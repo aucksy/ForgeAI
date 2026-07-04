@@ -1,0 +1,71 @@
+{
+  "expo": {
+    "name": "ForgeAI",
+    "slug": "forgeai",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "forgeai",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#07080C",
+    "android": {
+      "package": "com.forgeai.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#07080C",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#07080C",
+          "android": {
+            "image": "./assets/images/splash-icon.png",
+            "imageWidth": 96
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ForgeAI uses your photos so the AI coach can estimate nutrition from meal pictures.",
+          "cameraPermission": "ForgeAI uses the camera so you can snap a meal for instant nutrition estimates."
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "ForgeAI uses the microphone so you can talk to your AI coach.",
+          "speechRecognitionPermission": "ForgeAI uses speech recognition so you can log workouts and meals by voice."
+        }
+      ],
+      "expo-sqlite",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {}
+    },
+    "owner": "aucksy"
+  }
+}
