@@ -45,3 +45,6 @@ android/.kotlin/
 android/local.properties
 android/app/release.keystore
 *.keystore
+# the standard Android debug keystore (android/android) is NOT a secret and CI
+# needs it for the secret-less debug-signing fallback:
+!android/app/debug.keystore
