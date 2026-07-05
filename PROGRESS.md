@@ -1,4 +1,4 @@
-# ForgeAI progress
+﻿# ForgeAI progress
 
 ## Done
 - 2026-07-04: Scaffolded (Expo SDK 56, deps incl. expo-speech-recognition),
@@ -20,7 +20,7 @@
 - For a properly release-signed build: run the "Generate release keystore"
   workflow once, set the 4 ANDROID_* Actions secrets (owner-gated).
 
-## Deliberately deferred (not bugs — scoped for the demo)
+## Deliberately deferred (not bugs â€” scoped for the demo)
 - **Pounds (lb) units**: shipped kg-only. Full lb needs input parsing + every
   localCoach reply string (both languages) + cards + analytics + profile sync;
   half-doing it is worse than kg-only. Settings shows "lb coming soon".
@@ -30,10 +30,11 @@
   is missing (unreachable with the seed; hardening item if real onboarding lands).
 
 ## Gotchas / lessons
-- `@react-navigation/bottom-tabs` isn't hoisted — TabBar uses a structural type.
+- `@react-navigation/bottom-tabs` isn't hoisted â€” TabBar uses a structural type.
 - Keep `chart.series` order (CVD-validated). Dark-only UI.
 - Demo must impress with NO API key: provider defaults to `local`, seeded data.
 - Seed is DELETE-first + idempotent; reset uses forceReseed() (bypasses memo).
 - Commit messages with inner double-quotes: use `git commit -F <file>`, not a
   PowerShell here-string (the quotes word-split the -m arg).
 - Node not on default PATH: prepend `%LOCALAPPDATA%\nodejs`.
+
