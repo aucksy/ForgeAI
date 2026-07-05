@@ -33,9 +33,12 @@ export const useChat = create<ChatState>()((set, get) => ({
     if ((!trimmed && !imageUri) || get().sending) return;
     const now = Date.now();
     // Optimistic user bubble + pending coach placeholder, replaced by the
-    // persisted messages once sendToCoach resolves (it never throws).
+    // persisted messages once sendToCoach resolves (it never throws). The user
+    // id is threaded into the persisted row so its FlatList key stays stable and
+    // the bubble doesn't remount / replay its entrance when the reply lands.
+    const userId = uuid();
     const optimisticUser: ChatMessage = {
-      id: `local-user-${uuid()}`,
+      id: userId,
       role: 'user',
       kind: 'text',
       text: trimmed,
@@ -55,7 +58,27 @@ export const useChat = create<ChatState>()((set, get) => ({
     set((s) => ({ sending: true, messages: [...s.messages, optimisticUser, pendingCoach] }));
 
     try {
-      const persisted = await sendToCoach(trimmed, imageUri ?? null);
+      const persisted = await sendToCoach(trimmed, imageUri ?? null, userId);
+      if (persisted.length === 0) {
+        // The very first DB write failed (sendToCoach swallows it and returns
+        // []). Keep the user's bubble instead of silently dropping it, replace
+        // only the pending coach placeholder with an inline error.
+        set((s) => ({
+          sending: false,
+          messages: [
+            ...s.messages.filter((m) => m.id !== pendingCoach.id),
+            {
+              id: `local-error-${uuid()}`,
+              role: 'coach',
+              kind: 'error',
+              text: 'Could not save your message — please try again.',
+              payload: null,
+              createdAt: Date.now(),
+            },
+          ],
+        }));
+        return;
+      }
       set((s) => ({
         sending: false,
         messages: [

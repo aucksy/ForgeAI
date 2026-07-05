@@ -25,9 +25,11 @@ const PROVIDER_OPTIONS = [
   { id: 'local', label: 'Local demo', icon: 'zap' },
 ] as const satisfies readonly ChipOption<AiProviderId>[];
 
+// Demo ships kg-only (Indian gym context). Full pounds support — input parsing,
+// every coach reply string, chat cards and analytics — is a tracked enhancement;
+// exposing a half-converted lb toggle would read worse than kg-only.
 const UNIT_OPTIONS = [
   { id: 'metric', label: 'kg' },
-  { id: 'imperial', label: 'lb' },
 ] as const satisfies readonly ChipOption<UnitSystem>[];
 
 const LANGUAGE_OPTIONS = [
@@ -79,6 +81,9 @@ export default function SettingsScreen() {
         success();
         Alert.alert('Demo data regenerated', 'A fresh 13-week training history is ready.');
       } else {
+        // Reseed genuinely failed — refresh anyway so the UI reflects the wiped
+        // DB rather than showing ghost pre-reset data, then ask for a restart.
+        await Promise.all([useDashboard.getState().refresh(), useChat.getState().load()]);
         thud();
         Alert.alert(
           'Demo data cleared',
@@ -203,6 +208,16 @@ export default function SettingsScreen() {
             selectedId={unitSystem}
             onSelect={setUnitSystem}
           />
+          <Text
+            style={{
+              fontFamily: type.body,
+              fontSize: type.size.caption,
+              color: color.inkMuted,
+              marginTop: space.sm,
+            }}
+          >
+            Pounds (lb) support is coming soon.
+          </Text>
           <View style={{ marginTop: space.lg }}>
             <ChipGroup
               label="Language"

@@ -298,9 +298,11 @@ export async function deleteSession(id: string): Promise<void> {
 // ---------------------------------------------------------------- analytics
 
 /**
- * Walk back day-by-day from `today`. A run of >= 2 consecutive rest days ends
- * the streak; the result counts DISTINCT workout days in the unbroken run
- * (an untrained today alone does not break it).
+ * Walk back day-by-day. A run of >= 2 consecutive rest days STRICTLY BEFORE
+ * today ends the streak; the result counts DISTINCT workout days in the unbroken
+ * run. Today is special-cased: an untrained today never counts toward the rest
+ * run (so a morning before the first workout — or the demo's untrained install
+ * day — doesn't collapse a live streak); it only adds when today is trained.
  */
 export async function getStreakDays(todayISO_: string): Promise<number> {
   const rows = await getDb().getAllAsync<{ date_iso: string }>(
@@ -310,9 +312,9 @@ export async function getStreakDays(todayISO_: string): Promise<number> {
   if (trained.size === 0) return 0;
   const earliest = [...trained].sort()[0];
 
-  let streak = 0;
+  let streak = trained.has(todayISO_) ? 1 : 0;
   let restRun = 0;
-  let cursor = todayISO_;
+  let cursor = addDays(todayISO_, -1); // rest-run rule applies to days before today
   while (cursor >= earliest) {
     if (trained.has(cursor)) {
       streak += 1;

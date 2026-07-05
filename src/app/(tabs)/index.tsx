@@ -70,7 +70,8 @@ export default function DashboardScreen() {
 
   const goCoach = useCallback(() => {
     thud();
-    router.push('/coach');
+    // Deep-link the coach to present today's session (coach.tsx consumes ?prompt=).
+    router.push({ pathname: '/coach', params: { prompt: "Today's Workout" } });
   }, [router]);
 
   return (

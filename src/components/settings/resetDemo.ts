@@ -1,15 +1,12 @@
 import { getDb, getMeta } from '@/db';
-import { ensureSeeded } from '@/db/seed';
+import { forceReseed } from '@/db/seed';
 
 /**
  * Danger-zone reset: wipe every table (children before parents so foreign
- * keys never trip), then ask the seeder to regenerate the demo.
- *
- * Foundation note: `ensureSeeded()` memoises its in-flight promise at module
- * scope, so when the launch seed already succeeded this call resolves without
- * re-seeding. We therefore verify the `seeded` meta flag afterwards and report
- * whether the data really regenerated — the caller shows a "restart the app"
- * notice when it did not (per the CONTRACTS "restart notice" spec).
+ * keys never trip), then regenerate the demo in-session via forceReseed()
+ * (which bypasses the launch-seed memo). We still verify the `seeded` meta flag
+ * and report the result so the caller can fall back to a "restart the app"
+ * notice if the reseed genuinely failed (per the CONTRACTS "restart notice" spec).
  */
 const TABLES_IN_DELETE_ORDER = [
   'set_entries',
@@ -35,7 +32,7 @@ export async function resetDemoData(): Promise<{ reseeded: boolean }> {
   });
 
   try {
-    await ensureSeeded();
+    await forceReseed();
   } catch {
     // fall through — the flag check below reports the truth either way
   }

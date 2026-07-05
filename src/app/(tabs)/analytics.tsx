@@ -9,6 +9,7 @@ import {
   FrequencySection,
   MuscleSection,
   PrSection,
+  ProteinSection,
   SectionSkeleton,
   StrengthSection,
   VolumeSection,
@@ -68,19 +69,24 @@ export default function AnalyticsScreen() {
               target={profile ? profile.calorieTarget : null}
               index={3}
             />
-            <MuscleSection data={bundle.muscleVolume} index={4} />
+            <ProteinSection
+              data={bundle.calories}
+              target={profile ? profile.proteinTargetG : null}
+              index={4}
+            />
+            <MuscleSection data={bundle.muscleVolume} index={5} />
             <ConsistencySection
               cells={bundle.consistency}
               rangeDays={range}
               streak={streak}
-              index={5}
+              index={6}
             />
-            <PrSection prs={bundle.prTimeline} index={6} />
-            <StrengthSection data={bundle.strengthTrend} index={7} />
+            <PrSection prs={bundle.prTimeline} index={7} />
+            <StrengthSection data={bundle.strengthTrend} index={8} />
           </>
         )}
         {/* lives outside the bundle gate so the selected lift survives range switches */}
-        <ExerciseSection rangeDays={range} index={8} />
+        <ExerciseSection rangeDays={range} index={9} />
       </ScrollView>
     </Screen>
   );

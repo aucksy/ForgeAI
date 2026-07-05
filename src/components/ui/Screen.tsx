@@ -89,6 +89,7 @@ export function Screen({ title, subtitle, scroll = true, right, noPad, children 
       {scroll ? (
         <ScrollView
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingTop: padTop,
             paddingHorizontal: noPad ? 0 : space.screenX,

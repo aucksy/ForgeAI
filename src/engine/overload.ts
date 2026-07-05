@@ -98,6 +98,17 @@ export function computeOverloadTarget(input: {
     summaries[1].topReps < target.repRangeMin
   ) {
     const dl = deload(lastS.topWeightKg, inc);
+    if (dl >= lastS.topWeightKg - 1e-6) {
+      // No room to drop (bodyweight / minimum load) — hold and chase rep quality.
+      return {
+        ...base,
+        last,
+        targetWeightKg: lastS.topWeightKg,
+        targetRepsMin: target.repRangeMin,
+        reason: holdFloorReason(lastS.topWeightKg, target.repRangeMin),
+        action: 'hold',
+      };
+    }
     return {
       ...base,
       last,
@@ -117,6 +128,17 @@ export function computeOverloadTarget(input: {
     const repsClimbing = r0 > r1 || r0 > r2;
     if (!repsClimbing) {
       const dl = deload(lastS.topWeightKg, inc);
+      if (dl >= lastS.topWeightKg - 1e-6) {
+        // Plateaued but already at the floor — can't deload; hold for rep quality.
+        return {
+          ...base,
+          last,
+          targetWeightKg: lastS.topWeightKg,
+          targetRepsMin: target.repRangeMin,
+          reason: holdFloorReason(lastS.topWeightKg, target.repRangeMin),
+          action: 'hold',
+        };
+      }
       return {
         ...base,
         last,
@@ -152,11 +174,22 @@ export function computeOverloadTarget(input: {
   };
 }
 
-/** 10% off the top weight, floored to the increment, never below one increment. */
+/**
+ * 10% off the top weight, floored to the increment, never below one increment
+ * and never ABOVE the current weight (a very light / bodyweight lift has nowhere
+ * to drop — callers detect that no-op via `dl >= topWeightKg` and hold instead).
+ */
 function deload(topWeightKg: number, incrementKg: number): number {
   if (topWeightKg <= 0) return 0;
   const dropped = round3(Math.floor((topWeightKg * 0.9) / incrementKg + 1e-9) * incrementKg);
-  return Math.max(dropped, incrementKg);
+  return Math.min(topWeightKg, Math.max(dropped, incrementKg));
+}
+
+/** Copy for when a lift is already at its floor and can't be deloaded further. */
+function holdFloorReason(topWeightKg: number, repRangeMin: number): string {
+  return topWeightKg <= 0
+    ? `Bodyweight here — own the movement and add a clean rep before we add load.`
+    : `Already at the floor at ${trimNum(topWeightKg)} kg — hold it and rebuild to ${repRangeMin}+ strong, clean reps before adding weight.`;
 }
 
 /** Top working set = heaviest weight; topReps = best reps at that weight. */

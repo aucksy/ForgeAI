@@ -101,11 +101,17 @@ async function persistReply(saved: ChatMessage[], text: string, cards: CoachCard
 export async function sendToCoach(
   userText: string,
   imageUri?: string | null,
+  userMessageId?: string,
 ): Promise<ChatMessage[]> {
   const saved: ChatMessage[] = [];
   try {
     saved.push(
-      await chatRepo.addMessage({ role: 'user', text: userText, imageUri: imageUri ?? null }),
+      await chatRepo.addMessage({
+        id: userMessageId,
+        role: 'user',
+        text: userText,
+        imageUri: imageUri ?? null,
+      }),
     );
   } catch {
     return saved; // DB unavailable — nothing else we can do.
@@ -152,18 +158,26 @@ export async function sendToCoach(
       msgs.push({ role: m.role === 'user' ? 'user' : 'assistant', text: m.text });
     }
     while (msgs.length && msgs[0].role !== 'user') msgs.shift();
-    if (!msgs.length) msgs.push({ role: 'user', text: userText });
+
+    // The wire conversation MUST end on the current user turn: a caption-less
+    // photo send has empty text and is dropped by the filter above, which would
+    // leave a trailing assistant turn (rejected as a prefill — HTTP 400 on
+    // Claude Sonnet 5 / Opus 4.8) and glue the image to a stale earlier message.
+    const caption = userText.trim();
+    const last = msgs[msgs.length - 1];
+    const endsWithCurrentTurn = caption.length > 0 && last?.role === 'user' && last.text === caption;
+    if (!msgs.length || !endsWithCurrentTurn) {
+      if (imageUri || !msgs.length) {
+        msgs.push({
+          role: 'user',
+          text: caption || 'Meal photo attached — estimate the calories and macros, then log it.',
+        });
+      }
+    }
 
     if (imageUri) {
       const image = await readImageBase64(imageUri);
-      if (image) {
-        for (let i = msgs.length - 1; i >= 0; i--) {
-          if (msgs[i].role === 'user') {
-            msgs[i].imageBase64 = image;
-            break;
-          }
-        }
-      }
+      if (image) msgs[msgs.length - 1].imageBase64 = image;
     }
 
     const chat = provider === 'anthropic' ? chatAnthropic : chatOpenAi;

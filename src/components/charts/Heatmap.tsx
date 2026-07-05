@@ -33,15 +33,19 @@ const DAY_HINTS: { row: number; label: string }[] = [
 export function Heatmap({ cells, weeks }: HeatmapProps) {
   const [w, setW] = useState(0);
 
-  const cols = Math.max(1, weeks);
+  // Row offset of the first cell (Mon = row 0).
+  const first = cells[0];
+  const offset = first ? (fromISO(first.dateISO).getDay() + 6) % 7 : 0;
+
+  // Derive column count from the actual data, not just the weeks prop: cells are
+  // ascending, so trusting `weeks` alone would cull the NEWEST days (incl. today)
+  // whenever offset pushes the last cells past weeks*7. Cell size flows from cols,
+  // so the grid simply shrinks to fit.
+  const cols = Math.max(1, weeks, Math.ceil((offset + cells.length) / 7));
   const gridW = Math.max(0, w - DAY_GUTTER);
   const cell = Math.min(16, (gridW - (cols - 1) * GAP) / cols);
   const gridH = cell * 7 + GAP * 6;
   const rx = Math.min(3, cell / 3);
-
-  // Row offset of the first cell (Mon = row 0).
-  const first = cells[0];
-  const offset = first ? (fromISO(first.dateISO).getDay() + 6) % 7 : 0;
 
   const body =
     w === 0 || cells.length === 0 || cell <= 0 ? null : (

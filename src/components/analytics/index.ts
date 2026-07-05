@@ -12,6 +12,8 @@ export { MuscleSection } from './MuscleSection';
 export type { MuscleSectionProps } from './MuscleSection';
 export { PrSection } from './PrSection';
 export type { PrSectionProps } from './PrSection';
+export { ProteinSection } from './ProteinSection';
+export type { ProteinSectionProps } from './ProteinSection';
 export { HeaderStat, InspectReadout, Section, SectionSkeleton } from './Section';
 export type { SectionProps } from './Section';
 export { StrengthSection } from './StrengthSection';

@@ -65,8 +65,19 @@ export async function getTodaysWorkout(dateISO?: string): Promise<TodaysWorkout>
     }
     day = days[idx];
   } else {
-    // Rotation: the day after the plan-day of the most recent session (wrap, skip rest).
-    day = nextTrainingDay(days, lastSession ? matchPlanDay(days, lastSession) : null);
+    // Rotation: the day after the plan-day of the most recent PLAN-MATCHING
+    // session. Anchoring on the newest session that maps to a plan day means an
+    // ad-hoc off-plan log (e.g. an 'upper' chat log absent from a PPL plan)
+    // doesn't silently reset the A/B cycle back to day 0.
+    let lastIdx: number | null = null;
+    for (const s of recent) {
+      const idx = matchPlanDay(days, s);
+      if (idx !== null) {
+        lastIdx = idx;
+        break;
+      }
+    }
+    day = nextTrainingDay(days, lastIdx);
   }
 
   if (!day) {

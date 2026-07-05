@@ -44,6 +44,23 @@ async function batchInsert(
   }
 }
 
+/** Data tables the seed fills — cleared first so a reseed is idempotent and can
+ *  never collide with a stray user row (e.g. a body-weight or exercise logged in
+ *  a post-reset window) on the UNIQUE indexes. Children before parents (FK). */
+const SEED_TABLES = [
+  'set_entries',
+  'personal_records',
+  'workout_sessions',
+  'plan_exercises',
+  'plan_days',
+  'workout_plans',
+  'meals',
+  'chat_messages',
+  'body_weight',
+  'user_profile',
+  'exercises',
+] as const;
+
 let inFlight: Promise<void> | null = null;
 
 export function ensureSeeded(): Promise<void> {
@@ -53,6 +70,19 @@ export function ensureSeeded(): Promise<void> {
       throw err;
     });
   }
+  return inFlight;
+}
+
+/**
+ * Force a fresh seed regardless of the memoised launch promise. Used by the
+ * "Reset demo data" flow: after the wipe the `seeded` flag is gone, so seed()
+ * runs fully and (being DELETE-first) is safe even if rows survived the wipe.
+ */
+export function forceReseed(): Promise<void> {
+  inFlight = seed().catch((err: unknown) => {
+    inFlight = null;
+    throw err;
+  });
   return inFlight;
 }
 
@@ -176,6 +206,9 @@ async function seed(): Promise<void> {
 
   // ---- one exclusive transaction; seeded flag last so a crash re-seeds clean.
   await getDb().withExclusiveTransactionAsync(async (tx) => {
+    // Idempotency: clear any surviving rows before inserting so a reseed can't
+    // collide on UNIQUE(exercises.name) / UNIQUE(body_weight.date_iso).
+    for (const table of SEED_TABLES) await tx.runAsync(`DELETE FROM ${table}`);
     await batchInsert(tx, 'user_profile', [
       'id', 'name', 'age', 'height_cm', 'goal', 'experience', 'gym_name', 'member_since_iso',
       'calorie_target', 'protein_target_g', 'carbs_target_g', 'fat_target_g', 'unit_system', 'language',

@@ -565,6 +565,51 @@ function mealGuidance(f: Flavour): LocalReply {
   };
 }
 
+// ------------------------------------------------------- muscles-trained query
+
+/** True when a set expression is present even if no exercise name was parsed. */
+function hasSetExpression(t: string): boolean {
+  SET_EXPR.lastIndex = 0; // shared /g/ regex — reset before and after .test
+  const hit = SET_EXPR.test(t);
+  SET_EXPR.lastIndex = 0;
+  return hit;
+}
+
+function isMusclesTrained(t: string): boolean {
+  return (
+    /\b(muscles?|muscle groups?|body ?parts?)\b/.test(t) &&
+    /(today|aaj|train|trained|training|work|worked|hit|kiya|kiye|maara|mara)\b/.test(t)
+  );
+}
+
+async function musclesTrainedReply(f: Flavour): Promise<LocalReply> {
+  const today = todayISO();
+  const sessions = await workoutRepo.getSessionsBetween(today, today);
+  const muscles: string[] = [];
+  for (const s of sessions) {
+    const detail = await workoutRepo.getSessionDetail(s.id);
+    if (!detail) continue;
+    for (const e of detail.exercises) {
+      if (!muscles.includes(e.exercise.muscleGroup)) muscles.push(e.exercise.muscleGroup);
+    }
+  }
+  if (muscles.length === 0) {
+    return {
+      text: pick(
+        f,
+        "Nothing logged yet today — rest so far. Tell me when you lift and I'll track the muscles worked.",
+        'Aaj abhi tak kuch log nahi hua — rest chal raha hai. Jab lift karo bata dena, main muscles track kar dunga.',
+      ),
+      cards: [],
+    };
+  }
+  const list = muscles.join(', ');
+  return {
+    text: pick(f, `Today you've trained: ${list}.`, `Aaj aapne train kiya: ${list}.`),
+    cards: [],
+  };
+}
+
 // -------------------------------------------------------------------- main
 
 /**
@@ -578,6 +623,9 @@ export async function localCoachReply(text: string): Promise<LocalReply | null> 
   const f = detectFlavour(raw);
 
   if (isTodaysWorkout(t)) return todaysWorkoutReply(f);
+  // Before isLogWorkoutHint so Hinglish "kaunse muscles kiye aaj" isn't hijacked
+  // into workout-logging guidance by the "kiye" verb.
+  if (isMusclesTrained(t)) return musclesTrainedReply(f);
   if (isPrQuery(t)) return prReply(f);
   if (isNutritionQuery(t)) return nutritionReply(t, f);
 
@@ -592,7 +640,9 @@ export async function localCoachReply(text: string): Promise<LocalReply | null> 
   const workout = parseWorkout(t);
   if (workout.length) return logWorkoutReply(workout, f);
 
-  if (isLogWorkoutHint(t)) return workoutGuidance(f);
+  // A set expression with no exercise name ("3 sets of 10 at 60") parses to no
+  // sets — guide instead of falling through to the generic help reply.
+  if (hasSetExpression(t) || isLogWorkoutHint(t)) return workoutGuidance(f);
 
   const foods = parseFoods(t);
   const eatVerb = /\b(ate|had|eat|eaten|having|khaya|khayi|khaye|kha liya|breakfast|lunch|dinner|snack|meal|log)\b/.test(t);

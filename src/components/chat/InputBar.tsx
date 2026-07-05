@@ -31,8 +31,9 @@ export interface InputBarProps {
   language: AppLanguage;
 }
 
-/** How long we wait after mic release for the final transcript to land. */
-const FINAL_TRANSCRIPT_GRACE_MS = 420;
+/** Safety-net wait for the final transcript if the recognizer's end event never
+ *  fires. The primary flush is the falling edge of `listening` (see effect). */
+const FINAL_TRANSCRIPT_FALLBACK_MS = 2500;
 
 export function InputBar({
   sending,
@@ -47,11 +48,28 @@ export function InputBar({
   const [micHeld, setMicHeld] = useState(false);
   const voice = useVoiceInput();
 
-  // Mirror the live transcript so the release-timeout reads the latest value.
+  // Mirror the live transcript so the flush reads the latest value.
   const partialRef = useRef('');
   useEffect(() => {
     partialRef.current = voice.partial;
   }, [voice.partial]);
+
+  // Voice send is flushed on the recognizer's end (the falling edge of
+  // `listening`, which lands AFTER the final result) rather than a fixed race
+  // timer; the fallback timer only covers an engine that never fires 'end'.
+  const flushPendingRef = useRef(false);
+  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flushVoice = useCallback(() => {
+    if (!flushPendingRef.current) return; // idempotent: timer + end can't double-send
+    flushPendingRef.current = false;
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current);
+      flushTimerRef.current = null;
+    }
+    const finalText = partialRef.current.trim();
+    partialRef.current = '';
+    if (finalText) onSend(finalText);
+  }, [onSend]);
 
   const pulse = useSharedValue(1);
   const micStyle = useAnimatedStyle(() => ({ transform: [{ scale: pulse.value }] }));
@@ -74,15 +92,26 @@ export function InputBar({
     setMicHeld(false);
     cancelAnimation(pulse);
     pulse.value = withSpring(1, motion.spring);
+    flushPendingRef.current = true;
     void voice.stop();
-    // The final result event can arrive just after stop() — give it a beat,
-    // then send whatever transcript we ended up with.
-    setTimeout(() => {
-      const finalText = partialRef.current.trim();
-      partialRef.current = '';
-      if (finalText) onSend(finalText);
-    }, FINAL_TRANSCRIPT_GRACE_MS);
-  }, [onSend, pulse, voice]);
+    // Primary flush is the listening falling-edge effect below; this timer is a
+    // safety net if the recognizer never emits 'end'.
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    flushTimerRef.current = setTimeout(flushVoice, FINAL_TRANSCRIPT_FALLBACK_MS);
+  }, [flushVoice, pulse, voice]);
+
+  // Recognizer finished (listening dropped after the final result) and the mic
+  // is released -> send the completed transcript.
+  useEffect(() => {
+    if (!voice.listening && !micHeld) flushVoice();
+  }, [voice.listening, micHeld, flushVoice]);
+
+  // Cancel a pending flush timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    };
+  }, []);
 
   const handleSendPress = useCallback(() => {
     const trimmed = text.trim();

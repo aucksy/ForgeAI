@@ -54,6 +54,9 @@ export async function getMessages(limit?: number): Promise<ChatMessage[]> {
 }
 
 export async function addMessage(input: {
+  /** Reuse a caller-supplied id (e.g. the chat store's optimistic bubble) so the
+   *  persisted row keeps the same FlatList key and doesn't remount/re-animate. */
+  id?: string;
   role: MessageRole;
   kind?: MessageKind;
   text: string;
@@ -61,7 +64,7 @@ export async function addMessage(input: {
   imageUri?: string | null;
 }): Promise<ChatMessage> {
   const message: ChatMessage = {
-    id: uuid(),
+    id: input.id ?? uuid(),
     role: input.role,
     kind: input.kind ?? 'text',
     text: input.text,
