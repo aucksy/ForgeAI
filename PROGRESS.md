@@ -1,24 +1,39 @@
 # ForgeAI progress
 
 ## Done
-- 2026-07-04: Project scaffolded (Expo SDK 56, deps installed incl.
-  expo-speech-recognition 56.0.1). Contract layer authored: theme tokens
-  (validated chart palette), domain models, SQLite schema v1, db bootstrap,
-  lib utils (date/format/uuid/haptics/keys), expo-router skeleton (4 tabs +
-  exercise route), docs (PRD, CONTRACTS). `tsc --noEmit` green.
-
-## In flight
-- Wave 1 fan-out: repos / engine+services / ui-kit+charts / ai+stores+voice /
-  seed / assets — then integration tsc pass.
+- 2026-07-04: Scaffolded (Expo SDK 56, deps incl. expo-speech-recognition),
+  contract layer, docs. `tsc` green.
+- 2026-07-05: Wave 1 (DB repos, overload/recovery/strength engine + services,
+  premium UI kit + SVG charts, AI layer w/ Anthropic+OpenAI REST + offline
+  localCoach, 3-month demo seed, brand icons). Wave 2 (dashboard, coach chat
+  w/ rich cards + voice + photo, analytics, exercise + settings screens).
+  Both waves `tsc` green and committed/pushed (github.com/aucksy/ForgeAI).
+- 2026-07-05: `expo prebuild` android/ committed with CI-driven signing
+  (release keystore from Actions secrets, debug-signing fallback when absent).
+- 2026-07-05: Adversarial review (5 finders -> per-finding skeptics -> fixes).
+  19 confirmed findings fixed (2 HIGH, 6 MED, 11 LOW); 5 refuted. `tsc` green,
+  committed (c24e35c). See the commit body for the full list.
 
 ## Next
-- Wave 2: dashboard, chat UI, analytics, exercise+settings screens.
-- Adversarial review -> fixes -> initial commit polish.
-- Ship prep (user-gated): GitHub repo + secrets, keystore, `expo prebuild`
-  android/ commit, release-apk.yml tag build, first APK link.
+- Tag `v0.1.0` -> GitHub Actions builds signed(or debug-signed) APK+AAB ->
+  paste the direct .apk link. First test build needs NO secrets.
+- For a properly release-signed build: run the "Generate release keystore"
+  workflow once, set the 4 ANDROID_* Actions secrets (owner-gated).
 
-## Gotchas
-- `@react-navigation/bottom-tabs` is NOT hoisted — TabBar uses a structural
-  prop type; don't import from that package at top level.
-- Keep `chart.series` order (CVD safety). Dark-only UI.
-- Demo must impress with NO API key (localCoach fallback + seeded data).
+## Deliberately deferred (not bugs — scoped for the demo)
+- **Pounds (lb) units**: shipped kg-only. Full lb needs input parsing + every
+  localCoach reply string (both languages) + cards + analytics + profile sync;
+  half-doing it is worse than kg-only. Settings shows "lb coming soon".
+- A/B plan-day tie-break when a chat log contains only exercises shared by both
+  variants (LOW, self-corrects on the next full log; rotation fix mitigates).
+- Strength-benchmark name-matching could over-match accessories IF a main lift
+  is missing (unreachable with the seed; hardening item if real onboarding lands).
+
+## Gotchas / lessons
+- `@react-navigation/bottom-tabs` isn't hoisted — TabBar uses a structural type.
+- Keep `chart.series` order (CVD-validated). Dark-only UI.
+- Demo must impress with NO API key: provider defaults to `local`, seeded data.
+- Seed is DELETE-first + idempotent; reset uses forceReseed() (bypasses memo).
+- Commit messages with inner double-quotes: use `git commit -F <file>`, not a
+  PowerShell here-string (the quotes word-split the -m arg).
+- Node not on default PATH: prepend `%LOCALAPPDATA%\nodejs`.
