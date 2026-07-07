@@ -64,7 +64,9 @@
       "reactCompiler": true
     },
     "extra": {
-      "router": {}
+      "router": {},
+      "supabaseUrl": "https://hdxzqbdiokjklnypfisq.supabase.co",
+      "supabasePublishableKey": "sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo"
     },
     "owner": "aucksy"
   }

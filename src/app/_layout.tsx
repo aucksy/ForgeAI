@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { useCloud } from '@/store/cloudStore';
 import { initDb } from '@/db';
 import { ensureSeeded } from '@/db/seed';
 import { color } from '@/theme/tokens';
@@ -24,6 +25,9 @@ export default function RootLayout() {
       } finally {
         setDbReady(true);
       }
+      // Cloud is fully gated: init() no-ops (and starts NO network watcher)
+      // unless a gym is linked, so the offline demo makes zero network calls.
+      void useCloud.getState().init();
     })();
   }, []);
 

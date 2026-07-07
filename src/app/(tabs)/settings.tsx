@@ -7,6 +7,7 @@ import { ANTHROPIC_MODELS, OPENAI_MODELS } from '@/ai/models';
 import { ApiKeyField } from '@/components/settings/ApiKeyField';
 import { ChipGroup } from '@/components/settings/ChipGroup';
 import type { ChipOption } from '@/components/settings/ChipGroup';
+import { CloudCard } from '@/components/settings/CloudCard';
 import { GymCard } from '@/components/settings/GymCard';
 import { resetDemoData } from '@/components/settings/resetDemo';
 import { ToggleRow } from '@/components/settings/SettingRow';
@@ -239,7 +240,11 @@ export default function SettingsScreen() {
         </Card>
       </Section>
 
-      <Section title="Your gym" delay={210}>
+      <Section title="Gym sync" delay={210}>
+        <CloudCard />
+      </Section>
+
+      <Section title="Your gym" delay={245}>
         <GymCard />
       </Section>
 

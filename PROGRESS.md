@@ -28,6 +28,22 @@
   ~$150/$1.3k/$7.7k-12k per mo @ 10/100/1000 gyms (AI-dominated). **Awaiting
   "go" to start Phase 1** (will read the Supabase creds in `Resources/Supabase/`).
 
+- 2026-07-07: **Phase 1 done (cloud foundation)** — Supabase (free tier, Mumbai)
+  schema+RLS+RPCs (`supabase/migrations/0001_init.sql` + README), mobile
+  `src/cloud/*` (lazy client, email auth + join-by-code, SQLite outbox → one-way
+  idempotent upsert, NetInfo-gated drain, consent + cloud-delete), `cloudStore`,
+  Settings `CloudCard`. Push piggybacks `dashboardStore.refresh` (no frozen-repo
+  edits). Fully gated by `isCloudActive` — **offline demo makes zero network
+  calls, untouched**. Adversarial review (4 finders + skeptics): 15 fixed / 5
+  refuted, incl. 2 HIGH RLS holes (member could self-escalate to owner + read all
+  co-members' health data; unpinned gym_id cross-tenant injection). typecheck green.
+  **HUMAN STEPS (supabase/README.md):** apply the SQL, turn OFF email confirmation
+  for beta, `insert into gyms(name,join_code) values('Iron Temple Fitness','IRON01');`,
+  then test Settings → Gym sync. **BUILD NOTE:** next tag build must confirm
+  `@react-native-community/netinfo` autolinks in the committed `android/` (dynamic
+  autolinking, low risk); if it fails, `expo prebuild` regen + re-apply the
+  build.gradle signing block.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

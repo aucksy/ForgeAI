@@ -130,4 +130,19 @@ CREATE TABLE IF NOT EXISTS meta (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL
 );
+
+-- Cloud one-way push outbox (B2B2C). NOT a domain table: no user_id, identity is
+-- attached at drain time from the cloud session. Holds at most one pending
+-- member-summary snapshot; drained by src/cloud when online + a gym is linked.
+CREATE TABLE IF NOT EXISTS sync_outbox (
+  id TEXT PRIMARY KEY,
+  kind TEXT NOT NULL DEFAULT 'member_summary',
+  payload TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  client_version INTEGER NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  last_error TEXT,
+  updated_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_outbox_status ON sync_outbox(status);
 `;

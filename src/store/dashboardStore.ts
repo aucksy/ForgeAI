@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+import { maybeSync } from '@/cloud/sync';
 import { getDashboardData } from '@/services/dashboard';
 import type { DashboardData } from '@/types/models';
 
@@ -25,5 +26,7 @@ export const useDashboard = create<DashboardState>()((set) => ({
     } catch {
       if (seq === refreshSeq) set({ loading: false });
     }
+    // One-way cloud push (no-op unless a gym is linked → offline demo unaffected).
+    void maybeSync();
   },
 }));
