@@ -4,6 +4,29 @@ _Synthesised 2026-07-07. Every number below reflects the fact-check verdicts (co
 
 ---
 
+## 0. BETA MODE — everything free, < 100 users (current phase)
+
+The decisions below are the **scale-ready target**. For the **free beta** we deliberately
+pick the free-tier / simplest variant of each and defer all paid pieces. **$0/month.**
+
+| Decision | Scale target (below) | **Beta (now)** |
+|---|---|---|
+| Supabase | Pro $25 + compute | **Free tier** (500 MB DB, 5 GB egress, 50k MAU) — plenty for <100 users. *Gotcha: a free project pauses after 7 days idle — just un-pause it, or a tiny cron ping.* Region still **Mumbai**. |
+| Member auth | per-member signed JWT (avoids MAU bomb) | **Supabase Auth for everyone** (owners + members) — 50k MAU free easily covers <100. **No custom JWT-minting Edge Function** → much less code. Swap members to signed JWT only when nearing ~50k MAU. |
+| Auth method | phone OTP via MSG91 (₹/SMS) | **Email (magic-link / OTP)** — free, no SMS cost, no DLT registration. Phone OTP later. |
+| join-by-code | Edge Function | **Postgres RPC** (`SECURITY DEFINER`) — no Edge Function needed at beta. |
+| AI (Phase 3) | Gemini 2.5 Flash + GPT-5.4 escalation | **`localCoach` stays the free default** (offline, no key). When Phase 3 lands, use **free-tier Gemini / Groq keys**; <100 beta users sit inside free rate limits. |
+| Dashboard | Cloudflare Pages (already free) | **unchanged — free.** |
+| Billing (Razorpay) | Phase 5 | **deferred** — beta is free, no billing. |
+| WhatsApp reminders | Utility templates via BSP (₹/msg) | **deferred** — use free `expo-notifications` local reminders if any are needed. |
+| Compliance | full DPDP checklist | **still ship consent + a delete path** (free, just code) — health data goes to cloud the moment a member connects. |
+
+**Net beta cost: $0/month.** The only thing that changes at scale is swapping in the paid/
+harder variants above — the schema, RLS, tables, one-way push, and dashboard **all stay**,
+so beta is not throwaway. "Later integrate better-quality services" = flip these rows.
+
+---
+
 ## 1. TL;DR decisions
 
 | Decision | Choice | Why (one line) | ~Cost at our scale |

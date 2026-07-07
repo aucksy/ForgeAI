@@ -5,7 +5,15 @@ Source of truth for the offline demo → multi-tenant B2B2C evolution. Follows
 **offline-first, ONE-WAY push (phone → cloud), no two-way sync, demo stays 100%
 offline after every phase.**
 
-> **Decisions locked 2026-07-07 — see `docs/DECISIONS.md`** (web-researched +
+> **BETA MODE (current): everything FREE, < 100 users** — see `docs/DECISIONS.md §0`.
+> Beta uses the free-tier variant of every choice below and defers all paid pieces:
+> Supabase **Free** tier; **Supabase Auth (email) for members too** (no custom
+> JWT-minting Edge Function — 50k MAU free covers <100 users); **join-by-code as a
+> Postgres RPC**; AI stays `localCoach` (free/offline) until Phase 3 uses free-tier
+> keys; billing/WhatsApp/MSG91 deferred. **$0/month.** The scale-ready deltas below
+> are the upgrade path (flip when nearing free-tier limits) — beta is not throwaway.
+>
+> **Scale-ready decisions locked 2026-07-07 — see `docs/DECISIONS.md`** (web-researched +
 > fact-checked). Deltas folded into the phases below:
 > - **Backend:** Supabase **Pro, Spend Cap ON**, region **Mumbai `ap-south-1`**.
 > - **Members are NOT on Supabase Auth** — a **per-member signed JWT** (gym secret)
