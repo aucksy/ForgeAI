@@ -16,10 +16,17 @@
   https://github.com/aucksy/ForgeAI/releases/download/v0.1.0/forgeai-v0.1.0.apk
 
 ## B2B2C evolution (guide: docs/B2B2C-BUILD.md)
-- 2026-07-05: **Phase 0 done** — read the guide + codebase, wrote `docs/PLAN.md`
-  (offline-first, one-way push, no two-way sync; phases 1-6 with files/success/
-  risks). Awaiting human approval before Phase 1. Supabase creds present in
-  `Resources/Supabase/` (NOT yet read — will ask before Phase 1).
+- 2026-07-05: **Phase 0 (plan) done** — `docs/PLAN.md` (offline-first, one-way
+  push, no two-way sync; phases 1-6).
+- 2026-07-07: **Phase 0 (research+decisions) done** — 23-agent web-research
+  workflow (6 areas → fact-check → synthesis), all pricing verified live 2026-07.
+  `docs/DECISIONS.md` written; PLAN updated. Key calls: Supabase Pro (Mumbai),
+  **members on a signed JWT NOT Supabase Auth** (avoids a $650-2925/mo MAU bomb),
+  **AI = Gemini 2.5 Flash primary** (not Groq) w/ GPT-5.4 photo-escalation,
+  dashboard = Vite SPA on Cloudflare Pages in a pnpm monorepo, Razorpay+UPI,
+  WhatsApp Utility templates, DPDP checklist + cloud delete endpoint. Cost:
+  ~$150/$1.3k/$7.7k-12k per mo @ 10/100/1000 gyms (AI-dominated). **Awaiting
+  "go" to start Phase 1** (will read the Supabase creds in `Resources/Supabase/`).
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate

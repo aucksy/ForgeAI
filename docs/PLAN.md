@@ -5,6 +5,27 @@ Source of truth for the offline demo → multi-tenant B2B2C evolution. Follows
 **offline-first, ONE-WAY push (phone → cloud), no two-way sync, demo stays 100%
 offline after every phase.**
 
+> **Decisions locked 2026-07-07 — see `docs/DECISIONS.md`** (web-researched +
+> fact-checked). Deltas folded into the phases below:
+> - **Backend:** Supabase **Pro, Spend Cap ON**, region **Mumbai `ap-south-1`**.
+> - **Members are NOT on Supabase Auth** — a **per-member signed JWT** (gym secret)
+>   drives RLS. Only the few thousand **owners** use Supabase Auth (email + phone
+>   OTP via **MSG91**). This one call is ~$0 vs ~$650–2,925/mo (MAU counts token
+>   refresh). Load-bearing — enforce in review.
+> - **AI is Gemini-primary, not Groq:** text = **Gemini 2.5 Flash** (+ Flash-Lite
+>   for trivial turns); meal-photo = **Gemini 2.5 Flash → escalate low-confidence /
+>   mixed-thali photos to GPT-5.4** (GPT-4o/GPT-5 are delisted), cap ~15–20%;
+>   voice = Gemini native audio, **Groq Whisper v3 turbo** fallback. Keep the
+>   swappable seam; run a 100-photo Indian-food eval to set the escalation threshold.
+> - **Dashboard:** Vite+React+TS SPA on **Cloudflare Pages (free, commercial-OK)**;
+>   repo becomes a **pnpm monorepo** (`apps/mobile`, `apps/dashboard`, `packages/theme`).
+> - **DPDP:** add a **cloud delete endpoint** + consent logging + breach alerting
+>   (one-way sync makes cloud-delete a non-obvious hard requirement).
+> - **Billing:** Razorpay Subscriptions + UPI AutoPay. **Reminders:** WhatsApp
+>   **Utility** templates via an aggregator BSP.
+> - **Cost:** ~$150/mo @10 gyms → ~$1.3k @100 → ~$7.7k–12k @1000; **AI (driven by
+>   daily-active users) dominates**, not the 1M records. Backend stays ~$40–85/mo.
+
 ## Codebase understanding (what exists today)
 
 - **Expo SDK 56 / RN 0.85 / TS strict** app at repo root (`Codebase/`), shipped
@@ -31,12 +52,14 @@ offline after every phase.**
 2. **Identity lives in `meta`** (`member_id`, `tenant_id`, `gym_code`, `member_name`)
    via the existing `setMeta/getMeta`. **No `user_id`/`tenant_id` on domain tables.**
    The Supabase auth session (a secret) lives in SecureStore, not `meta`.
-3. **Push = derived summary upsert, not event replay.** After a log, we recompute the
-   member's rolling summary from existing services and **idempotently upsert** one row
-   per member to the cloud. Because it's idempotent, we need only a dirty flag
-   (`meta.sync_dirty` + `meta.sync_last_pushed_at`) + a connectivity listener — **no
-   outbox table, no repo hooks, no domain-schema change.** (An event outbox is a
-   Phase 4+ option only if per-session granularity is ever required.)
+3. **Push = derived summary upsert via an outbox, not event replay.** After a log we
+   recompute the member's rolling summary from existing services and enqueue it in a new
+   `sync_outbox` table (status `pending|synced|error`, `client_version`); a connectivity
+   listener drains it with an **idempotent** `upsert(onConflict:'member_id')` under the
+   member JWT (RLS). The outbox (a non-domain table, **no `user_id`**) gives clean
+   retry/error tracking + offline resilience; a monotonic `client_version` guard stops
+   stale retries regressing state. **No repo hooks, no domain-schema change** — enqueue
+   is triggered from the store/service layer, never inside the frozen repos.
 4. **Supabase URL + anon key ship in `app.json > extra`** (anon key is publishable and
    RLS-guarded). **Service-role key NEVER ships** — Edge Functions / dashboard-server
    only. AI keys move server-side in Phase 3.
@@ -55,8 +78,13 @@ offline after every phase.**
 - **Deliverables:** `docs/PLAN.md`, `docs/B2B2C-BUILD.md` (copied), PROGRESS note.
 
 ### Phase 1 — Cloud foundation (offline stays intact)
-- **Goal:** Supabase schema + RLS; member auth; join-gym-by-code; identity in `meta`;
-  one-way summary push. Demo still 100% offline.
+- **Goal:** Supabase schema + RLS (Mumbai); **per-member signed JWT** (not Supabase
+  Auth); join-gym-by-code; identity in `meta`; **outbox → one-way summary upsert**;
+  consent logging + a cloud **delete endpoint**. Demo still 100% offline.
+- **Auth model (locked):** members get a JWT minted by a `mint-member-jwt` Edge
+  Function (signed with the gym secret, claims `gym_id`+`member_id`) at join; the app
+  sets it on the supabase-js client and RLS enforces `auth.jwt()->>'gym_id'`. Owners
+  (dashboard) use Supabase Auth (email + phone OTP via MSG91). Never ship service_role.
 - **Human provides:** Supabase Project URL + anon key + service-role key
   (`Resources/Supabase/…` already present — I will ask before reading/using).
 - **Add (files):**
@@ -74,9 +102,15 @@ offline after every phase.**
     SecureStore session adapter.
   - `src/cloud/session.ts` — `isCloudActive()`, `getIdentity()` (from `meta`),
     `signInMember()`, `joinGymByCode()`, `signOut()`; writes identity to `meta`.
-  - `src/cloud/pushSummary.ts` — `markDirty()`, `pushIfDirty()` (debounced, retried),
-    derives the summary from `services/dashboard` + `services/analytics` (read-only).
-  - `src/cloud/connectivity.ts` — `expo-network` reachability → drains on reconnect.
+  - `src/cloud/outbox.ts` — new SQLite `sync_outbox(id, status pending|synced|error,
+    payload, attempts, updated_at)`; `enqueueSummary()` snapshots the member summary
+    (derived read-only from `services/dashboard`+`analytics`); `drain()` does an
+    **idempotent** `upsert(row,{onConflict:'member_id'})` under the member JWT (RLS),
+    guarded by `client_version` monotonic bump so stale retries can't regress state.
+  - `src/cloud/connectivity.ts` — `@react-native-community/netinfo` `isInternetReachable`
+    → drains the outbox on launch/reconnect (treat `null` as "don't push yet").
+  - `src/cloud/deleteMyData.ts` — erases local SQLite AND calls the cloud delete
+    endpoint (one-way sync means a deleted local row never propagates — DPDP requirement).
   - `src/store/cloudStore.ts` — `{ status, identity, gymName, signIn, join, signOut }`.
   - `src/app/(auth)/join.tsx` + `src/components/cloud/*` — join-by-code + sign-in UI
     (reuses `components/ui`, adds nothing to protected dirs).
@@ -96,13 +130,16 @@ offline after every phase.**
 
 ### Phase 2 — Owner dashboard (read-only)
 - **Goal:** the artifact that sells gyms — members, last-active, streaks, at-risk list.
-- **Add:** `Codebase/dashboard/` — Vite + React + TS + `@supabase/supabase-js`; owner
-  auth; pages: Members, At-risk (no activity ≥ N days), Streaks/leaderboard, Gym
-  branding preview. **Imports `../src/theme/tokens.ts` directly** (pure TS, no RN) for
-  visual parity. Its own `package.json`/`tsconfig`; `netlify`/`vercel`-deployable.
-- **Edit:** root `tsconfig.json` — **exclude `dashboard/`** so the Expo `tsc` never
-  compiles the web app (they have different libs). Metro already ignores non-`src` roots;
-  confirm `dashboard/node_modules` is gitignored.
+- **Restructure to a pnpm monorepo** (locked): move the Expo app to `apps/mobile/`,
+  extract `src/theme/tokens.ts` → `packages/theme/`, add `apps/dashboard/` (Vite+React+TS
+  + supabase-js). Both consume `packages/theme` (dashboard must NOT import `apps/mobile`'s
+  RN `src`). Careful migration — update CI paths, `android/`, `app.json`, Metro
+  `watchFolders` (root + `packages/*`). Alternative if the move is too risky pre-revenue:
+  keep mobile at root, add only `dashboard/` + a shared `packages/theme` (partial workspace).
+- **Host = Cloudflare Pages (free, commercial-OK):** project root `apps/dashboard`,
+  build `pnpm --filter dashboard build`, path-filtered so a mobile commit doesn't rebuild.
+  Browser talks to Supabase directly (RLS-scoped owner reads); Pages serves static only.
+- **Pages:** Members, At-risk (no activity ≥ N days), Streaks/leaderboard, Gym branding.
 - **Success:** owner logs in, sees only their gym's members (RLS), at-risk list matches
   the data; dashboard reads summaries written in Phase 1; Expo `typecheck` still green;
   offline member demo unaffected (dashboard is a separate app).
@@ -110,20 +147,22 @@ offline after every phase.**
   auth/role gating (owner vs member); deploy target is human-gated.
 - **Shippable checkpoint.**
 
-### Phase 3 — Groq AI proxy (members stop pasting keys)
+### Phase 3 — AI proxy (Gemini-primary; members stop pasting keys)
 - **Goal:** server-side AI so the member app ships no key; keep `localCoach` free tier.
-- **Human provides:** Groq API key (Edge Function secret).
-- **Add:** `supabase/functions/ai-proxy/` — Groq proxy (text: Llama 3.3 70B; voice:
-  Groq Whisper; meal photos: Groq vision Llama 4 Scout/Maverick), per-gym rate limits,
-  key server-side. `src/ai/providers/backend.ts` — new provider hitting the proxy with
-  the member session token. Extend `AiProviderId` with `'backend'` (type addition only)
-  + one `orchestrator` branch + a Settings toggle ("Gym AI Coach"). 
-- **Edit:** `orchestrator.sendToCoach` (add the `backend` branch alongside existing);
-  `types/models.ts` `AiProviderId` union; Settings provider list.
+- **Human provides:** Gemini (Google AI) key; OpenAI key (photo escalation); optional
+  Groq key (Whisper fallback) — all Edge Function secrets, never shipped.
+- **Add:** `supabase/functions/ai-proxy/` — **Gemini-primary**: text = Gemini 2.5 Flash
+  (trivial turns → Flash-Lite); meal-photo = Gemini 2.5 Flash, **escalate low-confidence
+  / mixed-thali photos to GPT-5.4** (cap 15–20%); voice = Gemini native audio, **Groq
+  Whisper v3 turbo** fallback. Per-gym rate limits; keys server-side. Batch API + prompt
+  caching on the coach system prompt to ~halve cost. `src/ai/providers/backend.ts` — new
+  provider hitting the proxy with the member JWT. Extend `AiProviderId` with `'backend'`
+  (type addition) + one `orchestrator` branch + a Settings toggle ("Gym AI Coach").
+- **Pre-flight (make-or-break):** a **100-photo Indian-food eval** (roti/dal/biryani/thali)
+  comparing Gemini 2.5 Flash vs GPT-5.4 to SET the escalation confidence threshold.
 - **Success:** with a session, chat + meal-photo + voice work via the proxy with **no
-  local key**; `localCoach` still works offline with no account; rate limit enforced.
-  **If Indian-food macro accuracy from Groq vision is weak in testing, route only photos
-  to Claude/OpenAI via the proxy and keep text/voice on Groq** (decision recorded then).
+  local key**; `localCoach` still works offline with no account; rate limit enforced;
+  escalation stays under the cap.
 - **Risks:** vision macro accuracy (have the fallback ready); proxy latency; never leak
   the key to the client; keep the offline path untouched.
 - **Shippable checkpoint.**
@@ -161,8 +200,12 @@ offline after every phase.**
 (log workout/meal, dashboard, analytics, `localCoach`) · no protected file touched ·
 phase success criteria met · `PROGRESS.md` updated · small committed steps · STOP + report.
 
-## Open questions for the human (before Phase 1)
-1. Dashboard hosting target (Vercel / Netlify / Cloudflare Pages)? Affects Phase 2 deploy.
-2. Confirm dashboard lives in-repo at `Codebase/dashboard/` (monorepo-lite) vs a new repo.
-3. Groq vs Claude/OpenAI for meal-photo macros — accept the "photos-only fallback" rule?
-4. Region/data-residency preference for Supabase (India vs nearest) for DPDP posture.
+## Open questions — RESOLVED 2026-07-07 (see docs/DECISIONS.md §3)
+1. Dashboard host → **Cloudflare Pages** (free, commercial-OK, India PoPs).
+2. Repo → **in-repo pnpm monorepo** (`apps/mobile` + `apps/dashboard` + `packages/theme`).
+3. Meal-photo fallback → **YES, cross-provider**: Gemini 2.5 Flash → GPT-5.4 on
+   low-confidence/mixed-thali, capped 15–20%; validate on a 100-photo Indian eval first.
+4. Supabase region → **Mumbai `ap-south-1`** (only India region).
+
+Nothing blocks Phase 1. Human still provides: Supabase keys (present in
+`Resources/Supabase/`, unread), later the Groq/Gemini/OpenAI keys + MSG91 + Razorpay.
