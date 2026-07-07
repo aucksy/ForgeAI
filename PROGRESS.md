@@ -15,7 +15,13 @@
   APK + AAB, no secrets needed. Direct APK:
   https://github.com/aucksy/ForgeAI/releases/download/v0.1.0/forgeai-v0.1.0.apk
 
-## Next
+## B2B2C evolution (guide: docs/B2B2C-BUILD.md)
+- 2026-07-05: **Phase 0 done** — read the guide + codebase, wrote `docs/PLAN.md`
+  (offline-first, one-way push, no two-way sync; phases 1-6 with files/success/
+  risks). Awaiting human approval before Phase 1. Supabase creds present in
+  `Resources/Supabase/` (NOT yet read — will ask before Phase 1).
+
+## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
   (owner-gated) -> the next tag auto-signs with the real key.
