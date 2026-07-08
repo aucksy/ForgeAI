@@ -1,0 +1,25 @@
+{
+  "name": "forgeai-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "ForgeAI owner dashboard — read-only members / at-risk / streaks (Vite + React + TS, reads Supabase with owner auth).",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.110.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.7"
+  }
+}

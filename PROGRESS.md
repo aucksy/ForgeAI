@@ -79,6 +79,32 @@
     timestamp); `photo_uri`/`image_uri` are local file paths that won't resolve on a new phone (rows
     restore fine, images just missing) — acceptable for beta.
 
+- 2026-07-08: **Phase 2 DONE (owner dashboard) — standalone `apps/dashboard`, build green,
+  adversarially reviewed.** Vite + React + TS SPA reading Supabase with owner auth (RLS-scoped).
+  DECISION: built **STANDALONE** (the plan's sanctioned lower-risk alternative) — touches **ZERO
+  mobile files**; the full pnpm-monorepo move + `packages/theme` extraction is **DEFERRED** (theme
+  mirrored locally in `apps/dashboard/src/theme.ts`). Offline mobile demo provably unaffected.
+  - **Built:** owner sign-in/create-account (`Login`), session (`useSession`), "Create your gym"
+    onboarding via the `create_gym` RPC → join code (`Onboarding`); `Dashboard` = KPI tiles
+    (members / active-7d / at-risk / longest-streak) + members table + at-risk list + streak
+    leaderboard; RLS-scoped reads via `useGymData` (profiles → gym + member_summary). Cloudflare
+    Pages deploy steps + owner-onboarding SQL in `apps/dashboard/README.md`.
+  - **Verified:** dashboard `npm run build` → **0 type errors** + Vite bundle OK; **mobile
+    typecheck exit 0** after adding root tsconfig `exclude:["node_modules","apps"]` (hygiene so the
+    two apps' typechecks never cross-pollute). No mobile source changed → offline demo intact.
+  - **Adversarial review** (5 finders → skeptics, 10 agents): **3 LOW fixed / 2 refuted / 0
+    HIGH-MED**; the **rls-schema-match** and **build-isolation** lenses came back CLEAN. Fixes:
+    (1) `Login` shows a "check your email" notice when sign-up returns no session (confirm-ON /
+    already-registered) instead of a silent no-op; (2) the "Longest streak" tile now reads
+    `longest_streak` (was `current_streak` → collapsed when a streak broke); (3) `useGymData`
+    generation guard + `<Authed key={userId}>` kill a cross-tab stale-response race.
+  - **Owner setup to see data:** sign up → "Create your gym" (or adopt the IRON01 test gym via the
+    one-line SQL in the README) → share the join code → members sync from the app.
+  - **Deploy gate (owner):** create a Cloudflare Pages project (root `apps/dashboard`, build
+    `npm install && npm run build`, output `dist`). No secrets — publishable key only.
+  - **NEXT candidates:** the deferred **full monorepo move** (apps/mobile + packages/theme) if/when
+    justified; or **Phase 3** (Gemini AI proxy). Await direction.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

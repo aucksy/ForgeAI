@@ -185,6 +185,11 @@ offline after every phase.**
   cloud build.** **Shippable checkpoint — build only AFTER the Phase 1 live loop is confirmed.**
 
 ### Phase 2 — Owner dashboard (read-only)
+> **STATUS 2026-07-08: BUILT (standalone) + adversarially reviewed.** Chose the sanctioned
+> lower-risk variant below — a self-contained `apps/dashboard` Vite+React+TS app that touches
+> ZERO mobile files (theme mirrored locally in `apps/dashboard/src/theme.ts`). The full
+> pnpm-monorepo move of the mobile app into `apps/mobile` + a shared `packages/theme` is
+> **DEFERRED** to a later, separate step. See PROGRESS.md (2026-07-08).
 - **Goal:** the artifact that sells gyms — members, last-active, streaks, at-risk list.
 - **Restructure to a pnpm monorepo** (locked): move the Expo app to `apps/mobile/`,
   extract `src/theme/tokens.ts` → `packages/theme/`, add `apps/dashboard/` (Vite+React+TS
