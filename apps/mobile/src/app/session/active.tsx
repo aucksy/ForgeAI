@@ -1,16 +1,19 @@
 /** Active workout — the live logging screen (full-screen over the tabs). */
+import { useKeepAwake } from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { useDashboard } from '@/store/dashboardStore';
-import { color, space, type } from '@/theme/tokens';
+import { color, radius, space, type } from '@/theme/tokens';
 
 import { ExerciseLogCard } from '@/tracker/components/ExerciseLogCard';
+import { RestTimerBar } from '@/tracker/components/RestTimerBar';
 import { formatDuration } from '@/tracker/services/finishSummary';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { useRestTimer } from '@/tracker/store/restTimerStore';
 
 function useElapsed(startedAt: number | null): number {
   const [now, setNow] = useState(() => Date.now());
@@ -32,6 +35,27 @@ export default function ActiveWorkoutScreen() {
   const committing = useActiveWorkout((s) => s.committing);
   const finish = useActiveWorkout((s) => s.finish);
   const discard = useActiveWorkout((s) => s.discard);
+  const lastDeleted = useActiveWorkout((s) => s.lastDeleted);
+  const undoDelete = useActiveWorkout((s) => s.undoDelete);
+  const dismissUndo = useActiveWorkout((s) => s.dismissUndo);
+  const loadRestDefault = useRestTimer((s) => s.loadDefault);
+  const skipRest = useRestTimer((s) => s.skip);
+
+  // Keep the screen awake and load the rest-timer default while logging.
+  useKeepAwake();
+  useEffect(() => {
+    void loadRestDefault();
+    // Clear any running rest timer on leaving the workout (finish/discard/exit) so a
+    // stale timer can't leak a phantom countdown/haptic into the next session.
+    return () => skipRest();
+  }, [loadRestDefault, skipRest]);
+
+  // Auto-dismiss the undo snackbar after a few seconds.
+  useEffect(() => {
+    if (!lastDeleted) return;
+    const id = setTimeout(() => dismissUndo(), 4000);
+    return () => clearTimeout(id);
+  }, [lastDeleted, dismissUndo]);
 
   const elapsed = useElapsed(startedAt);
 
@@ -43,8 +67,9 @@ export default function ActiveWorkoutScreen() {
     if (!active && !leaving.current) router.replace('/workout');
   }, [active, router]);
 
+  // At least one WORKING (non-warm-up) set with weight + reps.
   const canFinish = exercises.some((e) =>
-    e.sets.some((s) => s.reps != null && s.reps > 0 && s.weightKg != null),
+    e.sets.some((s) => !s.isWarmup && s.reps != null && s.reps > 0 && s.weightKg != null),
   );
 
   const onDiscard = (): void => {
@@ -129,8 +154,32 @@ export default function ActiveWorkoutScreen() {
           />
         </ScrollView>
 
-        {/* finish bar */}
+        {/* rest timer · undo · finish */}
         <View style={{ paddingTop: space.md, paddingBottom: Math.max(insets.bottom, space.md) }}>
+          <RestTimerBar />
+          {lastDeleted ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingHorizontal: space.lg,
+                paddingVertical: space.md,
+                marginBottom: space.sm,
+                borderRadius: radius.lg,
+                backgroundColor: color.surfaceRaised,
+                borderWidth: 1,
+                borderColor: color.border,
+              }}
+            >
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+                Set removed
+              </Text>
+              <Pressable onPress={() => undoDelete()} hitSlop={8}>
+                <Text style={{ fontFamily: type.bodyBold, fontSize: type.size.sub, color: color.accent }}>Undo</Text>
+              </Pressable>
+            </View>
+          ) : null}
           <PrimaryButton
             label={canFinish ? 'Finish workout' : 'Log a set to finish'}
             icon="check"

@@ -34,6 +34,8 @@ export interface DraftExercise {
   name: string;
   muscleGroup: MuscleGroup;
   equipment: Exercise['equipment'];
+  /** Weight increment for warm-up rounding. Optional so older persisted drafts load. */
+  incrementKg?: number;
   /** Last session's working sets — powers the PREVIOUS column + auto-fill. */
   previousSets: { weightKg: number; reps: number }[];
   sets: DraftSet[];
@@ -55,6 +57,8 @@ export interface ActiveWorkoutState {
   dayType: DayType;
   planDayId: string | null;
   exercises: DraftExercise[];
+  /** Most recently swipe-deleted set, for the undo snackbar (not persisted). */
+  lastDeleted: { exKey: string; index: number; set: DraftSet } | null;
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
@@ -68,6 +72,12 @@ export interface ActiveWorkoutState {
   updateSet: (exKey: string, setKey: string, patch: Partial<Pick<DraftSet, 'weightKg' | 'reps'>>) => void;
   toggleWarmup: (exKey: string, setKey: string) => void;
   toggleDone: (exKey: string, setKey: string) => void;
+  /** Prepend computed warm-up rows (isWarmup) to an exercise. */
+  insertWarmupSets: (exKey: string, rows: { weightKg: number; reps: number }[]) => void;
+  /** Remove a set but stash it for undo (drives the snackbar). */
+  deleteSetWithUndo: (exKey: string, setKey: string) => void;
+  undoDelete: () => void;
+  dismissUndo: () => void;
   /** Commit to SQLite; returns the new session id, or null if nothing loggable. */
   finish: (note?: string | null) => Promise<string | null>;
   discard: () => Promise<void>;
@@ -94,7 +104,7 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
 }
 
 async function buildDraftExercise(
-  ex: Pick<Exercise, 'id' | 'name' | 'muscleGroup' | 'equipment'>,
+  ex: Pick<Exercise, 'id' | 'name' | 'muscleGroup' | 'equipment' | 'incrementKg'>,
   targetSets: number,
 ): Promise<DraftExercise> {
   const hist = await getExerciseHistory(ex.id, 1);
@@ -113,6 +123,7 @@ async function buildDraftExercise(
     name: ex.name,
     muscleGroup: ex.muscleGroup,
     equipment: ex.equipment,
+    incrementKg: ex.incrementKg,
     previousSets,
     sets,
   };
@@ -150,6 +161,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     dayType: 'full',
     planDayId: null,
     exercises: [],
+    lastDeleted: null,
 
     hydrate: async () => {
       // Already hydrated, or a workout already begun in-memory — nothing to restore.
@@ -191,6 +203,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         dayType: 'full',
         planDayId: null,
         exercises: [],
+        lastDeleted: null,
       });
       void persistDraft(get());
     },
@@ -210,7 +223,16 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           );
         }
       }
-      set({ active: true, hydrated: true, committing: false, startedAt: Date.now(), dayType, planDayId, exercises });
+      set({
+        active: true,
+        hydrated: true,
+        committing: false,
+        startedAt: Date.now(),
+        dayType,
+        planDayId,
+        exercises,
+        lastDeleted: null,
+      });
       void persistDraft(get());
     },
 
@@ -220,6 +242,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     },
 
     removeExercise: (exKey) => {
+      // Kill a pending undo for this exercise (its set list is going away).
+      if (get().lastDeleted?.exKey === exKey) set({ lastDeleted: null });
       mutate((list) => list.filter((e) => e.key !== exKey));
     },
 
@@ -238,6 +262,47 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         list.map((e) => (e.key === exKey ? { ...e, sets: e.sets.filter((s) => s.key !== setKey) } : e)),
       );
     },
+
+    insertWarmupSets: (exKey, rows) => {
+      if (rows.length === 0) return;
+      // Prepending shifts array indices — invalidate any pending undo for this exercise.
+      if (get().lastDeleted?.exKey === exKey) set({ lastDeleted: null });
+      const warm: DraftSet[] = rows.map((r) => ({
+        key: uuid(),
+        weightKg: r.weightKg,
+        reps: r.reps,
+        isWarmup: true,
+        done: false,
+      }));
+      mutate((list) => list.map((e) => (e.key === exKey ? { ...e, sets: [...warm, ...e.sets] } : e)));
+    },
+
+    deleteSetWithUndo: (exKey, setKey) => {
+      const ex = get().exercises.find((e) => e.key === exKey);
+      if (!ex) return;
+      const index = ex.sets.findIndex((s) => s.key === setKey);
+      if (index < 0) return;
+      set({ lastDeleted: { exKey, index, set: ex.sets[index] } });
+      mutate((list) =>
+        list.map((e) => (e.key === exKey ? { ...e, sets: e.sets.filter((s) => s.key !== setKey) } : e)),
+      );
+    },
+
+    undoDelete: () => {
+      const ld = get().lastDeleted;
+      if (!ld) return;
+      mutate((list) =>
+        list.map((e) => {
+          if (e.key !== ld.exKey) return e;
+          const sets = [...e.sets];
+          sets.splice(Math.min(ld.index, sets.length), 0, ld.set);
+          return { ...e, sets };
+        }),
+      );
+      set({ lastDeleted: null });
+    },
+
+    dismissUndo: () => set({ lastDeleted: null }),
 
     updateSet: (exKey, setKey, patch) => {
       mutate((list) =>
@@ -300,7 +365,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           }
         }
       }
-      if (flat.length === 0) return null;
+      // Need at least one working set — a warm-up-only session would be invisible
+      // to history/PREVIOUS (getExerciseHistory excludes warm-ups).
+      if (flat.length === 0 || !flat.some((f) => !f.isWarmup)) return null;
       set({ committing: true });
       try {
         const session = await createSession({
@@ -321,6 +388,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           dayType: 'full',
           planDayId: null,
           exercises: [],
+          lastDeleted: null,
         });
         return session.id;
       } catch (e) {
@@ -339,6 +407,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         dayType: 'full',
         planDayId: null,
         exercises: [],
+        lastDeleted: null,
       });
     },
 

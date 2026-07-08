@@ -5,6 +5,7 @@
  */
 import { useEffect, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 
 import { Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
@@ -13,6 +14,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftSet } from '../store/activeWorkoutStore';
+import { useRestTimer } from '../store/restTimerStore';
 
 interface SetRowProps {
   exKey: string;
@@ -33,6 +35,8 @@ export function SetRow({ exKey, set, label, previous }: SetRowProps) {
   const updateSet = useActiveWorkout((s) => s.updateSet);
   const toggleWarmup = useActiveWorkout((s) => s.toggleWarmup);
   const toggleDone = useActiveWorkout((s) => s.toggleDone);
+  const deleteSetWithUndo = useActiveWorkout((s) => s.deleteSetWithUndo);
+  const startRest = useRestTimer((s) => s.start);
 
   const [wText, setWText] = useState(set.weightKg == null ? '' : String(set.weightKg));
   const [rText, setRText] = useState(set.reps == null ? '' : String(set.reps));
@@ -63,20 +67,47 @@ export function SetRow({ exKey, set, label, previous }: SetRowProps) {
 
   const prevText = previous ? `${trimNum(previous.weightKg)} × ${previous.reps}` : '—';
   const done = set.done;
-  const rowBg = done ? 'rgba(12, 163, 12, 0.12)' : 'transparent';
+  // Opaque so the Swipeable reveal is clean (the card behind is also color.surface).
+  const rowBg = done ? 'rgba(12, 163, 12, 0.12)' : color.surface;
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: space.sm,
-        paddingVertical: 6,
-        paddingHorizontal: space.xs,
-        borderRadius: radius.sm,
-        backgroundColor: rowBg,
-      }}
+    <Swipeable
+      renderRightActions={() => (
+        <Pressable
+          onPress={() => deleteSetWithUndo(exKey, set.key)}
+          style={{
+            width: 76,
+            marginLeft: 6,
+            borderRadius: radius.sm,
+            backgroundColor: color.critical,
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'row',
+            gap: 4,
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Delete set"
+        >
+          <Icon name="close" size={16} color="#FFFFFF" />
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: '#FFFFFF' }}>
+            Delete
+          </Text>
+        </Pressable>
+      )}
+      overshootRight={false}
+      rightThreshold={40}
     >
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: space.sm,
+          paddingVertical: 6,
+          paddingHorizontal: space.xs,
+          borderRadius: radius.sm,
+          backgroundColor: rowBg,
+        }}
+      >
       {/* SET cell — tap to toggle warm-up */}
       <Pressable
         onPress={() => {
@@ -136,7 +167,12 @@ export function SetRow({ exKey, set, label, previous }: SetRowProps) {
       {/* ✓ complete — haptic on finger-DOWN */}
       <Pressable
         onPressIn={() => tap()}
-        onPress={() => toggleDone(exKey, set.key)}
+        onPress={() => {
+          const wasDone = set.done;
+          toggleDone(exKey, set.key);
+          // Auto-start the rest timer on completing a working set (not on undo/warm-up).
+          if (!wasDone && !set.isWarmup) startRest();
+        }}
         hitSlop={6}
         accessibilityRole="button"
         accessibilityLabel={done ? 'Set complete, tap to undo' : 'Mark set complete'}
@@ -153,7 +189,8 @@ export function SetRow({ exKey, set, label, previous }: SetRowProps) {
       >
         <Icon name="check" size={18} color={done ? '#05140A' : color.inkMuted} />
       </Pressable>
-    </View>
+      </View>
+    </Swipeable>
   );
 }
 

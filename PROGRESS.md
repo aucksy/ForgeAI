@@ -195,10 +195,38 @@
     finish error-branch dead-end (added Done button); add-exercise double-tap pop (re-entry ref). The
     router-nav + frozen-file lenses came back CLEAN.
   - **Verify:** `npm run typecheck` exit 0; tracker has ZERO network imports (offline firewall intact —
-    `dashboardStore.refresh` only piggybacks the pre-existing gated `maybeSync`). **NOT built (cloud-only) —
-    owner tags a `v*` to produce an APK.** **Deferred to later phases:** rest timer + plate/warm-up calc
-    (P2), calendar/heatmap + weekly-streak + repeat/delete (P3), library tab + custom exercise + export (P4),
-    writable routine editor + RPE/set-types (P5).
+    `dashboardStore.refresh` only piggybacks the pre-existing gated `maybeSync`). **Shipped as `v0.2.0`
+    (first monorepo tag build GREEN → CI paths confirmed). APK:
+    https://github.com/aucksy/ForgeAI/releases/download/v0.2.0/forgeai-v0.2.0.apk** — owner testing pending.
+
+- 2026-07-08: **Manual tracker PHASE 2 DONE (rest timer + barbell math) — typecheck green, adversarially reviewed, offline + frozen-clean. Committed as v0.3.0; awaiting owner "tag it" for a test APK + "continue" for Phase 3.**
+  Foreground rest timer + plate/warm-up calculators + swipe-to-delete/undo + keep-awake — **deliberately
+  built with ZERO new native modules** (background/lock-screen notification via `expo-notifications` is
+  DEFERRED because it forces an `expo prebuild` android/ regen, unverifiable locally). `expo-keep-awake` is
+  already an autolinked transitive dep of expo (no android/ change).
+  - **Added:** `services/plateMath.ts` (kg greedy per-side + closest-achievable), `services/warmupMath.ts`
+    (40/60/80% ramp, reuses frozen `engine.roundToIncrement`; drops steps ≥ working weight / duplicates),
+    `store/restTimerStore.ts` (ephemeral countdown; default in `meta['restTimerDefaultSec']`),
+    `components/RestTimerBar.tsx` (±15/skip, haptic at zero), `components/PlateCalcSheet.tsx` (Modal).
+  - **Edited (tracker-owned + the one allowed screen):** `store/activeWorkoutStore.ts` (DraftExercise gains
+    optional `incrementKg`; `insertWarmupSets` prepend; `deleteSetWithUndo`/`undoDelete`/`dismissUndo` +
+    `lastDeleted`); `SetRow.tsx` (gesture-handler `Swipeable` delete + auto-start rest timer on ✓);
+    `ExerciseLogCard.tsx` (barbell plate button + Warm-up action); `app/session/active.tsx` (`useKeepAwake`,
+    `<RestTimerBar>`, undo snackbar, load rest default, **skip() rest timer on unmount**).
+  - **Adversarial review (3 parallel lenses — logic / RN-gesture / constraints):** constraints lens **CLEAN**
+    (no frozen edit, no network, no schema change, no new native dep, only `meta` keys `activeWorkoutDraft`
+    + `restTimerDefaultSec`). **6 confirmed bugs FIXED, 0 HIGH:** (1) rest-timer state leaked across workouts
+    → phantom bar/haptic (fixed: `skip()` on active-screen unmount); (2) undo restored at a stale index after
+    a warm-up prepend → corrupted set order/PREVIOUS (fixed: clear `lastDeleted` on prepend/remove-exercise
+    of that exKey); (3) undo dead after removing the exercise (same fix); (4) warm-up-ONLY workout was
+    finishable but invisible to history (fixed: `canFinish`/`finish` now require ≥1 working set); (5) warm-ups
+    could meet/exceed the work weight on light lifts (fixed in `computeWarmups`); (6) first-frame inflated
+    timer display (fixed: clamp to `durationSec` + reset baseline). **Deliberately NOT fixed (LOW):** a stray
+    finger-down haptic if a swipe starts exactly on the ✓ — fixing needs the haptic on release, which breaks
+    the [[android-haptic-on-down]] crispness rule; tradeoff favors crisp.
+  - **Test tracking:** consolidated **`docs/TEST-CHECKLIST.md`** (Phase 1 untested items + Phase 2), owner to
+    tick through on device. **NEXT:** owner "tag it" → tag `v0.3.0` for the APK; then "continue" → Phase 3
+    (history calendar + weekly-streak + repeat/delete). Later P4 library/export, P5 routine editor + RPE.
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
