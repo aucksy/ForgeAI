@@ -136,6 +136,17 @@
   `v0.1.1-mono`) to confirm the updated CI paths produce a signed APK before relying on it.** All
   commits remain LOCAL/unpushed (see docs/OWNER-TODO.md).
 
+- 2026-07-08: **PRODUCT PIVOT (owner) — manual workout tracker first, AI + nutrition last.**
+  Near-term focus = a **Hevy-like manual workout tracker + analytics** (simple, clean, user-friendly,
+  robust). **AI coaching AND nutrition/calorie tracking DEFERRED to the end** (chat/`localCoach` stays
+  but isn't the focus; B2B2C **Phase 3 AI proxy moves after** the manual-tracker track). Recorded in
+  `CONTEXT.md` (▶ CURRENT FOCUS) + `docs/PLAN.md` (PRODUCT PIVOT). **NEXT SESSION (fresh chat):
+  deep-research Hevy + peers → write a manual-tracker PRD + phased plan → build phase by phase.**
+  Note: workouts today are logged via the AI chat; a first-class manual flow (routines → active-session
+  set logging → history/PRs/charts) mostly needs BUILDING on top of the existing DB + `src/engine`
+  (all CONTRACTS-frozen — reuse via services, don't rewrite). B2B2C work (Phases 1/1.5/2 + monorepo)
+  stays done and valid; all commits remain LOCAL/unpushed (see `docs/OWNER-TODO.md`).
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

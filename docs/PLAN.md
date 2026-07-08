@@ -34,6 +34,24 @@ offline after every phase.**
 > - **Cost:** ~$150/mo @10 gyms → ~$1.3k @100 → ~$7.7k–12k @1000; **AI (driven by
 >   daily-active users) dominates**, not the 1M records. Backend stays ~$40–85/mo.
 
+## PRODUCT PIVOT (2026-07-08) — manual workout tracker first, AI + nutrition last
+
+Near-term product focus shifts to a **best-in-class MANUAL workout tracker + analytics**, modeled on
+**Hevy** (simple, clean, user-friendly, robust). Re-ordering:
+- **NOW (priority track):** design + build the manual workout-logging UX — **routines/templates →
+  active-session set logging (reps/weight, rest timer, previous-set hints) → exercise library →
+  workout history → PRs → per-exercise progress analytics** — on top of the existing SQLite
+  (`workout_sessions` / `set_entries` / `exercises` / `personal_records` / `workout_plans` /
+  `plan_days` / `plan_exercises`) and the frozen `src/engine`. Reuse the engine/repos via services;
+  do not rewrite them (CONTRACTS-frozen).
+- **DEFERRED to the end:** (1) **AI coaching** — the chat/`localCoach` layer stays in the app but is
+  not the focus; **B2B2C Phase 3 (AI proxy) moves after** the manual-tracker track. (2)
+  **Nutrition/calorie tracking** (meal logging + macros). B2B2C Phases 4–5 (owner ops, billing)
+  unaffected in principle, but the manual tracker is the immediate priority.
+- **How the next session starts:** a fresh chat will **deep-research Hevy and peers (Strong, etc.)**
+  → write a manual-tracker **PRD + phased plan** → build phase by phase (offline-first, kg, frozen
+  files respected), stopping for approval between phases. Kickoff prompt handed to the owner.
+
 ## Codebase understanding (what exists today)
 
 - **Expo SDK 56 / RN 0.85 / TS strict** app at repo root (`Codebase/`), shipped

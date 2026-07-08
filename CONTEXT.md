@@ -11,6 +11,15 @@ Any `src/…` or `android/…` path below is under **`apps/mobile/`**. Repo-leve
 `supabase/`, `PROGRESS.md` and CI (`.github/`) stay at the root. Install once with `npm install`
 at the repo root (hoists all workspaces); the mobile Metro config watches the workspace root.
 
+**▶ CURRENT FOCUS (2026-07-08 pivot).** Near-term goal: make the **manual workout tracker + its
+analytics** best-in-class — **simple, clean, user-friendly and robust, like the Hevy app**. That is
+the priority build track now. **AI coaching AND nutrition/calorie tracking are DEFERRED to the end**
+(the AI/chat + `localCoach` layer stays in the app but is not the focus; B2B2C Phase 3 = AI proxy
+moves *after* the manual-tracker track). Today, workouts are logged via the AI chat — a first-class
+manual logging flow (routines/templates → active-session set logging → history/PRs/charts) mostly
+needs to be BUILT, on top of the existing SQLite tables + `src/engine`. A fresh session will
+deep-research Hevy/peers and plan it — see `PROGRESS.md` and `docs/PLAN.md` (PRODUCT PIVOT).
+
 ## Stack & conventions (mirrors ColorCloset)
 - Expo SDK 56 / RN 0.85 / TypeScript strict / expo-router / Zustand / expo-sqlite /
   Reanimated 4 / react-native-svg charts / SecureStore for API keys.
