@@ -57,7 +57,8 @@
         }
       ],
       "expo-sqlite",
-      "expo-secure-store"
+      "expo-secure-store",
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -66,7 +67,8 @@
     "extra": {
       "router": {},
       "supabaseUrl": "https://hdxzqbdiokjklnypfisq.supabase.co",
-      "supabasePublishableKey": "sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo"
+      "supabasePublishableKey": "sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo",
+      "googleWebClientId": "REPLACE_WITH_GOOGLE_WEB_CLIENT_ID"
     },
     "owner": "aucksy"
   }

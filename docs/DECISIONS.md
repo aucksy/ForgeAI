@@ -27,6 +27,43 @@ so beta is not throwaway. "Later integrate better-quality services" = flip these
 
 ---
 
+## 0.1 — AMENDMENT (2026-07-08): member backup & restore via Google Drive
+
+**Decision:** ADD member-owned **full-history backup & restore** via **Google Drive**. This is a
+deliberate, owner-approved amendment to the "one-way push / no restore" reading of
+`B2B2C-BUILD.md §3.2`. Trigger: reinstall/new-phone must not lose a member's history (people
+uninstall/reinstall constantly) — the summary-only cloud row cannot rehydrate the phone.
+
+**Crucially this is NOT two-way sync** (the hard part — conflict resolution — is still deleted):
+- The **Supabase** relationship stays **strictly one-way** (phone → cloud *summary*) and unchanged.
+  No cloud→phone writes of Supabase data, no merge, no tombstones.
+- **Google Drive** holds a full snapshot of the member's local SQLite in **their own** Drive
+  (`drive.file` scope). Restore is a **one-time hydrate on a fresh/empty install** (Drive → phone).
+  Single-device assumption ⇒ no conflict logic.
+
+**Two permanent stores, never overlapping:**
+
+| Store | Holds | For | Cost to us |
+|---|---|---|---|
+| **Supabase** | 1-row summary | the **gym owner** (dashboard) | tiny (one row/member) |
+| **Google Drive** | full history snapshot | the **member** (restore) | **$0** (member's own Drive) |
+
+**Why Drive, not a Supabase snapshot blob:** (1) storage stays **$0 to us at any scale** — the
+backup lives in the member's Drive, so Supabase storage stays flat (summary only); (2) cleaner
+DPDP posture — the gym never holds a member's raw history; (3) reuses the proven **ColorCloset**
+Drive pattern; owner has set up Google OAuth clients many times.
+
+**Why Drive can't replace Supabase:** the owner dashboard needs a **shared, owner-queryable**
+server across *all* members ("who's at-risk / streak leaderboard"); a member's private Drive can't
+serve cross-member queries. **Both are required.**
+
+**Gate (owner):** Drive OAuth needs the build's **signing-key SHA-1** registered as an Android
+OAuth client + a Web client id in `app.json > extra`. ForgeAI is currently **debug-signed** →
+register the debug SHA-1 for testing OR stand up the release keystore first. `google-signin` is a
+**native module** ⇒ testable only via a **cloud dev/preview build** (not Expo Go, not local).
+
+---
+
 ## 1. TL;DR decisions
 
 | Decision | Choice | Why (one line) | ~Cost at our scale |

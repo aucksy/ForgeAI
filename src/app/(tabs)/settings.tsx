@@ -7,6 +7,7 @@ import { ANTHROPIC_MODELS, OPENAI_MODELS } from '@/ai/models';
 import { ApiKeyField } from '@/components/settings/ApiKeyField';
 import { ChipGroup } from '@/components/settings/ChipGroup';
 import type { ChipOption } from '@/components/settings/ChipGroup';
+import { BackupCard } from '@/components/settings/BackupCard';
 import { CloudCard } from '@/components/settings/CloudCard';
 import { GymCard } from '@/components/settings/GymCard';
 import { resetDemoData } from '@/components/settings/resetDemo';
@@ -248,7 +249,11 @@ export default function SettingsScreen() {
         <GymCard />
       </Section>
 
-      <Section title="Danger zone" delay={280}>
+      <Section title="Backup & restore" delay={280}>
+        <BackupCard />
+      </Section>
+
+      <Section title="Danger zone" delay={315}>
         <Card>
           <GhostButton
             label={resetting ? 'Resetting…' : 'Reset demo data'}

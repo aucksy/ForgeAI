@@ -136,6 +136,54 @@ offline after every phase.**
   churn (keep it additive); make sure `isCloudActive()` guards every call path.
 - **Shippable checkpoint** (tag-ready).
 
+### Phase 1.5 — Member backup & restore (Google Drive)  [AMENDMENT — see DECISIONS §0.1]
+- **Goal:** a member's **full local history survives uninstall/reinstall/new phone** by backing up
+  to their **own Google Drive** and restoring on a fresh install. **Supabase summary push
+  UNCHANGED (still one-way).** NOT two-way sync — Drive→phone restore is a one-time hydrate of an
+  empty DB; no conflict resolution.
+- **Non-negotiables preserved:** offline demo makes **zero network/Drive calls** with no account +
+  no Google link; protected dirs (`engine`/`components/ui`/`components/charts`/CONTRACTS) untouched;
+  the Supabase relationship stays strictly one-way.
+- **Reuse:** ColorCloset's `src/lib/drive.ts` almost verbatim — `@react-native-google-signin/
+  google-signin`, `drive.file` scope, ONE canonical backup file in a dedicated "ForgeAI" Drive
+  folder, direct Drive v3 REST, overwrite-on-update, `DEVELOPER_ERROR → "register the SHA-1"` msg.
+- **Add (files):**
+  - `src/cloud/drive.ts` — port of ColorCloset drive.ts: `isDriveConfigured()` (firewall on
+    `extra.googleWebClientId`), configure/sign-in/silent/sign-out, `backupToDrive(json)`,
+    `restoreFromDrive()`. Constructs nothing until the user taps a Drive action.
+  - `src/cloud/snapshot.ts` — `exportSnapshot(): Promise<string>` serializes the **domain** tables
+    (`user_profile, body_weight, exercises, workout_sessions, set_entries, personal_records,
+    workout_plans, plan_days, plan_exercises, meals, chat_messages`) to a versioned envelope
+    `{ schema_version, exported_at, tables:{…} }`. **Excludes** `sync_outbox` and the cloud-identity
+    `meta` key (identity is re-established at sign-in). `importSnapshot(json)` = DELETE-first + bulk
+    INSERT in **FK-safe order** inside one `withExclusiveTransactionAsync` (mirrors the seed's
+    idempotent DELETE-first); refuses/upgrades on `schema_version` mismatch.
+  - `src/store/backupStore.ts` — `{ googleEmail, lastBackupAt, status, linkGoogle, backupNow,
+    checkForBackup, restoreNow, unlinkGoogle }`; persists `lastBackupAt` in `meta`.
+  - `src/components/settings/BackupCard.tsx` — "Back up & restore" card: link Google · Back up now
+    (+ last-backup time) · Restore from Drive (shows found-backup date + confirm) · unlink. Reuses
+    `components/ui` only.
+- **Edit (minimal):** `app.json` (add `extra.googleWebClientId` + the google-signin plugin/dep);
+  `src/app/(tabs)/settings.tsx` (mount `BackupCard`). Auto-backup on background is **deferred** —
+  v1 = manual "Back up now" + backup-on-launch-if-linked-and-dirty; harden later.
+- **Restore UX:** in Settings, and offered on first gym-connect: if a Drive backup exists AND the
+  local DB is demo-only/empty, prompt "Restore your history? (backed up <date>)". Restore replaces
+  demo data. **Never auto-overwrite existing real data — always confirm.**
+- **Success:** (1) link Google → Back up now → one file in the member's Drive/ForgeAI folder;
+  (2) clear data / reinstall → link the **same** Google → Restore → full history returns (workouts,
+  meals, PRs, body-weight, chat); dashboard/analytics show real data; summary re-pushes to Supabase;
+  (3) offline demo (no account, no Google) → zero network/Drive calls, every feature works;
+  (4) `npm run typecheck` green.
+- **Risks / gotchas:** **SHA-1 gate** (Drive OAuth needs the signing-key SHA-1 as an Android OAuth
+  client + Web client id; ForgeAI is debug-signed → register debug SHA-1 or stand up release
+  keystore); **native module** (google-signin must autolink in the committed `android/` — likely
+  `expo prebuild` regen + re-apply the build.gradle signing block; test only via a **cloud**
+  dev/preview build); **snapshot FK order** (exercises→sessions→set_entries/PRs; plans→plan_days→
+  plan_exercises); **identity note** (backup is tied to the member's **Google** account, which may
+  differ from their Supabase email — document "restore uses the Google account that made the backup").
+- **Verify:** typecheck + offline-zero-network + logic review locally; **live Drive test needs a
+  cloud build.** **Shippable checkpoint — build only AFTER the Phase 1 live loop is confirmed.**
+
 ### Phase 2 — Owner dashboard (read-only)
 - **Goal:** the artifact that sells gyms — members, last-active, streaks, at-risk list.
 - **Restructure to a pnpm monorepo** (locked): move the Expo app to `apps/mobile/`,

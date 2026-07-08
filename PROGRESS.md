@@ -44,6 +44,41 @@
   autolinking, low risk); if it fails, `expo prebuild` regen + re-apply the
   build.gradle signing block.
 
+- 2026-07-08: **Phase 1.5 DONE (Drive backup & restore) — typecheck green, adversarially reviewed.**
+  Owner decided reinstall/new-phone MUST restore full history (summary-only cloud row can't
+  rehydrate the phone). Plan: `PLAN.md → Phase 1.5`; decision `DECISIONS.md §0.1`. **NOT two-way
+  sync** — member-owned **Google Drive** full-history snapshot + restore-on-fresh-install (one-time
+  hydrate); **Supabase stays one-way summary-only**; **$0 storage to us** (member's own Drive).
+  - **Added:** `src/cloud/drive.ts` (Drive v3 REST, `drive.file`, one canonical `forgeai-backup.json`
+    in a "ForgeAI" folder; ported from ColorCloset `@react-native-google-signin/google-signin`),
+    `src/cloud/snapshot.ts` (11 domain tables → versioned JSON; export reads + import writes each in
+    ONE exclusive transaction, FK-safe orders from the seed; **excludes `meta`+`sync_outbox`** so a
+    restore can't clobber the gym link or re-trigger the seed), `src/store/backupStore.ts`,
+    `src/components/settings/BackupCard.tsx`.
+  - **Edited (minimal):** `app.json` (google-signin plugin + `extra.googleWebClientId` placeholder),
+    `package.json` (dep `^16.1.2`, installed), `src/app/(tabs)/settings.tsx` (mounted `BackupCard`).
+  - **Offline firewall INTACT:** BackupCard returns null unless `isDriveConfigured()`; `init()` only
+    touches Google if a local `drive_linked` marker exists → no-account/no-Google demo makes **zero**
+    Drive/network calls. No protected file (`engine`/`components/ui`/`components/charts`/CONTRACTS)
+    touched. Verified by a dedicated offline-firewall review lens (came back clean).
+  - **Adversarial review** (5 finders → per-finding skeptics, 10 agents): **4 LOW confirmed + fixed,
+    1 refuted, 0 HIGH/MED survived.** Fixes: (1) `exportSnapshot` now transactional (consistent
+    point-in-time snapshot, else a concurrent write could orphan a child → restore FK-fail);
+    (2) `accessToken` inspects `signInSilently()` result type (v16 resolves `noSavedCredentialFound`
+    instead of throwing) + wraps `getTokens` → friendly error; (3) `ensureFolderId` `orderBy=createdTime`
+    (deterministic when duplicate folders race); (4) `restoreFound` returns boolean + ghost buttons
+    gated on `busy` → no false "Restored" on a no-op double-tap.
+  - **BUILD/OWNER GATES (before Drive works in a build):** ① set a real `extra.googleWebClientId`
+    (card stays hidden until then — so the CURRENT placeholder build is SAFE: card hidden, demo
+    unaffected). ② register the build's signing **SHA-1** as an Android OAuth client (`com.forgeai.app`)
+    — debug SHA-1 for testing, or stand up the release keystore. ③ **native module: the committed
+    `android/` must be regenerated (`expo prebuild`) to autolink google-signin, then re-apply the CI
+    signing block** — until then a tag build ships without the module (still safe: card hidden). Test
+    Drive only via a **cloud** dev/preview build (not Expo Go, not local).
+  - **Deferred (noted, not bugs):** no auto-backup scheduler yet (manual "Back up now" + a last-backup
+    timestamp); `photo_uri`/`image_uri` are local file paths that won't resolve on a new phone (rows
+    restore fine, images just missing) — acceptable for beta.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

@@ -8,6 +8,7 @@
     "@expo-google-fonts/space-grotesk": "^0.4.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "12.0.1",
+    "@react-native-google-signin/google-signin": "^16.1.2",
     "@supabase/supabase-js": "^2.110.1",
     "expo": "~56.0.12",
     "expo-build-properties": "~56.0.19",
