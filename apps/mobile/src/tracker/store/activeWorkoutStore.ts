@@ -15,7 +15,7 @@ import { addSets, createSession, getExerciseHistory } from '@/db/repos/workoutRe
 import { todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 import { getTodaysWorkout } from '@/services/coach';
-import type { DayType, Exercise, MuscleGroup } from '@/types/models';
+import type { DayType, Exercise, MuscleGroup, SessionDetail } from '@/types/models';
 
 const DRAFT_KEY = 'activeWorkoutDraft';
 
@@ -65,6 +65,8 @@ export interface ActiveWorkoutState {
   startEmpty: () => void;
   /** Seed from the coach's rotated plan day (full-body fallback when no plan / rest). */
   startFromPlan: () => Promise<void>;
+  /** Start a fresh workout pre-filled from a past session (repeat-this-workout). */
+  startFromSession: (session: SessionDetail) => Promise<void>;
   addExercise: (ex: Exercise) => Promise<void>;
   removeExercise: (exKey: string) => void;
   addSet: (exKey: string) => void;
@@ -230,6 +232,26 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: Date.now(),
         dayType,
         planDayId,
+        exercises,
+        lastDeleted: null,
+      });
+      void persistDraft(get());
+    },
+
+    startFromSession: async (session) => {
+      const exercises = await Promise.all(
+        session.exercises.map((g) => {
+          const working = g.sets.filter((s) => !s.isWarmup).length;
+          return buildDraftExercise(g.exercise, working > 0 ? working : 1);
+        }),
+      );
+      set({
+        active: true,
+        hydrated: true,
+        committing: false,
+        startedAt: Date.now(),
+        dayType: session.dayType,
+        planDayId: null,
         exercises,
         lastDeleted: null,
       });

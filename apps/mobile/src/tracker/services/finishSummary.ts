@@ -112,6 +112,26 @@ export function formatDuration(totalSec: number): string {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
+/** A playful weight comparison for the finish screen (total volume moved). */
+export function volumeComparison(kg: number): string {
+  const items: { min: number; label: string }[] = [
+    { min: 300000, label: 'a Boeing 747' },
+    { min: 150000, label: 'a blue whale' },
+    { min: 55000, label: 'an M1 tank' },
+    { min: 12000, label: 'a T-Rex' },
+    { min: 5400, label: 'an African elephant' },
+    { min: 2000, label: 'a hippo' },
+    { min: 900, label: 'a grand piano' },
+    { min: 500, label: 'a grizzly bear' },
+    { min: 250, label: 'a giant panda' },
+    { min: 120, label: 'a baby elephant' },
+    { min: 60, label: 'an adult human' },
+    { min: 20, label: 'a car tyre' },
+  ];
+  for (const it of items) if (kg >= it.min) return it.label;
+  return 'a bag of flour';
+}
+
 /** Human label for a day type, matching the coach service. */
 export function dayTypeLabel(dayType: string): string {
   switch (dayType) {

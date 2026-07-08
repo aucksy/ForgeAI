@@ -16,7 +16,7 @@ import { fmtInt } from '@/lib/format';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { SessionSummary } from '@/tracker/components/SessionSummary';
-import { dayTypeLabel, getSessionSummary } from '@/tracker/services/finishSummary';
+import { dayTypeLabel, getSessionSummary, volumeComparison } from '@/tracker/services/finishSummary';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 
 export default function FinishScreen() {
@@ -67,6 +67,11 @@ export default function FinishScreen() {
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
                   {fmtInt(data.totalVolumeKg)} kg moved · {data.workingSetCount} sets
                 </Text>
+                {data.totalVolumeKg > 0 ? (
+                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: 'rgba(31,13,5,0.6)', marginTop: 2 }}>
+                    That's about {volumeComparison(data.totalVolumeKg)}.
+                  </Text>
+                ) : null}
               </View>
             </View>
           </HeroCard>

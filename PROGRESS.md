@@ -228,6 +228,25 @@
     tick through on device. **NEXT:** owner "tag it" → tag `v0.3.0` for the APK; then "continue" → Phase 3
     (history calendar + weekly-streak + repeat/delete). Later P4 library/export, P5 routine editor + RPE.
 
+- 2026-07-08: **Manual tracker PHASE 3 DONE (history calendar + weekly-streak + repeat/delete) — typecheck green, adversarially reviewed, committed local as v0.4.0 (NOT yet tagged). v0.3.0 (Phase 1+2) was pushed+tagged (build ran). Awaiting owner "tag it" (→ v0.4.0 APK) + "continue" for Phase 4.**
+  - **Added:** `services/history.ts` (`getWeekStreak` — Hevy WEEKLY-streak semantics: consecutive weeks with
+    ≥1 session, in-progress current week doesn't break; `restDays` since last workout; distinct from the frozen
+    day-based `getStreakDays`). `finishSummary.ts` gains `volumeComparison` (playful weight tiers).
+  - **Edited:** `store/activeWorkoutStore.ts` (`startFromSession` = repeat-a-workout: rebuilds a fresh draft
+    from a past `SessionDetail` via `buildDraftExercise`); `(tabs)/history.tsx` (Week-streak + Rest-days
+    StatTiles + a **13-week `Heatmap` calendar** via frozen `getConsistency(91)` + the feed); `session/[id].tsx`
+    (**Repeat** + **Delete** — `deleteSession` frozen); `session/finish.tsx` (comparison hero line).
+  - **Adversarial review (2 lenses: logic + nav/constraints) — constraints CLEAN; 1 MED + 4 LOW fixed, 0 HIGH.**
+    **MED (both agents):** Repeat guarded on in-memory `active`, but the draft only hydrates on the Workout tab
+    → cold-start → History → Repeat could OVERWRITE a persisted in-progress draft. **Fix: `await hydrate()`
+    before the guard in `onRepeat` + a re-entry ref.** LOW: delete had no error path (added `.catch`); streak
+    window capped ~53wk (→ ~3yr); history `Promise.all` over-broad catch could blank the feed if the streak read
+    failed (→ per-promise catches).
+  - `docs/TEST-CHECKLIST.md` updated (Phase-3 section, "needs v0.4.0"). typecheck green; zero network; no frozen
+    file/schema/native change. **Deferred:** anatomical muscle-map SVG (frozen `Heatmap` + muscle `HBarList`
+    suffice). **NEXT:** owner "tag it" → tag `v0.4.0`; "continue" → Phase 4 (exercise library tab + custom
+    exercises + richer exercise detail + bodyweight + CSV/JSON export).
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

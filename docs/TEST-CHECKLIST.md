@@ -4,7 +4,7 @@ Running list of things to verify on device. Install the APK after **uninstalling
 ForgeAI** (debug-signed builds won't install over each other). 🔬 = an edge case a review fixed —
 worth an extra look. Everything must also work **offline / no account**.
 
-> Build to test both phases: **v0.3.0** (Phase 1 + Phase 2). Phase 1 alone shipped as v0.2.0.
+> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** (next tag) = adds Phase 3.
 
 ---
 
@@ -68,6 +68,23 @@ worth an extra look. Everything must also work **offline / no account**.
 
 ---
 
+## Phase 3 — history calendar + repeat/delete  (needs v0.4.0)
+
+### Calendar + streak (History tab)
+- [ ] Above the feed: a **Week streak** tile (consecutive weeks with ≥1 workout) + a **Rest days** tile (days since last workout).
+- [ ] 🔬 A rest day or two does **not** break the week streak; a fully blank week does; the current not-yet-trained week doesn't break it.
+- [ ] A **"Last 13 weeks"** heatmap shows trained days shaded by volume; empty (no workouts) hides the streak/heatmap and shows the empty state.
+
+### Repeat a workout
+- [ ] Open a past workout (History → tap) → **Repeat this workout** → a new active workout opens pre-filled with the same exercises + set counts and PREVIOUS values.
+- [ ] 🔬 With a workout already in progress, Repeat warns "Finish your current workout first" (and 🔬 after a **cold start**, tapping Repeat without visiting Workout still detects an in-progress draft — it doesn't silently wipe it).
+
+### Delete a workout
+- [ ] On a past workout → **Delete workout** → confirm → it's removed and History no longer shows it (Home stats update too).
+
+### Finish flourish
+- [ ] The finish screen's hero shows a playful line, e.g. *"That's about a grand piano."* (scales with total volume).
+
 ## Cross-cutting
 - [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work.
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.
@@ -78,4 +95,4 @@ worth an extra look. Everything must also work **offline / no account**.
 - **Background/lock-screen** rest-timer notification (needs `expo-notifications` + an `android/` regen) — the timer is **foreground-only** for now.
 - No per-exercise **custom** rest duration or a Settings control yet (default 1:30; adjust live with ±15).
 - No **drop/failure** set types, **RPE**, or **supersets** (later). No **routine editor** yet (Phase 5) — "Start from plan" uses the seeded plan.
-- No **calendar/streak/repeat** in History yet (Phase 3), no **exercise library tab / custom exercises / export** yet (Phase 4). Units are **kg-only**.
+- No **exercise library tab / custom exercises / export** yet (Phase 4). Units are **kg-only**.
