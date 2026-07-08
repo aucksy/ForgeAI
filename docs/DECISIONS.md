@@ -64,6 +64,17 @@ register the debug SHA-1 for testing OR stand up the release keystore first. `go
 
 ---
 
+## 0.2 — AMENDMENT (2026-07-08): npm workspaces instead of pnpm for the monorepo
+
+The monorepo (§3 answer 2) was built with **npm workspaces**, not the pnpm-workspace originally
+locked. Reason: for an Expo/RN app whose Android build is cloud-only (unverifiable locally), npm's
+flat/hoisted `node_modules` is the layout Metro/Expo/Gradle expect — it sidesteps pnpm's symlink
+footguns and needs no new tooling (CI already used `npm ci`). All monorepo benefits (single-sourced
+`packages/theme`, atomic versioning, path-filtered CI) are unchanged. Owner-approved. Revisit pnpm
+only if a concrete need arises.
+
+---
+
 ## 1. TL;DR decisions
 
 | Decision | Choice | Why (one line) | ~Cost at our scale |

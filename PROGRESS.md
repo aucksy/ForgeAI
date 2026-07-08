@@ -127,8 +127,14 @@
   re-exports them + keeps its web `font`/CSS-`gradients`. Added `@forgeai/theme:*` dep to both.
   **Verified:** `npm install` links the package; **mobile typecheck exit 0**; **dashboard build
   exit 0** (Vite resolves the shared `.ts` package as source — 83 modules). No token VALUES changed;
-  the mobile chart-series order is untouched. **NEXT = adversarial review of the whole move, then
-  the owner tags a test build to confirm the Android CI paths.**
+  the mobile chart-series order is untouched.
+- 2026-07-08: **Monorepo move — adversarial review CLEAN.** 5 finders (ci-android-build,
+  native-metro-resolution, stale-path-refs, theme-fidelity, gitignore-hygiene) → **0 findings /
+  0 HIGH-MED-LOW** (each did heavy file-read + grep investigation). Move committed in two stages:
+  `c929f06` (structural) + `d237754` (theme). **ONE residual, inherent to cloud-only builds: the
+  Gradle APK/AAB build is unverifiable locally — the owner should push a TEST TAG (e.g. a throwaway
+  `v0.1.1-mono`) to confirm the updated CI paths produce a signed APK before relying on it.** All
+  commits remain LOCAL/unpushed (see docs/OWNER-TODO.md).
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
