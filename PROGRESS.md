@@ -147,6 +147,59 @@
   (all CONTRACTS-frozen — reuse via services, don't rewrite). B2B2C work (Phases 1/1.5/2 + monorepo)
   stays done and valid; all commits remain LOCAL/unpushed (see `docs/OWNER-TODO.md`).
 
+- 2026-07-08: **Manual-tracker RESEARCH + PRD done — AWAITING OWNER APPROVAL (no feature code yet).**
+  Deep Hevy/peers research via a 27-agent workflow (8 areas → 18 adversarial fact-checks vs primary
+  sources → synthesis; 1 REFUTED = Strong uses Brzycki-only not Brzycki/Epley, so KEEP frozen Epley
+  `epleyE1rm`; Hevy Pro = $2.99/mo & CSV export is FREE). Wrote **`docs/HEVY-RESEARCH.md`** (cited,
+  grounded to the frozen schema) + **`docs/TRACKER-PRD.md`** (current-state assessment + 5-phase plan).
+  **Codebase assessment:** the DB tables + `src/engine` + UI kit are all frozen and sufficient;
+  `workoutRepo.addSets` already auto-numbers sets + runs PR detection; `exercise/[id]` already renders
+  per-exercise analytics; **key gaps** = NO manual active-workout screen, NO history/library list, NO
+  rest timer, and `planRepo` is READ-ONLY (no routine CRUD). Plan = NEW modules under a `src/tracker/`
+  namespace (draft-in-memory active workout → `createSession`+`addSets` on Finish; prefs/draft in the
+  frozen `meta` table; Phase-5 schema additions are purely additive via a new `initTrackerSchema`,
+  never editing `schema.ts`/frozen signatures). **Open decisions for owner** (in PRD §8): tab structure
+  (new tracker tab bar since frozen `TabBar` hardcodes icons), routine-editor placement (Phase 5a vs
+  earlier), `expo-notifications`/`expo-keep-awake` for the rest timer, Home hero CTA repoint.
+  Phasing: P1 log-a-workout (spine) → P2 rest timer + plate/warm-up math → P3 history + calendar →
+  P4 library + exercise detail + export → P5 additive depth (routine editor, RPE, set types, ...).
+  **Owner decisions LOCKED (2026-07-08):** (1) navigation = **new `TrackerTabBar`** → Home · Workout ·
+  History · Progress · Profile, Coach demoted to a Home button (frozen `TabBar` untouched); (2) writable
+  **routine editor = Phase 5a** (logger first; v1 substitute = seeded plan + Start-From-Plan +
+  repeat-workout); (3) add `expo-notifications`+`expo-keep-awake` in P2; (4) repoint Home hero CTA to
+  Start Workout (keep "Ask coach").
+
+- 2026-07-08: **Manual tracker PHASE 1 DONE (log-a-workout spine) — typecheck green, adversarially reviewed, offline-firewall clean. Awaiting "continue" for Phase 2.**
+  Owner approved the plan ("Go"). Built the first manual logging flow entirely as NEW modules (no frozen
+  file edited): active-workout draft held in a Zustand store (`src/tracker/store/activeWorkoutStore.ts`),
+  autosaved to the frozen `meta` table (`activeWorkoutDraft`) for crash recovery, committed on Finish via
+  the FROZEN `workoutRepo.createSession({source:'manual'})` + `addSets` (auto set# + PR detection — no PR
+  code written). PREVIOUS column + one-tap ✓ (haptic on finger-DOWN) + warm-up toggle; Start-Empty and
+  Start-From-Plan (`coach.getTodaysWorkout` + `getActivePlan`).
+  - **Added:** `src/tracker/` = store/activeWorkoutStore, services/finishSummary (session-scoped muscle
+    split + `getSessionPrs` direct read of `personal_records`), components/{SetRow, ExerciseLogCard,
+    ExercisePickerList, SessionSummary, WorkoutCard, **TrackerTabBar**}; routes `app/session/{active,
+    add-exercise,finish,[id]}.tsx`; tabs `app/(tabs)/{workout,history}.tsx`.
+  - **Edited (minimal, screens only):** `(tabs)/_layout.tsx` → new `TrackerTabBar` + tabs **Home · Workout ·
+    History · Progress · Profile** (Coach hidden from the bar via a name filter, still navigable); `(tabs)/
+    index.tsx` hero CTA → Start Workout.
+  - **Nav note:** frozen `TabBar` hardcodes its icon map, so `TrackerTabBar` is a same-visuals copy with
+    proper icons (History uses `calendar` — the Icon set has no `history` glyph). Full-screen logging flow
+    lives under `app/session/*` to avoid a `/workout` tab collision.
+  - **Review (5 lenses → 11 candidates → adversarial verify → 7 CONFIRMED, all fixed):** HIGH finish
+    double-submit (added a `committing` guard in the store + disabled Finish while saving); MED PREVIOUS
+    off-by-one once a warm-up precedes a working set (now mapped by WORKING-set ordinal in both
+    `ExerciseLogCard` display and store `prevForSet` auto-fill); MED hydrate TOCTOU (post-await re-check +
+    `hydrated` set on start/finish/discard); MED no KeyboardAvoidingView (added, iOS `padding`); muscle
+    split day-scoped → **session-scoped** in finishSummary (day-range double-counted 2 same-day sessions);
+    finish error-branch dead-end (added Done button); add-exercise double-tap pop (re-entry ref). The
+    router-nav + frozen-file lenses came back CLEAN.
+  - **Verify:** `npm run typecheck` exit 0; tracker has ZERO network imports (offline firewall intact —
+    `dashboardStore.refresh` only piggybacks the pre-existing gated `maybeSync`). **NOT built (cloud-only) —
+    owner tags a `v*` to produce an APK.** **Deferred to later phases:** rest timer + plate/warm-up calc
+    (P2), calendar/heatmap + weekly-streak + repeat/delete (P3), library tab + custom exercise + export (P4),
+    writable routine editor + RPE/set-types (P5).
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

@@ -68,6 +68,12 @@ export default function DashboardScreen() {
     setRefreshing(false);
   }, [refresh, loadExtras]);
 
+  const goWorkout = useCallback(() => {
+    thud();
+    // Manual-tracker pivot: the hero now starts a workout instead of opening chat.
+    router.push('/workout');
+  }, [router]);
+
   const goCoach = useCallback(() => {
     thud();
     // Deep-link the coach to present today's session (coach.tsx consumes ?prompt=).
@@ -101,7 +107,7 @@ export default function DashboardScreen() {
               <HeroWorkoutCard
                 workout={data.todaysWorkout}
                 unitSystem={unitSystem}
-                onPress={goCoach}
+                onPress={goWorkout}
               />
             </Section>
             <Section index={1}>
