@@ -1,50 +1,27 @@
-# dependencies
+# Repo-root ignores. Each app/package has its own .gitignore for tool-specific paths.
+
+# dependencies (workspaces hoist here)
 node_modules/
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
-
-# Native
-.kotlin/
-*.orig.*
+# secrets / keys
+*.pem
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
 
-# Metro
-.metro-health-check*
+# local env
+.env
+.env*.local
 
-# debug
+# typescript / tooling
+*.tsbuildinfo
+
+# debug logs
 npm-debug.*
 yarn-debug.*
 yarn-error.*
 
 # macOS
 .DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-# generated native folders — iOS is not used; ANDROID is committed (built in CI),
-# so we track its source but ignore build outputs, local config and ALL keystores.
-/ios
-android/build/
-android/app/build/
-android/.gradle/
-android/.cxx/
-android/.kotlin/
-android/local.properties
-android/app/release.keystore
-*.keystore
-# the standard Android debug keystore (android/android) is NOT a secret and CI
-# needs it for the secret-less debug-signing fallback:
-!android/app/debug.keystore

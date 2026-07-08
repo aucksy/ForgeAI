@@ -18,7 +18,6 @@
     "expo-env.d.ts"
   ],
   "exclude": [
-    "node_modules",
-    "apps"
+    "node_modules"
   ]
 }

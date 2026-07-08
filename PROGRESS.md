@@ -105,6 +105,22 @@
   - **NEXT candidates:** the deferred **full monorepo move** (apps/mobile + packages/theme) if/when
     justified; or **Phase 3** (Gemini AI proxy). Await direction.
 
+- 2026-07-08: **Monorepo move — Stage 1 (structural) DONE.** Converted to **npm workspaces**
+  (owner-approved choice over the DECISIONS-locked pnpm — lower RN/Metro risk, no new tooling).
+  Mobile app git-moved from repo root → **`apps/mobile/`** (202 tracked renames incl. `android/`);
+  dashboard already at `apps/dashboard/`. Added root workspace `package.json` (workspaces
+  `apps/*` + `packages/*`), `apps/mobile/metro.config.js` (watch workspace root + resolve hoisted
+  `node_modules`), split `.gitignore` (root + `apps/mobile`), single root lockfile. CI
+  `release-apk.yml` paths updated (`working-directory: apps/mobile/android`, keystore + artifact
+  finds); `gen-keystore.yml` needed no change; `make-icons.mjs` is script-relative (moved with
+  `scripts/`+`assets/`). **Android build is monorepo-SAFE** — `settings.gradle` + `app/build.gradle`
+  resolve every dep via Node `require.resolve` (follows npm hoisting to the root `node_modules`),
+  NO hardcoded `../node_modules`. **Verified locally:** `npm install` (663 pkgs, one lockfile) clean;
+  **mobile typecheck exit 0**; **dashboard build exit 0**; `npx expo config` resolves (ForgeAI /
+  com.forgeai.app / 8 plugins). **NOT locally verifiable:** the Gradle APK/AAB build (cloud-only) —
+  needs a test tag to confirm CI paths hold. **NEXT = Stage 2: extract `packages/theme`** (shared
+  color/space/radius) consumed by both apps, then a review pass.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

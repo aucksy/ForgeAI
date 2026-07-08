@@ -5,6 +5,12 @@ remembers everything (workouts, nutrition, PRs) so leaving the gym means leaving
 your coach behind. Full requirements: `docs/PRD.md`. Module APIs: `docs/CONTRACTS.md`.
 Live status: `PROGRESS.md`.
 
+**Monorepo (npm workspaces).** The Expo member app lives in **`apps/mobile/`**, the owner
+web dashboard in **`apps/dashboard/`**, shared code in **`packages/`** (e.g. `packages/theme`).
+Any `src/…` or `android/…` path below is under **`apps/mobile/`**. Repo-level `docs/`,
+`supabase/`, `PROGRESS.md` and CI (`.github/`) stay at the root. Install once with `npm install`
+at the repo root (hoists all workspaces); the mobile Metro config watches the workspace root.
+
 ## Stack & conventions (mirrors ColorCloset)
 - Expo SDK 56 / RN 0.85 / TypeScript strict / expo-router / Zustand / expo-sqlite /
   Reanimated 4 / react-native-svg charts / SecureStore for API keys.
