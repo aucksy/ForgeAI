@@ -118,8 +118,17 @@
   NO hardcoded `../node_modules`. **Verified locally:** `npm install` (663 pkgs, one lockfile) clean;
   **mobile typecheck exit 0**; **dashboard build exit 0**; `npx expo config` resolves (ForgeAI /
   com.forgeai.app / 8 plugins). **NOT locally verifiable:** the Gradle APK/AAB build (cloud-only) —
-  needs a test tag to confirm CI paths hold. **NEXT = Stage 2: extract `packages/theme`** (shared
-  color/space/radius) consumed by both apps, then a review pass.
+  needs a test tag to confirm CI paths hold.
+- 2026-07-08: **Monorepo move — Stage 2 (shared theme) DONE.** Extracted the platform-neutral
+  primitives (full `color` palette + `space` + `radius`, VERBATIM) into **`packages/theme`**
+  (`@forgeai/theme`, source-only `.ts`). Both apps now single-source them: `apps/mobile/src/theme/
+  tokens.ts` re-exports `{color,space,radius}` from the package and keeps its mobile-only bits
+  (CVD `chart` palette, RN `gradients`/`shadow`/`motion`/`type`); `apps/dashboard/src/theme.ts`
+  re-exports them + keeps its web `font`/CSS-`gradients`. Added `@forgeai/theme:*` dep to both.
+  **Verified:** `npm install` links the package; **mobile typecheck exit 0**; **dashboard build
+  exit 0** (Vite resolves the shared `.ts` package as source — 83 modules). No token VALUES changed;
+  the mobile chart-series order is untouched. **NEXT = adversarial review of the whole move, then
+  the owner tags a test build to confirm the Android CI paths.**
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
