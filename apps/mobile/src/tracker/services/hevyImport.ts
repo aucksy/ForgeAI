@@ -23,7 +23,6 @@ import {
   deleteSession,
   getSessionsBetween,
 } from '@/db/repos/workoutRepo';
-import { toISO } from '@/lib/date';
 import type { DayType, Exercise, MuscleGroup } from '@/types/models';
 
 type Equipment = Exercise['equipment'];
@@ -102,16 +101,30 @@ const MONTH_IDX: Record<string, number> = {
   jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
 };
 
-/** Parse Hevy's "7 Jul 2026, 14:24" (1-2 digit day/hour) to a LOCAL epoch ms. */
+const pad = (n: number): string => String(n).padStart(2, '0');
+
+/**
+ * Parse Hevy's "7 Jul 2026, 14:24" (1-2 digit day/hour) to a TIMEZONE-STABLE epoch:
+ * the wall-clock is interpreted as UTC (Date.UTC, NOT local `new Date(...)`). This
+ * keeps a workout's identity + calendar day identical no matter which timezone the
+ * device is in when the file is (re-)imported — so Merge's "safe to re-run"
+ * idempotency (keyed on startedAt) can't be broken by a device timezone change, and
+ * the imported day never drifts. Derive the day with `utcDateISO` (UTC getters).
+ */
 export function parseHevyDate(input: unknown): number | null {
   if (typeof input !== 'string') return null;
   const m = /^\s*(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4}),?\s+(\d{1,2}):(\d{2})/.exec(input);
   if (!m) return null;
   const mon = MONTH_IDX[m[2].slice(0, 3).toLowerCase()];
   if (mon === undefined) return null;
-  const d = new Date(Number(m[3]), mon, Number(m[1]), Number(m[4]), Number(m[5]), 0, 0);
-  const t = d.getTime();
+  const t = Date.UTC(Number(m[3]), mon, Number(m[1]), Number(m[4]), Number(m[5]), 0, 0);
   return Number.isNaN(t) ? null : t;
+}
+
+/** Calendar day (YYYY-MM-DD) of a UTC-basis epoch from parseHevyDate. */
+function utcDateISO(ms: number): string {
+  const d = new Date(ms);
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
 }
 
 // ---------------------------------------------------------------- classifiers
@@ -276,7 +289,7 @@ export function parseHevyBase64(base64: string): ParsedHevy {
         dayType: inferDayType(rawTitle),
         startedAt,
         endedAt,
-        dateISO: toISO(new Date(startedAt)),
+        dateISO: utcDateISO(startedAt),
         exercises: [],
       };
       byStart.set(startRaw, workout);

@@ -226,7 +226,7 @@ export default function ImportScreen() {
             />
             {preview.skippedRows > 0 ? (
               <StatRow
-                label="Skipped (cardio / timed)"
+                label="Skipped rows (no reps)"
                 value={String(preview.skippedRows)}
                 tint={color.inkMuted}
               />
@@ -247,7 +247,7 @@ export default function ImportScreen() {
               onPress={() => setMode('replace')}
               body={
                 preview.existingWorkouts > 0
-                  ? `Delete your current ${preview.existingWorkouts} workout${preview.existingWorkouts === 1 ? '' : 's'} (incl. demo data), then import. Recommended for a fresh migration.`
+                  ? `Delete ALL ${preview.existingWorkouts} of your current workout${preview.existingWorkouts === 1 ? '' : 's'} (demo or your own), then import. Recommended for a fresh migration.`
                   : 'Import into an empty history. Recommended for a fresh migration.'
               }
             />
