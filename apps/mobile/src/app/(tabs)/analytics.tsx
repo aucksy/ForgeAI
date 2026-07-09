@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -16,7 +17,7 @@ import {
   useAnalyticsData,
 } from '@/components/analytics';
 import type { RangeDays } from '@/components/analytics';
-import { Chip, Screen } from '@/components/ui';
+import { Chip, IconButton, Screen } from '@/components/ui';
 import { tap } from '@/lib/haptics';
 import { motion, space } from '@/theme/tokens';
 
@@ -24,6 +25,7 @@ const RANGES: RangeDays[] = [30, 90, 180];
 
 /** Progress — the full analytics story: body, volume, nutrition, PRs, strength. */
 export default function AnalyticsScreen() {
+  const router = useRouter();
   const { range, setRange, bundle, profile, streak, loading } = useAnalyticsData();
 
   const pickRange = (r: RangeDays) => {
@@ -33,7 +35,14 @@ export default function AnalyticsScreen() {
   };
 
   return (
-    <Screen title="Progress" subtitle="Every session compounds" scroll={false}>
+    <Screen
+      title="Progress"
+      subtitle="Every session compounds"
+      scroll={false}
+      right={
+        <IconButton icon="scale" onPress={() => router.push('/bodyweight')} accessibilityLabel="Log body weight" />
+      }
+    >
       {/* range selector — pinned under the header */}
       <Animated.View
         entering={FadeInDown.delay(60).duration(motion.slow)}

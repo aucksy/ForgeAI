@@ -4,7 +4,7 @@ Running list of things to verify on device. Install the APK after **uninstalling
 ForgeAI** (debug-signed builds won't install over each other). 🔬 = an edge case a review fixed —
 worth an extra look. Everything must also work **offline / no account**.
 
-> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** (next tag) = adds Phase 3.
+> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export).
 
 ---
 
@@ -85,8 +85,45 @@ worth an extra look. Everything must also work **offline / no account**.
 ### Finish flourish
 - [ ] The finish screen's hero shows a playful line, e.g. *"That's about a grand piano."* (scales with total volume).
 
+## Phase 4 — library + custom exercise + exercise detail + bodyweight + export  (needs v0.5.0)
+
+### Exercise library (Workout tab → "Exercise library")
+- [ ] Workout tab (no active workout) shows an **"Exercise library"** button → opens the library.
+- [ ] **Search** matches on name **and** aliases (e.g. Hindi/Hinglish alias finds the exercise).
+- [ ] **Two chip rows** filter independently: **muscle** (All muscles + each group) and **gear/equipment** (All gear + each type); combining both narrows correctly; tapping a selected chip clears it.
+- [ ] A **"Recent"** section lists recently-used exercises at the top (only when no search/filter is active); tapping a row opens its detail.
+- [ ] Empty search (no match) shows the empty state; the **"New exercise"** button stays reachable.
+- [ ] 🔬 Close (X) returns to the Workout tab (not stuck).
+
+### Custom exercise (library → "New exercise")
+- [ ] Create with name + primary muscle + equipment (+ optional secondary muscles, compound/isolation, increment) → **Save** opens the new exercise's detail.
+- [ ] Save is **disabled** until name + primary muscle + equipment are all set.
+- [ ] Picking equipment sets a sensible default **increment** (machine 5, bodyweight 1, else 2.5); you can override it.
+- [ ] Secondary-muscle chips **exclude** the chosen primary muscle.
+- [ ] 🔬 Exact-name duplicate (e.g. "Bench Press (Barbell)" already exists) → "Already in your library" with an **Open it** option.
+- [ ] 🔬 A distinct name that merely *contains* an existing one (e.g. **"Bulgarian Split Squat"** with "Squat" present) is **allowed** (not falsely blocked).
+- [ ] 🔬 Double-tap Save → created **once**.
+
+### Exercise detail (tap any exercise)
+- [ ] The progress chart has a **metric switcher** — **Weight / Volume / e1RM / Best set** chips swap the line (colour changes; volume/best-set use compact axis labels).
+- [ ] A **Records** card shows **Heaviest weight** (with reps) + **Best est. 1RM**, then a **Set records** ladder (heaviest weight at each rep count, reps ascending).
+- [ ] 🔬 Tapping any record row (PR or set-record) opens **that record's session** (read-only detail).
+- [ ] 🔬 A bodyweight movement (Pull Up / Plank) shows a **flat/empty** Best-set + no Set-records ladder (no weight to plot) — not a crash.
+- [ ] An exercise with no history still shows the "No sets logged yet" empty state (no Records card).
+
+### Body weight (Progress tab → scale icon, top-right)
+- [ ] The **scale icon** in the Progress header opens the Body-weight screen.
+- [ ] Type a weight → **Log weight** → it appears in the trend + History list; logging again the **same day overwrites** (one entry per day).
+- [ ] 🔬 Invalid input (empty / 0 / letters) → "Enter a weight" alert, nothing logged.
+- [ ] Trend line + current weight + all-time delta pill render once ≥2 entries exist; with 0 entries an empty state shows.
+
+### Export (Settings/Profile → Backup & restore → "Export workouts (Excel)")
+- [ ] Tap **Export workouts (Excel)** → the OS **share sheet** opens with a `.xlsx` file → send to Drive/Gmail/Files.
+- [ ] The file opens in Excel/Sheets: **one row per set**, readable headers (Date, Exercise, Weight (kg), Reps, …), warm-ups marked "Warm-up".
+- [ ] 🔬 On a freshly **wiped** app (Reset demo data first) → Export shows **"Nothing to export"** and does **NOT** open a share sheet over a blank file.
+
 ## Cross-cutting
-- [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work.
+- [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, and Excel export all work with zero network** (export share is a local file, no upload).
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.
 
 ---
@@ -95,4 +132,5 @@ worth an extra look. Everything must also work **offline / no account**.
 - **Background/lock-screen** rest-timer notification (needs `expo-notifications` + an `android/` regen) — the timer is **foreground-only** for now.
 - No per-exercise **custom** rest duration or a Settings control yet (default 1:30; adjust live with ±15).
 - No **drop/failure** set types, **RPE**, or **supersets** (later). No **routine editor** yet (Phase 5) — "Start from plan" uses the seeded plan.
-- No **exercise library tab / custom exercises / export** yet (Phase 4). Units are **kg-only**.
+- **Library / custom exercises / exercise-detail switcher / bodyweight / Excel export** landed in **Phase 4 (v0.5.0)**. Units are **kg-only**. The library is reached from the Workout tab (no dedicated tab — the 5 tabs are taken).
+- **"Migrate from Hevy" import** is **NOT in v0.5.0** — it's the next release (v0.6.0): pick a Hevy `.xlsx` → parse → clear-then-import. Coming next.

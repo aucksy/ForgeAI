@@ -1,16 +1,19 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { ExerciseCharts } from '@/components/exercise/ExerciseCharts';
 import { ExerciseHero } from '@/components/exercise/ExerciseHero';
 import { SessionHistory } from '@/components/exercise/SessionHistory';
 import { Badge, EmptyState, IconButton, Screen, Skeleton } from '@/components/ui';
+import { getPrHistory } from '@/db/repos/prRepo';
 import { getExerciseStats } from '@/services/analytics';
 import { useSettings } from '@/store/settingsStore';
 import { color, motion, radius, space, type } from '@/theme/tokens';
-import type { ExerciseStats } from '@/types/models';
+import { ExerciseMetricChart } from '@/tracker/components/ExerciseMetricChart';
+import { ExercisePrRows } from '@/tracker/components/ExercisePrRows';
+import { bestSetVolumeSeries, xrmLadder } from '@/tracker/services/exerciseAnalytics';
+import type { ExerciseStats, PersonalRecord } from '@/types/models';
 
 const cap = (s: string) => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
 
@@ -39,6 +42,7 @@ export default function ExerciseScreen() {
 
   const units = useSettings((s) => s.unitSystem);
   const [stats, setStats] = useState<ExerciseStats | null>(null);
+  const [prs, setPrs] = useState<PersonalRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -64,7 +68,27 @@ export default function ExerciseScreen() {
     };
   }, [id]);
 
+  // PRs load independently so a PR read failure never blanks the stats screen.
+  useEffect(() => {
+    let alive = true;
+    setPrs([]);
+    if (id) {
+      getPrHistory(id)
+        .then((p) => {
+          if (alive) setPrs(p);
+        })
+        .catch(() => {
+          /* no PRs yet / transient */
+        });
+    }
+    return () => {
+      alive = false;
+    };
+  }, [id]);
+
   const hasHistory = stats !== null && stats.history.length > 0;
+  const bestSet = useMemo(() => (stats ? bestSetVolumeSeries(stats.history) : []), [stats]);
+  const ladder = useMemo(() => (stats ? xrmLadder(stats.history) : []), [stats]);
 
   return (
     <Screen>
@@ -152,7 +176,13 @@ export default function ExerciseScreen() {
       ) : (
         <>
           <ExerciseHero stats={stats} units={units} />
-          <ExerciseCharts progress={stats.progress} units={units} />
+          <ExerciseMetricChart progress={stats.progress} bestSet={bestSet} units={units} />
+          <ExercisePrRows
+            prs={prs}
+            ladder={ladder}
+            units={units}
+            onOpenSession={(sid) => router.push(`/session/${sid}`)}
+          />
           <SessionHistory history={stats.history} units={units} />
         </>
       )}

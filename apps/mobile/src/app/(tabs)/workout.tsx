@@ -117,6 +117,7 @@ export default function WorkoutScreen() {
             </HeroCard>
 
             <GhostButton label="Start empty workout" icon="plus" onPress={onStartEmpty} />
+            <GhostButton label="Exercise library" icon="dumbbell" onPress={() => router.push('/library')} />
           </>
         )}
       </View>

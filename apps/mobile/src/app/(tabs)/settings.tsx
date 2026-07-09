@@ -13,6 +13,7 @@ import { GymCard } from '@/components/settings/GymCard';
 import { resetDemoData } from '@/components/settings/resetDemo';
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { Card, GhostButton, Icon, Screen, SectionHeader } from '@/components/ui';
+import { ExportCard } from '@/tracker/components/ExportCard';
 import { success, thud } from '@/lib/haptics';
 import { getAnthropicKey, getOpenAiKey, setAnthropicKey, setOpenAiKey } from '@/lib/keys';
 import { useChat } from '@/store/chatStore';
@@ -251,6 +252,9 @@ export default function SettingsScreen() {
 
       <Section title="Backup & restore" delay={280}>
         <BackupCard />
+        <View style={{ marginTop: space.md }}>
+          <ExportCard />
+        </View>
       </Section>
 
       <Section title="Danger zone" delay={315}>

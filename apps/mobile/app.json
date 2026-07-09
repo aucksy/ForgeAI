@@ -2,7 +2,7 @@
   "expo": {
     "name": "ForgeAI",
     "slug": "forgeai",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "forgeai",
@@ -58,7 +58,8 @@
       ],
       "expo-sqlite",
       "expo-secure-store",
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,
