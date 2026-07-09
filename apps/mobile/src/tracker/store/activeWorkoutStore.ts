@@ -11,6 +11,7 @@ import { create } from 'zustand';
 
 import { getMeta, setMeta } from '@/db';
 import { getActivePlan } from '@/db/repos/planRepo';
+import { getRoutine } from '@/tracker/db/routineRepo';
 import { addSets, createSession, getExerciseHistory } from '@/db/repos/workoutRepo';
 import { todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
@@ -65,6 +66,8 @@ export interface ActiveWorkoutState {
   startEmpty: () => void;
   /** Seed from the coach's rotated plan day (full-body fallback when no plan / rest). */
   startFromPlan: () => Promise<void>;
+  /** Start a workout from a SPECIFIC routine (plan day) chosen by the user. */
+  startFromPlanDay: (dayId: string) => Promise<void>;
   /** Start a fresh workout pre-filled from a past session (repeat-this-workout). */
   startFromSession: (session: SessionDetail) => Promise<void>;
   addExercise: (ex: Exercise) => Promise<void>;
@@ -224,6 +227,31 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             day.exercises.map((pe) => buildDraftExercise(pe.exercise, pe.targetSets)),
           );
         }
+      }
+      set({
+        active: true,
+        hydrated: true,
+        committing: false,
+        startedAt: Date.now(),
+        dayType,
+        planDayId,
+        exercises,
+        lastDeleted: null,
+      });
+      void persistDraft(get());
+    },
+
+    startFromPlanDay: async (dayId) => {
+      const day = await getRoutine(dayId);
+      let dayType: DayType = 'full';
+      let planDayId: string | null = null;
+      let exercises: DraftExercise[] = [];
+      if (day) {
+        dayType = day.dayType;
+        planDayId = day.id;
+        exercises = await Promise.all(
+          day.exercises.map((pe) => buildDraftExercise(pe.exercise, pe.targetSets)),
+        );
       }
       set({
         active: true,

@@ -4,7 +4,7 @@ Running list of things to verify on device. Install the APK after **uninstalling
 ForgeAI** (debug-signed builds won't install over each other). 🔬 = an edge case a review fixed —
 worth an extra look. Everything must also work **offline / no account**.
 
-> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1).
+> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1) · **v0.7.0** = adds Phase 5a (writable routine editor).
 
 ---
 
@@ -144,6 +144,27 @@ worth an extra look. Everything must also work **offline / no account**.
 - [ ] 🔬 **Replace** with existing demo data → the demo workouts are gone, only the 487 Hevy workouts remain; the exercise **library** now lists the imported exercises (search finds e.g. "Bench Press (Barbell)").
 - [ ] 🔬 If the import fails midway (unlikely), the DB is **unchanged** ("Nothing was changed") — it's one atomic transaction.
 
+## Phase 5a — writable routine editor  (needs v0.7.0)
+
+### Routines list (Workout tab → "Routines")
+- [ ] The Workout tab (no active workout) shows a **"Routines"** button → opens the routines list; the seeded PPL plan's **6 days** appear as routine cards (name · day-type badge · exercise count).
+- [ ] Tapping a card (not its button) opens the **editor**; tapping **"Start routine"** launches an active workout pre-filled with that day's exercises + **PREVIOUS** values.
+- [ ] The **+** in the header (or "New routine") creates a routine and opens the editor. An **empty** routine shows "Add exercises to start this routine." instead of a Start button.
+- [ ] 🔬 With a workout already in progress, Start warns "Finish your current workout first" (and 🔬 after a **cold start** — open Routines without visiting Workout — Start still detects the in-progress draft and doesn't wipe it).
+
+### Editor (routines → a card)
+- [ ] **Rename** the routine (type + tap away) → the name persists (reopen to confirm). 🔬 Type a new name, tap **Add exercise**, come back → the typed name is **kept** (not reverted).
+- [ ] **Day type** chips (Push/Pull/Legs/Upper/Lower/Full) — tap to change; the subtitle updates; persists.
+- [ ] **Add exercise** (search + muscle chips) appends it; 🔬 **double-tap** a picker row → added **once**, land back on the editor.
+- [ ] Per exercise: **Sets / Rep min / Rep max** steppers adjust (clamped: sets 1–12, reps 1–50); rep-max can't drop below rep-min; raising rep-min drags rep-max up. Values persist.
+- [ ] **Up / down** arrows reorder exercises; 🔬 rapid double-tap reorder → the order **sticks** (no silent revert), no crash.
+- [ ] **Remove** an exercise (×, confirm) drops it.
+- [ ] **Duplicate routine** creates a "… (copy)" with the same exercises and opens it. **Delete routine** (confirm) removes it; **History is unaffected**.
+
+### Rotation / regression
+- [ ] After editing/adding routines, the Home/Workout **"Today: <day>"** rotation still works (frozen coach reads the same plan days). 🔬 An **empty** new routine may show as "No plan for today — start empty" on its rotation slot (known tradeoff — add exercises or delete it).
+- [ ] Start-from-plan on the Workout tab hero and **repeat-a-workout** from History still work.
+
 ## Cross-cutting
 - [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload).
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.
@@ -153,6 +174,6 @@ worth an extra look. Everything must also work **offline / no account**.
 ## Deferred — NOT bugs (coming later)
 - **Background/lock-screen** rest-timer notification (needs `expo-notifications` + an `android/` regen) — the timer is **foreground-only** for now.
 - No per-exercise **custom** rest duration or a Settings control yet (default 1:30; adjust live with ±15).
-- No **drop/failure** set types, **RPE**, or **supersets** (later). No **routine editor** yet (Phase 5) — "Start from plan" uses the seeded plan.
+- No **drop/failure** set types, **RPE**, or **supersets** yet — these land in **Phase 5b** (v0.8.0, first additive schema via `initTrackerSchema`). The **writable routine editor** shipped in **Phase 5a (v0.7.0)**.
 - **Library / custom exercises / exercise-detail switcher / bodyweight / Excel export** landed in **Phase 4 (v0.5.0)**. Units are **kg-only**. The library is reached from the Workout tab (no dedicated tab — the 5 tabs are taken).
 - **"Migrate from Hevy" import** shipped in **v0.6.0** (pick a Hevy `.csv`/`.xlsx` → preview → Replace/Merge → import). Deferred from the import: **RPE**, **superset** grouping, and per-set **exercise notes** from Hevy are dropped (they land with Phase 5's RPE/set-types work); imported images/cardio (Treadmill) and timed holds (Plank) are skipped (no reps).
