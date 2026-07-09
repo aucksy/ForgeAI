@@ -4,7 +4,7 @@ Running list of things to verify on device. Install the APK after **uninstalling
 ForgeAI** (debug-signed builds won't install over each other). 🔬 = an edge case a review fixed —
 worth an extra look. Everything must also work **offline / no account**.
 
-> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export).
+> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.0** = adds "Migrate from Hevy" import.
 
 ---
 
@@ -122,8 +122,30 @@ worth an extra look. Everything must also work **offline / no account**.
 - [ ] The file opens in Excel/Sheets: **one row per set**, readable headers (Date, Exercise, Weight (kg), Reps, …), warm-ups marked "Warm-up".
 - [ ] 🔬 On a freshly **wiped** app (Reset demo data first) → Export shows **"Nothing to export"** and does **NOT** open a share sheet over a blank file.
 
+## Phase 5-adjacent — Migrate from Hevy import  (needs v0.6.0)
+
+### Pick + preview (Settings/Profile → Backup & restore → "Import from Hevy")
+- [ ] **Import from Hevy** row opens the import screen; **Choose Hevy file** opens the OS file picker.
+- [ ] Pick your real Hevy export (`.csv` **or** the mislabelled `.xlsx`) → a **preview** shows: Workouts, Sets, Exercises (+ **N new**), Skipped (cardio/timed), and the **date range**. (Owner's file → **487 workouts / 8811 sets / 93 exercises / 5 skipped**, May 2022 → Jul 2026.)
+- [ ] 🔬 Pick a **non-Hevy** file (random doc/photo) → a friendly "Couldn't read that file" alert, no crash, no partial write.
+- [ ] Cancel the file picker → returns cleanly (no error, still on the intro screen).
+
+### Replace vs Merge
+- [ ] **Replace** (default, highlighted) shows a red warning naming your **current workout count** ("Delete your current N workouts (incl. demo data), then import").
+- [ ] **Merge** explains it keeps current workouts + adds these + is safe to re-run.
+- [ ] Tapping a mode selects it (border/tint changes); the Import button label reflects the mode + count.
+
+### Import + result
+- [ ] Import runs with a **progress %** + "Importing X / Y workouts" bar; the screen **stays awake**; the close (X) is hidden mid-import.
+- [ ] On finish: a **summary** (workouts added / sets logged / new exercises created) + success haptic; **See your workouts** opens History showing the imported sessions (newest = Jul 2026); **Done** returns to Settings.
+- [ ] Open a few imported workouts → sets/reps/weights look right; **warm-up** rows marked; bodyweight moves (Push Up / Pull Up) show **0 kg**; day-type label reads sensibly (Push/Pull/Legs/…); the original Hevy title shows in notes.
+- [ ] History/Progress/PRs update (weekly volume, streak, exercise detail charts populate from the imported history).
+- [ ] 🔬 **Idempotent re-run**: run **Merge** again with the same file → "Already imported (skipped) N" and **no duplicate** workouts/exercises created.
+- [ ] 🔬 **Replace** with existing demo data → the demo workouts are gone, only the 487 Hevy workouts remain; the exercise **library** now lists the imported exercises (search finds e.g. "Bench Press (Barbell)").
+- [ ] 🔬 If the import fails midway (unlikely), the DB is **unchanged** ("Nothing was changed") — it's one atomic transaction.
+
 ## Cross-cutting
-- [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, and Excel export all work with zero network** (export share is a local file, no upload).
+- [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload).
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.
 
 ---
@@ -133,4 +155,4 @@ worth an extra look. Everything must also work **offline / no account**.
 - No per-exercise **custom** rest duration or a Settings control yet (default 1:30; adjust live with ±15).
 - No **drop/failure** set types, **RPE**, or **supersets** (later). No **routine editor** yet (Phase 5) — "Start from plan" uses the seeded plan.
 - **Library / custom exercises / exercise-detail switcher / bodyweight / Excel export** landed in **Phase 4 (v0.5.0)**. Units are **kg-only**. The library is reached from the Workout tab (no dedicated tab — the 5 tabs are taken).
-- **"Migrate from Hevy" import** is **NOT in v0.5.0** — it's the next release (v0.6.0): pick a Hevy `.xlsx` → parse → clear-then-import. Coming next.
+- **"Migrate from Hevy" import** shipped in **v0.6.0** (pick a Hevy `.csv`/`.xlsx` → preview → Replace/Merge → import). Deferred from the import: **RPE**, **superset** grouping, and per-set **exercise notes** from Hevy are dropped (they land with Phase 5's RPE/set-types work); imported images/cardio (Treadmill) and timed holds (Plank) are skipped (no reps).

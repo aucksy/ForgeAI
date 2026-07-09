@@ -14,6 +14,7 @@ import { resetDemoData } from '@/components/settings/resetDemo';
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { Card, GhostButton, Icon, Screen, SectionHeader } from '@/components/ui';
 import { ExportCard } from '@/tracker/components/ExportCard';
+import { ImportCard } from '@/tracker/components/ImportCard';
 import { success, thud } from '@/lib/haptics';
 import { getAnthropicKey, getOpenAiKey, setAnthropicKey, setOpenAiKey } from '@/lib/keys';
 import { useChat } from '@/store/chatStore';
@@ -254,6 +255,9 @@ export default function SettingsScreen() {
         <BackupCard />
         <View style={{ marginTop: space.md }}>
           <ExportCard />
+        </View>
+        <View style={{ marginTop: space.md }}>
+          <ImportCard />
         </View>
       </Section>
 
