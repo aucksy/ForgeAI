@@ -4,7 +4,7 @@ Running list of things to verify on device. Install the APK after **uninstalling
 ForgeAI** (debug-signed builds won't install over each other). 🔬 = an edge case a review fixed —
 worth an extra look. Everything must also work **offline / no account**.
 
-> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.0** = adds "Migrate from Hevy" import.
+> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1).
 
 ---
 
