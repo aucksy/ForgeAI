@@ -15,6 +15,7 @@ import { ToggleRow } from '@/components/settings/SettingRow';
 import { Card, GhostButton, Icon, Screen, SectionHeader } from '@/components/ui';
 import { ExportCard } from '@/tracker/components/ExportCard';
 import { ImportCard } from '@/tracker/components/ImportCard';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import { success, thud } from '@/lib/haptics';
 import { getAnthropicKey, getOpenAiKey, setAnthropicKey, setOpenAiKey } from '@/lib/keys';
 import { useChat } from '@/store/chatStore';
@@ -72,6 +73,9 @@ export default function SettingsScreen() {
   const setSpeakReplies = useSettings((s) => s.setSpeakReplies);
   const setUnitSystem = useSettings((s) => s.setUnitSystem);
   const setLanguage = useSettings((s) => s.setLanguage);
+
+  const advancedSets = useTrackerPrefs((s) => s.advancedSets);
+  const setAdvancedSets = useTrackerPrefs((s) => s.setAdvancedSets);
 
   const [resetting, setResetting] = useState(false);
 
@@ -240,6 +244,18 @@ export default function SettingsScreen() {
               divider
             />
           </View>
+        </Card>
+      </Section>
+
+      <Section title="Workout" delay={175}>
+        <Card style={{ paddingVertical: space.xs }}>
+          <ToggleRow
+            icon="target"
+            title="Advanced set logging"
+            caption="Show RPE and set types (warm-up · drop · failure) on each set"
+            value={advancedSets}
+            onChange={setAdvancedSets}
+          />
         </Card>
       </Section>
 

@@ -9,6 +9,8 @@
  */
 import { getDb } from '@/db';
 import { getSessionDetail } from '@/db/repos/workoutRepo';
+import { getSessionSetMeta } from '@/tracker/db/trackerSets';
+import type { SetMeta } from '@/tracker/db/trackerSets';
 import type { MuscleGroup, MuscleVolumeSlice, SessionDetail } from '@/types/models';
 
 export interface SessionPr {
@@ -27,6 +29,8 @@ export interface SessionSummaryData {
   exerciseCount: number;
   prs: SessionPr[];
   muscles: MuscleVolumeSlice[];
+  /** rpe/set_type/note keyed by set id (additive columns; older sets → 'normal'/null). */
+  setMeta: Record<string, SetMeta>;
 }
 
 /** PRs recorded against a single session (weight + e1rm), joined with exercise names. */
@@ -85,6 +89,7 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
   const session = await getSessionDetail(sessionId);
   if (!session) return null;
   const prs = await getSessionPrs(sessionId);
+  const setMeta = await getSessionSetMeta(sessionId);
   const muscles = sessionMuscleVolume(session);
   const durationSec =
     session.endedAt != null ? Math.max(0, Math.round((session.endedAt - session.startedAt) / 1000)) : 0;
@@ -100,6 +105,7 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
     exerciseCount: session.exercises.length,
     prs,
     muscles,
+    setMeta,
   };
 }
 

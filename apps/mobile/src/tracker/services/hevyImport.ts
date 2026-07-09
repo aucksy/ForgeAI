@@ -7,22 +7,20 @@
  * `start_time` (unique per workout). We map: title -> dayType (+ keep the original
  * in notes), start/end -> timestamps + local day, exercise_title -> an exact-name
  * library match else a newly created custom exercise (muscle via a keyword
- * classifier, equipment from the "(...)" suffix), warmup -> isWarmup. Rows that are
- * duration/distance-only (Plank, Treadmill — no reps) are skipped.
+ * classifier, equipment from the "(...)" suffix), warmup -> isWarmup, and (Phase 5b)
+ * per-set rpe + dropset/failure set types. Rows that are duration/distance-only
+ * (Plank, Treadmill — no reps) are skipped.
  *
- * Writes reuse createSession + addSets (its auto set-numbering AND PR detection),
- * createExercise and deleteSession — no schema change, no frozen file edited.
+ * Writes reuse createSession + addSetsWithMeta (which wraps the frozen addSets — its
+ * auto set-numbering AND PR detection — then persists rpe/set_type via the additive
+ * columns), createExercise and deleteSession — no frozen file/signature edited.
  */
 import * as XLSX from 'xlsx';
 
 import { getDb } from '@/db';
 import { createExercise, getAllExercises } from '@/db/repos/exerciseRepo';
-import {
-  addSets,
-  createSession,
-  deleteSession,
-  getSessionsBetween,
-} from '@/db/repos/workoutRepo';
+import { createSession, deleteSession, getSessionsBetween } from '@/db/repos/workoutRepo';
+import { addSetsWithMeta } from '@/tracker/db/trackerSets';
 import type { DayType, Exercise, MuscleGroup } from '@/types/models';
 
 type Equipment = Exercise['equipment'];
@@ -39,6 +37,9 @@ interface ParsedSet {
   weightKg: number; // 0 for bodyweight (null in the file)
   reps: number;
   isWarmup: boolean;
+  /** Working-set variant from Hevy's set_type (dropset/failure); warm-up via isWarmup. */
+  setType: 'normal' | 'drop' | 'failure';
+  rpe: number | null;
   setIndex: number;
 }
 
@@ -277,7 +278,16 @@ export function parseHevyBase64(base64: string): ParsedHevy {
       continue;
     }
     const weightKg = asNumber(r['weight_kg']) ?? 0; // null weight = bodyweight
-    const isWarmup = asString(r['set_type']).toLowerCase() === 'warmup';
+    const rawSetType = asString(r['set_type']).toLowerCase().trim();
+    const isWarmup = rawSetType === 'warmup';
+    // Hevy working-set variants: dropset / failure. Everything else → normal.
+    const setType: ParsedSet['setType'] =
+      rawSetType === 'dropset' || rawSetType === 'drop set' || rawSetType === 'drop'
+        ? 'drop'
+        : rawSetType === 'failure'
+          ? 'failure'
+          : 'normal';
+    const rpe = asNumber(r['rpe']);
     const setIndex = asNumber(r['set_index']) ?? 0;
 
     let workout = byStart.get(startRaw);
@@ -299,7 +309,7 @@ export function parseHevyBase64(base64: string): ParsedHevy {
       exercise = { title: exTitle, sets: [] };
       workout.exercises.push(exercise);
     }
-    exercise.sets.push({ weightKg, reps: Math.round(reps), isWarmup, setIndex });
+    exercise.sets.push({ weightKg, reps: Math.round(reps), isWarmup, setType, rpe, setIndex });
   }
 
   const workouts = [...byStart.values()].sort((a, b) => a.startedAt - b.startedAt);
@@ -430,6 +440,8 @@ export async function runImport(
           weightKg: st.weightKg,
           reps: st.reps,
           isWarmup: st.isWarmup,
+          rpe: st.isWarmup ? null : st.rpe,
+          setType: st.isWarmup ? undefined : st.setType,
         }));
       });
       if (sets.length === 0) {
@@ -445,7 +457,7 @@ export async function runImport(
         startedAt: w.startedAt,
         endedAt: w.endedAt,
       });
-      await addSets(session.id, sets);
+      await addSetsWithMeta(session.id, sets);
       seenStarts.add(w.startedAt); // guard against duplicate start_times within the file
       result.imported += 1;
       result.setsInserted += sets.length;

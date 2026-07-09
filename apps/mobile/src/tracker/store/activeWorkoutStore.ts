@@ -12,7 +12,9 @@ import { create } from 'zustand';
 import { getMeta, setMeta } from '@/db';
 import { getActivePlan } from '@/db/repos/planRepo';
 import { getRoutine } from '@/tracker/db/routineRepo';
-import { addSets, createSession, getExerciseHistory } from '@/db/repos/workoutRepo';
+import { addSetsWithMeta } from '@/tracker/db/trackerSets';
+import type { RichSet } from '@/tracker/db/trackerSets';
+import { createSession, getExerciseHistory } from '@/db/repos/workoutRepo';
 import { todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 import { getTodaysWorkout } from '@/services/coach';
@@ -27,6 +29,10 @@ export interface DraftSet {
   reps: number | null;
   isWarmup: boolean;
   done: boolean;
+  /** Advanced (opt-in) set logging — Phase 5b. Optional so older drafts still load. */
+  rpe?: number | null;
+  /** Working-set variant; warm-up is carried by `isWarmup`, not here. */
+  setType?: 'normal' | 'drop' | 'failure';
 }
 
 export interface DraftExercise {
@@ -77,6 +83,10 @@ export interface ActiveWorkoutState {
   updateSet: (exKey: string, setKey: string, patch: Partial<Pick<DraftSet, 'weightKg' | 'reps'>>) => void;
   toggleWarmup: (exKey: string, setKey: string) => void;
   toggleDone: (exKey: string, setKey: string) => void;
+  /** Advanced set logging (opt-in). Set the set's type; 'warmup' toggles isWarmup. */
+  setSetType: (exKey: string, setKey: string, type: 'normal' | 'warmup' | 'drop' | 'failure') => void;
+  /** Advanced set logging (opt-in). Record/clear a set's RPE. */
+  setRpe: (exKey: string, setKey: string, rpe: number | null) => void;
   /** Prepend computed warm-up rows (isWarmup) to an exercise. */
   insertWarmupSets: (exKey: string, rows: { weightKg: number; reps: number }[]) => void;
   /** Remove a set but stash it for undo (drives the snackbar). */
@@ -374,6 +384,33 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       );
     },
 
+    setSetType: (exKey, setKey, t) => {
+      mutate((list) =>
+        list.map((e) =>
+          e.key === exKey
+            ? {
+                ...e,
+                sets: e.sets.map((s) =>
+                  s.key === setKey
+                    ? { ...s, isWarmup: t === 'warmup', setType: t === 'warmup' ? undefined : t }
+                    : s,
+                ),
+              }
+            : e,
+        ),
+      );
+    },
+
+    setRpe: (exKey, setKey, rpe) => {
+      mutate((list) =>
+        list.map((e) =>
+          e.key === exKey
+            ? { ...e, sets: e.sets.map((s) => (s.key === setKey ? { ...s, rpe } : s)) }
+            : e,
+        ),
+      );
+    },
+
     toggleDone: (exKey, setKey) => {
       mutate((list) =>
         list.map((e) => {
@@ -402,7 +439,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // Guard re-entry (double-tap): committing is set synchronously below, before
       // the first await, so a second concurrent call bails here.
       if (!s.active || s.startedAt == null || s.committing) return null;
-      const flat: { exerciseId: string; weightKg: number; reps: number; isWarmup: boolean }[] = [];
+      const flat: RichSet[] = [];
       for (const ex of s.exercises) {
         for (const st of ex.sets) {
           if (isCommittable(st)) {
@@ -411,6 +448,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               weightKg: st.weightKg as number,
               reps: st.reps as number,
               isWarmup: st.isWarmup,
+              rpe: st.isWarmup ? null : st.rpe ?? null,
+              setType: st.isWarmup ? undefined : st.setType ?? 'normal',
             });
           }
         }
@@ -428,7 +467,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           startedAt: s.startedAt,
           endedAt: Date.now(),
         });
-        await addSets(session.id, flat); // auto set_number + PR detection
+        await addSetsWithMeta(session.id, flat); // auto set_number + PR detection + rpe/type
         await setMeta(DRAFT_KEY, '');
         set({
           active: false,

@@ -4,7 +4,7 @@ Running list of things to verify on device. Install the APK after **uninstalling
 ForgeAI** (debug-signed builds won't install over each other). 🔬 = an edge case a review fixed —
 worth an extra look. Everything must also work **offline / no account**.
 
-> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1) · **v0.7.0** = adds Phase 5a (writable routine editor).
+> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1) · **v0.7.0** = adds Phase 5a (writable routine editor) · **v0.8.0** = adds Phase 5b (RPE + drop/failure set types; first additive schema).
 
 ---
 
@@ -165,6 +165,24 @@ worth an extra look. Everything must also work **offline / no account**.
 - [ ] After editing/adding routines, the Home/Workout **"Today: <day>"** rotation still works (frozen coach reads the same plan days). 🔬 An **empty** new routine may show as "No plan for today — start empty" on its rotation slot (known tradeoff — add exercises or delete it).
 - [ ] Start-from-plan on the Workout tab hero and **repeat-a-workout** from History still work.
 
+## Phase 5b — RPE + drop/failure set types  (needs v0.8.0)
+
+### Opt-in toggle (Settings/Profile → Workout)
+- [ ] A **"Workout"** settings group shows **"Advanced set logging"** (off by default). With it **off**, the active-workout set rows are **exactly** as before (SET tap toggles warm-up; no RPE/type row) — a clean regression check.
+- [ ] Turn it **on** → each set row gains a second line: **Normal · Warm · Drop · Fail** chips + an **RPE** field.
+
+### Logging (Advanced on)
+- [ ] Tap **Drop** on a working set → the SET cell shows **D** (accent); **Fail** → **F** (red); **Warm** → **W** (amber, = warm-up). The selected chip highlights.
+- [ ] Type an **RPE** (e.g. 8.5) → it's kept; 🔬 typing "8." mid-decimal isn't clobbered.
+- [ ] 🔬 A **Drop** / **Fail** set still **counts** as a working set — it appears in Volume, PREVIOUS, and can earn a PR (they're `is_warmup=0`). Only **Warm** rows are excluded from volume/PRs.
+- [ ] Finish the workout → the summary's per-exercise set chips show **D/F** prefixes and **@RPE** suffixes (warm-ups show **W**, no RPE). Open it again from **History** → same badges (read back from the DB).
+- [ ] 🔬 With Advanced **on**, mark a set **Drop**, then tap the **SET cell** to toggle warm-up → shows **W** and commits as a warm-up (is_warmup wins); toggle off → back to **Drop**.
+
+### Migration / regression (the additive schema)
+- [ ] 🔬 **Existing install upgrade**: install v0.8.0 over v0.7.0 (or any prior) **without** wiping data → the app launches fine, all old workouts/PRs intact, old sets show no D/F/RPE (they're `normal`/null). New sets logged with types/RPE display them.
+- [ ] 🔬 **Fresh install / Reset demo data** → seeded 13-week history still generates; Coach text-logging, Export, and the **Hevy import** still work.
+- [ ] 🔬 **Hevy import** now carries over **RPE** and **drop/failure** set types (re-import your file with Advanced on → open an imported workout with drop sets/RPE → they show). Idempotent re-run still reports "already imported", no dupes.
+
 ## Cross-cutting
 - [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload).
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.
@@ -174,6 +192,6 @@ worth an extra look. Everything must also work **offline / no account**.
 ## Deferred — NOT bugs (coming later)
 - **Background/lock-screen** rest-timer notification (needs `expo-notifications` + an `android/` regen) — the timer is **foreground-only** for now.
 - No per-exercise **custom** rest duration or a Settings control yet (default 1:30; adjust live with ±15).
-- No **drop/failure** set types, **RPE**, or **supersets** yet — these land in **Phase 5b** (v0.8.0, first additive schema via `initTrackerSchema`). The **writable routine editor** shipped in **Phase 5a (v0.7.0)**.
+- **RPE** + **drop/failure** set types shipped in **Phase 5b (v0.8.0)** — opt-in via Settings → Workout → "Advanced set logging". **Supersets** + per-set/exercise **notes** are still deferred (optional Phase 5c). The **writable routine editor** shipped in **Phase 5a (v0.7.0)**.
 - **Library / custom exercises / exercise-detail switcher / bodyweight / Excel export** landed in **Phase 4 (v0.5.0)**. Units are **kg-only**. The library is reached from the Workout tab (no dedicated tab — the 5 tabs are taken).
-- **"Migrate from Hevy" import** shipped in **v0.6.0** (pick a Hevy `.csv`/`.xlsx` → preview → Replace/Merge → import). Deferred from the import: **RPE**, **superset** grouping, and per-set **exercise notes** from Hevy are dropped (they land with Phase 5's RPE/set-types work); imported images/cardio (Treadmill) and timed holds (Plank) are skipped (no reps).
+- **"Migrate from Hevy" import** shipped in **v0.6.0** (pick a Hevy `.csv`/`.xlsx` → preview → Replace/Merge → import). As of **Phase 5b (v0.8.0)** the import also carries over **RPE** and **drop/failure** set types. Still dropped: **superset** grouping and per-set **exercise notes** (optional Phase 5c); imported images/cardio (Treadmill) and timed holds (Plank) are skipped (no reps).

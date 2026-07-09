@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useCloud } from '@/store/cloudStore';
 import { initDb } from '@/db';
+import { initTrackerSchema } from '@/tracker/db/trackerSchema';
 import { ensureSeeded } from '@/db/seed';
 import { color } from '@/theme/tokens';
 import { useAppFonts } from '@/theme/fonts';
@@ -21,6 +22,7 @@ export default function RootLayout() {
     (async () => {
       try {
         await initDb();
+        await initTrackerSchema(); // additive tracker columns — after initDb, before seed
         await ensureSeeded();
       } finally {
         setDbReady(true);

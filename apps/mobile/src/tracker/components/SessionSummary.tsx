@@ -12,7 +12,8 @@ import type { SessionSummaryData } from '../services/finishSummary';
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
 
 export function SessionSummary({ data }: { data: SessionSummaryData }) {
-  const { session, durationSec, totalVolumeKg, workingSetCount, exerciseCount, prs, muscles } = data;
+  const { session, durationSec, totalVolumeKg, workingSetCount, exerciseCount, prs, muscles, setMeta } =
+    data;
 
   return (
     <View style={{ gap: space.lg }}>
@@ -87,30 +88,43 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
                 {g.exercise.name}
               </Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: space.sm }}>
-                {g.sets.map((s) => (
-                  <View
-                    key={s.id}
-                    style={{
-                      paddingHorizontal: space.sm,
-                      paddingVertical: 4,
-                      borderRadius: radius.sm,
-                      backgroundColor: s.isWarmup ? color.surfaceRaised : color.surfaceSunken,
-                      borderWidth: 1,
-                      borderColor: color.border,
-                    }}
-                  >
-                    <Text
+                {g.sets.map((s) => {
+                  const meta = setMeta[s.id];
+                  // Type prefix: warm-up wins (authoritative isWarmup), else drop/failure.
+                  const prefix = s.isWarmup
+                    ? 'W '
+                    : meta?.setType === 'drop'
+                      ? 'D '
+                      : meta?.setType === 'failure'
+                        ? 'F '
+                        : '';
+                  const rpe = !s.isWarmup && meta?.rpe != null ? ` @${trimNum(meta.rpe)}` : '';
+                  return (
+                    <View
+                      key={s.id}
                       style={{
-                        fontFamily: type.mono,
-                        fontSize: type.size.caption,
-                        color: s.isWarmup ? color.inkMuted : color.inkSecondary,
+                        paddingHorizontal: space.sm,
+                        paddingVertical: 4,
+                        borderRadius: radius.sm,
+                        backgroundColor: s.isWarmup ? color.surfaceRaised : color.surfaceSunken,
+                        borderWidth: 1,
+                        borderColor: color.border,
                       }}
                     >
-                      {s.isWarmup ? 'W ' : ''}
-                      {trimNum(s.weightKg)}×{s.reps}
-                    </Text>
-                  </View>
-                ))}
+                      <Text
+                        style={{
+                          fontFamily: type.mono,
+                          fontSize: type.size.caption,
+                          color: s.isWarmup ? color.inkMuted : color.inkSecondary,
+                        }}
+                      >
+                        {prefix}
+                        {trimNum(s.weightKg)}×{s.reps}
+                        {rpe}
+                      </Text>
+                    </View>
+                  );
+                })}
               </View>
             </Card>
           ))}
