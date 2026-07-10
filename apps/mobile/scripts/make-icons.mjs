@@ -1,104 +1,113 @@
 #!/usr/bin/env node
 /**
- * ForgeAI icon pipeline — ONE inline SVG master -> every app icon.
+ * ForgeAI icon pipeline — resize the designer's master PNG exports into every
+ * app-icon output (Expo assets + native Android mipmaps + splash logo).
  *
- * Master mark: bold geometric "F" whose top arm IS a barbell (long bar, two
- * plates, sleeve tip) plus a rising ember spark. Ember gradient
- * (#FF8B4A -> #F0570F) on deep #07080C rounded-square background.
+ * Source of truth = the three master PNGs in scripts/icon-src/ (copied from the
+ * "Forge AI App Icons" export set):
+ *   hero-1024.png        full square launcher art (ember hexagon + compass star
+ *                        on #07080C, subtle glow) — the composed icon.
+ *   mark-1024.png        the mark alone on transparent (adaptive foreground / splash).
+ *   mark-white-1024.png  solid-white mark on transparent (Android monochrome/themed).
  *
- * Run from repo root:   node scripts/make-icons.mjs
- * Outputs (assets/images/):
- *   icon.png                     1024  mark on rounded-square bg + subtle glow
- *   android-icon-foreground.png  1024  mark only, transparent (adaptive icon)
- *   android-icon-monochrome.png  1024  solid-white mark, transparent
- *   splash-icon.png               512  mark only, transparent
- *   favicon.png                    48  mini icon with bg
+ * No sharp/ImageMagick on the build machine, so we resize by embedding each PNG
+ * as a data-URI <image> inside an SVG and letting @resvg/resvg-js rasterise it at
+ * the target size (round icons use an SVG circle clip-path).
+ *
+ * CI builds android/ directly (no prebuild), so the NATIVE res/mipmap-* files are
+ * what actually ship — they are regenerated here too, as PNG (the old .webp are
+ * deleted; Android resolves @mipmap/ic_launcher to either extension).
+ *
+ * Run from apps/mobile:   node scripts/make-icons.mjs
  */
-import { mkdir, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Resvg } from '@resvg/resvg-js';
 
-const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'images');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const SRC = join(ROOT, 'scripts', 'icon-src');
+const ASSETS = join(ROOT, 'assets', 'images');
+const RES = join(ROOT, 'android', 'app', 'src', 'main', 'res');
 
-const BG = '#07080C';
-const EMBER = ['#FF8B4A', '#F0570F']; // gradient sweep, top-left -> bottom-right
-const EMBER_GLOW = '#FF7A3B';
-const EMBER_BRIGHT = '#FFA043';
+// Adaptive-icon safe zone = central 72dp of the 108dp foreground (~0.667). The
+// mark art already carries ~0.82 internal height, so drawing it at 0.80 of the
+// canvas lands the hexagon at ~0.66 — inside the mask on every launcher shape.
+const FG_SAFE = 0.8;
 
-/**
- * The mark is authored in a 512x512 box (kept in sync with
- * src/components/ui/Logo.tsx). After the -40/+22 centering shift its ink
- * spans x 80..432, y 74..438 — centered on (256, 256); the farthest ink
- * point from center is r ~= 241 (stem's bottom-left rounded corner).
- */
-const MARK_BOX = 512;
+const heroB64 = (await readFile(join(SRC, 'hero-1024.png'))).toString('base64');
+const markB64 = (await readFile(join(SRC, 'mark-1024.png'))).toString('base64');
+const monoB64 = (await readFile(join(SRC, 'mark-white-1024.png'))).toString('base64');
 
-function markShapes(mono) {
-  const fill = mono ? '#FFFFFF' : 'url(#ember)';
-  const spark = mono ? '#FFFFFF' : EMBER[0];
-  const dot = mono ? '#FFFFFF' : EMBER_BRIGHT;
-  return `<g transform="translate(-40 22)">
-    <!-- barbell bar doubles as the F's top arm; runs under both plates -->
-    <rect x="120" y="96" width="352" height="72" rx="30" fill="${fill}"/>
-    <rect x="330" y="52" width="48" height="160" rx="22" fill="${fill}"/>
-    <rect x="398" y="72" width="40" height="120" rx="20" fill="${fill}"/>
-    <!-- F stem + mid arm -->
-    <rect x="120" y="96" width="72" height="320" rx="30" fill="${fill}"/>
-    <rect x="120" y="252" width="168" height="64" rx="28" fill="${fill}"/>
-    <!-- rising ember spark + trailing dot -->
-    <path d="M386 262 Q392 300 430 306 Q392 312 386 350 Q380 312 342 306 Q380 300 386 262 Z" fill="${spark}"/>
-    <circle cx="448" cy="240" r="13" fill="${dot}"/>
-  </g>`;
-}
-
-function buildSvg({ canvas, markBoxPx, background = false, mono = false }) {
-  const scale = markBoxPx / MARK_BOX;
-  const offset = (canvas - markBoxPx) / 2;
-  const rx = Math.round(canvas * 0.176); // rounded-square bg radius
-  // Gradient coords are userSpaceOnUse in the mark's local (pre-shift) space,
-  // so one continuous sweep covers the whole monogram instead of restarting
-  // per shape (which objectBoundingBox would do).
-  const defs = mono
-    ? ''
-    : `<defs>
-    <linearGradient id="ember" x1="120" y1="52" x2="420" y2="416" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="${EMBER[0]}"/>
-      <stop offset="1" stop-color="${EMBER[1]}"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.65">
-      <stop offset="0" stop-color="${EMBER_GLOW}" stop-opacity="0.16"/>
-      <stop offset="1" stop-color="${EMBER_GLOW}" stop-opacity="0"/>
-    </radialGradient>
-  </defs>`;
-  const bg = background
-    ? `<rect width="${canvas}" height="${canvas}" rx="${rx}" fill="${BG}"/>
-  <rect width="${canvas}" height="${canvas}" rx="${rx}" fill="url(#glow)"/>`
+/** Rasterise a master PNG centred in a square canvas (optionally circle-clipped). */
+function render(b64, canvas, contentFrac, { round = false } = {}) {
+  const content = Math.round(canvas * contentFrac);
+  const offset = (canvas - content) / 2;
+  const defs = round
+    ? `<defs><clipPath id="c"><circle cx="${canvas / 2}" cy="${canvas / 2}" r="${canvas / 2}"/></clipPath></defs>`
     : '';
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${canvas}" height="${canvas}" viewBox="0 0 ${canvas} ${canvas}">
-  ${defs}${bg}
-  <g transform="translate(${offset} ${offset}) scale(${scale})">${markShapes(mono)}</g>
-</svg>`;
+  const clip = round ? ' clip-path="url(#c)"' : '';
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${canvas}" height="${canvas}" viewBox="0 0 ${canvas} ${canvas}">` +
+    `${defs}<image href="data:image/png;base64,${b64}" x="${offset}" y="${offset}" width="${content}" height="${content}"${clip}/></svg>`;
+  return new Resvg(svg, { fitTo: { mode: 'width', value: canvas } }).render().asPng();
 }
 
-const TARGETS = [
-  { file: 'icon.png', canvas: 1024, markBoxPx: 844, background: true },
-  // Adaptive-icon safe zone = central 66% circle (Pixel uses a plain circle
-  // mask). markBoxPx 708 puts the mark's farthest corner at
-  // 241 * (708/512) ~= 333 px from center — inside the 338 px safe radius.
-  { file: 'android-icon-foreground.png', canvas: 1024, markBoxPx: 708 },
-  { file: 'android-icon-monochrome.png', canvas: 1024, markBoxPx: 708, mono: true },
-  { file: 'splash-icon.png', canvas: 512, markBoxPx: 512 },
-  // At 48 px push the mark slightly past the box for legibility.
-  { file: 'favicon.png', canvas: 48, markBoxPx: 54, background: true },
+/** width from a PNG's IHDR (bytes 16..20, big-endian) — to match existing sizes. */
+function pngWidth(buf) {
+  return buf.readUInt32BE(16);
+}
+
+const write = async (path, buf) => {
+  await writeFile(path, buf);
+  console.log(`  ${path.replace(ROOT, '.')}  (${buf.length} bytes)`);
+};
+
+// ---------------------------------------------------------------- Expo assets
+await mkdir(ASSETS, { recursive: true });
+console.log('Expo assets:');
+await copyFile(join(SRC, 'hero-1024.png'), join(ASSETS, 'icon.png')); // 1024, lossless
+console.log('  ./assets/images/icon.png  (copied hero)');
+await write(join(ASSETS, 'android-icon-foreground.png'), render(markB64, 1024, FG_SAFE));
+await write(join(ASSETS, 'android-icon-monochrome.png'), render(monoB64, 1024, FG_SAFE));
+await write(join(ASSETS, 'splash-icon.png'), render(markB64, 512, 0.9));
+await write(join(ASSETS, 'favicon.png'), render(heroB64, 48, 1));
+
+// ---------------------------------------------------------------- native mipmaps
+const DENSITIES = [
+  { dir: 'mipmap-mdpi', legacy: 48, adaptive: 108 },
+  { dir: 'mipmap-hdpi', legacy: 72, adaptive: 162 },
+  { dir: 'mipmap-xhdpi', legacy: 96, adaptive: 216 },
+  { dir: 'mipmap-xxhdpi', legacy: 144, adaptive: 324 },
+  { dir: 'mipmap-xxxhdpi', legacy: 192, adaptive: 432 },
 ];
-
-await mkdir(OUT_DIR, { recursive: true });
-for (const target of TARGETS) {
-  const svg = buildSvg(target);
-  const png = new Resvg(svg, { fitTo: { mode: 'width', value: target.canvas } })
-    .render()
-    .asPng();
-  await writeFile(join(OUT_DIR, target.file), png);
-  console.log(`wrote ${target.file}  ${target.canvas}x${target.canvas}  ${png.length} bytes`);
+console.log('Native mipmaps (webp -> png):');
+for (const d of DENSITIES) {
+  const dir = join(RES, d.dir);
+  await mkdir(dir, { recursive: true });
+  // Drop the stale .webp so aapt doesn't see duplicate ic_launcher resources.
+  for (const name of ['ic_launcher', 'ic_launcher_round', 'ic_launcher_foreground', 'ic_launcher_monochrome']) {
+    await rm(join(dir, `${name}.webp`), { force: true });
+  }
+  await write(join(dir, 'ic_launcher.png'), render(heroB64, d.legacy, 1));
+  await write(join(dir, 'ic_launcher_round.png'), render(heroB64, d.legacy, 1, { round: true }));
+  await write(join(dir, 'ic_launcher_foreground.png'), render(markB64, d.adaptive, FG_SAFE));
+  await write(join(dir, 'ic_launcher_monochrome.png'), render(monoB64, d.adaptive, FG_SAFE));
 }
+
+// ---------------------------------------------------------------- native splash logo
+// Keep the launch screen on-brand; regenerate each drawable-* splashscreen_logo.png
+// at its EXISTING pixel size (from the committed file's IHDR).
+console.log('Native splash logo:');
+for (const d of ['drawable-mdpi', 'drawable-hdpi', 'drawable-xhdpi', 'drawable-xxhdpi', 'drawable-xxxhdpi']) {
+  const path = join(RES, d, 'splashscreen_logo.png');
+  let size;
+  try {
+    size = pngWidth(await readFile(path));
+  } catch {
+    continue; // density not present
+  }
+  await write(path, render(markB64, size, 1));
+}
+
+console.log('done.');

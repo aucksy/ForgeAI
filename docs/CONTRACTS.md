@@ -340,7 +340,11 @@ demo; TODAY = next day in rotation):
 
 ## Assets
 
-`scripts/make-icons.mjs` (node, @resvg/resvg-js): one SVG master — ember-gradient
-barbell-spark "F" monogram on #07080C — renders icon.png (1024), adaptive
-foreground (1024, safe zone), monochrome, splash-icon (512), favicon (48).
+`scripts/make-icons.mjs` (node, @resvg/resvg-js): resizes the designer's master
+PNG exports in `scripts/icon-src/` (ember hexagon + compass-star mark on #07080C)
+by embedding each as a data-URI `<image>` in an SVG (no sharp/ImageMagick on the
+build machine). Outputs the Expo assets (icon 1024, adaptive foreground/monochrome
+1024, splash 512, favicon 48) AND the native `res/mipmap-*` launcher icons (PNG;
+the old .webp are deleted — CI builds android/ with no prebuild, so the native
+mipmaps are what actually ship) plus the drawable-* splash logos.
 `Logo.tsx`: SVG wordmark "FORGE **AI**" (Sora feel, ember accent).
