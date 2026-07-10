@@ -3,9 +3,13 @@ import type { CoachTool, ProviderMessage, ProviderTurn } from '@/ai/types';
 /**
  * OpenAI Chat Completions API over plain fetch (no SDK).
  * Tools via tools/tool_calls JSON; images as data-URI image_url parts.
+ *
+ * The wire format is shared by every OpenAI-compatible endpoint, so the core
+ * (`chatOpenAiCompatible`) is parameterised by base URL / label / token field —
+ * Groq (src/ai/providers/groq.ts) reuses it verbatim.
  */
 
-const API_URL = 'https://api.openai.com/v1/chat/completions';
+const OPENAI_URL = 'https://api.openai.com/v1/chat/completions';
 
 interface WireToolCall {
   id?: string;
@@ -82,16 +86,30 @@ function toWire(system: string, messages: ProviderMessage[]): Record<string, unk
   return wire;
 }
 
-export async function chatOpenAi(
-  cfg: { apiKey: string; model: string },
+export interface OpenAiCompatibleConfig {
+  apiKey: string;
+  model: string;
+  /** Full chat-completions endpoint. Defaults to OpenAI. */
+  baseUrl?: string;
+  /** Provider name for user-facing error messages. */
+  label?: string;
+  /** Token-limit field name — OpenAI uses `max_completion_tokens`, Groq `max_tokens`. */
+  maxTokensField?: string;
+}
+
+/** Any OpenAI-compatible chat endpoint (OpenAI, Groq, …). */
+export async function chatOpenAiCompatible(
+  cfg: OpenAiCompatibleConfig,
   system: string,
   messages: ProviderMessage[],
   tools: CoachTool[],
 ): Promise<ProviderTurn> {
+  const url = cfg.baseUrl ?? OPENAI_URL;
+  const label = cfg.label ?? 'OpenAI';
   const body: Record<string, unknown> = {
     model: cfg.model,
     messages: toWire(system, messages),
-    max_completion_tokens: 1024,
+    [cfg.maxTokensField ?? 'max_completion_tokens']: 1024,
   };
   if (tools.length) {
     body.tools = tools.map((t) => ({
@@ -102,7 +120,7 @@ export async function chatOpenAi(
 
   let res: Response;
   try {
-    res = await fetch(API_URL, {
+    res = await fetch(url, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -111,13 +129,13 @@ export async function chatOpenAi(
       body: JSON.stringify(body),
     });
   } catch {
-    throw new Error('Could not reach OpenAI — check your internet connection.');
+    throw new Error(`Could not reach ${label} — check your internet connection.`);
   }
 
   if (!res.ok) {
     // Never echo the API key; keep the server detail short.
     const detail = (await res.text().catch(() => '')).slice(0, 200);
-    throw new Error(`OpenAI API error (HTTP ${res.status}): ${detail || res.statusText}`);
+    throw new Error(`${label} API error (HTTP ${res.status}): ${detail || res.statusText}`);
   }
 
   const json = (await res.json()) as { choices?: { message?: WireChoiceMessage }[] };
@@ -133,4 +151,14 @@ export async function chatOpenAi(
     }
   }
   return turn;
+}
+
+/** OpenAI Chat Completions. */
+export function chatOpenAi(
+  cfg: { apiKey: string; model: string },
+  system: string,
+  messages: ProviderMessage[],
+  tools: CoachTool[],
+): Promise<ProviderTurn> {
+  return chatOpenAiCompatible({ ...cfg, baseUrl: OPENAI_URL, label: 'OpenAI' }, system, messages, tools);
 }

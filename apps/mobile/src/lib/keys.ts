@@ -7,6 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 
 const OPENAI_KEY = 'forgeai.openai_api_key';
 const ANTHROPIC_KEY = 'forgeai.anthropic_api_key';
+const GROQ_KEY = 'forgeai.groq_api_key';
 
 export async function getOpenAiKey(): Promise<string | null> {
   return SecureStore.getItemAsync(OPENAI_KEY);
@@ -24,6 +25,15 @@ export async function getAnthropicKey(): Promise<string | null> {
 export async function setAnthropicKey(value: string): Promise<void> {
   if (!value.trim()) return SecureStore.deleteItemAsync(ANTHROPIC_KEY);
   await SecureStore.setItemAsync(ANTHROPIC_KEY, value.trim());
+}
+
+export async function getGroqKey(): Promise<string | null> {
+  return SecureStore.getItemAsync(GROQ_KEY);
+}
+
+export async function setGroqKey(value: string): Promise<void> {
+  if (!value.trim()) return SecureStore.deleteItemAsync(GROQ_KEY);
+  await SecureStore.setItemAsync(GROQ_KEY, value.trim());
 }
 
 /** Masked preview for Settings, e.g. "sk-…k3Fq". */

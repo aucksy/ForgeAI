@@ -302,12 +302,13 @@ export interface ExerciseStats {
 
 // ---------------------------------------------------------------- AI settings
 
-export type AiProviderId = 'anthropic' | 'openai' | 'local';
+export type AiProviderId = 'anthropic' | 'openai' | 'groq' | 'local';
 
 export interface AiSettings {
   provider: AiProviderId;
   anthropicModel: string;
   openaiModel: string;
+  groqModel: string;
   voiceEnabled: boolean;
   speakReplies: boolean;
 }

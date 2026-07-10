@@ -15,3 +15,14 @@ export const OPENAI_MODELS: { id: string; label: string }[] = [
   { id: 'gpt-5-mini', label: 'GPT-5 mini' },
   { id: 'gpt-4.1', label: 'GPT-4.1' },
 ];
+
+// Groq uses OpenAI-compatible chat completions + tool calling. Slugs can change
+// as Groq rotates hosted models — update here if one 404s.
+export const DEFAULT_GROQ_MODEL = 'llama-3.3-70b-versatile';
+
+export const GROQ_MODELS: { id: string; label: string }[] = [
+  { id: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B' },
+  { id: 'openai/gpt-oss-120b', label: 'GPT-OSS 120B' },
+  { id: 'moonshotai/kimi-k2-instruct', label: 'Kimi K2' },
+  { id: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B (fast)' },
+];

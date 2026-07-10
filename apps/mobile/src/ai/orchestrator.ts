@@ -7,13 +7,14 @@ import * as FileSystem from 'expo-file-system/legacy';
 
 import * as chatRepo from '@/db/repos/chatRepo';
 import * as userRepo from '@/db/repos/userRepo';
-import { getAnthropicKey, getOpenAiKey } from '@/lib/keys';
+import { getAnthropicKey, getGroqKey, getOpenAiKey } from '@/lib/keys';
 import { todayISO } from '@/lib/date';
 import { useSettings } from '@/store/settingsStore';
 import type { AiProviderId, ChatMessage } from '@/types/models';
 
 import { localCoachReply, type LocalReply } from '@/ai/localCoach';
 import { chatAnthropic } from '@/ai/providers/anthropic';
+import { chatGroq } from '@/ai/providers/groq';
 import { chatOpenAi } from '@/ai/providers/openai';
 import { buildSystemPrompt } from '@/ai/system';
 import { COACH_TOOLS } from '@/ai/tools';
@@ -23,7 +24,7 @@ const MAX_TOOL_ROUNDS = 6;
 const HISTORY_LIMIT = 20;
 
 const KEY_HINT =
-  'Tip: I answered with the built-in local coach. Add a Claude or OpenAI API key in Settings for full conversational AI (and meal-photo estimation).';
+  'Tip: I answered with the built-in local coach. Add a Claude, OpenAI or Groq API key in Settings for full conversational AI (and meal-photo estimation on Claude/OpenAI).';
 
 function genericHelp(): LocalReply {
   return {
@@ -135,6 +136,12 @@ export async function sendToCoach(
         provider = 'local';
         missingKey = true;
       }
+    } else if (provider === 'groq') {
+      apiKey = await getGroqKey();
+      if (!apiKey) {
+        provider = 'local';
+        missingKey = true;
+      }
     }
 
     if (provider === 'local') {
@@ -175,15 +182,27 @@ export async function sendToCoach(
       }
     }
 
-    if (imageUri) {
+    if (imageUri && provider === 'groq') {
+      // Groq's text models can't see images — replace the photo prompt with a
+      // clear note instead of letting Groq reject the request (HTTP 400).
+      msgs[msgs.length - 1].text =
+        (caption ? `${caption}\n\n` : '') +
+        "(I can't analyze photos on Groq — add a Claude or OpenAI key for meal-photo estimates, or describe the meal in words and I'll log it.)";
+    } else if (imageUri) {
       const image = await readImageBase64(imageUri);
       if (image) msgs[msgs.length - 1].imageBase64 = image;
     }
 
-    const chat = provider === 'anthropic' ? chatAnthropic : chatOpenAi;
+    const chat =
+      provider === 'anthropic' ? chatAnthropic : provider === 'groq' ? chatGroq : chatOpenAi;
     const cfg = {
       apiKey,
-      model: provider === 'anthropic' ? settings.ai.anthropicModel : settings.ai.openaiModel,
+      model:
+        provider === 'anthropic'
+          ? settings.ai.anthropicModel
+          : provider === 'groq'
+            ? settings.ai.groqModel
+            : settings.ai.openaiModel,
     };
 
     const cards: CoachCard[] = [];

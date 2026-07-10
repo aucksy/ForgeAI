@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { DEFAULT_ANTHROPIC_MODEL, DEFAULT_OPENAI_MODEL } from '@/ai/models';
+import { DEFAULT_ANTHROPIC_MODEL, DEFAULT_GROQ_MODEL, DEFAULT_OPENAI_MODEL } from '@/ai/models';
 import type { AiProviderId, AiSettings, AppLanguage, UnitSystem } from '@/types/models';
 
 /**
@@ -14,7 +14,7 @@ export interface SettingsState {
   unitSystem: UnitSystem;
   language: AppLanguage;
   setProvider: (provider: AiProviderId) => void;
-  setModel: (provider: 'anthropic' | 'openai', model: string) => void;
+  setModel: (provider: 'anthropic' | 'openai' | 'groq', model: string) => void;
   setVoiceEnabled: (enabled: boolean) => void;
   setSpeakReplies: (enabled: boolean) => void;
   setUnitSystem: (unitSystem: UnitSystem) => void;
@@ -28,6 +28,7 @@ export const useSettings = create<SettingsState>()(
         provider: 'local',
         anthropicModel: DEFAULT_ANTHROPIC_MODEL,
         openaiModel: DEFAULT_OPENAI_MODEL,
+        groqModel: DEFAULT_GROQ_MODEL,
         voiceEnabled: true,
         speakReplies: false,
       },
@@ -38,7 +39,11 @@ export const useSettings = create<SettingsState>()(
         set((s) => ({
           ai: {
             ...s.ai,
-            ...(provider === 'anthropic' ? { anthropicModel: model } : { openaiModel: model }),
+            ...(provider === 'anthropic'
+              ? { anthropicModel: model }
+              : provider === 'groq'
+                ? { groqModel: model }
+                : { openaiModel: model }),
           },
         })),
       setVoiceEnabled: (voiceEnabled) => set((s) => ({ ai: { ...s.ai, voiceEnabled } })),
@@ -49,6 +54,12 @@ export const useSettings = create<SettingsState>()(
     {
       name: 'forgeai-settings',
       storage: createJSONStorage(() => AsyncStorage),
+      // Deep-merge the nested `ai` object so a settings blob persisted before a
+      // new field existed (e.g. groqModel) still gets the current default.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<SettingsState>;
+        return { ...current, ...p, ai: { ...current.ai, ...(p.ai ?? {}) } };
+      },
     },
   ),
 );

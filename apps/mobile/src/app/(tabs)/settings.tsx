@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { ANTHROPIC_MODELS, OPENAI_MODELS } from '@/ai/models';
+import { ANTHROPIC_MODELS, GROQ_MODELS, OPENAI_MODELS } from '@/ai/models';
 import { ApiKeyField } from '@/components/settings/ApiKeyField';
 import { ChipGroup } from '@/components/settings/ChipGroup';
 import type { ChipOption } from '@/components/settings/ChipGroup';
@@ -17,7 +17,14 @@ import { ExportCard } from '@/tracker/components/ExportCard';
 import { ImportCard } from '@/tracker/components/ImportCard';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import { success, thud } from '@/lib/haptics';
-import { getAnthropicKey, getOpenAiKey, setAnthropicKey, setOpenAiKey } from '@/lib/keys';
+import {
+  getAnthropicKey,
+  getGroqKey,
+  getOpenAiKey,
+  setAnthropicKey,
+  setGroqKey,
+  setOpenAiKey,
+} from '@/lib/keys';
 import { useChat } from '@/store/chatStore';
 import { useDashboard } from '@/store/dashboardStore';
 import { useSettings } from '@/store/settingsStore';
@@ -27,6 +34,7 @@ import type { AiProviderId, AppLanguage, UnitSystem } from '@/types/models';
 const PROVIDER_OPTIONS = [
   { id: 'anthropic', label: 'Claude', icon: 'sparkle' },
   { id: 'openai', label: 'OpenAI', icon: 'globe' },
+  { id: 'groq', label: 'Groq', icon: 'flame' },
   { id: 'local', label: 'Local demo', icon: 'zap' },
 ] as const satisfies readonly ChipOption<AiProviderId>[];
 
@@ -143,9 +151,26 @@ export default function SettingsScreen() {
             <View style={{ marginTop: space.lg }}>
               <ChipGroup
                 label="Model"
-                options={ai.provider === 'anthropic' ? ANTHROPIC_MODELS : OPENAI_MODELS}
-                selectedId={ai.provider === 'anthropic' ? ai.anthropicModel : ai.openaiModel}
-                onSelect={(id) => setModel(ai.provider === 'anthropic' ? 'anthropic' : 'openai', id)}
+                options={
+                  ai.provider === 'anthropic'
+                    ? ANTHROPIC_MODELS
+                    : ai.provider === 'groq'
+                      ? GROQ_MODELS
+                      : OPENAI_MODELS
+                }
+                selectedId={
+                  ai.provider === 'anthropic'
+                    ? ai.anthropicModel
+                    : ai.provider === 'groq'
+                      ? ai.groqModel
+                      : ai.openaiModel
+                }
+                onSelect={(id) =>
+                  setModel(
+                    ai.provider === 'anthropic' ? 'anthropic' : ai.provider === 'groq' ? 'groq' : 'openai',
+                    id,
+                  )
+                }
               />
             </View>
           )}
@@ -164,6 +189,13 @@ export default function SettingsScreen() {
             placeholder="sk-…"
             load={getOpenAiKey}
             save={setOpenAiKey}
+            divider
+          />
+          <ApiKeyField
+            label="Groq API key"
+            placeholder="gsk_…"
+            load={getGroqKey}
+            save={setGroqKey}
             divider
           />
           <View
