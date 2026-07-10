@@ -4,7 +4,7 @@ Running list of things to verify on device. Install the APK after **uninstalling
 ForgeAI** (debug-signed builds won't install over each other). 🔬 = an edge case a review fixed —
 worth an extra look. Everything must also work **offline / no account**.
 
-> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1) · **v0.7.0** = adds Phase 5a (writable routine editor) · **v0.8.0** = adds Phase 5b (RPE + drop/failure set types; first additive schema).
+> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1) · **v0.7.0** = adds Phase 5a (writable routine editor) · **v0.8.0** = adds Phase 5b (RPE + drop/failure set types; first additive schema) · **v0.9.0** = adds Phase 5c (supersets + per-exercise notes; schema v2).
 
 ---
 
@@ -183,6 +183,25 @@ worth an extra look. Everything must also work **offline / no account**.
 - [ ] 🔬 **Fresh install / Reset demo data** → seeded 13-week history still generates; Coach text-logging, Export, and the **Hevy import** still work.
 - [ ] 🔬 **Hevy import** now carries over **RPE** and **drop/failure** set types (re-import your file with Advanced on → open an imported workout with drop sets/RPE → they show). Idempotent re-run still reports "already imported", no dupes.
 
+## Phase 5c — supersets + per-exercise notes  (needs v0.9.0)
+
+### Supersets (active workout)
+- [ ] On an exercise card, tap **Superset** → a sheet opens: **Start new superset (A)**. Pick it → the card gets an **accent left border** + a **"Superset A"** badge in the header.
+- [ ] On another exercise, tap **Superset** → the sheet now offers **Join Superset A** (+ Start new superset B). Join → both cards show "Superset A".
+- [ ] Tap the **"Superset A" badge** (or the Superset button) → **Remove from superset** → the border/badge clear.
+- [ ] 🔬 Start superset A on one, B on another → distinct badges (A/B). Removing one exercise from a group doesn't crash or mislabel the others.
+- [ ] Finish → the summary shows the **"Superset A/B"** badge on the grouped exercises; open it again from **History** → same badges (read back from the DB).
+
+### Per-exercise notes
+- [ ] On an exercise card, tap **Add note** → a text field appears; type a note. **Hide note** collapses it (the text is kept). Reopen a resumed draft → the note persists.
+- [ ] Finish → the summary shows the note under the exercise name; History detail shows it too.
+- [ ] 🔬 A note on an exercise whose first set is a **warm-up** still saves + displays.
+
+### Migration / regression
+- [ ] 🔬 **Upgrade over v0.8.0 (or earlier) without wiping** → launches fine, old data intact; the new `superset_group` column is added silently (schema v1→v2). Old sessions show no superset/note.
+- [ ] 🔬 **Hevy import** carries over **supersets** (exercises Hevy grouped) + **exercise notes** — re-import a file that has them → open an imported workout → the superset badges + notes show. (The owner's file has none — supersets stay ungrouped, which is correct.) Idempotent re-run still skips, no dupes.
+- [ ] 🔬 Adding the **same exercise twice** in one workout with a note/superset only on the *second* card: both save, but the summary (which groups by exercise) shows the first instance's badge/note — known, values are still stored.
+
 ## Cross-cutting
 - [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload).
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.
@@ -192,6 +211,6 @@ worth an extra look. Everything must also work **offline / no account**.
 ## Deferred — NOT bugs (coming later)
 - **Background/lock-screen** rest-timer notification (needs `expo-notifications` + an `android/` regen) — the timer is **foreground-only** for now.
 - No per-exercise **custom** rest duration or a Settings control yet (default 1:30; adjust live with ±15).
-- **RPE** + **drop/failure** set types shipped in **Phase 5b (v0.8.0)** — opt-in via Settings → Workout → "Advanced set logging". **Supersets** + per-set/exercise **notes** are still deferred (optional Phase 5c). The **writable routine editor** shipped in **Phase 5a (v0.7.0)**.
+- **RPE** + **drop/failure** set types shipped in **Phase 5b (v0.8.0)** — opt-in via Settings → Workout → "Advanced set logging". **Supersets** + per-**exercise** notes shipped in **Phase 5c (v0.9.0)**. The **writable routine editor** shipped in **Phase 5a (v0.7.0)**. (Per-**set** text notes remain out of scope — not in the Hevy export; notes are per-exercise.)
 - **Library / custom exercises / exercise-detail switcher / bodyweight / Excel export** landed in **Phase 4 (v0.5.0)**. Units are **kg-only**. The library is reached from the Workout tab (no dedicated tab — the 5 tabs are taken).
-- **"Migrate from Hevy" import** shipped in **v0.6.0** (pick a Hevy `.csv`/`.xlsx` → preview → Replace/Merge → import). As of **Phase 5b (v0.8.0)** the import also carries over **RPE** and **drop/failure** set types. Still dropped: **superset** grouping and per-set **exercise notes** (optional Phase 5c); imported images/cardio (Treadmill) and timed holds (Plank) are skipped (no reps).
+- **"Migrate from Hevy" import** shipped in **v0.6.0** (pick a Hevy `.csv`/`.xlsx` → preview → Replace/Merge → import). As of **Phase 5b (v0.8.0)** the import carries over **RPE** and **drop/failure** set types, and as of **Phase 5c (v0.9.0)** it also carries over **superset** grouping + per-**exercise notes**. Imported images/cardio (Treadmill) and timed holds (Plank) are still skipped (no reps).

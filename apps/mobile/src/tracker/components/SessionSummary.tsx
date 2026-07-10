@@ -6,6 +6,7 @@ import { Badge, Card, Icon, SectionHeader, StatTile } from '@/components/ui';
 import { fmtWeight, trimNum } from '@/lib/format';
 import { color, radius, space, type } from '@/theme/tokens';
 
+import { supersetLabel } from '../lib/superset';
 import { formatDuration } from '../services/finishSummary';
 import type { SessionSummaryData } from '../services/finishSummary';
 
@@ -82,11 +83,33 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
       <View>
         <SectionHeader title="Exercises" />
         <View style={{ gap: space.sm }}>
-          {session.exercises.map((g) => (
+          {session.exercises.map((g) => {
+            // superset_group + note are shared across the exercise's sets (note lives on set 1).
+            const firstMeta = g.sets.length > 0 ? setMeta[g.sets[0].id] : undefined;
+            const ssg = firstMeta?.supersetGroup ?? null;
+            const exNote =
+              g.sets.map((s) => setMeta[s.id]?.note).find((n) => !!n && n.trim().length > 0) ?? null;
+            return (
             <Card key={g.exercise.id}>
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
-                {g.exercise.name}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.xs, flexWrap: 'wrap' }}>
+                <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+                  {g.exercise.name}
+                </Text>
+                {ssg != null ? <Badge label={`Superset ${supersetLabel(ssg)}`} tone="neutral" /> : null}
+              </View>
+              {exNote ? (
+                <Text
+                  style={{
+                    fontFamily: type.body,
+                    fontSize: type.size.caption,
+                    color: color.inkMuted,
+                    marginTop: 4,
+                    lineHeight: 15,
+                  }}
+                >
+                  {exNote}
+                </Text>
+              ) : null}
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: space.sm }}>
                 {g.sets.map((s) => {
                   const meta = setMeta[s.id];
@@ -127,7 +150,8 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
                 })}
               </View>
             </Card>
-          ))}
+            );
+          })}
         </View>
       </View>
     </View>

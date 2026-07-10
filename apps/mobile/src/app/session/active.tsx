@@ -72,6 +72,11 @@ export default function ActiveWorkoutScreen() {
     e.sets.some((s) => !s.isWarmup && s.reps != null && s.reps > 0 && s.weightKg != null),
   );
 
+  // Distinct superset groups in this workout (for the per-card chooser).
+  const existingGroups = [
+    ...new Set(exercises.map((e) => e.supersetGroup).filter((g): g is number => g != null)),
+  ].sort((a, b) => a - b);
+
   const onDiscard = (): void => {
     Alert.alert('Discard workout?', 'This workout and its sets will be deleted. This cannot be undone.', [
       { text: 'Keep logging', style: 'cancel' },
@@ -145,7 +150,9 @@ export default function ActiveWorkoutScreen() {
               body="Pick an exercise to start logging sets."
             />
           ) : (
-            exercises.map((ex) => <ExerciseLogCard key={ex.key} exercise={ex} />)
+            exercises.map((ex) => (
+              <ExerciseLogCard key={ex.key} exercise={ex} existingGroups={existingGroups} />
+            ))
           )}
           <GhostButton
             label="Add exercise"

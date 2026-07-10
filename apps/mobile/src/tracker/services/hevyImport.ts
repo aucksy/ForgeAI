@@ -7,8 +7,9 @@
  * `start_time` (unique per workout). We map: title -> dayType (+ keep the original
  * in notes), start/end -> timestamps + local day, exercise_title -> an exact-name
  * library match else a newly created custom exercise (muscle via a keyword
- * classifier, equipment from the "(...)" suffix), warmup -> isWarmup, and (Phase 5b)
- * per-set rpe + dropset/failure set types. Rows that are duration/distance-only
+ * classifier, equipment from the "(...)" suffix), warmup -> isWarmup, (Phase 5b)
+ * per-set rpe + dropset/failure set types, and (Phase 5c) superset_id -> per-workout
+ * group + exercise_notes -> per-exercise note. Rows that are duration/distance-only
  * (Plank, Treadmill — no reps) are skipped.
  *
  * Writes reuse createSession + addSetsWithMeta (which wraps the frozen addSets — its
@@ -46,6 +47,10 @@ interface ParsedSet {
 interface ParsedExercise {
   title: string; // original Hevy exercise_title, e.g. "Bench Press (Barbell)"
   sets: ParsedSet[];
+  /** Raw Hevy superset_id (remapped to a per-workout group int in runImport). null = none. */
+  supersetId: string | null;
+  /** Hevy per-exercise note (exercise_notes column). */
+  note: string | null;
 }
 
 interface ParsedWorkout {
@@ -306,7 +311,15 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     }
     let exercise = workout.exercises.find((e) => e.title === exTitle);
     if (!exercise) {
-      exercise = { title: exTitle, sets: [] };
+      // superset_id / exercise_notes are consistent per exercise — capture at first appearance.
+      const supersetRaw = asString(r['superset_id']).trim();
+      const noteRaw = sanitizeTitle(asString(r['exercise_notes']));
+      exercise = {
+        title: exTitle,
+        sets: [],
+        supersetId: supersetRaw !== '' ? supersetRaw : null,
+        note: noteRaw !== '' ? noteRaw : null,
+      };
       workout.exercises.push(exercise);
     }
     exercise.sets.push({ weightKg, reps: Math.round(reps), isWarmup, setType, rpe, setIndex });
@@ -432,16 +445,28 @@ export async function runImport(
         onProgress?.(done, total);
         continue;
       }
+      // Remap this workout's distinct Hevy superset_ids to small group ints (1,2,3…).
+      let groupCounter = 0;
+      const supersetMap = new Map<string, number>();
+      for (const ex of w.exercises) {
+        if (ex.supersetId && !supersetMap.has(ex.supersetId)) {
+          supersetMap.set(ex.supersetId, ++groupCounter);
+        }
+      }
       const sets = w.exercises.flatMap((ex) => {
         const exerciseId = idByTitle.get(ex.title);
         if (!exerciseId) return [];
-        return ex.sets.map((st) => ({
+        const group = ex.supersetId ? supersetMap.get(ex.supersetId) ?? null : null;
+        return ex.sets.map((st, i) => ({
           exerciseId,
           weightKg: st.weightKg,
           reps: st.reps,
           isWarmup: st.isWarmup,
           rpe: st.isWarmup ? null : st.rpe,
           setType: st.isWarmup ? undefined : st.setType,
+          supersetGroup: group,
+          // Per-exercise note on the first set (becomes set_number 1).
+          note: i === 0 ? ex.note : null,
         }));
       });
       if (sets.length === 0) {

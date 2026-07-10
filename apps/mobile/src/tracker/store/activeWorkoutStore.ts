@@ -43,6 +43,10 @@ export interface DraftExercise {
   equipment: Exercise['equipment'];
   /** Weight increment for warm-up rounding. Optional so older persisted drafts load. */
   incrementKg?: number;
+  /** Superset grouping (Phase 5c) — same int = same superset. Optional for old drafts. */
+  supersetGroup?: number | null;
+  /** Per-exercise note (Phase 5c) — persisted on the exercise's first set. */
+  note?: string;
   /** Last session's working sets — powers the PREVIOUS column + auto-fill. */
   previousSets: { weightKg: number; reps: number }[];
   sets: DraftSet[];
@@ -87,6 +91,10 @@ export interface ActiveWorkoutState {
   setSetType: (exKey: string, setKey: string, type: 'normal' | 'warmup' | 'drop' | 'failure') => void;
   /** Advanced set logging (opt-in). Record/clear a set's RPE. */
   setRpe: (exKey: string, setKey: string, rpe: number | null) => void;
+  /** Superset grouping (Phase 5c). Assign/join a group, or null to ungroup. */
+  setSupersetGroup: (exKey: string, group: number | null) => void;
+  /** Per-exercise note (Phase 5c). */
+  setExerciseNote: (exKey: string, note: string) => void;
   /** Prepend computed warm-up rows (isWarmup) to an exercise. */
   insertWarmupSets: (exKey: string, rows: { weightKg: number; reps: number }[]) => void;
   /** Remove a set but stash it for undo (drives the snackbar). */
@@ -411,6 +419,14 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       );
     },
 
+    setSupersetGroup: (exKey, group) => {
+      mutate((list) => list.map((e) => (e.key === exKey ? { ...e, supersetGroup: group } : e)));
+    },
+
+    setExerciseNote: (exKey, note) => {
+      mutate((list) => list.map((e) => (e.key === exKey ? { ...e, note } : e)));
+    },
+
     toggleDone: (exKey, setKey) => {
       mutate((list) =>
         list.map((e) => {
@@ -441,6 +457,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       if (!s.active || s.startedAt == null || s.committing) return null;
       const flat: RichSet[] = [];
       for (const ex of s.exercises) {
+        const exNote = ex.note?.trim() ? ex.note.trim() : null;
+        let firstOfExercise = true;
         for (const st of ex.sets) {
           if (isCommittable(st)) {
             flat.push({
@@ -450,7 +468,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               isWarmup: st.isWarmup,
               rpe: st.isWarmup ? null : st.rpe ?? null,
               setType: st.isWarmup ? undefined : st.setType ?? 'normal',
+              supersetGroup: ex.supersetGroup ?? null,
+              // A per-exercise note lives on the exercise's first committed set.
+              note: firstOfExercise ? exNote : null,
             });
+            firstOfExercise = false;
           }
         }
       }

@@ -27,12 +27,15 @@ export interface RichSet {
   /** Working-set variant. Ignored when isWarmup (persisted as 'warmup'). */
   setType?: 'normal' | 'drop' | 'failure';
   note?: string | null;
+  /** Per-workout superset group (same int = same superset). null = ungrouped. */
+  supersetGroup?: number | null;
 }
 
 export interface SetMeta {
   rpe: number | null;
   setType: SetType;
   note: string | null;
+  supersetGroup: number | null;
 }
 
 /** Append sets (frozen set-numbering + PR detection), then persist their rpe/type/note. */
@@ -48,12 +51,10 @@ export async function addSetsWithMeta(sessionId: string, sets: RichSet[]): Promi
   for (let i = 0; i < created.length; i++) {
     const s = sets[i];
     const setType: SetType = s.isWarmup ? 'warmup' : s.setType ?? 'normal';
-    await db.runAsync('UPDATE set_entries SET rpe = ?, set_type = ?, note = ? WHERE id = ?', [
-      s.rpe ?? null,
-      setType,
-      s.note ?? null,
-      created[i].id,
-    ]);
+    await db.runAsync(
+      'UPDATE set_entries SET rpe = ?, set_type = ?, note = ?, superset_group = ? WHERE id = ?',
+      [s.rpe ?? null, setType, s.note ?? null, s.supersetGroup ?? null, created[i].id],
+    );
   }
   return created;
 }
@@ -65,13 +66,17 @@ export async function getSessionSetMeta(sessionId: string): Promise<Record<strin
     rpe: number | null;
     set_type: string | null;
     note: string | null;
-  }>('SELECT id, rpe, set_type, note FROM set_entries WHERE session_id = ?', [sessionId]);
+    superset_group: number | null;
+  }>('SELECT id, rpe, set_type, note, superset_group FROM set_entries WHERE session_id = ?', [
+    sessionId,
+  ]);
   const out: Record<string, SetMeta> = {};
   for (const r of rows) {
     out[r.id] = {
       rpe: r.rpe,
       setType: (r.set_type as SetType | null) ?? 'normal',
       note: r.note,
+      supersetGroup: r.superset_group,
     };
   }
   return out;
