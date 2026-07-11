@@ -12,6 +12,7 @@ import { todayISO } from '@/lib/date';
 import { useSettings } from '@/store/settingsStore';
 import type { AiProviderId, ChatMessage } from '@/types/models';
 
+import { checkGrounding } from '@/ai/grounding';
 import { localCoachReply, type LocalReply } from '@/ai/localCoach';
 import { chatAnthropic } from '@/ai/providers/anthropic';
 import { chatGroq } from '@/ai/providers/groq';
@@ -206,6 +207,7 @@ export async function sendToCoach(
     };
 
     const cards: CoachCard[] = [];
+    const toolResults: string[] = []; // grounding corpus (dev smoke-check only)
     let finalText = '';
     for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
       const turn = await chat(cfg, system, msgs, COACH_TOOLS);
@@ -214,13 +216,30 @@ export async function sendToCoach(
         break;
       }
       msgs.push({ role: 'assistant', text: turn.text, toolCalls: turn.toolCalls });
+      const collectCorpus = typeof __DEV__ !== 'undefined' && __DEV__;
       for (const call of turn.toolCalls) {
         const result = await executeToolCall(call, cards);
+        if (collectCorpus) {
+          try {
+            toolResults.push(JSON.stringify(result) ?? '');
+          } catch {
+            /* non-serialisable result — skip from the grounding corpus */
+          }
+        }
         msgs.push({ role: 'tool', toolResult: { callId: call.id, result } });
       }
       finalText = turn.text; // best available if we exhaust the round budget
     }
     if (!finalText.trim()) finalText = cards.length ? 'Done — details below.' : 'Done!';
+
+    // Grounding smoke-check: warn (dev only) if the reply quotes data-like numbers
+    // absent from the system prompt + tool outputs. Never alters the user reply.
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
+      const g = checkGrounding(finalText, [system, ...toolResults]);
+      if (!g.grounded) {
+        console.warn('[coach grounding] possibly ungrounded numbers:', g.ungroundedNumbers.join(', '));
+      }
+    }
 
     await persistReply(saved, finalText, cards);
     return saved;

@@ -222,6 +222,17 @@ worth an extra look. Everything must also work **offline / no account**.
 - [ ] 🔬 **AI notes ON but airplane mode / bad key** → the deterministic note stays (no error, no blank card, no spinner stuck).
 - [ ] 🔬 Toggle "AI coach notes" OFF while on the finish screen → the note reverts to the deterministic line.
 
+## Phase C3 — Smarter cloud coach (v0.12.0) — needs a Groq (or Claude/OpenAI) key in Settings → AI Coach
+- [ ] **Routines**: ask the coach "what routines do I have?" → it lists your saved routines with sets × rep ranges (calls get_routines; no invented exercises).
+- [ ] **Recent workouts**: ask "how did my last workout go?" / "what did I train recently?" → real sets/volume from your last sessions.
+- [ ] 🔬 **RPE / overreach** (log a few sessions with RPE via Settings → Workout → Advanced set logging, some at 9-10): ask "am I overreaching?" or "how's my RPE on <lift>?" → the coach cites your actual average RPE and advises hold/deload vs push. It must NOT invent RPE for sets you never rated (says it doesn't have it).
+- [ ] **Supersets**: log a workout with a superset → ask "did I do any supersets recently?" → it names the grouped exercises.
+- [ ] **Progress**: ask "am I progressing on bench?" → trend from get_exercise_stats (top weight / e1RM over recent sessions, + avgRpe when present).
+- [ ] **Overload target voice**: ask "what should I do today?" → it coaches to the get_todays_workout target weights/reps and explains why.
+- [ ] 🔬 **Grounding (dev builds only)**: with Metro logs open, if the coach ever quotes a number it didn't get from a tool, a `[coach grounding] possibly ungrounded numbers` warning prints. (Release builds never warn and the reply is never altered.)
+- [ ] 🔬 **No regressions**: existing coach abilities still work — log a workout / meal by chat, "show my PRs", "weekly summary", meal photo on Claude/OpenAI (Groq still shows the "photo needs Claude/OpenAI" note).
+- [ ] **Offline coach untouched**: with provider = Local (no key) → chat still logs workouts/meals and answers basics exactly as before.
+
 ## Cross-cutting
 - [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload).
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.

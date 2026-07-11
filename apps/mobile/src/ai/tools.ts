@@ -13,6 +13,9 @@ import { fmtInt, trimNum } from '@/lib/format';
 import { getExerciseStats } from '@/services/analytics';
 import { getTodaysWorkout } from '@/services/coach';
 import { getDashboardData } from '@/services/dashboard';
+import * as routineRepo from '@/tracker/db/routineRepo';
+import { getSessionSetMeta } from '@/tracker/db/trackerSets';
+import type { SetMeta } from '@/tracker/db/trackerSets';
 import type {
   DayType,
   Exercise,
@@ -254,6 +257,18 @@ export async function summarizeWorkoutRange(
 
 function fmtSet(weightKg: number, reps: number): string {
   return `${trimNum(weightKg)}kg × ${reps}`;
+}
+
+function r1(n: number): number {
+  return Math.round(n * 10) / 10;
+}
+
+/** Average working-set RPE for a session (additive column; null when unrecorded). */
+function avgRpe(sets: { id: string }[], meta: Record<string, SetMeta>): number | null {
+  const rpes = sets
+    .map((s) => meta[s.id]?.rpe)
+    .filter((v): v is number => typeof v === 'number' && Number.isFinite(v));
+  return rpes.length ? r1(rpes.reduce((a, b) => a + b, 0) / rpes.length) : null;
 }
 
 function workoutLoggedCardText(detail: SessionDetail, newPrs: PrWithName[]): string {
@@ -593,6 +608,22 @@ export const COACH_TOOLS: CoachTool[] = [
         return { resultForModel: { error: `No exercise found matching "${name}".` } };
       }
       const stats = await getExerciseStats(exercise.id);
+      // RPE-aware: attach each recent session's average working-set RPE (opt-in
+      // additive column; null when the member never logged RPE). Keyed by session
+      // so same-day sessions don't collide.
+      const recentHistory = stats.history.slice(0, 5); // newest first
+      const rpeBySession = new Map<string, number | null>();
+      await Promise.all(
+        recentHistory.map(async (h) => {
+          const meta = await getSessionSetMeta(h.sessionId);
+          rpeBySession.set(h.sessionId, avgRpe(h.sets, meta));
+        }),
+      );
+      // `progress` is `history` in chronological order (1:1 reverse), so align the
+      // newest 5 progress points to the same sessions BY INDEX — robust to two
+      // sessions on one calendar date (a date-keyed join would collide/overwrite).
+      const chrono = [...recentHistory].reverse(); // oldest→newest, matches progress tail
+      const recent = stats.progress.slice(-5);
       return {
         resultForModel: {
           name: stats.exercise.name,
@@ -601,14 +632,15 @@ export const COACH_TOOLS: CoachTool[] = [
           bestSet: stats.bestSet
             ? `${fmtSet(stats.bestSet.weightKg, stats.bestSet.reps)} on ${stats.bestSet.dateISO}`
             : null,
-          prE1rmKg: stats.prE1rmKg !== null ? Math.round(stats.prE1rmKg * 10) / 10 : null,
-          avgWeightKg: stats.avgWeightKg !== null ? Math.round(stats.avgWeightKg * 10) / 10 : null,
-          avgReps: stats.avgReps !== null ? Math.round(stats.avgReps * 10) / 10 : null,
-          recentSessions: stats.progress.slice(-5).map((p) => ({
+          prE1rmKg: stats.prE1rmKg !== null ? r1(stats.prE1rmKg) : null,
+          avgWeightKg: stats.avgWeightKg !== null ? r1(stats.avgWeightKg) : null,
+          avgReps: stats.avgReps !== null ? r1(stats.avgReps) : null,
+          recentSessions: recent.map((p, i) => ({
             dateISO: p.dateISO,
             topWeightKg: p.topWeightKg,
-            e1rmKg: Math.round(p.e1rmKg * 10) / 10,
+            e1rmKg: r1(p.e1rmKg),
             volumeKg: Math.round(p.volumeKg),
+            avgRpe: rpeBySession.get(chrono[i]?.sessionId ?? '') ?? null,
           })),
         },
       };
@@ -643,6 +675,88 @@ export const COACH_TOOLS: CoachTool[] = [
           lastEntry: prev ? { dateISO: prev.dateISO, weightKg: prev.weightKg } : null,
         },
       };
+    },
+  },
+
+  {
+    name: 'get_routines',
+    description:
+      "List the member's saved workout routines (the days of their active plan): each routine's name, day type, and its exercises with target sets and rep ranges. Use to answer 'what routines do I have?' or to build a session from a routine.",
+    parameters: { type: 'object', properties: {} },
+    async execute() {
+      const routines = await routineRepo.listRoutines();
+      return {
+        resultForModel: {
+          count: routines.length,
+          routines: routines.map((d) => ({
+            name: d.name,
+            dayType: d.dayType,
+            exerciseCount: d.exercises.length,
+            exercises: d.exercises.map(
+              (pe) =>
+                `${pe.exercise.name} — ${pe.targetSets} × ${pe.repRangeMin}-${pe.repRangeMax}`,
+            ),
+          })),
+        },
+      };
+    },
+  },
+
+  {
+    name: 'get_recent_workouts',
+    description:
+      'Get the most recent logged workouts in detail: date, day type, volume, each exercise with its working sets, average RPE (if recorded), any supersets, and exercise notes. Use for "how did my last workout go?", "did I overreach (RPE)?", or superset questions.',
+    parameters: {
+      type: 'object',
+      properties: {
+        limit: {
+          type: 'integer',
+          description: 'How many recent sessions to return (default 5, max 10).',
+        },
+      },
+    },
+    async execute(args) {
+      const n = asNumber(args.limit);
+      const limit = Math.min(10, Math.max(1, n === undefined ? 5 : Math.round(n)));
+      const sessions = await workoutRepo.getRecentSessionDetails(limit);
+      const workouts = await Promise.all(
+        sessions.map(async (s) => {
+          const meta = await getSessionSetMeta(s.id);
+          const exercises = s.exercises.map((g) => {
+            const working = g.sets.filter((st) => !st.isWarmup);
+            const noteSet = working.find((st) => meta[st.id]?.note?.trim());
+            return {
+              name: g.exercise.name,
+              sets: working.map((st) => fmtSet(st.weightKg, st.reps)).join(', '),
+              avgRpe: avgRpe(working, meta),
+              note: noteSet ? meta[noteSet.id]?.note ?? null : null,
+            };
+          });
+          // Supersets: group working-set exercise names by their superset_group.
+          const groups = new Map<number, Set<string>>();
+          for (const g of s.exercises) {
+            for (const st of g.sets) {
+              if (st.isWarmup) continue;
+              const grp = meta[st.id]?.supersetGroup;
+              if (grp == null) continue;
+              const set = groups.get(grp) ?? new Set<string>();
+              set.add(g.exercise.name);
+              groups.set(grp, set);
+            }
+          }
+          const supersets = [...groups.values()]
+            .map((names) => [...names])
+            .filter((names) => names.length > 1);
+          return {
+            dateISO: s.dateISO,
+            dayType: s.dayType,
+            volumeKg: Math.round(s.totalVolumeKg),
+            exercises,
+            ...(supersets.length ? { supersets } : {}),
+          };
+        }),
+      );
+      return { resultForModel: { count: workouts.length, workouts } };
     },
   },
 
