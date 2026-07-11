@@ -298,6 +298,15 @@
 
 - 2026-07-09: **APK size cut ~105 MB → ~56 MB (v0.9.3).** Diagnosed via `unzip -l` on the release APK: **~88 MB (84%) was native `.so` libs duplicated across 4 ABIs** in the single universal APK (x86_64 24.6 + x86 24.5 + arm64-v8a 23.1 + armeabi-v7a 16.0). It's a proper minified release (CI runs `assembleRelease bundleRelease`), so the bloat was purely the 4× ABI multiplication, not debug. **Fix (owner chose arm64+armv7 via AskUserQuestion): `android/gradle.properties reactNativeArchitectures=armeabi-v7a,arm64-v8a`** — drops the two **emulator-only** x86 ABIs (~49 MB), runs on every real phone incl. old 32-bit. (arm64-only would've been ~40 MB but drops 32-bit devices.) The Play **AAB** (CI already builds it) delivers per-ABI regardless, so Play downloads were already ~30-40 MB; this only shrinks the **direct-download APK**. Note `expo.useLegacyPackaging=false` keeps .so uncompressed in the APK (faster install, bigger file) — flipping to true would compress them further but wasn't done (install-time tradeoff).
 
+- 2026-07-09: **NEXT DIRECTION CHOSEN (owner) — "Elevate the AI Coach."** The Hevy-style manual tracker is
+  feature-complete (Phases 1–5c, v0.9.3), so the next track returns to the app's moat: make the AI coach
+  proactive + data-grounded, powered by the engine + the owner's Groq key. Plan written to
+  **`docs/AI-COACH-PLAN.md`** (phases **C1** coach-at-logging [surface the frozen `computeOverloadTarget` in
+  the active-workout UI — deterministic, offline, the USP move] → **C2** post-workout coach note → **C3**
+  smarter Groq-powered chat using the new tracker data [routines/RPE/supersets tools + system-prompt upgrade
+  + a light grounding guard] → **C4** optional Home nudges). A FRESH CHAT executes it phase by phase (same
+  frozen-file rules, offline-first, ship-after-review). No feature code yet.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
