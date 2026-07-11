@@ -9,8 +9,11 @@ import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen } from '@/co
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
 
+import type { OverloadTarget } from '@/types/models';
+
 import { ExerciseLogCard } from '@/tracker/components/ExerciseLogCard';
 import { RestTimerBar } from '@/tracker/components/RestTimerBar';
+import { getTargetsForPlanDay } from '@/tracker/services/coachTargets';
 import { formatDuration } from '@/tracker/services/finishSummary';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
@@ -31,6 +34,7 @@ export default function ActiveWorkoutScreen() {
 
   const active = useActiveWorkout((s) => s.active);
   const startedAt = useActiveWorkout((s) => s.startedAt);
+  const planDayId = useActiveWorkout((s) => s.planDayId);
   const exercises = useActiveWorkout((s) => s.exercises);
   const committing = useActiveWorkout((s) => s.committing);
   const finish = useActiveWorkout((s) => s.finish);
@@ -49,6 +53,28 @@ export default function ActiveWorkoutScreen() {
     // stale timer can't leak a phantom countdown/haptic into the next session.
     return () => skipRest();
   }, [loadRestDefault, skipRest]);
+
+  // Coach targets (Phase C1) — the progressive-overload prescription per plan-day
+  // exercise, surfaced inline in each card. Derived/offline (SQLite only), never
+  // persisted in the draft. Recomputes when the plan day or exercise list changes
+  // (e.g. adding a plan exercise mid-session). Empty for Start-Empty / repeats.
+  const [targets, setTargets] = useState<Map<string, OverloadTarget>>(() => new Map());
+  const exerciseIdsKey = exercises.map((e) => e.exerciseId).join(',');
+  useEffect(() => {
+    let cancelled = false;
+    void getTargetsForPlanDay(planDayId)
+      .then((map) => {
+        if (!cancelled) setTargets(map);
+      })
+      .catch(() => {
+        if (!cancelled) setTargets(new Map());
+      });
+    return () => {
+      cancelled = true;
+    };
+    // exerciseIdsKey re-runs the load when the roster changes; planDayId scopes it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [planDayId, exerciseIdsKey]);
 
   // Auto-dismiss the undo snackbar after a few seconds.
   useEffect(() => {
@@ -151,7 +177,12 @@ export default function ActiveWorkoutScreen() {
             />
           ) : (
             exercises.map((ex) => (
-              <ExerciseLogCard key={ex.key} exercise={ex} existingGroups={existingGroups} />
+              <ExerciseLogCard
+                key={ex.key}
+                exercise={ex}
+                existingGroups={existingGroups}
+                target={targets.get(ex.exerciseId) ?? null}
+              />
             ))
           )}
           <GhostButton

@@ -202,6 +202,16 @@ worth an extra look. Everything must also work **offline / no account**.
 - [ ] 🔬 **Hevy import** carries over **supersets** (exercises Hevy grouped) + **exercise notes** — re-import a file that has them → open an imported workout → the superset badges + notes show. (The owner's file has none — supersets stay ungrouped, which is correct.) Idempotent re-run still skips, no dupes.
 - [ ] 🔬 Adding the **same exercise twice** in one workout with a note/superset only on the *second* card: both save, but the summary (which groups by exercise) shows the first instance's badge/note — known, values are still stored.
 
+## Phase C1 — Coach at the point of logging (v0.10.0)
+- [ ] **Start From Plan** (or a routine) → each plan exercise's card shows an inline **Target X kg × reps** line + a Progress/Hold/Deload/Start badge, above the SET/PREV table.
+- [ ] **Tap the target line** → the coach's one-sentence reason expands; tap again → collapses.
+- [ ] 🔬 **Numbers match the Coach tab**: open Coach → "today's workout" card and compare per-exercise Target weight/reps/badge to the active-workout line for the **same rotation day** — identical.
+- [ ] **Start Empty** → no target line on any card (byte-for-byte the old 2-tap flow); add an ad-hoc exercise → still no target unless it's part of the plan day.
+- [ ] Add a **plan-day exercise mid-session** (via Add exercise) → its target line appears after the roster changes.
+- [ ] Editing weights/reps on a set does **not** cause the target to flicker/refetch.
+- [ ] 🔬 **Offline**: airplane mode → the target + reason still show (deterministic engine, zero network).
+- [ ] 🔬 **First-time exercise** (no history) → shows a "Start" badge + conservative starting weight/reason.
+
 ## Cross-cutting
 - [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload).
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.
