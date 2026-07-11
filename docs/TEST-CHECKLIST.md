@@ -233,6 +233,12 @@ worth an extra look. Everything must also work **offline / no account**.
 - [ ] 🔬 **No regressions**: existing coach abilities still work — log a workout / meal by chat, "show my PRs", "weekly summary", meal photo on Claude/OpenAI (Groq still shows the "photo needs Claude/OpenAI" note).
 - [ ] **Offline coach untouched**: with provider = Local (no key) → chat still logs workouts/meals and answers basics exactly as before.
 
+## Phase C4 — Home proactive coach nudge (v0.13.0)
+- [ ] Home tab → the **COACH INSIGHT** card now shows an "Ask your coach ›" affordance and is tappable.
+- [ ] Tap it → jumps to the Coach tab and auto-sends "What should I focus on today, and why?" → the coach answers (grounded; richer with a key, local-coach reply with no key).
+- [ ] 🔬 Offline / no key → tapping still opens the coach and the built-in local coach responds (no crash, no network needed for the nudge itself).
+- [ ] 🔬 The insight **text** is unchanged from before (still PR > plateau > protein > volume > streak from the engine) — C4 only made it tappable.
+
 ## Cross-cutting
 - [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload).
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.

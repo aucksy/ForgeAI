@@ -80,6 +80,13 @@ export default function DashboardScreen() {
     router.push({ pathname: '/coach', params: { prompt: "Today's Workout" } });
   }, [router]);
 
+  const goInsightCoach = useCallback(() => {
+    thud();
+    // Phase C4: the Home insight nudge is proactive — tapping asks the coach to
+    // expand on today's focus (grounded via tools, richer with a key).
+    router.push({ pathname: '/coach', params: { prompt: 'What should I focus on today, and why?' } });
+  }, [router]);
+
   return (
     <Screen scroll={false} noPad>
       <ScrollView
@@ -134,7 +141,7 @@ export default function DashboardScreen() {
               </Section>
             ) : null}
             <Section index={5}>
-              <InsightCard insight={data.insight} />
+              <InsightCard insight={data.insight} onPress={goInsightCoach} />
             </Section>
             <Section index={6}>
               <NextUpRow
