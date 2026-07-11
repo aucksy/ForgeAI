@@ -84,6 +84,8 @@ export default function SettingsScreen() {
 
   const advancedSets = useTrackerPrefs((s) => s.advancedSets);
   const setAdvancedSets = useTrackerPrefs((s) => s.setAdvancedSets);
+  const coachNotes = useTrackerPrefs((s) => s.coachNotes);
+  const setCoachNotes = useTrackerPrefs((s) => s.setCoachNotes);
 
   const [resetting, setResetting] = useState(false);
 
@@ -287,6 +289,14 @@ export default function SettingsScreen() {
             caption="Show RPE and set types (warm-up · drop · failure) on each set"
             value={advancedSets}
             onChange={setAdvancedSets}
+          />
+          <ToggleRow
+            icon="sparkle"
+            title="AI coach notes"
+            caption="After a workout, add an AI-written note via your Groq key (needs a key; otherwise the built-in coach note always shows)"
+            value={coachNotes}
+            onChange={setCoachNotes}
+            divider
           />
         </Card>
       </Section>

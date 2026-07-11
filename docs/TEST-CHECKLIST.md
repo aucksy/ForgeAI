@@ -212,6 +212,16 @@ worth an extra look. Everything must also work **offline / no account**.
 - [ ] 🔬 **Offline**: airplane mode → the target + reason still show (deterministic engine, zero network).
 - [ ] 🔬 **First-time exercise** (no history) → shows a "Start" badge + conservative starting weight/reason.
 
+## Phase C2 — Post-workout coach note (v0.11.0)
+- [ ] Finish any workout → the finish screen shows a **"COACH"** GlassCard (sparkle icon) with a one-line note between the hero and the summary.
+- [ ] 🔬 **Hit a PR** (log a heavier top set than ever before on an exercise) → finish → the note leads with the PR ("New PR on … — X kg × R…").
+- [ ] 🔬 **Repeat a same-day-type workout** with clearly **more** total volume than last time → note says "…% more than your last <Day>". With clearly **less** → note says "…% down on last time".
+- [ ] 🔬 **First-ever session of a day type** (no prior same-type) → note falls back to the "<Day> done — N working sets, <muscle> took the brunt…" cue (no crash, no NaN/%).
+- [ ] **AI coach notes OFF (default)** + no Groq key → the deterministic note still shows **instantly**, airplane mode included (**zero network** — verify with the device offline).
+- [ ] **AI coach notes ON** (Settings → Workout) **+ a valid Groq key** (Settings → AI Coach) → finish online → after a beat the note is **replaced** by a richer AI sentence; the numbers in it are real (not invented).
+- [ ] 🔬 **AI notes ON but airplane mode / bad key** → the deterministic note stays (no error, no blank card, no spinner stuck).
+- [ ] 🔬 Toggle "AI coach notes" OFF while on the finish screen → the note reverts to the deterministic line.
+
 ## Cross-cutting
 - [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload).
 - [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.

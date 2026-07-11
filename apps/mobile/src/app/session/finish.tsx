@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import {
   EmptyState,
   GhostButton,
+  GlassCard,
   HeroCard,
   Icon,
   PrimaryButton,
@@ -16,8 +17,10 @@ import { fmtInt } from '@/lib/format';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { SessionSummary } from '@/tracker/components/SessionSummary';
+import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coachNote';
 import { dayTypeLabel, getSessionSummary, volumeComparison } from '@/tracker/services/finishSummary';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
 export default function FinishScreen() {
   const router = useRouter();
@@ -26,6 +29,8 @@ export default function FinishScreen() {
 
   const [data, setData] = useState<SessionSummaryData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [note, setNote] = useState<string | null>(null);
+  const coachNotesPref = useTrackerPrefs((s) => s.coachNotes);
 
   useEffect(() => {
     let alive = true;
@@ -47,6 +52,26 @@ export default function FinishScreen() {
       alive = false;
     };
   }, [id]);
+
+  // Coach note (Phase C2): show the deterministic engine line as soon as the
+  // summary loads, then — only if the user opted in AND a Groq key is set — swap
+  // in a richer AI note when it arrives. Never blocks; falls back silently.
+  useEffect(() => {
+    if (!data) return;
+    let alive = true;
+    void getSessionCoachNote(data).then((n) => {
+      if (!alive) return;
+      setNote(n.text);
+      if (coachNotesPref) {
+        void getCloudCoachNote(data).then((rich) => {
+          if (alive && rich) setNote(rich);
+        });
+      }
+    });
+    return () => {
+      alive = false;
+    };
+  }, [data, coachNotesPref]);
 
   return (
     <Screen title="Workout complete" subtitle="Nice work — logged and saved.">
@@ -75,6 +100,37 @@ export default function FinishScreen() {
               </View>
             </View>
           </HeroCard>
+
+          {note ? (
+            <GlassCard>
+              <View style={{ flexDirection: 'row', gap: space.md }}>
+                <Icon name="sparkle" size={20} color={color.accentBright} />
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontFamily: type.bodySemi,
+                      fontSize: type.size.caption,
+                      letterSpacing: 0.4,
+                      color: color.inkMuted,
+                      marginBottom: 3,
+                    }}
+                  >
+                    COACH
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: type.body,
+                      fontSize: type.size.body,
+                      color: color.ink,
+                      lineHeight: 21,
+                    }}
+                  >
+                    {note}
+                  </Text>
+                </View>
+              </View>
+            </GlassCard>
+          ) : null}
 
           <SessionSummary data={data} />
 
