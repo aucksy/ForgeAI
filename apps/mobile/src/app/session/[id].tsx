@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, View } from 'react-native';
 
 import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
-import { deleteSession } from '@/db/repos/workoutRepo';
+import { deleteSessionAndReconcile } from '@/tracker/services/prRebuild';
 import { shortDate } from '@/lib/date';
 import { useDashboard } from '@/store/dashboardStore';
 import { radius, space } from '@/theme/tokens';
@@ -70,7 +70,7 @@ export default function SessionDetailScreen() {
         text: 'Delete',
         style: 'destructive',
         onPress: () => {
-          void deleteSession(id)
+          void deleteSessionAndReconcile(id)
             .then(() => {
               void useDashboard.getState().refresh();
               router.back();

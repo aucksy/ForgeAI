@@ -15,6 +15,7 @@ import { getTodaysWorkout } from '@/services/coach';
 import { getDashboardData } from '@/services/dashboard';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import * as routineRepo from '@/tracker/db/routineRepo';
+import { deleteSessionAndReconcile } from '@/tracker/services/prRebuild';
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import type { SetMeta } from '@/tracker/db/trackerSets';
 import type {
@@ -148,7 +149,11 @@ export async function logWorkoutCore(
   if (!resolved.length) throw new Error('No valid sets to log.');
 
   const existing = await workoutRepo.getSessionsBetween(day, day);
-  let session = existing[0];
+  // Only fold chat-logged sets into an OPEN chat session for that day — never into
+  // a finished manual/seed session (that would silently corrupt its finish summary,
+  // day type and duration). Manual sessions are 'manual'; chat sessions stay open
+  // (endedAt === null), so this reuses today's running chat log and nothing else.
+  let session = existing.find((s) => s.source === 'chat' && s.endedAt == null);
   if (!session) {
     session = await workoutRepo.createSession({
       dateISO: day,
@@ -1222,7 +1227,9 @@ export const COACH_TOOLS: CoachTool[] = [
       if (!sessions.length) return { resultForModel: { error: `No workout logged on ${dateISO}.` } };
       const target = sessions[sessions.length - 1]; // most recent that day (asc order)
       const detail = await workoutRepo.getSessionDetail(target.id);
-      await workoutRepo.deleteSession(target.id);
+      // Reconcile PRs after the delete (the event log can otherwise understate the
+      // best surviving set) — same path as the History-screen delete.
+      await deleteSessionAndReconcile(target.id);
       return {
         resultForModel: {
           deleted: true,
