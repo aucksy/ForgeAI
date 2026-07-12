@@ -1,12 +1,15 @@
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { RingGauge, StatTile } from '@/components/ui';
 import { fmtInt } from '@/lib/format';
+import { tap } from '@/lib/haptics';
 import { chart, color, radius, shadow, space, type } from '@/theme/tokens';
 import type { DashboardData } from '@/types/models';
 
 interface StatGridProps {
   data: DashboardData;
+  /** Tapping the calorie/protein rings opens the nutrition manager. */
+  onPressNutrition?: () => void;
 }
 
 const PROTEIN_COLOR = chart.series[2]; // aqua — distinct from the calorie ember
@@ -69,26 +72,44 @@ function RingCard({
 }
 
 /** 2x2 stat grid: calorie + protein rings on top, recovery + strength tiles below. */
-export function StatGrid({ data }: StatGridProps) {
+export function StatGrid({ data, onPressNutrition }: StatGridProps) {
+  const rings = (
+    <View style={{ flexDirection: 'row', gap: space.md }}>
+      <RingCard
+        title="Calories"
+        value={data.caloriesToday}
+        max={data.calorieTarget}
+        label={fmtInt(data.caloriesToday)}
+        sublabel={`of ${fmtInt(data.calorieTarget)}`}
+      />
+      <RingCard
+        title="Protein"
+        value={data.proteinTodayG}
+        max={data.proteinTargetG}
+        label={`${Math.round(data.proteinTodayG)}g`}
+        sublabel={`of ${Math.round(data.proteinTargetG)}g`}
+        ringColor={PROTEIN_COLOR}
+      />
+    </View>
+  );
+
   return (
     <View style={{ gap: space.md }}>
-      <View style={{ flexDirection: 'row', gap: space.md }}>
-        <RingCard
-          title="Calories"
-          value={data.caloriesToday}
-          max={data.calorieTarget}
-          label={fmtInt(data.caloriesToday)}
-          sublabel={`of ${fmtInt(data.calorieTarget)}`}
-        />
-        <RingCard
-          title="Protein"
-          value={data.proteinTodayG}
-          max={data.proteinTargetG}
-          label={`${Math.round(data.proteinTodayG)}g`}
-          sublabel={`of ${Math.round(data.proteinTargetG)}g`}
-          ringColor={PROTEIN_COLOR}
-        />
-      </View>
+      {onPressNutrition ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Nutrition — view and log today's meals"
+          onPress={() => {
+            tap();
+            onPressNutrition();
+          }}
+          style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
+        >
+          {rings}
+        </Pressable>
+      ) : (
+        rings
+      )}
       <View style={{ flexDirection: 'row', gap: space.md }}>
         <View style={{ flex: 1 }}>
           <StatTile

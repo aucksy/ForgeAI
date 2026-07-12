@@ -10,6 +10,7 @@ import type { ChipOption } from '@/components/settings/ChipGroup';
 import { BackupCard } from '@/components/settings/BackupCard';
 import { CloudCard } from '@/components/settings/CloudCard';
 import { GymCard } from '@/components/settings/GymCard';
+import { ProfileCard } from '@/components/settings/ProfileCard';
 import { resetDemoData } from '@/components/settings/resetDemo';
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { Card, GhostButton, Icon, Screen, SectionHeader } from '@/components/ui';
@@ -128,7 +129,11 @@ export default function SettingsScreen() {
 
   return (
     <Screen title="Settings" subtitle="Tune your coach">
-      <Section title="AI Coach" delay={0}>
+      <Section title="Your profile" delay={0}>
+        <ProfileCard onSaved={() => void useDashboard.getState().refresh()} />
+      </Section>
+
+      <Section title="AI Coach" delay={60}>
         <Card>
           <ChipGroup
             label="Provider"

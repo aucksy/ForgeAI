@@ -87,6 +87,11 @@ export default function DashboardScreen() {
     router.push({ pathname: '/coach', params: { prompt: 'What should I focus on today, and why?' } });
   }, [router]);
 
+  const goNutrition = useCallback(() => {
+    // The calorie/protein rings now open a real meal manager (view/add/delete).
+    router.push('/nutrition');
+  }, [router]);
+
   return (
     <Screen scroll={false} noPad>
       <ScrollView
@@ -121,7 +126,7 @@ export default function DashboardScreen() {
               <StreakRow streakDays={data.streakDays} workoutsThisWeek={data.workoutsThisWeek} />
             </Section>
             <Section index={2}>
-              <StatGrid data={data} />
+              <StatGrid data={data} onPressNutrition={goNutrition} />
             </Section>
             <Section index={3}>
               <VolumeCard
