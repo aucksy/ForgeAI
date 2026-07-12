@@ -38,6 +38,12 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
+      # Fail fast on a type error BEFORE the ~10-min Gradle build — the local
+      # ship-gate is manual, so this is CI's guard that a broken tag can't ship.
+      - name: Typecheck (mobile)
+        working-directory: apps/mobile
+        run: npm run typecheck
+
       # Release-keystore secrets are OPTIONAL: when absent (early test builds),
       # the decode step is skipped, ANDROID_KEYSTORE_PATH stays unset and the
       # Gradle release config falls back to debug signing — still installable.
