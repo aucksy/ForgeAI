@@ -3,14 +3,17 @@
  * Uses the exact same repos/services and returns the same card kinds as the
  * cloud tools, so the demo shines fully offline.
  */
+import * as exerciseRepo from '@/db/repos/exerciseRepo';
 import * as nutritionRepo from '@/db/repos/nutritionRepo';
 import * as prRepo from '@/db/repos/prRepo';
 import * as userRepo from '@/db/repos/userRepo';
 import * as workoutRepo from '@/db/repos/workoutRepo';
 import { addDays, todayISO } from '@/lib/date';
 import { fmtInt, trimNum } from '@/lib/format';
+import { getExerciseStats } from '@/services/analytics';
 import { getTodaysWorkout } from '@/services/coach';
-import type { NutritionDay } from '@/types/models';
+import * as routineRepo from '@/tracker/db/routineRepo';
+import type { Exercise, NutritionDay } from '@/types/models';
 
 import {
   buildWorkoutLoggedCard,
@@ -610,6 +613,168 @@ async function musclesTrainedReply(f: Flavour): Promise<LocalReply> {
   };
 }
 
+// ------------------------------------------------- parity intents (read-only)
+
+/** "what routines do I have", "my split", "my program" — but not a log request. */
+function isRoutinesQuery(t: string): boolean {
+  if (/\blog\b/.test(t)) return false;
+  return /\b(routines?|my split|workout split|my program|my programme)\b/.test(t);
+}
+
+async function routinesReply(f: Flavour): Promise<LocalReply> {
+  const routines = await routineRepo.listRoutines();
+  if (!routines.length) {
+    return {
+      text: pick(
+        f,
+        "You don't have any saved routines yet. Create one from the Workout tab → Routines.",
+        'Abhi koi saved routine nahi hai. Workout tab → Routines se ek bana lo.',
+      ),
+      cards: [],
+    };
+  }
+  const lines = routines
+    .map(
+      (r) =>
+        `${r.name} (${r.dayType}) — ${r.exercises.length} exercise${r.exercises.length === 1 ? '' : 's'}`,
+    )
+    .join('\n');
+  const text = pick(
+    f,
+    `You have ${routines.length} routine${routines.length === 1 ? '' : 's'}:\n${lines}`,
+    `Tumhare ${routines.length} routine hain:\n${lines}`,
+  );
+  const rows = routines.map((r) => ({
+    label: r.name,
+    value: `${r.dayType} · ${r.exercises.length} ex`,
+  }));
+  return { text, cards: [{ kind: 'stats', text: 'Your routines', payload: rows }] };
+}
+
+/** "what's my streak", "consistency" — not a log request. */
+function isStreakQuery(t: string): boolean {
+  if (/\blog\b/.test(t)) return false;
+  return /\b(streak|consistency)\b/.test(t);
+}
+
+async function streakReply(f: Flavour): Promise<LocalReply> {
+  const days = await workoutRepo.getStreakDays(todayISO());
+  const text =
+    days > 0
+      ? pick(
+          f,
+          `You're on a ${days}-day training streak. Keep it alive 🔥`,
+          `${days}-din ka training streak chal raha hai. Isko banaye rakho 🔥`,
+        )
+      : pick(
+          f,
+          'No active streak right now — log a workout today to start one.',
+          'Abhi koi active streak nahi — aaj ek workout log karke shuru karo.',
+        );
+  return { text, cards: [] };
+}
+
+/** "how did my last workout go", "pichla workout" — not a log or a range summary. */
+function isLastWorkoutQuery(t: string): boolean {
+  if (/\blog\b/.test(t)) return false;
+  // "last WEEK of training" etc. is a range summary — leave it to summaryDays.
+  if (/\b(week|weekly|hafta|hafte|month|monthly|mahina|mahine)\b/.test(t)) return false;
+  return /\b(last|previous|recent|pichla|pichle)\b[\s\w]*\b(workout|session|training|lift|gym)\b/.test(
+    t,
+  );
+}
+
+async function lastWorkoutReply(f: Flavour): Promise<LocalReply> {
+  const recent = await workoutRepo.getRecentSessionDetails(1);
+  const s = recent[0];
+  if (!s) {
+    return {
+      text: pick(f, 'No workouts logged yet.', 'Abhi tak koi workout log nahi hua.'),
+      cards: [],
+    };
+  }
+  const names = s.exercises.map((e) => e.exercise.name).join(', ');
+  const setCount = s.exercises.reduce(
+    (n, e) => n + e.sets.filter((x) => !x.isWarmup).length,
+    0,
+  );
+  const text = pick(
+    f,
+    `Your last workout (${s.dateISO}, ${s.dayType}): ${s.exercises.length} exercises, ${setCount} sets, ${fmtInt(s.totalVolumeKg)} kg volume — ${names}.`,
+    `Pichla workout (${s.dateISO}, ${s.dayType}): ${s.exercises.length} exercises, ${setCount} sets, ${fmtInt(s.totalVolumeKg)} kg volume — ${names}.`,
+  );
+  return {
+    text,
+    cards: [
+      {
+        kind: 'workout_logged',
+        text: `${s.dayType} · ${fmtInt(s.totalVolumeKg)} kg`,
+        payload: { ...s, newPrs: [] },
+      },
+    ],
+  };
+}
+
+/**
+ * Find one exercise clearly named in the message. Conservative on purpose:
+ * only names/aliases ≥4 chars matched at word boundaries, longest wins — so a
+ * generic progress question doesn't false-match a short substring ("row").
+ */
+async function matchExerciseInMessage(raw: string): Promise<Exercise | null> {
+  const msg = raw.toLowerCase();
+  const all = await exerciseRepo.getAllExercises();
+  let best: { ex: Exercise; len: number } | null = null;
+  for (const ex of all) {
+    const candidates = [ex.name, ...ex.aliases]
+      .map((s) => s.toLowerCase().trim())
+      .filter((s) => s.length >= 4);
+    for (const c of candidates) {
+      const re = new RegExp(`(?:^|[^a-z])${escapeRegex(c)}(?:[^a-z]|$)`);
+      if (re.test(msg) && (!best || c.length > best.len)) best = { ex, len: c.length };
+    }
+  }
+  return best?.ex ?? null;
+}
+
+async function exerciseProgressReply(ex: Exercise, f: Flavour): Promise<LocalReply> {
+  const stats = await getExerciseStats(ex.id);
+  if (!stats.sessionsCount || stats.progress.length === 0) {
+    return {
+      text: pick(
+        f,
+        `No logged sets for ${ex.name} yet — log a few and I'll track your progress.`,
+        `${ex.name} ke abhi koi set log nahi — kuch log karo, phir progress track karte hain.`,
+      ),
+      cards: [],
+    };
+  }
+  const first = stats.progress[0];
+  const last = stats.progress[stats.progress.length - 1];
+  const e1rmDelta = Math.round((last.e1rmKg - first.e1rmKg) * 10) / 10;
+  const e1rmNow = Math.round(last.e1rmKg * 10) / 10;
+  const best = stats.bestSet
+    ? `${trimNum(stats.bestSet.weightKg)}kg × ${stats.bestSet.reps}`
+    : '—';
+  const dir =
+    e1rmDelta > 0
+      ? pick(f, 'up', 'upar')
+      : e1rmDelta < 0
+        ? pick(f, 'down', 'neeche')
+        : pick(f, 'flat', 'same');
+  const text = pick(
+    f,
+    `${ex.name}: best set ${best}, estimated 1RM ${trimNum(e1rmNow)}kg — ${dir} ${Math.abs(e1rmDelta)}kg over your last ${stats.progress.length} sessions.`,
+    `${ex.name}: best set ${best}, e1RM ${trimNum(e1rmNow)}kg — pichle ${stats.progress.length} sessions me ${Math.abs(e1rmDelta)}kg ${dir}.`,
+  );
+  const rows = [
+    { label: pick(f, 'Best set', 'Best set'), value: best },
+    { label: 'e1RM', value: `${trimNum(e1rmNow)} kg` },
+    { label: pick(f, 'e1RM change', 'e1RM change'), value: `${e1rmDelta >= 0 ? '+' : ''}${e1rmDelta} kg` },
+    { label: pick(f, 'Sessions', 'Sessions'), value: `${stats.sessionsCount}` },
+  ];
+  return { text, cards: [{ kind: 'stats', text: `${ex.name} progress`, payload: rows }] };
+}
+
 // -------------------------------------------------------------------- main
 
 /**
@@ -623,6 +788,9 @@ export async function localCoachReply(text: string): Promise<LocalReply | null> 
   const f = detectFlavour(raw);
 
   if (isTodaysWorkout(t)) return todaysWorkoutReply(f);
+  if (isRoutinesQuery(t)) return routinesReply(f);
+  if (isLastWorkoutQuery(t)) return lastWorkoutReply(f);
+  if (isStreakQuery(t)) return streakReply(f);
   // Before isLogWorkoutHint so Hinglish "kaunse muscles kiye aaj" isn't hijacked
   // into workout-logging guidance by the "kiye" verb.
   if (isMusclesTrained(t)) return musclesTrainedReply(f);
@@ -632,7 +800,12 @@ export async function localCoachReply(text: string): Promise<LocalReply | null> 
   const days = summaryDays(t);
   if (days !== null) return summaryReply(days, f);
 
-  if (isImprovement(t)) return improvementReply(f);
+  // Progress question: if a specific lift is named ("am I progressing on bench?"),
+  // answer for THAT exercise; otherwise fall back to the global trend.
+  if (isImprovement(t)) {
+    const named = await matchExerciseInMessage(raw);
+    return named ? exerciseProgressReply(named, f) : improvementReply(f);
+  }
 
   const bodyWeight = parseBodyWeight(t);
   if (bodyWeight !== null) return bodyWeightReply(bodyWeight, f);

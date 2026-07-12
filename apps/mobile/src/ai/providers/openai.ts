@@ -22,6 +22,13 @@ interface WireChoiceMessage {
   tool_calls?: WireToolCall[];
 }
 
+interface WireChoice {
+  message?: WireChoiceMessage;
+  finish_reason?: string | null;
+}
+
+const MAX_COMPLETION_TOKENS = 4096;
+
 function safeJson(value: unknown): string {
   try {
     return JSON.stringify(value) ?? 'null';
@@ -109,8 +116,14 @@ export async function chatOpenAiCompatible(
   const body: Record<string, unknown> = {
     model: cfg.model,
     messages: toWire(system, messages),
-    [cfg.maxTokensField ?? 'max_completion_tokens']: 1024,
+    // The token cap counts reasoning tokens too — a low cap lets a reasoning
+    // model (gpt-5*) spend it all thinking and return empty content.
+    [cfg.maxTokensField ?? 'max_completion_tokens']: MAX_COMPLETION_TOKENS,
   };
+  // gpt-5* are reasoning models: cap the reasoning budget so the completion
+  // isn't starved. Only OpenAI's gpt-5 slugs accept this param (Groq's models
+  // never match `gpt-5`, so the shared core stays safe).
+  if (/^gpt-5/i.test(cfg.model)) body.reasoning_effort = 'low';
   if (tools.length) {
     body.tools = tools.map((t) => ({
       type: 'function',
@@ -138,8 +151,9 @@ export async function chatOpenAiCompatible(
     throw new Error(`${label} API error (HTTP ${res.status}): ${detail || res.statusText}`);
   }
 
-  const json = (await res.json()) as { choices?: { message?: WireChoiceMessage }[] };
-  const msg = json.choices?.[0]?.message;
+  const json = (await res.json()) as { choices?: WireChoice[] };
+  const choice = json.choices?.[0];
+  const msg = choice?.message;
   const turn: ProviderTurn = { text: typeof msg?.content === 'string' ? msg.content : '', toolCalls: [] };
   for (const call of msg?.tool_calls ?? []) {
     if (typeof call.id === 'string' && typeof call.function?.name === 'string') {
@@ -149,6 +163,12 @@ export async function chatOpenAiCompatible(
         args: parseArgs(call.function.arguments),
       });
     }
+  }
+  // Truncated by the token cap with nothing usable to show: surface it as a
+  // plain reply instead of an empty message (which reads as a silent failure).
+  if (choice?.finish_reason === 'length' && !turn.text.trim() && !turn.toolCalls.length) {
+    turn.text =
+      'That answer was cut off before it finished. Try asking something more specific, or break it into smaller questions.';
   }
   return turn;
 }

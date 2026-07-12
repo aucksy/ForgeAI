@@ -13,16 +13,19 @@ import { fmtInt, trimNum } from '@/lib/format';
 import { getExerciseStats } from '@/services/analytics';
 import { getTodaysWorkout } from '@/services/coach';
 import { getDashboardData } from '@/services/dashboard';
+import type { PlanDayFull } from '@/db/repos/planRepo';
 import * as routineRepo from '@/tracker/db/routineRepo';
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import type { SetMeta } from '@/tracker/db/trackerSets';
 import type {
   DayType,
   Exercise,
+  Goal,
   MuscleGroup,
   NutritionDay,
   PersonalRecord,
   SessionDetail,
+  UserProfile,
 } from '@/types/models';
 
 import type { CoachTool, ToolRunResult } from '@/ai/types';
@@ -293,6 +296,57 @@ export function buildWorkoutLoggedCard(logged: LoggedWorkout): ToolRunResult['ca
   };
 }
 
+// -------------------------------------------------- routine (plan-day) helpers
+
+/** Resolve a routine (plan day) by name — exact, then fuzzy, then by day type. */
+async function resolveRoutine(name: string): Promise<PlanDayFull | null> {
+  const q = name.trim().toLowerCase();
+  if (!q) return null;
+  const routines = await routineRepo.listRoutines();
+  return (
+    routines.find((r) => r.name.toLowerCase() === q) ??
+    routines.find((r) => r.name.toLowerCase().includes(q) || q.includes(r.name.toLowerCase())) ??
+    routines.find((r) => r.dayType === q) ??
+    null
+  );
+}
+
+/** Find one exercise inside a routine by name/alias (for update / remove). */
+function findRoutineExercise(
+  routine: PlanDayFull,
+  exName: string,
+): PlanDayFull['exercises'][number] | null {
+  const q = exName.trim().toLowerCase();
+  if (!q) return null;
+  return (
+    routine.exercises.find((pe) => pe.exercise.name.toLowerCase() === q) ??
+    routine.exercises.find((pe) => pe.exercise.aliases.some((a) => a.toLowerCase() === q)) ??
+    routine.exercises.find((pe) => pe.exercise.name.toLowerCase().includes(q)) ??
+    null
+  );
+}
+
+/** Compact routine summary for tool results. */
+function routineSummary(r: PlanDayFull): {
+  name: string;
+  dayType: DayType;
+  exercises: string[];
+} {
+  return {
+    name: r.name,
+    dayType: r.dayType,
+    exercises: r.exercises.map(
+      (pe) => `${pe.exercise.name} — ${pe.targetSets} × ${pe.repRangeMin}-${pe.repRangeMax}`,
+    ),
+  };
+}
+
+const GOALS: Goal[] = ['muscle', 'fat_loss', 'strength', 'general'];
+
+function clampInt(v: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(hi, Math.round(v)));
+}
+
 // ------------------------------------------------------------------- tools
 
 export const COACH_TOOLS: CoachTool[] = [
@@ -481,7 +535,10 @@ export const COACH_TOOLS: CoachTool[] = [
     },
     async execute(args) {
       const dateISO = asString(args.dateISO) ?? todayISO();
-      const snap = await nutritionSnapshot(dateISO);
+      const [snap, meals] = await Promise.all([
+        nutritionSnapshot(dateISO),
+        nutritionRepo.getMealsForDay(dateISO),
+      ]);
       return {
         resultForModel: {
           dateISO,
@@ -492,6 +549,12 @@ export const COACH_TOOLS: CoachTool[] = [
             fatG: Math.round(snap.day.fatG),
             meals: snap.day.mealCount,
           },
+          // Individual meals so the coach can reference/delete a specific one.
+          mealsList: meals.slice(0, 25).map((m) => ({
+            description: m.description,
+            calories: Math.round(m.calories),
+            proteinG: Math.round(m.proteinG),
+          })),
           targets: snap.targets,
           remaining: snap.remaining,
         },
@@ -785,6 +848,390 @@ export const COACH_TOOLS: CoachTool[] = [
           bodyWeightKg: d.bodyWeightKg,
           lastWorkout: d.lastWorkout,
           insight: d.insight,
+        },
+      };
+    },
+  },
+
+  // ------------------------------------------------- write / edit / delete tools
+  // These mutate stored data. Destructive ones (delete_*, remove_*) are
+  // confirm-first per the system prompt — the model asks before calling them.
+
+  {
+    name: 'create_routine',
+    description:
+      "Create a new empty workout routine (a day in the member's active plan). Add exercises afterwards with add_exercise_to_routine.",
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Routine name, e.g. "Push Day A".' },
+        dayType: {
+          type: 'string',
+          enum: ['push', 'pull', 'legs', 'upper', 'lower', 'full'],
+          description: 'Training split for this routine.',
+        },
+      },
+      required: ['name', 'dayType'],
+    },
+    async execute(args) {
+      const name = asString(args.name);
+      const dayType = asDayType(args.dayType);
+      if (!name || !dayType || dayType === 'rest') {
+        return {
+          resultForModel: {
+            error: 'create_routine needs a name and a dayType (push/pull/legs/upper/lower/full).',
+          },
+        };
+      }
+      // Use the returned id (names aren't unique — resolveRoutine could return an
+      // older same-named routine).
+      const id = await routineRepo.createRoutine({ name, dayType });
+      const routine = await routineRepo.getRoutine(id);
+      return {
+        resultForModel: {
+          created: true,
+          routine: routine ? routineSummary(routine) : { name, dayType, exercises: [] },
+        },
+      };
+    },
+  },
+
+  {
+    name: 'add_exercise_to_routine',
+    description:
+      "Add an exercise to one of the member's routines (creates the exercise if it doesn't exist). Call get_routines first to use the exact routine name.",
+    parameters: {
+      type: 'object',
+      properties: {
+        routineName: { type: 'string', description: 'Routine name as shown by get_routines.' },
+        exerciseName: { type: 'string' },
+        targetSets: { type: 'integer', description: 'Target working sets (default 3).' },
+        repRangeMin: { type: 'integer', description: 'Min reps (default 8).' },
+        repRangeMax: { type: 'integer', description: 'Max reps (default 12).' },
+      },
+      required: ['routineName', 'exerciseName'],
+    },
+    async execute(args) {
+      const routineName = asString(args.routineName);
+      const exerciseName = asString(args.exerciseName);
+      if (!routineName || !exerciseName) {
+        return {
+          resultForModel: { error: 'add_exercise_to_routine needs routineName and exerciseName.' },
+        };
+      }
+      const routine = await resolveRoutine(routineName);
+      if (!routine) {
+        return {
+          resultForModel: {
+            error: `No routine found named "${routineName}". Use get_routines to list them, or create_routine first.`,
+          },
+        };
+      }
+      let exercise = await exerciseRepo.findExerciseByName(exerciseName);
+      if (!exercise) {
+        exercise = await exerciseRepo.createExercise({
+          name: titleCase(exerciseName.trim()),
+          aliases: [exerciseName.trim().toLowerCase()],
+          muscleGroup: guessMuscleGroup(exerciseName),
+          secondaryMuscles: [],
+          equipment: 'other',
+          isCompound: false,
+          incrementKg: 2.5,
+        });
+      }
+      if (routine.exercises.some((pe) => pe.exerciseId === exercise.id)) {
+        return {
+          resultForModel: {
+            error: `"${exercise.name}" is already in "${routine.name}". Use update_routine_exercise to change its sets/reps.`,
+          },
+        };
+      }
+      const sets = asNumber(args.targetSets);
+      const rmin = asNumber(args.repRangeMin);
+      const rmax = asNumber(args.repRangeMax);
+      let repMin = rmin !== undefined ? clampInt(rmin, 1, 100) : undefined;
+      let repMax = rmax !== undefined ? clampInt(rmax, 1, 100) : undefined;
+      if (repMin !== undefined && repMax !== undefined && repMin > repMax) {
+        [repMin, repMax] = [repMax, repMin]; // keep min ≤ max
+      }
+      await routineRepo.addExerciseToRoutine(routine.id, exercise.id, {
+        targetSets: sets !== undefined ? clampInt(sets, 1, 20) : undefined,
+        repRangeMin: repMin,
+        repRangeMax: repMax,
+      });
+      const updated = await routineRepo.getRoutine(routine.id);
+      return {
+        resultForModel: { added: exercise.name, routine: updated ? routineSummary(updated) : null },
+      };
+    },
+  },
+
+  {
+    name: 'update_routine_exercise',
+    description:
+      'Change the target sets and/or rep range of an exercise already in a routine.',
+    parameters: {
+      type: 'object',
+      properties: {
+        routineName: { type: 'string' },
+        exerciseName: { type: 'string' },
+        targetSets: { type: 'integer' },
+        repRangeMin: { type: 'integer' },
+        repRangeMax: { type: 'integer' },
+      },
+      required: ['routineName', 'exerciseName'],
+    },
+    async execute(args) {
+      const routineName = asString(args.routineName);
+      const exerciseName = asString(args.exerciseName);
+      if (!routineName || !exerciseName) {
+        return {
+          resultForModel: { error: 'update_routine_exercise needs routineName and exerciseName.' },
+        };
+      }
+      const routine = await resolveRoutine(routineName);
+      if (!routine) return { resultForModel: { error: `No routine named "${routineName}".` } };
+      const pe = findRoutineExercise(routine, exerciseName);
+      if (!pe) {
+        return { resultForModel: { error: `"${exerciseName}" is not in "${routine.name}".` } };
+      }
+      const sets = asNumber(args.targetSets);
+      const rmin = asNumber(args.repRangeMin);
+      const rmax = asNumber(args.repRangeMax);
+      if (sets === undefined && rmin === undefined && rmax === undefined) {
+        return {
+          resultForModel: {
+            error: 'Nothing to update — pass targetSets, repRangeMin and/or repRangeMax.',
+          },
+        };
+      }
+      // Resolve the effective rep range (falling back to the stored bound) so a
+      // partial update can't leave an inverted min > max.
+      let effMin = rmin !== undefined ? clampInt(rmin, 1, 100) : pe.repRangeMin;
+      let effMax = rmax !== undefined ? clampInt(rmax, 1, 100) : pe.repRangeMax;
+      if (effMin > effMax) [effMin, effMax] = [effMax, effMin];
+      await routineRepo.updateRoutineExercise(pe.id, {
+        targetSets: sets !== undefined ? clampInt(sets, 1, 20) : undefined,
+        repRangeMin: rmin !== undefined || rmax !== undefined ? effMin : undefined,
+        repRangeMax: rmin !== undefined || rmax !== undefined ? effMax : undefined,
+      });
+      const updated = await routineRepo.getRoutine(routine.id);
+      return {
+        resultForModel: {
+          updated: pe.exercise.name,
+          routine: updated ? routineSummary(updated) : null,
+        },
+      };
+    },
+  },
+
+  {
+    name: 'remove_exercise_from_routine',
+    description:
+      'Remove an exercise from a routine. Destructive — confirm with the member first unless they clearly asked to remove it.',
+    parameters: {
+      type: 'object',
+      properties: {
+        routineName: { type: 'string' },
+        exerciseName: { type: 'string' },
+      },
+      required: ['routineName', 'exerciseName'],
+    },
+    async execute(args) {
+      const routineName = asString(args.routineName);
+      const exerciseName = asString(args.exerciseName);
+      if (!routineName || !exerciseName) {
+        return {
+          resultForModel: {
+            error: 'remove_exercise_from_routine needs routineName and exerciseName.',
+          },
+        };
+      }
+      const routine = await resolveRoutine(routineName);
+      if (!routine) return { resultForModel: { error: `No routine named "${routineName}".` } };
+      const pe = findRoutineExercise(routine, exerciseName);
+      if (!pe) {
+        return { resultForModel: { error: `"${exerciseName}" is not in "${routine.name}".` } };
+      }
+      const removedName = pe.exercise.name;
+      await routineRepo.removeRoutineExercise(pe.id);
+      const updated = await routineRepo.getRoutine(routine.id);
+      return {
+        resultForModel: {
+          removed: removedName,
+          routine: updated ? routineSummary(updated) : null,
+        },
+      };
+    },
+  },
+
+  {
+    name: 'delete_routine',
+    description:
+      'Delete an entire routine and all its exercises. Destructive — confirm with the member first unless they clearly asked to delete it.',
+    parameters: {
+      type: 'object',
+      properties: { routineName: { type: 'string' } },
+      required: ['routineName'],
+    },
+    async execute(args) {
+      const routineName = asString(args.routineName);
+      if (!routineName) return { resultForModel: { error: 'delete_routine needs routineName.' } };
+      const routine = await resolveRoutine(routineName);
+      if (!routine) return { resultForModel: { error: `No routine named "${routineName}".` } };
+      const deletedName = routine.name;
+      await routineRepo.deleteRoutine(routine.id);
+      return { resultForModel: { deleted: deletedName } };
+    },
+  },
+
+  {
+    name: 'update_targets',
+    description:
+      "Update the member's profile: display name, primary goal, and/or daily nutrition targets (calories, protein, carbs, fat in grams). Only pass the fields being changed.",
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        goal: { type: 'string', enum: ['muscle', 'fat_loss', 'strength', 'general'] },
+        calorieTarget: { type: 'integer' },
+        proteinTargetG: { type: 'integer' },
+        carbsTargetG: { type: 'integer' },
+        fatTargetG: { type: 'integer' },
+      },
+    },
+    async execute(args) {
+      const patch: Partial<Omit<UserProfile, 'id'>> = {};
+      const name = asString(args.name);
+      if (name) patch.name = name;
+      const goal = asString(args.goal)?.toLowerCase();
+      if (goal && (GOALS as string[]).includes(goal)) patch.goal = goal as Goal;
+      const cal = asNumber(args.calorieTarget);
+      if (cal !== undefined) patch.calorieTarget = clampInt(cal, 0, 20000);
+      const pro = asNumber(args.proteinTargetG);
+      if (pro !== undefined) patch.proteinTargetG = clampInt(pro, 0, 1000);
+      const carb = asNumber(args.carbsTargetG);
+      if (carb !== undefined) patch.carbsTargetG = clampInt(carb, 0, 2000);
+      const fat = asNumber(args.fatTargetG);
+      if (fat !== undefined) patch.fatTargetG = clampInt(fat, 0, 1000);
+      if (Object.keys(patch).length === 0) {
+        return {
+          resultForModel: {
+            error: 'Nothing to update — pass name, goal, or a calorie/protein/carb/fat target.',
+          },
+        };
+      }
+      const updated = await userRepo.updateProfile(patch);
+      return {
+        resultForModel: {
+          updated: true,
+          profile: {
+            name: updated.name,
+            goal: updated.goal,
+            calorieTarget: updated.calorieTarget,
+            proteinTargetG: updated.proteinTargetG,
+            carbsTargetG: updated.carbsTargetG,
+            fatTargetG: updated.fatTargetG,
+          },
+        },
+      };
+    },
+  },
+
+  {
+    name: 'delete_meal',
+    description:
+      "Delete a logged meal, identified by a word or two from its description (and optionally the day). Destructive — confirm with the member first unless they clearly asked to delete it. Call get_nutrition to see the day's meals.",
+    parameters: {
+      type: 'object',
+      properties: {
+        description: {
+          type: 'string',
+          description: 'A word or phrase from the meal to delete, e.g. "butter chicken".',
+        },
+        dateISO: { type: 'string', description: "Local day 'YYYY-MM-DD'. Omit for today." },
+      },
+    },
+    async execute(args) {
+      const dateISO = asString(args.dateISO) ?? todayISO();
+      const query = asString(args.description)?.toLowerCase();
+      const meals = await nutritionRepo.getMealsForDay(dateISO);
+      if (!meals.length) return { resultForModel: { error: `No meals logged on ${dateISO}.` } };
+      let target = meals[0];
+      let otherMatches = 0;
+      if (query) {
+        const matches = meals.filter((m) => m.description.toLowerCase().includes(query));
+        if (!matches.length) {
+          return {
+            resultForModel: {
+              error: `No meal matching "${query}" on ${dateISO}.`,
+              mealsThatDay: meals.map((m) => m.description),
+            },
+          };
+        }
+        target = matches[matches.length - 1]; // most recently logged match
+        otherMatches = matches.length - 1;
+      } else if (meals.length > 1) {
+        return {
+          resultForModel: {
+            error: `${meals.length} meals logged on ${dateISO} — say which one to delete.`,
+            mealsThatDay: meals.map((m) => m.description),
+          },
+        };
+      }
+      await nutritionRepo.deleteMeal(target.id);
+      const snap = await nutritionSnapshot(dateISO);
+      return {
+        resultForModel: {
+          deleted: target.description,
+          dateISO,
+          // Let the coach mention leftovers rather than assume it cleared them all.
+          ...(otherMatches > 0
+            ? { note: `${otherMatches} other meal(s) also matched "${query}" and were kept.` }
+            : {}),
+          dayTotals: {
+            calories: Math.round(snap.day.calories),
+            proteinG: Math.round(snap.day.proteinG),
+          },
+          remaining: snap.remaining,
+        },
+      };
+    },
+  },
+
+  {
+    name: 'delete_session',
+    description:
+      'Delete a logged workout session (all its sets) on a given day. Destructive — confirm with the member first unless they clearly asked to delete it. Call get_recent_workouts to see recent sessions and their dates.',
+    parameters: {
+      type: 'object',
+      properties: {
+        dateISO: {
+          type: 'string',
+          description: "Local day 'YYYY-MM-DD' of the workout to delete.",
+        },
+      },
+      required: ['dateISO'],
+    },
+    async execute(args) {
+      const dateISO = asString(args.dateISO);
+      if (!dateISO) {
+        return { resultForModel: { error: 'delete_session needs the dateISO of the workout.' } };
+      }
+      const sessions = await workoutRepo.getSessionsBetween(dateISO, dateISO);
+      if (!sessions.length) return { resultForModel: { error: `No workout logged on ${dateISO}.` } };
+      const target = sessions[sessions.length - 1]; // most recent that day (asc order)
+      const detail = await workoutRepo.getSessionDetail(target.id);
+      await workoutRepo.deleteSession(target.id);
+      return {
+        resultForModel: {
+          deleted: true,
+          dateISO,
+          dayType: target.dayType,
+          exercises: detail ? detail.exercises.map((e) => e.exercise.name) : [],
+          ...(sessions.length > 1
+            ? { note: `${sessions.length} sessions were on ${dateISO}; deleted the most recent.` }
+            : {}),
         },
       };
     },

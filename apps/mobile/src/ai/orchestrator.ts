@@ -224,10 +224,12 @@ export async function sendToCoach(
 
     const toolResults: string[] = []; // grounding corpus (dev smoke-check only)
     let finalText = '';
+    let exhausted = true; // still wanting tools when the round budget ran out
     for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
       const turn = await chat(cfg, system, msgs, COACH_TOOLS);
       if (!turn.toolCalls.length) {
         finalText = turn.text;
+        exhausted = false;
         break;
       }
       msgs.push({ role: 'assistant', text: turn.text, toolCalls: turn.toolCalls });
@@ -244,6 +246,18 @@ export async function sendToCoach(
         msgs.push({ role: 'tool', toolResult: { callId: call.id, result } });
       }
       finalText = turn.text; // best available if we exhaust the round budget
+    }
+
+    // Round budget exhausted while the model still wanted tools: its last `text`
+    // is stale interim reasoning, not an answer. Make ONE final call with NO tools
+    // (both providers accept tools.length===0) so it must summarise in prose.
+    if (exhausted) {
+      try {
+        const summary = await chat(cfg, system, msgs, []);
+        if (summary.text.trim()) finalText = summary.text;
+      } catch {
+        /* keep the best interim text; tools already ran and cards are saved */
+      }
     }
     if (!finalText.trim()) finalText = cards.length ? 'Done — details below.' : 'Done!';
 
