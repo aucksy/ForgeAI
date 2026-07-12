@@ -9,13 +9,13 @@
  */
 import { create } from 'zustand';
 
-import { getMeta, setMeta } from '@/db';
+import { getDb, getMeta, setMeta } from '@/db';
 import { getActivePlan } from '@/db/repos/planRepo';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { addSetsWithMeta } from '@/tracker/db/trackerSets';
 import type { RichSet } from '@/tracker/db/trackerSets';
 import { createSession, getExerciseHistory } from '@/db/repos/workoutRepo';
-import { todayISO } from '@/lib/date';
+import { toISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 import { getTodaysWorkout } from '@/services/coach';
 import type { DayType, Exercise, MuscleGroup, SessionDetail } from '@/types/models';
@@ -438,11 +438,15 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               if (s.key !== setKey) return s;
               if (s.done) return { ...s, done: false };
               // Completing: auto-fill blanks from the PREVIOUS value.
+              const reps = s.reps ?? prev?.reps ?? null;
+              // Nothing to log (blank set with no PREVIOUS) — don't fake a "done"
+              // state that finish() would silently drop (isCommittable needs reps > 0).
+              if (reps == null || reps <= 0) return s;
               return {
                 ...s,
                 done: true,
                 weightKg: s.weightKg ?? prev?.weightKg ?? 0,
-                reps: s.reps ?? prev?.reps ?? 0,
+                reps,
               };
             }),
           };
@@ -481,16 +485,30 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       if (flat.length === 0 || !flat.some((f) => !f.isWarmup)) return null;
       set({ committing: true });
       try {
-        const session = await createSession({
-          dateISO: todayISO(),
-          dayType: s.dayType,
-          notes: note ?? null,
-          source: 'manual',
-          startedAt: s.startedAt,
-          endedAt: Date.now(),
+        // The session belongs to the day it STARTED, not the commit instant — a
+        // workout crossing midnight must not split from its own started_at.
+        const startedAt = s.startedAt; // narrowed to number by the guard above
+        const dateISO = toISO(new Date(startedAt));
+        const endedAt = Date.now();
+        // Commit the whole workout atomically: createSession + addSetsWithMeta +
+        // the draft-clear all run inside ONE transaction on the shared getDb()
+        // connection (non-exclusive, like hevyImport — the frozen repos join it).
+        // A kill/error mid-commit now rolls back cleanly instead of leaving an
+        // orphan session + a surviving draft that would duplicate it on retry.
+        let sessionId = '';
+        await getDb().withTransactionAsync(async () => {
+          const session = await createSession({
+            dateISO,
+            dayType: s.dayType,
+            notes: note ?? null,
+            source: 'manual',
+            startedAt,
+            endedAt,
+          });
+          sessionId = session.id;
+          await addSetsWithMeta(session.id, flat); // auto set_number + PR detection + rpe/type
+          await setMeta(DRAFT_KEY, '');
         });
-        await addSetsWithMeta(session.id, flat); // auto set_number + PR detection + rpe/type
-        await setMeta(DRAFT_KEY, '');
         set({
           active: false,
           committing: false,
@@ -501,7 +519,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           exercises: [],
           lastDeleted: null,
         });
-        return session.id;
+        return sessionId;
       } catch (e) {
         set({ committing: false }); // let the user retry
         throw e;

@@ -45,7 +45,12 @@ const TABLES: readonly { name: string; cols: readonly string[] }[] = [
   },
   {
     name: 'set_entries',
-    cols: ['id', 'session_id', 'exercise_id', 'set_number', 'weight_kg', 'reps', 'is_warmup'],
+    // Includes the additive Phase-5b/5c columns (rpe/set_type/note/superset_group).
+    // They exist at runtime via initTrackerSchema; SELECTing/INSERTing them keeps the
+    // Drive backup lossless. Old backups lack these keys → batchInsert's `row[c] ?? null`
+    // restores them as NULL (backward-compatible; no SCHEMA_VERSION bump needed).
+    cols: ['id', 'session_id', 'exercise_id', 'set_number', 'weight_kg', 'reps', 'is_warmup',
+      'rpe', 'set_type', 'note', 'superset_group'],
   },
   {
     name: 'personal_records',

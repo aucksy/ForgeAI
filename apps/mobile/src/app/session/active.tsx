@@ -120,13 +120,19 @@ export default function ActiveWorkoutScreen() {
   const onFinish = async (): Promise<void> => {
     if (useActiveWorkout.getState().committing) return; // ignore double-tap while saving
     leaving.current = true;
-    const id = await finish(null);
-    if (id) {
-      await useDashboard.getState().refresh();
-      router.replace({ pathname: '/session/finish', params: { id } });
-    } else {
+    try {
+      const id = await finish(null);
+      if (id) {
+        await useDashboard.getState().refresh();
+        router.replace({ pathname: '/session/finish', params: { id } });
+      } else {
+        leaving.current = false;
+        Alert.alert('Nothing to save', 'Log at least one set (weight and reps) before finishing.');
+      }
+    } catch {
+      // Commit rolled back atomically (nothing saved) — let the user retry.
       leaving.current = false;
-      Alert.alert('Nothing to save', 'Log at least one set (weight and reps) before finishing.');
+      Alert.alert('Could not save', 'Something went wrong saving your workout. Your sets are still here — tap ✓ to try again.');
     }
   };
 

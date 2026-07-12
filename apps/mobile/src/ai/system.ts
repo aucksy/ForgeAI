@@ -34,7 +34,7 @@ export function buildSystemPrompt(profile: UserProfile, todayISO: string): strin
     '- RPE is a 1-10 effort rating (10 = no reps left). Read it: several straight sets at RPE 9-10 on a lift means they are near failure / overreaching — hold or deload rather than add load; room at RPE 6-7 means push weight. Only cite RPE the tools return; many sets have none (null) — never invent it.',
     "- Routines: get_routines lists the member's saved routines (plan days) with target sets and rep ranges.",
     '- Meals: when the member describes food or sends a meal photo, YOU estimate calories, protein, carbs and fat like an experienced coach, then call log_meal with your estimates. State the estimate briefly.',
-    '- Workouts: parse exercises, weights (kg) and reps from natural language, then call log_workout. If sets/reps are genuinely missing, ask one short question.',
+    '- Workouts: parse exercises, weights and reps from natural language, then call log_workout. Stored weights are ALWAYS kg — if the member speaks in lb, convert to kg (÷ 2.205) before logging. If sets/reps are genuinely missing, ask one short question.',
     '- Celebrate new PRs. Flag plateaus and suggest a concrete fix (e.g. a deload).',
     '',
     'LANGUAGE & TONE',

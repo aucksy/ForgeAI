@@ -16,7 +16,7 @@ interface HeroWorkoutCardProps {
 
 /**
  * Flagship dashboard card: today's session with the first three overload
- * targets. Ember glow + gradient top edge; tapping opens the coach tab.
+ * targets. Ember glow + gradient top edge; tapping starts the workout.
  */
 export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCardProps) {
   const targets = workout.targets.slice(0, 3);
@@ -173,7 +173,7 @@ export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCar
           }}
         >
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>
-            Open your coach
+            Start workout
           </Text>
           <Icon name="chevron-right" size={14} color={color.accent} />
         </View>

@@ -40,6 +40,13 @@ function genericHelp(): LocalReply {
   };
 }
 
+const PHOTO_OFFLINE_REPLY: LocalReply = {
+  text:
+    "I can't read photos in offline mode. Add a Claude or OpenAI key in Settings for meal-photo " +
+    'estimates — or just tell me what you ate (e.g. "2 rotis, dal and paneer") and I\'ll log it.',
+  cards: [],
+};
+
 function mediaTypeFromUri(uri: string): string {
   const ext = uri.split('?')[0].split('#')[0].split('.').pop()?.toLowerCase() ?? '';
   switch (ext) {
@@ -119,6 +126,9 @@ export async function sendToCoach(
     return saved; // DB unavailable — nothing else we can do.
   }
 
+  // Cards from tool executions are DB writes committed mid-loop. Declared out here
+  // so a later-round provider error can still surface what was already saved.
+  const cards: CoachCard[] = [];
   try {
     const settings = useSettings.getState();
     let provider: AiProviderId = settings.ai.provider;
@@ -146,7 +156,11 @@ export async function sendToCoach(
     }
 
     if (provider === 'local') {
-      const reply = (await localCoachReply(userText)) ?? genericHelp();
+      const parsed = await localCoachReply(userText);
+      // A meal photo with no actionable text must be acknowledged, not answered
+      // with the generic help blurb — the offline coach can't see images, so guide
+      // the user to describe it (or add a cloud key) instead of looking broken.
+      const reply = parsed ?? (imageUri ? PHOTO_OFFLINE_REPLY : genericHelp());
       await persistReply(saved, reply.text, reply.cards);
       if (missingKey) {
         saved.push(await chatRepo.addMessage({ role: 'coach', kind: 'text', text: KEY_HINT }));
@@ -157,7 +171,9 @@ export async function sendToCoach(
     // ---------------------------------------------------------- cloud path
     if (!apiKey) throw new Error('Missing API key.'); // unreachable; narrows type
     const profile = await userRepo.getProfile();
-    const system = buildSystemPrompt(profile, todayISO());
+    // Units come from the LIVE settings toggle, not the (never-updated) seeded
+    // profile row — otherwise an lb user is coached in kg.
+    const system = buildSystemPrompt({ ...profile, unitSystem: settings.unitSystem }, todayISO());
 
     const history = await chatRepo.getMessages(HISTORY_LIMIT);
     const msgs: ProviderMessage[] = [];
@@ -206,7 +222,6 @@ export async function sendToCoach(
             : settings.ai.openaiModel,
     };
 
-    const cards: CoachCard[] = [];
     const toolResults: string[] = []; // grounding corpus (dev smoke-check only)
     let finalText = '';
     for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
@@ -246,6 +261,12 @@ export async function sendToCoach(
   } catch (err) {
     const detail = err instanceof Error ? err.message : 'Something went wrong.';
     try {
+      // A tool may already have written to the DB before the failure (e.g. a
+      // logged workout in round 1, then round 2's request dropped). Surface those
+      // cards so the user doesn't think it failed and re-log a duplicate.
+      if (cards.length) {
+        await persistReply(saved, 'The connection dropped, but this was already saved:', cards);
+      }
       saved.push(
         await chatRepo.addMessage({
           role: 'coach',

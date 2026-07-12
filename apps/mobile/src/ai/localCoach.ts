@@ -637,7 +637,12 @@ export async function localCoachReply(text: string): Promise<LocalReply | null> 
   const bodyWeight = parseBodyWeight(t);
   if (bodyWeight !== null) return bodyWeightReply(bodyWeight, f);
 
-  const workout = parseWorkout(t);
+  // A QUESTION that merely contains a set expression ("should I bench 80 kg for 8?",
+  // "kya main 80 kg x 8 karu?") must NOT be logged — parseWorkout would coin a junk
+  // exercise ("should bench") + fake sets in the offline source of truth. Route
+  // interrogatives to guidance instead of writing.
+  const isQuestion = /\?\s*$/.test(raw) || /\b(should|shall|can i|could|would|kya|karu|karun|karoon)\b/.test(t);
+  const workout = isQuestion ? [] : parseWorkout(t);
   if (workout.length) return logWorkoutReply(workout, f);
 
   // A set expression with no exercise name ("3 sets of 10 at 60") parses to no
