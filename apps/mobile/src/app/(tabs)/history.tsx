@@ -5,11 +5,12 @@ import { View } from 'react-native';
 
 import { Heatmap } from '@/components/charts';
 import { Card, EmptyState, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
-import { getConsistency, getRecentSessionDetails } from '@/db/repos/workoutRepo';
+import { getConsistency } from '@/db/repos/workoutRepo';
 import { radius, space } from '@/theme/tokens';
 import type { ConsistencyCell, SessionDetail } from '@/types/models';
 
 import { WorkoutCard } from '@/tracker/components/WorkoutCard';
+import { getRecentSessionDetailsBatched } from '@/tracker/db/sessionDetails';
 import { getWeekStreak } from '@/tracker/services/history';
 import type { WeekStreak } from '@/tracker/services/history';
 
@@ -25,8 +26,9 @@ export default function HistoryScreen() {
     useCallback(() => {
       let alive = true;
       // Fetch each independently so a streak/heatmap read failing can't blank the feed.
+      // The feed read is batched (~3 queries, not 1 + 2×50) — this re-runs on every focus.
       Promise.all([
-        getRecentSessionDetails(50).catch(() => [] as SessionDetail[]),
+        getRecentSessionDetailsBatched(50).catch(() => [] as SessionDetail[]),
         getConsistency(CAL_WEEKS * 7).catch(() => [] as ConsistencyCell[]),
         getWeekStreak().catch(() => ({ weeks: 0, restDays: 0 }) as WeekStreak),
       ]).then(([rows, c, st]) => {

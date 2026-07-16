@@ -15,6 +15,7 @@ import { getTodaysWorkout } from '@/services/coach';
 import { getDashboardData } from '@/services/dashboard';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import * as routineRepo from '@/tracker/db/routineRepo';
+import { getRecentSessionDetailsBatched } from '@/tracker/db/sessionDetails';
 import { deleteSessionAndReconcile } from '@/tracker/services/prRebuild';
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import type { SetMeta } from '@/tracker/db/trackerSets';
@@ -786,7 +787,7 @@ export const COACH_TOOLS: CoachTool[] = [
     async execute(args) {
       const n = asNumber(args.limit);
       const limit = Math.min(10, Math.max(1, n === undefined ? 5 : Math.round(n)));
-      const sessions = await workoutRepo.getRecentSessionDetails(limit);
+      const sessions = await getRecentSessionDetailsBatched(limit);
       const workouts = await Promise.all(
         sessions.map(async (s) => {
           const meta = await getSessionSetMeta(s.id);

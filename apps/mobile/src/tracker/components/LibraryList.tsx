@@ -9,9 +9,10 @@ import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
 import { Chip, EmptyState, GhostButton, Icon } from '@/components/ui';
 import { getAllExercises } from '@/db/repos/exerciseRepo';
-import { getRecentSessionDetails } from '@/db/repos/workoutRepo';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { Exercise, MuscleGroup } from '@/types/models';
+
+import { getRecentSessionDetailsBatched } from '../db/sessionDetails';
 
 type Equipment = Exercise['equipment'];
 
@@ -91,7 +92,7 @@ export function LibraryList({
       .catch(() => {
         /* unseeded / transient — list stays empty */
       });
-    getRecentSessionDetails(12)
+    getRecentSessionDetailsBatched(12) // batched: ~3 queries, not 1 + 2×12
       .then((sessions) => {
         if (!alive) return;
         const seen = new Set<string>();

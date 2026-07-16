@@ -11,10 +11,11 @@ import { create } from 'zustand';
 
 import { getDb, getMeta, setMeta } from '@/db';
 import { getActivePlan } from '@/db/repos/planRepo';
+import { getBoundedExerciseHistory } from '@/tracker/db/exerciseHistory';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { addSetsWithMeta } from '@/tracker/db/trackerSets';
 import type { RichSet } from '@/tracker/db/trackerSets';
-import { createSession, getExerciseHistory } from '@/db/repos/workoutRepo';
+import { createSession } from '@/db/repos/workoutRepo';
 import { toISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 import { getTodaysWorkout } from '@/services/coach';
@@ -130,7 +131,10 @@ async function buildDraftExercise(
   ex: Pick<Exercise, 'id' | 'name' | 'muscleGroup' | 'equipment' | 'incrementKg'>,
   targetSets: number,
 ): Promise<DraftExercise> {
-  const hist = await getExerciseHistory(ex.id, 1);
+  // Bounded in SQL: start-from-plan builds one draft per plan exercise, and the frozen
+  // read would materialise each lift's ENTIRE working-set history just to keep its last
+  // session. Parity-identical (newest-first, working sets only).
+  const hist = await getBoundedExerciseHistory(ex.id, 1);
   const previousSets = (hist[0]?.sets ?? []).map((s) => ({ weightKg: s.weightKg, reps: s.reps }));
   const count = Math.max(targetSets, previousSets.length, 1);
   const sets: DraftSet[] = Array.from({ length: count }, () => ({
@@ -154,7 +158,7 @@ async function buildDraftExercise(
 
 /**
  * PREVIOUS entry for a set, matched by WORKING-set ordinal. `previousSets` holds
- * last session's working sets only (getExerciseHistory excludes warm-ups), so
+ * last session's working sets only (the history read excludes warm-ups), so
  * warm-up rows have no PREVIOUS and never shift the mapping of the working rows.
  */
 export function prevForSet(
@@ -481,7 +485,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         }
       }
       // Need at least one working set — a warm-up-only session would be invisible
-      // to history/PREVIOUS (getExerciseHistory excludes warm-ups).
+      // to history/PREVIOUS (the history read excludes warm-ups).
       if (flat.length === 0 || !flat.some((f) => !f.isWarmup)) return null;
       set({ committing: true });
       try {

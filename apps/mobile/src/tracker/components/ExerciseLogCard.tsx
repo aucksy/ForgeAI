@@ -1,5 +1,5 @@
 /** One exercise inside the active workout: header, set-table, warm-up + plate tools. */
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 
 import { Badge, GhostButton, Icon, IconButton } from '@/components/ui';
@@ -28,7 +28,14 @@ const ACTION_BADGE: Record<OverloadTarget['action'], { label: string; tone: Badg
 
 const repRange = (min: number, max: number): string => (min === max ? `${min}` : `${min}–${max}`);
 
-export function ExerciseLogCard({
+/**
+ * Memoised: the store rebuilds only the edited exercise (`list.map(e => e.key === exKey
+ * ? {...e} : e)`), so editing one card leaves the other five with identical props and they
+ * skip reconciliation entirely. This only holds while the caller keeps `existingGroups`
+ * and `target` referentially stable (active.tsx memoises the array and reads `target` from
+ * a state-held Map) — a freshly-allocated prop would silently make this a no-op.
+ */
+export const ExerciseLogCard = memo(function ExerciseLogCard({
   exercise,
   existingGroups,
   target,
@@ -285,7 +292,7 @@ export function ExerciseLogCard({
       />
     </View>
   );
-}
+});
 
 const colHead = {
   fontFamily: type.bodySemi,

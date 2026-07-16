@@ -8,14 +8,17 @@
  * rotation day the numbers are byte-identical to the Coach tab, and for any other
  * routine day it's the correct prescription for THAT day's rep ranges.
  *
- * Reuses frozen pure/read functions only (`getActivePlan`, `getExerciseHistory`,
+ * The history read is the SQL-bounded `getBoundedExerciseHistory` (parity-identical to
+ * the frozen `getExerciseHistory`, without materialising the lift's whole history for
+ * the 5 sessions we keep — this runs per plan exercise on the workout-start tap).
+ * Otherwise reuses frozen pure/read functions only (`getActivePlan`,
  * `computeOverloadTarget`) — no frozen file is edited, no schema, zero network.
  * A target only exists for exercises that belong to the plan day (a rep range
  * lives in the plan): ad-hoc / Start-Empty exercises simply get no prescription.
  */
 import { getActivePlan } from '@/db/repos/planRepo';
-import { getExerciseHistory } from '@/db/repos/workoutRepo';
 import { computeOverloadTarget } from '@/engine/overload';
+import { getBoundedExerciseHistory } from '@/tracker/db/exerciseHistory';
 import { todayISO } from '@/lib/date';
 import type { OverloadTarget } from '@/types/models';
 
@@ -36,7 +39,7 @@ export async function getTargetsForPlanDay(
   const today = todayISO();
   await Promise.all(
     day.exercises.map(async (pe) => {
-      const raw = await getExerciseHistory(pe.exerciseId, 5);
+      const raw = await getBoundedExerciseHistory(pe.exerciseId, 5);
       // Mirror services/coach.ts: prescribe from sessions completed BEFORE today
       // (targets stay stable all day) and cap at the most-recent 4.
       const history = raw

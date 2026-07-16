@@ -7,7 +7,7 @@
  * TYPE glyph (W/D/F) and a compact second line adds a type selector + RPE input.
  * When disabled the row is byte-for-byte the original 2-tap experience.
  */
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 
@@ -44,7 +44,14 @@ function parseNum(text: string, integer: boolean): number | null {
   return Number.isNaN(n) ? null : n;
 }
 
-export function SetRow({ exKey, set, label, previous }: SetRowProps) {
+/**
+ * Memoised: the store rebuilds only the edited set's object (`sets.map(s => s.key === setKey
+ * ? {...s} : s)`), so every untouched row keeps prop identity — `set` and `previous` are the
+ * same references, `exKey`/`label` are primitives. Typing a weight therefore reconciles ONE
+ * row, not all ~24 (each with a Swipeable + two TextInputs). Store actions and the
+ * `advancedSets` pref are read via hooks, so they still update a memoised row.
+ */
+export const SetRow = memo(function SetRow({ exKey, set, label, previous }: SetRowProps) {
   const updateSet = useActiveWorkout((s) => s.updateSet);
   const toggleWarmup = useActiveWorkout((s) => s.toggleWarmup);
   const toggleDone = useActiveWorkout((s) => s.toggleDone);
@@ -273,7 +280,7 @@ export function SetRow({ exKey, set, label, previous }: SetRowProps) {
       </View>
     </Swipeable>
   );
-}
+});
 
 const inputStyle = {
   flex: 1,

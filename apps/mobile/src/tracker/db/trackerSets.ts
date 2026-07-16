@@ -51,6 +51,18 @@ export async function addSetsWithMeta(sessionId: string, sets: RichSet[]): Promi
   for (let i = 0; i < created.length; i++) {
     const s = sets[i];
     const setType: SetType = s.isWarmup ? 'warmup' : s.setType ?? 'normal';
+    // A plain working set has nothing to write: `addSets` INSERTs leave all four
+    // additive columns NULL, and that IS the no-metadata state — `getSessionSetMeta`
+    // (their only reader) maps NULL → 'normal'/null, exactly as it already does for
+    // every seed row. So the UPDATE would rewrite the row to its own semantics.
+    // Skipping it drops ~8.8k redundant statements from a Hevy import. `setType`
+    // covers warm-ups too: isWarmup ⇒ 'warmup' ⇒ never 'normal'.
+    const hasMeta =
+      (s.rpe ?? null) !== null ||
+      (s.note ?? null) !== null ||
+      (s.supersetGroup ?? null) !== null ||
+      setType !== 'normal';
+    if (!hasMeta) continue;
     await db.runAsync(
       'UPDATE set_entries SET rpe = ?, set_type = ?, note = ?, superset_group = ? WHERE id = ?',
       [s.rpe ?? null, setType, s.note ?? null, s.supersetGroup ?? null, created[i].id],

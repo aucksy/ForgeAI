@@ -1,7 +1,7 @@
 /** Active workout — the live logging screen (full-screen over the tabs). */
 import { useKeepAwake } from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -11,22 +11,12 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import type { OverloadTarget } from '@/types/models';
 
+import { ElapsedClock } from '@/tracker/components/ElapsedClock';
 import { ExerciseLogCard } from '@/tracker/components/ExerciseLogCard';
 import { RestTimerBar } from '@/tracker/components/RestTimerBar';
 import { getTargetsForPlanDay } from '@/tracker/services/coachTargets';
-import { formatDuration } from '@/tracker/services/finishSummary';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
-
-function useElapsed(startedAt: number | null): number {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-  if (startedAt == null) return 0;
-  return Math.max(0, Math.floor((now - startedAt) / 1000));
-}
 
 export default function ActiveWorkoutScreen() {
   const router = useRouter();
@@ -83,8 +73,6 @@ export default function ActiveWorkoutScreen() {
     return () => clearTimeout(id);
   }, [lastDeleted, dismissUndo]);
 
-  const elapsed = useElapsed(startedAt);
-
   // We navigate away explicitly on finish/discard; suppress the safety redirect then.
   const leaving = useRef(false);
 
@@ -98,10 +86,18 @@ export default function ActiveWorkoutScreen() {
     e.sets.some((s) => !s.isWarmup && s.reps != null && s.reps > 0 && s.weightKg != null),
   );
 
-  // Distinct superset groups in this workout (for the per-card chooser).
-  const existingGroups = [
-    ...new Set(exercises.map((e) => e.supersetGroup).filter((g): g is number => g != null)),
-  ].sort((a, b) => a - b);
+  // Distinct superset groups in this workout (for the per-card chooser). Memoised on a
+  // primitive key, NOT on `exercises`: the store replaces that array on every keystroke,
+  // so a plain dep would hand every card a fresh array and defeat their React.memo.
+  const groupsKey = exercises.map((e) => e.supersetGroup ?? '').join(',');
+  const existingGroups = useMemo(
+    () =>
+      [
+        ...new Set(exercises.map((e) => e.supersetGroup).filter((g): g is number => g != null)),
+      ].sort((a, b) => a - b),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [groupsKey],
+  );
 
   const onDiscard = (): void => {
     Alert.alert('Discard workout?', 'This workout and its sets will be deleted. This cannot be undone.', [
@@ -148,14 +144,8 @@ export default function ActiveWorkoutScreen() {
         }}
       >
         <IconButton icon="close" onPress={onDiscard} accessibilityLabel="Discard workout" />
-        <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted }}>
-            ELAPSED
-          </Text>
-          <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>
-            {formatDuration(elapsed)}
-          </Text>
-        </View>
+        {/* Owns its own 1 Hz tick — the rest of this tree no longer re-renders per second. */}
+        <ElapsedClock startedAt={startedAt} />
         <IconButton
           icon="check"
           tint={canFinish && !committing ? color.accent : color.inkFaint}
