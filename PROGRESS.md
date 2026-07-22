@@ -384,6 +384,24 @@
   - **Caught during review:** a review agent ran Expo's lint, which auto-installed `eslint`/`eslint-config-expo`, generated `eslint.config.js` and churned `package-lock.json` (**5,698 insertions / 1,695 deletions**). Agent side-effect, not part of this change — all three reverted before commit; the diff is exactly 10 edits + 3 new files. (The critic had waved the lockfile through as "clean, 257 additions, dev-scoped" — it wasn't. Verify your own diff.)
   - **Verify:** `npm run typecheck` exit 0 (before + after fixes); no `engine`/`services`/`components/ui`/`components/charts`/`schema.ts`/`db/repos` change; offline (pure SQLite + local state). Direct APK: https://github.com/aucksy/ForgeAI/releases/download/v0.18.0/forgeai-v0.18.0.apk (build pending). **NEXT (assessment leftovers):** edit-a-logged-workout (#12) · "start fresh" reset · a11y pass (#18 contrast / #24 SR labels / #25 touch targets / #26 font-scaling) · pure-TS vitest seam (#10 — this pass's parity harness is a ready-made first test) · the `dataExport` repoint · the frozen `getTodaysWorkout` third of the start-tap (needs a scope call on `services/*`).
 
+- 2026-07-22: **MAJOR PIVOT DECLARED (owner) — B2B2C SaaS platform. Kickoff brief written; NO code.**
+  ForgeAI becomes a three-pillar ecosystem: (1) **Gym Management CRM** (web-first, the gym's
+  operating system), (2) the existing **member app** as a gym-membership benefit, (3) a **premium
+  AI layer** as the upgrade. Revenue = owner SaaS subscription + member AI upgrades (model open to
+  refinement; owner asked for assumptions to be challenged). Process = research → strategy docs →
+  approval → build. **Entrypoint for this track: `docs/overhaul/OVERHAUL-BRIEF.md`** — contains the
+  directive, the co-founder position (free/paid seam already exists in the code; gym SaaS carries
+  revenue; payments-rail + white-label as candidate revenue; two-way-sync reversal is the big
+  technical implication; India-first assumed), the head-start map (Pillars 2+3 largely built,
+  Pillar 1 ~10%), the **carried-forward weakness log W1–W10 with dispositions** (owner asked to
+  keep it: fake-seed onboarding W1 dissolved by invitation flow; frozen-files W2 to be formally
+  unfrozen behind tests W3; edit-workout W4; a11y W5; perf W6; PRD drift W7 resolved by pivot;
+  one-way-sync W8 re-architect; member-identity W9 re-decide; owner-gated setup W10), the
+  reuse-don't-redo pointer to `docs/DECISIONS.md` (2026-07-07 infra research stays valid), and the
+  **Phase R1 research plan** (8 areas A–H → 6 strategy docs, each with a plain-English executive
+  summary). Owner gates asked: research depth, pilot-gym access, 6-month goal. **NEXT = run R1
+  research once gates answered; then VISION.md → approval → build phases.**
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
