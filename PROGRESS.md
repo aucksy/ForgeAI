@@ -399,8 +399,11 @@
   one-way-sync W8 re-architect; member-identity W9 re-decide; owner-gated setup W10), the
   reuse-don't-redo pointer to `docs/DECISIONS.md` (2026-07-07 infra research stays valid), and the
   **Phase R1 research plan** (8 areas A–H → 6 strategy docs, each with a plain-English executive
-  summary). Owner gates asked: research depth, pilot-gym access, 6-month goal. **NEXT = run R1
-  research once gates answered; then VISION.md → approval → build phases.**
+  summary). **Owner gates ANSWERED same day: (1) research = FULL deep-dive (agent fleet authorized);
+  (2) pilot gym = YES — the owner has one → design partner + first pilot; (3) 6-month goal = FREE
+  PILOTS FIRST (learning-optimized roadmap, billing later).** R1 research launched (9 area
+  researchers → adversarial fact-check of load-bearing claims → completeness critic). **NEXT =
+  synthesize R1 into the 6 strategy docs (VISION.md first) → owner approval → build phases.**
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate

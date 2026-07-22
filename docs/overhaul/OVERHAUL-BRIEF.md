@@ -151,10 +151,12 @@ plain-English executive summary):**
 
 ---
 
-## 7. Open owner gates (asked 2026-07-22)
+## 7. Owner gates — ANSWERED (2026-07-22)
 
-1. Research depth/spend (full multi-agent deep-dive vs lighter pass).
-2. Pilot gym access — is there a real gym to design for and sell to first?
-3. The 6-month goal (first paying gym vs pilot fleet vs polished raise-ready product).
-
-Answers recorded in PROGRESS.md when given.
+1. **Research depth → FULL DEEP-DIVE.** Multi-agent, fact-checked, all 8 areas (authorizes the
+   agent fleet for R1).
+2. **Pilot gym → YES, the owner has one.** It becomes the design partner and first pilot:
+   interview its real operations as primary research; MVP is designed to run THAT gym.
+3. **6-month goal → FREE PILOTS FIRST.** Roadmap optimizes for learning at a few gyms running
+   free, converting to paid after the product proves itself. Revenue design still ships in
+   VISION.md, but the build order favors pilot-operability over billing.
