@@ -402,8 +402,60 @@
   summary). **Owner gates ANSWERED same day: (1) research = FULL deep-dive (agent fleet authorized);
   (2) pilot gym = YES — the owner has one → design partner + first pilot; (3) 6-month goal = FREE
   PILOTS FIRST (learning-optimized roadmap, billing later).** R1 research launched (9 area
-  researchers → adversarial fact-check of load-bearing claims → completeness critic). **NEXT =
-  synthesize R1 into the 6 strategy docs (VISION.md first) → owner approval → build phases.**
+  researchers → adversarial fact-check of load-bearing claims → completeness critic).
+
+- 2026-07-22: **R1 RESEARCH COMPLETE + `docs/overhaul/VISION.md` written — AWAITING OWNER APPROVAL.**
+  37 agents / 9 areas / 51 fact-checks / 2.2M tokens. **Verdicts: 12 CONFIRMED · 35 CORRECTED · 4
+  REFUTED** — the fact-check layer paid for itself. Raw record preserved in
+  `docs/overhaul/research/` (area summaries · findings · verdicts · completeness-critic JSON).
+  ⚠ **Ops note: the first run HUNG** — the india-market agent died mid-flight at 11:07 and the
+  pipeline waited on it ~4h; caught by checking file mtimes (a progress list alone looked healthy).
+  Fixed via TaskStop + `resumeFromRunId` (32 cached agents replayed free, only 5 ran live).
+  **LESSON: for long workflows, verify liveness by file mtime, not by counting completed agents.**
+  - **What the research killed/changed (detail in VISION.md §1):** (1) **member-paid AI is out** —
+    RevenueCat 2026 median H&F download→paid is 2.9%, AND every AI *upsold* on top of a paid product
+    drew revolt (Garmin Connect+, Strava) while every *bundled* one earned goodwill (Whoop, EGYM) →
+    AI becomes an **owner-paid** line; (2) **payments-as-revenue dropped** — not for the reason first
+    researched (the "0.1% India cap" was REFUTED — it was a hypothetical in Razorpay partner docs)
+    but because Indian gyms already collect by **direct UPI QR at zero cost**; (3) **billing inverted**
+    — Indian gyms sell **annual lump sums at 20–30% discount**, so the CRM's job is renewal-chasing +
+    part-payment/dues + cash-vs-UPI reconciliation, NOT a dunning engine; (4) **the member-app wedge
+    was REFUTED as stated** — Wodify Client is 4.9/5 on 16K ratings with PRs/leaderboards, PushPress
+    ships Train, Virtuagym/Exercise.com unify natively → wedge survives only vs **value-gym +
+    India-local** tooling; (5) **WhatsApp reminders reframed** — generic prompts have trivial effect,
+    nudge effects decay (8% of 53 megastudy arms persisted), and naive at-risk outreach **increased**
+    churn in a field experiment (10% vs 6%); (6) **PT sizing corrected** 14–20% → **~10% median**
+    (IHRSA) → demoted to Phase 2; (7) ⭐**Daxko (US, PE-backed) acquired FitnessForce on 2026-06-23**
+    — India's leader, 1,000+ gyms — explicitly for its UPI/GST/WhatsApp/biometric local rails. The
+    "India-localized rails nobody has" differentiator was bought five weeks ago; (8) **GST on gym
+    services fell to 5% WITHOUT ITC (2025-09-22)** → our SaaS fee is no longer creditable for gyms.
+  - **VISION.md's co-founder challenge (the core call):** building a full CRM points the only
+    founder's time at the most commoditised/lowest-ARPU/hardest-to-support layer while giving away
+    the one rare asset. **Recommendation = be the gym's MEMBER-FACING product, not its back office**:
+    member app (built) + engagement-depth attendance signal + renewal/dues ledger + a daily
+    "talk to these members" list driven by days-since-last-visit (the only churn signal with
+    peer-reviewed support, AUC 0.86) + WhatsApp. **~8 features, not the brief's ~40**; explicit NO to
+    POS/inventory/access-control/payroll/multi-branch/class-booking-first/white-label.
+  - **Business model:** single line = **owner-paid flat INR SaaS, published price** (Pilot free →
+    Core ₹1,499 ≤200 members → Growth ₹2,999 → AI add-on ₹999–1,999, owner-paid). **Honest ceiling
+    stated for the owner: ₹1–4 Cr/yr at multi-year heroic execution, India-only** (500 gyms ≈ the
+    18-yr category leader's size). Export door kept open (Zenoti/FitBudd/FitnessForce all monetised
+    OUTSIDE India; Western gyms pay ~10x) → **keep currency/language/tax/payment rails pluggable**.
+  - **Named kill-risks:** solo-founder support load (the #1 documented reason owners leave this
+    category; gyms run 5am–10pm multilingual) · Daxko moving first · unchecked regulatory walls (RBI
+    PA rules, DPDP on biometric data, TRAI DLT, 2025 WhatsApp price change may break the message
+    unit-economics) · **cost-to-serve never modelled** (AI inference + WhatsApp + infra + support vs
+    ₹1,499) · biometric integration may be impossible from a browser (ESSL/ZKTeco = Windows/on-prem).
+  - ⭐**NEXT = PRIMARY RESEARCH, NOT CODE.** The critic's sharpest hit: zero primary research —
+    9 desk-research areas over Western sources while a live design-partner gym sits unobserved.
+    `docs/overhaul/FIELDWORK.md` written (watch-don't-ask kit; owner runs ~1 week incl. a month-end
+    and a 6–9am peak) to settle **D1 phone-first vs computer-first** (desk research contradicted
+    itself; wrong answer = months wasted) · **D2 the real daily mess** (cash/UPI reconciliation was
+    ASSUMED, never observed) · **D3 will members install the app** (the whole wedge) · **D4 real
+    willingness to pay**. Highest-value artifact = a copy of the gym's actual register/Excel = the
+    true data model. **Remaining brief deliverables (MVP def, architecture, DB, API, UI/design
+    system, migration, sprints) are deliberately NOT written yet — writing them pre-fieldwork would
+    be fiction.**
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
