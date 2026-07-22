@@ -1,6 +1,18 @@
 # ForgeAI — Vision, Business Model & Competitive Position (v1, for approval)
 
-**Date:** 2026-07-22 · **Status:** DRAFT FOR OWNER APPROVAL · **Supersedes:** `docs/PRD.md` (historical)
+**Date:** 2026-07-22 · **Status:** ✅ **APPROVED BY OWNER 2026-07-22** · **Supersedes:** `docs/PRD.md` (historical)
+
+> **OWNER DECISIONS — LOCKED 2026-07-22**
+> 1. **Market = India-first, export door kept open.** Build for the design-partner gym and Indian
+>    value gyms; keep currency, language, tax and payment rails pluggable so a Western/ME/SEA
+>    version needs no rewrite. Accepts the §4 ceiling for now without foreclosing Path B.
+> 2. **Scope = NARROW (§3 recommendation adopted).** ~8 features, not the brief's ~40. Explicit NO
+>    to POS, inventory, access-control hardware, payroll, multi-branch roll-ups, class-booking-first,
+>    white-label per-gym apps, marketing-campaign builders, lead-scoring funnels, digital waivers.
+> 3. **Fieldwork first.** Owner runs `FIELDWORK.md` at the design-partner gym within ~1–2 weeks.
+>    No platform code until those notes return. MVP/architecture/DB/API/UI/sprint docs stay unwritten
+>    until D1–D4 are answered.
+
 **Evidence base:** `docs/overhaul/research/` — R1 deep research, 37 agents, 9 areas, 51 adversarial
 fact-checks, 1 completeness critic. **12 CONFIRMED · 35 CORRECTED · 4 REFUTED.**
 **Reused, not redone:** `docs/DECISIONS.md` (2026-07-07 infrastructure/cost research — still valid).

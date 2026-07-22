@@ -456,6 +456,18 @@
     true data model. **Remaining brief deliverables (MVP def, architecture, DB, API, UI/design
     system, migration, sprints) are deliberately NOT written yet — writing them pre-fieldwork would
     be fiction.**
+  - ✅ **VISION.md APPROVED by owner same day. Three decisions LOCKED (recorded in VISION.md header):
+    (1) MARKET = India-first with the export door kept open** → currency/language/tax/payment rails
+    must stay pluggable; no India-specific assumptions baked into the core. **(2) SCOPE = NARROW** —
+    the §3 recommendation adopted: ~8 features, explicit NO to POS/inventory/access-control/payroll/
+    multi-branch/class-booking-first/white-label/campaign-builders/lead-scoring/waivers. **(3)
+    FIELDWORK FIRST** — owner runs `FIELDWORK.md` at the design-partner gym within ~1–2 weeks; **no
+    platform code until those notes return.** ▶ **NEXT = await fieldwork answers (D1 phone-vs-computer
+    · D2 real daily mess · D3 will members install · D4 willingness to pay) → then MVP-ROADMAP.md +
+    ARCHITECTURE.md.** No-regret work available meanwhile (owner's call): **W3 test lane** (still zero
+    tests; also the prerequisite for the W2 frozen-file unfreeze) and **W1 real onboarding** (a member
+    invited by their real gym must never see the fake "Arjun" seed — disqualifying under any version
+    of the plan).
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
