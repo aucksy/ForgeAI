@@ -691,6 +691,93 @@
     same exercise logged as two separate blocks can't be edited yet; the date stepper is ±1 day at
     a time.
 
+- 2026-07-26: **Phase P1 DONE (gym CRM roster spine) — 183 CRM tests + 199 mobile tests green,
+  both typechecks green, production build green, adversarially reviewed (7 HIGH + 18 MED + 13 LOW;
+  every HIGH and MED fixed). Web app — no tag, no APK; the mobile app is untouched.**
+  **Owner directive 2026-07-26 (AskUserQuestion): stop asking what to build next, self-prioritise
+  and keep shipping; and "don't hold the crm on field work…just build one basis online research…a
+  crm that does all they need it to do".** That waives `VISION.md` locked decision 3 (the fieldwork
+  gate). `FIELDWORK.md` is still the blank kit; the R1 corpus (`docs/overhaul/research/`, 37 agents,
+  51 fact-checks) is the evidence base. VISION's NARROW scope decision still governs — nothing on
+  its explicit NO list (POS, inventory, door hardware, payroll, multi-branch, white-label) is built.
+  Full architecture + phase plan: **`docs/overhaul/CRM-BUILD.md`**. Checklist: `docs/CRM-TEST-CHECKLIST.md`.
+  - **The load-bearing schema decision.** `supabase/migrations/0001_init.sql` keys members off
+    `auth.users` (`member_summary.member_id references auth.users`), so a member only exists once
+    they install the app. A value gym's roster is mostly people who never will. `Member` is now a
+    **gym-owned row standing on its own** (keyed gym+phone), with `appUserId` linking to an account
+    only if one appears; memberships/payments/visits hang off `Member.id`, never an auth id. Purely
+    additive — `member_summary` is untouched and folds back in at P7 as an "app activity" view.
+  - **Decisions made without fieldwork** (all recorded in CRM-BUILD.md §"Three decisions"):
+    **responsive web, one codebase** (D1 phone-vs-desktop is unanswered; `AppShell` renders a real
+    bottom-nav+cards phone app under 861px and a sidebar+tables console above it, not a squashed
+    desktop); **integer paise everywhere** (not reversible later without a data migration);
+    **a local browser adapter beside the cloud one** (the build machine can't run Postgres — no
+    Docker, 5.9 GB RAM — so this is also the only way the CRM could be run or verified at all, plus
+    it is the zero-signup sales demo).
+  - **New (`apps/dashboard/src/crm/**`, ~4.6k lines):** `logic/{money,dates,membership,members,
+    receipts,selling}.ts` (all PURE), `data/{adapter,local,demo}.ts`, `store.tsx`, `CrmApp.tsx`,
+    `ui/{kit,AppShell,router,Welcome}` + screens `{Today,Members,MemberDetail,Plans,Settings}` +
+    forms `{MemberFormSheet,SellMembershipSheet,CollectPaymentSheet}`. A ~70-line hash router and an
+    in-repo UI kit rather than dependencies (hash routing also means the built SPA serves from any
+    static host with no rewrite rules — it will sit on a gym's shared PC).
+  - **Rules the code enforces** (each is a bug class, not a preference): inclusive `endsOn` (last
+    valid day, so renewals are back-to-back with no gap and no double-charged overlap); `addMonths`
+    clamps (31 Jan + 1mo = 28 Feb) and renewal chains settle on a stable anniversary; memberships
+    **snapshot** plan name + price at sale so a price rise never rewrites an issued receipt; money is
+    **append-only** (void with a reason, never edit/delete, and a voided receipt number is consumed
+    not reissued); status follows the **coverage chain** not the term running today; the daily chase
+    list **forgets** after `WINBACK_WINDOW_DAYS` (45).
+  - **Found by using it, before review:** the call list was led by members who lapsed 2 years ago
+    (`compareByAttention` sorted expired the same direction as expiring — it now flips direction per
+    state, and `needsAttentionToday` windows it); a member who renewed EARLY still read "expiring"
+    and stayed on the chase list (`coverageEndsOn` now walks the chain); on a phone the desktop
+    sidebar stayed rendered and the page scrolled sideways 42px (`useMediaQuery` listened only to the
+    MediaQueryList `change` event, which is not dependable — it now also listens to `resize`).
+  - **Adversarial review (1 deep agent, read-only) — 38 findings; all 7 HIGH and all 18 MED fixed:**
+    **H1 (the data-destroying one)** a schema-version mismatch threw nothing, so the corrupt-backup
+    path never ran and `read()` seeded a fresh gym straight over the real blob — a stale cached
+    bundle or a rolled-back deploy would have erased every member, payment and receipt. Now backs up
+    and **throws `FutureSchemaError`** rather than replacing data it cannot read. **H2** every
+    mutation pushed to the in-memory cache BEFORE `setItem`, so a quota failure left phantom records
+    in memory and the retry wrote them twice — rewritten as read-modify-**persist-then-adopt**, with
+    `StorageFullError`. **H3** two tabs on a shared front-desk PC clobbered each other and minted
+    duplicate receipt numbers — every read now re-reads when storage has moved (residual
+    non-atomicity documented; `localStorage` has no compare-and-swap). **H4** the sell sheet
+    defaulted a second renewal to a start date INSIDE the renewal already sold (a year sold twice) —
+    defaults now come from `coverageEndsOn` via the new PURE `logic/selling.ts`, and `validateSale`
+    refuses an overlap outright. **H5** `validateMember` returned `archived:false` unconditionally,
+    so editing an archived member's typo silently un-archived them — lifecycle state removed from the
+    form's draft type entirely. **H6** archiving a member deleted their dues from the gym's
+    money-owed total — totals now run over `allMemberViews`, plus an "Archived" filter. **H7**
+    cancelling a membership was one unconfirmed click with no undo — confirm sheet + typed reason +
+    `uncancelMembership`. MED highlights: **M4** `recordPayment`/`voidPayment` existed in the adapter
+    but nothing in the UI called them, so a part-payer's balance could never be settled (new
+    `CollectPaymentSheet`); **M3** the joining-fee guard asked "has a live membership?" instead of
+    "has ever paid a fee?", double-charging after a cancellation and skipping it after a fee-free
+    plan; **M1** `today` was frozen at mount, so a desk open past midnight stamped everything with
+    yesterday; **M7** `MAX_PAISE` was ten times its own docstring (₹10 crore, not ₹1 crore); **M14**
+    the modal had no focus trap or focus restore.
+  - **Four of my tests could not fail** (the review's sharpest finding, all fixed): the two timezone
+    tests passed under the exact bug they guarded because CI runs UTC — `vitest.config.ts` now pins
+    **`TZ=Asia/Kolkata`** and the tests assert the naive UTC result explicitly; the "voided receipt"
+    test passed rows with no `voided` field at all and was byte-identical to the test above it; the
+    "91xxxxxxxx series" test could not fail under either candidate ordering (the strict 10-digit rule
+    is what actually protects it — now pinned, with a `+44` case that genuinely exercises ordering);
+    and `expect(0.1 + 0.2).not.toBe(0.3)` asserted a property of JavaScript, not of this repo.
+    **`test/**` was also never typechecked** (`tsconfig.app.json` includes only `src`) — new
+    `tsconfig.test.json` fixes that, and it caught real drift immediately.
+  - **CI:** new `.github/workflows/ci.yml` typechecks, tests **and builds** both workspaces on every
+    push/PR. `release-apk.yml` only runs on a `v*` tag, and the CRM ships without one — it would
+    otherwise have had no gate at all.
+  - **Verified in a real browser, not just by tests:** every screen against an empty gym and a bogus
+    member id (no errors); the sell → part-pay → renew → collect → cancel round trip; the overlap
+    refusal; duplicate-phone refusal naming the existing member; phone layout at 375px (bottom nav,
+    cards, zero horizontal overflow, no target under 44px) and desktop at 1280px (sidebar, table).
+  - **Deliberately deferred:** no UI-render tests (the lane is Node-only, so `src/crm/ui/**` is
+    gated by `tsc` + `vite build` + manual browser checks — the mitigation was extracting form
+    decisions into pure `logic/selling.ts`); no `deletePlan` (retire only); receipt numbering is
+    derived from the ledger rather than a counter; multi-user safety waits for P7's Postgres adapter.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

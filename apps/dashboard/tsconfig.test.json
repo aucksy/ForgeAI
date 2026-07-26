@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "composite": true,
+    "types": ["node"]
+  },
+  "//": "Includes src as well as test: the tests import the app's modules directly, and a composite project must list every file in its program.",
+  "include": ["src", "test", "vitest.config.ts"]
+}

@@ -1,0 +1,53 @@
+name: CI
+
+# Typecheck + unit tests for every workspace, on every push and PR.
+#
+# The release workflow already gates the MOBILE app before its Gradle build, but
+# that only runs when a v* tag is pushed. The CRM (apps/dashboard) ships as a web
+# build with no tag in the loop, so without this it would have no gate at all —
+# and it is the workspace that handles money.
+on:
+  push:
+    branches: ['**']
+    tags-ignore: ['v*'] # v* tags are covered by release-apk.yml, which runs the same checks
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Typecheck (mobile)
+        working-directory: apps/mobile
+        run: npm run typecheck
+
+      - name: Unit tests (mobile)
+        working-directory: apps/mobile
+        run: npm test
+
+      - name: Typecheck (dashboard/CRM)
+        working-directory: apps/dashboard
+        run: npm run typecheck
+
+      # Money maths, calendar maths, membership state and the storage adapter.
+      - name: Unit tests (dashboard/CRM)
+        working-directory: apps/dashboard
+        run: npm test
+
+      # A build failure here is a shipping failure — the CRM is served as static
+      # files, so `vite build` succeeding IS the deployability check.
+      - name: Build (dashboard/CRM)
+        working-directory: apps/dashboard
+        run: npm run build
