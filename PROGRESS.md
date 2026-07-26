@@ -490,6 +490,56 @@
     empty start + an explicit "Load demo data" for sales; "Reset" must clear to empty, not regenerate
     fake data. Design against the fieldwork if it has landed by then.
 
+- 2026-07-26: **Phase O1 DONE (automated-test lane + CI gate) — 61 tests green, typecheck green, adversarially reviewed (0 correctness defects), frozen-clean. Shipping as v0.19.0.**
+  The app had ZERO automated tests (assessment #10 / weakness W3). O1 stands up a **pure-TypeScript
+  vitest lane** (no RN render, no native, no emulator) over the historically-buggy CORE LOGIC and
+  wires it into CI **before** the Gradle build, so a logic regression can't become a shipped APK.
+  This is the safety net that makes O2 (touches the seed path) and the later W2 frozen-file unfreeze
+  safe.
+  - **Harness (new, no source touched):** `apps/mobile/vitest.config.ts` (node env, `@/`→`src`
+    alias, `define __DEV__`) + `apps/mobile/test/stubs/native.ts` (a throwing Proxy). The pure fns
+    under test are the REAL implementations, but their MODULES transitively import native packages
+    (`@/db`→expo-sqlite; `@/lib/keys`→expo-secure-store; `@/lib/uuid`→**expo-crypto→react-native**;
+    stores→async-storage). Those five are aliased to the stub so a service file can be imported to
+    reach its pure exports; a stub is only ever imported, never CALLED (any call throws loudly). The
+    `react-native` alias also dodges its Flow-syntax `index.js` that the bundler can't parse.
+  - **Tests (`apps/mobile/test/**`, 61 across 9 files):** `engine/overload` (Epley, roundToIncrement
+    float-noise + inc≤0 passthrough, all overload branches: start/increase/deload/hold-at-floor/
+    plateau-deload/plateau-chase/default), `engine/strength` (benchmark match, 1.2 cap, **reuse guard
+    via "Overhead Row" matching two benchmarks**, score 0 paths), `plateMath` (exact/closest/at-bar/
+    custom set/concrete greedy pick), `warmupMath` (ramp, ≥work-weight drop, light-lift dedup, **2.5
+    fallback pinned by a value only reachable at inc=2.5**), `exerciseAnalytics` (warm-up/zero skip,
+    chrono order, xRM cap), `coachNote.buildSessionNote` (weight-PR>e1RM-PR>volume±5%>first-time),
+    `hevyImport` classifiers (**parseHevyDate UTC-basis** = the tz-idempotency fix, muscle-collision
+    order, equipment suffix+name fallback, dayType priority), `history.getWeekStreak` (mocked
+    `getSessionsBetween` + frozen clock: in-progress week doesn't break, gap breaks, multi-session
+    week counts once, restDays), `ai/grounding` (ungrounded flag, single-digit ignore, dedup).
+  - **Two latent quirks FOUND + PINNED (not fixed — O1 is tests-only):** (1) `classifyEquipment('Dips')`
+    → `'other'` because the calisthenics rule matches only the singular `\bdip\b` (Hevy names it the
+    plural "Dips") — a real misclassification, candidate fix for a later phase; (2) `checkGrounding`
+    treats a number that is a SUBSTRING of a source number as grounded (`corpus.includes(n)`) — lenient
+    by design (never blocks a reply), pinned so a future tightening is a conscious change. Also caught
+    **my own** arithmetic error while writing (deload FLOORS to the increment: 80→70, not 72.5).
+  - **CI gate:** `.github/workflows/release-apk.yml` — new "Unit tests (mobile)" step (`npm test`,
+    working-dir `apps/mobile`) mirroring the existing Typecheck step, placed AFTER typecheck and
+    BEFORE the ~10-min Gradle build (same job = sequential gating: tests fail → job fails → no APK/AAB).
+    (Used a step, not a separate `needs:` job, to mirror typecheck 1:1 and avoid a second `npm ci`.)
+  - **Adversarial review (1 focused agent, read-only, no install):** **0 correctness defects — every
+    expected value re-derived by hand matched the source; no coincidental greens.** Frozen files
+    git-confirmed untouched; functions under test confirmed REAL (not stubbed). 3 MED "weak/tautological
+    test" findings TIGHTENED (plate symmetry→concrete plates; strength reuse guard now actually
+    exercised; warm-up 2.5 fallback now discriminating) + LOW comment/coverage fixes + the two quirk
+    pins above added. Re-ran green.
+  - **Parity harness (v0.18.0 perf pass) DEFERRED (as flagged in the O1 plan):** it used Node's
+    experimental `node:sqlite`, unavailable on CI's Node 20; porting it needs a new SQLite devDep and
+    covers query-plumbing, not the buggy-core. The e1RM SQL it guarded is pinned indirectly by the
+    `epleyE1rm` unit tests. Clean follow-up if the DB layer needs coverage.
+  - **Verify:** `npx vitest run` → 61/61 pass; `npm run typecheck` exit 0 (test files + config now in
+    the `**/*.ts` include). Only new files + `package.json` (test script + `vitest` devDep) + lockfile
+    + the CI edit changed; **no frozen file / schema / existing signature touched; no behavior change.**
+    **NEXT = Phase O2 (W1 real onboarding):** replace the fake-"Arjun" auto-seed with a real empty
+    start + an explicit "Load demo data" for sales; "Reset" must clear to empty, not regenerate fake data.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

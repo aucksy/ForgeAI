@@ -44,6 +44,13 @@ jobs:
         working-directory: apps/mobile
         run: npm run typecheck
 
+      # Pure-TS unit tests over the app's core logic (plate/warm-up math, weekly
+      # streak, Hevy classifiers, coach note, overload/strength/e1RM). Runs before
+      # the Gradle build so a logic regression stops the tag from ever shipping.
+      - name: Unit tests (mobile)
+        working-directory: apps/mobile
+        run: npm test
+
       # Release-keystore secrets are OPTIONAL: when absent (early test builds),
       # the decode step is skipped, ANDROID_KEYSTORE_PATH stays unset and the
       # Gradle release config falls back to debug signing — still installable.
