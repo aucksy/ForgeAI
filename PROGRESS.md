@@ -469,6 +469,27 @@
     invited by their real gym must never see the fake "Arjun" seed — disqualifying under any version
     of the plan).
 
+- 2026-07-22: **Owner said "start building" → OVERHAUL GROUNDWORK track begins (no-regret, fieldwork-
+  independent). Recommended order LOCKED: O1 test lane FIRST, then O2 real onboarding.** Rationale:
+  tests are the safety net that makes O2 (which touches the seed path) and the later W2 frozen-file
+  unfreeze safe; the v0.18.0 perf pass already built a differential parity harness (5,289 comparisons)
+  = a ready-made first test. **▶ NEXT CHAT = Phase O1** (see the kickoff handoff). Platform code still
+  gated on fieldwork; O1/O2 are pure app-quality work valid under every plan.
+  - **O1 scope (test lane + CI gate, W3 + assessment #10):** stand up **vitest** in `apps/mobile`
+    (pure-TS, no native/RN render — extract/import pure fns only); cover the historically-buggy pure
+    logic first: `tracker/services/{plateMath,warmupMath,history.getWeekStreak,exerciseAnalytics,
+    coachNote.buildSessionNote}`, `tracker/services/hevyImport` classifiers (parseHevyDate UTC-basis,
+    classifyMuscle, classifyEquipment, inferDayType), `ai/grounding.checkGrounding`, `engine/*`
+    (epleyE1rm, computeOverloadTarget, roundToIncrement); port the perf-pass parity harness as the
+    first DB-logic test if feasible. Add a `test` job to `.github/workflows/release-apk.yml` gated
+    BEFORE the Gradle build (typecheck already runs there). **Frozen files stay read-only — tests
+    IMPORT them, never edit them** (testing frozen pure fns is explicitly allowed and desirable).
+    NOT in scope: RN component/render tests, unfreezing anything, any behavior change. Ship = a tagged
+    release once green (bump app.json; direct APK link per [[always-direct-apk-link]]).
+  - **O2 (next after O1) = W1 real onboarding:** replace the auto-seed-on-first-launch with a real
+    empty start + an explicit "Load demo data" for sales; "Reset" must clear to empty, not regenerate
+    fake data. Design against the fieldwork if it has landed by then.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
