@@ -30,7 +30,7 @@ import { demoSnapshot } from './data/demo';
 import { emptySnapshot, LocalCrmData } from './data/local';
 import { todayISO, type DateISO } from './logic/dates';
 import { buildMemberView } from './logic/membership';
-import type { Member, MemberDraft, MemberView, PlanDraft, Visit } from './types';
+import type { Member, MemberDraft, MemberView, Payment, PlanDraft, Visit } from './types';
 
 interface CrmContextValue {
   snapshot: CrmSnapshot;
@@ -63,7 +63,8 @@ interface CrmContextValue {
   sellMembership: (input: SellMembershipInput) => Promise<SellMembershipResult>;
   cancelMembership: (id: string, reason: string | null) => Promise<void>;
   uncancelMembership: (id: string) => Promise<void>;
-  recordPayment: (input: RecordPaymentInput) => Promise<void>;
+  /** Returns the written receipt, so the caller can offer to print it. */
+  recordPayment: (input: RecordPaymentInput) => Promise<Payment>;
   voidPayment: (id: string, reason: string) => Promise<void>;
   checkIn: (memberId: string, source: Visit['source']) => Promise<void>;
   updateGym: (patch: Partial<Omit<GymRecord, 'gymId' | 'createdAt'>>) => Promise<void>;
@@ -216,7 +217,7 @@ export function CrmProvider({ data, children }: { data?: LocalCrmData; children:
       sellMembership: (input) => mutate((a) => a.sellMembership(input)),
       cancelMembership: async (id, reason) => void (await mutate((a) => a.cancelMembership(id, reason))),
       uncancelMembership: async (id) => void (await mutate((a) => a.uncancelMembership(id))),
-      recordPayment: async (input) => void (await mutate((a) => a.recordPayment(input))),
+      recordPayment: (input) => mutate((a) => a.recordPayment(input)),
       voidPayment: async (id, reason) => void (await mutate((a) => a.voidPayment(id, reason))),
       checkIn: async (memberId, source) => void (await mutate((a) => a.checkIn(memberId, today, source))),
       updateGym: async (patch) => void (await mutate((a) => a.updateGym(patch))),

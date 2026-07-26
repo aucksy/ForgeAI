@@ -239,6 +239,10 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
           voidReason: null,
           collectedBy: null,
           createdAt: epochOfLocalNoon(paidOn),
+          // The demo gym is not GST-registered, and its history says so. If it
+          // read the live GSTIN instead, typing one into Settings would retro-fit
+          // tax lines onto two years of receipts it never charged tax on.
+          gstinAtSale: gym.gstin,
         };
       }
 

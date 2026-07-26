@@ -101,6 +101,27 @@ export class NotFoundError extends Error {
 }
 
 /**
+ * A date arrived that is not a real calendar day, or is so far from the present
+ * that it can only be a typo.
+ *
+ * The adapter checks rather than trusting the form because a date is the one field
+ * a browser will hand over half-finished: a `type="date"` input gives `''` while
+ * being typed and cheerfully accepts year `0002`. Both reached storage, and a year
+ * outside four digits produced a receipt number that could not be read back — so
+ * the next receipt reused it.
+ */
+export class InvalidDateError extends Error {
+  constructor(what: string) {
+    super(`${what} is not a valid date.`);
+    this.name = 'InvalidDateError';
+  }
+}
+
+/** No gym transacts outside this window; anything else is a mistyped year. */
+export const EARLIEST_DATE: DateISO = '2000-01-01';
+export const LATEST_DATE: DateISO = '2100-12-31';
+
+/**
  * The browser refused to save — almost always the ~5 MB storage quota, or Safari
  * private mode where the quota is zero. Nothing was written and nothing was kept
  * in memory either, so the caller can safely tell the user it did not happen.

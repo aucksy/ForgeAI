@@ -18,16 +18,10 @@ import { addDays, formatDay, isValidDateISO } from '../../logic/dates';
 import { endDateForPlan } from '../../logic/membership';
 import { saleDefaults, validateSale, type SaleProblem } from '../../logic/selling';
 import { formatINR, parseRupeeInput } from '../../logic/money';
+import { methodOptions } from '../../logic/payments';
 import type { MemberView, PaymentMethod, Plan } from '../../types';
+import type { SellMembershipResult } from '../../data/adapter';
 import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
-
-const METHODS: { value: PaymentMethod; label: string }[] = [
-  { value: 'cash', label: 'Cash' },
-  { value: 'upi', label: 'UPI' },
-  { value: 'card', label: 'Card' },
-  { value: 'bank', label: 'Bank transfer' },
-  { value: 'other', label: 'Other' },
-];
 
 export function SellMembershipSheet({
   view,
@@ -36,7 +30,8 @@ export function SellMembershipSheet({
 }: {
   view: MemberView;
   onClose: () => void;
-  onSold?: () => void;
+  /** Handed the sale, including the receipt when money was taken at the counter. */
+  onSold?: (result: SellMembershipResult) => void;
 }) {
   const { snapshot, today, sellMembership } = useCrm();
 
@@ -102,7 +97,7 @@ export function SellMembershipSheet({
     setSaving(true);
     setProblem(null);
     try {
-      await sellMembership({
+      const result = await sellMembership({
         memberId: view.member.id,
         planId: plan!.id,
         startsOn,
@@ -115,7 +110,7 @@ export function SellMembershipSheet({
         paidOn: today,
         soldBy: null,
       });
-      onSold?.();
+      onSold?.(result);
       onClose();
     } catch (e) {
       setProblem({ field: 'plan', message: e instanceof Error ? e.message : 'Could not save this membership.' });
@@ -272,7 +267,7 @@ export function SellMembershipSheet({
             label="Paid by"
             value={method}
             onChange={(v) => setMethod(v as PaymentMethod)}
-            options={METHODS}
+            options={methodOptions()}
           />
           <TextField
             label="Reference (optional)"

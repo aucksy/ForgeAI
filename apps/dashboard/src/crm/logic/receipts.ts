@@ -14,7 +14,12 @@ import { partsOf, type DateISO } from './dates';
 export function financialYear(date: DateISO): string {
   const { year, month } = partsOf(date);
   const startYear = month >= 4 ? year : year - 1;
-  return `${startYear}-${String((startYear + 1) % 100).padStart(2, '0')}`;
+  // BOTH halves are padded. `RECEIPT_RE` below demands four year digits, so an
+  // unpadded start year made the number it produced unparseable by the very
+  // function that reads it back: a mistyped year on a date field wrote
+  // `1-02/0001`, `nextReceiptNo` then failed to parse it, and the NEXT receipt
+  // was issued with the same number — the duplicate this file exists to prevent.
+  return `${String(startYear).padStart(4, '0')}-${String((startYear + 1) % 100).padStart(2, '0')}`;
 }
 
 const RECEIPT_RE = /^(\d{4}-\d{2})\/(\d{4,})$/;

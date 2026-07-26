@@ -10,6 +10,7 @@ import {
   normalizeName,
   normalizePhone,
   phoneDigits,
+  phoneForExport,
   splitE164,
   validateE164,
   validateMember,
@@ -268,5 +269,33 @@ describe('matchesQuery', () => {
   it('matches an email and returns everyone for an empty query', () => {
     expect(matchesQuery(riya, 'example.com')).toBe(true);
     expect(matchesQuery(riya, '   ')).toBe(true);
+  });
+});
+
+describe('a phone number bound for a spreadsheet', () => {
+  it('drops the leading + so Excel does not read it as a formula', () => {
+    // Found by exporting the real collections report: the CSV injection guard
+    // fired on every `+91…` and the whole column came out as `'+91 …`.
+    expect(phoneForExport('+919876543210')).toBe('91 98765 43210');
+    expect(phoneForExport('+919876543210').startsWith('+')).toBe(false);
+  });
+
+  it('keeps a NON-Indian number readable instead of handing Excel a bare integer', () => {
+    // The case the first version got wrong. `formatPhone` only spaces out Indian
+    // mobiles, so `+971501234567` exported as `971501234567` — twelve bare digits,
+    // which Excel renders as 9.71501E+11. A space anywhere makes the cell text.
+    expect(phoneForExport('+971501234567')).toBe('971 501234567');
+    expect(phoneForExport('+447700900123')).toBe('44 7700900123');
+  });
+
+  it('never returns a value a spreadsheet could read as a number', () => {
+    // The whole point of the function. Digits alone, with no separator, is the
+    // failure mode; a leading + is the other one.
+    for (const e164 of ['+919876543210', '+971501234567', '+6591234567', '+14155550123']) {
+      const cell = phoneForExport(e164);
+      expect(cell.startsWith('+')).toBe(false);
+      expect(/^\d+$/.test(cell)).toBe(false);
+      expect(cell.replace(/\D/g, '')).toBe(e164.replace(/\D/g, ''));
+    }
   });
 });

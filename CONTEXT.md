@@ -13,7 +13,9 @@ at the repo root (hoists all workspaces); the mobile Metro config watches the wo
 
 **▶ CURRENT FOCUS (2026-07-26).** Building **Pillar 1 — the gym management CRM** in
 `apps/dashboard`. **Entrypoint: `docs/overhaul/CRM-BUILD.md`** (architecture, the phase list P1–P7,
-and every assumption made without fieldwork). P1 (roster spine) shipped 2026-07-26.
+and every assumption made without fieldwork). P1 (roster spine) and P2 (money — ledger, collection
+reports, aged dues, printable GST-ready receipts) both shipped 2026-07-26. **P3 (attendance + the
+daily at-risk list) is next.**
 
 The owner **waived the fieldwork gate** on 2026-07-26 ("don't hold the crm on field work… just
 build one basis online research"), so `VISION.md` §8 / locked decision 3 no longer blocks platform

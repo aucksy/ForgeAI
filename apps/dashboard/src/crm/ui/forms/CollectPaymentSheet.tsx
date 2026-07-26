@@ -12,19 +12,13 @@
 import { useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
-import { formatDay } from '../../logic/dates';
+import { formatDay, isValidDateISO } from '../../logic/dates';
 import { isChased, unpaidForMembership } from '../../logic/membership';
 import { formatINR, parseRupeeInput } from '../../logic/money';
-import type { MemberView, PaymentMethod } from '../../types';
+import { methodOptions } from '../../logic/payments';
+import type { MemberView, Payment, PaymentMethod } from '../../types';
+import { EARLIEST_DATE as EARLIEST_SENSIBLE_DAY } from '../../data/adapter';
 import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
-
-const METHODS: { value: PaymentMethod; label: string }[] = [
-  { value: 'cash', label: 'Cash' },
-  { value: 'upi', label: 'UPI' },
-  { value: 'card', label: 'Card' },
-  { value: 'bank', label: 'Bank transfer' },
-  { value: 'other', label: 'Other' },
-];
 
 export function CollectPaymentSheet({
   view,
@@ -33,7 +27,8 @@ export function CollectPaymentSheet({
 }: {
   view: MemberView;
   onClose: () => void;
-  onCollected?: () => void;
+  /** Handed the written receipt so the caller can offer to print it. */
+  onCollected?: (payment: Payment) => void;
 }) {
   const { snapshot, today, recordPayment } = useCrm();
 
@@ -70,12 +65,20 @@ export function CollectPaymentSheet({
         `That's more than the ${formatINR(selected.unpaidP)} outstanding on this membership.`,
       );
     }
+    // Checked BEFORE the future test, because a half-typed or cleared date field
+    // passes `paidOn > today` and then throws deep inside the receipt-number maths,
+    // showing the desk "Not a YYYY-MM-DD date:". A mistyped year (0002) got as far
+    // as storage and minted a receipt number nothing could read back.
+    if (!isValidDateISO(paidOn)) return setError('Enter the date this money was received.');
+    if (paidOn < EARLIEST_SENSIBLE_DAY) {
+      return setError('That date looks like a typo — check the year.');
+    }
     if (paidOn > today) return setError('A payment can’t be dated in the future.');
 
     setSaving(true);
     setError(null);
     try {
-      await recordPayment({
+      const payment = await recordPayment({
         memberId: view.member.id,
         membershipId: selected.membership.id,
         amountP,
@@ -85,7 +88,7 @@ export function CollectPaymentSheet({
         note: null,
         collectedBy: null,
       });
-      onCollected?.();
+      onCollected?.(payment);
       onClose();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not record this payment.');
@@ -158,7 +161,7 @@ export function CollectPaymentSheet({
           label="Paid by"
           value={method}
           onChange={(v) => setMethod(v as PaymentMethod)}
-          options={METHODS}
+          options={methodOptions()}
         />
         <TextField
           label="Reference (optional)"

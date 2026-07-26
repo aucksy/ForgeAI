@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
   DuplicatePhoneError,
   FutureSchemaError,
+  InvalidDateError,
   NotFoundError,
   StorageFullError,
   type CrmSnapshot,
@@ -583,5 +584,125 @@ describe('check-in', () => {
 
   it('refuses a check-in for someone who is not on the roster', async () => {
     await expect(db.checkIn('ghost', TODAY, 'desk')).rejects.toBeInstanceOf(NotFoundError);
+  });
+});
+
+describe('a date the browser hands over half-finished never reaches storage', () => {
+  const sell = async (over: { startsOn?: string; paidOn?: string; collectNowP?: number } = {}) => {
+    const member = await db.createMember(memberDraft());
+    const plan = await db.createPlan(planDraft());
+    return db.sellMembership({
+      memberId: member.id,
+      planId: plan.id,
+      startsOn: over.startsOn ?? TODAY,
+      priceP: 300_000,
+      joiningFeeP: 0,
+      notes: null,
+      collectNowP: over.collectNowP ?? 300_000,
+      method: 'cash',
+      reference: null,
+      paidOn: over.paidOn ?? TODAY,
+      soldBy: null,
+    });
+  };
+
+  it('refuses an empty payment date instead of throwing inside the receipt maths', async () => {
+    await expect(sell({ paidOn: '' })).rejects.toThrow(InvalidDateError);
+  });
+
+  it('refuses a mistyped year that would mint an unreadable receipt number', async () => {
+    // `0002-01-01` is a real calendar day and passes "not in the future", so
+    // nothing else stopped it. Its receipt number could not be parsed back, and
+    // the next receipt reused it.
+    await expect(sell({ paidOn: '0002-01-01' })).rejects.toThrow(InvalidDateError);
+  });
+
+  it('refuses a nonsense start date', async () => {
+    await expect(sell({ startsOn: '2026-02-30' })).rejects.toThrow(InvalidDateError);
+  });
+
+  it('writes nothing at all when it refuses', async () => {
+    await expect(sell({ paidOn: '' })).rejects.toThrow(InvalidDateError);
+    const snap = await db.load();
+    expect(snap.memberships).toEqual([]);
+    expect(snap.payments).toEqual([]);
+  });
+
+  it('refuses a bad date on a later collection too', async () => {
+    const { membership } = await sell({ collectNowP: 0 });
+    await expect(
+      db.recordPayment({
+        memberId: membership.memberId,
+        membershipId: membership.id,
+        amountP: 100_000,
+        method: 'cash',
+        paidOn: 'not-a-date',
+        reference: null,
+        note: null,
+        collectedBy: null,
+      }),
+    ).rejects.toThrow(InvalidDateError);
+  });
+
+  it('still accepts an ordinary back-dated payment', async () => {
+    const { payment } = await sell({ paidOn: '2026-07-01' });
+    expect(payment?.paidOn).toBe('2026-07-01');
+  });
+});
+
+describe('the gym’s GST registration is snapshotted onto every receipt', () => {
+  const sellTo = async () => {
+    const member = await db.createMember(memberDraft());
+    const plan = await db.createPlan(planDraft());
+    return db.sellMembership({
+      memberId: member.id,
+      planId: plan.id,
+      startsOn: TODAY,
+      priceP: 300_000,
+      joiningFeeP: 0,
+      notes: null,
+      collectNowP: 150_000,
+      method: 'cash',
+      reference: null,
+      paidOn: TODAY,
+      soldBy: null,
+    });
+  };
+
+  it('records null while the gym is not registered', async () => {
+    const { payment } = await sellTo();
+    expect(payment?.gstinAtSale).toBeNull();
+  });
+
+  it('records the GSTIN the gym held at the moment of sale', async () => {
+    await db.updateGym({ gstin: '27AAPFU0939F1ZV' });
+    const { payment } = await sellTo();
+    expect(payment?.gstinAtSale).toBe('27AAPFU0939F1ZV');
+  });
+
+  it('does not rewrite an existing receipt when the gym registers later', async () => {
+    const { payment } = await sellTo();
+    await db.updateGym({ gstin: '27AAPFU0939F1ZV' });
+
+    const snap = await db.load();
+    const stored = snap.payments.find((p) => p.id === payment?.id);
+    expect(stored?.gstinAtSale).toBeNull();
+  });
+
+  it('snapshots on a later collection as well as at the point of sale', async () => {
+    const { membership } = await sellTo();
+    await db.updateGym({ gstin: '27AAPFU0939F1ZV' });
+
+    const second = await db.recordPayment({
+      memberId: membership.memberId,
+      membershipId: membership.id,
+      amountP: 150_000,
+      method: 'upi',
+      paidOn: TODAY,
+      reference: null,
+      note: null,
+      collectedBy: null,
+    });
+    expect(second.gstinAtSale).toBe('27AAPFU0939F1ZV');
   });
 });

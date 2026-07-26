@@ -778,6 +778,94 @@
     decisions into pure `logic/selling.ts`); no `deletePlan` (retire only); receipt numbering is
     derived from the ledger rather than a counter; multi-user safety waits for P7's Postgres adapter.
 
+- 2026-07-26: **Phase P2 DONE (gym CRM money) — 300 CRM tests + 199 mobile tests green, both
+  typechecks green, production build green, adversarially reviewed (1 HIGH + 4 MED + 5 LOW, every
+  one fixed, plus 5 tests that could not fail). Web app — no tag, no APK; the mobile app is
+  untouched.** Architecture + decisions: `docs/overhaul/CRM-BUILD.md` §"P2 — the money decisions".
+  Checklist: `docs/CRM-TEST-CHECKLIST.md` §P2.
+  - **What the owner gets.** A **Money** section with two views. **Collections** is the cash book:
+    pick a period (Today / Last 7 days / This month / Last month / This financial year / Custom) and
+    see what came in, split by cash / UPI / card / bank, with every receipt listed under it and a CSV
+    export for the accountant. **Dues** is who owes, led by **how long** they have owed it (over 60 /
+    31–60 / up to 30 days), with a Collect button on each row. Every receipt number is now a link to
+    a **printable receipt** on white paper — letterhead, term dates, joining fee disclosed, amount in
+    figures *and* words — with a **GST breakup** when the gym is registered.
+  - **New (`apps/dashboard/src/crm/**`, ~2.0k lines):** `logic/{gst,words,collections,csv,receiptDoc,
+    payments}.ts` (all PURE), `ui/screens/{Money,Receipt}.tsx`, `ui/forms/VoidPaymentSheet.tsx`,
+    `ui/download.ts`, print styles in `src/index.css`. Routes `#/money`, `#/money/dues`,
+    `#/receipts/:paymentId`.
+  - **The load-bearing money decision: GST is INCLUSIVE.** An Indian value gym quotes "₹1,500 a
+    month" and takes ₹1,500. Adding 5% on top would print a receipt claiming the gym collected
+    ₹1,575 — a wrong number on a document that leaves the building. So the tax is back-calculated
+    *out* of the amount received: taxable is rounded once and the tax is the remainder (never rounded
+    independently), so the two always add back to the paisa; CGST is floored and SGST takes what is
+    left, so an odd paisa lands somewhere rather than vanishing. The consequence that matters most is
+    what this does NOT touch: prices, part-payments and dues stay the gross the member pays, so
+    nothing about GST can move a balance.
+  - **Rules the code enforces** (each a bug class): the **rate follows the payment date** (18% before
+    22 Sep 2025, 5% after — 56th GST Council, from the R1 corpus), pinned by a test on 21/22/23 Sep;
+    **no valid GSTIN, no tax lines**, with the mod-36 check digit verified because a transposed digit
+    printed on a year of receipts is something the gym hears about from its accountant; **reports and
+    rows reconcile** — every filter narrows the totals *and* the list together; **voided money is
+    reported, never netted off**; **dues age from the term start**, and a term not yet started is a
+    **sale, not a debt**, so the owner never chases someone who is not late; ageing runs over
+    **archived members too** — archiving is not forgiveness.
+  - **Found by using it, before review:** the CSV export corrupted **every mobile number** —
+    the formula-injection guard correctly fired on the leading `+` and wrote `'+91 …`; the guard
+    stayed strict and `phoneForExport` bends around it instead. And several tap targets on the new
+    phone cards were 19–22px against the kit's 44px floor; measuring properly also caught **two
+    pre-existing P1 misses on the Today screen** (an 18px "See all", 36px member rows), fixed here.
+  - **Adversarial review (1 deep agent, read-only) — 10 findings, all fixed:**
+    **H1 (the one that would have left the building):** the receipt read the gym's GSTIN **live**, so
+    a gym that registered for GST in August would, on reprinting a June receipt, hand the member a
+    tax document asserting tax had been collected on a supply where none was — and the reverse when a
+    typo'd GSTIN was corrected. This broke the codebase's own "snapshots, not references" rule; the
+    *rate* followed the payment date correctly but the *registration status* followed nothing.
+    `Payment.gstinAtSale` now snapshots the GSTIN at the moment the receipt is issued (absent ⇒ fall
+    back to the gym, which is the old behaviour and no worse). **M2** an unpadded financial year meant
+    a mistyped date (`0002-01-01`) produced receipt `1-02/0001`, which `parseReceiptNo` could not read
+    back — so the **next receipt reused the same number**, the exact duplicate the file exists to
+    prevent; `financialYear` now pads, and the adapter refuses a date that is unreal or outside
+    2000–2100 (`InvalidDateError`) rather than trusting the form. **M3** the Dues CSV exported all 42
+    dues from a list filtered to 5, and said so in the toast. **M4** the Money toast had no timer, so
+    "Receipt voided" pinned itself over the content for the rest of the session. **M5**
+    `phoneForExport` fixed `+91` but handed Excel a bare 12-digit integer for every foreign member —
+    `+971501234567` rendered as `9.71501E+11`; it now splits on the dial code so every number
+    contains a space and stays text. LOW fixed: a cleared date field surfaced the raw
+    "Not a YYYY-MM-DD date:" to the front desk; "Total owed" ignored the age filter above a filtered
+    list; the void sheet promised the money would go back on the member's dues even for a **cancelled**
+    term, where it does not; the Money badge counted unpaid *terms* while the list it opens shows
+    *people*; and the receipt's Amount column stacked the gross above the taxable+CGST+SGST, so
+    reading down it gave ₹3,000 against a ₹1,500 total (the breakup now sits in its own labelled block
+    below the total).
+    **Lenses CLEAN:** the GST arithmetic across 0 / 1 paisa / MAX_PAISE / negatives; that voiding
+    restores dues on all six surfaces that show them; `collectionSummary` conserving money between
+    the total and the method split (including an unrecognised method, which gets its own row rather
+    than being dropped); date arithmetic across year boundaries and short Februaries; double-click;
+    the CSV injection guard; React deps, leaks and the focus trap; receipt numbering under the
+    two-tab race.
+  - **Five tests that could not fail** (found by the review's sharpest lens, all replaced):
+    a "the document is reproducible" test asserting `buildReceiptDoc(base)` equals itself — a property
+    of pure functions in JavaScript that holds for *any* implementation, and it advertised precisely
+    the invariant H1 had broken; a CSV `startsWith('"')` assertion strictly implied by the
+    exact-equality test above it; a GST test comparing the implementation against its own constants
+    (passes for any cutover date); a `bucketFor(-7)` duplicating the `-1` branch four lines up; and a
+    `phoneForExport` case fed an input `normalizePhone` cannot produce, while the reachable case was
+    the one actually broken. Each was replaced with a test that exercises the real invariant.
+  - **Verified in a real browser, not just by tests:** the full void → dues → collect cycle (voiding
+    2026-27/0070 put ₹1,370 back on the member's page, in Dues and on the badge; re-collecting issued
+    2026-27/**0071**, not a reuse, with zero duplicate numbers across 202 payments); registering for
+    GST leaving an existing receipt **byte-identical**, while the next receipt carries the snapshot
+    and the tax block; both CSV exports opened and read; filtering Dues dropping Total owed from
+    ₹1.4L to ₹6.5k in step with its 2 rows and its 2-line export; all three bad-date messages; an
+    empty gym and a bogus receipt id on every route with no console errors; and 375px across all six
+    routes with **zero targets under 44px and zero horizontal overflow**.
+  - **Deliberately deferred:** this is a **payment receipt, not a tax invoice** — a full invoice needs
+    its own sequential series and B2B recipient details, which is P6's job, so the heading says what
+    it is; dues age from the term start (a gym that invoices separately would want an invoice date,
+    which does not exist in this model); still no UI-render tests (the Node-only lane gates
+    `src/crm/ui/**` by `tsc` + `vite build` + browser checks).
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

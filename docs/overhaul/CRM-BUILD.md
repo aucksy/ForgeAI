@@ -51,6 +51,12 @@ apps/dashboard/src/crm/
     members.ts          phone normalisation/validation, duplicates, search
     receipts.ts         Indian financial-year receipt numbering
     selling.ts          sale defaults + validation (extracted OUT of the form — see below)
+    payments.ts         payment methods: one ordering, one set of labels
+    gst.ts              INCLUSIVE GST split, rate by date, GSTIN checksum
+    words.ts            amounts in words on the Indian scale (lakh/crore)
+    collections.ts      date ranges, collection summaries, dues ageing
+    csv.ts              CSV escaping + spreadsheet formula-injection guard
+    receiptDoc.ts       the printable receipt, assembled as data
   data/
     adapter.ts          the CrmData interface — the ONLY storage seam
     local.ts            browser-local adapter (one versioned JSON blob)
@@ -107,6 +113,47 @@ claim a payment was recorded when it wasn't.
   *inside* the renewal already sold, and a joining fee charged twice. Anything a form decides is now
   a pure function with tests.
 
+## P2 — the money decisions
+
+**GST is INCLUSIVE, and that is the load-bearing call.** An Indian value gym quotes "₹1,500 a
+month" and takes ₹1,500. If the receipt added 5% on top it would state that the gym collected
+₹1,575 — a document leaving the building with a number the gym never took. So the tax is
+back-calculated *out* of the amount received: `taxable = round(gross × 100 ÷ 105)` and
+`tax = gross − taxable`, subtracted rather than rounded independently so the two always add back to
+the paisa. CGST is floored and SGST takes the remainder, so an odd paisa of tax lands somewhere
+instead of vanishing. The consequence that matters most is what this does NOT touch: plan prices,
+part-payments and dues are all stored as the gross the member pays, so nothing about GST can move a
+balance. The split exists only on the printed receipt.
+
+**The rate follows the payment date, not today.** GST on gym services was cut from 18% (with ITC) to
+5% (without ITC) on 22 September 2025 — 56th GST Council, recorded in
+`docs/overhaul/research/R1-findings.txt`. Reprinting a 2025 receipt must show the tax that applied
+then. The cutover is pinned by a test on 21/22/23 September.
+
+**No GSTIN, no tax lines — and the GSTIN checksum is verified.** Printing a tax breakup for a gym
+that is not registered is a document claiming tax was collected for the government when it was not.
+Shape-only validation accepts a transposed digit, and a wrong GSTIN printed on every receipt for a
+year is something the gym hears about from their accountant, so the mod-36 check digit is computed.
+
+**Reports and rows must reconcile.** Every filter on the Money screen — period, method, search —
+narrows the totals *and* the receipt list together. A total that stays put while the list below it
+shrinks is a report nobody trusts twice. Voided receipts are never netted off; they are reported
+separately with their own count, so the figure can always be reconciled against the ledger.
+
+**Dues lead with age, not amount.** ₹2,000 owed since last week and ₹2,000 owed since March are the
+same number and a different phone call. Every due carries how many days it has been outstanding and
+falls into 0–30 / 31–60 / 60+. A term that has not started yet is a **sale, not a debt**, and is
+bucketed separately so the owner never chases a member who is not late. Ageing runs over every
+member including archived ones — archiving is not forgiveness.
+
+**The receipt's balance is dated.** "Balance as on 26 Jul 2026", not "balance". A receipt reprinted
+after the member settles up would otherwise contradict the copy handed over last month.
+
+**The CSV guard stays strict, so the data bends around it.** A cell beginning `=`, `+`, `-` or `@`
+is a formula to a spreadsheet, so any such string is quoted and apostrophe-prefixed. That guard
+correctly fired on every `+91…` mobile number during a real export, which is why phone numbers are
+written without the leading `+` (`phoneForExport`) rather than by weakening the guard.
+
 ## Known limits (recorded, not bugs)
 
 - **No UI-render tests.** The lane is Node-only, so `src/crm/ui/**` is gated by `tsc`,
@@ -117,13 +164,20 @@ claim a payment was recorded when it wasn't.
 - **Plans can be retired, not deleted**, and receipt numbers are derived from the ledger rather than
   a stored counter (so a lost counter is always recomputable, and a back-dated receipt lands in the
   right financial year).
+- **A receipt is a receipt, not a tax invoice.** It shows the GST inside the amount received, which
+  is defensible for a payment against services, but a full tax invoice has stricter requirements
+  (its own sequential series, recipient details for B2B). That is P6's job, and the heading says
+  "Payment receipt" rather than claiming otherwise.
+- **Dues age from the day the term starts.** For a gym that collects at or before the first session
+  this is right; a gym that invoices separately would want to age from an invoice date, which does
+  not exist in this model yet.
 
 ## Phases
 
 | # | Phase | Status |
 |---|---|---|
 | **P1** | Roster spine — members, plans, sell/renew, dues, check-in, local adapter, test lane, CI gate | ✅ 2026-07-26 |
-| P2 | Money — payment ledger UI, part-payment collection, receipts, collection reports | planned |
+| **P2** | Money — payment ledger UI, collection reports, aged dues, printable GST-ready receipts, CSV export | ✅ 2026-07-26 |
 | P3 | Attendance + the daily at-risk action list (days-since-visit is the only churn signal with peer-reviewed multi-country support) | planned |
 | P4 | Renewals pipeline + click-to-WhatsApp composer (₹0 — no BSP spend until D3/D4 are answered) | planned |
 | P5 | Staff, roles & permissions + PT session ledger | planned |

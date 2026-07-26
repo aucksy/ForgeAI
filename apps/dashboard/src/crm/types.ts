@@ -161,11 +161,24 @@ export interface Payment extends GymScoped {
   voidReason: string | null;
   collectedBy: string | null;
   createdAt: number;
+  /**
+   * The gym's GSTIN at the moment this receipt was issued, or null if the gym was
+   * not registered then. SNAPSHOT, for the same reason the plan name and price are
+   * snapshotted onto a membership: a gym that registers for GST in August must not
+   * turn June's receipts into tax invoices when one is reprinted. Reading the gym's
+   * live GSTIN made a duplicate copy of an old receipt assert that tax had been
+   * collected on a supply where none was.
+   *
+   * Optional only so a blob written before this field existed still opens; when it
+   * is absent the receipt falls back to the gym's current GSTIN, which is exactly
+   * the old behaviour and no worse than it was.
+   */
+  gstinAtSale?: string | null;
 }
 
 export type PaymentDraft = Omit<
   Payment,
-  'id' | 'gymId' | 'receiptNo' | 'createdAt' | 'voided' | 'voidReason'
+  'id' | 'gymId' | 'receiptNo' | 'createdAt' | 'voided' | 'voidReason' | 'gstinAtSale'
 >;
 
 // ---------------------------------------------------------------- attendance

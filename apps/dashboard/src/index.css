@@ -56,3 +56,63 @@ table {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* ---------------------------------------------------------------- printing
+ *
+ * A receipt is the one thing this app produces that leaves the building, so it is
+ * rendered as a white sheet of paper ON SCREEN too, not just when printed. That
+ * way what the owner sees before pressing Print is what comes out — and it removes
+ * any need to override the dark theme colour by colour at print time, which is
+ * where printed pages usually come out unreadable.
+ *
+ * Printing then only has to hide the app around it. `visibility` rather than
+ * `display` keeps the sheet's own layout intact; the absolute position stops the
+ * hidden chrome from reserving a blank first page.
+ */
+.print-sheet {
+  background: #ffffff;
+  color: #101014;
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-sheet,
+  .print-sheet * {
+    visibility: visible;
+  }
+
+  .print-sheet {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* The VOID banner is the one thing that must survive a printer's default
+     "don't print backgrounds" setting — a voided receipt that prints looking
+     valid is worse than not printing at all. */
+  .print-exact {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+@page {
+  margin: 14mm;
+}

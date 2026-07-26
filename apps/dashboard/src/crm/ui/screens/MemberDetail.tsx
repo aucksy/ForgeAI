@@ -17,6 +17,7 @@ import type { Membership, Payment } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
 import { SellMembershipSheet } from '../forms/SellMembershipSheet';
+import { VoidPaymentSheet } from '../forms/VoidPaymentSheet';
 import {
   Avatar,
   Button,
@@ -37,20 +38,16 @@ import {
   radius,
   space,
 } from '../kit';
-import { navigate } from '../router';
-
-type Confirming =
-  | { kind: 'cancel'; membership: Membership }
-  | { kind: 'void'; payment: Payment }
-  | null;
+import { Link, navigate } from '../router';
 
 export function MemberDetailScreen({ memberId }: { memberId: string }) {
-  const { snapshot, today, viewFor, checkIn, setMemberArchived, cancelMembership, uncancelMembership, voidPayment } =
+  const { snapshot, today, viewFor, checkIn, setMemberArchived, cancelMembership, uncancelMembership } =
     useCrm();
   const [editing, setEditing] = useState(false);
   const [selling, setSelling] = useState(false);
   const [collecting, setCollecting] = useState(false);
-  const [confirming, setConfirming] = useState<Confirming>(null);
+  const [cancelling, setCancelling] = useState<Membership | null>(null);
+  const [voiding, setVoiding] = useState<Payment | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -242,7 +239,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 membership={m}
                 payments={payments}
                 today={today}
-                onCancel={() => setConfirming({ kind: 'cancel', membership: m })}
+                onCancel={() => setCancelling(m)}
                 onRestore={() => run(() => uncancelMembership(m.id), 'Cancellation reversed.')}
               />
             ))}
@@ -257,7 +254,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         ) : (
           <div style={{ display: 'grid', gap: space.xs }}>
             {payments.map((p) => (
-              <PaymentRow key={p.id} payment={p} onVoid={() => setConfirming({ kind: 'void', payment: p })} />
+              <PaymentRow key={p.id} payment={p} onVoid={() => setVoiding(p)} />
             ))}
           </div>
         )}
@@ -287,31 +284,40 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <SellMembershipSheet
           view={view}
           onClose={() => setSelling(false)}
-          onSold={() => flash('Membership saved.')}
+          onSold={(result) =>
+            flash(
+              result.payment
+                ? `Membership saved. Receipt ${result.payment.receiptNo}.`
+                : 'Membership saved — nothing collected yet.',
+            )
+          }
         />
       )}
       {collecting && (
         <CollectPaymentSheet
           view={view}
           onClose={() => setCollecting(false)}
-          onCollected={() => flash('Payment recorded.')}
+          onCollected={(payment) => flash(`Payment recorded. Receipt ${payment.receiptNo}.`)}
         />
       )}
-      {confirming && (
-        <ConfirmSheet
-          confirming={confirming}
-          onClose={() => setConfirming(null)}
-          onCancelMembership={(reason) =>
+      {cancelling && (
+        <CancelMembershipSheet
+          membership={cancelling}
+          onClose={() => setCancelling(null)}
+          onConfirm={(reason) =>
             run(async () => {
-              await cancelMembership(confirming.kind === 'cancel' ? confirming.membership.id : '', reason);
-              setConfirming(null);
+              await cancelMembership(cancelling.id, reason);
+              setCancelling(null);
             }, 'Membership cancelled.')
           }
-          onVoidPayment={(reason) =>
-            run(async () => {
-              await voidPayment(confirming.kind === 'void' ? confirming.payment.id : '', reason);
-              setConfirming(null);
-            }, 'Payment voided.')
+        />
+      )}
+      {voiding && (
+        <VoidPaymentSheet
+          payment={voiding}
+          onClose={() => setVoiding(null)}
+          onVoided={(restored) =>
+            flash(restored ? 'Receipt voided. The amount is back on their dues.' : 'Receipt voided.')
           }
         />
       )}
@@ -321,58 +327,42 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 }
 
 /**
- * Cancelling a membership and voiding a receipt both move money. Neither may be a
- * single unconfirmed click — the review's point was that "Load demo gym" asked for
- * confirmation while the irreversible money actions did not.
+ * Cancelling a membership moves money, so it is never a single unconfirmed click —
+ * the review's point was that "Load demo gym" asked for confirmation while the
+ * irreversible money actions did not. Voiding a receipt has the same rule and now
+ * lives in its own `VoidPaymentSheet`, shared with the money ledger, so the two
+ * places a receipt can be voided cannot drift apart.
  */
-function ConfirmSheet({
-  confirming,
+function CancelMembershipSheet({
+  membership,
   onClose,
-  onCancelMembership,
-  onVoidPayment,
+  onConfirm,
 }: {
-  confirming: NonNullable<Confirming>;
+  membership: Membership;
   onClose: () => void;
-  onCancelMembership: (reason: string) => void;
-  onVoidPayment: (reason: string) => void;
+  onConfirm: (reason: string) => void;
 }) {
   const [reason, setReason] = useState('');
-  const isCancel = confirming.kind === 'cancel';
 
   return (
     <Sheet
-      title={isCancel ? 'Cancel this membership?' : 'Void this receipt?'}
+      title="Cancel this membership?"
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
             Keep it
           </Button>
-          <Button
-            tone="danger"
-            disabled={reason.trim().length < 3}
-            onClick={() => (isCancel ? onCancelMembership(reason.trim()) : onVoidPayment(reason.trim()))}
-          >
-            {isCancel ? 'Cancel membership' : 'Void receipt'}
+          <Button tone="danger" disabled={reason.trim().length < 3} onClick={() => onConfirm(reason.trim())}>
+            Cancel membership
           </Button>
         </>
       }
     >
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {isCancel ? (
-          <>
-            <strong style={{ color: color.ink }}>{confirming.membership.planName}</strong> (
-            {formatDay(confirming.membership.startsOn)} → {formatDay(confirming.membership.endsOn)}) will
-            stop counting as cover and will no longer be chased for money. The record stays, and you can
-            undo this afterwards.
-          </>
-        ) : (
-          <>
-            Receipt <strong style={{ color: color.ink }}>{confirming.payment.receiptNo}</strong> for{' '}
-            {formatINR(confirming.payment.amountP)} will stop counting as money received. The row stays in
-            the ledger and its number is never reused — that is what an auditor expects.
-          </>
-        )}
+        <strong style={{ color: color.ink }}>{membership.planName}</strong> (
+        {formatDay(membership.startsOn)} → {formatDay(membership.endsOn)}) will stop counting as cover and
+        will no longer be chased for money. The record stays, and you can undo this afterwards.
       </p>
 
       <TextField
@@ -380,7 +370,7 @@ function ConfirmSheet({
         value={reason}
         onChange={setReason}
         autoFocus
-        placeholder={isCancel ? 'Moved city' : 'Entered twice'}
+        placeholder="Moved city"
         hint="Recorded against the record so it makes sense months later."
       />
     </Sheet>
@@ -466,9 +456,23 @@ function MembershipRow({
 function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid: () => void }) {
   return (
     <Row gap={space.md} wrap={false}>
-      <span style={{ fontFamily: font.mono, fontSize: 12, color: color.inkMuted, minWidth: 96 }}>
-        {payment.receiptNo}
-      </span>
+      {/* The receipt number is the handle on the printable copy — a member asking
+          for "the receipt for July" is the commonest counter request there is. */}
+      <Link to={`/receipts/${payment.id}`} title="Open printable receipt">
+        <span
+          style={{
+            fontFamily: font.mono,
+            fontSize: 12,
+            color: color.accentBright,
+            minWidth: 96,
+            display: 'inline-block',
+            minHeight: 44,
+            lineHeight: '44px',
+          }}
+        >
+          {payment.receiptNo}
+        </span>
+      </Link>
       <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, flex: 1, minWidth: 0 }}>
         {formatDay(payment.paidOn)} · {payment.method.toUpperCase()}
         {payment.reference ? ` · ${payment.reference}` : ''}

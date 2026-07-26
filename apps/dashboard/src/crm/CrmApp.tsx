@@ -10,12 +10,15 @@
 
 import { useMemo } from 'react';
 
+import { duesByMember, duesLedger } from './logic/collections';
 import { needsAttentionToday } from './logic/membership';
 import { CrmProvider, useCrm } from './store';
 import { AppShell, type NavItem } from './ui/AppShell';
 import { MemberDetailScreen } from './ui/screens/MemberDetail';
 import { MembersScreen } from './ui/screens/Members';
+import { MoneyScreen } from './ui/screens/Money';
 import { PlansScreen } from './ui/screens/Plans';
+import { ReceiptScreen } from './ui/screens/Receipt';
 import { SettingsScreen } from './ui/screens/Settings';
 import { TodayScreen } from './ui/screens/Today';
 import { Welcome } from './ui/Welcome';
@@ -30,7 +33,7 @@ export function CrmApp() {
 }
 
 function Routes() {
-  const { snapshot, memberViews } = useCrm();
+  const { snapshot, memberViews, today } = useCrm();
   const route = useRoute();
 
   // Never set up: no plans, no members, and still the placeholder name.
@@ -41,13 +44,26 @@ function Routes() {
     // Same rule as the Today screen's call list. Counting every expired member
     // ever made the badge read a large number over a list of a handful.
     const needsAttention = memberViews.filter((v) => needsAttentionToday(v)).length;
+    // Only genuinely overdue money badges Money — a term that has not started yet
+    // is a sale, not a debt, and badging it would send the owner chasing members
+    // who are not late.
+    //
+    // Counted in PEOPLE, like the Members badge beside it and like the list the
+    // badge opens. Counting unpaid terms made a member with three of them badge 3
+    // over a list showing one row.
+    const overdue = duesByMember(
+      duesLedger(snapshot.members, snapshot.memberships, snapshot.payments, today).filter(
+        (d) => d.bucket !== 'upcoming',
+      ),
+    ).length;
     return [
       { path: '/', label: 'Today', glyph: '◆' },
       { path: '/members', label: 'Members', glyph: '☰', badge: needsAttention },
+      { path: '/money', label: 'Money', glyph: '▤', badge: overdue },
       { path: '/plans', label: 'Plans', glyph: '₹' },
       { path: '/settings', label: 'Settings', glyph: '⚙' },
     ];
-  }, [memberViews]);
+  }, [memberViews, snapshot, today]);
 
   if (isNewGym) return <Welcome />;
 
@@ -66,6 +82,11 @@ function Screen({ segments }: { segments: string[] }) {
       return <TodayScreen />;
     case 'members':
       return id ? <MemberDetailScreen memberId={id} /> : <MembersScreen />;
+    case 'money':
+      return <MoneyScreen section={id} />;
+    case 'receipts':
+      // A receipt with no id is a broken link, not a list — send them to the ledger.
+      return id ? <ReceiptScreen paymentId={id} /> : <MoneyScreen />;
     case 'plans':
       return <PlansScreen />;
     case 'settings':

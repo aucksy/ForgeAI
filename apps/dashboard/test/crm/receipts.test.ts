@@ -85,3 +85,27 @@ describe('nextReceiptNo', () => {
     expect(nextReceiptNo(existing, '2026-07-26')).toBe('2026-27/10000');
   });
 });
+
+describe('a receipt number is always readable back', () => {
+  it('pads a short year so the series can still be parsed', () => {
+    // `RECEIPT_RE` demands four year digits. An unpadded start year produced
+    // `1-02/0001`, which `parseReceiptNo` then refused — so `nextReceiptNo` saw
+    // no prior receipts and issued the same number again.
+    expect(financialYear('0002-01-01')).toBe('0001-02');
+    expect(parseReceiptNo('0001-02/0001')).toEqual({ fy: '0001-02', seq: 1 });
+  });
+
+  it('never issues the same number twice, even for an absurd date', () => {
+    const first = nextReceiptNo([], '0002-01-01');
+    const second = nextReceiptNo([{ receiptNo: first }], '0002-01-01');
+    expect(second).not.toBe(first);
+    expect(parseReceiptNo(second)?.seq).toBe(2);
+  });
+
+  it('round-trips every financial year it can produce', () => {
+    for (const day of ['0002-01-01', '1999-12-31', '2026-07-26', '2099-04-01']) {
+      const fy = financialYear(day);
+      expect(parseReceiptNo(`${fy}/0001`)).not.toBeNull();
+    }
+  });
+});

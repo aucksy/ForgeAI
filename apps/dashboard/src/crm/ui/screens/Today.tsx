@@ -25,6 +25,7 @@ import {
   Row,
   SectionTitle,
   StatTile,
+  TOUCH,
   color,
   font,
   space,
@@ -180,7 +181,18 @@ function PersonRow({ view, detail, tone }: { view: MemberView; detail: string; t
   return (
     <Row gap={space.md} wrap={false}>
       <Link to={`/members/${member.id}`}>
-        <Row gap={space.md} wrap={false}>
+        {/* The whole name-and-status block is one 44px target. It measured 36px:
+            the kit commits to 44 and the "Message" link beside it already is, so
+            the two halves of the same row disagreed under a thumb. */}
+        <span
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: space.md,
+            minHeight: TOUCH,
+            minWidth: 0,
+          }}
+        >
           <Avatar text={initials(member.fullName)} size={32} />
           <div style={{ minWidth: 0 }}>
             <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.ink }}>
@@ -188,7 +200,7 @@ function PersonRow({ view, detail, tone }: { view: MemberView; detail: string; t
             </div>
             <div style={{ fontFamily: font.body, fontSize: 12, color: tone }}>{detail}</div>
           </div>
-        </Row>
+        </span>
       </Link>
       <span style={{ flex: 1 }} />
       <a
@@ -221,4 +233,9 @@ const moreLink: React.CSSProperties = {
   fontFamily: "'Manrope', system-ui, sans-serif",
   fontSize: 13,
   color: color.accentBright,
+  // An 18px text link is not a tap target.
+  display: 'inline-flex',
+  alignItems: 'center',
+  minHeight: TOUCH,
+  paddingLeft: space.sm,
 };

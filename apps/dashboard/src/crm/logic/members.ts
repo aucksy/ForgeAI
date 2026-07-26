@@ -90,6 +90,30 @@ export function phoneDigits(e164: string): string {
   return e164.replace(/\D/g, '');
 }
 
+/**
+ * A phone number for a spreadsheet cell: `91 98765 43210`, `971 501234567`.
+ *
+ * Two things have to be true at once and they pull in opposite directions.
+ *
+ * The leading `+` must go: a cell beginning with `+` is a formula to Excel, so the
+ * CSV writer's injection guard prefixes it with an apostrophe — correctly, and
+ * that guard must stay strict — and the accountant then reads `'+91 98765 43210`
+ * in every row.
+ *
+ * But the result must not be a bare run of digits either, or Excel reads it as a
+ * NUMBER and renders `+971501234567` as `9.71501E+11`. `formatPhone` only spaces
+ * out Indian mobiles, so every foreign member exported as an unreadable float.
+ * Splitting on the dial code guarantees a space in every case, whatever the
+ * country, which is what makes the cell text.
+ */
+export function phoneForExport(e164: string): string {
+  const pretty = formatPhone(e164);
+  if (pretty !== e164) return pretty.replace(/^\+/, '');
+
+  const { dialCode, national } = splitE164(e164);
+  return `${dialCode.replace(/^\+/, '')} ${national}`;
+}
+
 // ---------------------------------------------------------------- names
 
 /** Trim and collapse inner whitespace. */

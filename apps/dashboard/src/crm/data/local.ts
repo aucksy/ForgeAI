@@ -40,13 +40,16 @@ import type {
   PlanDraft,
   Visit,
 } from '../types';
-import type { DateISO } from '../logic/dates';
+import { isValidDateISO, type DateISO } from '../logic/dates';
 import { endDateForPlan } from '../logic/membership';
 import { findDuplicatePhone } from '../logic/members';
 import { nextReceiptNo } from '../logic/receipts';
 import {
   DuplicatePhoneError,
+  EARLIEST_DATE,
   FutureSchemaError,
+  InvalidDateError,
+  LATEST_DATE,
   NotFoundError,
   StorageFullError,
   type CrmData,
@@ -297,6 +300,9 @@ export class LocalCrmData implements CrmData {
       const plan = db.plans.find((p) => p.id === input.planId);
       if (!plan) throw new NotFoundError('That plan');
 
+      requireDay(input.startsOn, 'The start date');
+      if (input.collectNowP > 0) requireDay(input.paidOn, 'The payment date');
+
       const ts = this.now();
       const membership: Membership = {
         id: newId(),
@@ -335,6 +341,8 @@ export class LocalCrmData implements CrmData {
           voidReason: null,
           collectedBy: input.soldBy,
           createdAt: ts,
+          // Snapshot: registering for GST later must not rewrite this receipt.
+          gstinAtSale: db.gym.gstin,
         };
       }
 
@@ -375,6 +383,7 @@ export class LocalCrmData implements CrmData {
       if (input.membershipId && !db.memberships.some((m) => m.id === input.membershipId)) {
         throw new NotFoundError('That membership');
       }
+      requireDay(input.paidOn, 'The payment date');
 
       const payment: Payment = {
         id: newId(),
@@ -391,6 +400,7 @@ export class LocalCrmData implements CrmData {
         voidReason: null,
         collectedBy: input.collectedBy,
         createdAt: this.now(),
+        gstinAtSale: db.gym.gstin,
       };
       db.payments.push(payment);
       return { ...payment };
@@ -439,6 +449,18 @@ export class LocalCrmData implements CrmData {
 
 function appendNote(existing: string | null, line: string): string {
   return existing ? `${existing}\n${line}` : line;
+}
+
+/**
+ * Refuse a day that is not real, or that is outside any century a gym trades in.
+ * Called before anything is written, because a bad date does not just store badly:
+ * `nextReceiptNo` derives the financial-year series from it.
+ */
+function requireDay(value: DateISO, what: string): DateISO {
+  if (!isValidDateISO(value) || value < EARLIEST_DATE || value > LATEST_DATE) {
+    throw new InvalidDateError(what);
+  }
+  return value;
 }
 
 export function emptySnapshot(now: number, gymName = 'My Gym'): CrmSnapshot {
