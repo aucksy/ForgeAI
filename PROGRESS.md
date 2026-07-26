@@ -540,6 +540,91 @@
     **NEXT = Phase O2 (W1 real onboarding):** replace the fake-"Arjun" auto-seed with a real empty
     start + an explicit "Load demo data" for sales; "Reset" must clear to empty, not regenerate fake data.
 
+- 2026-07-26: **Phase O2 DONE (W1 real onboarding) — 142 tests green (61 O1 + 81 new), typecheck
+  green, adversarially reviewed (2 HIGH + 5 MED + 6 LOW found; all HIGH/MED fixed), frozen-clean.
+  Shipping as v0.20.0.**
+  The app auto-seeded a fake "Arjun Mehra" 13-week history on FIRST LAUNCH, and Settings → "Reset
+  demo data" wiped everything and **regenerated** it. Under the B2B2C pivot a member handed the app
+  by their real gym would see someone else's numbers — weakness **W1**, "disqualifying". O2 replaces
+  that with a real empty start, an explicit demo action for sales, and an erase that clears to EMPTY.
+  Fieldwork had NOT landed (FIELDWORK.md is still the blank kit), so this was built
+  fieldwork-independent as planned.
+  - **Boot gate (the load-bearing decision):** `hasMemberProfile()` — *is there a row in
+    `user_profile`* — is the ONLY onboarding signal. Not a flag, because every pre-O2 install
+    (incl. the owner's phone with 487 imported Hevy workouts) already has a profile and must
+    upgrade straight into the app. `app/_layout.tsx` no longer calls `ensureSeeded()`; it renders
+    `<WelcomeScreen>` **instead of** the `<Stack>` when there is no profile (not a route push — so
+    the tabs never mount over an empty DB and an erase returns there with no restart/nav race).
+  - **Owner decision (AskUserQuestion 2026-07-26): welcome captures NAME + MOBILE NUMBER.** The
+    owner asked for SMS OTP + "one install per number". Pushed back in chat and he agreed to
+    collect-now-verify-later: an OTP proves phone ownership, **not gym membership** (only the gym's
+    roster does that); it needs a backend + provider + **TRAI DLT** registration + per-message cost
+    (VISION §6 risk 4) before fieldwork D3 has told us members will even install; and it would break
+    the offline-first first launch. The number is stored locally as the identity the gym roster will
+    verify against when the platform track opens. Recommended replacement for OTP when we get there:
+    **gym approves / roster match** (₹0, proves more). Also locked: erase = fresh-install semantics;
+    "Load demo data" appears on BOTH the welcome screen and Settings.
+  - **New (`src/onboarding/*`):** `form.ts` (PURE — name/phone validation, E.164 normalisation,
+    optional age/height/weight parsing, `computeTargets` by goal × body weight), `db/memberSchema.ts`
+    (**additive** `ALTER TABLE user_profile ADD COLUMN phone TEXT`, PRAGMA-guarded + meta-versioned,
+    exact `initTrackerSchema` pattern — `schema.ts` never edited), `db/catalog.ts` (inserts the
+    ~40-movement catalog, imported read-only from `db/seed/exercises`), `db/dataActions.ts` (the
+    three lifecycle actions + `WIPE_TABLES_IN_ORDER` / `OWNED_META_KEYS`), `store/onboardingStore.ts`,
+    `components/{WelcomeScreen,BootErrorScreen}.tsx`. Plus `components/settings/DataCard.tsx` and
+    `components/dashboard/FirstRunCard.tsx`.
+  - **The three flows.** *Empty start*: ONE exclusive tx writes exactly 1 profile row + the exercise
+    catalog + (only if given) 1 body-weight row — **zero** session/set/PR/meal/chat/plan rows.
+    *Load demo*: erase → flag → the EXISTING generator via `forceReseed()` (seed files untouched
+    beyond comments). *Erase*: one tx clears all 11 domain tables + `sync_outbox` child-first, and
+    deletes **only** `seeded`/`demo_data`/`activeWorkoutDraft` from `meta` — the blanket `DELETE FROM
+    meta` the old reset did would have taken `cloud_client_version` with it, and resetting that
+    monotonic counter makes every later push look STALE to the server (owner dashboard frozen on
+    pre-erase numbers). Gym link + Drive settings therefore survive an erase by design.
+  - **Also:** `ensureSeeded()` **deleted** (dead after the boot change; leaving it exported invited
+    someone to re-wire auto-seeding). Optional-field honesty: `ai/system.ts` omits unknown age/height
+    /gym from the prompt instead of telling the model "0 y/o, 0 cm"; `GymCard`/`coach.tsx` handle an
+    empty gym name. `snapshot.ts` adds `phone` to the user_profile column list (lossless Drive
+    backup; old envelopes restore it NULL — same precedent as the 5b/5c columns, no SCHEMA_VERSION
+    bump). Phone is editable in Settings → Your profile.
+  - **Adversarial review (1 deep agent, read-only) — 13 findings; every HIGH and MED fixed:**
+    **H1 (the dangerous one)** `boot()` mapped ANY read failure to `status:'welcome'`, and
+    `completeOnboarding` wiped unconditionally → one transient SQLITE_BUSY on the owner's phone
+    would have offered a first-run screen over 487 workouts and destroyed them on "Start training".
+    Fixed twice over: a read failure now lands on a new **BootErrorScreen** (retry), and
+    `completeOnboarding` re-verifies **inside** the transaction (`ExistingDataError` if any profile
+    or session exists, caller recovers by re-booting into the app). **H2** a real Indian mobile in
+    the `91xxxxxxxx` series was mangled by the duplicate-country-code strip → that member could
+    never finish onboarding; `normalizePhone` now tries ordered candidates and keeps the number
+    as-typed when it is already valid. **M1** an `initMemberSchema` failure froze the app on a blank
+    splash (boot was inside the try) → init failures now fall through to the retry screen.
+    **M2** a cache-reset failure after a COMMITTED erase reported "could not erase" over an emptied
+    DB → best-effort. **M3** loading the demo on a gym-linked phone pushed Arjun's numbers to the
+    owner dashboard under the member's real name → `maybeSync()` now returns early while
+    `demo_data` is set. **M4** the demo flag was written AFTER the seed (kill in between = unlabelled
+    fake data) → flagged first. **M5** a Drive restore / Hevy import left the demo badge over real
+    data → `clearDemoFlag()` called from both. LOW fixed: blank phone no longer blocks unrelated
+    profile saves; erase navigates Home before unmounting the navigator; the demo alert re-checks
+    `busy`; optional-number parsing rejects `0x20`/`1e2` and accepts a decimal comma.
+    **Lenses CLEAN:** transactions/nesting (no `getDb()` inside an exclusive tx — the documented
+    deadlock), FK wipe order (verified against every `REFERENCES` clause), empty-DB crashes across
+    every screen, double-tap re-entry, the additive phone column, and **frozen-file compliance
+    (git-verified: `src/engine`, `src/components/{ui,charts}`, `schema.ts`, `src/db/repos`,
+    `src/services` all untouched; no exported signature changed).**
+  - **Tests (`test/onboarding/**`, 81 new):** the W1 promise asserted directly (empty start writes
+    NOTHING to the 8 history tables), the guard against wiping a populated DB, wipe order vs a
+    hand-built FK map, `meta` survivors, demo flag before-seed + cleared-by-erase, boot never
+    falling back to 'welcome' on a read error, committed-erase-survives-cache-failure, the
+    `91xxxxxxxx` regression, and `computeTargets` pinned to hand-derived numbers (incl. both
+    clamps). Review also flagged 6 weak/tautological assertions from my first pass — all replaced
+    with pinned values or real state checks; the erase DELETE list is now spelled out rather than
+    derived from the constant it tests.
+  - **Deliberately deferred (noted, not bugs):** SMS/OTP + roster verification (platform track);
+    "Restore from Drive" on the welcome screen (the Drive card is gated on an unset
+    `googleWebClientId`, so it would be dead UI today) — a reinstalling member must onboard first,
+    then Settings → Backup; onboarding hardcodes `unit_system:'metric'`/`language:'en'` (app is
+    kg-only, the UI reads `settingsStore`); `discard()` re-creates `activeWorkoutDraft=''` in meta
+    after an erase (falsy → no restore).
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

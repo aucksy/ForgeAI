@@ -1,5 +1,7 @@
 /**
- * Demo-data seeder. First launch only (meta.seeded flag): profile, exercise
+ * Demo-data seeder — since Phase O2 (W1) it runs ONLY when the member explicitly
+ * asks for demo data (never on launch); the `seeded` flag keeps it idempotent
+ * within a run. Writes: profile, exercise
  * catalog, active PPL plan, 13 weeks of sessions/sets/PRs, body weight, meals
  * and a seeded coach conversation — everything inserted in ONE exclusive
  * transaction via multi-row batched statements (fast enough for on-device
@@ -63,20 +65,17 @@ const SEED_TABLES = [
 
 let inFlight: Promise<void> | null = null;
 
-export function ensureSeeded(): Promise<void> {
-  if (!inFlight) {
-    inFlight = seed().catch((err: unknown) => {
-      inFlight = null; // allow a retry on next call
-      throw err;
-    });
-  }
-  return inFlight;
-}
+// NOTE: the old `ensureSeeded()` (the launch-time "seed once" entry point) was
+// REMOVED in Phase O2 (W1). Leaving it exported invited a future caller to wire
+// auto-seeding back into the boot path, which is precisely the defect O2 fixes.
+// The only way to create demo data is now forceReseed(), behind an explicit,
+// confirmed user action.
 
 /**
- * Force a fresh seed regardless of the memoised launch promise. Used by the
- * "Reset demo data" flow: after the wipe the `seeded` flag is gone, so seed()
- * runs fully and (being DELETE-first) is safe even if rows survived the wipe.
+ * Force a fresh seed regardless of the memoised promise. Since Phase O2 (W1) the
+ * ONLY caller is the explicit "Load demo data" action (onboarding/db/dataActions):
+ * it erases first, so the `seeded` flag is gone and seed() runs fully — and being
+ * DELETE-first it stays safe even if a row survived the wipe.
  */
 export function forceReseed(): Promise<void> {
   inFlight = seed().catch((err: unknown) => {

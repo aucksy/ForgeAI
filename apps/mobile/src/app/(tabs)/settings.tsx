@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
-import { useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { ANTHROPIC_MODELS, GROQ_MODELS, OPENAI_MODELS } from '@/ai/models';
@@ -9,15 +8,14 @@ import { ChipGroup } from '@/components/settings/ChipGroup';
 import type { ChipOption } from '@/components/settings/ChipGroup';
 import { BackupCard } from '@/components/settings/BackupCard';
 import { CloudCard } from '@/components/settings/CloudCard';
+import { DataCard } from '@/components/settings/DataCard';
 import { GymCard } from '@/components/settings/GymCard';
 import { ProfileCard } from '@/components/settings/ProfileCard';
-import { resetDemoData } from '@/components/settings/resetDemo';
 import { ToggleRow } from '@/components/settings/SettingRow';
-import { Card, GhostButton, Icon, Screen, SectionHeader } from '@/components/ui';
+import { Card, Icon, Screen, SectionHeader } from '@/components/ui';
 import { ExportCard } from '@/tracker/components/ExportCard';
 import { ImportCard } from '@/tracker/components/ImportCard';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
-import { success, thud } from '@/lib/haptics';
 import {
   getAnthropicKey,
   getGroqKey,
@@ -26,7 +24,6 @@ import {
   setGroqKey,
   setOpenAiKey,
 } from '@/lib/keys';
-import { useChat } from '@/store/chatStore';
 import { useDashboard } from '@/store/dashboardStore';
 import { useSettings } from '@/store/settingsStore';
 import { color, motion, space, type } from '@/theme/tokens';
@@ -87,45 +84,6 @@ export default function SettingsScreen() {
   const setAdvancedSets = useTrackerPrefs((s) => s.setAdvancedSets);
   const coachNotes = useTrackerPrefs((s) => s.coachNotes);
   const setCoachNotes = useTrackerPrefs((s) => s.setCoachNotes);
-
-  const [resetting, setResetting] = useState(false);
-
-  const runReset = async () => {
-    if (resetting) return;
-    setResetting(true);
-    try {
-      const { reseeded } = await resetDemoData();
-      if (reseeded) {
-        await Promise.all([useDashboard.getState().refresh(), useChat.getState().load()]);
-        success();
-        Alert.alert('Demo data regenerated', 'A fresh 13-week training history is ready.');
-      } else {
-        // Reseed genuinely failed — refresh anyway so the UI reflects the wiped
-        // DB rather than showing ghost pre-reset data, then ask for a restart.
-        await Promise.all([useDashboard.getState().refresh(), useChat.getState().load()]);
-        thud();
-        Alert.alert(
-          'Demo data cleared',
-          'Close and reopen ForgeAI to finish forging the fresh demo.',
-        );
-      }
-    } catch {
-      Alert.alert('Reset failed', 'Something went wrong — please try again.');
-    } finally {
-      setResetting(false);
-    }
-  };
-
-  const confirmReset = () => {
-    Alert.alert(
-      'Reset demo data?',
-      'This wipes every workout, meal, PR and chat message, then regenerates the demo from scratch.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Reset', style: 'destructive', onPress: () => void runReset() },
-      ],
-    );
-  };
 
   return (
     <Screen title="Settings" subtitle="Tune your coach">
@@ -324,26 +282,8 @@ export default function SettingsScreen() {
         </View>
       </Section>
 
-      <Section title="Danger zone" delay={315}>
-        <Card>
-          <GhostButton
-            label={resetting ? 'Resetting…' : 'Reset demo data'}
-            icon="flame"
-            onPress={confirmReset}
-          />
-          <Text
-            style={{
-              fontFamily: type.body,
-              fontSize: type.size.caption,
-              color: color.inkMuted,
-              textAlign: 'center',
-              marginTop: space.md,
-              lineHeight: 15,
-            }}
-          >
-            Wipes every workout, meal and chat, then regenerates the full demo dataset.
-          </Text>
-        </Card>
+      <Section title="Your data" delay={315}>
+        <DataCard />
       </Section>
     </Screen>
   );

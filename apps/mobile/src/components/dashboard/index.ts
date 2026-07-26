@@ -1,5 +1,6 @@
 export { BodyWeightCard } from './BodyWeightCard';
 export { DashboardSkeleton } from './DashboardSkeleton';
+export { FirstRunCard } from './FirstRunCard';
 export { GreetingHeader } from './GreetingHeader';
 export { HeroWorkoutCard } from './HeroWorkoutCard';
 export { InsightCard } from './InsightCard';

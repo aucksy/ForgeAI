@@ -16,6 +16,7 @@ import {
   type BackupInfo,
 } from '@/cloud/snapshot';
 import { getMeta, setMeta } from '@/db';
+import { clearDemoFlag } from '@/onboarding/db/dataActions';
 
 /** meta keys: a local "the user linked Google before" marker + the last backup time. */
 const LINKED_KEY = 'drive_linked';
@@ -129,6 +130,9 @@ export const useBackup = create<BackupState>()((set, get) => ({
     try {
       const env = parseSnapshot(found.json);
       await importSnapshot(env);
+      // Real history has replaced whatever was here — it is no longer demo data,
+      // so the badge and the softened "remove demo" wording must not linger.
+      await clearDemoFlag();
       set({ found: null });
       return true;
     } finally {

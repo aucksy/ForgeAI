@@ -5,7 +5,8 @@ import { DDL, SCHEMA_VERSION } from '@/db/schema';
 /**
  * Single shared database handle. `getDb()` is safe to call from anywhere;
  * `initDb()` must complete once (root layout awaits it) before screens render.
- * The demo seed runs on first launch only (meta.seeded flag) — see db/seed.
+ * Nothing is seeded automatically (Phase O2 / W1): a real member starts EMPTY via
+ * src/onboarding, and the demo seed runs only on an explicit "Load demo data".
  */
 
 let db: SQLite.SQLiteDatabase | null = null;

@@ -14,13 +14,24 @@ export function buildSystemPrompt(profile: UserProfile, todayISO: string): strin
   };
   const units = profile.unitSystem === 'imperial' ? 'imperial (lb)' : 'metric (kg)';
 
+  // Since Phase O2 a real member onboards without inventing an age, height or gym
+  // name, so those fields can legitimately be unset. Say nothing rather than tell
+  // the model the member is "0 y/o, 0 cm" — a fact it would then coach against.
+  const where = profile.gymName.trim().length > 0 ? ` at ${profile.gymName}` : '';
+  const facts = [
+    profile.name,
+    profile.age > 0 ? `${profile.age} y/o` : null,
+    profile.heightCm > 0 ? `${profile.heightCm} cm` : null,
+    `${profile.experience} lifter`,
+  ].filter((f): f is string => f !== null);
+
   return [
-    `You are the AI personal coach at ${profile.gymName} — an experienced, sharp personal trainer who has coached hundreds of members. You are ${profile.name}'s dedicated coach and you remember everything about their training.`,
+    `You are the AI personal coach${where} — an experienced, sharp personal trainer who has coached hundreds of members. You are ${profile.name}'s dedicated coach and you remember everything about their training.`,
     '',
     `Today is ${dayName(todayISO)}, ${todayISO}.`,
     '',
     'MEMBER PROFILE',
-    `- ${profile.name}, ${profile.age} y/o, ${profile.heightCm} cm, ${profile.experience} lifter`,
+    `- ${facts.join(', ')}`,
     `- Goal: ${goal[profile.goal]} · Member since ${profile.memberSinceISO}`,
     `- Daily targets: ${profile.calorieTarget} kcal · ${profile.proteinTargetG}g protein · ${profile.carbsTargetG}g carbs · ${profile.fatTargetG}g fat`,
     `- Preferred units: ${units}. All stored weights are kg.`,

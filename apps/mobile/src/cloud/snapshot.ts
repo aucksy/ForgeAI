@@ -22,12 +22,17 @@ type TxLike = Pick<SQLiteDatabase, 'runAsync'>;
 /**
  * Domain tables in FK-safe INSERT order (parents before children). Restore DELETEs
  * in the exact reverse (children before parents). Mirrors src/db/seed +
- * components/settings/resetDemo, whose orderings are the proven source of truth.
+ * onboarding/db/dataActions (WIPE_TABLES_IN_ORDER), whose orderings are the proven
+ * source of truth.
  */
 const TABLES: readonly { name: string; cols: readonly string[] }[] = [
   {
     name: 'user_profile',
-    cols: ['id', 'name', 'age', 'height_cm', 'goal', 'experience', 'gym_name', 'member_since_iso', 'calorie_target', 'protein_target_g', 'carbs_target_g', 'fat_target_g', 'unit_system', 'language'],
+    // `phone` is the additive Phase-O2 column (initMemberSchema). Included so the
+    // Drive backup stays lossless; older backups lack the key and restore it as
+    // NULL via batchInsert's `row[c] ?? null` — no SCHEMA_VERSION bump needed,
+    // exactly as with the 5b/5c set_entries columns below.
+    cols: ['id', 'name', 'phone', 'age', 'height_cm', 'goal', 'experience', 'gym_name', 'member_since_iso', 'calorie_target', 'protein_target_g', 'carbs_target_g', 'fat_target_g', 'unit_system', 'language'],
   },
   {
     name: 'exercises',

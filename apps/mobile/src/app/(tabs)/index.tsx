@@ -7,6 +7,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import {
   BodyWeightCard,
   DashboardSkeleton,
+  FirstRunCard,
   GreetingHeader,
   HeroWorkoutCard,
   InsightCard,
@@ -74,6 +75,11 @@ export default function DashboardScreen() {
     router.push('/workout');
   }, [router]);
 
+  const goRoutines = useCallback(() => {
+    thud();
+    router.push('/routines');
+  }, [router]);
+
   const goCoach = useCallback(() => {
     thud();
     // Deep-link the coach to present today's session (coach.tsx consumes ?prompt=).
@@ -116,11 +122,21 @@ export default function DashboardScreen() {
         {data ? (
           <>
             <Section index={0}>
-              <HeroWorkoutCard
-                workout={data.todaysWorkout}
-                unitSystem={unitSystem}
-                onPress={goWorkout}
-              />
+              {/* Phase O2 (W1): a real member starts with nothing logged — invite
+                  them to train instead of showing a plan card over zeros. */}
+              {data.lastWorkout === null ? (
+                <FirstRunCard
+                  name={firstName}
+                  onStartWorkout={goWorkout}
+                  onBuildRoutine={goRoutines}
+                />
+              ) : (
+                <HeroWorkoutCard
+                  workout={data.todaysWorkout}
+                  unitSystem={unitSystem}
+                  onPress={goWorkout}
+                />
+              )}
             </Section>
             <Section index={1}>
               <StreakRow streakDays={data.streakDays} workoutsThisWeek={data.workoutsThisWeek} />

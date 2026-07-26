@@ -47,10 +47,12 @@ export default function CoachScreen() {
     userRepo
       .getProfile()
       .then((p) => {
-        if (alive) setGymName(p.gymName);
+        // Since Phase O2 the gym name is optional at onboarding — an empty one
+        // must fall back to the generic subtitle, not render a blank line.
+        if (alive && p.gymName.trim().length > 0) setGymName(p.gymName);
       })
       .catch(() => {
-        /* unseeded — keep the fallback subtitle */
+        /* no profile yet — keep the fallback subtitle */
       });
     return () => {
       alive = false;

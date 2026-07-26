@@ -318,9 +318,17 @@ selective direct labels only — never every point; press-to-inspect where noted
   settings: provider selector (Claude/OpenAI/Local demo), model picker, API key
   fields (SecureStore via lib/keys, masked, never logged), voice toggles, units,
   language, "dark mode" (locked on, playful copy), gym branding footer
-  ("Powered by ForgeAI"), Reset demo data (drop DB + reseed + restart notice).
+  ("Powered by ForgeAI"), and **Your data** (Phase O2: `DataCard` — "Load demo data"
+  / "Erase all data"; the old "Reset demo data" reseed is GONE).
 
-## Seed (src/db/seed) — first-launch realism
+## Seed (src/db/seed) — DEMO-ONLY realism
+
+> **Phase O2 (W1) amendment, 2026-07-26.** The seed no longer runs on first launch.
+> A real member onboards into an EMPTY app via `src/onboarding` (profile + the
+> reference exercise catalog only). Everything below still describes the demo
+> dataset exactly — it is now reached solely through the explicit "Load demo data"
+> action, and an erase never regenerates it.
+
 
 Deterministic PRNG (mulberry32, fixed seed). Member: Arjun Mehra, 27, 176 cm,
 intermediate, goal muscle, gym "Iron Temple Fitness", member since 2025-11,

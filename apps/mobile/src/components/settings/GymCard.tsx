@@ -59,7 +59,9 @@ export function GymCard() {
               marginTop: space.sm,
             }}
           >
-            {profile.gymName}
+            {/* Since Phase O2 the gym name is optional at onboarding — show an
+                honest placeholder rather than an empty line. */}
+            {profile.gymName.trim().length > 0 ? profile.gymName : 'Not linked yet'}
           </Text>
           <Text
             style={{

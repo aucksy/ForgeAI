@@ -5,6 +5,8 @@ import { ChipGroup } from '@/components/settings/ChipGroup';
 import type { ChipOption } from '@/components/settings/ChipGroup';
 import { Card, PrimaryButton } from '@/components/ui';
 import { getProfile, updateProfile } from '@/db/repos/userRepo';
+import { getMemberPhone, setMemberPhone } from '@/onboarding/db/dataActions';
+import { validateE164 } from '@/onboarding/form';
 import { success } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { UserProfile } from '@/types/models';
@@ -60,6 +62,10 @@ const overline = {
 export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [name, setName] = useState('');
+  // Captured at onboarding (Phase O2). Stored locally; it becomes the identity the
+  // gym verifies against its roster when the platform track lands.
+  const [phone, setPhone] = useState('');
+  const [savedPhone, setSavedPhone] = useState('');
   const [goal, setGoal] = useState<UserProfile['goal']>('muscle');
   const [nums, setNums] = useState<Record<NumField['key'], string>>({
     calorieTarget: '',
@@ -88,7 +94,16 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
         });
       })
       .catch(() => {
-        /* unseeded DB — the card simply stays empty; nothing to edit yet */
+        /* no profile yet — the card simply stays empty; nothing to edit yet */
+      });
+    getMemberPhone()
+      .then((p) => {
+        if (!alive || !p) return;
+        setPhone(p);
+        setSavedPhone(p);
+      })
+      .catch(() => {
+        /* pre-O2 profile (no number captured) — the field stays empty */
       });
     return () => {
       alive = false;
@@ -114,13 +129,37 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
       }
       if (n !== profile[f.key]) patch[f.key] = n;
     }
-    if (Object.keys(patch).length === 0) {
+
+    // The number lives in an additive column, so it saves alongside (not through)
+    // the frozen updateProfile. A blank field means "left alone" — it must never
+    // block saving the goal or targets edited in the same pass.
+    const typedPhone = phone.trim();
+    let nextPhone: string | null = null;
+    if (typedPhone.length > 0 && typedPhone !== savedPhone) {
+      const valid = validateE164(typedPhone);
+      if (!valid) {
+        Alert.alert(
+          'Check your mobile number',
+          'Include the country code, e.g. +91 98765 43210.',
+        );
+        return;
+      }
+      nextPhone = valid;
+    }
+
+    if (Object.keys(patch).length === 0 && nextPhone === null) {
       setJustSaved(true);
       return;
     }
     setSaving(true);
     try {
-      const updated = await updateProfile(patch);
+      if (nextPhone !== null) {
+        await setMemberPhone(nextPhone);
+        setPhone(nextPhone);
+        setSavedPhone(nextPhone);
+      }
+      const updated =
+        Object.keys(patch).length > 0 ? await updateProfile(patch) : profile;
       setProfile(updated);
       success();
       setJustSaved(true);
@@ -147,6 +186,22 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
         returnKeyType="done"
         style={inputStyle}
       />
+
+      <View style={{ marginTop: space.lg }}>
+        <Text style={overline}>Mobile number</Text>
+        <TextInput
+          value={phone}
+          onChangeText={(t) => {
+            setPhone(t);
+            setJustSaved(false);
+          }}
+          placeholder="+91 98765 43210"
+          placeholderTextColor={color.inkFaint}
+          keyboardType="phone-pad"
+          maxLength={20}
+          style={inputStyle}
+        />
+      </View>
 
       <View style={{ marginTop: space.lg }}>
         <ChipGroup

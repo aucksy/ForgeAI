@@ -4,7 +4,7 @@ Running list of things to verify on device. Install the APK after **uninstalling
 ForgeAI** (debug-signed builds won't install over each other). 🔬 = an edge case a review fixed —
 worth an extra look. Everything must also work **offline / no account**.
 
-> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1) · **v0.7.0** = adds Phase 5a (writable routine editor) · **v0.8.0** = adds Phase 5b (RPE + drop/failure set types; first additive schema) · **v0.9.0** = adds Phase 5c (supersets + per-exercise notes; schema v2).
+> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1) · **v0.7.0** = adds Phase 5a (writable routine editor) · **v0.8.0** = adds Phase 5b (RPE + drop/failure set types; first additive schema) · **v0.9.0** = adds Phase 5c (supersets + per-exercise notes; schema v2) · **v0.20.0** = adds Phase O2 (real onboarding: empty start + explicit demo data + erase-to-empty).
 
 ---
 
@@ -239,9 +239,47 @@ worth an extra look. Everything must also work **offline / no account**.
 - [ ] 🔬 Offline / no key → tapping still opens the coach and the built-in local coach responds (no crash, no network needed for the nudge itself).
 - [ ] 🔬 The insight **text** is unchanged from before (still PR > plateau > protein > volume > streak from the engine) — C4 only made it tappable.
 
+## Phase O2 — real onboarding, no fake data (v0.20.0)
+
+> ⚠️ **Test the upgrade path FIRST, on your own phone, before anything else.** Install v0.20.0
+> over your existing build: it must open **straight into your own history** (487 imported Hevy
+> workouts, your PRs, your routines) with **no welcome screen**. If a welcome screen appears,
+> STOP and do not tap "Start training" — report it.
+
+### Upgrade (existing install)
+- [ ] Install over the previous build → lands on Home with all your data intact; no welcome screen.
+- [ ] Settings → **Your data** shows "Load demo data" + "Erase all data" (the old "Reset demo data" is gone) and **no** "Demo data loaded" badge.
+- [ ] Settings → Your profile now has a **Mobile number** field (empty on an upgraded install) → type `+91 98765 43210` → Save → reopen Settings → it persisted.
+
+### Fresh install (uninstall first)
+- [ ] First launch shows the **welcome screen** — no Arjun, no 13 weeks of history anywhere.
+- [ ] Try to continue with a blank name → clear inline error. Blank/short/`5`-starting number → error naming the number.
+- [ ] 🔬 A number starting **91** (e.g. `9198765432`) is ACCEPTED (it must not be mistaken for a duplicate country code).
+- [ ] Enter name + number only, tap **Start training** → app opens with: Home showing "Let's begin" (start-first-workout card), History empty, Progress empty, **no** meals/chat/PRs.
+- [ ] Workout tab → **Exercise library** is fully populated (~40 movements with Hindi aliases) → log a real set → it appears in History and Home fills in.
+- [ ] Optional fields: redo a fresh install entering age/height/body weight/gym → Settings → Your profile shows the derived calorie/protein targets; Progress shows the single body-weight entry dated today.
+- [ ] 🔬 Enter body weight as `82,4` (comma) → accepted. Enter `1e2` as age → rejected.
+
+### Demo data (sales)
+- [ ] Welcome screen → **Load demo data instead** → confirm → the full Arjun demo appears.
+- [ ] Settings → Your data shows the **"Demo data loaded"** badge and the erase button reads **"Remove demo data"**.
+- [ ] **Remove demo data** → back to the welcome screen, everything gone; complete onboarding again → empty app (**it must NOT regenerate the demo**).
+- [ ] Settings → **Load demo data** from inside a real (non-demo) app → warns it deletes everything → loads the demo.
+- [ ] 🔬 With a gym linked (Settings → Gym sync), loading the demo must **not** push demo numbers to the owner dashboard.
+
+### Erase
+- [ ] Settings → **Erase all data** → confirm → welcome screen, no restart needed.
+- [ ] After re-onboarding you land on **Home** (not Settings).
+- [ ] 🔬 If a gym was linked before the erase, the link and the Drive backup settings survive (re-onboard → Settings still shows them).
+- [ ] 🔬 Erase while a workout is in progress → the in-progress draft is gone (Workout tab shows "Start a workout", not "Workout in progress").
+
+### Regression
+- [ ] Hevy import into a freshly onboarded empty app still works end-to-end.
+- [ ] Drive restore (if configured) onto a fresh install: onboard first → Settings → Backup → restore → data appears and any demo badge disappears.
+
 ## Cross-cutting
-- [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload).
-- [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Reset demo data still work.
+- [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload). **Onboarding itself is fully offline** — no SMS, no network call.
+- [ ] **Regression**: Coach chat still logs a workout by text (e.g. `bench press 80 kg 8 7 6`) → appears in History; Progress tab + Settings → Your data still work.
 
 ---
 

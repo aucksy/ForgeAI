@@ -36,8 +36,11 @@ SQLite is the source of truth (`src/db`), pure coaching logic in `src/engine`,
 DB-orchestration in `src/services`, the AI layer (`src/ai`) exposes tools over the
 same repos — cloud providers (Anthropic/OpenAI REST, keys in SecureStore) with a
 deterministic `localCoach` fallback so the demo works with NO API key. Chat renders
-structured cards, not just text. Demo data seeds 3 months of realistic history on
-first launch (`src/db/seed`).
+structured cards, not just text. **Onboarding (`src/onboarding`, Phase O2/W1):** a
+real member starts EMPTY — a welcome screen captures name + mobile number and writes
+a profile plus the reference exercise catalog, nothing else. The 3-month demo history
+(`src/db/seed`) NEVER runs on launch: it is an explicit "Load demo data" action, and
+"Erase all data" clears back to the welcome screen without reseeding.
 
 ## User-gated items (ask, never hardcode)
 - GitHub repo creation + push URL, Actions secrets (keystore etc.) — owner provides.
