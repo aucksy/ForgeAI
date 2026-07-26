@@ -11,10 +11,13 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import type { OverloadTarget } from '@/types/models';
 
+import { SessionGoneError } from '@/tracker/db/sessionEdit';
+import { EditSessionHeader } from '@/tracker/components/EditSessionHeader';
 import { ElapsedClock } from '@/tracker/components/ElapsedClock';
 import { ExerciseLogCard } from '@/tracker/components/ExerciseLogCard';
 import { RestTimerBar } from '@/tracker/components/RestTimerBar';
 import { getTargetsForPlanDay } from '@/tracker/services/coachTargets';
+import { draftToRichSets, hasWorkingSet } from '@/tracker/services/draftSets';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 
@@ -29,6 +32,15 @@ export default function ActiveWorkoutScreen() {
   const committing = useActiveWorkout((s) => s.committing);
   const finish = useActiveWorkout((s) => s.finish);
   const discard = useActiveWorkout((s) => s.discard);
+  // Phase W4 — the same screen doubles as the editor for a saved workout.
+  const editingSessionId = useActiveWorkout((s) => s.editingSessionId);
+  const editDateISO = useActiveWorkout((s) => s.editDateISO);
+  const editNotes = useActiveWorkout((s) => s.editNotes);
+  const dayType = useActiveWorkout((s) => s.dayType);
+  const setEditDate = useActiveWorkout((s) => s.setEditDate);
+  const setEditDayType = useActiveWorkout((s) => s.setEditDayType);
+  const setEditNotes = useActiveWorkout((s) => s.setEditNotes);
+  const saveEdits = useActiveWorkout((s) => s.saveEdits);
   const lastDeleted = useActiveWorkout((s) => s.lastDeleted);
   const undoDelete = useActiveWorkout((s) => s.undoDelete);
   const dismissUndo = useActiveWorkout((s) => s.dismissUndo);
@@ -81,10 +93,10 @@ export default function ActiveWorkoutScreen() {
     if (!active && !leaving.current) router.replace('/workout');
   }, [active, router]);
 
-  // At least one WORKING (non-warm-up) set with weight + reps.
-  const canFinish = exercises.some((e) =>
-    e.sets.some((s) => !s.isWarmup && s.reps != null && s.reps > 0 && s.weightKg != null),
-  );
+  // Exactly what a save would write — the same helper the store commits through,
+  // so the button can never enable on a set the save then silently drops.
+  const canFinish = hasWorkingSet(draftToRichSets(exercises));
+  const isEditing = editingSessionId != null;
 
   // Distinct superset groups in this workout (for the per-card chooser). Memoised on a
   // primitive key, NOT on `exercises`: the store replaces that array on every keystroke,
@@ -100,17 +112,68 @@ export default function ActiveWorkoutScreen() {
   );
 
   const onDiscard = (): void => {
+    const back = (): void => {
+      leaving.current = true;
+      // Leaving an edit returns to the workout it came from, unchanged.
+      const to = editingSessionId ? `/session/${editingSessionId}` : '/workout';
+      void discard().then(() => router.replace(to));
+    };
+    if (isEditing) {
+      Alert.alert('Discard changes?', 'Your edits will be thrown away. The saved workout stays as it was.', [
+        { text: 'Keep editing', style: 'cancel' },
+        { text: 'Discard changes', style: 'destructive', onPress: back },
+      ]);
+      return;
+    }
     Alert.alert('Discard workout?', 'This workout and its sets will be deleted. This cannot be undone.', [
       { text: 'Keep logging', style: 'cancel' },
-      {
-        text: 'Discard',
-        style: 'destructive',
-        onPress: () => {
-          leaving.current = true;
-          void discard().then(() => router.replace('/workout'));
-        },
-      },
+      { text: 'Discard', style: 'destructive', onPress: back },
     ]);
+  };
+
+  const onSaveEdits = async (): Promise<void> => {
+    if (useActiveWorkout.getState().committing) return; // ignore double-tap while saving
+    leaving.current = true;
+    try {
+      const id = await saveEdits();
+      if (!id) {
+        leaving.current = false;
+        Alert.alert(
+          'Nothing to save',
+          'A workout needs at least one set. To get rid of it entirely, discard these changes and delete the workout instead.',
+        );
+        return;
+      }
+      // Saved. Nothing past this point may report failure — a refresh error must
+      // not strand the member on an editor whose workout is already written.
+      await useDashboard.getState().refresh().catch(() => undefined);
+      if (!useActiveWorkout.getState().lastSaveReconciled) {
+        Alert.alert(
+          'Changes saved',
+          'Your personal records will catch up the next time you log or edit a workout.',
+        );
+      }
+      router.replace({ pathname: '/session/[id]', params: { id } });
+    } catch (err) {
+      if (err instanceof SessionGoneError) {
+        // Deleted from elsewhere while this draft sat open — there is nothing to
+        // save back to. Drop the draft rather than leave an editor that can only fail.
+        leaving.current = true;
+        await discard();
+        Alert.alert('Workout deleted', 'This workout was deleted, so your changes were discarded.');
+        router.replace('/history');
+        return;
+      }
+      leaving.current = false;
+      Alert.alert(
+        'Could not save',
+        'Something went wrong saving your changes. The workout is unchanged — tap Save to try again.',
+      );
+    }
+  };
+
+  const onPrimary = (): void => {
+    void (isEditing ? onSaveEdits() : onFinish());
   };
 
   const onFinish = async (): Promise<void> => {
@@ -143,14 +206,18 @@ export default function ActiveWorkoutScreen() {
           marginBottom: space.md,
         }}
       >
-        <IconButton icon="close" onPress={onDiscard} accessibilityLabel="Discard workout" />
+        <IconButton
+          icon="close"
+          onPress={onDiscard}
+          accessibilityLabel={isEditing ? 'Discard changes' : 'Discard workout'}
+        />
         {/* Owns its own 1 Hz tick — the rest of this tree no longer re-renders per second. */}
         <ElapsedClock startedAt={startedAt} />
         <IconButton
           icon="check"
           tint={canFinish && !committing ? color.accent : color.inkFaint}
-          onPress={() => void onFinish()}
-          accessibilityLabel="Finish workout"
+          onPress={onPrimary}
+          accessibilityLabel={isEditing ? 'Save changes' : 'Finish workout'}
         />
       </View>
 
@@ -165,6 +232,17 @@ export default function ActiveWorkoutScreen() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ gap: space.md, paddingBottom: space.xl }}
         >
+          {isEditing ? (
+            <EditSessionHeader
+              dateISO={editDateISO ?? ''}
+              dayType={dayType}
+              notes={editNotes ?? ''}
+              onDateChange={setEditDate}
+              onDayTypeChange={setEditDayType}
+              onNotesChange={setEditNotes}
+            />
+          ) : null}
+
           {exercises.length === 0 ? (
             <EmptyState
               icon="dumbbell"
@@ -215,11 +293,19 @@ export default function ActiveWorkoutScreen() {
             </View>
           ) : null}
           <PrimaryButton
-            label={canFinish ? 'Finish workout' : 'Log a set to finish'}
+            label={
+              isEditing
+                ? canFinish
+                  ? 'Save changes'
+                  : 'Keep at least one set'
+                : canFinish
+                  ? 'Finish workout'
+                  : 'Log a set to finish'
+            }
             icon="check"
             loading={committing}
             disabled={!canFinish || committing}
-            onPress={() => void onFinish()}
+            onPress={onPrimary}
           />
         </View>
       </KeyboardAvoidingView>

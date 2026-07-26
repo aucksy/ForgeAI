@@ -24,6 +24,8 @@ export default function WorkoutScreen() {
   const startEmpty = useActiveWorkout((s) => s.startEmpty);
   const startFromPlan = useActiveWorkout((s) => s.startFromPlan);
   const discard = useActiveWorkout((s) => s.discard);
+  // Phase W4: the same draft slot holds an in-progress EDIT of a saved workout.
+  const editingSessionId = useActiveWorkout((s) => s.editingSessionId);
 
   const [preview, setPreview] = useState<PlanPreview | null>(null);
   const [starting, setStarting] = useState(false);
@@ -65,10 +67,17 @@ export default function WorkoutScreen() {
   };
 
   const onDiscard = (): void => {
-    Alert.alert('Discard workout?', 'Your in-progress workout will be deleted.', [
-      { text: 'Keep', style: 'cancel' },
-      { text: 'Discard', style: 'destructive', onPress: () => void discard() },
-    ]);
+    const editing = useActiveWorkout.getState().editingSessionId != null;
+    Alert.alert(
+      editing ? 'Discard changes?' : 'Discard workout?',
+      editing
+        ? 'Your edits will be thrown away. The saved workout stays as it was.'
+        : 'Your in-progress workout will be deleted.',
+      [
+        { text: 'Keep', style: 'cancel' },
+        { text: 'Discard', style: 'destructive', onPress: () => void discard() },
+      ],
+    );
   };
 
   return (
@@ -80,14 +89,24 @@ export default function WorkoutScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
                 <Icon name="clock" size={22} color="#1F0D05" />
                 <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: '#1F0D05' }}>
-                  Workout in progress
+                  {editingSessionId ? 'Editing a workout' : 'Workout in progress'}
                 </Text>
               </View>
               <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
-                {exerciseCount} {exerciseCount === 1 ? 'exercise' : 'exercises'} logged so far.
+                {editingSessionId
+                  ? 'You have unsaved changes to a saved workout.'
+                  : `${exerciseCount} ${exerciseCount === 1 ? 'exercise' : 'exercises'} logged so far.`}
               </Text>
-              <PrimaryButton label="Resume workout" icon="dumbbell" onPress={goActive} />
-              <GhostButton label="Discard" icon="close" onPress={onDiscard} />
+              <PrimaryButton
+                label={editingSessionId ? 'Resume editing' : 'Resume workout'}
+                icon="dumbbell"
+                onPress={goActive}
+              />
+              <GhostButton
+                label={editingSessionId ? 'Discard changes' : 'Discard'}
+                icon="close"
+                onPress={onDiscard}
+              />
             </View>
           </HeroCard>
         ) : (

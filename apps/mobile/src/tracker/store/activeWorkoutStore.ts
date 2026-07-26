@@ -13,10 +13,14 @@ import { getDb, getMeta, setMeta } from '@/db';
 import { getActivePlan } from '@/db/repos/planRepo';
 import { getBoundedExerciseHistory } from '@/tracker/db/exerciseHistory';
 import { getRoutine } from '@/tracker/db/routineRepo';
-import { addSetsWithMeta } from '@/tracker/db/trackerSets';
-import type { RichSet } from '@/tracker/db/trackerSets';
+import { saveSessionEdits } from '@/tracker/db/sessionEdit';
+import { addSetsWithMeta, getSessionSetMeta } from '@/tracker/db/trackerSets';
+import { buildEditDraft, previousExcludingSession, uneditableReason } from '@/tracker/services/editDraft';
+import type { PreviousByExercise } from '@/tracker/services/editDraft';
+import { computeEditedTiming } from '@/tracker/services/sessionTiming';
+import { draftToRichSets, hasWorkingSet, isCommittable } from '@/tracker/services/draftSets';
 import { createSession } from '@/db/repos/workoutRepo';
-import { toISO } from '@/lib/date';
+import { toISO, todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 import { getTodaysWorkout } from '@/services/coach';
 import type { DayType, Exercise, MuscleGroup, SessionDetail } from '@/types/models';
@@ -58,6 +62,16 @@ interface DraftSnapshot {
   dayType: DayType;
   planDayId: string | null;
   exercises: DraftExercise[];
+  /** Phase W4 — set when this draft is a CORRECTION to an existing session. */
+  editingSessionId?: string | null;
+  /** Edit mode only: the day the session claims (may be moved by the user). */
+  dateISO?: string | null;
+  /** Edit mode only: the session's notes. */
+  notes?: string | null;
+  /** Edit mode only: the session's original end time. */
+  endedAt?: number | null;
+  /** Edit mode only: the day the session was stored under BEFORE any move. */
+  originalDateISO?: string | null;
 }
 
 export interface ActiveWorkoutState {
@@ -71,6 +85,21 @@ export interface ActiveWorkoutState {
   exercises: DraftExercise[];
   /** Most recently swipe-deleted set, for the undo snackbar (not persisted). */
   lastDeleted: { exKey: string; index: number; set: DraftSet } | null;
+  /** Phase W4: id of the session being CORRECTED, or null for a new workout. */
+  editingSessionId: string | null;
+  /** Edit mode only — the day the corrected session will claim. */
+  editDateISO: string | null;
+  /** Edit mode only — the session's notes. */
+  editNotes: string | null;
+  /** Edit mode only — the original end time, shifted with the date. */
+  editEndedAt: number | null;
+  /**
+   * Edit mode only — the `date_iso` the session was STORED under. A date move is
+   * measured from this, never from the local day of `started_at`: the two disagree
+   * for every Hevy-imported workout (imported timestamps are UTC-based), so
+   * measuring from the timestamp would shift a no-op save by a whole day.
+   */
+  editOriginalDateISO: string | null;
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
@@ -104,13 +133,24 @@ export interface ActiveWorkoutState {
   dismissUndo: () => void;
   /** Commit to SQLite; returns the new session id, or null if nothing loggable. */
   finish: (note?: string | null) => Promise<string | null>;
+  /** Phase W4: load a logged session into the draft to correct it. */
+  startEditingSession: (session: SessionDetail) => Promise<void>;
+  /** Edit mode: move the workout to another day (clamped to today). */
+  setEditDate: (dateISO: string) => void;
+  /** Edit mode: change the session's day type. */
+  setEditDayType: (dayType: DayType) => void;
+  /** Edit mode: change the session's notes. */
+  setEditNotes: (notes: string) => void;
+  /** Edit mode: write the corrections back. Returns the session id, or null. */
+  saveEdits: () => Promise<string | null>;
+  /**
+   * False when the last save committed but its personal-record reconciliation
+   * failed — the workout IS saved, the PR list may lag. Reset on each save.
+   */
+  lastSaveReconciled: boolean;
   discard: () => Promise<void>;
   /** Number of sets that would actually be logged (positive reps + a weight). */
   committableSetCount: () => number;
-}
-
-function isCommittable(s: DraftSet): boolean {
-  return s.reps != null && s.reps > 0 && s.weightKg != null && s.weightKg >= 0;
 }
 
 async function persistDraft(s: ActiveWorkoutState): Promise<void> {
@@ -123,6 +163,11 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
     dayType: s.dayType,
     planDayId: s.planDayId,
     exercises: s.exercises,
+    editingSessionId: s.editingSessionId,
+    dateISO: s.editDateISO,
+    notes: s.editNotes,
+    endedAt: s.editEndedAt,
+    originalDateISO: s.editOriginalDateISO,
   };
   await setMeta(DRAFT_KEY, JSON.stringify(snap));
 }
@@ -189,6 +234,12 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     planDayId: null,
     exercises: [],
     lastDeleted: null,
+    editingSessionId: null,
+    editDateISO: null,
+    editNotes: null,
+    editEndedAt: null,
+    editOriginalDateISO: null,
+    lastSaveReconciled: true,
 
     hydrate: async () => {
       // Already hydrated, or a workout already begun in-memory — nothing to restore.
@@ -212,6 +263,12 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               dayType: snap.dayType,
               planDayId: snap.planDayId ?? null,
               exercises: snap.exercises,
+              // Pre-W4 drafts have none of these — they restore as a new workout.
+              editingSessionId: snap.editingSessionId ?? null,
+              editDateISO: snap.dateISO ?? null,
+              editNotes: snap.notes ?? null,
+              editEndedAt: snap.endedAt ?? null,
+              editOriginalDateISO: snap.originalDateISO ?? null,
             });
           }
         } catch {
@@ -231,6 +288,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId: null,
         exercises: [],
         lastDeleted: null,
+        editingSessionId: null,
+        editDateISO: null,
+        editNotes: null,
+        editEndedAt: null,
+        editOriginalDateISO: null,
       });
       void persistDraft(get());
     },
@@ -259,6 +321,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId,
         exercises,
         lastDeleted: null,
+        editingSessionId: null,
+        editDateISO: null,
+        editNotes: null,
+        editEndedAt: null,
+        editOriginalDateISO: null,
       });
       void persistDraft(get());
     },
@@ -284,6 +351,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId,
         exercises,
         lastDeleted: null,
+        editingSessionId: null,
+        editDateISO: null,
+        editNotes: null,
+        editEndedAt: null,
+        editOriginalDateISO: null,
       });
       void persistDraft(get());
     },
@@ -304,6 +376,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId: null,
         exercises,
         lastDeleted: null,
+        editingSessionId: null,
+        editDateISO: null,
+        editNotes: null,
+        editEndedAt: null,
+        editOriginalDateISO: null,
       });
       void persistDraft(get());
     },
@@ -463,30 +540,13 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // Guard re-entry (double-tap): committing is set synchronously below, before
       // the first await, so a second concurrent call bails here.
       if (!s.active || s.startedAt == null || s.committing) return null;
-      const flat: RichSet[] = [];
-      for (const ex of s.exercises) {
-        const exNote = ex.note?.trim() ? ex.note.trim() : null;
-        let firstOfExercise = true;
-        for (const st of ex.sets) {
-          if (isCommittable(st)) {
-            flat.push({
-              exerciseId: ex.exerciseId,
-              weightKg: st.weightKg as number,
-              reps: st.reps as number,
-              isWarmup: st.isWarmup,
-              rpe: st.isWarmup ? null : st.rpe ?? null,
-              setType: st.isWarmup ? undefined : st.setType ?? 'normal',
-              supersetGroup: ex.supersetGroup ?? null,
-              // A per-exercise note lives on the exercise's first committed set.
-              note: firstOfExercise ? exNote : null,
-            });
-            firstOfExercise = false;
-          }
-        }
-      }
+      // An edit must go through saveEdits — finishing would create a SECOND session
+      // and leave the original untouched.
+      if (s.editingSessionId) return null;
+      const flat = draftToRichSets(s.exercises);
       // Need at least one working set — a warm-up-only session would be invisible
       // to history/PREVIOUS (the history read excludes warm-ups).
-      if (flat.length === 0 || !flat.some((f) => !f.isWarmup)) return null;
+      if (!hasWorkingSet(flat)) return null;
       set({ committing: true });
       try {
         // The session belongs to the day it STARTED, not the commit instant — a
@@ -530,6 +590,114 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       }
     },
 
+    startEditingSession: async (session) => {
+      // PREVIOUS must show the session BEFORE this one, not the workout its own
+      // numbers — nor a NEWER one, which ticking a blank set would then auto-fill
+      // into the past. Pull a few and take the newest that predates this session.
+      const [meta, histories] = await Promise.all([
+        getSessionSetMeta(session.id),
+        Promise.all(
+          session.exercises.map(async (g) => ({
+            exerciseId: g.exercise.id,
+            history: await getBoundedExerciseHistory(g.exercise.id, 4),
+          })),
+        ),
+      ]);
+      const previous: PreviousByExercise = {};
+      for (const h of histories) {
+        previous[h.exerciseId] = previousExcludingSession(h.history, session.id, session.dateISO);
+      }
+      const exercises = buildEditDraft(session, meta, previous, { makeKey: uuid });
+      set({
+        active: true,
+        hydrated: true,
+        committing: false,
+        // Keep the ORIGINAL start time: it anchors the session's place in history
+        // and is what PR detection compares against.
+        startedAt: session.startedAt,
+        dayType: session.dayType,
+        planDayId: null,
+        exercises,
+        lastDeleted: null,
+        editingSessionId: session.id,
+        editDateISO: session.dateISO,
+        editNotes: session.notes,
+        editEndedAt: session.endedAt,
+        editOriginalDateISO: session.dateISO,
+      });
+      void persistDraft(get());
+    },
+
+    setEditDate: (dateISO) => {
+      // A workout can't have happened in the future. Clamped here as well as in the
+      // header so a stale draft (device clock moved on) can't carry one through.
+      if (!get().editingSessionId || dateISO > todayISO()) return;
+      set({ editDateISO: dateISO });
+      void persistDraft(get());
+    },
+
+    setEditDayType: (dayType) => {
+      if (!get().editingSessionId) return;
+      set({ dayType });
+      void persistDraft(get());
+    },
+
+    setEditNotes: (notes) => {
+      if (!get().editingSessionId) return;
+      set({ editNotes: notes });
+      void persistDraft(get());
+    },
+
+    saveEdits: async () => {
+      const s = get();
+      // Same re-entry guard as finish(): `committing` is set synchronously below.
+      if (!s.active || !s.editingSessionId || s.startedAt == null || s.committing) return null;
+      const flat = draftToRichSets(s.exercises);
+      // Emptying a workout is a DELETE, not a save — the screen offers that instead.
+      if (!hasWorkingSet(flat)) return null;
+
+      const sessionId = s.editingSessionId;
+      const fallbackDate = toISO(new Date(s.startedAt));
+      const timing = computeEditedTiming({
+        originalDateISO: s.editOriginalDateISO ?? s.editDateISO ?? fallbackDate,
+        dateISO: s.editDateISO ?? fallbackDate,
+        startedAt: s.startedAt,
+        endedAt: s.editEndedAt,
+        now: Date.now(),
+      });
+
+      set({ committing: true });
+      try {
+        const { reconciled } = await saveSessionEdits(sessionId, {
+          dateISO: timing.dateISO,
+          dayType: s.dayType,
+          notes: s.editNotes?.trim() ? s.editNotes.trim() : null,
+          startedAt: timing.startedAt,
+          endedAt: timing.endedAt,
+          sets: flat,
+        });
+        set({ lastSaveReconciled: reconciled });
+        await setMeta(DRAFT_KEY, '');
+        set({
+          active: false,
+          committing: false,
+          hydrated: true,
+          startedAt: null,
+          dayType: 'full',
+          planDayId: null,
+          exercises: [],
+          lastDeleted: null,
+          editingSessionId: null,
+          editDateISO: null,
+          editNotes: null,
+        });
+        return sessionId;
+      } catch (e) {
+        set({ committing: false }); // let the user retry; nothing was committed
+        throw e;
+      }
+    },
+
     discard: async () => {
       await setMeta(DRAFT_KEY, '');
       set({
@@ -541,6 +709,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId: null,
         exercises: [],
         lastDeleted: null,
+        editingSessionId: null,
+        editDateISO: null,
+        editNotes: null,
+        editEndedAt: null,
+        editOriginalDateISO: null,
       });
     },
 

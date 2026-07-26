@@ -625,6 +625,72 @@
     kg-only, the UI reads `settingsStore`); `discard()` re-creates `activeWorkoutDraft=''` in meta
     after an erase (falsy → no restore).
 
+- 2026-07-26: **Phase W4 DONE (edit a logged workout) — 199 tests green (142 + 57 new across 4
+  files), typecheck green, adversarially reviewed (1 HIGH + 5 MED + 6 LOW; all HIGH/MED fixed),
+  frozen-clean. Shipping as v0.21.0.**
+  A finished workout was immutable (weakness **W4** / assessment #12): a wrong weight or a forgotten
+  exercise could only be fixed by deleting the whole session and re-logging it. Owner picked the
+  full scope (AskUserQuestion 2026-07-26): sets, exercises, date, day type and notes.
+  - **Design:** no second editor. History → a session → **Edit** loads it back into the EXISTING
+    logging screen (`app/session/active.tsx`) via the same draft store, so a correction gets the
+    real set rows, PREVIOUS column, plate calculator, warm-up ramp, RPE, set types and supersets
+    instead of a weaker parallel UI. "Finish workout" becomes "Save changes"; the Workout tab and
+    the discard copy are edit-aware; `finish()` hard-refuses while `editingSessionId` is set so an
+    edit can never create a duplicate session.
+  - **New:** `services/draftSets.ts` (PURE — `isCommittable`/`draftToRichSets`/`hasWorkingSet`,
+    extracted verbatim from `finish()` so both write paths share ONE definition of what gets
+    logged), `services/editDraft.ts` (PURE — `buildEditDraft` rebuilds the draft from
+    `SessionDetail` + `getSessionSetMeta` incl. 5b/5c metadata; `previousExcludingSession`;
+    `uneditableReason`), `services/sessionTiming.ts` (PURE — the date move),
+    `db/sessionEdit.ts` (`saveSessionEdits`), `components/EditSessionHeader.tsx` (±1-day stepper,
+    day-type chips, notes — a real date picker would mean a new native module).
+  - **The save:** sets are REPLACED wholesale (ids are internal and `addSets` renumbers anyway), in
+    ONE non-exclusive transaction on the shared connection so the frozen repos join it: UPDATE the
+    session → DELETE its `personal_records` → DELETE its `set_entries` → `addSetsWithMeta` (frozen
+    `addSets` = set numbering + PR detection). Session-first ordering matters: `checkAndRecordPrs`
+    reads `started_at` back off the row. Then, OUTSIDE the transaction, the pre-existing
+    `reconcilePrsForExercises` runs for every exercise the edit touched **or removed** — a lowered
+    lift must be able to promote a later, smaller one that never earned its own row.
+  - **Adversarial review (1 deep agent, read-only) — 12 findings; all HIGH/MED fixed:**
+    **H1 (would have corrupted the owner's own history):** the date shift was measured from the
+    LOCAL calendar day of `started_at`, but the Hevy import stores `started_at`/`date_iso` on a UTC
+    basis (deliberately — that's the tz-idempotency fix from v0.6.1). On an IST device every
+    imported evening session's local day is one AHEAD of its stored day, so a save that changed
+    NOTHING would have moved it 24 h earlier — reordering history, PREVIOUS and PR comparisons, and
+    breaking Hevy Merge idempotency (`startedAt`-keyed) so a re-import would duplicate it. Fixed by
+    keeping the session's stored `date_iso` (`editOriginalDateISO`, persisted in the draft) and
+    measuring the move from that; pinned by a regression test in `sessionTiming.test.ts`.
+    **M2** two cards of the same exercise collapse into one on load (`getSessionDetail` groups by
+    exercise id), so saving would silently destroy the second block's note/superset → `uneditableReason`
+    now refuses those sessions with a named reason. **M3** PREVIOUS used "newest session that isn't
+    this one", so editing an OLD workout quoted the most recent one — and ticking a blank set
+    auto-fills from PREVIOUS, writing future numbers into the past; now filtered to sessions
+    strictly before the edited day (the test that blessed the old behaviour was replaced).
+    **M4** a post-commit failure (reconcile / draft clear / dashboard refresh) told the member "the
+    workout is unchanged" over a workout that WAS changed → `saveSessionEdits` returns
+    `{reconciled}` instead of throwing, and the screen reports a records lag, not a failure.
+    **M5** deleting the session elsewhere left an editor that could only ever fail → `SessionGoneError`
+    is caught, the draft dropped, and the member routed to History. **M6** moving a workout onto
+    today could put `started_at` in the FUTURE, hiding it from its own PR comparison and handing out
+    a fake PR → clamped to now. LOW fixed: `discard()`/`saveEdits` now clear every edit field;
+    one shared re-entry ref for Edit/Repeat; `canFinish` now calls the shared `hasWorkingSet` so the
+    button can't enable on a set the save would drop; the date is clamped in the store as well as
+    the header; the disabled "next day" chevron is inert rather than greyed-but-tappable.
+    **Lenses CLEAN:** transactions (the exclusive-vs-shared choice verified against the frozen call
+    chain), DST/midnight-crossing, the empty-save path, set-level round trip, nav/props/icons, and
+    frozen-file compliance (git-verified). The reviewer also confirmed the DISPLAYED best PR stays
+    correct in all six edit shapes it constructed — only record *attribution* can drift, same as the
+    pre-existing delete path.
+  - **Tests (57 new across 4 files):** the full open→save round trip writes byte-identical rows
+    (incl. warm-ups, RPE, drop/failure, notes, supersets); a no-op save moves nothing even when
+    `date_iso` disagrees with the timestamp's local day (the H1 regression); the future-clamp; the
+    midnight-crossing shift; the merge guard; reconcile covering removed exercises; a reconcile
+    failure not failing the save.
+  - **Known limits (documented, not bugs):** record *attribution* can drift after a move (the
+    displayed best stays right — same property as the existing delete path); a workout with the
+    same exercise logged as two separate blocks can't be edited yet; the date stepper is ±1 day at
+    a time.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

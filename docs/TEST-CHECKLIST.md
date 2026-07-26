@@ -4,7 +4,7 @@ Running list of things to verify on device. Install the APK after **uninstalling
 ForgeAI** (debug-signed builds won't install over each other). 🔬 = an edge case a review fixed —
 worth an extra look. Everything must also work **offline / no account**.
 
-> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1) · **v0.7.0** = adds Phase 5a (writable routine editor) · **v0.8.0** = adds Phase 5b (RPE + drop/failure set types; first additive schema) · **v0.9.0** = adds Phase 5c (supersets + per-exercise notes; schema v2) · **v0.20.0** = adds Phase O2 (real onboarding: empty start + explicit demo data + erase-to-empty).
+> Builds: **v0.2.0** = Phase 1 · **v0.3.0** = Phase 1 + 2 · **v0.4.0** = adds Phase 3 · **v0.5.0** = adds Phase 4 (library + custom exercise + richer exercise detail + bodyweight + Excel export) · **v0.6.1** = adds "Migrate from Hevy" import (install this one — v0.6.0 was the initial tag, superseded by the review-fixed v0.6.1) · **v0.7.0** = adds Phase 5a (writable routine editor) · **v0.8.0** = adds Phase 5b (RPE + drop/failure set types; first additive schema) · **v0.9.0** = adds Phase 5c (supersets + per-exercise notes; schema v2) · **v0.20.0** = adds Phase O2 (real onboarding: empty start + explicit demo data + erase-to-empty) · **v0.21.0** = adds W4 (edit a logged workout).
 
 ---
 
@@ -276,6 +276,47 @@ worth an extra look. Everything must also work **offline / no account**.
 ### Regression
 - [ ] Hevy import into a freshly onboarded empty app still works end-to-end.
 - [ ] Drive restore (if configured) onto a fresh install: onboard first → Settings → Backup → restore → data appears and any demo badge disappears.
+
+## Phase W4 — edit a logged workout (v0.21.0)
+
+> ⚠️ **Do this on a copy of your data if you can.** Saving an edit REPLACES that workout's sets.
+> The first check below is the one that matters most: it guards your imported Hevy history.
+
+### The no-op save (imported history)
+- [ ] 🔬 History → open an **imported Hevy workout logged in the evening** (after ~6:30pm) → Edit →
+      change nothing → **Save changes** → it stays on the SAME date in History (it must not jump a day).
+- [ ] Re-run the Hevy import in **Merge** mode afterwards → that workout is still reported as skipped
+      (not imported again).
+
+### Editing sets
+- [ ] History → a workout → **Edit this workout** → the editor opens with every set filled in and ticked.
+- [ ] Change a weight and a rep count → Save → the workout detail shows the new numbers, and Progress/
+      volume update.
+- [ ] Swipe-delete a set → Save → it's gone. Add a set → Save → it's there.
+- [ ] Add a whole exercise → Save → it appears in the workout. Remove one → Save → gone.
+- [ ] RPE / drop / failure / warm-up flags and supersets survive an open-and-save with no changes
+      (turn on Settings → Workout → Advanced set logging to see them).
+- [ ] A per-exercise note written during logging is still there after an edit-save.
+
+### Records
+- [ ] Log (or find) a workout holding a PR → Edit → lower that set's weight → Save → the PR on the
+      exercise page and Progress drops to your true best (not the old number, not zero).
+- [ ] Delete the PR set entirely → Save → the PR falls back to your next best actual set.
+
+### Date, type and notes
+- [ ] Edit → step the date back a day → Save → it moves in History and on the calendar heatmap.
+- [ ] The **next-day arrow is dead** once you reach today (a workout can't be in the future).
+- [ ] Change the day type (Push/Pull/…) → Save → the title changes in History.
+- [ ] Add a note → Save → reopen the editor → the note is still there.
+
+### Guards
+- [ ] Start a new workout, leave it in progress, then History → Edit → it refuses with "Finish your
+      current workout first".
+- [ ] While editing, the Workout tab says **"Editing a workout"** with Resume editing / Discard changes.
+- [ ] Remove every set in the editor → the Save button reads "Keep at least one set" and the ✓ says
+      "Nothing to save" — it points you at deleting the workout instead.
+- [ ] Kill the app mid-edit → reopen → Workout tab offers to resume the edit → Save still works.
+- [ ] Discard changes → the original workout is untouched.
 
 ## Cross-cutting
 - [ ] **Offline**: Airplane mode, no account → do all of the above end-to-end; Progress + Coach (localCoach) still work. **Library, custom exercise, exercise detail, bodyweight log, Excel export, and the Hevy import all work with zero network** (import reads a local file + parses on-device, no upload). **Onboarding itself is fully offline** — no SMS, no network call.
