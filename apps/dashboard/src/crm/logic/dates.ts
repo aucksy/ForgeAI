@@ -51,6 +51,20 @@ export function dateISOFromEpoch(ms: number): DateISO {
   return toISO(d.getFullYear(), d.getMonth() + 1, d.getDate());
 }
 
+/**
+ * The LOCAL wall-clock hour (0–23) an epoch-ms timestamp falls in, or null when the
+ * timestamp is not a real instant.
+ *
+ * Local, not UTC, for the same reason `dateISOFromEpoch` is: a 6am check-in at a
+ * Jaipur gym is 00:30 UTC, so a peak-hour report built on `getUTCHours` would tell
+ * the owner their gym is busiest in the middle of the night.
+ */
+export function hourOfEpoch(ms: number): number | null {
+  const d = new Date(ms);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.getHours();
+}
+
 /** Build a `DateISO` from parts, zero-padded. */
 export function toISO(year: number, month: number, day: number): DateISO {
   return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;

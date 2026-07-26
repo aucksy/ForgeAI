@@ -1,8 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildDemoGym, demoSnapshot, starterPlans } from '../../src/crm/data/demo';
-import { diffDays } from '../../src/crm/logic/dates';
-import { buildMemberView, endDateForPlan } from '../../src/crm/logic/membership';
+import { atRiskList, attendanceProfile, attendanceSummary } from '../../src/crm/logic/attendance';
+import { diffDays, hourOfEpoch } from '../../src/crm/logic/dates';
+import {
+  buildMemberView,
+  coverageEndsOn,
+  endDateForPlan,
+  needsAttentionToday,
+} from '../../src/crm/logic/membership';
 import { parseReceiptNo } from '../../src/crm/logic/receipts';
 
 const TODAY = '2026-07-26';
@@ -191,6 +197,81 @@ describe('demo gym', () => {
       return view.outstandingP > 0;
     });
     expect(withDues.length).toBeGreaterThan(5);
+  });
+
+  it('leaves a real at-risk tail, and does not flag half the gym', () => {
+    // Both directions matter. An empty at-risk list makes the screen impossible to
+    // demo or verify; a list holding most of the roster means the thresholds are
+    // wrong, and that is precisely the failure the research warns about — a list
+    // that flags everybody is a list the owner stops opening.
+    const rows = atRiskList(snap.members, snap.memberships, snap.visits, TODAY);
+    const covered = snap.members.filter(
+      (m) => !m.archived && coverageEndsOn(snap.memberships.filter((x) => x.memberId === m.id), TODAY) !== null,
+    );
+
+    expect(rows.length).toBeGreaterThan(3);
+    expect(rows.length).toBeLessThan(covered.length / 2);
+  });
+
+  it('never puts the same member on the at-risk list and the renewals chase list', () => {
+    // This assertion used to check `!r.member.archived` — which tests archival, is
+    // already covered elsewhere, and cannot fail, while its comment claimed to be
+    // guarding the overlap. The overlap was in fact real (members whose cover ends
+    // this week are 'expiring', which both lists matched), so the one test that
+    // named the invariant was the one asserting a tautology instead.
+    const atRisk = new Set(
+      atRiskList(snap.members, snap.memberships, snap.visits, TODAY).map((r) => r.member.id),
+    );
+    const chased = new Set(
+      snap.members
+        .filter((m) =>
+          needsAttentionToday(
+            buildMemberView(
+              m,
+              snap.memberships.filter((x) => x.memberId === m.id),
+              snap.payments.filter((p) => p.memberId === m.id),
+              snap.visits.filter((v) => v.memberId === m.id),
+              TODAY,
+            ),
+          ),
+        )
+        .map((m) => m.id),
+    );
+
+    expect(atRisk.size).toBeGreaterThan(0);
+    expect(chased.size).toBeGreaterThan(0);
+    expect([...atRisk].filter((id) => chased.has(id))).toEqual([]);
+  });
+
+  it('never reports a member training more than seven times in a seven-day week', () => {
+    // The rate is printed on every member's page next to their raw visit count, so
+    // an impossible number there is a number the owner can see is wrong — which is
+    // how it was found. Asserted over the whole roster rather than by clicking.
+    const worst = snap.members
+      .map((m) =>
+        attendanceProfile(
+          m,
+          snap.memberships.filter((x) => x.memberId === m.id),
+          snap.visits.filter((v) => v.memberId === m.id),
+          TODAY,
+        ),
+      )
+      .reduce((max, p) => Math.max(max, p.weeklyRate), 0);
+
+    expect(worst).toBeGreaterThan(0);
+    expect(worst).toBeLessThanOrEqual(7);
+  });
+
+  it('records EVERY visit at a believable local hour', () => {
+    // The previous version asserted only that the BUSIEST hour was between 6 and 21,
+    // which survives the bug it named: the demo peaks at 9pm, and read in UTC that
+    // shifts to 15:30 — still inside the band. Asserting every visit is what
+    // actually bites, because a 6am check-in read in UTC becomes 00:30.
+    const hours = snap.visits.map((v) => hourOfEpoch(v.checkedInAt));
+    expect(hours.length).toBeGreaterThan(100);
+    expect(hours.every((h) => h !== null && h >= 6 && h <= 21)).toBe(true);
+
+    expect(attendanceSummary(snap.visits, '2026-06-01', TODAY).busiestHour).not.toBeNull();
   });
 
   it('scales down to an empty roster for the starter-plan case', () => {

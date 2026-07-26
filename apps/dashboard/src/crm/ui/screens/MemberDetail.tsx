@@ -9,7 +9,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCrm } from '../../store';
-import { formatDay, relativeDay } from '../../logic/dates';
+import {
+  attendanceProfile,
+  hourLabel,
+  patternSummary,
+  riskBandFor,
+  riskReason,
+  RHYTHM_WINDOW_DAYS,
+} from '../../logic/attendance';
+import { addDays, formatDay, relativeDay } from '../../logic/dates';
 import { isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials, phoneDigits } from '../../logic/members';
@@ -73,14 +81,28 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     [snapshot.payments, memberId],
   );
 
-  const visitCount = useMemo(
-    () => snapshot.visits.filter((v) => v.memberId === memberId).length,
+  const memberVisits = useMemo(
+    () => snapshot.visits.filter((v) => v.memberId === memberId),
     [snapshot.visits, memberId],
   );
 
+  const visitCount = memberVisits.length;
+
   const visitedToday = useMemo(
-    () => snapshot.visits.some((v) => v.memberId === memberId && v.visitedOn === today),
-    [snapshot.visits, memberId, today],
+    () => memberVisits.some((v) => v.visitedOn === today),
+    [memberVisits, today],
+  );
+
+  const memberRow = useMemo(
+    () => snapshot.members.find((m) => m.id === memberId) ?? null,
+    [snapshot.members, memberId],
+  );
+
+  // Their own rhythm, and what it says. Built here rather than read off the roster
+  // view because the profile needs the raw visits, not just the last one.
+  const profile = useMemo(
+    () => (memberRow ? attendanceProfile(memberRow, memberships, memberVisits, today) : null),
+    [memberRow, memberships, memberVisits, today],
   );
 
   if (!view) {
@@ -222,6 +244,13 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           </Button>
         </Row>
       </div>
+
+      {profile && (
+        <Card style={{ marginBottom: space.lg }}>
+          <SectionTitle>Training pattern</SectionTitle>
+          <AttendanceStrip profile={profile} today={today} />
+        </Card>
+      )}
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Memberships</SectionTitle>
@@ -374,6 +403,79 @@ function CancelMembershipSheet({
         hint="Recorded against the record so it makes sense months later."
       />
     </Sheet>
+  );
+}
+
+/**
+ * Eight weeks of attendance as a row of squares, plus what their rhythm says.
+ *
+ * A calendar strip rather than a count, because "18 visits" answers nothing an owner
+ * asks: a member who came 18 times in the first fortnight and never since is a
+ * different conversation from one who comes twice a week without fail, and the two
+ * are the same number.
+ */
+function AttendanceStrip({
+  profile,
+  today,
+}: {
+  profile: ReturnType<typeof attendanceProfile>;
+  today: string;
+}) {
+  const band = riskBandFor(profile);
+  // NOT the raw band: `ok` covers "training fine", "no plan running" and "too new to
+  // judge", and showing a green "Training" pill above "0 visits in 56 days" is a
+  // label contradicting the number beneath it.
+  const verdict = patternSummary(profile, band);
+  const present = new Set(profile.recentDays);
+  const days: string[] = [];
+  for (let i = RHYTHM_WINDOW_DAYS - 1; i >= 0; i -= 1) days.push(addDays(today, -i));
+
+  return (
+    <>
+      <Row gap={space.xs}>
+        <Pill tone={verdict.tone}>{verdict.label}</Pill>
+        {profile.usualHour !== null && <Pill tone="muted">Usually {hourLabel(profile.usualHour)}</Pill>}
+        {profile.medianGapDays !== null && (
+          <Pill tone="muted">
+            Every {Math.round(profile.medianGapDays)} {Math.round(profile.medianGapDays) === 1 ? 'day' : 'days'}
+          </Pill>
+        )}
+      </Row>
+
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 3,
+          margin: `${space.md}px 0`,
+        }}
+      >
+        {days.map((day) => (
+          <span
+            key={day}
+            title={`${formatDay(day)}${present.has(day) ? ' — trained' : ''}`}
+            style={{
+              width: 12,
+              height: 12,
+              borderRadius: 3,
+              background: present.has(day) ? color.accent : color.surfaceSunken,
+              border: `1px solid ${color.border}`,
+            }}
+          />
+        ))}
+      </div>
+
+      <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+        {profile.visitsInWindowN} {profile.visitsInWindowN === 1 ? 'visit' : 'visits'} in the last{' '}
+        {RHYTHM_WINDOW_DAYS} days
+        {/* The rate is measured over the days their plan actually covered, so it says
+            so — otherwise a member who renewed six days ago reads "20 visits in 56
+            days · about 20.0 a week" and the two numbers cannot both be true. */}
+        {profile.weeklyRate > 0 &&
+          ` · about ${profile.weeklyRate.toFixed(1)} a week while their plan was running`}
+        {band !== 'ok' && ` · ${riskReason({ profile, band })}`}
+      </div>
+    </>
   );
 }
 

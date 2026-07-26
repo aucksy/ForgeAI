@@ -48,6 +48,7 @@ import {
   DuplicatePhoneError,
   EARLIEST_DATE,
   FutureSchemaError,
+  FutureVisitError,
   InvalidDateError,
   LATEST_DATE,
   NotFoundError,
@@ -424,9 +425,20 @@ export class LocalCrmData implements CrmData {
 
   // ------------------------------------------------------------ attendance
 
-  async checkIn(memberId: string, day: DateISO, source: Visit['source']): Promise<Visit> {
+  async checkIn(
+    memberId: string,
+    day: DateISO,
+    source: Visit['source'],
+    today: DateISO,
+  ): Promise<Visit> {
     return this.update((db) => {
       if (!db.members.some((m) => m.id === memberId)) throw new NotFoundError('That member');
+
+      // Same guard the money paths get: a `type="date"` field hands over year 0002
+      // without complaint, and a visit is what the at-risk list is computed from.
+      requireDay(day, 'The visit date');
+      requireDay(today, 'Today’s date');
+      if (day > today) throw new FutureVisitError();
 
       const existing = db.visits.find((v) => v.memberId === memberId && v.visitedOn === day);
       if (existing) return { ...existing };
@@ -441,6 +453,16 @@ export class LocalCrmData implements CrmData {
       };
       db.visits.push(visit);
       return { ...visit };
+    });
+  }
+
+  async undoCheckIn(memberId: string, day: DateISO): Promise<void> {
+    return this.update((db) => {
+      requireDay(day, 'The visit date');
+      // Filtered on BOTH keys. Dropping either one deletes a member's whole
+      // attendance history, or everybody's attendance for the day, from what the
+      // desk thinks is a single undo.
+      db.visits = db.visits.filter((v) => !(v.memberId === memberId && v.visitedOn === day));
     });
   }
 }

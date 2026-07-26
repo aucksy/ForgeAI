@@ -326,6 +326,7 @@ export function Button({
   variant = 'primary',
   tone,
   full,
+  ariaLabel,
 }: {
   children: ReactNode;
   onClick?: () => void;
@@ -334,6 +335,13 @@ export function Button({
   variant?: 'primary' | 'ghost' | 'quiet';
   tone?: 'danger';
   full?: boolean;
+  /**
+   * Overrides the visible text for screen readers. Needed wherever the same short
+   * label repeats down a list: forty rows of "Undo, button" with no indication of
+   * whose check-in each one removes is unusable, and undo is the only destructive
+   * control in the product.
+   */
+  ariaLabel?: string;
 }) {
   const danger = tone === 'danger';
   const base: CSSProperties = {
@@ -374,7 +382,13 @@ export function Button({
           };
 
   return (
-    <button type={type} onClick={onClick} disabled={disabled} style={{ ...base, ...skin }}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      style={{ ...base, ...skin }}
+    >
       {children}
     </button>
   );

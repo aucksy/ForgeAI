@@ -866,6 +866,119 @@
     which does not exist in this model); still no UI-render tests (the Node-only lane gates
     `src/crm/ui/**` by `tsc` + `vite build` + browser checks).
 
+- 2026-07-26: **Phase P3 DONE (gym CRM attendance + the daily at-risk list) — 403 CRM tests + 199
+  mobile tests green, both typechecks green, production build green, 69/69 mutations killed across
+  two harnesses, adversarially reviewed (3 HIGH + 5 MED + 7 LOW; every HIGH and MED fixed).
+  Web app — no tag, no APK; the mobile app is untouched.** Architecture + decisions:
+  `docs/overhaul/CRM-BUILD.md` §"P3 — the attendance decisions". Checklist:
+  `docs/CRM-TEST-CHECKLIST.md` §P3.
+  - **What the owner gets.** A **Visits** section with two views. **Register** is the front desk:
+    type three letters of a name or the last four digits of a mobile, tap, done — the box clears
+    itself for the next person, the day's list builds underneath with real clock times, and every
+    row has an **Undo** (a mis-tapped name was previously impossible to take back; check-in had no
+    delete path at all). It shows an expired plan or an unpaid balance before you wave somebody
+    through, and blocks neither — deciding who trains is the owner's call, not the software's.
+    Yesterday and any past day can be caught up when the desk PC was down. **At risk** is the daily
+    action list: paying members who have stopped coming, each with how long they have been away
+    *and their own usual gap*. Plus check-ins per day over 30 days and the gym's peak hour —
+    `checkedInAt` had been recorded since P1 and nothing had ever read it.
+  - **The load-bearing decision: absence is measured PER MEMBER, not against one threshold.**
+    Days-without-attendance is the only churn signal with peer-reviewed multi-country support
+    (35–54% of feature importance in a deployed dropout model over 5,209 members, AUC 0.86 — R1
+    findings 116/164/166). But a single "flag at 14 days" rule is wrong in both directions at once:
+    a four-times-a-week member absent eight days has already broken their habit, while a Sunday-only
+    member at eight days is exactly on schedule. Each member is judged against the median gap
+    between their own last several visits, with a fixed fallback only for somebody too new to have
+    a rhythm, and a floor so nobody is chased sooner than ten days.
+  - **The rhythm is sampled from their LAST VISITS, not from a window ending today** — caught while
+    writing the tests, and the whole feature turns on it. A fortnightly member needs four visits
+    spanning six weeks to have a measurable rhythm, so an eight-week window anchored on today holds
+    that history for at most a fortnight of absence. Measured that way the personal baseline
+    evaporates on the very day the member starts drifting, dropping them onto the generic threshold
+    — flagging somebody one day late, which is precisely the failure the baseline exists to prevent.
+  - **Rules the code enforces** (each a bug class): the list says **nothing at all** until the gym
+    has used the register on 5 separate days (see H1 below); it holds only members whose cover runs
+    **beyond the renewals window**, so nobody is on this list and the chase list at once;
+    **archived members are excluded**, the opposite of the dues rule and deliberately so (archiving
+    does not forgive a debt, but you do not phone somebody you have archived about their workouts);
+    nobody is flagged before they have had **a covered week** in which they could have come, or if
+    they trained **today or yesterday**; **a visit dated in the future is refused**
+    (`FutureVisitError`) while back-dating is allowed, because a desk that was down still has to be
+    caught up and attendance is what the whole list is computed from; check-in now takes the same
+    `requireDay` guard as the money paths.
+  - **The copy is a design constraint, and a test enforces it.** A randomised field experiment found
+    proactive retention outreach *raised* churn — 10% against 6% for untouched controls, because
+    risk and responsiveness are different things (R1 finding 173). The rule taken from it: talk to
+    an at-risk member about their **training**, never about their membership. Every generated reason
+    string is asserted against `/renew|membership|expir|pay|due|₹/i`.
+  - **New (`apps/dashboard/src/crm/**`, ~1.5k lines):** `logic/attendance.ts` (PURE — profiles,
+    personal-baseline rhythm, risk bands, register, trend, peak-hour histogram),
+    `ui/screens/Attendance.tsx`; `logic/dates.ts` gains `hourOfEpoch`; the adapter gains
+    `undoCheckIn` and a `today` argument on `checkIn`; the kit's `Button` gains `ariaLabel`.
+    Routes `#/attendance`, `#/attendance/risk`.
+  - **Mutation-tested before being trusted:** 69 mutations across two harnesses broke each new
+    function in turn (UTC instead of local hours, unmerged overlapping terms, off-by-one band
+    boundaries, undo filtered on one key instead of two, the register gate, the expiring handover)
+    and confirmed the test named after it fails. All 69 killed. The first pass had **four
+    survivors**, each resolved honestly: two were tests that could not discriminate, and two were
+    **guards that turned out to be provably dead code** — clipping every term to the window already
+    handles a backwards range, and only in-range days are ever read out of the daily-counts map — so
+    the dead lines were deleted rather than given tests that pretend to cover them.
+  - **Found by using it, not by tests:** a member three weeks in with exactly one visit was flagged
+    **on the day that visit happened** — the card read "Only 1 visit since joining 22 days ago"
+    above "last in: today", two true facts making one absurd suggestion, since they were in the
+    building. The **"Another day" chip was completely dead** — the chip state was derived back out
+    of the date, so clicking it changed nothing and the date field it reveals was unreachable; and
+    fixing that surfaced worse, because a date cleared mid-typing fell back to **today** while the
+    banner still said another day, so a check-in would have silently landed on the wrong date (the
+    day is now explicitly unusable and the whole write path disappears until it is real). The sixth
+    navigation item **overflowed its 62px column** at 375px, bleeding over its neighbour.
+  - **Adversarial review (1 deep agent, read-only) — 15 findings; all 3 HIGH and all 5 MED fixed:**
+    **H1 (the one that would have greeted every existing gym):** the list had no notion of whether
+    the gym uses the register at all. Until this phase check-in was a button buried on a member's
+    profile, so a P1/P2 gym has an empty `visits` table — and judged on that, **79 of 83 covered
+    members were flagged**, with a red tile telling the owner most of their gym had stopped coming
+    on the day the feature arrived. No attendance is an absent signal, not a negative one
+    (`isRegisterInUse`, and an empty state that says so instead of claiming everybody is training).
+    **H2** the two-lists-must-not-overlap rule excluded only the *expired*; a member whose cover
+    ends this week is `expiring`, which the chase list also matches, so "plan about to lapse AND
+    stopped coming" — the canonical pre-churn member — landed on both cards with contradictory
+    advice one scroll apart. The handover now sits on the same constant the chase list uses, pinned
+    by a property test rather than examples. **H3** `RISK_LABEL.ok` rendered as a green **Training**
+    pill for members who demonstrably were not: `ok` covers "training", "no plan running" and "too
+    new to judge", so a member who lapsed two months ago and never once checked in got a green
+    pill above "0 visits in the last 56 days" (`patternSummary`). MED: **M5** `weeklyRate` divided
+    every visit in the window by only the *covered* days, reporting a member who trained through a
+    lapse and renewed six days ago as training **20 times a week**; **M4** "haven't trained lately"
+    was wrong for a third of the list — a new member two visits in has not stopped, they never
+    started, so the copy now covers both; **M8** forty identical "Undo" buttons with no accessible
+    name, on the only destructive control in the product.
+  - **Two of my tests could not fail, and the review found both:** the demo "believable hours" test
+    asserted only that the *busiest* hour was between 6 and 21, which survives the exact UTC bug it
+    named (the demo peaks at 9pm; read as UTC that shifts to 15:30, still inside the band) — it now
+    asserts every visit, since a 6am check-in read as UTC becomes 00:30. And the demo test whose
+    comment claimed to guard the chase-list overlap asserted `!member.archived` instead — a
+    tautology already covered elsewhere, and the invariant it named was the one actually broken
+    (H2). It now checks real disjointness over the whole demo gym.
+  - **Verified in a real browser, not just by tests:** the full desk cycle (search → check in →
+    "✓ Already in" on a second search → real clock times in the register → undo, with storage moving
+    33 → 34 → 33 each time); a back-dated check-in landing on 24 July; a future date and a cleared
+    date both removing the write path; **two tabs** checking different members in without either
+    clobbering the other (33 → 34 → 35, both present); the H1 case reproduced by emptying `visits`
+    on a full 128-member gym, now reading **0** with no badge; the H2 case reconstructed (cover
+    ending in 3 days + 30 days absent) appearing on the renewals card **only**; the H3 member now
+    reading "No plan running"; 33 Undo buttons with 33 distinct accessible names; and every route at
+    375px with **zero targets under 44px, zero horizontal overflow and zero console errors**. Peak
+    hour reads "4 pm–5 pm" on the demo gym — a UTC-parsed timestamp would put an Indian gym's rush
+    hour near midnight.
+  - **Deliberately deferred:** no outcome logging on the at-risk list (whether the owner called, and
+    what happened) — the closed loop the research says the whole category is missing, which needs
+    P5's staff model to record *who* called; no holdout group to measure the churn delta honestly
+    (same dependency); `isRegisterInUse` cannot detect *partial* adoption, where the desk records
+    some members and not others; still no UI-render tests, so `src/crm/ui/**` is gated by `tsc` +
+    `vite build` + browser checks. LOW findings left open and recorded: shared error state on the
+    register means a failed action's banner is cleared by the next successful one.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

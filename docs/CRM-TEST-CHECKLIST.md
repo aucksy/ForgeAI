@@ -7,7 +7,9 @@ run `npm run dev --workspace apps/dashboard` and open the printed URL.
 Automated coverage lives in `apps/dashboard/test/crm/**` (`npm test --workspace apps/dashboard`);
 this file is only for what a human has to look at.
 
-> Builds: **P1** = roster spine (members, plans, sell/renew, dues, check-in).
+> Builds: **P1** = roster spine (members, plans, sell/renew, dues, check-in) ·
+> **P2** = money (ledger, collection reports, aged dues, printable receipts) ·
+> **P3** = attendance (the register) and the daily at-risk list.
 
 ---
 
@@ -181,3 +183,73 @@ this file is only for what a human has to look at.
 - [ ] 🔬 Open it in Excel: **mobile numbers read normally** and ₹ / Indian names are not mangled.
 - [ ] 🔬 Put `=1+1` in a member's note, then export. Excel must show it as **text**, not run it.
 - [ ] The Amount column is a **number** you can sum, not text with a ₹ in it.
+
+---
+
+## P3 — attendance and the at-risk list
+
+> Reach it from **Visits** in the navigation (the screen itself is titled Attendance). The badge
+> counts **people** who have stopped training, not visits.
+
+### The register — the busiest thing at a front desk
+- [ ] **Visits → Register**, type three letters of a name → they appear with their status, what
+      they owe, and their number. Tap **Check in**. The box clears itself for the next person.
+- [ ] Type the **last four digits of a mobile** instead — same result.
+- [ ] They appear at the **top of "In today"** with the real clock time.
+- [ ] Search them again: it says **"✓ Already in"** and offers no second check-in.
+- [ ] 🔬 An **expired** member or one who **owes money** can still be checked in — the desk is
+      warned, never blocked. Deciding who trains is the owner's call, not the software's.
+- [ ] **Undo** removes that one check-in and says whose it was.
+- [ ] 🔬 Undo somebody who came **yesterday as well as today** — only today's goes.
+- [ ] Tapping Undo twice in a row does not error.
+
+### Catching up a day the desk missed
+- [ ] **Yesterday** switches the register, and an orange bar says **"Recording for … — not today"**.
+- [ ] **Another day** reveals a date field. Pick a past date, check somebody in, and it lands on
+      that date (check their member page).
+- [ ] 🔬 Type a **future** date: the check-in box disappears and the field says the day has not
+      happened yet. Nothing can be recorded.
+- [ ] 🔬 **Clear** the date field completely. The check-in box must disappear too — it must never
+      quietly fall back to recording against today while the screen still says another day.
+
+### Who has stopped coming
+- [ ] 🔬 **Before you have used the register for a few days, this list says nothing at all** — it
+      reads "Start checking members in", not "everybody is training" and *certainly* not a list of
+      your whole roster. Nobody is judged on attendance that was never recorded.
+- [ ] **Visits → At risk** lists only members whose plan is **still running with weeks left**.
+      Nobody expired, and nobody whose plan runs out this week — those people are on Today's "Talk
+      to these members" instead. 🔬 No member is ever on both lists.
+- [ ] 🔬 Each row says how long since their last visit **and their own usual gap** ("12 days since
+      their last visit — they usually train every 3 days"). Two members absent the same number of
+      days can be in different bands, and that is the point.
+- [ ] 🔬 Nobody who trained **today or yesterday** is on the list, whatever their history.
+- [ ] 🔬 The list is a handful of people, not half the roster. A list that flags everyone is a list
+      you stop opening.
+- [ ] 🔬 Nothing on this screen mentions renewals, expiry or money. Ask about their **training** —
+      the research says a renewal pitch to somebody who has drifted makes them *more* likely to
+      leave, not less.
+- [ ] **Archived** members never appear here (unlike Dues, where archiving does not cancel a debt).
+- [ ] Filter chips (Not settled in / Slipping / Gone quiet) narrow the list and the counts agree.
+- [ ] **Export CSV** downloads exactly the rows on screen, with the reason in plain English.
+
+### When the gym is busy
+- [ ] "Last 30 days" draws a bar per day, with **closed days visible as gaps**, not missing.
+- [ ] 🔬 **Busiest hour** matches when people actually come (a 6am gym must read "6 am–7 am", never
+      midnight — that would mean the times are being read in the wrong timezone).
+- [ ] Rows imported without a real time show **—**, not an invented 5:30am.
+
+### On a member's page
+- [ ] **Training pattern** shows 8 weeks as squares, their usual hour, and their usual gap.
+- [ ] The count under it agrees with the squares above it.
+- [ ] 🔬 Open somebody whose plan has **expired and who never checked in**: the pill says
+      **"No plan running"**, not a green "Training" above a line reading "0 visits".
+- [ ] 🔬 The "about N a week" figure is never more than 7 — and it says it is measured over the
+      days their plan was running, so it cannot contradict the visit count beside it.
+
+### Accessibility
+- [ ] 🔬 With a screen reader, each **Undo** in the register announces **whose** check-in it
+      removes, not just "Undo" forty times. It is the only destructive control in the product.
+
+### Today screen
+- [ ] **"Losing the habit"** tile opens the at-risk list; **"Check-ins today"** opens the register.
+- [ ] The **"Losing the habit"** card holds different people from "Talk to these members".

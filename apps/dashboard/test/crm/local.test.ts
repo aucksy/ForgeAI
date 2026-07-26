@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
   DuplicatePhoneError,
   FutureSchemaError,
+  FutureVisitError,
   InvalidDateError,
   NotFoundError,
   StorageFullError,
@@ -568,8 +569,8 @@ describe('payments', () => {
 describe('check-in', () => {
   it('records one visit per member per day, however many times they scan', async () => {
     const m = await db.createMember(memberDraft());
-    const first = await db.checkIn(m.id, TODAY, 'desk');
-    const again = await db.checkIn(m.id, TODAY, 'app');
+    const first = await db.checkIn(m.id, TODAY, 'desk', TODAY);
+    const again = await db.checkIn(m.id, TODAY, 'app', TODAY);
 
     expect(again.id).toBe(first.id);
     expect((await db.load()).visits).toHaveLength(1);
@@ -577,13 +578,84 @@ describe('check-in', () => {
 
   it('records separate days separately', async () => {
     const m = await db.createMember(memberDraft());
-    await db.checkIn(m.id, '2026-07-25', 'desk');
-    await db.checkIn(m.id, '2026-07-26', 'desk');
+    await db.checkIn(m.id, '2026-07-25', 'desk', TODAY);
+    await db.checkIn(m.id, '2026-07-26', 'desk', TODAY);
     expect((await db.load()).visits).toHaveLength(2);
   });
 
   it('refuses a check-in for someone who is not on the roster', async () => {
-    await expect(db.checkIn('ghost', TODAY, 'desk')).rejects.toBeInstanceOf(NotFoundError);
+    await expect(db.checkIn('ghost', TODAY, 'desk', TODAY)).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it('accepts a back-dated visit — a desk PC that was down still has to be caught up', async () => {
+    const m = await db.createMember(memberDraft());
+    const visit = await db.checkIn(m.id, '2026-07-20', 'desk', TODAY);
+    expect(visit.visitedOn).toBe('2026-07-20');
+    expect((await db.load()).visits).toHaveLength(1);
+  });
+
+  it('refuses a visit dated in the future, and writes nothing', async () => {
+    const m = await db.createMember(memberDraft());
+    await expect(db.checkIn(m.id, '2026-07-27', 'desk', TODAY)).rejects.toBeInstanceOf(
+      FutureVisitError,
+    );
+    expect((await db.load()).visits).toHaveLength(0);
+  });
+
+  it('refuses a visit date that is not a real day', async () => {
+    const m = await db.createMember(memberDraft());
+    // A `type="date"` field hands over '' while it is being typed, and year 0002
+    // without complaint. Both used to reach storage.
+    await expect(db.checkIn(m.id, '', 'desk', TODAY)).rejects.toBeInstanceOf(InvalidDateError);
+    await expect(db.checkIn(m.id, '2026-02-30', 'desk', TODAY)).rejects.toBeInstanceOf(
+      InvalidDateError,
+    );
+    await expect(db.checkIn(m.id, '0002-01-01', 'desk', TODAY)).rejects.toBeInstanceOf(
+      InvalidDateError,
+    );
+    expect((await db.load()).visits).toHaveLength(0);
+  });
+});
+
+describe('undo a check-in', () => {
+  it('removes only that member on only that day', async () => {
+    const a = await db.createMember(memberDraft());
+    const b = await db.createMember(memberDraft({ phone: '+919876500011' }));
+    await db.checkIn(a.id, '2026-07-25', 'desk', TODAY);
+    await db.checkIn(a.id, TODAY, 'desk', TODAY);
+    await db.checkIn(b.id, TODAY, 'desk', TODAY);
+
+    await db.undoCheckIn(a.id, TODAY);
+
+    const visits = (await db.load()).visits;
+    // Filtering on one key instead of two would take out either A's whole history
+    // or everybody's attendance for the day, from what the desk thinks is one undo.
+    expect(visits).toHaveLength(2);
+    expect(visits.some((v) => v.memberId === a.id && v.visitedOn === '2026-07-25')).toBe(true);
+    expect(visits.some((v) => v.memberId === b.id && v.visitedOn === TODAY)).toBe(true);
+    expect(visits.some((v) => v.memberId === a.id && v.visitedOn === TODAY)).toBe(false);
+  });
+
+  it('is a silent no-op when there was no such visit, so a double-tap cannot fail', async () => {
+    const m = await db.createMember(memberDraft());
+    await db.checkIn(m.id, TODAY, 'desk', TODAY);
+    await db.undoCheckIn(m.id, TODAY);
+    await expect(db.undoCheckIn(m.id, TODAY)).resolves.toBeUndefined();
+    expect((await db.load()).visits).toHaveLength(0);
+  });
+
+  it('refuses a date that is not a real day', async () => {
+    const m = await db.createMember(memberDraft());
+    await expect(db.undoCheckIn(m.id, '2026-13-01')).rejects.toBeInstanceOf(InvalidDateError);
+  });
+
+  it('survives a reload — the removal is persisted, not just dropped from memory', async () => {
+    const m = await db.createMember(memberDraft());
+    await db.checkIn(m.id, TODAY, 'desk', TODAY);
+    await db.undoCheckIn(m.id, TODAY);
+
+    const reopened = new LocalCrmData({ store, now: () => 1 });
+    expect((await reopened.load()).visits).toHaveLength(0);
   });
 });
 

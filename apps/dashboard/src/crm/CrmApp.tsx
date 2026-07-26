@@ -10,10 +10,12 @@
 
 import { useMemo } from 'react';
 
+import { atRiskList } from './logic/attendance';
 import { duesByMember, duesLedger } from './logic/collections';
 import { needsAttentionToday } from './logic/membership';
 import { CrmProvider, useCrm } from './store';
 import { AppShell, type NavItem } from './ui/AppShell';
+import { AttendanceScreen } from './ui/screens/Attendance';
 import { MemberDetailScreen } from './ui/screens/MemberDetail';
 import { MembersScreen } from './ui/screens/Members';
 import { MoneyScreen } from './ui/screens/Money';
@@ -56,9 +58,17 @@ function Routes() {
         (d) => d.bucket !== 'upcoming',
       ),
     ).length;
+    // Counted in PEOPLE like the two badges beside it, and like the list it opens.
+    const atRisk = atRiskList(snapshot.members, snapshot.memberships, snapshot.visits, today).length;
     return [
       { path: '/', label: 'Today', glyph: '◆' },
       { path: '/members', label: 'Members', glyph: '☰', badge: needsAttention },
+      // "Visits" rather than "Attendance": six items across a 375px phone leave
+      // about 54px of text, and the longer word does not fit. The screen itself is
+      // still titled Attendance, which is the word an owner comparing products
+      // looks for — a short tab label under a fuller page title is the ordinary
+      // pattern on both mobile platforms.
+      { path: '/attendance', label: 'Visits', glyph: '✓', badge: atRisk },
       { path: '/money', label: 'Money', glyph: '▤', badge: overdue },
       { path: '/plans', label: 'Plans', glyph: '₹' },
       { path: '/settings', label: 'Settings', glyph: '⚙' },
@@ -82,6 +92,8 @@ function Screen({ segments }: { segments: string[] }) {
       return <TodayScreen />;
     case 'members':
       return id ? <MemberDetailScreen memberId={id} /> : <MembersScreen />;
+    case 'attendance':
+      return <AttendanceScreen section={id} />;
     case 'money':
       return <MoneyScreen section={id} />;
     case 'receipts':

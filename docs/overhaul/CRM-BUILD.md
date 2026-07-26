@@ -1,6 +1,6 @@
 # ForgeAI Gym CRM — build guide (Pillar 1)
 
-**Started:** 2026-07-26 · **Lives in:** `apps/dashboard` · **Status:** P1 shipped, P2–P7 planned.
+**Started:** 2026-07-26 · **Lives in:** `apps/dashboard` · **Status:** P1–P3 shipped, P4–P7 planned.
 
 > **Owner directive, 2026-07-26.** The fieldwork gate in `VISION.md` (§8, locked decision 3 —
 > "no platform code until the design-partner gym notes return") is **WAIVED**. The owner instructed:
@@ -57,6 +57,7 @@ apps/dashboard/src/crm/
     collections.ts      date ranges, collection summaries, dues ageing
     csv.ts              CSV escaping + spreadsheet formula-injection guard
     receiptDoc.ts       the printable receipt, assembled as data
+    attendance.ts       per-member rhythm, risk bands, register, trend, peak hours
   data/
     adapter.ts          the CrmData interface — the ONLY storage seam
     local.ts            browser-local adapter (one versioned JSON blob)
@@ -154,6 +155,104 @@ is a formula to a spreadsheet, so any such string is quoted and apostrophe-prefi
 correctly fired on every `+91…` mobile number during a real export, which is why phone numbers are
 written without the leading `+` (`phoneForExport`) rather than by weakening the guard.
 
+## P3 — the attendance decisions
+
+**Days-without-attendance is the only churn signal worth building on, and the measurement is
+PER MEMBER.** It carries 35–54% of the feature importance in a deployed dropout model over 5,209
+members (AUC 0.86), ahead of membership duration and amount billed — the one leading indicator in
+the corpus with peer-reviewed, multi-country support (`R1-findings.txt` 116/164/166/167).
+Everything else the category sells has none. But a single "flag at 14 days" rule is wrong in both
+directions at once: a four-times-a-week member absent eight days has already broken their habit,
+while a Sunday-only member at eight days is exactly on schedule. So absence is judged against the
+median gap between the member's own last several visits, with a fixed 12-day fallback for anyone
+too new to have a rhythm and a 10-day floor so nobody is ever chased sooner than the researched
+intervention window.
+
+**The rhythm is sampled from their LAST VISITS, not from a window ending today.** This is the
+subtlest thing in the phase and the whole feature turns on it. A fortnightly member needs four
+visits spanning six weeks to have a measurable rhythm, so an eight-week window anchored on today
+holds that history for at most a fortnight of absence — the personal baseline would evaporate on
+the very day the member started drifting, dropping them onto the generic threshold and flagging
+somebody one day late. Counting back from their last visit instead means the pattern survives the
+absence it exists to be judged against.
+
+**Three bands, ordered by what the owner can still change rather than by how bad the number is.**
+*Not settled in* leads: dropout probability peaks inside the first three months, under four visits
+in month one predicts roughly 80% cancellation, and a real onboarding moved six-month retention
+from 60% to 87% — the cheapest save available, with the fastest-closing window. Then *slipping*
+(past their own gap; the documented day-10–14 intervention). Then *gone quiet*, still worth a call
+but the hardest of the three conversations.
+
+**No register, no list.** The at-risk list says *nothing at all* until the gym has used the
+register on at least `MIN_REGISTER_DAYS` (5) separate days. Review found the alternative, and it
+was the worst thing this phase could have shipped: until P3 the only way to check anybody in was a
+button buried on a member's profile, so every gym already running P1 and P2 has an empty `visits`
+table. Judged on that, 79 of 83 covered members came back flagged, and an owner's first sight of
+the feature was a red tile saying most of their gym had stopped coming — when the gym had not
+started. No attendance is an **absent** signal, not a negative one, and the empty state says so
+rather than claiming "everybody is training", which would be inventing evidence the gym has not
+produced. Known limit: this cannot detect *partial* adoption, where the desk records some members
+and not others.
+
+**The at-risk list is a different population from the renewals list, by construction — and the
+handover is at the same threshold, not a similar one.** It holds only members whose cover runs for
+more than `EXPIRING_WINDOW_DAYS` beyond today. The first cut excluded only the *expired*, which
+review showed still overlapped: a member whose cover ends this week is `expiring`, which
+`needsAttentionToday` also matches, and "plan about to lapse **and** stopped coming" is the single
+commonest pre-churn member there is — so the two lists collided on exactly the people they were
+built for, and the owner read "ends in 3 days, renew them" and "never mention their membership"
+one scroll apart about the same person. One person, one conversation: while a renewal is imminent
+that conversation wins, and they return here if they renew and still do not show up. The invariant
+is pinned by a property test over a generated population plus the whole demo gym, not by examples,
+because the two lists are governed by separate constants that could drift.
+
+Archived members are excluded — the opposite of the dues rule, and deliberately: archiving does not
+forgive a debt, but you do not phone somebody you have archived about their workouts. Nobody is
+flagged before they have had a covered week in which they could have come, and nobody who trained
+today or yesterday is on it whatever their rate says.
+
+**The copy never mentions money, and a test enforces it.** A randomised field experiment found
+proactive retention outreach *raised* churn — 10% against 6% for untouched controls, because risk
+and responsiveness are different things (finding 173). The rule taken from it is to talk to an
+at-risk member about their **training**, never about their membership. Every generated reason
+string is asserted against `/renew|membership|expir|pay|due|₹/i`.
+
+**Back-dating the register is allowed; forward-dating is refused.** A desk PC that was down still
+has to be caught up, and attendance is what the entire at-risk list is computed from, so refusing
+the catch-up would quietly poison it. A visit tomorrow is not a correction — it is a mistyped
+year, and it would mark an absent member present until the calendar caught up
+(`FutureVisitError`). When the typed day is unusable the whole write path disappears rather than
+falling back to today, because a silent fall-back would record against the wrong date while the
+banner still named another one.
+
+**Undo is the product's only delete, and it is scoped to one member on one day.** Money is
+append-only for good reasons; attendance is not money, and a mis-tapped name on a busy evening is
+the commonest thing that happens at a front desk. Filtering on either key alone would take out a
+member's whole history, or everybody's attendance for the day, from what the desk thinks is one
+undo.
+
+**"We cannot tell" is a third answer, distinct from "they are fine".** `riskBandFor` returns `ok`
+for a member who is training, for one with no plan running, and for one too new to judge — so the
+member's page decides through `patternSummary` rather than reading the band directly. Showing the
+raw band gave a member who lapsed two months ago and had never once checked in a green **Training**
+pill directly above the line "0 visits in the last 56 days", a label contradicting the number
+beneath it. One tone per band (`BAND_TONE`) is shared by every surface for the same reason: gone
+quiet was previously grey on one screen and orange on two others, which teaches an owner that the
+colours mean nothing.
+
+**A rate is measured over one population on both sides of the division.** `weeklyRate` counts
+covered visits over covered days. Counting *every* visit in the window against only the *covered*
+days reported a member who kept training through a lapse and renewed six days ago as training
+twenty times a week — printed directly beneath "20 visits in the last 56 days", two numbers that
+cannot both be true. The member's page states the denominator in words rather than leaving the
+reader to divide.
+
+**Local hours, never UTC.** `checkedInAt` is epoch milliseconds and every reading of it is local:
+a 6am check-in at a Jaipur gym is 00:30 UTC, so a peak-hour report built on `getUTCHours` would
+tell the owner their rush hour is the middle of the night. Timestamps that do not land on the day
+they are recorded against are ignored outright — an imported paper-register row carries
+`checkedInAt: 0`, which is 5:30am IST and would otherwise vote in every histogram it appeared in.
+
 ## Known limits (recorded, not bugs)
 
 - **No UI-render tests.** The lane is Node-only, so `src/crm/ui/**` is gated by `tsc`,
@@ -178,7 +277,7 @@ written without the leading `+` (`phoneForExport`) rather than by weakening the 
 |---|---|---|
 | **P1** | Roster spine — members, plans, sell/renew, dues, check-in, local adapter, test lane, CI gate | ✅ 2026-07-26 |
 | **P2** | Money — payment ledger UI, collection reports, aged dues, printable GST-ready receipts, CSV export | ✅ 2026-07-26 |
-| P3 | Attendance + the daily at-risk action list (days-since-visit is the only churn signal with peer-reviewed multi-country support) | planned |
+| **P3** | Attendance — the register (search-first check-in, undo, back-dating) + the daily at-risk list on a per-member baseline, 30-day trend and peak hours | ✅ 2026-07-26 |
 | P4 | Renewals pipeline + click-to-WhatsApp composer (₹0 — no BSP spend until D3/D4 are answered) | planned |
 | P5 | Staff, roles & permissions + PT session ledger | planned |
 | P6 | Reports + GST invoices | planned |

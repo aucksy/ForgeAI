@@ -117,6 +117,22 @@ export class InvalidDateError extends Error {
   }
 }
 
+/**
+ * Somebody tried to record a visit on a day that has not happened yet.
+ *
+ * Back-dating the register is legitimate — a desk PC that was down yesterday has to
+ * be caught up, and attendance is the entire basis of the at-risk list, so refusing
+ * the catch-up would silently poison it. Forward-dating never is: a visit tomorrow
+ * is not a correction, it is a mistyped year, and it would sit in the data marking
+ * an absent member present until the calendar caught up with it.
+ */
+export class FutureVisitError extends Error {
+  constructor() {
+    super('You can’t record a visit for a day that hasn’t happened yet.');
+    this.name = 'FutureVisitError';
+  }
+}
+
 /** No gym transacts outside this window; anything else is a mistyped year. */
 export const EARLIEST_DATE: DateISO = '2000-01-01';
 export const LATEST_DATE: DateISO = '2100-12-31';
@@ -175,6 +191,20 @@ export interface CrmData {
   recordPayment(input: RecordPaymentInput): Promise<Payment>;
   voidPayment(id: string, reason: string): Promise<Payment>;
 
-  /** Idempotent per member per day — scanning twice does not double-count a visit. */
-  checkIn(memberId: string, day: DateISO, source: Visit['source']): Promise<Visit>;
+  /**
+   * Idempotent per member per day — scanning twice does not double-count a visit.
+   * `today` is passed in rather than read from a clock so the adapter can refuse a
+   * visit dated in the future without disagreeing with the screen about what day it
+   * is (the store re-resolves `today` across midnight).
+   */
+  checkIn(memberId: string, day: DateISO, source: Visit['source'], today: DateISO): Promise<Visit>;
+
+  /**
+   * Remove one member's check-in on one day. Attendance is not money: a mis-tapped
+   * name on a busy evening is the commonest thing that happens at a front desk, and
+   * until now there was no way to take it back — which is worse than an audit gap,
+   * because the at-risk list is built on exactly these rows. Silent no-op when there
+   * was no such visit, so a double-tap on Undo cannot fail.
+   */
+  undoCheckIn(memberId: string, day: DateISO): Promise<void>;
 }

@@ -66,7 +66,9 @@ interface CrmContextValue {
   /** Returns the written receipt, so the caller can offer to print it. */
   recordPayment: (input: RecordPaymentInput) => Promise<Payment>;
   voidPayment: (id: string, reason: string) => Promise<void>;
-  checkIn: (memberId: string, source: Visit['source']) => Promise<void>;
+  /** `day` defaults to today; pass it to catch up a register the desk missed. */
+  checkIn: (memberId: string, source: Visit['source'], day?: DateISO) => Promise<void>;
+  undoCheckIn: (memberId: string, day: DateISO) => Promise<void>;
   updateGym: (patch: Partial<Omit<GymRecord, 'gymId' | 'createdAt'>>) => Promise<void>;
 
   /** Destructive resets, used by the welcome screen and settings. */
@@ -219,7 +221,9 @@ export function CrmProvider({ data, children }: { data?: LocalCrmData; children:
       uncancelMembership: async (id) => void (await mutate((a) => a.uncancelMembership(id))),
       recordPayment: (input) => mutate((a) => a.recordPayment(input)),
       voidPayment: async (id, reason) => void (await mutate((a) => a.voidPayment(id, reason))),
-      checkIn: async (memberId, source) => void (await mutate((a) => a.checkIn(memberId, today, source))),
+      checkIn: async (memberId, source, day) =>
+        void (await mutate((a) => a.checkIn(memberId, day ?? today, source, today))),
+      undoCheckIn: async (memberId, day) => void (await mutate((a) => a.undoCheckIn(memberId, day))),
       updateGym: async (patch) => void (await mutate((a) => a.updateGym(patch))),
       loadDemoGym: async () => {
         db.replaceAll(demoSnapshot(today));

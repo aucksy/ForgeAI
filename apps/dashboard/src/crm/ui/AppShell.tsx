@@ -183,7 +183,21 @@ function BottomNav({ nav, activePath }: { nav: NavItem[]; activePath: string }) 
               <span aria-hidden style={{ fontSize: 18 }}>
                 {item.glyph}
               </span>
-              {item.label}
+              {/* Six items across a 375px phone leaves ~54px of text room. Without
+                  this the label is sized to its own content and bleeds over its
+                  neighbour rather than being clipped, which is invisible until a
+                  label grows — so it is pinned here rather than only kept short. */}
+              <span
+                style={{
+                  maxWidth: '100%',
+                  minWidth: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {item.label}
+              </span>
               {item.badge ? (
                 <span style={{ position: 'absolute', top: 2, right: '50%', marginRight: -22 }}>
                   <Badge count={item.badge} />

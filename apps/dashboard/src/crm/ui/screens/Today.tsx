@@ -10,11 +10,12 @@
 import { useMemo } from 'react';
 
 import { useCrm } from '../../store';
+import { atRiskList, isRegisterInUse, riskReason } from '../../logic/attendance';
 import { formatDay, monthKey, relativeDay, startOfMonth } from '../../logic/dates';
 import { compareByAttention, needsAttentionToday, WINBACK_WINDOW_DAYS } from '../../logic/membership';
 import { formatINR, formatINRShort, sumPaise } from '../../logic/money';
 import { formatPhone, initials, phoneDigits } from '../../logic/members';
-import type { MemberView } from '../../types';
+import type { Member } from '../../types';
 import {
   Avatar,
   Button,
@@ -75,6 +76,19 @@ export function TodayScreen() {
     [stats.dues],
   );
 
+  // Paying members who have stopped showing up. A different list from the one above
+  // it on purpose: those people's memberships are running out, these people's
+  // memberships are fine and they have quietly stopped coming — which is the thing
+  // an owner cannot see without this product.
+  const atRisk = useMemo(
+    () => atRiskList(snapshot.members, snapshot.memberships, snapshot.visits, today),
+    [snapshot.members, snapshot.memberships, snapshot.visits, today],
+  );
+
+  // An empty list means "nobody has drifted" or "we have no attendance to read" —
+  // two completely different messages.
+  const registerUsed = useMemo(() => isRegisterInUse(snapshot.visits, today), [snapshot.visits, today]);
+
   return (
     <>
       <PageHeader
@@ -113,7 +127,21 @@ export function TodayScreen() {
           tone="good"
           sub={`Since ${formatDay(startOfMonth(today))}`}
         />
-        <StatTile label="Check-ins today" value={stats.visitsToday} />
+        <StatTile
+          label="Check-ins today"
+          value={stats.visitsToday}
+          onClick={() => navigate('/attendance')}
+          sub="Open the register"
+        />
+        {/* "Stopped coming" was wrong for a third of this list — a new member two
+            visits into their first month has not stopped, they never started. */}
+        <StatTile
+          label="Losing the habit"
+          value={atRisk.length}
+          tone={atRisk.length > 0 ? 'critical' : undefined}
+          onClick={() => navigate('/attendance/risk')}
+          sub="Paying, but barely training"
+        />
       </Grid>
 
       <div style={{ height: space.xl }} />
@@ -139,7 +167,7 @@ export function TodayScreen() {
               {renewals.slice(0, 6).map((v) => (
                 <PersonRow
                   key={v.member.id}
-                  view={v}
+                  member={v.member}
                   detail={
                     v.current
                       ? `${v.current.planName} · ${
@@ -155,6 +183,44 @@ export function TodayScreen() {
         </Card>
 
         <Card>
+          <SectionTitle
+            action={
+              <Link to="/attendance/risk">
+                <span style={moreLink}>See all</span>
+              </Link>
+            }
+          >
+            Losing the habit
+          </SectionTitle>
+          {atRisk.length === 0 ? (
+            registerUsed ? (
+              <EmptyState
+                title="Everybody is training"
+                body="No member with a live plan has drifted away from their usual routine."
+              />
+            ) : (
+              // Claiming everyone is training would be inventing evidence this gym
+              // has not yet produced.
+              <EmptyState
+                title="Start checking members in"
+                body="A few days of the register and this fills itself in."
+              />
+            )
+          ) : (
+            <div style={{ display: 'grid', gap: space.sm }}>
+              {atRisk.slice(0, 6).map((r) => (
+                <PersonRow
+                  key={r.member.id}
+                  member={r.member}
+                  detail={riskReason(r)}
+                  tone={r.band === 'settling_in' ? color.criticalText : color.warning}
+                />
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card>
           <SectionTitle>Money to collect</SectionTitle>
           {duesList.length === 0 ? (
             <EmptyState title="Everyone's paid up" body="No outstanding dues on the roster." />
@@ -163,7 +229,7 @@ export function TodayScreen() {
               {duesList.map((v) => (
                 <PersonRow
                   key={v.member.id}
-                  view={v}
+                  member={v.member}
                   detail={`${formatINR(v.outstandingP)} outstanding`}
                   tone={color.warning}
                 />
@@ -176,8 +242,7 @@ export function TodayScreen() {
   );
 }
 
-function PersonRow({ view, detail, tone }: { view: MemberView; detail: string; tone: string }) {
-  const { member } = view;
+function PersonRow({ member, detail, tone }: { member: Member; detail: string; tone: string }) {
   return (
     <Row gap={space.md} wrap={false}>
       <Link to={`/members/${member.id}`}>
