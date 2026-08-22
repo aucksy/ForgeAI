@@ -16,4 +16,11 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
+// expo-sqlite's web build imports `wa-sqlite.wasm` directly. Metro treats an
+// unknown extension as source, so `expo start --web` dies with
+// "Unable to resolve module ./wa-sqlite/wa-sqlite.wasm" even though the file is
+// right there. Registering it as an asset is the documented fix and changes
+// nothing for the native builds.
+config.resolver.assetExts = [...config.resolver.assetExts, 'wasm'];
+
 module.exports = config;
