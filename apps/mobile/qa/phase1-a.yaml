@@ -70,6 +70,11 @@ appId: com.forgeai.app
 - tapOn:
     text: "Mark set complete"
     index: 0
+    # The rest countdown re-renders 4x a second, so "wait until the screen is still"
+    # would sit out the whole 3.5 s the record toast is up.
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "New record.*"
+    timeout: 3000
 - takeScreenshot: 09-new-record
-- assertVisible: "New record.*"
 - assertVisible: "Skip rest"
