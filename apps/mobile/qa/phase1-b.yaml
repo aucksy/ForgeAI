@@ -6,7 +6,7 @@ appId: com.forgeai.app
 - takeScreenshot: 10-notification-shade
 - tapOn: "Workout in progress"
 - extendedWaitUntil:
-    visible: "Add exercise"
+    visible: "Log a set to finish|Finish workout"
     timeout: 30000
 - takeScreenshot: 11-back-from-notification
 - tapOn: "Minimise workout.*"
@@ -16,7 +16,7 @@ appId: com.forgeai.app
 - takeScreenshot: 12-minimised-bar
 - tapOn: ".*Tap to open the workout"
 - extendedWaitUntil:
-    visible: "Add exercise"
+    visible: "Log a set to finish|Finish workout"
     timeout: 15000
 - tapOn:
     text: "More for .*"

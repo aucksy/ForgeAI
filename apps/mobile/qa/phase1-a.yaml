@@ -33,7 +33,7 @@ appId: com.forgeai.app
     text: "(?i)^allow$"
     optional: true
 - extendedWaitUntil:
-    visible: "Add exercise"
+    visible: "Log a set to finish|Finish workout"
     timeout: 30000
 - takeScreenshot: 03-active-workout
 - tapOn:
