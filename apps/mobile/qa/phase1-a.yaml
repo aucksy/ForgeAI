@@ -16,6 +16,10 @@ appId: com.forgeai.app
 - takeScreenshot: 00-welcome
 - tapOn: "Load demo data instead"
 - extendedWaitUntil:
+    visible: "(?i)load demo"
+    timeout: 15000
+- tapOn: "(?i)^load demo$"
+- extendedWaitUntil:
     visible: "Workout"
     timeout: 90000
 - takeScreenshot: 01-home
