@@ -5,9 +5,14 @@ appId: com.forgeai.app
 ---
 - launchApp:
     clearState: true
+    permissions:
+      all: allow
 - extendedWaitUntil:
-    visible: "Load demo data instead"
+    visible: "ForgeAI|Your name|Start training"
     timeout: 90000
+- scrollUntilVisible:
+    element: "Load demo data instead"
+    timeout: 30000
 - takeScreenshot: 00-welcome
 - tapOn: "Load demo data instead"
 - extendedWaitUntil:
@@ -20,12 +25,9 @@ appId: com.forgeai.app
     timeout: 30000
 - takeScreenshot: 02-workout-tab
 - tapOn: "Start (?!empty).*"
-- runFlow:
-    when:
-      visible: "(?i)allow"
-    commands:
-      - takeScreenshot: 03a-permission-prompt
-      - tapOn: "(?i)^allow$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 30000
@@ -39,12 +41,10 @@ appId: com.forgeai.app
 - tapOn: "Rest 30s"
 - takeScreenshot: 06-rest-set-to-30s
 - tapOn:
-    text: "Set 1\. Change set type"
+    text: 'Set 1\. Change set type'
     index: 0
 - takeScreenshot: 07-set-type-sheet
-- tapOn:
-    text: "Close"
-    index: 1
+- back
 - tapOn:
     text: "Mark set complete"
     index: 0
