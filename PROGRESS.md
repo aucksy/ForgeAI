@@ -979,6 +979,46 @@
     `vite build` + browser checks. LOW findings left open and recorded: shared error state on the
     register means a failed action's banner is cleared by the next successful one.
 
+- 2026-10-05: **Tracker Phase 1 DONE — the live workout screen, Hevy parity, kept calm (v0.22.0).**
+  Owner brief: "focus on the workout tracker … match Hevy … UI should not look busy and full of
+  options … Do proper QA". Research behind it: `Resources/Hevy-Research-v1.docx` (outside the repo).
+  - **Calmer exercise card:** one "more" menu (note · rest timer · warm-up sets · plate calculator ·
+    superset · remove) replaces four always-visible buttons; only "Add set" stays. Rest time sits
+    beside the muscle tag. Set type by tapping the set number (sheet: normal/warm-up/drop/failure/
+    remove) for everyone; "Track RPE" (old `advancedSets` key) now only adds a coloured RPE column.
+  - **Rest timer:** per-exercise length (`exercise_prefs`, tracker schema v3), default in Profile,
+    no rest before a drop set, supersets rest per round + scroll to the next exercise. Countdown
+    lives in `restTimerStore` (survives leaving the screen). `expo-notifications` schedules "Rest is
+    over"; a quiet sticky "Workout in progress" card; tapping either reopens the workout (never a
+    duplicate screen). Bell + record chime via `expo-audio` (generated wavs, duck the music).
+  - **Minimise:** chevron leaves the workout running; a bar above the tabs (hidden on the Workout
+    tab, which has its own Resume card). Discard moved to a quiet link under the exercises.
+  - **Notes carry forward** from the last workout with that exercise. **Live records** on tick
+    (same comparisons as frozen `prRepo`), medal on the row + toast. **"Update routine?"** at finish
+    when exercises were added/removed/reordered or set ROWS added/removed (blank planned sets =
+    skipped, not re-planned); occurrence-aware for a lift listed twice. **Save as routine** from a
+    saved workout's menu. Extra sets show the set above as a grey hint (filled only on tick;
+    untick gives it back). Edit mode: month calendar for any past day + editable minutes.
+  - **QA:** 231 vitest (32 new; each review fix has a test that fails on the code before it).
+    Adversarial review: 9 findings → 8 fixed; 1 confirmed by measurement and left open: on
+    Android 14+ without the exact-alarm permission (denied by default) the locked-phone "Rest is
+    over" alert is inexact — **~10 s and ~17 s late on a 30 s rest in two emulator runs** (it
+    always arrived). Fix needs the owner's call (one-time "allow on-time alerts" system page via a
+    small local native module, vs. accept the delay). New **`qa-device.yml`**: x86_64 APK → API 34 emulator → Maestro
+    (`apps/mobile/qa/`), sleeps the phone through a 30 s rest and reads `dumpsys notification`,
+    uploads screenshots + logcat as `qa-out`. Final emulator run (1286693) passed both parts end to end. Device runs found two real bugs unit tests could not:
+    the expiry clean-up dismissed "Rest is over" the instant it posted (fixed + regression test),
+    and the routine prompt firing on skipped sets (fixed).
+  - **Infra:** Gradle heap 2 → 4 GB (`packageRelease` OOM'd once at 2 GB). `SCHEDULE_EXACT_ALARM`
+    + POST_NOTIFICATIONS declared; vector `notification_icon`; `res/raw/keep.xml` keeps the sounds
+    through resource shrinking. The member web build cannot run the app (`withExclusiveTransaction
+    Async` unsupported on web) — the emulator is the QA path. Lessons: `D:\Brain\Lessons\
+    forgeai-device-qa-on-a-cloud-emulator.md`.
+  - **Moved / dropped on purpose:** stopwatch for timed holds → Phase 2 (with timed exercise
+    types); "previous from the same routine" setting dropped (workouts don't record their routine);
+    ticking a set from the lock screen not built (needs custom native code).
+
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

@@ -11,6 +11,8 @@ Any `src/…` or `android/…` path below is under **`apps/mobile/`**. Repo-leve
 `supabase/`, `PROGRESS.md` and CI (`.github/`) stay at the root. Install once with `npm install`
 at the repo root (hoists all workspaces); the mobile Metro config watches the workspace root.
 
+**▶ 2026-10-05: owner switched focus to the member app's WORKOUT TRACKER (Hevy parity, calm UI).** Tracker Phase 1 (live workout screen) shipped as v0.22.0 — see PROGRESS.md; device QA is `.github/workflows/qa-device.yml`. Phases 2–5 (exercises, progress, routines/plans, around-the-phone) are in `Resources/Hevy-Research-v1.docx` §11 and the chat plan.
+
 **▶ CURRENT FOCUS (2026-07-26).** Building **Pillar 1 — the gym management CRM** in
 `apps/dashboard`. **Entrypoint: `docs/overhaul/CRM-BUILD.md`** (architecture, the phase list P1–P7,
 and every assumption made without fieldwork). P1 (roster spine), P2 (money — ledger, collection
