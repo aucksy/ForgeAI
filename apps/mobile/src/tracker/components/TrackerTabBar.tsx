@@ -14,6 +14,8 @@ import type { TabBarProps } from '@/components/ui/TabBar';
 import { tap } from '@/lib/haptics';
 import { color, motion, radius, shadow, type } from '@/theme/tokens';
 
+import { WorkoutMiniBar } from './WorkoutMiniBar';
+
 const ROUTE_ICON: Record<string, IconName> = {
   index: 'home',
   workout: 'dumbbell',
@@ -87,6 +89,9 @@ function TabItem({
 export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
   return (
+    <View>
+    {/* Phase 1: a workout left open shows here, on every tab, until finished. */}
+    <WorkoutMiniBar />
     <View
       style={{
         flexDirection: 'row',
@@ -122,6 +127,7 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
           />
         );
       })}
+    </View>
     </View>
   );
 }

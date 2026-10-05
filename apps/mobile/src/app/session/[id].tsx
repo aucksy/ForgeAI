@@ -1,13 +1,20 @@
-/** Detail of a past workout (from History) — edit, repeat or delete it. */
+/**
+ * Detail of a past workout (from History) — repeat or edit it; the "more" menu
+ * holds Save as routine (Phase 1) and Delete.
+ */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 
-import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { EmptyState, GhostButton, Icon, IconButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { deleteSessionAndReconcile } from '@/tracker/services/prRebuild';
 import { shortDate } from '@/lib/date';
 import { useDashboard } from '@/store/dashboardStore';
-import { radius, space } from '@/theme/tokens';
+import { color, radius, space } from '@/theme/tokens';
+
+import { createRoutineFromWorkout } from '@/tracker/db/routineRepo';
+import { Glyph } from '@/tracker/components/TrackerGlyph';
+import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import { uneditableReason } from '@/tracker/services/editDraft';
@@ -30,6 +37,7 @@ export default function SessionDetailScreen() {
 
   const [data, setData] = useState<SessionSummaryData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [menu, setMenu] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -98,6 +106,31 @@ export default function SessionDetailScreen() {
     }
   };
 
+  const onSaveRoutine = async (): Promise<void> => {
+    if (!data || busy.current) return;
+    busy.current = true;
+    try {
+      const s = data.session;
+      const items = s.exercises.map((g) => ({
+        exerciseId: g.exercise.id,
+        workingSets: g.sets.filter((x) => !x.isWarmup).length,
+      }));
+      const routineId = await createRoutineFromWorkout({
+        name: `${dayTypeLabel(s.dayType)} · ${shortDate(s.dateISO)}`,
+        dayType: s.dayType === 'rest' ? 'full' : s.dayType,
+        items,
+      });
+      busy.current = false;
+      Alert.alert('Saved as a routine', 'You can rename it and start it from the Workout tab.', [
+        { text: 'Done', style: 'cancel' },
+        { text: 'Open routine', onPress: () => router.push({ pathname: '/routines/[id]', params: { id: routineId } }) },
+      ]);
+    } catch {
+      busy.current = false;
+      Alert.alert('Could not save the routine', 'Something went wrong. Please try again.');
+    }
+  };
+
   const onDelete = (): void => {
     if (!id) return;
     Alert.alert('Delete workout?', 'This permanently removes this workout and its sets.', [
@@ -121,7 +154,30 @@ export default function SessionDetailScreen() {
     <Screen
       title={data ? dayTypeLabel(data.session.dayType) : 'Workout'}
       subtitle={data ? shortDate(data.session.dateISO) : undefined}
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      right={
+        <View style={{ flexDirection: 'row', gap: space.sm }}>
+          {data ? (
+            <Pressable
+              onPress={() => setMenu(true)}
+              accessibilityRole="button"
+              accessibilityLabel="More"
+              style={{
+                width: 42,
+                height: 42,
+                borderRadius: radius.pill,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: color.surfaceRaised,
+                borderWidth: 1,
+                borderColor: color.border,
+              }}
+            >
+              <Glyph name="more" size={20} color={color.inkSecondary} />
+            </Pressable>
+          ) : null}
+          <IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />
+        </View>
+      }
     >
       {loading ? (
         <View style={{ gap: space.lg }}>
@@ -134,8 +190,28 @@ export default function SessionDetailScreen() {
           <View style={{ gap: space.md }}>
             <PrimaryButton label="Repeat this workout" icon="dumbbell" onPress={() => void onRepeat()} />
             <GhostButton label="Edit this workout" icon="check" onPress={() => void onEdit()} />
-            <GhostButton label="Delete workout" icon="close" onPress={onDelete} />
           </View>
+          <TrackerSheet visible={menu} title="This workout" onClose={() => setMenu(false)}>
+            <View style={{ gap: 2 }}>
+              <SheetRow
+                label="Save as routine"
+                leading={<Glyph name="list" size={20} color={color.accent} />}
+                onPress={() => {
+                  setMenu(false);
+                  void onSaveRoutine();
+                }}
+              />
+              <SheetRow
+                label="Delete workout"
+                danger
+                leading={<Glyph name="trash" size={20} color={color.criticalText} />}
+                onPress={() => {
+                  setMenu(false);
+                  setTimeout(onDelete, 260);
+                }}
+              />
+            </View>
+          </TrackerSheet>
         </View>
       ) : (
         <EmptyState icon="dumbbell" title="Workout not found" body="This session may have been deleted." />

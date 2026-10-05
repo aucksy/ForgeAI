@@ -15,7 +15,7 @@ import { ToggleRow } from '@/components/settings/SettingRow';
 import { Card, Icon, Screen, SectionHeader } from '@/components/ui';
 import { ExportCard } from '@/tracker/components/ExportCard';
 import { ImportCard } from '@/tracker/components/ImportCard';
-import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
+import { WorkoutPrefsCard } from '@/tracker/components/WorkoutPrefsCard';
 import {
   getAnthropicKey,
   getGroqKey,
@@ -80,10 +80,6 @@ export default function SettingsScreen() {
   const setUnitSystem = useSettings((s) => s.setUnitSystem);
   const setLanguage = useSettings((s) => s.setLanguage);
 
-  const advancedSets = useTrackerPrefs((s) => s.advancedSets);
-  const setAdvancedSets = useTrackerPrefs((s) => s.setAdvancedSets);
-  const coachNotes = useTrackerPrefs((s) => s.coachNotes);
-  const setCoachNotes = useTrackerPrefs((s) => s.setCoachNotes);
 
   return (
     <Screen title="Settings" subtitle="Tune your coach">
@@ -245,23 +241,7 @@ export default function SettingsScreen() {
       </Section>
 
       <Section title="Workout" delay={175}>
-        <Card style={{ paddingVertical: space.xs }}>
-          <ToggleRow
-            icon="target"
-            title="Advanced set logging"
-            caption="Show RPE and set types (warm-up · drop · failure) on each set"
-            value={advancedSets}
-            onChange={setAdvancedSets}
-          />
-          <ToggleRow
-            icon="sparkle"
-            title="AI coach notes"
-            caption="After a workout, add an AI-written note via your Groq key (needs a key; otherwise the built-in coach note always shows)"
-            value={coachNotes}
-            onChange={setCoachNotes}
-            divider
-          />
-        </Card>
+        <WorkoutPrefsCard />
       </Section>
 
       <Section title="Gym sync" delay={210}>

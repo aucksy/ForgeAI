@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 2;
+export const TRACKER_SCHEMA_VERSION = 3;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -45,6 +45,14 @@ export async function initTrackerSchema(): Promise<void> {
   await ensureColumn('set_entries', 'note', 'TEXT');
   // v2 (Phase 5c): superset grouping (per-workout small integer; NULL = ungrouped).
   await ensureColumn('set_entries', 'superset_group', 'INTEGER');
+  // v3 (Phase 1 workout screen): per-exercise settings that outlive one workout.
+  // rest_sec: NULL = use the default rest, 0 = no timer, >0 = seconds.
+  await getDb().execAsync(
+    `CREATE TABLE IF NOT EXISTS exercise_prefs (
+       exercise_id TEXT PRIMARY KEY,
+       rest_sec INTEGER
+     )`,
+  );
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }

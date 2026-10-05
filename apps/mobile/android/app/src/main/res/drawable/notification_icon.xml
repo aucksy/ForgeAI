@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status-bar icon for workout notifications (Phase 1): the app's dumbbell glyph, white on transparent. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path android:pathData="M3.5,9.7v4.6 M6.7,7.2v9.6 M17.3,7.2v9.6 M20.5,9.7v4.6 M6.7,12h10.6"
+      android:strokeColor="#FFFFFFFF"
+      android:strokeWidth="2.2"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round"
+      android:fillColor="#00000000"/>
+</vector>

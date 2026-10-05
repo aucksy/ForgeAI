@@ -12,6 +12,8 @@ import { create } from 'zustand';
 import { getDb, getMeta, setMeta } from '@/db';
 import { getActivePlan } from '@/db/repos/planRepo';
 import { getBoundedExerciseHistory } from '@/tracker/db/exerciseHistory';
+import { getCarriedNote, getExerciseRestSec, getPriorBests, setExerciseRestSec } from '@/tracker/db/exercisePrefs';
+import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { saveSessionEdits } from '@/tracker/db/sessionEdit';
 import { addSetsWithMeta, getSessionSetMeta } from '@/tracker/db/trackerSets';
@@ -55,6 +57,13 @@ export interface DraftExercise {
   /** Last session's working sets — powers the PREVIOUS column + auto-fill. */
   previousSets: { weightKg: number; reps: number }[];
   sets: DraftSet[];
+  /**
+   * Phase 1: this exercise's own rest length in seconds. null/absent = the default
+   * rest, 0 = no timer. Saved per exercise, so it carries to the next workout.
+   */
+  restSec?: number | null;
+  /** Phase 1: best weight / e1RM before this workout, for live record alerts. */
+  bests?: PriorBests | null;
 }
 
 interface DraftSnapshot {
@@ -125,6 +134,8 @@ export interface ActiveWorkoutState {
   setSupersetGroup: (exKey: string, group: number | null) => void;
   /** Per-exercise note (Phase 5c). */
   setExerciseNote: (exKey: string, note: string) => void;
+  /** Phase 1: this exercise's rest length (null = default, 0 = off). Remembered per exercise. */
+  setRestSec: (exKey: string, restSec: number | null) => void;
   /** Prepend computed warm-up rows (isWarmup) to an exercise. */
   insertWarmupSets: (exKey: string, rows: { weightKg: number; reps: number }[]) => void;
   /** Remove a set but stash it for undo (drives the snackbar). */
@@ -141,6 +152,8 @@ export interface ActiveWorkoutState {
   setEditDayType: (dayType: DayType) => void;
   /** Edit mode: change the session's notes. */
   setEditNotes: (notes: string) => void;
+  /** Edit mode (Phase 1): set the workout's length in whole minutes. */
+  setEditDuration: (minutes: number) => void;
   /** Edit mode: write the corrections back. Returns the session id, or null. */
   saveEdits: () => Promise<string | null>;
   /**
@@ -179,7 +192,14 @@ async function buildDraftExercise(
   // Bounded in SQL: start-from-plan builds one draft per plan exercise, and the frozen
   // read would materialise each lift's ENTIRE working-set history just to keep its last
   // session. Parity-identical (newest-first, working sets only).
-  const hist = await getBoundedExerciseHistory(ex.id, 1);
+  const [hist, restSec, note, bests] = await Promise.all([
+    getBoundedExerciseHistory(ex.id, 1),
+    // Phase 1 extras never block starting a workout: a failed read just means
+    // default rest, no carried note, no live record alert.
+    getExerciseRestSec(ex.id).catch(() => null),
+    getCarriedNote(ex.id).catch(() => null),
+    getPriorBests(ex.id).catch(() => null),
+  ]);
   const previousSets = (hist[0]?.sets ?? []).map((s) => ({ weightKg: s.weightKg, reps: s.reps }));
   const count = Math.max(targetSets, previousSets.length, 1);
   const sets: DraftSet[] = Array.from({ length: count }, () => ({
@@ -198,6 +218,10 @@ async function buildDraftExercise(
     incrementKg: ex.incrementKg,
     previousSets,
     sets,
+    restSec,
+    bests,
+    // Notes carry forward from the last workout with this exercise (Hevy-style).
+    ...(note ? { note } : {}),
   };
 }
 
@@ -214,6 +238,32 @@ export function prevForSet(
   for (const s of ex.sets) {
     if (s.key === setKey) return s.isWarmup ? null : ex.previousSets[working] ?? null;
     if (!s.isWarmup) working += 1;
+  }
+  return null;
+}
+
+/**
+ * What a blank set is filled with when ticked, and what its inputs show greyed:
+ * last workout's matching set (PREVIOUS), or — for a set beyond last time's count —
+ * the nearest working set ABOVE it that has numbers (Phase 1: an extra set is one
+ * tap, as in Hevy). Only hints: nothing is written into the row until it is ticked,
+ * because every row with numbers is saved on finish.
+ */
+export function fillForSet(
+  ex: DraftExercise,
+  setKey: string,
+): { weightKg: number; reps: number } | null {
+  const prev = prevForSet(ex, setKey);
+  if (prev) return prev;
+  const idx = ex.sets.findIndex((s) => s.key === setKey);
+  if (idx < 0 || ex.sets[idx].isWarmup) return null;
+  for (let i = idx - 1; i >= 0; i--) {
+    const s = ex.sets[i];
+    if (s.isWarmup) continue;
+    const prevAbove = prevForSet(ex, s.key);
+    const w = s.weightKg ?? prevAbove?.weightKg ?? null;
+    const r = s.reps ?? prevAbove?.reps ?? null;
+    if (w != null && r != null && r > 0) return { weightKg: w, reps: r };
   }
   return null;
 }
@@ -508,11 +558,19 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       mutate((list) => list.map((e) => (e.key === exKey ? { ...e, note } : e)));
     },
 
+    setRestSec: (exKey, restSec) => {
+      const ex = get().exercises.find((e) => e.key === exKey);
+      if (!ex) return;
+      // Same lift twice in one workout shares the setting, as it will next time.
+      mutate((list) => list.map((e) => (e.exerciseId === ex.exerciseId ? { ...e, restSec } : e)));
+      void setExerciseRestSec(ex.exerciseId, restSec).catch(() => undefined);
+    },
+
     toggleDone: (exKey, setKey) => {
       mutate((list) =>
         list.map((e) => {
           if (e.key !== exKey) return e;
-          const prev = prevForSet(e, setKey);
+          const prev = fillForSet(e, setKey);
           return {
             ...e,
             sets: e.sets.map((s) => {
@@ -645,6 +703,14 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     setEditNotes: (notes) => {
       if (!get().editingSessionId) return;
       set({ editNotes: notes });
+      void persistDraft(get());
+    },
+
+    setEditDuration: (minutes) => {
+      const s = get();
+      if (!s.editingSessionId || s.startedAt == null) return;
+      const mins = Math.max(1, Math.min(600, Math.round(minutes)));
+      set({ editEndedAt: s.startedAt + mins * 60_000 });
       void persistDraft(get());
     },
 

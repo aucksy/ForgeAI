@@ -1,0 +1,52 @@
+# Phase 1 device QA, part B — after the phone slept through the rest.
+# Notification shade is already open (adb). Tap the workout card → back in the workout →
+# minimise → mini bar → remove an exercise → finish → "Update routine?" → summary → Profile.
+appId: com.forgeai.app
+---
+- takeScreenshot: 10-notification-shade
+- tapOn: "Workout in progress"
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+- takeScreenshot: 11-back-from-notification
+- tapOn: "Minimise workout.*"
+- extendedWaitUntil:
+    visible: ".*Tap to open the workout"
+    timeout: 15000
+- takeScreenshot: 12-minimised-bar
+- tapOn: ".*Tap to open the workout"
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 15000
+- tapOn:
+    text: "More for .*"
+    index: 1
+- tapOn: "Remove exercise"
+- tapOn: "(?i)^remove$"
+- takeScreenshot: 13-exercise-removed
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: "Update .*"
+    timeout: 20000
+- takeScreenshot: 14-update-routine-prompt
+- tapOn: "(?i)keep original"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- takeScreenshot: 15-finish-summary
+- scrollUntilVisible:
+    element: "Done"
+    timeout: 15000
+- tapOn: "Done"
+- extendedWaitUntil:
+    visible: "Profile"
+    timeout: 20000
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "Default rest"
+    timeout: 30000
+- takeScreenshot: 16-profile-workout-settings
+- assertVisible: "Workout sounds"
+- assertVisible: "Track RPE"

@@ -24,6 +24,12 @@ export default defineConfig({
       { find: 'expo-secure-store', replacement: nativeStub },
       { find: 'expo-crypto', replacement: nativeStub },
       { find: '@react-native-async-storage/async-storage', replacement: nativeStub },
+      // Phase 1 workout screen: notifications, sounds and their audio files are
+      // device-only; the pure rest/record/routine rules never reach them.
+      { find: 'expo-notifications', replacement: nativeStub },
+      { find: 'expo-audio', replacement: nativeStub },
+      { find: 'expo-haptics', replacement: nativeStub },
+      { find: /^.*\.wav$/, replacement: nativeStub },
       // react-native ships Flow syntax that the bundler can't parse; it is pulled
       // in transitively (e.g. via expo-crypto) but never exercised by pure logic.
       { find: /^react-native$/, replacement: nativeStub },

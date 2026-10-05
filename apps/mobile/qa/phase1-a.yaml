@@ -1,0 +1,65 @@
+# Phase 1 device QA, part A — runs on a cloud Android emulator (.github/workflows/qa-device.yml).
+# Demo data → start today's routine → calm card + menu → per-exercise rest 30s →
+# set-type sheet → tick (rest starts) → beat history (live record) → leave the rest running.
+appId: com.forgeai.app
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Load demo data instead"
+    timeout: 90000
+- takeScreenshot: 00-welcome
+- tapOn: "Load demo data instead"
+- extendedWaitUntil:
+    visible: "Workout"
+    timeout: 90000
+- takeScreenshot: 01-home
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 30000
+- takeScreenshot: 02-workout-tab
+- tapOn: "Start (?!empty).*"
+- runFlow:
+    when:
+      visible: "(?i)allow"
+    commands:
+      - takeScreenshot: 03a-permission-prompt
+      - tapOn: "(?i)^allow$"
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+- takeScreenshot: 03-active-workout
+- tapOn:
+    text: "More for .*"
+    index: 0
+- takeScreenshot: 04-exercise-menu
+- tapOn: "Rest timer"
+- takeScreenshot: 05-rest-picker
+- tapOn: "Rest 30s"
+- takeScreenshot: 06-rest-set-to-30s
+- tapOn:
+    text: "Set 1\. Change set type"
+    index: 0
+- takeScreenshot: 07-set-type-sheet
+- tapOn:
+    text: "Close"
+    index: 1
+- tapOn:
+    text: "Mark set complete"
+    index: 0
+- takeScreenshot: 08-first-set-ticked-rest-running
+- assertVisible: "Skip rest"
+- tapOn: "Skip rest"
+- tapOn:
+    text: "Weight in kilograms, set 2"
+    index: 0
+- eraseText
+- inputText: "300"
+- hideKeyboard
+- tapOn:
+    text: "Mark set complete"
+    index: 0
+- takeScreenshot: 09-new-record
+- assertVisible: "New record.*"
+- assertVisible: "Skip rest"

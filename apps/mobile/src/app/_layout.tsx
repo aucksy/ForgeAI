@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useCloud } from '@/store/cloudStore';
 import { initDb } from '@/db';
 import { initTrackerSchema } from '@/tracker/db/trackerSchema';
+import { WorkoutPresenceHost } from '@/tracker/components/WorkoutPresenceHost';
 import { initMemberSchema } from '@/onboarding/db/memberSchema';
 import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
@@ -31,10 +32,12 @@ export default function RootLayout() {
         await initDb();
         await initTrackerSchema(); // additive tracker columns
         await initMemberSchema(); // additive member columns (phone)
-      } catch {
+      } catch (e) {
         // Fall through: boot() below will fail its reads too and land on the
         // retry screen. Swallowing here (rather than skipping boot) is what keeps
-        // a failed migration from freezing the app on a blank splash.
+        // a failed migration from freezing the app on a blank splash. Development
+        // builds still say WHY, so a start-up failure is diagnosable.
+        if (__DEV__) console.warn('[boot] database start-up failed:', e);
       } finally {
         setDbReady(true);
       }
@@ -74,6 +77,7 @@ export default function RootLayout() {
           animation: 'fade_from_bottom',
         }}
       />
+      <WorkoutPresenceHost />
     </GestureHandlerRootView>
   );
 }

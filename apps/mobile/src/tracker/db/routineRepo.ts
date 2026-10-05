@@ -213,3 +213,61 @@ export async function reorderRoutineExercises(dayId: string, orderedPeIds: strin
     }),
   );
 }
+
+// ---------------------------------------------------------------- Phase 1: update from a workout
+
+/**
+ * Rewrite a routine to match a finished workout ("Update routine?" → yes):
+ * exercise list and order follow the workout; an exercise already in the routine
+ * keeps its rep range and takes the workout's set count (when it had sets); a new
+ * exercise is added with the usual 8–12 range. One transaction — all or nothing.
+ */
+export async function syncRoutineToWorkout(
+  dayId: string,
+  items: { exerciseId: string; workingSets: number }[],
+): Promise<void> {
+  const db = getDb();
+  await serialize(() =>
+    db.withTransactionAsync(async () => {
+      const existing = await db.getAllAsync<{ id: string; exercise_id: string; target_sets: number }>(
+        'SELECT id, exercise_id, target_sets FROM plan_exercises WHERE plan_day_id = ?',
+        [dayId],
+      );
+      const byExercise = new Map(existing.map((r) => [r.exercise_id, r]));
+      const keep = new Set<string>();
+      const seen = new Set<string>();
+      let order = 0;
+      for (const it of items) {
+        if (seen.has(it.exerciseId)) continue; // same lift twice → one routine row
+        seen.add(it.exerciseId);
+        const row = byExercise.get(it.exerciseId);
+        if (row) {
+          keep.add(row.id);
+          const sets = it.workingSets > 0 ? it.workingSets : row.target_sets;
+          await db.runAsync('UPDATE plan_exercises SET ex_order = ?, target_sets = ? WHERE id = ?', [order, sets, row.id]);
+        } else {
+          await db.runAsync(
+            `INSERT INTO plan_exercises(id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max)
+             VALUES(?, ?, ?, ?, ?, ?, ?)`,
+            [uuid(), dayId, it.exerciseId, order, Math.max(1, it.workingSets || 3), 8, 12],
+          );
+        }
+        order += 1;
+      }
+      for (const r of existing) {
+        if (!keep.has(r.id)) await db.runAsync('DELETE FROM plan_exercises WHERE id = ?', [r.id]);
+      }
+    }),
+  );
+}
+
+/** "Save as routine" from a logged workout: a new routine with its exercises and set counts. */
+export async function createRoutineFromWorkout(input: {
+  name: string;
+  dayType: DayType;
+  items: { exerciseId: string; workingSets: number }[];
+}): Promise<string> {
+  const id = await createRoutine({ name: input.name, dayType: input.dayType });
+  await syncRoutineToWorkout(id, input.items);
+  return id;
+}

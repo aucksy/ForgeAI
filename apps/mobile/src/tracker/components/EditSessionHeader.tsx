@@ -2,16 +2,17 @@
  * Edit-mode header — Phase W4. Only rendered when the logging screen is CORRECTING
  * a saved workout, so a normal session keeps its uncluttered "just log sets" layout.
  *
- * The date is a ±1-day stepper rather than a calendar: fixing a workout logged on
- * the wrong day is a one- or two-day correction in practice, and a real date picker
- * would mean a new native module (which forces an android/ regen — see the Phase-2
- * notes on expo-notifications).
+ * Phase 1: the date opens a month calendar (any past day — log a workout you
+ * forgot), and the duration can be corrected in minutes. Both are plain JS; no
+ * native date-picker module.
  */
-import { memo } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { memo, useEffect, useState } from 'react';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
-import { Chip, Icon, IconButton } from '@/components/ui';
-import { addDays, dayName, shortDate, todayISO } from '@/lib/date';
+import { Chip, Icon } from '@/components/ui';
+import { dayName, shortDate } from '@/lib/date';
+
+import { DatePickerSheet } from './DatePickerSheet';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { DayType } from '@/types/models';
 
@@ -38,7 +39,10 @@ export interface EditSessionHeaderProps {
   dateISO: string;
   dayType: DayType;
   notes: string;
+  /** Whole minutes, or null when the workout has no recorded end. */
+  durationMin: number | null;
   onDateChange: (dateISO: string) => void;
+  onDurationChange: (minutes: number) => void;
   onDayTypeChange: (dayType: DayType) => void;
   onNotesChange: (notes: string) => void;
 }
@@ -47,12 +51,18 @@ export const EditSessionHeader = memo(function EditSessionHeader({
   dateISO,
   dayType,
   notes,
+  durationMin,
   onDateChange,
+  onDurationChange,
   onDayTypeChange,
   onNotesChange,
 }: EditSessionHeaderProps) {
-  // A workout can't have happened tomorrow.
-  const canGoForward = dateISO < todayISO();
+  const [picking, setPicking] = useState(false);
+  const [minText, setMinText] = useState(durationMin == null ? '' : String(durationMin));
+  useEffect(() => {
+    if (durationMin != null && Number(minText) !== durationMin) setMinText(String(durationMin));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [durationMin]);
 
   return (
     <View
@@ -72,30 +82,38 @@ export const EditSessionHeader = memo(function EditSessionHeader({
         </Text>
       </View>
 
-      <View>
-        <Text style={overline}>Date</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <IconButton
-            icon="chevron-left"
-            onPress={() => onDateChange(addDays(dateISO, -1))}
-            accessibilityLabel="Previous day"
+      <View style={{ flexDirection: 'row', gap: space.md }}>
+        <View style={{ flex: 3 }}>
+          <Text style={overline}>Date</Text>
+          <Pressable
+            onPress={() => setPicking(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`Date, ${dayName(dateISO)} ${shortDate(dateISO)}. Change`}
+            style={fieldBox}
+          >
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+              {dayName(dateISO)}, {shortDate(dateISO)}
+            </Text>
+            <Icon name="calendar" size={16} color={color.accent} />
+          </Pressable>
+        </View>
+        <View style={{ flex: 2 }}>
+          <Text style={overline}>Minutes</Text>
+          <TextInput
+            value={minText}
+            onChangeText={(t) => {
+              const clean = t.replace(/[^0-9]/g, '').slice(0, 3);
+              setMinText(clean);
+              const n = parseInt(clean, 10);
+              if (Number.isFinite(n) && n > 0) onDurationChange(n);
+            }}
+            keyboardType="number-pad"
+            selectTextOnFocus
+            placeholder="—"
+            placeholderTextColor={color.inkFaint}
+            accessibilityLabel="Workout length in minutes"
+            style={[fieldBox, { fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }]}
           />
-          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
-            {dayName(dateISO)}, {shortDate(dateISO)}
-          </Text>
-          {canGoForward ? (
-            <IconButton
-              icon="chevron-right"
-              onPress={() => onDateChange(addDays(dateISO, 1))}
-              accessibilityLabel="Next day"
-            />
-          ) : (
-            // Today: render the glyph inert rather than a greyed-but-tappable
-            // button that a screen reader still announces as available.
-            <View style={{ padding: space.sm }} accessibilityElementsHidden importantForAccessibility="no">
-              <Icon name="chevron-right" size={20} color={color.inkFaint} />
-            </View>
-          )}
         </View>
       </View>
 
@@ -138,6 +156,27 @@ export const EditSessionHeader = memo(function EditSessionHeader({
           }}
         />
       </View>
+      <DatePickerSheet
+        visible={picking}
+        value={dateISO}
+        onChoose={(iso) => {
+          onDateChange(iso);
+          setPicking(false);
+        }}
+        onClose={() => setPicking(false)}
+      />
     </View>
   );
 });
+
+const fieldBox = {
+  height: 44,
+  flexDirection: 'row' as const,
+  alignItems: 'center' as const,
+  justifyContent: 'space-between' as const,
+  paddingHorizontal: space.md,
+  borderRadius: radius.md,
+  backgroundColor: color.surfaceSunken,
+  borderWidth: 1,
+  borderColor: color.borderStrong,
+};
