@@ -5,7 +5,6 @@
  * workout was not from a routine, or the routine has since been deleted.
  */
 import type { DraftExercise } from '../store/activeWorkoutStore';
-import { isCommittable } from './draftSets';
 import { getRoutine, syncRoutineToWorkout } from '../db/routineRepo';
 import { describeDiff, diffRoutine } from './routineDiff';
 
@@ -16,13 +15,19 @@ export interface RoutineOffer {
   items: { exerciseId: string; workingSets: number }[];
 }
 
+function setRowsIfEdited(e: DraftExercise): number {
+  const rows = e.sets.filter((s) => !s.isWarmup).length;
+  if (e.startRows == null) return 0; // draft from an older app version: assume unchanged
+  return rows !== e.startRows ? rows : 0;
+}
+
 export function workoutItems(exercises: DraftExercise[]): { exerciseId: string; name: string; workingSets: number }[] {
   return exercises.map((e) => ({
     exerciseId: e.exerciseId,
     name: e.name,
-    // Only sets that will be SAVED count — blank rows (extra PREVIOUS rows the
-    // member left empty) are not sets done, and must not rewrite the target.
-    workingSets: e.sets.filter((s) => !s.isWarmup && isCommittable(s)).length,
+    // A set count is only reported when the member ADDED or REMOVED set rows. Rows
+    // left blank are skipped sets, not a new plan; 0 means "keep the routine's count".
+    workingSets: setRowsIfEdited(e),
   }));
 }
 

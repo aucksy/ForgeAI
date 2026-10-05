@@ -91,7 +91,7 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   return (
     <View>
     {/* Phase 1: a workout left open shows here, on every tab, until finished. */}
-    <WorkoutMiniBar />
+    {state.routes[state.index]?.name !== 'workout' ? <WorkoutMiniBar /> : null}
     <View
       style={{
         flexDirection: 'row',

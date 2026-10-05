@@ -39,20 +39,32 @@ function ex(patch: Partial<DraftExercise> = {}): DraftExercise {
   };
 }
 
-describe('Update routine? counts only sets that will be saved', () => {
-  it('3 done + 2 blank PREVIOUS rows is 3 sets, so a 3-set routine is unchanged', () => {
-    const bench = ex({
-      sets: [
-        set({ weightKg: 60, reps: 8, done: true }),
-        set({ weightKg: 60, reps: 8, done: true }),
-        set({ weightKg: 60, reps: 8, done: true }),
-        set(),
-        set(),
-      ],
-    });
+describe('Update routine? only counts added or removed set rows', () => {
+  const routine = [{ exerciseId: 'bench', name: 'Bench', targetSets: 4 }];
+  const rows = (k: number): DraftSet[] => Array.from({ length: k }, () => set());
+
+  it('2 of 4 planned sets done, 2 left blank, is skipping — no change', () => {
+    const bench = ex({ startRows: 4, sets: [set({ weightKg: 60, reps: 8, done: true }), set({ weightKg: 60, reps: 8, done: true }), set(), set()] });
     const items = workoutItems([bench]);
-    expect(items[0].workingSets).toBe(3);
-    expect(diffRoutine([{ exerciseId: 'bench', name: 'Bench', targetSets: 3 }], items).changed).toBe(false);
+    expect(items[0].workingSets).toBe(0);
+    expect(diffRoutine(routine, items).changed).toBe(false);
+  });
+
+  it('extra PREVIOUS rows left blank are not a change either', () => {
+    const bench = ex({ startRows: 5, sets: rows(5) });
+    expect(diffRoutine(routine, workoutItems([bench])).changed).toBe(false);
+  });
+
+  it('adding a row is a change, and reports the new row count', () => {
+    const bench = ex({ startRows: 4, sets: rows(5) });
+    const items = workoutItems([bench]);
+    expect(items[0].workingSets).toBe(5);
+    expect(diffRoutine(routine, items).setsChanged).toEqual(['Bench']);
+  });
+
+  it('warm-up rows never count', () => {
+    const bench = ex({ startRows: 4, sets: [set({ isWarmup: true }), ...rows(4)] });
+    expect(workoutItems([bench])[0].workingSets).toBe(0);
   });
 });
 

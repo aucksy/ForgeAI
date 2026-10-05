@@ -11,6 +11,11 @@ appId: com.forgeai.app
 - takeScreenshot: 11-back-from-notification
 - tapOn: "Minimise workout.*"
 - extendedWaitUntil:
+    visible: "Resume workout"
+    timeout: 15000
+- takeScreenshot: 12a-workout-tab-resume-card
+- tapOn: "^Home$"
+- extendedWaitUntil:
     visible: ".*Tap to open the workout"
     timeout: 15000
 - takeScreenshot: 12-minimised-bar

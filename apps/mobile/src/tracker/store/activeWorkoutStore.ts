@@ -70,6 +70,12 @@ export interface DraftExercise {
   restSec?: number | null;
   /** Phase 1: best weight / e1RM before this workout, for live record alerts. */
   bests?: PriorBests | null;
+  /**
+   * Phase 1: working set rows when the exercise was put on screen. "Update routine?"
+   * only counts a set change when the member added or removed rows — leaving planned
+   * sets blank is skipping, not re-planning (Hevy behaves the same way).
+   */
+  startRows?: number;
 }
 
 interface DraftSnapshot {
@@ -226,6 +232,7 @@ async function buildDraftExercise(
     sets,
     restSec,
     bests,
+    startRows: count,
     // Notes carry forward from the last workout with this exercise (Hevy-style).
     ...(note ? { note } : {}),
   };

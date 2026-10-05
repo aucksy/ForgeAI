@@ -335,7 +335,7 @@ export default function ActiveWorkoutScreen() {
             />
           ) : null}
 
-          {exercises.length === 0 ? (
+          {!active ? null : exercises.length === 0 ? (
             <EmptyState
               icon="dumbbell"
               title="Add your first exercise"
