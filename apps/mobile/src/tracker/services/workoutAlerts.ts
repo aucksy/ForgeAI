@@ -12,7 +12,7 @@
  * The native module is loaded lazily so the web bundle and the unit tests never
  * touch it.
  */
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 
 type NotificationsModule = typeof import('expo-notifications');
 
@@ -50,7 +50,12 @@ export function setupWorkoutAlerts(): Promise<void> {
       n.setNotificationHandler({
         handleNotification: async (notification) => {
           const kind = (notification.request.content.data as { kind?: string } | null)?.kind;
-          // App is open: the rest timer on screen already beeps — no banner, no sound.
+          const open = AppState.currentState === 'active';
+          if (kind === 'rest' && !open) {
+            // Screen off / app in the background: this IS the alert.
+            return { shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false };
+          }
+          // App open: the on-screen timer already rings — no banner, no sound.
           // The ongoing card still lists in the shade.
           return {
             shouldShowBanner: false,

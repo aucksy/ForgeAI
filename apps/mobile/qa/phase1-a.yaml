@@ -58,8 +58,11 @@ appId: com.forgeai.app
 - tapOn:
     text: "Weight in kilograms, set 2"
     index: 0
+- waitForAnimationToEnd
 - eraseText
+- waitForAnimationToEnd
 - inputText: "300"
+- takeScreenshot: 08b-typed-300
 - hideKeyboard
 - tapOn:
     text: "Mark set complete"

@@ -64,8 +64,11 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
           success();
           playWorkoutSound('rest');
         }
+        // Do NOT cancel/dismiss the scheduled alert here. In the background it is
+        // the member's only alert, and it fires at this same moment — dismissing it
+        // would delete it as it appears (seen on the device QA emulator). In the
+        // foreground the alert handler suppresses it anyway.
         set({ endsAt: null });
-        void cancelRestEnd();
       },
       Math.max(0, endsAt - Date.now()),
     );
