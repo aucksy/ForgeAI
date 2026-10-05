@@ -7,6 +7,9 @@ appId: com.forgeai.app
     clearState: true
     permissions:
       all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
 - extendedWaitUntil:
     visible: "ForgeAI|Your name|Start training"
     timeout: 90000

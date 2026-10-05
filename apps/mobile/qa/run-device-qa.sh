@@ -18,6 +18,10 @@ now_ms() { adb shell date +%s%3N | tr -d '\r'; }
 
 log "device: $(adb shell getprop ro.build.version.release | tr -d '\r') (API $(adb shell getprop ro.build.version.sdk | tr -d '\r'))"
 adb install -r "$APK" || { log "INSTALL FAILED"; exit 1; }
+# A freshly booted emulator can still be busy; its launcher sometimes throws an
+# "isn't responding" box over the app. Let it settle, then clear system dialogs.
+sleep 30
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 adb logcat -c
 log "exact alarm permission: $(adb shell appops get $PKG SCHEDULE_EXACT_ALARM | tr -d '\r')"
 
