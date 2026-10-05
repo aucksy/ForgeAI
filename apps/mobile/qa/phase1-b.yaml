@@ -50,7 +50,7 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "^Profile$"
 - scrollUntilVisible:
-    element: "Default rest"
+    element: "Track RPE"
     timeout: 30000
 - takeScreenshot: 16-profile-workout-settings
 - assertVisible: "Workout sounds"

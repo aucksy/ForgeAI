@@ -64,7 +64,7 @@ appId: com.forgeai.app
 - waitForAnimationToEnd
 - eraseText
 - waitForAnimationToEnd
-- inputText: "300"
+- inputText: " 300"
 - takeScreenshot: 08b-typed-300
 - hideKeyboard
 - tapOn:
