@@ -97,6 +97,12 @@ export default function ActiveWorkoutScreen() {
     if (!editingSessionId) void ensureAlertPermission();
   }, [editingSessionId]);
 
+  // Tell the notification handler this screen is already open (no duplicate push).
+  useEffect(() => {
+    useWorkoutUi.getState().setScreenOpen(true);
+    return () => useWorkoutUi.getState().setScreenOpen(false);
+  }, []);
+
   // Superset hand-off: bring the next exercise into view.
   const scrollRef = useRef<ScrollViewType>(null);
   const cardY = useRef<Record<string, number>>({});

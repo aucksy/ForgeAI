@@ -230,17 +230,22 @@ export async function syncRoutineToWorkout(
   await serialize(() =>
     db.withTransactionAsync(async () => {
       const existing = await db.getAllAsync<{ id: string; exercise_id: string; target_sets: number }>(
-        'SELECT id, exercise_id, target_sets FROM plan_exercises WHERE plan_day_id = ?',
+        'SELECT id, exercise_id, target_sets FROM plan_exercises WHERE plan_day_id = ? ORDER BY ex_order ASC',
         [dayId],
       );
-      const byExercise = new Map(existing.map((r) => [r.exercise_id, r]));
+      // Rows matched by OCCURRENCE per lift, so a routine that has the same exercise
+      // twice on purpose (Bench, then Bench back-off) keeps both rows: the workout's
+      // 1st Bench updates the routine's 1st Bench row, the 2nd the 2nd.
+      const queues = new Map<string, { id: string; target_sets: number }[]>();
+      for (const r of existing) {
+        const q = queues.get(r.exercise_id) ?? [];
+        q.push(r);
+        queues.set(r.exercise_id, q);
+      }
       const keep = new Set<string>();
-      const seen = new Set<string>();
       let order = 0;
       for (const it of items) {
-        if (seen.has(it.exerciseId)) continue; // same lift twice → one routine row
-        seen.add(it.exerciseId);
-        const row = byExercise.get(it.exerciseId);
+        const row = queues.get(it.exerciseId)?.shift();
         if (row) {
           keep.add(row.id);
           const sets = it.workingSets > 0 ? it.workingSets : row.target_sets;

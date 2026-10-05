@@ -11,6 +11,7 @@ import { listenForAlertTaps, setupWorkoutAlerts, WORKOUT_ROUTE } from '../servic
 import { startWorkoutPresence } from '../services/workoutPresence';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
+import { useWorkoutUi } from '../store/workoutUiStore';
 
 export function WorkoutPresenceHost() {
   const router = useRouter();
@@ -30,7 +31,10 @@ export function WorkoutPresenceHost() {
         .then(() => {
           // Let the navigator mount first on a cold start.
           setTimeout(() => {
-            if (useActiveWorkout.getState().active) router.push('/session/active');
+            // Already on the workout screen (phone locked on it) → just come back to it.
+            if (useActiveWorkout.getState().active && !useWorkoutUi.getState().screenOpen) {
+              router.push('/session/active');
+            }
           }, 300);
         });
     });

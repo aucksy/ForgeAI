@@ -31,26 +31,32 @@ export interface RoutineDiff {
 }
 
 export function diffRoutine(routine: RoutineExerciseLite[], workout: WorkoutExerciseLite[]): RoutineDiff {
-  // One entry per exercise id (first occurrence wins) on both sides.
-  const uniq = <T extends { exerciseId: string }>(xs: T[]): T[] => {
-    const seen = new Set<string>();
-    return xs.filter((x) => (seen.has(x.exerciseId) ? false : (seen.add(x.exerciseId), true)));
+  // Key each row by lift + occurrence ("bench#0", "bench#1"), so a routine that
+  // has the same exercise twice on purpose is compared copy by copy — the same
+  // matching the routine update uses when it writes.
+  const keyed = <T extends { exerciseId: string }>(xs: T[]): (T & { k: string })[] => {
+    const seen = new Map<string, number>();
+    return xs.map((x) => {
+      const nth = seen.get(x.exerciseId) ?? 0;
+      seen.set(x.exerciseId, nth + 1);
+      return { ...x, k: `${x.exerciseId}#${nth}` };
+    });
   };
-  const r = uniq(routine);
-  const w = uniq(workout);
-  const rIds = new Set(r.map((x) => x.exerciseId));
-  const wIds = new Set(w.map((x) => x.exerciseId));
+  const r = keyed(routine);
+  const w = keyed(workout);
+  const rIds = new Set(r.map((x) => x.k));
+  const wIds = new Set(w.map((x) => x.k));
 
-  const added = w.filter((x) => !rIds.has(x.exerciseId)).map((x) => x.name);
-  const removed = r.filter((x) => !wIds.has(x.exerciseId)).map((x) => x.name);
+  const added = w.filter((x) => !rIds.has(x.k)).map((x) => x.name);
+  const removed = r.filter((x) => !wIds.has(x.k)).map((x) => x.name);
 
-  const keptR = r.filter((x) => wIds.has(x.exerciseId)).map((x) => x.exerciseId);
-  const keptW = w.filter((x) => rIds.has(x.exerciseId)).map((x) => x.exerciseId);
+  const keptR = r.filter((x) => wIds.has(x.k)).map((x) => x.k);
+  const keptW = w.filter((x) => rIds.has(x.k)).map((x) => x.k);
   const reordered = keptR.some((id, i) => keptW[i] !== id);
 
-  const target = new Map(r.map((x) => [x.exerciseId, x.targetSets]));
+  const target = new Map(r.map((x) => [x.k, x.targetSets]));
   const setsChanged = w
-    .filter((x) => target.has(x.exerciseId) && x.workingSets > 0 && target.get(x.exerciseId) !== x.workingSets)
+    .filter((x) => target.has(x.k) && x.workingSets > 0 && target.get(x.k) !== x.workingSets)
     .map((x) => x.name);
 
   return {

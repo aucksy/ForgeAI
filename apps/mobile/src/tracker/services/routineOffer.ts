@@ -5,6 +5,7 @@
  * workout was not from a routine, or the routine has since been deleted.
  */
 import type { DraftExercise } from '../store/activeWorkoutStore';
+import { isCommittable } from './draftSets';
 import { getRoutine, syncRoutineToWorkout } from '../db/routineRepo';
 import { describeDiff, diffRoutine } from './routineDiff';
 
@@ -19,7 +20,9 @@ export function workoutItems(exercises: DraftExercise[]): { exerciseId: string; 
   return exercises.map((e) => ({
     exerciseId: e.exerciseId,
     name: e.name,
-    workingSets: e.sets.filter((s) => !s.isWarmup).length,
+    // Only sets that will be SAVED count — blank rows (extra PREVIOUS rows the
+    // member left empty) are not sets done, and must not rewrite the target.
+    workingSets: e.sets.filter((s) => !s.isWarmup && isCommittable(s)).length,
   }));
 }
 

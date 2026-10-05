@@ -40,6 +40,12 @@ export interface DraftSet {
   rpe?: number | null;
   /** Working-set variant; warm-up is carried by `isWarmup`, not here. */
   setType?: 'normal' | 'drop' | 'failure';
+  /**
+   * Phase 1: which fields the tick filled from a hint (not typed). Unticking clears
+   * them again — every row with numbers is saved, so a mistaken tick-untick on a
+   * blank row must leave it blank.
+   */
+  autoFilled?: { weight?: boolean; reps?: boolean };
 }
 
 export interface DraftExercise {
@@ -437,6 +443,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
 
     addExercise: async (ex) => {
       const draftEx = await buildDraftExercise(ex, 1);
+      // Correcting a past workout: a note carried from a LATER session would be wrong.
+      if (get().editingSessionId) delete draftEx.note;
       mutate((list) => [...list, draftEx]);
     },
 
@@ -507,7 +515,23 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       mutate((list) =>
         list.map((e) =>
           e.key === exKey
-            ? { ...e, sets: e.sets.map((s) => (s.key === setKey ? { ...s, ...patch } : s)) }
+            ? {
+                ...e,
+                sets: e.sets.map((s) =>
+                  s.key === setKey
+                    ? {
+                        ...s,
+                        ...patch,
+                        autoFilled: s.autoFilled
+                          ? {
+                              weight: 'weightKg' in patch ? false : s.autoFilled.weight,
+                              reps: 'reps' in patch ? false : s.autoFilled.reps,
+                            }
+                          : undefined,
+                      }
+                    : s,
+                ),
+              }
             : e,
         ),
       );
@@ -575,7 +599,16 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             ...e,
             sets: e.sets.map((s) => {
               if (s.key !== setKey) return s;
-              if (s.done) return { ...s, done: false };
+              if (s.done) {
+                const af = s.autoFilled;
+                return {
+                  ...s,
+                  done: false,
+                  weightKg: af?.weight ? null : s.weightKg,
+                  reps: af?.reps ? null : s.reps,
+                  autoFilled: undefined,
+                };
+              }
               // Completing: auto-fill blanks from the PREVIOUS value.
               const reps = s.reps ?? prev?.reps ?? null;
               // Nothing to log (blank set with no PREVIOUS) — don't fake a "done"
@@ -586,6 +619,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
                 done: true,
                 weightKg: s.weightKg ?? prev?.weightKg ?? 0,
                 reps,
+                autoFilled: { weight: s.weightKg == null, reps: s.reps == null },
               };
             }),
           };

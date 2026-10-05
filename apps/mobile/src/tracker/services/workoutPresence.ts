@@ -10,7 +10,7 @@
  */
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
-import { clearWorkoutOngoing, showWorkoutOngoing } from './workoutAlerts';
+import { cancelRestEnd, clearWorkoutOngoing, showWorkoutOngoing } from './workoutAlerts';
 
 /** "6:42 pm" in the phone's local time. */
 export function clockTime(epochMs: number): string {
@@ -54,6 +54,8 @@ export function startWorkoutPresence(): () => void {
       if (last !== 'off') {
         last = 'off';
         void clearWorkoutOngoing();
+        // Also covers an alarm left by a previous app run that was killed mid-rest.
+        if (!w.active) void cancelRestEnd();
       }
       return;
     }

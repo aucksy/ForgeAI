@@ -186,15 +186,22 @@ export function listenForAlertTaps(onRoute: (route: string) => void): () => void
   };
   let sub: { remove: () => void } | null = null;
   try {
-    sub = n.addNotificationResponseReceivedListener((resp) => {
-      const r = routeOf(resp.notification.request.content.data);
+    // A handled tap is forgotten at once, so a later re-mount of the app's screens
+    // can't replay it and jump back into the workout on its own.
+    const handle = (data: unknown): void => {
+      const r = routeOf(data);
+      try {
+        n.clearLastNotificationResponse();
+      } catch {
+        // ignore
+      }
       if (r) onRoute(r);
-    });
+    };
+    sub = n.addNotificationResponseReceivedListener((resp) => handle(resp.notification.request.content.data));
     void n
       .getLastNotificationResponseAsync()
       .then((resp) => {
-        const r = resp ? routeOf(resp.notification.request.content.data) : null;
-        if (r) onRoute(r);
+        if (resp) handle(resp.notification.request.content.data);
       })
       .catch(() => undefined);
   } catch {

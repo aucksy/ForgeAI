@@ -73,6 +73,9 @@ function afterTick(exKey: string, setKey: string): void {
   const d = afterSetCompleted(st.exercises, exKey, setKey, timer.defaultSec);
   const nextName = st.exercises.find((e) => e.key === (d.nextExKey ?? exKey))?.name ?? null;
   if (d.restSec) timer.start(d.restSec, nextName);
+  // Ticked during an older rest, and this set means "no rest" (drop set next,
+  // mid-superset, rest off) → the old bell must not ring mid-set.
+  else if (timer.endsAt != null) timer.skip();
   if (d.nextExKey) useWorkoutUi.getState().requestScroll(d.nextExKey);
 }
 
