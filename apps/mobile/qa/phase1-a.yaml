@@ -39,6 +39,16 @@ appId: com.forgeai.app
     visible: "Log a set to finish|Finish workout"
     timeout: 30000
 - takeScreenshot: 03-active-workout
+# Progression v2: the Target line reads "<weight> · aim for N" (or bodyweight / first-time
+# range); tapping it shows the one-sentence reason, tapping again hides it.
+- assertVisible: 'Target .*(aim for \d+|×).*Tap for why\.'
+- tapOn:
+    text: 'Target .*Tap for why\.'
+    index: 0
+- takeScreenshot: 03b-target-reason
+- tapOn:
+    text: 'Target .*Tap for why\.'
+    index: 0
 - tapOn:
     text: "More for .*"
     index: 0

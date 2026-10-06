@@ -11,7 +11,8 @@ import * as workoutRepo from '@/db/repos/workoutRepo';
 import { todayISO } from '@/lib/date';
 import { fmtInt, trimNum } from '@/lib/format';
 import { getExerciseStats } from '@/services/analytics';
-import { getTodaysWorkout } from '@/services/coach';
+import { targetLine } from '@/tracker/engine/progression';
+import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
 import { getDashboardData } from '@/services/dashboard';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import * as routineRepo from '@/tracker/db/routineRepo';
@@ -453,7 +454,7 @@ export const COACH_TOOLS: CoachTool[] = [
       "Get today's planned workout with per-exercise progressive-overload targets: last session, today's target weight/reps and the reason behind it.",
     parameters: { type: 'object', properties: {} },
     async execute() {
-      const tw = await getTodaysWorkout();
+      const tw = await getTodaysWorkoutWithTargets();
       return {
         resultForModel: {
           dayName: tw.dayName,
@@ -462,9 +463,9 @@ export const COACH_TOOLS: CoachTool[] = [
           exercises: tw.targets.map((t) => ({
             name: t.exerciseName,
             last: t.last
-              ? `${fmtSet(t.last.weightKg, t.last.topReps)} on ${t.last.dateISO}`
+              ? `${t.bodyweightOnly ? `${t.last.topReps} reps` : fmtSet(t.last.weightKg, t.last.topReps)} on ${t.last.dateISO}`
               : 'never performed',
-            target: `${trimNum(t.targetWeightKg)}kg, ${t.targetSets} sets of ${t.targetRepsMin}-${t.targetRepsMax}`,
+            target: `${targetLine(t)}, ${t.targetSets} sets (range ${t.targetRepsMin}-${t.targetRepsMax})`,
             action: t.action,
             reason: t.reason,
           })),
@@ -912,8 +913,8 @@ export const COACH_TOOLS: CoachTool[] = [
         routineName: { type: 'string', description: 'Routine name as shown by get_routines.' },
         exerciseName: { type: 'string' },
         targetSets: { type: 'integer', description: 'Target working sets (default 3).' },
-        repRangeMin: { type: 'integer', description: 'Min reps (default 8).' },
-        repRangeMax: { type: 'integer', description: 'Max reps (default 12).' },
+        repRangeMin: { type: 'integer', description: "Min reps (default: picked from the member's goal and the exercise type)." },
+        repRangeMax: { type: 'integer', description: "Max reps (default: picked from the member's goal and the exercise type)." },
       },
       required: ['routineName', 'exerciseName'],
     },

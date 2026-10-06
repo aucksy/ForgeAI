@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { Badge } from '@/components/ui';
 import type { BadgeProps } from '@/components/ui';
 import { trimNum } from '@/lib/format';
+import { targetBadge, targetLine } from '@/tracker/engine/progression';
 import { color, space, type } from '@/theme/tokens';
 
 import type { PlanTargetView, WorkoutPlanView } from '../payload';
@@ -16,8 +17,17 @@ const ACTION_BADGE: Record<PlanTargetView['action'], { label: string; tone: Badg
     start: { label: 'Start', tone: 'good' },
   };
 
-function repRange(min: number, max: number): string {
-  return min === max ? `${min}` : `${min}–${max}`;
+const NEW_BADGE = {
+  Up: { label: 'Up', tone: 'accent' },
+  Lighter: { label: 'Lighter', tone: 'warn' },
+  Start: { label: 'Start', tone: 'good' },
+} as const satisfies Record<string, { label: string; tone: BadgeProps['tone'] }>;
+
+/** Cards saved before the v2 engine keep their old badge; new ones show a word only on a change. */
+function badgeFor(t: PlanTargetView): { label: string; tone: BadgeProps['tone'] } | null {
+  if (t.change === undefined) return ACTION_BADGE[t.action];
+  const b = targetBadge(t);
+  return b ? NEW_BADGE[b] : null;
 }
 
 /**
@@ -33,7 +43,7 @@ export function WorkoutPlanCard({ plan }: { plan: WorkoutPlanView }) {
     >
       <Divider mt={space.lg} mb={0} />
       {plan.targets.map((t, i) => {
-        const badge = ACTION_BADGE[t.action];
+        const badge = badgeFor(t);
         const isLast = i === plan.targets.length - 1;
         return (
           <View
@@ -64,7 +74,7 @@ export function WorkoutPlanCard({ plan }: { plan: WorkoutPlanView }) {
               >
                 {t.exerciseName}
               </Text>
-              <Badge label={badge.label} tone={badge.tone} />
+              {badge ? <Badge label={badge.label} tone={badge.tone} /> : null}
             </View>
             <Text
               style={{
@@ -75,7 +85,9 @@ export function WorkoutPlanCard({ plan }: { plan: WorkoutPlanView }) {
               }}
             >
               {t.last
-                ? `Last: ${trimNum(t.last.weightKg)} kg × ${t.last.topReps}`
+                ? t.bodyweightOnly
+                  ? `Last: ${t.last.topReps} reps`
+                  : `Last: ${trimNum(t.last.weightKg)} kg × ${t.last.topReps}`
                 : 'First session — no history yet'}
             </Text>
             <Text
@@ -86,7 +98,7 @@ export function WorkoutPlanCard({ plan }: { plan: WorkoutPlanView }) {
                 color: color.accentBright,
               }}
             >
-              {`Target: ${trimNum(t.targetWeightKg)} kg × ${repRange(t.targetRepsMin, t.targetRepsMax)} · ${t.targetSets} sets`}
+              {`Target: ${targetLine(t)} · ${t.targetSets} sets`}
             </Text>
             {t.reason ? (
               <Text

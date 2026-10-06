@@ -16,9 +16,8 @@ import type { TextInput as TextInputType } from 'react-native';
 
 import { Badge, GhostButton, Icon } from '@/components/ui';
 import type { BadgeProps } from '@/components/ui';
-import { trimNum } from '@/lib/format';
 import { color, radius, space, type } from '@/theme/tokens';
-import type { OverloadTarget } from '@/types/models';
+import { targetBadge, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
 
 import { supersetLabel } from '../lib/superset';
 import { liveRecordFlags } from '../services/liveRecords';
@@ -38,15 +37,13 @@ import { SheetRow, TrackerSheet } from './TrackerSheet';
 
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
 
-// Same action → badge mapping as the Coach tab's WorkoutPlanCard (consistent voice).
-const ACTION_BADGE: Record<OverloadTarget['action'], { label: string; tone: BadgeProps['tone'] }> = {
-  increase: { label: 'Progress', tone: 'accent' },
-  hold: { label: 'Hold', tone: 'neutral' },
-  deload: { label: 'Deload', tone: 'warn' },
-  start: { label: 'Start', tone: 'good' },
+// A word only when the weight changes (or the first time) — same words as the chat card.
+const BADGE_TONE: Record<NonNullable<ReturnType<typeof targetBadge>>, BadgeProps['tone']> = {
+  Up: 'accent',
+  Lighter: 'warn',
+  Start: 'good',
 };
 
-const repRange = (min: number, max: number): string => (min === max ? `${min}` : `${min}–${max}`);
 
 type SheetName = 'menu' | 'rest' | 'plates' | 'superset' | null;
 
@@ -63,9 +60,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   exercise: DraftExercise;
   /** Distinct superset groups in the whole workout (for the chooser). */
   existingGroups: number[];
-  /** Progressive-overload prescription for this exercise (Phase C1); null when
+  /** Progressive-overload prescription for this exercise (v2 engine); null when
    *  the exercise isn't part of the plan day (Start-Empty / ad-hoc add). */
-  target?: OverloadTarget | null;
+  target?: ProgressionTarget | null;
 }) {
   const addSet = useActiveWorkout((s) => s.addSet);
   const removeExercise = useActiveWorkout((s) => s.removeExercise);
@@ -256,10 +253,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         <Pressable
           onPress={() => setShowWhy((v) => !v)}
           accessibilityRole="button"
-          accessibilityLabel={`Coach target ${trimNum(target.targetWeightKg)} kg by ${repRange(
-            target.targetRepsMin,
-            target.targetRepsMax,
-          )} reps. Tap for why.`}
+          accessibilityLabel={`Target ${targetLine(target)}. Tap for why.`}
           style={{
             gap: 4,
             borderRadius: radius.sm,
@@ -276,10 +270,12 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accentBright }}
               numberOfLines={1}
             >
-              {`Target ${trimNum(target.targetWeightKg)} kg × ${repRange(target.targetRepsMin, target.targetRepsMax)}`}
+              {targetLine(target)}
             </Text>
-            <Badge label={ACTION_BADGE[target.action].label} tone={ACTION_BADGE[target.action].tone} />
-            <Icon name="chevron-right" size={14} color={showWhy ? color.accent : color.inkMuted} />
+            {targetBadge(target) ? (
+              <Badge label={targetBadge(target)!} tone={BADGE_TONE[targetBadge(target)!]} />
+            ) : null}
+            <Glyph name="info" size={16} color={showWhy ? color.accent : color.inkMuted} />
           </View>
           {showWhy && target.reason ? (
             <Text

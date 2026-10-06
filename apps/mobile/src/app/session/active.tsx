@@ -17,7 +17,7 @@ import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen } from '@/co
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import type { OverloadTarget } from '@/types/models';
+import type { ProgressionTarget } from '@/tracker/engine/progression';
 
 import { SessionGoneError } from '@/tracker/db/sessionEdit';
 import { EditSessionHeader } from '@/tracker/components/EditSessionHeader';
@@ -117,7 +117,7 @@ export default function ActiveWorkoutScreen() {
   // exercise, surfaced inline in each card. Derived/offline (SQLite only), never
   // persisted in the draft. Recomputes when the plan day or exercise list changes
   // (e.g. adding a plan exercise mid-session). Empty for Start-Empty / repeats.
-  const [targets, setTargets] = useState<Map<string, OverloadTarget>>(() => new Map());
+  const [targets, setTargets] = useState<Map<string, ProgressionTarget>>(() => new Map());
   const exerciseIdsKey = exercises.map((e) => e.exerciseId).join(',');
   useEffect(() => {
     let cancelled = false;

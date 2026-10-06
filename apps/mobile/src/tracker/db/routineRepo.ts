@@ -9,10 +9,13 @@
  * same rows. Reads reuse the frozen `getActivePlan`; only writes live here.
  */
 import { getDb } from '@/db';
+import { getExerciseById } from '@/db/repos/exerciseRepo';
 import { getActivePlan } from '@/db/repos/planRepo';
+import { getProfile } from '@/db/repos/userRepo';
+import { defaultRepRange } from '@/tracker/engine/repRanges';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import { uuid } from '@/lib/uuid';
-import type { DayType } from '@/types/models';
+import type { DayType, Goal, UserProfile } from '@/types/models';
 
 /** Day types offered in the editor (rotation days — 'rest' isn't a startable routine). */
 export const ROUTINE_DAY_TYPES: DayType[] = ['push', 'pull', 'legs', 'upper', 'lower', 'full'];
@@ -149,7 +152,31 @@ export async function reorderRoutines(orderedDayIds: string[]): Promise<void> {
 
 // ---------------------------------------------------------------- exercises in a routine
 
-/** Append an exercise to a routine (sensible target defaults); returns the plan_exercise id. */
+/**
+ * Default rep range per exercise for NEW routine rows, from the member's goal and the
+ * exercise kind (`tracker/engine/repRanges.ts`). Read before any transaction opens.
+ */
+async function defaultRangesFor(
+  exerciseIds: string[],
+): Promise<Map<string, { repRangeMin: number; repRangeMax: number }>> {
+  let goal: Goal | null = null;
+  let experience: UserProfile['experience'] | null = null;
+  try {
+    const p = await getProfile();
+    goal = p.goal;
+    experience = p.experience;
+  } catch {
+    // no profile yet — defaultRepRange falls back to 8–12
+  }
+  const out = new Map<string, { repRangeMin: number; repRangeMax: number }>();
+  for (const id of new Set(exerciseIds)) {
+    const ex = await getExerciseById(id);
+    out.set(id, ex ? defaultRepRange(ex, goal, experience) : { repRangeMin: 8, repRangeMax: 12 });
+  }
+  return out;
+}
+
+/** Append an exercise to a routine (rep range from goal × exercise kind unless given); returns the plan_exercise id. */
 export async function addExerciseToRoutine(
   dayId: string,
   exerciseId: string,
@@ -162,10 +189,15 @@ export async function addExerciseToRoutine(
   );
   const order = (maxRow?.max_o ?? -1) + 1;
   const id = uuid();
+  const def = (await defaultRangesFor([exerciseId])).get(exerciseId) ?? { repRangeMin: 8, repRangeMax: 12 };
+  // Only one end given (e.g. the coach says "max 6"): the default fills the other end
+  // without crossing it, so the range stays valid.
+  const repMin = opts?.repRangeMin ?? Math.min(def.repRangeMin, opts?.repRangeMax ?? def.repRangeMin);
+  const repMax = Math.max(repMin, opts?.repRangeMax ?? def.repRangeMax);
   await db.runAsync(
     `INSERT INTO plan_exercises(id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max)
      VALUES(?, ?, ?, ?, ?, ?, ?)`,
-    [id, dayId, exerciseId, order, opts?.targetSets ?? 3, opts?.repRangeMin ?? 8, opts?.repRangeMax ?? 12],
+    [id, dayId, exerciseId, order, opts?.targetSets ?? 3, repMin, repMax],
   );
   return id;
 }
@@ -220,13 +252,15 @@ export async function reorderRoutineExercises(dayId: string, orderedPeIds: strin
  * Rewrite a routine to match a finished workout ("Update routine?" → yes):
  * exercise list and order follow the workout; an exercise already in the routine
  * keeps its rep range and takes the workout's set count (when it had sets); a new
- * exercise is added with the usual 8–12 range. One transaction — all or nothing.
+ * exercise is added with the default range for the member's goal and its kind.
+ * One transaction — all or nothing.
  */
 export async function syncRoutineToWorkout(
   dayId: string,
   items: { exerciseId: string; workingSets: number }[],
 ): Promise<void> {
   const db = getDb();
+  const defaults = await defaultRangesFor(items.map((it) => it.exerciseId));
   await serialize(() =>
     db.withTransactionAsync(async () => {
       const existing = await db.getAllAsync<{ id: string; exercise_id: string; target_sets: number }>(
@@ -254,7 +288,15 @@ export async function syncRoutineToWorkout(
           await db.runAsync(
             `INSERT INTO plan_exercises(id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max)
              VALUES(?, ?, ?, ?, ?, ?, ?)`,
-            [uuid(), dayId, it.exerciseId, order, Math.max(1, it.workingSets || 3), 8, 12],
+            [
+              uuid(),
+              dayId,
+              it.exerciseId,
+              order,
+              Math.max(1, it.workingSets || 3),
+              defaults.get(it.exerciseId)?.repRangeMin ?? 8,
+              defaults.get(it.exerciseId)?.repRangeMax ?? 12,
+            ],
           );
         }
         order += 1;

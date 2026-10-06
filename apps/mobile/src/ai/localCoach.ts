@@ -11,7 +11,8 @@ import * as workoutRepo from '@/db/repos/workoutRepo';
 import { addDays, todayISO } from '@/lib/date';
 import { fmtInt, trimNum } from '@/lib/format';
 import { getExerciseStats } from '@/services/analytics';
-import { getTodaysWorkout } from '@/services/coach';
+import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
+import { targetLine } from '@/tracker/engine/progression';
 import * as routineRepo from '@/tracker/db/routineRepo';
 import type { Exercise, NutritionDay } from '@/types/models';
 
@@ -310,10 +311,10 @@ function isLogMealHint(t: string): boolean {
 // ------------------------------------------------------------------ replies
 
 async function todaysWorkoutReply(f: Flavour): Promise<LocalReply> {
-  const tw = await getTodaysWorkout();
+  const tw = await getTodaysWorkoutWithTargets();
   const top = tw.targets
     .slice(0, 3)
-    .map((t) => `${t.exerciseName} ${trimNum(t.targetWeightKg)}kg × ${t.targetRepsMin}-${t.targetRepsMax}`)
+    .map((t) => `${t.exerciseName} ${targetLine(t)}`)
     .join(' · ');
   const text = pick(
     f,

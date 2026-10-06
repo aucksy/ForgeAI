@@ -1,67 +1,78 @@
 /**
- * Coach-at-logging targets (Phase C1) — surface the progressive-overload
- * prescription inside the active-workout screen, not just the Coach tab.
+ * Coach targets — the "Target" line for each exercise of a plan day.
  *
- * Pure READ service: given the active workout's plan day, it drives the FROZEN
- * `computeOverloadTarget` with exactly the same inputs `services/coach.ts` uses
- * (history limit 5, only sessions BEFORE today, most-recent 4). So for today's
- * rotation day the numbers are byte-identical to the Coach tab, and for any other
- * routine day it's the correct prescription for THAT day's rep ranges.
- *
- * The history read is the SQL-bounded `getBoundedExerciseHistory` (parity-identical to
- * the frozen `getExerciseHistory`, without materialising the lift's whole history for
- * the 5 sessions we keep — this runs per plan exercise on the workout-start tap).
- * Otherwise reuses frozen pure/read functions only (`getActivePlan`,
- * `computeOverloadTarget`) — no frozen file is edited, no schema, zero network.
- * A target only exists for exercises that belong to the plan day (a rep range
- * lives in the plan): ad-hoc / Start-Empty exercises simply get no prescription.
+ * Since the progression polish (Oct 2026) every Target the member sees comes from the
+ * v2 engine `tracker/engine/progression.ts`, not the frozen `engine/overload.ts`:
+ *  - the live workout screen (`getTargetsForPlanDay`), and
+ *  - the chat coach's "today's workout" reply and tool (`getTodaysWorkoutWithTargets`),
+ *    which take the FROZEN `getTodaysWorkout()` rotation as-is and only swap its targets,
+ * so the two can never disagree. A target only exists for exercises in the plan day (the
+ * rep range lives there); ad-hoc / Start-Empty exercises get none.
  */
 import { getActivePlan } from '@/db/repos/planRepo';
-import { computeOverloadTarget } from '@/engine/overload';
-import { getBoundedExerciseHistory } from '@/tracker/db/exerciseHistory';
+import { getProfile } from '@/db/repos/userRepo';
 import { todayISO } from '@/lib/date';
-import type { OverloadTarget } from '@/types/models';
+import { getTodaysWorkout } from '@/services/coach';
+import { getProgressionHistory } from '@/tracker/db/progressionHistory';
+import { computeProgressionTarget, type ProgressionTarget } from '@/tracker/engine/progression';
+import type { Exercise, PlanExercise, TodaysWorkout, UserProfile } from '@/types/models';
+
+/** Sessions read per lift: 4 for the rules, the rest to learn the weight step. */
+const HISTORY_SESSIONS = 12;
+
+type PlanExerciseFull = PlanExercise & { exercise: Exercise };
+
+async function experienceOrDefault(): Promise<UserProfile['experience']> {
+  try {
+    return (await getProfile()).experience;
+  } catch {
+    return 'intermediate'; // no profile yet — never the beginner fast lane
+  }
+}
+
+async function targetsFor(exercises: PlanExerciseFull[]): Promise<ProgressionTarget[]> {
+  const today = todayISO();
+  const experience = await experienceOrDefault();
+  return Promise.all(
+    exercises.map(async (pe) => {
+      // Prescribe from sessions completed BEFORE today so the Target stays stable all day.
+      const raw = await getProgressionHistory(pe.exerciseId, HISTORY_SESSIONS + 1);
+      const history = raw.filter((h) => h.dateISO < today).slice(0, HISTORY_SESSIONS);
+      return computeProgressionTarget({
+        exercise: pe.exercise,
+        target: { targetSets: pe.targetSets, repRangeMin: pe.repRangeMin, repRangeMax: pe.repRangeMax },
+        history,
+        todayISO: today,
+        experience,
+      });
+    }),
+  );
+}
 
 /**
- * Map of `exerciseId -> OverloadTarget` for the exercises of `planDayId`.
+ * Map of `exerciseId -> target` for the exercises of `planDayId`.
  * Empty when there's no plan day (Start-Empty / repeat-a-session / no plan).
  */
 export async function getTargetsForPlanDay(
   planDayId: string | null,
-): Promise<Map<string, OverloadTarget>> {
-  const out = new Map<string, OverloadTarget>();
+): Promise<Map<string, ProgressionTarget>> {
+  const out = new Map<string, ProgressionTarget>();
   if (!planDayId) return out;
-
   const active = await getActivePlan();
   const day = active?.days.find((d) => d.id === planDayId) ?? null;
   if (!day) return out;
-
-  const today = todayISO();
-  await Promise.all(
-    day.exercises.map(async (pe) => {
-      const raw = await getBoundedExerciseHistory(pe.exerciseId, 5);
-      // Mirror services/coach.ts: prescribe from sessions completed BEFORE today
-      // (targets stay stable all day) and cap at the most-recent 4.
-      const history = raw
-        .filter((h) => h.dateISO < today)
-        .slice(0, 4)
-        .map((h) => ({
-          dateISO: h.dateISO,
-          sets: h.sets.map((s) => ({ weightKg: s.weightKg, reps: s.reps })),
-        }));
-      const target = computeOverloadTarget({
-        exercise: pe.exercise,
-        target: {
-          targetSets: pe.targetSets,
-          repRangeMin: pe.repRangeMin,
-          repRangeMax: pe.repRangeMax,
-        },
-        history,
-      });
-      // A plan day normally lists an exercise once; if it appears twice, keep the
-      // entry that resolves first so one target shows (identical history anyway).
-      if (!out.has(pe.exerciseId)) out.set(pe.exerciseId, target);
-    }),
-  );
+  const targets = await targetsFor(day.exercises);
+  // A plan day normally lists an exercise once; if twice, keep the first.
+  for (const t of targets) if (!out.has(t.exerciseId)) out.set(t.exerciseId, t);
   return out;
+}
+
+/** The frozen `getTodaysWorkout()` with its targets recomputed by the v2 engine. */
+export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout, 'targets'> & { targets: ProgressionTarget[] }> {
+  const tw = await getTodaysWorkout();
+  if (!tw.planDayId || tw.targets.length === 0) return { ...tw, targets: [] };
+  const active = await getActivePlan();
+  const day = active?.days.find((d) => d.id === tw.planDayId) ?? null;
+  if (!day) return { ...tw, targets: [] };
+  return { ...tw, targets: await targetsFor(day.exercises) };
 }

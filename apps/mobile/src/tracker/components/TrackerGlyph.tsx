@@ -7,7 +7,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 import { color as palette } from '@/theme/tokens';
 
-export type GlyphName = 'more' | 'chevron-down' | 'medal' | 'trash' | 'pencil' | 'list';
+export type GlyphName = 'more' | 'chevron-down' | 'medal' | 'trash' | 'pencil' | 'list' | 'info';
 
 const PATHS: Record<GlyphName, { p?: string[]; dots?: { x: number; y: number }[]; c?: { x: number; y: number; r: number }[] }> = {
   more: { dots: [{ x: 5.5, y: 12 }, { x: 12, y: 12 }, { x: 18.5, y: 12 }] },
@@ -23,6 +23,7 @@ const PATHS: Record<GlyphName, { p?: string[]; dots?: { x: number; y: number }[]
     p: ['M15.2 4.6 19.4 8.8 9 19.2H4.8V15Z', 'M13 6.8l4.2 4.2'],
   },
   list: { p: ['M9 6.5h11', 'M9 12h11', 'M9 17.5h11', 'M4.5 6.5h.01', 'M4.5 12h.01', 'M4.5 17.5h.01'] },
+  info: { p: ['M12 11v5.2', 'M12 7.9v.01'], c: [{ x: 12, y: 12, r: 8.6 }] },
 };
 
 export function Glyph({ name, size = 22, color = palette.ink }: { name: GlyphName; size?: number; color?: string }) {

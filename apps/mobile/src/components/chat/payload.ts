@@ -19,6 +19,10 @@ export interface PlanTargetView {
   targetSets: number;
   reason: string;
   action: 'increase' | 'hold' | 'deload' | 'start';
+  /** v2 progression fields; absent on cards saved before Oct 2026. */
+  repGoal?: number | null;
+  change?: 'up' | 'down' | null;
+  bodyweightOnly?: boolean;
 }
 
 export interface WorkoutPlanView {
@@ -139,6 +143,13 @@ export function parseWorkoutPlan(payload: unknown): WorkoutPlanView | null {
       targetSets: raw.targetSets,
       reason: typeof raw.reason === 'string' ? raw.reason : '',
       action: raw.action,
+      ...('change' in raw
+        ? {
+            repGoal: num(raw.repGoal) ? raw.repGoal : null,
+            change: raw.change === 'up' || raw.change === 'down' ? raw.change : null,
+            bodyweightOnly: raw.bodyweightOnly === true,
+          }
+        : {}),
     });
   }
   if (targets.length === 0) return null;
