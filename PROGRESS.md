@@ -1122,7 +1122,7 @@
     video (camera ≤30 s; gallery clips over 30 s / 80 MB refused), copied into app storage.
   - **Hevy import:** keeps timed/distance rows (and carried weight), assisted help, link names;
     a one-time Merge backfill adds timed rows older versions dropped (never again after).
-  - **Review (3 adversarial reviewers):** 2 HIGH, 11 MED, ~10 LOW — fixed with tests: Hevy import
+  - **Review (3 adversarial reviewers):** 4 HIGH (2 app, 2 device-QA flow), 11 MED, 12 LOW — fixed with tests: Hevy import
     doubled dumbbell volume on a fresh phone; hold Target clamped below last time (+ cap lost
     after one workout, one set counted as a hit); cardio dropped from today's workout lists;
     Counting change re-read history; edit Save dropped rows that didn't fit the type; chat logged
