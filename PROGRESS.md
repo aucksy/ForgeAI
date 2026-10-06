@@ -1076,6 +1076,71 @@
   Tests 286. Device QA cannot reach R0 with demo data (every demo lift has history); its copy is
   covered by unit tests, and the Home screenshot shows the swapped targets.
 
+- 2026-10-06: **Tracker Phase 2 — exercises (v0.24.0).** Owner brief: library 38 → 400+ with steps
+  and a moving demo behind a tap, seven exercise types + stopwatch/countdown, §4.4/§4.5 rules,
+  body weight in pull-up/dip volume, custom exercises with own photo/video, clear dumbbell
+  counting, finer muscles, Hevy import keeping timed/distance sets.
+  - **Demo source (licence research, `docs/exercise-library/LICENSES.md`):** free-exercise-db /
+    wrkout are NOT public domain — photos and text copied from bodybuilding.com (author's own
+    note, pixel match 3/3). ExerciseDB GIFs are Gymvisual's art (re-hosts show no consent).
+    Free + legal: **Everkinetic** line drawings, CC BY-SA 4.0 (start/end frames on a shared
+    canvas → 2-frame cross-fade loop), recoloured for the dark theme; credit line on every demo.
+    Paid option NOT bought (owner gate): Gymvisual ~$405 for 450 GIFs vs ExerciseAnimatic $599;
+    side-by-side of the same 5 exercises: `Resources/Exercise-Demo-Options-v1.html`.
+  - **Library:** 402 entries written for ForgeAI (5 parts in `docs/exercise-library/part_*.json`,
+    spec `SPEC.md`), generated to `src/tracker/catalog/catalogData.ts` by
+    `scripts/build-exercise-catalog.py` (validator: unique keys/names/link names, muscles, types,
+    caps, links, 2–4 steps ≤110 chars, every old seed name maps). 176 have a drawing (each checked
+    by eye; 4 back drawings assigned from mislabelled or unused Everkinetic titles), built by
+    `scripts/build-exercise-media.py` → `assets/exercises/*.webp` (528 files, **4.3 MB bundled**,
+    offline-first; `res/raw/keep.xml` keeps `assets_exercises_*` through the resource shrinker).
+    Pictures: still thumbnail in lists, moving demo only on tap (`ExerciseDemoSheet`).
+  - **Sync (`catalogSync.ts`):** once per catalogue version at launch (after a profile exists),
+    after demo data and after a Drive restore: link rows by name / link names (owner's Hevy
+    titles), never rename; log type only when history can be read that way; a member's own
+    dumbbell history keeps "weight as typed"; insert missing entries. New members get the full
+    library at onboarding.
+  - **Types (`engine/logTypes.ts`):** weight×reps, reps, weighted (+kg), assisted (help stored
+    negative), time (microwave entry "130" = 1:30), distance, time+distance. Schema additive
+    (tracker v4/v5: exercise catalog_key/log_type/load_mode/bw_share/muscles/media; set
+    duration_sec/distance_m/load_mode). Hold timer sheet: stopwatch or countdown from the Target.
+  - **Rules (`progression.ts`):** holds +5 s when every planned set hit the target, capped by the
+    catalogue (custom exercises uncapped), never below last time; reps to a cap → "try a harder
+    version" (named, opens it); 4 workouts under range → easier version; assisted: help goes
+    down, then "Try it without help". Distance work and timed cardio get no Target line.
+  - **Volume (`engine/volume.ts`, one rule everywhere):** pull-up/chin-up/dip/muscle-up families
+    add body weight (bodyweight timeline; a hint when none logged); "kg each" counts both
+    dumbbells; time/distance 0 kg. Applied on Home (volume, recovery, insight), History, finish,
+    Progress, exercise page (incl. Best set), coach tools, export.
+  - **Counting (dumbbells):** Counting sheet on the card: one weight / two dumbbells (each) / one
+    side at a time / two dumbbells, one side. Each set can carry the counting it was logged with
+    (`set_entries.load_mode`): switching stamps the old way on past sets first, so history never
+    re-reads. Hevy imports read "as typed" (fresh library rows frozen to 'one').
+  - **Muscles:** 20 finer muscles (front/side/rear shoulders…); sets per muscle count 1 for the
+    main muscle, 0.5 for helpers (bench: chest 1, triceps 0.5).
+  - **Custom exercises:** type, finer muscles, body-weight switch, own photo (gallery/camera) or
+    video (camera ≤30 s; gallery clips over 30 s / 80 MB refused), copied into app storage.
+  - **Hevy import:** keeps timed/distance rows (and carried weight), assisted help, link names;
+    a one-time Merge backfill adds timed rows older versions dropped (never again after).
+  - **Review (3 adversarial reviewers):** 2 HIGH, 11 MED, ~10 LOW — fixed with tests: Hevy import
+    doubled dumbbell volume on a fresh phone; hold Target clamped below last time (+ cap lost
+    after one workout, one set counted as a hit); cardio dropped from today's workout lists;
+    Counting change re-read history; edit Save dropped rows that didn't fit the type; chat logged
+    assisted help as added weight and reps on timed exercises; "Plank 0 kg" records in Home
+    insight/coach; Home recovery on the old volume; Best set chart on weight×reps; demo/restore
+    stamp reset too late; timer kept running after closing; camera could only take photos;
+    the device-QA flow (Pull Up name, scrolling, anchors). New cards now scroll into view.
+    Not fixed (LOW): SetRow re-renders on each keystroke within one card; the demo seed's chat
+    "workout logged" card still shows weight × reps volume.
+  - **Tests:** 381 vitest (95 new). Device QA part C (`qa/phase2-c.yaml`): run 37446849032 on 33ed600 passed parts A, B and C, no crash (rest alert ~19 s late, as before).
+    The first run failed before part C's first step: part B's Maestro driver still held its port
+    (fixed in `run-device-qa.sh`: force-stop + 10 s). Run 37442830906's screens showed the library
+    chip rows clipped at the bottom (the 400-row list's flex basis squeezed them) — fixed with
+    `flexShrink: 0`, confirmed in the final run. Screens: `Resources/Phase2-screens/` (library,
+    demo sheet, pull-up page with easier/harder, plank stopwatch, assisted row, Counting sheet,
+    KG EACH + KM/TIME cards, finish 1,082 kg = 8 pull-ups at body weight + 8 assisted at body
+    weight − 20 kg, sets per muscle in halves, custom timed exercise).
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
