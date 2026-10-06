@@ -14,6 +14,7 @@ import {
   score,
   summarise,
   targetBadge,
+  targetFill,
   targetLine,
   type ProgSession,
   type ProgSetType,
@@ -444,5 +445,24 @@ describe('review fixes', () => {
       sess('2026-09-30', [[60, 4], [60, 4], [60, 4]]),
     ];
     expect(run(ex(), range(5, 8), h).targetWeightKg).toBe(55);
+  });
+});
+
+describe('set-row fill from the Target (second review)', () => {
+  it('a first time never fills the guessed start weight', () => {
+    const t = run(ex(), range(8, 12), []);
+    expect(t.rule).toBe('R0');
+    expect(targetFill(t)).toBeNull();
+  });
+
+  it('after a pyramid only the line speaks; rows keep last time', () => {
+    const t = run(ex(), range(5, 8), [sess('2026-10-03', [[60, 10], [70, 8], [80, 5]])]);
+    expect(t.topSetOnly).toBe(true);
+    expect(targetFill(t)).toBeNull();
+  });
+
+  it('a normal Target fills its weight and rep goal', () => {
+    const t = run(ex(), range(5, 8), [sess('2026-10-03', [[72.5, 8], [72.5, 8], [72.5, 8], [72.5, 8]])]);
+    expect(targetFill(t)).toEqual({ weightKg: 75, reps: 5 });
   });
 });

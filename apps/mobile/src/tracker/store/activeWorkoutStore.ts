@@ -121,13 +121,6 @@ export interface ActiveWorkoutState {
    * measuring from the timestamp would shift a no-op save by a whole day.
    */
   editOriginalDateISO: string | null;
-  /**
-   * Target weight + rep goal per exerciseId (progression v2), set by the workout screen
-   * once targets load. Drives the set rows' hints and tick auto-fill. Never persisted:
-   * it is recomputed from history every time the screen opens.
-   */
-  targetFills: Record<string, { weightKg: number; reps: number }>;
-  setTargetFills: (fills: Record<string, { weightKg: number; reps: number }>) => void;
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
@@ -144,7 +137,8 @@ export interface ActiveWorkoutState {
   removeSet: (exKey: string, setKey: string) => void;
   updateSet: (exKey: string, setKey: string, patch: Partial<Pick<DraftSet, 'weightKg' | 'reps'>>) => void;
   toggleWarmup: (exKey: string, setKey: string) => void;
-  toggleDone: (exKey: string, setKey: string) => void;
+  /** `fill` = what the row is hinting (its Target-aware fill); omitted → computed from PREVIOUS. */
+  toggleDone: (exKey: string, setKey: string, fill?: { weightKg: number; reps: number } | null) => void;
   /** Advanced set logging (opt-in). Set the set's type; 'warmup' toggles isWarmup. */
   setSetType: (exKey: string, setKey: string, type: 'normal' | 'warmup' | 'drop' | 'failure') => void;
   /** Advanced set logging (opt-in). Record/clear a set's RPE. */
@@ -323,8 +317,6 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     editEndedAt: null,
     editOriginalDateISO: null,
     lastSaveReconciled: true,
-    targetFills: {},
-    setTargetFills: (fills) => set({ targetFills: fills }),
 
     hydrate: async () => {
       // Already hydrated, or a workout already begun in-memory — nothing to restore.
@@ -619,11 +611,12 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       void setExerciseRestSec(ex.exerciseId, restSec).catch(() => undefined);
     },
 
-    toggleDone: (exKey, setKey) => {
+    toggleDone: (exKey, setKey, fill) => {
       mutate((list) =>
         list.map((e) => {
           if (e.key !== exKey) return e;
-          const prev = fillForSet(e, setKey, get().targetFills[e.exerciseId]);
+          // The row passes the exact fill it is hinting, so the hint and the tick never disagree.
+          const prev = fill !== undefined ? fill : fillForSet(e, setKey);
           return {
             ...e,
             sets: e.sets.map((s) => {

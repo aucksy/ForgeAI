@@ -30,14 +30,20 @@ async function experienceOrDefault(): Promise<UserProfile['experience']> {
   }
 }
 
-async function targetsFor(exercises: PlanExerciseFull[]): Promise<ProgressionTarget[]> {
+/**
+ * `includeToday`: the live workout counts a workout finished earlier today (its PREVIOUS
+ * column already shows it; the open draft is not saved yet, so it never counts itself).
+ * The chat's "today's workout" keeps sessions before today so it stays stable all day.
+ */
+async function targetsFor(exercises: PlanExerciseFull[], includeToday: boolean): Promise<ProgressionTarget[]> {
   const today = todayISO();
   const experience = await experienceOrDefault();
   return Promise.all(
     exercises.map(async (pe) => {
-      // Prescribe from sessions completed BEFORE today so the Target stays stable all day.
       const raw = await getProgressionHistory(pe.exerciseId, HISTORY_SESSIONS + 1);
-      const history = raw.filter((h) => h.dateISO < today).slice(0, HISTORY_SESSIONS);
+      const history = raw
+        .filter((h) => (includeToday ? h.dateISO <= today : h.dateISO < today))
+        .slice(0, HISTORY_SESSIONS);
       return computeProgressionTarget({
         exercise: pe.exercise,
         target: { targetSets: pe.targetSets, repRangeMin: pe.repRangeMin, repRangeMax: pe.repRangeMax },
@@ -61,7 +67,7 @@ export async function getTargetsForPlanDay(
   const active = await getActivePlan();
   const day = active?.days.find((d) => d.id === planDayId) ?? null;
   if (!day) return out;
-  const targets = await targetsFor(day.exercises);
+  const targets = await targetsFor(day.exercises, true);
   // A plan day normally lists an exercise once; if twice, keep the first.
   for (const t of targets) if (!out.has(t.exerciseId)) out.set(t.exerciseId, t);
   return out;
@@ -74,5 +80,5 @@ export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout,
   const active = await getActivePlan();
   const day = active?.days.find((d) => d.id === tw.planDayId) ?? null;
   if (!day) return { ...tw, targets: [] };
-  return { ...tw, targets: await targetsFor(day.exercises) };
+  return { ...tw, targets: await targetsFor(day.exercises, false) };
 }

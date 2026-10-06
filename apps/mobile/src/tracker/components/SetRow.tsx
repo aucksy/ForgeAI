@@ -243,7 +243,7 @@ export const SetRow = memo(function SetRow({ exKey, set, label, previous, fill, 
           onPressIn={() => tap()}
           onPress={() => {
             const wasDone = set.done;
-            toggleDone(exKey, set.key);
+            toggleDone(exKey, set.key, fill);
             if (!wasDone) afterTick(exKey, set.key);
           }}
           hitSlop={6}

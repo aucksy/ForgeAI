@@ -125,4 +125,15 @@ describe('tick then untick a blank row', () => {
     const row = useActiveWorkout.getState().exercises[0].sets[0];
     expect(row).toMatchObject({ done: false, weightKg: null, reps: 9 });
   });
+
+  it('a tick fills exactly what the row hints (the Target), and untick gives it back', () => {
+    const blank = set();
+    const e = ex({ previousSets: [{ weightKg: 72.5, reps: 8 }], sets: [blank] });
+    useActiveWorkout.setState({ exercises: [e] });
+    const st = useActiveWorkout.getState();
+    st.toggleDone(e.key, blank.key, { weightKg: 75, reps: 5 });
+    expect(useActiveWorkout.getState().exercises[0].sets[0]).toMatchObject({ done: true, weightKg: 75, reps: 5 });
+    st.toggleDone(e.key, blank.key, { weightKg: 75, reps: 5 });
+    expect(useActiveWorkout.getState().exercises[0].sets[0]).toMatchObject({ done: false, weightKg: null, reps: null });
+  });
 });

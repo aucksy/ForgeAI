@@ -50,6 +50,8 @@ export interface ProgressionTarget extends OverloadTarget {
   bodyweightOnly: boolean;
   /** Which rule fired (tests + debugging; never shown). */
   rule: ProgRule;
+  /** Last time was a pyramid (every set a different weight): the Target is for the top set only. */
+  topSetOnly: boolean;
 }
 
 /** Rules look at this many recent workouts; the step is learned from the whole input. */
@@ -106,7 +108,7 @@ export function computeProgressionTarget(input: {
   // R0 — first time. Frozen engine's start weights, unchanged (owner decision pending).
   if (all.length === 0) {
     const t = computeOverloadTarget({ exercise, target: { ...target, repRangeMin: min, repRangeMax: max }, history: [] });
-    return { ...t, repGoal: null, change: null, bodyweightOnly, rule: 'R0' };
+    return { ...t, repGoal: null, change: null, bodyweightOnly, rule: 'R0', topSetOnly: false };
   }
 
   const sessions = all.slice(0, RULE_WINDOW);
@@ -136,6 +138,7 @@ export function computeProgressionTarget(input: {
       action: change === 'up' ? 'increase' : change === 'down' ? 'deload' : 'hold',
       reason,
       rule,
+      topSetOnly: L.ramp,
     };
   };
 
@@ -253,9 +256,16 @@ export function targetLine(t: LineInput): string {
   return `${load} × ${range}`;
 }
 
-/** What the set rows hint (and a tick fills): the Target weight and its rep goal (the range's bottom on a first time). */
-export function targetFill(t: Pick<ProgressionTarget, 'targetWeightKg' | 'targetRepsMin' | 'repGoal'>): { weightKg: number; reps: number } {
-  return { weightKg: t.targetWeightKg, reps: t.repGoal ?? t.targetRepsMin };
+/**
+ * What the set rows hint (and a tick fills): the Target weight and its rep goal. null —
+ * keep last time's hints — on a first time (the start weight is a guess; a tick must never
+ * save it) and after a pyramid (the Target is for the top set, not every row).
+ */
+export function targetFill(
+  t: Pick<ProgressionTarget, 'targetWeightKg' | 'repGoal' | 'action' | 'topSetOnly'>,
+): { weightKg: number; reps: number } | null {
+  if (t.action === 'start' || t.topSetOnly || t.repGoal == null) return null;
+  return { weightKg: t.targetWeightKg, reps: t.repGoal };
 }
 
 /** A word only when the weight changes (or the first time). null = say nothing. */
