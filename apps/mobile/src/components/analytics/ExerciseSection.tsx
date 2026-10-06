@@ -4,12 +4,13 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { BarChart, LineChart } from '@/components/charts';
 import { Chip, EmptyState, GhostButton, Skeleton } from '@/components/ui';
+import { getDb } from '@/db';
 import { getAllExercises } from '@/db/repos/exerciseRepo';
 import { addDays, tinyDate, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { tap } from '@/lib/haptics';
-import { getExerciseStats } from '@/services/analytics';
 import { color, space, type } from '@/theme/tokens';
+import { getExerciseOverview } from '@/tracker/services/exerciseStats';
 import type { ExerciseStats } from '@/types/models';
 
 import { InspectReadout, Section } from './Section';
@@ -49,14 +50,25 @@ export function ExerciseSection({ rangeDays, index }: ExerciseSectionProps) {
 
   useEffect(() => {
     let alive = true;
-    getAllExercises()
-      .then((all) => {
+    // Phase 2: the library has 400+ exercises, so "shortest name" alone would pick a
+    // never-logged one ("Bench Dip" for Bench). Prefer the lift the member actually does
+    // most, then the shortest name.
+    Promise.all([
+      getAllExercises(),
+      getDb()
+        .getAllAsync<{ exercise_id: string; n: number }>(
+          'SELECT exercise_id, COUNT(DISTINCT session_id) AS n FROM set_entries WHERE is_warmup = 0 GROUP BY exercise_id',
+        )
+        .catch(() => [] as { exercise_id: string; n: number }[]),
+    ])
+      .then(([all, counts]) => {
         if (!alive) return;
+        const used = new Map(counts.map((c) => [c.exercise_id, c.n]));
         const found: PickItem[] = [];
         for (const p of PICKS) {
           const matches = all
             .filter((e) => p.re.test(e.name) && !found.some((f) => f.id === e.id))
-            .sort((a, b) => a.name.length - b.name.length);
+            .sort((a, b) => (used.get(b.id) ?? 0) - (used.get(a.id) ?? 0) || a.name.length - b.name.length);
           if (matches.length > 0) found.push({ id: matches[0].id, label: p.label });
         }
         setPicks(found);
@@ -76,9 +88,10 @@ export function ExerciseSection({ rangeDays, index }: ExerciseSectionProps) {
     const req = ++reqRef.current;
     setBusy(true);
     setInspect(null);
-    getExerciseStats(selected)
-      .then((s) => {
-        if (reqRef.current === req) setStats(s);
+    // Phase 2: session volume by the one volume rule (the frozen stats sum weight × reps).
+    getExerciseOverview(selected)
+      .then((o) => {
+        if (reqRef.current === req) setStats(o?.weightStats ?? null);
       })
       .catch(() => {
         if (reqRef.current === req) setStats(null);

@@ -10,10 +10,14 @@ import * as userRepo from '@/db/repos/userRepo';
 import * as workoutRepo from '@/db/repos/workoutRepo';
 import { todayISO } from '@/lib/date';
 import { fmtInt, trimNum } from '@/lib/format';
-import { getExerciseStats } from '@/services/analytics';
+import { getTrackerExercise, getTrackerExercisesByIds } from '@/tracker/db/exerciseInfo';
+import { fmtSetCompact, fmtDuration, storedWeight, type LogType } from '@/tracker/engine/logTypes';
 import { targetLine } from '@/tracker/engine/progression';
 import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
-import { getDashboardData } from '@/services/dashboard';
+import { getExerciseOverview } from '@/tracker/services/exerciseStats';
+import { getDashboardDataPhase2 } from '@/tracker/services/dashboardPhase2';
+import { getMeaningfulPrs, meaningfulPrs } from '@/tracker/services/records';
+import { getSessionDetailWithVolume, withVolume } from '@/tracker/services/volumeService';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import * as routineRepo from '@/tracker/db/routineRepo';
 import { getRecentSessionDetailsBatched } from '@/tracker/db/sessionDetails';
@@ -106,6 +110,29 @@ export type PrWithName = PersonalRecord & { exerciseName: string };
 export interface LoggedWorkout {
   detail: SessionDetail;
   newPrs: PrWithName[];
+  /** Phase 2: exercises logged by time or distance. Chat can't log those (see chatSets). */
+  skipped: string[];
+}
+
+/**
+ * What a chat-logged "weight × reps" means for an exercise of this type (Phase 2). PURE.
+ *  - assisted: the number is the machine's help, stored negative (20 kg of help → −20);
+ *  - time / distance: chat can't say how long or how far ("plank 3x45" reads as 3 kg ×
+ *    45 reps), so nothing is logged — null — and the reply points to the workout screen;
+ *  - everything else as said.
+ */
+export function chatSets(logType: LogType, sets: readonly WorkoutSetInput[]): WorkoutSetInput[] | null {
+  if (logType === 'time' || logType === 'distance' || logType === 'time_distance') return null;
+  return sets.map((s) => ({ weightKg: storedWeight(logType, s.weightKg), reps: s.reps }));
+}
+
+/** The reply line for exercises chat couldn't log ("" when none). */
+export function skippedNote(skipped: readonly string[]): string {
+  if (skipped.length === 0) return '';
+  const names = skipped.join(', ');
+  return skipped.length === 1
+    ? `${names} is logged by time or distance — log it from the workout screen.`
+    : `${names} are logged by time or distance — log them from the workout screen.`;
 }
 
 export interface WorkoutSetInput {
@@ -129,6 +156,7 @@ export async function logWorkoutCore(
 ): Promise<LoggedWorkout> {
   const day = dateISO ?? todayISO();
   const resolved: { exercise: Exercise; sets: WorkoutSetInput[] }[] = [];
+  const skipped: string[] = [];
   for (const input of exercises) {
     const sets = input.sets.filter(
       (s) => s.weightKg >= 0 && s.weightKg <= 500 && s.reps >= 1 && s.reps <= 100,
@@ -146,9 +174,17 @@ export async function logWorkoutCore(
         incrementKg: 2.5,
       });
     }
-    resolved.push({ exercise, sets });
+    // Phase 2: the exercise's type decides what "20 kg × 8" means (help on an assisted
+    // move), and timed / distance exercises can't be logged from a sentence at all.
+    const info = await getTrackerExercise(exercise.id).catch(() => null);
+    const typed = chatSets(info?.logType ?? 'weight_reps', sets);
+    if (!typed) {
+      if (!skipped.includes(exercise.name)) skipped.push(exercise.name);
+      continue;
+    }
+    resolved.push({ exercise, sets: typed });
   }
-  if (!resolved.length) throw new Error('No valid sets to log.');
+  if (!resolved.length) throw new Error(skipped.length ? skippedNote(skipped) : 'No valid sets to log.');
 
   const existing = await workoutRepo.getSessionsBetween(day, day);
   // Only fold chat-logged sets into an OPEN chat session for that day — never into
@@ -182,9 +218,10 @@ export async function logWorkoutCore(
     }
   }
 
-  const detail = await workoutRepo.getSessionDetail(session.id);
+  // Phase 2: the same volume the workout screens show (body weight on pull-ups, both dumbbells…).
+  const detail = await getSessionDetailWithVolume(session.id);
   if (!detail) throw new Error('Could not load the logged session.');
-  return { detail, newPrs };
+  return { detail, newPrs: await meaningfulPrs(newPrs).catch(() => newPrs), skipped };
 }
 
 export interface NutritionSnapshot {
@@ -237,7 +274,7 @@ export async function summarizeWorkoutRange(
   let totalVolumeKg = 0;
   for (const s of sessions) {
     dayTypeCounts[s.dayType] = (dayTypeCounts[s.dayType] ?? 0) + 1;
-    const detail = await workoutRepo.getSessionDetail(s.id);
+    const detail = await getSessionDetailWithVolume(s.id);
     if (!detail) continue;
     totalVolumeKg += detail.totalVolumeKg;
     for (const ex of detail.exercises) {
@@ -442,6 +479,7 @@ export const COACH_TOOLS: CoachTool[] = [
           newPrs: logged.newPrs.map(
             (p) => `${p.exerciseName} ${p.kind} ${trimNum(p.value)}kg (${fmtSet(p.weightKg, p.reps)})`,
           ),
+          ...(logged.skipped.length ? { notLogged: skippedNote(logged.skipped) } : {}),
         },
         card: buildWorkoutLoggedCard(logged),
       };
@@ -462,10 +500,24 @@ export const COACH_TOOLS: CoachTool[] = [
           headline: tw.headline,
           exercises: tw.targets.map((t) => ({
             name: t.exerciseName,
-            last: t.last
-              ? `${t.bodyweightOnly ? `${t.last.topReps} reps` : fmtSet(t.last.weightKg, t.last.topReps)} on ${t.last.dateISO}`
+            last: t.free
+              ? 'not summarised here (see the exercise history)'
+              : t.last
+              ? `${
+                  t.logType === 'time'
+                    ? `${t.last.sets} timed sets`
+                    : t.logType === 'assisted'
+                      ? `${t.last.topReps} reps with ${trimNum(Math.abs(t.last.weightKg))}kg of help`
+                      : t.bodyweightOnly
+                        ? `${t.last.topReps} reps`
+                        : fmtSet(t.last.weightKg, t.last.topReps)
+                } on ${t.last.dateISO}`
               : 'never performed',
-            target: `${targetLine(t)}, ${t.targetSets} sets (range ${t.targetRepsMin}-${t.targetRepsMax})`,
+            target: t.free
+              ? `no target rule for this one: log the ${targetLine(t).toLowerCase()} done`
+              : t.logType === 'time'
+                ? `${targetLine(t)}, ${t.targetSets} sets`
+                : `${targetLine(t)}, ${t.targetSets} sets (range ${t.targetRepsMin}-${t.targetRepsMax})`,
             action: t.action,
             reason: t.reason,
           })),
@@ -639,7 +691,7 @@ export const COACH_TOOLS: CoachTool[] = [
     description: "List the member's personal records (best weight and best estimated 1RM per exercise).",
     parameters: { type: 'object', properties: {} },
     async execute() {
-      const prs = await prRepo.getAllPrs();
+      const prs = await getMeaningfulPrs(); // no "Plank 0 kg" or negative assisted records
       return {
         resultForModel: prs.slice(0, 15).map((p) => ({
           exercise: p.exerciseName,
@@ -677,7 +729,31 @@ export const COACH_TOOLS: CoachTool[] = [
       if (!exercise) {
         return { resultForModel: { error: `No exercise found matching "${name}".` } };
       }
-      const stats = await getExerciseStats(exercise.id);
+      // Phase 2: timed, distance, bodyweight-reps and assisted exercises have their own
+      // numbers (longest hold, best pace, most reps, least help).
+      const overview = await getExerciseOverview(exercise.id).catch(() => null);
+      if (overview && !overview.weightStats) {
+        return {
+          resultForModel: {
+            name: overview.exercise.name,
+            loggedAs: overview.exercise.logType,
+            sessionsCount: overview.history.length,
+            ...Object.fromEntries(overview.tiles.map((t) => [t.label, t.value])),
+            recentSessions: overview.history.slice(0, 5).map((h) => ({
+              dateISO: h.dateISO,
+              sets: h.sets
+                .filter((s) => !s.isWarmup)
+                .map((s) => fmtSetCompact(s, overview.exercise.logType, overview.exercise.distUnit))
+                .join(', '),
+            })),
+          },
+        };
+      }
+      // No fallback to the frozen weight × reps stats: they'd disagree with every screen.
+      if (!overview?.weightStats) {
+        return { resultForModel: { error: `Could not read the stats for ${exercise.name} right now.` } };
+      }
+      const stats = overview.weightStats;
       // RPE-aware: attach each recent session's average working-set RPE (opt-in
       // additive column; null when the member never logged RPE). Keyed by session
       // so same-day sessions don't collide.
@@ -788,16 +864,34 @@ export const COACH_TOOLS: CoachTool[] = [
     async execute(args) {
       const n = asNumber(args.limit);
       const limit = Math.min(10, Math.max(1, n === undefined ? 5 : Math.round(n)));
-      const sessions = await getRecentSessionDetailsBatched(limit);
+      const raw = await getRecentSessionDetailsBatched(limit);
+      const sessions = await withVolume(raw).catch(() => raw);
+      const kinds = await getTrackerExercisesByIds(sessions.flatMap((s) => s.exercises.map((g) => g.exercise.id))).catch(
+        () => new Map(),
+      );
       const workouts = await Promise.all(
         sessions.map(async (s) => {
           const meta = await getSessionSetMeta(s.id);
           const exercises = s.exercises.map((g) => {
             const working = g.sets.filter((st) => !st.isWarmup);
             const noteSet = working.find((st) => meta[st.id]?.note?.trim());
+            const info = kinds.get(g.exercise.id);
+            const lt = info?.logType ?? 'weight_reps';
             return {
               name: g.exercise.name,
-              sets: working.map((st) => fmtSet(st.weightKg, st.reps)).join(', '),
+              sets: working
+                .map((st) =>
+                  lt === 'weight_reps'
+                    ? fmtSet(st.weightKg, st.reps)
+                    : lt === 'time'
+                      ? fmtDuration(meta[st.id]?.durationSec ?? 0)
+                      : fmtSetCompact(
+                          { weightKg: st.weightKg, reps: st.reps, durationSec: meta[st.id]?.durationSec, distanceM: meta[st.id]?.distanceM },
+                          lt,
+                          info?.distUnit ?? 'km',
+                        ),
+                )
+                .join(', '),
               avgRpe: avgRpe(working, meta),
               note: noteSet ? meta[noteSet.id]?.note ?? null : null,
             };
@@ -836,7 +930,8 @@ export const COACH_TOOLS: CoachTool[] = [
       "Compact snapshot of the member's day and trends (streak, calories/protein vs targets, recovery, strength, weekly volume, body weight, last workout). Use for open coaching questions.",
     parameters: { type: 'object', properties: {} },
     async execute() {
-      const d = await getDashboardData();
+      // Phase 2: exactly what Home shows (volume, recovery, records, today's Targets).
+      const d = await getDashboardDataPhase2();
       return {
         resultForModel: {
           today: {

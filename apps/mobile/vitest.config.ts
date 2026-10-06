@@ -30,6 +30,9 @@ export default defineConfig({
       { find: 'expo-audio', replacement: nativeStub },
       { find: 'expo-haptics', replacement: nativeStub },
       { find: /^.*\.wav$/, replacement: nativeStub },
+      // Phase 2: the member's own exercise photo/video (device-only picker and files).
+      { find: 'expo-file-system/legacy', replacement: nativeStub },
+      { find: 'expo-image-picker', replacement: nativeStub },
       // react-native ships Flow syntax that the bundler can't parse; it is pulled
       // in transitively (e.g. via expo-crypto) but never exercised by pure logic.
       { find: /^react-native$/, replacement: nativeStub },
@@ -38,6 +41,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['test/**/*.test.ts'],
+    // Bundled pictures (Phase 2 exercise demos) load as opaque numbers, as under Metro.
+    setupFiles: ['test/setup/assets.ts'],
     // Deterministic clock/timezone is asserted explicitly per test; keep the
     // runner itself free of global date mutation.
   },

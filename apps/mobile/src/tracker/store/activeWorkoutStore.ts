@@ -11,14 +11,22 @@ import { create } from 'zustand';
 
 import { getDb, getMeta, setMeta } from '@/db';
 import { getActivePlan } from '@/db/repos/planRepo';
-import { getBoundedExerciseHistory } from '@/tracker/db/exerciseHistory';
+import { getBoundedExerciseHistory, type TrackedSetEntry } from '@/tracker/db/exerciseHistory';
+import {
+  getTrackerExercise,
+  getTrackerExercisesByIds,
+  setExerciseLoadMode,
+  type TrackerExercise,
+} from '@/tracker/db/exerciseInfo';
+import { isLoggable, typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
+import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getCarriedNote, getExerciseRestSec, getPriorBests, setExerciseRestSec } from '@/tracker/db/exercisePrefs';
 import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { saveSessionEdits } from '@/tracker/db/sessionEdit';
 import { addSetsWithMeta, getSessionSetMeta } from '@/tracker/db/trackerSets';
-import { buildEditDraft, previousExcludingSession, uneditableReason } from '@/tracker/services/editDraft';
-import type { PreviousByExercise } from '@/tracker/services/editDraft';
+import { buildEditDraft, previousExcludingSession } from '@/tracker/services/editDraft';
+import type { ExerciseKinds, PreviousByExercise } from '@/tracker/services/editDraft';
 import { computeEditedTiming } from '@/tracker/services/sessionTiming';
 import { draftToRichSets, hasWorkingSet, isCommittable } from '@/tracker/services/draftSets';
 import { createSession } from '@/db/repos/workoutRepo';
@@ -31,9 +39,16 @@ const DRAFT_KEY = 'activeWorkoutDraft';
 
 export interface DraftSet {
   key: string;
-  /** null = not entered yet (the row shows the PREVIOUS value as a placeholder). */
+  /**
+   * null = not entered yet (the row shows the PREVIOUS value as a placeholder). The
+   * TYPED value: help on an assisted move is positive here and stored negative on save.
+   */
   weightKg: number | null;
   reps: number | null;
+  /** Phase 2: seconds on a time exercise (null = not entered). */
+  durationSec?: number | null;
+  /** Phase 2: metres on a distance exercise (null = not entered). */
+  distanceM?: number | null;
   isWarmup: boolean;
   done: boolean;
   /** Advanced (opt-in) set logging — Phase 5b. Optional so older drafts still load. */
@@ -45,8 +60,30 @@ export interface DraftSet {
    * them again — every row with numbers is saved, so a mistaken tick-untick on a
    * blank row must leave it blank.
    */
-  autoFilled?: { weight?: boolean; reps?: boolean };
+  autoFilled?: { weight?: boolean; reps?: boolean; duration?: boolean; distance?: boolean };
+  /**
+   * Editing a saved workout: the set's own counting (logged before the member changed the
+   * exercise's counting) — written back unchanged so an edit never re-reads it.
+   */
+  loadMode?: LoadMode | null;
+  /**
+   * Editing a saved workout: the row as stored, when it doesn't fit the exercise's type
+   * (a timed Hevy row on a weight × reps exercise, reps logged by chat on a timed one).
+   * The editor can't show it, so Save writes it back exactly as it was — never drops it.
+   */
+  keep?: { weightKg: number; reps: number; durationSec?: number | null; distanceM?: number | null };
 }
+
+/** Last time's numbers for one set row, in TYPED form (help positive). */
+export interface PrevSet {
+  weightKg: number;
+  reps: number;
+  durationSec?: number | null;
+  distanceM?: number | null;
+}
+
+/** What a tick fills into a blank row (and what its inputs show greyed). */
+export type SetFill = PrevSet;
 
 export interface DraftExercise {
   key: string;
@@ -60,9 +97,23 @@ export interface DraftExercise {
   supersetGroup?: number | null;
   /** Per-exercise note (Phase 5c) — persisted on the exercise's first set. */
   note?: string;
-  /** Last session's working sets — powers the PREVIOUS column + auto-fill. */
-  previousSets: { weightKg: number; reps: number }[];
+  /** Last session's working sets — powers the PREVIOUS column + auto-fill (typed form). */
+  previousSets: PrevSet[];
   sets: DraftSet[];
+  /**
+   * Phase 2 — how this exercise is logged and counted. Optional so drafts saved before
+   * Phase 2 still load (absent = weight × reps, weight as typed).
+   */
+  logType?: LogType;
+  loadMode?: LoadMode;
+  distUnit?: DistUnit;
+  /** Catalogue entry (picture, steps, easier/harder versions). */
+  catalogKey?: string | null;
+  /** The member's own photo or video for this exercise. */
+  mediaUri?: string | null;
+  mediaType?: 'image' | 'video' | null;
+  /** Finer main muscle for the card's tag ("Side shoulders"); absent → the coarse group. */
+  muscleLabel?: string;
   /**
    * Phase 1: this exercise's own rest length in seconds. null/absent = the default
    * rest, 0 = no timer. Saved per exercise, so it carries to the next workout.
@@ -135,10 +186,23 @@ export interface ActiveWorkoutState {
   removeExercise: (exKey: string) => void;
   addSet: (exKey: string) => void;
   removeSet: (exKey: string, setKey: string) => void;
-  updateSet: (exKey: string, setKey: string, patch: Partial<Pick<DraftSet, 'weightKg' | 'reps'>>) => void;
+  updateSet: (
+    exKey: string,
+    setKey: string,
+    patch: Partial<Pick<DraftSet, 'weightKg' | 'reps' | 'durationSec' | 'distanceM'>>,
+  ) => void;
   toggleWarmup: (exKey: string, setKey: string) => void;
   /** `fill` = what the row is hinting (its Target-aware fill); omitted → computed from PREVIOUS. */
-  toggleDone: (exKey: string, setKey: string, fill?: { weightKg: number; reps: number } | null) => void;
+  toggleDone: (exKey: string, setKey: string, fill?: SetFill | null) => void;
+  /** Phase 2 (hold timer): write a measured time into a set and tick it. */
+  completeTimedSet: (exKey: string, setKey: string, durationSec: number) => void;
+  /** Phase 2: how this exercise's weight counts (dumbbells). Remembered for the exercise. */
+  setLoadMode: (exKey: string, mode: LoadMode) => void;
+  /**
+   * Phase 2 ("try a harder / easier version"): put another exercise in this card's place.
+   * Only while none of its sets is ticked — logged sets belong to the exercise they were done on.
+   */
+  swapExercise: (exKey: string, ex: Exercise) => Promise<boolean>;
   /** Advanced set logging (opt-in). Set the set's type; 'warmup' toggles isWarmup. */
   setSetType: (exKey: string, setKey: string, type: 'normal' | 'warmup' | 'drop' | 'failure') => void;
   /** Advanced set logging (opt-in). Record/clear a set's RPE. */
@@ -198,6 +262,14 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
   await setMeta(DRAFT_KEY, JSON.stringify(snap));
 }
 
+/** A stored history set in the form the set row shows and types (help positive). PURE. */
+export function toPrevSet(s: Pick<TrackedSetEntry, 'weightKg' | 'reps' | 'durationSec' | 'distanceM'>, logType: LogType): PrevSet {
+  const p: PrevSet = { weightKg: typedWeight(logType, s.weightKg), reps: s.reps };
+  if (s.durationSec != null) p.durationSec = s.durationSec;
+  if (s.distanceM != null) p.distanceM = s.distanceM;
+  return p;
+}
+
 async function buildDraftExercise(
   ex: Pick<Exercise, 'id' | 'name' | 'muscleGroup' | 'equipment' | 'incrementKg'>,
   targetSets: number,
@@ -205,15 +277,18 @@ async function buildDraftExercise(
   // Bounded in SQL: start-from-plan builds one draft per plan exercise, and the frozen
   // read would materialise each lift's ENTIRE working-set history just to keep its last
   // session. Parity-identical (newest-first, working sets only).
-  const [hist, restSec, note, bests] = await Promise.all([
+  const [hist, restSec, note, bests, info] = await Promise.all([
     getBoundedExerciseHistory(ex.id, 1),
     // Phase 1 extras never block starting a workout: a failed read just means
     // default rest, no carried note, no live record alert.
     getExerciseRestSec(ex.id).catch(() => null),
     getCarriedNote(ex.id).catch(() => null),
     getPriorBests(ex.id).catch(() => null),
+    // Phase 2: how it is logged. A failed read logs it as weight × reps, as before.
+    getTrackerExercise(ex.id).catch(() => null),
   ]);
-  const previousSets = (hist[0]?.sets ?? []).map((s) => ({ weightKg: s.weightKg, reps: s.reps }));
+  const logType: LogType = info?.logType ?? 'weight_reps';
+  const previousSets = (hist[0]?.sets ?? []).map((s) => toPrevSet(s, logType));
   const count = Math.max(targetSets, previousSets.length, 1);
   const sets: DraftSet[] = Array.from({ length: count }, () => ({
     key: uuid(),
@@ -234,6 +309,13 @@ async function buildDraftExercise(
     restSec,
     bests,
     startRows: count,
+    logType,
+    loadMode: info?.loadMode ?? 'one',
+    distUnit: info?.distUnit ?? 'km',
+    catalogKey: info?.catalogKey ?? null,
+    mediaUri: info?.mediaUri ?? null,
+    mediaType: info?.mediaType ?? null,
+    ...(info?.muscles.primary[0] ? { muscleLabel: MUSCLE_LABEL[info.muscles.primary[0]] } : {}),
     // Notes carry forward from the last workout with this exercise (Hevy-style).
     ...(note ? { note } : {}),
   };
@@ -244,16 +326,22 @@ async function buildDraftExercise(
  * last session's working sets only (the history read excludes warm-ups), so
  * warm-up rows have no PREVIOUS and never shift the mapping of the working rows.
  */
-export function prevForSet(
-  ex: DraftExercise,
-  setKey: string,
-): { weightKg: number; reps: number } | null {
+export function prevForSet(ex: DraftExercise, setKey: string): PrevSet | null {
   let working = 0;
   for (const s of ex.sets) {
     if (s.key === setKey) return s.isWarmup ? null : ex.previousSets[working] ?? null;
     if (!s.isWarmup) working += 1;
   }
   return null;
+}
+
+/** The fill has what this exercise's type needs (a usable hint / tick value). */
+function fillUsable(lt: LogType, f: PrevSet | null): boolean {
+  if (!f) return false;
+  if (lt === 'time') return (f.durationSec ?? 0) > 0;
+  if (lt === 'distance') return (f.distanceM ?? 0) > 0;
+  if (lt === 'time_distance') return (f.distanceM ?? 0) > 0 || (f.durationSec ?? 0) > 0;
+  return f.reps > 0;
 }
 
 /**
@@ -267,30 +355,49 @@ export function fillForSet(
   ex: DraftExercise,
   setKey: string,
   /** The exercise's Target (progression v2): when present, normal and failure rows hint
-   *  its weight and rep goal instead of last time's numbers, so the rows agree with the
-   *  Target line. A weight the member already typed higher up wins (the line never argues).
-   *  Warm-up and drop rows keep the old hints. */
-  target?: { weightKg: number; reps: number } | null,
-): { weightKg: number; reps: number } | null {
+   *  its weight and rep goal (or, timed, its hold) instead of last time's numbers, so the
+   *  rows agree with the Target line. A weight the member already typed higher up wins
+   *  (the line never argues). Warm-up and drop rows keep the old hints. */
+  target?: SetFill | null,
+): SetFill | null {
+  const lt: LogType = ex.logType ?? 'weight_reps';
+  const repsType = lt === 'weight_reps' || lt === 'reps' || lt === 'weighted' || lt === 'assisted';
   const idx = ex.sets.findIndex((s) => s.key === setKey);
   if (target && idx >= 0 && !ex.sets[idx].isWarmup && ex.sets[idx].setType !== 'drop') {
-    for (let i = idx - 1; i >= 0; i--) {
-      const s = ex.sets[i];
-      if (s.isWarmup || s.setType === 'drop') continue;
-      if (s.weightKg != null) return { weightKg: s.weightKg, reps: target.reps };
+    if (lt === 'time') {
+      return target.durationSec != null && target.durationSec > 0
+        ? { weightKg: 0, reps: 0, durationSec: target.durationSec }
+        : null;
     }
-    return { weightKg: target.weightKg, reps: target.reps };
+    if (repsType) {
+      for (let i = idx - 1; i >= 0; i--) {
+        const s = ex.sets[i];
+        if (s.isWarmup || s.setType === 'drop') continue;
+        if (s.weightKg != null) return { weightKg: s.weightKg, reps: target.reps };
+      }
+      return { weightKg: target.weightKg, reps: target.reps };
+    }
   }
   const prev = prevForSet(ex, setKey);
-  if (prev) return prev;
+  if (prev && fillUsable(lt, prev)) return prev;
   if (idx < 0 || ex.sets[idx].isWarmup) return null;
   for (let i = idx - 1; i >= 0; i--) {
     const s = ex.sets[i];
     if (s.isWarmup) continue;
     const prevAbove = prevForSet(ex, s.key);
-    const w = s.weightKg ?? prevAbove?.weightKg ?? null;
-    const r = s.reps ?? prevAbove?.reps ?? null;
-    if (w != null && r != null && r > 0) return { weightKg: w, reps: r };
+    if (repsType) {
+      // A bodyweight move's blank weight is "no added weight", not "missing".
+      const w = s.weightKg ?? prevAbove?.weightKg ?? (lt === 'weight_reps' ? null : 0);
+      const r = s.reps ?? prevAbove?.reps ?? null;
+      if (w != null && r != null && r > 0) return { weightKg: w, reps: r };
+      continue;
+    }
+    const d = s.durationSec ?? prevAbove?.durationSec ?? null;
+    const m = s.distanceM ?? prevAbove?.distanceM ?? null;
+    const cand: SetFill = { weightKg: 0, reps: 0 };
+    if (d != null && (lt === 'time' || lt === 'time_distance')) cand.durationSec = d;
+    if (m != null && (lt === 'distance' || lt === 'time_distance')) cand.distanceM = m;
+    if (fillUsable(lt, cand)) return cand;
   }
   return null;
 }
@@ -547,6 +654,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
                           ? {
                               weight: 'weightKg' in patch ? false : s.autoFilled.weight,
                               reps: 'reps' in patch ? false : s.autoFilled.reps,
+                              duration: 'durationSec' in patch ? false : s.autoFilled.duration,
+                              distance: 'distanceM' in patch ? false : s.autoFilled.distance,
                             }
                           : undefined,
                       }
@@ -617,6 +726,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           if (e.key !== exKey) return e;
           // The row passes the exact fill it is hinting, so the hint and the tick never disagree.
           const prev = fill !== undefined ? fill : fillForSet(e, setKey);
+          const lt: LogType = e.logType ?? 'weight_reps';
           return {
             ...e,
             sets: e.sets.map((s) => {
@@ -628,7 +738,26 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
                   done: false,
                   weightKg: af?.weight ? null : s.weightKg,
                   reps: af?.reps ? null : s.reps,
+                  durationSec: af?.duration ? null : s.durationSec,
+                  distanceM: af?.distance ? null : s.distanceM,
                   autoFilled: undefined,
+                };
+              }
+              if (lt === 'time' || lt === 'distance' || lt === 'time_distance') {
+                // Time / distance: fill what this type needs, tick only when there is
+                // something to save (finish() would silently drop an empty row).
+                const durationSec =
+                  lt === 'distance' ? s.durationSec ?? null : s.durationSec ?? prev?.durationSec ?? null;
+                const distanceM = lt === 'time' ? s.distanceM ?? null : s.distanceM ?? prev?.distanceM ?? null;
+                const next = { ...s, durationSec, distanceM };
+                if (!isLoggable(lt, next)) return s;
+                return {
+                  ...next,
+                  done: true,
+                  autoFilled: {
+                    duration: s.durationSec == null && durationSec != null,
+                    distance: s.distanceM == null && distanceM != null,
+                  },
                 };
               }
               // Completing: auto-fill blanks from the PREVIOUS value.
@@ -647,6 +776,45 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           };
         }),
       );
+    },
+
+    completeTimedSet: (exKey, setKey, durationSec) => {
+      const sec = Math.round(durationSec);
+      if (!Number.isFinite(sec) || sec <= 0) return;
+      mutate((list) =>
+        list.map((e) =>
+          e.key === exKey
+            ? {
+                ...e,
+                sets: e.sets.map((s) =>
+                  s.key === setKey ? { ...s, durationSec: sec, done: true, autoFilled: undefined } : s,
+                ),
+              }
+            : e,
+        ),
+      );
+    },
+
+    setLoadMode: (exKey, mode) => {
+      const ex = get().exercises.find((e) => e.key === exKey);
+      if (!ex) return;
+      // Same lift twice in one workout shares the setting, as it will next time.
+      mutate((list) => list.map((e) => (e.exerciseId === ex.exerciseId ? { ...e, loadMode: mode } : e)));
+      void setExerciseLoadMode(ex.exerciseId, mode).catch(() => undefined);
+    },
+
+    swapExercise: async (exKey, next) => {
+      const cur = get().exercises.find((e) => e.key === exKey);
+      if (!cur || cur.sets.some((s) => s.done)) return false;
+      const draftEx = await buildDraftExercise(next, cur.sets.filter((s) => !s.isWarmup).length || 1);
+      if (get().editingSessionId) delete draftEx.note;
+      // Re-check after the await: a tick may have landed meanwhile.
+      const still = get().exercises.find((e) => e.key === exKey);
+      if (!still || still.sets.some((s) => s.done)) return false;
+      mutate((list) =>
+        list.map((e) => (e.key === exKey ? { ...draftEx, key: exKey, supersetGroup: e.supersetGroup ?? null } : e)),
+      );
+      return true;
     },
 
     finish: async (note) => {
@@ -708,7 +876,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // PREVIOUS must show the session BEFORE this one, not the workout its own
       // numbers — nor a NEWER one, which ticking a blank set would then auto-fill
       // into the past. Pull a few and take the newest that predates this session.
-      const [meta, histories] = await Promise.all([
+      const [meta, histories, infos] = await Promise.all([
         getSessionSetMeta(session.id),
         Promise.all(
           session.exercises.map(async (g) => ({
@@ -716,12 +884,22 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             history: await getBoundedExerciseHistory(g.exercise.id, 4),
           })),
         ),
+        // No fallback: without each exercise's type, Save would drop timed and assisted sets.
+        // A failed read refuses the edit (the screen says "Could not open the editor").
+        getTrackerExercisesByIds(session.exercises.map((g) => g.exercise.id)),
       ]);
+      const kinds: ExerciseKinds = {};
+      for (const [id, info] of infos) {
+        kinds[id] = { logType: info.logType, loadMode: info.loadMode, distUnit: info.distUnit, catalogKey: info.catalogKey };
+      }
       const previous: PreviousByExercise = {};
       for (const h of histories) {
-        previous[h.exerciseId] = previousExcludingSession(h.history, session.id, session.dateISO);
+        const lt = kinds[h.exerciseId]?.logType ?? 'weight_reps';
+        previous[h.exerciseId] = previousExcludingSession(h.history, session.id, session.dateISO).map((s) =>
+          toPrevSet(s, lt),
+        );
       }
-      const exercises = buildEditDraft(session, meta, previous, { makeKey: uuid });
+      const exercises = buildEditDraft(session, meta, previous, { makeKey: uuid }, kinds);
       set({
         active: true,
         hydrated: true,
@@ -841,7 +1019,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
 
     committableSetCount: () => {
       let n = 0;
-      for (const ex of get().exercises) for (const s of ex.sets) if (isCommittable(s)) n += 1;
+      for (const ex of get().exercises) for (const s of ex.sets) if (isCommittable(s, ex.logType ?? 'weight_reps')) n += 1;
       return n;
     },
   };

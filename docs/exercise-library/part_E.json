@@ -1,0 +1,2513 @@
+[
+  {
+    "key": "crunch",
+    "name": "Crunch",
+    "ek": "0291",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "decline_crunch",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "crunches",
+      "ab crunch",
+      "floor crunch",
+      "basic crunch"
+    ],
+    "linkNames": [
+      "Crunch"
+    ],
+    "steps": [
+      "Lie face up with knees bent, feet flat and fingertips behind your ears.",
+      "Squeeze your stomach to curl your shoulders off the floor.",
+      "Lower slowly, keeping your hands light so you never pull your neck."
+    ]
+  },
+  {
+    "key": "decline_crunch",
+    "name": "Decline Crunch",
+    "ek": "0292",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "crunch",
+    "harder": "weighted_decline_crunch",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline bench crunch",
+      "decline ab crunch",
+      "decline crunches"
+    ],
+    "linkNames": [
+      "Decline Crunch"
+    ],
+    "steps": [
+      "Hook your feet under the pads of a decline bench and lie back.",
+      "Cross your arms on your chest and curl your shoulders toward your knees.",
+      "Lower slowly until your shoulder blades touch the bench."
+    ]
+  },
+  {
+    "key": "weighted_decline_crunch",
+    "name": "Weighted Decline Crunch",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "decline_crunch",
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "plate decline crunch",
+      "decline crunch with weight",
+      "loaded decline crunch"
+    ],
+    "linkNames": [
+      "Decline Crunch (Weighted)"
+    ],
+    "steps": [
+      "Hook your feet under the pads of a decline bench and lie back.",
+      "Hold a plate or dumbbell flat against your chest with both hands.",
+      "Curl your shoulders toward your knees, then lower slowly."
+    ]
+  },
+  {
+    "key": "weighted_crunch",
+    "name": "Weighted Crunch",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "plate crunch",
+      "crunch with weight",
+      "loaded crunch"
+    ],
+    "linkNames": [
+      "Crunch (Weighted)"
+    ],
+    "steps": [
+      "Lie face up with knees bent and feet flat on the floor.",
+      "Hold a plate or dumbbell on your chest with both hands.",
+      "Curl your shoulders up by squeezing your stomach, then lower slowly."
+    ]
+  },
+  {
+    "key": "sit_up",
+    "name": "Sit-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "decline_sit_up",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "situp",
+      "sit ups",
+      "full sit up"
+    ],
+    "linkNames": [
+      "Sit Up"
+    ],
+    "steps": [
+      "Lie face up, knees bent, feet flat or hooked under something heavy.",
+      "Cross your arms on your chest and sit all the way up.",
+      "Roll back down slowly until your shoulders touch the floor."
+    ]
+  },
+  {
+    "key": "decline_sit_up",
+    "name": "Decline Sit-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "sit_up",
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline situp",
+      "decline bench sit up",
+      "decline sit ups"
+    ],
+    "linkNames": [
+      "Decline Sit Up"
+    ],
+    "steps": [
+      "Hook your feet under the pads of a decline bench and lie back.",
+      "Cross your arms and sit up until your chest is close to your knees.",
+      "Lower yourself back down slowly and with control."
+    ]
+  },
+  {
+    "key": "v_up",
+    "name": "V-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "v ups",
+      "jackknife",
+      "v sit up",
+      "jackknife crunch"
+    ],
+    "linkNames": [
+      "V Up"
+    ],
+    "steps": [
+      "Lie flat on your back with arms stretched past your head.",
+      "Lift your straight arms and legs together and touch your hands to your toes.",
+      "Lower both back down slowly without letting them drop."
+    ]
+  },
+  {
+    "key": "bicycle_crunch",
+    "name": "Bicycle Crunch",
+    "ek": "0284",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs",
+      "obliques"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bicycle crunches",
+      "cycle crunch",
+      "bicycle abs",
+      "cycling crunch"
+    ],
+    "linkNames": [
+      "Bicycle Crunch"
+    ],
+    "steps": [
+      "Lie face up, hands behind your head, knees lifted above your hips.",
+      "Bring one elbow toward the opposite knee as you straighten the other leg.",
+      "Switch sides in a slow pedalling motion, lower back pressed down."
+    ]
+  },
+  {
+    "key": "reverse_crunch",
+    "name": "Reverse Crunch",
+    "ek": "0287",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse crunches",
+      "lower ab crunch",
+      "bent knee hip raise"
+    ],
+    "linkNames": [
+      "Reverse Crunch"
+    ],
+    "steps": [
+      "Lie face up, palms down at your sides, knees bent over your hips.",
+      "Curl your hips off the floor, pulling your knees toward your chest.",
+      "Lower your hips slowly until your back is flat again."
+    ]
+  },
+  {
+    "key": "cross_body_crunch",
+    "name": "Cross-Body Crunch",
+    "ek": "0289",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "abs"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "twisting crunch",
+      "oblique crunch",
+      "elbow to knee crunch",
+      "cross crunch"
+    ],
+    "linkNames": [
+      "Cross Body Crunch"
+    ],
+    "steps": [
+      "Lie face up, knees bent, feet flat, fingertips behind your ears.",
+      "Curl up and twist, bringing one elbow toward the opposite knee.",
+      "Lower slowly, then twist to the other side on the next rep."
+    ]
+  },
+  {
+    "key": "decline_oblique_crunch",
+    "name": "Decline Oblique Crunch",
+    "ek": "0293",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "abs"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline twisting crunch",
+      "decline twist crunch",
+      "decline side crunch"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hook your feet under the pads of a decline bench and lie back.",
+      "Curl up and twist so one shoulder moves toward the opposite knee.",
+      "Lower slowly and switch sides each rep."
+    ]
+  },
+  {
+    "key": "ab_crunch_machine",
+    "name": "Ab Crunch Machine",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "machine crunch",
+      "ab machine",
+      "abdominal crunch machine",
+      "seated crunch machine"
+    ],
+    "linkNames": [
+      "Crunch (Machine)"
+    ],
+    "steps": [
+      "Sit in the machine and hold the handles or pads by your shoulders.",
+      "Curl your chest down toward your hips by squeezing your stomach.",
+      "Pause, then return slowly to the start."
+    ]
+  },
+  {
+    "key": "cable_crunch",
+    "name": "Cable Crunch",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "rope crunch",
+      "kneeling crunch",
+      "pet crunch",
+      "kneeling cable crunch",
+      "cable ab crunch"
+    ],
+    "linkNames": [
+      "Cable Crunch"
+    ],
+    "steps": [
+      "Kneel facing a high cable, holding the rope beside your head.",
+      "Curl your chest down toward your knees using your stomach, not your arms.",
+      "Rise slowly back to the start, keeping your hips still."
+    ]
+  },
+  {
+    "key": "stability_ball_crunch",
+    "name": "Stability Ball Crunch",
+    "ek": "0295",
+    "equipment": "other",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "swiss ball crunch",
+      "gym ball crunch",
+      "exercise ball crunch",
+      "ball crunch"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie back on a gym ball so it supports your lower back, feet wide.",
+      "Cross your arms on your chest and curl your shoulders up.",
+      "Lower slowly back over the ball until you feel a stretch."
+    ]
+  },
+  {
+    "key": "stability_ball_knee_tuck",
+    "name": "Stability Ball Knee Tuck",
+    "ek": "0296",
+    "equipment": "other",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "swiss ball knee tuck",
+      "ball pull in",
+      "gym ball tuck",
+      "ball knee tuck"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold a high plank with your shins resting on a gym ball.",
+      "Pull your knees in toward your chest, rolling the ball forward.",
+      "Push your legs back out straight, keeping your hips level."
+    ]
+  },
+  {
+    "key": "lying_leg_raise",
+    "name": "Lying Leg Raise",
+    "ek": "0021",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "hanging_knee_raise",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "leg raises",
+      "floor leg raise",
+      "bench leg raise",
+      "lying leg lift",
+      "flat bench leg raise"
+    ],
+    "linkNames": [
+      "Lying Leg Raise"
+    ],
+    "steps": [
+      "Lie face up on a mat or flat bench with palms tucked beneath you.",
+      "Keep your legs straight and lift them until they point at the ceiling.",
+      "Lower slowly, keeping your lower back pressed down."
+    ]
+  },
+  {
+    "key": "hanging_knee_raise",
+    "name": "Hanging Knee Raise",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "lying_leg_raise",
+    "harder": "hanging_leg_raise",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "knee raise",
+      "hanging knee up",
+      "hanging knee tuck",
+      "bar knee raise"
+    ],
+    "linkNames": [
+      "Hanging Knee Raise"
+    ],
+    "steps": [
+      "Hang from a pull-up bar with straight arms.",
+      "Pull your knees up toward your chest by curling your hips.",
+      "Lower your legs slowly without swinging."
+    ]
+  },
+  {
+    "key": "hanging_leg_raise",
+    "name": "Hanging Leg Raise",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "hanging_knee_raise",
+    "harder": "toes_to_bar",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "leg raise",
+      "hanging raises",
+      "pet ki exercise",
+      "hanging leg raises",
+      "bar leg raise"
+    ],
+    "linkNames": [
+      "Hanging Leg Raise"
+    ],
+    "steps": [
+      "Hang from a pull-up bar with straight arms and legs together.",
+      "Keep your legs straight and raise them until they are level with your hips.",
+      "Lower slowly and stop any swing before the next rep."
+    ]
+  },
+  {
+    "key": "toes_to_bar",
+    "name": "Toes to Bar",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "lats",
+      "forearms"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "hanging_leg_raise",
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "toes 2 bar",
+      "t2b",
+      "toe to bar"
+    ],
+    "linkNames": [
+      "Toes to Bar"
+    ],
+    "steps": [
+      "Hang from a pull-up bar with straight arms.",
+      "Pull your shoulders down and lift your feet up to touch the bar.",
+      "Lower your legs with control and stop the swing."
+    ]
+  },
+  {
+    "key": "decline_leg_raise",
+    "name": "Decline Leg Raise",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline bench leg raise",
+      "decline leg lift"
+    ],
+    "linkNames": [
+      "Decline Leg Raise"
+    ],
+    "steps": [
+      "Lie on a decline bench with your head at the high end.",
+      "Hold the bench behind your head and keep your legs straight.",
+      "Raise your legs until they point up, then lower them slowly."
+    ]
+  },
+  {
+    "key": "captains_chair_knee_raise",
+    "name": "Captain's Chair Knee Raise",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "captains_chair_leg_raise",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "vertical knee raise",
+      "dip station knee raise",
+      "captain chair knee raise",
+      "knee raise station"
+    ],
+    "linkNames": [
+      "Knee Raise Parallel Bars"
+    ],
+    "steps": [
+      "Rest your forearms on the pads with your back against the backrest.",
+      "Lift your knees toward your chest without swinging.",
+      "Lower your legs slowly until they hang straight."
+    ]
+  },
+  {
+    "key": "captains_chair_leg_raise",
+    "name": "Captain's Chair Leg Raise",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "captains_chair_knee_raise",
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "vertical leg raise",
+      "dip station leg raise",
+      "captain chair leg raise",
+      "parallel bar leg raise"
+    ],
+    "linkNames": [
+      "Leg Raise Parallel Bars"
+    ],
+    "steps": [
+      "Rest your forearms on the pads with your back against the backrest.",
+      "Keep your legs straight and raise them until they are level with your hips.",
+      "Lower them slowly without swinging."
+    ]
+  },
+  {
+    "key": "russian_twist",
+    "name": "Russian Twist",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "abs"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "weighted_russian_twist",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "russian twists",
+      "seated twist",
+      "side to side twist"
+    ],
+    "linkNames": [
+      "Russian Twist (Bodyweight)"
+    ],
+    "steps": [
+      "Sit with knees bent, lean back slightly and keep your back straight.",
+      "Clasp your hands and lift your feet off the floor if you can.",
+      "Turn your shoulders to tap your hands beside each hip in turn."
+    ]
+  },
+  {
+    "key": "weighted_russian_twist",
+    "name": "Weighted Russian Twist",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "abs"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "russian_twist",
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "russian twist with plate",
+      "plate twist",
+      "medicine ball twist",
+      "weighted twist"
+    ],
+    "linkNames": [
+      "Russian Twist (Weighted)"
+    ],
+    "steps": [
+      "Sit with knees bent, lean back slightly and keep your back straight.",
+      "Hold a plate, dumbbell or medicine ball in front of your chest.",
+      "Turn your shoulders to bring the weight beside each hip in turn."
+    ]
+  },
+  {
+    "key": "rotary_torso_machine",
+    "name": "Rotary Torso Machine",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "abs"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "oblique twist machine",
+      "torso rotation",
+      "torso twist machine",
+      "rotary torso",
+      "oblique machine"
+    ],
+    "linkNames": [
+      "Oblique Twist"
+    ],
+    "steps": [
+      "Sit in the machine set for one side and hold the handles.",
+      "Keep your hips still and turn your upper body against the weight.",
+      "Return slowly, finish your reps, then set it for the other side."
+    ]
+  },
+  {
+    "key": "cable_woodchop",
+    "name": "Cable Woodchop",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "abs",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "woodchop",
+      "wood chop",
+      "cable chop",
+      "cable wood chop"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand side-on to a high cable and hold the handle with both hands.",
+      "Pull it down and across your body to the opposite knee, turning your chest.",
+      "Let it return slowly, finish your reps, then switch sides."
+    ]
+  },
+  {
+    "key": "pallof_press",
+    "name": "Pallof Press",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "abs"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "anti rotation press",
+      "cable press out",
+      "paloff press",
+      "pallof"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand side-on to a chest-high cable, holding the handle at your chest.",
+      "Press it straight out in front and hold for a second without turning.",
+      "Bring it back to your chest, finish your reps, then switch sides."
+    ]
+  },
+  {
+    "key": "dumbbell_side_bend",
+    "name": "Dumbbell Side Bend",
+    "ek": "0294",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "lower_back"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "side bend",
+      "db side bend",
+      "dumbbell side bends",
+      "love handles",
+      "kamar ki exercise"
+    ],
+    "linkNames": [
+      "Side Bend (Dumbbell)"
+    ],
+    "steps": [
+      "Stand tall holding a dumbbell in one hand, other hand on your hip.",
+      "Bend sideways toward the dumbbell, sliding it down your leg.",
+      "Pull yourself back up straight, finish your reps, then switch hands."
+    ]
+  },
+  {
+    "key": "knee_plank",
+    "name": "Knee Plank",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "plank",
+    "repCap": null,
+    "holdCapSec": 60,
+    "distUnit": null,
+    "aliases": [
+      "half plank",
+      "kneeling plank",
+      "plank on knees",
+      "modified plank"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Rest on your forearms and knees, elbows under your shoulders.",
+      "Make a straight line from your head to your knees and squeeze your stomach.",
+      "Breathe steadily and hold for the time."
+    ]
+  },
+  {
+    "key": "plank",
+    "name": "Plank",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "obliques"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "knee_plank",
+    "harder": "rkc_plank",
+    "repCap": null,
+    "holdCapSec": 60,
+    "distUnit": null,
+    "aliases": [
+      "front plank",
+      "forearm plank",
+      "elbow plank",
+      "plank hold"
+    ],
+    "linkNames": [
+      "Plank"
+    ],
+    "steps": [
+      "Rest on your forearms and toes, elbows under your shoulders.",
+      "Keep your body straight from head to heels without letting your hips sag.",
+      "Squeeze your stomach and glutes and breathe steadily for the time."
+    ]
+  },
+  {
+    "key": "rkc_plank",
+    "name": "RKC Plank",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "obliques",
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "plank",
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 30,
+    "distUnit": null,
+    "aliases": [
+      "hardstyle plank",
+      "rkc"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Get into a forearm plank with elbows slightly ahead of your shoulders.",
+      "Squeeze your glutes, thighs and fists as hard as you can.",
+      "Pull your elbows toward your toes without moving, and hold."
+    ]
+  },
+  {
+    "key": "side_plank",
+    "name": "Side Plank",
+    "ek": "0113",
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "abs",
+      "abductors"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 45,
+    "distUnit": null,
+    "aliases": [
+      "side planks",
+      "side bridge",
+      "oblique plank"
+    ],
+    "linkNames": [
+      "Side Plank"
+    ],
+    "steps": [
+      "Lie on your side, propped on one forearm, elbow under your shoulder.",
+      "Lift your hips so your body forms a straight line.",
+      "Hold for the time, then switch sides."
+    ]
+  },
+  {
+    "key": "dead_hang",
+    "name": "Dead Hang",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [
+      "lats"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 60,
+    "distUnit": null,
+    "aliases": [
+      "bar hang",
+      "passive hang",
+      "hang from bar",
+      "latakna"
+    ],
+    "linkNames": [
+      "Dead Hang"
+    ],
+    "steps": [
+      "Grab a pull-up bar with both hands, shoulder-width apart.",
+      "Lift your feet and hang with straight arms and a relaxed body.",
+      "Hold for the time, then step down carefully."
+    ]
+  },
+  {
+    "key": "wall_sit",
+    "name": "Wall Sit",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 90,
+    "distUnit": null,
+    "aliases": [
+      "wall squat",
+      "wall chair",
+      "invisible chair"
+    ],
+    "linkNames": [
+      "Wall Sit"
+    ],
+    "steps": [
+      "Stand with your back flat against a wall, feet a step out in front.",
+      "Slide down until your thighs are level with the floor.",
+      "Keep your knees over your ankles and hold for the time."
+    ]
+  },
+  {
+    "key": "hollow_hold",
+    "name": "Hollow Hold",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 45,
+    "distUnit": null,
+    "aliases": [
+      "hollow body",
+      "hollow body hold",
+      "banana hold"
+    ],
+    "linkNames": [
+      "Hollow Body Hold"
+    ],
+    "steps": [
+      "Lie face up with your arms stretched past your head.",
+      "Press your lower back into the floor and lift your arms, shoulders and legs.",
+      "Hold that curved shape, legs straight and low, for the time."
+    ]
+  },
+  {
+    "key": "l_sit",
+    "name": "L-Sit",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "triceps",
+      "quads"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 30,
+    "distUnit": null,
+    "aliases": [
+      "l sit",
+      "l-sit hold",
+      "l sit hold"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Grip parallel bars or press your hands into the floor beside your hips.",
+      "Push down through straight arms to lift your body.",
+      "Raise your straight legs level with your hips and hold."
+    ]
+  },
+  {
+    "key": "stomach_vacuum",
+    "name": "Stomach Vacuum",
+    "ek": "0027",
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 30,
+    "distUnit": null,
+    "aliases": [
+      "vacuum",
+      "abdominal draw-in",
+      "belly draw-in",
+      "pet andar"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Kneel on all fours, hands under shoulders, back flat like a table.",
+      "Breathe all the way out, then pull your belly button up toward your spine.",
+      "Hold it in while taking small breaths, then relax."
+    ]
+  },
+  {
+    "key": "dead_bug",
+    "name": "Dead Bug",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "deadbug",
+      "dead bugs"
+    ],
+    "linkNames": [
+      "Dead Bug"
+    ],
+    "steps": [
+      "Lie face up, arms pointing at the ceiling, knees bent over your hips.",
+      "Lower one arm and the opposite leg toward the floor, keeping your back down.",
+      "Bring them back, then switch sides."
+    ]
+  },
+  {
+    "key": "bird_dog",
+    "name": "Bird Dog",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "lower_back"
+    ],
+    "secondary": [
+      "abs",
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bird dogs",
+      "opposite arm and leg raise"
+    ],
+    "linkNames": [
+      "Bird Dog"
+    ],
+    "steps": [
+      "Kneel on all fours with your hands under your shoulders.",
+      "Reach one arm forward and the opposite leg back until both are straight.",
+      "Hold for a second, return, then switch sides."
+    ]
+  },
+  {
+    "key": "ab_wheel_rollout",
+    "name": "Ab Wheel Rollout",
+    "ek": null,
+    "equipment": "other",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "lats",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "ab wheel",
+      "ab roller",
+      "ab rollout",
+      "wheel rollout"
+    ],
+    "linkNames": [
+      "Ab Wheel"
+    ],
+    "steps": [
+      "Kneel on a mat holding the ab wheel under your shoulders.",
+      "Roll forward slowly as far as you can without letting your lower back sag.",
+      "Pull the wheel back to your knees using your stomach."
+    ]
+  },
+  {
+    "key": "barbell_rollout",
+    "name": "Barbell Rollout",
+    "ek": "0286",
+    "equipment": "barbell",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "lats",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "barbell ab rollout",
+      "kneeling barbell rollout",
+      "barbell roll out",
+      "rod rollout"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Put small round plates on a barbell and kneel behind it.",
+      "Grip the bar shoulder-width and roll it forward as far as you can control.",
+      "Keep your back from sagging and pull the bar back to your knees."
+    ]
+  },
+  {
+    "key": "mountain_climber",
+    "name": "Mountain Climber",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "cardio",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 60,
+    "distUnit": null,
+    "aliases": [
+      "mountain climbers",
+      "climbers",
+      "running plank"
+    ],
+    "linkNames": [
+      "Mountain Climber"
+    ],
+    "steps": [
+      "Start in a push-up position with hands under your shoulders.",
+      "Drive one knee toward your chest, then switch legs quickly.",
+      "Keep your hips low and keep going for the time."
+    ]
+  },
+  {
+    "key": "flutter_kicks",
+    "name": "Flutter Kicks",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 60,
+    "distUnit": null,
+    "aliases": [
+      "flutter kick",
+      "leg flutters",
+      "flutters"
+    ],
+    "linkNames": [
+      "Flutter Kicks"
+    ],
+    "steps": [
+      "Lie face up with your hands under your hips and legs straight.",
+      "Lift your heels slightly and kick your legs up and down in turn.",
+      "Keep your lower back pressed down and go for the time."
+    ]
+  },
+  {
+    "key": "toe_touch_crunch",
+    "name": "Toe Touch Crunch",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "toe touches",
+      "toe touch",
+      "toe reach",
+      "lying toe touch"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie face up with your legs pointing straight at the ceiling.",
+      "Reach your hands toward your toes, lifting your shoulders off the floor.",
+      "Lower your shoulders slowly, keeping your legs still."
+    ]
+  },
+  {
+    "key": "heel_touch",
+    "name": "Heel Touch",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "abs"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "heel touches",
+      "heel taps",
+      "alternate heel touch",
+      "ankle reach"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie face up with knees bent and feet flat, a little apart.",
+      "Lift your shoulders slightly and reach one hand to the heel on that side.",
+      "Switch sides in a steady rhythm, keeping your shoulders up."
+    ]
+  },
+  {
+    "key": "seated_knee_tuck",
+    "name": "Seated Knee Tuck",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "in and out",
+      "in and outs",
+      "knee tuck",
+      "bench knee tuck",
+      "seated leg tuck"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on a bench edge or the floor, leaning back on your hands.",
+      "Pull your knees in toward your chest as you lean slightly forward.",
+      "Push your legs back out straight without letting your feet touch down."
+    ]
+  },
+  {
+    "key": "plank_shoulder_tap",
+    "name": "Plank Shoulder Tap",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "obliques",
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "shoulder taps",
+      "plank taps",
+      "shoulder tap"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Start in a push-up position with your feet a little wider than hips.",
+      "Lift one hand to tap the opposite shoulder without rocking your hips.",
+      "Put the hand down and repeat with the other side."
+    ]
+  },
+  {
+    "key": "treadmill_run",
+    "name": "Treadmill Run",
+    "ek": null,
+    "equipment": "machine",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "hamstrings",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "km",
+    "aliases": [
+      "treadmill",
+      "treadmill running",
+      "treadmill jog",
+      "running machine",
+      "treadmill walk"
+    ],
+    "linkNames": [
+      "Treadmill"
+    ],
+    "steps": [
+      "Step on, clip the safety key to your clothes and start at a walk.",
+      "Raise the speed to a pace where you can talk in short sentences.",
+      "Slow to a walk for the last few minutes before you stop."
+    ]
+  },
+  {
+    "key": "outdoor_run",
+    "name": "Outdoor Run",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "hamstrings",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "km",
+    "aliases": [
+      "running",
+      "run",
+      "jogging",
+      "jog",
+      "road run",
+      "daudna"
+    ],
+    "linkNames": [
+      "Running"
+    ],
+    "steps": [
+      "Warm up with five minutes of brisk walking.",
+      "Run at an easy pace where you can still hold a conversation.",
+      "Walk for a few minutes at the end to cool down."
+    ]
+  },
+  {
+    "key": "walking",
+    "name": "Walking",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "km",
+    "aliases": [
+      "walk",
+      "brisk walk",
+      "morning walk",
+      "evening walk",
+      "chalna"
+    ],
+    "linkNames": [
+      "Walking"
+    ],
+    "steps": [
+      "Wear comfortable shoes and start at an easy pace.",
+      "Walk briskly, swinging your arms, until you breathe a little harder.",
+      "Slow down for the last few minutes."
+    ]
+  },
+  {
+    "key": "incline_treadmill_walk",
+    "name": "Incline Treadmill Walk",
+    "ek": null,
+    "equipment": "machine",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "km",
+    "aliases": [
+      "incline walk",
+      "treadmill incline walk",
+      "uphill walk",
+      "12 3 30",
+      "incline walking"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Clip on the safety key and start walking with the belt flat.",
+      "Raise the incline step by step, then hold a steady brisk pace.",
+      "Keep your hands off the rails and lower the incline before stopping."
+    ]
+  },
+  {
+    "key": "stationary_bike",
+    "name": "Stationary Bike",
+    "ek": null,
+    "equipment": "machine",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "km",
+    "aliases": [
+      "exercise bike",
+      "gym cycle",
+      "cycling machine",
+      "spin bike",
+      "indoor cycling",
+      "upright bike"
+    ],
+    "linkNames": [
+      "Spinning"
+    ],
+    "steps": [
+      "Set the seat height so your knee stays slightly bent at the bottom.",
+      "Pedal at a steady pace with enough resistance to breathe harder.",
+      "Lower the resistance and pedal easy for the last few minutes."
+    ]
+  },
+  {
+    "key": "outdoor_cycling",
+    "name": "Outdoor Cycling",
+    "ek": null,
+    "equipment": "other",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "km",
+    "aliases": [
+      "cycling",
+      "bicycle",
+      "bike ride",
+      "road cycling",
+      "cycle chalana"
+    ],
+    "linkNames": [
+      "Cycling"
+    ],
+    "steps": [
+      "Check your tyres and brakes, and wear a helmet.",
+      "Ride at a steady pace where you can still talk.",
+      "Ease off for the last few minutes to cool down."
+    ]
+  },
+  {
+    "key": "rowing_machine",
+    "name": "Rowing Machine",
+    "ek": null,
+    "equipment": "machine",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "upper_back",
+      "lats",
+      "quads"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "m",
+    "aliases": [
+      "rower",
+      "rowing",
+      "erg",
+      "indoor rowing",
+      "row machine"
+    ],
+    "linkNames": [
+      "Rowing Machine"
+    ],
+    "steps": [
+      "Strap your feet in and hold the handle with straight arms.",
+      "Push with your legs, lean back slightly, then pull the handle to your ribs.",
+      "Return arms first, then body, then bend your knees to slide forward."
+    ]
+  },
+  {
+    "key": "elliptical",
+    "name": "Elliptical",
+    "ek": null,
+    "equipment": "machine",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "km",
+    "aliases": [
+      "elliptical trainer",
+      "cross trainer",
+      "elliptical machine"
+    ],
+    "linkNames": [
+      "Elliptical Trainer"
+    ],
+    "steps": [
+      "Step onto the pedals, hold the moving handles and start striding.",
+      "Keep a steady pace where you breathe harder but can still talk.",
+      "Lower the resistance for the last few minutes before you stop."
+    ]
+  },
+  {
+    "key": "stair_climber",
+    "name": "Stair Climber",
+    "ek": null,
+    "equipment": "machine",
+    "type": "time",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "glutes",
+      "quads",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 1800,
+    "distUnit": null,
+    "aliases": [
+      "stairmaster",
+      "stair machine",
+      "stepmill",
+      "stair stepper",
+      "seedhi chadhna"
+    ],
+    "linkNames": [
+      "Stair Machine",
+      "Stair Machine (Floors)"
+    ],
+    "steps": [
+      "Step on and start at a slow, steady speed.",
+      "Climb with your whole foot on each step, standing tall off the rails.",
+      "Slow it down and wait for the steps to stop before stepping off."
+    ]
+  },
+  {
+    "key": "swimming",
+    "name": "Swimming",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "lats",
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "m",
+    "aliases": [
+      "swim",
+      "lap swimming",
+      "swimming laps",
+      "tairaki"
+    ],
+    "linkNames": [
+      "Swimming"
+    ],
+    "steps": [
+      "Warm up with one or two easy lengths.",
+      "Swim at a steady pace, breathing in a regular rhythm.",
+      "Rest at the wall when needed and finish with one slow length."
+    ]
+  },
+  {
+    "key": "hiking",
+    "name": "Hiking",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "glutes",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "km",
+    "aliases": [
+      "hike",
+      "trek",
+      "trekking",
+      "trail walk"
+    ],
+    "linkNames": [
+      "Hiking"
+    ],
+    "steps": [
+      "Wear shoes with good grip and carry enough water.",
+      "Walk at a steady pace, taking shorter steps on steep parts.",
+      "Go slowly and carefully on the way down."
+    ]
+  },
+  {
+    "key": "jump_rope",
+    "name": "Jump Rope",
+    "ek": null,
+    "equipment": "other",
+    "type": "time",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 300,
+    "distUnit": null,
+    "aliases": [
+      "skipping",
+      "skipping rope",
+      "rope skipping",
+      "jumping rope",
+      "rassi koodna"
+    ],
+    "linkNames": [
+      "Jump Rope"
+    ],
+    "steps": [
+      "Hold the handles at hip height with the rope behind your heels.",
+      "Turn the rope with your wrists and hop just high enough to clear it.",
+      "Land softly on the balls of your feet and keep a steady rhythm."
+    ]
+  },
+  {
+    "key": "air_bike",
+    "name": "Air Bike",
+    "ek": null,
+    "equipment": "machine",
+    "type": "time_distance",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "glutes",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "km",
+    "aliases": [
+      "assault bike",
+      "fan bike",
+      "echo bike",
+      "airdyne"
+    ],
+    "linkNames": [
+      "Air Bike"
+    ],
+    "steps": [
+      "Set the seat so your knee stays slightly bent at the bottom.",
+      "Pedal and push-pull the handles together at a steady, hard effort.",
+      "Ease off and pedal slowly for a minute before you stop."
+    ]
+  },
+  {
+    "key": "burpee",
+    "name": "Burpee",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "chest"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "burpees",
+      "full burpee",
+      "burpee push-up"
+    ],
+    "linkNames": [
+      "Burpee"
+    ],
+    "steps": [
+      "From standing, squat down and put your hands on the floor.",
+      "Jump your feet back into a push-up position and do one push-up.",
+      "Jump your feet back in, then jump up with your arms overhead."
+    ]
+  },
+  {
+    "key": "jumping_jack",
+    "name": "Jumping Jack",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 60,
+    "distUnit": null,
+    "aliases": [
+      "jumping jacks",
+      "star jumps",
+      "jacks"
+    ],
+    "linkNames": [
+      "Jumping Jack"
+    ],
+    "steps": [
+      "Stand tall with feet together and arms by your sides.",
+      "Jump your feet wide while swinging your arms overhead.",
+      "Jump back to the start and keep a steady rhythm for the time."
+    ]
+  },
+  {
+    "key": "high_knees",
+    "name": "High Knees",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "quads",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 60,
+    "distUnit": null,
+    "aliases": [
+      "high knee",
+      "high knee run",
+      "knee drives",
+      "spot running"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand tall with your feet hip-width apart.",
+      "Run on the spot, driving each knee up to hip height.",
+      "Pump your arms and land softly on the balls of your feet."
+    ]
+  },
+  {
+    "key": "battle_ropes",
+    "name": "Battle Ropes",
+    "ek": null,
+    "equipment": "other",
+    "type": "time",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "front_delts",
+      "forearms",
+      "abs"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 60,
+    "distUnit": null,
+    "aliases": [
+      "battle rope",
+      "rope waves",
+      "heavy rope",
+      "battling ropes"
+    ],
+    "linkNames": [
+      "Battle Ropes"
+    ],
+    "steps": [
+      "Hold one rope end in each hand, knees bent, chest up.",
+      "Whip your arms up and down fast to send waves along the ropes.",
+      "Keep your stomach tight and keep the waves going for the time."
+    ]
+  },
+  {
+    "key": "farmers_walk",
+    "name": "Farmer's Walk",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "time_distance",
+    "primary": [
+      "forearms",
+      "traps"
+    ],
+    "secondary": [
+      "abs",
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "m",
+    "aliases": [
+      "farmer walk",
+      "farmers carry",
+      "farmer's carry",
+      "dumbbell carry",
+      "loaded carry"
+    ],
+    "linkNames": [
+      "Farmers Walk"
+    ],
+    "steps": [
+      "Pick up a heavy dumbbell in each hand and stand tall.",
+      "Walk with short, quick steps, shoulders back and arms straight.",
+      "Bend your knees to set the weights down at the end."
+    ]
+  },
+  {
+    "key": "suitcase_carry",
+    "name": "Suitcase Carry",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "time_distance",
+    "primary": [
+      "obliques"
+    ],
+    "secondary": [
+      "forearms",
+      "traps",
+      "abs"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "m",
+    "aliases": [
+      "one arm farmer walk",
+      "single arm carry",
+      "suitcase walk",
+      "one hand carry"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold one heavy dumbbell at your side, other arm free.",
+      "Walk tall without leaning toward the weight.",
+      "Set it down, then carry it the same distance in the other hand."
+    ]
+  },
+  {
+    "key": "sled_push",
+    "name": "Sled Push",
+    "ek": null,
+    "equipment": "other",
+    "type": "distance",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "calves",
+      "cardio"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "m",
+    "aliases": [
+      "prowler push",
+      "push sled",
+      "sled drive"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Grip the sled handles and lean in at a low angle, arms bent.",
+      "Drive with short, powerful steps, pushing through the balls of your feet.",
+      "Keep your back flat and push until you cover the distance."
+    ]
+  },
+  {
+    "key": "sled_pull",
+    "name": "Sled Pull",
+    "ek": null,
+    "equipment": "other",
+    "type": "distance",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "forearms",
+      "cardio"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": "m",
+    "aliases": [
+      "sled drag",
+      "backward sled drag",
+      "reverse sled drag"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach straps to the sled and hold the handles at arm's length.",
+      "Sit your hips back slightly and walk backward with short steps.",
+      "Keep your chest up and keep pulling until you cover the distance."
+    ]
+  },
+  {
+    "key": "turkish_get_up",
+    "name": "Turkish Get-Up",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "abs"
+    ],
+    "secondary": [
+      "front_delts",
+      "obliques",
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 4,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "get up",
+      "tgu",
+      "kettlebell get up",
+      "turkish getup"
+    ],
+    "linkNames": [
+      "Turkish Get Up"
+    ],
+    "steps": [
+      "Lie face up holding a kettlebell straight up over one shoulder.",
+      "Keep your eyes on it and press up onto your elbow, then your hand.",
+      "Lift your hips, sweep one leg under you, then stand up from the kneel.",
+      "Reverse each step slowly to lie back down, then switch sides."
+    ]
+  },
+  {
+    "key": "kettlebell_clean_and_press",
+    "name": "Kettlebell Clean and Press",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "triceps",
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 4,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "kb clean and press",
+      "kettlebell clean press",
+      "clean and press",
+      "single arm clean and press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with a kettlebell between your feet and grip it with one hand.",
+      "Snap your hips forward to bring it up to rest on your forearm.",
+      "Press it straight overhead, then lower it to your shoulder and the floor.",
+      "Finish your reps, then switch hands."
+    ]
+  },
+  {
+    "key": "medicine_ball_slam",
+    "name": "Medicine Ball Slam",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "cardio"
+    ],
+    "secondary": [
+      "lats",
+      "abs",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "ball slams",
+      "slam ball",
+      "med ball slam",
+      "medicine ball slams"
+    ],
+    "linkNames": [
+      "Ball Slams"
+    ],
+    "steps": [
+      "Stand with feet shoulder-width apart, holding a slam ball at your chest.",
+      "Lift it overhead, rising onto your toes.",
+      "Slam it hard into the floor, then squat to pick it up."
+    ]
+  }
+]

@@ -1,11 +1,15 @@
 /**
- * The exercise catalog a REAL member starts with — Phase O2 (W1).
+ * The exercise catalog a REAL member starts with — Phase O2 (W1), grown in Phase 2.
  *
- * The ~40-movement catalog in `src/db/seed/exercises.ts` is REFERENCE data (names,
- * aliases, muscle groups, load increments), not fake history, so a genuinely empty
- * start still ships it: without a library there is nothing to log on day one.
- * Everything else the demo seed invents — Arjun's profile, 13 weeks of sessions,
- * PRs, meals, chat — is NOT written here. That distinction is the whole of W1.
+ * The catalog is REFERENCE data (names, aliases, muscle groups, load increments), not
+ * fake history, so a genuinely empty start still ships it: without a library there is
+ * nothing to log on day one. Everything else the demo seed invents — Arjun's profile,
+ * 13 weeks of sessions, PRs, meals, chat — is NOT written here. That distinction is the
+ * whole of W1.
+ *
+ * Phase 2: a new member gets the whole bundled library (400+ exercises with pictures,
+ * steps, log types), each row linked to its library entry. If the bundle were ever empty
+ * the original ~40-movement seed catalog is the fallback.
  *
  * Import-only against the seed module: nothing in `src/db/seed/*` is edited.
  */
@@ -13,6 +17,8 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 import { EXERCISES } from '@/db/seed/exercises';
 import { uuid } from '@/lib/uuid';
+import { insertCatalogEntries } from '@/tracker/catalog/catalogSync';
+import { CATALOG } from '@/tracker/catalog/exerciseCatalog';
 
 type SqlValue = string | number | null;
 type TxLike = Pick<SQLiteDatabase, 'runAsync'>;
@@ -28,7 +34,7 @@ export const EXERCISE_COLUMNS = [
   'increment_kg',
 ] as const;
 
-/** Flatten the catalog to INSERT rows (fresh ids each call). */
+/** Flatten the original seed catalog to INSERT rows (fresh ids each call). */
 export function catalogRows(): SqlValue[][] {
   return EXERCISES.map((ex) => [
     uuid(),
@@ -47,6 +53,7 @@ export function catalogRows(): SqlValue[][] {
  * SQLite's bind-variable limit, mirroring the seed's batchInsert.
  */
 export async function insertExerciseCatalog(tx: TxLike): Promise<number> {
+  if (CATALOG.length > 0) return insertCatalogEntries(tx, CATALOG);
   const rows = catalogRows();
   const cols = EXERCISE_COLUMNS;
   const perChunk = Math.max(1, Math.floor(800 / cols.length));

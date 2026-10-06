@@ -1,74 +1,35 @@
 /**
  * Standalone exercise-library list: search (name + aliases), 2-axis filter
- * (muscle group × equipment), a pinned "Recent" section, and a "New exercise"
+ * (muscle × equipment), a pinned "Recent" section, and a "New exercise"
  * affordance. Rows navigate to detail (browse), unlike the mid-workout
  * ExercisePickerList which adds to the active draft. Read-only over frozen repos.
+ *
+ * Phase 2: 400+ exercises, each with a small still picture (tap it for the moving demo),
+ * finer muscle filters (front / side / rear shoulders…) and ranked search.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
+import { FlatList, Text, TextInput, View } from 'react-native';
 
 import { Chip, EmptyState, GhostButton, Icon } from '@/components/ui';
-import { getAllExercises } from '@/db/repos/exerciseRepo';
 import { color, radius, space, type } from '@/theme/tokens';
-import type { Exercise, MuscleGroup } from '@/types/models';
+import type { Exercise } from '@/types/models';
 
+import { MUSCLE_LABEL, MUSCLES, type Muscle } from '../catalog/muscles';
 import { getRecentSessionDetailsBatched } from '../db/sessionDetails';
+import { getAllTrackerExercises, type TrackerExercise } from '../db/exerciseInfo';
+import { filterExercises } from '../services/exerciseSearch';
+import { ExerciseDemoSheet } from './ExerciseDemoSheet';
+import { ExerciseListRow } from './ExerciseListRow';
 
 type Equipment = Exercise['equipment'];
 
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
-
-function normalize(s: string): string {
-  return s.toLowerCase().trim().replace(/\s+/g, ' ');
-}
 
 const sectionLabel = {
   fontFamily: type.heading,
   fontSize: type.size.sub,
   color: color.inkSecondary,
 } as const;
-
-function ExerciseRow({ ex, onPress }: { ex: Exercise; onPress: () => void }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`View ${ex.name}`}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: space.md,
-        padding: space.md,
-        borderRadius: radius.md,
-        backgroundColor: color.surface,
-        borderWidth: 1,
-        borderColor: color.border,
-      }}
-    >
-      <View
-        style={{
-          width: 38,
-          height: 38,
-          borderRadius: 19,
-          backgroundColor: color.accentSoft,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Icon name="dumbbell" size={18} color={color.accent} />
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
-          {ex.name}
-        </Text>
-        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
-          {cap(ex.muscleGroup)} · {cap(ex.equipment)}
-        </Text>
-      </View>
-      <Icon name="chevron-right" size={18} color={color.inkMuted} />
-    </Pressable>
-  );
-}
 
 export function LibraryList({
   onSelectExercise,
@@ -77,31 +38,31 @@ export function LibraryList({
   onSelectExercise: (ex: Exercise) => void;
   onCreateNew: () => void;
 }) {
-  const [all, setAll] = useState<Exercise[]>([]);
-  const [recent, setRecent] = useState<Exercise[]>([]);
+  const [all, setAll] = useState<TrackerExercise[]>([]);
+  const [recent, setRecent] = useState<TrackerExercise[]>([]);
   const [query, setQuery] = useState('');
-  const [muscle, setMuscle] = useState<MuscleGroup | null>(null);
+  const [muscle, setMuscle] = useState<Muscle | null>(null);
   const [equipment, setEquipment] = useState<Equipment | null>(null);
+  const [demo, setDemo] = useState<TrackerExercise | null>(null);
 
   useEffect(() => {
     let alive = true;
-    getAllExercises()
-      .then((list) => {
-        if (alive) setAll(list);
-      })
-      .catch(() => {
-        /* unseeded / transient — list stays empty */
-      });
-    getRecentSessionDetailsBatched(12) // batched: ~3 queries, not 1 + 2×12
-      .then((sessions) => {
+    Promise.all([
+      getAllTrackerExercises(),
+      getRecentSessionDetailsBatched(12).catch(() => []), // batched: ~3 queries, not 1 + 2×12
+    ])
+      .then(([list, sessions]) => {
         if (!alive) return;
+        setAll(list);
+        const byId = new Map(list.map((e) => [e.id, e]));
         const seen = new Set<string>();
-        const out: Exercise[] = [];
+        const out: TrackerExercise[] = [];
         for (const s of sessions) {
           for (const e of s.exercises) {
-            if (seen.has(e.exercise.id)) continue;
-            seen.add(e.exercise.id);
-            out.push(e.exercise);
+            const ex = byId.get(e.exercise.id);
+            if (!ex || seen.has(ex.id)) continue;
+            seen.add(ex.id);
+            out.push(ex);
             if (out.length >= 6) break;
           }
           if (out.length >= 6) break;
@@ -109,7 +70,7 @@ export function LibraryList({
         setRecent(out);
       })
       .catch(() => {
-        /* no history yet — no recent section */
+        /* unseeded / transient — list stays empty */
       });
     return () => {
       alive = false;
@@ -117,9 +78,9 @@ export function LibraryList({
   }, []);
 
   const muscles = useMemo(() => {
-    const seen = new Set<MuscleGroup>();
-    for (const e of all) seen.add(e.muscleGroup);
-    return [...seen].sort();
+    const seen = new Set<Muscle>();
+    for (const e of all) for (const m of e.muscles.primary) seen.add(m);
+    return MUSCLES.filter((m) => seen.has(m));
   }, [all]);
 
   const equipments = useMemo(() => {
@@ -128,16 +89,7 @@ export function LibraryList({
     return [...seen].sort();
   }, [all]);
 
-  const filtered = useMemo(() => {
-    const q = normalize(query);
-    return all.filter((e) => {
-      if (muscle && e.muscleGroup !== muscle) return false;
-      if (equipment && e.equipment !== equipment) return false;
-      if (!q) return true;
-      if (normalize(e.name).includes(q)) return true;
-      return e.aliases.some((a) => normalize(a).includes(q));
-    });
-  }, [all, query, muscle, equipment]);
+  const filtered = useMemo(() => filterExercises(all, { query, muscle, equipment }), [all, query, muscle, equipment]);
 
   const showRecent = query === '' && muscle === null && equipment === null && recent.length > 0;
 
@@ -161,9 +113,10 @@ export function LibraryList({
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="Search exercises"
+          placeholder={all.length > 0 ? `Search ${all.length} exercises` : 'Search exercises'}
           placeholderTextColor={color.inkMuted}
           autoCorrect={false}
+          accessibilityLabel="Search exercises"
           style={{
             flex: 1,
             fontFamily: type.bodyMedium,
@@ -188,7 +141,7 @@ export function LibraryList({
         }
         renderItem={({ item }) => (
           <Chip
-            label={cap(item)}
+            label={MUSCLE_LABEL[item]}
             selected={muscle === item}
             onPress={() => setMuscle((cur) => (cur === item ? null : item))}
           />
@@ -224,6 +177,8 @@ export function LibraryList({
         keyExtractor={(e) => e.id}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        initialNumToRender={12}
+        windowSize={9}
         contentContainerStyle={{ gap: space.sm, paddingBottom: space.xxl }}
         ListHeaderComponent={
           <View style={{ gap: space.sm, marginBottom: space.sm }}>
@@ -232,7 +187,14 @@ export function LibraryList({
               <>
                 <Text style={sectionLabel}>Recent</Text>
                 {recent.map((ex) => (
-                  <ExerciseRow key={`r-${ex.id}`} ex={ex} onPress={() => onSelectExercise(ex)} />
+                  <ExerciseListRow
+                    key={`r-${ex.id}`}
+                    ex={ex}
+                    trailing="chevron-right"
+                    actionLabel="View"
+                    onPress={onSelectExercise}
+                    onDemo={setDemo}
+                  />
                 ))}
                 <Text style={[sectionLabel, { marginTop: space.xs }]}>All exercises</Text>
               </>
@@ -242,7 +204,17 @@ export function LibraryList({
         ListEmptyComponent={
           <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search, or create a new exercise." />
         }
-        renderItem={({ item }) => <ExerciseRow ex={item} onPress={() => onSelectExercise(item)} />}
+        renderItem={({ item }) => (
+          <ExerciseListRow ex={item} trailing="chevron-right" actionLabel="View" onPress={onSelectExercise} onDemo={setDemo} />
+        )}
+      />
+
+      <ExerciseDemoSheet
+        visible={demo != null}
+        catalogKey={demo?.catalogKey ?? null}
+        name={demo?.name ?? ''}
+        media={demo ? { uri: demo.mediaUri, type: demo.mediaType } : null}
+        onClose={() => setDemo(null)}
       />
     </View>
   );

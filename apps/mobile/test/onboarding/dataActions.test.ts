@@ -13,7 +13,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { EXERCISES } from '@/db/seed/exercises';
+import { CATALOG } from '@/tracker/catalog/exerciseCatalog';
 
 const h = vi.hoisted(() => {
   interface Call {
@@ -132,7 +132,9 @@ function sqls(): string[] {
 }
 
 function inserts(table: string): { sql: string; params?: unknown[] }[] {
-  return h.state.calls.filter((c) => c.sql.includes(`INSERT INTO ${table} `));
+  return h.state.calls.filter(
+    (c) => c.sql.includes(`INSERT INTO ${table} `) || c.sql.includes(`INSERT OR IGNORE INTO ${table} `),
+  );
 }
 
 /** Rows in a multi-row INSERT = number of value tuples. */
@@ -193,7 +195,14 @@ describe('completeOnboarding — the W1 guarantee', () => {
 
   it('ships the reference exercise catalog so there is something to log', async () => {
     await completeOnboarding(INPUT);
-    expect(insertedRows('exercises')).toBe(EXERCISES.length);
+    // Phase 2: the whole bundled library (400+), not the old ~40-movement seed list.
+    expect(CATALOG.length).toBeGreaterThanOrEqual(400);
+    expect(insertedRows('exercises')).toBe(CATALOG.length);
+  });
+
+  it('stamps the library version, so the next launch does not re-sync a library it just wrote', async () => {
+    await completeOnboarding(INPUT);
+    expect(h.state.meta.get('exercise_catalog_version')).toBeTruthy();
   });
 
   it('logs a first body weight only when the member gave one', async () => {
@@ -381,5 +390,17 @@ describe('boot signals', () => {
     expect(h.state.calls).toEqual([
       { sql: 'UPDATE user_profile SET phone = ?', params: ['+919876543210'] },
     ]);
+  });
+});
+
+describe('Phase 2 review: the library re-syncs even if the app dies right after the demo seed', () => {
+  it('the library-version stamp is cleared BEFORE the demo seed runs', async () => {
+    h.state.meta.set('exercise_catalog_version', '1');
+    let atSeed: string | undefined;
+    vi.mocked(forceReseed).mockImplementationOnce(async () => {
+      atSeed = h.state.meta.get('exercise_catalog_version');
+    });
+    await loadDemoData();
+    expect(atSeed).toBe('0');
   });
 });

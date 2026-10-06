@@ -1,26 +1,30 @@
-/** Searchable, muscle-filterable exercise list used mid-workout to add exercises. */
+/**
+ * Searchable, muscle-filterable exercise list used mid-workout to add exercises.
+ * Phase 2: small still pictures (tap one for the moving demo — the row itself adds the
+ * exercise), finer muscles, ranked search over 400+ exercises.
+ */
 import { useEffect, useMemo, useState } from 'react';
-import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
+import { FlatList, TextInput, View } from 'react-native';
 
-import { Chip, EmptyState, Icon } from '@/components/ui';
-import { getAllExercises } from '@/db/repos/exerciseRepo';
+import { Chip, EmptyState } from '@/components/ui';
 import { color, radius, space, type } from '@/theme/tokens';
-import type { Exercise, MuscleGroup } from '@/types/models';
+import type { Exercise } from '@/types/models';
 
-const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
-
-function normalize(s: string): string {
-  return s.toLowerCase().trim().replace(/\s+/g, ' ');
-}
+import { MUSCLE_LABEL, MUSCLES, type Muscle } from '../catalog/muscles';
+import { getAllTrackerExercises, type TrackerExercise } from '../db/exerciseInfo';
+import { filterExercises } from '../services/exerciseSearch';
+import { ExerciseDemoSheet } from './ExerciseDemoSheet';
+import { ExerciseListRow } from './ExerciseListRow';
 
 export function ExercisePickerList({ onSelect }: { onSelect: (ex: Exercise) => void }) {
-  const [all, setAll] = useState<Exercise[]>([]);
+  const [all, setAll] = useState<TrackerExercise[]>([]);
   const [query, setQuery] = useState('');
-  const [muscle, setMuscle] = useState<MuscleGroup | null>(null);
+  const [muscle, setMuscle] = useState<Muscle | null>(null);
+  const [demo, setDemo] = useState<TrackerExercise | null>(null);
 
   useEffect(() => {
     let alive = true;
-    getAllExercises()
+    getAllTrackerExercises()
       .then((list) => {
         if (alive) setAll(list);
       })
@@ -33,20 +37,12 @@ export function ExercisePickerList({ onSelect }: { onSelect: (ex: Exercise) => v
   }, []);
 
   const muscles = useMemo(() => {
-    const seen = new Set<MuscleGroup>();
-    for (const e of all) seen.add(e.muscleGroup);
-    return [...seen].sort();
+    const seen = new Set<Muscle>();
+    for (const e of all) for (const m of e.muscles.primary) seen.add(m);
+    return MUSCLES.filter((m) => seen.has(m));
   }, [all]);
 
-  const filtered = useMemo(() => {
-    const q = normalize(query);
-    return all.filter((e) => {
-      if (muscle && e.muscleGroup !== muscle) return false;
-      if (!q) return true;
-      if (normalize(e.name).includes(q)) return true;
-      return e.aliases.some((a) => normalize(a).includes(q));
-    });
-  }, [all, query, muscle]);
+  const filtered = useMemo(() => filterExercises(all, { query, muscle, equipment: null }), [all, query, muscle]);
 
   return (
     <View style={{ flex: 1, gap: space.md }}>
@@ -70,6 +66,7 @@ export function ExercisePickerList({ onSelect }: { onSelect: (ex: Exercise) => v
           placeholder="Search exercises"
           placeholderTextColor={color.inkMuted}
           autoCorrect={false}
+          accessibilityLabel="Search exercises"
           style={{
             flex: 1,
             fontFamily: type.bodyMedium,
@@ -94,7 +91,7 @@ export function ExercisePickerList({ onSelect }: { onSelect: (ex: Exercise) => v
         }
         renderItem={({ item }) => (
           <Chip
-            label={cap(item)}
+            label={MUSCLE_LABEL[item]}
             selected={muscle === item}
             onPress={() => setMuscle((cur) => (cur === item ? null : item))}
           />
@@ -108,52 +105,23 @@ export function ExercisePickerList({ onSelect }: { onSelect: (ex: Exercise) => v
         keyExtractor={(e) => e.id}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        initialNumToRender={12}
+        windowSize={9}
         contentContainerStyle={{ gap: space.sm, paddingBottom: space.xxl }}
         ListEmptyComponent={
           <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search or muscle group." />
         }
         renderItem={({ item }) => (
-          <Pressable
-            onPress={() => onSelect(item)}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: space.md,
-              padding: space.md,
-              borderRadius: radius.md,
-              backgroundColor: color.surface,
-              borderWidth: 1,
-              borderColor: color.border,
-            }}
-            accessibilityRole="button"
-            accessibilityLabel={`Add ${item.name}`}
-          >
-            <View
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 19,
-                backgroundColor: color.accentSoft,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Icon name="dumbbell" size={18} color={color.accent} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text
-                numberOfLines={1}
-                style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}
-              >
-                {item.name}
-              </Text>
-              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
-                {cap(item.muscleGroup)} · {cap(item.equipment)}
-              </Text>
-            </View>
-            <Icon name="plus" size={18} color={color.accent} />
-          </Pressable>
+          <ExerciseListRow ex={item} trailing="plus" actionLabel="Add" onPress={onSelect} onDemo={setDemo} />
         )}
+      />
+
+      <ExerciseDemoSheet
+        visible={demo != null}
+        catalogKey={demo?.catalogKey ?? null}
+        name={demo?.name ?? ''}
+        media={demo ? { uri: demo.mediaUri, type: demo.mediaType } : null}
+        onClose={() => setDemo(null)}
       />
     </View>
   );

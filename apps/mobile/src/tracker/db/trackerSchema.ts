@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 3;
+export const TRACKER_SCHEMA_VERSION = 5;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -53,6 +53,27 @@ export async function initTrackerSchema(): Promise<void> {
        rest_sec INTEGER
      )`,
   );
+  // v4 (Phase 2 exercises). On `exercises`: the catalogue link, how the exercise is logged
+  // (NULL = weight × reps), how its weight counts (NULL = the catalogue's, else as typed),
+  // the share of body weight its reps lift (NULL = the catalogue's, else none), finer
+  // muscles (NULL = the catalogue's, else classified from the name), and the member's own
+  // photo or video. On `set_entries`: time and distance (NULL on weight × reps rows; those
+  // rows keep weight_kg/reps, time/distance rows store 0 there).
+  await ensureColumn('exercises', 'catalog_key', 'TEXT');
+  await ensureColumn('exercises', 'log_type', 'TEXT');
+  await ensureColumn('exercises', 'load_mode', 'TEXT');
+  await ensureColumn('exercises', 'bw_share', 'REAL');
+  await ensureColumn('exercises', 'muscles', 'TEXT');
+  await ensureColumn('exercises', 'media_uri', 'TEXT');
+  await ensureColumn('exercises', 'media_type', 'TEXT');
+  await ensureColumn('set_entries', 'duration_sec', 'REAL');
+  await ensureColumn('set_entries', 'distance_m', 'REAL');
+  await getDb().execAsync('CREATE INDEX IF NOT EXISTS idx_exercises_catalog_key ON exercises(catalog_key)');
+  // v5 (Phase 2 review): how THIS set's weight was counted, when it differs from the
+  // exercise's current counting (NULL = follow the exercise). Written when the member
+  // changes an exercise's counting (its older sets keep the old reading) and on a Hevy
+  // import into an exercise that already counts "each" (Hevy numbers are as typed).
+  await ensureColumn('set_entries', 'load_mode', 'TEXT');
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }

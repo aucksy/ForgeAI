@@ -2,7 +2,7 @@
   "expo": {
     "name": "ForgeAI",
     "slug": "forgeai",
-    "version": "0.23.1",
+    "version": "0.24.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "forgeai",
@@ -70,7 +70,8 @@
         {
           "color": "#FF7A3B"
         }
-      ]
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -29,6 +29,8 @@ import {
   updateRoutine,
   updateRoutineExercise,
 } from '@/tracker/db/routineRepo';
+import { getTrackerExercisesByIds } from '@/tracker/db/exerciseInfo';
+import { hasReps, type LogType } from '@/tracker/engine/logTypes';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
@@ -47,6 +49,8 @@ export default function RoutineEditorScreen() {
   const [routine, setRoutine] = useState<PlanDayFull | null>(null);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
+  /** Phase 2: how each exercise is logged — timed and distance rows have no rep range. */
+  const [logTypes, setLogTypes] = useState<Map<string, LogType>>(new Map());
   // Seed the name field once per routine id — refocus (e.g. returning from
   // Add-exercise) must NOT clobber an in-progress, not-yet-committed rename.
   // Keyed by id so a duplicate (router.replace to a new id) reseeds correctly.
@@ -64,6 +68,13 @@ export default function RoutineEditorScreen() {
             seededId.current = r.id;
           }
           setLoading(false);
+          if (r) {
+            void getTrackerExercisesByIds(r.exercises.map((pe) => pe.exerciseId))
+              .then((infos) => {
+                if (alive) setLogTypes(new Map([...infos].map(([k, v]) => [k, v.logType])));
+              })
+              .catch(() => undefined);
+          }
         })
         .catch(() => {
           if (alive) setLoading(false);
@@ -305,27 +316,45 @@ export default function RoutineEditorScreen() {
                       min={1}
                       max={12}
                     />
-                    <Stepper
-                      label="Rep min"
-                      value={pe.repRangeMin}
-                      onChange={(v) =>
-                        patchExercise(pe.id, {
-                          repRangeMin: clamp(v, 1, 50),
-                          repRangeMax: Math.max(pe.repRangeMax, clamp(v, 1, 50)),
-                        })
-                      }
-                      min={1}
-                      max={50}
-                    />
-                    <Stepper
-                      label="Rep max"
-                      value={pe.repRangeMax}
-                      onChange={(v) =>
-                        patchExercise(pe.id, { repRangeMax: clamp(v, pe.repRangeMin, 50) })
-                      }
-                      min={pe.repRangeMin}
-                      max={50}
-                    />
+                    {hasReps(logTypes.get(pe.exerciseId) ?? 'weight_reps') ? (
+                      <>
+                        <Stepper
+                          label="Rep min"
+                          value={pe.repRangeMin}
+                          onChange={(v) =>
+                            patchExercise(pe.id, {
+                              repRangeMin: clamp(v, 1, 50),
+                              repRangeMax: Math.max(pe.repRangeMax, clamp(v, 1, 50)),
+                            })
+                          }
+                          min={1}
+                          max={50}
+                        />
+                        <Stepper
+                          label="Rep max"
+                          value={pe.repRangeMax}
+                          onChange={(v) =>
+                            patchExercise(pe.id, { repRangeMax: clamp(v, pe.repRangeMin, 50) })
+                          }
+                          min={pe.repRangeMin}
+                          max={50}
+                        />
+                      </>
+                    ) : (
+                      <Text
+                        style={{
+                          flex: 1,
+                          alignSelf: 'center',
+                          fontFamily: type.body,
+                          fontSize: type.size.caption,
+                          color: color.inkMuted,
+                        }}
+                      >
+                        {logTypes.get(pe.exerciseId) === 'time'
+                          ? 'Timed: the hold time grows from your last workouts.'
+                          : 'Distance: log how far, and how long.'}
+                      </Text>
+                    )}
                   </View>
                 </View>
               ))}

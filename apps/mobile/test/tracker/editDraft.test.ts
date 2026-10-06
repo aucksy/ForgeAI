@@ -287,3 +287,34 @@ describe('uneditableReason', () => {
     expect(why).toContain('Barbell Row');
   });
 });
+
+describe('Phase 2 review: an edit never drops or re-reads a saved set', () => {
+  const kinds = (logType: 'weight_reps' | 'time' | 'assisted') => ({
+    'ex-bench': { logType, loadMode: 'one' as const, distUnit: 'km' as const, catalogKey: null },
+  });
+  const roundTrip = (s: SessionDetail, m: Record<string, SetMeta>, k: ReturnType<typeof kinds>) =>
+    draftToRichSets(buildEditDraft(s, m, {}, deps, k));
+
+  it('a timed Hevy row on a weight × reps exercise goes back exactly as it was', () => {
+    const s = session({ exercises: [{ exercise: BENCH, sets: [entry('t1', { weightKg: 0, reps: 0 })], volumeKg: 0 }] });
+    const rows = roundTrip(s, { t1: meta({ durationSec: 45 }) }, kinds('weight_reps'));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ weightKg: 0, reps: 0, durationSec: 45 });
+  });
+  it('reps logged by chat on a timed exercise survive an edit', () => {
+    const s = session({ exercises: [{ exercise: BENCH, sets: [entry('r1', { weightKg: 3, reps: 45 })], volumeKg: 0 }] });
+    const rows = roundTrip(s, {}, kinds('time'));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ weightKg: 3, reps: 45 });
+  });
+  it('a run with time AND distance on a timed exercise keeps both', () => {
+    const s = session({ exercises: [{ exercise: BENCH, sets: [entry('c1', { weightKg: 0, reps: 0 })], volumeKg: 0 }] });
+    const rows = roundTrip(s, { c1: meta({ durationSec: 1200, distanceM: 2400 }) }, kinds('time'));
+    expect(rows[0]).toMatchObject({ durationSec: 1200, distanceM: 2400 });
+  });
+  it('a set logged before the counting changed keeps its own counting', () => {
+    const rows = roundTrip(session(), { s1: meta({ loadMode: 'one' }) }, kinds('weight_reps'));
+    expect(rows[0].loadMode).toBe('one');
+    expect(rows[1]).not.toHaveProperty('loadMode'); // a plain row keeps its exact shape
+  });
+});

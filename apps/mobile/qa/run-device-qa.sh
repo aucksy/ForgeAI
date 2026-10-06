@@ -76,6 +76,12 @@ log "part B start"
 maestro test --format junit --output "$OUT/part-b.xml" --test-output-dir "$OUT/part-b" "$QA_DIR/phase1-b.yaml" \
   > "$OUT/part-b.log" 2>&1 || { status=1; log "PART B FAILED"; }
 
+# ---------------------------------------------------------------- part C (Phase 2 exercises)
+adb shell cmd statusbar collapse >/dev/null 2>&1 || true
+log "part C start"
+maestro test --format junit --output "$OUT/part-c.xml" --test-output-dir "$OUT/part-c" "$QA_DIR/phase2-c.yaml" \
+  > "$OUT/part-c.log" 2>&1 || { status=1; log "PART C FAILED"; }
+
 # ---------------------------------------------------------------- crash check
 adb logcat -d > "$OUT/logcat.txt"
 if grep -q "FATAL EXCEPTION" "$OUT/logcat.txt"; then

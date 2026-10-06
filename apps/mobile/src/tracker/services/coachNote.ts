@@ -17,12 +17,14 @@
 import { DEFAULT_GROQ_MODEL } from '@/ai/models';
 import { chatGroq } from '@/ai/providers/groq';
 import { getLastSessionOfDayType } from '@/db/repos/workoutRepo';
+import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getGroqKey } from '@/lib/keys';
 import { fmtInt, trimNum } from '@/lib/format';
 import { useSettings } from '@/store/settingsStore';
 import type { SessionDetail } from '@/types/models';
 
 import { dayTypeLabel } from './finishSummary';
+import { withVolume } from './volumeService';
 import type { SessionSummaryData } from './finishSummary';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 
@@ -66,7 +68,8 @@ export function buildSessionNote(
   }
 
   // 3) First time on this day type / no prior volume — recovery + next-focus cue.
-  const topMuscle = data.muscles[0]?.muscleGroup;
+  const top = data.muscles[0]?.muscle;
+  const topMuscle = top ? MUSCLE_LABEL[top] : null;
   if (topMuscle) {
     return `${dayLabel} done — ${data.workingSetCount} working sets, ${cap(topMuscle)} took the brunt. Protein and sleep now; that's where growth happens.`;
   }
@@ -78,6 +81,12 @@ export interface CoachNote {
   source: 'engine' | 'groq';
 }
 
+/** The previous workout of the same day type, its volume counted by the Phase 2 rule (like today's). */
+async function lastSameTypeWithVolume(data: SessionSummaryData): Promise<SessionDetail | null> {
+  const prev = await getLastSessionOfDayType(data.session.dayType, data.session.dateISO);
+  return prev ? (await withVolume([prev]))[0] : null;
+}
+
 /** The always-shown deterministic note (fetches the prior same-day-type session). */
 export async function getSessionCoachNote(data: SessionSummaryData): Promise<CoachNote> {
   // `date_iso < beforeISO` excludes today's just-saved session → the PREVIOUS
@@ -85,7 +94,7 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
   // ever fails, still return a note (prev=null) so the coach card ALWAYS shows.
   let prev: SessionDetail | null = null;
   try {
-    prev = await getLastSessionOfDayType(data.session.dayType, data.session.dateISO);
+    prev = await lastSameTypeWithVolume(data);
   } catch {
     prev = null;
   }
@@ -105,7 +114,7 @@ function factSheet(data: SessionSummaryData, prevSameType: SessionDetail | null)
         .join('; ')}`,
     );
   }
-  const muscles = data.muscles.slice(0, 3).map((m) => m.muscleGroup);
+  const muscles = data.muscles.slice(0, 3).map((m) => MUSCLE_LABEL[m.muscle].toLowerCase());
   if (muscles.length > 0) lines.push(`Top muscles: ${muscles.join(', ')}`);
   if (prevSameType && prevSameType.totalVolumeKg > 0) {
     const pct = Math.round(
@@ -134,7 +143,7 @@ export async function getCloudCoachNote(data: SessionSummaryData): Promise<strin
   const key = await getGroqKey();
   if (!key) return null; // no key → stay offline
   try {
-    const prevSameType = await getLastSessionOfDayType(data.session.dayType, data.session.dateISO);
+    const prevSameType = await lastSameTypeWithVolume(data);
     const model = useSettings.getState().ai.groqModel || DEFAULT_GROQ_MODEL;
     const turn = await chatGroq(
       { apiKey: key, model },

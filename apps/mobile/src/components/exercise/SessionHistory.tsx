@@ -5,34 +5,61 @@ import { Card, SectionHeader } from '@/components/ui';
 import { shortDate } from '@/lib/date';
 import { fmtCompact, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { color, motion, radius, space, type } from '@/theme/tokens';
-import type { ExerciseStats, SetEntry, UnitSystem } from '@/types/models';
+import type { ExerciseHistoryEntry, TrackedSetEntry } from '@/tracker/db/exerciseHistory';
+import { fmtSetCompact, typedWeight, type DistUnit, type LogType } from '@/tracker/engine/logTypes';
+import type { UnitSystem } from '@/types/models';
 
 export interface SessionHistoryProps {
-  history: ExerciseStats['history'];
+  history: ExerciseHistoryEntry[];
   units: UnitSystem;
   /** How many sessions to render (newest first). Default 15. */
   maxSessions?: number;
+  /** Phase 2: how the exercise is logged (absent = weight × reps). */
+  logType?: LogType;
+  distUnit?: DistUnit;
 }
 
-/** Index of the top working set (heaviest, then most reps) for emphasis. */
-function topSetIndex(sets: SetEntry[]): number {
+/** Index of the top working set for emphasis: heaviest then most reps; longest / farthest for time and distance. */
+function topSetIndex(sets: TrackedSetEntry[], lt: LogType): number {
+  const score = (s: TrackedSetEntry): [number, number] => {
+    if (lt === 'time') return [s.durationSec ?? 0, 0];
+    if (lt === 'distance' || lt === 'time_distance') return [s.distanceM ?? 0, -(s.durationSec ?? 0)];
+    if (lt === 'reps') return [s.reps, s.weightKg];
+    return [s.weightKg, s.reps];
+  };
   let top = -1;
   for (let i = 0; i < sets.length; i++) {
-    const s = sets[i];
-    if (s.isWarmup) continue;
-    if (
-      top === -1 ||
-      s.weightKg > sets[top].weightKg ||
-      (s.weightKg === sets[top].weightKg && s.reps > sets[top].reps)
-    ) {
+    if (sets[i].isWarmup) continue;
+    if (top === -1) {
       top = i;
+      continue;
     }
+    const [a1, a2] = score(sets[i]);
+    const [b1, b2] = score(sets[top]);
+    if (a1 > b1 || (a1 === b1 && a2 > b2)) top = i;
   }
   return top;
 }
 
-function SetChip({ set, units, top }: { set: SetEntry; units: UnitSystem; top: boolean }) {
-  const label = `${trimNum(kgToDisplay(set.weightKg, units))} × ${set.reps}`;
+function SetChip({
+  set,
+  units,
+  top,
+  lt,
+  distUnit,
+}: {
+  set: TrackedSetEntry;
+  units: UnitSystem;
+  top: boolean;
+  lt: LogType;
+  distUnit: DistUnit;
+}) {
+  const label =
+    lt === 'weight_reps'
+      ? `${trimNum(kgToDisplay(set.weightKg, units))} × ${set.reps}`
+      : lt === 'assisted'
+        ? `${trimNum(typedWeight(lt, set.weightKg))} × ${set.reps}`
+        : fmtSetCompact(set, lt, distUnit).replace('×', ' × ');
   return (
     <View
       style={{
@@ -59,7 +86,7 @@ function SetChip({ set, units, top }: { set: SetEntry; units: UnitSystem; top: b
 }
 
 /** Recent sessions: date header, sets as chips (top set embered, warmups dimmed). */
-export function SessionHistory({ history, units, maxSessions = 15 }: SessionHistoryProps) {
+export function SessionHistory({ history, units, maxSessions = 15, logType = 'weight_reps', distUnit = 'km' }: SessionHistoryProps) {
   const shown = history.slice(0, maxSessions);
   const unit = weightUnit(units);
 
@@ -71,7 +98,7 @@ export function SessionHistory({ history, units, maxSessions = 15 }: SessionHist
       <SectionHeader title="Recent sessions" />
       <Card style={{ paddingVertical: space.xs }}>
         {shown.map((h, i) => {
-          const top = topSetIndex(h.sets);
+          const top = topSetIndex(h.sets, logType);
           return (
           <View
             key={h.sessionId}
@@ -94,19 +121,21 @@ export function SessionHistory({ history, units, maxSessions = 15 }: SessionHist
               >
                 {shortDate(h.dateISO)}
               </Text>
-              <Text
-                style={{
-                  fontFamily: type.mono,
-                  fontSize: type.size.sub,
-                  color: color.inkSecondary,
-                }}
-              >
-                {fmtCompact(kgToDisplay(h.volumeKg, units))} {unit} vol
-              </Text>
+              {h.volumeKg > 0 ? (
+                <Text
+                  style={{
+                    fontFamily: type.mono,
+                    fontSize: type.size.sub,
+                    color: color.inkSecondary,
+                  }}
+                >
+                  {fmtCompact(kgToDisplay(h.volumeKg, units))} {unit} vol
+                </Text>
+              ) : null}
             </View>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
               {h.sets.map((s, si) => (
-                <SetChip key={s.id} set={s} units={units} top={si === top} />
+                <SetChip key={s.id} set={s} units={units} top={si === top} lt={logType} distUnit={distUnit} />
               ))}
             </View>
           </View>

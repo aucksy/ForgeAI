@@ -36,7 +36,11 @@ const TABLES: readonly { name: string; cols: readonly string[] }[] = [
   },
   {
     name: 'exercises',
-    cols: ['id', 'name', 'aliases', 'muscle_group', 'secondary_muscles', 'equipment', 'is_compound', 'increment_kg'],
+    // + the additive Phase 2 columns (tracker schema v4): catalogue link, how it is logged
+    // and counted, finer muscles, the member's own photo/video path (the file itself stays
+    // on the phone). Older backups lack them → NULL, exactly like the 5b/5c set columns.
+    cols: ['id', 'name', 'aliases', 'muscle_group', 'secondary_muscles', 'equipment', 'is_compound', 'increment_kg',
+      'catalog_key', 'log_type', 'load_mode', 'bw_share', 'muscles', 'media_uri', 'media_type'],
   },
   { name: 'workout_plans', cols: ['id', 'name', 'is_active'] },
   { name: 'plan_days', cols: ['id', 'plan_id', 'day_type', 'day_order', 'name'] },
@@ -55,7 +59,7 @@ const TABLES: readonly { name: string; cols: readonly string[] }[] = [
     // Drive backup lossless. Old backups lack these keys → batchInsert's `row[c] ?? null`
     // restores them as NULL (backward-compatible; no SCHEMA_VERSION bump needed).
     cols: ['id', 'session_id', 'exercise_id', 'set_number', 'weight_kg', 'reps', 'is_warmup',
-      'rpe', 'set_type', 'note', 'superset_group'],
+      'rpe', 'set_type', 'note', 'superset_group', 'duration_sec', 'distance_m', 'load_mode'],
   },
   {
     name: 'personal_records',

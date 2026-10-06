@@ -83,7 +83,7 @@ export default function AnalyticsScreen() {
               target={profile ? profile.proteinTargetG : null}
               index={4}
             />
-            <MuscleSection data={bundle.muscleVolume} index={5} />
+            <MuscleSection data={bundle.muscleSets} index={5} />
             <ConsistencySection
               cells={bundle.consistency}
               rangeDays={range}

@@ -18,6 +18,7 @@ import { getDb, getMeta, setMeta } from '@/db';
 import { forceReseed } from '@/db/seed';
 import { todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
+import { forgetCatalogSync, markCatalogSynced, resyncExerciseCatalog } from '@/tracker/catalog/catalogSync';
 
 import { insertExerciseCatalog } from './catalog';
 import type { OnboardingInput } from '../form';
@@ -186,6 +187,8 @@ export async function completeOnboarding(input: OnboardingInput): Promise<void> 
       ]);
     }
   });
+  // The whole bundled library went in above; nothing to link or top up on next launch.
+  await markCatalogSynced().catch(() => undefined);
 }
 
 /**
@@ -208,7 +211,13 @@ export async function loadDemoData(): Promise<void> {
   // harmless state, whereas "seeded but unflagged" would present Arjun's 13 weeks
   // as the member's own training with no demo badge — the exact W1 failure.
   await setMeta(DEMO_FLAG, '1');
+  // Before the seed commits: a kill right after it still links the demo to the library.
+  await forgetCatalogSync().catch(() => undefined);
   await forceReseed();
+  // Phase 2: the demo seed writes its ~40 exercises; link them to the bundled library
+  // (pictures, steps, types — the demo is known to log one dumbbell's weight) and add the
+  // rest. A failure here leaves the demo usable; the next launch retries the sync.
+  await resyncExerciseCatalog(true).catch(() => undefined);
 }
 
 /**

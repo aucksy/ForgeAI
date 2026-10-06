@@ -45,10 +45,20 @@
 import { getDb } from '@/db';
 import type { SetEntry } from '@/types/models';
 
+import { isLoadMode, type LoadMode } from '../engine/logTypes';
+
+/** A working set plus Phase 2's time and distance (null on weight × reps rows). */
+export interface TrackedSetEntry extends SetEntry {
+  durationSec?: number | null;
+  distanceM?: number | null;
+  /** The set's own counting, when it differs from the exercise's current way. */
+  loadMode?: LoadMode | null;
+}
+
 export interface ExerciseHistoryEntry {
   sessionId: string;
   dateISO: string;
-  sets: SetEntry[];
+  sets: TrackedSetEntry[];
   volumeKg: number;
 }
 
@@ -61,10 +71,13 @@ interface HistoryRow {
   reps: number;
   is_warmup: number;
   date_iso: string;
+  duration_sec: number | null;
+  distance_m: number | null;
+  load_mode: string | null;
 }
 
-function mapSet(r: HistoryRow): SetEntry {
-  return {
+function mapSet(r: HistoryRow): TrackedSetEntry {
+  const s: TrackedSetEntry = {
     id: r.id,
     sessionId: r.session_id,
     exerciseId: r.exercise_id,
@@ -73,11 +86,16 @@ function mapSet(r: HistoryRow): SetEntry {
     reps: r.reps,
     isWarmup: r.is_warmup === 1,
   };
+  // Only when present, so weight × reps rows keep the exact frozen shape.
+  if (r.duration_sec != null) s.durationSec = r.duration_sec;
+  if (r.distance_m != null) s.distanceM = r.distance_m;
+  if (isLoadMode(r.load_mode)) s.loadMode = r.load_mode;
+  return s;
 }
 
-/** Columns of the frozen `SetRow` shape, plus the session's date. */
+/** Columns of the frozen `SetRow` shape, plus the session's date and Phase 2's time/distance. */
 const COLS = `se.id, se.session_id, se.exercise_id, se.set_number, se.weight_kg, se.reps,
-              se.is_warmup, ws.date_iso AS date_iso`;
+              se.is_warmup, ws.date_iso AS date_iso, se.duration_sec, se.distance_m, se.load_mode`;
 
 const ORDER = 'ORDER BY ws.started_at DESC, ws.date_iso DESC, se.set_number ASC';
 

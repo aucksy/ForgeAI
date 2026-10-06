@@ -9,8 +9,15 @@
  * library match else a newly created custom exercise (muscle via a keyword
  * classifier, equipment from the "(...)" suffix), warmup -> isWarmup, (Phase 5b)
  * per-set rpe + dropset/failure set types, and (Phase 5c) superset_id -> per-workout
- * group + exercise_notes -> per-exercise note. Rows that are duration/distance-only
- * (Plank, Treadmill — no reps) are skipped.
+ * group + exercise_notes -> per-exercise note.
+ *
+ * Phase 2: timed and distance rows (Plank, Treadmill — no reps) are KEPT as time /
+ * distance sets (duration_seconds, distance_km), where earlier versions dropped them.
+ * "(Assisted)" titles are assisted moves (Hevy exports the help as a positive kg; it is
+ * stored negative), "(Weighted)" titles carry the added weight, and a Hevy title that the
+ * bundled library knows ("Bench Press (Barbell)", "Pull Up") lands on that library exercise
+ * — with its picture, steps and type — instead of a new custom copy. A Merge re-run also
+ * adds the timed and distance sets that earlier imports skipped to workouts already here.
  *
  * Writes reuse createSession + addSetsWithMeta (which wraps the frozen addSets — its
  * auto set-numbering AND PR detection — then persists rpe/set_type via the additive
@@ -18,10 +25,12 @@
  */
 import * as XLSX from 'xlsx';
 
-import { getDb } from '@/db';
-import { createExercise, getAllExercises } from '@/db/repos/exerciseRepo';
+import { getDb, getMeta, setMeta } from '@/db';
+import { createExercise } from '@/db/repos/exerciseRepo';
 import { createSession, deleteSession, getSessionsBetween } from '@/db/repos/workoutRepo';
+import { catalogEntry, catalogEntryByName } from '@/tracker/catalog/exerciseCatalog';
 import { addSetsWithMeta } from '@/tracker/db/trackerSets';
+import { isLoadMode, isLogType, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import type { DayType, Exercise, MuscleGroup } from '@/types/models';
 
 type Equipment = Exercise['equipment'];
@@ -34,14 +43,25 @@ const MAX_ISO = '9999-12-31';
 
 export type ImportMode = 'replace' | 'merge';
 
+/**
+ * Set after the first Phase 2 import. The Merge backfill (timed / distance rows that
+ * versions before Phase 2 dropped) runs only before it — once — so a later Merge never
+ * brings back timed sets the member deleted on purpose.
+ */
+const TIMED_BACKFILL_KEY = 'hevy_timed_backfill_done';
+
 interface ParsedSet {
-  weightKg: number; // 0 for bodyweight (null in the file)
-  reps: number;
+  weightKg: number; // 0 for bodyweight (null in the file); as exported (help is positive)
+  reps: number; // 0 on a timed / distance row
   isWarmup: boolean;
   /** Working-set variant from Hevy's set_type (dropset/failure); warm-up via isWarmup. */
   setType: 'normal' | 'drop' | 'failure';
   rpe: number | null;
   setIndex: number;
+  /** Phase 2: seconds (duration_seconds), null when absent. */
+  durationSec: number | null;
+  /** Phase 2: metres (distance_km × 1000), null when absent. */
+  distanceM: number | null;
 }
 
 interface ParsedExercise {
@@ -65,8 +85,10 @@ interface ParsedWorkout {
 export interface ParsedHevy {
   workouts: ParsedWorkout[]; // chronological ascending (oldest first)
   distinctExerciseTitles: string[]; // only titles that have >= 1 valid set
-  skippedRows: number; // duration/distance-only rows dropped
+  skippedRows: number; // rows with nothing to log (no reps, time or distance)
   totalSetRows: number;
+  /** Phase 2: rows kept as time / distance sets (earlier versions dropped them). */
+  timedRows: number;
 }
 
 export interface ImportPreview {
@@ -78,6 +100,8 @@ export interface ImportPreview {
   skippedRows: number;
   existingWorkouts: number; // current sessions in the DB (for the Replace warning)
   dateRange: { fromISO: string; toISO: string } | null;
+  /** Phase 2: timed / distance sets in the file. */
+  timedSets: number;
 }
 
 export interface ImportResult {
@@ -86,6 +110,8 @@ export interface ImportResult {
   emptyWorkouts: number; // workouts with 0 valid sets, skipped
   setsInserted: number;
   createdExercises: number;
+  /** Phase 2 (Merge): timed / distance sets added to workouts imported before they were supported. */
+  backfilledSets: number;
 }
 
 // ---------------------------------------------------------------- text utils
@@ -226,6 +252,58 @@ function buildExerciseInput(title: string): Omit<Exercise, 'id'> {
   };
 }
 
+/**
+ * How a NEW exercise from a Hevy title is logged (Phase 2), read from the title's
+ * "(Assisted)" / "(Weighted)" suffix and from what its rows carry. PURE.
+ */
+export function inferLogType(title: string, sets: readonly Pick<ParsedSet, 'weightKg' | 'reps' | 'durationSec' | 'distanceM'>[]): LogType {
+  const t = title.toLowerCase();
+  if (/\(assisted\)|\bassisted\b|band assisted/.test(t)) return 'assisted';
+  if (/\(weighted\)/.test(t)) return 'weighted';
+  const withReps = sets.filter((s) => s.reps > 0);
+  if (withReps.length > 0) {
+    if (classifyEquipment(title) === 'bodyweight' && withReps.every((s) => s.weightKg === 0)) return 'reps';
+    return 'weight_reps';
+  }
+  const anyDistance = sets.some((s) => (s.distanceM ?? 0) > 0);
+  const anyTime = sets.some((s) => (s.durationSec ?? 0) > 0);
+  if (anyDistance && anyTime) return 'time_distance';
+  if (anyDistance) return 'distance';
+  return 'time';
+}
+
+/**
+ * What `weight_kg` stores for an imported set of this type: help is negative (Hevy exports
+ * it positive). A carried weight on a timed or distance row (farmer's walk, sled push,
+ * weighted hold) is kept: volume ignores it for those types, the export still shows it. PURE.
+ */
+export function importedWeight(logType: LogType, weightKg: number): number {
+  if (logType === 'assisted') return -Math.abs(weightKg);
+  if (logType === 'time' || logType === 'distance' || logType === 'time_distance') return Math.max(0, weightKg);
+  return weightKg;
+}
+
+/**
+ * How an exercise's imported Hevy weights are read. Hevy keeps one number per set, typed
+ * however the member typed it - the owner's export has both dumbbells as one number
+ * (Hammer Curl 25 kg next to 12.5 kg one-arm curls). So imported history reads "as typed":
+ *  - an exercise nobody has logged yet takes "weight as typed" for good - the same as the
+ *    launch sync gives a member's own history - so a file reads the same on a new phone
+ *    as on an upgraded one;
+ *  - an exercise already logged "each" in ForgeAI keeps that for its own sets; only the
+ *    imported sets are marked "as typed".
+ * PURE.
+ */
+export function importCounting(
+  row: { loadMode: string | null; catalogKey: string | null },
+  hadSets: boolean,
+): { freeze: boolean; setMode: LoadMode | null } {
+  const effective: LoadMode = isLoadMode(row.loadMode) ? row.loadMode : catalogEntry(row.catalogKey)?.loadMode ?? 'one';
+  if (effective === 'one') return { freeze: false, setMode: null };
+  if (row.loadMode == null && !hadSets) return { freeze: true, setMode: null };
+  return { freeze: false, setMode: 'one' };
+}
+
 // ---------------------------------------------------------------- parsing
 
 type RawRow = Record<string, unknown>;
@@ -269,6 +347,7 @@ export function parseHevyBase64(base64: string): ParsedHevy {
   const byStart = new Map<string, ParsedWorkout>();
   let skippedRows = 0;
   let totalSetRows = 0;
+  let timedRows = 0;
 
   for (const r of rows) {
     totalSetRows += 1;
@@ -276,12 +355,17 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     const startedAt = parseHevyDate(startRaw);
     const exTitle = asString(r['exercise_title']).trim();
     const reps = asNumber(r['reps']);
-    // A "set" needs a positive rep count; duration/distance-only rows (Plank,
-    // Treadmill) have null reps and are skipped.
-    if (startedAt === null || exTitle === '' || reps === null || reps <= 0) {
+    const duration = asNumber(r['duration_seconds']);
+    const distanceKm = asNumber(r['distance_km']);
+    const durationSec = duration != null && duration > 0 ? Math.round(duration) : null;
+    const distanceM = distanceKm != null && distanceKm > 0 ? Math.round(distanceKm * 1000 * 10) / 10 : null;
+    const hasReps = reps !== null && reps > 0;
+    // A set needs reps, a time or a distance (Phase 2 keeps Plank / Treadmill rows).
+    if (startedAt === null || exTitle === '' || (!hasReps && durationSec === null && distanceM === null)) {
       skippedRows += 1;
       continue;
     }
+    if (!hasReps) timedRows += 1;
     const weightKg = asNumber(r['weight_kg']) ?? 0; // null weight = bodyweight
     const rawSetType = asString(r['set_type']).toLowerCase().trim();
     const isWarmup = rawSetType === 'warmup';
@@ -322,7 +406,16 @@ export function parseHevyBase64(base64: string): ParsedHevy {
       };
       workout.exercises.push(exercise);
     }
-    exercise.sets.push({ weightKg, reps: Math.round(reps), isWarmup, setType, rpe, setIndex });
+    exercise.sets.push({
+      weightKg,
+      reps: hasReps ? Math.round(reps as number) : 0,
+      isWarmup,
+      setType,
+      rpe,
+      setIndex,
+      durationSec,
+      distanceM,
+    });
   }
 
   const workouts = [...byStart.values()].sort((a, b) => a.startedAt - b.startedAt);
@@ -338,15 +431,54 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     distinctExerciseTitles: [...titles],
     skippedRows,
     totalSetRows,
+    timedRows,
   };
 }
 
 // ---------------------------------------------------------------- preview
 
+interface LibraryRow {
+  id: string;
+  name: string;
+  catalogKey: string | null;
+  logType: LogType;
+  /** The row's own counting column (null = the catalogue's). */
+  loadMode?: string | null;
+}
+
+async function readLibrary(): Promise<LibraryRow[]> {
+  const rows = await getDb().getAllAsync<{
+    id: string;
+    name: string;
+    catalog_key: string | null;
+    log_type: string | null;
+    load_mode: string | null;
+  }>('SELECT id, name, catalog_key, log_type, load_mode FROM exercises');
+  return rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    catalogKey: r.catalog_key,
+    logType: isLogType(r.log_type) ? r.log_type : 'weight_reps',
+    loadMode: r.load_mode,
+  }));
+}
+
+/**
+ * The library row a Hevy title lands on: an exact name match first, else the row linked to
+ * the library entry that title means ("Bench Press (Barbell)" → Barbell Bench Press). PURE.
+ */
+export function matchTitle(title: string, library: readonly LibraryRow[]): LibraryRow | null {
+  const key = norm(title);
+  const exact = library.find((e) => norm(e.name) === key);
+  if (exact) return exact;
+  const entry = catalogEntryByName(title);
+  if (!entry) return null;
+  return library.find((e) => e.catalogKey === entry.key) ?? null;
+}
+
 /** Analyze a parse against the current library + history — no DB writes. */
 export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> {
-  const library = await getAllExercises();
-  const known = new Set(library.map((e) => norm(e.name)));
+  const library = await readLibrary();
   // Count how many exercises will actually be CREATED — dedupe by normalized name
   // so the "N new" figure matches runImport (which creates once per unique norm).
   const newExercises: string[] = [];
@@ -354,7 +486,7 @@ export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> 
   let matched = 0;
   for (const title of parsed.distinctExerciseTitles) {
     const key = norm(title);
-    if (known.has(key)) {
+    if (matchTitle(title, library)) {
       matched += 1;
     } else if (!newSeen.has(key)) {
       newSeen.add(key);
@@ -383,6 +515,7 @@ export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> 
     skippedRows: parsed.skippedRows,
     existingWorkouts,
     dateRange,
+    timedSets: parsed.timedRows,
   };
 }
 
@@ -406,8 +539,10 @@ export async function runImport(
     emptyWorkouts: 0,
     setsInserted: 0,
     createdExercises: 0,
+    backfilledSets: 0,
   };
   const total = parsed.workouts.length;
+  const backfillDone = (await getMeta(TIMED_BACKFILL_KEY).catch(() => null)) === '1';
 
   await getDb().withTransactionAsync(async () => {
     // 1. Replace mode: clear all existing workouts (PRs cascade via deleteSession).
@@ -419,22 +554,72 @@ export async function runImport(
     // 2. Idempotency guard — start times already in the DB (empty after a replace).
     const remaining = await getSessionsBetween(MIN_ISO, MAX_ISO);
     const seenStarts = new Set<number>(remaining.map((s) => s.startedAt));
+    const sessionByStart = new Map<number, string>(remaining.map((s) => [s.startedAt, s.id]));
 
-    // 3. Resolve every distinct exercise title once: exact-name match else create.
-    const library = await getAllExercises();
-    const idByNormName = new Map(library.map((e) => [norm(e.name), e.id]));
-    const idByTitle = new Map<string, string>();
-    for (const title of parsed.distinctExerciseTitles) {
-      const key = norm(title);
-      let id = idByNormName.get(key);
-      if (!id) {
-        const created = await createExercise(buildExerciseInput(title));
-        id = created.id;
-        idByNormName.set(key, id);
-        result.createdExercises += 1;
-      }
-      idByTitle.set(title, id);
+    // 3. Resolve every distinct exercise title once: an exact name or the library
+    //    exercise the title means, else a new custom exercise logged the way its rows are.
+    const library = await readLibrary();
+    const setsByTitle = new Map<string, ParsedSet[]>();
+    for (const w of parsed.workouts) {
+      for (const ex of w.exercises) setsByTitle.set(ex.title, [...(setsByTitle.get(ex.title) ?? []), ...ex.sets]);
     }
+    const byTitle = new Map<string, { id: string; logType: LogType; setMode?: LoadMode | null }>();
+    for (const title of parsed.distinctExerciseTitles) {
+      const hit = matchTitle(title, library);
+      if (hit) {
+        byTitle.set(title, { id: hit.id, logType: hit.logType });
+        continue;
+      }
+      const logType = inferLogType(title, setsByTitle.get(title) ?? []);
+      const entry = catalogEntryByName(title);
+      const linkKey = entry && !library.some((e) => e.catalogKey === entry.key) ? entry.key : null;
+      const created = await createExercise(buildExerciseInput(title));
+      await getDb().runAsync('UPDATE exercises SET log_type = ?, catalog_key = ? WHERE id = ?', [
+        logType,
+        linkKey,
+        created.id,
+      ]);
+      library.push({ id: created.id, name: created.name, catalogKey: linkKey, logType, loadMode: null });
+      byTitle.set(title, { id: created.id, logType });
+      result.createdExercises += 1;
+    }
+
+    // 3b. How each target's imported weights count (see importCounting): read "as typed".
+    const counts = await getDb().getAllAsync<{ exercise_id: string; n: number }>(
+      'SELECT exercise_id, COUNT(*) AS n FROM set_entries GROUP BY exercise_id',
+    );
+    const hadSets = new Set(counts.filter((c) => c.n > 0).map((c) => c.exercise_id));
+    const rowById = new Map(library.map((r) => [r.id, r]));
+    const frozen = new Set<string>();
+    for (const target of byTitle.values()) {
+      const row = rowById.get(target.id);
+      if (!row) continue;
+      const how = importCounting({ loadMode: row.loadMode ?? null, catalogKey: row.catalogKey }, hadSets.has(target.id));
+      if (how.freeze && !frozen.has(target.id)) {
+        await getDb().runAsync("UPDATE exercises SET load_mode = 'one' WHERE id = ? AND load_mode IS NULL", [target.id]);
+        frozen.add(target.id);
+      }
+      target.setMode = how.setMode;
+    }
+
+    const toRich = (ex: ParsedExercise, group: number | null) => {
+      const target = byTitle.get(ex.title);
+      if (!target) return [];
+      return ex.sets.map((st, i) => ({
+        exerciseId: target.id,
+        weightKg: importedWeight(target.logType, st.weightKg),
+        reps: st.reps,
+        isWarmup: st.isWarmup,
+        rpe: st.isWarmup ? null : st.rpe,
+        setType: st.isWarmup ? undefined : st.setType,
+        supersetGroup: group,
+        // Per-exercise note on the first set (becomes set_number 1).
+        note: i === 0 ? ex.note : null,
+        durationSec: st.durationSec,
+        distanceM: st.distanceM,
+        loadMode: target.setMode ?? null,
+      }));
+    };
 
     // 4. One session per workout (chronological, so PRs accrue in real order).
     let done = 0;
@@ -442,6 +627,27 @@ export async function runImport(
       done += 1;
       if (seenStarts.has(w.startedAt)) {
         result.skippedExisting += 1;
+        // Merge re-run: earlier versions dropped timed / distance rows. Add them to this
+        // already-imported workout when that exercise has nothing in it yet.
+        const sessionId = sessionByStart.get(w.startedAt);
+        if (mode === 'merge' && sessionId && !backfillDone) {
+          const timedOnly = w.exercises.filter((ex) => ex.sets.length > 0 && ex.sets.every((st) => st.reps === 0));
+          if (timedOnly.length > 0) {
+            const present = await getDb().getAllAsync<{ exercise_id: string }>(
+              'SELECT DISTINCT exercise_id FROM set_entries WHERE session_id = ?',
+              [sessionId],
+            );
+            const have = new Set(present.map((p) => p.exercise_id));
+            const add = timedOnly.flatMap((ex) => {
+              const target = byTitle.get(ex.title);
+              return target && !have.has(target.id) ? toRich(ex, null) : [];
+            });
+            if (add.length > 0) {
+              await addSetsWithMeta(sessionId, add);
+              result.backfilledSets += add.length;
+            }
+          }
+        }
         onProgress?.(done, total);
         continue;
       }
@@ -453,22 +659,9 @@ export async function runImport(
           supersetMap.set(ex.supersetId, ++groupCounter);
         }
       }
-      const sets = w.exercises.flatMap((ex) => {
-        const exerciseId = idByTitle.get(ex.title);
-        if (!exerciseId) return [];
-        const group = ex.supersetId ? supersetMap.get(ex.supersetId) ?? null : null;
-        return ex.sets.map((st, i) => ({
-          exerciseId,
-          weightKg: st.weightKg,
-          reps: st.reps,
-          isWarmup: st.isWarmup,
-          rpe: st.isWarmup ? null : st.rpe,
-          setType: st.isWarmup ? undefined : st.setType,
-          supersetGroup: group,
-          // Per-exercise note on the first set (becomes set_number 1).
-          note: i === 0 ? ex.note : null,
-        }));
-      });
+      const sets = w.exercises.flatMap((ex) =>
+        toRich(ex, ex.supersetId ? supersetMap.get(ex.supersetId) ?? null : null),
+      );
       if (sets.length === 0) {
         result.emptyWorkouts += 1;
         onProgress?.(done, total);
@@ -490,5 +683,6 @@ export async function runImport(
     }
   });
 
+  await setMeta(TIMED_BACKFILL_KEY, '1').catch(() => undefined);
   return result;
 }

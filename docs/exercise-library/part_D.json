@@ -1,0 +1,2860 @@
+[
+  {
+    "key": "air_squat",
+    "name": "Air Squat",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "pistol_squat",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bodyweight squat",
+      "free squat",
+      "uthak baithak",
+      "no weight squat"
+    ],
+    "linkNames": [
+      "Squat (Bodyweight)"
+    ],
+    "steps": [
+      "Stand with feet shoulder-width apart and arms out in front for balance.",
+      "Sit your hips back and down until your thighs are level with the floor.",
+      "Push through your whole foot to stand back up tall."
+    ]
+  },
+  {
+    "key": "jump_squat",
+    "name": "Jump Squat",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "air_squat",
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "squat jump",
+      "squat jumps",
+      "jumping squat"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with feet shoulder-width apart and squat down to about half depth.",
+      "Swing your arms up and jump straight up as high as you can.",
+      "Land softly with bent knees and go straight into the next rep."
+    ]
+  },
+  {
+    "key": "goblet_squat",
+    "name": "Goblet Squat",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "kettlebell goblet squat",
+      "kb goblet squat",
+      "dumbbell goblet squat",
+      "db goblet squat"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold one dumbbell or kettlebell upright against your chest with both hands.",
+      "Stand with feet a little wider than your shoulders, toes turned out slightly.",
+      "Squat down between your knees, keeping your chest up.",
+      "Stand back up by pressing through your heels."
+    ]
+  },
+  {
+    "key": "barbell_back_squat",
+    "name": "Barbell Squat",
+    "ek": "0122",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors",
+      "lower_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "squat",
+      "squats",
+      "back squat",
+      "baithak",
+      "bb squat",
+      "barbell back squat"
+    ],
+    "linkNames": [
+      "Squat (Barbell)"
+    ],
+    "steps": [
+      "Rest the bar on your upper back and step out of the rack.",
+      "Stand with feet shoulder-width apart, toes turned out slightly.",
+      "Lower yourself until your thighs are at least level with the floor.",
+      "Push up through your whole foot, keeping your chest up and back flat."
+    ]
+  },
+  {
+    "key": "pistol_squat",
+    "name": "Pistol Squat",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "abs"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "air_squat",
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one leg squat",
+      "single leg squat",
+      "pistol squats"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand on one leg with the other leg held straight out in front.",
+      "Reach your arms forward and slowly squat down on the standing leg.",
+      "Go as low as you can control, then push back up to standing.",
+      "Hold a post for balance until you are strong enough to go without."
+    ]
+  },
+  {
+    "key": "front_squat",
+    "name": "Front Squat",
+    "ek": "0138",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "front squats",
+      "barbell front squat"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Rest the bar on the front of your shoulders with your elbows high.",
+      "Step back from the rack and stand with feet shoulder-width apart.",
+      "Squat down, keeping your chest up and elbows pointing forward.",
+      "Push through your feet to stand back up."
+    ]
+  },
+  {
+    "key": "hack_squat",
+    "name": "Hack Squat",
+    "ek": "0123",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "hack squat machine",
+      "hack machine",
+      "machine hack squat"
+    ],
+    "linkNames": [
+      "Hack Squat (Machine)"
+    ],
+    "steps": [
+      "Stand on the platform with your back on the pad, shoulders under the pads.",
+      "With feet shoulder-width apart, release the safety handles.",
+      "Lower yourself until your thighs are level with the foot platform.",
+      "Push through your feet to rise, without snapping your knees straight."
+    ]
+  },
+  {
+    "key": "reverse_hack_squat",
+    "name": "Reverse Hack Squat",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "quads",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse hack",
+      "facing hack squat"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand facing the pad of a hack squat machine, shoulders under the pads.",
+      "Release the safety handles and push your hips back as you bend your knees.",
+      "Lower until your thighs are level with the platform.",
+      "Push through your heels and squeeze your glutes to stand back up."
+    ]
+  },
+  {
+    "key": "smith_machine_squat",
+    "name": "Smith Machine Squat",
+    "ek": "0124",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith squat",
+      "smith machine squats"
+    ],
+    "linkNames": [
+      "Squat (Smith Machine)"
+    ],
+    "steps": [
+      "Set the bar on your upper back and unhook it by turning your wrists.",
+      "Walk your feet a little in front of the bar, shoulder-width apart.",
+      "Lower until your thighs are level with the floor.",
+      "Push up through your feet, and hook the bar back when you finish."
+    ]
+  },
+  {
+    "key": "box_squat",
+    "name": "Box Squat",
+    "ek": "0133",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bench squat",
+      "squat to box",
+      "squat to bench"
+    ],
+    "linkNames": [
+      "Box Squat (Barbell)"
+    ],
+    "steps": [
+      "Set a box behind you and rest the bar on your upper back.",
+      "Sit your hips back and squat down until you lightly touch the box.",
+      "Stay tight without relaxing on the box, then push up to standing."
+    ]
+  },
+  {
+    "key": "pause_squat",
+    "name": "Pause Squat",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors",
+      "lower_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "paused squat",
+      "pause back squat",
+      "paused back squat"
+    ],
+    "linkNames": [
+      "Pause Squat (Barbell)"
+    ],
+    "steps": [
+      "Rest the bar on your upper back and step out of the rack.",
+      "Squat until your hips sit level with your knees or lower.",
+      "Hold still at the bottom for two seconds, staying tight.",
+      "Push up through your whole foot to stand tall."
+    ]
+  },
+  {
+    "key": "dumbbell_squat",
+    "name": "Dumbbell Squat",
+    "ek": "0130",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db squat",
+      "dumbbell squats"
+    ],
+    "linkNames": [
+      "Squat (Dumbbell)"
+    ],
+    "steps": [
+      "Hold a dumbbell at each side, feet shoulder-width apart.",
+      "Sit your hips back and squat until your thighs are level with the floor.",
+      "Keep your chest up and push through your heels to stand."
+    ]
+  },
+  {
+    "key": "sumo_squat",
+    "name": "Sumo Squat",
+    "ek": "0152",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads",
+      "adductors"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "plie squat",
+      "pile squat",
+      "wide squat",
+      "dumbbell sumo squat",
+      "kettlebell sumo squat"
+    ],
+    "linkNames": [
+      "Sumo Squat (Dumbbell)",
+      "Sumo Squat (Kettlebell)"
+    ],
+    "steps": [
+      "Stand with feet wide, toes turned out, holding one dumbbell between your legs.",
+      "Bend your knees and lower straight down, pushing your knees out over your toes.",
+      "Push through your heels and squeeze your inner thighs to stand back up."
+    ]
+  },
+  {
+    "key": "barbell_sumo_squat",
+    "name": "Barbell Sumo Squat",
+    "ek": "0160",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads",
+      "adductors"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "wide stance squat",
+      "barbell wide squat",
+      "wide stance barbell squat"
+    ],
+    "linkNames": [
+      "Sumo Squat (Barbell)"
+    ],
+    "steps": [
+      "Rest the bar on your upper back and stand with feet wide, toes out.",
+      "Squat straight down, pushing your knees out in line with your toes.",
+      "Stop when your thighs are level with the floor, then stand back up."
+    ]
+  },
+  {
+    "key": "overhead_squat",
+    "name": "Overhead Squat",
+    "ek": "0151",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "front_delts",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "ohs",
+      "overhead barbell squat"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the bar overhead with a wide grip and your arms locked straight.",
+      "Stand with feet shoulder-width apart, toes turned out slightly.",
+      "Squat down, keeping the bar over the middle of your feet.",
+      "Stand back up with arms straight; learn it with an empty bar first."
+    ]
+  },
+  {
+    "key": "sissy_squat",
+    "name": "Sissy Squat",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "weighted_sissy_squat",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "sissy squats",
+      "sissy squat bench"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold a post with one hand and rise onto the balls of your feet.",
+      "Lean back as your knees travel forward, hips and shoulders in line.",
+      "Lower as far as is comfortable, then push back up using your thighs."
+    ]
+  },
+  {
+    "key": "weighted_sissy_squat",
+    "name": "Weighted Sissy Squat",
+    "ek": "0158",
+    "equipment": "bodyweight",
+    "type": "weighted",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "sissy_squat",
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "plate sissy squat",
+      "sissy squat with plate"
+    ],
+    "linkNames": [
+      "Sissy Squat (Weighted)"
+    ],
+    "steps": [
+      "Hug a plate to your chest and hold a post with your free hand.",
+      "Rise onto the balls of your feet and lean back slightly.",
+      "Push your knees forward to lower, keeping knees, hips and shoulders in line.",
+      "Push back up using your thighs."
+    ]
+  },
+  {
+    "key": "belt_squat",
+    "name": "Belt Squat",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "belt squat machine",
+      "hip belt squat"
+    ],
+    "linkNames": [
+      "Belt Squat (Machine)"
+    ],
+    "steps": [
+      "Clip the belt around your hips and stand on the platform, feet shoulder-width.",
+      "Hold the handles lightly and release the safety lever.",
+      "Lower until your thighs are level with the floor, then stand back up."
+    ]
+  },
+  {
+    "key": "landmine_squat",
+    "name": "Landmine Squat",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "landmine squats",
+      "landmine goblet squat"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the free end of a landmine bar at your chest with both hands.",
+      "Stand facing the bar, feet shoulder-width apart, leaning slightly into it.",
+      "Lower until your thighs are level with the floor.",
+      "Stand back up by pressing through your heels."
+    ]
+  },
+  {
+    "key": "dumbbell_split_squat",
+    "name": "Dumbbell Split Squat",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both_side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db split squat",
+      "static lunge",
+      "stationary lunge",
+      "split squats"
+    ],
+    "linkNames": [
+      "Split Squat (Dumbbell)"
+    ],
+    "steps": [
+      "Take a long step forward with a dumbbell at each side.",
+      "Lower your back knee straight down until it almost touches the floor.",
+      "Push through your front foot to rise, keeping both feet in place.",
+      "Finish all reps on one leg, then switch legs."
+    ]
+  },
+  {
+    "key": "bulgarian_split_squat",
+    "name": "Bulgarian Split Squat",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both_side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bss",
+      "split squat",
+      "bulgarian",
+      "rear foot elevated split squat",
+      "db bulgarian split squat"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Rest one foot on a bench behind you, a dumbbell in each hand.",
+      "Stand far enough forward that your front heel stays down.",
+      "Lower your back knee towards the floor, keeping your chest up.",
+      "Push through your front heel to rise; switch legs after your set."
+    ]
+  },
+  {
+    "key": "barbell_bulgarian_split_squat",
+    "name": "Barbell Bulgarian Split Squat",
+    "ek": "0147",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "barbell bss",
+      "bb bulgarian split squat"
+    ],
+    "linkNames": [],
+    "steps": [
+      "With the bar on your back, rest one foot on a bench behind you.",
+      "Lower your back knee towards the floor, keeping your chest up.",
+      "Push through your front heel to stand back up.",
+      "Finish your reps, then switch legs."
+    ]
+  },
+  {
+    "key": "smith_machine_split_squat",
+    "name": "Smith Machine Split Squat",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith machine lunge",
+      "smith lunges",
+      "smith split squat"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Unhook the bar on your upper back with one foot forward and one back.",
+      "Drop your back knee straight down, stopping just above the floor.",
+      "Push through your front foot to rise; switch legs after your set."
+    ]
+  },
+  {
+    "key": "walking_lunge",
+    "name": "Walking Lunge",
+    "ek": "0121",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both_side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "lunges",
+      "db lunges",
+      "lunge",
+      "walking lunges",
+      "dumbbell walking lunge"
+    ],
+    "linkNames": [
+      "Walking Lunge (Dumbbell)"
+    ],
+    "steps": [
+      "Stand tall, holding a dumbbell at each side.",
+      "Take a long step forward and lower your back knee towards the floor.",
+      "Push off and bring your back foot through into the next step."
+    ]
+  },
+  {
+    "key": "dumbbell_lunge",
+    "name": "Dumbbell Lunge",
+    "ek": "0115",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both_side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "forward lunge",
+      "front lunge",
+      "dumbbell forward lunge",
+      "dumbbell lunges"
+    ],
+    "linkNames": [
+      "Lunge (Dumbbell)"
+    ],
+    "steps": [
+      "Stand tall, holding a dumbbell at each side.",
+      "Step forward and lower until both knees are bent to about 90 degrees.",
+      "Push off your front foot to step back, then switch legs."
+    ]
+  },
+  {
+    "key": "barbell_lunge",
+    "name": "Barbell Lunge",
+    "ek": "0114",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bb lunge",
+      "barbell lunges",
+      "barbell forward lunge"
+    ],
+    "linkNames": [
+      "Lunge (Barbell)"
+    ],
+    "steps": [
+      "Rest the bar on your upper back and stand with feet hip-width apart.",
+      "Step forward and lower until your back knee nearly touches the floor.",
+      "Push off your front foot to step back, then switch legs."
+    ]
+  },
+  {
+    "key": "bodyweight_lunge",
+    "name": "Bodyweight Lunge",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "jumping_lunge",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bodyweight lunges",
+      "free lunge",
+      "lunge without weight"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand tall with your hands on your hips.",
+      "Step forward and lower until your back knee nearly touches the floor.",
+      "Push off your front foot to step back, then switch legs."
+    ]
+  },
+  {
+    "key": "dumbbell_reverse_lunge",
+    "name": "Dumbbell Reverse Lunge",
+    "ek": "0129",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both_side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse lunge",
+      "rear lunge",
+      "back lunge",
+      "step back lunge",
+      "db reverse lunge"
+    ],
+    "linkNames": [
+      "Reverse Lunge (Dumbbell)"
+    ],
+    "steps": [
+      "Stand tall, holding a dumbbell at each side.",
+      "Step one foot back and lower until your back knee nearly touches the floor.",
+      "Push through your front heel to bring your back foot forward again."
+    ]
+  },
+  {
+    "key": "barbell_reverse_lunge",
+    "name": "Barbell Reverse Lunge",
+    "ek": "0128",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "barbell rear lunge",
+      "bb reverse lunge"
+    ],
+    "linkNames": [
+      "Reverse Lunge (Barbell)"
+    ],
+    "steps": [
+      "Rest the bar on your upper back and stand with feet hip-width apart.",
+      "Step one foot back and lower until your back knee nearly touches the floor.",
+      "Drive off your front heel to return, then switch legs."
+    ]
+  },
+  {
+    "key": "lateral_lunge",
+    "name": "Lateral Lunge",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "adductors",
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "side lunge",
+      "side lunges",
+      "lateral lunges"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with feet together and hands clasped at your chest.",
+      "Step wide to one side and sit your hips back over that foot.",
+      "Keep the other leg straight, then push off to return and switch sides."
+    ]
+  },
+  {
+    "key": "curtsy_lunge",
+    "name": "Curtsy Lunge",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "quads",
+      "abductors"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both_side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "curtsy lunges",
+      "curtsey lunge",
+      "crossover lunge"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand tall, holding a dumbbell at each side.",
+      "Step one foot behind and across the other, like a curtsy.",
+      "Lower until your back knee nearly touches the floor, chest up.",
+      "Drive off your front heel to return, then switch legs."
+    ]
+  },
+  {
+    "key": "jumping_lunge",
+    "name": "Jumping Lunge",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "bodyweight_lunge",
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "jump lunge",
+      "jumping lunges",
+      "split jump",
+      "lunge jump"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Start in a lunge with one foot forward and both knees bent.",
+      "Jump up and switch legs in the air.",
+      "Land softly in a lunge with the other foot forward and repeat."
+    ]
+  },
+  {
+    "key": "dumbbell_step_up",
+    "name": "Dumbbell Step-Up",
+    "ek": "0137",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both_side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "step up",
+      "step ups",
+      "db step up",
+      "box step up",
+      "dumbbell step up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Face a sturdy bench or box, holding a dumbbell at each side.",
+      "Place one foot fully on the box and push through it to stand up.",
+      "Step down slowly with the same leg; switch legs after your set."
+    ]
+  },
+  {
+    "key": "barbell_step_up",
+    "name": "Barbell Step-Up",
+    "ek": "0134",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bb step up",
+      "barbell step up",
+      "barbell step ups"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Rest the bar on your upper back and face a sturdy box or bench.",
+      "Place one foot fully on the box and push through it to stand up.",
+      "Step down slowly with the same leg; switch legs after your set."
+    ]
+  },
+  {
+    "key": "leg_press",
+    "name": "Leg Press",
+    "ek": "0127",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "leg press machine",
+      "45 degree leg press",
+      "leg press 45"
+    ],
+    "linkNames": [
+      "Leg Press (Machine)"
+    ],
+    "steps": [
+      "Sit back in the seat and set your feet shoulder-width on the plate.",
+      "Push the plate up slightly and release the safety handles.",
+      "Lower the plate until your knees are bent to about 90 degrees.",
+      "Press back up through your heels without locking your knees."
+    ]
+  },
+  {
+    "key": "single_leg_press",
+    "name": "Single-Leg Leg Press",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "single leg press",
+      "one leg press",
+      "single leg leg press"
+    ],
+    "linkNames": [
+      "Single Leg Press (Machine)"
+    ],
+    "steps": [
+      "Sit in the leg press with one foot in the middle of the plate.",
+      "Release the safety handles and lower the plate under control.",
+      "Press back up through your heel; switch legs after your set."
+    ]
+  },
+  {
+    "key": "seated_leg_press",
+    "name": "Seated Leg Press",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "adductors"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "horizontal leg press",
+      "seated leg press machine",
+      "leg press seated"
+    ],
+    "linkNames": [
+      "Leg Press Horizontal (Machine)"
+    ],
+    "steps": [
+      "Sit back against the pad, feet flat on the plate.",
+      "Hold the handles and press until your legs are almost straight.",
+      "Bend your knees slowly to bring the weight back."
+    ]
+  },
+  {
+    "key": "leg_extension",
+    "name": "Leg Extension",
+    "ek": "0142",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "quad extension",
+      "extensions",
+      "leg extensions",
+      "leg extension machine"
+    ],
+    "linkNames": [
+      "Leg Extension (Machine)"
+    ],
+    "steps": [
+      "Sit with your back on the pad and the roller just above your ankles.",
+      "Hold the handles and straighten your legs to lift the pad.",
+      "Squeeze your thighs at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "single_leg_extension",
+    "name": "Single-Leg Leg Extension",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "single leg extension",
+      "one leg extension",
+      "single leg leg extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on the leg extension machine with the roller above one ankle.",
+      "Straighten that leg to lift the pad, squeezing your thigh at the top.",
+      "Lower slowly, then switch legs after your set."
+    ]
+  },
+  {
+    "key": "lying_leg_curl",
+    "name": "Lying Leg Curl",
+    "ek": "0117",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "calves"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "leg curl",
+      "hamstring curl",
+      "ham curl",
+      "lying leg curls",
+      "prone leg curl"
+    ],
+    "linkNames": [
+      "Lying Leg Curl (Machine)"
+    ],
+    "steps": [
+      "Lie on your front on the machine, roller resting just above your heels.",
+      "Keep your hips on the pad and curl your heels towards your hips.",
+      "Squeeze at the top, then lower slowly without letting the weights touch."
+    ]
+  },
+  {
+    "key": "seated_leg_curl",
+    "name": "Seated Leg Curl",
+    "ek": "0119",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "calves"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated leg curls",
+      "seated hamstring curl",
+      "sitting leg curl"
+    ],
+    "linkNames": [
+      "Seated Leg Curl (Machine)"
+    ],
+    "steps": [
+      "Sit with the roller under your lower calves and the thigh pad locked down.",
+      "Curl your heels down and back under the seat as far as you can.",
+      "Return slowly until your legs are almost straight."
+    ]
+  },
+  {
+    "key": "standing_leg_curl",
+    "name": "Standing Leg Curl",
+    "ek": "0120",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "calves"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "standing leg curls",
+      "standing hamstring curl",
+      "single leg curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand at the machine with the roller behind one ankle, holding the handles.",
+      "Curl your heel up towards your hip, keeping your thigh still.",
+      "Lower slowly, then switch legs after your set."
+    ]
+  },
+  {
+    "key": "dumbbell_leg_curl",
+    "name": "Dumbbell Leg Curl",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db leg curl",
+      "lying dumbbell leg curl",
+      "dumbbell hamstring curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on your front along a bench, knees just past the end.",
+      "Grip a light dumbbell firmly between your feet.",
+      "Curl your heels towards your hips, then lower slowly."
+    ]
+  },
+  {
+    "key": "nordic_curl",
+    "name": "Nordic Curl",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "swiss_ball_leg_curl",
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "nordic hamstring curl",
+      "nordics",
+      "nordic curls"
+    ],
+    "linkNames": [
+      "Nordic Hamstrings Curls"
+    ],
+    "steps": [
+      "Kneel on a mat with your heels held down by a pad or partner.",
+      "Keep your body straight from knees to head and lean forward slowly.",
+      "Lower under control, then catch yourself with your hands.",
+      "Push off lightly and pull yourself back up with the back of your thighs."
+    ]
+  },
+  {
+    "key": "swiss_ball_leg_curl",
+    "name": "Swiss Ball Leg Curl",
+    "ek": null,
+    "equipment": "other",
+    "type": "reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "nordic_curl",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "stability ball leg curl",
+      "gym ball leg curl",
+      "ball hamstring curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on your back with heels on a gym ball, arms at your sides.",
+      "Lift your hips so your body forms a straight line.",
+      "Pull the ball towards you with your heels, then roll it back out."
+    ]
+  },
+  {
+    "key": "romanian_deadlift",
+    "name": "Romanian Deadlift",
+    "ek": "0118",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "glutes",
+      "lower_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "rdl",
+      "stiff leg deadlift",
+      "romanian dl",
+      "barbell rdl"
+    ],
+    "linkNames": [
+      "Romanian Deadlift (Barbell)"
+    ],
+    "steps": [
+      "Stand tall holding the bar at your thighs, hands just outside your legs.",
+      "Knees slightly bent, push your hips back and slide the bar down your legs.",
+      "Stop at a strong stretch behind your thighs, keeping your back flat.",
+      "Squeeze your glutes and push your hips forward to stand up."
+    ]
+  },
+  {
+    "key": "dumbbell_romanian_deadlift",
+    "name": "Dumbbell Romanian Deadlift",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "glutes",
+      "lower_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db rdl",
+      "dumbbell rdl",
+      "dumbbell stiff leg deadlift"
+    ],
+    "linkNames": [
+      "Romanian Deadlift (Dumbbell)"
+    ],
+    "steps": [
+      "Stand tall with the dumbbells resting against the front of your thighs.",
+      "Knees slightly bent, push your hips back and lower the dumbbells down your legs.",
+      "Stop at a strong stretch behind your thighs, keeping your back flat.",
+      "Push your hips forward to stand back up."
+    ]
+  },
+  {
+    "key": "single_leg_romanian_deadlift",
+    "name": "Single-Leg Romanian Deadlift",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "glutes",
+      "lower_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "single leg rdl",
+      "one leg rdl",
+      "single leg deadlift",
+      "sl rdl"
+    ],
+    "linkNames": [
+      "Single Leg Romanian Deadlift (Dumbbell)"
+    ],
+    "steps": [
+      "Stand on one leg holding a dumbbell in the opposite hand.",
+      "Lean forward from the hips as your free leg rises straight behind you.",
+      "Lower until your body is nearly level with the floor, back flat.",
+      "Push your hips forward to stand up; switch sides after your set."
+    ]
+  },
+  {
+    "key": "kettlebell_swing",
+    "name": "Kettlebell Swing",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "secondary": [
+      "lower_back",
+      "abs"
+    ],
+    "compound": true,
+    "incrementKg": 4,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "kb swing",
+      "kettlebell swings",
+      "russian swing"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with feet wider than your hips, kettlebell on the floor in front.",
+      "Push your hips behind you as the bell swings between your legs, back flat.",
+      "Snap your hips forward to swing the bell up to chest height.",
+      "Let it swing back between your legs and go into the next rep."
+    ]
+  },
+  {
+    "key": "cable_pull_through",
+    "name": "Cable Pull-Through",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings",
+      "lower_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "pull through",
+      "cable pull through",
+      "glute pull through",
+      "rope pull through"
+    ],
+    "linkNames": [
+      "Cable Pull Through"
+    ],
+    "steps": [
+      "Clip a rope to a low pulley and face away, rope between your legs.",
+      "Walk out a few steps, feet a little wider than your hips.",
+      "Push your hips back and let the rope draw your hands between your legs.",
+      "Squeeze your glutes to drive your hips forward and stand tall."
+    ]
+  },
+  {
+    "key": "barbell_hip_thrust",
+    "name": "Barbell Hip Thrust",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "hip thrust",
+      "thrusts",
+      "hip thrusts",
+      "glute thrust"
+    ],
+    "linkNames": [
+      "Hip Thrust (Barbell)"
+    ],
+    "steps": [
+      "Sit with your upper back on a bench, a padded bar across your hips.",
+      "Plant your feet flat, about hip-width apart, knees bent.",
+      "Drive your hips up until your body is level from knees to shoulders.",
+      "Squeeze your glutes at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "hip_thrust_machine",
+    "name": "Hip Thrust Machine",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "machine hip thrust",
+      "glute drive",
+      "glute drive machine"
+    ],
+    "linkNames": [
+      "Hip Thrust (Machine)"
+    ],
+    "steps": [
+      "Sit with your upper back on the pad and the belt across your hips.",
+      "Plant your feet flat, about hip-width apart.",
+      "Drive your hips up until your body is level from knees to shoulders.",
+      "Squeeze your glutes at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "smith_machine_hip_thrust",
+    "name": "Smith Machine Hip Thrust",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith hip thrust",
+      "smith machine glute thrust"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit against a bench under the Smith bar, with a pad over your hips.",
+      "Plant your feet flat and unhook the bar.",
+      "Drive your hips up until your body is level from knees to shoulders.",
+      "Squeeze your glutes at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "dumbbell_hip_thrust",
+    "name": "Dumbbell Hip Thrust",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db hip thrust",
+      "dumbbell glute thrust"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit with your upper back against a bench, a dumbbell resting on your hips.",
+      "Hold the dumbbell in place and plant your feet flat.",
+      "Drive your hips up until your body is level from knees to shoulders.",
+      "Squeeze your glutes at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "single_leg_hip_thrust",
+    "name": "Single-Leg Hip Thrust",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "single_leg_glute_bridge",
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "single leg hip thrust",
+      "one leg hip thrust"
+    ],
+    "linkNames": [
+      "Single Leg Hip Thrust"
+    ],
+    "steps": [
+      "Sit with your upper back against a bench, one foot flat, other leg raised.",
+      "Push through the planted heel until your body is straight from knee to shoulder.",
+      "Lower slowly, then switch legs after your set."
+    ]
+  },
+  {
+    "key": "glute_bridge",
+    "name": "Glute Bridge",
+    "ek": "0109",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "single_leg_glute_bridge",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "glute bridge",
+      "glute bridges",
+      "hip bridge",
+      "bridge"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie face up with your knees bent and heels close to your hips.",
+      "Push through your heels and lift your hips into a straight line.",
+      "Squeeze your glutes at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "single_leg_glute_bridge",
+    "name": "Single-Leg Glute Bridge",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "glute_bridge",
+    "harder": "single_leg_hip_thrust",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "single leg glute bridge",
+      "single leg bridge",
+      "one leg glute bridge"
+    ],
+    "linkNames": [
+      "Single Leg Glute Bridge"
+    ],
+    "steps": [
+      "Lie on your back with one foot flat and the other leg straight out.",
+      "Push through the planted heel to lift your hips into a straight line.",
+      "Lower slowly, then switch legs after your set."
+    ]
+  },
+  {
+    "key": "barbell_glute_bridge",
+    "name": "Barbell Glute Bridge",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bb glute bridge",
+      "weighted glute bridge",
+      "floor hip thrust"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on the floor with a padded bar across your hips, feet flat.",
+      "Hold the bar steady and drive your hips up through your heels.",
+      "Squeeze your glutes at the top, then lower slowly to the floor."
+    ]
+  },
+  {
+    "key": "cable_glute_kickback",
+    "name": "Cable Glute Kickback",
+    "ek": "0112",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable kickback",
+      "glute kickback",
+      "kickbacks",
+      "cable kickbacks"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Strap a cuff to one ankle and attach it to a low pulley.",
+      "Face the machine, hold it for support and lean forward slightly.",
+      "Kick your leg straight back without arching your lower back.",
+      "Return slowly, then switch legs after your set."
+    ]
+  },
+  {
+    "key": "glute_kickback_machine",
+    "name": "Glute Kickback Machine",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "kickback machine",
+      "machine glute kickback",
+      "glute machine"
+    ],
+    "linkNames": [
+      "Glute Kickback (Machine)"
+    ],
+    "steps": [
+      "Set up on the machine with one foot against the kick pad.",
+      "Hold the handles and push your leg back until your hip is straight.",
+      "Squeeze your glute at the top, then return slowly.",
+      "Finish your reps, then switch legs."
+    ]
+  },
+  {
+    "key": "donkey_kick",
+    "name": "Donkey Kick",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "donkey kicks",
+      "kneeling kickback",
+      "quadruped kickback"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Get on your hands and knees, hands under shoulders, knees under hips.",
+      "Keeping the knee bent, lift one foot up towards the ceiling.",
+      "Squeeze your glute at the top, lower slowly and switch sides after your set."
+    ]
+  },
+  {
+    "key": "fire_hydrant",
+    "name": "Fire Hydrant",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abductors"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "fire hydrants",
+      "side knee raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Get on your hands and knees, hands under shoulders, knees under hips.",
+      "Keeping the knee bent, lift one leg out to the side to hip height.",
+      "Lower slowly without twisting your body, then switch sides."
+    ]
+  },
+  {
+    "key": "hip_abduction_machine",
+    "name": "Hip Abduction Machine",
+    "ek": "0156",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "abductors"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "abductor machine",
+      "outer thigh machine",
+      "hip abductor",
+      "outer thigh",
+      "abduction machine"
+    ],
+    "linkNames": [
+      "Hip Abduction (Machine)"
+    ],
+    "steps": [
+      "Sit on the machine with the pads against the outside of your knees.",
+      "Push your knees apart as far as you can.",
+      "Pause, then let your legs come back together slowly."
+    ]
+  },
+  {
+    "key": "hip_adduction_machine",
+    "name": "Hip Adduction Machine",
+    "ek": "0157",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "adductors"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "adductor machine",
+      "inner thigh machine",
+      "hip adductor",
+      "inner thigh",
+      "adduction machine"
+    ],
+    "linkNames": [
+      "Hip Adduction (Machine)"
+    ],
+    "steps": [
+      "Sit on the machine with the pads against the inside of your knees.",
+      "Squeeze your legs together until the pads meet.",
+      "Let your legs open slowly back to the start."
+    ]
+  },
+  {
+    "key": "cable_hip_abduction",
+    "name": "Cable Hip Abduction",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "abductors"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "standing cable abduction",
+      "cable side leg raise",
+      "cable leg abduction"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand side-on to a low pulley with the cuff on your far ankle.",
+      "Hold the machine for support and lift that leg out to the side.",
+      "Lower slowly, then switch legs after your set."
+    ]
+  },
+  {
+    "key": "cable_hip_adduction",
+    "name": "Cable Hip Adduction",
+    "ek": "0135",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "adductors"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "standing cable adduction",
+      "cable inner thigh",
+      "cable leg adduction"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand side-on to a low pulley with the cuff on your near ankle.",
+      "Hold the machine and let the cable pull that leg out slightly.",
+      "Sweep the leg inwards and across your body, past your standing foot.",
+      "Return slowly, then switch legs after your set."
+    ]
+  },
+  {
+    "key": "side_lying_leg_raise",
+    "name": "Side-Lying Leg Raise",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abductors"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "side leg raise",
+      "side lying leg lift",
+      "lying hip abduction"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on your side with legs straight and your head resting on your arm.",
+      "Lift your top leg up, toes pointing forward, without rolling back.",
+      "Lower slowly, then switch sides after your set."
+    ]
+  },
+  {
+    "key": "banded_lateral_walk",
+    "name": "Banded Lateral Walk",
+    "ek": null,
+    "equipment": "other",
+    "type": "reps",
+    "primary": [
+      "abductors"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "band walk",
+      "lateral band walk",
+      "side band walk",
+      "monster walk",
+      "mini band walk"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Put a mini band around your legs, just above the knees or ankles.",
+      "Stand in a half squat with feet hip-width apart.",
+      "Step sideways, keeping the band tight, counting each step as one rep.",
+      "Walk the same number of steps back the other way."
+    ]
+  },
+  {
+    "key": "clamshell",
+    "name": "Clamshell",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "abductors"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "clamshells",
+      "clam",
+      "banded clamshell"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on your side with knees bent and heels together.",
+      "Keeping your feet touching, lift your top knee as high as you can.",
+      "Lower slowly and switch sides; a band above the knees makes it harder."
+    ]
+  },
+  {
+    "key": "copenhagen_plank",
+    "name": "Copenhagen Plank",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "time",
+    "primary": [
+      "adductors"
+    ],
+    "secondary": [
+      "obliques",
+      "abs"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 30,
+    "distUnit": null,
+    "aliases": [
+      "copenhagen",
+      "copenhagen side plank",
+      "adductor plank"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on your side next to a bench, propped up on your forearm.",
+      "Place your top foot or knee on the bench.",
+      "Lift your hips until your body is straight, lower leg off the floor.",
+      "Hold, then lower and switch sides."
+    ]
+  },
+  {
+    "key": "standing_calf_raise",
+    "name": "Standing Calf Raise",
+    "ek": "0282",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "calf raise",
+      "calves",
+      "standing calves",
+      "pindli",
+      "standing calf machine",
+      "calf raise machine"
+    ],
+    "linkNames": [
+      "Standing Calf Raise (Machine)"
+    ],
+    "steps": [
+      "Stand under the shoulder pads with your heels hanging off the step.",
+      "Let your heels drop below the step for a full stretch.",
+      "Rise up onto your toes as high as you can.",
+      "Pause at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "seated_calf_raise",
+    "name": "Seated Calf Raise",
+    "ek": "0279",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated calves",
+      "seated calf",
+      "seated calf machine"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit with the knee pad snug on your thighs, toes on the step's edge.",
+      "Release the lock and let your heels drop for a stretch.",
+      "Push up onto your toes as high as you can, then lower slowly."
+    ]
+  },
+  {
+    "key": "barbell_calf_raise",
+    "name": "Barbell Calf Raise",
+    "ek": "0281",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "standing barbell calf raise",
+      "bb calf raise",
+      "barbell calves"
+    ],
+    "linkNames": [
+      "Standing Calf Raise (Barbell)"
+    ],
+    "steps": [
+      "Rest the bar on your upper back and stand with feet hip-width apart.",
+      "Rise up onto your toes as high as you can.",
+      "Pause, then lower your heels slowly; stand on a plate for more stretch."
+    ]
+  },
+  {
+    "key": "smith_machine_calf_raise",
+    "name": "Smith Machine Calf Raise",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith calf raise",
+      "smith machine calves",
+      "smith calves"
+    ],
+    "linkNames": [
+      "Standing Calf Raise (Smith)"
+    ],
+    "steps": [
+      "Stand on a step under the Smith bar, resting it on your upper back.",
+      "Unhook the bar and let your heels drop for a stretch.",
+      "Rise up onto your toes as high as you can, then lower slowly."
+    ]
+  },
+  {
+    "key": "dumbbell_calf_raise",
+    "name": "Dumbbell Calf Raise",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db calf raise",
+      "standing dumbbell calf raise",
+      "dumbbell calves"
+    ],
+    "linkNames": [
+      "Standing Calf Raise (Dumbbell)"
+    ],
+    "steps": [
+      "Hold a dumbbell at each side, heels hanging off a step.",
+      "Let your heels drop below the step for a stretch.",
+      "Rise up onto your toes as high as you can, then lower slowly."
+    ]
+  },
+  {
+    "key": "single_leg_calf_raise",
+    "name": "Single-Leg Dumbbell Calf Raise",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": "bodyweight_calf_raise",
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "single leg calf raise",
+      "one leg calf raise",
+      "single leg dumbbell calf raise"
+    ],
+    "linkNames": [
+      "Single Leg Standing Calf Raise (Dumbbell)"
+    ],
+    "steps": [
+      "Stand on one leg on a step, holding a dumbbell on that side.",
+      "Hold a rail with your free hand for balance.",
+      "Let your heel drop, then rise onto your toes as high as you can.",
+      "Lower slowly, then switch sides after your set."
+    ]
+  },
+  {
+    "key": "donkey_calf_raise",
+    "name": "Donkey Calf Raise",
+    "ek": "0275",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "donkey calves",
+      "donkey calf machine",
+      "bent over calf raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Bend forward, hold a rail, and stand with your toes on a block.",
+      "Load your hips with the machine pad or a partner sitting on them.",
+      "Rise up onto your toes as high as you can.",
+      "Lower your heels slowly below the block for a full stretch."
+    ]
+  },
+  {
+    "key": "leg_press_calf_raise",
+    "name": "Leg Press Calf Raise",
+    "ek": "0273",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "calf press",
+      "leg press calf press",
+      "calf press on leg press",
+      "calf press machine"
+    ],
+    "linkNames": [
+      "Calf Press (Machine)"
+    ],
+    "steps": [
+      "Sit in the leg press, toes on the bottom edge of the plate.",
+      "Push the plate up and keep your legs almost straight.",
+      "Point your toes to push the plate further, then let it come back slowly.",
+      "Use a weight you control so your feet never slip off the edge."
+    ]
+  },
+  {
+    "key": "seated_dumbbell_calf_raise",
+    "name": "Seated Dumbbell Calf Raise",
+    "ek": "0276",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated db calf raise",
+      "seated one leg calf raise",
+      "dumbbell seated calf raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on a bench and set the front of one foot on a block.",
+      "Rest a dumbbell on that knee and hold it in place.",
+      "Raise your heel as high as you can, then lower slowly.",
+      "Finish your reps, then switch legs."
+    ]
+  },
+  {
+    "key": "seated_barbell_calf_raise",
+    "name": "Seated Barbell Calf Raise",
+    "ek": "0272",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated barbell calves",
+      "barbell seated calf raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on a bench and set the front of both feet on a block.",
+      "Rest a padded barbell across your lower thighs and hold it steady.",
+      "Raise your heels as high as you can, then lower slowly for a stretch."
+    ]
+  },
+  {
+    "key": "bodyweight_calf_raise",
+    "name": "Bodyweight Calf Raise",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "calves"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "single_leg_calf_raise",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "free calf raise",
+      "home calf raise",
+      "calf raise without weight"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with your heels off a step, one hand on a wall.",
+      "Let your heels drop below the step for a stretch.",
+      "Rise up onto your toes as high as you can, then lower slowly."
+    ]
+  },
+  {
+    "key": "box_jump",
+    "name": "Box Jump",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "quads"
+    ],
+    "secondary": [
+      "glutes",
+      "calves"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "box jumps",
+      "plyo box jump",
+      "jump on box"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand about a foot away from a sturdy box, feet hip-width apart.",
+      "Swing your arms back, dip into a quarter squat and jump onto the box.",
+      "Land softly with both feet and knees bent, then stand tall.",
+      "Step down rather than jumping down, and reset for the next rep."
+    ]
+  }
+]

@@ -8,6 +8,8 @@
  * off. Parsers never throw.
  */
 
+import { isLogType, type LogType } from '@/tracker/engine/logTypes';
+
 // ------------------------------------------------------------------ views
 
 export interface PlanTargetView {
@@ -23,6 +25,14 @@ export interface PlanTargetView {
   repGoal?: number | null;
   change?: 'up' | 'down' | null;
   bodyweightOnly?: boolean;
+  /** Phase 2 fields; absent on cards saved before them (= weight × reps). */
+  logType?: LogType;
+  holdSec?: number | null;
+  version?: { kind: 'harder' | 'easier' } | null;
+  each?: boolean;
+  perSide?: boolean;
+  /** No Target rule (distance work, timed cardio). */
+  free?: boolean;
 }
 
 export interface WorkoutPlanView {
@@ -164,6 +174,19 @@ export function parseWorkoutPlan(payload: unknown): WorkoutPlanView | null {
             repGoal: num(raw.repGoal) ? raw.repGoal : null,
             change: raw.change === 'up' || raw.change === 'down' ? raw.change : null,
             bodyweightOnly: raw.bodyweightOnly === true,
+          }
+        : {}),
+      ...(isLogType(raw.logType)
+        ? {
+            logType: raw.logType,
+            holdSec: num(raw.holdSec) ? raw.holdSec : null,
+            version:
+              isRecord(raw.version) && (raw.version.kind === 'harder' || raw.version.kind === 'easier')
+                ? { kind: raw.version.kind }
+                : null,
+            ...(raw.each === true ? { each: true } : {}),
+            ...(raw.perSide === true ? { perSide: true } : {}),
+            ...(raw.free === true ? { free: true } : {}),
           }
         : {}),
     });

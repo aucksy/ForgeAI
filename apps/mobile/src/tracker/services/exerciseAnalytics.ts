@@ -21,14 +21,20 @@ export interface XrmRecord {
   sessionId: string;
 }
 
-/** Best single-set volume (weight × reps) per session, oldest → newest (chart order). */
-export function bestSetVolumeSeries(history: History): BestSetPoint[] {
+/**
+ * Best single-set volume per session, oldest → newest (chart order). `volumeOf` is the
+ * Phase 2 volume rule (both dumbbells, body weight on pull-ups); default weight × reps.
+ */
+export function bestSetVolumeSeries(
+  history: History,
+  volumeOf: (s: History[number]['sets'][number], dateISO: string) => number = (s) => s.weightKg * s.reps,
+): BestSetPoint[] {
   const points: BestSetPoint[] = [];
   for (const h of history) {
     let best = 0;
     for (const s of h.sets) {
       if (s.isWarmup) continue;
-      const v = s.weightKg * s.reps;
+      const v = volumeOf(s, h.dateISO);
       if (v > best) best = v;
     }
     points.push({ dateISO: h.dateISO, bestSetVolumeKg: best });

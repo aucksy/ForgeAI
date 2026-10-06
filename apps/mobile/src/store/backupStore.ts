@@ -17,6 +17,8 @@ import {
 } from '@/cloud/snapshot';
 import { getMeta, setMeta } from '@/db';
 import { clearDemoFlag } from '@/onboarding/db/dataActions';
+import { forgetCatalogSync, resyncExerciseCatalog } from '@/tracker/catalog/catalogSync';
+import { clearMissingExerciseMedia } from '@/tracker/services/exerciseMedia';
 
 /** meta keys: a local "the user linked Google before" marker + the last backup time. */
 const LINKED_KEY = 'drive_linked';
@@ -129,10 +131,18 @@ export const useBackup = create<BackupState>()((set, get) => ({
     set({ busy: true });
     try {
       const env = parseSnapshot(found.json);
+      // Before the replace commits: a kill right after it still re-syncs the library.
+      await forgetCatalogSync().catch(() => undefined);
       await importSnapshot(env);
       // Real history has replaced whatever was here — it is no longer demo data,
       // so the badge and the softened "remove demo" wording must not linger.
       await clearDemoFlag();
+      // Phase 2: an older backup holds the old library — link it to the bundled one and
+      // add the exercises it lacks. Never blocks a restore that already succeeded.
+      await resyncExerciseCatalog(false).catch(() => undefined);
+      // The backup has each exercise's own photo/video PATH, not the file: clear the ones
+      // that aren't on this phone so the library drawing shows instead of a blank square.
+      await clearMissingExerciseMedia().catch(() => undefined);
       set({ found: null });
       return true;
     } finally {

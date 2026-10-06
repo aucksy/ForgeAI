@@ -88,7 +88,8 @@ describe('buildSessionNote', () => {
 
   it('gives a recovery cue on the first time training a day type', () => {
     const note = buildSessionNote(
-      data({ workingSetCount: 14, muscles: [{ muscleGroup: 'chest' }] as SessionSummaryData['muscles'] }),
+      // Phase 2: the split is working sets per finer muscle.
+      data({ workingSetCount: 14, muscles: [{ muscle: 'chest', sets: 6 }] }),
       null,
     );
     expect(note).toContain('Push Day done');

@@ -14,6 +14,7 @@
  * every set of a new exercise as a "record", which is noise, not news.
  */
 import { epleyE1rm } from '@/engine/overload';
+import type { LogType } from '@/tracker/engine/logTypes';
 import type { DraftSet } from '@/tracker/store/activeWorkoutStore';
 
 export interface PriorBests {
@@ -28,9 +29,15 @@ const EPS = 1e-9;
 export function liveRecordFlags(ex: {
   bests?: PriorBests | null;
   sets: DraftSet[];
+  /** Phase 2: only weight × reps and added-weight moves have a weight record. */
+  logType?: LogType;
 }): Map<string, RecordKind> {
   const out = new Map<string, RecordKind>();
   if (!ex.bests) return out;
+  // Help on an assisted move is typed positive but stored negative, and time/distance
+  // rows carry no weight: neither can be compared with the stored bests.
+  const lt = ex.logType ?? 'weight_reps';
+  if (lt !== 'weight_reps' && lt !== 'weighted' && lt !== 'reps') return out;
   let bestW = ex.bests.weightKg;
   let bestE = ex.bests.e1rm;
   for (const s of ex.sets) {

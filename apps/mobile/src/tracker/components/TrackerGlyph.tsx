@@ -7,9 +7,31 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 import { color as palette } from '@/theme/tokens';
 
-export type GlyphName = 'more' | 'chevron-down' | 'medal' | 'trash' | 'pencil' | 'list' | 'info';
+export type GlyphName =
+  | 'more'
+  | 'chevron-down'
+  | 'medal'
+  | 'trash'
+  | 'pencil'
+  | 'list'
+  | 'info'
+  | 'play'
+  | 'pause'
+  | 'timer'
+  | 'image'
+  | 'swap'
+  | 'scale-split';
 
 const PATHS: Record<GlyphName, { p?: string[]; dots?: { x: number; y: number }[]; c?: { x: number; y: number; r: number }[] }> = {
+  play: { p: ['M8 5.5v13l10.5-6.5Z'] },
+  pause: { p: ['M8.5 5.5v13', 'M15.5 5.5v13'] },
+  timer: { p: ['M12 9v4.4l2.6 1.6', 'M9.6 2.8h4.8', 'M12 2.8v2.4'], c: [{ x: 12, y: 13.4, r: 7.6 }] },
+  image: {
+    p: ['M4.5 5.5h15v13h-15Z', 'M4.5 15.5l4.2-4.2 3.6 3.6 2.4-2.4 4.8 4.8'],
+    c: [{ x: 15.2, y: 9.2, r: 1.4 }],
+  },
+  swap: { p: ['M5 8.5h13', 'M14.5 5l3.5 3.5-3.5 3.5', 'M19 15.5H6', 'M9.5 12 6 15.5 9.5 19'] },
+  'scale-split': { p: ['M12 4v16', 'M5.5 8.5h13', 'M5.5 8.5 3 14h5Z', 'M18.5 8.5 16 14h5Z'] },
   more: { dots: [{ x: 5.5, y: 12 }, { x: 12, y: 12 }, { x: 18.5, y: 12 }] },
   'chevron-down': { p: ['M5.5 9.3 12 15.8l6.5-6.5'] },
   medal: {

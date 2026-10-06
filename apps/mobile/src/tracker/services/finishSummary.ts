@@ -6,12 +6,21 @@
  * (there is no frozen repo fn for
  * "PRs of one session", and `addSets` records them internally without returning
  * them). Read-only, no schema change, no frozen file edited.
+ *
+ * Phase 2: volume follows the one rule in `engine/volume.ts` (body weight on pull-ups and
+ * dips, both dumbbells, no kilos for time and distance), the muscle split counts SETS per
+ * finer muscle (a bench set = 1 chest, ½ triceps, ½ front shoulders), each exercise
+ * carries how it is logged so its sets read right ("0:45", "+10×8"), and records that
+ * say nothing ("0 kg" on a bodyweight or timed set) are left out.
  */
 import { getDb } from '@/db';
 import { getSessionDetail } from '@/db/repos/workoutRepo';
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import type { SetMeta } from '@/tracker/db/trackerSets';
-import type { MuscleGroup, MuscleVolumeSlice, SessionDetail } from '@/types/models';
+import type { TrackerExercise } from '@/tracker/db/exerciseInfo';
+import { missesBodyweight, muscleSets, type MuscleSetsSlice } from '@/tracker/engine/volume';
+import { applyVolume, getVolumeContext, toVolumeSession } from '@/tracker/services/volumeService';
+import type { SessionDetail } from '@/types/models';
 
 export interface SessionPr {
   exerciseName: string;
@@ -28,9 +37,14 @@ export interface SessionSummaryData {
   workingSetCount: number;
   exerciseCount: number;
   prs: SessionPr[];
-  muscles: MuscleVolumeSlice[];
-  /** rpe/set_type/note keyed by set id (additive columns; older sets → 'normal'/null). */
+  /** Working sets per finer muscle (fractional). */
+  muscles: MuscleSetsSlice[];
+  /** rpe/set_type/note/time/distance keyed by set id (additive columns; older sets → 'normal'/null). */
   setMeta: Record<string, SetMeta>;
+  /** Phase 2: how each exercise is logged, by exercise id. */
+  kinds: Record<string, Pick<TrackerExercise, 'logType' | 'loadMode' | 'distUnit' | 'catalogKey'>>;
+  /** Pull-ups or dips were logged but no body weight is known, so they add no volume. */
+  needsBodyweight: boolean;
 }
 
 /** PRs recorded against a single session (weight + e1rm), joined with exercise names. */
@@ -41,62 +55,56 @@ export async function getSessionPrs(sessionId: string): Promise<SessionPr[]> {
     weight_kg: number;
     reps: number;
     name: string;
+    log_type: string | null;
   }>(
-    `SELECT pr.kind, pr.value, pr.weight_kg, pr.reps, e.name AS name
+    `SELECT pr.kind, pr.value, pr.weight_kg, pr.reps, e.name AS name, e.log_type AS log_type
      FROM personal_records pr
      JOIN exercises e ON e.id = pr.exercise_id
      WHERE pr.session_id = ? AND pr.kind IN ('weight', 'e1rm')
      ORDER BY pr.kind ASC`,
     [sessionId],
   );
-  return rows.map((r) => ({
-    exerciseName: r.name,
-    kind: r.kind === 'e1rm' ? 'e1rm' : 'weight',
-    value: r.value,
-    weightKg: r.weight_kg,
-    reps: r.reps,
-  }));
+  return rows
+    .filter((r) => isMeaningfulPr(r.value, r.log_type))
+    .map((r) => ({
+      exerciseName: r.name,
+      kind: r.kind === 'e1rm' ? 'e1rm' : 'weight',
+      value: r.value,
+      weightKg: r.weight_kg,
+      reps: r.reps,
+    }));
 }
 
 /**
- * Per-muscle working volume for a SINGLE session (mirrors the frozen
- * getMuscleGroupVolume rule: primary full, each secondary 50%, warm-ups excluded).
- * Session-scoped so it matches the volume/set tiles on the same screen — the
- * day-range repo would double-count a second workout logged the same day.
+ * A stored weight/e1RM record worth showing. The frozen detector also records the first
+ * bodyweight, timed or distance set ever logged — "0 kg" — and an assisted move's "heaviest"
+ * help; neither is a record a member would recognise. PURE.
  */
-function sessionMuscleVolume(session: SessionDetail): MuscleVolumeSlice[] {
-  const acc = new Map<MuscleGroup, { volumeKg: number; sets: number }>();
-  const bump = (m: MuscleGroup, volumeKg: number, sets: number): void => {
-    const cur = acc.get(m) ?? { volumeKg: 0, sets: 0 };
-    cur.volumeKg += volumeKg;
-    cur.sets += sets;
-    acc.set(m, cur);
-  };
-  for (const g of session.exercises) {
-    for (const st of g.sets) {
-      if (st.isWarmup) continue;
-      const vol = st.weightKg * st.reps;
-      bump(g.exercise.muscleGroup, vol, 1);
-      for (const sm of g.exercise.secondaryMuscles) bump(sm, vol * 0.5, 0.5);
-    }
-  }
-  return [...acc.entries()]
-    .map(([muscleGroup, v]) => ({ muscleGroup, volumeKg: v.volumeKg, sets: Math.round(v.sets) }))
-    .sort((a, b) => b.volumeKg - a.volumeKg);
+export function isMeaningfulPr(value: number, logType: string | null | undefined): boolean {
+  if (!(value > 0)) return false;
+  return logType == null || logType === 'weight_reps' || logType === 'weighted' || logType === 'reps';
 }
 
 export async function getSessionSummary(sessionId: string): Promise<SessionSummaryData | null> {
-  const session = await getSessionDetail(sessionId);
-  if (!session) return null;
-  const prs = await getSessionPrs(sessionId);
-  const setMeta = await getSessionSetMeta(sessionId);
-  const muscles = sessionMuscleVolume(session);
+  const raw = await getSessionDetail(sessionId);
+  if (!raw) return null;
+  const [prs, setMeta, ctx] = await Promise.all([
+    getSessionPrs(sessionId),
+    getSessionSetMeta(sessionId),
+    getVolumeContext(raw.exercises.map((g) => g.exercise.id)),
+  ]);
+  const session = applyVolume(raw, ctx);
+  const vs = toVolumeSession(session, ctx);
   const durationSec =
     session.endedAt != null ? Math.max(0, Math.round((session.endedAt - session.startedAt) / 1000)) : 0;
   const workingSetCount = session.exercises.reduce(
     (n, g) => n + g.sets.filter((s) => !s.isWarmup).length,
     0,
   );
+  const kinds: SessionSummaryData['kinds'] = {};
+  for (const [id, info] of ctx.exercises) {
+    kinds[id] = { logType: info.logType, loadMode: info.loadMode, distUnit: info.distUnit, catalogKey: info.catalogKey };
+  }
   return {
     session,
     durationSec,
@@ -104,8 +112,10 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
     workingSetCount,
     exerciseCount: session.exercises.length,
     prs,
-    muscles,
+    muscles: muscleSets([vs]),
     setMeta,
+    kinds,
+    needsBodyweight: missesBodyweight(vs, ctx.bw),
   };
 }
 

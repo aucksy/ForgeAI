@@ -228,9 +228,12 @@ export default function ImportScreen() {
               label="Exercises"
               value={`${preview.distinctExercises}  ·  ${preview.newExercises.length} new`}
             />
+            {preview.timedSets > 0 ? (
+              <StatRow label="Timed or distance sets" value={String(preview.timedSets)} />
+            ) : null}
             {preview.skippedRows > 0 ? (
               <StatRow
-                label="Skipped rows (no reps)"
+                label="Skipped rows (empty)"
                 value={String(preview.skippedRows)}
                 tint={color.inkMuted}
               />
@@ -259,7 +262,7 @@ export default function ImportScreen() {
               label="Merge"
               selected={mode === 'merge'}
               onPress={() => setMode('merge')}
-              body="Keep your current workouts and add these. Any workout already imported is skipped, so it’s safe to re-run."
+              body="Keep your current workouts and add these. Any workout already imported is skipped, so it’s safe to re-run. Timed and distance sets that older imports left out are added."
             />
           </View>
 
@@ -332,6 +335,13 @@ export default function ImportScreen() {
                 label="Already imported (skipped)"
                 value={String(result.skippedExisting)}
                 tint={color.inkMuted}
+              />
+            ) : null}
+            {result.backfilledSets > 0 ? (
+              <StatRow
+                label="Timed and distance sets added to earlier imports"
+                value={String(result.backfilledSets)}
+                tint={color.goodText}
               />
             ) : null}
           </Card>

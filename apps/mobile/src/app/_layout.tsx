@@ -10,6 +10,8 @@ import { initDb } from '@/db';
 import { initTrackerSchema } from '@/tracker/db/trackerSchema';
 import { WorkoutPresenceHost } from '@/tracker/components/WorkoutPresenceHost';
 import { initMemberSchema } from '@/onboarding/db/memberSchema';
+import { hasMemberProfile } from '@/onboarding/db/dataActions';
+import { syncExerciseCatalog } from '@/tracker/catalog/catalogSync';
 import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
@@ -32,6 +34,10 @@ export default function RootLayout() {
         await initDb();
         await initTrackerSchema(); // additive tracker columns
         await initMemberSchema(); // additive member columns (phone)
+        // Phase 2: once per library version, link this member's exercises to the bundled
+        // library and add the new ones (a fresh install gets the whole library at
+        // onboarding instead). A failure never blocks the app — it retries next launch.
+        if (await hasMemberProfile().catch(() => false)) await syncExerciseCatalog().catch(() => false);
       } catch (e) {
         // Fall through: boot() below will fail its reads too and land on the
         // retry screen. Swallowing here (rather than skipping boot) is what keeps

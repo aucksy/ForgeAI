@@ -10,6 +10,8 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import { describe, expect, it, vi } from 'vitest';
 
 import { EXERCISES } from '@/db/seed/exercises';
+import { CATALOG_COLUMNS } from '@/tracker/catalog/catalogSync';
+import { CATALOG } from '@/tracker/catalog/exerciseCatalog';
 import type { MuscleGroup } from '@/types/models';
 
 vi.mock('@/lib/uuid', () => {
@@ -101,7 +103,9 @@ describe('catalogRows', () => {
 });
 
 describe('insertExerciseCatalog', () => {
-  it('inserts every exercise, chunked under the SQLite bind-variable limit', async () => {
+  // Phase 2: a new member's day-one library is the whole bundled library (400+ exercises
+  // with pictures, steps and log types), each row linked to its entry — not the old ~40.
+  it('inserts the whole bundled library, each row linked, chunked under the SQLite bind-variable limit', async () => {
     const statements: { sql: string; params: unknown[] }[] = [];
     // Type-only import of the real expo-sqlite signature; the runtime module is
     // the O1 throwing stub, which this fake never touches.
@@ -112,12 +116,33 @@ describe('insertExerciseCatalog', () => {
 
     const inserted = await insertExerciseCatalog({ runAsync });
 
-    expect(inserted).toBe(EXERCISES.length);
+    expect(CATALOG.length).toBeGreaterThanOrEqual(400);
+    expect(inserted).toBe(CATALOG.length);
     const tuples = statements.reduce((n, s) => n + (s.sql.match(/\(\?/g)?.length ?? 0), 0);
-    expect(tuples).toBe(EXERCISES.length);
+    expect(tuples).toBe(CATALOG.length);
+    const keyAt = CATALOG_COLUMNS.indexOf('catalog_key');
+    const keys = new Set<unknown>();
     for (const s of statements) {
       expect(s.params.length).toBeLessThanOrEqual(900); // SQLite default limit is 999
-      expect(s.params.length % EXERCISE_COLUMNS.length).toBe(0);
+      expect(s.params.length % CATALOG_COLUMNS.length).toBe(0);
+      s.params.forEach((v, i) => {
+        if (i % CATALOG_COLUMNS.length === keyAt) keys.add(v);
+      });
     }
+    expect(keys).toEqual(new Set(CATALOG.map((e) => e.key)));
+  });
+
+  it('every original seed name is still in the day-one library (old routines and imports keep finding them)', async () => {
+    const names = new Set<unknown>();
+    const runAsync = (async (_sql: string, params: unknown[]) => {
+      params.forEach((v, i) => {
+        if (i % CATALOG_COLUMNS.length === 1) names.add(String(v).toLowerCase());
+      });
+      return { lastInsertRowId: 0, changes: 0 };
+    }) as unknown as SQLiteDatabase['runAsync'];
+    await insertExerciseCatalog({ runAsync });
+    const libraryNames = new Set(CATALOG.flatMap((e) => [e.name, ...(e.linkNames ?? [])].map((n) => n.toLowerCase())));
+    for (const ex of EXERCISES) expect(libraryNames.has(ex.name.toLowerCase()), ex.name).toBe(true);
+    expect(names.size).toBe(CATALOG.length);
   });
 });

@@ -1,0 +1,2305 @@
+[
+  {
+    "key": "pull_up",
+    "name": "Pull-up",
+    "ek": "0087",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "assisted_pull_up",
+    "harder": "weighted_pull_up",
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "pull up",
+      "pullup",
+      "pullups",
+      "pull-ups",
+      "pull ups",
+      "overhand pull up"
+    ],
+    "linkNames": [
+      "Pull Up"
+    ],
+    "steps": [
+      "Hang from the bar, palms facing away, hands a bit wider than your shoulders.",
+      "Pull your chest up until your chin clears the bar.",
+      "Lower yourself slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "chin_up",
+    "name": "Chin-up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "assisted_chin_up",
+    "harder": "weighted_chin_up",
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "chin up",
+      "chinup",
+      "chinups",
+      "chin-ups",
+      "chin ups",
+      "underhand pull up",
+      "reverse grip pull up"
+    ],
+    "linkNames": [
+      "Chin Up"
+    ],
+    "steps": [
+      "Hang from the bar, palms facing you, hands shoulder-width apart.",
+      "Pull up until your chin clears the bar, elbows close to your body.",
+      "Lower yourself slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "assisted_pull_up",
+    "name": "Assisted Pull-up",
+    "ek": null,
+    "equipment": "machine",
+    "type": "assisted",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": null,
+    "harder": "pull_up",
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "assisted pull up",
+      "assisted pullup",
+      "assisted pull ups",
+      "pull up machine",
+      "gravitron",
+      "assisted chin dip machine"
+    ],
+    "linkNames": [
+      "Pull Up (Assisted)"
+    ],
+    "steps": [
+      "Pick the help weight; more weight makes it easier.",
+      "Kneel on the pad and grip the top handles, palms facing away.",
+      "Pull up until your chin clears the handles, then lower slowly."
+    ]
+  },
+  {
+    "key": "assisted_chin_up",
+    "name": "Assisted Chin-up",
+    "ek": null,
+    "equipment": "machine",
+    "type": "assisted",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": null,
+    "harder": "chin_up",
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "assisted chin up",
+      "assisted chinup",
+      "assisted chin ups",
+      "chin up machine"
+    ],
+    "linkNames": [
+      "Chin Up (Assisted)"
+    ],
+    "steps": [
+      "Pick the help weight; more weight makes it easier.",
+      "Kneel on the pad and grip the bar, palms facing you, shoulder-width.",
+      "Pull up until your chin clears your hands, then lower slowly."
+    ]
+  },
+  {
+    "key": "weighted_pull_up",
+    "name": "Weighted Pull-up",
+    "ek": null,
+    "equipment": "other",
+    "type": "weighted",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "pull_up",
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "weighted pull up",
+      "weighted pullup",
+      "weighted pull ups",
+      "belt pull up",
+      "pull up with weight"
+    ],
+    "linkNames": [
+      "Pull Up (Weighted)"
+    ],
+    "steps": [
+      "Hang a plate from a dip belt, or hold a dumbbell between your feet.",
+      "Grip the bar palms away, hands a bit wider than your shoulders.",
+      "Pull until your chin clears the bar, then lower slowly to straight arms."
+    ]
+  },
+  {
+    "key": "weighted_chin_up",
+    "name": "Weighted Chin-up",
+    "ek": null,
+    "equipment": "other",
+    "type": "weighted",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "chin_up",
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "weighted chin up",
+      "weighted chinup",
+      "weighted chin ups",
+      "chin up with weight"
+    ],
+    "linkNames": [
+      "Chin Up (Weighted)"
+    ],
+    "steps": [
+      "Hang a plate from a dip belt, or hold a dumbbell between your feet.",
+      "Grip the bar palms facing you, hands shoulder-width apart.",
+      "Pull until your chin clears the bar, then lower slowly to straight arms."
+    ]
+  },
+  {
+    "key": "negative_pull_up",
+    "name": "Negative Pull-up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "band_assisted_pull_up",
+    "harder": "pull_up",
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "negative pull up",
+      "negative pullup",
+      "pull up negatives",
+      "eccentric pull up",
+      "slow lowering pull up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand on a box and grip the bar, palms facing away.",
+      "Jump or step up so your chin is above the bar.",
+      "Lower yourself slowly, over 3 to 5 seconds, until your arms are straight.",
+      "Step back onto the box and repeat."
+    ]
+  },
+  {
+    "key": "band_assisted_pull_up",
+    "name": "Band-Assisted Pull-up",
+    "ek": null,
+    "equipment": "other",
+    "type": "assisted",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": null,
+    "harder": "pull_up",
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "band assisted pull up",
+      "band pull up",
+      "banded pull up",
+      "resistance band pull up",
+      "band assisted pullup"
+    ],
+    "linkNames": [
+      "Pull Up (Band)"
+    ],
+    "steps": [
+      "Loop a band over the bar; a thicker band gives more help.",
+      "Put one knee or foot in the band and grip the bar, palms away.",
+      "Pull until your chin clears the bar, then lower slowly."
+    ]
+  },
+  {
+    "key": "inverted_row",
+    "name": "Inverted Row",
+    "ek": "0086",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "pull_up",
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "body row",
+      "bodyweight row",
+      "australian pull up",
+      "australian pullup",
+      "inverted rows",
+      "horizontal pull up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie under a bar set at waist height and grip it, palms facing away.",
+      "Keep your body straight from head to heels, heels on the floor.",
+      "Pull your chest up to the bar, then lower until your arms are straight."
+    ]
+  },
+  {
+    "key": "muscle_up",
+    "name": "Muscle-up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "triceps",
+      "chest"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "pull_up",
+    "harder": null,
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "muscle up",
+      "muscleup",
+      "muscle ups",
+      "bar muscle up"
+    ],
+    "linkNames": [
+      "Muscle Up"
+    ],
+    "steps": [
+      "Hang from the bar, palms facing away, hands about shoulder-width.",
+      "Pull hard and fast, bringing the bar toward your lower chest.",
+      "Lean your chest over the bar and push down until your arms are straight.",
+      "Lower yourself back to a hang with control."
+    ]
+  },
+  {
+    "key": "neutral_grip_pull_up",
+    "name": "Neutral-Grip Pull-up",
+    "ek": "0090",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "assisted_pull_up",
+    "harder": "weighted_pull_up",
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "neutral grip pull up",
+      "neutral grip chin up",
+      "parallel grip pull up",
+      "hammer grip pull up",
+      "narrow parallel grip chin up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Grip the parallel handles with your palms facing each other.",
+      "Hang with straight arms, then pull up until your chin clears the handles.",
+      "Lower yourself slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "wide_grip_pull_up",
+    "name": "Wide-Grip Pull-up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "upper_back",
+      "biceps"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "pull_up",
+    "harder": "weighted_pull_up",
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "wide grip pull up",
+      "wide pull up",
+      "wide grip pullup",
+      "wide grip chin up",
+      "wide pullups"
+    ],
+    "linkNames": [
+      "Wide Pull Up"
+    ],
+    "steps": [
+      "Grip the bar palms away, hands well wider than your shoulders.",
+      "Pull your chest toward the bar until your chin clears it.",
+      "Lower yourself slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "lat_pulldown",
+    "name": "Lat Pulldown",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "pulldown",
+      "lat pull down",
+      "lats",
+      "peeth pulldown",
+      "lat machine",
+      "wide grip lat pulldown",
+      "wide grip pulldown",
+      "front lat pulldown",
+      "cable pulldown"
+    ],
+    "linkNames": [
+      "Lat Pulldown (Cable)"
+    ],
+    "steps": [
+      "Sit with your thighs under the pads and grip the bar wide, palms away.",
+      "Lean back slightly and pull the bar to your upper chest, not your neck.",
+      "Let the bar rise slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "machine_lat_pulldown",
+    "name": "Machine Lat Pulldown",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "lat pulldown machine",
+      "plate loaded pulldown",
+      "lever pulldown",
+      "iso lateral pulldown",
+      "hammer strength pulldown"
+    ],
+    "linkNames": [
+      "Lat Pulldown (Machine)"
+    ],
+    "steps": [
+      "Sit with your thighs under the pads and grip both handles overhead.",
+      "Pull the handles down until your hands reach shoulder height.",
+      "Let them rise slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "close_grip_lat_pulldown",
+    "name": "Close-Grip Lat Pulldown",
+    "ek": "0096",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "close grip pulldown",
+      "v bar pulldown",
+      "v grip pulldown",
+      "v handle pulldown",
+      "narrow grip pulldown",
+      "neutral grip pulldown"
+    ],
+    "linkNames": [
+      "Lat Pulldown - Close Grip (Cable)"
+    ],
+    "steps": [
+      "Clip a V-handle to the high cable and sit with thighs under the pads.",
+      "Hold the handle, palms facing each other, and lean back slightly.",
+      "Pull it to your upper chest, then let it rise slowly to straight arms."
+    ]
+  },
+  {
+    "key": "reverse_grip_lat_pulldown",
+    "name": "Reverse-Grip Lat Pulldown",
+    "ek": "0093",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse grip pulldown",
+      "underhand pulldown",
+      "underhand lat pulldown",
+      "reverse lat pulldown",
+      "supinated pulldown"
+    ],
+    "linkNames": [
+      "Reverse Grip Lat Pulldown (Cable)"
+    ],
+    "steps": [
+      "Sit with thighs under the pads and grip the bar shoulder-width, palms facing you.",
+      "Pull the bar to your upper chest, elbows close to your sides.",
+      "Let the bar rise slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "single_arm_lat_pulldown",
+    "name": "Single-Arm Lat Pulldown",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "single arm pulldown",
+      "one arm lat pulldown",
+      "one arm pulldown",
+      "single arm lat pull down",
+      "unilateral pulldown"
+    ],
+    "linkNames": [
+      "Single Arm Lat Pulldown"
+    ],
+    "steps": [
+      "Clip a single handle to the high cable and sit or kneel facing it.",
+      "Pull the handle down to your shoulder, elbow close to your side.",
+      "Let it rise until your arm is straight; switch arms after your reps."
+    ]
+  },
+  {
+    "key": "kneeling_cable_pulldown",
+    "name": "Kneeling Cable Pulldown",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "biceps",
+      "upper_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "kneeling pulldown",
+      "kneeling lat pulldown",
+      "kneeling rope pulldown",
+      "half kneeling pulldown"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Clip a bar or rope to the high cable and kneel facing it.",
+      "Hold it with straight arms, upper body tall and hips forward.",
+      "Pull it down to your upper chest, then let it rise slowly."
+    ]
+  },
+  {
+    "key": "straight_arm_pulldown",
+    "name": "Straight-Arm Pulldown",
+    "ek": "0092",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "triceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "straight arm pulldown",
+      "straight arm lat pulldown",
+      "straight arm pushdown",
+      "lat pushdown",
+      "standing lat pulldown"
+    ],
+    "linkNames": [
+      "Straight Arm Lat Pulldown (Cable)"
+    ],
+    "steps": [
+      "Stand facing the high cable and grip the bar, palms down.",
+      "Lean forward a little, arms straight with a soft bend at the elbows.",
+      "Sweep the bar down to your thighs, then let it rise to eye level."
+    ]
+  },
+  {
+    "key": "cable_pullover",
+    "name": "Cable Pullover",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "triceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "rope pullover",
+      "standing cable pullover",
+      "rope straight arm pulldown",
+      "cable lat pullover"
+    ],
+    "linkNames": [
+      "Rope Straight Arm Pulldown"
+    ],
+    "steps": [
+      "Clip a rope to the high cable, step back and lean forward a little.",
+      "Hold the rope up in front of your head with arms nearly straight.",
+      "Pull the rope down in an arc to your thighs, then return slowly."
+    ]
+  },
+  {
+    "key": "machine_pullover",
+    "name": "Machine Pullover",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "upper_back",
+      "chest"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "pullover machine",
+      "seated pullover",
+      "lat pullover machine",
+      "nautilus pullover"
+    ],
+    "linkNames": [
+      "Seated Lat Pullover",
+      "Pullover (Machine)"
+    ],
+    "steps": [
+      "Set the seat so your shoulders line up with the machine's pivot.",
+      "Sit back and hold the bar overhead, arms nearly straight.",
+      "Pull it down in an arc toward your belly, then return slowly."
+    ]
+  },
+  {
+    "key": "barbell_row",
+    "name": "Barbell Row",
+    "ek": "0028",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "row",
+      "bent over row",
+      "bb row",
+      "barbell rowing",
+      "peeth row",
+      "bent over barbell row",
+      "bent-over row",
+      "overhand barbell row"
+    ],
+    "linkNames": [
+      "Bent Over Row (Barbell)"
+    ],
+    "steps": [
+      "Hold the bar palms down, hands a bit wider than your shoulders.",
+      "Push your hips back and lean forward, back flat, knees slightly bent.",
+      "Pull the bar to your lower ribs, then lower it to straight arms."
+    ]
+  },
+  {
+    "key": "pendlay_row",
+    "name": "Pendlay Row",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "pendlay rows",
+      "dead stop row",
+      "strict barbell row",
+      "barbell row from floor"
+    ],
+    "linkNames": [
+      "Pendlay Row (Barbell)"
+    ],
+    "steps": [
+      "Bend over the bar on the floor until your back is nearly level.",
+      "Grip it a bit wider than your shoulders, palms down, back flat.",
+      "Pull it fast to your lower chest, then set it back down each rep."
+    ]
+  },
+  {
+    "key": "reverse_grip_barbell_row",
+    "name": "Reverse-Grip Barbell Row",
+    "ek": "0026",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "yates row",
+      "underhand barbell row",
+      "underhand row",
+      "reverse grip row",
+      "reverse barbell row",
+      "supinated row"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the bar with palms facing up, hands shoulder-width apart.",
+      "Lean forward partway with knees slightly bent and back flat.",
+      "Pull the bar to your belly button, elbows close, then lower it slowly."
+    ]
+  },
+  {
+    "key": "t_bar_row",
+    "name": "T-Bar Row",
+    "ek": "0029",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "t bar row",
+      "tbar row",
+      "t bar rowing",
+      "t-bar rows",
+      "landmine row",
+      "v handle t bar row"
+    ],
+    "linkNames": [
+      "T Bar Row"
+    ],
+    "steps": [
+      "Stand over the bar, feet either side, and grip the handles.",
+      "Lean forward with knees slightly bent and back flat.",
+      "Pull the handles toward your chest, then lower until your arms are straight."
+    ]
+  },
+  {
+    "key": "chest_supported_t_bar_row",
+    "name": "Chest-Supported T-Bar Row",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "chest supported t bar row",
+      "lying t bar row",
+      "incline t bar row",
+      "t bar row machine",
+      "chest supported row machine"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie face down on the angled pad with your feet on the platform.",
+      "Grip the handles with your arms hanging straight.",
+      "Pull the handles toward your chest, then lower them slowly."
+    ]
+  },
+  {
+    "key": "meadows_row",
+    "name": "Meadows Row",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "rear_delts",
+      "biceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "meadows rows",
+      "landmine one arm row",
+      "single arm landmine row",
+      "one arm t bar row"
+    ],
+    "linkNames": [
+      "Meadows Rows (Barbell)"
+    ],
+    "steps": [
+      "Stand side-on to the end of a landmine bar, back flat.",
+      "Grip the end of the bar overhand, other forearm resting on your knee.",
+      "Pull the bar up toward your hip, then lower it slowly.",
+      "Finish your reps, then switch sides."
+    ]
+  },
+  {
+    "key": "one_arm_dumbbell_row",
+    "name": "One-Arm Dumbbell Row",
+    "ek": "0024",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "upper_back",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "dumbbell row",
+      "db row",
+      "one arm row",
+      "single arm dumbbell row",
+      "one arm dumbbell rowing",
+      "dumbbell rowing",
+      "bench dumbbell row"
+    ],
+    "linkNames": [
+      "Dumbbell Row"
+    ],
+    "steps": [
+      "Put one knee and one hand on a bench, back flat.",
+      "Hold a dumbbell in your free hand with your arm hanging straight.",
+      "Pull it up toward your hip, elbow close, then lower it slowly.",
+      "Finish your reps, then switch sides."
+    ]
+  },
+  {
+    "key": "dumbbell_bent_over_row",
+    "name": "Dumbbell Bent-Over Row",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bent over dumbbell row",
+      "two arm dumbbell row",
+      "db bent over row",
+      "double dumbbell row"
+    ],
+    "linkNames": [
+      "Bent Over Row (Dumbbell)"
+    ],
+    "steps": [
+      "Hold two dumbbells with your palms turned toward your body.",
+      "Push your hips back and lean forward, back flat, knees slightly bent.",
+      "Pull both dumbbells to your lower ribs, then lower them to straight arms."
+    ]
+  },
+  {
+    "key": "chest_supported_dumbbell_row",
+    "name": "Chest-Supported Dumbbell Row",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "rear_delts",
+      "biceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "chest supported row",
+      "incline dumbbell row",
+      "incline bench row",
+      "chest supported incline row",
+      "prone dumbbell row"
+    ],
+    "linkNames": [
+      "Chest Supported Incline Row (Dumbbell)"
+    ],
+    "steps": [
+      "Set a bench to a low incline and lie chest-down on it.",
+      "Let a dumbbell hang straight down from each hand.",
+      "Pull the dumbbells up toward your ribs, then lower them slowly."
+    ]
+  },
+  {
+    "key": "seated_cable_row",
+    "name": "Seated Cable Row",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable row",
+      "seated row",
+      "low row",
+      "v grip cable row",
+      "v bar row",
+      "close grip cable row",
+      "seated rowing",
+      "cable rowing"
+    ],
+    "linkNames": [
+      "Seated Cable Row - V Grip (Cable)"
+    ],
+    "steps": [
+      "Sit at the low cable with your feet on the plate, knees slightly bent.",
+      "Hold the V-handle with straight arms and sit tall.",
+      "Pull the handle to your belly, squeezing your shoulder blades together.",
+      "Let your arms straighten slowly without rounding your back."
+    ]
+  },
+  {
+    "key": "straight_bar_cable_row",
+    "name": "Straight-Bar Cable Row",
+    "ek": "0025",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bar grip cable row",
+      "seated cable row bar grip",
+      "overhand cable row",
+      "straight bar seated row"
+    ],
+    "linkNames": [
+      "Seated Cable Row - Bar Grip"
+    ],
+    "steps": [
+      "Clip a straight bar to the low cable and sit with knees slightly bent.",
+      "Grip it palms down, hands about shoulder-width, and sit tall.",
+      "Pull the bar to your belly, then let your arms straighten slowly."
+    ]
+  },
+  {
+    "key": "wide_grip_cable_row",
+    "name": "Wide-Grip Cable Row",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "rear_delts",
+      "lats",
+      "biceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "wide grip seated row",
+      "wide grip cable row",
+      "wide cable row",
+      "lat bar row",
+      "wide grip seated cable row"
+    ],
+    "linkNames": [
+      "Seated Cable Row - Bar Wide Grip"
+    ],
+    "steps": [
+      "Clip a long bar to the low cable and sit with knees slightly bent.",
+      "Grip it palms down, hands well wider than your shoulders.",
+      "Pull the bar to your lower chest, elbows out, then return slowly."
+    ]
+  },
+  {
+    "key": "single_arm_cable_row",
+    "name": "Single-Arm Cable Row",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "upper_back",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm cable row",
+      "single arm seated cable row",
+      "one arm seated row",
+      "unilateral cable row"
+    ],
+    "linkNames": [
+      "Single Arm Cable Row"
+    ],
+    "steps": [
+      "Clip one handle to a low cable, then sit or stand facing it.",
+      "Pull the handle to your side, elbow close, without twisting your body.",
+      "Let your arm straighten slowly; switch arms after your reps."
+    ]
+  },
+  {
+    "key": "seated_machine_row",
+    "name": "Seated Machine Row",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "machine row",
+      "seated row machine",
+      "chest supported machine row",
+      "machine rowing",
+      "seated machine rowing"
+    ],
+    "linkNames": [
+      "Seated Row (Machine)"
+    ],
+    "steps": [
+      "Set the seat so the handles are level with your chest.",
+      "Sit with your chest on the pad and grip the handles.",
+      "Pull the handles back until your elbows pass your body, then return slowly."
+    ]
+  },
+  {
+    "key": "iso_lateral_row",
+    "name": "Iso-Lateral Row",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "iso lateral row",
+      "iso row",
+      "hammer strength row",
+      "plate loaded row",
+      "lever row"
+    ],
+    "linkNames": [
+      "Iso-Lateral Row (Machine)"
+    ],
+    "steps": [
+      "Sit with your chest on the pad and feet flat.",
+      "Grip both handles; each side moves on its own.",
+      "Pull the handles toward your ribs, then let them go forward slowly."
+    ]
+  },
+  {
+    "key": "iso_lateral_high_row",
+    "name": "Iso-Lateral High Row",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "upper_back",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "high row",
+      "high row machine",
+      "machine high row",
+      "hammer strength high row",
+      "iso lateral high row"
+    ],
+    "linkNames": [
+      "Iso-Lateral High Row (Machine)"
+    ],
+    "steps": [
+      "Sit with your thighs under the pad and reach up to the high handles.",
+      "Pull the handles down and back toward your chest.",
+      "Let them rise slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "iso_lateral_low_row",
+    "name": "Iso-Lateral Low Row",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "lats"
+    ],
+    "secondary": [
+      "upper_back",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "low row machine",
+      "machine low row",
+      "hammer strength low row",
+      "iso lateral low row"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit with your chest on the pad and grip the low handles.",
+      "Pull the handles back toward your hips, elbows close.",
+      "Let them go forward slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "smith_machine_row",
+    "name": "Smith Machine Row",
+    "ek": "0022",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "rear_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith row",
+      "smith machine bent over row",
+      "smith bent over row"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set the bar at knee height and grip it palms down, a bit wide.",
+      "Unhook it, push your hips back and lean forward, back flat.",
+      "Pull the bar to your lower ribs, then lower it to straight arms."
+    ]
+  },
+  {
+    "key": "dumbbell_shrug",
+    "name": "Dumbbell Shrug",
+    "ek": "0005",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "traps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "shrugs",
+      "trap shrug",
+      "traps",
+      "db shrug",
+      "dumbbell shrugs",
+      "shoulder shrug",
+      "kandhe uchkana"
+    ],
+    "linkNames": [
+      "Shrug (Dumbbell)"
+    ],
+    "steps": [
+      "Stand tall, holding a dumbbell at each side.",
+      "Lift your shoulders straight up toward your ears, arms straight.",
+      "Hold for a second, then lower your shoulders slowly."
+    ]
+  },
+  {
+    "key": "barbell_shrug",
+    "name": "Barbell Shrug",
+    "ek": "0030",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "traps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "barbell shrugs",
+      "bb shrug",
+      "bar shrug"
+    ],
+    "linkNames": [
+      "Shrug (Barbell)"
+    ],
+    "steps": [
+      "Hold a barbell in front of your thighs, hands just wider than shoulders.",
+      "Lift your shoulders straight up toward your ears.",
+      "Pause at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "cable_shrug",
+    "name": "Cable Shrug",
+    "ek": "0009",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "traps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable shrugs",
+      "cable trap shrug"
+    ],
+    "linkNames": [
+      "Shrug (Cable)"
+    ],
+    "steps": [
+      "Clip a straight bar to the low cable and hold it at your thighs.",
+      "Stand tall and lift your shoulders up toward your ears.",
+      "Pause at the top, then lower slowly with straight arms."
+    ]
+  },
+  {
+    "key": "smith_machine_shrug",
+    "name": "Smith Machine Shrug",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "traps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith shrug",
+      "smith machine shrugs"
+    ],
+    "linkNames": [
+      "Shrug (Smith Machine)"
+    ],
+    "steps": [
+      "Set the bar at mid-thigh height and grip it just wider than shoulders.",
+      "Unhook the bar and stand tall with straight arms.",
+      "Lift your shoulders toward your ears, pause, then lower slowly."
+    ]
+  },
+  {
+    "key": "trap_bar_shrug",
+    "name": "Trap Bar Shrug",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "traps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "hex bar shrug",
+      "farmer's shrug",
+      "farmers shrug",
+      "trap bar shrugs"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand inside the trap bar and lift it like a deadlift.",
+      "With arms straight, lift your shoulders up toward your ears.",
+      "Pause at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "machine_shrug",
+    "name": "Machine Shrug",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "traps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "shrug machine",
+      "machine shrugs",
+      "standing shrug machine"
+    ],
+    "linkNames": [
+      "Shrug (Machine)"
+    ],
+    "steps": [
+      "Stand in the machine with the handles at your sides, arms straight.",
+      "Lift your shoulders straight up toward your ears.",
+      "Pause at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "incline_y_raise",
+    "name": "Incline Y-Raise",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "upper_back"
+    ],
+    "secondary": [
+      "traps",
+      "rear_delts",
+      "side_delts"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "y raise",
+      "prone y raise",
+      "incline y raise",
+      "y raises",
+      "face down y raise",
+      "lower trap raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie chest-down on an incline bench, a light dumbbell in each hand.",
+      "With thumbs up, raise your arms forward and out into a Y shape.",
+      "Lower them slowly until they hang straight down."
+    ]
+  },
+  {
+    "key": "deadlift",
+    "name": "Deadlift",
+    "ek": "0099",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "lower_back",
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings",
+      "traps",
+      "forearms"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "dl",
+      "deads",
+      "conventional deadlift",
+      "barbell deadlift",
+      "dead lift",
+      "deadlifts"
+    ],
+    "linkNames": [
+      "Deadlift (Barbell)"
+    ],
+    "steps": [
+      "Stand with the bar over the middle of your feet, feet hip-width.",
+      "Push your hips back and grip the bar just outside your legs, back flat.",
+      "Stand up tall by pushing the floor away, keeping the bar close.",
+      "Lower it the same way, hips back first, to the floor."
+    ]
+  },
+  {
+    "key": "sumo_deadlift",
+    "name": "Sumo Deadlift",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "glutes",
+      "quads"
+    ],
+    "secondary": [
+      "adductors",
+      "hamstrings",
+      "lower_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "sumo dl",
+      "sumo deadlifts",
+      "wide stance deadlift",
+      "sumo"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with feet wide, toes turned out, the bar over your feet.",
+      "Squat down and grip the bar inside your knees, back flat, chest up.",
+      "Push your knees out and stand up, keeping the bar close.",
+      "Lower it the same way to the floor."
+    ]
+  },
+  {
+    "key": "trap_bar_deadlift",
+    "name": "Trap Bar Deadlift",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "glutes",
+      "quads"
+    ],
+    "secondary": [
+      "hamstrings",
+      "lower_back",
+      "traps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "hex bar deadlift",
+      "trap bar dl",
+      "hex bar dl",
+      "trap bar deadlifts",
+      "hex deadlift"
+    ],
+    "linkNames": [
+      "Deadlift (Trap Bar)"
+    ],
+    "steps": [
+      "Stand in the middle of the trap bar, feet hip-width.",
+      "Bend your hips and knees to grip the handles, back flat, chest up.",
+      "Push through the floor and stand up tall.",
+      "Lower the bar the same way to the floor."
+    ]
+  },
+  {
+    "key": "rack_pull",
+    "name": "Rack Pull",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "lower_back"
+    ],
+    "secondary": [
+      "glutes",
+      "traps",
+      "forearms"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "rack pulls",
+      "rack deadlift",
+      "block pull",
+      "partial deadlift",
+      "pin pull"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set the bar on the rack pins or blocks just below your knees.",
+      "Grip it just outside your legs, hips back, back flat.",
+      "Stand up tall, pushing your hips forward.",
+      "Lower the bar back to the pins with control."
+    ]
+  },
+  {
+    "key": "smith_machine_deadlift",
+    "name": "Smith Machine Deadlift",
+    "ek": "0100",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "lower_back",
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings",
+      "traps",
+      "forearms"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith deadlift",
+      "smith machine deadlifts",
+      "smith dl"
+    ],
+    "linkNames": [
+      "Deadlift (Smith Machine)"
+    ],
+    "steps": [
+      "Set the bar at its lowest height and stand close, feet hip-width.",
+      "Push your hips back and grip the bar just outside your legs, back flat.",
+      "Stand up tall, then lower the bar the same way, hips back first."
+    ]
+  },
+  {
+    "key": "dumbbell_deadlift",
+    "name": "Dumbbell Deadlift",
+    "ek": "0107",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "lower_back",
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings",
+      "quads",
+      "forearms"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db deadlift",
+      "dumbbell deadlifts",
+      "dumbbell dl"
+    ],
+    "linkNames": [
+      "Deadlift (Dumbbell)"
+    ],
+    "steps": [
+      "Stand tall with a dumbbell hanging at each side.",
+      "Push your hips back and bend your knees, lowering the weights to your shins.",
+      "Keep your back flat and stand back up by pushing the floor away."
+    ]
+  },
+  {
+    "key": "stiff_leg_deadlift",
+    "name": "Stiff-Leg Deadlift",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "glutes",
+      "lower_back"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "stiff leg deadlift",
+      "straight leg deadlift",
+      "sldl",
+      "stiff legged deadlift",
+      "stiff leg dl"
+    ],
+    "linkNames": [
+      "Straight Leg Deadlift"
+    ],
+    "steps": [
+      "Stand holding the bar at your thighs, knees only slightly bent.",
+      "With your back flat, lower the bar down your legs to a deep stretch.",
+      "Push your hips forward to stand back up."
+    ]
+  },
+  {
+    "key": "good_morning",
+    "name": "Good Morning",
+    "ek": "0101",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "lower_back",
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "good mornings",
+      "barbell good morning",
+      "bb good morning"
+    ],
+    "linkNames": [
+      "Good Morning (Barbell)"
+    ],
+    "steps": [
+      "Rest a barbell on your upper back, as for a squat.",
+      "With knees slightly bent and back flat, push your hips back and lean forward.",
+      "Stop when your upper body is nearly level, then stand back up."
+    ]
+  },
+  {
+    "key": "smith_machine_good_morning",
+    "name": "Smith Machine Good Morning",
+    "ek": "0102",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "hamstrings"
+    ],
+    "secondary": [
+      "lower_back",
+      "glutes"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith good morning",
+      "smith machine good mornings"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set the Smith bar at shoulder height and rest it on your upper back.",
+      "Unhook it, then push your hips back and lean forward, back flat.",
+      "Stop when your upper body is nearly level, then stand back up."
+    ]
+  },
+  {
+    "key": "back_extension",
+    "name": "Back Extension",
+    "ek": "0103",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "lower_back"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "superman",
+    "harder": "weighted_back_extension",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "hyperextension",
+      "hyper extension",
+      "hyperextensions",
+      "back extensions",
+      "roman chair",
+      "lower back extension",
+      "kamar"
+    ],
+    "linkNames": [
+      "Back Extension (Hyperextension)"
+    ],
+    "steps": [
+      "Set the pad just below your hips and hook your ankles under the rollers.",
+      "Cross your arms on your chest and lower your upper body toward the floor.",
+      "Rise until your body is in a straight line, without leaning back."
+    ]
+  },
+  {
+    "key": "weighted_back_extension",
+    "name": "Weighted Back Extension",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "lower_back"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "back_extension",
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "weighted hyperextension",
+      "weighted hyper extension",
+      "plate back extension",
+      "loaded back extension"
+    ],
+    "linkNames": [
+      "Back Extension (Weighted Hyperextension)"
+    ],
+    "steps": [
+      "Set up on the back extension bench and hug a plate to your chest.",
+      "Lower your upper body toward the floor with your back flat.",
+      "Rise until your body is in a straight line, then repeat."
+    ]
+  },
+  {
+    "key": "machine_back_extension",
+    "name": "Machine Back Extension",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "lower_back"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "back extension machine",
+      "lower back machine",
+      "seated back extension"
+    ],
+    "linkNames": [
+      "Back Extension (Machine)"
+    ],
+    "steps": [
+      "Sit with your upper back against the pad and feet on the footrest.",
+      "Cross your arms and push back until you are upright.",
+      "Return forward slowly with control."
+    ]
+  },
+  {
+    "key": "stability_ball_back_extension",
+    "name": "Stability Ball Back Extension",
+    "ek": "0104",
+    "equipment": "other",
+    "type": "reps",
+    "primary": [
+      "lower_back"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "back_extension",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "swiss ball back extension",
+      "gym ball back extension",
+      "ball back extension",
+      "exercise ball back extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie face down with your hips on the ball and toes on the floor.",
+      "Put your hands by your ears and let your chest curl over the ball.",
+      "Lift your chest until your body is straight, then lower slowly."
+    ]
+  },
+  {
+    "key": "superman",
+    "name": "Superman",
+    "ek": "0105",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "lower_back"
+    ],
+    "secondary": [
+      "glutes"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "back_extension",
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "supermans",
+      "superman raise",
+      "prone back raise",
+      "floor back extension",
+      "superman exercise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie face down with your arms stretched out past your head.",
+      "Lift your arms, chest and legs a little off the floor.",
+      "Hold for two seconds, then lower back down."
+    ]
+  },
+  {
+    "key": "reverse_hyperextension",
+    "name": "Reverse Hyperextension",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "glutes"
+    ],
+    "secondary": [
+      "hamstrings",
+      "lower_back"
+    ],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse hyper",
+      "reverse hypers",
+      "reverse back extension",
+      "bench reverse hyper"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on your stomach on a high bench, hips right at its end.",
+      "Hold the bench and let your legs hang toward the floor.",
+      "Lift your legs until they line up with your body, then lower slowly."
+    ]
+  }
+]

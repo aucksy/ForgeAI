@@ -1,0 +1,238 @@
+# Phase 2 device QA, part C — exercises (runs after parts A and B; demo data is loaded).
+# Library with pictures and finer muscles → the moving demo behind a tap → exercise page →
+# an empty workout with every new kind of set: a timed plank on the stopwatch, bodyweight
+# pull-ups (body weight counts in volume), an assisted pull-up, dumbbells "kg each" with the
+# Counting choice, a treadmill run (distance + time) → finish → sets per muscle → new exercise form.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Exercise library"
+    timeout: 30000
+- tapOn: "Exercise library"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- takeScreenshot: 20-library
+- tapOn: "Search exercises"
+- inputText: " lateral raise"
+- hideKeyboard
+- takeScreenshot: 21-library-search
+# The small picture opens the moving demo; the row itself opens the exercise page.
+- tapOn:
+    text: "Show how to do .*Lateral Raise.*"
+    index: 0
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: "Drawing: Everkinetic.*"
+    timeout: 10000
+- takeScreenshot: 22-demo-sheet
+- back
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " pull-up"
+- hideKeyboard
+- tapOn:
+    text: "View Pull[- ][Uu]p"
+    index: 0
+- extendedWaitUntil:
+    visible: "How to do it"
+    timeout: 15000
+- takeScreenshot: 23-exercise-page
+- assertVisible: "Easier:.*|Harder:.*"
+- back
+- back
+# ---------------------------------------------------------------- empty workout, new set kinds
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 20000
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 20000
+# Plank: TIME column + stopwatch.
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " plank"
+- hideKeyboard
+- tapOn:
+    text: "Add Plank"
+    index: 0
+- extendedWaitUntil:
+    visible: "Start the timer for set 1"
+    timeout: 15000
+- tapOn: "Start the timer for set 1"
+- extendedWaitUntil:
+    visible: "Start timer"
+    timeout: 10000
+- tapOn: "Start timer"
+- extendedWaitUntil:
+    visible: "0:0[3-9] so far"
+    timeout: 15000
+- takeScreenshot: 24-hold-stopwatch
+- tapOn:
+    text: "Stop and save .*"
+    waitToSettleTimeoutMs: 300
+- takeScreenshot: 25-plank-set-saved
+- tapOn:
+    text: "Skip rest"
+    optional: true
+# Pull-up: REPS only. (Demo data keeps the seed's name "Pull Up"; linking never renames.)
+- scrollUntilVisible:
+    element:
+      text: "Add exercise"
+    timeout: 15000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " pull-up"
+- hideKeyboard
+- tapOn:
+    text: "Add Pull[- ][Uu]p"
+    index: 0
+- extendedWaitUntil:
+    visible: "More for Pull[- ][Uu]p"
+    timeout: 15000
+- tapOn:
+    text: "Reps, set 1"
+    below:
+      text: "More for Pull[- ][Uu]p"
+- inputText: " 8"
+- hideKeyboard
+- tapOn:
+    text: "Mark set complete"
+    below:
+      text: "More for Pull[- ][Uu]p"
+- tapOn:
+    text: "Skip rest"
+    optional: true
+# Assisted pull-up: ASSIST KG + REPS.
+- scrollUntilVisible:
+    element:
+      text: "Add exercise"
+    timeout: 15000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " assisted pull"
+- hideKeyboard
+- tapOn:
+    text: "Add Assisted Pull-up.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "ASSIST KG"
+    timeout: 15000
+- tapOn:
+    text: "Assistance in kilograms, set 1"
+    below:
+      text: "More for Assisted Pull-up.*"
+- inputText: " 20"
+- tapOn:
+    text: "Reps, set 1"
+    below:
+      text: "More for Assisted Pull-up.*"
+- inputText: " 8"
+- hideKeyboard
+- takeScreenshot: 26-assisted-row
+# Dumbbells: "KG EACH" and the Counting choice.
+- scrollUntilVisible:
+    element:
+      text: "Add exercise"
+    timeout: 15000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " dumbbell bench"
+- hideKeyboard
+- tapOn:
+    text: "Add Dumbbell Bench Press.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "KG EACH"
+    timeout: 15000
+- tapOn:
+    text: "More for Dumbbell Bench Press.*"
+    index: 0
+- tapOn: "Counting"
+- extendedWaitUntil:
+    visible: ".*Past workouts keep theirs.*"
+    timeout: 10000
+- takeScreenshot: 27-counting-sheet
+- tapOn: "Two dumbbells.*"
+# Treadmill: KM + TIME.
+- scrollUntilVisible:
+    element:
+      text: "Add exercise"
+    timeout: 15000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " treadmill"
+- hideKeyboard
+- tapOn:
+    text: "Add Treadmill.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Distance in kilometres, set 1"
+    timeout: 15000
+- tapOn:
+    text: "Distance in kilometres, set 1"
+    below:
+      text: "More for Treadmill.*"
+- inputText: " 2.4"
+- tapOn:
+    text: "Time, minutes and seconds, set 1"
+    below:
+      text: "More for Treadmill.*"
+- inputText: " 1200"
+- hideKeyboard
+- takeScreenshot: 28-workout-all-kinds
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- takeScreenshot: 29-finish
+- scrollUntilVisible:
+    element: "Sets per muscle"
+    timeout: 20000
+- takeScreenshot: 30-sets-per-muscle
+- scrollUntilVisible:
+    element: "Done"
+    timeout: 20000
+- takeScreenshot: 31-finish-exercises
+- tapOn: "Done"
+# ---------------------------------------------------------------- custom exercise form
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 20000
+- tapOn: "^Workout$"
+- tapOn: "Exercise library"
+- tapOn: "New exercise"
+- extendedWaitUntil:
+    visible: "How you log it"
+    timeout: 15000
+- tapOn: "Exercise name"
+- inputText: " Wall Plank Hold"
+- hideKeyboard
+- tapOn: "^Time$"
+- tapOn: "^Abs$"
+- tapOn: "^Bodyweight$"
+- takeScreenshot: 32-new-exercise-form
+- scrollUntilVisible:
+    element: "Save exercise"
+    timeout: 15000
+- takeScreenshot: 33-new-exercise-photo
+- tapOn: "Save exercise"
+- extendedWaitUntil:
+    visible: "No sets logged yet"
+    timeout: 15000
+- assertVisible: "Wall Plank Hold"
+- takeScreenshot: 34-custom-exercise-page

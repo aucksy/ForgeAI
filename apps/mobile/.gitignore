@@ -29,3 +29,6 @@ android/app/release.keystore
 
 # typescript
 *.tsbuildinfo
+
+# Phase 2: downloaded Everkinetic SVGs for scripts/build-exercise-media.py (re-fetched on demand)
+.media-cache/

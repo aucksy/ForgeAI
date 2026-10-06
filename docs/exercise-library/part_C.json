@@ -1,0 +1,3181 @@
+[
+  {
+    "key": "barbell_curl",
+    "name": "Barbell Curl",
+    "ek": "0211",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bb curl",
+      "curl",
+      "biceps curl",
+      "dole",
+      "dole curl",
+      "barbell bicep curl",
+      "rod curl",
+      "standing barbell curl"
+    ],
+    "linkNames": [
+      "Bicep Curl (Barbell)"
+    ],
+    "steps": [
+      "Stand tall holding the bar at your thighs, palms up, hands shoulder-width apart.",
+      "Keep your elbows by your sides and curl the bar up to your chest.",
+      "Lower it slowly until your arms are straight, without swinging your body."
+    ]
+  },
+  {
+    "key": "ez_bar_curl",
+    "name": "EZ Bar Curl",
+    "ek": "0226",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "ez curl",
+      "ez bar bicep curl",
+      "z bar curl",
+      "zigzag rod curl",
+      "curl bar curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the EZ bar on the angled grips, palms up, arms hanging straight.",
+      "Pin your elbows to your sides and curl the bar towards your shoulders.",
+      "Squeeze at the top, then lower slowly to the start."
+    ]
+  },
+  {
+    "key": "close_grip_ez_bar_curl",
+    "name": "Close-Grip EZ Bar Curl",
+    "ek": "0218",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "close grip ez curl",
+      "narrow ez bar curl",
+      "inner grip ez curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the EZ bar on the inner bends, palms up, hands close together.",
+      "Keep your elbows still and curl the bar up to your upper chest.",
+      "Lower it under control until your arms are straight again."
+    ]
+  },
+  {
+    "key": "wide_grip_ez_bar_curl",
+    "name": "Wide-Grip EZ Bar Curl",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "wide grip ez curl",
+      "outer grip ez curl",
+      "wide z bar curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the EZ bar on the outer bends, palms up, arms straight.",
+      "Keep your elbows at your sides and curl the bar to your chest.",
+      "Lower slowly until your arms are fully straight."
+    ]
+  },
+  {
+    "key": "close_grip_barbell_curl",
+    "name": "Close-Grip Barbell Curl",
+    "ek": "0219",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "close grip curl",
+      "narrow grip barbell curl",
+      "close grip rod curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the bar palms up with your hands narrower than shoulder-width.",
+      "Keep your elbows tucked in and curl the bar up to your chest.",
+      "Lower it slowly to your thighs without leaning back."
+    ]
+  },
+  {
+    "key": "wide_grip_barbell_curl",
+    "name": "Wide-Grip Barbell Curl",
+    "ek": "0250",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "wide grip curl",
+      "wide grip rod curl",
+      "wide barbell curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the bar palms up with your hands wider than your shoulders.",
+      "Keep your elbows at your sides and curl the bar to your chest.",
+      "Lower it slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "barbell_drag_curl",
+    "name": "Barbell Drag Curl",
+    "ek": "0222",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "drag curl",
+      "bb drag curl",
+      "drag curls"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand holding the bar against your thighs, palms up, shoulder-width grip.",
+      "Pull your elbows back and drag the bar up your body to your chest.",
+      "Keep the bar touching you as you lower it back down."
+    ]
+  },
+  {
+    "key": "barbell_preacher_curl",
+    "name": "Barbell Preacher Curl",
+    "ek": "0239",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bb preacher curl",
+      "preacher bench curl",
+      "straight bar preacher curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit at the preacher bench with the backs of your arms on the pad.",
+      "Hold the bar palms up and curl it towards your shoulders.",
+      "Lower slowly until your arms are nearly straight, without dropping the weight."
+    ]
+  },
+  {
+    "key": "ez_bar_preacher_curl",
+    "name": "EZ Bar Preacher Curl",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "ez preacher curl",
+      "z bar preacher curl",
+      "ez bar scott curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit at the preacher bench, armpits snug against the top of the pad.",
+      "Hold the EZ bar on the angled grips and curl it up.",
+      "Lower it slowly until your arms are nearly straight."
+    ]
+  },
+  {
+    "key": "barbell_spider_curl",
+    "name": "Barbell Spider Curl",
+    "ek": "0245",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "spider curl",
+      "bb spider curl",
+      "prone barbell curl"
+    ],
+    "linkNames": [
+      "Spider Curl (Barbell)"
+    ],
+    "steps": [
+      "Rest your chest on the steep side of a preacher or incline bench.",
+      "Let the bar hang with straight arms, palms up.",
+      "Curl the bar up without moving your elbows, then lower it slowly."
+    ]
+  },
+  {
+    "key": "ez_bar_spider_curl",
+    "name": "EZ Bar Spider Curl",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "ez spider curl",
+      "z bar spider curl",
+      "incline ez bar curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie chest-down on an incline bench, arms hanging straight with the EZ bar.",
+      "Curl the bar towards your forehead, keeping your upper arms still.",
+      "Squeeze, then lower slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "barbell_21s",
+    "name": "Barbell 21s",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "21s",
+      "21s curl",
+      "twenty ones",
+      "21 curls",
+      "barbell 21"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Do 7 half curls from your thighs up to elbow height.",
+      "Do 7 half curls from elbow height up to your chest.",
+      "Finish with 7 full curls, then log the set as 21 reps."
+    ]
+  },
+  {
+    "key": "plate_curl",
+    "name": "Plate Curl",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "weight plate curl",
+      "plate bicep curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold a weight plate by its sides, arms straight down in front of you.",
+      "Keep your elbows at your sides and curl the plate up to your chest.",
+      "Lower it slowly back to your thighs."
+    ]
+  },
+  {
+    "key": "dumbbell_curl",
+    "name": "Dumbbell Curl",
+    "ek": "0224",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db curl",
+      "alternate curl",
+      "bicep curl",
+      "dumbbell bicep curl",
+      "dumble curl",
+      "standing dumbbell curl"
+    ],
+    "linkNames": [
+      "Bicep Curl (Dumbbell)"
+    ],
+    "steps": [
+      "Stand with a dumbbell in each hand, arms straight, palms facing forward.",
+      "Keep your elbows at your sides and curl both dumbbells to your shoulders.",
+      "Lower them slowly until your arms are straight again."
+    ]
+  },
+  {
+    "key": "alternating_dumbbell_curl",
+    "name": "Alternating Dumbbell Curl",
+    "ek": "0223",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "alternating curl",
+      "alternate db curl",
+      "alternating bicep curl",
+      "one by one curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand holding a dumbbell in each hand at your sides, palms forward.",
+      "Curl one dumbbell to your shoulder while the other arm stays still.",
+      "Lower it slowly and repeat with the other arm; both arms make one rep."
+    ]
+  },
+  {
+    "key": "single_arm_dumbbell_curl",
+    "name": "Single-Arm Dumbbell Curl",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm curl",
+      "one arm dumbbell curl",
+      "single arm curl",
+      "one hand curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold one dumbbell at your side, palm forward, free hand on your hip.",
+      "Curl the dumbbell to your shoulder, keeping your elbow by your side.",
+      "Lower slowly, finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "seated_dumbbell_curl",
+    "name": "Seated Dumbbell Curl",
+    "ek": "0243",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated db curl",
+      "seated bicep curl",
+      "sitting dumbbell curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit tall on a bench, a dumbbell in each hand, arms hanging down.",
+      "Curl both dumbbells up, turning your palms to face your shoulders.",
+      "Lower them slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "hammer_curl",
+    "name": "Hammer Curl",
+    "ek": "0227",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "hammers",
+      "neutral grip curl",
+      "db hammer curl",
+      "dumbbell hammer curl",
+      "dumble hammer curl"
+    ],
+    "linkNames": [
+      "Hammer Curl (Dumbbell)"
+    ],
+    "steps": [
+      "Stand with a dumbbell in each hand, palms facing your thighs.",
+      "Keep your palms facing in and curl both dumbbells to your shoulders.",
+      "Lower slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "alternating_hammer_curl",
+    "name": "Alternating Hammer Curl",
+    "ek": "0213",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "alternate hammer curl",
+      "alternating hammers",
+      "one by one hammer curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand holding a dumbbell in each hand, palms facing your body.",
+      "Curl one dumbbell up with your thumb on top, the other arm still.",
+      "Lower it and switch arms; both arms make one rep."
+    ]
+  },
+  {
+    "key": "single_arm_hammer_curl",
+    "name": "Single-Arm Hammer Curl",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm hammer curl",
+      "single arm hammer",
+      "one hand hammer curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold one dumbbell at your side, palm facing your thigh.",
+      "Curl it to your shoulder with your thumb pointing up.",
+      "Lower slowly, finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "seated_hammer_curl",
+    "name": "Seated Hammer Curl",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated db hammer curl",
+      "sitting hammer curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit tall on a bench, a dumbbell in each hand, palms facing in.",
+      "Curl both dumbbells up with your thumbs on top.",
+      "Lower them slowly until your arms hang straight."
+    ]
+  },
+  {
+    "key": "cross_body_hammer_curl",
+    "name": "Cross-Body Hammer Curl",
+    "ek": "0221",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cross body curl",
+      "pinwheel curl",
+      "crossbody hammer curl",
+      "across body hammer curl"
+    ],
+    "linkNames": [
+      "Cross Body Hammer Curl"
+    ],
+    "steps": [
+      "Stand with a dumbbell in each hand, palms facing your thighs.",
+      "Curl one dumbbell across your body towards the opposite shoulder.",
+      "Lower it and repeat with the other arm; both arms make one rep."
+    ]
+  },
+  {
+    "key": "concentration_curl",
+    "name": "Concentration Curl",
+    "ek": "0220",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "concentration",
+      "db concentration curl",
+      "seated concentration curl"
+    ],
+    "linkNames": [
+      "Concentration Curl"
+    ],
+    "steps": [
+      "Sit on a bench, feet wide, and rest your elbow inside your thigh.",
+      "Curl the dumbbell up towards your shoulder without moving your upper arm.",
+      "Lower slowly, finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "incline_dumbbell_curl",
+    "name": "Incline Dumbbell Curl",
+    "ek": "0214",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline curl",
+      "seated incline curl",
+      "incline db curl"
+    ],
+    "linkNames": [
+      "Seated Incline Curl (Dumbbell)"
+    ],
+    "steps": [
+      "Sit back on a bench set to about 45 degrees, arms hanging straight down.",
+      "Keep your elbows pointing down and curl the dumbbells, together or in turns.",
+      "Lower slowly until your arms are fully straight."
+    ]
+  },
+  {
+    "key": "incline_hammer_curl",
+    "name": "Incline Hammer Curl",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline db hammer curl",
+      "seated incline hammer curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit back on an incline bench, dumbbells hanging down, palms facing in.",
+      "Curl both dumbbells up with your thumbs on top, elbows still.",
+      "Lower slowly until your arms hang straight."
+    ]
+  },
+  {
+    "key": "dumbbell_spider_curl",
+    "name": "Dumbbell Spider Curl",
+    "ek": "0225",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db spider curl",
+      "prone incline curl",
+      "chest supported curl",
+      "incline spider curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie chest-down on an incline bench, a dumbbell in each hand, arms hanging.",
+      "Curl both dumbbells up without moving your upper arms.",
+      "Squeeze at the top, then lower slowly to straight arms."
+    ]
+  },
+  {
+    "key": "dumbbell_preacher_curl",
+    "name": "Dumbbell Preacher Curl",
+    "ek": "0249",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db preacher curl",
+      "two arm dumbbell preacher curl",
+      "dumble preacher curl"
+    ],
+    "linkNames": [
+      "Preacher Curl (Dumbbell)"
+    ],
+    "steps": [
+      "Sit at the preacher bench, a dumbbell in each hand, arms on the pad.",
+      "Curl both dumbbells up towards your shoulders, palms facing you.",
+      "Lower slowly until your arms are nearly straight, without dropping the weight."
+    ]
+  },
+  {
+    "key": "single_arm_dumbbell_preacher_curl",
+    "name": "Single-Arm Dumbbell Preacher Curl",
+    "ek": "0237",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm preacher curl",
+      "single arm preacher curl",
+      "one arm db preacher curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Rest the back of one arm on the preacher pad, dumbbell in hand.",
+      "Curl the dumbbell up towards your shoulder, palm facing you.",
+      "Lower slowly to nearly straight, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "incline_bench_preacher_curl",
+    "name": "Incline Bench Preacher Curl",
+    "ek": "0248",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline bench one arm curl",
+      "one arm incline preacher curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand behind an incline bench and drape one arm over the backrest.",
+      "Curl the dumbbell up with your upper arm pressed on the pad.",
+      "Lower slowly, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "preacher_hammer_curl",
+    "name": "Preacher Hammer Curl",
+    "ek": "0240",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "hammer preacher curl",
+      "db preacher hammer curl",
+      "neutral grip preacher curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit at the preacher bench, a dumbbell in each hand, palms facing in.",
+      "Keep your arms on the pad and curl the dumbbells up, thumbs on top.",
+      "Lower them slowly until your arms are nearly straight."
+    ]
+  },
+  {
+    "key": "zottman_curl",
+    "name": "Zottman Curl",
+    "ek": "0251",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "zottman",
+      "zottman dumbbell curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with a dumbbell in each hand, palms facing forward.",
+      "Curl both dumbbells up, then turn your palms to face down at the top.",
+      "Lower slowly with palms down, then turn them back up at the bottom."
+    ]
+  },
+  {
+    "key": "waiter_curl",
+    "name": "Waiter Curl",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "waiters curl",
+      "plate grip dumbbell curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold one dumbbell upright, both palms flat under its top end.",
+      "Keep your elbows at your sides and curl it up to your chest.",
+      "Lower slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "cable_curl",
+    "name": "Cable Curl",
+    "ek": "0212",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable bicep curl",
+      "cable bar curl",
+      "standing cable curl",
+      "cable ez bar curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a short bar to the low pulley and hold it palms up.",
+      "Stand tall, elbows at your sides, and curl the bar to your chest.",
+      "Lower slowly until your arms are straight, keeping the cable tight."
+    ]
+  },
+  {
+    "key": "rope_cable_curl",
+    "name": "Rope Cable Curl",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "rope bicep curl",
+      "cable rope curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a rope to the low pulley and hold an end in each hand.",
+      "Curl the rope up, turning your palms up and pulling the ends apart.",
+      "Lower slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "rope_hammer_curl",
+    "name": "Rope Hammer Curl",
+    "ek": "0216",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable hammer curl",
+      "rope hammer",
+      "cable rope hammer curl"
+    ],
+    "linkNames": [
+      "Hammer Curl (Cable)"
+    ],
+    "steps": [
+      "Attach a rope to the low pulley and hold it with palms facing in.",
+      "Keep your elbows at your sides and curl the rope to your chest.",
+      "Lower slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "single_arm_cable_hammer_curl",
+    "name": "Single-Arm Cable Hammer Curl",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm cable hammer curl",
+      "single arm rope hammer curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand side-on to a low pulley holding a rope or handle, palm facing in.",
+      "Curl it up to your shoulder with your thumb on top.",
+      "Lower slowly, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "cable_preacher_curl",
+    "name": "Cable Preacher Curl",
+    "ek": "0217",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "preacher cable curl",
+      "cable scott curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set a preacher bench in front of a low pulley with a short bar.",
+      "Rest your arms on the pad and curl the bar towards your face.",
+      "Lower slowly until your arms are nearly straight."
+    ]
+  },
+  {
+    "key": "single_arm_cable_preacher_curl",
+    "name": "Single-Arm Cable Preacher Curl",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm cable preacher curl",
+      "single arm preacher cable curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set a preacher bench before a low pulley and hold one handle.",
+      "Rest your arm on the pad and curl the handle to your shoulder.",
+      "Lower slowly to nearly straight, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "single_arm_cable_curl",
+    "name": "Single-Arm Cable Curl",
+    "ek": "0247",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm cable curl",
+      "single arm cable bicep curl",
+      "cable one hand curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a handle to the low pulley and hold it palm up.",
+      "Keep your elbow by your side and curl the handle to your shoulder.",
+      "Lower slowly, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "overhead_cable_curl",
+    "name": "Overhead Cable Curl",
+    "ek": "0238",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "high cable curl",
+      "double biceps cable curl",
+      "cable crossover curl",
+      "high pulley curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand between two high pulleys, holding a handle in each hand.",
+      "With your arms out at shoulder height, curl the handles towards your ears.",
+      "Straighten your arms slowly, keeping your elbows level."
+    ]
+  },
+  {
+    "key": "single_arm_high_cable_curl",
+    "name": "Single-Arm High Cable Curl",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm high cable curl",
+      "single arm overhead cable curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand side-on to a high pulley and hold the handle, arm out straight.",
+      "Keep your elbow at shoulder height and curl the handle to your head.",
+      "Straighten slowly, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "behind_the_back_cable_curl",
+    "name": "Behind-the-Back Cable Curl",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bayesian curl",
+      "bayesian cable curl",
+      "face away cable curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Face away from a low pulley, handle in one hand, arm slightly behind you.",
+      "Step forward until you feel a stretch, then curl the handle up.",
+      "Lower slowly to the stretch, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "cable_concentration_curl",
+    "name": "Cable Concentration Curl",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable concentration",
+      "seated cable concentration curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit or kneel by a low pulley with your elbow braced on your thigh.",
+      "Curl the handle up to your shoulder without moving your upper arm.",
+      "Lower slowly, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "lying_cable_curl",
+    "name": "Lying Cable Curl",
+    "ek": "0232",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "lying down cable curl",
+      "floor cable curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on your back with your feet towards a low pulley, holding a bar.",
+      "Keep your elbows by your sides and curl the bar to your chest.",
+      "Lower slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "preacher_curl",
+    "name": "Preacher Curl",
+    "ek": "0236",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "machine preacher curl",
+      "scott curl",
+      "preacher curl machine",
+      "preacher machine"
+    ],
+    "linkNames": [
+      "Preacher Curl (Machine)"
+    ],
+    "steps": [
+      "Set the seat so your armpits sit at the top of the pad.",
+      "Grip the handles palms up and curl them towards your shoulders.",
+      "Lower slowly until your arms are nearly straight."
+    ]
+  },
+  {
+    "key": "machine_bicep_curl",
+    "name": "Machine Bicep Curl",
+    "ek": "0253",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "biceps"
+    ],
+    "secondary": [
+      "forearms"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bicep curl machine",
+      "biceps machine",
+      "arm curl machine",
+      "machine curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set the seat so your elbows line up with the machine's turning point.",
+      "Keep your upper arms on the pad and curl the handles up.",
+      "Lower slowly until your arms are almost straight."
+    ]
+  },
+  {
+    "key": "triceps_pushdown",
+    "name": "Triceps Pushdown",
+    "ek": "0205",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "pushdown",
+      "rope pushdown",
+      "cable pushdown",
+      "tricep pushdown",
+      "bar pushdown",
+      "tricep pressdown",
+      "straight bar pushdown"
+    ],
+    "linkNames": [
+      "Triceps Pushdown"
+    ],
+    "steps": [
+      "Attach a short straight bar to a high pulley and grip it palms down.",
+      "Pin your elbows to your sides and push the bar down to your thighs.",
+      "Let the bar rise slowly to chest height without moving your elbows."
+    ]
+  },
+  {
+    "key": "rope_triceps_pushdown",
+    "name": "Rope Triceps Pushdown",
+    "ek": "0206",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "tricep rope",
+      "triceps rope",
+      "rope pressdown",
+      "rope tricep pushdown"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a rope to a high pulley and hold an end in each hand.",
+      "Push the rope down to your thighs, pulling the ends apart at the bottom.",
+      "Let it rise slowly to chest height, elbows fixed at your sides."
+    ]
+  },
+  {
+    "key": "v_bar_triceps_pushdown",
+    "name": "V-Bar Triceps Pushdown",
+    "ek": "0207",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "v bar pushdown",
+      "v handle pushdown",
+      "v bar tricep pushdown"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a V-bar to a high pulley and grip it palms down.",
+      "Keep your elbows tight to your sides and push the bar to your thighs.",
+      "Let it rise slowly to chest height."
+    ]
+  },
+  {
+    "key": "reverse_grip_triceps_pushdown",
+    "name": "Reverse-Grip Triceps Pushdown",
+    "ek": "0189",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse grip pushdown",
+      "underhand pushdown",
+      "reverse pushdown",
+      "underhand tricep pushdown"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a straight bar to a high pulley and grip it palms up.",
+      "Keep your elbows at your sides and push the bar down to your thighs.",
+      "Let it rise slowly, stopping before your elbows move forward."
+    ]
+  },
+  {
+    "key": "single_arm_cable_pushdown",
+    "name": "Single-Arm Cable Pushdown",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm pushdown",
+      "single arm pushdown",
+      "one arm tricep pushdown",
+      "single arm tricep pushdown"
+    ],
+    "linkNames": [
+      "Single Arm Triceps Pushdown (Cable)"
+    ],
+    "steps": [
+      "Attach a single handle to a high pulley and hold it palm down.",
+      "Elbow at your side, push the handle down until your arm is straight.",
+      "Let it rise slowly, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "single_arm_reverse_grip_pushdown",
+    "name": "Single-Arm Reverse-Grip Pushdown",
+    "ek": "0166",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm reverse pushdown",
+      "single arm underhand pushdown",
+      "one arm reverse grip pushdown"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a handle to a high pulley and hold it palm up.",
+      "Keep your elbow at your side and push the handle down to your thigh.",
+      "Let it rise slowly, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "cable_overhead_triceps_extension",
+    "name": "Cable Overhead Triceps Extension",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "overhead rope extension",
+      "rope overhead extension",
+      "cable overhead extension",
+      "overhead cable extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a rope to a pulley, face away, and hold it behind your head.",
+      "Step one foot forward, elbows pointing ahead and close together.",
+      "Straighten your arms forward, then bend them slowly to stretch behind your head."
+    ]
+  },
+  {
+    "key": "single_arm_overhead_cable_extension",
+    "name": "Single-Arm Overhead Cable Extension",
+    "ek": "0199",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm overhead cable extension",
+      "single arm cable overhead extension",
+      "one arm cable overhead"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a handle to the low pulley and stand with your back to it.",
+      "Hold the handle behind your head with your elbow pointing up.",
+      "Straighten your arm overhead, lower slowly, then switch arms after your reps."
+    ]
+  },
+  {
+    "key": "kneeling_cable_triceps_extension",
+    "name": "Kneeling Cable Triceps Extension",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "kneeling overhead cable extension",
+      "kneeling rope extension",
+      "kneeling cable overhead extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Kneel facing away from a high pulley, holding a rope behind your head.",
+      "Lean forward slightly with your elbows by your ears.",
+      "Straighten your arms forward, then bend them slowly back behind your head."
+    ]
+  },
+  {
+    "key": "incline_cable_triceps_extension",
+    "name": "Incline Cable Triceps Extension",
+    "ek": "0164",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline cable extension",
+      "incline overhead cable extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set an incline bench with its backrest facing a low pulley.",
+      "Lie back holding a short bar behind your head, elbows pointing up.",
+      "Straighten your arms overhead, then let the bar return slowly behind your head."
+    ]
+  },
+  {
+    "key": "cable_skull_crusher",
+    "name": "Cable Skull Crusher",
+    "ek": "0165",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable skullcrusher",
+      "lying cable extension",
+      "lying cable triceps extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench, head towards a low pulley, holding a short bar.",
+      "With arms straight up, bend your elbows to lower the bar to your forehead.",
+      "Straighten your arms again without moving your elbows."
+    ]
+  },
+  {
+    "key": "lying_rope_triceps_extension",
+    "name": "Lying Rope Triceps Extension",
+    "ek": "0178",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "lying rope extension",
+      "lying cable rope extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench, head towards a low pulley, holding a rope.",
+      "Point your upper arms at the ceiling with the rope behind your head.",
+      "Straighten your arms up, then lower the rope slowly back behind your head."
+    ]
+  },
+  {
+    "key": "cable_triceps_kickback",
+    "name": "Cable Triceps Kickback",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable tricep kickback",
+      "single arm tricep kickback",
+      "tricep cable kickback"
+    ],
+    "linkNames": [
+      "Triceps Kickback (Cable)"
+    ],
+    "steps": [
+      "Hold a handle from a low pulley and lean forward with a flat back.",
+      "Keep your upper arm by your side and straighten your arm back.",
+      "Bend it slowly to the start, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "cross_body_cable_extension",
+    "name": "Cross-Body Cable Extension",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cross body pushdown",
+      "cross body tricep extension",
+      "cable cross triceps extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set a pulley at shoulder height and hold it with your far hand.",
+      "Start with your hand by the opposite shoulder, elbow bent.",
+      "Straighten your arm out to the side, return slowly, then switch arms."
+    ]
+  },
+  {
+    "key": "machine_triceps_extension",
+    "name": "Machine Triceps Extension",
+    "ek": "0210",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "tricep machine",
+      "triceps extension machine",
+      "machine tricep extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set the seat so your upper arms rest flat on the pad.",
+      "Push the handles down until your arms are straight.",
+      "Let them return slowly without lifting your elbows."
+    ]
+  },
+  {
+    "key": "bodyweight_triceps_extension",
+    "name": "Bodyweight Triceps Extension",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 20,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bodyweight skull crusher",
+      "smith machine triceps extension",
+      "bar triceps extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold a fixed bar at waist height, body straight and leaning forward.",
+      "Bend your elbows to lower your head under the bar.",
+      "Push back up by straightening your arms."
+    ]
+  },
+  {
+    "key": "overhead_triceps_extension",
+    "name": "Overhead Triceps Extension",
+    "ek": "0198",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "overhead extension",
+      "french press",
+      "tricep extension",
+      "db overhead extension",
+      "dumbbell overhead extension",
+      "two hand overhead extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold one dumbbell overhead with both hands cupped under the top end.",
+      "Keep your elbows close to your head and lower it behind your head.",
+      "Straighten your arms to lift it back up."
+    ]
+  },
+  {
+    "key": "seated_overhead_dumbbell_extension",
+    "name": "Seated Overhead Dumbbell Extension",
+    "ek": "0194",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated dumbbell french press",
+      "seated overhead extension",
+      "seated tricep extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on a bench with back support, holding one dumbbell overhead in both hands.",
+      "Lower it behind your head, keeping your elbows pointing up.",
+      "Straighten your arms to press it back overhead."
+    ]
+  },
+  {
+    "key": "single_arm_overhead_dumbbell_extension",
+    "name": "Single-Arm Overhead Dumbbell Extension",
+    "ek": "0173",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm overhead extension",
+      "one arm dumbbell extension",
+      "single arm tricep extension",
+      "one hand overhead extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit or stand holding a dumbbell straight overhead in one hand.",
+      "Bend your elbow to lower it behind your head, upper arm still.",
+      "Straighten your arm, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "dumbbell_skull_crusher",
+    "name": "Dumbbell Skull Crusher",
+    "ek": "0184",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db skull crusher",
+      "dumbbell skullcrusher",
+      "lying dumbbell extension",
+      "dumbbell lying triceps extension"
+    ],
+    "linkNames": [
+      "Skullcrusher (Dumbbell)"
+    ],
+    "steps": [
+      "Lie on a flat bench holding a dumbbell in each hand above your chest.",
+      "Bend your elbows to lower the dumbbells beside your head.",
+      "Straighten your arms again, keeping your upper arms still."
+    ]
+  },
+  {
+    "key": "single_dumbbell_skull_crusher",
+    "name": "Single-Dumbbell Skull Crusher",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one dumbbell skull crusher",
+      "lying single dumbbell extension",
+      "two hand dumbbell skull crusher"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench holding one dumbbell above your chest with both hands.",
+      "Bend your elbows to lower it behind your head, upper arms still.",
+      "Straighten your arms to bring it back above your chest."
+    ]
+  },
+  {
+    "key": "single_arm_lying_dumbbell_extension",
+    "name": "Single-Arm Lying Dumbbell Extension",
+    "ek": "0186",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm lying extension",
+      "one arm skull crusher",
+      "single arm dumbbell skull crusher"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench holding one dumbbell straight above your shoulder.",
+      "Bend your elbow to lower the dumbbell beside your head.",
+      "Straighten your arm, finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "incline_dumbbell_skull_crusher",
+    "name": "Incline Dumbbell Skull Crusher",
+    "ek": "0209",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline dumbbell extension",
+      "incline db skull crusher",
+      "incline lying extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie back on an incline bench, dumbbells held straight up, palms facing in.",
+      "Bend your elbows to lower the dumbbells behind your head.",
+      "Straighten your arms back up without moving your upper arms."
+    ]
+  },
+  {
+    "key": "decline_dumbbell_skull_crusher",
+    "name": "Decline Dumbbell Skull Crusher",
+    "ek": "0169",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline dumbbell extension",
+      "decline db skull crusher"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a decline bench with a dumbbell in each hand, arms straight up.",
+      "Bend your elbows to lower the dumbbells beside your head.",
+      "Straighten your arms again, keeping your elbows pointing up."
+    ]
+  },
+  {
+    "key": "tate_press",
+    "name": "Tate Press",
+    "ek": "0203",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "tate dumbbell press",
+      "elbows out extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench, dumbbells held straight up, inner ends almost touching.",
+      "Bend your elbows out to the sides to bring the dumbbells to your chest.",
+      "Press them back up by straightening your arms."
+    ]
+  },
+  {
+    "key": "dumbbell_triceps_kickback",
+    "name": "Dumbbell Triceps Kickback",
+    "ek": "0204",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "kickback",
+      "tricep kickback",
+      "db kickback",
+      "one arm kickback",
+      "dumbbell kickback"
+    ],
+    "linkNames": [
+      "Triceps Kickback (Dumbbell)"
+    ],
+    "steps": [
+      "Rest one knee and hand on a bench and keep your back flat.",
+      "Hold the dumbbell in your other hand, upper arm raised to your side.",
+      "Straighten your arm back, lower slowly, then switch arms after your reps."
+    ]
+  },
+  {
+    "key": "two_arm_dumbbell_kickback",
+    "name": "Two-Arm Dumbbell Kickback",
+    "ek": "0197",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bent over kickback",
+      "double dumbbell kickback",
+      "two arm kickback"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold a dumbbell in each hand and lean forward from your hips, back flat.",
+      "Keep your upper arms by your sides and straighten both arms back.",
+      "Bend your elbows slowly to return."
+    ]
+  },
+  {
+    "key": "barbell_skull_crusher",
+    "name": "Barbell Skull Crusher",
+    "ek": "0183",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "skull crusher",
+      "skullcrusher",
+      "lying triceps extension",
+      "bb skull crusher",
+      "nose breaker",
+      "lying tricep extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a bench holding the bar above your chest, palms facing your feet.",
+      "Bend only your elbows to lower the bar to your forehead.",
+      "Straighten your arms to raise it, keeping full control near your face."
+    ]
+  },
+  {
+    "key": "ez_bar_skull_crusher",
+    "name": "EZ Bar Skull Crusher",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "ez skull crusher",
+      "ez bar skullcrusher",
+      "z bar skull crusher",
+      "lying ez bar extension",
+      "zigzag rod skull crusher"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench holding the EZ bar's inner bends above your chest.",
+      "Keep your upper arms still and lower the bar towards your forehead.",
+      "Straighten your arms to press it back up."
+    ]
+  },
+  {
+    "key": "behind_the_head_skull_crusher",
+    "name": "Behind-the-Head Skull Crusher",
+    "ek": "0179",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "skull crusher behind head",
+      "lying extension behind head",
+      "behind the head extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench holding a bar or EZ bar above your chest.",
+      "Let your upper arms tilt back and lower the bar behind your head.",
+      "Straighten your arms to bring the bar back over your chest."
+    ]
+  },
+  {
+    "key": "incline_barbell_skull_crusher",
+    "name": "Incline Barbell Skull Crusher",
+    "ek": "0174",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline skull crusher",
+      "incline barbell extension",
+      "incline ez bar skull crusher"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie back on an incline bench holding a bar overhead with a close grip.",
+      "Bend your elbows to lower the bar behind your head.",
+      "Straighten your arms back up without moving your elbows."
+    ]
+  },
+  {
+    "key": "decline_ez_bar_skull_crusher",
+    "name": "Decline EZ Bar Skull Crusher",
+    "ek": "0170",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline skull crusher",
+      "decline ez bar extension",
+      "decline lying triceps extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a decline bench with your feet hooked, EZ bar above your chest.",
+      "Bend your elbows to lower the bar towards your forehead.",
+      "Straighten your arms again, keeping your upper arms still."
+    ]
+  },
+  {
+    "key": "jm_press",
+    "name": "JM Press",
+    "ek": "0175",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [
+      "chest",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "jm bench",
+      "j m press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench, bar over your chest, hands just inside shoulder-width.",
+      "Bend your elbows and let the bar travel down towards your chin.",
+      "Press it back up along the same path, elbows tucked in."
+    ]
+  },
+  {
+    "key": "standing_barbell_overhead_extension",
+    "name": "Standing Barbell Overhead Extension",
+    "ek": "0201",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "standing french press",
+      "barbell overhead extension",
+      "ez bar overhead extension",
+      "standing ez bar extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand tall holding a bar or EZ bar straight overhead, hands close.",
+      "Keep your elbows by your head and lower the bar behind it.",
+      "Straighten your arms to lift it back overhead."
+    ]
+  },
+  {
+    "key": "seated_barbell_overhead_extension",
+    "name": "Seated Barbell Overhead Extension",
+    "ek": "0193",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated french press",
+      "seated ez bar french press",
+      "ez bar french press",
+      "seated overhead barbell extension"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on a bench with back support, bar or EZ bar held overhead.",
+      "Lower it behind your head, elbows pointing up and close together.",
+      "Straighten your arms to press it back up."
+    ]
+  },
+  {
+    "key": "reverse_grip_bench_press",
+    "name": "Reverse-Grip Bench Press",
+    "ek": "0190",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps",
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse grip bench",
+      "underhand bench press",
+      "reverse bench press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench and grip the bar palms facing you, shoulder-width.",
+      "Lower the bar slowly to your lower chest, elbows tucked in.",
+      "Press it back up; use a spotter, as this grip can slip."
+    ]
+  },
+  {
+    "key": "reverse_barbell_curl",
+    "name": "Reverse Barbell Curl",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [
+      "biceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse curl",
+      "reverse grip curl",
+      "overhand curl",
+      "bb reverse curl",
+      "reverse rod curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the bar palms down, hands shoulder-width, arms straight.",
+      "Keep your elbows at your sides and curl the bar to your chest.",
+      "Lower slowly, keeping your wrists straight."
+    ]
+  },
+  {
+    "key": "ez_bar_reverse_curl",
+    "name": "EZ Bar Reverse Curl",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [
+      "biceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "ez reverse curl",
+      "reverse ez curl",
+      "z bar reverse curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the EZ bar palms down on the angled grips, arms straight.",
+      "Curl the bar up to your chest, elbows at your sides.",
+      "Lower it slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "dumbbell_reverse_curl",
+    "name": "Dumbbell Reverse Curl",
+    "ek": "0257",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [
+      "biceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db reverse curl",
+      "reverse dumbbell curl",
+      "overhand dumbbell curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with a dumbbell in each hand, palms facing back.",
+      "Keep your palms down and curl both dumbbells to your shoulders.",
+      "Lower them slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "cable_reverse_curl",
+    "name": "Cable Reverse Curl",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [
+      "biceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse cable curl",
+      "overhand cable curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Attach a straight bar to the low pulley and grip it palms down.",
+      "Keep your elbows at your sides and curl the bar to your chest.",
+      "Lower slowly until your arms are straight."
+    ]
+  },
+  {
+    "key": "reverse_preacher_curl",
+    "name": "Reverse Preacher Curl",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [
+      "biceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse grip preacher curl",
+      "overhand preacher curl",
+      "ez bar reverse preacher curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit at the preacher bench and grip an EZ bar or bar palms down.",
+      "Keep your arms on the pad and curl the bar up.",
+      "Lower slowly until your arms are nearly straight."
+    ]
+  },
+  {
+    "key": "plate_reverse_curl",
+    "name": "Plate Reverse Curl",
+    "ek": "0241",
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [
+      "biceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse plate curl",
+      "plate overhand curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold a weight plate by its edges, palms down, arms straight.",
+      "Keep your elbows at your sides and curl the plate up to your chest.",
+      "Lower it slowly to the start."
+    ]
+  },
+  {
+    "key": "barbell_wrist_curl",
+    "name": "Barbell Wrist Curl",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "wrist curl",
+      "palms up wrist curl",
+      "seated wrist curl",
+      "bb wrist curl",
+      "kalai curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit and rest your forearms on your thighs, palms up, wrists past your knees.",
+      "Let the bar roll down to your fingers, then curl your wrists up.",
+      "Lower slowly, moving only your wrists."
+    ]
+  },
+  {
+    "key": "dumbbell_wrist_curl",
+    "name": "Dumbbell Wrist Curl",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db wrist curl",
+      "seated dumbbell wrist curl",
+      "palms up dumbbell wrist curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit with a dumbbell in each hand, forearms on your thighs, palms up.",
+      "Lower the dumbbells by bending your wrists down.",
+      "Curl your wrists up as high as you can, then lower slowly."
+    ]
+  },
+  {
+    "key": "single_arm_dumbbell_wrist_curl",
+    "name": "Single-Arm Dumbbell Wrist Curl",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm wrist curl",
+      "single arm wrist curl",
+      "one hand wrist curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Rest one forearm on a bench, palm up, hand over the edge.",
+      "Lower the dumbbell by bending your wrist, then curl it up.",
+      "Finish your reps, then switch arms."
+    ]
+  },
+  {
+    "key": "reverse_barbell_wrist_curl",
+    "name": "Reverse Barbell Wrist Curl",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse wrist curl",
+      "wrist extension",
+      "palms down wrist curl",
+      "barbell wrist extension"
+    ],
+    "linkNames": [
+      "Seated Wrist Extension (Barbell)"
+    ],
+    "steps": [
+      "Sit with your forearms on your thighs, palms down, wrists past your knees.",
+      "Lift the backs of your hands up as high as you can.",
+      "Lower the bar slowly, moving only your wrists."
+    ]
+  },
+  {
+    "key": "reverse_dumbbell_wrist_curl",
+    "name": "Reverse Dumbbell Wrist Curl",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "dumbbell wrist extension",
+      "reverse db wrist curl",
+      "palms down dumbbell wrist curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit with a dumbbell in each hand, forearms on your thighs, palms down.",
+      "Raise the backs of your hands, bending only at the wrists.",
+      "Lower slowly to the start."
+    ]
+  },
+  {
+    "key": "behind_the_back_wrist_curl",
+    "name": "Behind-the-Back Wrist Curl",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "behind back wrist curl",
+      "standing wrist curl",
+      "behind the back barbell wrist curl"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand holding a bar behind your back, palms facing back, arms straight.",
+      "Let the bar roll down to your fingers.",
+      "Curl it back up by bending your wrists, then repeat slowly."
+    ]
+  },
+  {
+    "key": "wrist_roller",
+    "name": "Wrist Roller",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "forearm roller",
+      "wrist roll",
+      "roller rope"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the roller at shoulder height, arms straight out, weight on the floor.",
+      "Turn the handle hand over hand to wind the rope until the weight rises.",
+      "Unwind slowly to lower it; one full wind up and down is one rep."
+    ]
+  },
+  {
+    "key": "plate_pinch",
+    "name": "Plate Pinch",
+    "ek": null,
+    "equipment": "other",
+    "type": "time",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": 60,
+    "distUnit": null,
+    "aliases": [
+      "pinch grip",
+      "plate pinch hold",
+      "pinch hold"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Press two plates together, smooth sides out, and pinch them with your fingertips.",
+      "Lift them and hold at your side with your arm straight.",
+      "Hold for time, then set them down with control; do both hands."
+    ]
+  },
+  {
+    "key": "hand_gripper",
+    "name": "Hand Gripper",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "forearms"
+    ],
+    "secondary": [],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "gripper",
+      "hand grip",
+      "grip strengthener",
+      "grip trainer"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold the gripper in one hand with the handle across your palm.",
+      "Squeeze until the handles touch, then let them open slowly.",
+      "Switch hands after your reps; log the gripper's rated kg as weight."
+    ]
+  }
+]

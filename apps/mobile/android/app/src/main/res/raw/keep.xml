@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Release builds shrink unused resources. The workout sounds (Phase 1) are looked up by
-     name from JavaScript, which the shrinker cannot see, so keep them explicitly. -->
+<!-- Release builds shrink unused resources. The workout sounds (Phase 1) and the exercise
+     demo pictures (Phase 2) are looked up by name from JavaScript, which the shrinker
+     cannot see, so keep them explicitly. -->
 <resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@raw/assets_sounds_*" />
+    tools:keep="@raw/assets_sounds_*,@drawable/assets_exercises_*" />

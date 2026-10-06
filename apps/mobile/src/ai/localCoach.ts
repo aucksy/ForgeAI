@@ -10,17 +10,21 @@ import * as userRepo from '@/db/repos/userRepo';
 import * as workoutRepo from '@/db/repos/workoutRepo';
 import { addDays, todayISO } from '@/lib/date';
 import { fmtInt, trimNum } from '@/lib/format';
-import { getExerciseStats } from '@/services/analytics';
 import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
+import { getExerciseOverview } from '@/tracker/services/exerciseStats';
+import { getRecentSessionDetailsWithVolume, getWeeklyVolumeKg } from '@/tracker/services/volumeService';
 import { targetLine } from '@/tracker/engine/progression';
 import * as routineRepo from '@/tracker/db/routineRepo';
+import { getMeaningfulPrs } from '@/tracker/services/records';
 import type { Exercise, NutritionDay } from '@/types/models';
 
 import {
   buildWorkoutLoggedCard,
   logWorkoutCore,
   nutritionSnapshot,
+  skippedNote,
   summarizeWorkoutRange,
+  type LoggedWorkout,
   type WorkoutExerciseInput,
 } from '@/ai/tools';
 import type { CoachCard } from '@/ai/types';
@@ -313,6 +317,7 @@ function isLogMealHint(t: string): boolean {
 async function todaysWorkoutReply(f: Flavour): Promise<LocalReply> {
   const tw = await getTodaysWorkoutWithTargets();
   const top = tw.targets
+    .filter((t) => !t.free)
     .slice(0, 3)
     .map((t) => `${t.exerciseName} ${targetLine(t)}`)
     .join(' · ');
@@ -328,7 +333,15 @@ async function logWorkoutReply(
   entries: WorkoutExerciseInput[],
   f: Flavour,
 ): Promise<LocalReply> {
-  const logged = await logWorkoutCore(entries);
+  let logged: LoggedWorkout;
+  try {
+    logged = await logWorkoutCore(entries);
+  } catch (e) {
+    // Only timed / distance exercises were named: say where to log them.
+    const msg = e instanceof Error ? e.message : '';
+    if (msg.includes('logged by time or distance')) return { text: msg, cards: [] };
+    throw e;
+  }
   const card = buildWorkoutLoggedCard(logged);
   const names = logged.detail.exercises.map((e) => e.exercise.name).join(', ');
   const vol = fmtInt(logged.detail.totalVolumeKg);
@@ -339,10 +352,11 @@ async function logWorkoutReply(
         ` 🏆 Naya PR: ${logged.newPrs.map((p) => `${p.exerciseName} ${trimNum(p.value)}kg`).join(', ')}!`,
       )
     : '';
+  const skipped = skippedNote(logged.skipped);
   const text = pick(
     f,
-    `Logged: ${names} — ${vol} kg total volume. Solid work.${prLine}`,
-    `Log ho gaya: ${names} — total volume ${vol} kg. Badhiya kaam!${prLine}`,
+    `Logged: ${names} — ${vol} kg total volume. Solid work.${prLine}${skipped ? `\n${skipped}` : ''}`,
+    `Log ho gaya: ${names} — total volume ${vol} kg. Badhiya kaam!${prLine}${skipped ? `\n${skipped}` : ''}`,
   );
   return { text, cards: card ? [card] : [] };
 }
@@ -444,7 +458,7 @@ async function summaryReply(days: number, f: Flavour): Promise<LocalReply> {
 }
 
 async function prReply(f: Flavour): Promise<LocalReply> {
-  const prs = await prRepo.getAllPrs();
+  const prs = await getMeaningfulPrs(); // no "Plank 0 kg" or negative assisted records
   if (!prs.length) {
     return {
       text: pick(
@@ -472,13 +486,13 @@ async function prReply(f: Flavour): Promise<LocalReply> {
 
 async function improvementReply(f: Flavour): Promise<LocalReply> {
   const today = todayISO();
-  const weekly = await workoutRepo.getWeeklyVolume(8);
+  const weekly = await getWeeklyVolumeKg(8);
   const half = Math.floor(weekly.length / 2);
   const older = weekly.slice(0, half).reduce((n, p) => n + p.volumeKg, 0);
   const recent = weekly.slice(half).reduce((n, p) => n + p.volumeKg, 0);
   const volDelta = older > 0 ? Math.round(((recent - older) / older) * 100) : 0;
 
-  const prs = await prRepo.getAllPrs();
+  const prs = await getMeaningfulPrs(); // no "Plank 0 kg" or negative assisted records
   const cutoff = addDays(today, -30);
   const recentPrs = prs.filter((p) => p.dateISO >= cutoff);
 
@@ -686,7 +700,7 @@ function isLastWorkoutQuery(t: string): boolean {
 }
 
 async function lastWorkoutReply(f: Flavour): Promise<LocalReply> {
-  const recent = await workoutRepo.getRecentSessionDetails(1);
+  const recent = await getRecentSessionDetailsWithVolume(1);
   const s = recent[0];
   if (!s) {
     return {
@@ -738,8 +752,29 @@ async function matchExerciseInMessage(raw: string): Promise<Exercise | null> {
 }
 
 async function exerciseProgressReply(ex: Exercise, f: Flavour): Promise<LocalReply> {
-  const stats = await getExerciseStats(ex.id);
-  if (!stats.sessionsCount || stats.progress.length === 0) {
+  // Phase 2: timed, distance, bodyweight-reps and assisted exercises answer with their own
+  // numbers (longest hold, best pace, most reps, least help) — never "0kg × 0".
+  const overview = await getExerciseOverview(ex.id).catch(() => null);
+  if (overview && !overview.weightStats) {
+    if (overview.history.length === 0) {
+      return {
+        text: pick(
+          f,
+          `No logged sets for ${ex.name} yet — log a few and I'll track your progress.`,
+          `${ex.name} ke abhi koi set log nahi — kuch log karo, phir progress track karte hain.`,
+        ),
+        cards: [],
+      };
+    }
+    const facts = overview.tiles.map((t) => `${t.label.toLowerCase()} ${t.value}`).join(', ');
+    return {
+      text: pick(f, `${ex.name}: ${facts}.`, `${ex.name}: ${facts}.`),
+      cards: [{ kind: 'stats', text: ex.name, payload: overview.tiles.map((t) => ({ label: t.label, value: t.value })) }],
+    };
+  }
+  // No fallback to the frozen weight × reps stats: they'd disagree with every screen.
+  const stats = overview?.weightStats ?? null;
+  if (!stats || !stats.sessionsCount || stats.progress.length === 0) {
     return {
       text: pick(
         f,

@@ -18,7 +18,7 @@ import {
 } from '@/components/dashboard';
 import { Screen } from '@/components/ui';
 import { getProfile } from '@/db/repos/userRepo';
-import { getWeeklyVolume } from '@/db/repos/workoutRepo';
+import { getWeeklyVolumeKg } from '@/tracker/services/volumeService';
 import { thud } from '@/lib/haptics';
 import { useDashboard } from '@/store/dashboardStore';
 import { useSettings } from '@/store/settingsStore';
@@ -47,7 +47,8 @@ export default function DashboardScreen() {
 
   const loadExtras = useCallback(async () => {
     try {
-      const [weeks, profile] = await Promise.all([getWeeklyVolume(8), getProfile()]);
+      // Phase 2: the same volume rule as every other screen (body weight on pull-ups, both dumbbells…).
+      const [weeks, profile] = await Promise.all([getWeeklyVolumeKg(8), getProfile()]);
       setVolumeSeries(weeks.map((w) => w.volumeKg));
       const first = profile.name.trim().split(/\s+/)[0];
       setFirstName(first || null);

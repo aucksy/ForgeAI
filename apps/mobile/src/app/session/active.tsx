@@ -106,6 +106,19 @@ export default function ActiveWorkoutScreen() {
   // Superset hand-off: bring the next exercise into view.
   const scrollRef = useRef<ScrollViewType>(null);
   const cardY = useRef<Record<string, number>>({});
+  // A newly added exercise: bring its card into view once it has a position (the list
+  // never scrolled, so a fourth card landed below the fold, out of sight).
+  const knownKeys = useRef<Set<string> | null>(null);
+  const scrollToNew = useRef<string | null>(null);
+  useEffect(() => {
+    const keys = exercises.map((e) => e.key);
+    const known = knownKeys.current;
+    if (known) {
+      const added = keys.filter((k) => !known.has(k));
+      if (added.length > 0) scrollToNew.current = added[added.length - 1];
+    }
+    knownKeys.current = new Set(keys);
+  }, [exercises]);
   const scrollTo = useWorkoutUi((s) => s.scrollTo);
   useEffect(() => {
     if (!scrollTo) return;
@@ -254,7 +267,7 @@ export default function ActiveWorkoutScreen() {
         router.replace({ pathname: '/session/finish', params: { id } });
       } else {
         leaving.current = false;
-        Alert.alert('Nothing to save', 'Log at least one set (weight and reps) before finishing.');
+        Alert.alert('Nothing to save', 'Log at least one set before finishing.');
       }
     } catch {
       // Commit rolled back atomically (nothing saved) — let the user retry.
@@ -346,7 +359,12 @@ export default function ActiveWorkoutScreen() {
               <View
                 key={ex.key}
                 onLayout={(e) => {
-                  cardY.current[ex.key] = e.nativeEvent.layout.y;
+                  const y = e.nativeEvent.layout.y;
+                  cardY.current[ex.key] = y;
+                  if (scrollToNew.current === ex.key) {
+                    scrollToNew.current = null;
+                    scrollRef.current?.scrollTo({ y: Math.max(0, y - 8), animated: true });
+                  }
                 }}
               >
                 <ExerciseLogCard

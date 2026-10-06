@@ -1,0 +1,3203 @@
+[
+  {
+    "key": "barbell_bench_press",
+    "name": "Barbell Bench Press",
+    "ek": "0042",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bench",
+      "bench press",
+      "chest press",
+      "flat bench",
+      "chhati",
+      "chhati press",
+      "flat bench press",
+      "bb bench press"
+    ],
+    "linkNames": [
+      "Bench Press (Barbell)"
+    ],
+    "steps": [
+      "Lie on a flat bench, eyes under the bar, feet flat on the floor.",
+      "Grip the bar slightly wider than your shoulders and lift it off the rack.",
+      "Lower the bar slowly to your mid-chest, then press it back up.",
+      "Use a spotter or safety bars when you go heavy."
+    ]
+  },
+  {
+    "key": "incline_barbell_press",
+    "name": "Incline Barbell Press",
+    "ek": "0043",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline bench",
+      "incline press",
+      "incline barbell",
+      "upper chest press",
+      "incline bench press",
+      "incline bb press"
+    ],
+    "linkNames": [
+      "Incline Bench Press (Barbell)"
+    ],
+    "steps": [
+      "Set the bench to a low incline and lie back under the bar.",
+      "Grip slightly wider than your shoulders and lift the bar off the rack.",
+      "Lower the bar to your upper chest.",
+      "Press it back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "decline_barbell_bench_press",
+    "name": "Decline Barbell Bench Press",
+    "ek": "0051",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline bench",
+      "decline press",
+      "decline bench press",
+      "lower chest press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a decline bench and hook your legs under the pads.",
+      "Grip slightly wider than your shoulders and lift the bar off the rack.",
+      "Lower the bar to your lower chest.",
+      "Press it back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "close_grip_bench_press",
+    "name": "Close Grip Bench Press",
+    "ek": "0049",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [
+      "chest",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cgbp",
+      "close grip bench",
+      "close grip press",
+      "narrow grip bench press"
+    ],
+    "linkNames": [
+      "Bench Press - Close Grip (Barbell)"
+    ],
+    "steps": [
+      "Lie on a flat bench and grip the bar about shoulder-width apart.",
+      "Lower the bar to your lower chest, elbows close to your sides.",
+      "Press it back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "wide_grip_bench_press",
+    "name": "Wide Grip Bench Press",
+    "ek": "0082",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "wide bench",
+      "wide grip bench",
+      "wide bench press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench, eyes under the bar, feet flat on the floor.",
+      "Grip the bar wider than usual, but never so wide it hurts your shoulders.",
+      "Lower the bar to your mid-chest, then press it back up."
+    ]
+  },
+  {
+    "key": "barbell_pullover",
+    "name": "Barbell Pullover",
+    "ek": "0045",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "lats",
+      "triceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bb pullover",
+      "bent arm pullover",
+      "barbell bent arm pullover"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench holding a barbell over your chest, hands close.",
+      "Bend your elbows a little and lower the bar back behind your head.",
+      "Stop at a stretch, then pull the bar back over your chest."
+    ]
+  },
+  {
+    "key": "dumbbell_bench_press",
+    "name": "Dumbbell Bench Press",
+    "ek": "0055",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db bench press",
+      "db bench",
+      "flat dumbbell press",
+      "dumbbell chest press",
+      "flat db press"
+    ],
+    "linkNames": [
+      "Bench Press (Dumbbell)"
+    ],
+    "steps": [
+      "Sit on a flat bench with a dumbbell resting on each thigh.",
+      "Lie back and hold the dumbbells at your chest, palms facing your feet.",
+      "Press them up until your arms are straight.",
+      "Lower them slowly back to your chest."
+    ]
+  },
+  {
+    "key": "incline_dumbbell_press",
+    "name": "Incline Dumbbell Press",
+    "ek": "0080",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline db press",
+      "incline dumbbell",
+      "db incline press",
+      "incline dumbbell bench press"
+    ],
+    "linkNames": [
+      "Incline Bench Press (Dumbbell)"
+    ],
+    "steps": [
+      "Set a low incline and sit with a dumbbell on each thigh.",
+      "Lie back and hold the dumbbells at your upper chest.",
+      "Press them up until your arms are straight.",
+      "Lower them slowly back to your chest."
+    ]
+  },
+  {
+    "key": "decline_dumbbell_press",
+    "name": "Decline Dumbbell Press",
+    "ek": "0052",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline db press",
+      "decline dumbbell bench press",
+      "decline dumbbell"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a decline bench, legs hooked, dumbbells held at your chest.",
+      "Press the dumbbells up until your arms are straight.",
+      "Lower them slowly to the sides of your lower chest."
+    ]
+  },
+  {
+    "key": "dumbbell_fly",
+    "name": "Dumbbell Fly",
+    "ek": "0056",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db fly",
+      "dumbbell flye",
+      "dumbbell flys",
+      "flat dumbbell fly",
+      "flat fly"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench holding dumbbells above your chest, palms facing in.",
+      "With your elbows slightly bent, open your arms out wide.",
+      "Lower until you feel a stretch across your chest.",
+      "Bring the dumbbells back together over your chest."
+    ]
+  },
+  {
+    "key": "incline_dumbbell_fly",
+    "name": "Incline Dumbbell Fly",
+    "ek": "0062",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline db fly",
+      "incline fly",
+      "incline flys"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a low incline bench holding dumbbells above your chest.",
+      "Keep your elbows slightly bent and open your arms out wide.",
+      "Lower until you feel a stretch, then bring them back together."
+    ]
+  },
+  {
+    "key": "decline_dumbbell_fly",
+    "name": "Decline Dumbbell Fly",
+    "ek": "0053",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline db fly",
+      "decline fly"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a decline bench, legs hooked, dumbbells above your chest.",
+      "Keep your elbows slightly bent and open your arms out wide.",
+      "Lower until you feel a stretch, then bring them back together."
+    ]
+  },
+  {
+    "key": "dumbbell_pullover",
+    "name": "Dumbbell Pullover",
+    "ek": "0079",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "lats",
+      "triceps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db pullover",
+      "pullover",
+      "cross bench pullover",
+      "straight arm pullover",
+      "lying pullover",
+      "dumbbell pull over",
+      "bench pullover"
+    ],
+    "linkNames": [
+      "Pullover (Dumbbell)"
+    ],
+    "steps": [
+      "Lie on a flat bench, holding one dumbbell over your chest with both hands.",
+      "Keep your arms almost straight and lower the dumbbell back behind your head.",
+      "Stop when you feel a stretch, then pull it back over your chest."
+    ]
+  },
+  {
+    "key": "single_arm_dumbbell_bench_press",
+    "name": "Single-Arm Dumbbell Bench Press",
+    "ek": "0068",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm dumbbell bench press",
+      "one arm db press",
+      "single arm db bench",
+      "one hand dumbbell press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench holding one dumbbell at the side of your chest.",
+      "Press it up until your arm is straight, keeping your hips flat.",
+      "Lower it slowly. Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "neutral_grip_dumbbell_press",
+    "name": "Neutral Grip Dumbbell Press",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "hammer press",
+      "dumbbell hammer press",
+      "hammer grip dumbbell press",
+      "neutral grip db press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench with dumbbells at your chest, palms facing each other.",
+      "Press them up until your arms are straight.",
+      "Lower them slowly, keeping your elbows close to your sides."
+    ]
+  },
+  {
+    "key": "incline_neutral_grip_dumbbell_press",
+    "name": "Incline Neutral Grip Dumbbell Press",
+    "ek": "0059",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline hammer press",
+      "incline hammer grip press",
+      "incline neutral grip db press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on an incline bench with dumbbells at your chest, palms facing in.",
+      "Press them up until your arms are straight.",
+      "Lower them slowly back to your chest."
+    ]
+  },
+  {
+    "key": "dumbbell_squeeze_press",
+    "name": "Dumbbell Squeeze Press",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "squeeze press",
+      "crush press",
+      "db squeeze press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on a flat bench holding two dumbbells pressed together over your chest.",
+      "Squeeze them hard against each other the whole time.",
+      "Lower them to your chest, then press back up."
+    ]
+  },
+  {
+    "key": "dumbbell_floor_press",
+    "name": "Dumbbell Floor Press",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "floor press",
+      "db floor press",
+      "floor dumbbell press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Lie on the floor, knees bent, dumbbells held above your chest.",
+      "Lower them until your upper arms touch the floor.",
+      "Pause, then press them back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "machine_chest_press",
+    "name": "Machine Chest Press",
+    "ek": "0066",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "chest press machine",
+      "seated chest press",
+      "machine press",
+      "machine bench press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set the seat so the handles line up with your mid-chest.",
+      "Press the handles forward until your arms are straight.",
+      "Let them come back slowly until you feel a chest stretch."
+    ]
+  },
+  {
+    "key": "iso_lateral_chest_press",
+    "name": "Iso-Lateral Chest Press",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "iso lateral chest press",
+      "plate loaded chest press"
+    ],
+    "linkNames": [
+      "Iso-Lateral Chest Press (Machine)"
+    ],
+    "steps": [
+      "Load equal plates on each side and set the seat to chest height.",
+      "Press both handles forward until your arms are straight.",
+      "Let them come back slowly until you feel a chest stretch."
+    ]
+  },
+  {
+    "key": "incline_machine_chest_press",
+    "name": "Incline Machine Chest Press",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline chest press machine",
+      "machine incline press",
+      "incline chest press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set the seat so the handles start near your upper chest.",
+      "Press the handles up and forward until your arms are straight.",
+      "Lower them slowly until you feel a chest stretch."
+    ]
+  },
+  {
+    "key": "decline_machine_chest_press",
+    "name": "Decline Machine Chest Press",
+    "ek": "0085",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline chest press machine",
+      "machine decline press",
+      "decline chest press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set the seat so the handles start near your lower chest.",
+      "Press the handles down and forward until your arms are straight.",
+      "Let them come back slowly."
+    ]
+  },
+  {
+    "key": "pec_deck_fly",
+    "name": "Pec Deck Fly",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "pec deck",
+      "butterfly",
+      "machine fly",
+      "pec fly",
+      "chest fly machine",
+      "butterfly machine"
+    ],
+    "linkNames": [
+      "Chest Fly (Machine)"
+    ],
+    "steps": [
+      "Set the seat so the handles sit at chest height.",
+      "Hold the handles with your elbows slightly bent.",
+      "Bring the handles together in front of your chest.",
+      "Open your arms slowly until you feel a chest stretch."
+    ]
+  },
+  {
+    "key": "incline_machine_fly",
+    "name": "Incline Machine Fly",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline pec deck",
+      "incline chest fly machine",
+      "incline fly machine"
+    ],
+    "linkNames": [
+      "Incline Chest Fly (Machine)"
+    ],
+    "steps": [
+      "Sit back on the incline seat and hold the handles, elbows slightly bent.",
+      "Bring the handles up and together over your upper chest.",
+      "Open your arms slowly until you feel a stretch."
+    ]
+  },
+  {
+    "key": "smith_machine_bench_press",
+    "name": "Smith Machine Bench Press",
+    "ek": "0078",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith bench press",
+      "smith bench",
+      "smith flat bench"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set a flat bench so the bar comes down to your mid-chest.",
+      "Grip slightly wider than your shoulders and twist the bar off the hooks.",
+      "Lower the bar to your chest, then press it back up.",
+      "Twist the bar back onto the hooks when you finish."
+    ]
+  },
+  {
+    "key": "smith_machine_incline_press",
+    "name": "Smith Machine Incline Press",
+    "ek": "0081",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith incline",
+      "smith incline bench",
+      "incline smith press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set an incline bench so the bar comes down to your upper chest.",
+      "Grip slightly wider than your shoulders and twist the bar off the hooks.",
+      "Lower the bar to your upper chest, then press it back up."
+    ]
+  },
+  {
+    "key": "smith_machine_decline_press",
+    "name": "Smith Machine Decline Press",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith decline",
+      "smith decline bench",
+      "decline smith press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set a decline bench so the bar comes down to your lower chest.",
+      "Hook your legs, grip slightly wider than your shoulders, and unhook the bar.",
+      "Lower the bar to your lower chest, then press it back up."
+    ]
+  },
+  {
+    "key": "cable_fly",
+    "name": "Cable Fly",
+    "ek": "0048",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable crossover",
+      "fly",
+      "flys",
+      "chest fly",
+      "cable crossovers",
+      "high cable fly"
+    ],
+    "linkNames": [
+      "Cable Fly Crossovers"
+    ],
+    "steps": [
+      "Set both pulleys high and hold a handle in each hand.",
+      "Step forward, lean in slightly, and keep your elbows a little bent.",
+      "Pull the handles down and together in front of your chest.",
+      "Let your arms open slowly until you feel a stretch."
+    ]
+  },
+  {
+    "key": "low_to_high_cable_fly",
+    "name": "Low-to-High Cable Fly",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "low cable fly",
+      "low to high fly",
+      "low cable crossover",
+      "upper chest cable fly"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set both pulleys low and hold a handle in each hand.",
+      "Step forward with your elbows a little bent.",
+      "Sweep the handles up and together at chest height.",
+      "Lower them slowly back down."
+    ]
+  },
+  {
+    "key": "incline_cable_fly",
+    "name": "Incline Cable Fly",
+    "ek": "0060",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline bench cable fly",
+      "cable incline fly"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Place an incline bench between low pulleys and grab a handle in each hand.",
+      "Lie back with your arms open wide and elbows slightly bent.",
+      "Bring the handles up and together over your upper chest.",
+      "Lower them slowly back out to the sides."
+    ]
+  },
+  {
+    "key": "flat_bench_cable_fly",
+    "name": "Flat Bench Cable Fly",
+    "ek": "0057",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "lying cable fly",
+      "flat cable fly",
+      "cable fly on bench"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Place a flat bench between low pulleys and grab a handle in each hand.",
+      "Lie back with your arms open wide and elbows slightly bent.",
+      "Bring the handles together over your chest, then lower them slowly."
+    ]
+  },
+  {
+    "key": "single_arm_cable_fly",
+    "name": "Single-Arm Cable Fly",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm cable fly",
+      "single arm cable crossover",
+      "one arm cable crossover"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set a pulley at chest height and stand with your side to it.",
+      "Hold the handle in your near hand, elbow slightly bent.",
+      "Sweep the handle across in front of your chest.",
+      "Return slowly. Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "cable_chest_press",
+    "name": "Cable Chest Press",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "standing cable press",
+      "cable press",
+      "standing cable chest press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set both pulleys at chest height and hold a handle in each hand.",
+      "Step forward with one foot ahead, hands beside your chest.",
+      "Press the handles forward until your arms are straight.",
+      "Bring them back slowly to your chest."
+    ]
+  },
+  {
+    "key": "svend_press",
+    "name": "Svend Press",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "plate press",
+      "plate squeeze press",
+      "plate chest press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand tall and squeeze two plates together between your palms at your chest.",
+      "Press the plates straight out in front until your arms are straight.",
+      "Keep squeezing as you bring them back to your chest."
+    ]
+  },
+  {
+    "key": "knee_push_up",
+    "name": "Knee Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "incline_push_up",
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "knee pushup",
+      "knee push ups",
+      "kneeling push up",
+      "half push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Kneel with hands under your shoulders, body straight from knees to head.",
+      "Lower your chest until it nearly touches the floor.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "incline_push_up",
+    "name": "Incline Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "knee_push_up",
+    "harder": "push_up",
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "incline pushup",
+      "bench push up",
+      "hands elevated push up",
+      "wall push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Put your hands on a bench or wall, a bit wider than your shoulders.",
+      "Step your feet back until your body is straight.",
+      "Lower your chest toward your hands, then push back up."
+    ]
+  },
+  {
+    "key": "push_up",
+    "name": "Push-Up",
+    "ek": "0077",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "incline_push_up",
+    "harder": "decline_push_up",
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "pushup",
+      "push ups",
+      "pushups",
+      "press up"
+    ],
+    "linkNames": [
+      "Push Up"
+    ],
+    "steps": [
+      "Start on your hands and toes, hands a little wider than your shoulders.",
+      "Keep your body straight and lower your chest near the floor.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "decline_push_up",
+    "name": "Decline Push-Up",
+    "ek": "0075",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "push_up",
+    "harder": "archer_push_up",
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "decline pushup",
+      "feet elevated push up",
+      "feet up push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Put your feet up on a bench and your hands on the floor.",
+      "Keep your body straight and lower your chest near the floor.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "archer_push_up",
+    "name": "Archer Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "decline_push_up",
+    "harder": null,
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "archer pushup",
+      "side to side push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Start in a push-up with your hands set very wide.",
+      "Lower toward one hand, keeping the other arm nearly straight.",
+      "Push back up, then lower toward the other side."
+    ]
+  },
+  {
+    "key": "diamond_push_up",
+    "name": "Diamond Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [
+      "chest",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "diamond pushup",
+      "diamond push ups",
+      "triangle push up"
+    ],
+    "linkNames": [
+      "Diamond Push Up"
+    ],
+    "steps": [
+      "Start in a push-up with your hands together, fingers forming a diamond.",
+      "Lower your chest to your hands, elbows close to your body.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "close_grip_push_up",
+    "name": "Close Grip Push-Up",
+    "ek": "0188",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [
+      "chest",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "close grip pushup",
+      "narrow push up",
+      "triceps push up",
+      "tricep pushup"
+    ],
+    "linkNames": [
+      "Push Up - Close Grip"
+    ],
+    "steps": [
+      "Start in a push-up with your hands under your chest, close together.",
+      "Lower down, keeping your elbows tight to your sides.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "wide_push_up",
+    "name": "Wide Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "wide pushup",
+      "wide grip push up",
+      "wide arm push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Start in a push-up with your hands much wider than your shoulders.",
+      "Keep your body straight and lower your chest near the floor.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "weighted_push_up",
+    "name": "Weighted Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "weighted",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "weighted pushup",
+      "plate push up",
+      "push up with plate",
+      "vest push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Wear a weight vest, or have someone place a plate on your upper back.",
+      "Keep your body straight and lower your chest near the floor.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "deficit_push_up",
+    "name": "Deficit Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "deficit pushup",
+      "push up bars",
+      "push up handles",
+      "pushup stand"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Grip two push-up handles or stacked plates, set shoulder-width apart.",
+      "Lower your chest below your hands, keeping your body straight.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "clap_push_up",
+    "name": "Clap Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "clapping push up",
+      "plyo push up",
+      "explosive push up",
+      "plyometric push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Start in a push-up and lower your chest near the floor.",
+      "Push up hard so your hands leave the floor, and clap once.",
+      "Land with soft elbows and go straight into the next rep."
+    ]
+  },
+  {
+    "key": "spiderman_push_up",
+    "name": "Spiderman Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts",
+      "obliques"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "spiderman pushup",
+      "spider push up",
+      "knee to elbow push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Start in a push-up with your body straight.",
+      "As you lower, bring one knee out to touch the elbow on that side.",
+      "Push back up and return the leg, then switch sides."
+    ]
+  },
+  {
+    "key": "hindu_push_up",
+    "name": "Hindu Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "front_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "dand",
+      "dands",
+      "hindu pushup",
+      "hindu push ups"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Start with hips high and arms straight, your body making an upside-down V.",
+      "Bend your elbows and swoop your chest down and forward, close to the floor.",
+      "Straighten your arms to lift your chest, hips low, looking ahead.",
+      "Push your hips back up into the V to finish the rep."
+    ]
+  },
+  {
+    "key": "pike_push_up",
+    "name": "Pike Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "triceps",
+      "side_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "handstand_push_up",
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "pike pushup",
+      "pike press",
+      "shoulder push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Start in a push-up, then walk your feet in so your hips point up.",
+      "Bend your elbows to lower the top of your head toward the floor.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "handstand_push_up",
+    "name": "Handstand Push-Up",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "triceps",
+      "side_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": "pike_push_up",
+    "harder": null,
+    "repCap": 25,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "hspu",
+      "handstand pushup",
+      "wall handstand push up"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Kick up into a handstand with your heels resting against a wall.",
+      "Lower slowly until your head lightly touches a folded mat.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "chest_dip",
+    "name": "Chest Dip",
+    "ek": "0054",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "assisted_dip",
+    "harder": "weighted_dip",
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "dip",
+      "parallel bar dips",
+      "chest dips",
+      "dips"
+    ],
+    "linkNames": [
+      "Dips",
+      "Chest Dip"
+    ],
+    "steps": [
+      "Grip the parallel bars and lift yourself up on straight arms.",
+      "Lean forward slightly and lower until your upper arms are level with the floor.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "triceps_dip",
+    "name": "Triceps Dip",
+    "ek": "0172",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [
+      "chest",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "bench_dip",
+    "harder": null,
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "tricep dip",
+      "triceps dips",
+      "upright dip",
+      "bar dip"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Grip the parallel bars and lift yourself up on straight arms.",
+      "Keep your body upright and elbows close as you lower.",
+      "Stop when your upper arms are level with the floor, then push up."
+    ]
+  },
+  {
+    "key": "assisted_dip",
+    "name": "Assisted Dip",
+    "ek": null,
+    "equipment": "machine",
+    "type": "assisted",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": null,
+    "harder": "chest_dip",
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "assisted dip machine",
+      "machine assisted dip",
+      "dip assist"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Pick the help weight on the stack; more weight makes it easier.",
+      "Kneel on the pad and grip the dip handles with straight arms.",
+      "Lower until your upper arms are level with the floor.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "weighted_dip",
+    "name": "Weighted Dip",
+    "ek": null,
+    "equipment": "bodyweight",
+    "type": "weighted",
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 1,
+    "easier": "chest_dip",
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "weighted dips",
+      "belt dip",
+      "dip with belt",
+      "dip belt"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hang a plate or dumbbell from a dip belt around your hips.",
+      "Grip the bars and lower until your upper arms are level with the floor.",
+      "Push back up until your arms are straight."
+    ]
+  },
+  {
+    "key": "bench_dip",
+    "name": "Bench Dip",
+    "ek": "0162",
+    "equipment": "bodyweight",
+    "type": "reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [
+      "front_delts",
+      "chest"
+    ],
+    "compound": true,
+    "incrementKg": 1,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": "triceps_dip",
+    "repCap": 15,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bench dips",
+      "chair dip",
+      "bench tricep dip",
+      "tricep bench dip"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on a bench edge with hands beside your hips and legs out.",
+      "Slide off and bend your elbows to lower your hips toward the floor.",
+      "Stop when your elbows reach about a right angle, then push back up."
+    ]
+  },
+  {
+    "key": "seated_dip_machine",
+    "name": "Seated Dip Machine",
+    "ek": "0171",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "triceps"
+    ],
+    "secondary": [
+      "chest",
+      "front_delts"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "dip machine",
+      "tricep dip machine",
+      "machine dip",
+      "seated dip"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit with your back against the pad and grip the handles at your sides.",
+      "Push the handles down until your arms are straight.",
+      "Let them rise slowly until your elbows bend to a right angle."
+    ]
+  },
+  {
+    "key": "overhead_press",
+    "name": "Overhead Press",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "side_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "ohp",
+      "military press",
+      "shoulder press",
+      "barbell shoulder press",
+      "kandha press",
+      "kandhe",
+      "standing barbell press",
+      "standing ohp"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with the bar resting on your upper chest, hands just outside your shoulders.",
+      "Tighten your stomach and press the bar straight up overhead.",
+      "Lower it slowly back to your upper chest."
+    ]
+  },
+  {
+    "key": "seated_barbell_shoulder_press",
+    "name": "Seated Barbell Shoulder Press",
+    "ek": "0004",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "side_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated military press",
+      "seated ohp",
+      "seated barbell press",
+      "seated bb shoulder press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on an upright bench and take the bar off the rack.",
+      "Lower it to your upper chest, then press it straight up.",
+      "Keep your back against the pad the whole time."
+    ]
+  },
+  {
+    "key": "dumbbell_shoulder_press",
+    "name": "Dumbbell Shoulder Press",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "side_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db shoulder press",
+      "seated dumbbell press",
+      "dumbbell press",
+      "seated db shoulder press"
+    ],
+    "linkNames": [
+      "Shoulder Press (Dumbbell)"
+    ],
+    "steps": [
+      "Sit on an upright bench with dumbbells at your shoulders, palms forward.",
+      "Press them up until your arms are straight overhead.",
+      "Lower them slowly back to your shoulders."
+    ]
+  },
+  {
+    "key": "standing_dumbbell_shoulder_press",
+    "name": "Standing Dumbbell Shoulder Press",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "side_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "standing db press",
+      "standing dumbbell press",
+      "dumbbell overhead press",
+      "db ohp"
+    ],
+    "linkNames": [
+      "Overhead Press (Dumbbell)"
+    ],
+    "steps": [
+      "Stand tall with dumbbells at your shoulders, palms facing forward.",
+      "Tighten your stomach and press them straight up overhead.",
+      "Lower them slowly back to your shoulders."
+    ]
+  },
+  {
+    "key": "single_arm_dumbbell_shoulder_press",
+    "name": "Single-Arm Dumbbell Shoulder Press",
+    "ek": "0038",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "side_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm shoulder press",
+      "one arm dumbbell press",
+      "single arm db press",
+      "one arm overhead press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand tall holding one dumbbell at shoulder height, other hand on your hip.",
+      "Press it straight up without leaning to the side.",
+      "Lower it slowly. Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "arnold_press",
+    "name": "Arnold Press",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "side_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "arnold dumbbell press",
+      "arnold shoulder press",
+      "arnolds"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit with dumbbells in front of your shoulders, palms facing you.",
+      "Press up, turning your palms to face forward as you go.",
+      "Turn them back as you lower to the start."
+    ]
+  },
+  {
+    "key": "machine_shoulder_press",
+    "name": "Machine Shoulder Press",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "side_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "shoulder press machine",
+      "seated shoulder press machine",
+      "machine ohp",
+      "machine overhead press"
+    ],
+    "linkNames": [
+      "Seated Shoulder Press (Machine)"
+    ],
+    "steps": [
+      "Set the seat so the handles start at shoulder height.",
+      "Press the handles up until your arms are straight.",
+      "Lower them slowly back to shoulder height."
+    ]
+  },
+  {
+    "key": "smith_machine_shoulder_press",
+    "name": "Smith Machine Shoulder Press",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "side_delts",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith shoulder press",
+      "smith ohp",
+      "smith military press",
+      "smith overhead press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set an upright bench so the bar lowers just in front of your face.",
+      "Grip just outside your shoulders and twist the bar off the hooks.",
+      "Lower the bar to chin height, then press it back up."
+    ]
+  },
+  {
+    "key": "landmine_press",
+    "name": "Landmine Press",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "chest",
+      "triceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "single arm landmine press",
+      "one arm landmine press",
+      "landmine shoulder press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Wedge one end of a barbell in a corner and load the other end.",
+      "Hold the loaded end at your shoulder with one hand.",
+      "Press it up and forward until your arm is straight.",
+      "Lower it back to your shoulder. Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "push_press",
+    "name": "Push Press",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "triceps",
+      "side_delts",
+      "quads"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "barbell push press",
+      "bb push press"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand with the bar on your upper chest, hands just outside your shoulders.",
+      "Bend your knees slightly, then drive up hard through your legs.",
+      "Use that push to press the bar straight overhead.",
+      "Lower the bar back to your upper chest with control."
+    ]
+  },
+  {
+    "key": "lateral_raise",
+    "name": "Lateral Raise",
+    "ek": "0018",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "side raise",
+      "laterals",
+      "side laterals",
+      "db lateral raise",
+      "dumbbell lateral raise",
+      "side lateral raise"
+    ],
+    "linkNames": [
+      "Lateral Raise (Dumbbell)"
+    ],
+    "steps": [
+      "Stand tall with a dumbbell in each hand by your sides.",
+      "With elbows slightly bent, raise your arms out to the sides.",
+      "Stop at shoulder height, then lower slowly."
+    ]
+  },
+  {
+    "key": "seated_lateral_raise",
+    "name": "Seated Lateral Raise",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated side raise",
+      "seated db lateral raise",
+      "seated dumbbell lateral raise"
+    ],
+    "linkNames": [
+      "Seated Lateral Raise (Dumbbell)"
+    ],
+    "steps": [
+      "Sit on the end of a bench, back straight, dumbbells at your sides.",
+      "Raise your arms out to the sides up to shoulder height.",
+      "Lower them slowly without swinging."
+    ]
+  },
+  {
+    "key": "single_arm_dumbbell_lateral_raise",
+    "name": "Single-Arm Dumbbell Lateral Raise",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm lateral raise",
+      "single arm side raise",
+      "one arm dumbbell lateral raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold a dumbbell in one hand and grip a post with the other.",
+      "Raise the dumbbell out to the side up to shoulder height.",
+      "Lower it slowly. Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "cable_lateral_raise",
+    "name": "Cable Lateral Raise",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "two arm cable lateral raise",
+      "cable side raise",
+      "cable laterals",
+      "double cable lateral raise"
+    ],
+    "linkNames": [
+      "Lateral Raise (Cable)"
+    ],
+    "steps": [
+      "Stand between two low pulleys, holding each handle in the opposite hand.",
+      "Raise both arms out to the sides up to shoulder height.",
+      "Lower them slowly back down."
+    ]
+  },
+  {
+    "key": "single_arm_cable_lateral_raise",
+    "name": "Single-Arm Cable Lateral Raise",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm cable lateral raise",
+      "single cable lateral",
+      "one arm cable side raise"
+    ],
+    "linkNames": [
+      "Single Arm Lateral Raise (Cable)"
+    ],
+    "steps": [
+      "Set a pulley low and stand side-on, holding the handle in your far hand.",
+      "Raise your arm out to the side up to shoulder height.",
+      "Lower it slowly. Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "machine_lateral_raise",
+    "name": "Machine Lateral Raise",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "lateral raise machine",
+      "side raise machine",
+      "machine side raise"
+    ],
+    "linkNames": [
+      "Lateral Raise (Machine)",
+      "Lateral Raise Machine"
+    ],
+    "steps": [
+      "Set the seat so your shoulders line up with the machine's pivot.",
+      "Press your arms against the pads and raise them to shoulder height.",
+      "Lower them slowly back down."
+    ]
+  },
+  {
+    "key": "cable_y_raise",
+    "name": "Cable Y-Raise",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "rear_delts",
+      "traps"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "y raise",
+      "cable y",
+      "y raises"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand between two low pulleys, holding each handle in the opposite hand.",
+      "Raise your arms up and out into a wide Y above your head.",
+      "Lower them slowly back down."
+    ]
+  },
+  {
+    "key": "barbell_upright_row",
+    "name": "Barbell Upright Row",
+    "ek": "0014",
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps",
+      "biceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "upright row",
+      "bb upright row",
+      "barbell upright rows"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand holding a barbell at your thighs, hands about shoulder-width apart.",
+      "Pull the bar up close to your body, elbows leading the way.",
+      "Stop at chest height, then lower it slowly."
+    ]
+  },
+  {
+    "key": "dumbbell_upright_row",
+    "name": "Dumbbell Upright Row",
+    "ek": "0016",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps",
+      "biceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "db upright row",
+      "dumbbell upright rows"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand holding dumbbells in front of your thighs, palms facing you.",
+      "Pull them up close to your body, elbows leading the way.",
+      "Stop at chest height, then lower them slowly."
+    ]
+  },
+  {
+    "key": "single_arm_dumbbell_upright_row",
+    "name": "Single-Arm Dumbbell Upright Row",
+    "ek": "0039",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps",
+      "biceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm upright row",
+      "single arm upright row",
+      "one arm dumbbell upright row"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold a dumbbell in one hand and grip a post with the other.",
+      "Pull the dumbbell up close to your body, elbow leading, to chest height.",
+      "Lower it slowly. Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "cable_upright_row",
+    "name": "Cable Upright Row",
+    "ek": "0015",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps",
+      "biceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "cable upright rows",
+      "rope upright row",
+      "upright row cable"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Hold a straight bar on a low pulley in front of your thighs.",
+      "Pull the bar up close to your body, elbows leading the way.",
+      "Stop at chest height, then lower it slowly."
+    ]
+  },
+  {
+    "key": "smith_machine_upright_row",
+    "name": "Smith Machine Upright Row",
+    "ek": "0013",
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "side_delts"
+    ],
+    "secondary": [
+      "traps",
+      "biceps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "smith upright row",
+      "smith machine upright rows"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set the bar at thigh height and grip it about shoulder-width apart.",
+      "Twist it off the hooks and pull it up, elbows leading the way.",
+      "Stop at chest height, then lower it slowly."
+    ]
+  },
+  {
+    "key": "dumbbell_front_raise",
+    "name": "Dumbbell Front Raise",
+    "ek": "0033",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "chest"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "front raise",
+      "db front raise",
+      "front raises",
+      "front delt raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand tall with dumbbells in front of your thighs, palms facing you.",
+      "Raise them straight out in front to shoulder height.",
+      "Lower them slowly. You can also alternate arms."
+    ]
+  },
+  {
+    "key": "barbell_front_raise",
+    "name": "Barbell Front Raise",
+    "ek": null,
+    "equipment": "barbell",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "chest"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bb front raise",
+      "barbell front raises",
+      "ez bar front raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand holding a barbell at your thighs, hands shoulder-width apart.",
+      "Raise it straight out in front to shoulder height, arms nearly straight.",
+      "Lower it slowly without swinging."
+    ]
+  },
+  {
+    "key": "plate_front_raise",
+    "name": "Plate Front Raise",
+    "ek": null,
+    "equipment": "other",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "chest"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "plate raise",
+      "front plate raise",
+      "plate front raises"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand tall holding a weight plate by its sides, arms down.",
+      "Raise the plate straight out in front up to eye level.",
+      "Lower it slowly back down."
+    ]
+  },
+  {
+    "key": "cable_front_raise",
+    "name": "Cable Front Raise",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "chest"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "rope front raise",
+      "cable front raises",
+      "front raise cable"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand facing away from a low pulley with a rope running between your legs.",
+      "Raise your hands straight out in front up to shoulder height.",
+      "Lower them slowly back down."
+    ]
+  },
+  {
+    "key": "single_arm_cable_front_raise",
+    "name": "Single-Arm Cable Front Raise",
+    "ek": "0008",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "front_delts"
+    ],
+    "secondary": [
+      "chest"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm cable front raise",
+      "single cable front raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Stand facing away from a low pulley, holding the handle in one hand.",
+      "Raise your arm straight out in front up to shoulder height.",
+      "Lower it slowly. Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "face_pull",
+    "name": "Face Pull",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "rear_delts"
+    ],
+    "secondary": [
+      "upper_back",
+      "traps"
+    ],
+    "compound": true,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "rope face pull",
+      "facepull",
+      "rear delt pull",
+      "face pulls",
+      "cable face pull"
+    ],
+    "linkNames": [
+      "Face Pull"
+    ],
+    "steps": [
+      "Set a rope on a pulley at face height and hold both ends.",
+      "Step back and pull the rope toward your face, elbows high.",
+      "Spread the rope ends beside your ears, then return slowly."
+    ]
+  },
+  {
+    "key": "rear_delt_fly",
+    "name": "Rear Delt Fly",
+    "ek": "0032",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "rear_delts"
+    ],
+    "secondary": [
+      "upper_back"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse fly",
+      "rear delts",
+      "bent over rear delt fly",
+      "bent over lateral raise",
+      "rear delt raise",
+      "dumbbell reverse fly"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Bend forward at the hips, back flat, dumbbells hanging below your chest.",
+      "Rest your forehead on a bench if it helps you keep still.",
+      "Raise your arms out to the sides, elbows slightly bent.",
+      "Squeeze your shoulder blades together at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "seated_rear_delt_fly",
+    "name": "Seated Rear Delt Fly",
+    "ek": null,
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "rear_delts"
+    ],
+    "secondary": [
+      "upper_back"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated reverse fly",
+      "seated rear delt raise",
+      "seated bent over lateral raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on the end of a bench and lean forward, chest near your knees.",
+      "Hold dumbbells below your legs, palms facing each other.",
+      "Raise your arms out to the sides, then lower slowly."
+    ]
+  },
+  {
+    "key": "chest_supported_reverse_fly",
+    "name": "Chest-Supported Reverse Fly",
+    "ek": "0023",
+    "equipment": "dumbbell",
+    "type": "weight_reps",
+    "primary": [
+      "rear_delts"
+    ],
+    "secondary": [
+      "upper_back"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "both",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "chest supported rear delt fly",
+      "incline reverse fly",
+      "prone reverse fly",
+      "lying rear delt raise"
+    ],
+    "linkNames": [
+      "Chest Supported Reverse Fly (Dumbbell)"
+    ],
+    "steps": [
+      "Lie face down on a flat or low incline bench, dumbbells hanging down.",
+      "Raise your arms out to the sides, elbows slightly bent.",
+      "Squeeze your shoulder blades together at the top, then lower slowly."
+    ]
+  },
+  {
+    "key": "reverse_pec_deck",
+    "name": "Reverse Pec Deck",
+    "ek": null,
+    "equipment": "machine",
+    "type": "weight_reps",
+    "primary": [
+      "rear_delts"
+    ],
+    "secondary": [
+      "upper_back"
+    ],
+    "compound": false,
+    "incrementKg": 5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "rear delt machine",
+      "reverse fly machine",
+      "rear delt fly machine",
+      "machine reverse fly"
+    ],
+    "linkNames": [
+      "Rear Delt Reverse Fly (Machine)"
+    ],
+    "steps": [
+      "Sit facing the pad, chest against it, handles set in front of you.",
+      "Grip the handles at shoulder height with nearly straight arms.",
+      "Push your arms back and out until they line up with your body.",
+      "Return slowly to the start."
+    ]
+  },
+  {
+    "key": "cable_rear_delt_fly",
+    "name": "Cable Rear Delt Fly",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "rear_delts"
+    ],
+    "secondary": [
+      "upper_back"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "reverse cable fly",
+      "reverse cable crossover",
+      "cable reverse fly",
+      "rear delt cable fly"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set both pulleys at shoulder height and stand in the middle.",
+      "Cross your arms and hold each cable in the opposite hand.",
+      "Pull your arms back and out until they line up with your body.",
+      "Return slowly to the start."
+    ]
+  },
+  {
+    "key": "single_arm_cable_reverse_fly",
+    "name": "Single-Arm Cable Reverse Fly",
+    "ek": null,
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "rear_delts"
+    ],
+    "secondary": [
+      "upper_back"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "one arm cable reverse fly",
+      "single arm rear delt fly",
+      "one arm rear delt cable"
+    ],
+    "linkNames": [
+      "Reverse Fly Single Arm (Cable)"
+    ],
+    "steps": [
+      "Set a pulley at shoulder height and stand with your side to it.",
+      "Hold the handle with your far hand, arm straight across your chest.",
+      "Pull your arm back and out to the side, then return slowly.",
+      "Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "bent_over_cable_rear_delt_raise",
+    "name": "Bent-Over Cable Rear Delt Raise",
+    "ek": "0017",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "rear_delts"
+    ],
+    "secondary": [
+      "upper_back"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "side",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "bent over cable raise",
+      "bent over cable lateral raise",
+      "cable rear delt raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Set a pulley low and hold the handle with your far hand.",
+      "Bend forward at the hips with your back flat and knees soft.",
+      "Raise your arm out to the side up to shoulder height.",
+      "Lower it slowly. Finish all reps, then switch arms."
+    ]
+  },
+  {
+    "key": "seated_cable_rear_delt_fly",
+    "name": "Seated Cable Rear Delt Fly",
+    "ek": "0035",
+    "equipment": "cable",
+    "type": "weight_reps",
+    "primary": [
+      "rear_delts"
+    ],
+    "secondary": [
+      "upper_back"
+    ],
+    "compound": false,
+    "incrementKg": 2.5,
+    "loadMode": "one",
+    "bwShare": 0,
+    "easier": null,
+    "harder": null,
+    "repCap": null,
+    "holdCapSec": null,
+    "distUnit": null,
+    "aliases": [
+      "seated cable reverse fly",
+      "seated cable rear delt raise"
+    ],
+    "linkNames": [],
+    "steps": [
+      "Sit on a bench between two low pulleys and lean your chest forward.",
+      "Hold each handle in the opposite hand, cables crossing in front of your legs.",
+      "Raise your arms out to the sides up to shoulder height.",
+      "Lower them slowly back down."
+    ]
+  }
+]

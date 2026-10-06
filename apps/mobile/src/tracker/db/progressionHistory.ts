@@ -2,12 +2,13 @@
  * History read for the progression engine (`tracker/engine/progression.ts`).
  *
  * Same session bounding as `getBoundedExerciseHistory` (working sets only, newest
- * sessions first, the limit applied in SQL), plus the two tracker columns the engine
- * needs: `set_type` (drop sets are ignored) and `rpe` (effort credit). Older rows that
- * predate those columns read as 'normal' / no RPE.
+ * sessions first, the limit applied in SQL), plus the tracker columns the engine
+ * needs: `set_type` (drop sets are ignored), `rpe` (effort credit) and, since Phase 2,
+ * `duration_sec` (timed holds). Older rows that predate those columns read as
+ * 'normal' / no RPE / no time.
  */
 import { getDb } from '@/db';
-import type { ProgSession, ProgSetType } from '@/tracker/engine/progression';
+import type { ProgSession, ProgSet, ProgSetType } from '@/tracker/engine/progression';
 
 interface Row {
   session_id: string;
@@ -16,6 +17,7 @@ interface Row {
   reps: number;
   rpe: number | null;
   set_type: string | null;
+  duration_sec?: number | null;
 }
 
 const TYPES: readonly ProgSetType[] = ['normal', 'warmup', 'drop', 'failure'];
@@ -23,7 +25,7 @@ const TYPES: readonly ProgSetType[] = ['normal', 'warmup', 'drop', 'failure'];
 export async function getProgressionHistory(exerciseId: string, limit: number): Promise<ProgSession[]> {
   if (limit <= 0) return [];
   const rows = await getDb().getAllAsync<Row>(
-    `SELECT se.session_id, ws.date_iso AS date_iso, se.weight_kg, se.reps, se.rpe, se.set_type
+    `SELECT se.session_id, ws.date_iso AS date_iso, se.weight_kg, se.reps, se.rpe, se.set_type, se.duration_sec
        FROM set_entries se
        JOIN workout_sessions ws ON ws.id = se.session_id
       WHERE se.exercise_id = ? AND se.is_warmup = 0
@@ -54,12 +56,14 @@ export function groupRows(rows: Row[]): ProgSession[] {
       out.push(s);
     }
     const t = (r.set_type ?? 'normal') as ProgSetType;
-    s.sets.push({
+    const set: ProgSet = {
       weightKg: r.weight_kg,
       reps: r.reps,
       rpe: r.rpe == null ? null : Number(r.rpe),
       setType: TYPES.includes(t) ? t : 'normal',
-    });
+    };
+    if (r.duration_sec != null) set.durationSec = Number(r.duration_sec);
+    s.sets.push(set);
   }
   return out;
 }

@@ -16,7 +16,9 @@ import type { TextInput as TextInputType } from 'react-native';
 
 import { Badge, GhostButton, Icon } from '@/components/ui';
 import type { BadgeProps } from '@/components/ui';
+import { getExerciseById } from '@/db/repos/exerciseRepo';
 import { color, radius, space, type } from '@/theme/tokens';
+import { columnHeads, LOAD_MODE_LABEL, LOAD_MODES, repsPerSide, weightIsEach } from '@/tracker/engine/logTypes';
 import { targetBadge, targetFill, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
 
 import { supersetLabel } from '../lib/superset';
@@ -27,9 +29,12 @@ import { fillForSet, useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
+import { ExerciseDemoSheet } from './ExerciseDemoSheet';
+import { ExerciseThumb } from './ExerciseThumb';
+import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
-import { SetRow } from './SetRow';
+import { afterTick, SetRow } from './SetRow';
 import { SetTypeSheet } from './SetTypeSheet';
 import { SupersetSheet } from './SupersetSheet';
 import { Glyph } from './TrackerGlyph';
@@ -44,7 +49,13 @@ const BADGE_TONE: Record<NonNullable<ReturnType<typeof targetBadge>>, BadgeProps
 };
 
 
-type SheetName = 'menu' | 'rest' | 'plates' | 'superset' | null;
+type SheetName = 'menu' | 'rest' | 'plates' | 'superset' | 'counting' | 'demo' | null;
+
+/** Dumbbell-style exercises get the "Counting" choice (how the typed weight counts). */
+function hasCountingChoice(ex: Pick<DraftExercise, 'equipment' | 'logType' | 'loadMode'>): boolean {
+  if ((ex.logType ?? 'weight_reps') !== 'weight_reps') return false;
+  return ex.equipment !== 'barbell' || (ex.loadMode ?? 'one') !== 'one';
+}
 
 /**
  * Memoised: the store rebuilds only the edited exercise, so editing one card leaves
@@ -72,12 +83,22 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const setSetType = useActiveWorkout((s) => s.setSetType);
   const setRpe = useActiveWorkout((s) => s.setRpe);
   const deleteSetWithUndo = useActiveWorkout((s) => s.deleteSetWithUndo);
+  const setLoadMode = useActiveWorkout((s) => s.setLoadMode);
+  const swapExercise = useActiveWorkout((s) => s.swapExercise);
+  const completeTimedSet = useActiveWorkout((s) => s.completeTimedSet);
   const defaultRest = useRestTimer((s) => s.defaultSec);
   const showRpe = useTrackerPrefs((s) => s.advancedSets);
 
   const [sheet, setSheet] = useState<SheetName>(null);
   const [typeFor, setTypeFor] = useState<string | null>(null);
+  const [timerFor, setTimerFor] = useState<string | null>(null);
   const [showWhy, setShowWhy] = useState(false);
+
+  // Phase 2: how this exercise is logged and counted (older drafts: weight × reps, as typed).
+  const logType = exercise.logType ?? 'weight_reps';
+  const loadMode = exercise.loadMode ?? 'one';
+  const distUnit = exercise.distUnit ?? 'km';
+  const heads = columnHeads(logType, loadMode, distUnit);
 
   // Two RN Modals swapping in the same frame can drop the second on Android —
   // let the first finish sliding out.
@@ -103,6 +124,10 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   // Target weight + rep goal for the set rows' hints (null off-plan). Memoised so the
   // rows (and SetRow's memo) keep identity while the target is unchanged.
   const fillTarget = useMemo(() => (target ? targetFill(target) : null), [target]);
+  // The Target line says "each" / "per side" when the columns do.
+  const line = target
+    ? targetLine({ ...target, each: weightIsEach(loadMode), perSide: repsPerSide(loadMode) })
+    : null;
 
   // Working weight = first entered working set, else today's Target, else last session's first working set.
   const firstWorking = exercise.sets.find((s) => !s.isWarmup && s.weightKg != null);
@@ -119,7 +144,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       // PREVIOUS aligns by WORKING-set ordinal (previousSets excludes warm-ups),
       // matching prevForSet() in the store so display + auto-fill agree.
       let label: string;
-      let previous: { weightKg: number; reps: number } | null;
+      let previous: DraftExercise['previousSets'][number] | null;
       if (s.isWarmup) {
         label = 'W';
         previous = null;
@@ -133,7 +158,25 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   }, [exercise, fillTarget]);
 
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
+  const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);
   const typeSet = typeFor ? exercise.sets.find((s) => s.key === typeFor) ?? null : null;
+  const timerRow = timerFor ? rows.find((r) => r.set.key === timerFor) ?? null : null;
+  const timerGoal = timerRow ? timerRow.set.durationSec ?? timerRow.fill?.durationSec ?? null : null;
+
+  // "Try a harder / easier version": switch this card to the linked exercise, while
+  // nothing has been ticked yet (logged sets stay with the exercise they were done on).
+  const version = target?.version ?? null;
+  const canSwitch = version?.id != null && !exercise.sets.some((s) => s.done);
+  const onSwitch = async (): Promise<void> => {
+    if (!version?.id) return;
+    const next = await getExerciseById(version.id).catch(() => null);
+    if (!next) {
+      Alert.alert('Not in your library', `${version.name} is not in your exercise library.`);
+      return;
+    }
+    const ok = await swapExercise(exercise.key, next);
+    if (!ok) Alert.alert('Already started', 'Finish this exercise as it is. Try the other version next time.');
+  };
 
   const confirmRemove = (): void => {
     Alert.alert('Remove exercise?', `Remove ${exercise.name} and its sets from this workout.`, [
@@ -169,14 +212,21 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         gap: space.sm,
       }}
     >
-      {/* header */}
+      {/* header — the small picture opens the moving demo (never autoplays here) */}
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.sm }}>
+        <ExerciseThumb
+          catalogKey={exercise.catalogKey ?? null}
+          name={exercise.name}
+          size={44}
+          media={{ uri: exercise.mediaUri ?? null, type: exercise.mediaType ?? null }}
+          onPress={() => setSheet('demo')}
+        />
         <View style={{ flex: 1 }}>
           <Text numberOfLines={1} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
             {exercise.name}
           </Text>
           <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-            <Badge label={cap(exercise.muscleGroup)} tone="accent" />
+            <Badge label={exercise.muscleLabel ?? cap(exercise.muscleGroup)} tone="accent" />
             {group != null ? (
               <Pressable onPress={() => setSheet('superset')} accessibilityRole="button" accessibilityLabel="Edit superset">
                 <Badge label={`Superset ${supersetLabel(group)}`} tone="neutral" />
@@ -252,11 +302,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       ) : null}
 
       {/* coach target (Phase C1) — inline prescription, tap for the why */}
-      {target ? (
+      {target && line ? (
         <Pressable
           onPress={() => setShowWhy((v) => !v)}
           accessibilityRole="button"
-          accessibilityLabel={`Target ${targetLine(target)}. Tap for why.`}
+          accessibilityLabel={`Target ${line}. Tap for why.`}
           style={{
             gap: 4,
             borderRadius: radius.sm,
@@ -273,7 +323,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accentBright }}
               numberOfLines={1}
             >
-              {targetLine(target)}
+              {line}
             </Text>
             {targetBadge(target) ? (
               <Badge label={targetBadge(target)!} tone={BADGE_TONE[targetBadge(target)!]} />
@@ -293,15 +343,49 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               {target.reason}
             </Text>
           ) : null}
+          {showWhy && version && canSwitch ? (
+            <Pressable
+              onPress={() => void onSwitch()}
+              accessibilityRole="button"
+              accessibilityLabel={`Switch to ${version.name}`}
+              style={{
+                marginTop: 4,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: space.xs,
+                alignSelf: 'flex-start',
+                paddingHorizontal: space.md,
+                height: 34,
+                borderRadius: radius.pill,
+                backgroundColor: color.accentSoft,
+              }}
+            >
+              <Glyph name="swap" size={16} color={color.accent} />
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>
+                Switch to {version.name}
+              </Text>
+            </Pressable>
+          ) : null}
         </Pressable>
       ) : null}
 
-      {/* column header */}
+      {/* column header — the words say what to type ("KG EACH" = one dumbbell) */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingHorizontal: space.xs }}>
         <Text style={[colHead, { width: 34, textAlign: 'center' }]}>SET</Text>
         <Text style={[colHead, { width: 70 }]}>PREVIOUS</Text>
-        <Text style={[colHead, { flex: 1, textAlign: 'center' }]}>KG</Text>
-        <Text style={[colHead, { flex: 1, textAlign: 'center' }]}>REPS</Text>
+        {heads.distance ? <Text style={[colHead, { flex: 1, textAlign: 'center' }]}>{heads.distance}</Text> : null}
+        {heads.weight ? (
+          <Text numberOfLines={1} style={[colHead, { flex: 1, textAlign: 'center' }]}>
+            {heads.weight}
+          </Text>
+        ) : null}
+        {heads.reps ? (
+          <Text numberOfLines={1} style={[colHead, { flex: 1, textAlign: 'center' }]}>
+            {heads.reps}
+          </Text>
+        ) : null}
+        {heads.time ? <Text style={[colHead, { flex: 1, textAlign: 'center' }]}>{heads.time}</Text> : null}
+        {logType === 'time' ? <View style={{ width: 34 }} /> : null}
         {showRpe ? <Text style={[colHead, { width: 38, textAlign: 'center' }]}>RPE</Text> : null}
         <View style={{ width: 34 }} />
       </View>
@@ -316,6 +400,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           fill={r.fill}
           record={r.record}
           onOpenType={onOpenType}
+          logType={logType}
+          distUnit={distUnit}
+          onOpenTimer={logType === 'time' ? onOpenTimer : undefined}
         />
       ))}
 
@@ -341,15 +428,25 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             leading={<Icon name="clock" size={20} color={color.accent} />}
             onPress={() => openAfterMenu('rest')}
           />
-          <SheetRow
-            label="Add warm-up sets"
-            leading={<Icon name="flame" size={20} color={color.accent} />}
-            onPress={() => {
-              setSheet(null);
-              onWarmup();
-            }}
-          />
-          {exercise.equipment === 'barbell' ? (
+          {logType === 'weight_reps' ? (
+            <SheetRow
+              label="Add warm-up sets"
+              leading={<Icon name="flame" size={20} color={color.accent} />}
+              onPress={() => {
+                setSheet(null);
+                onWarmup();
+              }}
+            />
+          ) : null}
+          {hasCountingChoice(exercise) ? (
+            <SheetRow
+              label="Counting"
+              value={LOAD_MODE_LABEL[loadMode].title}
+              leading={<Glyph name="scale-split" size={20} color={color.accent} />}
+              onPress={() => openAfterMenu('counting')}
+            />
+          ) : null}
+          {exercise.equipment === 'barbell' && logType === 'weight_reps' ? (
             <SheetRow
               label="Plate calculator"
               leading={<Icon name="scale" size={20} color={color.accent} />}
@@ -415,6 +512,70 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           setTypeFor(null);
         }}
         onClose={() => setTypeFor(null)}
+      />
+
+      {/* Counting — what the typed weight means (Hevy's top complaint). */}
+      <TrackerSheet
+        visible={sheet === 'counting'}
+        title="Counting"
+        subtitle={`How ${exercise.name} is typed and counted from now on. Past workouts keep theirs.`}
+        onClose={() => setSheet(null)}
+      >
+        <View style={{ gap: 2 }}>
+          {LOAD_MODES.map((m) => (
+            <Pressable
+              key={m}
+              onPress={() => {
+                setLoadMode(exercise.key, m);
+                setSheet(null);
+              }}
+              accessibilityRole="button"
+              accessibilityState={{ selected: m === loadMode }}
+              accessibilityLabel={`${LOAD_MODE_LABEL[m].title}. ${LOAD_MODE_LABEL[m].detail}`}
+              style={{
+                paddingVertical: space.sm,
+                paddingHorizontal: space.md,
+                borderRadius: radius.md,
+                backgroundColor: m === loadMode ? color.accentSoft : 'transparent',
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: type.bodySemi,
+                  fontSize: type.size.body,
+                  color: m === loadMode ? color.accent : color.ink,
+                }}
+              >
+                {LOAD_MODE_LABEL[m].title}
+              </Text>
+              <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, marginTop: 2 }}>
+                {LOAD_MODE_LABEL[m].detail}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </TrackerSheet>
+
+      <HoldTimerSheet
+        visible={timerRow != null}
+        title={`${exercise.name} · ${timerRow?.label === 'W' ? 'Warm-up' : `Set ${timerRow?.label ?? ''}`}`}
+        goalSec={timerGoal}
+        onSave={(sec) => {
+          const key = timerFor;
+          setTimerFor(null);
+          if (!key) return;
+          completeTimedSet(exercise.key, key, sec);
+          afterTick(exercise.key, key);
+        }}
+        onClose={() => setTimerFor(null)}
+      />
+
+      <ExerciseDemoSheet
+        visible={sheet === 'demo'}
+        catalogKey={exercise.catalogKey ?? null}
+        name={exercise.name}
+        media={{ uri: exercise.mediaUri ?? null, type: exercise.mediaType ?? null }}
+        onClose={() => setSheet(null)}
       />
     </View>
   );
