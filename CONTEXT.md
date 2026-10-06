@@ -12,6 +12,7 @@ Any `src/…` or `android/…` path below is under **`apps/mobile/`**. Repo-leve
 at the repo root (hoists all workspaces); the mobile Metro config watches the workspace root.
 
 **▶ 2026-10-05: owner switched focus to the member app's WORKOUT TRACKER (Hevy parity, calm UI).** Tracker Phase 1 (live workout screen) shipped as v0.22.0 — see PROGRESS.md; device QA is `.github/workflows/qa-device.yml`. Phases 2–5 (exercises, progress, routines/plans, around-the-phone) are in `Resources/Hevy-Research-v1.docx` §11 and the chat plan.
+**2026-10-06: Progression v2 (v0.23.0)** — every Target comes from `src/tracker/engine/progression.ts` (spec: `Resources/Progressive-Overload-Research-v2.docx` §4); the frozen `engine/overload.ts` only seeds demo history and gives the first-time start weight (owner decision pending on that copy).
 
 **▶ CURRENT FOCUS (2026-07-26).** Building **Pillar 1 — the gym management CRM** in
 `apps/dashboard`. **Entrypoint: `docs/overhaul/CRM-BUILD.md`** (architecture, the phase list P1–P7,

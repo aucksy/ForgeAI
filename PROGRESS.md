@@ -1018,6 +1018,50 @@
     types); "previous from the same routine" setting dropped (workouts don't record their routine);
     ticking a set from the lock screen not built (needs custom native code).
 
+- 2026-10-06: **Progression v2 — smarter Target line, goal-based rep ranges (v0.23.0).**
+  Owner brief: research progressive overload (done: `Resources/Progressive-Overload-Research-v2.docx`,
+  outside the repo), then "Start the new rules fix" (its Phase 1 polish list).
+  - **New pure engine `tracker/engine/progression.ts`** drives every Target the member sees: the
+    workout screen (`coachTargets.getTargetsForPlanDay`) and the chat reply + `get_todays_workout`
+    tool (`getTodaysWorkoutWithTargets` = frozen `getTodaysWorkout()` rotation with its targets
+    swapped). Frozen `engine/overload.ts` untouched — still builds the demo history and still gives
+    the first-time start weight (rule R0) until the owner decides that copy.
+  - Rules (spec §4): main weight = most counted sets (ties heaviest; ramps judged on the top set);
+    drop sets ignored; score = reps + min(2, 10 − RPE) for RPE 6–10; step learned from repeated
+    workout-to-workout increases, else catalogue; step > 20% of the weight → reps first (max+2, jump
+    at max+4, then aim min−2); beginner double step within 10%; 21–41 days off hold, 42+ ≈10%
+    lighter; under range twice and not climbing → ≈10% lighter in nearest whole steps; stall needs
+    4 workouts and never fires within one rep of the top; unloaded bodyweight → reps to a cap
+    (15 pull/dip/row, 25 push, else 20) then "harder version", never kilos.
+  - **Target line:** "42.5 kg · aim for 9" / "Bodyweight · aim for 11"; badge only Up / Lighter /
+    Start; reason behind a new `info` glyph. Chat card uses the same words; cards saved before v2
+    keep their old badge (no `change` key).
+  - **Rep ranges for NEW routine rows** from goal × exercise kind (`tracker/engine/repRanges.ts`;
+    big = compound barbell + leg press). Saved ranges never change; the demo routine is untouched.
+  - **History read** `tracker/db/progressionHistory.ts` adds `rpe` + `set_type` (12 sessions: 4 for
+    the rules, the rest to learn the step).
+  - **QA:** 274 vitest (43 new). Each defect from the research (drop set blocks increase, pull-up
+    told "+2.5 kg", 5 → 7.5 kg dumbbell, cut after three steady workouts, "three weeks" copy, heavy
+    top single as working weight) has a test asserting the OLD engine's wrong answer and the new
+    right one. Adversarial review: 2 HIGH (lb-converted weights like 61.2244898 kg emptied the main
+    sets → wrong cut; pyramids cut at the top of the range), 4 MED (big jump undone two workouts
+    later; cut one rep from moving up; once-loaded dips showing "0 kg"; a comeback ramp teaching a
+    10 kg step), 5 LOW — all fixed with regression tests. Building found one more: at a 10% big-jump
+    line the empty 20 kg bar could never step to 22.5 kg, so the line is 20% (spec updated to v2).
+    Device QA (`qa/phase1-a.yaml`) now asserts the Target line and photographs its reason; final
+    run 37415011848 on 8d0f15e passed both parts (screens: Target 75 kg · aim for 5, Up, reason
+    shown; rows hint 75 × 5; one tick logged 75 × 5 with a heaviest-weight medal).
+  - **Set rows follow the Target:** device QA showed "75 kg · aim for 5" above rows hinting
+    72.5 × 8, so working rows now hint (and a tick on a blank row fills) the Target weight + rep
+    goal; a weight typed higher up wins; warm-up and drop rows keep the old hints; PREVIOUS still
+    shows last time. The row passes its own fill to `toggleDone`, so hint and tick cannot differ.
+    Second review (0 HIGH): a first-time start weight and a pyramid's top weight are never filled
+    into rows (`targetFill` → null; the line still shows them); the live workout's Target now
+    counts a workout finished earlier the same day (chat stays on before-today). A one-tap tick at
+    a raised Target can fire a "Heaviest weight" record — intended (the tick claims the lift).
+  - **Left open:** first-time copy (owner decision); assisted exercises from a Hevy import progress the wrong way (no
+    assisted type until Phase 2); dumbbell weight per hand vs pair not made explicit (Phase 2).
+
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
