@@ -716,6 +716,10 @@ export const EXERCISE_MEDIA: Readonly<Record<string, ExerciseMedia>> = {
     thumb: require('../../../assets/exercises/wide_grip_bench_press__t.webp'),
     frames: [require('../../../assets/exercises/wide_grip_bench_press__0.webp'), require('../../../assets/exercises/wide_grip_bench_press__1.webp')],
   },
+  wide_grip_pull_up: {
+    thumb: require('../../../assets/exercises/wide_grip_pull_up__t.webp'),
+    frames: [require('../../../assets/exercises/wide_grip_pull_up__0.webp'), require('../../../assets/exercises/wide_grip_pull_up__1.webp')],
+  },
   zottman_curl: {
     thumb: require('../../../assets/exercises/zottman_curl__t.webp'),
     frames: [require('../../../assets/exercises/zottman_curl__0.webp'), require('../../../assets/exercises/zottman_curl__1.webp')],

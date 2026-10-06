@@ -18,9 +18,9 @@ not protected.
   licence, CC BY-SA 4.0. The app's code is not affected.
 - Attribution in the app: every demo sheet showing a library drawing says
   "Drawing: Everkinetic, CC BY-SA 4.0, recoloured" and links to the licence.
-- Coverage: only the exercises whose `ek` field is set have a drawing — 175 of 402 (each one
+- Coverage: only the exercises whose `ek` field is set have a drawing — 176 of 402 (each one
   checked by eye against its name; several Everkinetic titles are wrong). The rest show their
-  steps and say on screen that there is no moving demo yet. Size: 525 files, 4.3 MB.
+  steps and say on screen that there is no moving demo yet. Size: 528 files, 4.3 MB.
 - Rebuild: `python scripts/build-exercise-catalog.py ../../docs/exercise-library` (text) and
   `python scripts/build-exercise-media.py <merged.json from --out-json>` (pictures), from `apps/mobile`.
 

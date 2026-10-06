@@ -78,6 +78,11 @@ maestro test --format junit --output "$OUT/part-b.xml" --test-output-dir "$OUT/p
 
 # ---------------------------------------------------------------- part C (Phase 2 exercises)
 adb shell cmd statusbar collapse >/dev/null 2>&1 || true
+# Part B's Maestro driver can still hold its port right after B ends; a third session then
+# fails "Failed to bind to address :36609" before its first step. Stop it and let it go.
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+sleep 10
 log "part C start"
 maestro test --format junit --output "$OUT/part-c.xml" --test-output-dir "$OUT/part-c" "$QA_DIR/phase2-c.yaml" \
   > "$OUT/part-c.log" 2>&1 || { status=1; log "PART C FAILED"; }

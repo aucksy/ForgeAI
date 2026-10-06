@@ -420,7 +420,7 @@
   {
     "key": "wide_grip_pull_up",
     "name": "Wide-Grip Pull-up",
-    "ek": null,
+    "ek": "0091",
     "equipment": "bodyweight",
     "type": "reps",
     "primary": [
