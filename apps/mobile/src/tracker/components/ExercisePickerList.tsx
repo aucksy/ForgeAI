@@ -96,7 +96,8 @@ export function ExercisePickerList({ onSelect }: { onSelect: (ex: Exercise) => v
             onPress={() => setMuscle((cur) => (cur === item ? null : item))}
           />
         )}
-        style={{ flexGrow: 0 }}
+        // Never shrink: under a 400-row list the row was squeezed and the chip text clipped.
+        style={{ flexGrow: 0, flexShrink: 0 }}
       />
 
       {/* results */}

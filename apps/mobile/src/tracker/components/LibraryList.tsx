@@ -146,7 +146,8 @@ export function LibraryList({
             onPress={() => setMuscle((cur) => (cur === item ? null : item))}
           />
         )}
-        style={{ flexGrow: 0 }}
+        // Never shrink: under a 400-row list the row was squeezed and the chip text clipped.
+        style={{ flexGrow: 0, flexShrink: 0 }}
       />
 
       {/* equipment filter chips */}
@@ -168,7 +169,8 @@ export function LibraryList({
             onPress={() => setEquipment((cur) => (cur === item ? null : item))}
           />
         )}
-        style={{ flexGrow: 0 }}
+        // Never shrink: under a 400-row list the row was squeezed and the chip text clipped.
+        style={{ flexGrow: 0, flexShrink: 0 }}
       />
 
       {/* results */}
