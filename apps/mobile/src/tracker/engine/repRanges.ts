@@ -4,7 +4,7 @@
  * Picked from the member's goal (already in the profile) and the kind of exercise
  * (already in the catalogue), so the member answers no new question. Only used for NEW
  * routine rows: a range the member or a trainer set is never overwritten.
- * Evidence: `Resources/Progressive-Overload-Research-v1.docx` §3.
+ * Evidence: `Resources/Progressive-Overload-Research-v2.docx` §3.
  */
 import type { Exercise, Goal, UserProfile } from '@/types/models';
 

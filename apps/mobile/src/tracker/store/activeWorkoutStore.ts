@@ -121,6 +121,13 @@ export interface ActiveWorkoutState {
    * measuring from the timestamp would shift a no-op save by a whole day.
    */
   editOriginalDateISO: string | null;
+  /**
+   * Target weight + rep goal per exerciseId (progression v2), set by the workout screen
+   * once targets load. Drives the set rows' hints and tick auto-fill. Never persisted:
+   * it is recomputed from history every time the screen opens.
+   */
+  targetFills: Record<string, { weightKg: number; reps: number }>;
+  setTargetFills: (fills: Record<string, { weightKg: number; reps: number }>) => void;
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
@@ -265,10 +272,23 @@ export function prevForSet(
 export function fillForSet(
   ex: DraftExercise,
   setKey: string,
+  /** The exercise's Target (progression v2): when present, normal and failure rows hint
+   *  its weight and rep goal instead of last time's numbers, so the rows agree with the
+   *  Target line. A weight the member already typed higher up wins (the line never argues).
+   *  Warm-up and drop rows keep the old hints. */
+  target?: { weightKg: number; reps: number } | null,
 ): { weightKg: number; reps: number } | null {
+  const idx = ex.sets.findIndex((s) => s.key === setKey);
+  if (target && idx >= 0 && !ex.sets[idx].isWarmup && ex.sets[idx].setType !== 'drop') {
+    for (let i = idx - 1; i >= 0; i--) {
+      const s = ex.sets[i];
+      if (s.isWarmup || s.setType === 'drop') continue;
+      if (s.weightKg != null) return { weightKg: s.weightKg, reps: target.reps };
+    }
+    return { weightKg: target.weightKg, reps: target.reps };
+  }
   const prev = prevForSet(ex, setKey);
   if (prev) return prev;
-  const idx = ex.sets.findIndex((s) => s.key === setKey);
   if (idx < 0 || ex.sets[idx].isWarmup) return null;
   for (let i = idx - 1; i >= 0; i--) {
     const s = ex.sets[i];
@@ -303,6 +323,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     editEndedAt: null,
     editOriginalDateISO: null,
     lastSaveReconciled: true,
+    targetFills: {},
+    setTargetFills: (fills) => set({ targetFills: fills }),
 
     hydrate: async () => {
       // Already hydrated, or a workout already begun in-memory — nothing to restore.
@@ -601,7 +623,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       mutate((list) =>
         list.map((e) => {
           if (e.key !== exKey) return e;
-          const prev = fillForSet(e, setKey);
+          const prev = fillForSet(e, setKey, get().targetFills[e.exerciseId]);
           return {
             ...e,
             sets: e.sets.map((s) => {

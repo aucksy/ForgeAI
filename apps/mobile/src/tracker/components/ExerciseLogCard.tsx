@@ -17,7 +17,7 @@ import type { TextInput as TextInputType } from 'react-native';
 import { Badge, GhostButton, Icon } from '@/components/ui';
 import type { BadgeProps } from '@/components/ui';
 import { color, radius, space, type } from '@/theme/tokens';
-import { targetBadge, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
+import { targetBadge, targetFill, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
 
 import { supersetLabel } from '../lib/superset';
 import { liveRecordFlags } from '../services/liveRecords';
@@ -101,9 +101,13 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercise.note]);
 
-  // Working weight = first entered working set, else last session's first working set.
+  // Target weight + rep goal for the set rows' hints (null off-plan). Memoised so the
+  // rows (and SetRow's memo) keep identity while the target is unchanged.
+  const fillTarget = useMemo(() => (target ? targetFill(target) : null), [target]);
+
+  // Working weight = first entered working set, else today's Target, else last session's first working set.
   const firstWorking = exercise.sets.find((s) => !s.isWarmup && s.weightKg != null);
-  const workingWeight = firstWorking?.weightKg ?? exercise.previousSets[0]?.weightKg ?? null;
+  const workingWeight = firstWorking?.weightKg ?? fillTarget?.weightKg ?? exercise.previousSets[0]?.weightKg ?? null;
 
   const restSec = effectiveRestSec(exercise, defaultRest);
   const restIsCustom = exercise.restSec != null;
@@ -125,9 +129,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         label = String(working + 1);
         working += 1;
       }
-      return { set: s, label, previous, fill: fillForSet(exercise, s.key), record: flags.get(s.key) ?? null };
+      return { set: s, label, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
     });
-  }, [exercise]);
+  }, [exercise, fillTarget]);
 
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
   const typeSet = typeFor ? exercise.sets.find((s) => s.key === typeFor) ?? null : null;

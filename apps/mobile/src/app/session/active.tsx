@@ -17,7 +17,7 @@ import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen } from '@/co
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import type { ProgressionTarget } from '@/tracker/engine/progression';
+import { targetFill, type ProgressionTarget } from '@/tracker/engine/progression';
 
 import { SessionGoneError } from '@/tracker/db/sessionEdit';
 import { EditSessionHeader } from '@/tracker/components/EditSessionHeader';
@@ -123,13 +123,22 @@ export default function ActiveWorkoutScreen() {
     let cancelled = false;
     void getTargetsForPlanDay(planDayId)
       .then((map) => {
-        if (!cancelled) setTargets(map);
+        if (cancelled) return;
+        setTargets(map);
+        // The store fills a ticked blank set from the same Target the rows hint.
+        const fills: Record<string, { weightKg: number; reps: number }> = {};
+        for (const [id, t] of map) fills[id] = targetFill(t);
+        useActiveWorkout.getState().setTargetFills(fills);
       })
       .catch(() => {
-        if (!cancelled) setTargets(new Map());
+        if (cancelled) return;
+        setTargets(new Map());
+        useActiveWorkout.getState().setTargetFills({});
       });
     return () => {
       cancelled = true;
+      // Never let one workout's Targets fill another's sets.
+      useActiveWorkout.getState().setTargetFills({});
     };
     // exerciseIdsKey re-runs the load when the roster changes; planDayId scopes it.
     // eslint-disable-next-line react-hooks/exhaustive-deps

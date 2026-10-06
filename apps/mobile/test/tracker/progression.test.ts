@@ -1,6 +1,6 @@
 /**
  * Progression engine v2 — one test per rule, and for every defect the research found in
- * the frozen engine (Progressive-Overload-Research-v1 §2, cases B C E F G J) a check that
+ * the frozen engine (Progressive-Overload-Research-v2 §2, cases B C E F G J) a check that
  * the OLD engine gives the wrong answer and the new one the right answer.
  */
 import { describe, expect, it } from 'vitest';

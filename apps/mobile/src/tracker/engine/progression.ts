@@ -3,7 +3,7 @@
  *
  * Replaces the frozen `engine/overload.ts` for every Target the member sees (the frozen
  * file stays as-is: the demo-history seed and its tests still use it). Spec and evidence:
- * `Resources/Progressive-Overload-Research-v1.docx` §4 (outside the repo).
+ * `Resources/Progressive-Overload-Research-v2.docx` §4 (outside the repo).
  *
  * Core: double progression — same weight, add reps until every main set reaches the top
  * of the range, then add one weight step and start from the bottom again. Around it:
@@ -251,6 +251,11 @@ export function targetLine(t: LineInput): string {
   if (t.repGoal != null) return `${load} · aim for ${t.repGoal}`;
   const range = t.targetRepsMin === t.targetRepsMax ? `${t.targetRepsMin}` : `${t.targetRepsMin}–${t.targetRepsMax}`;
   return `${load} × ${range}`;
+}
+
+/** What the set rows hint (and a tick fills): the Target weight and its rep goal (the range's bottom on a first time). */
+export function targetFill(t: Pick<ProgressionTarget, 'targetWeightKg' | 'targetRepsMin' | 'repGoal'>): { weightKg: number; reps: number } {
+  return { weightKg: t.targetWeightKg, reps: t.repGoal ?? t.targetRepsMin };
 }
 
 /** A word only when the weight changes (or the first time). null = say nothing. */

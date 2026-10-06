@@ -202,6 +202,37 @@ describe('fill for an extra set', () => {
   });
 });
 
+// ------------------------------------------------------------------ fill from the Target (progression v2)
+describe('fill from the Target', () => {
+  const target = { weightKg: 75, reps: 5 };
+
+  it('working rows hint the Target, not last time (the line and the rows agree)', () => {
+    const s1 = set({ weightKg: null, reps: null });
+    const s2 = set({ weightKg: null, reps: null });
+    const a = ex({ previousSets: [{ weightKg: 72.5, reps: 8 }, { weightKg: 72.5, reps: 8 }], sets: [s1, s2] });
+    expect(fillForSet(a, s1.key)).toEqual({ weightKg: 72.5, reps: 8 }); // before: last time
+    expect(fillForSet(a, s1.key, target)).toEqual({ weightKg: 75, reps: 5 });
+    expect(fillForSet(a, s2.key, target)).toEqual({ weightKg: 75, reps: 5 });
+  });
+
+  it('a weight the member typed above wins; the rep goal stays', () => {
+    const s1 = set({ weightKg: 70, reps: null });
+    const s2 = set({ weightKg: null, reps: null });
+    const a = ex({ sets: [s1, s2] });
+    expect(fillForSet(a, s2.key, target)).toEqual({ weightKg: 70, reps: 5 });
+  });
+
+  it('warm-up and drop rows keep their old hints', () => {
+    const w = set({ weightKg: null, reps: null, isWarmup: true });
+    const s1 = set({ weightKg: 75, reps: 5 });
+    const d = set({ weightKg: null, reps: null, setType: 'drop' });
+    const a = ex({ sets: [w, s1, d] });
+    expect(fillForSet(a, w.key, target)).toBeNull();
+    expect(fillForSet(a, d.key, target)).toEqual({ weightKg: 75, reps: 5 }); // the set above, as before
+    expect(fillForSet(a, d.key, { weightKg: 99, reps: 1 })).toEqual({ weightKg: 75, reps: 5 }); // not the Target
+  });
+});
+
 // ------------------------------------------------------------------ lock-screen card
 describe('lock-screen card text', () => {
   it('counts working sets, or shows when rest ends', () => {
