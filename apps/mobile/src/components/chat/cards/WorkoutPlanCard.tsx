@@ -6,7 +6,7 @@ import { trimNum } from '@/lib/format';
 import { targetBadge, targetLine } from '@/tracker/engine/progression';
 import { color, space, type } from '@/theme/tokens';
 
-import type { PlanTargetView, WorkoutPlanView } from '../payload';
+import { planRowView, type PlanTargetView, type WorkoutPlanView } from '../payload';
 import { CardShell, Divider } from './CardShell';
 
 const ACTION_BADGE: Record<PlanTargetView['action'], { label: string; tone: BadgeProps['tone'] }> =
@@ -20,11 +20,11 @@ const ACTION_BADGE: Record<PlanTargetView['action'], { label: string; tone: Badg
 const NEW_BADGE = {
   Up: { label: 'Up', tone: 'accent' },
   Lighter: { label: 'Lighter', tone: 'warn' },
-  Start: { label: 'Start', tone: 'good' },
 } as const satisfies Record<string, { label: string; tone: BadgeProps['tone'] }>;
 
 /** Cards saved before the v2 engine keep their old badge; new ones show a word only on a change. */
 function badgeFor(t: PlanTargetView): { label: string; tone: BadgeProps['tone'] } | null {
+  if (t.action === 'start') return null; // the line already says "First time"
   if (t.change === undefined) return ACTION_BADGE[t.action];
   const b = targetBadge(t);
   return b ? NEW_BADGE[b] : null;
@@ -44,6 +44,7 @@ export function WorkoutPlanCard({ plan }: { plan: WorkoutPlanView }) {
       <Divider mt={space.lg} mb={0} />
       {plan.targets.map((t, i) => {
         const badge = badgeFor(t);
+        const { line, showReason } = planRowView(t);
         const isLast = i === plan.targets.length - 1;
         return (
           <View
@@ -98,9 +99,9 @@ export function WorkoutPlanCard({ plan }: { plan: WorkoutPlanView }) {
                 color: color.accentBright,
               }}
             >
-              {`Target: ${targetLine(t)} · ${t.targetSets} sets`}
+              {`Target: ${targetLine(line)} · ${t.targetSets} sets`}
             </Text>
-            {t.reason ? (
+            {showReason ? (
               <Text
                 style={{
                   marginTop: 4,

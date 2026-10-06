@@ -1,11 +1,11 @@
 /**
  * Progression engine v2 — one test per rule, and for every defect the research found in
- * the frozen engine (Progressive-Overload-Research-v2 §2, cases B C E F G J) a check that
+ * the frozen engine (Progressive-Overload-Research-v3 §2, cases B C E F G J) a check that
  * the OLD engine gives the wrong answer and the new one the right answer.
  */
 import { describe, expect, it } from 'vitest';
 
-import { parseWorkoutPlan } from '@/components/chat/payload';
+import { parseWorkoutPlan, planRowView } from '@/components/chat/payload';
 import { computeOverloadTarget } from '@/engine/overload';
 import { groupRows } from '@/tracker/db/progressionHistory';
 import {
@@ -137,13 +137,23 @@ describe('defects found in the old engine', () => {
 });
 
 describe('rules', () => {
-  it('R0: first time keeps the old start weight (owner decision pending)', () => {
-    const t = run(ex({ equipment: 'machine', incrementKg: 5, isCompound: false }), range(8, 12), []);
+  it('R0: first time shows no kilos (owner: Option A, 6 Oct 2026)', () => {
+    const machine = ex({ name: 'Leg Press', equipment: 'machine', incrementKg: 5, isCompound: true });
+    expect(old(machine, range(8, 12), []).targetWeightKg).toBe(20); // before: a guessed 20 kg
+    const t = run(machine, range(8, 12), []);
     expect(t.rule).toBe('R0');
     expect(t.action).toBe('start');
-    expect(t.targetWeightKg).toBe(20);
     expect(t.repGoal).toBeNull();
-    expect(targetBadge(t)).toBe('Start');
+    expect(targetLine(t)).toBe('First time · find a weight for 8–12 reps');
+    expect(t.reason).toContain('could lift about 2 more times');
+    expect(t.reason).not.toMatch(/\d kg/);
+    expect(targetBadge(t)).toBeNull();
+    expect(targetFill(t)).toBeNull();
+  });
+
+  it('R0: a first-time bodyweight move says reps, no kilos', () => {
+    const t = run(ex({ name: 'Pull Up', equipment: 'bodyweight' }), range(5, 8), []);
+    expect(targetLine(t)).toBe('First time · bodyweight, 5–8 reps');
   });
 
   it('R0: warm-ups and drop sets alone count as no history', () => {
@@ -464,5 +474,36 @@ describe('set-row fill from the Target (second review)', () => {
   it('a normal Target fills its weight and rep goal', () => {
     const t = run(ex(), range(5, 8), [sess('2026-10-03', [[72.5, 8], [72.5, 8], [72.5, 8], [72.5, 8]])]);
     expect(targetFill(t)).toEqual({ weightKg: 75, reps: 5 });
+  });
+});
+
+describe('first time everywhere (Option A, third review)', () => {
+  const card = (over: Record<string, unknown>) =>
+    parseWorkoutPlan({
+      targets: [{ exerciseName: 'Leg Press', last: null, targetWeightKg: 20, targetRepsMin: 8, targetRepsMax: 12, targetSets: 3, action: 'start', ...over }],
+    })!.targets[0];
+
+  it('an old saved card hides its guessed-weight reason under the new line', () => {
+    const v = planRowView(card({ reason: 'First time on Leg Press — starting light at 20 kg to groove the movement.' }));
+    expect(targetLine(v.line)).toBe('First time · find a weight for 8–12 reps');
+    expect(v.showReason).toBe(false);
+  });
+
+  it('an old bodyweight first-time card reads as bodyweight', () => {
+    const v = planRowView(card({ exerciseName: 'Pull Up', targetWeightKg: 0, reason: 'First time on Pull Up — bodyweight only today.' }));
+    expect(targetLine(v.line)).toBe('First time · bodyweight, 8–12 reps');
+    expect(v.showReason).toBe(true);
+  });
+
+  it('a new first-time card keeps its reason', () => {
+    const t = run(ex({ name: 'Leg Press', equipment: 'machine' }), range(8, 12), []);
+    const v = planRowView(parseWorkoutPlan({ targets: [t] })!.targets[0]);
+    expect(v.showReason).toBe(true);
+    expect(targetLine(v.line)).toBe('First time · find a weight for 8–12 reps');
+  });
+
+  it('the Home card can show pounds through the same line', () => {
+    const t = run(ex(), range(8, 12), [sess('2026-10-03', [[50, 10], [50, 9], [50, 8]])]);
+    expect(targetLine(t, (kg) => `${Math.round(kg * 2.2046)} lb`)).toBe('110 lb · aim for 9');
   });
 });

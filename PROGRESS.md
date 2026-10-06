@@ -1019,13 +1019,13 @@
     ticking a set from the lock screen not built (needs custom native code).
 
 - 2026-10-06: **Progression v2 — smarter Target line, goal-based rep ranges (v0.23.0).**
-  Owner brief: research progressive overload (done: `Resources/Progressive-Overload-Research-v2.docx`,
+  Owner brief: research progressive overload (done: `Resources/Progressive-Overload-Research-v3.docx`,
   outside the repo), then "Start the new rules fix" (its Phase 1 polish list).
   - **New pure engine `tracker/engine/progression.ts`** drives every Target the member sees: the
     workout screen (`coachTargets.getTargetsForPlanDay`) and the chat reply + `get_todays_workout`
     tool (`getTodaysWorkoutWithTargets` = frozen `getTodaysWorkout()` rotation with its targets
-    swapped). Frozen `engine/overload.ts` untouched — still builds the demo history and still gives
-    the first-time start weight (rule R0) until the owner decides that copy.
+    swapped). Frozen `engine/overload.ts` untouched — still builds the demo history. (Its
+    first-time start weight was used for rule R0 in v0.23.0 only; replaced in v0.23.1, below.)
   - Rules (spec §4): main weight = most counted sets (ties heaviest; ramps judged on the top set);
     drop sets ignored; score = reps + min(2, 10 − RPE) for RPE 6–10; step learned from repeated
     workout-to-workout increases, else catalogue; step > 20% of the weight → reps first (max+2, jump
@@ -1059,9 +1059,22 @@
     into rows (`targetFill` → null; the line still shows them); the live workout's Target now
     counts a workout finished earlier the same day (chat stays on before-today). A one-tap tick at
     a raised Target can fire a "Heaviest weight" record — intended (the tick claims the lift).
-  - **Left open:** first-time copy (owner decision); assisted exercises from a Hevy import progress the wrong way (no
+  - **Left open:** assisted exercises from a Hevy import progress the wrong way (no
     assisted type until Phase 2); dumbbell weight per hand vs pair not made explicit (Phase 2).
 
+- 2026-10-06: **First time on an exercise shows no kilos (v0.23.1).** Owner picked Option A from
+  research v3 §12. Rule R0 no longer borrows the frozen engine's guessed start weight (20 kg on
+  every barbell/machine, 7.5 kg on dumbbells): the Target line reads "First time · find a weight
+  for 8–12 reps" (bodyweight: "First time · bodyweight, 8–12 reps"), the reason says "pick a weight you
+  could lift about 2 more times", rows keep no Target hint, and the "Start" badge is gone (the line
+  already says "First time"). Same words in the chat card, chat reply and AI tool. Tests 282.
+  Third review (1 HIGH): the **Home card** still printed the frozen engine's targets (guessed
+  start weights, "0 kg" for bodyweight, and since v0.23.0 different numbers from the workout
+  screen) — `dashboardStore` now swaps in `getTodaysWorkoutWithTargets()` and the card renders
+  `targetLine` (kg or lb). Old saved chat cards hide a first-time reason that names a guessed
+  weight, drop the "Start" badge, and read a 0 kg first-time row as bodyweight (`planRowView`).
+  Tests 286. Device QA cannot reach R0 with demo data (every demo lift has history); its copy is
+  covered by unit tests, and the Home screenshot shows the swapped targets.
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate

@@ -37,11 +37,10 @@ import { SheetRow, TrackerSheet } from './TrackerSheet';
 
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
 
-// A word only when the weight changes (or the first time) — same words as the chat card.
+// A word only when the weight changes — same words as the chat card.
 const BADGE_TONE: Record<NonNullable<ReturnType<typeof targetBadge>>, BadgeProps['tone']> = {
   Up: 'accent',
   Lighter: 'warn',
-  Start: 'good',
 };
 
 

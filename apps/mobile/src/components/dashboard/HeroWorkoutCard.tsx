@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 
 import { HeroCard, Icon } from '@/components/ui';
 import { fmtWeight } from '@/lib/format';
+import { targetLine } from '@/tracker/engine/progression';
 import { color, gradients, radius, shadow, space, type } from '@/theme/tokens';
 import type { TodaysWorkout, UnitSystem } from '@/types/models';
 
@@ -144,7 +145,7 @@ export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCar
                     color: color.inkSecondary,
                   }}
                 >
-                  {fmtWeight(t.targetWeightKg, unitSystem)} × {t.targetRepsMin}–{t.targetRepsMax}
+                  {targetLine(t, (kg) => fmtWeight(kg, unitSystem))}
                 </Text>
               </View>
             ))}

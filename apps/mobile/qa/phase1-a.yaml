@@ -41,7 +41,7 @@ appId: com.forgeai.app
 - takeScreenshot: 03-active-workout
 # Progression v2: the Target line reads "<weight> · aim for N" (or bodyweight / first-time
 # range); tapping it shows the one-sentence reason, tapping again hides it.
-- assertVisible: 'Target .*(aim for \d+|×).*Tap for why\.'
+- assertVisible: 'Target .*(aim for \d+|×|First time).*Tap for why\.'
 - tapOn:
     text: 'Target .*Tap for why\.'
     index: 0

@@ -107,6 +107,22 @@ function isAction(v: unknown): v is PlanAction {
   return typeof v === 'string' && (ACTIONS as readonly string[]).includes(v);
 }
 
+// ------------------------------------------------------------------ display helpers
+
+/**
+ * How a saved plan-card row is shown today. Cards saved before v0.23.1 may carry a
+ * first-time reason naming a guessed start weight ("starting light at 20 kg"), which the
+ * new "find a weight" line would contradict — that reason is hidden. An old first-time card
+ * at 0 kg was a bodyweight move.
+ */
+export function planRowView(t: PlanTargetView): { line: PlanTargetView & { bodyweightOnly: boolean }; showReason: boolean } {
+  const legacyStart = t.action === 'start' && /\d kg/.test(t.reason);
+  return {
+    line: { ...t, bodyweightOnly: t.bodyweightOnly ?? (t.action === 'start' && t.targetWeightKg === 0) },
+    showReason: t.reason.length > 0 && !legacyStart,
+  };
+}
+
 // ------------------------------------------------------------------ parsers
 
 /** 'workout_plan' -> TodaysWorkout-shaped payload. */

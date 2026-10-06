@@ -3,7 +3,7 @@
  *
  * Replaces the frozen `engine/overload.ts` for every Target the member sees (the frozen
  * file stays as-is: the demo-history seed and its tests still use it). Spec and evidence:
- * `Resources/Progressive-Overload-Research-v2.docx` §4 (outside the repo).
+ * `Resources/Progressive-Overload-Research-v3.docx` §4 (outside the repo).
  *
  * Core: double progression — same weight, add reps until every main set reaches the top
  * of the range, then add one weight step and start from the bottom again. Around it:
@@ -14,12 +14,12 @@
  *  - bodyweight moves progress by reps, never by kilos the member has never added;
  *  - a long break holds or lightens the weight; a stall waits 4 workouts before a cut.
  *
- * First time on an exercise (rule R0) deliberately reuses the frozen engine's start
- * weights until the owner picks between "no kilos" and "light start weight".
+ * First time on an exercise (rule R0): no kilos at all — "find a weight for 8–12, stop
+ * with about 2 left" (owner decision, 6 Oct 2026: a start weight by equipment was a guess
+ * that was often wrong, e.g. 20 kg on every machine).
  *
  * All weights kg. History is newest first, sessions BEFORE today, warm-ups excluded.
  */
-import { computeOverloadTarget } from '@/engine/overload';
 import { trimNum } from '@/lib/format';
 import type { Exercise, OverloadTarget, UserProfile } from '@/types/models';
 
@@ -105,10 +105,21 @@ export function computeProgressionTarget(input: {
     bodyweightOnly,
   };
 
-  // R0 — first time. Frozen engine's start weights, unchanged (owner decision pending).
+  // R0 — first time: no kilos. The member finds their own weight; next time we take it from there.
   if (all.length === 0) {
-    const t = computeOverloadTarget({ exercise, target: { ...target, repRangeMin: min, repRangeMax: max }, history: [] });
-    return { ...t, repGoal: null, change: null, bodyweightOnly, rule: 'R0', topSetOnly: false };
+    return {
+      ...base,
+      last: null,
+      targetWeightKg: 0,
+      repGoal: null,
+      change: null,
+      action: 'start',
+      reason: bodyweightOnly
+        ? `First time on ${name}. Do clean reps, stopping with about 2 left. Next time we take it from there.`
+        : `First time on ${name}. Pick a weight you could lift about 2 more times at ${min}–${max} reps. Next time we take it from there.`,
+      rule: 'R0',
+      topSetOnly: false,
+    };
   }
 
   const sessions = all.slice(0, RULE_WINDOW);
@@ -243,23 +254,28 @@ export function computeProgressionTarget(input: {
 
 // ---------------------------------------------------------------- display (shared by every screen)
 
-type LineInput = Pick<OverloadTarget, 'targetWeightKg' | 'targetRepsMin' | 'targetRepsMax'> & {
+type LineInput = Pick<OverloadTarget, 'targetWeightKg' | 'targetRepsMin' | 'targetRepsMax' | 'action'> & {
   repGoal?: number | null;
   bodyweightOnly?: boolean;
 };
 
-/** The one-line Target: "42.5 kg · aim for 9", "Bodyweight · aim for 11", or the range on a first time. */
-export function targetLine(t: LineInput): string {
-  const load = t.bodyweightOnly ? 'Bodyweight' : `${trimNum(t.targetWeightKg)} kg`;
-  if (t.repGoal != null) return `${load} · aim for ${t.repGoal}`;
+/**
+ * The one-line Target: "42.5 kg · aim for 9", "Bodyweight · aim for 11", and on a first
+ * time "First time · find a weight for 8–12" (never a guessed number).
+ */
+export function targetLine(t: LineInput, fmtKg: (kg: number) => string = (kg) => `${trimNum(kg)} kg`): string {
   const range = t.targetRepsMin === t.targetRepsMax ? `${t.targetRepsMin}` : `${t.targetRepsMin}–${t.targetRepsMax}`;
+  if (t.action === 'start') {
+    return t.bodyweightOnly ? `First time · bodyweight, ${range} reps` : `First time · find a weight for ${range} reps`;
+  }
+  const load = t.bodyweightOnly ? 'Bodyweight' : fmtKg(t.targetWeightKg);
+  if (t.repGoal != null) return `${load} · aim for ${t.repGoal}`;
   return `${load} × ${range}`;
 }
 
 /**
  * What the set rows hint (and a tick fills): the Target weight and its rep goal. null —
- * keep last time's hints — on a first time (the start weight is a guess; a tick must never
- * save it) and after a pyramid (the Target is for the top set, not every row).
+ * keep last time's hints — on a first time (there is no Target weight to fill) and after a pyramid (the Target is for the top set, not every row).
  */
 export function targetFill(
   t: Pick<ProgressionTarget, 'targetWeightKg' | 'repGoal' | 'action' | 'topSetOnly'>,
@@ -268,9 +284,8 @@ export function targetFill(
   return { weightKg: t.targetWeightKg, reps: t.repGoal };
 }
 
-/** A word only when the weight changes (or the first time). null = say nothing. */
-export function targetBadge(t: { action: OverloadTarget['action']; change?: 'up' | 'down' | null }): 'Up' | 'Lighter' | 'Start' | null {
-  if (t.action === 'start') return 'Start';
+/** A word only when the weight changes. null = say nothing (the first-time line already says "First time"). */
+export function targetBadge(t: { change?: 'up' | 'down' | null }): 'Up' | 'Lighter' | null {
   if (t.change === 'up') return 'Up';
   if (t.change === 'down') return 'Lighter';
   return null;
