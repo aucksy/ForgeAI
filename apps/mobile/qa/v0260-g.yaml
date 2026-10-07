@@ -268,22 +268,14 @@ appId: com.forgeai.app
 - tapOn:
     text: "Skip rest"
     optional: true
-# Swap for today: a library exercise added now (nothing ticked on it yet).
+# Swap for today: the plan's second lift, nothing ticked on it yet (the demo's Overhead Press
+# is linked to the library by its name). Its routine stays as it is.
 - scrollUntilVisible:
-    element: "Add exercise"
+    element: "More for Overhead Press"
     centerElement: true
     timeout: 20000
-- tapOn: "Add exercise"
-- tapOn: "Search exercises"
-- inputText: " push-up"
-- hideKeyboard
-- tapOn:
-    text: "Add Push[- ][Uu]p"
-    index: 0
-- extendedWaitUntil:
-    visible: "More for Push[- ][Uu]p"
-    timeout: 15000
-- tapOn: "More for Push[- ][Uu]p"
+    waitToSettleTimeoutMs: 500
+- tapOn: "More for Overhead Press"
 - tapOn: "Swap exercise, This workout"
 - extendedWaitUntil:
     visible: "For this workout only. Your routine stays."
@@ -293,7 +285,7 @@ appId: com.forgeai.app
     text: "Swap to .*"
     index: 0
 - extendedWaitUntil:
-    notVisible: "More for Push[- ][Uu]p"
+    notVisible: "More for Overhead Press"
     timeout: 10000
 - takeScreenshot: 103-swapped-today
 # Finish: saved as an easy-week workout, so the 300 kg set is no record (and no "update the

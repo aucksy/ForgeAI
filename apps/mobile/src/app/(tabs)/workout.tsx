@@ -9,6 +9,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 
 import { GhostButton, HeroCard, Icon, PrimaryButton, Screen } from '@/components/ui';
+import { getActivePlan } from '@/db/repos/planRepo';
 import { countWord } from '@/lib/words';
 import { getTodaysWorkout } from '@/services/coach';
 import { color, gradients, space, type } from '@/theme/tokens';
@@ -41,6 +42,8 @@ export default function WorkoutScreen() {
   const [preview, setPreview] = useState<PlanPreview | null>(null);
   const [plan, setPlan] = useState<PlanNow | null>(null);
   const [stalled, setStalled] = useState(0);
+  /** The followed plan has routines (a day with nothing planned is not "no plan"). */
+  const [hasRoutines, setHasRoutines] = useState(true);
   const [starting, setStarting] = useState(false);
   const [tick, setTick] = useState(0);
 
@@ -64,6 +67,11 @@ export default function WorkoutScreen() {
         .catch(() => {
           if (alive) setPlan(null);
         });
+      getActivePlan()
+        .then((p) => {
+          if (alive) setHasRoutines((p?.days.length ?? 0) > 0);
+        })
+        .catch(() => undefined);
       stalledLiftsInPlan()
         .then((n) => {
           if (alive) setStalled(n);
@@ -203,7 +211,8 @@ export default function WorkoutScreen() {
             </HeroCard>
 
             <GhostButton label="Start empty workout" icon="plus" onPress={onStartEmpty} />
-            {preview && !preview.hasPlan ? (
+            {/* Only with no plan to follow — not on a day the plan has nothing for (trained already). */}
+            {preview && !preview.hasPlan && !hasRoutines ? (
               <>
                 <GhostButton label="Ready programs" icon="trophy" onPress={() => router.push('/programs')} />
                 <GhostButton label="Build a plan" icon="sparkle" onPress={() => router.push('/plan/build')} />
