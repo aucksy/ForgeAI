@@ -95,6 +95,7 @@ appId: com.forgeai.app
 - takeScreenshot: 86-builder-answers
 - scrollUntilVisible:
     element: "Build my plan"
+    centerElement: true
     timeout: 15000
 - tapOn: "Build my plan"
 - extendedWaitUntil:
@@ -123,6 +124,7 @@ appId: com.forgeai.app
 - takeScreenshot: 89-plan-lower-no-goblet
 - scrollUntilVisible:
     element: "Routines, more information"
+    centerElement: true
     direction: UP
     timeout: 20000
 - tapOn: "Routines, more information"
@@ -130,6 +132,7 @@ appId: com.forgeai.app
 - takeScreenshot: 90-plan-ladder-info
 - scrollUntilVisible:
     element: "Follow this plan"
+    centerElement: true
     direction: UP
     timeout: 20000
 - tapOn: "Follow this plan"
@@ -233,6 +236,7 @@ appId: com.forgeai.app
 - tapOn: "^Routines$"
 - scrollUntilVisible:
     element: "Start routine"
+    centerElement: true
     timeout: 15000
 - tapOn:
     text: "Start routine"
@@ -267,6 +271,7 @@ appId: com.forgeai.app
 # Swap for today: a library exercise added now (nothing ticked on it yet).
 - scrollUntilVisible:
     element: "Add exercise"
+    centerElement: true
     timeout: 20000
 - tapOn: "Add exercise"
 - tapOn: "Search exercises"
@@ -302,6 +307,7 @@ appId: com.forgeai.app
 - takeScreenshot: 104-easy-finish
 - scrollUntilVisible:
     element: "Done"
+    centerElement: true
     timeout: 20000
 - tapOn: "Done"
 - extendedWaitUntil:
