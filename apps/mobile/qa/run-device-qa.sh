@@ -125,6 +125,9 @@ maestro test --format junit --output "$OUT/part-f.xml" --test-output-dir "$OUT/p
 # A routine file "someone shared", in Downloads, for the import steps.
 adb push "$QA_DIR/fixtures/qa-shared.forgeai.json" /sdcard/Download/qa-shared.forgeai.json >/dev/null 2>&1 || log "PUSH ROUTINE FILE FAILED"
 adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///sdcard/Download/qa-shared.forgeai.json" >/dev/null 2>&1 || true
+# The broadcast is a no-op on newer Android; a volume scan makes the file picker list it (as for part D's photos).
+adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+log "downloads: $(adb shell content query --uri content://media/external/downloads --projection _display_name 2>/dev/null | grep -c qa-shared) routine file"
 adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
 adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
 sleep 10
