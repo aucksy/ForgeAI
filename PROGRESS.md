@@ -1229,6 +1229,48 @@
     swap "Longest time" for "Best pace"; report notes stay rule-written until the AI layer ships;
     the body map (and share picture) gets a male / female figure chosen in Profile.
 
+- 2026-10-07: **Tracker v0.25.1 — the owner's three Phase 3 decisions.** Owner brief: build the
+  decisions recorded in afbe15a (tracker plan, Phase 3 "Decided by the owner"), fix the share
+  picture's recorded wording slips, one review round, phone test with the figure switch and a
+  run's Best pace.
+  - **Best pace for runs (`tracker/engine/records.ts`):** time + distance exercises keep "Longest
+    distance" and swap "Longest time" for "Best pace" (kind `pace`, kept as speed so "bigger is
+    better" stays one rule, shown as minutes per km at the whole second). Only sets of 1 km or
+    more count (`PACE_BASIS`, typed per distance unit), so a sprint can't set it; the exercise
+    page says so behind an i beside "Records" (`InfoHeading`) and shows a "—" row until a 1 km
+    set. Time-only exercises (plank) and loaded carries (farmer's walk) keep "Longest time".
+    Everywhere records show: live pop-up, finish screen, exercise page, records list, reports,
+    share picture, and the coach's exercise facts (`overviewFacts`).
+  - **Report notes:** stay rule-written. No change.
+  - **Body figure:** Profile → "Body figure: Male / Female" (tracker prefs, default male; Erase
+    all data resets it). `scripts/build-body-map.cjs` also builds the female drawing from
+    react-native-body-highlighter 3.2.0's bodyFemaleFront/Back (MIT), mapped onto the same finer
+    muscles; the male paths are byte-identical. The Progress body map and the workout share
+    picture follow the choice. The body map is now one labelled image for screen readers
+    ("…, female figure, front and back").
+  - **Share picture wording:** "1 day trained"; a short year shows TIME in minutes (was "HOURS
+    0"); a month or year with untimed workouts says "N workouts, M timed"; a cardio-only workout
+    lists Cardio under MUSCLES WORKED and shows DISTANCE (was an empty heading and "KG LIFTED
+    0"). Swept: the month and year pictures counted body weight on pull-ups and dips in KG
+    LIFTED (the workout picture's round-3 privacy rule now covers all three); count words come
+    from one helper (`lib/words.countWord`) on every screen a member reads one.
+  - **Review (one round, three reviewers), commit 3b07b5a:** pace on time-only bikes, carries,
+    same-looking "new" pace, a set that beat pace and distance, the coach's facts, pace before
+    distance, the finish screen's "0 kg moved" after a run, "Busiest month · 1" → "1 workout".
+  - **Known, not fixed:** the app has no mile unit yet (`DistUnit` is km or m), so every pace is
+    per km — adding miles must add its own pace line (the type forces it); rowing and swimming
+    pace is per km now (the old tile said /500 m); a workout draft started before the update
+    gets no Best pace pop-up (its saved bests lack the kind); a mistyped run (2 km in 0:30) can
+    set an absurd Best pace — no cut-off, because a cut-off is a product rule.
+  - **Tests:** 509 vitest (29 new). Device QA run 37608864153 on 4439825 passed parts A–F
+    (no app crash in any part's log): Female in Profile → the female figure on Progress (70,
+    71); a 400 m sprint sets no record (72); 2 km in 9:00 → "New record · Best pace · 4:30 /km"
+    (73), on the finish screen (74) and the share picture, drawn on the female figure (75); the
+    run's page shows Best pace 4:30 /km and Longest distance, the 1 km rule behind the i (76,
+    77). Earlier run 37604234721 (91ad7a6) failed only its own check: the figure's label sat on
+    a view screen readers skip (fixed in 4439825). Screens: `Resources/v0.25.1-screens/` (8 from
+    the phone, 8 share pictures drawn on a computer with sample data in `computer-drawn/`).
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
