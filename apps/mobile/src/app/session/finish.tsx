@@ -35,8 +35,10 @@ export default function FinishScreen() {
   const [note, setNote] = useState<string | null>(null);
   const [sharing, setSharing] = useState(false);
   const coachNotesPref = useTrackerPrefs((s) => s.coachNotes);
+  // v0.25.1: the body figure chosen in Profile.
+  const figure = useTrackerPrefs((s) => s.bodyFigure);
   // Phase 3: the picture to share on WhatsApp / Instagram.
-  const scene = useMemo(() => (data ? workoutShareScene(workoutShareInput(data)) : null), [data]);
+  const scene = useMemo(() => (data ? workoutShareScene({ ...workoutShareInput(data), figure }) : null), [data, figure]);
 
   useEffect(() => {
     let alive = true;

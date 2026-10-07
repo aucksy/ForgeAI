@@ -12,7 +12,7 @@
  * time is not news.
  */
 import type { DraftSet } from '@/tracker/store/activeWorkoutStore';
-import { storedWeight, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
+import { storedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import {
   RECORD_KINDS,
   beats,
@@ -20,9 +20,9 @@ import {
   sessionContribution,
   setRecordValue,
   type RecordKind,
+  type RecordRule,
   type RecordSet,
 } from '@/tracker/engine/records';
-import type { VolumeRule } from '@/tracker/engine/volume';
 
 import { recordToastLabel, type RecordTextContext } from './recordText';
 
@@ -53,6 +53,8 @@ interface LiveExercise {
   /** Phase 2: how the exercise is logged (absent = weight × reps). */
   logType?: LogType;
   loadMode?: LoadMode;
+  /** v0.25.1: pace counts sets of at least 1 km (absent = km). */
+  distUnit?: DistUnit;
 }
 
 /** A ticked draft set in stored form. */
@@ -82,7 +84,7 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
   const kinds = recordKindsFor(lt);
   // A draft saved before Phase 3 knows only the two old bests.
   const prior: Partial<Record<RecordKind, number>> = ex.bests.by ?? { weight: ex.bests.weightKg, e1rm: ex.bests.e1rm };
-  const rule: VolumeRule = { logType: lt, loadMode: mode, bwShare: ex.bests.bwShare ?? 0 };
+  const rule: RecordRule = { logType: lt, loadMode: mode, bwShare: ex.bests.bwShare ?? 0, distUnit: ex.distUnit ?? 'km' };
   const body = ex.bests.bodyweightKg ?? null;
 
   const running: Partial<Record<RecordKind, number>> = { ...prior };
@@ -159,7 +161,7 @@ export function toastHit<T extends LiveExercise & { key: string; exerciseId: str
   if (!hit || hit.kind === 'best_session') return hit ?? null;
   const lt: LogType = ex.logType ?? 'weight_reps';
   const mode: LoadMode = ex.loadMode ?? 'one';
-  const rule: VolumeRule = { logType: lt, loadMode: mode, bwShare: ex.bests?.bwShare ?? 0 };
+  const rule: RecordRule = { logType: lt, loadMode: mode, bwShare: ex.bests?.bwShare ?? 0, distUnit: ex.distUnit ?? 'km' };
   const body = ex.bests?.bodyweightKg ?? null;
   for (const card of exercises) {
     if (card.exerciseId !== ex.exerciseId) continue;

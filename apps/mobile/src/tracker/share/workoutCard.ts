@@ -8,9 +8,10 @@
  */
 import { color } from '@/theme/tokens';
 
+import type { BodyFigure } from '../catalog/bodyMapPaths';
 import { MUSCLE_LABEL } from '../catalog/muscles';
 import { muscleLevels } from '../engine/bodyMap';
-import { fmtSets, type MuscleSetsSlice } from '../engine/volume';
+import { setsText, type MuscleSetsSlice } from '../engine/volume';
 import { wordmark } from './brand';
 import { fitSize, fitText, packLines, type Scene, type SceneNode } from './scene';
 
@@ -24,7 +25,10 @@ export interface WorkoutShareInput {
   dateText: string;
   /** "1h 04m", or null when the workout has no length. */
   durationText: string | null;
-  /** "KG LIFTED" (the default), or "REPS" when only body weight moved. */
+  /**
+   * "KG LIFTED" (the default), "REPS" when only body weight moved, and — v0.25.1, a workout of
+   * only runs, rides or planks — "DISTANCE" or "EXERCISES" (see `liftedOnPicture`).
+   */
   volumeLabel?: string;
   /** "12,480" — never including body weight (see `liftedOnPicture`). */
   volumeText: string;
@@ -35,6 +39,8 @@ export interface WorkoutShareInput {
   /** Every record the workout set, printed or not (default: `records.length`). */
   recordCount?: number;
   muscles: MuscleSetsSlice[];
+  /** v0.25.1: the body figure chosen in Profile (default male). */
+  figure?: BodyFigure;
 }
 
 const M = 72;
@@ -85,8 +91,9 @@ export function workoutShareScene(input: WorkoutShareInput): Scene {
   // Body map (front + back) on the left; records or muscles on the right.
   const levels = [...muscleLevels(input.muscles)];
   const fig = 440;
-  nodes.push({ t: 'body', x: M - 30, y: 516, height: fig, view: 'front', levels });
-  nodes.push({ t: 'body', x: M - 30 + fig / 2 - 6, y: 516, height: fig, view: 'back', levels });
+  const figure = input.figure ?? 'male';
+  nodes.push({ t: 'body', x: M - 30, y: 516, height: fig, view: 'front', levels, figure });
+  nodes.push({ t: 'body', x: M - 30 + fig / 2 - 6, y: 516, height: fig, view: 'back', levels, figure });
 
   const rx = 560;
   const rw = SHARE_W - M - rx;
@@ -117,15 +124,18 @@ export function workoutShareScene(input: WorkoutShareInput): Scene {
       nodes.push({ t: 'text', x: rx, y: Math.min(y + 4, 964), text: `and ${hidden} more`, font: 'bodyMedium', size: 26, fill: color.inkMuted });
     }
   } else {
-    nodes.push({ t: 'text', x: rx, y: 560, text: 'MUSCLES WORKED', font: 'bodyBold', size: 26, fill: color.accent });
-    input.muscles
-      .filter((m) => m.muscle !== 'cardio')
-      .slice(0, 5)
-      .forEach((m, i) => {
-        const y = 620 + i * 64;
-        nodes.push({ t: 'text', x: rx, y, text: fitText(MUSCLE_LABEL[m.muscle], 'bodySemi', 32, rw - 150), font: 'bodySemi', size: 32, fill: color.ink });
-        nodes.push({ t: 'text', x: SHARE_W - M, y, text: `${fmtSets(m.sets)} sets`, font: 'mono', size: 30, fill: color.inkSecondary, anchor: 'end' });
-      });
+    // v0.25.1: a cardio-only workout left this list empty under its heading. Cardio is left
+    // out only while real muscles are there to list; with none, the heading is not drawn.
+    const body = input.muscles.filter((m) => m.muscle !== 'cardio');
+    const listed = (body.length > 0 ? body : input.muscles).slice(0, 5);
+    if (listed.length > 0) {
+      nodes.push({ t: 'text', x: rx, y: 560, text: 'MUSCLES WORKED', font: 'bodyBold', size: 26, fill: color.accent });
+    }
+    listed.forEach((m, i) => {
+      const y = 620 + i * 64;
+      nodes.push({ t: 'text', x: rx, y, text: fitText(MUSCLE_LABEL[m.muscle], 'bodySemi', 32, rw - 150), font: 'bodySemi', size: 32, fill: color.ink });
+      nodes.push({ t: 'text', x: SHARE_W - M, y, text: setsText(m.sets), font: 'mono', size: 30, fill: color.inkSecondary, anchor: 'end' });
+    });
   }
 
   // Exercises.

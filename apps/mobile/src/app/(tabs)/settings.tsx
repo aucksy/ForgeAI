@@ -16,6 +16,8 @@ import { Card, Icon, Screen, SectionHeader } from '@/components/ui';
 import { ExportCard } from '@/tracker/components/ExportCard';
 import { ImportCard } from '@/tracker/components/ImportCard';
 import { WorkoutPrefsCard } from '@/tracker/components/WorkoutPrefsCard';
+import type { BodyFigure } from '@/tracker/catalog/bodyMapPaths';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import {
   getAnthropicKey,
   getGroqKey,
@@ -49,6 +51,12 @@ const LANGUAGE_OPTIONS = [
   { id: 'hinglish', label: 'Hinglish' },
 ] as const satisfies readonly ChipOption<AppLanguage>[];
 
+// v0.25.1: the figure the body map on Progress and the share picture draw.
+const FIGURE_OPTIONS = [
+  { id: 'male', label: 'Male' },
+  { id: 'female', label: 'Female' },
+] as const satisfies readonly ChipOption<BodyFigure>[];
+
 function Section({
   title,
   delay,
@@ -79,6 +87,8 @@ export default function SettingsScreen() {
   const setSpeakReplies = useSettings((s) => s.setSpeakReplies);
   const setUnitSystem = useSettings((s) => s.setUnitSystem);
   const setLanguage = useSettings((s) => s.setLanguage);
+  const bodyFigure = useTrackerPrefs((s) => s.bodyFigure);
+  const setBodyFigure = useTrackerPrefs((s) => s.setBodyFigure);
 
 
   return (
@@ -225,6 +235,14 @@ export default function SettingsScreen() {
               options={LANGUAGE_OPTIONS}
               selectedId={language}
               onSelect={setLanguage}
+            />
+          </View>
+          <View style={{ marginTop: space.lg }}>
+            <ChipGroup
+              label="Body figure"
+              options={FIGURE_OPTIONS}
+              selectedId={bodyFigure}
+              onSelect={setBodyFigure}
             />
           </View>
           <View style={{ marginTop: space.lg }}>

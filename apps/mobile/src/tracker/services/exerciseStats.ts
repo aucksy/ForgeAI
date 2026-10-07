@@ -68,8 +68,8 @@ export function recordSessionsFromHistory(history: readonly ExerciseHistoryEntry
 
 /**
  * Tiles that do not repeat the Records card (Phase 3): the card now carries most reps,
- * longest time and longest distance with their dates, so only the other facts stay as
- * tiles — least help, best pace, all-time distance, the busiest workout, and the count. PURE.
+ * longest time, best pace (v0.25.1) and longest distance with their dates, so only the other
+ * facts stay as tiles — least help, all-time distance, the busiest workout, and the count. PURE.
  */
 export function tilesBesideRecords(tiles: readonly OverviewTile[], logType: LogType): OverviewTile[] {
   const repeated: Record<LogType, readonly string[]> = {
@@ -153,17 +153,13 @@ export function weightStatsOf(exercise: TrackerExercise, history: ExerciseHistor
   };
 }
 
-/** Seconds per km (or per 500 m for metre-based exercises like rowing). */
-export function pace(durationSec: number, distanceM: number, unit: DistUnit): number | null {
-  if (!(durationSec > 0) || !(distanceM > 0)) return null;
-  return unit === 'm' ? durationSec / (distanceM / 500) : durationSec / (distanceM / 1000);
-}
-
-export function fmtPace(secPer: number, unit: DistUnit): string {
-  return `${fmtDuration(Math.round(secPer))} /${unit === 'm' ? '500 m' : 'km'}`;
-}
-
-/** Tiles and the chart for a non-weight type. PURE. */
+/**
+ * Tiles and the chart for a non-weight type. PURE.
+ *
+ * v0.25.1: a run's best pace is a record now (`engine/records`, sets of 1 km or more), shown
+ * on the Records card; the tile that worked it out from every set — a 200 m sprint included —
+ * is gone, and runs show their all-time distance like other distance work.
+ */
 export function typedOverview(
   logType: LogType,
   history: ExerciseHistoryEntry[],
@@ -228,16 +224,11 @@ export function typedOverview(
   const dist = (h: ExerciseHistoryEntry) => h.sets.reduce((n, s) => n + (s.distanceM ?? 0), 0);
   const longest = Math.max(0, ...history.flatMap((h) => h.sets.map((s) => s.distanceM ?? 0)));
   const total = history.reduce((n, h) => n + dist(h), 0);
-  const paces = history.flatMap((h) =>
-    h.sets.map((s) => pace(s.durationSec ?? 0, s.distanceM ?? 0, unit)).filter((p): p is number => p != null),
-  );
-  const tiles: OverviewTile[] = [{ label: 'Longest', value: longest > 0 ? fmtDistance(longest, unit) : '—' }];
-  if (logType === 'time_distance') {
-    tiles.push({ label: 'Best pace', value: paces.length > 0 ? fmtPace(Math.min(...paces), unit) : '—' });
-  } else {
-    tiles.push({ label: 'All time', value: total > 0 ? fmtDistance(total, unit) : '—' });
-  }
-  tiles.push(workouts);
+  const tiles: OverviewTile[] = [
+    { label: 'Longest', value: longest > 0 ? fmtDistance(longest, unit) : '—' },
+    { label: 'All time', value: total > 0 ? fmtDistance(total, unit) : '—' },
+    workouts,
+  ];
   return {
     tiles,
     series: {

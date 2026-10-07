@@ -7,6 +7,7 @@ import { BodyMap } from '@/tracker/components/BodyMap';
 import { MAPPED_MUSCLES, muscleLevels, untrainedLine, untrainedMuscles, WEEK_LEGEND } from '@/tracker/engine/bodyMap';
 import type { MuscleSetsSlice } from '@/tracker/engine/volume';
 import { MAP_LEVELS } from '@/tracker/lib/bodyMapColors';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
 import { HeaderStat, Section } from './Section';
 
@@ -19,9 +20,10 @@ export interface BodyMapSectionProps {
 /**
  * Phase 3: the muscles trained in the last 7 days on a body drawing (Hevy's map, praised for
  * showing what you skipped). Brighter = more working sets; the line under it names the
- * muscles that got none.
+ * muscles that got none. v0.25.1: drawn on the figure chosen in Profile.
  */
 export function BodyMapSection({ sets, index }: BodyMapSectionProps) {
+  const figure = useTrackerPrefs((s) => s.bodyFigure);
   const levels = muscleLevels(sets);
   const trained = MAPPED_MUSCLES.length - untrainedMuscles(levels).length;
   const skipped = untrainedMuscles(levels).map((m) => MUSCLE_LABEL[m]);
@@ -36,7 +38,7 @@ export function BodyMapSection({ sets, index }: BodyMapSectionProps) {
         <EmptyState icon="dumbbell" title="Nothing trained this week" body="Log a workout and the muscles you work light up here." />
       ) : (
         <View style={{ gap: space.md }}>
-          <BodyMap levels={levels} height={250} />
+          <BodyMap levels={levels} figure={figure} height={250} />
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.md, flexWrap: 'wrap' }}>
             {WEEK_LEGEND.map((label, i) => (
               <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>

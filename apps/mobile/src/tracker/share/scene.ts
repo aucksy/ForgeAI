@@ -6,7 +6,7 @@
  * native add-on), and on a computer by `sceneToSvg` + resvg for tests and previews. Both use
  * the app's own fonts, so a name cut to fit here fits there too.
  */
-import { BODY_BACK, BODY_FRONT } from '../catalog/bodyMapPaths';
+import { BODY_VIEWS, type BodyFigure, type BodyView } from '../catalog/bodyMapPaths';
 import type { Muscle } from '../catalog/muscles';
 import type { MapLevel } from '../engine/bodyMap';
 import { MAP_OUTLINE, regionFill } from '../lib/bodyMapColors';
@@ -46,7 +46,8 @@ export type SceneNode =
   | { t: 'glow'; cx: number; cy: number; r: number; color: string; opacity: number }
   | { t: 'text'; x: number; y: number; text: string; font: FontToken; size: number; fill: string; anchor?: 'start' | 'middle' | 'end'; opacity?: number }
   | { t: 'path'; d: string; fill?: string; stroke?: string; strokeWidth?: number; x?: number; y?: number; scale?: number }
-  | { t: 'body'; x: number; y: number; height: number; view: 'front' | 'back'; levels: readonly (readonly [Muscle, MapLevel])[] };
+  /** v0.25.1: `figure` is the member's choice in Profile (absent = male). */
+  | { t: 'body'; x: number; y: number; height: number; view: 'front' | 'back'; levels: readonly (readonly [Muscle, MapLevel])[]; figure?: BodyFigure };
 
 export interface Scene {
   width: number;
@@ -133,13 +134,13 @@ export function fitText(text: string, font: FontToken, size: number, maxWidth: n
 
 /** The drawing a body node stands for, scaled to `height` (each view is 1 wide : 2 high). */
 export function bodyPaths(node: Extract<SceneNode, { t: 'body' }>): { d: string; fill: string }[] {
-  const view = node.view === 'front' ? BODY_FRONT : BODY_BACK;
+  const view = bodyView(node);
   const levels = new Map(node.levels);
   return view.parts.map((p) => ({ d: p.d, fill: regionFill(p.region, levels) }));
 }
 
-export function bodyView(node: Extract<SceneNode, { t: 'body' }>) {
-  return node.view === 'front' ? BODY_FRONT : BODY_BACK;
+export function bodyView(node: Extract<SceneNode, { t: 'body' }>): BodyView {
+  return BODY_VIEWS[node.figure ?? 'male'][node.view];
 }
 
 export { MAP_OUTLINE };

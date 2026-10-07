@@ -25,6 +25,7 @@ import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
 import { workoutShareInput } from '@/tracker/share/workoutInput';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
 export default function SessionDetailScreen() {
   const router = useRouter();
@@ -42,8 +43,10 @@ export default function SessionDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [menu, setMenu] = useState(false);
   const [sharing, setSharing] = useState(false);
+  // v0.25.1: the body figure chosen in Profile.
+  const figure = useTrackerPrefs((s) => s.bodyFigure);
   // Phase 3: the same picture the finish screen shares.
-  const scene = useMemo(() => (data ? workoutShareScene(workoutShareInput(data)) : null), [data]);
+  const scene = useMemo(() => (data ? workoutShareScene({ ...workoutShareInput(data), figure }) : null), [data, figure]);
 
   useEffect(() => {
     let alive = true;

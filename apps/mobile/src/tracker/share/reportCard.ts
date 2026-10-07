@@ -7,8 +7,8 @@ import { fmtInt } from '@/lib/format';
 import { color } from '@/theme/tokens';
 
 import { MUSCLE_LABEL } from '../catalog/muscles';
-import { bigNumber, durationText, type MonthReport, type YearReview } from '../engine/reports';
-import { fmtSets } from '../engine/volume';
+import { bigNumber, durationText, type MonthReport, type PeriodTotals, type YearReview } from '../engine/reports';
+import { setsText } from '../engine/volume';
 import { daysInMonth, firstWeekday, monthName, monthTitle } from '../lib/months';
 import { wordmark } from './brand';
 import { fitText, type Scene, type SceneNode } from './scene';
@@ -38,6 +38,27 @@ function footer(): SceneNode {
   return { t: 'text', x: SHARE_W / 2, y: SHARE_H - 44, text: 'Logged with ForgeAI', font: 'bodyMedium', size: 26, fill: color.inkMuted, anchor: 'middle' };
 }
 
+/**
+ * The line under the title: "43 workouts · 22 days trained". v0.25.1: never "1 days", and
+ * when only some workouts have a length (one logged by chat has none) it says how many did —
+ * "43 workouts, 40 timed" — so the picture's time never reads as the whole period's, as the
+ * report screen already says "in 40 timed workouts". PURE.
+ */
+export function periodLine(t: Pick<PeriodTotals, 'workouts' | 'days' | 'timed'>): string {
+  const partial = t.timed > 0 && t.timed < t.workouts;
+  return `${fmtInt(t.workouts)} ${t.workouts === 1 ? 'workout' : 'workouts'}${partial ? `, ${fmtInt(t.timed)} timed` : ''} · ${fmtInt(t.days)} ${t.days === 1 ? 'day' : 'days'} trained`;
+}
+
+/**
+ * The year's time box: whole hours once there is at least one ("HOURS 91"), the minutes
+ * under that ("TIME 45 min") — v0.25.1: a short year read "HOURS 0". PURE.
+ */
+export function yearTimeStat(durationSec: number): [string, string] {
+  if (!(durationSec > 0)) return ['HOURS', '—'];
+  if (durationSec >= 3600) return ['HOURS', fmtInt(Math.round(durationSec / 3600))];
+  return ['TIME', durationText(durationSec)];
+}
+
 /** Rows "label ........ value", up to `max`. */
 function list(top: number, title: string, rows: [string, string][]): SceneNode[] {
   const nodes: SceneNode[] = [
@@ -57,7 +78,7 @@ export function monthShareScene(r: MonthReport, recordCount: number): Scene {
   const nodes: SceneNode[] = frame(
     'Monthly report',
     r.complete ? monthTitle(r.month) : `${monthName(r.month)} so far`,
-    `${t.workouts} ${t.workouts === 1 ? 'workout' : 'workouts'} · ${r.trainedDays.length} ${r.trainedDays.length === 1 ? 'day' : 'days'} trained`,
+    periodLine({ workouts: t.workouts, days: r.trainedDays.length, timed: t.timed }),
   );
   nodes.push(
     ...stats([
@@ -91,9 +112,9 @@ export function monthShareScene(r: MonthReport, recordCount: number): Scene {
 
   const muscles = r.muscles.filter((m) => m.muscle !== 'cardio').slice(0, 3);
   if (r.topExercises.length > 0) {
-    nodes.push(...list(1000, 'MOST TRAINED', r.topExercises.slice(0, 3).map((e) => [e.name, `${fmtInt(e.sets)} sets`])));
+    nodes.push(...list(1000, 'MOST TRAINED', r.topExercises.slice(0, 3).map((e) => [e.name, setsText(e.sets)])));
   } else if (muscles.length > 0) {
-    nodes.push(...list(1000, 'MUSCLES WORKED', muscles.map((m) => [MUSCLE_LABEL[m.muscle], `${fmtSets(m.sets)} sets`])));
+    nodes.push(...list(1000, 'MUSCLES WORKED', muscles.map((m) => [MUSCLE_LABEL[m.muscle], setsText(m.sets)])));
   }
   nodes.push(footer());
   return { width: SHARE_W, height: SHARE_H, background: BG, nodes };
@@ -104,11 +125,11 @@ export function yearShareScene(y: YearReview): Scene {
   const nodes: SceneNode[] = frame(
     'Year in review',
     y.complete ? `${y.year} in review` : `${y.year} so far`,
-    `${fmtInt(t.workouts)} ${t.workouts === 1 ? 'workout' : 'workouts'} · ${fmtInt(t.days)} days trained`,
+    periodLine(t),
   );
   nodes.push(
     ...stats([
-      ['HOURS', t.durationSec > 0 ? fmtInt(Math.round(t.durationSec / 3600)) : '—'],
+      yearTimeStat(t.durationSec),
       ['KG LIFTED', bigNumber(t.volumeKg)],
       ['SETS', fmtInt(t.sets)],
       ['RECORDS', fmtInt(y.recordCount)],
@@ -135,7 +156,7 @@ export function yearShareScene(y: YearReview): Scene {
 
   const rows: [string, string][] = [];
   const fav = y.topExercises[0];
-  if (fav) rows.push([`Favourite: ${fav.name}`, `${fmtInt(fav.sets)} sets`]);
+  if (fav) rows.push([`Favourite: ${fav.name}`, setsText(fav.sets)]);
   if (y.busiest) rows.push(['Busiest month', `${monthName(y.busiest.month)} · ${y.busiest.workouts}`]);
   if (y.longestStreakWeeks > 0) rows.push(['Longest streak', `${y.longestStreakWeeks} ${y.longestStreakWeeks === 1 ? 'week' : 'weeks'}`]);
   if (y.gain) rows.push([`Biggest gain: ${y.gain.name}`, `+${y.gain.pct}%`]);

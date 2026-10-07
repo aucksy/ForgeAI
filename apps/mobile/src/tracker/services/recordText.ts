@@ -7,7 +7,7 @@ import { fmtInt, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import type { UnitSystem } from '@/types/models';
 
 import { fmtDistance, fmtDuration, weightIsEach, type DistUnit, type LoadMode, type LogType } from '../engine/logTypes';
-import { RECORD_LABEL, sessionUnit, type RecordHit } from '../engine/records';
+import { fmtPace, RECORD_LABEL, sessionUnit, type RecordHit } from '../engine/records';
 import { monthOf, monthTitle } from '../lib/months';
 
 export interface RecordTextContext {
@@ -27,7 +27,7 @@ function each(hit: RecordHit, ctx: RecordTextContext): string {
   return ctx.logType === 'weight_reps' && weightIsEach(mode) ? ' each' : '';
 }
 
-/** The record's number as a member reads it: "85 kg", "80 kg × 8", "15 reps", "1:30", "5 km". */
+/** The record's number as a member reads it: "85 kg", "80 kg × 8", "15 reps", "1:30", "5:12 /km", "5 km". */
 export function recordValueText(hit: RecordHit, ctx: RecordTextContext): string {
   const units = ctx.units ?? 'metric';
   const s = hit.set;
@@ -49,6 +49,8 @@ export function recordValueText(hit: RecordHit, ctx: RecordTextContext): string 
       return `${Math.round(hit.value)} reps`;
     case 'duration':
       return fmtDuration(hit.value);
+    case 'pace':
+      return fmtPace(hit.value, ctx.distUnit);
     case 'distance':
       return fmtDistance(hit.value, ctx.distUnit);
     default:
@@ -56,7 +58,10 @@ export function recordValueText(hit: RecordHit, ctx: RecordTextContext): string 
   }
 }
 
-/** A short second line, or null: "3 reps", "from 85 kg × 4", "680 kg in one set", "at +10 kg". */
+/**
+ * A short second line, or null: "3 reps", "from 85 kg × 4", "680 kg in one set", "at +10 kg",
+ * "5 km in 26:00".
+ */
 export function recordDetailText(hit: RecordHit, ctx: RecordTextContext): string | null {
   const units = ctx.units ?? 'metric';
   const s = hit.set;
@@ -74,6 +79,10 @@ export function recordDetailText(hit: RecordHit, ctx: RecordTextContext): string
       if (s.weightKg > 0) return `at +${kg(s.weightKg, units)}`;
       if (s.weightKg < 0) return `with ${kg(-s.weightKg, units)} of help`;
       return null;
+    case 'pace':
+      return s && (s.distanceM ?? 0) > 0 && (s.durationSec ?? 0) > 0
+        ? `${fmtDistance(s.distanceM ?? 0, ctx.distUnit)} in ${fmtDuration(s.durationSec ?? 0)}`
+        : null;
     default:
       return null;
   }

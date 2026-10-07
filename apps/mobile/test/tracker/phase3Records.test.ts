@@ -44,7 +44,8 @@ describe('which records an exercise keeps', () => {
     expect(recordKindsFor('assisted')).toEqual(['reps', 'best_session']);
     expect(recordKindsFor('time')).toEqual(['duration']);
     expect(recordKindsFor('distance')).toEqual(['distance']);
-    expect(recordKindsFor('time_distance')).toEqual(['distance', 'duration']);
+    // v0.25.1 (owner): a run keeps its best pace, not its longest time.
+    expect(recordKindsFor('time_distance')).toEqual(['distance', 'pace']);
   });
   it('names them in plain words', () => {
     expect(Object.values(RECORD_LABEL)).toEqual([
@@ -54,6 +55,7 @@ describe('which records an exercise keeps', () => {
       'Best session',
       'Most reps',
       'Longest time',
+      'Best pace',
       'Longest distance',
     ]);
   });
@@ -127,15 +129,16 @@ describe('the record rule', () => {
     expect(r.events.map((e) => [e.kind, e.value])).toEqual([['duration', 90]]);
   });
 
-  it('before Phase 3: a longer run was not a record — now "Longest distance" (and time)', () => {
+  it('before Phase 3: a longer run was not a record — now "Longest distance" (and, v0.25.1, a faster pace)', () => {
     const r = exerciseRecords(
       [session('2026-09-01', [{ distanceM: 3000, durationSec: 1000 }]), session('2026-09-04', [{ distanceM: 5000, durationSec: 1650 }])],
       RUN,
       [],
     );
+    // 5 km in 27:30 (5:30 /km) is faster than 3 km in 16:40 (5:33 /km).
     expect(r.events.map((e) => [e.kind, e.value])).toEqual([
       ['distance', 5000],
-      ['duration', 1650],
+      ['pace', 5000 / 1650],
     ]);
   });
 
@@ -191,9 +194,10 @@ describe('the live pop-up knows every kind', () => {
   });
 
   it('a kind never logged before announces nothing (first time is not news)', () => {
+    // Only a pace is known (3 m/s): the faster 5 km names it; distance has no history, so no news.
     const s = draft({ distanceM: 5000, durationSec: 1500 });
-    const hits = liveRecordHits({ bests: { weightKg: 0, e1rm: 0, by: { duration: 1200 } }, sets: [s], logType: 'time_distance' });
-    expect(hits.get(s.key)?.kind).toBe('duration');
+    const hits = liveRecordHits({ bests: { weightKg: 0, e1rm: 0, by: { pace: 3 } }, sets: [s], logType: 'time_distance' });
+    expect(hits.get(s.key)?.kind).toBe('pace');
   });
 
   it('a heavier set names "Heaviest weight" even when it also beats the best set', () => {

@@ -57,6 +57,11 @@ export function shareDate(dateISO: string): string {
   return `${shortDate(dateISO)} ${fromISO(dateISO).getFullYear()}`;
 }
 
+/** "5.2 km" or "800 m" — a picture's total distance across exercises. PURE. */
+export function totalDistanceText(m: number): string {
+  return m >= 1000 ? `${trimNum(m / 1000, 1)} km` : `${Math.round(m)} m`;
+}
+
 /**
  * What the picture says was lifted: the weight on the bar, the dumbbells, the machine or the
  * belt, never the member's body weight. PURE.
@@ -65,21 +70,33 @@ export function shareDate(dateISO: string): string {
  * pull-up workout's picture read "KG LIFTED 3,104" beside "40 reps" — 77.6 kg, the member's
  * body weight, on a picture that promises nothing about their body. When nothing but body
  * weight moved, the picture counts the reps instead. The finish screen keeps the full volume.
+ *
+ * v0.25.1: a workout of only runs, rides or planks read "KG LIFTED 0". It now says how far
+ * it went (DISTANCE), or — timed work with no distance — how many exercises it had.
  */
-export function liftedOnPicture(data: SessionSummaryData): { label: 'KG LIFTED' | 'REPS'; value: string } {
+export function liftedOnPicture(data: SessionSummaryData): { label: 'KG LIFTED' | 'REPS' | 'DISTANCE' | 'EXERCISES'; value: string } {
   let kg = 0;
   let reps = 0;
+  let metres = 0;
+  let exercises = 0;
   for (const g of data.session.exercises) {
     const kind = data.kinds[g.exercise.id];
     const logType: LogType = kind?.logType ?? 'weight_reps';
     const rule = { logType, loadMode: kind?.loadMode ?? ('one' as const), bwShare: 0 };
+    let working = 0;
     for (const s of g.sets) {
       if (s.isWarmup) continue;
+      working += 1;
       kg += setVolumeKg({ weightKg: s.weightKg, reps: s.reps, isWarmup: false, loadMode: data.setMeta[s.id]?.loadMode ?? null }, rule, null);
       if (logType !== 'time' && logType !== 'distance' && logType !== 'time_distance') reps += Math.max(0, s.reps);
+      metres += Math.max(0, data.setMeta[s.id]?.distanceM ?? 0);
     }
+    if (working > 0) exercises += 1;
   }
-  if (kg <= 0 && reps > 0) return { label: 'REPS', value: fmtInt(reps) };
+  if (kg > 0) return { label: 'KG LIFTED', value: fmtInt(kg) };
+  if (reps > 0) return { label: 'REPS', value: fmtInt(reps) };
+  if (metres > 0) return { label: 'DISTANCE', value: totalDistanceText(metres) };
+  if (exercises > 0) return { label: 'EXERCISES', value: String(exercises) };
   return { label: 'KG LIFTED', value: fmtInt(kg) };
 }
 

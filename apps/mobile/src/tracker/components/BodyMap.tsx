@@ -1,13 +1,14 @@
 /**
  * Front and back body drawing with each muscle shaded by how much it was trained (Phase 3).
- * Drawing: react-native-body-highlighter (MIT), see catalog/bodyMapPaths.
+ * Drawing: react-native-body-highlighter (MIT), see catalog/bodyMapPaths. v0.25.1: the male
+ * or female figure, as the member chose in Profile ("Body figure").
  */
 import { Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { color, space, type } from '@/theme/tokens';
 
-import { BODY_BACK, BODY_FRONT, type BodyView } from '../catalog/bodyMapPaths';
+import { BODY_VIEWS, type BodyFigure, type BodyView } from '../catalog/bodyMapPaths';
 import type { Muscle } from '../catalog/muscles';
 import type { MapLevel } from '../engine/bodyMap';
 import { MAP_OUTLINE, regionFill } from '../lib/bodyMapColors';
@@ -26,21 +27,24 @@ function Figure({ view, levels, height }: { view: BodyView; levels: ReadonlyMap<
 
 export function BodyMap({
   levels,
+  figure = 'male',
   height = 220,
   labels = true,
 }: {
   levels: ReadonlyMap<Muscle, MapLevel>;
+  figure?: BodyFigure;
   height?: number;
   labels?: boolean;
 }) {
+  const views = BODY_VIEWS[figure];
   return (
     <View
       style={{ flexDirection: 'row', justifyContent: 'center', gap: space.lg }}
-      accessibilityLabel="Body map of the muscles you trained, front and back"
+      accessibilityLabel={`Body map of the muscles you trained, ${figure} figure, front and back`}
     >
       {[
-        { view: BODY_FRONT, label: 'Front' },
-        { view: BODY_BACK, label: 'Back' },
+        { view: views.front, label: 'Front' },
+        { view: views.back, label: 'Back' },
       ].map(({ view, label }) => (
         <View key={label} style={{ alignItems: 'center' }}>
           <Figure view={view} levels={levels} height={height} />

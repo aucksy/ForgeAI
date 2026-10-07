@@ -12,6 +12,7 @@
  * Every screen that shows a volume number goes through `setVolumeKg` (via the tracker
  * reads), so the Home card, History, the finish screen, Progress and the coach agree.
  */
+import { fmtInt } from '@/lib/format';
 import type { DayType } from '@/types/models';
 
 import type { MuscleMap, Muscle } from '../catalog/muscles';
@@ -142,4 +143,9 @@ export function muscleSets(sessions: readonly VolumeSession[]): MuscleSetsSlice[
 /** "12", "4.5" — fractional sets read naturally. */
 export function fmtSets(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
+}
+
+/** "1 set", "4.5 sets", "1,240 sets" — never "1 sets" (v0.25.1, share pictures). */
+export function setsText(n: number): string {
+  return `${Number.isInteger(n) ? fmtInt(n) : n.toFixed(1)} ${n === 1 ? 'set' : 'sets'}`;
 }

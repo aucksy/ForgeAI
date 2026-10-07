@@ -8,7 +8,7 @@ import * as XLSX from 'xlsx';
 
 import { getsTarget, isTimedCardio } from '@/tracker/engine/logTypes';
 import { filterExercises, matchRank } from '@/tracker/services/exerciseSearch';
-import { bestSetSeriesFor, fmtPace, pace, typedOverview } from '@/tracker/services/exerciseStats';
+import { bestSetSeriesFor, typedOverview } from '@/tracker/services/exerciseStats';
 import { isMeaningfulPr } from '@/tracker/services/finishSummary';
 import { importCounting, importedWeight, inferLogType, parseHevyBase64 } from '@/tracker/services/hevyImport';
 import { consistencyLevels, withPhase2Volume } from '@/tracker/services/volumeService';
@@ -151,11 +151,11 @@ describe('the exercise page for non-weight types', () => {
     const o = typedOverview('assisted', [h('2026-10-03', [{ weightKg: -15, reps: 8 }]), h('2026-09-30', [{ weightKg: -25, reps: 10 }])], 'km');
     expect(o.tiles[0]).toEqual({ label: 'Least help', value: '15 kg × 8' });
   });
-  it('runs: longest distance and best pace', () => {
+  it('runs: longest distance and all-time distance (v0.25.1: best pace is a record now)', () => {
     const o = typedOverview('time_distance', [h('2026-10-03', [{ distanceM: 5000, durationSec: 1650 }]), h('2026-09-30', [{ distanceM: 2400, durationSec: 720 }])], 'km');
     expect(o.tiles[0]).toEqual({ label: 'Longest', value: '5 km' });
-    expect(o.tiles[1]).toEqual({ label: 'Best pace', value: '5:00 /km' });
-    expect(fmtPace(pace(120, 500, 'm') ?? 0, 'm')).toBe('2:00 /500 m');
+    expect(o.tiles[1]).toEqual({ label: 'All time', value: '7.4 km' });
+    expect(o.tiles.map((t) => t.label)).not.toContain('Best pace');
   });
 });
 

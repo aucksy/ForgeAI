@@ -9,11 +9,17 @@
  *   best_set      Best set             most volume in one set (the one volume rule)
  *   best_session  Best session         most volume in one workout — most reps for a bodyweight move
  *   reps          Most reps            most reps in one set
- *   duration      Longest time         longest single set (plank, run)
+ *   duration      Longest time         longest single set (plank, wall sit)
+ *   pace          Best pace            fastest set of at least 1 km (run, row, ride)
  *   distance      Longest distance     longest single set (walk, run, row)
  *
  * Which ones an exercise keeps follows how it is logged (`recordKindsFor`): a plank has no
  * "heaviest weight", a bench press no "longest time".
+ *
+ * v0.25.1 (owner, 7 Oct): a run keeps "Best pace" instead of "Longest time" — a slow run
+ * is not a record. Pace counts only sets of at least 1 km (`PACE_BASIS`), so a 200 m sprint
+ * can't set it. Pace is kept as SPEED (metres per second) so "bigger is better" holds for
+ * every kind and every comparison below stays one rule; it reads as minutes per km.
  *
  * Records are DERIVED from the sets, never stored: editing or deleting a workout, or
  * moving it to another day, can never leave a record behind. A record is NEWS (an event)
@@ -23,16 +29,16 @@
  */
 import { epleyE1rm } from '@/engine/overload';
 
-import { type LoadMode, type LogType } from './logTypes';
+import { fmtDuration, type DistUnit, type LoadMode, type LogType } from './logTypes';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint, type VolumeRule } from './volume';
 
-export type RecordKind = 'weight' | 'e1rm' | 'best_set' | 'best_session' | 'reps' | 'duration' | 'distance';
+export type RecordKind = 'weight' | 'e1rm' | 'best_set' | 'best_session' | 'reps' | 'duration' | 'pace' | 'distance';
 
 /**
  * Display order, and the order a set's medal picks from when one set beats several records
  * at once (a heavier set usually also lifts the 1-rep max and the best set).
  */
-export const RECORD_KINDS: readonly RecordKind[] = ['weight', 'e1rm', 'best_set', 'reps', 'duration', 'distance', 'best_session'];
+export const RECORD_KINDS: readonly RecordKind[] = ['weight', 'e1rm', 'best_set', 'reps', 'duration', 'pace', 'distance', 'best_session'];
 
 export const RECORD_LABEL: Record<RecordKind, string> = {
   weight: 'Heaviest weight',
@@ -41,8 +47,39 @@ export const RECORD_LABEL: Record<RecordKind, string> = {
   best_session: 'Best session',
   reps: 'Most reps',
   duration: 'Longest time',
+  pace: 'Best pace',
   distance: 'Longest distance',
 };
+
+/**
+ * What pace is measured over, by the exercise's distance unit: minutes per km — the owner's
+ * rule, metre-based exercises (rowing, swimming) included — and only sets at least that long
+ * count. When a mile unit is added, TypeScript asks for its line here: per mile, 1 mile.
+ */
+export const PACE_BASIS: Record<DistUnit, { metres: number; unit: string; words: string }> = {
+  km: { metres: 1000, unit: 'km', words: '1 km' },
+  m: { metres: 1000, unit: 'km', words: '1 km' },
+};
+
+/** "5:12 /km" for a pace kept as speed (metres per second). PURE. */
+export function fmtPace(speedMps: number, unit: DistUnit): string {
+  const basis = PACE_BASIS[unit];
+  return `${fmtDuration(Math.round(basis.metres / speedMps))} /${basis.unit}`;
+}
+
+/**
+ * The rule as the member reads it, under the Records heading of an exercise that keeps a
+ * pace: "Best pace counts only sets of 1 km or more, so a short sprint can't set it." PURE.
+ */
+export function paceRuleText(unit: DistUnit): string {
+  return `Best pace counts only sets of ${PACE_BASIS[unit].words} or more, so a short sprint can't set it.`;
+}
+
+/**
+ * The rule the records follow for one exercise: its volume rule, plus the distance unit
+ * (pace's minimum length). Absent unit = km.
+ */
+export type RecordRule = VolumeRule & { distUnit?: DistUnit };
 
 /** The records an exercise keeps, by how it is logged, in display order. */
 export function recordKindsFor(t: LogType): RecordKind[] {
@@ -60,7 +97,8 @@ export function recordKindsFor(t: LogType): RecordKind[] {
     case 'distance':
       return ['distance'];
     case 'time_distance':
-      return ['distance', 'duration'];
+      // v0.25.1: pace, not time — a slower run takes longer, and that is no record.
+      return ['distance', 'pace'];
     default:
       return [];
   }
@@ -95,7 +133,10 @@ export interface RecordSession {
 /** A best value and where it was set. */
 export interface RecordHit {
   kind: RecordKind;
-  /** kg (weight, e1rm, best set, best session on weight moves), reps, seconds or metres. */
+  /**
+   * kg (weight, e1rm, best set, best session on weight moves), reps, seconds, metres, or —
+   * for pace — metres per second (bigger is faster; `fmtPace` reads it as minutes per km).
+   */
   value: number;
   sessionId: string;
   dateISO: string;
@@ -120,7 +161,7 @@ export interface ExerciseRecords {
 const finite = (n: number | null | undefined): number => (n != null && Number.isFinite(n) ? n : 0);
 
 /** The set's value for a set-level kind, or null when the set says nothing about it. */
-export function setRecordValue(kind: RecordKind, s: RecordSet, rule: VolumeRule, bodyweightKg: number | null): number | null {
+export function setRecordValue(kind: RecordKind, s: RecordSet, rule: RecordRule, bodyweightKg: number | null): number | null {
   const w = finite(s.weightKg);
   const r = finite(s.reps);
   switch (kind) {
@@ -141,6 +182,14 @@ export function setRecordValue(kind: RecordKind, s: RecordSet, rule: VolumeRule,
     case 'distance': {
       const m = finite(s.distanceM);
       return m > 0 ? m : null;
+    }
+    case 'pace': {
+      // Speed over the whole set. A set shorter than the basis (1 km) says nothing about
+      // pace: a 200 m sprint would always "beat" a 5 km run.
+      const m = finite(s.distanceM);
+      const sec = finite(s.durationSec);
+      if (!(sec > 0) || m < PACE_BASIS[rule.distUnit ?? 'km'].metres) return null;
+      return m / sec;
     }
     default:
       return null;
@@ -177,7 +226,7 @@ function chronological(sessions: readonly RecordSession[]): RecordSession[] {
 }
 
 /** The best of each kind inside ONE workout. */
-export function sessionBests(session: RecordSession, rule: VolumeRule, kinds: readonly RecordKind[], bodyweightKg: number | null): Map<RecordKind, RecordHit> {
+export function sessionBests(session: RecordSession, rule: RecordRule, kinds: readonly RecordKind[], bodyweightKg: number | null): Map<RecordKind, RecordHit> {
   const out = new Map<RecordKind, RecordHit>();
   for (const kind of kinds) {
     if (kind === 'best_session') {
@@ -205,7 +254,7 @@ export function sessionBests(session: RecordSession, rule: VolumeRule, kinds: re
  * Every record of one exercise across its history. `sessions` may come in any order; each
  * is judged only against the workouts BEFORE it.
  */
-export function exerciseRecords(sessions: readonly RecordSession[], rule: VolumeRule, bw: readonly BodyweightPoint[]): ExerciseRecords {
+export function exerciseRecords(sessions: readonly RecordSession[], rule: RecordRule, bw: readonly BodyweightPoint[]): ExerciseRecords {
   const kinds = recordKindsFor(rule.logType);
   const bests = new Map<RecordKind, RecordHit>();
   const events: RecordEvent[] = [];

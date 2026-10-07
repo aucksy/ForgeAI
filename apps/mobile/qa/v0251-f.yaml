@@ -1,0 +1,149 @@
+# v0.25.1 device QA, part F — the owner's Phase 3 decisions on a real phone (runs after
+# parts A–E; part C logged a Treadmill Run of 2.4 km in 12:00, i.e. a best pace of 5:00 /km).
+# Profile → Body figure: Female → the Progress body map → a run: a 400 m sprint (sets no pace)
+# and 2 km in 9:00 (a new best pace, 4:30 /km) → finish → the share picture on the female figure
+# → the run's exercise page: Best pace in Records, and the 1 km rule behind the i.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+# ---------------------------------------------------------------- body figure
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: '(?i)body figure'
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Female$"
+- takeScreenshot: 70-profile-body-figure
+- tapOn: "^Progress$"
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 30000
+- assertVisible: '.*female figure.*'
+- takeScreenshot: 71-body-map-female
+# ---------------------------------------------------------------- a run: best pace
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 30000
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 20000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " treadmill"
+- hideKeyboard
+- tapOn:
+    text: "Add Treadmill Run"
+    index: 0
+- extendedWaitUntil:
+    visible: "Distance in kilometres, set 1"
+    timeout: 15000
+# Set 1: a 400 m sprint at 3:20 /km — faster than 5:00 /km, but under 1 km: no record.
+- tapOn:
+    text: "Distance in kilometres, set 1"
+    below:
+      text: "More for Treadmill Run"
+- inputText: " 0.4"
+- tapOn:
+    text: "Time, minutes and seconds, set 1"
+    below:
+      text: "More for Treadmill Run"
+- inputText: " 120"
+- hideKeyboard
+- tapOn:
+    text: "Mark set complete"
+    below:
+      text: "More for Treadmill Run"
+    waitToSettleTimeoutMs: 300
+- takeScreenshot: 72-sprint-no-record
+- tapOn:
+    text: "Skip rest"
+    optional: true
+# Set 2: 2 km in 9:00 — 4:30 /km beats 5:00 /km.
+- tapOn: "Add set"
+- tapOn:
+    text: "Distance in kilometres, set 2"
+    below:
+      text: "More for Treadmill Run"
+- inputText: " 2"
+- tapOn:
+    text: "Time, minutes and seconds, set 2"
+    below:
+      text: "More for Treadmill Run"
+- inputText: " 900"
+- hideKeyboard
+# Set 1 now reads "Set complete, tap to undo": the only "Mark set complete" left is set 2's.
+- tapOn:
+    text: "Mark set complete"
+    below:
+      text: "More for Treadmill Run"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'New record.*Best pace.*'
+    timeout: 3000
+- takeScreenshot: 73-best-pace-record
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- scrollUntilVisible:
+    element: 'Best pace.*'
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: 74-finish-best-pace
+- scrollUntilVisible:
+    element: "Share workout"
+    timeout: 20000
+- tapOn: "Share workout"
+- extendedWaitUntil:
+    visible: "Share picture"
+    timeout: 15000
+- takeScreenshot: 75-share-picture-female
+- back
+- scrollUntilVisible:
+    element: "Done"
+    timeout: 20000
+- tapOn: "Done"
+# ---------------------------------------------------------------- the run's records + the 1 km rule
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 20000
+- tapOn: "^Workout$"
+- tapOn: "Exercise library"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " treadmill"
+- hideKeyboard
+- tapOn:
+    text: "View Treadmill Run"
+    index: 0
+- extendedWaitUntil:
+    visible: "How to do it"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Longest distance"
+    centerElement: true
+    timeout: 20000
+- assertVisible: "Best pace"
+- assertNotVisible: "Best pace counts only.*"
+- takeScreenshot: 76-run-records
+- tapOn: "Records, more information"
+- assertVisible: "Best pace counts only sets of 1 km or more, so a short sprint can't set it."
+- takeScreenshot: 77-run-records-info

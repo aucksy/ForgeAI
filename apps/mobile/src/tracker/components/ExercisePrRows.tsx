@@ -1,7 +1,11 @@
 /**
  * The exercise's records (Phase 3: every kind it keeps — heaviest weight, best 1-rep max,
- * best set, best session, most reps, longest time, longest distance) + the xRM "Set Records"
- * ladder for weight exercises. Tap a record → the workout it was set in.
+ * best set, best session, most reps, longest time, best pace, longest distance) + the xRM
+ * "Set Records" ladder for weight exercises. Tap a record → the workout it was set in.
+ *
+ * v0.25.1: an exercise that keeps a pace (runs, rows, rides) says behind the i beside
+ * "Records" that only sets of 1 km or more count, and shows "Best pace" with "—" until one
+ * such set is logged — so a fast sprint that set nothing does not look like a bug.
  */
 import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -11,10 +15,12 @@ import type { IconName } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
 import { kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { color, motion, space, type } from '@/theme/tokens';
-import { RECORD_LABEL, type RecordHit, type RecordKind } from '@/tracker/engine/records';
+import { PACE_BASIS, paceRuleText, RECORD_LABEL, recordKindsFor, type RecordHit, type RecordKind } from '@/tracker/engine/records';
 import type { XrmRecord } from '@/tracker/services/exerciseAnalytics';
 import { recordDetailText, recordValueText, type RecordTextContext } from '@/tracker/services/recordText';
 import type { UnitSystem } from '@/types/models';
+
+import { InfoHeading } from './InfoHeading';
 
 export interface ExercisePrRowsProps {
   bests: RecordHit[];
@@ -31,6 +37,7 @@ const ICON: Record<RecordKind, IconName> = {
   best_session: 'flame',
   reps: 'target',
   duration: 'clock',
+  pace: 'clock',
   distance: 'zap',
 };
 
@@ -41,12 +48,13 @@ function recDate(iso: string): string {
   return year === nowYear ? tinyDate(iso) : `${tinyDate(iso)} ${year}`;
 }
 
-function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label: string; value: string; sub: string; onPress: () => void }) {
+function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label: string; value: string; sub: string; onPress: (() => void) | null }) {
   return (
     <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`${label}, ${value}. Open the workout.`}
+      onPress={onPress ?? undefined}
+      disabled={!onPress}
+      accessibilityRole={onPress ? 'button' : 'text'}
+      accessibilityLabel={onPress ? `${label}, ${value}. Open the workout.` : `${label}, ${sub}`}
       style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm }}
     >
       <View
@@ -67,8 +75,8 @@ function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label
           {sub}
         </Text>
       </View>
-      <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>{value}</Text>
-      <Icon name="chevron-right" size={16} color={color.inkMuted} />
+      <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: onPress ? color.ink : color.inkMuted }}>{value}</Text>
+      {onPress ? <Icon name="chevron-right" size={16} color={color.inkMuted} /> : <View style={{ width: 16 }} />}
     </Pressable>
   );
 }
@@ -76,10 +84,13 @@ function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label
 export function ExercisePrRows({ bests, ctx, ladder, units, onOpenSession }: ExercisePrRowsProps) {
   const unit = weightUnit(units);
   if (bests.length === 0 && ladder.length === 0) return null;
+  // Runs, rows and rides keep a pace: say which sets count, and hold its place until one does.
+  const keepsPace = recordKindsFor(ctx.logType).includes('pace');
+  const paceMissing = keepsPace && !bests.some((b) => b.kind === 'pace');
 
   return (
     <Animated.View entering={FadeInDown.duration(motion.slow).delay(160)} style={{ marginTop: space.xl }}>
-      <SectionHeader title="Records" />
+      {keepsPace ? <InfoHeading title="Records" info={paceRuleText(ctx.distUnit)} /> : <SectionHeader title="Records" />}
       <Card>
         {bests.map((b) => {
           const detail = recordDetailText(b, { ...ctx, units });
@@ -94,6 +105,15 @@ export function ExercisePrRows({ bests, ctx, ladder, units, onOpenSession }: Exe
             />
           );
         })}
+        {paceMissing ? (
+          <RecordRow
+            icon={ICON.pace}
+            label={RECORD_LABEL.pace}
+            value="—"
+            sub={`No set of ${PACE_BASIS[ctx.distUnit].words} or more yet`}
+            onPress={null}
+          />
+        ) : null}
 
         {ladder.length > 0 ? (
           <>

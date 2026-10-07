@@ -113,6 +113,14 @@ log "part E start"
 maestro test --format junit --output "$OUT/part-e.xml" --test-output-dir "$OUT/part-e" "$QA_DIR/phase3-e.yaml" \
   > "$OUT/part-e.log" 2>&1 || { status=1; log "PART E FAILED"; }
 
+# ---------------------------------------------------------------- part F (v0.25.1: figure + best pace)
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+sleep 10
+log "part F start"
+maestro test --format junit --output "$OUT/part-f.xml" --test-output-dir "$OUT/part-f" "$QA_DIR/v0251-f.yaml" \
+  > "$OUT/part-f.log" 2>&1 || { status=1; log "PART F FAILED"; }
+
 # ---------------------------------------------------------------- crash check
 adb logcat -d > "$OUT/logcat.txt"
 if grep -q "FATAL EXCEPTION" "$OUT/logcat.txt"; then
@@ -121,6 +129,15 @@ if grep -q "FATAL EXCEPTION" "$OUT/logcat.txt"; then
   status=1
 else
   log "no crash in logcat"
+fi
+# Maestro clears logcat when each part starts, so the log above holds only the last part.
+# Every part's own device log is in its test-output folder: check them all.
+crashed=$(grep -rl --include='*logcat*' -e "FATAL EXCEPTION" -e "ANR in $PKG" "$OUT"/part-* 2>/dev/null || true)
+if [ -n "$crashed" ]; then
+  log "CRASH OR ANR in: $crashed"
+  status=1
+else
+  log "no crash or ANR in any part's device log ($(find "$OUT"/part-* -name '*logcat*' 2>/dev/null | wc -l) logs read)"
 fi
 grep -i "ReactNativeJS" "$OUT/logcat.txt" | grep -i "error\|warn" | head -60 > "$OUT/js-errors.txt" || true
 log "done, status $status"
