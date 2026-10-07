@@ -58,7 +58,7 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "Build a plan"
 - extendedWaitUntil:
-    visible: "Build my plan"
+    visible: "A few answers, then your plan."
     timeout: 15000
 - waitForAnimationToEnd
 - tapOn: "^4$"
@@ -69,6 +69,10 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 15000
 - tapOn: "^Knee$"
+- scrollUntilVisible:
+    element: "Choose exercises to leave out"
+    centerElement: true
+    timeout: 15000
 - tapOn: "Choose exercises to leave out"
 - extendedWaitUntil:
     visible: "Search exercises"
@@ -99,6 +103,10 @@ appId: com.forgeai.app
 - assertVisible: "Upper / Lower · 4 days"
 - assertVisible: "Without a pull-up bar, rows stand in for pull-ups."
 - takeScreenshot: 87-built-plan
+- scrollUntilVisible:
+    element: "Swap Dumbbell Floor Press"
+    centerElement: true
+    timeout: 15000
 - tapOn: "Swap Dumbbell Floor Press"
 - extendedWaitUntil:
     visible: "Swap to Push-Up.*"
@@ -223,8 +231,8 @@ appId: com.forgeai.app
 - takeScreenshot: 99-workout-easy-week
 # Start a routine of the plan from Routines.
 - tapOn: "^Routines$"
-- extendedWaitUntil:
-    visible: "Start routine"
+- scrollUntilVisible:
+    element: "Start routine"
     timeout: 15000
 - tapOn:
     text: "Start routine"

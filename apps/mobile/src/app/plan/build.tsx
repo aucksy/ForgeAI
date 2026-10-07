@@ -134,7 +134,9 @@ export default function BuildPlanScreen() {
             <Card key={`${r.name}-${ri}`} style={{ gap: space.sm }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginBottom: 2 }}>
                 <Text style={{ flex: 1, fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{r.name}</Text>
-                <Badge label={dayTypeLabel(r.dayType)} tone="accent" />
+                <View>
+                  <Badge label={dayTypeLabel(r.dayType)} tone="accent" />
+                </View>
               </View>
               {r.exercises.map((x, xi) => {
                 const e = catalogEntry(x.key);

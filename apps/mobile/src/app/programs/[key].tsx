@@ -89,7 +89,9 @@ export default function ProgramScreen() {
                       <Icon name="chevron-right" size={16} color={color.inkMuted} />
                     </View>
                     <Text style={{ flex: 1, fontFamily: type.heading, fontSize: type.size.sub, color: color.ink }}>{r.name}</Text>
-                    <Badge label={dayTypeLabel(r.dayType)} tone="neutral" />
+                    <View>
+                      <Badge label={dayTypeLabel(r.dayType)} tone="neutral" />
+                    </View>
                     <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
                       {countWord(r.exercises.length, 'exercise')}
                     </Text>
