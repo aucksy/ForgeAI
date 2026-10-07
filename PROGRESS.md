@@ -1271,6 +1271,97 @@
     a view screen readers skip (fixed in 4439825). Screens: `Resources/v0.25.1-screens/` (8 from
     the phone, 8 share pictures drawn on a computer with sample data in `computer-drawn/`).
 
+- 2026-10-07: **Tracker Phase 4 — routines and plans (v0.26.0).** Owner brief (tracker plan,
+  Phase 4): routine folders; a library of ready programs (home, dumbbells only, beginner to
+  advanced); a plan builder better than Hevy Trainer (equipment, injuries, exercises to avoid,
+  swap, deload weeks, split choice, overload for pull-ups and push-ups, from the research v3);
+  share a routine as a file or text.
+  - **Folders (tracker schema v7, additive):** a folder is a `workout_plans` row; the folder the
+    member FOLLOWS is the active plan, so the frozen rotation (`services/coach.getTodaysWorkout`)
+    gives "Today" from it unchanged. New columns: `workout_plans.folder_order / source /
+    settings` (JSON: program or builder answers, easy-week rhythm, start day, one-off easy week)
+    and `workout_sessions.easy_week`; all in the Drive backup (`cloud/snapshot.ts`). The member's
+    old routines are one followed folder. Routines screen: the followed folder first and open,
+    the rest folded under name + count; a folder's menu follows it, turns easy weeks on/off,
+    takes or skips an easy week, adds a routine, renames, shares or deletes it; "+" adds a
+    routine, a folder or a shared file. A routine in any folder opens, starts and gets Targets
+    (`getRoutine` → `folderRepo.getRoutineAnywhere`). Routine editor menu: share, move to folder,
+    duplicate (same folder), delete; "Swap" on each library exercise (for good: sets and reps stay).
+  - **Ready programs (`plans/programs.ts`):** 11 programs in three groups — Gym, Dumbbells only,
+    Home — each beginner to advanced; every exercise a library key (test-checked), rep ranges
+    from the research table by the program's style and level. Follow it (its routines become
+    "Today") or add it to your routines.
+  - **Plan builder (`plans/builder.ts`, `plans/fit.ts`, rules only, offline):** goal, level, days
+    (2–6), split (best for my days / full body / upper-lower / push-pull-legs), equipment (full
+    gym, dumbbells and a bench, dumbbells only, pull-up bar, none), time (30–75 min), "go easy
+    on" 7 joints (moves that load them are left out; the i says to stop anything that hurts),
+    "leave out" any library exercise, easy weeks. Every input visibly changes the plan (Hevy
+    Trainer's review: level and goal barely change it): the level picks the rung (machines →
+    barbells; incline push-ups → archer push-ups; negatives → weighted pull-ups), the goal the
+    rep ranges, the time the exercise count, the main muscles get a weekly set dose (research
+    §5), and plain notes say what the kit cannot cover. The plan screen: each routine with sets
+    × reps, "Then: …" ladders for body-weight moves (the i explains reps → harder version →
+    weight, the caps from the library), Swap on every exercise, weekly sets per muscle folded.
+  - **Easy weeks (research §6.4):** every 6 weeks (default on — the owner's open decision 2,
+    Option A, one constant `EASY_WEEKS_DEFAULT`): half the sets, the same weights; the Target
+    reads "Easy week · 60 kg · 2 sets", the Workout tab and the live workout show the note
+    (why behind the i), "Train normally this week" skips it. Easy-week workouts stay out of
+    records, the Target's history, PREVIOUS and the exercise page's numbers and charts (still in
+    the history list), give no record pop-up or medal, and never offer "update the routine".
+    Offered early when 3 or more lifts of the plan stall (R3/R4), at least two normal weeks
+    after the last easy week — also when the rhythm is off (a one-off easy week).
+  - **Effort per week (research §5):** members who log RPE see this plan week's effort on the
+    Target ("· RPE 7" in week 1 → "· RPE 9" by the block's end; 4-week waves without easy weeks).
+  - **Swap for today:** the live workout's exercise menu swaps an un-ticked library exercise for
+    one that fits the plan's equipment, sore joints and "leave out" list; the routine stays.
+  - **Sharing (`plans/routineFile.ts`):** a routine or a whole folder as plain text (any app) or
+    as a `.forgeai.json` file another member opens with "Import a routine file": each exercise
+    lands on the same library exercise (by key, else library name), the member's own by name,
+    or is added as their own (name, how it's logged, main muscles from the file). Odd numbers
+    are brought into range; unusable files are refused in plain words. No web link (no server).
+  - **Review round (one reviewer; 2 HIGH, 5 MEDIUM, 5 LOW, 1 unverified), all fixed, each with a
+    test that fails before** (`phase4Review.test.ts`, `phase4ReviewStore.test.ts`,
+    `sessionEdit.test.ts`): a plan followed before Phase 4 had no start day, so easy weeks never
+    came and "Take an easy week now" did nothing (weeks now start the first day the app reads
+    the plan); the easy-week note hid on a day with no "Today" (seen: part F's off-plan workout
+    emptied "Today" for the push/pull/legs plan); Home and the coach showed normal Targets in an
+    easy week; an easy hold asked for last time + 5 s; a new empty folder vanished behind "No
+    routines yet"; easy-week workouts reached the frozen PR log (finish, edit and the rebuild
+    after a delete), so Home's PR count and the strength score counted them; swaps in a ready
+    program ignored its kit (a home program was offered a barbell); "Its 1 routine go too"; a
+    swap in an easy week brought back last time's full set count; a 30 dp swap button; the move
+    sheet could not scroll; a double tap made two folders; a huge file picked by mistake was read
+    whole (now refused over 1 MB). Swept: every on/off switch now has a screen-reader name.
+  - **Known, not built / limits:** easing ONE sore exercise for a week (research §6.4, users ask
+    for it) is not built — owner choice below; no gym equipment profile (the learned weight step
+    stays); no web link for sharing (no server); plans made before this update keep easy weeks
+    off until switched on (new plans start on); the chat coach lists only the followed folder's
+    routines; the frozen PR check still compares against easy-week sets, so an impossible
+    easy-week set could hold back Home's PR count (the app's own records are unaffected);
+    "several lifts" is 3 and the offer waits two normal weeks after an easy week (the research
+    gives no number); a swap for good keeps the member's sets and rep range; home programs
+    assume a pull-up bar (the advanced one also two chairs for dips, said on its card).
+  - **Open owner choices (listed, not decided):** (1) easy weeks on by default for new plans
+    (built, research option A) or off; (2) add "easy today" for one sore exercise, or keep easy
+    weeks plan-wide only; (3) an optional gym equipment profile, or keep the learned step only;
+    (4) share by web link once the cloud backend exists, or text and file only.
+  - **Found by the phone test (part G), fixed:** the plan opened mid-way after "Build my plan"
+    (the answers and the plan returned the same `<Screen>`, so React kept one ScrollView and
+    its offset — each now has its own `key`); with a plan followed but nothing planned today
+    (part F's off-plan workout), the Workout tab offered "Ready programs" / "Build a plan" as if
+    there were no plan — now only when the followed plan has no routines; the frozen `Badge`
+    pins itself to the top of a row, so the program page's day tag sat above its line (wrapped);
+    after an easy-week workout the finish screen's coach line read "Volume was 80% down on last
+    time — fine on a heavy or short day" — it now says the week was lighter on purpose (the
+    summary carries `easy_week`; the opt-in cloud note's facts too). Four other stops were the
+    flow's own (an off-screen wait, a tap under the status bar, a long scroll slowed by the
+    ticking clock, a file the picker could not list until a media scan; lesson recorded).
+  - **Tests:** 594 vitest (85 new in Phase 4; 5 preview renders skipped). Device QA run 37643924405
+    on 0e4989d passed parts A–G with no app crash in any part's log (part G: 29 screens, below).
+    Screens: `Resources/Phase4-screens/`. Effort per week is checked by logic tests only (the
+    phone test does not switch on Track RPE); the early easy-week offer needs weeks of stalled
+    history, so it is logic-tested too.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
