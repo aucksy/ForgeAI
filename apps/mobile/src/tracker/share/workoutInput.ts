@@ -3,9 +3,11 @@ import { fromISO, shortDate } from '@/lib/date';
 import { fmtInt, trimNum } from '@/lib/format';
 
 import { fmtDistance, fmtDuration, weightIsEach, type DistUnit, type LoadMode, type LogType } from '../engine/logTypes';
-import { RECORD_LABEL } from '../engine/records';
+import { RECORD_LABEL, sessionUnit } from '../engine/records';
+import { setVolumeKg } from '../engine/volume';
 import type { SetMeta } from '../db/trackerSets';
 import { dayTypeLabel, formatDuration, type SessionSummaryData } from '../services/finishSummary';
+import type { RecordEventRow } from '../services/recordsService';
 import { recordValueText } from '../services/recordText';
 import type { WorkoutShareInput } from './workoutCard';
 
@@ -55,13 +57,51 @@ export function shareDate(dateISO: string): string {
   return `${shortDate(dateISO)} ${fromISO(dateISO).getFullYear()}`;
 }
 
+/**
+ * What the picture says was lifted: the weight on the bar, the dumbbells, the machine or the
+ * belt, never the member's body weight. PURE.
+ *
+ * Phase 3, third review: the app's volume adds body weight on pull-ups and dips, so a
+ * pull-up workout's picture read "KG LIFTED 3,104" beside "40 reps" — 77.6 kg, the member's
+ * body weight, on a picture that promises nothing about their body. When nothing but body
+ * weight moved, the picture counts the reps instead. The finish screen keeps the full volume.
+ */
+export function liftedOnPicture(data: SessionSummaryData): { label: 'KG LIFTED' | 'REPS'; value: string } {
+  let kg = 0;
+  let reps = 0;
+  for (const g of data.session.exercises) {
+    const kind = data.kinds[g.exercise.id];
+    const logType: LogType = kind?.logType ?? 'weight_reps';
+    const rule = { logType, loadMode: kind?.loadMode ?? ('one' as const), bwShare: 0 };
+    for (const s of g.sets) {
+      if (s.isWarmup) continue;
+      kg += setVolumeKg({ weightKg: s.weightKg, reps: s.reps, isWarmup: false, loadMode: data.setMeta[s.id]?.loadMode ?? null }, rule, null);
+      if (logType !== 'time' && logType !== 'distance' && logType !== 'time_distance') reps += Math.max(0, s.reps);
+    }
+  }
+  if (kg <= 0 && reps > 0) return { label: 'REPS', value: fmtInt(reps) };
+  return { label: 'KG LIFTED', value: fmtInt(kg) };
+}
+
+/**
+ * A record the picture can print. "Best session" on a pull-up or dip with added weight is a
+ * kilo total with body weight in it, so it stays off (it still counts in RECORDS and in
+ * "and N more"); every other record names the set itself ("+10 kg", "40 reps"). PURE.
+ */
+export function recordFitsPicture(r: Pick<RecordEventRow, 'kind' | 'exerciseId' | 'info'>, kinds: SessionSummaryData['kinds']): boolean {
+  return !(r.kind === 'best_session' && sessionUnit(r.info.logType) === 'kg' && (kinds[r.exerciseId]?.bwShare ?? 0) > 0);
+}
+
 export function workoutShareInput(data: SessionSummaryData): WorkoutShareInput {
   const s = data.session;
+  const lifted = liftedOnPicture(data);
+  const records = data.records ?? [];
   return {
     title: dayTypeLabel(s.dayType),
     dateText: shareDate(s.dateISO),
     durationText: data.durationSec > 0 ? formatDuration(data.durationSec) : null,
-    volumeText: fmtInt(data.totalVolumeKg),
+    volumeLabel: lifted.label,
+    volumeText: lifted.value,
     sets: data.workingSetCount,
     exercises: s.exercises
       .map((g) => {
@@ -73,7 +113,10 @@ export function workoutShareInput(data: SessionSummaryData): WorkoutShareInput {
         };
       })
       .filter((e) => e.sets > 0),
-    records: (data.records ?? []).map((r) => ({ exerciseName: r.exerciseName, label: RECORD_LABEL[r.kind], value: recordValueText(r, r.info) })),
+    records: records
+      .filter((r) => recordFitsPicture(r, data.kinds))
+      .map((r) => ({ exerciseName: r.exerciseName, label: RECORD_LABEL[r.kind], value: recordValueText(r, r.info) })),
+    recordCount: records.length,
     muscles: data.muscles,
   };
 }

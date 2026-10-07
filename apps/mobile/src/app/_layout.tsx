@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { KeyboardRoom } from '@/components/KeyboardRoom';
 import { useCloud } from '@/store/cloudStore';
 import { initDb } from '@/db';
 import { initTrackerSchema } from '@/tracker/db/trackerSchema';
@@ -64,11 +65,13 @@ export default function RootLayout() {
 
   // Rendered INSTEAD of the navigator (not pushed onto it) so the tabs never mount
   // over an empty DB, and an "Erase all data" can drop straight back here.
+  // KeyboardRoom: the app draws edge to edge, where Android no longer shrinks the window
+  // for the keyboard — it gives every screen the room back (see components/KeyboardRoom).
   if (status === 'welcome' || status === 'error') {
     return (
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: color.bg }}>
         <StatusBar style="light" />
-        {status === 'welcome' ? <WelcomeScreen /> : <BootErrorScreen />}
+        <KeyboardRoom>{status === 'welcome' ? <WelcomeScreen /> : <BootErrorScreen />}</KeyboardRoom>
       </GestureHandlerRootView>
     );
   }
@@ -76,14 +79,16 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: color.bg }}>
       <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: color.bg },
-          animation: 'fade_from_bottom',
-        }}
-      />
-      <WorkoutPresenceHost />
+      <KeyboardRoom>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: color.bg },
+            animation: 'fade_from_bottom',
+          }}
+        />
+        <WorkoutPresenceHost />
+      </KeyboardRoom>
     </GestureHandlerRootView>
   );
 }

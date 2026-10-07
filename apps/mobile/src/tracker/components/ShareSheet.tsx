@@ -10,6 +10,7 @@ import { Alert, Text, useWindowDimensions, View } from 'react-native';
 import type Svg from 'react-native-svg';
 
 import { PrimaryButton } from '@/components/ui';
+import { SHARE_FOLDER } from '@/lib/tempPictures';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { SceneSvg } from '../share/SceneSvg';
@@ -55,7 +56,10 @@ export function ShareSheet({
         clearTimeout(guard);
         void (async () => {
           try {
-            const uri = `${FileSystem.cacheDirectory ?? ''}${pictureFileName(fileName)}`;
+            // A folder of their own, which "Erase all data" deletes (lib/tempPictures).
+            const dir = `${FileSystem.cacheDirectory ?? ''}${SHARE_FOLDER}`;
+            await FileSystem.makeDirectoryAsync(dir, { intermediates: true }).catch(() => undefined);
+            const uri = `${dir}${pictureFileName(fileName)}`;
             await FileSystem.writeAsStringAsync(uri, base64, { encoding: FileSystem.EncodingType.Base64 });
             if (await Sharing.isAvailableAsync()) {
               await Sharing.shareAsync(uri, { mimeType: 'image/png', UTI: 'public.png', dialogTitle: title });

@@ -11,6 +11,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 
 import { getDb } from '@/db';
+import { launchFor, takePendingPick } from '@/lib/pendingPick';
 
 export interface PickedMedia {
   uri: string;
@@ -62,7 +63,7 @@ async function keep(asset: ImagePicker.ImagePickerAsset): Promise<PickedMedia> {
 
 /** Gallery pick (photo or video). null when cancelled; throws 'video-too-long' / 'video-too-big'. */
 export async function pickFromGallery(): Promise<PickedMedia | null> {
-  const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images', 'videos'], quality: 0.8 });
+  const res = await launchFor('exercise-media', () => ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images', 'videos'], quality: 0.8 }));
   if (res.canceled || res.assets.length === 0) return null;
   return keep(res.assets[0]);
 }
@@ -75,13 +76,25 @@ export async function pickFromGallery(): Promise<PickedMedia | null> {
 export async function takeWithCamera(kind: 'image' | 'video'): Promise<PickedMedia | null> {
   const perm = await ImagePicker.requestCameraPermissionsAsync();
   if (!perm.granted) throw new Error('camera-denied');
-  const res = await ImagePicker.launchCameraAsync(
-    kind === 'video'
-      ? { mediaTypes: ['videos'], videoMaxDuration: MAX_VIDEO_SEC, quality: 0.8 }
-      : { mediaTypes: ['images'], quality: 0.8 },
+  const res = await launchFor('exercise-media', () =>
+    ImagePicker.launchCameraAsync(
+      kind === 'video'
+        ? { mediaTypes: ['videos'], videoMaxDuration: MAX_VIDEO_SEC, quality: 0.8 }
+        : { mediaTypes: ['images'], quality: 0.8 },
+    ),
   );
   if (res.canceled || res.assets.length === 0) return null;
   return keep(res.assets[0]);
+}
+
+/**
+ * The photo or video Android's restart left behind (it closed ForgeAI behind the camera or
+ * the gallery), copied in — or null. Phase 3 review: before, it was simply lost. Throws like
+ * a gallery pick when the clip is too long or too big.
+ */
+export async function keepPendingMedia(): Promise<PickedMedia | null> {
+  const asset = await takePendingPick('exercise-media');
+  return asset ? keep(asset) : null;
 }
 
 /** Remove a file this module copied in (never anything outside its own folder). */

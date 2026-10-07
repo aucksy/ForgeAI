@@ -1,13 +1,14 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, View } from 'react-native';
+import { Alert, FlatList, KeyboardAvoidingView, Platform, View } from 'react-native';
 import type { ListRenderItemInfo } from 'react-native';
 
 import { ChatSkeleton, InputBar, MessageBubble, SuggestedPrompts } from '@/components/chat';
 import { EmptyState, IconButton, Screen } from '@/components/ui';
 import * as userRepo from '@/db/repos/userRepo';
 import { success, thud } from '@/lib/haptics';
+import { launchFor, takePendingPick } from '@/lib/pendingPick';
 import { speak } from '@/lib/voice';
 import { useChat } from '@/store/chatStore';
 import { useDashboard } from '@/store/dashboardStore';
@@ -41,6 +42,20 @@ export default function CoachScreen() {
   useEffect(() => {
     if (!loaded) void load();
   }, [loaded, load]);
+
+  // Phase 3 review: a meal photo picked while Android closed the app comes back into the
+  // message box (never sent on its own — the member still taps send).
+  useEffect(() => {
+    let alive = true;
+    takePendingPick('chat-photo')
+      .then((asset) => {
+        if (alive && asset) setImageUri(asset.uri);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -104,11 +119,13 @@ export default function CoachScreen() {
 
   const pickImage = useCallback(async () => {
     try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
-        quality: 0.7,
-        base64: false,
-      });
+      const result = await launchFor('chat-photo', () =>
+        ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ['images'],
+          quality: 0.7,
+          base64: false,
+        }),
+      );
       const asset = result.canceled ? null : (result.assets[0] ?? null);
       if (asset) setImageUri(asset.uri);
     } catch {
@@ -178,7 +195,8 @@ export default function CoachScreen() {
         />
       }
     >
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={0} style={{ flex: 1 }}>
+      {/* Android: the app-wide KeyboardRoom makes the room (one handler, never two). */}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={0} style={{ flex: 1 }}>
         {!loaded ? (
           <ChatSkeleton />
         ) : rows.length === 0 ? (

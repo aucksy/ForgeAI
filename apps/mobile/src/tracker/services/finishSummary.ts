@@ -44,8 +44,11 @@ export interface SessionSummaryData {
   muscles: MuscleSetsSlice[];
   /** rpe/set_type/note/time/distance keyed by set id (additive columns; older sets → 'normal'/null). */
   setMeta: Record<string, SetMeta>;
-  /** Phase 2: how each exercise is logged, by exercise id. */
-  kinds: Record<string, Pick<TrackerExercise, 'logType' | 'loadMode' | 'distUnit' | 'catalogKey'>>;
+  /**
+   * Phase 2: how each exercise is logged, by exercise id. `bwShare` (Phase 3) says its volume
+   * counts body weight, which the share picture must leave out.
+   */
+  kinds: Record<string, Pick<TrackerExercise, 'logType' | 'loadMode' | 'distUnit' | 'catalogKey' | 'bwShare'>>;
   /** Pull-ups or dips were logged but no body weight is known, so they add no volume. */
   needsBodyweight: boolean;
 }
@@ -114,7 +117,7 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
   );
   const kinds: SessionSummaryData['kinds'] = {};
   for (const [id, info] of ctx.exercises) {
-    kinds[id] = { logType: info.logType, loadMode: info.loadMode, distUnit: info.distUnit, catalogKey: info.catalogKey };
+    kinds[id] = { logType: info.logType, loadMode: info.loadMode, distUnit: info.distUnit, catalogKey: info.catalogKey, bwShare: info.bwShare };
   }
   return {
     session,

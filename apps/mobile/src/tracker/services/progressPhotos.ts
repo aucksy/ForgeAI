@@ -18,6 +18,8 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { getDb } from '@/db';
 import { todayISO } from '@/lib/date';
+import { launchFor, takePendingPick } from '@/lib/pendingPick';
+import { tempPictureDirs } from '@/lib/tempPictures';
 import { uuid } from '@/lib/uuid';
 
 export interface ProgressPhoto {
@@ -139,7 +141,7 @@ function keep(asset: ImagePicker.ImagePickerAsset): Promise<ProgressPhoto> {
 
 /** Gallery pick, dated by the picture's own EXIF date when it has one. null when cancelled. */
 export async function addPhotoFromGallery(): Promise<ProgressPhoto | null> {
-  const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.85, exif: true });
+  const res = await launchFor('progress-photo', () => ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.85, exif: true }));
   if (res.canceled || res.assets.length === 0) return null;
   return keep(res.assets[0]);
 }
@@ -148,9 +150,18 @@ export async function addPhotoFromGallery(): Promise<ProgressPhoto | null> {
 export async function addPhotoFromCamera(): Promise<ProgressPhoto | null> {
   const perm = await ImagePicker.requestCameraPermissionsAsync();
   if (!perm.granted) throw new Error('camera-denied');
-  const res = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 0.85 });
+  const res = await launchFor('progress-photo', () => ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 0.85 }));
   if (res.canceled || res.assets.length === 0) return null;
   return keep(res.assets[0]);
+}
+
+/**
+ * The photo Android's restart left behind (it closed ForgeAI behind the camera), saved like
+ * any other — or null. Phase 3 review: before, that photo was simply lost.
+ */
+export async function keepPendingPhoto(): Promise<ProgressPhoto | null> {
+  const asset = await takePendingPick('progress-photo');
+  return asset ? keep(asset) : null;
 }
 
 /** Delete one photo: the row, then its file. */
@@ -160,11 +171,17 @@ export async function deleteProgressPhoto(photo: Pick<ProgressPhoto, 'id' | 'uri
 }
 
 /**
- * Remove the photo folder, then empty the image caches — each step tried even when one
- * before it fails, so nothing private outlives an erase.
+ * Remove the photo folder and the temporary pictures, then empty the image caches — each
+ * step tried even when one before it fails, so nothing private outlives an erase.
  */
-export async function wipePhotoStorage(steps: { removeFolder: () => Promise<unknown>; clearDisk: () => Promise<unknown>; clearMemory: () => Promise<unknown> }): Promise<void> {
-  for (const step of [steps.removeFolder, steps.clearDisk, steps.clearMemory]) {
+export async function wipePhotoStorage(steps: {
+  removeFolder: () => Promise<unknown>;
+  /** Third review: the picker's temporary copies and the share pictures (`lib/tempPictures`). */
+  removeTemp?: readonly (() => Promise<unknown>)[];
+  clearDisk: () => Promise<unknown>;
+  clearMemory: () => Promise<unknown>;
+}): Promise<void> {
+  for (const step of [steps.removeFolder, ...(steps.removeTemp ?? []), steps.clearDisk, steps.clearMemory]) {
     try {
       await step();
     } catch {
@@ -173,19 +190,30 @@ export async function wipePhotoStorage(steps: { removeFolder: () => Promise<unkn
   }
 }
 
-/** "Erase all data": every photo file goes with the rows (the rows go in the erase itself). */
-export async function deleteAllProgressPhotoFiles(): Promise<void> {
-  // Phase 3 review: the picture viewer keeps photos in memory only (`cachePolicy="memory"`),
-  // but the image caches are emptied too, belt and braces.
-  await wipePhotoStorage({
+/**
+ * What an erase deletes, in these folders (the real ones on the phone; stand-ins in tests).
+ * Phase 3 review: the picture viewer keeps photos in memory only (`cachePolicy="memory"`),
+ * but the image caches are emptied too, belt and braces.
+ */
+export function photoEraseSteps(
+  files: { documentDirectory: string | null; cacheDirectory: string | null; deleteAsync: (uri: string, options: { idempotent: boolean }) => Promise<void> },
+  images: { clearDiskCache: () => Promise<unknown>; clearMemoryCache: () => Promise<unknown> },
+): Parameters<typeof wipePhotoStorage>[0] {
+  return {
     removeFolder: async () => {
-      if (typeof FileSystem.documentDirectory === 'string' && FileSystem.documentDirectory.length > 0) {
-        await FileSystem.deleteAsync(DIR, { idempotent: true });
+      if (typeof files.documentDirectory === 'string' && files.documentDirectory.length > 0) {
+        await files.deleteAsync(`${files.documentDirectory}progress-photos/`, { idempotent: true });
       }
     },
-    clearDisk: () => Image.clearDiskCache(),
-    clearMemory: () => Image.clearMemoryCache(),
-  });
+    removeTemp: tempPictureDirs(files.cacheDirectory).map((dir) => () => files.deleteAsync(dir, { idempotent: true })),
+    clearDisk: () => images.clearDiskCache(),
+    clearMemory: () => images.clearMemoryCache(),
+  };
+}
+
+/** "Erase all data": every photo file goes with the rows (the rows go in the erase itself). */
+export async function deleteAllProgressPhotoFiles(): Promise<void> {
+  await wipePhotoStorage(photoEraseSteps(FileSystem, Image));
 }
 
 /** Does the file behind a row still exist on this phone? */

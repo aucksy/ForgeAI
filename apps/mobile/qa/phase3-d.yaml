@@ -97,6 +97,12 @@ appId: com.forgeai.app
 - tapOn: "Arm in centimetres"
 - inputText: " 36"
 - hideKeyboard
+# The bottom box with the keyboard open: the screen shrinks above the keyboard and brings
+# the box into view (third review: the keyboard used to cover Hips, Thigh, Calf and Save).
+- tapOn: "Calf in centimetres"
+- inputText: " 38"
+- takeScreenshot: 51b-keyboard-room
+- hideKeyboard
 - takeScreenshot: 51-log-measurements
 - scrollUntilVisible:
     element: "Save measurements"

@@ -25,6 +25,7 @@ import { exerciseHasSets, getTrackerExercise, type TrackerExercise } from '@/tra
 import { LOG_TYPE_LABEL, LOG_TYPES, type LogType } from '@/tracker/engine/logTypes';
 import {
   deleteKeptMedia,
+  keepPendingMedia,
   MAX_VIDEO_SEC,
   pickFromGallery,
   takeWithCamera,
@@ -79,6 +80,8 @@ export default function NewExerciseScreen() {
   const savingRef = useRef(false);
   /** Files picked during this visit — deleted again if the member leaves without saving. */
   const pickedHere = useRef<string[]>([]);
+  /** A photo or video brought back after Android closed the app wins over the saved one. */
+  const recovered = useRef(false);
 
   const isLibrary = existing?.catalogKey != null;
 
@@ -97,7 +100,7 @@ export default function NewExerciseScreen() {
       setIsCompound(ex.isCompound);
       setIncrement(ex.incrementKg);
       setCountsBodyweight(ex.bwShare > 0);
-      setMedia(ex.mediaUri && ex.mediaType ? { uri: ex.mediaUri, type: ex.mediaType } : null);
+      if (!recovered.current) setMedia(ex.mediaUri && ex.mediaType ? { uri: ex.mediaUri, type: ex.mediaType } : null);
     });
     return () => {
       alive = false;
@@ -111,6 +114,24 @@ export default function NewExerciseScreen() {
     },
     [],
   );
+
+  // Phase 3 review: a photo or video taken while Android closed the app behind the camera
+  // comes back into the form (before, it was lost; the rest of the form starts over).
+  useEffect(() => {
+    let alive = true;
+    keepPendingMedia()
+      .then((m) => {
+        if (!m) return;
+        if (!alive) return void deleteKeptMedia(m.uri);
+        pickedHere.current.push(m.uri);
+        recovered.current = true;
+        setMedia(m);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const pickEquipment = (eq: Equipment): void => {
     setEquipment(eq);

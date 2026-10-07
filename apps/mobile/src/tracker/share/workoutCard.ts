@@ -24,11 +24,16 @@ export interface WorkoutShareInput {
   dateText: string;
   /** "1h 04m", or null when the workout has no length. */
   durationText: string | null;
-  /** "12,480". */
+  /** "KG LIFTED" (the default), or "REPS" when only body weight moved. */
+  volumeLabel?: string;
+  /** "12,480" — never including body weight (see `liftedOnPicture`). */
   volumeText: string;
   sets: number;
   exercises: { name: string; sets: number; best: string | null }[];
+  /** The records the picture prints. */
   records: { exerciseName: string; label: string; value: string }[];
+  /** Every record the workout set, printed or not (default: `records.length`). */
+  recordCount?: number;
   muscles: MuscleSetsSlice[];
 }
 
@@ -66,11 +71,12 @@ export function workoutShareScene(input: WorkoutShareInput): Scene {
   nodes.push({ t: 'text', x: M, y: 292, text: 'Workout complete', font: 'bodySemi', size: 32, fill: color.accent });
 
   // Stats.
+  const recordCount = input.recordCount ?? input.records.length;
   const stats: [string, string][] = [
     ['TIME', input.durationText ?? '—'],
-    ['KG LIFTED', input.volumeText],
+    [input.volumeLabel ?? 'KG LIFTED', input.volumeText],
     ['SETS', String(input.sets)],
-    ['RECORDS', String(input.records.length)],
+    ['RECORDS', String(recordCount)],
   ];
   const gap = 20;
   const w = (SHARE_W - M * 2 - gap * (stats.length - 1)) / stats.length;
@@ -106,7 +112,7 @@ export function workoutShareScene(input: WorkoutShareInput): Scene {
       shownItems += used;
       y += blockH;
     }
-    const hidden = input.records.length - shownItems;
+    const hidden = recordCount - shownItems;
     if (hidden > 0) {
       nodes.push({ t: 'text', x: rx, y: Math.min(y + 4, 964), text: `and ${hidden} more`, font: 'bodyMedium', size: 26, fill: color.inkMuted });
     }

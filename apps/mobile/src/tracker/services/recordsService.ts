@@ -89,12 +89,22 @@ export interface ExerciseRecordSet {
  * fingerprint is one cheap query over what records depend on: the sets (count, newest row,
  * how many carry their own counting), the workouts (count, start times, days, newest id),
  * body weight, and each exercise's name and settings.
+ *
+ * Third review: counts alone missed an edit. Saving an edited workout deletes its sets and
+ * inserts them again, and when it is the newest workout SQLite gives the new rows the same
+ * row numbers — so fixing "600 kg" to "60 kg" left every count as it was and Progress kept
+ * the old record until a restart. SQLite's own write counters close that: total_changes()
+ * moves with every row this connection writes, `PRAGMA data_version` with every commit from
+ * another connection (demo data, erase and Drive restore use one of their own).
  */
 let cache: { version: string; data: Map<string, ExerciseRecordSet> } | null = null;
 
 async function dataVersion(): Promise<string> {
-  const row = await getDb().getFirstAsync<Record<string, string | number | null>>(
-    `SELECT (SELECT COUNT(*) FROM set_entries) AS sets_n,
+  const db = getDb();
+  const other = await db.getFirstAsync<{ data_version: number }>('PRAGMA data_version');
+  const row = await db.getFirstAsync<Record<string, string | number | null>>(
+    `SELECT total_changes() AS changes,
+            (SELECT COUNT(*) FROM set_entries) AS sets_n,
             (SELECT MAX(rowid) FROM set_entries) AS sets_max,
             (SELECT COUNT(*) FROM set_entries WHERE load_mode IS NOT NULL) AS sets_modes,
             (SELECT COUNT(*) FROM workout_sessions) AS ws_n,
@@ -106,7 +116,7 @@ async function dataVersion(): Promise<string> {
             (SELECT group_concat(id || ':' || name || ':' || COALESCE(log_type, '') || ':' || COALESCE(load_mode, '') || ':' || COALESCE(bw_share, ''), '|')
                FROM exercises) AS ex`,
   );
-  return JSON.stringify(row ?? null);
+  return JSON.stringify([other?.data_version ?? null, row ?? null]);
 }
 
 /** Drop the kept records (tests; a new data source). */

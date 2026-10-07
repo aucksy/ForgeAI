@@ -8,6 +8,7 @@ import { Pressable, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useKeyboardFrame } from '@/components/KeyboardRoom';
 import { Icon } from '@/components/ui';
 import type { IconName } from '@/components/ui';
 import type { TabBarProps } from '@/components/ui/TabBar';
@@ -88,6 +89,10 @@ function TabItem({
 
 export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
+  // Phase 3 review: every screen now shrinks above the keyboard (KeyboardRoom), so while
+  // the member types, the tab bar and the workout bar step aside instead of riding up on it.
+  const typing = useKeyboardFrame() != null;
+  if (typing) return null;
   return (
     <View>
     {/* Phase 1: a workout left open shows here, on every tab, until finished. */}

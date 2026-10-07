@@ -207,6 +207,7 @@ export function InputBar({
             multiline
             placeholder={micActive ? 'Listening…' : 'Ask your coach anything…'}
             placeholderTextColor={micActive ? color.accentBright : color.inkMuted}
+            accessibilityLabel="Message your coach"
             style={{
               maxHeight: 96,
               paddingVertical: Platform.OS === 'ios' ? 12 : 8,

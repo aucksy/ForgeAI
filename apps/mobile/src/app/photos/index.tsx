@@ -19,6 +19,7 @@ import {
   addPhotoFromGallery,
   deleteProgressPhoto,
   getProgressPhotos,
+  keepPendingPhoto,
   type ProgressPhoto,
 } from '@/tracker/services/progressPhotos';
 
@@ -38,7 +39,10 @@ export default function ProgressPhotosScreen() {
 
   const load = useCallback(() => {
     let alive = true;
-    getProgressPhotos()
+    // A photo taken while Android closed the app behind the camera is saved first.
+    keepPendingPhoto()
+      .catch(() => null)
+      .then(() => getProgressPhotos())
       .then((p) => {
         if (alive) setPhotos(p);
       })
