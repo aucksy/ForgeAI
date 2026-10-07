@@ -38,8 +38,12 @@ export function BodyMap({
 }) {
   const views = BODY_VIEWS[figure];
   return (
+    // One element for screen readers (the drawn parts mean nothing one by one) — and the
+    // label is then visible to device QA, which checks the figure.
     <View
       style={{ flexDirection: 'row', justifyContent: 'center', gap: space.lg }}
+      accessible
+      accessibilityRole="image"
       accessibilityLabel={`Body map of the muscles you trained, ${figure} figure, front and back`}
     >
       {[
