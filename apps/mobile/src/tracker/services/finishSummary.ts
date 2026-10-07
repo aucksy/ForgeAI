@@ -12,6 +12,7 @@
  * carries how it is logged so its sets read right ("0:45", "+10×8"), and records that
  * say nothing ("0 kg" on a bodyweight or timed set) are left out.
  */
+import { getDb } from '@/db';
 import { getSessionDetail } from '@/db/repos/workoutRepo';
 import { fmtInt } from '@/lib/format';
 import { countWord } from '@/lib/words';
@@ -54,6 +55,8 @@ export interface SessionSummaryData {
   kinds: Record<string, Pick<TrackerExercise, 'logType' | 'loadMode' | 'distUnit' | 'catalogKey' | 'bwShare'>>;
   /** Pull-ups or dips were logged but no body weight is known, so they add no volume. */
   needsBodyweight: boolean;
+  /** Phase 4: a planned easy week of the followed plan (less volume is the point). */
+  easyWeek?: boolean;
 }
 
 /**
@@ -100,11 +103,14 @@ export function isMeaningfulPr(value: number, logType: string | null | undefined
 export async function getSessionSummary(sessionId: string): Promise<SessionSummaryData | null> {
   const raw = await getSessionDetail(sessionId);
   if (!raw) return null;
-  const [rawRecords, setMeta, ctx] = await Promise.all([
+  const [rawRecords, setMeta, ctx, easy] = await Promise.all([
     // A records read that fails must never hide the summary of a saved workout.
     getSessionRecords(sessionId).catch(() => [] as RecordEventRow[]),
     getSessionSetMeta(sessionId),
     getVolumeContext(raw.exercises.map((g) => g.exercise.id)),
+    getDb()
+      .getFirstAsync<{ easy_week: number | null }>('SELECT easy_week FROM workout_sessions WHERE id = ?', [sessionId])
+      .catch(() => null),
   ]);
   const { records, prs } = orderSessionRecords(
     rawRecords,
@@ -134,6 +140,7 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
     setMeta,
     kinds,
     needsBodyweight: missesBodyweight(vs, ctx.bw),
+    easyWeek: easy?.easy_week === 1,
   };
 }
 

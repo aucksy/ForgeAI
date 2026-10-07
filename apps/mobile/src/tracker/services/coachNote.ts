@@ -42,6 +42,10 @@ export function buildSessionNote(
   prevSameType: SessionDetail | null,
 ): string {
   const dayLabel = dayTypeLabel(data.session.dayType);
+  // Phase 4: a planned easy week — less volume is the point, not a dip to explain away.
+  if (data.easyWeek) {
+    return `Easy week done — ${countWord(data.workingSetCount, 'working set')} at your usual weights. Lighter on purpose: next week you come back stronger.`;
+  }
   const weightPrs = data.prs.filter((p) => p.kind === 'weight');
   const e1rmPrs = data.prs.filter((p) => p.kind === 'e1rm');
 
@@ -114,6 +118,7 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
 function factSheet(data: SessionSummaryData, prevSameType: SessionDetail | null): string {
   const lines: string[] = [
     `Day type: ${dayTypeLabel(data.session.dayType)}`,
+    ...(data.easyWeek ? ['This was a planned easy week: half the sets at the usual weights, so less volume is the point.'] : []),
     `Total volume: ${fmtInt(data.totalVolumeKg)} kg across ${data.workingSetCount} working sets, ${data.exerciseCount} exercises`,
   ];
   if (data.prs.length > 0) {

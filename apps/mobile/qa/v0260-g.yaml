@@ -296,6 +296,10 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+# The coach line knows it was a planned easy week (not "volume was 80% down").
+- extendedWaitUntil:
+    visible: "Easy week done.*"
+    timeout: 10000
 - takeScreenshot: 104-easy-finish
 - scrollUntilVisible:
     element: "Done"

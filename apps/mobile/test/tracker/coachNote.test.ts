@@ -32,6 +32,12 @@ const weightPr = (exerciseName: string, weightKg: number, reps: number): Session
 });
 
 describe('buildSessionNote', () => {
+  it('Phase 4: an easy week is lighter on purpose, not "down on last time"', () => {
+    const note = buildSessionNote(data({ easyWeek: true, totalVolumeKg: 1500, workingSetCount: 7 }), prev(7500));
+    expect(note).toBe('Easy week done — 7 working sets at your usual weights. Lighter on purpose: next week you come back stronger.');
+    expect(buildSessionNote(data({ totalVolumeKg: 1500 }), prev(7500))).toContain('80% down on last time');
+  });
+
   it('leads with a single weight PR', () => {
     const note = buildSessionNote(data({ prs: [weightPr('Bench Press', 100, 5)] }), null);
     expect(note).toContain('New PR on Bench Press');
