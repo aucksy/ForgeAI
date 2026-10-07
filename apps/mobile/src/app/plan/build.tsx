@@ -105,9 +105,13 @@ export default function BuildPlanScreen() {
   };
 
   // ---------------------------------------------------------------- the plan
+  // Own `key`s: the answers and the plan are two scroll views, so the plan opens at its top
+  // (notes, "Follow this plan"), not at the spot the member scrolled the answers to (seen on
+  // the phone test: it opened mid-plan, its button out of sight).
   if (plan) {
     return (
       <Screen
+        key="plan"
         title={plan.name}
         subtitle={`${countWord(input.days, 'day')} a week · ${input.minutes} min · ${PLAN_EQUIPMENT_LABEL[input.equipment]}`}
         right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
@@ -216,7 +220,7 @@ export default function BuildPlanScreen() {
 
   // ---------------------------------------------------------------- the answers
   return (
-    <Screen title="Build a plan" subtitle="A few answers, then your plan." right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
+    <Screen key="answers" title="Build a plan" subtitle="A few answers, then your plan." right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
       <View style={{ gap: space.xl }}>
         <ChipGroup label="Goal" options={GOALS} selectedId={input.goal} onSelect={(goal) => s.set({ goal })} />
         <ChipGroup label="Experience" options={LEVELS} selectedId={input.level} onSelect={(level) => s.set({ level })} />
