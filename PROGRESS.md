@@ -1225,8 +1225,9 @@
     part A, the year picture drawn on a computer with sample data, and `key-screens.png`. Seen in
     that run, not fixed (layout): while typing in the chat, the suggestion chips above the box are
     squeezed to half height.
-  - **Open owner choices:** "Longest time" on runs vs "Best pace"; rule-written vs AI-written
-    report notes; one body figure vs a male/female choice.
+  - **Owner decisions (7 Oct, after the release; to build as v0.25.1):** time + distance exercises
+    swap "Longest time" for "Best pace"; report notes stay rule-written until the AI layer ships;
+    the body map (and share picture) gets a male / female figure chosen in Profile.
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
