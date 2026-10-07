@@ -1,47 +1,49 @@
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { Badge, EmptyState, Icon } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
-import { trimNum } from '@/lib/format';
 import { color, space, type } from '@/theme/tokens';
-import type { PersonalRecord } from '@/types/models';
+import { RECORD_LABEL } from '@/tracker/engine/records';
+import { recordValueText } from '@/tracker/services/recordText';
+import type { RecordEventRow } from '@/tracker/services/recordsService';
 
-import { Section } from './Section';
+import { HeaderStat, Section } from './Section';
 
 export interface PrSectionProps {
-  prs: (PersonalRecord & { exerciseName: string })[];
+  /** Record events inside the chosen range, newest first. */
+  events: RecordEventRow[];
+  rangeDays: number;
   index: number;
+  onSeeAll: () => void;
+  onOpenExercise: (exerciseId: string) => void;
 }
 
-const MAX_ROWS = 8;
+const MAX_ROWS = 6;
 
-const KIND_META: Record<PersonalRecord['kind'], { label: string; tone: 'accent' | 'good' | 'neutral' }> = {
-  weight: { label: 'Top weight', tone: 'accent' },
-  e1rm: { label: 'e1RM', tone: 'good' },
-  volume: { label: 'Volume', tone: 'neutral' },
-};
-
-/** Personal-record timeline: trophy rows, newest first. */
-export function PrSection({ prs, index }: PrSectionProps) {
-  const rows = prs.slice(0, MAX_ROWS);
+/**
+ * Personal records (Phase 3): the latest records of every kind — heaviest, best set, best
+ * session, most reps, longest time and distance — newest first. A record is a workout
+ * that beat an earlier best; a first workout with an exercise sets its bests quietly.
+ */
+export function PrSection({ events, rangeDays, index, onSeeAll, onOpenExercise }: PrSectionProps) {
+  const rows = events.slice(0, MAX_ROWS);
 
   return (
     <Section
       title="Personal Records"
       index={index}
-      caption={rows.length > 0 ? 'PRs update automatically when you log workouts.' : undefined}
+      right={events.length > 0 ? <HeaderStat text={`${events.length} in ${rangeDays} days`} /> : undefined}
     >
       {rows.length === 0 ? (
-        <EmptyState
-          icon="trophy"
-          title="No PRs yet"
-          body="Beat a previous best and it lands here — automatically."
-        />
+        <EmptyState icon="trophy" title="No records yet" body="Beat a previous best and it lands here — automatically." />
       ) : (
         <View style={{ gap: space.lg }}>
-          {rows.map((pr) => (
-            <View
-              key={pr.id}
+          {rows.map((r, i) => (
+            <Pressable
+              key={`${r.exerciseId}-${r.kind}-${r.sessionId}-${i}`}
+              onPress={() => onOpenExercise(r.exerciseId)}
+              accessibilityRole="button"
+              accessibilityLabel={`${r.exerciseName}, ${RECORD_LABEL[r.kind]}, ${recordValueText(r, r.info)}, ${tinyDate(r.dateISO)}`}
               style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}
             >
               <View
@@ -57,51 +59,32 @@ export function PrSection({ prs, index }: PrSectionProps) {
                 <Icon name="trophy" size={18} color={color.accentBright} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text
-                  numberOfLines={1}
-                  style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}
-                >
-                  {pr.exerciseName}
+                <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+                  {r.exerciseName}
                 </Text>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: space.sm,
-                    marginTop: 3,
-                  }}
-                >
-                  <Badge label={KIND_META[pr.kind].label} tone={KIND_META[pr.kind].tone} />
-                  <Text
-                    style={{
-                      fontFamily: type.body,
-                      fontSize: type.size.caption,
-                      color: color.inkMuted,
-                    }}
-                  >
-                    {trimNum(pr.weightKg)} kg × {pr.reps}
-                  </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginTop: 3 }}>
+                  <Badge label={RECORD_LABEL[r.kind]} tone="accent" />
                 </View>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
-                <Text
-                  style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}
-                >
-                  {trimNum(pr.value)} kg
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: type.bodyMedium,
-                    fontSize: type.size.caption,
-                    color: color.inkMuted,
-                    marginTop: 2,
-                  }}
-                >
-                  {tinyDate(pr.dateISO)}
+                <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }}>{recordValueText(r, r.info)}</Text>
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted, marginTop: 2 }}>
+                  {tinyDate(r.dateISO)}
                 </Text>
               </View>
-            </View>
+            </Pressable>
           ))}
+          {events.length > MAX_ROWS ? (
+            <Pressable
+              onPress={onSeeAll}
+              accessibilityRole="button"
+              accessibilityLabel={`See all ${events.length} records`}
+              style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.xs, paddingTop: space.xs }}
+            >
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>See all {events.length} records</Text>
+              <Icon name="chevron-right" size={16} color={color.accent} />
+            </Pressable>
+          ) : null}
         </View>
       )}
     </Section>

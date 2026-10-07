@@ -2,10 +2,9 @@
  * Finish / session summary — a read-only view-model for a completed session.
  *
  * Composes the frozen `getSessionDetail`, derives the muscle split session-scoped
- * from its sets, and reads the session's PRs directly from `personal_records`
- * (there is no frozen repo fn for
- * "PRs of one session", and `addSets` records them internally without returning
- * them). Read-only, no schema change, no frozen file edited.
+ * from its sets, and (Phase 3) derives the session's records with the one record rule
+ * (`engine/records` via `recordsService`). Read-only, no schema change, no frozen file
+ * edited.
  *
  * Phase 2: volume follows the one rule in `engine/volume.ts` (body weight on pull-ups and
  * dips, both dumbbells, no kilos for time and distance), the muscle split counts SETS per
@@ -13,12 +12,13 @@
  * carries how it is logged so its sets read right ("0:45", "+10×8"), and records that
  * say nothing ("0 kg" on a bodyweight or timed set) are left out.
  */
-import { getDb } from '@/db';
 import { getSessionDetail } from '@/db/repos/workoutRepo';
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import type { SetMeta } from '@/tracker/db/trackerSets';
 import type { TrackerExercise } from '@/tracker/db/exerciseInfo';
+import { RECORD_KINDS } from '@/tracker/engine/records';
 import { missesBodyweight, muscleSets, type MuscleSetsSlice } from '@/tracker/engine/volume';
+import { getSessionRecords, type RecordEventRow } from '@/tracker/services/recordsService';
 import { applyVolume, getVolumeContext, toVolumeSession } from '@/tracker/services/volumeService';
 import type { SessionDetail } from '@/types/models';
 
@@ -36,7 +36,10 @@ export interface SessionSummaryData {
   totalVolumeKg: number;
   workingSetCount: number;
   exerciseCount: number;
+  /** Heaviest-weight and 1-rep-max records of this workout (the coach line's headline). */
   prs: SessionPr[];
+  /** Phase 3: every record this workout set, in the workout's exercise order. */
+  records: RecordEventRow[];
   /** Working sets per finer muscle (fractional). */
   muscles: MuscleSetsSlice[];
   /** rpe/set_type/note/time/distance keyed by set id (additive columns; older sets → 'normal'/null). */
@@ -47,32 +50,35 @@ export interface SessionSummaryData {
   needsBodyweight: boolean;
 }
 
-/** PRs recorded against a single session (weight + e1rm), joined with exercise names. */
-export async function getSessionPrs(sessionId: string): Promise<SessionPr[]> {
-  const rows = await getDb().getAllAsync<{
-    kind: string;
-    value: number;
-    weight_kg: number;
-    reps: number;
-    name: string;
-    log_type: string | null;
-  }>(
-    `SELECT pr.kind, pr.value, pr.weight_kg, pr.reps, e.name AS name, e.log_type AS log_type
-     FROM personal_records pr
-     JOIN exercises e ON e.id = pr.exercise_id
-     WHERE pr.session_id = ? AND pr.kind IN ('weight', 'e1rm')
-     ORDER BY pr.kind ASC`,
-    [sessionId],
+/**
+ * A workout's records in its own exercise order, and the heaviest / 1-rep-max ones in the
+ * coach line's older shape. PURE (exported for tests).
+ *
+ * Phase 3: records come from the one record rule (`engine/records`) instead of the frozen
+ * detector's rows, so the finish screen shows all seven kinds and agrees with the live
+ * pop-up. A first workout with an exercise sets its bests without calling them records,
+ * as the live pop-up always has.
+ */
+export function orderSessionRecords(
+  records: readonly RecordEventRow[],
+  exerciseOrder: readonly string[],
+): { records: RecordEventRow[]; prs: SessionPr[] } {
+  const pos = new Map(exerciseOrder.map((id, i) => [id, i]));
+  const ordered = [...records].sort(
+    (a, b) =>
+      (pos.get(a.exerciseId) ?? exerciseOrder.length) - (pos.get(b.exerciseId) ?? exerciseOrder.length) ||
+      RECORD_KINDS.indexOf(a.kind) - RECORD_KINDS.indexOf(b.kind),
   );
-  return rows
-    .filter((r) => isMeaningfulPr(r.value, r.log_type))
+  const prs: SessionPr[] = ordered
+    .filter((r) => r.kind === 'weight' || r.kind === 'e1rm')
     .map((r) => ({
-      exerciseName: r.name,
+      exerciseName: r.exerciseName,
       kind: r.kind === 'e1rm' ? 'e1rm' : 'weight',
-      value: r.value,
-      weightKg: r.weight_kg,
-      reps: r.reps,
+      value: r.kind === 'e1rm' ? Math.round(r.value * 10) / 10 : r.value,
+      weightKg: r.set?.weightKg ?? r.value,
+      reps: r.set?.reps ?? 0,
     }));
+  return { records: ordered, prs };
 }
 
 /**
@@ -88,11 +94,16 @@ export function isMeaningfulPr(value: number, logType: string | null | undefined
 export async function getSessionSummary(sessionId: string): Promise<SessionSummaryData | null> {
   const raw = await getSessionDetail(sessionId);
   if (!raw) return null;
-  const [prs, setMeta, ctx] = await Promise.all([
-    getSessionPrs(sessionId),
+  const [rawRecords, setMeta, ctx] = await Promise.all([
+    // A records read that fails must never hide the summary of a saved workout.
+    getSessionRecords(sessionId).catch(() => [] as RecordEventRow[]),
     getSessionSetMeta(sessionId),
     getVolumeContext(raw.exercises.map((g) => g.exercise.id)),
   ]);
+  const { records, prs } = orderSessionRecords(
+    rawRecords,
+    raw.exercises.map((g) => g.exercise.id),
+  );
   const session = applyVolume(raw, ctx);
   const vs = toVolumeSession(session, ctx);
   const durationSec =
@@ -112,6 +123,7 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
     workingSetCount,
     exerciseCount: session.exercises.length,
     prs,
+    records,
     muscles: muscleSets([vs]),
     setMeta,
     kinds,

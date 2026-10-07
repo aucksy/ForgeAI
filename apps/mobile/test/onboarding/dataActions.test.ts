@@ -77,7 +77,17 @@ vi.mock('@/db/seed', () => ({
 vi.mock('@/lib/uuid', () => ({ uuid: () => `id-${++h.state.uuidN}` }));
 vi.mock('@/lib/date', () => ({ todayISO: () => '2026-07-26' }));
 
+// Phase 3: progress photo files and the demo's measurements live outside these SQL calls.
+vi.mock('@/tracker/services/progressPhotos', () => ({
+  deleteAllProgressPhotoFiles: vi.fn(async () => {
+    h.state.calls.push({ sql: 'DELETE PHOTO FILES' });
+  }),
+}));
+vi.mock('@/tracker/db/demoBody', () => ({ seedDemoMeasurements: vi.fn(async () => undefined) }));
+
 import { forceReseed } from '@/db/seed';
+import { seedDemoMeasurements } from '@/tracker/db/demoBody';
+import { deleteAllProgressPhotoFiles } from '@/tracker/services/progressPhotos';
 import {
   ExistingDataError,
   OWNED_META_KEYS,
@@ -151,6 +161,8 @@ beforeEach(() => {
   h.state.meta = new Map();
   h.state.uuidN = 0;
   vi.mocked(forceReseed).mockClear();
+  vi.mocked(deleteAllProgressPhotoFiles).mockClear();
+  vi.mocked(seedDemoMeasurements).mockClear();
 });
 
 describe('WIPE_TABLES_IN_ORDER', () => {
@@ -273,10 +285,19 @@ describe('eraseAllData', () => {
       'DELETE FROM meals',
       'DELETE FROM chat_messages',
       'DELETE FROM body_weight',
+      'DELETE FROM body_measurements',
+      'DELETE FROM progress_photos',
       'DELETE FROM user_profile',
       'DELETE FROM exercises',
       'DELETE FROM sync_outbox',
     ]);
+  });
+
+  it('Phase 3: deletes the progress photo FILES once the wipe has committed', async () => {
+    await eraseAllData();
+    expect(deleteAllProgressPhotoFiles).toHaveBeenCalledTimes(1);
+    const all = sqls();
+    expect(all.indexOf('DELETE PHOTO FILES')).toBeGreaterThan(all.indexOf('COMMIT'));
   });
 
   it('really clears the demo flag, so the badge cannot outlive the demo', async () => {
@@ -318,7 +339,8 @@ describe('eraseAllData', () => {
   it('runs as a single transaction', async () => {
     await eraseAllData();
     expect(sqls().filter((s) => s === 'BEGIN')).toHaveLength(1);
-    expect(sqls()[sqls().length - 1]).toBe('COMMIT');
+    // Every SQL statement sits inside it; only the photo files go after (they are not SQL).
+    expect(sqls().filter((s) => s !== 'DELETE PHOTO FILES').at(-1)).toBe('COMMIT');
   });
 });
 
@@ -330,6 +352,15 @@ describe('loadDemoData', () => {
     expect(deletes.length).toBe(WIPE_TABLES_IN_ORDER.length + OWNED_META_KEYS.length);
     // Every wipe statement was recorded before the seed ran.
     expect(h.state.reseedAtCall).toBe(h.state.calls.length);
+  });
+
+  it('Phase 3: adds the demo measurements after the seed (and never photos)', async () => {
+    await loadDemoData();
+    expect(seedDemoMeasurements).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(seedDemoMeasurements).mock.invocationCallOrder[0]).toBeGreaterThan(
+      vi.mocked(forceReseed).mock.invocationCallOrder[0],
+    );
+    expect(inserts('progress_photos')).toHaveLength(0);
   });
 
   it('flags the data as demo BEFORE seeding — a kill mid-seed must not leave it unlabelled', async () => {

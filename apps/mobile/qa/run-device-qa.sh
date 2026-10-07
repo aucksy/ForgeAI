@@ -87,6 +87,32 @@ log "part C start"
 maestro test --format junit --output "$OUT/part-c.xml" --test-output-dir "$OUT/part-c" "$QA_DIR/phase2-c.yaml" \
   > "$OUT/part-c.log" 2>&1 || { status=1; log "PART C FAILED"; }
 
+# ---------------------------------------------------------------- part D (Phase 3 progress)
+# Two SAMPLE pictures in the phone's gallery for the progress-photo steps (they say "Sample
+# photo" on them). Media scan so Android's photo picker lists them.
+adb push "$QA_DIR/fixtures/sample-progress-1.png" /sdcard/Pictures/forgeai-sample-1.png >/dev/null 2>&1 || log "PUSH SAMPLE 1 FAILED"
+adb push "$QA_DIR/fixtures/sample-progress-2.png" /sdcard/Pictures/forgeai-sample-2.png >/dev/null 2>&1 || log "PUSH SAMPLE 2 FAILED"
+for f in forgeai-sample-1.png forgeai-sample-2.png; do
+  adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///sdcard/Pictures/$f" >/dev/null 2>&1 || true
+done
+adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+sleep 5
+log "media store: $(adb shell content query --uri content://media/external/images/media --projection _display_name 2>/dev/null | grep -c forgeai-sample) sample pictures"
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+sleep 10
+log "part D start"
+maestro test --format junit --output "$OUT/part-d.xml" --test-output-dir "$OUT/part-d" "$QA_DIR/phase3-d.yaml" \
+  > "$OUT/part-d.log" 2>&1 || { status=1; log "PART D FAILED"; }
+
+# ---------------------------------------------------------------- part E (records live + share)
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+sleep 10
+log "part E start"
+maestro test --format junit --output "$OUT/part-e.xml" --test-output-dir "$OUT/part-e" "$QA_DIR/phase3-e.yaml" \
+  > "$OUT/part-e.log" 2>&1 || { status=1; log "PART E FAILED"; }
+
 # ---------------------------------------------------------------- crash check
 adb logcat -d > "$OUT/logcat.txt"
 if grep -q "FATAL EXCEPTION" "$OUT/logcat.txt"; then

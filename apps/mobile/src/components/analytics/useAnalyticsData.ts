@@ -71,8 +71,12 @@ async function loadBundle(range: RangeDays): Promise<AnalyticsBundle> {
  * Local analytics state: refetches the full bundle whenever the range changes.
  * Out-of-order responses are dropped (rapid range switching), and any failure
  * degrades to an empty bundle so every section falls back to its EmptyState.
+ *
+ * Phase 3: also refetches when Progress comes back into view (`focusKey`), so a workout
+ * finished on another tab shows without switching the range. The old numbers stay on
+ * screen while the new ones load — no skeleton flash on every visit.
  */
-export function useAnalyticsData(): AnalyticsState {
+export function useAnalyticsData(focusKey = 1): AnalyticsState {
   const [range, setRange] = useState<RangeDays>(90);
   const [bundle, setBundle] = useState<AnalyticsBundle | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -81,6 +85,7 @@ export function useAnalyticsData(): AnalyticsState {
   const reqRef = useRef(0);
 
   useEffect(() => {
+    if (focusKey <= 0) return; // not shown yet
     const req = ++reqRef.current;
     setLoading(true);
     (async () => {
@@ -97,7 +102,7 @@ export function useAnalyticsData(): AnalyticsState {
         if (reqRef.current === req) setLoading(false);
       }
     })();
-  }, [range]);
+  }, [range, focusKey]);
 
   return { range, setRange, bundle, profile, streak, loading };
 }

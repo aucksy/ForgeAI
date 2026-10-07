@@ -43,7 +43,7 @@ import {
   type LogType,
 } from '../engine/logTypes';
 import { rpeColor } from '../lib/rpe';
-import { liveRecordFlags, recordLabel } from '../services/liveRecords';
+import { liveRecordHits, recordLabel } from '../services/liveRecords';
 import type { RecordKind } from '../services/liveRecords';
 import { afterSetCompleted } from '../services/restRules';
 import { playWorkoutSound } from '../services/workoutSounds';
@@ -112,11 +112,13 @@ export function afterTick(exKey: string, setKey: string): void {
   const done = ex?.sets.find((s) => s.key === setKey);
   if (!ex || !done?.done) return; // a blank set with nothing to fill stays unticked
 
-  const kind = liveRecordFlags(ex).get(setKey);
-  if (kind) {
+  const hit = liveRecordHits(ex).get(setKey);
+  if (hit) {
     success();
     playWorkoutSound('record');
-    useWorkoutUi.getState().showRecord(ex.name, recordLabel(kind, done));
+    useWorkoutUi
+      .getState()
+      .showRecord(ex.name, recordLabel(hit, { logType: ex.logType ?? 'weight_reps', loadMode: ex.loadMode ?? 'one', distUnit: ex.distUnit ?? 'km' }));
   }
 
   const timer = useRestTimer.getState();

@@ -1,0 +1,189 @@
+# Phase 3 device QA, part D — progress (runs after parts A–C; demo data + today's workouts).
+# Progress: reports card + "last 7 days" body map → the monthly report (calendar, records,
+# muscles, share picture) → the year so far → personal records (all kinds) → measurements
+# (log two) → progress photos (two SAMPLE pictures pushed by run-device-qa.sh) → compare.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Progress$"
+    timeout: 60000
+- tapOn: "^Progress$"
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 30000
+- takeScreenshot: 40-progress-top
+# ---------------------------------------------------------------- monthly report
+- tapOn: 'Open the .* report'
+- extendedWaitUntil:
+    visible: "Monthly report"
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "COACH"
+    timeout: 20000
+- takeScreenshot: 41-month-report
+- scrollUntilVisible:
+    element: 'Days you trained.*'
+    timeout: 15000
+- takeScreenshot: 42-month-calendar
+- scrollUntilVisible:
+    element: "Sets per muscle"
+    timeout: 15000
+- takeScreenshot: 43-month-records-muscles
+- tapOn: "Share as a picture"
+- extendedWaitUntil:
+    visible: "Share picture"
+    timeout: 15000
+- takeScreenshot: 44-month-share-picture
+- back
+- back
+# ---------------------------------------------------------------- year so far
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 15000
+- tapOn: 'Open the year in review for .*'
+- extendedWaitUntil:
+    visible: "Year in review"
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "COACH"
+    timeout: 20000
+- takeScreenshot: 45-year-review
+- scrollUntilVisible:
+    element: "Most trained"
+    timeout: 15000
+- takeScreenshot: 46-year-review-more
+- back
+# ---------------------------------------------------------------- personal records
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Personal Records"
+    timeout: 20000
+- scrollUntilVisible:
+    element: 'Measurements\..*'
+    timeout: 20000
+- takeScreenshot: 47-records-and-body
+- runFlow:
+    when:
+      visible: 'See all \d+ records'
+    commands:
+      - tapOn: 'See all \d+ records'
+      - extendedWaitUntil:
+          visible: 'Personal records'
+          timeout: 15000
+      - takeScreenshot: 48-all-records
+      - back
+# ---------------------------------------------------------------- measurements
+- scrollUntilVisible:
+    element: 'Measurements\..*'
+    timeout: 20000
+- tapOn: 'Measurements\..*'
+- extendedWaitUntil:
+    visible: "Log measurements"
+    timeout: 15000
+- takeScreenshot: 50-measurements
+- tapOn: "Log measurements"
+- extendedWaitUntil:
+    visible: "Waist in centimetres"
+    timeout: 15000
+- tapOn: "Waist in centimetres"
+- inputText: " 80.2"
+- tapOn: "Arm in centimetres"
+- inputText: " 36"
+- hideKeyboard
+- takeScreenshot: 51-log-measurements
+- scrollUntilVisible:
+    element: "Save measurements"
+    timeout: 15000
+- tapOn: "Save measurements"
+- extendedWaitUntil:
+    visible: "Log measurements"
+    timeout: 15000
+- tapOn:
+    text: "^Waist$"
+    index: 0
+- takeScreenshot: 52-waist-trend
+- scrollUntilVisible:
+    element: "Latest"
+    timeout: 15000
+- takeScreenshot: 53-measurements-latest
+- back
+# ---------------------------------------------------------------- progress photos
+- scrollUntilVisible:
+    element: 'Progress photos\..*'
+    timeout: 20000
+- tapOn: 'Progress photos\..*'
+- extendedWaitUntil:
+    visible: "Add a photo"
+    timeout: 15000
+- takeScreenshot: 54-photos-empty
+- tapOn: "Add a photo"
+- tapOn: "Choose from gallery"
+- extendedWaitUntil:
+    visible: '(?i)photos|albums|recent|.*photo.*'
+    timeout: 15000
+- takeScreenshot: 55-system-photo-picker
+# Android's photo picker: each picture is labelled "Photo taken on <date>"; its thumbnail
+# view id is a second way in if the label differs on this system image.
+- tapOn:
+    text: '(?i)photo taken on.*'
+    index: 0
+    optional: true
+- runFlow:
+    when:
+      visible: '^Albums$'
+    commands:
+      - tapOn:
+          id: '.*icon_thumbnail'
+          index: 0
+          optional: true
+- extendedWaitUntil:
+    visible: 'Progress photo, .*'
+    timeout: 20000
+- tapOn: "Add a photo"
+- tapOn: "Choose from gallery"
+- extendedWaitUntil:
+    visible: '(?i)photos|albums|recent|.*photo.*'
+    timeout: 15000
+- tapOn:
+    text: '(?i)photo taken on.*'
+    index: 1
+    optional: true
+- runFlow:
+    when:
+      visible: '^Albums$'
+    commands:
+      - tapOn:
+          id: '.*icon_thumbnail'
+          index: 1
+          optional: true
+- extendedWaitUntil:
+    visible: "Compare two photos"
+    timeout: 20000
+- takeScreenshot: 56-photos-grid
+- tapOn:
+    text: 'Progress photo, .*'
+    index: 0
+- extendedWaitUntil:
+    visible: "Delete photo"
+    timeout: 10000
+- takeScreenshot: 57-photo-viewer
+- back
+- tapOn: "Compare two photos"
+- tapOn:
+    text: 'Progress photo, .*'
+    index: 0
+- tapOn:
+    text: 'Progress photo, .*'
+    index: 1
+- extendedWaitUntil:
+    visible: "Before"
+    timeout: 15000
+- takeScreenshot: 58-photo-compare
+- back
+- back

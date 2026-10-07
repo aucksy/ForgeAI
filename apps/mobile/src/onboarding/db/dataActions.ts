@@ -19,6 +19,8 @@ import { forceReseed } from '@/db/seed';
 import { todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 import { forgetCatalogSync, markCatalogSynced, resyncExerciseCatalog } from '@/tracker/catalog/catalogSync';
+import { seedDemoMeasurements } from '@/tracker/db/demoBody';
+import { deleteAllProgressPhotoFiles } from '@/tracker/services/progressPhotos';
 
 import { insertExerciseCatalog } from './catalog';
 import type { OnboardingInput } from '../form';
@@ -53,6 +55,9 @@ export const WIPE_TABLES_IN_ORDER = [
   'meals',
   'chat_messages',
   'body_weight',
+  // Phase 3 (tracker schema v6). The photo FILES are deleted after the wipe commits.
+  'body_measurements',
+  'progress_photos',
   'user_profile',
   'exercises',
   'sync_outbox',
@@ -198,6 +203,9 @@ export async function completeOnboarding(input: OnboardingInput): Promise<void> 
  */
 export async function eraseAllData(): Promise<void> {
   await getDb().withExclusiveTransactionAsync(wipe);
+  // Phase 3: progress photos are files in the app's storage. The rows went in the wipe;
+  // the pictures go now, so nothing private outlives an erase.
+  await deleteAllProgressPhotoFiles().catch(() => undefined);
 }
 
 /**
@@ -218,6 +226,9 @@ export async function loadDemoData(): Promise<void> {
   // (pictures, steps, types — the demo is known to log one dumbbell's weight) and add the
   // rest. A failure here leaves the demo usable; the next launch retries the sync.
   await resyncExerciseCatalog(true).catch(() => undefined);
+  // Phase 3: a few months of waist / chest / arm measurements that follow the demo's body
+  // weight, so the Measurements screen has something to show in a sales demo. No photos.
+  await seedDemoMeasurements().catch(() => undefined);
 }
 
 /**

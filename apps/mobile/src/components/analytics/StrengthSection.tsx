@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Text } from 'react-native';
 
-import { LineChart } from '@/components/charts';
 import { EmptyState } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
 import { color, type } from '@/theme/tokens';
+import { DateLineChart } from '@/tracker/components/DateLineChart';
 
 import { InspectReadout, Section } from './Section';
 
@@ -39,7 +39,7 @@ export function StrengthSection({ data, index }: StrengthSectionProps) {
       caption={hasData ? 'Key-lift e1RM relative to body weight, scored 0-100.' : undefined}
     >
       {hasData ? (
-        <LineChart
+        <DateLineChart
           data={data.map((d) => ({ x: d.dateISO, y: d.score }))}
           height={150}
           fillGradient

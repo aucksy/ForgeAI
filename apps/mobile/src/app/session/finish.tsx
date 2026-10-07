@@ -1,6 +1,6 @@
 /** Post-workout celebratory summary. */
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import {
@@ -17,9 +17,12 @@ import { fmtInt } from '@/lib/format';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { SessionSummary } from '@/tracker/components/SessionSummary';
+import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coachNote';
 import { dayTypeLabel, getSessionSummary, volumeComparison } from '@/tracker/services/finishSummary';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
+import { workoutShareScene } from '@/tracker/share/workoutCard';
+import { workoutShareInput } from '@/tracker/share/workoutInput';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
 export default function FinishScreen() {
@@ -30,7 +33,10 @@ export default function FinishScreen() {
   const [data, setData] = useState<SessionSummaryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState<string | null>(null);
+  const [sharing, setSharing] = useState(false);
   const coachNotesPref = useTrackerPrefs((s) => s.coachNotes);
+  // Phase 3: the picture to share on WhatsApp / Instagram.
+  const scene = useMemo(() => (data ? workoutShareScene(workoutShareInput(data)) : null), [data]);
 
   useEffect(() => {
     let alive = true;
@@ -136,8 +142,18 @@ export default function FinishScreen() {
 
           <View style={{ gap: space.md, marginTop: space.sm }}>
             <PrimaryButton label="Done" icon="check" onPress={() => router.replace('/')} />
+            <GhostButton label="Share workout" icon="send" onPress={() => setSharing(true)} />
             <GhostButton label="View history" icon="calendar" onPress={() => router.replace('/history')} />
           </View>
+          {scene ? (
+            <ShareSheet
+              visible={sharing}
+              scene={scene}
+              fileName={`forgeai-workout-${data.session.dateISO}`}
+              title="Share your workout"
+              onClose={() => setSharing(false)}
+            />
+          ) : null}
         </View>
       ) : (
         <View style={{ gap: space.lg }}>

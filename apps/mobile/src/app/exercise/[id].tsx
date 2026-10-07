@@ -11,15 +11,14 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { ExerciseHero } from '@/components/exercise/ExerciseHero';
 import { SessionHistory } from '@/components/exercise/SessionHistory';
-import { LineChart } from '@/components/charts';
 import { Badge, Card, EmptyState, IconButton, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
-import { getPrHistory } from '@/db/repos/prRepo';
 import { trimNum } from '@/lib/format';
 import { useSettings } from '@/store/settingsStore';
 import { chart, color, motion, radius, space, type } from '@/theme/tokens';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { mediaFor } from '@/tracker/catalog/media';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
+import { DateLineChart } from '@/tracker/components/DateLineChart';
 import { ExerciseDemoSheet } from '@/tracker/components/ExerciseDemoSheet';
 import { ExerciseMetricChart } from '@/tracker/components/ExerciseMetricChart';
 import { ExercisePrRows } from '@/tracker/components/ExercisePrRows';
@@ -29,8 +28,6 @@ import { getExerciseIdsByCatalogKey } from '@/tracker/db/exerciseInfo';
 import { fmtDuration, LOAD_MODE_LABEL, LOG_TYPE_LABEL } from '@/tracker/engine/logTypes';
 import { xrmLadder } from '@/tracker/services/exerciseAnalytics';
 import { getExerciseOverview, type ExerciseOverview } from '@/tracker/services/exerciseStats';
-import { isMeaningfulPr } from '@/tracker/services/finishSummary';
-import type { PersonalRecord } from '@/types/models';
 
 const cap = (s: string) => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
 
@@ -75,7 +72,6 @@ export default function ExerciseScreen() {
 
   const units = useSettings((s) => s.unitSystem);
   const [ov, setOv] = useState<ExerciseOverview | null>(null);
-  const [prs, setPrs] = useState<PersonalRecord[]>([]);
   const [versionIds, setVersionIds] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [demo, setDemo] = useState(false);
@@ -101,12 +97,6 @@ export default function ExerciseScreen() {
         .catch(() => {
           if (alive) setLoading(false);
         });
-      // PRs load independently so a PR read failure never blanks the stats screen.
-      getPrHistory(id)
-        .then((p) => {
-          if (alive) setPrs(p);
-        })
-        .catch(() => undefined);
       return () => {
         alive = false;
       };
@@ -120,7 +110,10 @@ export default function ExerciseScreen() {
   // Same volume rule as the Volume chart (both dumbbells, body weight on pull-ups).
   const bestSet = ov?.bestSet ?? [];
   const ladder = useMemo(() => (stats ? xrmLadder(stats.history) : []), [stats]);
-  const shownPrs = useMemo(() => prs.filter((p) => isMeaningfulPr(p.value, ex?.logType)), [prs, ex?.logType]);
+  // Phase 3: every record this exercise keeps, from the one record rule.
+  const bests = ov?.records.bests ?? [];
+  const recordCtx = ex ? { logType: ex.logType, loadMode: ex.loadMode, distUnit: ex.distUnit } : null;
+  const openSession = (sid: string) => router.push(`/session/${sid}`);
   const media = ex ? { uri: ex.mediaUri, type: ex.mediaType } : null;
   const hasPicture = Boolean(ex?.mediaUri) || mediaFor(ex?.catalogKey) != null;
   const easier = catalogEntry(entry?.easier);
@@ -228,7 +221,7 @@ export default function ExerciseScreen() {
               <>
                 <ExerciseHero stats={stats} units={units} />
                 <ExerciseMetricChart progress={stats.progress} bestSet={bestSet} units={units} />
-                <ExercisePrRows prs={shownPrs} ladder={ladder} units={units} onOpenSession={(sid) => router.push(`/session/${sid}`)} />
+                {recordCtx ? <ExercisePrRows bests={bests} ctx={recordCtx} ladder={ladder} units={units} onOpenSession={openSession} /> : null}
                 <SessionHistory history={ov.history} units={units} logType={ex.logType} distUnit={ex.distUnit} />
               </>
             ) : (
@@ -244,10 +237,11 @@ export default function ExerciseScreen() {
                   <View style={{ marginTop: space.xl }}>
                     <SectionHeader title={series.title} />
                     <Card>
-                      <LineChart data={series.points} height={200} color={chart.series[0]} fillGradient yFormat={seriesFmt} onInspect={() => undefined} />
+                      <DateLineChart data={series.points} height={200} color={chart.series[0]} fillGradient yFormat={seriesFmt} onInspect={() => undefined} />
                     </Card>
                   </View>
                 ) : null}
+                {recordCtx ? <ExercisePrRows bests={bests} ctx={recordCtx} ladder={[]} units={units} onOpenSession={openSession} /> : null}
                 <SessionHistory history={ov.history} units={units} logType={ex.logType} distUnit={ex.distUnit} />
               </>
             )}

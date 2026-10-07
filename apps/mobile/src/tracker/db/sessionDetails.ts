@@ -126,14 +126,28 @@ const placeholders = (n: number): string => Array.from({ length: n }, () => '?')
 /** Newest-first session details, batched into ~3 queries instead of 1 + 2×N. */
 export async function getRecentSessionDetailsBatched(limit: number): Promise<SessionDetail[]> {
   if (limit <= 0) return [];
-  const db = getDb();
-
-  const sessionRows = await db.getAllAsync<SessionRow>(
+  const sessionRows = await getDb().getAllAsync<SessionRow>(
     'SELECT * FROM workout_sessions ORDER BY date_iso DESC, started_at DESC LIMIT ?',
     [limit],
   );
-  if (sessionRows.length === 0) return [];
+  return detailsFor(sessionRows);
+}
 
+/**
+ * Phase 3 (reports): every session between two days (inclusive), newest first, batched the
+ * same way.
+ */
+export async function getSessionDetailsBetween(fromISO: string, toISO: string): Promise<SessionDetail[]> {
+  const sessionRows = await getDb().getAllAsync<SessionRow>(
+    'SELECT * FROM workout_sessions WHERE date_iso BETWEEN ? AND ? ORDER BY date_iso DESC, started_at DESC',
+    [fromISO, toISO],
+  );
+  return detailsFor(sessionRows);
+}
+
+async function detailsFor(sessionRows: SessionRow[]): Promise<SessionDetail[]> {
+  if (sessionRows.length === 0) return [];
+  const db = getDb();
   const sessionIds = sessionRows.map((r) => r.id);
   const setRows: SetRow[] = [];
   for (const ids of chunked(sessionIds)) {

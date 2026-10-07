@@ -69,6 +69,28 @@ describe('buildSessionNote', () => {
     expect(note).toContain('Estimated-1RM PR on Deadlift');
   });
 
+  it('Phase 3: celebrates a new kind of record when there is no heavier set or 1RM', () => {
+    const note = buildSessionNote(
+      data({
+        records: [
+          {
+            kind: 'reps',
+            value: 15,
+            previous: 12,
+            sessionId: 's',
+            dateISO: '2026-07-20',
+            set: { weightKg: 0, reps: 15 },
+            exerciseId: 'pu',
+            exerciseName: 'Pull Up',
+            info: { logType: 'reps', loadMode: 'one', distUnit: 'km' },
+          },
+        ],
+      }),
+      prev(10000),
+    );
+    expect(note).toBe("Most reps on Pull Up: 15 reps. That's a new record — keep stacking them.");
+  });
+
   it('reports a volume gain vs the last same day-type', () => {
     const note = buildSessionNote(data({ totalVolumeKg: 10500 }), prev(10000));
     expect(note).toContain('10,500 kg moved');

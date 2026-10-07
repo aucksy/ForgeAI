@@ -13,8 +13,12 @@ export interface ExerciseHeroProps {
 const round1 = (n: number) => Math.round(n * 10) / 10;
 
 /**
- * Hero stat row: Best set / PR e1RM / Avg weight / Avg reps as compact tiles.
+ * Hero stat row: Heaviest set / PR e1RM / Avg weight / Avg reps as compact tiles.
  * Full-bleed horizontal scroll so long values ("82.5 kg × 8") never wrap.
+ *
+ * Phase 3: the first tile was called "Best set" but shows the HEAVIEST set; "Best set" is
+ * now a record of its own (most volume in one set, Hevy's meaning), so the tile says what
+ * it shows.
  */
 export function ExerciseHero({ stats, units }: ExerciseHeroProps) {
   const unit = weightUnit(units);
@@ -32,7 +36,7 @@ export function ExerciseHero({ stats, units }: ExerciseHeroProps) {
       contentContainerStyle={{ paddingHorizontal: space.screenX, gap: space.md }}
     >
       <View style={{ minWidth: 132 }}>
-        <StatTile label="Best set" value={bestValue} icon="dumbbell" />
+        <StatTile label="Heaviest set" value={bestValue} icon="dumbbell" />
       </View>
       <View style={{ minWidth: 118 }}>
         <StatTile

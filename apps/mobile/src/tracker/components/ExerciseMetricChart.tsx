@@ -3,12 +3,13 @@ import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { LineChart } from '@/components/charts';
 import { Card, Chip, SectionHeader } from '@/components/ui';
 import { fmtCompact, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { chart, motion, space } from '@/theme/tokens';
 import type { BestSetPoint } from '@/tracker/services/exerciseAnalytics';
 import type { ExerciseProgressPoint, UnitSystem } from '@/types/models';
+
+import { DateLineChart } from './DateLineChart';
 
 type Metric = 'weight' | 'volume' | 'e1rm' | 'bestSet';
 
@@ -59,7 +60,7 @@ export function ExerciseMetricChart({ progress, bestSet, units }: ExerciseMetric
         ))}
       </View>
       <Card>
-        <LineChart data={data} height={210} color={active.color} fillGradient yFormat={yFormat} onInspect={noopInspect} />
+        <DateLineChart data={data} height={210} color={active.color} fillGradient yFormat={yFormat} onInspect={noopInspect} />
       </Card>
     </Animated.View>
   );

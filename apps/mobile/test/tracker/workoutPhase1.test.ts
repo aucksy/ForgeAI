@@ -125,8 +125,10 @@ describe('live records', () => {
   });
 
   it('labels in plain words', () => {
-    expect(recordLabel('weight', { weightKg: 85, reps: 3 })).toBe('Heaviest weight · 85 kg');
-    expect(recordLabel('e1rm', { weightKg: 80, reps: 12 })).toBe('Best 1-rep max · 112 kg');
+    // Phase 3: the label takes the hit (kind + value + set) and how the exercise is logged.
+    const ctx = { logType: 'weight_reps', loadMode: 'one', distUnit: 'km' } as const;
+    expect(recordLabel({ kind: 'weight', value: 85, set: { weightKg: 85, reps: 3 } }, ctx)).toBe('Heaviest weight · 85 kg');
+    expect(recordLabel({ kind: 'e1rm', value: 112, set: { weightKg: 80, reps: 12 } }, ctx)).toBe('Best 1-rep max · 112 kg');
   });
 });
 

@@ -1,0 +1,390 @@
+/**
+ * Monthly report and year in review — Phase 3. PURE.
+ *
+ * Hevy users name "the monthly report" among the things they love; Hevy also does a
+ * December year in review. Here both are built from the member's own log, with a short
+ * note in the coach's voice written by fixed rules (no AI call, works offline): how often
+ * they trained against the month before, the records they set, and the one big muscle that
+ * got the least work.
+ */
+import { addDays, weekStartISO } from '@/lib/date';
+import { fmtInt } from '@/lib/format';
+
+import { MUSCLE_LABEL, type Muscle } from '../catalog/muscles';
+import { monthName, shiftMonth } from '../lib/months';
+import type { RecordKind } from './records';
+import type { BodyweightPoint, MuscleSetsSlice } from './volume';
+
+/** One workout, as the reports need it. */
+export interface ReportSession {
+  sessionId: string;
+  dateISO: string;
+  /** 0 when the workout has no end time (logged by chat). */
+  durationSec: number;
+  /** By the one volume rule. */
+  volumeKg: number;
+  /** Working sets. */
+  sets: number;
+  exercises: { exerciseId: string; name: string; sets: number }[];
+}
+
+/** The parts of a record a report needs. */
+export interface ReportRecord {
+  exerciseId: string;
+  exerciseName: string;
+  kind: RecordKind;
+  dateISO: string;
+}
+
+export interface PeriodTotals {
+  workouts: number;
+  /** Days with at least one workout. */
+  days: number;
+  durationSec: number;
+  volumeKg: number;
+  sets: number;
+}
+
+export function totalsOf(sessions: readonly ReportSession[]): PeriodTotals {
+  return {
+    workouts: sessions.length,
+    days: new Set(sessions.map((s) => s.dateISO)).size,
+    durationSec: sessions.reduce((n, s) => n + Math.max(0, s.durationSec), 0),
+    volumeKg: sessions.reduce((n, s) => n + Math.max(0, s.volumeKg), 0),
+    sets: sessions.reduce((n, s) => n + s.sets, 0),
+  };
+}
+
+export interface TopExercise {
+  exerciseId: string;
+  name: string;
+  sets: number;
+  workouts: number;
+}
+
+/** Most-trained exercises by working sets (then workouts, then name). */
+export function topExercises(sessions: readonly ReportSession[], n = 3): TopExercise[] {
+  const by = new Map<string, TopExercise>();
+  for (const s of sessions) {
+    for (const e of s.exercises) {
+      if (e.sets <= 0) continue;
+      const cur = by.get(e.exerciseId) ?? { exerciseId: e.exerciseId, name: e.name, sets: 0, workouts: 0 };
+      cur.sets += e.sets;
+      cur.workouts += 1;
+      by.set(e.exerciseId, cur);
+    }
+  }
+  return [...by.values()]
+    .sort((a, b) => b.sets - a.sets || b.workouts - a.workouts || a.name.localeCompare(b.name))
+    .slice(0, n);
+}
+
+export interface BodyweightChange {
+  start: number;
+  end: number;
+  change: number;
+  startISO: string;
+  endISO: string;
+}
+
+/** First and last weigh-in inside the period; null with fewer than two. */
+export function bodyweightChange(points: readonly BodyweightPoint[], from: string, to: string): BodyweightChange | null {
+  const inside = points.filter((p) => p.dateISO >= from && p.dateISO <= to).sort((a, b) => (a.dateISO < b.dateISO ? -1 : 1));
+  if (inside.length < 2) return null;
+  const a = inside[0];
+  const b = inside[inside.length - 1];
+  return { start: a.weightKg, end: b.weightKg, change: Math.round((b.weightKg - a.weightKg) * 10) / 10, startISO: a.dateISO, endISO: b.dateISO };
+}
+
+/** Longest run of back-to-back weeks (Monday to Sunday) with at least one workout. */
+export function longestWeekStreak(dates: readonly string[]): number {
+  const weeks = [...new Set(dates.map(weekStartISO))].sort();
+  let best = 0;
+  let run = 0;
+  let prev: string | null = null;
+  for (const w of weeks) {
+    run = prev != null && addDays(prev, 7) === w ? run + 1 : 1;
+    if (run > best) best = run;
+    prev = w;
+  }
+  return best;
+}
+
+export interface StrengthPoint {
+  exerciseId: string;
+  name: string;
+  dateISO: string;
+  /** Best estimated 1-rep max of that workout. */
+  e1rm: number;
+}
+
+export interface StrengthGain {
+  exerciseId: string;
+  name: string;
+  fromKg: number;
+  toKg: number;
+  pct: number;
+}
+
+/**
+ * The lift that grew the most: best estimated 1-rep max of its first third of workouts in the
+ * period (at most three) against its last third — the two never overlap. Needs at least four
+ * workouts at least four weeks apart, so one lucky day is not "the biggest gain".
+ */
+export function biggestGain(points: readonly StrengthPoint[]): StrengthGain | null {
+  const by = new Map<string, StrengthPoint[]>();
+  for (const p of points) {
+    if (!(p.e1rm > 0)) continue;
+    const list = by.get(p.exerciseId) ?? [];
+    list.push(p);
+    by.set(p.exerciseId, list);
+  }
+  let best: StrengthGain | null = null;
+  for (const [exerciseId, list] of by) {
+    if (list.length < 4) continue;
+    const sorted = [...list].sort((a, b) => (a.dateISO < b.dateISO ? -1 : a.dateISO > b.dateISO ? 1 : 0));
+    if (addDays(sorted[0].dateISO, 28) > sorted[sorted.length - 1].dateISO) continue;
+    const k = Math.min(3, Math.floor(sorted.length / 3));
+    const fromKg = Math.max(...sorted.slice(0, k).map((p) => p.e1rm));
+    const toKg = Math.max(...sorted.slice(-k).map((p) => p.e1rm));
+    const pct = Math.round(((toKg - fromKg) / fromKg) * 100);
+    if (pct <= 0) continue;
+    if (!best || pct > best.pct) best = { exerciseId, name: sorted[0].name, fromKg: Math.round(fromKg), toKg: Math.round(toKg), pct };
+  }
+  return best;
+}
+
+/**
+ * A change against the period before, for a tile: "+3", "−2", "+12%", "Same". null when the
+ * period before had nothing to compare with.
+ */
+export function changeText(cur: number, prev: number | null | undefined, mode: 'count' | 'pct'): { value: string; good: boolean } | null {
+  if (prev == null || !(prev > 0)) return null;
+  if (mode === 'pct') {
+    const pct = Math.round(((cur - prev) / prev) * 100);
+    if (pct === 0) return { value: 'Same', good: true };
+    return { value: `${pct > 0 ? '+' : '−'}${Math.abs(pct)}%`, good: pct > 0 };
+  }
+  const diff = Math.round(cur - prev);
+  if (diff === 0) return { value: 'Same', good: true };
+  return { value: `${diff > 0 ? '+' : '−'}${fmtInt(Math.abs(diff))}`, good: diff > 0 };
+}
+
+/** "11 h 20 min", "45 min", "—". */
+export function durationText(sec: number): string {
+  if (!(sec > 0)) return '—';
+  const total = Math.max(1, Math.round(sec / 60));
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+  if (h === 0) return `${m} min`;
+  return m === 0 ? `${h} h` : `${h} h ${m} min`;
+}
+
+// ---------------------------------------------------------------- the month
+
+export interface MonthReport {
+  month: string;
+  /** The month is over (else it reads "so far"). */
+  complete: boolean;
+  totals: PeriodTotals;
+  /** The month before, for the comparison; null when nothing was logged then. */
+  previous: PeriodTotals | null;
+  trainedDays: string[];
+  records: ReportRecord[];
+  muscles: MuscleSetsSlice[];
+  topExercises: TopExercise[];
+  bodyweight: BodyweightChange | null;
+  note: string;
+}
+
+/** The big muscles the coach checks for balance, and one move to suggest for each. */
+const BALANCE: readonly { muscle: Muscle; move: string }[] = [
+  { muscle: 'chest', move: 'push-ups or a bench press' },
+  { muscle: 'lats', move: 'pull-ups or lat pulldowns' },
+  { muscle: 'upper_back', move: 'rows' },
+  { muscle: 'front_delts', move: 'an overhead press' },
+  { muscle: 'side_delts', move: 'lateral raises' },
+  { muscle: 'rear_delts', move: 'face pulls' },
+  { muscle: 'quads', move: 'squats or leg presses' },
+  { muscle: 'hamstrings', move: 'Romanian deadlifts or leg curls' },
+  { muscle: 'glutes', move: 'hip thrusts' },
+  { muscle: 'calves', move: 'calf raises' },
+  { muscle: 'abs', move: 'planks or crunches' },
+];
+
+/** The least-trained big muscle when it clearly lags (under 4 sets in a month of real training). */
+export function lagging(muscles: readonly MuscleSetsSlice[], totalSets: number): { muscle: Muscle; sets: number; move: string } | null {
+  if (totalSets < 40) return null;
+  let worst: { muscle: Muscle; sets: number; move: string } | null = null;
+  for (const b of BALANCE) {
+    const sets = muscles.find((m) => m.muscle === b.muscle)?.sets ?? 0;
+    if (sets < 4 && (!worst || sets < worst.sets)) worst = { muscle: b.muscle, sets, move: b.move };
+  }
+  return worst;
+}
+
+function times(n: number): string {
+  return n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`;
+}
+
+/** Two or three short sentences in the coach's voice. */
+export function monthNote(r: Omit<MonthReport, 'note'>): string {
+  const name = monthName(r.month);
+  const prevName = monthName(shiftMonth(r.month, -1));
+  const n = r.totals.workouts;
+  const parts: string[] = [];
+  if (n === 0) {
+    parts.push(r.complete ? `No workouts logged in ${name}.` : `No workouts yet in ${name}.`);
+    return parts.join(' ');
+  }
+  let first = `You trained ${times(n)} in ${name}${r.complete ? '' : ' so far'}`;
+  if (r.previous && r.previous.workouts > 0 && r.complete) {
+    const diff = n - r.previous.workouts;
+    first += diff > 0 ? ` — ${diff} more than ${prevName}` : diff < 0 ? ` — ${-diff} fewer than ${prevName}` : ` — the same as ${prevName}`;
+  }
+  parts.push(`${first}.`);
+
+  if (r.records.length > 0) {
+    const counts = new Map<string, { name: string; n: number }>();
+    for (const rec of r.records) {
+      const c = counts.get(rec.exerciseId) ?? { name: rec.exerciseName, n: 0 };
+      c.n += 1;
+      counts.set(rec.exerciseId, c);
+    }
+    const lead = [...counts.values()].sort((a, b) => b.n - a.n || a.name.localeCompare(b.name))[0];
+    parts.push(
+      r.records.length === 1
+        ? `You set a new record on ${lead.name}.`
+        : counts.size === 1
+          ? `You set ${r.records.length} new records, all on ${lead.name}.`
+          : `You set ${r.records.length} new records, led by ${lead.name}.`,
+    );
+  } else {
+    parts.push('No new records this time — steady work still counts.');
+  }
+
+  const lag = lagging(r.muscles, r.totals.sets);
+  if (lag) {
+    const label = MUSCLE_LABEL[lag.muscle];
+    parts.push(
+      lag.sets === 0
+        ? `${label} got no work — try ${lag.move} next month.`
+        : `${label} got only ${fmtSetsWord(lag.sets)} — try ${lag.move} next month.`,
+    );
+  }
+  return parts.join(' ');
+}
+
+function fmtSetsWord(sets: number): string {
+  const v = Number.isInteger(sets) ? String(sets) : sets.toFixed(1);
+  return `${v} ${sets === 1 ? 'set' : 'sets'}`;
+}
+
+export function buildMonthReport(input: {
+  month: string;
+  complete: boolean;
+  sessions: readonly ReportSession[];
+  previous: readonly ReportSession[];
+  records: readonly ReportRecord[];
+  muscles: readonly MuscleSetsSlice[];
+  bodyweight: readonly BodyweightPoint[];
+  from: string;
+  to: string;
+}): MonthReport {
+  const base: Omit<MonthReport, 'note'> = {
+    month: input.month,
+    complete: input.complete,
+    totals: totalsOf(input.sessions),
+    previous: input.previous.length > 0 ? totalsOf(input.previous) : null,
+    trainedDays: [...new Set(input.sessions.map((s) => s.dateISO))].sort(),
+    records: [...input.records],
+    muscles: [...input.muscles],
+    topExercises: topExercises(input.sessions),
+    bodyweight: bodyweightChange(input.bodyweight, input.from, input.to),
+  };
+  return { ...base, note: monthNote(base) };
+}
+
+// ---------------------------------------------------------------- the year
+
+export interface YearReview {
+  year: number;
+  complete: boolean;
+  totals: PeriodTotals;
+  /** Workouts in each month so far, January first. */
+  byMonth: { month: string; workouts: number }[];
+  busiest: { month: string; workouts: number } | null;
+  topExercises: TopExercise[];
+  recordCount: number;
+  gain: StrengthGain | null;
+  longestStreakWeeks: number;
+  muscles: MuscleSetsSlice[];
+  bodyweight: BodyweightChange | null;
+  note: string;
+}
+
+/** "1.2 million", "84,500". */
+export function bigNumber(n: number): string {
+  if (n >= 1_000_000) return `${(Math.round(n / 100_000) / 10).toString()} million`;
+  return fmtInt(n);
+}
+
+/** Hours, rounded: "168 hours", "1 hour". */
+export function hoursText(sec: number): string {
+  const h = Math.round(sec / 3600);
+  return `${h} ${h === 1 ? 'hour' : 'hours'}`;
+}
+
+export function yearNote(r: Omit<YearReview, 'note'>): string {
+  const t = r.totals;
+  if (t.workouts === 0) return r.complete ? `No workouts logged in ${r.year}.` : `No workouts yet in ${r.year}.`;
+  const head = r.complete ? `${r.year}` : `${r.year} so far`;
+  const facts = [`${fmtInt(t.workouts)} ${t.workouts === 1 ? 'workout' : 'workouts'}`];
+  if (t.durationSec >= 3600) facts.push(hoursText(t.durationSec));
+  if (t.volumeKg > 0) facts.push(`${bigNumber(t.volumeKg)} kg lifted`);
+  const parts = [`${head}: ${facts.length > 1 ? `${facts.slice(0, -1).join(', ')} and ${facts[facts.length - 1]}` : facts[0]}.`];
+  const fav = r.topExercises[0];
+  if (r.busiest && r.busiest.workouts > 0 && fav) {
+    parts.push(`Your busiest month was ${monthName(r.busiest.month)}, and ${fav.name} was your favourite — ${fmtInt(fav.sets)} sets.`);
+  } else if (fav) {
+    parts.push(`${fav.name} was your favourite — ${fmtInt(fav.sets)} sets.`);
+  }
+  if (r.gain) {
+    parts.push(`Biggest gain: ${r.gain.name}, up ${r.gain.pct}% (about ${r.gain.fromKg} → ${r.gain.toKg} kg for one rep).`);
+  } else if (r.recordCount > 0) {
+    parts.push(`You set ${fmtInt(r.recordCount)} new ${r.recordCount === 1 ? 'record' : 'records'}.`);
+  }
+  return parts.join(' ');
+}
+
+export function buildYearReview(input: {
+  year: number;
+  complete: boolean;
+  /** Last month to list (December for a finished year, else this month). */
+  lastMonth: string;
+  sessions: readonly ReportSession[];
+  recordCount: number;
+  strength: readonly StrengthPoint[];
+  muscles: readonly MuscleSetsSlice[];
+  bodyweight: readonly BodyweightPoint[];
+}): YearReview {
+  const byMonth: { month: string; workouts: number }[] = [];
+  for (let m = `${input.year}-01`; m <= input.lastMonth && m.startsWith(String(input.year)); m = shiftMonth(m, 1)) {
+    byMonth.push({ month: m, workouts: input.sessions.filter((s) => s.dateISO.startsWith(m)).length });
+  }
+  const busiest = byMonth.reduce<{ month: string; workouts: number } | null>((b, m) => (m.workouts > (b?.workouts ?? 0) ? m : b), null);
+  const base: Omit<YearReview, 'note'> = {
+    year: input.year,
+    complete: input.complete,
+    totals: totalsOf(input.sessions),
+    byMonth,
+    busiest,
+    topExercises: topExercises(input.sessions),
+    recordCount: input.recordCount,
+    gain: biggestGain(input.strength),
+    longestStreakWeeks: longestWeekStreak(input.sessions.map((s) => s.dateISO)),
+    muscles: [...input.muscles],
+    bodyweight: bodyweightChange(input.bodyweight, `${input.year}-01-01`, `${input.year}-12-31`),
+  };
+  return { ...base, note: yearNote(base) };
+}

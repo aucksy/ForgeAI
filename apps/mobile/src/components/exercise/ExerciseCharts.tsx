@@ -2,10 +2,11 @@ import { useMemo } from 'react';
 import { View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { BarChart, LineChart } from '@/components/charts';
+import { BarChart } from '@/components/charts';
 import { Card, SectionHeader } from '@/components/ui';
 import { fmtCompact, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { chart, motion, space } from '@/theme/tokens';
+import { DateLineChart } from '@/tracker/components/DateLineChart';
 import type { ExerciseProgressPoint, UnitSystem } from '@/types/models';
 
 export interface ExerciseChartsProps {
@@ -48,7 +49,7 @@ export function ExerciseCharts({ progress, units }: ExerciseChartsProps) {
       >
         <SectionHeader title={`Top set weight (${unit})`} />
         <Card>
-          <LineChart
+          <DateLineChart
             data={weightData}
             height={200}
             fillGradient
@@ -64,7 +65,7 @@ export function ExerciseCharts({ progress, units }: ExerciseChartsProps) {
       >
         <SectionHeader title={`Estimated 1RM (${unit})`} />
         <Card>
-          <LineChart
+          <DateLineChart
             data={e1rmData}
             height={200}
             color={chart.series[1]}

@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 5;
+export const TRACKER_SCHEMA_VERSION = 6;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -74,6 +74,29 @@ export async function initTrackerSchema(): Promise<void> {
   // changes an exercise's counting (its older sets keep the old reading) and on a Hevy
   // import into an exercise that already counts "each" (Hevy numbers are as typed).
   await ensureColumn('set_entries', 'load_mode', 'TEXT');
+  // v6 (Phase 3 progress): body measurements (one value per kind per day, like body weight)
+  // and progress photos (the picture lives in the app's own storage on this phone; the row
+  // keeps its path and day).
+  await getDb().execAsync(
+    `CREATE TABLE IF NOT EXISTS body_measurements (
+       id TEXT PRIMARY KEY,
+       date_iso TEXT NOT NULL,
+       kind TEXT NOT NULL,
+       value REAL NOT NULL
+     )`,
+  );
+  await getDb().execAsync(
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_body_measurements_day_kind ON body_measurements(date_iso, kind)',
+  );
+  await getDb().execAsync(
+    `CREATE TABLE IF NOT EXISTS progress_photos (
+       id TEXT PRIMARY KEY,
+       date_iso TEXT NOT NULL,
+       uri TEXT NOT NULL,
+       created_at INTEGER NOT NULL
+     )`,
+  );
+  await getDb().execAsync('CREATE INDEX IF NOT EXISTS idx_progress_photos_date ON progress_photos(date_iso)');
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }

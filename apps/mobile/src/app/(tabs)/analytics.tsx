@@ -1,8 +1,10 @@
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import {
+  BodyMapSection,
   BodyWeightSection,
   CaloriesSection,
   ConsistencySection,
@@ -11,22 +13,40 @@ import {
   MuscleSection,
   PrSection,
   ProteinSection,
+  ReportsCard,
   SectionSkeleton,
   StrengthSection,
   VolumeSection,
   useAnalyticsData,
+  useProgressExtras,
 } from '@/components/analytics';
 import type { RangeDays } from '@/components/analytics';
 import { Chip, IconButton, Screen } from '@/components/ui';
+import { addDays, todayISO } from '@/lib/date';
 import { tap } from '@/lib/haptics';
 import { motion, space } from '@/theme/tokens';
+import { monthOf } from '@/tracker/lib/months';
+import { reportIndex } from '@/tracker/services/reportsService';
 
 const RANGES: RangeDays[] = [30, 90, 180];
 
-/** Progress — the full analytics story: body, volume, nutrition, PRs, strength. */
+/**
+ * Progress — Phase 3 order, calm top to bottom:
+ *   the monthly report and the year so far · the muscles trained in the last 7 days ·
+ *   then, over the chosen range: records, body (weight, measurements, photos), training
+ *   volume and frequency, sets per muscle, consistency, strength, one lift up close, and
+ *   nutrition last.
+ */
 export default function AnalyticsScreen() {
   const router = useRouter();
-  const { range, setRange, bundle, profile, streak, loading } = useAnalyticsData();
+  const [focusKey, setFocusKey] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      setFocusKey((k) => k + 1);
+    }, []),
+  );
+  const { range, setRange, bundle, profile, streak, loading } = useAnalyticsData(focusKey);
+  const extras = useProgressExtras();
 
   const pickRange = (r: RangeDays) => {
     if (r === range) return;
@@ -34,35 +54,55 @@ export default function AnalyticsScreen() {
     setRange(r);
   };
 
+  const today = todayISO();
+  const from = addDays(today, -(range - 1));
+  const rangeEvents = extras.events.filter((e) => e.dateISO >= from && e.dateISO <= today);
+  const months = [...extras.monthCounts.keys()].sort().reverse();
+  const idx = reportIndex(months, today);
+  const yearWorkouts =
+    idx.year != null ? [...extras.monthCounts.entries()].filter(([m]) => m.startsWith(String(idx.year))).reduce((n, [, c]) => n + c, 0) : 0;
+  const openReport = (period: string) => {
+    tap();
+    router.push({ pathname: '/report/[period]', params: { period } });
+  };
+
   return (
     <Screen
       title="Progress"
       subtitle="Every session compounds"
       scroll={false}
-      right={
-        <IconButton icon="scale" onPress={() => router.push('/bodyweight')} accessibilityLabel="Log body weight" />
-      }
+      right={<IconButton icon="scale" onPress={() => router.push('/bodyweight')} accessibilityLabel="Log body weight" />}
     >
-      {/* range selector — pinned under the header */}
-      <Animated.View
-        entering={FadeInDown.delay(60).duration(motion.slow)}
-        style={{ flexDirection: 'row', gap: space.sm, marginBottom: space.lg }}
-      >
-        {RANGES.map((r) => (
-          <Chip
-            key={r}
-            label={`${r} days`}
-            selected={range === r}
-            onPress={() => pickRange(r)}
-          />
-        ))}
-      </Animated.View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: space.xs, paddingBottom: space.xxl }}>
+        <ReportsCard
+          month={idx.month}
+          monthRunning={idx.month === monthOf(today)}
+          monthWorkouts={idx.month ? extras.monthCounts.get(idx.month) ?? 0 : 0}
+          monthRecords={idx.month ? extras.events.filter((e) => monthOf(e.dateISO) === idx.month).length : 0}
+          year={idx.year}
+          yearRunning={idx.year === Number(today.slice(0, 4))}
+          yearWorkouts={yearWorkouts}
+          index={0}
+          onOpen={openReport}
+        />
+        <BodyMapSection sets={extras.weekMuscles} index={1} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: space.xs, paddingBottom: space.xxl }}
-      >
-        {loading || !bundle ? (
+        {/* range for everything below */}
+        <Animated.View entering={FadeInDown.delay(60).duration(motion.slow)} style={{ flexDirection: 'row', gap: space.sm, marginBottom: space.lg }}>
+          {RANGES.map((r) => (
+            <Chip key={r} label={`${r} days`} selected={range === r} onPress={() => pickRange(r)} />
+          ))}
+        </Animated.View>
+
+        <PrSection
+          events={rangeEvents}
+          rangeDays={range}
+          index={2}
+          onSeeAll={() => router.push('/records')}
+          onOpenExercise={(id) => router.push({ pathname: '/exercise/[id]', params: { id } })}
+        />
+
+        {(loading && !bundle) || !bundle ? (
           <View>
             {[0, 1, 2, 3].map((i) => (
               <SectionSkeleton key={i} index={i} />
@@ -70,32 +110,30 @@ export default function AnalyticsScreen() {
           </View>
         ) : (
           <>
-            <BodyWeightSection data={bundle.weight} index={0} />
-            <VolumeSection data={bundle.weeklyVolume} index={1} />
-            <FrequencySection data={bundle.frequency} index={2} />
-            <CaloriesSection
-              data={bundle.calories}
-              target={profile ? profile.calorieTarget : null}
+            <BodyWeightSection
+              data={bundle.weight}
               index={3}
+              measureLine={extras.measureLine}
+              photoCount={extras.photoCount}
+              onWeight={() => router.push('/bodyweight')}
+              onMeasurements={() => router.push('/measurements')}
+              onPhotos={() => router.push('/photos')}
             />
-            <ProteinSection
-              data={bundle.calories}
-              target={profile ? profile.proteinTargetG : null}
-              index={4}
-            />
-            <MuscleSection data={bundle.muscleSets} index={5} />
-            <ConsistencySection
-              cells={bundle.consistency}
-              rangeDays={range}
-              streak={streak}
-              index={6}
-            />
-            <PrSection prs={bundle.prTimeline} index={7} />
+            <VolumeSection data={bundle.weeklyVolume} index={4} />
+            <FrequencySection data={bundle.frequency} index={5} />
+            <MuscleSection data={bundle.muscleSets} index={6} />
+            <ConsistencySection cells={bundle.consistency} rangeDays={range} streak={streak} index={7} />
             <StrengthSection data={bundle.strengthTrend} index={8} />
           </>
         )}
         {/* lives outside the bundle gate so the selected lift survives range switches */}
         <ExerciseSection rangeDays={range} index={9} />
+        {bundle ? (
+          <>
+            <CaloriesSection data={bundle.calories} target={profile ? profile.calorieTarget : null} index={10} />
+            <ProteinSection data={bundle.calories} target={profile ? profile.proteinTargetG : null} index={11} />
+          </>
+        ) : null}
       </ScrollView>
     </Screen>
   );

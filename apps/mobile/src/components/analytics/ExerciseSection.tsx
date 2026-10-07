@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-import { BarChart, LineChart } from '@/components/charts';
+import { BarChart } from '@/components/charts';
 import { Chip, EmptyState, GhostButton, Skeleton } from '@/components/ui';
 import { getDb } from '@/db';
 import { getAllExercises } from '@/db/repos/exerciseRepo';
@@ -10,6 +10,7 @@ import { addDays, tinyDate, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { tap } from '@/lib/haptics';
 import { color, space, type } from '@/theme/tokens';
+import { DateLineChart } from '@/tracker/components/DateLineChart';
 import { getExerciseOverview } from '@/tracker/services/exerciseStats';
 import type { ExerciseStats } from '@/types/models';
 
@@ -159,7 +160,7 @@ export function ExerciseSection({ rangeDays, index }: ExerciseSectionProps) {
       ) : (
         <>
           <Text style={styles.chartLabel}>TOP SET WEIGHT</Text>
-          <LineChart
+          <DateLineChart
             data={progress.map((p) => ({ x: p.dateISO, y: p.topWeightKg }))}
             fillGradient
             yFormat={(n) => trimNum(n)}

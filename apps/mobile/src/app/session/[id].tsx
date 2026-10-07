@@ -3,7 +3,7 @@
  * holds Save as routine (Phase 1) and Delete.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, View } from 'react-native';
 
 import { EmptyState, GhostButton, Icon, IconButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
@@ -19,8 +19,11 @@ import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import { uneditableReason } from '@/tracker/services/editDraft';
 import { SessionSummary } from '@/tracker/components/SessionSummary';
+import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { dayTypeLabel, getSessionSummary } from '@/tracker/services/finishSummary';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
+import { workoutShareScene } from '@/tracker/share/workoutCard';
+import { workoutShareInput } from '@/tracker/share/workoutInput';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 export default function SessionDetailScreen() {
@@ -38,6 +41,9 @@ export default function SessionDetailScreen() {
   const [data, setData] = useState<SessionSummaryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [menu, setMenu] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  // Phase 3: the same picture the finish screen shares.
+  const scene = useMemo(() => (data ? workoutShareScene(workoutShareInput(data)) : null), [data]);
 
   useEffect(() => {
     let alive = true;
@@ -194,6 +200,15 @@ export default function SessionDetailScreen() {
           <TrackerSheet visible={menu} title="This workout" onClose={() => setMenu(false)}>
             <View style={{ gap: 2 }}>
               <SheetRow
+                label="Share as a picture"
+                leading={<Glyph name="image" size={20} color={color.accent} />}
+                onPress={() => {
+                  setMenu(false);
+                  // Let the menu slide away before the share sheet slides up.
+                  setTimeout(() => setSharing(true), 260);
+                }}
+              />
+              <SheetRow
                 label="Save as routine"
                 leading={<Glyph name="list" size={20} color={color.accent} />}
                 onPress={() => {
@@ -212,6 +227,15 @@ export default function SessionDetailScreen() {
               />
             </View>
           </TrackerSheet>
+          {scene ? (
+            <ShareSheet
+              visible={sharing}
+              scene={scene}
+              fileName={`forgeai-workout-${data.session.dateISO}`}
+              title="Share this workout"
+              onClose={() => setSharing(false)}
+            />
+          ) : null}
         </View>
       ) : (
         <EmptyState icon="dumbbell" title="Workout not found" body="This session may have been deleted." />

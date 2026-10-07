@@ -1,0 +1,123 @@
+# Phase 3 device QA, part E — a new kind of record live, the records on the finish screen,
+# the workout share picture through to Android's share menu, and the exercise page's
+# records card. Runs after part D.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 30000
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 20000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " pull-up"
+- hideKeyboard
+- tapOn:
+    text: "Add Pull[- ][Uu]p"
+    index: 0
+- extendedWaitUntil:
+    visible: "More for Pull[- ][Uu]p"
+    timeout: 15000
+# More pull-ups in one set than ever before: "Most reps" (a Phase 3 record kind).
+- tapOn:
+    text: "Reps, set 1"
+    below:
+      text: "More for Pull[- ][Uu]p"
+- inputText: " 40"
+- hideKeyboard
+- tapOn:
+    text: "Mark set complete"
+    below:
+      text: "More for Pull[- ][Uu]p"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "New record.*"
+    timeout: 3000
+- takeScreenshot: 60-most-reps-record
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- takeScreenshot: 61-finish-records
+- scrollUntilVisible:
+    element: "Share workout"
+    timeout: 20000
+- tapOn: "Share workout"
+- extendedWaitUntil:
+    visible: "Share picture"
+    timeout: 15000
+- takeScreenshot: 62-workout-share-picture
+- tapOn: "Share picture"
+# Android's share menu (the chooser) lists the apps that can take a picture.
+- extendedWaitUntil:
+    visible: '(?i).*(share|copy|nearby|messages|drive|gmail|files).*'
+    timeout: 20000
+- takeScreenshot: 63-android-share-menu
+- back
+- back
+- scrollUntilVisible:
+    element: "Done"
+    timeout: 20000
+- tapOn: "Done"
+# ---------------------------------------------------------------- exercise page records
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 20000
+- tapOn: "^Workout$"
+- tapOn: "Exercise library"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " pull-up"
+- hideKeyboard
+- tapOn:
+    text: "View Pull[- ][Uu]p"
+    index: 0
+- extendedWaitUntil:
+    visible: "How to do it"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Records"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Most reps"
+    timeout: 20000
+- takeScreenshot: 64-pull-up-records
+- back
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " bench press"
+- hideKeyboard
+- tapOn:
+    text: "View .*Bench Press.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "How to do it|Heaviest set"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Best set"
+    timeout: 20000
+- takeScreenshot: 65-bench-chart-by-date
+- scrollUntilVisible:
+    element: "Best session"
+    timeout: 20000
+- takeScreenshot: 66-bench-records

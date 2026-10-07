@@ -2,14 +2,13 @@
  * Per-exercise facts the workout screen needs when an exercise is added (Phase 1):
  *  - its own rest length (new `exercise_prefs` table, tracker schema v3);
  *  - the note from the last workout that had it (notes carry forward, Hevy-style);
- *  - the member's best weight and best e1RM so far (for live record alerts).
+ *  - the member's bests so far (for live record alerts; Phase 3: every record kind).
  *
- * Reads only; the frozen tables are untouched. The best-so-far query is the same
- * one the frozen record detector runs (`prRepo.checkAndRecordPrs`), so a live alert
- * and the saved record agree.
+ * Reads only; the frozen tables are untouched.
  */
 import { getDb } from '@/db';
 import type { PriorBests } from '@/tracker/services/liveRecords';
+import { getPriorRecordBests } from '@/tracker/services/recordsService';
 
 /** NULL = default rest, 0 = off, >0 = seconds. */
 export async function getExerciseRestSec(exerciseId: string): Promise<number | null> {
@@ -51,15 +50,11 @@ export async function getCarriedNote(exerciseId: string): Promise<string | null>
   return n ? n : null;
 }
 
-/** Best working-set weight and e1RM before now; null when there is no history. */
+/**
+ * The best of every record kind before now (Phase 3: heaviest, 1-rep max, best set, best
+ * session, most reps, longest time and distance); null when there is no history. Built by
+ * the same record rule as the finish screen, so the live pop-up and the saved record agree.
+ */
 export async function getPriorBests(exerciseId: string): Promise<PriorBests | null> {
-  const row = await getDb().getFirstAsync<{ best_weight: number | null; best_e1rm: number | null }>(
-    `SELECT MAX(se.weight_kg) AS best_weight,
-            MAX(se.weight_kg * (1 + se.reps / 30.0)) AS best_e1rm
-       FROM set_entries se
-      WHERE se.exercise_id = ? AND se.is_warmup = 0`,
-    [exerciseId],
-  );
-  if (row?.best_weight == null || row.best_e1rm == null) return null;
-  return { weightKg: row.best_weight, e1rm: row.best_e1rm };
+  return getPriorRecordBests(exerciseId);
 }

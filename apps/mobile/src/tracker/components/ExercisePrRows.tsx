@@ -1,5 +1,8 @@
-/** Personal records (heaviest weight, best est. 1RM) + xRM "Set Records" for one exercise. Tap a record → its session. */
-import { useMemo } from 'react';
+/**
+ * The exercise's records (Phase 3: every kind it keeps — heaviest weight, best 1-rep max,
+ * best set, best session, most reps, longest time, longest distance) + the xRM "Set Records"
+ * ladder for weight exercises. Tap a record → the workout it was set in.
+ */
 import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -8,15 +11,28 @@ import type { IconName } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
 import { kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { color, motion, space, type } from '@/theme/tokens';
+import { RECORD_LABEL, type RecordHit, type RecordKind } from '@/tracker/engine/records';
 import type { XrmRecord } from '@/tracker/services/exerciseAnalytics';
-import type { PersonalRecord, UnitSystem } from '@/types/models';
+import { recordDetailText, recordValueText, type RecordTextContext } from '@/tracker/services/recordText';
+import type { UnitSystem } from '@/types/models';
 
 export interface ExercisePrRowsProps {
-  prs: PersonalRecord[];
+  bests: RecordHit[];
+  ctx: RecordTextContext;
   ladder: XrmRecord[];
   units: UnitSystem;
   onOpenSession: (sessionId: string) => void;
 }
+
+const ICON: Record<RecordKind, IconName> = {
+  weight: 'trophy',
+  e1rm: 'trend',
+  best_set: 'dumbbell',
+  best_session: 'flame',
+  reps: 'target',
+  duration: 'clock',
+  distance: 'zap',
+};
 
 /** "12 Jun" for the current year, else "12 Jun 2024" (records can be old). */
 function recDate(iso: string): string {
@@ -25,32 +41,12 @@ function recDate(iso: string): string {
   return year === nowYear ? tinyDate(iso) : `${tinyDate(iso)} ${year}`;
 }
 
-function bestOf(list: PersonalRecord[], kind: PersonalRecord['kind']): PersonalRecord | null {
-  let best: PersonalRecord | null = null;
-  for (const p of list) {
-    if (p.kind === kind && (best === null || p.value > best.value)) best = p;
-  }
-  return best;
-}
-
-function RecordRow({
-  icon,
-  label,
-  value,
-  sub,
-  onPress,
-}: {
-  icon: IconName;
-  label: string;
-  value: string;
-  sub: string;
-  onPress: () => void;
-}) {
+function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label: string; value: string; sub: string; onPress: () => void }) {
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${label}, ${value}. Open session.`}
+      accessibilityLabel={`${label}, ${value}. Open the workout.`}
       style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm }}
     >
       <View
@@ -67,7 +63,9 @@ function RecordRow({
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{label}</Text>
-        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{sub}</Text>
+        <Text numberOfLines={1} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
+          {sub}
+        </Text>
       </View>
       <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>{value}</Text>
       <Icon name="chevron-right" size={16} color={color.inkMuted} />
@@ -75,47 +73,32 @@ function RecordRow({
   );
 }
 
-export function ExercisePrRows({ prs, ladder, units, onOpenSession }: ExercisePrRowsProps) {
+export function ExercisePrRows({ bests, ctx, ladder, units, onOpenSession }: ExercisePrRowsProps) {
   const unit = weightUnit(units);
-  const weightPr = useMemo(() => bestOf(prs, 'weight'), [prs]);
-  const e1rmPr = useMemo(() => bestOf(prs, 'e1rm'), [prs]);
-
-  if (weightPr === null && e1rmPr === null && ladder.length === 0) return null;
+  if (bests.length === 0 && ladder.length === 0) return null;
 
   return (
     <Animated.View entering={FadeInDown.duration(motion.slow).delay(160)} style={{ marginTop: space.xl }}>
       <SectionHeader title="Records" />
       <Card>
-        {weightPr ? (
-          <RecordRow
-            icon="trophy"
-            label="Heaviest weight"
-            value={`${trimNum(kgToDisplay(weightPr.weightKg, units))} ${unit}`}
-            sub={`${weightPr.reps} reps · ${recDate(weightPr.dateISO)}`}
-            onPress={() => onOpenSession(weightPr.sessionId)}
-          />
-        ) : null}
-        {e1rmPr ? (
-          <RecordRow
-            icon="trend"
-            label="Best est. 1RM"
-            value={`${trimNum(kgToDisplay(e1rmPr.value, units))} ${unit}`}
-            sub={recDate(e1rmPr.dateISO)}
-            onPress={() => onOpenSession(e1rmPr.sessionId)}
-          />
-        ) : null}
+        {bests.map((b) => {
+          const detail = recordDetailText(b, { ...ctx, units });
+          return (
+            <RecordRow
+              key={b.kind}
+              icon={ICON[b.kind]}
+              label={RECORD_LABEL[b.kind]}
+              value={recordValueText(b, { ...ctx, units })}
+              sub={detail ? `${detail} · ${recDate(b.dateISO)}` : recDate(b.dateISO)}
+              onPress={() => onOpenSession(b.sessionId)}
+            />
+          );
+        })}
 
         {ladder.length > 0 ? (
           <>
             <View style={{ height: 1, backgroundColor: color.border, marginVertical: space.sm }} />
-            <Text
-              style={{
-                fontFamily: type.heading,
-                fontSize: type.size.sub,
-                color: color.inkSecondary,
-                marginBottom: space.xs,
-              }}
-            >
+            <Text style={{ fontFamily: type.heading, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.xs }}>
               Set records
             </Text>
             {ladder.map((r) => (

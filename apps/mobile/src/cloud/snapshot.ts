@@ -66,6 +66,10 @@ const TABLES: readonly { name: string; cols: readonly string[] }[] = [
     cols: ['id', 'exercise_id', 'kind', 'value', 'weight_kg', 'reps', 'date_iso', 'session_id'],
   },
   { name: 'body_weight', cols: ['id', 'date_iso', 'weight_kg'] },
+  // Phase 3 (tracker schema v6). Older backups lack it → restored empty, like any table.
+  // `progress_photos` is deliberately NOT here: the pictures stay on this phone, and a
+  // restore must neither drop the member's photos nor bring back rows whose files are gone.
+  { name: 'body_measurements', cols: ['id', 'date_iso', 'kind', 'value'] },
   {
     name: 'meals',
     cols: ['id', 'date_iso', 'logged_at', 'description', 'calories', 'protein_g', 'carbs_g', 'fat_g', 'source', 'photo_uri'],

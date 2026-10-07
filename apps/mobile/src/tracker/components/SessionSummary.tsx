@@ -1,21 +1,23 @@
-/** Read-only session recap: stat tiles, new PRs, muscle split, per-exercise sets. */
+/** Read-only session recap: stat tiles, new records, muscle split, per-exercise sets. */
 import { Text, View } from 'react-native';
 
 import { HBarList } from '@/components/charts';
 import { Badge, Card, Icon, SectionHeader, StatTile } from '@/components/ui';
-import { fmtWeight, trimNum } from '@/lib/format';
+import { trimNum } from '@/lib/format';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { MUSCLE_LABEL } from '../catalog/muscles';
 import { fmtSetCompact, typedWeight, weightIsEach, repsPerSide } from '../engine/logTypes';
+import { RECORD_LABEL } from '../engine/records';
 import { fmtSets } from '../engine/volume';
 import { supersetLabel } from '../lib/superset';
 import { formatDuration } from '../services/finishSummary';
 import type { SessionSummaryData } from '../services/finishSummary';
+import { groupByExercise, recordValueText } from '../services/recordText';
 
 export function SessionSummary({ data }: { data: SessionSummaryData }) {
-  const { session, durationSec, totalVolumeKg, workingSetCount, exerciseCount, prs, muscles, setMeta, kinds, needsBodyweight } =
-    data;
+  const { session, durationSec, totalVolumeKg, workingSetCount, exerciseCount, muscles, setMeta, kinds, needsBodyweight } = data;
+  const records = data.records ?? [];
 
   return (
     <View style={{ gap: space.lg }}>
@@ -40,35 +42,26 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
         </Text>
       ) : null}
 
-      {/* new PRs */}
-      {prs.length > 0 ? (
+      {/* new records (Phase 3: all seven kinds), one row per exercise */}
+      {records.length > 0 ? (
         <Card>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginBottom: space.sm }}>
             <Icon name="trophy" size={18} color={color.accent} />
             <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-              {prs.length === 1 ? 'New personal record' : `${prs.length} new personal records`}
+              {records.length === 1 ? 'New personal record' : `${records.length} new personal records`}
             </Text>
           </View>
-          <View style={{ gap: space.sm }}>
-            {prs.map((pr, i) => (
-              <View
-                key={`${pr.exerciseName}-${pr.kind}-${i}`}
-                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
-              >
-                <Text
-                  numberOfLines={1}
-                  style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}
-                >
-                  {pr.exerciseName}
+          <View style={{ gap: space.md }}>
+            {groupByExercise(records).map((g) => (
+              <View key={g.exerciseId} style={{ gap: 6 }}>
+                <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+                  {g.exerciseName}
                 </Text>
-                <Badge
-                  label={
-                    pr.kind === 'weight'
-                      ? `${fmtWeight(pr.weightKg)} × ${pr.reps}`
-                      : `e1RM ${trimNum(pr.value)} kg`
-                  }
-                  tone="accent"
-                />
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                  {g.rows.map((r) => (
+                    <Badge key={r.kind} label={`${RECORD_LABEL[r.kind]} · ${recordValueText(r, r.info)}`} tone="accent" />
+                  ))}
+                </View>
               </View>
             ))}
           </View>

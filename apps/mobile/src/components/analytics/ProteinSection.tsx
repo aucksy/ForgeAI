@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { LineChart } from '@/components/charts';
 import { EmptyState } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
 import { fmtCompact, fmtInt } from '@/lib/format';
+import { DateLineChart } from '@/tracker/components/DateLineChart';
 import type { NutritionDay } from '@/types/models';
 
 import { HeaderStat, InspectReadout, Section } from './Section';
@@ -32,7 +32,7 @@ export function ProteinSection({ data, target, index }: ProteinSectionProps) {
   return (
     <Section title="Protein" index={index} right={right}>
       {hasData ? (
-        <LineChart
+        <DateLineChart
           data={points.map((d) => ({ x: d.dateISO, y: d.proteinG }))}
           fillGradient
           yFormat={(n) => `${fmtCompact(n)}g`}

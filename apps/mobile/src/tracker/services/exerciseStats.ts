@@ -13,6 +13,7 @@ import type { ExerciseProgressPoint, ExerciseStats } from '@/types/models';
 import { getBoundedExerciseHistory, type ExerciseHistoryEntry } from '../db/exerciseHistory';
 import { getTrackerExercise, type TrackerExercise } from '../db/exerciseInfo';
 import { distanceToUnit, fmtDistance, fmtDuration, isTimedCardio, type DistUnit, type LogType } from '../engine/logTypes';
+import { exerciseRecords, type ExerciseRecords, type RecordSession } from '../engine/records';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint } from '../engine/volume';
 import { bestSetVolumeSeries, type BestSetPoint } from './exerciseAnalytics';
 import { getBodyweightTimeline } from './volumeService';
@@ -40,6 +41,47 @@ export interface ExerciseOverview {
   series: OverviewSeries | null;
   /** Best single set per workout, by the same volume rule as the Volume chart. */
   bestSet: BestSetPoint[];
+  /** Phase 3: every record this exercise keeps (heaviest, best set, most reps, longest…). */
+  records: ExerciseRecords;
+}
+
+/**
+ * The exercise page's history (newest first, ordered by start time) as the record rule's
+ * workouts. PURE.
+ */
+export function recordSessionsFromHistory(history: readonly ExerciseHistoryEntry[]): RecordSession[] {
+  const n = history.length;
+  return history.map((h, i) => ({
+    sessionId: h.sessionId,
+    dateISO: h.dateISO,
+    // The list is already in start-time order; its position stands in for the time.
+    startedAt: n - i,
+    sets: h.sets.map((s) => ({
+      weightKg: s.weightKg,
+      reps: s.reps,
+      durationSec: s.durationSec ?? null,
+      distanceM: s.distanceM ?? null,
+      loadMode: s.loadMode ?? null,
+    })),
+  }));
+}
+
+/**
+ * Tiles that do not repeat the Records card (Phase 3): the card now carries most reps,
+ * longest time and longest distance with their dates, so only the other facts stay as
+ * tiles — least help, best pace, all-time distance, the busiest workout, and the count. PURE.
+ */
+export function tilesBesideRecords(tiles: readonly OverviewTile[], logType: LogType): OverviewTile[] {
+  const repeated: Record<LogType, readonly string[]> = {
+    weight_reps: [],
+    weighted: [],
+    reps: ['Best set', 'Most in a workout'],
+    assisted: ['Most reps'],
+    time: ['Longest hold', 'Longest'],
+    distance: ['Longest'],
+    time_distance: ['Longest'],
+  };
+  return tiles.filter((t) => !repeated[logType].includes(t.label));
 }
 
 const round1 = (n: number): number => Math.round(n * 10) / 10;
@@ -215,6 +257,7 @@ export async function getExerciseOverview(exerciseId: string): Promise<ExerciseO
   ]);
   if (!exercise) return null;
   const history = historyWithVolume(raw, exercise, bw);
+  const records = exerciseRecords(recordSessionsFromHistory(history), exercise, bw);
   const weighty = exercise.logType === 'weight_reps' || exercise.logType === 'weighted';
   if (weighty) {
     return {
@@ -224,10 +267,11 @@ export async function getExerciseOverview(exerciseId: string): Promise<ExerciseO
       tiles: [],
       series: null,
       bestSet: bestSetSeriesFor(history, exercise, bw),
+      records,
     };
   }
   const { tiles, series } = typedOverview(exercise.logType, history, exercise.distUnit, {
     cardio: isTimedCardio(exercise.logType, exercise.muscles.primary),
   });
-  return { exercise, history, weightStats: null, tiles, series, bestSet: [] };
+  return { exercise, history, weightStats: null, tiles: tilesBesideRecords(tiles, exercise.logType), series, bestSet: [], records };
 }

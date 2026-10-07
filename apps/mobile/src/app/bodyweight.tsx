@@ -3,13 +3,14 @@ import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Text, TextInput, View } from 'react-native';
 
-import { DeltaPill, LineChart } from '@/components/charts';
+import { DeltaPill } from '@/components/charts';
 import { AnimatedNumber, Card, EmptyState, IconButton, PrimaryButton, Screen, SectionHeader, Skeleton } from '@/components/ui';
 import { getBodyWeightHistory, logBodyWeight } from '@/db/repos/userRepo';
 import { shortDate, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { success } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
+import { DateLineChart } from '@/tracker/components/DateLineChart';
 import type { BodyWeightEntry } from '@/types/models';
 
 const noopInspect = () => {
@@ -141,7 +142,7 @@ export default function BodyWeightScreen() {
                   {history.length >= 2 ? <DeltaPill value={delta} suffix=" kg" /> : null}
                 </View>
                 {history.length >= 2 ? (
-                  <LineChart
+                  <DateLineChart
                     data={history.map((d) => ({ x: d.dateISO, y: d.weightKg }))}
                     fillGradient
                     yFormat={(n) => trimNum(n)}

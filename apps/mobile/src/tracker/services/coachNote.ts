@@ -23,7 +23,9 @@ import { fmtInt, trimNum } from '@/lib/format';
 import { useSettings } from '@/store/settingsStore';
 import type { SessionDetail } from '@/types/models';
 
+import { RECORD_LABEL } from '../engine/records';
 import { dayTypeLabel } from './finishSummary';
+import { recordValueText } from './recordText';
 import { withVolume } from './volumeService';
 import type { SessionSummaryData } from './finishSummary';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
@@ -52,6 +54,12 @@ export function buildSessionNote(
   if (e1rmPrs.length > 0) {
     const p = e1rmPrs[0];
     return `Estimated-1RM PR on ${p.exerciseName} today — you got stronger even without a heavier top set. Keep feeding it.`;
+  }
+  // Phase 3: the other record kinds — most reps, best set, best session, longest time or distance.
+  const other = (data.records ?? []).find((r) => r.kind !== 'weight' && r.kind !== 'e1rm');
+  if (other) {
+    const value = recordValueText(other, other.info);
+    return `${RECORD_LABEL[other.kind]} on ${other.exerciseName}: ${value}. That's a new record — keep stacking them.`;
   }
 
   // 2) Volume vs the last time you trained this day type.
@@ -111,6 +119,14 @@ function factSheet(data: SessionSummaryData, prevSameType: SessionDetail | null)
     lines.push(
       `PRs today: ${data.prs
         .map((p) => `${p.exerciseName} ${trimNum(p.value)} ${p.kind === 'e1rm' ? 'est-1RM' : 'kg'}`)
+        .join('; ')}`,
+    );
+  }
+  const others = (data.records ?? []).filter((r) => r.kind !== 'weight' && r.kind !== 'e1rm');
+  if (others.length > 0) {
+    lines.push(
+      `Other records today: ${others
+        .map((r) => `${r.exerciseName} ${RECORD_LABEL[r.kind].toLowerCase()} ${recordValueText(r, r.info)}`)
         .join('; ')}`,
     );
   }

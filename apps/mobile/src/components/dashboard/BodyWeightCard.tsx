@@ -1,9 +1,10 @@
 import { Text, View } from 'react-native';
 
-import { DeltaPill, Sparkline } from '@/components/charts';
+import { DeltaPill } from '@/components/charts';
 import { AnimatedNumber, Card } from '@/components/ui';
 import { kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { chart, color, space, type } from '@/theme/tokens';
+import { DateSparkline } from '@/tracker/components/DateSparkline';
 import type { UnitSystem } from '@/types/models';
 
 interface BodyWeightCardProps {
@@ -69,8 +70,8 @@ export function BodyWeightCard({ weightKg, trend, unitSystem }: BodyWeightCardPr
       </View>
 
       <View style={{ width: CHART_W, alignItems: 'flex-end' }}>
-        <Sparkline
-          data={trend.map((t) => t.weightKg)}
+        <DateSparkline
+          data={trend.map((t) => ({ x: t.dateISO, y: t.weightKg }))}
           width={CHART_W}
           height={CHART_H}
           color={LINE_COLOR}

@@ -1,5 +1,11 @@
+export { BodyMapSection } from './BodyMapSection';
+export type { BodyMapSectionProps } from './BodyMapSection';
 export { BodyWeightSection } from './BodyWeightSection';
 export type { BodyWeightSectionProps } from './BodyWeightSection';
+export { ReportsCard } from './ReportsCard';
+export type { ReportsCardProps } from './ReportsCard';
+export { useProgressExtras } from './useProgressExtras';
+export type { ProgressExtras } from './useProgressExtras';
 export { CaloriesSection } from './CaloriesSection';
 export type { CaloriesSectionProps } from './CaloriesSection';
 export { ConsistencySection } from './ConsistencySection';
