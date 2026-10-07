@@ -137,6 +137,18 @@ describe('saveSessionEdits', () => {
     expect(at).toBeLessThan(indexOfMatch('addSetsWithMeta'));
   });
 
+  it('Phase 4 review (MED 6): an easy-week workout keeps no PR rows after an edit', async () => {
+    await saveSessionEdits('sess-1', edits());
+    // Re-detection (addSetsWithMeta) writes PR rows; for an easy-week workout they go again,
+    // inside the same transaction.
+    const at = h.state.calls.findIndex(
+      (c, i) => i > h.state.addSetsAt && c.sql.includes('DELETE FROM personal_records') && c.sql.includes('easy_week = 1'),
+    );
+    expect(at).toBeGreaterThan(h.state.addSetsAt);
+    expect(at).toBeLessThan(sqls().indexOf('COMMIT'));
+    expect(h.state.calls[at].params).toEqual(['sess-1', 'sess-1']);
+  });
+
   it('writes the exact new set list through the frozen path', async () => {
     const sets = [row('ex-bench'), row('ex-row', { weightKg: 70, reps: 10 })];
     await saveSessionEdits('sess-1', edits({ sets }));

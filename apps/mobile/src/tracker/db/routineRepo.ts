@@ -11,6 +11,7 @@
 import { getDb } from '@/db';
 import { getExerciseById } from '@/db/repos/exerciseRepo';
 import { getActivePlan } from '@/db/repos/planRepo';
+import { getRoutineAnywhere } from '@/tracker/db/folderRepo';
 import { getProfile } from '@/db/repos/userRepo';
 import { defaultRepRange } from '@/tracker/engine/repRanges';
 import type { PlanDayFull } from '@/db/repos/planRepo';
@@ -60,17 +61,21 @@ export async function listRoutines(): Promise<PlanDayFull[]> {
   return active ? active.days : [];
 }
 
-/** One routine (day) with its exercises, or null. */
+/**
+ * One routine (day) with its exercises, or null. Phase 4: from ANY folder — a routine in a
+ * folder the member does not follow still opens, starts and gets its Target line.
+ */
 export async function getRoutine(dayId: string): Promise<PlanDayFull | null> {
-  const active = await getActivePlan();
-  if (!active) return null;
-  return active.days.find((d) => d.id === dayId) ?? null;
+  return getRoutineAnywhere(dayId);
 }
 
-/** Create a new empty routine at the end of the active plan; returns its id. */
-export async function createRoutine(input: { name: string; dayType: DayType }): Promise<string> {
+/**
+ * Create a new empty routine at the end of a folder (the followed one when none is given);
+ * returns its id.
+ */
+export async function createRoutine(input: { name: string; dayType: DayType; folderId?: string | null }): Promise<string> {
   const db = getDb();
-  const planId = await ensureActivePlanId();
+  const planId = input.folderId ?? (await ensureActivePlanId());
   const maxRow = await db.getFirstAsync<{ max_o: number | null }>(
     'SELECT MAX(day_order) AS max_o FROM plan_days WHERE plan_id = ?',
     [planId],
@@ -108,15 +113,15 @@ export async function deleteRoutine(dayId: string): Promise<void> {
   await getDb().runAsync('DELETE FROM plan_days WHERE id = ?', [dayId]);
 }
 
-/** Clone a routine (name + " (copy)") with all its exercises; returns the new id. */
+/** Clone a routine (name + " (copy)") with all its exercises, in the same folder; returns the new id. */
 export async function duplicateRoutine(dayId: string): Promise<string> {
   const db = getDb();
-  const day = await db.getFirstAsync<{ day_type: string; name: string }>(
-    'SELECT day_type, name FROM plan_days WHERE id = ?',
+  const day = await db.getFirstAsync<{ day_type: string; name: string; plan_id: string }>(
+    'SELECT day_type, name, plan_id FROM plan_days WHERE id = ?',
     [dayId],
   );
   if (!day) throw new Error(`Routine not found: ${dayId}`);
-  const newId = await createRoutine({ name: `${day.name} (copy)`, dayType: day.day_type as DayType });
+  const newId = await createRoutine({ name: `${day.name} (copy)`, dayType: day.day_type as DayType, folderId: day.plan_id });
   const exRows = await db.getAllAsync<{
     exercise_id: string;
     ex_order: number;
@@ -223,6 +228,14 @@ export async function updateRoutineExercise(
   }
   if (sets.length === 0) return;
   await getDb().runAsync(`UPDATE plan_exercises SET ${sets.join(', ')} WHERE id = ?`, [...args, peId]);
+}
+
+/**
+ * Phase 4 swap "for good": another exercise takes this one's place in the routine, with the
+ * same sets and rep range (the member's own numbers are never reset).
+ */
+export async function replaceRoutineExercise(peId: string, exerciseId: string): Promise<void> {
+  await getDb().runAsync('UPDATE plan_exercises SET exercise_id = ? WHERE id = ?', [exerciseId, peId]);
 }
 
 /** Remove an exercise from a routine. */

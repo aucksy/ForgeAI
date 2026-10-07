@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 6;
+export const TRACKER_SCHEMA_VERSION = 7;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -97,6 +97,15 @@ export async function initTrackerSchema(): Promise<void> {
      )`,
   );
   await getDb().execAsync('CREATE INDEX IF NOT EXISTS idx_progress_photos_date ON progress_photos(date_iso)');
+  // v7 (Phase 4 routines and plans). A routine FOLDER is a `workout_plans` row (the plan the
+  // member follows is the active one — the frozen rotation reads it as before); its place in
+  // the list, where it came from ('program' / 'builder' / 'import'; NULL = the member's own)
+  // and its settings (JSON: easy-week schedule, start day, the builder's answers). A workout
+  // done in an easy week is marked, so records and the Target leave it out.
+  await ensureColumn('workout_plans', 'folder_order', 'INTEGER');
+  await ensureColumn('workout_plans', 'source', 'TEXT');
+  await ensureColumn('workout_plans', 'settings', 'TEXT');
+  await ensureColumn('workout_sessions', 'easy_week', 'INTEGER');
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }

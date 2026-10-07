@@ -9,6 +9,8 @@
  *    exercise (remembered for next time).
  *  - Notes carry forward from the last workout with this exercise.
  *  - Sets that beat the member's history get a medal as they are ticked.
+ * Phase 4: "Swap exercise" in the menu — for this workout only, before a set is ticked,
+ * to one that fits the plan's equipment and sore areas. The routine stays as it is.
  */
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, Text, TextInput, View } from 'react-native';
@@ -22,7 +24,10 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { columnHeads, LOAD_MODE_LABEL, LOAD_MODES, repsPerSide, weightIsEach } from '@/tracker/engine/logTypes';
 import { targetBadge, targetFill, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
 
+import { exerciseIdsForKeys } from '../db/folderRepo';
 import { supersetLabel } from '../lib/superset';
+import { alternativesFor, type Alternative } from '../plans/builder';
+import { swapContextFor } from '../services/plansService';
 import { earlierCards, liveRecordFlags } from '../services/liveRecords';
 import { effectiveRestSec, fmtRest } from '../services/restRules';
 import { computeWarmups } from '../services/warmupMath';
@@ -38,6 +43,7 @@ import { RestPickerSheet } from './RestPickerSheet';
 import { afterTick, SetRow } from './SetRow';
 import { SetTypeSheet } from './SetTypeSheet';
 import { SupersetSheet } from './SupersetSheet';
+import { SwapSheet } from './SwapSheet';
 import { Glyph } from './TrackerGlyph';
 import { SheetRow, TrackerSheet } from './TrackerSheet';
 
@@ -50,7 +56,7 @@ const BADGE_TONE: Record<NonNullable<ReturnType<typeof targetBadge>>, BadgeProps
 };
 
 
-type SheetName = 'menu' | 'rest' | 'plates' | 'superset' | 'counting' | 'demo' | null;
+type SheetName = 'menu' | 'rest' | 'plates' | 'superset' | 'counting' | 'demo' | 'swap' | null;
 
 /** Dumbbell-style exercises get the "Counting" choice (how the typed weight counts). */
 function hasCountingChoice(ex: Pick<DraftExercise, 'equipment' | 'logType' | 'loadMode'>): boolean {
@@ -86,6 +92,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const deleteSetWithUndo = useActiveWorkout((s) => s.deleteSetWithUndo);
   const setLoadMode = useActiveWorkout((s) => s.setLoadMode);
   const swapExercise = useActiveWorkout((s) => s.swapExercise);
+  // Phase 4: an easy week stays out of records — no medals on its sets.
+  const easyWeek = useActiveWorkout((s) => s.easyWeek);
   const completeTimedSet = useActiveWorkout((s) => s.completeTimedSet);
   // Phase 3 review: the same lift on a card higher up counts toward this card's medals.
   // Shallow-compared, so a card re-renders only when one of those cards changes.
@@ -97,6 +105,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const [typeFor, setTypeFor] = useState<string | null>(null);
   const [timerFor, setTimerFor] = useState<string | null>(null);
   const [showWhy, setShowWhy] = useState(false);
+  const [swapOptions, setSwapOptions] = useState<Alternative[]>([]);
 
   // Phase 2: how this exercise is logged and counted (older drafts: weight × reps, as typed).
   const logType = exercise.logType ?? 'weight_reps';
@@ -142,7 +151,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
 
   // Per-row derived values, memoised on the exercise object (rebuilt only on edit).
   const rows = useMemo(() => {
-    const flags = liveRecordFlags(exercise, earlier);
+    const flags = easyWeek ? new Map<string, never>() : liveRecordFlags(exercise, earlier);
     let working = 0;
     return exercise.sets.map((s) => {
       // PREVIOUS aligns by WORKING-set ordinal (previousSets excludes warm-ups),
@@ -159,7 +168,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       }
       return { set: s, label, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
     });
-  }, [exercise, fillTarget, earlier]);
+  }, [exercise, fillTarget, earlier, easyWeek]);
 
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
   const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);
@@ -180,6 +189,37 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     }
     const ok = await swapExercise(exercise.key, next);
     if (!ok) Alert.alert('Already started', 'Finish this exercise as it is. Try the other version next time.');
+  };
+
+  // Phase 4: swap for today — only before a set is ticked, only a library exercise.
+  const canSwapToday = exercise.catalogKey != null && !exercise.sets.some((s) => s.done);
+  const onOpenSwap = async (): Promise<void> => {
+    const key = exercise.catalogKey;
+    if (!key) return;
+    const st = useActiveWorkout.getState();
+    const ctx = await swapContextFor(st.planDayId).catch(() => null);
+    const exclude = st.exercises.flatMap((e) => (e.catalogKey ? [e.catalogKey] : []));
+    setSwapOptions(
+      alternativesFor(key, {
+        level: ctx?.level ?? 'intermediate',
+        exclude,
+        equipment: ctx?.equipment ?? 'gym',
+        sore: ctx?.sore ?? [],
+        avoid: ctx?.avoid ?? [],
+      }),
+    );
+    setSheet('swap');
+  };
+  const onPickSwap = async (a: Alternative): Promise<void> => {
+    setSheet(null);
+    const id = (await exerciseIdsForKeys([a.key]).catch(() => new Map<string, string>())).get(a.key);
+    const next = id ? await getExerciseById(id).catch(() => null) : null;
+    if (!next) {
+      Alert.alert('Could not swap', 'Please try again.');
+      return;
+    }
+    const ok = await swapExercise(exercise.key, next);
+    if (!ok) Alert.alert('Already started', 'Finish this exercise as it is. Swap it next time.');
   };
 
   const confirmRemove = (): void => {
@@ -463,6 +503,17 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             leading={<Icon name="zap" size={20} color={color.accent} />}
             onPress={() => openAfterMenu('superset')}
           />
+          {canSwapToday ? (
+            <SheetRow
+              label="Swap exercise"
+              value="This workout"
+              leading={<Glyph name="swap" size={20} color={color.accent} />}
+              onPress={() => {
+                setSheet(null);
+                setTimeout(() => void onOpenSwap(), 260);
+              }}
+            />
+          ) : null}
           <SheetRow
             label="Remove exercise"
             danger
@@ -488,6 +539,14 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         onClose={() => setSheet(null)}
       />
       <PlateCalcSheet visible={sheet === 'plates'} initialKg={workingWeight ?? 0} onClose={() => setSheet(null)} />
+      <SwapSheet
+        visible={sheet === 'swap'}
+        name={exercise.name}
+        options={swapOptions}
+        note="For this workout only. Your routine stays."
+        onClose={() => setSheet(null)}
+        onPick={(a) => void onPickSwap(a)}
+      />
       <SupersetSheet
         visible={sheet === 'superset'}
         currentGroup={group}

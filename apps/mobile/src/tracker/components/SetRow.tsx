@@ -114,7 +114,8 @@ export function afterTick(exKey: string, setKey: string): void {
 
   // Phase 3 review: the pop-up counts the same lift on other cards, and stays quiet for a set
   // already beaten by another ticked set (the medal still follows set order).
-  const hit = toastHit(st.exercises, exKey, setKey);
+  // Phase 4: an easy week stays out of records, so it never claims one.
+  const hit = st.easyWeek ? null : toastHit(st.exercises, exKey, setKey);
   if (hit) {
     success();
     playWorkoutSound('record');

@@ -1,0 +1,343 @@
+# v0.26.0 device QA, part G — Phase 4 routines and plans (runs after parts A–F, on the demo
+# member: muscle, intermediate, the demo "Push Pull Legs — 6 Day" plan).
+# Ready programs → follow one → the plan builder (Upper / Lower, 4 days, dumbbells only, a sore
+# knee, leave out Goblet Squat) → swap in the plan → follow it → the routine editor: swap for
+# good, share as text, move to another folder → share a folder as a file → back on the demo
+# plan: easy weeks on, take one now → the easy workout (half the sets, no record pop-up, swap
+# for today) → train normally → open a routine file someone shared.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 30000
+- tapOn: "^Routines$"
+- extendedWaitUntil:
+    visible: "Ready programs"
+    timeout: 20000
+- takeScreenshot: 80-routines-folders
+# ---------------------------------------------------------------- ready programs
+- tapOn: "Ready programs"
+- extendedWaitUntil:
+    visible: "Full Body Basics.*"
+    timeout: 15000
+- takeScreenshot: 81-programs
+- scrollUntilVisible:
+    element: "Dumbbell Full Body,.*"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Dumbbell Full Body,.*"
+- extendedWaitUntil:
+    visible: "Follow this program"
+    timeout: 15000
+- takeScreenshot: 82-program-dumbbell
+- tapOn: "Follow this program"
+# Easy weeks start on (the open owner decision's default): week 1, the easy one in week 6.
+- extendedWaitUntil:
+    visible: "Dumbbell Full Body, 2 routines, your plan, Week 1 · easy week in week 6"
+    timeout: 20000
+- takeScreenshot: 83-program-followed
+# Routines sits above the tabs (no tab bar): Back returns to the Workout tab.
+- back
+- extendedWaitUntil:
+    visible: "Today: Full Body [AB]"
+    timeout: 20000
+- assertVisible: "Week 1 · easy week in week 6"
+- takeScreenshot: 84-workout-today-program
+# ---------------------------------------------------------------- the plan builder
+- tapOn: "^Routines$"
+- extendedWaitUntil:
+    visible: "Build a plan"
+    timeout: 20000
+- tapOn: "Build a plan"
+- extendedWaitUntil:
+    visible: "Build my plan"
+    timeout: 15000
+- waitForAnimationToEnd
+- tapOn: "^4$"
+- tapOn: "^Upper / Lower$"
+- tapOn: "^Dumbbells only$"
+- scrollUntilVisible:
+    element: "^Knee$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Knee$"
+- tapOn: "Choose exercises to leave out"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 15000
+- tapOn: "Search exercises"
+- inputText: " goblet"
+- hideKeyboard
+- tapOn:
+    text: "Leave out Goblet Squat"
+    index: 0
+- extendedWaitUntil:
+    visible: "Keep Goblet Squat"
+    timeout: 5000
+- takeScreenshot: 85-leave-out-picker
+- tapOn: "^Done$"
+- scrollUntilVisible:
+    element: "Goblet Squat ✕"
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: 86-builder-answers
+- scrollUntilVisible:
+    element: "Build my plan"
+    timeout: 15000
+- tapOn: "Build my plan"
+- extendedWaitUntil:
+    visible: "Follow this plan"
+    timeout: 15000
+- assertVisible: "Upper / Lower · 4 days"
+- assertVisible: "Without a pull-up bar, rows stand in for pull-ups."
+- takeScreenshot: 87-built-plan
+- tapOn: "Swap Dumbbell Floor Press"
+- extendedWaitUntil:
+    visible: "Swap to Push-Up.*"
+    timeout: 10000
+- takeScreenshot: 88-plan-swap-sheet
+- tapOn: "Swap to Push-Up.*"
+- extendedWaitUntil:
+    visible: "Swap Push-Up"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Dumbbell Squat"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: 89-plan-lower-no-goblet
+- scrollUntilVisible:
+    element: "Routines, more information"
+    direction: UP
+    timeout: 20000
+- tapOn: "Routines, more information"
+- assertVisible: "Body-weight moves get harder in steps.*"
+- takeScreenshot: 90-plan-ladder-info
+- scrollUntilVisible:
+    element: "Follow this plan"
+    direction: UP
+    timeout: 20000
+- tapOn: "Follow this plan"
+- extendedWaitUntil:
+    visible: "Upper / Lower · 4 days, 4 routines, your plan.*"
+    timeout: 20000
+- takeScreenshot: 91-built-plan-followed
+# ---------------------------------------------------------------- the routine editor
+- tapOn: "Edit Upper A"
+- extendedWaitUntil:
+    visible: "Edit routine"
+    timeout: 15000
+# The member's library may name it "Push-up" or "Push Up".
+- tapOn: "Swap Push[- ][Uu]p"
+- extendedWaitUntil:
+    visible: "In this routine from now on. Your sets and reps stay."
+    timeout: 10000
+- takeScreenshot: 92-routine-swap-sheet
+- tapOn:
+    text: "Swap to .*"
+    index: 0
+- extendedWaitUntil:
+    notVisible: "Swap Push[- ][Uu]p"
+    timeout: 10000
+- takeScreenshot: 93-routine-swapped
+- tapOn: "More for this routine"
+- extendedWaitUntil:
+    visible: "Share routine"
+    timeout: 10000
+- takeScreenshot: 94-routine-menu
+- tapOn: "Share routine"
+- extendedWaitUntil:
+    visible: "Send as text"
+    timeout: 10000
+- tapOn: "Send as text"
+# Android's share menu.
+- extendedWaitUntil:
+    visible: '(?i).*(share|copy|nearby|messages|drive|gmail|files).*'
+    timeout: 20000
+- takeScreenshot: 95-share-text
+- back
+- tapOn: "More for this routine"
+- tapOn: "Move to folder"
+- extendedWaitUntil:
+    visible: "Dumbbell Full Body, 2 routines"
+    timeout: 10000
+- tapOn: "Dumbbell Full Body, 2 routines"
+- extendedWaitUntil:
+    visible: ".*· Dumbbell Full Body"
+    timeout: 10000
+- takeScreenshot: 96-routine-moved
+- tapOn: "Close"
+# ---------------------------------------------------------------- share a folder as a file
+- extendedWaitUntil:
+    visible: "More for Upper / Lower · 4 days"
+    timeout: 15000
+- tapOn: "More for Upper / Lower · 4 days"
+- tapOn: "Share folder"
+- extendedWaitUntil:
+    visible: "Send as a file"
+    timeout: 10000
+- tapOn: "Send as a file"
+- extendedWaitUntil:
+    visible: '(?i).*(share|copy|nearby|messages|drive|gmail|files).*'
+    timeout: 20000
+- takeScreenshot: 97-share-file
+- back
+# ---------------------------------------------------------------- an easy week on the demo plan
+- scrollUntilVisible:
+    element: "More for Push Pull Legs — 6 Day"
+    centerElement: true
+    timeout: 20000
+- tapOn: "More for Push Pull Legs — 6 Day"
+- tapOn: "Follow this plan, Today's workout"
+- extendedWaitUntil:
+    visible: "Push Pull Legs — 6 Day, .* routines, your plan, Week 1"
+    timeout: 15000
+- tapOn: "More for Push Pull Legs — 6 Day"
+- tapOn: "Easy week every 6 weeks, Off"
+- extendedWaitUntil:
+    visible: "Push Pull Legs — 6 Day, .*, Week 1 · easy week in week 6"
+    timeout: 15000
+- tapOn: "More for Push Pull Legs — 6 Day"
+- extendedWaitUntil:
+    visible: "Take an easy week now"
+    timeout: 10000
+- takeScreenshot: 98-folder-menu
+- tapOn: "Take an easy week now"
+- extendedWaitUntil:
+    visible: "Push Pull Legs — 6 Day, .*, Easy week this week"
+    timeout: 15000
+- back
+# Part F logged a "full" workout today, so this push/pull/legs plan has no "Today" now. The
+# easy-week note and "Train normally this week" must still show (review, HIGH 2).
+- extendedWaitUntil:
+    visible: "Easy week: half the sets, the same weights.*"
+    timeout: 20000
+- assertVisible: "Train normally this week"
+- takeScreenshot: 99-workout-easy-week
+# Start a routine of the plan from Routines.
+- tapOn: "^Routines$"
+- extendedWaitUntil:
+    visible: "Start routine"
+    timeout: 15000
+- tapOn:
+    text: "Start routine"
+    index: 0
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Easy week: half the sets, the same weights.*"
+    timeout: 30000
+- assertVisible: "Target Easy week.*"
+- takeScreenshot: 100-easy-workout
+# A huge weight is a record in a normal week (part A); an easy week never claims one.
+- tapOn:
+    text: "Weight in kilograms, set 1"
+    index: 0
+- eraseText
+- inputText: " 300"
+- hideKeyboard
+- tapOn:
+    text: "Mark set complete"
+    index: 0
+    waitToSettleTimeoutMs: 300
+# The pop-up would show at once and stay 3.5 s; look 1.5 s later.
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertNotVisible: "New record.*"
+- takeScreenshot: 101-easy-no-record
+- tapOn:
+    text: "Skip rest"
+    optional: true
+# Swap for today: a library exercise added now (nothing ticked on it yet).
+- scrollUntilVisible:
+    element: "Add exercise"
+    timeout: 20000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " push-up"
+- hideKeyboard
+- tapOn:
+    text: "Add Push[- ][Uu]p"
+    index: 0
+- extendedWaitUntil:
+    visible: "More for Push[- ][Uu]p"
+    timeout: 15000
+- tapOn: "More for Push[- ][Uu]p"
+- tapOn: "Swap exercise, This workout"
+- extendedWaitUntil:
+    visible: "For this workout only. Your routine stays."
+    timeout: 10000
+- takeScreenshot: 102-swap-today-sheet
+- tapOn:
+    text: "Swap to .*"
+    index: 0
+- extendedWaitUntil:
+    notVisible: "More for Push[- ][Uu]p"
+    timeout: 10000
+- takeScreenshot: 103-swapped-today
+# Finish: saved as an easy-week workout, so the 300 kg set is no record (and no "update the
+# routine?" question: half the sets is not a new plan).
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- takeScreenshot: 104-easy-finish
+- scrollUntilVisible:
+    element: "Done"
+    timeout: 20000
+- tapOn: "Done"
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 20000
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Train normally this week"
+    timeout: 15000
+- tapOn: "Train normally this week"
+- extendedWaitUntil:
+    notVisible: "Easy week: half the sets, the same weights.*"
+    timeout: 15000
+- takeScreenshot: 105-trained-normally
+# ---------------------------------------------------------------- open a shared routine file
+- tapOn: "^Routines$"
+- extendedWaitUntil:
+    visible: "Add a routine, folder or file"
+    timeout: 15000
+- tapOn: "Add a routine, folder or file"
+- tapOn: "Import a routine file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-shared).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-shared.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- takeScreenshot: 106-file-picker
+- tapOn: "qa-shared.*"
+- extendedWaitUntil:
+    visible: "Routines added"
+    timeout: 20000
+- assertVisible: "New in your library: Sam's Band Pull.*"
+- takeScreenshot: 107-import-done
+- tapOn: "(?i)^ok$"
+- scrollUntilVisible:
+    element: "Shared by Sam, 1 routine.*"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: 108-imported-folder

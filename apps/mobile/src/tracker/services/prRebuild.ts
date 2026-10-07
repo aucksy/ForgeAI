@@ -36,7 +36,7 @@ export async function reconcilePrsForExercises(exerciseIds: string[]): Promise<v
     const byWeight = await db.getFirstAsync<{ session_id: string }>(
       `SELECT se.session_id AS session_id
        FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
-       WHERE se.exercise_id = ? AND se.is_warmup = 0
+       WHERE se.exercise_id = ? AND se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0
        ORDER BY se.weight_kg DESC, ws.started_at ASC LIMIT 1`,
       [exerciseId],
     );
@@ -44,7 +44,7 @@ export async function reconcilePrsForExercises(exerciseIds: string[]): Promise<v
     const byE1rm = await db.getFirstAsync<{ session_id: string }>(
       `SELECT se.session_id AS session_id
        FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
-       WHERE se.exercise_id = ? AND se.is_warmup = 0
+       WHERE se.exercise_id = ? AND se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0
        ORDER BY (se.weight_kg * (1 + se.reps / 30.0)) DESC, ws.started_at ASC LIMIT 1`,
       [exerciseId],
     );

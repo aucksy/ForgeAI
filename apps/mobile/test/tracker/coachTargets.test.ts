@@ -30,6 +30,10 @@ vi.mock('@/db/repos/userRepo', () => ({ getProfile: async () => ({ experience: '
 vi.mock('@/db/repos/planRepo', () => ({
   getActivePlan: async () => ({ days: [{ id: 'd1', exercises: plan }] }),
 }));
+// Phase 4: a routine's Target is read from any folder, not only the followed plan.
+vi.mock('@/tracker/db/folderRepo', () => ({
+  getRoutineAnywhere: async (id: string) => (id === 'd1' ? { id: 'd1', exercises: plan } : null),
+}));
 vi.mock('@/services/coach', () => ({
   getTodaysWorkout: async () => ({
     planDayId: 'd1',

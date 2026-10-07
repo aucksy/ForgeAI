@@ -60,6 +60,8 @@ export interface ExerciseHistoryEntry {
   dateISO: string;
   sets: TrackedSetEntry[];
   volumeKg: number;
+  /** Phase 4: a workout of a plan's easy week (absent = a normal one). */
+  easyWeek?: boolean;
 }
 
 interface HistoryRow {
@@ -74,6 +76,7 @@ interface HistoryRow {
   duration_sec: number | null;
   distance_m: number | null;
   load_mode: string | null;
+  easy_week: number | null;
 }
 
 function mapSet(r: HistoryRow): TrackedSetEntry {
@@ -95,30 +98,38 @@ function mapSet(r: HistoryRow): TrackedSetEntry {
 
 /** Columns of the frozen `SetRow` shape, plus the session's date and Phase 2's time/distance. */
 const COLS = `se.id, se.session_id, se.exercise_id, se.set_number, se.weight_kg, se.reps,
-              se.is_warmup, ws.date_iso AS date_iso, se.duration_sec, se.distance_m, se.load_mode`;
+              se.is_warmup, ws.date_iso AS date_iso, se.duration_sec, se.distance_m, se.load_mode,
+              ws.easy_week AS easy_week`;
 
 const ORDER = 'ORDER BY ws.started_at DESC, ws.date_iso DESC, se.set_number ASC';
 
 /**
  * Working sets only, grouped per session, newest first — the frozen
  * `getExerciseHistory` contract with the limit resolved in SQLite.
+ *
+ * Phase 4: `skipEasy` leaves out easy-week workouts (PREVIOUS is the last NORMAL workout);
+ * otherwise each entry says whether it was one, so charts and records can leave it out
+ * while the history list still shows it.
  */
 export async function getBoundedExerciseHistory(
   exerciseId: string,
   limit?: number,
+  opts: { skipEasy?: boolean } = {},
 ): Promise<ExerciseHistoryEntry[]> {
   // The frozen fn's JS trim yields nothing for a non-positive limit; don't emit
   // `LIMIT 0`/`LIMIT -1` (SQLite reads a negative limit as "no limit").
   if (limit != null && limit <= 0) return [];
 
   const db = getDb();
+  const easy = opts.skipEasy ? 'AND COALESCE(ws.easy_week, 0) = 0' : '';
+  const easy2 = opts.skipEasy ? 'AND COALESCE(w2.easy_week, 0) = 0' : '';
   const rows =
     limit == null
       ? await db.getAllAsync<HistoryRow>(
           `SELECT ${COLS}
              FROM set_entries se
              JOIN workout_sessions ws ON ws.id = se.session_id
-            WHERE se.exercise_id = ? AND se.is_warmup = 0
+            WHERE se.exercise_id = ? AND se.is_warmup = 0 ${easy}
             ${ORDER}`,
           [exerciseId],
         )
@@ -129,12 +140,12 @@ export async function getBoundedExerciseHistory(
           `SELECT ${COLS}
              FROM set_entries se
              JOIN workout_sessions ws ON ws.id = se.session_id
-            WHERE se.exercise_id = ? AND se.is_warmup = 0
+            WHERE se.exercise_id = ? AND se.is_warmup = 0 ${easy}
               AND se.session_id IN (
                 SELECT s2.session_id
                   FROM set_entries s2
                   JOIN workout_sessions w2 ON w2.id = s2.session_id
-                 WHERE s2.exercise_id = ? AND s2.is_warmup = 0
+                 WHERE s2.exercise_id = ? AND s2.is_warmup = 0 ${easy2}
                  GROUP BY s2.session_id
                  ORDER BY MAX(w2.started_at) DESC, MAX(w2.date_iso) DESC
                  LIMIT ?
@@ -150,6 +161,8 @@ export async function getBoundedExerciseHistory(
     let group = bySession.get(r.session_id);
     if (!group) {
       group = { sessionId: r.session_id, dateISO: r.date_iso, sets: [], volumeKg: 0 };
+      // Only when set, so a normal workout keeps the exact frozen shape.
+      if (r.easy_week === 1) group.easyWeek = true;
       bySession.set(r.session_id, group);
       out.push(group);
     }

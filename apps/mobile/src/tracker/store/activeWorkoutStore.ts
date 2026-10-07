@@ -24,6 +24,8 @@ import { getCarriedNote, getExerciseRestSec, getPriorBests, setExerciseRestSec }
 import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { saveSessionEdits } from '@/tracker/db/sessionEdit';
+import { easySets } from '@/tracker/plans/easyWeek';
+import { getPlanNow, isEasyForRoutine } from '@/tracker/services/planState';
 import { addSetsWithMeta, getSessionSetMeta } from '@/tracker/db/trackerSets';
 import { buildEditDraft, previousExcludingSession } from '@/tracker/services/editDraft';
 import type { ExerciseKinds, PreviousByExercise } from '@/tracker/services/editDraft';
@@ -133,6 +135,8 @@ interface DraftSnapshot {
   startedAt: number;
   dayType: DayType;
   planDayId: string | null;
+  /** Phase 4: started in an easy week of the followed plan. Absent on older drafts. */
+  easyWeek?: boolean;
   exercises: DraftExercise[];
   /** Phase W4 — set when this draft is a CORRECTION to an existing session. */
   editingSessionId?: string | null;
@@ -154,6 +158,11 @@ export interface ActiveWorkoutState {
   startedAt: number | null;
   dayType: DayType;
   planDayId: string | null;
+  /**
+   * Phase 4: this workout is an easy week of the followed plan — half the sets, the same
+   * weights; saved marked, so records and the Target leave it out.
+   */
+  easyWeek: boolean;
   exercises: DraftExercise[];
   /** Most recently swipe-deleted set, for the undo snackbar (not persisted). */
   lastDeleted: { exKey: string; index: number; set: DraftSet } | null;
@@ -252,6 +261,7 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
     startedAt: s.startedAt,
     dayType: s.dayType,
     planDayId: s.planDayId,
+    easyWeek: s.easyWeek,
     exercises: s.exercises,
     editingSessionId: s.editingSessionId,
     dateISO: s.editDateISO,
@@ -273,12 +283,14 @@ export function toPrevSet(s: Pick<TrackedSetEntry, 'weightKg' | 'reps' | 'durati
 async function buildDraftExercise(
   ex: Pick<Exercise, 'id' | 'name' | 'muscleGroup' | 'equipment' | 'incrementKg'>,
   targetSets: number,
+  opts: { exactSets?: boolean } = {},
 ): Promise<DraftExercise> {
   // Bounded in SQL: start-from-plan builds one draft per plan exercise, and the frozen
   // read would materialise each lift's ENTIRE working-set history just to keep its last
-  // session. Parity-identical (newest-first, working sets only).
+  // session. Parity-identical (newest-first, working sets only). Phase 4: PREVIOUS is the
+  // last NORMAL workout — an easy week's lighter, shorter sets are not what to beat.
   const [hist, restSec, note, bests, info] = await Promise.all([
-    getBoundedExerciseHistory(ex.id, 1),
+    getBoundedExerciseHistory(ex.id, 1, { skipEasy: true }),
     // Phase 1 extras never block starting a workout: a failed read just means
     // default rest, no carried note, no live record alert.
     getExerciseRestSec(ex.id).catch(() => null),
@@ -289,7 +301,8 @@ async function buildDraftExercise(
   ]);
   const logType: LogType = info?.logType ?? 'weight_reps';
   const previousSets = (hist[0]?.sets ?? []).map((s) => toPrevSet(s, logType));
-  const count = Math.max(targetSets, previousSets.length, 1);
+  // An easy week asks for exactly half the sets, even when last time had more rows.
+  const count = opts.exactSets ? Math.max(1, targetSets) : Math.max(targetSets, previousSets.length, 1);
   const sets: DraftSet[] = Array.from({ length: count }, () => ({
     key: uuid(),
     weightKg: null,
@@ -416,6 +429,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     startedAt: null,
     dayType: 'full',
     planDayId: null,
+    easyWeek: false,
     exercises: [],
     lastDeleted: null,
     editingSessionId: null,
@@ -446,6 +460,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               startedAt: snap.startedAt,
               dayType: snap.dayType,
               planDayId: snap.planDayId ?? null,
+              easyWeek: snap.easyWeek === true,
               exercises: snap.exercises,
               // Pre-W4 drafts have none of these — they restore as a new workout.
               editingSessionId: snap.editingSessionId ?? null,
@@ -470,6 +485,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: Date.now(),
         dayType: 'full',
         planDayId: null,
+        easyWeek: false,
         exercises: [],
         lastDeleted: null,
         editingSessionId: null,
@@ -482,17 +498,22 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     },
 
     startFromPlan: async () => {
-      const [tw, active] = await Promise.all([getTodaysWorkout(), getActivePlan()]);
+      const [tw, active, plan] = await Promise.all([getTodaysWorkout(), getActivePlan(), getPlanNow().catch(() => null)]);
       let dayType: DayType = 'full';
       let planDayId: string | null = null;
       let exercises: DraftExercise[] = [];
+      // Phase 4: today's routine always comes from the followed plan — in its easy week,
+      // half the sets.
+      const easy = plan?.easy === true;
       if (active && tw.planDayId) {
         const day = active.days.find((d) => d.id === tw.planDayId);
         if (day) {
           dayType = day.dayType;
           planDayId = day.id;
           exercises = await Promise.all(
-            day.exercises.map((pe) => buildDraftExercise(pe.exercise, pe.targetSets)),
+            day.exercises.map((pe) =>
+              buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, { exactSets: easy }),
+            ),
           );
         }
       }
@@ -503,6 +524,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: Date.now(),
         dayType,
         planDayId,
+        easyWeek: easy && planDayId != null,
         exercises,
         lastDeleted: null,
         editingSessionId: null,
@@ -515,7 +537,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     },
 
     startFromPlanDay: async (dayId) => {
-      const day = await getRoutine(dayId);
+      const [day, easy] = await Promise.all([getRoutine(dayId), isEasyForRoutine(dayId).catch(() => false)]);
       let dayType: DayType = 'full';
       let planDayId: string | null = null;
       let exercises: DraftExercise[] = [];
@@ -523,7 +545,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         dayType = day.dayType;
         planDayId = day.id;
         exercises = await Promise.all(
-          day.exercises.map((pe) => buildDraftExercise(pe.exercise, pe.targetSets)),
+          day.exercises.map((pe) =>
+            buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, { exactSets: easy }),
+          ),
         );
       }
       set({
@@ -533,6 +557,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: Date.now(),
         dayType,
         planDayId,
+        easyWeek: easy && planDayId != null,
         exercises,
         lastDeleted: null,
         editingSessionId: null,
@@ -558,6 +583,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: Date.now(),
         dayType: session.dayType,
         planDayId: null,
+        easyWeek: false,
         exercises,
         lastDeleted: null,
         editingSessionId: null,
@@ -806,7 +832,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     swapExercise: async (exKey, next) => {
       const cur = get().exercises.find((e) => e.key === exKey);
       if (!cur || cur.sets.some((s) => s.done)) return false;
-      const draftEx = await buildDraftExercise(next, cur.sets.filter((s) => !s.isWarmup).length || 1);
+      // Phase 4: in an easy week the halved set count stays (not last time's full count).
+      const draftEx = await buildDraftExercise(next, cur.sets.filter((s) => !s.isWarmup).length || 1, { exactSets: get().easyWeek });
       if (get().editingSessionId) delete draftEx.note;
       // Re-check after the await: a tick may have landed meanwhile.
       const still = get().exercises.find((e) => e.key === exKey);
@@ -853,6 +880,12 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           });
           sessionId = session.id;
           await addSetsWithMeta(session.id, flat); // auto set_number + PR detection + rpe/type
+          // Phase 4: an easy-week workout is marked, so records and the Target leave it out —
+          // also the frozen PR log that Home's PR count, the strength score and the coach read.
+          if (s.easyWeek) {
+            await getDb().runAsync('UPDATE workout_sessions SET easy_week = 1 WHERE id = ?', [session.id]);
+            await getDb().runAsync('DELETE FROM personal_records WHERE session_id = ?', [session.id]);
+          }
           await setMeta(DRAFT_KEY, '');
         });
         set({
@@ -862,6 +895,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           startedAt: null,
           dayType: 'full',
           planDayId: null,
+          easyWeek: false,
           exercises: [],
           lastDeleted: null,
         });
@@ -909,6 +943,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: session.startedAt,
         dayType: session.dayType,
         planDayId: null,
+        easyWeek: false,
         exercises,
         lastDeleted: null,
         editingSessionId: session.id,
@@ -985,6 +1020,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           startedAt: null,
           dayType: 'full',
           planDayId: null,
+          easyWeek: false,
           exercises: [],
           lastDeleted: null,
           editingSessionId: null,
@@ -1007,6 +1043,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: null,
         dayType: 'full',
         planDayId: null,
+        easyWeek: false,
         exercises: [],
         lastDeleted: null,
         editingSessionId: null,

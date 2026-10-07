@@ -42,7 +42,9 @@ const TABLES: readonly { name: string; cols: readonly string[] }[] = [
     cols: ['id', 'name', 'aliases', 'muscle_group', 'secondary_muscles', 'equipment', 'is_compound', 'increment_kg',
       'catalog_key', 'log_type', 'load_mode', 'bw_share', 'muscles', 'media_uri', 'media_type'],
   },
-  { name: 'workout_plans', cols: ['id', 'name', 'is_active'] },
+  // + the additive Phase 4 columns (tracker schema v7): a folder's place, where it came from,
+  // its settings (easy weeks). Older backups lack them → NULL, like the columns above.
+  { name: 'workout_plans', cols: ['id', 'name', 'is_active', 'folder_order', 'source', 'settings'] },
   { name: 'plan_days', cols: ['id', 'plan_id', 'day_type', 'day_order', 'name'] },
   {
     name: 'plan_exercises',
@@ -50,7 +52,8 @@ const TABLES: readonly { name: string; cols: readonly string[] }[] = [
   },
   {
     name: 'workout_sessions',
-    cols: ['id', 'date_iso', 'started_at', 'ended_at', 'day_type', 'notes', 'source'],
+    // + `easy_week` (Phase 4, tracker schema v7): a workout of a plan's easy week.
+    cols: ['id', 'date_iso', 'started_at', 'ended_at', 'day_type', 'notes', 'source', 'easy_week'],
   },
   {
     name: 'set_entries',

@@ -97,6 +97,11 @@ export async function saveSessionEdits(
     // Frozen path: auto set_number per (session, exercise) + PR detection, then the
     // additive rpe/set_type/note/superset columns.
     await addSetsWithMeta(sessionId, edits.sets);
+    // Phase 4: an easy-week workout stays out of the frozen PR log after an edit too.
+    await db.runAsync(
+      'DELETE FROM personal_records WHERE session_id = ? AND EXISTS (SELECT 1 FROM workout_sessions WHERE id = ? AND easy_week = 1)',
+      [sessionId, sessionId],
+    );
   });
 
   // Outside the transaction: reconciliation re-runs checkAndRecordPrs on OTHER

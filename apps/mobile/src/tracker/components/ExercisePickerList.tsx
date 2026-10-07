@@ -16,7 +16,20 @@ import { filterExercises } from '../services/exerciseSearch';
 import { ExerciseDemoSheet } from './ExerciseDemoSheet';
 import { ExerciseListRow } from './ExerciseListRow';
 
-export function ExercisePickerList({ onSelect }: { onSelect: (ex: Exercise) => void }) {
+export function ExercisePickerList({
+  onSelect,
+  actionLabel = 'Add',
+  isMarked,
+  only,
+}: {
+  onSelect: (ex: TrackerExercise) => void;
+  /** Screen-reader verb for each row (Phase 4: "Leave out" in the plan builder). */
+  actionLabel?: string;
+  /** Phase 4: rows already chosen show a tick instead of the plus. Pass a new function when the marks change. */
+  isMarked?: (ex: TrackerExercise) => boolean;
+  /** Phase 4: show only these (the plan builder lists library exercises only). Keep it stable. */
+  only?: (ex: TrackerExercise) => boolean;
+}) {
   const [all, setAll] = useState<TrackerExercise[]>([]);
   const [query, setQuery] = useState('');
   const [muscle, setMuscle] = useState<Muscle | null>(null);
@@ -36,13 +49,15 @@ export function ExercisePickerList({ onSelect }: { onSelect: (ex: Exercise) => v
     };
   }, []);
 
+  const shown = useMemo(() => (only ? all.filter(only) : all), [all, only]);
+
   const muscles = useMemo(() => {
     const seen = new Set<Muscle>();
-    for (const e of all) for (const m of e.muscles.primary) seen.add(m);
+    for (const e of shown) for (const m of e.muscles.primary) seen.add(m);
     return MUSCLES.filter((m) => seen.has(m));
-  }, [all]);
+  }, [shown]);
 
-  const filtered = useMemo(() => filterExercises(all, { query, muscle, equipment: null }), [all, query, muscle]);
+  const filtered = useMemo(() => filterExercises(shown, { query, muscle, equipment: null }), [shown, query, muscle]);
 
   return (
     <View style={{ flex: 1, gap: space.md }}>
@@ -112,8 +127,15 @@ export function ExercisePickerList({ onSelect }: { onSelect: (ex: Exercise) => v
         ListEmptyComponent={
           <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search or muscle group." />
         }
+        extraData={isMarked}
         renderItem={({ item }) => (
-          <ExerciseListRow ex={item} trailing="plus" actionLabel="Add" onPress={onSelect} onDemo={setDemo} />
+          <ExerciseListRow
+            ex={item}
+            trailing={isMarked?.(item) ? 'check' : 'plus'}
+            actionLabel={isMarked?.(item) ? 'Keep' : actionLabel}
+            onPress={onSelect}
+            onDemo={setDemo}
+          />
         )}
       />
 

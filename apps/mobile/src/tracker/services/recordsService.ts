@@ -30,12 +30,16 @@ const COLS = `se.session_id, se.exercise_id, se.weight_kg, se.reps, se.duration_
               ws.date_iso AS date_iso, ws.started_at AS started_at`;
 const ORDER = 'ORDER BY ws.started_at ASC, ws.date_iso ASC, se.session_id ASC, se.set_number ASC';
 
-/** Working sets of these exercises (all of them when omitted), oldest workout first. */
+/**
+ * Working sets of these exercises (all of them when omitted), oldest workout first. Phase 4:
+ * easy-week workouts stay out of records (research v3 §6.4) — a lighter week is no record.
+ */
 async function readWorkingSets(exerciseIds?: readonly string[]): Promise<SetRow[]> {
   const db = getDb();
   if (exerciseIds == null) {
     return db.getAllAsync<SetRow>(
-      `SELECT ${COLS} FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id WHERE se.is_warmup = 0 ${ORDER}`,
+      `SELECT ${COLS} FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
+        WHERE se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0 ${ORDER}`,
     );
   }
   const unique = [...new Set(exerciseIds)];
@@ -45,7 +49,8 @@ async function readWorkingSets(exerciseIds?: readonly string[]): Promise<SetRow[
     out.push(
       ...(await db.getAllAsync<SetRow>(
         `SELECT ${COLS} FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
-          WHERE se.is_warmup = 0 AND se.exercise_id IN (${chunk.map(() => '?').join(', ')}) ${ORDER}`,
+          WHERE se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0
+            AND se.exercise_id IN (${chunk.map(() => '?').join(', ')}) ${ORDER}`,
         chunk,
       )),
     );

@@ -1,4 +1,9 @@
-/** Workout tab — start a workout (empty or from plan) or resume one in progress. */
+/**
+ * Workout tab — start a workout (empty or from plan) or resume one in progress.
+ * Phase 4: the followed plan's week ("Week 3 · easy week in week 6"); in an easy week the
+ * note and "Train normally this week"; when 3 or more lifts of the plan have stalled, an easy
+ * week now (research v3 §5); with no plan, the ready programs and the plan builder.
+ */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
@@ -8,6 +13,11 @@ import { countWord } from '@/lib/words';
 import { getTodaysWorkout } from '@/services/coach';
 import { color, gradients, space, type } from '@/theme/tokens';
 
+import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
+import { followedFolder } from '@/tracker/db/folderRepo';
+import { offerEarlyEasy } from '@/tracker/plans/effort';
+import { stalledLiftsInPlan } from '@/tracker/services/coachTargets';
+import { getPlanNow, moveEasyWeek, planLine, type PlanNow } from '@/tracker/services/planState';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 interface PlanPreview {
@@ -29,7 +39,10 @@ export default function WorkoutScreen() {
   const editingSessionId = useActiveWorkout((s) => s.editingSessionId);
 
   const [preview, setPreview] = useState<PlanPreview | null>(null);
+  const [plan, setPlan] = useState<PlanNow | null>(null);
+  const [stalled, setStalled] = useState(0);
   const [starting, setStarting] = useState(false);
+  const [tick, setTick] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -44,11 +57,48 @@ export default function WorkoutScreen() {
         .catch(() => {
           if (alive) setPreview({ dayName: 'Full Body', count: 0, hasPlan: false });
         });
+      getPlanNow()
+        .then((p) => {
+          if (alive) setPlan(p);
+        })
+        .catch(() => {
+          if (alive) setPlan(null);
+        });
+      stalledLiftsInPlan()
+        .then((n) => {
+          if (alive) setStalled(n);
+        })
+        .catch(() => {
+          if (alive) setStalled(0);
+        });
       return () => {
         alive = false;
       };
-    }, [hydrate]),
+    }, [hydrate, tick]),
   );
+
+  const onEasyNow = async (): Promise<void> => {
+    try {
+      const f = await followedFolder();
+      if (f) await moveEasyWeek(f, 'now');
+      setTick((t) => t + 1);
+    } catch {
+      Alert.alert('Could not change the week', 'Please try again.');
+    }
+  };
+
+  const onTrainNormally = async (): Promise<void> => {
+    try {
+      const f = await followedFolder();
+      if (f) await moveEasyWeek(f, 'skip');
+      setTick((t) => t + 1);
+    } catch {
+      Alert.alert('Could not change the week', 'Please try again.');
+    }
+  };
+
+  const week = preview?.hasPlan ? planLine(plan) : null;
+  const offerEasy = plan != null && offerEarlyEasy({ stalled, easyNow: plan.easy, week: plan.week, lastEasy: plan.lastEasy });
 
   const goActive = (): void => router.push('/session/active');
 
@@ -125,6 +175,11 @@ export default function WorkoutScreen() {
                     ? `${countWord(preview.count, 'exercise')} from your plan, pre-filled with last time's numbers.`
                     : 'No plan for today — start empty and add exercises as you go.'}
                 </Text>
+                {week && !plan?.easy ? (
+                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>
+                ) : null}
+                {/* An easy week shows even on a day with no "Today" (trained already, or off-plan). */}
+                {plan?.easy ? <EasyWeekNote /> : null}
                 {preview?.hasPlan ? (
                   <PrimaryButton
                     label={`Start ${preview.dayName}`}
@@ -133,10 +188,27 @@ export default function WorkoutScreen() {
                     onPress={() => void onStartPlan()}
                   />
                 ) : null}
+                {plan?.easy ? (
+                  <GhostButton label="Train normally this week" icon="flame" onPress={() => void onTrainNormally()} />
+                ) : null}
+                {offerEasy ? (
+                  <View style={{ gap: space.sm }}>
+                    <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
+                      {`${countWord(stalled, 'lift')} stuck at the same numbers. An easy week now often gets them moving again.`}
+                    </Text>
+                    <GhostButton label="Take an easy week now" icon="heart" onPress={() => void onEasyNow()} />
+                  </View>
+                ) : null}
               </View>
             </HeroCard>
 
             <GhostButton label="Start empty workout" icon="plus" onPress={onStartEmpty} />
+            {preview && !preview.hasPlan ? (
+              <>
+                <GhostButton label="Ready programs" icon="trophy" onPress={() => router.push('/programs')} />
+                <GhostButton label="Build a plan" icon="sparkle" onPress={() => router.push('/plan/build')} />
+              </>
+            ) : null}
             <GhostButton label="Routines" icon="target" onPress={() => router.push('/routines')} />
             <GhostButton label="Exercise library" icon="dumbbell" onPress={() => router.push('/library')} />
           </>

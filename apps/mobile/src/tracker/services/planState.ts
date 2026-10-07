@@ -1,0 +1,122 @@
+/**
+ * Where the followed plan stands today — Phase 4: its week, and whether this is an easy
+ * week. Only the folder the member FOLLOWS has weeks (they count from the day they started
+ * following it); a routine started from any other folder is a normal workout.
+ */
+import { todayISO } from '@/lib/date';
+
+import { folderOfRoutine, followedFolder, setFolderSettings, type Folder, type FolderSettings } from '../db/folderRepo';
+import { EASY_EVERY, isEasyWeek, nextEasyWeek, planWeek, skipEasyWeek, takeEasyNow } from '../plans/easyWeek';
+import { effortRir, lastEasyWeek } from '../plans/effort';
+
+export interface PlanNow {
+  folderId: string;
+  name: string;
+  /** Week of the plan (1 = the first 7 days), or null before a start day is known. */
+  week: number | null;
+  easy: boolean;
+  /** Easy weeks every this many weeks, or null when off. */
+  every: number | null;
+  nextEasyWeek: number | null;
+  /** The last easy week at or before this one (planned or one-off), or null. */
+  lastEasy: number | null;
+  /** Reps to leave in the tank this week (3 → 1 through a block), null in an easy week. */
+  effortRir: number | null;
+}
+
+/** The followed folder's week and easy-week state on a day. PURE. */
+export function planNowOf(folder: Pick<Folder, 'id' | 'name' | 'following' | 'settings'>, today: string): PlanNow | null {
+  if (!folder.following) return null;
+  const s = folder.settings;
+  const week = s.startISO ? planWeek(s.startISO, today) : null;
+  const easy = week != null && (isEasyWeek(s.easy ?? null, week) || s.easyOnce === week);
+  return {
+    folderId: folder.id,
+    name: folder.name,
+    week,
+    easy,
+    every: s.easy?.every ?? null,
+    nextEasyWeek: week != null ? nextEasyWeek(s.easy ?? null, week) : null,
+    lastEasy: week != null ? lastEasyWeek(s.easy ?? null, week, s.easyOnce ?? null) : null,
+    effortRir: week != null ? effortRir(s.easy ?? null, week, easy) : null,
+  };
+}
+
+/** "Week 3 · easy week in week 6", "Easy week this week", or "Week 3". PURE. */
+export function planLine(p: PlanNow | null): string | null {
+  if (!p || p.week == null) return null;
+  if (p.easy) return 'Easy week this week';
+  if (p.nextEasyWeek != null) return `Week ${p.week} · easy week in week ${p.nextEasyWeek}`;
+  return `Week ${p.week}`;
+}
+
+/**
+ * The followed plan's week today. A plan followed before Phase 4 (or made by "New routine",
+ * or by the demo data) has no start day: its weeks start counting today, saved once, so
+ * easy weeks, the week line and the early easy-week offer work on it too.
+ */
+export async function getPlanNow(today: string = todayISO()): Promise<PlanNow | null> {
+  const f = await followedFolder();
+  if (!f) return null;
+  if (!f.settings.startISO) {
+    const settings = { ...f.settings, startISO: today };
+    await setFolderSettings(f.id, settings).catch(() => undefined);
+    return planNowOf({ ...f, settings }, today);
+  }
+  return planNowOf(f, today);
+}
+
+/** Is a workout of this routine an easy one today? (Its folder is followed and in an easy week.) */
+export async function isEasyForRoutine(dayId: string, today: string = todayISO()): Promise<boolean> {
+  const f = await folderOfRoutine(dayId);
+  return f ? planNowOf(f, today)?.easy === true : false;
+}
+
+/** Turn easy weeks on (every `EASY_EVERY` weeks, counted from now) or off for a folder. */
+export function withEasyWeeks(settings: FolderSettings, on: boolean, week: number | null): FolderSettings {
+  if (!on) return { ...settings, easy: null };
+  return { ...settings, easy: { every: settings.easy?.every ?? EASY_EVERY, base: Math.max(0, (week ?? 1) - 1) } };
+}
+
+export async function setEasyWeeks(folder: Pick<Folder, 'id' | 'settings'>, on: boolean, today: string = todayISO()): Promise<void> {
+  // No start day yet (a plan from before Phase 4): its weeks start today (review, HIGH).
+  const startISO = folder.settings.startISO ?? today;
+  await setFolderSettings(folder.id, { ...withEasyWeeks(folder.settings, on, planWeek(startISO, today)), startISO });
+}
+
+/**
+ * "Take an easy week now" / "Train normally this week" on the followed plan. PURE. With the
+ * easy-week rhythm on, the rhythm moves (the next one comes `every` weeks later); with it off,
+ * "now" is a one-off easy week (offered when several lifts stall) and "skip" drops it.
+ */
+export function withMovedEasyWeek(s: FolderSettings, action: 'now' | 'skip', week: number): FolderSettings {
+  const out: FolderSettings = { ...s };
+  if (action === 'skip' && out.easyOnce === week) delete out.easyOnce;
+  if (s.easy) {
+    if (action === 'now') out.easy = takeEasyNow(s.easy, week);
+    else if (isEasyWeek(s.easy, week)) out.easy = skipEasyWeek(s.easy, week);
+  } else if (action === 'now') {
+    out.easyOnce = week;
+  }
+  return out;
+}
+
+export async function moveEasyWeek(folder: Pick<Folder, 'id' | 'settings'>, action: 'now' | 'skip', today: string = todayISO()): Promise<void> {
+  // No start day yet: this is week 1 (before the review, "Take an easy week now" did nothing).
+  const startISO = folder.settings.startISO ?? today;
+  await setFolderSettings(folder.id, { ...withMovedEasyWeek(folder.settings, action, planWeek(startISO, today)), startISO });
+}
+
+/**
+ * The Routines screen's "No routines yet" card: only when there is no folder at all. A new,
+ * empty folder must still show (review: it vanished behind the card). PURE.
+ */
+export function showNoRoutinesYet(folders: readonly unknown[]): boolean {
+  return folders.length === 0;
+}
+
+/** The question before a folder is deleted. PURE. */
+export function deleteFolderMessage(routines: number, following: boolean): string {
+  const gone = routines === 0 ? 'It has no routines.' : routines === 1 ? 'Its routine goes too.' : `Its ${routines} routines go too.`;
+  return `${gone} Your workout history stays.${following ? " Today's workout will have no plan until you follow another folder." : ''}`;
+}

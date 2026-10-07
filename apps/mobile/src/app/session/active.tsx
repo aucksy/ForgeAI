@@ -21,6 +21,7 @@ import type { ProgressionTarget } from '@/tracker/engine/progression';
 
 import { SessionGoneError } from '@/tracker/db/sessionEdit';
 import { EditSessionHeader } from '@/tracker/components/EditSessionHeader';
+import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
 import { ElapsedClock } from '@/tracker/components/ElapsedClock';
 import { ExerciseLogCard } from '@/tracker/components/ExerciseLogCard';
 import { RecordToast } from '@/tracker/components/RecordToast';
@@ -33,6 +34,7 @@ import { getTargetsForPlanDay } from '@/tracker/services/coachTargets';
 import { draftToRichSets, hasWorkingSet } from '@/tracker/services/draftSets';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import { useWorkoutUi } from '@/tracker/store/workoutUiStore';
 
 /** Ask "Update routine?" and wait for the answer. Never throws. */
@@ -64,6 +66,10 @@ export default function ActiveWorkoutScreen() {
   const active = useActiveWorkout((s) => s.active);
   const startedAt = useActiveWorkout((s) => s.startedAt);
   const planDayId = useActiveWorkout((s) => s.planDayId);
+  // Phase 4: an easy week of the followed plan (half the sets, the same weights).
+  const easyWeek = useActiveWorkout((s) => s.easyWeek);
+  // Phase 4: members who log RPE see this plan week's effort on the Target.
+  const logsRpe = useTrackerPrefs((s) => s.advancedSets);
   const exercises = useActiveWorkout((s) => s.exercises);
   const committing = useActiveWorkout((s) => s.committing);
   const finish = useActiveWorkout((s) => s.finish);
@@ -134,7 +140,7 @@ export default function ActiveWorkoutScreen() {
   const exerciseIdsKey = exercises.map((e) => e.exerciseId).join(',');
   useEffect(() => {
     let cancelled = false;
-    void getTargetsForPlanDay(planDayId)
+    void getTargetsForPlanDay(planDayId, { easy: easyWeek, effort: logsRpe })
       .then((map) => {
         if (!cancelled) setTargets(map);
       })
@@ -146,7 +152,7 @@ export default function ActiveWorkoutScreen() {
     };
     // exerciseIdsKey re-runs the load when the roster changes; planDayId scopes it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [planDayId, exerciseIdsKey]);
+  }, [planDayId, exerciseIdsKey, easyWeek, logsRpe]);
 
   // Auto-dismiss the undo snackbar after a few seconds.
   useEffect(() => {
@@ -255,7 +261,9 @@ export default function ActiveWorkoutScreen() {
     leaving.current = true;
     // What was on screen at finish — the store resets once the commit lands.
     const before = useActiveWorkout.getState();
-    const routinePlanDayId = before.planDayId;
+    // Phase 4: an easy week has half the sets on purpose — never offer to save that into
+    // the routine.
+    const routinePlanDayId = before.easyWeek ? null : before.planDayId;
     const routineSnapshot = before.exercises;
     try {
       const id = await finish(null);
@@ -347,6 +355,9 @@ export default function ActiveWorkoutScreen() {
               onNotesChange={setEditNotes}
             />
           ) : null}
+
+          {/* Phase 4: the followed plan's easy week — the fact on screen, the why behind the i */}
+          {easyWeek && !isEditing ? <EasyWeekNote /> : null}
 
           {!active ? null : exercises.length === 0 ? (
             <EmptyState

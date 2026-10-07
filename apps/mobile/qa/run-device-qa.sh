@@ -121,6 +121,16 @@ log "part F start"
 maestro test --format junit --output "$OUT/part-f.xml" --test-output-dir "$OUT/part-f" "$QA_DIR/v0251-f.yaml" \
   > "$OUT/part-f.log" 2>&1 || { status=1; log "PART F FAILED"; }
 
+# ---------------------------------------------------------------- part G (v0.26.0: routines and plans)
+# A routine file "someone shared", in Downloads, for the import steps.
+adb push "$QA_DIR/fixtures/qa-shared.forgeai.json" /sdcard/Download/qa-shared.forgeai.json >/dev/null 2>&1 || log "PUSH ROUTINE FILE FAILED"
+adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///sdcard/Download/qa-shared.forgeai.json" >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+sleep 10
+log "part G start"
+maestro test --format junit --output "$OUT/part-g.xml" --test-output-dir "$OUT/part-g" "$QA_DIR/v0260-g.yaml"   > "$OUT/part-g.log" 2>&1 || { status=1; log "PART G FAILED"; }
+
 # ---------------------------------------------------------------- crash check
 # Only the app's own crashes count (another app's crash on the emulator is not ours).
 app_crash() { grep -A1 "FATAL EXCEPTION" "$1" 2>/dev/null | grep -q "Process: $PKG"; }
@@ -142,7 +152,7 @@ for f in $(find "$OUT"/part-* -name '*logcat*' 2>/dev/null); do
 done
 reports=$(find "$OUT"/part-* \( -name 'crash-report*' -o -name 'anr-report*' \) 2>/dev/null)
 if [ -n "$reports" ]; then log "MAESTRO CRASH/ANR REPORT: $reports"; status=1; fi
-log "device logs read: $read_logs (parts A-F)"
+log "device logs read: $read_logs (parts A-G)"
 if [ "$read_logs" -eq 0 ]; then log "WARNING: no per-part device logs found - only the last part's logcat was checked"; fi
 grep -i "ReactNativeJS" "$OUT/logcat.txt" | grep -i "error\|warn" | head -60 > "$OUT/js-errors.txt" || true
 log "done, status $status"

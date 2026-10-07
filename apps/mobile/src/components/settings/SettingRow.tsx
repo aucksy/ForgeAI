@@ -89,6 +89,8 @@ export function ToggleRow({ icon, title, caption, value, onChange, locked, divid
         <Switch
           value={value}
           disabled={locked}
+          // Screen readers name the switch, not just "switch, on" (every toggle row).
+          accessibilityLabel={title}
           onValueChange={(v) => {
             if (locked) return;
             tap();

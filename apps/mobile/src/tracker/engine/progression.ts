@@ -90,6 +90,42 @@ export interface ProgressionTarget extends OverloadTarget {
    * today's workout still lists it, the workout card shows no Target line.
    */
   free?: boolean;
+  /** Phase 4: an easy week of the followed plan (`toEasyTarget`). */
+  easy?: boolean;
+  /** Phase 4: this plan week's effort for members who log RPE (`withEffort`): the RPE to stop at. */
+  effortRpe?: number;
+}
+
+/**
+ * The Target for an easy week (Phase 4, research v3 §6.4): half the sets, the same weight —
+ * never "Up", and never a rep number to chase; stop with 3 or more reps left. A hold keeps
+ * last time's time (not the +5 s). A first time stays a first time. PURE.
+ */
+export function toEasyTarget(t: ProgressionTarget, reason: string, sets: (n: number) => number): ProgressionTarget {
+  if (t.free || t.action === 'start') return t;
+  const same = t.change === 'up' && t.last ? t.last.weightKg : t.targetWeightKg;
+  const hold = t.logType === 'time' && t.change === 'up' && t.holdSec != null ? Math.max(1, t.holdSec - HOLD_STEP_SEC) : t.holdSec;
+  return {
+    ...t,
+    easy: true,
+    holdSec: hold,
+    targetSets: sets(t.targetSets),
+    targetWeightKg: same,
+    change: null,
+    repGoal: null,
+    version: null,
+    reason,
+  };
+}
+
+/**
+ * This plan week's effort on the Target (Phase 4, research v3 §5: "3 reps left in week 1 → 1
+ * left in week 4"), for members who log RPE. Never on a first time, an easy week, a hold or an
+ * exercise with no Target rule. The reason gains one sentence. PURE.
+ */
+export function withEffort(t: ProgressionTarget, rir: number | null, reason: string): ProgressionTarget {
+  if (rir == null || t.free || t.easy || t.action === 'start' || t.logType === 'time') return t;
+  return { ...t, effortRpe: 10 - rir, reason: `${t.reason} ${reason}` };
 }
 
 /** Rules look at this many recent workouts; the step is learned from the whole input. */
@@ -535,6 +571,11 @@ type LineInput = Pick<OverloadTarget, 'targetWeightKg' | 'targetRepsMin' | 'targ
   perSide?: boolean;
   /** No Target rule: the line says what to log. */
   free?: boolean;
+  /** Phase 4: an easy week ("Easy week · 40 kg · 2 sets"). */
+  easy?: boolean;
+  targetSets?: number;
+  /** Phase 4: "· RPE 8" for members who log RPE (`withEffort`). */
+  effortRpe?: number;
 };
 
 /**
@@ -546,9 +587,11 @@ export function targetLine(t: LineInput, fmtKg: (kg: number) => string = (kg) =>
   const range = t.targetRepsMin === t.targetRepsMax ? `${t.targetRepsMin}` : `${t.targetRepsMin}–${t.targetRepsMax}`;
   const lt = t.logType ?? 'weight_reps';
   if (t.free) return lt === 'time_distance' ? 'Time and distance' : lt === 'distance' ? 'Distance' : 'Time';
+  const easySets = t.easy && t.targetSets ? ` · ${t.targetSets} ${t.targetSets === 1 ? 'set' : 'sets'}` : '';
   if (lt === 'time') {
     if (t.action === 'start') return 'First time · find a time you can hold';
     const hold = `Hold ${fmtDurationWords(t.holdSec ?? 0)}`;
+    if (t.easy) return `Easy week · ${hold}${easySets}`;
     return t.version?.kind === 'harder' ? `${hold} · try a harder version` : hold;
   }
   if (t.action === 'start') {
@@ -565,11 +608,14 @@ export function targetLine(t: LineInput, fmtKg: (kg: number) => string = (kg) =>
       : lt === 'weighted' || lt === 'reps'
         ? `+${fmtKg(t.targetWeightKg)}`
         : `${fmtKg(t.targetWeightKg)}${t.each ? ' each' : ''}`;
+  if (t.easy) return `Easy week · ${load}${easySets}`;
   if (t.version?.kind === 'harder') return `${load} · try a harder version`;
   if (t.version?.kind === 'easier') return `${load} · try an easier version`;
   const side = t.perSide ? ' per side' : '';
-  if (t.repGoal != null) return `${load} · aim for ${t.repGoal}${side}`;
-  return `${load} × ${range}`;
+  // Phase 4: this plan week's effort, for members who log RPE.
+  const effort = t.effortRpe != null ? ` · RPE ${t.effortRpe}` : '';
+  if (t.repGoal != null) return `${load} · aim for ${t.repGoal}${side}${effort}`;
+  return `${load} × ${range}${effort}`;
 }
 
 /** What a Target fills into a set row: the TYPED values (help as a positive number). */

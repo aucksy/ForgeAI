@@ -259,20 +259,23 @@ export async function getExerciseOverview(exerciseId: string): Promise<ExerciseO
   ]);
   if (!exercise) return null;
   const history = historyWithVolume(raw, exercise, bw);
-  const records = exerciseRecords(recordSessionsFromHistory(history), exercise, bw);
+  // Phase 4: an easy week's workouts stay in the history list but out of the records, the
+  // numbers and the charts — a planned lighter week is not a dip in progress.
+  const counted = history.filter((h) => !h.easyWeek);
+  const records = exerciseRecords(recordSessionsFromHistory(counted), exercise, bw);
   const weighty = exercise.logType === 'weight_reps' || exercise.logType === 'weighted';
   if (weighty) {
     return {
       exercise,
       history,
-      weightStats: weightStatsOf(exercise, history),
+      weightStats: weightStatsOf(exercise, counted),
       tiles: [],
       series: null,
-      bestSet: bestSetSeriesFor(history, exercise, bw),
+      bestSet: bestSetSeriesFor(counted, exercise, bw),
       records,
     };
   }
-  const { tiles, series } = typedOverview(exercise.logType, history, exercise.distUnit, {
+  const { tiles, series } = typedOverview(exercise.logType, counted, exercise.distUnit, {
     cardio: isTimedCardio(exercise.logType, exercise.muscles.primary),
   });
   return { exercise, history, weightStats: null, tiles: tilesBesideRecords(tiles, exercise.logType), series, bestSet: [], records };

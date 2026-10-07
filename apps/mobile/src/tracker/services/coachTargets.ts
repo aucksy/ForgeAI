@@ -21,9 +21,14 @@ import { todayISO } from '@/lib/date';
 import { getTodaysWorkout } from '@/services/coach';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { getExerciseIdsByCatalogKey, getTrackerExercisesByIds, type TrackerExercise } from '@/tracker/db/exerciseInfo';
+import { getRoutineAnywhere } from '@/tracker/db/folderRepo';
 import { getProgressionHistory } from '@/tracker/db/progressionHistory';
 import { getsTarget, repsPerSide, weightIsEach } from '@/tracker/engine/logTypes';
-import { computeProgressionTarget, freeTarget, type ProgressionTarget, type VersionLink } from '@/tracker/engine/progression';
+import { computeProgressionTarget, freeTarget, toEasyTarget, withEffort, type ProgressionTarget, type VersionLink } from '@/tracker/engine/progression';
+import { EASY_REASON, easySets } from '@/tracker/plans/easyWeek';
+import { effortReason, STALL_RULES } from '@/tracker/plans/effort';
+import { getPlanNow, planNowOf } from '@/tracker/services/planState';
+import { folderOfRoutine } from '@/tracker/db/folderRepo';
 import type { Exercise, PlanExercise, TodaysWorkout, UserProfile } from '@/types/models';
 
 /** Sessions read per lift: 4 for the rules, the rest to learn the weight step. */
@@ -106,27 +111,59 @@ async function targetsFor(exercises: PlanExerciseFull[], includeToday: boolean):
 /**
  * Map of `exerciseId -> target` for the exercises of `planDayId`.
  * Empty when there's no plan day (Start-Empty / repeat-a-session / no plan).
+ *
+ * Phase 4: the routine can sit in any folder (not only the followed plan), and in an easy
+ * week of the followed plan every Target becomes the easy one (half the sets, same weight).
+ * With `effort` (members who log RPE), a routine of the followed plan also gets this plan
+ * week's effort ("· RPE 8").
  */
 export async function getTargetsForPlanDay(
   planDayId: string | null,
+  opts: { easy?: boolean; effort?: boolean } = {},
 ): Promise<Map<string, ProgressionTarget>> {
   const out = new Map<string, ProgressionTarget>();
   if (!planDayId) return out;
-  const active = await getActivePlan();
-  const day = active?.days.find((d) => d.id === planDayId) ?? null;
+  const day = await getRoutineAnywhere(planDayId);
   if (!day) return out;
   const targets = await targetsFor(day.exercises, true);
+  let rir: number | null = null;
+  if (opts.effort && !opts.easy) {
+    const folder = await folderOfRoutine(planDayId).catch(() => null);
+    rir = folder ? planNowOf(folder, todayISO())?.effortRir ?? null : null;
+  }
   // A plan day normally lists an exercise once; if twice, keep the first. No line for free ones.
-  for (const t of targets) if (!t.free && !out.has(t.exerciseId)) out.set(t.exerciseId, t);
+  for (const t of targets) {
+    if (t.free || out.has(t.exerciseId)) continue;
+    out.set(t.exerciseId, opts.easy ? toEasyTarget(t, EASY_REASON, easySets) : withEffort(t, rir, rir != null ? effortReason(rir) : ''));
+  }
   return out;
 }
 
-/** The frozen `getTodaysWorkout()` with its targets recomputed by the v2 engine. */
+/**
+ * How many lifts of the followed plan are stalled right now (the Target's stall rules), for
+ * the early easy-week offer. 0 with no plan or no plan weeks.
+ */
+export async function stalledLiftsInPlan(): Promise<number> {
+  const now = await getPlanNow().catch(() => null);
+  if (!now || now.week == null || now.easy) return 0;
+  const active = await getActivePlan();
+  if (!active) return 0;
+  const seen = new Set<string>();
+  const exercises = active.days.flatMap((d) => d.exercises).filter((pe) => !seen.has(pe.exerciseId) && seen.add(pe.exerciseId));
+  const targets = await targetsFor(exercises, true);
+  return targets.filter((t) => !t.free && STALL_RULES.has(t.rule)).length;
+}
+
+/**
+ * The frozen `getTodaysWorkout()` with its targets recomputed by the v2 engine. Phase 4: in
+ * an easy week, the easy Targets — Home and the coach say the same as the workout screen.
+ */
 export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout, 'targets'> & { targets: ProgressionTarget[] }> {
   const tw = await getTodaysWorkout();
   if (!tw.planDayId || tw.targets.length === 0) return { ...tw, targets: [] };
   const active = await getActivePlan();
   const day = active?.days.find((d) => d.id === tw.planDayId) ?? null;
   if (!day) return { ...tw, targets: [] };
-  return { ...tw, targets: await targetsFor(day.exercises, false) };
+  const [targets, now] = await Promise.all([targetsFor(day.exercises, false), getPlanNow().catch(() => null)]);
+  return { ...tw, targets: now?.easy ? targets.map((t) => toEasyTarget(t, EASY_REASON, easySets)) : targets };
 }

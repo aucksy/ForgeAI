@@ -1,4 +1,8 @@
-/** Routine editor — rename, retype, add/reorder/tune/remove exercises, start or delete. */
+/**
+ * Routine editor — rename, retype, add/reorder/tune/remove exercises, start or delete.
+ * Phase 4: swap an exercise for good (one that fits the plan's equipment and sore areas),
+ * and from the menu share the routine, move it to another folder, duplicate or delete it.
+ */
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
@@ -16,9 +20,15 @@ import {
 } from '@/components/ui';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import { tap } from '@/lib/haptics';
+import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { DayType } from '@/types/models';
 
+import { ShareRoutineSheet } from '@/tracker/components/ShareRoutineSheet';
+import { SwapSheet } from '@/tracker/components/SwapSheet';
+import { Glyph } from '@/tracker/components/TrackerGlyph';
+import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
+import { exerciseIdsForKeys, folderOfRoutine, listFolders, moveRoutine, type Folder } from '@/tracker/db/folderRepo';
 import {
   ROUTINE_DAY_TYPES,
   deleteRoutine,
@@ -26,12 +36,15 @@ import {
   getRoutine,
   removeRoutineExercise,
   reorderRoutineExercises,
+  replaceRoutineExercise,
   updateRoutine,
   updateRoutineExercise,
 } from '@/tracker/db/routineRepo';
 import { getTrackerExercisesByIds } from '@/tracker/db/exerciseInfo';
 import { hasReps, type LogType } from '@/tracker/engine/logTypes';
+import { alternativesFor, type Alternative } from '@/tracker/plans/builder';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
+import { swapContextFor } from '@/tracker/services/plansService';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
@@ -51,6 +64,13 @@ export default function RoutineEditorScreen() {
   const [name, setName] = useState('');
   /** Phase 2: how each exercise is logged — timed and distance rows have no rep range. */
   const [logTypes, setLogTypes] = useState<Map<string, LogType>>(new Map());
+  /** Phase 4: each exercise's library key (null for the member's own) — only library ones swap. */
+  const [catalogKeys, setCatalogKeys] = useState<Map<string, string | null>>(new Map());
+  const [folderName, setFolderName] = useState<string | null>(null);
+  const [menu, setMenu] = useState(false);
+  const [moveTo, setMoveTo] = useState<Folder[] | null>(null);
+  const [sharing, setSharing] = useState(false);
+  const [swapping, setSwapping] = useState<{ peId: string; name: string; options: Alternative[] } | null>(null);
   // Seed the name field once per routine id — refocus (e.g. returning from
   // Add-exercise) must NOT clobber an in-progress, not-yet-committed rename.
   // Keyed by id so a duplicate (router.replace to a new id) reseeds correctly.
@@ -71,7 +91,14 @@ export default function RoutineEditorScreen() {
           if (r) {
             void getTrackerExercisesByIds(r.exercises.map((pe) => pe.exerciseId))
               .then((infos) => {
-                if (alive) setLogTypes(new Map([...infos].map(([k, v]) => [k, v.logType])));
+                if (!alive) return;
+                setLogTypes(new Map([...infos].map(([k, v]) => [k, v.logType])));
+                setCatalogKeys(new Map([...infos].map(([k, v]) => [k, v.catalogKey])));
+              })
+              .catch(() => undefined);
+            void folderOfRoutine(r.id)
+              .then((f) => {
+                if (alive) setFolderName(f?.name ?? null);
               })
               .catch(() => undefined);
           }
@@ -180,6 +207,68 @@ export default function RoutineEditorScreen() {
       .catch(() => Alert.alert('Duplicate failed', 'Could not duplicate this routine. Please try again.'));
   };
 
+  // Two RN Modals swapping in the same frame can drop the second on Android.
+  const after = (fn: () => void): void => {
+    setMenu(false);
+    setTimeout(fn, 260);
+  };
+
+  /** Swap for good: the choices fit this routine's plan (equipment, sore areas, "never" list). */
+  const onSwap = async (peId: string): Promise<void> => {
+    const pe = routine?.exercises.find((x) => x.id === peId);
+    const key = pe ? catalogKeys.get(pe.exerciseId) : null;
+    if (!routine || !pe || !key) return;
+    const ctx = await swapContextFor(id).catch(() => null);
+    const exclude = routine.exercises.flatMap((x) => {
+      const k = catalogKeys.get(x.exerciseId);
+      return k ? [k] : [];
+    });
+    setSwapping({
+      peId,
+      name: pe.exercise.name,
+      options: alternativesFor(key, {
+        level: ctx?.level ?? 'intermediate',
+        exclude,
+        equipment: ctx?.equipment ?? 'gym',
+        sore: ctx?.sore ?? [],
+        avoid: ctx?.avoid ?? [],
+      }),
+    });
+  };
+
+  const onPickSwap = async (a: Alternative): Promise<void> => {
+    const w = swapping;
+    setSwapping(null);
+    if (!w) return;
+    try {
+      const exerciseId = (await exerciseIdsForKeys([a.key])).get(a.key);
+      if (!exerciseId) throw new Error('not in library');
+      await replaceRoutineExercise(w.peId, exerciseId);
+      reload();
+    } catch {
+      Alert.alert('Could not swap', 'Please try again.');
+    }
+  };
+
+  const onMoveMenu = (): void => {
+    after(() => {
+      void listFolders()
+        .then((all) => {
+          const others = all.filter((f) => !f.routines.some((r) => r.id === id));
+          if (others.length === 0) Alert.alert('No other folder', 'Make a folder on the Routines screen first.');
+          else setMoveTo(others);
+        })
+        .catch(() => Alert.alert('Could not load folders', 'Please try again.'));
+    });
+  };
+
+  const onMoveTo = (f: Folder): void => {
+    setMoveTo(null);
+    void moveRoutine(id, f.id)
+      .then(() => setFolderName(f.name))
+      .catch(() => Alert.alert('Could not move', 'Please try again.'));
+  };
+
   const onStart = async (): Promise<void> => {
     if (starting.current) return;
     starting.current = true;
@@ -201,8 +290,32 @@ export default function RoutineEditorScreen() {
     <Screen
       scroll={false}
       title="Edit routine"
-      subtitle={routine ? dayTypeLabel(routine.dayType) : undefined}
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      subtitle={routine ? (folderName ? `${dayTypeLabel(routine.dayType)} · ${folderName}` : dayTypeLabel(routine.dayType)) : undefined}
+      right={
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+          {routine ? (
+            <Pressable
+              onPress={() => setMenu(true)}
+              hitSlop={6}
+              accessibilityRole="button"
+              accessibilityLabel="More for this routine"
+              style={{
+                width: 42,
+                height: 42,
+                borderRadius: radius.pill,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: color.surfaceRaised,
+                borderWidth: 1,
+                borderColor: color.border,
+              }}
+            >
+              <Glyph name="more" size={20} color={color.inkSecondary} />
+            </Pressable>
+          ) : null}
+          <IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />
+        </View>
+      }
     >
       {loading ? (
         <View style={{ gap: space.lg }}>
@@ -299,6 +412,17 @@ export default function RoutineEditorScreen() {
                       disabled={index === routine.exercises.length - 1}
                       onPress={() => onMove(index, 1)}
                     />
+                    {catalogKeys.get(pe.exerciseId) ? (
+                      <Pressable
+                        onPress={() => void onSwap(pe.id)}
+                        hitSlop={6}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Swap ${pe.exercise.name}`}
+                        style={{ width: 36, height: 36, alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <Glyph name="swap" size={18} color={color.accent} />
+                      </Pressable>
+                    ) : null}
                     <IconButton
                       icon="close"
                       size={30}
@@ -377,11 +501,48 @@ export default function RoutineEditorScreen() {
               disabled={routine.exercises.length === 0}
               onPress={() => void onStart()}
             />
-            <GhostButton label="Duplicate routine" icon="plus" onPress={onDuplicate} />
-            <GhostButton label="Delete routine" icon="close" onPress={onDelete} />
           </View>
         </ScrollView>
       )}
+
+      {/* the routine's menu */}
+      <TrackerSheet visible={menu} title={routine?.name ?? 'Routine'} onClose={() => setMenu(false)}>
+        <View style={{ gap: 2 }}>
+          {routine && routine.exercises.length > 0 ? (
+            <SheetRow label="Share routine" leading={<Icon name="send" size={18} color={color.accent} />} onPress={() => after(() => setSharing(true))} />
+          ) : null}
+          <SheetRow label="Move to folder" leading={<Glyph name="list" size={18} color={color.accent} />} onPress={onMoveMenu} />
+          <SheetRow label="Duplicate routine" leading={<Icon name="plus" size={18} color={color.accent} />} onPress={() => after(onDuplicate)} />
+          <SheetRow label="Delete routine" danger leading={<Glyph name="trash" size={18} color={color.criticalText} />} onPress={() => after(onDelete)} />
+        </View>
+      </TrackerSheet>
+
+      {/* move: every other folder, with its routine count */}
+      <TrackerSheet visible={moveTo != null} title="Move to folder" onClose={() => setMoveTo(null)}>
+        {/* Many folders on a small phone: the list scrolls inside the sheet. */}
+        <ScrollView style={{ maxHeight: 360 }} contentContainerStyle={{ gap: 2 }}>
+          {(moveTo ?? []).map((f) => (
+            <SheetRow
+              key={f.id}
+              label={f.name}
+              value={f.following ? `Your plan · ${countWord(f.routines.length, 'routine')}` : countWord(f.routines.length, 'routine')}
+              leading={<Glyph name="list" size={18} color={color.accent} />}
+              onPress={() => onMoveTo(f)}
+            />
+          ))}
+        </ScrollView>
+      </TrackerSheet>
+
+      <SwapSheet
+        visible={swapping != null}
+        name={swapping?.name ?? ''}
+        options={swapping?.options ?? []}
+        note="In this routine from now on. Your sets and reps stay."
+        onClose={() => setSwapping(null)}
+        onPick={(a) => void onPickSwap(a)}
+      />
+
+      <ShareRoutineSheet visible={sharing} folder={null} routines={routine ? [routine] : []} onClose={() => setSharing(false)} />
     </Screen>
   );
 }

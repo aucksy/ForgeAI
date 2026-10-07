@@ -1,0 +1,15 @@
+{
+  "kind": "forgeai-routines",
+  "version": 1,
+  "folder": "Shared by Sam",
+  "routines": [
+    {
+      "name": "Sam's Arms",
+      "dayType": "upper",
+      "exercises": [
+        { "name": "Barbell Curl", "catalogKey": "barbell_curl", "logType": "weight_reps", "sets": 3, "repMin": 8, "repMax": 12, "primary": ["biceps"] },
+        { "name": "Sam's Band Pull", "catalogKey": null, "logType": "reps", "sets": 2, "repMin": 15, "repMax": 20, "primary": ["rear_delts"] }
+      ]
+    }
+  ]
+}
