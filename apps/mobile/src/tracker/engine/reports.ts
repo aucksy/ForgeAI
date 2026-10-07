@@ -9,6 +9,7 @@
  */
 import { addDays, weekStartISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
+import { countWord } from '@/lib/words';
 
 import { MUSCLE_LABEL, type Muscle } from '../catalog/muscles';
 import { monthName, shiftMonth } from '../lib/months';
@@ -34,6 +35,17 @@ export interface ReportRecord {
   exerciseName: string;
   kind: RecordKind;
   dateISO: string;
+}
+
+/**
+ * What a share picture may say was moved over a period (v0.25.1 review): the weight on the
+ * bar, dumbbells, machine or belt — never body weight, as on the workout picture — then the
+ * reps and the distance, for a month of only pull-ups or only runs.
+ */
+export interface PictureTotals {
+  kg: number;
+  reps: number;
+  distanceM: number;
 }
 
 export interface PeriodTotals {
@@ -222,6 +234,8 @@ export interface MonthReport {
   topExercises: TopExercise[];
   bodyweight: BodyweightChange | null;
   note: string;
+  /** For the share picture (absent when the caller did not count it). */
+  picture?: PictureTotals;
 }
 
 /** The big muscles the coach checks for balance, and one move to suggest for each. */
@@ -318,8 +332,10 @@ export function buildMonthReport(input: {
   bodyweight: readonly BodyweightPoint[];
   from: string;
   to: string;
+  picture?: PictureTotals;
 }): MonthReport {
   const base: Omit<MonthReport, 'note'> = {
+    ...(input.picture ? { picture: input.picture } : {}),
     month: input.month,
     complete: input.complete,
     totals: totalsOf(input.sessions),
@@ -349,6 +365,8 @@ export interface YearReview {
   muscles: MuscleSetsSlice[];
   bodyweight: BodyweightChange | null;
   note: string;
+  /** For the share picture (absent when the caller did not count it). */
+  picture?: PictureTotals;
 }
 
 /** "1.2 million", "84,500". */
@@ -373,9 +391,9 @@ export function yearNote(r: Omit<YearReview, 'note'>): string {
   const parts = [`${head}: ${facts.length > 1 ? `${facts.slice(0, -1).join(', ')} and ${facts[facts.length - 1]}` : facts[0]}.`];
   const fav = r.topExercises[0];
   if (r.busiest && r.busiest.workouts > 0 && fav) {
-    parts.push(`Your busiest month was ${monthName(r.busiest.month)}, and ${fav.name} was your favourite — ${fmtInt(fav.sets)} sets.`);
+    parts.push(`Your busiest month was ${monthName(r.busiest.month)}, and ${fav.name} was your favourite — ${countWord(fav.sets, 'set', fmtInt)}.`);
   } else if (fav) {
-    parts.push(`${fav.name} was your favourite — ${fmtInt(fav.sets)} sets.`);
+    parts.push(`${fav.name} was your favourite — ${countWord(fav.sets, 'set', fmtInt)}.`);
   }
   if (r.gain) {
     parts.push(`Biggest gain: ${r.gain.name}, up ${r.gain.pct}% (about ${r.gain.fromKg} → ${r.gain.toKg} kg for one rep).`);
@@ -395,6 +413,7 @@ export function buildYearReview(input: {
   strength: readonly StrengthPoint[];
   muscles: readonly MuscleSetsSlice[];
   bodyweight: readonly BodyweightPoint[];
+  picture?: PictureTotals;
 }): YearReview {
   const byMonth: { month: string; workouts: number }[] = [];
   for (let m = `${input.year}-01`; m <= input.lastMonth && m.startsWith(String(input.year)); m = shiftMonth(m, 1)) {
@@ -402,6 +421,7 @@ export function buildYearReview(input: {
   }
   const busiest = byMonth.reduce<{ month: string; workouts: number } | null>((b, m) => (m.workouts > (b?.workouts ?? 0) ? m : b), null);
   const base: Omit<YearReview, 'note'> = {
+    ...(input.picture ? { picture: input.picture } : {}),
     year: input.year,
     complete: input.complete,
     totals: totalsOf(input.sessions),

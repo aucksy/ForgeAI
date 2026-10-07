@@ -4,10 +4,12 @@
  * calendar (or the year's month-by-month bars) and the highlights. PURE.
  */
 import { fmtInt } from '@/lib/format';
+import { countWord } from '@/lib/words';
 import { color } from '@/theme/tokens';
 
 import { MUSCLE_LABEL } from '../catalog/muscles';
-import { bigNumber, durationText, type MonthReport, type PeriodTotals, type YearReview } from '../engine/reports';
+import { fmtTotalDistance } from '../engine/logTypes';
+import { bigNumber, durationText, type MonthReport, type PeriodTotals, type PictureTotals, type YearReview } from '../engine/reports';
 import { setsText } from '../engine/volume';
 import { daysInMonth, firstWeekday, monthName, monthTitle } from '../lib/months';
 import { wordmark } from './brand';
@@ -50,6 +52,20 @@ export function periodLine(t: Pick<PeriodTotals, 'workouts' | 'days' | 'timed'>)
 }
 
 /**
+ * The second box of a month or year picture (v0.25.1 review), by the workout picture's rule:
+ * kilos on the bar, dumbbells, machine or belt — never body weight — else the reps (a month
+ * of pull-ups), else the distance (a month of runs), else the workouts. Never "KG LIFTED 0".
+ * Without the picture's own count (older callers) it keeps the report's volume. PURE.
+ */
+export function liftedStat(t: Pick<PeriodTotals, 'volumeKg' | 'workouts'>, p: PictureTotals | undefined): [string, string] {
+  if (!p) return ['KG LIFTED', bigNumber(t.volumeKg)];
+  if (p.kg > 0) return ['KG LIFTED', bigNumber(p.kg)];
+  if (p.reps > 0) return ['REPS', bigNumber(p.reps)];
+  if (p.distanceM > 0) return ['DISTANCE', fmtTotalDistance(p.distanceM)];
+  return ['WORKOUTS', fmtInt(t.workouts)];
+}
+
+/**
  * The year's time box: whole hours once there is at least one ("HOURS 91"), the minutes
  * under that ("TIME 45 min") — v0.25.1: a short year read "HOURS 0". PURE.
  */
@@ -83,7 +99,7 @@ export function monthShareScene(r: MonthReport, recordCount: number): Scene {
   nodes.push(
     ...stats([
       ['TIME', durationText(t.durationSec)],
-      ['KG LIFTED', bigNumber(t.volumeKg)],
+      liftedStat(t, r.picture),
       ['SETS', fmtInt(t.sets)],
       ['RECORDS', String(recordCount)],
     ]),
@@ -130,7 +146,7 @@ export function yearShareScene(y: YearReview): Scene {
   nodes.push(
     ...stats([
       yearTimeStat(t.durationSec),
-      ['KG LIFTED', bigNumber(t.volumeKg)],
+      liftedStat(t, y.picture),
       ['SETS', fmtInt(t.sets)],
       ['RECORDS', fmtInt(y.recordCount)],
     ]),
@@ -157,7 +173,8 @@ export function yearShareScene(y: YearReview): Scene {
   const rows: [string, string][] = [];
   const fav = y.topExercises[0];
   if (fav) rows.push([`Favourite: ${fav.name}`, setsText(fav.sets)]);
-  if (y.busiest) rows.push(['Busiest month', `${monthName(y.busiest.month)} · ${y.busiest.workouts}`]);
+  // v0.25.1 review: "October · 1" said 1 of what — the count now says it.
+  if (y.busiest) rows.push([`Busiest month · ${countWord(y.busiest.workouts, 'workout', fmtInt)}`, monthName(y.busiest.month)]);
   if (y.longestStreakWeeks > 0) rows.push(['Longest streak', `${y.longestStreakWeeks} ${y.longestStreakWeeks === 1 ? 'week' : 'weeks'}`]);
   if (y.gain) rows.push([`Biggest gain: ${y.gain.name}`, `+${y.gain.pct}%`]);
   if (rows.length > 0) nodes.push(...list(980, 'HIGHLIGHTS', rows.slice(0, 4)));

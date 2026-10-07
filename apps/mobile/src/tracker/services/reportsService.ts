@@ -10,10 +10,48 @@ import type { SessionDetail } from '@/types/models';
 
 import { getTrackerExercisesByIds } from '../db/exerciseInfo';
 import { getSessionDetailsBetween } from '../db/sessionDetails';
-import { buildMonthReport, buildYearReview, type MonthReport, type ReportSession, type StrengthPoint, type YearReview } from '../engine/reports';
+import { hasReps } from '../engine/logTypes';
+import { buildMonthReport, buildYearReview, type MonthReport, type PictureTotals, type ReportSession, type StrengthPoint, type YearReview } from '../engine/reports';
+import { setVolumeKg } from '../engine/volume';
 import { monthDays, monthOf, shiftMonth, yearDays } from '../lib/months';
 import { getRecordEvents, type RecordEventRow } from './recordsService';
-import { getBodyweightTimeline, getMuscleSetsBetween, withVolume } from './volumeService';
+import { applyVolume, getBodyweightTimeline, getMuscleSetsBetween, getVolumeContext, type VolumeContext } from './volumeService';
+
+/**
+ * What the month / year share picture may say was moved (v0.25.1 review): the weight on the
+ * bar, dumbbells, machine or belt only — the workout picture's rule (`liftedOnPicture`), so
+ * a month of pull-ups never shares a number that divides back to body weight — plus the
+ * reps and the distance for a period with no kilos. PURE (exported for tests).
+ */
+export function pictureTotals(details: readonly SessionDetail[], ctx: Pick<VolumeContext, 'exercises' | 'setModes'>, distanceM: number): PictureTotals {
+  let kg = 0;
+  let reps = 0;
+  for (const d of details) {
+    for (const g of d.exercises) {
+      const info = ctx.exercises.get(g.exercise.id);
+      const logType = info?.logType ?? 'weight_reps';
+      const rule = { logType, loadMode: info?.loadMode ?? ('one' as const), bwShare: 0 };
+      for (const s of g.sets) {
+        if (s.isWarmup) continue;
+        kg += setVolumeKg({ weightKg: s.weightKg, reps: s.reps, isWarmup: false, loadMode: ctx.setModes?.get(s.id) ?? null }, rule, null);
+        if (hasReps(logType)) reps += Math.max(0, s.reps);
+      }
+    }
+  }
+  return { kg, reps, distanceM: Math.max(0, distanceM) };
+}
+
+/** Distance in the working sets of workouts between two days (inclusive). */
+async function distanceBetween(from: string, to: string): Promise<number> {
+  const row = await getDb().getFirstAsync<{ m: number | null }>(
+    `SELECT TOTAL(se.distance_m) AS m FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
+      WHERE ws.date_iso BETWEEN ? AND ? AND se.is_warmup = 0`,
+    [from, to],
+  );
+  return row?.m ?? 0;
+}
+
+const exerciseIdsOf = (details: readonly SessionDetail[]): string[] => [...new Set(details.flatMap((d) => d.exercises.map((g) => g.exercise.id)))];
 
 /** Session details → what the reports count. PURE (exported for tests). */
 export function toReportSessions(details: readonly SessionDetail[]): ReportSession[] {
@@ -67,23 +105,26 @@ export interface MonthReportData {
 export async function getMonthReport(month: string, today: string = todayISO()): Promise<MonthReportData> {
   const { from, to } = monthDays(month);
   const prev = monthDays(shiftMonth(month, -1));
-  const [cur, before, records, muscles, bw] = await Promise.all([
-    getSessionDetailsBetween(from, to).then(withVolume),
-    getSessionDetailsBetween(prev.from, prev.to).then(withVolume),
+  const [rawCur, rawBefore, records, muscles, bw, metres] = await Promise.all([
+    getSessionDetailsBetween(from, to),
+    getSessionDetailsBetween(prev.from, prev.to),
     getRecordEvents({ from, to }),
     getMuscleSetsBetween(from, to),
     getBodyweightTimeline(),
+    distanceBetween(from, to).catch(() => 0),
   ]);
+  const ctx = await getVolumeContext(exerciseIdsOf([...rawCur, ...rawBefore]));
   const report = buildMonthReport({
     month,
     complete: today > to,
-    sessions: toReportSessions(cur),
-    previous: toReportSessions(before),
+    sessions: toReportSessions(rawCur.map((d) => applyVolume(d, ctx))),
+    previous: toReportSessions(rawBefore.map((d) => applyVolume(d, ctx))),
     records,
     muscles,
     bodyweight: bw,
     from,
     to,
+    picture: pictureTotals(rawCur, ctx, metres),
   });
   return { report, records };
 }
@@ -107,16 +148,15 @@ export function strengthPoints(details: readonly SessionDetail[], weightExercise
 
 export async function getYearReview(year: number, today: string = todayISO()): Promise<YearReview> {
   const { from, to } = yearDays(year);
-  const [raw, records, muscles, bw] = await Promise.all([
+  const [raw, records, muscles, bw, metres] = await Promise.all([
     getSessionDetailsBetween(from, to),
     getRecordEvents({ from, to }),
     getMuscleSetsBetween(from, to),
     getBodyweightTimeline(),
+    distanceBetween(from, to).catch(() => 0),
   ]);
-  const [details, infos] = await Promise.all([
-    withVolume(raw),
-    getTrackerExercisesByIds([...new Set(raw.flatMap((d) => d.exercises.map((g) => g.exercise.id)))]),
-  ]);
+  const [ctx, infos] = await Promise.all([getVolumeContext(exerciseIdsOf(raw)), getTrackerExercisesByIds(exerciseIdsOf(raw))]);
+  const details = raw.map((d) => applyVolume(d, ctx));
   const weightIds = new Set([...infos.values()].filter((e) => e.logType === 'weight_reps').map((e) => e.id));
   const complete = today > to;
   return buildYearReview({
@@ -128,5 +168,6 @@ export async function getYearReview(year: number, today: string = todayISO()): P
     strength: strengthPoints(details, weightIds),
     muscles,
     bodyweight: bw,
+    picture: pictureTotals(raw, ctx, metres),
   });
 }

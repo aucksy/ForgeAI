@@ -141,7 +141,8 @@ appId: com.forgeai.app
     element: "Longest distance"
     centerElement: true
     timeout: 20000
-- assertVisible: "Best pace"
+# The pace itself, not just its label: the "—" row before any 1 km set has the label too.
+- assertVisible: "4:30 /km"
 - assertNotVisible: "Best pace counts only.*"
 - takeScreenshot: 76-run-records
 - tapOn: "Records, more information"

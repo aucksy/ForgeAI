@@ -8,6 +8,8 @@
  * Started once from the root layout; listens to the two stores, so it works no
  * matter which screen is showing. Card updates are de-duplicated on their text.
  */
+import { countWord } from '@/lib/words';
+
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { cancelRestEnd, clearWorkoutOngoing, showWorkoutOngoing } from './workoutAlerts';
@@ -36,7 +38,7 @@ export function ongoingText(
     }
   }
   if (total === 0) return 'Add an exercise to start';
-  return `${done} of ${total} sets done`;
+  return `${done} of ${countWord(total, 'set')} done`;
 }
 
 let started = false;

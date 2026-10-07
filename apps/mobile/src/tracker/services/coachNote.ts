@@ -20,6 +20,7 @@ import { getLastSessionOfDayType } from '@/db/repos/workoutRepo';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getGroqKey } from '@/lib/keys';
 import { fmtInt, trimNum } from '@/lib/format';
+import { countWord } from '@/lib/words';
 import { useSettings } from '@/store/settingsStore';
 import type { SessionDetail } from '@/types/models';
 
@@ -79,9 +80,9 @@ export function buildSessionNote(
   const top = data.muscles[0]?.muscle;
   const topMuscle = top ? MUSCLE_LABEL[top] : null;
   if (topMuscle) {
-    return `${dayLabel} done — ${data.workingSetCount} working sets, ${cap(topMuscle)} took the brunt. Protein and sleep now; that's where growth happens.`;
+    return `${dayLabel} done — ${countWord(data.workingSetCount, 'working set')}, ${cap(topMuscle)} took the brunt. Protein and sleep now; that's where growth happens.`;
   }
-  return `${dayLabel} logged — ${data.workingSetCount} sets in the books. Recovery is where the growth actually happens.`;
+  return `${dayLabel} logged — ${countWord(data.workingSetCount, 'set')} in the books. Recovery is where the growth actually happens.`;
 }
 
 export interface CoachNote {

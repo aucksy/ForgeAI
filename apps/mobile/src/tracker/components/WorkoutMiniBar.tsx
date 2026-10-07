@@ -50,7 +50,7 @@ export function WorkoutMiniBar() {
         router.push('/session/active');
       }}
       accessibilityRole="button"
-      accessibilityLabel={`${title}. ${editing ? '' : `${done} sets done. `}Tap to open the workout`}
+      accessibilityLabel={`${title}. ${editing ? '' : `${done === 1 ? '1 set' : `${done} sets`} done. `}Tap to open the workout`}
       style={{
         marginHorizontal: space.md,
         marginBottom: space.sm,

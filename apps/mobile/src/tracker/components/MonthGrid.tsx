@@ -1,6 +1,7 @@
 /** A month as a calendar, Monday first, with the days trained filled in (Phase 3 report). */
 import { Text, View } from 'react-native';
 
+import { countWord } from '@/lib/words';
 import { color, space, type } from '@/theme/tokens';
 
 import { daysInMonth, firstWeekday } from '../lib/months';
@@ -17,7 +18,7 @@ export function MonthGrid({ month, trained, today }: { month: string; trained: r
   for (let i = 0; i < cells.length; i += 7) rows.push(cells.slice(i, i + 7));
 
   return (
-    <View style={{ gap: 6 }} accessibilityLabel={`${trained.length} days trained this month`}>
+    <View style={{ gap: 6 }} accessibilityLabel={`${countWord(trained.length, 'day')} trained this month`}>
       <View style={{ flexDirection: 'row' }}>
         {HEAD.map((h, i) => (
           <Text key={i} style={{ flex: 1, textAlign: 'center', fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>

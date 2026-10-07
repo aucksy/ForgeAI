@@ -45,7 +45,7 @@ describe('which records an exercise keeps', () => {
     expect(recordKindsFor('time')).toEqual(['duration']);
     expect(recordKindsFor('distance')).toEqual(['distance']);
     // v0.25.1 (owner): a run keeps its best pace, not its longest time.
-    expect(recordKindsFor('time_distance')).toEqual(['distance', 'pace']);
+    expect(recordKindsFor('time_distance')).toEqual(['pace', 'distance']);
   });
   it('names them in plain words', () => {
     expect(Object.values(RECORD_LABEL)).toEqual([
@@ -137,8 +137,8 @@ describe('the record rule', () => {
     );
     // 5 km in 27:30 (5:30 /km) is faster than 3 km in 16:40 (5:33 /km).
     expect(r.events.map((e) => [e.kind, e.value])).toEqual([
+      ['pace', 1000 / 330],
       ['distance', 5000],
-      ['pace', 5000 / 1650],
     ]);
   });
 
@@ -213,7 +213,8 @@ describe('the live pop-up knows every kind', () => {
   it('assisted help is typed positive and never counts as weight', () => {
     const s = draft({ weightKg: 20, reps: 10 });
     const hits = liveRecordHits({ bests: { weightKg: 0, e1rm: 0, by: { reps: 8, best_session: 30 } }, sets: [s], logType: 'assisted' });
-    expect(hits.get(s.key)).toEqual({ kind: 'reps', value: 10, set: { weightKg: -20, reps: 10, durationSec: null, distanceM: null, loadMode: 'one' } });
+    // v0.25.1: a hit also lists every record its set beat (`all`).
+    expect(hits.get(s.key)).toMatchObject({ kind: 'reps', value: 10, set: { weightKg: -20, reps: 10, durationSec: null, distanceM: null, loadMode: 'one' } });
   });
 
   it('the bests come from the same rule as the finish screen', () => {
@@ -224,8 +225,9 @@ describe('the live pop-up knows every kind', () => {
       by: { reps: 12, best_session: 22 },
       bwShare: 1,
       bodyweightKg: 81,
+      kinds: ['reps', 'best_session'],
     });
-    expect(priorBestsFrom({ bests: [], events: [] }, { bwShare: 0 }, [], '2026-10-01')).toBeNull();
+    expect(priorBestsFrom({ kinds: [], bests: [], events: [] }, { bwShare: 0 }, [], '2026-10-01')).toBeNull();
   });
 });
 

@@ -1,7 +1,8 @@
 import { HBarList } from '@/components/charts';
 import { EmptyState } from '@/components/ui';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
-import { fmtSets, type MuscleSetsSlice } from '@/tracker/engine/volume';
+import { countWord } from '@/lib/words';
+import { setsText, type MuscleSetsSlice } from '@/tracker/engine/volume';
 
 import { HeaderStat, Section } from './Section';
 
@@ -26,12 +27,12 @@ export function MuscleSection({ data, index }: MuscleSectionProps) {
     <Section
       title="Sets per Muscle"
       index={index}
-      right={slices.length > 0 ? <HeaderStat text={`${muscles} muscles`} /> : undefined}
+      right={slices.length > 0 ? <HeaderStat text={countWord(muscles, 'muscle')} /> : undefined}
     >
       {slices.length > 0 ? (
         <HBarList
           data={slices.map((m) => ({ label: MUSCLE_LABEL[m.muscle], value: m.sets }))}
-          valueFormat={(n) => `${fmtSets(n)} sets`}
+          valueFormat={(n) => setsText(n)}
         />
       ) : (
         <EmptyState icon="zap" title="No data yet" body="Sets for each muscle appear once workouts are logged." />

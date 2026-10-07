@@ -2,7 +2,7 @@
 import { fromISO, shortDate } from '@/lib/date';
 import { fmtInt, trimNum } from '@/lib/format';
 
-import { fmtDistance, fmtDuration, weightIsEach, type DistUnit, type LoadMode, type LogType } from '../engine/logTypes';
+import { fmtDistance, fmtDuration, fmtTotalDistance, weightIsEach, type DistUnit, type LoadMode, type LogType } from '../engine/logTypes';
 import { RECORD_LABEL, sessionUnit } from '../engine/records';
 import { setVolumeKg } from '../engine/volume';
 import type { SetMeta } from '../db/trackerSets';
@@ -45,7 +45,7 @@ export function bestSetText(
     )[0];
     if (top.weightKg > 0) return `+${trimNum(top.weightKg)} kg × ${top.reps}`;
     if (top.weightKg < 0) return `${trimNum(-top.weightKg)} kg help × ${top.reps}`;
-    return `${top.reps} reps`;
+    return `${top.reps} ${top.reps === 1 ? 'rep' : 'reps'}`;
   }
   const top = [...working].sort((a, b) => b.weightKg - a.weightKg || b.reps - a.reps)[0];
   if (top.reps <= 0) return null;
@@ -58,9 +58,7 @@ export function shareDate(dateISO: string): string {
 }
 
 /** "5.2 km" or "800 m" — a picture's total distance across exercises. PURE. */
-export function totalDistanceText(m: number): string {
-  return m >= 1000 ? `${trimNum(m / 1000, 1)} km` : `${Math.round(m)} m`;
-}
+export const totalDistanceText = fmtTotalDistance;
 
 /**
  * What the picture says was lifted: the weight on the bar, the dumbbells, the machine or the

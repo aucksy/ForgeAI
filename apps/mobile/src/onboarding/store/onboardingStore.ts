@@ -15,6 +15,7 @@ import { useChat } from '@/store/chatStore';
 import { useDashboard } from '@/store/dashboardStore';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
 import type { OnboardingInput } from '../form';
 import {
@@ -122,6 +123,13 @@ export const useOnboarding = create<OnboardingState>()((set) => ({
     try {
       await eraseAllData();
       await resetInMemoryState();
+      // v0.25.1: the body figure is the member's own choice — the next member on this phone
+      // starts on the default figure, like a fresh install.
+      try {
+        useTrackerPrefs.getState().setBodyFigure('male');
+      } catch {
+        /* a preference only — the erase stands */
+      }
       set({ status: 'welcome', demo: false, busy: false });
     } catch (err) {
       set({ busy: false });

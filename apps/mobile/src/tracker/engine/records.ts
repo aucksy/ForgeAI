@@ -19,7 +19,11 @@
  * v0.25.1 (owner, 7 Oct): a run keeps "Best pace" instead of "Longest time" — a slow run
  * is not a record. Pace counts only sets of at least 1 km (`PACE_BASIS`), so a 200 m sprint
  * can't set it. Pace is kept as SPEED (metres per second) so "bigger is better" holds for
- * every kind and every comparison below stays one rule; it reads as minutes per km.
+ * every kind and every comparison below stays one rule; it reads as minutes per km, and is
+ * rounded to the whole second it is shown with, so a "new" best never reads the same as
+ * the old one. The owner's words were about runs: loaded carries (farmer's walk, suitcase
+ * carry) are time + distance too, but tens of metres and no cardio — they keep their
+ * longest time.
  *
  * Records are DERIVED from the sets, never stored: editing or deleting a workout, or
  * moving it to another day, can never leave a record behind. A record is NEWS (an event)
@@ -77,12 +81,21 @@ export function paceRuleText(unit: DistUnit): string {
 
 /**
  * The rule the records follow for one exercise: its volume rule, plus the distance unit
- * (pace's minimum length). Absent unit = km.
+ * (pace's minimum length; absent = km) and its main muscles (a time + distance exercise keeps
+ * a pace only when it is cardio; absent = cardio). A `TrackerExercise` is one as it stands.
  */
-export type RecordRule = VolumeRule & { distUnit?: DistUnit };
+export type RecordRule = VolumeRule & { distUnit?: DistUnit; muscles?: { primary: readonly string[] } };
 
-/** The records an exercise keeps, by how it is logged, in display order. */
-export function recordKindsFor(t: LogType): RecordKind[] {
+/** The records this exercise keeps, in display order. */
+export function kindsForRule(rule: Pick<RecordRule, 'logType' | 'muscles'>): RecordKind[] {
+  return recordKindsFor(rule.logType, rule.muscles ? rule.muscles.primary.includes('cardio') : true);
+}
+
+/**
+ * The records an exercise keeps, by how it is logged, in display order. `cardio` (default
+ * yes) separates a run, ride or row from a loaded carry, which keeps its longest time.
+ */
+export function recordKindsFor(t: LogType, cardio = true): RecordKind[] {
   switch (t) {
     case 'weight_reps':
       return ['weight', 'e1rm', 'best_set', 'best_session'];
@@ -98,7 +111,7 @@ export function recordKindsFor(t: LogType): RecordKind[] {
       return ['distance'];
     case 'time_distance':
       // v0.25.1: pace, not time — a slower run takes longer, and that is no record.
-      return ['distance', 'pace'];
+      return cardio ? ['pace', 'distance'] : ['distance', 'duration'];
     default:
       return [];
   }
@@ -152,6 +165,8 @@ export interface RecordEvent extends RecordHit {
 }
 
 export interface ExerciseRecords {
+  /** The kinds this exercise keeps, in display order (v0.25.1: the Records card asks). */
+  kinds: RecordKind[];
   /** Current best per kind, in display order (kinds never logged are absent). */
   bests: RecordHit[];
   /** Every time a workout beat the best before it, oldest first. */
@@ -185,11 +200,14 @@ export function setRecordValue(kind: RecordKind, s: RecordSet, rule: RecordRule,
     }
     case 'pace': {
       // Speed over the whole set. A set shorter than the basis (1 km) says nothing about
-      // pace: a 200 m sprint would always "beat" a 5 km run.
+      // pace: a 200 m sprint would always "beat" a 5 km run. Taken at the whole second per
+      // km the screen shows, so 49:58 for 10 km (5:00 /km) does not "beat" 25:00 for 5 km.
       const m = finite(s.distanceM);
       const sec = finite(s.durationSec);
-      if (!(sec > 0) || m < PACE_BASIS[rule.distUnit ?? 'km'].metres) return null;
-      return m / sec;
+      const basis = PACE_BASIS[rule.distUnit ?? 'km'].metres;
+      if (!(sec > 0) || m < basis) return null;
+      const perBasis = Math.round((sec * basis) / m);
+      return perBasis > 0 ? basis / perBasis : null;
     }
     default:
       return null;
@@ -255,7 +273,7 @@ export function sessionBests(session: RecordSession, rule: RecordRule, kinds: re
  * is judged only against the workouts BEFORE it.
  */
 export function exerciseRecords(sessions: readonly RecordSession[], rule: RecordRule, bw: readonly BodyweightPoint[]): ExerciseRecords {
-  const kinds = recordKindsFor(rule.logType);
+  const kinds = kindsForRule(rule);
   const bests = new Map<RecordKind, RecordHit>();
   const events: RecordEvent[] = [];
   for (const session of chronological(sessions)) {
@@ -272,5 +290,5 @@ export function exerciseRecords(sessions: readonly RecordSession[], rule: Record
       }
     }
   }
-  return { bests: kinds.map((k) => bests.get(k)).filter((h): h is RecordHit => h != null), events };
+  return { kinds, bests: kinds.map((k) => bests.get(k)).filter((h): h is RecordHit => h != null), events };
 }

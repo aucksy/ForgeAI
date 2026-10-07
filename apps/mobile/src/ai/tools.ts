@@ -14,7 +14,8 @@ import { getTrackerExercise, getTrackerExercisesByIds } from '@/tracker/db/exerc
 import { fmtSetCompact, fmtDuration, storedWeight, type LogType } from '@/tracker/engine/logTypes';
 import { targetLine } from '@/tracker/engine/progression';
 import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
-import { getExerciseOverview } from '@/tracker/services/exerciseStats';
+import { getExerciseOverview, overviewFacts } from '@/tracker/services/exerciseStats';
+import { countWord } from '@/lib/words';
 import { getDashboardDataPhase2 } from '@/tracker/services/dashboardPhase2';
 import { getMeaningfulPrs, meaningfulPrs } from '@/tracker/services/records';
 import { getSessionDetailWithVolume, withVolume } from '@/tracker/services/volumeService';
@@ -328,7 +329,7 @@ function workoutLoggedCardText(detail: SessionDetail, newPrs: PrWithName[]): str
         .map((p) => `${p.exerciseName} ${trimNum(p.value)}kg (${p.kind === 'e1rm' ? 'e1RM' : p.kind})`)
         .join(', ')}.`
     : '';
-  return `Logged ${detail.exercises.length} exercise${detail.exercises.length > 1 ? 's' : ''}, ${setCount} sets — ${fmtInt(detail.totalVolumeKg)} kg volume.${pr}`;
+  return `Logged ${countWord(detail.exercises.length, 'exercise')}, ${countWord(setCount, 'set')} — ${fmtInt(detail.totalVolumeKg)} kg volume.${pr}`;
 }
 
 /** Build the 'workout_logged' card (payload = SessionDetail + newPrs). */
@@ -507,9 +508,9 @@ export const COACH_TOOLS: CoachTool[] = [
                   t.logType === 'time'
                     ? `${t.last.sets} timed sets`
                     : t.logType === 'assisted'
-                      ? `${t.last.topReps} reps with ${trimNum(Math.abs(t.last.weightKg))}kg of help`
+                      ? `${t.last.topReps} ${t.last.topReps === 1 ? 'rep' : 'reps'} with ${trimNum(Math.abs(t.last.weightKg))}kg of help`
                       : t.bodyweightOnly
-                        ? `${t.last.topReps} reps`
+                        ? `${t.last.topReps} ${t.last.topReps === 1 ? 'rep' : 'reps'}`
                         : fmtSet(t.last.weightKg, t.last.topReps)
                 } on ${t.last.dateISO}`
               : 'never performed',
@@ -738,7 +739,7 @@ export const COACH_TOOLS: CoachTool[] = [
             name: overview.exercise.name,
             loggedAs: overview.exercise.logType,
             sessionsCount: overview.history.length,
-            ...Object.fromEntries(overview.tiles.map((t) => [t.label, t.value])),
+            ...Object.fromEntries(overviewFacts(overview).map((t) => [t.label, t.value])),
             recentSessions: overview.history.slice(0, 5).map((h) => ({
               dateISO: h.dateISO,
               sets: h.sets

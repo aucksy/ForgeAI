@@ -19,7 +19,7 @@ import { color, gradients, radius, space, type } from '@/theme/tokens';
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coachNote';
-import { dayTypeLabel, getSessionSummary, volumeComparison } from '@/tracker/services/finishSummary';
+import { dayTypeLabel, finishHeadline, getSessionSummary, volumeComparison } from '@/tracker/services/finishSummary';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
 import { workoutShareInput } from '@/tracker/share/workoutInput';
@@ -98,7 +98,7 @@ export default function FinishScreen() {
                   {dayTypeLabel(data.session.dayType)} done
                 </Text>
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
-                  {fmtInt(data.totalVolumeKg)} kg moved · {data.workingSetCount} {data.workingSetCount === 1 ? 'set' : 'sets'}
+                  {finishHeadline(data)}
                 </Text>
                 {data.totalVolumeKg > 0 ? (
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: 'rgba(31,13,5,0.6)', marginTop: 2 }}>

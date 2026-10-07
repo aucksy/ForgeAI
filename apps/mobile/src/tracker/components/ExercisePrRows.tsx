@@ -15,7 +15,7 @@ import type { IconName } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
 import { kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { color, motion, space, type } from '@/theme/tokens';
-import { PACE_BASIS, paceRuleText, RECORD_LABEL, recordKindsFor, type RecordHit, type RecordKind } from '@/tracker/engine/records';
+import { PACE_BASIS, paceRuleText, RECORD_LABEL, type RecordHit, type RecordKind } from '@/tracker/engine/records';
 import type { XrmRecord } from '@/tracker/services/exerciseAnalytics';
 import { recordDetailText, recordValueText, type RecordTextContext } from '@/tracker/services/recordText';
 import type { UnitSystem } from '@/types/models';
@@ -24,6 +24,8 @@ import { InfoHeading } from './InfoHeading';
 
 export interface ExercisePrRowsProps {
   bests: RecordHit[];
+  /** v0.25.1: the kinds this exercise keeps (a run keeps a pace, a carry its longest time). */
+  kinds: readonly RecordKind[];
   ctx: RecordTextContext;
   ladder: XrmRecord[];
   units: UnitSystem;
@@ -49,14 +51,8 @@ function recDate(iso: string): string {
 }
 
 function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label: string; value: string; sub: string; onPress: (() => void) | null }) {
-  return (
-    <Pressable
-      onPress={onPress ?? undefined}
-      disabled={!onPress}
-      accessibilityRole={onPress ? 'button' : 'text'}
-      accessibilityLabel={onPress ? `${label}, ${value}. Open the workout.` : `${label}, ${sub}`}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm }}
-    >
+  const body = (
+    <>
       <View
         style={{
           width: 34,
@@ -77,16 +73,32 @@ function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label
       </View>
       <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: onPress ? color.ink : color.inkMuted }}>{value}</Text>
       {onPress ? <Icon name="chevron-right" size={16} color={color.inkMuted} /> : <View style={{ width: 16 }} />}
+    </>
+  );
+  const row = { flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm } as const;
+  // Nothing to open (a pace not set yet): a plain line, so a screen reader does not call it
+  // a "disabled" button.
+  if (!onPress) {
+    return (
+      <View accessible accessibilityLabel={`${label}, ${sub}`} style={row}>
+        {body}
+      </View>
+    );
+  }
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={`${label}, ${value}. Open the workout.`} style={row}>
+      {body}
     </Pressable>
   );
 }
 
-export function ExercisePrRows({ bests, ctx, ladder, units, onOpenSession }: ExercisePrRowsProps) {
+export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession }: ExercisePrRowsProps) {
   const unit = weightUnit(units);
-  if (bests.length === 0 && ladder.length === 0) return null;
-  // Runs, rows and rides keep a pace: say which sets count, and hold its place until one does.
-  const keepsPace = recordKindsFor(ctx.logType).includes('pace');
+  // Runs, rows and rides keep a pace: say which sets count, and hold its place until one does —
+  // also when nothing else is a record yet (a bike logged by time only).
+  const keepsPace = kinds.includes('pace');
   const paceMissing = keepsPace && !bests.some((b) => b.kind === 'pace');
+  if (bests.length === 0 && ladder.length === 0 && !keepsPace) return null;
 
   return (
     <Animated.View entering={FadeInDown.duration(motion.slow).delay(160)} style={{ marginTop: space.xl }}>

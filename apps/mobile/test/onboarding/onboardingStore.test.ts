@@ -72,6 +72,11 @@ vi.mock('@/store/chatStore', () => ({
 vi.mock('@/store/dashboardStore', () => ({
   useDashboard: { getState: () => ({ refresh: async () => undefined }) },
 }));
+// v0.25.1: the body figure the member chose in Profile.
+const prefs = vi.hoisted(() => ({ figure: 'female' as 'male' | 'female' }));
+vi.mock('@/tracker/store/trackerPrefsStore', () => ({
+  useTrackerPrefs: { getState: () => ({ setBodyFigure: (f: 'male' | 'female') => (prefs.figure = f) }) },
+}));
 
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import type { OnboardingInput } from '@/onboarding/form';
@@ -168,6 +173,17 @@ describe('erase / loadDemo', () => {
     await useOnboarding.getState().erase();
     expect(h.state.erased).toBe(1);
     expect(useOnboarding.getState()).toMatchObject({ status: 'welcome', demo: false, busy: false });
+  });
+
+  it('v0.25.1 review: erase puts the body figure back on the default (before: the next member kept the last one\'s)', async () => {
+    prefs.figure = 'female';
+    useOnboarding.setState({ status: 'ready' });
+    await useOnboarding.getState().erase();
+    expect(prefs.figure).toBe('male');
+    // Loading demo data is not an erase: the figure stays as chosen.
+    prefs.figure = 'female';
+    await useOnboarding.getState().loadDemo();
+    expect(prefs.figure).toBe('female');
   });
 
   it('a cache-reset failure does NOT report the committed erase as failed', async () => {

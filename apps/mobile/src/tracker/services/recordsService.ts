@@ -204,6 +204,7 @@ export function priorBestsFrom(records: ExerciseRecords, info: Pick<TrackerExerc
     by,
     bwShare: info.bwShare,
     bodyweightKg: bodyweightOn(bw, today),
+    kinds: records.kinds,
   };
 }
 

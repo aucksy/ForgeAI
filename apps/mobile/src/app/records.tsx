@@ -9,6 +9,7 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { Badge, EmptyState, IconButton, Screen, Skeleton } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
+import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { recordDetailText, recordValueText, withMonthHeadings } from '@/tracker/services/recordText';
@@ -37,7 +38,7 @@ export default function RecordsScreen() {
   return (
     <Screen
       title="Personal records"
-      subtitle={rows && rows.length > 0 ? `${rows.length} records, newest first` : undefined}
+      subtitle={rows && rows.length > 0 ? `${countWord(rows.length, 'record')}, newest first` : undefined}
       scroll={false}
       right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
     >

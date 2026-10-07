@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 
 import { GhostButton, HeroCard, Icon, PrimaryButton, Screen } from '@/components/ui';
+import { countWord } from '@/lib/words';
 import { getTodaysWorkout } from '@/services/coach';
 import { color, gradients, space, type } from '@/theme/tokens';
 
@@ -121,7 +122,7 @@ export default function WorkoutScreen() {
                 </View>
                 <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
                   {preview?.hasPlan
-                    ? `${preview.count} exercises from your plan, pre-filled with last time's numbers.`
+                    ? `${countWord(preview.count, 'exercise')} from your plan, pre-filled with last time's numbers.`
                     : 'No plan for today — start empty and add exercises as you go.'}
                 </Text>
                 {preview?.hasPlan ? (

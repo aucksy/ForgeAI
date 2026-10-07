@@ -38,6 +38,11 @@ export interface PriorBests {
   bwShare?: number;
   /** Phase 3: the member's body weight when the workout started. */
   bodyweightKg?: number | null;
+  /**
+   * v0.25.1: the kinds this exercise keeps (a loaded carry keeps its longest time, a run its
+   * pace). Absent on older drafts — then they follow how the exercise is logged.
+   */
+  kinds?: RecordKind[];
 }
 
 export interface LiveHit {
@@ -45,6 +50,12 @@ export interface LiveHit {
   value: number;
   /** The ticked set, as stored (help on an assisted move negative). */
   set: RecordSet;
+  /**
+   * v0.25.1: every record this set beat, in medal order (the first is `kind`). The pop-up
+   * names the first one no other ticked set has matched — a 10 km that set the longest
+   * distance is still news after a faster 1 km took the pace.
+   */
+  all?: LiveHit[];
 }
 
 interface LiveExercise {
@@ -81,7 +92,7 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
   if (!ex.bests) return out;
   const lt: LogType = ex.logType ?? 'weight_reps';
   const mode: LoadMode = ex.loadMode ?? 'one';
-  const kinds = recordKindsFor(lt);
+  const kinds = ex.bests.kinds ?? recordKindsFor(lt);
   // A draft saved before Phase 3 knows only the two old bests.
   const prior: Partial<Record<RecordKind, number>> = ex.bests.by ?? { weight: ex.bests.weightKg, e1rm: ex.bests.e1rm };
   const rule: RecordRule = { logType: lt, loadMode: mode, bwShare: ex.bests.bwShare ?? 0, distUnit: ex.distUnit ?? 'km' };
@@ -108,13 +119,13 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
   for (const s of ex.sets) {
     if (!s.done || s.isWarmup) continue;
     const set = storedSet(s, lt, mode);
-    let hit: LiveHit | null = null;
+    const all: LiveHit[] = [];
     for (const kind of RECORD_KINDS) {
       if (kind === 'best_session' || !kinds.includes(kind)) continue;
       const v = setRecordValue(kind, set, rule, body);
       if (v == null) continue;
       const best = running[kind];
-      if (prior[kind] != null && best != null && beats(v, best) && !hit) hit = { kind, value: v, set };
+      if (prior[kind] != null && best != null && beats(v, best)) all.push({ kind, value: v, set });
       running[kind] = best == null ? v : Math.max(best, v);
     }
     if (kinds.includes('best_session')) {
@@ -122,10 +133,10 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
       const p = prior.best_session;
       if (!sessionBeaten && p != null && beats(sessionTotal, p)) {
         sessionBeaten = true;
-        if (!hit) hit = { kind: 'best_session', value: sessionTotal, set };
+        all.push({ kind: 'best_session', value: sessionTotal, set });
       }
     }
-    if (hit) out.set(s.key, hit);
+    if (all.length > 0) out.set(s.key, { ...all[0], all });
   }
   return out;
 }
@@ -147,8 +158,9 @@ export function earlierCards<T extends { key: string; exerciseId: string }>(exer
 
 /**
  * The record to announce for the set just ticked, or null. The medal follows set order, but
- * the pop-up must not cheer a set that is already beaten by another ticked set of the same
- * exercise in this workout (ticking set 3 at 102.5 kg, then set 2 at 100 kg). PURE.
+ * the pop-up must not cheer a record that is already matched by another ticked set of the
+ * same exercise in this workout (ticking set 3 at 102.5 kg, then set 2 at 100 kg). When a set
+ * beat several records, the first one nobody else matched is announced. PURE.
  */
 export function toastHit<T extends LiveExercise & { key: string; exerciseId: string }>(
   exercises: readonly T[],
@@ -158,20 +170,26 @@ export function toastHit<T extends LiveExercise & { key: string; exerciseId: str
   const ex = exercises.find((e) => e.key === exKey);
   if (!ex) return null;
   const hit = liveRecordHits(ex, earlierCards(exercises, exKey)).get(setKey);
-  if (!hit || hit.kind === 'best_session') return hit ?? null;
+  if (!hit) return null;
   const lt: LogType = ex.logType ?? 'weight_reps';
   const mode: LoadMode = ex.loadMode ?? 'one';
   const rule: RecordRule = { logType: lt, loadMode: mode, bwShare: ex.bests?.bwShare ?? 0, distUnit: ex.distUnit ?? 'km' };
   const body = ex.bests?.bodyweightKg ?? null;
-  for (const card of exercises) {
-    if (card.exerciseId !== ex.exerciseId) continue;
-    for (const s of card.sets) {
-      if (s.key === setKey || !s.done || s.isWarmup) continue;
-      const v = setRecordValue(hit.kind, storedSet(s, lt, mode), rule, body);
-      if (v != null && !beats(hit.value, v)) return null;
+  const matchedElsewhere = (c: LiveHit): boolean => {
+    for (const card of exercises) {
+      if (card.exerciseId !== ex.exerciseId) continue;
+      for (const s of card.sets) {
+        if (s.key === setKey || !s.done || s.isWarmup) continue;
+        const v = setRecordValue(c.kind, storedSet(s, lt, mode), rule, body);
+        if (v != null && !beats(c.value, v)) return true;
+      }
     }
+    return false;
+  };
+  for (const c of hit.all ?? [hit]) {
+    if (c.kind === 'best_session' || !matchedElsewhere(c)) return { kind: c.kind, value: c.value, set: c.set };
   }
-  return hit;
+  return null;
 }
 
 /** "Heaviest weight · 85 kg × 3" / "Most reps · 15 reps" / "Best session · 2,140 kg". */

@@ -184,6 +184,11 @@ export function fmtDistance(m: number, unit: DistUnit): string {
   return `${trim(v)} ${unit}`;
 }
 
+/** A total over several exercises: "5.2 km", or "800 m" under a kilometre. */
+export function fmtTotalDistance(m: number): string {
+  return m >= 1000 ? `${String(Math.round(m / 100) / 10)} km` : `${Math.round(m)} m`;
+}
+
 // ---------------------------------------------------------------- time
 
 /** "0:45", "1:30", "30:00", "1:05:00". */
@@ -271,11 +276,11 @@ export function fmtSetCompact(s: SetValues, t: LogType, unit: DistUnit = 'km'): 
   switch (t) {
     case 'reps':
       // Older rows of a bodyweight move may still carry a weight.
-      return s.weightKg > 0 ? `+${trim(s.weightKg)}×${s.reps}` : s.weightKg < 0 ? `assist ${trim(-s.weightKg)}×${s.reps}` : `${s.reps} reps`;
+      return s.weightKg > 0 ? `+${trim(s.weightKg)}×${s.reps}` : s.weightKg < 0 ? `assist ${trim(-s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
     case 'weighted':
-      return s.weightKg > 0 ? `+${trim(s.weightKg)}×${s.reps}` : `${s.reps} reps`;
+      return s.weightKg > 0 ? `+${trim(s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
     case 'assisted':
-      return s.weightKg < 0 ? `assist ${trim(-s.weightKg)}×${s.reps}` : `${s.reps} reps`;
+      return s.weightKg < 0 ? `assist ${trim(-s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
     case 'time':
       return fmtDuration(s.durationSec ?? 0);
     case 'distance':

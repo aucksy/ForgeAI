@@ -122,23 +122,28 @@ maestro test --format junit --output "$OUT/part-f.xml" --test-output-dir "$OUT/p
   > "$OUT/part-f.log" 2>&1 || { status=1; log "PART F FAILED"; }
 
 # ---------------------------------------------------------------- crash check
+# Only the app's own crashes count (another app's crash on the emulator is not ours).
+app_crash() { grep -A1 "FATAL EXCEPTION" "$1" 2>/dev/null | grep -q "Process: $PKG"; }
 adb logcat -d > "$OUT/logcat.txt"
-if grep -q "FATAL EXCEPTION" "$OUT/logcat.txt"; then
+if app_crash "$OUT/logcat.txt"; then
   log "CRASH FOUND in logcat"
   grep -n -A25 "FATAL EXCEPTION" "$OUT/logcat.txt" | head -80 >> "$OUT/timeline.txt"
   status=1
 else
-  log "no crash in logcat"
+  log "no app crash in logcat"
 fi
 # Maestro clears logcat when each part starts, so the log above holds only the last part.
-# Every part's own device log is in its test-output folder: check them all.
-crashed=$(grep -rl --include='*logcat*' -e "FATAL EXCEPTION" -e "ANR in $PKG" "$OUT"/part-* 2>/dev/null || true)
-if [ -n "$crashed" ]; then
-  log "CRASH OR ANR in: $crashed"
-  status=1
-else
-  log "no crash or ANR in any part's device log ($(find "$OUT"/part-* -name '*logcat*' 2>/dev/null | wc -l) logs read)"
-fi
+# Every part's own device log is in its test-output folder, and Maestro writes a crash or
+# ANR report of its own when it sees one: check them all.
+read_logs=0
+for f in $(find "$OUT"/part-* -name '*logcat*' 2>/dev/null); do
+  read_logs=$((read_logs + 1))
+  if app_crash "$f" || grep -q "ANR in $PKG" "$f"; then log "CRASH OR ANR in $f"; status=1; fi
+done
+reports=$(find "$OUT"/part-* \( -name 'crash-report*' -o -name 'anr-report*' \) 2>/dev/null)
+if [ -n "$reports" ]; then log "MAESTRO CRASH/ANR REPORT: $reports"; status=1; fi
+log "device logs read: $read_logs (parts A-F)"
+if [ "$read_logs" -eq 0 ]; then log "WARNING: no per-part device logs found - only the last part's logcat was checked"; fi
 grep -i "ReactNativeJS" "$OUT/logcat.txt" | grep -i "error\|warn" | head -60 > "$OUT/js-errors.txt" || true
 log "done, status $status"
 exit $status

@@ -221,7 +221,7 @@ export default function ExerciseScreen() {
               <>
                 <ExerciseHero stats={stats} units={units} />
                 <ExerciseMetricChart progress={stats.progress} bestSet={bestSet} units={units} />
-                {recordCtx ? <ExercisePrRows bests={bests} ctx={recordCtx} ladder={ladder} units={units} onOpenSession={openSession} /> : null}
+                {recordCtx ? <ExercisePrRows bests={bests} kinds={ov.records.kinds} ctx={recordCtx} ladder={ladder} units={units} onOpenSession={openSession} /> : null}
                 <SessionHistory history={ov.history} units={units} logType={ex.logType} distUnit={ex.distUnit} />
               </>
             ) : (
@@ -241,7 +241,7 @@ export default function ExerciseScreen() {
                     </Card>
                   </View>
                 ) : null}
-                {recordCtx ? <ExercisePrRows bests={bests} ctx={recordCtx} ladder={[]} units={units} onOpenSession={openSession} /> : null}
+                {recordCtx ? <ExercisePrRows bests={bests} kinds={ov.records.kinds} ctx={recordCtx} ladder={[]} units={units} onOpenSession={openSession} /> : null}
                 <SessionHistory history={ov.history} units={units} logType={ex.logType} distUnit={ex.distUnit} />
               </>
             )}

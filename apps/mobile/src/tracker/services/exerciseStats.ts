@@ -13,9 +13,10 @@ import type { ExerciseProgressPoint, ExerciseStats } from '@/types/models';
 import { getBoundedExerciseHistory, type ExerciseHistoryEntry } from '../db/exerciseHistory';
 import { getTrackerExercise, type TrackerExercise } from '../db/exerciseInfo';
 import { distanceToUnit, fmtDistance, fmtDuration, isTimedCardio, type DistUnit, type LogType } from '../engine/logTypes';
-import { exerciseRecords, type ExerciseRecords, type RecordSession } from '../engine/records';
+import { exerciseRecords, RECORD_LABEL, type ExerciseRecords, type RecordSession } from '../engine/records';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint } from '../engine/volume';
 import { bestSetVolumeSeries, type BestSetPoint } from './exerciseAnalytics';
+import { recordValueText } from './recordText';
 import { getBodyweightTimeline } from './volumeService';
 
 export interface OverviewTile {
@@ -173,8 +174,8 @@ export function typedOverview(
     const mostInOne = Math.max(0, ...history.map((h) => h.sets.reduce((n, s) => n + s.reps, 0)));
     return {
       tiles: [
-        { label: 'Best set', value: `${best} reps` },
-        { label: 'Most in a workout', value: `${mostInOne} reps` },
+        { label: 'Best set', value: `${best} ${best === 1 ? 'rep' : 'reps'}` },
+        { label: 'Most in a workout', value: `${mostInOne} ${mostInOne === 1 ? 'rep' : 'reps'}` },
         workouts,
       ],
       series: {
@@ -237,6 +238,16 @@ export function typedOverview(
       points: chrono.map((h) => ({ x: h.dateISO, y: distanceToUnit(dist(h), unit) })),
     },
   };
+}
+
+/**
+ * The numbers the coach can quote for a non-weight exercise: its records (best pace, longest
+ * hold, most reps…) and then the tiles beside them — the page shows both, so the coach must
+ * too (v0.25.1 review: once the records left the tiles, "how's my running?" lost its pace). PURE.
+ */
+export function overviewFacts(ov: Pick<ExerciseOverview, 'exercise' | 'records' | 'tiles'>): OverviewTile[] {
+  const records = ov.records.bests.map((b) => ({ label: RECORD_LABEL[b.kind], value: recordValueText(b, ov.exercise) }));
+  return [...records, ...ov.tiles];
 }
 
 /** Everything the exercise page shows, or null when the exercise is gone. */

@@ -18,7 +18,8 @@ import { MonthGrid } from '@/tracker/components/MonthGrid';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { bigNumber, changeText, emptyReportText, timeText, type MonthReport, type YearReview } from '@/tracker/engine/reports';
-import { fmtSets } from '@/tracker/engine/volume';
+import { setsText } from '@/tracker/engine/volume';
+import { countWord } from '@/lib/words';
 import { isMonthKey, monthName, monthOf, monthTitle, shiftMonth } from '@/tracker/lib/months';
 import { recordValueText } from '@/tracker/services/recordText';
 import { getMonthReport, getTrainedMonths, getYearReview, type MonthReportData } from '@/tracker/services/reportsService';
@@ -59,7 +60,7 @@ function Muscles({ muscles }: { muscles: MonthReport['muscles'] }) {
     <View>
       <SectionHeader title="Sets per muscle" />
       <Card>
-        <HBarList data={top.map((m) => ({ label: MUSCLE_LABEL[m.muscle], value: m.sets }))} valueFormat={(n) => `${fmtSets(n)} sets`} />
+        <HBarList data={top.map((m) => ({ label: MUSCLE_LABEL[m.muscle], value: m.sets }))} valueFormat={(n) => setsText(n)} />
       </Card>
     </View>
   );
@@ -78,7 +79,7 @@ function Favourites({ items }: { items: MonthReport['topExercises'] }) {
               {e.name}
             </Text>
             <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.inkSecondary }}>
-              {fmtInt(e.sets)} sets · {e.workouts} {e.workouts === 1 ? 'workout' : 'workouts'}
+              {setsText(e.sets)} · {countWord(e.workouts, 'workout')}
             </Text>
           </View>
         ))}
@@ -117,7 +118,7 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
       <Hero
         big={`${t.workouts} ${t.workouts === 1 ? 'workout' : 'workouts'}`}
         label={r.complete ? monthTitle(r.month) : `${monthName(r.month)} so far`}
-        line={`${timeText(t)} · ${fmtInt(t.volumeKg)} kg · ${fmtInt(t.sets)} sets`}
+        line={`${timeText(t)} · ${fmtInt(t.volumeKg)} kg · ${setsText(t.sets)}`}
       />
       <CoachNote text={r.note} />
       {r.previous && r.complete ? (
@@ -188,7 +189,7 @@ function YearBody({ y }: { y: YearReview }) {
       <Hero
         big={`${fmtInt(t.workouts)} ${t.workouts === 1 ? 'workout' : 'workouts'}`}
         label={y.complete ? `${y.year} in review` : `${y.year} so far`}
-        line={`${timeText(t)} · ${bigNumber(t.volumeKg)} kg · ${fmtInt(t.sets)} sets`}
+        line={`${timeText(t)} · ${bigNumber(t.volumeKg)} kg · ${setsText(t.sets)}`}
       />
       <CoachNote text={y.note} />
       <View>

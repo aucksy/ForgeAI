@@ -244,6 +244,16 @@ export default function SettingsScreen() {
               selectedId={bodyFigure}
               onSelect={setBodyFigure}
             />
+            <Text
+              style={{
+                fontFamily: type.body,
+                fontSize: type.size.caption,
+                color: color.inkMuted,
+                marginTop: space.sm,
+              }}
+            >
+              The body drawn on Progress and on share pictures.
+            </Text>
           </View>
           <View style={{ marginTop: space.lg }}>
             <ToggleRow

@@ -39,14 +39,14 @@ export function recordValueText(hit: RecordHit, ctx: RecordTextContext): string 
     case 'best_set': {
       if (!s) return kg(hit.value, units);
       if (ctx.logType === 'weighted' || ctx.logType === 'reps' || ctx.logType === 'assisted') {
-        return s.weightKg > 0 ? `+${kg(s.weightKg, units)} × ${s.reps}` : `${s.reps} reps`;
+        return s.weightKg > 0 ? `+${kg(s.weightKg, units)} × ${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
       }
       return `${kg(s.weightKg, units)}${each(hit, ctx)} × ${s.reps}`;
     }
     case 'best_session':
-      return sessionUnit(ctx.logType) === 'reps' ? `${Math.round(hit.value)} reps` : `${fmtInt(kgToDisplay(hit.value, units))} ${weightUnit(units)}`;
+      return sessionUnit(ctx.logType) === 'reps' ? `${Math.round(hit.value)} ${Math.round(hit.value) === 1 ? 'rep' : 'reps'}` : `${fmtInt(kgToDisplay(hit.value, units))} ${weightUnit(units)}`;
     case 'reps':
-      return `${Math.round(hit.value)} reps`;
+      return `${Math.round(hit.value)} ${Math.round(hit.value) === 1 ? 'rep' : 'reps'}`;
     case 'duration':
       return fmtDuration(hit.value);
     case 'pace':

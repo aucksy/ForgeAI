@@ -85,9 +85,9 @@ export function prevLabel(p: PrevSet | null, lt: LogType, unit: DistUnit): strin
   if (!p) return '—';
   switch (lt) {
     case 'reps':
-      return p.weightKg ? `+${trimNum(p.weightKg)} × ${p.reps}` : `${p.reps} reps`;
+      return p.weightKg ? `+${trimNum(p.weightKg)} × ${p.reps}` : `${p.reps} ${p.reps === 1 ? 'rep' : 'reps'}`;
     case 'weighted':
-      return p.weightKg > 0 ? `+${trimNum(p.weightKg)} × ${p.reps}` : `${p.reps} reps`;
+      return p.weightKg > 0 ? `+${trimNum(p.weightKg)} × ${p.reps}` : `${p.reps} ${p.reps === 1 ? 'rep' : 'reps'}`;
     case 'assisted':
       return `${trimNum(p.weightKg)} × ${p.reps}`;
     case 'time':

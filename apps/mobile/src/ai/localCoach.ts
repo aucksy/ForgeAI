@@ -11,7 +11,8 @@ import * as workoutRepo from '@/db/repos/workoutRepo';
 import { addDays, todayISO } from '@/lib/date';
 import { fmtInt, trimNum } from '@/lib/format';
 import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
-import { getExerciseOverview } from '@/tracker/services/exerciseStats';
+import { getExerciseOverview, overviewFacts } from '@/tracker/services/exerciseStats';
+import { countWord } from '@/lib/words';
 import { getRecentSessionDetailsWithVolume, getWeeklyVolumeKg } from '@/tracker/services/volumeService';
 import { targetLine } from '@/tracker/engine/progression';
 import * as routineRepo from '@/tracker/db/routineRepo';
@@ -441,15 +442,15 @@ async function summaryReply(days: number, f: Flavour): Promise<LocalReply> {
   const topName = w.topExercises[0]?.name;
   const text = pick(
     f,
-    `${label}: ${w.sessions} workouts, ${fmtInt(w.totalVolumeKg)} kg total volume${topName ? ` (biggest mover: ${topName})` : ''}. Nutrition averaged ${fmtInt(avgKcal)} kcal & ${avgP}g protein/day.`,
-    `${label}: ${w.sessions} workouts, total volume ${fmtInt(w.totalVolumeKg)} kg${topName ? ` (sabse zyada: ${topName})` : ''}. Nutrition average ${fmtInt(avgKcal)} kcal aur ${avgP}g protein/din raha.`,
+    `${label}: ${countWord(w.sessions, 'workout')}, ${fmtInt(w.totalVolumeKg)} kg total volume${topName ? ` (biggest mover: ${topName})` : ''}. Nutrition averaged ${fmtInt(avgKcal)} kcal & ${avgP}g protein/day.`,
+    `${label}: ${countWord(w.sessions, 'workout')}, total volume ${fmtInt(w.totalVolumeKg)} kg${topName ? ` (sabse zyada: ${topName})` : ''}. Nutrition average ${fmtInt(avgKcal)} kcal aur ${avgP}g protein/din raha.`,
   );
   const rows = [
     { label: 'Workouts', value: `${w.sessions}` },
     { label: 'Total volume', value: `${fmtInt(w.totalVolumeKg)} kg` },
     ...w.topExercises.slice(0, 3).map((e) => ({
       label: e.name,
-      value: `${fmtInt(e.volumeKg)} kg · ${e.sets} sets`,
+      value: `${fmtInt(e.volumeKg)} kg · ${countWord(e.sets, 'set')}`,
     })),
     { label: 'Avg calories', value: `${fmtInt(avgKcal)} kcal/day` },
     { label: 'Avg protein', value: `${avgP} g/day` },
@@ -715,8 +716,8 @@ async function lastWorkoutReply(f: Flavour): Promise<LocalReply> {
   );
   const text = pick(
     f,
-    `Your last workout (${s.dateISO}, ${s.dayType}): ${s.exercises.length} exercises, ${setCount} sets, ${fmtInt(s.totalVolumeKg)} kg volume — ${names}.`,
-    `Pichla workout (${s.dateISO}, ${s.dayType}): ${s.exercises.length} exercises, ${setCount} sets, ${fmtInt(s.totalVolumeKg)} kg volume — ${names}.`,
+    `Your last workout (${s.dateISO}, ${s.dayType}): ${countWord(s.exercises.length, 'exercise')}, ${countWord(setCount, 'set')}, ${fmtInt(s.totalVolumeKg)} kg volume — ${names}.`,
+    `Pichla workout (${s.dateISO}, ${s.dayType}): ${countWord(s.exercises.length, 'exercise')}, ${countWord(setCount, 'set')}, ${fmtInt(s.totalVolumeKg)} kg volume — ${names}.`,
   );
   return {
     text,
@@ -766,10 +767,11 @@ async function exerciseProgressReply(ex: Exercise, f: Flavour): Promise<LocalRep
         cards: [],
       };
     }
-    const facts = overview.tiles.map((t) => `${t.label.toLowerCase()} ${t.value}`).join(', ');
+    const shown = overviewFacts(overview);
+    const facts = shown.map((t) => `${t.label.toLowerCase()} ${t.value}`).join(', ');
     return {
       text: pick(f, `${ex.name}: ${facts}.`, `${ex.name}: ${facts}.`),
-      cards: [{ kind: 'stats', text: ex.name, payload: overview.tiles.map((t) => ({ label: t.label, value: t.value })) }],
+      cards: [{ kind: 'stats', text: ex.name, payload: shown.map((t) => ({ label: t.label, value: t.value })) }],
     };
   }
   // No fallback to the frozen weight × reps stats: they'd disagree with every screen.

@@ -7,11 +7,11 @@ import { trimNum } from '@/lib/format';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { MUSCLE_LABEL } from '../catalog/muscles';
-import { fmtSetCompact, typedWeight, weightIsEach, repsPerSide } from '../engine/logTypes';
+import { fmtSetCompact, fmtTotalDistance, typedWeight, weightIsEach, repsPerSide } from '../engine/logTypes';
 import { RECORD_LABEL } from '../engine/records';
 import { fmtSets } from '../engine/volume';
 import { supersetLabel } from '../lib/superset';
-import { formatDuration } from '../services/finishSummary';
+import { formatDuration, workoutDistanceM } from '../services/finishSummary';
 import type { SessionSummaryData } from '../services/finishSummary';
 import { groupByExercise, recordValueText } from '../services/recordText';
 
@@ -27,7 +27,12 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
           <StatTile label="Duration" value={durationSec > 0 ? formatDuration(durationSec) : '—'} icon="clock" />
         </View>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
-          <StatTile label="Volume" value={Math.round(totalVolumeKg)} unit="kg" icon="dumbbell" />
+          {/* v0.25.1 review: a run read "Volume 0 kg" — with no kilos, its distance. */}
+          {totalVolumeKg <= 0 && workoutDistanceM(data) > 0 ? (
+            <StatTile label="Distance" value={fmtTotalDistance(workoutDistanceM(data))} icon="zap" />
+          ) : (
+            <StatTile label="Volume" value={Math.round(totalVolumeKg)} unit="kg" icon="dumbbell" />
+          )}
         </View>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
           <StatTile label="Sets" value={workingSetCount} icon="check" />

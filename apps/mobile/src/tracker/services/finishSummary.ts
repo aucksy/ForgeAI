@@ -13,6 +13,9 @@
  * say nothing ("0 kg" on a bodyweight or timed set) are left out.
  */
 import { getSessionDetail } from '@/db/repos/workoutRepo';
+import { fmtInt } from '@/lib/format';
+import { countWord } from '@/lib/words';
+import { fmtTotalDistance } from '@/tracker/engine/logTypes';
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import type { SetMeta } from '@/tracker/db/trackerSets';
 import type { TrackerExercise } from '@/tracker/db/exerciseInfo';
@@ -132,6 +135,24 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
     kinds,
     needsBodyweight: missesBodyweight(vs, ctx.bw),
   };
+}
+
+/** Distance logged in the workout's working sets (runs, rows, carries), in metres. PURE. */
+export function workoutDistanceM(data: Pick<SessionSummaryData, 'session' | 'setMeta'>): number {
+  let m = 0;
+  for (const g of data.session.exercises) for (const s of g.sets) if (!s.isWarmup) m += Math.max(0, data.setMeta[s.id]?.distanceM ?? 0);
+  return m;
+}
+
+/**
+ * The finish screen's line under "… done": "12,480 kg moved · 18 sets". v0.25.1 review: a
+ * run read "0 kg moved"; with no kilos it says the distance ("5.4 km · 2 sets"), or just the sets. PURE.
+ */
+export function finishHeadline(data: Pick<SessionSummaryData, 'session' | 'setMeta' | 'totalVolumeKg' | 'workingSetCount'>): string {
+  const sets = countWord(data.workingSetCount, 'set');
+  if (data.totalVolumeKg > 0) return `${fmtInt(data.totalVolumeKg)} kg moved · ${sets}`;
+  const m = workoutDistanceM(data);
+  return m > 0 ? `${fmtTotalDistance(m)} · ${sets}` : sets;
 }
 
 /** "1h 04m" / "42m 10s" / "0m 45s" */

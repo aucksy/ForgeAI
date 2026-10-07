@@ -5,6 +5,7 @@ import { Icon } from '@/components/ui';
 import { PressScale } from '@/components/ui/PressScale';
 import { relativeDay } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
+import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { SessionDetail } from '@/types/models';
 
@@ -43,8 +44,7 @@ export function WorkoutCard({ session, onPress }: { session: SessionDetail; onPr
           {dayTypeLabel(session.dayType)}
         </Text>
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
-          {relativeDay(session.dateISO)} · {session.exercises.length}{' '}
-          {session.exercises.length === 1 ? 'exercise' : 'exercises'} · {workingSets} sets
+          {relativeDay(session.dateISO)} · {countWord(session.exercises.length, 'exercise')} · {countWord(workingSets, 'set')}
         </Text>
       </View>
       <View style={{ alignItems: 'flex-end' }}>

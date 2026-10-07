@@ -87,7 +87,7 @@ export function WorkoutPlanCard({ plan }: { plan: WorkoutPlanView }) {
             >
               {t.last
                 ? t.bodyweightOnly
-                  ? `Last: ${t.last.topReps} reps`
+                  ? `Last: ${t.last.topReps} ${t.last.topReps === 1 ? 'rep' : 'reps'}`
                   : `Last: ${trimNum(t.last.weightKg)} kg × ${t.last.topReps}`
                 : 'First session — no history yet'}
             </Text>
