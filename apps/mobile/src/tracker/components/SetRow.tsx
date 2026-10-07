@@ -43,7 +43,7 @@ import {
   type LogType,
 } from '../engine/logTypes';
 import { rpeColor } from '../lib/rpe';
-import { liveRecordHits, recordLabel } from '../services/liveRecords';
+import { recordLabel, toastHit } from '../services/liveRecords';
 import type { RecordKind } from '../services/liveRecords';
 import { afterSetCompleted } from '../services/restRules';
 import { playWorkoutSound } from '../services/workoutSounds';
@@ -112,7 +112,9 @@ export function afterTick(exKey: string, setKey: string): void {
   const done = ex?.sets.find((s) => s.key === setKey);
   if (!ex || !done?.done) return; // a blank set with nothing to fill stays unticked
 
-  const hit = liveRecordHits(ex).get(setKey);
+  // Phase 3 review: the pop-up counts the same lift on other cards, and stays quiet for a set
+  // already beaten by another ticked set (the medal still follows set order).
+  const hit = toastHit(st.exercises, exKey, setKey);
   if (hit) {
     success();
     playWorkoutSound('record');

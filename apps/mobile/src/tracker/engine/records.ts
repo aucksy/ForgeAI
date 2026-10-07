@@ -99,6 +99,8 @@ export interface RecordHit {
   value: number;
   sessionId: string;
   dateISO: string;
+  /** When that workout started: orders two workouts on one day. */
+  startedAt?: number;
   /** The set that holds it; null for best session. */
   set: RecordSet | null;
 }
@@ -181,7 +183,9 @@ export function sessionBests(session: RecordSession, rule: VolumeRule, kinds: re
     if (kind === 'best_session') {
       let total = 0;
       for (const s of session.sets) total += sessionContribution(s, rule, bodyweightKg);
-      if (total > 0) out.set(kind, { kind, value: total, sessionId: session.sessionId, dateISO: session.dateISO, set: null });
+      if (total > 0) {
+        out.set(kind, { kind, value: total, sessionId: session.sessionId, dateISO: session.dateISO, startedAt: session.startedAt, set: null });
+      }
       continue;
     }
     let best: RecordHit | null = null;
@@ -189,7 +193,7 @@ export function sessionBests(session: RecordSession, rule: VolumeRule, kinds: re
       const v = setRecordValue(kind, s, rule, bodyweightKg);
       if (v == null) continue;
       if (!best || beats(v, best.value) || (!beats(best.value, v) && best.set && betterHolder(kind, best.set, s))) {
-        best = { kind, value: v, sessionId: session.sessionId, dateISO: session.dateISO, set: s };
+        best = { kind, value: v, sessionId: session.sessionId, dateISO: session.dateISO, startedAt: session.startedAt, set: s };
       }
     }
     if (best) out.set(kind, best);

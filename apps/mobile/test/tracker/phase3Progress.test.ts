@@ -174,7 +174,7 @@ describe('the monthly report', () => {
       from: '2026-09-01',
       to: '2026-09-30',
     });
-    expect(r.totals).toEqual({ workouts: 5, days: 4, durationSec: 18000, volumeKg: 25000, sets: 75 });
+    expect(r.totals).toEqual({ workouts: 5, days: 4, durationSec: 18000, timed: 5, volumeKg: 25000, sets: 75 });
     expect(r.previous?.workouts).toBe(3);
     expect(r.trainedDays).toEqual(['2026-09-02', '2026-09-04', '2026-09-09', '2026-09-16']);
     expect(r.bodyweight).toMatchObject({ start: 76, end: 76.8, change: 0.8 });

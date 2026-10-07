@@ -92,6 +92,7 @@ import {
   ExistingDataError,
   OWNED_META_KEYS,
   WIPE_TABLES_IN_ORDER,
+  adoptImportedData,
   clearDemoFlag,
   completeOnboarding,
   eraseAllData,
@@ -375,6 +376,20 @@ describe('loadDemoData', () => {
     h.state.meta.set('seeded', '1');
     await loadDemoData();
     expect(h.state.meta.has('seeded')).toBe(false); // the seed's early-return is disarmed
+  });
+});
+
+describe('adoptImportedData (Phase 3 review)', () => {
+  it('a Hevy import over the demo drops the demo\'s measurements (before: they became the member\'s)', async () => {
+    h.state.meta.set('demo_data', '1');
+    await adoptImportedData();
+    expect(sqls()).toContain('DELETE FROM body_measurements');
+    expect(await isDemoData()).toBe(false);
+  });
+
+  it('a member\'s own measurements stay when the data was not the demo', async () => {
+    await adoptImportedData();
+    expect(sqls()).not.toContain('DELETE FROM body_measurements');
   });
 });
 

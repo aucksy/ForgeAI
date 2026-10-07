@@ -166,7 +166,7 @@ export default function ProgressPhotosScreen() {
                       borderColor: order >= 0 ? color.accent : color.border,
                     }}
                   >
-                    <Image source={{ uri: p.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                    <Image source={{ uri: p.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" cachePolicy="memory" />
                     {order >= 0 ? (
                       <View
                         style={{
@@ -210,7 +210,7 @@ export default function ProgressPhotosScreen() {
             </Text>
             <IconButton icon="close" onPress={() => setViewing(null)} accessibilityLabel="Close photo" />
           </View>
-          {viewing ? <Image source={{ uri: viewing.uri }} style={{ flex: 1, marginVertical: space.lg }} contentFit="contain" /> : null}
+          {viewing ? <Image source={{ uri: viewing.uri }} style={{ flex: 1, marginVertical: space.lg }} contentFit="contain" cachePolicy="memory" /> : null}
           {viewing ? (
             <Pressable
               onPress={() => onDelete(viewing)}

@@ -13,6 +13,8 @@ import { getMuscleSetsBetween } from '@/tracker/services/volumeService';
 
 /** Phase 3 parts of Progress that do not follow the 30/90/180-day range. */
 export interface ProgressExtras {
+  /** False until the first load finishes (cards wait instead of flashing "nothing yet"). */
+  ready: boolean;
   /** Every record, newest first (Progress filters it to the range). */
   events: RecordEventRow[];
   /** Working sets per muscle, last 7 days (the body map). */
@@ -24,7 +26,7 @@ export interface ProgressExtras {
   photoCount: number;
 }
 
-const EMPTY: ProgressExtras = { events: [], weekMuscles: [], monthCounts: new Map(), measureLine: null, photoCount: 0 };
+const EMPTY: ProgressExtras = { ready: false, events: [], weekMuscles: [], monthCounts: new Map(), measureLine: null, photoCount: 0 };
 
 async function monthCounts(): Promise<Map<string, number>> {
   const rows = await getDb().getAllAsync<{ ym: string; n: number }>(
@@ -59,7 +61,7 @@ export function useProgressExtras(): ProgressExtras {
         countProgressPhotos().catch(() => 0),
       ]).then(([events, weekMuscles, counts, line, photos]) => {
         if (req.current !== id) return;
-        setExtras({ events, weekMuscles, monthCounts: counts, measureLine: line, photoCount: photos });
+        setExtras({ ready: true, events, weekMuscles, monthCounts: counts, measureLine: line, photoCount: photos });
       });
     }, []),
   );

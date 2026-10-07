@@ -33,6 +33,8 @@ export default defineConfig({
       // Phase 2: the member's own exercise photo/video (device-only picker and files).
       { find: 'expo-file-system/legacy', replacement: nativeStub },
       { find: 'expo-image-picker', replacement: nativeStub },
+      // Phase 3: progress photos clear the image library's caches on erase.
+      { find: /^expo-image$/, replacement: nativeStub },
       // react-native ships Flow syntax that the bundler can't parse; it is pulled
       // in transitively (e.g. via expo-crypto) but never exercised by pure logic.
       { find: /^react-native$/, replacement: nativeStub },

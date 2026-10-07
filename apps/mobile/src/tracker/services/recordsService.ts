@@ -83,8 +83,55 @@ export interface ExerciseRecordSet {
   records: ExerciseRecords;
 }
 
+/**
+ * Phase 3 review: Progress re-read every working set on each visit (8,800 rows after a big
+ * Hevy import). The full read is now kept until the data it was made from changes. The
+ * fingerprint is one cheap query over what records depend on: the sets (count, newest row,
+ * how many carry their own counting), the workouts (count, start times, days, newest id),
+ * body weight, and each exercise's name and settings.
+ */
+let cache: { version: string; data: Map<string, ExerciseRecordSet> } | null = null;
+
+async function dataVersion(): Promise<string> {
+  const row = await getDb().getFirstAsync<Record<string, string | number | null>>(
+    `SELECT (SELECT COUNT(*) FROM set_entries) AS sets_n,
+            (SELECT MAX(rowid) FROM set_entries) AS sets_max,
+            (SELECT COUNT(*) FROM set_entries WHERE load_mode IS NOT NULL) AS sets_modes,
+            (SELECT COUNT(*) FROM workout_sessions) AS ws_n,
+            (SELECT TOTAL(started_at) FROM workout_sessions) AS ws_starts,
+            (SELECT TOTAL(CAST(replace(date_iso, '-', '') AS INTEGER)) FROM workout_sessions) AS ws_days,
+            (SELECT MAX(id) FROM workout_sessions) AS ws_max,
+            (SELECT COUNT(*) FROM body_weight) AS bw_n,
+            (SELECT TOTAL(weight_kg) FROM body_weight) AS bw_sum,
+            (SELECT group_concat(id || ':' || name || ':' || COALESCE(log_type, '') || ':' || COALESCE(load_mode, '') || ':' || COALESCE(bw_share, ''), '|')
+               FROM exercises) AS ex`,
+  );
+  return JSON.stringify(row ?? null);
+}
+
+/** Drop the kept records (tests; a new data source). */
+export function forgetRecordCache(): void {
+  cache = null;
+}
+
 /** Every record of these exercises (all exercises when omitted). */
 export async function getRecordsByExercise(exerciseIds?: readonly string[]): Promise<Map<string, ExerciseRecordSet>> {
+  const version = await dataVersion().catch(() => null);
+  if (version != null && cache != null && cache.version === version) {
+    if (exerciseIds == null) return cache.data;
+    const some = new Map<string, ExerciseRecordSet>();
+    for (const id of exerciseIds) {
+      const r = cache.data.get(id);
+      if (r) some.set(id, r);
+    }
+    return some;
+  }
+  const data = await computeRecords(exerciseIds);
+  if (exerciseIds == null && version != null) cache = { version, data };
+  return data;
+}
+
+async function computeRecords(exerciseIds?: readonly string[]): Promise<Map<string, ExerciseRecordSet>> {
   const [rows, bw] = await Promise.all([readWorkingSets(exerciseIds), getBodyweightTimeline()]);
   const grouped = groupRecordSessions(rows);
   const infos = await getTrackerExercisesByIds([...grouped.keys()]);
@@ -112,7 +159,8 @@ export function flattenEvents(byExercise: ReadonlyMap<string, ExerciseRecordSet>
       rows.push({ ...e, exerciseId, exerciseName: info.name, info: { logType: info.logType, loadMode: info.loadMode, distUnit: info.distUnit } });
     }
   }
-  return rows.sort((a, b) => (a.dateISO === b.dateISO ? 0 : a.dateISO < b.dateISO ? 1 : -1));
+  // Newest first: by day, then — two workouts on one day — by start time.
+  return rows.sort((a, b) => (a.dateISO === b.dateISO ? (b.startedAt ?? 0) - (a.startedAt ?? 0) : a.dateISO < b.dateISO ? 1 : -1));
 }
 
 /** Record events between two days (inclusive), newest first. Omitted bounds are open. */
@@ -150,10 +198,10 @@ export function priorBestsFrom(records: ExerciseRecords, info: Pick<TrackerExerc
 }
 
 export async function getPriorRecordBests(exerciseId: string): Promise<PriorBests | null> {
-  const [rows, bw] = await Promise.all([readWorkingSets([exerciseId]), getBodyweightTimeline()]);
-  const sessions = groupRecordSessions(rows).get(exerciseId);
-  if (!sessions || sessions.length === 0) return null;
-  const info = (await getTrackerExercisesByIds([exerciseId])).get(exerciseId);
-  if (!info) return null;
-  return priorBestsFrom(exerciseRecords(sessions, info, bw), info, bw, todayISO());
+  // Starting a workout builds every card at once: one read per exercise, or none at all when
+  // Progress already worked the records out and nothing has changed since.
+  const [byExercise, bw] = await Promise.all([getRecordsByExercise([exerciseId]), getBodyweightTimeline()]);
+  const r = byExercise.get(exerciseId);
+  if (!r) return null;
+  return priorBestsFrom(r.records, r.info, bw, todayISO());
 }

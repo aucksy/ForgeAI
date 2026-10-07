@@ -3,6 +3,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Card, Icon } from '@/components/ui';
 import { color, motion, space, type } from '@/theme/tokens';
+import { yearRowSub } from '@/tracker/engine/reports';
 import { monthName, monthTitle } from '@/tracker/lib/months';
 
 export interface ReportsCardProps {
@@ -61,7 +62,7 @@ export function ReportsCard(p: ReportsCardProps) {
         {p.year != null ? (
           <Row
             title={p.yearRunning ? `${p.year} so far` : `${p.year} in review`}
-            sub={`${workouts(p.yearWorkouts)} this year`}
+            sub={yearRowSub(p.yearWorkouts, p.yearRunning, p.year)}
             label={`Open the year in review for ${p.year}`}
             onPress={() => p.onOpen(String(p.year))}
           />

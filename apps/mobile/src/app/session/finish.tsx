@@ -96,7 +96,7 @@ export default function FinishScreen() {
                   {dayTypeLabel(data.session.dayType)} done
                 </Text>
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
-                  {fmtInt(data.totalVolumeKg)} kg moved · {data.workingSetCount} sets
+                  {fmtInt(data.totalVolumeKg)} kg moved · {data.workingSetCount} {data.workingSetCount === 1 ? 'set' : 'sets'}
                 </Text>
                 {data.totalVolumeKg > 0 ? (
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: 'rgba(31,13,5,0.6)', marginTop: 2 }}>

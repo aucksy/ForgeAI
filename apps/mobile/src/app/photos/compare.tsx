@@ -61,7 +61,7 @@ export default function ComparePhotosScreen() {
                   borderColor: color.border,
                 }}
               >
-                <Image source={{ uri: p.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                <Image source={{ uri: p.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" cachePolicy="memory" />
               </View>
               <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink, textAlign: 'center' }}>
                 {i === 0 ? 'Before' : 'After'}

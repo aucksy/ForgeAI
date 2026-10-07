@@ -11,13 +11,13 @@ import { Pressable, Text, View } from 'react-native';
 import { BarChart, HBarList } from '@/components/charts';
 import { Badge, Card, EmptyState, GlassCard, HeroCard, Icon, IconButton, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
 import { todayISO } from '@/lib/date';
-import { fmtInt, trimNum } from '@/lib/format';
+import { fmtCompact, fmtInt, trimNum } from '@/lib/format';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { MonthGrid } from '@/tracker/components/MonthGrid';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { RECORD_LABEL } from '@/tracker/engine/records';
-import { bigNumber, changeText, durationText, type MonthReport, type YearReview } from '@/tracker/engine/reports';
+import { bigNumber, changeText, emptyReportText, timeText, type MonthReport, type YearReview } from '@/tracker/engine/reports';
 import { fmtSets } from '@/tracker/engine/volume';
 import { isMonthKey, monthName, monthOf, monthTitle, shiftMonth } from '@/tracker/lib/months';
 import { recordValueText } from '@/tracker/services/recordText';
@@ -109,14 +109,15 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
   const t = r.totals;
   const prevName = monthName(shiftMonth(r.month, -1));
   if (t.workouts === 0) {
-    return <EmptyState icon="calendar" title="No workouts this month" body="Workouts you log this month will show here." />;
+    const e = emptyReportText('month', r.complete, monthName(r.month));
+    return <EmptyState icon="calendar" title={e.title} body={e.body} />;
   }
   return (
     <View style={{ gap: space.lg }}>
       <Hero
         big={`${t.workouts} ${t.workouts === 1 ? 'workout' : 'workouts'}`}
         label={r.complete ? monthTitle(r.month) : `${monthName(r.month)} so far`}
-        line={`${durationText(t.durationSec)} · ${fmtInt(t.volumeKg)} kg · ${fmtInt(t.sets)} sets`}
+        line={`${timeText(t)} · ${fmtInt(t.volumeKg)} kg · ${fmtInt(t.sets)} sets`}
       />
       <CoachNote text={r.note} />
       {r.previous && r.complete ? (
@@ -127,7 +128,7 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
               <StatTile label="Workouts" value={t.workouts} delta={changeText(t.workouts, r.previous.workouts, 'count') ?? undefined} />
             </View>
             <View style={{ flex: 1 }}>
-              <StatTile label="Volume" value={`${bigNumber(t.volumeKg)}`} unit="kg" delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct') ?? undefined} />
+              <StatTile label="Volume" value={fmtCompact(t.volumeKg)} unit="kg" delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct') ?? undefined} />
             </View>
             <View style={{ flex: 1 }}>
               <StatTile label="Sets" value={t.sets} delta={changeText(t.sets, r.previous.sets, 'count') ?? undefined} />
@@ -178,7 +179,8 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
 function YearBody({ y }: { y: YearReview }) {
   const t = y.totals;
   if (t.workouts === 0) {
-    return <EmptyState icon="calendar" title="No workouts this year" body="Workouts you log this year will show here." />;
+    const e = emptyReportText('year', y.complete, String(y.year));
+    return <EmptyState icon="calendar" title={e.title} body={e.body} />;
   }
   const bars = y.byMonth.map((m) => ({ x: monthName(m.month).slice(0, 3), y: m.workouts }));
   return (
@@ -186,7 +188,7 @@ function YearBody({ y }: { y: YearReview }) {
       <Hero
         big={`${fmtInt(t.workouts)} ${t.workouts === 1 ? 'workout' : 'workouts'}`}
         label={y.complete ? `${y.year} in review` : `${y.year} so far`}
-        line={`${durationText(t.durationSec)} · ${bigNumber(t.volumeKg)} kg · ${fmtInt(t.sets)} sets`}
+        line={`${timeText(t)} · ${bigNumber(t.volumeKg)} kg · ${fmtInt(t.sets)} sets`}
       />
       <CoachNote text={y.note} />
       <View>

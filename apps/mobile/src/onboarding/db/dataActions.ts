@@ -239,3 +239,14 @@ export async function loadDemoData(): Promise<void> {
 export async function clearDemoFlag(): Promise<void> {
   await getDb().runAsync('DELETE FROM meta WHERE key = ?', [DEMO_FLAG]);
 }
+
+/**
+ * A Hevy import brought real training in. If the data was the demo, its body measurements
+ * (Phase 3) are the demo member's, not this member's: delete them before the demo flag goes,
+ * or they would pass for the member's own and reach their Drive backup. (A Drive restore
+ * replaces every table itself, so it keeps calling `clearDemoFlag` alone.)
+ */
+export async function adoptImportedData(): Promise<void> {
+  if (await isDemoData()) await getDb().runAsync('DELETE FROM body_measurements');
+  await clearDemoFlag();
+}

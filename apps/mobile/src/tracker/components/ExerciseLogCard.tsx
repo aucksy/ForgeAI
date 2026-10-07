@@ -13,6 +13,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 import type { TextInput as TextInputType } from 'react-native';
+import { useShallow } from 'zustand/react/shallow';
 
 import { Badge, GhostButton, Icon } from '@/components/ui';
 import type { BadgeProps } from '@/components/ui';
@@ -22,7 +23,7 @@ import { columnHeads, LOAD_MODE_LABEL, LOAD_MODES, repsPerSide, weightIsEach } f
 import { targetBadge, targetFill, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
 
 import { supersetLabel } from '../lib/superset';
-import { liveRecordFlags } from '../services/liveRecords';
+import { earlierCards, liveRecordFlags } from '../services/liveRecords';
 import { effectiveRestSec, fmtRest } from '../services/restRules';
 import { computeWarmups } from '../services/warmupMath';
 import { fillForSet, useActiveWorkout } from '../store/activeWorkoutStore';
@@ -86,6 +87,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const setLoadMode = useActiveWorkout((s) => s.setLoadMode);
   const swapExercise = useActiveWorkout((s) => s.swapExercise);
   const completeTimedSet = useActiveWorkout((s) => s.completeTimedSet);
+  // Phase 3 review: the same lift on a card higher up counts toward this card's medals.
+  // Shallow-compared, so a card re-renders only when one of those cards changes.
+  const earlier = useActiveWorkout(useShallow((s) => earlierCards(s.exercises, exercise.key)));
   const defaultRest = useRestTimer((s) => s.defaultSec);
   const showRpe = useTrackerPrefs((s) => s.advancedSets);
 
@@ -138,7 +142,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
 
   // Per-row derived values, memoised on the exercise object (rebuilt only on edit).
   const rows = useMemo(() => {
-    const flags = liveRecordFlags(exercise);
+    const flags = liveRecordFlags(exercise, earlier);
     let working = 0;
     return exercise.sets.map((s) => {
       // PREVIOUS aligns by WORKING-set ordinal (previousSets excludes warm-ups),
@@ -155,7 +159,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       }
       return { set: s, label, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
     });
-  }, [exercise, fillTarget]);
+  }, [exercise, fillTarget, earlier]);
 
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
   const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);

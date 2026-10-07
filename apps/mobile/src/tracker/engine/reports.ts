@@ -41,6 +41,8 @@ export interface PeriodTotals {
   /** Days with at least one workout. */
   days: number;
   durationSec: number;
+  /** Workouts with a length (one logged by chat has none, so time only covers these). */
+  timed: number;
   volumeKg: number;
   sets: number;
 }
@@ -50,9 +52,20 @@ export function totalsOf(sessions: readonly ReportSession[]): PeriodTotals {
     workouts: sessions.length,
     days: new Set(sessions.map((s) => s.dateISO)).size,
     durationSec: sessions.reduce((n, s) => n + Math.max(0, s.durationSec), 0),
+    timed: sessions.filter((s) => s.durationSec > 0).length,
     volumeKg: sessions.reduce((n, s) => n + Math.max(0, s.volumeKg), 0),
     sets: sessions.reduce((n, s) => n + s.sets, 0),
   };
+}
+
+/**
+ * The time line of a report: "11 h 20 min", or — when some workouts have no length —
+ * "11 h 20 min in 40 timed workouts", so a partial total never reads as the whole.
+ */
+export function timeText(t: Pick<PeriodTotals, 'durationSec' | 'timed' | 'workouts'>): string {
+  const base = durationText(t.durationSec);
+  if (t.timed === 0 || t.timed >= t.workouts) return base;
+  return `${base} in ${t.timed} timed ${t.timed === 1 ? 'workout' : 'workouts'}`;
 }
 
 export interface TopExercise {
@@ -180,6 +193,20 @@ export function durationText(sec: number): string {
   return m === 0 ? `${h} h` : `${h} h ${m} min`;
 }
 
+/**
+ * What a report with no workouts says. A month or year that is over can't gain any, so it
+ * says so instead of "workouts you log will show here".
+ */
+export function emptyReportText(kind: 'month' | 'year', complete: boolean, name: string): { title: string; body: string } {
+  if (complete) return { title: `No workouts in ${name}`, body: `Nothing was logged that ${kind}.` };
+  return { title: `No workouts yet this ${kind}`, body: `Workouts you log this ${kind} will show here.` };
+}
+
+/** The year row on Progress: "73 workouts this year", or "150 workouts in 2026" once it is over. */
+export function yearRowSub(workouts: number, running: boolean, year: number): string {
+  return `${workouts} ${workouts === 1 ? 'workout' : 'workouts'} ${running ? 'this year' : `in ${year}`}`;
+}
+
 // ---------------------------------------------------------------- the month
 
 export interface MonthReport {
@@ -263,7 +290,8 @@ export function monthNote(r: Omit<MonthReport, 'note'>): string {
     parts.push('No new records this time — steady work still counts.');
   }
 
-  const lag = lagging(r.muscles, r.totals.sets);
+  // Only once the month is over: on the 8th, "calves got no work" is not news yet.
+  const lag = r.complete ? lagging(r.muscles, r.totals.sets) : null;
   if (lag) {
     const label = MUSCLE_LABEL[lag.muscle];
     parts.push(
@@ -340,7 +368,7 @@ export function yearNote(r: Omit<YearReview, 'note'>): string {
   if (t.workouts === 0) return r.complete ? `No workouts logged in ${r.year}.` : `No workouts yet in ${r.year}.`;
   const head = r.complete ? `${r.year}` : `${r.year} so far`;
   const facts = [`${fmtInt(t.workouts)} ${t.workouts === 1 ? 'workout' : 'workouts'}`];
-  if (t.durationSec >= 3600) facts.push(hoursText(t.durationSec));
+  if (t.durationSec >= 3600) facts.push(t.timed >= t.workouts ? hoursText(t.durationSec) : `${hoursText(t.durationSec)} of timed workouts`);
   if (t.volumeKg > 0) facts.push(`${bigNumber(t.volumeKg)} kg lifted`);
   const parts = [`${head}: ${facts.length > 1 ? `${facts.slice(0, -1).join(', ')} and ${facts[facts.length - 1]}` : facts[0]}.`];
   const fav = r.topExercises[0];

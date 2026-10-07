@@ -25,6 +25,13 @@ appId: com.forgeai.app
     visible: "COACH"
     timeout: 20000
 - takeScreenshot: 41-month-report
+# The share button sits in the header, which scrolls away: use it before scrolling.
+- tapOn: "Share as a picture"
+- extendedWaitUntil:
+    visible: "Share picture"
+    timeout: 15000
+- takeScreenshot: 44-month-share-picture
+- back
 - scrollUntilVisible:
     element: 'Days you trained.*'
     timeout: 15000
@@ -33,12 +40,6 @@ appId: com.forgeai.app
     element: "Sets per muscle"
     timeout: 15000
 - takeScreenshot: 43-month-records-muscles
-- tapOn: "Share as a picture"
-- extendedWaitUntil:
-    visible: "Share picture"
-    timeout: 15000
-- takeScreenshot: 44-month-share-picture
-- back
 - back
 # ---------------------------------------------------------------- year so far
 - extendedWaitUntil:

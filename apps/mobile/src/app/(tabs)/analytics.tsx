@@ -85,7 +85,7 @@ export default function AnalyticsScreen() {
           index={0}
           onOpen={openReport}
         />
-        <BodyMapSection sets={extras.weekMuscles} index={1} />
+        {extras.ready ? <BodyMapSection sets={extras.weekMuscles} index={1} /> : <SectionSkeleton index={1} />}
 
         {/* range for everything below */}
         <Animated.View entering={FadeInDown.delay(60).duration(motion.slow)} style={{ flexDirection: 'row', gap: space.sm, marginBottom: space.lg }}>
@@ -94,13 +94,17 @@ export default function AnalyticsScreen() {
           ))}
         </Animated.View>
 
-        <PrSection
-          events={rangeEvents}
-          rangeDays={range}
-          index={2}
-          onSeeAll={() => router.push('/records')}
-          onOpenExercise={(id) => router.push({ pathname: '/exercise/[id]', params: { id } })}
-        />
+        {extras.ready ? (
+          <PrSection
+            events={rangeEvents}
+            rangeDays={range}
+            index={2}
+            onSeeAll={() => router.push('/records')}
+            onOpenExercise={(id) => router.push({ pathname: '/exercise/[id]', params: { id } })}
+          />
+        ) : (
+          <SectionSkeleton index={2} />
+        )}
 
         {(loading && !bundle) || !bundle ? (
           <View>

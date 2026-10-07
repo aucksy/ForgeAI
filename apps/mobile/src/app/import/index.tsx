@@ -11,7 +11,7 @@ import { useRef, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 import { Card, GhostButton, Icon, IconButton, PrimaryButton, Screen } from '@/components/ui';
-import { clearDemoFlag } from '@/onboarding/db/dataActions';
+import { adoptImportedData } from '@/onboarding/db/dataActions';
 import { shortDate } from '@/lib/date';
 import { success, warn } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -154,7 +154,8 @@ export default function ImportScreen() {
       });
       // Real history just landed — if the app was showing demo data, it isn't a
       // demo any more (Phase O2: the badge must not sit over genuine training).
-      if (r.imported > 0) await clearDemoFlag();
+      // Phase 3: the demo's own body measurements go with it.
+      if (r.imported > 0) await adoptImportedData();
       setResult(r);
       setPhase('done');
       success();
