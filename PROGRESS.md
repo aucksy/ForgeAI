@@ -1141,6 +1141,93 @@
     KG EACH + KM/TIME cards, finish 1,082 kg = 8 pull-ups at body weight + 8 assisted at body
     weight − 20 kg, sets per muscle in halves, custom timed exercise).
 
+- 2026-10-07: **Tracker Phase 3 — progress (v0.25.0).** Owner brief (tracker plan, Phase 3): more
+  record types, a body map of the last 7 days, measurements and progress photos, a monthly report
+  and a year in review, a workout picture to share, charts spaced by real date.
+  - **Records (`tracker/engine/records.ts`, one rule):** seven kinds — heaviest weight, best 1-rep
+    max, best set, best session, most reps, longest time, longest distance — picked by how the
+    exercise is logged (`recordKindsFor`). Derived from the sets, never stored: an edit, a delete
+    or a date move can't leave one behind. A first workout sets bests quietly (as the live pop-up
+    always has). Feeds the live pop-up, the finish and saved-workout screens, the exercise page,
+    Progress, the reports and the share picture; the frozen `personal_records` table keeps its old
+    readers (coach list, Home PR line, strength score). `recordsService` keeps the full read in
+    memory until the data changes (fingerprint, see round 3).
+  - **Charts by real date:** `DateLineChart` / `DateSparkline` over `lib/chartTime`; a test fails
+    if a screen goes back to the index-spaced frozen charts.
+  - **Body map:** last 7 days on Progress, front and back, shaded by working sets (1–2 / 3–5 /
+    6–9 / 10+) with a "Not trained" line. Drawing from react-native-body-highlighter 3.2.0 (MIT;
+    its licence ships in the bundle as `BODY_MAP_LICENSE`), generated onto ForgeAI's finer muscles
+    by `scripts/build-body-map.cjs`.
+  - **Body:** 10 measurement kinds (tracker schema v6, additive; in the Drive backup). Progress
+    photos are copied into app storage: phone-only, left out of the Drive backup, shown with a
+    memory-only image cache, deleted by Erase all data. Demo data adds measurements, never photos.
+  - **Reports:** monthly report (calendar, against last month, records, sets per muscle, most
+    trained, body weight) and year in review (workouts each month, days, streak, records, biggest
+    gain). The coach note is written by fixed rules (no AI call). Progress offers last month's
+    report and this year so far.
+  - **Share picture:** 1080 × 1350 PNG of a workout, a month or a year, drawn as an SVG scene
+    (`share/scene.ts` → `SceneSvg` → react-native-svg `toDataURL` → expo-sharing), no new native
+    module. Text widths come from the app's own fonts (`scripts/build-font-metrics.mjs`). No name,
+    no gym, and (round 3) nothing that gives away body weight.
+  - **Review rounds 1–2** (records/charts; data/privacy/reports), commit 949d272: same lift on two
+    cards; no pop-up for a set already beaten; record order on two-workout days; records kept
+    between Progress visits; photos memory-only and erase empties the image caches; gallery photos
+    take their EXIF date; a failed save no longer loses the photo; a Hevy import drops the demo's
+    measurements; report wording; the month Volume tile wrap; "1 set".
+  - **Review round 3** ("will it work on a real phone": share picture, report / records /
+    measurement / photo screens, Progress layout, device QA parts D and E; 3 reviewers), commit
+    db7e966. Fixed, each with a test that fails on 949d272 (`test/tracker/phase3PhoneReview.test.ts`):
+    - **Records after an edit** (found checking round 2's cache): saving an edited workout deletes
+      and re-inserts its sets; for the newest workout SQLite hands out the same row numbers, so the
+      cache's counts didn't move and Progress, the records list, the reports and the next
+      workout's pop-up kept the old record ("600 kg") until a restart. The fingerprint now adds
+      `total_changes()` and `PRAGMA data_version` (proven on real SQLite with the app's query).
+      Cost: any write now redoes the full read on the next visit (correctness over speed).
+    - **Share picture privacy (HIGH):** KG LIFTED counted body weight on pull-ups and dips, so a
+      pull-up workout read "KG LIFTED 3,104" beside "40 reps" = 77.6 kg, the member's body weight
+      (seen on the emulator). The picture now counts only the weight on the bar, dumbbells,
+      machine or belt (`liftedOnPicture`), shows REPS when only body weight moved, and leaves
+      "Best session … kg" on weighted pull-ups and dips off (still counted in RECORDS). The finish
+      screen keeps the full volume.
+    - **Keyboard (swept app-wide):** the app draws edge to edge, where Android no longer shrinks
+      the window, so the keyboard covered the bottom of every screen — the lower measurement
+      boxes and Save, the last sets of a workout, long forms (seen: the workout screen's Finish
+      bar sat behind the keyboard in run 37582659374). One `components/KeyboardRoom` at the app
+      root pads by the covered part; the tab bar and workout bar step aside while typing; the
+      chat drops its own Android padding (one handler). Sheets are separate windows that still
+      resize themselves (RN Modal turns edge-to-edge off for them).
+    - **Photo lost when Android closes the app behind the camera (swept to all 3 pickers):**
+      progress photo, exercise photo/video and chat meal photo note who asked
+      (`lib/pendingPick`) and take the picture back with `getPendingResultAsync` — into the
+      photo grid, the exercise form, or the chat box (never sent on its own).
+    - **Erase all data** also deletes the picker's temporary copies (`cache/ImagePicker/`, where a
+      camera photo lands first) and the share pictures (now in `cache/share/`).
+  - **Known, not fixed** (wording, layout, speed or test coverage — recorded per the review rule):
+    the year picture says "1 days trained" and HOURS "0" for a short year; the month picture's
+    TIME shows the bare total when some workouts weren't timed (the screen says "in N timed
+    workouts"); a cardio-only workout picture shows an empty MUSCLES WORKED and KG LIFTED 0; the
+    "Against <month>" Volume tile still wraps on a 360 dp phone and at font ×1.3; chart axes,
+    photos and measurement entries show dates without a year ("12 Mar"); at 360 dp × 1.3 the year
+    "Most trained" names cut to "Barb…" and the body-weight line wraps; with 3-button navigation
+    the bottom ~20 dp of a long screen sits under the bar; Progress takes ~0.3–1 s on the first
+    visit with ~40k imported sets; share pictures stay in `cache/share/` until an erase.
+    Device QA flows: the share-menu and photo-picker waits can pass on our own text, the
+    measurement save and the all-records page aren't asserted, the "Best set" / "Best session"
+    scrolls stop early (65 and 66 show less than their names), part E depends on part C, the crash
+    check reads only part E's log (every part's log was read by hand for the passing runs), and
+    longest time / longest distance and the year picture aren't exercised on the phone.
+  - **Tests:** 480 vitest (99 new in Phase 3). Device QA: run 37582659374 on 949d272 passed parts
+    A–E; run 37588017274 on db7e966 passed parts A–E plus the new keyboard steps — the workout
+    screen's Finish bar and the bottom measurement box now sit above the keyboard (08b, 51b), the
+    chat box too (67) — and the share picture reads REPS 40 through Android's share menu (62, 63).
+    No crash or app error in any part's log. Screens: `Resources/Phase3-screens/` — 25 phone
+    screens from parts D and E (42 and 53 left out: byte-for-byte copies of 41 and 52), 08b from
+    part A, the year picture drawn on a computer with sample data, and `key-screens.png`. Seen in
+    that run, not fixed (layout): while typing in the chat, the suggestion chips above the box are
+    squeezed to half height.
+  - **Open owner choices:** "Longest time" on runs vs "Best pace"; rule-written vs AI-written
+    report notes; one body figure vs a male/female choice.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
