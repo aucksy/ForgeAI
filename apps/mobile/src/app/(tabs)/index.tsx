@@ -23,6 +23,7 @@ import { thud } from '@/lib/haptics';
 import { useDashboard } from '@/store/dashboardStore';
 import { useSettings } from '@/store/settingsStore';
 import { color, motion, space } from '@/theme/tokens';
+import { todayLink } from '@/tracker/lib/todayLink';
 
 /** Entrance stagger for each dashboard section. */
 function Section({ index, children }: { index: number; children: ReactNode }) {
@@ -75,6 +76,14 @@ export default function DashboardScreen() {
     // Manual-tracker pivot: the hero now starts a workout instead of opening chat.
     router.push('/workout');
   }, [router]);
+
+  // v0.28.0: today's routine opens its preview first (every exercise, then Start); with
+  // nothing planned it goes to the Workout tab as before.
+  const link = data ? todayLink(data.todaysWorkout) : '/workout';
+  const goToday = useCallback(() => {
+    thud();
+    router.push(link);
+  }, [router, link]);
 
   const goRoutines = useCallback(() => {
     thud();
@@ -135,7 +144,7 @@ export default function DashboardScreen() {
                 <HeroWorkoutCard
                   workout={data.todaysWorkout}
                   unitSystem={unitSystem}
-                  onPress={goWorkout}
+                  onPress={goToday}
                 />
               )}
             </Section>

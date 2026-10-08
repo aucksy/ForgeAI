@@ -4,6 +4,7 @@
  * exercise name in the file is already one of the member's exercises.
  */
 import { todayISO } from '@/lib/date';
+import { getTodaysWorkout } from '@/services/coach';
 
 import { appFolder, followedFolder, saveAppFolder, type ImportApp, type NewRoutine } from '../db/folderRepo';
 import { exerciseIdsForTitles } from './hevyImport';
@@ -33,19 +34,30 @@ export function toNewRoutines(
     .filter((r) => r.exercises.length > 0);
 }
 
-/** What the follow question needs: the folder followed now (if not this app's), and whether this app's folder exists. */
-export async function followQuestion(app: ImportApp): Promise<{ followingName: string | null; updating: boolean }> {
+/**
+ * What the follow question needs: the folder followed now (if not this app's), and the name of
+ * this app's folder when one exists (it is refilled — the member may have renamed it).
+ */
+export async function followQuestion(app: ImportApp): Promise<{ followingName: string | null; updatingName: string | null }> {
   const [now, mine] = await Promise.all([followedFolder().catch(() => null), appFolder(app).catch(() => null)]);
-  return { followingName: now && now.id !== mine?.id ? now.name : null, updating: mine != null };
+  return { followingName: now && now.id !== mine?.id ? now.name : null, updatingName: mine?.name ?? null };
+}
+
+/** After saving: the routine Home's "Today" shows now (the frozen rotation), or null. */
+export async function homeToday(): Promise<string | null> {
+  const tw = await getTodaysWorkout().catch(() => null);
+  return tw && tw.planDayId ? tw.dayName : null;
 }
 
 export async function saveImportedRoutines(
   app: ImportApp,
   chosen: readonly { title: string; dayType: NewRoutine['dayType']; exercises: readonly FoundExercise[] }[],
   opts: { follow: boolean },
-): Promise<{ folderId: string; routines: number }> {
+): Promise<{ folderId: string; routines: number; name: string }> {
   const ids = await exerciseIdsForTitles([...new Set(chosen.flatMap((r) => r.exercises.map((e) => e.title)))]);
   const routines = toNewRoutines(chosen, ids);
+  if (routines.length === 0) throw new Error('nothing to save');
   const folderId = await saveAppFolder(app, APP_FOLDER_NAME[app], routines, { follow: opts.follow, todayISO: todayISO() });
-  return { folderId, routines: routines.length };
+  const saved = await appFolder(app).catch(() => null);
+  return { folderId, routines: routines.length, name: saved?.name ?? APP_FOLDER_NAME[app] };
 }

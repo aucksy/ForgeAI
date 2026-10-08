@@ -50,3 +50,14 @@ export function filterExercises<T extends SearchableExercise>(
   ranked.sort((a, b) => a.rank - b.rank || a.ex.name.localeCompare(b.ex.name, undefined, { sensitivity: 'base' }));
   return ranked.map((r) => r.ex);
 }
+
+/**
+ * v0.28.0: the name to offer as "Create “…”" at the end of the search (inside a workout): what
+ * the member typed (2+ letters), unless an exercise already has exactly that name. PURE.
+ */
+export function createOffer(query: string, all: readonly Pick<SearchableExercise, 'name'>[]): string | null {
+  const typed = query.trim().replace(/\s+/g, ' ');
+  if (typed.length < 2) return null;
+  const q = normalize(typed);
+  return all.some((e) => normalize(e.name) === q) ? null : typed;
+}

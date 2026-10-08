@@ -211,3 +211,12 @@ describe.skipIf(!HAS_BACKUP)("the owner's export against his saved Jaipur folder
     expect(nextUp(found.filter((r) => r.recent).map((r) => r.title), parsed.workouts)).toEqual({ next: 'Pull 1', after: 'Push 1' });
   });
 });
+
+describe("Home's Today card (owner: see the exercises before the clock starts)", () => {
+  it("today's routine opens its preview; nothing planned goes to the Workout tab", async () => {
+    const { todayLink } = await import('@/tracker/lib/todayLink');
+    expect(todayLink({ planDayId: 'd1', targets: [{}] })).toBe('/today');
+    expect(todayLink({ planDayId: null, targets: [] })).toBe('/workout');
+    expect(todayLink({ planDayId: 'd1', targets: [] })).toBe('/workout');
+  });
+});

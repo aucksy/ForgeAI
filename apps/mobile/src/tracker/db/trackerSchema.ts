@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 7;
+export const TRACKER_SCHEMA_VERSION = 8;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -106,6 +106,9 @@ export async function initTrackerSchema(): Promise<void> {
   await ensureColumn('workout_plans', 'source', 'TEXT');
   await ensureColumn('workout_plans', 'settings', 'TEXT');
   await ensureColumn('workout_sessions', 'easy_week', 'INTEGER');
+  // v8 (v0.28.0): the member's own distance exercise is kept in km or metres ('km' / 'm';
+  // NULL = the library's unit, else km). Display only — distances are stored in metres.
+  await ensureColumn('exercises', 'dist_unit', 'TEXT');
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }

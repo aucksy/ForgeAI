@@ -196,6 +196,9 @@ export default function WorkoutScreen() {
                     onPress={() => void onStartPlan()}
                   />
                 ) : null}
+                {preview?.hasPlan ? (
+                  <GhostButton label="See the exercises" icon="chevron-right" onPress={() => router.push('/today')} />
+                ) : null}
                 {plan?.easy ? (
                   <GhostButton label="Train normally this week" icon="flame" onPress={() => void onTrainNormally()} />
                 ) : null}

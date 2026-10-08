@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import { HeroCard, Icon } from '@/components/ui';
 import { fmtWeight } from '@/lib/format';
 import { targetLine } from '@/tracker/engine/progression';
+import { todayLink } from '@/tracker/lib/todayLink';
 import { color, gradients, radius, shadow, space, type } from '@/theme/tokens';
 import type { TodaysWorkout, UnitSystem } from '@/types/models';
 
@@ -17,7 +18,8 @@ interface HeroWorkoutCardProps {
 
 /**
  * Flagship dashboard card: today's session with the first three overload
- * targets. Ember glow + gradient top edge; tapping starts the workout.
+ * targets. Ember glow + gradient top edge; tapping opens today's workout (v0.28.0: its
+ * exercises first, then Start).
  */
 export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCardProps) {
   const targets = workout.targets.slice(0, 3);
@@ -174,7 +176,7 @@ export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCar
           }}
         >
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>
-            Start workout
+            {todayLink(workout) === '/today' ? 'See workout' : 'Start workout'}
           </Text>
           <Icon name="chevron-right" size={14} color={color.accent} />
         </View>

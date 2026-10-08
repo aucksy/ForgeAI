@@ -5,7 +5,7 @@
  *   2. Check each routine, one per screen — the last workout's exercises ticked, up to 5 more
  *      done under that name offered ("Also done in Push 1").
  *   3. Follow them? — Home's "Today" becomes the member's next routine. A member following
- *      another plan is asked, never switched silently.
+ *      another plan is asked, never switched silently. Nothing ticked → nothing to save.
  *   4. Done — the folder "From Hevy"; a later import updates it.
  */
 import { useRouter } from 'expo-router';
@@ -18,8 +18,8 @@ import { success, warn } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import type { ImportApp } from '../db/folderRepo';
-import { APP_FOLDER_NAME, followQuestion, saveImportedRoutines } from '../services/routineImport';
-import { chosenRoutines, findRoutines, nextUp, type FoundExercise, type FoundRoutine, type RebuildWorkout } from '../services/routineRebuild';
+import { followQuestion, homeToday, saveImportedRoutines } from '../services/routineImport';
+import { chosenRoutines, findRoutines, type FoundExercise, type FoundRoutine, type RebuildWorkout } from '../services/routineRebuild';
 
 const CAPTION = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 } as const;
 const HEAD = { fontFamily: type.heading, fontSize: type.size.h3, color: color.ink } as const;
@@ -74,12 +74,15 @@ function TickRow({ label, sub, ticked, onPress }: { label: string; sub: string; 
   );
 }
 
-type Step = { kind: 'list' } | { kind: 'check'; i: number } | { kind: 'follow' } | { kind: 'done'; routines: number; followed: boolean };
+type Step =
+  | { kind: 'list' }
+  | { kind: 'check'; i: number }
+  | { kind: 'follow' }
+  | { kind: 'done'; routines: number; folder: string; today: string | null };
 
 export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp; workouts: readonly RebuildWorkout[]; onClose: () => void }) {
   const router = useRouter();
   const appName = app === 'hevy' ? 'Hevy' : 'Strong';
-  const folderName = APP_FOLDER_NAME[app];
   const found = useMemo(() => findRoutines(workouts), [workouts]);
   const recent = found.filter((r) => r.recent);
   const older = found.filter((r) => !r.recent);
@@ -90,12 +93,12 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
     () => new Map(found.map((r) => [r.title, new Set(r.exercises.filter((e) => e.ticked).map((e) => e.title))])),
   );
   const [showOlder, setShowOlder] = useState(false);
-  const [question, setQuestion] = useState<{ followingName: string | null; updating: boolean } | null>(null);
+  const [question, setQuestion] = useState<{ followingName: string | null; updatingName: string | null } | null>(null);
   const [busy, setBusy] = useState(false);
 
   const kept: FoundRoutine[] = found.filter((r) => keep.has(r.title));
-  const order = kept.map((r) => r.title);
-  const upNext = nextUp(order, workouts);
+  // What Save writes: kept routines with at least one ticked exercise.
+  const saved = useMemo(() => chosenRoutines(found, keep, ticks), [found, keep, ticks]);
 
   const toggleRoutine = (title: string) =>
     setKeep((k) => {
@@ -115,7 +118,7 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
     });
 
   const toFollow = async () => {
-    setQuestion(await followQuestion(app).catch(() => ({ followingName: null, updating: false })));
+    setQuestion(await followQuestion(app).catch(() => ({ followingName: null, updatingName: null })));
     setStep({ kind: 'follow' });
   };
 
@@ -123,10 +126,11 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
     if (busy) return;
     setBusy(true);
     try {
-      const chosen = chosenRoutines(found, keep, ticks);
-      const r = await saveImportedRoutines(app, chosen, { follow });
+      const r = await saveImportedRoutines(app, saved, { follow });
+      // Home's own answer (its rotation reads every recent workout, not only this file).
+      const today = await homeToday();
       success();
-      setStep({ kind: 'done', routines: r.routines, followed: follow });
+      setStep({ kind: 'done', routines: r.routines, folder: r.name, today });
     } catch {
       warn();
       Alert.alert('Couldn’t save the routines', 'Nothing was changed. Please try again.');
@@ -166,9 +170,9 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
                 accessibilityRole="button"
                 style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingVertical: space.sm + 2 }}
               >
-                <Icon name={showOlder ? 'chevron-left' : 'chevron-right'} size={16} color={color.inkMuted} />
+                <Icon name="chevron-right" size={16} color={color.inkMuted} />
                 <Text style={{ ...CAPTION, color: color.inkSecondary }}>
-                  {older.length} older name{older.length === 1 ? '' : 's'} (not used for a year)
+                  {showOlder ? 'Hide the older names' : `${older.length} older name${older.length === 1 ? '' : 's'} (not used for a year)`}
                 </Text>
               </Pressable>
               {showOlder ? older.map(row) : null}
@@ -246,24 +250,38 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
 
   // ---------------------------------------------------------------- 3. follow them?
   if (step.kind === 'follow') {
+    const back = () => setStep({ kind: 'check', i: kept.length - 1 });
+    if (saved.length === 0) {
+      return (
+        <View style={{ gap: space.lg }}>
+          <Text style={{ ...CAPTION, color: color.inkSecondary }}>Every exercise is unticked, so there is nothing to save. Go back and tick the ones in each routine.</Text>
+          <GhostButton label="Back" icon="chevron-left" onPress={back} />
+        </View>
+      );
+    }
     return (
       <View style={{ gap: space.lg }}>
         <Card style={{ gap: space.md, paddingVertical: space.xl }}>
           <Icon name="calendar" size={26} color={color.accent} />
           <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>Follow these as your plan?</Text>
           <Text style={{ ...CAPTION, color: color.inkSecondary }}>
-            Home will show your next routine each day, in the order you do them.
-            {upNext ? ` Next up: ${upNext.next} (after your last ${upNext.after}).` : ''}
+            Home will show your next routine each day, in the order you do them: {saved.map((r) => r.title).join(', ')}.
           </Text>
           {question?.followingName ? (
-            <Text style={CAPTION}>
-              You follow “{question.followingName}” now. It stays in your routines if you switch.
-            </Text>
+            <Text style={CAPTION}>You follow “{question.followingName}” now. It stays in your routines if you switch.</Text>
+          ) : null}
+          {question?.updatingName ? (
+            <Text style={CAPTION}>This replaces the routines in “{question.updatingName}” with these.</Text>
           ) : null}
         </Card>
         <View style={{ gap: space.md }}>
           <PrimaryButton label={busy ? 'Saving…' : 'Follow them'} icon="check" loading={busy} onPress={() => void save(true)} />
-          <GhostButton label={question?.followingName ? `Keep “${question.followingName}”` : 'Not now'} icon="close" onPress={() => void save(false)} />
+          <GhostButton
+            label={question?.followingName ? `Keep “${question.followingName}”` : 'Save without following'}
+            icon="close"
+            onPress={() => void save(false)}
+          />
+          <GhostButton label="Back" icon="chevron-left" onPress={back} />
         </View>
       </View>
     );
@@ -275,11 +293,11 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
       <Card style={{ alignItems: 'center', paddingVertical: space.xl, gap: space.sm }}>
         <Icon name="target" size={30} color={color.accent} />
         <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink, textAlign: 'center' }}>
-          {step.routines} routine{step.routines === 1 ? '' : 's'} in {folderName}
+          {step.routines} routine{step.routines === 1 ? '' : 's'} in {step.folder}
         </Text>
         <Text style={{ ...CAPTION, textAlign: 'center' }}>
-          {question?.updating ? `${folderName} now matches this file.` : 'Find them in Workout → Routines.'}
-          {step.followed && upNext ? ` Home shows ${upNext.next} next.` : ''}
+          {question?.updatingName ? `${step.folder} now matches this file.` : 'Find them in Workout → Routines.'}
+          {step.today ? ` Home shows ${step.today} today.` : ''}
         </Text>
       </Card>
       <View style={{ gap: space.md }}>

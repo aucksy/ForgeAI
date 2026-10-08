@@ -25,6 +25,8 @@ export default function AddExerciseScreen() {
           picked.current = true;
           void addExercise(ex).then(() => router.back());
         }}
+        // v0.28.0: not in the list? Make it here (the form adds it to this workout on Save).
+        onCreate={(typed) => router.push({ pathname: '/library/new', params: { for: 'workout', name: typed } })}
       />
     </Screen>
   );

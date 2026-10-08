@@ -22,6 +22,13 @@ export interface CustomExerciseInput {
   incrementKg: number;
   /** Body weight counts in volume (pull-up / dip style moves). */
   countsBodyweight: boolean;
+  /** v0.28.0: a distance exercise is kept in km (miles under "lb, miles") or metres. */
+  distUnit?: 'km' | 'm';
+}
+
+/** The stored distance unit: only a distance type has one (km unless metres was chosen). PURE. */
+export function distUnitOf(input: Pick<CustomExerciseInput, 'logType' | 'distUnit'>): 'km' | 'm' | null {
+  return input.logType === 'distance' || input.logType === 'time_distance' ? input.distUnit ?? 'km' : null;
 }
 
 /** The frozen base row for a custom exercise. PURE. */
@@ -52,8 +59,8 @@ export async function createCustomExercise(
     const created = await createExercise(baseRowOf(input));
     id = created.id;
     await getDb().runAsync(
-      `UPDATE exercises SET log_type = ?, muscles = ?, bw_share = ?, media_uri = ?, media_type = ? WHERE id = ?`,
-      [input.logType, JSON.stringify(input.muscles), bwShareOf(input), media.uri, media.type, id],
+      `UPDATE exercises SET log_type = ?, muscles = ?, bw_share = ?, media_uri = ?, media_type = ?, dist_unit = ? WHERE id = ?`,
+      [input.logType, JSON.stringify(input.muscles), bwShareOf(input), media.uri, media.type, distUnitOf(input), id],
     );
   });
   return id;
@@ -71,7 +78,8 @@ export async function updateCustomExercise(
     `UPDATE exercises
         SET name = ?, muscle_group = ?, secondary_muscles = ?, equipment = ?, is_compound = ?, increment_kg = ?,
             log_type = CASE WHEN ? = 1 THEN log_type ELSE ? END,
-            muscles = ?, bw_share = ?, media_uri = ?, media_type = ?
+            muscles = ?, bw_share = ?, media_uri = ?, media_type = ?,
+            dist_unit = CASE WHEN (CASE WHEN ? = 1 THEN log_type ELSE ? END) IN ('distance', 'time_distance') THEN ? ELSE NULL END
       WHERE id = ?`,
     [
       base.name,
@@ -86,6 +94,10 @@ export async function updateCustomExercise(
       bwShareOf(input),
       media.uri,
       media.type,
+      // The type the row keeps (the old one once sets are logged) decides if it has a unit.
+      lockLogType ? 1 : 0,
+      input.logType,
+      input.distUnit ?? 'km',
       id,
     ],
   );

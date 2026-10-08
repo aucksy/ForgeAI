@@ -7,6 +7,9 @@
  * volume is offered only for bodyweight types. Library exercises opened here can only get
  * the member's own photo or video; their name, muscles and type stay the library's.
  * Once an exercise has logged sets its log type is fixed (the history was logged that way).
+ * v0.28.0: opened from "Add exercise" inside a workout (`?for=workout&name=…`), the typed name
+ * is filled in and Save adds the new exercise to the workout; a distance exercise is kept in
+ * km (miles under "lb, miles") or metres.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
@@ -25,6 +28,7 @@ import { Glyph } from '@/tracker/components/TrackerGlyph';
 import { incrementChoices, pickedIncrement } from '@/tracker/components/unitText';
 import { createCustomExercise, setExerciseMedia, updateCustomExercise } from '@/tracker/db/customExercise';
 import { exerciseHasSets, getTrackerExercise, type TrackerExercise } from '@/tracker/db/exerciseInfo';
+import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { LOG_TYPE_LABEL, LOG_TYPES, type LogType } from '@/tracker/engine/logTypes';
 import {
   deleteKeptMedia,
@@ -62,14 +66,15 @@ function FieldLabel({ children }: { children: string }) {
 
 export default function NewExerciseScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const params = useLocalSearchParams<{ id?: string | string[]; name?: string; for?: string }>();
   const editId = typeof params.id === 'string' ? params.id : params.id?.[0];
+  const forWorkout = params.for === 'workout';
   // v0.27.0: the increment chips read kg or lb; the step is stored in kg.
   const units = useUnits();
 
   const [existing, setExisting] = useState<TrackerExercise | null>(null);
   const [typeLocked, setTypeLocked] = useState(false);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(() => (typeof params.name === 'string' ? params.name.trim().slice(0, 80) : ''));
   const [logType, setLogType] = useState<LogType>('weight_reps');
   const [muscle, setMuscle] = useState<Muscle | null>(null);
   const [secondary, setSecondary] = useState<Muscle[]>([]);
@@ -77,6 +82,7 @@ export default function NewExerciseScreen() {
   const [isCompound, setIsCompound] = useState(false);
   const [increment, setIncrement] = useState<number>(() => stepFor(2.5, units));
   const [countsBodyweight, setCountsBodyweight] = useState(false);
+  const [distUnit, setDistUnit] = useState<'km' | 'm'>('km');
   const [media, setMedia] = useState<PickedMedia | null>(null);
   const [saving, setSaving] = useState(false);
   // A picked file is being copied in: buttons and Save wait for it.
@@ -104,6 +110,7 @@ export default function NewExerciseScreen() {
       setIsCompound(ex.isCompound);
       setIncrement(ex.incrementKg);
       setCountsBodyweight(ex.bwShare > 0);
+      setDistUnit(ex.distUnit === 'm' ? 'm' : 'km');
       if (!recovered.current) setMedia(ex.mediaUri && ex.mediaType ? { uri: ex.mediaUri, type: ex.mediaType } : null);
     });
     return () => {
@@ -222,6 +229,7 @@ export default function NewExerciseScreen() {
           isCompound,
           incrementKg: increment,
           countsBodyweight,
+          distUnit,
         };
         const m = { uri: media?.uri ?? null, type: media?.type ?? null };
         if (existing) {
@@ -229,6 +237,13 @@ export default function NewExerciseScreen() {
         } else {
           const id = await createCustomExercise(input, m);
           await dropUnused();
+          if (forWorkout) {
+            // Straight into the workout it was made for (the picker under this screen goes too).
+            const made = await getTrackerExercise(id);
+            if (made && useActiveWorkout.getState().active) await useActiveWorkout.getState().addExercise(made);
+            router.dismissTo('/session/active');
+            return;
+          }
           router.replace({ pathname: '/exercise/[id]', params: { id } });
           return;
         }
@@ -326,6 +341,16 @@ export default function NewExerciseScreen() {
               </View>
             </View>
 
+            {logType === 'distance' || logType === 'time_distance' ? (
+              <View style={{ gap: space.sm }}>
+                <FieldLabel>Distance in</FieldLabel>
+                <View style={{ flexDirection: 'row', gap: space.sm }}>
+                  <Chip label={units === 'imperial' ? 'Miles' : 'Kilometres'} selected={distUnit === 'km'} onPress={() => setDistUnit('km')} />
+                  <Chip label="Metres" selected={distUnit === 'm'} onPress={() => setDistUnit('m')} />
+                </View>
+              </View>
+            ) : null}
+
             {isBodyweightType(logType) ? (
               <View style={{ gap: space.sm }}>
                 <FieldLabel>Body weight in volume</FieldLabel>
@@ -408,7 +433,7 @@ export default function NewExerciseScreen() {
         </View>
 
         <PrimaryButton
-          label={existing ? 'Save changes' : 'Save exercise'}
+          label={existing ? 'Save changes' : forWorkout ? 'Save and add to workout' : 'Save exercise'}
           icon="check"
           loading={saving}
           disabled={!canSave}

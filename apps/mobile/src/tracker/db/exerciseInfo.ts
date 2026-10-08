@@ -44,6 +44,8 @@ export interface ExerciseInfoRow {
   muscles: string | null;
   media_uri: string | null;
   media_type: string | null;
+  /** v0.28.0: the member's own distance exercise in 'km' or 'm' (NULL = the library's). */
+  dist_unit?: string | null;
 }
 
 function parseJsonArray(raw: string): string[] {
@@ -78,14 +80,14 @@ export function resolveExercise(r: ExerciseInfoRow, entry: CatalogEntry | null =
     loadMode: isLoadMode(r.load_mode) ? r.load_mode : entry?.loadMode ?? 'one',
     bwShare: r.bw_share != null && Number.isFinite(r.bw_share) ? Math.max(0, r.bw_share) : entry?.bwShare ?? 0,
     muscles,
-    distUnit: entry?.distUnit ?? 'km',
+    distUnit: r.dist_unit === 'm' || r.dist_unit === 'km' ? r.dist_unit : entry?.distUnit ?? 'km',
     mediaUri: r.media_uri && r.media_uri.length > 0 ? r.media_uri : null,
     mediaType: r.media_type === 'video' ? 'video' : r.media_type === 'image' ? 'image' : null,
   };
 }
 
 const COLS = `id, name, aliases, muscle_group, secondary_muscles, equipment, is_compound, increment_kg,
-  catalog_key, log_type, load_mode, bw_share, muscles, media_uri, media_type`;
+  catalog_key, log_type, load_mode, bw_share, muscles, media_uri, media_type, dist_unit`;
 
 export async function getTrackerExercise(id: string): Promise<TrackerExercise | null> {
   const row = await getDb().getFirstAsync<ExerciseInfoRow>(`SELECT ${COLS} FROM exercises WHERE id = ?`, [id]);

@@ -4,15 +4,15 @@
  * exercise), finer muscles, ranked search over 400+ exercises.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { FlatList, TextInput, View } from 'react-native';
+import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
-import { Chip, EmptyState } from '@/components/ui';
+import { Chip, EmptyState, Icon } from '@/components/ui';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { Exercise } from '@/types/models';
 
 import { MUSCLE_LABEL, MUSCLES, type Muscle } from '../catalog/muscles';
 import { getAllTrackerExercises, type TrackerExercise } from '../db/exerciseInfo';
-import { filterExercises } from '../services/exerciseSearch';
+import { createOffer, filterExercises } from '../services/exerciseSearch';
 import { ExerciseDemoSheet } from './ExerciseDemoSheet';
 import { ExerciseListRow } from './ExerciseListRow';
 
@@ -21,6 +21,7 @@ export function ExercisePickerList({
   actionLabel = 'Add',
   isMarked,
   only,
+  onCreate,
 }: {
   onSelect: (ex: TrackerExercise) => void;
   /** Screen-reader verb for each row (Phase 4: "Leave out" in the plan builder). */
@@ -29,6 +30,8 @@ export function ExercisePickerList({
   isMarked?: (ex: TrackerExercise) => boolean;
   /** Phase 4: show only these (the plan builder lists library exercises only). Keep it stable. */
   only?: (ex: TrackerExercise) => boolean;
+  /** v0.28.0: offer "Create “<typed>”" at the end of the results (inside a workout). */
+  onCreate?: (typed: string) => void;
 }) {
   const [all, setAll] = useState<TrackerExercise[]>([]);
   const [query, setQuery] = useState('');
@@ -58,6 +61,30 @@ export function ExercisePickerList({
   }, [shown]);
 
   const filtered = useMemo(() => filterExercises(shown, { query, muscle, equipment: null }), [shown, query, muscle]);
+  const createName = onCreate ? createOffer(query, shown) : null;
+  const createRow = createName ? (
+    <Pressable
+      onPress={() => onCreate?.(createName)}
+      accessibilityRole="button"
+      accessibilityLabel={`Create ${createName}`}
+      style={({ pressed }) => ({
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: space.sm,
+        padding: space.md,
+        borderRadius: radius.md,
+        borderWidth: 1,
+        borderColor: color.border,
+        borderStyle: 'dashed',
+        opacity: pressed ? 0.7 : 1,
+      })}
+    >
+      <Icon name="plus" size={18} color={color.accent} />
+      <Text numberOfLines={1} style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink }}>
+        Create “{createName}”
+      </Text>
+    </Pressable>
+  ) : null;
 
   return (
     <View style={{ flex: 1, gap: space.md }}>
@@ -125,8 +152,9 @@ export function ExercisePickerList({
         windowSize={9}
         contentContainerStyle={{ gap: space.sm, paddingBottom: space.xxl }}
         ListEmptyComponent={
-          <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search or muscle group." />
+          createRow ? null : <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search or muscle group." />
         }
+        ListFooterComponent={createRow}
         extraData={isMarked}
         renderItem={({ item }) => (
           <ExerciseListRow

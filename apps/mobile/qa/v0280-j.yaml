@@ -1,7 +1,9 @@
 # v0.28.0 device QA, part J — the member's own Hevy routines (runs after parts A–I). A real-format
 # Hevy .csv (text dates, which v0.27.0 read as no workouts) is imported; then the routines found
 # in it are checked one per screen, followed, and land in the folder "From Hevy". The same file
-# imported again adds nothing and updates "From Hevy" (no second folder).
+# imported again adds nothing and updates "From Hevy" (no second folder). Then: Home's Today card
+# opens the day's exercises first, and "Add exercise" inside a workout offers "Create “…”" (a
+# distance exercise in metres), which lands in the workout.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -92,14 +94,13 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Follow these as your plan\\?"
     timeout: 10000
-- assertVisible: ".*Next up: Pull A \\(after your last Push A\\).*"
+- assertVisible: ".*in the order you do them: Push A, Pull A.*"
 - takeScreenshot: 145-follow-question
 - tapOn: "Follow them"
 # ---------------------------------------------------------------- 4. done
 - extendedWaitUntil:
     visible: "2 routines in From Hevy"
     timeout: 15000
-- assertVisible: ".*Home shows Pull A next.*"
 - takeScreenshot: 146-routines-saved
 - tapOn: "Open routines"
 - extendedWaitUntil:
@@ -111,8 +112,9 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 30000
 - tapOn: "Push A"
+# Hevy's "Chest Fly (Machine)" is the library's Pec Deck Fly (the history landed there too).
 - extendedWaitUntil:
-    visible: "Chest Fly \\(Machine\\)"
+    visible: "Pec Deck Fly"
     timeout: 15000
 - takeScreenshot: 148-push-a-routine
 - back
@@ -120,6 +122,16 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- Home: the next routine
 - tapOn: "^Home$"
 - takeScreenshot: 149-home-today
+- runFlow:
+    when:
+      visible: "See workout"
+    commands:
+      - tapOn: "See workout"
+      - extendedWaitUntil:
+          visible: "Change this routine"
+          timeout: 15000
+      - takeScreenshot: 149b-today-preview
+      - back
 # ---------------------------------------------------------------- the same file again
 - tapOn: "^Profile$"
 - scrollUntilVisible:
@@ -183,3 +195,62 @@ appId: com.forgeai.app
     visible: "From Hevy"
     timeout: 15000
 - takeScreenshot: 152-one-from-hevy-folder
+- back
+# ---------------------------------------------------------------- the Workout tab's "See the exercises"
+- tapOn: "^Workout$"
+- runFlow:
+    when:
+      visible: "See the exercises"
+    commands:
+      - tapOn: "See the exercises"
+      - extendedWaitUntil:
+          visible: "Change this routine"
+          timeout: 15000
+      - takeScreenshot: 153-today-preview-from-workout
+      - back
+# ---------------------------------------------------------------- "Create “…”" inside a workout
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 15000
+- tapOn: "Start empty workout"
+- scrollUntilVisible:
+    element: "Add exercise"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: "Sled Drag QA"
+- hideKeyboard
+- extendedWaitUntil:
+    visible: "Create “Sled Drag QA”"
+    timeout: 10000
+- takeScreenshot: 154-create-offer
+- tapOn: "Create “Sled Drag QA”"
+- extendedWaitUntil:
+    visible: "How you log it"
+    timeout: 15000
+- tapOn: "^Distance$"
+- tapOn: "^Abs$"
+- tapOn: "^Other$"
+- extendedWaitUntil:
+    visible: "Distance in"
+    timeout: 5000
+- tapOn: "^Metres$"
+- takeScreenshot: 155-create-form-metres
+- scrollUntilVisible:
+    element: "Save and add to workout"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Save and add to workout"
+- extendedWaitUntil:
+    visible: "Sled Drag QA"
+    timeout: 15000
+- assertVisible: "^M$"
+- takeScreenshot: 156-created-in-workout
+- scrollUntilVisible:
+    element: "Discard workout"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Discard workout"
+- tapOn:
+    id: "android:id/button1"
