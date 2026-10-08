@@ -35,7 +35,15 @@ export interface FolderSettings {
    * easy-week rhythm is off (`plans/effort.offerEarlyEasy`).
    */
   easyOnce?: number;
+  /**
+   * v0.28.0: the routines rebuilt from this app's export ("From Hevy"). A later import of the
+   * same app updates this folder instead of adding a second one.
+   */
+  fromApp?: ImportApp;
 }
+
+/** The apps whose exports bring routines in. */
+export type ImportApp = 'hevy' | 'strong';
 
 export interface Folder {
   id: string;
@@ -59,6 +67,7 @@ export function parseFolderSettings(raw: string | null | undefined): FolderSetti
     if (s.builder && typeof s.builder === 'object' && !Array.isArray(s.builder)) out.builder = s.builder as Record<string, unknown>;
     if (typeof s.startISO === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.startISO)) out.startISO = s.startISO;
     if (typeof s.easyOnce === 'number' && Number.isInteger(s.easyOnce) && s.easyOnce >= 1) out.easyOnce = s.easyOnce;
+    if (s.fromApp === 'hevy' || s.fromApp === 'strong') out.fromApp = s.fromApp;
     const e = s.easy as Partial<EasySchedule> | null | undefined;
     if (e && typeof e.every === 'number' && e.every >= 2 && typeof e.base === 'number' && Number.isFinite(e.base)) {
       out.easy = { every: Math.round(e.every), base: Math.round(e.base) };
@@ -302,6 +311,54 @@ export interface NewRoutine {
   exercises: { exerciseId: string; sets: number; repMin: number; repMax: number }[];
 }
 
+/** The folder an app's routines were brought into before, or null. */
+export async function appFolder(app: ImportApp): Promise<Omit<Folder, 'routines'> | null> {
+  const rows = await getDb().getAllAsync<PlanRow>(
+    "SELECT id, name, is_active, folder_order, source, settings FROM workout_plans WHERE source = 'import' ORDER BY rowid ASC",
+  );
+  const p = rows.find((r) => parseFolderSettings(r.settings).fromApp === app);
+  return p ? { id: p.id, name: p.name, following: p.is_active === 1, source: 'import', settings: parseFolderSettings(p.settings) } : null;
+}
+
+/**
+ * v0.28.0: write an app's routines as its own folder ("From Hevy"), in one transaction. A folder
+ * brought in from that app before is emptied and refilled in place — same name, same place in
+ * the list, still followed if it was — so a second import never makes a second folder.
+ * `follow` makes it the plan "Today" comes from. Returns the folder id.
+ */
+export async function saveAppFolder(
+  app: ImportApp,
+  name: string,
+  routines: readonly NewRoutine[],
+  opts: { follow: boolean; todayISO: string },
+): Promise<string> {
+  const before = await appFolder(app);
+  if (!before) {
+    return createFolderWithRoutines(name, routines, {
+      source: 'import',
+      settings: { fromApp: app },
+      follow: opts.follow,
+      todayISO: opts.todayISO,
+    });
+  }
+  const db = getDb();
+  const settings: FolderSettings = { ...before.settings, fromApp: app };
+  if (opts.follow && !before.following) {
+    settings.startISO = opts.todayISO;
+    if (settings.easy) settings.easy = { ...settings.easy, base: 0 };
+  }
+  await serial(() =>
+    db.withTransactionAsync(async () => {
+      if (opts.follow) await db.runAsync('UPDATE workout_plans SET is_active = CASE WHEN id = ? THEN 1 ELSE 0 END', [before.id]);
+      await db.runAsync('UPDATE workout_plans SET settings = ? WHERE id = ?', [JSON.stringify(settings), before.id]);
+      await db.runAsync('DELETE FROM plan_exercises WHERE plan_day_id IN (SELECT id FROM plan_days WHERE plan_id = ?)', [before.id]);
+      await db.runAsync('DELETE FROM plan_days WHERE plan_id = ?', [before.id]);
+      await insertRoutines(before.id, routines);
+    }),
+  );
+  return before.id;
+}
+
 /** A whole folder with its routines in one transaction; returns the folder id. */
 export async function createFolderWithRoutines(
   name: string,
@@ -320,29 +377,35 @@ export async function createFolderWithRoutines(
         'INSERT INTO workout_plans(id, name, is_active, folder_order, source, settings) VALUES(?, ?, ?, ?, ?, ?)',
         [id, name.trim() || 'Folder', opts.follow ? 1 : 0, order, opts.source ?? null, JSON.stringify(settings)],
       );
-      for (let d = 0; d < routines.length; d++) {
-        const r = routines[d];
-        const dayId = uuid();
-        await db.runAsync('INSERT INTO plan_days(id, plan_id, day_type, day_order, name) VALUES(?, ?, ?, ?, ?)', [
-          dayId,
-          id,
-          r.dayType,
-          d,
-          r.name.trim() || 'Routine',
-        ]);
-        for (let i = 0; i < r.exercises.length; i++) {
-          const x = r.exercises[i];
-          const min = Math.max(1, Math.min(50, Math.round(x.repMin)));
-          await db.runAsync(
-            `INSERT INTO plan_exercises(id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max)
-             VALUES(?, ?, ?, ?, ?, ?, ?)`,
-            [uuid(), dayId, x.exerciseId, i, Math.max(1, Math.min(12, Math.round(x.sets))), min, Math.max(min, Math.min(50, Math.round(x.repMax)))],
-          );
-        }
-      }
+      await insertRoutines(id, routines);
     }),
   );
   return id;
+}
+
+/** The routines of a folder, in order (inside the caller's transaction). */
+async function insertRoutines(planId: string, routines: readonly NewRoutine[]): Promise<void> {
+  const db = getDb();
+  for (let d = 0; d < routines.length; d++) {
+    const r = routines[d];
+    const dayId = uuid();
+    await db.runAsync('INSERT INTO plan_days(id, plan_id, day_type, day_order, name) VALUES(?, ?, ?, ?, ?)', [
+      dayId,
+      planId,
+      r.dayType,
+      d,
+      r.name.trim() || 'Routine',
+    ]);
+    for (let i = 0; i < r.exercises.length; i++) {
+      const x = r.exercises[i];
+      const min = Math.max(1, Math.min(50, Math.round(x.repMin)));
+      await db.runAsync(
+        `INSERT INTO plan_exercises(id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max)
+         VALUES(?, ?, ?, ?, ?, ?, ?)`,
+        [uuid(), dayId, x.exerciseId, i, Math.max(1, Math.min(12, Math.round(x.sets))), min, Math.max(min, Math.min(50, Math.round(x.repMax)))],
+      );
+    }
+  }
 }
 
 /**

@@ -164,6 +164,16 @@ log "app alarms after part I: $(cat "$OUT/i-alarm-count.txt" 2>/dev/null)"
 adb shell dumpsys appwidget > "$OUT/i-appwidget.txt" 2>/dev/null || true
 log "home-screen widget list saved (i-appwidget.txt); ForgeAI widget lines: $(grep -c 'com.forgeai.phone.TodayWidget' "$OUT/i-appwidget.txt" 2>/dev/null)"
 
+# ---------------------------------------------------------------- part J (v0.28.0: the member's own Hevy routines)
+# A real-format Hevy .csv (text dates) with two routines, free workouts and an old name.
+adb push "$QA_DIR/fixtures/qa-hevy.csv" /sdcard/Download/qa-hevy.csv >/dev/null 2>&1 || log "PUSH HEVY FILE FAILED"
+adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+sleep 10
+log "part J start"
+maestro test --format junit --output "$OUT/part-j.xml" --test-output-dir "$OUT/part-j" "$QA_DIR/v0280-j.yaml"   > "$OUT/part-j.log" 2>&1 || { status=1; log "PART J FAILED"; }
+
 # ---------------------------------------------------------------- crash check
 # Only the app's own crashes count (another app's crash on the emulator is not ours).
 app_crash() { grep -A1 "FATAL EXCEPTION" "$1" 2>/dev/null | grep -q "Process: $PKG"; }

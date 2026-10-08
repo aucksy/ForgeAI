@@ -11,7 +11,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useKeepAwake } from 'expo-keep-awake';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 import { Card, GhostButton, Icon, IconButton, PrimaryButton, Screen } from '@/components/ui';
@@ -28,10 +28,12 @@ import {
   type ImportResult,
   type ParsedHevy,
 } from '@/tracker/services/hevyImport';
+import { findRoutines } from '@/tracker/services/routineRebuild';
 import { looksLikeStrong, parseStrongText, strongFileInfo, type FileUnits } from '@/tracker/services/strongImport';
+import { RoutineImportSteps } from '@/tracker/components/RoutineImportSteps';
 import { useSettings } from '@/store/settingsStore';
 
-type Phase = 'idle' | 'preview' | 'importing' | 'done';
+type Phase = 'idle' | 'preview' | 'importing' | 'done' | 'routines';
 
 const CAPTION = {
   fontFamily: type.body,
@@ -210,6 +212,9 @@ export default function ImportScreen() {
       // the file read fine a moment ago; keep what is shown
     }
   };
+
+  // v0.28.0: the member's own routines, rebuilt from the same file (offered after the import).
+  const routineCount = useMemo(() => (parsed ? findRoutines(parsed.workouts).length : 0), [parsed]);
 
   const pct = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
 
@@ -423,11 +428,26 @@ export default function ImportScreen() {
             ) : null}
           </Card>
 
-          <View style={{ gap: space.md }}>
-            <PrimaryButton label="See your workouts" icon="calendar" onPress={() => router.replace('/history')} />
-            <GhostButton label="Done" icon="check" onPress={() => router.back()} />
-          </View>
+          {routineCount > 0 ? (
+            <View style={{ gap: space.md }}>
+              <Text style={{ ...CAPTION, color: color.inkSecondary }}>
+                Next: your {appName} routines. We found {routineCount} in this file.
+              </Text>
+              <PrimaryButton label="Bring my routines in" icon="chevron-right" onPress={() => setPhase('routines')} />
+              <GhostButton label="Not now" icon="close" onPress={() => router.back()} />
+            </View>
+          ) : (
+            <View style={{ gap: space.md }}>
+              <PrimaryButton label="See your workouts" icon="calendar" onPress={() => router.replace('/history')} />
+              <GhostButton label="Done" icon="check" onPress={() => router.back()} />
+            </View>
+          )}
         </View>
+      ) : null}
+
+      {/* ---------- v0.28.0: the member's routines, step by step ---------- */}
+      {phase === 'routines' && parsed ? (
+        <RoutineImportSteps app={strong ? 'strong' : 'hevy'} workouts={parsed.workouts} onClose={() => router.back()} />
       ) : null}
     </Screen>
   );

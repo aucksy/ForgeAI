@@ -1,0 +1,185 @@
+# v0.28.0 device QA, part J — the member's own Hevy routines (runs after parts A–I). A real-format
+# Hevy .csv (text dates, which v0.27.0 read as no workouts) is imported; then the routines found
+# in it are checked one per screen, followed, and land in the folder "From Hevy". The same file
+# imported again adds nothing and updates "From Hevy" (no second folder).
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "Import from Hevy"
+    centerElement: true
+    timeout: 90000
+- tapOn: "Import from Hevy"
+- extendedWaitUntil:
+    visible: "Choose Hevy file"
+    timeout: 15000
+- tapOn: "Choose Hevy file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-hevy).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-hevy.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "qa-hevy.*"
+- extendedWaitUntil:
+    visible: "^Merge$"
+    timeout: 20000
+- tapOn: "^Merge$"
+- takeScreenshot: 140-hevy-csv-preview
+- scrollUntilVisible:
+    element: "Merge 12 workouts"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Merge 12 workouts"
+- extendedWaitUntil:
+    visible: "12 workouts imported"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "Bring my routines in"
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: 141-hevy-imported-routines-next
+- tapOn: "Bring my routines in"
+# ---------------------------------------------------------------- 1. routines found
+- extendedWaitUntil:
+    visible: "We found 3 routines in your Hevy workouts"
+    timeout: 15000
+- assertNotVisible: "Morning workout.*"
+- tapOn: "1 older name.*"
+- extendedWaitUntil:
+    visible: "Legs Old"
+    timeout: 5000
+- takeScreenshot: 142-routines-found
+- tapOn: "Check these 2"
+# ---------------------------------------------------------------- 2. one routine per screen
+- extendedWaitUntil:
+    visible: "Also done in Push A"
+    timeout: 10000
+- assertVisible: "1 of 2"
+- assertVisible: "Triceps Pushdown"
+- tapOn: "Chest Fly \\(Machine\\)"
+- takeScreenshot: 143-check-push-a
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "2 of 2"
+    timeout: 10000
+- assertVisible: "Pull A"
+- takeScreenshot: 144-check-pull-a
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Next$"
+# ---------------------------------------------------------------- 3. follow them?
+- extendedWaitUntil:
+    visible: "Follow these as your plan\\?"
+    timeout: 10000
+- assertVisible: ".*Next up: Pull A \\(after your last Push A\\).*"
+- takeScreenshot: 145-follow-question
+- tapOn: "Follow them"
+# ---------------------------------------------------------------- 4. done
+- extendedWaitUntil:
+    visible: "2 routines in From Hevy"
+    timeout: 15000
+- assertVisible: ".*Home shows Pull A next.*"
+- takeScreenshot: 146-routines-saved
+- tapOn: "Open routines"
+- extendedWaitUntil:
+    visible: "From Hevy"
+    timeout: 15000
+- takeScreenshot: 147-from-hevy-folder
+- scrollUntilVisible:
+    element: "Push A"
+    centerElement: true
+    timeout: 30000
+- tapOn: "Push A"
+- extendedWaitUntil:
+    visible: "Chest Fly \\(Machine\\)"
+    timeout: 15000
+- takeScreenshot: 148-push-a-routine
+- back
+- back
+# ---------------------------------------------------------------- Home: the next routine
+- tapOn: "^Home$"
+- takeScreenshot: 149-home-today
+# ---------------------------------------------------------------- the same file again
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "Import from Hevy"
+    centerElement: true
+    timeout: 90000
+- tapOn: "Import from Hevy"
+- tapOn: "Choose Hevy file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-hevy).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-hevy.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "qa-hevy.*"
+- extendedWaitUntil:
+    visible: "Already in ForgeAI"
+    timeout: 20000
+- takeScreenshot: 150-reimport-preview
+- scrollUntilVisible:
+    element: "Merge 12 workouts"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Merge 12 workouts"
+- extendedWaitUntil:
+    visible: "0 workouts imported"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "Bring my routines in"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Bring my routines in"
+- tapOn: "Check these 2"
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Next$"
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Follow these as your plan\\?"
+    timeout: 10000
+- tapOn: "Follow them"
+- extendedWaitUntil:
+    visible: ".*From Hevy now matches this file.*"
+    timeout: 15000
+- takeScreenshot: 151-reimport-updated
+- tapOn: "Open routines"
+- extendedWaitUntil:
+    visible: "From Hevy"
+    timeout: 15000
+- takeScreenshot: 152-one-from-hevy-folder

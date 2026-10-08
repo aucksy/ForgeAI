@@ -148,6 +148,11 @@ const pad = (n: number): string => String(n).padStart(2, '0');
  * the imported day never drifts. Derive the day with `utcDateISO` (UTC getters).
  */
 export function parseHevyDate(input: unknown): number | null {
+  // A real spreadsheet (.xlsx) may hold the time as a date number (days since 30 Dec 1899):
+  // read it as the same wall clock written as UTC, to the minute (2000 onwards; a small number is not a date).
+  if (typeof input === 'number' && Number.isFinite(input) && input >= 36526 && input < 2958466) {
+    return Math.round(((input - 25569) * 86_400_000) / 60_000) * 60_000;
+  }
   if (typeof input !== 'string') return null;
   const m = /^\s*(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4}),?\s+(\d{1,2}):(\d{2})/.exec(input);
   if (!m) return null;
@@ -339,7 +344,9 @@ function asString(v: unknown): string {
 export function parseHevyBase64(base64: string): ParsedHevy {
   let rows: RawRow[];
   try {
-    const wb = XLSX.read(base64, { type: 'base64' });
+    // v0.28.0: `raw` keeps a CSV's text as text. Without it SheetJS turns Hevy's "5 Oct 2026,
+    // 11:10" into a spreadsheet date number and no workout was found in a .csv export.
+    const wb = XLSX.read(base64, { type: 'base64', raw: true });
     const sheet = wb.Sheets[wb.SheetNames[0]];
     if (!sheet) throw new Error('empty');
     rows = XLSX.utils.sheet_to_json<RawRow>(sheet, { defval: null, raw: true });
@@ -364,7 +371,7 @@ export function parseHevyBase64(base64: string): ParsedHevy {
   for (const r of rows) {
     totalSetRows += 1;
     const startRaw = asString(r['start_time']);
-    const startedAt = parseHevyDate(startRaw);
+    const startedAt = parseHevyDate(r['start_time']);
     const exTitle = asString(r['exercise_title']).trim();
     const reps = asNumber(r['reps']);
     const duration = asNumber(r['duration_seconds']);
@@ -395,7 +402,7 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     let workout = byStart.get(startRaw);
     if (!workout) {
       const rawTitle = asString(r['title']);
-      const endedAt = parseHevyDate(asString(r['end_time']));
+      const endedAt = parseHevyDate(r['end_time']);
       workout = {
         title: sanitizeTitle(rawTitle),
         dayType: inferDayType(rawTitle),
@@ -487,6 +494,21 @@ export function matchTitle(title: string, library: readonly LibraryRow[]): Libra
   const entry = catalogEntryByName(title);
   if (!entry) return null;
   return library.find((e) => e.catalogKey === entry.key) ?? null;
+}
+
+/**
+ * v0.28.0: the member's exercise for each app exercise name, the same way the history import
+ * resolved it (an exact name, else the library exercise the name means). Run after the import,
+ * so every name in the file has one; a name with none is left out.
+ */
+export async function exerciseIdsForTitles(titles: readonly string[]): Promise<Map<string, string>> {
+  const library = await readLibrary();
+  const out = new Map<string, string>();
+  for (const t of titles) {
+    const hit = matchTitle(t, library);
+    if (hit) out.set(t, hit.id);
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------- the same workout twice
