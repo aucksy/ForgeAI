@@ -50,6 +50,27 @@ function hasOpenWorkingSet(ex: DraftExercise): boolean {
 }
 
 /**
+ * v0.26.1: what the rest card and "Rest is over" name as next — "Bench Press, set 3".
+ * Starts at `fromExKey` (the exercise the screen goes to next); when that one has no working
+ * set left, the next exercise down the list that has one. The set number counts working sets
+ * only (warm-ups are not numbered), as the set rows do. Null when nothing is left to do.
+ */
+export function nextUpLabel(exercises: DraftExercise[], fromExKey: string): string | null {
+  const start = exercises.findIndex((e) => e.key === fromExKey);
+  if (start < 0) return null;
+  const order = [...exercises.slice(start), ...exercises.slice(0, start)];
+  for (const ex of order) {
+    let n = 0;
+    for (const s of ex.sets) {
+      if (s.isWarmup) continue;
+      n += 1;
+      if (!s.done) return `${ex.name}, set ${n}`;
+    }
+  }
+  return null;
+}
+
+/**
  * Call AFTER the tick has been applied to `exercises` (the ticked set is `done`).
  * Unticking is not a completion — callers only ask on a completion.
  */

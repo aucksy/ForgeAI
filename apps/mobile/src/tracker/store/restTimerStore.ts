@@ -33,6 +33,8 @@ export interface RestTimerState {
   endsAt: number | null;
   /** Configured length of the current timer (for the progress bar). */
   durationSec: number;
+  /** Epoch ms the current rest began (the watch card shows endsAt − startedAt as its length). */
+  startedAt: number | null;
   /** What comes next, for the notification text ("Bench Press"). */
   nextLabel: string | null;
   defaultSec: number;
@@ -42,6 +44,16 @@ export interface RestTimerState {
   start: (sec?: number, nextLabel?: string | null) => void;
   addSec: (delta: number) => void;
   skip: () => void;
+  /**
+   * v0.26.1: the rest was changed on the watch card ("+15 s" / "Skip") or the card's rest is
+   * adopted after the app slept. Changes the app's timer only — the card already knows.
+   */
+  fromCard: (c: { kind: 'add'; endsAt: number; startedAt: number } | { kind: 'stop' } | {
+    kind: 'adopt';
+    endsAt: number;
+    startedAt: number;
+    next: string | null;
+  }) => void;
 }
 
 let expiry: ReturnType<typeof setTimeout> | null = null;
@@ -77,6 +89,7 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
   return {
     endsAt: null,
     durationSec: DEFAULT_REST_SEC,
+    startedAt: null,
     nextLabel: null,
     defaultSec: DEFAULT_REST_SEC,
     loaded: false,
@@ -98,10 +111,11 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
     start: (sec, nextLabel = null) => {
       const dur = sec && sec > 0 ? sec : get().defaultSec;
       if (!dur || dur <= 0) return;
-      const endsAt = Date.now() + dur * 1000;
-      set({ endsAt, durationSec: dur, nextLabel });
+      const startedAt = Date.now();
+      const endsAt = startedAt + dur * 1000;
+      set({ endsAt, durationSec: dur, nextLabel, startedAt });
       arm(endsAt);
-      void scheduleRestEnd(endsAt, nextLabel);
+      void scheduleRestEnd(endsAt, nextLabel, startedAt);
     },
 
     addSec: (delta) => {
@@ -113,13 +127,36 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
         durationSec: Math.max(get().durationSec, Math.ceil((newEnds - Date.now()) / 1000)),
       });
       arm(newEnds);
-      void scheduleRestEnd(newEnds, get().nextLabel);
+      void scheduleRestEnd(newEnds, get().nextLabel, get().startedAt ?? Date.now());
     },
 
     skip: () => {
       clearExpiry();
       if (get().endsAt != null) set({ endsAt: null });
       void cancelRestEnd();
+    },
+
+    fromCard: (c) => {
+      if (c.kind === 'stop') {
+        clearExpiry();
+        if (get().endsAt != null) set({ endsAt: null });
+        return;
+      }
+      const now = Date.now();
+      if (c.endsAt <= now) return;
+      const left = Math.ceil((c.endsAt - now) / 1000);
+      if (c.kind === 'adopt') {
+        // The app slept (or restarted) while the card ran: take the card's rest as it is.
+        set({
+          endsAt: c.endsAt,
+          startedAt: c.startedAt,
+          durationSec: Math.max(left, Math.round((c.endsAt - c.startedAt) / 1000)),
+          nextLabel: c.next,
+        });
+      } else {
+        set({ endsAt: c.endsAt, startedAt: c.startedAt, durationSec: Math.max(get().durationSec, left) });
+      }
+      arm(c.endsAt);
     },
   };
 });

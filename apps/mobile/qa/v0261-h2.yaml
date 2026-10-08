@@ -1,0 +1,61 @@
+# v0.26.1 device QA, part H2 — runs after H1, once the script has STOPPED the app's process
+# (Android closed it in the background). "Skip" on the card still works: the card goes, and the
+# app, opened again, has no rest running. Then a 30 s rest with the app OPEN: "Rest is over" is
+# still posted (that is what buzzes a watch); the script reads the notification list after.
+appId: com.forgeai.app
+---
+- swipe:
+    start: 50%, 1%
+    end: 50%, 75%
+    duration: 600
+- extendedWaitUntil:
+    visible: 'Rest 1:45 · ends .*'
+    timeout: 15000
+- runFlow:
+    when:
+      notVisible: '^Skip$'
+    commands:
+      - swipe:
+          from:
+            text: 'Rest 1:45 · ends .*'
+          direction: DOWN
+- tapOn: '^Skip$'
+- extendedWaitUntil:
+    notVisible: 'Rest 1:45 · ends .*'
+    timeout: 10000
+- takeScreenshot: 113-shade-after-skip
+- pressKey: Back
+# ---------------------------------------------------------------- the app again
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Resume workout"
+    timeout: 30000
+- tapOn: "Resume workout"
+- extendedWaitUntil:
+    visible: "More for Barbell Bench Press"
+    timeout: 20000
+- assertNotVisible: "Skip rest"
+- takeScreenshot: 114-app-after-skip-on-card
+# ---------------------------------------------------------------- rest ends with the app open
+- tapOn: "More for Barbell Bench Press"
+- tapOn: "Rest timer"
+- tapOn: "Rest 30s"
+- tapOn:
+    text: "Mark set complete"
+    index: 0
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 10000
+- takeScreenshot: 115-rest-30s-app-open
+- extendedWaitUntil:
+    notVisible: "Skip rest"
+    timeout: 50000
+- takeScreenshot: 116-rest-over-app-open

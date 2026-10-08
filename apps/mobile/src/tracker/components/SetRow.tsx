@@ -45,7 +45,7 @@ import {
 import { rpeColor } from '../lib/rpe';
 import { recordLabel, toastHit } from '../services/liveRecords';
 import type { RecordKind } from '../services/liveRecords';
-import { afterSetCompleted } from '../services/restRules';
+import { afterSetCompleted, nextUpLabel } from '../services/restRules';
 import { playWorkoutSound } from '../services/workoutSounds';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftSet, PrevSet, SetFill } from '../store/activeWorkoutStore';
@@ -126,7 +126,8 @@ export function afterTick(exKey: string, setKey: string): void {
 
   const timer = useRestTimer.getState();
   const d = afterSetCompleted(st.exercises, exKey, setKey, timer.defaultSec);
-  const nextName = st.exercises.find((e) => e.key === (d.nextExKey ?? exKey))?.name ?? null;
+  // v0.26.1: "Bench Press, set 3" for the watch card and "Rest is over".
+  const nextName = nextUpLabel(st.exercises, d.nextExKey ?? exKey);
   if (d.restSec) timer.start(d.restSec, nextName);
   // Ticked during an older rest, and this set means "no rest" (drop set next,
   // mid-superset, rest off) → the old bell must not ring mid-set.

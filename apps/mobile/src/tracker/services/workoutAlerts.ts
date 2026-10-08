@@ -14,6 +14,8 @@
  */
 import { AppState, Platform } from 'react-native';
 
+import { clearRestCard, showRestCard } from './restCard';
+
 type NotificationsModule = typeof import('expo-notifications');
 
 const REST_ID = 'forgeai-rest-end';
@@ -107,11 +109,25 @@ export async function ensureAlertPermission(): Promise<void> {
   }
 }
 
-/** Schedule (or move) the "Rest is over" alert. */
-export async function scheduleRestEnd(endsAt: number, nextLabel: string | null): Promise<void> {
+/**
+ * Schedule (or move) the "Rest is over" alert. v0.26.1: on a build with the native rest card
+ * (`restCard.ts`) the card shows the rest — also on the watch — and posts "Rest is over" itself,
+ * so the old scheduled alert is only cancelled. Without it, the Phase 1 alert as before.
+ */
+export async function scheduleRestEnd(
+  endsAt: number,
+  nextLabel: string | null,
+  startedAt: number = Date.now(),
+): Promise<void> {
+  const onCard = showRestCard(startedAt, endsAt, nextLabel);
   const n = N();
   if (!n) return;
   try {
+    if (onCard) {
+      await n.cancelScheduledNotificationAsync(REST_ID);
+      await n.dismissNotificationAsync(REST_ID);
+      return;
+    }
     await setupWorkoutAlerts();
     await n.cancelScheduledNotificationAsync(REST_ID);
     if (endsAt - Date.now() < 1000) return;
@@ -133,6 +149,7 @@ export async function scheduleRestEnd(endsAt: number, nextLabel: string | null):
 }
 
 export async function cancelRestEnd(): Promise<void> {
+  clearRestCard(true);
   const n = N();
   if (!n) return;
   try {

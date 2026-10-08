@@ -1,0 +1,87 @@
+# v0.26.1 device QA, part H1 — the rest card (what the watch shows). Runs after parts A–G.
+# An empty workout → Barbell Bench Press with a 1:30 rest and 3 sets → tick set 1 → the app
+# goes to the background → the phone's shade shows the swipe-away card "Rest 1:30 · ends …" /
+# "Next: Barbell Bench Press, set 2" with "+15 s" and "Skip" → "+15 s" from the shade → the card
+# reads "Rest 1:45". (A watch shows this same card; its buttons run here, on the phone.)
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 30000
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 20000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " bench press"
+- hideKeyboard
+- tapOn:
+    text: "Add Barbell Bench Press"
+    index: 0
+- extendedWaitUntil:
+    visible: "More for Barbell Bench Press"
+    timeout: 15000
+# A known rest length, so the card's numbers can be checked.
+- tapOn: "More for Barbell Bench Press"
+- tapOn: "Rest timer"
+- tapOn: "Rest 1:30"
+- scrollUntilVisible:
+    element: "Add set"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Add set"
+- tapOn: "Add set"
+- scrollUntilVisible:
+    element: "More for Barbell Bench Press"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- tapOn:
+    text: "Mark set complete"
+    index: 0
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 10000
+- takeScreenshot: 110-rest-in-app
+# ---------------------------------------------------------------- the app in the background
+- pressKey: Home
+- swipe:
+    start: 50%, 1%
+    end: 50%, 75%
+    duration: 600
+- extendedWaitUntil:
+    visible: 'Rest 1:30 · ends .*'
+    timeout: 15000
+# A notification lower in the shade shows its buttons only when opened out.
+- runFlow:
+    when:
+      notVisible: '\+15 s'
+    commands:
+      - swipe:
+          from:
+            text: 'Rest 1:30 · ends .*'
+          direction: DOWN
+- assertVisible: 'Next: Barbell Bench Press, set 2'
+- assertVisible: '\+15 s'
+- assertVisible: '^Skip$'
+- takeScreenshot: 111-shade-rest-card
+- tapOn:
+    text: '\+15 s'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Rest 1:45 · ends .*'
+    timeout: 10000
+- takeScreenshot: 112-shade-after-plus-15

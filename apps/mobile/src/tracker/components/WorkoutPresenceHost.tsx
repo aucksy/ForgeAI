@@ -7,6 +7,7 @@
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
+import { onRestOpen, takeRestOpenRequest } from '../services/restCard';
 import { listenForAlertTaps, setupWorkoutAlerts, WORKOUT_ROUTE } from '../services/workoutAlerts';
 import { startWorkoutPresence } from '../services/workoutPresence';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
@@ -22,7 +23,7 @@ export function WorkoutPresenceHost() {
     const stop = startWorkoutPresence();
     void useActiveWorkout.getState().hydrate().catch(() => undefined);
 
-    const unlisten = listenForAlertTaps((route) => {
+    const openWorkout = (route: string): void => {
       if (route !== WORKOUT_ROUTE) return;
       void useActiveWorkout
         .getState()
@@ -37,10 +38,16 @@ export function WorkoutPresenceHost() {
             }
           }, 300);
         });
-    });
+    };
+    const unlisten = listenForAlertTaps(openWorkout);
+    // v0.26.1: the watch card and its "Rest is over" are native alerts — a tap opens the app
+    // with a flag (cold start: read once here; app already running: an event).
+    const unlistenCard = onRestOpen(() => openWorkout(WORKOUT_ROUTE));
+    if (takeRestOpenRequest()) openWorkout(WORKOUT_ROUTE);
     return () => {
       stop();
       unlisten();
+      unlistenCard();
     };
   }, [router]);
 

@@ -8,10 +8,13 @@
  * Started once from the root layout; listens to the two stores, so it works no
  * matter which screen is showing. Card updates are de-duplicated on their text.
  */
+import { AppState } from 'react-native';
+
 import { countWord } from '@/lib/words';
 
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
+import { markRestCardHeld, onRestCardChange, readRestCard, reconcileWithCard, restCardHolds } from './restCard';
 import { cancelRestEnd, clearWorkoutOngoing, showWorkoutOngoing } from './workoutAlerts';
 
 /** "6:42 pm" in the phone's local time. */
@@ -51,6 +54,9 @@ export function startWorkoutPresence(): () => void {
   const update = (): void => {
     const w = useActiveWorkout.getState();
     const r = useRestTimer.getState();
+    // v0.26.1: before the saved workout is read back, "no workout" is not known yet — a rest
+    // the watch card kept running while the app was closed must survive until then.
+    if (!w.active && !w.hydrated) return;
     if (!w.active || w.editingSessionId) {
       if (!w.active && r.endsAt != null) r.skip(); // workout over → no stray bell
       if (last !== 'off') {
@@ -67,12 +73,43 @@ export function startWorkoutPresence(): () => void {
     void showWorkoutOngoing('Workout in progress', body);
   };
 
-  const u1 = useActiveWorkout.subscribe(update);
+  // v0.26.1: the watch card. Its buttons change the app's timer while JS runs; when the app
+  // comes back (or starts) it catches up with whatever the card did meanwhile.
+  let wasHydrated = useActiveWorkout.getState().hydrated;
+  const catchUp = (): void => {
+    const w = useActiveWorkout.getState();
+    if (!w.active || w.editingSessionId) return;
+    const r = useRestTimer.getState();
+    const step = reconcileWithCard({ endsAt: r.endsAt, onCard: restCardHolds() }, readRestCard(), Date.now());
+    if (step.do === 'adopt') {
+      r.fromCard({ kind: 'adopt', endsAt: step.endsAt, startedAt: step.startedAt, next: step.next });
+      markRestCardHeld();
+    } else if (step.do === 'stop') r.fromCard({ kind: 'stop' });
+  };
+  const offCard = onRestCardChange((c) => {
+    const r = useRestTimer.getState();
+    if (c.kind === 'add') r.fromCard(c);
+    else if (c.kind === 'skip') r.fromCard({ kind: 'stop' });
+  });
+  const appState = AppState.addEventListener('change', (s) => {
+    if (s === 'active') catchUp();
+  });
+
+  const u1 = useActiveWorkout.subscribe((s) => {
+    if (s.hydrated && !wasHydrated) {
+      wasHydrated = true;
+      catchUp();
+    }
+    update();
+  });
   const u2 = useRestTimer.subscribe(update);
+  if (wasHydrated) catchUp();
   update();
   return () => {
     u1();
     u2();
+    offCard();
+    appState.remove();
     started = false;
   };
 }

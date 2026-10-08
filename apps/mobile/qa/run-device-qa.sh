@@ -134,6 +134,63 @@ sleep 10
 log "part G start"
 maestro test --format junit --output "$OUT/part-g.xml" --test-output-dir "$OUT/part-g" "$QA_DIR/v0260-g.yaml"   > "$OUT/part-g.log" 2>&1 || { status=1; log "PART G FAILED"; }
 
+# ---------------------------------------------------------------- part H (v0.26.1: the watch's rest card)
+# The cloud phone cannot pair a watch. A watch shows exactly the phone's swipe-away alerts and
+# runs their buttons on the phone, so the card, its buttons and the end alert are proven here.
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+sleep 10
+log "part H1 start"
+maestro test --format junit --output "$OUT/part-h1.xml" --test-output-dir "$OUT/part-h1" "$QA_DIR/v0261-h.yaml" \
+  > "$OUT/part-h1.log" 2>&1 || { status=1; log "PART H1 FAILED"; }
+adb shell dumpsys notification --noredact > "$OUT/h-card-after-plus15.txt"
+# The card must be swipe-away (no ongoing / no-clear flag), on the quiet channel, with both buttons.
+python3 - "$OUT/h-card-after-plus15.txt" >> "$OUT/timeline.txt" <<'PY' || status=1
+import re, sys
+text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+blocks = [b for b in re.split(r"\n\s*NotificationRecord\(", text) if "pkg=com.forgeai.app" in b and "rest-card" in b]
+if not blocks:
+    print("[qa] REST CARD NOT FOUND"); sys.exit(1)
+b = blocks[0]
+flags = re.search(r"flags=(0x[0-9a-fA-F]+)", b)
+f = int(flags.group(1), 16) if flags else -1
+ongoing = f >= 0 and (f & 0x2 or f & 0x20)
+title = re.search(r"android\.title=String \(([^)]*)\)", b)
+print(f"[qa] REST CARD found: title={title.group(1) if title else '?'} flags={hex(f)} swipe-away={'yes' if not ongoing else 'NO'}"
+      f" +15={'yes' if '+15 s' in b else 'NO'} skip={'yes' if 'Skip' in b else 'NO'} chronometer={'yes' if 'android.showChronometer=Boolean (true)' in b else 'no'}"
+      f" countdown={'yes' if 'android.chronometerCountDown=Boolean (true)' in b else 'no'}")
+sys.exit(1 if ongoing or '+15 s' not in b or 'Skip' not in b or not (title and 'Rest 1:45' in title.group(1)) else 0)
+PY
+adb shell cmd statusbar collapse >/dev/null 2>&1 || true
+adb shell input keyevent KEYCODE_HOME
+sleep 3
+# Android stops a background app to save memory; the card's buttons must still work.
+adb shell am kill "$PKG"
+sleep 3
+log "app process after kill: '$(adb shell pidof $PKG | tr -d '\r')' (empty = stopped)"
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+sleep 10
+log "part H2 start"
+maestro test --format junit --output "$OUT/part-h2.xml" --test-output-dir "$OUT/part-h2" "$QA_DIR/v0261-h2.yaml" \
+  > "$OUT/part-h2.log" 2>&1 || { status=1; log "PART H2 FAILED"; }
+adb shell dumpsys notification --noredact > "$OUT/h-after-rest-app-open.txt"
+adb shell cmd statusbar expand-notifications
+sleep 2
+adb exec-out screencap -p > "$OUT/h-117-shade-rest-over.png"
+adb shell cmd statusbar collapse >/dev/null 2>&1 || true
+python3 - "$OUT/h-after-rest-app-open.txt" >> "$OUT/timeline.txt" <<'PY' || status=1
+import re, sys
+text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+blocks = [b for b in re.split(r"\n\s*NotificationRecord\(", text) if "pkg=com.forgeai.app" in b and "Rest is over" in b]
+cards = [b for b in re.split(r"\n\s*NotificationRecord\(", text) if "pkg=com.forgeai.app" in b and "rest-card" in b]
+if not blocks:
+    print("[qa] REST IS OVER (app open) NOT FOUND"); sys.exit(1)
+ch = re.search(r"channel=([\w-]+)", blocks[0])
+print(f"[qa] REST IS OVER with the app open: posted, channel={ch.group(1) if ch else '?'}; rest card left: {len(cards)}")
+sys.exit(0 if not cards else 1)
+PY
+
 # ---------------------------------------------------------------- crash check
 # Only the app's own crashes count (another app's crash on the emulator is not ours).
 app_crash() { grep -A1 "FATAL EXCEPTION" "$1" 2>/dev/null | grep -q "Process: $PKG"; }
@@ -155,7 +212,7 @@ for f in $(find "$OUT"/part-* -name '*logcat*' 2>/dev/null); do
 done
 reports=$(find "$OUT"/part-* \( -name 'crash-report*' -o -name 'anr-report*' \) 2>/dev/null)
 if [ -n "$reports" ]; then log "MAESTRO CRASH/ANR REPORT: $reports"; status=1; fi
-log "device logs read: $read_logs (parts A-G)"
+log "device logs read: $read_logs (parts A-H)"
 if [ "$read_logs" -eq 0 ]; then log "WARNING: no per-part device logs found - only the last part's logcat was checked"; fi
 grep -i "ReactNativeJS" "$OUT/logcat.txt" | grep -i "error\|warn" | head -60 > "$OUT/js-errors.txt" || true
 log "done, status $status"
