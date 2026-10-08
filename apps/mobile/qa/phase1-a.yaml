@@ -26,6 +26,13 @@ appId: com.forgeai.app
     visible: "Workout"
     timeout: 90000
 - takeScreenshot: 01-home
+# v0.28.0: Home's Today card opens the day's exercises first; nothing starts until Start.
+- tapOn: "See workout"
+- extendedWaitUntil:
+    visible: "Change this routine"
+    timeout: 20000
+- takeScreenshot: 01b-today-preview
+- back
 - tapOn: "^Workout$"
 - extendedWaitUntil:
     visible: "Start empty workout"

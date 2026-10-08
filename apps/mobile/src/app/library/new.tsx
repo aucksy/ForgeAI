@@ -314,6 +314,16 @@ export default function NewExerciseScreen() {
               ) : null}
             </View>
 
+            {logType === 'distance' || logType === 'time_distance' ? (
+              <View style={{ gap: space.sm }}>
+                <FieldLabel>Distance in</FieldLabel>
+                <View style={{ flexDirection: 'row', gap: space.sm }}>
+                  <Chip label={units === 'imperial' ? 'Miles' : 'Kilometres'} selected={distUnit === 'km'} onPress={() => setDistUnit('km')} />
+                  <Chip label="Metres" selected={distUnit === 'm'} onPress={() => setDistUnit('m')} />
+                </View>
+              </View>
+            ) : null}
+
             {/* primary muscle (finer) */}
             <View style={{ gap: space.sm }}>
               <FieldLabel>Main muscle</FieldLabel>
@@ -343,16 +353,6 @@ export default function NewExerciseScreen() {
                 ))}
               </View>
             </View>
-
-            {logType === 'distance' || logType === 'time_distance' ? (
-              <View style={{ gap: space.sm }}>
-                <FieldLabel>Distance in</FieldLabel>
-                <View style={{ flexDirection: 'row', gap: space.sm }}>
-                  <Chip label={units === 'imperial' ? 'Miles' : 'Kilometres'} selected={distUnit === 'km'} onPress={() => setDistUnit('km')} />
-                  <Chip label="Metres" selected={distUnit === 'm'} onPress={() => setDistUnit('m')} />
-                </View>
-              </View>
-            ) : null}
 
             {isBodyweightType(logType) ? (
               <View style={{ gap: space.sm }}>
