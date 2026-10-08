@@ -1362,6 +1362,51 @@
     phone test does not switch on Track RPE); the early easy-week offer needs weeks of stalled
     history, so it is logic-tested too.
 
+- 2026-10-08: **Tracker v0.26.1 — the rest timer on the watch (Phase 5, option A).** Owner brief:
+  log on the phone, start rests there; while a rest runs his Wear OS watch shows it, stays in
+  sync and buzzes at the end; no logging on the watch.
+  - **The rest card:** Wear OS copies a phone alert only when it can be swiped away (ongoing /
+    no-clear never), so a rest now posts a quiet swipe-away card (channel `rest-card`, LOW: no
+    sound, no banner): title "Rest 1:30 · ends 4:12 pm" (12/24-hour from the phone), text "Next:
+    Bench Press, set 3" (`restRules.nextUpLabel`: the next working set; the next exercise down
+    the list after an exercise's last set), a count-down chronometer, buttons "+15 s" and
+    "Skip". The length in the title is end − start, so +15 s / −15 s move it.
+  - **Native piece:** local Expo module `apps/mobile/modules/forge-rest` (Kotlin, autolinked from
+    `modules/`): `RestCard` keeps the rest in SharedPreferences, posts/updates/removes the card,
+    arms the end (an in-process timer for on-the-second, plus an AlarmManager alarm — exact only
+    with "Alarms & reminders", else inexact), and posts "Rest is over". `RestActionReceiver`
+    (not exported) runs the buttons — from the shade or a watch (a tap on a copied alert runs on
+    the phone) — with the app in the background or its JS stopped. `ForgeRestModule`: show /
+    clear / getState / takeOpenRequest + events. "Rest is over" is posted also with the app on
+    screen (channel `rest-over-open`: vibrate, no sound — the app rings itself; removes itself
+    after a minute) because a posted alert is what buzzes the watch; screen off or app away → the
+    loud `rest-timer` channel as before. Tapping the card or the alert opens the workout.
+  - **App side:** `services/restCard.ts` (bridge + pure `reconcileWithCard`); the timer store keeps
+    `startedAt` and takes card changes (`fromCard`); `workoutAlerts.scheduleRestEnd` hands the rest
+    to the card (falls back to the Phase 1 expo alert without it); presence catches up on resume
+    and after the saved workout is read back (no clean-up before that any more), and re-posts an
+    adopted rest.
+  - **Review (one round, one reviewer), all fixed** (`restCard.test.ts`, `hydrateFailure.test.ts`):
+    an adopted rest after a force-stop had no card or alarm (M1); show/fireEnd could interleave
+    across threads (M2, `@Synchronized`); a failed draft read never ended the restore (L1);
+    stale saved rests (L2); the QA script's notification checks matched channel NAMES printed
+    after the record list, so they could pass with nothing posted (H1/H2 → `qa/notif.py` reads
+    records only); part H's rest too short for the kill-and-restart (M3).
+  - **Device QA run 37719613104 on eaf255f passed parts A–H**, no app crash in any part's log.
+    Part A: the card during a 30 s rest (`Rest 0:30 · ends …`, flags 0x8 = swipe-away, both
+    buttons, chronometer counting down), "Rest is over" on the locked phone (loud channel). Part
+    H (`v0261-h.yaml`, `v0261-h2.yaml`): the card in the shade with the app in the background
+    (111), "+15 s" from the shade → "Rest 3:15" (112), the app process stopped, then "Skip" from
+    the shade → card gone (113), the app reopened with no rest running (114), a 30 s rest with
+    the app OPEN → "Rest is over" posted on `rest-over-open`, no card left (115, 116). Screens:
+    `Resources/v0.26.1-screens/`.
+  - **Known, not fixed:** the cloud phone cannot pair a watch — the watch side is the owner's
+    check; with the app's process stopped, a Skip from the watch leaves the "Workout in progress"
+    card saying "Resting" until the app is opened (113); without "Alarms & reminders" a locked
+    phone's "Rest is over" can be ~10–17 s late (unchanged from Phase 1); some Samsung watches
+    do not forward alerts while the phone is in use — then "Rest is over with the app open" will
+    not buzz (a watch setting).
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
