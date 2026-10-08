@@ -9,7 +9,7 @@ appId: com.forgeai.app
     end: 50%, 75%
     duration: 600
 - extendedWaitUntil:
-    visible: 'Rest 1:45 · ends .*'
+    visible: 'Rest 3:15 · ends .*'
     timeout: 15000
 - runFlow:
     when:
@@ -17,11 +17,13 @@ appId: com.forgeai.app
     commands:
       - swipe:
           from:
-            text: 'Rest 1:45 · ends .*'
+            text: 'Rest 3:15 · ends .*'
           direction: DOWN
-- tapOn: '^Skip$'
+- tapOn:
+    text: '^Skip$'
+    waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    notVisible: 'Rest 1:45 · ends .*'
+    notVisible: 'Rest 3:15 · ends .*'
     timeout: 10000
 - takeScreenshot: 113-shade-after-skip
 - pressKey: Back

@@ -14,7 +14,7 @@ import { countWord } from '@/lib/words';
 
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
-import { markRestCardHeld, onRestCardChange, readRestCard, reconcileWithCard, restCardHolds } from './restCard';
+import { onRestCardChange, readRestCard, reconcileWithCard, restCardHolds, showRestCard } from './restCard';
 import { cancelRestEnd, clearWorkoutOngoing, showWorkoutOngoing } from './workoutAlerts';
 
 /** "6:42 pm" in the phone's local time. */
@@ -83,7 +83,9 @@ export function startWorkoutPresence(): () => void {
     const step = reconcileWithCard({ endsAt: r.endsAt, onCard: restCardHolds() }, readRestCard(), Date.now());
     if (step.do === 'adopt') {
       r.fromCard({ kind: 'adopt', endsAt: step.endsAt, startedAt: step.startedAt, next: step.next });
-      markRestCardHeld();
+      // Re-post it: after a force-stop Android removed the card and its alarm, though the saved
+      // rest stayed (review M1). Posting the same rest again is harmless otherwise.
+      showRestCard(step.startedAt, step.endsAt, step.next);
     } else if (step.do === 'stop') r.fromCard({ kind: 'stop' });
   };
   const offCard = onRestCardChange((c) => {

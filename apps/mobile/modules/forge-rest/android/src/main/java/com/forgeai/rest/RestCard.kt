@@ -58,10 +58,16 @@ object RestCard {
   private var fastPath: Runnable? = null
 
   // ------------------------------------------------------------------ state
+  @Synchronized
   fun load(ctx: Context): Rest? {
     val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     val ends = p.getLong("endsAt", 0L)
     if (ends <= 0L) return null
+    // A rest whose end passed long ago lost its alarm (the app was force-stopped): forget it.
+    if (ends < System.currentTimeMillis() - 60_000L) {
+      p.edit().clear().apply()
+      return null
+    }
     return Rest(p.getLong("startedAt", ends), ends, p.getString("next", null))
   }
 
@@ -79,6 +85,7 @@ object RestCard {
 
   // ------------------------------------------------------------------ actions
   /** A rest started or changed in the app. */
+  @Synchronized
   fun show(ctx: Context, startedAt: Long, endsAt: Long, next: String?) {
     val r = Rest(startedAt, endsAt, next)
     save(ctx, r)
@@ -88,6 +95,7 @@ object RestCard {
   }
 
   /** "+15 s" on the card (phone shade or watch). Returns the new rest, or null if none runs. */
+  @Synchronized
   fun add(ctx: Context): Rest? {
     val cur = load(ctx) ?: return null
     val now = System.currentTimeMillis()
@@ -100,6 +108,7 @@ object RestCard {
   }
 
   /** "Skip" on the card, or the app skipped / the workout ended. */
+  @Synchronized
   fun clear(ctx: Context, dismissOver: Boolean) {
     forget(ctx)
     disarm(ctx)
@@ -108,6 +117,7 @@ object RestCard {
   }
 
   /** The alarm (or the in-process timer) for [expected] went off. */
+  @Synchronized
   fun fireEnd(ctx: Context, expected: Long) {
     val cur = load(ctx) ?: return
     if (cur.endsAt != expected) return // moved or skipped meanwhile
@@ -313,6 +323,8 @@ object RestCard {
         b.setPriority(if (open) Notification.PRIORITY_DEFAULT else Notification.PRIORITY_MAX)
           .setDefaults(if (open) Notification.DEFAULT_VIBRATE else Notification.DEFAULT_ALL)
       }
+      // App on screen: the watch has buzzed by the time this goes; the app shows the rest is over.
+      if (open && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) b.setTimeoutAfter(60_000L)
       openIntent(ctx)?.let { b.setContentIntent(it) }
       nm(ctx).notify(OVER_ID, b.build())
     } catch (_: Exception) {

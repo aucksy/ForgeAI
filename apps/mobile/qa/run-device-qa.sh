@@ -46,27 +46,10 @@ adb shell wm dismiss-keyguard || true
 log "screen on"
 
 # When did "Rest is over" post, compared with when it was due (tick + 30 s)?
-python3 - "$OUT/notifications-after-rest.txt" "$TICK_MS" >> "$OUT/timeline.txt" <<'PY'
-import re, sys
-text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
-tick = int(sys.argv[2])
-found = False
-for block in re.split(r"\n\s*NotificationRecord\(", text):
-    if "forgeai-rest-end" in block or "Rest is over" in block:
-        found = True
-        m = re.search(r"mCreationTimeMs=(\d+)", block) or re.search(r"\bwhen=(\d+)", block)
-        if m:
-            posted = int(m.group(1))
-            print(f"[qa] REST ALERT posted; due ~{tick + 30000}, posted {posted}, late by about {(posted - (tick + 30000)) / 1000:.1f}s (tick time is approximate, +/- a few s)")
-        else:
-            print("[qa] REST ALERT posted (no timestamp found in dump)")
-        break
-if not found:
-    print("[qa] REST ALERT NOT FOUND in the notification list 50 s after a 30 s rest")
-PY
-grep -q "forgeai-workout-ongoing\|Workout in progress" "$OUT/notifications-after-rest.txt" \
-  && log "ONGOING CARD present" || { log "ONGOING CARD MISSING"; status=1; }
-grep -q "Rest is over" "$OUT/notifications-after-rest.txt" || status=1
+python3 "$QA_DIR/notif.py" over-locked "$OUT/notifications-after-rest.txt" "$TICK_MS" >> "$OUT/timeline.txt" || status=1
+python3 "$QA_DIR/notif.py" ongoing "$OUT/notifications-after-rest.txt" >> "$OUT/timeline.txt" || status=1
+# v0.26.1: the rest card was showing during the rest (what a paired watch would show).
+python3 "$QA_DIR/notif.py" card "$OUT/notifications-during-rest.txt" "Rest 0:30" >> "$OUT/timeline.txt" || status=1
 
 # ---------------------------------------------------------------- part B
 adb shell cmd statusbar expand-notifications
@@ -145,22 +128,7 @@ maestro test --format junit --output "$OUT/part-h1.xml" --test-output-dir "$OUT/
   > "$OUT/part-h1.log" 2>&1 || { status=1; log "PART H1 FAILED"; }
 adb shell dumpsys notification --noredact > "$OUT/h-card-after-plus15.txt"
 # The card must be swipe-away (no ongoing / no-clear flag), on the quiet channel, with both buttons.
-python3 - "$OUT/h-card-after-plus15.txt" >> "$OUT/timeline.txt" <<'PY' || status=1
-import re, sys
-text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
-blocks = [b for b in re.split(r"\n\s*NotificationRecord\(", text) if "pkg=com.forgeai.app" in b and "rest-card" in b]
-if not blocks:
-    print("[qa] REST CARD NOT FOUND"); sys.exit(1)
-b = blocks[0]
-flags = re.search(r"flags=(0x[0-9a-fA-F]+)", b)
-f = int(flags.group(1), 16) if flags else -1
-ongoing = f >= 0 and (f & 0x2 or f & 0x20)
-title = re.search(r"android\.title=String \(([^)]*)\)", b)
-print(f"[qa] REST CARD found: title={title.group(1) if title else '?'} flags={hex(f)} swipe-away={'yes' if not ongoing else 'NO'}"
-      f" +15={'yes' if '+15 s' in b else 'NO'} skip={'yes' if 'Skip' in b else 'NO'} chronometer={'yes' if 'android.showChronometer=Boolean (true)' in b else 'no'}"
-      f" countdown={'yes' if 'android.chronometerCountDown=Boolean (true)' in b else 'no'}")
-sys.exit(1 if ongoing or '+15 s' not in b or 'Skip' not in b or not (title and 'Rest 1:45' in title.group(1)) else 0)
-PY
+python3 "$QA_DIR/notif.py" card "$OUT/h-card-after-plus15.txt" "Rest 3:15" >> "$OUT/timeline.txt" || status=1
 adb shell cmd statusbar collapse >/dev/null 2>&1 || true
 adb shell input keyevent KEYCODE_HOME
 sleep 3
@@ -179,17 +147,7 @@ adb shell cmd statusbar expand-notifications
 sleep 2
 adb exec-out screencap -p > "$OUT/h-117-shade-rest-over.png"
 adb shell cmd statusbar collapse >/dev/null 2>&1 || true
-python3 - "$OUT/h-after-rest-app-open.txt" >> "$OUT/timeline.txt" <<'PY' || status=1
-import re, sys
-text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
-blocks = [b for b in re.split(r"\n\s*NotificationRecord\(", text) if "pkg=com.forgeai.app" in b and "Rest is over" in b]
-cards = [b for b in re.split(r"\n\s*NotificationRecord\(", text) if "pkg=com.forgeai.app" in b and "rest-card" in b]
-if not blocks:
-    print("[qa] REST IS OVER (app open) NOT FOUND"); sys.exit(1)
-ch = re.search(r"channel=([\w-]+)", blocks[0])
-print(f"[qa] REST IS OVER with the app open: posted, channel={ch.group(1) if ch else '?'}; rest card left: {len(cards)}")
-sys.exit(0 if not cards else 1)
-PY
+python3 "$QA_DIR/notif.py" over-open "$OUT/h-after-rest-app-open.txt" >> "$OUT/timeline.txt" || status=1
 
 # ---------------------------------------------------------------- crash check
 # Only the app's own crashes count (another app's crash on the emulator is not ours).

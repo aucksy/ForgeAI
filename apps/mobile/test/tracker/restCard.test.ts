@@ -21,13 +21,17 @@ vi.mock('@/tracker/services/workoutAlerts', () => ({
 }));
 let card: { startedAt: number; endsAt: number; next: string | null } | null | undefined;
 let cardListener: ((c: unknown) => void) | null = null;
+const reposted: unknown[][] = [];
 vi.mock('@/tracker/services/restCard', async (orig) => {
   const real = (await orig()) as typeof import('@/tracker/services/restCard');
   return {
     ...real,
     readRestCard: () => card,
     restCardHolds: () => true,
-    markRestCardHeld: () => undefined,
+    showRestCard: (...a: unknown[]) => {
+      reposted.push(a);
+      return true;
+    },
     onRestCardChange: (cb: (c: unknown) => void) => {
       cardListener = cb;
       return () => {
@@ -152,6 +156,8 @@ describe('the app timer and the card', () => {
     expect(useRestTimer.getState().endsAt).toBe(1_060_000);
     expect(useRestTimer.getState().nextLabel).toBe('Row, set 2');
     expect(calls.cancel).toBe(0);
+    // Review M1: a force-stop removed the card and its alarm, so the adopted rest is posted again.
+    expect(reposted.at(-1)).toEqual([990_000, 1_060_000, 'Row, set 2']);
     stop();
   });
 

@@ -445,7 +445,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         set({ hydrated: true });
         return;
       }
-      const raw = await getMeta(DRAFT_KEY);
+      // v0.26.1 review: a failed read still ends the restore, or the start-up clean-up (and the
+      // watch card's catch-up) would wait for it for ever. A broken read = no saved workout.
+      const raw = await getMeta(DRAFT_KEY).catch(() => null);
       // A workout may have been started (start-tap) during the await — don't clobber it.
       if (get().active || get().hydrated) {
         set({ hydrated: true });

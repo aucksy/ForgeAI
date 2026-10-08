@@ -39,10 +39,6 @@ let handed = false;
 export function restCardHolds(): boolean {
   return handed;
 }
-/** The app adopted the card's rest (after a sleep or a restart): the card holds it. */
-export function markRestCardHeld(): void {
-  handed = true;
-}
 function N(): Native | null {
   if (mod !== undefined) return mod;
   mod = null;

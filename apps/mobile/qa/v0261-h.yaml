@@ -1,8 +1,8 @@
 # v0.26.1 device QA, part H1 — the rest card (what the watch shows). Runs after parts A–G.
-# An empty workout → Barbell Bench Press with a 1:30 rest and 3 sets → tick set 1 → the app
-# goes to the background → the phone's shade shows the swipe-away card "Rest 1:30 · ends …" /
+# An empty workout → Barbell Bench Press with a 3:00 rest and 3 sets → tick set 1 → the app
+# goes to the background → the phone's shade shows the swipe-away card "Rest 3:00 · ends …" /
 # "Next: Barbell Bench Press, set 2" with "+15 s" and "Skip" → "+15 s" from the shade → the card
-# reads "Rest 1:45". (A watch shows this same card; its buttons run here, on the phone.)
+# reads "Rest 3:15". (A watch shows this same card; its buttons run here, on the phone.)
 appId: com.forgeai.app
 ---
 - launchApp
@@ -36,7 +36,7 @@ appId: com.forgeai.app
 # A known rest length, so the card's numbers can be checked.
 - tapOn: "More for Barbell Bench Press"
 - tapOn: "Rest timer"
-- tapOn: "Rest 1:30"
+- tapOn: "Rest 3:00"
 - scrollUntilVisible:
     element: "Add set"
     centerElement: true
@@ -63,7 +63,7 @@ appId: com.forgeai.app
     end: 50%, 75%
     duration: 600
 - extendedWaitUntil:
-    visible: 'Rest 1:30 · ends .*'
+    visible: 'Rest 3:00 · ends .*'
     timeout: 15000
 # A notification lower in the shade shows its buttons only when opened out.
 - runFlow:
@@ -72,7 +72,7 @@ appId: com.forgeai.app
     commands:
       - swipe:
           from:
-            text: 'Rest 1:30 · ends .*'
+            text: 'Rest 3:00 · ends .*'
           direction: DOWN
 - assertVisible: 'Next: Barbell Bench Press, set 2'
 - assertVisible: '\+15 s'
@@ -82,6 +82,6 @@ appId: com.forgeai.app
     text: '\+15 s'
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    visible: 'Rest 1:45 · ends .*'
+    visible: 'Rest 3:15 · ends .*'
     timeout: 10000
 - takeScreenshot: 112-shade-after-plus-15
