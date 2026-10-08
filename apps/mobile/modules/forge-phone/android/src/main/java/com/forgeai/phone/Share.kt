@@ -19,8 +19,17 @@ object Share {
   private const val TAKEN = "com.forgeai.phone.SHARE_TAKEN"
   private const val MAX_BYTES = 50L * 1024 * 1024
 
+  /**
+   * A share not taken yet. Reopened from Recents after Android closed the app, the activity is
+   * rebuilt from the same share with "launched from history" set — that one was taken before.
+   * (The same file shared again on purpose is a new share and is taken.)
+   */
   fun isShare(intent: Intent?): Boolean =
-    intent != null && intent.action == Intent.ACTION_SEND && !intent.getBooleanExtra(TAKEN, false) && streamOf(intent) != null
+    intent != null &&
+      intent.action == Intent.ACTION_SEND &&
+      !intent.getBooleanExtra(TAKEN, false) &&
+      (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0 &&
+      streamOf(intent) != null
 
   @Suppress("DEPRECATION")
   private fun streamOf(intent: Intent): Uri? {
@@ -54,7 +63,7 @@ object Share {
     val i = intent!!
     i.putExtra(TAKEN, true)
     val uri = streamOf(i) ?: return null
-    val name = nameOf(c, uri).replace(Regex("[^A-Za-z0-9._ -]"), "_").take(80)
+    val name = nameOf(c, uri).replace(Regex("[^A-Za-z0-9._ -]"), "_").take(80).let { if (it.trim('.', ' ').isEmpty()) "shared-export" else it }
     val dir = File(c.cacheDir, "shared-import").apply { mkdirs() }
     dir.listFiles()?.forEach { it.delete() } // only the newest share is kept
     val out = File(dir, name.ifBlank { "shared-export" })

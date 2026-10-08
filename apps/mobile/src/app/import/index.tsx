@@ -176,7 +176,10 @@ export default function ImportScreen() {
       });
       if (res.canceled || !res.assets || res.assets.length === 0) return;
       const asset = res.assets[0];
-      await readFile(asset.uri, asset.name, strong);
+      // The button's own app (a shared file before may have been the other one).
+      const pickStrong = params.from === 'strong';
+      setStrong(pickStrong);
+      await readFile(asset.uri, asset.name, pickStrong);
     } catch (e) {
       warn();
       Alert.alert('Couldn’t read that file', e instanceof Error ? e.message : 'Please try again.');

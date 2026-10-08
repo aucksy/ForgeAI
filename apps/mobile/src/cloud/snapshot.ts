@@ -40,7 +40,9 @@ const TABLES: readonly { name: string; cols: readonly string[] }[] = [
     // and counted, finer muscles, the member's own photo/video path (the file itself stays
     // on the phone). Older backups lack them → NULL, exactly like the 5b/5c set columns.
     cols: ['id', 'name', 'aliases', 'muscle_group', 'secondary_muscles', 'equipment', 'is_compound', 'increment_kg',
-      'catalog_key', 'log_type', 'load_mode', 'bw_share', 'muscles', 'media_uri', 'media_type'],
+      'catalog_key', 'log_type', 'load_mode', 'bw_share', 'muscles', 'media_uri', 'media_type',
+      // v0.28.0 (tracker schema v8): an own distance exercise in km or metres (NULL = the library's).
+      'dist_unit'],
   },
   // + the additive Phase 4 columns (tracker schema v7): a folder's place, where it came from,
   // its settings (easy weeks). Older backups lack them → NULL, like the columns above.

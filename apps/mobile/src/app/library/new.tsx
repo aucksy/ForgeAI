@@ -240,9 +240,12 @@ export default function NewExerciseScreen() {
           if (forWorkout) {
             // Straight into the workout it was made for (the picker under this screen goes too).
             const made = await getTrackerExercise(id);
-            if (made && useActiveWorkout.getState().active) await useActiveWorkout.getState().addExercise(made);
-            router.dismissTo('/session/active');
-            return;
+            if (made && useActiveWorkout.getState().active) {
+              await useActiveWorkout.getState().addExercise(made);
+              router.dismissTo('/session/active');
+              return;
+            }
+            // The workout was closed meanwhile: show the new exercise instead of an empty workout.
           }
           router.replace({ pathname: '/exercise/[id]', params: { id } });
           return;

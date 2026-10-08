@@ -180,10 +180,15 @@ HEVY_ID=$(adb shell "content query --uri content://media/external/file --project
 log "qa-hevy.csv media id: ${HEVY_ID:-none}"
 adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
 adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
-adb shell am start -a android.intent.action.SEND -t text/csv --grant-read-uri-permission --eu android.intent.extra.STREAM "content://media/external/file/${HEVY_ID}" -n "$PKG/.MainActivity" > "$OUT/k-share.txt" 2>&1 || log "SHARE INTENT FAILED"
-sleep 8
-log "part K start"
-maestro test --format junit --output "$OUT/part-k.xml" --test-output-dir "$OUT/part-k" "$QA_DIR/v0280-k.yaml"   > "$OUT/part-k.log" 2>&1 || { status=1; log "PART K FAILED"; }
+[ -n "$HEVY_ID" ] && adb shell am start -a android.intent.action.SEND -t text/csv --grant-read-uri-permission --eu android.intent.extra.STREAM "content://media/external/file/${HEVY_ID}" -p "$PKG" > "$OUT/k-share.txt" 2>&1 || log "SHARE INTENT FAILED"
+# -p (not -n): Android routes the share through the app's own share filter, as the share menu does.
+if [ -n "$HEVY_ID" ]; then
+  sleep 8
+  log "part K start"
+  maestro test --format junit --output "$OUT/part-k.xml" --test-output-dir "$OUT/part-k" "$QA_DIR/v0280-k.yaml"   > "$OUT/part-k.log" 2>&1 || { status=1; log "PART K FAILED"; }
+else
+  status=1; log "PART K SKIPPED: qa-hevy.csv not in the media store"
+fi
 
 # ---------------------------------------------------------------- crash check
 # Only the app's own crashes count (another app's crash on the emulator is not ours).

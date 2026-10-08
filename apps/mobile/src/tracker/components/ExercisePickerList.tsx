@@ -66,7 +66,7 @@ export function ExercisePickerList({
     <Pressable
       onPress={() => onCreate?.(createName)}
       accessibilityRole="button"
-      accessibilityLabel={`Create ${createName}`}
+      accessibilityLabel={`Create “${createName}”`}
       style={({ pressed }) => ({
         flexDirection: 'row',
         alignItems: 'center',

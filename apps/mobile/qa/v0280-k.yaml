@@ -7,6 +7,9 @@ appId: com.forgeai.app
     visible: "Already in ForgeAI"
     timeout: 60000
 - assertVisible: "qa-hevy.csv"
-- assertVisible: "Merge 12 workouts"
+- scrollUntilVisible:
+    element: "Merge 12 workouts"
+    centerElement: true
+    timeout: 15000
 - takeScreenshot: 160-shared-file-preview
 - tapOn: "Close"

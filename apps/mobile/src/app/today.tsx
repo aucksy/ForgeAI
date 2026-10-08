@@ -7,7 +7,7 @@
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 
 import { Card, GhostButton, IconButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { fmtWeight } from '@/lib/format';
@@ -59,6 +59,8 @@ export default function TodayScreen() {
     try {
       if (!useActiveWorkout.getState().active) await startFromPlan();
       router.replace('/session/active');
+    } catch {
+      Alert.alert('Couldn’t start the workout', 'Please try again.');
     } finally {
       setStarting(false);
     }
