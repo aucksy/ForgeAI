@@ -230,12 +230,20 @@ appId: com.forgeai.app
     visible: "How you log it"
     timeout: 15000
 - tapOn: "^Distance$"
-- tapOn: "^Abs$"
-- tapOn: "^Other$"
 - extendedWaitUntil:
     visible: "Distance in"
     timeout: 5000
 - tapOn: "^Metres$"
+- scrollUntilVisible:
+    element: "^Abs$"
+    centerElement: true
+    timeout: 10000
+- tapOn: "^Abs$"
+- scrollUntilVisible:
+    element: "^Other$"
+    centerElement: true
+    timeout: 10000
+- tapOn: "^Other$"
 - takeScreenshot: 155-create-form-metres
 - scrollUntilVisible:
     element: "Save and add to workout"
