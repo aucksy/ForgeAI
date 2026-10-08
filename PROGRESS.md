@@ -1465,6 +1465,49 @@
     today's workout before starting it from Home.
   - **Tests:** 661 vitest.
 
+- 2026-10-08: **Tracker v0.28.0 — Phase 6: the member's own routines in, and the gaps found in the
+  gym** (owner, mid-session: Hevy routines not imported; see today's workout before starting;
+  share an export to ForgeAI; Create from a workout's search).
+  - **Routines rebuilt from the export** (`tracker/services/routineRebuild.ts`, pure): a routine =
+    a title used 3+ times that is not an app's free-workout name; ticked = the last workout of
+    that name; offered = up to 5 more done under it, newest first; sets / rep range = working
+    sets of the last time; rotation order by most-common successor (last year); older names
+    (no use for a year) fold unticked. Scored on the owner's export vs his saved folder
+    (`Resources/Hevy Backups/`): 34/36 shown, 22/24 ticked right, rotation and next-up right
+    (`routineRebuild.test.ts` runs that check on the owner's PC only — personal data).
+  - **Guided steps** `tracker/components/RoutineImportSteps.tsx` after the import (found → one
+    per screen → follow? → done); saved by `services/routineImport.ts` → `folderRepo.saveAppFolder`
+    (FolderSettings.fromApp; a re-import refills the same folder in one transaction, keeps
+    followed/startISO; nothing ticked saves nothing). Exercise ids via
+    `hevyImport.exerciseIdsForTitles` (same `matchTitle` as the history import). The done screen
+    shows the frozen rotation's own answer (`homeToday`), not a guess.
+  - **Bug found on the owner's file:** a Hevy .csv read 0 workouts — SheetJS turned "5 Oct 2026,
+    11:10" into a date number. `XLSX.read(..., { raw: true })` + `parseHevyDate` takes a
+    spreadsheet date number (`hevyCsvDates.test.ts`, fails before).
+  - **Today preview** `src/app/today.tsx` (Home hero via `tracker/lib/todayLink.ts`, Workout tab
+    "See the exercises"). **Create from search** `exerciseSearch.createOffer` + picker footer →
+    `library/new?for=workout&name=` (Save adds to the open workout). **km or metres** for own
+    distance exercises: tracker schema v8 `exercises.dist_unit` (also in the Drive backup; a
+    derived test checks every tracker ensureColumn is backed up).
+  - **Share to ForgeAI:** SEND intent-filter (.csv / .xlsx types; no VIEW — a content:// VIEW
+    would reach the router), `modules/forge-phone/.../Share.kt` copies the stream to the cache,
+    taken once (not again when rebuilt from Recents), `phone/sharedImport.ts` → `/import?file=`.
+  - **Reviews (two rounds, two reviewers): 13 findings fixed** — e.g. the next-up text could
+    disagree with Home's rotation; an all-unticked save unfollowed the plan; a re-import silently
+    replaced edits (now said); Hevy's "Chest Fly (Machine)" is the library's Pec Deck Fly; the
+    backup dropped dist_unit; a closed workout behind the Create form.
+  - **Device QA:** parts J (`qa/v0280-j.yaml`) and K (`qa/v0280-k.yaml`, Files app → Share →
+    ForgeAI); part A opens the Today page. Lessons: a shell `am start` SEND with a MediaStore
+    uri did not reach the app's read (use the Files app); test workouts must avoid the demo's
+    10 am / 6:30 pm starts or the 30-minute same-workout rule skips them.
+  - **Device QA run 37763356020 passed parts A–K**, no app crash. Screens:
+    `Resources/Phase6-screens/` (+ `key-screens.png`). Earlier runs stopped on the flows only
+    (test workouts clashing with the demo's times; a shell SEND not readable; chips below the
+    fold; one flaky notification-shade pull in part H that passed on the rerun).
+  - **Tests:** 685 vitest.
+  - **Owner choices (Phase 6):** read a Hevy folder link (needs an in-app browser part);
+    which routines start ticked. Phase 4's and Phase 5's stay open.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

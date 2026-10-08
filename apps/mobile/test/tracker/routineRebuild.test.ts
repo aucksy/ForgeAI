@@ -209,7 +209,7 @@ describe.skipIf(!HAS_BACKUP)("the owner's export against his saved Jaipur folder
     }
     expect({ saved, shown, ticked, tickedRight }).toEqual({ saved: 36, shown: 34, ticked: 24, tickedRight: 22 });
     expect(nextUp(found.filter((r) => r.recent).map((r) => r.title), parsed.workouts)).toEqual({ next: 'Pull 1', after: 'Push 1' });
-  });
+  }, 60_000); // reads a 1 MB export
 });
 
 describe("Home's Today card (owner: see the exercises before the clock starts)", () => {
