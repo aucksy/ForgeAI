@@ -6,12 +6,16 @@
  * v0.27.0: the same screen imports a Strong export (`/import?from=strong`): Strong's CSV is read
  * by `strongImport.ts` into the Hevy import's own shape, so preview, Replace / Merge and the
  * write are shared. An older Strong file does not say its units — the member says, once.
+ *
+ * v0.28.0: a file shared to ForgeAI from Android's share menu arrives here as `?file=` (copied
+ * into the app's cache): it is read straight away — Hevy or Strong told by its content — so the
+ * member lands on the preview. After the import, the member's own routines (`RoutineImportSteps`).
  */
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useKeepAwake } from 'expo-keep-awake';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 import { Card, GhostButton, Icon, IconButton, PrimaryButton, Screen } from '@/components/ui';
@@ -31,6 +35,7 @@ import {
 import { findRoutines } from '@/tracker/services/routineRebuild';
 import { looksLikeStrong, parseStrongText, strongFileInfo, type FileUnits } from '@/tracker/services/strongImport';
 import { RoutineImportSteps } from '@/tracker/components/RoutineImportSteps';
+import { sharedFileKind } from '@/tracker/phone/sharedImport';
 import { useSettings } from '@/store/settingsStore';
 
 type Phase = 'idle' | 'preview' | 'importing' | 'done' | 'routines';
@@ -104,8 +109,9 @@ function ModeOption({
 export default function ImportScreen() {
   useKeepAwake(); // a long import shouldn't be interrupted by the screen sleeping
   const router = useRouter();
-  const params = useLocalSearchParams<{ from?: string }>();
-  const strong = params.from === 'strong';
+  const params = useLocalSearchParams<{ from?: string; file?: string; name?: string; type?: string }>();
+  // A shared file says which app it came from by its content (read below).
+  const [strong, setStrong] = useState(params.from === 'strong');
   const appName = strong ? 'Strong' : 'Hevy';
   const memberUnits = useSettings((s) => s.unitSystem);
   // Strong (older files only): the units the file was written in, when it does not say.
@@ -122,6 +128,42 @@ export default function ImportScreen() {
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [result, setResult] = useState<ImportResult | null>(null);
 
+  /** Read a picked or shared file into the preview. `asStrong` null = tell by its content. */
+  const readFile = async (uri: string, name: string, asStrong: boolean | null, kind: 'sheet' | 'text' = 'text'): Promise<void> => {
+    let isStrong = asStrong;
+    if (isStrong === null) {
+      isStrong = kind === 'text' ? looksLikeStrong(await FileSystem.readAsStringAsync(uri)) : false;
+      setStrong(isStrong);
+    }
+    let p: ParsedHevy;
+    if (isStrong) {
+      const text = await FileSystem.readAsStringAsync(uri);
+      if (!looksLikeStrong(text)) {
+        throw new Error('That doesn’t look like a Strong export. In Strong, export your data and pick the .csv file.');
+      }
+      const info = strongFileInfo(text);
+      const units: FileUnits = info.fileUnits ?? memberUnits;
+      p = parseStrongText(text, units); // throws a plain-words Error on a bad file
+      setStrongText(info.unitsKnown ? null : text);
+      setFileUnits(info.unitsKnown ? null : units);
+    } else {
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      p = parseHevyBase64(base64); // throws a user-safe Error on a bad file
+    }
+    if (p.workouts.length === 0) throw new Error('No workouts were found in that file.');
+    const pv = await previewImport(p);
+    setParsed(p);
+    setPreview(pv);
+    setFileName(name || `${isStrong ? 'Strong' : 'Hevy'} export`);
+    // v0.27.0: with the member's own workouts here, Merge is the safe start (a second import
+    // must not delete what was logged in ForgeAI since). Replace only over demo data or nothing.
+    const demo = await isDemoData().catch(() => true);
+    setMode(pv.existingWorkouts > 0 && !demo ? 'merge' : 'replace');
+    setPhase('preview');
+  };
+
   const onPick = async (): Promise<void> => {
     if (busyRef.current) return;
     busyRef.current = true;
@@ -134,33 +176,7 @@ export default function ImportScreen() {
       });
       if (res.canceled || !res.assets || res.assets.length === 0) return;
       const asset = res.assets[0];
-      let p: ParsedHevy;
-      if (strong) {
-        const text = await FileSystem.readAsStringAsync(asset.uri);
-        if (!looksLikeStrong(text)) {
-          throw new Error('That doesn’t look like a Strong export. In Strong, export your data and pick the .csv file.');
-        }
-        const info = strongFileInfo(text);
-        const units: FileUnits = info.fileUnits ?? memberUnits;
-        p = parseStrongText(text, units); // throws a plain-words Error on a bad file
-        setStrongText(info.unitsKnown ? null : text);
-        setFileUnits(info.unitsKnown ? null : units);
-      } else {
-        const base64 = await FileSystem.readAsStringAsync(asset.uri, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-        p = parseHevyBase64(base64); // throws a user-safe Error on a bad file
-      }
-      if (p.workouts.length === 0) throw new Error('No workouts were found in that file.');
-      const pv = await previewImport(p);
-      setParsed(p);
-      setPreview(pv);
-      setFileName(asset.name || `${appName} export`);
-      // v0.27.0: with the member's own workouts here, Merge is the safe start (a second import
-      // must not delete what was logged in ForgeAI since). Replace only over demo data or nothing.
-      const demo = await isDemoData().catch(() => true);
-      setMode(pv.existingWorkouts > 0 && !demo ? 'merge' : 'replace');
-      setPhase('preview');
+      await readFile(asset.uri, asset.name, strong);
     } catch (e) {
       warn();
       Alert.alert('Couldn’t read that file', e instanceof Error ? e.message : 'Please try again.');
@@ -169,6 +185,27 @@ export default function ImportScreen() {
       setBusy(false);
     }
   };
+
+  // v0.28.0: a shared file — read it once, straight away.
+  const sharedRead = useRef(false);
+  useEffect(() => {
+    const uri = typeof params.file === 'string' ? params.file : null;
+    if (!uri || sharedRead.current) return;
+    sharedRead.current = true;
+    busyRef.current = true;
+    setBusy(true);
+    const name = typeof params.name === 'string' ? params.name : '';
+    readFile(uri, name, null, sharedFileKind({ name, type: typeof params.type === 'string' ? params.type : '' }))
+      .catch((e: unknown) => {
+        warn();
+        Alert.alert('Couldn’t read that file', e instanceof Error ? e.message : 'Please try again.');
+      })
+      .finally(() => {
+        busyRef.current = false;
+        setBusy(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.file]);
 
   const onImport = async (): Promise<void> => {
     if (busyRef.current || !parsed) return;

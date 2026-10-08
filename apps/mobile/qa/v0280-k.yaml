@@ -1,0 +1,12 @@
+# v0.28.0 device QA, part K — an export shared to ForgeAI (runs after part J). The script shares
+# qa-hevy.csv to ForgeAI as Android's share menu does (ACTION_SEND, a content:// file with read
+# permission); the import opens on that file's preview, without picking it.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "Already in ForgeAI"
+    timeout: 60000
+- assertVisible: "qa-hevy.csv"
+- assertVisible: "Merge 12 workouts"
+- takeScreenshot: 160-shared-file-preview
+- tapOn: "Close"

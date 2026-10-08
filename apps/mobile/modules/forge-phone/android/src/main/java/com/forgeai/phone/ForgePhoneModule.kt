@@ -5,7 +5,8 @@ import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
 /**
- * JS side of "around the phone" (v0.27.0): Health Connect and the home-screen widgets.
+ * JS side of "around the phone" (v0.27.0): Health Connect and the home-screen widgets; v0.28.0
+ * an export shared to ForgeAI from Android's share menu.
  * Health Connect calls are async (they talk to another app); widget calls are quick.
  */
 class ForgePhoneModule : Module() {
@@ -14,6 +15,32 @@ class ForgePhoneModule : Module() {
 
   override fun definition() = ModuleDefinition {
     Name("ForgePhone")
+    Events("onSharedFile")
+
+    // ---------------------------------------------------------------- a shared export (v0.28.0)
+    // The app already running: Android hands the share to onNewIntent; JS takes it on the event.
+    OnNewIntent { intent ->
+      if (Share.isShare(intent)) {
+        Share.pending = intent
+        try {
+          sendEvent("onSharedFile", mapOf<String, Any?>())
+        } catch (_: Exception) {
+          // JS reads it with takeSharedFile when it comes back
+        }
+      }
+    }
+
+    // A cold start opened by a share keeps it on the activity's own intent.
+    AsyncFunction("takeSharedFile") {
+      val c = ctx ?: return@AsyncFunction null
+      val first = Share.pending
+      Share.pending = null
+      try {
+        Share.take(c, first) ?: Share.take(c, appContext.currentActivity?.intent)
+      } catch (_: Throwable) {
+        null
+      }
+    }
 
     // ---------------------------------------------------------------- Health Connect
     Function("healthStatus") {

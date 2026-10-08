@@ -15,6 +15,9 @@ export interface ForgePhone {
   widgetSave(json: string): boolean;
   widgetCount(): number;
   widgetPin(kind: 'today' | 'week'): boolean;
+  /** v0.28.0: an export shared to ForgeAI (copied into the app's cache), taken once. */
+  takeSharedFile(): Promise<{ uri: string; name: string; type: string } | null>;
+  addListener(event: 'onSharedFile', cb: () => void): { remove: () => void };
 }
 
 let mod: ForgePhone | null | undefined;

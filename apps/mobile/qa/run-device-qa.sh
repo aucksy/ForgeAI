@@ -174,6 +174,17 @@ sleep 10
 log "part J start"
 maestro test --format junit --output "$OUT/part-j.xml" --test-output-dir "$OUT/part-j" "$QA_DIR/v0280-j.yaml"   > "$OUT/part-j.log" 2>&1 || { status=1; log "PART J FAILED"; }
 
+# ---------------------------------------------------------------- part K (v0.28.0: an export shared to ForgeAI)
+# Share qa-hevy.csv (pushed for part J) as the share menu does: its MediaStore uri, read permission granted.
+HEVY_ID=$(adb shell "content query --uri content://media/external/file --projection _id --where \"_display_name='qa-hevy.csv'\"" 2>/dev/null | sed -n 's/.*_id=\([0-9]*\).*/\1/p' | head -1)
+log "qa-hevy.csv media id: ${HEVY_ID:-none}"
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+adb shell am start -a android.intent.action.SEND -t text/csv --grant-read-uri-permission --eu android.intent.extra.STREAM "content://media/external/file/${HEVY_ID}" -n "$PKG/.MainActivity" > "$OUT/k-share.txt" 2>&1 || log "SHARE INTENT FAILED"
+sleep 8
+log "part K start"
+maestro test --format junit --output "$OUT/part-k.xml" --test-output-dir "$OUT/part-k" "$QA_DIR/v0280-k.yaml"   > "$OUT/part-k.log" 2>&1 || { status=1; log "PART K FAILED"; }
+
 # ---------------------------------------------------------------- crash check
 # Only the app's own crashes count (another app's crash on the emulator is not ours).
 app_crash() { grep -A1 "FATAL EXCEPTION" "$1" 2>/dev/null | grep -q "Process: $PKG"; }

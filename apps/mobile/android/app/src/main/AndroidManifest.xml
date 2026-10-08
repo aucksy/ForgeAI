@@ -43,6 +43,16 @@
       <intent-filter>
         <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
       </intent-filter>
+      <!-- v0.28.0: a Hevy / Strong export shared from the share menu opens the import. -->
+      <intent-filter>
+        <action android:name="android.intent.action.SEND"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <data android:mimeType="text/csv"/>
+        <data android:mimeType="text/comma-separated-values"/>
+        <data android:mimeType="application/csv"/>
+        <data android:mimeType="application/vnd.ms-excel"/>
+        <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+      </intent-filter>
     </activity>
     <!-- Health Connect (Android 14+): the same, from the system's permission screens. -->
     <activity-alias android:name="ViewPermissionUsageActivity" android:exported="true" android:targetActivity=".MainActivity" android:permission="android.permission.START_VIEW_PERMISSION_USAGE">

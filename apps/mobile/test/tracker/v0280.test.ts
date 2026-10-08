@@ -55,3 +55,13 @@ describe("the member's own distance exercise in km or metres", () => {
     expect(resolveExercise(row('furlong'), null).distUnit).toBe('km');
   });
 });
+
+describe('an export shared to ForgeAI from the share menu', () => {
+  it('a spreadsheet is read as bytes, a .csv as text', async () => {
+    const { sharedFileKind } = await import('@/tracker/phone/sharedImport');
+    expect(sharedFileKind({ name: 'workout_data.xlsx', type: '' })).toBe('sheet');
+    expect(sharedFileKind({ name: 'shared-export', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })).toBe('sheet');
+    expect(sharedFileKind({ name: 'workout_data.csv', type: 'text/csv' })).toBe('text');
+    expect(sharedFileKind({ name: 'strong.csv', type: 'text/comma-separated-values' })).toBe('text');
+  });
+});

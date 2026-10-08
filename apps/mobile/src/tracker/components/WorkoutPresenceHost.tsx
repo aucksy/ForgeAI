@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
 import { startPhoneSync } from '../phone/phoneSync';
+import { listenForShares } from '../phone/sharedImport';
 import { onRestOpen, takeRestOpenRequest } from '../services/restCard';
 import { listenForAlertTaps, setupWorkoutAlerts, WORKOUT_ROUTE } from '../services/workoutAlerts';
 import { startWorkoutPresence } from '../services/workoutPresence';
@@ -52,10 +53,15 @@ export function WorkoutPresenceHost() {
     // with a flag (cold start: read once here; app already running: an event).
     const unlistenCard = onRestOpen(() => openWorkout(WORKOUT_ROUTE));
     if (takeRestOpenRequest()) openWorkout(WORKOUT_ROUTE);
+    // v0.28.0: an export shared to ForgeAI opens the import with it (after the navigator mounts).
+    const unlistenShare = listenForShares((f) =>
+      setTimeout(() => router.push({ pathname: '/import', params: { file: f.uri, name: f.name, type: f.type } }), 300),
+    );
     return () => {
       stop();
       unlisten();
       unlistenCard();
+      unlistenShare();
     };
   }, [router]);
 
