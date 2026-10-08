@@ -1407,6 +1407,64 @@
     do not forward alerts while the phone is in use — then "Rest is over with the app open" will
     not buzz (a watch setting).
 
+- 2026-10-08: **Tracker v0.27.0 — the rest of Phase 5 (around the phone).** Owner brief: Health
+  Connect, home-screen widgets, workout reminders, import from Strong, pounds and miles.
+  - **Pounds and miles:** Profile → Units "kg, km" / "lb, miles" (the frozen settings store's
+    `unitSystem`, also offered on the welcome form — it asks body weight). `src/lib/units.ts` is
+    pure and fed by `lib/useUnits.startUnitSync`; stored kg / metres / cm never change. Set rows
+    typed and shown in lb (`tracker/components/unitText.ts`), km exercises shown/typed in miles
+    (`logTypes.shownDistUnit`; metre exercises stay metres), pace per mile on display (the record
+    basis stays 1 km whatever is shown), Targets on pound steps (`stepFor`, a learned step kept),
+    plates (45 lb bar, 45/35/25/10/5/2.5) and warm-ups, records, reports, share pictures ("LB
+    LIFTED"), coach notes, the chat coach (a bare "135" is lb; "kg"/"lb" words win), body weight,
+    measurements in inches. Metric output byte-identical (all earlier tests unchanged). Swept by
+    three parallel agents on disjoint files.
+  - **Import from Strong** (`strongImport.ts` → the Hevy import's `ParsedHevy`): older comma file
+    (units asked once in the preview) and Strong 6 semicolon file (units from headers, comma
+    decimals, rest-timer rows skipped). Hevy files exported in pounds/miles read too. Profile →
+    Backup → "Import from Strong".
+  - **Importing again (owner, mid-session):** a workout already in ForgeAI is skipped — the same
+    start (imported before) or the same workout logged in ForgeAI too (same day, start within 30
+    min on the clock, `isAlreadyHere`); the preview counts "Already in ForgeAI"; with the member's
+    own workouts the import starts on Merge, not Replace.
+  - **Health Connect** (native `modules/forge-phone`, connect-client 1.1.0, `overrideLibrary` +
+    rationale filter + VIEW_PERMISSION_USAGE alias in the app manifest; JS `tracker/phone/*`):
+    Profile → Around your phone → Connect (Health Connect's own screen) → each finished workout is
+    a strength session + estimated active calories (`calories.ts`: 2.5 MET strength, 6 cardio,
+    above resting, × body weight × time; owner's open choice); an edit re-sends (client id +
+    version), a delete removes it; "Send past workouts"; never demo data; imported workouts sent
+    at their real time (`realStart`). Missing Health Connect → its Play Store page.
+  - **Home-screen widgets:** "Today" (the plan's workout, "6 exercises · Bench Press first",
+    done once trained; tap → Workout tab) and "This week" (done days Monday–Sunday against the
+    plan); the app pushes their data (launch, resume, background, finish, delete); a widget left
+    past its day says "Open ForgeAI…". Added from Profile (`requestPinAppWidget`) or the home screen.
+  - **Workout reminders:** off until switched on; weekdays + time (default Mon/Wed/Fri 6:00 pm —
+    owner's open choice); the next 14 set as single alerts and redone on launch / finish, so a
+    trained day gets none; tap → Workout tab.
+  - **Review (one round, one reviewer; 5 MEDIUM), all fixed with failing-first tests**
+    (`phase5Review.test.ts`, `reimport.test.ts`): pounds stored two ways (typed vs
+    imported/rounded) read as new records — `records.beats` now ties within 1 part in 10,000 and
+    imports keep pounds unrounded; 165 lb at the welcome form came back as 164.9; demo workouts
+    reached Health Connect; Health Connect missing was a dead end; the pace record basis followed
+    the shown unit. Also: accents kept in Strong names, calories record always re-sent, the
+    permission screen started on the UI thread.
+  - **Device QA run 37732903490 on 2b063af passed parts A–I**, no app crash in any part's log.
+    Part I (`qa/v0270-i.yaml`): a Strong file (older layout) imported as pounds (120–122), Units
+    lb, miles (123), history (124), a run's Best pace per mile (125), Health Connect on and 9
+    workouts sent (126, 128, 129), reminders on — "Next: Tomorrow 6:00 pm" (130), the Today widget
+    added and on the home screen (131, 132), a set typed in lb and the finish screen "725 lb
+    moved" (133, 134); 28 app alarms after (the reminders). Two earlier runs stopped on the flow
+    (a 30 s scroll too short for Profile; the cloud phone pre-grants Health Connect, so the card
+    showed "Turn on"). Screens: `Resources/Phase5-screens/` (+ `key-screens.png`).
+  - **Known, not built / limits:** Health Connect copies stay if the member erases data or
+    Replace-imports; time-only cardio (no distance) counts at the strength rate; reminders stop
+    if the app is not opened for two weeks; old chat cards keep the unit they were written in;
+    a workout logged by chat does not refresh reminders.
+  - **Owner, mid-session — planned (tracker plan, Phase 5 "Next"):** bring his Hevy/Strong
+    ROUTINES in (the export has none; study below), share an export straight to ForgeAI, and see
+    today's workout before starting it from Home.
+  - **Tests:** 661 vitest.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
