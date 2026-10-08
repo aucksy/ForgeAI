@@ -12,12 +12,27 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 60000
+# Part H2 leaves its workout open: discard it first (its own Discard, then the dialog's).
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Start empty workout|Resume workout"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Resume workout"
+    commands:
+      - tapOn: "^Discard$"
+      - tapOn:
+          id: "android:id/button1"
+      - extendedWaitUntil:
+          visible: "Start empty workout"
+          timeout: 15000
 # ---------------------------------------------------------------- import from Strong
 - tapOn: "^Profile$"
 - scrollUntilVisible:
     element: "Import from Strong"
     centerElement: true
-    timeout: 30000
+    timeout: 90000
 - tapOn: "Import from Strong"
 - extendedWaitUntil:
     visible: "Choose Strong file"
@@ -59,7 +74,7 @@ appId: com.forgeai.app
     element: "lb, miles"
     direction: UP
     centerElement: true
-    timeout: 30000
+    timeout: 90000
 - tapOn: "lb, miles"
 - takeScreenshot: 123-units-lb-miles
 - tapOn: "^History$"
@@ -91,9 +106,12 @@ appId: com.forgeai.app
 - scrollUntilVisible:
     element: "Health Connect"
     centerElement: true
-    timeout: 30000
+    timeout: 90000
 - takeScreenshot: 126-around-your-phone
-- tapOn: "^Connect$"
+- tapOn:
+    text: "^Connect$"
+    below:
+      text: "Health Connect"
 # Health Connect's own screens (Android 14): maybe an intro, then the permission list.
 - tapOn:
     text: '(?i)^(get started|continue|next)$'
