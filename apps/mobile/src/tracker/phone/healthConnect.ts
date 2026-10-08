@@ -41,6 +41,7 @@ export function openHealthConnect(): boolean {
 
 interface Row {
   id: string;
+  date_iso: string;
   started_at: number;
   ended_at: number | null;
   day_type: string;
@@ -56,17 +57,37 @@ export interface HealthWorkout {
   kcal: number;
 }
 
+/**
+ * Imported workouts (Hevy, Strong) keep their clock time written as UTC (`parseHevyDate`), so a
+ * re-import on a phone in another timezone finds the same workouts. Health Connect needs the
+ * real moment: such a start (a whole second, whose UTC day is the workout's day — a workout
+ * logged live here has milliseconds) is read back as local clock time. PURE.
+ */
+export function realStart(startedAt: number, dateISO: string): number {
+  if (startedAt % 1000 !== 0) return startedAt;
+  const d = new Date(startedAt);
+  const utcDay = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+  if (utcDay !== dateISO) return startedAt;
+  return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()).getTime();
+}
+
 /** PURE: the records for Health Connect from the rows read. */
 export function healthPayload(rows: readonly Row[], bodyKg: number | null): HealthWorkout[] {
   return rows.map((r) => {
-    const w = { startedAt: r.started_at, endedAt: r.ended_at, sets: r.sets, cardioSec: r.cardio };
-    return { id: r.id, title: dayTypeLabel(r.day_type), startMs: r.started_at, endMs: endFor(w), kcal: activeKcal(w, bodyKg) };
+    const shift = realStart(r.started_at, r.date_iso) - r.started_at;
+    const w = {
+      startedAt: r.started_at + shift,
+      endedAt: r.ended_at != null ? r.ended_at + shift : null,
+      sets: r.sets,
+      cardioSec: r.cardio,
+    };
+    return { id: r.id, title: dayTypeLabel(r.day_type), startMs: w.startedAt, endMs: endFor(w), kcal: activeKcal(w, bodyKg) };
   });
 }
 
 async function readRows(where: string, args: (string | number)[]): Promise<Row[]> {
   return getDb().getAllAsync<Row>(
-    `SELECT s.id, s.started_at, s.ended_at, s.day_type,
+    `SELECT s.id, s.date_iso, s.started_at, s.ended_at, s.day_type,
        (SELECT COUNT(*) FROM set_entries se WHERE se.session_id = s.id AND se.is_warmup = 0) AS sets,
        (SELECT COALESCE(SUM(CASE WHEN se.distance_m > 0 THEN se.duration_sec ELSE 0 END), 0)
           FROM set_entries se WHERE se.session_id = s.id) AS cardio

@@ -29,7 +29,7 @@ describe('calories (an estimate, by MET)', () => {
   });
 
   it('builds one Health Connect record per workout, named by its day', () => {
-    const [r] = healthPayload([{ id: 's1', started_at: T0, ended_at: T0 + 3600_000, day_type: 'push', sets: 18, cardio: 0 }], 75);
+    const [r] = healthPayload([{ id: 's1', date_iso: '2026-10-07', started_at: T0, ended_at: T0 + 3600_000, day_type: 'push', sets: 18, cardio: 0 }], 75);
     expect(r).toEqual({ id: 's1', title: 'Push Day', startMs: T0, endMs: T0 + 3600_000, kcal: 188 });
   });
 });

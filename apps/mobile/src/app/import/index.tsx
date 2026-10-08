@@ -15,7 +15,7 @@ import { useRef, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 import { Card, GhostButton, Icon, IconButton, PrimaryButton, Screen } from '@/components/ui';
-import { adoptImportedData } from '@/onboarding/db/dataActions';
+import { adoptImportedData, isDemoData } from '@/onboarding/db/dataActions';
 import { shortDate } from '@/lib/date';
 import { success, warn } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -154,7 +154,10 @@ export default function ImportScreen() {
       setParsed(p);
       setPreview(pv);
       setFileName(asset.name || `${appName} export`);
-      setMode('replace');
+      // v0.27.0: with the member's own workouts here, Merge is the safe start (a second import
+      // must not delete what was logged in ForgeAI since). Replace only over demo data or nothing.
+      const demo = await isDemoData().catch(() => true);
+      setMode(pv.existingWorkouts > 0 && !demo ? 'merge' : 'replace');
       setPhase('preview');
     } catch (e) {
       warn();
@@ -276,6 +279,9 @@ export default function ImportScreen() {
               label="Exercises"
               value={`${preview.distinctExercises}  ·  ${preview.newExercises.length} new`}
             />
+            {preview.alreadyHere > 0 ? (
+              <StatRow label="Already in ForgeAI" value={String(preview.alreadyHere)} tint={color.inkMuted} />
+            ) : null}
             {preview.timedSets > 0 ? (
               <StatRow label="Timed or distance sets" value={String(preview.timedSets)} />
             ) : null}
@@ -330,7 +336,7 @@ export default function ImportScreen() {
               label="Merge"
               selected={mode === 'merge'}
               onPress={() => setMode('merge')}
-              body="Keep your current workouts and add these. Any workout already imported is skipped, so it’s safe to re-run. Timed and distance sets that older imports left out are added."
+              body="Keep your current workouts and add these. A workout already here is skipped, also one you logged in ForgeAI too (same day, started within 30 minutes), so it’s safe to re-run."
             />
           </View>
 
@@ -398,6 +404,9 @@ export default function ImportScreen() {
             <StatRow label="Workouts added" value={String(result.imported)} tint={color.goodText} />
             <StatRow label="Sets logged" value={String(result.setsInserted)} />
             <StatRow label="New exercises created" value={String(result.createdExercises)} />
+            {result.skippedSameWorkout > 0 ? (
+              <StatRow label="Logged in ForgeAI too (skipped)" value={String(result.skippedSameWorkout)} tint={color.inkMuted} />
+            ) : null}
             {result.skippedExisting > 0 ? (
               <StatRow
                 label="Already imported (skipped)"

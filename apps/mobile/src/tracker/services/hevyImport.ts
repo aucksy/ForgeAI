@@ -102,6 +102,8 @@ export interface ImportPreview {
   dateRange: { fromISO: string; toISO: string } | null;
   /** Phase 2: timed / distance sets in the file. */
   timedSets: number;
+  /** v0.27.0: workouts in the file already in ForgeAI (imported before, or logged here too) — Merge skips them. */
+  alreadyHere: number;
 }
 
 export interface ImportResult {
@@ -112,6 +114,8 @@ export interface ImportResult {
   createdExercises: number;
   /** Phase 2 (Merge): timed / distance sets added to workouts imported before they were supported. */
   backfilledSets: number;
+  /** v0.27.0 (Merge): the same workout already logged in ForgeAI (same day, start within 30 min) — skipped. */
+  skippedSameWorkout: number;
 }
 
 // ---------------------------------------------------------------- text utils
@@ -485,6 +489,38 @@ export function matchTitle(title: string, library: readonly LibraryRow[]): Libra
   return library.find((e) => e.catalogKey === entry.key) ?? null;
 }
 
+// ---------------------------------------------------------------- the same workout twice
+
+/** Two starts this close on the same day are one workout logged in two apps. */
+export const SAME_WORKOUT_MS = 30 * 60 * 1000;
+
+/**
+ * A ForgeAI session's start read as wall clock written as UTC — the basis imports use
+ * (`parseHevyDate`). A session logged live here keeps the real moment, so it is converted.
+ */
+export function wallClockAsUtc(ms: number): number {
+  const d = new Date(ms);
+  return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
+}
+
+/**
+ * v0.27.0: is this imported workout already in ForgeAI? Either imported before (the exact same
+ * start) or the same workout logged here too — the member tracked it in both apps (same day,
+ * starts within 30 minutes on the clock). PURE.
+ */
+export function isAlreadyHere(
+  w: { dateISO: string; startedAt: number },
+  existing: readonly { dateISO: string; startedAt: number }[],
+): 'exact' | 'same' | null {
+  let same = false;
+  for (const e of existing) {
+    if (e.startedAt === w.startedAt) return 'exact';
+    if (e.dateISO !== w.dateISO) continue;
+    if (Math.abs(e.startedAt - w.startedAt) <= SAME_WORKOUT_MS || Math.abs(wallClockAsUtc(e.startedAt) - w.startedAt) <= SAME_WORKOUT_MS) same = true;
+  }
+  return same ? 'same' : null;
+}
+
 /** Analyze a parse against the current library + history — no DB writes. */
 export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> {
   const library = await readLibrary();
@@ -505,7 +541,10 @@ export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> 
   let sets = 0;
   for (const w of parsed.workouts) for (const ex of w.exercises) sets += ex.sets.length;
 
-  const existingWorkouts = (await getSessionsBetween(MIN_ISO, MAX_ISO)).length;
+  const existing = await getSessionsBetween(MIN_ISO, MAX_ISO);
+  const existingWorkouts = existing.length;
+  let alreadyHere = 0;
+  for (const w of parsed.workouts) if (isAlreadyHere(w, existing)) alreadyHere += 1;
 
   const dateRange =
     parsed.workouts.length > 0
@@ -525,6 +564,7 @@ export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> 
     existingWorkouts,
     dateRange,
     timedSets: parsed.timedRows,
+    alreadyHere,
   };
 }
 
@@ -549,6 +589,7 @@ export async function runImport(
     setsInserted: 0,
     createdExercises: 0,
     backfilledSets: 0,
+    skippedSameWorkout: 0,
   };
   const total = parsed.workouts.length;
   const backfillDone = (await getMeta(TIMED_BACKFILL_KEY).catch(() => null)) === '1';
@@ -563,6 +604,7 @@ export async function runImport(
     // 2. Idempotency guard — start times already in the DB (empty after a replace).
     const remaining = await getSessionsBetween(MIN_ISO, MAX_ISO);
     const seenStarts = new Set<number>(remaining.map((s) => s.startedAt));
+    const sameDay = remaining.map((s) => ({ dateISO: s.dateISO, startedAt: s.startedAt }));
     const sessionByStart = new Map<number, string>(remaining.map((s) => [s.startedAt, s.id]));
 
     // 3. Resolve every distinct exercise title once: an exact name or the library
@@ -657,6 +699,12 @@ export async function runImport(
             }
           }
         }
+        onProgress?.(done, total);
+        continue;
+      }
+      // v0.27.0: the same workout already logged in ForgeAI (tracked in both apps) is not doubled.
+      if (mode === 'merge' && isAlreadyHere(w, sameDay) === 'same') {
+        result.skippedSameWorkout += 1;
         onProgress?.(done, total);
         continue;
       }
