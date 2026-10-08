@@ -37,7 +37,8 @@ class ForgePhoneModule : Module() {
       Share.pending = null
       try {
         Share.take(c, first) ?: Share.take(c, appContext.currentActivity?.intent)
-      } catch (_: Throwable) {
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeShare", "could not read the shared file", e)
         null
       }
     }

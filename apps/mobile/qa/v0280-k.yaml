@@ -1,8 +1,30 @@
-# v0.28.0 device QA, part K — an export shared to ForgeAI (runs after part J). The script shares
-# qa-hevy.csv to ForgeAI as Android's share menu does (ACTION_SEND, a content:// file with read
-# permission); the import opens on that file's preview, without picking it.
+# v0.28.0 device QA, part K — an export shared to ForgeAI, the way a person does it (runs after
+# part J). The script opens Android's Files app; here: hold qa-hevy.csv in Downloads → Share →
+# ForgeAI. The import opens on that file's preview, without picking it.
 appId: com.forgeai.app
 ---
+- extendedWaitUntil:
+    visible: '(?i).*(downloads|recent|files|qa-hevy).*'
+    timeout: 30000
+- runFlow:
+    when:
+      notVisible: "qa-hevy.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- longPressOn: "qa-hevy.*"
+- takeScreenshot: 159-files-selected
+- tapOn:
+    text: "Share"
+- extendedWaitUntil:
+    visible: "ForgeAI"
+    timeout: 20000
+- takeScreenshot: 159b-share-menu
+- tapOn: "ForgeAI"
 - extendedWaitUntil:
     visible: "Already in ForgeAI"
     timeout: 60000

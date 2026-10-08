@@ -175,20 +175,15 @@ log "part J start"
 maestro test --format junit --output "$OUT/part-j.xml" --test-output-dir "$OUT/part-j" "$QA_DIR/v0280-j.yaml"   > "$OUT/part-j.log" 2>&1 || { status=1; log "PART J FAILED"; }
 
 # ---------------------------------------------------------------- part K (v0.28.0: an export shared to ForgeAI)
-# Share qa-hevy.csv (pushed for part J) as the share menu does: its MediaStore uri, read permission granted.
-HEVY_ID=$(adb shell "content query --uri content://media/external/file --projection _id --where \"_display_name='qa-hevy.csv'\"" 2>/dev/null | sed -n 's/.*_id=\([0-9]*\).*/\1/p' | head -1)
-log "qa-hevy.csv media id: ${HEVY_ID:-none}"
+# The Files app, as a person shares a file (qa-hevy.csv was pushed to Downloads for part J).
 adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
 adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
-[ -n "$HEVY_ID" ] && adb shell am start -a android.intent.action.SEND -t text/csv --grant-read-uri-permission --eu android.intent.extra.STREAM "content://media/external/file/${HEVY_ID}" -p "$PKG" > "$OUT/k-share.txt" 2>&1 || log "SHARE INTENT FAILED"
-# -p (not -n): Android routes the share through the app's own share filter, as the share menu does.
-if [ -n "$HEVY_ID" ]; then
-  sleep 8
-  log "part K start"
-  maestro test --format junit --output "$OUT/part-k.xml" --test-output-dir "$OUT/part-k" "$QA_DIR/v0280-k.yaml"   > "$OUT/part-k.log" 2>&1 || { status=1; log "PART K FAILED"; }
-else
-  status=1; log "PART K SKIPPED: qa-hevy.csv not in the media store"
-fi
+adb shell am start -n com.google.android.documentsui/com.android.documentsui.files.FilesActivity > "$OUT/k-files.txt" 2>&1   || adb shell am start -a android.intent.action.VIEW -d "content://com.android.externalstorage.documents/root/primary" >> "$OUT/k-files.txt" 2>&1   || log "FILES APP DID NOT OPEN"
+sleep 8
+log "part K start"
+maestro test --format junit --output "$OUT/part-k.xml" --test-output-dir "$OUT/part-k" "$QA_DIR/v0280-k.yaml"   > "$OUT/part-k.log" 2>&1 || { status=1; log "PART K FAILED"; }
+adb logcat -d -s ForgeShare:W > "$OUT/k-share-log.txt" 2>/dev/null || true
+log "share errors logged: $(grep -c 'ForgeShare' "$OUT/k-share-log.txt" 2>/dev/null)"
 
 # ---------------------------------------------------------------- crash check
 # Only the app's own crashes count (another app's crash on the emulator is not ours).
