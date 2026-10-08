@@ -108,22 +108,24 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 90000
 - takeScreenshot: 126-around-your-phone
+# "Connect" opens Health Connect's own screen. The cloud phone grants every permission at
+# install, so it may show "Turn on" (already allowed) instead — both lead to "Send past workouts".
 - tapOn:
-    text: "^Connect$"
+    text: "^(Connect|Turn on)$"
     below:
       text: "Health Connect"
-# Health Connect's own screens (Android 14): maybe an intro, then the permission list.
-- tapOn:
-    text: '(?i)^(get started|continue|next)$'
-    optional: true
-- extendedWaitUntil:
-    visible: '(?i).*(allow all|allow forgeai|health connect).*'
-    timeout: 20000
-- takeScreenshot: 127-health-connect-permissions
-- tapOn:
-    text: '(?i)^allow all$'
-    optional: true
-- tapOn: '(?i)^allow$'
+- runFlow:
+    when:
+      visible: '(?i)^(allow all|allow|get started)$'
+    commands:
+      - tapOn:
+          text: '(?i)^(get started|continue|next)$'
+          optional: true
+      - takeScreenshot: 127-health-connect-permissions
+      - tapOn:
+          text: '(?i)^allow all$'
+          optional: true
+      - tapOn: '(?i)^allow$'
 - extendedWaitUntil:
     visible: "Send past workouts"
     timeout: 20000
