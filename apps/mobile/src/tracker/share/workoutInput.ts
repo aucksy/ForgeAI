@@ -1,6 +1,7 @@
 /** A finished workout's summary → what its share picture shows (Phase 3). PURE. */
 import { fromISO, shortDate } from '@/lib/date';
-import { fmtInt, trimNum } from '@/lib/format';
+import { fmtInt, kgText } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
 
 import { fmtDistance, fmtDuration, fmtTotalDistance, weightIsEach, type DistUnit, type LoadMode, type LogType } from '../engine/logTypes';
 import { RECORD_LABEL, sessionUnit } from '../engine/records';
@@ -43,13 +44,13 @@ export function bestSetText(
     const top = [...working].sort((a, b) =>
       lt === 'reps' ? b.reps - a.reps : b.weightKg - a.weightKg || b.reps - a.reps,
     )[0];
-    if (top.weightKg > 0) return `+${trimNum(top.weightKg)} kg × ${top.reps}`;
-    if (top.weightKg < 0) return `${trimNum(-top.weightKg)} kg help × ${top.reps}`;
+    if (top.weightKg > 0) return `+${kgText(top.weightKg)} × ${top.reps}`;
+    if (top.weightKg < 0) return `${kgText(-top.weightKg)} help × ${top.reps}`;
     return `${top.reps} ${top.reps === 1 ? 'rep' : 'reps'}`;
   }
   const top = [...working].sort((a, b) => b.weightKg - a.weightKg || b.reps - a.reps)[0];
   if (top.reps <= 0) return null;
-  return `${trimNum(top.weightKg)} kg${weightIsEach(kind.loadMode) ? ' each' : ''} × ${top.reps}`;
+  return `${kgText(top.weightKg)}${weightIsEach(kind.loadMode) ? ' each' : ''} × ${top.reps}`;
 }
 
 /** "Tue, 6 Oct 2026". */
@@ -72,7 +73,10 @@ export const totalDistanceText = fmtTotalDistance;
  * v0.25.1: a workout of only runs, rides or planks read "KG LIFTED 0". It now says how far
  * it went (DISTANCE), or — timed work with no distance — how many exercises it had.
  */
-export function liftedOnPicture(data: SessionSummaryData): { label: 'KG LIFTED' | 'REPS' | 'DISTANCE' | 'EXERCISES'; value: string } {
+export function liftedOnPicture(data: SessionSummaryData): {
+  label: 'KG LIFTED' | 'LB LIFTED' | 'REPS' | 'DISTANCE' | 'EXERCISES';
+  value: string;
+} {
   let kg = 0;
   let reps = 0;
   let metres = 0;
@@ -91,11 +95,13 @@ export function liftedOnPicture(data: SessionSummaryData): { label: 'KG LIFTED' 
     }
     if (working > 0) exercises += 1;
   }
-  if (kg > 0) return { label: 'KG LIFTED', value: fmtInt(kg) };
+  // "KG LIFTED" / "LB LIFTED", by the member's choice.
+  const lifted = weightUnitOf() === 'lb' ? ('LB LIFTED' as const) : ('KG LIFTED' as const);
+  if (kg > 0) return { label: lifted, value: fmtInt(kgToShown(kg)) };
   if (reps > 0) return { label: 'REPS', value: fmtInt(reps) };
   if (metres > 0) return { label: 'DISTANCE', value: totalDistanceText(metres) };
   if (exercises > 0) return { label: 'EXERCISES', value: String(exercises) };
-  return { label: 'KG LIFTED', value: fmtInt(kg) };
+  return { label: lifted, value: fmtInt(kgToShown(kg)) };
 }
 
 /**

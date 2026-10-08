@@ -8,11 +8,12 @@
  * best pace. PURE builders + one reader.
  */
 import { epleyE1rm } from '@/engine/overload';
+import { kgToShown, weightUnitOf } from '@/lib/units';
 import type { ExerciseProgressPoint, ExerciseStats } from '@/types/models';
 
 import { getBoundedExerciseHistory, type ExerciseHistoryEntry } from '../db/exerciseHistory';
 import { getTrackerExercise, type TrackerExercise } from '../db/exerciseInfo';
-import { distanceToUnit, fmtDistance, fmtDuration, isTimedCardio, type DistUnit, type LogType } from '../engine/logTypes';
+import { distanceToUnit, fmtDistance, fmtDuration, isTimedCardio, type DistUnit, type LogType, shownDistUnit } from '../engine/logTypes';
 import { exerciseRecords, RECORD_LABEL, type ExerciseRecords, type RecordSession } from '../engine/records';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint } from '../engine/volume';
 import { bestSetVolumeSeries, type BestSetPoint } from './exerciseAnalytics';
@@ -27,7 +28,7 @@ export interface OverviewTile {
 export interface OverviewSeries {
   title: string;
   points: { x: string; y: number }[];
-  /** How to print a y value. */
+  /** How to print a y value. 'kg': the points are stored kg — show them with `fmtW`. */
   unit: 'reps' | 'kg' | 'seconds' | 'distance';
 }
 
@@ -192,12 +193,12 @@ export function typedOverview(
     const most = Math.max(0, ...all.map((s) => s.reps));
     return {
       tiles: [
-        { label: 'Least help', value: least ? `${round1(helpOf(least.weightKg))} kg × ${least.reps}` : '—' },
+        { label: 'Least help', value: least ? `${round1(kgToShown(helpOf(least.weightKg)))} ${weightUnitOf()} × ${least.reps}` : '—' },
         { label: 'Most reps', value: `${most}` },
         workouts,
       ],
       series: {
-        title: 'Help used (kg) — lower is stronger',
+        title: `Help used (${weightUnitOf()}) — lower is stronger`,
         unit: 'kg',
         points: chrono.map((h) => ({ x: h.dateISO, y: Math.min(...h.sets.map((s) => helpOf(s.weightKg))) })),
       },
@@ -233,7 +234,7 @@ export function typedOverview(
   return {
     tiles,
     series: {
-      title: `Distance (${unit})`,
+      title: `Distance (${shownDistUnit(unit)})`,
       unit: 'distance',
       points: chrono.map((h) => ({ x: h.dateISO, y: distanceToUnit(dist(h), unit) })),
     },

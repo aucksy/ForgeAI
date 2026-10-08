@@ -1,6 +1,6 @@
-/** Settings card: migrate a Hevy export (.csv/.xlsx) into local history. */
+/** Settings card: bring a Hevy export (.csv/.xlsx) or, since v0.27.0, a Strong export (.csv) into local history. */
 import { useRouter } from 'expo-router';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Card, GhostButton } from '@/components/ui';
 import { tap } from '@/lib/haptics';
@@ -19,6 +19,15 @@ export function ImportCard() {
           router.push('/import');
         }}
       />
+      <View style={{ height: space.sm }} />
+      <GhostButton
+        label="Import from Strong"
+        icon="calendar"
+        onPress={() => {
+          tap();
+          router.push({ pathname: '/import', params: { from: 'strong' } });
+        }}
+      />
       <Text
         style={{
           fontFamily: type.body,
@@ -29,7 +38,7 @@ export function ImportCard() {
           lineHeight: 15,
         }}
       >
-        Bring your full Hevy workout history in — pick your exported file, preview, then import.
+        Bring your full Hevy or Strong workout history in: pick your exported file, preview, then import.
       </Text>
     </Card>
   );

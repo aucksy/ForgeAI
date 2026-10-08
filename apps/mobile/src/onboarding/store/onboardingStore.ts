@@ -14,6 +14,7 @@ import { create } from 'zustand';
 import { useChat } from '@/store/chatStore';
 import { useDashboard } from '@/store/dashboardStore';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { phoneAfterErase } from '@/tracker/phone/phoneSync';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
@@ -58,6 +59,8 @@ async function resetInMemoryState(): Promise<void> {
     useRestTimer.getState().skip();
     await useActiveWorkout.getState().discard();
     await Promise.all([useDashboard.getState().refresh(), useChat.getState().load()]);
+    // v0.27.0: reminders and Health Connect sending off, widgets blank (a fresh start).
+    await phoneAfterErase();
   } catch {
     /* caches only — the committed write stands */
   }

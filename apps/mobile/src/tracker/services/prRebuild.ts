@@ -19,6 +19,7 @@
 import { getDb } from '@/db';
 import { checkAndRecordPrs } from '@/db/repos/prRepo';
 import { deleteSession } from '@/db/repos/workoutRepo';
+import { phoneAfterDelete } from '@/tracker/phone/phoneSync';
 
 /** Re-record leading PRs for these exercises from their surviving working sets. */
 export async function reconcilePrsForExercises(exerciseIds: string[]): Promise<void> {
@@ -66,4 +67,6 @@ export async function deleteSessionAndReconcile(sessionId: string): Promise<void
   const exerciseIds = rows.map((r) => r.exercise_id);
   await deleteSession(sessionId);
   await reconcilePrsForExercises(exerciseIds);
+  // v0.27.0: out of Health Connect too, and the widgets redone.
+  void phoneAfterDelete(sessionId);
 }

@@ -10,12 +10,14 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 import { Badge, EmptyState, IconButton, Screen, Skeleton } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
 import { countWord } from '@/lib/words';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { recordDetailText, recordValueText, withMonthHeadings } from '@/tracker/services/recordText';
 import { getRecordEvents, type RecordEventRow } from '@/tracker/services/recordsService';
 
 export default function RecordsScreen() {
+  useUnits(); // v0.27.0: the record and set texts follow Profile → Units
   const router = useRouter();
   const [rows, setRows] = useState<RecordEventRow[] | null>(null);
 

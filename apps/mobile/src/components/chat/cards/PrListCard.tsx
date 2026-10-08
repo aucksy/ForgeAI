@@ -2,7 +2,8 @@ import { Text, View } from 'react-native';
 
 import { Badge, Icon } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
-import { trimNum } from '@/lib/format';
+import { cw } from '@/ai/unitText';
+import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';
 
 import type { PrView } from '../payload';
@@ -12,6 +13,7 @@ const MAX_ROWS = 8;
 
 /** Trophy list of personal records. */
 export function PrListCard({ prs }: { prs: PrView[] }) {
+  const u = useUnits();
   const shown = prs.slice(0, MAX_ROWS);
   return (
     <CardShell
@@ -54,8 +56,8 @@ export function PrListCard({ prs }: { prs: PrView[] }) {
                 }}
               >
                 {pr.kind === 'e1rm'
-                  ? `e1RM ${trimNum(pr.value)} kg`
-                  : `${trimNum(pr.weightKg)} kg × ${pr.reps}`}
+                  ? `e1RM ${cw(pr.value, u)}`
+                  : `${cw(pr.weightKg, u)} × ${pr.reps}`}
               </Text>
             </View>
             <View style={{ alignItems: 'flex-end', gap: 3 }}>

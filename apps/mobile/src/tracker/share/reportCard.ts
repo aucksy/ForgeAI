@@ -4,6 +4,7 @@
  * calendar (or the year's month-by-month bars) and the highlights. PURE.
  */
 import { fmtInt } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
 import { countWord } from '@/lib/words';
 import { color } from '@/theme/tokens';
 
@@ -58,8 +59,10 @@ export function periodLine(t: Pick<PeriodTotals, 'workouts' | 'days' | 'timed'>)
  * Without the picture's own count (older callers) it keeps the report's volume. PURE.
  */
 export function liftedStat(t: Pick<PeriodTotals, 'volumeKg' | 'workouts'>, p: PictureTotals | undefined): [string, string] {
-  if (!p) return ['KG LIFTED', bigNumber(t.volumeKg)];
-  if (p.kg > 0) return ['KG LIFTED', bigNumber(p.kg)];
+  // "KG LIFTED" / "LB LIFTED", by the member's choice.
+  const lifted = `${weightUnitOf().toUpperCase()} LIFTED`;
+  if (!p) return [lifted, bigNumber(kgToShown(t.volumeKg))];
+  if (p.kg > 0) return [lifted, bigNumber(kgToShown(p.kg))];
   if (p.reps > 0) return ['REPS', bigNumber(p.reps)];
   if (p.distanceM > 0) return ['DISTANCE', fmtTotalDistance(p.distanceM)];
   return ['WORKOUTS', fmtInt(t.workouts)];

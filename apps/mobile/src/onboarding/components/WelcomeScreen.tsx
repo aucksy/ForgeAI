@@ -18,8 +18,9 @@ import { ChipGroup } from '@/components/settings/ChipGroup';
 import type { ChipOption } from '@/components/settings/ChipGroup';
 import { Logo } from '@/components/ui/Logo';
 import { success, thud } from '@/lib/haptics';
+import { useSettings } from '@/store/settingsStore';
 import { color, motion, radius, space, type } from '@/theme/tokens';
-import type { Goal } from '@/types/models';
+import type { Goal, UnitSystem } from '@/types/models';
 
 import type { Experience, OnboardingDraft } from '../form';
 import { emptyDraft, validateOnboarding } from '../form';
@@ -37,6 +38,12 @@ const EXPERIENCE_OPTIONS = [
   { id: 'intermediate', label: 'Intermediate' },
   { id: 'advanced', label: 'Advanced' },
 ] as const satisfies readonly ChipOption<Experience>[];
+
+// v0.27.0: the same choice as Profile → Units.
+const UNIT_OPTIONS = [
+  { id: 'metric', label: 'kg, km' },
+  { id: 'imperial', label: 'lb, miles' },
+] as const satisfies readonly ChipOption<UnitSystem>[];
 
 const inputStyle = {
   backgroundColor: color.surfaceSunken,
@@ -108,6 +115,9 @@ export function WelcomeScreen() {
   const complete = useOnboarding((s) => s.complete);
   const loadDemo = useOnboarding((s) => s.loadDemo);
   const busy = useOnboarding((s) => s.busy);
+  const units = useSettings((s) => s.unitSystem);
+  const setUnits = useSettings((s) => s.setUnitSystem);
+  const imperial = units === 'imperial';
 
   const [draft, setDraft] = useState<OnboardingDraft>(emptyDraft);
   const [error, setError] = useState<{ field: keyof OnboardingDraft; message: string } | null>(null);
@@ -122,7 +132,7 @@ export function WelcomeScreen() {
 
   const onStart = async (): Promise<void> => {
     if (busy) return;
-    const result = validateOnboarding(draft);
+    const result = validateOnboarding(draft, units);
     if (!result.ok) {
       setError({ field: result.field, message: result.message });
       thud();
@@ -254,6 +264,18 @@ export function WelcomeScreen() {
               </Text>
             </View>
 
+            <View style={{ marginBottom: space.md }}>
+              <ChipGroup
+                label="Units"
+                options={UNIT_OPTIONS}
+                selectedId={units}
+                onSelect={(u) => {
+                  setUnits(u);
+                  setError(null);
+                }}
+              />
+            </View>
+
             <View style={{ flexDirection: 'row', gap: space.md }}>
               <View style={{ flex: 1 }}>
                 <Field label="Age">
@@ -269,7 +291,7 @@ export function WelcomeScreen() {
                 </Field>
               </View>
               <View style={{ flex: 1 }}>
-                <Field label="Height (cm)">
+                <Field label={imperial ? 'Height (inches)' : 'Height (cm)'}>
                   <TextInput
                     value={draft.heightCm}
                     onChangeText={(t) => patch({ heightCm: t })}
@@ -284,7 +306,7 @@ export function WelcomeScreen() {
             </View>
             <FieldError message={errFor('age') ?? errFor('heightCm')} />
 
-            <Field label="Body weight (kg)" hint="Logs today's weight and sets your starting daily targets.">
+            <Field label={imperial ? 'Body weight (lb)' : 'Body weight (kg)'} hint="Logs today's weight and sets your starting daily targets.">
               <TextInput
                 value={draft.bodyWeightKg}
                 onChangeText={(t) => patch({ bodyWeightKg: t })}

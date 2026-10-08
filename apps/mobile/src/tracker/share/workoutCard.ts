@@ -6,6 +6,7 @@
  * worked on the body drawing, the records set, and each exercise with its best set. No name,
  * no gym, nothing about the member's body — only the workout.
  */
+import { weightUnitOf } from '@/lib/units';
 import { color } from '@/theme/tokens';
 
 import type { BodyFigure } from '../catalog/bodyMapPaths';
@@ -80,7 +81,7 @@ export function workoutShareScene(input: WorkoutShareInput): Scene {
   const recordCount = input.recordCount ?? input.records.length;
   const stats: [string, string][] = [
     ['TIME', input.durationText ?? '—'],
-    [input.volumeLabel ?? 'KG LIFTED', input.volumeText],
+    [input.volumeLabel ?? `${weightUnitOf().toUpperCase()} LIFTED`, input.volumeText],
     ['SETS', String(input.sets)],
     ['RECORDS', String(recordCount)],
   ];

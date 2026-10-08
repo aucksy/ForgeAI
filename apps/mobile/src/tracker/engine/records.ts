@@ -33,7 +33,7 @@
  */
 import { epleyE1rm } from '@/engine/overload';
 
-import { fmtDuration, type DistUnit, type LoadMode, type LogType } from './logTypes';
+import { fmtDuration, shownDistUnit, type DistUnit, type LoadMode, type LogType } from './logTypes';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint, type VolumeRule } from './volume';
 
 export type RecordKind = 'weight' | 'e1rm' | 'best_set' | 'best_session' | 'reps' | 'duration' | 'pace' | 'distance';
@@ -58,16 +58,23 @@ export const RECORD_LABEL: Record<RecordKind, string> = {
 /**
  * What pace is measured over, by the exercise's distance unit: minutes per km — the owner's
  * rule, metre-based exercises (rowing, swimming) included — and only sets at least that long
- * count. When a mile unit is added, TypeScript asks for its line here: per mile, 1 mile.
+ * count. v0.27.0: under "lb, miles" a kilometre exercise is shown in miles (`shownDistUnit`),
+ * so its pace is minutes per mile over sets of 1 mile or more.
  */
 export const PACE_BASIS: Record<DistUnit, { metres: number; unit: string; words: string }> = {
   km: { metres: 1000, unit: 'km', words: '1 km' },
   m: { metres: 1000, unit: 'km', words: '1 km' },
+  mi: { metres: 1609.344, unit: 'mi', words: '1 mile' },
 };
+
+/** The pace basis for an exercise as it is shown now (km → mile under "lb, miles"). */
+export function paceBasis(unit: DistUnit | undefined): (typeof PACE_BASIS)[DistUnit] {
+  return PACE_BASIS[shownDistUnit(unit ?? 'km')];
+}
 
 /** "5:12 /km" for a pace kept as speed (metres per second). PURE. */
 export function fmtPace(speedMps: number, unit: DistUnit): string {
-  const basis = PACE_BASIS[unit];
+  const basis = paceBasis(unit);
   return `${fmtDuration(Math.round(basis.metres / speedMps))} /${basis.unit}`;
 }
 
@@ -76,7 +83,7 @@ export function fmtPace(speedMps: number, unit: DistUnit): string {
  * pace: "Best pace counts only sets of 1 km or more, so a short sprint can't set it." PURE.
  */
 export function paceRuleText(unit: DistUnit): string {
-  return `Best pace counts only sets of ${PACE_BASIS[unit].words} or more, so a short sprint can't set it.`;
+  return `Best pace counts only sets of ${PACE_BASIS.km.words} or more, so a short sprint can't set it.`;
 }
 
 /**
@@ -204,7 +211,7 @@ export function setRecordValue(kind: RecordKind, s: RecordSet, rule: RecordRule,
       // km the screen shows, so 49:58 for 10 km (5:00 /km) does not "beat" 25:00 for 5 km.
       const m = finite(s.distanceM);
       const sec = finite(s.durationSec);
-      const basis = PACE_BASIS[rule.distUnit ?? 'km'].metres;
+      const basis = PACE_BASIS[rule.distUnit === 'mi' ? 'km' : (rule.distUnit ?? 'km')].metres;
       if (!(sec > 0) || m < basis) return null;
       const perBasis = Math.round((sec * basis) / m);
       return perBasis > 0 ? basis / perBasis : null;
@@ -226,7 +233,9 @@ export function sessionContribution(s: RecordSet, rule: VolumeRule, bodyweightKg
 
 /** Strictly better, with room for float noise (61.2244898 kg from a pounds import). */
 export function beats(v: number, best: number): boolean {
-  return v > best + Math.max(1e-6, Math.abs(best) * 1e-9);
+  // v0.27.0 review: 1 part in 10,000 is a tie. A pound weight stored by two roads (typed vs
+  // imported or rounded) differs by a few thousandths of a kg; real weights differ by 0.25+.
+  return v > best + Math.max(1e-6, Math.abs(best) * 1e-4);
 }
 
 /** Is set `b` the better holder of a tie than `a`? Heaviest weight prefers more reps. */

@@ -2,11 +2,15 @@
  * Migrate from Hevy — pick a Hevy export (.csv/.xlsx), preview what will be
  * imported, choose Replace vs Merge, then write it into local history. Fully
  * offline: the file is read from disk and parsed on-device (SheetJS); no upload.
+ *
+ * v0.27.0: the same screen imports a Strong export (`/import?from=strong`): Strong's CSV is read
+ * by `strongImport.ts` into the Hevy import's own shape, so preview, Replace / Merge and the
+ * write are shared. An older Strong file does not say its units — the member says, once.
  */
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useKeepAwake } from 'expo-keep-awake';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
@@ -24,6 +28,8 @@ import {
   type ImportResult,
   type ParsedHevy,
 } from '@/tracker/services/hevyImport';
+import { looksLikeStrong, parseStrongText, strongFileInfo, type FileUnits } from '@/tracker/services/strongImport';
+import { useSettings } from '@/store/settingsStore';
 
 type Phase = 'idle' | 'preview' | 'importing' | 'done';
 
@@ -96,6 +102,13 @@ function ModeOption({
 export default function ImportScreen() {
   useKeepAwake(); // a long import shouldn't be interrupted by the screen sleeping
   const router = useRouter();
+  const params = useLocalSearchParams<{ from?: string }>();
+  const strong = params.from === 'strong';
+  const appName = strong ? 'Strong' : 'Hevy';
+  const memberUnits = useSettings((s) => s.unitSystem);
+  // Strong (older files only): the units the file was written in, when it does not say.
+  const [strongText, setStrongText] = useState<string | null>(null);
+  const [fileUnits, setFileUnits] = useState<FileUnits | null>(null);
 
   const [phase, setPhase] = useState<Phase>('idle');
   const [busy, setBusy] = useState(false);
@@ -119,15 +132,28 @@ export default function ImportScreen() {
       });
       if (res.canceled || !res.assets || res.assets.length === 0) return;
       const asset = res.assets[0];
-      const base64 = await FileSystem.readAsStringAsync(asset.uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      const p = parseHevyBase64(base64); // throws a user-safe Error on a bad file
+      let p: ParsedHevy;
+      if (strong) {
+        const text = await FileSystem.readAsStringAsync(asset.uri);
+        if (!looksLikeStrong(text)) {
+          throw new Error('That doesn’t look like a Strong export. In Strong, export your data and pick the .csv file.');
+        }
+        const info = strongFileInfo(text);
+        const units: FileUnits = info.fileUnits ?? memberUnits;
+        p = parseStrongText(text, units); // throws a plain-words Error on a bad file
+        setStrongText(info.unitsKnown ? null : text);
+        setFileUnits(info.unitsKnown ? null : units);
+      } else {
+        const base64 = await FileSystem.readAsStringAsync(asset.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        p = parseHevyBase64(base64); // throws a user-safe Error on a bad file
+      }
       if (p.workouts.length === 0) throw new Error('No workouts were found in that file.');
       const pv = await previewImport(p);
       setParsed(p);
       setPreview(pv);
-      setFileName(asset.name || 'Hevy export');
+      setFileName(asset.name || `${appName} export`);
       setMode('replace');
       setPhase('preview');
     } catch (e) {
@@ -169,12 +195,25 @@ export default function ImportScreen() {
     }
   };
 
+  // An older Strong file: the member says which units it was written in; read it again.
+  const onFileUnits = async (u: FileUnits): Promise<void> => {
+    if (!strongText || busyRef.current) return;
+    setFileUnits(u);
+    try {
+      const p = parseStrongText(strongText, u);
+      setParsed(p);
+      setPreview(await previewImport(p));
+    } catch {
+      // the file read fine a moment ago; keep what is shown
+    }
+  };
+
   const pct = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
 
   return (
     <Screen
       scroll={phase !== 'importing'}
-      title="Migrate from Hevy"
+      title={strong ? 'Import from Strong' : 'Migrate from Hevy'}
       right={
         phase === 'importing' ? undefined : (
           <IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />
@@ -189,19 +228,27 @@ export default function ImportScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
                 <Icon name="calendar" size={20} color={color.accent} />
                 <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-                  Bring your Hevy history in
+                  Bring your {appName} history in
                 </Text>
               </View>
-              <Text style={CAPTION}>
-                In Hevy, go to <Text style={{ color: color.inkSecondary }}>Settings → Export &amp; Backup Data</Text> and
-                export your workouts. Then pick that <Text style={{ color: color.inkSecondary }}>.csv</Text> (or{' '}
-                <Text style={{ color: color.inkSecondary }}>.xlsx</Text>) file here. Weights are read as kilograms.
-              </Text>
+              {strong ? (
+                <Text style={CAPTION}>
+                  In Strong, go to <Text style={{ color: color.inkSecondary }}>Settings → Export Strong Data</Text> and
+                  save the <Text style={{ color: color.inkSecondary }}>.csv</Text> file. Then pick that file here.
+                  Kilograms or pounds: both are read.
+                </Text>
+              ) : (
+                <Text style={CAPTION}>
+                  In Hevy, go to <Text style={{ color: color.inkSecondary }}>Settings → Export &amp; Backup Data</Text> and
+                  export your workouts. Then pick that <Text style={{ color: color.inkSecondary }}>.csv</Text> (or{' '}
+                  <Text style={{ color: color.inkSecondary }}>.xlsx</Text>) file here. Kilograms or pounds: both are read.
+                </Text>
+              )}
               <Text style={CAPTION}>Everything is processed on your phone — nothing is uploaded.</Text>
             </View>
           </Card>
           <PrimaryButton
-            label={busy ? 'Reading…' : 'Choose Hevy file'}
+            label={busy ? 'Reading…' : `Choose ${appName} file`}
             icon="chart"
             loading={busy}
             onPress={() => void onPick()}
@@ -246,6 +293,26 @@ export default function ImportScreen() {
               />
             ) : null}
           </Card>
+
+          {fileUnits ? (
+            <View style={{ gap: space.sm }}>
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+                This file does not say its units. Strong wrote it in:
+              </Text>
+              <ModeOption
+                label="Kilograms and km"
+                selected={fileUnits === 'metric'}
+                onPress={() => void onFileUnits('metric')}
+                body="Choose this if Strong showed your weights in kg."
+              />
+              <ModeOption
+                label="Pounds and miles"
+                selected={fileUnits === 'imperial'}
+                onPress={() => void onFileUnits('imperial')}
+                body="Choose this if Strong showed your weights in lb."
+              />
+            </View>
+          ) : null}
 
           <View style={{ gap: space.sm }}>
             <ModeOption
@@ -324,7 +391,7 @@ export default function ImportScreen() {
             <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>
               {result.imported} workouts imported
             </Text>
-            <Text style={{ ...CAPTION, textAlign: 'center' as const }}>Your Hevy history is now in ForgeAI.</Text>
+            <Text style={{ ...CAPTION, textAlign: 'center' as const }}>Your {appName} history is now in ForgeAI.</Text>
           </Card>
 
           <Card>

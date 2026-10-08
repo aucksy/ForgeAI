@@ -9,6 +9,7 @@ import { Alert, Pressable, View } from 'react-native';
 import { EmptyState, GhostButton, Icon, IconButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { deleteSessionAndReconcile } from '@/tracker/services/prRebuild';
 import { shortDate } from '@/lib/date';
+import { useUnits } from '@/lib/useUnits';
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space } from '@/theme/tokens';
 
@@ -28,6 +29,7 @@ import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
 export default function SessionDetailScreen() {
+  useUnits(); // v0.27.0: the record and set texts follow Profile → Units
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = typeof params.id === 'string' ? params.id : params.id?.[0];

@@ -19,7 +19,8 @@ import { chatGroq } from '@/ai/providers/groq';
 import { getLastSessionOfDayType } from '@/db/repos/workoutRepo';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getGroqKey } from '@/lib/keys';
-import { fmtInt, trimNum } from '@/lib/format';
+import { kgNum, kgText } from '@/lib/format';
+import { fmtVol, weightUnitOf } from '@/lib/units';
 import { countWord } from '@/lib/words';
 import { useSettings } from '@/store/settingsStore';
 import type { SessionDetail } from '@/types/models';
@@ -53,8 +54,8 @@ export function buildSessionNote(
   if (weightPrs.length > 0) {
     const p = weightPrs[0];
     return weightPrs.length === 1
-      ? `New PR on ${p.exerciseName} — ${trimNum(p.weightKg)} kg × ${p.reps}. That's progressive overload doing its job.`
-      : `${weightPrs.length} weight PRs today — ${p.exerciseName} led at ${trimNum(p.weightKg)} kg. Your strength curve is pointing up.`;
+      ? `New PR on ${p.exerciseName} — ${kgText(p.weightKg)} × ${p.reps}. That's progressive overload doing its job.`
+      : `${weightPrs.length} weight PRs today — ${p.exerciseName} led at ${kgText(p.weightKg)}. Your strength curve is pointing up.`;
   }
   if (e1rmPrs.length > 0) {
     const p = e1rmPrs[0];
@@ -72,7 +73,7 @@ export function buildSessionNote(
     const delta = (data.totalVolumeKg - prevSameType.totalVolumeKg) / prevSameType.totalVolumeKg;
     const pct = Math.round(Math.abs(delta) * 100);
     if (pct >= 5 && delta > 0) {
-      return `${fmtInt(data.totalVolumeKg)} kg moved — ${pct}% more than your last ${dayLabel}. Recover hard and it'll show.`;
+      return `${fmtVol(data.totalVolumeKg)} moved — ${pct}% more than your last ${dayLabel}. Recover hard and it'll show.`;
     }
     if (pct >= 5 && delta < 0) {
       return `Solid ${dayLabel}. Volume was ${pct}% down on last time — fine on a heavy or short day; the streak is what matters.`;
@@ -119,12 +120,12 @@ function factSheet(data: SessionSummaryData, prevSameType: SessionDetail | null)
   const lines: string[] = [
     `Day type: ${dayTypeLabel(data.session.dayType)}`,
     ...(data.easyWeek ? ['This was a planned easy week: half the sets at the usual weights, so less volume is the point.'] : []),
-    `Total volume: ${fmtInt(data.totalVolumeKg)} kg across ${data.workingSetCount} working sets, ${data.exerciseCount} exercises`,
+    `Total volume: ${fmtVol(data.totalVolumeKg)} across ${data.workingSetCount} working sets, ${data.exerciseCount} exercises`,
   ];
   if (data.prs.length > 0) {
     lines.push(
       `PRs today: ${data.prs
-        .map((p) => `${p.exerciseName} ${trimNum(p.value)} ${p.kind === 'e1rm' ? 'est-1RM' : 'kg'}`)
+        .map((p) => `${p.exerciseName} ${kgNum(p.value)} ${p.kind === 'e1rm' ? 'est-1RM' : weightUnitOf()}`)
         .join('; ')}`,
     );
   }
@@ -143,16 +144,16 @@ function factSheet(data: SessionSummaryData, prevSameType: SessionDetail | null)
       ((data.totalVolumeKg - prevSameType.totalVolumeKg) / prevSameType.totalVolumeKg) * 100,
     );
     lines.push(
-      `Vs last ${dayTypeLabel(data.session.dayType)}: ${pct >= 0 ? '+' : ''}${pct}% volume (last was ${fmtInt(prevSameType.totalVolumeKg)} kg)`,
+      `Vs last ${dayTypeLabel(data.session.dayType)}: ${pct >= 0 ? '+' : ''}${pct}% volume (last was ${fmtVol(prevSameType.totalVolumeKg)})`,
     );
   }
   return lines.join('\n');
 }
 
-const CLOUD_SYSTEM =
+const cloudSystem = (): string =>
   'You are an experienced, encouraging personal trainer. In ONE sentence of at most 28 words, ' +
   'give the member a specific post-workout note grounded ONLY in the facts provided. Reference at ' +
-  'least one real number from the facts. Use kg. No emoji, no lists, no invented data. If the facts ' +
+  `least one real number from the facts. Use ${weightUnitOf()}. No emoji, no lists, no invented data. If the facts ` +
   'are thin, keep it short and motivating.';
 
 /**
@@ -169,7 +170,7 @@ export async function getCloudCoachNote(data: SessionSummaryData): Promise<strin
     const model = useSettings.getState().ai.groqModel || DEFAULT_GROQ_MODEL;
     const turn = await chatGroq(
       { apiKey: key, model },
-      CLOUD_SYSTEM,
+      cloudSystem(),
       [{ role: 'user', text: `Facts:\n${factSheet(data, prevSameType)}` }],
       [],
     );

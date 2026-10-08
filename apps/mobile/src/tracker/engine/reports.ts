@@ -9,6 +9,7 @@
  */
 import { addDays, weekStartISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
 import { countWord } from '@/lib/words';
 
 import { MUSCLE_LABEL, type Muscle } from '../catalog/muscles';
@@ -387,7 +388,7 @@ export function yearNote(r: Omit<YearReview, 'note'>): string {
   const head = r.complete ? `${r.year}` : `${r.year} so far`;
   const facts = [`${fmtInt(t.workouts)} ${t.workouts === 1 ? 'workout' : 'workouts'}`];
   if (t.durationSec >= 3600) facts.push(t.timed >= t.workouts ? hoursText(t.durationSec) : `${hoursText(t.durationSec)} of timed workouts`);
-  if (t.volumeKg > 0) facts.push(`${bigNumber(t.volumeKg)} kg lifted`);
+  if (t.volumeKg > 0) facts.push(`${bigNumber(kgToShown(t.volumeKg))} ${weightUnitOf()} lifted`);
   const parts = [`${head}: ${facts.length > 1 ? `${facts.slice(0, -1).join(', ')} and ${facts[facts.length - 1]}` : facts[0]}.`];
   const fav = r.topExercises[0];
   if (r.busiest && r.busiest.workouts > 0 && fav) {
@@ -396,7 +397,7 @@ export function yearNote(r: Omit<YearReview, 'note'>): string {
     parts.push(`${fav.name} was your favourite — ${countWord(fav.sets, 'set', fmtInt)}.`);
   }
   if (r.gain) {
-    parts.push(`Biggest gain: ${r.gain.name}, up ${r.gain.pct}% (about ${r.gain.fromKg} → ${r.gain.toKg} kg for one rep).`);
+    parts.push(`Biggest gain: ${r.gain.name}, up ${r.gain.pct}% (about ${Math.round(kgToShown(r.gain.fromKg))} → ${Math.round(kgToShown(r.gain.toKg))} ${weightUnitOf()} for one rep).`);
   } else if (r.recordCount > 0) {
     parts.push(`You set ${fmtInt(r.recordCount)} new ${r.recordCount === 1 ? 'record' : 'records'}.`);
   }

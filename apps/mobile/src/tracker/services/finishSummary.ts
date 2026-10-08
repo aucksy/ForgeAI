@@ -14,7 +14,7 @@
  */
 import { getDb } from '@/db';
 import { getSessionDetail } from '@/db/repos/workoutRepo';
-import { fmtInt } from '@/lib/format';
+import { fmtVol } from '@/lib/units';
 import { countWord } from '@/lib/words';
 import { fmtTotalDistance } from '@/tracker/engine/logTypes';
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
@@ -157,7 +157,7 @@ export function workoutDistanceM(data: Pick<SessionSummaryData, 'session' | 'set
  */
 export function finishHeadline(data: Pick<SessionSummaryData, 'session' | 'setMeta' | 'totalVolumeKg' | 'workingSetCount'>): string {
   const sets = countWord(data.workingSetCount, 'set');
-  if (data.totalVolumeKg > 0) return `${fmtInt(data.totalVolumeKg)} kg moved · ${sets}`;
+  if (data.totalVolumeKg > 0) return `${fmtVol(data.totalVolumeKg)} moved · ${sets}`;
   const m = workoutDistanceM(data);
   return m > 0 ? `${fmtTotalDistance(m)} · ${sets}` : sets;
 }

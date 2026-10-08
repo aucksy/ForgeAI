@@ -3,9 +3,8 @@ import { useCallback, useRef, useState } from 'react';
 
 import { getDb } from '@/db';
 import { addDays, todayISO } from '@/lib/date';
-import { trimNum } from '@/lib/format';
 import { getMeasurements } from '@/tracker/db/measurementRepo';
-import { MEASURE_LABEL, measureUnit, summarize } from '@/tracker/engine/measurements';
+import { fmtMeasure, MEASURE_LABEL, summarize } from '@/tracker/engine/measurements';
 import type { MuscleSetsSlice } from '@/tracker/engine/volume';
 import { countProgressPhotos } from '@/tracker/services/progressPhotos';
 import { getRecordEvents, type RecordEventRow } from '@/tracker/services/recordsService';
@@ -21,7 +20,7 @@ export interface ProgressExtras {
   weekMuscles: MuscleSetsSlice[];
   /** Workouts per month, 'YYYY-MM' → count (the reports card). */
   monthCounts: Map<string, number>;
-  /** "Waist 81 cm", or null. */
+  /** "Waist 81 cm" (or "Waist 31.9 in" under lb, miles — read on each focus), or null. */
   measureLine: string | null;
   photoCount: number;
 }
@@ -38,7 +37,7 @@ async function monthCounts(): Promise<Map<string, number>> {
 async function measureLine(): Promise<string | null> {
   const summary = summarize(await getMeasurements());
   const pick = summary.find((s) => s.kind === 'waist') ?? summary[0];
-  return pick ? `${MEASURE_LABEL[pick.kind]} ${trimNum(pick.latest)} ${measureUnit(pick.kind)}` : null;
+  return pick ? `${MEASURE_LABEL[pick.kind]} ${fmtMeasure(pick.kind, pick.latest)}` : null;
 }
 
 /**

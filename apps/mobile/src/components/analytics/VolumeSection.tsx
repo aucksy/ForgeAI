@@ -1,6 +1,8 @@
 import { BarChart } from '@/components/charts';
 import { EmptyState } from '@/components/ui';
 import { fmtCompact } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import type { VolumePoint } from '@/types/models';
 
 import { HeaderStat, Section } from './Section';
@@ -13,6 +15,7 @@ export interface VolumeSectionProps {
 
 /** Weekly training volume — last week highlighted in full ember. */
 export function VolumeSection({ data, index }: VolumeSectionProps) {
+  const units = useUnits(); // v0.27.0: kg or lb
   const points = trimLeading(data, (d) => d.volumeKg <= 0);
   const hasData = points.some((d) => d.volumeKg > 0);
   const total = points.reduce((sum, d) => sum + d.volumeKg, 0);
@@ -21,11 +24,11 @@ export function VolumeSection({ data, index }: VolumeSectionProps) {
     <Section
       title="Weekly Volume"
       index={index}
-      right={hasData ? <HeaderStat text={`${fmtCompact(total)} kg lifted`} /> : undefined}
+      right={hasData ? <HeaderStat text={`${fmtCompact(kgToShown(total, units))} ${weightUnitOf(units)} lifted`} /> : undefined}
     >
       {hasData ? (
         <BarChart
-          data={points.map((d) => ({ x: d.dateISO, y: d.volumeKg }))}
+          data={points.map((d) => ({ x: d.dateISO, y: kgToShown(d.volumeKg, units) }))}
           highlightLast
           labelEvery={labelStep(points.length)}
         />

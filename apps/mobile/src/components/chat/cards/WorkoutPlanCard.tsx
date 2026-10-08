@@ -2,7 +2,8 @@ import { Text, View } from 'react-native';
 
 import { Badge } from '@/components/ui';
 import type { BadgeProps } from '@/components/ui';
-import { trimNum } from '@/lib/format';
+import { cw } from '@/ai/unitText';
+import { useUnits } from '@/lib/useUnits';
 import { targetBadge, targetLine } from '@/tracker/engine/progression';
 import { color, space, type } from '@/theme/tokens';
 
@@ -35,6 +36,7 @@ function badgeFor(t: PlanTargetView): { label: string; tone: BadgeProps['tone'] 
  * progressive-overload action badge.
  */
 export function WorkoutPlanCard({ plan }: { plan: WorkoutPlanView }) {
+  const u = useUnits(); // re-render on a Units change; targetLine reads the same choice
   return (
     <CardShell
       icon="dumbbell"
@@ -88,7 +90,7 @@ export function WorkoutPlanCard({ plan }: { plan: WorkoutPlanView }) {
               {t.last
                 ? t.bodyweightOnly
                   ? `Last: ${t.last.topReps} ${t.last.topReps === 1 ? 'rep' : 'reps'}`
-                  : `Last: ${trimNum(t.last.weightKg)} kg × ${t.last.topReps}`
+                  : `Last: ${cw(t.last.weightKg, u)} × ${t.last.topReps}`
                 : 'First session — no history yet'}
             </Text>
             <Text

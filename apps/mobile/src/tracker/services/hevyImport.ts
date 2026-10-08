@@ -316,6 +316,14 @@ function asNumber(v: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+function lbsToKg(v: number | null): number | null {
+  return v == null ? null : v * 0.45359237; // unrounded, as a typed pound weight is stored
+}
+
+function milesToKm(v: number | null): number | null {
+  return v == null ? null : v * 1.609344;
+}
+
 function asString(v: unknown): string {
   return v == null ? '' : String(v);
 }
@@ -356,7 +364,8 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     const exTitle = asString(r['exercise_title']).trim();
     const reps = asNumber(r['reps']);
     const duration = asNumber(r['duration_seconds']);
-    const distanceKm = asNumber(r['distance_km']);
+    // v0.27.0: a Hevy account set to pounds exports weight_lbs / distance_miles instead.
+    const distanceKm = r['distance_km'] !== undefined ? asNumber(r['distance_km']) : milesToKm(asNumber(r['distance_miles']));
     const durationSec = duration != null && duration > 0 ? Math.round(duration) : null;
     const distanceM = distanceKm != null && distanceKm > 0 ? Math.round(distanceKm * 1000 * 10) / 10 : null;
     const hasReps = reps !== null && reps > 0;
@@ -366,7 +375,7 @@ export function parseHevyBase64(base64: string): ParsedHevy {
       continue;
     }
     if (!hasReps) timedRows += 1;
-    const weightKg = asNumber(r['weight_kg']) ?? 0; // null weight = bodyweight
+    const weightKg = (r['weight_kg'] !== undefined ? asNumber(r['weight_kg']) : lbsToKg(asNumber(r['weight_lbs']))) ?? 0; // null weight = bodyweight
     const rawSetType = asString(r['set_type']).toLowerCase().trim();
     const isWarmup = rawSetType === 'warmup';
     // Hevy working-set variants: dropset / failure. Everything else → normal.

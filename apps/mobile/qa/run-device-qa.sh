@@ -149,6 +149,21 @@ adb exec-out screencap -p > "$OUT/h-117-shade-rest-over.png"
 adb shell cmd statusbar collapse >/dev/null 2>&1 || true
 python3 "$QA_DIR/notif.py" over-open "$OUT/h-after-rest-app-open.txt" >> "$OUT/timeline.txt" || status=1
 
+# ---------------------------------------------------------------- part I (v0.27.0: the rest of Phase 5)
+# A Strong export "someone made" (older layout, pounds and miles), in Downloads, for the import.
+adb push "$QA_DIR/fixtures/qa-strong.csv" /sdcard/Download/qa-strong.csv >/dev/null 2>&1 || log "PUSH STRONG FILE FAILED"
+adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+sleep 10
+log "part I start"
+maestro test --format junit --output "$OUT/part-i.xml" --test-output-dir "$OUT/part-i" "$QA_DIR/v0270-i.yaml"   > "$OUT/part-i.log" 2>&1 || { status=1; log "PART I FAILED"; }
+# The reminders the app set (expo keeps them as alarms) and the widget the home screen holds.
+adb shell dumpsys alarm | grep -c "com.forgeai.app" > "$OUT/i-alarm-count.txt" 2>/dev/null || true
+log "app alarms after part I: $(cat "$OUT/i-alarm-count.txt" 2>/dev/null)"
+adb shell dumpsys appwidget > "$OUT/i-appwidget.txt" 2>/dev/null || true
+log "home-screen widget list saved (i-appwidget.txt); ForgeAI widget lines: $(grep -c 'com.forgeai.phone.TodayWidget' "$OUT/i-appwidget.txt" 2>/dev/null)"
+
 # ---------------------------------------------------------------- crash check
 # Only the app's own crashes count (another app's crash on the emulator is not ours).
 app_crash() { grep -A1 "FATAL EXCEPTION" "$1" 2>/dev/null | grep -q "Process: $PKG"; }
@@ -170,7 +185,7 @@ for f in $(find "$OUT"/part-* -name '*logcat*' 2>/dev/null); do
 done
 reports=$(find "$OUT"/part-* \( -name 'crash-report*' -o -name 'anr-report*' \) 2>/dev/null)
 if [ -n "$reports" ]; then log "MAESTRO CRASH/ANR REPORT: $reports"; status=1; fi
-log "device logs read: $read_logs (parts A-H)"
+log "device logs read: $read_logs (parts A-I)"
 if [ "$read_logs" -eq 0 ]; then log "WARNING: no per-part device logs found - only the last part's logcat was checked"; fi
 grep -i "ReactNativeJS" "$OUT/logcat.txt" | grep -i "error\|warn" | head -60 > "$OUT/js-errors.txt" || true
 log "done, status $status"

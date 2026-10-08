@@ -1,0 +1,211 @@
+# v0.27.0 device QA, part I — the rest of Phase 5 (runs after parts A–H). Strong import (an
+# older Strong file in pounds and miles, pushed to Downloads by the script) → Units "lb, miles"
+# → the imported bench in lb and the run's pace per mile → Health Connect: Connect, allow on
+# Health Connect's own screen, send past workouts → workout reminders → a home-screen widget
+# → a workout logged in lb and finished (sent to Health Connect).
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+# ---------------------------------------------------------------- import from Strong
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "Import from Strong"
+    centerElement: true
+    timeout: 30000
+- tapOn: "Import from Strong"
+- extendedWaitUntil:
+    visible: "Choose Strong file"
+    timeout: 15000
+- takeScreenshot: 120-strong-import
+- tapOn: "Choose Strong file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-strong).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-strong.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "qa-strong.*"
+- extendedWaitUntil:
+    visible: "This file does not say its units.*"
+    timeout: 20000
+- tapOn: "Pounds and miles"
+- tapOn: "^Merge$"
+- takeScreenshot: 121-strong-preview
+- scrollUntilVisible:
+    element: "Merge 2 workouts"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Merge 2 workouts"
+- extendedWaitUntil:
+    visible: "2 workouts imported"
+    timeout: 30000
+- takeScreenshot: 122-strong-imported
+- tapOn: "^Done$"
+# ---------------------------------------------------------------- pounds and miles
+- scrollUntilVisible:
+    element: "lb, miles"
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- tapOn: "lb, miles"
+- takeScreenshot: 123-units-lb-miles
+- tapOn: "^History$"
+- waitForAnimationToEnd
+- takeScreenshot: 124-history-lb
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Exercise library"
+    timeout: 30000
+- tapOn: "Exercise library"
+- tapOn: "Search exercises"
+- inputText: " outdoor run"
+- hideKeyboard
+- tapOn:
+    text: "View Outdoor Run"
+    index: 0
+- extendedWaitUntil:
+    visible: "Records"
+    timeout: 15000
+- scrollUntilVisible:
+    element: '.*/mi.*'
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: 125-run-pace-per-mile
+- back
+- back
+# ---------------------------------------------------------------- around your phone
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "Health Connect"
+    centerElement: true
+    timeout: 30000
+- takeScreenshot: 126-around-your-phone
+- tapOn: "^Connect$"
+# Health Connect's own screens (Android 14): maybe an intro, then the permission list.
+- tapOn:
+    text: '(?i)^(get started|continue|next)$'
+    optional: true
+- extendedWaitUntil:
+    visible: '(?i).*(allow all|allow forgeai|health connect).*'
+    timeout: 20000
+- takeScreenshot: 127-health-connect-permissions
+- tapOn:
+    text: '(?i)^allow all$'
+    optional: true
+- tapOn: '(?i)^allow$'
+- extendedWaitUntil:
+    visible: "Send past workouts"
+    timeout: 20000
+- takeScreenshot: 128-health-connect-on
+- tapOn: "Send past workouts"
+- extendedWaitUntil:
+    visible: "Sent \\d+ workouts? to Health Connect.*"
+    timeout: 30000
+- takeScreenshot: 129-health-connect-sent
+# ---------------------------------------------------------------- reminders
+- scrollUntilVisible:
+    element: "Workout reminders"
+    centerElement: true
+    timeout: 15000
+- tapOn:
+    text: "Workout reminders"
+    index: 0
+- runFlow:
+    when:
+      notVisible: "Remind me later"
+    commands:
+      - tapOn:
+          text: "Workout reminders"
+          index: 1
+          optional: true
+- tapOn:
+    text: '(?i)^allow$'
+    optional: true
+- extendedWaitUntil:
+    visible: '.*Next: .*'
+    timeout: 15000
+- takeScreenshot: 130-reminders-on
+# ---------------------------------------------------------------- widgets
+- scrollUntilVisible:
+    element: "Add Today"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Add Today"
+- extendedWaitUntil:
+    visible: '(?i).*(add to home screen|add automatically|^add$).*'
+    timeout: 15000
+- takeScreenshot: 131-widget-add-dialog
+- tapOn: '(?i)^(add to home screen|add)$'
+- pressKey: Home
+- extendedWaitUntil:
+    visible: '^TODAY$'
+    timeout: 15000
+- takeScreenshot: 132-home-screen-widget
+# ---------------------------------------------------------------- a workout in lb
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "^Workout$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 30000
+- tapOn: "Start empty workout"
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 20000
+- tapOn: "Add exercise"
+- tapOn: "Search exercises"
+- inputText: " bench press"
+- hideKeyboard
+- tapOn:
+    text: "Add Barbell Bench Press"
+    index: 0
+- extendedWaitUntil:
+    visible: "Weight in pounds, set 1"
+    timeout: 15000
+- tapOn:
+    text: "Weight in pounds, set 1"
+    below:
+      text: "More for Barbell Bench Press"
+- eraseText
+- inputText: " 145"
+- tapOn:
+    text: "Reps, set 1"
+    below:
+      text: "More for Barbell Bench Press"
+- eraseText
+- inputText: " 5"
+- hideKeyboard
+- takeScreenshot: 133-set-in-lb
+- tapOn:
+    text: "Mark set complete"
+    index: 0
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- tapOn:
+    text: '(?i)keep original'
+    optional: true
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- takeScreenshot: 134-finish-in-lb

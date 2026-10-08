@@ -10,12 +10,24 @@ import { Card, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { success } from '@/lib/haptics';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { getMeasurements, logMeasurements } from '@/tracker/db/measurementRepo';
-import { MEASURES, MEASURE_LABEL, measureUnit, measurementsToSave, summarize, type MeasureKind } from '@/tracker/engine/measurements';
+import {
+  MEASURES,
+  MEASURE_LABEL,
+  measureToShown,
+  measureUnit,
+  measurementsToSave,
+  shownToMeasure,
+  summarize,
+  type MeasureKind,
+} from '@/tracker/engine/measurements';
 
 export default function LogMeasurementsScreen() {
   const router = useRouter();
+  // v0.27.0: sizes typed in cm or inches; always stored in cm.
+  const units = useUnits();
   const [typed, setTyped] = useState<Partial<Record<MeasureKind, string>>>({});
   const [last, setLast] = useState<Partial<Record<MeasureKind, number>>>({});
   const [saving, setSaving] = useState(false);
@@ -38,7 +50,9 @@ export default function LogMeasurementsScreen() {
 
   const onSave = async (): Promise<void> => {
     if (savingRef.current) return;
-    const { values, bad } = measurementsToSave(typed);
+    const { values: typedValues, bad } = measurementsToSave(typed);
+    const values: Partial<Record<MeasureKind, number>> = {};
+    for (const k of Object.keys(typedValues) as MeasureKind[]) values[k] = shownToMeasure(k, typedValues[k] as number, units);
     if (bad.length > 0) {
       Alert.alert('Check the numbers', `${bad.map((k) => MEASURE_LABEL[k]).join(', ')}: type a number above 0, like 82.5.`);
       return;
@@ -90,12 +104,12 @@ export default function LogMeasurementsScreen() {
                   value={typed[kind] ?? ''}
                   onChangeText={(t) => setTyped((cur) => ({ ...cur, [kind]: t }))}
                   keyboardType="decimal-pad"
-                  placeholder={last[kind] != null ? trimNum(last[kind] as number) : '—'}
+                  placeholder={last[kind] != null ? trimNum(measureToShown(kind, last[kind] as number, units)) : '—'}
                   placeholderTextColor={color.inkFaint}
-                  accessibilityLabel={`${MEASURE_LABEL[kind]} in ${measureUnit(kind) === '%' ? 'percent' : 'centimetres'}`}
+                  accessibilityLabel={`${MEASURE_LABEL[kind]} in ${measureUnit(kind, units) === '%' ? 'percent' : measureUnit(kind, units) === 'in' ? 'inches' : 'centimetres'}`}
                   style={{ flex: 1, fontFamily: type.mono, fontSize: type.size.body, color: color.ink, paddingVertical: 0, textAlign: 'right' }}
                 />
-                <Text style={{ width: 24, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{measureUnit(kind)}</Text>
+                <Text style={{ width: 24, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{measureUnit(kind, units)}</Text>
               </View>
             </View>
           ))}

@@ -2,7 +2,10 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { AnimatedNumber, Badge, Icon } from '@/components/ui';
 import { relativeDay } from '@/lib/date';
-import { fmtCompact, fmtInt, trimNum } from '@/lib/format';
+import { cw } from '@/ai/unitText';
+import { fmtCompact, fmtInt } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import type { WorkoutLoggedView } from '../payload';
@@ -16,6 +19,7 @@ function capitalize(s: string): string {
 
 /** Summary card for a logged session + trophy rows for any fresh PRs. */
 export function WorkoutLoggedCard({ data }: { data: WorkoutLoggedView }) {
+  const u = useUnits();
   return (
     <CardShell
       icon="check"
@@ -27,11 +31,11 @@ export function WorkoutLoggedCard({ data }: { data: WorkoutLoggedView }) {
       <View style={{ flexDirection: 'row', gap: space.sm, marginTop: space.lg }}>
         <View style={styles.statBox}>
           <AnimatedNumber
-            value={data.totalVolumeKg}
+            value={kgToShown(data.totalVolumeKg, u)}
             format={(n) => fmtCompact(n)}
             style={styles.statValue}
           />
-          <Text style={styles.statLabel}>kg volume</Text>
+          <Text style={styles.statLabel}>{`${weightUnitOf(u)} volume`}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statValue}>{fmtInt(data.setCount)}</Text>
@@ -96,8 +100,8 @@ export function WorkoutLoggedCard({ data }: { data: WorkoutLoggedView }) {
                   }}
                 >
                   {pr.kind === 'e1rm'
-                    ? `e1RM ${trimNum(pr.value)} kg`
-                    : `${trimNum(pr.weightKg)} kg × ${pr.reps}`}
+                    ? `e1RM ${cw(pr.value, u)}`
+                    : `${cw(pr.weightKg, u)} × ${pr.reps}`}
                 </Text>
               </View>
               <Badge label="NEW PR" tone="accent" />

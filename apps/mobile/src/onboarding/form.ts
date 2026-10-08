@@ -233,6 +233,12 @@ interface NumRule {
 const AGE_RULE: NumRule = { min: 10, max: 100, integer: true, label: 'age' };
 const HEIGHT_RULE: NumRule = { min: 90, max: 250, integer: false, label: 'height' };
 const WEIGHT_RULE: NumRule = { min: 20, max: 350, integer: false, label: 'body weight' };
+// v0.27.0: the same ranges typed in inches and pounds (stored in cm and kg as always).
+const HEIGHT_RULE_IN: NumRule = { min: 36, max: 98, integer: false, label: 'height' };
+const WEIGHT_RULE_LB: NumRule = { min: 44, max: 770, integer: false, label: 'body weight' };
+const CM_PER_INCH = 2.54;
+const KG_PER_POUND = 0.45359237;
+const round1 = (n: number): number => Math.round(n * 10) / 10;
 
 /** Blank → null (not provided). Anything present must be a sane number. */
 function parseOptionalNumber(raw: string, rule: NumRule): number | null | 'invalid' {
@@ -252,7 +258,14 @@ function parseOptionalNumber(raw: string, rule: NumRule): number | null | 'inval
 
 const GYM_NAME_MAX = 60;
 
-export function validateOnboarding(draft: OnboardingDraft): ValidationResult {
+/**
+ * `units` (v0.27.0): under 'imperial' the height is typed in inches and the body weight in
+ * pounds; the result is still cm and kg. Default 'metric' = exactly as before.
+ */
+export function validateOnboarding(draft: OnboardingDraft, units: 'metric' | 'imperial' = 'metric'): ValidationResult {
+  const imperial = units === 'imperial';
+  const hRule = imperial ? HEIGHT_RULE_IN : HEIGHT_RULE;
+  const wRule = imperial ? WEIGHT_RULE_LB : WEIGHT_RULE;
   const name = normalizeName(draft.name);
   if (name.length === 0) {
     return { ok: false, field: 'name', message: 'Enter your name so your coach knows who you are.' };
@@ -277,14 +290,17 @@ export function validateOnboarding(draft: OnboardingDraft): ValidationResult {
   if (age === 'invalid') {
     return { ok: false, field: 'age', message: `Enter an age between ${AGE_RULE.min} and ${AGE_RULE.max}, or leave it blank.` };
   }
-  const heightCm = parseOptionalNumber(draft.heightCm, HEIGHT_RULE);
-  if (heightCm === 'invalid') {
-    return { ok: false, field: 'heightCm', message: `Enter a height between ${HEIGHT_RULE.min} and ${HEIGHT_RULE.max} cm, or leave it blank.` };
+  const heightTyped = parseOptionalNumber(draft.heightCm, hRule);
+  if (heightTyped === 'invalid') {
+    return { ok: false, field: 'heightCm', message: `Enter a height between ${hRule.min} and ${hRule.max} ${imperial ? 'inches' : 'cm'}, or leave it blank.` };
   }
-  const bodyWeightKg = parseOptionalNumber(draft.bodyWeightKg, WEIGHT_RULE);
-  if (bodyWeightKg === 'invalid') {
-    return { ok: false, field: 'bodyWeightKg', message: `Enter a body weight between ${WEIGHT_RULE.min} and ${WEIGHT_RULE.max} kg, or leave it blank.` };
+  const weightTyped = parseOptionalNumber(draft.bodyWeightKg, wRule);
+  if (weightTyped === 'invalid') {
+    return { ok: false, field: 'bodyWeightKg', message: `Enter a body weight between ${wRule.min} and ${wRule.max} ${imperial ? 'lb' : 'kg'}, or leave it blank.` };
   }
+  const heightCm = heightTyped != null && imperial ? round1(heightTyped * CM_PER_INCH) : heightTyped;
+  // Unrounded: 165 lb must come back as 165 lb, not 164.9 (v0.27.0 review).
+  const bodyWeightKg = weightTyped != null && imperial ? weightTyped * KG_PER_POUND : weightTyped;
 
   const gymName = draft.gymName.trim().replace(/\s+/g, ' ');
   if (gymName.length > GYM_NAME_MAX) {

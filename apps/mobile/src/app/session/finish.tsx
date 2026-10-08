@@ -14,6 +14,7 @@ import {
   Skeleton,
 } from '@/components/ui';
 import { fmtInt } from '@/lib/format';
+import { useUnits } from '@/lib/useUnits';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { SessionSummary } from '@/tracker/components/SessionSummary';
@@ -26,6 +27,7 @@ import { workoutShareInput } from '@/tracker/share/workoutInput';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
 export default function FinishScreen() {
+  useUnits(); // v0.27.0: the record and set texts follow Profile → Units
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = typeof params.id === 'string' ? params.id : params.id?.[0];

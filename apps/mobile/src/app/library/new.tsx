@@ -15,11 +15,14 @@ import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 
 import { Chip, GhostButton, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { getAllExercises } from '@/db/repos/exerciseRepo';
+import { stepFor } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { Exercise } from '@/types/models';
 
 import { MUSCLE_LABEL, MUSCLES, type Muscle } from '@/tracker/catalog/muscles';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
+import { incrementChoices, pickedIncrement } from '@/tracker/components/unitText';
 import { createCustomExercise, setExerciseMedia, updateCustomExercise } from '@/tracker/db/customExercise';
 import { exerciseHasSets, getTrackerExercise, type TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { LOG_TYPE_LABEL, LOG_TYPES, type LogType } from '@/tracker/engine/logTypes';
@@ -35,7 +38,6 @@ import {
 type Equipment = Exercise['equipment'];
 
 const EQUIPMENTS: Equipment[] = ['barbell', 'dumbbell', 'machine', 'cable', 'bodyweight', 'other'];
-const INCREMENTS = [0.5, 1, 2.5, 5];
 
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
 const norm = (s: string): string => s.toLowerCase().trim().replace(/\s+/g, ' ');
@@ -62,6 +64,8 @@ export default function NewExerciseScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const editId = typeof params.id === 'string' ? params.id : params.id?.[0];
+  // v0.27.0: the increment chips read kg or lb; the step is stored in kg.
+  const units = useUnits();
 
   const [existing, setExisting] = useState<TrackerExercise | null>(null);
   const [typeLocked, setTypeLocked] = useState(false);
@@ -71,7 +75,7 @@ export default function NewExerciseScreen() {
   const [secondary, setSecondary] = useState<Muscle[]>([]);
   const [equipment, setEquipment] = useState<Equipment | null>(null);
   const [isCompound, setIsCompound] = useState(false);
-  const [increment, setIncrement] = useState<number>(2.5);
+  const [increment, setIncrement] = useState<number>(() => stepFor(2.5, units));
   const [countsBodyweight, setCountsBodyweight] = useState(false);
   const [media, setMedia] = useState<PickedMedia | null>(null);
   const [saving, setSaving] = useState(false);
@@ -135,7 +139,7 @@ export default function NewExerciseScreen() {
 
   const pickEquipment = (eq: Equipment): void => {
     setEquipment(eq);
-    setIncrement(defaultIncrement(eq));
+    setIncrement(stepFor(defaultIncrement(eq), units));
   };
 
   const pickType = (t: LogType): void => {
@@ -344,8 +348,8 @@ export default function NewExerciseScreen() {
                 <View style={{ gap: space.sm }}>
                   <FieldLabel>Weight increment</FieldLabel>
                   <View style={{ flexDirection: 'row', gap: space.sm }}>
-                    {INCREMENTS.map((n) => (
-                      <Chip key={n} label={`${n} kg`} selected={increment === n} onPress={() => setIncrement(n)} />
+                    {incrementChoices(units).map((c, i) => (
+                      <Chip key={c.label} label={c.label} selected={pickedIncrement(increment, units) === i} onPress={() => setIncrement(c.kg)} />
                     ))}
                   </View>
                 </View>

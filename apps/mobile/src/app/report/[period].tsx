@@ -12,6 +12,8 @@ import { BarChart, HBarList } from '@/components/charts';
 import { Badge, Card, EmptyState, GlassCard, HeroCard, Icon, IconButton, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { fmtCompact, fmtInt, trimNum } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { MonthGrid } from '@/tracker/components/MonthGrid';
@@ -89,23 +91,26 @@ function Favourites({ items }: { items: MonthReport['topExercises'] }) {
 }
 
 function BodyweightLine({ change }: { change: MonthReport['bodyweight'] }) {
+  const units = useUnits(); // v0.27.0: kg or lb
   if (!change) return null;
   return (
     <Card style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
       <Icon name="scale" size={20} color={color.accent} />
       <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>Body weight</Text>
       <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>
-        {trimNum(change.start)} → {trimNum(change.end)} kg
+        {trimNum(kgToShown(change.start, units))} → {trimNum(kgToShown(change.end, units))} {weightUnitOf(units)}
       </Text>
       <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.inkMuted }}>
         ({change.change > 0 ? '+' : change.change < 0 ? '−' : ''}
-        {trimNum(Math.abs(change.change))})
+        {trimNum(Math.abs(kgToShown(change.change, units)))})
       </Text>
     </Card>
   );
 }
 
 function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
+  const units = useUnits(); // v0.27.0: kg or lb
+  const wu = weightUnitOf(units);
   const r = data.report;
   const t = r.totals;
   const prevName = monthName(shiftMonth(r.month, -1));
@@ -118,7 +123,7 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
       <Hero
         big={`${t.workouts} ${t.workouts === 1 ? 'workout' : 'workouts'}`}
         label={r.complete ? monthTitle(r.month) : `${monthName(r.month)} so far`}
-        line={`${timeText(t)} · ${fmtInt(t.volumeKg)} kg · ${setsText(t.sets)}`}
+        line={`${timeText(t)} · ${fmtInt(kgToShown(t.volumeKg, units))} ${wu} · ${setsText(t.sets)}`}
       />
       <CoachNote text={r.note} />
       {r.previous && r.complete ? (
@@ -129,7 +134,7 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
               <StatTile label="Workouts" value={t.workouts} delta={changeText(t.workouts, r.previous.workouts, 'count') ?? undefined} />
             </View>
             <View style={{ flex: 1 }}>
-              <StatTile label="Volume" value={fmtCompact(t.volumeKg)} unit="kg" delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct') ?? undefined} />
+              <StatTile label="Volume" value={fmtCompact(kgToShown(t.volumeKg, units))} unit={wu} delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct') ?? undefined} />
             </View>
             <View style={{ flex: 1 }}>
               <StatTile label="Sets" value={t.sets} delta={changeText(t.sets, r.previous.sets, 'count') ?? undefined} />
@@ -178,6 +183,8 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
 }
 
 function YearBody({ y }: { y: YearReview }) {
+  const units = useUnits(); // v0.27.0: kg or lb
+  const wu = weightUnitOf(units);
   const t = y.totals;
   if (t.workouts === 0) {
     const e = emptyReportText('year', y.complete, String(y.year));
@@ -189,7 +196,7 @@ function YearBody({ y }: { y: YearReview }) {
       <Hero
         big={`${fmtInt(t.workouts)} ${t.workouts === 1 ? 'workout' : 'workouts'}`}
         label={y.complete ? `${y.year} in review` : `${y.year} so far`}
-        line={`${timeText(t)} · ${bigNumber(t.volumeKg)} kg · ${setsText(t.sets)}`}
+        line={`${timeText(t)} · ${bigNumber(Math.round(kgToShown(t.volumeKg, units)))} ${wu} · ${setsText(t.sets)}`}
       />
       <CoachNote text={y.note} />
       <View>
@@ -219,7 +226,7 @@ function YearBody({ y }: { y: YearReview }) {
             {y.gain.name} · up {y.gain.pct}%
           </Text>
           <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-            Estimated 1-rep max about {y.gain.fromKg} → {y.gain.toKg} kg
+            Estimated 1-rep max about {Math.round(kgToShown(y.gain.fromKg, units))} → {Math.round(kgToShown(y.gain.toKg, units))} {wu}
           </Text>
         </Card>
       ) : null}

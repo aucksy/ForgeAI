@@ -1,12 +1,17 @@
-/** Bottom-sheet plate calculator (kg): target + bar -> per-side plate stack. */
+/**
+ * Bottom-sheet plate calculator: target + bar -> per-side plate stack. Works in kg; under
+ * "lb, miles" (v0.27.0) the target is typed in lb and the bar and plates are the pound set.
+ */
 import { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 
 import { Icon } from '@/components/ui';
-import { trimNum } from '@/lib/format';
+import { shownToKg, weightUnitOf } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { BAR_OPTIONS_KG, DEFAULT_BAR_KG, computePlates } from '../services/plateMath';
+import { barOptionsKg, computePlates, defaultBarKg, platesKg } from '../services/plateMath';
+import { kgToTyped, parseTyped, showW } from './unitText';
 
 export function PlateCalcSheet({
   visible,
@@ -17,19 +22,26 @@ export function PlateCalcSheet({
   initialKg: number;
   onClose: () => void;
 }) {
+  const units = useUnits();
+  const unit = weightUnitOf(units);
   const [text, setText] = useState('');
-  const [barKg, setBarKg] = useState<number>(DEFAULT_BAR_KG);
+  const [barKg, setBarKg] = useState<number>(() => defaultBarKg(units));
 
   useEffect(() => {
-    if (visible) setText(initialKg > 0 ? String(initialKg) : '');
-  }, [visible, initialKg]);
+    if (visible) setText(initialKg > 0 ? kgToTyped(initialKg, units) : '');
+  }, [visible, initialKg, units]);
+  // A unit switch swaps the bar set (20 kg ↔ 45 lb).
+  useEffect(() => {
+    setBarKg(defaultBarKg(units));
+  }, [units]);
 
+  // The typed target, in kg (typed pounds turned into kg).
   const target = useMemo(() => {
-    const n = parseFloat(text.replace(',', '.'));
-    return Number.isFinite(n) ? n : 0;
-  }, [text]);
+    const n = parseTyped(text);
+    return n != null && Number.isFinite(n) ? shownToKg(n, units) : 0;
+  }, [text, units]);
 
-  const result = useMemo(() => (target > 0 ? computePlates(target, barKg) : null), [target, barKg]);
+  const result = useMemo(() => (target > 0 ? computePlates(target, barKg, platesKg(units)) : null), [target, barKg, units]);
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -70,7 +82,7 @@ export function PlateCalcSheet({
             onChangeText={setText}
             keyboardType="decimal-pad"
             selectTextOnFocus
-            placeholder="kg"
+            placeholder={unit}
             placeholderTextColor={color.inkMuted}
             style={{
               flex: 1,
@@ -93,7 +105,7 @@ export function PlateCalcSheet({
           <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary, width: 64 }}>
             Bar
           </Text>
-          {BAR_OPTIONS_KG.map((b) => {
+          {barOptionsKg(units).map((b) => {
             const on = barKg === b;
             return (
               <Pressable
@@ -109,7 +121,7 @@ export function PlateCalcSheet({
                 }}
               >
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: on ? color.accent : color.inkSecondary }}>
-                  {b} kg
+                  {showW(b, units)} {unit}
                 </Text>
               </Pressable>
             );
@@ -137,7 +149,7 @@ export function PlateCalcSheet({
                     }}
                   >
                     <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.accentBright }}>
-                      {trimNum(p)}
+                      {showW(p, units)}
                     </Text>
                   </View>
                 ))}
@@ -149,11 +161,11 @@ export function PlateCalcSheet({
             )}
             {!result.exact ? (
               <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.warning }}>
-                Closest achievable: {trimNum(result.achievableKg)} kg (target {trimNum(result.targetKg)} kg)
+                Closest achievable: {showW(result.achievableKg, units)} {unit} (target {showW(result.targetKg, units)} {unit})
               </Text>
             ) : (
               <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
-                {trimNum(result.achievableKg)} kg · each side loaded the same
+                {showW(result.achievableKg, units)} {unit} · each side loaded the same
               </Text>
             )}
           </View>

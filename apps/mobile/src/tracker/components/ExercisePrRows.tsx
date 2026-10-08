@@ -122,7 +122,7 @@ export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession
             icon={ICON.pace}
             label={RECORD_LABEL.pace}
             value="—"
-            sub={`No set of ${PACE_BASIS[ctx.distUnit].words} or more yet`}
+            sub={`No set of ${PACE_BASIS.km.words} or more yet`}
             onPress={null}
           />
         ) : null}

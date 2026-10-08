@@ -161,7 +161,7 @@ describe('runs keep their best pace, not their longest time', () => {
     // Behind the i beside "Records" (opened on the phone in device QA part F), and a "—" row
     // until a set of 1 km or more is logged — also on a bike logged by time only (review).
     expect(src).toMatch(/<InfoHeading title="Records" info=\{paceRuleText\(ctx\.distUnit\)\} \/>/);
-    expect(src).toMatch(/No set of \$\{PACE_BASIS\[ctx\.distUnit\]\.words\} or more yet/);
+    expect(src).toMatch(/No set of \$\{PACE_BASIS\.km\.words\} or more yet/);
     expect(src).toMatch(/if \(bests\.length === 0 && ladder\.length === 0 && !keepsPace\) return null;/);
   });
 

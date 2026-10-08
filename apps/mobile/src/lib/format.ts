@@ -1,5 +1,7 @@
 import type { UnitSystem } from '@/types/models';
 
+import { displayUnits, kgToShown, weightUnitOf } from './units';
+
 export const KG_PER_LB = 0.45359237;
 
 export function kgToDisplay(kg: number, units: UnitSystem): number {
@@ -18,6 +20,20 @@ export function weightUnit(units: UnitSystem): 'kg' | 'lb' {
 export function fmtWeight(kg: number, units: UnitSystem = 'metric'): string {
   const v = kgToDisplay(kg, units);
   return `${trimNum(v)} ${weightUnit(units)}`;
+}
+
+/**
+ * A weight in a sentence, in the member's unit, trimmed like `trimNum` (1 decimal):
+ * "62.5 kg" / "137.8 lb". Under "kg, km" it is exactly `${trimNum(kg)} kg`, so older
+ * sentences read the same.
+ */
+export function kgText(kg: number, u: UnitSystem = displayUnits()): string {
+  return `${kgNum(kg, u)} ${weightUnitOf(u)}`;
+}
+
+/** Just the number of `kgText`: "62.5" / "137.8". */
+export function kgNum(kg: number, u: UnitSystem = displayUnits()): string {
+  return trimNum(kgToShown(kg, u));
 }
 
 /** 12480 -> "12,480" */

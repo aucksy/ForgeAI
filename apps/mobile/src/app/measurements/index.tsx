@@ -10,11 +10,13 @@ import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { Card, Chip, EmptyState, IconButton, PrimaryButton, Screen, SectionHeader, Skeleton } from '@/components/ui';
 import { shortDate, tinyDate } from '@/lib/date';
 import { trimNum } from '@/lib/format';
+import { useUnits } from '@/lib/useUnits';
 import { chart, color, radius, space, type } from '@/theme/tokens';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
 import { deleteMeasurement, getMeasurements } from '@/tracker/db/measurementRepo';
 import {
   MEASURE_LABEL,
+  measureToShown,
   measureUnit,
   seriesFor,
   summarize,
@@ -32,6 +34,8 @@ function signed(n: number): string {
 
 export default function MeasurementsScreen() {
   const router = useRouter();
+  // v0.27.0: sizes shown in cm or inches (stored in cm).
+  const units = useUnits();
   const [entries, setEntries] = useState<MeasurementEntry[] | null>(null);
   const [picked, setPicked] = useState<MeasureKind | null>(null);
 
@@ -52,12 +56,15 @@ export default function MeasurementsScreen() {
 
   const summary = useMemo(() => summarize(entries ?? []), [entries]);
   const kind: MeasureKind | null = picked && summary.some((s) => s.kind === picked) ? picked : summary[0]?.kind ?? null;
-  const points = useMemo(() => (kind ? seriesFor(entries ?? [], kind) : []), [entries, kind]);
+  const points = useMemo(
+    () => (kind ? seriesFor(entries ?? [], kind).map((p) => ({ ...p, y: measureToShown(kind, p.y, units) })) : []),
+    [entries, kind, units],
+  );
   const current = summary.find((s) => s.kind === kind) ?? null;
-  const unit = kind ? measureUnit(kind) : 'cm';
+  const unit = kind ? measureUnit(kind, units) : measureUnit('waist', units);
 
   const onDelete = (e: MeasurementEntry) => {
-    Alert.alert('Delete this entry?', `${MEASURE_LABEL[e.kind]} ${trimNum(e.value)} ${measureUnit(e.kind)} on ${shortDate(e.dateISO)}.`, [
+    Alert.alert('Delete this entry?', `${MEASURE_LABEL[e.kind]} ${trimNum(measureToShown(e.kind, e.value, units))} ${measureUnit(e.kind, units)} on ${shortDate(e.dateISO)}.`, [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
@@ -96,13 +103,13 @@ export default function MeasurementsScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: space.md }}>
                 <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{MEASURE_LABEL[kind]}</Text>
                 <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h2, color: color.ink }}>
-                  {trimNum(current.latest)}
+                  {trimNum(measureToShown(current.kind, current.latest, units))}
                   <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.inkMuted }}> {unit}</Text>
                 </Text>
               </View>
               {current.change !== null ? (
                 <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.md }}>
-                  {signed(current.change)} {unit} since {tinyDate(points[0].x)}
+                  {signed(measureToShown(current.kind, current.change, units))} {unit} since {tinyDate(points[0].x)}
                 </Text>
               ) : null}
               {points.length >= 2 ? (
@@ -122,17 +129,17 @@ export default function MeasurementsScreen() {
                     key={s.kind}
                     onPress={() => setPicked(s.kind)}
                     accessibilityRole="button"
-                    accessibilityLabel={`${MEASURE_LABEL[s.kind]} ${trimNum(s.latest)} ${measureUnit(s.kind)}`}
+                    accessibilityLabel={`${MEASURE_LABEL[s.kind]} ${trimNum(measureToShown(s.kind, s.latest, units))} ${measureUnit(s.kind, units)}`}
                     style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: space.sm, gap: space.md }}
                   >
                     <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: s.kind === kind ? color.accent : color.ink }}>
                       {MEASURE_LABEL[s.kind]}
                     </Text>
                     {s.change !== null ? (
-                      <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted }}>{signed(s.change)}</Text>
+                      <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted }}>{signed(measureToShown(s.kind, s.change, units))}</Text>
                     ) : null}
                     <Text style={{ width: 86, textAlign: 'right', fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>
-                      {trimNum(s.latest)} {measureUnit(s.kind)}
+                      {trimNum(measureToShown(s.kind, s.latest, units))} {measureUnit(s.kind, units)}
                     </Text>
                   </Pressable>
                 ))}
@@ -150,7 +157,7 @@ export default function MeasurementsScreen() {
                       key={e.id}
                       onPress={() => onDelete(e)}
                       accessibilityRole="button"
-                      accessibilityLabel={`${shortDate(e.dateISO)}, ${trimNum(e.value)} ${unit}. Tap to delete.`}
+                      accessibilityLabel={`${shortDate(e.dateISO)}, ${trimNum(measureToShown(e.kind, e.value, units))} ${unit}. Tap to delete.`}
                       style={{
                         flexDirection: 'row',
                         justifyContent: 'space-between',
@@ -165,7 +172,7 @@ export default function MeasurementsScreen() {
                     >
                       <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>{shortDate(e.dateISO)}</Text>
                       <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>
-                        {trimNum(e.value)} {unit}
+                        {trimNum(measureToShown(e.kind, e.value, units))} {unit}
                       </Text>
                     </Pressable>
                   ))}

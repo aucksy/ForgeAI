@@ -58,7 +58,7 @@ function SetChip({
     lt === 'weight_reps'
       ? `${trimNum(kgToDisplay(set.weightKg, units))} × ${set.reps}`
       : lt === 'assisted'
-        ? `${trimNum(typedWeight(lt, set.weightKg))} × ${set.reps}`
+        ? `${trimNum(kgToDisplay(typedWeight(lt, set.weightKg), units))} × ${set.reps}`
         : fmtSetCompact(set, lt, distUnit).replace('×', ' × ');
   return (
     <View

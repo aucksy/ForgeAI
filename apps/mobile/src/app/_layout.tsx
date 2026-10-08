@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { KeyboardRoom } from '@/components/KeyboardRoom';
+import { startUnitSync } from '@/lib/useUnits';
 import { useCloud } from '@/store/cloudStore';
 import { initDb } from '@/db';
 import { initTrackerSchema } from '@/tracker/db/trackerSchema';
@@ -20,6 +21,8 @@ import { color } from '@/theme/tokens';
 import { useAppFonts } from '@/theme/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+// v0.27.0: kg / lb and km / miles — the pure formatters follow Profile → Units.
+startUnitSync();
 
 export default function RootLayout() {
   const fontsLoaded = useAppFonts();

@@ -16,6 +16,7 @@ import { Card, Icon, Screen, SectionHeader } from '@/components/ui';
 import { ExportCard } from '@/tracker/components/ExportCard';
 import { ImportCard } from '@/tracker/components/ImportCard';
 import { WorkoutPrefsCard } from '@/tracker/components/WorkoutPrefsCard';
+import { PhoneCard } from '@/tracker/phone/PhoneCard';
 import type { BodyFigure } from '@/tracker/catalog/bodyMapPaths';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import {
@@ -38,11 +39,11 @@ const PROVIDER_OPTIONS = [
   { id: 'local', label: 'Local demo', icon: 'zap' },
 ] as const satisfies readonly ChipOption<AiProviderId>[];
 
-// Demo ships kg-only (Indian gym context). Full pounds support — input parsing,
-// every coach reply string, chat cards and analytics — is a tracked enhancement;
-// exposing a half-converted lb toggle would read worse than kg-only.
+// v0.27.0 (tracker plan Phase 5): pounds and miles everywhere a weight or a kilometre shows
+// (stored metric as always; `lib/units.ts`). Metre exercises stay in metres.
 const UNIT_OPTIONS = [
-  { id: 'metric', label: 'kg' },
+  { id: 'metric', label: 'kg, km' },
+  { id: 'imperial', label: 'lb, miles' },
 ] as const satisfies readonly ChipOption<UnitSystem>[];
 
 const LANGUAGE_OPTIONS = [
@@ -219,16 +220,6 @@ export default function SettingsScreen() {
             selectedId={unitSystem}
             onSelect={setUnitSystem}
           />
-          <Text
-            style={{
-              fontFamily: type.body,
-              fontSize: type.size.caption,
-              color: color.inkMuted,
-              marginTop: space.sm,
-            }}
-          >
-            Pounds (lb) support is coming soon.
-          </Text>
           <View style={{ marginTop: space.lg }}>
             <ChipGroup
               label="Language"
@@ -270,6 +261,10 @@ export default function SettingsScreen() {
 
       <Section title="Workout" delay={175}>
         <WorkoutPrefsCard />
+      </Section>
+
+      <Section title="Around your phone" delay={190}>
+        <PhoneCard />
       </Section>
 
       <Section title="Gym sync" delay={210}>

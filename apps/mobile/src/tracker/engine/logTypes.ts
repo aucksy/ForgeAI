@@ -27,6 +27,8 @@
  *   both_side  two dumbbells AND one leg at a time                 ×4  dumbbell lunge, Bulgarian split squat
  */
 
+import { displayUnits, M_PER_MILE, weightUnitOf, wNum } from '@/lib/units';
+
 export type LogType = 'weight_reps' | 'reps' | 'weighted' | 'assisted' | 'time' | 'distance' | 'time_distance';
 
 export const LOG_TYPES: readonly LogType[] = [
@@ -140,33 +142,49 @@ export function columnHeads(
   mode: LoadMode,
   distUnit: DistUnit,
 ): { weight: string | null; reps: string | null; time: string | null; distance: string | null } {
+  // v0.27.0: the member's unit — "LB", "+LB", "ASSIST LB", "LB EACH", "MI".
+  const W = weightUnitOf().toUpperCase();
   return {
     weight: !hasWeight(t)
       ? null
       : t === 'weighted'
-        ? '+KG'
+        ? `+${W}`
         : t === 'assisted'
-          ? 'ASSIST KG'
+          ? `ASSIST ${W}`
           : weightIsEach(mode)
-            ? 'KG EACH'
-            : 'KG',
+            ? `${W} EACH`
+            : W,
     reps: hasReps(t) ? (repsPerSide(mode) ? 'REPS/SIDE' : 'REPS') : null,
     time: hasTime(t) ? 'TIME' : null,
-    distance: hasDistance(t) ? distUnit.toUpperCase() : null,
+    distance: hasDistance(t) ? shownDistUnit(distUnit).toUpperCase() : null,
   };
 }
 
 // ---------------------------------------------------------------- distance
 
-export type DistUnit = 'km' | 'm';
+/**
+ * An exercise's distance unit. The library gives 'km' or 'm'; v0.27.0 adds 'mi': under
+ * "lb, miles" a kilometre exercise is shown, typed and paced in miles (`shownDistUnit`).
+ * Metre exercises stay in metres. Distances are always stored in metres.
+ */
+export type DistUnit = 'km' | 'm' | 'mi';
+
+/** The unit this exercise is SHOWN in now: km becomes miles under "lb, miles". */
+export function shownDistUnit(unit: DistUnit): DistUnit {
+  return unit === 'km' && displayUnits() === 'imperial' ? 'mi' : unit;
+}
 
 /** Metres → the number the member types/reads in this unit. */
 export function distanceToUnit(m: number, unit: DistUnit): number {
-  return unit === 'km' ? Math.round((m / 1000) * 1000) / 1000 : Math.round(m);
+  const u = shownDistUnit(unit);
+  if (u === 'mi') return Math.round((m / M_PER_MILE) * 1000) / 1000;
+  return u === 'km' ? Math.round((m / 1000) * 1000) / 1000 : Math.round(m);
 }
 
 export function distanceFromUnit(v: number, unit: DistUnit): number {
-  return unit === 'km' ? Math.round(v * 1000 * 10) / 10 : Math.round(v * 10) / 10;
+  const u = shownDistUnit(unit);
+  if (u === 'mi') return Math.round(v * M_PER_MILE * 10) / 10;
+  return u === 'km' ? Math.round(v * 1000 * 10) / 10 : Math.round(v * 10) / 10;
 }
 
 /**
@@ -181,11 +199,12 @@ export function typedDistanceMatches(typed: number | null, storedM: number | nul
 /** "2.4 km", "500 m". */
 export function fmtDistance(m: number, unit: DistUnit): string {
   const v = distanceToUnit(m, unit);
-  return `${trim(v)} ${unit}`;
+  return `${trim(v)} ${shownDistUnit(unit)}`;
 }
 
-/** A total over several exercises: "5.2 km", or "800 m" under a kilometre. */
+/** A total over several exercises: "5.2 km", or "800 m" under a kilometre ("3.2 mi" under lb, miles). */
 export function fmtTotalDistance(m: number): string {
+  if (displayUnits() === 'imperial' && m >= M_PER_MILE / 10) return `${String(Math.round((m / M_PER_MILE) * 10) / 10)} mi`;
   return m >= 1000 ? `${String(Math.round(m / 100) / 10)} km` : `${Math.round(m)} m`;
 }
 
@@ -276,11 +295,11 @@ export function fmtSetCompact(s: SetValues, t: LogType, unit: DistUnit = 'km'): 
   switch (t) {
     case 'reps':
       // Older rows of a bodyweight move may still carry a weight.
-      return s.weightKg > 0 ? `+${trim(s.weightKg)}×${s.reps}` : s.weightKg < 0 ? `assist ${trim(-s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
+      return s.weightKg > 0 ? `+${wNum(s.weightKg)}×${s.reps}` : s.weightKg < 0 ? `assist ${wNum(-s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
     case 'weighted':
-      return s.weightKg > 0 ? `+${trim(s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
+      return s.weightKg > 0 ? `+${wNum(s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
     case 'assisted':
-      return s.weightKg < 0 ? `assist ${trim(-s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
+      return s.weightKg < 0 ? `assist ${wNum(-s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
     case 'time':
       return fmtDuration(s.durationSec ?? 0);
     case 'distance':
@@ -292,7 +311,7 @@ export function fmtSetCompact(s: SetValues, t: LogType, unit: DistUnit = 'km'): 
       return d > 0 ? fmtDistance(d, unit) : fmtDuration(tm);
     }
     default:
-      return `${trim(s.weightKg)}×${s.reps}`;
+      return `${wNum(s.weightKg)}×${s.reps}`;
   }
 }
 

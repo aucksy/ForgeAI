@@ -1,10 +1,13 @@
 /**
  * Body measurements — Phase 3. PURE. Free here (Hevy keeps all but two behind Pro).
  *
- * Ten common ones, head to toe. Lengths are centimetres (the app is kg / cm today — pounds
- * and inches come with Phase 5); body fat is a percentage. One value per measurement per
+ * Ten common ones, head to toe. Lengths are STORED in centimetres and shown in the member's
+ * unit (inches under "lb, miles", v0.27.0); body fat is a percentage. One value per measurement per
  * day: logging the same day again replaces it, like body weight.
  */
+import { trimNum } from '@/lib/format';
+import { cmToShown, displayUnits, lengthUnitOf, shownToCm, type UnitSystem } from '@/lib/units';
+
 export type MeasureKind = 'body_fat' | 'neck' | 'shoulders' | 'chest' | 'arm' | 'forearm' | 'waist' | 'hips' | 'thigh' | 'calf';
 
 /** Form and chip order: body fat, then head to toe. */
@@ -23,8 +26,24 @@ export const MEASURE_LABEL: Record<MeasureKind, string> = {
   calf: 'Calf',
 };
 
-export function measureUnit(kind: MeasureKind): '%' | 'cm' {
-  return kind === 'body_fat' ? '%' : 'cm';
+/** The unit shown beside a measurement: "%", "cm", or "in" under "lb, miles". */
+export function measureUnit(kind: MeasureKind, u: UnitSystem = displayUnits()): '%' | 'cm' | 'in' {
+  return kind === 'body_fat' ? '%' : lengthUnitOf(u);
+}
+
+/** A stored value (cm, or %) → the number shown. */
+export function measureToShown(kind: MeasureKind, value: number, u: UnitSystem = displayUnits()): number {
+  return kind === 'body_fat' ? value : cmToShown(value, u);
+}
+
+/** A typed value in the shown unit → the value to store (cm, or %). */
+export function shownToMeasure(kind: MeasureKind, value: number, u: UnitSystem = displayUnits()): number {
+  return kind === 'body_fat' ? value : shownToCm(value, u);
+}
+
+/** "81.5 cm", "32.1 in", "18.2 %" — a stored value in words. */
+export function fmtMeasure(kind: MeasureKind, value: number, u: UnitSystem = displayUnits()): string {
+  return `${trimNum(measureToShown(kind, value, u))} ${measureUnit(kind, u)}`;
 }
 
 export function isMeasureKind(v: unknown): v is MeasureKind {
@@ -51,7 +70,10 @@ export function parseMeasure(text: string): number | null {
   return v > 0 && Number.isFinite(v) ? v : Number.NaN;
 }
 
-/** The typed form → the values to save, or the names of the boxes that are not numbers. */
+/**
+ * The typed form → the values to save, or the names of the boxes that are not numbers.
+ * Values come back in the unit TYPED (rounded to 0.1); store them through `shownToMeasure`.
+ */
 export function measurementsToSave(typed: Partial<Record<MeasureKind, string>>): { values: Partial<Record<MeasureKind, number>>; bad: MeasureKind[] } {
   const values: Partial<Record<MeasureKind, number>> = {};
   const bad: MeasureKind[] = [];

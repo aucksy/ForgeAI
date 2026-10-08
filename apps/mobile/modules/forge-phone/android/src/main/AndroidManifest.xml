@@ -1,0 +1,24 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+  <uses-sdk tools:overrideLibrary="androidx.health.connect.client"/>
+  <!-- Health Connect: write each finished workout and its calories. Nothing is read. -->
+  <uses-permission android:name="android.permission.health.WRITE_EXERCISE"/>
+  <uses-permission android:name="android.permission.health.WRITE_ACTIVE_CALORIES_BURNED"/>
+  <queries>
+    <package android:name="com.google.android.apps.healthdata"/>
+  </queries>
+  <application>
+    <!-- Home-screen widgets: today's workout, and this week. -->
+    <receiver android:name="com.forgeai.phone.TodayWidget" android:exported="true" android:label="@string/forge_widget_today_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/forge_widget_today"/>
+    </receiver>
+    <receiver android:name="com.forgeai.phone.WeekWidget" android:exported="true" android:label="@string/forge_widget_week_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/forge_widget_week"/>
+    </receiver>
+  </application>
+</manifest>

@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+  <!-- v0.27.0: Health Connect's client library asks for Android 8; the app checks for Android 9+ before using it. -->
+  <uses-sdk tools:overrideLibrary="androidx.health.connect.client"/>
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:replace="android:maxSdkVersion"/>
   <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -37,6 +39,17 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="forgeai"/>
       </intent-filter>
+      <!-- Health Connect (Android 13 and older): "why ForgeAI asks" opens the app. -->
+      <intent-filter>
+        <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
+      </intent-filter>
     </activity>
+    <!-- Health Connect (Android 14+): the same, from the system's permission screens. -->
+    <activity-alias android:name="ViewPermissionUsageActivity" android:exported="true" android:targetActivity=".MainActivity" android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+        <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+      </intent-filter>
+    </activity-alias>
   </application>
 </manifest>

@@ -18,6 +18,7 @@ import { chatAnthropic } from '@/ai/providers/anthropic';
 import { chatGroq } from '@/ai/providers/groq';
 import { chatOpenAi } from '@/ai/providers/openai';
 import { buildSystemPrompt } from '@/ai/system';
+import { cunit } from '@/ai/unitText';
 import { COACH_TOOLS } from '@/ai/tools';
 import type { CoachCard, ProviderMessage, ProviderTurn } from '@/ai/types';
 
@@ -32,7 +33,7 @@ function genericHelp(): LocalReply {
     text: [
       "I'm your coach — talk to me naturally. Try:",
       '• "What\'s my workout today?" / "Aaj kya karna hai?"',
-      '• "Bench press 80 kg for 8, 7 and 6"',
+      cunit() === 'lb' ? '• "Bench press 185 lb for 8, 7 and 6"' : '• "Bench press 80 kg for 8, 7 and 6"',
       '• "I had 2 rotis, dal and butter chicken"',
       '• "How much protein left today?" · "Show my PRs" · "Weekly summary"',
     ].join('\n'),

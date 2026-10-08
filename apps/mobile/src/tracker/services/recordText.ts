@@ -4,6 +4,7 @@
  * share picture.
  */
 import { fmtInt, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
+import { displayUnits } from '@/lib/units';
 import type { UnitSystem } from '@/types/models';
 
 import { fmtDistance, fmtDuration, weightIsEach, type DistUnit, type LoadMode, type LogType } from '../engine/logTypes';
@@ -14,6 +15,7 @@ export interface RecordTextContext {
   logType: LogType;
   loadMode: LoadMode;
   distUnit: DistUnit;
+  /** Default: the member's choice (Profile → Units). */
   units?: UnitSystem;
 }
 
@@ -29,7 +31,7 @@ function each(hit: RecordHit, ctx: RecordTextContext): string {
 
 /** The record's number as a member reads it: "85 kg", "80 kg × 8", "15 reps", "1:30", "5:12 /km", "5 km". */
 export function recordValueText(hit: RecordHit, ctx: RecordTextContext): string {
-  const units = ctx.units ?? 'metric';
+  const units = ctx.units ?? displayUnits();
   const s = hit.set;
   switch (hit.kind) {
     case 'weight':
@@ -63,7 +65,7 @@ export function recordValueText(hit: RecordHit, ctx: RecordTextContext): string 
  * "5 km in 26:00".
  */
 export function recordDetailText(hit: RecordHit, ctx: RecordTextContext): string | null {
-  const units = ctx.units ?? 'metric';
+  const units = ctx.units ?? displayUnits();
   const s = hit.set;
   switch (hit.kind) {
     case 'weight':

@@ -5,6 +5,8 @@ import { Icon } from '@/components/ui';
 import { PressScale } from '@/components/ui/PressScale';
 import { relativeDay } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { SessionDetail } from '@/types/models';
@@ -12,6 +14,7 @@ import type { SessionDetail } from '@/types/models';
 import { dayTypeLabel } from '../services/finishSummary';
 
 export function WorkoutCard({ session, onPress }: { session: SessionDetail; onPress: () => void }) {
+  const units = useUnits(); // v0.27.0: kg or lb
   const workingSets = session.exercises.reduce((n, g) => n + g.sets.filter((s) => !s.isWarmup).length, 0);
   return (
     <PressScale
@@ -49,9 +52,9 @@ export function WorkoutCard({ session, onPress }: { session: SessionDetail; onPr
       </View>
       <View style={{ alignItems: 'flex-end' }}>
         <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }}>
-          {fmtInt(session.totalVolumeKg)}
+          {fmtInt(kgToShown(session.totalVolumeKg, units))}
         </Text>
-        <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted }}>kg</Text>
+        <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted }}>{weightUnitOf(units)}</Text>
       </View>
     </PressScale>
   );

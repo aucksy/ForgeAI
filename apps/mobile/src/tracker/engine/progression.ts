@@ -31,7 +31,8 @@
  *
  * All weights kg. History is newest first, sessions BEFORE today, warm-ups excluded.
  */
-import { trimNum } from '@/lib/format';
+import { kgText } from '@/lib/format';
+import { isImperial, roundToShownStep, stepFor } from '@/lib/units';
 import type { Exercise, OverloadTarget, UserProfile } from '@/types/models';
 
 import { fmtDurationWords, isBodyweightFamily, type LogType } from './logTypes';
@@ -231,11 +232,22 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const topReps = Math.max(...L.mainSets.map((s) => s.reps));
   const last = { weightKg: w, topReps, sets: L.mainSets.length, dateISO: L.dateISO };
   const step = learnStep(all, exercise, assisted);
+  const learned = learnedGap(all, assisted) > 0;
+  /**
+   * "lb, miles" with no step learned yet: a suggested weight lands on the member's own pound
+   * steps (135 → 140 lb, never 137.3 lb). A learned step is already in their unit, and
+   * "kg, km" is never touched. Never rounds to zero or past it.
+   */
+  const clean = (kg: number): number => {
+    if (!isImperial() || learned || sameWeight(kg, w)) return kg;
+    const r = roundToShownStep(kg, step);
+    return Math.sign(r) === Math.sign(kg) && Math.abs(r) > 1e-6 ? round3(r) : kg;
+  };
   /** " at 40 kg", " at +10 kg", " with 20 kg of help" — how the weight reads in a sentence. */
   const at = (kg: number) =>
-    assisted ? (kg < 0 ? ` with ${trimNum(-kg)} kg of help` : ' with no help') : kg > 0 ? ` at ${trimNum(kg)} kg` : '';
+    assisted ? (kg < 0 ? ` with ${kgText(-kg)} of help` : ' with no help') : kg > 0 ? ` at ${kgText(kg)}` : '';
   /** "40 kg", "20 kg of help", "no help". */
-  const load = (kg: number) => (assisted ? (kg < 0 ? `${trimNum(-kg)} kg of help` : 'no help') : `${trimNum(kg)} kg`);
+  const load = (kg: number) => (assisted ? (kg < 0 ? `${kgText(-kg)} of help` : 'no help') : `${kgText(kg)}`);
 
   const out = (
     rule: ProgRule,
@@ -265,7 +277,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   if (gap >= 21) {
     const weeks = Math.floor(gap / 7);
     if (gap >= 42 && !bodyweightOnly) {
-      const lighter = assisted ? round3(w - step) : stepDown(w, step);
+      const lighter = assisted ? clean(round3(w - step)) : stepDown(w, step, clean);
       if (lighter !== null) {
         return out(
           'R1b',
@@ -273,7 +285,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
           min,
           assisted
             ? `${weeks} weeks since your last ${name}. Start with a little more help, ${load(lighter)}, and build back.`
-            : `${weeks} weeks since your last ${name}. Start a little lighter at ${trimNum(lighter)} kg and build back.`,
+            : `${weeks} weeks since your last ${name}. Start a little lighter at ${kgText(lighter)} and build back.`,
         );
       }
     }
@@ -330,7 +342,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     const usedCredit = L.mainSets.some((s) => s.reps < max);
     const did = `You did ${repsList}${at(w)}${usedCredit ? ' with reps to spare' : ''}.`;
     if (assisted) {
-      const next = round3(w + step);
+      const next = clean(round3(w + step));
       if (next >= -1e-6) {
         // No help left to take away: the unassisted version is next.
         const harder = input.harder ? { kind: 'harder' as const, ...input.harder } : null;
@@ -350,16 +362,19 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       const expandCap = max + 4;
       if (minScore >= expandCap) {
         const goal = Math.max(1, min - 2);
-        return out('R2', w + step, goal, `${did} Time for ${trimNum(w + step)} kg — a big jump, so ${goal} reps is a win.`);
+        const up = clean(w + step);
+        return out('R2', up, goal, `${did} Time for ${kgText(up)} — a big jump, so ${goal} reps is a win.`);
       }
       const goal = Math.min(expandCap, Math.max(max + 2, lowestReps + 1));
       const pct = Math.round((step / w) * 100);
-      return out('R2b', w, goal, `The next step is ${trimNum(w + step)} kg, a ${pct}% jump. Add reps first: aim for ${goal}.`);
+      return out('R2b', w, goal, `The next step is ${kgText(clean(w + step))}, a ${pct}% jump. Add reps first: aim for ${goal}.`);
     }
     if (input.experience === 'beginner' && minScore >= max + 3 && w > 0 && (2 * step) / w <= DOUBLE_STEP_SHARE + 1e-9) {
-      return out('R2c', w + 2 * step, min, `That looked easy: ${repsList}${at(w)}. Jumping to ${trimNum(w + 2 * step)} kg.`);
+      const jump = clean(w + 2 * step);
+      return out('R2c', jump, min, `That looked easy: ${repsList}${at(w)}. Jumping to ${kgText(jump)}.`);
     }
-    return out('R2', w + step, min, `${did} Time for ${trimNum(w + step)} kg.`);
+    const up = clean(w + step);
+    return out('R2', up, min, `${did} Time for ${kgText(up)}.`);
   }
 
   // Sessions at today's main weight, newest first (the "run").
@@ -374,14 +389,14 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const sum = (s: Summary) => s.mainSets.map(score).reduce((a, b) => a + b, 0);
   if (judged.length >= 2 && best(judged[0]) < min && best(judged[1]) < min && sum(judged[0]) <= sum(judged[1])) {
     if (assisted) {
-      const more = round3(w - step);
+      const more = clean(round3(w - step));
       return out('R3', more, min, `Reps fell under ${min} twice${at(w)}. Use ${load(more)} and build back up.`);
     }
-    const lighter = stepDown(w, step);
+    const lighter = stepDown(w, step, clean);
     if (lighter !== null) {
-      return out('R3', lighter, min, `Reps fell under ${min} twice at ${trimNum(w)} kg. Drop to ${trimNum(lighter)} kg and build back up.`);
+      return out('R3', lighter, min, `Reps fell under ${min} twice at ${kgText(w)}. Drop to ${kgText(lighter)} and build back up.`);
     }
-    return out('R3', w, min, `Reps fell under ${min} twice at ${trimNum(w)} kg. Stay here and build back to ${min}.`);
+    return out('R3', w, min, `Reps fell under ${min} twice at ${kgText(w)}. Stay here and build back to ${min}.`);
   }
 
   // R4 — stalled: 4 workouts at this weight and no better than the oldest of them.
@@ -394,14 +409,14 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     if (judged.slice(0, 3).every((s) => total(s) <= oldest)) {
       const mid = Math.round((min + max) / 2);
       if (assisted) {
-        const more = round3(w - step);
+        const more = clean(round3(w - step));
         return out('R4', more, mid, `Stuck${at(w)} for ${judged.length} workouts. A little more help, ${load(more)}, usually breaks it.`);
       }
-      const lighter = stepDown(w, step);
+      const lighter = stepDown(w, step, clean);
       if (lighter !== null) {
-        return out('R4', lighter, mid, `Stuck at ${trimNum(w)} kg for ${judged.length} workouts. A small step back to ${trimNum(lighter)} kg usually breaks it.`);
+        return out('R4', lighter, mid, `Stuck at ${kgText(w)} for ${judged.length} workouts. A small step back to ${kgText(lighter)} usually breaks it.`);
       }
-      return out('R4', w, mid, `Stuck at ${trimNum(w)} kg for ${judged.length} workouts. Keep the weight and aim for ${mid} clean reps.`);
+      return out('R4', w, mid, `Stuck at ${kgText(w)} for ${judged.length} workouts. Keep the weight and aim for ${mid} clean reps.`);
     }
   }
 
@@ -583,7 +598,7 @@ type LineInput = Pick<OverloadTarget, 'targetWeightKg' | 'targetRepsMin' | 'targ
  * "Assist 15 kg · aim for 8", and on a first time "First time · find a weight for 8–12"
  * (never a guessed number).
  */
-export function targetLine(t: LineInput, fmtKg: (kg: number) => string = (kg) => `${trimNum(kg)} kg`): string {
+export function targetLine(t: LineInput, fmtKg: (kg: number) => string = (kg) => kgText(kg)): string {
   const range = t.targetRepsMin === t.targetRepsMax ? `${t.targetRepsMin}` : `${t.targetRepsMin}–${t.targetRepsMax}`;
   const lt = t.logType ?? 'weight_reps';
   if (t.free) return lt === 'time_distance' ? 'Time and distance' : lt === 'distance' ? 'Distance' : 'Time';
@@ -689,11 +704,18 @@ export function score(s: ProgSet): number {
  * The most common weight INCREASE between one workout and the next (in date order) — the
  * jump the member actually makes at their gym. Drops (deloads, comebacks) are ignored, and
  * a jump seen only once is ignored as a typo. Ties → the smaller jump. Falls back to the
- * catalogue increment (2.5 kg when unset). `signed` (assisted moves): help is stored as a
+ * catalogue increment (2.5 kg when unset; its nearest pound step under "lb, miles"). `signed` (assisted moves): help is stored as a
  * negative weight, so taking help away is an increase too and non-positive weights count.
  */
 export function learnStep(sessions: Summary[], exercise: Pick<Exercise, 'incrementKg'>, signed = false): number {
-  const fallback = exercise.incrementKg > 0 ? exercise.incrementKg : 2.5;
+  // Under "lb, miles" the catalogue's kg step becomes the nearest pound step (2.5 kg → 5 lb).
+  const fallback = stepFor(exercise.incrementKg > 0 ? exercise.incrementKg : 2.5);
+  const gap = learnedGap(sessions, signed);
+  return gap > 0 ? gap : fallback;
+}
+
+/** The learned jump of `learnStep`, or 0 when none was seen twice. */
+function learnedGap(sessions: Summary[], signed: boolean): number {
   const byDate = [...sessions].filter((s) => signed || s.mainWeight > 0).sort((a, b) => a.dateISO.localeCompare(b.dateISO));
   const gaps = new Map<number, number>();
   for (let i = 1; i < byDate.length; i++) {
@@ -708,13 +730,16 @@ export function learnStep(sessions: Summary[], exercise: Pick<Exercise, 'increme
       bestGap = g;
     }
   }
-  return bestGap > 0 ? bestGap : fallback;
+  return bestGap;
 }
 
-/** About 10% lighter, in whole steps (nearest, at least one). null when that would reach zero. */
-function stepDown(weightKg: number, step: number): number | null {
+/**
+ * About 10% lighter, in whole steps (nearest, at least one). null when that would reach zero.
+ * `clean` lands it on the member's pound steps (see `computeProgressionTarget`).
+ */
+function stepDown(weightKg: number, step: number, clean: (kg: number) => number = (kg) => kg): number | null {
   const steps = Math.max(1, Math.round((weightKg * 0.1) / step));
-  const next = round3(weightKg - steps * step);
+  const next = clean(round3(weightKg - steps * step));
   return next > 0 ? next : null;
 }
 

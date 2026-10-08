@@ -20,6 +20,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { Badge, GhostButton, Icon } from '@/components/ui';
 import type { BadgeProps } from '@/components/ui';
 import { getExerciseById } from '@/db/repos/exerciseRepo';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { columnHeads, LOAD_MODE_LABEL, LOAD_MODES, repsPerSide, weightIsEach } from '@/tracker/engine/logTypes';
 import { targetBadge, targetFill, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
@@ -100,6 +101,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const earlier = useActiveWorkout(useShallow((s) => earlierCards(s.exercises, exercise.key)));
   const defaultRest = useRestTimer((s) => s.defaultSec);
   const showRpe = useTrackerPrefs((s) => s.advancedSets);
+  // v0.27.0: the column heads (KG / LB, KM / MI) and the Target line follow Profile → Units.
+  useUnits();
 
   const [sheet, setSheet] = useState<SheetName>(null);
   const [typeFor, setTypeFor] = useState<string | null>(null);

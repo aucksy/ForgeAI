@@ -9,7 +9,7 @@ import * as prRepo from '@/db/repos/prRepo';
 import * as userRepo from '@/db/repos/userRepo';
 import * as workoutRepo from '@/db/repos/workoutRepo';
 import { todayISO } from '@/lib/date';
-import { fmtInt, trimNum } from '@/lib/format';
+import { fmtInt } from '@/lib/format';
 import { getTrackerExercise, getTrackerExercisesByIds } from '@/tracker/db/exerciseInfo';
 import { fmtSetCompact, fmtDuration, storedWeight, type LogType } from '@/tracker/engine/logTypes';
 import { targetLine } from '@/tracker/engine/progression';
@@ -20,6 +20,7 @@ import { getDashboardDataPhase2 } from '@/tracker/services/dashboardPhase2';
 import { getMeaningfulPrs, meaningfulPrs } from '@/tracker/services/records';
 import { getSessionDetailWithVolume, withVolume } from '@/tracker/services/volumeService';
 import type { PlanDayFull } from '@/db/repos/planRepo';
+import { cvol, cwTight } from '@/ai/unitText';
 import * as routineRepo from '@/tracker/db/routineRepo';
 import { getRecentSessionDetailsBatched } from '@/tracker/db/sessionDetails';
 import { deleteSessionAndReconcile } from '@/tracker/services/prRebuild';
@@ -304,7 +305,7 @@ export async function summarizeWorkoutRange(
 }
 
 function fmtSet(weightKg: number, reps: number): string {
-  return `${trimNum(weightKg)}kg × ${reps}`;
+  return `${cwTight(weightKg)} × ${reps}`;
 }
 
 function r1(n: number): number {
@@ -326,10 +327,10 @@ function workoutLoggedCardText(detail: SessionDetail, newPrs: PrWithName[]): str
   );
   const pr = newPrs.length
     ? ` New PR${newPrs.length > 1 ? 's' : ''}: ${newPrs
-        .map((p) => `${p.exerciseName} ${trimNum(p.value)}kg (${p.kind === 'e1rm' ? 'e1RM' : p.kind})`)
+        .map((p) => `${p.exerciseName} ${cwTight(p.value)} (${p.kind === 'e1rm' ? 'e1RM' : p.kind})`)
         .join(', ')}.`
     : '';
-  return `Logged ${countWord(detail.exercises.length, 'exercise')}, ${countWord(setCount, 'set')} — ${fmtInt(detail.totalVolumeKg)} kg volume.${pr}`;
+  return `Logged ${countWord(detail.exercises.length, 'exercise')}, ${countWord(setCount, 'set')} — ${cvol(detail.totalVolumeKg)} volume.${pr}`;
 }
 
 /** Build the 'workout_logged' card (payload = SessionDetail + newPrs). */
@@ -478,7 +479,7 @@ export const COACH_TOOLS: CoachTool[] = [
               .join(', '),
           })),
           newPrs: logged.newPrs.map(
-            (p) => `${p.exerciseName} ${p.kind} ${trimNum(p.value)}kg (${fmtSet(p.weightKg, p.reps)})`,
+            (p) => `${p.exerciseName} ${p.kind} ${cwTight(p.value)} (${fmtSet(p.weightKg, p.reps)})`,
           ),
           ...(logged.skipped.length ? { notLogged: skippedNote(logged.skipped) } : {}),
         },
@@ -508,7 +509,7 @@ export const COACH_TOOLS: CoachTool[] = [
                   t.logType === 'time'
                     ? `${t.last.sets} timed sets`
                     : t.logType === 'assisted'
-                      ? `${t.last.topReps} ${t.last.topReps === 1 ? 'rep' : 'reps'} with ${trimNum(Math.abs(t.last.weightKg))}kg of help`
+                      ? `${t.last.topReps} ${t.last.topReps === 1 ? 'rep' : 'reps'} with ${cwTight(Math.abs(t.last.weightKg))} of help`
                       : t.bodyweightOnly
                         ? `${t.last.topReps} ${t.last.topReps === 1 ? 'rep' : 'reps'}`
                         : fmtSet(t.last.weightKg, t.last.topReps)

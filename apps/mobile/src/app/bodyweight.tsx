@@ -1,4 +1,4 @@
-/** Body-weight quick-log + trend + history — frozen userRepo, offline, kg. */
+/** Body-weight quick-log + trend + history — frozen userRepo, offline, stored in kg (shown kg or lb). */
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Text, TextInput, View } from 'react-native';
@@ -9,8 +9,11 @@ import { getBodyWeightHistory, logBodyWeight } from '@/db/repos/userRepo';
 import { shortDate, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { success } from '@/lib/haptics';
+import { kgToShown, shownToKg, weightUnitOf } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
+import { showW } from '@/tracker/components/unitText';
 import type { BodyWeightEntry } from '@/types/models';
 
 const noopInspect = () => {
@@ -19,6 +22,9 @@ const noopInspect = () => {
 
 export default function BodyWeightScreen() {
   const router = useRouter();
+  // v0.27.0: typed and shown in kg or lb; always stored in kg.
+  const units = useUnits();
+  const unit = weightUnitOf(units);
 
   const [history, setHistory] = useState<BodyWeightEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,13 +53,13 @@ export default function BodyWeightScreen() {
     if (savingRef.current) return;
     const v = parseFloat(input.replace(',', '.'));
     if (!Number.isFinite(v) || v <= 0) {
-      Alert.alert('Enter a weight', 'Type your body weight in kg, e.g. 76.5');
+      Alert.alert('Enter a weight', units === 'imperial' ? 'Type your body weight in lb, e.g. 168.5' : 'Type your body weight in kg, e.g. 76.5');
       return;
     }
     savingRef.current = true;
     setSaving(true);
     try {
-      await logBodyWeight(todayISO(), v);
+      await logBodyWeight(todayISO(), shownToKg(v, units));
       success();
       setInput('');
       const h = await getBodyWeightHistory();
@@ -68,7 +74,7 @@ export default function BodyWeightScreen() {
 
   const latest = history.length > 0 ? history[history.length - 1] : null;
   const current = latest ? latest.weightKg : 0;
-  const delta = history.length >= 2 ? Math.round((current - history[0].weightKg) * 10) / 10 : 0;
+  const delta = history.length >= 2 ? Math.round(kgToShown(current - history[0].weightKg, units) * 10) / 10 : 0;
 
   return (
     <Screen
@@ -98,7 +104,7 @@ export default function BodyWeightScreen() {
               <TextInput
                 value={input}
                 onChangeText={setInput}
-                placeholder={latest ? trimNum(latest.weightKg) : '76.5'}
+                placeholder={latest ? showW(latest.weightKg, units) : units === 'imperial' ? '168.5' : '76.5'}
                 placeholderTextColor={color.inkMuted}
                 keyboardType="decimal-pad"
                 style={{
@@ -109,7 +115,7 @@ export default function BodyWeightScreen() {
                   paddingVertical: 0,
                 }}
               />
-              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>kg</Text>
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{unit}</Text>
             </View>
             <PrimaryButton label="Log weight" icon="check" loading={saving} onPress={() => void onLog()} />
           </View>
@@ -134,16 +140,16 @@ export default function BodyWeightScreen() {
                   }}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: space.xs + 2 }}>
-                    <AnimatedNumber value={current} format={(n) => trimNum(n)} style={{ fontSize: type.size.h1 }} />
+                    <AnimatedNumber key={units} value={current} format={(n) => showW(n, units)} style={{ fontSize: type.size.h1 }} />
                     <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>
-                      kg now
+                      {unit} now
                     </Text>
                   </View>
-                  {history.length >= 2 ? <DeltaPill value={delta} suffix=" kg" /> : null}
+                  {history.length >= 2 ? <DeltaPill value={delta} suffix={` ${unit}`} /> : null}
                 </View>
                 {history.length >= 2 ? (
                   <DateLineChart
-                    data={history.map((d) => ({ x: d.dateISO, y: d.weightKg }))}
+                    data={history.map((d) => ({ x: d.dateISO, y: kgToShown(d.weightKg, units) }))}
                     fillGradient
                     yFormat={(n) => trimNum(n)}
                     onInspect={noopInspect}
@@ -181,7 +187,7 @@ export default function BodyWeightScreen() {
                       {shortDate(e.dateISO)}
                     </Text>
                     <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>
-                      {trimNum(e.weightKg)} kg
+                      {showW(e.weightKg, units)} {unit}
                     </Text>
                   </View>
                 ))}

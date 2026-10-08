@@ -6,6 +6,8 @@ import { AnimatedNumber, Icon } from '@/components/ui';
 import type { IconName } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
 import { trimNum } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
 
@@ -44,26 +46,29 @@ function LinkRow({ icon, title, sub, onPress }: { icon: IconName; title: string;
  */
 export function BodyWeightSection({ data, index, measureLine, photoCount, onWeight, onMeasurements, onPhotos }: BodyWeightSectionProps) {
   const [inspect, setInspect] = useState<{ x: string; y: number } | null>(null);
+  // v0.27.0: kg or lb (stored kg). The chart is drawn in the shown unit.
+  const units = useUnits();
+  const unit = weightUnitOf(units);
   const has = data.length > 0;
   const current = has ? data[data.length - 1].weightKg : 0;
-  const delta = has ? Math.round((current - data[0].weightKg) * 10) / 10 : 0;
+  const delta = has ? Math.round(kgToShown(current - data[0].weightKg, units) * 10) / 10 : 0;
 
   return (
     <Section
       title="Body"
       index={index}
-      right={inspect ? <InspectReadout value={`${trimNum(inspect.y)} kg`} sub={tinyDate(inspect.x)} /> : undefined}
+      right={inspect ? <InspectReadout value={`${trimNum(inspect.y)} ${unit}`} sub={tinyDate(inspect.x)} /> : undefined}
     >
       {has ? (
         <>
           <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: space.lg }}>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: space.xs + 2 }}>
-              <AnimatedNumber value={current} format={(n) => trimNum(n)} style={{ fontSize: type.size.h1 }} />
-              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>kg now</Text>
+              <AnimatedNumber key={units} value={current} format={(n) => trimNum(kgToShown(n, units))} style={{ fontSize: type.size.h1 }} />
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{unit} now</Text>
             </View>
-            <DeltaPill value={delta} suffix=" kg" />
+            <DeltaPill value={delta} suffix={` ${unit}`} />
           </View>
-          <DateLineChart data={data.map((d) => ({ x: d.dateISO, y: d.weightKg }))} fillGradient yFormat={(n) => trimNum(n)} onInspect={setInspect} />
+          <DateLineChart data={data.map((d) => ({ x: d.dateISO, y: kgToShown(d.weightKg, units) }))} fillGradient yFormat={(n) => trimNum(n)} onInspect={setInspect} />
           <View style={{ height: 1, backgroundColor: color.border, marginVertical: space.md }} />
         </>
       ) : (

@@ -35,6 +35,7 @@ import { createSession } from '@/db/repos/workoutRepo';
 import { toISO, todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 import { getTodaysWorkout } from '@/services/coach';
+import { phoneAfterWorkout } from '@/tracker/phone/phoneSync';
 import type { DayType, Exercise, MuscleGroup, SessionDetail } from '@/types/models';
 
 const DRAFT_KEY = 'activeWorkoutDraft';
@@ -901,6 +902,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           exercises: [],
           lastDeleted: null,
         });
+        // v0.27.0: Health Connect, widgets and reminders follow (quiet, never in the way).
+        void phoneAfterWorkout(sessionId);
         return sessionId;
       } catch (e) {
         set({ committing: false }); // let the user retry
@@ -1029,6 +1032,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           editDateISO: null,
           editNotes: null,
         });
+        // v0.27.0: Health Connect, widgets and reminders follow (quiet, never in the way).
+        void phoneAfterWorkout(sessionId);
         return sessionId;
       } catch (e) {
         set({ committing: false }); // let the user retry; nothing was committed

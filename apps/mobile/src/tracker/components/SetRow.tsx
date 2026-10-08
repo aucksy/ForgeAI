@@ -26,6 +26,7 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { Icon } from '@/components/ui';
 import { success, tap } from '@/lib/haptics';
 import { trimNum } from '@/lib/format';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import {
@@ -39,6 +40,7 @@ import {
   hasTime,
   hasWeight,
   parseDuration,
+  shownDistUnit,
   type DistUnit,
   type LogType,
 } from '../engine/logTypes';
@@ -53,6 +55,7 @@ import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
 import { Glyph } from './TrackerGlyph';
+import { distWord, kgToTyped, parseTyped, showW, typedToKg, typedWeightMatches, weightLabel } from './unitText';
 
 interface SetRowProps {
   exKey: string;
@@ -73,34 +76,29 @@ interface SetRowProps {
   onOpenTimer?: (setKey: string) => void;
 }
 
-function parseNum(text: string, integer: boolean): number | null {
-  const t = text.trim().replace(',', '.');
-  if (t === '') return null;
-  const n = integer ? parseInt(t, 10) : parseFloat(t);
-  return Number.isNaN(n) ? null : n;
-}
+const parseNum = parseTyped;
 
 /** What the PREVIOUS cell says for last time's set. PURE (exported for tests). */
 export function prevLabel(p: PrevSet | null, lt: LogType, unit: DistUnit): string {
   if (!p) return '—';
   switch (lt) {
     case 'reps':
-      return p.weightKg ? `+${trimNum(p.weightKg)} × ${p.reps}` : `${p.reps} ${p.reps === 1 ? 'rep' : 'reps'}`;
+      return p.weightKg ? `+${showW(p.weightKg)} × ${p.reps}` : `${p.reps} ${p.reps === 1 ? 'rep' : 'reps'}`;
     case 'weighted':
-      return p.weightKg > 0 ? `+${trimNum(p.weightKg)} × ${p.reps}` : `${p.reps} ${p.reps === 1 ? 'rep' : 'reps'}`;
+      return p.weightKg > 0 ? `+${showW(p.weightKg)} × ${p.reps}` : `${p.reps} ${p.reps === 1 ? 'rep' : 'reps'}`;
     case 'assisted':
-      return `${trimNum(p.weightKg)} × ${p.reps}`;
+      return `${showW(p.weightKg)} × ${p.reps}`;
     case 'time':
       return p.durationSec ? fmtDuration(p.durationSec) : '—';
     case 'distance':
-      return p.distanceM ? `${trimNum(distanceToUnit(p.distanceM, unit))} ${unit}` : '—';
+      return p.distanceM ? `${trimNum(distanceToUnit(p.distanceM, unit))} ${shownDistUnit(unit)}` : '—';
     case 'time_distance': {
       const d = p.distanceM ? trimNum(distanceToUnit(p.distanceM, unit)) : '';
       const t = p.durationSec ? fmtDuration(p.durationSec) : '';
       return d && t ? `${d} · ${t}` : d || t || '—';
     }
     default:
-      return `${trimNum(p.weightKg)} × ${p.reps}`;
+      return `${showW(p.weightKg)} × ${p.reps}`;
   }
 }
 
@@ -156,21 +154,23 @@ export const SetRow = memo(function SetRow({
   const toggleDone = useActiveWorkout((s) => s.toggleDone);
   const deleteSetWithUndo = useActiveWorkout((s) => s.deleteSetWithUndo);
   const showRpe = useTrackerPrefs((s) => s.advancedSets);
+  // v0.27.0: kg or lb — typed pounds are stored as kg; the box shows the member's unit.
+  const units = useUnits();
 
-  const [wText, setWText] = useState(set.weightKg == null ? '' : String(set.weightKg));
+  const [wText, setWText] = useState(kgToTyped(set.weightKg, units));
   const [rText, setRText] = useState(set.reps == null ? '' : String(set.reps));
   const [tText, setTText] = useState(set.durationSec ? fmtDuration(set.durationSec) : '');
   const [dText, setDText] = useState(set.distanceM ? String(distanceToUnit(set.distanceM, distUnit)) : '');
   const [tFocused, setTFocused] = useState(false);
 
   // Sync back only when the store value diverges from what's typed (e.g. auto-fill
-  // on complete), so typing "82." isn't clobbered mid-decimal.
+  // on complete), so typing "82." (or "135" lb) isn't clobbered mid-decimal.
   useEffect(() => {
-    if (parseNum(wText, false) !== set.weightKg) {
-      setWText(set.weightKg == null ? '' : String(set.weightKg));
+    if (!typedWeightMatches(wText, set.weightKg, units)) {
+      setWText(kgToTyped(set.weightKg, units));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [set.weightKg]);
+  }, [set.weightKg, units]);
   useEffect(() => {
     if (parseNum(rText, true) !== set.reps) {
       setRText(set.reps == null ? '' : String(set.reps));
@@ -189,11 +189,11 @@ export const SetRow = memo(function SetRow({
     const stored = set.distanceM != null ? distanceToUnit(set.distanceM, distUnit) : null;
     setDText(stored == null ? '' : String(stored));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [set.distanceM]);
+  }, [set.distanceM, units]);
 
   const onWeight = (t: string): void => {
     setWText(t);
-    updateSet(exKey, set.key, { weightKg: parseNum(t, false) });
+    updateSet(exKey, set.key, { weightKg: typedToKg(t, units) });
   };
   const onReps = (t: string): void => {
     setRText(t);
@@ -229,7 +229,7 @@ export const SetRow = memo(function SetRow({
   }
   const typeName = set.isWarmup ? 'Warm-up' : set.setType === 'drop' ? 'Drop' : set.setType === 'failure' ? 'Failure' : 'Set';
   const which = `${typeName.toLowerCase()} ${label}`;
-  const weightName = logType === 'assisted' ? 'Assistance in kilograms' : logType === 'weighted' ? 'Added weight in kilograms' : 'Weight in kilograms';
+  const weightName = weightLabel(logType === 'assisted' ? 'assisted' : logType === 'weighted' ? 'weighted' : 'weight', units);
 
   return (
     <Swipeable
@@ -305,7 +305,7 @@ export const SetRow = memo(function SetRow({
             selectTextOnFocus
             placeholder={fill?.distanceM ? String(distanceToUnit(fill.distanceM, distUnit)) : '—'}
             placeholderTextColor={color.inkFaint}
-            accessibilityLabel={`Distance in ${distUnit === 'km' ? 'kilometres' : 'metres'}, ${which}`}
+            accessibilityLabel={`Distance in ${distWord(shownDistUnit(distUnit))}, ${which}`}
             style={inputStyle}
           />
         ) : null}
@@ -317,7 +317,7 @@ export const SetRow = memo(function SetRow({
             onChangeText={onWeight}
             keyboardType="decimal-pad"
             selectTextOnFocus
-            placeholder={fill && (logType === 'weight_reps' || fill.weightKg) ? trimNum(fill.weightKg) : '—'}
+            placeholder={fill && (logType === 'weight_reps' || fill.weightKg) ? showW(fill.weightKg, units) : '—'}
             placeholderTextColor={color.inkFaint}
             accessibilityLabel={`${weightName}, ${which}`}
             style={inputStyle}

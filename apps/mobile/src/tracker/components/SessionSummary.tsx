@@ -4,6 +4,8 @@ import { Text, View } from 'react-native';
 import { HBarList } from '@/components/charts';
 import { Badge, Card, Icon, SectionHeader, StatTile } from '@/components/ui';
 import { trimNum } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { MUSCLE_LABEL } from '../catalog/muscles';
@@ -14,10 +16,14 @@ import { supersetLabel } from '../lib/superset';
 import { formatDuration, workoutDistanceM } from '../services/finishSummary';
 import type { SessionSummaryData } from '../services/finishSummary';
 import { groupByExercise, recordValueText } from '../services/recordText';
+import { showW } from './unitText';
 
 export function SessionSummary({ data }: { data: SessionSummaryData }) {
   const { session, durationSec, totalVolumeKg, workingSetCount, exerciseCount, muscles, setMeta, kinds, needsBodyweight } = data;
   const records = data.records ?? [];
+  // v0.27.0: kg or lb.
+  const units = useUnits();
+  const wu = weightUnitOf(units);
 
   return (
     <View style={{ gap: space.lg }}>
@@ -31,7 +37,7 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
           {totalVolumeKg <= 0 && workoutDistanceM(data) > 0 ? (
             <StatTile label="Distance" value={fmtTotalDistance(workoutDistanceM(data))} icon="zap" />
           ) : (
-            <StatTile label="Volume" value={Math.round(totalVolumeKg)} unit="kg" icon="dumbbell" />
+            <StatTile label="Volume" value={Math.round(kgToShown(totalVolumeKg, units))} unit={wu} icon="dumbbell" />
           )}
         </View>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
@@ -102,12 +108,12 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
             const counting =
               lt === 'weight_reps' && weightIsEach(mode)
                 ? repsPerSide(mode)
-                  ? 'kg each · reps per side'
-                  : 'kg each'
+                  ? `${wu} each · reps per side`
+                  : `${wu} each`
                 : lt === 'weight_reps' && repsPerSide(mode)
                   ? 'reps per side'
                   : lt === 'assisted'
-                    ? 'kg of help'
+                    ? `${wu} of help`
                     : null;
             return (
             <Card key={g.exercise.id}>
@@ -147,7 +153,7 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
                   const rpe = !s.isWarmup && meta?.rpe != null ? ` @${trimNum(meta.rpe)}` : '';
                   const body =
                     lt === 'assisted'
-                      ? `${trimNum(typedWeight(lt, s.weightKg))}×${s.reps}`
+                      ? `${showW(typedWeight(lt, s.weightKg), units)}×${s.reps}`
                       : fmtSetCompact(
                           { weightKg: s.weightKg, reps: s.reps, durationSec: meta?.durationSec, distanceM: meta?.distanceM },
                           lt,

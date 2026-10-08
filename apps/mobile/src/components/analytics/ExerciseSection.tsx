@@ -8,6 +8,8 @@ import { getDb } from '@/db';
 import { getAllExercises } from '@/db/repos/exerciseRepo';
 import { addDays, tinyDate, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
+import { kgToShown, weightUnitOf } from '@/lib/units';
+import { useUnits } from '@/lib/useUnits';
 import { tap } from '@/lib/haptics';
 import { color, space, type } from '@/theme/tokens';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
@@ -48,6 +50,8 @@ export function ExerciseSection({ rangeDays, index }: ExerciseSectionProps) {
   const [busy, setBusy] = useState(true);
   const [inspect, setInspect] = useState<{ x: string; y: number } | null>(null);
   const reqRef = useRef(0);
+  // v0.27.0: kg or lb — the charts are drawn in the shown unit.
+  const units = useUnits();
 
   useEffect(() => {
     let alive = true;
@@ -120,7 +124,7 @@ export function ExerciseSection({ rangeDays, index }: ExerciseSectionProps) {
       index={index}
       right={
         inspect ? (
-          <InspectReadout value={`${trimNum(inspect.y)} kg`} sub={tinyDate(inspect.x)} />
+          <InspectReadout value={`${trimNum(inspect.y)} ${weightUnitOf(units)}`} sub={tinyDate(inspect.x)} />
         ) : undefined
       }
     >
@@ -161,14 +165,14 @@ export function ExerciseSection({ rangeDays, index }: ExerciseSectionProps) {
         <>
           <Text style={styles.chartLabel}>TOP SET WEIGHT</Text>
           <DateLineChart
-            data={progress.map((p) => ({ x: p.dateISO, y: p.topWeightKg }))}
+            data={progress.map((p) => ({ x: p.dateISO, y: kgToShown(p.topWeightKg, units) }))}
             fillGradient
             yFormat={(n) => trimNum(n)}
             onInspect={setInspect}
           />
           <Text style={[styles.chartLabel, { marginTop: space.lg }]}>SESSION VOLUME</Text>
           <BarChart
-            data={progress.map((p) => ({ x: p.dateISO, y: p.volumeKg }))}
+            data={progress.map((p) => ({ x: p.dateISO, y: kgToShown(p.volumeKg, units) }))}
             height={120}
             labelEvery={labelStep(progress.length)}
           />

@@ -2,6 +2,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { Badge, EmptyState, Icon } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
+import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { recordValueText } from '@/tracker/services/recordText';
@@ -26,6 +27,7 @@ const MAX_ROWS = 6;
  * that beat an earlier best; a first workout with an exercise sets its bests quietly.
  */
 export function PrSection({ events, rangeDays, index, onSeeAll, onOpenExercise }: PrSectionProps) {
+  useUnits(); // v0.27.0: the record and set texts follow Profile → Units
   const rows = events.slice(0, MAX_ROWS);
 
   return (

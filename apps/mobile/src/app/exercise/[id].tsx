@@ -24,6 +24,7 @@ import { ExerciseMetricChart } from '@/tracker/components/ExerciseMetricChart';
 import { ExercisePrRows } from '@/tracker/components/ExercisePrRows';
 import { ExerciseThumb } from '@/tracker/components/ExerciseThumb';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
+import { showW } from '@/tracker/components/unitText';
 import { getExerciseIdsByCatalogKey } from '@/tracker/db/exerciseInfo';
 import { fmtDuration, LOAD_MODE_LABEL, LOG_TYPE_LABEL } from '@/tracker/engine/logTypes';
 import { xrmLadder } from '@/tracker/services/exerciseAnalytics';
@@ -125,7 +126,7 @@ export default function ExerciseScreen() {
 
   const series = ov?.series ?? null;
   const seriesFmt = (n: number): string =>
-    series?.unit === 'seconds' ? fmtDuration(n) : series?.unit === 'distance' ? trimNum(n) : trimNum(n);
+    series?.unit === 'seconds' ? fmtDuration(n) : series?.unit === 'kg' ? showW(n, units) : trimNum(n);
 
   return (
     <Screen scroll={false}>

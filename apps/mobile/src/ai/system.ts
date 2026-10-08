@@ -53,6 +53,8 @@ export function buildSystemPrompt(profile: UserProfile, todayISO: string): strin
     'LANGUAGE & TONE',
     `- Mirror the member's language exactly: English → English, Hindi → Hindi, Hinglish (Hindi in Latin script) → Hinglish in Latin script. Default language preference: ${profile.language}.`,
     '- Concise, warm, confident. Short sentences. Zero fluff, no lectures, no emoji spam (one is fine when celebrating).',
-    '- Numbers in kg by default; convert for display only if the member uses lb.',
+    profile.unitSystem === 'imperial'
+      ? '- This member reads pounds and miles: answer every weight in lb and every kilometre distance in miles. Tool fields ending in Kg are kilograms and distances are metres — convert them (kg × 2.205 = lb, km ÷ 1.609 = mi); text a tool already writes in lb or mi is ready to quote. A bare number the member gives for a lift or body weight is lb: convert to kg before logging.'
+      : '- Numbers in kg by default; convert for display only if the member uses lb.',
   ].join('\n');
 }

@@ -1,8 +1,10 @@
 /**
- * Warm-up set calculator (kg). Pure. Reuses the FROZEN engine `roundToIncrement`
- * so warm-up loads snap to the exercise's real weight increment.
+ * Warm-up set calculator (kg in, kg out). Pure. Reuses the FROZEN engine `roundToIncrement`
+ * so warm-up loads snap to the exercise's real weight increment — under "lb, miles" its
+ * nearest pound step (2.5 kg → 5 lb), so warm-ups read as clean pound numbers.
  */
 import { roundToIncrement } from '@/engine/overload';
+import { stepFor } from '@/lib/units';
 
 export interface WarmupStep {
   pct: number;
@@ -22,7 +24,7 @@ export function computeWarmups(
   steps: WarmupStep[] = DEFAULT_WARMUP,
 ): { weightKg: number; reps: number }[] {
   if (!(workingKg > 0)) return [];
-  const inc = incrementKg > 0 ? incrementKg : 2.5;
+  const inc = stepFor(incrementKg > 0 ? incrementKg : 2.5);
   const out: { weightKg: number; reps: number }[] = [];
   let lastW = 0;
   for (const s of steps) {
