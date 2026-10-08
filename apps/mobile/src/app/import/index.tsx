@@ -254,7 +254,12 @@ export default function ImportScreen() {
   };
 
   // v0.28.0: the member's own routines, rebuilt from the same file (offered after the import).
-  const routineCount = useMemo(() => (parsed ? findRoutines(parsed.workouts).length : 0), [parsed]);
+  const routineCount = useMemo(() => {
+    if (!parsed) return 0;
+    const found = findRoutines(parsed.workouts);
+    const recent = found.filter((r) => r.recent).length;
+    return recent > 0 ? recent : found.length;
+  }, [parsed]);
 
   const pct = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
 

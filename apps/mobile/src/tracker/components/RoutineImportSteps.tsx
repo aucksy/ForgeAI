@@ -86,6 +86,8 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
   const found = useMemo(() => findRoutines(workouts), [workouts]);
   const recent = found.filter((r) => r.recent);
   const older = found.filter((r) => !r.recent);
+  // The count is the routines in use; names not used for a year are folded below it.
+  const shownCount = recent.length > 0 ? recent.length : found.length;
 
   const [step, setStep] = useState<Step>({ kind: 'list' });
   const [keep, setKeep] = useState<Set<string>>(() => new Set(recent.map((r) => r.title)));
@@ -154,7 +156,7 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
       <View style={{ gap: space.lg }}>
         <View style={{ gap: space.xs }}>
           <Text style={HEAD}>
-            We found {found.length} routine{found.length === 1 ? '' : 's'} in your {appName} workouts
+            We found {shownCount} routine{shownCount === 1 ? '' : 's'} in your {appName} workouts
           </Text>
           <Text style={CAPTION}>
             {appName} does not export routines, so we rebuilt them from the workouts you started from each one. You check
