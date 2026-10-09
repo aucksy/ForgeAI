@@ -27,6 +27,8 @@ export type CardChange =
 
 interface Native {
   show(startedAt: number, endsAt: number, next: string | null): boolean;
+  /** Added in v0.28.1; an older native piece lacks it. */
+  setQuiet?(quiet: boolean): boolean;
   clear(dismissOver: boolean): boolean;
   getState(): { endsAt: number; startedAt: number; next: string | null };
   takeOpenRequest(): boolean;
@@ -54,10 +56,15 @@ function N(): Native | null {
 }
 
 /** Post or update the card. False = no native piece (use the old alert). */
-export function showRestCard(startedAt: number, endsAt: number, next: string | null): boolean {
+export function showRestCard(startedAt: number, endsAt: number, next: string | null, quiet?: boolean): boolean {
   const n = N();
   if (!n) return false;
   try {
+    try {
+      if (quiet !== undefined) n.setQuiet?.(quiet); // "Workout sounds" off: "Rest is over" only vibrates
+    } catch {
+      // ignore
+    }
     handed = n.show(startedAt, endsAt, next) === true;
     return handed;
   } catch {

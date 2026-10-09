@@ -416,6 +416,15 @@ export function fillForSet(
   return null;
 }
 
+/**
+ * v0.28.1 — a live workout's start never falls on a whole second. Imported workouts do (their
+ * clock time is kept as UTC), and Health Connect tells the two apart that way (`realStart`): a
+ * live start at exactly .000 was sent hours off, about 1 time in 1,000.
+ */
+export function liveStart(now: number = Date.now()): number {
+  return now % 1000 === 0 ? now + 1 : now;
+}
+
 export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
   /** Apply an exercise-list transform, then persist. */
   const mutate = (fn: (exercises: DraftExercise[]) => DraftExercise[]): void => {
@@ -485,7 +494,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         active: true,
         hydrated: true,
         committing: false,
-        startedAt: Date.now(),
+        startedAt: liveStart(),
         dayType: 'full',
         planDayId: null,
         easyWeek: false,
@@ -524,7 +533,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         active: true,
         hydrated: true,
         committing: false,
-        startedAt: Date.now(),
+        startedAt: liveStart(),
         dayType,
         planDayId,
         easyWeek: easy && planDayId != null,
@@ -557,7 +566,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         active: true,
         hydrated: true,
         committing: false,
-        startedAt: Date.now(),
+        startedAt: liveStart(),
         dayType,
         planDayId,
         easyWeek: easy && planDayId != null,
@@ -583,7 +592,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         active: true,
         hydrated: true,
         committing: false,
-        startedAt: Date.now(),
+        startedAt: liveStart(),
         dayType: session.dayType,
         planDayId: null,
         easyWeek: false,

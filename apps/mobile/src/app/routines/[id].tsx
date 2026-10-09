@@ -281,6 +281,8 @@ export default function RoutineEditorScreen() {
     try {
       await startFromPlanDay(id);
       router.replace('/session/active');
+    } catch {
+      Alert.alert('Couldn’t start the workout', 'Please try again.');
     } finally {
       starting.current = false;
     }

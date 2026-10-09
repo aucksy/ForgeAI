@@ -1508,6 +1508,36 @@
   - **Owner choices (Phase 6):** read a Hevy folder link (needs an in-app browser part);
     which routines start ticked. Phase 4's and Phase 5's stay open.
 
+- 2026-10-09: **Tracker v0.28.1 — end-to-end audit after the tracker plan was built.** Four
+  read-only reviewers (plan Phases 1–3, 4–6 vs the code; data safety; live workout + phone) and
+  one adversarial review of the fixes. No Done row missing or unreachable. Fixed:
+  - `forge-rest` `setQuiet` (own prefs file): "Workout sounds" off → "Rest is over" on the
+    vibrate-only channel; `showRestCard(..., quiet?)` from `workoutAlerts` and the catch-up re-post
+    in `workoutPresence`.
+  - Start on `today.tsx` / Workout tab awaits `hydrate()` (a draft saved before a kill was
+    overwritten); Start failures alert (also `routines/[id]`). `todayLink.doneToday` →
+    "You did this today" / "Start … again".
+  - `BackupCard` refuses a restore while a workout is open (its exercise ids would vanish → Finish
+    always failed). `snapshot.ts` backs up `exercise_prefs` (`keepWhenAbsent` for old backups;
+    derived test: every tracker CREATE TABLE is backed up except progress_photos).
+  - `hevyImport`: plain UTF-8 text decoded by `base64Utf8` (SheetJS read a BOM-less CSV as
+    Latin-1); spreadsheets, UTF-16 and non-UTF-8 text keep the old path. `sanitizeTitle` keeps
+    every alphabet and in-word joiners, drops emoji. Notes keep emoji. A second block of the same
+    exercise in one workout sorts after the first. Month names de/fr/es/it/pt/nl.
+    `replacedSessionIds` → the import screen removes replaced workouts from Health Connect in
+    the background (not for demo data). Demo check failing → Merge. Cached copy deleted.
+  - `strongImport.num`: comma decimals in a comma file, thousands marks; one "72,5" in the file
+    makes it comma-decimal.
+  - `activeWorkoutStore.liveStart`: a live start is never a whole second (`realStart` read such
+    a start as an import → Health Connect hours off).
+  - Create-from-workout with a taken name → "Add it to the workout". Editing an old workout shows
+    EDITING instead of the elapsed clock.
+  - Expo patch versions brought in line (`expo install --fix`; app.json plugin change not taken).
+  - Plan rows corrected (sounds; volume bars). Left as known: lock-screen card text while JS
+    sleeps, pace wording under miles (engine, frozen), From Hevy re-import replaces edits (said),
+    late rest alert on Android 14+ (open decision).
+  - **Tests:** 702 vitest (`v0281.test.ts`, one per fix).
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets
@@ -1516,9 +1546,7 @@
   onboarding for a real (non-seeded) member, Play Store prep.
 
 ## Deliberately deferred (not bugs - scoped for the demo)
-- Pounds (lb) units: shipped kg-only. Full lb needs input parsing + every
-  localCoach reply string (both languages) + cards + analytics + profile sync;
-  half-doing it is worse than kg-only. Settings shows "lb coming soon".
+- (Pounds and miles shipped in v0.27.0 — no longer deferred.)
 - A/B plan-day tie-break when a chat log contains only exercises shared by both
   variants (LOW, self-corrects on the next full log; rotation fix mitigates).
 - Strength-benchmark name-matching could over-match accessories IF a main lift

@@ -116,6 +116,8 @@ export interface ImportResult {
   backfilledSets: number;
   /** v0.27.0 (Merge): the same workout already logged in ForgeAI (same day, start within 30 min) — skipped. */
   skippedSameWorkout: number;
+  /** v0.28.1 (Replace): the workouts deleted, so Health Connect can drop them too. */
+  replacedSessionIds?: string[];
 }
 
 // ---------------------------------------------------------------- text utils
@@ -125,9 +127,73 @@ function norm(s: string): string {
   return s.toLowerCase().trim().replace(/\s+/g, ' ');
 }
 
-/** Drop non-printable-ASCII (mangled emoji from the export) so notes read clean. */
-function sanitizeTitle(s: string): string {
-  return s.replace(/[^\x20-\x7E]+/g, ' ').replace(/\s+/g, ' ').trim();
+/**
+ * Drop emoji and symbols (Hevy's "Morning workout ☀️") and control characters. v0.28.1: letters
+ * of every language stay — "Día de pierna" was "D a de pierna", a Hindi title was emptied.
+ */
+export function sanitizeTitle(s: string): string {
+  // An emoji with its joiners ("👨‍👩‍👧"); a joiner inside a word (Persian, Hindi) stays.
+  return s
+    .replace(/‍?[\uD800-\uDFFF←-⯿︀-️⃣]+(?:‍[\uD800-\uDFFF←-⯿︀-️⃣]+)*‍?/g, ' ')
+    .replace(/[​\u0000-\u001F\u007F-\u009F]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+/**
+ * v0.28.1 — a .csv export is UTF-8 text with no marker at its start, which SheetJS reads as
+ * Latin-1 ("búlgara" became "bÃºlgara", a new exercise). Decode base64 → UTF-8 here; null when
+ * the bytes are not UTF-8 (a file Excel saved as Windows-1252 goes to SheetJS as before). PURE.
+ */
+export function base64Utf8(base64: string): string | null {
+  const clean = base64.replace(/[^A-Za-z0-9+/]/g, '');
+  const bytes = new Uint8Array(Math.floor((clean.length * 6) / 8));
+  let n = 0;
+  let buf = 0;
+  let bits = 0;
+  for (let i = 0; i < clean.length; i++) {
+    buf = ((buf << 6) | B64.indexOf(clean[i])) & 0xffffff;
+    bits += 6;
+    if (bits >= 8) {
+      bits -= 8;
+      bytes[n++] = (buf >> bits) & 0xff;
+    }
+  }
+  let out = '';
+  let chunk: number[] = [];
+  const flush = (): void => {
+    out += String.fromCharCode(...chunk);
+    chunk = [];
+  };
+  for (let i = bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf ? 3 : 0; i < n; i++) {
+    const b = bytes[i];
+    let cp = 0xfffd;
+    let need = 0;
+    if (b < 0x80) cp = b;
+    else if (b >= 0xc2 && b < 0xe0) [cp, need] = [b & 0x1f, 1];
+    else if (b >= 0xe0 && b < 0xf0) [cp, need] = [b & 0x0f, 2];
+    else if (b >= 0xf0 && b < 0xf5) [cp, need] = [b & 0x07, 3];
+    let ok = true;
+    for (let k = 1; k <= need; k++) {
+      const c = i + k < n ? bytes[i + k] : 0;
+      if ((c & 0xc0) !== 0x80) {
+        ok = false;
+        break;
+      }
+      cp = (cp << 6) | (c & 0x3f);
+    }
+    if (need > 0 && ok) i += need;
+    else if (b >= 0x80) return null; // not UTF-8
+    if (cp > 0xffff) {
+      cp -= 0x10000;
+      chunk.push(0xd800 + (cp >> 10), 0xdc00 + (cp & 0x3ff));
+    } else chunk.push(cp);
+    if (chunk.length > 8000) flush();
+  }
+  flush();
+  return out;
 }
 
 // ---------------------------------------------------------------- date parsing
@@ -135,7 +201,21 @@ function sanitizeTitle(s: string): string {
 const MONTH_IDX: Record<string, number> = {
   jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
   jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+  // v0.28.1: a phone set to German, French, Spanish, Italian, Portuguese or Dutch may write the
+  // month in its language. Unknown months were skipped rows (every October in German).
+  mär: 2, mrz: 2, mai: 4, okt: 9, dez: 11, // de
+  janv: 0, fév: 1, févr: 1, avr: 3, juin: 5, juil: 6, aoû: 7, août: 7, déc: 11, // fr
+  ene: 0, abr: 3, ago: 7, sept: 8, dic: 11, // es
+  gen: 0, mag: 4, giu: 5, lug: 6, set: 8, ott: 9, // it
+  fev: 1, out: 9, // pt
+  mrt: 2, mei: 4, // nl
 };
+
+/** "Okt" / "févr." / "Sept" → its month, or undefined. */
+function monthOf(word: string): number | undefined {
+  const w = word.toLowerCase().replace(/\.$/, '');
+  return MONTH_IDX[w] ?? MONTH_IDX[w.slice(0, 4)] ?? MONTH_IDX[w.slice(0, 3)];
+}
 
 const pad = (n: number): string => String(n).padStart(2, '0');
 
@@ -154,9 +234,9 @@ export function parseHevyDate(input: unknown): number | null {
     return Math.round(((input - 25569) * 86_400_000) / 60_000) * 60_000;
   }
   if (typeof input !== 'string') return null;
-  const m = /^\s*(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4}),?\s+(\d{1,2}):(\d{2})/.exec(input);
+  const m = /^\s*(\d{1,2})\.?\s+([^\s\d,]{3,})\s+(\d{4}),?\s+(\d{1,2}):(\d{2})/.exec(input);
   if (!m) return null;
-  const mon = MONTH_IDX[m[2].slice(0, 3).toLowerCase()];
+  const mon = monthOf(m[2]);
   if (mon === undefined) return null;
   const t = Date.UTC(Number(m[3]), mon, Number(m[1]), Number(m[4]), Number(m[5]), 0, 0);
   return Number.isNaN(t) ? null : t;
@@ -346,7 +426,12 @@ export function parseHevyBase64(base64: string): ParsedHevy {
   try {
     // v0.28.0: `raw` keeps a CSV's text as text. Without it SheetJS turns Hevy's "5 Oct 2026,
     // 11:10" into a spreadsheet date number and no workout was found in a .csv export.
-    const wb = XLSX.read(base64, { type: 'base64', raw: true });
+    // v0.28.1: plain UTF-8 text (a .csv) is read as such. A spreadsheet (.xlsx is a zip, "PK" =
+    // "UEsDB"; an old .xls starts "0M8R4"), UTF-16 text ("//4", "/v8") or other text: SheetJS as before.
+    const head = base64.trimStart().slice(0, 5);
+    const spreadsheet = /^(UEsDB|0M8R4)/.test(head) || /^(\/\/4|\/v8)/.test(head);
+    const text = spreadsheet ? null : base64Utf8(base64);
+    const wb = text != null ? XLSX.read(text, { type: 'string', raw: true }) : XLSX.read(base64, { type: 'base64', raw: true });
     const sheet = wb.Sheets[wb.SheetNames[0]];
     if (!sheet) throw new Error('empty');
     rows = XLSX.utils.sheet_to_json<RawRow>(sheet, { defval: null, raw: true });
@@ -367,6 +452,9 @@ export function parseHevyBase64(base64: string): ParsedHevy {
   let skippedRows = 0;
   let totalSetRows = 0;
   let timedRows = 0;
+  const lastTitle = new Map<ParsedWorkout, string>();
+  const blockOf = new Map<ParsedExercise, number>();
+  const orderOf = new Map<ParsedSet, number>();
 
   for (const r of rows) {
     totalSetRows += 1;
@@ -414,10 +502,16 @@ export function parseHevyBase64(base64: string): ParsedHevy {
       byStart.set(startRaw, workout);
     }
     let exercise = workout.exercises.find((e) => e.title === exTitle);
+    // v0.28.1: Hevy restarts set_index for a second block of the same exercise in one workout;
+    // a new block starts when another exercise came in between. Its sets go after the first's.
+    const prevTitle = lastTitle.get(workout);
+    if (exercise && prevTitle !== exTitle) blockOf.set(exercise, (blockOf.get(exercise) ?? 0) + 1);
+    lastTitle.set(workout, exTitle);
     if (!exercise) {
       // superset_id / exercise_notes are consistent per exercise — capture at first appearance.
       const supersetRaw = asString(r['superset_id']).trim();
-      const noteRaw = sanitizeTitle(asString(r['exercise_notes']));
+      // v0.28.1: read as UTF-8 now, a note keeps its emoji (only control characters go).
+      const noteRaw = asString(r['exercise_notes']).replace(/[\u0000-\u0009\u000B-\u001F]+/g, ' ').trim();
       exercise = {
         title: exTitle,
         sets: [],
@@ -426,7 +520,7 @@ export function parseHevyBase64(base64: string): ParsedHevy {
       };
       workout.exercises.push(exercise);
     }
-    exercise.sets.push({
+    const set: ParsedSet = {
       weightKg,
       reps: hasReps ? Math.round(reps as number) : 0,
       isWarmup,
@@ -435,13 +529,15 @@ export function parseHevyBase64(base64: string): ParsedHevy {
       setIndex,
       durationSec,
       distanceM,
-    });
+    };
+    orderOf.set(set, (blockOf.get(exercise) ?? 0) * 100_000 + setIndex);
+    exercise.sets.push(set);
   }
 
   const workouts = [...byStart.values()].sort((a, b) => a.startedAt - b.startedAt);
   // Sets ordered by Hevy's set_index within each exercise (stable, matches log order).
   for (const w of workouts) {
-    for (const ex of w.exercises) ex.sets.sort((a, b) => a.setIndex - b.setIndex);
+    for (const ex of w.exercises) ex.sets.sort((a, b) => (orderOf.get(a) ?? a.setIndex) - (orderOf.get(b) ?? b.setIndex));
   }
   const titles = new Set<string>();
   for (const w of workouts) for (const ex of w.exercises) titles.add(ex.title);
@@ -621,6 +717,7 @@ export async function runImport(
     if (mode === 'replace') {
       const existing = await getSessionsBetween(MIN_ISO, MAX_ISO);
       for (const s of existing) await deleteSession(s.id);
+      result.replacedSessionIds = existing.map((s) => s.id);
     }
 
     // 2. Idempotency guard — start times already in the DB (empty after a replace).

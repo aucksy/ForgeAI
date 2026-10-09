@@ -157,7 +157,7 @@ describe('the app timer and the card', () => {
     expect(useRestTimer.getState().nextLabel).toBe('Row, set 2');
     expect(calls.cancel).toBe(0);
     // Review M1: a force-stop removed the card and its alarm, so the adopted rest is posted again.
-    expect(reposted.at(-1)).toEqual([990_000, 1_060_000, 'Row, set 2']);
+    expect(reposted.at(-1)).toEqual([990_000, 1_060_000, 'Row, set 2', false]); // + quiet: "Workout sounds" on
     stop();
   });
 

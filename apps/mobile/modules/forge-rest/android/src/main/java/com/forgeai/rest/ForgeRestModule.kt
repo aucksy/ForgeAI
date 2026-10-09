@@ -51,6 +51,12 @@ class ForgeRestModule : Module() {
       true
     }
 
+    Function("setQuiet") { quiet: Boolean ->
+      val c = ctx ?: return@Function false
+      RestCard.setQuiet(c, quiet)
+      true
+    }
+
     Function("clear") { dismissOver: Boolean ->
       val c = ctx ?: return@Function false
       RestCard.clear(c, dismissOver)

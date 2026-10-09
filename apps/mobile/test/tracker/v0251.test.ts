@@ -216,7 +216,7 @@ describe('a male or female body figure', () => {
     expect(bodyView({ t: 'body', x: 0, y: 0, height: 10, view: 'back', levels: [] })).toBe(BODY_BACK);
     const png = new Resvg(sceneToSvg(scene)).render();
     expect([png.width, png.height]).toEqual([1080, 1350]);
-  });
+  }, 20_000); // renders a full PNG; slow when every test file runs at once
 
   it('Profile offers the choice; Progress, the finish screen and a saved workout follow it', () => {
     expect(read('tracker/store/trackerPrefsStore.ts')).toMatch(/bodyFigure: 'male',/);

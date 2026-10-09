@@ -45,6 +45,7 @@ object RestCard {
   const val ADD_SEC = 15
 
   private const val PREFS = "forgeai_rest_card"
+  private const val PREFS_QUIET = "forgeai_rest_quiet"
   private const val COLOR = 0xFFFF7A3B.toInt()
   /** An end that fires this much early (an inexact alarm never does) is re-armed instead. */
   private const val EARLY_MS = 1500L
@@ -78,6 +79,17 @@ object RestCard {
       .putString("next", r.next)
       .apply()
   }
+
+  /**
+   * "Workout sounds" off in Profile: "Rest is over" only vibrates (and still buzzes the watch).
+   * Kept apart from the rest, which [forget] clears.
+   */
+  fun setQuiet(ctx: Context, quiet: Boolean) {
+    ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).edit().putBoolean("quiet", quiet).apply()
+  }
+
+  private fun quiet(ctx: Context): Boolean =
+    ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).getBoolean("quiet", false)
 
   private fun forget(ctx: Context) {
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().clear().apply()
@@ -309,7 +321,8 @@ object RestCard {
       ensureChannels(ctx)
       // App on screen: it rings itself, so the phone only vibrates — but the alert is still
       // posted, which is what makes the watch buzz. Otherwise this is the loud alert.
-      val open = appOnScreen(ctx)
+      // "Workout sounds" off: the vibrate-only channel, wherever the app is.
+      val open = appOnScreen(ctx) || quiet(ctx)
       val b = builder(ctx, if (open) CH_OVER_OPEN else CH_OVER)
         .setSmallIcon(iconRes(ctx))
         .setColor(COLOR)

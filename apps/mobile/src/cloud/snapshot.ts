@@ -25,7 +25,7 @@ type TxLike = Pick<SQLiteDatabase, 'runAsync'>;
  * onboarding/db/dataActions (WIPE_TABLES_IN_ORDER), whose orderings are the proven
  * source of truth.
  */
-const TABLES: readonly { name: string; cols: readonly string[] }[] = [
+const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?: boolean }[] = [
   {
     name: 'user_profile',
     // `phone` is the additive Phase-O2 column (initMemberSchema). Included so the
@@ -44,6 +44,9 @@ const TABLES: readonly { name: string; cols: readonly string[] }[] = [
       // v0.28.0 (tracker schema v8): an own distance exercise in km or metres (NULL = the library's).
       'dist_unit'],
   },
+  // v0.28.1: each exercise's own rest length (tracker schema v3) was not backed up. A backup
+  // made before this has no such table: the phone's own rest lengths are kept, not emptied.
+  { name: 'exercise_prefs', cols: ['exercise_id', 'rest_sec'], keepWhenAbsent: true },
   // + the additive Phase 4 columns (tracker schema v7): a folder's place, where it came from,
   // its settings (easy weeks). Older backups lack them → NULL, like the columns above.
   { name: 'workout_plans', cols: ['id', 'name', 'is_active', 'folder_order', 'source', 'settings'] },
@@ -172,11 +175,12 @@ async function batchInsert(tx: TxLike, table: string, cols: readonly string[], r
  */
 export async function importSnapshot(env: BackupEnvelope): Promise<void> {
   await getDb().withExclusiveTransactionAsync(async (tx) => {
+    const kept = (t: (typeof TABLES)[number]): boolean => t.keepWhenAbsent === true && env.tables[t.name] === undefined;
     for (let i = TABLES.length - 1; i >= 0; i--) {
-      await tx.runAsync(`DELETE FROM ${TABLES[i].name}`);
+      if (!kept(TABLES[i])) await tx.runAsync(`DELETE FROM ${TABLES[i].name}`);
     }
     for (const t of TABLES) {
-      await batchInsert(tx, t.name, t.cols, env.tables[t.name] ?? []);
+      if (!kept(t)) await batchInsert(tx, t.name, t.cols, env.tables[t.name] ?? []);
     }
   });
 }

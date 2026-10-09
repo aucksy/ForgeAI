@@ -14,6 +14,7 @@ import { countWord } from '@/lib/words';
 
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
+import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { onRestCardChange, readRestCard, reconcileWithCard, restCardHolds, showRestCard } from './restCard';
 import { cancelRestEnd, clearWorkoutOngoing, showWorkoutOngoing } from './workoutAlerts';
 
@@ -85,7 +86,7 @@ export function startWorkoutPresence(): () => void {
       r.fromCard({ kind: 'adopt', endsAt: step.endsAt, startedAt: step.startedAt, next: step.next });
       // Re-post it: after a force-stop Android removed the card and its alarm, though the saved
       // rest stayed (review M1). Posting the same rest again is harmless otherwise.
-      showRestCard(step.startedAt, step.endsAt, step.next);
+      showRestCard(step.startedAt, step.endsAt, step.next, !useTrackerPrefs.getState().sounds);
     } else if (step.do === 'stop') r.fromCard({ kind: 'stop' });
   };
   const offCard = onRestCardChange((c) => {

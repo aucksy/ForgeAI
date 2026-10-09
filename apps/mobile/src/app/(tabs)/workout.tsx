@@ -111,17 +111,23 @@ export default function WorkoutScreen() {
   const goActive = (): void => router.push('/session/active');
 
   const onStartPlan = async (): Promise<void> => {
+    if (starting) return;
     setStarting(true);
     try {
-      await startFromPlan();
+      // A workout saved before Android closed the app loads first — Start must not replace it.
+      await hydrate();
+      if (!useActiveWorkout.getState().active) await startFromPlan();
       goActive();
+    } catch {
+      Alert.alert('Couldn’t start the workout', 'Please try again.');
     } finally {
       setStarting(false);
     }
   };
 
-  const onStartEmpty = (): void => {
-    startEmpty();
+  const onStartEmpty = async (): Promise<void> => {
+    await hydrate();
+    if (!useActiveWorkout.getState().active) startEmpty();
     goActive();
   };
 
@@ -213,7 +219,7 @@ export default function WorkoutScreen() {
               </View>
             </HeroCard>
 
-            <GhostButton label="Start empty workout" icon="plus" onPress={onStartEmpty} />
+            <GhostButton label="Start empty workout" icon="plus" onPress={() => void onStartEmpty()} />
             {/* Only with no plan to follow — not on a day the plan has nothing for (trained already). */}
             {preview && !preview.hasPlan && !hasRoutines ? (
               <>

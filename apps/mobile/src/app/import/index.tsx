@@ -35,6 +35,7 @@ import {
 import { findRoutines } from '@/tracker/services/routineRebuild';
 import { looksLikeStrong, parseStrongText, strongFileInfo, type FileUnits } from '@/tracker/services/strongImport';
 import { RoutineImportSteps } from '@/tracker/components/RoutineImportSteps';
+import { removeWorkoutFromHealth } from '@/tracker/phone/healthConnect';
 import { sharedFileKind } from '@/tracker/phone/sharedImport';
 import { useSettings } from '@/store/settingsStore';
 
@@ -152,6 +153,9 @@ export default function ImportScreen() {
       });
       p = parseHevyBase64(base64); // throws a user-safe Error on a bad file
     }
+    // v0.28.1: the picked or shared copy (a whole workout history) does not stay in the cache.
+    const cache = FileSystem.cacheDirectory;
+    if (cache && uri.startsWith(cache)) void FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => undefined);
     if (p.workouts.length === 0) throw new Error('No workouts were found in that file.');
     const pv = await previewImport(p);
     setParsed(p);
@@ -159,7 +163,8 @@ export default function ImportScreen() {
     setFileName(name || `${isStrong ? 'Strong' : 'Hevy'} export`);
     // v0.27.0: with the member's own workouts here, Merge is the safe start (a second import
     // must not delete what was logged in ForgeAI since). Replace only over demo data or nothing.
-    const demo = await isDemoData().catch(() => true);
+    // v0.28.1: a failed check is NOT demo data — never start on Replace over real workouts.
+    const demo = await isDemoData().catch(() => false);
     setMode(pv.existingWorkouts > 0 && !demo ? 'merge' : 'replace');
     setPhase('preview');
   };
@@ -226,7 +231,15 @@ export default function ImportScreen() {
       // Real history just landed — if the app was showing demo data, it isn't a
       // demo any more (Phase O2: the badge must not sit over genuine training).
       // Phase 3: the demo's own body measurements go with it.
+      const wasDemo = await isDemoData().catch(() => false);
       if (r.imported > 0) await adoptImportedData();
+      // v0.28.1: Replace deleted workouts already sent to Health Connect — take them out there too
+      // (the imported ones are new workouts; sent again, they were doubled). In the background,
+      // after the done screen (two calls a workout); demo workouts were never sent.
+      const gone = wasDemo ? [] : (r.replacedSessionIds ?? []);
+      void (async () => {
+        for (const id of gone) await removeWorkoutFromHealth(id);
+      })();
       setResult(r);
       setPhase('done');
       success();

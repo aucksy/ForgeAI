@@ -19,6 +19,7 @@ import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
 import { targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
 import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
 import { getPlanNow, planLine, type PlanNow } from '@/tracker/services/planState';
+import { doneToday } from '@/tracker/lib/todayLink';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 interface Today {
@@ -33,6 +34,7 @@ export default function TodayScreen() {
   const unitSystem = useSettings((s) => s.unitSystem);
   const active = useActiveWorkout((s) => s.active);
   const startFromPlan = useActiveWorkout((s) => s.startFromPlan);
+  const hydrate = useActiveWorkout((s) => s.hydrate);
   const [today, setToday] = useState<Today | null>(null);
   const [plan, setPlan] = useState<PlanNow | null>(null);
   const [failed, setFailed] = useState(false);
@@ -41,6 +43,7 @@ export default function TodayScreen() {
   useFocusEffect(
     useCallback(() => {
       let alive = true;
+      void hydrate();
       getTodaysWorkoutWithTargets()
         .then((tw) => alive && setToday(tw))
         .catch(() => alive && setFailed(true));
@@ -50,13 +53,15 @@ export default function TodayScreen() {
       return () => {
         alive = false;
       };
-    }, []),
+    }, [hydrate]),
   );
 
   const onStart = async (): Promise<void> => {
     if (starting) return;
     setStarting(true);
     try {
+      // A workout saved before Android closed the app loads first — Start must not replace it.
+      await hydrate();
       if (!useActiveWorkout.getState().active) await startFromPlan();
       router.replace('/session/active');
     } catch {
@@ -68,6 +73,7 @@ export default function TodayScreen() {
 
   const week = plan && !plan.easy ? planLine(plan) : null;
   const has = today != null && today.planDayId != null && today.targets.length > 0;
+  const done = doneToday(today);
 
   return (
     <Screen
@@ -93,7 +99,9 @@ export default function TodayScreen() {
               {today.dayName}
             </Text>
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>
-              {countWord(today.targets.length, 'exercise')}, pre-filled with last time’s numbers.
+              {done
+                ? `You did this today. ${countWord(today.targets.length, 'exercise')}.`
+                : `${countWord(today.targets.length, 'exercise')}, pre-filled with last time’s numbers.`}
             </Text>
             {week ? (
               <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>
@@ -125,7 +133,7 @@ export default function TodayScreen() {
           </Card>
           <View style={{ gap: space.md }}>
             <PrimaryButton
-              label={active ? 'Resume workout' : `Start ${today.dayName}`}
+              label={active ? 'Resume workout' : done ? `Start ${today.dayName} again` : `Start ${today.dayName}`}
               icon="dumbbell"
               loading={starting}
               onPress={() => void onStart()}

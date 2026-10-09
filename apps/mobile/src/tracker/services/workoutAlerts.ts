@@ -14,6 +14,7 @@
  */
 import { AppState, Platform } from 'react-native';
 
+import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { clearRestCard, showRestCard } from './restCard';
 
 type NotificationsModule = typeof import('expo-notifications');
@@ -119,7 +120,8 @@ export async function scheduleRestEnd(
   nextLabel: string | null,
   startedAt: number = Date.now(),
 ): Promise<void> {
-  const onCard = showRestCard(startedAt, endsAt, nextLabel);
+  const quiet = !useTrackerPrefs.getState().sounds;
+  const onCard = showRestCard(startedAt, endsAt, nextLabel, quiet);
   const n = N();
   if (!n) return;
   try {
@@ -137,7 +139,7 @@ export async function scheduleRestEnd(
         title: 'Rest is over',
         body: nextLabel ? `Next up: ${nextLabel}` : 'Time for your next set',
         data: { kind: 'rest', route: WORKOUT_ROUTE },
-        sound: 'default',
+        sound: quiet ? false : 'default',
         priority: 'max',
         color: '#FF7A3B',
       },

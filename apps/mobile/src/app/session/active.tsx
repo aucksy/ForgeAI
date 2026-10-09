@@ -318,7 +318,12 @@ export default function ActiveWorkoutScreen() {
           </Pressable>
         )}
         {/* Owns its own 1 Hz tick — the rest of this tree no longer re-renders per second. */}
-        <ElapsedClock startedAt={startedAt} />
+        {isEditing ? (
+          // v0.28.1: an old workout being edited has no running clock (it counted from its start, days ago).
+          <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted, letterSpacing: 1.2 }}>EDITING</Text>
+        ) : (
+          <ElapsedClock startedAt={startedAt} />
+        )}
         <IconButton
           icon="check"
           tint={canFinish && !committing ? color.accent : color.inkFaint}

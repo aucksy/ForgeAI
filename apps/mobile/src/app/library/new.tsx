@@ -215,9 +215,19 @@ export default function NewExerciseScreen() {
         if (clash) {
           savingRef.current = false;
           setSaving(false);
+          // v0.28.1: made for a workout, the one already there goes into that workout instead.
+          const addClash = async (): Promise<void> => {
+            const ex = await getTrackerExercise(clash.id).catch(() => null);
+            if (ex && useActiveWorkout.getState().active) {
+              await useActiveWorkout.getState().addExercise(ex);
+              router.dismissTo('/session/active');
+            } else router.replace({ pathname: '/exercise/[id]', params: { id: clash.id } });
+          };
           Alert.alert('Already in your library', `"${clash.name}" already exists.`, [
             { text: 'Cancel', style: 'cancel' },
-            { text: 'Open it', onPress: () => router.replace({ pathname: '/exercise/[id]', params: { id: clash.id } }) },
+            forWorkout
+              ? { text: 'Add it to the workout', onPress: () => void addClash() }
+              : { text: 'Open it', onPress: () => router.replace({ pathname: '/exercise/[id]', params: { id: clash.id } }) },
           ]);
           return;
         }

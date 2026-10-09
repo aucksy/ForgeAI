@@ -89,11 +89,24 @@ export function looksLikeStrong(text: string): boolean {
 
 // ---------------------------------------------------------------- values
 
-function num(raw: string | undefined, commaDecimal: boolean): number | null {
+/**
+ * A number as Strong wrote it. v0.28.1: a comma-decimal phone can write "72,5" (quoted) even in a
+ * comma-separated file — it was read as nothing, so the set imported at 0 kg. Thousands marks too:
+ * "1.072,5" and "1,072.5". Exported for tests.
+ */
+export function num(raw: string | undefined, commaDecimal: boolean): number | null {
   if (raw == null) return null;
-  let s = raw.trim();
+  let s = raw.trim().replace(/\s/g, '');
   if (s === '') return null;
-  if (commaDecimal && /^-?\d+,\d+$/.test(s)) s = s.replace(',', '.');
+  const comma = s.lastIndexOf(',');
+  const dot = s.lastIndexOf('.');
+  if (comma >= 0 && dot >= 0) {
+    // Both: the last one is the decimal mark.
+    s = comma > dot ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+  } else if (comma >= 0) {
+    // Only a comma: a decimal mark ("72,5", or any in a ;-file), else thousands ("1,072").
+    s = commaDecimal || /^-?\d+,\d{1,2}$/.test(s) ? s.replace(',', '.') : s.replace(/,/g, '');
+  }
   const n = Number(s);
   return Number.isFinite(n) ? n : null;
 }
@@ -191,7 +204,10 @@ export function parseStrongText(text: string, units: FileUnits): ParsedHevy {
         : units === 'imperial'
           ? M_PER_MILE
           : 1000;
-  const commaDecimal = delimiter === ';';
+  // v0.28.1: a comma-decimal phone may write "72,5" in a comma-separated file too; one such
+  // weight or distance means "1,234" there is 1.234, not 1234.
+  const commaDecimal =
+    delimiter === ';' || rows.slice(1).some((r) => [iWeight, iDist].some((i) => i >= 0 && /^-?\d+,\d{1,2}$/.test((r[i] ?? '').trim())));
 
   const byKey = new Map<string, ParsedWorkout>();
   let skippedRows = 0;

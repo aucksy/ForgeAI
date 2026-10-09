@@ -9,6 +9,7 @@ import { useBackup } from '@/store/backupStore';
 import { useChat } from '@/store/chatStore';
 import { useDashboard } from '@/store/dashboardStore';
 import { color, space, type } from '@/theme/tokens';
+import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -108,6 +109,13 @@ export function BackupCard() {
 
   const onRestore = async () => {
     setError(null);
+    // v0.28.1: a restore replaces the exercises an open workout points at, so that workout
+    // could never be saved. Finish or discard it first.
+    await useActiveWorkout.getState().hydrate().catch(() => undefined);
+    if (useActiveWorkout.getState().active) {
+      Alert.alert('Finish your workout first', 'Finish or discard the workout in progress, then restore.');
+      return;
+    }
     try {
       const { found } = await checkForBackup();
       if (!found) {
