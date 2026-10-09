@@ -83,9 +83,9 @@ appId: com.forgeai.app
     visible: "Push Day · Jaipur"
     timeout: 15000
 - takeScreenshot: 178a-jaipur-push-1-top
-# Exactly as saved in Hevy; the 5th exercise is below the fold.
+# Exactly as saved in Hevy (4 sets · 20-42); its library name is "Cable Triceps Kickback"; below the fold.
 - scrollUntilVisible:
-    element: "Triceps Kickback.*"
+    element: "Cable Triceps Kickback"
     centerElement: true
     timeout: 20000
 - takeScreenshot: 178-jaipur-push-1
