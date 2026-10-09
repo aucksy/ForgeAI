@@ -1563,6 +1563,10 @@
   - Device QA part L (`qa/v0290-l.yaml`): paste the owner's link, check, follow, folder Jaipur.
   - Review: 3 fixed (blank-reps exercise made timed; bodyweight asked for a weight; re-import kept old rests) + the sets line read from its own line.
   - **Tests:** 718 vitest.
+  - **Device QA run 37953954911 passed parts A–L**, no app crash. Earlier runs found: the done
+    screen after a file import read "routines in" (a `{ ...(await x) }` result inside a conditional
+    lost its fields on the phone — written out plainly; part J caught it) and two part-L selector
+    slips (below the fold; the library name "Cable Triceps Kickback" for Hevy's "Triceps Kickback (Cable)").
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
