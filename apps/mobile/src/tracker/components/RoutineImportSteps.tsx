@@ -148,7 +148,15 @@ export function RoutineImportSteps({
     if (busy) return;
     setBusy(true);
     try {
-      const r = link ? await saveLinkedRoutines(link, saved, { follow }) : { ...(await saveImportedRoutines(app, saved, { follow })), created: 0 };
+      // Written out plainly: on the phone, `{ ...(await …) }` inside `a ? b : c` came back
+      // without its fields (the done screen read "routines in", v0.29.0 phone test part J).
+      let r: { routines: number; name: string; created: number };
+      if (link) {
+        r = await saveLinkedRoutines(link, saved, { follow });
+      } else {
+        const s = await saveImportedRoutines(app, saved, { follow });
+        r = { routines: s.routines, name: s.name, created: 0 };
+      }
       // Home's own answer (its rotation reads every recent workout, not only this file).
       const today = await homeToday();
       success();
