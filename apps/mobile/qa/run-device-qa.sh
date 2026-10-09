@@ -185,6 +185,13 @@ maestro test --format junit --output "$OUT/part-k.xml" --test-output-dir "$OUT/p
 adb logcat -d -s ForgeShare:W > "$OUT/k-share-log.txt" 2>/dev/null || true
 log "share errors logged: $(grep -c 'ForgeShare' "$OUT/k-share-log.txt" 2>/dev/null)"
 
+# ---------------------------------------------------------------- part L (v0.29.0: Import routines from a Hevy link)
+# Reads the owner's public Hevy folder on hevy.com in the app's hidden in-app browser (needs the internet).
+adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
+adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
+log "part L start"
+maestro test --format junit --output "$OUT/part-l.xml" --test-output-dir "$OUT/part-l" "$QA_DIR/v0290-l.yaml"   > "$OUT/part-l.log" 2>&1 || { status=1; log "PART L FAILED"; }
+
 # ---------------------------------------------------------------- crash check
 # Only the app's own crashes count (another app's crash on the emulator is not ours).
 app_crash() { grep -A1 "FATAL EXCEPTION" "$1" 2>/dev/null | grep -q "Process: $PKG"; }

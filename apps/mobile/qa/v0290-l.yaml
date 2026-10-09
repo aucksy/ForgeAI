@@ -1,0 +1,86 @@
+# v0.29.0 device QA, part L — Import routines from a Hevy share link (runs after parts A–K).
+# Profile → Import routines → paste the owner's public folder link → the app reads hevy.com in a
+# hidden in-app browser → "We found 6 routines in “Jaipur”" → check each → follow → the folder
+# "Jaipur" with Push 1's 7 exercises exactly as saved in Hevy. Needs the internet (hevy.com).
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "^Import routines$"
+    centerElement: true
+    timeout: 90000
+- tapOn: "^Import routines$"
+- extendedWaitUntil:
+    visible: "Copy your routines from Hevy"
+    timeout: 15000
+- tapOn: "Hevy share link"
+- inputText: "https://hevy.com/folder/177335"
+- hideKeyboard
+- takeScreenshot: 170-import-routines-link
+- tapOn: "Read link"
+- takeScreenshot: 171-reading-link
+# ---------------------------------------------------------------- 1. found
+- extendedWaitUntil:
+    visible: "We found 6 routines in .Jaipur."
+    timeout: 60000
+- assertVisible: "Push 1"
+- takeScreenshot: 172-link-routines-found
+- tapOn: "Check these 6"
+# ---------------------------------------------------------------- 2. one per screen, exactly as saved
+- extendedWaitUntil:
+    visible: "1 of 6"
+    timeout: 10000
+- assertVisible: "As saved in Hevy.*"
+- assertVisible: "Chin Up"
+- assertVisible: "3 sets · 9–12 reps"
+- takeScreenshot: 173-link-check-pull-2
+- runFlow:
+    file: v0290-l-next.yaml
+- runFlow:
+    file: v0290-l-next.yaml
+- runFlow:
+    file: v0290-l-next.yaml
+- runFlow:
+    file: v0290-l-next.yaml
+- runFlow:
+    file: v0290-l-next.yaml
+- extendedWaitUntil:
+    visible: "6 of 6"
+    timeout: 10000
+- assertVisible: "Single Arm Lateral Raise \\(Cable\\)"
+- takeScreenshot: 174-link-check-push-1
+- runFlow:
+    file: v0290-l-next.yaml
+# ---------------------------------------------------------------- 3. follow
+- extendedWaitUntil:
+    visible: "Follow these as your plan\\?"
+    timeout: 10000
+- takeScreenshot: 175-link-follow
+- tapOn: "Follow them"
+# ---------------------------------------------------------------- 4. done
+- extendedWaitUntil:
+    visible: "6 routines in Jaipur"
+    timeout: 20000
+- takeScreenshot: 176-link-saved
+- tapOn: "Open routines"
+- extendedWaitUntil:
+    visible: "Jaipur"
+    timeout: 15000
+- takeScreenshot: 177-jaipur-folder
+- scrollUntilVisible:
+    element: "Push 1"
+    centerElement: true
+    timeout: 30000
+- tapOn: "Push 1"
+- extendedWaitUntil:
+    visible: "Triceps Kickback \\(Cable\\)"
+    timeout: 15000
+- takeScreenshot: 178-jaipur-push-1
+- back

@@ -6,8 +6,9 @@
 import { todayISO } from '@/lib/date';
 import { getTodaysWorkout } from '@/services/coach';
 
-import { appFolder, followedFolder, saveAppFolder, type ImportApp, type NewRoutine } from '../db/folderRepo';
-import { exerciseIdsForTitles } from './hevyImport';
+import { appFolder, followedFolder, linkFolder, saveAppFolder, saveLinkFolder, type ImportApp, type NewRoutine } from '../db/folderRepo';
+import { getExerciseRestSec, setExerciseRestSec } from '../db/exercisePrefs';
+import { exerciseIdsCreating, exerciseIdsForTitles } from './hevyImport';
 import type { FoundExercise } from './routineRebuild';
 
 export const APP_FOLDER_NAME: Record<ImportApp, string> = { hevy: 'From Hevy', strong: 'From Strong' };
@@ -60,4 +61,38 @@ export async function saveImportedRoutines(
   const folderId = await saveAppFolder(app, APP_FOLDER_NAME[app], routines, { follow: opts.follow, todayISO: todayISO() });
   const saved = await appFolder(app).catch(() => null);
   return { folderId, routines: routines.length, name: saved?.name ?? APP_FOLDER_NAME[app] };
+}
+
+// ---------------------------------------------------------------- v0.29.0: from a share link
+
+/** The follow question for a link's folder: the folder followed now, and this link's folder if any. */
+export async function linkFollowQuestion(url: string): Promise<{ followingName: string | null; updatingName: string | null }> {
+  const [now, mine] = await Promise.all([followedFolder().catch(() => null), linkFolder(url).catch(() => null)]);
+  return { followingName: now && now.id !== mine?.id ? now.name : null, updatingName: mine?.name ?? null };
+}
+
+/**
+ * Save a link's checked routines as the folder named in Hevy. An exercise not in ForgeAI yet is
+ * made (a custom exercise); its rest from the link becomes its own rest unless the member set
+ * one. Returns the folder, how many routines and how many new exercises.
+ */
+export async function saveLinkedRoutines(
+  link: { url: string; folderName: string; rests: ReadonlyMap<string, number> },
+  chosen: readonly { title: string; dayType: NewRoutine['dayType']; exercises: readonly FoundExercise[] }[],
+  opts: { follow: boolean },
+): Promise<{ folderId: string; routines: number; name: string; created: number }> {
+  const items = new Map<string, boolean>();
+  for (const r of chosen) for (const e of r.exercises) items.set(e.title, (items.get(e.title) ?? true) && e.repMin == null);
+  const { ids, created } = await exerciseIdsCreating([...items].map(([title, timed]) => ({ title, timed })));
+  const routines = toNewRoutines(chosen, ids);
+  if (routines.length === 0) throw new Error('nothing to save');
+  // The same link copied again: its rests win too (the folder "now matches this link").
+  const again = (await linkFolder(link.url).catch(() => null)) != null;
+  const folderId = await saveLinkFolder(link.url, link.folderName, routines, { follow: opts.follow, todayISO: todayISO() });
+  for (const [title, sec] of link.rests) {
+    const id = ids.get(title);
+    if (id && (again || (await getExerciseRestSec(id).catch(() => 0)) == null)) await setExerciseRestSec(id, sec).catch(() => undefined);
+  }
+  const saved = await linkFolder(link.url).catch(() => null);
+  return { folderId, routines: routines.length, name: saved?.name ?? link.folderName, created };
 }

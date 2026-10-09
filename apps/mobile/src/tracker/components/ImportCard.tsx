@@ -28,6 +28,16 @@ export function ImportCard() {
           router.push({ pathname: '/import', params: { from: 'strong' } });
         }}
       />
+      <View style={{ height: space.sm }} />
+      {/* v0.29.0: routines exactly as saved, from a Hevy share link */}
+      <GhostButton
+        label="Import routines"
+        icon="globe"
+        onPress={() => {
+          tap();
+          router.push('/import/routines');
+        }}
+      />
       <Text
         style={{
           fontFamily: type.body,
@@ -38,7 +48,7 @@ export function ImportCard() {
           lineHeight: 15,
         }}
       >
-        Bring your full Hevy or Strong workout history in: pick your exported file, preview, then import.
+        Bring your full Hevy or Strong workout history in: pick your exported file, preview, then import. Import routines copies them from a Hevy share link.
       </Text>
     </Card>
   );

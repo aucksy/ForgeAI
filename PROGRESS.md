@@ -1541,6 +1541,29 @@
     stopped in part I only: the demo, dated from today, put a 6:30 pm workout on qa-strong.csv's
     22 Sep, and the 30-minute rule rightly skipped its 6:10 pm one — fixture moved to 5 am.
 
+- 2026-10-09: **Tracker v0.29.0 — Import routines from a Hevy share link** (owner: build it;
+  research Strong too).
+  - `src/app/import/routines.tsx` (paste → reading → steps), entry from Profile's ImportCard and
+    Routines "+" sheet. `tracker/components/HevyLinkReader.tsx`: hidden `react-native-webview`
+    (13.16.1, new native dependency) on the public page with `Accept-Language: en`, navigation
+    limited to hevy.com, incognito; `routineLink.READ_PAGE_JS` waits until the h3 count reaches
+    the page's `metadata.routine_count` (or 20 s), posts h1–h5 (+ each h5's box text).
+  - `services/routineLink.ts` (pure): `parseRoutineLink`, `parseExerciseBox` ("4 sets · 11-20
+    reps", "Rest 2m 15s"; a timed exercise shows sets only — Hevy's own page code read),
+    `parseHevyPage` (h2 name, h3 routines, h5 with a sets box = exercise; a routine link = one
+    routine), `linkedToFound`, `linkedRests`, `readProblem`.
+  - Saving: `routineImport.saveLinkedRoutines` → `hevyImport.exerciseIdsCreating` (match, else a
+    custom exercise) → `folderRepo.saveLinkFolder` (FolderSettings.fromLink; same link refills;
+    `saveAppFolder` and it share `refillOrCreate`); rest from the link only where none is set.
+    `RoutineImportSteps` takes `link` (everything ticked; "As saved in Hevy").
+  - **Strong researched:** link.strong.app/<id> serves the same 118-byte redirect for any id —
+    no data; templates need Strong's private servers; the CSV has workouts only. Not built.
+  - Proven: the exact script run on the live page in a real browser (6 routines, 36 exercises);
+    a fake-DOM test runs it on the captured page (`test/fixtures/hevy-folder-page.json`).
+  - Device QA part L (`qa/v0290-l.yaml`): paste the owner's link, check, follow, folder Jaipur.
+  - Review: 3 fixed (blank-reps exercise made timed; bodyweight asked for a weight; re-import kept old rests) + the sets line read from its own line.
+  - **Tests:** 718 vitest.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

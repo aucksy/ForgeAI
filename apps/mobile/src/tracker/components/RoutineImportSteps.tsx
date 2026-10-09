@@ -7,6 +7,8 @@
  *   3. Follow them? — Home's "Today" becomes the member's next routine. A member following
  *      another plan is asked, never switched silently. Nothing ticked → nothing to save.
  *   4. Done — the folder "From Hevy"; a later import updates it.
+ * v0.29.0: the same steps for routines copied from a Hevy share link (`link`): exactly as saved,
+ * every exercise ticked, saved as the folder named in Hevy.
  */
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
@@ -18,7 +20,7 @@ import { success, warn } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import type { ImportApp } from '../db/folderRepo';
-import { followQuestion, homeToday, saveImportedRoutines } from '../services/routineImport';
+import { followQuestion, homeToday, linkFollowQuestion, saveImportedRoutines, saveLinkedRoutines } from '../services/routineImport';
 import { chosenRoutines, findRoutines, type FoundExercise, type FoundRoutine, type RebuildWorkout } from '../services/routineRebuild';
 
 const CAPTION = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 } as const;
@@ -78,12 +80,30 @@ type Step =
   | { kind: 'list' }
   | { kind: 'check'; i: number }
   | { kind: 'follow' }
-  | { kind: 'done'; routines: number; folder: string; today: string | null };
+  | { kind: 'done'; routines: number; folder: string; today: string | null; created: number };
 
-export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp; workouts: readonly RebuildWorkout[]; onClose: () => void }) {
+/** v0.29.0: routines read from a share link, with the folder's name and each exercise's rest. */
+export interface LinkRoutines {
+  url: string;
+  folderName: string;
+  found: FoundRoutine[];
+  rests: ReadonlyMap<string, number>;
+}
+
+export function RoutineImportSteps({
+  app,
+  workouts,
+  link,
+  onClose,
+}: {
+  app: ImportApp;
+  workouts?: readonly RebuildWorkout[];
+  link?: LinkRoutines;
+  onClose: () => void;
+}) {
   const router = useRouter();
   const appName = app === 'hevy' ? 'Hevy' : 'Strong';
-  const found = useMemo(() => findRoutines(workouts), [workouts]);
+  const found = useMemo(() => link?.found ?? findRoutines(workouts ?? []), [link, workouts]);
   const recent = found.filter((r) => r.recent);
   const older = found.filter((r) => !r.recent);
   // The count is the routines in use; names not used for a year are folded below it.
@@ -120,7 +140,7 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
     });
 
   const toFollow = async () => {
-    setQuestion(await followQuestion(app).catch(() => ({ followingName: null, updatingName: null })));
+    setQuestion(await (link ? linkFollowQuestion(link.url) : followQuestion(app)).catch(() => ({ followingName: null, updatingName: null })));
     setStep({ kind: 'follow' });
   };
 
@@ -128,11 +148,11 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
     if (busy) return;
     setBusy(true);
     try {
-      const r = await saveImportedRoutines(app, saved, { follow });
+      const r = link ? await saveLinkedRoutines(link, saved, { follow }) : { ...(await saveImportedRoutines(app, saved, { follow })), created: 0 };
       // Home's own answer (its rotation reads every recent workout, not only this file).
       const today = await homeToday();
       success();
-      setStep({ kind: 'done', routines: r.routines, folder: r.name, today });
+      setStep({ kind: 'done', routines: r.routines, folder: r.name, today, created: r.created });
     } catch {
       warn();
       Alert.alert('Couldn’t save the routines', 'Nothing was changed. Please try again.');
@@ -147,7 +167,7 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
       <TickRow
         key={r.title}
         label={r.title}
-        sub={`${r.uses} workouts · last ${when(r.lastISO)}`}
+        sub={link ? `${r.exercises.length} exercise${r.exercises.length === 1 ? '' : 's'}` : `${r.uses} workouts · last ${when(r.lastISO)}`}
         ticked={keep.has(r.title)}
         onPress={() => toggleRoutine(r.title)}
       />
@@ -156,11 +176,14 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
       <View style={{ gap: space.lg }}>
         <View style={{ gap: space.xs }}>
           <Text style={HEAD}>
-            We found {shownCount} routine{shownCount === 1 ? '' : 's'} in your {appName} workouts
+            {link
+              ? `We found ${shownCount} routine${shownCount === 1 ? '' : 's'} in “${link.folderName}”`
+              : `We found ${shownCount} routine${shownCount === 1 ? '' : 's'} in your ${appName} workouts`}
           </Text>
           <Text style={CAPTION}>
-            {appName} does not export routines, so we rebuilt them from the workouts you started from each one. You check
-            each one next.
+            {link
+              ? 'Copied exactly as saved in Hevy. You check each one next.'
+              : `${appName} does not export routines, so we rebuilt them from the workouts you started from each one. You check each one next.`}
           </Text>
         </View>
         <Card>
@@ -210,7 +233,9 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
           </Text>
           <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>{r.title}</Text>
           <Text style={CAPTION}>
-            From your last {r.title} ({when(r.lastISO)}). Untick anything that is not in this routine.
+            {link
+              ? 'As saved in Hevy. Untick anything you don’t want.'
+              : `From your last ${r.title} (${when(r.lastISO)}). Untick anything that is not in this routine.`}
           </Text>
         </View>
         <Card>
@@ -237,7 +262,11 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
             </Card>
           </View>
         ) : null}
-        <Text style={CAPTION}>Sets and reps are from the last time you did each one. You can change them later in the routine.</Text>
+        <Text style={CAPTION}>
+          {link
+            ? 'Sets, reps and rest are as saved in Hevy. You can change them later in the routine.'
+            : 'Sets and reps are from the last time you did each one. You can change them later in the routine.'}
+        </Text>
         <View style={{ gap: space.md }}>
           <PrimaryButton
             label="Next"
@@ -298,8 +327,9 @@ export function RoutineImportSteps({ app, workouts, onClose }: { app: ImportApp;
           {step.routines} routine{step.routines === 1 ? '' : 's'} in {step.folder}
         </Text>
         <Text style={{ ...CAPTION, textAlign: 'center' }}>
-          {question?.updatingName ? `${step.folder} now matches this file.` : 'Find them in Workout → Routines.'}
+          {question?.updatingName ? `${step.folder} now matches this ${link ? 'link' : 'file'}.` : 'Find them in Workout → Routines.'}
           {step.today ? ` Home shows ${step.today} today.` : ''}
+          {step.created > 0 ? ` ${step.created} new exercise${step.created === 1 ? '' : 's'} added to your library.` : ''}
         </Text>
       </Card>
       <View style={{ gap: space.md }}>

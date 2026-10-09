@@ -1,0 +1,122 @@
+/**
+ * v0.29.0 — Import routines (owner, 9 Oct 2026): paste a Hevy share link (a folder or one
+ * routine) and its routines come in exactly as saved — sets, rep ranges and rest — through the
+ * same check-and-follow steps as the history import. One question per screen:
+ *   1. the link (with how to copy it in Hevy) → 2. reading… → 3. the steps.
+ * Strong's share links open only inside Strong (researched 9 Oct 2026), so Strong routines come
+ * from its export file (Import from Strong → "Bring my routines in").
+ */
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
+import { ActivityIndicator, Text, TextInput, View } from 'react-native';
+
+import { Card, GhostButton, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { warn } from '@/lib/haptics';
+import { color, radius, space, type } from '@/theme/tokens';
+
+import { HevyLinkReader } from '@/tracker/components/HevyLinkReader';
+import { RoutineImportSteps, type LinkRoutines } from '@/tracker/components/RoutineImportSteps';
+import { inferDayType } from '@/tracker/services/hevyImport';
+import { linkedRests, linkedToFound, parseHevyPage, parseRoutineLink, readProblem, type PageRead, type RoutineLink } from '@/tracker/services/routineLink';
+
+const CAPTION = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 } as const;
+
+type Phase = { kind: 'paste' } | { kind: 'reading'; link: RoutineLink } | { kind: 'steps'; routines: LinkRoutines };
+
+export default function ImportRoutinesScreen() {
+  const router = useRouter();
+  const params = useLocalSearchParams<{ link?: string }>();
+  const [text, setText] = useState(typeof params.link === 'string' ? params.link : '');
+  const [phase, setPhase] = useState<Phase>({ kind: 'paste' });
+  const [problem, setProblem] = useState<string | null>(null);
+
+  const link = parseRoutineLink(text);
+
+  const onRead = (): void => {
+    if (!link) {
+      setProblem('That isn’t a Hevy share link. It looks like hevy.com/folder/… or hevy.com/routine/…');
+      return;
+    }
+    setProblem(null);
+    setPhase({ kind: 'reading', link });
+  };
+
+  const onPageRead = (l: RoutineLink, read: PageRead | null): void => {
+    const folder = read ? parseHevyPage(read.nodes, l.kind) : null;
+    const why = readProblem(read, folder);
+    if (why || !folder) {
+      warn();
+      setProblem(why);
+      setPhase({ kind: 'paste' });
+      return;
+    }
+    setPhase({
+      kind: 'steps',
+      routines: { url: l.url, folderName: folder.name, found: linkedToFound(folder, inferDayType), rests: linkedRests(folder) },
+    });
+  };
+
+  return (
+    <Screen title="Import routines" right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
+      {phase.kind === 'steps' ? (
+        <RoutineImportSteps app="hevy" link={phase.routines} onClose={() => router.back()} />
+      ) : phase.kind === 'reading' ? (
+        <View style={{ gap: space.lg }}>
+          <Card style={{ alignItems: 'center', gap: space.md, paddingVertical: space.xl }}>
+            <ActivityIndicator color={color.accent} />
+            <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Reading your Hevy link…</Text>
+            <Text style={{ ...CAPTION, textAlign: 'center' }}>This takes a few seconds.</Text>
+          </Card>
+          <GhostButton label="Cancel" icon="close" onPress={() => setPhase({ kind: 'paste' })} />
+          <HevyLinkReader key={phase.link.url} url={phase.link.url} onRead={(r) => onPageRead(phase.link, r)} />
+        </View>
+      ) : (
+        <View style={{ gap: space.lg }}>
+          <View style={{ gap: space.xs }}>
+            <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Copy your routines from Hevy</Text>
+            <Text style={CAPTION}>Paste a Hevy share link. Your routines come in exactly as saved: exercises, sets, reps and rest.</Text>
+          </View>
+          <View
+            style={{
+              minHeight: 46,
+              paddingHorizontal: space.md,
+              justifyContent: 'center',
+              borderRadius: radius.md,
+              backgroundColor: color.surfaceSunken,
+              borderWidth: 1,
+              borderColor: problem ? color.criticalText : color.border,
+            }}
+          >
+            <TextInput
+              value={text}
+              onChangeText={(t) => {
+                setText(t);
+                setProblem(null);
+              }}
+              placeholder="hevy.com/folder/…"
+              placeholderTextColor={color.inkMuted}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="url"
+              returnKeyType="go"
+              onSubmitEditing={onRead}
+              accessibilityLabel="Hevy share link"
+              style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink, paddingVertical: space.sm }}
+            />
+          </View>
+          {problem ? <Text style={{ ...CAPTION, color: color.criticalText }}>{problem}</Text> : null}
+          <PrimaryButton label="Read link" icon="chevron-right" disabled={text.trim() === ''} onPress={onRead} />
+          <Card style={{ gap: space.sm }}>
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>How to get the link in Hevy</Text>
+            <Text style={CAPTION}>A folder: Workout tab → ⋯ on the folder → Share Folder → Copy Link.</Text>
+            <Text style={CAPTION}>One routine: Workout tab → ⋯ on the routine → Share Routine → Copy Link.</Text>
+          </Card>
+          <Text style={CAPTION}>
+            Coming from Strong? Strong’s links open only in Strong. Import your Strong file instead, then tap “Bring my routines in”.
+          </Text>
+          <GhostButton label="Import from Strong" icon="calendar" onPress={() => router.replace({ pathname: '/import', params: { from: 'strong' } })} />
+        </View>
+      )}
+    </Screen>
+  );
+}

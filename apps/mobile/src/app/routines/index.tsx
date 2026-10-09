@@ -286,6 +286,8 @@ export default function RoutinesScreen() {
         <SheetRow label="New routine" leading={<Icon name="dumbbell" size={18} color={color.accent} />} onPress={() => after(() => void onNewRoutine(followedId))} />
         <SheetRow label="New folder" leading={<Glyph name="list" size={18} color={color.accent} />} onPress={() => after(() => setNaming({ mode: 'new' }))} />
         <SheetRow label="Import a routine file" leading={<Glyph name="image" size={18} color={color.accent} />} onPress={() => after(() => void onImport())} />
+        {/* v0.29.0: routines copied exactly from a Hevy share link */}
+        <SheetRow label="Import routines from Hevy" leading={<Icon name="globe" size={18} color={color.accent} />} onPress={() => after(() => router.push('/import/routines'))} />
       </TrackerSheet>
 
       {/* a folder's menu */}

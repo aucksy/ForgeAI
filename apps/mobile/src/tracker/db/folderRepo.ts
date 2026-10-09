@@ -40,6 +40,11 @@ export interface FolderSettings {
    * same app updates this folder instead of adding a second one.
    */
   fromApp?: ImportApp;
+  /**
+   * v0.29.0: the share link its routines were copied from (Import routines). Copying the same
+   * link again updates this folder instead of adding a second one.
+   */
+  fromLink?: string;
 }
 
 /** The apps whose exports bring routines in. */
@@ -68,6 +73,7 @@ export function parseFolderSettings(raw: string | null | undefined): FolderSetti
     if (typeof s.startISO === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.startISO)) out.startISO = s.startISO;
     if (typeof s.easyOnce === 'number' && Number.isInteger(s.easyOnce) && s.easyOnce >= 1) out.easyOnce = s.easyOnce;
     if (s.fromApp === 'hevy' || s.fromApp === 'strong') out.fromApp = s.fromApp;
+    if (typeof s.fromLink === 'string' && /^https:\/\/hevy\.com\//.test(s.fromLink)) out.fromLink = s.fromLink;
     const e = s.easy as Partial<EasySchedule> | null | undefined;
     if (e && typeof e.every === 'number' && e.every >= 2 && typeof e.base === 'number' && Number.isFinite(e.base)) {
       out.easy = { every: Math.round(e.every), base: Math.round(e.base) };
@@ -332,17 +338,48 @@ export async function saveAppFolder(
   routines: readonly NewRoutine[],
   opts: { follow: boolean; todayISO: string },
 ): Promise<string> {
-  const before = await appFolder(app);
+  return refillOrCreate(await appFolder(app), name, routines, { fromApp: app }, opts);
+}
+
+/** v0.29.0: the folder a share link's routines were copied into before, or null. */
+export async function linkFolder(url: string): Promise<Omit<Folder, 'routines'> | null> {
+  const rows = await getDb().getAllAsync<PlanRow>(
+    "SELECT id, name, is_active, folder_order, source, settings FROM workout_plans WHERE source = 'import' ORDER BY rowid ASC",
+  );
+  const p = rows.find((r) => parseFolderSettings(r.settings).fromLink === url);
+  return p ? { id: p.id, name: p.name, following: p.is_active === 1, source: 'import', settings: parseFolderSettings(p.settings) } : null;
+}
+
+/**
+ * v0.29.0: a share link's routines as their own folder (named as in Hevy, e.g. "Jaipur"). The
+ * same link copied again refills that folder in place, like `saveAppFolder`.
+ */
+export async function saveLinkFolder(
+  url: string,
+  name: string,
+  routines: readonly NewRoutine[],
+  opts: { follow: boolean; todayISO: string },
+): Promise<string> {
+  return refillOrCreate(await linkFolder(url), name, routines, { fromLink: url }, opts);
+}
+
+async function refillOrCreate(
+  before: Omit<Folder, 'routines'> | null,
+  name: string,
+  routines: readonly NewRoutine[],
+  mark: FolderSettings,
+  opts: { follow: boolean; todayISO: string },
+): Promise<string> {
   if (!before) {
     return createFolderWithRoutines(name, routines, {
       source: 'import',
-      settings: { fromApp: app },
+      settings: mark,
       follow: opts.follow,
       todayISO: opts.todayISO,
     });
   }
   const db = getDb();
-  const settings: FolderSettings = { ...before.settings, fromApp: app };
+  const settings: FolderSettings = { ...before.settings, ...mark };
   if (opts.follow && !before.following) {
     settings.startISO = opts.todayISO;
     if (settings.easy) settings.easy = { ...settings.easy, base: 0 };

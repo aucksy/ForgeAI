@@ -607,6 +607,45 @@ export async function exerciseIdsForTitles(titles: readonly string[]): Promise<M
   return out;
 }
 
+/**
+ * How a NEW exercise from a link is logged. `timed` = the link shows no reps for it; that is a
+ * hold or cardio only when its name says so (Hevy shows "3 sets" alone for a rep exercise with
+ * blank reps, like "Pull Up"). A bodyweight name is logged by reps alone. PURE.
+ */
+export function linkLogType(title: string, timed: boolean): LogType {
+  const held = timed && /plank|hold|hang|wall sit|l-sit|stretch|run|walk|jog|cycl|bike|treadmill|elliptical|swim|skip|jump rope|rowing machine|stair/i.test(title);
+  return inferLogType(title, held ? [{ weightKg: 0, reps: 0, durationSec: 60, distanceM: null }] : [{ weightKg: 0, reps: 10, durationSec: null, distanceM: null }]);
+}
+
+/**
+ * v0.29.0 (Import routines from a link): each exercise name → the member's exercise, made as a
+ * custom exercise when nothing matches (as the history import does). `timed` = the link shows
+ * no reps for it AND its name is a hold or cardio (Hevy also shows "3 sets" alone for a rep
+ * exercise with blank reps, like "Pull Up").
+ */
+export async function exerciseIdsCreating(items: readonly { title: string; timed: boolean }[]): Promise<{ ids: Map<string, string>; created: number }> {
+  const library = await readLibrary();
+  const ids = new Map<string, string>();
+  let created = 0;
+  for (const { title, timed } of items) {
+    if (ids.has(title)) continue;
+    const hit = matchTitle(title, library);
+    if (hit) {
+      ids.set(title, hit.id);
+      continue;
+    }
+    const logType = linkLogType(title, timed);
+    const entry = catalogEntryByName(title);
+    const linkKey = entry && !library.some((e) => e.catalogKey === entry.key) ? entry.key : null;
+    const made = await createExercise(buildExerciseInput(title));
+    await getDb().runAsync('UPDATE exercises SET log_type = ?, catalog_key = ? WHERE id = ?', [logType, linkKey, made.id]);
+    library.push({ id: made.id, name: made.name, catalogKey: linkKey, logType, loadMode: null });
+    ids.set(title, made.id);
+    created += 1;
+  }
+  return { ids, created };
+}
+
 // ---------------------------------------------------------------- the same workout twice
 
 /** Two starts this close on the same day are one workout logged in two apps. */
