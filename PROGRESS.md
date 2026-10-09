@@ -1537,6 +1537,9 @@
     sleeps, pace wording under miles (engine, frozen), From Hevy re-import replaces edits (said),
     late rest alert on Android 14+ (open decision).
   - **Tests:** 702 vitest (`v0281.test.ts`, one per fix).
+  - **Device QA run 37912268388 passed parts A–K**, no app crash. The first run (37906347375)
+    stopped in part I only: the demo, dated from today, put a 6:30 pm workout on qa-strong.csv's
+    22 Sep, and the 30-minute rule rightly skipped its 6:10 pm one — fixture moved to 5 am.
 
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
