@@ -8,6 +8,27 @@ appId: com.forgeai.app
     start: 50%, 1%
     end: 50%, 75%
     duration: 600
+- waitForAnimationToEnd:
+    timeout: 3000
+# The shade swipe sometimes lands on the launcher instead (run 38038041222): try twice more.
+- runFlow:
+    when:
+      notVisible: 'Rest 3:15 · ends .*'
+    commands:
+      - swipe:
+          start: 50%, 0%
+          end: 50%, 80%
+          duration: 800
+      - waitForAnimationToEnd:
+          timeout: 3000
+- runFlow:
+    when:
+      notVisible: 'Rest 3:15 · ends .*'
+    commands:
+      - swipe:
+          start: 50%, 0%
+          end: 50%, 80%
+          duration: 800
 - extendedWaitUntil:
     visible: 'Rest 3:15 · ends .*'
     timeout: 15000

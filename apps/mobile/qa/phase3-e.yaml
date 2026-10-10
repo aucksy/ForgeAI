@@ -122,23 +122,15 @@ appId: com.forgeai.app
     element: "Best session"
     timeout: 20000
 - takeScreenshot: 66-bench-records
-# ---------------------------------------------------------------- chat with the keyboard open
-# Third review: the chat now gets its room from the app-wide KeyboardRoom like every screen;
-# the message box must sit just above the keyboard (the tab bar steps aside).
+# ---------------------------------------------------------------- the coach is hidden
+# Owner decision D4 (Phase 0): coach, nutrition and gym sync are hidden from members. Home must
+# show no coach card and no calorie rings, and a coach link must land on Home, unsent.
 - back
 - back
 - extendedWaitUntil:
     visible: "^Home$"
     timeout: 20000
 - tapOn: "^Home$"
-- scrollUntilVisible:
-    element: 'Coach insight: .*'
-    timeout: 20000
-- tapOn: 'Coach insight: .*'
-- extendedWaitUntil:
-    visible: "Message your coach"
-    timeout: 20000
-- tapOn: "Message your coach"
-- inputText: " How was my week"
-- takeScreenshot: 67-chat-keyboard
-- hideKeyboard
+- assertNotVisible: 'Coach insight: .*'
+- assertNotVisible: '(?i)^calories$'
+- takeScreenshot: 67-home-no-coach
