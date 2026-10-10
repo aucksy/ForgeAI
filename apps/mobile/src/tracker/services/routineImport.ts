@@ -8,7 +8,8 @@ import { getTodaysWorkout } from '@/services/coach';
 
 import { appFolder, followedFolder, linkFolder, saveAppFolder, saveLinkFolder, type ImportApp, type NewRoutine } from '../db/folderRepo';
 import { getExerciseRestSec, setExerciseRestSec } from '../db/exercisePrefs';
-import { exerciseIdsCreating, exerciseIdsForTitles } from './hevyImport';
+import { LOG_TYPE_LABEL } from '../engine/logTypes';
+import { classifyMuscle, exerciseIdsCreating, exerciseIdsForTitles, linkLogType, titlesNotInLibrary } from './hevyImport';
 import type { FoundExercise } from './routineRebuild';
 
 export const APP_FOLDER_NAME: Record<ImportApp, string> = { hevy: 'From Hevy', strong: 'From Strong' };
@@ -95,4 +96,25 @@ export async function saveLinkedRoutines(
   }
   const saved = await linkFolder(link.url).catch(() => null);
   return { folderId, routines: routines.length, name: saved?.name ?? link.folderName, created };
+}
+
+/** v0.29.1: an exercise from the link that ForgeAI does not have yet, and how it would be made. */
+export interface NewExercise {
+  title: string;
+  /** "Back · Weight and reps" */
+  about: string;
+}
+
+/** What `about` says for a name. PURE. */
+export function newExerciseAbout(title: string, timed: boolean): string {
+  const m = classifyMuscle(title);
+  return `${m.charAt(0).toUpperCase()}${m.slice(1)} · ${LOG_TYPE_LABEL[linkLogType(title, timed)]}`;
+}
+
+/** The ticked exercises that are new to ForgeAI (each becomes the member's own exercise). */
+export async function newExercisesIn(chosen: readonly { exercises: readonly FoundExercise[] }[]): Promise<NewExercise[]> {
+  const timed = new Map<string, boolean>();
+  for (const r of chosen) for (const e of r.exercises) timed.set(e.title, (timed.get(e.title) ?? true) && e.repMin == null);
+  const missing = await titlesNotInLibrary([...timed.keys()]);
+  return missing.map((title) => ({ title, about: newExerciseAbout(title, timed.get(title) ?? false) }));
 }

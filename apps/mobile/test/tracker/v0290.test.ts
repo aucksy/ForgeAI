@@ -171,6 +171,28 @@ describe('the script that runs on Hevy’s page', () => {
   });
 });
 
+describe('continuity with the imported history (v0.29.1, owner)', () => {
+  it('a link and the history import find exercises the same way, so a routine and its history are one exercise', () => {
+    const hevy = readFileSync('src/tracker/services/hevyImport.ts', 'utf8');
+    // Both read the same library and match with the same rule; the link only adds what is missing.
+    expect(hevy).toMatch(/export async function exerciseIdsCreating[\s\S]*?const hit = matchTitle\(title, library\)/);
+    expect(hevy).toMatch(/for \(const title of parsed\.distinctExerciseTitles\) \{\s*const hit = matchTitle\(title, library\)/);
+  });
+
+  it('an exercise new to ForgeAI is shown before saving, with how it will be made', async () => {
+    const { newExerciseAbout } = await import('@/tracker/services/routineImport');
+    expect(newExerciseAbout('Decline Leg Raise (Gurgaon)', false)).toMatch(/ · Reps only$|· Weight and reps$/);
+    expect(newExerciseAbout('Plank (Weighted Vest)', true)).toMatch(/· Time$/);
+    const steps = readFileSync('src/tracker/components/RoutineImportSteps.tsx', 'utf8');
+    expect(steps).toMatch(/new to ForgeAI/);
+    expect(steps).toMatch(/lastOne \? void afterChecks\(\)/);
+  });
+
+  it('the history import names its new exercises (folded)', () => {
+    expect(readFileSync('src/app/import/index.tsx', 'utf8')).toMatch(/new to ForgeAI: see them/);
+  });
+});
+
 describe('the folder remembers its link', () => {
   it('copying the same link again updates that folder (settings keep the link)', () => {
     expect(parseFolderSettings(JSON.stringify({ fromLink: 'https://hevy.com/folder/177335' })).fromLink).toBe('https://hevy.com/folder/177335');

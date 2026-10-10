@@ -128,6 +128,7 @@ export default function ImportScreen() {
   const [mode, setMode] = useState<ImportMode>('replace');
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [result, setResult] = useState<ImportResult | null>(null);
+  const [showNew, setShowNew] = useState(false);
 
   /** Read a picked or shared file into the preview. `asStrong` null = tell by its content. */
   const readFile = async (uri: string, name: string, asStrong: boolean | null, kind: 'sheet' | 'text' = 'text'): Promise<void> => {
@@ -362,6 +363,36 @@ export default function ImportScreen() {
               />
             ) : null}
           </Card>
+
+          {/* v0.29.1: the exercises ForgeAI does not have are named (folded) — each is added as the
+              member's own exercise with that name, which keeps its history with it. */}
+          {preview.newExercises.length > 0 ? (
+            <View style={{ gap: space.sm }}>
+              <Pressable
+                onPress={() => setShowNew((v) => !v)}
+                accessibilityRole="button"
+                style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}
+              >
+                <Icon name="chevron-right" size={16} color={color.inkMuted} />
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, flex: 1 }}>
+                  {showNew ? 'Hide the new exercises' : `${preview.newExercises.length} new to ForgeAI: see them`}
+                </Text>
+              </Pressable>
+              {showNew ? (
+                <Card style={{ gap: space.xs }}>
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 16 }}>
+                    Added as your own exercises with the same names, so their history stays with them. Add a photo any time in
+                    Workout → Exercise library.
+                  </Text>
+                  {preview.newExercises.map((t) => (
+                    <Text key={t} style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.ink }}>
+                      {t}
+                    </Text>
+                  ))}
+                </Card>
+              ) : null}
+            </View>
+          ) : null}
 
           {fileUnits ? (
             <View style={{ gap: space.sm }}>

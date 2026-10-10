@@ -20,7 +20,15 @@ import { success, warn } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import type { ImportApp } from '../db/folderRepo';
-import { followQuestion, homeToday, linkFollowQuestion, saveImportedRoutines, saveLinkedRoutines } from '../services/routineImport';
+import {
+  followQuestion,
+  homeToday,
+  linkFollowQuestion,
+  newExercisesIn,
+  saveImportedRoutines,
+  saveLinkedRoutines,
+  type NewExercise,
+} from '../services/routineImport';
 import { chosenRoutines, findRoutines, type FoundExercise, type FoundRoutine, type RebuildWorkout } from '../services/routineRebuild';
 
 const CAPTION = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 } as const;
@@ -79,6 +87,7 @@ function TickRow({ label, sub, ticked, onPress }: { label: string; sub: string; 
 type Step =
   | { kind: 'list' }
   | { kind: 'check'; i: number }
+  | { kind: 'new'; items: NewExercise[] }
   | { kind: 'follow' }
   | { kind: 'done'; routines: number; folder: string; today: string | null; created: number };
 
@@ -117,6 +126,8 @@ export function RoutineImportSteps({
   const [showOlder, setShowOlder] = useState(false);
   const [question, setQuestion] = useState<{ followingName: string | null; updatingName: string | null } | null>(null);
   const [busy, setBusy] = useState(false);
+  /** v0.29.1: exercises new to ForgeAI the member chose not to add (left out of the routines). */
+  const [leaveOut, setLeaveOut] = useState<Set<string>>(() => new Set());
 
   const kept: FoundRoutine[] = found.filter((r) => keep.has(r.title));
   // What Save writes: kept routines with at least one ticked exercise.
@@ -142,6 +153,25 @@ export function RoutineImportSteps({
   const toFollow = async () => {
     setQuestion(await (link ? linkFollowQuestion(link.url) : followQuestion(app)).catch(() => ({ followingName: null, updatingName: null })));
     setStep({ kind: 'follow' });
+  };
+
+  /**
+   * v0.29.1: after the last routine — a link's exercises ForgeAI does not have yet are shown first
+   * (each is added as the member's own exercise, so its Hevy history and the routine stay one).
+   * A file import made them already, with the history.
+   */
+  const afterChecks = async () => {
+    const items = link ? await newExercisesIn(saved).catch(() => []) : [];
+    if (items.length > 0) setStep({ kind: 'new', items });
+    else await toFollow();
+  };
+
+  /** Leave the unticked new exercises out of every routine, then ask about following. */
+  const addNew = async () => {
+    if (leaveOut.size > 0) {
+      setTicks((m) => new Map([...m].map(([k, s]) => [k, new Set([...s].filter((t) => !leaveOut.has(t)))])));
+    }
+    await toFollow();
   };
 
   const save = async (follow: boolean) => {
@@ -279,9 +309,54 @@ export function RoutineImportSteps({
           <PrimaryButton
             label="Next"
             icon="chevron-right"
-            onPress={() => (lastOne ? void toFollow() : setStep({ kind: 'check', i: step.i + 1 }))}
+            onPress={() => (lastOne ? void afterChecks() : setStep({ kind: 'check', i: step.i + 1 }))}
           />
           <GhostButton label="Back" icon="chevron-left" onPress={() => setStep(step.i === 0 ? { kind: 'list' } : { kind: 'check', i: step.i - 1 })} />
+        </View>
+      </View>
+    );
+  }
+
+  // ---------------------------------------------------------------- 2b. new to ForgeAI (a link)
+  if (step.kind === 'new') {
+    const adding = step.items.filter((e) => !leaveOut.has(e.title)).length;
+    return (
+      <View style={{ gap: space.lg }}>
+        <View style={{ gap: space.xs }}>
+          <Text style={HEAD}>
+            {step.items.length} exercise{step.items.length === 1 ? ' is' : 's are'} new to ForgeAI
+          </Text>
+          <Text style={CAPTION}>
+            We add {step.items.length === 1 ? 'it' : 'them'} to your exercises with the same name, so your Hevy history and these
+            routines stay together. Untick one to leave it out.
+          </Text>
+        </View>
+        <Card>
+          {step.items.map((e) => (
+            <TickRow
+              key={e.title}
+              label={e.title}
+              sub={e.about}
+              ticked={!leaveOut.has(e.title)}
+              onPress={() =>
+                setLeaveOut((s) => {
+                  const n = new Set(s);
+                  if (n.has(e.title)) n.delete(e.title);
+                  else n.add(e.title);
+                  return n;
+                })
+              }
+            />
+          ))}
+        </Card>
+        <Text style={CAPTION}>Add a photo or change the muscle any time: Workout → Exercise library.</Text>
+        <View style={{ gap: space.md }}>
+          <PrimaryButton
+            label={adding === 0 ? 'Leave them out' : `Add ${adding === 1 ? 'it' : `these ${adding}`}`}
+            icon="chevron-right"
+            onPress={() => void addNew()}
+          />
+          <GhostButton label="Back" icon="chevron-left" onPress={() => setStep({ kind: 'check', i: kept.length - 1 })} />
         </View>
       </View>
     );

@@ -137,6 +137,8 @@ describe("the phone test's Hevy file (qa/fixtures/qa-hevy.csv)", () => {
       ['Bench Press (Barbell)', true, 3],
       ['Lateral Raise (Dumbbell)', true, 3],
       ['Triceps Pushdown', true, 3],
+      // v0.29.1: the phone test checks this one's PREVIOUS after the Hevy-link import (continuity).
+      ['Skullcrusher (Dumbbell)', true, 2],
       ['Chest Fly (Machine)', false, 3],
     ]);
     expect(nextUp(['Push A', 'Pull A'], parsed.workouts)).toEqual({ next: 'Pull A', after: 'Push A' });

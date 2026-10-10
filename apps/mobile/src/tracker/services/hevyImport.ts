@@ -608,6 +608,15 @@ export async function exerciseIdsForTitles(titles: readonly string[]): Promise<M
 }
 
 /**
+ * v0.29.1: the names that match nothing in the member's exercises (each would be made as a
+ * custom exercise), in the order given. Reads only.
+ */
+export async function titlesNotInLibrary(titles: readonly string[]): Promise<string[]> {
+  const library = await readLibrary();
+  return [...new Set(titles)].filter((t) => !matchTitle(t, library));
+}
+
+/**
  * How a NEW exercise from a link is logged. `timed` = the link shows no reps for it; that is a
  * hold or cardio only when its name says so (Hevy shows "3 sets" alone for a rep exercise with
  * blank reps, like "Pull Up"). A bodyweight name is logged by reps alone. PURE.

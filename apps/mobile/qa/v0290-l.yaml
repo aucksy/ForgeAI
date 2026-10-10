@@ -58,6 +58,14 @@ appId: com.forgeai.app
 - takeScreenshot: 174-link-check-push-1
 - runFlow:
     file: v0290-l-next.yaml
+# ---------------------------------------------------------------- 2b. new to ForgeAI (v0.29.1)
+# "Decline Leg Raise (Gurgaon)" is the owner's own Hevy exercise: offered, added with that name.
+- extendedWaitUntil:
+    visible: "1 exercise is new to ForgeAI"
+    timeout: 15000
+- assertVisible: "Decline Leg Raise \\(Gurgaon\\)"
+- takeScreenshot: 174b-link-new-exercise
+- tapOn: "Add it"
 # ---------------------------------------------------------------- 3. follow
 - extendedWaitUntil:
     visible: "Follow these as your plan\\?"
@@ -89,4 +97,26 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 20000
 - takeScreenshot: 178-jaipur-push-1
-- back
+# ---------------------------------------------------------------- continuity (v0.29.1, owner)
+# Start the routine copied from the link: the PREVIOUS column shows the Hevy history imported in
+# part J (Skullcrusher 12 kg × 11 on 29 Sep; shown in pounds after part I: 26.5 × 11).
+- scrollUntilVisible:
+    element: "Start routine"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Start routine"
+- extendedWaitUntil:
+    visible: "Dumbbell Skull Crusher"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "(26\\.5|12) × 11"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: 179-push-1-previous-from-hevy
+- scrollUntilVisible:
+    element: "Discard workout"
+    centerElement: true
+    timeout: 30000
+- tapOn: "Discard workout"
+- tapOn:
+    id: "android:id/button1"
