@@ -1634,6 +1634,24 @@
     Review: 13 findings fixed. Phone flows updated (Finish sheet, labels, demo removal on import).
   - **Tests:** 1,109 vitest. Phone test run 38052813715 on d7276b1.
 
+- 2026-10-10: **v0.32.0 — Audit Phases 3, 4 and 5** (one release).
+  - **Phase 3, trust every number** (5f4b05b): schema v11 `routine_id` — a workout remembers its
+    routine; one `todayPlan()` answer for Home, Workout tab, Today, Start, reminders and widgets.
+    One rule per number (records D10, weeks streak D9, body-weight change, Latin digits with the
+    phone's grouping, a single is its own 1RM). History: endless list with month headers, calendar,
+    search across all years. Editing the past + Log a past workout. Review: 1 blocker + 10 fixed.
+  - **Phase 4, exercises, routines and imports** (0308758): search that understands people (word
+    order, plurals, typos, Hevy/Strong names; ~1 ms), merge/hide exercises; routines keep set types,
+    targets, rest, supersets and notes (schema v12); plan builder; imports exactly as saved (dates,
+    units, names, repairs). Review: 1 blocker + 10 fixed. New phone part N (History).
+  - **Phase 5, Progress and body** (86697b1): "This week so far vs your usual", Your lifts, body map;
+    edit/re-date/delete weigh-ins and measurements with Undo; photo dates; opt-in photo backup with
+    shrunk copies (expo-image-manipulator); share picture carries the workout's name. Review:
+    1 blocker + 10 fixed.
+  - Phone flows matched to the new screens (5a421b0): a workout without a routine keeps its
+    time-of-day name (LW-10, e.g. "Afternoon workout"); Routines list scroll.
+  - **Tests:** 1,438 vitest (three time zones). Phone test run 38077330571 on bf8a17a (Progress "Any exercise" scroll fix).
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
