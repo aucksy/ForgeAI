@@ -2,8 +2,12 @@
 # Profile's second half — Your gym, Backup with the imports, Your data (erase), About — sits shut
 # under one heading, "Gym, backup and data" (src/components/settings/ProfileFold.tsx; the title
 # is set in src/app/(tabs)/settings.tsx). This brings the heading into view and opens it ONLY
-# when it is still shut: a second tap closes it. Open = the "Your gym" section heading shows
-# right under it (Profile's own "Your gym · optional" box label is a different text).
+# when it is still shut: a second tap closes it. Open = the "Your gym" section heading (the
+# fold's first section while the coach is hidden) is there under it (Profile's own
+# "Your gym · optional" box label is a different text). That heading can sit just BELOW the
+# screen's edge (device QA run 38081757903: the shut fold is the end of the page, so the scroll
+# leaves it at the bottom; once opened, its first section starts off screen), so it is looked for
+# by scrolling, never with a plain wait.
 # The Profile tab keeps its scroll position, so away from the top ("Your details" not on screen)
 # it looks UP first, then down.
 # Call it after tapping "^Profile$".
@@ -30,11 +34,18 @@ appId: com.forgeai.app
           element: "Gym, backup and data.*"
           centerElement: true
           timeout: 60000
+# Already open? Its "Your gym" heading is then a short way further down. When the fold is shut
+# the page ends at the fold, nothing moves and this look finds nothing (optional by design).
+- scrollUntilVisible:
+    element: "^Your gym$"
+    timeout: 8000
+    optional: true
 - runFlow:
     when:
       notVisible: "^Your gym$"
     commands:
       - tapOn: "Gym, backup and data.*"
-- extendedWaitUntil:
-    visible: "^Your gym$"
-    timeout: 10000
+- scrollUntilVisible:
+    element: "^Your gym$"
+    centerElement: true
+    timeout: 20000

@@ -1,6 +1,7 @@
 # Phase 1 device QA, part B — after the phone slept through the rest.
 # Notification shade is already open (adb). Tap the workout card → back in the workout →
-# minimise → mini bar → remove an exercise → Finish → the "Finish workout?" sheet → summary with
+# minimise → Home's "Workout in progress · Continue" card (no bar on Home since Phase 7) →
+# minimise → the bar on History → remove an exercise → Finish → the "Finish workout?" sheet → summary with
 # its "Update routine?" sheet → Keep original → Profile.
 appId: com.forgeai.app
 ---
@@ -15,11 +16,30 @@ appId: com.forgeai.app
     visible: "Resume workout"
     timeout: 15000
 - takeScreenshot: 12a-workout-tab-resume-card
+# Audit Phase 7 (packet B, src/tracker/lib/miniBar.ts): on Home the answer card itself says
+# "Workout in progress" with Continue, so the minimised bar is NOT shown there (two of the same
+# thing). Home's way back is Continue; every other tab keeps the bar (History, below).
 - tapOn: "^Home$"
+- extendedWaitUntil:
+    visible: "^Continue$"
+    timeout: 15000
+- assertVisible: "Workout in progress"
+- assertNotVisible: ".*Tap to open the workout"
+- takeScreenshot: 12-home-answer-card
+- tapOn: "^Continue$"
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 15000
+# Minimise goes back to where the workout was opened from: Home, its card still there.
+- tapOn: "Minimise workout.*"
+- extendedWaitUntil:
+    visible: "^Continue$"
+    timeout: 15000
+- tapOn: "^History$"
 - extendedWaitUntil:
     visible: ".*Tap to open the workout"
     timeout: 15000
-- takeScreenshot: 12-minimised-bar
+- takeScreenshot: 12b-minimised-bar-on-history
 - tapOn: ".*Tap to open the workout"
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"

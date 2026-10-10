@@ -436,7 +436,12 @@ appId: com.forgeai.app
     timeout: 20000
 - assertVisible: "New in your library: Sam's Band Pull.*"
 - takeScreenshot: 107-import-done
-- tapOn: "(?i)^ok$"
+# Audit Phase 7 (packet B): the notice is the app's own sheet now, not Android's pop-up; its one
+# button names what it does, "Close" (src/lib/tell.ts NOTICE_BUTTON), never "OK".
+- tapOn: "^Close$"
+- extendedWaitUntil:
+    notVisible: "Routines added"
+    timeout: 10000
 - scrollUntilVisible:
     element: "Shared by Sam, 1 routine.*"
     centerElement: true

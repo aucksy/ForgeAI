@@ -96,6 +96,8 @@ object RestCard {
   private const val COLOR = 0xFFFF7A3B.toInt()
   /** An end that fires this much early (an inexact alarm never does) is re-armed instead. */
   private const val EARLY_MS = 1500L
+  /** Logcat tag for the end-of-rest path (the device QA saves these lines). */
+  private const val LOG_TAG = "ForgeRest"
   /** [load] reports a rest this long past its end as none (the app's view only). */
   private const val STALE_MS = 60_000L
 
@@ -260,6 +262,7 @@ object RestCard {
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
     if (dismissOver) nm(ctx).cancel(OVER_ID)
+    android.util.Log.i(LOG_TAG, "rest cleared (dismissOver=$dismissOver)")
   }
 
   /**
@@ -271,10 +274,13 @@ object RestCard {
    */
   @Synchronized
   fun fireEnd(ctx: Context, expected: Long) {
-    val cur = stored(ctx) ?: return // skipped, workout finished or discarded, or already alerted
-    if (cur.endsAt != expected) return // moved, or replaced by the next set's rest
+    // Device QA run 38081757903: the alarm went off on time on a sleeping phone, yet no
+    // "Rest is over" was in the list 50 s later. These lines (tag ForgeRest) say which way it went.
+    val cur = stored(ctx) ?: return endLog(expected, "no saved rest (skipped, finished, or already alerted)")
+    if (cur.endsAt != expected) return endLog(expected, "the rest now ends at ${cur.endsAt}, not alerted")
     val now = System.currentTimeMillis()
     if (now < expected - EARLY_MS) {
+      endLog(expected, "${expected - now} ms early, armed again")
       arm(ctx, expected)
       return
     }
@@ -282,8 +288,13 @@ object RestCard {
     forget(ctx)
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
+    endLog(expected, "posting Rest is over, ${now - expected} ms late")
     postOver(ctx, cur.next, expected, now - expected, done)
     listener?.invoke("end", 0L, 0L)
+  }
+
+  private fun endLog(expected: Long, what: String) {
+    android.util.Log.i(LOG_TAG, "end $expected: $what")
   }
 
   /**
@@ -306,6 +317,7 @@ object RestCard {
     forget(ctx)
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
+    android.util.Log.i(LOG_TAG, "rest settled quietly (ended ${now - cur.endsAt} ms ago, app on screen)")
   }
 
   /**
@@ -856,11 +868,11 @@ object RestCard {
   }
 
   /**
-   * The "Rest is over" text. On time: "Next up: …" as before. A minute or more late (RT-01):
-   * "Ended 2 min ago · Next up: …", so a late alert is not taken for a fresh one.
+   * The "Rest is over" text. On time: "Next: …" (one word per idea, Phase 7). A minute or more late (RT-01):
+   * "Ended 2 min ago · Next: …", so a late alert is not taken for a fresh one.
    */
   fun overText(next: String?, lateMs: Long): String {
-    val base = if (next != null) "Next up: $next" else "Time for your next set"
+    val base = if (next != null) "Next: $next" else "Time for your next set"
     val mins = lateMs / 60_000L
     return if (mins >= 1L) "Ended $mins min ago · $base" else base
   }
@@ -899,8 +911,9 @@ object RestCard {
       doneAction(ctx, icon, done, endsAt, next)?.let { b.addAction(it) }
       openIntent(ctx)?.let { b.setContentIntent(it) }
       nm(ctx).notify(OVER_ID, b.build())
-    } catch (_: Exception) {
-      // ignore
+      android.util.Log.i(LOG_TAG, "Rest is over posted on $channel")
+    } catch (e: Exception) {
+      android.util.Log.w(LOG_TAG, "Rest is over NOT posted", e)
     }
   }
 }

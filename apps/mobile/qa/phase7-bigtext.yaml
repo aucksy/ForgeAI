@@ -19,11 +19,18 @@ env:
 - tapOn:
     text: "(?i)^allow$"
     optional: true
+# With Android's 3-button bar the bar's own home button is ALSO called "Home" (device QA run
+# 38081757903, part P7NAV3: a plain "^Home$" was already "visible" on that button before the app
+# drew, and the tap pressed it and left the app for the launcher). So wait for a tab name the
+# system bar does not have, and tap the app's Home tab by position: index 0 is the top-most
+# match (Maestro sorts matches by y), and the app's tab bar always sits above the system bar.
 - extendedWaitUntil:
-    visible: "^Home$"
+    visible: "^Profile$"
     timeout: 90000
 # ---------------------------------------------------------------- Home
-- tapOn: "^Home$"
+- tapOn:
+    text: "^Home$"
+    index: 0
 - extendedWaitUntil:
     visible: "(?i)good (morning|afternoon|evening).*|This week so far"
     timeout: 30000
@@ -135,4 +142,6 @@ env:
 - runFlow:
     file: sub-profile-fold-open.yaml
 - takeScreenshot: p7-big-${NAV}-08-profile-fold-open
-- tapOn: "^Home$"
+- tapOn:
+    text: "^Home$"
+    index: 0

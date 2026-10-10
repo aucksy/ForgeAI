@@ -50,6 +50,7 @@ import {
   type HistoryRow,
 } from '@/tracker/services/historyFeed';
 import { getConsistencyCells } from '@/tracker/services/volumeService';
+import { historyView } from '@/tracker/lib/historyView';
 import { askAboutOpenWorkout, openActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
@@ -344,6 +345,11 @@ export default function HistoryScreen() {
   );
 
   const searching = query.length > 0;
+  // The box is in use (typed text, or a search still applied): the list and its box stay up.
+  const boxInUse = searching || queryText.trim().length > 0;
+  const listShown = useRef(false);
+  const view = historyView({ status, itemCount: items.length, total, searching: boxInUse, listShown: listShown.current });
+  if (view === 'list') listShown.current = true;
   const subtitle = total > 0 ? `${workoutsWord(total)}${firstDay ? ` since ${monthTitle(firstDay.slice(0, 7))}` : ''}` : 'Every workout you log.';
 
   const listHeader = (
@@ -369,6 +375,22 @@ export default function HistoryScreen() {
             <Heatmap cells={cells} weeks={CAL_WEEKS} />
           </Card>
         </View>
+      ) : null}
+      {/* A re-read that has nothing on screen yet (a search typed after one that matched
+          nothing, or cleared): say so here, so the box above never goes away. */}
+      {status === 'loading' && items.length === 0 ? (
+        searching ? (
+          <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Searching…</Text>
+        ) : (
+          <ActivityIndicator color={color.accent} />
+        )
+      ) : null}
+      {status === 'error' && items.length === 0 ? (
+        <LoadError
+          compact
+          what={searching ? 'this search' : 'your workouts'}
+          onRetry={() => void refresh(queryRef.current, 0, false)}
+        />
       ) : null}
       {searching && status === 'ready' ? (
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
@@ -412,15 +434,15 @@ export default function HistoryScreen() {
 
   return (
     <Screen title="History" subtitle={subtitle} scroll={false}>
-      {status === 'loading' && items.length === 0 ? (
+      {view === 'skeleton' ? (
         <View style={{ gap: space.md }}>
           {[0, 1, 2, 3].map((i) => (
             <Skeleton key={i} width="100%" height={88} radius={radius.lg} />
           ))}
         </View>
-      ) : status === 'error' && items.length === 0 ? (
+      ) : view === 'error' ? (
         <LoadError what="your workouts" onRetry={() => void refresh(queryRef.current, 0, false)} />
-      ) : total === 0 && !searching ? (
+      ) : view === 'empty' ? (
         <View style={{ gap: space.lg }}>
           <EmptyState
             icon="dumbbell"

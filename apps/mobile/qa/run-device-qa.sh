@@ -68,6 +68,11 @@ log "screen off"
 sleep 50
 adb shell dumpsys notification --noredact > "$OUT/notifications-after-rest.txt"
 adb shell dumpsys alarm | grep -i -A3 "$PKG" > "$OUT/alarms.txt" || true
+# Which way the end of the rest went (RestCard.kt logs it under the tag ForgeRest): run 38081757903
+# had the alarm on time but no "Rest is over" 50 s later, and no log of that window. Saved now,
+# before part B's Maestro clears logcat.
+adb logcat -d -v time > "$OUT/a-rest-logcat.txt" 2>/dev/null || true
+log "rest end path (ForgeRest lines): $(grep 'ForgeRest' "$OUT/a-rest-logcat.txt" 2>/dev/null | sed 's/^.*ForgeRest[^:]*: //' | tr '\n' ';' | cut -c1-600)"
 adb shell input keyevent KEYCODE_WAKEUP
 sleep 1
 adb shell wm dismiss-keyguard || true
@@ -168,6 +173,8 @@ log "part H2 start"
 maestro test --format junit --output "$OUT/part-h2.xml" --test-output-dir "$OUT/part-h2" "$QA_DIR/v0261-h2.yaml" \
   > "$OUT/part-h2.log" 2>&1 || { status=1; log "PART H2 FAILED"; }
 adb shell dumpsys notification --noredact > "$OUT/h-after-rest-app-open.txt"
+adb logcat -d -v time > "$OUT/h2-rest-logcat.txt" 2>/dev/null || true
+log "H2 rest end path (ForgeRest lines): $(grep 'ForgeRest' "$OUT/h2-rest-logcat.txt" 2>/dev/null | sed 's/^.*ForgeRest[^:]*: //' | tr '\n' ';' | cut -c1-600)"
 adb shell cmd statusbar expand-notifications
 sleep 2
 adb exec-out screencap -p > "$OUT/h-117-shade-rest-over.png"
