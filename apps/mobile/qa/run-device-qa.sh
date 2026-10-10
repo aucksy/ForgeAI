@@ -67,6 +67,12 @@ adb shell input keyevent KEYCODE_SLEEP
 log "screen off"
 sleep 50
 adb shell dumpsys notification --noredact > "$OUT/notifications-after-rest.txt"
+# Why a notification left the list: Android's events log keeps every enqueue/cancel with its
+# reason (4 = error, 8 = app cancel, 19 = timeout, 10/22 = listener/assistant); logcat -c does
+# not clear this buffer. Saved for part A's "Rest is over" (id 41002).
+adb logcat -b events -d 2>/dev/null | grep -E "notification_(enqueue|canceled|cancel)" | grep -i forgeai > "$OUT/a-notif-events.txt" || true
+adb logcat -d 2>/dev/null | grep -iE "bad notification|NotifInflat|onNotificationError|ForgeRest" > "$OUT/a-notif-errors.txt" || true
+log "rest alert events: $(grep -c '41002' "$OUT/a-notif-events.txt" 2>/dev/null || echo 0) lines for id 41002 (a-notif-events.txt)"
 adb shell dumpsys alarm | grep -i -A3 "$PKG" > "$OUT/alarms.txt" || true
 # Which way the end of the rest went (RestCard.kt logs it under the tag ForgeRest): run 38081757903
 # had the alarm on time but no "Rest is over" 50 s later, and no log of that window. Saved now,

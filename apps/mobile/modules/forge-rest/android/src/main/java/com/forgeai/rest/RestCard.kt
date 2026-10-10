@@ -90,6 +90,8 @@ object RestCard {
   const val ADD_SEC = 15
 
   private const val PREFS = "forgeai_rest_card"
+  /** The tag of the "Rest is over" now showing ([cancelOver]). */
+  private const val PREFS_OVER = "forgeai_rest_over"
   private const val PREFS_QUIET = "forgeai_rest_quiet"
   /** Phase 6: the last Done tap (kept apart from the rest, which [forget] clears). */
   private const val PREFS_DONE = "forgeai_rest_done"
@@ -229,13 +231,26 @@ object RestCard {
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().clear().apply()
   }
 
+  /**
+   * Removes "Rest is over", whichever alert is showing. Each alert is posted under its own tag
+   * ("over-<end time>"): Android 14 never cancels the timer behind setTimeoutAfter (the "app open"
+   * alert's 60 s), and when that timer fires it removes whatever then holds the same id and tag —
+   * with one shared id, the NEXT rest's loud alert. A tag per alert means an old timer finds nothing.
+   * The untagged id is removed too (alerts posted before this change).
+   */
+  private fun cancelOver(ctx: Context) {
+    val nm = nm(ctx)
+    nm.cancel(OVER_ID)
+    ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE).getString("tag", null)?.let { nm.cancel(it, OVER_ID) }
+  }
+
   // ------------------------------------------------------------------ actions
   /** A rest started or changed in the app. */
   @Synchronized
   fun show(ctx: Context, startedAt: Long, endsAt: Long, next: String?) {
     val r = Rest(startedAt, endsAt, next)
     save(ctx, r)
-    nm(ctx).cancel(OVER_ID) // an old "Rest is over" goes when the next rest starts
+    cancelOver(ctx) // an old "Rest is over" goes when the next rest starts
     post(ctx, r)
     arm(ctx, endsAt)
   }
@@ -261,7 +276,7 @@ object RestCard {
     forget(ctx)
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
-    if (dismissOver) nm(ctx).cancel(OVER_ID)
+    if (dismissOver) cancelOver(ctx)
     android.util.Log.i(LOG_TAG, "rest cleared (dismissOver=$dismissOver)")
   }
 
@@ -284,12 +299,11 @@ object RestCard {
       arm(ctx, expected)
       return
     }
-    val done = doneTarget(ctx) // read before [forget] wipes it: "Rest is over" carries Done too
     forget(ctx)
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
     endLog(expected, "posting Rest is over, ${now - expected} ms late")
-    postOver(ctx, cur.next, expected, now - expected, done)
+    postOver(ctx, cur.next, expected, now - expected)
     listener?.invoke("end", 0L, 0L)
   }
 
@@ -374,7 +388,7 @@ object RestCard {
   fun doneTapped(ctx: Context, intent: Intent): PendingDone? {
     val d = pendingFrom(intent, open = false) ?: return null
     keepPending(ctx, d)
-    nm(ctx).cancel(OVER_ID)
+    cancelOver(ctx)
     return d
   }
 
@@ -399,7 +413,7 @@ object RestCard {
     intent.removeExtra(EXTRA_DONE_VALUES)
     intent.removeExtra(EXTRA_ENDS)
     keepPending(ctx, d)
-    nm(ctx).cancel(OVER_ID)
+    cancelOver(ctx)
     return true
   }
 
@@ -878,7 +892,7 @@ object RestCard {
   }
 
   @Suppress("DEPRECATION")
-  private fun postOver(ctx: Context, next: String?, endsAt: Long, lateMs: Long, done: DoneTarget?) {
+  private fun postOver(ctx: Context, next: String?, endsAt: Long, lateMs: Long) {
     try {
       ensureChannels(ctx)
       val icon = iconRes(ctx)
@@ -907,10 +921,14 @@ object RestCard {
       }
       // App on screen: the watch has buzzed by the time this goes; the app shows the rest is over.
       if (open && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) b.setTimeoutAfter(60_000L)
-      // Phase 6: "Done" logs the next set from here too (lock screen, watch).
-      doneAction(ctx, icon, done, endsAt, next)?.let { b.addAction(it) }
+      // No "Done" here (it stays on the rest card): with that action on this alert, Android 14
+      // removed "Rest is over" seconds after posting it on a locked phone (device QA run
+      // 38081757903: posted with 1 action, then gone, not by the app). The alert is back to the
+      // shape every earlier phone run passed with.
       openIntent(ctx)?.let { b.setContentIntent(it) }
-      nm(ctx).notify(OVER_ID, b.build())
+      val tag = "over-$endsAt"
+      ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE).edit().putString("tag", tag).commit()
+      nm(ctx).notify(tag, OVER_ID, b.build())
       android.util.Log.i(LOG_TAG, "Rest is over posted on $channel")
     } catch (e: Exception) {
       android.util.Log.w(LOG_TAG, "Rest is over NOT posted", e)
