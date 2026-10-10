@@ -83,7 +83,9 @@ env:
           timeout: 20000
       - tapOn: "Search exercises"
       - inputText: " bench press"
-      - hideKeyboard
+      # No hideKeyboard: it is Android Back, and with the 3-button bar (part P7NAV3, run
+      # 38085995006) that Back closed the picker and then the app. The results and "Add 1" sit
+      # above the keyboard (the window shrinks for it).
       # Phase 2 (LW-15): tick the exercise in the picker, then "Add 1".
       - tapOn:
           text: "Select Barbell Bench Press"

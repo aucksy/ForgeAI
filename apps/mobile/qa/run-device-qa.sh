@@ -252,6 +252,7 @@ adb shell input keyevent KEYCODE_HOME
 adb shell pm revoke "$PKG" android.permission.POST_NOTIFICATIONS > "$OUT/i2-revoke.txt" 2>&1 || log "NOTIFICATIONS OFF: could not revoke the permission ($(tr -d '\r' < "$OUT/i2-revoke.txt"))"
 sleep 2
 free_maestro
+log "NOTIFICATIONS OFF: permission now: $(adb shell dumpsys package "$PKG" | tr -d '\r' | grep -o 'android.permission.POST_NOTIFICATIONS: granted=[a-z]*' | head -1)"
 log "part I2 start"
 maestro test --format junit --output "$OUT/part-i2.xml" --test-output-dir "$OUT/part-i2" "$QA_DIR/phase6-i2.yaml"   > "$OUT/part-i2.log" 2>&1 || { status=1; log "PART I2 FAILED"; }
 adb shell pm clear-permission-flags "$PKG" android.permission.POST_NOTIFICATIONS user-set user-fixed >/dev/null 2>&1 || true

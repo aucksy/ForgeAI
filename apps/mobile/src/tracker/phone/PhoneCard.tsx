@@ -160,6 +160,9 @@ function RemindersRow() {
 
   useEffect(() => {
     let alive = true;
+    // Checked at once, not only after the reminders are set again (which waits behind any
+    // refresh already running and, with `ask`, behind Android's permission question).
+    if (on) void remindersBlocked().then((b) => alive && setBlocked(b === true));
     void refreshReminders({ ask: on }).then((t) => {
       if (!alive) return;
       setNext(t);

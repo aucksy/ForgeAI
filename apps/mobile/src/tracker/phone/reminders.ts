@@ -33,6 +33,7 @@ import { followedFolder } from '@/tracker/db/folderRepo';
 import { planDaysPerWeek } from '@/tracker/services/planState';
 import { getTodayPlan } from '@/tracker/services/todayService';
 
+import { nativeNotificationsEnabled } from '../services/restCard';
 import { ensureAlertPermission, notificationsGranted } from '../services/workoutAlerts';
 import { liveWorkout } from './liveWorkout';
 import { DEFAULT_REMINDER_DAYS, DEFAULT_REMINDER_MINUTES, usePhonePrefs } from './phonePrefs';
@@ -293,6 +294,10 @@ function writeStamp(s: ScheduleStamp | null): Promise<void> {
 export async function remindersBlocked(): Promise<boolean | null> {
   const n = N();
   if (!n) return null;
+  // Two readings: Android's own "are ForgeAI's notifications on" (the rest card's native piece)
+  // and expo-notifications' permission. Either saying no means no reminder can arrive (device QA
+  // part I2, run 38085995006: with the permission taken away the row still said "Next: …").
+  if (nativeNotificationsEnabled() === false) return true;
   const granted = await notificationsGranted();
   if (granted === false) return true;
   try {
