@@ -104,6 +104,22 @@ async function openAndUpgrade(): Promise<void> {
     const { fixSingleE1rmRecords } = await import('@/tracker/services/prRebuild');
     await fixSingleE1rmRecords();
   }).catch(() => undefined);
+  // Audit Phase 4, once each (never blocks start-up; a failure tries again next launch):
+  //  - IM-07: imported workouts' times become the real moment (they were clock time as UTC);
+  //  - IM-02 / IM-03: folders copied from a Hevy link get their warm-ups and real order back.
+  // Both queue their own writes (never nested inside another queued job).
+  try {
+    const { repairImportedClockTimes } = await import('@/tracker/services/importClockRepair');
+    await repairImportedClockTimes();
+  } catch {
+    // tries again next launch
+  }
+  try {
+    const { repairLinkFolders } = await import('@/tracker/services/linkFolderRepair');
+    await repairLinkFolders();
+  } catch {
+    // tries again next launch
+  }
   // Phase 2: once per library version, link this member's exercises to the bundled library
   // and add the new ones (a fresh install gets the whole library at onboarding instead). A
   // failure never blocks the app — it retries next launch. (Not an upgrade step: the app

@@ -35,6 +35,38 @@ appId: com.forgeai.app
     timeout: 10000
 - takeScreenshot: 22-demo-sheet
 - back
+# Audit Phase 4 (EX-01): search understands how people type — plurals and the muscle as a word
+# ("bicep curls" finds the curls) and no space ("benchpress" finds Barbell Bench Press).
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " bicep curls"
+- hideKeyboard
+- extendedWaitUntil:
+    visible: "View .*Curl"
+    timeout: 10000
+- assertNotVisible: "No exercises found"
+- takeScreenshot: 22b-search-bicep-curls
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " benchpress"
+- hideKeyboard
+- extendedWaitUntil:
+    visible: "View Barbell Bench Press"
+    timeout: 10000
+- takeScreenshot: 22c-search-benchpress
+# A typed name that is not an exercise: "Did you mean Dumbbell Curl?" sits above "Create “…”".
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " dumbell curl"
+- hideKeyboard
+- scrollUntilVisible:
+    element: 'Did you mean Dumbbell Curl\?.*'
+    timeout: 20000
+- assertVisible:
+    text: "Create “dumbell curl”"
+    below:
+      text: 'Did you mean Dumbbell Curl\?.*'
+- takeScreenshot: 22d-search-did-you-mean
 - tapOn: "Search exercises"
 - eraseText
 - inputText: " pull-up"
@@ -91,7 +123,8 @@ appId: com.forgeai.app
 - tapOn:
     text: "Skip rest"
     optional: true
-# Pull-up: REPS only. (Demo data keeps the seed's name "Pull Up"; linking never renames.)
+# Pull-up: REPS only. (Demo data keeps the seed's name "Pull Up": a name the member or Hevy gave is never
+# restyled; only the library's own older spellings take the one style, e.g. "Pull-Up", EX-20.)
 - scrollUntilVisible:
     element:
       text: "Add exercise"
@@ -130,7 +163,7 @@ appId: com.forgeai.app
 - inputText: " assisted pull"
 - hideKeyboard
 - tapOn:
-    text: "Select Assisted Pull-up.*"
+    text: "Select Assisted Pull-Up.*"
     index: 0
 - tapOn: "Add 1"
 - extendedWaitUntil:
@@ -139,12 +172,12 @@ appId: com.forgeai.app
 - tapOn:
     text: ".* set 1 assistance, kilograms"
     below:
-      text: "More for Assisted Pull-up.*"
+      text: "More for Assisted Pull-Up.*"
 - inputText: " 20"
 - tapOn:
     text: ".* set 1 reps"
     below:
-      text: "More for Assisted Pull-up.*"
+      text: "More for Assisted Pull-Up.*"
 - inputText: " 8"
 - hideKeyboard
 - takeScreenshot: 26-assisted-row

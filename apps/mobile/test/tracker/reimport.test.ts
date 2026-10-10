@@ -6,10 +6,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { isAlreadyHere, wallClockAsUtc } from '@/tracker/services/hevyImport';
+import { realFromStored } from '@/tracker/services/importClockRepair';
 import { healthPayload, realStart } from '@/tracker/phone/healthConnect';
 
 // A workout at 6:30 pm on 1 Oct 2026 on the member's clock:
-const IMPORTED = Date.UTC(2026, 9, 1, 18, 30); // how an import stores it (clock time written as UTC)
+const IMPORTED = new Date(2026, 9, 1, 18, 30).getTime(); // how an import stores it (the real moment, audit IM-07)
+const OLD_IMPORT = Date.UTC(2026, 9, 1, 18, 30); // how imports stored it before (clock time written as UTC)
 const LIVE = new Date(2026, 9, 1, 18, 41, 12).getTime() + 345; // logged live in ForgeAI, 11 min later
 
 describe('the same workout twice', () => {
@@ -27,15 +29,33 @@ describe('the same workout twice', () => {
     expect(isAlreadyHere({ dateISO: '2026-10-01', startedAt: IMPORTED }, [{ dateISO: '2026-10-02', startedAt: LIVE }])).toBeNull();
   });
 
-  it('reads a live start as clock time the way imports store it', () => {
-    expect(wallClockAsUtc(new Date(2026, 9, 1, 18, 30).getTime())).toBe(IMPORTED);
+  it('reads a live start as clock time written as UTC (kept for older callers)', () => {
+    expect(wallClockAsUtc(new Date(2026, 9, 1, 18, 30).getTime())).toBe(OLD_IMPORT);
+  });
+
+  it('IM-07: after a time-zone change the same workout is still recognised (same day, name and length)', () => {
+    const hourAway = IMPORTED + 3 * 3600_000;
+    expect(
+      isAlreadyHere(
+        { dateISO: '2026-10-01', startedAt: hourAway, endedAt: hourAway + 3600_000, title: 'Push 1' },
+        [{ dateISO: '2026-10-01', startedAt: IMPORTED, endedAt: IMPORTED + 3600_000, title: 'Push 1' }],
+      ),
+    ).toBe('exact');
+    expect(
+      isAlreadyHere(
+        { dateISO: '2026-10-01', startedAt: hourAway, endedAt: hourAway + 1800_000, title: 'Push 1' },
+        [{ dateISO: '2026-10-01', startedAt: IMPORTED, endedAt: IMPORTED + 3600_000, title: 'Push 1' }],
+      ),
+    ).toBeNull();
   });
 });
 
 describe('Health Connect gets the real time of an imported workout', () => {
-  it('an imported start becomes the local moment; a live one is left alone', () => {
-    expect(realStart(IMPORTED, '2026-10-01')).toBe(new Date(2026, 9, 1, 18, 30).getTime());
+  it('every start is already the real moment (IM-07); an old-style start is moved once by the repair', () => {
+    expect(realStart(IMPORTED, '2026-10-01')).toBe(IMPORTED);
     expect(realStart(LIVE, '2026-10-01')).toBe(LIVE);
+    expect(realFromStored(OLD_IMPORT, '2026-10-01')).toBe(IMPORTED);
+    expect(realFromStored(LIVE, '2026-10-01')).toBe(LIVE);
   });
 
   it('the record carries the shifted start and end, same length', () => {

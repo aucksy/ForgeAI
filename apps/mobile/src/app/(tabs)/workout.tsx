@@ -252,7 +252,7 @@ export default function WorkoutScreen() {
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>
                 ) : null}
                 {/* An easy week shows even on a day with no "Today" (trained already, or off-plan). */}
-                {plan?.easy ? <EasyWeekNote /> : null}
+                {plan?.easy ? <EasyWeekNote until={plan.easyUntil} /> : null}
                 {preview?.hasPlan ? (
                   <PrimaryButton
                     label={`Start ${preview.dayName}`}

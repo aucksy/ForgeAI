@@ -1,10 +1,11 @@
 # v0.26.0 device QA, part G — Phase 4 routines and plans (runs after parts A–F, on the demo
 # member: muscle, intermediate, the demo "Push Pull Legs — 6 Day" plan).
-# Ready programs → follow one → the plan builder (Upper / Lower, 4 days, dumbbells only, a sore
-# knee, leave out Goblet Squat) → swap in the plan → follow it → the routine editor: swap for
-# good, share as text, move to another folder → share a folder as a file → back on the demo
-# plan: easy weeks on, take one now → the easy workout (half the sets, no record pop-up, swap
-# for today) → train normally → open a routine file someone shared.
+# Ready programs → follow one → the plan builder, step by step (Upper / Lower, 4 days, dumbbells
+# only, a sore knee, leave out Goblet Squat) → swap in the plan → save and follow it → a routine's
+# calm preview → Edit routine: swap for good, share as text, move to another folder → share a
+# folder as a file → back on the demo plan: easy weeks on, take one now (with its end date) → the
+# easy workout (half the sets, no record pop-up, swap for today) → train normally → open a
+# routine file someone shared → "New routine" asks where it goes → reorder mode.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -57,13 +58,40 @@ appId: com.forgeai.app
     visible: "Build a plan"
     timeout: 20000
 - tapOn: "Build a plan"
+# Audit Phase 4 (RP-17): the answers come in 5 short steps, each with Next (and Back after the
+# first): goal and experience → days and split → equipment → sore spots → time and easy weeks.
 - extendedWaitUntil:
-    visible: "A few answers, then your plan."
+    visible: "Step 1 of 5"
     timeout: 15000
 - waitForAnimationToEnd
+- assertNotVisible: "^Back$"
+- takeScreenshot: 84b-builder-step-1
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 2 of 5"
+    timeout: 10000
 - tapOn: "^4$"
 - tapOn: "^Upper / Lower$"
+# Back goes one step back with the answers kept (the plan below is still "Upper / Lower · 4
+# days"); Next again.
+- tapOn: "^Back$"
+- extendedWaitUntil:
+    visible: "Step 1 of 5"
+    timeout: 10000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 2 of 5"
+    timeout: 10000
+- takeScreenshot: 84c-builder-step-2-kept
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 3 of 5"
+    timeout: 10000
 - tapOn: "^Dumbbells only$"
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 4 of 5"
+    timeout: 10000
 - scrollUntilVisible:
     element: "^Knee$"
     centerElement: true
@@ -94,13 +122,23 @@ appId: com.forgeai.app
     timeout: 15000
 - takeScreenshot: 86-builder-answers
 - scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 5 of 5"
+    timeout: 10000
+- scrollUntilVisible:
     element: "Build my plan"
     centerElement: true
     timeout: 15000
 - tapOn: "Build my plan"
+# RP-17: the finished plan is kept ("Save") or followed ("Save and follow").
 - extendedWaitUntil:
-    visible: "Follow this plan"
+    visible: "Save and follow"
     timeout: 15000
+- assertVisible: "^Save$"
 - assertVisible: "Upper / Lower · 4 days"
 - assertVisible: "Without a pull-up bar, rows stand in for pull-ups."
 - takeScreenshot: 87-built-plan
@@ -131,19 +169,29 @@ appId: com.forgeai.app
 - assertVisible: "Body-weight moves get harder in steps.*"
 - takeScreenshot: 90-plan-ladder-info
 - scrollUntilVisible:
-    element: "Follow this plan"
+    element: "Save and follow"
     centerElement: true
     direction: UP
     timeout: 20000
-- tapOn: "Follow this plan"
+- tapOn: "Save and follow"
 - extendedWaitUntil:
     visible: "Upper / Lower · 4 days, 4 routines, your plan.*"
     timeout: 20000
 - takeScreenshot: 91-built-plan-followed
-# ---------------------------------------------------------------- the routine editor
-- tapOn: "Edit Upper A"
+# ---------------------------------------------------------------- the routine preview, then the editor
+# Audit Phase 4: routines are compact rows ("Upper A, 5 exercises · Upper") with a small Start
+# ("Start Upper A"); a tap on the row opens a calm preview with "Start routine"; Edit sits behind
+# "Edit routine" ("Edit Upper A" is gone).
+- assertVisible: "Start Upper A"
+- tapOn: "Upper A, .*"
 - extendedWaitUntil:
-    visible: "Edit routine"
+    visible: "Start routine"
+    timeout: 15000
+- assertVisible: '\d+ sets? · .*'
+- takeScreenshot: 91b-routine-preview
+- tapOn: "Edit routine"
+- extendedWaitUntil:
+    visible: "More for this routine"
     timeout: 15000
 # The member's library may name it "Push-up" or "Push Up".
 - tapOn: "Swap Push[- ][Uu]p"
@@ -185,6 +233,14 @@ appId: com.forgeai.app
     visible: ".*· Dumbbell Full Body"
     timeout: 10000
 - takeScreenshot: 96-routine-moved
+# Close the editor (back on the preview, which reads the routine again), then the preview.
+- tapOn: "Close"
+- extendedWaitUntil:
+    notVisible: "More for this routine"
+    timeout: 10000
+- extendedWaitUntil:
+    visible: '.*· Dumbbell Full Body'
+    timeout: 10000
 - tapOn: "Close"
 # ---------------------------------------------------------------- share a folder as a file
 - extendedWaitUntil:
@@ -223,26 +279,30 @@ appId: com.forgeai.app
     timeout: 10000
 - takeScreenshot: 98-folder-menu
 - tapOn: "Take an easy week now"
+# RP-04: an easy week taken now is the 7 days from the tap, its end date always shown
+# ("Easy week until Fri, 16 Oct").
 - extendedWaitUntil:
-    visible: "Push Pull Legs — 6 Day, .*, Easy week this week"
+    visible: 'Push Pull Legs — 6 Day, .*, Easy week until [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}'
     timeout: 15000
 - back
-# Part F logged a "full" workout today, so this push/pull/legs plan has no "Today" now. The
-# easy-week note and "Train normally this week" must still show (review, HIGH 2).
+# The easy-week note and "Train normally this week" must show whatever Today says (review, HIGH 2).
+# Since audit Phase 3 an empty workout (parts C, E, F) never moves or hides Today, so the card
+# may read "Today: <routine>" or, with part A's routine counted, "Done today: … · Next: …".
 - extendedWaitUntil:
     visible: "Easy week: half the sets, the same weights.*"
     timeout: 20000
+# RP-04: the note carries the end date too.
+- assertVisible: 'Easy week: half the sets, the same weights\. Until [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}\.'
 - assertVisible: "Train normally this week"
 - takeScreenshot: 99-workout-easy-week
-# Start a routine of the plan from Routines.
+# Start a routine of the plan from Routines: the followed folder sits first, open; its first row's
+# small Start ("Start Push Day A", whose second lift is Overhead Press).
 - tapOn: "^Routines$"
 - scrollUntilVisible:
-    element: "Start routine"
+    element: "Start Push Day A"
     centerElement: true
     timeout: 15000
-- tapOn:
-    text: "Start routine"
-    index: 0
+- tapOn: "Start Push Day A"
 # LW-24: with a workout already open the app asks (Resume / Discard and start new) instead of
 # "Finish your current workout first". None should be open here; if one is, start this one.
 - runFlow:
@@ -377,3 +437,36 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 20000
 - takeScreenshot: 108-imported-folder
+# ---------------------------------------------------------------- a new routine asks where it goes
+# Audit Phase 4 (RP-08): "New routine" never joins the plan by itself — a folder picker first,
+# "My routines" (not followed) at the top, the followed plan last. Nothing is made here.
+- tapOn: "Add a routine, folder or file"
+- tapOn: "New routine"
+- extendedWaitUntil:
+    visible: 'Where should the routine go\?'
+    timeout: 10000
+- assertVisible: "My routines, Not in your plan.*"
+- assertVisible:
+    text: ".*, Your plan · Today will include it"
+    below:
+      text: "My routines, Not in your plan.*"
+- takeScreenshot: 109-new-routine-folder-picker
+- back
+- extendedWaitUntil:
+    notVisible: 'Where should the routine go\?'
+    timeout: 10000
+# ---------------------------------------------------------------- reorder mode
+# RP-07: "Reorder routines and folders" puts Move up / Move down on routines and folders (in the
+# followed folder the order IS the rotation). Looked at; nothing is moved.
+- tapOn: "Add a routine, folder or file"
+- tapOn: "Reorder routines and folders"
+- extendedWaitUntil:
+    visible: "Move routines and folders. Your plan goes in this order."
+    timeout: 10000
+- assertVisible: "Today goes in this order."
+- assertVisible: "Move Push Day A down"
+- takeScreenshot: 110-reorder-mode
+- tapOn: "Done reordering"
+- extendedWaitUntil:
+    visible: "Start any routine in a tap."
+    timeout: 10000

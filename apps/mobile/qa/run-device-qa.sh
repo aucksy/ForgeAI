@@ -199,10 +199,23 @@ log "share errors logged: $(grep -c 'ForgeShare' "$OUT/k-share-log.txt" 2>/dev/n
 
 # ---------------------------------------------------------------- part L (v0.29.0: Import routines from a Hevy link)
 # Reads the owner's public Hevy folder on hevy.com in the app's hidden in-app browser (needs the internet).
+# Audit Phase 4: first his Hevy HISTORY of those routines (two rounds of Push 1 → … → Leg 2), so
+# the folder takes his real rotation and Today after Push 1 is Pull 1, as on his phone.
+push_fixture "$QA_DIR/fixtures/qa-jaipur.csv" /sdcard/Download/qa-jaipur.csv
+adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+log "downloads: $(wait_media qa-jaipur 1 20 downloads) Jaipur history file"
 adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
 adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
 log "part L start"
 maestro test --format junit --output "$OUT/part-l.xml" --test-output-dir "$OUT/part-l" "$QA_DIR/v0290-l.yaml"   > "$OUT/part-l.log" 2>&1 || { status=1; log "PART L FAILED"; }
+
+# ---------------------------------------------------------------- part N (audit Phase 3: History holds everything)
+# List / Calendar / search across years (part J's March 2024 Hevy workouts), an old workout's
+# edit asks before Back throws it away, Log a past workout. Saves nothing, so part M's count holds.
+free_maestro
+log "part N start"
+maestro test --format junit --output "$OUT/part-n.xml" --test-output-dir "$OUT/part-n" "$QA_DIR/audit3-n.yaml" \
+  > "$OUT/part-n.log" 2>&1 || { status=1; log "PART N FAILED"; }
 
 # ---------------------------------------------------------------- part M (backup survives a reinstall)
 # Android's own backup (the app's backup rules: the workout database, AsyncStorage, settings) into

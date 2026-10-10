@@ -1,0 +1,148 @@
+# Audit Phase 3 device QA, part N — History holds everything (runs after parts A–L, before M).
+# By now History holds today's workouts (parts A–I), part I's Strong import (Sep 2026, shown in lb)
+# and part J's Hevy import, which has three "Legs Old" workouts from March 2024 (Fridays 1, 8 and
+# 15 Mar, 4:10–5:15). History tab → List / Calendar / Log a past workout / search, THE streak in
+# weeks, month headings with their counts → Calendar → search "legs old" → the March 2024 card
+# (date WITH its year) → its page → Edit → Android Back asks "Discard changes?" → nothing is left
+# open → Log a past workout (yesterday 18:00) → Back asks "Discard this workout?". Nothing is
+# saved, so part M's workout count is not changed by this part.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^History$"
+    timeout: 60000
+- tapOn: "^History$"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 30000
+# ---------------------------------------------------------------- the top of History
+- assertVisible: "^List$"
+- assertVisible: "^Calendar$"
+- assertVisible: "Search your workouts by exercise or workout name"
+# D9: THE streak, in weeks (today has workouts, so at least "1-week streak").
+- extendedWaitUntil:
+    visible: '[\d,]+-week streak'
+    timeout: 15000
+- assertNotVisible: '(?i).*day streak.*'
+- takeScreenshot: 190-history-top
+# HI-01: an endless list under month headings that carry their own count ("October 2026 · 9 workouts").
+- scrollUntilVisible:
+    element: '[A-Z][a-z]+ 20\d\d · [\d,]+ workouts?'
+    timeout: 20000
+# Cards say "Today", "Yesterday" or the date — never "3 days ago", never "-1 days ago" (HI-20).
+- assertNotVisible: '.*\d+ days ago.*'
+# PG-22: Latin digits, the phone's grouping (en-US: Western), never the Indian "1,02,450".
+- assertNotVisible: '(?s).*\d,\d\d,\d\d\d.*'
+- takeScreenshot: 191-history-month-heading
+- scrollUntilVisible:
+    element: "Search your workouts by exercise or workout name"
+    direction: UP
+    timeout: 20000
+# ---------------------------------------------------------------- calendar
+- tapOn: "^Calendar$"
+- extendedWaitUntil:
+    visible: '[A-Z][a-z]+ 20\d\d · [\d,]+ workouts?\. Tap a day to see its workouts\.'
+    timeout: 15000
+- takeScreenshot: 192-history-calendar
+- tapOn: "^List$"
+- extendedWaitUntil:
+    visible: "Search your workouts by exercise or workout name"
+    timeout: 15000
+# ---------------------------------------------------------------- search across all years
+- tapOn: "Search your workouts by exercise or workout name"
+- inputText: " legs old"
+- hideKeyboard
+# The three Hevy "Legs Old" workouts of March 2024, found by their kept name (HI-04).
+- extendedWaitUntil:
+    visible: '3 workouts match .legs old.\.'
+    timeout: 15000
+- assertVisible: "March 2024 · 3 workouts"
+# HI-15: an old workout's date carries its year, then its start and its length (4:10 to 5:15):
+# "Fri, 15 Mar 2024 · 04:10 · 1h 05m".
+- assertVisible: 'Fri, 15 Mar 2024 · \d\d:\d\d · 1h 05m'
+- takeScreenshot: 193-history-search-2024
+# ---------------------------------------------------------------- an old workout, edited
+- tapOn: 'Fri, 15 Mar 2024 · \d\d:\d\d.*'
+- extendedWaitUntil:
+    visible: "Fri, 15 Mar 2024"
+    timeout: 15000
+- takeScreenshot: 194-old-workout-page
+- scrollUntilVisible:
+    element: "Edit this workout"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Edit this workout"
+# LW-24: nothing should be open here; if one is (an earlier part stopped mid-workout), discard it.
+- runFlow:
+    when:
+      visible: "A workout is already open"
+    commands:
+      - takeScreenshot: 194b-workout-already-open
+      - tapOn: "Discard it and edit this one"
+- extendedWaitUntil:
+    visible: "Editing a saved workout"
+    timeout: 20000
+# The date reads with its year; the start time can be edited (HI-15).
+- assertVisible: "Date, Fri, 15 Mar 2024. Change"
+- assertVisible: "Start hour, 0 to 23"
+- assertVisible: "Start minute, 0 to 59"
+- takeScreenshot: 195-edit-old-workout
+# HI-07: Android Back on the editor asks first; it never leaves the edit open behind.
+- back
+- extendedWaitUntil:
+    visible: 'Discard changes\?'
+    timeout: 10000
+- takeScreenshot: 196-edit-back-asks
+- tapOn: "^Discard$"
+# Back on the saved workout, unchanged (the editor's Date box also says "Fri, 15 Mar 2024", so
+# wait for the editor to go first).
+- extendedWaitUntil:
+    notVisible: "Editing a saved workout"
+    timeout: 15000
+- extendedWaitUntil:
+    visible: "Fri, 15 Mar 2024"
+    timeout: 15000
+- back
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- tapOn: "^Workout$"
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 20000
+- assertNotVisible: "Resume editing"
+- assertNotVisible: "Editing a workout"
+- takeScreenshot: 197-no-edit-left-open
+# ---------------------------------------------------------------- log a past workout
+- tapOn: "^History$"
+- scrollUntilVisible:
+    element: "Log a past workout"
+    direction: UP
+    timeout: 20000
+- tapOn: "Log a past workout"
+- extendedWaitUntil:
+    visible: "Pick the day, when it started and how long it lasted."
+    timeout: 15000
+# The button says what it will log: yesterday at 18:00 ("Log Fri, 9 Oct · 18:00").
+- assertVisible: 'Log [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}( \d{4})? · 18:00'
+- takeScreenshot: 198-log-past-sheet
+- tapOn: 'Log [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}( \d{4})? · 18:00'
+- extendedWaitUntil:
+    visible: "Logging a past workout"
+    timeout: 20000
+- assertVisible: "PAST WORKOUT"
+- takeScreenshot: 199-past-workout-editor
+- back
+- extendedWaitUntil:
+    visible: 'Discard this workout\?'
+    timeout: 10000
+- tapOn: "^Discard$"
+# Back to History, nothing saved.
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 15000
+- takeScreenshot: 199b-past-workout-discarded

@@ -3,8 +3,8 @@
  * and "Today" comes from them) or keep it in your routines. Its routines fold below, each
  * exercise with its sets and the rep range the research table gives this program.
  */
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useRef, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 import { Badge, Card, EmptyState, GhostButton, Icon, IconButton, PrimaryButton, Screen, SectionHeader } from '@/components/ui';
@@ -15,7 +15,7 @@ import { color, space, type } from '@/theme/tokens';
 import { EASY_EVERY, EASY_WEEKS_DEFAULT } from '@/tracker/plans/easyWeek';
 import { EQUIPMENT_LABEL, programByKey, programMeta, programRoutines, setsAndReps } from '@/tracker/plans/programs';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
-import { addProgram } from '@/tracker/services/plansService';
+import { addProgram, existingProgramFolder, type ExistingChoice } from '@/tracker/services/plansService';
 
 export default function ProgramScreen() {
   const router = useRouter();
@@ -25,6 +25,24 @@ export default function ProgramScreen() {
   const [easy, setEasy] = useState(EASY_WEEKS_DEFAULT);
   const [open, setOpen] = useState<Record<number, boolean>>({ 0: true });
   const busy = useRef(false);
+  /** RP-18: this program is already a folder of the member's ("Already in your routines"). */
+  const [already, setAlready] = useState<{ name: string; following: boolean } | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      let alive = true;
+      if (key) {
+        existingProgramFolder(key)
+          .then((f) => {
+            if (alive) setAlready(f ? { name: f.name, following: f.following } : null);
+          })
+          .catch(() => undefined);
+      }
+      return () => {
+        alive = false;
+      };
+    }, [key]),
+  );
 
   if (!p) {
     return (
@@ -35,11 +53,13 @@ export default function ProgramScreen() {
   }
   const routines = programRoutines(p);
 
-  const add = async (follow: boolean): Promise<void> => {
+  const add = async (follow: boolean, existing?: ExistingChoice): Promise<void> => {
     if (busy.current) return;
     busy.current = true;
     try {
-      await addProgram(p.key, { follow, easyWeeks: easy });
+      // RP-18: already added → that folder is updated (and followed when asked), never a second
+      // one unless the member asked for a copy.
+      await addProgram(p.key, { follow, easyWeeks: easy, existing });
       // Back to the Routines screen already open (not a second copy on top of the old ones).
       router.dismissTo('/routines');
     } catch {
@@ -66,10 +86,20 @@ export default function ProgramScreen() {
             onChange={setEasy}
           />
         </Card>
-        <View style={{ gap: space.md }}>
-          <PrimaryButton label="Follow this program" icon="target" onPress={() => void add(true)} />
-          <GhostButton label="Add to my routines" icon="plus" onPress={() => void add(false)} />
-        </View>
+        {already ? (
+          <View style={{ gap: space.md }}>
+            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+              {already.following ? `You follow this program ("${already.name}").` : `Already in your routines ("${already.name}").`}
+            </Text>
+            {!already.following ? <PrimaryButton label="Follow it" icon="target" onPress={() => void add(true, 'update')} /> : null}
+            <GhostButton label="Add a copy" icon="plus" onPress={() => void add(false, 'copy')} />
+          </View>
+        ) : (
+          <View style={{ gap: space.md }}>
+            <PrimaryButton label="Follow this program" icon="target" onPress={() => void add(true)} />
+            <GhostButton label="Add to my routines" icon="plus" onPress={() => void add(false)} />
+          </View>
+        )}
 
         <View>
           <SectionHeader title={`${countWord(routines.length, 'routine')} · ${countWord(p.daysPerWeek, 'day')} a week`} />
@@ -99,7 +129,7 @@ export default function ProgramScreen() {
                   {shown
                     ? r.exercises.map((x) => (
                         <View key={x.key} style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingLeft: space.lg }}>
-                          <Text numberOfLines={1} style={{ flex: 1, fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
+                          <Text numberOfLines={2} style={{ flex: 1, fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
                             {x.name}
                           </Text>
                           <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.ink }}>{setsAndReps(x)}</Text>

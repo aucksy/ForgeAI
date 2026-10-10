@@ -29,9 +29,12 @@ appId: com.forgeai.app
     visible: "Already in ForgeAI"
     timeout: 60000
 - assertVisible: "qa-hevy.csv"
+# Audit Phase 4 (IM-09): part J imported this file already, so the preview says so first and
+# offers no "Merge 12 workouts" that would add 0.
 - scrollUntilVisible:
-    element: "Merge 12 workouts"
+    element: "All 12 workouts are already here"
     centerElement: true
     timeout: 15000
+- assertNotVisible: "(Merge|Import) 12 workouts"
 - takeScreenshot: 160-shared-file-preview
 - tapOn: "Close"

@@ -13,6 +13,13 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "ForgeAI|Your name|Start training"
     timeout: 90000
+# Audit Phase 4 (point 6): switchers are met where they arrive — "Coming from Hevy or Strong?"
+# on the welcome screen. Not tapped here: a pick opens the import after the next Home.
+- scrollUntilVisible:
+    element: "Coming from Hevy or Strong\\?"
+    timeout: 30000
+- assertVisible: "From Hevy"
+- assertVisible: "From Strong"
 - scrollUntilVisible:
     element: "Load demo data instead"
     timeout: 30000
@@ -26,6 +33,21 @@ appId: com.forgeai.app
     visible: "Workout"
     timeout: 90000
 - takeScreenshot: 01-home
+# Audit Phase 3: Home's one "Today" answer. The demo history ends yesterday, so today's routine is
+# still to do: its name over "N exercises from your plan" (not "Done today", not "No plan yet").
+- extendedWaitUntil:
+    visible: '\d+ exercises? from your plan'
+    timeout: 20000
+# D9: THE streak counts weeks ("13-week streak", read off the flame row's label), never days.
+- scrollUntilVisible:
+    element: '\d+-week streak'
+    timeout: 15000
+- assertNotVisible: '(?i).*day streak.*'
+- takeScreenshot: 01a-home-week-streak
+- scrollUntilVisible:
+    element: "See workout"
+    direction: UP
+    timeout: 15000
 # v0.28.0: Home's Today card opens the day's exercises first; nothing starts until Start.
 - tapOn: "See workout"
 - extendedWaitUntil:
@@ -38,6 +60,11 @@ appId: com.forgeai.app
     visible: "Start empty workout"
     timeout: 30000
 - takeScreenshot: 02-workout-tab
+# Audit Phase 3 (RP-03): the Workout tab names the same routine as Home, and its Start button
+# ("Start <that routine>") starts exactly it, by id.
+- extendedWaitUntil:
+    visible: 'Today: .*'
+    timeout: 20000
 - tapOn: "Start (?!empty).*"
 - tapOn:
     text: "(?i)^allow$"

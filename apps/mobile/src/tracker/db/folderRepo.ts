@@ -18,6 +18,7 @@ import { catalogEntry } from '../catalog/exerciseCatalog';
 import { insertCatalogEntries } from '../catalog/catalogSync';
 import type { CatalogEntry } from '../catalog/types';
 import type { EasySchedule } from '../plans/easyWeek';
+import { MAX_ROUTINE_REPS, MAX_ROUTINE_SETS, parsePlanSets, planSetsJson, workingCount, type PlanSet } from '../plans/routineSets';
 
 export type FolderSource = 'program' | 'builder' | 'import';
 
@@ -46,7 +47,39 @@ export interface FolderSettings {
    * link again updates this folder instead of adding a second one.
    */
   fromLink?: string;
+  /**
+   * Audit Phase 4 (RP-04): the first day of an easy week taken with "Take an easy week now" —
+   * seven easy days from that day, whatever day the plan's weeks start on.
+   */
+  easyFrom?: string;
+  /** Audit Phase 4 (RP-06): the plan's training days a week (a program's, the builder's). */
+  daysPerWeek?: number;
+  /**
+   * Audit Phase 4 (RP-18): the fingerprint of the routine file this folder came from, so the
+   * same file imported again is recognised.
+   */
+  fromFile?: string;
+  /**
+   * Review fix (link folders): the routines' names in the order Hevy's page lists them, kept when
+   * the folder is copied. The one-time repair only puts a folder in the member's rotation while
+   * it is still in exactly this order (never one the member arranged).
+   */
+  pageOrder?: string[];
 }
+
+/** Audit Phase 4 (RP-19): what a routine row keeps besides sets and reps. */
+export interface RoutineExerciseExtras {
+  /** Each set's type and target; null/absent = `targetSets` normal sets. */
+  sets?: PlanSet[] | null;
+  /** This routine's rest for the exercise (seconds; 0 = no timer); null = the exercise's own. */
+  restSec?: number | null;
+  /** Superset: rows with the same number go together; null = none. */
+  supersetGroup?: number | null;
+  note?: string | null;
+}
+export type RoutineExercise = PlanDayFull['exercises'][number] & RoutineExerciseExtras;
+/** A routine with everything its rows keep (a `PlanDayFull` with the extras). */
+export type RoutineFull = Omit<PlanDayFull, 'exercises'> & { exercises: RoutineExercise[] };
 
 /** The apps whose exports bring routines in. */
 export type ImportApp = 'hevy' | 'strong';
@@ -58,7 +91,7 @@ export interface Folder {
   following: boolean;
   source: FolderSource | null;
   settings: FolderSettings;
-  routines: PlanDayFull[];
+  routines: RoutineFull[];
 }
 
 /** Settings from the stored JSON; anything unreadable is an empty object. PURE. */
@@ -75,6 +108,10 @@ export function parseFolderSettings(raw: string | null | undefined): FolderSetti
     if (typeof s.easyOnce === 'number' && Number.isInteger(s.easyOnce) && s.easyOnce >= 1) out.easyOnce = s.easyOnce;
     if (s.fromApp === 'hevy' || s.fromApp === 'strong') out.fromApp = s.fromApp;
     if (typeof s.fromLink === 'string' && /^https:\/\/hevy\.com\//.test(s.fromLink)) out.fromLink = s.fromLink;
+    if (typeof s.easyFrom === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.easyFrom)) out.easyFrom = s.easyFrom;
+    if (typeof s.daysPerWeek === 'number' && Number.isInteger(s.daysPerWeek) && s.daysPerWeek >= 1 && s.daysPerWeek <= 7) out.daysPerWeek = s.daysPerWeek;
+    if (typeof s.fromFile === 'string' && /^[a-z0-9]{1,40}$/.test(s.fromFile)) out.fromFile = s.fromFile;
+    if (Array.isArray(s.pageOrder) && s.pageOrder.length <= 500 && s.pageOrder.every((n) => typeof n === 'string')) out.pageOrder = s.pageOrder as string[];
     const e = s.easy as Partial<EasySchedule> | null | undefined;
     if (e && typeof e.every === 'number' && e.every >= 2 && typeof e.base === 'number' && Number.isFinite(e.base)) {
       out.easy = { every: Math.round(e.every), base: Math.round(e.base) };
@@ -114,6 +151,10 @@ interface PeRow {
   target_sets: number;
   rep_range_min: number;
   rep_range_max: number;
+  sets_json: string | null;
+  rest_sec: number | null;
+  superset_group: number | null;
+  note: string | null;
 }
 interface ExRow {
   id: string;
@@ -136,7 +177,7 @@ function jsonList(raw: string): string[] {
 }
 
 /** Days with their exercises, in each day's own order (same shape as the frozen plan read). */
-async function readDays(days: readonly DayRow[]): Promise<PlanDayFull[]> {
+async function readDays(days: readonly DayRow[]): Promise<RoutineFull[]> {
   if (days.length === 0) return [];
   const db = getDb();
   const pes: PeRow[] = [];
@@ -144,7 +185,8 @@ async function readDays(days: readonly DayRow[]): Promise<PlanDayFull[]> {
     const chunk = days.slice(i, i + 400).map((d) => d.id);
     pes.push(
       ...(await db.getAllAsync<PeRow>(
-        `SELECT id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max
+        `SELECT id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max,
+                sets_json, rest_sec, superset_group, note
            FROM plan_exercises WHERE plan_day_id IN (${chunk.map(() => '?').join(', ')}) ORDER BY ex_order ASC`,
         chunk,
       )),
@@ -191,7 +233,16 @@ async function readDays(days: readonly DayRow[]): Promise<PlanDayFull[]> {
           repRangeMin: p.rep_range_min,
           repRangeMax: p.rep_range_max,
         };
-        return exercise ? [{ ...pe, exercise }] : [];
+        const sets = parsePlanSets(p.sets_json);
+        const extras: RoutineExerciseExtras = {
+          sets,
+          restSec: p.rest_sec != null && p.rest_sec >= 0 ? p.rest_sec : null,
+          supersetGroup: p.superset_group ?? null,
+          note: p.note?.trim() ? p.note : null,
+        };
+        // A stored list is the truth for the set count (a hand-edited target_sets can't disagree).
+        if (sets) pe.targetSets = Math.max(1, workingCount(sets));
+        return exercise ? [{ ...pe, ...extras, exercise }] : [];
       }),
   }));
 }
@@ -217,7 +268,7 @@ export async function listFolders(): Promise<Folder[]> {
 }
 
 /** One routine with its exercises, from ANY folder (not only the followed one). */
-export async function getRoutineAnywhere(dayId: string): Promise<PlanDayFull | null> {
+export async function getRoutineAnywhere(dayId: string): Promise<RoutineFull | null> {
   const day = await getDb().getFirstAsync<DayRow>('SELECT id, plan_id, day_type, day_order, name FROM plan_days WHERE id = ?', [dayId]);
   if (!day) return null;
   const [full] = await readDays([day]);
@@ -286,14 +337,25 @@ export async function followFolder(id: string, todayISO: string): Promise<void> 
   const db = getDb();
   const row = await db.getFirstAsync<{ settings: string | null }>('SELECT settings FROM workout_plans WHERE id = ?', [id]);
   if (!row) return;
-  const settings = { ...parseFolderSettings(row.settings), startISO: todayISO };
-  if (settings.easy) settings.easy = { ...settings.easy, base: 0 };
+  const settings = freshWeeks(parseFolderSettings(row.settings), todayISO);
   await serial(() =>
     db.withTransactionAsync(async () => {
       await db.runAsync('UPDATE workout_plans SET is_active = CASE WHEN id = ? THEN 1 ELSE 0 END', [id]);
       await db.runAsync('UPDATE workout_plans SET settings = ? WHERE id = ?', [JSON.stringify(settings), id]);
     }),
   );
+}
+
+/**
+ * RP-05: the plan's weeks start again from `todayISO` — the easy-week rhythm counts from here
+ * and no one-off easy week (taken early, or "now") is left over from an earlier time. PURE.
+ */
+export function freshWeeks(s: FolderSettings, todayISO: string): FolderSettings {
+  const out: FolderSettings = { ...s, startISO: todayISO };
+  if (out.easy) out.easy = { ...out.easy, base: 0 };
+  delete out.easyOnce;
+  delete out.easyFrom;
+  return out;
 }
 
 /** Delete a folder and its routines (their exercise lists cascade). Workout history stays. */
@@ -305,6 +367,90 @@ export async function deleteFolder(id: string): Promise<void> {
       await db.runAsync('DELETE FROM workout_plans WHERE id = ?', [id]);
     }),
   );
+}
+
+/**
+ * RP-07: a new order for the folders (the full list of ids, top to bottom). The followed folder
+ * still shows first; the order of the others is the member's.
+ */
+export async function reorderFolders(orderedIds: readonly string[]): Promise<void> {
+  const db = getDb();
+  await serial(() =>
+    db.withTransactionAsync(async () => {
+      for (let i = 0; i < orderedIds.length; i++) {
+        await db.runAsync('UPDATE workout_plans SET folder_order = ? WHERE id = ?', [i + 1, orderedIds[i]]);
+      }
+    }),
+  );
+}
+
+/** The name of the folder new routines go to when the member does not pick one. */
+export const MY_ROUTINES = 'My routines';
+const isMyRoutines = (name: string): boolean => name.trim().toLowerCase() === MY_ROUTINES.toLowerCase();
+
+/**
+ * RP-08: the folder a new routine lands in when the member did not choose one — a "My
+ * routines" folder they do NOT follow, made when missing. Never the followed plan, and never
+ * followed: a new routine must not change "Today" by itself. For a caller inside a queued job.
+ */
+export async function myRoutinesFolderIdUnqueued(): Promise<string> {
+  const db = getDb();
+  const rows = await db.getAllAsync<{ id: string; name: string; is_active: number }>(
+    'SELECT id, name, is_active FROM workout_plans ORDER BY COALESCE(folder_order, 1000000) ASC, rowid ASC',
+  );
+  const hit = rows.find((r) => r.is_active !== 1 && isMyRoutines(r.name));
+  if (hit) return hit.id;
+  // A plan made by an older "New routine" is itself called "My Routines": the new folder must
+  // not look like the same one.
+  const name = rows.some((r) => r.is_active === 1 && isMyRoutines(r.name)) ? 'Other routines' : MY_ROUTINES;
+  const same = rows.find((r) => r.is_active !== 1 && r.name.trim().toLowerCase() === name.toLowerCase());
+  if (same) return same.id;
+  const id = uuid();
+  await db.runAsync(
+    'INSERT INTO workout_plans(id, name, is_active, folder_order, source, settings) VALUES(?, ?, 0, ?, NULL, ?)',
+    [id, name, await nextFolderOrder(), '{}'],
+  );
+  return id;
+}
+
+/** `myRoutinesFolderIdUnqueued`, queued. */
+export function myRoutinesFolderId(): Promise<string> {
+  return serial(() => myRoutinesFolderIdUnqueued());
+}
+
+/** RP-18: the folder a ready program was added as before (the first one), or null. */
+export async function programFolder(key: string): Promise<Omit<Folder, 'routines'> | null> {
+  return folderWhere("source = 'program'", (s) => s.program === key);
+}
+
+/** RP-18: the folder a routine file with this fingerprint was imported into before, or null. */
+export async function fileFolder(fingerprint: string): Promise<Omit<Folder, 'routines'> | null> {
+  return folderWhere("source = 'import'", (s) => s.fromFile === fingerprint);
+}
+
+async function folderWhere(where: string, match: (s: FolderSettings) => boolean): Promise<Omit<Folder, 'routines'> | null> {
+  const rows = await getDb().getAllAsync<PlanRow>(
+    `SELECT id, name, is_active, folder_order, source, settings FROM workout_plans WHERE ${where} ORDER BY rowid ASC`,
+  );
+  const p = rows.find((r) => match(parseFolderSettings(r.settings)));
+  return p
+    ? { id: p.id, name: p.name, following: p.is_active === 1, source: isSource(p.source) ? p.source : null, settings: parseFolderSettings(p.settings) }
+    : null;
+}
+
+/**
+ * RP-18 "Update the existing folder": its routines are rewritten from `routines` in place (each
+ * routine kept by name keeps its id, so its workouts and "Today" stay with it), its settings
+ * take `mark`, and it is followed when asked. Returns the folder id.
+ */
+export async function refillFolder(
+  folder: Omit<Folder, 'routines'>,
+  name: string,
+  routines: readonly NewRoutine[],
+  mark: FolderSettings,
+  opts: { follow: boolean; todayISO: string },
+): Promise<string> {
+  return refillOrCreate(folder, name, routines, mark, opts);
 }
 
 /** Move a routine to the end of another folder. */
@@ -320,7 +466,15 @@ export async function moveRoutine(dayId: string, folderId: string): Promise<void
 export interface NewRoutine {
   name: string;
   dayType: DayType;
-  exercises: { exerciseId: string; sets: number; repMin: number; repMax: number }[];
+  exercises: ({ exerciseId: string; sets: number; repMin: number; repMax: number } & NewRoutineExtras)[];
+}
+
+/** RP-19: what a new routine row may also carry (set types and targets, rest, superset, note). */
+export interface NewRoutineExtras {
+  setList?: PlanSet[] | null;
+  restSec?: number | null;
+  supersetGroup?: number | null;
+  note?: string | null;
 }
 
 /** The folder an app's routines were brought into before, or null. */
@@ -386,10 +540,7 @@ async function refillOrCreate(
   }
   const db = getDb();
   const settings: FolderSettings = { ...before.settings, ...mark };
-  if (opts.follow && !before.following) {
-    settings.startISO = opts.todayISO;
-    if (settings.easy) settings.easy = { ...settings.easy, base: 0 };
-  }
+  if (opts.follow && !before.following) Object.assign(settings, freshWeeks(settings, opts.todayISO));
   await serial(() =>
     db.withTransactionAsync(async () => {
       if (opts.follow) await db.runAsync('UPDATE workout_plans SET is_active = CASE WHEN id = ? THEN 1 ELSE 0 END', [before.id]);
@@ -492,16 +643,44 @@ async function insertRoutines(planId: string, routines: readonly NewRoutine[], k
         r.name.trim() || 'Routine',
       ]);
     }
-    for (let i = 0; i < r.exercises.length; i++) {
-      const x = r.exercises[i];
-      const min = Math.max(1, Math.min(50, Math.round(x.repMin)));
-      await db.runAsync(
-        `INSERT INTO plan_exercises(id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max)
-         VALUES(?, ?, ?, ?, ?, ?, ?)`,
-        [uuid(), dayId, x.exerciseId, i, Math.max(1, Math.min(12, Math.round(x.sets))), min, Math.max(min, Math.min(50, Math.round(x.repMax)))],
-      );
-    }
+    for (let i = 0; i < r.exercises.length; i++) await insertRoutineRow(dayId, r.exercises[i], i);
   }
+}
+
+/** One routine row as stored (the clamps and the set list's rules), for `insertRoutineRow`. PURE. */
+export function routineRowValues(x: NewRoutine['exercises'][number]): {
+  targetSets: number;
+  repMin: number;
+  repMax: number;
+  setsJson: string | null;
+  restSec: number | null;
+  supersetGroup: number | null;
+  note: string | null;
+} {
+  // RP-23: no 12-set / 50-rep caps — only a sanity bound far beyond any real routine.
+  const min = Math.max(1, Math.min(MAX_ROUTINE_REPS, Math.round(x.repMin) || 1));
+  const json = planSetsJson(x.setList ?? null);
+  const sets = json && x.setList ? workingCount(x.setList) : Math.round(x.sets);
+  return {
+    targetSets: Math.max(1, Math.min(MAX_ROUTINE_SETS, sets || 1)),
+    repMin: min,
+    repMax: Math.max(min, Math.min(MAX_ROUTINE_REPS, Math.round(x.repMax) || min)),
+    setsJson: json,
+    restSec: x.restSec != null && x.restSec >= 0 ? Math.round(x.restSec) : null,
+    supersetGroup: x.supersetGroup ?? null,
+    note: x.note?.trim() ? x.note.trim() : null,
+  };
+}
+
+/** One routine row (inside the caller's transaction / queued job). */
+export async function insertRoutineRow(dayId: string, x: NewRoutine['exercises'][number], order: number): Promise<void> {
+  const v = routineRowValues(x);
+  await getDb().runAsync(
+    `INSERT INTO plan_exercises(id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max,
+                                sets_json, rest_sec, superset_group, note)
+     VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [uuid(), dayId, x.exerciseId, order, v.targetSets, v.repMin, v.repMax, v.setsJson, v.restSec, v.supersetGroup, v.note],
+  );
 }
 
 /**

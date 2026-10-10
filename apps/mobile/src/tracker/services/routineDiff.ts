@@ -12,6 +12,8 @@ export interface RoutineExerciseLite {
   exerciseId: string;
   name: string;
   targetSets: number;
+  /** RP-19: the routine's superset for this row (null/absent = none). */
+  supersetGroup?: number | null;
 }
 
 export interface WorkoutExerciseLite {
@@ -19,6 +21,13 @@ export interface WorkoutExerciseLite {
   name: string;
   /** Working (non-warm-up) set rows on screen at finish. */
   workingSets: number;
+  /** RP-19: the member changed the set types (added a warm-up, made a set a drop set…). */
+  typesChanged?: boolean;
+  /** RP-19: the member changed the rest or the note of this card. */
+  restChanged?: boolean;
+  noteChanged?: boolean;
+  /** The superset the card is in at finish (null/absent = none). */
+  supersetGroup?: number | null;
 }
 
 export interface RoutineDiff {
@@ -28,6 +37,23 @@ export interface RoutineDiff {
   reordered: boolean;
   /** Names whose set count differs. */
   setsChanged: string[];
+  /** RP-19: names whose set types, rest or note changed (and which of those changed). */
+  detailsChanged: string[];
+  detailKinds: ('types' | 'rest' | 'note')[];
+  /** RP-19: exercises were put into or taken out of a superset. */
+  supersetsChanged: boolean;
+}
+
+/** Each row's partners in its superset, as "a#0|b#0" pairs (only rows in `keep`). */
+function supersetPairs(rows: readonly { k: string; supersetGroup?: number | null }[], keep: Set<string>): Set<string> {
+  const out = new Set<string>();
+  const kept = rows.filter((r) => keep.has(r.k) && r.supersetGroup != null);
+  for (let i = 0; i < kept.length; i++) {
+    for (let j = i + 1; j < kept.length; j++) {
+      if (kept[i].supersetGroup === kept[j].supersetGroup) out.add([kept[i].k, kept[j].k].sort().join('|'));
+    }
+  }
+  return out;
 }
 
 export function diffRoutine(routine: RoutineExerciseLite[], workout: WorkoutExerciseLite[]): RoutineDiff {
@@ -59,12 +85,31 @@ export function diffRoutine(routine: RoutineExerciseLite[], workout: WorkoutExer
     .filter((x) => target.has(x.k) && x.workingSets > 0 && target.get(x.k) !== x.workingSets)
     .map((x) => x.name);
 
+  const kinds = new Set<'types' | 'rest' | 'note'>();
+  const detailsChanged = w
+    .filter((x) => {
+      if (!target.has(x.k)) return false;
+      if (x.typesChanged) kinds.add('types');
+      if (x.restChanged) kinds.add('rest');
+      if (x.noteChanged) kinds.add('note');
+      return x.typesChanged === true || x.restChanged === true || x.noteChanged === true;
+    })
+    .map((x) => x.name);
+  const both = new Set(keptR);
+  const rPairs = supersetPairs(r, both);
+  const wPairs = supersetPairs(w, both);
+  const supersetsChanged = rPairs.size !== wPairs.size || [...rPairs].some((p) => !wPairs.has(p));
+
   return {
-    changed: added.length > 0 || removed.length > 0 || reordered || setsChanged.length > 0,
+    changed:
+      added.length > 0 || removed.length > 0 || reordered || setsChanged.length > 0 || detailsChanged.length > 0 || supersetsChanged,
     added,
     removed,
     reordered,
     setsChanged,
+    detailsChanged,
+    detailKinds: (['types', 'rest', 'note'] as const).filter((k) => kinds.has(k)),
+    supersetsChanged,
   };
 }
 
@@ -85,6 +130,14 @@ export function describeDiff(d: RoutineDiff): string {
         : `You did a different number of sets on ${d.setsChanged.length} exercises.`,
     );
   }
+  const details = d.detailsChanged ?? [];
+  if (details.length) {
+    const kinds = d.detailKinds ?? [];
+    const what =
+      kinds.length === 1 ? (kinds[0] === 'types' ? 'the set types' : kinds[0] === 'rest' ? 'the rest' : 'the note') : 'sets, rest or notes';
+    parts.push(`You changed ${what} on ${list(details)}.`);
+  }
+  if (d.supersetsChanged && parts.length === 0) parts.push('You changed the supersets.');
   if (d.reordered && parts.length === 0) parts.push('You changed the exercise order.');
   return parts.join(' ');
 }

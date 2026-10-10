@@ -1,13 +1,17 @@
 /**
- * Build a plan — Phase 4. One screen of answers (goal, level, days, split, equipment, time,
- * sore areas, exercises to leave out, easy weeks), then the plan itself: each routine with
- * its exercises, sets and rep ranges, a swap for any exercise, the push-up and pull-up
- * ladders, and the weekly sets per muscle. "Follow this plan" saves it as your plan.
- * Rules only (`plans/builder.ts`): no AI call, works offline.
+ * Build a plan — Phase 4. The answers (goal, level, days, split, equipment, time, sore areas,
+ * exercises to leave out, easy weeks), then the plan itself: each routine with its exercises,
+ * sets and rep ranges, a swap for any exercise, the push-up and pull-up ladders, and the weekly
+ * sets per muscle. Rules only (`plans/builder.ts`): no AI call, works offline.
+ *
+ * Audit Phase 4 (RP-17): the answers come step by step (5 short steps); Back — the button or
+ * the phone's back — goes to the previous step, and from the plan back to the answers (never
+ * out, losing them). The finished plan can be kept without following it ("Save") or followed
+ * ("Save and follow").
  */
-import { useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Alert, BackHandler, Pressable, Text, View } from 'react-native';
 
 import { Badge, Card, Chip, GhostButton, Icon, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { ChipGroup, type ChipOption } from '@/components/settings/ChipGroup';
@@ -28,7 +32,7 @@ import { setsAndReps } from '@/tracker/plans/programs';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { saveBuiltPlan } from '@/tracker/services/plansService';
-import { usePlanBuilder } from '@/tracker/store/planBuilderStore';
+import { BUILDER_STEPS, usePlanBuilder } from '@/tracker/store/planBuilderStore';
 
 const GOALS = [
   { id: 'muscle', label: 'Build muscle' },
@@ -79,14 +83,25 @@ export default function BuildPlanScreen() {
     };
   }, []);
 
-  const { input, plan } = s;
+  // RP-17: the phone's back goes one step back (from the plan: to the answers), never out of
+  // the builder with the answers lost; on the first step it leaves as usual.
+  // Only while this screen is in front: the leave-out picker on top handles its own back.
+  useFocusEffect(
+    useCallback(() => {
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => usePlanBuilder.getState().goBack());
+      return () => sub.remove();
+    }, []),
+  );
+
+  const { input, plan, step } = s;
   const autoSplit = SPLIT_LABEL[splitFor('auto', input.days)];
 
-  const onFollow = async (): Promise<void> => {
+  /** RP-17: "Save" keeps the plan in your routines; "Save and follow" makes it your plan. */
+  const onSave = async (follow: boolean): Promise<void> => {
     if (!plan || saving.current) return;
     saving.current = true;
     try {
-      await saveBuiltPlan(plan, input, { follow: true, easyWeeks: s.easyWeeks });
+      await saveBuiltPlan(plan, input, { follow, easyWeeks: s.easyWeeks });
       usePlanBuilder.getState().clearPlan();
       // Back to the Routines screen already open (not a second copy on top of the old ones).
       router.dismissTo('/routines');
@@ -127,8 +142,12 @@ export default function BuildPlanScreen() {
             </Card>
           ) : null}
           <View style={{ gap: space.md }}>
-            <PrimaryButton label="Follow this plan" icon="target" onPress={() => void onFollow()} />
-            <GhostButton label="Change answers" icon="chevron-left" onPress={() => usePlanBuilder.getState().clearPlan()} />
+            <PrimaryButton label="Save and follow" icon="target" onPress={() => void onSave(true)} />
+            <GhostButton label="Save" icon="plus" onPress={() => void onSave(false)} />
+            <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, textAlign: 'center' }}>
+              Save keeps it in your routines without changing your plan.
+            </Text>
+            <GhostButton label="Change answers" icon="chevron-left" onPress={() => usePlanBuilder.getState().goBack()} />
           </View>
 
           {plan.routines.some((r) => r.exercises.some((x) => x.ladder.length > 0)) ? (
@@ -218,12 +237,24 @@ export default function BuildPlanScreen() {
     );
   }
 
-  // ---------------------------------------------------------------- the answers
+  // ---------------------------------------------------------------- the answers, step by step
+  const last = step >= BUILDER_STEPS - 1;
   return (
-    <Screen key="answers" title="Build a plan" subtitle="A few answers, then your plan." right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
+    <Screen
+      key={`answers-${step}`}
+      title="Build a plan"
+      subtitle={`Step ${step + 1} of ${BUILDER_STEPS}`}
+      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+    >
       <View style={{ gap: space.xl }}>
-        <ChipGroup label="Goal" options={GOALS} selectedId={input.goal} onSelect={(goal) => s.set({ goal })} />
-        <ChipGroup label="Experience" options={LEVELS} selectedId={input.level} onSelect={(level) => s.set({ level })} />
+        {step === 0 ? (
+          <>
+            <ChipGroup label="Goal" options={GOALS} selectedId={input.goal} onSelect={(goal) => s.set({ goal })} />
+            <ChipGroup label="Experience" options={LEVELS} selectedId={input.level} onSelect={(level) => s.set({ level })} />
+          </>
+        ) : null}
+        {step === 1 ? (
+          <>
         <ChipGroup label="Days a week" options={DAYS} selectedId={String(input.days) as (typeof DAYS)[number]['id']} onSelect={(d) => s.set({ days: Number(d) })} />
         <View>
           <ChipGroup label="Split" options={SPLITS} selectedId={input.split} onSelect={(split) => s.set({ split })} />
@@ -233,9 +264,13 @@ export default function BuildPlanScreen() {
             </Text>
           ) : null}
         </View>
-        <ChipGroup label="Equipment" options={EQUIPMENT} selectedId={input.equipment} onSelect={(equipment) => s.set({ equipment })} />
-        <ChipGroup label="Time per workout" options={TIMES} selectedId={String(input.minutes)} onSelect={(m) => s.set({ minutes: Number(m) })} />
-
+          </>
+        ) : null}
+        {step === 2 ? (
+          <ChipGroup label="Equipment" options={EQUIPMENT} selectedId={input.equipment} onSelect={(equipment) => s.set({ equipment })} />
+        ) : null}
+        {step === 3 ? (
+          <>
         <View>
           <InfoHeading title="Go easy on" info={SORE_AREA_INFO} />
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
@@ -256,7 +291,11 @@ export default function BuildPlanScreen() {
           ) : null}
           <GhostButton label={input.avoid.length > 0 ? 'Choose more' : 'Choose exercises to leave out'} icon="plus" onPress={() => router.push('/plan/avoid')} />
         </View>
-
+          </>
+        ) : null}
+        {step === 4 ? (
+          <>
+        <ChipGroup label="Time per workout" options={TIMES} selectedId={String(input.minutes)} onSelect={(m) => s.set({ minutes: Number(m) })} />
         <Card style={{ paddingVertical: space.xs }}>
           <ToggleRow
             icon="heart"
@@ -266,8 +305,13 @@ export default function BuildPlanScreen() {
             onChange={s.setEasyWeeks}
           />
         </Card>
+          </>
+        ) : null}
 
-        <PrimaryButton label="Build my plan" icon="sparkle" onPress={() => s.build()} />
+        <View style={{ gap: space.md }}>
+          {last ? <PrimaryButton label="Build my plan" icon="sparkle" onPress={() => s.build()} /> : <PrimaryButton label="Next" icon="chevron-right" onPress={() => s.next()} />}
+          {step > 0 ? <GhostButton label="Back" icon="chevron-left" onPress={() => s.goBack()} /> : null}
+        </View>
       </View>
     </Screen>
   );

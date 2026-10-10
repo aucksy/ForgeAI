@@ -1,6 +1,8 @@
 # v0.27.0 device QA, part I — the rest of Phase 5 (runs after parts A–H). Strong import (an
 # older Strong file in pounds and miles, pushed to Downloads by the script; since Phase 1 it is
-# the import over the demo: the demo goes, the member gives a name) → Units "lb, miles"
+# the import over the demo: the demo goes, the member gives a name; since audit Phase 4 the
+# kg-or-lb question shows a real set and nothing is chosen for the member) → the same Strong file
+# through "Import from Hevy" reads as Strong and is all already here → Units "lb, miles"
 # → the imported bench in lb and the run's pace per mile → Health Connect: Connect, allow on
 # Health Connect's own screen, send past workouts → workout reminders → a home-screen widget
 # → a workout logged in lb and finished (sent to Health Connect).
@@ -57,6 +59,19 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "This file does not say its units.*"
     timeout: 20000
+# Audit Phase 4 (IM-06): asked with a real set from the file (its heaviest: Squat 185), and
+# nothing is chosen for the member — the import button waits for the answer.
+- assertVisible: 'Squat \(Barbell\) 185 — kg or lb\?'
+- takeScreenshot: 120b-strong-units-question
+- scrollUntilVisible:
+    element: "Choose kg or lb first"
+    centerElement: true
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Pounds and miles"
+    direction: UP
+    centerElement: true
+    timeout: 15000
 - tapOn: "Pounds and miles"
 # Phase 1 (DS-05 / IM-01): part A loaded the demo, so this first import is over the demo. The
 # preview says the whole demo goes first (the member's own workouts from parts A–H stay) and asks
@@ -72,7 +87,8 @@ appId: com.forgeai.app
 - inputText: "Test Member"
 - hideKeyboard
 # Replace / Merge sit below the demo card. Merge is already chosen (own workouts are here); tap it
-# anyway, the way a member confirms the choice.
+# anyway, the way a member confirms the choice. IM-09: the button says what will happen
+# ("Import 2 workouts": both are new), no longer "Merge 2 workouts".
 - scrollUntilVisible:
     element: "^Merge$"
     centerElement: true
@@ -80,10 +96,10 @@ appId: com.forgeai.app
 - tapOn: "^Merge$"
 - takeScreenshot: 121-strong-preview
 - scrollUntilVisible:
-    element: "Merge 2 workouts"
+    element: "Import 2 workouts"
     centerElement: true
     timeout: 15000
-- tapOn: "Merge 2 workouts"
+- tapOn: "Import 2 workouts"
 - extendedWaitUntil:
     visible: "2 workouts imported"
     timeout: 30000
@@ -91,6 +107,40 @@ appId: com.forgeai.app
 - assertVisible: "Undo import"
 - takeScreenshot: 122-strong-imported
 - tapOn: "^Done$"
+# ---------------------------------------------------------------- a Strong file through "Import from Hevy"
+# Audit Phase 4 (IM-18): a file is told apart by its content — the Strong file picked through
+# "Import from Hevy" reads as Strong (the screen turns into "Import from Strong"); IM-09: it was
+# just imported, so "All 2 workouts are already here". Closed without importing.
+- scrollUntilVisible:
+    element: "Import from Hevy"
+    centerElement: true
+    timeout: 30000
+- tapOn: "Import from Hevy"
+- extendedWaitUntil:
+    visible: "Choose Hevy file"
+    timeout: 15000
+- tapOn: "Choose Hevy file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-strong).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-strong.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "qa-strong.*"
+- extendedWaitUntil:
+    visible: "All 2 workouts are already here"
+    timeout: 20000
+- assertVisible: "Import from Strong"
+- assertNotVisible: "Migrate from Hevy"
+- takeScreenshot: 122b-strong-through-hevy-all-here
+- tapOn: "Close"
 # ---------------------------------------------------------------- pounds and miles
 - scrollUntilVisible:
     element: "lb, miles"

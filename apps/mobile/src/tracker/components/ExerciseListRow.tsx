@@ -1,7 +1,9 @@
 /**
- * One exercise in a list (library and mid-workout picker). Phase 2: a small still picture —
- * tap it for the moving demo — then the name and "Muscle · Equipment". Tapping the rest of
- * the row does the list's job (open the exercise, or add it to the workout).
+ * One exercise in a list (the one exercise list — library, Add exercise, Swap). A small still
+ * picture — tap it for the demo — then the name and "Muscle · Equipment". The WHOLE row is the
+ * button for the list's job (open the exercise, or add it): no dead padding (EX-17, at least
+ * 48 dp), and a long name wraps to two lines instead of being cut (EX-12) — "Single-Arm
+ * Dumbbell Preacher Curl" and "Single-Arm Dumbbell Curl" must not look the same.
  */
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -32,17 +34,22 @@ export const ExerciseListRow = memo(function ExerciseListRow({
 }) {
   const muscle = MUSCLE_LABEL[ex.muscles.primary[0]] ?? cap(ex.muscleGroup);
   return (
-    <View
-      style={{
+    <Pressable
+      onPress={() => onPress(ex)}
+      accessibilityRole="button"
+      accessibilityLabel={`${actionLabel} ${ex.name}`}
+      style={({ pressed }) => ({
         flexDirection: 'row',
         alignItems: 'center',
         gap: space.md,
-        padding: space.md,
+        minHeight: 64,
+        paddingHorizontal: space.md,
+        paddingVertical: space.sm,
         borderRadius: radius.md,
-        backgroundColor: color.surface,
+        backgroundColor: pressed ? color.surfaceRaised : color.surface,
         borderWidth: 1,
         borderColor: color.border,
-      }}
+      })}
     >
       <ExerciseThumb
         catalogKey={ex.catalogKey}
@@ -51,22 +58,16 @@ export const ExerciseListRow = memo(function ExerciseListRow({
         media={{ uri: ex.mediaUri, type: ex.mediaType }}
         onPress={() => onDemo(ex)}
       />
-      <Pressable
-        onPress={() => onPress(ex)}
-        accessibilityRole="button"
-        accessibilityLabel={`${actionLabel} ${ex.name}`}
-        style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 44 }}
-      >
-        <View style={{ flex: 1 }}>
-          <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
-            {ex.name}
-          </Text>
-          <Text numberOfLines={1} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
-            {muscle} · {cap(ex.equipment)}
-          </Text>
-        </View>
-        <Icon name={trailing} size={18} color={trailing === 'plus' ? color.accent : color.inkMuted} />
-      </Pressable>
-    </View>
+      <View style={{ flex: 1 }}>
+        <Text numberOfLines={2} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+          {ex.name}
+        </Text>
+        <Text numberOfLines={1} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
+          {muscle} · {cap(ex.equipment)}
+          {ex.catalogKey ? '' : ' · Yours'}
+        </Text>
+      </View>
+      <Icon name={trailing} size={18} color={trailing === 'plus' || trailing === 'check' ? color.accent : color.inkMuted} />
+    </Pressable>
   );
 });

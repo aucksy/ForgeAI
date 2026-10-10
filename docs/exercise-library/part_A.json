@@ -119,7 +119,7 @@
   },
   {
     "key": "close_grip_bench_press",
-    "name": "Close Grip Bench Press",
+    "name": "Close-Grip Bench Press",
     "ek": "0049",
     "equipment": "barbell",
     "type": "weight_reps",
@@ -146,7 +146,8 @@
       "narrow grip bench press"
     ],
     "linkNames": [
-      "Bench Press - Close Grip (Barbell)"
+      "Bench Press - Close Grip (Barbell)",
+      "Close Grip Bench Press"
     ],
     "steps": [
       "Lie on a flat bench and grip the bar about shoulder-width apart.",
@@ -156,7 +157,7 @@
   },
   {
     "key": "wide_grip_bench_press",
-    "name": "Wide Grip Bench Press",
+    "name": "Wide-Grip Bench Press",
     "ek": "0082",
     "equipment": "barbell",
     "type": "weight_reps",
@@ -181,7 +182,9 @@
       "wide grip bench",
       "wide bench press"
     ],
-    "linkNames": [],
+    "linkNames": [
+      "Wide Grip Bench Press"
+    ],
     "steps": [
       "Lie on a flat bench, eyes under the bar, feet flat on the floor.",
       "Grip the bar wider than usual, but never so wide it hurts your shoulders.",
@@ -511,7 +514,7 @@
   },
   {
     "key": "neutral_grip_dumbbell_press",
-    "name": "Neutral Grip Dumbbell Press",
+    "name": "Neutral-Grip Dumbbell Press",
     "ek": null,
     "equipment": "dumbbell",
     "type": "weight_reps",
@@ -537,7 +540,9 @@
       "hammer grip dumbbell press",
       "neutral grip db press"
     ],
-    "linkNames": [],
+    "linkNames": [
+      "Neutral Grip Dumbbell Press"
+    ],
     "steps": [
       "Lie on a flat bench with dumbbells at your chest, palms facing each other.",
       "Press them up until your arms are straight.",
@@ -546,7 +551,7 @@
   },
   {
     "key": "incline_neutral_grip_dumbbell_press",
-    "name": "Incline Neutral Grip Dumbbell Press",
+    "name": "Incline Neutral-Grip Dumbbell Press",
     "ek": "0059",
     "equipment": "dumbbell",
     "type": "weight_reps",
@@ -571,7 +576,9 @@
       "incline hammer grip press",
       "incline neutral grip db press"
     ],
-    "linkNames": [],
+    "linkNames": [
+      "Incline Neutral Grip Dumbbell Press"
+    ],
     "steps": [
       "Lie on an incline bench with dumbbells at your chest, palms facing in.",
       "Press them up until your arms are straight.",
@@ -1416,7 +1423,7 @@
   },
   {
     "key": "close_grip_push_up",
-    "name": "Close Grip Push-Up",
+    "name": "Close-Grip Push-Up",
     "ek": "0188",
     "equipment": "bodyweight",
     "type": "reps",
@@ -1443,7 +1450,8 @@
       "tricep pushup"
     ],
     "linkNames": [
-      "Push Up - Close Grip"
+      "Push Up - Close Grip",
+      "Close Grip Push-Up"
     ],
     "steps": [
       "Start in a push-up with your hands under your chest, close together.",
@@ -1651,7 +1659,9 @@
       "dand",
       "dands",
       "hindu pushup",
-      "hindu push ups"
+      "hindu push ups",
+      "डंड",
+      "दंड"
     ],
     "linkNames": [],
     "steps": [

@@ -17,6 +17,7 @@ import { distanceToUnit, fmtDistance, fmtDuration, isTimedCardio, type DistUnit,
 import { exerciseRecords, RECORD_LABEL, type ExerciseRecords, type RecordSession } from '../engine/records';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint } from '../engine/volume';
 import { bestSetVolumeSeries, type BestSetPoint } from './exerciseAnalytics';
+import { shownLogType } from './exerciseHeadline';
 import { recordValueText } from './recordText';
 import { getBodyweightTimeline } from './volumeService';
 
@@ -45,6 +46,11 @@ export interface ExerciseOverview {
   bestSet: BestSetPoint[];
   /** Phase 3: every record this exercise keeps (heaviest, best set, most reps, longest…). */
   records: ExerciseRecords;
+  /**
+   * Audit Phase 4 (EX-07): how the numbers read — the exercise's own type, except a weight type
+   * that never carried added weight reads as 'reps' (no "0 kg" tiles or flat 0 charts).
+   */
+  shownAs?: LogType;
 }
 
 /**
@@ -264,7 +270,9 @@ export async function getExerciseOverview(exerciseId: string): Promise<ExerciseO
   // numbers and the charts — a planned lighter week is not a dip in progress.
   const counted = history.filter((h) => !h.easyWeek);
   const records = exerciseRecords(recordSessionsFromHistory(counted), exercise, bw);
-  const weighty = exercise.logType === 'weight_reps' || exercise.logType === 'weighted';
+  // EX-07: a weight type never logged with added weight reads as reps.
+  const shownAs = shownLogType(exercise.logType, counted);
+  const weighty = shownAs === 'weight_reps' || shownAs === 'weighted';
   if (weighty) {
     return {
       exercise,
@@ -274,10 +282,11 @@ export async function getExerciseOverview(exerciseId: string): Promise<ExerciseO
       series: null,
       bestSet: bestSetSeriesFor(counted, exercise, bw),
       records,
+      shownAs,
     };
   }
-  const { tiles, series } = typedOverview(exercise.logType, counted, exercise.distUnit, {
-    cardio: isTimedCardio(exercise.logType, exercise.muscles.primary),
+  const { tiles, series } = typedOverview(shownAs, counted, exercise.distUnit, {
+    cardio: isTimedCardio(shownAs, exercise.muscles.primary),
   });
-  return { exercise, history, weightStats: null, tiles: tilesBesideRecords(tiles, exercise.logType), series, bestSet: [], records };
+  return { exercise, history, weightStats: null, tiles: tilesBesideRecords(tiles, shownAs), series, bestSet: [], records, shownAs };
 }

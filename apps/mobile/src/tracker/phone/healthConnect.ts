@@ -58,17 +58,12 @@ export interface HealthWorkout {
 }
 
 /**
- * Imported workouts (Hevy, Strong) keep their clock time written as UTC (`parseHevyDate`), so a
- * re-import on a phone in another timezone finds the same workouts. Health Connect needs the
- * real moment: such a start (a whole second, whose UTC day is the workout's day — a workout
- * logged live here has milliseconds) is read back as local clock time. PURE.
+ * The real moment a workout started. Audit IM-07: imported workouts (Hevy, Strong) used to keep
+ * their clock time written as UTC and were turned back here; since Phase 4 every stored start is
+ * the real moment (older imports were moved once at start-up, `importClockRepair`). PURE.
  */
-export function realStart(startedAt: number, dateISO: string): number {
-  if (startedAt % 1000 !== 0) return startedAt;
-  const d = new Date(startedAt);
-  const utcDay = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
-  if (utcDay !== dateISO) return startedAt;
-  return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()).getTime();
+export function realStart(startedAt: number, _dateISO?: string): number {
+  return startedAt;
 }
 
 /** PURE: the records for Health Connect from the rows read. */

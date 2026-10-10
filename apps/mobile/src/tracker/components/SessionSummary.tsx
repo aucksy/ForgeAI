@@ -77,7 +77,7 @@ export function SessionSummary({
           <View style={{ gap: space.md }}>
             {groupByExercise(records).map((g) => (
               <View key={g.exerciseId} style={{ gap: 6 }}>
-                <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+                <Text numberOfLines={2} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
                   {g.exerciseName}
                 </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>

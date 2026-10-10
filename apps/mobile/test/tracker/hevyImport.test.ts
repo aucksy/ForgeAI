@@ -8,19 +8,18 @@ import {
 } from '@/tracker/services/hevyImport';
 
 describe('parseHevyDate', () => {
-  it('parses "D Mon YYYY, HH:MM" on a TIMEZONE-STABLE UTC basis', () => {
+  it('parses "D Mon YYYY, HH:MM" as that clock time on this phone (audit IM-07: the real moment)', () => {
     const ms = parseHevyDate('7 Jul 2026, 14:24')!;
-    expect(ms).toBe(Date.UTC(2026, 6, 7, 14, 24, 0, 0));
-    // The whole point of the fix: identity is UTC, not the runner's local zone.
+    expect(ms).toBe(new Date(2026, 6, 7, 14, 24, 0, 0).getTime());
     const d = new Date(ms);
-    expect(d.getUTCFullYear()).toBe(2026);
-    expect(d.getUTCDate()).toBe(7);
-    expect(d.getUTCHours()).toBe(14);
+    expect(d.getFullYear()).toBe(2026);
+    expect(d.getDate()).toBe(7);
+    expect(d.getHours()).toBe(14);
   });
 
   it('accepts 1-2 digit day/hour and a comma-optional format', () => {
-    expect(parseHevyDate('1 Jan 2025 09:05')).toBe(Date.UTC(2025, 0, 1, 9, 5, 0, 0));
-    expect(parseHevyDate('12 December 2024, 23:59')).toBe(Date.UTC(2024, 11, 12, 23, 59, 0, 0));
+    expect(parseHevyDate('1 Jan 2025 09:05')).toBe(new Date(2025, 0, 1, 9, 5, 0, 0).getTime());
+    expect(parseHevyDate('12 December 2024, 23:59')).toBe(new Date(2024, 11, 12, 23, 59, 0, 0).getTime());
   });
 
   it('returns null for non-strings and unrecognizable input', () => {

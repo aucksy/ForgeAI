@@ -16,7 +16,7 @@ export interface ForgePhone {
   widgetCount(): number;
   widgetPin(kind: 'today' | 'week'): boolean;
   /** v0.28.0: an export shared to ForgeAI (copied into the app's cache), taken once. */
-  takeSharedFile(): Promise<{ uri: string; name: string; type: string } | null>;
+  takeSharedFile(): Promise<{ uri: string; name: string; type: string } | { error: 'too_big' | 'unreadable' } | null>;
   addListener(event: 'onSharedFile', cb: () => void): { remove: () => void };
 }
 

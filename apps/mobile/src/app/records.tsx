@@ -78,7 +78,7 @@ export default function RecordsScreen() {
                 }}
               >
                 <View style={{ flex: 1, gap: 4 }}>
-                  <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+                  <Text numberOfLines={2} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
                     {item.row.exerciseName}
                   </Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>

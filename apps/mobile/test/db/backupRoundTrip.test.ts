@@ -32,7 +32,8 @@ const FULL_ROWS: [string, Row][] = [
   ['exercise_prefs', { exercise_id: 'ex1', rest_sec: 150 }],
   ['workout_plans', { id: 'plan1', name: 'PPL', is_active: 1, folder_order: 2, source: 'builder', settings: '{"every":6}' }],
   ['plan_days', { id: 'day1', plan_id: 'plan1', day_type: 'push', day_order: 0, name: 'Push A' }],
-  ['plan_exercises', { id: 'pe1', plan_day_id: 'day1', exercise_id: 'ex1', ex_order: 0, target_sets: 4, rep_range_min: 5, rep_range_max: 8 }],
+  ['plan_exercises', { id: 'pe1', plan_day_id: 'day1', exercise_id: 'ex1', ex_order: 0, target_sets: 4, rep_range_min: 5, rep_range_max: 8,
+    sets_json: '[{"type":"warmup"},{"type":"normal","reps":8}]', rest_sec: 120, superset_group: 1, note: 'pause at the bottom' }],
   ['workout_sessions', { id: 's1', date_iso: '2026-03-01', started_at: 1772339400000, ended_at: 1772343300000, day_type: 'push', notes: 'n', source: 'manual', easy_week: 1, title: 'Push A', routine_id: 'day1' }],
   ['set_entries', {
     id: 'se1', session_id: 's1', exercise_id: 'ex1', set_number: 1, weight_kg: 80, reps: 6, is_warmup: 0, rpe: 8.5, set_type: 'drop',

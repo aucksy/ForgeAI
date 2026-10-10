@@ -35,6 +35,11 @@ import { addSetsWithMeta } from '@/tracker/db/trackerSets';
 import { isLoadMode, isLogType, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import type { DayType, Exercise, MuscleGroup } from '@/types/models';
 
+import { csvObjects, normHead, num } from './csvText';
+import { repairImportedClockTimes } from './importClockRepair';
+import { localMoment, readWallClock, scanDateOrder, wallISO, type DateOrder } from './importDates';
+import { isDefaultWorkoutName } from './routineRebuild';
+
 type Equipment = Exercise['equipment'];
 
 // date_iso is a 'YYYY-MM-DD' string, so these lexicographic bounds cover all rows.
@@ -123,6 +128,19 @@ export interface ParsedHevy {
   totalSetRows: number;
   /** Phase 2: rows kept as time / distance sets (earlier versions dropped them). */
   timedRows: number;
+  /**
+   * Review fix: rows left out because their date could not be read — reported to the member
+   * (with one of them), never dropped silently. Absent = none.
+   */
+  badDateRows?: number;
+  badDateExample?: string | null;
+  /**
+   * Review fix: number-only dates that read two ways ("03/04/2026") with nothing in the whole
+   * file to settle it. The member is asked; until then the file was read day-first. Null = no question.
+   */
+  dateQuestion?: string | null;
+  /** The way round the number-only dates were read. */
+  dateOrder?: DateOrder;
 }
 
 export interface ImportPreview {
@@ -132,12 +150,22 @@ export interface ImportPreview {
   newExercises: string[]; // titles that will be created (no exact library match)
   matchedExercises: number;
   skippedRows: number;
+  /** Review fix: rows whose date could not be read (left out, and said so). */
+  badDateRows: number;
+  badDateExample: string | null;
+  /** Review fix (IM-15): how each new name's sets are logged, so "Same as …?" only offers a match logged the same way. */
+  newExerciseTypes: Record<string, LogType>;
   existingWorkouts: number; // current sessions in the DB (for the Replace warning)
   dateRange: { fromISO: string; toISO: string } | null;
   /** Phase 2: timed / distance sets in the file. */
   timedSets: number;
   /** v0.27.0: workouts in the file already in ForgeAI (imported before, or logged here too) — Merge skips them. */
   alreadyHere: number;
+  /**
+   * Phase 4 (IM-15): file names that land on a ForgeAI exercise of another name — shown with both
+   * names ("Chest Fly (Machine) → Pec Deck Fly").
+   */
+  renamed: { from: string; to: string }[];
 }
 
 export interface ImportResult {
@@ -234,54 +262,17 @@ export function base64Utf8(base64: string): string | null {
 
 // ---------------------------------------------------------------- date parsing
 
-const MONTH_IDX: Record<string, number> = {
-  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
-  jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
-  // v0.28.1: a phone set to German, French, Spanish, Italian, Portuguese or Dutch may write the
-  // month in its language. Unknown months were skipped rows (every October in German).
-  mär: 2, mrz: 2, mai: 4, okt: 9, dez: 11, // de
-  janv: 0, fév: 1, févr: 1, avr: 3, juin: 5, juil: 6, aoû: 7, août: 7, déc: 11, // fr
-  ene: 0, abr: 3, ago: 7, sept: 8, dic: 11, // es
-  gen: 0, mag: 4, giu: 5, lug: 6, set: 8, ott: 9, // it
-  fev: 1, out: 9, // pt
-  mrt: 2, mei: 4, // nl
-};
-
-/** "Okt" / "févr." / "Sept" → its month, or undefined. */
-function monthOf(word: string): number | undefined {
-  const w = word.toLowerCase().replace(/\.$/, '');
-  return MONTH_IDX[w] ?? MONTH_IDX[w.slice(0, 4)] ?? MONTH_IDX[w.slice(0, 3)];
-}
-
-const pad = (n: number): string => String(n).padStart(2, '0');
-
 /**
- * Parse Hevy's "7 Jul 2026, 14:24" (1-2 digit day/hour) to a TIMEZONE-STABLE epoch:
- * the wall-clock is interpreted as UTC (Date.UTC, NOT local `new Date(...)`). This
- * keeps a workout's identity + calendar day identical no matter which timezone the
- * device is in when the file is (re-)imported — so Merge's "safe to re-run"
- * idempotency (keyed on startedAt) can't be broken by a device timezone change, and
- * the imported day never drifts. Derive the day with `utcDateISO` (UTC getters).
+ * A Hevy time ("7 Jul 2026, 14:24", or any form Excel rewrites it to — see `importDates`) → the
+ * moment that clock time is on this phone. Audit IM-07: it used to be the clock time written as
+ * UTC (so a re-import in another time zone matched exactly), which put every imported workout
+ * hours off in the export, History and Health Connect. A re-import now also recognises a
+ * workout by its day, name and length (`isAlreadyHere`), so a time-zone change still never
+ * doubles one. Null when unreadable.
  */
-export function parseHevyDate(input: unknown): number | null {
-  // A real spreadsheet (.xlsx) may hold the time as a date number (days since 30 Dec 1899):
-  // read it as the same wall clock written as UTC, to the minute (2000 onwards; a small number is not a date).
-  if (typeof input === 'number' && Number.isFinite(input) && input >= 36526 && input < 2958466) {
-    return Math.round(((input - 25569) * 86_400_000) / 60_000) * 60_000;
-  }
-  if (typeof input !== 'string') return null;
-  const m = /^\s*(\d{1,2})\.?\s+([^\s\d,]{3,})\s+(\d{4}),?\s+(\d{1,2}):(\d{2})/.exec(input);
-  if (!m) return null;
-  const mon = monthOf(m[2]);
-  if (mon === undefined) return null;
-  const t = Date.UTC(Number(m[3]), mon, Number(m[1]), Number(m[4]), Number(m[5]), 0, 0);
-  return Number.isNaN(t) ? null : t;
-}
-
-/** Calendar day (YYYY-MM-DD) of a UTC-basis epoch from parseHevyDate. */
-function utcDateISO(ms: number): string {
-  const d = new Date(ms);
-  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+export function parseHevyDate(input: unknown, order: DateOrder = 'dmy'): number | null {
+  const c = readWallClock(input, order);
+  return c ? localMoment(c) : null;
 }
 
 // ---------------------------------------------------------------- classifiers
@@ -445,6 +436,56 @@ export function inferDayType(rawTitle: string): DayType {
   return 'full';
 }
 
+/** inferDayType, or null when the title says nothing it knows (another language, a nickname). PURE. */
+export function inferDayTypeOrNull(rawTitle: string): DayType | null {
+  const t = rawTitle.toLowerCase();
+  if (/\bpush\b|\bpull\b|full body|\bfull\b|\bleg|squat|quad|hamstring|glute|calf|calves|lunge|chest|shoulder|tricep|\bdelt|bench|\bpec\b|back|bicep|\blat\b|\brow\b|deadlift|pull ?down|lower|upper/.test(t)) {
+    return inferDayType(rawTitle);
+  }
+  return null;
+}
+
+/** The muscle a name's keywords say, or null (no guess). */
+function muscleOrNull(title: string): MuscleGroup | null {
+  const t = title.toLowerCase();
+  for (const [re, muscle] of MUSCLE_RULES) if (re.test(t)) return muscle;
+  return null;
+}
+
+/**
+ * IM-14: a workout's day from its exercises — mostly legs → legs; no legs → push, pull or upper
+ * body; a mix → full body. PURE.
+ */
+export function dayTypeFromExercises(titles: readonly string[]): DayType {
+  let push = 0;
+  let pull = 0;
+  let legs = 0;
+  for (const t of titles) {
+    const m = muscleOrNull(t);
+    if (m === 'chest' || m === 'shoulders' || m === 'triceps') push += 1;
+    else if (m === 'back' || m === 'biceps' || m === 'forearms') pull += 1;
+    else if (m === 'quads' || m === 'hamstrings' || m === 'glutes' || m === 'calves') legs += 1;
+  }
+  const all = push + pull + legs;
+  if (all === 0) return 'full';
+  if (legs / all >= 0.6) return 'legs';
+  if (legs / all > 0.25) return 'full';
+  if (push / all >= 0.7) return 'push';
+  if (pull / all >= 0.7) return 'pull';
+  return 'upper';
+}
+
+/**
+ * The day of an imported workout: from its name when the name says (English); an app's own name
+ * for an empty workout ("Morning workout", "Entrenamiento de mañana") stays full body, as
+ * before; any other name (IM-14: "Día de pierna", "Тренировка ног") from its exercises. PURE.
+ */
+export function dayTypeOfWorkout(title: string, exerciseTitles: readonly string[]): DayType {
+  const named = inferDayTypeOrNull(title);
+  if (named) return named;
+  return isDefaultWorkoutName(title) ? 'full' : dayTypeFromExercises(exerciseTitles);
+}
+
 function buildExerciseInput(title: string): Omit<Exercise, 'id'> {
   const equipment = classifyEquipment(title);
   return {
@@ -516,12 +557,6 @@ type RawRow = Record<string, unknown>;
 
 const REQUIRED_COLUMNS = ['title', 'start_time', 'exercise_title', 'set_type'] as const;
 
-function asNumber(v: unknown): number | null {
-  if (v == null || v === '') return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-}
-
 function lbsToKg(v: number | null): number | null {
   return v == null ? null : v * 0.45359237; // unrounded, as a typed pound weight is stored
 }
@@ -534,24 +569,59 @@ function asString(v: unknown): string {
   return v == null ? '' : String(v);
 }
 
+/** Bytes that are not UTF-8 (Excel's "CSV" on Windows): one character per byte. PURE. */
+function base64Latin1(base64: string): string {
+  const clean = base64.replace(/[^A-Za-z0-9+/]/g, '');
+  let out = '';
+  let buf = 0;
+  let bits = 0;
+  const chunk: number[] = [];
+  for (let i = 0; i < clean.length; i++) {
+    buf = ((buf << 6) | B64.indexOf(clean[i])) & 0xffffff;
+    bits += 6;
+    if (bits >= 8) {
+      bits -= 8;
+      chunk.push((buf >> bits) & 0xff);
+      if (chunk.length > 8000) out += String.fromCharCode(...chunk.splice(0));
+    }
+  }
+  return out + String.fromCharCode(...chunk);
+}
+
+/**
+ * The file's rows, each keyed by its (normalised) column name. IM-11: a .csv is read here, not by
+ * the spreadsheet library — a file Excel saved again may use ";" or tabs, Excel's "sep=" line,
+ * a byte-order mark, or Windows letters, and every value stays text exactly as written.
+ */
+function readRows(base64: string): { rows: RawRow[]; commaDecimal: boolean } {
+  // A spreadsheet (.xlsx is a zip, "PK" = "UEsDB"; an old .xls starts "0M8R4") or UTF-16 text
+  // ("//4", "/v8"): the spreadsheet library.
+  const head = base64.trimStart().slice(0, 5);
+  if (/^(UEsDB|0M8R4)/.test(head) || /^(\/\/4|\/v8)/.test(head)) {
+    const wb = XLSX.read(base64, { type: 'base64', raw: true });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    if (!sheet) throw new Error('empty');
+    const raw = XLSX.utils.sheet_to_json<RawRow>(sheet, { defval: null, raw: true });
+    const rows = raw.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [normHead(k), v])));
+    return { rows, commaDecimal: rows.some((r) => typeof r['weight_kg'] === 'string' && /^\s*-?\d+,\d+\s*$/.test(r['weight_kg'] as string)) };
+  }
+  const text = base64Utf8(base64) ?? base64Latin1(base64);
+  const { rows, delimiter } = csvObjects(text);
+  // A ";"-separated file comes from a decimal-comma Excel; "72,5" in a number column says so too.
+  const numberCols = ['weight_kg', 'weight_lbs', 'reps', 'distance_km', 'distance_miles', 'duration_seconds', 'rpe'];
+  const commaDecimal = delimiter === ';' || rows.slice(0, 2000).some((r) => numberCols.some((c) => /^\s*-?\d+,\d{1,2}\s*$/.test(r[c] ?? '')));
+  return { rows, commaDecimal };
+}
+
 /**
  * Parse a base64 .xlsx (or .csv) Hevy export into grouped, chronological workouts.
  * Throws a user-safe Error if the file isn't a recognizable Hevy export.
  */
-export function parseHevyBase64(base64: string): ParsedHevy {
+export function parseHevyBase64(base64: string, opts: { dateOrder?: DateOrder } = {}): ParsedHevy {
   let rows: RawRow[];
+  let commaDecimal = false;
   try {
-    // v0.28.0: `raw` keeps a CSV's text as text. Without it SheetJS turns Hevy's "5 Oct 2026,
-    // 11:10" into a spreadsheet date number and no workout was found in a .csv export.
-    // v0.28.1: plain UTF-8 text (a .csv) is read as such. A spreadsheet (.xlsx is a zip, "PK" =
-    // "UEsDB"; an old .xls starts "0M8R4"), UTF-16 text ("//4", "/v8") or other text: SheetJS as before.
-    const head = base64.trimStart().slice(0, 5);
-    const spreadsheet = /^(UEsDB|0M8R4)/.test(head) || /^(\/\/4|\/v8)/.test(head);
-    const text = spreadsheet ? null : base64Utf8(base64);
-    const wb = text != null ? XLSX.read(text, { type: 'string', raw: true }) : XLSX.read(base64, { type: 'base64', raw: true });
-    const sheet = wb.Sheets[wb.SheetNames[0]];
-    if (!sheet) throw new Error('empty');
-    rows = XLSX.utils.sheet_to_json<RawRow>(sheet, { defval: null, raw: true });
+    ({ rows, commaDecimal } = readRows(base64));
   } catch {
     throw new Error('Could not read that file. Export your Hevy data and pick the .csv/.xlsx file.');
   }
@@ -561,8 +631,18 @@ export function parseHevyBase64(base64: string): ParsedHevy {
   const first = rows[0];
   const missing = REQUIRED_COLUMNS.filter((c) => !(c in first));
   if (missing.length > 0) {
-    throw new Error('That doesn’t look like a Hevy export (unexpected columns).');
+    throw new Error(
+      missing.length === REQUIRED_COLUMNS.length
+        ? 'That doesn’t look like a Hevy export (unexpected columns).'
+        : `That doesn’t look like a Hevy export: it has no ${missing.join(', ')} column${missing.length === 1 ? '' : 's'}.`,
+    );
   }
+  const n = (v: unknown): number | null => num(v as string | number | null | undefined, commaDecimal);
+  // Review fix: the WHOLE column decides day-first / month-first; when nothing settles it the
+  // member is asked (`dateQuestion`) and their answer comes back as `opts.dateOrder`.
+  const scan = scanDateOrder(rows.map((r) => r['start_time']));
+  const order: DateOrder = opts.dateOrder ?? scan.order ?? 'dmy';
+  let badDateRows = 0;
 
   // One workout per (title, start_time, end_time). Hevy writes times to the minute, so two
   // workouts started in the same minute share a start_time; grouping by start alone merged them.
@@ -570,6 +650,8 @@ export function parseHevyBase64(base64: string): ParsedHevy {
   let skippedRows = 0;
   let totalSetRows = 0;
   let timedRows = 0;
+  const unreadDates: string[] = [];
+  const needsDay = new Set<ParsedWorkout>();
   const lastTitle = new Map<ParsedWorkout, string>();
   const blockOf = new Map<ParsedExercise, number>();
   const orderOf = new Map<ParsedSet, number>();
@@ -577,24 +659,31 @@ export function parseHevyBase64(base64: string): ParsedHevy {
   for (const r of rows) {
     totalSetRows += 1;
     const startRaw = asString(r['start_time']);
-    const startedAt = parseHevyDate(r['start_time']);
+    const clock = readWallClock(r['start_time'], order);
+    const startedAt = clock ? localMoment(clock) : null;
+    if (!clock && startRaw.trim() !== '' && unreadDates.length < 3) unreadDates.push(startRaw.trim());
+    if (!clock) {
+      // A row whose date can't be read is counted and shown, never dropped silently.
+      badDateRows += 1;
+      continue;
+    }
     const exTitle = asString(r['exercise_title']).trim();
-    const reps = asNumber(r['reps']);
-    const duration = asNumber(r['duration_seconds']);
+    const reps = n(r['reps']);
+    const duration = n(r['duration_seconds']);
     // v0.27.0: a Hevy account set to pounds exports weight_lbs / distance_miles instead.
-    const distanceKm = r['distance_km'] !== undefined ? asNumber(r['distance_km']) : milesToKm(asNumber(r['distance_miles']));
+    const distanceKm = r['distance_km'] !== undefined ? n(r['distance_km']) : milesToKm(n(r['distance_miles']));
     const durationSec = duration != null && duration > 0 ? Math.round(duration) : null;
     const distanceM = distanceKm != null && distanceKm > 0 ? Math.round(distanceKm * 1000 * 10) / 10 : null;
     const hasReps = reps !== null && reps > 0;
     // A set needs reps, a time or a distance (Phase 2 keeps Plank / Treadmill rows).
-    if (startedAt === null || exTitle === '' || (!hasReps && durationSec === null && distanceM === null)) {
+    if (startedAt === null || clock === null || exTitle === '' || (!hasReps && durationSec === null && distanceM === null)) {
       skippedRows += 1;
       continue;
     }
     if (!hasReps) timedRows += 1;
-    const weightKg = (r['weight_kg'] !== undefined ? asNumber(r['weight_kg']) : lbsToKg(asNumber(r['weight_lbs']))) ?? 0; // null weight = bodyweight
+    const weightKg = (r['weight_kg'] !== undefined ? n(r['weight_kg']) : lbsToKg(n(r['weight_lbs']))) ?? 0; // null weight = bodyweight
     const rawSetType = asString(r['set_type']).toLowerCase().trim();
-    const isWarmup = rawSetType === 'warmup';
+    const isWarmup = rawSetType === 'warmup' || rawSetType === 'warm up' || rawSetType === 'warm-up';
     // Hevy working-set variants: dropset / failure. Everything else → normal.
     const setType: ParsedSet['setType'] =
       rawSetType === 'dropset' || rawSetType === 'drop set' || rawSetType === 'drop'
@@ -602,27 +691,30 @@ export function parseHevyBase64(base64: string): ParsedHevy {
         : rawSetType === 'failure'
           ? 'failure'
           : 'normal';
-    const rpe = asNumber(r['rpe']);
-    const setIndex = asNumber(r['set_index']) ?? 0;
+    const rpe = n(r['rpe']);
+    const setIndex = n(r['set_index']) ?? 0;
 
     const rawTitle = asString(r['title']);
     const workoutKey = `${rawTitle}\u0000${startRaw}\u0000${asString(r['end_time'])}`;
     let workout = byStart.get(workoutKey);
     if (!workout) {
-      const endedAt = parseHevyDate(r['end_time']);
+      const endClock = readWallClock(r['end_time'], order);
+      const endedAt = endClock ? localMoment(endClock) : null;
       // #9: our own "Push · Morning workout" — the day from its first part, the name kept apart.
       const own = ownTitle(rawTitle);
       const dayTitle = own ? own.day : rawTitle;
       workout = {
         title: sanitizeTitle(rawTitle),
         notes: workoutNotes(dayTitle, r['description'] !== undefined ? asString(r['description']) : null),
-        dayType: inferDayType(dayTitle),
+        // From the title, else (IM-14) from the exercises once they are all read (below).
+        dayType: inferDayTypeOrNull(dayTitle) ?? 'full',
         ...(own ? { name: own.name } : {}),
         startedAt,
         endedAt,
-        dateISO: utcDateISO(startedAt),
+        dateISO: wallISO(clock),
         exercises: [],
       };
+      if (inferDayTypeOrNull(dayTitle) == null) needsDay.add(workout);
       byStart.set(workoutKey, workout);
     }
     let exercise = workout.exercises.find((e) => e.title === exTitle);
@@ -666,7 +758,15 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     exercise.sets.push(set);
   }
 
+  // IM-11: nothing read because no date could be — say which column and show one.
+  if (byStart.size === 0 && unreadDates.length > 0) {
+    throw new Error(
+      `The dates in its start_time column could not be read (for example “${unreadDates[0]}”). Export the file from Hevy again and pick it without opening it in Excel.`,
+    );
+  }
+
   const workouts = [...byStart.values()].sort((a, b) => a.startedAt - b.startedAt);
+  for (const w of needsDay) w.dayType = dayTypeOfWorkout(w.title, w.exercises.map((e) => e.title));
   // Two workouts in the same minute: the later one in the file starts a second later, so each
   // keeps its own start (the import skips a start it has already written, and Merge keys on it).
   // Same file → same seconds, so a re-run still recognises both.
@@ -690,6 +790,10 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     skippedRows,
     totalSetRows,
     timedRows,
+    badDateRows,
+    badDateExample: unreadDates[0] ?? null,
+    dateQuestion: scan.order == null && opts.dateOrder == null ? scan.ambiguous : null,
+    dateOrder: order,
   };
 }
 
@@ -750,6 +854,20 @@ export async function exerciseIdsForTitles(titles: readonly string[]): Promise<M
 }
 
 /**
+ * Audit IM-15: names that land on an exercise ForgeAI calls something else — shown with both
+ * names ("Chest Fly (Machine) → Pec Deck Fly"). Reads only.
+ */
+export async function renamedIn(titles: readonly string[]): Promise<{ from: string; to: string }[]> {
+  const library = await readLibrary();
+  const out: { from: string; to: string }[] = [];
+  for (const t of new Set(titles)) {
+    const hit = matchTitle(t, library);
+    if (hit && norm(hit.name) !== norm(t)) out.push({ from: t, to: hit.name });
+  }
+  return out;
+}
+
+/**
  * v0.29.1: the names that match nothing in the member's exercises (each would be made as a
  * custom exercise), in the order given. Reads only.
  */
@@ -777,26 +895,36 @@ export function linkLogType(title: string, timed: boolean): LogType {
  * no reps for it AND its name is a hold or cardio (Hevy also shows "3 sets" alone for a rep
  * exercise with blank reps, like "Pull Up").
  */
-export async function exerciseIdsCreating(items: readonly { title: string; timed: boolean }[]): Promise<{ ids: Map<string, string>; created: number }> {
+export async function exerciseIdsCreating(
+  items: readonly { title: string; timed: boolean; logType?: LogType | null }[],
+  matches?: ReadonlyMap<string, string>,
+): Promise<{ ids: Map<string, string>; created: number }> {
   const library = await readLibrary();
   const ids = new Map<string, string>();
   const madeNow: string[] = [];
   let created = 0;
-  for (const { title, timed } of items) {
+  for (const { title, timed, logType: known } of items) {
     if (ids.has(title)) continue;
+    // IM-15: "Same as ForgeAI's …" — the member's pick for a name ForgeAI did not know.
+    const picked = matches?.get(title);
+    if (picked && library.some((e) => e.id === picked)) {
+      ids.set(title, picked);
+      continue;
+    }
     const hit = matchTitle(title, library);
     if (hit) {
       ids.set(title, hit.id);
       continue;
     }
-    const logType = linkLogType(title, timed);
+    // Hevy's own type when the link said it (its page data); else a guess from the name.
+    const logType = known ?? linkLogType(title, timed);
     const entry = catalogEntryByName(title);
     const linkKey = entry && !library.some((e) => e.catalogKey === entry.key) ? entry.key : null;
     const made = await createExercise(buildExerciseInput(title));
     await getDb().runAsync('UPDATE exercises SET log_type = ?, catalog_key = ? WHERE id = ?', [logType, linkKey, made.id]);
     library.push({ id: made.id, name: made.name, catalogKey: linkKey, logType, loadMode: null });
     ids.set(title, made.id);
-    madeNow.push(made.id);
+    if (!known) madeNow.push(made.id);
     created += 1;
   }
   if (madeNow.length > 0) {
@@ -820,36 +948,116 @@ export function wallClockAsUtc(ms: number): number {
   return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
 }
 
+/** A workout as the "already here?" check reads it. */
+export interface KnownWorkout {
+  dateISO: string;
+  startedAt: number;
+  endedAt?: number | null;
+  /** The workout's own name (an imported one keeps its Hevy title, "Push 1"). */
+  title?: string | null;
+}
+
+const sameName = (a: string | null | undefined, b: string | null | undefined): boolean =>
+  !!a && !!b && a.replace(/\s+/g, ' ').trim().toLowerCase() === b.replace(/\s+/g, ' ').trim().toLowerCase();
+
 /**
- * v0.27.0: is this imported workout already in ForgeAI? Either imported before (the exact same
- * start) or the same workout logged here too — the member tracked it in both apps (same day,
- * starts within 30 minutes on the clock). PURE.
+ * v0.27.0: is this imported workout already in ForgeAI? Either imported before — the exact same
+ * start, or (IM-07, a phone moved to another time zone since) the same day, name and length —
+ * or the same workout logged here too: the member tracked it in both apps (same day, starts
+ * within 30 minutes). PURE.
  */
-export function isAlreadyHere(
-  w: { dateISO: string; startedAt: number },
-  existing: readonly { dateISO: string; startedAt: number }[],
-): 'exact' | 'same' | null {
+export function isAlreadyHere(w: KnownWorkout, existing: readonly KnownWorkout[]): 'exact' | 'same' | null {
   let same = false;
+  const len = w.endedAt != null ? w.endedAt - w.startedAt : null;
   for (const e of existing) {
     if (e.startedAt === w.startedAt) return 'exact';
     if (e.dateISO !== w.dateISO) continue;
-    if (Math.abs(e.startedAt - w.startedAt) <= SAME_WORKOUT_MS || Math.abs(wallClockAsUtc(e.startedAt) - w.startedAt) <= SAME_WORKOUT_MS) same = true;
+    if (len != null && e.endedAt != null && sameName(e.title, w.title) && Math.abs(e.endedAt - e.startedAt - len) <= 60_000) return 'exact';
+    if (Math.abs(e.startedAt - w.startedAt) <= SAME_WORKOUT_MS) same = true;
   }
   return same ? 'same' : null;
 }
 
+/**
+ * Review fix: which workout already here each file workout IS (its id), or null. First every
+ * exact start claims its workout; then the same day, name and length (a phone moved to another
+ * time zone) may match only a workout NOT claimed already in this run — so two 30-minute
+ * "Cardio" workouts on one day, one of them imported before, never make the new one look
+ * imported. PURE.
+ */
+export function matchKnown(file: readonly KnownWorkout[], existing: readonly (KnownWorkout & { id: string })[]): (string | null)[] {
+  const out: (string | null)[] = file.map(() => null);
+  const claimed = new Set<string>();
+  const byStart = new Map<number, string>();
+  for (const e of existing) if (!byStart.has(e.startedAt)) byStart.set(e.startedAt, e.id);
+  file.forEach((w, i) => {
+    const id = byStart.get(w.startedAt);
+    if (id) {
+      out[i] = id;
+      claimed.add(id);
+    }
+  });
+  file.forEach((w, i) => {
+    if (out[i]) return;
+    for (const e of existing) {
+      if (claimed.has(e.id)) continue;
+      if (isAlreadyHere(w, [e]) === 'exact') {
+        out[i] = e.id;
+        claimed.add(e.id);
+        break;
+      }
+    }
+  });
+  return out;
+}
+
+/** Every workout here, with its name and end, for `isAlreadyHere` (plus moved workouts' first starts). */
+async function knownWorkouts(): Promise<(KnownWorkout & { id: string })[]> {
+  const sessions = await getSessionsBetween(MIN_ISO, MAX_ISO);
+  // The workout's own name is a tracker column (schema v9), not in the frozen session shape.
+  const named = await getDb()
+    .getAllAsync<{ id: string; title: string | null }>('SELECT id, title FROM workout_sessions WHERE title IS NOT NULL')
+    .catch(() => [] as { id: string; title: string | null }[]);
+  const titleOf = new Map((named ?? []).map((r) => [r.id, r.title]));
+  const out: (KnownWorkout & { id: string })[] = sessions.map((r) => ({
+    id: r.id,
+    dateISO: r.dateISO,
+    startedAt: r.startedAt,
+    endedAt: r.endedAt ?? null,
+    title: titleOf.get(r.id) ?? null,
+  }));
+  // HI-03: a workout moved to another day since it was imported is still "already here".
+  for (const o of await originalStarts().catch(() => [])) out.push({ id: o.id, dateISO: o.dateISO, startedAt: o.startedAt });
+  return out;
+}
+
+/** The workout as the check compares it: its start, end, day and the name it is saved under. */
+const asKnown = (w: ParsedWorkout): KnownWorkout => ({ dateISO: w.dateISO, startedAt: w.startedAt, endedAt: w.endedAt, title: importedWorkoutName(w) });
+
+/** Every set the file has for one exercise name. PURE. */
+function setsOfTitle(parsed: ParsedHevy, title: string): ParsedSet[] {
+  const out: ParsedSet[] = [];
+  for (const w of parsed.workouts) for (const ex of w.exercises) if (ex.title === title) out.push(...ex.sets);
+  return out;
+}
+
 /** Analyze a parse against the current library + history — no DB writes. */
 export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> {
+  // IM-07: workouts imported before are compared on the same footing (real moments).
+  await repairImportedClockTimes().catch(() => 0);
   const library = await readLibrary();
   // Count how many exercises will actually be CREATED — dedupe by normalized name
   // so the "N new" figure matches runImport (which creates once per unique norm).
   const newExercises: string[] = [];
   const newSeen = new Set<string>();
   let matched = 0;
+  const renamed: { from: string; to: string }[] = [];
   for (const title of parsed.distinctExerciseTitles) {
     const key = norm(title);
-    if (matchTitle(title, library)) {
+    const hit = matchTitle(title, library);
+    if (hit) {
       matched += 1;
+      if (norm(hit.name) !== key) renamed.push({ from: title, to: hit.name });
     } else if (!newSeen.has(key)) {
       newSeen.add(key);
       newExercises.push(title);
@@ -860,10 +1068,13 @@ export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> 
 
   const existing = await getSessionsBetween(MIN_ISO, MAX_ISO);
   const existingWorkouts = existing.length;
-  // HI-03: a workout moved to another day since it was imported is still "already here".
-  const known = [...existing, ...(await originalStarts().catch(() => []))];
+  const known = await knownWorkouts();
+  const fileKnown = parsed.workouts.map(asKnown);
+  const matchedIds = matchKnown(fileKnown, known);
   let alreadyHere = 0;
-  for (const w of parsed.workouts) if (isAlreadyHere(w, known)) alreadyHere += 1;
+  fileKnown.forEach((k, i) => {
+    if (matchedIds[i] != null || isAlreadyHere(k, known) === 'same') alreadyHere += 1;
+  });
 
   const dateRange =
     parsed.workouts.length > 0
@@ -880,10 +1091,14 @@ export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> 
     newExercises,
     matchedExercises: matched,
     skippedRows: parsed.skippedRows,
+    badDateRows: parsed.badDateRows ?? 0,
+    badDateExample: parsed.badDateExample ?? null,
+    newExerciseTypes: Object.fromEntries(newExercises.map((t) => [t, inferLogType(t, setsOfTitle(parsed, t))])),
     existingWorkouts,
     dateRange,
     timedSets: parsed.timedRows,
     alreadyHere,
+    renamed,
   };
 }
 
@@ -898,9 +1113,16 @@ export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> 
  */
 export async function runImport(
   parsed: ParsedHevy,
-  opts: { mode: ImportMode; onProgress?: (done: number, total: number) => void },
+  opts: {
+    mode: ImportMode;
+    onProgress?: (done: number, total: number) => void;
+    /** IM-15: file names the member matched to one of their exercises ("Same as …"): title → exercise id. */
+    matches?: ReadonlyMap<string, string>;
+  },
 ): Promise<ImportResult> {
   const { mode, onProgress } = opts;
+  // IM-07: the workouts here are on the real-moment footing before any is compared or added.
+  await repairImportedClockTimes();
   const result: ImportResult = {
     imported: 0,
     skippedExisting: 0,
@@ -931,13 +1153,13 @@ export async function runImport(
     // 2. Idempotency guard — start times already in the DB (empty after a replace).
     // HI-03: plus the FIRST start of every workout an edit has moved since (its import key), so
     // a moved workout is never brought back as a duplicate. Read after a replace: none survive it.
-    const remaining = [
-      ...(await getSessionsBetween(MIN_ISO, MAX_ISO)),
-      ...(await originalStarts()),
-    ];
+    const remaining = await knownWorkouts();
     const seenStarts = new Set<number>(remaining.map((s) => s.startedAt));
-    const sameDay = remaining.map((s) => ({ dateISO: s.dateISO, startedAt: s.startedAt }));
+    const sameDay: KnownWorkout[] = remaining.map((s) => ({ dateISO: s.dateISO, startedAt: s.startedAt, endedAt: s.endedAt, title: s.title }));
     const sessionByStart = new Map<number, string>(remaining.map((s) => [s.startedAt, s.id]));
+    // IM-07: the same workout after a time-zone change (same day, name and length) — each
+    // workout here matched by at most one in the file (review fix, `matchKnown`).
+    const matchedHere = matchKnown(parsed.workouts.map(asKnown), remaining);
 
     // 3. Resolve every distinct exercise title once: an exact name or the library
     //    exercise the title means, else a new custom exercise logged the way its rows are.
@@ -948,7 +1170,10 @@ export async function runImport(
     }
     const byTitle = new Map<string, { id: string; logType: LogType; setMode?: LoadMode | null }>();
     for (const title of parsed.distinctExerciseTitles) {
-      const hit = matchTitle(title, library);
+      // IM-15: the member said "Same as ForgeAI's …" for this name.
+      const pickedId = opts.matches?.get(title);
+      const picked = pickedId ? library.find((e) => e.id === pickedId) ?? null : null;
+      const hit = picked ?? matchTitle(title, library);
       if (hit) {
         let logType = hit.logType;
         if (guessed.has(hit.id)) {
@@ -1027,13 +1252,14 @@ export async function runImport(
 
     // 4. One session per workout (chronological, so PRs accrue in real order).
     let done = 0;
-    for (const w of parsed.workouts) {
+    for (const [wi, w] of parsed.workouts.entries()) {
       done += 1;
-      if (seenStarts.has(w.startedAt)) {
+      const elsewhere = seenStarts.has(w.startedAt) ? null : matchedHere[wi];
+      if (seenStarts.has(w.startedAt) || elsewhere) {
         result.skippedExisting += 1;
         // Merge re-run: earlier versions dropped timed / distance rows. Add them to this
         // already-imported workout when that exercise has nothing in it yet.
-        const sessionId = sessionByStart.get(w.startedAt);
+        const sessionId = sessionByStart.get(w.startedAt) ?? elsewhere ?? undefined;
         // Audit Phase 3 (HI-04): a workout imported before names were kept gets its name and
         // routine now — only where none is saved (a name the member gave is never replaced).
         if (mode === 'merge' && sessionId) {
@@ -1068,7 +1294,7 @@ export async function runImport(
         continue;
       }
       // v0.27.0: the same workout already logged in ForgeAI (tracked in both apps) is not doubled.
-      if (mode === 'merge' && isAlreadyHere(w, sameDay) === 'same') {
+      if (mode === 'merge' && isAlreadyHere(asKnown(w), sameDay) === 'same') {
         result.skippedSameWorkout += 1;
         onProgress?.(done, total);
         continue;

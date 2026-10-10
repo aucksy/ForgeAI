@@ -10,9 +10,9 @@
  * Units: like Hevy, a "lb, miles" member gets `weight_lbs` / `distance_miles` (the importer
  * reads both); everyone else `weight_kg` / `distance_km`.
  *
- * Times (DS-12): an IMPORTED workout keeps its clock time written as UTC (`parseHevyDate`),
- * a workout logged here keeps the real moment. Both are written as the clock time the member
- * saw — via `realStartOf` (Health Connect's `realStart`) — so a 6:00 pm Hevy workout stays "18:00", not 23:30.
+ * Times (DS-12, audit IM-07): every workout keeps the real moment it started — an imported one
+ * too, since Phase 4 (older imports were moved once, `importClockRepair`) — and is written as the
+ * clock time the member saw, so a 6:00 pm Hevy workout stays "18:00" and comes back exactly.
  *
  * Reads only: one SELECT, so no write queue is needed. The file goes to the cache folder (never
  * backed up, cleared by Android when space is short); the previous export is removed first, and
@@ -77,17 +77,12 @@ export interface HistorySetRow {
 }
 
 /**
- * The real moment of a workout's start: Health Connect's `realStart`, copied here so this file
- * does not load the phone-connection modules (a test checks the two agree). An imported start
- * (a whole second whose UTC day is the workout's day) is clock time written as UTC → read back
- * as local clock time; a start logged here (it has milliseconds) is already real. PURE.
+ * The real moment of a workout's start. Audit IM-07: every stored start is the real moment now
+ * (imports store it; older imports were moved once at start-up, `importClockRepair`), so this is
+ * the start itself. Kept, with Health Connect's `realStart`, so callers read one rule. PURE.
  */
-export function realStartOf(startedAt: number, dateISO: string): number {
-  if (startedAt % 1000 !== 0) return startedAt;
-  const d = new Date(startedAt);
-  const utcDay = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
-  if (utcDay !== dateISO) return startedAt;
-  return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()).getTime();
+export function realStartOf(startedAt: number, _dateISO?: string): number {
+  return startedAt;
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

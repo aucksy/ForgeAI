@@ -16,6 +16,13 @@
  *     history keeps "weight as typed": the owner's Hevy export shows Hammer Curl at 25 kg
  *     next to Cross Body Hammer Curl at 12.5 kg, i.e. both dumbbells typed as one number.
  *  4. INSERT every entry nothing links to.
+ *  5. (Audit Phase 4, EX-15) Library facts reach existing phones: a library row's search
+ *     words, muscles and gear are read from the bundle at run time (`resolveExercise`,
+ *     `exerciseSearch`), so a library fix shows on the next launch without rewriting rows; the
+ *     one stored fact that needs a write is the NAME — the library's own older spelling
+ *     ("Pull-up", "Close Grip Bench Press") takes the new one. A row the member made or edited
+ *     in the exercise form (it stores its own muscles) is theirs: never linked by name, never
+ *     restyled.
  *
  * `planCatalogSync` is PURE (tests drive it); `syncExerciseCatalog` runs it in one
  * transaction.
@@ -41,11 +48,32 @@ export interface SyncRow {
   loadMode: string | null;
   /** Logged working or warm-up sets of this exercise, and the sign of their weights. */
   sets: { count: number; anyPositive: boolean; anyNegative: boolean };
+  /** EX-15: made or edited by the member in the exercise form (it stores its own muscles). */
+  own?: boolean;
 }
 
 export interface SyncPlan {
   links: { id: string; key: string; logType: LogType | null; freezeLoadMode: boolean }[];
   inserts: CatalogEntry[];
+  /** EX-15: library rows (not the member's own); `name` set when the library's older spelling is restyled. */
+  refresh: { id: string; key: string; name: string | null }[];
+}
+
+/**
+ * EX-20: library names restyled in catalogue version 2 beyond their letter case. A row still
+ * carrying one of them takes the new spelling; a name Hevy or the member gave never changes.
+ */
+const FORMER_LIBRARY_NAMES = new Set([
+  'Close Grip Bench Press',
+  'Wide Grip Bench Press',
+  'Neutral Grip Dumbbell Press',
+  'Incline Neutral Grip Dumbbell Press',
+  'Close Grip Push-Up',
+]);
+
+/** A name with case, spaces and punctuation ignored ("Pull-up" = "Pull Up" = "pull-UP"). PURE. */
+export function nameShape(s: string): string {
+  return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
 }
 
 /** The log type a linked row should take, or null to keep reading it as weight × reps. */
@@ -78,6 +106,8 @@ export function planCatalogSync(rows: readonly SyncRow[], opts: { demo: boolean 
     .filter((r) => !r.catalogKey || !catalogEntry(r.catalogKey))
     .sort((a, b) => b.sets.count - a.sets.count);
   for (const r of unlinked) {
+    // EX-15: the member's own exercise stays theirs, even when it shares a library name.
+    if (r.own) continue;
     const entry = catalogEntryByName(r.name);
     if (!entry || linked.has(entry.key)) continue;
     linked.add(entry.key);
@@ -91,7 +121,27 @@ export function planCatalogSync(rows: readonly SyncRow[], opts: { demo: boolean 
   // exercise that happens to share it is the member's; leave it alone).
   const names = new Set(rows.map((r) => normName(r.name)));
   const inserts = catalog.filter((e) => !linked.has(e.key) && !names.has(normName(e.name)));
-  return { links, inserts };
+
+  // EX-15: every library row that is not the member's own takes the bundle's facts.
+  const keyOf = new Map<string, string>();
+  for (const r of rows) if (r.catalogKey && catalogEntry(r.catalogKey) && !r.own) keyOf.set(r.id, r.catalogKey);
+  for (const l of links) keyOf.set(l.id, l.key);
+  // How many rows share each name shape: a restyle never makes "Pull-up" and "Pull-Up" twins.
+  const shapes = new Map<string, number>();
+  for (const r of rows) shapes.set(nameShape(r.name), (shapes.get(nameShape(r.name)) ?? 0) + 1);
+  const refresh: SyncPlan['refresh'] = [];
+  for (const r of rows) {
+    const key = keyOf.get(r.id);
+    const entry = key ? catalogEntry(key) : null;
+    if (!entry) continue;
+    // Only the library's own older spelling ("Pull-up", "Close Grip Bench Press"); a name the
+    // member or Hevy gave ("Pull Up") stays as it is.
+    const olderSpelling = normName(r.name) === normName(entry.name) || FORMER_LIBRARY_NAMES.has(r.name);
+    const restyle =
+      r.name !== entry.name && olderSpelling && nameShape(r.name) === nameShape(entry.name) && shapes.get(nameShape(r.name)) === 1;
+    refresh.push({ id: r.id, key: entry.key, name: restyle ? entry.name : null });
+  }
+  return { links, inserts, refresh };
 }
 
 type Tx = Pick<SQLiteDatabase, 'runAsync' | 'getAllAsync'>;
@@ -148,11 +198,13 @@ async function readRows(tx: Tx): Promise<SyncRow[]> {
     catalog_key: string | null;
     log_type: string | null;
     load_mode: string | null;
+    own: number;
     n: number;
     pos: number;
     neg: number;
   }>(
     `SELECT e.id, e.name, e.catalog_key, e.log_type, e.load_mode,
+            CASE WHEN e.muscles IS NULL THEN 0 ELSE 1 END AS own,
             COUNT(s.id) AS n,
             COALESCE(MAX(CASE WHEN s.weight_kg > 0 THEN 1 ELSE 0 END), 0) AS pos,
             COALESCE(MAX(CASE WHEN s.weight_kg < 0 THEN 1 ELSE 0 END), 0) AS neg
@@ -167,6 +219,7 @@ async function readRows(tx: Tx): Promise<SyncRow[]> {
     logType: r.log_type,
     loadMode: r.load_mode,
     sets: { count: r.n, anyPositive: r.pos === 1, anyNegative: r.neg === 1 },
+    own: r.own === 1,
   }));
 }
 
@@ -182,6 +235,10 @@ export async function applyCatalogSync(tx: Tx, opts: { demo: boolean }): Promise
         WHERE id = ?`,
       [l.key, l.logType, l.freezeLoadMode ? 1 : 0, l.id],
     );
+  }
+  for (const f of plan.refresh) {
+    if (f.name == null) continue;
+    await tx.runAsync('UPDATE exercises SET name = ? WHERE id = ? AND muscles IS NULL', [f.name, f.id]);
   }
   await insertCatalogEntries(tx, plan.inserts);
   return plan;

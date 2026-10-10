@@ -336,7 +336,8 @@ describe('easy weeks (research v3 §6.4)', () => {
   it('the plan line says where the member is', () => {
     const folder = { id: 'f', name: 'Plan', following: true, settings: { startISO: '2026-10-01', easy: every6 } };
     expect(planLine(planNowOf(folder, '2026-10-15'))).toBe('Week 3 · easy week in week 6');
-    expect(planLine(planNowOf(folder, '2026-11-06'))).toBe('Easy week this week');
+    // RP-04: the end date is always said (week 6 runs 5–11 Nov).
+    expect(planLine(planNowOf(folder, '2026-11-06'))).toBe('Easy week until Wed, 11 Nov');
     expect(planLine(planNowOf({ ...folder, settings: { startISO: '2026-10-01' } }, '2026-10-15'))).toBe('Week 3');
     expect(planNowOf({ ...folder, following: false }, '2026-10-15')).toBeNull();
     expect(planLine(null)).toBeNull();
@@ -428,8 +429,11 @@ describe('sharing a routine as a file or text', () => {
     expect(bad(`{"kind":"${ROUTINE_FILE_KIND}","version":2,"routines":[{}]}`)).toMatch(/newer ForgeAI/);
     expect(bad(`{"kind":"${ROUTINE_FILE_KIND}","version":1,"routines":[]}`)).toBe('That file has no routines in it.');
     expect(bad(`{"kind":"${ROUTINE_FILE_KIND}","version":1,"routines":[{"name":"x","exercises":[{"name":""}]}]}`)).toBe('An exercise in that file is damaged.');
-    const many = JSON.stringify({ kind: ROUTINE_FILE_KIND, version: 1, routines: Array.from({ length: 31 }, () => ({ name: 'r', exercises: [] })) });
-    expect(bad(many)).toMatch(/30 at most/);
+    // RP-16: only a file far beyond any real folder is refused (500 routines at most).
+    const many = JSON.stringify({ kind: ROUTINE_FILE_KIND, version: 1, routines: Array.from({ length: 501 }, () => ({ name: 'r', exercises: [] })) });
+    expect(bad(many)).toMatch(/500 at most/);
+    const fine = JSON.stringify({ kind: ROUTINE_FILE_KIND, version: 1, routines: Array.from({ length: 31 }, () => ({ name: 'r', exercises: [] })) });
+    expect(bad(fine)).toBeNull();
   });
 
   it('brings odd numbers into range instead of refusing an older file', () => {
@@ -446,7 +450,8 @@ describe('sharing a routine as a file or text', () => {
     expect(r.file.folder).toBeNull();
     expect(r.file.routines[0].name).toBe('Legs');
     expect(r.file.routines[0].dayType).toBe('full');
-    expect(r.file.routines[0].exercises[0]).toEqual({ name: 'Squat', catalogKey: null, logType: 'weight_reps', sets: 12, repMin: 1, repMax: 1, primary: ['quads'] });
+    // RP-23: 99 sets is unusual but kept (no 12-set cap); 50 sets at most.
+    expect(r.file.routines[0].exercises[0]).toEqual({ name: 'Squat', catalogKey: null, logType: 'weight_reps', sets: 50, repMin: 1, repMax: 1, primary: ['quads'] });
   });
 });
 

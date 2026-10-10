@@ -1,8 +1,0 @@
-# Part L helper: scroll to "Next" on a routine's check screen and tap it.
-appId: com.forgeai.app
----
-- scrollUntilVisible:
-    element: "^Next$"
-    centerElement: true
-    timeout: 15000
-- tapOn: "^Next$"

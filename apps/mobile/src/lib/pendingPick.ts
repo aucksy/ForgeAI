@@ -28,9 +28,18 @@ export function pendingAsset(r: Pending): ImagePicker.ImagePickerAsset | null {
   return r.assets?.[0] ?? null;
 }
 
-/** Open a picker, noting who asked until it comes back. */
-export async function launchFor<T>(purpose: PickPurpose, launch: () => Promise<T>, store: PickStore = AsyncStorage): Promise<T> {
-  await store.setItem(KEY, purpose).catch(() => undefined);
+/** The note: the purpose, and (audit Phase 4, EX-13) which item asked — "exercise-media|<id>". */
+function noteOf(purpose: PickPurpose, target?: string): string {
+  return target ? `${purpose}|${target}` : purpose;
+}
+
+/**
+ * Open a picker, noting who asked until it comes back. `target` names the one thing the
+ * picture is for (EX-13: the exercise being edited, or "new"), so after a restart it goes back
+ * to that exercise and never into another one's form.
+ */
+export async function launchFor<T>(purpose: PickPurpose, launch: () => Promise<T>, store: PickStore = AsyncStorage, target?: string): Promise<T> {
+  await store.setItem(KEY, noteOf(purpose, target)).catch(() => undefined);
   try {
     return await launch();
   } finally {
@@ -38,13 +47,23 @@ export async function launchFor<T>(purpose: PickPurpose, launch: () => Promise<T
   }
 }
 
-/** The picture a restart left behind for this screen — once — or null. */
+/**
+ * The picture a restart left behind for this screen — once — or null. With a `target`, only
+ * the picture noted for that same target is taken; another target's stays for its own form.
+ */
 export async function takePendingPick(
   purpose: PickPurpose,
   deps: { store: PickStore; pending: () => Promise<Pending> } = { store: AsyncStorage, pending: () => ImagePicker.getPendingResultAsync() },
+  target?: string,
 ): Promise<ImagePicker.ImagePickerAsset | null> {
   const asked = await deps.store.getItem(KEY).catch(() => null);
-  if (asked !== purpose) return null;
+  if (asked == null) return null;
+  const bar = asked.indexOf('|');
+  const askedPurpose = bar < 0 ? asked : asked.slice(0, bar);
+  const askedTarget = bar < 0 ? null : asked.slice(bar + 1);
+  if (askedPurpose !== purpose) return null;
+  // A note for one exercise is never adopted by another exercise's form.
+  if (askedTarget != null && target != null && askedTarget !== target) return null;
   await deps.store.removeItem(KEY).catch(() => undefined);
   return pendingAsset(await deps.pending().catch(() => null));
 }

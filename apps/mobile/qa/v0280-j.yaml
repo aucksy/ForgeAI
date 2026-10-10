@@ -1,7 +1,8 @@
 # v0.28.0 device QA, part J — the member's own Hevy routines (runs after parts A–I). A real-format
 # Hevy .csv (text dates, which v0.27.0 read as no workouts) is imported; then the routines found
-# in it are checked one per screen, followed, and land in the folder "From Hevy". The same file
-# imported again adds nothing and updates "From Hevy" (no second folder). Since Phase 1 the demo is
+# in it are checked one per screen, followed, and land in the folder "From Hevy" (a tap on a routine
+# opens its preview). The same file imported again says "All 12 workouts are already here", adds
+# nothing, and updates "From Hevy" (no second folder). Since Phase 1 the demo is
 # already gone (part I's import removed it), so this preview has no demo card. Then: Home's Today card
 # opens the day's exercises first, and "Add exercise" inside a workout offers "Create “…”" (a
 # distance exercise in metres), which lands in the workout.
@@ -41,6 +42,11 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Date range$"
     timeout: 20000
+# Audit Phase 4 (IM-08): the date range carries its years — 3 "Legs Old" in March 2024 to
+# September 2026 — so years of history never read like months.
+- assertVisible: "Mar 2024 → Sep 2026"
+# Every name in this file is one ForgeAI knows (some under another name): nothing to ask.
+- assertNotVisible: '.* new to ForgeAI'
 # Phase 1 (DS-05 / IM-01): part I's import took the demo away, so this is an ordinary import over
 # the member's own data: no "The demo goes first" card, no name box.
 - assertNotVisible: "The demo goes first"
@@ -50,11 +56,12 @@ appId: com.forgeai.app
     timeout: 15000
 - tapOn: "^Merge$"
 - takeScreenshot: 140-hevy-csv-preview
+# IM-09: the button says what will happen ("Import 12 workouts": all are new).
 - scrollUntilVisible:
-    element: "Merge 12 workouts"
+    element: "Import 12 workouts"
     centerElement: true
     timeout: 15000
-- tapOn: "Merge 12 workouts"
+- tapOn: "Import 12 workouts"
 - extendedWaitUntil:
     visible: "12 workouts imported"
     timeout: 30000
@@ -119,11 +126,14 @@ appId: com.forgeai.app
     element: "Push A"
     centerElement: true
     timeout: 30000
+# Audit Phase 4: a compact row with a small Start; the row opens the routine's calm preview.
+- assertVisible: "Start Push A"
 - tapOn: "Push A"
 # Hevy's "Chest Fly (Machine)" is the library's Pec Deck Fly (the history landed there too).
 - extendedWaitUntil:
-    visible: "Push Day · From Hevy"
+    visible: 'Push Day · \d+ exercises · From Hevy.*'
     timeout: 15000
+- assertVisible: "Start routine"
 # v0.29.1: five exercises now (Skull Crusher added to the file), so it is below the fold.
 - scrollUntilVisible:
     element: "Pec Deck Fly"
@@ -135,11 +145,15 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- Home: the next routine
 - tapOn: "^Home$"
 - takeScreenshot: 149-home-today
+# Audit Phase 3: the card's action names where it goes — "See workout" (today's routine), or
+# "See what’s next" once today's routine is done ("Done today: Push A · Next: Pull A"); both open
+# the Today page. Never "Start workout" on a tap that only opens another screen (SH-23).
+- assertNotVisible: "Start workout"
 - runFlow:
     when:
-      visible: "See workout"
+      visible: "See workout|See what.s next"
     commands:
-      - tapOn: "See workout"
+      - tapOn: "See workout|See what.s next"
       - extendedWaitUntil:
           visible: "Change this routine"
           timeout: 15000
@@ -170,15 +184,14 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Already in ForgeAI"
     timeout: 20000
-- takeScreenshot: 150-reimport-preview
+# Audit Phase 4 (IM-09): a file already imported says so first, and offers no "Merge 12" that
+# would add 0 — straight on to the routines.
 - scrollUntilVisible:
-    element: "Merge 12 workouts"
+    element: "All 12 workouts are already here"
     centerElement: true
     timeout: 15000
-- tapOn: "Merge 12 workouts"
-- extendedWaitUntil:
-    visible: "0 workouts imported"
-    timeout: 30000
+- assertNotVisible: "(Merge|Import) 12 workouts"
+- takeScreenshot: 150-reimport-preview
 - scrollUntilVisible:
     element: "Bring my routines in"
     centerElement: true
@@ -200,7 +213,7 @@ appId: com.forgeai.app
     timeout: 10000
 - tapOn: "Follow them"
 - extendedWaitUntil:
-    visible: ".*From Hevy now matches this file.*"
+    visible: ".*From Hevy is updated from this file.*"
     timeout: 15000
 - takeScreenshot: 151-reimport-updated
 - tapOn: "Open routines"

@@ -123,7 +123,7 @@ describe('start-up (real SQLite)', () => {
     expect(closes).toBe(1); // the old handle was let go before reopening
     expect(store.getState().status).toBe('ready');
     expect(store.getState().bootError).toBeNull();
-    expect(db.all<{ value: string }>("SELECT value FROM meta WHERE key = 'tracker_schema_version'")[0].value).toBe('11');
+    expect(db.all<{ value: string }>("SELECT value FROM meta WHERE key = 'tracker_schema_version'")[0].value).toBe('12');
   });
 
   it('a database that would not open: Try again really reopens it', async () => {

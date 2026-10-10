@@ -19,7 +19,6 @@ import {
 } from '@/components/saveProblemStore';
 import { getDb, getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
-import { getActivePlan } from '@/db/repos/planRepo';
 import { getBoundedExerciseHistory, type HistoryBefore, type TrackedSetEntry } from '@/tracker/db/exerciseHistory';
 import {
   getTrackerExercise,
@@ -35,6 +34,8 @@ import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { saveSessionEditsUnqueued } from '@/tracker/db/sessionEdit';
 import { easySets } from '@/tracker/plans/easyWeek';
+import { typesOf, type PlanSetType } from '@/tracker/plans/routineSets';
+import type { RoutineExerciseExtras } from '@/tracker/db/folderRepo';
 import { getPlanNow, isEasyForRoutine } from '@/tracker/services/planState';
 import { addSetsWithMeta, getSessionSetMeta } from '@/tracker/db/trackerSets';
 import { buildEditDraft, previousExcludingSession } from '@/tracker/services/editDraft';
@@ -176,6 +177,15 @@ export interface DraftExercise {
    * ticked sets stayed there). "Update routine?" counts the two as one routine exercise.
    */
   splitFrom?: string;
+  /**
+   * Audit Phase 4 (RP-19): the rows' types when the card came from a routine (warm-up, normal,
+   * drop, failure). "Update routine?" saves the types only when the member changed them.
+   */
+  startTypes?: PlanSetType[];
+  /** RP-19: the rest the card started with (from the routine or the exercise); see startTypes. */
+  startRestSec?: number | null;
+  /** RP-19: the note the card started with (the routine's, else the carried one). */
+  startNote?: string | null;
 }
 
 /** Phase 2: what the Finish sheet decided. */
@@ -562,8 +572,11 @@ export function nextCardNumber(list: readonly Pick<DraftExercise, 'exerciseId' |
 async function buildDraftExercise(
   ex: Pick<Exercise, 'id' | 'name' | 'muscleGroup' | 'equipment' | 'incrementKg'>,
   targetSets: number,
-  /** `card`: this card's place among the workout's cards of the SAME exercise (0 = first). */
-  opts: { exactSets?: boolean; card?: number; before?: HistoryBefore | null } = {},
+  /**
+   * `card`: this card's place among the workout's cards of the SAME exercise (0 = first).
+   * `routine`: the card comes from a routine — its sets as saved (RP-19), its rest and note.
+   */
+  opts: { exactSets?: boolean; card?: number; before?: HistoryBefore | null; routine?: RoutineExerciseExtras | null } = {},
 ): Promise<DraftExercise> {
   // Bounded in SQL: start-from-plan builds one draft per plan exercise, and the frozen
   // read would materialise each lift's ENTIRE working-set history just to keep its last
@@ -595,21 +608,46 @@ async function buildDraftExercise(
   // An easy week asks for exactly half the sets, even when last time had more rows.
   // TG-08: last time's drop sets come back AS drop sets, in their place (their PREVIOUS is the
   // drop), and only normal sets count toward the routine's set count.
-  const lastTypes = opts.exactSets ? [] : lastSets.map((s) => (s.setType === 'drop' ? 'drop' : 'normal'));
-  const normalLast = lastTypes.filter((t) => t !== 'drop').length;
-  const extra = Math.max(0, targetSets - normalLast);
-  const rowTypes: ('normal' | 'drop')[] = opts.exactSets
-    ? Array.from({ length: Math.max(1, targetSets) }, () => 'normal' as const)
-    : [...lastTypes, ...Array.from({ length: extra }, () => 'normal' as const)];
-  if (rowTypes.length === 0) rowTypes.push('normal');
+  const lastTypes: ('normal' | 'drop')[] = opts.exactSets ? [] : lastSets.map((s) => (s.setType === 'drop' ? 'drop' : 'normal'));
+  const routine = opts.routine ?? null;
+  const planned = routine?.sets && routine.sets.length > 0 ? routine.sets : null;
+  let rowTypes: PlanSetType[];
+  if (opts.exactSets) {
+    // An easy week: exactly half the working sets (plain), after the routine's warm-ups.
+    const warm = (planned ?? []).filter((x) => x.type === 'warmup').map(() => 'warmup' as const);
+    rowTypes = [...warm, ...Array.from({ length: Math.max(1, targetSets) }, () => 'normal' as const)];
+  } else if (planned) {
+    // RP-19: the routine's sets exactly as saved — warm-ups as warm-ups, drops as drops.
+    rowTypes = typesOf(planned);
+  } else if (routine) {
+    // RP-21: from a routine the ROUTINE decides how many sets (lowering it is respected even
+    // when last time had more); last time's drop sets still come back after their set (TG-08).
+    rowTypes = [];
+    let normals = 0;
+    for (const t of lastTypes) {
+      if (t === 'drop') {
+        if (normals > 0 && normals <= targetSets) rowTypes.push('drop');
+      } else if (++normals <= targetSets) rowTypes.push('normal');
+    }
+    for (let i = Math.min(normals, targetSets); i < targetSets; i++) rowTypes.push('normal');
+  } else {
+    // Added mid-workout or repeating a workout: as many rows as last time, at least the target.
+    const normalLast = lastTypes.filter((t) => t !== 'drop').length;
+    const extra = Math.max(0, targetSets - normalLast);
+    rowTypes = [...lastTypes, ...Array.from({ length: extra }, () => 'normal' as const)];
+  }
+  if (!rowTypes.some((t) => t !== 'warmup')) rowTypes.push('normal');
   const sets: DraftSet[] = rowTypes.map((t) => ({
     key: uuid(),
     weightKg: null,
     reps: null,
-    isWarmup: false,
+    isWarmup: t === 'warmup',
     done: false,
-    ...(t === 'drop' ? { setType: 'drop' as const } : {}),
+    ...(t === 'drop' ? { setType: 'drop' as const } : t === 'failure' ? { setType: 'failure' as const } : {}),
   }));
+  // The routine's own rest and note win over the exercise's (RP-19).
+  const cardRest = routine?.restSec != null ? routine.restSec : restSec;
+  const cardNote = routine?.note?.trim() ? routine.note.trim() : note;
   return {
     key: uuid(),
     exerciseId: ex.id,
@@ -619,10 +657,18 @@ async function buildDraftExercise(
     incrementKg: ex.incrementKg,
     previousSets,
     sets,
-    restSec,
+    restSec: cardRest,
     bests,
-    // #3: drop rows are not routine sets ("Update routine?" never counts them).
-    startRows: rowTypes.filter((t) => t !== 'drop').length,
+    // #3: drop rows are not routine sets ("Update routine?" never counts them); nor warm-ups.
+    startRows: rowTypes.filter((t) => t === 'normal' || t === 'failure').length,
+    ...(routine
+      ? {
+          startTypes: rowTypes,
+          startRestSec: cardRest ?? null,
+          startNote: cardNote ?? null,
+          ...(routine.supersetGroup != null ? { supersetGroup: routine.supersetGroup } : {}),
+        }
+      : {}),
     card,
     logType,
     loadMode: info?.loadMode ?? 'one',
@@ -631,8 +677,9 @@ async function buildDraftExercise(
     mediaUri: info?.mediaUri ?? null,
     mediaType: info?.mediaType ?? null,
     ...(info?.muscles.primary[0] ? { muscleLabel: MUSCLE_LABEL[info.muscles.primary[0]] } : {}),
-    // Notes carry forward from the last workout with this exercise (Hevy-style).
-    ...(note ? { note } : {}),
+    // Notes carry forward from the last workout with this exercise (Hevy-style); a routine's
+    // own note comes first.
+    ...(cardNote ? { note: cardNote } : {}),
   };
 }
 
@@ -643,7 +690,7 @@ async function buildDraftExercise(
  */
 async function cardsWithTargets(
   planDayId: string,
-  rows: readonly { exerciseId: string; targetSets: number; exercise: Exercise }[],
+  rows: readonly ({ exerciseId: string; targetSets: number; exercise: Exercise } & RoutineExerciseExtras)[],
   easy: boolean,
 ): Promise<DraftExercise[]> {
   const effort = useTrackerPrefs.getState().advancedSets;
@@ -652,7 +699,11 @@ async function cardsWithTargets(
   const [exercises, early] = await Promise.all([
     Promise.all(
       rows.map((pe, i) =>
-        buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, { exactSets: easy, card: cards[i] }),
+        buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, {
+          exactSets: easy,
+          card: cards[i],
+          routine: { sets: pe.sets ?? null, restSec: pe.restSec ?? null, note: pe.note ?? null, supersetGroup: pe.supersetGroup ?? null },
+        }),
       ),
     ),
     preloadTargets(
@@ -666,7 +717,8 @@ async function cardsWithTargets(
   } catch {
     // The screen loads them itself.
   }
-  return exercises;
+  // RP-19: the routine's supersets, numbered 1, 2… (a lone member is not a superset).
+  return tidySupersets(exercises);
 }
 
 /** How long a restore waits for the Targets before showing the workout anyway. */
@@ -1003,15 +1055,16 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // Audit Phase 3: the one "Today" answer (its `planDayId` is the routine Start starts —
       // the next one once today's is done). Screens that SHOW a routine start that routine by
       // id instead (`startFromPlanDay`, RP-03); this is for a Start with no routine on screen.
-      const [tw, active, plan] = await Promise.all([getTodaysWorkout(undefined, { targets: false }), getActivePlan(), getPlanNow().catch(() => null)]);
+      const [tw, plan] = await Promise.all([getTodaysWorkout(undefined, { targets: false }), getPlanNow().catch(() => null)]);
       let dayType: DayType = 'full';
       let planDayId: string | null = null;
       let exercises: DraftExercise[] = [];
       // Phase 4: today's routine always comes from the followed plan — in its easy week,
       // half the sets.
       const easy = plan?.easy === true;
-      if (active && tw.planDayId) {
-        const day = active.days.find((d) => d.id === tw.planDayId);
+      if (tw.planDayId) {
+        // RP-19: read with everything the routine keeps (set types, rest, supersets, notes).
+        const day = await getRoutine(tw.planDayId);
         if (day) {
           dayType = day.dayType;
           planDayId = day.id;

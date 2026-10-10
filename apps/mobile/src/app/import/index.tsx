@@ -10,6 +10,12 @@
  * v0.28.0: a file shared to ForgeAI from Android's share menu arrives here as `?file=` (copied
  * into the app's cache): it is read straight away — Hevy or Strong told by its content — so the
  * member lands on the preview. After the import, the member's own routines (`RoutineImportSteps`).
+ *
+ * Audit Phase 4: a picked file is told apart by its content too (IM-18: a Strong file through
+ * "Import from Hevy" imports as Strong); a file that is neither says so (IM-17); the date range
+ * has its years (IM-08); a file already imported says "All 12 workouts are already here" (IM-09);
+ * an older Strong file asks "Bench Press 100 — kg or lb?" with no answer chosen for the member
+ * (IM-06); names new to ForgeAI ask "Same as ForgeAI's …?" (IM-15).
  */
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -23,7 +29,6 @@ import { countOwnWorkouts, isDemoData, prepareImportOverDemo } from '@/onboardin
 import { replaceConfirmBody, replaceImpact, restoreSafetyCopy, takeSafetyCopy, type SafetyCopy } from '@/onboarding/db/importSafety';
 import { normalizeName } from '@/onboarding/form';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
-import { shortDate } from '@/lib/date';
 import { success, warn } from '@/lib/haptics';
 import { useBackGuard } from '@/lib/useBackGuard';
 import { useDashboard } from '@/store/dashboardStore';
@@ -37,12 +42,15 @@ import {
   type ImportResult,
   type ParsedHevy,
 } from '@/tracker/services/hevyImport';
+import { dateOrderQuestion, type DateOrder } from '@/tracker/services/importDates';
+import { matchesFrom, suggestMatches, type NameSuggestion } from '@/tracker/services/importMatch';
+import { allHereText, dateRangeText, doneTitle, importButtonLabel, unitsQuestion } from '@/tracker/services/importWords';
 import { findRoutines } from '@/tracker/services/routineRebuild';
-import { looksLikeStrong, parseStrongText, strongFileInfo, type FileUnits } from '@/tracker/services/strongImport';
+import { looksLikeStrong, parseStrongText, strongFileInfo, unitsExample, type FileUnits } from '@/tracker/services/strongImport';
+import { NewNamesCard, RenamedList } from '@/tracker/components/NewNamesCard';
 import { RoutineImportSteps } from '@/tracker/components/RoutineImportSteps';
 import { removeWorkoutFromHealth } from '@/tracker/phone/healthConnect';
-import { sharedFileKind } from '@/tracker/phone/sharedImport';
-import { useSettings } from '@/store/settingsStore';
+import { shareProblemText, sharedFileKind } from '@/tracker/phone/sharedImport';
 
 type Phase = 'idle' | 'preview' | 'importing' | 'done' | 'routines' | 'undone';
 
@@ -115,14 +123,25 @@ function ModeOption({
 export default function ImportScreen() {
   useKeepAwake(); // a long import shouldn't be interrupted by the screen sleeping
   const router = useRouter();
-  const params = useLocalSearchParams<{ from?: string; file?: string; name?: string; type?: string }>();
+  const params = useLocalSearchParams<{ from?: string; file?: string; name?: string; type?: string; shareError?: string }>();
   // A shared file says which app it came from by its content (read below).
   const [strong, setStrong] = useState(params.from === 'strong');
   const appName = strong ? 'Strong' : 'Hevy';
-  const memberUnits = useSettings((s) => s.unitSystem);
-  // Strong (older files only): the units the file was written in, when it does not say.
+  // Strong (older files only): the units the file was written in, when it does not say. IM-06:
+  // nothing is chosen for the member — Import waits for the answer, asked with a real set.
   const [strongText, setStrongText] = useState<string | null>(null);
   const [fileUnits, setFileUnits] = useState<FileUnits | null>(null);
+  const [unitsExampleSet, setUnitsExampleSet] = useState<{ exercise: string; value: number } | null>(null);
+  // Review fix: number-only dates that read two ways ("03/04/2026") and nothing in the file
+  // settles it — the member says which (never guessed); Import waits for the answer.
+  const [dateAsk, setDateAsk] = useState<string | null>(null);
+  const [dateAnswer, setDateAnswer] = useState<DateOrder | null>(null);
+  const hevyBase64 = useRef<string | null>(null);
+  // An older Strong file that does not say its units (IM-06): the units question is shown.
+  const [unitsAsk, setUnitsAsk] = useState(false);
+  // IM-15: names new to ForgeAI with ForgeAI's closest exercise; the ones the member said "Yes" to.
+  const [suggestions, setSuggestions] = useState<NameSuggestion[]>([]);
+  const [same, setSame] = useState<Set<string>>(() => new Set());
 
   const [phase, setPhase] = useState<Phase>('idle');
   const [busy, setBusy] = useState(false);
@@ -133,9 +152,9 @@ export default function ImportScreen() {
   const [mode, setMode] = useState<ImportMode>('replace');
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [result, setResult] = useState<ImportResult | null>(null);
-  const [showNew, setShowNew] = useState(false);
-  // Plain-words problems on the screen itself (no Android pop-ups).
-  const [problem, setProblem] = useState<string | null>(null);
+  // Plain-words problems on the screen itself (no Android pop-ups). IM-17: a shared file ForgeAI
+  // could not take says why.
+  const [problem, setProblem] = useState<string | null>(() => shareProblemText(typeof params.shareError === 'string' ? params.shareError : null));
 
   // DS-05 / IM-01: over the demo, the whole demo goes first and the member gives their name.
   const [demo, setDemo] = useState(false);
@@ -215,16 +234,32 @@ export default function ImportScreen() {
           throw new Error('That doesn’t look like a Strong export. In Strong, export your data and pick the .csv file.');
         }
         const info = strongFileInfo(text);
-        const units: FileUnits = info.fileUnits ?? memberUnits;
-        p = parseStrongText(text, units); // throws a plain-words Error on a bad file
-        setStrongText(info.unitsKnown ? null : text);
-        setFileUnits(info.unitsKnown ? null : units);
+        // Read as kg for the counts; an older file waits for the member's answer (IM-06).
+        p = parseStrongText(text, info.fileUnits ?? 'metric'); // throws a plain-words Error on a bad file
+        // Kept to read again when the member answers the units or the date question.
+        setStrongText(info.unitsKnown && !p.dateQuestion ? null : text);
+        setFileUnits(info.unitsKnown ? info.fileUnits ?? 'metric' : null);
+        setUnitsAsk(!info.unitsKnown);
+        setUnitsExampleSet(info.unitsKnown ? null : unitsExample(text));
+        hevyBase64.current = null;
       } else {
         const base64 = await FileSystem.readAsStringAsync(uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
-        p = parseHevyBase64(base64); // throws a user-safe Error on a bad file
+        try {
+          p = parseHevyBase64(base64); // throws a user-safe Error on a bad file
+        } catch (e) {
+          // IM-17 / IM-18: neither app's columns — say so in plain words.
+          if (e instanceof Error && /unexpected columns/.test(e.message)) throw new Error(NOT_AN_EXPORT);
+          throw e;
+        }
+        setStrongText(null);
+        setFileUnits(null);
+        setUnitsAsk(false);
+        hevyBase64.current = p.dateQuestion ? base64 : null;
       }
+      setDateAsk(p.dateQuestion ?? null);
+      setDateAnswer(null);
     } finally {
       // v0.28.1 / IM-19: the picked or shared copy (a whole workout history) does not stay in
       // the cache, also when the file could not be read.
@@ -233,6 +268,12 @@ export default function ImportScreen() {
     }
     if (p.workouts.length === 0) throw new Error('No workouts were found in that file.');
     const pv = await previewImport(p);
+    setSuggestions(
+      await suggestMatches(pv.newExercises.map((title) => ({ title, logType: pv.newExerciseTypes[title] ?? null }))).catch(() =>
+        pv.newExercises.map((title) => ({ title, match: null })),
+      ),
+    );
+    setSame(new Set());
     setParsed(p);
     setPreview(pv);
     setFileName(name || `${isStrong ? 'Strong' : 'Hevy'} export`);
@@ -261,13 +302,12 @@ export default function ImportScreen() {
       });
       if (res.canceled || !res.assets || res.assets.length === 0) return;
       const asset = res.assets[0];
-      // The button's own app (a shared file before may have been the other one).
-      const pickStrong = params.from === 'strong';
-      setStrong(pickStrong);
-      await readFile(asset.uri, asset.name, pickStrong);
+      // IM-18: told apart by its content, like a shared file (a Strong file picked through
+      // "Import from Hevy" imports as Strong; the button's app is only where the screen starts).
+      await readFile(asset.uri, asset.name, null, sharedFileKind({ name: asset.name ?? '', type: asset.mimeType ?? '' }));
     } catch (e) {
       warn();
-      setProblem(`Couldn’t read that file. ${e instanceof Error ? e.message : 'Please try again.'}`);
+      setProblem(readProblemText(e));
     } finally {
       busyRef.current = false;
       setBusy(false);
@@ -286,7 +326,7 @@ export default function ImportScreen() {
     readFile(uri, name, null, sharedFileKind({ name, type: typeof params.type === 'string' ? params.type : '' }))
       .catch((e: unknown) => {
         warn();
-        setProblem(`Couldn’t read that file. ${e instanceof Error ? e.message : 'Please try again.'}`);
+        setProblem(readProblemText(e));
       })
       .finally(() => {
         busyRef.current = false;
@@ -345,6 +385,7 @@ export default function ImportScreen() {
         }
         const r = await runImport(parsed, {
           mode,
+          matches: matchesFrom(suggestions, same),
           onProgress: (done, total) => {
             if (done % 5 === 0 || done === total) setProgress({ done, total });
           },
@@ -417,11 +458,26 @@ export default function ImportScreen() {
   };
 
   // An older Strong file: the member says which units it was written in; read it again.
+  const needsUnits = unitsAsk && fileUnits == null;
+  const needsDate = dateAsk != null && dateAnswer == null;
   const onFileUnits = async (u: FileUnits): Promise<void> => {
     if (!strongText || busyRef.current) return;
     setFileUnits(u);
     try {
-      const p = parseStrongText(strongText, u);
+      const p = parseStrongText(strongText, u, dateAnswer ?? undefined);
+      setParsed(p);
+      setPreview(await previewImport(p));
+    } catch {
+      // the file read fine a moment ago; keep what is shown
+    }
+  };
+  // The member's answer to the date question: the file is read again that way round.
+  const onDateOrder = async (o: DateOrder): Promise<void> => {
+    if (busyRef.current) return;
+    setDateAnswer(o);
+    try {
+      const p = strongText != null ? parseStrongText(strongText, fileUnits ?? 'metric', o) : hevyBase64.current ? parseHevyBase64(hevyBase64.current, { dateOrder: o }) : null;
+      if (!p) return;
       setParsed(p);
       setPreview(await previewImport(p));
     } catch {
@@ -522,60 +578,70 @@ export default function ImportScreen() {
                 tint={color.inkMuted}
               />
             ) : null}
+            {preview.badDateRows > 0 ? (
+              <StatRow label="Rows left out (date unreadable)" value={String(preview.badDateRows)} tint={color.criticalText} />
+            ) : null}
             {preview.dateRange ? (
-              <StatRow
-                label="Date range"
-                value={`${shortDate(preview.dateRange.fromISO)} → ${shortDate(preview.dateRange.toISO)}`}
-              />
+              <StatRow label="Date range" value={dateRangeText(preview.dateRange.fromISO, preview.dateRange.toISO)} />
             ) : null}
           </Card>
 
-          {/* v0.29.1: the exercises ForgeAI does not have are named (folded) — each is added as the
-              member's own exercise with that name, which keeps its history with it. */}
-          {preview.newExercises.length > 0 ? (
+          {/* IM-09: a file already imported says so first. */}
+          {allHereText(preview) && mode === 'merge' ? (
+            <Card style={{ gap: space.xs }}>
+              <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{allHereText(preview)}</Text>
+              <Text style={CAPTION}>Nothing in this file is new to ForgeAI, so nothing will be added.</Text>
+            </Card>
+          ) : null}
+
+          {/* IM-15: names new to ForgeAI, each with ForgeAI's closest exercise to say "same as". */}
+          <NewNamesCard
+            suggestions={suggestions}
+            same={same}
+            onAnswer={(title, yes) =>
+              setSame((cur) => {
+                const n = new Set(cur);
+                if (yes) n.add(title);
+                else n.delete(title);
+                return n;
+              })
+            }
+          />
+          <RenamedList renamed={preview.renamed} />
+
+          {/* Review fix: rows whose date could not be read are said, with one of them. */}
+          {preview.badDateRows > 0 ? (
+            <Text style={CAPTION}>
+              {preview.badDateRows} row{preview.badDateRows === 1 ? '' : 's'} could not be read as a date
+              {preview.badDateExample ? ` (for example “${preview.badDateExample}”)` : ''}, so {preview.badDateRows === 1 ? 'it is' : 'they are'} left out. Everything else comes in.
+            </Text>
+          ) : null}
+
+          {/* Review fix: a date that reads two ways is asked about, with a date from the file. */}
+          {dateAsk ? (
             <View style={{ gap: space.sm }}>
-              <Pressable
-                onPress={() => setShowNew((v) => !v)}
-                accessibilityRole="button"
-                style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}
-              >
-                <Icon name="chevron-right" size={16} color={color.inkMuted} />
-                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, flex: 1 }}>
-                  {showNew ? 'Hide the new exercises' : `${preview.newExercises.length} new to ForgeAI: see them`}
-                </Text>
-              </Pressable>
-              {showNew ? (
-                <Card style={{ gap: space.xs }}>
-                  <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 16 }}>
-                    Added as your own exercises with the same names, so their history stays with them. Add a photo any time in
-                    Workout → Exercise library.
-                  </Text>
-                  {preview.newExercises.map((t) => (
-                    <Text key={t} style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.ink }}>
-                      {t}
-                    </Text>
-                  ))}
-                </Card>
-              ) : null}
+              <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{dateOrderQuestion(dateAsk).question}</Text>
+              <Text style={CAPTION}>This file writes dates as numbers only, and they can be read two ways. Pick the one that matches your workouts.</Text>
+              <ModeOption label={dateOrderQuestion(dateAsk).dayFirst} selected={dateAnswer === 'dmy'} onPress={() => void onDateOrder('dmy')} body="Day, then month (as most of the world writes it)." />
+              <ModeOption label={dateOrderQuestion(dateAsk).monthFirst} selected={dateAnswer === 'mdy'} onPress={() => void onDateOrder('mdy')} body="Month, then day (as the US writes it)." />
             </View>
           ) : null}
 
-          {fileUnits ? (
+          {unitsAsk && strongText != null ? (
             <View style={{ gap: space.sm }}>
-              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
-                This file does not say its units. Strong wrote it in:
-              </Text>
+              <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{unitsQuestion(unitsExampleSet)}</Text>
+              <Text style={{ ...CAPTION }}>This file does not say its units. Pick the one Strong showed you.</Text>
               <ModeOption
                 label="Kilograms and km"
                 selected={fileUnits === 'metric'}
                 onPress={() => void onFileUnits('metric')}
-                body="Choose this if Strong showed your weights in kg."
+                body={unitsExampleSet ? `${unitsExampleSet.exercise}: ${unitsExampleSet.value} kg` : 'Choose this if Strong showed your weights in kg.'}
               />
               <ModeOption
                 label="Pounds and miles"
                 selected={fileUnits === 'imperial'}
                 onPress={() => void onFileUnits('imperial')}
-                body="Choose this if Strong showed your weights in lb."
+                body={unitsExampleSet ? `${unitsExampleSet.exercise}: ${unitsExampleSet.value} lb (${Math.round(unitsExampleSet.value * 0.45359237 * 10) / 10} kg)` : 'Choose this if Strong showed your weights in lb.'}
               />
             </View>
           ) : null}
@@ -645,15 +711,20 @@ export default function ImportScreen() {
           ) : null}
 
           <View style={{ gap: space.md }}>
-            <PrimaryButton
-              label={
-                mode === 'replace'
-                  ? `Replace with ${preview.workouts} workouts`
-                  : `Merge ${preview.workouts} workouts`
-              }
-              icon="check"
-              onPress={() => void onImport()}
-            />
+            {allHereText(preview) && mode === 'merge' ? (
+              routineCount > 0 ? (
+                <PrimaryButton label="Bring my routines in" icon="chevron-right" onPress={() => setPhase('routines')} />
+              ) : (
+                <PrimaryButton label="Done" icon="check" onPress={close} />
+              )
+            ) : (
+              <PrimaryButton
+                label={needsUnits ? 'Choose kg or lb first' : needsDate ? 'Answer the date question first' : importButtonLabel(mode, preview)}
+                icon="check"
+                disabled={needsUnits || needsDate}
+                onPress={() => void onImport()}
+              />
+            )}
             <GhostButton label="Choose a different file" icon="close" onPress={() => void onPick()} />
           </View>
         </View>
@@ -702,9 +773,11 @@ export default function ImportScreen() {
           <Card style={{ alignItems: 'center', paddingVertical: space.xl, gap: space.sm }}>
             <Icon name="trophy" size={30} color={color.accent} />
             <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>
-              {result.imported} workouts imported
+              {doneTitle(result.imported)}
             </Text>
-            <Text style={{ ...CAPTION, textAlign: 'center' as const }}>Your {appName} history is now in ForgeAI.</Text>
+            <Text style={{ ...CAPTION, textAlign: 'center' as const }}>
+              {result.imported > 0 ? `Your ${appName} history is now in ForgeAI.` : `Every workout in this file was already in ForgeAI.`}
+            </Text>
           </Card>
 
           {canUndo ? (
@@ -769,4 +842,14 @@ export default function ImportScreen() {
       ) : null}
     </Screen>
   );
+}
+
+/** IM-17: what a file that is neither app's export gets. */
+const NOT_AN_EXPORT = 'This file isn’t a Hevy or Strong export. In Hevy: Settings → Export & Backup Data. In Strong: Settings → Export Strong Data.';
+
+/** A read problem in plain words (IM-17: "This file isn't…" stands on its own). */
+function readProblemText(e: unknown): string {
+  const m = e instanceof Error ? e.message : '';
+  if (m.startsWith('This file isn’t')) return m;
+  return `Couldn’t read that file. ${m || 'Please try again.'}`;
 }

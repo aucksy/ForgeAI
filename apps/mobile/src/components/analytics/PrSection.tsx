@@ -63,7 +63,7 @@ export function PrSection({ events, rangeDays, index, onSeeAll, onOpenExercise }
                 <Icon name="trophy" size={18} color={color.accentBright} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+                <Text numberOfLines={2} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
                   {r.exerciseName}
                 </Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginTop: 3 }}>

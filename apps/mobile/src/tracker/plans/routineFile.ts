@@ -13,11 +13,19 @@ import type { DayType } from '@/types/models';
 
 import { isLogType, type LogType } from '../engine/logTypes';
 import { isMuscle, type Muscle } from '../catalog/muscles';
+import { MAX_ROUTINE_REPS, MAX_ROUTINE_SETS, parsePlanSets, planSetsJson, workingCount, type PlanSet } from './routineSets';
 
 export const ROUTINE_FILE_KIND = 'forgeai-routines';
 export const ROUTINE_FILE_VERSION = 1;
-/** 30 routines × 40 exercises is well under this; anything bigger is not a routine file. */
-export const ROUTINE_FILE_MAX_BYTES = 1_000_000;
+/**
+ * RP-16: a file the app shares always opens again. The limits below are far beyond any real
+ * folder (they only stop a file that is not a routine file); names are shortened, never refused.
+ */
+export const ROUTINE_FILE_MAX_BYTES = 5_000_000;
+export const FILE_MAX_ROUTINES = 500;
+export const FILE_MAX_EXERCISES = 200;
+/** Longer names are cut to this length on import (the editor allows this much). */
+export const ROUTINE_NAME_MAX = 120;
 
 const DAY_TYPES: readonly DayType[] = ['push', 'pull', 'legs', 'upper', 'lower', 'full'];
 
@@ -41,6 +49,11 @@ export interface SharedExercise {
   repMax: number;
   /** The main muscles, so an exercise only the sender has can be made again. */
   primary: Muscle[];
+  /** RP-19 (optional, older files have none): set types and targets, rest, superset, note. */
+  setList?: PlanSet[] | null;
+  restSec?: number | null;
+  supersetGroup?: number | null;
+  note?: string | null;
 }
 
 export interface SharedRoutine {
@@ -68,10 +81,16 @@ export function routineFileJson(file: RoutineFile): string {
 /** "upper-a.forgeai.json" — letters, digits and dashes. */
 export function routineFileName(title: string): string {
   const clean = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return `${clean || 'routine'}.forgeai.json`;
+  // A file name stays short whatever the routine is called (RP-16).
+  return `${clean.slice(0, 60).replace(/-$/, '') || 'routine'}.forgeai.json`;
 }
 
-const isText = (v: unknown, max: number): v is string => typeof v === 'string' && v.trim().length > 0 && v.length <= max;
+/** A non-empty name, cut to `max` characters (RP-16: a long name is shortened, never refused). */
+const nameOf = (v: unknown, max: number): string | null => {
+  if (typeof v !== 'string') return null;
+  const t = v.replace(/\s+/g, ' ').trim();
+  return t.length === 0 ? null : t.slice(0, max).trim();
+};
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, Math.round(n)));
 const num = (v: unknown, fallback: number): number => (typeof v === 'number' && Number.isFinite(v) ? v : fallback);
 
@@ -90,33 +109,45 @@ export function parseRoutineFile(text: string): { ok: true; file: RoutineFile } 
   if (!f || f.kind !== ROUTINE_FILE_KIND) return { ok: false, reason: 'That file is not a ForgeAI routine file.' };
   if (num(f.version, 0) > ROUTINE_FILE_VERSION) return { ok: false, reason: 'That file comes from a newer ForgeAI. Update the app, then try again.' };
   if (!Array.isArray(f.routines) || f.routines.length === 0) return { ok: false, reason: 'That file has no routines in it.' };
-  if (f.routines.length > 30) return { ok: false, reason: 'That file has too many routines (30 at most).' };
+  if (f.routines.length > FILE_MAX_ROUTINES) return { ok: false, reason: `That file has too many routines (${FILE_MAX_ROUTINES} at most).` };
   const routines: SharedRoutine[] = [];
   for (const r of f.routines as unknown[]) {
     const rr = r as Partial<Record<keyof SharedRoutine, unknown>> | null;
-    if (!rr || !isText(rr.name, 80) || !Array.isArray(rr.exercises)) return { ok: false, reason: 'A routine in that file is damaged.' };
+    const rName = rr ? nameOf(rr.name, ROUTINE_NAME_MAX) : null;
+    if (!rr || !rName || !Array.isArray(rr.exercises)) return { ok: false, reason: 'A routine in that file is damaged.' };
+    if (rr.exercises.length > FILE_MAX_EXERCISES) return { ok: false, reason: `A routine in that file has too many exercises (${FILE_MAX_EXERCISES} at most).` };
     const exercises: SharedExercise[] = [];
-    for (const e of (rr.exercises as unknown[]).slice(0, 40)) {
+    for (const e of rr.exercises as unknown[]) {
       const ee = e as Partial<Record<keyof SharedExercise, unknown>> | null;
-      if (!ee || !isText(ee.name, 80)) return { ok: false, reason: 'An exercise in that file is damaged.' };
-      const repMin = clamp(num(ee.repMin, 8), 1, 50);
+      const eName = ee ? nameOf(ee.name, ROUTINE_NAME_MAX) : null;
+      if (!ee || !eName) return { ok: false, reason: 'An exercise in that file is damaged.' };
+      // RP-23: no 12-set / 50-rep caps — the same bounds as the editor.
+      const repMin = clamp(num(ee.repMin, 8), 1, MAX_ROUTINE_REPS);
+      const setList = Array.isArray(ee.setList) ? parsePlanSets(JSON.stringify(ee.setList)) : null;
+      const rest = num(ee.restSec, -1);
+      const group = num(ee.supersetGroup, 0);
+      const note = typeof ee.note === 'string' && ee.note.trim() ? ee.note.trim().slice(0, 500) : null;
       exercises.push({
-        name: ee.name.trim(),
+        name: eName,
         catalogKey: typeof ee.catalogKey === 'string' && /^[a-z0-9_]{1,60}$/.test(ee.catalogKey) ? ee.catalogKey : null,
         logType: isLogType(ee.logType) ? ee.logType : 'weight_reps',
-        sets: clamp(num(ee.sets, 3), 1, 12),
+        sets: setList ? Math.max(1, workingCount(setList)) : clamp(num(ee.sets, 3), 1, MAX_ROUTINE_SETS),
         repMin,
-        repMax: clamp(num(ee.repMax, 12), repMin, 50),
+        repMax: clamp(num(ee.repMax, 12), repMin, MAX_ROUTINE_REPS),
         primary: Array.isArray(ee.primary) ? (ee.primary as unknown[]).filter(isMuscle).slice(0, 3) : [],
+        ...(setList ? { setList } : {}),
+        ...(rest >= 0 ? { restSec: Math.min(3600, Math.round(rest)) } : {}),
+        ...(group >= 1 ? { supersetGroup: Math.round(group) } : {}),
+        ...(note ? { note } : {}),
       });
     }
     routines.push({
-      name: rr.name.trim(),
+      name: rName,
       dayType: DAY_TYPES.includes(rr.dayType as DayType) ? (rr.dayType as DayType) : 'full',
       exercises,
     });
   }
-  const folder = isText(f.folder, 80) ? f.folder.trim() : null;
+  const folder = nameOf(f.folder, ROUTINE_NAME_MAX);
   return { ok: true, file: { kind: ROUTINE_FILE_KIND, version: ROUTINE_FILE_VERSION, folder, routines } };
 }
 
@@ -146,4 +177,39 @@ export function routinesText(folder: string | null, routines: readonly SharedRou
   }
   blocks.push('Made with ForgeAI');
   return blocks.join('\n\n');
+}
+
+/**
+ * RP-18: a short fingerprint of what a file holds (its folder name and routines, not the file's
+ * bytes), so the same file imported twice is recognised. Review fix: every part of a row counts
+ * (rest, superset and note too), so a file that differs only there is a different file. FNV-1a,
+ * twice. PURE.
+ */
+export function fileFingerprint(file: Pick<RoutineFile, 'folder' | 'routines'>): string {
+  const canon = JSON.stringify({
+    f: file.folder ?? null,
+    r: file.routines.map((r) => ({
+      n: r.name.toLowerCase(),
+      d: r.dayType,
+      x: r.exercises.map((e) => [
+        e.catalogKey ?? e.name.toLowerCase(),
+        e.sets,
+        e.repMin,
+        e.repMax,
+        planSetsJson(e.setList ?? null),
+        e.restSec ?? null,
+        e.supersetGroup ?? null,
+        e.note ?? null,
+      ]),
+    })),
+  });
+  const hash = (seed: number): string => {
+    let h = seed >>> 0;
+    for (let i = 0; i < canon.length; i++) {
+      h ^= canon.charCodeAt(i);
+      h = Math.imul(h, 0x01000193) >>> 0;
+    }
+    return h.toString(36);
+  };
+  return `${hash(0x811c9dc5)}${hash(0x01234567)}`;
 }

@@ -5,6 +5,8 @@
  *   1. the link (with how to copy it in Hevy) → 2. reading… → 3. the steps.
  * Strong's share links open only inside Strong (researched 9 Oct 2026), so Strong routines come
  * from its export file (Import from Strong → "Bring my routines in").
+ * Audit Phase 4 (IM-13): a read that got only part of the folder says so ("Only 4 of 6 routines
+ * could be read — try again"), with Try again or Use these.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
@@ -18,11 +20,26 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { HevyLinkReader } from '@/tracker/components/HevyLinkReader';
 import { RoutineImportSteps, type LinkRoutines } from '@/tracker/components/RoutineImportSteps';
 import { inferDayType } from '@/tracker/services/hevyImport';
-import { linkedRests, linkedToFound, parseHevyPage, parseRoutineLink, readProblem, type PageRead, type RoutineLink } from '@/tracker/services/routineLink';
+import { historyTypesFor } from '@/tracker/services/routineImport';
+import {
+  linkedToFound,
+  parseRoutineLink,
+  partialRead,
+  partialReadText,
+  readLinkedFolder,
+  readProblem,
+  type LinkedFolder,
+  type PageRead,
+  type RoutineLink,
+} from '@/tracker/services/routineLink';
 
 const CAPTION = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 } as const;
 
-type Phase = { kind: 'paste' } | { kind: 'reading'; link: RoutineLink } | { kind: 'steps'; routines: LinkRoutines };
+type Phase =
+  | { kind: 'paste' }
+  | { kind: 'reading'; link: RoutineLink }
+  | { kind: 'partial'; link: RoutineLink; folder: LinkedFolder; text: string }
+  | { kind: 'steps'; routines: LinkRoutines };
 
 export default function ImportRoutinesScreen() {
   const router = useRouter();
@@ -44,7 +61,7 @@ export default function ImportRoutinesScreen() {
   useBackGuard(() => {
     if (leaving.current) return false;
     if (phase.kind === 'steps') return stepsBack.current?.() ?? false;
-    if (phase.kind === 'reading') {
+    if (phase.kind === 'reading' || phase.kind === 'partial') {
       setPhase({ kind: 'paste' });
       return true;
     }
@@ -60,8 +77,15 @@ export default function ImportRoutinesScreen() {
     setPhase({ kind: 'reading', link });
   };
 
+  /** The routines to the steps: exactly as saved, or (headings only) warm-ups from the member's history. */
+  const toSteps = async (l: RoutineLink, folder: LinkedFolder): Promise<void> => {
+    const found = linkedToFound(folder, inferDayType);
+    const routines = folder.fromPageData ? found : await historyTypesFor(found).catch(() => found);
+    setPhase({ kind: 'steps', routines: { url: l.url, kind: l.kind, folderName: folder.name, found: routines, exact: folder.fromPageData === true } });
+  };
+
   const onPageRead = (l: RoutineLink, read: PageRead | null): void => {
-    const folder = read ? parseHevyPage(read.nodes, l.kind) : null;
+    const folder = read ? readLinkedFolder(read, l.kind) : null;
     const why = readProblem(read, folder);
     if (why || !folder) {
       warn();
@@ -69,16 +93,35 @@ export default function ImportRoutinesScreen() {
       setPhase({ kind: 'paste' });
       return;
     }
-    setPhase({
-      kind: 'steps',
-      routines: { url: l.url, folderName: folder.name, found: linkedToFound(folder, inferDayType), rests: linkedRests(folder) },
-    });
+    // IM-13: part of the folder only — say so before anything is copied.
+    const part = partialRead(read, folder);
+    if (part) {
+      warn();
+      setPhase({ kind: 'partial', link: l, folder, text: partialReadText(part) });
+      return;
+    }
+    void toSteps(l, folder);
   };
 
   return (
     <Screen title="Import routines" right={<IconButton icon="close" onPress={close} accessibilityLabel="Close" />}>
       {phase.kind === 'steps' ? (
         <RoutineImportSteps app="hevy" link={phase.routines} onClose={close} backRef={stepsBack} />
+      ) : phase.kind === 'partial' ? (
+        <View style={{ gap: space.lg }}>
+          <Card style={{ gap: space.sm, paddingVertical: space.xl }}>
+            <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{phase.text}</Text>
+            <Text style={CAPTION}>
+              Hevy’s page did not finish loading. Trying again usually gets them all. You can also copy the {phase.folder.routines.length} that came through.
+            </Text>
+          </Card>
+          <PrimaryButton label="Try again" icon="chevron-right" onPress={() => setPhase({ kind: 'reading', link: phase.link })} />
+          <GhostButton
+            label={`Use these ${phase.folder.routines.length}`}
+            icon="check"
+            onPress={() => void toSteps(phase.link, phase.folder)}
+          />
+        </View>
       ) : phase.kind === 'reading' ? (
         <View style={{ gap: space.lg }}>
           <Card style={{ alignItems: 'center', gap: space.md, paddingVertical: space.xl }}>
@@ -93,7 +136,7 @@ export default function ImportRoutinesScreen() {
         <View style={{ gap: space.lg }}>
           <View style={{ gap: space.xs }}>
             <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Copy your routines from Hevy</Text>
-            <Text style={CAPTION}>Paste a Hevy share link. Your routines come in exactly as saved: exercises, sets, reps and rest.</Text>
+            <Text style={CAPTION}>Paste a Hevy share link. Your routines come in exactly as saved: exercises, warm-ups, sets, reps and rest.</Text>
           </View>
           <View
             style={{

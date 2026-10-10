@@ -13,6 +13,8 @@ import { getSessionsBetween } from '@/db/repos/workoutRepo';
 import { addDays, todayISO, weekStartISO } from '@/lib/date';
 import { countWord } from '@/lib/words';
 import { getTodayPlan } from '@/tracker/services/todayService';
+import { followedFolder } from '@/tracker/db/folderRepo';
+import { planDaysPerWeek } from '@/tracker/services/planState';
 
 import { phoneNative } from './native';
 
@@ -76,10 +78,11 @@ export async function refreshWidgets(): Promise<void> {
     const t = todayISO();
     const start = weekStartISO(t);
     // Audit Phase 3: the same "Today" answer as Home and the Workout tab (RP-10).
-    const [plan, sessions, tp] = await Promise.all([
+    const [plan, sessions, tp, folder] = await Promise.all([
       getActivePlan(),
       getSessionsBetween(start, addDays(start, 6)),
       getTodayPlan(t).catch(() => null),
+      followedFolder().catch(() => null),
     ]);
     const doneDates = new Set(sessions.map((s) => s.dateISO));
     const hasPlan = plan != null && plan.days.length > 0;
@@ -90,7 +93,8 @@ export async function refreshWidgets(): Promise<void> {
       doneToday: tp?.status === 'doneToday' ? (tp.doneToday?.name ?? 'Workout') : null,
       next: tp?.status === 'doneToday' ? (tp.next?.name ?? null) : null,
       doneDates,
-      goal: hasPlan ? plan.days.length : null,
+      // RP-06: the plan's days a week (3 for a 3-day plan of 2 routines), not its routine count.
+      goal: hasPlan ? planDaysPerWeek(folder?.settings ?? {}, plan.days.length) : null,
     });
     n.widgetSave(JSON.stringify(data));
   } catch {

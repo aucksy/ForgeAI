@@ -1,7 +1,7 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Pressable, RefreshControl, ScrollView, Text } from 'react-native';
+import { Alert, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import {
@@ -28,6 +28,7 @@ import { color, motion, space, type } from '@/theme/tokens';
 import { runGuarded } from '@/lib/guardedAction';
 import { todayLink } from '@/tracker/lib/todayLink';
 import { startShownWorkout } from '@/tracker/services/todayStart';
+import { SwitcherCard, takePendingImport, type SwitchApp } from '@/tracker/components/SwitcherCard';
 import type { Goal } from '@/types/models';
 
 // D4 = A: the coach, nutrition and their scores stay hidden until their own phase.
@@ -62,6 +63,22 @@ export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   // SH-29: a wrong forgeai:// link lands here with one calm line.
   const [notice, setNotice] = useState<string | null>(null);
+
+  // Audit Phase 4: a switcher's import (Hevy or Strong) opens from an empty Home, and right after
+  // the welcome screen when they picked their app there.
+  const openImport = useCallback(
+    (app: SwitchApp) => {
+      thud();
+      router.push(app === 'strong' ? { pathname: '/import', params: { from: 'strong' } } : '/import');
+    },
+    [router],
+  );
+  useFocusEffect(
+    useCallback(() => {
+      const app = takePendingImport();
+      if (app) openImport(app);
+    }, [openImport]),
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -192,11 +209,14 @@ export default function DashboardScreen() {
               {/* Phase O2 (W1): a real member starts with nothing logged — invite
                   them to train instead of showing a plan card over zeros. */}
               {data.lastWorkout === null ? (
-                <FirstRunCard
-                  name={firstName}
-                  onStartWorkout={startNow}
-                  onBuildRoutine={goRoutines}
-                />
+                <View style={{ gap: space.lg }}>
+                  <FirstRunCard
+                    name={firstName}
+                    onStartWorkout={startNow}
+                    onBuildRoutine={goRoutines}
+                  />
+                  <SwitcherCard onPick={openImport} />
+                </View>
               ) : (
                 <HeroWorkoutCard
                   workout={data.todaysWorkout}

@@ -54,8 +54,17 @@ export function WorkoutPresenceHost() {
     const unlistenCard = onRestOpen(() => openWorkout(WORKOUT_ROUTE));
     if (takeRestOpenRequest()) openWorkout(WORKOUT_ROUTE);
     // v0.28.0: an export shared to ForgeAI opens the import with it (after the navigator mounts).
+    // Audit IM-17: one ForgeAI could not take opens the import too, saying why.
     const unlistenShare = listenForShares((f) =>
-      setTimeout(() => router.push({ pathname: '/import', params: { file: f.uri, name: f.name, type: f.type } }), 300),
+      setTimeout(
+        () =>
+          router.push(
+            'error' in f
+              ? { pathname: '/import', params: { shareError: f.error } }
+              : { pathname: '/import', params: { file: f.uri, name: f.name, type: f.type } },
+          ),
+        300,
+      ),
     );
     return () => {
       stop();

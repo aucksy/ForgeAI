@@ -58,7 +58,10 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
   { name: 'plan_days', cols: ['id', 'plan_id', 'day_type', 'day_order', 'name'] },
   {
     name: 'plan_exercises',
-    cols: ['id', 'plan_day_id', 'exercise_id', 'ex_order', 'target_sets', 'rep_range_min', 'rep_range_max'],
+    // + tracker schema v12 (RP-19): set types and targets, the routine's own rest, superset and
+    // note. Older backups lack them → NULL (a plain routine), like the columns above.
+    cols: ['id', 'plan_day_id', 'exercise_id', 'ex_order', 'target_sets', 'rep_range_min', 'rep_range_max',
+      'sets_json', 'rest_sec', 'superset_group', 'note'],
   },
   {
     name: 'workout_sessions',
@@ -99,7 +102,12 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
 const APP_TAG = 'forgeai';
 
 /** The only `meta` keys a backup carries (see the file note). */
-const META_KEYS: readonly string[] = ['importOriginalStarts'];
+// + audit IM-07: whether imported workouts' times were moved to the real moment. A backup from
+// before that has no mark, so restoring it repairs its workouts again on the next start.
+// + review fix (Phase 4): what each copied routine row was (`routine_import_marks` — without it a
+// restored phone treats every copied routine as the member's own) and the exercises the member
+// hid (`hidden_exercises`).
+const META_KEYS: readonly string[] = ['importOriginalStarts', 'import_clock_real_v1', 'routine_import_marks', 'hidden_exercises'];
 
 export interface BackupEnvelope {
   app: string;
@@ -223,5 +231,8 @@ export async function replaceAllInTransaction(tx: TxLike, env: BackupEnvelope): 
         await tx.runAsync('DELETE FROM meta WHERE key = ?', [key]);
       }
     }
+  } else {
+    // A backup older than the keys above predates the IM-07 repair: its imports need it again.
+    await tx.runAsync('DELETE FROM meta WHERE key = ?', ['import_clock_real_v1']);
   }
 }

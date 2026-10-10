@@ -68,8 +68,8 @@ describe('the History card', () => {
     expect(f.when).toBe('Fri, 10 Oct 2025 · 07:30');
   });
 
-  it('an imported start (clock time written as UTC) shows the time the member saw', () => {
-    const f = historyCardFacts(item({ dateISO: '2026-10-01', startedAt: Date.UTC(2026, 9, 1, 18, 0, 0), endedAt: null }), { today: TODAY });
+  it('an imported start (the real moment since audit IM-07) shows the time the member saw', () => {
+    const f = historyCardFacts(item({ dateISO: '2026-10-01', startedAt: new Date(2026, 9, 1, 18, 0, 0).getTime(), endedAt: null }), { today: TODAY });
     expect(f.when).toBe('Thu, 1 Oct · 18:00');
   });
 

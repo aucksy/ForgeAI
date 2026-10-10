@@ -13,7 +13,7 @@ import { enqueueWrite } from '@/db/writeQueue';
 import type { Exercise, MuscleGroup } from '@/types/models';
 
 import { catalogEntry } from '../catalog/exerciseCatalog';
-import { musclesOf, parseMuscleMap, type MuscleMap } from '../catalog/muscles';
+import { COARSE_OF, coarseSecondaryOf, musclesOf, parseMuscleMap, type MuscleMap } from '../catalog/muscles';
 import type { CatalogEntry } from '../catalog/types';
 import { isLoadMode, isLogType, type DistUnit, type LoadMode, type LogType } from '../engine/logTypes';
 
@@ -74,6 +74,14 @@ export function resolveExercise(r: ExerciseInfoRow, entry: CatalogEntry | null =
   const muscles =
     stored ??
     (entry ? { primary: [...entry.primary], secondary: [...entry.secondary] } : musclesOf(base));
+  // Audit Phase 4 (EX-15): a library exercise the member never made their own (no muscles of
+  // its own) takes its gear and muscle groups from the bundled library, so a library fix
+  // reaches every phone on the next launch. The stored columns stay as they were.
+  if (entry && !stored) {
+    base.equipment = entry.equipment;
+    base.muscleGroup = COARSE_OF[entry.primary[0]] ?? base.muscleGroup;
+    base.secondaryMuscles = coarseSecondaryOf(muscles);
+  }
   return {
     ...base,
     catalogKey: entry ? entry.key : null,

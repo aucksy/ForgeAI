@@ -23,7 +23,8 @@ import { parseTyped } from '@/tracker/components/unitText';
 import { computeEditedTiming } from '@/tracker/services/sessionTiming';
 import { setRecordValue } from '@/tracker/engine/records';
 import { biggestGain } from '@/tracker/engine/reports';
-import { isEasyWeek, planWeek, takeEasyNow } from '@/tracker/plans/easyWeek';
+import { planWeek } from '@/tracker/plans/easyWeek';
+import { planNowOf, withMovedEasyWeek } from '@/tracker/services/planState';
 import { addDays, relativeDay, todayISO } from '@/lib/date';
 
 const LIBRARY = CATALOG.map((e) => ({
@@ -37,19 +38,19 @@ const search = (q: string) => filterExercises(LIBRARY, { query: q, muscle: null,
 
 describe('EX-01 search finds everyday spellings (else the member is offered "Create" and makes a duplicate)', () => {
   for (const q of ['bicep curls', 'dumbell curl', 'calf raises', 'hammer curls', 'skull crushers', 'benchpress']) {
-    it.fails(`EX-01 known defect: "${q}" finds at least one library exercise`, () => {
+    it(`EX-01: "${q}" finds at least one library exercise`, () => {
       expect(search(q).length).toBeGreaterThan(0);
     });
   }
 
-  it.fails('EX-01 known defect: every Hevy title the library knows (linkNames) finds its own exercise', () => {
+  it('EX-01: every Hevy title the library knows (linkNames) finds its own exercise', () => {
     const misses: string[] = [];
     for (const e of CATALOG) {
       for (const title of e.linkNames ?? []) {
         if (!search(title).some((r) => r.name === e.name)) misses.push(title);
       }
     }
-    // Today: most Hevy titles ("Squat (Barbell)", "Lateral Raise (Cable)") return nothing.
+    // Before Phase 4: most Hevy titles ("Squat (Barbell)", "Lateral Raise (Cable)") returned nothing.
     expect(misses, `${misses.length} Hevy titles not found, e.g. ${misses.slice(0, 5).join(' | ')}`).toEqual([]);
   });
 });
@@ -120,12 +121,19 @@ describe('PG-02 one mistyped set cannot become the year\'s "biggest gain"', () =
 });
 
 describe('RP-04 "Take an easy week now" gives seven easy days from the tap', () => {
-  it.fails('RP-04 known defect: plan started on a Wednesday, easy week taken on a Monday → Mon..Sun are all easy', () => {
+  // Fixed in audit Phase 4: the easy week is now a date range (seven days from the tap), so the
+  // test reads what the member sees — the followed plan's state on each day — instead of the
+  // week-number schedule, which cannot say "from Monday" in a plan whose weeks start Wednesday.
+  it('RP-04: plan started on a Wednesday, easy week taken on a Monday → Mon..Sun are all easy', () => {
     const start = '2026-09-02'; // a Wednesday
     const tap = '2026-10-05'; // a Monday
     const week = planWeek(start, tap);
-    const s = takeEasyNow({ every: 6, base: 0 } as never, week);
-    const easyDays = [0, 1, 2, 3, 4, 5, 6].filter((d) => isEasyWeek(s, planWeek(start, addDays(tap, d))));
+    const settings = withMovedEasyWeek({ startISO: start, easy: { every: 6, base: 0 } }, 'now', week, tap);
+    const folder = { id: 'f', name: 'Plan', following: true, settings };
+    const easyDays = [0, 1, 2, 3, 4, 5, 6].filter((d) => planNowOf(folder, addDays(tap, d))?.easy === true);
     expect(easyDays.length).toBe(7);
+    // …and only seven: the next Monday trains normally, and the end date is known.
+    expect(planNowOf(folder, addDays(tap, 7))?.easy).toBe(false);
+    expect(planNowOf(folder, tap)?.easyUntil).toBe('2026-10-11');
   });
 });

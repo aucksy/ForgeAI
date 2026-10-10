@@ -142,7 +142,8 @@ describe('#1 one workout screen, never two stacked', () => {
 describe('#3 drop rows never change the routine set count', () => {
   it('a drop row added during the workout is not "4 sets" (before: Update routine? to 4)', () => {
     const c = card('bench', { exerciseId: 'bench-id', startRows: 3, sets: [row(true), row(true), row(true), row(true, { setType: 'drop' })] });
-    expect(workoutItems([c])).toEqual([{ exerciseId: 'bench-id', name: 'bench', workingSets: 0 }]);
+    expect(workoutItems([c])).toHaveLength(1);
+    expect(workoutItems([c])[0]).toMatchObject({ exerciseId: 'bench-id', name: 'bench', workingSets: 0, typesChanged: false });
     // A real extra set still counts.
     c.sets.push(row(true));
     expect(workoutItems([c])[0].workingSets).toBe(4);

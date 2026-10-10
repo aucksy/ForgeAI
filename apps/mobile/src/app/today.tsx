@@ -143,14 +143,14 @@ export default function TodayScreen() {
             </Text>
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>
               {done
-                ? `${today.today?.title ?? 'Done today'} · Next: ${countWord(today.targets.length, 'exercise')}, pre-filled with last time’s numbers.`
+                ? `${today.today?.title ?? 'Done today'}${today.today?.line ? ` · ${today.today.line}` : ''}. ${countWord(today.targets.length, 'exercise')}, pre-filled with last time’s numbers.`
                 : `${countWord(today.targets.length, 'exercise')}, pre-filled with last time’s numbers.`}
             </Text>
             {week ? (
               <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>
             ) : null}
           </View>
-          {plan?.easy ? <EasyWeekNote /> : null}
+          {plan?.easy ? <EasyWeekNote until={plan.easyUntil} /> : null}
           <Card>
             {today.targets.map((t, i) => (
               <View

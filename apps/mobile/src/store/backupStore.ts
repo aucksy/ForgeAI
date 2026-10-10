@@ -137,6 +137,11 @@ export interface BackupState {
 /** After any restore (or undo): re-link the library and clear media paths that aren't here. */
 async function afterReplace(): Promise<void> {
   await clearDemoFlag();
+  // Review fix (IM-07): a backup from before Phase 4 brings workouts imported the old way; the
+  // restore cleared the repair's mark, so they are put right now, not at the next start.
+  await import('@/tracker/services/importClockRepair')
+    .then((m) => m.repairImportedClockTimes())
+    .catch(() => 0);
   await resyncExerciseCatalog(false).catch(() => undefined);
   await clearMissingExerciseMedia().catch(() => undefined);
 }

@@ -147,9 +147,10 @@ describe('routine folders', () => {
     expect(f.source).toBe('program');
     expect(f.settings).toEqual({ program: 'gym_ppl_intermediate', easy: { every: 6, base: 0 }, startISO: '2026-10-07' });
     expect(f.routines.map((r) => r.name)).toEqual(['Push', 'Routine']);
-    // Odd numbers are brought into range: 1–12 sets, 1–50 reps, max never under min.
+    // Odd numbers are brought into range, max never under min. RP-23: no 12-set / 50-rep caps
+    // (20 sets and 99 reps stay; only 1–50 sets and 1–999 reps are the bounds).
     expect(f.routines[0].exercises.map((e) => [e.targetSets, e.repRangeMin, e.repRangeMax])).toEqual([
-      [12, 1, 50],
+      [20, 1, 99],
       [3, 12, 12],
     ]);
   });

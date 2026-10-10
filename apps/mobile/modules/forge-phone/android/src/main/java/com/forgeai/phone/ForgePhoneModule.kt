@@ -39,7 +39,8 @@ class ForgePhoneModule : Module() {
         Share.take(c, first) ?: Share.take(c, appContext.currentActivity?.intent)
       } catch (e: Throwable) {
         android.util.Log.w("ForgeShare", "could not read the shared file", e)
-        null
+        // Audit IM-17: the import screen says why, instead of nothing happening.
+        mapOf("error" to (if (e.message == "too big") "too_big" else "unreadable"))
       }
     }
 

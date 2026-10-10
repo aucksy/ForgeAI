@@ -39,3 +39,21 @@ export const START_FAILED = "Couldn't start the workout. Try again.";
 export const EDIT_FAILED = "Couldn't open the editor. Try again.";
 export const SAVE_ROUTINE_FAILED = "Couldn't save the routine. Try again.";
 export const ADD_EXERCISE_FAILED = "Couldn't add it. Try again.";
+
+/**
+ * Audit Phase 4 (EX-18): open a page once, however fast the taps. `go` runs on the first tap;
+ * taps in the next `ms` (while the page slides in) are ignored, so a double tap never stacks
+ * two copies of the same page. Returns false when the tap was ignored.
+ */
+export function navigateOnce(guard: { current: boolean }, go: () => void, ms = 700): boolean {
+  if (guard.current) return false;
+  guard.current = true;
+  try {
+    go();
+  } finally {
+    setTimeout(() => {
+      guard.current = false;
+    }, ms);
+  }
+  return true;
+}

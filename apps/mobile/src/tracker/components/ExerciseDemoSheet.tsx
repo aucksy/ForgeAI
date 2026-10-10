@@ -77,6 +77,7 @@ export function ExerciseDemoSheet({
   name,
   media,
   onClose,
+  showSteps = true,
 }: {
   visible: boolean;
   /** Used to look up the member's own photo/video when `media` isn't passed. */
@@ -85,6 +86,11 @@ export function ExerciseDemoSheet({
   name: string;
   media?: ThumbMedia | null;
   onClose: () => void;
+  /**
+   * Audit Phase 4 (EX-09): the exercise page already prints the steps under the picture, so its
+   * sheet shows the picture alone — the steps are never shown twice.
+   */
+  showSteps?: boolean;
 }) {
   // Compared by value: callers may pass a fresh object on every render.
   const passed = media !== undefined;
@@ -111,7 +117,7 @@ export function ExerciseDemoSheet({
 
   const entry = catalogEntry(catalogKey);
   const bundled = mediaFor(catalogKey);
-  const steps = entry?.steps ?? [];
+  const steps = showSteps ? entry?.steps ?? [] : [];
   const height = 210;
 
   let picture = null;
@@ -164,7 +170,12 @@ export function ExerciseDemoSheet({
           >
             {name}
           </Text>
-          <Pressable onPress={onClose} hitSlop={10} accessibilityRole="button" accessibilityLabel="Close">
+          <Pressable
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close"
+            style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', marginRight: -space.sm }}
+          >
             <Icon name="close" size={22} color={color.inkMuted} />
           </Pressable>
         </View>
@@ -181,7 +192,7 @@ export function ExerciseDemoSheet({
             {showCredit ? <DrawingCredit beforeOpen={onClose} /> : null}
             {steps.length > 0 && !picture ? (
               <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>
-                No moving demo for this exercise yet — the steps are below.
+                No picture for this exercise yet. Here is how to do it:
               </Text>
             ) : null}
             {steps.length > 0 ? (

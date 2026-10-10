@@ -98,7 +98,7 @@ async function logHistory(db: RealDb): Promise<Names> {
     { exerciseId: bench, weightKg: 70, reps: 6, setType: 'failure', rpe: 10, supersetGroup: 1 },
   ]);
 
-  // 2) Imported from Hevy earlier: clock time written as UTC — 5 Oct, 8:00 pm on the clock.
+  // 2) Imported from Hevy by an older version: clock time written as UTC — 5 Oct, 8:00 pm on the clock.
   const importedStart = Date.UTC(2026, 9, 5, 20, 0);
   const w2 = await createSession({
     dateISO: '2026-10-05', dayType: 'legs', notes: 'Leg day', source: 'manual',
@@ -111,6 +111,12 @@ async function logHistory(db: RealDb): Promise<Names> {
     { exerciseId: custom.id, weightKg: 100, reps: 10 },
     { exerciseId: idOf(db, names.assisted), weightKg: -20, reps: 8 },
   ]);
+  // Audit IM-07: the next start moves that older import to the real moment, once (the export
+  // no longer guesses which workouts to correct).
+  const { repairImportedClockTimes } = await import('@/tracker/services/importClockRepair');
+  expect(await repairImportedClockTimes()).toBe(1);
+  expect(await repairImportedClockTimes()).toBe(0);
+  expect(db.all<{ s: number }>('SELECT started_at AS s FROM workout_sessions WHERE id = ?', [w2.id])[0].s).toBe(new Date(2026, 9, 5, 20, 0).getTime());
   return names;
 }
 

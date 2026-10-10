@@ -10,6 +10,7 @@ on any problem so a bad entry can never reach the app:
   - only known muscles, types, equipment and load modes; caps only where they mean something
   - every easier/harder link points at an entry that exists
   - 2–4 steps, each at most 110 characters; lowercase aliases
+  - one name style (EX-20): "Pull-Up", "Close-Grip Bench Press" — never "Pull-up" / "Close Grip"
   - every one of ForgeAI's ~40 original exercise names maps to exactly one entry
 """
 import glob
@@ -79,6 +80,9 @@ def main() -> None:
         steps = e.get('steps') or []
         if not 2 <= len(steps) <= 4 or any(len(s) > 110 or not s.strip() for s in steps):
             problems.append(f'{where}: steps {len(steps)} / lengths {[len(s) for s in steps]}')
+        # EX-20: one name style — Title Case, hyphenated compounds ("Pull-Up", "Close-Grip").
+        if re.search(r'-up', e['name']) or re.search(r'(Close|Wide|Neutral|Reverse|Narrow) Grip', e['name']):
+            problems.append(f'{where}: name "{e["name"]}" — write "-Up" and "Close-Grip" style')
         if any(a != a.lower() for a in e.get('aliases') or []):
             problems.append(f'{where}: aliases must be lowercase')
         if (e.get('bwShare') or 0) > 0 and not BW_FAMILY.search(k):

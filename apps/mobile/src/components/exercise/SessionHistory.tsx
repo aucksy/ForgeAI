@@ -1,18 +1,20 @@
-import { Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { Card, SectionHeader } from '@/components/ui';
+import { Card, FoldSection } from '@/components/ui';
 import { shortDate } from '@/lib/date';
-import { fmtCompact, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
+import { fmtCompact, kgToDisplay, weightUnit } from '@/lib/format';
 import { color, motion, radius, space, type } from '@/theme/tokens';
 import type { ExerciseHistoryEntry, TrackedSetEntry } from '@/tracker/db/exerciseHistory';
-import { fmtSetCompact, typedWeight, type DistUnit, type LogType } from '@/tracker/engine/logTypes';
+import { type DistUnit, type LogType } from '@/tracker/engine/logTypes';
+import { setLabel } from '@/tracker/services/exerciseHeadline';
 import type { UnitSystem } from '@/types/models';
 
 export interface SessionHistoryProps {
   history: ExerciseHistoryEntry[];
   units: UnitSystem;
-  /** How many sessions to render (newest first). Default 15. */
+  /** How many sessions one page shows (newest first); "Show more" adds the next page. Default 15. */
   maxSessions?: number;
   /** Phase 2: how the exercise is logged (absent = weight × reps). */
   logType?: LogType;
@@ -54,12 +56,7 @@ function SetChip({
   lt: LogType;
   distUnit: DistUnit;
 }) {
-  const label =
-    lt === 'weight_reps'
-      ? `${trimNum(kgToDisplay(set.weightKg, units))} × ${set.reps}`
-      : lt === 'assisted'
-        ? `${trimNum(kgToDisplay(typedWeight(lt, set.weightKg), units))} × ${set.reps}`
-        : fmtSetCompact(set, lt, distUnit).replace('×', ' × ');
+  const label = setLabel(set, lt, units, distUnit);
   return (
     <View
       style={{
@@ -85,17 +82,23 @@ function SetChip({
   );
 }
 
-/** Recent sessions: date header, sets as chips (top set embered, warmups dimmed). */
+/**
+ * Past sessions: folded shut under a count (audit Phase 4, EX-14 / R2); open, a page of sessions
+ * (date, sets as chips — top set embered, warm-ups dimmed) and "Show more" for the next page, so
+ * five years of bench are all there, not just the last 15.
+ */
 export function SessionHistory({ history, units, maxSessions = 15, logType = 'weight_reps', distUnit = 'km' }: SessionHistoryProps) {
-  const shown = history.slice(0, maxSessions);
+  const [pages, setPages] = useState(1);
+  const shown = history.slice(0, maxSessions * pages);
   const unit = weightUnit(units);
+  const left = history.length - shown.length;
 
   return (
     <Animated.View
       entering={FadeInDown.duration(motion.slow).delay(320)}
       style={{ marginTop: space.xl }}
     >
-      <SectionHeader title="Recent sessions" />
+      <FoldSection title="Past sessions" count={history.length} noun="session">
       <Card style={{ paddingVertical: space.xs }}>
         {shown.map((h, i) => {
           const top = topSetIndex(h.sets, logType);
@@ -142,19 +145,19 @@ export function SessionHistory({ history, units, maxSessions = 15, logType = 'we
           );
         })}
       </Card>
-      {history.length > shown.length ? (
-        <Text
-          style={{
-            fontFamily: type.bodyMedium,
-            fontSize: type.size.caption,
-            color: color.inkMuted,
-            textAlign: 'center',
-            marginTop: space.md,
-          }}
+      {left > 0 ? (
+        <Pressable
+          onPress={() => setPages((p) => p + 1)}
+          accessibilityRole="button"
+          accessibilityLabel={`Show ${Math.min(left, maxSessions)} more sessions, ${left} left`}
+          style={{ minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
         >
-          Showing the last {shown.length} of {history.length} sessions
-        </Text>
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>
+            Show {Math.min(left, maxSessions)} more · {left} left
+          </Text>
+        </Pressable>
       ) : null}
+      </FoldSection>
     </Animated.View>
   );
 }

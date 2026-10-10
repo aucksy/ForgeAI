@@ -214,7 +214,8 @@ describe('LW-31 / TG-06 — swap after a tick', () => {
     start([card('bench', { exerciseId: 'bench-id', sets: [row(true), row(false), row(false)], startRows: 3 })]);
     await useActiveWorkout.getState().swapExercise('bench', lib('dips', 'Dips'));
     const items = workoutItems(useActiveWorkout.getState().exercises);
-    expect(items).toEqual([{ exerciseId: 'bench-id', name: 'bench', workingSets: 0 }]);
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({ exerciseId: 'bench-id', name: 'bench', workingSets: 0, typesChanged: false });
     expect(diffRoutine([{ exerciseId: 'bench-id', name: 'bench', targetSets: 3 }], items).changed).toBe(false);
   });
 

@@ -328,7 +328,8 @@ describe('a picture taken while Android closed the app is kept', () => {
     }
     expect(launches).toBe(5); // progress photo ×2, exercise photo/video ×2, chat meal photo
     expect(read('app/photos/index.tsx')).toContain('keepPendingPhoto()');
-    expect(read('app/library/new.tsx')).toContain('keepPendingMedia()');
+    // EX-13 (audit Phase 4): the form takes back only the picture noted for its own exercise.
+    expect(read('app/library/new.tsx')).toContain("keepPendingMedia(editId ?? 'new')");
     expect(read('app/(tabs)/coach.tsx')).toContain("takePendingPick('chat-photo')");
   });
 });

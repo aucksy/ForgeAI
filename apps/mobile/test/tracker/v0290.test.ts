@@ -108,7 +108,7 @@ describe("the owner's folder Jaipur, read from its share page", () => {
     expect(one.routines.map((r) => [r.title, r.exercises.length])).toEqual([['Push Day', 1]]);
   });
 
-  it('two routines with one name both come in; an exercise listed twice is kept once', () => {
+  it('two routines with one name both come in; an exercise listed twice keeps both blocks (IM-12)', () => {
     const found = linkedToFound(
       {
         name: 'F',
@@ -120,9 +120,10 @@ describe("the owner's folder Jaipur, read from its share page", () => {
       inferDayType,
     );
     expect(found.map((r) => [r.title, r.exercises.map((e) => e.title)])).toEqual([
-      ['Push', ['A']],
+      ['Push', ['A', 'A']],
       ['Push (2)', ['B']],
     ]);
+    expect(found[0].exercises.map((e) => e.key)).toEqual(['0:A', '1:A']);
   });
 });
 
@@ -186,7 +187,8 @@ describe('continuity with the imported history (v0.29.1, owner)', () => {
     const hevy = readFileSync('src/tracker/services/hevyImport.ts', 'utf8');
     // Both read the same library and match with the same rule; the link only adds what is missing.
     expect(hevy).toMatch(/export async function exerciseIdsCreating[\s\S]*?const hit = matchTitle\(title, library\)/);
-    expect(hevy).toMatch(/for \(const title of parsed\.distinctExerciseTitles\) \{\s*const hit = matchTitle\(title, library\)/);
+    // IM-15: the member's own "Same as …" answer comes first, then the same rule.
+    expect(hevy).toMatch(/for \(const title of parsed\.distinctExerciseTitles\) \{[\s\S]{0,400}?const hit = picked \?\? matchTitle\(title, library\)/);
   });
 
   // [source-text check] Partly reads source text (the rest is behavioural): passes on dead code, fails on a harmless rename (audit QA-12).
@@ -213,8 +215,9 @@ describe('continuity with the imported history (v0.29.1, owner)', () => {
   });
 
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
-  it('[source-text check] the history import names its new exercises (folded)', () => {
-    expect(readFileSync('src/app/import/index.tsx', 'utf8')).toMatch(/new to ForgeAI: see them/);
+  it('[source-text check] the history import names its new exercises, each with a suggested match (IM-15)', () => {
+    expect(readFileSync('src/app/import/index.tsx', 'utf8')).toMatch(/<NewNamesCard/);
+    expect(readFileSync('src/tracker/components/NewNamesCard.tsx', 'utf8')).toMatch(/new to ForgeAI/);
   });
 });
 

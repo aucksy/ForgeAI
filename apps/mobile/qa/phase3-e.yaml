@@ -73,14 +73,20 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
-# LW-21: the records fold shut under "New records" with a count ("1 record · see it"): open them.
+# Audit Phase 3 (D10): the finish line counts LIFTS that beat a best — one lift here (pull-ups),
+# whatever kinds of record it set ("… · 1 lift beat its best").
+- extendedWaitUntil:
+    visible: '.* · 1 lift beat its best'
+    timeout: 15000
+# LW-21: the records fold shut under "New records" with a count. Since Phase 3 (D10) it counts
+# lifts, not kinds of record ("1 lift · see it"): open them.
 - scrollUntilVisible:
     element: "New records"
     centerElement: true
     timeout: 20000
 - tapOn: "New records"
 - extendedWaitUntil:
-    visible: '\d+ records? · hide (it|them)'
+    visible: '1 lift · hide it'
     timeout: 5000
 - takeScreenshot: 61-finish-records
 - scrollUntilVisible:
@@ -122,6 +128,11 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "How to do it"
     timeout: 15000
+# Audit Phase 4 (EX-07): the page leads with the member's own answer — "Last time · Today" and
+# "Best · <kind>", in the way the exercise is logged.
+- assertVisible: 'Last time · .*'
+- assertVisible: 'Best · .*'
+- takeScreenshot: 63b-pull-up-last-time-best
 - scrollUntilVisible:
     element: "Records"
     timeout: 20000
@@ -148,6 +159,15 @@ appId: com.forgeai.app
     element: "Best session"
     timeout: 20000
 - takeScreenshot: 66-bench-records
+# Audit Phase 4 (EX-14 / R2): every past session is there, folded shut under its count
+# ("Past sessions" · "13 sessions · see them"), no longer just "the last 15".
+- scrollUntilVisible:
+    element: "Past sessions"
+    centerElement: true
+    timeout: 20000
+- assertVisible: '[\d,]+ sessions? · see (it|them)'
+- assertNotVisible: 'Showing the last .*'
+- takeScreenshot: 66b-bench-past-sessions-folded
 # ---------------------------------------------------------------- the coach is hidden
 # Owner decision D4 (Phase 0): coach, nutrition and gym sync are hidden from members. Home must
 # show no coach card and no calorie rings, and a coach link must land on Home, unsent.

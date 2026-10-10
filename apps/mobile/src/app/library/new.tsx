@@ -10,13 +10,18 @@
  * v0.28.0: opened from "Add exercise" inside a workout (`?for=workout&name=…`), the typed name
  * is filled in and Save adds the new exercise to the workout; a distance exercise is kept in
  * km (miles under "lb, miles") or metres.
+ * Audit Phase 4: the form guesses the main muscle, gear and type from the typed name (EX-08)
+ * and Save says what is still missing; Edit opens with the exercise filled in, and if it
+ * cannot be read says so — it never saves a copy as a new exercise (EX-19); a photo brought
+ * back after Android closed the app returns to the exercise it was taken for (EX-13); every
+ * save refreshes the exercise lists (EX-03).
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import { useEffect, useRef, useState } from 'react';
+import { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 
-import { Chip, GhostButton, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { Chip, GhostButton, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { getAllExercises } from '@/db/repos/exerciseRepo';
 import { stepFor } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
@@ -29,6 +34,8 @@ import { incrementChoices, pickedIncrement } from '@/tracker/components/unitText
 import { createCustomExercise, setExerciseMedia, updateCustomExercise } from '@/tracker/db/customExercise';
 import { exerciseHasSets, getTrackerExercise, type TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { exercisesChanged } from '@/tracker/store/exerciseListStore';
+import { guessFromName, missingForSave } from '@/tracker/services/exerciseGuess';
 import { LOG_TYPE_LABEL, LOG_TYPES, type LogType } from '@/tracker/engine/logTypes';
 import {
   deleteKeptMedia,
@@ -73,6 +80,12 @@ export default function NewExerciseScreen() {
   const units = useUnits();
 
   const [existing, setExisting] = useState<TrackerExercise | null>(null);
+  // EX-19: in edit mode nothing shows (and nothing saves) until the exercise is read.
+  const [editLoad, setEditLoad] = useState<'loading' | 'ready' | 'failed'>(editId ? 'loading' : 'ready');
+  const [editAttempt, setEditAttempt] = useState(0);
+  // EX-08: a guess fills a field only until the member picks it themselves.
+  const touched = useRef({ muscle: false, equipment: false, type: false });
+  const [guessedFrom, setGuessedFrom] = useState<string | null>(null);
   const [typeLocked, setTypeLocked] = useState(false);
   const [name, setName] = useState(() => (typeof params.name === 'string' ? params.name.trim().slice(0, 80) : ''));
   const [logType, setLogType] = useState<LogType>('weight_reps');
@@ -98,8 +111,14 @@ export default function NewExerciseScreen() {
   useEffect(() => {
     if (!editId) return;
     let alive = true;
+    setEditLoad('loading');
     void Promise.all([getTrackerExercise(editId), exerciseHasSets(editId).catch(() => true)]).then(([ex, used]) => {
-      if (!alive || !ex) return;
+      if (!alive) return;
+      if (!ex) {
+        setEditLoad('failed');
+        return;
+      }
+      setEditLoad('ready');
       setExisting(ex);
       setTypeLocked(used);
       setName(ex.name);
@@ -112,11 +131,32 @@ export default function NewExerciseScreen() {
       setCountsBodyweight(ex.bwShare > 0);
       setDistUnit(ex.distUnit === 'm' ? 'm' : 'km');
       if (!recovered.current) setMedia(ex.mediaUri && ex.mediaType ? { uri: ex.mediaUri, type: ex.mediaType } : null);
+    }, () => {
+      if (alive) setEditLoad('failed');
     });
     return () => {
       alive = false;
     };
-  }, [editId]);
+  }, [editId, editAttempt]);
+
+  // EX-08: guess the muscle, gear and type from the name while the member types (a new
+  // exercise only; what they pick themselves is never overwritten).
+  const guessName = useDeferredValue(name);
+  // Review fix (search speed): the guess searches the whole library, so it follows the typing a
+  // beat behind (useDeferredValue) instead of holding up each letter.
+  useEffect(() => {
+    if (editId) return;
+    const g = guessFromName(guessName);
+    if (!touched.current.muscle) setMuscle(g.muscle);
+    if (!touched.current.equipment && g.equipment !== equipment) {
+      setEquipment(g.equipment);
+      if (g.equipment) setIncrement(stepFor(defaultIncrement(g.equipment), units));
+    }
+    if (!touched.current.type && !typeLocked) setLogType(g.logType ?? 'weight_reps');
+    setGuessedFrom(g.from);
+    // Only the name drives the guess.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guessName, editId]);
 
   // Leaving without saving: drop files copied in during this visit.
   useEffect(
@@ -130,7 +170,7 @@ export default function NewExerciseScreen() {
   // comes back into the form (before, it was lost; the rest of the form starts over).
   useEffect(() => {
     let alive = true;
-    keepPendingMedia()
+    keepPendingMedia(editId ?? 'new')
       .then((m) => {
         if (!m) return;
         if (!alive) return void deleteKeptMedia(m.uri);
@@ -145,12 +185,14 @@ export default function NewExerciseScreen() {
   }, []);
 
   const pickEquipment = (eq: Equipment): void => {
+    touched.current.equipment = true;
     setEquipment(eq);
     setIncrement(stepFor(defaultIncrement(eq), units));
   };
 
   const pickType = (t: LogType): void => {
     if (typeLocked) return;
+    touched.current.type = true;
     setLogType(t);
     if (isBodyweightType(t) && !isBodyweightType(logType)) {
       setEquipment((cur) => cur ?? 'bodyweight');
@@ -166,7 +208,9 @@ export default function NewExerciseScreen() {
     if (mediaBusy) return;
     setMediaBusy(true);
     try {
-      const picked = from === 'gallery' ? await pickFromGallery() : await takeWithCamera(from === 'video' ? 'video' : 'image');
+      // EX-13: the pick is noted for THIS exercise ("new" for a new one).
+      const target = editId ?? 'new';
+      const picked = from === 'gallery' ? await pickFromGallery(target) : await takeWithCamera(from === 'video' ? 'video' : 'image', target);
       if (!picked) return;
       pickedHere.current.push(picked.uri);
       setMedia(picked);
@@ -188,9 +232,9 @@ export default function NewExerciseScreen() {
   };
 
   // Never while a picked file is still being copied in (the save would miss it).
-  const canSave = isLibrary
-    ? !saving && !mediaBusy
-    : name.trim().length > 0 && muscle !== null && equipment !== null && !saving && !mediaBusy;
+  // EX-08: what still stops Save, said on the button ("Pick a main muscle").
+  const missing = isLibrary ? null : missingForSave({ name, muscle, equipment });
+  const canSave = editLoad === 'ready' && missing == null && !saving && !mediaBusy;
 
   const onSave = async (): Promise<void> => {
     if (savingRef.current) return;
@@ -203,6 +247,8 @@ export default function NewExerciseScreen() {
       for (const uri of pickedHere.current) if (uri !== media?.uri) await deleteKeptMedia(uri);
     };
     try {
+      // EX-19: an edit whose exercise could not be read never saves as a new exercise.
+      if (editId && !existing) throw new Error('not-loaded');
       if (existing && isLibrary) {
         await setExerciseMedia(existing.id, { uri: media?.uri ?? null, type: media?.type ?? null });
       } else {
@@ -246,6 +292,7 @@ export default function NewExerciseScreen() {
           await updateCustomExercise(existing.id, input, m, typeLocked);
         } else {
           const id = await createCustomExercise(input, m);
+          exercisesChanged();
           await dropUnused();
           if (forWorkout) {
             // Straight into the workout it was made for (the picker under this screen goes too).
@@ -261,6 +308,7 @@ export default function NewExerciseScreen() {
           return;
         }
       }
+      exercisesChanged();
       // The old file is no longer used by anything.
       if (before && before !== media?.uri) await deleteKeptMedia(before);
       await dropUnused();
@@ -272,7 +320,23 @@ export default function NewExerciseScreen() {
     }
   };
 
-  const title = existing ? (isLibrary ? 'Your photo or video' : 'Edit exercise') : 'New exercise';
+  const title = existing ? (isLibrary ? 'Your photo or video' : 'Edit exercise') : editId ? 'Edit exercise' : 'New exercise';
+
+  if (editId && editLoad !== 'ready') {
+    return (
+      <Screen title={title} right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
+        {editLoad === 'failed' ? (
+          <LoadError what="this exercise" onRetry={() => setEditAttempt((n) => n + 1)} />
+        ) : (
+          <View style={{ gap: space.lg }}>
+            <Skeleton width="100%" height={46} />
+            <Skeleton width="100%" height={96} />
+            <Skeleton width="100%" height={140} />
+          </View>
+        )}
+      </Screen>
+    );
+  }
 
   return (
     <Screen title={title} right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
@@ -307,6 +371,11 @@ export default function NewExerciseScreen() {
                   style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink, paddingVertical: 0 }}
                 />
               </View>
+              {guessedFrom && !existing ? (
+                <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>
+                  Muscle, gear and type filled in like {guessedFrom}. Change anything that is different.
+                </Text>
+              ) : null}
             </View>
 
             {/* how it is logged */}
@@ -339,7 +408,15 @@ export default function NewExerciseScreen() {
               <FieldLabel>Main muscle</FieldLabel>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
                 {MUSCLES.map((m) => (
-                  <Chip key={m} label={MUSCLE_LABEL[m]} selected={muscle === m} onPress={() => setMuscle(m)} />
+                  <Chip
+                    key={m}
+                    label={MUSCLE_LABEL[m]}
+                    selected={muscle === m}
+                    onPress={() => {
+                      touched.current.muscle = true;
+                      setMuscle(m);
+                    }}
+                  />
                 ))}
               </View>
             </View>
@@ -421,7 +498,12 @@ export default function NewExerciseScreen() {
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>
                   {media.type === 'video' ? 'Your video' : 'Your photo'}
                 </Text>
-                <Pressable onPress={() => setMedia(null)} accessibilityRole="button" accessibilityLabel="Remove photo or video" hitSlop={8}>
+                <Pressable
+                  onPress={() => setMedia(null)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Remove photo or video"
+                  style={{ minHeight: 48, justifyContent: 'center', alignSelf: 'flex-start' }}
+                >
                   <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.criticalText }}>Remove</Text>
                 </Pressable>
               </View>
@@ -446,7 +528,7 @@ export default function NewExerciseScreen() {
         </View>
 
         <PrimaryButton
-          label={existing ? 'Save changes' : forWorkout ? 'Save and add to workout' : 'Save exercise'}
+          label={missing ?? (existing ? 'Save changes' : forWorkout ? 'Save and add to workout' : 'Save exercise')}
           icon="check"
           loading={saving}
           disabled={!canSave}

@@ -62,9 +62,12 @@ async function keep(asset: ImagePicker.ImagePickerAsset): Promise<PickedMedia> {
   return { uri: dest, type };
 }
 
-/** Gallery pick (photo or video). null when cancelled; throws 'video-too-long' / 'video-too-big'. */
-export async function pickFromGallery(): Promise<PickedMedia | null> {
-  const res = await launchFor('exercise-media', () => ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images', 'videos'], quality: 0.8 }));
+/**
+ * Gallery pick (photo or video). null when cancelled; throws 'video-too-long' / 'video-too-big'.
+ * `forExercise`: the exercise id it is for, or "new" (EX-13: a restart returns it to that form).
+ */
+export async function pickFromGallery(forExercise?: string): Promise<PickedMedia | null> {
+  const res = await launchFor('exercise-media', () => ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images', 'videos'], quality: 0.8 }), undefined, forExercise);
   if (res.canceled || res.assets.length === 0) return null;
   return keep(res.assets[0]);
 }
@@ -74,7 +77,7 @@ export async function pickFromGallery(): Promise<PickedMedia | null> {
  * (asking for both opens the photo camera), so the form offers them as two buttons.
  * null when cancelled; throws 'camera-denied' when refused.
  */
-export async function takeWithCamera(kind: 'image' | 'video'): Promise<PickedMedia | null> {
+export async function takeWithCamera(kind: 'image' | 'video', forExercise?: string): Promise<PickedMedia | null> {
   const perm = await ImagePicker.requestCameraPermissionsAsync();
   if (!perm.granted) throw new Error('camera-denied');
   const res = await launchFor('exercise-media', () =>
@@ -83,6 +86,8 @@ export async function takeWithCamera(kind: 'image' | 'video'): Promise<PickedMed
         ? { mediaTypes: ['videos'], videoMaxDuration: MAX_VIDEO_SEC, quality: 0.8 }
         : { mediaTypes: ['images'], quality: 0.8 },
     ),
+    undefined,
+    forExercise,
   );
   if (res.canceled || res.assets.length === 0) return null;
   return keep(res.assets[0]);
@@ -93,8 +98,8 @@ export async function takeWithCamera(kind: 'image' | 'video'): Promise<PickedMed
  * the gallery), copied in — or null. Phase 3 review: before, it was simply lost. Throws like
  * a gallery pick when the clip is too long or too big.
  */
-export async function keepPendingMedia(): Promise<PickedMedia | null> {
-  const asset = await takePendingPick('exercise-media');
+export async function keepPendingMedia(forExercise?: string): Promise<PickedMedia | null> {
+  const asset = await takePendingPick('exercise-media', undefined, forExercise);
   return asset ? keep(asset) : null;
 }
 

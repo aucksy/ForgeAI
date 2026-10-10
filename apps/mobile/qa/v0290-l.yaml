@@ -1,7 +1,13 @@
 # v0.29.0 device QA, part L — Import routines from a Hevy share link (runs after parts A–K).
+# First the owner's Hevy HISTORY of his Jaipur routines (qa-jaipur.csv, pushed by the script: two
+# rounds of Push 1 → Pull 1 → Legs 1 → Push 2 → Pull 2 → Leg 2, Push 1's incline bench as 2
+# warm-ups + 3 working sets), so the member's real rotation is known, as on his phone. Then
 # Profile → Import routines → paste the owner's public folder link → the app reads hevy.com in a
-# hidden in-app browser → "We found 6 routines in “Jaipur”" → check each → follow → the folder
-# "Jaipur" with Push 1's 7 exercises exactly as saved in Hevy. Needs the internet (hevy.com).
+# hidden in-app browser → "We found 6 routines in “Jaipur”" → (Check each one is optional; one
+# routine checked, then Back) → Next → the one new name, "Same as ForgeAI's …?" → follow, in the
+# order he does them → the folder "Jaipur": Push 1's preview shows the incline bench's 3 working
+# sets with its 2 warm-ups as warm-ups and Hevy's 3:30 rest → start Push 1 (PREVIOUS from part
+# J's Hevy history) → finish it → Home's Today says Pull 1. Needs the internet (hevy.com).
 appId: com.forgeai.app
 ---
 - launchApp
@@ -11,7 +17,54 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 60000
+# ---------------------------------------------------------------- 0. the owner's Jaipur history
 - tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "Import from Hevy"
+    centerElement: true
+    timeout: 90000
+- tapOn: "Import from Hevy"
+- extendedWaitUntil:
+    visible: "Choose Hevy file"
+    timeout: 15000
+- tapOn: "Choose Hevy file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-jaipur).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-jaipur.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "qa-jaipur.*"
+- extendedWaitUntil:
+    visible: "^Date range$"
+    timeout: 20000
+- assertVisible: "Sep 2026 → Oct 2026"
+- scrollUntilVisible:
+    element: "Import 12 workouts"
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: 169-jaipur-history-preview
+- tapOn: "Import 12 workouts"
+- extendedWaitUntil:
+    visible: "12 workouts imported"
+    timeout: 30000
+# Two uses of each name are not "routines" yet (that takes 3): no routine steps offered here.
+- scrollUntilVisible:
+    element: "^(Done|Not now)$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^(Done|Not now)$"
+# ---------------------------------------------------------------- the link
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 15000
 - scrollUntilVisible:
     element: "^Import routines$"
     centerElement: true
@@ -32,8 +85,15 @@ appId: com.forgeai.app
     timeout: 60000
 - assertVisible: "Push 1"
 - takeScreenshot: 172-link-routines-found
-- tapOn: "Check these 6"
-# ---------------------------------------------------------------- 2. one per screen, exactly as saved
+# ---------------------------------------------------------------- 2. checking is optional
+# Audit Phase 4: a link comes over exactly as saved, so the list goes straight on with one Next;
+# "Check each one" is there if wanted. One routine checked here (exactly as saved), then Back.
+- scrollUntilVisible:
+    element: "Check each one"
+    centerElement: true
+    timeout: 15000
+- assertVisible: "^Next$"
+- tapOn: "Check each one"
 - extendedWaitUntil:
     visible: "1 of 6"
     timeout: 10000
@@ -41,41 +101,57 @@ appId: com.forgeai.app
 - assertVisible: "Chin Up"
 - assertVisible: "3 sets · 9–12 reps"
 - takeScreenshot: 173-link-check-pull-2
-- runFlow:
-    file: v0290-l-next.yaml
-- runFlow:
-    file: v0290-l-next.yaml
-- runFlow:
-    file: v0290-l-next.yaml
-- runFlow:
-    file: v0290-l-next.yaml
-- runFlow:
-    file: v0290-l-next.yaml
+- scrollUntilVisible:
+    element: "^Back$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Back$"
 - extendedWaitUntil:
-    visible: "6 of 6"
+    visible: "We found 6 routines in .Jaipur."
     timeout: 10000
-- assertVisible: "Single Arm Lateral Raise \\(Cable\\)"
-- takeScreenshot: 174-link-check-push-1
-- runFlow:
-    file: v0290-l-next.yaml
-# ---------------------------------------------------------------- 2b. new to ForgeAI (v0.29.1)
-# "Decline Leg Raise (Gurgaon)" is the owner's own Hevy exercise: offered, added with that name.
+# IM-15: names ForgeAI keeps under another name are shown with both.
+- scrollUntilVisible:
+    element: "Named differently in ForgeAI"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Named differently in ForgeAI"
+- scrollUntilVisible:
+    element: 'Chest Fly \(Machine\) → Pec Deck Fly'
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: 174-link-named-differently
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Next$"
+# ---------------------------------------------------------------- 2b. new to ForgeAI (IM-15)
+# "Decline Leg Raise (Gurgaon)" is the owner's own Hevy exercise. ForgeAI offers its closest
+# exercise ("Same as ForgeAI's Decline Leg Raise?"), never chosen for him: Keep as new adds it
+# with his name, as before.
 - extendedWaitUntil:
-    visible: "1 exercise is new to ForgeAI"
+    visible: "1 name is new to ForgeAI"
     timeout: 15000
 - assertVisible: "Decline Leg Raise \\(Gurgaon\\)"
+- assertVisible: "Same as ForgeAI.s .*\\?"
 - takeScreenshot: 174b-link-new-exercise
-- tapOn: "Add it"
-# ---------------------------------------------------------------- 3. follow
+- tapOn: "Keep as new"
+- tapOn: "^Next$"
+# ---------------------------------------------------------------- 3. follow, in his real rotation
+# IM-03: his history (step 0) gives the order he does them in, so the folder goes in that order.
 - extendedWaitUntil:
     visible: "Follow these as your plan\\?"
     timeout: 10000
+- assertVisible: ".*in the order you do them: Push 1, Pull 1, Legs 1, Push 2, Pull 2, Leg 2\\..*"
 - takeScreenshot: 175-link-follow
 - tapOn: "Follow them"
 # ---------------------------------------------------------------- 4. done
 - extendedWaitUntil:
     visible: "6 routines in Jaipur"
     timeout: 20000
+# His last workout was Leg 2 (4 Oct), so the rotation continues with Push 1.
+- assertVisible: ".*Home shows Push 1 today\\..*"
+- assertVisible: ".*1 new exercise added to your library\\..*"
 - takeScreenshot: 176-link-saved
 - tapOn: "Open routines"
 - extendedWaitUntil:
@@ -87,9 +163,15 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 30000
 - tapOn: "Push 1"
+# ---------------------------------------------------------------- Push 1's preview
 - extendedWaitUntil:
-    visible: "Push Day · Jaipur"
+    visible: 'Push Day · \d+ exercises · Jaipur.*'
     timeout: 15000
+# IM-02 (the plan's proof): Hevy's incline bench is 2 warm-ups + 3 working sets, and its own
+# 3:30 rest — never "5 sets".
+- assertVisible: "Incline Dumbbell Press"
+- assertVisible: '2 warm-up · 3 sets · .*Rest 3:30'
+- assertNotVisible: '5 sets · .*Rest 3:30'
 - takeScreenshot: 178a-jaipur-push-1-top
 # Exactly as saved in Hevy (4 sets · 20-42); its library name is "Cable Triceps Kickback"; below the fold.
 - scrollUntilVisible:
@@ -100,10 +182,6 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- continuity (v0.29.1, owner)
 # Start the routine copied from the link: the PREVIOUS column shows the Hevy history imported in
 # part J (Skullcrusher 12 kg × 11 on 29 Sep; shown in pounds after part I: 26.5 × 11).
-- scrollUntilVisible:
-    element: "Start routine"
-    centerElement: true
-    timeout: 20000
 - tapOn: "Start routine"
 # LW-24: with a workout already open the app asks (Resume / Discard and start new) instead of
 # "Finish your current workout first". None should be open here; if one is, start this one.
@@ -128,15 +206,55 @@ appId: com.forgeai.app
           duration: 500
 - assertVisible: "(26\\.5|12) × 11"
 - takeScreenshot: 179-push-1-previous-from-hevy
-- repeat:
-    times: 20
-    while:
-      notVisible: "Discard workout"
-    commands:
-      - swipe:
-          start: 12%, 75%
-          end: 12%, 25%
-          duration: 500
-- tapOn: "Discard workout"
+# ---------------------------------------------------------------- after Push 1 comes Pull 1
+# One set ticked (it saves the PREVIOUS numbers shown as hints), then Finish.
 - tapOn:
-    id: "android:id/button1"
+    text: "Mark .*Skull ?[Cc]rusher set 1 complete"
+    index: 0
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+# LW-11: if the summary asks "Update routine?", keep the routine as copied (the button under it).
+- runFlow:
+    when:
+      visible: "Update routine"
+    commands:
+      - tapOn:
+          text: "Keep original"
+          below:
+            text: "Update routine"
+      - extendedWaitUntil:
+          notVisible: "Update routine"
+          timeout: 10000
+- takeScreenshot: 179b-push-1-finished
+- scrollUntilVisible:
+    element: "Done"
+    timeout: 20000
+- tapOn: "Done"
+- extendedWaitUntil:
+    visible: "^Home$"
+    timeout: 20000
+- tapOn: "^Home$"
+# The plan's proof: in the folder's rotation, Push 1 is followed by Pull 1.
+- extendedWaitUntil:
+    visible: "Next: Pull 1"
+    timeout: 20000
+- assertVisible: "Done today: Push 1"
+- takeScreenshot: 179c-home-today-pull-1

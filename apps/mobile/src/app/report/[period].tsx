@@ -78,7 +78,7 @@ function Favourites({ items }: { items: MonthReport['topExercises'] }) {
         {items.map((e, i) => (
           <View key={e.exerciseId} style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
             <Text style={{ width: 18, fontFamily: type.monoBold, fontSize: type.size.sub, color: color.accent }}>{i + 1}</Text>
-            <Text numberOfLines={1} style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+            <Text numberOfLines={2} style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
               {e.name}
             </Text>
             <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.inkSecondary }}>
@@ -160,7 +160,7 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
             data.records.slice(0, 5).map((rec, i) => (
               <View key={`${rec.exerciseId}-${rec.kind}-${i}`} style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
                 <View style={{ flex: 1, gap: 4 }}>
-                  <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+                  <Text numberOfLines={2} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
                     {rec.exerciseName}
                   </Text>
                   <View style={{ flexDirection: 'row' }}>

@@ -25,6 +25,9 @@ appId: com.forgeai.app
     visible: "COACH"
     timeout: 20000
 - takeScreenshot: 41-month-report
+# Audit Phase 3 (PG-22): full numbers use Latin digits and the PHONE's grouping. This emulator is
+# en-US, so a month's volume reads "228,288 kg", never the Indian "2,28,288" the app used to force.
+- assertNotVisible: '(?s).*\d,\d\d,\d\d\d.*'
 # The share button sits in the header, which scrolls away: use it before scrolling.
 - tapOn: "Share as a picture"
 - extendedWaitUntil:
@@ -36,6 +39,12 @@ appId: com.forgeai.app
     element: 'Days you trained.*'
     timeout: 15000
 - takeScreenshot: 42-month-calendar
+# D10: the records heading counts LIFTS ("3 lifts beat their best"; "New records" when none),
+# no longer every kind of record ("7 new records").
+- scrollUntilVisible:
+    element: '(New records|[\d,]+ lifts? beat (its|their) best)'
+    timeout: 15000
+- assertNotVisible: '[\d,]+ new records?'
 - scrollUntilVisible:
     element: "Sets per muscle"
     timeout: 15000
@@ -53,6 +62,13 @@ appId: com.forgeai.app
     visible: "COACH"
     timeout: 20000
 - takeScreenshot: 45-year-review
+- assertNotVisible: '(?s).*\d,\d\d,\d\d\d.*'
+# D10: the year's tile counts lifts ("Lifts up"), and the streak tile is in weeks (D9).
+- scrollUntilVisible:
+    element: "Lifts up"
+    timeout: 15000
+- assertNotVisible: "New records"
+- assertVisible: "Longest streak"
 - scrollUntilVisible:
     element: "Most trained"
     timeout: 15000
@@ -69,19 +85,54 @@ appId: com.forgeai.app
     element: 'Measurements\..*'
     timeout: 20000
 - takeScreenshot: 47-records-and-body
+# PG-11: the body-weight change always says its span ("+3.6 kg" over "in 90 days", or "since
+# 13 Jul 2025" for a long one). It sits above the Measurements row.
+- scrollUntilVisible:
+    element: '(in \d+ days?|since \d{1,2} [A-Z][a-z]{2} \d{4})'
+    direction: UP
+    timeout: 15000
+- takeScreenshot: 47b-body-weight-span
+# Audit Phase 3 (D10): the link no longer carries a count ("See all records"); the records page
+# counts LIFTS in its subtitle ("5 lifts beat their best · every record, newest first"). The
+# link shows only with more than 6 records; it sits just above the body-weight card.
+- scrollUntilVisible:
+    element: 'See all records'
+    direction: UP
+    timeout: 10000
+    optional: true
 - runFlow:
     when:
-      visible: 'See all \d+ records'
+      visible: 'See all records'
     commands:
-      - tapOn: 'See all \d+ records'
+      - tapOn: 'See all records'
       - extendedWaitUntil:
           visible: 'Personal records'
           timeout: 15000
+      - assertVisible: '[\d,]+ lifts? beat (its|their) best · every record, newest first'
       - takeScreenshot: 48-all-records
       - back
+# ---------------------------------------------------------------- volume + streak (Phase 3 numbers)
+# PG-22: the range's volume is a full number grouped the phone's way. The demo's 13 weeks lift
+# well over 100,000 kg, so on this en-US phone it must read "650,000 kg lifted" (Western), never
+# "6,50,000" (Indian) or "650k".
+- scrollUntilVisible:
+    element: '[\d,]+ kg lifted'
+    centerElement: true
+    timeout: 20000
+- assertVisible: '\d{1,3}(,\d{3})* kg lifted'
+- assertNotVisible: '(?s).*\d,\d\d,\d\d\d.*'
+- takeScreenshot: 48b-volume-western-grouping
+# D9: Progress shows THE streak in weeks, the same rule as Home and History.
+- scrollUntilVisible:
+    element: '\d+-week streak.*'
+    centerElement: true
+    timeout: 20000
+- assertNotVisible: '(?i).*day streak.*'
+- takeScreenshot: 48c-progress-week-streak
 # ---------------------------------------------------------------- measurements
 - scrollUntilVisible:
     element: 'Measurements\..*'
+    direction: UP
     timeout: 20000
 - tapOn: 'Measurements\..*'
 - extendedWaitUntil:

@@ -4,6 +4,11 @@
  * A folder's menu follows it, turns easy weeks on or off, adds a routine, renames, shares or
  * deletes it. Ready programs and the plan builder start here too; "+" adds a routine, a
  * folder, or a routine file someone shared.
+ *
+ * Audit Phase 4: routines are compact rows with a small Start, as in Hevy (tap a row for a calm
+ * preview); "Reorder" moves routines inside a folder and folders in the list (RP-07 — in the
+ * followed folder the order IS the rotation); a new routine asks where it goes and never joins
+ * the plan by itself (RP-08); the same file imported again offers to update its folder (RP-18).
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
@@ -12,20 +17,31 @@ import { Alert, Pressable, Text, View } from 'react-native';
 import { Badge, EmptyState, GhostButton, Icon, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import type { IconName } from '@/components/ui';
-import type { PlanDayFull } from '@/db/repos/planRepo';
 import { todayISO } from '@/lib/date';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';
+import { tap } from '@/lib/haptics';
 import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 
+import { FolderPickerSheet } from '@/tracker/components/FolderPickerSheet';
 import { NameSheet } from '@/tracker/components/NameSheet';
 import { ShareRoutineSheet } from '@/tracker/components/ShareRoutineSheet';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
-import { createFolder, deleteFolder, followFolder, listFolders, renameFolder, type Folder } from '@/tracker/db/folderRepo';
-import { createRoutine } from '@/tracker/db/routineRepo';
+import {
+  createFolder,
+  deleteFolder,
+  followFolder,
+  listFolders,
+  reorderFolders,
+  renameFolder,
+  type Folder,
+  type RoutineFull,
+} from '@/tracker/db/folderRepo';
+import { createRoutine, reorderRoutines } from '@/tracker/db/routineRepo';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { deleteFolderMessage, getPlanNow, moveEasyWeek, planLine, setEasyWeeks, showNoRoutinesYet, type PlanNow } from '@/tracker/services/planState';
+import type { ExistingChoice } from '@/tracker/services/plansService';
 import { pickAndImportRoutineFile } from '@/tracker/services/routineShare';
 import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
@@ -55,47 +71,114 @@ function EntryCard({ icon, title, sub, onPress }: { icon: IconName; title: strin
   );
 }
 
-function RoutineCard({ r, onOpen, onStart, error }: { r: PlanDayFull; onOpen: () => void; onStart: () => void; error?: string | null }) {
-  return (
+/** Up / down for reorder mode — 48 dp targets (the icon set has no vertical chevron: rotate). */
+function MoveButtons({ name, first, last, onMove }: { name: string; first: boolean; last: boolean; onMove: (dir: -1 | 1) => void }) {
+  const btn = (dir: -1 | 1, disabled: boolean) => (
     <Pressable
-      onPress={onOpen}
-      style={{
-        backgroundColor: color.surface,
-        borderRadius: radius.lg,
-        borderWidth: 1,
-        borderColor: color.border,
-        padding: space.lg,
-        gap: space.md,
+      onPress={() => {
+        if (disabled) return;
+        tap();
+        onMove(dir);
       }}
       accessibilityRole="button"
-      accessibilityLabel={`Edit ${r.name}`}
+      accessibilityState={{ disabled }}
+      accessibilityLabel={`Move ${name} ${dir === -1 ? 'up' : 'down'}`}
+      style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center' }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-        <View style={{ flex: 1 }}>
-          <Text numberOfLines={1} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-            {r.name}
-          </Text>
-          <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-            <Badge label={dayTypeLabel(r.dayType)} tone="accent" />
-            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
-              {countWord(r.exercises.length, 'exercise')}
-            </Text>
-          </View>
-        </View>
-        <Icon name="chevron-right" size={20} color={color.inkMuted} />
+      <View style={{ transform: [{ rotate: dir === -1 ? '-90deg' : '90deg' }] }}>
+        <Icon name="chevron-right" size={20} color={disabled ? color.inkDisabled : color.accent} />
       </View>
-      {r.exercises.length > 0 ? (
-        <View style={{ gap: space.sm }}>
-          <GhostButton label="Start routine" icon="dumbbell" onPress={onStart} />
-          <InlineError message={error} />
-        </View>
-      ) : (
-        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
-          Add exercises to start this routine.
-        </Text>
-      )}
     </Pressable>
   );
+  return (
+    <View style={{ flexDirection: 'row', gap: space.xs }}>
+      {btn(-1, first)}
+      {btn(1, last)}
+    </View>
+  );
+}
+
+/** A compact routine row (Hevy style): name and facts, a small Start on the right. */
+function RoutineRow({
+  r,
+  divider,
+  reordering,
+  first,
+  last,
+  onOpen,
+  onStart,
+  onMove,
+  error,
+}: {
+  r: RoutineFull;
+  divider: boolean;
+  reordering: boolean;
+  first: boolean;
+  last: boolean;
+  onOpen: () => void;
+  onStart: () => void;
+  onMove: (dir: -1 | 1) => void;
+  error?: string | null;
+}) {
+  const facts = r.exercises.length > 0 ? `${countWord(r.exercises.length, 'exercise')} · ${dayTypeLabel(r.dayType)}` : 'No exercises yet';
+  return (
+    <View style={{ borderTopWidth: divider ? 1 : 0, borderTopColor: color.border }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 64, paddingLeft: space.md, paddingRight: space.sm }}>
+        <Pressable
+          onPress={reordering ? undefined : onOpen}
+          disabled={reordering}
+          accessibilityRole="button"
+          accessibilityLabel={`${r.name}, ${facts}`}
+          accessibilityHint="Shows the routine"
+          style={{ flex: 1, minHeight: 56, justifyContent: 'center' }}
+        >
+          <Text numberOfLines={1} style={{ fontFamily: type.heading, fontSize: type.size.sub, color: color.ink }}>
+            {r.name}
+          </Text>
+          <Text numberOfLines={1} style={{ marginTop: 2, fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
+            {facts}
+          </Text>
+        </Pressable>
+        {reordering ? (
+          <MoveButtons name={r.name} first={first} last={last} onMove={onMove} />
+        ) : r.exercises.length > 0 ? (
+          <Pressable
+            onPress={onStart}
+            accessibilityRole="button"
+            accessibilityLabel={`Start ${r.name}`}
+            hitSlop={4}
+            style={({ pressed }) => ({
+              minHeight: 44,
+              minWidth: 76,
+              paddingHorizontal: space.md,
+              borderRadius: radius.pill,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: pressed ? color.accentSoft : color.surfaceRaised,
+              borderWidth: 1,
+              borderColor: color.accent,
+            })}
+          >
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Start</Text>
+          </Pressable>
+        ) : null}
+      </View>
+      {error ? (
+        <View style={{ paddingHorizontal: space.md, paddingBottom: space.sm }}>
+          <InlineError message={error} />
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+/** Swap two neighbours in a list (pure helper for the reorder buttons). */
+function moved<T>(list: readonly T[], index: number, dir: -1 | 1): T[] {
+  const next = index + dir;
+  if (next < 0 || next >= list.length) return [...list];
+  const out = [...list];
+  [out[index], out[next]] = [out[next], out[index]];
+  return out;
 }
 
 export default function RoutinesScreen() {
@@ -117,6 +200,12 @@ export default function RoutinesScreen() {
   const [addMenu, setAddMenu] = useState(false);
   const [naming, setNaming] = useState<{ mode: 'new' } | { mode: 'rename'; folder: Folder } | null>(null);
   const [sharing, setSharing] = useState<Folder | null>(null);
+  /** RP-07: reorder mode — up/down on routines and folders instead of Start. */
+  const [reordering, setReordering] = useState(false);
+  /** RP-08: where a new routine goes. */
+  const [picking, setPicking] = useState(false);
+  /** RP-18: the same file again — update its folder or add a copy. */
+  const [existing, setExisting] = useState<{ name: string; resolve: (c: ExistingChoice | null) => void } | null>(null);
 
   const reload = useCallback(() => {
     let alive = true;
@@ -148,13 +237,15 @@ export default function RoutinesScreen() {
   const after = (fn: () => void): void => {
     setMenuFor(null);
     setAddMenu(false);
+    setPicking(false);
     setTimeout(fn, 260);
   };
 
-  const isOpen = (f: Folder): boolean => open[f.id] ?? f.following;
+  const isOpen = (f: Folder): boolean => reordering || (open[f.id] ?? f.following);
 
   const onNewRoutine = async (folderId: string | null): Promise<void> => {
     try {
+      // RP-08: no folder given → "My routines" (not followed), never the plan by itself.
       const id = await createRoutine({ name: 'New routine', dayType: 'full', folderId });
       router.push(`/routines/${id}`);
     } catch {
@@ -186,17 +277,31 @@ export default function RoutinesScreen() {
 
   const onImport = async (): Promise<void> => {
     try {
-      const res = await pickAndImportRoutineFile();
+      const res = await pickAndImportRoutineFile(
+        (name) =>
+          new Promise<ExistingChoice | null>((resolve) => {
+            setExisting({ name, resolve });
+          }),
+      );
       if (!res) return;
       setOpen((o) => ({ ...o, [res.folderId]: true }));
       reload();
       const lines: string[] = [];
       if (res.added.length > 0) lines.push(`New in your library: ${res.added.join(', ')}.`);
       if (res.skipped.length > 0) lines.push(`Left out (no muscles in the file): ${res.skipped.join(', ')}.`);
-      Alert.alert('Routines added', lines.length > 0 ? lines.join('\n\n') : 'They are in a new folder.');
+      Alert.alert(
+        res.updated ? 'Folder updated' : 'Routines added',
+        lines.length > 0 ? lines.join('\n\n') : res.updated ? 'You had this file already, so its folder was updated.' : 'They are in a new folder.',
+      );
     } catch (e) {
       Alert.alert('Could not open that file', e instanceof Error ? e.message : 'Please try again.');
     }
+  };
+
+  const answerExisting = (c: ExistingChoice | null): void => {
+    const e = existing;
+    setExisting(null);
+    e?.resolve(c);
   };
 
   const confirmDelete = (f: Folder): void => {
@@ -215,18 +320,57 @@ export default function RoutinesScreen() {
     );
   };
 
-  const followedId = folders?.find((f) => f.following)?.id ?? null;
+  /** RP-07: move a routine inside its folder — saved at once; a failed save says so. */
+  const onMoveRoutine = (f: Folder, index: number, dir: -1 | 1): void => {
+    if (!folders) return;
+    const routines = moved(f.routines, index, dir);
+    setFolders(folders.map((x) => (x.id === f.id ? { ...x, routines } : x)));
+    reorderRoutines(routines.map((r) => r.id)).catch(() => {
+      Alert.alert('Could not save the new order', 'Please try again.');
+      reload();
+    });
+  };
+
+  /** RP-07: move a folder in the list (the followed one always stays first). */
+  const onMoveFolder = (index: number, dir: -1 | 1): void => {
+    if (!folders) return;
+    const lead = folders.filter((f) => f.following);
+    const rest = moved(folders.filter((f) => !f.following), index, dir);
+    setFolders([...lead, ...rest]);
+    reorderFolders(rest.map((f) => f.id)).catch(() => {
+      Alert.alert('Could not save the new order', 'Please try again.');
+      reload();
+    });
+  };
+
+  const others = folders?.filter((f) => !f.following) ?? [];
+  const canReorder = (folders ?? []).some((f) => f.routines.length > 1) || others.length > 1;
 
   return (
     <Screen
       title="Routines"
-      subtitle="Start any routine in a tap."
-      right={<IconButton icon="plus" onPress={() => setAddMenu(true)} accessibilityLabel="Add a routine, folder or file" />}
+      subtitle={reordering ? 'Move routines and folders. Your plan goes in this order.' : 'Start any routine in a tap.'}
+      right={
+        reordering ? (
+          <Pressable
+            onPress={() => setReordering(false)}
+            accessibilityRole="button"
+            accessibilityLabel="Done reordering"
+            style={{ minHeight: 48, minWidth: 64, paddingHorizontal: space.md, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.accent }}>Done</Text>
+          </Pressable>
+        ) : (
+          <IconButton icon="plus" onPress={() => setAddMenu(true)} accessibilityLabel="Add a routine, folder or file" />
+        )
+      }
     >
-      <View style={{ flexDirection: 'row', gap: space.md, marginBottom: space.lg }}>
-        <EntryCard icon="trophy" title="Ready programs" sub="Gym, dumbbells or home, beginner to advanced" onPress={() => router.push('/programs')} />
-        <EntryCard icon="sparkle" title="Build a plan" sub="From your goal, days, equipment and sore spots" onPress={() => router.push('/plan/build')} />
-      </View>
+      {!reordering ? (
+        <View style={{ flexDirection: 'row', gap: space.md, marginBottom: space.lg }}>
+          <EntryCard icon="trophy" title="Ready programs" sub="Gym, dumbbells or home, beginner to advanced" onPress={() => router.push('/programs')} />
+          <EntryCard icon="sparkle" title="Build a plan" sub="From your goal, days, equipment and sore spots" onPress={() => router.push('/plan/build')} />
+        </View>
+      ) : null}
 
       {folders == null && loadFailed ? (
         <LoadError what="your routines" onRetry={retryLoad} />
@@ -245,20 +389,24 @@ export default function RoutinesScreen() {
           {folders.map((f) => {
             const shown = isOpen(f);
             const line = f.following ? planLine(plan) : null;
+            const otherIndex = others.findIndex((x) => x.id === f.id);
             return (
-              <View key={f.id} style={{ gap: space.md }}>
+              <View key={f.id} style={{ gap: space.sm }}>
                 {/* the heading is the fact and never folds: name, count, following */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
                   <Pressable
                     onPress={() => setOpen((o) => ({ ...o, [f.id]: !shown }))}
+                    disabled={reordering}
                     accessibilityRole="button"
                     accessibilityState={{ expanded: shown }}
                     accessibilityLabel={`${f.name}, ${countWord(f.routines.length, 'routine')}${f.following ? ', your plan' : ''}${line ? `, ${line}` : ''}`}
                     style={{ flex: 1, minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: space.sm }}
                   >
-                    <View style={{ transform: [{ rotate: shown ? '90deg' : '0deg' }] }}>
-                      <Icon name="chevron-right" size={18} color={color.inkMuted} />
-                    </View>
+                    {!reordering ? (
+                      <View style={{ transform: [{ rotate: shown ? '90deg' : '0deg' }] }}>
+                        <Icon name="chevron-right" size={18} color={color.inkMuted} />
+                      </View>
+                    ) : null}
                     <View style={{ flex: 1 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
                         <Text numberOfLines={1} style={{ flexShrink: 1, fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
@@ -271,32 +419,54 @@ export default function RoutinesScreen() {
                       </Text>
                     </View>
                   </Pressable>
-                  <Pressable
-                    onPress={() => setMenuFor(f)}
-                    hitSlop={8}
-                    accessibilityRole="button"
-                    accessibilityLabel={`More for ${f.name}`}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: radius.pill,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: color.surfaceRaised,
-                      borderWidth: 1,
-                      borderColor: color.border,
-                    }}
-                  >
-                    <Glyph name="more" size={20} color={color.inkSecondary} />
-                  </Pressable>
+                  {reordering ? (
+                    otherIndex >= 0 && others.length > 1 ? (
+                      <MoveButtons name={f.name} first={otherIndex === 0} last={otherIndex === others.length - 1} onMove={(dir) => onMoveFolder(otherIndex, dir)} />
+                    ) : null
+                  ) : (
+                    <Pressable
+                      onPress={() => setMenuFor(f)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel={`More for ${f.name}`}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: radius.pill,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: color.surfaceRaised,
+                        borderWidth: 1,
+                        borderColor: color.border,
+                      }}
+                    >
+                      <Glyph name="more" size={20} color={color.inkSecondary} />
+                    </Pressable>
+                  )}
                 </View>
+                {f.following && reordering && f.routines.length > 1 ? (
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>Today goes in this order.</Text>
+                ) : null}
                 {shown ? (
                   f.routines.length === 0 ? (
-                    <GhostButton label="Add a routine" icon="plus" onPress={() => void onNewRoutine(f.id)} />
+                    reordering ? null : <GhostButton label="Add a routine" icon="plus" onPress={() => void onNewRoutine(f.id)} />
                   ) : (
-                    f.routines.map((r) => (
-                      <RoutineCard key={r.id} r={r} onOpen={() => router.push(`/routines/${r.id}`)} onStart={() => void onStart(r.id)} error={startError?.dayId === r.id ? startError.message : null} />
-                    ))
+                    <View style={{ backgroundColor: color.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: color.border, overflow: 'hidden' }}>
+                      {f.routines.map((r, i) => (
+                        <RoutineRow
+                          key={r.id}
+                          r={r}
+                          divider={i > 0}
+                          reordering={reordering}
+                          first={i === 0}
+                          last={i === f.routines.length - 1}
+                          onOpen={() => router.push(`/routines/view/${r.id}`)}
+                          onStart={() => void onStart(r.id)}
+                          onMove={(dir) => onMoveRoutine(f, i, dir)}
+                          error={startError?.dayId === r.id ? startError.message : null}
+                        />
+                      ))}
+                    </View>
                   )
                 ) : null}
               </View>
@@ -305,13 +475,35 @@ export default function RoutinesScreen() {
         </View>
       )}
 
-      {/* "+": a routine (into your plan), a folder, or a shared file */}
+      {/* "+": a routine (asks where — RP-08), a folder, or a shared file */}
       <TrackerSheet visible={addMenu} title="Add" onClose={() => setAddMenu(false)}>
-        <SheetRow label="New routine" leading={<Icon name="dumbbell" size={18} color={color.accent} />} onPress={() => after(() => void onNewRoutine(followedId))} />
+        <SheetRow label="New routine" leading={<Icon name="dumbbell" size={18} color={color.accent} />} onPress={() => after(() => setPicking(true))} />
         <SheetRow label="New folder" leading={<Glyph name="list" size={18} color={color.accent} />} onPress={() => after(() => setNaming({ mode: 'new' }))} />
         <SheetRow label="Import a routine file" leading={<Glyph name="image" size={18} color={color.accent} />} onPress={() => after(() => void onImport())} />
         {/* v0.29.0: routines copied exactly from a Hevy share link */}
         <SheetRow label="Import routines from Hevy" leading={<Icon name="globe" size={18} color={color.accent} />} onPress={() => after(() => router.push('/import/routines'))} />
+        {canReorder ? (
+          <SheetRow label="Reorder routines and folders" leading={<Glyph name="list" size={18} color={color.accent} />} onPress={() => after(() => setReordering(true))} />
+        ) : null}
+      </TrackerSheet>
+
+      <FolderPickerSheet
+        visible={picking}
+        title="Where should the routine go?"
+        folders={folders ?? []}
+        onClose={() => setPicking(false)}
+        onPick={(folderId) => after(() => void onNewRoutine(folderId))}
+      />
+
+      {/* RP-18: this file was imported before */}
+      <TrackerSheet
+        visible={existing != null}
+        title="You have this file already"
+        subtitle={existing ? `It is in "${existing.name}".` : undefined}
+        onClose={() => answerExisting(null)}
+      >
+        <SheetRow label="Update the existing folder" leading={<Icon name="check" size={18} color={color.accent} />} onPress={() => answerExisting('update')} />
+        <SheetRow label="Add a copy" leading={<Icon name="plus" size={18} color={color.accent} />} onPress={() => answerExisting('copy')} />
       </TrackerSheet>
 
       {/* a folder's menu */}
@@ -335,16 +527,17 @@ export default function RoutinesScreen() {
               leading={<Icon name="heart" size={18} color={color.accent} />}
               onPress={() => {
                 const f = menuFor;
-                after(() => void setEasyWeeks(f, !f.settings.easy).then(reload).catch(() => undefined));
+                after(() => void setEasyWeeks(f, !f.settings.easy).then(reload).catch(() => Alert.alert('Could not save', 'Please try again.')));
               }}
             />
             {menuFor.following && menuFor.settings.easy && plan && !plan.easy ? (
               <SheetRow
                 label="Take an easy week now"
+                value="7 days from today"
                 leading={<Icon name="clock" size={18} color={color.accent} />}
                 onPress={() => {
                   const f = menuFor;
-                  after(() => void moveEasyWeek(f, 'now').then(reload).catch(() => undefined));
+                  after(() => void moveEasyWeek(f, 'now').then(reload).catch(() => Alert.alert('Could not save', 'Please try again.')));
                 }}
               />
             ) : null}
@@ -354,11 +547,14 @@ export default function RoutinesScreen() {
                 leading={<Icon name="flame" size={18} color={color.accent} />}
                 onPress={() => {
                   const f = menuFor;
-                  after(() => void moveEasyWeek(f, 'skip').then(reload).catch(() => undefined));
+                  after(() => void moveEasyWeek(f, 'skip').then(reload).catch(() => Alert.alert('Could not save', 'Please try again.')));
                 }}
               />
             ) : null}
             <SheetRow label="Add a routine here" leading={<Icon name="plus" size={18} color={color.accent} />} onPress={() => { const f = menuFor; after(() => void onNewRoutine(f.id)); }} />
+            {menuFor.routines.length > 1 ? (
+              <SheetRow label="Reorder routines" leading={<Glyph name="list" size={18} color={color.accent} />} onPress={() => after(() => setReordering(true))} />
+            ) : null}
             <SheetRow label="Rename folder" leading={<Glyph name="pencil" size={18} color={color.accent} />} onPress={() => { const f = menuFor; after(() => setNaming({ mode: 'rename', folder: f })); }} />
             {menuFor.routines.length > 0 ? (
               <SheetRow label="Share folder" leading={<Icon name="send" size={18} color={color.accent} />} onPress={() => { const f = menuFor; after(() => setSharing(f)); }} />

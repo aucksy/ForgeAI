@@ -8,13 +8,16 @@ import { Pressable, Text, View } from 'react-native';
 
 import { Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
+import { shortDate } from '@/lib/date';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { EASY_REASON } from '../plans/easyWeek';
 import { Glyph } from './TrackerGlyph';
 
-export function EasyWeekNote() {
+/** `until`: the easy week's last day (RP-04: the end date is always on screen when known). */
+export function EasyWeekNote({ until }: { until?: string | null } = {}) {
   const [open, setOpen] = useState(false);
+  const end = until ? ` Until ${shortDate(until)}.` : '';
   return (
     <View style={{ borderRadius: radius.md, backgroundColor: color.accentSoft, paddingHorizontal: space.md }}>
       <Pressable
@@ -23,13 +26,13 @@ export function EasyWeekNote() {
           setOpen((o) => !o);
         }}
         accessibilityRole="button"
-        accessibilityLabel="Easy week: half the sets, the same weights. More information"
+        accessibilityLabel={`Easy week: half the sets, the same weights.${end} More information`}
         accessibilityState={{ expanded: open }}
         style={{ minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: space.sm }}
       >
         <Icon name="heart" size={16} color={color.accentBright} />
         <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accentBright }}>
-          Easy week: half the sets, the same weights.
+          Easy week: half the sets, the same weights.{end}
         </Text>
         <Glyph name="info" size={18} color={open ? color.accentBright : color.inkMuted} />
       </Pressable>

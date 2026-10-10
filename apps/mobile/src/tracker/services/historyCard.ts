@@ -32,15 +32,12 @@ export interface HistoryCardFacts {
 }
 
 /**
- * The start as the member saw it on the clock: an imported start (a whole second whose UTC day
- * is the workout's day) is clock time written as UTC. Same rule as Health Connect's `realStart`.
+ * The start as the member saw it on the clock. Audit IM-07: every stored start is the real moment
+ * now (older imports were moved once at start-up, `importClockRepair`), so it is the start
+ * itself. Same rule as Health Connect's `realStart`. PURE.
  */
-export function shownStart(startedAt: number, dateISO: string): number {
-  if (startedAt % 1000 !== 0) return startedAt;
-  const d = new Date(startedAt);
-  const utcDay = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
-  if (utcDay !== dateISO) return startedAt;
-  return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()).getTime();
+export function shownStart(startedAt: number, _dateISO?: string): number {
+  return startedAt;
 }
 
 export function historyCardFacts(

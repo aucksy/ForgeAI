@@ -39,6 +39,16 @@ appId: com.forgeai.app
     visible: "Add exercise"
     timeout: 20000
 - tapOn: "Add exercise"
+# Audit Phase 4 (EX-06): the one exercise list — with nothing typed, the last workouts' exercises
+# come first under "Recent" (parts C and E logged some today), then "All exercises".
+- extendedWaitUntil:
+    visible: "(?i)^recent$"
+    timeout: 15000
+- assertVisible: "All muscles"
+- takeScreenshot: 71b-add-exercise-recent
+- scrollUntilVisible:
+    element: "(?i)^all exercises$"
+    timeout: 15000
 - tapOn: "Search exercises"
 - inputText: " treadmill"
 - hideKeyboard
@@ -112,6 +122,11 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+# Audit Phase 3 (D10): the finish line counts LIFTS that beat a best — the run is one lift, even
+# if it set more than one kind of record ("… · 1 lift beat its best").
+- extendedWaitUntil:
+    visible: '.* · 1 lift beat its best'
+    timeout: 15000
 # LW-21: the records fold shut under "New records": open them before looking for Best pace.
 - scrollUntilVisible:
     element: "New records"

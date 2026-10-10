@@ -25,6 +25,10 @@ vi.mock('@/tracker/db/folderRepo', async () => {
     },
     folderOfRoutine: async () => h.folder,
     followedFolder: async () => h.folder,
+    // RP-18: nothing was added before in these tests (the real lookups are tested on SQLite).
+    programFolder: async () => null,
+    fileFolder: async () => null,
+    refillFolder: async () => 'refilled',
   };
 });
 vi.mock('@/tracker/db/customExercise', () => ({
@@ -62,7 +66,8 @@ describe('ready programs and built plans become folders', () => {
     await addProgram('gym_full_body_beginner', { follow: true, easyWeeks: true });
     await addProgram('gym_full_body_beginner', { follow: false, easyWeeks: false });
     const [on, off] = h.folders;
-    expect(on.opts).toEqual({ source: 'program', settings: { program: 'gym_full_body_beginner', easy: { every: 6, base: 0 } }, follow: true, todayISO: '2026-10-07' });
+    // RP-06: the plan remembers its days a week (3 for this program of 2 routines).
+    expect(on.opts).toEqual({ source: 'program', settings: { program: 'gym_full_body_beginner', easy: { every: 6, base: 0 }, daysPerWeek: 3 }, follow: true, todayISO: '2026-10-07' });
     expect(off.opts).toMatchObject({ follow: false, settings: { easy: null } });
     for (const r of on.routines as Routine[]) {
       expect(r.exercises.length).toBeGreaterThan(0);
@@ -80,7 +85,7 @@ describe('ready programs and built plans become folders', () => {
     await saveBuiltPlan(plan, input, { follow: true, easyWeeks: false });
     const [f] = h.folders;
     expect(f.name).toBe(plan.name);
-    expect(f.opts).toMatchObject({ source: 'builder', settings: { builder: input, easy: null }, follow: true });
+    expect(f.opts).toMatchObject({ source: 'builder', settings: { builder: input, easy: null, daysPerWeek: input.days }, follow: true });
     expect((f.routines as Routine[]).map((r) => r.exercises.length)).toEqual(plan.routines.map((r) => r.exercises.length));
   });
 });
@@ -123,7 +128,8 @@ describe('opening a shared routine file', () => {
     expect(h.custom[0]).toMatchObject({ name: 'Secret Move', logType: 'reps', muscles: { primary: ['chest'], secondary: [] } });
     const [f] = h.folders;
     expect(f.name).toBe('From Sam');
-    expect(f.opts).toEqual({ source: 'import', settings: {} });
+    // RP-18: the folder remembers which file it came from.
+    expect(f.opts).toEqual({ source: 'import', settings: { fromFile: expect.stringMatching(/^[a-z0-9]+$/) } });
     const ids = (f.routines as Routine[])[0].exercises.map((x) => x.exerciseId);
     expect(ids).toEqual(['lib-barbell_bench_press', `lib-${catalogEntryByName('Bench Press (Barbell)')!.key}`, 'own-1', 'own-new-1', 'own-new-1']);
   });

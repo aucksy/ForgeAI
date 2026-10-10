@@ -18,6 +18,9 @@
  */
 import type { DayType } from '@/types/models';
 
+import type { LogType } from '../engine/logTypes';
+import type { PlanSet } from '../plans/routineSets';
+
 /** The parts of a parsed export this needs (Hevy's and Strong's parsers both give it). */
 export interface RebuildWorkout {
   title: string;
@@ -41,7 +44,27 @@ export interface FoundExercise {
   lastISO: string;
   /** In the last workout of this name: ticked. Otherwise offered ("Also done in …"). */
   ticked: boolean;
+  /**
+   * Phase 4 (IM-12): what tells this row apart in its routine, when the title does not — a
+   * routine copied from a Hevy link may hold the same exercise twice (a back-off block at the
+   * end). Absent = the title.
+   */
+  key?: string;
+  /** Phase 4 (IM-02): each set's type and target, as saved in Hevy (warm-ups stay warm-ups). */
+  setList?: PlanSet[] | null;
+  /** Phase 4 (IM-22): the routine's own rest for this exercise (Hevy's per-exercise rest). */
+  restSec?: number | null;
+  /** Superset group within the routine (rows with the same number go together). */
+  supersetGroup?: number | null;
+  note?: string | null;
+  /** Hevy says it is timed (a hold, cardio): no rep target. */
+  timed?: boolean;
+  /** How a new exercise of this name is logged, when the source says (Hevy's exercise type). */
+  logType?: LogType | null;
 }
+
+/** The key a row is ticked by in the steps. PURE. */
+export const rowKey = (e: Pick<FoundExercise, 'key' | 'title'>): string => e.key ?? e.title;
 
 export interface FoundRoutine {
   title: string;
@@ -58,18 +81,104 @@ export const MIN_ROUTINE_USES = 3;
 export const SUGGEST_MAX = 5;
 const RECENT_DAYS = 365;
 
+// IM-14: the words an app's own name for an empty workout is made of, in the languages Hevy and
+// Strong ship ("Entrenamiento de mañana", "Morgentraining", "Утренняя тренировка", "朝のワークアウト").
+const TIME_WORDS = new Set(
+  (
+    'early late morning afternoon evening night midday noon lunch lunchtime ' +
+    'mañana manana tarde noche mediodía mediodia matutino matutina vespertino vespertina nocturno nocturna madrugada ' +
+    'morgen morgens früh frueh vormittag vormittags mittag mittags nachmittag nachmittags abend abends nacht nachts ' +
+    'matin matinal matinale matinée matinee après-midi apres-midi aprèm soir soirée soiree midi nuit ' +
+    'mattina mattino mattutino mattutina pomeriggio pomeridiano pomeridiana sera serale notte notturno notturna ' +
+    'manhã manha noite matinal ' +
+    'ochtend middag avond nacht ' +
+    'утренняя утренняя утро дневная день вечерняя вечер ночная ночь ' +
+    'poranny poranna popołudniowy popołudniowa wieczorny wieczorna nocny nocna ' +
+    'sabah öğle öğleden ogleden sonra akşam aksam gece ' +
+    'morgon eftermiddag kväll kvall natt formiddag ettermiddag kveld aften ' +
+    'pagi siang sore malam ' +
+    'सुबह दोपहर शाम रात'
+  ).split(' '),
+);
+const WORKOUT_WORDS = new Set(
+  (
+    'workout workouts training session ' +
+    'entrenamiento entreno sesión sesion rutina ' +
+    'training trainingseinheit einheit workout ' +
+    'entraînement entrainement séance seance ' +
+    'allenamento sessione ' +
+    'treino sessão sessao ' +
+    'training ' +
+    'тренировка ' +
+    'trening ' +
+    'antrenman antrenmanı antrenmani ' +
+    'träning traening trening økt ' +
+    'latihan ' +
+    'वर्कआउट कसरत'
+  ).split(' '),
+);
+const FILLER_WORDS = new Set('de del la le du da do della di am im der die das the of in en a al my mi mon ma mein meine il o um uma ein eine'.split(' '));
+const CJK_TIME = ['朝の', '午前の', '昼の', '午後の', '夕方の', '夜の', '朝', '午後', '夜', '아침', '오전', '오후', '저녁', '밤', '早晨', '早上', '上午', '中午', '下午', '晚上', '夜间'];
+const CJK_WORKOUT = ['ワークアウト', 'トレーニング', '운동', '워크아웃', '锻炼', '鍛鍊', '训练', '訓練', '健身'];
+
+/** "Morgentraining" = "morgen" + "training" ("Nachmittagstraining" with its joining s). */
+function isCompound(w: string): boolean {
+  for (const wk of WORKOUT_WORDS) {
+    if (wk.length < 4 || !w.endsWith(wk) || w.length === wk.length) continue;
+    let head = w.slice(0, w.length - wk.length).replace(/-$/, '');
+    if (TIME_WORDS.has(head)) return true;
+    if (head.endsWith('s')) head = head.slice(0, -1);
+    if (TIME_WORDS.has(head)) return true;
+  }
+  return false;
+}
+
 /**
  * An app's own name for a workout started empty: Hevy names it by the time of day ("Morning
  * workout ☀️", "Afternoon workout 💪" — the emoji is stripped on import), Strong the same
- * ("Evening Workout"); plain "Workout" / "New workout" / "Quick workout" too.
+ * ("Evening Workout"); plain "Workout" / "New workout" / "Quick workout" too. IM-14: in every
+ * language the apps ship — a name made only of a time of day and a word for workout.
  */
 export function isDefaultWorkoutName(title: string): boolean {
   const t = title.toLowerCase().replace(/[^a-z ]+/g, ' ').replace(/\s+/g, ' ').trim();
-  return (
-    t === '' ||
+  if (
     /^(early |late )?(morning|afternoon|evening|night|midday|noon|lunch|lunchtime|late night) workout$/.test(t) ||
     /^(workout|new workout|empty workout|quick workout|quick start|my workout)$/.test(t)
-  );
+  ) {
+    return true;
+  }
+  const raw = title
+    .toLowerCase()
+    .replace(/[.,!?:;"“”«»()[\]{}_\/\\|*#~+=]+/g, ' ')
+    .replace(/[’']/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (raw === '') return t === '';
+  let workout = false;
+  for (const w of raw.split(' ')) {
+    if (WORKOUT_WORDS.has(w)) {
+      workout = true;
+      continue;
+    }
+    if (TIME_WORDS.has(w) || FILLER_WORDS.has(w) || CJK_TIME.includes(w)) continue;
+    if (CJK_WORKOUT.includes(w)) {
+      workout = true;
+      continue;
+    }
+    if (isCompound(w)) {
+      workout = true;
+      continue;
+    }
+    // Japanese, Korean, Chinese: no spaces — the time and workout words run together.
+    let rest = w;
+    let cjk = false;
+    for (const k of CJK_WORKOUT) if (rest.includes(k)) [rest, cjk] = [rest.split(k).join(''), true];
+    if (!cjk) return false;
+    for (const k of CJK_TIME) rest = rest.split(k).join('');
+    if (rest.replace(/の/g, '') !== '') return false;
+    workout = true;
+  }
+  return workout;
 }
 
 const keyOf = (title: string): string => title.toLowerCase().trim().replace(/\s+/g, ' ');
@@ -186,6 +295,56 @@ function orderRoutines(found: FoundRoutine[], sorted: readonly RebuildWorkout[],
 }
 
 /**
+ * IM-03: the member's real rotation of `names`, from their workouts: the routine done most in
+ * the recent stretch first, then each time the one that most often came next ("Push 1, Pull 1,
+ * Push 2, Pull 2"). Only the most recent stretch counts (the last `rounds` rounds of the
+ * folder), so an old rotation does not decide. Names not done in that stretch follow, in the
+ * order given. Null when fewer than 2 of the names were done in it (nothing to go by). PURE.
+ */
+export function rotationOrder(
+  names: readonly string[],
+  history: readonly Pick<RebuildWorkout, 'title' | 'dateISO'>[],
+  rounds = 4,
+): string[] | null {
+  const keys = new Map<string, string>();
+  for (const n of names) if (!keys.has(keyOf(n))) keys.set(keyOf(n), n);
+  const all = [...history]
+    .map((w, i) => ({ k: keyOf(w.title), iso: w.dateISO, i }))
+    .filter((w) => keys.has(w.k))
+    .sort((a, b) => (a.iso < b.iso ? -1 : a.iso > b.iso ? 1 : a.i - b.i));
+  const seq = all.slice(-Math.max(2, rounds * keys.size)).map((w) => w.k);
+  const uses = new Map<string, number>();
+  const firstAt = new Map<string, number>();
+  seq.forEach((k, i) => {
+    uses.set(k, (uses.get(k) ?? 0) + 1);
+    if (!firstAt.has(k)) firstAt.set(k, i);
+  });
+  if (uses.size < 2) return null;
+  const next = new Map<string, { n: number; last: number }>();
+  for (let i = 1; i < seq.length; i++) {
+    if (seq[i] === seq[i - 1]) continue;
+    const t = `${seq[i - 1]}>${seq[i]}`;
+    next.set(t, { n: (next.get(t)?.n ?? 0) + 1, last: i });
+  }
+  const done = [...uses.keys()].sort((a, b) => (uses.get(b) ?? 0) - (uses.get(a) ?? 0) || (firstAt.get(a) ?? 0) - (firstAt.get(b) ?? 0));
+  const out: string[] = [];
+  let cur = done.shift();
+  while (cur) {
+    out.push(cur);
+    let best = -1;
+    let bestN = 0;
+    let bestLast = -1;
+    done.forEach((k, i) => {
+      const t = next.get(`${cur}>${k}`);
+      if (t && (t.n > bestN || (t.n === bestN && t.last > bestLast))) [best, bestN, bestLast] = [i, t.n, t.last];
+    });
+    cur = best >= 0 ? done.splice(best, 1)[0] : done.shift();
+  }
+  const rest = [...keys.keys()].filter((k) => !uses.has(k));
+  return [...out, ...rest].map((k) => keys.get(k) as string);
+}
+
+/**
  * The routine after the newest workout that was one of `order` (wrapping round): what "Today"
  * shows once the folder is followed. Null when none of them was ever done.
  */
@@ -211,7 +370,7 @@ export function chosenRoutines(
     .filter((r) => keep.has(r.title))
     .map((r) => {
       const t = ticks.get(r.title);
-      return { title: r.title, dayType: r.dayType, exercises: r.exercises.filter((e) => (t ? t.has(e.title) : e.ticked)) };
+      return { title: r.title, dayType: r.dayType, exercises: r.exercises.filter((e) => (t ? t.has(rowKey(e)) : e.ticked)) };
     })
     .filter((r) => r.exercises.length > 0);
 }

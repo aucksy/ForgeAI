@@ -22,6 +22,8 @@ import { useSettings } from '@/store/settingsStore';
 import { color, motion, radius, space, type } from '@/theme/tokens';
 import type { Goal, UnitSystem } from '@/types/models';
 
+import { choosePendingImport, SwitcherCard, type SwitchApp } from '@/tracker/components/SwitcherCard';
+
 import { countOwnWorkouts } from '../db/dataActions';
 import type { Experience, OnboardingDraft } from '../form';
 import { emptyDraft, validateOnboarding } from '../form';
@@ -134,6 +136,13 @@ export function WelcomeScreen() {
   // The app's own sheets: this screen renders before the navigator, so there is no ConfirmHost.
   const [problem, setProblem] = useState<string | null>(null);
   const [askDemo, setAskDemo] = useState(false);
+  // Audit Phase 4: a switcher's app — its import opens right after "Start training".
+  const [switchApp, setSwitchApp] = useState<SwitchApp | null>(null);
+  const pickSwitch = (app: SwitchApp): void => {
+    const next = switchApp === app ? null : app;
+    setSwitchApp(next);
+    choosePendingImport(next);
+  };
   // Phase 1 (DS-06): "Remove demo data" keeps the member's own workouts and lands here.
   const [kept, setKept] = useState(0);
   useEffect(() => {
@@ -175,6 +184,8 @@ export function WelcomeScreen() {
   const confirmDemo = (): void => {
     setAskDemo(false);
     if (useOnboarding.getState().busy) return; // re-check: the sheet sat open
+    // A "From Hevy / Strong" pick is for starting with their own history, not the demo.
+    choosePendingImport(null);
     void loadDemo().catch(() => {
       thud();
       setProblem('Could not load the demo. Please try again.');
@@ -351,6 +362,10 @@ export function WelcomeScreen() {
               <FieldError message={errFor('gymName')} />
             </Field>
           </Card>
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.duration(motion.slow).delay(150)} style={{ marginBottom: space.lg }}>
+          <SwitcherCard onPick={pickSwitch} selected={switchApp} later />
         </Animated.View>
 
         <Animated.View entering={FadeInDown.duration(motion.slow).delay(180)} style={{ gap: space.md }}>

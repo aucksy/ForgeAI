@@ -1,7 +1,7 @@
 [
   {
     "key": "pull_up",
-    "name": "Pull-up",
+    "name": "Pull-Up",
     "ek": "0087",
     "equipment": "bodyweight",
     "type": "reps",
@@ -40,7 +40,7 @@
   },
   {
     "key": "chin_up",
-    "name": "Chin-up",
+    "name": "Chin-Up",
     "ek": null,
     "equipment": "bodyweight",
     "type": "reps",
@@ -80,7 +80,7 @@
   },
   {
     "key": "assisted_pull_up",
-    "name": "Assisted Pull-up",
+    "name": "Assisted Pull-Up",
     "ek": null,
     "equipment": "machine",
     "type": "assisted",
@@ -119,7 +119,7 @@
   },
   {
     "key": "assisted_chin_up",
-    "name": "Assisted Chin-up",
+    "name": "Assisted Chin-Up",
     "ek": null,
     "equipment": "machine",
     "type": "assisted",
@@ -156,7 +156,7 @@
   },
   {
     "key": "weighted_pull_up",
-    "name": "Weighted Pull-up",
+    "name": "Weighted Pull-Up",
     "ek": null,
     "equipment": "other",
     "type": "weighted",
@@ -194,7 +194,7 @@
   },
   {
     "key": "weighted_chin_up",
-    "name": "Weighted Chin-up",
+    "name": "Weighted Chin-Up",
     "ek": null,
     "equipment": "other",
     "type": "weighted",
@@ -231,7 +231,7 @@
   },
   {
     "key": "negative_pull_up",
-    "name": "Negative Pull-up",
+    "name": "Negative Pull-Up",
     "ek": null,
     "equipment": "bodyweight",
     "type": "reps",
@@ -268,7 +268,7 @@
   },
   {
     "key": "band_assisted_pull_up",
-    "name": "Band-Assisted Pull-up",
+    "name": "Band-Assisted Pull-Up",
     "ek": null,
     "equipment": "other",
     "type": "assisted",
@@ -344,7 +344,7 @@
   },
   {
     "key": "muscle_up",
-    "name": "Muscle-up",
+    "name": "Muscle-Up",
     "ek": null,
     "equipment": "bodyweight",
     "type": "reps",
@@ -383,7 +383,7 @@
   },
   {
     "key": "neutral_grip_pull_up",
-    "name": "Neutral-Grip Pull-up",
+    "name": "Neutral-Grip Pull-Up",
     "ek": "0090",
     "equipment": "bodyweight",
     "type": "reps",
@@ -419,7 +419,7 @@
   },
   {
     "key": "wide_grip_pull_up",
-    "name": "Wide-Grip Pull-up",
+    "name": "Wide-Grip Pull-Up",
     "ek": "0091",
     "equipment": "bodyweight",
     "type": "reps",

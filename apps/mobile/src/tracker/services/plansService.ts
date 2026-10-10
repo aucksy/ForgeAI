@@ -14,16 +14,21 @@ import {
   createFolderWithRoutines,
   exerciseIdsByName,
   exerciseIdsForKeys,
+  fileFolder,
   folderOfRoutine,
   followedFolder,
+  programFolder,
+  refillFolder,
+  type Folder,
   type FolderSettings,
   type NewRoutine,
+  type RoutineFull,
 } from '../db/folderRepo';
 import type { BuilderInput, BuiltPlan, Level } from '../plans/builder';
 import { PLAN_EQUIPMENT, SORE_AREAS, type FitContext, type PlanEquipment, type SoreArea } from '../plans/fit';
 import { EASY_EVERY } from '../plans/easyWeek';
 import { programByKey, programRoutines, type ProgramEquipment } from '../plans/programs';
-import { makeRoutineFile, type RoutineFile, type SharedRoutine } from '../plans/routineFile';
+import { fileFingerprint, makeRoutineFile, type RoutineFile, type SharedRoutine } from '../plans/routineFile';
 
 const easySchedule = (on: boolean): FolderSettings['easy'] => (on ? { every: EASY_EVERY, base: 0 } : null);
 
@@ -40,14 +45,37 @@ async function withIds(routines: readonly { name: string; dayType: NewRoutine['d
   }));
 }
 
-/** Add a ready program as a folder; returns its id. */
-export async function addProgram(key: string, opts: { follow: boolean; easyWeeks: boolean }): Promise<string> {
+/**
+ * RP-18: what to do when the folder is already in the member's routines — "update" rewrites that
+ * folder in place (its routines keep their ids; followed when asked), "copy" adds a second one.
+ */
+export type ExistingChoice = 'update' | 'copy';
+
+/** RP-18: the folder this program was added as before, or null. */
+export function existingProgramFolder(key: string): Promise<Omit<Folder, 'routines'> | null> {
+  return programFolder(key);
+}
+
+/**
+ * Add a ready program as a folder; returns its id. Already in the routines (RP-18): updated in
+ * place unless the member chose to add a copy — the same program never silently makes two
+ * folders.
+ */
+export async function addProgram(key: string, opts: { follow: boolean; easyWeeks: boolean; existing?: ExistingChoice }): Promise<string> {
   const p = programByKey(key);
   if (!p) throw new Error('That program is not in this version of ForgeAI.');
   const routines = await withIds(programRoutines(p));
-  return createFolderWithRoutines(p.name, routines, {
+  // RP-06: the plan remembers its days a week (3 for a 3-day program of 2 routines).
+  const settings: FolderSettings = { program: p.key, easy: easySchedule(opts.easyWeeks), daysPerWeek: p.daysPerWeek };
+  const before = opts.existing === 'copy' ? null : await programFolder(p.key);
+  if (before) {
+    // An easy-week rhythm already running keeps its count.
+    const easy = opts.easyWeeks ? (before.settings.easy ?? settings.easy) : null;
+    return refillFolder(before, before.name, routines, { ...settings, easy }, { follow: opts.follow, todayISO: todayISO() });
+  }
+  return createFolderWithRoutines(opts.existing === 'copy' ? `${p.name} (copy)` : p.name, routines, {
     source: 'program',
-    settings: { program: p.key, easy: easySchedule(opts.easyWeeks) },
+    settings,
     follow: opts.follow,
     todayISO: todayISO(),
   });
@@ -58,14 +86,14 @@ export async function saveBuiltPlan(plan: BuiltPlan, input: BuilderInput, opts: 
   const routines = await withIds(plan.routines);
   return createFolderWithRoutines(plan.name, routines, {
     source: 'builder',
-    settings: { builder: { ...input }, easy: easySchedule(opts.easyWeeks) },
+    settings: { builder: { ...input }, easy: easySchedule(opts.easyWeeks), daysPerWeek: Math.max(1, Math.min(7, Math.round(input.days))) },
     follow: opts.follow,
     todayISO: todayISO(),
   });
 }
 
 /** The routines as a share file / text: names, library keys, sets, rep ranges, main muscles. */
-export async function sharedRoutinesOf(routines: readonly PlanDayFull[]): Promise<SharedRoutine[]> {
+export async function sharedRoutinesOf(routines: readonly (PlanDayFull | RoutineFull)[]): Promise<SharedRoutine[]> {
   const infos = await getTrackerExercisesByIds(routines.flatMap((r) => r.exercises.map((pe) => pe.exerciseId)));
   return routines.map((r) => ({
     name: r.name,
@@ -80,12 +108,17 @@ export async function sharedRoutinesOf(routines: readonly PlanDayFull[]): Promis
         repMin: pe.repRangeMin,
         repMax: pe.repRangeMax,
         primary: info ? [...info.muscles.primary] : [],
+        // RP-19: the routine's set types, rest, superset and note travel with it.
+        ...('sets' in pe && pe.sets ? { setList: pe.sets } : {}),
+        ...('restSec' in pe && pe.restSec != null ? { restSec: pe.restSec } : {}),
+        ...('supersetGroup' in pe && pe.supersetGroup != null ? { supersetGroup: pe.supersetGroup } : {}),
+        ...('note' in pe && pe.note ? { note: pe.note } : {}),
       };
     }),
   }));
 }
 
-export async function routineFileOf(folder: string | null, routines: readonly PlanDayFull[]): Promise<RoutineFile> {
+export async function routineFileOf(folder: string | null, routines: readonly (PlanDayFull | RoutineFull)[]): Promise<RoutineFile> {
   return makeRoutineFile(folder, await sharedRoutinesOf(routines));
 }
 
@@ -121,6 +154,13 @@ export interface ImportResult {
   added: string[];
   /** Exercises that could not be added (no muscles in the file). */
   skipped: string[];
+  /** RP-18: the file was imported before and that folder was updated (no second folder). */
+  updated?: boolean;
+}
+
+/** RP-18: the folder this file was imported into before, or null. */
+export function existingFileFolder(file: RoutineFile): Promise<Omit<Folder, 'routines'> | null> {
+  return fileFolder(fileFingerprint(file));
 }
 
 /**
@@ -128,7 +168,7 @@ export interface ImportResult {
  * with the same library key, else the same name; one only the sender had is added as the
  * member's own (its name, how it is logged and its main muscles come with the file).
  */
-export async function importRoutineFile(file: RoutineFile): Promise<ImportResult> {
+export async function importRoutineFile(file: RoutineFile, opts: { existing?: ExistingChoice } = {}): Promise<ImportResult> {
   const all = file.routines.flatMap((r) => r.exercises);
   const byKey = await exerciseIdsForKeys(all.flatMap((e) => (e.catalogKey ? [e.catalogKey] : [])));
   // A name that is a library name (or one of its link names) lands on that library exercise.
@@ -173,11 +213,29 @@ export async function importRoutineFile(file: RoutineFile): Promise<ImportResult
     const exercises: NewRoutine['exercises'] = [];
     for (const e of r.exercises) {
       const exerciseId = await idFor(e);
-      if (exerciseId) exercises.push({ exerciseId, sets: e.sets, repMin: e.repMin, repMax: e.repMax });
+      if (exerciseId) {
+        exercises.push({
+          exerciseId,
+          sets: e.sets,
+          repMin: e.repMin,
+          repMax: e.repMax,
+          setList: e.setList ?? null,
+          restSec: e.restSec ?? null,
+          supersetGroup: e.supersetGroup ?? null,
+          note: e.note ?? null,
+        });
+      }
     }
     routines.push({ name: r.name, dayType: r.dayType, exercises });
   }
   const name = file.folder ?? (file.routines.length === 1 ? file.routines[0].name : 'Shared routines');
-  const folderId = await createFolderWithRoutines(name, routines, { source: 'import', settings: {} });
+  // RP-18: the same file again updates the folder it made (unless the member asked for a copy).
+  const fromFile = fileFingerprint(file);
+  const before = opts.existing === 'copy' ? null : await fileFolder(fromFile);
+  if (before) {
+    await refillFolder(before, before.name, routines, { fromFile }, { follow: false, todayISO: todayISO() });
+    return { folderId: before.id, added, skipped, updated: true };
+  }
+  const folderId = await createFolderWithRoutines(opts.existing === 'copy' ? `${name} (copy)` : name, routines, { source: 'import', settings: { fromFile } });
   return { folderId, added, skipped };
 }

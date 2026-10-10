@@ -22,8 +22,8 @@ describe('a Hevy .csv export', () => {
       ['Pull 1', '2026-09-29'],
       ['Push 1', '2026-10-05'],
     ]);
-    expect(p.workouts[1].startedAt).toBe(Date.UTC(2026, 9, 5, 11, 10));
-    expect(p.workouts[1].endedAt).toBe(Date.UTC(2026, 9, 5, 12, 31));
+    expect(p.workouts[1].startedAt).toBe(new Date(2026, 9, 5, 11, 10).getTime());
+    expect(p.workouts[1].endedAt).toBe(new Date(2026, 9, 5, 12, 31).getTime());
     expect(p.workouts[1].exercises[0].sets.map((s) => [s.isWarmup, s.weightKg, s.reps])).toEqual([
       [true, 20, 15],
       [false, 32.5, 10],
@@ -32,7 +32,7 @@ describe('a Hevy .csv export', () => {
 
   it('a spreadsheet date number reads as the same clock time', () => {
     // 5 Oct 2026 11:10 = day 46300 + 11h10m
-    expect(parseHevyDate(46300 + (11 * 60 + 10) / 1440)).toBe(Date.UTC(2026, 9, 5, 11, 10));
-    expect(parseHevyDate('5 Oct 2026, 11:10')).toBe(Date.UTC(2026, 9, 5, 11, 10));
+    expect(parseHevyDate(46300 + (11 * 60 + 10) / 1440)).toBe(new Date(2026, 9, 5, 11, 10).getTime());
+    expect(parseHevyDate('5 Oct 2026, 11:10')).toBe(new Date(2026, 9, 5, 11, 10).getTime());
   });
 });

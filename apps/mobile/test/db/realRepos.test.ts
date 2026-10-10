@@ -56,7 +56,7 @@ describe('start-up on a fresh install (real schema)', () => {
     expect(db.all('PRAGMA foreign_keys')[0]).toEqual({ foreign_keys: 1 });
     const meta = Object.fromEntries(db.all<{ key: string; value: string }>('SELECT key, value FROM meta').map((r) => [r.key, r.value]));
     expect(meta.schema_version).toBe('1');
-    expect(meta.tracker_schema_version).toBe('11');
+    expect(meta.tracker_schema_version).toBe('12');
     expect(meta.member_schema_version).toBe('1');
   });
 
@@ -230,7 +230,10 @@ describe('routines (real SQL)', () => {
     const got = await r.getRoutine(id);
     expect(got?.name).toBe('Push A');
     expect(got?.exercises.map((e) => e.exercise.name)).toEqual(['Barbell Bench Press', 'Dumbbell Shoulder Press']);
-    expect((await r.listRoutines()).map((x) => x.id)).toContain(id);
+    // RP-08: with no folder given it lands in "My routines" — not followed, so not in the plan.
+    expect((await r.listRoutines()).map((x) => x.id)).not.toContain(id);
+    const { listFolders } = await import('@/tracker/db/folderRepo');
+    expect((await listFolders()).map((f) => [f.name, f.following, f.routines.map((x) => x.id)])).toEqual([['My routines', false, [id]]]);
   });
 
   it('"Save as routine" from a workout keeps exercise order and set counts (createRoutineFromWorkout)', async () => {

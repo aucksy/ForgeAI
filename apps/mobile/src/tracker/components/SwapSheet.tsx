@@ -56,7 +56,7 @@ export function SwapSheet({
             >
               <Glyph name="swap" size={18} color={color.accent} />
               <View style={{ flex: 1 }}>
-                <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+                <Text numberOfLines={2} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
                   {o.name}
                 </Text>
                 <Text numberOfLines={1} style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>

@@ -14,8 +14,16 @@
  *    Notes, Workout Notes — units in the column names.
  * Set Order is a number for a working set, "W" warm-up, "D" drop set, "F" to failure; Strong 6
  * also writes "Rest Timer" rows, which are not sets.
+ *
+ * Audit Phase 4: the workout's own notes ("Workout Notes", IM-04) are kept; dates in any form a
+ * phone or Excel writes them are read (IM-11, `importDates`), as the clock time the member saw
+ * (IM-07); a workout name in another language gets its day from its exercises (IM-14).
  */
-import { inferDayType, type ParsedHevy } from './hevyImport';
+import { csvObjects, delimiterOf, normHead, num, parseCsv, withoutSepLine } from './csvText';
+import { dayTypeOfWorkout, workoutNotes, type ParsedHevy } from './hevyImport';
+import { localMoment, readWallClock, scanDateOrder, wallISO, type DateOrder } from './importDates';
+
+export { num, parseCsv } from './csvText';
 
 type ParsedWorkout = ParsedHevy['workouts'][number];
 type ParsedExercise = ParsedWorkout['exercises'][number];
@@ -35,54 +43,9 @@ export interface StrongFile {
 
 // ---------------------------------------------------------------- CSV
 
-/** Split CSV text into rows of fields: quotes, doubled quotes, CRLF, a BOM. */
-export function parseCsv(text: string, delimiter: string): string[][] {
-  const src = text.replace(/^﻿/, '');
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = '';
-  let quoted = false;
-  for (let i = 0; i < src.length; i++) {
-    const c = src[i];
-    if (quoted) {
-      if (c === '"') {
-        if (src[i + 1] === '"') {
-          field += '"';
-          i += 1;
-        } else quoted = false;
-      } else field += c;
-      continue;
-    }
-    if (c === '"') quoted = true;
-    else if (c === delimiter) {
-      row.push(field);
-      field = '';
-    } else if (c === '\n' || c === '\r') {
-      if (c === '\r' && src[i + 1] === '\n') i += 1;
-      row.push(field);
-      if (row.some((f) => f.trim() !== '')) rows.push(row);
-      row = [];
-      field = '';
-    } else field += c;
-  }
-  row.push(field);
-  if (row.some((f) => f.trim() !== '')) rows.push(row);
-  return rows;
-}
-
-/** The first line decides: Strong 6 uses ";", older exports ",". */
-function delimiterOf(text: string): string {
-  const first = text.replace(/^﻿/, '').split(/\r?\n/, 1)[0] ?? '';
-  const semi = (first.match(/;/g) ?? []).length;
-  const comma = (first.match(/,/g) ?? []).length;
-  return semi > comma ? ';' : ',';
-}
-
-const normHead = (h: string): string => h.trim().toLowerCase().replace(/\s+/g, ' ');
-
 /** True when the text's header row is a Strong export. */
 export function looksLikeStrong(text: string): boolean {
-  const rows = parseCsv(text.slice(0, 4000), delimiterOf(text));
+  const rows = parseCsv(withoutSepLine(text.slice(0, 4000)), delimiterOf(text));
   const head = (rows[0] ?? []).map(normHead);
   return head.includes('exercise name') && head.includes('set order') && head.includes('workout name');
 }
@@ -90,37 +53,12 @@ export function looksLikeStrong(text: string): boolean {
 // ---------------------------------------------------------------- values
 
 /**
- * A number as Strong wrote it. v0.28.1: a comma-decimal phone can write "72,5" (quoted) even in a
- * comma-separated file — it was read as nothing, so the set imported at 0 kg. Thousands marks too:
- * "1.072,5" and "1,072.5". Exported for tests.
+ * Strong's "2023-08-15 18:30:12" (or any form Excel rewrites it to) → the moment that clock time
+ * is on this phone (IM-07: the time the member saw, stored as it was). Null when unreadable.
  */
-export function num(raw: string | undefined, commaDecimal: boolean): number | null {
-  if (raw == null) return null;
-  let s = raw.trim().replace(/\s/g, '');
-  if (s === '') return null;
-  const comma = s.lastIndexOf(',');
-  const dot = s.lastIndexOf('.');
-  if (comma >= 0 && dot >= 0) {
-    // Both: the last one is the decimal mark.
-    s = comma > dot ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
-  } else if (comma >= 0) {
-    // Only a comma: a decimal mark ("72,5", or any in a ;-file), else thousands ("1,072").
-    s = commaDecimal || /^-?\d+,\d{1,2}$/.test(s) ? s.replace(',', '.') : s.replace(/,/g, '');
-  }
-  const n = Number(s);
-  return Number.isFinite(n) ? n : null;
-}
-
-/**
- * Strong's "2023-08-15 18:30:12" (or "18:30") as a TIMEZONE-STABLE epoch — the wall clock read
- * as UTC, exactly like the Hevy import (`parseHevyDate`), so a re-import on a phone in another
- * timezone finds the same workouts and Merge never doubles them.
- */
-export function parseStrongDate(raw: string): number | null {
-  const m = /^\s*(\d{4})[-/](\d{1,2})[-/](\d{1,2})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(raw);
-  if (!m) return null;
-  const t = Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4]), Number(m[5]), Number(m[6] ?? 0));
-  return Number.isNaN(t) ? null : t;
+export function parseStrongDate(raw: string, order: DateOrder = 'dmy'): number | null {
+  const c = readWallClock(raw, order);
+  return c ? localMoment(c) : null;
 }
 
 /** "1h 5m", "45m", "30s", "1:05:00", or plain seconds → seconds. */
@@ -145,11 +83,6 @@ export function parseStrongDuration(raw: string | undefined): number | null {
   return any ? Math.round(total) : null;
 }
 
-const pad = (n: number): string => String(n).padStart(2, '0');
-function utcDateISO(ms: number): string {
-  const d = new Date(ms);
-  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
-}
 function clean(s: string): string {
   // Control characters only: "Día de pierna" keeps its accent.
   return s.replace(/[\u0000-\u001F\u007F]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -159,7 +92,7 @@ function clean(s: string): string {
 
 /** What the header says about units (before the member is asked). */
 export function strongFileInfo(text: string): StrongFile {
-  const rows = parseCsv(text.slice(0, 4000), delimiterOf(text));
+  const rows = parseCsv(withoutSepLine(text.slice(0, 4000)), delimiterOf(text));
   const head = (rows[0] ?? []).map(normHead);
   const w = head.find((h) => h.startsWith('weight'));
   if (w && /\(kg/.test(w)) return { unitsKnown: true, fileUnits: 'metric' };
@@ -171,9 +104,9 @@ export function strongFileInfo(text: string): StrongFile {
  * Read a Strong export. `units` is used only where the column names do not say (the older
  * layout): kg + km, or lb + miles. Throws a plain-words Error on a file that is not Strong's.
  */
-export function parseStrongText(text: string, units: FileUnits): ParsedHevy {
+export function parseStrongText(text: string, units: FileUnits, dateOrder?: DateOrder): ParsedHevy {
   const delimiter = delimiterOf(text);
-  const rows = parseCsv(text, delimiter);
+  const rows = parseCsv(withoutSepLine(text), delimiter);
   if (rows.length < 2) throw new Error('That file has no rows to import.');
   const head = rows[0].map(normHead);
   const col = (pred: (h: string) => boolean): number => head.findIndex(pred);
@@ -187,6 +120,7 @@ export function parseStrongText(text: string, units: FileUnits): ParsedHevy {
   const iDist = col((h) => h.startsWith('distance'));
   const iSecs = col((h) => h === 'seconds');
   const iNotes = col((h) => h === 'notes');
+  const iWorkoutNotes = col((h) => h === 'workout notes');
   const iRpe = col((h) => h === 'rpe');
   const iNum = col((h) => h === 'workout #');
   if (iDate < 0 || iEx < 0 || iOrder < 0 || iName < 0) {
@@ -209,7 +143,13 @@ export function parseStrongText(text: string, units: FileUnits): ParsedHevy {
   const commaDecimal =
     delimiter === ';' || rows.slice(1).some((r) => [iWeight, iDist].some((i) => i >= 0 && /^-?\d+,\d{1,2}$/.test((r[i] ?? '').trim())));
 
+  // Review fix: the WHOLE Date column decides day-first / month-first; when nothing settles it
+  // the member is asked (`dateQuestion`) and their answer comes back as `dateOrder`.
+  const scan = scanDateOrder(rows.slice(1).map((r) => r[iDate]));
+  const readOrder: DateOrder = dateOrder ?? scan.order ?? 'dmy';
+  let badDateRows = 0;
   const byKey = new Map<string, ParsedWorkout>();
+  const unreadDates: string[] = [];
   let skippedRows = 0;
   let totalSetRows = 0;
   let timedRows = 0;
@@ -220,7 +160,14 @@ export function parseStrongText(text: string, units: FileUnits): ParsedHevy {
     // A rest-timer row (Strong 6) is not a set — not counted at all.
     if (/rest/i.test(order)) continue;
     totalSetRows += 1;
-    const startedAt = parseStrongDate(r[iDate] ?? '');
+    const clock = readWallClock(r[iDate] ?? '', readOrder);
+    const startedAt = clock ? localMoment(clock) : null;
+    if (!clock && (r[iDate] ?? '').trim() !== '' && unreadDates.length < 3) unreadDates.push((r[iDate] ?? '').trim());
+    if (!clock) {
+      // A row whose date can't be read is counted and shown, never dropped silently.
+      badDateRows += 1;
+      continue;
+    }
     const exTitle = (r[iEx] ?? '').trim();
     const reps = iReps >= 0 ? num(r[iReps], commaDecimal) : null;
     const secs = iSecs >= 0 ? num(r[iSecs], commaDecimal) : null;
@@ -249,14 +196,18 @@ export function parseStrongText(text: string, units: FileUnits): ParsedHevy {
       const dur = parseStrongDuration(iDur >= 0 ? r[iDur] : undefined);
       w = {
         title: name,
-        dayType: inferDayType(name),
+        // The day comes from the name, else (another language) from its exercises, once read.
+        dayType: 'full',
         startedAt,
         endedAt: dur != null && dur > 0 ? startedAt + dur * 1000 : null,
-        dateISO: utcDateISO(startedAt),
+        dateISO: wallISO(clock as NonNullable<typeof clock>),
         exercises: [],
       };
       byKey.set(key, w);
     }
+    // IM-04: the workout's own notes (on each of its rows; the first one written wins).
+    const wn = iWorkoutNotes >= 0 ? (r[iWorkoutNotes] ?? '').replace(/\r\n?/g, '\n').trim() : '';
+    if (wn !== '' && w.notes === undefined) w.notes = workoutNotes(w.title, wn);
     let ex = w.exercises.find((e) => e.title === exTitle);
     if (!ex) {
       ex = { title: exTitle, sets: [], supersetId: null, note: null };
@@ -280,7 +231,39 @@ export function parseStrongText(text: string, units: FileUnits): ParsedHevy {
 
   const workouts = [...byKey.values()].sort((a, b) => a.startedAt - b.startedAt);
   if (workouts.length === 0 && totalSetRows === 0) throw new Error('That file has no rows to import.');
+  if (workouts.length === 0 && unreadDates.length > 0) {
+    throw new Error(`The dates in its Date column could not be read (for example “${unreadDates[0]}”). Export the file from Strong again and pick it without opening it in Excel.`);
+  }
+  for (const w of workouts) w.dayType = dayTypeOfWorkout(w.title, w.exercises.map((e) => e.title));
   const titles = new Set<string>();
   for (const w of workouts) for (const ex of w.exercises) titles.add(ex.title);
-  return { workouts, distinctExerciseTitles: [...titles], skippedRows, totalSetRows, timedRows };
+  return {
+    workouts,
+    distinctExerciseTitles: [...titles],
+    skippedRows,
+    totalSetRows,
+    timedRows,
+    badDateRows,
+    badDateExample: unreadDates[0] ?? null,
+    dateQuestion: scan.order == null && dateOrder == null ? scan.ambiguous : null,
+    dateOrder: readOrder,
+  };
+}
+
+/**
+ * IM-06: one real set from an older file (no units in it), to ask about: the heaviest working
+ * weight as written ("Bench Press 100 — kg or lb?"). Null when the file has no weights. PURE.
+ */
+export function unitsExample(text: string): { exercise: string; value: number } | null {
+  const { rows, head, delimiter } = csvObjects(text);
+  const w = head.find((h) => h.startsWith('weight'));
+  if (!w) return null;
+  let best: { exercise: string; value: number } | null = null;
+  for (const r of rows) {
+    if (/^(w|rest)/i.test((r['set order'] ?? '').trim())) continue;
+    const v = num(r[w], delimiter === ';');
+    const ex = (r['exercise name'] ?? '').trim();
+    if (v != null && v > 0 && ex && (!best || v > best.value)) best = { exercise: ex, value: Math.round(v * 100) / 100 };
+  }
+  return best;
 }

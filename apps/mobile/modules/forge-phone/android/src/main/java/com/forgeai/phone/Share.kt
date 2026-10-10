@@ -79,7 +79,7 @@ object Share {
           o.write(buf, 0, n)
         }
       }
-    } ?: return null
+    } ?: return mapOf("error" to "unreadable") // the sharing app gave no way to read it (audit IM-17)
     return mapOf("uri" to Uri.fromFile(out).toString(), "name" to name, "type" to (i.type ?: ""))
   }
 }

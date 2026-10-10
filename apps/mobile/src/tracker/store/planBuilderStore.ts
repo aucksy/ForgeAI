@@ -18,6 +18,14 @@ export interface PlanBuilderState {
   plan: BuiltPlan | null;
   /** Names of the exercises in `input.avoid`, for the chips. */
   avoidNames: Record<string, string>;
+  /** RP-17: the answers come one step at a time (0 … BUILDER_STEPS - 1). */
+  step: number;
+  next: () => void;
+  /**
+   * RP-17: Back — from the plan to the last step (answers kept), from a step to the one before.
+   * False on the first step (Back then leaves the builder).
+   */
+  goBack: () => boolean;
   start: (from: { goal: Goal | null; level: UserProfile['experience'] | null }) => void;
   set: (patch: Partial<BuilderInput>) => void;
   toggleSore: (a: SoreArea) => void;
@@ -27,6 +35,9 @@ export interface PlanBuilderState {
   swap: (routineIndex: number, exerciseIndex: number, key: string) => void;
   clearPlan: () => void;
 }
+
+/** RP-17: goal and experience → days and split → equipment → sore spots → time and easy weeks. */
+export const BUILDER_STEPS = 5;
 
 export const DEFAULT_INPUT: BuilderInput = {
   goal: 'muscle',
@@ -44,13 +55,27 @@ export const usePlanBuilder = create<PlanBuilderState>()((set, get) => ({
   easyWeeks: EASY_WEEKS_DEFAULT,
   plan: null,
   avoidNames: {},
+  step: 0,
   start: (from) =>
     set({
       input: { ...DEFAULT_INPUT, goal: from.goal ?? DEFAULT_INPUT.goal, level: from.level ?? DEFAULT_INPUT.level },
       easyWeeks: EASY_WEEKS_DEFAULT,
       plan: null,
       avoidNames: {},
+      step: 0,
     }),
+  next: () => set({ step: Math.min(BUILDER_STEPS - 1, get().step + 1) }),
+  goBack: () => {
+    if (get().plan) {
+      set({ plan: null, step: BUILDER_STEPS - 1 });
+      return true;
+    }
+    if (get().step > 0) {
+      set({ step: get().step - 1 });
+      return true;
+    }
+    return false;
+  },
   set: (patch) => set({ input: { ...get().input, ...patch } }),
   toggleSore: (a) => {
     const sore = get().input.sore;

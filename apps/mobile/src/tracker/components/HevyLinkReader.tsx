@@ -2,12 +2,14 @@
  * v0.29.0 — opens a Hevy share page in a hidden in-app browser and reads its routines off the
  * screen (`routineLink.READ_PAGE_JS`). Nothing is shown; the page asks for English so the words
  * ("3 sets · 9-12 reps", "Rest 3m 0s") are the ones the reader knows. No Hevy account or key.
+ * Audit Phase 4: before the page's own scripts run, `CAPTURE_API_JS` keeps a copy of the data the
+ * page loads for the link (every set's type, warm-ups included), which the reader sends back too.
  */
 import { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { parsePageMessage, READ_PAGE_JS, type PageRead } from '../services/routineLink';
+import { CAPTURE_API_JS, parsePageMessage, READ_PAGE_JS, type PageRead } from '../services/routineLink';
 
 /** A slow phone or network gets this long; the page script itself gives up after 20 s. */
 const GIVE_UP_MS = 35_000;
@@ -30,6 +32,7 @@ export function HevyLinkReader({ url, onRead }: { url: string; onRead: (read: Pa
     <View style={{ width: 1, height: 1, opacity: 0, position: 'absolute' }} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
       <WebView
         source={{ uri: url, headers: { 'Accept-Language': 'en-US,en;q=0.9' } }}
+        injectedJavaScriptBeforeContentLoaded={CAPTURE_API_JS}
         injectedJavaScript={READ_PAGE_JS}
         onMessage={(e) => finish(parsePageMessage(e.nativeEvent.data))}
         onError={() => finish(null)}

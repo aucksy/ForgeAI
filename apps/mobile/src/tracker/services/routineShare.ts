@@ -12,7 +12,7 @@ import type { PlanDayFull } from '@/db/repos/planRepo';
 import { SHARE_FOLDER } from '@/lib/tempPictures';
 
 import { parseRoutineFile, ROUTINE_FILE_MAX_BYTES, routineFileJson, routineFileName, routinesText } from '../plans/routineFile';
-import { importRoutineFile, routineFileOf, sharedRoutinesOf, type ImportResult } from './plansService';
+import { existingFileFolder, importRoutineFile, routineFileOf, sharedRoutinesOf, type ExistingChoice, type ImportResult } from './plansService';
 
 /** Send the routines as plain text (WhatsApp, a note…). */
 export async function shareRoutinesAsText(folder: string | null, routines: readonly PlanDayFull[]): Promise<void> {
@@ -37,7 +37,10 @@ export async function shareRoutinesAsFile(folder: string | null, routines: reado
  * Pick a routine file and add it as a new folder. null when the member cancelled; a
  * plain-English Error when the file cannot be used.
  */
-export async function pickAndImportRoutineFile(): Promise<ImportResult | null> {
+export async function pickAndImportRoutineFile(
+  /** RP-18: asked when this file was imported before — "update" that folder, add a "copy", or null to stop. */
+  choose?: (folderName: string) => Promise<ExistingChoice | null>,
+): Promise<ImportResult | null> {
   const res = await DocumentPicker.getDocumentAsync({ type: ['*/*'], copyToCacheDirectory: true, multiple: false });
   if (res.canceled || !res.assets || res.assets.length === 0) return null;
   // A photo or a video picked by mistake must not be read into memory whole.
@@ -46,5 +49,11 @@ export async function pickAndImportRoutineFile(): Promise<ImportResult | null> {
   const text = await FileSystem.readAsStringAsync(res.assets[0].uri);
   const parsed = parseRoutineFile(text);
   if (!parsed.ok) throw new Error(parsed.reason);
+  const before = await existingFileFolder(parsed.file);
+  if (before && choose) {
+    const pick = await choose(before.name);
+    if (!pick) return null;
+    return importRoutineFile(parsed.file, { existing: pick });
+  }
   return importRoutineFile(parsed.file);
 }

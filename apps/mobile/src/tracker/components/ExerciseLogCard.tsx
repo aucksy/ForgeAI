@@ -326,7 +326,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             accessibilityLabel={`${exercise.name}. Open its history and how-to`}
             style={{ alignSelf: 'flex-start', maxWidth: '100%' }}
           >
-            <Text numberOfLines={1} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
+            <Text numberOfLines={2} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
               {exercise.name}
             </Text>
           </Pressable>

@@ -7,8 +7,12 @@ import type { CatalogEntry } from './types';
 
 export { CATALOG };
 
-/** Bump when entries are added or their linking aliases change: installs re-sync once. */
-export const CATALOG_VERSION = 1;
+/**
+ * Bump when entries are added or their names, aliases, muscles or gear change: installs re-sync
+ * once, and library rows the member has not made their own take the new facts (EX-15).
+ * 2 = audit Phase 4: one name style ("Pull-Up", "Close-Grip Bench Press"), Hindi-script aliases.
+ */
+export const CATALOG_VERSION = 2;
 
 const BY_KEY = new Map<string, CatalogEntry>(CATALOG.map((e) => [e.key, e]));
 

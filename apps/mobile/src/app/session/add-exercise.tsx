@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 
 import { IconButton, PrimaryButton, Screen } from '@/components/ui';
-import { ADD_EXERCISE_FAILED, runGuarded } from '@/lib/guardedAction';
+import { ADD_EXERCISE_FAILED, navigateOnce, runGuarded } from '@/lib/guardedAction';
 import { space } from '@/theme/tokens';
 
 import { ExercisePickerList } from '@/tracker/components/ExercisePickerList';
@@ -30,6 +30,8 @@ export default function AddExerciseScreen() {
   const swapExercise = useActiveWorkout((s) => s.swapExercise);
   // Guard against a rapid double-tap adding twice + popping past the active screen.
   const busy = useRef(false);
+  // EX-18: a double tap on "Create …" opens one form, not two.
+  const nav = useRef(false);
   // EX-10: a failed add says so and the picker keeps working (the guard is always released).
   const [error, setError] = useState<string | null>(null);
   const [picked, setPicked] = useState<TrackerExercise[]>([]);
@@ -99,7 +101,9 @@ export default function AddExerciseScreen() {
         onSelect={onSelect}
         // v0.28.0: not in the list? Make it here (the form adds it to this workout on Save).
         onCreate={
-          swapKey ? undefined : (typed) => router.push({ pathname: '/library/new', params: { for: 'workout', name: typed } })
+          swapKey
+            ? undefined
+            : (typed) => navigateOnce(nav, () => router.push({ pathname: '/library/new', params: { for: 'workout', name: typed } }))
         }
       />
       {swapKey ? null : (

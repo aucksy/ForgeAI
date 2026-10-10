@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 11;
+export const TRACKER_SCHEMA_VERSION = 12;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -122,6 +122,14 @@ export async function initTrackerSchema(): Promise<void> {
   // NULL = not known (older workouts; imports with no routine of that name), '' = known to
   // have none (an empty workout — it never moves "Today").
   await ensureColumn('workout_sessions', 'routine_id', 'TEXT');
+  // v12 (audit Phase 4 — RP-19): a routine keeps its sets as Hevy does. On `plan_exercises`:
+  // each set's type and optional target (JSON list; NULL = `target_sets` normal sets, so every
+  // older row reads as before), the exercise's own rest in THIS routine (NULL = the exercise's
+  // rest, 0 = no timer), its superset (small integer, NULL = none) and a note (NULL = none).
+  await ensureColumn('plan_exercises', 'sets_json', 'TEXT');
+  await ensureColumn('plan_exercises', 'rest_sec', 'INTEGER');
+  await ensureColumn('plan_exercises', 'superset_group', 'INTEGER');
+  await ensureColumn('plan_exercises', 'note', 'TEXT');
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }

@@ -85,14 +85,14 @@ describe('the same exercise twice in one Hevy workout', () => {
 
 describe('Hevy dates in other languages', () => {
   it('German, French, Spanish, Italian, Portuguese and Dutch months read; before: skipped rows', () => {
-    const oct5 = Date.UTC(2026, 9, 5, 7, 30);
+    const oct5 = new Date(2026, 9, 5, 7, 30).getTime();
     for (const s of ['5 Okt 2026, 7:30', '5 oct. 2026, 7:30', '5 Oct 2026, 7:30', '5 ott 2026, 7:30', '5 out 2026, 7:30', '5. Okt. 2026, 7:30'])
       expect(parseHevyDate(s)).toBe(oct5);
-    expect(parseHevyDate('7 Mär 2026, 7:30')).toBe(Date.UTC(2026, 2, 7, 7, 30));
-    expect(parseHevyDate('7 juin 2026, 7:30')).toBe(Date.UTC(2026, 5, 7, 7, 30));
-    expect(parseHevyDate('7 juil. 2026, 7:30')).toBe(Date.UTC(2026, 6, 7, 7, 30));
-    expect(parseHevyDate('7 déc. 2026, 7:30')).toBe(Date.UTC(2026, 11, 7, 7, 30));
-    expect(parseHevyDate('7 Dez 2026, 7:30')).toBe(Date.UTC(2026, 11, 7, 7, 30));
+    expect(parseHevyDate('7 Mär 2026, 7:30')).toBe(new Date(2026, 2, 7, 7, 30).getTime());
+    expect(parseHevyDate('7 juin 2026, 7:30')).toBe(new Date(2026, 5, 7, 7, 30).getTime());
+    expect(parseHevyDate('7 juil. 2026, 7:30')).toBe(new Date(2026, 6, 7, 7, 30).getTime());
+    expect(parseHevyDate('7 déc. 2026, 7:30')).toBe(new Date(2026, 11, 7, 7, 30).getTime());
+    expect(parseHevyDate('7 Dez 2026, 7:30')).toBe(new Date(2026, 11, 7, 7, 30).getTime());
     expect(parseHevyDate('7 Xyz 2026, 7:30')).toBeNull();
   });
 });

@@ -18,6 +18,8 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { shownNotes } from '@/tracker/lib/workoutText';
 
 import { createRoutineFromWorkout } from '@/tracker/db/routineRepo';
+import { listFolders, type Folder } from '@/tracker/db/folderRepo';
+import { FolderPickerSheet } from '@/tracker/components/FolderPickerSheet';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 
@@ -110,12 +112,22 @@ export default function SessionDetailScreen() {
       () => setActionError(EDIT_FAILED),
     );
 
-  const onSaveRoutine = (): Promise<unknown> =>
+  /** RP-08: "Save as routine" first asks where it goes ("My routines" first, the plan last). */
+  const [pickFolders, setPickFolders] = useState<Folder[] | null>(null);
+  const askSaveRoutine = (): void => {
+    setActionError(null);
+    listFolders()
+      .then(setPickFolders)
+      .catch(() => setActionError(SAVE_ROUTINE_FAILED));
+  };
+
+  const onSaveRoutine = (folderId: string | null, choices: readonly Folder[]): Promise<unknown> =>
     runGuarded(
       busy,
       async () => {
         if (!data) return;
         setActionError(null);
+        const into = folderId ? choices.find((f) => f.id === folderId) ?? null : null;
         const s = data.session;
         const items = s.exercises.map((g) => ({
           exerciseId: g.exercise.id,
@@ -125,11 +137,18 @@ export default function SessionDetailScreen() {
           name: s.title?.trim() ? s.title.trim() : `${sessionTitle(s)} · ${shortDate(s.dateISO)}`,
           dayType: s.dayType === 'rest' ? 'full' : s.dayType,
           items,
+          folderId,
         });
-        Alert.alert('Saved as a routine', 'You can rename it and start it from the Workout tab.', [
+        Alert.alert(
+          'Saved as a routine',
+          into?.following
+            ? `It is in ${into.name}, your plan — Today will include it.`
+            : `It is in ${into?.name ?? 'My routines'}. Your plan has not changed.`,
+          [
           { text: 'Done', style: 'cancel' },
           { text: 'Open routine', onPress: () => router.push({ pathname: '/routines/[id]', params: { id: routineId } }) },
-        ]);
+          ],
+        );
       },
       () => setActionError(SAVE_ROUTINE_FAILED),
     );
@@ -229,7 +248,7 @@ export default function SessionDetailScreen() {
                 leading={<Glyph name="list" size={20} color={color.accent} />}
                 onPress={() => {
                   setMenu(false);
-                  void onSaveRoutine();
+                  setTimeout(askSaveRoutine, 260);
                 }}
               />
               <SheetRow
@@ -243,6 +262,18 @@ export default function SessionDetailScreen() {
               />
             </View>
           </TrackerSheet>
+          <FolderPickerSheet
+            visible={pickFolders != null}
+            title="Where should the routine go?"
+            folders={pickFolders ?? []}
+            onClose={() => setPickFolders(null)}
+            onPick={(folderId) => {
+              const choices = pickFolders ?? [];
+              setPickFolders(null);
+              // Let the sheet slide away before the saved message.
+              setTimeout(() => void onSaveRoutine(folderId, choices), 260);
+            }}
+          />
           {scene ? (
             <ShareSheet
               visible={sharing}
