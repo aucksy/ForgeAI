@@ -1584,7 +1584,7 @@
     their type from the real sets when nothing was logged on them; whole-word name check.
   - **Tests:** 723 vitest.
 
-- 2026-10-10: **Audit Phase 0 — ready the ground** (owner: "go with your picks and start fixing";
+- 2026-10-10: **v0.30.0 — Audit Phase 0: ready the ground** (owner: "go with your picks and start fixing";
   audit plan kept outside this public repo, see CONTEXT.md; decisions D1–D13 = A).
   - D4: coach, nutrition and gym sync hidden behind `src/lib/features.ts` (Home, Profile, Progress
     nutrition charts, Profile daily targets; coach/nutrition routes redirect Home; gym push and the
@@ -1610,6 +1610,8 @@
     disabled arrows used the raised grey (now `inkDisabled`); nutrition charts/targets hidden;
     rest-lateness fallback read the alert's own due time; nested folder list scroll.
   - **Tests:** 871 vitest (5 skipped), dashboard 403.
+  - Phone test run 38038041222 on c24ec89: crash/ANR/JS scan clean; E (looked for the hidden coach card)
+    and H1/H2 (shade swipe hit the launcher) were test slips — fixed in f819be0, re-run before tagging.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
