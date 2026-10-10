@@ -1,14 +1,15 @@
 /**
- * Onboarding form logic — PURE (no DB, no native, no React). Phase O2 (W1).
+ * Onboarding form logic — PURE (no DB, no native, no React). Phase O2 (W1); Audit Phase 7 (D12).
  *
  * Turns what the member typed on the welcome screen into either a validated
  * `OnboardingInput` (ready to persist) or a single, human-readable error naming
  * the field at fault. Every rule lives here so it is unit-testable without a
  * device: see test/onboarding/form.test.ts.
  *
- * Export-clean per VISION.md: the dial code is data, not a constant. India (+91)
- * gets the strict 10-digit/6-9-start rule we actually know; every other country
- * falls back to a permissive E.164 length check rather than a wrong local rule.
+ * Audit Phase 7 (SH-10, SH-26): the mobile number is OPTIONAL and any country's number is
+ * accepted — no default dial code and no one country's rule. A number is "7 to 15 digits,
+ * with an optional leading +" (spaces, dashes, dots and brackets allowed while typing).
+ * Goal and experience are no longer pre-chosen for the member (SH-09): the welcome asks.
  */
 import type { Goal, UserProfile } from '@/types/models';
 
@@ -17,10 +18,11 @@ export type Experience = UserProfile['experience'];
 /** Raw text straight off the welcome screen — all strings, nothing coerced yet. */
 export interface OnboardingDraft {
   name: string;
-  dialCode: string;
+  /** Optional. Blank = no number. Any country: "+44 7700 900123", "98765 43210". */
   phone: string;
-  goal: Goal;
-  experience: Experience;
+  /** Null until the member picks one (nothing is chosen for them). */
+  goal: Goal | null;
+  experience: Experience | null;
   /** Optional — blank means "not provided", never a made-up number. */
   age: string;
   heightCm: string;
@@ -38,8 +40,13 @@ export interface NutritionTargets {
 /** Validated, ready to write. `0` / `''` / `null` mean "member didn't say". */
 export interface OnboardingInput {
   name: string;
-  /** E.164, e.g. '+919876543210'. Stored locally; verification comes with the gym link. */
-  phoneE164: string;
+  /**
+   * The mobile number as the member typed it, cleaned to digits with an optional leading +
+   * (e.g. '+447700900123' or '9876543210'), or null when they left it blank. Stored locally
+   * only; a gym link will verify it later. (The field kept its old name so saved fixtures
+   * and callers did not have to change; it is not always E.164 any more.)
+   */
+  phoneE164: string | null;
   goal: Goal;
   experience: Experience;
   age: number;
@@ -53,12 +60,13 @@ export type ValidationResult =
   | { ok: true; value: OnboardingInput }
   | { ok: false; field: keyof OnboardingDraft; message: string };
 
-export const DEFAULT_DIAL_CODE = '+91';
-
+/**
+ * A blank draft with the old defaults (Build muscle, New to lifting) — kept for callers and
+ * tests that build a draft in code. The welcome screen starts from `welcomeDraft()` instead.
+ */
 export function emptyDraft(): OnboardingDraft {
   return {
     name: '',
-    dialCode: DEFAULT_DIAL_CODE,
     phone: '',
     goal: 'muscle',
     experience: 'beginner',
@@ -69,89 +77,56 @@ export function emptyDraft(): OnboardingDraft {
   };
 }
 
+/** What the welcome starts from: nothing chosen for the member (SH-09). */
+export function welcomeDraft(): OnboardingDraft {
+  return {
+    name: '',
+    phone: '',
+    goal: null,
+    experience: null,
+    age: '',
+    heightCm: '',
+    bodyWeightKg: '',
+    gymName: '',
+  };
+}
+
 // ---------------------------------------------------------------- name
 
-const NAME_MAX = 60;
+export const NAME_MAX = 60;
 
 /** Trim + collapse inner whitespace. Keeps display names tidy without mangling them. */
 export function normalizeName(raw: string): string {
   return raw.trim().replace(/\s+/g, ' ');
 }
 
+/** The member's name, or what to tell them. Shared by the welcome and Profile. */
+export function checkName(raw: string): { ok: true; name: string } | { ok: false; message: string } {
+  const name = normalizeName(raw);
+  if (name.length === 0) return { ok: false, message: 'Your name, please.' };
+  if (name.length > NAME_MAX) return { ok: false, message: `Keep your name under ${NAME_MAX} characters.` };
+  return { ok: true, name };
+}
+
 // ---------------------------------------------------------------- phone
 
-/** Digits of the dial code, without the '+'. */
-function dialDigits(raw: string): string {
-  return raw.replace(/\D/g, '');
-}
-
-export interface PhoneParts {
-  dialCode: string; // '+91'
-  national: string; // '9876543210'
-  e164: string; // '+919876543210'
-}
-
-/** Is `national` a plausible subscriber number for this dial code? */
-function isValidNational(dial: string, national: string): boolean {
-  if (dial === '91') {
-    // The one country whose rule we actually know: 10 digits, starts 6-9.
-    return /^[6-9]\d{9}$/.test(national);
-  }
-  // Everywhere else: permissive E.164 length only — a guessed local rule would
-  // reject real numbers the day we sell outside India.
-  return national.length >= 6 && national.length <= 14;
-}
+export const PHONE_MESSAGE = 'Enter 7 to 15 digits, or leave it blank.';
 
 /**
- * Normalise a dial code + typed number into E.164, or null when it can't be one.
- * Accepts spaces, dashes, brackets and a leading 0 or +<dial> the member may have
- * typed inside the number field itself.
- *
- * The interesting case: a real Indian mobile can START with the digits of its own
- * dial code (the 91xxxxxxxx series), so blindly stripping a "duplicate" country
- * code would reject a valid number and lock that member out of onboarding. We
- * therefore build candidates and take the first that is actually valid. Where the
- * length rule is known (India) the number AS TYPED wins; where it isn't, the
- * dial-stripped reading wins, because a permissive length check can't tell the two
- * apart and a re-typed country code is by far the likelier intent.
+ * Any country's mobile number, optional. Blank → `{ ok: true, phone: null }` (no number);
+ * "+44 7700 900123" → '+447700900123'; "98765-43210" → '9876543210'. Refused: letters, a +
+ * anywhere but the front, fewer than 7 or more than 15 digits. No country's own rule is
+ * applied — a guessed local rule would refuse real numbers (SH-26).
  */
-export function normalizePhone(dialCodeRaw: string, phoneRaw: string): PhoneParts | null {
-  const dial = dialDigits(dialCodeRaw);
-  if (dial.length < 1 || dial.length > 4) return null;
-
-  const digits = phoneRaw.replace(/\D/g, '');
-  if (digits.length === 0) return null;
-
-  const asTyped = digits;
-  const dialStripped =
-    digits.length > dial.length && digits.startsWith(dial) ? digits.slice(dial.length) : null;
-  // Indian/UK habit: a trunk '0' before the mobile number.
-  const trunkStripped = digits.replace(/^0+/, '');
-
-  const candidates =
-    dial === '91'
-      ? [asTyped, dialStripped, trunkStripped]
-      : [dialStripped, asTyped, trunkStripped];
-
-  for (const national of candidates) {
-    if (national && isValidNational(dial, national)) {
-      return { dialCode: `+${dial}`, national, e164: `+${dial}${national}` };
-    }
-  }
-  return null;
-}
-
-/**
- * Validate a number the member typed IN FULL, including the '+' (the Settings
- * editor, where splitting a stored E.164 back into dial code + national digits
- * would be guesswork). Returns the cleaned E.164 or null.
- */
-export function validateE164(raw: string): string | null {
-  const trimmed = raw.trim().replace(/[\s()-]/g, '');
-  if (!/^\+\d{7,15}$/.test(trimmed)) return null;
-  // The one rule we actually know: Indian mobiles are 10 digits starting 6-9.
-  if (trimmed.startsWith('+91') && !/^\+91[6-9]\d{9}$/.test(trimmed)) return null;
-  return trimmed;
+export function parsePhone(raw: string): { ok: true; phone: string | null } | { ok: false; message: string } {
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) return { ok: true, phone: null };
+  const compact = trimmed.replace(/[\s\-.()]/g, '');
+  if (!/^\+?\d+$/.test(compact)) return { ok: false, message: PHONE_MESSAGE };
+  const plus = compact.startsWith('+');
+  const digits = plus ? compact.slice(1) : compact;
+  if (digits.length < 7 || digits.length > 15) return { ok: false, message: PHONE_MESSAGE };
+  return { ok: true, phone: plus ? `+${digits}` : digits };
 }
 
 // ---------------------------------------------------------------- targets
@@ -160,8 +135,9 @@ const ROUND_TO = { calories: 50, macro: 5 } as const;
 /** Reference body weight when the member skips the optional field — keeps one code path. */
 export const REFERENCE_BODY_WEIGHT_KG = 75;
 
-// Ranges mirror the editable bounds in components/settings/ProfileCard so a
-// generated target is always re-savable there.
+// Ranges mirror TARGET_RULES in components/settings/profileAutosave.ts (the bounds Profile
+// accepts when a target is edited) so a generated target is always re-savable there.
+// (Not imported: profileAutosave imports this file.)
 const LIMITS = {
   calorieTarget: { min: 800, max: 8000 },
   proteinTargetG: { min: 20, max: 500 },
@@ -256,7 +232,9 @@ function parseOptionalNumber(raw: string, rule: NumRule): number | null | 'inval
 
 // ---------------------------------------------------------------- validation
 
-const GYM_NAME_MAX = 60;
+export const GYM_NAME_MAX = 60;
+export const GOAL_MESSAGE = 'Choose a goal.';
+export const EXPERIENCE_MESSAGE = 'Choose your experience.';
 
 /**
  * `units` (v0.27.0): under 'imperial' the height is typed in inches and the body weight in
@@ -266,25 +244,17 @@ export function validateOnboarding(draft: OnboardingDraft, units: 'metric' | 'im
   const imperial = units === 'imperial';
   const hRule = imperial ? HEIGHT_RULE_IN : HEIGHT_RULE;
   const wRule = imperial ? WEIGHT_RULE_LB : WEIGHT_RULE;
-  const name = normalizeName(draft.name);
-  if (name.length === 0) {
-    return { ok: false, field: 'name', message: 'Enter your name.' };
-  }
-  if (name.length > NAME_MAX) {
-    return { ok: false, field: 'name', message: `Keep your name under ${NAME_MAX} characters.` };
-  }
+  const named = checkName(draft.name);
+  if (!named.ok) return { ok: false, field: 'name', message: named.message };
+  const name = named.name;
 
-  const phone = normalizePhone(draft.dialCode, draft.phone);
-  if (!phone) {
-    return {
-      ok: false,
-      field: 'phone',
-      message:
-        dialDigits(draft.dialCode) === '91'
-          ? 'Enter a 10-digit mobile number starting with 6, 7, 8 or 9.'
-          : 'Enter a valid mobile number for that country code.',
-    };
-  }
+  const phone = parsePhone(draft.phone);
+  if (!phone.ok) return { ok: false, field: 'phone', message: phone.message };
+
+  if (draft.goal == null) return { ok: false, field: 'goal', message: GOAL_MESSAGE };
+  if (draft.experience == null) return { ok: false, field: 'experience', message: EXPERIENCE_MESSAGE };
+  const goal = draft.goal;
+  const experience = draft.experience;
 
   const age = parseOptionalNumber(draft.age, AGE_RULE);
   if (age === 'invalid') {
@@ -311,14 +281,14 @@ export function validateOnboarding(draft: OnboardingDraft, units: 'metric' | 'im
     ok: true,
     value: {
       name,
-      phoneE164: phone.e164,
-      goal: draft.goal,
-      experience: draft.experience,
+      phoneE164: phone.phone,
+      goal,
+      experience,
       age: age ?? 0,
       heightCm: heightCm ?? 0,
       gymName,
       bodyWeightKg,
-      targets: computeTargets(draft.goal, bodyWeightKg),
+      targets: computeTargets(goal, bodyWeightKg),
     },
   };
 }

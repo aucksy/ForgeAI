@@ -24,12 +24,13 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
-import { Card, GhostButton, Icon, IconButton, PrimaryButton, Screen, UndoBar, askConfirm } from '@/components/ui';
+import { Card, GhostButton, Icon, PrimaryButton, Screen, UndoBar, askConfirm } from '@/components/ui';
 import { countOwnWorkouts, isDemoData, prepareImportOverDemo } from '@/onboarding/db/dataActions';
 import { replaceConfirmBody, replaceImpact, restoreSafetyCopy, takeSafetyCopy, type SafetyCopy } from '@/onboarding/db/importSafety';
 import { normalizeName } from '@/onboarding/form';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { success, warn } from '@/lib/haptics';
+import { goBack } from '@/lib/goBack';
 import { useBackGuard } from '@/lib/useBackGuard';
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -204,7 +205,7 @@ export default function ImportScreen() {
   const stepsBack = useRef<(() => boolean) | null>(null);
   const close = (): void => {
     leaving.current = true;
-    router.back();
+    goBack(router, '/settings');
   };
   useBackGuard((leave) => {
     if (leaving.current) return false;
@@ -506,12 +507,8 @@ export default function ImportScreen() {
   return (
     <Screen
       scroll={phase !== 'importing'}
-      title={strong ? 'Import from Strong' : 'Migrate from Hevy'}
-      right={
-        phase === 'importing' ? undefined : (
-          <IconButton icon="close" onPress={close} accessibilityLabel="Close" />
-        )
-      }
+      title={strong ? 'Import from Strong' : 'Import from Hevy'}
+      onBack={phase === 'importing' ? undefined : close}
     >
       {problem ? (
         <Text style={{ ...CAPTION, color: color.criticalText, marginBottom: space.md }}>{problem}</Text>
@@ -523,7 +520,7 @@ export default function ImportScreen() {
           <Card>
             <View style={{ gap: space.md }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-                <Icon name="calendar" size={20} color={color.accent} />
+                <Icon name="import" size={20} color={color.accent} />
                 <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
                   Bring your {appName} history in
                 </Text>
@@ -733,7 +730,7 @@ export default function ImportScreen() {
                 onPress={() => void onImport()}
               />
             )}
-            <GhostButton label="Choose a different file" icon="close" onPress={() => void onPick()} />
+            <GhostButton label="Choose a different file" icon="import" onPress={() => void onPick()} />
           </View>
         </View>
       ) : null}
@@ -767,7 +764,7 @@ export default function ImportScreen() {
             />
           </View>
           <Text style={{ ...CAPTION, textAlign: 'center' as const }}>
-            Building your history and detecting PRs. If you leave, it finishes on its own.
+            Building your history and finding your records. If you leave, it finishes on its own.
           </Text>
         </View>
       ) : null}
@@ -779,7 +776,7 @@ export default function ImportScreen() {
             <UndoBar message={undoBar} actionLabel="Undo" onAction={() => void onUndo()} onDismiss={() => setUndoBar(null)} />
           ) : null}
           <Card style={{ alignItems: 'center', paddingVertical: space.xl, gap: space.sm }}>
-            <Icon name="trophy" size={30} color={color.accent} />
+            <Icon name="check" size={30} color={color.accent} />
             <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>
               {doneTitle(result.imported)}
             </Text>
@@ -789,7 +786,7 @@ export default function ImportScreen() {
           </Card>
 
           {canUndo ? (
-            <GhostButton label={undoing ? 'Undoing…' : 'Undo import'} icon="close" onPress={() => void onUndo()} />
+            <GhostButton label={undoing ? 'Undoing…' : 'Undo import'} onPress={() => void onUndo()} />
           ) : null}
 
           <Card>

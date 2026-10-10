@@ -14,17 +14,6 @@ export function todayLink(tw: TodayLike): '/today' | '/workout' | '/routines' {
 }
 
 /**
- * The words on the card's action, true to where it goes (SH-23: never "Start workout" on a
- * tap that only opens another screen). PURE.
- */
-export function todayAction(tw: TodayLike): string {
-  const link = todayLink(tw);
-  if (link === '/routines') return tw.today?.status === 'emptyPlan' ? 'Open your routines' : 'Pick a program or build one';
-  if (link === '/today') return tw.today?.status === 'doneToday' ? 'See what’s next' : 'See workout';
-  return 'Choose a workout';
-}
-
-/**
  * Today's routine was already done today (audit Phase 3: the one "Today" answer says so).
  * Older shapes without it: the old headline "… is in the books …".
  */

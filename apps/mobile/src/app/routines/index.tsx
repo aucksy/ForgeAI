@@ -12,12 +12,13 @@
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { Badge, EmptyState, GhostButton, Icon, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
+import { Badge, EmptyState, GhostButton, Icon, IconButton, LoadError, Screen, Skeleton, askConfirm } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import type { IconName } from '@/components/ui';
 import { todayISO } from '@/lib/date';
+import { goBack } from '@/lib/goBack';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { tap } from '@/lib/haptics';
 import { countWord } from '@/lib/words';
@@ -45,6 +46,7 @@ import type { ExistingChoice } from '@/tracker/services/plansService';
 import { pickAndImportRoutineFile } from '@/tracker/services/routineShare';
 import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { tell } from '@/lib/tell';
 
 function EntryCard({ icon, title, sub, onPress }: { icon: IconName; title: string; sub: string; onPress: () => void }) {
   return (
@@ -249,7 +251,7 @@ export default function RoutinesScreen() {
       const id = await createRoutine({ name: 'New routine', dayType: 'full', folderId });
       router.push(`/routines/${id}`);
     } catch {
-      Alert.alert('Could not create routine', 'Please try again.');
+      void tell('Could not create routine', 'Please try again.');
     }
   };
 
@@ -289,12 +291,12 @@ export default function RoutinesScreen() {
       const lines: string[] = [];
       if (res.added.length > 0) lines.push(`New in your library: ${res.added.join(', ')}.`);
       if (res.skipped.length > 0) lines.push(`Left out (no muscles in the file): ${res.skipped.join(', ')}.`);
-      Alert.alert(
+      void tell(
         res.updated ? 'Folder updated' : 'Routines added',
         lines.length > 0 ? lines.join('\n\n') : res.updated ? 'You had this file already, so its folder was updated.' : 'They are in a new folder.',
       );
     } catch (e) {
-      Alert.alert('Could not open that file', e instanceof Error ? e.message : 'Please try again.');
+      void tell('Could not open that file', e instanceof Error ? e.message : 'Please try again.');
     }
   };
 
@@ -306,18 +308,14 @@ export default function RoutinesScreen() {
 
   const confirmDelete = (f: Folder): void => {
     const n = f.routines.length;
-    Alert.alert(
-      `Delete ${f.name}?`,
-      deleteFolderMessage(n, f.following),
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => void deleteFolder(f.id).then(reload).catch(() => Alert.alert('Delete failed', 'Please try again.')),
-        },
-      ],
-    );
+    void askConfirm({
+      title: `Delete ${f.name}?`,
+      body: deleteFolderMessage(n, f.following),
+      confirmLabel: 'Delete',
+      destructive: true,
+    }).then((ok) => {
+      if (ok) void deleteFolder(f.id).then(reload).catch(() => void tell('Delete failed', 'Please try again.'));
+    });
   };
 
   /** RP-07: move a routine inside its folder — saved at once; a failed save says so. */
@@ -326,7 +324,7 @@ export default function RoutinesScreen() {
     const routines = moved(f.routines, index, dir);
     setFolders(folders.map((x) => (x.id === f.id ? { ...x, routines } : x)));
     reorderRoutines(routines.map((r) => r.id)).catch(() => {
-      Alert.alert('Could not save the new order', 'Please try again.');
+      void tell('Could not save the new order', 'Please try again.');
       reload();
     });
   };
@@ -338,7 +336,7 @@ export default function RoutinesScreen() {
     const rest = moved(folders.filter((f) => !f.following), index, dir);
     setFolders([...lead, ...rest]);
     reorderFolders(rest.map((f) => f.id)).catch(() => {
-      Alert.alert('Could not save the new order', 'Please try again.');
+      void tell('Could not save the new order', 'Please try again.');
       reload();
     });
   };
@@ -349,7 +347,8 @@ export default function RoutinesScreen() {
   return (
     <Screen
       title="Routines"
-      subtitle={reordering ? 'Move routines and folders. Your plan goes in this order.' : 'Start any routine in a tap.'}
+      subtitle={reordering ? 'Move routines and folders. Your plan goes in this order.' : undefined}
+      onBack={reordering ? undefined : () => goBack(router, '/workout')}
       right={
         reordering ? (
           <Pressable
@@ -367,8 +366,8 @@ export default function RoutinesScreen() {
     >
       {!reordering ? (
         <View style={{ flexDirection: 'row', gap: space.md, marginBottom: space.lg }}>
-          <EntryCard icon="trophy" title="Ready programs" sub="Gym, dumbbells or home, beginner to advanced" onPress={() => router.push('/programs')} />
-          <EntryCard icon="sparkle" title="Build a plan" sub="From your goal, days, equipment and sore spots" onPress={() => router.push('/plan/build')} />
+          <EntryCard icon="list" title="Ready programs" sub="Gym, dumbbells or home, beginner to advanced" onPress={() => router.push('/programs')} />
+          <EntryCard icon="list" title="Build a plan" sub="From your goal, days, equipment and sore spots" onPress={() => router.push('/plan/build')} />
         </View>
       ) : null}
 
@@ -381,7 +380,7 @@ export default function RoutinesScreen() {
         </View>
       ) : showNoRoutinesYet(folders) ? (
         <View style={{ gap: space.lg }}>
-          <EmptyState icon="dumbbell" title="No routines yet" body="Follow a ready program, build a plan, or make your own routine." />
+          <EmptyState icon="list" title="No routines yet" body="Follow a ready program, build a plan, or make your own routine." />
           <GhostButton label="New routine" icon="plus" onPress={() => void onNewRoutine(null)} />
         </View>
       ) : (
@@ -514,10 +513,10 @@ export default function RoutinesScreen() {
               <SheetRow
                 label="Follow this plan"
                 value="Today's workout"
-                leading={<Icon name="target" size={18} color={color.accent} />}
+                leading={<Icon name="check" size={18} color={color.accent} />}
                 onPress={() => {
                   const f = menuFor;
-                  after(() => void followFolder(f.id, todayISO()).then(reload).catch(() => Alert.alert('Could not follow', 'Please try again.')));
+                  after(() => void followFolder(f.id, todayISO()).then(reload).catch(() => void tell('Could not follow', 'Please try again.')));
                 }}
               />
             ) : null}
@@ -527,27 +526,27 @@ export default function RoutinesScreen() {
               leading={<Icon name="heart" size={18} color={color.accent} />}
               onPress={() => {
                 const f = menuFor;
-                after(() => void setEasyWeeks(f, !f.settings.easy).then(reload).catch(() => Alert.alert('Could not save', 'Please try again.')));
+                after(() => void setEasyWeeks(f, !f.settings.easy).then(reload).catch(() => void tell('Could not save', 'Please try again.')));
               }}
             />
             {menuFor.following && menuFor.settings.easy && plan && !plan.easy ? (
               <SheetRow
                 label="Take an easy week now"
                 value="7 days from today"
-                leading={<Icon name="clock" size={18} color={color.accent} />}
+                leading={<Icon name="heart" size={18} color={color.accent} />}
                 onPress={() => {
                   const f = menuFor;
-                  after(() => void moveEasyWeek(f, 'now').then(reload).catch(() => Alert.alert('Could not save', 'Please try again.')));
+                  after(() => void moveEasyWeek(f, 'now').then(reload).catch(() => void tell('Could not save', 'Please try again.')));
                 }}
               />
             ) : null}
             {menuFor.following && plan?.easy ? (
               <SheetRow
                 label="Train normally this week"
-                leading={<Icon name="flame" size={18} color={color.accent} />}
+                leading={<Icon name="dumbbell" size={18} color={color.accent} />}
                 onPress={() => {
                   const f = menuFor;
-                  after(() => void moveEasyWeek(f, 'skip').then(reload).catch(() => Alert.alert('Could not save', 'Please try again.')));
+                  after(() => void moveEasyWeek(f, 'skip').then(reload).catch(() => void tell('Could not save', 'Please try again.')));
                 }}
               />
             ) : null}
@@ -576,7 +575,7 @@ export default function RoutinesScreen() {
           setNaming(null);
           if (!n) return;
           const job = n.mode === 'rename' ? renameFolder(n.folder.id, name) : createFolder(name).then((id) => setOpen((o) => ({ ...o, [id]: true })));
-          void job.then(reload).catch(() => Alert.alert('Could not save', 'Please try again.'));
+          void job.then(reload).catch(() => void tell('Could not save', 'Please try again.'));
         }}
       />
 

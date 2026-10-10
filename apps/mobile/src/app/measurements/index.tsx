@@ -10,8 +10,9 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
-import { askConfirm, Card, Chip, EmptyState, IconButton, LoadError, PrimaryButton, Screen, SectionHeader, Skeleton, UndoBar } from '@/components/ui';
+import { askConfirm, Card, Chip, EmptyState, LoadError, PrimaryButton, Screen, SectionHeader, Skeleton, UndoBar } from '@/components/ui';
 import { dateWithYear, tinyDate, todayISO } from '@/lib/date';
+import { goBack } from '@/lib/goBack';
 import { trimNum } from '@/lib/format';
 import { useUnits } from '@/lib/useUnits';
 import { chart, color, radius, space, type } from '@/theme/tokens';
@@ -157,7 +158,7 @@ export default function MeasurementsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-    <Screen title="Measurements" right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
+    <Screen title="Measurements" onBack={() => goBack(router, '/analytics')}>
       <View style={{ gap: space.lg }}>
         <PrimaryButton label="Log measurements" icon="plus" onPress={() => router.push('/measurements/log')} />
 
@@ -167,7 +168,7 @@ export default function MeasurementsScreen() {
           <Skeleton width="100%" height={240} radius={radius.lg} />
         ) : summary.length === 0 || !kind || !current ? (
           <EmptyState
-            icon="target"
+            icon="ruler"
             title="No measurements yet"
             body="Log your waist, chest, arms and more. Each one gets its own trend here."
           />

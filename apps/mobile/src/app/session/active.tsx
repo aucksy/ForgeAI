@@ -9,10 +9,11 @@
 import { useKeepAwake } from 'expo-keep-awake';
 import { useFocusEffect, useIsFocused, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import type { ScrollView as ScrollViewType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DangerLink } from '@/components/DangerLink';
 import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen, askConfirm } from '@/components/ui';
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -34,11 +35,13 @@ import { holdRoutineOffer, routineUpdateOffer } from '@/tracker/services/routine
 import { ensureAlertPermission } from '@/tracker/services/workoutAlerts';
 import { loadTargets, querySignature, targetQuery, useTargets } from '@/tracker/store/targetStore';
 import { useUnits } from '@/lib/useUnits';
+import { goBack } from '@/lib/goBack';
 import { draftToRichSets, hasWorkingSet } from '@/tracker/services/draftSets';
 import { isCorrecting, useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import { useWorkoutUi } from '@/tracker/store/workoutUiStore';
+import { tell } from '@/lib/tell';
 
 export default function ActiveWorkoutScreen() {
   const router = useRouter();
@@ -227,10 +230,15 @@ export default function ActiveWorkoutScreen() {
       });
       return;
     }
-    Alert.alert('Discard workout?', 'This workout and its sets will be deleted. This cannot be undone.', [
-      { text: 'Keep logging', style: 'cancel' },
-      { text: 'Discard', style: 'destructive', onPress: back },
-    ]);
+    void askConfirm({
+      title: 'Discard workout?',
+      body: 'This workout and its sets will be deleted. This cannot be undone.',
+      confirmLabel: 'Discard',
+      cancelLabel: 'Keep logging',
+      destructive: true,
+    }).then((ok) => {
+      if (ok) back();
+    });
   };
 
   // HI-07: Android Back on the editor asks "Discard changes?" instead of leaving the edit open
@@ -257,7 +265,7 @@ export default function ActiveWorkoutScreen() {
       const id = await saveEdits();
       if (!id) {
         leaving.current = false;
-        Alert.alert(
+        void tell(
           'Nothing to save',
           wasPast
             ? 'Type at least one set to save this workout.'
@@ -271,7 +279,7 @@ export default function ActiveWorkoutScreen() {
       router.replace({ pathname: '/session/[id]', params: { id } });
       void useDashboard.getState().refresh().catch(() => undefined);
       if (!useActiveWorkout.getState().lastSaveReconciled) {
-        Alert.alert(
+        void tell(
           wasPast ? 'Workout saved' : 'Changes saved',
           'Your records will catch up the next time you log or edit a workout.',
         );
@@ -282,12 +290,12 @@ export default function ActiveWorkoutScreen() {
         // save back to. Drop the draft rather than leave an editor that can only fail.
         leaving.current = true;
         await discard();
-        Alert.alert('Workout deleted', 'This workout was deleted, so your changes were discarded.');
+        void tell('Workout deleted', 'This workout was deleted, so your changes were discarded.');
         router.replace('/history');
         return;
       }
       leaving.current = false;
-      Alert.alert(
+      void tell(
         'Could not save',
         'Something went wrong saving your changes. The workout is unchanged — tap Save to try again.',
       );
@@ -330,12 +338,12 @@ export default function ActiveWorkoutScreen() {
         void useDashboard.getState().refresh().catch(() => undefined);
       } else {
         leaving.current = false;
-        Alert.alert('Nothing to save', 'Tick at least one set before finishing.');
+        void tell('Nothing to save', 'Tick at least one set before finishing.');
       }
     } catch {
       // Commit rolled back atomically (nothing saved) — let the user retry.
       leaving.current = false;
-      Alert.alert('Could not save', 'Something went wrong saving your workout. Your sets are still here — tap Finish to try again.');
+      void tell('Could not save', 'Something went wrong saving your workout. Your sets are still here — tap Finish to try again.');
     } finally {
       finishing.current = false;
     }
@@ -357,10 +365,11 @@ export default function ActiveWorkoutScreen() {
         }}
       >
         {isEditing ? (
-          <IconButton icon="close" onPress={onDiscard} accessibilityLabel="Discard changes" />
+          // Phase 7: one way to leave — the back arrow (it asks before throwing edits away); an × never deletes.
+          <IconButton icon="chevron-left" onPress={onDiscard} accessibilityLabel="Go back" />
         ) : (
           <Pressable
-            onPress={() => router.back()}
+            onPress={() => goBack(router, '/workout')}
             hitSlop={6}
             accessibilityRole="button"
             accessibilityLabel="Minimise workout. It keeps running."
@@ -466,17 +475,9 @@ export default function ActiveWorkoutScreen() {
             }}
           />
           {!isEditing ? (
-            <Pressable
-              onPress={onDiscard}
-              hitSlop={8}
-              accessibilityRole="button"
-              accessibilityLabel="Discard workout"
-              style={{ alignSelf: 'center', paddingVertical: space.md, paddingHorizontal: space.lg }}
-            >
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.criticalText }}>
-                Discard workout
-              </Text>
-            </Pressable>
+            <View style={{ paddingVertical: space.xs }}>
+              <DangerLink label="Discard workout" onPress={onDiscard} />
+            </View>
           ) : null}
         </ScrollView>
         <RecordToast />

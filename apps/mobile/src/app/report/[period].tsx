@@ -11,6 +11,7 @@ import { Pressable, Text, View } from 'react-native';
 import { BarChart, HBarList } from '@/components/charts';
 import { Badge, Card, EmptyState, GlassCard, HeroCard, Icon, IconButton, LoadError, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
 import { todayISO } from '@/lib/date';
+import { goBack } from '@/lib/goBack';
 import { fmtInt, trimNum } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
@@ -240,10 +241,10 @@ function YearBody({ y }: { y: YearReview }) {
           <StatTile label="Longest streak" value={y.longestStreakWeeks} unit={y.longestStreakWeeks === 1 ? 'week' : 'weeks'} icon="flame" />
         </View>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
-          <StatTile label="Lifts up" value={y.recordCount} icon="trophy" />
+          <StatTile label="Lifts up" value={y.recordCount} icon="medal" />
         </View>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
-          <StatTile label="Busiest month" value={y.busiest ? monthName(y.busiest.month).slice(0, 3) : '—'} icon="zap" />
+          <StatTile label="Busiest month" value={y.busiest ? monthName(y.busiest.month).slice(0, 3) : '—'} icon="calendar" />
         </View>
       </View>
       {y.gain ? (
@@ -322,12 +323,8 @@ export default function ReportScreen() {
     <Screen
       title={title}
       subtitle={isYear ? 'Year in review' : 'Monthly report'}
-      right={
-        <View style={{ flexDirection: 'row', gap: space.sm }}>
-          {scene ? <IconButton icon="send" onPress={() => setSharing(true)} accessibilityLabel="Share as a picture" /> : null}
-          <IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />
-        </View>
-      }
+      onBack={() => goBack(router, '/analytics')}
+      right={scene ? <IconButton icon="send" onPress={() => setSharing(true)} accessibilityLabel="Share as a picture" /> : undefined}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: space.lg }}>
         <Pressable

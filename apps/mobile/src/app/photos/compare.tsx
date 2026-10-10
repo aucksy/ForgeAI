@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EmptyState, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
 import { useLoad } from '@/lib/useLoad';
+import { goBack } from '@/lib/goBack';
 import { dateWithYear } from '@/lib/date';
 import { color, radius, space, type } from '@/theme/tokens';
 import { ZoomImage } from '@/tracker/components/ZoomImage';
@@ -40,7 +41,7 @@ export default function ComparePhotosScreen() {
     <Screen
       title="Compare"
       subtitle={pair ? apartText(pair[0].dateISO, pair[1].dateISO) : undefined}
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/analytics')}
     >
       {load.state === 'error' ? (
         <LoadError what="these photos" onRetry={load.retry} />

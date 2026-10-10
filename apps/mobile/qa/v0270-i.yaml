@@ -29,14 +29,18 @@ appId: com.forgeai.app
     when:
       visible: "Resume workout"
     commands:
+      - tapOn: "^Discard workout$"
       - tapOn: "^Discard$"
-      - tapOn:
-          id: "android:id/button1"
       - extendedWaitUntil:
           visible: "Start empty workout"
           timeout: 15000
 # ---------------------------------------------------------------- import from Strong
 - tapOn: "^Profile$"
+# Audit Phase 7: the imports sit inside Profile's folded "Gym, backup and data" (it stays open
+# for the rest of this part: the tab is not restarted until the widget step, which needs only
+# the open half).
+- runFlow:
+    file: sub-profile-fold-open.yaml
 - scrollUntilVisible:
     element: "Import from Strong"
     centerElement: true
@@ -116,6 +120,9 @@ appId: com.forgeai.app
 # Audit Phase 4 (IM-18): a file is told apart by its content — the Strong file picked through
 # "Import from Hevy" reads as Strong (the screen turns into "Import from Strong"); IM-09: it was
 # just imported, so "All 2 workouts are already here". Closed without importing.
+# The fold should still be open (same Profile screen); opened again only if it is shut.
+- runFlow:
+    file: sub-profile-fold-open.yaml
 - scrollUntilVisible:
     element: "Import from Hevy"
     centerElement: true
@@ -145,7 +152,7 @@ appId: com.forgeai.app
 - assertVisible: "Import from Strong"
 - assertNotVisible: "Migrate from Hevy"
 - takeScreenshot: 122b-strong-through-hevy-all-here
-- tapOn: "Close"
+- tapOn: "Go back"
 # ---------------------------------------------------------------- pounds and miles
 - scrollUntilVisible:
     element: "lb, miles"

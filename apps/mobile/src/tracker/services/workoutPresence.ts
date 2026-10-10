@@ -49,7 +49,7 @@ export function ongoingText(
   restEndsAt: number | null,
   use24Hour = false,
 ): string {
-  if (restEndsAt != null) return `Resting · next set at ${clockTime(restEndsAt, use24Hour)}`;
+  if (restEndsAt != null) return `Rest · next set at ${clockTime(restEndsAt, use24Hour)}`;
   let total = 0;
   let done = 0;
   for (const e of exercises) {

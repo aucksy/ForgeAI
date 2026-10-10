@@ -59,6 +59,15 @@ export function tinyDate(iso: string): string {
 }
 
 /**
+ * Packet B (Phase 7): "9 Oct" this year, "9 Oct 2025" otherwise — the list-and-chart date with
+ * its year whenever it isn't this year. `today` is for tests.
+ */
+export function tinyDateWithYear(iso: string, today: string = todayISO()): string {
+  const base = tinyDate(iso);
+  return iso.slice(0, 4) === today.slice(0, 4) ? base : `${base} ${iso.slice(0, 4)}`;
+}
+
+/**
  * HI-15: "Fri, 9 Oct" this year, "Fri, 9 Oct 2025" otherwise — the year whenever it isn't
  * this year, so an old workout is never ambiguous. `today` is for tests.
  */

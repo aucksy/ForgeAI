@@ -17,6 +17,11 @@ export interface ConfirmOptions {
   cancelLabel?: string;
   /** Red confirm button: for deletes and anything that throws work away. */
   destructive?: boolean;
+  /**
+   * Packet B (Phase 7): a notice, not a question ("Could not save — please try again"): one
+   * quiet button (`confirmLabel`), no Cancel. Replaces Android's one-button grey pop-up.
+   */
+  notice?: boolean;
 }
 
 export interface ConfirmRequest extends ConfirmOptions {

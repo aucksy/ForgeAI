@@ -194,7 +194,7 @@ export function toastHit<T extends LiveExercise & { key: string; exerciseId: str
   return null;
 }
 
-/** "Heaviest weight · 85 kg × 3" / "Most reps · 15 reps" / "Best session · 2,140 kg". */
+/** "Heaviest weight · 85 kg × 3" / "Most reps · 15 reps" / "Best workout · 2,140 kg". */
 export function recordLabel(hit: LiveHit, ctx: RecordTextContext): string {
   return recordToastLabel({ kind: hit.kind, value: hit.value, set: hit.kind === 'best_session' ? null : hit.set, sessionId: '', dateISO: '' }, ctx);
 }

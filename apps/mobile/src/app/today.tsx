@@ -9,9 +9,10 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Text, View } from 'react-native';
 
-import { Card, GhostButton, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { Card, GhostButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { todayISO } from '@/lib/date';
+import { goBack } from '@/lib/goBack';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { useLoad } from '@/lib/useLoad';
 import { fmtWeight } from '@/lib/format';
@@ -24,6 +25,7 @@ import { targetLine, type ProgressionTarget } from '@/tracker/engine/progression
 import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
 import { getPlanNow, planLine, type PlanNow } from '@/tracker/services/planState';
 import { doneToday } from '@/tracker/lib/todayLink';
+import { startMode, startShownWorkout } from '@/tracker/services/todayStart';
 import { showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import type { TodaySummary } from '@/types/models';
@@ -40,8 +42,10 @@ interface Today {
 export default function TodayScreen() {
   const router = useRouter();
   const unitSystem = useSettings((s) => s.unitSystem);
-  const active = useActiveWorkout((s) => s.active);
-  const startFromPlanDay = useActiveWorkout((s) => s.startFromPlanDay);
+  // "Resume workout" only for a live workout — an edit of a past one is not "open" (as on Home).
+  const resumes = useActiveWorkout(
+    (s) => startMode({ active: s.active, editingSessionId: s.editingSessionId, pastLog: s.pastLog }) === 'resume',
+  );
   const hydrate = useActiveWorkout((s) => s.hydrate);
   // RP-13: a failed read says "Couldn't load today's workout — Try again", never
   // "No workout planned for today".
@@ -86,11 +90,10 @@ export default function TodayScreen() {
         setStarting(true);
         setStartError(null);
         try {
-          // A workout saved before Android closed the app loads first — Start must not replace it.
-          await hydrate();
-          // RP-03: the routine this page shows, by id — never worked out again at the tap.
-          if (!useActiveWorkout.getState().active && today?.planDayId) await startFromPlanDay(today.planDayId);
-          showActiveWorkout(router);
+          // RP-03: the routine this page shows, by id — never worked out again at the tap. The
+          // same Start as Home's: a live workout resumes, an edit left open is asked about
+          // ("Resume editing" / "Discard changes and start new"), never opened silently.
+          await startShownWorkout(router, today?.planDayId ?? null, () => void showActiveWorkout(router));
         } finally {
           setStarting(false);
         }
@@ -107,7 +110,7 @@ export default function TodayScreen() {
   return (
     <Screen
       title="Today"
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router)}
     >
       {todayLoad.state === 'error' ? (
         <LoadError what="today's workout" onRetry={todayLoad.retry} />
@@ -129,7 +132,7 @@ export default function TodayScreen() {
           {today.today?.status === 'noPlan' || today.today?.status === 'emptyPlan' ? (
             <GhostButton
               label={today.today.status === 'noPlan' ? 'Pick a program or build one' : 'Open your routines'}
-              icon="target"
+              icon="list"
               onPress={() => router.replace('/routines')}
             />
           ) : null}
@@ -176,7 +179,7 @@ export default function TodayScreen() {
           </Card>
           <View style={{ gap: space.md }}>
             <PrimaryButton
-              label={active ? 'Resume workout' : `Start ${today.dayName}`}
+              label={resumes ? 'Resume workout' : `Start ${today.dayName}`}
               icon="dumbbell"
               loading={starting}
               onPress={() => void onStart()}

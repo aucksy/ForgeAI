@@ -12,7 +12,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Card, Icon, SectionHeader } from '@/components/ui';
 import type { IconName } from '@/components/ui';
-import { tinyDate } from '@/lib/date';
+import { tinyDateWithYear } from '@/lib/date';
 import { kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { color, motion, space, type } from '@/theme/tokens';
 import { PACE_BASIS, paceRuleText, RECORD_LABEL, type RecordHit, type RecordKind } from '@/tracker/engine/records';
@@ -32,23 +32,11 @@ export interface ExercisePrRowsProps {
   onOpenSession: (sessionId: string) => void;
 }
 
-const ICON: Record<RecordKind, IconName> = {
-  weight: 'trophy',
-  e1rm: 'trend',
-  best_set: 'dumbbell',
-  best_session: 'flame',
-  reps: 'target',
-  duration: 'clock',
-  pace: 'clock',
-  distance: 'zap',
-};
+/** Packet B (Phase 7): one icon per meaning — every record wears the medal; the label says which. */
+const RECORD_ICON: IconName = 'medal';
 
 /** "12 Jun" for the current year, else "12 Jun 2024" (records can be old). */
-function recDate(iso: string): string {
-  const year = iso.slice(0, 4);
-  const nowYear = String(new Date().getFullYear());
-  return year === nowYear ? tinyDate(iso) : `${tinyDate(iso)} ${year}`;
-}
+const recDate = (iso: string): string => tinyDateWithYear(iso);
 
 function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label: string; value: string; sub: string; onPress: (() => void) | null }) {
   const body = (
@@ -109,7 +97,7 @@ export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession
           return (
             <RecordRow
               key={b.kind}
-              icon={ICON[b.kind]}
+              icon={RECORD_ICON}
               label={RECORD_LABEL[b.kind]}
               value={recordValueText(b, { ...ctx, units })}
               sub={detail ? `${detail} · ${recDate(b.dateISO)}` : recDate(b.dateISO)}
@@ -119,7 +107,7 @@ export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession
         })}
         {paceMissing ? (
           <RecordRow
-            icon={ICON.pace}
+            icon={RECORD_ICON}
             label={RECORD_LABEL.pace}
             value="—"
             sub={`No set of ${PACE_BASIS.km.words} or more yet`}
@@ -136,7 +124,7 @@ export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession
             {ladder.map((r) => (
               <RecordRow
                 key={`x-${r.reps}`}
-                icon="target"
+                icon={RECORD_ICON}
                 label={`${r.reps} ${r.reps === 1 ? 'rep' : 'reps'}`}
                 value={`${trimNum(kgToDisplay(r.weightKg, units))} ${unit}`}
                 sub={recDate(r.dateISO)}

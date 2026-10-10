@@ -12,7 +12,8 @@ import { Text, View } from 'react-native';
 
 import { color, type } from '@/theme/tokens';
 
-import { formatDuration } from '../services/finishSummary';
+// Packet B: a running clock reads m:ss ("12:05", "1:02:30"), never "12m 05s".
+import { fmtDuration } from '../engine/logTypes';
 
 /** Seconds since `startedAt` (0 when the workout hasn't started), ticking every 1s. */
 function useElapsed(startedAt: number | null): number {
@@ -33,7 +34,7 @@ export const ElapsedClock = memo(function ElapsedClock({ startedAt }: { startedA
         ELAPSED
       </Text>
       <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>
-        {formatDuration(elapsed)}
+        {fmtDuration(elapsed)}
       </Text>
     </View>
   );

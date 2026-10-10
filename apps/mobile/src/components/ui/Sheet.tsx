@@ -7,14 +7,19 @@
  * Keyboard: a React Native Modal is its own window, which Android still shrinks for the
  * keyboard (the app-wide KeyboardRoom only covers the main window), so the capped panel simply
  * rides up above it. iOS gets a KeyboardAvoidingView.
+ *
+ * Review fix: it notes when it closes (`sheetClock`), so a notice or question opened in the same
+ * moment (`tell()` / `askConfirm`) waits for it to slide away instead of being dropped.
  */
-import { useState, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { Icon } from './Icon';
+import { noteSheetClosed } from './sheetClock';
+import { useReduceMotion } from './useReduceMotion';
 
 export interface SheetProps {
   visible: boolean;
@@ -31,14 +36,30 @@ export interface SheetProps {
 
 export function Sheet({ visible, title, subtitle, onClose, children, footer, closeLabel = 'Close' }: SheetProps) {
   const insets = useSafeAreaInsets();
+  // Phase 7: with "reduce motion" on, the sheet appears in place instead of sliding up.
+  const reduced = useReduceMotion();
   const [viewH, setViewH] = useState(0);
   const [contentH, setContentH] = useState(0);
   // Scroll only when the body overflows: a short sheet stays still, and a list that scrolls
   // inside a short sheet keeps its own gestures.
   const overflows = contentH > viewH + 1;
 
+  // Note the moment it closes — hidden, or taken off the screen while showing. A layout effect,
+  // so the time is set before ConfirmHost (a normal effect) looks at it in the same update.
+  const wasVisible = useRef(visible);
+  useLayoutEffect(() => {
+    if (wasVisible.current && !visible) noteSheetClosed();
+    wasVisible.current = visible;
+  }, [visible]);
+  useLayoutEffect(
+    () => () => {
+      if (wasVisible.current) noteSheetClosed();
+    },
+    [],
+  );
+
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
+    <Modal visible={visible} transparent animationType={reduced ? 'none' : 'slide'} onRequestClose={onClose} statusBarTranslucent>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <View style={{ flex: 1, justifyContent: 'flex-end', paddingTop: insets.top + space.lg }}>
           <Pressable

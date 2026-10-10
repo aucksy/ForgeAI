@@ -5,9 +5,9 @@
  * weight and best estimated 1-rep max. Hevy keeps seven. Phase 3 adds the other five:
  *
  *   weight        Heaviest weight      the heaviest working set (added weight on a weighted move)
- *   e1rm          Best 1-rep max       Epley estimate, weight × (1 + reps / 30); a single is itself
+ *   e1rm          Estimated 1-rep max  Epley estimate, weight × (1 + reps / 30); a single is itself
  *   best_set      Best set             most volume in one set (the one volume rule)
- *   best_session  Best session         most volume in one workout — most reps for a bodyweight move
+ *   best_session  Best workout         most volume in one workout — most reps for a bodyweight move
  *   reps          Most reps            most reps in one set
  *   duration      Longest time         longest single set (plank, wall sit)
  *   pace          Best pace            fastest set of at least 1 km (run, row, ride)
@@ -46,9 +46,9 @@ export const RECORD_KINDS: readonly RecordKind[] = ['weight', 'e1rm', 'best_set'
 
 export const RECORD_LABEL: Record<RecordKind, string> = {
   weight: 'Heaviest weight',
-  e1rm: 'Best 1-rep max',
+  e1rm: 'Estimated 1-rep max',
   best_set: 'Best set',
-  best_session: 'Best session',
+  best_session: 'Best workout',
   reps: 'Most reps',
   duration: 'Longest time',
   pace: 'Best pace',
@@ -143,7 +143,7 @@ export function recordKindsFor(t: LogType, cardio = true): RecordKind[] {
   }
 }
 
-/** Best session counts kilos on weight moves and reps on bodyweight moves. */
+/** Best workout counts kilos on weight moves and reps on bodyweight moves. */
 export function sessionUnit(t: LogType): 'kg' | 'reps' | null {
   if (t === 'weight_reps' || t === 'weighted') return 'kg';
   if (t === 'reps' || t === 'assisted') return 'reps';

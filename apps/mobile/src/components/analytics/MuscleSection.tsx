@@ -29,7 +29,7 @@ export function MuscleSection({ data, index }: MuscleSectionProps) {
       {slices.length > 0 ? (
         <HBarList data={slices.map((m) => ({ label: MUSCLE_LABEL[m.muscle], value: m.sets }))} valueFormat={(n) => setsText(n)} />
       ) : (
-        <EmptyState icon="zap" title="No sets in this range" body="Sets for each muscle show once you do a workout." />
+        <EmptyState icon="dumbbell" title="No sets in this range" body="Sets for each muscle show once you do a workout." />
       )}
     </Section>
   );

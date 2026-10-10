@@ -58,11 +58,11 @@ export function PrSection({ events, allCount, rangeDays, index, onSeeAll, onOpen
       {rows.length === 0 ? (
         allCount > 0 ? (
           <View>
-            <EmptyState icon="trophy" title={`No new bests in ${rangeDays} days`} body="Beat a previous best and it lands here." />
+            <EmptyState icon="medal" title={`No new bests in ${rangeDays} days`} body="Beat a previous best and it lands here." />
             {linkRow}
           </View>
         ) : (
-          <EmptyState icon="trophy" title="No records yet" body="Beat a previous best and it lands here." />
+          <EmptyState icon="medal" title="No records yet" body="Beat a previous best and it lands here." />
         )
       ) : (
         <View style={{ gap: space.lg }}>
@@ -84,7 +84,7 @@ export function PrSection({ events, allCount, rangeDays, index, onSeeAll, onOpen
                   justifyContent: 'center',
                 }}
               >
-                <Icon name="trophy" size={18} color={color.accentBright} />
+                <Icon name="medal" size={18} color={color.accentBright} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text numberOfLines={2} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>

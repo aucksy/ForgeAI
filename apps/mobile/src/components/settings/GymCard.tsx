@@ -3,16 +3,14 @@ import { Text, View } from 'react-native';
 
 import { GlassCard, Skeleton } from '@/components/ui';
 import { Logo } from '@/components/ui/Logo';
-import { fromISO } from '@/lib/date';
+import { monthTitle } from '@/lib/date';
 import { getProfile } from '@/db/repos/userRepo';
 import { color, space, type } from '@/theme/tokens';
 import type { UserProfile } from '@/types/models';
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
+/** "October 2026" — the shared month heading. */
 function monthYear(iso: string): string {
-  const d = fromISO(iso);
-  return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  return monthTitle(iso.slice(0, 7));
 }
 
 /** Gym branding: the member's gym, tenure and the ForgeAI lockup. */

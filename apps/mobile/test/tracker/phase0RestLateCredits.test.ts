@@ -92,7 +92,8 @@ describe('EX-05: the exercise drawings are credited', () => {
   it('the credits page exists and uses the app Screen with a way back', () => {
     const page = read('src/app/credits.tsx');
     expect(page).toMatch(/<Screen/);
-    expect(page).toMatch(/router\.back\(\)/);
+    // Audit Phase 7 review: back, or (opened cold, nothing behind it) the Profile tab.
+    expect(page).toMatch(/goBack\(router, '\/settings'\)/);
   });
 
   it('the credit line is readable and opens Credits (before: 1.74 : 1 grey, licence link only)', () => {

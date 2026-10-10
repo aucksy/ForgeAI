@@ -7,7 +7,7 @@
  */
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Text, TextInput, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
 import { askConfirm, Card, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { todayISO } from '@/lib/date';
@@ -19,6 +19,7 @@ import { DayRow } from '@/tracker/components/BodyEntrySheet';
 import { DatePickerSheet } from '@/tracker/components/DatePickerSheet';
 import { getMeasurements, logMeasurements } from '@/tracker/db/measurementRepo';
 import { replaceMeasurementsQuestion, shouldAskReplace } from '@/tracker/engine/bodyCheck';
+import { tell } from '@/lib/tell';
 import {
   MEASURES,
   MEASURE_LABEL,
@@ -65,11 +66,11 @@ export default function LogMeasurementsScreen() {
     const values: Partial<Record<MeasureKind, number>> = {};
     for (const k of Object.keys(typedValues) as MeasureKind[]) values[k] = shownToMeasure(k, typedValues[k] as number, units);
     if (bad.length > 0) {
-      Alert.alert('Check the numbers', `${bad.map((k) => MEASURE_LABEL[k]).join(', ')}: type a number above 0, like 82.5.`);
+      void tell('Check the numbers', `${bad.map((k) => MEASURE_LABEL[k]).join(', ')}: type a number above 0, like 82.5.`);
       return;
     }
     if (Object.keys(values).length === 0) {
-      Alert.alert('Nothing to save', 'Type at least one measurement.');
+      void tell('Nothing to save', 'Type at least one measurement.');
       return;
     }
     savingRef.current = true;
@@ -91,7 +92,7 @@ export default function LogMeasurementsScreen() {
       success();
       router.back();
     } catch {
-      Alert.alert('Could not save', 'Something went wrong. Please try again.');
+      void tell('Could not save', 'Something went wrong. Please try again.');
     } finally {
       savingRef.current = false;
       setSaving(false);

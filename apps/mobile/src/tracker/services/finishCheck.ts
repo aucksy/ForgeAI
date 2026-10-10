@@ -8,6 +8,8 @@
  * The same "ticked working sets" count feeds the Workout tab and the minimised bar, so every
  * count the member sees during a workout means the same thing (LW-23).
  */
+import { dateWithYear, toISO } from '@/lib/date';
+import { fmtTotalTime } from '@/lib/format';
 import { countWord } from '@/lib/words';
 import { draftLogType, isCommittable } from '@/tracker/services/draftSets';
 import type { DraftExercise } from '@/tracker/store/activeWorkoutStore';
@@ -69,11 +71,9 @@ export function overviewLine(o: { exercises: number; sets: number }, durationMs:
   return `${countWord(o.exercises, 'exercise')} · ${countWord(o.sets, 'set')} · ${durationText(durationMs)}`;
 }
 
-/** "52 min", "1h 05m" */
+/** "52 min", "1h 05m" (the shared `fmtTotalTime`). */
 export function durationText(ms: number): string {
-  const min = Math.max(1, Math.round(ms / 60_000));
-  if (min < 60) return `${min} min`;
-  return `${Math.floor(min / 60)}h ${String(min % 60).padStart(2, '0')}m`;
+  return fmtTotalTime(ms / 1000);
 }
 
 /** When the last set was ticked (null when nothing carries a tick time). */
@@ -165,7 +165,7 @@ export function uses24Hour(phone?: boolean | null): boolean {
 
 /**
  * "6:42 pm" (or "18:42" on a 24-hour phone) — and the day too when it is not today
- * ("6:42 pm, Fri 9 Oct"). `use24Hour`: the phone's setting; absent = the locale's.
+ * ("6:42 pm, Fri, 9 Oct"). `use24Hour`: the phone's setting; absent = the locale's.
  */
 export function clockTime(ms: number, now: number = Date.now(), use24Hour?: boolean | null): string {
   const d = new Date(ms);
@@ -176,9 +176,8 @@ export function clockTime(ms: number, now: number = Date.now(), use24Hour?: bool
     : `${h % 12 === 0 ? 12 : h % 12}:${mm} ${h < 12 ? 'am' : 'pm'}`;
   const n = new Date(now);
   if (d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate()) return t;
-  const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${t}, ${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  // Packet B: the one heading date, "Fri, 9 Oct" (with its year when it isn't this year).
+  return `${t}, ${dateWithYear(toISO(d), toISO(n))}`;
 }
 
 /** "Morning workout" … "Night workout", from when it started. */

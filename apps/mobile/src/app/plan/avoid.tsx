@@ -8,8 +8,9 @@ import { useCallback } from 'react';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { PrimaryButton, Screen } from '@/components/ui';
 import { countWord } from '@/lib/words';
+import { goBack } from '@/lib/goBack';
 import { color, space, type } from '@/theme/tokens';
 
 import { ExercisePickerList } from '@/tracker/components/ExercisePickerList';
@@ -31,7 +32,7 @@ export default function LeaveOutScreen() {
       scroll={false}
       title="Leave out"
       subtitle={avoid.length > 0 ? `${countWord(avoid.length, 'exercise')} left out` : 'Tap the exercises you never want.'}
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/workout')}
     >
       <ExercisePickerList
         actionLabel="Leave out"

@@ -37,4 +37,4 @@ appId: com.forgeai.app
     timeout: 15000
 - assertNotVisible: "(Merge|Import) 12 workouts"
 - takeScreenshot: 160-shared-file-preview
-- tapOn: "Close"
+- tapOn: "Go back"

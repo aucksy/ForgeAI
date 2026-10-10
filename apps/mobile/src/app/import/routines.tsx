@@ -12,8 +12,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { ActivityIndicator, Text, TextInput, View } from 'react-native';
 
-import { Card, GhostButton, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { Card, GhostButton, PrimaryButton, Screen } from '@/components/ui';
 import { warn } from '@/lib/haptics';
+import { goBack } from '@/lib/goBack';
 import { useBackGuard } from '@/lib/useBackGuard';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -56,7 +57,7 @@ export default function ImportRoutinesScreen() {
   const leaving = useRef(false);
   const close = (): void => {
     leaving.current = true;
-    router.back();
+    goBack(router, '/workout');
   };
   useBackGuard(() => {
     if (leaving.current) return false;
@@ -104,7 +105,7 @@ export default function ImportRoutinesScreen() {
   };
 
   return (
-    <Screen title="Import routines" right={<IconButton icon="close" onPress={close} accessibilityLabel="Close" />}>
+    <Screen title="Import routines" onBack={close}>
       {phase.kind === 'steps' ? (
         <RoutineImportSteps app="hevy" link={phase.routines} onClose={close} backRef={stepsBack} />
       ) : phase.kind === 'partial' ? (
@@ -176,7 +177,7 @@ export default function ImportRoutinesScreen() {
           <Text style={CAPTION}>
             Coming from Strong? Strong’s links open only in Strong. Import your Strong file instead, then tap “Bring my routines in”.
           </Text>
-          <GhostButton label="Import from Strong" icon="calendar" onPress={() => {
+          <GhostButton label="Import from Strong" icon="import" onPress={() => {
               leaving.current = true;
               router.replace({ pathname: '/import', params: { from: 'strong' } });
             }} />

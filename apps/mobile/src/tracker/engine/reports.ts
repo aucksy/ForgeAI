@@ -8,7 +8,7 @@
  * got the least work.
  */
 import { addDays, weekStartISO } from '@/lib/date';
-import { fmtInt } from '@/lib/format';
+import { fmtInt, fmtTotalTime } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import type { UnitSystem } from '@/types/models';
 import { countWord } from '@/lib/words';
@@ -207,14 +207,10 @@ export function changeText(cur: number, prev: number | null | undefined, mode: '
   return { value: `${diff > 0 ? '+' : '−'}${fmtInt(Math.abs(diff))}`, good: diff > 0 };
 }
 
-/** "11 h 20 min", "45 min", "—". */
+/** "11h 20m", "45 min", "—" (the shared `fmtTotalTime`). */
 export function durationText(sec: number): string {
   if (!(sec > 0)) return '—';
-  const total = Math.max(1, Math.round(sec / 60));
-  const h = Math.floor(total / 60);
-  const m = total % 60;
-  if (h === 0) return `${m} min`;
-  return m === 0 ? `${h} h` : `${h} h ${m} min`;
+  return fmtTotalTime(sec);
 }
 
 /**

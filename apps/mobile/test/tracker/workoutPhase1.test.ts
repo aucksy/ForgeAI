@@ -37,7 +37,7 @@ function ex(patch: Partial<DraftExercise> = {}): DraftExercise {
 describe('rest timer rules', () => {
   it('formats rest lengths the way the picker shows them', () => {
     expect(fmtRest(0)).toBe('Off');
-    expect(fmtRest(45)).toBe('45s');
+    expect(fmtRest(45)).toBe('0:45');
     expect(fmtRest(90)).toBe('1:30');
     expect(fmtRest(120)).toBe('2:00');
   });
@@ -128,7 +128,7 @@ describe('live records', () => {
     // Phase 3: the label takes the hit (kind + value + set) and how the exercise is logged.
     const ctx = { logType: 'weight_reps', loadMode: 'one', distUnit: 'km' } as const;
     expect(recordLabel({ kind: 'weight', value: 85, set: { weightKg: 85, reps: 3 } }, ctx)).toBe('Heaviest weight · 85 kg');
-    expect(recordLabel({ kind: 'e1rm', value: 112, set: { weightKg: 80, reps: 12 } }, ctx)).toBe('Best 1-rep max · 112 kg');
+    expect(recordLabel({ kind: 'e1rm', value: 112, set: { weightKg: 80, reps: 12 } }, ctx)).toBe('Estimated 1-rep max · 112 kg');
   });
 });
 
@@ -244,7 +244,7 @@ describe('lock-screen card text', () => {
     expect(ongoingText(exercises, null)).toBe('1 of 2 sets done');
     expect(ongoingText([], null)).toBe('Add an exercise to start');
     const at = new Date(2026, 9, 5, 18, 42).getTime();
-    expect(ongoingText(exercises, at)).toBe('Resting · next set at 6:42 pm');
+    expect(ongoingText(exercises, at)).toBe('Rest · next set at 6:42 pm');
     expect(clockTime(new Date(2026, 9, 5, 0, 5).getTime())).toBe('12:05 am');
     expect(clockTime(new Date(2026, 9, 5, 12, 0).getTime())).toBe('12:00 pm');
   });

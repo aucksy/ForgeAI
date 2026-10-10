@@ -16,6 +16,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
+import { DangerLink } from '@/components/DangerLink';
 import { Badge, Card, GhostButton, askConfirm } from '@/components/ui';
 import { success, thud, warn } from '@/lib/haptics';
 import { countOwnWorkouts } from '@/onboarding/db/dataActions';
@@ -141,11 +142,7 @@ export function DataCard() {
           <View style={{ flexDirection: 'row', marginBottom: space.md }}>
             <Badge label="Demo data loaded" tone="warn" />
           </View>
-          <GhostButton
-            label={working === 'remove' ? 'Removing…' : 'Remove demo data'}
-            icon="close"
-            onPress={() => void onRemoveDemo()}
-          />
+          <DangerLink label={working === 'remove' ? 'Removing…' : 'Remove demo data'} onPress={() => void onRemoveDemo()} />
           <Text style={caption}>
             This app is showing a sample member, not your training. Workouts you logged yourself stay.
           </Text>
@@ -153,9 +150,8 @@ export function DataCard() {
         </>
       ) : null}
 
-      <GhostButton
+      <DangerLink
         label={working === 'erase' ? 'Erasing…' : working === 'demo' ? 'Loading demo…' : 'Erase all data'}
-        icon="flame"
         onPress={() => void onErase()}
       />
       <Text style={caption}>Deletes everything on this phone and starts over from the welcome screen.</Text>

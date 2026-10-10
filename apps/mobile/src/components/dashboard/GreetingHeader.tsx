@@ -1,7 +1,6 @@
 import { Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { Logo } from '@/components/ui/Logo';
 import { shortDate, todayISO } from '@/lib/date';
 import { color, motion, type } from '@/theme/tokens';
 
@@ -10,14 +9,18 @@ interface GreetingHeaderProps {
   name: string | null;
 }
 
-function greetingForHour(hour: number): string {
-  if (hour < 5) return 'Burning the midnight oil';
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
+/** Plain greetings only (audit R4: no "Burning the midnight oil"). Exported for tests. */
+export function greetingForHour(hour: number): string {
+  if (hour >= 5 && hour < 12) return 'Good morning';
+  if (hour >= 12 && hour < 17) return 'Good afternoon';
   return 'Good evening';
 }
 
-/** Top-of-dashboard greeting: date overline + local-hour greeting, Logo mark right. */
+/**
+ * Top of Home: the date ("Fri, 9 Oct", as every heading writes it) and a plain greeting. Audit
+ * Phase 7 (V3): the logo is gone, so the greeting has the full width and wraps to two lines
+ * rather than shrinking.
+ */
 export function GreetingHeader({ name }: GreetingHeaderProps) {
   const greeting = greetingForHour(new Date().getHours());
   const line = name ? `${greeting}, ${name}` : greeting;
@@ -26,27 +29,22 @@ export function GreetingHeader({ name }: GreetingHeaderProps) {
     <Animated.View
       entering={FadeInDown.duration(motion.slow)}
       style={{
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'space-between',
         marginBottom: 2,
       }}
     >
-      <View style={{ flex: 1, paddingRight: 12 }}>
+      <View>
         <Text
           style={{
             fontFamily: type.bodySemi,
-            fontSize: type.size.caption,
+            fontSize: type.size.sub,
             color: color.inkMuted,
-            letterSpacing: 1.4,
-            textTransform: 'uppercase',
           }}
         >
           {shortDate(todayISO())}
         </Text>
         <Text
-          numberOfLines={1}
-          adjustsFontSizeToFit
+          accessibilityRole="header"
+          numberOfLines={2}
           style={{
             fontFamily: type.display,
             fontSize: type.size.h1,
@@ -57,9 +55,6 @@ export function GreetingHeader({ name }: GreetingHeaderProps) {
         >
           {line}
         </Text>
-      </View>
-      <View style={{ marginBottom: 4 }}>
-        <Logo height={20} />
       </View>
     </Animated.View>
   );

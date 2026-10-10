@@ -11,6 +11,7 @@ import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { color, radius, shadow, space, type } from '@/theme/tokens';
 
 import { undoClock } from './undoClock';
+import { useReduceMotion } from './useReduceMotion';
 
 export interface UndoBarProps {
   /** What just happened, e.g. "Set 3 deleted". */
@@ -28,6 +29,7 @@ export function UndoBar({ message, actionLabel = 'Undo', onAction, onDismiss, du
   const clock = useRef(undoClock.start(Date.now(), durationMs));
   const finished = useRef(false);
   const [, setTick] = useState(0);
+  const reduced = useReduceMotion();
 
   useEffect(() => {
     if (finished.current || clock.current.runningSince == null) return;
@@ -50,8 +52,8 @@ export function UndoBar({ message, actionLabel = 'Undo', onAction, onDismiss, du
 
   return (
     <Animated.View
-      entering={FadeInDown.duration(200)}
-      exiting={FadeOutDown.duration(160)}
+      entering={reduced ? undefined : FadeInDown.duration(200)}
+      exiting={reduced ? undefined : FadeOutDown.duration(160)}
       onTouchStart={hold}
       onTouchEnd={release}
       onTouchCancel={release}

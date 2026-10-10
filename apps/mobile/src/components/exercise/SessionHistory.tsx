@@ -98,7 +98,7 @@ export function SessionHistory({ history, units, maxSessions = 15, logType = 'we
       entering={FadeInDown.duration(motion.slow).delay(320)}
       style={{ marginTop: space.xl }}
     >
-      <FoldSection title="Past sessions" count={history.length} noun="session">
+      <FoldSection title="Past workouts" count={history.length} noun="workout">
       <Card style={{ paddingVertical: space.xs }}>
         {shown.map((h, i) => {
           const top = topSetIndex(h.sets, logType);
@@ -149,7 +149,7 @@ export function SessionHistory({ history, units, maxSessions = 15, logType = 'we
         <Pressable
           onPress={() => setPages((p) => p + 1)}
           accessibilityRole="button"
-          accessibilityLabel={`Show ${Math.min(left, maxSessions)} more sessions, ${left} left`}
+          accessibilityLabel={`Show ${Math.min(left, maxSessions)} more workouts, ${left} left`}
           style={{ minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
         >
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>

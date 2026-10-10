@@ -13,7 +13,7 @@
  *  - Small honest-number rules for the sections below.
  */
 import { epleyE1rm } from '@/engine/overload';
-import { addDays, tinyDate, weekStartISO } from '@/lib/date';
+import { addDays, tinyDate, tinyDateWithYear, weekStartISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import type { UnitSystem } from '@/types/models';
@@ -282,7 +282,7 @@ export function liftTrendPoints(l: Pick<LiftSeries, 'unit' | 'points'>, units: U
 
 /** "9 Oct", or "9 Oct 2025" when it isn't this year. */
 export function dayText(iso: string, today: string): string {
-  return iso.slice(0, 4) === today.slice(0, 4) ? tinyDate(iso) : `${tinyDate(iso)} ${iso.slice(0, 4)}`;
+  return tinyDateWithYear(iso, today);
 }
 
 /** The lift's last workout: "82.5 kg × 6 · 15 Sep" / "20 reps · 1 Sep". */

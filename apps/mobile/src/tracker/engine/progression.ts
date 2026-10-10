@@ -466,7 +466,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     'R5',
     same,
     goal,
-    `Last time ${repsList}${at(w)}. ${assisted ? 'Same help' : 'Same weight'}, aim for ${goal} ${L.ramp ? 'on your top set' : 'on every set'}.`,
+    `Last time ${repsList}${at(w)}. ${assisted ? 'Same help' : 'Same weight'}, aim for ${goal} ${L.ramp ? 'at your heaviest weight' : 'on every set'}.`,
   );
 }
 

@@ -4,12 +4,13 @@
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { Card, EmptyState, GhostButton, askConfirm, Icon, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { Card, EmptyState, GhostButton, askConfirm, Icon, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { deleteWorkout } from '@/tracker/services/workoutDelete';
 import { dateWithYear, shortDate } from '@/lib/date';
+import { goBack } from '@/lib/goBack';
 import { EDIT_FAILED, SAVE_ROUTINE_FAILED, START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { useLoad } from '@/lib/useLoad';
 import { useUnits } from '@/lib/useUnits';
@@ -34,6 +35,7 @@ import { workoutShareInput } from '@/tracker/share/workoutInput';
 import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
+import { tell } from '@/lib/tell';
 
 export default function SessionDetailScreen() {
   useUnits(); // v0.27.0: the record and set texts follow Profile → Units
@@ -102,7 +104,7 @@ export default function SessionDetailScreen() {
         // faithfully rather than quietly merging them away.
         const blocked = uneditableReason(data.session, await getSessionSetMeta(data.session.id));
         if (blocked) {
-          Alert.alert("Can't edit this one", blocked);
+          void tell("Can't edit this one", blocked);
           return;
         }
         await startEditingSession(data.session);
@@ -139,16 +141,16 @@ export default function SessionDetailScreen() {
           items,
           folderId,
         });
-        Alert.alert(
-          'Saved as a routine',
-          into?.following
+        void askConfirm({
+          title: 'Saved as a routine',
+          body: into?.following
             ? `It is in ${into.name}, your plan — Today will include it.`
             : `It is in ${into?.name ?? 'My routines'}. Your plan has not changed.`,
-          [
-          { text: 'Done', style: 'cancel' },
-          { text: 'Open routine', onPress: () => router.push({ pathname: '/routines/[id]', params: { id: routineId } }) },
-          ],
-        );
+          confirmLabel: 'Open routine',
+          cancelLabel: 'Done',
+        }).then((open) => {
+          if (open) router.push({ pathname: '/routines/[id]', params: { id: routineId } });
+        });
       },
       () => setActionError(SAVE_ROUTINE_FAILED),
     );
@@ -205,9 +207,9 @@ export default function SessionDetailScreen() {
               <Glyph name="more" size={20} color={color.inkSecondary} />
             </Pressable>
           ) : null}
-          <IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />
         </View>
       }
+      onBack={() => goBack(router, '/history')}
     >
       {loading ? (
         <View style={{ gap: space.lg }}>
@@ -279,7 +281,6 @@ export default function SessionDetailScreen() {
               visible={sharing}
               scene={scene}
               fileName={`forgeai-workout-${data.session.dateISO}`}
-              title="Share this workout"
               onClose={() => setSharing(false)}
             />
           ) : null}
@@ -287,7 +288,7 @@ export default function SessionDetailScreen() {
       ) : loadFailed ? (
         <LoadError what="this workout" onRetry={summary.retry} />
       ) : (
-        <EmptyState icon="dumbbell" title="Workout not found" body="This session may have been deleted." />
+        <EmptyState icon="dumbbell" title="Workout not found" body="This workout may have been deleted." />
       )}
     </Screen>
   );

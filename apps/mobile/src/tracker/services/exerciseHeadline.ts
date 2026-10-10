@@ -18,7 +18,7 @@ import type { RecordHit, RecordKind } from '../engine/records';
 export function setLabel(set: TrackedSetEntry, lt: LogType, units: UnitSystem, distUnit: DistUnit): string {
   if (lt === 'weight_reps') return `${trimNum(kgToDisplay(set.weightKg, units))} × ${set.reps}`;
   if (lt === 'assisted') return `${trimNum(kgToDisplay(typedWeight(lt, set.weightKg), units))} × ${set.reps}`;
-  return fmtSetCompact(set, lt, distUnit).replace('×', ' × ');
+  return fmtSetCompact(set, lt, distUnit);
 }
 
 /** The newest workout's working sets in words, or null with no history. */

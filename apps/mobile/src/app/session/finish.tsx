@@ -9,9 +9,9 @@ import { Text, View } from 'react-native';
 
 import {
   askConfirm,
+  Card,
   EmptyState,
   GhostButton,
-  GlassCard,
   HeroCard,
   Icon,
   PrimaryButton,
@@ -89,9 +89,9 @@ export default function FinishScreen() {
     });
   }, [data, id]);
 
-  // Coach note (Phase C2): show the deterministic engine line as soon as the
-  // summary loads, then — only if the user opted in AND a Groq key is set — swap
-  // in a richer AI note when it arrives. Never blocks; falls back silently.
+  // The note (Phase C2; audit Phase 7: facts, not a coach): the deterministic line as soon as
+  // the summary loads, then — only with the coach switch on, the member opted in AND a Groq key
+  // set — a richer note when it arrives. Never blocks; falls back silently.
   useEffect(() => {
     if (!data) return;
     let alive = true;
@@ -112,7 +112,7 @@ export default function FinishScreen() {
   const comparison = data ? volumeComparison(data.totalVolumeKg) : null;
 
   return (
-    <Screen title="Workout complete" subtitle="Saved to your history.">
+    <Screen title="Workout complete" subtitle="Saved to your history." onBack={() => router.replace('/')}>
       {loading ? (
         <View style={{ gap: space.lg }}>
           <Skeleton width="100%" height={128} radius={radius.xl} />
@@ -122,7 +122,7 @@ export default function FinishScreen() {
         <View style={{ gap: space.lg }}>
           <HeroCard gradient={gradients.ember}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
-              <Icon name="trophy" size={28} color="#1F0D05" />
+              <Icon name="check" size={28} color="#1F0D05" />
               <View style={{ flex: 1 }}>
                 <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: '#1F0D05' }}>
                   {workoutName(data)} done
@@ -139,35 +139,15 @@ export default function FinishScreen() {
             </View>
           </HeroCard>
 
+          {/* Audit Phase 7: a line of facts (an easy week, its records, or kg lifted against the
+              last workout of its kind) — plain, with no coach heading or sparkle while the coach
+              is hidden, and never food or sleep advice while nutrition is. */}
           {note ? (
-            <GlassCard>
-              <View style={{ flexDirection: 'row', gap: space.md }}>
-                <Icon name="sparkle" size={20} color={color.accentBright} />
-                <View style={{ flex: 1 }}>
-                  <Text
-                    style={{
-                      fontFamily: type.bodySemi,
-                      fontSize: type.size.caption,
-                      letterSpacing: 0.4,
-                      color: color.inkMuted,
-                      marginBottom: 3,
-                    }}
-                  >
-                    IN SHORT
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: type.body,
-                      fontSize: type.size.body,
-                      color: color.ink,
-                      lineHeight: 21,
-                    }}
-                  >
-                    {note}
-                  </Text>
-                </View>
-              </View>
-            </GlassCard>
+            <Card>
+              <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.ink, lineHeight: 21 }}>
+                {note}
+              </Text>
+            </Card>
           ) : null}
 
           {routineLine ? (
@@ -179,7 +159,7 @@ export default function FinishScreen() {
 
           <View style={{ gap: space.md, marginTop: space.sm }}>
             <PrimaryButton label="Done" icon="check" onPress={() => router.replace('/')} />
-            <GhostButton label="Share workout" icon="send" onPress={() => setSharing(true)} />
+            <GhostButton label="Share as a picture" icon="send" onPress={() => setSharing(true)} />
             <GhostButton label="View history" icon="calendar" onPress={() => router.replace('/history')} />
           </View>
           {scene ? (
@@ -187,7 +167,6 @@ export default function FinishScreen() {
               visible={sharing}
               scene={scene}
               fileName={`forgeai-workout-${data.session.dateISO}`}
-              title="Share your workout"
               onClose={() => setSharing(false)}
             />
           ) : null}

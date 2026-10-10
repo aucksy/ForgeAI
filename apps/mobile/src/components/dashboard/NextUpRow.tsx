@@ -17,10 +17,10 @@ function capitalize(s: string): string {
   return s.length > 0 ? s[0].toUpperCase() + s.slice(1) : s;
 }
 
-/** Last-session recap on the left, next planned workout on the right. */
+/** Last-workout recap on the left, next planned workout on the right. */
 export function NextUpRow({ lastWorkout, nextName, onPress }: NextUpRowProps) {
   return (
-    <Tappable onPress={onPress} accessibilityLabel={`Next up: ${nextName}`}>
+    <Tappable onPress={onPress} accessibilityLabel={`Next: ${nextName}`}>
       <Card style={{ flexDirection: 'row', alignItems: 'center' }}>
         <View style={{ flex: 1, paddingRight: space.md }}>
           <Text
@@ -31,7 +31,7 @@ export function NextUpRow({ lastWorkout, nextName, onPress }: NextUpRowProps) {
               letterSpacing: 1.2,
             }}
           >
-            LAST SESSION
+            LAST WORKOUT
           </Text>
           <Text
             numberOfLines={1}
@@ -44,7 +44,7 @@ export function NextUpRow({ lastWorkout, nextName, onPress }: NextUpRowProps) {
           >
             {lastWorkout
               ? `${relativeDay(lastWorkout.dateISO)} · ${capitalize(lastWorkout.dayType)}`
-              : 'No sessions yet'}
+              : 'No workouts yet'}
           </Text>
         </View>
 
@@ -66,7 +66,7 @@ export function NextUpRow({ lastWorkout, nextName, onPress }: NextUpRowProps) {
               letterSpacing: 1.2,
             }}
           >
-            NEXT UP
+            NEXT
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: space.xs }}>
             <Text

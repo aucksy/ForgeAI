@@ -69,7 +69,7 @@ describe('workout cards during a rest', () => {
     expect(seen.ongoing.at(-1)).toBe('1 of 2 sets done');
     holds = false; // a build without the rest card: this card names the rest, in 24-hour time
     useRestTimer.setState({ endsAt: new Date(2026, 9, 5, 18, 43).getTime() });
-    expect(seen.ongoing.at(-1)).toBe('Resting · next set at 18:43');
+    expect(seen.ongoing.at(-1)).toBe('Rest · next set at 18:43');
     stop();
   });
 

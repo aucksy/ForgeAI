@@ -6,9 +6,10 @@
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, AppState, Text, View } from 'react-native';
+import { AppState, Text, View } from 'react-native';
 
-import { GhostButton, HeroCard, Icon, PrimaryButton, Screen } from '@/components/ui';
+import { DangerLink } from '@/components/DangerLink';
+import { GhostButton, HeroCard, Icon, PrimaryButton, Screen, askConfirm } from '@/components/ui';
 import { getActivePlan } from '@/db/repos/planRepo';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
@@ -24,6 +25,7 @@ import { liveCountsLine } from '@/tracker/services/finishCheck';
 import { getTodayPlan } from '@/tracker/services/todayService';
 import { openActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { tell } from '@/lib/tell';
 
 interface PlanPreview {
   /** The routine Start starts — by id, never worked out again at the tap (RP-03). */
@@ -122,7 +124,7 @@ export default function WorkoutScreen() {
       if (f) await moveEasyWeek(f, 'now');
       setTick((t) => t + 1);
     } catch {
-      Alert.alert('Could not change the week', 'Please try again.');
+      void tell('Could not change the week', 'Please try again.');
     }
   };
 
@@ -132,7 +134,7 @@ export default function WorkoutScreen() {
       if (f) await moveEasyWeek(f, 'skip');
       setTick((t) => t + 1);
     } catch {
-      Alert.alert('Could not change the week', 'Please try again.');
+      void tell('Could not change the week', 'Please try again.');
     }
   };
 
@@ -144,7 +146,7 @@ export default function WorkoutScreen() {
   // the screen (ignored while it is open or was opened a moment ago).
   const startGuard = useRef(false);
   const goActive = (): void => void openActiveWorkout(router);
-  const startFailed = (): void => Alert.alert('Couldn’t start the workout', 'Please try again.');
+  const startFailed = (): void => void tell('Couldn’t start the workout', 'Please try again.');
 
   const onStartPlan = (): Promise<unknown> =>
     runGuarded(
@@ -180,22 +182,24 @@ export default function WorkoutScreen() {
 
   const onDiscard = (): void => {
     const editing = useActiveWorkout.getState().editingSessionId != null;
-    Alert.alert(
-      editing ? 'Discard changes?' : 'Discard workout?',
-      editing
+    void askConfirm({
+      title: editing ? 'Discard changes?' : 'Discard workout?',
+      body: editing
         ? 'Your edits will be thrown away. The saved workout stays as it was.'
         : 'Your in-progress workout will be deleted.',
-      [
-        { text: 'Keep', style: 'cancel' },
-        { text: 'Discard', style: 'destructive', onPress: () => void discard() },
-      ],
-    );
+      confirmLabel: 'Discard',
+      cancelLabel: 'Keep',
+      destructive: true,
+    }).then((ok) => {
+      if (ok) void discard();
+    });
   };
 
   return (
-    <Screen title="Workout" subtitle="Log a session — offline, one tap per set.">
+    <Screen title="Workout">
       <View style={{ gap: space.lg }}>
         {active ? (
+          <>
           <HeroCard gradient={gradients.ember}>
             <View style={{ gap: space.md }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
@@ -214,19 +218,18 @@ export default function WorkoutScreen() {
                 icon="dumbbell"
                 onPress={goActive}
               />
-              <GhostButton
-                label={editingSessionId ? 'Discard changes' : 'Discard'}
-                icon="close"
-                onPress={onDiscard}
-              />
             </View>
           </HeroCard>
+          {/* Packet B: the one destructive style — a red link that asks first. Below the ember
+              card (red on orange is unreadable). */}
+          <DangerLink label={editingSessionId ? 'Discard changes' : 'Discard workout'} onPress={onDiscard} />
+          </>
         ) : (
           <>
             <HeroCard>
               <View style={{ gap: space.md }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-                  <Icon name="target" size={20} color={color.accent} />
+                  <Icon name="dumbbell" size={20} color={color.accent} />
                   <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
                     {preview?.status === 'doneToday'
                       ? preview.title
@@ -265,7 +268,7 @@ export default function WorkoutScreen() {
                   <GhostButton label="See the exercises" icon="chevron-right" onPress={() => router.push('/today')} />
                 ) : null}
                 {plan?.easy ? (
-                  <GhostButton label="Train normally this week" icon="flame" onPress={() => void onTrainNormally()} />
+                  <GhostButton label="Train normally this week" icon="dumbbell" onPress={() => void onTrainNormally()} />
                 ) : null}
                 {offerEasy ? (
                   <View style={{ gap: space.sm }}>
@@ -282,11 +285,11 @@ export default function WorkoutScreen() {
             {/* Only with no plan to follow — not on a day the plan has nothing for (trained already). */}
             {preview && !preview.hasPlan && !hasRoutines ? (
               <>
-                <GhostButton label="Ready programs" icon="trophy" onPress={() => router.push('/programs')} />
-                <GhostButton label="Build a plan" icon="sparkle" onPress={() => router.push('/plan/build')} />
+                <GhostButton label="Ready programs" icon="list" onPress={() => router.push('/programs')} />
+                <GhostButton label="Build a plan" icon="list" onPress={() => router.push('/plan/build')} />
               </>
             ) : null}
-            <GhostButton label="Routines" icon="target" onPress={() => router.push('/routines')} />
+            <GhostButton label="Routines" icon="list" onPress={() => router.push('/routines')} />
             <GhostButton label="Exercise library" icon="dumbbell" onPress={() => router.push('/library')} />
           </>
         )}

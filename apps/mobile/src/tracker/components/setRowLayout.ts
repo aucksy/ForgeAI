@@ -28,6 +28,8 @@ export const SET_ROW = {
   /** ✓, RPE and the timer button: 48 wide, 44 high + 2 dp of touch above and below. */
   button: 48,
   height: 44,
+  /** The row's touch height: every box and button is at least 48 dp to the finger. */
+  touch: 48,
   prevWide: 70,
   prevNarrow: 52,
 } as const;

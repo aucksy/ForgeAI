@@ -5,7 +5,8 @@
 import { useRouter } from 'expo-router';
 import { useRef } from 'react';
 
-import { IconButton, Screen } from '@/components/ui';
+import { goBack } from '@/lib/goBack';
+import { Screen } from '@/components/ui';
 import { ExercisePickerList } from '@/tracker/components/ExercisePickerList';
 import { useProgressPick } from '@/tracker/store/progressPickStore';
 
@@ -20,7 +21,7 @@ export default function PickLiftScreen() {
       scroll={false}
       title="Any exercise"
       subtitle="See its trend on Progress"
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/analytics')}
     >
       <ExercisePickerList
         actionLabel="Show trend"

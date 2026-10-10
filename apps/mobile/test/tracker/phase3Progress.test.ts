@@ -220,8 +220,8 @@ describe('the monthly report', () => {
     expect(changeText(5, 0, 'count')).toBeNull();
     expect(durationText(0)).toBe('—');
     expect(durationText(45 * 60)).toBe('45 min');
-    expect(durationText(11 * 3600 + 20 * 60)).toBe('11 h 20 min');
-    expect(durationText(7199)).toBe('2 h');
+    expect(durationText(11 * 3600 + 20 * 60)).toBe('11h 20m');
+    expect(durationText(7199)).toBe('2h');
   });
 });
 

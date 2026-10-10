@@ -4,16 +4,19 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { color, motion, radius, shadow, space } from '@/theme/tokens';
 
+import { useReduceMotion } from './useReduceMotion';
+
 export interface CardProps {
   style?: StyleProp<ViewStyle>;
   children?: ReactNode;
 }
 
-/** Default content surface: raised card with hairline border + soft shadow. */
+/** Default content surface: raised card with hairline border + soft shadow. Still when motion is reduced. */
 export function Card({ style, children }: CardProps) {
+  const reduced = useReduceMotion();
   return (
     <Animated.View
-      entering={FadeInDown.duration(motion.base)}
+      entering={reduced ? undefined : FadeInDown.duration(motion.base)}
       style={[
         {
           backgroundColor: color.surface,

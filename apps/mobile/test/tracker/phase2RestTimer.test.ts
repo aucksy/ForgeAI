@@ -187,8 +187,8 @@ describe('RT-05: one card during a rest, the phone\'s own clock', () => {
     const at = new Date(2026, 9, 5, 18, 42).getTime();
     expect(clockTime(at, true)).toBe('18:42');
     expect(clockTime(new Date(2026, 9, 5, 0, 5).getTime(), true)).toBe('00:05');
-    expect(ongoingText(exercises, at, true)).toBe('Resting · next set at 18:42');
-    expect(ongoingText(exercises, at)).toBe('Resting · next set at 6:42 pm');
+    expect(ongoingText(exercises, at, true)).toBe('Rest · next set at 18:42');
+    expect(ongoingText(exercises, at)).toBe('Rest · next set at 6:42 pm');
   });
 });
 

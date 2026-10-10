@@ -64,7 +64,7 @@ export function PlateCalcSheet({
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-            <Icon name="scale" size={20} color={color.accent} />
+            <Icon name="dumbbell" size={20} color={color.accent} />
             <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Plate calculator</Text>
           </View>
           <Pressable onPress={onClose} hitSlop={8}>

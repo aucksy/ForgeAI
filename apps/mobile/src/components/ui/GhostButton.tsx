@@ -10,15 +10,22 @@ export interface GhostButtonProps {
   label: string;
   onPress: () => void;
   icon?: IconName;
+  /** Spoken name when the label alone is not enough (default: the label). */
+  accessibilityLabel?: string;
 }
 
-/** Quiet secondary action: transparent surface + hairline pill. */
-export function GhostButton({ label, onPress, icon }: GhostButtonProps) {
+/**
+ * Quiet secondary action: transparent surface + hairline pill.
+ * Phase 7: at least 50 dp tall, and grows (never clips) when the label wraps at large text.
+ */
+export function GhostButton({ label, onPress, icon, accessibilityLabel }: GhostButtonProps) {
   return (
     <PressScale
       onPress={onPress}
+      accessibilityLabel={accessibilityLabel}
       style={{
-        height: 50,
+        minHeight: 50,
+        paddingVertical: space.sm,
         borderRadius: radius.pill,
         borderWidth: 1,
         borderColor: color.borderStrong,
@@ -31,7 +38,7 @@ export function GhostButton({ label, onPress, icon }: GhostButtonProps) {
       }}
     >
       {icon ? <Icon name={icon} size={18} color={color.accent} /> : null}
-      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink, textAlign: 'center', flexShrink: 1 }}>
         {label}
       </Text>
     </PressScale>

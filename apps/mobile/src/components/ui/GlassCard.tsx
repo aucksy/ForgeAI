@@ -4,6 +4,8 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { color, motion, radius, shadow, space } from '@/theme/tokens';
 
+import { useReduceMotion } from './useReduceMotion';
+
 export interface GlassCardProps {
   style?: StyleProp<ViewStyle>;
   children?: ReactNode;
@@ -11,9 +13,10 @@ export interface GlassCardProps {
 
 /** Glassmorphism surface — translucent plane + brighter hairline edge. */
 export function GlassCard({ style, children }: GlassCardProps) {
+  const reduced = useReduceMotion();
   return (
     <Animated.View
-      entering={FadeInDown.duration(motion.base)}
+      entering={reduced ? undefined : FadeInDown.duration(motion.base)}
       style={[
         {
           backgroundColor: color.glass,

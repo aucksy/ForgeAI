@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { askConfirm, EmptyState, GhostButton, Icon, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { dateWithYear, tinyDate } from '@/lib/date';
+import { goBack } from '@/lib/goBack';
 import { color, radius, space, type } from '@/theme/tokens';
 import { DatePickerSheet } from '@/tracker/components/DatePickerSheet';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
@@ -199,7 +200,7 @@ export default function ProgressPhotosScreen() {
     <Screen
       title="Progress photos"
       subtitle={backupOn ? 'Private. Your newest are in your phone’s backup too.' : 'Private. They stay on this phone.'}
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/analytics')}
     >
       <View style={{ gap: space.lg }}>
         {picking ? (
@@ -222,7 +223,7 @@ export default function ProgressPhotosScreen() {
           <View style={{ gap: space.md }}>
             <PrimaryButton label="Add a photo" icon="camera" loading={busy} onPress={() => setAdding(true)} />
             {photos && photos.length >= 2 ? (
-              <GhostButton label="Compare two photos" icon="target" onPress={() => setPicking(true)} />
+              <GhostButton label="Compare two photos" icon="camera" onPress={() => setPicking(true)} />
             ) : null}
           </View>
         )}

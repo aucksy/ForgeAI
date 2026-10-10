@@ -5,18 +5,28 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { color, gradients, motion, radius, shadow, space } from '@/theme/tokens';
 
+import { useReduceMotion } from './useReduceMotion';
+
 export interface HeroCardProps {
   /** Gradient pair; defaults to the cool steel sheen. Pass gradients.ember for the flagship card. */
   gradient?: readonly [string, string];
   style?: StyleProp<ViewStyle>;
   children?: ReactNode;
+  /**
+   * Read the whole card as ONE line, numbers and units together ("This month, 12 workouts,
+   * 3 more than September"). Leave out when the card holds its own buttons.
+   */
+  accessibilityLabel?: string;
 }
 
 /** Gradient hero surface for the headline card of a screen. */
-export function HeroCard({ gradient, style, children }: HeroCardProps) {
+export function HeroCard({ gradient, style, children, accessibilityLabel }: HeroCardProps) {
+  const reduced = useReduceMotion();
   return (
     <Animated.View
-      entering={FadeInDown.duration(motion.slow)}
+      entering={reduced ? undefined : FadeInDown.duration(motion.slow)}
+      accessible={accessibilityLabel ? true : undefined}
+      accessibilityLabel={accessibilityLabel}
       style={[{ borderRadius: radius.xl, ...shadow.card }, style]}
     >
       <LinearGradient

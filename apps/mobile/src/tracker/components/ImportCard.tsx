@@ -13,7 +13,7 @@ export function ImportCard() {
     <Card>
       <GhostButton
         label="Import from Hevy"
-        icon="calendar"
+        icon="import"
         onPress={() => {
           tap();
           router.push('/import');
@@ -22,7 +22,7 @@ export function ImportCard() {
       <View style={{ height: space.sm }} />
       <GhostButton
         label="Import from Strong"
-        icon="calendar"
+        icon="import"
         onPress={() => {
           tap();
           router.push({ pathname: '/import', params: { from: 'strong' } });

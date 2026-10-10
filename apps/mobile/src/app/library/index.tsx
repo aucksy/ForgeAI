@@ -2,8 +2,9 @@
 import { useRouter } from 'expo-router';
 import { useRef } from 'react';
 
-import { IconButton, Screen } from '@/components/ui';
+import { Screen } from '@/components/ui';
 import { navigateOnce } from '@/lib/guardedAction';
+import { goBack } from '@/lib/goBack';
 
 import { LibraryList } from '@/tracker/components/LibraryList';
 
@@ -19,7 +20,7 @@ export default function LibraryScreen() {
     <Screen
       scroll={false}
       title="Exercise library"
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/workout')}
     >
       <LibraryList
         onSelectExercise={(ex) => go(() => router.push({ pathname: '/exercise/[id]', params: { id: ex.id } }))}

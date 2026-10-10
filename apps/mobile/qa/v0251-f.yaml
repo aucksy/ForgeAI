@@ -150,9 +150,9 @@ appId: com.forgeai.app
     timeout: 20000
 - takeScreenshot: 74-finish-best-pace
 - scrollUntilVisible:
-    element: "Share workout"
+    element: "Share as a picture"
     timeout: 20000
-- tapOn: "Share workout"
+- tapOn: "Share as a picture"
 - extendedWaitUntil:
     visible: "Share picture"
     timeout: 15000

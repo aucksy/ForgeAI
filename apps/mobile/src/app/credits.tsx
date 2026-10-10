@@ -7,8 +7,9 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Linking, Pressable, Text, View } from 'react-native';
 
-import { Card, IconButton, Screen } from '@/components/ui';
+import { Card, Screen } from '@/components/ui';
 import { CREDITS, type Credit } from '@/lib/credits';
+import { goBack } from '@/lib/goBack';
 import { color, space, type } from '@/theme/tokens';
 
 function open(url: string): void {
@@ -61,7 +62,7 @@ export default function CreditsScreen() {
     <Screen
       title="Credits"
       subtitle="Pictures and fonts made by others"
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/settings')}
     >
       <View style={{ paddingBottom: space.xxl }}>
         <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19, marginBottom: space.lg }}>

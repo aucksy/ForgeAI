@@ -19,6 +19,10 @@ appId: com.forgeai.app
     timeout: 60000
 # ---------------------------------------------------------------- 0. the owner's Jaipur history
 - tapOn: "^Profile$"
+# Audit Phase 7: the imports sit inside Profile's folded "Gym, backup and data" (it stays open
+# when the import screen closes, for "Import routines" below).
+- runFlow:
+    file: sub-profile-fold-open.yaml
 - scrollUntilVisible:
     element: "Import from Hevy"
     centerElement: true
@@ -65,6 +69,9 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 15000
+# The fold should still be open (same Profile screen); opened again only if it is shut.
+- runFlow:
+    file: sub-profile-fold-open.yaml
 - scrollUntilVisible:
     element: "^Import routines$"
     centerElement: true
@@ -252,9 +259,11 @@ appId: com.forgeai.app
     visible: "^Home$"
     timeout: 20000
 - tapOn: "^Home$"
-# The plan's proof: in the folder's rotation, Push 1 is followed by Pull 1.
+# The plan's proof: in the folder's rotation, Push 1 is followed by Pull 1. Audit Phase 7: Home's
+# answer card titles "Done today: Push 1" over the line "Next: Pull 1"; the card's text is also
+# one spoken line ("Done today: Push 1. Next: Pull 1"), which the patterns accept too.
 - extendedWaitUntil:
-    visible: "Next: Pull 1"
+    visible: '(.*\. )?Next: Pull 1'
     timeout: 20000
-- assertVisible: "Done today: Push 1"
+- assertVisible: 'Done today: Push 1(\. .*)?'
 - takeScreenshot: 179c-home-today-pull-1

@@ -67,7 +67,7 @@ export function widgetData(i: WidgetInput): WidgetData {
   const todayIndex = Array.from({ length: 7 }, (_, k) => addDays(start, k)).indexOf(i.todayISO);
 
   let today: WidgetToday;
-  if (i.doneToday) today = { title: `${i.doneToday} done`, line: i.next ? `Next: ${i.next}` : 'Nice work. Rest well.', action: 'Open' };
+  if (i.doneToday) today = { title: `${i.doneToday} done`, line: i.next ? `Next: ${i.next}` : 'Nothing else planned today', action: 'Open' };
   else if (i.today && i.today.exercises.length > 0) {
     today = {
       title: i.today.name,

@@ -20,8 +20,11 @@ import { SessionHistory } from '@/components/exercise/SessionHistory';
 import { askConfirm, Badge, Card, EmptyState, IconButton, LoadError, Screen, SectionHeader, Sheet, SheetRow, Skeleton, StatTile } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { relativeDay } from '@/lib/date';
+import { goBack } from '@/lib/goBack';
 import { trimNum } from '@/lib/format';
 import { navigateOnce } from '@/lib/guardedAction';
+import { liftedWords } from '@/lib/units';
+import { countWord } from '@/lib/words';
 import { useSettings } from '@/store/settingsStore';
 import { chart, color, motion, radius, space, type } from '@/theme/tokens';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
@@ -244,7 +247,7 @@ export default function ExerciseScreen() {
           entering={FadeInDown.duration(motion.slow)}
           style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.md, marginBottom: space.lg }}
         >
-          <IconButton icon="chevron-left" onPress={() => router.back()} accessibilityLabel="Go back" />
+          <IconButton icon="chevron-left" onPress={() => goBack(router, '/workout')} accessibilityLabel="Go back" />
           <View style={{ flex: 1, paddingTop: 2 }}>
             {ex ? (
               <>
@@ -254,7 +257,7 @@ export default function ExerciseScreen() {
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginTop: space.sm, flexWrap: 'wrap' }}>
                   <Badge label={MUSCLE_LABEL[ex.muscles.primary[0]] ?? cap(ex.muscleGroup)} tone="accent" />
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
-                    {cap(ex.equipment)} · {ov?.history.length ?? 0} {ov?.history.length === 1 ? 'session' : 'sessions'}
+                    {cap(ex.equipment)} · {countWord(ov?.history.length ?? 0, 'workout')}
                   </Text>
                 </View>
               </>
@@ -347,7 +350,7 @@ export default function ExerciseScreen() {
                 <Text style={{ fontFamily: type.bodySemi, color: color.ink }}>Logged as </Text>
                 {LOG_TYPE_LABEL[ex.logType].toLowerCase()}
                 {ex.logType === 'weight_reps' && ex.loadMode !== 'one' ? ` · ${LOAD_MODE_LABEL[ex.loadMode].title.toLowerCase()}` : ''}
-                {ex.bwShare > 0 ? ' · your body weight counts in volume' : ''}
+                {ex.bwShare > 0 ? ` · your body weight counts in the ${liftedWords(units)}` : ''}
               </Text>
               {easier ? <VersionLink label="Easier:" name={easier.name} onPress={openVersion(entry?.easier)} /> : null}
               {harder ? <VersionLink label="Harder:" name={harder.name} onPress={openVersion(entry?.harder)} /> : null}
@@ -367,7 +370,7 @@ export default function ExerciseScreen() {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
                   {ov.tiles.map((t) => (
                     <View key={t.label} style={{ flexBasis: '30%', flexGrow: 1 }}>
-                      <StatTile label={t.label} value={t.value} icon="trophy" />
+                      <StatTile label={t.label} value={t.value} icon="medal" />
                     </View>
                   ))}
                 </View>

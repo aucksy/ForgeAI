@@ -45,10 +45,10 @@ export function parseCustomRest(minText: string, secText: string): number | null
 
 export const DEFAULT_REST_SEC = 90;
 
-/** "Off", "45s", "1:30", "2:00". */
+/** "Off", "0:45", "1:30", "2:00". */
 export function fmtRest(sec: number): string {
   if (sec <= 0) return 'Off';
-  if (sec < 60) return `${sec}s`;
+  // Packet B: one clock spelling — "0:45", never "45s".
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return `${m}:${String(s).padStart(2, '0')}`;

@@ -7,9 +7,10 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-import { EmptyState, GhostButton, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { EmptyState, GhostButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';
+import { goBack } from '@/lib/goBack';
 import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -119,11 +120,11 @@ export default function RoutinePreviewScreen() {
     );
   };
 
-  const close = <IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />;
+  const back = (): void => goBack(router, '/workout');
 
   if (loading) {
     return (
-      <Screen title="Routine" right={close}>
+      <Screen title="Routine" onBack={back}>
         <View style={{ gap: space.md }}>
           <Skeleton width="100%" height={64} radius={radius.lg} />
           <Skeleton width="100%" height={160} radius={radius.lg} />
@@ -133,7 +134,7 @@ export default function RoutinePreviewScreen() {
   }
   if (!routine) {
     return (
-      <Screen title="Routine" right={close}>
+      <Screen title="Routine" onBack={back}>
         {loadFailed ? (
           <LoadError what="this routine" onRetry={() => { setLoading(true); reload(); }} />
         ) : (
@@ -146,7 +147,7 @@ export default function RoutinePreviewScreen() {
   const facts = [dayTypeLabel(routine.dayType), countWord(routine.exercises.length, 'exercise'), folderName].filter(Boolean).join(' · ');
 
   return (
-    <Screen scroll={false} title={routine.name} subtitle={facts} right={close}>
+    <Screen scroll={false} title={routine.name} subtitle={facts} onBack={back}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: space.md, paddingBottom: space.xl }}>
         {routine.exercises.length === 0 ? (
           <EmptyState icon="dumbbell" title="No exercises yet" body="Edit the routine to add exercises." />

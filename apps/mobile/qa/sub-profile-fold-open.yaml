@@ -1,0 +1,40 @@
+# Sub-flow (not a part of its own; called with runFlow from other flows). Audit Phase 7 (D12):
+# Profile's second half — Your gym, Backup with the imports, Your data (erase), About — sits shut
+# under one heading, "Gym, backup and data" (src/components/settings/ProfileFold.tsx; the title
+# is set in src/app/(tabs)/settings.tsx). This brings the heading into view and opens it ONLY
+# when it is still shut: a second tap closes it. Open = the "Your gym" section heading shows
+# right under it (Profile's own "Your gym · optional" box label is a different text).
+# The Profile tab keeps its scroll position, so away from the top ("Your details" not on screen)
+# it looks UP first, then down.
+# Call it after tapping "^Profile$".
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 30000
+- runFlow:
+    when:
+      notVisible: "^Your details$"
+    commands:
+      - scrollUntilVisible:
+          element: "Gym, backup and data.*"
+          direction: UP
+          centerElement: true
+          timeout: 20000
+          optional: true
+- runFlow:
+    when:
+      notVisible: "Gym, backup and data.*"
+    commands:
+      - scrollUntilVisible:
+          element: "Gym, backup and data.*"
+          centerElement: true
+          timeout: 60000
+- runFlow:
+    when:
+      notVisible: "^Your gym$"
+    commands:
+      - tapOn: "Gym, backup and data.*"
+- extendedWaitUntil:
+    visible: "^Your gym$"
+    timeout: 10000

@@ -2,10 +2,10 @@
  * "Share routine" / "Share folder" (Phase 4): as text anyone can read, or as a file another
  * ForgeAI member opens with "Import a routine file".
  */
-import { Alert } from 'react-native';
 
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import { color } from '@/theme/tokens';
+import { tell } from '@/lib/tell';
 
 import { shareRoutinesAsFile, shareRoutinesAsText } from '../services/routineShare';
 import { Glyph } from './TrackerGlyph';
@@ -23,7 +23,7 @@ export function ShareRoutineSheet({
   routines: readonly PlanDayFull[];
   onClose: () => void;
 }) {
-  const fail = () => Alert.alert('Could not share', 'Something went wrong. Please try again.');
+  const fail = () => void tell('Could not share', 'Something went wrong. Please try again.');
   const title = folder ? `Share ${folder}` : `Share ${routines[0]?.name ?? 'routine'}`;
   return (
     <TrackerSheet visible={visible} title={title} subtitle="Text anyone can read, or a file another ForgeAI member can open." onClose={onClose}>
@@ -42,7 +42,7 @@ export function ShareRoutineSheet({
           onClose();
           void shareRoutinesAsFile(folder, routines)
             .then((ok) => {
-              if (!ok) Alert.alert('Sharing is not available', 'This phone has no app to send the file with.');
+              if (!ok) void tell('Sharing is not available', 'This phone has no app to send the file with.');
             })
             .catch(fail);
         }}

@@ -159,8 +159,8 @@ describe('the reports say true things', () => {
   it('time only covers the workouts that have one, and says so (before: read as the whole)', () => {
     const t = totalsOf([s('2026-10-01'), s('2026-10-02'), s('2026-10-03', 0)]);
     expect(t.timed).toBe(2);
-    expect(timeText(t)).toBe('2 h in 2 timed workouts');
-    expect(timeText(totalsOf([s('2026-10-01')]))).toBe('1 h');
+    expect(timeText(t)).toBe('2h in 2 timed workouts');
+    expect(timeText(totalsOf([s('2026-10-01')]))).toBe('1h');
     const note = yearNote({
       year: 2026,
       complete: false,

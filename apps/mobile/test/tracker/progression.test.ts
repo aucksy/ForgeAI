@@ -409,7 +409,7 @@ describe('review fixes', () => {
     // (was 82.5, a weight his plates never made).
     expect(t.targetWeightKg).toBe(85);
     const top = run(ex(), range(8, 12), [sess('2026-10-03', [[100, 6], [90, 8], [85, 10]])]);
-    expect(top.reason).toContain('on your top set');
+    expect(top.reason).toContain('at your heaviest weight');
   });
 
   it('M1: climbing reps after a big jump are not undone', () => {

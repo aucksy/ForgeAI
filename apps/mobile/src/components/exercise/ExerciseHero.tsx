@@ -13,12 +13,13 @@ export interface ExerciseHeroProps {
 const round1 = (n: number) => Math.round(n * 10) / 10;
 
 /**
- * Hero stat row: Heaviest set / PR e1RM / Avg weight / Avg reps as compact tiles.
+ * Hero stat row: Heaviest weight / Est. 1-rep max / Avg weight / Avg reps as compact tiles.
+ * Packet B (Phase 7): the two records carry the medal; the two averages carry no icon.
  * Full-bleed horizontal scroll so long values ("82.5 kg × 8") never wrap.
  *
  * Phase 3: the first tile was called "Best set" but shows the HEAVIEST set; "Best set" is
  * now a record of its own (most volume in one set, Hevy's meaning), so the tile says what
- * it shows.
+ * it shows — now "Heaviest weight" (design language: never "heaviest set").
  */
 export function ExerciseHero({ stats, units }: ExerciseHeroProps) {
   const unit = weightUnit(units);
@@ -36,14 +37,14 @@ export function ExerciseHero({ stats, units }: ExerciseHeroProps) {
       contentContainerStyle={{ paddingHorizontal: space.screenX, gap: space.md }}
     >
       <View style={{ minWidth: 132 }}>
-        <StatTile label="Heaviest set" value={bestValue} icon="dumbbell" />
+        <StatTile label="Heaviest weight" value={bestValue} icon="medal" />
       </View>
       <View style={{ minWidth: 118 }}>
         <StatTile
-          label="PR e1RM"
+          label="Est. 1-rep max"
           value={round1(kgToDisplay(stats.prE1rmKg ?? 0, units))}
           unit={unit}
-          icon="trophy"
+          icon="medal"
         />
       </View>
       <View style={{ minWidth: 118 }}>
@@ -51,11 +52,10 @@ export function ExerciseHero({ stats, units }: ExerciseHeroProps) {
           label="Avg weight"
           value={round1(kgToDisplay(stats.avgWeightKg ?? 0, units))}
           unit={unit}
-          icon="scale"
         />
       </View>
       <View style={{ minWidth: 112 }}>
-        <StatTile label="Avg reps" value={round1(stats.avgReps ?? 0)} icon="target" />
+        <StatTile label="Avg reps" value={round1(stats.avgReps ?? 0)} />
       </View>
     </ScrollView>
   );

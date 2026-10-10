@@ -6,6 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { color, gradients, motion, space, type } from '@/theme/tokens';
 
+import { IconButton } from './IconButton';
+import { useReduceMotion } from './useReduceMotion';
+
 export interface ScreenProps {
   title?: string;
   subtitle?: string;
@@ -13,6 +16,12 @@ export interface ScreenProps {
   scroll?: boolean;
   /** Node rendered on the right of the header row. */
   right?: ReactNode;
+  /**
+   * Audit Phase 7 (one way to leave a page): a pushed page passes its "leave" here and gets the
+   * one back arrow, top-left beside the title, spoken "Go back". × is only for sheets and create
+   * forms (they pass their own × as `right`).
+   */
+  onBack?: () => void;
   /** Remove horizontal screen padding (edge-to-edge content). */
   noPad?: boolean;
   children?: ReactNode;
@@ -22,24 +31,30 @@ export interface ScreenProps {
  * Page shell: backdrop gradient wash + ember glow, safe area, animated header, and a solid
  * strip behind the status bar so nothing scrolls under the clock.
  */
-export function Screen({ title, subtitle, scroll = true, right, noPad, children }: ScreenProps) {
+export function Screen({ title, subtitle, scroll = true, right, onBack, noPad, children }: ScreenProps) {
   const insets = useSafeAreaInsets();
-  const hasHeader = Boolean(title || subtitle || right);
+  const reduced = useReduceMotion();
+  const hasHeader = Boolean(title || subtitle || right || onBack);
 
   const header = hasHeader ? (
     <Animated.View
-      entering={FadeInDown.duration(motion.slow)}
+      entering={reduced ? undefined : FadeInDown.duration(motion.slow)}
       style={{
         flexDirection: 'row',
-        alignItems: 'flex-end',
+        // With a back arrow the row lines up on the title's first line (as the exercise page).
+        alignItems: onBack ? 'flex-start' : 'flex-end',
         justifyContent: 'space-between',
+        gap: onBack ? space.md : 0,
         marginBottom: space.xl,
         paddingHorizontal: noPad ? space.screenX : 0,
       }}
     >
-      <View style={{ flex: 1, paddingRight: right ? space.md : 0 }}>
+      {onBack ? <IconButton icon="chevron-left" onPress={onBack} accessibilityLabel="Go back" /> : null}
+      <View style={{ flex: 1, paddingRight: right ? space.md : 0, paddingTop: onBack ? 4 : 0 }}>
         {title ? (
+          // Phase 7: the page title is the first heading a screen reader can jump to.
           <Text
+            accessibilityRole="header"
             style={{
               fontFamily: type.display,
               fontSize: type.size.h1,

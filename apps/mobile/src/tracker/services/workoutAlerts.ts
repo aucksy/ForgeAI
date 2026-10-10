@@ -155,7 +155,7 @@ export async function scheduleRestEnd(
       identifier: REST_ID,
       content: {
         title: 'Rest is over',
-        body: nextLabel ? `Next up: ${nextLabel}` : 'Time for your next set',
+        body: nextLabel ? `Next: ${nextLabel}` : 'Time for your next set',
         data: { kind: 'rest', route: WORKOUT_ROUTE },
         sound: quiet ? false : 'default',
         priority: 'max',

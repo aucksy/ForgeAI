@@ -75,6 +75,19 @@ export function fmtPct(n: number, signed = false): string {
   return `${signed && r > 0 ? '+' : ''}${r}%`;
 }
 
+/**
+ * Audit Phase 7 (packet B): the one spelling of a length of time — a workout's duration, a
+ * month's total. "45 min" under an hour; "1h 05m", "25h 39m" and "2h" from an hour on. Never
+ * "0m 12s" or "11 h 20 min". (A running clock or a rest is m:ss — `fmtDuration`.)
+ */
+export function fmtTotalTime(totalSec: number): string {
+  const min = Math.max(1, Math.round(totalSec / 60));
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m === 0 ? `${h}h` : `${h}h ${String(m).padStart(2, '0')}m`;
+}
+
 /** Clamp helper used across charts + progress rings. */
 export function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));

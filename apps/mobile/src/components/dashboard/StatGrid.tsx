@@ -2,10 +2,11 @@ import { Pressable, Text, View } from 'react-native';
 
 import { RingGauge, StatTile } from '@/components/ui';
 import { scoreTiles } from '@/lib/features';
-import { fmtInt } from '@/lib/format';
 import { tap } from '@/lib/haptics';
 import { chart, color, radius, shadow, space, type } from '@/theme/tokens';
 import type { DashboardData } from '@/types/models';
+
+import { nutritionRings, nutritionRingsLabel, NUTRITION_RINGS_HINT } from './nutritionRings';
 
 interface StatGridProps {
   data: DashboardData;
@@ -52,7 +53,11 @@ function RingCard({
         ...shadow.card,
       }}
     >
+      {/* The ring says its title itself ("Calories, 1,420 of 2,200"), so the visible title is
+          not read a second time. */}
       <Text
+        importantForAccessibility="no"
+        accessibilityElementsHidden
         style={{
           alignSelf: 'flex-start',
           fontFamily: type.bodyMedium,
@@ -67,6 +72,7 @@ function RingCard({
           value={value}
           max={max}
           size={104}
+          title={title}
           label={label}
           sublabel={sublabel}
           color={ringColor}
@@ -84,23 +90,11 @@ export function StatGrid({
   showScores = true,
 }: StatGridProps) {
   const scores = scoreTiles(data);
+  const words = nutritionRings(data);
   const rings = (
     <View style={{ flexDirection: 'row', gap: space.md }}>
-      <RingCard
-        title="Calories"
-        value={data.caloriesToday}
-        max={data.calorieTarget}
-        label={fmtInt(data.caloriesToday)}
-        sublabel={`of ${fmtInt(data.calorieTarget)}`}
-      />
-      <RingCard
-        title="Protein"
-        value={data.proteinTodayG}
-        max={data.proteinTargetG}
-        label={`${Math.round(data.proteinTodayG)}g`}
-        sublabel={`of ${Math.round(data.proteinTargetG)}g`}
-        ringColor={PROTEIN_COLOR}
-      />
+      <RingCard {...words.calories} />
+      <RingCard {...words.protein} ringColor={PROTEIN_COLOR} />
     </View>
   );
 
@@ -109,7 +103,8 @@ export function StatGrid({
       {!showRings ? null : onPressNutrition ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Nutrition — view and log today's meals"
+          accessibilityLabel={nutritionRingsLabel(words)}
+          accessibilityHint={NUTRITION_RINGS_HINT}
           onPress={() => {
             tap();
             onPressNutrition();
@@ -141,7 +136,7 @@ export function StatGrid({
                 label="Strength"
                 value={data.strength.score}
                 unit={data.strength.label}
-                icon="zap"
+                icon="trend"
               />
             </View>
           ) : null}

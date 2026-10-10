@@ -9,7 +9,6 @@ import { Icon } from '@/components/ui';
 import { color } from '@/theme/tokens';
 
 import { folderChoices } from '../services/folderChoice';
-import { Glyph } from './TrackerGlyph';
 import { SheetRow, TrackerSheet } from './TrackerSheet';
 
 export function FolderPickerSheet({
@@ -34,7 +33,7 @@ export function FolderPickerSheet({
             key={c.folderId ?? 'mine'}
             label={c.label}
             value={c.value}
-            leading={c.following ? <Icon name="target" size={18} color={color.accent} /> : <Glyph name="list" size={18} color={color.accent} />}
+            leading={<Icon name={c.following ? 'check' : 'list'} size={18} color={color.accent} />}
             onPress={() => onPick(c.folderId)}
           />
         ))}

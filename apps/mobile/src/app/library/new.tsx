@@ -19,11 +19,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { useDeferredValue, useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
-import { Chip, GhostButton, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { Chip, GhostButton, IconButton, LoadError, PrimaryButton, Screen, Skeleton, askConfirm } from '@/components/ui';
 import { getAllExercises } from '@/db/repos/exerciseRepo';
-import { stepFor } from '@/lib/units';
+import { liftedWords, stepFor } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { Exercise } from '@/types/models';
@@ -37,6 +37,7 @@ import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { exercisesChanged } from '@/tracker/store/exerciseListStore';
 import { guessFromName, missingForSave } from '@/tracker/services/exerciseGuess';
 import { LOG_TYPE_LABEL, LOG_TYPES, type LogType } from '@/tracker/engine/logTypes';
+import { tell } from '@/lib/tell';
 import {
   deleteKeptMedia,
   keepPendingMedia,
@@ -216,7 +217,7 @@ export default function NewExerciseScreen() {
       setMedia(picked);
     } catch (e) {
       const why = e instanceof Error ? e.message : '';
-      Alert.alert(
+      void tell(
         'Could not add it',
         why === 'camera-denied'
           ? 'ForgeAI needs the camera for this. You can allow it in your phone settings, or choose from your gallery.'
@@ -269,12 +270,15 @@ export default function NewExerciseScreen() {
               router.dismissTo('/session/active');
             } else router.replace({ pathname: '/exercise/[id]', params: { id: clash.id } });
           };
-          Alert.alert('Already in your library', `"${clash.name}" already exists.`, [
-            { text: 'Cancel', style: 'cancel' },
-            forWorkout
-              ? { text: 'Add it to the workout', onPress: () => void addClash() }
-              : { text: 'Open it', onPress: () => router.replace({ pathname: '/exercise/[id]', params: { id: clash.id } }) },
-          ]);
+          void askConfirm({
+            title: 'Already in your library',
+            body: `"${clash.name}" already exists.`,
+            confirmLabel: forWorkout ? 'Add it to the workout' : 'Open it',
+          }).then((ok) => {
+            if (!ok) return;
+            if (forWorkout) void addClash();
+            else router.replace({ pathname: '/exercise/[id]', params: { id: clash.id } });
+          });
           return;
         }
         const input = {
@@ -316,7 +320,7 @@ export default function NewExerciseScreen() {
     } catch {
       savingRef.current = false;
       setSaving(false);
-      Alert.alert('Could not save', 'Something went wrong saving the exercise. Please try again.');
+      void tell('Could not save', 'Something went wrong saving the exercise. Please try again.');
     }
   };
 
@@ -443,7 +447,7 @@ export default function NewExerciseScreen() {
 
             {isBodyweightType(logType) ? (
               <View style={{ gap: space.sm }}>
-                <FieldLabel>Body weight in volume</FieldLabel>
+                <FieldLabel>{`Body weight in ${liftedWords(units)}`}</FieldLabel>
                 <View style={{ flexDirection: 'row', gap: space.sm }}>
                   <Chip label="Counts (pull-up, dip)" selected={countsBodyweight} onPress={() => setCountsBodyweight(true)} />
                   <Chip label="Doesn't count" selected={!countsBodyweight} onPress={() => setCountsBodyweight(false)} />
@@ -517,7 +521,7 @@ export default function NewExerciseScreen() {
               <GhostButton label="Photo" icon="camera" onPress={() => void addMedia('photo')} />
             </View>
             <View style={{ flex: 1 }}>
-              <GhostButton label="Video" icon="camera" onPress={() => void addMedia('video')} />
+              <GhostButton label="Video" icon="video" onPress={() => void addMedia('video')} />
             </View>
           </View>
           <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>

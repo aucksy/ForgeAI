@@ -127,7 +127,7 @@ function HealthRow() {
         <View style={{ gap: space.xs, paddingBottom: space.sm }}>
           <GhostButton
             label={busy ? 'Sending…' : 'Send past workouts'}
-            icon="calendar"
+            icon="heart"
             onPress={() => {
               if (busy) return;
               tap();

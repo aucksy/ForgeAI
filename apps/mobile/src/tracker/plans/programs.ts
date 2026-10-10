@@ -143,7 +143,7 @@ export const PROGRAMS: readonly Program[] = [
     level: 'intermediate',
     daysPerWeek: 4,
     style: 'muscle',
-    summary: 'Four days: upper body, lower body, twice a week each. Every muscle gets two good sessions.',
+    summary: 'Four days: upper body, lower body, twice a week each. Every muscle gets two good workouts.',
     routines: [
       {
         name: 'Upper A',
@@ -269,7 +269,7 @@ export const PROGRAMS: readonly Program[] = [
     level: 'advanced',
     daysPerWeek: 6,
     style: 'muscle',
-    summary: 'Six days of hard dumbbell work for lifters with a home setup. High volume — take the easy weeks.',
+    summary: 'Six days of hard dumbbell work for lifters with a home setup. Lots of sets — take the easy weeks.',
     routines: [
       {
         name: 'Push A',

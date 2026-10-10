@@ -9,7 +9,7 @@ describe('feature switch (owner decision D4 = A)', () => {
 
   it('Home shows no rings, scores or coach cards with the switch off', () => {
     const parts = homeParts(FEATURES);
-    expect(parts).toEqual(['today', 'streak', 'volume', 'bodyWeight']);
+    expect(parts).toEqual(['today', 'week']);
     expect(parts).not.toContain('nutritionRings');
     expect(parts).not.toContain('insight');
     expect(parts).not.toContain('nextUp');
@@ -18,14 +18,14 @@ describe('feature switch (owner decision D4 = A)', () => {
 
   it('Home brings each part back when its switch is on', () => {
     expect(homeParts({ coach: true, nutrition: true, gymSync: false })).toEqual([
-      'today', 'streak', 'nutritionRings', 'scores', 'volume', 'bodyWeight', 'insight', 'nextUp',
+      'today', 'week', 'nutritionRings', 'scores', 'insight', 'nextUp',
     ]);
   });
 
-  it('Profile hides AI keys, voice, language, coach notes and gym sync with the switch off', () => {
+  it('Profile hides AI keys, voice, coach notes and gym sync with the switch off', () => {
     expect(profileParts(FEATURES)).toEqual([]);
     expect(profileParts({ coach: true, nutrition: false, gymSync: true })).toEqual([
-      'aiCoach', 'voice', 'language', 'coachNotes', 'gymSync',
+      'aiCoach', 'voice', 'coachNotes', 'gymSync',
     ]);
   });
 });

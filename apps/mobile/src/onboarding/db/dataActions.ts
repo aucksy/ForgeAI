@@ -163,7 +163,7 @@ export async function isDemoData(): Promise<boolean> {
   return false;
 }
 
-/** The member's mobile number in E.164, or null on a pre-O2 / demo profile. */
+/** The member's mobile number (digits, optional leading +), or null when none was given. */
 export async function getMemberPhone(): Promise<string | null> {
   const row = await getDb().getFirstAsync<{ phone: string | null }>(
     'SELECT phone FROM user_profile LIMIT 1',
@@ -172,8 +172,9 @@ export async function getMemberPhone(): Promise<string | null> {
   return phone && phone.length > 0 ? phone : null;
 }
 
-export async function setMemberPhone(phoneE164: string): Promise<void> {
-  await enqueueWrite(() => getDb().runAsync('UPDATE user_profile SET phone = ?', [phoneE164]));
+/** Add, change or (with null) remove the member's number — Profile's mobile row (SH-10). */
+export async function setMemberPhone(phone: string | null): Promise<void> {
+  await enqueueWrite(() => getDb().runAsync('UPDATE user_profile SET phone = ?', [phone]));
 }
 
 // ---------------------------------------------------------------- the demo's rows

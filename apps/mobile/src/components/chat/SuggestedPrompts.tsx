@@ -10,18 +10,18 @@ export interface SuggestedPromptsProps {
 
 /** The PRD's 12 suggested prompts. */
 const PROMPTS: { label: string; icon: IconName }[] = [
-  { label: "Today's Workout", icon: 'dumbbell' },
-  { label: 'Log Workout', icon: 'plus' },
-  { label: 'Log Meal', icon: 'meal' },
-  { label: 'Upload Food Photo', icon: 'camera' },
-  { label: 'Show My Progress', icon: 'trend' },
-  { label: 'Weekly Summary', icon: 'calendar' },
-  { label: 'Monthly Summary', icon: 'chart' },
-  { label: 'Show My PRs', icon: 'trophy' },
-  { label: 'Nutrition Today', icon: 'flame' },
-  { label: 'Calories Remaining', icon: 'zap' },
-  { label: 'Protein Remaining', icon: 'target' },
-  { label: 'What Should I Lift Today?', icon: 'sparkle' },
+  { label: "Today's workout", icon: 'dumbbell' },
+  { label: 'Log workout', icon: 'plus' },
+  { label: 'Log meal', icon: 'meal' },
+  { label: 'Upload food photo', icon: 'camera' },
+  { label: 'Show my progress', icon: 'trend' },
+  { label: 'Weekly summary', icon: 'calendar' },
+  { label: 'Monthly summary', icon: 'chart' },
+  { label: 'Show my records', icon: 'medal' },
+  { label: 'Nutrition today', icon: 'meal' },
+  { label: 'Calories remaining', icon: 'meal' },
+  { label: 'Protein remaining', icon: 'meal' },
+  { label: 'What should I lift today?', icon: 'sparkle' },
 ];
 
 export function SuggestedPrompts({ onPrompt }: SuggestedPromptsProps) {

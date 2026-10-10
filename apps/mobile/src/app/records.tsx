@@ -7,8 +7,9 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
-import { Badge, EmptyState, GhostButton, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
+import { Badge, EmptyState, GhostButton, LoadError, Screen, Skeleton } from '@/components/ui';
 import { useLoad } from '@/lib/useLoad';
+import { goBack } from '@/lib/goBack';
 import { tinyDate } from '@/lib/date';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -42,7 +43,7 @@ export default function RecordsScreen() {
           : undefined
       }
       scroll={false}
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/analytics')}
     >
       {state === 'error' ? (
         <LoadError what="your records" onRetry={retry} />
@@ -54,7 +55,7 @@ export default function RecordsScreen() {
         </View>
       ) : rows.length === 0 ? (
         <View>
-          <EmptyState icon="trophy" title={scoped ? `No new bests${span}` : 'No records yet'} body="Beat a previous best and it lands here." />
+          <EmptyState icon="medal" title={scoped ? `No new bests${span}` : 'No records yet'} body="Beat a previous best and it lands here." />
           {scoped && all && all.length > 0 ? <GhostButton label="See all records" onPress={() => router.setParams({ from: '', to: '', label: '' })} /> : null}
         </View>
       ) : (

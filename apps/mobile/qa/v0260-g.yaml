@@ -36,10 +36,10 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "Dumbbell Full Body,.*"
 - extendedWaitUntil:
-    visible: "Follow this program"
+    visible: "Follow this plan"
     timeout: 15000
 - takeScreenshot: 82-program-dumbbell
-- tapOn: "Follow this program"
+- tapOn: "Follow this plan"
 # Easy weeks start on (the open owner decision's default): week 1, the easy one in week 6.
 - extendedWaitUntil:
     visible: "Dumbbell Full Body, 2 routines, your plan, Week 1 · easy week in week 6"
@@ -234,14 +234,14 @@ appId: com.forgeai.app
     timeout: 10000
 - takeScreenshot: 96-routine-moved
 # Close the editor (back on the preview, which reads the routine again), then the preview.
-- tapOn: "Close"
+- tapOn: "Go back"
 - extendedWaitUntil:
     notVisible: "More for this routine"
     timeout: 10000
 - extendedWaitUntil:
     visible: '.*· Dumbbell Full Body'
     timeout: 10000
-- tapOn: "Close"
+- tapOn: "Go back"
 # ---------------------------------------------------------------- share a folder as a file
 - extendedWaitUntil:
     visible: "More for Upper / Lower · 4 days"
@@ -382,10 +382,13 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
-# The coach line knows it was a planned easy week (not "volume was 80% down").
+# The finish note knows it was a planned easy week (not "80% less kg lifted"). Audit Phase 7: a
+# plain line of facts with no "IN SHORT" heading or sparkle (src/tracker/services/coachNote.ts):
+# "Easy week: 1 working set at your usual weights, lighter on purpose."
 - extendedWaitUntil:
-    visible: "Easy week done.*"
+    visible: 'Easy week: [\d,]+ working sets? at your usual weights, lighter on purpose\.'
     timeout: 10000
+- assertNotVisible: "IN SHORT"
 - takeScreenshot: 104-easy-finish
 - scrollUntilVisible:
     element: "Done"
@@ -478,5 +481,5 @@ appId: com.forgeai.app
 - takeScreenshot: 110-reorder-mode
 - tapOn: "Done reordering"
 - extendedWaitUntil:
-    visible: "Start any routine in a tap."
+    visible: "Ready programs"
     timeout: 10000

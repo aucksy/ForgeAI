@@ -12,25 +12,38 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { motionMode, useReduceMotion } from './useReduceMotion';
+
 export interface SkeletonProps {
   width: DimensionValue;
   height: number;
   radius?: number;
 }
 
-/** Shimmer placeholder: dim plate + looping gradient sweep. */
+/**
+ * Shimmer placeholder: dim plate + looping gradient sweep.
+ * Phase 7: with "reduce motion" on it is a still plate — no endless sweep.
+ */
 export function Skeleton({ width, height, radius = 10 }: SkeletonProps) {
   const [measured, setMeasured] = useState(typeof width === 'number' ? width : 0);
   const progress = useSharedValue(0);
+  const reduced = useReduceMotion();
 
   useEffect(() => {
+    if (reduced) {
+      cancelAnimation(progress);
+      return;
+    }
+    progress.value = 0;
     progress.value = withRepeat(
-      withTiming(1, { duration: 1300, easing: Easing.inOut(Easing.ease) }),
+      withTiming(1, { duration: 1300, easing: Easing.inOut(Easing.ease), reduceMotion: motionMode(false) }),
       -1,
       false,
+      undefined,
+      motionMode(false),
     );
     return () => cancelAnimation(progress);
-  }, [progress]);
+  }, [progress, reduced]);
 
   const w = measured || 160;
   const sweep = useAnimatedStyle(() => ({
@@ -52,14 +65,16 @@ export function Skeleton({ width, height, radius = 10 }: SkeletonProps) {
         overflow: 'hidden',
       }}
     >
-      <Animated.View style={[{ position: 'absolute', top: 0, bottom: 0, width: w * 0.7 }, sweep]}>
-        <LinearGradient
-          colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.07)', 'rgba(255,255,255,0)']}
-          start={{ x: 0, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          style={{ flex: 1 }}
-        />
-      </Animated.View>
+      {reduced ? null : (
+        <Animated.View style={[{ position: 'absolute', top: 0, bottom: 0, width: w * 0.7 }, sweep]}>
+          <LinearGradient
+            colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.07)', 'rgba(255,255,255,0)']}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={{ flex: 1 }}
+          />
+        </Animated.View>
+      )}
     </View>
   );
 }

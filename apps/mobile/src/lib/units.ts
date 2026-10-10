@@ -71,6 +71,15 @@ export function fmtVol(kg: number, u: UnitSystem = current): string {
 }
 
 /**
+ * Audit Phase 7 (packet B): the one name for the total weight moved — "kg lifted" / "lb lifted"
+ * (never "volume", "kg moved" or "vol"). `capital` starts a heading or tile label: "Kg lifted".
+ */
+export function liftedWords(u: UnitSystem = current, capital = false): string {
+  const w = `${weightUnitOf(u)} lifted`;
+  return capital ? w[0].toUpperCase() + w.slice(1) : w;
+}
+
+/**
  * A weight step for the member's unit when nothing learned says otherwise: the kg step as
  * given, or its nearest common pound step (2.5 kg → 5 lb, 1.25 kg → 2.5 lb, 5 kg → 10 lb), in kg.
  */

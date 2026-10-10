@@ -11,7 +11,7 @@
  */
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 import {
   Badge,
@@ -28,6 +28,7 @@ import {
 } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';
+import { goBack } from '@/lib/goBack';
 import { tap } from '@/lib/haptics';
 import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -69,6 +70,7 @@ import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { swapContextFor } from '@/tracker/services/plansService';
 import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { tell } from '@/lib/tell';
 
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
 const clamp = (n: number, lo: number, hi: number): number => Math.max(lo, Math.min(hi, n));
@@ -263,20 +265,13 @@ export default function RoutineEditorScreen() {
   };
 
   const onRemove = (peId: string, exName: string): void => {
-    Alert.alert('Remove exercise?', `Remove ${exName} from this routine.`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Remove',
-        style: 'destructive',
-        onPress: () => {
-          if (!routine) return;
-          // RP-15: removed from the screen only once it is removed for real.
-          removeRoutineExercise(peId)
-            .then(() => setRoutine((r) => (r ? { ...r, exercises: r.exercises.filter((pe) => pe.id !== peId) } : r)))
-            .catch(() => Alert.alert('Could not remove', `${exName} is still in the routine. Please try again.`));
-        },
-      },
-    ]);
+    void askConfirm({ title: 'Remove exercise?', body: `Remove ${exName} from this routine.`, confirmLabel: 'Remove', destructive: true }).then((ok) => {
+      if (!ok || !routine) return;
+      // RP-15: removed from the screen only once it is removed for real.
+      removeRoutineExercise(peId)
+        .then(() => setRoutine((r) => (r ? { ...r, exercises: r.exercises.filter((pe) => pe.id !== peId) } : r)))
+        .catch(() => void tell('Could not remove', `${exName} is still in the routine. Please try again.`));
+    });
   };
 
   const onMove = (index: number, dir: -1 | 1): void => {
@@ -291,25 +286,24 @@ export default function RoutineEditorScreen() {
   };
 
   const onDelete = (): void => {
-    Alert.alert('Delete routine?', 'This removes the routine and its exercise list. History is unaffected.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          void deleteRoutine(id)
-            .then(() => router.back())
-            .catch(() => Alert.alert('Delete failed', 'Could not delete this routine. Please try again.'));
-        },
-      },
-    ]);
+    void askConfirm({
+      title: 'Delete routine?',
+      body: 'This removes the routine and its exercise list. History is unaffected.',
+      confirmLabel: 'Delete',
+      destructive: true,
+    }).then((ok) => {
+      if (!ok) return;
+      void deleteRoutine(id)
+        .then(() => router.back())
+        .catch(() => void tell('Delete failed', 'Could not delete this routine. Please try again.'));
+    });
   };
 
   /** RP-08: the copy goes where the member picks ("My routines" first, the plan last). */
   const onDuplicate = (): void => {
     void listFolders()
       .then(setDupTo)
-      .catch(() => Alert.alert('Could not load folders', 'Please try again.'));
+      .catch(() => void tell('Could not load folders', 'Please try again.'));
   };
 
   const onDuplicateTo = (folderId: string | null): void => {
@@ -318,7 +312,7 @@ export default function RoutineEditorScreen() {
     setTimeout(() => {
       void duplicateRoutine(id, folderId)
         .then((newId) => router.replace(`/routines/${newId}`))
-        .catch(() => Alert.alert('Duplicate failed', 'Could not duplicate this routine. Please try again.'));
+        .catch(() => void tell('Duplicate failed', 'Could not duplicate this routine. Please try again.'));
     }, 260);
   };
 
@@ -361,7 +355,7 @@ export default function RoutineEditorScreen() {
       await replaceRoutineExercise(w.peId, exerciseId);
       reload();
     } catch {
-      Alert.alert('Could not swap', 'Please try again.');
+      void tell('Could not swap', 'Please try again.');
     }
   };
 
@@ -370,10 +364,10 @@ export default function RoutineEditorScreen() {
       void listFolders()
         .then((all) => {
           const others = all.filter((f) => !f.routines.some((r) => r.id === id));
-          if (others.length === 0) Alert.alert('No other folder', 'Make a folder on the Routines screen first.');
+          if (others.length === 0) void tell('No other folder', 'Make a folder on the Routines screen first.');
           else setMoveTo(others);
         })
-        .catch(() => Alert.alert('Could not load folders', 'Please try again.'));
+        .catch(() => void tell('Could not load folders', 'Please try again.'));
     });
   };
 
@@ -381,7 +375,7 @@ export default function RoutineEditorScreen() {
     setMoveTo(null);
     void moveRoutine(id, f.id)
       .then(() => setFolderName(f.name))
-      .catch(() => Alert.alert('Could not move', 'Please try again.'));
+      .catch(() => void tell('Could not move', 'Please try again.'));
   };
 
   const onStart = async (): Promise<void> => {
@@ -431,16 +425,12 @@ export default function RoutineEditorScreen() {
               <Glyph name="more" size={20} color={color.inkSecondary} />
             </Pressable>
           ) : null}
-          <IconButton
-            icon="close"
-            onPress={() => {
-              commitName(); // RP-24
-              router.back();
-            }}
-            accessibilityLabel="Close"
-          />
         </View>
       }
+      onBack={() => {
+        commitName(); // RP-24
+        goBack(router, '/workout');
+      }}
     >
       {loading ? (
         <View style={{ gap: space.lg }}>
@@ -461,7 +451,7 @@ export default function RoutineEditorScreen() {
           {saveError ? (
             <View style={{ gap: space.sm }}>
               <InlineError message="Couldn't save your last change. It is still shown here." />
-              <GhostButton label="Try again" icon="settings" onPress={saveError.retry} />
+              <GhostButton label="Try again" onPress={saveError.retry} />
             </View>
           ) : null}
 
@@ -560,7 +550,7 @@ export default function RoutineEditorScreen() {
                       </Pressable>
                     ) : null}
                     <IconButton
-                      icon="close"
+                      icon="trash"
                       size={30}
                       tint={color.inkMuted}
                       onPress={() => onRemove(pe.id, pe.exercise.name)}

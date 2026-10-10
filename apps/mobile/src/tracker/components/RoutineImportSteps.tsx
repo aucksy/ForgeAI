@@ -23,7 +23,7 @@ import { useEffect, useMemo, useState, type MutableRefObject } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { Card, GhostButton, Icon, PrimaryButton } from '@/components/ui';
-import { tinyDate } from '@/lib/date';
+import { tinyDateWithYear } from '@/lib/date';
 import { success, warn } from '@/lib/haptics';
 import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -50,11 +50,9 @@ import { MatchRow, RenamedList } from './NewNamesCard';
 const CAPTION = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 } as const;
 const HEAD = { fontFamily: type.heading, fontSize: type.size.h3, color: color.ink } as const;
 
-/** "5 Oct", or "Dec 2023" in another year. */
+/** "5 Oct", or "5 Dec 2023" in another year (the shared list date). */
 function when(iso: string): string {
-  const y = Number(iso.slice(0, 4));
-  if (y === new Date().getFullYear()) return tinyDate(iso);
-  return `${tinyDate(iso).split(' ')[1]} ${y}`;
+  return tinyDateWithYear(iso);
 }
 
 function setsText(e: FoundExercise): string {
@@ -530,7 +528,7 @@ export function RoutineImportSteps({
               accessibilityLabel={`${c.label}, ${c.value}`}
               style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 52, paddingVertical: space.sm, opacity: pressed ? 0.7 : 1 })}
             >
-              <Icon name={c.following ? 'target' : 'calendar'} size={18} color={color.accent} />
+              <Icon name={c.following ? 'check' : 'list'} size={18} color={color.accent} />
               <View style={{ flex: 1, gap: 2 }}>
                 <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink }}>{c.label}</Text>
                 <Text style={CAPTION}>{c.value}</Text>
@@ -563,7 +561,7 @@ export function RoutineImportSteps({
     return (
       <View style={{ gap: space.lg }}>
         <Card style={{ gap: space.md, paddingVertical: space.xl }}>
-          <Icon name="calendar" size={26} color={color.accent} />
+          <Icon name="list" size={26} color={color.accent} />
           <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>Follow these as your plan?</Text>
           <Text style={{ ...CAPTION, color: color.inkSecondary }}>
             {realOrder
@@ -582,7 +580,6 @@ export function RoutineImportSteps({
           <PrimaryButton label={busy ? 'Saving…' : 'Follow them'} icon="check" loading={busy} onPress={() => void save(true)} />
           <GhostButton
             label={question?.followingName ? `Keep “${question.followingName}”` : 'Save without following'}
-            icon="close"
             onPress={() => void save(false)}
           />
           <GhostButton label="Back" icon="chevron-left" onPress={back} />
@@ -595,7 +592,7 @@ export function RoutineImportSteps({
   return (
     <View style={{ gap: space.lg }}>
       <Card style={{ alignItems: 'center', paddingVertical: space.xl, gap: space.sm }}>
-        <Icon name="target" size={30} color={color.accent} />
+        <Icon name="check" size={30} color={color.accent} />
         <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink, textAlign: 'center' }}>
           {step.routines} routine{step.routines === 1 ? '' : 's'} in {step.folder}
         </Text>
@@ -607,7 +604,7 @@ export function RoutineImportSteps({
         </Text>
       </Card>
       <View style={{ gap: space.md }}>
-        <PrimaryButton label="Open routines" icon="target" onPress={() => router.replace('/routines')} />
+        <PrimaryButton label="Open routines" icon="list" onPress={() => router.replace('/routines')} />
         <GhostButton label="Done" icon="check" onPress={onClose} />
       </View>
     </View>

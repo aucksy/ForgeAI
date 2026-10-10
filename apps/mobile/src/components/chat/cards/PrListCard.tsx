@@ -17,9 +17,9 @@ export function PrListCard({ prs }: { prs: PrView[] }) {
   const shown = prs.slice(0, MAX_ROWS);
   return (
     <CardShell
-      icon="trophy"
+      icon="medal"
       iconColor={color.accentBright}
-      title="Personal records"
+      title="Records"
       subtitle={`${prs.length} lifetime ${prs.length === 1 ? 'best' : 'bests'} on file`}
     >
       <View style={{ marginTop: space.sm }}>
@@ -36,7 +36,7 @@ export function PrListCard({ prs }: { prs: PrView[] }) {
             }}
           >
             <Icon
-              name="trophy"
+              name="medal"
               size={15}
               color={pr.kind === 'e1rm' ? color.accentBright : color.inkFaint}
             />
@@ -56,13 +56,13 @@ export function PrListCard({ prs }: { prs: PrView[] }) {
                 }}
               >
                 {pr.kind === 'e1rm'
-                  ? `e1RM ${cw(pr.value, u)}`
+                  ? `Estimated 1-rep max ${cw(pr.value, u)}`
                   : `${cw(pr.weightKg, u)} × ${pr.reps}`}
               </Text>
             </View>
             <View style={{ alignItems: 'flex-end', gap: 3 }}>
               <Badge
-                label={pr.kind === 'e1rm' ? 'e1RM' : 'Weight'}
+                label={pr.kind === 'e1rm' ? 'Est. 1-rep max' : 'Weight'}
                 tone={pr.kind === 'e1rm' ? 'accent' : 'neutral'}
               />
               {pr.dateISO ? (

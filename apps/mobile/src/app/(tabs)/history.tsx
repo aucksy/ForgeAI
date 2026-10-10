@@ -279,7 +279,7 @@ export default function HistoryScreen() {
         borderColor: color.border,
       }}
     >
-      <Icon name="dumbbell" size={16} color={color.inkMuted} />
+      <Icon name="search" size={16} color={color.inkMuted} />
       <TextInput
         value={queryText}
         onChangeText={setQueryText}
@@ -319,7 +319,7 @@ export default function HistoryScreen() {
             <StatTile label="Streak" value={streakText(streak.weeks)} icon="flame" />
           </View>
           <View style={{ flex: 1 }}>
-            <StatTile label="Rest days" value={streak.restDays} icon="clock" />
+            <StatTile label="Rest days" value={streak.restDays} icon="calendar" />
           </View>
         </View>
       ) : null}

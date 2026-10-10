@@ -464,6 +464,11 @@ describe('boot signals', () => {
       { sql: 'UPDATE user_profile SET phone = ?', params: ['+919876543210'] },
     ]);
   });
+
+  it('Audit Phase 7 (SH-10): setMemberPhone(null) removes the number', async () => {
+    await setMemberPhone(null);
+    expect(h.state.calls).toEqual([{ sql: 'UPDATE user_profile SET phone = ?', params: [null] }]);
+  });
 });
 
 describe('Phase 2 review: the library re-syncs even if the app dies right after the demo seed', () => {

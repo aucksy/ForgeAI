@@ -47,7 +47,7 @@ export function ExerciseCharts({ progress, units }: ExerciseChartsProps) {
         entering={FadeInDown.duration(motion.slow).delay(80)}
         style={{ marginTop: space.xl }}
       >
-        <SectionHeader title={`Top set weight (${unit})`} />
+        <SectionHeader title={`Heaviest weight (${unit})`} />
         <Card>
           <DateLineChart
             data={weightData}
@@ -63,7 +63,7 @@ export function ExerciseCharts({ progress, units }: ExerciseChartsProps) {
         entering={FadeInDown.duration(motion.slow).delay(160)}
         style={{ marginTop: space.xl }}
       >
-        <SectionHeader title={`Estimated 1RM (${unit})`} />
+        <SectionHeader title={`Estimated 1-rep max (${unit})`} />
         <Card>
           <DateLineChart
             data={e1rmData}
@@ -80,7 +80,7 @@ export function ExerciseCharts({ progress, units }: ExerciseChartsProps) {
         entering={FadeInDown.duration(motion.slow).delay(240)}
         style={{ marginTop: space.xl }}
       >
-        <SectionHeader title={`Session volume (${unit})`} />
+        <SectionHeader title={`${unit === 'lb' ? 'Lb' : 'Kg'} lifted per workout`} />
         <Card>
           <BarChart
             data={volumeData}

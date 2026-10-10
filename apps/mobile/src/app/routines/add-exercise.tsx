@@ -1,12 +1,12 @@
 /** Add an exercise to a routine (full-screen picker; routine-scoped via ?dayId=). */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef } from 'react';
-import { Alert } from 'react-native';
 
 import { EmptyState, IconButton, Screen } from '@/components/ui';
 
 import { ExercisePickerList } from '@/tracker/components/ExercisePickerList';
 import { addExerciseToRoutine } from '@/tracker/db/routineRepo';
+import { tell } from '@/lib/tell';
 
 export default function RoutineAddExerciseScreen() {
   const router = useRouter();
@@ -40,7 +40,7 @@ export default function RoutineAddExerciseScreen() {
             .then(() => router.back())
             .catch(() => {
               picked.current = false;
-              Alert.alert('Could not add exercise', 'Please try again.');
+              void tell('Could not add exercise', 'Please try again.');
             });
         }}
       />

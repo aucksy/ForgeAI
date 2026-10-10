@@ -11,8 +11,15 @@ appId: com.forgeai.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "ForgeAI|Your name|Start training"
+    visible: "Step 1 of 3|Your name"
     timeout: 90000
+# Audit Phase 7 (D12 = A): the welcome is 3 steps; step 1 asks only the name and an optional
+# mobile number (age, height, gym and body weight are no longer asked here).
+- assertVisible: "Step 1 of 3"
+- assertVisible: "Mobile number, optional"
+- assertNotVisible: '(?i)age( in years)?.*'
+- assertNotVisible: '(?i)height.*'
+- assertNotVisible: '(?i)body weight.*'
 # Audit Phase 4 (point 6): switchers are met where they arrive — "Coming from Hevy or Strong?"
 # on the welcome screen. Not tapped here: a pick opens the import after the next Home.
 - scrollUntilVisible:
@@ -23,6 +30,8 @@ appId: com.forgeai.app
 - scrollUntilVisible:
     element: "Load demo data instead"
     timeout: 30000
+- assertNotVisible: '(?i)height.*'
+- assertNotVisible: '(?i)body weight.*'
 - takeScreenshot: 00-welcome
 - tapOn: "Load demo data instead"
 - extendedWaitUntil:
@@ -35,21 +44,27 @@ appId: com.forgeai.app
 - takeScreenshot: 01-home
 # Audit Phase 3: Home's one "Today" answer. The demo history ends yesterday, so today's routine is
 # still to do: its name over "N exercises from your plan" (not "Done today", not "No plan yet").
+# Audit Phase 7: the answer card titles it "Next: <routine>" and its text is also one spoken
+# line ("Next: Push 1. 5 exercises from your plan"), which the pattern accepts too.
 - extendedWaitUntil:
-    visible: '\d+ exercises? from your plan'
+    visible: '(.*\. )?\d+ exercises? from your plan'
     timeout: 20000
-# D9: THE streak counts weeks ("13-week streak", read off the flame row's label), never days.
+- assertVisible: 'Next: .*'
+# D9: THE streak counts weeks, never days. Audit Phase 7: Home's one answer card is followed by
+# "This week so far", whose facts line reads "13 weeks in a row · 12,345 kg lifted" (shown only
+# while the streak is above 0; the demo's 13 weeks end yesterday, so it is).
 - scrollUntilVisible:
-    element: '\d+-week streak'
+    element: '.*\d+ weeks? in a row.*'
     timeout: 15000
 - assertNotVisible: '(?i).*day streak.*'
 - takeScreenshot: 01a-home-week-streak
+# Audit Phase 7: the answer card is "Next: <routine>" with Start, and a quiet "See exercises" link.
 - scrollUntilVisible:
-    element: "See workout"
+    element: "See exercises"
     direction: UP
     timeout: 15000
 # v0.28.0: Home's Today card opens the day's exercises first; nothing starts until Start.
-- tapOn: "See workout"
+- tapOn: "See exercises"
 - extendedWaitUntil:
     visible: "Change this routine"
     timeout: 20000
@@ -89,7 +104,7 @@ appId: com.forgeai.app
 - takeScreenshot: 04-exercise-menu
 - tapOn: "Rest timer"
 - takeScreenshot: 05-rest-picker
-- tapOn: "Rest 30s"
+- tapOn: "Rest 0:30"
 - takeScreenshot: 06-rest-set-to-30s
 # Phase 2 (LW-27): every set control names its exercise and set, e.g.
 # "Barbell Bench Press set 1. Change set type", "Mark Barbell Bench Press set 1 complete".

@@ -5,17 +5,19 @@
  */
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { Badge, Card, EmptyState, GhostButton, Icon, IconButton, PrimaryButton, Screen, SectionHeader } from '@/components/ui';
+import { Badge, Card, EmptyState, GhostButton, Icon, PrimaryButton, Screen, SectionHeader } from '@/components/ui';
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { countWord } from '@/lib/words';
+import { goBack } from '@/lib/goBack';
 import { color, space, type } from '@/theme/tokens';
 
 import { EASY_EVERY, EASY_WEEKS_DEFAULT } from '@/tracker/plans/easyWeek';
 import { EQUIPMENT_LABEL, programByKey, programMeta, programRoutines, setsAndReps } from '@/tracker/plans/programs';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { addProgram, existingProgramFolder, type ExistingChoice } from '@/tracker/services/plansService';
+import { tell } from '@/lib/tell';
 
 export default function ProgramScreen() {
   const router = useRouter();
@@ -46,7 +48,7 @@ export default function ProgramScreen() {
 
   if (!p) {
     return (
-      <Screen title="Program" right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
+      <Screen title="Program" onBack={() => goBack(router, '/workout')}>
         <EmptyState icon="dumbbell" title="Program not found" body="Go back and pick another." />
       </Screen>
     );
@@ -63,7 +65,7 @@ export default function ProgramScreen() {
       // Back to the Routines screen already open (not a second copy on top of the old ones).
       router.dismissTo('/routines');
     } catch {
-      Alert.alert('Could not add the program', 'Please try again.');
+      void tell('Could not add the program', 'Please try again.');
     } finally {
       busy.current = false;
     }
@@ -73,7 +75,7 @@ export default function ProgramScreen() {
     <Screen
       title={p.name}
       subtitle={`${EQUIPMENT_LABEL[p.equipment]} · ${programMeta(p)}`}
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/workout')}
     >
       <View style={{ gap: space.lg }}>
         <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.inkSecondary, lineHeight: 21 }}>{p.summary}</Text>
@@ -91,12 +93,12 @@ export default function ProgramScreen() {
             <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
               {already.following ? `You follow this program ("${already.name}").` : `Already in your routines ("${already.name}").`}
             </Text>
-            {!already.following ? <PrimaryButton label="Follow it" icon="target" onPress={() => void add(true, 'update')} /> : null}
+            {!already.following ? <PrimaryButton label="Follow it" icon="check" onPress={() => void add(true, 'update')} /> : null}
             <GhostButton label="Add a copy" icon="plus" onPress={() => void add(false, 'copy')} />
           </View>
         ) : (
           <View style={{ gap: space.md }}>
-            <PrimaryButton label="Follow this program" icon="target" onPress={() => void add(true)} />
+            <PrimaryButton label="Follow this plan" icon="check" onPress={() => void add(true)} />
             <GhostButton label="Add to my routines" icon="plus" onPress={() => void add(false)} />
           </View>
         )}

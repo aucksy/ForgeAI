@@ -23,4 +23,9 @@ config.resolver.nodeModulesPaths = [
 // nothing for the native builds.
 config.resolver.assetExts = [...config.resolver.assetExts, 'wasm'];
 
+// Audit Phase 7 (SH-21): every Text / TextInput grows with the phone's font size up to a
+// sensible cap, set once — see scripts/metro-text-scale.cjs and src/components/ui/scaledText.tsx.
+const { withTextScale } = require('./scripts/metro-text-scale.cjs');
+config.resolver.resolveRequest = withTextScale(projectRoot, config.resolver.resolveRequest);
+
 module.exports = config;

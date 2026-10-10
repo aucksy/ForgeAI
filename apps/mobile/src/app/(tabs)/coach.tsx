@@ -1,11 +1,11 @@
 import * as ImagePicker from 'expo-image-picker';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, Platform, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, View } from 'react-native';
 import type { ListRenderItemInfo } from 'react-native';
 
 import { ChatSkeleton, InputBar, MessageBubble, SuggestedPrompts } from '@/components/chat';
-import { EmptyState, IconButton, Screen } from '@/components/ui';
+import { EmptyState, IconButton, Screen, askConfirm } from '@/components/ui';
 import * as userRepo from '@/db/repos/userRepo';
 import { FEATURES, linkedDraft } from '@/lib/features';
 import { success, thud } from '@/lib/haptics';
@@ -143,7 +143,7 @@ function CoachScreen() {
 
   const handlePrompt = useCallback(
     (label: string) => {
-      if (label === 'Upload Food Photo') {
+      if (label === 'Upload food photo') {
         void pickImage();
         return;
       }
@@ -159,20 +159,14 @@ function CoachScreen() {
   const draft = linkedDraft(params.prompt);
 
   const confirmClear = useCallback(() => {
-    Alert.alert(
-      'Clear conversation?',
-      'This deletes your entire chat history with the coach. Your workouts, meals and PRs stay logged.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Clear',
-          style: 'destructive',
-          onPress: () => {
-            void clear();
-          },
-        },
-      ],
-    );
+    void askConfirm({
+      title: 'Clear conversation?',
+      body: 'This deletes your entire chat history with the coach. Your workouts, meals and records stay logged.',
+      confirmLabel: 'Clear',
+      destructive: true,
+    }).then((ok) => {
+      if (ok) void clear();
+    });
   }, [clear]);
 
   const renderItem = useCallback(
@@ -185,12 +179,12 @@ function CoachScreen() {
   return (
     <Screen
       title="Coach"
-      subtitle={gymName ?? 'Your AI personal trainer'}
+      subtitle={gymName ?? undefined}
       scroll={false}
       noPad
       right={
         <IconButton
-          icon="close"
+          icon="trash"
           onPress={confirmClear}
           size={38}
           tint={color.inkSecondary}

@@ -32,7 +32,7 @@ export function SwitcherCard({
   return (
     <Card style={{ gap: space.sm }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-        <Icon name="calendar" size={18} color={color.accent} />
+        <Icon name="import" size={18} color={color.accent} />
         <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Coming from Hevy or Strong?</Text>
       </View>
       <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 }}>

@@ -8,7 +8,7 @@ import { Text, View } from 'react-native';
 import { HBarList } from '@/components/charts';
 import { Badge, Card, FoldSection, StatTile } from '@/components/ui';
 import { trimNum } from '@/lib/format';
-import { kgToShown, weightUnitOf } from '@/lib/units';
+import { kgToShown, liftedWords, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -50,22 +50,22 @@ export function SessionSummary({
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
           {/* v0.25.1 review: a run read "Volume 0 kg" — with no kilos, its distance. */}
           {totalVolumeKg <= 0 && workoutDistanceM(data) > 0 ? (
-            <StatTile label="Distance" value={fmtTotalDistance(workoutDistanceM(data))} icon="zap" />
+            <StatTile label="Distance" value={fmtTotalDistance(workoutDistanceM(data))} icon="route" />
           ) : (
-            <StatTile label="Volume" value={Math.round(kgToShown(totalVolumeKg, units))} unit={wu} icon="dumbbell" />
+            <StatTile label={liftedWords(units, true)} value={Math.round(kgToShown(totalVolumeKg, units))} unit={wu} icon="dumbbell" />
           )}
         </View>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
           <StatTile label="Sets" value={workingSetCount} icon="check" />
         </View>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
-          <StatTile label="Exercises" value={exerciseCount} icon="target" />
+          <StatTile label="Exercises" value={exerciseCount} icon="dumbbell" />
         </View>
       </View>
       ) : null}
       {needsBodyweight ? (
         <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, marginTop: -space.sm }}>
-          Log your body weight so pull-ups and dips count in your volume.
+          Log your body weight so pull-ups and dips count in your {liftedWords(units)}.
         </Text>
       ) : null}
 
@@ -165,7 +165,7 @@ export function SessionSummary({
                   const rpe = !s.isWarmup && meta?.rpe != null ? ` @${trimNum(meta.rpe)}` : '';
                   const body =
                     lt === 'assisted'
-                      ? `${showW(typedWeight(lt, s.weightKg), units)}×${s.reps}`
+                      ? `${showW(typedWeight(lt, s.weightKg), units)} ${wu} × ${s.reps}`
                       : fmtSetCompact(
                           { weightKg: s.weightKg, reps: s.reps, durationSec: meta?.durationSec, distanceM: meta?.distanceM },
                           lt,

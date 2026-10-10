@@ -16,6 +16,9 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 60000
 - tapOn: "^Profile$"
+# Audit Phase 7: the imports sit inside Profile's folded "Gym, backup and data".
+- runFlow:
+    file: sub-profile-fold-open.yaml
 - scrollUntilVisible:
     element: "Import from Hevy"
     centerElement: true
@@ -145,15 +148,16 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- Home: the next routine
 - tapOn: "^Home$"
 - takeScreenshot: 149-home-today
-# Audit Phase 3: the card's action names where it goes — "See workout" (today's routine), or
-# "See what’s next" once today's routine is done ("Done today: Push A · Next: Pull A"); both open
-# the Today page. Never "Start workout" on a tap that only opens another screen (SH-23).
+# Audit Phase 3 / Phase 7: the answer card's link names where it goes — "See exercises" under
+# "Next: <routine>" (whose own button is "Start"), or "See what’s next" once today's routine is
+# done ("Done today: Push A" / "Next: Pull A"); both open the Today page. Never "Start workout"
+# on a tap that only opens another screen (SH-23).
 - assertNotVisible: "Start workout"
 - runFlow:
     when:
-      visible: "See workout|See what.s next"
+      visible: "See exercises|See what.s next"
     commands:
-      - tapOn: "See workout|See what.s next"
+      - tapOn: "See exercises|See what.s next"
       - extendedWaitUntil:
           visible: "Change this routine"
           timeout: 15000
@@ -161,6 +165,9 @@ appId: com.forgeai.app
       - back
 # ---------------------------------------------------------------- the same file again
 - tapOn: "^Profile$"
+# The fold should still be open (the Profile tab kept its screen); opened again only if shut.
+- runFlow:
+    file: sub-profile-fold-open.yaml
 - scrollUntilVisible:
     element: "Import from Hevy"
     centerElement: true
@@ -286,5 +293,4 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 15000
 - tapOn: "Discard workout"
-- tapOn:
-    id: "android:id/button1"
+- tapOn: "^Discard$"

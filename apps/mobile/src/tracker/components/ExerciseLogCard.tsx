@@ -14,17 +14,18 @@
  */
 import { useRouter } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 import type { TextInput as TextInputType } from 'react-native';
 import { useShallow } from 'zustand/react/shallow';
 
-import { Badge, GhostButton, Icon } from '@/components/ui';
+import { Badge, GhostButton, Icon, askConfirm } from '@/components/ui';
 import type { BadgeProps } from '@/components/ui';
 import { getExerciseById } from '@/db/repos/exerciseRepo';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { columnHeads, LOAD_MODE_LABEL, LOAD_MODES, repsPerSide, weightIsEach } from '@/tracker/engine/logTypes';
 import { targetBadge, targetFill, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
+import { tell } from '@/lib/tell';
 
 import { exerciseIdsForKeys } from '../db/folderRepo';
 import { supersetLabel } from '../lib/superset';
@@ -230,11 +231,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     if (!version?.id) return;
     const next = await getExerciseById(version.id).catch(() => null);
     if (!next) {
-      Alert.alert('Not in your library', `${version.name} is not in your exercise library.`);
+      void tell('Not in your library', `${version.name} is not in your exercise library.`);
       return;
     }
     const ok = await swapExercise(exercise.key, next).catch(() => false);
-    if (!ok) Alert.alert('Could not switch', 'Please try again.');
+    if (!ok) void tell('Could not switch', 'Please try again.');
   };
 
   // Phase 4: swap for today. LW-31: also after a tick, and for the member's own exercises
@@ -268,23 +269,27 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     const id = (await exerciseIdsForKeys([a.key]).catch(() => new Map<string, string>())).get(a.key);
     const next = id ? await getExerciseById(id).catch(() => null) : null;
     if (!next) {
-      Alert.alert('Could not swap', 'Please try again.');
+      void tell('Could not swap', 'Please try again.');
       return;
     }
     const ok = await swapExercise(exercise.key, next).catch(() => false);
-    if (!ok) Alert.alert('Could not swap', 'Please try again.');
+    if (!ok) void tell('Could not swap', 'Please try again.');
   };
 
   const confirmRemove = (): void => {
-    Alert.alert('Remove exercise?', `Remove ${exercise.name} and its sets from this workout.`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Remove', style: 'destructive', onPress: () => removeExercise(exercise.key) },
-    ]);
+    void askConfirm({
+      title: 'Remove exercise?',
+      body: `Remove ${exercise.name} and its sets from this workout.`,
+      confirmLabel: 'Remove',
+      destructive: true,
+    }).then((ok) => {
+      if (ok) removeExercise(exercise.key);
+    });
   };
 
   const onWarmup = (): void => {
     if (workingWeight == null || workingWeight <= 0) {
-      Alert.alert('Set a working weight first', 'Enter a weight on a working set, then add warm-up sets.');
+      void tell('Set a working weight first', 'Enter a weight on a working set, then add warm-up sets.');
       return;
     }
     const w = computeWarmups(workingWeight, exercise.incrementKg ?? 2.5);
@@ -457,6 +462,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           {showWhy && version && canSwitch ? (
             <Pressable
               onPress={() => void onSwitch()}
+              hitSlop={7}
               accessibilityRole="button"
               accessibilityLabel={`Switch to ${version.name}`}
               style={{
@@ -466,7 +472,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
                 gap: space.xs,
                 alignSelf: 'flex-start',
                 paddingHorizontal: space.md,
-                height: 34,
+                minHeight: 34,
                 borderRadius: radius.pill,
                 backgroundColor: color.accentSoft,
               }}
@@ -549,7 +555,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           {logType === 'weight_reps' ? (
             <SheetRow
               label="Add warm-up sets"
-              leading={<Icon name="flame" size={20} color={color.accent} />}
+              leading={<Icon name="plus" size={20} color={color.accent} />}
               onPress={() => {
                 setSheet(null);
                 onWarmup();
@@ -567,7 +573,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           {exercise.equipment === 'barbell' && logType === 'weight_reps' ? (
             <SheetRow
               label="Plate calculator"
-              leading={<Icon name="scale" size={20} color={color.accent} />}
+              leading={<Icon name="dumbbell" size={20} color={color.accent} />}
               onPress={() => openAfterMenu('plates')}
             />
           ) : null}

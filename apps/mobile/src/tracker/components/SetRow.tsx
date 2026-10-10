@@ -363,7 +363,13 @@ export const SetRow = memo(function SetRow({
     keyboardType: 'decimal-pad' | 'number-pad';
     a11y: string;
   }): JSX.Element => (
-    <View style={{ flex: 1, minHeight: SET_ROW.height, justifyContent: 'center' }}>
+    // Packet B (Phase 7): the box is drawn 44 dp tall but the finger gets 48 — a tap on the
+    // 2 dp above or below still lands in the box. The input stays the spoken element.
+    <Pressable
+      accessible={false}
+      onPress={() => p.inputRef.current?.focus()}
+      style={{ flex: 1, minHeight: SET_ROW.touch, justifyContent: 'center' }}
+    >
       <TextInput
         ref={p.inputRef}
         value={p.value}
@@ -383,7 +389,7 @@ export const SetRow = memo(function SetRow({
           </Text>
         </View>
       ) : null}
-    </View>
+    </Pressable>
   );
 
   return (
@@ -417,7 +423,8 @@ export const SetRow = memo(function SetRow({
             flexDirection: 'row',
             alignItems: 'center',
             gap: space.sm,
-            paddingVertical: 2,
+            // The boxes carry their own 48 dp touch height, so the row needs no padding of its own.
+            minHeight: SET_ROW.touch,
             paddingHorizontal: space.xs,
             transform: [{ translateX: shakeX }],
           }}

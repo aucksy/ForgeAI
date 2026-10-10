@@ -50,9 +50,9 @@ describe('which records an exercise keeps', () => {
   it('names them in plain words', () => {
     expect(Object.values(RECORD_LABEL)).toEqual([
       'Heaviest weight',
-      'Best 1-rep max',
+      'Estimated 1-rep max',
       'Best set',
-      'Best session',
+      'Best workout',
       'Most reps',
       'Longest time',
       'Best pace',

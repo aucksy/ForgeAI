@@ -88,7 +88,7 @@ export function BodyWeightSection({ data, index, measureLine, photoCount, lastWe
       ) : (
         <LinkRow icon="scale" title="Body weight" sub={bodyWeightSub(0, lastWeighIn, units, todayISO()) ?? 'Log it'} onPress={onWeight} />
       )}
-      <LinkRow icon="target" title="Measurements" sub={measureLine ?? 'Log them'} onPress={onMeasurements} />
+      <LinkRow icon="ruler" title="Measurements" sub={measureLine ?? 'Log them'} onPress={onMeasurements} />
       <LinkRow icon="camera" title="Progress photos" sub={photoCount > 0 ? String(photoCount) : 'Add one'} onPress={onPhotos} />
     </Section>
   );

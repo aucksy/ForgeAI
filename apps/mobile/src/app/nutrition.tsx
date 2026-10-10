@@ -3,7 +3,7 @@
  *  gives the prominent Home calorie/protein rings a real management surface. */
 import { Redirect, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Text, TextInput, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
 import {
   Card,
@@ -13,17 +13,20 @@ import {
   Screen,
   SectionHeader,
   Skeleton,
+  askConfirm,
 } from '@/components/ui';
 import { getProfile } from '@/db/repos/userRepo';
 import { getMealsForDay } from '@/db/repos/nutritionRepo';
 import { deleteMeal, logMeal } from '@/db/queuedWrites';
 import { todayISO } from '@/lib/date';
+import { goBack } from '@/lib/goBack';
 import { FEATURES } from '@/lib/features';
 import { fmtInt } from '@/lib/format';
 import { success, tap } from '@/lib/haptics';
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { Meal, UserProfile } from '@/types/models';
+import { tell } from '@/lib/tell';
 
 interface MacroField {
   key: 'calories' | 'proteinG' | 'carbsG' | 'fatG';
@@ -102,7 +105,7 @@ function NutritionScreen() {
     if (saving) return;
     const description = draft.description.trim();
     if (description.length === 0) {
-      Alert.alert('Describe the meal', 'Add a short description, e.g. "2 rotis, dal, paneer".');
+      void tell('Describe the meal', 'Add a short description, e.g. "2 rotis, dal, paneer".');
       return;
     }
     const nums = {
@@ -114,12 +117,12 @@ function NutritionScreen() {
     for (const m of MACROS) {
       const v = nums[m.key];
       if (!Number.isFinite(v) || v < 0 || v > 100000) {
-        Alert.alert(`Check ${m.label}`, `Enter a number in ${m.unit} (or leave it blank for 0).`);
+        void tell(`Check ${m.label}`, `Enter a number in ${m.unit} (or leave it blank for 0).`);
         return;
       }
     }
     if (nums.calories === 0) {
-      Alert.alert('Add calories', 'Enter at least the calories for this meal.');
+      void tell('Add calories', 'Enter at least the calories for this meal.');
       return;
     }
     setSaving(true);
@@ -130,7 +133,7 @@ function NutritionScreen() {
       await reloadMeals();
       void useDashboard.getState().refresh();
     } catch {
-      Alert.alert('Could not save', 'Something went wrong adding the meal — please try again.');
+      void tell('Could not save', 'Something went wrong adding the meal — please try again.');
     } finally {
       setSaving(false);
     }
@@ -138,31 +141,28 @@ function NutritionScreen() {
 
   const onDelete = (meal: Meal): void => {
     tap();
-    Alert.alert('Delete meal?', `Remove "${meal.description}" from today?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          void (async () => {
-            try {
-              await deleteMeal(meal.id);
-              await reloadMeals();
-              void useDashboard.getState().refresh();
-            } catch {
-              Alert.alert('Could not delete', 'Something went wrong — please try again.');
-            }
-          })();
-        },
-      },
-    ]);
+    void askConfirm({
+      title: 'Delete meal?',
+      body: `Remove "${meal.description}" from today?`,
+      confirmLabel: 'Delete',
+      destructive: true,
+    }).then(async (ok) => {
+      if (!ok) return;
+      try {
+        await deleteMeal(meal.id);
+        await reloadMeals();
+        void useDashboard.getState().refresh();
+      } catch {
+        void tell('Could not delete', 'Something went wrong — please try again.');
+      }
+    });
   };
 
   return (
     <Screen
       title="Nutrition"
       subtitle="Today's meals"
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router)}
     >
       <View style={{ gap: space.lg }}>
         {/* today's totals vs targets */}
@@ -300,7 +300,7 @@ function NutritionScreen() {
                   </Text>
                 </View>
                 <IconButton
-                  icon="close"
+                  icon="trash"
                   size={34}
                   tint={color.inkMuted}
                   onPress={() => onDelete(m)}

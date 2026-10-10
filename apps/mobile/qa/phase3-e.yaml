@@ -94,9 +94,9 @@ appId: com.forgeai.app
     timeout: 5000
 - takeScreenshot: 61-finish-records
 - scrollUntilVisible:
-    element: "Share workout"
+    element: "Share as a picture"
     timeout: 20000
-- tapOn: "Share workout"
+- tapOn: "Share as a picture"
 - extendedWaitUntil:
     visible: "Share picture"
     timeout: 15000
@@ -151,23 +151,23 @@ appId: com.forgeai.app
     text: "View .*Bench Press.*"
     index: 0
 - extendedWaitUntil:
-    visible: "How to do it|Heaviest set"
+    visible: "How to do it|Heaviest weight"
     timeout: 15000
 - scrollUntilVisible:
     element: "Best set"
     timeout: 20000
 - takeScreenshot: 65-bench-chart-by-date
 - scrollUntilVisible:
-    element: "Best session"
+    element: "Best workout"
     timeout: 20000
 - takeScreenshot: 66-bench-records
 # Audit Phase 4 (EX-14 / R2): every past session is there, folded shut under its count
-# ("Past sessions" · "13 sessions · see them"), no longer just "the last 15".
+# ("Past workouts" · "13 workouts · see them"), no longer just "the last 15".
 - scrollUntilVisible:
-    element: "Past sessions"
+    element: "Past workouts"
     centerElement: true
     timeout: 20000
-- assertVisible: '[\d,]+ sessions? · see (it|them)'
+- assertVisible: '[\d,]+ workouts? · see (it|them)'
 - assertNotVisible: 'Showing the last .*'
 - takeScreenshot: 66b-bench-past-sessions-folded
 # ---------------------------------------------------------------- the coach is hidden

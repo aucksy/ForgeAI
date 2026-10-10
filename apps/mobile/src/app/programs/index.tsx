@@ -6,7 +6,8 @@
 import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
-import { Card, Icon, IconButton, Screen, SectionHeader } from '@/components/ui';
+import { goBack } from '@/lib/goBack';
+import { Card, Icon, Screen, SectionHeader } from '@/components/ui';
 import { color, space, type } from '@/theme/tokens';
 
 import { programGroups, programMeta } from '@/tracker/plans/programs';
@@ -17,7 +18,7 @@ export default function ProgramsScreen() {
     <Screen
       title="Ready programs"
       subtitle="Follow one as your plan, or keep it in your routines."
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/workout')}
     >
       <View style={{ gap: space.lg }}>
         {programGroups().map((g) => (

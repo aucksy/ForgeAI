@@ -12,12 +12,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardFrame } from '@/components/KeyboardRoom';
 import { Icon } from '@/components/ui';
 import type { IconName } from '@/components/ui';
+import { TEXT_SCALE_CAP } from '@/components/ui/a11y';
 import type { TabBarProps } from '@/components/ui/TabBar';
+import { motionMode, useReduceMotion } from '@/components/ui/useReduceMotion';
 import { tap, thud } from '@/lib/haptics';
 import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
+import { useDashboard } from '@/store/dashboardStore';
 import { color, motion, radius, shadow, space, type } from '@/theme/tokens';
 
+import { showsMiniBar } from '../lib/miniBar';
+import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { WorkoutMiniBar } from './WorkoutMiniBar';
 
 const ROUTE_ICON: Record<string, IconName> = {
@@ -25,7 +30,7 @@ const ROUTE_ICON: Record<string, IconName> = {
   workout: 'dumbbell',
   history: 'calendar',
   analytics: 'chart',
-  settings: 'settings',
+  settings: 'person',
 };
 
 /** Routes present in the navigator but never shown as a tab (still navigable). */
@@ -42,20 +47,23 @@ function TabItem({
   focused: boolean;
   onPress: () => void;
 }) {
+  // Audit Phase 7: the pill and lift stay still when the phone asks for less motion.
+  const rm = motionMode(useReduceMotion());
   const pill = useAnimatedStyle(() => ({
-    opacity: withTiming(focused ? 1 : 0, { duration: motion.fast }),
-    transform: [{ scale: withSpring(focused ? 1 : 0.55, motion.spring) }],
+    opacity: withTiming(focused ? 1 : 0, { duration: motion.fast, reduceMotion: rm }),
+    transform: [{ scale: withSpring(focused ? 1 : 0.55, { ...motion.spring, reduceMotion: rm }) }],
   }));
   const lift = useAnimatedStyle(() => ({
-    transform: [{ translateY: withSpring(focused ? -1 : 0, motion.spring) }],
+    transform: [{ translateY: withSpring(focused ? -1 : 0, { ...motion.spring, reduceMotion: rm }) }],
   }));
 
   return (
     <Pressable
-      accessibilityRole="button"
+      accessibilityRole="tab"
+      accessibilityLabel={label}
       accessibilityState={{ selected: focused }}
       onPress={onPress}
-      style={{ flex: 1, alignItems: 'center', gap: 3 }}
+      style={{ flex: 1, alignItems: 'center', gap: 3, minHeight: 48 }}
     >
       <View style={{ width: 54, height: 30, alignItems: 'center', justifyContent: 'center' }}>
         <Animated.View
@@ -77,7 +85,12 @@ function TabItem({
           <Icon name={icon} size={21} color={focused ? color.accent : color.inkMuted} />
         </Animated.View>
       </View>
+      {/* Audit Phase 7 (SH-21): five labels share one row — grow less, and shrink to fit rather than split ("Progre/ss"). */}
       <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+        maxFontSizeMultiplier={TEXT_SCALE_CAP.tabLabel}
         style={{
           color: focused ? color.accent : color.inkMuted,
           fontFamily: focused ? type.bodySemi : type.bodyMedium,
@@ -148,13 +161,17 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   // Phase 3 review: every screen now shrinks above the keyboard (KeyboardRoom), so while
   // the member types, the tab bar and the workout bar step aside instead of riding up on it.
   const typing = useKeyboardFrame() != null;
+  const homeReady = useDashboard((s) => s.data != null);
+  const editing = useActiveWorkout((s) => s.editingSessionId != null || s.pastLog);
   if (typing) return null;
   return (
     <View>
-    {/* Phase 1: a workout left open shows here, on every tab, until finished. */}
-    {state.routes[state.index]?.name !== 'workout' ? <WorkoutMiniBar /> : null}
+    {/* Phase 1: a workout left open shows here until finished — on every tab but Workout,
+        and (Phase 7) not on Home once Home's own card says "Workout in progress". */}
+    {showsMiniBar({ tab: state.routes[state.index]?.name, homeReady, editing }) ? <WorkoutMiniBar /> : null}
     <DemoStrip />
     <View
+      accessibilityRole="tablist"
       style={{
         flexDirection: 'row',
         backgroundColor: color.glass,

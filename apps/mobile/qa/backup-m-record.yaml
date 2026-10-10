@@ -1,4 +1,4 @@
-# Device QA, part M (record) — runs after parts A–L and N, BEFORE Android's backup. Opens Profile and
+# Device QA, part M (record) — runs after parts A–L, N and P7, BEFORE Android's backup. Opens Profile and
 # scrolls to the Backup card, whose first line is the member's workout count ("12 workouts").
 # The script reads that exact line off the screen and part M (after) must find it again once the
 # app has been uninstalled, reinstalled and restored from the backup.
@@ -12,6 +12,9 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 60000
 - tapOn: "^Profile$"
+# Audit Phase 7: Backup sits inside Profile's folded "Gym, backup and data".
+- runFlow:
+    file: sub-profile-fold-open.yaml
 # The count loads a moment after the card ("Your workouts" first); wait for the number.
 - scrollUntilVisible:
     element: '^[0-9]+ workouts?$'

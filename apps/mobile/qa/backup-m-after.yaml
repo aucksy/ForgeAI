@@ -12,14 +12,18 @@ appId: com.forgeai.app
     text: "(?i)^allow$"
     optional: true
 # A restored member goes straight to the tabs. Without the restore this is the welcome screen
-# ("Start training"), and the wait times out here (Maestro saves a picture of what it saw).
+# (audit Phase 7: 3 steps, opening on "Step 1 of 3"; "Start training" is only on step 3), and
+# the wait times out here (Maestro saves a picture of what it saw).
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 90000
-- assertNotVisible: "Start training"
+- assertNotVisible: "Step 1 of 3"
 - assertNotVisible: "Load demo data instead"
 - takeScreenshot: 181-after-reinstall-first-screen
 - tapOn: "^Profile$"
+# Audit Phase 7: Backup sits inside Profile's folded "Gym, backup and data".
+- runFlow:
+    file: sub-profile-fold-open.yaml
 - scrollUntilVisible:
     element: "^${WORKOUTS_LINE}$"
     centerElement: true

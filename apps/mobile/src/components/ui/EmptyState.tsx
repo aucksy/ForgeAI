@@ -3,6 +3,8 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { color, motion, space, type } from '@/theme/tokens';
 
+import { useReduceMotion } from './useReduceMotion';
+
 import { Icon } from './Icon';
 import type { IconName } from './Icon';
 
@@ -13,12 +15,15 @@ export interface EmptyStateProps {
 }
 
 export function EmptyState({ icon, title, body }: EmptyStateProps) {
+  const reduced = useReduceMotion();
   return (
     <Animated.View
-      entering={FadeInDown.duration(motion.slow)}
+      entering={reduced ? undefined : FadeInDown.duration(motion.slow)}
       style={{ alignItems: 'center', paddingVertical: space.xxxl, paddingHorizontal: space.xl }}
     >
       <View
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
         style={{
           width: 58,
           height: 58,
@@ -32,6 +37,7 @@ export function EmptyState({ icon, title, body }: EmptyStateProps) {
         <Icon name={icon} size={26} color={color.accent} />
       </View>
       <Text
+        accessibilityRole="header"
         style={{
           fontFamily: type.heading,
           fontSize: type.size.h3,

@@ -1,0 +1,138 @@
+# Audit Phase 7 device QA, parts P7BIG and P7NAV3 — the large-text screen tour (runs after parts
+# A–L and N, before M). The script has set the phone's font size to its largest step
+# (adb: settings put system font_scale 2.0) and stopped the app; it runs this flow twice: with
+# the emulator's usual gesture navigation (NAV=gesture) and, when the image can switch, with
+# Android's 3-button bar (NAV=3button). Each screen a member uses is photographed
+# (p7-big-<NAV>-*.png; the script gathers them in qa-out/p7-big/): Home (top, then This week),
+# the Workout tab, an open workout with a set row, History, Progress, Profile (and its fold).
+# Changes NOTHING: the workout is an empty one with one exercise and no ticked set, thrown away
+# with "Discard workout" (an Android dialog, "Discard workout?" → Discard); a workout an earlier
+# part left open is only looked at, then minimised. The Profile fold is opened (screen state only).
+appId: com.forgeai.app
+env:
+  NAV: gesture
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Home$"
+    timeout: 90000
+# ---------------------------------------------------------------- Home
+- tapOn: "^Home$"
+- extendedWaitUntil:
+    visible: "(?i)good (morning|afternoon|evening).*|This week so far"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-01-home
+- scrollUntilVisible:
+    element: "This week so far"
+    centerElement: true
+    timeout: 20000
+    optional: true
+- takeScreenshot: p7-big-${NAV}-02-home-this-week
+# ---------------------------------------------------------------- Workout tab
+- tapOn: "^Workout$"
+- scrollUntilVisible:
+    element: "Start empty workout|Resume workout"
+    centerElement: true
+    timeout: 30000
+- takeScreenshot: p7-big-${NAV}-03-workout-tab
+# ---------------------------------------------------------------- an open workout with a set row
+# An earlier part left a workout open: show it as it is, then minimise it (nothing changes).
+- runFlow:
+    when:
+      visible: "Resume workout"
+    commands:
+      - tapOn: "Resume workout"
+      - extendedWaitUntil:
+          visible: "Log a set to finish|Finish workout"
+          timeout: 30000
+      - takeScreenshot: p7-big-${NAV}-04-open-workout
+      - tapOn: "Minimise workout.*"
+      - extendedWaitUntil:
+          visible: "Resume workout"
+          timeout: 15000
+# None open (the usual case after part N): an empty workout, one exercise, then discarded.
+- runFlow:
+    when:
+      notVisible: "Resume workout"
+    commands:
+      - tapOn: "Start empty workout"
+      - tapOn:
+          text: "(?i)^allow$"
+          optional: true
+      - extendedWaitUntil:
+          visible: "Add exercise"
+          timeout: 30000
+      - tapOn: "Add exercise"
+      - extendedWaitUntil:
+          visible: "Search exercises"
+          timeout: 20000
+      - tapOn: "Search exercises"
+      - inputText: " bench press"
+      - hideKeyboard
+      # Phase 2 (LW-15): tick the exercise in the picker, then "Add 1".
+      - tapOn:
+          text: "Select Barbell Bench Press"
+          index: 0
+      - tapOn: "Add 1"
+      # LW-27: "Barbell Bench Press set 1 weight, kilograms" (pounds after part I's "lb, miles").
+      - extendedWaitUntil:
+          visible: ".* set 1 weight, (kilograms|pounds)"
+          timeout: 20000
+      - waitForAnimationToEnd:
+          timeout: 3000
+      - takeScreenshot: p7-big-${NAV}-04-open-workout
+      - scrollUntilVisible:
+          element: "Discard workout"
+          centerElement: true
+          timeout: 20000
+      - takeScreenshot: p7-big-${NAV}-04b-open-workout-bottom
+      - tapOn: "Discard workout"
+      - extendedWaitUntil:
+          visible: 'Discard workout\?'
+          timeout: 10000
+      - takeScreenshot: p7-big-${NAV}-04c-discard-question
+      # The app's own confirm sheet: its "Discard" button (the link behind it says "Discard workout").
+      - tapOn: "^Discard$"
+      - scrollUntilVisible:
+          element: "Start empty workout"
+          centerElement: true
+          timeout: 30000
+      - assertNotVisible: "Resume workout"
+# ---------------------------------------------------------------- History
+- tapOn: "^History$"
+- scrollUntilVisible:
+    element: "Log a past workout"
+    direction: UP
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-05-history
+# ---------------------------------------------------------------- Progress
+- tapOn: "^Progress$"
+- extendedWaitUntil:
+    visible: "This week.* vs your usual"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-06-progress
+# ---------------------------------------------------------------- Profile
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "^Your details$"
+    direction: UP
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-07-profile
+- runFlow:
+    file: sub-profile-fold-open.yaml
+- takeScreenshot: p7-big-${NAV}-08-profile-fold-open
+- tapOn: "^Home$"

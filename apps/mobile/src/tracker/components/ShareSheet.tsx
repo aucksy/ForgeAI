@@ -6,12 +6,13 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { useRef, useState } from 'react';
-import { Alert, Text, useWindowDimensions, View } from 'react-native';
+import { Text, useWindowDimensions, View } from 'react-native';
 import type Svg from 'react-native-svg';
 
 import { PrimaryButton } from '@/components/ui';
 import { SHARE_FOLDER } from '@/lib/tempPictures';
 import { color, radius, space, type } from '@/theme/tokens';
+import { tell } from '@/lib/tell';
 
 import { SceneSvg } from '../share/SceneSvg';
 import { pictureFileName, type Scene } from '../share/scene';
@@ -36,7 +37,7 @@ export function ShareSheet({
   // Fit the picture on screen with room for the button below it.
   const previewW = Math.min(width - space.xl * 2, ((height * 0.55) * scene.width) / scene.height);
 
-  const fail = () => Alert.alert('Could not make the picture', 'Something went wrong. Please try again.');
+  const fail = () => void tell('Could not make the picture', 'Something went wrong. Please try again.');
 
   const onShare = () => {
     const svg = ref.current;
@@ -64,7 +65,7 @@ export function ShareSheet({
             if (await Sharing.isAvailableAsync()) {
               await Sharing.shareAsync(uri, { mimeType: 'image/png', UTI: 'public.png', dialogTitle: title });
             } else {
-              Alert.alert('Sharing is not available', 'This phone has no app to share the picture with.');
+              void tell('Sharing is not available', 'This phone has no app to share the picture with.');
             }
           } catch {
             fail();

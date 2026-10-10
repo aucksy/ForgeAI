@@ -67,7 +67,7 @@ export function SupersetSheet({
           {join.map((j) => (
             <SheetRow
               key={j.group}
-              label={`Join Superset ${supersetLabel(j.group)}`}
+              label={`Join superset ${supersetLabel(j.group)}`}
               value={j.names.join(' + ')}
               leading={<Icon name="zap" size={20} color={color.accent} />}
               onPress={() => onJoin(j.group)}

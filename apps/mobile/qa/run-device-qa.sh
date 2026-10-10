@@ -290,6 +290,96 @@ log "part N start"
 maestro test --format junit --output "$OUT/part-n.xml" --test-output-dir "$OUT/part-n" "$QA_DIR/audit3-n.yaml" \
   > "$OUT/part-n.log" 2>&1 || { status=1; log "PART N FAILED"; }
 
+# ---------------------------------------------------------------- part P7 (audit Phase 7: large text)
+# The phone's font size at its largest step (font_scale 2.0, Android 14's top setting) and the app
+# restarted, then a screen tour (phase7-bigtext.yaml): Home, the Workout tab, an open workout with
+# a set row (an empty workout with one exercise, then discarded: nothing saved), History, Progress,
+# Profile and its fold, each photographed (p7-big-<nav>-*.png, also gathered in qa-out/p7-big/).
+# Run once with the emulator's gesture navigation (part P7BIG) and once with Android's 3-button
+# bar (part P7NAV3) when this image can switch to it by adb. Font size and navigation are put
+# back before part M. Saves nothing, so part M's workout count is not changed by this part.
+P7_SHOTS=8   # screenshots every tour takes, whichever way its workout step goes
+p7_font() { adb shell settings get system font_scale 2>/dev/null | tr -d '\r'; }
+# 0 = 3-button, 1 = 2-button, 2 = gestures (Android's own setting, kept in step with the overlay).
+p7_nav() { adb shell settings get secure navigation_mode 2>/dev/null | tr -d '\r'; }
+p7_overlay_on() { adb shell cmd overlay list 2>/dev/null | tr -d '\r' | grep -q "\[x\] *com.android.internal.systemui.navbar.$1\$"; }
+p7_nav_to() {  # $1 = threebutton | twobutton | gestural
+  adb shell cmd overlay enable-exclusive --category "com.android.internal.systemui.navbar.$1" >/dev/null 2>&1 \
+    || adb shell cmd overlay enable "com.android.internal.systemui.navbar.$1" >/dev/null 2>&1 || true
+  sleep 8
+  p7_overlay_on "$1"
+}
+p7_tour() {  # $1 = part name (p7big / p7nav3), $2 = navigation label for the screenshot names
+  local n up
+  up=$(echo "$1" | tr '[:lower:]' '[:upper:]')
+  free_maestro
+  adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  log "part $1 start"
+  maestro test -e NAV="$2" --format junit --output "$OUT/part-$1.xml" --test-output-dir "$OUT/part-$1" "$QA_DIR/phase7-bigtext.yaml" \
+    > "$OUT/part-$1.log" 2>&1 || {
+      status=1
+      adb exec-out screencap -p > "$OUT/$1-failed.png"
+      log "PART $up FAILED (large-text tour, $2 navigation, font scale $(p7_font)): part-$1.log, $1-failed.png"
+    }
+  # Maestro writes screenshots into the part's output folder (or, on an older Maestro, the
+  # working folder): gather this tour's into qa-out/p7-big/ so they sit together in the artifact.
+  mkdir -p "$OUT/p7-big"
+  { find "$OUT/part-$1" -name "p7-big-$2-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "p7-big-$2-*.png" 2>/dev/null; } \
+    | while read -r f; do cp "$f" "$OUT/p7-big/" 2>/dev/null; done
+  n=$(find "$OUT/p7-big" -name "p7-big-$2-*.png" 2>/dev/null | wc -l | tr -d ' ')
+  if [ "$n" -ge "$P7_SHOTS" ]; then
+    log "BIG TEXT ($2 navigation): $n screenshots in qa-out/p7-big/"
+  else
+    log "BIG TEXT ($2 navigation): screenshots MISSING, $n of at least $P7_SHOTS in qa-out/p7-big/ (part-$1.log)"
+  fi
+}
+p7_font_before=$(p7_font)
+adb shell settings put system font_scale 2.0
+sleep 3
+if [ "$(p7_font)" = "2.0" ]; then
+  log "BIG TEXT: font scale set to 2.0 (was '$p7_font_before')"
+  p7_tour p7big gesture
+  # 3-button navigation: an overlay on the emulator image; switched only when it is there.
+  p7_nav_before=$(p7_nav)
+  adb shell cmd overlay list 2>/dev/null | tr -d '\r' | grep -i "navbar" > "$OUT/p7-nav-overlays.txt" || true
+  if grep -q "com.android.internal.systemui.navbar.threebutton" "$OUT/p7-nav-overlays.txt"; then
+    if p7_nav_to threebutton; then
+      log "THREE-BUTTON NAV: on (navigation_mode $(p7_nav), was '$p7_nav_before')"
+      adb exec-out screencap -p > "$OUT/p7-nav3-bar.png"
+      p7_tour p7nav3 3button
+    else
+      log "THREE-BUTTON NAV FAILED: the overlay would not switch on (navigation_mode $(p7_nav)); see p7-nav-overlays.txt"
+      status=1
+    fi
+    # Back to what the phone had (gestures on this emulator; 2-button or 3-button if it said so).
+    case "$p7_nav_before" in
+      0) p7_back=threebutton ;;
+      1) p7_back=twobutton ;;
+      *) p7_back=gestural ;;
+    esac
+    if p7_nav_to "$p7_back"; then
+      log "THREE-BUTTON NAV: put back to $p7_back (navigation_mode $(p7_nav))"
+    else
+      log "THREE-BUTTON NAV FAILED: could not put navigation back to $p7_back (navigation_mode $(p7_nav))"
+      status=1
+    fi
+  else
+    log "THREE-BUTTON NAV: this emulator image has no 3-button navigation overlay; that tour was not run (p7-nav-overlays.txt)"
+  fi
+else
+  log "BIG TEXT FAILED: font scale did not change (reads '$(p7_font)'); the large-text tour was not run"
+  status=1
+fi
+adb shell settings put system font_scale 1.0
+sleep 3
+if [ "$(p7_font)" = "1.0" ]; then
+  log "BIG TEXT: font scale put back to 1.0"
+else
+  log "BIG TEXT FAILED: font scale could not be put back to 1.0 (reads '$(p7_font)')"
+  status=1
+fi
+adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
+
 # ---------------------------------------------------------------- part M (backup survives a reinstall)
 # Android's own backup (the app's backup rules: the workout database, AsyncStorage, settings) into
 # the emulator's LOCAL backup store, then uninstall + reinstall the SAME APK. The member's workouts

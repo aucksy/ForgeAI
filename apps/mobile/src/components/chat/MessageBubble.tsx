@@ -119,7 +119,7 @@ function CoachContent({ message }: { message: ChatMessage }) {
     return (
       <View style={{ alignItems: 'flex-start' }}>
         <View style={styles.errorBubble}>
-          <Icon name="zap" size={15} color={color.warning} />
+          <Icon name="sparkle" size={15} color={color.warning} />
           <Text style={styles.errorText}>{message.text || 'Something went wrong.'}</Text>
         </View>
       </View>

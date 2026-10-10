@@ -351,10 +351,10 @@ describe('the share pictures say it right', () => {
     expect(t).toContain('October');
   });
 
-  it('review: the finish screen says the distance after a run, not "0 kg moved"', () => {
+  it('review: the finish screen says the distance after a run, not "0 kg lifted"', () => {
     const run = cardioSummary();
     expect(finishHeadline(run)).toBe('5 km · 1 set');
-    expect(finishHeadline({ ...run, totalVolumeKg: 12480, workingSetCount: 18 })).toBe('12,480 kg moved · 18 sets');
+    expect(finishHeadline({ ...run, totalVolumeKg: 12480, workingSetCount: 18 })).toBe('12,480 kg lifted · 18 sets');
     expect(finishHeadline(cardioSummary([], { durationSec: 600 }))).toBe('1 set');
   });
 

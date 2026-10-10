@@ -7,15 +7,18 @@ export const FEATURES = { coach: false, nutrition: false, gymSync: false } as co
 
 export type Features = { readonly coach: boolean; readonly nutrition: boolean; readonly gymSync: boolean };
 
-/** Home's parts, top to bottom. Pure so the switch's effect on Home is testable. */
-export type HomePart = 'today' | 'streak' | 'nutritionRings' | 'scores' | 'volume' | 'bodyWeight' | 'insight' | 'nextUp';
+/**
+ * Home's parts, top to bottom. Pure so the switch's effect on Home is testable.
+ * Audit Phase 7 (a calmer Home): the one Today answer card, then this week's numbers (the same
+ * ones Progress shows). Kg lifted per week and body weight live on Progress.
+ */
+export type HomePart = 'today' | 'week' | 'nutritionRings' | 'scores' | 'insight' | 'nextUp';
 
 export function homeParts(f: Features): HomePart[] {
-  const parts: HomePart[] = ['today', 'streak'];
+  const parts: HomePart[] = ['today', 'week'];
   if (f.nutrition) parts.push('nutritionRings');
   // Recovery and strength scores belong to the coach's engine — shown only with it.
   if (f.coach) parts.push('scores');
-  parts.push('volume', 'bodyWeight');
   // The insight card and "Next up" row both open the coach.
   if (f.coach) parts.push('insight', 'nextUp');
   return parts;
@@ -35,12 +38,13 @@ export function scoreTiles(d: {
 }
 
 /** Profile's sections that depend on a hidden feature. */
-export type ProfilePart = 'aiCoach' | 'voice' | 'language' | 'coachNotes' | 'gymSync';
+export type ProfilePart = 'aiCoach' | 'voice' | 'coachNotes' | 'gymSync';
 
 export function profileParts(f: Features): ProfilePart[] {
   const parts: ProfilePart[] = [];
-  // Voice and language only change the coach chat today (findings AI-13, AI-25).
-  if (f.coach) parts.push('aiCoach', 'voice', 'language', 'coachNotes');
+  // Voice only changes the coach chat today (finding AI-13). Language changed nothing a member
+  // could see (AI-25, SH-15), so it is gone from Profile even with the coach on.
+  if (f.coach) parts.push('aiCoach', 'voice', 'coachNotes');
   if (f.gymSync) parts.push('gymSync');
   return parts;
 }

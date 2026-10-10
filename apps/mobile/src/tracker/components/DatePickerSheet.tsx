@@ -7,13 +7,12 @@ import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { Icon } from '@/components/ui';
-import { fromISO, todayISO } from '@/lib/date';
+import { fromISO, monthTitle, todayISO } from '@/lib/date';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { monthGrid } from '../lib/calendar';
 import { TrackerSheet } from './TrackerSheet';
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 export function DatePickerSheet({
@@ -58,7 +57,7 @@ export function DatePickerSheet({
           <Icon name="chevron-left" size={20} color={color.ink} />
         </Pressable>
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
-          {MONTHS[cursor.m]} {cursor.y}
+          {monthTitle(`${cursor.y}-${String(cursor.m + 1).padStart(2, '0')}`)}
         </Text>
         <Pressable
           onPress={() => !atCurrentMonth && step(1)}

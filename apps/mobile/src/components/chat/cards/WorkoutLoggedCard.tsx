@@ -1,14 +1,16 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { AnimatedNumber, Badge, Icon } from '@/components/ui';
+import { AnimatedNumber, Badge } from '@/components/ui';
 import { relativeDay } from '@/lib/date';
 import { cw } from '@/ai/unitText';
 import { fmtCompact, fmtInt } from '@/lib/format';
-import { kgToShown, weightUnitOf } from '@/lib/units';
+import { kgToShown, liftedWords } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import type { WorkoutLoggedView } from '../payload';
+import { Glyph } from '@/tracker/components/TrackerGlyph';
+
 import { CardShell, Divider } from './CardShell';
 
 const GOOD_BG = 'rgba(61, 203, 108, 0.14)';
@@ -17,7 +19,7 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Summary card for a logged session + trophy rows for any fresh PRs. */
+/** Summary card for a logged workout + medal rows for any new records. */
 export function WorkoutLoggedCard({ data }: { data: WorkoutLoggedView }) {
   const u = useUnits();
   return (
@@ -35,7 +37,7 @@ export function WorkoutLoggedCard({ data }: { data: WorkoutLoggedView }) {
             format={(n) => fmtCompact(n)}
             style={styles.statValue}
           />
-          <Text style={styles.statLabel}>{`${weightUnitOf(u)} volume`}</Text>
+          <Text style={styles.statLabel}>{liftedWords(u)}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statValue}>{fmtInt(data.setCount)}</Text>
@@ -83,7 +85,7 @@ export function WorkoutLoggedCard({ data }: { data: WorkoutLoggedView }) {
                 paddingVertical: space.sm,
               }}
             >
-              <Icon name="trophy" size={17} color={color.accentBright} />
+              <Glyph name="medal" size={17} color={color.accentBright} />
               <View style={{ flex: 1 }}>
                 <Text
                   numberOfLines={1}
@@ -100,11 +102,11 @@ export function WorkoutLoggedCard({ data }: { data: WorkoutLoggedView }) {
                   }}
                 >
                   {pr.kind === 'e1rm'
-                    ? `e1RM ${cw(pr.value, u)}`
+                    ? `Estimated 1-rep max ${cw(pr.value, u)}`
                     : `${cw(pr.weightKg, u)} × ${pr.reps}`}
                 </Text>
               </View>
-              <Badge label="NEW PR" tone="accent" />
+              <Badge label="New record" tone="accent" />
             </View>
           ))}
         </>

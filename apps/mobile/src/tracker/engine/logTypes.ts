@@ -57,13 +57,14 @@ export const LOAD_MODES: readonly LoadMode[] = ['both', 'side', 'both_side', 'on
 
 /** The choice as the member reads it (exercise menu → "Counting"). */
 export const LOAD_MODE_LABEL: Record<LoadMode, { title: string; detail: string }> = {
-  both: { title: 'Two dumbbells', detail: "Type one dumbbell's weight. Volume counts both." },
-  side: { title: 'One side at a time', detail: 'Type the reps for one side. Volume counts both sides.' },
+  // Packet B (one word per idea): "the total lifted", never "volume".
+  both: { title: 'Two dumbbells', detail: "Type one dumbbell's weight. The total lifted counts both." },
+  side: { title: 'One side at a time', detail: 'Type the reps for one side. The total lifted counts both sides.' },
   both_side: {
     title: 'Two dumbbells, one leg at a time',
-    detail: "Type one dumbbell's weight and the reps for one leg. Volume counts all of it.",
+    detail: "Type one dumbbell's weight and the reps for one leg. The total lifted counts all of it.",
   },
-  one: { title: 'Weight as typed', detail: 'One bar, machine or weight. Volume counts it once.' },
+  one: { title: 'Weight as typed', detail: 'One bar, machine or weight. The total lifted counts it once.' },
 };
 
 export function isLogType(v: unknown): v is LogType {
@@ -294,8 +295,9 @@ export interface SetValues {
 }
 
 /**
- * A compact set label for history chips and summaries: "60×8", "12 reps", "+10×8",
- * "help 20×8", "0:45", "2.4 km", "2.4 km · 12:00".
+ * A compact set label for history chips and summaries: "60 kg × 8", "12 reps", "+10 kg × 8",
+ * "assist 20 kg × 8", "0:45", "2.4 km", "2.4 km · 12:00". Packet B (Phase 7, design language
+ * "Weights and reps"): spaces round the × and the unit always — never "60×8".
  */
 export function fmtSetCompact(s: SetValues, t: LogType, unit: DistUnit = 'km'): string {
   // A rep-less row on a reps type (a timed Hevy row landing on an older weight × reps
@@ -303,14 +305,15 @@ export function fmtSetCompact(s: SetValues, t: LogType, unit: DistUnit = 'km'): 
   if (s.reps === 0 && (t === 'weight_reps' || t === 'reps' || t === 'weighted' || t === 'assisted')) {
     if ((s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) return fmtSetCompact(s, 'time_distance', unit);
   }
+  const wx = (kg: number): string => `${wNum(kg)} ${weightUnitOf()} × ${s.reps}`;
   switch (t) {
     case 'reps':
       // Older rows of a bodyweight move may still carry a weight.
-      return s.weightKg > 0 ? `+${wNum(s.weightKg)}×${s.reps}` : s.weightKg < 0 ? `assist ${wNum(-s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
+      return s.weightKg > 0 ? `+${wx(s.weightKg)}` : s.weightKg < 0 ? `assist ${wx(-s.weightKg)}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
     case 'weighted':
-      return s.weightKg > 0 ? `+${wNum(s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
+      return s.weightKg > 0 ? `+${wx(s.weightKg)}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
     case 'assisted':
-      return s.weightKg < 0 ? `assist ${wNum(-s.weightKg)}×${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
+      return s.weightKg < 0 ? `assist ${wx(-s.weightKg)}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
     case 'time':
       return fmtDuration(s.durationSec ?? 0);
     case 'distance':
@@ -322,7 +325,7 @@ export function fmtSetCompact(s: SetValues, t: LogType, unit: DistUnit = 'km'): 
       return d > 0 ? fmtDistance(d, unit) : fmtDuration(tm);
     }
     default:
-      return `${wNum(s.weightKg)}×${s.reps}`;
+      return wx(s.weightKg);
   }
 }
 

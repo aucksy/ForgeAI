@@ -1,6 +1,6 @@
 /**
  * Workout reminders (v0.27.0; audit Phase 6). Off until the member turns them on in Profile. A
- * quiet alert on the chosen days at the chosen time: "Time to train" / "Next up: Push 1".
+ * quiet alert on the chosen days at the chosen time: "Time to train" / "Next: Push 1".
  *
  * Audit Phase 6:
  *  - PH-04: a WEEKLY repeat per chosen day (expo-notifications `WEEKLY`), so reminders keep
@@ -342,7 +342,7 @@ async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }): Pr
     // Audit Phase 3: the one "Today" answer. The rotation only moves when a workout is saved,
     // and every save sets the reminders again, so every repeat can name the next routine.
     const next = tp?.next ? tp.next.name : null;
-    const body = next ? `Next up: ${next}` : 'Open ForgeAI to start your workout';
+    const body = next ? `Next: ${next}` : 'Open ForgeAI to start your workout';
     const stamp: ScheduleStamp = {
       offset: now.getTimezoneOffset(),
       key: JSON.stringify({ triggers, body }),

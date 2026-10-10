@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { GhostButton } from '@/components/ui';
 import { tap, thud } from '@/lib/haptics';
 import { maskKey } from '@/lib/keys';
 import { color, radius, space, type } from '@/theme/tokens';
+import { tell } from '@/lib/tell';
 
 export interface ApiKeyFieldProps {
   label: string;
@@ -52,7 +53,7 @@ export function ApiKeyField({ label, placeholder, load, save, divider }: ApiKeyF
       setEditing(false);
       thud();
     } catch {
-      Alert.alert('Could not save key', 'Secure storage was unavailable — please try again.');
+      void tell('Could not save key', 'Secure storage was unavailable — please try again.');
     } finally {
       setSaving(false);
     }

@@ -109,7 +109,7 @@ export function liftedOnPicture(data: SessionSummaryData): {
 }
 
 /**
- * A record the picture can print. "Best session" on a pull-up or dip with added weight is a
+ * A record the picture can print. "Best workout" on a pull-up or dip with added weight is a
  * kilo total with body weight in it, so it stays off (it still counts in RECORDS and in
  * "and N more"); every other record names the set itself ("+10 kg", "40 reps"). PURE.
  */

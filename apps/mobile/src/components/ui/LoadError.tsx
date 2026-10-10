@@ -8,6 +8,7 @@ import { Text, View } from 'react-native';
 import { color, space, type } from '@/theme/tokens';
 
 import { GhostButton } from './GhostButton';
+import { useAnnounce } from './useAnnounce';
 
 export interface LoadErrorProps {
   onRetry: () => void;
@@ -21,9 +22,12 @@ export interface LoadErrorProps {
 
 export function LoadError({ onRetry, what, detail, compact }: LoadErrorProps) {
   const title = what ? `Couldn't load ${what}` : "Couldn't load";
+  // Phase 7: spoken as soon as it appears, so a screen-reader member knows the page failed.
+  // Only by this announcement — no live region as well, or it is said twice (`shouldAnnounce`).
+  useAnnounce(detail ? `${title}. ${detail}` : title);
   return (
     <View
-      accessibilityLiveRegion="polite"
+      accessibilityRole="alert"
       style={{ alignItems: 'center', gap: space.md, paddingVertical: compact ? space.lg : space.xxxl, paddingHorizontal: space.xl }}
     >
       <Text
@@ -38,7 +42,7 @@ export function LoadError({ onRetry, what, detail, compact }: LoadErrorProps) {
         </Text>
       ) : null}
       <View style={{ minWidth: 160 }}>
-        <GhostButton label="Try again" onPress={onRetry} />
+        <GhostButton label="Try again" accessibilityLabel={`Try again: ${title}`} onPress={onRetry} />
       </View>
     </View>
   );

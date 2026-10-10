@@ -10,7 +10,7 @@
  *
  * Prefer Undo over a question for deletes (Appendix B); ask only when Undo is not possible.
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, Text } from 'react-native';
 
 import { color, radius, space, type } from '@/theme/tokens';
@@ -19,6 +19,7 @@ import { answerConfirm, useConfirmStore, type ConfirmRequest } from './confirmSt
 import { GhostButton } from './GhostButton';
 import { PrimaryButton } from './PrimaryButton';
 import { Sheet } from './Sheet';
+import { sheetWaitNow } from './sheetClock';
 
 export interface ConfirmSheetProps {
   visible: boolean;
@@ -31,6 +32,8 @@ export interface ConfirmSheetProps {
   cancelLabel?: string;
   /** For deletes and anything that throws work away: a red confirm button. */
   destructive?: boolean;
+  /** A notice: one quiet button that closes it, no Cancel (see `ConfirmOptions.notice`). */
+  notice?: boolean;
   onConfirm: () => void;
   /** Cancel, ×, back button and a tap outside all land here. */
   onCancel: () => void;
@@ -45,6 +48,7 @@ export function ConfirmSheet({
   confirmLabel,
   cancelLabel = 'Cancel',
   destructive,
+  notice,
   onConfirm,
   onCancel,
 }: ConfirmSheetProps) {
@@ -60,13 +64,15 @@ export function ConfirmSheet({
   };
 
   return (
-    <Sheet visible={visible} title={title} onClose={once(onCancel)} closeLabel={cancelLabel}>
+    <Sheet visible={visible} title={title} onClose={once(onCancel)} closeLabel={notice ? confirmLabel : cancelLabel}>
       {body ? (
         <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.inkSecondary, lineHeight: 21 }}>
           {body}
         </Text>
       ) : null}
-      {destructive ? (
+      {notice ? (
+        <GhostButton label={confirmLabel} onPress={once(onConfirm)} />
+      ) : destructive ? (
         <Pressable
           onPress={once(onConfirm)}
           accessibilityRole="button"
@@ -80,15 +86,16 @@ export function ConfirmSheet({
             alignItems: 'center',
             justifyContent: 'center',
             paddingHorizontal: space.xl,
+            paddingVertical: space.sm,
             marginTop: space.sm,
           })}
         >
-          <Text style={{ fontFamily: type.bodyBold, fontSize: 16, color: color.criticalText }}>{confirmLabel}</Text>
+          <Text style={{ fontFamily: type.bodyBold, fontSize: 16, color: color.criticalText, textAlign: 'center' }}>{confirmLabel}</Text>
         </Pressable>
       ) : (
         <PrimaryButton label={confirmLabel} onPress={once(onConfirm)} />
       )}
-      <GhostButton label={cancelLabel} onPress={once(onCancel)} />
+      {notice ? null : <GhostButton label={cancelLabel} onPress={once(onCancel)} />}
     </Sheet>
   );
 }
@@ -96,9 +103,29 @@ export function ConfirmSheet({
 /**
  * Shows whatever `askConfirm()` asked. Mount ONCE, inside the safe-area provider, at the app
  * root (src/app/_layout.tsx, next to the navigator).
+ *
+ * Review fix: a question or notice asked the moment another sheet closes (a sheet's "Delete"
+ * row, then "Could not delete") waits for that sheet to slide away (`sheetClock`) — two Modals
+ * swapping in one frame can lose the new one on Android. One place, so every caller is safe.
+ * A new question replacing one already on screen just changes its words (no wait).
  */
 export function ConfirmHost() {
   const request = useConfirmStore((s) => s.request);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (request == null) {
+      setReady(false);
+      return undefined;
+    }
+    if (ready) return undefined;
+    const wait = sheetWaitNow();
+    if (wait === 0) {
+      setReady(true);
+      return undefined;
+    }
+    const t = setTimeout(() => setReady(true), wait);
+    return () => clearTimeout(t);
+  }, [request, ready]);
   // Keep the last words on screen while the sheet slides away.
   const last = useRef<ConfirmRequest | null>(null);
   if (request) last.current = request;
@@ -106,12 +133,13 @@ export function ConfirmHost() {
   if (!shown) return null;
   return (
     <ConfirmSheet
-      visible={request != null}
+      visible={request != null && ready}
       title={shown.title}
       body={shown.body}
       confirmLabel={shown.confirmLabel}
       cancelLabel={shown.cancelLabel}
       destructive={shown.destructive}
+      notice={shown.notice}
       onConfirm={() => answerConfirm(shown.id, true)}
       onCancel={() => answerConfirm(shown.id, false)}
     />

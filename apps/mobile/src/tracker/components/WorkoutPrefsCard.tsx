@@ -82,7 +82,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
       ) : null}
       <RestAlertsStatusRow divider />
       <ToggleRow
-        icon="target"
+        icon="gauge"
         title="Track RPE"
         caption="Rate how hard each set felt (6–10)"
         value={advancedSets}

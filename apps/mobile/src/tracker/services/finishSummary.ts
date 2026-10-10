@@ -14,6 +14,7 @@
  */
 import { getDb } from '@/db';
 import { getSessionDetail } from '@/db/repos/workoutRepo';
+import { fmtTotalTime } from '@/lib/format';
 import { fmtVol } from '@/lib/units';
 import { countWord } from '@/lib/words';
 import { fmtTotalDistance } from '@/tracker/engine/logTypes';
@@ -172,7 +173,8 @@ export function workoutDistanceM(data: Pick<SessionSummaryData, 'session' | 'set
  */
 export function finishHeadline(data: Pick<SessionSummaryData, 'session' | 'setMeta' | 'totalVolumeKg' | 'workingSetCount'>): string {
   const sets = countWord(data.workingSetCount, 'set');
-  if (data.totalVolumeKg > 0) return `${fmtVol(data.totalVolumeKg)} moved · ${sets}`;
+  // Packet B (one word per idea): "kg lifted" / "lb lifted", never "kg moved".
+  if (data.totalVolumeKg > 0) return `${fmtVol(data.totalVolumeKg)} lifted · ${sets}`;
   const m = workoutDistanceM(data);
   return m > 0 ? `${fmtTotalDistance(m)} · ${sets}` : sets;
 }
@@ -199,13 +201,12 @@ export function finishAnswer(
   return parts.join(' · ');
 }
 
-/** "1h 04m" / "42m 10s" / "0m 45s" */
+/**
+ * A finished workout's length: "42 min", "1h 04m" — the shared `fmtTotalTime`, the same as the
+ * finish line above it (Packet B: never "42m 10s" / "0m 45s").
+ */
 export function formatDuration(totalSec: number): string {
-  const h = Math.floor(totalSec / 3600);
-  const m = Math.floor((totalSec % 3600) / 60);
-  const s = totalSec % 60;
-  if (h > 0) return `${h}h ${String(m).padStart(2, '0')}m`;
-  return `${m}m ${String(s).padStart(2, '0')}s`;
+  return fmtTotalTime(totalSec);
 }
 
 /** Real weights the finish screen compares with (typical adults / models). */

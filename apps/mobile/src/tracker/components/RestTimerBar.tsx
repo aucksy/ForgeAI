@@ -187,8 +187,8 @@ export function RestTimerBar() {
               justifyContent: 'flex-end',
             }}
           >
-            <TimerBtn label="−15" a11y="15 seconds less" onPress={() => addSec(-15)} />
-            <TimerBtn label="+15" a11y="15 seconds more" onPress={() => addSec(15)} />
+            <TimerBtn label="−15 s" a11y="15 seconds less" onPress={() => addSec(-15)} />
+            <TimerBtn label="+15 s" a11y="15 seconds more" onPress={() => addSec(15)} />
             <TimerBtn label="Skip" a11y="Skip rest" onPress={() => skip()} />
           </View>
         </View>

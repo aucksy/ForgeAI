@@ -22,7 +22,6 @@ import {
   Card,
   EmptyState,
   GhostButton,
-  IconButton,
   LoadError,
   PrimaryButton,
   Screen,
@@ -33,6 +32,7 @@ import {
 import { getBodyWeightHistory, getProfile } from '@/db/repos/userRepo';
 import { logBodyWeight } from '@/db/queuedWrites';
 import { dateWithYear, tinyDate, todayISO } from '@/lib/date';
+import { goBack } from '@/lib/goBack';
 import { trimNum } from '@/lib/format';
 import { success } from '@/lib/haptics';
 import { kgToShown, shownToKg, weightUnitOf } from '@/lib/units';
@@ -262,7 +262,7 @@ export default function BodyWeightScreen() {
     <View style={{ flex: 1 }}>
       <Screen
         title="Body weight"
-        right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+        onBack={() => goBack(router, '/analytics')}
       >
         <View style={{ gap: space.lg }}>
           {/* quick log — always available */}

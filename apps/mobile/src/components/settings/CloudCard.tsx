@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
+import { DangerLink } from '@/components/DangerLink';
 import { isCloudConfigured } from '@/cloud/config';
-import { Card, GhostButton, Icon, PrimaryButton } from '@/components/ui';
+import { Card, GhostButton, Icon, PrimaryButton, askConfirm } from '@/components/ui';
 import { tap } from '@/lib/haptics';
 import { useCloud } from '@/store/cloudStore';
 import { color, radius, space, type } from '@/theme/tokens';
+import { tell } from '@/lib/tell';
 
 function Field(props: {
   label: string;
@@ -90,7 +92,7 @@ export function CloudCard() {
     return (
       <Card>
         <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-          Session expired
+          Signed out
         </Text>
         <Text
           style={{
@@ -120,12 +122,12 @@ export function CloudCard() {
         <View style={{ marginTop: space.lg, gap: space.sm }}>
           <PrimaryButton
             label={busy ? 'Signing in…' : 'Reconnect'}
-            icon="sparkle"
+            icon="key"
             loading={busy}
             disabled={busy}
             onPress={() => void onReauth()}
           />
-          <GhostButton label="Disconnect" icon="close" onPress={() => void disconnect()} />
+          <GhostButton label="Disconnect" onPress={() => void disconnect()} />
         </View>
       </Card>
     );
@@ -153,30 +155,21 @@ export function CloudCard() {
           track your progress. Your full history stays on this phone.
         </Text>
         <View style={{ marginTop: space.lg, gap: space.sm }}>
-          <GhostButton label="Disconnect" icon="close" onPress={() => void disconnect()} />
-          <GhostButton
+          <GhostButton label="Disconnect" onPress={() => void disconnect()} />
+          <DangerLink
             label="Delete my cloud data"
-            icon="close"
             onPress={() =>
-              Alert.alert(
-                'Delete cloud data?',
-                'This erases the summary your gym can see. Your data on this phone stays. You can reconnect anytime.',
-                [
-                  { text: 'Cancel', style: 'cancel' },
-                  {
-                    text: 'Delete',
-                    style: 'destructive',
-                    onPress: () => {
-                      void deleteData().catch((e: unknown) =>
-                        Alert.alert(
-                          'Could not delete',
-                          e instanceof Error ? e.message : 'Please try again when online.',
-                        ),
-                      );
-                    },
-                  },
-                ],
-              )
+              void askConfirm({
+                title: 'Delete cloud data?',
+                body: 'This erases the summary your gym can see. Your data on this phone stays. You can reconnect anytime.',
+                confirmLabel: 'Delete',
+                destructive: true,
+              }).then((ok) => {
+                if (!ok) return;
+                void deleteData().catch(
+                  (e: unknown) => void tell('Could not delete', e instanceof Error ? e.message : 'Please try again when online.'),
+                );
+              })
             }
           />
         </View>
@@ -312,7 +305,7 @@ export function CloudCard() {
       <View style={{ marginTop: space.lg }}>
         <PrimaryButton
           label={busy ? 'Connecting…' : 'Connect'}
-          icon="sparkle"
+          icon="key"
           loading={busy}
           disabled={busy}
           onPress={() => void onConnect()}

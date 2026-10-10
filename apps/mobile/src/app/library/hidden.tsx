@@ -6,9 +6,10 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
-import { EmptyState, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
+import { EmptyState, LoadError, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { runGuarded } from '@/lib/guardedAction';
+import { goBack } from '@/lib/goBack';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { getTrackerExercisesByIds, type TrackerExercise } from '@/tracker/db/exerciseInfo';
@@ -58,7 +59,7 @@ export default function HiddenExercisesScreen() {
       scroll={false}
       title="Hidden exercises"
       subtitle="Hidden from every exercise list. Show one to bring it back."
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      onBack={() => goBack(router, '/workout')}
     >
       <InlineError message={error} />
       {rows == null && failed ? (

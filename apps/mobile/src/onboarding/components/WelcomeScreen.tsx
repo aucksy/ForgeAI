@@ -1,21 +1,37 @@
 /**
- * First-run welcome — Phase O2 (W1 real onboarding).
+ * First-run welcome — Phase O2 (W1), rebuilt in Audit Phase 7 as 3 calm steps (D12 = A):
+ *
+ *   1. Your name (+ an optional mobile number, any country)
+ *   2. kg or lb
+ *   3. Your goal and experience → Start training
  *
  * Rendered by the root layout INSTEAD of the navigator when no profile row exists,
  * so the tabs never mount with someone else's data behind them and an erase can
  * return here with no restart and no navigation race.
  *
- * Name + mobile number are required (the number is the identity the gym will
- * verify against its roster once the platform track opens — it is stored locally
- * only, no SMS is sent). Everything else is optional and editable in Settings.
+ * SH-10 / SH-26: the number no longer blocks the start and no country's rule is assumed.
+ * SH-17: a missing or wrong answer is written under its own field, scrolled into view, and
+ * spoken by the screen reader — never only a buzz. Every answer can be changed in Profile.
+ * The step logic is pure (`../welcomeSteps`); the demo and the "Coming from Hevy or Strong?"
+ * pick behave exactly as before.
  */
-import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useEffect, useRef, useState } from 'react';
+import {
+  AccessibilityInfo,
+  BackHandler,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Card, ConfirmSheet, GhostButton, Icon, PrimaryButton, Screen } from '@/components/ui';
-import { ChipGroup } from '@/components/settings/ChipGroup';
-import type { ChipOption } from '@/components/settings/ChipGroup';
+import { ConfirmSheet, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
 import { Logo } from '@/components/ui/Logo';
 import { success, thud } from '@/lib/haptics';
 import { useSettings } from '@/store/settingsStore';
@@ -26,27 +42,49 @@ import { choosePendingImport, SwitcherCard, type SwitchApp } from '@/tracker/com
 
 import { countOwnWorkouts } from '../db/dataActions';
 import type { Experience, OnboardingDraft } from '../form';
-import { emptyDraft, validateOnboarding } from '../form';
+import { validateOnboarding, welcomeDraft } from '../form';
 import { useOnboarding } from '../store/onboardingStore';
+import {
+  nextStep,
+  previousStep,
+  stepLabel,
+  stepOf,
+  stepProblem,
+  WELCOME_STEP_COUNT,
+  welcomeFieldOf,
+  type WelcomeField,
+  type WelcomeProblem,
+  type WelcomeStep,
+} from '../welcomeSteps';
+import { RadioList, type RadioOption } from './RadioList';
 
-const GOAL_OPTIONS = [
+const GOAL_OPTIONS: readonly RadioOption<Goal>[] = [
   { id: 'muscle', label: 'Build muscle' },
   { id: 'fat_loss', label: 'Lose fat' },
   { id: 'strength', label: 'Get stronger' },
-  { id: 'general', label: 'General' },
-] as const satisfies readonly ChipOption<Goal>[];
+  { id: 'general', label: 'General fitness' },
+];
 
-const EXPERIENCE_OPTIONS = [
+const EXPERIENCE_OPTIONS: readonly RadioOption<Experience>[] = [
   { id: 'beginner', label: 'New to lifting' },
   { id: 'intermediate', label: 'Intermediate' },
   { id: 'advanced', label: 'Advanced' },
-] as const satisfies readonly ChipOption<Experience>[];
+];
 
-// v0.27.0: the same choice as Profile → Units.
-const UNIT_OPTIONS = [
-  { id: 'metric', label: 'kg, km' },
-  { id: 'imperial', label: 'lb, miles' },
-] as const satisfies readonly ChipOption<UnitSystem>[];
+// The same choice as Profile → Units ("kg, km" / "lb, miles").
+const UNIT_OPTIONS: readonly RadioOption<UnitSystem>[] = [
+  { id: 'metric', label: 'Kilograms', caption: 'kg and km' },
+  { id: 'imperial', label: 'Pounds', caption: 'lb and miles' },
+];
+
+const STEP_TEXT: Record<WelcomeStep, { title: string; sub: string }> = {
+  0: {
+    title: 'Welcome to ForgeAI',
+    sub: 'Three quick questions and you are training. Every number in here will be one you lifted.',
+  },
+  1: { title: 'Kilograms or pounds?', sub: 'For every weight in the app. You can change it in Profile.' },
+  2: { title: 'Your goal and experience', sub: 'They shape your Targets. You can change them in Profile.' },
+};
 
 const inputStyle = {
   backgroundColor: color.surfaceSunken,
@@ -54,10 +92,11 @@ const inputStyle = {
   borderColor: color.borderStrong,
   borderRadius: radius.md,
   paddingHorizontal: space.md,
-  paddingVertical: 10,
+  paddingVertical: 12,
+  minHeight: 48,
   color: color.ink,
   fontFamily: type.body,
-  fontSize: type.size.sub,
+  fontSize: type.size.body,
 } as const;
 
 const overline = {
@@ -69,15 +108,20 @@ const overline = {
   marginBottom: space.sm,
 } as const;
 
+/**
+ * The line under a field. Spoken by `showProblem`'s announcement each time it is shown — no
+ * live region as well, or TalkBack would say it twice (one mechanism: `shouldAnnounce`).
+ */
 function FieldError({ message }: { message: string | null }) {
   if (!message) return null;
   return (
     <Text
       style={{
         fontFamily: type.bodyMedium,
-        fontSize: type.size.caption,
+        fontSize: type.size.sub,
         color: color.criticalText,
         marginTop: space.xs,
+        lineHeight: 19,
       }}
     >
       {message}
@@ -85,32 +129,11 @@ function FieldError({ message }: { message: string | null }) {
   );
 }
 
-function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
+function Hint({ children }: { children: string }) {
   return (
-    <View style={{ marginBottom: space.lg }}>
-      <Text style={overline}>{label}</Text>
+    <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 }}>
       {children}
-      {hint ? (
-        <Text
-          style={{
-            fontFamily: type.body,
-            fontSize: type.size.caption,
-            color: color.inkMuted,
-            marginTop: space.xs,
-          }}
-        >
-          {hint}
-        </Text>
-      ) : null}
-    </View>
+    </Text>
   );
 }
 
@@ -118,23 +141,34 @@ export function WelcomeScreen() {
   const complete = useOnboarding((s) => s.complete);
   const loadDemo = useOnboarding((s) => s.loadDemo);
   const busy = useOnboarding((s) => s.busy);
-  const units = useSettings((s) => s.unitSystem);
   const setUnits = useSettings((s) => s.setUnitSystem);
-  const imperial = units === 'imperial';
+  const insets = useSafeAreaInsets();
 
-  const [draft, setDraft] = useState<OnboardingDraft>(emptyDraft);
-  const [error, setError] = useState<{ field: keyof OnboardingDraft; message: string } | null>(null);
+  const [step, setStep] = useState<WelcomeStep>(0);
+  const [draft, setDraft] = useState<OnboardingDraft>(welcomeDraft);
+  // Nothing is chosen for the member: step 2 waits for a tap (the pick is saved at once).
+  const [units, setPickedUnits] = useState<UnitSystem | null>(null);
+  const [problem, setProblem] = useState<WelcomeProblem | null>(null);
+
+  const scrollRef = useRef<ScrollView>(null);
+  const nameRef = useRef<TextInput>(null);
+  const phoneRef = useRef<TextInput>(null);
+  // Where each field sits inside the step body, and where the body sits in the scroll.
+  const bodyY = useRef(0);
+  const fieldY = useRef<Partial<Record<WelcomeField, number>>>({});
+  const at = (field: WelcomeField) => (e: { nativeEvent: { layout: { y: number } } }) => {
+    fieldY.current[field] = e.nativeEvent.layout.y;
+  };
 
   const patch = (p: Partial<OnboardingDraft>): void => {
     setDraft((d) => ({ ...d, ...p }));
-    setError(null);
+    setProblem((cur) => (cur && cur.field in p ? null : cur));
   };
 
-  const errFor = (field: keyof OnboardingDraft): string | null =>
-    error && error.field === field ? error.message : null;
+  const errFor = (field: WelcomeField): string | null => (problem && problem.field === field ? problem.message : null);
 
   // The app's own sheets: this screen renders before the navigator, so there is no ConfirmHost.
-  const [problem, setProblem] = useState<string | null>(null);
+  const [saveProblem, setSaveProblem] = useState<string | null>(null);
   const [askDemo, setAskDemo] = useState(false);
   // Audit Phase 4: a switcher's app — its import opens right after "Start training".
   const [switchApp, setSwitchApp] = useState<SwitchApp | null>(null);
@@ -157,27 +191,79 @@ export function WelcomeScreen() {
     };
   }, []);
 
-  const onStart = async (): Promise<void> => {
-    if (busy) return;
-    const result = validateOnboarding(draft, units);
-    if (!result.ok) {
-      setError({ field: result.field, message: result.message });
-      thud();
+  /** Write it under the field, bring the field into view, say it out loud (SH-17). */
+  const showProblem = (p: WelcomeProblem): void => {
+    setProblem(p);
+    thud();
+    AccessibilityInfo.announceForAccessibility(p.message);
+    // After the line has been laid out, so the field and its message both fit in view.
+    requestAnimationFrame(() => {
+      const y = fieldY.current[p.field];
+      if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, bodyY.current + y - space.lg), animated: true });
+      if (p.field === 'name') nameRef.current?.focus();
+      else if (p.field === 'phone') phoneRef.current?.focus();
+    });
+  };
+
+  const goTo = (s: WelcomeStep): void => {
+    setProblem(null);
+    setSaveProblem(null);
+    setStep(s);
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+    AccessibilityInfo.announceForAccessibility(`${stepLabel(s)}. ${STEP_TEXT[s].title}`);
+  };
+
+  // Android back walks back through the steps; on the first step it leaves as usual.
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      const prev = previousStep(step);
+      if (prev == null || useOnboarding.getState().busy) return false;
+      goTo(prev);
+      return true;
+    });
+    return () => sub.remove();
+    // goTo only touches setters and refs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
+  const onNext = (): void => {
+    const p = stepProblem(step, draft, units);
+    if (p) {
+      showProblem(p);
       return;
     }
-    setProblem(null);
+    goTo(nextStep(step));
+  };
+
+  const onStart = async (): Promise<void> => {
+    if (busy) return;
+    const p = stepProblem(2, draft, units);
+    if (p) {
+      showProblem(p);
+      return;
+    }
+    const result = validateOnboarding(draft, units ?? 'metric');
+    if (!result.ok) {
+      // Only reachable for an answer on an earlier step: go there and point at it.
+      const back = stepOf(result.field);
+      if (back !== step) goTo(back);
+      showProblem({ field: welcomeFieldOf(result.field), message: result.message });
+      return;
+    }
+    setSaveProblem(null);
     try {
       await complete(result.value);
       success();
     } catch {
       thud();
-      setProblem('Could not save your details. Please try again.');
+      // Spoken once, by InlineError's own announcement when the line appears.
+      setSaveProblem('Could not save your details. Please try again.');
     }
   };
 
   const onLoadDemo = (): void => {
     if (busy) return;
-    setProblem(null);
+    setSaveProblem(null);
     setAskDemo(true);
   };
 
@@ -188,7 +274,7 @@ export function WelcomeScreen() {
     choosePendingImport(null);
     void loadDemo().catch(() => {
       thud();
-      setProblem('Could not load the demo. Please try again.');
+      setSaveProblem('Could not load the demo. Please try again.');
     });
   };
 
@@ -197,208 +283,210 @@ export function WelcomeScreen() {
       ? `Fills the app with a sample member and 13 weeks of made-up training, for showing ForgeAI off. Your ${kept} workout${kept === 1 ? '' : 's'} on this phone ${kept === 1 ? 'is' : 'are'} deleted.`
       : 'Fills the app with a sample member and 13 weeks of made-up training, for showing ForgeAI off. You can remove it any time.';
 
+  const text = STEP_TEXT[step];
+
   return (
-    <Screen>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <Animated.View entering={FadeInDown.duration(motion.slow)} style={{ marginBottom: space.xl }}>
-          <Logo height={26} />
-          <Text
-            style={{
-              fontFamily: type.display,
-              fontSize: type.size.h1,
-              color: color.ink,
-              letterSpacing: -0.5,
-              marginTop: space.lg,
-            }}
-          >
-            Welcome to ForgeAI
-          </Text>
-          <Text
-            style={{
-              fontFamily: type.bodyMedium,
-              fontSize: type.size.sub,
-              color: color.inkSecondary,
-              marginTop: 4,
-              lineHeight: 19,
-            }}
-          >
-            Two details and you are training. Your history starts empty — every number in
-            here will be one you actually lifted.
-          </Text>
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.duration(motion.slow).delay(60)}>
-          <Card style={{ marginBottom: space.lg }}>
-            <Field label="Your name">
-              <TextInput
-                value={draft.name}
-                onChangeText={(t) => patch({ name: t })}
-                placeholder="e.g. Rahul Sharma"
-                placeholderTextColor={color.inkMuted}
-                autoCapitalize="words"
-                autoCorrect={false}
-                returnKeyType="next"
-                style={inputStyle}
-              />
-              <FieldError message={errFor('name')} />
-            </Field>
-
-            <Field
-              label="Mobile number"
-              hint="Stays on this phone. Your gym uses it to recognise you when you join them."
+    <Screen scroll={false}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <ScrollView
+          ref={scrollRef}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: space.xxl + insets.bottom }}
+        >
+          {/* ---------------------------------------------------------------- header */}
+          <View style={{ marginBottom: space.xl }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 48 }}>
+              {step > 0 ? (
+                <IconButton icon="chevron-left" size={48} accessibilityLabel="Back" onPress={() => goTo(previousStep(step) ?? 0)} />
+              ) : (
+                <Logo height={26} />
+              )}
+              <View style={{ flex: 1 }} />
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted }}>{stepLabel(step)}</Text>
+            </View>
+            {/* Three bars: done and current lit (the step label above says the same in words). */}
+            <View
+              style={{ flexDirection: 'row', gap: space.xs, marginTop: space.md }}
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
             >
-              <View style={{ flexDirection: 'row', gap: space.sm }}>
-                <TextInput
-                  value={draft.dialCode}
-                  onChangeText={(t) => patch({ dialCode: t })}
-                  keyboardType="phone-pad"
-                  maxLength={5}
-                  style={[inputStyle, { width: 68, textAlign: 'center' }]}
+              {Array.from({ length: WELCOME_STEP_COUNT }, (_, i) => (
+                <View
+                  key={i}
+                  style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i <= step ? color.accent : color.border }}
                 />
-                <TextInput
-                  value={draft.phone}
-                  onChangeText={(t) => patch({ phone: t })}
-                  placeholder="98765 43210"
-                  placeholderTextColor={color.inkMuted}
-                  keyboardType="phone-pad"
-                  maxLength={18}
-                  style={[inputStyle, { flex: 1 }]}
-                />
-              </View>
-              <FieldError message={errFor('phone')} />
-            </Field>
-
-            <View style={{ marginBottom: space.lg }}>
-              <ChipGroup
-                label="Your goal"
-                options={GOAL_OPTIONS}
-                selectedId={draft.goal}
-                onSelect={(goal) => patch({ goal })}
-              />
+              ))}
             </View>
-
-            <ChipGroup
-              label="Experience"
-              options={EXPERIENCE_OPTIONS}
-              selectedId={draft.experience}
-              onSelect={(experience) => patch({ experience })}
-            />
-          </Card>
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.duration(motion.slow).delay(120)}>
-          <Card style={{ marginBottom: space.lg }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginBottom: space.lg }}>
-              <Icon name="sparkle" size={16} color={color.accent} />
-              <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-                Optional — a bit more about you
-              </Text>
-            </View>
-
-            <View style={{ marginBottom: space.md }}>
-              <ChipGroup
-                label="Units"
-                options={UNIT_OPTIONS}
-                selectedId={units}
-                onSelect={(u) => {
-                  setUnits(u);
-                  setError(null);
-                }}
-              />
-            </View>
-
-            <View style={{ flexDirection: 'row', gap: space.md }}>
-              <View style={{ flex: 1 }}>
-                <Field label="Age">
-                  <TextInput
-                    value={draft.age}
-                    onChangeText={(t) => patch({ age: t })}
-                    placeholder="—"
-                    placeholderTextColor={color.inkMuted}
-                    keyboardType="number-pad"
-                    maxLength={3}
-                    style={inputStyle}
-                  />
-                </Field>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Field label={imperial ? 'Height (inches)' : 'Height (cm)'}>
-                  <TextInput
-                    value={draft.heightCm}
-                    onChangeText={(t) => patch({ heightCm: t })}
-                    placeholder="—"
-                    placeholderTextColor={color.inkMuted}
-                    keyboardType="numeric"
-                    maxLength={5}
-                    style={inputStyle}
-                  />
-                </Field>
-              </View>
-            </View>
-            <FieldError message={errFor('age') ?? errFor('heightCm')} />
-
-            <Field label={imperial ? 'Body weight (lb)' : 'Body weight (kg)'} hint="Logs today's weight and sets your starting daily targets.">
-              <TextInput
-                value={draft.bodyWeightKg}
-                onChangeText={(t) => patch({ bodyWeightKg: t })}
-                placeholder="—"
-                placeholderTextColor={color.inkMuted}
-                keyboardType="numeric"
-                maxLength={6}
-                style={inputStyle}
-              />
-              <FieldError message={errFor('bodyWeightKg')} />
-            </Field>
-
-            <Field label="Your gym">
-              <TextInput
-                value={draft.gymName}
-                onChangeText={(t) => patch({ gymName: t })}
-                placeholder="e.g. Iron Temple Fitness"
-                placeholderTextColor={color.inkMuted}
-                autoCapitalize="words"
-                style={inputStyle}
-              />
-              <FieldError message={errFor('gymName')} />
-            </Field>
-          </Card>
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.duration(motion.slow).delay(150)} style={{ marginBottom: space.lg }}>
-          <SwitcherCard onPick={pickSwitch} selected={switchApp} later />
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.duration(motion.slow).delay(180)} style={{ gap: space.md }}>
-          <PrimaryButton
-            label={busy ? 'Setting up…' : 'Start training'}
-            icon="dumbbell"
-            loading={busy}
-            onPress={() => void onStart()}
-          />
-          {problem ? (
-            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.criticalText, textAlign: 'center' }}>
-              {problem}
+            <Text
+              accessibilityRole="header"
+              style={{ fontFamily: type.display, fontSize: type.size.h1, color: color.ink, letterSpacing: -0.5, marginTop: space.lg }}
+            >
+              {text.title}
             </Text>
-          ) : null}
-          {kept > 0 ? (
-            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, textAlign: 'center' }}>
-              Your {kept} workout{kept === 1 ? ' is' : 's are'} still here. Add your details to carry on.
+            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginTop: 4, lineHeight: 19 }}>
+              {text.sub}
             </Text>
-          ) : null}
-          <GhostButton label="Load demo data instead" icon="sparkle" onPress={onLoadDemo} />
-          <Text
-            style={{
-              fontFamily: type.body,
-              fontSize: type.size.caption,
-              color: color.inkMuted,
-              textAlign: 'center',
-              lineHeight: 16,
+          </View>
+
+          {/* ---------------------------------------------------------------- the step */}
+          <Animated.View
+            key={step}
+            entering={FadeIn.duration(motion.base)}
+            onLayout={(e) => {
+              bodyY.current = e.nativeEvent.layout.y;
             }}
           >
-            Everything is stored on this phone and works offline. Nothing is shared until you
-            link a gym.
-          </Text>
-        </Animated.View>
+            {step === 0 ? (
+              <>
+                <View onLayout={at('name')} style={{ marginBottom: space.lg }}>
+                  <Text style={overline}>Your name</Text>
+                  <TextInput
+                    ref={nameRef}
+                    value={draft.name}
+                    onChangeText={(t) => patch({ name: t })}
+                    placeholder="e.g. Rahul Sharma"
+                    placeholderTextColor={color.inkMuted}
+                    accessibilityLabel="Your name"
+                    autoCapitalize="words"
+                    autoCorrect={false}
+                    autoComplete="name"
+                    returnKeyType="next"
+                    blurOnSubmit={false}
+                    onSubmitEditing={() => phoneRef.current?.focus()}
+                    maxLength={80}
+                    style={[inputStyle, errFor('name') ? { borderColor: color.criticalText } : null]}
+                  />
+                  <FieldError message={errFor('name')} />
+                </View>
+
+                <View onLayout={at('phone')} style={{ marginBottom: space.lg }}>
+                  <Text style={overline}>Mobile number · optional</Text>
+                  <TextInput
+                    ref={phoneRef}
+                    value={draft.phone}
+                    onChangeText={(t) => patch({ phone: t })}
+                    placeholder="e.g. +91 98765 43210"
+                    placeholderTextColor={color.inkMuted}
+                    accessibilityLabel="Mobile number, optional"
+                    keyboardType="phone-pad"
+                    autoComplete="tel"
+                    returnKeyType="done"
+                    onSubmitEditing={onNext}
+                    maxLength={24}
+                    style={[inputStyle, errFor('phone') ? { borderColor: color.criticalText } : null]}
+                  />
+                  <FieldError message={errFor('phone')} />
+                  <Hint>Any country. Only for your gym, once you link one. Add or remove it any time in Profile.</Hint>
+                </View>
+
+                {kept > 0 ? (
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.lg, lineHeight: 19 }}>
+                    Your {kept} workout{kept === 1 ? ' is' : 's are'} still here. Add your details to carry on.
+                  </Text>
+                ) : null}
+
+                <PrimaryButton label="Next" onPress={onNext} />
+
+                <View style={{ marginTop: space.xl }}>
+                  <SwitcherCard onPick={pickSwitch} selected={switchApp} later />
+                </View>
+
+                <Pressable
+                  onPress={onLoadDemo}
+                  accessibilityRole="button"
+                  accessibilityLabel="Load demo data instead"
+                  style={({ pressed }) => ({
+                    minHeight: 48,
+                    marginTop: space.lg,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: pressed ? 0.6 : 1,
+                  })}
+                >
+                  <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary, textDecorationLine: 'underline' }}>
+                    Load demo data instead
+                  </Text>
+                </Pressable>
+                <InlineError message={saveProblem} />
+                <Text
+                  style={{
+                    fontFamily: type.body,
+                    fontSize: type.size.caption,
+                    color: color.inkMuted,
+                    textAlign: 'center',
+                    marginTop: space.sm,
+                    lineHeight: 17,
+                  }}
+                >
+                  Everything stays on this phone and works offline.
+                </Text>
+              </>
+            ) : null}
+
+            {step === 1 ? (
+              <>
+                <View onLayout={at('units')} style={{ marginBottom: space.xl }}>
+                  <RadioList
+                    options={UNIT_OPTIONS}
+                    selectedId={units}
+                    invalid={errFor('units') != null}
+                    onSelect={(u) => {
+                      setPickedUnits(u);
+                      setUnits(u);
+                      setProblem(null);
+                    }}
+                  />
+                  <FieldError message={errFor('units')} />
+                </View>
+                <PrimaryButton label="Next" onPress={onNext} />
+              </>
+            ) : null}
+
+            {step === 2 ? (
+              <>
+                <View onLayout={at('goal')} style={{ marginBottom: space.xl }}>
+                  <Text style={overline} accessibilityRole="header">
+                    Your goal
+                  </Text>
+                  <RadioList
+                    options={GOAL_OPTIONS}
+                    selectedId={draft.goal}
+                    invalid={errFor('goal') != null}
+                    onSelect={(goal) => patch({ goal })}
+                  />
+                  <FieldError message={errFor('goal')} />
+                </View>
+                <View onLayout={at('experience')} style={{ marginBottom: space.xl }}>
+                  <Text style={overline} accessibilityRole="header">
+                    Experience
+                  </Text>
+                  <RadioList
+                    options={EXPERIENCE_OPTIONS}
+                    selectedId={draft.experience}
+                    invalid={errFor('experience') != null}
+                    onSelect={(experience) => patch({ experience })}
+                  />
+                  <FieldError message={errFor('experience')} />
+                </View>
+                {switchApp ? (
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.md, lineHeight: 19 }}>
+                    Your {switchApp === 'hevy' ? 'Hevy' : 'Strong'} workouts and routines come in right after you start.
+                  </Text>
+                ) : null}
+                <PrimaryButton
+                  label={busy ? 'Setting up…' : 'Start training'}
+                  icon="dumbbell"
+                  loading={busy}
+                  onPress={() => void onStart()}
+                />
+                <View style={{ marginTop: space.md }}>
+                  <InlineError message={saveProblem} />
+                </View>
+              </>
+            ) : null}
+          </Animated.View>
+        </ScrollView>
       </KeyboardAvoidingView>
       <ConfirmSheet
         visible={askDemo}

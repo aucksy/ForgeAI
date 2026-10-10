@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 
 import { isDriveConfigured } from '@/cloud/drive';
 import { askConfirm, Card, GhostButton, Icon, PrimaryButton } from '@/components/ui';
+import { clockTime, tinyDateWithYear, toISO } from '@/lib/date';
 import { success, warn } from '@/lib/haptics';
 import { undoRestoreBody, useBackup } from '@/store/backupStore';
 import { useChat } from '@/store/chatStore';
@@ -16,16 +17,12 @@ import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 import { PhotoBackupCard } from './PhotoBackupCard';
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-/** ISO → "8 Jul 2026, 14:30" without relying on Intl (spotty on RN Android). */
+/** ISO → "8 Jul, 14:30" ("8 Jul 2025, 14:30" in another year) — the shared date and clock. */
 function fmtWhen(iso: string | null): string {
   if (!iso) return 'never';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return 'unknown';
-  const hh = String(d.getHours()).padStart(2, '0');
-  const mm = String(d.getMinutes()).padStart(2, '0');
-  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${hh}:${mm}`;
+  return `${tinyDateWithYear(toISO(d))}, ${clockTime(d.getTime())}`;
 }
 
 /** "412 workouts" / "1 workout" / "No workouts yet". PURE. */
@@ -314,7 +311,7 @@ function DriveBackup() {
       <View style={{ marginTop: space.lg, gap: space.sm }}>
         <PrimaryButton
           label={busy ? 'Working…' : 'Back up now'}
-          icon="sparkle"
+          icon="check"
           loading={busy}
           disabled={busy}
           onPress={() => void onBackup()}
@@ -339,7 +336,6 @@ function DriveBackup() {
         ) : null}
         <GhostButton
           label="Unlink Google"
-          icon="close"
           onPress={() => {
             if (busy) return;
             void unlinkGoogle();

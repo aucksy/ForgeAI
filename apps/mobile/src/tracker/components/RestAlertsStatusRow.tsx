@@ -41,7 +41,7 @@ export function RestAlertsStatusRow({ divider }: { divider?: boolean }) {
   const fixable = status !== 'on-time';
   const row = (
     <SettingRow
-      icon="zap"
+      icon="volume"
       title={words.title}
       caption={words.caption}
       divider={divider}

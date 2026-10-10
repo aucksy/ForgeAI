@@ -11,12 +11,13 @@
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, BackHandler, Pressable, Text, View } from 'react-native';
+import { BackHandler, Pressable, Text, View } from 'react-native';
 
 import { Badge, Card, Chip, GhostButton, Icon, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { ChipGroup, type ChipOption } from '@/components/settings/ChipGroup';
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { getProfile } from '@/db/repos/userRepo';
+import { trimNum } from '@/lib/format';
 import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { Goal } from '@/types/models';
@@ -33,6 +34,7 @@ import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { saveBuiltPlan } from '@/tracker/services/plansService';
 import { BUILDER_STEPS, usePlanBuilder } from '@/tracker/store/planBuilderStore';
+import { tell } from '@/lib/tell';
 
 const GOALS = [
   { id: 'muscle', label: 'Build muscle' },
@@ -106,7 +108,7 @@ export default function BuildPlanScreen() {
       // Back to the Routines screen already open (not a second copy on top of the old ones).
       router.dismissTo('/routines');
     } catch {
-      Alert.alert('Could not save the plan', 'Please try again.');
+      void tell('Could not save the plan', 'Please try again.');
     } finally {
       saving.current = false;
     }
@@ -142,7 +144,7 @@ export default function BuildPlanScreen() {
             </Card>
           ) : null}
           <View style={{ gap: space.md }}>
-            <PrimaryButton label="Save and follow" icon="target" onPress={() => void onSave(true)} />
+            <PrimaryButton label="Save and follow" icon="check" onPress={() => void onSave(true)} />
             <GhostButton label="Save" icon="plus" onPress={() => void onSave(false)} />
             <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, textAlign: 'center' }}>
               Save keeps it in your routines without changing your plan.
@@ -213,7 +215,7 @@ export default function BuildPlanScreen() {
                 {plan.weekly.map((w) => (
                   <View key={w.muscle} style={{ flexDirection: 'row' }}>
                     <Text style={{ flex: 1, fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>{MUSCLE_LABEL[w.muscle]}</Text>
-                    <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.ink }}>{countWord(w.sets, 'set', (n) => (Number.isInteger(n) ? String(n) : n.toFixed(1)))}</Text>
+                    <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.ink }}>{countWord(w.sets, 'set', (n) => trimNum(n))}</Text>
                   </View>
                 ))}
               </Card>
@@ -309,7 +311,7 @@ export default function BuildPlanScreen() {
         ) : null}
 
         <View style={{ gap: space.md }}>
-          {last ? <PrimaryButton label="Build my plan" icon="sparkle" onPress={() => s.build()} /> : <PrimaryButton label="Next" icon="chevron-right" onPress={() => s.next()} />}
+          {last ? <PrimaryButton label="Build my plan" icon="list" onPress={() => s.build()} /> : <PrimaryButton label="Next" icon="chevron-right" onPress={() => s.next()} />}
           {step > 0 ? <GhostButton label="Back" icon="chevron-left" onPress={() => s.goBack()} /> : null}
         </View>
       </View>

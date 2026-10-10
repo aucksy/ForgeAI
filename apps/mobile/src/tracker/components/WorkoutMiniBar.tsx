@@ -9,6 +9,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
+import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { liveCounts } from '../services/finishCheck';
@@ -44,7 +45,7 @@ export function WorkoutMiniBar() {
   if (!active) return null;
 
   const resting = remaining > 0;
-  const title = editing ? 'Editing a workout' : resting ? 'Resting' : 'Workout in progress';
+  const title = editing ? 'Editing a workout' : resting ? 'Rest' : 'Workout in progress';
   const right = editing ? 'Open' : resting ? fmtClock(remaining) : startedAt ? fmtElapsed(now - startedAt) : '';
 
   return (
@@ -55,7 +56,7 @@ export function WorkoutMiniBar() {
         openActiveWorkout(router);
       }}
       accessibilityRole="button"
-      accessibilityLabel={`${title}. ${editing ? '' : `${done === 1 ? '1 set' : `${done} sets`} done. `}Tap to open the workout`}
+      accessibilityLabel={`${title}. ${editing ? '' : `${countWord(done, 'set')} done. `}Tap to open the workout`}
       style={{
         marginHorizontal: space.md,
         marginBottom: space.sm,
@@ -64,7 +65,7 @@ export function WorkoutMiniBar() {
         borderWidth: 1,
         borderColor: resting ? color.accent : color.borderStrong,
         paddingHorizontal: space.lg,
-        height: 52,
+        minHeight: 52,
         flexDirection: 'row',
         alignItems: 'center',
         gap: space.md,
@@ -84,7 +85,7 @@ export function WorkoutMiniBar() {
         </Text>
         {!editing ? (
           <Text numberOfLines={1} style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkSecondary }}>
-            {done === 1 ? '1 set done' : `${done} sets done`}
+            {`${countWord(done, 'set')} done`}
           </Text>
         ) : null}
       </View>

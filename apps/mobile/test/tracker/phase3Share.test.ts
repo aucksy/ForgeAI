@@ -102,7 +102,7 @@ describe('text fits before the phone draws it', () => {
   });
 
   it('records wrap between items onto two lines, and say how many fitted', () => {
-    const items = ['Heaviest weight 85 kg', 'Best 1-rep max 107.7 kg', 'Best set 85 kg × 8', 'Best session 2,140 kg'];
+    const items = ['Heaviest weight 85 kg', 'Estimated 1-rep max 107.7 kg', 'Best set 85 kg × 8', 'Best workout 2,140 kg'];
     const { lines, used } = packLines(items, 'bodyMedium', 28, 448, 2);
     expect(lines).toHaveLength(2);
     expect(lines.every((l) => textWidth(l, 'bodyMedium', 28) <= 448)).toBe(true);

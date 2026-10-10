@@ -98,7 +98,10 @@ describe('what a set row needs, per type', () => {
     expect(fmtSetCompact({ weightKg: 0, reps: 0, durationSec: 45 }, 'time')).toBe('0:45');
     expect(fmtSetCompact({ weightKg: 0, reps: 0, distanceM: 2400, durationSec: 720 }, 'time_distance')).toBe('2.4 km · 12:00');
     expect(fmtSetCompact({ weightKg: 0, reps: 0, durationSec: 45 }, 'weight_reps')).toBe('0:45');
-    expect(fmtSetCompact({ weightKg: -20, reps: 8 }, 'assisted')).toBe('assist 20×8');
+    expect(fmtSetCompact({ weightKg: -20, reps: 8 }, 'assisted')).toBe('assist 20 kg × 8');
+    // Packet B: spaces and the unit always.
+    expect(fmtSetCompact({ weightKg: 60, reps: 8 }, 'weight_reps')).toBe('60 kg × 8');
+    expect(fmtSetCompact({ weightKg: 10, reps: 8 }, 'weighted')).toBe('+10 kg × 8');
     expect(fmtSetCompact({ weightKg: 0, reps: 12 }, 'reps')).toBe('12 reps');
   });
 });

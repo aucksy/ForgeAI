@@ -85,6 +85,23 @@ export async function getProgressTop(today: string = todayISO()): Promise<Progre
   return { totalWorkouts: total?.n ?? 0, week, lifts };
 }
 
+/**
+ * Only "This week vs your usual" — the numbers Home shows under its answer card (audit Phase 7).
+ * The same reads and the same rule as `getProgressTop`, so Home and Progress never disagree;
+ * it just skips the 180 days "Your lifts" needs.
+ */
+export async function getWeekVsUsual(today: string = todayISO()): Promise<WeekVsUsual> {
+  const weekFrom = weekStartISO(today);
+  const usualFrom = addDays(weekFrom, -7 * USUAL_WEEKS);
+  const [first, window, events] = await Promise.all([
+    getDb().getFirstAsync<{ first: string | null }>('SELECT MIN(date_iso) AS first FROM workout_sessions'),
+    readWindow(usualFrom, today),
+    getRecordEvents({ from: weekFrom, to: today }),
+  ]);
+  const infos = await getTrackerExercisesByIds([...new Set(window.sets.map((s) => s.exerciseId))]);
+  return weekVsUsual({ ...window, infos, events, today, firstWorkoutISO: first?.first ?? null });
+}
+
 /** Each exercise's working sets between two days, with the muscles it trains (the body-map sheet). */
 export async function getMuscleGroupsBetween(from: string, to: string): Promise<MuscleGroupSets[]> {
   const rows = await getDb().getAllAsync<{ exercise_id: string; n: number }>(

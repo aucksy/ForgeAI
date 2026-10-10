@@ -270,6 +270,7 @@ describe('LW-17 / SH-22: the row fits a 360 dp phone', () => {
     // ✓ / RPE / timer: 48 wide and 44 high + 2 dp of touch above and below = 48 × 48.
     expect(SET_ROW.button).toBeGreaterThanOrEqual(48);
     expect(SET_ROW.height + 4).toBeGreaterThanOrEqual(48);
+    expect(SET_ROW.touch).toBeGreaterThanOrEqual(48);
     expect(SET_ROW.set + 4).toBeGreaterThanOrEqual(48);
     // The grey hint is what a tick saves; a bodyweight move with no added weight shows "—".
     expect(hintTexts({ weightKg: 75, reps: 5 }, 'weight_reps', 'km', 'metric')).toMatchObject({ weight: '75', reps: '5' });

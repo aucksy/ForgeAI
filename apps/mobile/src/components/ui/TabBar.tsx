@@ -5,8 +5,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { tap } from '@/lib/haptics';
 import { color, motion, radius, shadow, type } from '@/theme/tokens';
 
+import { TEXT_SCALE_CAP } from './a11y';
 import { Icon } from './Icon';
 import type { IconName } from './Icon';
+import { motionMode, useReduceMotion } from './useReduceMotion';
 
 /**
  * Structural subset of @react-navigation/bottom-tabs' BottomTabBarProps —
@@ -41,20 +43,22 @@ function TabItem({
   focused: boolean;
   onPress: () => void;
 }) {
+  const rm = motionMode(useReduceMotion());
   const pill = useAnimatedStyle(() => ({
-    opacity: withTiming(focused ? 1 : 0, { duration: motion.fast }),
-    transform: [{ scale: withSpring(focused ? 1 : 0.55, motion.spring) }],
+    opacity: withTiming(focused ? 1 : 0, { duration: motion.fast, reduceMotion: rm }),
+    transform: [{ scale: withSpring(focused ? 1 : 0.55, { ...motion.spring, reduceMotion: rm }) }],
   }));
   const lift = useAnimatedStyle(() => ({
-    transform: [{ translateY: withSpring(focused ? -1 : 0, motion.spring) }],
+    transform: [{ translateY: withSpring(focused ? -1 : 0, { ...motion.spring, reduceMotion: rm }) }],
   }));
 
   return (
     <Pressable
-      accessibilityRole="button"
+      accessibilityRole="tab"
+      accessibilityLabel={label}
       accessibilityState={{ selected: focused }}
       onPress={onPress}
-      style={{ flex: 1, alignItems: 'center', gap: 3 }}
+      style={{ flex: 1, alignItems: 'center', gap: 3, minHeight: 48 }}
     >
       <View style={{ width: 54, height: 30, alignItems: 'center', justifyContent: 'center' }}>
         <Animated.View
@@ -76,7 +80,12 @@ function TabItem({
           <Icon name={icon} size={21} color={focused ? color.accent : color.inkMuted} />
         </Animated.View>
       </View>
+      {/* Phase 7 (SH-21): four labels share one row — grow less, and shrink to fit rather than split ("Progre/ss"). */}
       <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+        maxFontSizeMultiplier={TEXT_SCALE_CAP.tabLabel}
         style={{
           color: focused ? color.accent : color.inkMuted,
           fontFamily: focused ? type.bodySemi : type.bodyMedium,
@@ -94,6 +103,7 @@ export function TabBar({ state, descriptors, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
   return (
     <View
+      accessibilityRole="tablist"
       style={{
         flexDirection: 'row',
         backgroundColor: color.glass,

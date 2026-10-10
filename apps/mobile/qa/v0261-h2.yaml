@@ -74,7 +74,7 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- rest ends with the app open
 - tapOn: "More for Barbell Bench Press"
 - tapOn: "Rest timer"
-- tapOn: "Rest 30s"
+- tapOn: "Rest 0:30"
 # LW-27: set 1 was ticked in H1, set 2 by "Done" on the card in H1D; set 3 is
 # "Mark Barbell Bench Press set 3 complete" (the last set still rests: a rest follows every set).
 - tapOn:

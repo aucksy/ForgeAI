@@ -7,19 +7,19 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  DEFAULT_DIAL_CODE,
   REFERENCE_BODY_WEIGHT_KG,
+  checkName,
   computeTargets,
   emptyDraft,
   normalizeName,
-  normalizePhone,
-  validateE164,
+  parsePhone,
   validateOnboarding,
+  welcomeDraft,
 } from '@/onboarding/form';
 import type { OnboardingDraft } from '@/onboarding/form';
 
 function draft(patch: Partial<OnboardingDraft> = {}): OnboardingDraft {
-  return { ...emptyDraft(), name: 'Rahul Sharma', phone: '9876543210', ...patch };
+  return { ...emptyDraft(), name: 'Rahul Sharma', phone: '9876543210', goal: 'muscle', experience: 'beginner', ...patch };
 }
 
 describe('normalizeName', () => {
@@ -32,72 +32,77 @@ describe('normalizeName', () => {
   });
 });
 
-describe('normalizePhone', () => {
-  it('builds E.164 from the default +91 dial code', () => {
-    expect(normalizePhone(DEFAULT_DIAL_CODE, '9876543210')?.e164).toBe('+919876543210');
+describe('checkName', () => {
+  it('asks for a name when it is blank or only spaces', () => {
+    expect(checkName('')).toEqual({ ok: false, message: 'Your name, please.' });
+    expect(checkName('   '+'\t'+' ')).toEqual({ ok: false, message: 'Your name, please.' });
   });
-
-  it('accepts spaces, dashes and brackets the member typed', () => {
-    expect(normalizePhone('+91', '(98765) 43-210')?.e164).toBe('+919876543210');
+  it('keeps names from every script, tidied', () => {
+    expect(checkName('  José   María ')).toEqual({ ok: true, name: 'José María' });
+    expect(checkName('राहुल शर्मा')).toEqual({ ok: true, name: 'राहुल शर्मा' });
+    expect(checkName('李')).toEqual({ ok: true, name: '李' });
   });
-
-  it('strips a trunk 0 typed before an Indian mobile', () => {
-    expect(normalizePhone('+91', '09876543210')?.national).toBe('9876543210');
-  });
-
-  it('strips a country code re-typed inside the number field', () => {
-    expect(normalizePhone('+91', '919876543210')?.e164).toBe('+919876543210');
-  });
-
-  it('does NOT strip "91" from a real 10-digit mobile in the 91xx series', () => {
-    // The number AS TYPED is already valid, so the duplicate-country-code strip
-    // must not fire — stripping would leave 8 digits and lock this member out.
-    const parts = normalizePhone('+91', '9198765432');
-    expect(parts?.national).toBe('9198765432');
-    expect(parts?.e164).toBe('+919198765432');
-  });
-
-  it('rejects an Indian number that is not 10 digits', () => {
-    expect(normalizePhone('+91', '98765432')).toBeNull();
-    expect(normalizePhone('+91', '98765432100')).toBeNull();
-  });
-
-  it('rejects an Indian number that does not start 6-9 (landline / bogus)', () => {
-    expect(normalizePhone('+91', '5876543210')).toBeNull();
-    expect(normalizePhone('+91', '1234567890')).toBeNull();
-  });
-
-  it('stays permissive for other countries — export-clean, no guessed local rules', () => {
-    // A 9-digit UK mobile and a 10-digit US number both pass; only E.164 length is checked.
-    expect(normalizePhone('+44', '7700900123')?.e164).toBe('+447700900123');
-    expect(normalizePhone('+1', '4155550123')?.e164).toBe('+14155550123');
-    expect(normalizePhone('+971', '501234567')?.e164).toBe('+971501234567');
-  });
-
-  it('rejects a non-India number that is too short or too long for E.164', () => {
-    expect(normalizePhone('+44', '12345')).toBeNull();
-    expect(normalizePhone('+44', '123456789012345')).toBeNull();
-  });
-
-  it('rejects an empty number and an impossible dial code', () => {
-    expect(normalizePhone('+91', '')).toBeNull();
-    expect(normalizePhone('', '9876543210')).toBeNull();
-    expect(normalizePhone('+123456', '9876543210')).toBeNull();
+  it('refuses a name over 60 characters', () => {
+    expect(checkName('a'.repeat(60)).ok).toBe(true);
+    expect(checkName('a'.repeat(61)).ok).toBe(false);
   });
 });
 
-describe('validateE164 (Settings editor, full number typed)', () => {
-  it('accepts a clean international number and strips formatting', () => {
-    expect(validateE164(' +91 98765-43210 ')).toBe('+919876543210');
+/**
+ * Audit Phase 7 (SH-10, SH-26): the number is optional and any country's number is accepted —
+ * no +91 default, no Indian 10-digit rule. A number is 7 to 15 digits with an optional leading
+ * "+"; spaces, dashes, dots and brackets are formatting and are dropped.
+ */
+describe('parsePhone — optional, any country', () => {
+  it('blank means "no number", never an error', () => {
+    expect(parsePhone('')).toEqual({ ok: true, phone: null });
+    expect(parsePhone('    ')).toEqual({ ok: true, phone: null });
   });
 
-  it('requires the leading +', () => {
-    expect(validateE164('919876543210')).toBeNull();
+  it.each([
+    ['India', '+91 98765 43210', '+919876543210'],
+    ['India, typed bare', '98765 43210', '9876543210'],
+    ['India, a 91xx mobile', '+91 91987 65432', '+919198765432'],
+    ['UK', '+44 7700 900123', '+447700900123'],
+    ['UK, trunk 0 and brackets', '(07700) 900-123', '07700900123'],
+    ['USA', '+1 (415) 555-0123', '+14155550123'],
+    ['USA, dots', '415.555.0123', '4155550123'],
+    ['UAE', '+971 50 123 4567', '+971501234567'],
+    ['Germany', '+49 1512 3456789', '+4915123456789'],
+    ['Brazil', '+55 11 91234-5678', '+5511912345678'],
+    ['Nigeria', '+234 803 123 4567', '+2348031234567'],
+    ['Japan', '+81 90-1234-5678', '+819012345678'],
+    ['Australia', '+61 412 345 678', '+61412345678'],
+    ['Singapore (8 digits)', '+65 8123 4567', '+6581234567'],
+    ['Niue (shortest real: 7 digits incl. code)', '+683 4002', '+6834002'],
+    ['15 digits, the longest allowed', '+123456789012345', '+123456789012345'],
+  ])('accepts %s', (_country, typed, stored) => {
+    expect(parsePhone(typed)).toEqual({ ok: true, phone: stored });
   });
 
-  it('applies the India rule when the number starts +91', () => {
-    expect(validateE164('+915876543210')).toBeNull();
-    expect(validateE164('+9198765432')).toBeNull();
+  it("no longer applies India's rule to anyone", () => {
+    // Before: "Enter a 10-digit mobile number starting with 6, 7, 8 or 9."
+    expect(parsePhone('+91 5876543210').ok).toBe(true);
+    expect(parsePhone('1234567890').ok).toBe(true);
+  });
+
+  it.each([
+    ['too short (6 digits)', '123456'],
+    ['too long (16 digits)', '+1234567890123456'],
+    ['letters', '98765 ABCDE'],
+    ['words', 'call me'],
+    ['a + in the middle', '98765+43210'],
+    ['two pluses', '++919876543210'],
+    ['only a plus', '+'],
+    ['only formatting', '--- ()'],
+    ['an extension', '+44 20 7946 0958 ext 12'],
+    ['emoji', '📞 98765 43210'],
+    ['a hash', '#9876543210'],
+  ])('refuses %s with one plain line', (_why, typed) => {
+    const r = parsePhone(typed);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.message).toBe('Enter 7 to 15 digits, or leave it blank.');
   });
 });
 
@@ -168,12 +173,12 @@ describe('computeTargets', () => {
 });
 
 describe('validateOnboarding', () => {
-  it('accepts the minimum: a name and a mobile number', () => {
-    const r = validateOnboarding(draft());
+  it('accepts the minimum: a name, a goal and an experience — no number needed', () => {
+    const r = validateOnboarding(draft({ phone: '' }));
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.value.name).toBe('Rahul Sharma');
-    expect(r.value.phoneE164).toBe('+919876543210');
+    expect(r.value.phoneE164).toBeNull();
     // Nothing invented for the fields the member skipped.
     expect(r.value.age).toBe(0);
     expect(r.value.heightCm).toBe(0);
@@ -181,11 +186,17 @@ describe('validateOnboarding', () => {
     expect(r.value.bodyWeightKg).toBeNull();
   });
 
+  it('keeps a number when one is given, from any country', () => {
+    const r = validateOnboarding(draft({ phone: '+44 7700 900123' }));
+    expect(r.ok && r.value.phoneE164).toBe('+447700900123');
+  });
+
   it('rejects a blank or whitespace-only name', () => {
     const r = validateOnboarding(draft({ name: '   ' }));
     expect(r.ok).toBe(false);
     if (r.ok) return;
     expect(r.field).toBe('name');
+    expect(r.message).toBe('Your name, please.');
   });
 
   it('rejects a bad number and names the phone field', () => {
@@ -193,14 +204,16 @@ describe('validateOnboarding', () => {
     expect(r.ok).toBe(false);
     if (r.ok) return;
     expect(r.field).toBe('phone');
-    expect(r.message).toContain('10-digit');
+    expect(r.message).not.toContain('10-digit');
   });
 
-  it('gives a country-neutral message when the dial code is not India', () => {
-    const r = validateOnboarding(draft({ dialCode: '+44', phone: '1' }));
-    expect(r.ok).toBe(false);
-    if (r.ok) return;
-    expect(r.message).not.toContain('10-digit');
+  it('nothing is chosen for the member: goal and experience must be picked (SH-09)', () => {
+    expect(welcomeDraft().goal).toBeNull();
+    expect(welcomeDraft().experience).toBeNull();
+    const noGoal = validateOnboarding(draft({ goal: null }));
+    expect(!noGoal.ok && noGoal.field).toBe('goal');
+    const noExp = validateOnboarding(draft({ experience: null }));
+    expect(!noExp.ok && noExp.field).toBe('experience');
   });
 
   it('carries the optional numbers through when they are sane', () => {

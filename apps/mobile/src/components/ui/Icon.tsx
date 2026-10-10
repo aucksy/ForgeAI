@@ -29,7 +29,18 @@ export type IconName =
   | 'target'
   | 'key'
   | 'globe'
-  | 'volume';
+  | 'volume'
+  // Audit Phase 7 (packet B, one meaning per icon — docs/DESIGN-LANGUAGE.md "Icons"):
+  | 'medal'
+  | 'list'
+  | 'person'
+  | 'search'
+  | 'trash'
+  | 'video'
+  | 'ruler'
+  | 'route'
+  | 'import'
+  | 'gauge';
 
 export interface IconProps {
   name: IconName;
@@ -169,6 +180,54 @@ const ICONS: Record<IconName, IconDef> = {
       'M14.8 9.2a4 4 0 0 1 0 5.6',
       'M17.6 6.6a7.8 7.8 0 0 1 0 10.8',
     ],
+  },
+  // A record (the same drawing as the tracker's medal glyph).
+  medal: {
+    p: ['M8.2 3.5 10.6 9', 'M15.8 3.5 13.4 9', 'M12 13.2v.01'],
+    c: [{ x: 12, y: 15, r: 5.4 }],
+  },
+  // Routines, plans and programs.
+  list: { p: ['M9 6.5h11', 'M9 12h11', 'M9 17.5h11', 'M4.5 6.5h.01', 'M4.5 12h.01', 'M4.5 17.5h.01'] },
+  // Profile.
+  person: {
+    p: ['M4.8 20.5c.6-3.9 3.6-6.4 7.2-6.4s6.6 2.5 7.2 6.4'],
+    c: [{ x: 12, y: 8.2, r: 3.6 }],
+  },
+  // Search.
+  search: {
+    p: ['M15.4 15.4 20.5 20.5'],
+    c: [{ x: 10.8, y: 10.8, r: 6.3 }],
+  },
+  // Delete.
+  trash: {
+    p: ['M4.5 6.8h15', 'M9.5 6.8V4.6h5v2.2', 'M6.6 6.8l.9 12.4a1.8 1.8 0 0 0 1.8 1.6h5.4a1.8 1.8 0 0 0 1.8-1.6l.9-12.4'],
+  },
+  // A video (a photo is the camera).
+  video: {
+    p: [
+      'M4.5 6.5h10a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 3 16V8a1.5 1.5 0 0 1 1.5-1.5Z',
+      'M16 10.5l5-3v9l-5-3Z',
+    ],
+  },
+  // Body measurements (a tape).
+  ruler: {
+    p: ['M3.5 15.5 15.5 3.5l5 5-12 12Z', 'M7.5 11.5l2 2', 'M10.5 8.5l2 2', 'M13.5 5.5l2 2'],
+  },
+  // A distance.
+  route: {
+    p: ['M6 18.5h8.5a3.5 3.5 0 0 0 0-7h-5a3.5 3.5 0 0 1 0-7H18'],
+    c: [
+      { x: 6, y: 18.5, r: 1.6 },
+      { x: 18, y: 4.5, r: 1.6 },
+    ],
+  },
+  // Bring in from a file or another app.
+  import: {
+    p: ['M12 3.5v11', 'M7.5 10 12 14.5 16.5 10', 'M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2'],
+  },
+  // How hard a set felt (RPE).
+  gauge: {
+    p: ['M4 16.5a8 8 0 1 1 16 0', 'M12 16.5l3.6-4.6', 'M12 16.5v.01'],
   },
 };
 

@@ -262,9 +262,9 @@ describe('PG-21: the report hero says what applies', () => {
     expect(line).not.toMatch(/0 kg|^—/);
   });
   it('a month of pull-ups without body weight: reps', () => {
-    expect(heroLine({ ...base, durationSec: 3600 * 5 + 600, timed: 12 }, { kg: 0, reps: 480, distanceM: 0 }, 'metric')).toBe('5 h 10 min · 480 reps · 24 sets');
+    expect(heroLine({ ...base, durationSec: 3600 * 5 + 600, timed: 12 }, { kg: 0, reps: 480, distanceM: 0 }, 'metric')).toBe('5h 10m · 480 reps · 24 sets');
   });
   it('lifting: time, kg lifted, sets', () => {
-    expect(heroLine({ ...base, durationSec: 3600, timed: 12, volumeKg: 12_480 }, { kg: 12_000, reps: 100, distanceM: 0 }, 'metric')).toBe('1 h · 12,480 kg · 24 sets');
+    expect(heroLine({ ...base, durationSec: 3600, timed: 12, volumeKg: 12_480 }, { kg: 12_000, reps: 100, distanceM: 0 }, 'metric')).toBe('1h · 12,480 kg · 24 sets');
   });
 });

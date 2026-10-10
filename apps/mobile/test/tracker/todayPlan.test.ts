@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { todayPlan, todayWords, type TodayRoutineInput, type TodaySessionInput } from '@/tracker/plans/todayPlan';
-import { todayAction, todayLink, doneToday } from '@/tracker/lib/todayLink';
+import { todayLink, doneToday } from '@/tracker/lib/todayLink';
 import { shownNotes } from '@/tracker/lib/workoutText';
 import { importedWorkoutName, routineIdForName } from '@/tracker/services/hevyImport';
 import { widgetData } from '@/tracker/phone/widgets';
@@ -124,14 +124,14 @@ describe('todayPlan — the one Today answer', () => {
   });
 });
 
-describe('Home card action words (SH-23) and links', () => {
+describe('Home card links', () => {
   const sum = (status: 'next' | 'doneToday' | 'noPlan' | 'emptyPlan') => ({ status, title: '', line: '', nextId: null, nextName: null, doneName: null, doneSessionId: null });
-  it('never says "Start workout" on a tap that only opens another screen', () => {
-    expect(todayAction({ planDayId: null, targets: [], today: sum('noPlan') })).toBe('Pick a program or build one');
+  // (The card's own words now come from `homeAnswer` — see homeAnswer.test.ts.)
+  it('no plan → the routines screen; a plan with exercises → its preview; else the Workout tab', () => {
     expect(todayLink({ planDayId: null, targets: [], today: sum('noPlan') })).toBe('/routines');
-    expect(todayAction({ planDayId: 'd', targets: [{}], today: sum('next') })).toBe('See workout');
-    expect(todayAction({ planDayId: 'd', targets: [{}], today: sum('doneToday') })).toBe('See what’s next');
-    expect(todayAction({ planDayId: null, targets: [] })).toBe('Choose a workout');
+    expect(todayLink({ planDayId: 'd', targets: [{}], today: sum('emptyPlan') })).toBe('/routines');
+    expect(todayLink({ planDayId: 'd', targets: [{}], today: sum('next') })).toBe('/today');
+    expect(todayLink({ planDayId: null, targets: [] })).toBe('/workout');
   });
   it('doneToday reads the one answer', () => {
     expect(doneToday({ headline: 'x', today: sum('doneToday') })).toBe(true);

@@ -60,7 +60,7 @@ export function NutritionSummaryCard({ data }: { data: NutritionSummaryView }) {
   const { day, targets, remaining } = data;
   return (
     <CardShell
-      icon="flame"
+      icon="meal"
       title="Nutrition today"
       subtitle={`${fmtInt(day.calories)} of ${fmtInt(targets.calories)} kcal`}
     >
@@ -105,7 +105,7 @@ export function NutritionSummaryCard({ data }: { data: NutritionSummaryView }) {
       >
         {remaining.calories > 0
           ? `${fmtInt(remaining.calories)} kcal · ${Math.round(remaining.proteinG)} g protein still to go today.`
-          : 'Daily calorie target hit — nice work.'}
+          : 'Daily calorie target hit.'}
       </Text>
     </CardShell>
   );

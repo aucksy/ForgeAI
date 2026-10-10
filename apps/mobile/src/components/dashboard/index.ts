@@ -1,10 +1,7 @@
-export { BodyWeightCard } from './BodyWeightCard';
+export { AnswerCard } from './AnswerCard';
 export { DashboardSkeleton } from './DashboardSkeleton';
-export { FirstRunCard } from './FirstRunCard';
 export { GreetingHeader } from './GreetingHeader';
-export { HeroWorkoutCard } from './HeroWorkoutCard';
 export { InsightCard } from './InsightCard';
 export { NextUpRow } from './NextUpRow';
 export { StatGrid } from './StatGrid';
-export { StreakRow } from './StreakRow';
-export { VolumeCard } from './VolumeCard';
+export { ThisWeekCard } from './ThisWeekCard';
