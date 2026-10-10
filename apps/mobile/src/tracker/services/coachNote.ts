@@ -16,6 +16,7 @@
  */
 import { DEFAULT_GROQ_MODEL } from '@/ai/models';
 import { chatGroq } from '@/ai/providers/groq';
+import { FEATURES } from '@/lib/features';
 import { getLastSessionOfDayType } from '@/db/repos/workoutRepo';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getGroqKey } from '@/lib/keys';
@@ -162,6 +163,7 @@ const cloudSystem = (): string =>
  * the caller silently keeps the deterministic line.
  */
 export async function getCloudCoachNote(data: SessionSummaryData): Promise<string | null> {
+  if (!FEATURES.coach) return null; // the coach is hidden (owner decision D4) — no network
   if (!useTrackerPrefs.getState().coachNotes) return null; // opt-in gate — no network
   const key = await getGroqKey();
   if (!key) return null; // no key → stay offline

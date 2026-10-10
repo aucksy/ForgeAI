@@ -2,12 +2,21 @@
  * v0.28.1 — the end-to-end audit after the tracker plan was built (9 Oct 2026). One test per
  * fix, each written from the case the audit found.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync as readFromDisk } from 'node:fs';
+import { isAbsolute, join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
 import { base64Utf8, parseHevyBase64, parseHevyDate, sanitizeTitle } from '@/tracker/services/hevyImport';
 import { num } from '@/tracker/services/strongImport';
+
+// Source paths below are relative to apps/mobile, whatever the working directory (audit QA-25).
+const fromApp = (p: string): string => (isAbsolute(p) ? p : join(__dirname, '..', '..', p));
+function readFileSync(p: string): Buffer;
+function readFileSync(p: string, enc: 'utf8'): string;
+function readFileSync(p: string, enc?: 'utf8'): string | Buffer {
+  return enc ? readFromDisk(fromApp(p), enc) : readFromDisk(fromApp(p));
+}
 
 const HEAD = '"title","start_time","end_time","description","exercise_title","superset_id","exercise_notes","set_index","set_type","weight_kg","reps","distance_km","duration_seconds","rpe"';
 const csv = (...rows: string[]): string => Buffer.from([HEAD, ...rows].join('\n'), 'utf8').toString('base64');
@@ -131,7 +140,8 @@ describe("Today's page after today's routine is done", () => {
 });
 
 describe('every table the tracker adds is backed up (or left out on purpose)', () => {
-  it('each own rest length is in the backup; before: lost on a restore', () => {
+  // [source-text check] Superseded by the behavioural test/db/backupRoundTrip.test.ts (real SQLite); kept as a second guard (audit QA-12).
+  it('[source-text check] each own rest length is in the backup; before: lost on a restore', () => {
     const schema = readFileSync('src/tracker/db/trackerSchema.ts', 'utf8');
     const snap = readFileSync('src/cloud/snapshot.ts', 'utf8');
     const tables = [...schema.matchAll(/CREATE TABLE IF NOT EXISTS (\w+)/g)].map((m) => m[1]);
@@ -142,25 +152,30 @@ describe('every table the tracker adds is backed up (or left out on purpose)', (
 describe('the audit fixes are wired where the member meets them', () => {
   const read = (p: string): string => readFileSync(p, 'utf8');
 
-  it('"Workout sounds" off reaches the rest-over alert on a locked phone', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] "Workout sounds" off reaches the rest-over alert on a locked phone', () => {
     expect(read('src/tracker/services/workoutAlerts.ts')).toMatch(/showRestCard\(startedAt, endsAt, nextLabel, quiet\)/);
     expect(read('modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt')).toMatch(/appOnScreen\(ctx\) \|\| quiet\(ctx\)/);
   });
 
-  it('Start waits for a workout saved before Android closed the app', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] Start waits for a workout saved before Android closed the app', () => {
     expect(read('src/app/today.tsx')).toMatch(/await hydrate\(\);\s+if \(!useActiveWorkout\.getState\(\)\.active\) await startFromPlan\(\)/);
     expect(read('src/app/(tabs)/workout.tsx')).toMatch(/await hydrate\(\);\s+if \(!useActiveWorkout\.getState\(\)\.active\) await startFromPlan\(\)/);
   });
 
-  it('a restore waits until the open workout is finished or discarded', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] a restore waits until the open workout is finished or discarded', () => {
     expect(read('src/components/settings/BackupCard.tsx')).toMatch(/Finish your workout first/);
   });
 
-  it('a failed check never starts the import on Replace', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] a failed check never starts the import on Replace', () => {
     expect(read('src/app/import/index.tsx')).toMatch(/isDemoData\(\)\.catch\(\(\) => false\)/);
   });
 
-  it('Replace takes the deleted workouts out of Health Connect', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] Replace takes the deleted workouts out of Health Connect', () => {
     const s = read('src/app/import/index.tsx');
     expect(s).toMatch(/const gone = wasDemo \? \[\] : \(r\.replacedSessionIds \?\? \[\]\)/);
     expect(s).toMatch(/for \(const id of gone\) await removeWorkoutFromHealth\(id\)/);

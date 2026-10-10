@@ -2,7 +2,8 @@
  * v0.29.0 — Import routines from a Hevy share link (owner, 9 Oct 2026). The page fixture is the
  * owner's folder "Jaipur" as the reader saw it on hevy.com that day (test/fixtures).
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync as readFromDisk } from 'node:fs';
+import { isAbsolute, join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
@@ -20,6 +21,14 @@ import {
   type PageNode,
   type PageRead,
 } from '@/tracker/services/routineLink';
+
+// Source paths below are relative to apps/mobile, whatever the working directory (audit QA-25).
+const fromApp = (p: string): string => (isAbsolute(p) ? p : join(__dirname, '..', '..', p));
+function readFileSync(p: string): Buffer;
+function readFileSync(p: string, enc: 'utf8'): string;
+function readFileSync(p: string, enc?: 'utf8'): string | Buffer {
+  return enc ? readFromDisk(fromApp(p), enc) : readFromDisk(fromApp(p));
+}
 
 const page = JSON.parse(readFileSync('test/fixtures/hevy-folder-page.json', 'utf8')) as { nodes: PageNode[]; expected: number };
 
@@ -172,14 +181,16 @@ describe('the script that runs on Hevy’s page', () => {
 });
 
 describe('continuity with the imported history (v0.29.1, owner)', () => {
-  it('a link and the history import find exercises the same way, so a routine and its history are one exercise', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] a link and the history import find exercises the same way, so a routine and its history are one exercise', () => {
     const hevy = readFileSync('src/tracker/services/hevyImport.ts', 'utf8');
     // Both read the same library and match with the same rule; the link only adds what is missing.
     expect(hevy).toMatch(/export async function exerciseIdsCreating[\s\S]*?const hit = matchTitle\(title, library\)/);
     expect(hevy).toMatch(/for \(const title of parsed\.distinctExerciseTitles\) \{\s*const hit = matchTitle\(title, library\)/);
   });
 
-  it('an exercise new to ForgeAI is shown before saving, with how it will be made', async () => {
+  // [source-text check] Partly reads source text (the rest is behavioural): passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] an exercise new to ForgeAI is shown before saving, with how it will be made', async () => {
     const { newExerciseAbout } = await import('@/tracker/services/routineImport');
     expect(newExerciseAbout('Decline Leg Raise (Gurgaon)', false)).toMatch(/ · Reps only$|· Weight and reps$/);
     expect(newExerciseAbout('Plank (Weighted Vest)', true)).toMatch(/· Time$/);
@@ -194,13 +205,15 @@ describe('continuity with the imported history (v0.29.1, owner)', () => {
     for (const t of ['Farmers Carry', 'Plank', 'Treadmill Run']) expect(linkLogType(t, true)).toMatch(/time/);
   });
 
-  it('routines first, history later: the real sets correct a guessed type (unless it was used already)', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] routines first, history later: the real sets correct a guessed type (unless it was used already)', () => {
     const hevy = readFileSync('src/tracker/services/hevyImport.ts', 'utf8');
     expect(hevy).toMatch(/madeNow\.push\(made\.id\)/); // the link remembers what it guessed
     expect(hevy).toMatch(/if \(guessed\.has\(hit\.id\)\)[\s\S]*?\(used\?\.n \?\? 0\) === 0 && real !== logType/);
   });
 
-  it('the history import names its new exercises (folded)', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] the history import names its new exercises (folded)', () => {
     expect(readFileSync('src/app/import/index.tsx', 'utf8')).toMatch(/new to ForgeAI: see them/);
   });
 });
@@ -211,7 +224,8 @@ describe('the folder remembers its link', () => {
     expect(parseFolderSettings(JSON.stringify({ fromLink: 'https://evil.example/x' })).fromLink).toBeUndefined();
   });
 
-  it('Import routines is reachable from Profile and from Routines → +', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] Import routines is reachable from Profile and from Routines → +', () => {
     expect(readFileSync('src/tracker/components/ImportCard.tsx', 'utf8')).toMatch(/router\.push\('\/import\/routines'\)/);
     expect(readFileSync('src/app/routines/index.tsx', 'utf8')).toMatch(/Import routines from Hevy[\s\S]*router\.push\('\/import\/routines'\)/);
   });

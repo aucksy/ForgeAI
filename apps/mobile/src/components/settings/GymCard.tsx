@@ -61,7 +61,7 @@ export function GymCard() {
           >
             {/* Since Phase O2 the gym name is optional at onboarding — show an
                 honest placeholder rather than an empty line. */}
-            {profile.gymName.trim().length > 0 ? profile.gymName : 'Not linked yet'}
+            {profile.gymName.trim().length > 0 ? profile.gymName : 'Not added yet'}
           </Text>
           <Text
             style={{
@@ -92,18 +92,8 @@ export function GymCard() {
         </View>
       )}
 
-      <Text
-        style={{
-          fontFamily: type.body,
-          fontSize: type.size.sub,
-          color: color.inkSecondary,
-          lineHeight: 19,
-          marginTop: space.md,
-        }}
-      >
-        Your coach and complete history live with your gym membership.
-      </Text>
-
+      {/* AI-18: the old line "Your coach and complete history live with your gym
+          membership" was untrue — history lives on this phone. */}
       <View
         style={{
           borderTopWidth: 1,
@@ -117,7 +107,11 @@ export function GymCard() {
       >
         <Logo height={22} />
         <Text
-          style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}
+          style={{
+            fontFamily: type.bodyMedium,
+            fontSize: type.size.caption,
+            color: color.inkMuted,
+          }}
         >
           Powered by ForgeAI
         </Text>

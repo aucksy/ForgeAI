@@ -23,6 +23,7 @@ import {
 import type { RangeDays } from '@/components/analytics';
 import { Chip, IconButton, Screen } from '@/components/ui';
 import { addDays, todayISO } from '@/lib/date';
+import { FEATURES } from '@/lib/features';
 import { tap } from '@/lib/haptics';
 import { motion, space } from '@/theme/tokens';
 import { monthOf } from '@/tracker/lib/months';
@@ -132,7 +133,8 @@ export default function AnalyticsScreen() {
         )}
         {/* lives outside the bundle gate so the selected lift survives range switches */}
         <ExerciseSection rangeDays={range} index={9} />
-        {bundle ? (
+        {/* Nutrition is hidden (owner decision D4): no way to log a meal, so no empty charts. */}
+        {bundle && FEATURES.nutrition ? (
           <>
             <CaloriesSection data={bundle.calories} target={profile ? profile.calorieTarget : null} index={10} />
             <ProteinSection data={bundle.calories} target={profile ? profile.proteinTargetG : null} index={11} />

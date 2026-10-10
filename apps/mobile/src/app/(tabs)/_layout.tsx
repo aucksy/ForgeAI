@@ -13,7 +13,8 @@ export default function TabsLayout() {
       <Tabs.Screen name="history" options={{ title: 'History' }} />
       <Tabs.Screen name="analytics" options={{ title: 'Progress' }} />
       <Tabs.Screen name="settings" options={{ title: 'Profile' }} />
-      {/* Coach stays reachable (Home button) but is hidden from the tab bar. */}
+      {/* Coach is hidden from the tab bar. While FEATURES.coach is off (lib/features.ts)
+          the route itself sends members Home; Home's coach buttons come back with it. */}
       <Tabs.Screen name="coach" options={{ title: 'Coach' }} />
     </Tabs>
   );

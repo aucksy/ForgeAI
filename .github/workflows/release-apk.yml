@@ -3,17 +3,47 @@ name: Build & Release (APK + AAB)
 # Push a tag like v0.2.0 -> builds a signed release APK (sideloading) AND a signed
 # release AAB (Play upload), then publishes both as a GitHub Release. Manual runs
 # (workflow_dispatch) just build + upload them as run artifacts.
+#
+# Two gates (audit QA-03 / H1):
+#  1. phone-gate: the cloud phone test (qa-device.yml) must have PASSED on the tagged commit,
+#     or on its parent when the tag commit only bumps the version / edits PROGRESS, CONTEXT or
+#     docs (scripts/ci/phone_gate.py). Tags can never skip it; a manual run can, with the
+#     skip_phone_gate input, and says so loudly.
+#  2. release checks on the built APK before publishing (scripts/ci/release_checks.py): signing
+#     key (repo variable or secret ALLOWED_CERT_SHA256), versionCode/versionName only go up,
+#     permissions equal scripts/ci/approved-permissions.txt, 16 KB alignment (warn), size (warn).
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      skip_phone_gate:
+        description: 'Build without a passing phone test on this commit (manual runs only; tags never skip)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write # required to create the Release
 
 jobs:
+  phone-gate:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Require a passing phone test on this commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SKIP_PHONE_GATE: ${{ github.event_name == 'workflow_dispatch' && inputs.skip_phone_gate && 'true' || 'false' }}
+        run: python3 scripts/ci/phone_gate.py
+
   build:
+    needs: phone-gate
     runs-on: ubuntu-latest
     # Surface the optional keystore secret as an env var so steps can gate on it
     # (the `secrets` context is NOT allowed inside an `if:` condition).
@@ -90,6 +120,15 @@ jobs:
           path: |
             forgeai-*.apk
             forgeai-*.aab
+
+      # Checks on the built APK itself. A FAIL stops here, before the Release is published
+      # (the run artifact above still holds the APK to inspect). ALLOWED_CERT_SHA256 is a public fingerprint (not a secret); set it as a
+      # repository variable once the real release key exists.
+      - name: Release checks (signing, version, permissions, 16 KB, size)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALLOWED_CERT_SHA256: ${{ vars.ALLOWED_CERT_SHA256 || secrets.ALLOWED_CERT_SHA256 }}
+        run: python3 scripts/ci/release_checks.py "forgeai-${GITHUB_REF_NAME}.apk"
 
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')

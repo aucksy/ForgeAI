@@ -8,7 +8,8 @@ import expo.modules.kotlin.modules.ModuleDefinition
  * JS side of the rest card (v0.26.1). Sync functions, so calls land in the order JS makes them.
  *  - show(startedAt, endsAt, next) — a rest started or moved in the app;
  *  - clear(dismissOver)            — skipped in the app, or the workout ended;
- *  - getState()                    — the rest as the card knows it ({ endsAt: 0 } = none);
+ *  - getState()                    — the rest as the card knows it ({ endsAt: 0 } = none); first
+ *                                    settles a rest that ended while the app was away;
  *  - takeOpenRequest()             — true once if the app was opened from a rest alert.
  * Events: onRestChange { kind: "add" | "skip" | "end", endsAt, startedAt }, onOpenWorkout.
  */
@@ -65,6 +66,8 @@ class ForgeRestModule : Module() {
 
     Function("getState") {
       val c = ctx
+      // The app is back: a rest that ended while it was away is alerted or settled now (RT-01).
+      if (c != null) RestCard.settle(c)
       val r = if (c != null) RestCard.load(c) else null
       mapOf(
         "endsAt" to (r?.endsAt ?: 0L).toDouble(),

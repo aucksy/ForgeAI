@@ -3,7 +3,7 @@
  *  - Default rest — the rest timer for exercises without their own setting;
  *  - Workout sounds — rest bell + new-record chime;
  *  - Track RPE — adds the effort column (set types are always available now);
- *  - AI coach notes — unchanged.
+ *  - AI coach notes — only while the coach is switched on (lib/features.ts, D4).
  */
 import { useEffect, useState } from 'react';
 import { Pressable, Text } from 'react-native';
@@ -17,7 +17,7 @@ import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { RestPickerSheet } from './RestPickerSheet';
 
-export function WorkoutPrefsCard() {
+export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: boolean }) {
   const advancedSets = useTrackerPrefs((s) => s.advancedSets);
   const setAdvancedSets = useTrackerPrefs((s) => s.setAdvancedSets);
   const coachNotes = useTrackerPrefs((s) => s.coachNotes);
@@ -45,7 +45,9 @@ export function WorkoutPrefsCard() {
           title="Default rest"
           caption="Starts when you tick a set. Change it per exercise from the exercise's menu."
           right={
-            <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.accent }}>
+            <Text
+              style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.accent }}
+            >
               {defaultSec > 0 ? fmtRest(defaultSec) : 'Off'}
             </Text>
           }
@@ -67,14 +69,16 @@ export function WorkoutPrefsCard() {
         onChange={setAdvancedSets}
         divider
       />
-      <ToggleRow
-        icon="sparkle"
-        title="AI coach notes"
-        caption="After a workout, add an AI-written note via your Groq key (needs a key; otherwise the built-in coach note always shows)"
-        value={coachNotes}
-        onChange={setCoachNotes}
-        divider
-      />
+      {showCoachNotes ? (
+        <ToggleRow
+          icon="sparkle"
+          title="AI coach notes"
+          caption="After a workout, add an AI-written note via your Groq key (needs a key; otherwise the built-in coach note always shows)"
+          value={coachNotes}
+          onChange={setCoachNotes}
+          divider
+        />
+      ) : null}
       <RestPickerSheet
         visible={picking}
         title="Default rest"

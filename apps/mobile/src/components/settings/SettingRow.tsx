@@ -96,9 +96,9 @@ export function ToggleRow({ icon, title, caption, value, onChange, locked, divid
             tap();
             onChange?.(v);
           }}
-          trackColor={{ false: color.inkFaint, true: color.accentDeep }}
+          trackColor={{ false: color.inkDisabled, true: color.accentDeep }}
           thumbColor={value ? color.accentBright : color.inkSecondary}
-          ios_backgroundColor={color.inkFaint}
+          ios_backgroundColor={color.inkDisabled}
         />
       }
     />

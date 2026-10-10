@@ -6,6 +6,9 @@
  * imports RESOLVE under Node without loading real native code. Any actual call
  * into a native API throws loudly — a test that needs DB/store behaviour must
  * `vi.mock` the specific function instead of relying on this stub.
+ *
+ * expo-sqlite and expo-crypto now have their own stubs (test/stubs/expo-sqlite.ts,
+ * test/stubs/expo-crypto.ts): a test can run real SQL through test/helpers/realDb.ts.
  */
 const nativeStub: unknown = new Proxy(
   {},

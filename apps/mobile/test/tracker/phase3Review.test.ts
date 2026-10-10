@@ -66,7 +66,8 @@ describe('two workouts on one day list newest first', () => {
 });
 
 describe('progress photos are private and dated right', () => {
-  it('the photo screens never write a copy to the image disk cache (before: default disk cache)', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] the photo screens never write a copy to the image disk cache (before: default disk cache)', () => {
     const screens = ['src/app/photos/index.tsx', 'src/app/photos/compare.tsx'].map((f) => readFileSync(join(__dirname, '..', '..', f), 'utf8'));
     const images = screens.flatMap((s) => s.match(/<Image\b[^>]*>/g) ?? []);
     expect(images.length).toBeGreaterThanOrEqual(3);

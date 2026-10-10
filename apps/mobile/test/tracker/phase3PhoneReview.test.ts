@@ -263,7 +263,8 @@ describe('every screen makes room for the keyboard', () => {
     expect(keyboardRoom(0, { screenY: 500, height: 276 })).toBe(0);
   });
 
-  it('the app root wraps every screen and the welcome form; no screen adds a second room on Android', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] the app root wraps every screen and the welcome form; no screen adds a second room on Android', () => {
     expect(read('app/_layout.tsx').match(/<KeyboardRoom>/g)?.length).toBe(2);
     // One handler: every other KeyboardAvoidingView leaves Android to the root (the chat
     // screen padded on Android too, on top of nothing else — before the root existed).
@@ -314,7 +315,8 @@ describe('a picture taken while Android closed the app is kept', () => {
     expect(pendingAsset(null)).toBeNull();
   });
 
-  it('every place that opens the camera or the gallery notes who asked, and takes its picture back', () => {
+  // [source-text check] Architecture lint over source text — kept on purpose as lint, not a behaviour test (audit QA-12).
+  it('[source-text check] every place that opens the camera or the gallery notes who asked, and takes its picture back', () => {
     const files = [...tsxFiles(SRC), ...tsFiles(SRC)];
     let launches = 0;
     for (const f of files) {
@@ -333,7 +335,8 @@ describe('a picture taken while Android closed the app is kept', () => {
 
 // ------------------------------------------------------------------ erase leaves no pictures behind
 describe('"Erase all data" leaves no pictures behind', () => {
-  it("also deletes the picker's temporary copies and the share pictures (before: only progress-photos/)", async () => {
+  // [source-text check] Partly reads source text (the rest is behavioural): passes on dead code, fails on a harmless rename (audit QA-12).
+  it("[source-text check] also deletes the picker's temporary copies and the share pictures (before: only progress-photos/)", async () => {
     const deleted: string[] = [];
     const files = { documentDirectory: 'file:///app/files/', cacheDirectory: 'file:///app/cache/', deleteAsync: async (uri: string) => void deleted.push(uri) };
     await wipePhotoStorage(photoEraseSteps(files, { clearDiskCache: async () => true, clearMemoryCache: async () => true }));

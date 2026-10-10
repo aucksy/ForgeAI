@@ -260,7 +260,7 @@ export function WelcomeScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginBottom: space.lg }}>
               <Icon name="sparkle" size={16} color={color.accent} />
               <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-                Optional — sharpens your coach
+                Optional — a bit more about you
               </Text>
             </View>
 

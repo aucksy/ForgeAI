@@ -168,9 +168,10 @@ appId: com.forgeai.app
     visible: "Send as text"
     timeout: 10000
 - tapOn: "Send as text"
-# Android's share menu.
+# Android's share menu: text only the system chooser shows (not ForgeAI's "Share routine",
+# which the old loose regex matched).
 - extendedWaitUntil:
-    visible: '(?i).*(share|copy|nearby|messages|drive|gmail|files).*'
+    visible: '(Sharing text|No recommended people to share with)'
     timeout: 20000
 - takeScreenshot: 95-share-text
 - back
@@ -195,8 +196,9 @@ appId: com.forgeai.app
     visible: "Send as a file"
     timeout: 10000
 - tapOn: "Send as a file"
+# Android's share menu: text only the system chooser shows (not ForgeAI's "Share folder").
 - extendedWaitUntil:
-    visible: '(?i).*(share|copy|nearby|messages|drive|gmail|files).*'
+    visible: '(Sharing 1 file|Sharing file|No recommended people to share with)'
     timeout: 20000
 - takeScreenshot: 97-share-file
 - back

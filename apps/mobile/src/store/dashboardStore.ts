@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { maybeSync } from '@/cloud/sync';
+import { FEATURES } from '@/lib/features';
 import { getDashboardDataPhase2 } from '@/tracker/services/dashboardPhase2';
 import type { DashboardData } from '@/types/models';
 
@@ -29,6 +30,8 @@ export const useDashboard = create<DashboardState>()((set) => ({
       if (seq === refreshSeq) set({ loading: false });
     }
     // One-way cloud push (no-op unless a gym is linked → offline demo unaffected).
-    void maybeSync();
+    // Gym sync is hidden from members (owner decision D4), so a phone linked before
+    // that never keeps uploading in the background.
+    if (FEATURES.gymSync) void maybeSync();
   },
 }));

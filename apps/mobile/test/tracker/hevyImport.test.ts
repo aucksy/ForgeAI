@@ -78,11 +78,12 @@ describe('classifyEquipment', () => {
     expect(classifyEquipment('Farmer Carry')).toBe('other');
   });
 
-  it('pins a known gap: the plural "Dips" misses the \\bdip\\b boundary -> other', () => {
-    // Hevy names this exercise "Dips" (plural); the calisthenics rule matches only
-    // the singular \bdip\b, so it currently classifies as 'other'. Documented here
-    // as current behaviour (O1 is tests-only). Candidate fix for a later phase.
-    expect(classifyEquipment('Dips')).toBe('other');
+  // Was a green test pinning the bug as "current behaviour" (audit QA-14). Now it states the
+  // RIGHT behaviour and is marked it.fails: green while the gap is open, RED the day a fix
+  // lands — then switch it to it(...). See test/known-defects/ for the convention.
+  it.fails('QA-14 known defect: the plural "Dips" is a bodyweight exercise (today it misses the singular dip rule -> other)', () => {
+    // Hevy names this exercise "Dips" (plural); the calisthenics rule matches only the singular.
+    expect(classifyEquipment('Dips')).toBe('bodyweight');
   });
 });
 

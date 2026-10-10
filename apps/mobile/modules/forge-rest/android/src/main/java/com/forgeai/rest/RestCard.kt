@@ -49,6 +49,8 @@ object RestCard {
   private const val COLOR = 0xFFFF7A3B.toInt()
   /** An end that fires this much early (an inexact alarm never does) is re-armed instead. */
   private const val EARLY_MS = 1500L
+  /** [load] reports a rest this long past its end as none (the app's view only). */
+  private const val STALE_MS = 60_000L
 
   data class Rest(val startedAt: Long, val endsAt: Long, val next: String?)
 
@@ -59,17 +61,32 @@ object RestCard {
   private var fastPath: Runnable? = null
 
   // ------------------------------------------------------------------ state
+  /**
+   * The rest as saved, however long ago it ended. Phase 0 (RT-01): nothing here throws a rest
+   * away for being old any more. Before, a rest more than 60 s past its end was wiped on read,
+   * so an alarm Android delivered late (inexact on Android 14+ without "Alarms & reminders")
+   * found nothing and "Rest is over" never came. A saved rest is wiped only by [clear] (Skip,
+   * the workout finished or discarded), by [fireEnd] once its alert is posted, or by [settle];
+   * a new rest overwrites it in [show].
+   */
   @Synchronized
-  fun load(ctx: Context): Rest? {
+  fun stored(ctx: Context): Rest? {
     val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     val ends = p.getLong("endsAt", 0L)
     if (ends <= 0L) return null
-    // A rest whose end passed long ago lost its alarm (the app was force-stopped): forget it.
-    if (ends < System.currentTimeMillis() - 60_000L) {
-      p.edit().clear().apply()
-      return null
-    }
     return Rest(p.getLong("startedAt", ends), ends, p.getString("next", null))
+  }
+
+  /**
+   * The rest for the app (getState) and for "+15 s". A rest that ended over a minute ago reads
+   * as none, as before, so the app's catch-up is unchanged; unlike before, the saved rest is
+   * NOT wiped here, so its late alarm still finds it.
+   */
+  @Synchronized
+  fun load(ctx: Context): Rest? {
+    val r = stored(ctx) ?: return null
+    if (r.endsAt < System.currentTimeMillis() - STALE_MS) return null
+    return r
   }
 
   private fun save(ctx: Context, r: Rest) {
@@ -106,13 +123,15 @@ object RestCard {
     arm(ctx, endsAt)
   }
 
-  /** "+15 s" on the card (phone shade or watch). Returns the new rest, or null if none runs. */
+  /**
+   * "+15 s" on the card (phone shade or watch). Returns the new rest, or null if none runs.
+   * Pressed after the end but before a late "Rest is over" (RT-01): 15 s from now, not ignored.
+   */
   @Synchronized
   fun add(ctx: Context): Rest? {
     val cur = load(ctx) ?: return null
     val now = System.currentTimeMillis()
-    if (cur.endsAt <= now) return null
-    val r = cur.copy(endsAt = cur.endsAt + ADD_SEC * 1000L)
+    val r = cur.copy(endsAt = maxOf(cur.endsAt, now) + ADD_SEC * 1000L)
     save(ctx, r)
     post(ctx, r)
     arm(ctx, r.endsAt)
@@ -128,11 +147,17 @@ object RestCard {
     if (dismissOver) nm(ctx).cancel(OVER_ID)
   }
 
-  /** The alarm (or the in-process timer) for [expected] went off. */
+  /**
+   * The alarm (or the in-process timer) for [expected] went off. Phase 0 (RT-01): however late
+   * it comes, "Rest is over" is posted at once. No ghost alert: the guards are the saved rest
+   * itself. Skip, Finish and Discard wipe it ([clear]); the next set's rest replaces it and
+   * "+15 s" moves it, so its end no longer matches [expected]; the app's own catch-up wipes a
+   * long-overdue one while the member is looking at the app ([settle]).
+   */
   @Synchronized
   fun fireEnd(ctx: Context, expected: Long) {
-    val cur = load(ctx) ?: return
-    if (cur.endsAt != expected) return // moved or skipped meanwhile
+    val cur = stored(ctx) ?: return // skipped, workout finished or discarded, or already alerted
+    if (cur.endsAt != expected) return // moved, or replaced by the next set's rest
     val now = System.currentTimeMillis()
     if (now < expected - EARLY_MS) {
       arm(ctx, expected)
@@ -141,8 +166,30 @@ object RestCard {
     forget(ctx)
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
-    postOver(ctx, cur.next)
+    postOver(ctx, cur.next, expected, now - expected)
     listener?.invoke("end", 0L, 0L)
+  }
+
+  /**
+   * The app read the rest (getState: it came back on screen, or finished loading). With ForgeAI
+   * on screen, a rest whose end passed over a minute ago is settled quietly: the member is
+   * looking at the app, which already shows the rest is over, so a late alarm must not buzz
+   * later, mid-set. A rest just over (up to a minute) gets its alert now, as an on-time end
+   * would. Off screen nothing changes here: the alarm still brings the alert.
+   */
+  @Synchronized
+  fun settle(ctx: Context) {
+    val cur = stored(ctx) ?: return
+    val now = System.currentTimeMillis()
+    if (cur.endsAt > now) return
+    if (!appOnScreen(ctx)) return
+    if (now - cur.endsAt <= STALE_MS) {
+      fireEnd(ctx, cur.endsAt)
+      return
+    }
+    forget(ctx)
+    disarm(ctx)
+    nm(ctx).cancel(CARD_ID)
   }
 
   // ------------------------------------------------------------------ timing
@@ -159,13 +206,31 @@ object RestCard {
     fastPath = run
     handler.postDelayed(run, maxOf(0L, endsAt - System.currentTimeMillis()))
     // The alarm covers a sleeping phone and a stopped app. Exact only where Android allows
-    // it (the "Alarms & reminders" permission); otherwise Android may run it a little late.
+    // it (the "Alarms & reminders" permission, Android 12+); otherwise Android may run it
+    // late, and [fireEnd] still alerts then. Asking for the permission is a later phase (D8).
+    val am = try {
+      ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    } catch (_: Exception) {
+      return // No alarm: the in-process timer and the app's own timer still run.
+    }
+    val pi = endIntent(app, endsAt)
+    val exact = try {
+      Build.VERSION.SDK_INT < Build.VERSION_CODES.S || am.canScheduleExactAlarms()
+    } catch (_: Exception) {
+      false
+    }
+    if (exact) {
+      try {
+        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endsAt, pi)
+        return
+      } catch (_: SecurityException) {
+        // The permission was taken away between the check and the call: inexact below.
+      } catch (_: Exception) {
+        // inexact below
+      }
+    }
     try {
-      val am = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-      val pi = endIntent(app, endsAt)
-      val exact = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || am.canScheduleExactAlarms()
-      if (exact) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endsAt, pi)
-      else am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endsAt, pi)
+      am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endsAt, pi)
     } catch (_: Exception) {
       // No alarm: the in-process timer and the app's own timer still run.
     }
@@ -315,8 +380,18 @@ object RestCard {
     }
   }
 
+  /**
+   * The "Rest is over" text. On time: "Next up: …" as before. A minute or more late (RT-01):
+   * "Ended 2 min ago · Next up: …", so a late alert is not taken for a fresh one.
+   */
+  fun overText(next: String?, lateMs: Long): String {
+    val base = if (next != null) "Next up: $next" else "Time for your next set"
+    val mins = lateMs / 60_000L
+    return if (mins >= 1L) "Ended $mins min ago · $base" else base
+  }
+
   @Suppress("DEPRECATION")
-  private fun postOver(ctx: Context, next: String?) {
+  private fun postOver(ctx: Context, next: String?, endsAt: Long, lateMs: Long) {
     try {
       ensureChannels(ctx)
       // App on screen: it rings itself, so the phone only vibrates — but the alert is still
@@ -327,7 +402,9 @@ object RestCard {
         .setSmallIcon(iconRes(ctx))
         .setColor(COLOR)
         .setContentTitle("Rest is over")
-        .setContentText(if (next != null) "Next up: $next" else "Time for your next set")
+        .setContentText(overText(next, lateMs))
+        .setShowWhen(true)
+        .setWhen(endsAt)
         .setAutoCancel(true)
         .setOngoing(false)
         .setCategory(Notification.CATEGORY_REMINDER)

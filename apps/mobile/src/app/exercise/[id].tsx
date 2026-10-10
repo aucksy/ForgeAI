@@ -19,6 +19,7 @@ import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { mediaFor } from '@/tracker/catalog/media';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
+import { DrawingCredit } from '@/tracker/components/DrawingCredit';
 import { ExerciseDemoSheet } from '@/tracker/components/ExerciseDemoSheet';
 import { ExerciseMetricChart } from '@/tracker/components/ExerciseMetricChart';
 import { ExercisePrRows } from '@/tracker/components/ExercisePrRows';
@@ -190,6 +191,8 @@ export default function ExerciseScreen() {
                     </Pressable>
                   </View>
                 </View>
+                {/* Phase 0 (EX-05): the library drawing is credited where it is shown */}
+                {!ex.mediaUri && mediaFor(ex.catalogKey) != null ? <DrawingCredit /> : null}
                 {(entry?.steps ?? []).map((s, i) => (
                   <View key={i} style={{ flexDirection: 'row', gap: space.sm }}>
                     <Text style={{ width: 16, fontFamily: type.monoBold, fontSize: type.size.sub, color: color.accent }}>{i + 1}</Text>

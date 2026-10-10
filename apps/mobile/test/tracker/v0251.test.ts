@@ -155,7 +155,8 @@ describe('runs keep their best pace, not their longest time', () => {
     expect(tiles.map((t) => t.label)).toEqual(['All time', 'Workouts']);
   });
 
-  it('the screen says which sets count', () => {
+  // [source-text check] Partly reads source text (the rest is behavioural): passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] the screen says which sets count', () => {
     expect(paceRuleText('km')).toBe("Best pace counts only sets of 1 km or more, so a short sprint can't set it.");
     const src = readFileSync(join(__dirname, '..', '..', 'src', 'tracker', 'components', 'ExercisePrRows.tsx'), 'utf8');
     // Behind the i beside "Records" (opened on the phone in device QA part F), and a "—" row
@@ -218,7 +219,8 @@ describe('a male or female body figure', () => {
     expect([png.width, png.height]).toEqual([1080, 1350]);
   }, 20_000); // renders a full PNG; slow when every test file runs at once
 
-  it('Profile offers the choice; Progress, the finish screen and a saved workout follow it', () => {
+  // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
+  it('[source-text check] Profile offers the choice; Progress, the finish screen and a saved workout follow it', () => {
     expect(read('tracker/store/trackerPrefsStore.ts')).toMatch(/bodyFigure: 'male',/);
     expect(read('app/(tabs)/settings.tsx')).toMatch(/label="Body figure"/);
     expect(read('components/analytics/BodyMapSection.tsx')).toMatch(/<BodyMap levels=\{levels\} figure=\{figure\}/);

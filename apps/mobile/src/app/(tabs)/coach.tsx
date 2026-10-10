@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { useLocalSearchParams } from 'expo-router';
+import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, FlatList, KeyboardAvoidingView, Platform, View } from 'react-native';
 import type { ListRenderItemInfo } from 'react-native';
@@ -7,6 +7,7 @@ import type { ListRenderItemInfo } from 'react-native';
 import { ChatSkeleton, InputBar, MessageBubble, SuggestedPrompts } from '@/components/chat';
 import { EmptyState, IconButton, Screen } from '@/components/ui';
 import * as userRepo from '@/db/repos/userRepo';
+import { FEATURES, linkedDraft } from '@/lib/features';
 import { success, thud } from '@/lib/haptics';
 import { launchFor, takePendingPick } from '@/lib/pendingPick';
 import { speak } from '@/lib/voice';
@@ -24,7 +25,14 @@ interface Row {
 /** A new time group (tiny centred timestamp) starts after this gap. */
 const TIMESTAMP_GAP_MS = 12 * 60_000;
 
-export default function CoachScreen() {
+/** D4 = A: the coach is hidden until its own phase — any route here (an old link,
+ *  stale navigation) goes Home. The chat below stays intact for when it returns. */
+export default function CoachRoute() {
+  if (!FEATURES.coach) return <Redirect href="/" />;
+  return <CoachScreen />;
+}
+
+function CoachScreen() {
   const messages = useChat((s) => s.messages);
   const sending = useChat((s) => s.sending);
   const loaded = useChat((s) => s.loaded);
@@ -144,16 +152,11 @@ export default function CoachScreen() {
     [handleSend, pickImage],
   );
 
-  // Other screens (e.g. the dashboard hero) can deep-link here with ?prompt=…
-  const params = useLocalSearchParams<{ prompt?: string }>();
-  const consumedPrompt = useRef<string | null>(null);
-  useEffect(() => {
-    const p = typeof params.prompt === 'string' && params.prompt.trim() ? params.prompt : null;
-    if (p && loaded && consumedPrompt.current !== p) {
-      consumedPrompt.current = p;
-      void handleSend(p);
-    }
-  }, [params.prompt, loaded, handleSend]);
+  // A link here with ?prompt=… (another screen, or forgeai://coach?prompt=… from outside
+  // the app) only FILLS the message box — the member reads it and taps send. Never sent
+  // on its own: an outside link must not log workouts in the member's name (SH-01).
+  const params = useLocalSearchParams<{ prompt?: string | string[] }>();
+  const draft = linkedDraft(params.prompt);
 
   const confirmClear = useCallback(() => {
     Alert.alert(
@@ -237,6 +240,7 @@ export default function CoachScreen() {
           }}
           micEnabled={voiceEnabled}
           language={language}
+          draft={draft}
         />
       </KeyboardAvoidingView>
     </Screen>

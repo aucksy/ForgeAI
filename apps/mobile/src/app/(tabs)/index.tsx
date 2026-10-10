@@ -1,7 +1,7 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
 import { useCallback, useState } from 'react';
-import { RefreshControl, ScrollView } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import {
@@ -16,14 +16,22 @@ import {
   StreakRow,
   VolumeCard,
 } from '@/components/dashboard';
-import { Screen } from '@/components/ui';
+import { Card, Screen } from '@/components/ui';
 import { getProfile } from '@/db/repos/userRepo';
 import { getWeeklyVolumeKg } from '@/tracker/services/volumeService';
+import { FEATURES, homeParts } from '@/lib/features';
 import { thud } from '@/lib/haptics';
+import { takeLinkNotice } from '@/lib/linkNotice';
 import { useDashboard } from '@/store/dashboardStore';
 import { useSettings } from '@/store/settingsStore';
-import { color, motion, space } from '@/theme/tokens';
+import { color, motion, space, type } from '@/theme/tokens';
 import { todayLink } from '@/tracker/lib/todayLink';
+
+// D4 = A: the coach, nutrition and their scores stay hidden until their own phase.
+const PARTS = new Set(homeParts(FEATURES));
+
+/** How long the "That link didn't work." line stays before it fades on its own. */
+const NOTICE_MS = 4000;
 
 /** Entrance stagger for each dashboard section. */
 function Section({ index, children }: { index: number; children: ReactNode }) {
@@ -45,6 +53,18 @@ export default function DashboardScreen() {
   // the MiniBars comes straight from the repo (foundation gap worked around here).
   const [volumeSeries, setVolumeSeries] = useState<number[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  // SH-29: a wrong forgeai:// link lands here with one calm line.
+  const [notice, setNotice] = useState<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      const t = takeLinkNotice();
+      if (!t) return undefined;
+      setNotice(t);
+      const timer = setTimeout(() => setNotice(null), NOTICE_MS);
+      return () => clearTimeout(timer);
+    }, []),
+  );
 
   const loadExtras = useCallback(async () => {
     try {
@@ -92,7 +112,7 @@ export default function DashboardScreen() {
 
   const goCoach = useCallback(() => {
     thud();
-    // Deep-link the coach to present today's session (coach.tsx consumes ?prompt=).
+    // Opens the coach with this question in the box, unsent (coach.tsx, SH-01).
     router.push({ pathname: '/coach', params: { prompt: "Today's Workout" } });
   }, [router]);
 
@@ -100,7 +120,10 @@ export default function DashboardScreen() {
     thud();
     // Phase C4: the Home insight nudge is proactive — tapping asks the coach to
     // expand on today's focus (grounded via tools, richer with a key).
-    router.push({ pathname: '/coach', params: { prompt: 'What should I focus on today, and why?' } });
+    router.push({
+      pathname: '/coach',
+      params: { prompt: 'What should I focus on today, and why?' },
+    });
   }, [router]);
 
   const goNutrition = useCallback(() => {
@@ -129,6 +152,27 @@ export default function DashboardScreen() {
       >
         <GreetingHeader name={firstName} />
 
+        {notice ? (
+          <Pressable
+            onPress={() => setNotice(null)}
+            accessibilityRole="button"
+            accessibilityLabel={`${notice} Dismiss`}
+            accessibilityLiveRegion="polite"
+          >
+            <Card>
+              <Text
+                style={{
+                  fontFamily: type.bodyMedium,
+                  fontSize: type.size.sub,
+                  color: color.inkSecondary,
+                }}
+              >
+                {notice}
+              </Text>
+            </Card>
+          </Pressable>
+        ) : null}
+
         {data ? (
           <>
             <Section index={0}>
@@ -151,9 +195,16 @@ export default function DashboardScreen() {
             <Section index={1}>
               <StreakRow streakDays={data.streakDays} workoutsThisWeek={data.workoutsThisWeek} />
             </Section>
-            <Section index={2}>
-              <StatGrid data={data} onPressNutrition={goNutrition} />
-            </Section>
+            {PARTS.has('nutritionRings') || PARTS.has('scores') ? (
+              <Section index={2}>
+                <StatGrid
+                  data={data}
+                  onPressNutrition={goNutrition}
+                  showRings={PARTS.has('nutritionRings')}
+                  showScores={PARTS.has('scores')}
+                />
+              </Section>
+            ) : null}
             <Section index={3}>
               <VolumeCard
                 volumeKg={data.weeklyVolumeKg}
@@ -171,16 +222,20 @@ export default function DashboardScreen() {
                 />
               </Section>
             ) : null}
-            <Section index={5}>
-              <InsightCard insight={data.insight} onPress={goInsightCoach} />
-            </Section>
-            <Section index={6}>
-              <NextUpRow
-                lastWorkout={data.lastWorkout}
-                nextName={data.todaysWorkout.dayName}
-                onPress={goCoach}
-              />
-            </Section>
+            {PARTS.has('insight') ? (
+              <Section index={5}>
+                <InsightCard insight={data.insight} onPress={goInsightCoach} />
+              </Section>
+            ) : null}
+            {PARTS.has('nextUp') ? (
+              <Section index={6}>
+                <NextUpRow
+                  lastWorkout={data.lastWorkout}
+                  nextName={data.todaysWorkout.dayName}
+                  onPress={goCoach}
+                />
+              </Section>
+            ) : null}
           </>
         ) : (
           <DashboardSkeleton />

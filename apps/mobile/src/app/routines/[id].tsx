@@ -522,7 +522,7 @@ export default function RoutineEditorScreen() {
       {/* move: every other folder, with its routine count */}
       <TrackerSheet visible={moveTo != null} title="Move to folder" onClose={() => setMoveTo(null)}>
         {/* Many folders on a small phone: the list scrolls inside the sheet. */}
-        <ScrollView style={{ maxHeight: 360 }} contentContainerStyle={{ gap: 2 }}>
+        <ScrollView style={{ maxHeight: 360 }} nestedScrollEnabled contentContainerStyle={{ gap: 2 }}>
           {(moveTo ?? []).map((f) => (
             <SheetRow
               key={f.id}
@@ -562,7 +562,7 @@ function MoveBtn({ dir, disabled, onPress }: { dir: 'up' | 'down'; disabled: boo
       style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}
     >
       <View style={{ transform: [{ rotate: dir === 'up' ? '-90deg' : '90deg' }] }}>
-        <Icon name="chevron-right" size={20} color={disabled ? color.inkFaint : color.inkMuted} />
+        <Icon name="chevron-right" size={20} color={disabled ? color.inkDisabled : color.inkMuted} />
       </View>
     </Pressable>
   );
@@ -635,7 +635,7 @@ function StepBtn({
         style={{
           fontFamily: type.monoBold,
           fontSize: type.size.h3,
-          color: disabled ? color.inkFaint : color.accent,
+          color: disabled ? color.inkDisabled : color.accent,
         }}
       >
         {glyph}

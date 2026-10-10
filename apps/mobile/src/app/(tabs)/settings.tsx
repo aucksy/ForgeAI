@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { ANTHROPIC_MODELS, GROQ_MODELS, OPENAI_MODELS } from '@/ai/models';
@@ -11,8 +12,9 @@ import { CloudCard } from '@/components/settings/CloudCard';
 import { DataCard } from '@/components/settings/DataCard';
 import { GymCard } from '@/components/settings/GymCard';
 import { ProfileCard } from '@/components/settings/ProfileCard';
-import { ToggleRow } from '@/components/settings/SettingRow';
+import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
 import { Card, Icon, Screen, SectionHeader } from '@/components/ui';
+import { FEATURES, profileParts } from '@/lib/features';
 import { ExportCard } from '@/tracker/components/ExportCard';
 import { ImportCard } from '@/tracker/components/ImportCard';
 import { WorkoutPrefsCard } from '@/tracker/components/WorkoutPrefsCard';
@@ -31,6 +33,9 @@ import { useDashboard } from '@/store/dashboardStore';
 import { useSettings } from '@/store/settingsStore';
 import { color, motion, space, type } from '@/theme/tokens';
 import type { AiProviderId, AppLanguage, UnitSystem } from '@/types/models';
+
+// D4 = A: AI coach settings, voice, language and gym sync stay hidden until their phase.
+const PARTS = new Set(profileParts(FEATURES));
 
 const PROVIDER_OPTIONS = [
   { id: 'anthropic', label: 'Claude', icon: 'sparkle' },
@@ -90,127 +95,135 @@ export default function SettingsScreen() {
   const setLanguage = useSettings((s) => s.setLanguage);
   const bodyFigure = useTrackerPrefs((s) => s.bodyFigure);
   const setBodyFigure = useTrackerPrefs((s) => s.setBodyFigure);
-
+  const router = useRouter();
 
   return (
-    <Screen title="Settings" subtitle="Tune your coach">
+    <Screen title="Settings">
       <Section title="Your profile" delay={0}>
         <ProfileCard onSaved={() => void useDashboard.getState().refresh()} />
       </Section>
 
-      <Section title="AI Coach" delay={60}>
-        <Card>
-          <ChipGroup
-            label="Provider"
-            options={PROVIDER_OPTIONS}
-            selectedId={ai.provider}
-            onSelect={setProvider}
-          />
+      {PARTS.has('aiCoach') ? (
+        <Section title="AI Coach" delay={60}>
+          <Card>
+            <ChipGroup
+              label="Provider"
+              options={PROVIDER_OPTIONS}
+              selectedId={ai.provider}
+              onSelect={setProvider}
+            />
 
-          {ai.provider === 'local' ? (
-            <Text
+            {ai.provider === 'local' ? (
+              <Text
+                style={{
+                  fontFamily: type.body,
+                  fontSize: type.size.caption,
+                  color: color.inkMuted,
+                  marginTop: space.md,
+                  lineHeight: 15,
+                }}
+              >
+                The local coach runs fully offline — no API key needed.
+              </Text>
+            ) : (
+              <View style={{ marginTop: space.lg }}>
+                <ChipGroup
+                  label="Model"
+                  options={
+                    ai.provider === 'anthropic'
+                      ? ANTHROPIC_MODELS
+                      : ai.provider === 'groq'
+                        ? GROQ_MODELS
+                        : OPENAI_MODELS
+                  }
+                  selectedId={
+                    ai.provider === 'anthropic'
+                      ? ai.anthropicModel
+                      : ai.provider === 'groq'
+                        ? ai.groqModel
+                        : ai.openaiModel
+                  }
+                  onSelect={(id) =>
+                    setModel(
+                      ai.provider === 'anthropic'
+                        ? 'anthropic'
+                        : ai.provider === 'groq'
+                          ? 'groq'
+                          : 'openai',
+                      id,
+                    )
+                  }
+                />
+              </View>
+            )}
+
+            <View
+              style={{ borderTopWidth: 1, borderTopColor: color.border, marginTop: space.lg }}
+            />
+            <ApiKeyField
+              label="Claude API key"
+              placeholder="sk-ant-…"
+              load={getAnthropicKey}
+              save={setAnthropicKey}
+            />
+            <ApiKeyField
+              label="OpenAI API key"
+              placeholder="sk-…"
+              load={getOpenAiKey}
+              save={setOpenAiKey}
+              divider
+            />
+            <ApiKeyField
+              label="Groq API key"
+              placeholder="gsk_…"
+              load={getGroqKey}
+              save={setGroqKey}
+              divider
+            />
+            <View
               style={{
-                fontFamily: type.body,
-                fontSize: type.size.caption,
-                color: color.inkMuted,
-                marginTop: space.md,
-                lineHeight: 15,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                marginTop: space.xs,
               }}
             >
-              The local coach runs fully offline — no API key needed.
-            </Text>
-          ) : (
-            <View style={{ marginTop: space.lg }}>
-              <ChipGroup
-                label="Model"
-                options={
-                  ai.provider === 'anthropic'
-                    ? ANTHROPIC_MODELS
-                    : ai.provider === 'groq'
-                      ? GROQ_MODELS
-                      : OPENAI_MODELS
-                }
-                selectedId={
-                  ai.provider === 'anthropic'
-                    ? ai.anthropicModel
-                    : ai.provider === 'groq'
-                      ? ai.groqModel
-                      : ai.openaiModel
-                }
-                onSelect={(id) =>
-                  setModel(
-                    ai.provider === 'anthropic' ? 'anthropic' : ai.provider === 'groq' ? 'groq' : 'openai',
-                    id,
-                  )
-                }
-              />
+              <Icon name="key" size={12} color={color.inkMuted} />
+              <Text
+                style={{
+                  fontFamily: type.bodyMedium,
+                  fontSize: type.size.caption,
+                  color: color.inkMuted,
+                }}
+              >
+                Keys are stored securely on this device.
+              </Text>
             </View>
-          )}
+          </Card>
+        </Section>
+      ) : null}
 
-          <View
-            style={{ borderTopWidth: 1, borderTopColor: color.border, marginTop: space.lg }}
-          />
-          <ApiKeyField
-            label="Claude API key"
-            placeholder="sk-ant-…"
-            load={getAnthropicKey}
-            save={setAnthropicKey}
-          />
-          <ApiKeyField
-            label="OpenAI API key"
-            placeholder="sk-…"
-            load={getOpenAiKey}
-            save={setOpenAiKey}
-            divider
-          />
-          <ApiKeyField
-            label="Groq API key"
-            placeholder="gsk_…"
-            load={getGroqKey}
-            save={setGroqKey}
-            divider
-          />
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 6,
-              marginTop: space.xs,
-            }}
-          >
-            <Icon name="key" size={12} color={color.inkMuted} />
-            <Text
-              style={{
-                fontFamily: type.bodyMedium,
-                fontSize: type.size.caption,
-                color: color.inkMuted,
-              }}
-            >
-              Keys are stored securely on this device.
-            </Text>
-          </View>
-        </Card>
-      </Section>
-
-      <Section title="Voice" delay={70}>
-        <Card style={{ paddingVertical: space.xs }}>
-          <ToggleRow
-            icon="mic"
-            title="Voice input"
-            caption="Hold the mic in chat to talk to your coach"
-            value={ai.voiceEnabled}
-            onChange={setVoiceEnabled}
-          />
-          <ToggleRow
-            icon="volume"
-            title="Speak replies"
-            caption="Your coach reads answers out loud"
-            value={ai.speakReplies}
-            onChange={setSpeakReplies}
-            divider
-          />
-        </Card>
-      </Section>
+      {PARTS.has('voice') ? (
+        <Section title="Voice" delay={70}>
+          <Card style={{ paddingVertical: space.xs }}>
+            <ToggleRow
+              icon="mic"
+              title="Voice input"
+              caption="Hold the mic in chat to talk to your coach"
+              value={ai.voiceEnabled}
+              onChange={setVoiceEnabled}
+            />
+            <ToggleRow
+              icon="volume"
+              title="Speak replies"
+              caption="Your coach reads answers out loud"
+              value={ai.speakReplies}
+              onChange={setSpeakReplies}
+              divider
+            />
+          </Card>
+        </Section>
+      ) : null}
 
       <Section title="Preferences" delay={140}>
         <Card>
@@ -220,14 +233,16 @@ export default function SettingsScreen() {
             selectedId={unitSystem}
             onSelect={setUnitSystem}
           />
-          <View style={{ marginTop: space.lg }}>
-            <ChipGroup
-              label="Language"
-              options={LANGUAGE_OPTIONS}
-              selectedId={language}
-              onSelect={setLanguage}
-            />
-          </View>
+          {PARTS.has('language') ? (
+            <View style={{ marginTop: space.lg }}>
+              <ChipGroup
+                label="Language"
+                options={LANGUAGE_OPTIONS}
+                selectedId={language}
+                onSelect={setLanguage}
+              />
+            </View>
+          ) : null}
           <View style={{ marginTop: space.lg }}>
             <ChipGroup
               label="Body figure"
@@ -260,16 +275,18 @@ export default function SettingsScreen() {
       </Section>
 
       <Section title="Workout" delay={175}>
-        <WorkoutPrefsCard />
+        <WorkoutPrefsCard showCoachNotes={PARTS.has('coachNotes')} />
       </Section>
 
       <Section title="Around your phone" delay={190}>
         <PhoneCard />
       </Section>
 
-      <Section title="Gym sync" delay={210}>
-        <CloudCard />
-      </Section>
+      {PARTS.has('gymSync') ? (
+        <Section title="Gym sync" delay={210}>
+          <CloudCard />
+        </Section>
+      ) : null}
 
       <Section title="Your gym" delay={245}>
         <GymCard />
@@ -287,6 +304,21 @@ export default function SettingsScreen() {
 
       <Section title="Your data" delay={315}>
         <DataCard />
+      </Section>
+
+      <Section title="About" delay={350}>
+        <Card style={{ paddingVertical: space.xs }}>
+          <Pressable
+            onPress={() => router.push('/credits')}
+            accessibilityRole="button"
+            accessibilityLabel="Credits"
+          >
+            <SettingRow
+              title="Credits"
+              right={<Icon name="chevron-right" size={16} color={color.inkMuted} />}
+            />
+          </Pressable>
+        </Card>
       </Section>
     </Screen>
   );

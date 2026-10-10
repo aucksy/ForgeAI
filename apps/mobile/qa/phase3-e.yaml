@@ -66,9 +66,10 @@ appId: com.forgeai.app
     timeout: 15000
 - takeScreenshot: 62-workout-share-picture
 - tapOn: "Share picture"
-# Android's share menu (the chooser) lists the apps that can take a picture.
+# Android's share menu (the chooser) lists the apps that can take a picture. Assert text only the
+# SYSTEM chooser shows: ForgeAI's own sheet says "Share picture", which an old loose regex matched.
 - extendedWaitUntil:
-    visible: '(?i).*(share|copy|nearby|messages|drive|gmail|files).*'
+    visible: '(Sharing image|Sharing 1 image|No recommended people to share with)'
     timeout: 20000
 - takeScreenshot: 63-android-share-menu
 - back

@@ -75,4 +75,6 @@ a profile plus the reference exercise catalog, nothing else. The 3-month demo hi
 
 ## User-gated items (ask, never hardcode)
 - GitHub repo creation + push URL, Actions secrets (keystore etc.) — owner provides.
-- Release keystore: none exists yet; generate via CI keytool step or owner provides.
+- Release keystore: none exists yet. The owner makes it privately on his own PC (never in a
+  GitHub workflow: this repo is public and its logs are readable by anyone) and loads it as
+  the ANDROID_* Actions secrets.

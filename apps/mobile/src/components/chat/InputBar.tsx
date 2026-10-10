@@ -29,6 +29,8 @@ export interface InputBarProps {
   /** Settings voiceEnabled — mic only shows when this AND device support. */
   micEnabled: boolean;
   language: AppLanguage;
+  /** Text placed in the box unsent (e.g. from a link) — the member still taps send. */
+  draft?: string | null;
 }
 
 /** Safety-net wait for the final transcript if the recognizer's end event never
@@ -43,8 +45,13 @@ export function InputBar({
   onSend,
   micEnabled,
   language,
+  draft,
 }: InputBarProps) {
-  const [text, setText] = useState('');
+  const [text, setText] = useState(draft ?? '');
+  // A new linked draft replaces the box's text; it is never sent from here.
+  useEffect(() => {
+    if (draft) setText(draft);
+  }, [draft]);
   const [micHeld, setMicHeld] = useState(false);
   const voice = useVoiceInput();
 

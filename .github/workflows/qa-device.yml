@@ -5,8 +5,14 @@ name: Device QA (Android emulator)
 # as the release, boots an Android 14 emulator, taps through the workout with Maestro,
 # puts the phone to sleep during a rest to prove the "Rest is over" alert fires, and
 # uploads every screenshot, the notification list and logcat as the `qa-out` artifact.
+#
+# Manual only, to save runner minutes (about 50 min a run). A release needs a PASSING run of
+# this workflow on the tagged commit or its parent (release-apk.yml's phone-gate job). The
+# `workflow_call` trigger lets a later release workflow call it directly with `uses:` + `needs:`;
+# note that a called run is recorded under the CALLER's workflow, not under this file's name.
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   device-qa:
@@ -39,6 +45,14 @@ jobs:
           find app/build/outputs/apk/release -name '*.apk' -exec cp {} "$GITHUB_WORKSPACE/qa.apk" \;
           ls -la "$GITHUB_WORKSPACE/qa.apk"
 
+      # The same merged-manifest permission list the release checks gate on, read from this
+      # build (warn only here), so a wrong scripts/ci/approved-permissions.txt shows up before
+      # anyone tags a release.
+      - name: Permission list of this build
+        run: |
+          mkdir -p qa-out
+          python3 scripts/ci/release_checks.py qa.apk --only permissions --warn-only --out-dir qa-out 2>&1 | tee qa-out/permissions-check.txt || echo "::warning::Could not read the permission list of this build (it never fails the phone test)."
+
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -61,10 +75,16 @@ jobs:
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: bash apps/mobile/qa/run-device-qa.sh "$GITHUB_WORKSPACE/qa.apk"
 
+      # Parts run / passed / failed, every skipped step, the crash / ANR / JS-error scan and the
+      # rest-alert timing, on the run's summary page.
+      - name: Phone test summary
+        if: always()
+        run: python3 apps/mobile/qa/qa_report.py summary qa-out || true
+
       - name: Upload QA evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: qa-out
           path: qa-out
-          retention-days: 7
+          retention-days: 30

@@ -6,7 +6,9 @@ import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { KeyboardRoom } from '@/components/KeyboardRoom';
+import { ConfirmHost } from '@/components/ui';
 import { startUnitSync } from '@/lib/useUnits';
+import { FEATURES } from '@/lib/features';
 import { useCloud } from '@/store/cloudStore';
 import { initDb } from '@/db';
 import { initTrackerSchema } from '@/tracker/db/trackerSchema';
@@ -25,6 +27,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 startUnitSync();
 
 export default function RootLayout() {
+  // Loaded or failed — a font failure falls back to the phone's font (SH-02).
   const fontsLoaded = useAppFonts();
   const [dbReady, setDbReady] = useState(false);
   // Phase O2 (W1): NOTHING is seeded on launch any more. A first run with no
@@ -54,7 +57,8 @@ export default function RootLayout() {
       await useOnboarding.getState().boot();
       // Cloud is fully gated: init() no-ops (and starts NO network watcher)
       // unless a gym is linked, so the offline app makes zero network calls.
-      void useCloud.getState().init();
+      // Gym sync is hidden until its own phase (D4) — not even started then.
+      if (FEATURES.gymSync) void useCloud.getState().init();
     })();
   }, []);
 
@@ -91,6 +95,8 @@ export default function RootLayout() {
           }}
         />
         <WorkoutPresenceHost />
+        {/* The app's own "Are you sure?" sheet (askConfirm) — mounted once, above every screen. */}
+        <ConfirmHost />
       </KeyboardRoom>
     </GestureHandlerRootView>
   );

@@ -1584,10 +1584,36 @@
     their type from the real sets when nothing was logged on them; whole-word name check.
   - **Tests:** 723 vitest.
 
+- 2026-10-10: **Audit Phase 0 — ready the ground** (owner: "go with your picks and start fixing";
+  audit plan kept outside this public repo, see CONTEXT.md; decisions D1–D13 = A).
+  - D4: coach, nutrition and gym sync hidden behind `src/lib/features.ts` (Home, Profile, Progress
+    nutrition charts, Profile daily targets; coach/nutrition routes redirect Home; gym push and the
+    Groq finish note gated). A `forgeai://coach?prompt=` link only fills the box (SH-01).
+  - `+not-found.tsx` → Home + "That link didn't work." (SH-29). Fonts failing no longer trap the
+    splash (`fontGate.ts`, SH-02).
+  - Shared blocks: greys raised to ≥ 4.5:1 (`inkMuted`, `inkFaint`; new `inkDisabled`) with a
+    contrast test (SH-19, LW-14); `Screen` status-bar strip (SH-28, PG-29); `Sheet` (scrolls, 90 %
+    cap) behind `TrackerSheet` (LW-16); `ConfirmSheet`/`askConfirm` (+`ConfirmHost` in the root),
+    `LoadError`, `UndoBar`, `FoldSection`; `docs/DESIGN-LANGUAGE.md`.
+  - Rest card (Kotlin): a late "Rest is over" alarm is no longer dropped after 60 s; `settle()` on
+    getState; exact → inexact alarm fallback; "Ended N min ago" when ≥ 1 min late (RT-01).
+  - Credits page (`/credits`, Everkinetic CC BY-SA 4.0, body map MIT, fonts OFL) + readable
+    `DrawingCredit` under drawings (EX-05); demo sheet scrolls (EX-11).
+  - Safety net: `gen-keystore.yml` deleted (public repo; DS-03). Release needs a green phone test on
+    the tagged commit or its paperwork-only parent (`scripts/ci/phone_gate.py`), then
+    `release_checks.py` (cert allow-list, version only up, approved permissions, 16 KB, size).
+    Phone test: `qa_report.py` crash/ANR/JS-error scan of every part, skipped steps listed,
+    rest-alert lateness budget 5 s, share-sheet checks that only Android's sheet passes.
+    Unit tests: sql.js real database (`test/helpers/realDb.ts`), migrations from 6 past versions,
+    backup round trip, 19 known defects as `it.fails`, CI runs under 3 time zones.
+  - Review: 0 blockers; fixed: JS-error scan missed the default logcat layout; off switches and
+    disabled arrows used the raised grey (now `inkDisabled`); nutrition charts/targets hidden;
+    rest-lateness fallback read the alert's own due time; nested folder list scroll.
+  - **Tests:** 871 vitest (5 skipped), dashboard 403.
+
 ## Next (pre-B2B2C, still valid)
-- Gather demo feedback. For a properly release-signed build: run the "Generate
-  release keystore" workflow once, set the 4 ANDROID_* Actions secrets
-  (owner-gated) -> the next tag auto-signs with the real key.
+- The release key is made privately on the owner's PC (never in this repo or a workflow log);
+  only its encrypted Actions secrets reach GitHub.
 - Candidate follow-ups: full lb unit support, richer AI coaching prompts,
   onboarding for a real (non-seeded) member, Play Store prep.
 

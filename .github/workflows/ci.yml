@@ -37,6 +37,22 @@ jobs:
         working-directory: apps/mobile
         run: npm test
 
+      # Time-zone matrix (audit QA-14 / H12). The runner is UTC; members are in India
+      # (+5:30, a half-hour offset) and a daylight-saving zone catches DST bugs that neither
+      # UTC nor IST can. Same suite, ~15 s each. A test red in only one of these is a real
+      # date bug, not a flake.
+      - name: Unit tests (mobile, TZ=Asia/Kolkata)
+        working-directory: apps/mobile
+        env:
+          TZ: Asia/Kolkata
+        run: npm test
+
+      - name: Unit tests (mobile, TZ=America/New_York)
+        working-directory: apps/mobile
+        env:
+          TZ: America/New_York
+        run: npm test
+
       - name: Typecheck (dashboard/CRM)
         working-directory: apps/dashboard
         run: npm run typecheck

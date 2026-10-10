@@ -1,0 +1,36 @@
+# Android permissions the release APK may ask for. One name per line; '#' starts a comment.
+# scripts/ci/release_checks.py compares this list with `aapt2 dump permissions` of the built APK
+# (the merged manifest: the app, its native modules and every library). Any difference fails the
+# release and prints the diff. A NEW permission is an owner decision: approve it by adding the
+# line here in the same commit that brings it in. maxSdkVersion limits are not compared.
+#
+# Written 10 Oct 2026 from the app manifest, apps/mobile/modules/*, the autolinked packages'
+# manifests and their Maven libraries (firebase-messaging, androidx.biometric, androidx.core).
+# The cloud phone test prints the real list from its own build (qa-out/permissions.txt and the
+# run summary) - if it shows a difference, fix this file before tagging.
+
+# app manifest (apps/mobile/android/app/src/main/AndroidManifest.xml)
+android.permission.INTERNET
+android.permission.READ_EXTERNAL_STORAGE
+android.permission.RECORD_AUDIO
+android.permission.SYSTEM_ALERT_WINDOW
+android.permission.VIBRATE
+android.permission.SCHEDULE_EXACT_ALARM
+android.permission.WRITE_EXTERNAL_STORAGE
+
+# own native modules (forge-rest, forge-phone)
+android.permission.POST_NOTIFICATIONS
+android.permission.health.WRITE_EXERCISE
+android.permission.health.WRITE_ACTIVE_CALORIES_BURNED
+
+# libraries
+android.permission.ACCESS_NETWORK_STATE
+android.permission.ACCESS_WIFI_STATE
+android.permission.CAMERA
+android.permission.MODIFY_AUDIO_SETTINGS
+android.permission.RECEIVE_BOOT_COMPLETED
+android.permission.USE_BIOMETRIC
+android.permission.USE_FINGERPRINT
+android.permission.WAKE_LOCK
+com.google.android.c2dm.permission.RECEIVE
+com.forgeai.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION

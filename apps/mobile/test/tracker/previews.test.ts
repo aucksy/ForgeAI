@@ -171,6 +171,8 @@ describe.runIf(OUT)('preview pictures (v0.25.1)', () => {
   });
 });
 
-it('previews are opt-in', () => {
+// [cannot fail] Always true by construction (audit QA-14): it only keeps the file from being
+// empty when FORGEAI_PREVIEW_DIR is unset. It proves nothing about the app.
+it('[cannot fail] previews are opt-in', () => {
   expect(typeof OUT === 'string' || OUT === undefined).toBe(true);
 });

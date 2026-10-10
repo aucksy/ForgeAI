@@ -10,16 +10,18 @@
 import { Image } from 'expo-image';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Linking, Text, View } from 'react-native';
+import { Animated, Easing, Modal, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import type { ImageSourcePropType } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Icon } from '@/components/ui';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { catalogEntry } from '../catalog/exerciseCatalog';
-import { MEDIA_CREDIT, MEDIA_LICENCE_URL, mediaFor } from '../catalog/media';
+import { mediaFor } from '../catalog/media';
 import { getTrackerExercise } from '../db/exerciseInfo';
+import { DrawingCredit } from './DrawingCredit';
 import type { ThumbMedia } from './ExerciseThumb';
-import { TrackerSheet } from './TrackerSheet';
 
 /** Two-frame loop: hold the start, fade to the end, hold, fade back. */
 export function FrameLoop({ frames, height }: { frames: readonly [ImageSourcePropType, ImageSourcePropType]; height: number }) {
@@ -123,43 +125,86 @@ export function ExerciseDemoSheet({
   else if (bundled) picture = <FrameLoop frames={bundled.frames} height={height} />;
   const showCredit = !own?.uri && bundled != null;
 
+  // Phase 0 (EX-11): the sheet stops at 90 % of the screen (below the status bar) and its body
+  // scrolls, so at large text the name and the close button stay on screen. Built here rather
+  // than on TrackerSheet, which the workout's other small sheets share unchanged.
+  const insets = useSafeAreaInsets();
+  const { height: winH } = useWindowDimensions();
+  const maxHeight = Math.min(winH * 0.9, winH - insets.top - space.md);
+
   return (
-    <TrackerSheet visible={visible} title={name} onClose={onClose}>
-      <View style={{ gap: space.md }}>
-        {visible ? picture : null}
-        {showCredit ? (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
+      <Pressable
+        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.55)' }}
+        onPress={onClose}
+        accessibilityRole="button"
+        accessibilityLabel="Close"
+      />
+      <View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          maxHeight,
+          backgroundColor: color.surfaceRaised,
+          borderTopLeftRadius: radius.xl,
+          borderTopRightRadius: radius.xl,
+          borderWidth: 1,
+          borderColor: color.borderStrong,
+          paddingTop: space.lg,
+          gap: space.md,
+        }}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingHorizontal: space.xl }}>
           <Text
-            onPress={() => void Linking.openURL(MEDIA_LICENCE_URL).catch(() => undefined)}
-            accessibilityRole="link"
-            style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkFaint, marginTop: -space.sm }}
+            numberOfLines={2}
+            accessibilityRole="header"
+            style={{ flex: 1, fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}
           >
-            {MEDIA_CREDIT}
+            {name}
           </Text>
-        ) : null}
-        {steps.length > 0 && !picture ? (
-          <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>
-            No moving demo for this exercise yet — the steps are below.
-          </Text>
-        ) : null}
-        {steps.length > 0 ? (
-          <View style={{ gap: space.sm }}>
-            {steps.map((s, i) => (
-              <View key={i} style={{ flexDirection: 'row', gap: space.sm }}>
-                <Text style={{ width: 18, fontFamily: type.monoBold, fontSize: type.size.sub, color: color.accent }}>
-                  {i + 1}
-                </Text>
-                <Text style={{ flex: 1, fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>
-                  {s}
-                </Text>
+          <Pressable onPress={onClose} hitSlop={10} accessibilityRole="button" accessibilityLabel="Close">
+            <Icon name="close" size={22} color={color.inkMuted} />
+          </Pressable>
+        </View>
+        <ScrollView
+          style={{ flexGrow: 0, flexShrink: 1 }}
+          contentContainerStyle={{
+            paddingHorizontal: space.xl,
+            paddingBottom: Math.max(insets.bottom, space.lg) + space.md,
+          }}
+          showsVerticalScrollIndicator
+        >
+          <View style={{ gap: space.md }}>
+            {visible ? picture : null}
+            {showCredit ? <DrawingCredit beforeOpen={onClose} /> : null}
+            {steps.length > 0 && !picture ? (
+              <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>
+                No moving demo for this exercise yet — the steps are below.
+              </Text>
+            ) : null}
+            {steps.length > 0 ? (
+              <View style={{ gap: space.sm }}>
+                {steps.map((s, i) => (
+                  <View key={i} style={{ flexDirection: 'row', gap: space.sm }}>
+                    <Text style={{ width: 18, fontFamily: type.monoBold, fontSize: type.size.sub, color: color.accent }}>
+                      {i + 1}
+                    </Text>
+                    <Text style={{ flex: 1, fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>
+                      {s}
+                    </Text>
+                  </View>
+                ))}
               </View>
-            ))}
+            ) : !picture ? (
+              <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>
+                No picture for this exercise yet. Add your own photo or video from the exercise page.
+              </Text>
+            ) : null}
           </View>
-        ) : !picture ? (
-          <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>
-            No picture for this exercise yet. Add your own photo or video from the exercise page.
-          </Text>
-        ) : null}
+        </ScrollView>
       </View>
-    </TrackerSheet>
+    </Modal>
   );
 }

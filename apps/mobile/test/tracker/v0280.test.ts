@@ -67,10 +67,13 @@ describe('an export shared to ForgeAI from the share menu', () => {
 });
 
 describe('the Drive backup keeps every column the tracker adds', () => {
-  it('each ensureColumn of a backed-up table is in the backup list (v0.28.0 missed dist_unit)', async () => {
+  // [source-text check] Superseded by the behavioural test/db/backupRoundTrip.test.ts (real SQLite); kept as a second guard (audit QA-12).
+  it('[source-text check] each ensureColumn of a backed-up table is in the backup list (v0.28.0 missed dist_unit)', async () => {
     const { readFileSync } = await import('node:fs');
-    const schema = readFileSync('src/tracker/db/trackerSchema.ts', 'utf8');
-    const snap = readFileSync('src/cloud/snapshot.ts', 'utf8');
+    const { join } = await import('node:path');
+    const app = join(__dirname, '..', '..'); // apps/mobile, whatever the working directory (QA-25)
+    const schema = readFileSync(join(app, 'src/tracker/db/trackerSchema.ts'), 'utf8');
+    const snap = readFileSync(join(app, 'src/cloud/snapshot.ts'), 'utf8');
     const added = [...schema.matchAll(/ensureColumn\('(\w+)', '(\w+)'/g)].map((m) => [m[1], m[2]] as const);
     expect(added.length).toBeGreaterThan(5);
     const missing: string[] = [];

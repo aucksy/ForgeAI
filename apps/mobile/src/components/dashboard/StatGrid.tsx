@@ -10,6 +10,10 @@ interface StatGridProps {
   data: DashboardData;
   /** Tapping the calorie/protein rings opens the nutrition manager. */
   onPressNutrition?: () => void;
+  /** Calorie/protein rings (nutrition switch). Default shown. */
+  showRings?: boolean;
+  /** Recovery/strength tiles (coach switch). Default shown. */
+  showScores?: boolean;
 }
 
 const PROTEIN_COLOR = chart.series[2]; // aqua — distinct from the calorie ember
@@ -72,7 +76,12 @@ function RingCard({
 }
 
 /** 2x2 stat grid: calorie + protein rings on top, recovery + strength tiles below. */
-export function StatGrid({ data, onPressNutrition }: StatGridProps) {
+export function StatGrid({
+  data,
+  onPressNutrition,
+  showRings = true,
+  showScores = true,
+}: StatGridProps) {
   const rings = (
     <View style={{ flexDirection: 'row', gap: space.md }}>
       <RingCard
@@ -95,7 +104,7 @@ export function StatGrid({ data, onPressNutrition }: StatGridProps) {
 
   return (
     <View style={{ gap: space.md }}>
-      {onPressNutrition ? (
+      {!showRings ? null : onPressNutrition ? (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Nutrition — view and log today's meals"
@@ -110,24 +119,26 @@ export function StatGrid({ data, onPressNutrition }: StatGridProps) {
       ) : (
         rings
       )}
-      <View style={{ flexDirection: 'row', gap: space.md }}>
-        <View style={{ flex: 1 }}>
-          <StatTile
-            label="Recovery"
-            value={data.recovery.score}
-            unit={capitalize(data.recovery.label)}
-            icon="heart"
-          />
+      {showScores ? (
+        <View style={{ flexDirection: 'row', gap: space.md }}>
+          <View style={{ flex: 1 }}>
+            <StatTile
+              label="Recovery"
+              value={data.recovery.score}
+              unit={capitalize(data.recovery.label)}
+              icon="heart"
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <StatTile
+              label="Strength"
+              value={data.strength.score}
+              unit={data.strength.label}
+              icon="zap"
+            />
+          </View>
         </View>
-        <View style={{ flex: 1 }}>
-          <StatTile
-            label="Strength"
-            value={data.strength.score}
-            unit={data.strength.label}
-            icon="zap"
-          />
-        </View>
-      </View>
+      ) : null}
     </View>
   );
 }

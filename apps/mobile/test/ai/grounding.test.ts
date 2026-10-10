@@ -30,11 +30,12 @@ describe('checkGrounding', () => {
     expect(r.ungroundedNumbers).toEqual(['125']);
   });
 
-  it('pins a known limitation: a number that is a SUBSTRING of a source number reads as grounded', () => {
+  // Was a green test pinning the bug as "current behaviour" (audit QA-14). Now it states the
+  // RIGHT behaviour and is marked it.fails: green while the gap is open, RED the day a fix
+  // lands — then switch it to it(...). See test/known-defects/ for the convention.
+  it.fails('QA-14 known defect: a number that is only a SUBSTRING of a source number ("12" inside "125") is not grounded', () => {
     // The check is a plain corpus.includes(n), so "12" is "found" inside "125".
-    // This is a lenient by-design tripwire (never blocks a reply); documented here
-    // so a future tightening is a conscious, test-visible change.
     const r = checkGrounding('You did 12 sets total.', ['session volume 125 kg']);
-    expect(r.grounded).toBe(true);
+    expect(r.grounded).toBe(false);
   });
 });

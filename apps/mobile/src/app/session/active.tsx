@@ -326,7 +326,7 @@ export default function ActiveWorkoutScreen() {
         )}
         <IconButton
           icon="check"
-          tint={canFinish && !committing ? color.accent : color.inkFaint}
+          tint={canFinish && !committing ? color.accent : color.inkDisabled}
           onPress={onPrimary}
           accessibilityLabel={isEditing ? 'Save changes' : 'Finish workout'}
         />

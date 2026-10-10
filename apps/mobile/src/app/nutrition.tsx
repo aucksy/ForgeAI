@@ -1,7 +1,7 @@
 /** Today's nutrition — view / add / delete meals. Frozen nutritionRepo, offline, kg.
  *  Meals were previously only creatable via chat and never viewable/editable; this
  *  gives the prominent Home calorie/protein rings a real management surface. */
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, Text, TextInput, View } from 'react-native';
 
@@ -17,6 +17,7 @@ import {
 import { getProfile } from '@/db/repos/userRepo';
 import { deleteMeal, getMealsForDay, logMeal } from '@/db/repos/nutritionRepo';
 import { todayISO } from '@/lib/date';
+import { FEATURES } from '@/lib/features';
 import { fmtInt } from '@/lib/format';
 import { success, tap } from '@/lib/haptics';
 import { useDashboard } from '@/store/dashboardStore';
@@ -51,7 +52,13 @@ const inputStyle = {
 
 const emptyDraft = { description: '', calories: '', proteinG: '', carbsG: '', fatG: '' };
 
-export default function NutritionScreen() {
+/** D4 = A: nutrition is hidden until its own phase — an old link here goes Home. */
+export default function NutritionRoute() {
+  if (!FEATURES.nutrition) return <Redirect href="/" />;
+  return <NutritionScreen />;
+}
+
+function NutritionScreen() {
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [meals, setMeals] = useState<Meal[]>([]);

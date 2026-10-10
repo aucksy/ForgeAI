@@ -6,11 +6,18 @@ the last block then also holds the channel list printed after it, where channel 
 (v0.26.1 review). So each record is cut at the first line that is not indented deeper than it.
 
 Usage: notif.py <check> <dump-file> [args]
-  over-locked <tick_ms>   "Rest is over" posted after a rest on a sleeping phone (prints how late)
+  over-locked <tick_ms> [during-rest-dump]
+                          "Rest is over" posted after a rest on a sleeping phone. The due time is
+                          the rest card's `when` (the exact end time the app set) read from the
+                          dump taken during the rest; FAILS when the alert was more than
+                          REST_LATE_BUDGET_S (default 5) late, or more than 2 s early.
+                          Without that dump the due time is tick + 30 s (approximate): lateness
+                          is then printed but cannot fail the run.
   ongoing                 the "Workout in progress" card is showing
   card <title-prefix>     the rest card is showing: swipe-away, both buttons, the given title
   over-open               "Rest is over" posted while the app was open, and the rest card gone
 """
+import os
 import re
 import sys
 
@@ -62,15 +69,32 @@ def main():
             print("[qa] REST ALERT NOT FOUND in the notification list 50 s after a 30 s rest")
             return 1
         b = over[0]
-        m = re.search(r"mCreationTimeMs=(\d+)", b) or re.search(r"\bwhen=(\d+)", b)
+        # Only the posting time counts: the alert's own `when` is the rest's due time
+        # (RestCard.postOver sets it), so reading it would always measure 0 s late.
+        m = re.search(r"mCreationTimeMs=(\d+)", b)
         ch = re.search(r"channel=([\w-]+)", header(b))
-        if m:
-            posted = int(m.group(1))
+        channel = ch.group(1) if ch else "?"
+        if not m:
+            print("[qa] REST ALERT posted (no timestamp found in dump); lateness NOT measured")
+            return 0
+        posted = int(m.group(1))
+        # Due time = the rest card's `when`, the exact end time the app set when the rest began.
+        due = None
+        if len(sys.argv) > 4:
+            during = records(open(sys.argv[4], encoding="utf-8", errors="replace").read())
+            card = [x for x in during if "channel=rest-card" in header(x)]
+            w = re.search(r"\bwhen=(\d+)", card[0]) if card else None
+            due = int(w.group(1)) if w else None
+        if due is None:
             late = (posted - (tick + 30000)) / 1000
-            print(f"[qa] REST ALERT posted (channel {ch.group(1) if ch else '?'}); due ~{tick + 30000}, posted {posted}, late by about {late:.1f}s (tick time is approximate, +/- a few s)")
-        else:
-            print("[qa] REST ALERT posted (no timestamp found in dump)")
-        return 0
+            print(f"[qa] REST ALERT posted (channel {channel}); due ~{tick + 30000} (approximate: no rest card in the during-rest dump), posted {posted}, late by about {late:.1f}s - lateness NOT gated")
+            return 0
+        budget = float(os.environ.get("REST_LATE_BUDGET_S", "5"))
+        late = (posted - due) / 1000
+        ok = -2.0 <= late <= budget
+        verdict = "within budget" if ok else ("REST ALERT TOO LATE" if late > budget else "REST ALERT TOO EARLY")
+        print(f"[qa] REST ALERT posted (channel {channel}); due {due} (the rest card's end time), posted {posted}, late by {late:.1f}s; budget {budget:g}s: {verdict}")
+        return 0 if ok else 1
     if check == "ongoing":
         ok = any(title(b) == "Workout in progress" for b in recs)
         print("[qa] ONGOING CARD present" if ok else "[qa] ONGOING CARD MISSING")
@@ -84,8 +108,10 @@ def main():
         fm = re.search(r"flags=(0x[0-9a-fA-F]+)", header(b))
         f = int(fm.group(1), 16) if fm else -1
         swipe = f >= 0 and not (f & 0x2) and not (f & 0x20)
-        plus = "+15 s" in b
-        skip = re.search(r'"Skip"', b) is not None or "Skip" in b
+        # The buttons are the record's notification ACTIONS ('[1] "Skip" -> PendingIntent...'),
+        # not any text that happens to contain the word.
+        plus = re.search(r'^\s*\[\d+\] "\+15 s" ->', b, re.M) is not None
+        skip = re.search(r'^\s*\[\d+\] "Skip" ->', b, re.M) is not None
         t = title(b)
         chrono = "android.showChronometer=Boolean (true)" in b
         down = "android.chronometerCountDown=Boolean (true)" in b

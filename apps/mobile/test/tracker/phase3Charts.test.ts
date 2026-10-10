@@ -73,7 +73,8 @@ function walk(dir: string): string[] {
 }
 
 describe('every line chart of dated points uses the date-spaced chart', () => {
-  it('no screen draws a line with the index-spaced LineChart or Sparkline', () => {
+  // [source-text check] Architecture lint over source text — kept on purpose as lint, not a behaviour test (audit QA-12).
+  it('[source-text check] no screen draws a line with the index-spaced LineChart or Sparkline', () => {
     const src = join(__dirname, '..', '..', 'src');
     const offenders = walk(src)
       .filter((f) => !relative(src, f).replace(/\\/g, '/').startsWith('components/charts/'))

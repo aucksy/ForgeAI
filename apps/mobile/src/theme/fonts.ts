@@ -11,8 +11,12 @@ import {
 } from '@expo-google-fonts/space-grotesk';
 import { useFonts } from 'expo-font';
 
-export function useAppFonts() {
-  const [loaded] = useFonts({
+import { fontsSettled } from './fontGate';
+
+/** True once the fonts have loaded OR failed — on a failure the phone's own font is
+ *  used, so the app never stays on the splash (SH-02). */
+export function useAppFonts(): boolean {
+  const [loaded, error] = useFonts({
     Manrope_400Regular,
     Manrope_500Medium,
     Manrope_600SemiBold,
@@ -22,5 +26,5 @@ export function useAppFonts() {
     SpaceGrotesk_500Medium,
     SpaceGrotesk_700Bold,
   });
-  return loaded;
+  return fontsSettled(loaded, error);
 }

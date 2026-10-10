@@ -8,6 +8,7 @@ import { getProfile, updateProfile } from '@/db/repos/userRepo';
 import { getMemberPhone, setMemberPhone } from '@/onboarding/db/dataActions';
 import { validateE164 } from '@/onboarding/form';
 import { success } from '@/lib/haptics';
+import { FEATURES } from '@/lib/features';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { UserProfile } from '@/types/models';
 
@@ -215,6 +216,8 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
         />
       </View>
 
+      {/* Calorie and macro targets only drive nutrition, which is hidden (owner decision D4). */}
+      {FEATURES.nutrition ? (
       <View style={{ marginTop: space.lg }}>
         <Text style={overline}>Daily targets</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
@@ -246,6 +249,7 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
           ))}
         </View>
       </View>
+      ) : null}
 
       <View style={{ marginTop: space.lg }}>
         <PrimaryButton

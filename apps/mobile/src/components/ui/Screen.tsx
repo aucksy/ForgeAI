@@ -18,7 +18,10 @@ export interface ScreenProps {
   children?: ReactNode;
 }
 
-/** Page shell: backdrop gradient wash + ember glow, safe area, animated header. */
+/**
+ * Page shell: backdrop gradient wash + ember glow, safe area, animated header, and a solid
+ * strip behind the status bar so nothing scrolls under the clock.
+ */
 export function Screen({ title, subtitle, scroll = true, right, noPad, children }: ScreenProps) {
   const insets = useSafeAreaInsets();
   const hasHeader = Boolean(title || subtitle || right);
@@ -68,24 +71,7 @@ export function Screen({ title, subtitle, scroll = true, right, noPad, children 
 
   return (
     <View style={{ flex: 1, backgroundColor: color.bg }}>
-      <LinearGradient
-        colors={gradients.backdrop}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 340 }}
-      />
-      <LinearGradient
-        colors={gradients.emberSubtle}
-        start={{ x: 0.2, y: 0 }}
-        end={{ x: 0.9, y: 1 }}
-        style={{
-          position: 'absolute',
-          top: -70,
-          right: -70,
-          width: 220,
-          height: 220,
-          borderRadius: 110,
-          opacity: 0.55,
-        }}
-      />
+      <Backdrop />
       {scroll ? (
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -111,6 +97,47 @@ export function Screen({ title, subtitle, scroll = true, right, noPad, children 
           {children}
         </View>
       )}
+      {/*
+        SH-28 / PG-29: the status bar is see-through, so scrolled text used to slide under the
+        clock. This strip covers the top inset with an exact copy of the backdrop behind it —
+        invisible at rest, solid once content scrolls beneath it.
+      */}
+      {insets.top > 0 ? (
+        <View
+          pointerEvents="none"
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top, overflow: 'hidden', backgroundColor: color.bg }}
+        >
+          <Backdrop />
+        </View>
+      ) : null}
     </View>
+  );
+}
+
+/** The page wash + ember glow, pinned to the top of the screen. */
+function Backdrop() {
+  return (
+    <>
+      <LinearGradient
+        colors={gradients.backdrop}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 340 }}
+      />
+      <LinearGradient
+        colors={gradients.emberSubtle}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.9, y: 1 }}
+        style={{
+          position: 'absolute',
+          top: -70,
+          right: -70,
+          width: 220,
+          height: 220,
+          borderRadius: 110,
+          opacity: 0.55,
+        }}
+      />
+    </>
   );
 }

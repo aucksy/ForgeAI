@@ -11,6 +11,11 @@ import { defineConfig } from 'vitest/config';
  * reach its pure exports. See test/stubs/native.ts.
  */
 const nativeStub = resolve(__dirname, 'test/stubs/native.ts');
+// expo-sqlite has its own stub: it still throws by default, but a real-SQL test can plug an
+// in-memory SQLite (sql.js) into it — see test/helpers/realDb.ts. expo-crypto's only use
+// (randomUUID) is served by Node's own, so code that creates rows can run for real.
+const sqliteStub = resolve(__dirname, 'test/stubs/expo-sqlite.ts');
+const cryptoStub = resolve(__dirname, 'test/stubs/expo-crypto.ts');
 
 export default defineConfig({
   define: {
@@ -20,9 +25,9 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: /^@\/(.*)$/, replacement: resolve(__dirname, 'src/$1') },
-      { find: 'expo-sqlite', replacement: nativeStub },
+      { find: 'expo-sqlite', replacement: sqliteStub },
       { find: 'expo-secure-store', replacement: nativeStub },
-      { find: 'expo-crypto', replacement: nativeStub },
+      { find: 'expo-crypto', replacement: cryptoStub },
       { find: '@react-native-async-storage/async-storage', replacement: nativeStub },
       // Phase 1 workout screen: notifications, sounds and their audio files are
       // device-only; the pure rest/record/routine rules never reach them.

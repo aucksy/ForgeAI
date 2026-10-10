@@ -11,7 +11,26 @@
 // Palette + spacing/radius scales are shared — sourced from @forgeai/theme and
 // re-exported so `@/theme/tokens` keeps its full surface. Mobile-only derivations
 // (chart palette, RN gradients/shadows/motion, font keys) follow below.
-export { color, space, radius } from '@forgeai/theme';
+import { color as sharedColor } from '@forgeai/theme';
+
+export { space, radius } from '@forgeai/theme';
+
+/**
+ * The shared palette, with the two lower greys raised for the phone (SH-19 / LW-14).
+ * The shared values (#6C7383, #3D4354) measured 1.6–4.2:1 on our dark planes — the grey
+ * hint numbers in a set row were near invisible under gym lights. Every text grey now
+ * reaches 4.5:1 on bg, surface, surfaceRaised, surfaceSunken, glass and the hero-card top
+ * (test/theme/contrast.test.ts). Mobile-only override: the web dashboard keeps its own look.
+ */
+export const color = {
+  ...sharedColor,
+  /** Captions, axis labels, column heads — 5.5:1 or better on every plane. */
+  inkMuted: '#9097A8',
+  /** Placeholders and hints (e.g. what a set tick will save) — 4.5:1 or better on every plane. */
+  inkFaint: '#82899B',
+  /** Inactive controls ONLY (WCAG-exempt). Never for information. ≥ 3:1 on bg/surface. */
+  inkDisabled: '#5E6577',
+} as const;
 
 export const chart = {
   /** Categorical slots, fixed order (validated): ember, blue, aqua, violet, yellow. */
