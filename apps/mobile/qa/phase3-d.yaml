@@ -43,8 +43,9 @@ appId: com.forgeai.app
 - tapOn:
     text: "Show trend Treadmill Run"
     index: 0
+# Progress keeps its scroll position (the lifts list), so wait for something in view there.
 - extendedWaitUntil:
-    visible: "This week.* vs your usual"
+    visible: "Any exercise.*"
     timeout: 15000
 - scrollUntilVisible:
     element: "Open exercise page"
