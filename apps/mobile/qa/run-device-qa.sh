@@ -77,7 +77,8 @@ log "screen on"
 # from the dump taken during the rest)? Fails when more than REST_LATE_BUDGET_S (5 s) late.
 python3 "$QA_DIR/notif.py" over-locked "$OUT/notifications-after-rest.txt" "$TICK_MS" "$OUT/notifications-during-rest.txt" >> "$OUT/timeline.txt" || status=1
 python3 "$QA_DIR/notif.py" ongoing "$OUT/notifications-after-rest.txt" >> "$OUT/timeline.txt" || status=1
-# v0.26.1: the rest card was showing during the rest (what a paired watch would show).
+# v0.26.1: the rest card was showing during the rest (what a paired watch would show); Phase 6:
+# with its three buttons in the order Done, +15 s, Skip (the next set exists, so Done shows).
 python3 "$QA_DIR/notif.py" card "$OUT/notifications-during-rest.txt" "Rest 0:30" >> "$OUT/timeline.txt" || status=1
 
 # ---------------------------------------------------------------- part B
@@ -144,8 +145,17 @@ maestro test --format junit --output "$OUT/part-h1.xml" --test-output-dir "$OUT/
   > "$OUT/part-h1.log" 2>&1 || { status=1; log "PART H1 FAILED"; }
 adb shell dumpsys notification --noredact > "$OUT/h-card-after-plus15.txt"
 # The card must be swipe-away (no ongoing / no-clear flag), on its Phase 2 channel (rest-card-v2,
-# no sound), with both buttons. Its shade view counts down; notif.py reads the title it still sets.
-python3 "$QA_DIR/notif.py" card "$OUT/h-card-after-plus15.txt" "Rest 3:15" >> "$OUT/timeline.txt" || status=1
+# no sound), with its three buttons in the order Done, +15 s, Skip (Phase 6). Its shade view
+# counts down; notif.py reads the title it still sets.
+python3 "$QA_DIR/notif.py" card "$OUT/h-card-after-plus15.txt" "Rest 3:15" "Barbell Bench Press, set 2" >> "$OUT/timeline.txt" || status=1
+# Phase 6: "Done" on that card, from the shade (still open), with the app in the background:
+# set 2 is ticked and its rest starts, so the card comes back as "Rest 3:00" naming set 3; the
+# app, opened again, shows it. H2 then uses THIS card's Skip.
+free_maestro
+log "part H1D start"
+maestro test --format junit --output "$OUT/part-h1d.xml" --test-output-dir "$OUT/part-h1d" "$QA_DIR/v0261-h1d.yaml"   > "$OUT/part-h1d.log" 2>&1 || { status=1; log "PART H1D FAILED"; }
+adb shell dumpsys notification --noredact > "$OUT/h-card-after-done.txt"
+python3 "$QA_DIR/notif.py" card "$OUT/h-card-after-done.txt" "Rest 3:00" "Barbell Bench Press, set 3" >> "$OUT/timeline.txt" || status=1
 adb shell cmd statusbar collapse >/dev/null 2>&1 || true
 adb shell input keyevent KEYCODE_HOME
 sleep 3
@@ -177,6 +187,69 @@ adb shell dumpsys alarm | grep -c "com.forgeai.app" > "$OUT/i-alarm-count.txt" 2
 log "dumpsys alarm lines mentioning the app after part I (not an alarm count): $(cat "$OUT/i-alarm-count.txt" 2>/dev/null)"
 adb shell dumpsys appwidget > "$OUT/i-appwidget.txt" 2>/dev/null || true
 log "home-screen widget list saved (i-appwidget.txt); ForgeAI widget lines: $(grep -c 'com.forgeai.phone.TodayWidget' "$OUT/i-appwidget.txt" 2>/dev/null)"
+
+# ---------------------------------------------------------------- widget link (audit Phase 6, PH-09)
+# The Today widget's Start / Resume opens forgeai://workout/start?routine=<id> (plus the widget's
+# own secret token). A link WITHOUT that token never starts a workout by itself, and one with no
+# routine, or a routine that does not exist, lands on the Workout tab. Here: the app idle (part I
+# finished its workout, none is open), the link opened with adb, then a short Maestro part
+# (phase6-link.yaml) reads the screen: "Start empty workout", and no open workout's texts. Also
+# no "Workout in progress" notification may appear (notif.py no-ongoing, dumps before and after).
+# Part I2 starts the app afresh after this, so the screen it leaves does not matter.
+widget_link() {
+  local name="$1" url="$2" before="$OUT/link-$1-notif-before.txt" after="$OUT/link-$1-notif-after.txt" res bad=""
+  adb shell input keyevent KEYCODE_HOME
+  sleep 2
+  adb shell dumpsys notification --noredact > "$before"
+  free_maestro
+  res=$(adb shell am start -W -a android.intent.action.VIEW -d "\"$url\"" "$PKG" 2>&1 | tr -d '\r')
+  echo "$res" > "$OUT/link-$name-am.txt"
+  log "WIDGET LINK $name: am start -W $url -> $(echo "$res" | grep -E '^(Status|Error|Warning)' | tr '\n' ' ')"
+  sleep 5
+  log "part link$name start"
+  maestro test --format junit --output "$OUT/part-link$name.xml" --test-output-dir "$OUT/part-link$name" "$QA_DIR/phase6-link.yaml" \
+    > "$OUT/part-link$name.log" 2>&1 || { status=1; log "PART LINK$(echo "$name" | tr '[:lower:]' '[:upper:]') FAILED"; bad="the Workout tab did not show, or an open workout did (part-link$name.log, link-$name.png)"; }
+  adb exec-out screencap -p > "$OUT/link-$name.png"
+  adb shell dumpsys notification --noredact > "$after"
+  if echo "$res" | grep -qiE "^Error|unable to resolve"; then
+    bad="${bad:+$bad; }the link did not open ForgeAI ($(echo "$res" | grep -iE '^Error|unable to resolve' | head -1))"
+  fi
+  # A "Workout in progress" card that was not there before the link = a workout was started.
+  if python3 "$QA_DIR/notif.py" no-ongoing "$before" > /dev/null; then
+    python3 "$QA_DIR/notif.py" no-ongoing "$after" > /dev/null || bad="${bad:+$bad; }a \"Workout in progress\" notification appeared after the link"
+  else
+    log "WIDGET LINK $name: note, a \"Workout in progress\" notification was already showing before the link (none should be after part I)"
+  fi
+  if [ -n "$bad" ]; then
+    log "WIDGET LINK $name FAILED: $url: $bad"
+    status=1
+  else
+    log "WIDGET LINK $name: $url opened the Workout tab and started nothing"
+  fi
+}
+widget_link 1 "forgeai://workout/start"
+widget_link 2 "forgeai://workout/start?routine=not-a-routine"
+free_maestro
+adb shell input keyevent KEYCODE_HOME
+
+# ---------------------------------------------------------------- part I2 (audit Phase 6, PH-01: notifications off)
+# Notifications blocked for ForgeAI: Profile's reminders row says so and offers "Turn on
+# notifications". Blocked here by taking the notification permission away (Android stops the app);
+# given back right after, for the parts that follow.
+adb shell pm revoke "$PKG" android.permission.POST_NOTIFICATIONS > "$OUT/i2-revoke.txt" 2>&1 || log "NOTIFICATIONS OFF: could not revoke the permission ($(tr -d '\r' < "$OUT/i2-revoke.txt"))"
+sleep 2
+free_maestro
+log "part I2 start"
+maestro test --format junit --output "$OUT/part-i2.xml" --test-output-dir "$OUT/part-i2" "$QA_DIR/phase6-i2.yaml"   > "$OUT/part-i2.log" 2>&1 || { status=1; log "PART I2 FAILED"; }
+adb shell pm clear-permission-flags "$PKG" android.permission.POST_NOTIFICATIONS user-set user-fixed >/dev/null 2>&1 || true
+adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS > "$OUT/i2-grant.txt" 2>&1 || true
+if adb shell dumpsys package "$PKG" | tr -d '\r' | grep -q "android.permission.POST_NOTIFICATIONS: granted=true"; then
+  log "NOTIFICATIONS OFF: permission given back after part I2"
+else
+  log "NOTIFICATIONS OFF FAILED: the notification permission could not be given back ($(tr -d '\r' < "$OUT/i2-grant.txt"))"
+  status=1
+fi
+adb shell input keyevent KEYCODE_HOME
 
 # ---------------------------------------------------------------- part J (v0.28.0: the member's own Hevy routines)
 # A real-format Hevy .csv (text dates) with two routines, free workouts and an old name.

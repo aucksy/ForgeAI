@@ -1,7 +1,9 @@
-# v0.26.1 device QA, part H2 — runs after H1, once the script has STOPPED the app's process
-# (Android closed it in the background). "Skip" on the card still works: the card goes, and the
-# app, opened again, has no rest running. Then a 30 s rest with the app OPEN: "Rest is over" is
-# still posted (that is what buzzes a watch); the script reads the notification list after.
+# v0.26.1 device QA, part H2 — runs after H1 and H1D, once the script has STOPPED the app's
+# process (Android closed it in the background). The card is the one H1D's "Done" posted
+# ("Rest 3:00 · ends …", naming set 3). "Skip" on the card still works: the card goes, and the
+# app, opened again, has no rest running (and set 2, ticked by Done, is still ticked). Then a 30 s
+# rest with the app OPEN (after set 3, the last set): "Rest is over" is still posted (that is what
+# buzzes a watch); the script reads the notification list after.
 appId: com.forgeai.app
 ---
 - swipe:
@@ -13,7 +15,7 @@ appId: com.forgeai.app
 # The shade swipe sometimes lands on the launcher instead (run 38038041222): try twice more.
 - runFlow:
     when:
-      notVisible: 'Rest 3:15 · ends .*'
+      notVisible: 'Rest 3:00 · ends .*'
     commands:
       - swipe:
           start: 50%, 0%
@@ -23,14 +25,14 @@ appId: com.forgeai.app
           timeout: 3000
 - runFlow:
     when:
-      notVisible: 'Rest 3:15 · ends .*'
+      notVisible: 'Rest 3:00 · ends .*'
     commands:
       - swipe:
           start: 50%, 0%
           end: 50%, 80%
           duration: 800
 - extendedWaitUntil:
-    visible: 'Rest 3:15 · ends .*'
+    visible: 'Rest 3:00 · ends .*'
     timeout: 15000
 - runFlow:
     when:
@@ -38,13 +40,14 @@ appId: com.forgeai.app
     commands:
       - swipe:
           from:
-            text: 'Rest 3:15 · ends .*'
+            text: 'Rest 3:00 · ends .*'
           direction: DOWN
+- assertVisible: '.*Barbell Bench Press, set 3'
 - tapOn:
     text: '^Skip$'
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
-    notVisible: 'Rest 3:15 · ends .*'
+    notVisible: 'Rest 3:00 · ends .*'
     timeout: 10000
 - takeScreenshot: 113-shade-after-skip
 - pressKey: Back
@@ -65,14 +68,17 @@ appId: com.forgeai.app
     visible: "More for Barbell Bench Press"
     timeout: 20000
 - assertNotVisible: "Skip rest"
+# Phase 6: the set H1D's "Done" ticked is still ticked after the process was stopped (saved).
+- assertVisible: 'Barbell Bench Press set 2 complete\. Tap to undo'
 - takeScreenshot: 114-app-after-skip-on-card
 # ---------------------------------------------------------------- rest ends with the app open
 - tapOn: "More for Barbell Bench Press"
 - tapOn: "Rest timer"
 - tapOn: "Rest 30s"
-# LW-27: set 1 was ticked in H1; set 2 is "Mark Barbell Bench Press set 2 complete".
+# LW-27: set 1 was ticked in H1, set 2 by "Done" on the card in H1D; set 3 is
+# "Mark Barbell Bench Press set 3 complete" (the last set still rests: a rest follows every set).
 - tapOn:
-    text: "Mark .* set 2 complete"
+    text: "Mark .* set 3 complete"
     index: 0
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:

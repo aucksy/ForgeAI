@@ -1,0 +1,45 @@
+# Audit Phase 6 device QA, part I2 (PH-01) — runs after part I, which turned workout reminders on.
+# The script has just taken ForgeAI's notification permission away (as a member blocking its
+# notifications would). Profile's reminders row must say so — "Notifications are off for ForgeAI,
+# so no reminder can arrive." — and offer "Turn on notifications" (not tapped: it leaves the app
+# for Android's settings). The script gives the permission back after this part.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+# Reminders are on, so the app may ask for the permission again: answer "Don't allow".
+- runFlow:
+    when:
+      visible: "(?i)^don.t allow$"
+    commands:
+      - takeScreenshot: 135a-notification-permission-asked
+      - tapOn: "(?i)^don.t allow$"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn: "^Profile$"
+- runFlow:
+    when:
+      visible: "(?i)^don.t allow$"
+    commands:
+      - tapOn: "(?i)^don.t allow$"
+- scrollUntilVisible:
+    element: "Workout reminders"
+    centerElement: true
+    timeout: 90000
+- runFlow:
+    when:
+      visible: "(?i)^don.t allow$"
+    commands:
+      - tapOn: "(?i)^don.t allow$"
+- extendedWaitUntil:
+    visible: "Notifications are off for ForgeAI, so no reminder can arrive\\."
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Turn on notifications"
+    centerElement: true
+    timeout: 15000
+- assertNotVisible: ".*Next: .*"
+- takeScreenshot: 135-reminders-notifications-off

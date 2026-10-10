@@ -182,6 +182,11 @@ export interface ImportResult {
   replacedSessionIds?: string[];
   /** The workouts this import wrote (Undo import takes exactly these away). */
   createdSessionIds?: string[];
+  /**
+   * Phase 6 review fix (Merge): workouts imported before that got sets added now (`backfilledSets`),
+   * so their Health Connect copy (its length and calories) is sent again.
+   */
+  extendedSessionIds?: string[];
 }
 
 // ---------------------------------------------------------------- text utils
@@ -1132,6 +1137,7 @@ export async function runImport(
     backfilledSets: 0,
     skippedSameWorkout: 0,
     createdSessionIds: [],
+    extendedSessionIds: [],
   };
   const total = parsed.workouts.length;
   const backfillDone = (await getMeta(TIMED_BACKFILL_KEY).catch(() => null)) === '1';
@@ -1287,6 +1293,7 @@ export async function runImport(
             if (add.length > 0) {
               await addSetsWithMeta(sessionId, add);
               result.backfilledSets += add.length;
+              if (!result.extendedSessionIds?.includes(sessionId)) result.extendedSessionIds?.push(sessionId);
             }
           }
         }

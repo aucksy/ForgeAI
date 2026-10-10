@@ -12,6 +12,12 @@
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
       </intent-filter>
+      <!-- Redraw both widgets when the clock or time zone is changed (Android still delivers
+           these two to a manifest receiver). The after-midnight redraw is an explicit alarm. -->
+      <intent-filter>
+        <action android:name="android.intent.action.TIME_SET"/>
+        <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+      </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/forge_widget_today"/>
     </receiver>
     <receiver android:name="com.forgeai.phone.WeekWidget" android:exported="true" android:label="@string/forge_widget_week_label">

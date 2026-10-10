@@ -15,7 +15,15 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *  - canScheduleExact() / openExactAlarmSettings()      — "Alarms & reminders";
  *  - notificationsEnabled() / openNotificationSettings() — ForgeAI's notifications;
  *  - is24Hour(), ringerMode() (0 silent, 1 vibrate, 2 normal), setRingThroughDnd(on).
- * Events: onRestChange { kind: "add" | "skip" | "end", endsAt, startedAt }, onOpenWorkout.
+ * Phase 6 ("Done" on the card and on "Rest is over"):
+ *  - setDoneTarget(workout, exKey, setKey, open, values) — the row the next card's Done ticks
+ *                                    (exKey null = no Done) and its grey hint; called just
+ *                                    before show();
+ *  - takePendingDone()             — the kept Done tap, once ({ workout, exKey, setKey, endsAt,
+ *                                    at, open, label, values } or null);
+ *  - postDoneNote(title, text)     — a quiet note that opens the app (a tap it could not act on);
+ *  - doneSettled()                 — the app acted on the Done tap: its broadcast may end.
+ * Events: onRestChange { kind: "add" | "skip" | "end" | "done", endsAt, startedAt }, onOpenWorkout.
  */
 class ForgeRestModule : Module() {
   private val ctx: Context?
@@ -40,6 +48,15 @@ class ForgeRestModule : Module() {
     }
 
     OnNewIntent { intent ->
+      // Phase 6: an "open" Done (a row with nothing to save) brought the app up: keep it for JS.
+      val c = ctx
+      if (c != null && RestCard.captureDoneIntent(c, intent)) {
+        try {
+          sendEvent("onRestChange", mapOf("kind" to "done", "endsAt" to 0.0, "startedAt" to 0.0))
+        } catch (_: Exception) {
+          // JS reads it with takePendingDone when it comes back.
+        }
+      }
       if (intent.getBooleanExtra(RestCard.EXTRA_OPEN, false)) {
         intent.removeExtra(RestCard.EXTRA_OPEN)
         try {
@@ -115,6 +132,45 @@ class ForgeRestModule : Module() {
     Function("setRingThroughDnd") { on: Boolean ->
       val c = ctx ?: return@Function false
       RestCard.setRingThroughDnd(c, on)
+      true
+    }
+
+    Function("setDoneTarget") { workout: Double, exKey: String?, setKey: String?, open: Boolean, values: String? ->
+      val c = ctx ?: return@Function false
+      val t = if (exKey != null && setKey != null && workout > 0.0) {
+        RestCard.DoneTarget(workout.toLong(), exKey, setKey, open, values)
+      } else {
+        null
+      }
+      RestCard.setDoneTarget(c, t)
+      true
+    }
+
+    Function("takePendingDone") {
+      val c = ctx ?: return@Function null
+      // A cold start by an "open" Done: the tap rides on the launch intent.
+      RestCard.captureDoneIntent(c, appContext.currentActivity?.intent)
+      val d = RestCard.takePending(c) ?: return@Function null
+      mapOf(
+        "workout" to d.workout.toDouble(),
+        "exKey" to d.exKey,
+        "setKey" to d.setKey,
+        "endsAt" to d.endsAt.toDouble(),
+        "at" to d.at.toDouble(),
+        "open" to d.open,
+        "label" to d.label,
+        "values" to d.values,
+      )
+    }
+
+    Function("doneSettled") {
+      RestCard.releaseDone()
+      true
+    }
+
+    Function("postDoneNote") { title: String, text: String ->
+      val c = ctx ?: return@Function false
+      RestCard.postNote(c, title, text)
       true
     }
 

@@ -49,7 +49,7 @@ import { findRoutines } from '@/tracker/services/routineRebuild';
 import { looksLikeStrong, parseStrongText, strongFileInfo, unitsExample, type FileUnits } from '@/tracker/services/strongImport';
 import { NewNamesCard, RenamedList } from '@/tracker/components/NewNamesCard';
 import { RoutineImportSteps } from '@/tracker/components/RoutineImportSteps';
-import { removeWorkoutFromHealth } from '@/tracker/phone/healthConnect';
+import { removeWorkoutFromHealth, sendWorkoutsToHealth } from '@/tracker/phone/healthConnect';
 import { shareProblemText, sharedFileKind } from '@/tracker/phone/sharedImport';
 
 type Phase = 'idle' | 'preview' | 'importing' | 'done' | 'routines' | 'undone';
@@ -172,15 +172,21 @@ export default function ImportScreen() {
   // v0.28.1: workouts Replace deleted are taken out of Health Connect too, once Undo is no
   // longer possible (the member leaves this screen), so an undo never finds them gone there.
   const pendingHealth = useRef<string[]>([]);
+  // Audit IM-16: the imported workouts go to Health Connect (when it is on) at the same moment;
+  // Phase 6 review fix: so do earlier imports a Merge added sets to (their copy is replaced).
+  const pendingSend = useRef<string[]>([]);
   const mounted = useRef(true);
 
   const flushHealth = (): void => {
     const gone = pendingHealth.current;
+    const add = pendingSend.current;
     pendingHealth.current = [];
+    pendingSend.current = [];
     undoCopy.current = null;
-    if (gone.length === 0) return;
+    if (gone.length === 0 && add.length === 0) return;
     void (async () => {
       for (const id of gone) await removeWorkoutFromHealth(id);
+      await sendWorkoutsToHealth(add);
     })();
   };
   useEffect(
@@ -394,6 +400,7 @@ export default function ImportScreen() {
         void useDashboard.getState().refresh().catch(() => undefined);
         // The demo was removed before the import, so every replaced workout is the member's.
         pendingHealth.current = r.replacedSessionIds ?? [];
+        pendingSend.current = [...(r.createdSessionIds ?? []), ...(r.extendedSessionIds ?? [])];
         if (!mounted.current) {
           // The member left while it ran: no undo now; Health Connect catches up at once.
           flushHealth();
@@ -444,6 +451,7 @@ export default function ImportScreen() {
       await restoreSafetyCopy(copy, { importedSessionIds: undoImported.current });
       undoCopy.current = null;
       pendingHealth.current = []; // the replaced workouts are back; Health Connect keeps them
+      pendingSend.current = []; // the imported ones are gone again: nothing to send
       setCanUndo(false);
       void useOnboarding.getState().refreshDemoFlag();
       void useDashboard.getState().refresh().catch(() => undefined);

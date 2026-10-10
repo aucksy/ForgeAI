@@ -7,14 +7,16 @@
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
-import { startPhoneSync } from '../phone/phoneSync';
+import { phoneWorkoutLive, startPhoneSync } from '../phone/phoneSync';
 import { listenForShares } from '../phone/sharedImport';
 import { onRestOpen, takeRestOpenRequest } from '../services/restCard';
+import { startRestDone } from '../services/restDoneRun';
 import { listenForAlertTaps, setupWorkoutAlerts, WORKOUT_ROUTE } from '../services/workoutAlerts';
 import { startWorkoutPresence } from '../services/workoutPresence';
-import { useActiveWorkout } from '../store/activeWorkoutStore';
+import { isCorrecting, useActiveWorkout, type ActiveWorkoutState } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
+import { afterTick } from './SetRow';
 
 export function WorkoutPresenceHost() {
   const router = useRouter();
@@ -25,6 +27,13 @@ export function WorkoutPresenceHost() {
     const stop = startWorkoutPresence();
     // v0.27.0: Health Connect, widgets and reminders kept in step (quiet, never in the way).
     startPhoneSync();
+    // Audit Phase 6 (PH-07, PH-09): a workout open → no reminder today, the widget says
+    // "Resume"; closed → both back. A correction of a saved workout is never "open".
+    const isLive = (s: ActiveWorkoutState): boolean => s.active && !isCorrecting(s);
+    const unwatch = useActiveWorkout.subscribe((s, prev) => {
+      if (isLive(s) === isLive(prev)) return;
+      void phoneWorkoutLive(isLive(s) ? { name: s.workoutName, routineId: s.planDayId ?? s.routineId } : null);
+    });
     void useActiveWorkout.getState().hydrate().catch(() => undefined);
 
     const openWorkout = (route: string): void => {
@@ -53,6 +62,20 @@ export function WorkoutPresenceHost() {
     // with a flag (cold start: read once here; app already running: an event).
     const unlistenCard = onRestOpen(() => openWorkout(WORKOUT_ROUTE));
     if (takeRestOpenRequest()) openWorkout(WORKOUT_ROUTE);
+    // Phase 6: "Done" on the rest card (phone or watch) ticks the next set; when that row has
+    // nothing to save (or the card is out of date) the app opens on it instead.
+    const stopDone = startRestDone({
+      afterTick,
+      openSet: (exKey, setKey, missing) => {
+        openWorkout(WORKOUT_ROUTE);
+        if (!exKey) return;
+        // After the screen is up (a cold start mounts the navigator first).
+        setTimeout(() => {
+          useWorkoutUi.getState().requestScroll(exKey);
+          if (setKey && missing) useWorkoutUi.getState().showRowNote(exKey, setKey, missing);
+        }, 900);
+      },
+    });
     // v0.28.0: an export shared to ForgeAI opens the import with it (after the navigator mounts).
     // Audit IM-17: one ForgeAI could not take opens the import too, saying why.
     const unlistenShare = listenForShares((f) =>
@@ -67,9 +90,11 @@ export function WorkoutPresenceHost() {
       ),
     );
     return () => {
+      unwatch();
       stop();
       unlisten();
       unlistenCard();
+      stopDone();
       unlistenShare();
     };
   }, [router]);

@@ -1,0 +1,106 @@
+# Phase 6 device QA, part H1D — "Done" on the rest card. Runs right after part H1, once the script
+# has read H1's card ("Rest 3:15", buttons Done, +15 s, Skip) from the notification list. The app
+# is still in the background (its process alive) and the shade is still open on that card, which
+# names "Barbell Bench Press, set 2".
+# "Done" from the shade → the app ticks set 2 (with its grey hint) and starts that set's rest: the
+# card is posted again as "Rest 3:00 · ends …" naming set 3 (the script reads it from the
+# notification list after this part) → the app, opened again, shows set 2 ticked, set 3 not, and
+# a rest running. Part H2 then uses this card's "Skip" with the app's process stopped.
+appId: com.forgeai.app
+---
+# The shade normally stays open between H1 and this part; open it again if it closed.
+- runFlow:
+    when:
+      notVisible: 'Rest 3:15 · ends .*'
+    commands:
+      - swipe:
+          start: 50%, 1%
+          end: 50%, 75%
+          duration: 600
+      - waitForAnimationToEnd:
+          timeout: 3000
+# The shade swipe sometimes lands on the launcher instead (run 38038041222): try once more.
+- runFlow:
+    when:
+      notVisible: 'Rest 3:15 · ends .*'
+    commands:
+      - swipe:
+          start: 50%, 0%
+          end: 50%, 80%
+          duration: 800
+      - waitForAnimationToEnd:
+          timeout: 3000
+- extendedWaitUntil:
+    visible: 'Rest 3:15 · ends .*'
+    timeout: 15000
+- runFlow:
+    when:
+      notVisible: '^Done$'
+    commands:
+      - swipe:
+          from:
+            text: 'Rest 3:15 · ends .*'
+          direction: DOWN
+- assertVisible: '.*Barbell Bench Press, set 2'
+- takeScreenshot: 112a-shade-before-done
+- tapOn:
+    text: '^Done$'
+    waitToSettleTimeoutMs: 300
+# The app (in the background, its JS running) ticks set 2 and starts set 2's rest (3:00 for this
+# exercise): the card comes back naming set 3. Not "Open ForgeAI to save …" (that note is only
+# for a phone where ForgeAI was closed).
+- extendedWaitUntil:
+    visible: 'Rest 3:00 · ends .*'
+    timeout: 15000
+- runFlow:
+    when:
+      notVisible: '.*Barbell Bench Press, set 3'
+    commands:
+      - swipe:
+          from:
+            text: 'Rest 3:00 · ends .*'
+          direction: DOWN
+- extendedWaitUntil:
+    visible: '.*Barbell Bench Press, set 3'
+    timeout: 10000
+- assertNotVisible: 'Open ForgeAI to .*'
+- assertVisible: '^Done$'
+- takeScreenshot: 112b-shade-after-done
+# ---------------------------------------------------------------- the app again
+- pressKey: Back
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Wait"
+    optional: true
+# The app comes back on the workout it was left on; if it opens on the tabs, resume it.
+- extendedWaitUntil:
+    visible: "More for Barbell Bench Press|Resume workout|^Workout$"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      notVisible: "More for Barbell Bench Press"
+    commands:
+      - tapOn:
+          text: "^Workout$"
+          optional: true
+      - extendedWaitUntil:
+          visible: "Resume workout"
+          timeout: 20000
+      - tapOn: "Resume workout"
+- extendedWaitUntil:
+    visible: "More for Barbell Bench Press"
+    timeout: 20000
+# Done ticked exactly the row the card named (LW-27 labels): set 2 done, set 3 still open.
+- scrollUntilVisible:
+    element: 'Barbell Bench Press set 2 complete\. Tap to undo'
+    centerElement: true
+    timeout: 10000
+- assertVisible: 'Mark Barbell Bench Press set 3 complete'
+- assertNotVisible: 'Mark Barbell Bench Press set 2 complete'
+# … and started set 2's rest, as a tick on screen does.
+- assertVisible: "Skip rest"
+- takeScreenshot: 112c-app-after-done-on-card
+- pressKey: Home

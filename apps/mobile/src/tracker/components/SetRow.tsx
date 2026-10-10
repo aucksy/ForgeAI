@@ -62,6 +62,7 @@ import { rpeColor } from '../lib/rpe';
 import { recordLabel, toastHit } from '../services/liveRecords';
 import type { RecordKind } from '../services/liveRecords';
 import { afterSetCompleted, nextUpLabel } from '../services/restRules';
+import { nextForCard } from '../services/restDoneRun';
 import { missingText, typoCheck, typoText, type TickMissing } from '../services/setTick';
 import { playWorkoutSound } from '../services/workoutSounds';
 import { flushDraft, useActiveWorkout } from '../store/activeWorkoutStore';
@@ -129,9 +130,11 @@ export function afterTick(exKey: string, setKey: string): void {
 
   const timer = useRestTimer.getState();
   const d = afterSetCompleted(st.exercises, exKey, setKey, timer.defaultSec);
-  // v0.26.1: "Bench Press, set 3" for the watch card and "Rest is over".
-  const nextName = nextUpLabel(st.exercises, d.nextExKey ?? exKey);
-  if (d.restSec) timer.start(d.restSec, nextName);
+  // v0.26.1: "Bench Press, set 3" for the watch card and "Rest is over". Phase 6: the card's
+  // "Done" ticks exactly the row it names, so the name comes from that row.
+  const card = nextForCard(d.nextExKey ?? exKey);
+  const nextName = card.label ?? nextUpLabel(st.exercises, d.nextExKey ?? exKey);
+  if (d.restSec) timer.start(d.restSec, nextName, card.done);
   // Ticked during an older rest, and this set means "no rest" (drop set next,
   // mid-superset, rest off) → the old bell must not ring mid-set.
   else if (timer.endsAt != null) timer.skip();
@@ -269,6 +272,20 @@ export const SetRow = memo(function SetRow({
     const ref = m === 'weight' ? wRef : m === 'reps' ? rRef : m === 'time' ? tRef : dRef;
     ref.current?.focus();
   };
+
+  // Phase 6: the rest card's "Done" could not tick this row (nothing to save) and opened the app
+  // here — the row says what is missing and puts the cursor there, as a tick on screen does.
+  const rowNote = useWorkoutUi((s) => (s.rowNote && s.rowNote.exKey === exKey && s.rowNote.setKey === set.key ? s.rowNote : null));
+  useEffect(() => {
+    if (!rowNote || set.done) return;
+    const line = missingText(rowNote.missing);
+    setNote(line);
+    AccessibilityInfo.announceForAccessibility(line);
+    if (noteTimer.current) clearTimeout(noteTimer.current);
+    noteTimer.current = setTimeout(() => setNote(null), 6000);
+    focusMissing(rowNote.missing);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowNote?.id]);
 
   const onTick = (): void => {
     const wasDone = set.done;

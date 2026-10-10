@@ -7,6 +7,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
@@ -46,6 +47,20 @@ import java.util.Locale
  *    over" goes out as an alarm (its own channel, alarm sound usage), which Do Not Disturb lets
  *    through unless the member blocks alarms too.
  *  - D8: exact-alarm and notification state, and the settings pages that fix them.
+ *
+ * Phase 6 (point 4): "Done" — the first button, before "+15 s" and "Skip", on the card and on
+ * "Rest is over". It ticks the row the card names ("Bench Press, set 2"). The app hands the row
+ * over before each rest ([setDoneTarget]: the workout's start time plus the row's own keys, so a
+ * card left over from another workout or a removed set never ticks a different row). A tap is
+ * kept here ("pending done", its own preferences file) and the app is told if its JS runs; the
+ * app ticks the row through its own store (never written from here), or takes the tap when it
+ * next starts. A row with nothing to save gets a Done that opens the app instead (Android allows
+ * no app launch from a button's broadcast).
+ *
+ * Review fixes: the Done also carries the row's grey hint as the card was posted ("values"), so
+ * the app ticks only while the row still shows it; an "open" Done is never read again from a
+ * launch out of Recents; and a Done tap keeps its broadcast open (at most [DONE_HOLD_MS]) until
+ * the app says it has acted ([releaseDone]), so Android cannot freeze the app before the tick.
  */
 object RestCard {
   const val CARD_ID = 41001
@@ -59,12 +74,25 @@ object RestCard {
   const val ACTION_ADD = "com.forgeai.rest.ADD15"
   const val ACTION_SKIP = "com.forgeai.rest.SKIP"
   const val ACTION_END = "com.forgeai.rest.END"
+  const val ACTION_DONE = "com.forgeai.rest.DONE"
+  const val NOTE_ID = 41003
+  const val EXTRA_DONE_WORKOUT = "forgeai_done_workout"
+  const val EXTRA_DONE_EX = "forgeai_done_ex"
+  const val EXTRA_DONE_SET = "forgeai_done_set"
+  const val EXTRA_DONE_LABEL = "forgeai_done_label"
+  const val EXTRA_DONE_VALUES = "forgeai_done_values"
+  /** The longest a Done tap's broadcast is kept open for the app to act on it. */
+  const val DONE_HOLD_MS = 2_000L
+  /** A Done tap the app has not read by then is dropped by the app; the note goes too. */
+  const val DONE_MAX_AGE_MS = 10L * 60_000L
   const val EXTRA_ENDS = "endsAt"
   const val EXTRA_OPEN = "forgeai_open_workout"
   const val ADD_SEC = 15
 
   private const val PREFS = "forgeai_rest_card"
   private const val PREFS_QUIET = "forgeai_rest_quiet"
+  /** Phase 6: the last Done tap (kept apart from the rest, which [forget] clears). */
+  private const val PREFS_DONE = "forgeai_rest_done"
   private const val COLOR = 0xFFFF7A3B.toInt()
   /** An end that fires this much early (an inexact alarm never does) is re-armed instead. */
   private const val EARLY_MS = 1500L
@@ -73,11 +101,32 @@ object RestCard {
 
   data class Rest(val startedAt: Long, val endsAt: Long, val next: String?)
 
+  /**
+   * The row the card's Done ticks. [open]: the row has nothing to save, so Done opens the app.
+   * [values]: the row's grey hint when the card was posted (the app compares it at the tap).
+   */
+  data class DoneTarget(val workout: Long, val exKey: String, val setKey: String, val open: Boolean, val values: String?)
+
+  /** A Done tap as kept for the app ([at] = when it was tapped). */
+  data class PendingDone(
+    val workout: Long,
+    val exKey: String,
+    val setKey: String,
+    val endsAt: Long,
+    val at: Long,
+    val open: Boolean,
+    val label: String?,
+    val values: String?,
+  )
+
   /** Set by the module while JS is alive: (kind, endsAt, startedAt). */
   @Volatile var listener: ((String, Long, Long) -> Unit)? = null
 
   private val handler = Handler(Looper.getMainLooper())
   private var fastPath: Runnable? = null
+  /** A Done tap's broadcast, kept open until the app has acted on it (or [DONE_HOLD_MS]). */
+  private var doneHold: BroadcastReceiver.PendingResult? = null
+  private var doneHoldEnd: Runnable? = null
 
   // ------------------------------------------------------------------ state
   /**
@@ -114,6 +163,35 @@ object RestCard {
       .putLong("endsAt", r.endsAt)
       .putString("next", r.next)
       .apply()
+  }
+
+  /**
+   * Phase 6: the row the next card's Done ticks (null = no Done button). Called by the app just
+   * before [show]; kept with the rest, so "+15 s" and a re-post keep it, and wiped with it.
+   */
+  @Synchronized
+  fun setDoneTarget(ctx: Context, t: DoneTarget?) {
+    val e = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+    if (t == null) {
+      e.remove("doneWorkout").remove("doneEx").remove("doneSet").remove("doneOpen").remove("doneValues")
+    } else {
+      e.putLong("doneWorkout", t.workout)
+        .putString("doneEx", t.exKey)
+        .putString("doneSet", t.setKey)
+        .putBoolean("doneOpen", t.open)
+        .putString("doneValues", t.values)
+    }
+    e.apply()
+  }
+
+  @Synchronized
+  fun doneTarget(ctx: Context): DoneTarget? {
+    val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    val ex = p.getString("doneEx", null) ?: return null
+    val set = p.getString("doneSet", null) ?: return null
+    val workout = p.getLong("doneWorkout", 0L)
+    if (workout <= 0L) return null
+    return DoneTarget(workout, ex, set, p.getBoolean("doneOpen", false), p.getString("doneValues", null))
   }
 
   /**
@@ -200,10 +278,11 @@ object RestCard {
       arm(ctx, expected)
       return
     }
+    val done = doneTarget(ctx) // read before [forget] wipes it: "Rest is over" carries Done too
     forget(ctx)
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
-    postOver(ctx, cur.next, expected, now - expected)
+    postOver(ctx, cur.next, expected, now - expected, done)
     listener?.invoke("end", 0L, 0L)
   }
 
@@ -238,6 +317,212 @@ object RestCard {
     val cur = stored(ctx) ?: return
     if (cur.endsAt <= System.currentTimeMillis()) return
     arm(ctx, cur.endsAt)
+  }
+
+  // ------------------------------------------------------------------ Phase 6: Done
+  /** The Done tap an intent carries: a button's broadcast, or the app launched by an "open" Done. */
+  private fun pendingFrom(intent: Intent, open: Boolean): PendingDone? {
+    val ex = intent.getStringExtra(EXTRA_DONE_EX) ?: return null
+    val set = intent.getStringExtra(EXTRA_DONE_SET) ?: return null
+    val workout = intent.getLongExtra(EXTRA_DONE_WORKOUT, 0L)
+    if (workout <= 0L) return null
+    return PendingDone(
+      workout = workout,
+      exKey = ex,
+      setKey = set,
+      endsAt = intent.getLongExtra(EXTRA_ENDS, 0L),
+      at = System.currentTimeMillis(),
+      open = open,
+      label = intent.getStringExtra(EXTRA_DONE_LABEL),
+      values = intent.getStringExtra(EXTRA_DONE_VALUES),
+    )
+  }
+
+  /** Kept until the app takes it; a newer tap replaces an older one. Written at once (commit). */
+  private fun keepPending(ctx: Context, d: PendingDone) {
+    ctx.getSharedPreferences(PREFS_DONE, Context.MODE_PRIVATE).edit()
+      .clear()
+      .putLong("workout", d.workout)
+      .putString("ex", d.exKey)
+      .putString("set", d.setKey)
+      .putLong("endsAt", d.endsAt)
+      .putLong("at", d.at)
+      .putBoolean("open", d.open)
+      .putString("label", d.label)
+      .putString("values", d.values)
+      .commit()
+  }
+
+  /**
+   * "Done" tapped on the card or on "Rest is over" (phone shade, lock screen or watch). Keeps the
+   * tap for the app and removes "Rest is over"; the card stays until the app posts the next rest.
+   * Null when the intent names no row.
+   */
+  @Synchronized
+  fun doneTapped(ctx: Context, intent: Intent): PendingDone? {
+    val d = pendingFrom(intent, open = false) ?: return null
+    keepPending(ctx, d)
+    nm(ctx).cancel(OVER_ID)
+    return d
+  }
+
+  /**
+   * The app was brought up by an "open" Done (a row with nothing to save): keep that tap for the
+   * app, once (the extras are removed). True when the intent carried one.
+   *
+   * Review fix: removing the extras changes only this copy of the intent. Reopened from Recents
+   * after Android closed it, the app is handed the ORIGINAL launch intent, extras and all, which
+   * would be read as a fresh tap (a new time, so past the 10-minute check). Such a launch is
+   * marked "launched from history" and is never a tap.
+   */
+  @Synchronized
+  fun captureDoneIntent(ctx: Context, intent: Intent?): Boolean {
+    if (intent == null) return false
+    if ((intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) return false
+    val d = pendingFrom(intent, open = true) ?: return false
+    intent.removeExtra(EXTRA_DONE_EX)
+    intent.removeExtra(EXTRA_DONE_SET)
+    intent.removeExtra(EXTRA_DONE_WORKOUT)
+    intent.removeExtra(EXTRA_DONE_LABEL)
+    intent.removeExtra(EXTRA_DONE_VALUES)
+    intent.removeExtra(EXTRA_ENDS)
+    keepPending(ctx, d)
+    nm(ctx).cancel(OVER_ID)
+    return true
+  }
+
+  /** The kept Done tap, taken ONCE by the app (null = none). The app is up: its note goes. */
+  @Synchronized
+  fun takePending(ctx: Context): PendingDone? {
+    val p = ctx.getSharedPreferences(PREFS_DONE, Context.MODE_PRIVATE)
+    val ex = p.getString("ex", null)
+    val set = p.getString("set", null)
+    val d = if (ex != null && set != null) {
+      PendingDone(
+        workout = p.getLong("workout", 0L),
+        exKey = ex,
+        setKey = set,
+        endsAt = p.getLong("endsAt", 0L),
+        at = p.getLong("at", 0L),
+        open = p.getBoolean("open", false),
+        label = p.getString("label", null),
+        values = p.getString("values", null),
+      )
+    } else {
+      null
+    }
+    p.edit().clear().commit()
+    try {
+      nm(ctx).cancel(NOTE_ID)
+    } catch (_: Exception) {
+      // ignore
+    }
+    return d
+  }
+
+  /**
+   * Review fix: a Done tap handed to the running app keeps its broadcast open ([result], from
+   * goAsync) until the app has acted on it ([releaseDone]) or [maxMs] passed, whichever is first.
+   * Without it a cached app could be frozen by Android between the tap and the tick. A newer tap
+   * ends an older hold first; every hold is finished exactly once.
+   */
+  @Synchronized
+  fun holdForDone(result: BroadcastReceiver.PendingResult, maxMs: Long) {
+    releaseDone()
+    doneHold = result
+    val end = Runnable { releaseDone() }
+    doneHoldEnd = end
+    handler.postDelayed(end, maxMs)
+  }
+
+  /** The app acted on the Done tap (or the time is up): its broadcast ends. Safe to call any time. */
+  @Synchronized
+  fun releaseDone() {
+    doneHoldEnd?.let { handler.removeCallbacks(it) }
+    doneHoldEnd = null
+    val r = doneHold ?: return
+    doneHold = null
+    try {
+      r.finish()
+    } catch (_: Exception) {
+      // already finished
+    }
+  }
+
+  /** Done tapped while the app's JS is not running: the tap waits for the app, and says so. */
+  fun noteQueued(ctx: Context, label: String?) {
+    val what = label ?: "your set"
+    postNote(ctx, "Open ForgeAI to save $what", "ForgeAI was closed. Open it within 10 min to log this set.")
+  }
+
+  /**
+   * A quiet note (the card's LOW channel: no sound, no watch buzz) that opens ForgeAI when tapped
+   * and goes by itself after 10 minutes, when a Done tap is no longer acted on.
+   */
+  @Suppress("DEPRECATION")
+  fun postNote(ctx: Context, title: String, text: String) {
+    try {
+      ensureChannels(ctx)
+      val b = builder(ctx, CH_CARD)
+        .setSmallIcon(iconRes(ctx))
+        .setColor(COLOR)
+        .setContentTitle(title)
+        .setContentText(text)
+        .setAutoCancel(true)
+        .setOngoing(false)
+        .setShowWhen(false)
+        .setVisibility(Notification.VISIBILITY_PUBLIC)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        b.setTimeoutAfter(DONE_MAX_AGE_MS)
+      } else {
+        b.setPriority(Notification.PRIORITY_LOW)
+      }
+      openIntent(ctx)?.let { b.setContentIntent(it) }
+      nm(ctx).notify(NOTE_ID, b.build())
+    } catch (_: Exception) {
+      // No permission to post: the tap still waits for the app.
+    }
+  }
+
+  /** One PendingIntent per row, so a tap on an older card still names ITS row, not the newest. */
+  private fun doneCode(t: DoneTarget): Int {
+    // The hint too: a card posted with another hint for the same row keeps ITS hint.
+    val key = t.workout.toString() + "|" + t.exKey + "|" + t.setKey + "|" + (t.values ?: "")
+    return 10_000 + ((key.hashCode() and 0x7fffffff) % 1_000_000)
+  }
+
+  private fun doneIntent(ctx: Context, t: DoneTarget, endsAt: Long, label: String?): PendingIntent? {
+    val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    val i: Intent
+    if (t.open) {
+      // Nothing to save: Done opens the app on the row. Android allows no app launch from a
+      // broadcast, so this button launches the app itself; the tap rides on the launch intent.
+      i = ctx.packageManager.getLaunchIntentForPackage(ctx.packageName) ?: return null
+      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+    } else {
+      i = Intent(ctx, RestActionReceiver::class.java).setAction(ACTION_DONE)
+    }
+    i.putExtra(EXTRA_DONE_WORKOUT, t.workout)
+    i.putExtra(EXTRA_DONE_EX, t.exKey)
+    i.putExtra(EXTRA_DONE_SET, t.setKey)
+    i.putExtra(EXTRA_DONE_LABEL, label)
+    i.putExtra(EXTRA_DONE_VALUES, t.values)
+    i.putExtra(EXTRA_ENDS, endsAt)
+    return if (t.open) {
+      PendingIntent.getActivity(ctx, doneCode(t), i, flags)
+    } else {
+      PendingIntent.getBroadcast(ctx, doneCode(t), i, flags)
+    }
+  }
+
+  private fun doneAction(ctx: Context, icon: Int, t: DoneTarget?, endsAt: Long, label: String?): Notification.Action? {
+    if (t == null) return null
+    return try {
+      val pi = doneIntent(ctx, t, endsAt, label) ?: return null
+      Notification.Action.Builder(Icon.createWithResource(ctx, icon), "Done", pi).build()
+    } catch (_: Exception) {
+      null
+    }
   }
 
   // ------------------------------------------------------------------ D8: access and settings
@@ -525,11 +810,13 @@ object RestCard {
         .setWhen(r.endsAt)
         .setCategory("stopwatch") // Notification.CATEGORY_STOPWATCH (Android 12+); older ones ignore it
         .setVisibility(Notification.VISIBILITY_PUBLIC)
-        .addAction(Notification.Action.Builder(Icon.createWithResource(ctx, icon), "+15 s", actionIntent(ctx, ACTION_ADD, 4)).build())
-        .addAction(Notification.Action.Builder(Icon.createWithResource(ctx, icon), "Skip", actionIntent(ctx, ACTION_SKIP, 5)).build())
+      // Phase 6: Done first (the most used), then +15 s and Skip; a watch shows them in this order.
+      doneAction(ctx, icon, doneTarget(ctx), r.endsAt, r.next)?.let { b.addAction(it) }
+      b.addAction(Notification.Action.Builder(Icon.createWithResource(ctx, icon), "+15 s", actionIntent(ctx, ACTION_ADD, 4)).build())
+      b.addAction(Notification.Action.Builder(Icon.createWithResource(ctx, icon), "Skip", actionIntent(ctx, ACTION_SKIP, 5)).build())
       val view = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) countdownView(ctx, r) else null
       if (view != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        // The system still draws the header and the +15 s / Skip buttons around it; a watch
+        // The system still draws the header and the Done, +15 s and Skip buttons around it; a watch
         // keeps showing the title and text set above. Review fix: no chronometer in the header
         // here. The custom line already counts down ("2:53 left"), and a header chronometer
         // was a second countdown right above it.
@@ -579,9 +866,10 @@ object RestCard {
   }
 
   @Suppress("DEPRECATION")
-  private fun postOver(ctx: Context, next: String?, endsAt: Long, lateMs: Long) {
+  private fun postOver(ctx: Context, next: String?, endsAt: Long, lateMs: Long, done: DoneTarget?) {
     try {
       ensureChannels(ctx)
+      val icon = iconRes(ctx)
       // App on screen: it rings itself, so the phone only vibrates — but the alert is still
       // posted, which is what makes the watch buzz. Otherwise this is the loud alert.
       // "Workout sounds" off: the vibrate-only channel, wherever the app is.
@@ -591,7 +879,7 @@ object RestCard {
       val alarm = !open && ringThroughDnd(ctx) && dndOn(ctx)
       val channel = if (open) CH_OVER_OPEN else if (alarm) CH_OVER_ALARM else CH_OVER
       val b = builder(ctx, channel)
-        .setSmallIcon(iconRes(ctx))
+        .setSmallIcon(icon)
         .setColor(COLOR)
         .setContentTitle("Rest is over")
         .setContentText(overText(next, lateMs))
@@ -607,6 +895,8 @@ object RestCard {
       }
       // App on screen: the watch has buzzed by the time this goes; the app shows the rest is over.
       if (open && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) b.setTimeoutAfter(60_000L)
+      // Phase 6: "Done" logs the next set from here too (lock screen, watch).
+      doneAction(ctx, icon, done, endsAt, next)?.let { b.addAction(it) }
       openIntent(ctx)?.let { b.setContentIntent(it) }
       nm(ctx).notify(OVER_ID, b.build())
     } catch (_: Exception) {

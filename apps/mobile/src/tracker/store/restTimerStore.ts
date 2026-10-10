@@ -26,6 +26,7 @@ import { getMeta, setMeta } from '@/db';
 import { success } from '@/lib/haptics';
 
 import { ringerMode } from '../services/restCard';
+import type { CardDone } from '../services/restDone';
 import { DEFAULT_REST_SEC, REST_MAX_SEC, REST_MIN_SEC } from '../services/restRules';
 import { cancelRestEnd, scheduleRestEnd } from '../services/workoutAlerts';
 import { playWorkoutSound } from '../services/workoutSounds';
@@ -60,7 +61,8 @@ export interface RestTimerState {
   loadDefault: () => Promise<void>;
   /** RT-11: resolves false when the choice could not be saved (it still applies until restart). */
   setDefaultSec: (sec: number) => Promise<boolean>;
-  start: (sec?: number, nextLabel?: string | null) => void;
+  /** Phase 6: `done` = the row the card's "Done" ticks (null: no Done button). */
+  start: (sec?: number, nextLabel?: string | null, done?: CardDone | null) => void;
   /** RT-03: a set was just ticked; a rest started in the same tap belongs to it. */
   noteTick: (exKey: string, setKey: string) => void;
   /** RT-03: this set was unticked; if its tick started the running rest, cancel that rest. */
@@ -148,7 +150,7 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
       }
     },
 
-    start: (sec, nextLabel = null) => {
+    start: (sec, nextLabel = null, done) => {
       const dur = sec && sec > 0 ? sec : get().defaultSec;
       if (!dur || dur <= 0) return;
       const startedAt = Date.now();
@@ -159,7 +161,7 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
       arm(endsAt);
       // Hand the rest to the card BEFORE the state changes, so the "Workout in progress" card
       // (updated on that change) already knows the rest card shows the rest (RT-05).
-      void scheduleRestEnd(endsAt, nextLabel, startedAt);
+      void (done === undefined ? scheduleRestEnd(endsAt, nextLabel, startedAt) : scheduleRestEnd(endsAt, nextLabel, startedAt, done));
       set({ endsAt, durationSec: dur, nextLabel, startedAt, source });
     },
 

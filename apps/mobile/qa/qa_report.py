@@ -202,7 +202,7 @@ def summary(out):
     md += ["", f"**Parts run:** {len(started)} · **passed:** {n_pass} · **failed:** {len(started) - n_pass}", ""]
 
     side = [l for l in timeline.splitlines() if re.search(
-        r"REST ALERT|REST CARD|ONGOING CARD|REST IS OVER|BACKUP M|FAILED|NOT FOUND|MISSING|exact alarm|LATE", l)]
+        r"REST ALERT|REST CARD|ONGOING CARD|REST IS OVER|WIDGET LINK|NOTIFICATIONS OFF|BACKUP M|FAILED|NOT FOUND|MISSING|exact alarm|LATE", l)]
     if side:
         md += ["### Side checks", ""] + ["- " + l.replace("[qa] ", "") for l in side] + [""]
 

@@ -16,6 +16,7 @@ import { AppState, Platform } from 'react-native';
 
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { clearRestCard, showRestCard } from './restCard';
+import type { CardDone } from './restDone';
 
 type NotificationsModule = typeof import('expo-notifications');
 
@@ -134,9 +135,11 @@ export async function scheduleRestEnd(
   endsAt: number,
   nextLabel: string | null,
   startedAt: number = Date.now(),
+  /** Phase 6: the row the card's "Done" ticks (left out: the card keeps the one it has). */
+  done?: CardDone | null,
 ): Promise<void> {
   const quiet = !useTrackerPrefs.getState().sounds;
-  const onCard = showRestCard(startedAt, endsAt, nextLabel, quiet);
+  const onCard = showRestCard(startedAt, endsAt, nextLabel, quiet, done);
   const n = N();
   if (!n) return;
   try {

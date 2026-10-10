@@ -75,10 +75,10 @@ describe('pace records do not depend on the unit shown', () => {
 describe('Health Connect never gets demo data', () => {
   it('sends real workouts, and nothing while demo data is loaded', async () => {
     demo = false;
-    expect(await sendAllWorkoutsToHealth()).toBe(1);
+    expect(await sendAllWorkoutsToHealth()).toEqual({ kind: 'sent', sent: 1, total: 1 });
     expect(writes).toHaveLength(1);
     demo = true;
-    expect(await sendAllWorkoutsToHealth()).toBe(0);
+    expect(await sendAllWorkoutsToHealth()).toEqual({ kind: 'demo' }); // Phase 6: says why
     expect(writes).toHaveLength(1);
   });
 });

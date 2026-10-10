@@ -2,8 +2,10 @@
 # An empty workout → Barbell Bench Press with a 3:00 rest and 3 sets → tick set 1 → the app
 # goes to the background → the phone's shade shows the swipe-away card, since Phase 2 (RT-05) its
 # own view: a countdown "2:53 left · Barbell Bench Press, set 2" over "Rest 3:00 · ends …", with
-# "+15 s" and "Skip" → "+15 s" from the shade → the card reads "Rest 3:15". (A watch shows this
-# card's title and text, set as before; its buttons run here, on the phone.)
+# (Phase 6) three buttons in the order "Done", "+15 s", "Skip" → "+15 s" from the shade → the card
+# reads "Rest 3:15". (A watch shows this card's title and text, set as before; its buttons run
+# here, on the phone.) The card's "Done" is tapped next, in part H1D (v0261-h1d.yaml), after the
+# script has read this card from the notification list.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -101,8 +103,18 @@ appId: com.forgeai.app
           direction: DOWN
 # Phase 2 (RT-05): the card's big line counts down: '2:53 left · Barbell Bench Press, set 2'.
 - assertVisible: '.*Barbell Bench Press, set 2'
+# Phase 6: three buttons, Done first, then +15 s, then Skip (left to right in the shade).
+- assertVisible: '^Done$'
 - assertVisible: '\+15 s'
 - assertVisible: '^Skip$'
+- assertVisible:
+    text: '\+15 s'
+    rightOf:
+      text: '^Done$'
+- assertVisible:
+    text: '^Skip$'
+    rightOf:
+      text: '\+15 s'
 - takeScreenshot: 111-shade-rest-card
 - tapOn:
     text: '\+15 s'

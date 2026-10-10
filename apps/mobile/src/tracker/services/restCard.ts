@@ -11,8 +11,15 @@
  *
  * No native piece (web, tests, an old build): every call returns false / null and the app falls
  * back to the Phase 1 expo-notifications alert.
+ *
+ * Phase 6 (point 4): a third button, "Done" (first in order: Done, +15 s, Skip), on the card and
+ * on "Rest is over" ticks the row the card names. The app hands that row over with each rest
+ * (`showRestCard(..., done)`); a tap is kept natively and taken once (`takePendingDone`) by
+ * `restDoneRun.ts`, which ticks through the store's normal tick path.
  */
 import { Platform } from 'react-native';
+
+import type { CardDone, DoneRequest } from './restDone';
 
 export interface CardRest {
   startedAt: number;
@@ -23,7 +30,9 @@ export interface CardRest {
 export type CardChange =
   | { kind: 'add'; endsAt: number; startedAt: number }
   | { kind: 'skip' }
-  | { kind: 'end' };
+  | { kind: 'end' }
+  /** Phase 6: "Done" was tapped (card, "Rest is over", or the watch); read it with takePendingDone. */
+  | { kind: 'done' };
 
 interface Native {
   show(startedAt: number, endsAt: number, next: string | null): boolean;
@@ -40,6 +49,15 @@ interface Native {
   is24Hour?(): boolean;
   ringerMode?(): number;
   setRingThroughDnd?(on: boolean): boolean;
+  /**
+   * Phase 6 ("Done"); an older native piece lacks these. exKey null = no Done button. `values`:
+   * the row's grey hint (`hintSignature`), carried on the button and handed back with the tap.
+   */
+  setDoneTarget?(workout: number, exKey: string | null, setKey: string | null, open: boolean, values: string | null): boolean;
+  takePendingDone?(): Record<string, unknown> | null;
+  postDoneNote?(title: string, text: string): boolean;
+  /** Review fix: the app has acted on a Done tap (its broadcast may end; else it ends after ~2 s). */
+  doneSettled?(): boolean;
   addListener(event: string, cb: (e: Record<string, unknown>) => void): { remove: () => void };
 }
 
@@ -63,8 +81,18 @@ function N(): Native | null {
   return mod;
 }
 
-/** Post or update the card. False = no native piece (use the old alert). */
-export function showRestCard(startedAt: number, endsAt: number, next: string | null, quiet?: boolean): boolean {
+/**
+ * Post or update the card. False = no native piece (use the old alert).
+ * Phase 6: `done` is the row the card's "Done" ticks (null = no Done button); left out, the card
+ * keeps the Done it has (+15 s in the app, or the card's rest adopted after a sleep).
+ */
+export function showRestCard(
+  startedAt: number,
+  endsAt: number,
+  next: string | null,
+  quiet?: boolean,
+  done?: CardDone | null,
+): boolean {
   const n = N();
   if (!n) return false;
   try {
@@ -72,6 +100,13 @@ export function showRestCard(startedAt: number, endsAt: number, next: string | n
       if (quiet !== undefined) n.setQuiet?.(quiet); // "Workout sounds" off: "Rest is over" only vibrates
     } catch {
       // ignore
+    }
+    try {
+      if (done !== undefined) {
+        n.setDoneTarget?.(done?.workout ?? 0, done?.exKey ?? null, done?.setKey ?? null, done?.open === true, done?.values ?? null);
+      }
+    } catch {
+      // ignore: the card shows without Done
     }
     handed = n.show(startedAt, endsAt, next) === true;
     return handed;
@@ -121,11 +156,70 @@ export function onRestCardChange(cb: (c: CardChange) => void): () => void {
     const sub = n.addListener('onRestChange', (e) => {
       const kind = e.kind;
       if (kind === 'add') cb({ kind, endsAt: Number(e.endsAt), startedAt: Number(e.startedAt) });
-      else if (kind === 'skip' || kind === 'end') cb({ kind });
+      else if (kind === 'skip' || kind === 'end' || kind === 'done') cb({ kind });
     });
     return () => sub.remove();
   } catch {
     return () => undefined;
+  }
+}
+
+/** PURE. A Done tap as the native piece hands it over; null when it lacks the row's identity. */
+export function parsePendingDone(raw: unknown): DoneRequest | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  const exKey = typeof r.exKey === 'string' && r.exKey ? r.exKey : null;
+  const setKey = typeof r.setKey === 'string' && r.setKey ? r.setKey : null;
+  const workout = Number(r.workout);
+  const at = Number(r.at);
+  if (!exKey || !setKey || !(workout > 0) || !(at > 0)) return null;
+  const endsAt = Number(r.endsAt);
+  return {
+    workout,
+    exKey,
+    setKey,
+    endsAt: Number.isFinite(endsAt) ? endsAt : 0,
+    at,
+    open: r.open === true,
+    label: typeof r.label === 'string' ? r.label : null,
+    values: typeof r.values === 'string' && r.values ? r.values : null,
+  };
+}
+
+/**
+ * Phase 6: the Done tap the phone kept, taken ONCE (the native piece forgets it). Null when none
+ * (or no native piece). Also picks up a Done that launched the app ("open" Done).
+ */
+export function takePendingDone(): DoneRequest | null {
+  try {
+    return parsePendingDone(N()?.takePendingDone?.() ?? null);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Review fix: the app has acted on the Done tap (ticked and saved, or decided not to). The
+ * native piece kept the tap's broadcast open for this (at most ~2 s), so Android does not freeze
+ * a cached app between the tap and the tick; this lets it end now.
+ */
+export function settleDone(): void {
+  try {
+    N()?.doneSettled?.();
+  } catch {
+    // ignore: it ends by itself
+  }
+}
+
+/**
+ * Phase 6: a Done that could not be acted on while the app is in the background (nothing to save,
+ * or the card was out of date): a quiet note that opens ForgeAI when tapped.
+ */
+export function postDoneNote(title: string, text: string): void {
+  try {
+    N()?.postDoneNote?.(title, text);
+  } catch {
+    // ignore
   }
 }
 

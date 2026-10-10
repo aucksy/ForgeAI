@@ -61,7 +61,7 @@ describe('Health Connect gets the real time of an imported workout', () => {
   it('the record carries the shifted start and end, same length', () => {
     const [r] = healthPayload(
       [{ id: 'h1', date_iso: '2026-10-01', started_at: IMPORTED, ended_at: IMPORTED + 3600_000, day_type: 'push', sets: 12, cardio: 0 }],
-      75,
+      [{ dateISO: '2026-09-01', weightKg: 75 }],
     );
     expect(r.startMs).toBe(new Date(2026, 9, 1, 18, 30).getTime());
     expect(r.endMs - r.startMs).toBe(3600_000);

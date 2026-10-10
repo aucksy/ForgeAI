@@ -1,0 +1,24 @@
+# Audit Phase 6 device QA, the widget link (PH-09). Run twice by the script, right after it opened
+# a forgeai://workout/start link with adb ("am start -W ... com.forgeai.app") while the app was
+# idle: part I finished its workout, so none is open. The links are NOT the widget's own (they
+# carry no secret token) and name no routine, or one that does not exist. Such a link must land
+# on the Workout tab and start NOTHING: "Start empty workout" shows, and none of an open workout's
+# texts do ("Workout in progress" / "Resume workout" on the tab, "Finish workout" / "Log a set to
+# finish" on the workout screen). The script also checks no "Workout in progress" notification
+# appeared. No launchApp: the screen is the one the link opened.
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- assertVisible: "Start empty workout"
+- assertNotVisible: "Workout in progress"
+- assertNotVisible: "Resume workout"
+- assertNotVisible: "Finish workout"
+- assertNotVisible: "Log a set to finish"
+- takeScreenshot: 136-widget-link-workout-tab

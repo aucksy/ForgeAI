@@ -107,11 +107,15 @@ describe('the Merge backfill of timed rows runs once', () => {
     h.sessions = [{ id: 'old', startedAt: 5 }];
     const r = await runImport(file, { mode: 'merge' });
     expect(r.backfilledSets).toBe(1);
+    // Phase 6 review fix: that earlier import is named for Health Connect to send again.
+    expect(r.extendedSessionIds).toEqual(['old']);
+    expect(r.createdSessionIds).toEqual([]);
   });
   it('a later Merge does not bring back plank sets the member deleted', async () => {
     h.sessions = [{ id: 'old', startedAt: 5 }];
     await runImport(file, { mode: 'merge' });
     const again = await runImport(file, { mode: 'merge' });
     expect(again.backfilledSets).toBe(0);
+    expect(again.extendedSessionIds).toEqual([]);
   });
 });

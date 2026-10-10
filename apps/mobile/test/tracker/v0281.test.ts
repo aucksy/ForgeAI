@@ -154,7 +154,7 @@ describe('the audit fixes are wired where the member meets them', () => {
 
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
   it('[source-text check] "Workout sounds" off reaches the rest-over alert on a locked phone', () => {
-    expect(read('src/tracker/services/workoutAlerts.ts')).toMatch(/showRestCard\(startedAt, endsAt, nextLabel, quiet\)/);
+    expect(read('src/tracker/services/workoutAlerts.ts')).toMatch(/showRestCard\(startedAt, endsAt, nextLabel, quiet(, done)?\)/); // Phase 6 adds Done's row
     expect(read('modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt')).toMatch(/appOnScreen\(ctx\) \|\| quiet\(ctx\)/);
   });
 

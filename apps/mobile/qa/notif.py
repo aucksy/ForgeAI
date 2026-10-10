@@ -14,8 +14,11 @@ Usage: notif.py <check> <dump-file> [args]
                           Without that dump the due time is tick + 30 s (approximate): lateness
                           is then printed but cannot fail the run.
   ongoing                 the "Workout in progress" card is showing
-  card <title-prefix>     the rest card is showing: swipe-away, both buttons, the given title,
-                          on the Phase 2 channel "rest-card-v2"
+  no-ongoing              NO "Workout in progress" card (no workout was started)
+  card <title-prefix> [text-part]
+                          the rest card is showing: swipe-away, its three buttons in the order
+                          Done, +15 s, Skip (Phase 6), the given title (and, if given, a text
+                          "Next: ..." containing text-part), on the Phase 2 channel "rest-card-v2"
   over-open               "Rest is over" posted while the app was open, and the rest card gone
 
 Phase 2 (RT-05 / RT-06): the card moved to the channel "rest-card-v2" (the old "rest-card" is
@@ -125,19 +128,35 @@ def main():
         ok = any(title(b) == "Workout in progress" for b in recs)
         print("[qa] ONGOING CARD present" if ok else "[qa] ONGOING CARD MISSING")
         return 0 if ok else 1
+    if check == "no-ongoing":
+        live = [b for b in recs if title(b) == "Workout in progress"]
+        print("[qa] ONGOING CARD absent (no workout open)" if not live else "[qa] ONGOING CARD PRESENT: a workout is open")
+        return 0 if not live else 1
     if check == "card":
         want = sys.argv[3]
         if not cards:
             print("[qa] REST CARD NOT FOUND")
             return 1
-        b = cards[0]
+        # Phase 6: a Done tap with the app's JS not running posts a note ("Open ForgeAI to save
+        # ...") on the card's own channel; the card is the one titled "Rest ...".
+        rest = [x for x in cards if title(x).startswith("Rest ")]
+        notes = [title(x) for x in cards if not title(x).startswith("Rest ")]
+        if notes:
+            print(f"[qa] REST CARD: other notes on the card's channel: {notes}")
+        b = (rest or cards)[0]
         fm = re.search(r"flags=(0x[0-9a-fA-F]+)", header(b))
         f = int(fm.group(1), 16) if fm else -1
         swipe = f >= 0 and not (f & 0x2) and not (f & 0x20)
         # The buttons are the record's notification ACTIONS ('[1] "Skip" -> PendingIntent...'),
-        # not any text that happens to contain the word.
-        plus = re.search(r'^\s*\[\d+\] "\+15 s" ->', b, re.M) is not None
-        skip = re.search(r'^\s*\[\d+\] "Skip" ->', b, re.M) is not None
+        # not any text that happens to contain the word. Phase 6: exactly Done, +15 s, Skip, in
+        # that order (a watch shows them in this order too).
+        acts = [a for _, a in sorted((int(i), a) for i, a in re.findall(r'^\s*\[(\d+)\] "(.*?)" ->', b, re.M))]
+        plus = "+15 s" in acts
+        skip = "Skip" in acts
+        done = "Done" in acts
+        order = acts == ["Done", "+15 s", "Skip"]
+        part = sys.argv[4] if len(sys.argv) > 4 else ""
+        text_ok = not part or part in text_of(b)
         t = title(b)
         ch = channel_of(b)
         on_v2 = ch == CARD_CHANNEL
@@ -149,15 +168,17 @@ def main():
         chan = ch or "?"
         if not on_v2:
             chan += f" (NOT {CARD_CHANNEL})"
-        print(f"[qa] REST CARD: title='{t}' text='{text_of(b)}' channel={chan} flags={hex(f)} swipe-away={'yes' if swipe else 'NO'} +15={'yes' if plus else 'NO'} skip={'yes' if skip else 'NO'} chronometer={'yes' if chrono else 'no'} countdown={'yes' if down else 'no'} countdown-view={'yes' if view else 'no'}")
-        return 0 if swipe and plus and skip and on_v2 and t.startswith(want) else 1
+        want_text = f" (want '{part}' in it: {'yes' if text_ok else 'NO'})" if part else ""
+        print(f"[qa] REST CARD: title='{t}' (want '{want}...') text='{text_of(b)}'{want_text} channel={chan} flags={hex(f)} swipe-away={'yes' if swipe else 'NO'} done={'yes' if done else 'NO'} +15={'yes' if plus else 'NO'} skip={'yes' if skip else 'NO'} buttons={acts} order-Done,+15 s,Skip={'yes' if order else 'NO'} chronometer={'yes' if chrono else 'no'} countdown={'yes' if down else 'no'} countdown-view={'yes' if view else 'no'}")
+        return 0 if swipe and order and on_v2 and t.startswith(want) and text_ok else 1
     if check == "over-open":
         if not over:
             print("[qa] REST IS OVER (app open) NOT FOUND")
             return 1
         ch = re.search(r"channel=([\w-]+)", header(over[0]))
-        print(f"[qa] REST IS OVER with the app open: posted on channel {ch.group(1) if ch else '?'}; rest cards left: {len(cards)}")
-        return 0 if not cards and ch and ch.group(1) == "rest-over-open" else 1
+        left = [x for x in cards if title(x).startswith("Rest ")]
+        print(f"[qa] REST IS OVER with the app open: posted on channel {ch.group(1) if ch else '?'}; rest cards left: {len(left)}; other notes on the card's channel: {[title(x) for x in cards if x not in left]}")
+        return 0 if not left and ch and ch.group(1) == "rest-over-open" else 1
     print("unknown check " + check)
     return 2
 

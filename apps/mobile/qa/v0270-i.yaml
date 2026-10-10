@@ -5,7 +5,12 @@
 # through "Import from Hevy" reads as Strong and is all already here → Units "lb, miles"
 # → the imported bench in lb and the run's pace per mile → Health Connect: Connect, allow on
 # Health Connect's own screen, send past workouts → workout reminders → a home-screen widget
-# → a workout logged in lb and finished (sent to Health Connect).
+# → a workout logged in lb and finished (sent to Health Connect). Audit Phase 6: the "Around your
+# phone" rows are checked by their real texts (src/tracker/phone/PhoneCard.tsx, reminders.ts
+# reminderCaption, healthConnect.ts sendResultText): Health Connect "On. Each workout …", the
+# reminders row off and on (day picker + "Reminder time … Change"), the widgets row before and
+# after a widget is placed ("1 on your home screen. …"). Part I2 (phase6-i2.yaml) checks the
+# reminders row with notifications blocked.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -202,10 +207,15 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Send past workouts"
     timeout: 20000
+# Audit Phase 6 (PH-03): the row says it is on, and what goes where.
+- assertVisible: 'On\. Each workout you finish goes to Health Connect with its calories \(an estimate\), so Google Fit and Samsung Health show it\.'
 - takeScreenshot: 128-health-connect-on
 - tapOn: "Send past workouts"
+# PH-03: the line under the button says what "Send past workouts" really did. The import above
+# replaced the demo, so the member's own workouts are sent (not "Nothing sent. Workouts on demo
+# data are never sent.").
 - extendedWaitUntil:
-    visible: "Sent \\d+ workouts? to Health Connect.*"
+    visible: 'Sent \d+ workouts? to Health Connect\.'
     timeout: 30000
 - takeScreenshot: 129-health-connect-sent
 # ---------------------------------------------------------------- reminders
@@ -213,12 +223,16 @@ appId: com.forgeai.app
     element: "Workout reminders"
     centerElement: true
     timeout: 15000
+# Off, the row says what it would do (audit Phase 6: on the usual days, at the usual time).
+- assertVisible: 'A quiet reminder on your usual training days, at your usual time\.'
+# Two "Workout reminders" on screen: the row's title (not tappable) and its switch (named after
+# the row). Tap one; if the row still reads "off", tap the other.
 - tapOn:
     text: "Workout reminders"
     index: 0
 - runFlow:
     when:
-      notVisible: "Remind me later"
+      visible: 'A quiet reminder on your usual training days, at your usual time\.'
     commands:
       - tapOn:
           text: "Workout reminders"
@@ -227,15 +241,30 @@ appId: com.forgeai.app
 - tapOn:
     text: '(?i)^allow$'
     optional: true
+# On: the weekly pattern (a day picker, Monday to Sunday) and a time, with the next reminder.
 - extendedWaitUntil:
-    visible: '.*Next: .*'
+    visible: 'Next: .*\. None on a day you already trained or while a workout is open\.'
     timeout: 15000
+- scrollUntilVisible:
+    element: 'Remind me on Monday'
+    timeout: 15000
+- assertVisible: 'Remind me on Sunday'
+- scrollUntilVisible:
+    element: 'Reminder time \d{1,2}:\d{2} (am|pm)\. Change'
+    timeout: 15000
+# Notifications are allowed (part A allowed every permission), so no "Turn on notifications".
+- assertNotVisible: "Turn on notifications"
+- assertNotVisible: 'Notifications are off for ForgeAI, so no reminder can arrive\.'
 - takeScreenshot: 130-reminders-on
 # ---------------------------------------------------------------- widgets
 - scrollUntilVisible:
     element: "Add Today"
     centerElement: true
     timeout: 15000
+# None on the home screen yet: the row says what the widgets show, with both Add buttons.
+- assertVisible: "Home-screen widgets"
+- assertVisible: "Today's workout and your week, on your home screen\\."
+- assertVisible: "Add This week"
 - tapOn: "Add Today"
 - extendedWaitUntil:
     visible: '(?i).*(add to home screen|add automatically|^add$).*'
@@ -247,9 +276,33 @@ appId: com.forgeai.app
     visible: '^TODAY$'
     timeout: 15000
 - takeScreenshot: 132-home-screen-widget
-# ---------------------------------------------------------------- a workout in lb
+# Back in the app, the widgets row counts the one just placed (re-read on every return).
 - launchApp:
     stopApp: false
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 30000
+- tapOn: "^Profile$"
+# The tab kept its scroll (just under the row) or starts at the top: up first, then down.
+- scrollUntilVisible:
+    element: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
+    direction: UP
+    centerElement: true
+    timeout: 10000
+    optional: true
+- runFlow:
+    when:
+      notVisible: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
+    commands:
+      - scrollUntilVisible:
+          element: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
+          centerElement: true
+          timeout: 30000
+- takeScreenshot: 132b-widgets-row-counts-it
+# ---------------------------------------------------------------- a workout in lb
 - tapOn:
     text: "^Workout$"
     optional: true
