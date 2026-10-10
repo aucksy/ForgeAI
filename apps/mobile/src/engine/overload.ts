@@ -5,8 +5,12 @@
 import { trimNum } from '@/lib/format';
 import type { Exercise, OverloadTarget } from '@/types/models';
 
-/** Epley estimated one-rep max: w * (1 + reps/30). */
+/**
+ * Epley estimated one-rep max: w * (1 + reps/30). Phase 3 (audit HI-10): a true single IS
+ * a 1-rep max — 100 kg × 1 is 100 kg, never "103.3".
+ */
 export function epleyE1rm(weightKg: number, reps: number): number {
+  if (reps === 1) return weightKg;
   return weightKg * (1 + reps / 30);
 }
 

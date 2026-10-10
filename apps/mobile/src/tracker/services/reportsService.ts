@@ -11,6 +11,7 @@ import type { SessionDetail } from '@/types/models';
 import { getTrackerExercisesByIds } from '../db/exerciseInfo';
 import { getSessionDetailsBetween } from '../db/sessionDetails';
 import { hasReps } from '../engine/logTypes';
+import { liftsBeatingBest } from '../engine/headline';
 import { buildMonthReport, buildYearReview, type MonthReport, type PictureTotals, type ReportSession, type StrengthPoint, type YearReview } from '../engine/reports';
 import { setVolumeKg } from '../engine/volume';
 import { monthDays, monthOf, shiftMonth, yearDays } from '../lib/months';
@@ -72,6 +73,14 @@ export function toReportSessions(details: readonly SessionDetail[]): ReportSessi
   });
 }
 
+/** Workouts per month ('YYYY-MM' → count): Progress's reports card. */
+export async function getMonthCounts(): Promise<Map<string, number>> {
+  const rows = await getDb().getAllAsync<{ ym: string; n: number }>(
+    'SELECT substr(date_iso, 1, 7) AS ym, COUNT(*) AS n FROM workout_sessions GROUP BY ym',
+  );
+  return new Map(rows.map((r) => [r.ym, r.n]));
+}
+
 /** Months with at least one workout, newest first ('YYYY-MM'). */
 export async function getTrainedMonths(): Promise<string[]> {
   const rows = await getDb().getAllAsync<{ ym: string }>(
@@ -129,6 +138,12 @@ export async function getMonthReport(month: string, today: string = todayISO()):
   return { report, records };
 }
 
+/**
+ * Sets with more reps than this say little about a 1-rep max (Epley overshoots a 25-rep
+ * set), so they never feed the year's "biggest gain" (PG-02).
+ */
+const MAX_E1RM_REPS = 12;
+
 /** Best estimated 1-rep max per workout of each weight × reps exercise. PURE. */
 export function strengthPoints(details: readonly SessionDetail[], weightExercises: ReadonlySet<string>): StrengthPoint[] {
   const out: StrengthPoint[] = [];
@@ -137,7 +152,7 @@ export function strengthPoints(details: readonly SessionDetail[], weightExercise
       if (!weightExercises.has(g.exercise.id)) continue;
       let best = 0;
       for (const s of g.sets) {
-        if (s.isWarmup || s.weightKg <= 0 || s.reps <= 0) continue;
+        if (s.isWarmup || s.weightKg <= 0 || s.reps <= 0 || s.reps > MAX_E1RM_REPS) continue;
         best = Math.max(best, epleyE1rm(s.weightKg, s.reps));
       }
       if (best > 0) out.push({ exerciseId: g.exercise.id, name: g.exercise.name, dateISO: d.dateISO, e1rm: best });
@@ -164,7 +179,8 @@ export async function getYearReview(year: number, today: string = todayISO()): P
     complete,
     lastMonth: complete ? `${year}-12` : monthOf(today),
     sessions: toReportSessions(details),
-    recordCount: records.length,
+    // D10: lifts that beat a best, not every kind of record they set.
+    recordCount: liftsBeatingBest(records),
     strength: strengthPoints(details, weightIds),
     muscles,
     bodyweight: bw,

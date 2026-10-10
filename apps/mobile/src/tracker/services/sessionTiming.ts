@@ -45,10 +45,17 @@ export function computeEditedTiming(input: {
 }): EditedTiming {
   const { originalDateISO, dateISO, startedAt, endedAt, now } = input;
   const requested = dayDeltaMs(originalDateISO, dateISO);
-  const overshoot = startedAt + requested - now;
-  const shift = overshoot > 0 ? requested - overshoot : requested;
-
-  const nextStart = startedAt + shift;
-  const nextEnd = endedAt == null ? null : Math.max(nextStart, Math.min(endedAt + shift, now));
+  // HI-05: the workout's LENGTH travels with it. When the moved workout would end after now
+  // (yesterday 18:00–19:00 moved onto today at 09:00), the whole workout slides back so it
+  // ends now — it never shrinks to 0 minutes. It never slides before the start of its new day
+  // (date_iso and started_at keep agreeing); only then, as a last resort, is it shortened.
+  const length = endedAt == null ? 0 : Math.max(0, endedAt - startedAt);
+  let nextStart = startedAt + requested;
+  if (nextStart + length > now) {
+    const dayStart = fromISO(dateISO).getTime();
+    nextStart = Math.min(nextStart, Math.max(now - length, dayStart));
+  }
+  nextStart = Math.min(nextStart, now);
+  const nextEnd = endedAt == null ? null : Math.max(nextStart, Math.min(nextStart + length, now));
   return { dateISO, startedAt: nextStart, endedAt: nextEnd };
 }

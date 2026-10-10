@@ -21,6 +21,7 @@ import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import { splitCards } from '@/tracker/services/cardSplit';
 import type { SetMeta } from '@/tracker/db/trackerSets';
 import type { TrackerExercise } from '@/tracker/db/exerciseInfo';
+import { liftsBeatingBest, liftsUpText } from '@/tracker/engine/headline';
 import { RECORD_KINDS } from '@/tracker/engine/records';
 import { missesBodyweight, muscleSets, type MuscleSetsSlice } from '@/tracker/engine/volume';
 import { durationText } from '@/tracker/services/finishCheck';
@@ -111,8 +112,8 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
     getSessionSetMeta(sessionId),
     getVolumeContext(raw.exercises.map((g) => g.exercise.id)),
     getDb()
-      .getFirstAsync<{ easy_week: number | null; title: string | null }>(
-        'SELECT easy_week, title FROM workout_sessions WHERE id = ?',
+      .getFirstAsync<{ easy_week: number | null; title: string | null; routine_id: string | null }>(
+        'SELECT easy_week, title, routine_id FROM workout_sessions WHERE id = ?',
         [sessionId],
       )
       .catch(() => null),
@@ -123,7 +124,8 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
   );
   // LW-10: the workout's own name rides on the session (the frozen reader doesn't map it).
   // LW-28: heavy and back-off cards of one lift come back as two cards, in their places.
-  const session = { ...applyVolume(splitCards(raw, setMeta), ctx), title: easy?.title ?? null };
+  // Audit Phase 3 review: and the routine it was started from, so a Repeat counts as that routine.
+  const session = { ...applyVolume(splitCards(raw, setMeta), ctx), title: easy?.title ?? null, routineId: easy ? easy.routine_id ?? null : null };
   const vs = toVolumeSession(session, ctx);
   const durationSec =
     session.endedAt != null ? Math.max(0, Math.round((session.endedAt - session.startedAt) / 1000)) : 0;
@@ -171,7 +173,8 @@ export function finishHeadline(data: Pick<SessionSummaryData, 'session' | 'setMe
 
 /**
  * The finish screen's answer, in one line (LW-21): "52 min · 18 sets · 12,480 kg lifted ·
- * 2 records". With no kilos it says the distance; records only when there are some. PURE.
+ * 2 lifts beat their best". With no kilos it says the distance; records only when there are
+ * some. PURE.
  */
 export function finishAnswer(
   data: Pick<SessionSummaryData, 'session' | 'setMeta' | 'totalVolumeKg' | 'workingSetCount' | 'durationSec' | 'records'>,
@@ -184,8 +187,9 @@ export function finishAnswer(
     const m = workoutDistanceM(data);
     if (m > 0) parts.push(fmtTotalDistance(m));
   }
-  const records = data.records?.length ?? 0;
-  if (records > 0) parts.push(countWord(records, 'record'));
+  // D10: the count is the LIFTS that beat a best; each kind still shows on the lift below.
+  const lifts = liftsBeatingBest((data.records ?? []).map((r) => ({ exerciseId: r.exerciseId, dateISO: '' })));
+  if (lifts > 0) parts.push(liftsUpText(lifts));
   return parts.join(' · ');
 }
 

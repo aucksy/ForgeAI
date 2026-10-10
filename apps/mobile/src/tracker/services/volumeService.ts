@@ -169,7 +169,8 @@ function plateauFrom(insight: string): string | null {
  * Phase 2: the frozen dashboard sums `weight × reps` and counts every stored record. Home
  * (and the coach's snapshot) must show the same volume as every other screen, so its
  * volume numbers, its recovery score and its insight line are recomputed with the one
- * volume rule and only records a member would recognise. PURE.
+ * volume rule. Phase 3 (D10): the insight's record count is the LIFTS that beat a best this
+ * week by the one record rule (`liftsUp`), never the frozen PR table. PURE.
  */
 export function withPhase2Volume(
   raw: DashboardData,
@@ -177,8 +178,8 @@ export function withPhase2Volume(
   lastWorkoutVolumeKg: number | null,
   today: string,
   extra: {
-    /** Exercises with a meaningful record in the last 7 days (null = unknown). */
-    recentPrCount?: number | null;
+    /** Lifts that beat a best this week, by the one record rule (null = unknown). */
+    liftsUp?: number | null;
     /** Recent sessions with Phase 2 volume, newest first (null = keep the frozen recovery). */
     recentDetails?: readonly SessionDetail[] | null;
   } = {},
@@ -187,28 +188,29 @@ export function withPhase2Volume(
   const prev = weeks.length > 1 ? weeks[weeks.length - 2].volumeKg : 0;
   const delta = prev > 0 ? Math.round(((cur - prev) / prev) * 100) : cur > 0 ? 100 : 0;
   const todayTrained = raw.lastWorkout?.dateISO === today;
+  const streakWeeks = raw.streakWeeks ?? 0;
   let insight: string;
-  if (extra.recentPrCount != null) {
-    // The frozen insight's own inputs, with the record count filtered and the new volume.
+  if (extra.liftsUp != null) {
+    // The frozen insight's own inputs, with the one record rule and the new volume.
     insight = buildInsight({
-      streakDays: raw.streakDays,
+      streakWeeks,
       proteinGapG: Math.round(raw.proteinTargetG - raw.proteinTodayG),
-      recentPrCount: extra.recentPrCount,
+      liftsUp: extra.liftsUp,
       plateauedExercise: plateauFrom(raw.insight),
       weeklyVolumeDeltaPct: delta,
       todayTrained,
     });
   } else {
-    // The frozen insight puts PRs, a plateau and protein ahead of volume; only when it
+    // The frozen insight puts records, a plateau and protein ahead of volume; only when it
     // fell through to the volume / streak / rest lines can the new volume change it.
     // (The volume-up line also says "protein", so match the protein lines exactly.)
-    const higherPriority = /\bPRs?\b|flat for three weeks|protein goal|of protein to go/.test(raw.insight);
+    const higherPriority = /beat (?:its|their) best|flat for three weeks|protein goal|of protein to go/.test(raw.insight);
     insight = higherPriority
       ? raw.insight
       : buildInsight({
-          streakDays: raw.streakDays,
+          streakWeeks,
           proteinGapG: 0,
-          recentPrCount: 0,
+          liftsUp: 0,
           plateauedExercise: null,
           weeklyVolumeDeltaPct: delta,
           todayTrained,
@@ -219,6 +221,7 @@ export function withPhase2Volume(
     weeklyVolumeKg: cur,
     weeklyVolumeDeltaPct: delta,
     insight,
+    ...(extra.liftsUp != null ? { liftsUpThisWeek: extra.liftsUp } : {}),
     recovery: extra.recentDetails ? phase2Recovery(extra.recentDetails, weeks, today) : raw.recovery,
     lastWorkout:
       raw.lastWorkout && lastWorkoutVolumeKg != null ? { ...raw.lastWorkout, volumeKg: lastWorkoutVolumeKg } : raw.lastWorkout,

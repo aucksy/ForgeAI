@@ -92,7 +92,8 @@ function list(top: number, title: string, rows: [string, string][]): SceneNode[]
   return nodes;
 }
 
-export function monthShareScene(r: MonthReport, recordCount: number): Scene {
+/** `liftsUp`: lifts that beat a best this month (D10 — lifts, not every kind of record). */
+export function monthShareScene(r: MonthReport, liftsUp: number): Scene {
   const t = r.totals;
   const nodes: SceneNode[] = frame(
     'Monthly report',
@@ -104,7 +105,7 @@ export function monthShareScene(r: MonthReport, recordCount: number): Scene {
       ['TIME', durationText(t.durationSec)],
       liftedStat(t, r.picture),
       ['SETS', fmtInt(t.sets)],
-      ['RECORDS', String(recordCount)],
+      ['LIFTS UP', fmtInt(liftsUp)],
     ]),
   );
 
@@ -151,7 +152,7 @@ export function yearShareScene(y: YearReview): Scene {
       yearTimeStat(t.durationSec),
       liftedStat(t, y.picture),
       ['SETS', fmtInt(t.sets)],
-      ['RECORDS', fmtInt(y.recordCount)],
+      ['LIFTS UP', fmtInt(y.recordCount)],
     ]),
   );
 

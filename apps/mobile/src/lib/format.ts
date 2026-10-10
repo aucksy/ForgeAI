@@ -1,5 +1,6 @@
 import type { UnitSystem } from '@/types/models';
 
+import { groupInt } from './numberFormat';
 import { displayUnits, kgToShown, weightUnitOf } from './units';
 
 export const KG_PER_LB = 0.45359237;
@@ -36,12 +37,17 @@ export function kgNum(kg: number, u: UnitSystem = displayUnits()): string {
   return trimNum(kgToShown(kg, u));
 }
 
-/** 12480 -> "12,480" */
+/**
+ * 12480 -> "12,480": whole numbers grouped the PHONE's way (PG-22 — it used to force Indian
+ * grouping on everyone, lb included). The ONE full-number format: screens with room show
+ * this; only a small tile or a chart axis uses `fmtCompact`, and never both for the same
+ * total on one screen.
+ */
 export function fmtInt(n: number): string {
-  return Math.round(n).toLocaleString('en-IN');
+  return groupInt(n);
 }
 
-/** 12480 -> "12.5k" (volume badges, axis ticks) */
+/** 12480 -> "12.5k" — small tiles and chart axes only (see `fmtInt`). */
 export function fmtCompact(n: number): string {
   const abs = Math.abs(n);
   if (abs >= 1_000_000) return `${trimNum(n / 1_000_000)}M`;

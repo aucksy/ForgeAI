@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 10;
+export const TRACKER_SCHEMA_VERSION = 11;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -117,6 +117,11 @@ export async function initTrackerSchema(): Promise<void> {
   // set), so a workout logging a lift once is unchanged; the two cards stay two after saving,
   // and each reads its own last time and Target.
   await ensureColumn('set_entries', 'card_index', 'INTEGER');
+  // v11 (audit Phase 3 — RP-01 / RP-02): the routine a workout was started from (a
+  // `plan_days.id`), saved at Finish, so "Today" knows Push 1 from Push 2 instead of guessing.
+  // NULL = not known (older workouts; imports with no routine of that name), '' = known to
+  // have none (an empty workout — it never moves "Today").
+  await ensureColumn('workout_sessions', 'routine_id', 'TEXT');
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }

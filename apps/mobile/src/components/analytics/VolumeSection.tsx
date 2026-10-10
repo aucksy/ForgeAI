@@ -1,6 +1,6 @@
 import { BarChart } from '@/components/charts';
 import { EmptyState } from '@/components/ui';
-import { fmtCompact } from '@/lib/format';
+import { fmtInt } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import type { VolumePoint } from '@/types/models';
@@ -24,7 +24,7 @@ export function VolumeSection({ data, index }: VolumeSectionProps) {
     <Section
       title="Weekly Volume"
       index={index}
-      right={hasData ? <HeaderStat text={`${fmtCompact(kgToShown(total, units))} ${weightUnitOf(units)} lifted`} /> : undefined}
+      right={hasData ? <HeaderStat text={`${fmtInt(kgToShown(total, units))} ${weightUnitOf(units)} lifted`} /> : undefined}
     >
       {hasData ? (
         <BarChart

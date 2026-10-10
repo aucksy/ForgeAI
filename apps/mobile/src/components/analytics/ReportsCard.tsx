@@ -3,6 +3,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Card, Icon } from '@/components/ui';
 import { color, motion, space, type } from '@/theme/tokens';
+import { liftsUpShort } from '@/tracker/engine/headline';
 import { yearRowSub } from '@/tracker/engine/reports';
 import { monthName, monthTitle } from '@/tracker/lib/months';
 
@@ -12,6 +13,7 @@ export interface ReportsCardProps {
   /** The month is still running (reads "so far"). */
   monthRunning: boolean;
   monthWorkouts: number;
+  /** D10: lifts that beat a best that month (not every kind of record). */
   monthRecords: number;
   year: number | null;
   yearRunning: boolean;
@@ -53,7 +55,7 @@ export function ReportsCard(p: ReportsCardProps) {
         {p.month ? (
           <Row
             title={p.monthRunning ? `${monthName(p.month)} so far` : `${monthTitle(p.month)} report`}
-            sub={`${workouts(p.monthWorkouts)} · ${p.monthRecords} ${p.monthRecords === 1 ? 'record' : 'records'}`}
+            sub={p.monthRecords > 0 ? `${workouts(p.monthWorkouts)} · ${liftsUpShort(p.monthRecords)}` : workouts(p.monthWorkouts)}
             label={`Open the ${monthTitle(p.month)} report`}
             onPress={() => p.onOpen(p.month as string)}
           />

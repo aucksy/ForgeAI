@@ -33,7 +33,7 @@ const FULL_ROWS: [string, Row][] = [
   ['workout_plans', { id: 'plan1', name: 'PPL', is_active: 1, folder_order: 2, source: 'builder', settings: '{"every":6}' }],
   ['plan_days', { id: 'day1', plan_id: 'plan1', day_type: 'push', day_order: 0, name: 'Push A' }],
   ['plan_exercises', { id: 'pe1', plan_day_id: 'day1', exercise_id: 'ex1', ex_order: 0, target_sets: 4, rep_range_min: 5, rep_range_max: 8 }],
-  ['workout_sessions', { id: 's1', date_iso: '2026-03-01', started_at: 1772339400000, ended_at: 1772343300000, day_type: 'push', notes: 'n', source: 'manual', easy_week: 1, title: 'Push A' }],
+  ['workout_sessions', { id: 's1', date_iso: '2026-03-01', started_at: 1772339400000, ended_at: 1772343300000, day_type: 'push', notes: 'n', source: 'manual', easy_week: 1, title: 'Push A', routine_id: 'day1' }],
   ['set_entries', {
     id: 'se1', session_id: 's1', exercise_id: 'ex1', set_number: 1, weight_kg: 80, reps: 6, is_warmup: 0, rpe: 8.5, set_type: 'drop',
     note: 'slow', superset_group: 1, duration_sec: 61, distance_m: 25, load_mode: 'one', card_index: 1,
@@ -93,5 +93,21 @@ describe('the Drive backup round trip keeps every table and column of the real s
     const env = JSON.parse(await exportSnapshot()) as { tables: Record<string, unknown[]> };
     const out = db.tables().filter((t) => !(t in env.tables));
     expect(out).toEqual(NOT_BACKED_UP);
+  });
+});
+
+describe('review: a moved imported workout stays recognised after a Drive restore (HI-03)', () => {
+  it('the remembered first starts (importOriginalStarts) go with the backup and come back', async () => {
+    const value = JSON.stringify({ 'w-moved': { startedAt: 1735722000000, dateISO: '2025-01-01' } });
+    db.raw.run("INSERT INTO meta(key, value) VALUES('importOriginalStarts', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value", [value]);
+    const { exportSnapshot, parseSnapshot, importSnapshot } = await import('@/cloud/snapshot');
+    const json = await exportSnapshot();
+    const { eraseAllData } = await import('@/onboarding/db/dataActions');
+    await eraseAllData();
+    db.raw.run("DELETE FROM meta WHERE key = 'importOriginalStarts'");
+    await importSnapshot(parseSnapshot(json));
+    expect(db.all<{ value: string }>("SELECT value FROM meta WHERE key = 'importOriginalStarts'")[0]?.value).toBe(value);
+    // Nothing else of meta travels (identity, the seeded flag, the last-backup time stay local).
+    expect(Object.keys((JSON.parse(json) as { meta?: Record<string, string> }).meta ?? {})).toEqual(['importOriginalStarts']);
   });
 });

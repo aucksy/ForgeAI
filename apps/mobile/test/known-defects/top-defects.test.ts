@@ -87,7 +87,7 @@ describe('LW-06 a minus sign typed by mistake is not kept (a negative weight is 
 });
 
 describe('HI-05 moving a workout onto today keeps its length', () => {
-  it.fails('HI-05 known defect: yesterday 18:00–19:00 moved to today at 09:00 still lasts 60 minutes', () => {
+  it('HI-05: yesterday 18:00–19:00 moved to today at 09:00 still lasts 60 minutes', () => {
     const today = new Date(2026, 9, 10, 9, 0, 0, 0).getTime();
     const start = new Date(2026, 9, 9, 18, 0, 0, 0).getTime();
     const t = computeEditedTiming({
@@ -98,20 +98,20 @@ describe('HI-05 moving a workout onto today keeps its length', () => {
 });
 
 describe('HI-10 a true single is its own 1-rep max', () => {
-  it.fails('HI-10 known defect: 100 kg × 1 → best 1-rep max 100 kg (not 103.3)', () => {
+  it('HI-10: 100 kg × 1 → best 1-rep max 100 kg (not 103.3)', () => {
     const v = setRecordValue('e1rm', { weightKg: 100, reps: 1 }, { logType: 'weight_reps', loadMode: 'total', bwShare: 0 } as never, null);
     expect(v).toBe(100);
   });
 });
 
 describe('HI-20 a workout dated "tomorrow" after flying west never reads "-1 days ago"', () => {
-  it.fails('HI-20 known defect: relativeDay(tomorrow) has no negative number', () => {
+  it('HI-20: relativeDay(tomorrow) has no negative number', () => {
     expect(relativeDay(addDays(todayISO(), 1))).not.toMatch(/-\d/);
   });
 });
 
 describe('PG-02 one mistyped set cannot become the year\'s "biggest gain"', () => {
-  it.fails('PG-02 known defect: bench 79→85 kg over 3 months with one 350 kg typo reports about +8%, not +342%', () => {
+  it('PG-02: bench 79→85 kg over 3 months with one 350 kg typo reports about +8%, not +342%', () => {
     const e1 = [79, 80, 80, 81, 82, 83, 350, 84, 85];
     const pts = e1.map((v, i) => ({ exerciseId: 'bench', name: 'Barbell Bench Press', dateISO: addDays('2026-01-05', i * 10), e1rm: v }));
     const g = biggestGain(pts);

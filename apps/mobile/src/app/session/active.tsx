@@ -7,13 +7,13 @@
  * next exercise. Finishing a changed routine workout offers to update the routine.
  */
 import { useKeepAwake } from 'expo-keep-awake';
-import { useIsFocused, useRouter } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { useFocusEffect, useIsFocused, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import type { ScrollView as ScrollViewType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen, askConfirm } from '@/components/ui';
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -35,7 +35,7 @@ import { ensureAlertPermission } from '@/tracker/services/workoutAlerts';
 import { loadTargets, querySignature, targetQuery, useTargets } from '@/tracker/store/targetStore';
 import { useUnits } from '@/lib/useUnits';
 import { draftToRichSets, hasWorkingSet } from '@/tracker/services/draftSets';
-import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { isCorrecting, useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import { useWorkoutUi } from '@/tracker/store/workoutUiStore';
@@ -47,6 +47,7 @@ export default function ActiveWorkoutScreen() {
   const active = useActiveWorkout((s) => s.active);
   const startedAt = useActiveWorkout((s) => s.startedAt);
   const planDayId = useActiveWorkout((s) => s.planDayId);
+  const workoutName = useActiveWorkout((s) => s.workoutName);
   // Phase 4: an easy week of the followed plan (half the sets, the same weights).
   const easyWeek = useActiveWorkout((s) => s.easyWeek);
   // Phase 4: members who log RPE see this plan week's effort on the Target.
@@ -65,6 +66,10 @@ export default function ActiveWorkoutScreen() {
   const setEditNotes = useActiveWorkout((s) => s.setEditNotes);
   const setEditDuration = useActiveWorkout((s) => s.setEditDuration);
   const editEndedAt = useActiveWorkout((s) => s.editEndedAt);
+  // Phase 3 packet C: "Log a past workout" uses this same editor for a NEW workout.
+  const pastLog = useActiveWorkout((s) => s.pastLog);
+  const setEditStartTime = useActiveWorkout((s) => s.setEditStartTime);
+  const editOriginalDateISO = useActiveWorkout((s) => s.editOriginalDateISO);
   const saveEdits = useActiveWorkout((s) => s.saveEdits);
   const lastDeleted = useActiveWorkout((s) => s.lastDeleted);
   const undoDelete = useActiveWorkout((s) => s.undoDelete);
@@ -101,8 +106,8 @@ export default function ActiveWorkoutScreen() {
 
   // First workout: ask for notification permission (rest alerts on a locked phone).
   useEffect(() => {
-    if (!editingSessionId) void ensureAlertPermission();
-  }, [editingSessionId]);
+    if (!editingSessionId && !pastLog) void ensureAlertPermission();
+  }, [editingSessionId, pastLog]);
 
   // Tell the notification handler this screen is already open (no duplicate push).
   useEffect(() => {
@@ -171,7 +176,8 @@ export default function ActiveWorkoutScreen() {
   // Exactly what a save would write — the same helper the store commits through,
   // so the button can never enable on a set the save then silently drops.
   const canFinish = hasWorkingSet(draftToRichSets(exercises));
-  const isEditing = editingSessionId != null;
+  // Correcting the past: an edit of a saved workout, or a past workout being logged.
+  const isEditing = isCorrecting({ editingSessionId, pastLog });
 
   // Distinct superset groups in this workout (for the per-card chooser). Memoised on a
   // primitive key, NOT on `exercises`: the store replaces that array on every keystroke,
@@ -189,19 +195,36 @@ export default function ActiveWorkoutScreen() {
   const onDiscard = (): void => {
     const back = (): void => {
       leaving.current = true;
-      // Leaving an edit returns to the workout it came from, unchanged.
+      // Leaving an edit returns to the workout it came from, unchanged; a past log to History.
       const sessionId = editingSessionId;
+      const wasPast = pastLog;
       void discard().then(() =>
         sessionId
           ? router.replace({ pathname: '/session/[id]', params: { id: sessionId } })
-          : router.replace('/workout'),
+          : router.replace(wasPast ? '/history' : '/workout'),
       );
     };
     if (isEditing) {
-      Alert.alert('Discard changes?', 'Your edits will be thrown away. The saved workout stays as it was.', [
-        { text: 'Keep editing', style: 'cancel' },
-        { text: 'Discard changes', style: 'destructive', onPress: back },
-      ]);
+      // HI-07: leaving an edit (✕ or Back) asks first; an edit is never left open behind.
+      void askConfirm(
+        pastLog
+          ? {
+              title: 'Discard this workout?',
+              body: 'Nothing is saved. Your history stays as it was.',
+              confirmLabel: 'Discard',
+              cancelLabel: 'Keep editing',
+              destructive: true,
+            }
+          : {
+              title: 'Discard changes?',
+              body: 'Your edits will be thrown away. The saved workout stays as it was.',
+              confirmLabel: 'Discard',
+              cancelLabel: 'Keep editing',
+              destructive: true,
+            },
+      ).then((ok) => {
+        if (ok) back();
+      });
       return;
     }
     Alert.alert('Discard workout?', 'This workout and its sets will be deleted. This cannot be undone.', [
@@ -210,29 +233,49 @@ export default function ActiveWorkoutScreen() {
     ]);
   };
 
+  // HI-07: Android Back on the editor asks "Discard changes?" instead of leaving the edit open
+  // as "a workout in progress". (A live workout's Back still minimises it.)
+  const onDiscardRef = useRef(onDiscard);
+  onDiscardRef.current = onDiscard;
+  useFocusEffect(
+    useCallback(() => {
+      if (!isEditing) return undefined;
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+        if (leaving.current || useActiveWorkout.getState().committing) return true;
+        onDiscardRef.current();
+        return true;
+      });
+      return () => sub.remove();
+    }, [isEditing]),
+  );
+
   const onSaveEdits = async (): Promise<void> => {
     if (useActiveWorkout.getState().committing) return; // ignore double-tap while saving
     leaving.current = true;
     try {
+      const wasPast = useActiveWorkout.getState().pastLog;
       const id = await saveEdits();
       if (!id) {
         leaving.current = false;
         Alert.alert(
           'Nothing to save',
-          'A workout needs at least one set. To get rid of it entirely, discard these changes and delete the workout instead.',
+          wasPast
+            ? 'Type at least one set to save this workout.'
+            : 'A workout needs at least one set. To get rid of it entirely, discard these changes and delete the workout instead.',
         );
         return;
       }
-      // Saved. Nothing past this point may report failure — a refresh error must
-      // not strand the member on an editor whose workout is already written.
-      await useDashboard.getState().refresh().catch(() => undefined);
+      // Saved. Nothing past this point may report failure. HI-14: go straight to the saved
+      // workout — Home catches up in the background (as after Finish), so the emptied editor
+      // is never on screen while it refreshes.
+      router.replace({ pathname: '/session/[id]', params: { id } });
+      void useDashboard.getState().refresh().catch(() => undefined);
       if (!useActiveWorkout.getState().lastSaveReconciled) {
         Alert.alert(
-          'Changes saved',
-          'Your personal records will catch up the next time you log or edit a workout.',
+          wasPast ? 'Workout saved' : 'Changes saved',
+          'Your records will catch up the next time you log or edit a workout.',
         );
       }
-      router.replace({ pathname: '/session/[id]', params: { id } });
     } catch (err) {
       if (err instanceof SessionGoneError) {
         // Deleted from elsewhere while this draft sat open — there is nothing to
@@ -256,7 +299,8 @@ export default function ActiveWorkoutScreen() {
     else if (canFinish && !committing) setFinishOpen(true); // LW-02: ask first, save on the sheet
   };
 
-  const defaultName = defaultWorkoutName(routineName, startedAt ?? Date.now());
+  // A Repeat starts with its source's name (it has no routine of its own on screen).
+  const defaultName = defaultWorkoutName(routineName ?? workoutName, startedAt ?? Date.now());
   const finishing = useRef(false);
 
   const onFinish = async (choice: FinishChoice): Promise<void> => {
@@ -337,7 +381,9 @@ export default function ActiveWorkoutScreen() {
         {/* Owns its own 1 Hz tick — the rest of this tree no longer re-renders per second. */}
         {isEditing ? (
           // v0.28.1: an old workout being edited has no running clock (it counted from its start, days ago).
-          <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted, letterSpacing: 1.2 }}>EDITING</Text>
+          <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted, letterSpacing: 1.2 }}>
+            {pastLog ? 'PAST WORKOUT' : 'EDITING'}
+          </Text>
         ) : (
           <ElapsedClock startedAt={startedAt} />
         )}
@@ -359,6 +405,7 @@ export default function ActiveWorkoutScreen() {
         >
           {isEditing ? (
             <EditSessionHeader
+              title={pastLog ? 'Logging a past workout' : 'Editing a saved workout'}
               dateISO={editDateISO ?? ''}
               dayType={dayType}
               notes={editNotes ?? ''}
@@ -367,6 +414,9 @@ export default function ActiveWorkoutScreen() {
                   ? Math.max(1, Math.round((editEndedAt - startedAt) / 60_000))
                   : null
               }
+              startedAt={startedAt}
+              storedDateISO={editOriginalDateISO ?? editDateISO ?? ''}
+              onStartTimeChange={setEditStartTime}
               onDateChange={setEditDate}
               onDurationChange={setEditDuration}
               onDayTypeChange={setEditDayType}
@@ -461,8 +511,12 @@ export default function ActiveWorkoutScreen() {
             label={
               isEditing
                 ? canFinish
-                  ? 'Save changes'
-                  : 'Keep at least one set'
+                  ? pastLog
+                    ? 'Save workout'
+                    : 'Save changes'
+                  : pastLog
+                    ? 'Type a set to save'
+                    : 'Keep at least one set'
                 : canFinish
                   ? 'Finish workout'
                   : 'Log a set to finish'

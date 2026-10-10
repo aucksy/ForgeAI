@@ -71,7 +71,8 @@ export function SessionSummary({
 
       {/* new records (Phase 3: all seven kinds), one row per exercise */}
       {records.length > 0 ? (
-        <FoldSection title="New records" count={records.length} noun="record">
+        // D10: the count is the LIFTS that beat a best; each kind shows on its lift below.
+        <FoldSection title="New records" count={groupByExercise(records).length} noun="lift">
         <Card>
           <View style={{ gap: space.md }}>
             {groupByExercise(records).map((g) => (

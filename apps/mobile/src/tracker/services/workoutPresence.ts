@@ -76,7 +76,7 @@ export function startWorkoutPresence(): () => void {
     // v0.26.1: before the saved workout is read back, "no workout" is not known yet — a rest
     // the watch card kept running while the app was closed must survive until then.
     if (!w.active && !w.hydrated) return;
-    if (!w.active || w.editingSessionId) {
+    if (!w.active || w.editingSessionId || w.pastLog) {
       if (!w.active && r.endsAt != null) r.skip(); // workout over → no stray bell
       if (last !== 'off') {
         last = 'off';
@@ -99,7 +99,7 @@ export function startWorkoutPresence(): () => void {
   let wasHydrated = useActiveWorkout.getState().hydrated;
   const catchUp = (): void => {
     const w = useActiveWorkout.getState();
-    if (!w.active || w.editingSessionId) return;
+    if (!w.active || w.editingSessionId || w.pastLog) return;
     const r = useRestTimer.getState();
     const step = reconcileWithCard({ endsAt: r.endsAt, onCard: restCardHolds() }, readRestCard(), Date.now());
     if (step.do === 'adopt') {

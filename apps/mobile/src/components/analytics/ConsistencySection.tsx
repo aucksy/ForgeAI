@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { Heatmap } from '@/components/charts';
 import { EmptyState, Icon } from '@/components/ui';
 import { color, space, type } from '@/theme/tokens';
+import { streakText } from '@/lib/streak';
 import type { ConsistencyCell } from '@/types/models';
 
 import { HeaderStat, Section } from './Section';
@@ -10,11 +11,12 @@ import { HeaderStat, Section } from './Section';
 export interface ConsistencySectionProps {
   cells: ConsistencyCell[];
   rangeDays: number;
+  /** THE streak (D9): weeks in a row with at least one workout. */
   streak: number;
   index: number;
 }
 
-/** GitHub-style training heatmap + the current streak underneath. */
+/** GitHub-style training heatmap + the current week streak underneath (D9). */
 export function ConsistencySection({ cells, rangeDays, streak, index }: ConsistencySectionProps) {
   const weeks = Math.min(26, Math.ceil(rangeDays / 7));
   const activeDays = cells.reduce((sum, c) => sum + (c.level > 0 ? 1 : 0), 0);
@@ -42,7 +44,7 @@ export function ConsistencySection({ cells, rangeDays, streak, index }: Consiste
               <Text
                 style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}
               >
-                {streak}-day streak{' '}
+                {streakText(streak)}{' '}
                 <Text
                   style={{
                     fontFamily: type.body,
@@ -57,7 +59,7 @@ export function ConsistencySection({ cells, rangeDays, streak, index }: Consiste
               <Text
                 style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}
               >
-                No active streak — train today to light one up
+                No streak yet — one workout this week starts one
               </Text>
             )}
           </View>

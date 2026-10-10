@@ -14,6 +14,10 @@ import { enqueueWrite } from '@/db/writeQueue';
  * cloud session, the `seeded` flag and the last-backup time are device-local and are
  * re-established on their own, so keeping `meta` out means a restore can't clobber the
  * gym link, re-trigger the demo seed, or wipe the backup timestamp.
+ *
+ * One exception, by name (`META_KEYS`): `importOriginalStarts` — the first start of each
+ * imported workout an edit moved (HI-03). It belongs to the workouts, not the device: without
+ * it, a restored phone re-importing the same Hevy file brings every moved workout back twice.
  */
 
 type SqlValue = string | number | null;
@@ -60,7 +64,8 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
     name: 'workout_sessions',
     // + `easy_week` (Phase 4, tracker schema v7): a workout of a plan's easy week.
     // + `title` (tracker schema v9): the workout's own name. Older backups → NULL.
-    cols: ['id', 'date_iso', 'started_at', 'ended_at', 'day_type', 'notes', 'source', 'easy_week', 'title'],
+    // + `routine_id` (tracker schema v11): the routine it was started from. Older backups → NULL.
+    cols: ['id', 'date_iso', 'started_at', 'ended_at', 'day_type', 'notes', 'source', 'easy_week', 'title', 'routine_id'],
   },
   {
     name: 'set_entries',
@@ -93,11 +98,16 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
 
 const APP_TAG = 'forgeai';
 
+/** The only `meta` keys a backup carries (see the file note). */
+const META_KEYS: readonly string[] = ['importOriginalStarts'];
+
 export interface BackupEnvelope {
   app: string;
   schema_version: number;
   exported_at: string; // ISO timestamp
   tables: Record<string, Row[]>;
+  /** `META_KEYS` present at export. Absent in backups made before it existed. */
+  meta?: Record<string, string>;
 }
 
 export interface BackupInfo {
@@ -109,6 +119,7 @@ export interface BackupInfo {
 /** Serialize every domain table to a portable JSON string. */
 export async function exportSnapshot(): Promise<string> {
   const tables: Record<string, Row[]> = {};
+  const meta: Record<string, string> = {};
   // Read every table inside ONE exclusive transaction so the snapshot is a
   // consistent point-in-time view: a concurrent write can't straddle two reads
   // and capture a child row whose parent was already read (which would make the
@@ -119,6 +130,11 @@ export async function exportSnapshot(): Promise<string> {
       for (const t of TABLES) {
         tables[t.name] = await tx.getAllAsync<Row>(`SELECT ${t.cols.join(', ')} FROM ${t.name}`);
       }
+      const rows = await tx.getAllAsync<{ key: string; value: string }>(
+        `SELECT key, value FROM meta WHERE key IN (${META_KEYS.map(() => '?').join(', ')})`,
+        [...META_KEYS],
+      );
+      for (const r of rows) if (typeof r.value === 'string') meta[r.key] = r.value;
     }),
   );
   const envelope: BackupEnvelope = {
@@ -126,6 +142,7 @@ export async function exportSnapshot(): Promise<string> {
     schema_version: SCHEMA_VERSION,
     exported_at: new Date().toISOString(),
     tables,
+    meta,
   };
   return JSON.stringify(envelope);
 }
@@ -177,7 +194,7 @@ async function batchInsert(tx: TxLike, table: string, cols: readonly string[], r
  * Replace all local domain data with the snapshot's, atomically. DELETE-first
  * (children → parents) then INSERT (parents → children) inside one exclusive
  * transaction, exactly like the seed — so a mid-restore crash leaves the DB clean
- * and re-runnable. Never touches `meta` (identity / seeded / last-backup survive).
+ * and re-runnable. Never touches `meta` (identity / seeded / last-backup survive) beyond `META_KEYS`.
  */
 export async function importSnapshot(env: BackupEnvelope): Promise<void> {
   // Through the app-wide write queue (DS-04): a workout save can't land half-way through.
@@ -195,5 +212,16 @@ export async function replaceAllInTransaction(tx: TxLike, env: BackupEnvelope): 
   }
   for (const t of TABLES) {
     if (!kept(t)) await batchInsert(tx, t.name, t.cols, env.tables[t.name] ?? []);
+  }
+  // The few meta keys a backup carries. An older backup has none: this phone's stay as they are.
+  if (env.meta && typeof env.meta === 'object') {
+    for (const key of META_KEYS) {
+      const v = env.meta[key];
+      if (typeof v === 'string') {
+        await tx.runAsync('INSERT INTO meta(key, value) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value', [key, v]);
+      } else {
+        await tx.runAsync('DELETE FROM meta WHERE key = ?', [key]);
+      }
+    }
   }
 }

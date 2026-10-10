@@ -1,7 +1,7 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
-import { useCallback, useState } from 'react';
-import { Pressable, RefreshControl, ScrollView, Text } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { Alert, Pressable, RefreshControl, ScrollView, Text } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import {
@@ -25,7 +25,10 @@ import { takeLinkNotice } from '@/lib/linkNotice';
 import { useDashboard } from '@/store/dashboardStore';
 import { useSettings } from '@/store/settingsStore';
 import { color, motion, space, type } from '@/theme/tokens';
+import { runGuarded } from '@/lib/guardedAction';
 import { todayLink } from '@/tracker/lib/todayLink';
+import { startShownWorkout } from '@/tracker/services/todayStart';
+import type { Goal } from '@/types/models';
 
 // D4 = A: the coach, nutrition and their scores stay hidden until their own phase.
 const PARTS = new Set(homeParts(FEATURES));
@@ -51,6 +54,8 @@ export default function DashboardScreen() {
   const unitSystem = useSettings((s) => s.unitSystem);
 
   const [firstName, setFirstName] = useState<string | null>(null);
+  // PG-10: the body-weight change's colour follows the member's goal.
+  const [goal, setGoal] = useState<Goal | null>(null);
   // DashboardData carries only the current week's total; the 8-week series for
   // the MiniBars comes straight from the repo (foundation gap worked around here).
   const [volumeSeries, setVolumeSeries] = useState<number[] | null>(null);
@@ -75,6 +80,7 @@ export default function DashboardScreen() {
       setVolumeSeries(weeks.map((w) => w.volumeKg));
       const first = profile.name.trim().split(/\s+/)[0];
       setFirstName(first || null);
+      setGoal(profile.goal);
     } catch {
       // unseeded / transient DB error — greeting and bars degrade gracefully
     }
@@ -93,14 +99,19 @@ export default function DashboardScreen() {
     setRefreshing(false);
   }, [refresh, loadExtras]);
 
-  const goWorkout = useCallback(() => {
+  // SH-23: "Start your first workout" really starts one — the plan's routine shown as Today,
+  // else an empty workout — instead of opening the Workout tab to choose again.
+  const startGuard = useRef(false);
+  const nextId = data?.todaysWorkout.today?.nextId ?? null;
+  const startNow = useCallback(() => {
     thud();
-    // Manual-tracker pivot: the hero now starts a workout instead of opening chat.
-    router.push('/workout');
-  }, [router]);
+    void runGuarded(startGuard, () => startShownWorkout(router, nextId), () =>
+      Alert.alert('Couldn’t start the workout', 'Please try again.'),
+    );
+  }, [router, nextId]);
 
-  // v0.28.0: today's routine opens its preview first (every exercise, then Start); with
-  // nothing planned it goes to the Workout tab as before.
+  // v0.28.0: today's routine opens its preview first (every exercise, then Start). Audit
+  // Phase 3: with no plan, the routines screen (ready programs, build a plan).
   const link = data ? todayLink(data.todaysWorkout) : '/workout';
   const goToday = useCallback(() => {
     thud();
@@ -183,7 +194,7 @@ export default function DashboardScreen() {
               {data.lastWorkout === null ? (
                 <FirstRunCard
                   name={firstName}
-                  onStartWorkout={goWorkout}
+                  onStartWorkout={startNow}
                   onBuildRoutine={goRoutines}
                 />
               ) : (
@@ -195,7 +206,13 @@ export default function DashboardScreen() {
               )}
             </Section>
             <Section index={1}>
-              <StreakRow streakDays={data.streakDays} workoutsThisWeek={data.workoutsThisWeek} />
+              {/* Phase 3: THE streak (weeks in a row, D9) and the lifts that beat a best this
+                  week by the one record rule (D10) — the same numbers Progress shows. */}
+              <StreakRow
+                streakWeeks={data.streakWeeks}
+                workoutsThisWeek={data.workoutsThisWeek}
+                liftsUpThisWeek={data.liftsUpThisWeek ?? null}
+              />
             </Section>
             {PARTS.has('nutritionRings') || PARTS.has('scores') ? (
               <Section index={2}>
@@ -221,6 +238,7 @@ export default function DashboardScreen() {
                   weightKg={data.bodyWeightKg}
                   trend={data.bodyWeightTrend}
                   unitSystem={unitSystem}
+                  goal={goal}
                 />
               </Section>
             ) : null}

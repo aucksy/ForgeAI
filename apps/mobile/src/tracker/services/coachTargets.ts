@@ -287,8 +287,10 @@ export async function stalledLiftsInPlan(): Promise<number> {
  * an easy week, the easy Targets — Home and the coach say the same as the workout screen.
  */
 export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout, 'targets'> & { targets: ProgressionTarget[] }> {
-  const tw = await getTodaysWorkout();
-  if (!tw.planDayId || tw.targets.length === 0) return { ...tw, targets: [] };
+  // Audit Phase 3 / RP-22: the one "Today" answer, without the frozen Targets it used to
+  // work out (each exercise's history) only to throw them away here.
+  const tw = await getTodaysWorkout(undefined, { targets: false });
+  if (!tw.planDayId) return { ...tw, targets: [] };
   const active = await getActivePlan();
   const day = active?.days.find((d) => d.id === tw.planDayId) ?? null;
   if (!day) return { ...tw, targets: [] };

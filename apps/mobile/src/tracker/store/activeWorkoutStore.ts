@@ -20,7 +20,7 @@ import {
 import { getDb, getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 import { getActivePlan } from '@/db/repos/planRepo';
-import { getBoundedExerciseHistory, type TrackedSetEntry } from '@/tracker/db/exerciseHistory';
+import { getBoundedExerciseHistory, type HistoryBefore, type TrackedSetEntry } from '@/tracker/db/exerciseHistory';
 import {
   getTrackerExercise,
   getTrackerExercisesByIds,
@@ -39,11 +39,13 @@ import { getPlanNow, isEasyForRoutine } from '@/tracker/services/planState';
 import { addSetsWithMeta, getSessionSetMeta } from '@/tracker/db/trackerSets';
 import { buildEditDraft, previousExcludingSession } from '@/tracker/services/editDraft';
 import type { ExerciseKinds, PreviousByExercise } from '@/tracker/services/editDraft';
-import { computeEditedTiming } from '@/tracker/services/sessionTiming';
+import { computeEditedTiming, dayDeltaMs } from '@/tracker/services/sessionTiming';
+import { reconcilePrsForExercises } from '@/tracker/services/prRebuild';
+import { checkMinutes, checkStartTime } from '@/tracker/services/editFields';
 import { draftToRichSets, hasWorkingSet, isCommittable } from '@/tracker/services/draftSets';
 import { tickValues, type TickMissing } from '@/tracker/services/setTick';
 import { createSession } from '@/db/repos/workoutRepo';
-import { toISO, todayISO } from '@/lib/date';
+import { fromISO, toISO, todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 import { getTodaysWorkout } from '@/services/coach';
 import { phoneAfterWorkout } from '@/tracker/phone/phoneSync';
@@ -190,6 +192,9 @@ interface DraftSnapshot {
   startedAt: number;
   dayType: DayType;
   planDayId: string | null;
+  /** See `ActiveWorkoutState.routineId`. Absent on older drafts (they saved '' at Finish). */
+  routineId?: string | null;
+  workoutName?: string | null;
   /** Phase 4: started in an easy week of the followed plan. Absent on older drafts. */
   easyWeek?: boolean;
   exercises: DraftExercise[];
@@ -205,6 +210,13 @@ interface DraftSnapshot {
   originalDateISO?: string | null;
 }
 
+/** "Log a past workout": the routine it was (its id, name and day type). */
+export interface PastRoutine {
+  id: string;
+  name: string;
+  dayType: DayType;
+}
+
 export interface ActiveWorkoutState {
   hydrated: boolean;
   active: boolean;
@@ -213,6 +225,15 @@ export interface ActiveWorkoutState {
   startedAt: number | null;
   dayType: DayType;
   planDayId: string | null;
+  /**
+   * The routine this workout counts as when it was NOT started from one (`planDayId` null),
+   * saved as its `routine_id` (tracker schema v11): a Repeat copies its source's, a past log the
+   * routine picked. `''` = known to have none (an empty workout — never moves "Today"); null =
+   * not known (a past log with nothing picked — "Today" places it by its name and exercises).
+   */
+  routineId: string | null;
+  /** The name this workout starts with (a Repeat: its source's; a past log: the routine picked). */
+  workoutName: string | null;
   /**
    * Phase 4: this workout is an easy week of the followed plan — half the sets, the same
    * weights; saved marked, so records and the Target leave it out.
@@ -236,6 +257,12 @@ export interface ActiveWorkoutState {
    * measuring from the timestamp would shift a no-op save by a whole day.
    */
   editOriginalDateISO: string | null;
+  /**
+   * Phase 3 packet C ("Log a past workout"): a NEW workout for a day gone by, typed in the
+   * editor (date, start, length, then the exercises) and saved as a manual workout. Like an
+   * edit, it is never "a workout in progress": it is not kept across an app restart.
+   */
+  pastLog: boolean;
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
@@ -308,8 +335,18 @@ export interface ActiveWorkoutState {
   setEditDayType: (dayType: DayType) => void;
   /** Edit mode: change the session's notes. */
   setEditNotes: (notes: string) => void;
-  /** Edit mode (Phase 1): set the workout's length in whole minutes. */
+  /** Edit mode (Phase 1): set the workout's length in whole minutes (1–600; else ignored). */
   setEditDuration: (minutes: number) => void;
+  /**
+   * Edit mode / past log (HI-18): set the start time on the workout's day, keeping its length.
+   * Returns why it was refused (a time still to come today), or null when set.
+   */
+  setEditStartTime: (hour: number, minute: number) => string | null;
+  /**
+   * "Log a past workout": open the editor for a NEW workout on `dateISO` at hour:minute lasting
+   * `minutes`. Returns why it was refused (a time still to come), or null when opened.
+   */
+  startPastWorkout: (o: { dateISO: string; hour: number; minute: number; minutes: number; routine?: PastRoutine | 'none' | null }) => string | null;
   /** Edit mode: write the corrections back. Returns the session id, or null. */
   saveEdits: () => Promise<string | null>;
   /**
@@ -322,8 +359,31 @@ export interface ActiveWorkoutState {
   committableSetCount: () => number;
 }
 
+/**
+ * HI-07: correcting the past (an edit, a past log) is never "a workout in progress". Its draft
+ * is not written to disk, so an abandoned edit can't come back after a restart as "Resume
+ * workout" on Home or hijack Start. PURE.
+ */
+export function isCorrecting(s: Pick<ActiveWorkoutState, 'editingSessionId' | 'pastLog'>): boolean {
+  return s.editingSessionId != null || s.pastLog === true;
+}
+
+/**
+ * HI-02 / HI-16: for a past workout being edited or logged, the history its new cards may
+ * quote — only workouts BEFORE it (its day as it now stands, its start moved with that day).
+ * null for a live workout. PURE.
+ */
+export function correctingBefore(
+  s: Pick<ActiveWorkoutState, 'editingSessionId' | 'pastLog' | 'startedAt' | 'editDateISO' | 'editOriginalDateISO'>,
+): HistoryBefore | null {
+  if (!isCorrecting(s) || s.startedAt == null) return null;
+  const original = s.editOriginalDateISO ?? s.editDateISO ?? toISO(new Date(s.startedAt));
+  const day = s.editDateISO ?? original;
+  return { dateISO: day, startedAt: s.startedAt + dayDeltaMs(original, day), excludeSessionId: s.editingSessionId };
+}
+
 async function persistDraft(s: ActiveWorkoutState): Promise<void> {
-  if (!s.active || s.startedAt == null) {
+  if (!s.active || s.startedAt == null || isCorrecting(s)) {
     await setMeta(DRAFT_KEY, '');
     return;
   }
@@ -331,6 +391,8 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
     startedAt: s.startedAt,
     dayType: s.dayType,
     planDayId: s.planDayId,
+    routineId: s.routineId,
+    workoutName: s.workoutName,
     easyWeek: s.easyWeek,
     exercises: s.exercises,
     editingSessionId: s.editingSessionId,
@@ -501,21 +563,25 @@ async function buildDraftExercise(
   ex: Pick<Exercise, 'id' | 'name' | 'muscleGroup' | 'equipment' | 'incrementKg'>,
   targetSets: number,
   /** `card`: this card's place among the workout's cards of the SAME exercise (0 = first). */
-  opts: { exactSets?: boolean; card?: number } = {},
+  opts: { exactSets?: boolean; card?: number; before?: HistoryBefore | null } = {},
 ): Promise<DraftExercise> {
   // Bounded in SQL: start-from-plan builds one draft per plan exercise, and the frozen
   // read would materialise each lift's ENTIRE working-set history just to keep its last
   // session. Parity-identical (newest-first, working sets only). Phase 4: PREVIOUS is the
   // last NORMAL workout — an easy week's lighter, shorter sets are not what to beat.
   const card = opts.card ?? 0;
+  // HI-02: a card added to a PAST workout (edit or past log) reads only workouts before it —
+  // never a later one's numbers, which a tick would write into the past — and carries no
+  // note or live-record bests from today.
+  const before = opts.before ?? undefined;
   const [hist, restSec, note, bests, info] = await Promise.all([
     // A later card (back-off) may need to look past last time for its own sets (#11).
-    getBoundedExerciseHistory(ex.id, card > 0 ? CARD_LOOKBACK : 1, { skipEasy: true }),
+    getBoundedExerciseHistory(ex.id, card > 0 ? CARD_LOOKBACK : 1, { skipEasy: true, before }),
     // Phase 1 extras never block starting a workout: a failed read just means
     // default rest, no carried note, no live record alert.
     getExerciseRestSec(ex.id).catch(() => null),
-    getCarriedNote(ex.id).catch(() => null),
-    getPriorBests(ex.id).catch(() => null),
+    before ? Promise.resolve(null) : getCarriedNote(ex.id).catch(() => null),
+    before ? Promise.resolve(null) : getPriorBests(ex.id).catch(() => null),
     // Phase 2: how it is logged. A failed read logs it as weight × reps, as before.
     getTrackerExercise(ex.id).catch(() => null),
   ]);
@@ -753,6 +819,87 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     else persistSoon();
   };
 
+  /**
+   * "Log a past workout" Save: a NEW manual workout on the day and time picked, its length
+   * kept (computeEditedTiming, as an edit), every row with numbers saved (nothing was trained
+   * live, so nothing waits for a tick). Records for later workouts are worked out again: a
+   * workout slotted into the past can change which later lifts were records.
+   */
+  const savePastWorkout = async (s: ActiveWorkoutState, flat: ReturnType<typeof draftToRichSets>): Promise<string | null> => {
+    const startedAt = s.startedAt as number;
+    const day = s.editDateISO ?? toISO(new Date(startedAt));
+    const timing = computeEditedTiming({
+      originalDateISO: s.editOriginalDateISO ?? day,
+      dateISO: day,
+      startedAt,
+      endedAt: s.editEndedAt,
+      now: Date.now(),
+    });
+    set({ committing: true });
+    if (draftTimer) clearTimeout(draftTimer);
+    draftTimer = null;
+    try {
+      const id = await enqueueWrite(async () => {
+        let made = '';
+        await getDb().withTransactionAsync(async () => {
+          const session = await createSession({
+            dateISO: timing.dateISO,
+            dayType: s.dayType,
+            notes: s.editNotes?.trim() ? s.editNotes.trim() : null,
+            source: 'manual',
+            startedAt: timing.startedAt,
+            endedAt: timing.endedAt,
+          });
+          made = session.id;
+          // The routine picked (tracker schema v11) — it moves "Today" like any workout of that
+          // routine; "None" = '' (never moves it); nothing picked = NULL (placed by its exercises).
+          await getDb().runAsync('UPDATE workout_sessions SET routine_id = ?, title = ? WHERE id = ?', [
+            s.routineId,
+            s.workoutName?.trim() ? s.workoutName.trim().slice(0, 60) : null,
+            session.id,
+          ]);
+          await addSetsWithMeta(session.id, flat);
+          await setMeta(DRAFT_KEY, '');
+        });
+        endDraftInJob();
+        return made;
+      });
+      let reconciled = true;
+      try {
+        await enqueueWrite(() => reconcilePrsForExercises([...new Set(flat.filter((f) => !f.isWarmup).map((f) => f.exerciseId))]));
+      } catch {
+        reconciled = false;
+      }
+      set({
+        active: false,
+        committing: false,
+        hydrated: true,
+        startedAt: null,
+        dayType: 'full',
+        planDayId: null,
+        routineId: '',
+        workoutName: null,
+        easyWeek: false,
+        exercises: [],
+        lastDeleted: null,
+        editingSessionId: null,
+        editDateISO: null,
+        editNotes: null,
+        editEndedAt: null,
+        editOriginalDateISO: null,
+        pastLog: false,
+        lastSaveReconciled: reconciled,
+      });
+      clearAllSaveProblems();
+      void phoneAfterWorkout(id);
+      return id;
+    } catch (e) {
+      set({ committing: false });
+      reportActionProblem('save', e);
+      throw e;
+    }
+  };
+
   return {
     hydrated: false,
     active: false,
@@ -760,6 +907,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     startedAt: null,
     dayType: 'full',
     planDayId: null,
+    routineId: '',
+    workoutName: null,
     easyWeek: false,
     exercises: [],
     lastDeleted: null,
@@ -768,6 +917,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     editNotes: null,
     editEndedAt: null,
     editOriginalDateISO: null,
+    pastLog: false,
     lastSaveReconciled: true,
 
     hydrate: async () => {
@@ -787,7 +937,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       if (raw) {
         try {
           const snap = JSON.parse(raw) as DraftSnapshot;
-          if (snap && typeof snap.startedAt === 'number' && Array.isArray(snap.exercises)) {
+          // HI-07: an edit left open by an older version is not a workout in progress — drop it.
+          if (snap && snap.editingSessionId) {
+            void enqueueWrite(() => setMeta(DRAFT_KEY, '')).catch(() => undefined);
+          } else if (snap && typeof snap.startedAt === 'number' && Array.isArray(snap.exercises)) {
             // TG-11 (reopening mid-workout): the Targets are ready before the rows show hints.
             if (snap.planDayId && !snap.editingSessionId) {
               await targetsBeforeHints(snap.planDayId, snap.exercises, snap.easyWeek === true);
@@ -802,6 +955,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               startedAt: snap.startedAt,
               dayType: snap.dayType,
               planDayId: snap.planDayId ?? null,
+              routineId: snap.routineId === undefined ? '' : snap.routineId,
+              workoutName: snap.workoutName ?? null,
               easyWeek: snap.easyWeek === true,
               // LW-26: a draft saved by an older version may hold a superset of one.
               exercises: tidySupersets(snap.exercises),
@@ -811,6 +966,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               editNotes: snap.notes ?? null,
               editEndedAt: snap.endedAt ?? null,
               editOriginalDateISO: snap.originalDateISO ?? null,
+              pastLog: false,
             });
           }
         } catch {
@@ -828,6 +984,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: liveStart(),
         dayType: 'full',
         planDayId: null,
+        routineId: '',
+        workoutName: null,
         easyWeek: false,
         exercises: [],
         lastDeleted: null,
@@ -836,12 +994,16 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editNotes: null,
         editEndedAt: null,
         editOriginalDateISO: null,
+        pastLog: false,
       });
       persistNow();
     },
 
     startFromPlan: async () => {
-      const [tw, active, plan] = await Promise.all([getTodaysWorkout(), getActivePlan(), getPlanNow().catch(() => null)]);
+      // Audit Phase 3: the one "Today" answer (its `planDayId` is the routine Start starts —
+      // the next one once today's is done). Screens that SHOW a routine start that routine by
+      // id instead (`startFromPlanDay`, RP-03); this is for a Start with no routine on screen.
+      const [tw, active, plan] = await Promise.all([getTodaysWorkout(undefined, { targets: false }), getActivePlan(), getPlanNow().catch(() => null)]);
       let dayType: DayType = 'full';
       let planDayId: string | null = null;
       let exercises: DraftExercise[] = [];
@@ -863,6 +1025,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: liveStart(),
         dayType,
         planDayId,
+        routineId: '',
+        workoutName: null,
         easyWeek: easy && planDayId != null,
         exercises,
         lastDeleted: null,
@@ -871,6 +1035,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editNotes: null,
         editEndedAt: null,
         editOriginalDateISO: null,
+        pastLog: false,
       });
       persistNow();
     },
@@ -892,6 +1057,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: liveStart(),
         dayType,
         planDayId,
+        routineId: '',
+        workoutName: null,
         easyWeek: easy && planDayId != null,
         exercises,
         lastDeleted: null,
@@ -900,6 +1067,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editNotes: null,
         editEndedAt: null,
         editOriginalDateISO: null,
+        pastLog: false,
       });
       persistNow();
     },
@@ -919,6 +1087,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: liveStart(),
         dayType: session.dayType,
         planDayId: null,
+        routineId: session.routineId ?? null,
+        workoutName: session.title?.trim() ? session.title.trim() : null,
         easyWeek: false,
         exercises,
         lastDeleted: null,
@@ -927,15 +1097,19 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editNotes: null,
         editEndedAt: null,
         editOriginalDateISO: null,
+        pastLog: false,
       });
       persistNow();
     },
 
     addExercise: async (ex) => {
       // #10: a second Bench added mid-workout is card 1, given now (not from screen order).
-      const draftEx = await buildDraftExercise(ex, 1, { card: nextCardNumber(get().exercises, ex.id) });
+      const draftEx = await buildDraftExercise(ex, 1, {
+        card: nextCardNumber(get().exercises, ex.id),
+        before: correctingBefore(get()),
+      });
       // Correcting a past workout: a note carried from a LATER session would be wrong.
-      if (get().editingSessionId) delete draftEx.note;
+      if (isCorrecting(get())) delete draftEx.note;
       mutate((list) => [...list, draftEx]);
     },
 
@@ -948,8 +1122,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         numbered.push({ exerciseId: ex.id, card });
         return card;
       });
-      const built = await Promise.all(picked.map((ex, i) => buildDraftExercise(ex, 1, { card: cards[i] })));
-      if (get().editingSessionId) for (const d of built) delete d.note;
+      const before = correctingBefore(get());
+      const built = await Promise.all(picked.map((ex, i) => buildDraftExercise(ex, 1, { card: cards[i], before })));
+      if (isCorrecting(get())) for (const d of built) delete d.note;
       mutate((list) => [...list, ...built], true);
     },
 
@@ -1103,6 +1278,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       if (!ex) return false;
       // Same lift twice in one workout shares the setting, as it will next time.
       mutate((list) => list.map((e) => (e.exerciseId === ex.exerciseId ? { ...e, restSec } : e)));
+      // HI-08: while correcting a past workout, nothing is "remembered for next time" - the
+      // change lives in this draft only and goes with Discard.
+      if (isCorrecting(get())) return true;
       // Phase 2 (RT-11): report whether it was kept for next time (it applies to this workout
       // either way), so the picker never claims "Remembered" for a write that failed.
       try {
@@ -1169,6 +1347,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       );
       // The rest belongs to the set whose tick started it; unticking that set cancels it.
       const isDone = doneNow();
+      // No rest timer while correcting the past (nothing is being trained).
+      if (isCorrecting(get())) return missing;
       if (wasDone && !isDone) useRestTimer.getState().cancelIfStartedBy(exKey, setKey);
       else if (!wasDone && isDone) useRestTimer.getState().noteTick(exKey, setKey);
       return missing;
@@ -1190,7 +1370,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         ),
         true,
       );
-      useRestTimer.getState().noteTick(exKey, setKey); // RT-03: a rest started now belongs to this set
+      if (!isCorrecting(get())) useRestTimer.getState().noteTick(exKey, setKey); // RT-03: a rest started now belongs to this set
     },
 
     setLoadMode: (exKey, mode) => {
@@ -1199,6 +1379,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // Same lift twice in one workout shares the setting, as it will next time. TG-03: PREVIOUS
       // is re-read in the new counting (50 as typed → 25 each), the same physical load; the
       // Target follows through the card's counting (targetStore).
+      // HI-08: correcting a past workout, the counting is THIS workout's - each of its sets is
+      // saved with it, and the exercise's own counting (every future workout) stays. Discard
+      // throws it away with the rest of the edit.
+      const correcting = isCorrecting(get());
       mutate((list) =>
         list.map((e) =>
           e.exerciseId === ex.exerciseId
@@ -1206,11 +1390,12 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
                 ...e,
                 loadMode: mode,
                 previousSets: e.previousSets.map((p) => ({ ...p, weightKg: convertCounting(p.weightKg, e.loadMode ?? 'one', mode) })),
+                ...(correcting ? { sets: e.sets.map((st) => ({ ...st, loadMode: mode })) } : {}),
               }
             : e,
         ),
       );
-      void setExerciseLoadMode(ex.exerciseId, mode).catch(() => undefined);
+      if (!correcting) void setExerciseLoadMode(ex.exerciseId, mode).catch(() => undefined);
     },
 
     swapExercise: async (exKey, next) => {
@@ -1226,9 +1411,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const draftEx = await buildDraftExercise(
         next,
         split ? openRows(cur) : cur.sets.filter((s) => !s.isWarmup).length || 1,
-        { exactSets: split || get().easyWeek, card: nextCardNumber(others, next.id) },
+        { exactSets: split || get().easyWeek, card: nextCardNumber(others, next.id), before: correctingBefore(get()) },
       );
-      if (get().editingSessionId) delete draftEx.note;
+      if (isCorrecting(get())) delete draftEx.note;
       // Re-check after the await: the card may be gone, or a tick may have landed meanwhile.
       const still = get().exercises.find((e) => e.key === exKey);
       if (!still) return false;
@@ -1249,13 +1434,14 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       if (!s.active || s.startedAt == null || s.committing) return null;
       // An edit must go through saveEdits — finishing would create a SECOND session
       // and leave the original untouched.
-      if (s.editingSessionId) return null;
+      if (s.editingSessionId || s.pastLog) return null;
       // LW-03: a row that was never ticked is saved only when the member chose "Save them".
       const flat = draftToRichSets(s.exercises, { tickedOnly: opts.keepUnticked !== true });
       // Need at least one working set — a warm-up-only session would be invisible
       // to history/PREVIOUS (the history read excludes warm-ups).
       if (!hasWorkingSet(flat)) return null;
-      const title = opts.name?.replace(/\s+/g, ' ').trim().slice(0, 60) || null;
+      // A Repeat keeps its source's name when the sheet gives none.
+      const title = (opts.name ?? s.workoutName)?.replace(/\s+/g, ' ').trim().slice(0, 60) || null;
       set({ committing: true });
       // Finish writes the whole workout itself; a pending typing-pause save is not needed.
       if (draftTimer) clearTimeout(draftTimer);
@@ -1291,6 +1477,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           id = session.id;
           // LW-10: the workout's own name (additive column, tracker schema v9).
           if (title) await getDb().runAsync('UPDATE workout_sessions SET title = ? WHERE id = ?', [title, session.id]);
+          // Audit Phase 3 (RP-01 / RP-02, tracker schema v11): the routine it was started from,
+          // so "Today" tells Push 1 from Push 2; '' = none (an empty workout never moves Today).
+          // A Repeat counts as its source's routine (null = not known: placed by name).
+          await getDb().runAsync('UPDATE workout_sessions SET routine_id = ? WHERE id = ?', [s.planDayId ?? s.routineId, session.id]);
           await addSetsWithMeta(session.id, flat); // auto set_number + PR detection + rpe/type
           // Phase 4: an easy-week workout is marked, so records and the Target leave it out —
           // also the frozen PR log that Home's PR count, the strength score and the coach read.
@@ -1308,6 +1498,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           startedAt: null,
           dayType: 'full',
           planDayId: null,
+          routineId: '',
+          workoutName: null,
           easyWeek: false,
           exercises: [],
           lastDeleted: null,
@@ -1337,12 +1529,15 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // PREVIOUS must show the session BEFORE this one, not the workout its own
       // numbers — nor a NEWER one, which ticking a blank set would then auto-fill
       // into the past. Pull a few and take the newest that predates this session.
+      // HI-16: read straight "the newest workout with this exercise BEFORE this one" (one per
+      // exercise) - not the 4 newest, which a workout from 6 weeks ago never reaches.
+      const before: HistoryBefore = { dateISO: session.dateISO, startedAt: session.startedAt, excludeSessionId: session.id };
       const [meta, histories, infos] = await Promise.all([
         getSessionSetMeta(session.id),
         Promise.all(
           session.exercises.map(async (g) => ({
             exerciseId: g.exercise.id,
-            history: await getBoundedExerciseHistory(g.exercise.id, 4),
+            history: await getBoundedExerciseHistory(g.exercise.id, 1, { before }),
           })),
         ),
         // No fallback: without each exercise's type, Save would drop timed and assisted sets.
@@ -1370,6 +1565,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: session.startedAt,
         dayType: session.dayType,
         planDayId: null,
+        routineId: '',
+        workoutName: null,
         easyWeek: false,
         exercises,
         lastDeleted: null,
@@ -1385,40 +1582,92 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     setEditDate: (dateISO) => {
       // A workout can't have happened in the future. Clamped here as well as in the
       // header so a stale draft (device clock moved on) can't carry one through.
-      if (!get().editingSessionId || dateISO > todayISO()) return;
+      if (!isCorrecting(get()) || dateISO > todayISO()) return;
       set({ editDateISO: dateISO });
       persistSoon();
     },
 
     setEditDayType: (dayType) => {
-      if (!get().editingSessionId) return;
+      if (!isCorrecting(get())) return;
       set({ dayType });
       persistSoon();
     },
 
     setEditNotes: (notes) => {
-      if (!get().editingSessionId) return;
+      if (!isCorrecting(get())) return;
       set({ editNotes: notes });
       persistSoon();
     },
 
     setEditDuration: (minutes) => {
       const s = get();
-      if (!s.editingSessionId || s.startedAt == null) return;
-      const mins = Math.max(1, Math.min(600, Math.round(minutes)));
-      set({ editEndedAt: s.startedAt + mins * 60_000 });
+      if (!isCorrecting(s) || s.startedAt == null) return;
+      // HI-18: no silent clamp - the field refuses 0 and > 600 with a message (checkMinutes);
+      // anything that still gets here out of range changes nothing.
+      const c = checkMinutes(String(Math.round(minutes)));
+      if (c.minutes == null) return;
+      set({ editEndedAt: s.startedAt + c.minutes * 60_000 });
       persistSoon();
+    },
+
+    setEditStartTime: (hour, minute) => {
+      const s = get();
+      if (!isCorrecting(s) || s.startedAt == null) return null;
+      const original = s.editOriginalDateISO ?? s.editDateISO ?? toISO(new Date(s.startedAt));
+      const day = s.editDateISO ?? original;
+      const length = s.editEndedAt != null ? Math.max(0, s.editEndedAt - s.startedAt) : null;
+      // A start that would push the end past now is refused here, with the reason (it used to be
+      // slid back quietly at Save).
+      const why = checkStartTime(day, hour, minute, Date.now(), length == null ? null : Math.round(length / 60_000));
+      if (why) return why;
+      // The new start on the stored day (the date move is applied at Save, as before). A start
+      // typed here is real clock time, so it never falls on a whole second (see `liveStart`).
+      const d = fromISO(original);
+      const startedAt = liveStart(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hour, minute).getTime());
+      set({ startedAt, editEndedAt: length == null ? null : startedAt + length });
+      persistSoon();
+      return null;
+    },
+
+    startPastWorkout: ({ dateISO, hour, minute, minutes, routine }) => {
+      const mins = checkMinutes(String(minutes)).minutes ?? 60;
+      const why = checkStartTime(dateISO, hour, minute, Date.now(), mins);
+      if (why) return why;
+      const d = fromISO(dateISO);
+      const startedAt = liveStart(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hour, minute).getTime());
+      set({
+        active: true,
+        hydrated: true,
+        committing: false,
+        startedAt,
+        dayType: routine && routine !== 'none' ? routine.dayType : 'full',
+        planDayId: null,
+        routineId: routine === 'none' ? '' : routine ? routine.id : null,
+        workoutName: routine && routine !== 'none' ? routine.name : null,
+        easyWeek: false,
+        exercises: [],
+        lastDeleted: null,
+        editingSessionId: null,
+        editDateISO: dateISO,
+        editNotes: null,
+        editEndedAt: startedAt + mins * 60_000,
+        editOriginalDateISO: dateISO,
+        pastLog: true,
+      });
+      return null;
     },
 
     saveEdits: async () => {
       const s = get();
       // Same re-entry guard as finish(): `committing` is set synchronously below.
-      if (!s.active || !s.editingSessionId || s.startedAt == null || s.committing) return null;
-      const flat = draftToRichSets(s.exercises);
+      if (!s.active || !isCorrecting(s) || s.startedAt == null || s.committing) return null;
+      // Review fix: the card's counting goes on every row (rows added after a Counting change too).
+      const flat = draftToRichSets(s.exercises, { stampLoadMode: true });
       // Emptying a workout is a DELETE, not a save — the screen offers that instead.
       if (!hasWorkingSet(flat)) return null;
+      if (s.pastLog) return savePastWorkout(s, flat);
 
-      const sessionId = s.editingSessionId;
+      const sessionId = s.editingSessionId as string;
       const fallbackDate = toISO(new Date(s.startedAt));
       const timing = computeEditedTiming({
         originalDateISO: s.editOriginalDateISO ?? s.editDateISO ?? fallbackDate,
@@ -1456,12 +1705,17 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           startedAt: null,
           dayType: 'full',
           planDayId: null,
+          routineId: '',
+          workoutName: null,
           easyWeek: false,
           exercises: [],
           lastDeleted: null,
           editingSessionId: null,
           editDateISO: null,
           editNotes: null,
+          editEndedAt: null,
+          editOriginalDateISO: null,
+          pastLog: false,
         });
         });
         clearAllSaveProblems();
@@ -1493,6 +1747,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: null,
         dayType: 'full',
         planDayId: null,
+        routineId: '',
+        workoutName: null,
         easyWeek: false,
         exercises: [],
         lastDeleted: null,
@@ -1501,6 +1757,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editNotes: null,
         editEndedAt: null,
         editOriginalDateISO: null,
+        pastLog: false,
       });
     },
 

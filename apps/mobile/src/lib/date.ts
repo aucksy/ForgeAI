@@ -58,10 +58,39 @@ export function tinyDate(iso: string): string {
   return `${d.getDate()} ${MONTHS[d.getMonth()]}`;
 }
 
-export function relativeDay(iso: string): string {
-  const diff = daysBetween(iso, todayISO());
+/**
+ * HI-15: "Fri, 9 Oct" this year, "Fri, 9 Oct 2025" otherwise — the year whenever it isn't
+ * this year, so an old workout is never ambiguous. `today` is for tests.
+ */
+export function dateWithYear(iso: string, today: string = todayISO()): string {
+  const base = shortDate(iso);
+  return iso.slice(0, 4) === today.slice(0, 4) ? base : `${base} ${iso.slice(0, 4)}`;
+}
+
+/** "October 2026" — a month heading. `ym` is "2026-10". */
+export function monthTitle(ym: string): string {
+  const [y, m] = ym.split('-').map(Number);
+  return `${MONTH_NAMES[m - 1]} ${y}`;
+}
+
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/**
+ * "Today", "Yesterday", "3 days ago", else the date (with its year when not this year).
+ * HI-20: a day AFTER today (a flight west, a corrected clock) never reads "-1 days ago":
+ * the day after is "Tomorrow", anything later is its date.
+ */
+export function relativeDay(iso: string, today: string = todayISO()): string {
+  const diff = daysBetween(iso, today);
   if (diff === 0) return 'Today';
   if (diff === 1) return 'Yesterday';
-  if (diff < 7) return `${diff} days ago`;
-  return shortDate(iso);
+  if (diff === -1) return 'Tomorrow';
+  if (diff > 1 && diff < 7) return `${diff} days ago`;
+  return dateWithYear(iso, today);
+}
+
+/** "18:05" — a clock time on the phone's own clock. */
+export function clockTime(ms: number): string {
+  const d = new Date(ms);
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }

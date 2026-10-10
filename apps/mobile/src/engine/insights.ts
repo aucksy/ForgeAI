@@ -1,21 +1,26 @@
 /**
  * Dashboard insight line — PURE (no DB imports).
- * One coach-voice sentence. Priority: PR > plateau > protein gap > volume > streak.
+ * One coach-voice sentence. Priority: records > plateau > protein gap > volume > streak.
+ *
+ * Phase 3 (D9, D10): the streak is WEEKS in a row (`lib/streak`), and records are counted
+ * as LIFTS that beat their best this week (`tracker/engine/headline`) — the same numbers
+ * Home's streak row and Progress show.
  */
 export function buildInsight(d: {
-  streakDays: number;
+  streakWeeks: number;
   proteinGapG: number;
-  recentPrCount: number;
+  /** Lifts that beat a best this week (the one record rule). */
+  liftsUp: number;
   plateauedExercise: string | null;
   weeklyVolumeDeltaPct: number;
   todayTrained: boolean;
 }): string {
-  const { streakDays, proteinGapG, recentPrCount, plateauedExercise, weeklyVolumeDeltaPct, todayTrained } = d;
+  const { streakWeeks, proteinGapG, liftsUp, plateauedExercise, weeklyVolumeDeltaPct, todayTrained } = d;
 
-  if (recentPrCount > 0) {
-    return recentPrCount === 1
-      ? 'New PR this week — your strength curve is pointing exactly where we want it.'
-      : `${recentPrCount} new PRs this week — strength is trending exactly where we want it.`;
+  if (liftsUp > 0) {
+    return liftsUp === 1
+      ? '1 lift beat its best this week — your strength curve is pointing exactly where we want it.'
+      : `${liftsUp} lifts beat their best this week — strength is trending exactly where we want it.`;
   }
 
   if (plateauedExercise) {
@@ -36,8 +41,8 @@ export function buildInsight(d: {
       : `Volume is ${pct}% down on last week — ${todayTrained ? "tomorrow's" : "today's"} session is the comeback.`;
   }
 
-  if (streakDays >= 2) {
-    return `${streakDays}-day streak and counting — consistency is what builds physiques.`;
+  if (streakWeeks >= 2) {
+    return `${streakWeeks}-week streak and counting — consistency is what builds physiques.`;
   }
 
   return todayTrained

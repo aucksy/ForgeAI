@@ -5,7 +5,7 @@ import { Alert, Text, TextInput, View } from 'react-native';
 
 import { DeltaPill } from '@/components/charts';
 import { AnimatedNumber, Card, EmptyState, IconButton, LoadError, PrimaryButton, Screen, SectionHeader, Skeleton } from '@/components/ui';
-import { getBodyWeightHistory } from '@/db/repos/userRepo';
+import { getBodyWeightHistory, getProfile } from '@/db/repos/userRepo';
 import { logBodyWeight } from '@/db/queuedWrites';
 import { shortDate, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
@@ -15,7 +15,8 @@ import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
 import { showW } from '@/tracker/components/unitText';
-import type { BodyWeightEntry } from '@/types/models';
+import { weightChange, weightChangeShown, weightChangeTone, weightSpanText } from '@/tracker/engine/headline';
+import type { BodyWeightEntry, Goal } from '@/types/models';
 
 const noopInspect = () => {
   /* enables the chart's press-drag crosshair */
@@ -35,6 +36,20 @@ export default function BodyWeightScreen() {
   const [input, setInput] = useState('');
   const [saving, setSaving] = useState(false);
   const savingRef = useRef(false);
+  // PG-10: the change's colour follows the member's goal (neutral until it is read).
+  const [goal, setGoal] = useState<Goal | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    getProfile()
+      .then((p) => {
+        if (alive) setGoal(p.goal);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -93,7 +108,8 @@ export default function BodyWeightScreen() {
 
   const latest = history.length > 0 ? history[history.length - 1] : null;
   const current = latest ? latest.weightKg : 0;
-  const delta = history.length >= 2 ? Math.round(kgToShown(current - history[0].weightKg, units) * 10) / 10 : 0;
+  // PG-11: the one body-weight rule, always with its span ("+5 kg since 13 Jul 2025").
+  const change = weightChange(history);
 
   return (
     <Screen
@@ -166,7 +182,12 @@ export default function BodyWeightScreen() {
                       {unit} now
                     </Text>
                   </View>
-                  {history.length >= 2 ? <DeltaPill value={delta} suffix={` ${unit}`} /> : null}
+                  {change ? (
+                    <View style={{ alignItems: 'flex-end', gap: 3 }}>
+                      <DeltaPill value={weightChangeShown(change, units)} suffix={` ${unit}`} tone={weightChangeTone(change.changeKg, goal)} />
+                      <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{weightSpanText(change)}</Text>
+                    </View>
+                  ) : null}
                 </View>
                 {history.length >= 2 ? (
                   <DateLineChart

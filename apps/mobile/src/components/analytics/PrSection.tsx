@@ -4,6 +4,7 @@ import { Badge, EmptyState, Icon } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
 import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';
+import { liftsBeatingBest, liftsUpShort } from '@/tracker/engine/headline';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { recordValueText } from '@/tracker/services/recordText';
 import type { RecordEventRow } from '@/tracker/services/recordsService';
@@ -24,7 +25,8 @@ const MAX_ROWS = 6;
 /**
  * Personal records (Phase 3): the latest records of every kind — heaviest, best set, best
  * session, most reps, longest time and distance — newest first. A record is a workout
- * that beat an earlier best; a first workout with an exercise sets its bests quietly.
+ * that beat an earlier best; a first workout with an exercise sets its bests quietly. The
+ * header counts LIFTS ("4 lifts up in 90 days", D10); each kind shows on its own row.
  */
 export function PrSection({ events, rangeDays, index, onSeeAll, onOpenExercise }: PrSectionProps) {
   useUnits(); // v0.27.0: the record and set texts follow Profile → Units
@@ -34,7 +36,7 @@ export function PrSection({ events, rangeDays, index, onSeeAll, onOpenExercise }
     <Section
       title="Personal Records"
       index={index}
-      right={events.length > 0 ? <HeaderStat text={`${events.length} in ${rangeDays} days`} /> : undefined}
+      right={events.length > 0 ? <HeaderStat text={`${liftsUpShort(liftsBeatingBest(events))} in ${rangeDays} days`} /> : undefined}
     >
       {rows.length === 0 ? (
         <EmptyState icon="trophy" title="No records yet" body="Beat a previous best and it lands here — automatically." />
@@ -80,10 +82,10 @@ export function PrSection({ events, rangeDays, index, onSeeAll, onOpenExercise }
             <Pressable
               onPress={onSeeAll}
               accessibilityRole="button"
-              accessibilityLabel={`See all ${events.length} records`}
+              accessibilityLabel="See all records"
               style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.xs, paddingTop: space.xs }}
             >
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>See all {events.length} records</Text>
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>See all records</Text>
               <Icon name="chevron-right" size={16} color={color.accent} />
             </Pressable>
           ) : null}

@@ -15,6 +15,7 @@ import { buildInsight } from '@/engine/insights';
 import { computeRecovery } from '@/engine/recovery';
 import { computeStrengthScore } from '@/engine/strength';
 import { addDays, todayISO, weekStartISO } from '@/lib/date';
+import { STREAK_LOOKBACK_DAYS, weekStreak } from '@/lib/streak';
 import { getTodaysWorkout } from '@/services/coach';
 import type { DashboardData, MuscleGroup, SessionDetail } from '@/types/models';
 
@@ -31,6 +32,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     recentDetails,
     weeklyBuckets,
     allPrs,
+    streakSessions,
   ] = await Promise.all([
     getTodaysWorkout(),
     getProfile(),
@@ -42,7 +44,10 @@ export async function getDashboardData(): Promise<DashboardData> {
     getRecentSessionDetails(12),
     getWeeklyVolume(6), // Monday buckets asc; last = current (partial) week
     getAllPrs(),
+    getSessionsBetween(addDays(today, -STREAK_LOOKBACK_DAYS), today),
   ]);
+  // Phase 3 (D9): THE streak is weeks in a row, the same rule as Progress and History.
+  const streakWeeks = weekStreak(streakSessions.map((s) => s.dateISO), today);
 
   const cur = weeklyBuckets.length > 0 ? weeklyBuckets[weeklyBuckets.length - 1].volumeKg : 0;
   const prev = weeklyBuckets.length > 1 ? weeklyBuckets[weeklyBuckets.length - 2].volumeKg : 0;
@@ -75,18 +80,18 @@ export async function getDashboardData(): Promise<DashboardData> {
   });
 
   const todayTrained = weekSessions.some((s) => s.dateISO === today);
-  const prExercises = new Set(
-    allPrs.filter((p) => p.dateISO >= sevenDayFloor).map((p) => p.exerciseId),
-  );
 
   const plateauedExercise = await findPlateau(
     todaysWorkout.targets.map((t) => ({ id: t.exerciseId, name: t.exerciseName })),
   );
 
+  // Phase 3 (D10, SH-05): the stored PR table calls a first-ever set a "PR", so it never
+  // speaks here; the lifts that beat a best are counted by the one record rule in
+  // `tracker/services/dashboardPhase2`.
   const insight = buildInsight({
-    streakDays,
+    streakWeeks,
     proteinGapG: Math.round(profile.proteinTargetG - nutrition.proteinG),
-    recentPrCount: prExercises.size,
+    liftsUp: 0,
     plateauedExercise,
     weeklyVolumeDeltaPct,
     todayTrained,
@@ -97,6 +102,7 @@ export async function getDashboardData(): Promise<DashboardData> {
   return {
     todaysWorkout,
     streakDays,
+    streakWeeks,
     workoutsThisWeek: weekSessions.length,
     caloriesToday: nutrition.calories,
     proteinTodayG: nutrition.proteinG,

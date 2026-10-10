@@ -5,7 +5,7 @@
  * weight and best estimated 1-rep max. Hevy keeps seven. Phase 3 adds the other five:
  *
  *   weight        Heaviest weight      the heaviest working set (added weight on a weighted move)
- *   e1rm          Best 1-rep max       Epley estimate, weight × (1 + reps / 30)
+ *   e1rm          Best 1-rep max       Epley estimate, weight × (1 + reps / 30); a single is itself
  *   best_set      Best set             most volume in one set (the one volume rule)
  *   best_session  Best session         most volume in one workout — most reps for a bodyweight move
  *   reps          Most reps            most reps in one set
@@ -83,7 +83,20 @@ export function fmtPace(speedMps: number, unit: DistUnit): string {
  * pace: "Best pace counts only sets of 1 km or more, so a short sprint can't set it." PURE.
  */
 export function paceRuleText(unit: DistUnit): string {
-  return `Best pace counts only sets of ${PACE_BASIS.km.words} or more, so a short sprint can't set it.`;
+  // HI-21: in the member's unit. The floor itself stays 1 km (records must not move when
+  // the member switches units), so under miles it reads "1 km (0.6 mi)".
+  const words = paceBasis(unit).unit === 'mi' ? '1 km (0.6 mi)' : PACE_BASIS.km.words;
+  return `Best pace counts only sets of ${words} or more, so a short sprint can't set it.`;
+}
+
+/**
+ * HI-21: the fastest pace a person can plausibly hold over a kilometre or more, in seconds
+ * per km. Anything faster is a typo (2 km in 0:30) and is never a pace record. A bike or
+ * ski erg goes far faster than a runner, so it gets its own floor.
+ */
+export function fastestPlausibleSecPerKm(rule: { name?: string; catalogKey?: string | null }): number {
+  const words = `${rule.name ?? ''} ${rule.catalogKey ?? ''}`;
+  return /bike|cycl|spin|ski/i.test(words) ? 60 : 150;
 }
 
 /**
@@ -91,7 +104,13 @@ export function paceRuleText(unit: DistUnit): string {
  * (pace's minimum length; absent = km) and its main muscles (a time + distance exercise keeps
  * a pace only when it is cardio; absent = cardio). A `TrackerExercise` is one as it stands.
  */
-export type RecordRule = VolumeRule & { distUnit?: DistUnit; muscles?: { primary: readonly string[] } };
+export type RecordRule = VolumeRule & {
+  distUnit?: DistUnit;
+  muscles?: { primary: readonly string[] };
+  /** The exercise's name / library key: a bike's plausible pace differs from a run's (HI-21). */
+  name?: string;
+  catalogKey?: string | null;
+};
 
 /** The records this exercise keeps, in display order. */
 export function kindsForRule(rule: Pick<RecordRule, 'logType' | 'muscles'>): RecordKind[] {
@@ -214,6 +233,8 @@ export function setRecordValue(kind: RecordKind, s: RecordSet, rule: RecordRule,
       const basis = PACE_BASIS[rule.distUnit === 'mi' ? 'km' : (rule.distUnit ?? 'km')].metres;
       if (!(sec > 0) || m < basis) return null;
       const perBasis = Math.round((sec * basis) / m);
+      // HI-21: an impossible pace is a typo, never a record.
+      if (perBasis < fastestPlausibleSecPerKm(rule) * (basis / 1000)) return null;
       return perBasis > 0 ? basis / perBasis : null;
     }
     default:

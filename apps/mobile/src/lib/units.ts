@@ -13,6 +13,8 @@
  */
 import type { UnitSystem } from '@/types/models';
 
+import { groupInt } from './numberFormat';
+
 export type { UnitSystem };
 export type WeightUnit = 'kg' | 'lb';
 
@@ -65,7 +67,7 @@ export function fmtW(kg: number, u: UnitSystem = current): string {
 
 /** Volume: whole units with thousands separators, "12,480 kg" / "27,514 lb". */
 export function fmtVol(kg: number, u: UnitSystem = current): string {
-  return `${Math.round(kgToShown(kg, u)).toLocaleString('en-IN')} ${weightUnitOf(u)}`;
+  return `${groupInt(kgToShown(kg, u))} ${weightUnitOf(u)}`;
 }
 
 /**

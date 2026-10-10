@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getDb } from '@/db';
 import { getProfile } from '@/db/repos/userRepo';
-import { getStreakDays } from '@/db/repos/workoutRepo';
 import { addDays, todayISO } from '@/lib/date';
 import { getAnalyticsBundle } from '@/services/analytics';
 import type { MuscleSetsSlice } from '@/tracker/engine/volume';
 import { isMeaningfulPr } from '@/tracker/services/finishSummary';
+import { getWeekStreak } from '@/tracker/services/history';
 import { getConsistencyCells, getMuscleSetsBetween, getWeeklyVolumeKg } from '@/tracker/services/volumeService';
 import type { UserProfile } from '@/types/models';
 
@@ -21,6 +21,7 @@ export interface AnalyticsState {
   setRange: (r: RangeDays) => void;
   bundle: AnalyticsBundle | null;
   profile: UserProfile | null;
+  /** THE streak (D9): weeks in a row with at least one workout — History's own read. */
   streak: number;
   loading: boolean;
   /**
@@ -63,6 +64,12 @@ async function loadBundle(range: RangeDays): Promise<AnalyticsBundle> {
   };
 }
 
+/** Everything Progress reads for one range (exported: the "two ways" test reads it too). */
+export async function loadProgress(range: RangeDays): Promise<{ bundle: AnalyticsBundle; profile: UserProfile; streak: number }> {
+  const [bundle, profile, streak] = await Promise.all([loadBundle(range), getProfile(), getWeekStreak()]);
+  return { bundle, profile, streak: streak.weeks };
+}
+
 /**
  * Local analytics state: refetches the full bundle whenever the range changes.
  * Out-of-order responses are dropped (rapid range switching). PG-23: a failure no longer
@@ -92,7 +99,7 @@ export function useAnalyticsData(focusKey = 1): AnalyticsState {
     setLoading(true);
     (async () => {
       try {
-        const [b, p, s] = await Promise.all([loadBundle(range), getProfile(), getStreakDays(todayISO())]);
+        const { bundle: b, profile: p, streak: s } = await loadProgress(range);
         if (reqRef.current !== req) return;
         bundleRange.current = range;
         setBundle(b);

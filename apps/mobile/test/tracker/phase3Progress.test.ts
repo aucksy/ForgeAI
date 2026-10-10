@@ -183,7 +183,8 @@ describe('the monthly report', () => {
       ['Barbell Row', 20, 5],
     ]);
     expect(r.note).toBe(
-      'You trained 5 times in September — 2 more than August. You set 3 new records, led by Bench Press. Lats got no work — try pull-ups or lat pulldowns next month.',
+      // D10: three records on two lifts = "2 lifts beat their best".
+      'You trained 5 times in September — 2 more than August. 2 lifts beat their best, led by Bench Press. Lats got no work — try pull-ups or lat pulldowns next month.',
     );
   });
 
@@ -242,8 +243,11 @@ describe('the year in review', () => {
       sessions,
       recordCount: 4,
       strength: [
+        // PG-02: six workouts, the median of the first two against the last two.
         { exerciseId: 's', name: 'Squat', dateISO: '2026-01-05', e1rm: 100 },
+        { exerciseId: 's', name: 'Squat', dateISO: '2026-01-12', e1rm: 100 },
         { exerciseId: 's', name: 'Squat', dateISO: '2026-03-02', e1rm: 104 },
+        { exerciseId: 's', name: 'Squat', dateISO: '2026-03-09', e1rm: 108 },
         { exerciseId: 's', name: 'Squat', dateISO: '2026-03-16', e1rm: 112 },
         { exerciseId: 's', name: 'Squat', dateISO: '2026-06-01', e1rm: 118 },
         // too few workouts to count
@@ -256,9 +260,9 @@ describe('the year in review', () => {
     expect(y.byMonth.map((m) => m.workouts)).toEqual([2, 0, 4, 0, 0, 1]);
     expect(y.busiest).toEqual({ month: '2026-03', workouts: 4 });
     expect(y.longestStreakWeeks).toBe(3); // 2, 9 and 16 March
-    expect(y.gain).toEqual({ exerciseId: 's', name: 'Squat', fromKg: 100, toKg: 118, pct: 18 });
+    expect(y.gain).toEqual({ exerciseId: 's', name: 'Squat', fromKg: 100, toKg: 115, pct: 15 });
     expect(y.note).toBe(
-      '2026 so far: 7 workouts, 7 hours and 35,000 kg lifted. Your busiest month was March, and Bench Press was your favourite — 35 sets. Biggest gain: Squat, up 18% (about 100 → 118 kg for one rep).',
+      '2026 so far: 7 workouts, 7 hours and 35,000 kg lifted. Your busiest month was March, and Bench Press was your favourite — 35 sets. Biggest gain: Squat, up 15% (about 100 → 115 kg for one rep).',
     );
   });
 
@@ -267,7 +271,7 @@ describe('the year in review', () => {
     expect(longestWeekStreak([])).toBe(0);
   });
 
-  it('a gain needs four workouts four weeks apart, and must be a gain', () => {
+  it('a gain needs six workouts four weeks apart, and must be a gain', () => {
     const p = (d: string, e1rm: number) => ({ exerciseId: 'x', name: 'X', dateISO: d, e1rm });
     expect(biggestGain([p('2026-01-01', 100), p('2026-01-03', 110), p('2026-01-05', 120), p('2026-01-07', 130)])).toBeNull();
     expect(biggestGain([p('2026-01-01', 130), p('2026-02-03', 110), p('2026-03-05', 120), p('2026-04-07', 100)])).toBeNull();

@@ -4,11 +4,10 @@
  * The frozen PR detector also stores the first bodyweight, timed or distance set ever
  * logged ("Plank 0 kg") and an assisted move's help as a negative "record" (where fewer
  * reps at the same help even beat more). The finish screen, session detail, exercise page
- * and Progress already hide those with `isMeaningfulPr`; every other list of records —
- * Home's "New PR" insight, the coach's reply and its tools — goes through here.
+ * and Progress already hide those with `isMeaningfulPr`; the coach's reply and its tools go
+ * through here. (Phase 3: Home counts lifts by the one record rule — `dashboardPhase2`.)
  */
 import { getAllPrs } from '@/db/repos/prRepo';
-import { addDays } from '@/lib/date';
 
 import { getTrackerExercisesByIds } from '../db/exerciseInfo';
 import { isMeaningfulPr } from './finishSummary';
@@ -31,10 +30,4 @@ export async function meaningfulPrs<T extends { exerciseId: string; value: numbe
 /** Every exercise's best weight / e1RM record, minus the ones nobody would recognise. */
 export async function getMeaningfulPrs(): Promise<Awaited<ReturnType<typeof getAllPrs>>> {
   return meaningfulPrs(await getAllPrs());
-}
-
-/** Exercises with a record in the last 7 days (Home's "New PR this week"). PURE. */
-export function recentPrCount(prs: readonly { exerciseId: string; dateISO: string }[], today: string): number {
-  const floor = addDays(today, -6);
-  return new Set(prs.filter((p) => p.dateISO >= floor && p.dateISO <= today).map((p) => p.exerciseId)).size;
 }

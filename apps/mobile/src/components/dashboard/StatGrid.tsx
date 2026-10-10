@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 
 import { RingGauge, StatTile } from '@/components/ui';
+import { scoreTiles } from '@/lib/features';
 import { fmtInt } from '@/lib/format';
 import { tap } from '@/lib/haptics';
 import { chart, color, radius, shadow, space, type } from '@/theme/tokens';
@@ -82,6 +83,7 @@ export function StatGrid({
   showRings = true,
   showScores = true,
 }: StatGridProps) {
+  const scores = scoreTiles(data);
   const rings = (
     <View style={{ flexDirection: 'row', gap: space.md }}>
       <RingCard
@@ -119,24 +121,30 @@ export function StatGrid({
       ) : (
         rings
       )}
-      {showScores ? (
+      {/* SH-08: a score shows only when it can be worked out — never "Strength 0" without
+          body weight or "Recovery 95 · Primed" before the first workout. */}
+      {showScores && (scores.recovery || scores.strength) ? (
         <View style={{ flexDirection: 'row', gap: space.md }}>
-          <View style={{ flex: 1 }}>
-            <StatTile
-              label="Recovery"
-              value={data.recovery.score}
-              unit={capitalize(data.recovery.label)}
-              icon="heart"
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <StatTile
-              label="Strength"
-              value={data.strength.score}
-              unit={data.strength.label}
-              icon="zap"
-            />
-          </View>
+          {scores.recovery ? (
+            <View style={{ flex: 1 }}>
+              <StatTile
+                label="Recovery"
+                value={data.recovery.score}
+                unit={capitalize(data.recovery.label)}
+                icon="heart"
+              />
+            </View>
+          ) : null}
+          {scores.strength ? (
+            <View style={{ flex: 1 }}>
+              <StatTile
+                label="Strength"
+                value={data.strength.score}
+                unit={data.strength.label}
+                icon="zap"
+              />
+            </View>
+          ) : null}
         </View>
       ) : null}
     </View>

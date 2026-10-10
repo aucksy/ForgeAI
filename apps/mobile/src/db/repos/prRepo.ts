@@ -28,10 +28,17 @@ function mapPr(r: PrRow): PersonalRecord {
   };
 }
 
-/** Epley estimated 1RM — inlined so repos stay independent of the engine module. */
+/**
+ * Epley estimated 1RM — inlined so repos stay independent of the engine module. As the
+ * engine's (audit HI-10): a true single IS a 1-rep max — 100 kg × 1 is 100, never "103.3".
+ */
 function epleyE1rm(weightKg: number, reps: number): number {
+  if (reps === 1) return weightKg;
   return weightKg * (1 + reps / 30);
 }
+
+/** The same estimate in SQL, for a `set_entries` row aliased `se`. */
+export const E1RM_SQL = 'CASE WHEN se.reps = 1 THEN se.weight_kg ELSE se.weight_kg * (1 + se.reps / 30.0) END';
 
 function round1(n: number): number {
   return Math.round(n * 10) / 10;
@@ -113,7 +120,7 @@ export async function checkAndRecordPrs(sessionId: string): Promise<PersonalReco
       best_e1rm: number | null;
     }>(
       `SELECT MAX(se.weight_kg) AS best_weight,
-              MAX(se.weight_kg * (1 + se.reps / 30.0)) AS best_e1rm
+              MAX(${E1RM_SQL}) AS best_e1rm
        FROM set_entries se
        JOIN workout_sessions ws ON ws.id = se.session_id
        WHERE se.exercise_id = ? AND se.is_warmup = 0

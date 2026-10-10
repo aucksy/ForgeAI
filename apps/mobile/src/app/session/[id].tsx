@@ -4,17 +4,18 @@
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
-import { Alert, Pressable, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
-import { EmptyState, GhostButton, askConfirm, Icon, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { Card, EmptyState, GhostButton, askConfirm, Icon, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { deleteWorkout } from '@/tracker/services/workoutDelete';
-import { shortDate } from '@/lib/date';
+import { dateWithYear, shortDate } from '@/lib/date';
 import { EDIT_FAILED, SAVE_ROUTINE_FAILED, START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { useLoad } from '@/lib/useLoad';
 import { useUnits } from '@/lib/useUnits';
 import { useDashboard } from '@/store/dashboardStore';
-import { color, radius, space } from '@/theme/tokens';
+import { color, radius, space, type } from '@/theme/tokens';
+import { shownNotes } from '@/tracker/lib/workoutText';
 
 import { createRoutineFromWorkout } from '@/tracker/db/routineRepo';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
@@ -162,7 +163,8 @@ export default function SessionDetailScreen() {
   return (
     <Screen
       title={data ? sessionTitle(data.session) : 'Workout'}
-      subtitle={data ? shortDate(data.session.dateISO) : undefined}
+      // HI-15: the year when it isn't this year. HI-19: an easy-week workout says so.
+      subtitle={data ? `${dateWithYear(data.session.dateISO)}${data.easyWeek ? ' · Easy week' : ''}` : undefined}
       right={
         <View style={{ flexDirection: 'row', gap: space.sm }}>
           {data ? (
@@ -196,6 +198,16 @@ export default function SessionDetailScreen() {
       ) : data ? (
         <View style={{ gap: space.lg }}>
           <SessionSummary data={data} exercisesOpen />
+          {/* HI-04: the workout's notes, under its summary (the name is the screen's title). */}
+          {(() => {
+            const note = shownNotes(data.session.title, data.session.notes);
+            return note ? (
+              <Card>
+                <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted, letterSpacing: 0.4 }}>Notes</Text>
+                <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.ink, marginTop: space.xs, lineHeight: 21 }}>{note}</Text>
+              </Card>
+            ) : null;
+          })()}
           <View style={{ gap: space.md }}>
             <PrimaryButton label="Repeat this workout" icon="dumbbell" onPress={() => void onRepeat()} />
             <GhostButton label="Edit this workout" icon="check" onPress={() => void onEdit()} />

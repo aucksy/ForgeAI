@@ -6,11 +6,12 @@
  * for today only is in the workout).
  */
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState, Text, View } from 'react-native';
 
 import { Card, GhostButton, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
+import { todayISO } from '@/lib/date';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { useLoad } from '@/lib/useLoad';
 import { fmtWeight } from '@/lib/format';
@@ -25,19 +26,22 @@ import { getPlanNow, planLine, type PlanNow } from '@/tracker/services/planState
 import { doneToday } from '@/tracker/lib/todayLink';
 import { showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import type { TodaySummary } from '@/types/models';
 
 interface Today {
   dayName: string;
   planDayId: string | null;
   headline: string;
   targets: ProgressionTarget[];
+  /** Audit Phase 3: the one "Today" answer ("Done today: Push 1", "Next: Pull 1"). */
+  today?: TodaySummary;
 }
 
 export default function TodayScreen() {
   const router = useRouter();
   const unitSystem = useSettings((s) => s.unitSystem);
   const active = useActiveWorkout((s) => s.active);
-  const startFromPlan = useActiveWorkout((s) => s.startFromPlan);
+  const startFromPlanDay = useActiveWorkout((s) => s.startFromPlanDay);
   const hydrate = useActiveWorkout((s) => s.hydrate);
   // RP-13: a failed read says "Couldn't load today's workout — Try again", never
   // "No workout planned for today".
@@ -48,6 +52,19 @@ export default function TodayScreen() {
   const startGuard = useRef(false);
   const [starting, setStarting] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
+
+  // RP-03: left open past midnight, the page reads Today again when the phone is back.
+  const shownDay = useRef(todayISO());
+  const reload = todayLoad.reload;
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (st) => {
+      if (st === 'active' && shownDay.current !== todayISO()) {
+        shownDay.current = todayISO();
+        void reload();
+      }
+    });
+    return () => sub.remove();
+  }, [reload]);
 
   useFocusEffect(
     useCallback(() => {
@@ -71,7 +88,8 @@ export default function TodayScreen() {
         try {
           // A workout saved before Android closed the app loads first — Start must not replace it.
           await hydrate();
-          if (!useActiveWorkout.getState().active) await startFromPlan();
+          // RP-03: the routine this page shows, by id — never worked out again at the tap.
+          if (!useActiveWorkout.getState().active && today?.planDayId) await startFromPlanDay(today.planDayId);
           showActiveWorkout(router);
         } finally {
           setStarting(false);
@@ -100,9 +118,21 @@ export default function TodayScreen() {
         </View>
       ) : !has ? (
         <View style={{ gap: space.lg }}>
-          <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.inkSecondary }}>
-            {today?.headline ?? 'No workout planned for today.'}
-          </Text>
+          <View style={{ gap: space.xs }}>
+            <Text style={{ fontFamily: type.display, fontSize: type.size.h2, color: color.ink }}>
+              {today.today?.title ?? 'Nothing planned'}
+            </Text>
+            <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.inkSecondary }}>
+              {today.today?.line ?? today.headline}
+            </Text>
+          </View>
+          {today.today?.status === 'noPlan' || today.today?.status === 'emptyPlan' ? (
+            <GhostButton
+              label={today.today.status === 'noPlan' ? 'Pick a program or build one' : 'Open your routines'}
+              icon="target"
+              onPress={() => router.replace('/routines')}
+            />
+          ) : null}
           <GhostButton label="Go to Workout" icon="dumbbell" onPress={() => router.replace('/workout')} />
         </View>
       ) : (
@@ -113,7 +143,7 @@ export default function TodayScreen() {
             </Text>
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>
               {done
-                ? `You did this today. ${countWord(today.targets.length, 'exercise')}.`
+                ? `${today.today?.title ?? 'Done today'} · Next: ${countWord(today.targets.length, 'exercise')}, pre-filled with last time’s numbers.`
                 : `${countWord(today.targets.length, 'exercise')}, pre-filled with last time’s numbers.`}
             </Text>
             {week ? (
@@ -146,7 +176,7 @@ export default function TodayScreen() {
           </Card>
           <View style={{ gap: space.md }}>
             <PrimaryButton
-              label={active ? 'Resume workout' : done ? `Start ${today.dayName} again` : `Start ${today.dayName}`}
+              label={active ? 'Resume workout' : `Start ${today.dayName}`}
               icon="dumbbell"
               loading={starting}
               onPress={() => void onStart()}

@@ -167,7 +167,7 @@ describe.each(TAGS)('upgrade from %s keeps every row', (tag) => {
     // 3. Versions are current.
     const meta = (k: string) => after.meta[k]?.value;
     expect(meta('schema_version')).toBe('1');
-    expect(meta('tracker_schema_version')).toBe('10');
+    expect(meta('tracker_schema_version')).toBe('11');
     expect(meta('member_schema_version')).toBe('1');
 
     // 4. The library sync linked the library-named exercise and left the member's own alone.
@@ -222,6 +222,6 @@ describe('a start-up killed half-way through a migration converges on the next l
     const fresh = await bootRealApp();
     expect(schemaOf(db)).toEqual(schemaOf(fresh));
     expect(db.count('set_entries')).toBe(5);
-    expect(db.all("SELECT value FROM meta WHERE key = 'tracker_schema_version'")).toEqual([{ value: '10' }]);
+    expect(db.all("SELECT value FROM meta WHERE key = 'tracker_schema_version'")).toEqual([{ value: '11' }]);
   });
 });

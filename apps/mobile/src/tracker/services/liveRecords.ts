@@ -66,6 +66,8 @@ interface LiveExercise {
   loadMode?: LoadMode;
   /** v0.25.1: pace counts sets of at least 1 km (absent = km). */
   distUnit?: DistUnit;
+  /** HI-21: a bike's plausible pace differs from a run's (the draft card's name). */
+  name?: string;
 }
 
 /** A ticked draft set in stored form. */
@@ -95,7 +97,7 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
   const kinds = ex.bests.kinds ?? recordKindsFor(lt);
   // A draft saved before Phase 3 knows only the two old bests.
   const prior: Partial<Record<RecordKind, number>> = ex.bests.by ?? { weight: ex.bests.weightKg, e1rm: ex.bests.e1rm };
-  const rule: RecordRule = { logType: lt, loadMode: mode, bwShare: ex.bests.bwShare ?? 0, distUnit: ex.distUnit ?? 'km' };
+  const rule: RecordRule = { logType: lt, loadMode: mode, bwShare: ex.bests.bwShare ?? 0, distUnit: ex.distUnit ?? 'km', name: ex.name };
   const body = ex.bests.bodyweightKg ?? null;
 
   const running: Partial<Record<RecordKind, number>> = { ...prior };
@@ -173,7 +175,7 @@ export function toastHit<T extends LiveExercise & { key: string; exerciseId: str
   if (!hit) return null;
   const lt: LogType = ex.logType ?? 'weight_reps';
   const mode: LoadMode = ex.loadMode ?? 'one';
-  const rule: RecordRule = { logType: lt, loadMode: mode, bwShare: ex.bests?.bwShare ?? 0, distUnit: ex.distUnit ?? 'km' };
+  const rule: RecordRule = { logType: lt, loadMode: mode, bwShare: ex.bests?.bwShare ?? 0, distUnit: ex.distUnit ?? 'km', name: ex.name };
   const body = ex.bests?.bodyweightKg ?? null;
   const matchedElsewhere = (c: LiveHit): boolean => {
     for (const card of exercises) {

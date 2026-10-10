@@ -10,6 +10,8 @@ import { kgToShown, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
+import { weightChange, weightChangeShown, weightChangeTone, weightSpanText } from '@/tracker/engine/headline';
+import type { Goal } from '@/types/models';
 
 import { InspectReadout, Section } from './Section';
 
@@ -22,6 +24,8 @@ export interface BodyWeightSectionProps {
   onWeight: () => void;
   onMeasurements: () => void;
   onPhotos: () => void;
+  /** The member's goal: the change's colour follows it (PG-10). */
+  goal?: Goal | null;
 }
 
 function LinkRow({ icon, title, sub, onPress }: { icon: IconName; title: string; sub: string; onPress: () => void }) {
@@ -44,14 +48,15 @@ function LinkRow({ icon, title, sub, onPress }: { icon: IconName; title: string;
  * Body: the weight trend (points at their real dates), then the way into measurements and
  * progress photos (Phase 3).
  */
-export function BodyWeightSection({ data, index, measureLine, photoCount, onWeight, onMeasurements, onPhotos }: BodyWeightSectionProps) {
+export function BodyWeightSection({ data, index, measureLine, photoCount, onWeight, onMeasurements, onPhotos, goal }: BodyWeightSectionProps) {
   const [inspect, setInspect] = useState<{ x: string; y: number } | null>(null);
   // v0.27.0: kg or lb (stored kg). The chart is drawn in the shown unit.
   const units = useUnits();
   const unit = weightUnitOf(units);
   const has = data.length > 0;
   const current = has ? data[data.length - 1].weightKg : 0;
-  const delta = has ? Math.round(kgToShown(current - data[0].weightKg, units) * 10) / 10 : 0;
+  // PG-11: the one body-weight rule, always with its span ("+3.6 kg in 90 days").
+  const change = weightChange(data);
 
   return (
     <Section
@@ -66,7 +71,12 @@ export function BodyWeightSection({ data, index, measureLine, photoCount, onWeig
               <AnimatedNumber key={units} value={current} format={(n) => trimNum(kgToShown(n, units))} style={{ fontSize: type.size.h1 }} />
               <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{unit} now</Text>
             </View>
-            <DeltaPill value={delta} suffix={` ${unit}`} />
+            {change ? (
+              <View style={{ alignItems: 'flex-end', gap: 3 }}>
+                <DeltaPill value={weightChangeShown(change, units)} suffix={` ${unit}`} tone={weightChangeTone(change.changeKg, goal)} />
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{weightSpanText(change)}</Text>
+              </View>
+            ) : null}
           </View>
           <DateLineChart data={data.map((d) => ({ x: d.dateISO, y: kgToShown(d.weightKg, units) }))} fillGradient yFormat={(n) => trimNum(n)} onInspect={setInspect} />
           <View style={{ height: 1, backgroundColor: color.border, marginVertical: space.md }} />

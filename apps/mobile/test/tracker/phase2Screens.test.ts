@@ -68,29 +68,31 @@ describe('Home: volume by the one rule, and the insight that talks about it', ()
       lastWorkout: { dateISO: '2026-10-05', dayType: 'pull', volumeKg: 2000 },
     }) as unknown as DashboardData;
   it('replaces the weekly volume, its change and the last workout volume', () => {
-    const d = withPhase2Volume(raw('3-day streak and counting — consistency is what builds physiques.'), [{ volumeKg: 10000 }, { volumeKg: 12000 }], 2800, '2026-10-06');
+    const d = withPhase2Volume(raw('3-week streak and counting — consistency is what builds physiques.'), [{ volumeKg: 10000 }, { volumeKg: 12000 }], 2800, '2026-10-06');
     expect(d.weeklyVolumeKg).toBe(12000);
     expect(d.weeklyVolumeDeltaPct).toBe(20);
     expect(d.lastWorkout?.volumeKg).toBe(2800);
     expect(d.insight).toContain('up 20%');
   });
-  it('keeps a PR or protein insight (they outrank volume), even though the volume line mentions protein', () => {
-    const pr = 'New PR this week — your strength curve is pointing exactly where we want it.';
+  it('keeps a records or protein insight (they outrank volume), even though the volume line mentions protein', () => {
+    const pr = '1 lift beat its best this week — your strength curve is pointing exactly where we want it.';
     expect(withPhase2Volume(raw(pr), [{ volumeKg: 1 }, { volumeKg: 5 }], null, '2026-10-06').insight).toBe(pr);
     const protein = "You're only 20 g away from your protein goal — one scoop of whey closes it.";
     expect(withPhase2Volume(raw(protein), [{ volumeKg: 1 }, { volumeKg: 5 }], null, '2026-10-06').insight).toBe(protein);
     const volumeLine = 'Weekly volume is up 12% on last week — earn it back with sleep and protein.';
     expect(withPhase2Volume(raw(volumeLine), [{ volumeKg: 100 }, { volumeKg: 100 }], null, '2026-10-06').insight).not.toBe(volumeLine);
   });
-  it('review: "New PR this week" only counts records a member would recognise', () => {
+  it('review (Phase 3, D10): the insight counts the lifts that beat a best by the one record rule', () => {
     // The frozen insight counted a first plank ("0 kg") as a PR.
-    const pr = 'New PR this week — your strength curve is pointing exactly where we want it.';
+    const pr = '1 lift beat its best this week — your strength curve is pointing exactly where we want it.';
     const base = { ...raw(pr), proteinTargetG: 120, proteinTodayG: 120 } as DashboardData;
-    const d = withPhase2Volume(base, [{ volumeKg: 100 }, { volumeKg: 100 }], null, '2026-10-06', { recentPrCount: 0 });
-    expect(d.insight).not.toContain('PR');
-    expect(withPhase2Volume(base, [{ volumeKg: 100 }, { volumeKg: 100 }], null, '2026-10-06', { recentPrCount: 2 }).insight).toContain('2 new PRs');
+    const d = withPhase2Volume(base, [{ volumeKg: 100 }, { volumeKg: 100 }], null, '2026-10-06', { liftsUp: 0 });
+    expect(d.insight).not.toContain('beat');
+    const two = withPhase2Volume(base, [{ volumeKg: 100 }, { volumeKg: 100 }], null, '2026-10-06', { liftsUp: 2 });
+    expect(two.insight).toContain('2 lifts beat their best this week');
+    expect(two.liftsUpThisWeek).toBe(2);
     const kept = 'Bench Press has been flat for three weeks — time to deload and build back stronger.';
-    expect(withPhase2Volume({ ...base, insight: kept }, [{ volumeKg: 1 }, { volumeKg: 1 }], null, '2026-10-06', { recentPrCount: 0 }).insight).toBe(kept);
+    expect(withPhase2Volume({ ...base, insight: kept }, [{ volumeKg: 1 }, { volumeKg: 1 }], null, '2026-10-06', { liftsUp: 0 }).insight).toBe(kept);
   });
   it('review: recovery counts body weight on pull-ups and marks the muscles of a plank as worked', () => {
     const sess = (dateISO: string, ex: { muscleGroup: string; volumeKg: number; sets: number }[]) =>
@@ -261,7 +263,7 @@ describe('chat logging follows the exercise type (review finding)', () => {
 
 describe('records a member would recognise (review finding)', () => {
   it('drops "Plank 0 kg" and negative assisted records; keeps real lifts', async () => {
-    const { keepMeaningful, recentPrCount } = await import('@/tracker/services/records');
+    const { keepMeaningful } = await import('@/tracker/services/records');
     const prs = [
       { exerciseId: 'bench', value: 100, dateISO: '2026-10-05' },
       { exerciseId: 'plank', value: 0, dateISO: '2026-10-05' },
@@ -270,8 +272,6 @@ describe('records a member would recognise (review finding)', () => {
     ];
     const types = new Map([['bench', 'weight_reps'], ['plank', 'time'], ['assist', 'assisted'], ['run', 'time_distance']]);
     expect(keepMeaningful(prs, types).map((p) => p.exerciseId)).toEqual(['bench']);
-    expect(recentPrCount(keepMeaningful(prs, types), '2026-10-06')).toBe(1);
-    expect(recentPrCount([{ exerciseId: 'a', dateISO: '2026-09-29' }], '2026-10-06')).toBe(0); // 8 days ago
   });
 });
 

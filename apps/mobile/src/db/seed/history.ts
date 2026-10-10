@@ -129,6 +129,7 @@ const SESSION_NOTES = [
 ] as const;
 
 export function epleyE1rm(weightKg: number, reps: number): number {
+  if (reps === 1) return weightKg; // a single is its own 1-rep max (as the engine)
   return weightKg * (1 + reps / 30);
 }
 

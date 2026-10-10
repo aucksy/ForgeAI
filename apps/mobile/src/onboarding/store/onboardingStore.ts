@@ -14,8 +14,10 @@ import { create } from 'zustand';
 
 import { initDb, resetDb } from '@/db';
 import { startupStep } from '@/db/startupError';
+import { enqueueWrite } from '@/db/writeQueue';
 import { useChat } from '@/store/chatStore';
 import { syncExerciseCatalog } from '@/tracker/catalog/catalogSync';
+import { ensureHistoryIndexes } from '@/tracker/db/historyIndexes';
 import { initTrackerSchema } from '@/tracker/db/trackerSchema';
 import { useDashboard } from '@/store/dashboardStore';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
@@ -92,6 +94,16 @@ async function openAndUpgrade(): Promise<void> {
     await initTrackerSchema(); // additive tracker columns
     await initMemberSchema(); // additive member columns (phone)
   });
+  // History's paging index (Phase 3). Speed only — History is correct without it — so a failure
+  // never blocks start-up. Not inside initTrackerSchema: that returns early once its version is
+  // stored, so existing installs would never get the index.
+  await ensureHistoryIndexes().catch(() => undefined);
+  // Once: records an older version stored for a single (100 × 1 as 103.3) are put right. Never
+  // blocks start-up; a failure tries again next launch.
+  await enqueueWrite(async () => {
+    const { fixSingleE1rmRecords } = await import('@/tracker/services/prRebuild');
+    await fixSingleE1rmRecords();
+  }).catch(() => undefined);
   // Phase 2: once per library version, link this member's exercises to the bundled library
   // and add the new ones (a fresh install gets the whole library at onboarding instead). A
   // failure never blocks the app — it retries next launch. (Not an upgrade step: the app

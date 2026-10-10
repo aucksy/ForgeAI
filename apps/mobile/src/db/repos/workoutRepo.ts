@@ -263,13 +263,26 @@ export async function getExerciseHistory(
   exerciseId: string,
   limit?: number,
 ): Promise<{ sessionId: string; dateISO: string; sets: SetEntry[]; volumeKg: number }[]> {
+  // Audit RP-22 (D3): with a limit, only the newest `limit` workouts' sets cross the bridge —
+  // before, every set of the exercise from every year was read and then trimmed here.
+  const bounded = limit != null && Number.isFinite(limit) && limit >= 0;
   const rows = await getDb().getAllAsync<SetRow & { date_iso: string }>(
     `SELECT se.*, ws.date_iso AS date_iso
      FROM set_entries se
      JOIN workout_sessions ws ON ws.id = se.session_id
-     WHERE se.exercise_id = ? AND se.is_warmup = 0
+     WHERE se.exercise_id = ? AND se.is_warmup = 0${
+       bounded
+         ? `
+       AND se.session_id IN (
+         SELECT s2.session_id FROM set_entries s2 JOIN workout_sessions w2 ON w2.id = s2.session_id
+          WHERE s2.exercise_id = ? AND s2.is_warmup = 0
+          GROUP BY s2.session_id
+          ORDER BY MAX(w2.started_at) DESC, MAX(w2.date_iso) DESC
+          LIMIT ?)`
+         : ''
+     }
      ORDER BY ws.started_at DESC, ws.date_iso DESC, se.set_number ASC`,
-    [exerciseId],
+    bounded ? [exerciseId, exerciseId, Math.floor(limit)] : [exerciseId],
   );
   const out: { sessionId: string; dateISO: string; sets: SetEntry[]; volumeKg: number }[] = [];
   const bySession = new Map<string, (typeof out)[number]>();

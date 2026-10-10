@@ -213,7 +213,9 @@ describe('LW-21 the summary leads with the answer', () => {
 
   it('time · sets · kg lifted, and records only when there are some', () => {
     expect(finishAnswer(base)).toBe('52 min · 18 sets · 12,480 kg lifted');
-    expect(finishAnswer({ ...base, records: [{}, {}] as never })).toBe('52 min · 18 sets · 12,480 kg lifted · 2 records');
+    // D10: two records on one lift = 1 lift; on two lifts = 2 lifts.
+    expect(finishAnswer({ ...base, records: [{ exerciseId: 'a' }, { exerciseId: 'a' }] as never })).toBe('52 min · 18 sets · 12,480 kg lifted · 1 lift beat its best');
+    expect(finishAnswer({ ...base, records: [{ exerciseId: 'a' }, { exerciseId: 'b' }] as never })).toBe('52 min · 18 sets · 12,480 kg lifted · 2 lifts beat their best');
     expect(finishAnswer({ ...base, durationSec: 0, totalVolumeKg: 0, workingSetCount: 1 })).toBe('1 set');
   });
 });

@@ -394,12 +394,51 @@ async function refillOrCreate(
     db.withTransactionAsync(async () => {
       if (opts.follow) await db.runAsync('UPDATE workout_plans SET is_active = CASE WHEN id = ? THEN 1 ELSE 0 END', [before.id]);
       await db.runAsync('UPDATE workout_plans SET settings = ? WHERE id = ?', [JSON.stringify(settings), before.id]);
+      // Each routine brought in again keeps the id it had (matched by name, then by place):
+      // the workouts saved from it point at that id, and "Today" is placed by it. New ids for
+      // every routine (with the start day kept) sent Today back to the first routine.
+      const old = await db.getAllAsync<{ id: string; name: string }>(
+        'SELECT id, name FROM plan_days WHERE plan_id = ? ORDER BY day_order ASC, rowid ASC',
+        [before.id],
+      );
+      const keep = keptRoutineIds(old, routines);
+      const kept = keep.filter((id): id is string => id != null);
       await db.runAsync('DELETE FROM plan_exercises WHERE plan_day_id IN (SELECT id FROM plan_days WHERE plan_id = ?)', [before.id]);
-      await db.runAsync('DELETE FROM plan_days WHERE plan_id = ?', [before.id]);
-      await insertRoutines(before.id, routines);
+      await db.runAsync(
+        `DELETE FROM plan_days WHERE plan_id = ?${kept.length ? ` AND id NOT IN (${kept.map(() => '?').join(', ')})` : ''}`,
+        [before.id, ...kept],
+      );
+      await insertRoutines(before.id, routines, keep);
     }),
   );
   return before.id;
+}
+
+/**
+ * For each routine brought in again, the id of the folder's routine it replaces, or null for a
+ * new one: the same name first (case and spaces ignored), then the same place. Each old id is
+ * used once. PURE.
+ */
+export function keptRoutineIds(
+  old: readonly { id: string; name: string }[],
+  next: readonly { name: string }[],
+): (string | null)[] {
+  const key = (s: string): string => s.replace(/\s+/g, ' ').trim().toLowerCase();
+  const used = new Set<string>();
+  const out: (string | null)[] = next.map((r) => {
+    const hit = old.find((o) => !used.has(o.id) && key(o.name) === key(r.name));
+    if (!hit) return null;
+    used.add(hit.id);
+    return hit.id;
+  });
+  return out.map((id, i) => {
+    if (id != null) return id;
+    const o = old[i];
+    // By place only when that old routine's name is not taken by another routine of the new list.
+    if (!o || used.has(o.id) || next.some((r) => key(r.name) === key(o.name))) return null;
+    used.add(o.id);
+    return o.id;
+  });
 }
 
 /** A whole folder with its routines in one transaction; returns the folder id. */
@@ -426,19 +465,33 @@ export async function createFolderWithRoutines(
   return id;
 }
 
-/** The routines of a folder, in order (inside the caller's transaction). */
-async function insertRoutines(planId: string, routines: readonly NewRoutine[]): Promise<void> {
+/**
+ * The routines of a folder, in order (inside the caller's transaction). `keep[d]`: an existing
+ * routine row to rewrite in place (its id kept) instead of a new one.
+ */
+async function insertRoutines(planId: string, routines: readonly NewRoutine[], keep: readonly (string | null)[] = []): Promise<void> {
   const db = getDb();
   for (let d = 0; d < routines.length; d++) {
     const r = routines[d];
-    const dayId = uuid();
-    await db.runAsync('INSERT INTO plan_days(id, plan_id, day_type, day_order, name) VALUES(?, ?, ?, ?, ?)', [
-      dayId,
-      planId,
-      r.dayType,
-      d,
-      r.name.trim() || 'Routine',
-    ]);
+    const kept = keep[d] ?? null;
+    const dayId = kept ?? uuid();
+    if (kept) {
+      await db.runAsync('UPDATE plan_days SET plan_id = ?, day_type = ?, day_order = ?, name = ? WHERE id = ?', [
+        planId,
+        r.dayType,
+        d,
+        r.name.trim() || 'Routine',
+        kept,
+      ]);
+    } else {
+      await db.runAsync('INSERT INTO plan_days(id, plan_id, day_type, day_order, name) VALUES(?, ?, ?, ?, ?)', [
+        dayId,
+        planId,
+        r.dayType,
+        d,
+        r.name.trim() || 'Routine',
+      ]);
+    }
     for (let i = 0; i < r.exercises.length; i++) {
       const x = r.exercises[i];
       const min = Math.max(1, Math.min(50, Math.round(x.repMin)));

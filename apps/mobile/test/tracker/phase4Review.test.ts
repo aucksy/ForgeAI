@@ -65,7 +65,7 @@ vi.mock('@/db', () => ({
   getMeta: async () => null,
   setMeta: async () => undefined,
 }));
-vi.mock('@/db/repos/prRepo', () => ({ checkAndRecordPrs: async (id: string) => void h.rechecked.push(id) }));
+vi.mock('@/db/repos/prRepo', () => ({ E1RM_SQL: 'CASE WHEN se.reps = 1 THEN se.weight_kg ELSE se.weight_kg * (1 + se.reps / 30.0) END', checkAndRecordPrs: async (id: string) => void h.rechecked.push(id) }));
 vi.mock('@/db/repos/workoutRepo', () => ({ deleteSession: async () => undefined }));
 
 const planState = await import('@/tracker/services/planState');

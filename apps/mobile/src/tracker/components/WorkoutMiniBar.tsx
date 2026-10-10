@@ -28,7 +28,8 @@ export function WorkoutMiniBar() {
   const router = useRouter();
   const active = useActiveWorkout((s) => s.active);
   const startedAt = useActiveWorkout((s) => s.startedAt);
-  const editing = useActiveWorkout((s) => s.editingSessionId != null);
+  // An edit or a past log (never left open: Back asks to discard — HI-07).
+  const editing = useActiveWorkout((s) => s.editingSessionId != null || s.pastLog);
   // LW-23: ticked WORKING sets, as the summary counts them (warm-ups never count).
   const done = useActiveWorkout((s) => liveCounts(s.exercises).setsDone);
   const remaining = useRestRemaining();

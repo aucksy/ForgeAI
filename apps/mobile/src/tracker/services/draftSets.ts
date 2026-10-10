@@ -32,8 +32,14 @@ export function isCommittable(s: DraftSet, logType: LogType = 'weight_reps'): bo
  * Phase 2 (LW-03): `tickedOnly` writes only ticked rows — Finish leaves rows that hold
  * numbers but were never ticked out unless the member chooses "Save them". An edit of a
  * saved workout loads every row ticked, so it keeps the default.
+ *
+ * `stampLoadMode` (correcting a past workout — an edit or a past log): every row without its
+ * own counting is saved with the card's (`ex.loadMode`). Counting changed while correcting is
+ * that workout's only (HI-08) and is stamped on the rows shown then; a row added AFTER the
+ * change (Add set, warm-ups) would otherwise be saved without one and read with the
+ * exercise's own counting.
  */
-export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tickedOnly?: boolean } = {}): RichSet[] {
+export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tickedOnly?: boolean; stampLoadMode?: boolean } = {}): RichSet[] {
   const flat: RichSet[] = [];
   // LW-28: each card's number among the cards of the same exercise (heavy Bench 0, back-off 1),
   // saved with its sets so the two cards stay two after saving. #10: the number the card was
@@ -66,6 +72,7 @@ export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tic
           if (st.keep.durationSec != null) kept.durationSec = st.keep.durationSec;
           if (st.keep.distanceM != null) kept.distanceM = st.keep.distanceM;
           if (st.loadMode != null) kept.loadMode = st.loadMode;
+          else if (opts.stampLoadMode && ex.loadMode != null) kept.loadMode = ex.loadMode;
           if (cardIndex > 0) kept.cardIndex = cardIndex;
           flat.push(kept);
           firstOfExercise = false;
@@ -88,6 +95,7 @@ export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tic
       if (lt === 'time' || lt === 'time_distance' || st.durationSec != null) row.durationSec = st.durationSec ?? null;
       if (lt === 'distance' || lt === 'time_distance' || st.distanceM != null) row.distanceM = st.distanceM ?? null;
       if (st.loadMode != null) row.loadMode = st.loadMode;
+      else if (opts.stampLoadMode && ex.loadMode != null) row.loadMode = ex.loadMode;
       if (cardIndex > 0) row.cardIndex = cardIndex;
       flat.push(row);
       firstOfExercise = false;

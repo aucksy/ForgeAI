@@ -122,18 +122,42 @@ const ORDER = 'ORDER BY ws.started_at DESC, ws.date_iso DESC, se.set_number ASC'
  * otherwise each entry says whether it was one, so charts and records can leave it out
  * while the history list still shows it.
  */
+/**
+ * Phase 3 packet C (HI-02 / HI-16): "before this workout" — only workouts that happened
+ * earlier than a past workout being edited or logged (an earlier day, or the same day and an
+ * earlier start), never the workout itself. Its PREVIOUS and hints then never quote a LATER
+ * workout, and an old workout always finds the one before it however much came after.
+ */
+export interface HistoryBefore {
+  dateISO: string;
+  startedAt: number;
+  /** The workout being edited (left out even if its stored time says otherwise). */
+  excludeSessionId?: string | null;
+}
+
+/** The "before" condition on a sessions alias, with its parameters. PURE. */
+function beforeSql(alias: string, b: HistoryBefore | undefined): { sql: string; params: (string | number)[] } {
+  if (!b) return { sql: '', params: [] };
+  return {
+    sql: `AND ${alias}.id != ? AND (${alias}.date_iso < ? OR (${alias}.date_iso = ? AND ${alias}.started_at < ?))`,
+    params: [b.excludeSessionId ?? '', b.dateISO, b.dateISO, b.startedAt],
+  };
+}
+
 export async function getBoundedExerciseHistory(
   exerciseId: string,
   limit?: number,
-  opts: { skipEasy?: boolean } = {},
+  opts: { skipEasy?: boolean; before?: HistoryBefore } = {},
 ): Promise<ExerciseHistoryEntry[]> {
   // The frozen fn's JS trim yields nothing for a non-positive limit; don't emit
   // `LIMIT 0`/`LIMIT -1` (SQLite reads a negative limit as "no limit").
   if (limit != null && limit <= 0) return [];
 
   const db = getDb();
-  const easy = opts.skipEasy ? 'AND COALESCE(ws.easy_week, 0) = 0' : '';
-  const easy2 = opts.skipEasy ? 'AND COALESCE(w2.easy_week, 0) = 0' : '';
+  const b1 = beforeSql('ws', opts.before);
+  const b2 = beforeSql('w2', opts.before);
+  const easy = `${opts.skipEasy ? 'AND COALESCE(ws.easy_week, 0) = 0' : ''} ${b1.sql}`;
+  const easy2 = `${opts.skipEasy ? 'AND COALESCE(w2.easy_week, 0) = 0' : ''} ${b2.sql}`;
   const rows =
     limit == null
       ? await db.getAllAsync<HistoryRow>(
@@ -142,7 +166,7 @@ export async function getBoundedExerciseHistory(
              JOIN workout_sessions ws ON ws.id = se.session_id
             WHERE se.exercise_id = ? AND se.is_warmup = 0 ${easy}
             ${ORDER}`,
-          [exerciseId],
+          [exerciseId, ...b1.params],
         )
       : await db.getAllAsync<HistoryRow>(
           // Bound the SESSION list first, then read only those sessions' sets. The
@@ -162,7 +186,7 @@ export async function getBoundedExerciseHistory(
                  LIMIT ?
               )
             ${ORDER}`,
-          [exerciseId, exerciseId, limit],
+          [exerciseId, ...b1.params, exerciseId, ...b2.params, limit],
         );
 
   // Group exactly like the frozen fn — minus its `break`, since SQL already bounded us.

@@ -13,6 +13,7 @@ import { kgToShown, weightUnitOf } from '@/lib/units';
 import { countWord } from '@/lib/words';
 
 import { MUSCLE_LABEL, type Muscle } from '../catalog/muscles';
+import { liftsBeatingBest, liftsUpText, weightChange } from './headline';
 import { monthName, shiftMonth } from '../lib/months';
 import type { RecordKind } from './records';
 import type { BodyweightPoint, MuscleSetsSlice } from './volume';
@@ -113,13 +114,13 @@ export interface BodyweightChange {
   endISO: string;
 }
 
-/** First and last weigh-in inside the period; null with fewer than two. */
+/** First and last weigh-in inside the period; null with fewer than two. The one body-weight
+ *  change rule (`engine/headline` `weightChange`), with the two weights it compares. */
 export function bodyweightChange(points: readonly BodyweightPoint[], from: string, to: string): BodyweightChange | null {
-  const inside = points.filter((p) => p.dateISO >= from && p.dateISO <= to).sort((a, b) => (a.dateISO < b.dateISO ? -1 : 1));
-  if (inside.length < 2) return null;
-  const a = inside[0];
-  const b = inside[inside.length - 1];
-  return { start: a.weightKg, end: b.weightKg, change: Math.round((b.weightKg - a.weightKg) * 10) / 10, startISO: a.dateISO, endISO: b.dateISO };
+  const c = weightChange(points, from, to);
+  if (!c) return null;
+  // The two weigh-ins the change itself compared (a day with two weigh-ins: the same one).
+  return { start: c.fromKg, end: c.toKg, change: c.changeKg, startISO: c.fromISO, endISO: c.toISO };
 }
 
 /** Longest run of back-to-back weeks (Monday to Sunday) with at least one workout. */
@@ -152,10 +153,18 @@ export interface StrengthGain {
   pct: number;
 }
 
+/** The middle value (the mean of the middle two for an even count). */
+function median(values: readonly number[]): number {
+  const v = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(v.length / 2);
+  return v.length % 2 ? v[mid] : (v[mid - 1] + v[mid]) / 2;
+}
+
 /**
- * The lift that grew the most: best estimated 1-rep max of its first third of workouts in the
- * period (at most three) against its last third — the two never overlap. Needs at least four
- * workouts at least four weeks apart, so one lucky day is not "the biggest gain".
+ * The lift that grew the most: the MEDIAN estimated 1-rep max of its first third of workouts
+ * in the period (two or three of them) against its last third — the two never overlap.
+ * PG-02: a median, not the best, so one mistyped set ("350 kg" for 35) can never be "the
+ * biggest gain"; it needs at least six workouts (two each side) over four weeks or more.
  */
 export function biggestGain(points: readonly StrengthPoint[]): StrengthGain | null {
   const by = new Map<string, StrengthPoint[]>();
@@ -167,12 +176,12 @@ export function biggestGain(points: readonly StrengthPoint[]): StrengthGain | nu
   }
   let best: StrengthGain | null = null;
   for (const [exerciseId, list] of by) {
-    if (list.length < 4) continue;
     const sorted = [...list].sort((a, b) => (a.dateISO < b.dateISO ? -1 : a.dateISO > b.dateISO ? 1 : 0));
-    if (addDays(sorted[0].dateISO, 28) > sorted[sorted.length - 1].dateISO) continue;
     const k = Math.min(3, Math.floor(sorted.length / 3));
-    const fromKg = Math.max(...sorted.slice(0, k).map((p) => p.e1rm));
-    const toKg = Math.max(...sorted.slice(-k).map((p) => p.e1rm));
+    if (k < 2) continue;
+    if (addDays(sorted[0].dateISO, 28) > sorted[sorted.length - 1].dateISO) continue;
+    const fromKg = median(sorted.slice(0, k).map((p) => p.e1rm));
+    const toKg = median(sorted.slice(-k).map((p) => p.e1rm));
     const pct = Math.round(((toKg - fromKg) / fromKg) * 100);
     if (pct <= 0) continue;
     if (!best || pct > best.pct) best = { exerciseId, name: sorted[0].name, fromKg: Math.round(fromKg), toKg: Math.round(toKg), pct };
@@ -287,6 +296,7 @@ export function monthNote(r: Omit<MonthReport, 'note'>): string {
   parts.push(`${first}.`);
 
   if (r.records.length > 0) {
+    // D10: count the LIFTS that beat a best; the lead is the lift with the most records.
     const counts = new Map<string, { name: string; n: number }>();
     for (const rec of r.records) {
       const c = counts.get(rec.exerciseId) ?? { name: rec.exerciseName, n: 0 };
@@ -294,13 +304,8 @@ export function monthNote(r: Omit<MonthReport, 'note'>): string {
       counts.set(rec.exerciseId, c);
     }
     const lead = [...counts.values()].sort((a, b) => b.n - a.n || a.name.localeCompare(b.name))[0];
-    parts.push(
-      r.records.length === 1
-        ? `You set a new record on ${lead.name}.`
-        : counts.size === 1
-          ? `You set ${r.records.length} new records, all on ${lead.name}.`
-          : `You set ${r.records.length} new records, led by ${lead.name}.`,
-    );
+    const lifts = liftsBeatingBest(r.records);
+    parts.push(lifts === 1 ? `${lead.name} beat its best.` : `${liftsUpText(lifts)}, led by ${lead.name}.`);
   } else {
     parts.push('No new records this time — steady work still counts.');
   }
@@ -360,6 +365,7 @@ export interface YearReview {
   byMonth: { month: string; workouts: number }[];
   busiest: { month: string; workouts: number } | null;
   topExercises: TopExercise[];
+  /** D10: the LIFTS that beat a best this year (not every kind of record). */
   recordCount: number;
   gain: StrengthGain | null;
   longestStreakWeeks: number;
@@ -399,7 +405,7 @@ export function yearNote(r: Omit<YearReview, 'note'>): string {
   if (r.gain) {
     parts.push(`Biggest gain: ${r.gain.name}, up ${r.gain.pct}% (about ${Math.round(kgToShown(r.gain.fromKg))} → ${Math.round(kgToShown(r.gain.toKg))} ${weightUnitOf()} for one rep).`);
   } else if (r.recordCount > 0) {
-    parts.push(`You set ${fmtInt(r.recordCount)} new ${r.recordCount === 1 ? 'record' : 'records'}.`);
+    parts.push(`${liftsUpText(r.recordCount)}.`);
   }
   return parts.join(' ');
 }
@@ -410,6 +416,7 @@ export function buildYearReview(input: {
   /** Last month to list (December for a finished year, else this month). */
   lastMonth: string;
   sessions: readonly ReportSession[];
+  /** Lifts that beat a best this year (D10). */
   recordCount: number;
   strength: readonly StrengthPoint[];
   muscles: readonly MuscleSetsSlice[];

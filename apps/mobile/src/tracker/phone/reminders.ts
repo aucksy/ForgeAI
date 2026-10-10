@@ -12,7 +12,7 @@ import { Platform } from 'react-native';
 
 import { addDays, fromISO, todayISO } from '@/lib/date';
 import { getSessionsBetween } from '@/db/repos/workoutRepo';
-import { getTodaysWorkout } from '@/services/coach';
+import { getTodayPlan } from '@/tracker/services/todayService';
 
 import { ensureAlertPermission } from '../services/workoutAlerts';
 import { usePhonePrefs } from './phonePrefs';
@@ -92,9 +92,10 @@ export async function refreshReminders(opts: { ask?: boolean } = {}): Promise<nu
       showBadge: false,
     });
     const t = todayISO();
-    const [today, tw] = await Promise.all([getSessionsBetween(t, t), getTodaysWorkout(t).catch(() => null)]);
+    const [today, tp] = await Promise.all([getSessionsBetween(t, t), getTodayPlan(t).catch(() => null)]);
     const times = planReminders({ days: p.reminderDays, minutes: p.reminderMinutes, now: new Date(), trainedToday: today.length > 0 });
-    const next = tw && tw.targets.length > 0 && today.length === 0 ? tw.dayName : null;
+    // Audit Phase 3: the one "Today" answer — today's routine, or the next one once it is done.
+    const next = tp?.next ? tp.next.name : null;
     for (let i = 0; i < times.length; i++) {
       await n.scheduleNotificationAsync({
         identifier: `${REMINDER_PREFIX}${i}`,

@@ -26,6 +26,7 @@ import { addDays, todayISO } from '@/lib/date';
 import { FEATURES } from '@/lib/features';
 import { tap } from '@/lib/haptics';
 import { motion, space } from '@/theme/tokens';
+import { liftsBeatingBest } from '@/tracker/engine/headline';
 import { monthOf } from '@/tracker/lib/months';
 import { reportIndex } from '@/tracker/services/reportsService';
 
@@ -79,7 +80,7 @@ export default function AnalyticsScreen() {
           month={idx.month}
           monthRunning={idx.month === monthOf(today)}
           monthWorkouts={idx.month ? extras.monthCounts.get(idx.month) ?? 0 : 0}
-          monthRecords={idx.month ? extras.events.filter((e) => monthOf(e.dateISO) === idx.month).length : 0}
+          monthRecords={idx.month ? liftsBeatingBest(extras.events.filter((e) => monthOf(e.dateISO) === idx.month)) : 0}
           year={idx.year}
           yearRunning={idx.year === Number(today.slice(0, 4))}
           yearWorkouts={yearWorkouts}
@@ -128,6 +129,7 @@ export default function AnalyticsScreen() {
           <>
             <BodyWeightSection
               data={bundle.weight}
+              goal={profile?.goal ?? null}
               index={3}
               measureLine={extras.measureLine}
               photoCount={extras.photoCount}

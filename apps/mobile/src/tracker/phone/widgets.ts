@@ -12,7 +12,7 @@ import { getActivePlan } from '@/db/repos/planRepo';
 import { getSessionsBetween } from '@/db/repos/workoutRepo';
 import { addDays, todayISO, weekStartISO } from '@/lib/date';
 import { countWord } from '@/lib/words';
-import { getTodaysWorkout } from '@/services/coach';
+import { getTodayPlan } from '@/tracker/services/todayService';
 
 import { phoneNative } from './native';
 
@@ -22,6 +22,8 @@ export interface WidgetInput {
   today: { name: string; exercises: string[] } | null;
   /** Name of a workout already done today, if any. */
   doneToday: string | null;
+  /** Audit Phase 3: the plan's routine after today's ("Next: Pull 1"), once today's is done. */
+  next?: string | null;
   /** Days with a finished workout ('YYYY-MM-DD'). */
   doneDates: ReadonlySet<string>;
   /** Workouts a week in the plan; null = no plan. */
@@ -42,7 +44,7 @@ export function widgetData(i: WidgetInput): WidgetData {
   const todayIndex = Array.from({ length: 7 }, (_, k) => addDays(start, k)).indexOf(i.todayISO);
 
   let today: WidgetData['today'];
-  if (i.doneToday) today = { title: `${i.doneToday} done`, line: 'Nice work. Rest well.', action: 'Open' };
+  if (i.doneToday) today = { title: `${i.doneToday} done`, line: i.next ? `Next: ${i.next}` : 'Nice work. Rest well.', action: 'Open' };
   else if (i.today && i.today.exercises.length > 0) {
     today = {
       title: i.today.name,
@@ -73,18 +75,20 @@ export async function refreshWidgets(): Promise<void> {
   try {
     const t = todayISO();
     const start = weekStartISO(t);
-    const [plan, sessions, tw] = await Promise.all([
+    // Audit Phase 3: the same "Today" answer as Home and the Workout tab (RP-10).
+    const [plan, sessions, tp] = await Promise.all([
       getActivePlan(),
       getSessionsBetween(start, addDays(start, 6)),
-      getTodaysWorkout(t).catch(() => null),
+      getTodayPlan(t).catch(() => null),
     ]);
     const doneDates = new Set(sessions.map((s) => s.dateISO));
-    const todays = sessions.filter((s) => s.dateISO === t);
     const hasPlan = plan != null && plan.days.length > 0;
     const data = widgetData({
       todayISO: t,
-      today: hasPlan && tw ? { name: tw.dayName, exercises: tw.targets.map((x) => x.exerciseName) } : null,
-      doneToday: todays.length > 0 ? (tw?.dayName ?? 'Workout') : null,
+      today: tp?.next ? { name: tp.next.name, exercises: tp.next.exercises.map((x) => x.exercise.name) } : null,
+      // Only the plan's routine done today closes Today; an empty workout never does (RP-01).
+      doneToday: tp?.status === 'doneToday' ? (tp.doneToday?.name ?? 'Workout') : null,
+      next: tp?.status === 'doneToday' ? (tp.next?.name ?? null) : null,
       doneDates,
       goal: hasPlan ? plan.days.length : null,
     });

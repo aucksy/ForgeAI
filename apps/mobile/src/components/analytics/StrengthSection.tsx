@@ -17,8 +17,11 @@ export interface StrengthSectionProps {
 export function StrengthSection({ data, index }: StrengthSectionProps) {
   const [inspect, setInspect] = useState<{ x: string; y: number } | null>(null);
 
-  const hasData = data.some((d) => d.score > 0);
-  const latest = data.length > 0 ? data[data.length - 1].score : 0;
+  // SH-08: a score of 0 means "can't be worked out yet" (no body weight, or no key lift by
+  // then) — it is never drawn or shown as a score.
+  const scored = data.filter((d) => d.score > 0);
+  const hasData = scored.length > 0;
+  const latest = hasData ? scored[scored.length - 1].score : 0;
 
   const right = inspect ? (
     <InspectReadout value={`${Math.round(inspect.y)}`} sub={tinyDate(inspect.x)} />
@@ -40,7 +43,7 @@ export function StrengthSection({ data, index }: StrengthSectionProps) {
     >
       {hasData ? (
         <DateLineChart
-          data={data.map((d) => ({ x: d.dateISO, y: d.score }))}
+          data={scored.map((d) => ({ x: d.dateISO, y: d.score }))}
           height={150}
           fillGradient
           yFormat={(n) => `${Math.round(n)}`}
@@ -50,7 +53,7 @@ export function StrengthSection({ data, index }: StrengthSectionProps) {
         <EmptyState
           icon="trend"
           title="No data yet"
-          body="Log the big lifts — bench, squat, deadlift — to score your strength."
+          body="Log your body weight and the big lifts — bench, squat, deadlift — to score your strength."
         />
       )}
     </Section>

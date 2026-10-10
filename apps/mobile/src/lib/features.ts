@@ -21,6 +21,19 @@ export function homeParts(f: Features): HomePart[] {
   return parts;
 }
 
+/**
+ * SH-08: which score tiles can honestly be shown. A strength score needs body weight AND at
+ * least one key lift (else it reads "Strength 0" forever); a recovery score needs at least
+ * one workout (else day one reads "Recovery 95 · Primed"). A score that can't be worked out
+ * is not shown at all. (Both tiles also need the coach switch — `homeParts`.)
+ */
+export function scoreTiles(d: {
+  strength: { keyLifts: readonly unknown[] };
+  lastWorkout: unknown | null;
+}): { strength: boolean; recovery: boolean } {
+  return { strength: d.strength.keyLifts.length > 0, recovery: d.lastWorkout != null };
+}
+
 /** Profile's sections that depend on a hidden feature. */
 export type ProfilePart = 'aiCoach' | 'voice' | 'language' | 'coachNotes' | 'gymSync';
 

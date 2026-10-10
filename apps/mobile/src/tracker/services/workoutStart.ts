@@ -77,7 +77,7 @@ export async function askAboutOpenWorkout(opts: { startLabel?: string } = {}): P
   await store.hydrate();
   const s = useActiveWorkout.getState();
   if (!s.active) return 'none';
-  const editing = s.editingSessionId != null;
+  const editing = s.editingSessionId != null || s.pastLog;
   const ticked = s.exercises.reduce((n, e) => n + e.sets.filter((x) => x.done && !x.isWarmup).length, 0);
   const discard = await askConfirm(
     editing

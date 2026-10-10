@@ -16,8 +16,8 @@
  * `checkAndRecordPrs` upserts per (session, exercise, kind), a re-run is a no-op
  * when the list is already correct. Bounded: ≤2 sessions re-checked per exercise.
  */
-import { getDb } from '@/db';
-import { checkAndRecordPrs } from '@/db/repos/prRepo';
+import { getDb, getMeta, setMeta } from '@/db';
+import { E1RM_SQL, checkAndRecordPrs } from '@/db/repos/prRepo';
 import { deleteSession } from '@/db/queuedWrites';
 import { enqueueWrite } from '@/db/writeQueue';
 import { phoneAfterDelete } from '@/tracker/phone/phoneSync';
@@ -47,7 +47,7 @@ export async function reconcilePrsForExercises(exerciseIds: string[]): Promise<v
       `SELECT se.session_id AS session_id
        FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
        WHERE se.exercise_id = ? AND se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0
-       ORDER BY (se.weight_kg * (1 + se.reps / 30.0)) DESC, ws.started_at ASC LIMIT 1`,
+       ORDER BY (${E1RM_SQL}) DESC, ws.started_at ASC LIMIT 1`,
       [exerciseId],
     );
     if (byWeight) sessionIds.add(byWeight.session_id);
@@ -56,6 +56,27 @@ export async function reconcilePrsForExercises(exerciseIds: string[]): Promise<v
   for (const sessionId of sessionIds) {
     await checkAndRecordPrs(sessionId);
   }
+}
+
+const SINGLE_FIX_KEY = 'pr_single_e1rm_fix';
+
+/**
+ * Once per install (Phase 3 review): an older version stored a single's 1-rep max with the
+ * formula (100 kg × 1 as 103.3). Put those rows right, then re-record the leaders of each
+ * exercise touched — a set that truly beat the single (95 × 2 = 101.3) was hidden by the
+ * inflated number and never got its row. Run it inside the write queue.
+ */
+export async function fixSingleE1rmRecords(): Promise<void> {
+  if ((await getMeta(SINGLE_FIX_KEY)) === '1') return;
+  const db = getDb();
+  const rows = await db.getAllAsync<{ exercise_id: string }>(
+    "SELECT DISTINCT exercise_id FROM personal_records WHERE kind = 'e1rm' AND reps = 1 AND value > weight_kg",
+  );
+  if (rows.length > 0) {
+    await db.runAsync("UPDATE personal_records SET value = weight_kg WHERE kind = 'e1rm' AND reps = 1 AND value > weight_kg");
+    await reconcilePrsForExercises(rows.map((r) => r.exercise_id));
+  }
+  await setMeta(SINGLE_FIX_KEY, '1');
 }
 
 /** Delete a session, then reconcile PR rows for the exercises it contained. */

@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 import { HeroCard, Icon } from '@/components/ui';
 import { fmtWeight } from '@/lib/format';
 import { targetLine } from '@/tracker/engine/progression';
-import { todayLink } from '@/tracker/lib/todayLink';
+import { todayAction } from '@/tracker/lib/todayLink';
 import { color, gradients, radius, shadow, space, type } from '@/theme/tokens';
 import type { TodaysWorkout, UnitSystem } from '@/types/models';
 
@@ -22,11 +22,18 @@ interface HeroWorkoutCardProps {
  * exercises first, then Start).
  */
 export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCardProps) {
-  const targets = workout.targets.slice(0, 3);
-  const extra = workout.targets.length - targets.length;
+  // Audit Phase 3: the one "Today" answer's words — "Done today: Push 1 · Next: Pull 1",
+  // "No plan yet · Pick a program or build one" (SH-03 / SH-04 / RP-10 / RP-11).
+  const done = workout.today?.status === 'doneToday';
+  const title = workout.today ? workout.today.title : workout.dayName;
+  const line = workout.today ? workout.today.line : workout.headline;
+  // Once today's routine is done the card says so and what is next — not its exercise list.
+  const shown = done ? [] : workout.targets;
+  const targets = shown.slice(0, 3);
+  const extra = shown.length - targets.length;
 
   return (
-    <Tappable onPress={onPress} accessibilityLabel={`Today's workout: ${workout.dayName}`}>
+    <Tappable onPress={onPress} accessibilityLabel={`Today's workout: ${line ? `${title}. ${line}` : title}`}>
       <HeroCard
         gradient={gradients.steel}
         style={{
@@ -92,19 +99,21 @@ export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCar
             marginTop: space.sm,
           }}
         >
-          {workout.dayName}
+          {title}
         </Text>
-        <Text
-          style={{
-            fontFamily: type.body,
-            fontSize: type.size.sub,
-            lineHeight: 19,
-            color: color.inkSecondary,
-            marginTop: space.xs,
-          }}
-        >
-          {workout.headline}
-        </Text>
+        {line ? (
+          <Text
+            style={{
+              fontFamily: type.body,
+              fontSize: type.size.sub,
+              lineHeight: 19,
+              color: color.inkSecondary,
+              marginTop: space.xs,
+            }}
+          >
+            {line}
+          </Text>
+        ) : null}
 
         {targets.length > 0 ? (
           <View
@@ -116,10 +125,12 @@ export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCar
               gap: space.sm,
             }}
           >
-            {targets.map((t) => (
+            {/* SH-18: the exercise's name first, on its own line; the Target under it, shortened —
+                a long Target ("First time · find a weight for 8–12 reps") never hides the name. */}
+            {targets.map((t, i) => (
               <View
-                key={t.exerciseId}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}
+                key={`${t.exerciseId}-${i}`}
+                style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.sm }}
               >
                 <View
                   style={{
@@ -127,28 +138,31 @@ export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCar
                     height: 5,
                     borderRadius: 2.5,
                     backgroundColor: color.accent,
+                    marginTop: 9,
                   }}
                 />
-                <Text
-                  numberOfLines={1}
-                  style={{
-                    flex: 1,
-                    fontFamily: type.bodyMedium,
-                    fontSize: type.size.body,
-                    color: color.ink,
-                  }}
-                >
-                  {t.exerciseName}
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: type.mono,
-                    fontSize: type.size.sub,
-                    color: color.inkSecondary,
-                  }}
-                >
-                  {targetLine(t, (kg) => fmtWeight(kg, unitSystem))}
-                </Text>
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      fontFamily: type.bodyMedium,
+                      fontSize: type.size.body,
+                      color: color.ink,
+                    }}
+                  >
+                    {t.exerciseName}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      fontFamily: type.mono,
+                      fontSize: type.size.caption,
+                      color: color.inkSecondary,
+                    }}
+                  >
+                    {targetLine(t, (kg) => fmtWeight(kg, unitSystem))}
+                  </Text>
+                </View>
               </View>
             ))}
             {extra > 0 ? (
@@ -176,7 +190,7 @@ export function HeroWorkoutCard({ workout, unitSystem, onPress }: HeroWorkoutCar
           }}
         >
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>
-            {todayLink(workout) === '/today' ? 'See workout' : 'Start workout'}
+            {todayAction(workout)}
           </Text>
           <Icon name="chevron-right" size={14} color={color.accent} />
         </View>

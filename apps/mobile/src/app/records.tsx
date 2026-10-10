@@ -9,9 +9,9 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 import { Badge, EmptyState, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
 import { useLoad } from '@/lib/useLoad';
 import { tinyDate } from '@/lib/date';
-import { countWord } from '@/lib/words';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
+import { liftsBeatingBest, liftsUpText } from '@/tracker/engine/headline';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { recordDetailText, recordValueText, withMonthHeadings } from '@/tracker/services/recordText';
 import { getRecordEvents } from '@/tracker/services/recordsService';
@@ -25,7 +25,8 @@ export default function RecordsScreen() {
   return (
     <Screen
       title="Personal records"
-      subtitle={rows && rows.length > 0 ? `${countWord(rows.length, 'record')}, newest first` : undefined}
+      // D10: the total counts LIFTS; every record each one set is listed below.
+      subtitle={rows && rows.length > 0 ? `${liftsUpText(liftsBeatingBest(rows))} · every record, newest first` : undefined}
       scroll={false}
       right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
     >

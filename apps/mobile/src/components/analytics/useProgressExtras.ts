@@ -1,13 +1,13 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 
-import { getDb } from '@/db';
 import { addDays, todayISO } from '@/lib/date';
 import { getMeasurements } from '@/tracker/db/measurementRepo';
 import { fmtMeasure, MEASURE_LABEL, summarize } from '@/tracker/engine/measurements';
 import type { MuscleSetsSlice } from '@/tracker/engine/volume';
 import { countProgressPhotos } from '@/tracker/services/progressPhotos';
 import { getRecordEvents, type RecordEventRow } from '@/tracker/services/recordsService';
+import { getMonthCounts } from '@/tracker/services/reportsService';
 import { getMuscleSetsBetween } from '@/tracker/services/volumeService';
 
 /** Phase 3 parts of Progress that do not follow the 30/90/180-day range. */
@@ -42,13 +42,6 @@ const EMPTY: ProgressExtras = {
   retry: () => {},
 };
 
-async function monthCounts(): Promise<Map<string, number>> {
-  const rows = await getDb().getAllAsync<{ ym: string; n: number }>(
-    'SELECT substr(date_iso, 1, 7) AS ym, COUNT(*) AS n FROM workout_sessions GROUP BY ym',
-  );
-  return new Map(rows.map((r) => [r.ym, r.n]));
-}
-
 async function measureLine(): Promise<string | null> {
   const summary = summarize(await getMeasurements());
   const pick = summary.find((s) => s.kind === 'waist') ?? summary[0];
@@ -70,7 +63,7 @@ export function useProgressExtras(): ProgressExtras {
     void Promise.all([
       getRecordEvents().catch(() => null),
       getMuscleSetsBetween(addDays(today, -6), today).catch(() => null),
-      monthCounts().catch(() => new Map<string, number>()),
+      getMonthCounts().catch(() => new Map<string, number>()),
       measureLine().catch(() => null),
       countProgressPhotos().catch(() => 0),
     ]).then(([events, weekMuscles, counts, line, photos]) => {

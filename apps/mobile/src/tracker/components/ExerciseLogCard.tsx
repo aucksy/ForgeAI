@@ -99,7 +99,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const moveExercise = useActiveWorkout((s) => s.moveExercise);
   const pairSuperset = useActiveWorkout((s) => s.pairSuperset);
   // Correcting a saved workout: its sets are all ticked, so no swap there (as before).
-  const editing = useActiveWorkout((s) => s.editingSessionId != null);
+  // Correcting the past (an edit or a past log): no swap-for-today, no rest timer (HI-08).
+  const editing = useActiveWorkout((s) => s.editingSessionId != null || s.pastLog);
   const router = useRouter();
   // Phase 4: an easy week stays out of records — no medals on its sets.
   const easyWeek = useActiveWorkout((s) => s.easyWeek);
@@ -336,6 +337,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
                 <Badge label={`Superset ${supersetLabel(group)}`} tone="neutral" />
               </Pressable>
             ) : null}
+            {editing ? null : (
             <Pressable
               onPress={() => setSheet('rest')}
               hitSlop={8}
@@ -354,6 +356,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
                 {restSec > 0 ? fmtRest(restSec) : 'Off'}
               </Text>
             </Pressable>
+            )}
           </View>
         </View>
         <Pressable
@@ -535,12 +538,14 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               setTimeout(() => noteRef.current?.focus(), 300);
             }}
           />
-          <SheetRow
-            label="Rest timer"
-            value={restSec > 0 ? fmtRest(restSec) : 'Off'}
-            leading={<Icon name="clock" size={20} color={color.accent} />}
-            onPress={() => openAfterMenu('rest')}
-          />
+          {editing ? null : (
+            <SheetRow
+              label="Rest timer"
+              value={restSec > 0 ? fmtRest(restSec) : 'Off'}
+              leading={<Icon name="clock" size={20} color={color.accent} />}
+              onPress={() => openAfterMenu('rest')}
+            />
+          )}
           {logType === 'weight_reps' ? (
             <SheetRow
               label="Add warm-up sets"
@@ -684,7 +689,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       <TrackerSheet
         visible={sheet === 'counting'}
         title="Counting"
-        subtitle={`How ${exercise.name} is typed and counted from now on. Past workouts keep theirs.`}
+        subtitle={
+          editing
+            ? `How ${exercise.name} is counted in this workout only. Your other workouts keep theirs.`
+            : `How ${exercise.name} is typed and counted from now on. Past workouts keep theirs.`
+        }
         onClose={() => setSheet(null)}
       >
         <View style={{ gap: 2 }}>

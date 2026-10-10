@@ -76,6 +76,11 @@ export interface WorkoutSession {
   source: 'chat' | 'seed' | 'manual';
   /** The workout's own name (tracker schema v9). Absent/null on older workouts → its day type. */
   title?: string | null;
+  /**
+   * The routine it was started from (tracker schema v11): '' = none, null = not known. Absent
+   * where the reader does not map it.
+   */
+  routineId?: string | null;
 }
 
 export interface SetEntry {
@@ -186,6 +191,26 @@ export interface TodaysWorkout {
   targets: OverloadTarget[];
   /** Coach-voice framing line for the day. */
   headline: string;
+  /**
+   * Audit Phase 3: the ONE "Today" answer (`tracker/plans/todayPlan.ts`) every screen shows.
+   * Absent only from older callers / test doubles.
+   */
+  today?: TodaySummary;
+}
+
+/** Audit Phase 3 — "Today" in words and ids, the same on every screen. */
+export interface TodaySummary {
+  status: 'next' | 'doneToday' | 'noPlan' | 'emptyPlan';
+  /** "Push 1" · "Done today: Push 1" · "No plan yet". */
+  title: string;
+  /** "6 exercises from your plan" · "Next: Pull 1" · "Pick a program or build one". */
+  line: string;
+  /** The routine Start starts (never re-worked out at the tap — RP-03). */
+  nextId: string | null;
+  nextName: string | null;
+  /** The workout done today from the plan. */
+  doneName: string | null;
+  doneSessionId: string | null;
 }
 
 export interface RecoveryStatus {
@@ -243,7 +268,12 @@ export interface ChatMessage {
 
 export interface DashboardData {
   todaysWorkout: TodaysWorkout;
+  /** Frozen day-based streak (kept for the hidden coach and gym sync; never shown). */
   streakDays: number;
+  /** THE streak (D9): weeks in a row with at least one workout (`lib/streak`). */
+  streakWeeks: number;
+  /** Lifts that beat a best this week by the one record rule (D10); absent = unknown. */
+  liftsUpThisWeek?: number | null;
   workoutsThisWeek: number;
   caloriesToday: number;
   proteinTodayG: number;

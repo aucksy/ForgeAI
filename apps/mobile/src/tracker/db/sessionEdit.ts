@@ -23,6 +23,7 @@
  */
 import { getDb } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
+import { rememberOriginalStart } from '@/tracker/db/importKeys';
 import { addSetsWithMeta } from '@/tracker/db/trackerSets';
 import type { RichSet } from '@/tracker/db/trackerSets';
 import { reconcilePrsForExercises } from '@/tracker/services/prRebuild';
@@ -86,8 +87,8 @@ export async function saveSessionEditsUnqueued(
   opts: { inTransaction?: () => Promise<void> } = {},
 ): Promise<SaveResult> {
   const db = getDb();
-  const exists = await db.getFirstAsync<{ id: string }>(
-    'SELECT id FROM workout_sessions WHERE id = ?',
+  const exists = await db.getFirstAsync<{ id: string; started_at: number; date_iso: string }>(
+    'SELECT id, started_at, date_iso FROM workout_sessions WHERE id = ?',
     [sessionId],
   );
   if (!exists) throw new SessionGoneError();
@@ -104,6 +105,12 @@ export async function saveSessionEditsUnqueued(
        WHERE id = ?`,
       [edits.dateISO, edits.dayType, edits.notes, edits.startedAt, edits.endedAt, sessionId],
     );
+    // HI-03: a moved workout keeps its import key — its FIRST start is remembered, so a
+    // re-import of the same file still knows it (and never brings it back as a duplicate).
+    const oldStart = Number(exists.started_at);
+    if (Number.isFinite(oldStart) && oldStart !== edits.startedAt && typeof exists.date_iso === 'string') {
+      await rememberOriginalStart(sessionId, { startedAt: oldStart, dateISO: exists.date_iso });
+    }
     await db.runAsync('DELETE FROM personal_records WHERE session_id = ?', [sessionId]);
     await db.runAsync('DELETE FROM set_entries WHERE session_id = ?', [sessionId]);
     // Frozen path: auto set_number per (session, exercise) + PR detection, then the

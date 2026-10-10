@@ -160,8 +160,9 @@ describe('the audit fixes are wired where the member meets them', () => {
 
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
   it('[source-text check] Start waits for a workout saved before Android closed the app', () => {
-    expect(read('src/app/today.tsx')).toMatch(/await hydrate\(\);\s+if \(!useActiveWorkout\.getState\(\)\.active\) await startFromPlan\(\)/);
-    expect(read('src/app/(tabs)/workout.tsx')).toMatch(/await hydrate\(\);\s+if \(!useActiveWorkout\.getState\(\)\.active\) await startFromPlan\(\)/);
+    // Audit Phase 3 (RP-03): Start starts the routine shown, by its id — still only after the hydrate.
+    expect(read('src/app/today.tsx')).toMatch(/await hydrate\(\);\s+(\/\/[^\n]*\n\s+)*if \(!useActiveWorkout\.getState\(\)\.active && today\?\.planDayId\) await startFromPlanDay\(today\.planDayId\)/);
+    expect(read('src/app/(tabs)/workout.tsx')).toMatch(/await hydrate\(\);\s+if \(!useActiveWorkout\.getState\(\)\.active\) \{\s+(\/\/[^\n]*\n\s+)*if \(preview\?\.dayId\) await startFromPlanDay\(preview\.dayId\)/);
   });
 
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).

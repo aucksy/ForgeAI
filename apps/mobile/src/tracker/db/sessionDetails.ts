@@ -30,7 +30,7 @@ import type {
   WorkoutSession,
 } from '@/types/models';
 
-interface SessionRow {
+export interface SessionRow {
   id: string;
   date_iso: string;
   started_at: number;
@@ -148,7 +148,8 @@ export async function getSessionDetailsBetween(fromISO: string, toISO: string): 
   return detailsFor(sessionRows);
 }
 
-async function detailsFor(sessionRows: SessionRow[]): Promise<SessionDetail[]> {
+/** HI-01 (History's paged list): details for session rows already read, batched the same way. */
+export async function detailsFor(sessionRows: SessionRow[]): Promise<SessionDetail[]> {
   if (sessionRows.length === 0) return [];
   const db = getDb();
   const sessionIds = sessionRows.map((r) => r.id);

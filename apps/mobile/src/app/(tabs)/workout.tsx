@@ -5,14 +5,14 @@
  * week now (research v3 §5); with no plan, the ready programs and the plan builder.
  */
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Alert, AppState, Text, View } from 'react-native';
 
 import { GhostButton, HeroCard, Icon, PrimaryButton, Screen } from '@/components/ui';
 import { getActivePlan } from '@/db/repos/planRepo';
+import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
 import { countWord } from '@/lib/words';
-import { getTodaysWorkout } from '@/services/coach';
 import { color, gradients, space, type } from '@/theme/tokens';
 
 import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
@@ -21,13 +21,20 @@ import { offerEarlyEasy } from '@/tracker/plans/effort';
 import { stalledLiftsInPlan } from '@/tracker/services/coachTargets';
 import { getPlanNow, moveEasyWeek, planLine, type PlanNow } from '@/tracker/services/planState';
 import { liveCountsLine } from '@/tracker/services/finishCheck';
+import { getTodayPlan } from '@/tracker/services/todayService';
 import { openActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 interface PlanPreview {
+  /** The routine Start starts — by id, never worked out again at the tap (RP-03). */
+  dayId: string | null;
   dayName: string;
   count: number;
   hasPlan: boolean;
+  /** Audit Phase 3: the one "Today" answer in words ("Done today: Push 1", "Next: Pull 1"). */
+  status: 'next' | 'doneToday' | 'noPlan' | 'emptyPlan';
+  title: string;
+  line: string;
 }
 
 export default function WorkoutScreen() {
@@ -38,7 +45,7 @@ export default function WorkoutScreen() {
   const countsLine = useActiveWorkout((s) => liveCountsLine(s.exercises));
   const hydrate = useActiveWorkout((s) => s.hydrate);
   const startEmpty = useActiveWorkout((s) => s.startEmpty);
-  const startFromPlan = useActiveWorkout((s) => s.startFromPlan);
+  const startFromPlanDay = useActiveWorkout((s) => s.startFromPlanDay);
   const discard = useActiveWorkout((s) => s.discard);
   // Phase W4: the same draft slot holds an in-progress EDIT of a saved workout.
   const editingSessionId = useActiveWorkout((s) => s.editingSessionId);
@@ -51,18 +58,38 @@ export default function WorkoutScreen() {
   const [starting, setStarting] = useState(false);
   const [tick, setTick] = useState(0);
 
+  // RP-03: a screen left open overnight reads Today again when the phone is back (a new day
+  // can mean a new routine); Start always starts the routine on screen.
+  const shownDay = useRef(todayISO());
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (st) => {
+      if (st === 'active' && shownDay.current !== todayISO()) setTick((t) => t + 1);
+    });
+    return () => sub.remove();
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       void hydrate();
       let alive = true;
-      getTodaysWorkout()
-        .then((tw) => {
+      shownDay.current = todayISO();
+      getTodayPlan(shownDay.current)
+        .then((tp) => {
           if (alive) {
-            setPreview({ dayName: tw.dayName, count: tw.targets.length, hasPlan: tw.targets.length > 0 });
+            const day = tp.next;
+            setPreview({
+              dayId: day?.id ?? null,
+              dayName: day?.name ?? '',
+              count: day?.exercises.length ?? 0,
+              hasPlan: day != null && day.exercises.length > 0,
+              status: tp.status,
+              title: tp.words.title,
+              line: tp.words.line,
+            });
           }
         })
         .catch(() => {
-          if (alive) setPreview({ dayName: 'Full Body', count: 0, hasPlan: false });
+          if (alive) setPreview(null);
         });
       getPlanNow()
         .then((p) => {
@@ -127,7 +154,11 @@ export default function WorkoutScreen() {
         try {
           // A workout saved before Android closed the app loads first — Start must not replace it.
           await hydrate();
-          if (!useActiveWorkout.getState().active) await startFromPlan();
+          if (!useActiveWorkout.getState().active) {
+            // RP-03: the routine its label names, by id — never re-worked out at the tap.
+            if (preview?.dayId) await startFromPlanDay(preview.dayId);
+            else startEmpty();
+          }
           goActive();
         } finally {
           setStarting(false);
@@ -197,13 +228,25 @@ export default function WorkoutScreen() {
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
                   <Icon name="target" size={20} color={color.accent} />
                   <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-                    {preview?.hasPlan ? `Today: ${preview.dayName}` : 'Start a workout'}
+                    {preview?.status === 'doneToday'
+                      ? preview.title
+                      : preview?.hasPlan
+                        ? `Today: ${preview.dayName}`
+                        : preview?.status === 'emptyPlan'
+                          ? preview.title
+                          : 'Start a workout'}
                   </Text>
                 </View>
                 <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-                  {preview?.hasPlan
-                    ? `${countWord(preview.count, 'exercise')} from your plan, pre-filled with last time's numbers.`
-                    : 'No plan for today — start empty and add exercises as you go.'}
+                  {preview?.status === 'doneToday'
+                    ? `${preview.line} · ${countWord(preview.count, 'exercise')}`
+                    : preview?.hasPlan
+                      ? `${countWord(preview.count, 'exercise')} from your plan, pre-filled with last time's numbers.`
+                      : preview?.status === 'emptyPlan'
+                        ? `${preview.line}, or start an empty workout.`
+                        : preview?.status === 'noPlan'
+                          ? 'No plan yet. Pick a program or build one — or start an empty workout and add exercises as you go.'
+                          : 'Start an empty workout and add exercises as you go.'}
                 </Text>
                 {week && !plan?.easy ? (
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>

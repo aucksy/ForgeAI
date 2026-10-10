@@ -11,13 +11,14 @@ import { Pressable, Text, View } from 'react-native';
 import { BarChart, HBarList } from '@/components/charts';
 import { Badge, Card, EmptyState, GlassCard, HeroCard, Icon, IconButton, LoadError, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
 import { todayISO } from '@/lib/date';
-import { fmtCompact, fmtInt, trimNum } from '@/lib/format';
+import { fmtInt, trimNum } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { MonthGrid } from '@/tracker/components/MonthGrid';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
+import { liftsBeatingBest, liftsUpText } from '@/tracker/engine/headline';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { bigNumber, changeText, emptyReportText, timeText, type MonthReport, type YearReview } from '@/tracker/engine/reports';
 import { setsText } from '@/tracker/engine/volume';
@@ -134,7 +135,8 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
               <StatTile label="Workouts" value={t.workouts} delta={changeText(t.workouts, r.previous.workouts, 'count') ?? undefined} />
             </View>
             <View style={{ flex: 1 }}>
-              <StatTile label="Volume" value={fmtCompact(kgToShown(t.volumeKg, units))} unit={wu} delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct') ?? undefined} />
+              {/* PG-22: the same full number as the line above — never "228.3k" beside "2,28,288". */}
+              <StatTile label="Volume" value={fmtInt(kgToShown(t.volumeKg, units))} unit={wu} delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct') ?? undefined} />
             </View>
             <View style={{ flex: 1 }}>
               <StatTile label="Sets" value={t.sets} delta={changeText(t.sets, r.previous.sets, 'count') ?? undefined} />
@@ -149,7 +151,8 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
         </Card>
       </View>
       <View>
-        <SectionHeader title={data.records.length === 1 ? '1 new record' : `${data.records.length} new records`} />
+        {/* D10: the total counts LIFTS; every record each one set is listed below. */}
+        <SectionHeader title={data.records.length === 0 ? 'New records' : liftsUpText(liftsBeatingBest(data.records))} />
         <Card style={{ gap: space.md }}>
           {data.records.length === 0 ? (
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>No new records this month.</Text>
@@ -213,7 +216,7 @@ function YearBody({ y }: { y: YearReview }) {
           <StatTile label="Longest streak" value={y.longestStreakWeeks} unit={y.longestStreakWeeks === 1 ? 'week' : 'weeks'} icon="flame" />
         </View>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
-          <StatTile label="New records" value={y.recordCount} icon="trophy" />
+          <StatTile label="Lifts up" value={y.recordCount} icon="trophy" />
         </View>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
           <StatTile label="Busiest month" value={y.busiest ? monthName(y.busiest.month).slice(0, 3) : '—'} icon="zap" />
@@ -286,7 +289,7 @@ export default function ReportScreen() {
   const title = isYear ? (Number(period) < Number(today.slice(0, 4)) ? `${period} in review` : `${period} so far`) : monthTitle(period);
   const scene =
     loaded?.kind === 'month' && loaded.data.report.totals.workouts > 0
-      ? monthShareScene(loaded.data.report, loaded.data.records.length)
+      ? monthShareScene(loaded.data.report, liftsBeatingBest(loaded.data.records))
       : loaded?.kind === 'year' && loaded.data.totals.workouts > 0
         ? yearShareScene(loaded.data)
         : null;

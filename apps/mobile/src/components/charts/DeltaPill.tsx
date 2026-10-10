@@ -7,18 +7,20 @@ export interface DeltaPillProps {
   value: number;
   /** Appended to the number (default '%'). */
   suffix?: string;
+  /**
+   * Whether this change is good news. Default: up is good, down is bad. A body-weight change
+   * passes its own (PG-10: down is good when losing fat; neutral without a goal).
+   */
+  tone?: 'good' | 'bad' | 'neutral';
 }
 
 /** Signed change pill: +12% (good) / -8% (critical) / 0 (neutral). */
-export function DeltaPill({ value, suffix = '%' }: DeltaPillProps) {
+export function DeltaPill({ value, suffix = '%', tone }: DeltaPillProps) {
   const positive = value > 0;
   const negative = value < 0;
-  const fg = positive ? palette.goodText : negative ? palette.criticalText : palette.inkMuted;
-  const bg = positive
-    ? 'rgba(61, 203, 108, 0.12)'
-    : negative
-      ? 'rgba(240, 113, 111, 0.12)'
-      : palette.surfaceRaised;
+  const t = tone ?? (positive ? 'good' : negative ? 'bad' : 'neutral');
+  const fg = t === 'good' ? palette.goodText : t === 'bad' ? palette.criticalText : palette.inkMuted;
+  const bg = t === 'good' ? 'rgba(61, 203, 108, 0.12)' : t === 'bad' ? 'rgba(240, 113, 111, 0.12)' : palette.surfaceRaised;
   const text = `${positive ? '+' : ''}${trimNum(value)}${suffix}`;
 
   return (

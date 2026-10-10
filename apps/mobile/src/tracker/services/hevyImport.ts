@@ -28,6 +28,7 @@ import * as XLSX from 'xlsx';
 import { getDb, getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 import { createExercise } from '@/db/repos/exerciseRepo';
+import { originalStarts } from '@/tracker/db/importKeys';
 import { createSession, deleteSession, getSessionsBetween } from '@/db/repos/workoutRepo';
 import { catalogEntry, catalogEntryByName } from '@/tracker/catalog/exerciseCatalog';
 import { addSetsWithMeta } from '@/tracker/db/trackerSets';
@@ -396,6 +397,35 @@ export function workoutNotes(title: string, description: string | null | undefin
   const tl = t.toLowerCase();
   if (bare || t === '' || tl === flat || tl.endsWith(`: ${flat}`)) return d;
   return `${t}\n${d}`;
+}
+
+/**
+ * Audit Phase 3 (HI-04): the name an imported workout keeps — our own "Push · Morning
+ * workout" gives its name part; a real Hevy title ("Push 1", "Morning workout") is the name;
+ * a bare day name from our own export ("Push") is none (the day type says it). PURE.
+ */
+export function importedWorkoutName(w: { title: string; name?: string | null }): string | null {
+  if (w.name) return w.name;
+  const t = sanitizeTitle(w.title).replace(/\s+/g, ' ').trim().slice(0, 60);
+  if (!t || DAY_LABELS.has(t.toLowerCase())) return null;
+  return t;
+}
+
+/**
+ * Audit Phase 3 (RP-02): the routine an imported workout was, by name — Hevy names a workout
+ * after its routine ("Push 1"). A routine of the followed plan wins; otherwise only a name
+ * that exactly one routine has. Null when nothing (or more than one) matches. PURE.
+ */
+export function routineIdForName(
+  name: string | null,
+  routines: readonly { id: string; name: string; followed: boolean }[],
+): string | null {
+  const key = (name ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!key) return null;
+  const hits = routines.filter((r) => r.name.replace(/\s+/g, ' ').trim().toLowerCase() === key);
+  const followed = hits.find((r) => r.followed);
+  if (followed) return followed.id;
+  return hits.length === 1 ? hits[0].id : null;
 }
 
 /**
@@ -830,8 +860,10 @@ export async function previewImport(parsed: ParsedHevy): Promise<ImportPreview> 
 
   const existing = await getSessionsBetween(MIN_ISO, MAX_ISO);
   const existingWorkouts = existing.length;
+  // HI-03: a workout moved to another day since it was imported is still "already here".
+  const known = [...existing, ...(await originalStarts().catch(() => []))];
   let alreadyHere = 0;
-  for (const w of parsed.workouts) if (isAlreadyHere(w, existing)) alreadyHere += 1;
+  for (const w of parsed.workouts) if (isAlreadyHere(w, known)) alreadyHere += 1;
 
   const dateRange =
     parsed.workouts.length > 0
@@ -897,7 +929,12 @@ export async function runImport(
     }
 
     // 2. Idempotency guard — start times already in the DB (empty after a replace).
-    const remaining = await getSessionsBetween(MIN_ISO, MAX_ISO);
+    // HI-03: plus the FIRST start of every workout an edit has moved since (its import key), so
+    // a moved workout is never brought back as a duplicate. Read after a replace: none survive it.
+    const remaining = [
+      ...(await getSessionsBetween(MIN_ISO, MAX_ISO)),
+      ...(await originalStarts()),
+    ];
     const seenStarts = new Set<number>(remaining.map((s) => s.startedAt));
     const sameDay = remaining.map((s) => ({ dateISO: s.dateISO, startedAt: s.startedAt }));
     const sessionByStart = new Map<number, string>(remaining.map((s) => [s.startedAt, s.id]));
@@ -981,6 +1018,13 @@ export async function runImport(
       }));
     };
 
+    // Audit Phase 3: every routine's name, to remember which routine a workout was.
+    const routineRows = await getDb().getAllAsync<{ id: string; name: string; is_active: number }>(
+      `SELECT pd.id, pd.name, wp.is_active FROM plan_days pd JOIN workout_plans wp ON wp.id = pd.plan_id
+        ORDER BY wp.is_active DESC, COALESCE(wp.folder_order, 1000000) ASC, pd.day_order ASC`,
+    );
+    const routines = routineRows.map((r) => ({ id: r.id, name: r.name, followed: r.is_active === 1 }));
+
     // 4. One session per workout (chronological, so PRs accrue in real order).
     let done = 0;
     for (const w of parsed.workouts) {
@@ -990,6 +1034,18 @@ export async function runImport(
         // Merge re-run: earlier versions dropped timed / distance rows. Add them to this
         // already-imported workout when that exercise has nothing in it yet.
         const sessionId = sessionByStart.get(w.startedAt);
+        // Audit Phase 3 (HI-04): a workout imported before names were kept gets its name and
+        // routine now — only where none is saved (a name the member gave is never replaced).
+        if (mode === 'merge' && sessionId) {
+          const name = importedWorkoutName(w);
+          const routineId = routineIdForName(name, routines);
+          if (name || routineId) {
+            await getDb().runAsync(
+              'UPDATE workout_sessions SET title = COALESCE(title, ?), routine_id = COALESCE(routine_id, ?) WHERE id = ?',
+              [name, routineId, sessionId],
+            );
+          }
+        }
         if (mode === 'merge' && sessionId && !backfillDone) {
           const timedOnly = w.exercises.filter((ex) => ex.sets.length > 0 && ex.sets.every((st) => st.reps === 0));
           if (timedOnly.length > 0) {
@@ -1059,8 +1115,12 @@ export async function runImport(
         startedAt: w.startedAt,
         endedAt: w.endedAt,
       });
-      // #9: the workout's own name (tracker schema v9 column), from a file this app wrote.
-      if (w.name) await getDb().runAsync('UPDATE workout_sessions SET title = ? WHERE id = ?', [w.name, session.id]);
+      // #9 / audit HI-04: the workout's own name (tracker schema v9) — our own "Push · name", or
+      // a Hevy title such as "Push 1". Audit RP-02 (schema v11): the routine of that name, if any.
+      const name = importedWorkoutName(w);
+      if (name) await getDb().runAsync('UPDATE workout_sessions SET title = ? WHERE id = ?', [name, session.id]);
+      const routineId = routineIdForName(name, routines);
+      if (routineId) await getDb().runAsync('UPDATE workout_sessions SET routine_id = ? WHERE id = ?', [routineId, session.id]);
       await addSetsWithMeta(session.id, sets);
       result.createdSessionIds?.push(session.id);
       seenStarts.add(w.startedAt); // guard against duplicate start_times within the file
