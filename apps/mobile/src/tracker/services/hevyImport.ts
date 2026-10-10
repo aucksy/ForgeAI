@@ -49,6 +49,22 @@ export type ImportMode = 'replace' | 'merge';
  * brings back timed sets the member deleted on purpose.
  */
 const TIMED_BACKFILL_KEY = 'hevy_timed_backfill_done';
+/**
+ * v0.29.1: exercises Import routines made from a link, whose type was GUESSED from the name (a
+ * link shows no sets). The history import, when it brings that exercise's real sets and nothing
+ * was logged on it yet, sets the type from those sets ("Cable Crunch" guessed as timed showed
+ * no PREVIOUS). JSON list of exercise ids, in `meta`.
+ */
+export const GUESSED_TYPE_KEY = 'link_guessed_exercise_types';
+
+function readIds(raw: string | null): string[] {
+  try {
+    const v = raw ? (JSON.parse(raw) as unknown) : [];
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
 
 interface ParsedSet {
   weightKg: number; // 0 for bodyweight (null in the file); as exported (help is positive)
@@ -622,7 +638,10 @@ export async function titlesNotInLibrary(titles: readonly string[]): Promise<str
  * blank reps, like "Pull Up"). A bodyweight name is logged by reps alone. PURE.
  */
 export function linkLogType(title: string, timed: boolean): LogType {
-  const held = timed && /plank|hold|hang|wall sit|l-sit|stretch|run|walk|jog|cycl|bike|treadmill|elliptical|swim|skip|jump rope|rowing machine|stair/i.test(title);
+  // Whole words: "run" must not find "Crunch", nor "hang" "Hanging Leg Raise".
+  const held =
+    timed &&
+    /\b(plank|planks|hold|dead hang|wall sit|l-sit|stretch|run|running|walk|walking|jog|jogging|cycling|bike|treadmill|elliptical|swim|swimming|skipping|jump rope|rowing machine|stair climber|stairmaster|carry|farmers? walk|battle ropes?|sled push|sled drag)\b/i.test(title);
   return inferLogType(title, held ? [{ weightKg: 0, reps: 0, durationSec: 60, distanceM: null }] : [{ weightKg: 0, reps: 10, durationSec: null, distanceM: null }]);
 }
 
@@ -635,6 +654,7 @@ export function linkLogType(title: string, timed: boolean): LogType {
 export async function exerciseIdsCreating(items: readonly { title: string; timed: boolean }[]): Promise<{ ids: Map<string, string>; created: number }> {
   const library = await readLibrary();
   const ids = new Map<string, string>();
+  const madeNow: string[] = [];
   let created = 0;
   for (const { title, timed } of items) {
     if (ids.has(title)) continue;
@@ -650,7 +670,12 @@ export async function exerciseIdsCreating(items: readonly { title: string; timed
     await getDb().runAsync('UPDATE exercises SET log_type = ?, catalog_key = ? WHERE id = ?', [logType, linkKey, made.id]);
     library.push({ id: made.id, name: made.name, catalogKey: linkKey, logType, loadMode: null });
     ids.set(title, made.id);
+    madeNow.push(made.id);
     created += 1;
+  }
+  if (madeNow.length > 0) {
+    const before = readIds(await getMeta(GUESSED_TYPE_KEY).catch(() => null));
+    await setMeta(GUESSED_TYPE_KEY, JSON.stringify([...new Set([...before, ...madeNow])])).catch(() => undefined);
   }
   return { ids, created };
 }
@@ -759,6 +784,8 @@ export async function runImport(
   };
   const total = parsed.workouts.length;
   const backfillDone = (await getMeta(TIMED_BACKFILL_KEY).catch(() => null)) === '1';
+  const guessed = new Set(readIds(await getMeta(GUESSED_TYPE_KEY).catch(() => null)));
+  const guessedBefore = guessed.size;
 
   await getDb().withTransactionAsync(async () => {
     // 1. Replace mode: clear all existing workouts (PRs cascade via deleteSession).
@@ -785,7 +812,19 @@ export async function runImport(
     for (const title of parsed.distinctExerciseTitles) {
       const hit = matchTitle(title, library);
       if (hit) {
-        byTitle.set(title, { id: hit.id, logType: hit.logType });
+        let logType = hit.logType;
+        if (guessed.has(hit.id)) {
+          // Made from a link with a guessed type: the real sets decide, unless it was used already.
+          const used = await getDb().getFirstAsync<{ n: number }>('SELECT COUNT(*) AS n FROM set_entries WHERE exercise_id = ?', [hit.id]);
+          const real = inferLogType(title, setsByTitle.get(title) ?? []);
+          if ((used?.n ?? 0) === 0 && real !== logType) {
+            await getDb().runAsync('UPDATE exercises SET log_type = ? WHERE id = ?', [real, hit.id]);
+            logType = real;
+            hit.logType = real;
+          }
+          guessed.delete(hit.id);
+        }
+        byTitle.set(title, { id: hit.id, logType });
         continue;
       }
       const logType = inferLogType(title, setsByTitle.get(title) ?? []);
@@ -908,5 +947,6 @@ export async function runImport(
   });
 
   await setMeta(TIMED_BACKFILL_KEY, '1').catch(() => undefined);
+  if (guessed.size !== guessedBefore) await setMeta(GUESSED_TYPE_KEY, JSON.stringify([...guessed])).catch(() => undefined);
   return result;
 }

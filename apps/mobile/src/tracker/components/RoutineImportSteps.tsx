@@ -130,8 +130,16 @@ export function RoutineImportSteps({
   const [leaveOut, setLeaveOut] = useState<Set<string>>(() => new Set());
 
   const kept: FoundRoutine[] = found.filter((r) => keep.has(r.title));
-  // What Save writes: kept routines with at least one ticked exercise.
-  const saved = useMemo(() => chosenRoutines(found, keep, ticks), [found, keep, ticks]);
+  // What Save writes: kept routines with at least one ticked exercise, less the new exercises
+  // the member chose to leave out (applied here, so Back and Next never lose that choice).
+  const ticked = useMemo(() => chosenRoutines(found, keep, ticks), [found, keep, ticks]);
+  const saved = useMemo(
+    () =>
+      leaveOut.size === 0
+        ? ticked
+        : ticked.map((r) => ({ ...r, exercises: r.exercises.filter((e) => !leaveOut.has(e.title)) })).filter((r) => r.exercises.length > 0),
+    [ticked, leaveOut],
+  );
 
   const toggleRoutine = (title: string) =>
     setKeep((k) => {
@@ -161,16 +169,13 @@ export function RoutineImportSteps({
    * A file import made them already, with the history.
    */
   const afterChecks = async () => {
-    const items = link ? await newExercisesIn(saved).catch(() => []) : [];
+    const items = link ? await newExercisesIn(ticked).catch(() => []) : [];
     if (items.length > 0) setStep({ kind: 'new', items });
     else await toFollow();
   };
 
-  /** Leave the unticked new exercises out of every routine, then ask about following. */
+  /** The unticked new exercises are left out by `saved`; now ask about following. */
   const addNew = async () => {
-    if (leaveOut.size > 0) {
-      setTicks((m) => new Map([...m].map(([k, s]) => [k, new Set([...s].filter((t) => !leaveOut.has(t)))])));
-    }
     await toFollow();
   };
 

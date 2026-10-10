@@ -188,6 +188,18 @@ describe('continuity with the imported history (v0.29.1, owner)', () => {
     expect(steps).toMatch(/lastOne \? void afterChecks\(\)/);
   });
 
+  it('a guess from the name: whole words only ("Crunch" is not a run); a carry is timed (review)', async () => {
+    const { linkLogType } = await import('@/tracker/services/hevyImport');
+    for (const t of ['Kneeling Cable Crunch', 'Reverse Crunch (Cable)', 'Hanging Windshield Wiper']) expect(linkLogType(t, true)).not.toMatch(/time/);
+    for (const t of ['Farmers Carry', 'Plank', 'Treadmill Run']) expect(linkLogType(t, true)).toMatch(/time/);
+  });
+
+  it('routines first, history later: the real sets correct a guessed type (unless it was used already)', () => {
+    const hevy = readFileSync('src/tracker/services/hevyImport.ts', 'utf8');
+    expect(hevy).toMatch(/madeNow\.push\(made\.id\)/); // the link remembers what it guessed
+    expect(hevy).toMatch(/if \(guessed\.has\(hit\.id\)\)[\s\S]*?\(used\?\.n \?\? 0\) === 0 && real !== logType/);
+  });
+
   it('the history import names its new exercises (folded)', () => {
     expect(readFileSync('src/app/import/index.tsx', 'utf8')).toMatch(/new to ForgeAI: see them/);
   });
