@@ -25,21 +25,23 @@ appId: com.forgeai.app
 - tapOn: "Search exercises"
 - inputText: " pull-up"
 - hideKeyboard
+# Phase 2 (LW-15): tick the exercise in the picker, then "Add 1".
 - tapOn:
-    text: "Add Pull[- ][Uu]p"
+    text: "Select Pull[- ][Uu]p"
     index: 0
+- tapOn: "Add 1"
 - extendedWaitUntil:
     visible: "More for Pull[- ][Uu]p"
     timeout: 15000
 # More pull-ups in one set than ever before: "Most reps" (a Phase 3 record kind).
 - tapOn:
-    text: "Reps, set 1"
+    text: ".* set 1 reps"
     below:
       text: "More for Pull[- ][Uu]p"
 - inputText: " 40"
 - hideKeyboard
 - tapOn:
-    text: "Mark set complete"
+    text: "Mark .* set 1 complete"
     below:
       text: "More for Pull[- ][Uu]p"
     waitToSettleTimeoutMs: 300
@@ -47,15 +49,39 @@ appId: com.forgeai.app
     visible: "New record.*"
     timeout: 3000
 - takeScreenshot: 60-most-reps-record
+# D7: 40 reps may be 3x or more the member's best, so the row may ask "40 reps — that's …×
+# your best. Keep it?" (already saved; it never refuses). It is on purpose: Keep.
+- tapOn:
+    text: "Keep 40 reps"
+    optional: true
+    waitToSettleTimeoutMs: 300
 - tapOn:
     text: "Skip rest"
     optional: true
+# Phase 2 (LW-02): Finish opens the "Finish workout?" sheet; its own button (above its
+# "Keep going"; the screen's button sits behind it) saves.
 - tapOn:
     text: "Finish workout"
     index: 0
 - extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+# LW-21: the records fold shut under "New records" with a count ("1 record · see it"): open them.
+- scrollUntilVisible:
+    element: "New records"
+    centerElement: true
+    timeout: 20000
+- tapOn: "New records"
+- extendedWaitUntil:
+    visible: '\d+ records? · hide (it|them)'
+    timeout: 5000
 - takeScreenshot: 61-finish-records
 - scrollUntilVisible:
     element: "Share workout"

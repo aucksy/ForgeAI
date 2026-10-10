@@ -28,15 +28,28 @@ export function isCommittable(s: DraftSet, logType: LogType = 'weight_reps'): bo
 /**
  * Flatten the draft to the rows that will be written, in order. A per-exercise
  * note rides on that exercise's FIRST committed set (Phase 5c convention).
+ *
+ * Phase 2 (LW-03): `tickedOnly` writes only ticked rows — Finish leaves rows that hold
+ * numbers but were never ticked out unless the member chooses "Save them". An edit of a
+ * saved workout loads every row ticked, so it keeps the default.
  */
-export function draftToRichSets(exercises: DraftExercise[]): RichSet[] {
+export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tickedOnly?: boolean } = {}): RichSet[] {
   const flat: RichSet[] = [];
+  // LW-28: each card's number among the cards of the same exercise (heavy Bench 0, back-off 1),
+  // saved with its sets so the two cards stay two after saving. #10: the number the card was
+  // given when it was made — moving back-off above heavy keeps both numbers. A card from an
+  // older draft (no number) takes its place among them, as before.
+  const seen = new Map<string, number>();
   for (const ex of exercises) {
+    const place = seen.get(ex.exerciseId) ?? 0;
+    seen.set(ex.exerciseId, place + 1);
+    const cardIndex = ex.card ?? place;
     const exNote = ex.note?.trim() ? ex.note.trim() : null;
     const lt = draftLogType(ex);
     const timed = lt === 'time' || lt === 'distance' || lt === 'time_distance';
     let firstOfExercise = true;
     for (const st of ex.sets) {
+      if (opts.tickedOnly && !st.done) continue;
       if (!isCommittable(st, lt)) {
         // Editing: a saved row that doesn't fit the type goes back exactly as it was.
         if (st.keep) {
@@ -53,6 +66,7 @@ export function draftToRichSets(exercises: DraftExercise[]): RichSet[] {
           if (st.keep.durationSec != null) kept.durationSec = st.keep.durationSec;
           if (st.keep.distanceM != null) kept.distanceM = st.keep.distanceM;
           if (st.loadMode != null) kept.loadMode = st.loadMode;
+          if (cardIndex > 0) kept.cardIndex = cardIndex;
           flat.push(kept);
           firstOfExercise = false;
         }
@@ -74,6 +88,7 @@ export function draftToRichSets(exercises: DraftExercise[]): RichSet[] {
       if (lt === 'time' || lt === 'time_distance' || st.durationSec != null) row.durationSec = st.durationSec ?? null;
       if (lt === 'distance' || lt === 'time_distance' || st.distanceM != null) row.distanceM = st.distanceM ?? null;
       if (st.loadMode != null) row.loadMode = st.loadMode;
+      if (cardIndex > 0) row.cardIndex = cardIndex;
       flat.push(row);
       firstOfExercise = false;
     }

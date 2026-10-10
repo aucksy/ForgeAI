@@ -5,11 +5,12 @@
  * week now (research v3 §5); with no plan, the ready programs and the plan builder.
  */
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 
 import { GhostButton, HeroCard, Icon, PrimaryButton, Screen } from '@/components/ui';
 import { getActivePlan } from '@/db/repos/planRepo';
+import { runGuarded } from '@/lib/guardedAction';
 import { countWord } from '@/lib/words';
 import { getTodaysWorkout } from '@/services/coach';
 import { color, gradients, space, type } from '@/theme/tokens';
@@ -19,6 +20,8 @@ import { followedFolder } from '@/tracker/db/folderRepo';
 import { offerEarlyEasy } from '@/tracker/plans/effort';
 import { stalledLiftsInPlan } from '@/tracker/services/coachTargets';
 import { getPlanNow, moveEasyWeek, planLine, type PlanNow } from '@/tracker/services/planState';
+import { liveCountsLine } from '@/tracker/services/finishCheck';
+import { openActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 interface PlanPreview {
@@ -31,7 +34,8 @@ export default function WorkoutScreen() {
   const router = useRouter();
 
   const active = useActiveWorkout((s) => s.active);
-  const exerciseCount = useActiveWorkout((s) => s.exercises.length);
+  // LW-23: ticked working sets only — never "6 exercises logged" before anything is logged.
+  const countsLine = useActiveWorkout((s) => liveCountsLine(s.exercises));
   const hydrate = useActiveWorkout((s) => s.hydrate);
   const startEmpty = useActiveWorkout((s) => s.startEmpty);
   const startFromPlan = useActiveWorkout((s) => s.startFromPlan);
@@ -108,28 +112,40 @@ export default function WorkoutScreen() {
   const week = preview?.hasPlan ? planLine(plan) : null;
   const offerEasy = plan != null && offerEarlyEasy({ stalled, easyNow: plan.easy, week: plan.week, lastEasy: plan.lastEasy });
 
-  const goActive = (): void => router.push('/session/active');
+  // RP-25: a double tap never stacks two workout screens — a ref guard on each start (state
+  // updates are async, so two fast taps both saw "not starting"), and one guarded way to open
+  // the screen (ignored while it is open or was opened a moment ago).
+  const startGuard = useRef(false);
+  const goActive = (): void => void openActiveWorkout(router);
+  const startFailed = (): void => Alert.alert('Couldn’t start the workout', 'Please try again.');
 
-  const onStartPlan = async (): Promise<void> => {
-    if (starting) return;
-    setStarting(true);
-    try {
-      // A workout saved before Android closed the app loads first — Start must not replace it.
-      await hydrate();
-      if (!useActiveWorkout.getState().active) await startFromPlan();
-      goActive();
-    } catch {
-      Alert.alert('Couldn’t start the workout', 'Please try again.');
-    } finally {
-      setStarting(false);
-    }
-  };
+  const onStartPlan = (): Promise<unknown> =>
+    runGuarded(
+      startGuard,
+      async () => {
+        setStarting(true);
+        try {
+          // A workout saved before Android closed the app loads first — Start must not replace it.
+          await hydrate();
+          if (!useActiveWorkout.getState().active) await startFromPlan();
+          goActive();
+        } finally {
+          setStarting(false);
+        }
+      },
+      startFailed,
+    );
 
-  const onStartEmpty = async (): Promise<void> => {
-    await hydrate();
-    if (!useActiveWorkout.getState().active) startEmpty();
-    goActive();
-  };
+  const onStartEmpty = (): Promise<unknown> =>
+    runGuarded(
+      startGuard,
+      async () => {
+        await hydrate();
+        if (!useActiveWorkout.getState().active) startEmpty();
+        goActive();
+      },
+      startFailed,
+    );
 
   const onDiscard = (): void => {
     const editing = useActiveWorkout.getState().editingSessionId != null;
@@ -160,7 +176,7 @@ export default function WorkoutScreen() {
               <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
                 {editingSessionId
                   ? 'You have unsaved changes to a saved workout.'
-                  : `${exerciseCount} ${exerciseCount === 1 ? 'exercise' : 'exercises'} logged so far.`}
+                  : countsLine}
               </Text>
               <PrimaryButton
                 label={editingSessionId ? 'Resume editing' : 'Resume workout'}

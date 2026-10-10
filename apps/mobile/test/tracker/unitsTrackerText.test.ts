@@ -55,10 +55,12 @@ describe('Targets in pounds', () => {
     expect(t.change).toBe('up');
   });
 
-  it('a step learned from the member’s own weights is kept as it is', () => {
+  it('TG-02: a step learned in kg lands on pound plates (never "148.8 lb")', () => {
+    // 60 / 62.5 / 65 kg read as 130 / 140 / 145 lb; the learned 2.5 kg step is 5 lb.
     const t = target([sess('2026-10-03', 65, [12, 12, 12]), sess('2026-09-30', 62.5, [12, 12, 12]), sess('2026-09-27', 60, [12, 12, 12])]);
-    expect(t.targetWeightKg).toBe(67.5);
-    expect(t.reason).toContain('Time for 148.8 lb.');
+    expect(wNum(t.targetWeightKg)).toBe('150');
+    expect(t.reason).toContain('Time for 150 lb.');
+    expect(targetLine(t)).toBe('150 lb · aim for 8');
   });
 
   it('the Target line on its own', () => {

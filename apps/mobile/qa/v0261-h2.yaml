@@ -70,8 +70,9 @@ appId: com.forgeai.app
 - tapOn: "More for Barbell Bench Press"
 - tapOn: "Rest timer"
 - tapOn: "Rest 30s"
+# LW-27: set 1 was ticked in H1; set 2 is "Mark Barbell Bench Press set 2 complete".
 - tapOn:
-    text: "Mark set complete"
+    text: "Mark .* set 2 complete"
     index: 0
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:

@@ -243,6 +243,14 @@ appId: com.forgeai.app
 - tapOn:
     text: "Start routine"
     index: 0
+# LW-24: with a workout already open the app asks (Resume / Discard and start new) instead of
+# "Finish your current workout first". None should be open here; if one is, start this one.
+- runFlow:
+    when:
+      visible: "A workout is already open"
+    commands:
+      - takeScreenshot: 99b-workout-already-open
+      - tapOn: "Discard and start new"
 - tapOn:
     text: "(?i)^allow$"
     optional: true
@@ -252,14 +260,15 @@ appId: com.forgeai.app
 - assertVisible: "Target Easy week.*"
 - takeScreenshot: 100-easy-workout
 # A huge weight is a record in a normal week (part A); an easy week never claims one.
+# LW-27: the boxes and the tick name their exercise and set ("… set 1 weight, kilograms").
 - tapOn:
-    text: "Weight in kilograms, set 1"
+    text: ".* set 1 weight, kilograms"
     index: 0
 - eraseText
 - inputText: " 300"
 - hideKeyboard
 - tapOn:
-    text: "Mark set complete"
+    text: "Mark .* set 1 complete"
     index: 0
     waitToSettleTimeoutMs: 300
 # The pop-up would show at once and stay 3.5 s; look 1.5 s later.
@@ -267,6 +276,12 @@ appId: com.forgeai.app
     timeout: 1500
 - assertNotVisible: "New record.*"
 - takeScreenshot: 101-easy-no-record
+# D7: 300 kg may be 2.5x or more this lift's best, so the row may ask "… Keep it?" (already
+# saved; it never refuses). It is on purpose: Keep.
+- tapOn:
+    text: 'Keep 300.*'
+    optional: true
+    waitToSettleTimeoutMs: 300
 - tapOn:
     text: "Skip rest"
     optional: true
@@ -292,9 +307,18 @@ appId: com.forgeai.app
 - takeScreenshot: 103-swapped-today
 # Finish: saved as an easy-week workout, so the 300 kg set is no record (and no "update the
 # routine?" question: half the sets is not a new plan).
+# Phase 2 (LW-02): Finish opens the "Finish workout?" sheet; its own button (above its
+# "Keep going"; the screen's button sits behind it) saves. Only the ticked 300 kg set holds numbers.
 - tapOn:
     text: "Finish workout"
     index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000

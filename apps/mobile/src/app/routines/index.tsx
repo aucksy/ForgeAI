@@ -27,6 +27,7 @@ import { createRoutine } from '@/tracker/db/routineRepo';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { deleteFolderMessage, getPlanNow, moveEasyWeek, planLine, setEasyWeeks, showNoRoutinesYet, type PlanNow } from '@/tracker/services/planState';
 import { pickAndImportRoutineFile } from '@/tracker/services/routineShare';
+import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 function EntryCard({ icon, title, sub, onPress }: { icon: IconName; title: string; sub: string; onPress: () => void }) {
@@ -170,12 +171,13 @@ export default function RoutinesScreen() {
         // Hydrate first: a persisted in-progress draft may exist but not be in memory yet
         // (it only loads on the Workout tab) — starting would overwrite it.
         await hydrate();
-        if (useActiveWorkout.getState().active) {
-          Alert.alert('Finish your current workout first', 'You already have a workout in progress.');
-          return;
+        // LW-24: a workout already open is never a dead end: Resume it, or discard it and start this.
+        if ((await askAboutOpenWorkout()) === 'resume') {
+          showActiveWorkout(router);
+          return 'left' as const;
         }
         await startFromPlanDay(dayId);
-        router.replace('/session/active');
+        showActiveWorkout(router);
         return 'left' as const;
       },
       () => setStartError({ dayId, message: START_FAILED }),

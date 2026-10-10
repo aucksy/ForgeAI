@@ -1,8 +1,9 @@
 # v0.26.1 device QA, part H1 — the rest card (what the watch shows). Runs after parts A–G.
 # An empty workout → Barbell Bench Press with a 3:00 rest and 3 sets → tick set 1 → the app
-# goes to the background → the phone's shade shows the swipe-away card "Rest 3:00 · ends …" /
-# "Next: Barbell Bench Press, set 2" with "+15 s" and "Skip" → "+15 s" from the shade → the card
-# reads "Rest 3:15". (A watch shows this same card; its buttons run here, on the phone.)
+# goes to the background → the phone's shade shows the swipe-away card, since Phase 2 (RT-05) its
+# own view: a countdown "2:53 left · Barbell Bench Press, set 2" over "Rest 3:00 · ends …", with
+# "+15 s" and "Skip" → "+15 s" from the shade → the card reads "Rest 3:15". (A watch shows this
+# card's title and text, set as before; its buttons run here, on the phone.)
 appId: com.forgeai.app
 ---
 - launchApp
@@ -27,9 +28,11 @@ appId: com.forgeai.app
 - tapOn: "Search exercises"
 - inputText: " bench press"
 - hideKeyboard
+# Phase 2 (LW-15): tick the exercise in the picker, then "Add 1".
 - tapOn:
-    text: "Add Barbell Bench Press"
+    text: "Select Barbell Bench Press"
     index: 0
+- tapOn: "Add 1"
 - extendedWaitUntil:
     visible: "More for Barbell Bench Press"
     timeout: 15000
@@ -48,8 +51,9 @@ appId: com.forgeai.app
     direction: UP
     centerElement: true
     timeout: 15000
+# LW-27: "Mark Barbell Bench Press set 1 complete". The empty row saves its grey hint (last time).
 - tapOn:
-    text: "Mark set complete"
+    text: "Mark .* set 1 complete"
     index: 0
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
@@ -95,7 +99,8 @@ appId: com.forgeai.app
           from:
             text: 'Rest 3:00 · ends .*'
           direction: DOWN
-- assertVisible: 'Next: Barbell Bench Press, set 2'
+# Phase 2 (RT-05): the card's big line counts down: '2:53 left · Barbell Bench Press, set 2'.
+- assertVisible: '.*Barbell Bench Press, set 2'
 - assertVisible: '\+15 s'
 - assertVisible: '^Skip$'
 - takeScreenshot: 111-shade-rest-card

@@ -1,9 +1,14 @@
-/** Post-workout celebratory summary. */
+/**
+ * Post-workout summary. Phase 2 (LW-21): the answer leads in one line (time · sets · kg lifted ·
+ * records); long lists fold. LW-11: Finish lands here at once, and the "Update routine?"
+ * question worked out on the workout screen is asked here, in the app's own sheet.
+ */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import {
+  askConfirm,
   EmptyState,
   GhostButton,
   GlassCard,
@@ -20,7 +25,8 @@ import { color, gradients, radius, space, type } from '@/theme/tokens';
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coachNote';
-import { dayTypeLabel, finishHeadline, getSessionSummary, volumeComparison } from '@/tracker/services/finishSummary';
+import { finishAnswer, getSessionSummary, sessionTitle, volumeComparison } from '@/tracker/services/finishSummary';
+import { applyRoutineOffer, takeRoutineOffer } from '@/tracker/services/routineOffer';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
 import { workoutShareInput } from '@/tracker/share/workoutInput';
@@ -36,6 +42,7 @@ export default function FinishScreen() {
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState<string | null>(null);
   const [sharing, setSharing] = useState(false);
+  const [routineLine, setRoutineLine] = useState<string | null>(null);
   const coachNotesPref = useTrackerPrefs((s) => s.coachNotes);
   // v0.25.1: the body figure chosen in Profile.
   const figure = useTrackerPrefs((s) => s.bodyFigure);
@@ -63,6 +70,25 @@ export default function FinishScreen() {
     };
   }, [id]);
 
+  // LW-11: "Update routine?" — asked here, once the summary is on screen (taken once per workout).
+  useEffect(() => {
+    if (!data || !id) return;
+    const offer = takeRoutineOffer(id);
+    if (!offer) return;
+    void askConfirm({
+      title: `Update "${offer.name}"?`,
+      body: `${offer.text} Save these changes to the routine for next time?`,
+      confirmLabel: 'Update routine',
+      cancelLabel: 'Keep original',
+    }).then((yes) => {
+      if (!yes) return;
+      applyRoutineOffer(offer).then(
+        () => setRoutineLine(`"${offer.name}" is updated for next time.`),
+        () => setRoutineLine("Couldn't update the routine. Your workout is saved; the routine is unchanged."),
+      );
+    });
+  }, [data, id]);
+
   // Coach note (Phase C2): show the deterministic engine line as soon as the
   // summary loads, then — only if the user opted in AND a Groq key is set — swap
   // in a richer AI note when it arrives. Never blocks; falls back silently.
@@ -83,8 +109,10 @@ export default function FinishScreen() {
     };
   }, [data, coachNotesPref]);
 
+  const comparison = data ? volumeComparison(data.totalVolumeKg) : null;
+
   return (
-    <Screen title="Workout complete" subtitle="Nice work — logged and saved.">
+    <Screen title="Workout complete" subtitle="Saved to your history.">
       {loading ? (
         <View style={{ gap: space.lg }}>
           <Skeleton width="100%" height={128} radius={radius.xl} />
@@ -97,14 +125,14 @@ export default function FinishScreen() {
               <Icon name="trophy" size={28} color="#1F0D05" />
               <View style={{ flex: 1 }}>
                 <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: '#1F0D05' }}>
-                  {dayTypeLabel(data.session.dayType)} done
+                  {sessionTitle(data.session)} done
                 </Text>
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
-                  {finishHeadline(data)}
+                  {finishAnswer(data)}
                 </Text>
-                {data.totalVolumeKg > 0 ? (
+                {comparison ? (
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: 'rgba(31,13,5,0.6)', marginTop: 2 }}>
-                    That's about {volumeComparison(data.totalVolumeKg)}.
+                    That's about {comparison}.
                   </Text>
                 ) : null}
               </View>
@@ -142,7 +170,12 @@ export default function FinishScreen() {
             </GlassCard>
           ) : null}
 
-          <SessionSummary data={data} />
+          {routineLine ? (
+            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>{routineLine}</Text>
+          ) : null}
+
+          {/* The totals already lead in the card above — no second copy in tiles. */}
+          <SessionSummary data={data} showTotals={false} />
 
           <View style={{ gap: space.md, marginTop: space.sm }}>
             <PrimaryButton label="Done" icon="check" onPress={() => router.replace('/')} />

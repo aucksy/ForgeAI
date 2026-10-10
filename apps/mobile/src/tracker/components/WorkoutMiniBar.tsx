@@ -11,6 +11,8 @@ import { Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
+import { liveCounts } from '../services/finishCheck';
+import { openActiveWorkout } from '../services/workoutStart';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { fmtClock, useRestRemaining } from './RestTimerBar';
 
@@ -27,7 +29,8 @@ export function WorkoutMiniBar() {
   const active = useActiveWorkout((s) => s.active);
   const startedAt = useActiveWorkout((s) => s.startedAt);
   const editing = useActiveWorkout((s) => s.editingSessionId != null);
-  const done = useActiveWorkout((s) => s.exercises.reduce((n, e) => n + e.sets.filter((x) => x.done).length, 0));
+  // LW-23: ticked WORKING sets, as the summary counts them (warm-ups never count).
+  const done = useActiveWorkout((s) => liveCounts(s.exercises).setsDone);
   const remaining = useRestRemaining();
 
   const [now, setNow] = useState(() => Date.now());
@@ -47,7 +50,8 @@ export function WorkoutMiniBar() {
     <Pressable
       onPress={() => {
         tap();
-        router.push('/session/active');
+        // RP-25: a double tap opens one workout screen, not two.
+        openActiveWorkout(router);
       }}
       accessibilityRole="button"
       accessibilityLabel={`${title}. ${editing ? '' : `${done === 1 ? '1 set' : `${done} sets`} done. `}Tap to open the workout`}

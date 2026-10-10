@@ -7,7 +7,7 @@ Passes when ONE of these is true:
   1. A qa-device.yml run with conclusion "success" exists for the tagged commit itself.
   2. A qa-device.yml run passed on the tagged commit's single parent, AND the parent -> tag
      diff touches ONLY release paperwork:
-       - PROGRESS.md, CONTEXT.md, anything under docs/
+       - PROGRESS.md, CONTEXT.md, scripts/ci/approved-permissions.txt, anything under docs/
        - apps/mobile/app.json, where every changed line is the "version" line
      (the usual "bump the version, update PROGRESS" commit on top of the tested one).
   3. A MANUAL run (workflow_dispatch) with the input skip_phone_gate=true. Tag pushes never skip.
@@ -29,7 +29,7 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "")
 TOKEN = os.environ.get("GITHUB_TOKEN", "")
 QA_WORKFLOW = os.environ.get("QA_WORKFLOW", "qa-device.yml")
 
-PAPERWORK_FILES = {"PROGRESS.md", "CONTEXT.md"}
+PAPERWORK_FILES = {"PROGRESS.md", "CONTEXT.md", "scripts/ci/approved-permissions.txt"}  # a check list; never changes the APK
 PAPERWORK_DIRS = ("docs/",)
 APP_JSON = "apps/mobile/app.json"
 VERSION_LINE = re.compile(r'^\s*"version"\s*:\s*"[^"]*"\s*,?\s*$')

@@ -33,10 +33,10 @@ const FULL_ROWS: [string, Row][] = [
   ['workout_plans', { id: 'plan1', name: 'PPL', is_active: 1, folder_order: 2, source: 'builder', settings: '{"every":6}' }],
   ['plan_days', { id: 'day1', plan_id: 'plan1', day_type: 'push', day_order: 0, name: 'Push A' }],
   ['plan_exercises', { id: 'pe1', plan_day_id: 'day1', exercise_id: 'ex1', ex_order: 0, target_sets: 4, rep_range_min: 5, rep_range_max: 8 }],
-  ['workout_sessions', { id: 's1', date_iso: '2026-03-01', started_at: 1772339400000, ended_at: 1772343300000, day_type: 'push', notes: 'n', source: 'manual', easy_week: 1 }],
+  ['workout_sessions', { id: 's1', date_iso: '2026-03-01', started_at: 1772339400000, ended_at: 1772343300000, day_type: 'push', notes: 'n', source: 'manual', easy_week: 1, title: 'Push A' }],
   ['set_entries', {
     id: 'se1', session_id: 's1', exercise_id: 'ex1', set_number: 1, weight_kg: 80, reps: 6, is_warmup: 0, rpe: 8.5, set_type: 'drop',
-    note: 'slow', superset_group: 1, duration_sec: 61, distance_m: 25, load_mode: 'one',
+    note: 'slow', superset_group: 1, duration_sec: 61, distance_m: 25, load_mode: 'one', card_index: 1,
   }],
   ['personal_records', { id: 'pr1', exercise_id: 'ex1', kind: 'weight', value: 80, weight_kg: 80, reps: 6, date_iso: '2026-03-01', session_id: 's1' }],
   ['body_weight', { id: 'bw1', date_iso: '2026-03-01', weight_kg: 78.4 }],

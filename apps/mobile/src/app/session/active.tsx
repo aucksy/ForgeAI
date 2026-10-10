@@ -7,7 +7,7 @@
  * next exercise. Finishing a changed routine workout offers to update the routine.
  */
 import { useKeepAwake } from 'expo-keep-awake';
-import { useRouter } from 'expo-router';
+import { useIsFocused, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import type { ScrollView as ScrollViewType } from 'react-native';
@@ -17,7 +17,6 @@ import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen } from '@/co
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import type { ProgressionTarget } from '@/tracker/engine/progression';
 
 import { SessionGoneError } from '@/tracker/db/sessionEdit';
 import { EditSessionHeader } from '@/tracker/components/EditSessionHeader';
@@ -27,37 +26,19 @@ import { ExerciseLogCard } from '@/tracker/components/ExerciseLogCard';
 import { RecordToast } from '@/tracker/components/RecordToast';
 import { RestTimerBar } from '@/tracker/components/RestTimerBar';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
-import { applyRoutineOffer, routineUpdateOffer } from '@/tracker/services/routineOffer';
-import type { RoutineOffer } from '@/tracker/services/routineOffer';
+import { FinishSheet, type FinishChoice } from '@/tracker/components/FinishSheet';
+import { getRoutine } from '@/tracker/db/routineRepo';
+import { defaultWorkoutName } from '@/tracker/services/finishCheck';
+import { bounceEmptyWorkout } from '@/tracker/services/workoutStart';
+import { holdRoutineOffer, routineUpdateOffer } from '@/tracker/services/routineOffer';
 import { ensureAlertPermission } from '@/tracker/services/workoutAlerts';
-import { getTargetsForPlanDay } from '@/tracker/services/coachTargets';
+import { loadTargets, querySignature, targetQuery, useTargets } from '@/tracker/store/targetStore';
+import { useUnits } from '@/lib/useUnits';
 import { draftToRichSets, hasWorkingSet } from '@/tracker/services/draftSets';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import { useWorkoutUi } from '@/tracker/store/workoutUiStore';
-
-/** Ask "Update routine?" and wait for the answer. Never throws. */
-function askRoutineUpdate(offer: RoutineOffer): Promise<void> {
-  return new Promise((resolve) => {
-    Alert.alert(
-      `Update "${offer.name}"?`,
-      `${offer.text} Save these changes to the routine for next time?`,
-      [
-        { text: 'Keep original', style: 'cancel', onPress: () => resolve() },
-        {
-          text: 'Update routine',
-          onPress: () => {
-            void applyRoutineOffer(offer)
-              .catch(() => Alert.alert('Could not update the routine', 'Your workout is saved. The routine is unchanged.'))
-              .finally(() => resolve());
-          },
-        },
-      ],
-      { cancelable: false },
-    );
-  });
-}
 
 export default function ActiveWorkoutScreen() {
   const router = useRouter();
@@ -89,6 +70,26 @@ export default function ActiveWorkoutScreen() {
   const undoDelete = useActiveWorkout((s) => s.undoDelete);
   const dismissUndo = useActiveWorkout((s) => s.dismissUndo);
   const loadRestDefault = useRestTimer((s) => s.loadDefault);
+  const defaultRestSec = useRestTimer((s) => s.defaultSec);
+
+  // Phase 2 (LW-02): Finish opens a calm sheet first; nothing is saved until it says so.
+  const [finishOpen, setFinishOpen] = useState(false);
+  // LW-10: the routine's own name is the workout's default name.
+  const [routineName, setRoutineName] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    setRoutineName(null);
+    if (planDayId) {
+      void getRoutine(planDayId)
+        .then((r) => {
+          if (alive) setRoutineName(r?.name ?? null);
+        })
+        .catch(() => undefined);
+    }
+    return () => {
+      alive = false;
+    };
+  }, [planDayId]);
 
   // Keep the screen awake and load the rest-timer default while logging. The rest
   // timer is NOT cleared on leaving this screen any more — minimising keeps it
@@ -132,27 +133,20 @@ export default function ActiveWorkoutScreen() {
     if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, y - 8), animated: true });
   }, [scrollTo]);
 
-  // Coach targets (Phase C1) — the progressive-overload prescription per plan-day
-  // exercise, surfaced inline in each card. Derived/offline (SQLite only), never
-  // persisted in the draft. Recomputes when the plan day or exercise list changes
-  // (e.g. adding a plan exercise mid-session). Empty for Start-Empty / repeats.
-  const [targets, setTargets] = useState<Map<string, ProgressionTarget>>(() => new Map());
-  const exerciseIdsKey = exercises.map((e) => e.exerciseId).join(',');
+  // Coach targets — the progressive-overload prescription, one per CARD (Packet C). Derived
+  // (SQLite only), never persisted in the draft. A swapped-in exercise keeps a Target (TG-06),
+  // a Counting change re-reads it in the new counting (TG-03), Profile → Units recomputes it
+  // and its "why" in the new unit (TG-04). Starting a routine stores them WITH the cards
+  // (TG-11), so this only loads what is missing or out of date. Empty for Start-Empty.
+  const units = useUnits();
+  const targetQ = targetQuery(planDayId, exercises, { easy: easyWeek, effort: logsRpe, units });
+  const targetSig = querySignature(targetQ);
+  const targetQRef = useRef(targetQ);
+  targetQRef.current = targetQ;
   useEffect(() => {
-    let cancelled = false;
-    void getTargetsForPlanDay(planDayId, { easy: easyWeek, effort: logsRpe })
-      .then((map) => {
-        if (!cancelled) setTargets(map);
-      })
-      .catch(() => {
-        if (!cancelled) setTargets(new Map());
-      });
-    return () => {
-      cancelled = true;
-    };
-    // exerciseIdsKey re-runs the load when the roster changes; planDayId scopes it.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [planDayId, exerciseIdsKey, easyWeek, logsRpe]);
+    void loadTargets(targetQRef.current);
+  }, [targetSig]);
+  const targets = useTargets((s) => s.targets);
 
   // Auto-dismiss the undo snackbar after a few seconds.
   useEffect(() => {
@@ -163,11 +157,16 @@ export default function ActiveWorkoutScreen() {
 
   // We navigate away explicitly on finish/discard; suppress the safety redirect then.
   const leaving = useRef(false);
+  // Packet E: when the Add exercise picker was last opened (double-tap guard).
+  const addOpenedAt = useRef(0);
 
-  // Nothing in progress (e.g. deep-linked with no draft) — bounce to the tab.
+  // Nothing in progress (e.g. deep-linked with no draft) — bounce to the tab. Review fix: only
+  // while this screen is in front. Under another screen (a "Discard and start new" from a past
+  // workout opened on top of this one) it waits; the start then comes back here with a workout.
+  const focused = useIsFocused();
   useEffect(() => {
-    if (!active && !leaving.current) router.replace('/workout');
-  }, [active, router]);
+    if (bounceEmptyWorkout({ active, leaving: leaving.current, focused })) router.replace('/workout');
+  }, [active, focused, router]);
 
   // Exactly what a save would write — the same helper the store commits through,
   // so the button can never enable on a set the save then silently drops.
@@ -253,36 +252,54 @@ export default function ActiveWorkoutScreen() {
   };
 
   const onPrimary = (): void => {
-    void (isEditing ? onSaveEdits() : onFinish());
+    if (isEditing) void onSaveEdits();
+    else if (canFinish && !committing) setFinishOpen(true); // LW-02: ask first, save on the sheet
   };
 
-  const onFinish = async (): Promise<void> => {
-    if (useActiveWorkout.getState().committing) return; // ignore double-tap while saving
-    leaving.current = true;
+  const defaultName = defaultWorkoutName(routineName, startedAt ?? Date.now());
+  const finishing = useRef(false);
+
+  const onFinish = async (choice: FinishChoice): Promise<void> => {
+    // A double tap never saves twice (the store also guards with `committing`).
+    if (finishing.current || useActiveWorkout.getState().committing) return;
+    finishing.current = true;
     // What was on screen at finish — the store resets once the commit lands.
     const before = useActiveWorkout.getState();
     // Phase 4: an easy week has half the sets on purpose — never offer to save that into
     // the routine.
     const routinePlanDayId = before.easyWeek ? null : before.planDayId;
-    const routineSnapshot = before.exercises;
+    // LW-11: work the routine question out NOW, while the workout is still on screen; the
+    // summary asks it. Nothing waits between the save and the summary.
+    const offer = await routineUpdateOffer(routinePlanDayId, before.exercises).catch(() => null);
+    leaving.current = true;
     try {
-      const id = await finish(null);
+      const id = await finish(choice.note.trim() ? choice.note.trim() : null, {
+        keepUnticked: choice.keepUnticked,
+        endedAt: choice.endedAt,
+        name: choice.name.trim() ? choice.name : defaultName,
+      });
       if (id) {
-        // Saved. The routine question cannot undo that, and never blocks leaving.
-        const offer = await routineUpdateOffer(routinePlanDayId, routineSnapshot).catch(() => null);
-        if (offer) await askRoutineUpdate(offer);
-        await useDashboard.getState().refresh().catch(() => undefined);
+        if (offer) holdRoutineOffer(id, offer);
+        setFinishOpen(false);
         router.replace({ pathname: '/session/finish', params: { id } });
+        // Home catches up in the background — it never holds the summary back.
+        void useDashboard.getState().refresh().catch(() => undefined);
       } else {
         leaving.current = false;
-        Alert.alert('Nothing to save', 'Log at least one set before finishing.');
+        Alert.alert('Nothing to save', 'Tick at least one set before finishing.');
       }
     } catch {
       // Commit rolled back atomically (nothing saved) — let the user retry.
       leaving.current = false;
-      Alert.alert('Could not save', 'Something went wrong saving your workout. Your sets are still here — tap ✓ to try again.');
+      Alert.alert('Could not save', 'Something went wrong saving your workout. Your sets are still here — tap Finish to try again.');
+    } finally {
+      finishing.current = false;
     }
   };
+
+  // LW-11: once Finish has saved, the summary replaces this screen. Never show the emptied
+  // workout ("0m 00s", Add exercise, Discard) on the way out.
+  if (!active && leaving.current) return <Screen scroll={false}>{null}</Screen>;
 
   return (
     <Screen scroll={false}>
@@ -324,12 +341,8 @@ export default function ActiveWorkoutScreen() {
         ) : (
           <ElapsedClock startedAt={startedAt} />
         )}
-        <IconButton
-          icon="check"
-          tint={canFinish && !committing ? color.accent : color.inkDisabled}
-          onPress={onPrimary}
-          accessibilityLabel={isEditing ? 'Save changes' : 'Finish workout'}
-        />
+        {/* LW-02: no second ✓ up here — the one Finish button sits at the bottom. Keeps the clock centred. */}
+        <View style={{ width: 42 }} />
       </View>
 
       <KeyboardAvoidingView
@@ -386,7 +399,7 @@ export default function ActiveWorkoutScreen() {
                 <ExerciseLogCard
                   exercise={ex}
                   existingGroups={existingGroups}
-                  target={targets.get(ex.exerciseId) ?? null}
+                  target={targets.get(ex.key) ?? null}
                 />
               </View>
             ))
@@ -394,7 +407,13 @@ export default function ActiveWorkoutScreen() {
           <GhostButton
             label="Add exercise"
             icon="plus"
-            onPress={() => router.push('/session/add-exercise')}
+            onPress={() => {
+              // A double tap opens one picker, not two stacked.
+              const now = Date.now();
+              if (now - addOpenedAt.current < 1000) return;
+              addOpenedAt.current = now;
+              router.push('/session/add-exercise');
+            }}
           />
           {!isEditing ? (
             <Pressable
@@ -455,6 +474,18 @@ export default function ActiveWorkoutScreen() {
           />
         </View>
       </KeyboardAvoidingView>
+      {!isEditing && startedAt != null ? (
+        <FinishSheet
+          visible={finishOpen}
+          exercises={exercises}
+          startedAt={startedAt}
+          defaultName={defaultName}
+          defaultRestSec={defaultRestSec}
+          saving={committing}
+          onFinish={(choice) => void onFinish(choice)}
+          onClose={() => setFinishOpen(false)}
+        />
+      ) : null}
     </Screen>
   );
 }

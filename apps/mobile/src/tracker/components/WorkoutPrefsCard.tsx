@@ -4,17 +4,23 @@
  *  - Workout sounds — rest bell + new-record chime;
  *  - Track RPE — adds the effort column (set types are always available now);
  *  - AI coach notes — only while the coach is switched on (lib/features.ts, D4).
+ *
+ * Phase 2, packet D: "Rest alerts: …" (are rest alerts on time? one tap fixes it), the optional
+ * "Ring through Do Not Disturb" (Android only, off by default — RT-12), and a default rest that
+ * could not be saved says so (RT-11).
  */
 import { useEffect, useState } from 'react';
-import { Pressable, Text } from 'react-native';
+import { Platform, Pressable, Text } from 'react-native';
 
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
 import { Card } from '@/components/ui';
 import { color, space, type } from '@/theme/tokens';
 
 import { fmtRest } from '../services/restRules';
+import { useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
+import { RestAlertsStatusRow } from './RestAlertsStatusRow';
 import { RestPickerSheet } from './RestPickerSheet';
 
 export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: boolean }) {
@@ -28,6 +34,9 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
   const setDefaultSec = useRestTimer((s) => s.setDefaultSec);
   const loadDefault = useRestTimer((s) => s.loadDefault);
   const [picking, setPicking] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const ringThroughDnd = useRestAlertPrefs((s) => s.ringThroughDnd);
+  const setRingThroughDnd = useRestAlertPrefs((s) => s.setRingThroughDnd);
 
   useEffect(() => {
     void loadDefault().catch(() => undefined);
@@ -61,6 +70,17 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
         onChange={setSounds}
         divider
       />
+      {Platform.OS === 'android' ? (
+        <ToggleRow
+          icon="volume"
+          title="Ring through Do Not Disturb"
+          caption="Rest is over still rings while Do Not Disturb is on"
+          value={ringThroughDnd}
+          onChange={setRingThroughDnd}
+          divider
+        />
+      ) : null}
+      <RestAlertsStatusRow divider />
       <ToggleRow
         icon="target"
         title="Track RPE"
@@ -84,11 +104,18 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
         title="Default rest"
         subtitle="Used for every exercise that has no rest time of its own."
         value={defaultSec}
+        error={saveError}
         onChoose={(sec) => {
-          setDefaultSec(sec ?? 0);
+          setSaveError(null);
+          void setDefaultSec(sec ?? 0).then((saved) => {
+            if (saved) setPicking(false);
+            else setSaveError("Couldn't save it. It applies until the app closes.");
+          });
+        }}
+        onClose={() => {
+          setSaveError(null);
           setPicking(false);
         }}
-        onClose={() => setPicking(false)}
       />
     </Card>
   );

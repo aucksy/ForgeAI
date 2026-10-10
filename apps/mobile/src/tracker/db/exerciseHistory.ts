@@ -53,6 +53,13 @@ export interface TrackedSetEntry extends SetEntry {
   distanceM?: number | null;
   /** The set's own counting, when it differs from the exercise's current way. */
   loadMode?: LoadMode | null;
+  /** TG-08: a drop or failure set (absent = a normal set), so a drop set comes back as one. */
+  setType?: 'drop' | 'failure';
+  /**
+   * LW-05 / LW-28 (tracker schema v10): the set's card among the workout's cards of the same
+   * exercise (heavy = 0, back-off = 1). Absent = the first card (and every older set).
+   */
+  cardIndex?: number;
 }
 
 export interface ExerciseHistoryEntry {
@@ -77,6 +84,8 @@ interface HistoryRow {
   distance_m: number | null;
   load_mode: string | null;
   easy_week: number | null;
+  set_type?: string | null;
+  card_index?: number | null;
 }
 
 function mapSet(r: HistoryRow): TrackedSetEntry {
@@ -93,13 +102,15 @@ function mapSet(r: HistoryRow): TrackedSetEntry {
   if (r.duration_sec != null) s.durationSec = r.duration_sec;
   if (r.distance_m != null) s.distanceM = r.distance_m;
   if (isLoadMode(r.load_mode)) s.loadMode = r.load_mode;
+  if (r.set_type === 'drop' || r.set_type === 'failure') s.setType = r.set_type;
+  if (r.card_index != null && r.card_index > 0) s.cardIndex = Number(r.card_index);
   return s;
 }
 
 /** Columns of the frozen `SetRow` shape, plus the session's date and Phase 2's time/distance. */
 const COLS = `se.id, se.session_id, se.exercise_id, se.set_number, se.weight_kg, se.reps,
               se.is_warmup, ws.date_iso AS date_iso, se.duration_sec, se.distance_m, se.load_mode,
-              ws.easy_week AS easy_week`;
+              ws.easy_week AS easy_week, se.set_type, se.card_index`;
 
 const ORDER = 'ORDER BY ws.started_at DESC, ws.date_iso DESC, se.set_number ASC';
 

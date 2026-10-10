@@ -56,7 +56,7 @@ describe('start-up on a fresh install (real schema)', () => {
     expect(db.all('PRAGMA foreign_keys')[0]).toEqual({ foreign_keys: 1 });
     const meta = Object.fromEntries(db.all<{ key: string; value: string }>('SELECT key, value FROM meta').map((r) => [r.key, r.value]));
     expect(meta.schema_version).toBe('1');
-    expect(meta.tracker_schema_version).toBe('8');
+    expect(meta.tracker_schema_version).toBe('10');
     expect(meta.member_schema_version).toBe('1');
   });
 

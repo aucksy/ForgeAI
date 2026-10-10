@@ -16,6 +16,7 @@ export function SwapSheet({
   options,
   note,
   onPick,
+  onPickAny,
   onClose,
 }: {
   visible: boolean;
@@ -25,13 +26,15 @@ export function SwapSheet({
   /** A line under the title ("For this workout only" / "In this routine from now on"). */
   note: string;
   onPick: (a: Alternative) => void;
+  /** LW-31: "Choose any exercise" — the full picker, for when none of these fits. */
+  onPickAny?: () => void;
   onClose: () => void;
 }) {
   return (
     <TrackerSheet visible={visible} title={`Swap ${name}`} subtitle={note} onClose={onClose}>
       {options.length === 0 ? (
         <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>
-          Nothing else in the library fits here. Add any exercise by hand instead.
+          {onPickAny ? 'Nothing in the library is a close match. Choose any exercise below.' : 'Nothing else in the library fits here. Add any exercise by hand instead.'}
         </Text>
       ) : (
         <View style={{ gap: 2 }}>
@@ -64,6 +67,27 @@ export function SwapSheet({
           ))}
         </View>
       )}
+      {onPickAny ? (
+        <Pressable
+          onPress={onPickAny}
+          accessibilityRole="button"
+          accessibilityLabel="Choose any exercise"
+          style={({ pressed }) => ({
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: space.md,
+            minHeight: 48,
+            paddingHorizontal: space.md,
+            borderRadius: radius.md,
+            backgroundColor: pressed ? color.surface : 'transparent',
+          })}
+        >
+          <Glyph name="list" size={18} color={color.accent} />
+          <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.accent }}>
+            Choose any exercise
+          </Text>
+        </Pressable>
+      ) : null}
     </TrackerSheet>
   );
 }

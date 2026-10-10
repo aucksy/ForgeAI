@@ -23,7 +23,7 @@ import * as Sharing from 'expo-sharing';
 
 import { getDb } from '@/db';
 import { todayISO } from '@/lib/date';
-import { DAY_LABEL } from '@/tracker/services/hevyImport';
+import { DAY_LABEL, TITLE_SEP } from '@/tracker/services/hevyImport';
 import type { DayType, UnitSystem } from '@/types/models';
 
 const KG_PER_LB = 0.45359237;
@@ -70,6 +70,10 @@ export interface HistorySetRow {
   superset_group: number | null;
   duration_sec: number | null;
   distance_m: number | null;
+  /** LW-10: the workout's own name (tracker schema v9); null = none. Absent in older callers. */
+  title?: string | null;
+  /** LW-28: the set's card among the workout's cards of this exercise (NULL / 0 = the first). */
+  card_index?: number | null;
 }
 
 /**
@@ -96,12 +100,16 @@ export function hevyStamp(ms: number): string {
 }
 
 /**
- * The Hevy `title` for a workout: the day's plain name only ("Push", "Upper body"). The importer
- * reads the day from it, and — seeing a bare day name — takes the notes from `description`
- * exactly as written (`workoutNotes`), so they survive the round trip. PURE.
+ * The Hevy `title` for a workout: the day's plain name ("Push", "Upper body"), and — review fix
+ * #9 — the workout's own name after it when it has one ("Push · Morning workout"; before, the
+ * name was dropped). The importer reads the day from the part before " · " and the name from
+ * the rest (`ownTitle` in hevyImport), and — seeing our day name — takes the notes from
+ * `description` exactly as written (`workoutNotes`), so all three survive the round trip. PURE.
  */
-export function workoutTitle(dayType: string): string {
-  return DAY_LABEL[dayType as DayType] ?? 'Workout';
+export function workoutTitle(dayType: string, name?: string | null): string {
+  const day = DAY_LABEL[dayType as DayType] ?? 'Workout';
+  const own = (name ?? '').replace(/\s+/g, ' ').trim();
+  return own ? `${day}${TITLE_SEP}${own}` : day;
 }
 
 /** The minute after a Hevy stamp's minute ("7 Jul 2026, 14:24" → "…, 14:25"). PURE. */
@@ -128,15 +136,17 @@ function hevySetType(r: HistorySetRow): string {
 }
 
 /**
- * Rows (ordered by workout, then the order the sets were logged) → Hevy CSV text. Each
- * exercise's sets are written as one block, in the order its first set was logged. PURE
- * (apart from the phone's time zone, which decides the clock times written).
+ * Rows (ordered by workout, then the order the sets were logged) → Hevy CSV text. Each CARD's
+ * sets are written as one block, in the order its first set was logged — review fix #9: heavy
+ * and back-off Bench are two blocks (Hevy's own way to write the same exercise twice), which the
+ * importer reads back as two cards in their places. PURE (apart from the phone's time zone,
+ * which decides the clock times written).
  */
 export function hevyCsvFromRows(rows: readonly HistorySetRow[], units: UnitSystem): string {
   const imperial = units === 'imperial';
   const lines = [hevyColumns(units).map(csvCell).join(',')];
 
-  // Group: workout → exercise (first-logged order) → sets.
+  // Group: workout → card of an exercise (first-logged order) → sets.
   const workouts = new Map<string, { head: HistorySetRow; exercises: Map<string, HistorySetRow[]> }>();
   for (const r of rows) {
     let w = workouts.get(r.session_id);
@@ -144,9 +154,10 @@ export function hevyCsvFromRows(rows: readonly HistorySetRow[], units: UnitSyste
       w = { head: r, exercises: new Map() };
       workouts.set(r.session_id, w);
     }
-    const list = w.exercises.get(r.exercise_id) ?? [];
+    const block = `${r.exercise_id}\u0000${r.card_index ?? 0}`;
+    const list = w.exercises.get(block) ?? [];
     list.push(r);
-    w.exercises.set(r.exercise_id, list);
+    w.exercises.set(block, list);
   }
 
   // The importer tells workouts apart by title + start + end. Two workouts the same on all three
@@ -156,7 +167,7 @@ export function hevyCsvFromRows(rows: readonly HistorySetRow[], units: UnitSyste
   for (const { head, exercises } of workouts.values()) {
     const start = realStartOf(head.started_at, head.date_iso);
     const shift = start - head.started_at;
-    const title = workoutTitle(head.day_type);
+    const title = workoutTitle(head.day_type, head.title);
     const endText = head.ended_at != null ? hevyStamp(head.ended_at + shift) : '';
     let shown = start;
     while (written.has(`${title}\u0000${hevyStamp(shown)}\u0000${endText}`)) shown = nextMinute(shown);
@@ -204,10 +215,10 @@ export function hevyCsvFromRows(rows: readonly HistorySetRow[], units: UnitSyste
 /** Every logged set, oldest workout first, sets in the order they were logged. Reads only. */
 export async function readHistoryRows(): Promise<HistorySetRow[]> {
   return getDb().getAllAsync<HistorySetRow>(
-    `SELECT s.id AS session_id, s.date_iso, s.started_at, s.ended_at, s.day_type, s.notes,
+    `SELECT s.id AS session_id, s.date_iso, s.started_at, s.ended_at, s.day_type, s.notes, s.title,
             se.exercise_id, e.name AS exercise_name, e.log_type,
             se.weight_kg, se.reps, se.is_warmup, se.rpe, se.set_type, se.note, se.superset_group,
-            se.duration_sec, se.distance_m
+            se.duration_sec, se.distance_m, se.card_index
        FROM workout_sessions s
        JOIN set_entries se ON se.session_id = s.id
        JOIN exercises e ON e.id = se.exercise_id

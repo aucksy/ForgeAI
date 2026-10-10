@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The rest card's own view (Phase 2, RT-05), used inside Android's decorated notification frame:
+  line 1 counts down the time LEFT ("2:53 left · Bench Press, set 2"); line 2 is the rest and its
+  end ("Rest 3:00 · ends 4:27 pm"). Looked up by name in RestCard.kt; kept by forge_rest_keep.xml.
+  Review fix: every line is ONE line (cut with "…" when long) and without font padding, so the
+  collapsed card stays within about 48 dp even with large text. No chronometer in the card's
+  header when this view is used (RestCard.post), so there is one countdown, not two.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Chronometer
+            android:id="@+id/forge_rest_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:includeFontPadding="false"
+            android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/forge_rest_line"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:includeFontPadding="false"
+            android:textAppearance="@android:style/TextAppearance.Material.Notification.Title" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/forge_rest_sub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:includeFontPadding="false"
+        android:textAppearance="@android:style/TextAppearance.Material.Notification" />
+</LinearLayout>

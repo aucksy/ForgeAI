@@ -1,87 +1,87 @@
 /**
- * Superset chooser (bottom sheet). Pick a superset for an exercise: start a new
- * one, join an existing group, or remove it. A plain RN Modal (not a Compose
- * bottom sheet) so there's no swipe-veto deadlock risk.
+ * Superset chooser (bottom sheet).
+ *
+ * LW-26: a superset always has at least two exercises. Instead of "Start new superset" (which
+ * made a superset of one, badge and all), the member picks the PARTNER: "Superset with Row".
+ * They can also join an existing superset, or leave theirs (a pair left with one is dissolved
+ * by the store, so no lone "Superset A" badge stays behind). Letters follow the screen order.
+ * Built on the shared Sheet, so it scrolls at large text (LW-16).
  */
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { GhostButton, Icon, PrimaryButton } from '@/components/ui';
-import { color, radius, space, type } from '@/theme/tokens';
+import { Icon } from '@/components/ui';
+import { color, space, type } from '@/theme/tokens';
 
 import { supersetLabel } from '../lib/superset';
+import { SheetRow, TrackerSheet } from './TrackerSheet';
 
 export function SupersetSheet({
   visible,
   currentGroup,
-  otherGroups,
-  nextGroup,
-  onChoose,
+  pairWith,
+  join,
+  onPair,
+  onJoin,
+  onLeave,
   onClose,
 }: {
   visible: boolean;
   /** The exercise's current group, or null if ungrouped. */
   currentGroup: number | null;
-  /** Existing groups in the workout other than currentGroup (to join). */
-  otherGroups: number[];
-  /** The group number a "New superset" would create. */
-  nextGroup: number;
-  onChoose: (group: number | null) => void;
+  /** Exercises not in a superset that this one can pair with. */
+  pairWith: readonly { key: string; name: string }[];
+  /** Other supersets this one can join, with their exercises. */
+  join: readonly { group: number; names: string[] }[];
+  onPair: (otherKey: string) => void;
+  onJoin: (group: number) => void;
+  onLeave: () => void;
   onClose: () => void;
 }) {
+  const nothing = pairWith.length === 0 && join.length === 0 && currentGroup == null;
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.55)' }} onPress={onClose} />
-      <View
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: color.surfaceRaised,
-          borderTopLeftRadius: radius.xl,
-          borderTopRightRadius: radius.xl,
-          borderWidth: 1,
-          borderColor: color.borderStrong,
-          padding: space.xl,
-          paddingBottom: space.xxl,
-          gap: space.md,
-        }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-            <Icon name="zap" size={20} color={color.accent} />
-            <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-              Superset
-            </Text>
-          </View>
-          <Pressable onPress={onClose} hitSlop={8}>
-            <Icon name="close" size={22} color={color.inkMuted} />
-          </Pressable>
-        </View>
-
-        <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-          Group exercises done back-to-back. They share a badge on this workout.
+    <TrackerSheet
+      visible={visible}
+      title={currentGroup != null ? `Superset ${supersetLabel(currentGroup)}` : 'Superset'}
+      subtitle="Exercises done back to back, resting after the round."
+      onClose={onClose}
+    >
+      {nothing ? (
+        <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>
+          Add another exercise to the workout to make a superset with it.
         </Text>
-
-        <PrimaryButton
-          label={`Start new superset (${supersetLabel(nextGroup)})`}
-          icon="plus"
-          onPress={() => onChoose(nextGroup)}
+      ) : null}
+      {pairWith.length > 0 ? (
+        <View style={{ gap: 2 }}>
+          {pairWith.map((p) => (
+            <SheetRow
+              key={p.key}
+              label={`Superset with ${p.name}`}
+              leading={<Icon name="zap" size={20} color={color.accent} />}
+              onPress={() => onPair(p.key)}
+            />
+          ))}
+        </View>
+      ) : null}
+      {join.length > 0 ? (
+        <View style={{ gap: 2, marginTop: pairWith.length > 0 ? space.xs : 0 }}>
+          {join.map((j) => (
+            <SheetRow
+              key={j.group}
+              label={`Join Superset ${supersetLabel(j.group)}`}
+              value={j.names.join(' + ')}
+              leading={<Icon name="zap" size={20} color={color.accent} />}
+              onPress={() => onJoin(j.group)}
+            />
+          ))}
+        </View>
+      ) : null}
+      {currentGroup != null ? (
+        <SheetRow
+          label="Remove from superset"
+          leading={<Icon name="close" size={20} color={color.inkMuted} />}
+          onPress={onLeave}
         />
-
-        {otherGroups.map((g) => (
-          <GhostButton
-            key={g}
-            label={`Join Superset ${supersetLabel(g)}`}
-            icon="zap"
-            onPress={() => onChoose(g)}
-          />
-        ))}
-
-        {currentGroup != null ? (
-          <GhostButton label="Remove from superset" icon="close" onPress={() => onChoose(null)} />
-        ) : null}
-      </View>
-    </Modal>
+      ) : null}
+    </TrackerSheet>
   );
 }

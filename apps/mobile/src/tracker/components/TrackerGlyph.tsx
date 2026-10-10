@@ -10,6 +10,7 @@ import { color as palette } from '@/theme/tokens';
 export type GlyphName =
   | 'more'
   | 'chevron-down'
+  | 'chevron-up'
   | 'medal'
   | 'trash'
   | 'pencil'
@@ -34,6 +35,7 @@ const PATHS: Record<GlyphName, { p?: string[]; dots?: { x: number; y: number }[]
   'scale-split': { p: ['M12 4v16', 'M5.5 8.5h13', 'M5.5 8.5 3 14h5Z', 'M18.5 8.5 16 14h5Z'] },
   more: { dots: [{ x: 5.5, y: 12 }, { x: 12, y: 12 }, { x: 18.5, y: 12 }] },
   'chevron-down': { p: ['M5.5 9.3 12 15.8l6.5-6.5'] },
+  'chevron-up': { p: ['M5.5 14.7 12 8.2l6.5 6.5'] },
   medal: {
     p: ['M8.2 3.5 10.6 9', 'M15.8 3.5 13.4 9', 'M12 13.2v.01'],
     c: [{ x: 12, y: 15, r: 5.4 }],

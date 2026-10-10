@@ -24,10 +24,11 @@ import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import { uneditableReason } from '@/tracker/services/editDraft';
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
-import { dayTypeLabel, getSessionSummary } from '@/tracker/services/finishSummary';
+import { getSessionSummary, sessionTitle } from '@/tracker/services/finishSummary';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
 import { workoutShareInput } from '@/tracker/share/workoutInput';
+import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
@@ -68,12 +69,13 @@ export default function SessionDetailScreen() {
         // Hydrate first: a persisted in-progress draft may exist but not yet be in memory
         // (it only loads on the Workout tab), and startFromSession would overwrite it.
         await hydrate();
-        if (useActiveWorkout.getState().active) {
-          Alert.alert('Finish your current workout first', 'You already have a workout in progress.');
-          return;
+        // LW-24: a workout already open is never a dead end: Resume it, or discard it and start this.
+        if ((await askAboutOpenWorkout()) === 'resume') {
+          showActiveWorkout(router);
+          return 'left' as const;
         }
         await startFromSession(data.session);
-        router.replace('/session/active');
+        showActiveWorkout(router);
         return 'left' as const;
       },
       () => setActionError(START_FAILED),
@@ -88,12 +90,10 @@ export default function SessionDetailScreen() {
         // Same guard as Repeat: a persisted in-progress draft only loads on the Workout
         // tab, so hydrate first or editing would silently overwrite it.
         await hydrate();
-        if (useActiveWorkout.getState().active) {
-          Alert.alert(
-            'Finish your current workout first',
-            'You have a workout in progress. Finish or discard it before editing an older one.',
-          );
-          return;
+        // LW-24: Resume the open workout, or discard it and edit this one.
+        if ((await askAboutOpenWorkout({ startLabel: 'Discard it and edit this one' })) === 'resume') {
+          showActiveWorkout(router);
+          return 'left' as const;
         }
         // Saving REPLACES every set, so refuse the cases the editor cannot represent
         // faithfully rather than quietly merging them away.
@@ -103,7 +103,7 @@ export default function SessionDetailScreen() {
           return;
         }
         await startEditingSession(data.session);
-        router.replace('/session/active');
+        showActiveWorkout(router);
         return 'left' as const;
       },
       () => setActionError(EDIT_FAILED),
@@ -121,7 +121,7 @@ export default function SessionDetailScreen() {
           workingSets: g.sets.filter((x) => !x.isWarmup).length,
         }));
         const routineId = await createRoutineFromWorkout({
-          name: `${dayTypeLabel(s.dayType)} · ${shortDate(s.dateISO)}`,
+          name: s.title?.trim() ? s.title.trim() : `${sessionTitle(s)} · ${shortDate(s.dateISO)}`,
           dayType: s.dayType === 'rest' ? 'full' : s.dayType,
           items,
         });
@@ -161,7 +161,7 @@ export default function SessionDetailScreen() {
 
   return (
     <Screen
-      title={data ? dayTypeLabel(data.session.dayType) : 'Workout'}
+      title={data ? sessionTitle(data.session) : 'Workout'}
       subtitle={data ? shortDate(data.session.dateISO) : undefined}
       right={
         <View style={{ flexDirection: 'row', gap: space.sm }}>
@@ -195,7 +195,7 @@ export default function SessionDetailScreen() {
         </View>
       ) : data ? (
         <View style={{ gap: space.lg }}>
-          <SessionSummary data={data} />
+          <SessionSummary data={data} exercisesOpen />
           <View style={{ gap: space.md }}>
             <PrimaryButton label="Repeat this workout" icon="dumbbell" onPress={() => void onRepeat()} />
             <GhostButton label="Edit this workout" icon="check" onPress={() => void onEdit()} />

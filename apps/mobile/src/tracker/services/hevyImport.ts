@@ -79,6 +79,13 @@ interface ParsedSet {
   durationSec: number | null;
   /** Phase 2: metres (distance_km × 1000), null when absent. */
   distanceM: number | null;
+  /**
+   * Review fix #9: which block of this exercise in the workout the set came from (0 = the first).
+   * Hevy writes the same exercise twice as two blocks; each becomes its own card (`card_index`).
+   */
+  card?: number;
+  /** The set's row in the file, so the cards are written back in the file's order. */
+  row?: number;
 }
 
 interface ParsedExercise {
@@ -88,6 +95,8 @@ interface ParsedExercise {
   supersetId: string | null;
   /** Hevy per-exercise note (exercise_notes column). */
   note: string | null;
+  /** Review fix #9: the note of each later block (card) of this exercise, by block number. */
+  blockNotes?: Record<number, string | null>;
 }
 
 interface ParsedWorkout {
@@ -102,6 +111,8 @@ interface ParsedWorkout {
   endedAt: number | null;
   dateISO: string;
   exercises: ParsedExercise[]; // first-appearance order
+  /** Review fix #9: the workout's own name, from a title this app wrote ("Push · Morning workout"). */
+  name?: string | null;
 }
 
 export interface ParsedHevy {
@@ -350,6 +361,23 @@ export const DAY_LABEL: Record<DayType, string> = {
 };
 const DAY_LABELS = new Set(Object.values(DAY_LABEL).map((l) => l.toLowerCase()));
 
+/** Between the day and the workout's own name in a title "Save my history" writes. */
+export const TITLE_SEP = ' · ';
+
+/**
+ * Review fix #9: a title this app wrote for a named workout — "Push · Morning workout" — split
+ * into the day's name and the workout's own name (cleaned the way Finish stores it). Null for
+ * any other title. PURE.
+ */
+export function ownTitle(rawTitle: string): { day: string; name: string } | null {
+  const at = rawTitle.indexOf(TITLE_SEP);
+  if (at <= 0) return null;
+  const day = rawTitle.slice(0, at);
+  if (!Object.values(DAY_LABEL).includes(day)) return null;
+  const name = rawTitle.slice(at + TITLE_SEP.length).replace(/\s+/g, ' ').trim().slice(0, 60);
+  return name ? { day, name } : null;
+}
+
 /**
  * A workout's notes from its file title and Hevy's `description` (the workout's own
  * description). PURE.
@@ -552,10 +580,14 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     let workout = byStart.get(workoutKey);
     if (!workout) {
       const endedAt = parseHevyDate(r['end_time']);
+      // #9: our own "Push · Morning workout" — the day from its first part, the name kept apart.
+      const own = ownTitle(rawTitle);
+      const dayTitle = own ? own.day : rawTitle;
       workout = {
         title: sanitizeTitle(rawTitle),
-        notes: workoutNotes(rawTitle, r['description'] !== undefined ? asString(r['description']) : null),
-        dayType: inferDayType(rawTitle),
+        notes: workoutNotes(dayTitle, r['description'] !== undefined ? asString(r['description']) : null),
+        dayType: inferDayType(dayTitle),
+        ...(own ? { name: own.name } : {}),
         startedAt,
         endedAt,
         dateISO: utcDateISO(startedAt),
@@ -567,7 +599,13 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     // v0.28.1: Hevy restarts set_index for a second block of the same exercise in one workout;
     // a new block starts when another exercise came in between. Its sets go after the first's.
     const prevTitle = lastTitle.get(workout);
-    if (exercise && prevTitle !== exTitle) blockOf.set(exercise, (blockOf.get(exercise) ?? 0) + 1);
+    if (exercise && prevTitle !== exTitle) {
+      const block = (blockOf.get(exercise) ?? 0) + 1;
+      blockOf.set(exercise, block);
+      // #9: a later block is its own card, with its own note.
+      const blockNote = asString(r['exercise_notes']).replace(/[\u0000-\u0009\u000B-\u001F]+/g, ' ').trim();
+      exercise.blockNotes = { ...(exercise.blockNotes ?? {}), [block]: blockNote !== '' ? blockNote : null };
+    }
     lastTitle.set(workout, exTitle);
     if (!exercise) {
       // superset_id / exercise_notes are consistent per exercise — capture at first appearance.
@@ -591,6 +629,8 @@ export function parseHevyBase64(base64: string): ParsedHevy {
       setIndex,
       durationSec,
       distanceM,
+      card: blockOf.get(exercise) ?? 0,
+      row: totalSetRows,
     };
     orderOf.set(set, (blockOf.get(exercise) ?? 0) * 100_000 + setIndex);
     exercise.sets.push(set);
@@ -925,14 +965,16 @@ export async function runImport(
       if (!target) return [];
       return ex.sets.map((st, i) => ({
         exerciseId: target.id,
+        // #9: a later block of the same exercise is its own card.
+        ...(st.card != null && st.card > 0 ? { cardIndex: st.card } : {}),
         weightKg: importedWeight(target.logType, st.weightKg),
         reps: st.reps,
         isWarmup: st.isWarmup,
         rpe: st.isWarmup ? null : st.rpe,
         setType: st.isWarmup ? undefined : st.setType,
         supersetGroup: group,
-        // Per-exercise note on the first set (becomes set_number 1).
-        note: i === 0 ? ex.note : null,
+        // Per-card note on the card's first set (the first card's becomes set_number 1).
+        note: i === 0 ? ex.note : (st.card ?? 0) > 0 && ex.sets[i - 1].card !== st.card ? ex.blockNotes?.[st.card ?? 0] ?? null : null,
         durationSec: st.durationSec,
         distanceM: st.distanceM,
         loadMode: target.setMode ?? null,
@@ -983,9 +1025,27 @@ export async function runImport(
           supersetMap.set(ex.supersetId, ++groupCounter);
         }
       }
-      const sets = w.exercises.flatMap((ex) =>
-        toRich(ex, ex.supersetId ? supersetMap.get(ex.supersetId) ?? null : null),
-      );
+      // #9: each card (block) in the place it had in the file — heavy Bench, Fly, back-off Bench.
+      // A file without repeated blocks keeps the exercises' first-appearance order, as before.
+      const blocks: { first: number; sets: ReturnType<typeof toRich> }[] = [];
+      for (const ex of w.exercises) {
+        const rich = toRich(ex, ex.supersetId ? supersetMap.get(ex.supersetId) ?? null : null);
+        const byCard = new Map<number, { first: number; sets: ReturnType<typeof toRich> }>();
+        ex.sets.forEach((st, i) => {
+          if (!rich[i]) return;
+          const c = st.card ?? 0;
+          let b = byCard.get(c);
+          if (!b) {
+            b = { first: Number.POSITIVE_INFINITY, sets: [] };
+            byCard.set(c, b);
+            blocks.push(b);
+          }
+          b.first = Math.min(b.first, st.row ?? Number.POSITIVE_INFINITY);
+          b.sets.push(rich[i]);
+        });
+      }
+      const ordered = blocks.every((b) => Number.isFinite(b.first)) ? [...blocks].sort((a, b) => a.first - b.first) : blocks;
+      const sets = ordered.flatMap((b) => b.sets);
       if (sets.length === 0) {
         result.emptyWorkouts += 1;
         onProgress?.(done, total);
@@ -999,6 +1059,8 @@ export async function runImport(
         startedAt: w.startedAt,
         endedAt: w.endedAt,
       });
+      // #9: the workout's own name (tracker schema v9 column), from a file this app wrote.
+      if (w.name) await getDb().runAsync('UPDATE workout_sessions SET title = ? WHERE id = ?', [w.name, session.id]);
       await addSetsWithMeta(session.id, sets);
       result.createdSessionIds?.push(session.id);
       seenStarts.add(w.startedAt); // guard against duplicate start_times within the file

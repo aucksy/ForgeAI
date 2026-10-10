@@ -11,7 +11,7 @@ import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { SessionDetail } from '@/types/models';
 
-import { dayTypeLabel } from '../services/finishSummary';
+import { sessionTitle } from '../services/finishSummary';
 
 export function WorkoutCard({ session, onPress }: { session: SessionDetail; onPress: () => void }) {
   const units = useUnits(); // v0.27.0: kg or lb
@@ -44,7 +44,7 @@ export function WorkoutCard({ session, onPress }: { session: SessionDetail; onPr
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-          {dayTypeLabel(session.dayType)}
+          {sessionTitle(session)}
         </Text>
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
           {relativeDay(session.dateISO)} · {countWord(session.exercises.length, 'exercise')} · {countWord(workingSets, 'set')}

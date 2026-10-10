@@ -11,12 +11,17 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
+import android.provider.Settings
 import android.text.format.DateFormat
+import android.widget.RemoteViews
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -30,13 +35,27 @@ import java.util.Locale
  *
  * The rest is kept here (SharedPreferences) as well as in the app's JS store, so a tap on the
  * watch changes the timer even when JS is asleep; JS reads [load] when it wakes up.
+ *
+ * Phase 2, packet D:
+ *  - RT-06: the card's channel is "rest-card-v2" (the old "rest-card" channel is deleted). It
+ *    is LOW importance, no sound or vibration: a DEFAULT channel made a Wear watch buzz at the
+ *    start of every rest (review fix); only "Rest is over" buzzes.
+ *  - RT-05: the card's big line is the time LEFT, counting down ("2:53 left · Bench Press, set 2"),
+ *    from a small custom layout (res/layout/forge_rest_card.xml) when it is present.
+ *  - RT-12: "Ring through Do Not Disturb" (off by default): with Do Not Disturb on, "Rest is
+ *    over" goes out as an alarm (its own channel, alarm sound usage), which Do Not Disturb lets
+ *    through unless the member blocks alarms too.
+ *  - D8: exact-alarm and notification state, and the settings pages that fix them.
  */
 object RestCard {
   const val CARD_ID = 41001
   const val OVER_ID = 41002
-  const val CH_CARD = "rest-card"
+  const val CH_CARD = "rest-card-v2"
+  /** The v0.26.1 card channel (LOW importance, filed under "Silent"); deleted on first use. */
+  private const val CH_CARD_OLD = "rest-card"
   const val CH_OVER = "rest-timer" // the same loud channel the app has used since v0.22
   const val CH_OVER_OPEN = "rest-over-open"
+  const val CH_OVER_ALARM = "rest-over-alarm"
   const val ACTION_ADD = "com.forgeai.rest.ADD15"
   const val ACTION_SKIP = "com.forgeai.rest.SKIP"
   const val ACTION_END = "com.forgeai.rest.END"
@@ -107,6 +126,24 @@ object RestCard {
 
   private fun quiet(ctx: Context): Boolean =
     ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).getBoolean("quiet", false)
+
+  /** Profile: "Ring through Do Not Disturb" (RT-12). Kept beside the sounds switch. */
+  fun setRingThroughDnd(ctx: Context, on: Boolean) {
+    ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).edit().putBoolean("dnd", on).apply()
+  }
+
+  private fun ringThroughDnd(ctx: Context): Boolean =
+    ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).getBoolean("dnd", false)
+
+  /** Is Do Not Disturb (any mode) on right now? */
+  private fun dndOn(ctx: Context): Boolean {
+    return try {
+      val f = nm(ctx).currentInterruptionFilter
+      f != NotificationManager.INTERRUPTION_FILTER_ALL && f != NotificationManager.INTERRUPTION_FILTER_UNKNOWN
+    } catch (_: Exception) {
+      false
+    }
+  }
 
   private fun forget(ctx: Context) {
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().clear().apply()
@@ -190,6 +227,87 @@ object RestCard {
     forget(ctx)
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
+  }
+
+  /**
+   * The app came back (getState). A running rest's alarm is set again, so a permission granted
+   * meanwhile ("Alarms & reminders", D8) makes THIS rest's alert exact, not only the next one.
+   */
+  @Synchronized
+  fun rearm(ctx: Context) {
+    val cur = stored(ctx) ?: return
+    if (cur.endsAt <= System.currentTimeMillis()) return
+    arm(ctx, cur.endsAt)
+  }
+
+  // ------------------------------------------------------------------ D8: access and settings
+  /** May the app set exact alarms? Always true below Android 12, where no permission exists. */
+  fun canScheduleExact(ctx: Context): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
+    return try {
+      (ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
+    } catch (_: Exception) {
+      true // unknown: never nag
+    }
+  }
+
+  /** Are ForgeAI's notifications on (Android 13+ asks; any version can block them)? */
+  fun notificationsEnabled(ctx: Context): Boolean {
+    return try {
+      nm(ctx).areNotificationsEnabled()
+    } catch (_: Exception) {
+      true
+    }
+  }
+
+  /** Android's "Alarms & reminders" page for this app (Android 12+). False if it did not open. */
+  fun openExactAlarmSettings(ctx: Context): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return false
+    return try {
+      val i = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + ctx.packageName))
+      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      ctx.startActivity(i)
+      true
+    } catch (_: Exception) {
+      openAppDetails(ctx)
+    }
+  }
+
+  /** Android's notification settings for this app. False if no settings page opened. */
+  fun openNotificationSettings(ctx: Context): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return openAppDetails(ctx)
+    return try {
+      val i = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+      i.putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      ctx.startActivity(i)
+      true
+    } catch (_: Exception) {
+      openAppDetails(ctx)
+    }
+  }
+
+  private fun openAppDetails(ctx: Context): Boolean {
+    return try {
+      val i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + ctx.packageName))
+      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      ctx.startActivity(i)
+      true
+    } catch (_: Exception) {
+      false
+    }
+  }
+
+  /** The phone's 12/24-hour setting (RT-05). */
+  fun is24Hour(ctx: Context): Boolean = DateFormat.is24HourFormat(ctx)
+
+  /** Ringer: 0 silent, 1 vibrate, 2 normal (RT-08). 2 when unknown. */
+  fun ringerMode(ctx: Context): Int {
+    return try {
+      (ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager).ringerMode
+    } catch (_: Exception) {
+      AudioManager.RINGER_MODE_NORMAL
+    }
   }
 
   // ------------------------------------------------------------------ timing
@@ -288,11 +406,42 @@ object RestCard {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
     val m = nm(ctx)
     if (m.getNotificationChannel(CH_CARD) == null) {
+      // Review fix: LOW importance again. A Wear OS watch buzzes for a bridged notification of
+      // DEFAULT importance even when its channel has no sound or vibration, so DEFAULT made the
+      // watch vibrate at the START of every rest. Only "Rest is over" (its own HIGH channel)
+      // should buzz. The card stays on the lock screen (PUBLIC, no private data) and the watch
+      // still shows it; the price is that the phone files it under "Silent".
       m.createNotificationChannel(
-        NotificationChannel(CH_CARD, "Rest timer card", NotificationManager.IMPORTANCE_LOW).apply {
+        NotificationChannel(CH_CARD, "Rest countdown", NotificationManager.IMPORTANCE_LOW).apply {
           description = "Shows your rest on the phone and on your watch, with +15 s and Skip"
           setSound(null, null)
           enableVibration(false)
+          enableLights(false)
+          setShowBadge(false)
+          lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        },
+      )
+    }
+    if (m.getNotificationChannel(CH_CARD_OLD) != null) {
+      try {
+        m.deleteNotificationChannel(CH_CARD_OLD)
+      } catch (_: Exception) {
+        // ignore
+      }
+    }
+    if (m.getNotificationChannel(CH_OVER_ALARM) == null) {
+      m.createNotificationChannel(
+        NotificationChannel(CH_OVER_ALARM, "Rest is over, through Do Not Disturb", NotificationManager.IMPORTANCE_HIGH).apply {
+          description = "Used only when you turn on Ring through Do Not Disturb in ForgeAI"
+          setSound(
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+            AudioAttributes.Builder()
+              .setUsage(AudioAttributes.USAGE_ALARM)
+              .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+              .build(),
+          )
+          enableVibration(true)
+          vibrationPattern = longArrayOf(0, 250, 150, 250)
           setShowBadge(false)
           lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         },
@@ -333,6 +482,33 @@ object RestCard {
     return "Rest ${fmtLength(len)} · ends ${clock(ctx, r.endsAt)}"
   }
 
+  /**
+   * RT-05: the card's own view. A big line that counts down the time LEFT
+   * ("2:53 left · Bench Press, set 2") and, under it, the old title ("Rest 3:00 · ends 4:27 pm").
+   * Looked up by name, so a build without the layout simply posts the plain card.
+   */
+  private fun countdownView(ctx: Context, r: Rest): RemoteViews? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return null
+    return try {
+      val res = ctx.resources
+      val pkg = ctx.packageName
+      val layout = res.getIdentifier("forge_rest_card", "layout", pkg)
+      val left = res.getIdentifier("forge_rest_left", "id", pkg)
+      val line = res.getIdentifier("forge_rest_line", "id", pkg)
+      val sub = res.getIdentifier("forge_rest_sub", "id", pkg)
+      if (layout == 0 || left == 0 || line == 0 || sub == 0) return null
+      val v = RemoteViews(pkg, layout)
+      val base = SystemClock.elapsedRealtime() + (r.endsAt - System.currentTimeMillis())
+      v.setChronometer(left, base, null, true)
+      v.setChronometerCountDown(left, true)
+      v.setTextViewText(line, if (r.next != null) " left · ${r.next}" else " left")
+      v.setTextViewText(sub, title(ctx, r))
+      v
+    } catch (_: Exception) {
+      null
+    }
+  }
+
   @Suppress("DEPRECATION")
   private fun post(ctx: Context, r: Rest) {
     try {
@@ -346,13 +522,25 @@ object RestCard {
         .setOnlyAlertOnce(true)
         .setAutoCancel(false)
         .setOngoing(false)
-        .setShowWhen(true)
         .setWhen(r.endsAt)
-        .setUsesChronometer(true)
+        .setCategory("stopwatch") // Notification.CATEGORY_STOPWATCH (Android 12+); older ones ignore it
         .setVisibility(Notification.VISIBILITY_PUBLIC)
         .addAction(Notification.Action.Builder(Icon.createWithResource(ctx, icon), "+15 s", actionIntent(ctx, ACTION_ADD, 4)).build())
         .addAction(Notification.Action.Builder(Icon.createWithResource(ctx, icon), "Skip", actionIntent(ctx, ACTION_SKIP, 5)).build())
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) b.setChronometerCountDown(true)
+      val view = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) countdownView(ctx, r) else null
+      if (view != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        // The system still draws the header and the +15 s / Skip buttons around it; a watch
+        // keeps showing the title and text set above. Review fix: no chronometer in the header
+        // here. The custom line already counts down ("2:53 left"), and a header chronometer
+        // was a second countdown right above it.
+        b.setShowWhen(false)
+        b.setStyle(Notification.DecoratedCustomViewStyle())
+        b.setCustomContentView(view)
+      } else {
+        // The plain card (no custom layout): the header chronometer IS its countdown.
+        b.setShowWhen(true).setUsesChronometer(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) b.setChronometerCountDown(true)
+      }
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // A card left behind by a stopped phone removes itself a minute after the rest.
         b.setTimeoutAfter(maxOf(1000L, r.endsAt - System.currentTimeMillis()) + 60_000L)
@@ -398,7 +586,11 @@ object RestCard {
       // posted, which is what makes the watch buzz. Otherwise this is the loud alert.
       // "Workout sounds" off: the vibrate-only channel, wherever the app is.
       val open = appOnScreen(ctx) || quiet(ctx)
-      val b = builder(ctx, if (open) CH_OVER_OPEN else CH_OVER)
+      // RT-12: only when the member turned it on, and only while Do Not Disturb is on; at other
+      // times the alert follows the ringer as before.
+      val alarm = !open && ringThroughDnd(ctx) && dndOn(ctx)
+      val channel = if (open) CH_OVER_OPEN else if (alarm) CH_OVER_ALARM else CH_OVER
+      val b = builder(ctx, channel)
         .setSmallIcon(iconRes(ctx))
         .setColor(COLOR)
         .setContentTitle("Rest is over")
@@ -407,7 +599,7 @@ object RestCard {
         .setWhen(endsAt)
         .setAutoCancel(true)
         .setOngoing(false)
-        .setCategory(Notification.CATEGORY_REMINDER)
+        .setCategory(if (alarm) Notification.CATEGORY_ALARM else Notification.CATEGORY_REMINDER)
         .setVisibility(Notification.VISIBILITY_PUBLIC)
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
         b.setPriority(if (open) Notification.PRIORITY_DEFAULT else Notification.PRIORITY_MAX)

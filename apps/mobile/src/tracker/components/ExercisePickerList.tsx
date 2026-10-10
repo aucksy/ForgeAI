@@ -25,6 +25,8 @@ export function ExercisePickerList({
   only,
   onCreate,
   error,
+  recentIds,
+  markedLabel = 'Keep',
 }: {
   onSelect: (ex: TrackerExercise) => void;
   /** Screen-reader verb for each row (Phase 4: "Leave out" in the plan builder). */
@@ -37,6 +39,10 @@ export function ExercisePickerList({
   onCreate?: (typed: string) => void;
   /** EX-10: a short line when the last pick failed ("Couldn't add it. Try again."); the list stays usable. */
   error?: string | null;
+  /** LW-15: exercises from the last few workouts, shown first under "Recent" (no search, no filter). */
+  recentIds?: readonly string[];
+  /** Screen-reader verb on a marked row (the plan builder: "Keep"; multi-select: "Unselect"). */
+  markedLabel?: string;
 }) {
   const [all, setAll] = useState<TrackerExercise[]>([]);
   // EX-16: until the first read answers, show placeholders — not "No exercises found" (and no
@@ -79,6 +85,16 @@ export function ExercisePickerList({
   }, [shown]);
 
   const filtered = useMemo(() => filterExercises(shown, { query, muscle, equipment: null }), [shown, query, muscle]);
+  // LW-15: "Recent" first while nothing is typed or filtered (the full list follows, A→Z).
+  const recent = useMemo(() => {
+    if (!recentIds || recentIds.length === 0) return [];
+    const byId = new Map(shown.map((e) => [e.id, e]));
+    return recentIds.flatMap((id) => {
+      const e = byId.get(id);
+      return e ? [e] : [];
+    });
+  }, [shown, recentIds]);
+  const showRecent = recent.length > 0 && query.trim() === '' && muscle == null;
   const createName = onCreate && loaded ? createOffer(query, shown) : null;
   const view = viewOf({ loaded, failed, count: filtered.length });
   const createRow = createName ? (
@@ -185,13 +201,35 @@ export function ExercisePickerList({
             <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search or muscle group." />
           )
         }
+        ListHeaderComponent={
+          showRecent ? (
+            <View style={{ gap: space.sm }}>
+              <Text accessibilityRole="header" style={bandHead}>
+                Recent
+              </Text>
+              {recent.map((item) => (
+                <ExerciseListRow
+                  key={`recent-${item.id}`}
+                  ex={item}
+                  trailing={isMarked?.(item) ? 'check' : 'plus'}
+                  actionLabel={isMarked?.(item) ? markedLabel : actionLabel}
+                  onPress={onSelect}
+                  onDemo={setDemo}
+                />
+              ))}
+              <Text accessibilityRole="header" style={[bandHead, { marginTop: space.sm }]}>
+                All exercises
+              </Text>
+            </View>
+          ) : null
+        }
         ListFooterComponent={createRow}
         extraData={isMarked}
         renderItem={({ item }) => (
           <ExerciseListRow
             ex={item}
             trailing={isMarked?.(item) ? 'check' : 'plus'}
-            actionLabel={isMarked?.(item) ? 'Keep' : actionLabel}
+            actionLabel={isMarked?.(item) ? markedLabel : actionLabel}
             onPress={onSelect}
             onDemo={setDemo}
           />
@@ -208,3 +246,11 @@ export function ExercisePickerList({
     </View>
   );
 }
+
+const bandHead = {
+  fontFamily: type.bodySemi,
+  fontSize: type.size.caption,
+  color: color.inkMuted,
+  letterSpacing: 0.4,
+  textTransform: 'uppercase',
+} as const;

@@ -1,7 +1,8 @@
 # v0.28.0 device QA, part J — the member's own Hevy routines (runs after parts A–I). A real-format
 # Hevy .csv (text dates, which v0.27.0 read as no workouts) is imported; then the routines found
 # in it are checked one per screen, followed, and land in the folder "From Hevy". The same file
-# imported again adds nothing and updates "From Hevy" (no second folder). Then: Home's Today card
+# imported again adds nothing and updates "From Hevy" (no second folder). Since Phase 1 the demo is
+# already gone (part I's import removed it), so this preview has no demo card. Then: Home's Today card
 # opens the day's exercises first, and "Add exercise" inside a workout offers "Create “…”" (a
 # distance exercise in metres), which lands in the workout.
 appId: com.forgeai.app
@@ -38,8 +39,15 @@ appId: com.forgeai.app
           optional: true
 - tapOn: "qa-hevy.*"
 - extendedWaitUntil:
-    visible: "^Merge$"
+    visible: "^Date range$"
     timeout: 20000
+# Phase 1 (DS-05 / IM-01): part I's import took the demo away, so this is an ordinary import over
+# the member's own data: no "The demo goes first" card, no name box.
+- assertNotVisible: "The demo goes first"
+- scrollUntilVisible:
+    element: "^Merge$"
+    centerElement: true
+    timeout: 15000
 - tapOn: "^Merge$"
 - takeScreenshot: 140-hevy-csv-preview
 - scrollUntilVisible:

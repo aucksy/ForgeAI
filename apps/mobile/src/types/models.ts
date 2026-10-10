@@ -74,6 +74,8 @@ export interface WorkoutSession {
   dayType: DayType;
   notes: string | null;
   source: 'chat' | 'seed' | 'manual';
+  /** The workout's own name (tracker schema v9). Absent/null on older workouts → its day type. */
+  title?: string | null;
 }
 
 export interface SetEntry {

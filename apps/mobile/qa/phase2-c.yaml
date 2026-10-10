@@ -65,13 +65,17 @@ appId: com.forgeai.app
 - tapOn: "Search exercises"
 - inputText: " plank"
 - hideKeyboard
+# Phase 2 (LW-15): the picker ticks exercises ("Select X"), then one "Add N" adds them.
 - tapOn:
-    text: "Add Plank"
+    text: "Select Plank"
     index: 0
+- assertVisible: "Unselect Plank"
+- tapOn: "Add 1"
+# LW-27: set controls name their exercise and set ("Start the timer for Plank set 1").
 - extendedWaitUntil:
-    visible: "Start the timer for set 1"
+    visible: "Start the timer for .* set 1"
     timeout: 15000
-- tapOn: "Start the timer for set 1"
+- tapOn: "Start the timer for .* set 1"
 - extendedWaitUntil:
     visible: "Start timer"
     timeout: 10000
@@ -97,19 +101,20 @@ appId: com.forgeai.app
 - inputText: " pull-up"
 - hideKeyboard
 - tapOn:
-    text: "Add Pull[- ][Uu]p"
+    text: "Select Pull[- ][Uu]p"
     index: 0
+- tapOn: "Add 1"
 - extendedWaitUntil:
     visible: "More for Pull[- ][Uu]p"
     timeout: 15000
 - tapOn:
-    text: "Reps, set 1"
+    text: ".* set 1 reps"
     below:
       text: "More for Pull[- ][Uu]p"
 - inputText: " 8"
 - hideKeyboard
 - tapOn:
-    text: "Mark set complete"
+    text: "Mark .* set 1 complete"
     below:
       text: "More for Pull[- ][Uu]p"
 - tapOn:
@@ -125,18 +130,19 @@ appId: com.forgeai.app
 - inputText: " assisted pull"
 - hideKeyboard
 - tapOn:
-    text: "Add Assisted Pull-up.*"
+    text: "Select Assisted Pull-up.*"
     index: 0
+- tapOn: "Add 1"
 - extendedWaitUntil:
     visible: "ASSIST KG"
     timeout: 15000
 - tapOn:
-    text: "Assistance in kilograms, set 1"
+    text: ".* set 1 assistance, kilograms"
     below:
       text: "More for Assisted Pull-up.*"
 - inputText: " 20"
 - tapOn:
-    text: "Reps, set 1"
+    text: ".* set 1 reps"
     below:
       text: "More for Assisted Pull-up.*"
 - inputText: " 8"
@@ -152,8 +158,9 @@ appId: com.forgeai.app
 - inputText: " dumbbell bench"
 - hideKeyboard
 - tapOn:
-    text: "Add Dumbbell Bench Press.*"
+    text: "Select Dumbbell Bench Press.*"
     index: 0
+- tapOn: "Add 1"
 - extendedWaitUntil:
     visible: "KG EACH"
     timeout: 15000
@@ -176,38 +183,67 @@ appId: com.forgeai.app
 - inputText: " treadmill"
 - hideKeyboard
 - tapOn:
-    text: "Add Treadmill.*"
+    text: "Select Treadmill.*"
     index: 0
+- tapOn: "Add 1"
 - extendedWaitUntil:
-    visible: "Distance in kilometres, set 1"
+    visible: ".* set 1 distance, kilometres"
     timeout: 15000
 - tapOn:
-    text: "Distance in kilometres, set 1"
+    text: ".* set 1 distance, kilometres"
     below:
       text: "More for Treadmill.*"
 - inputText: " 2.4"
 - tapOn:
-    text: "Time, minutes and seconds, set 1"
+    text: ".* set 1 time, minutes and seconds"
     below:
       text: "More for Treadmill.*"
 - inputText: " 1200"
 - hideKeyboard
 - takeScreenshot: 28-workout-all-kinds
+# Phase 2 (LW-02/-03): Finish opens the "Finish workout?" sheet. The assisted pull-up and the
+# run hold numbers but were never ticked: the sheet asks, and "Save them" keeps them (the old
+# Finish saved them without asking; this part checks them on the summary).
 - tapOn:
     text: "Finish workout"
     index: 0
 - extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- assertVisible: '\d+ sets? ha(s|ve) numbers but .*ticked\.'
+- tapOn: "Save them"
+- takeScreenshot: 28b-finish-sheet-save-them
+# The sheet's own button: the one above its "Keep going" (the screen's button sits behind it).
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
 - takeScreenshot: 29-finish
+# LW-21: long lists fold shut under a heading with a count ("4 muscles · see them"): open them.
 - scrollUntilVisible:
     element: "Sets per muscle"
+    centerElement: true
     timeout: 20000
+- tapOn: "Sets per muscle"
+- extendedWaitUntil:
+    visible: '\d+ muscles? · hide (it|them)'
+    timeout: 5000
 - takeScreenshot: 30-sets-per-muscle
+- scrollUntilVisible:
+    element: "^Exercises$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Exercises$"
+- extendedWaitUntil:
+    visible: '\d+ exercises? · hide (it|them)'
+    timeout: 5000
+- takeScreenshot: 31-finish-exercises
 - scrollUntilVisible:
     element: "Done"
     timeout: 20000
-- takeScreenshot: 31-finish-exercises
 - tapOn: "Done"
 # ---------------------------------------------------------------- custom exercise form
 - extendedWaitUntil:

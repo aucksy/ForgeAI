@@ -15,8 +15,33 @@
  */
 import type { DraftExercise } from '@/tracker/store/activeWorkoutStore';
 
-/** Rest lengths offered in the picker, in seconds. 0 = off. */
-export const REST_CHOICES: readonly number[] = [0, 30, 45, 60, 75, 90, 120, 150, 180, 240, 300];
+/**
+ * Rest lengths offered in the picker, in seconds. 0 = off. Phase 2 (RT-09): up to 10:00, plus a
+ * "Custom" length typed in the picker (any other length shows as Custom there).
+ */
+export const REST_CHOICES: readonly number[] = [0, 30, 45, 60, 90, 120, 150, 180, 210, 240, 300, 360, 480, 600];
+
+/** Shortest and longest rest a member can set (the timer's own limits). */
+export const REST_MIN_SEC = 5;
+export const REST_MAX_SEC = 600;
+
+/**
+ * Phase 2 (RT-09): the "Custom" rest, typed as minutes and seconds. Blank boxes count as 0.
+ * Null when it is not a whole number, seconds are 60 or more, or the total is outside
+ * 0:05 … 10:00.
+ */
+export function parseCustomRest(minText: string, secText: string): number | null {
+  const m = minText.trim();
+  const s = secText.trim();
+  if (!m && !s) return null;
+  if ((m && !/^\d{1,2}$/.test(m)) || (s && !/^\d{1,2}$/.test(s))) return null;
+  const min = m ? parseInt(m, 10) : 0;
+  const sec = s ? parseInt(s, 10) : 0;
+  if (sec >= 60) return null;
+  const total = min * 60 + sec;
+  if (total < REST_MIN_SEC || total > REST_MAX_SEC) return null;
+  return total;
+}
 
 export const DEFAULT_REST_SEC = 90;
 

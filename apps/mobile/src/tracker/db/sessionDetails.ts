@@ -38,6 +38,8 @@ interface SessionRow {
   day_type: string;
   notes: string | null;
   source: string;
+  /** Tracker schema v9 (the workout's own name); absent before the migration ran. */
+  title?: string | null;
 }
 
 interface SetRow {
@@ -70,6 +72,7 @@ function mapSession(r: SessionRow): WorkoutSession {
     dayType: r.day_type as DayType,
     notes: r.notes,
     source: r.source as WorkoutSession['source'],
+    title: r.title ?? null,
   };
 }
 

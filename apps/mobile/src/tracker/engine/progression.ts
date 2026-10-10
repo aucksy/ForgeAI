@@ -35,7 +35,8 @@ import { kgText } from '@/lib/format';
 import { isImperial, roundToShownStep, stepFor } from '@/lib/units';
 import type { Exercise, OverloadTarget, UserProfile } from '@/types/models';
 
-import { fmtDurationWords, isBodyweightFamily, type LogType } from './logTypes';
+import { fmtDurationWords, isBodyweightFamily, type LoadMode, type LogType } from './logTypes';
+import { buildLadder, downRungKg, ladderKind, sameRungKg, upRungsKg } from './weightLadder';
 
 export type ProgSetType = 'normal' | 'warmup' | 'drop' | 'failure';
 
@@ -46,6 +47,8 @@ export interface ProgSet {
   setType: ProgSetType;
   /** Time sets (Phase 2); absent on weight × reps rows. */
   durationSec?: number | null;
+  /** TG-03: the counting this set was logged with (absent = the exercise's current one). */
+  loadMode?: LoadMode | null;
 }
 
 export interface ProgSession {
@@ -95,6 +98,11 @@ export interface ProgressionTarget extends OverloadTarget {
   easy?: boolean;
   /** Phase 4: this plan week's effort for members who log RPE (`withEffort`): the RPE to stop at. */
   effortRpe?: number;
+  /**
+   * TG-02: last time's weight as it reads on the member's ladder (a clean number in the unit on
+   * screen: 165 lb logged, shown in kg -> 75). The easy week keeps this weight.
+   */
+  sameWeightKg?: number;
 }
 
 /**
@@ -104,7 +112,7 @@ export interface ProgressionTarget extends OverloadTarget {
  */
 export function toEasyTarget(t: ProgressionTarget, reason: string, sets: (n: number) => number): ProgressionTarget {
   if (t.free || t.action === 'start') return t;
-  const same = t.change === 'up' && t.last ? t.last.weightKg : t.targetWeightKg;
+  const same = t.change === 'up' && t.last ? t.sameWeightKg ?? t.last.weightKg : t.targetWeightKg;
   const hold = t.logType === 'time' && t.change === 'up' && t.holdSec != null ? Math.max(1, t.holdSec - HOLD_STEP_SEC) : t.holdSec;
   return {
     ...t,
@@ -168,7 +176,16 @@ export interface ProgressionInput {
   holdCapSec?: number | null;
   harder?: VersionLink | null;
   easier?: VersionLink | null;
+  /**
+   * TG-01: every weight the member has logged on this exercise (kg, ALL history, working sets,
+   * already in today's counting). Suggested weights are rungs of this ladder. Absent: the
+   * weights in `history`.
+   */
+  ladder?: readonly number[];
 }
+
+/** Loaded equipment: a blank weight here is "no weight logged", never "bodyweight" (TG-07). */
+const LOADED: ReadonlySet<Exercise['equipment']> = new Set(['barbell', 'dumbbell', 'machine', 'cable']);
 
 export function computeProgressionTarget(input: ProgressionInput): ProgressionTarget {
   const logType = input.logType ?? 'weight_reps';
@@ -180,7 +197,15 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const name = exercise.name;
   const assisted = logType === 'assisted';
 
-  const all = input.history.map(summarise).filter((s): s is Summary => s !== null);
+  let all = input.history.map(summarise).filter((s): s is Summary => s !== null);
+  // TG-07: a bar, dumbbell, machine or cable lift saved once with a blank weight (0 kg) is
+  // never a bodyweight move: such workouts are "no weight logged" and left out. Equipment
+  // 'other' follows the majority of its workouts.
+  if (logType === 'weight_reps') {
+    const zero = all.filter((s) => s.mainWeight <= 0).length;
+    const loaded = LOADED.has(exercise.equipment) || (exercise.equipment === 'other' && zero * 2 <= all.length);
+    if (zero > 0 && loaded) all = all.filter((s) => s.mainWeight > 0);
+  }
   const isBodyweight = exercise.equipment === 'bodyweight' || isBodyweightFamily(logType);
   // Reps-only when the latest workout carried no weight (an unloaded pull-up, or a lift
   // logged at 0 kg); a first-time bodyweight move too (but not the WEIGHTED version, whose
@@ -234,15 +259,26 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const step = learnStep(all, exercise, assisted);
   const learned = learnedGap(all, assisted) > 0;
   /**
-   * "lb, miles" with no step learned yet: a suggested weight lands on the member's own pound
-   * steps (135 → 140 lb, never 137.3 lb). A learned step is already in their unit, and
-   * "kg, km" is never touched. Never rounds to zero or past it.
+   * Assisted moves only (their help keeps the step rule): "lb, miles" with no step learned
+   * yet lands on the member's own pound steps. Never rounds to zero or past it.
    */
   const clean = (kg: number): number => {
     if (!isImperial() || learned || sameWeight(kg, w)) return kg;
     const r = roundToShownStep(kg, step);
     return Math.sign(r) === Math.sign(kg) && Math.abs(r) > 1e-6 ? round3(r) : kg;
   };
+  // TG-01 / TG-02: every other suggested weight is a rung of the member's own ladder, in the
+  // unit on screen.
+  const ladderWeights =
+    input.ladder ?? input.history.flatMap((s) => s.sets.filter((x) => x.setType !== 'warmup' && x.reps > 0).map((x) => x.weightKg));
+  const ladder = buildLadder(ladderWeights, ladderKind(exercise.equipment, logType), {
+    learnedStepKg: learnedGap(all, false),
+    catalogStepKg: exercise.incrementKg,
+  });
+  /** Last time's weight as the Target shows and fills it (a clean number in this unit). */
+  const same = assisted || bodyweightOnly ? w : sameRungKg(w, ladder);
+  const upTo = (n: number): number => upRungsKg(w, n, ladder)[n - 1];
+  const lighter = (): number | null => downRungKg(w, ladder);
   /** " at 40 kg", " at +10 kg", " with 20 kg of help" — how the weight reads in a sentence. */
   const at = (kg: number) =>
     assisted ? (kg < 0 ? ` with ${kgText(-kg)} of help` : ' with no help') : kg > 0 ? ` at ${kgText(kg)}` : '';
@@ -256,10 +292,12 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     reason: string,
     version: ProgressionTarget['version'] = null,
   ): ProgressionTarget => {
-    const change = weightKg > w + 1e-6 ? 'up' : weightKg < w - 1e-6 ? 'down' : null;
+    // Last time's weight on the ladder is "the same weight", even when it reads cleaner.
+    const change = sameWeight(weightKg, same) ? null : weightKg > w + 1e-6 ? 'up' : weightKg < w - 1e-6 ? 'down' : null;
     return {
       ...base,
       last,
+      sameWeightKg: round3(same),
       targetWeightKg: round3(weightKg),
       targetRepsMax: Math.max(max, repGoal),
       repGoal,
@@ -277,21 +315,21 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   if (gap >= 21) {
     const weeks = Math.floor(gap / 7);
     if (gap >= 42 && !bodyweightOnly) {
-      const lighter = assisted ? clean(round3(w - step)) : stepDown(w, step, clean);
-      if (lighter !== null) {
+      const down = assisted ? clean(round3(w - step)) : lighter();
+      if (down !== null) {
         return out(
           'R1b',
-          lighter,
+          down,
           min,
           assisted
-            ? `${weeks} weeks since your last ${name}. Start with a little more help, ${load(lighter)}, and build back.`
-            : `${weeks} weeks since your last ${name}. Start a little lighter at ${kgText(lighter)} and build back.`,
+            ? `${weeks} weeks since your last ${name}. Start with a little more help, ${load(down)}, and build back.`
+            : `${weeks} weeks since your last ${name}. Start a little lighter at ${kgText(down)} and build back.`,
         );
       }
     }
     return out(
       'R1',
-      w,
+      same,
       min,
       `Your last ${name} was ${weeks} weeks ago. ${bodyweightOnly ? 'Aim' : assisted ? 'Same help, aim' : 'Same weight, aim'} for ${min} and see how it feels.`,
     );
@@ -356,24 +394,26 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       }
       return out('R2', next, min, `${did} Time for ${load(next)}.`);
     }
+    // The next rung of the member's own ladder (TG-01): never a weight further away.
+    const up = upTo(1);
     // Added weight on a bodyweight move is small next to the body itself: never "big".
-    const big = !isBodyweight && w > 0 && step / w > BIG_STEP_SHARE + 1e-9;
+    const big = !isBodyweight && w > 0 && (up - w) / w > BIG_STEP_SHARE + 1e-9;
     if (big) {
       const expandCap = max + 4;
       if (minScore >= expandCap) {
         const goal = Math.max(1, min - 2);
-        const up = clean(w + step);
         return out('R2', up, goal, `${did} Time for ${kgText(up)} — a big jump, so ${goal} reps is a win.`);
       }
       const goal = Math.min(expandCap, Math.max(max + 2, lowestReps + 1));
-      const pct = Math.round((step / w) * 100);
-      return out('R2b', w, goal, `The next step is ${kgText(clean(w + step))}, a ${pct}% jump. Add reps first: aim for ${goal}.`);
+      const pct = Math.round(((up - w) / w) * 100);
+      return out('R2b', same, goal, `The next step is ${kgText(up)}, a ${pct}% jump. Add reps first: aim for ${goal}.`);
     }
-    if (input.experience === 'beginner' && minScore >= max + 3 && w > 0 && (2 * step) / w <= DOUBLE_STEP_SHARE + 1e-9) {
-      const jump = clean(w + 2 * step);
-      return out('R2c', jump, min, `That looked easy: ${repsList}${at(w)}. Jumping to ${kgText(jump)}.`);
+    if (input.experience === 'beginner' && minScore >= max + 3 && w > 0) {
+      const jump = upTo(2);
+      if ((jump - w) / w <= DOUBLE_STEP_SHARE + 1e-9) {
+        return out('R2c', jump, min, `That looked easy: ${repsList}${at(w)}. Jumping to ${kgText(jump)}.`);
+      }
     }
-    const up = clean(w + step);
     return out('R2', up, min, `${did} Time for ${kgText(up)}.`);
   }
 
@@ -392,11 +432,11 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       const more = clean(round3(w - step));
       return out('R3', more, min, `Reps fell under ${min} twice${at(w)}. Use ${load(more)} and build back up.`);
     }
-    const lighter = stepDown(w, step, clean);
-    if (lighter !== null) {
-      return out('R3', lighter, min, `Reps fell under ${min} twice at ${kgText(w)}. Drop to ${kgText(lighter)} and build back up.`);
+    const down = lighter();
+    if (down !== null) {
+      return out('R3', down, min, `Reps fell under ${min} twice at ${kgText(w)}. Drop to ${kgText(down)} and build back up.`);
     }
-    return out('R3', w, min, `Reps fell under ${min} twice at ${kgText(w)}. Stay here and build back to ${min}.`);
+    return out('R3', same, min, `Reps fell under ${min} twice at ${kgText(w)}. Stay here and build back to ${min}.`);
   }
 
   // R4 — stalled: 4 workouts at this weight and no better than the oldest of them.
@@ -412,11 +452,11 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
         const more = clean(round3(w - step));
         return out('R4', more, mid, `Stuck${at(w)} for ${judged.length} workouts. A little more help, ${load(more)}, usually breaks it.`);
       }
-      const lighter = stepDown(w, step, clean);
-      if (lighter !== null) {
-        return out('R4', lighter, mid, `Stuck at ${kgText(w)} for ${judged.length} workouts. A small step back to ${kgText(lighter)} usually breaks it.`);
+      const down = lighter();
+      if (down !== null) {
+        return out('R4', down, mid, `Stuck at ${kgText(w)} for ${judged.length} workouts. A small step back to ${kgText(down)} usually breaks it.`);
       }
-      return out('R4', w, mid, `Stuck at ${kgText(w)} for ${judged.length} workouts. Keep the weight and aim for ${mid} clean reps.`);
+      return out('R4', same, mid, `Stuck at ${kgText(w)} for ${judged.length} workouts. Keep the weight and aim for ${mid} clean reps.`);
     }
   }
 
@@ -424,7 +464,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const goal = Math.min(max, Math.max(min, lowestReps + 1));
   return out(
     'R5',
-    w,
+    same,
     goal,
     `Last time ${repsList}${at(w)}. ${assisted ? 'Same help' : 'Same weight'}, aim for ${goal} ${L.ramp ? 'on your top set' : 'on every set'}.`,
   );
@@ -640,6 +680,9 @@ export interface TargetFill {
   durationSec?: number;
 }
 
+/** An easy week stops with this many reps left (easyWeek.ts: "stop with 3 or more reps left"). */
+export const EASY_REPS_LEFT = 3;
+
 /**
  * What the set rows hint (and a tick fills): the Target weight and its rep goal (or the hold
  * time). null — keep last time's hints — on a first time (there is no Target weight to fill),
@@ -648,12 +691,19 @@ export interface TargetFill {
  */
 export function targetFill(
   t: Pick<ProgressionTarget, 'targetWeightKg' | 'repGoal' | 'action' | 'topSetOnly'> &
-    Partial<Pick<ProgressionTarget, 'logType' | 'holdSec' | 'version' | 'free'>>,
+    Partial<Pick<ProgressionTarget, 'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last'>>,
 ): TargetFill | null {
   if (t.action === 'start' || t.version || t.free) return null;
   if (t.logType === 'time') return t.holdSec != null && t.holdSec > 0 ? { weightKg: 0, reps: 0, durationSec: t.holdSec } : null;
-  if (t.topSetOnly || t.repGoal == null) return null;
+  if (t.topSetOnly) return null;
   const weightKg = t.logType === 'assisted' ? Math.abs(t.targetWeightKg) : t.targetWeightKg;
+  // LW-22 / TG-09: an easy week's rows hint the easy Target — its weight, and last time's
+  // reps less 3 ("stop with 3 or more reps left"), never last normal week's near-failure set.
+  if (t.easy && t.repGoal == null) {
+    const top = t.last?.topReps ?? 0;
+    return top > 0 ? { weightKg, reps: Math.max(1, top - EASY_REPS_LEFT) } : null;
+  }
+  if (t.repGoal == null) return null;
   return { weightKg, reps: t.repGoal };
 }
 
@@ -731,16 +781,6 @@ function learnedGap(sessions: Summary[], signed: boolean): number {
     }
   }
   return bestGap;
-}
-
-/**
- * About 10% lighter, in whole steps (nearest, at least one). null when that would reach zero.
- * `clean` lands it on the member's pound steps (see `computeProgressionTarget`).
- */
-function stepDown(weightKg: number, step: number, clean: (kg: number) => number = (kg) => kg): number | null {
-  const steps = Math.max(1, Math.round((weightKg * 0.1) / step));
-  const next = clean(round3(weightKg - steps * step));
-  return next > 0 ? next : null;
 }
 
 /** Rep cap before "ready for a harder version" on an unloaded bodyweight move. */

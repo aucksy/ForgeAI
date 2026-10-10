@@ -105,6 +105,14 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 20000
 - tapOn: "Start routine"
+# LW-24: with a workout already open the app asks (Resume / Discard and start new) instead of
+# "Finish your current workout first". None should be open here; if one is, start this one.
+- runFlow:
+    when:
+      visible: "A workout is already open"
+    commands:
+      - takeScreenshot: 178b-workout-already-open
+      - tapOn: "Discard and start new"
 - extendedWaitUntil:
     visible: "ELAPSED"
     timeout: 20000

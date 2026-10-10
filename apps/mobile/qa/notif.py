@@ -14,14 +14,26 @@ Usage: notif.py <check> <dump-file> [args]
                           Without that dump the due time is tick + 30 s (approximate): lateness
                           is then printed but cannot fail the run.
   ongoing                 the "Workout in progress" card is showing
-  card <title-prefix>     the rest card is showing: swipe-away, both buttons, the given title
+  card <title-prefix>     the rest card is showing: swipe-away, both buttons, the given title,
+                          on the Phase 2 channel "rest-card-v2"
   over-open               "Rest is over" posted while the app was open, and the rest card gone
+
+Phase 2 (RT-05 / RT-06): the card moved to the channel "rest-card-v2" (the old "rest-card" is
+deleted) and the shade draws its own view (a countdown "2:53 left · Bench Press, set 2" over
+"Rest 3:00 · ends …", Notification.DecoratedCustomViewStyle). That view's text is not in the
+dump's extras, but RestCard.kt still sets the title ("Rest 3:00 · ends …", android.title), the
+text ("Next: …", android.text) for a watch, and `when` = the rest's end, so every check here
+reads those, as before. Whether the custom view was used is printed, not gated.
 """
 import os
 import re
 import sys
 
 PKG = "pkg=com.forgeai.app"
+CARD_CHANNEL = "rest-card-v2"
+# Any rest card, on the Phase 2 channel or the deleted v0.26.1 one: a card left on the old
+# channel still counts as "a card showing" (and the card check then fails on its channel).
+CARD_CHANNELS = (CARD_CHANNEL, "rest-card")
 
 
 def records(text):
@@ -58,11 +70,25 @@ def header(block):
     return block.split("\n", 1)[0]
 
 
+def channel_of(block):
+    m = re.search(r"channel=([\w-]+)", header(block))
+    return m.group(1) if m else ""
+
+
+def text_of(block):
+    m = re.search(r"android\.text=\w+ \((.*)\)\s*$", block, re.M)
+    return m.group(1) if m else ""
+
+
+def is_card(block):
+    return channel_of(block) in CARD_CHANNELS
+
+
 def main():
     check, path = sys.argv[1], sys.argv[2]
     recs = records(open(path, encoding="utf-8", errors="replace").read())
     over = [b for b in recs if title(b) == "Rest is over"]
-    cards = [b for b in recs if "channel=rest-card" in header(b)]
+    cards = [b for b in recs if is_card(b)]
     if check == "over-locked":
         tick = int(sys.argv[3])
         if not over:
@@ -82,7 +108,7 @@ def main():
         due = None
         if len(sys.argv) > 4:
             during = records(open(sys.argv[4], encoding="utf-8", errors="replace").read())
-            card = [x for x in during if "channel=rest-card" in header(x)]
+            card = [x for x in during if is_card(x)]
             w = re.search(r"\bwhen=(\d+)", card[0]) if card else None
             due = int(w.group(1)) if w else None
         if due is None:
@@ -113,10 +139,18 @@ def main():
         plus = re.search(r'^\s*\[\d+\] "\+15 s" ->', b, re.M) is not None
         skip = re.search(r'^\s*\[\d+\] "Skip" ->', b, re.M) is not None
         t = title(b)
+        ch = channel_of(b)
+        on_v2 = ch == CARD_CHANNEL
         chrono = "android.showChronometer=Boolean (true)" in b
         down = "android.chronometerCountDown=Boolean (true)" in b
-        print(f"[qa] REST CARD: title='{t}' flags={hex(f)} swipe-away={'yes' if swipe else 'NO'} +15={'yes' if plus else 'NO'} skip={'yes' if skip else 'NO'} chronometer={'yes' if chrono else 'no'} countdown={'yes' if down else 'no'}")
-        return 0 if swipe and plus and skip and t.startswith(want) else 1
+        # RT-05: the shade's own countdown view. Informational: a build without the layout posts
+        # the plain card, which a watch shows the same way.
+        view = "DecoratedCustomViewStyle" in b
+        chan = ch or "?"
+        if not on_v2:
+            chan += f" (NOT {CARD_CHANNEL})"
+        print(f"[qa] REST CARD: title='{t}' text='{text_of(b)}' channel={chan} flags={hex(f)} swipe-away={'yes' if swipe else 'NO'} +15={'yes' if plus else 'NO'} skip={'yes' if skip else 'NO'} chronometer={'yes' if chrono else 'no'} countdown={'yes' if down else 'no'} countdown-view={'yes' if view else 'no'}")
+        return 0 if swipe and plus and skip and on_v2 and t.startswith(want) else 1
     if check == "over-open":
         if not over:
             print("[qa] REST IS OVER (app open) NOT FOUND")

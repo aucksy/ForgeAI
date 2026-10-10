@@ -19,10 +19,41 @@ export function showWU(kg: number, u: UnitSystem = displayUnits(), dp = 1): stri
   return `${showW(kg, u, dp)} ${weightUnitOf(u)}`;
 }
 
-/** A typed number ("135", "82,5", "") → its value, or null when blank or not a number. */
+/**
+ * Phase 2 (LW-06): what a number box keeps of a keystroke. Digits and ONE decimal mark (comma
+ * or point, kept as typed), nothing else — no minus, no spaces, no second mark — and no more
+ * digits than a real set needs. `integer` boxes (reps) keep digits only. PURE.
+ */
+export function cleanTyped(
+  text: string,
+  opts: { integer?: boolean; maxInt?: number; maxDec?: number } = {},
+): string {
+  const maxInt = opts.maxInt ?? 4;
+  const maxDec = opts.maxDec ?? 2;
+  if (opts.integer) return text.replace(/\D/g, '').slice(0, maxInt);
+  let intPart = '';
+  let decPart = '';
+  let mark = '';
+  for (const ch of text) {
+    if (ch >= '0' && ch <= '9') {
+      if (mark) decPart += ch;
+      else intPart += ch;
+    } else if ((ch === '.' || ch === ',') && !mark) {
+      mark = ch;
+    }
+  }
+  intPart = intPart.slice(0, maxInt);
+  if (!mark || maxDec <= 0) return intPart;
+  return `${intPart}${mark}${decPart.slice(0, maxDec)}`;
+}
+
+/**
+ * A typed number ("135", "82,5", "") → its value, or null when blank or not a number. Never
+ * negative (LW-06): a stray minus or space is ignored, the same way the box drops it as typed.
+ */
 export function parseTyped(text: string, integer = false): number | null {
-  const t = text.trim().replace(',', '.');
-  if (t === '') return null;
+  const t = cleanTyped(text.trim(), { integer, maxInt: 12, maxDec: 12 }).replace(',', '.');
+  if (t === '' || t === '.') return null;
   const n = integer ? parseInt(t, 10) : parseFloat(t);
   return Number.isNaN(n) ? null : n;
 }
@@ -57,6 +88,26 @@ export function typedWeightMatches(text: string, storedKg: number | null, u: Uni
 export function weightLabel(kind: 'weight' | 'assisted' | 'weighted', u: UnitSystem = displayUnits()): string {
   const word = u === 'imperial' ? 'pounds' : 'kilograms';
   return kind === 'assisted' ? `Assistance in ${word}` : kind === 'weighted' ? `Added weight in ${word}` : `Weight in ${word}`;
+}
+
+/**
+ * LW-27: what a screen reader says for one box of one set — unique on the screen, e.g.
+ * "Bench Press set 2 weight, kilograms" / "Pull-up warm-up 1 assistance, pounds". PURE.
+ */
+export function boxLabel(
+  exName: string,
+  which: string,
+  box: 'weight' | 'assisted' | 'weighted' | 'reps' | 'time' | { distance: string },
+  u: UnitSystem = displayUnits(),
+): string {
+  const word = u === 'imperial' ? 'pounds' : 'kilograms';
+  const head = `${exName} ${which}`;
+  if (box === 'weight') return `${head} weight, ${word}`;
+  if (box === 'assisted') return `${head} assistance, ${word}`;
+  if (box === 'weighted') return `${head} added weight, ${word}`;
+  if (box === 'reps') return `${head} reps`;
+  if (box === 'time') return `${head} time, minutes and seconds`;
+  return `${head} distance, ${box.distance}`;
 }
 
 /** The spoken name of a shown distance unit. */

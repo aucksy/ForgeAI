@@ -317,7 +317,9 @@ describe('assisted: the help goes DOWN (§4.4, Phase 2)', () => {
   it('before Phase 2 an assisted pull-up read help as kilos to ADD (a −20 kg main weight became "bodyweight")', () => {
     const h = [reps('2026-10-03', [[-20, 12], [-20, 12], [-20, 12]])];
     const old = computeProgressionTarget({ exercise: assisted, target: range(8, 12), history: h, todayISO: TODAY });
-    expect(old.bodyweightOnly).toBe(true); // nonsense: help is not body weight
+    // Was `true` (nonsense: help is not body weight). Since TG-07 a machine lift is never
+    // "Bodyweight" even when read as weight × reps: its ≤ 0 kg workouts are "no weight logged".
+    expect(old.bodyweightOnly).toBe(false);
     expect(run(h).bodyweightOnly).toBe(false);
   });
 });

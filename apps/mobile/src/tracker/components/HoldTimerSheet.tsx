@@ -10,17 +10,25 @@
  * The clock runs on wall time (start stamp + paused total), never on ticks, so a busy
  * frame or a short trip to the background can't make it drift. The workout screen keeps
  * the phone awake, so the countdown's end is never missed while it is open.
+ *
+ * LW-18: a plank is done with the phone on the floor. Once the clock has started, a touch on
+ * the dimmed area does nothing, and Back or × asks "Stop the timer?" — Keep 0:42 / Discard /
+ * Keep going — while the clock keeps running. Its own panel (not the shared Sheet), because the
+ * shared one closes on any of the three.
  */
-import { useEffect, useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Icon } from '@/components/ui';
 
 import { success, tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { fmtDuration } from '../engine/logTypes';
+import { holdCloseIntent, type HoldCloseSource } from '../services/holdTimerRules';
 import { playWorkoutSound } from '../services/workoutSounds';
 import { Glyph } from './TrackerGlyph';
-import { TrackerSheet } from './TrackerSheet';
 
 export interface HoldTimerProps {
   visible: boolean;
@@ -43,6 +51,7 @@ export function HoldTimerSheet({ visible, title, goalSec, onSave, onClose }: Hol
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [pausedMs, setPausedMs] = useState(0);
   const [now, setNow] = useState(Date.now());
+  const [asking, setAsking] = useState(false);
   const saved = useRef(false);
 
   // Fresh state each time the sheet opens. Closed mid-run (backdrop, back, ✕): the clock
@@ -51,12 +60,14 @@ export function HoldTimerSheet({ visible, title, goalSec, onSave, onClose }: Hol
     if (!visible) {
       setStartedAt(null);
       setPausedMs(0);
+      setAsking(false);
       return;
     }
     setGoal(goalSec != null && goalSec > 0 ? goalSec : null);
     setStartedAt(null);
     setPausedMs(0);
     setNow(Date.now());
+    setAsking(false);
     saved.current = false;
   }, [visible, goalSec]);
 
@@ -77,8 +88,17 @@ export function HoldTimerSheet({ visible, title, goalSec, onSave, onClose }: Hol
     if (saved.current || sec <= 0) return;
     saved.current = true;
     setStartedAt(null);
+    setAsking(false);
     onSave(sec);
   };
+
+  // LW-18: a brushed screen never throws the time away; Back / × ask first.
+  const requestClose = (source: HoldCloseSource): void => {
+    const intent = holdCloseIntent(source, started);
+    if (intent === 'close') onClose();
+    else if (intent === 'ask') setAsking(true);
+  };
+  const keepSec = Math.max(1, elapsedSec);
 
   // Countdown reached zero: bell, buzz, save the goal time.
   useEffect(() => {
@@ -106,11 +126,11 @@ export function HoldTimerSheet({ visible, title, goalSec, onSave, onClose }: Hol
   const mainLabel = running ? 'Pause' : started ? 'Resume' : 'Start';
 
   return (
-    <TrackerSheet
+    <HoldPanel
       visible={visible}
       title={title}
       subtitle={countdown ? `Countdown from ${fmtDuration(goal ?? 0)}. The set saves itself at zero.` : 'Stopwatch. Stop when you finish the set.'}
-      onClose={onClose}
+      onClose={requestClose}
     >
       <View style={{ alignItems: 'center', gap: space.md, paddingVertical: space.sm }}>
         <Text
@@ -167,8 +187,143 @@ export function HoldTimerSheet({ visible, title, goalSec, onSave, onClose }: Hol
             </Text>
           </Pressable>
         ) : null}
+
+        {/* LW-18: Back / × mid-hold — the clock keeps running while this is asked. */}
+        {asking && started ? (
+          <View
+            accessibilityLiveRegion="polite"
+            style={{
+              alignSelf: 'stretch',
+              gap: space.sm,
+              padding: space.md,
+              borderRadius: radius.lg,
+              backgroundColor: color.surface,
+              borderWidth: 1,
+              borderColor: color.borderStrong,
+            }}
+          >
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>Stop the timer?</Text>
+            <AskButton label={`Keep ${fmtDuration(keepSec)}`} strong onPress={() => save(keepSec)} />
+            <AskButton
+              label="Discard"
+              danger
+              onPress={() => {
+                setAsking(false);
+                onClose();
+              }}
+            />
+            <AskButton label="Keep going" onPress={() => setAsking(false)} />
+          </View>
+        ) : null}
       </View>
-    </TrackerSheet>
+    </HoldPanel>
+  );
+}
+
+/**
+ * The hold timer's bottom panel: the shared Sheet's look, but it tells WHICH way the member
+ * tried to close it (a tap outside, Back, or ×) so a running clock can ignore a brushed screen.
+ */
+function HoldPanel({
+  visible,
+  title,
+  subtitle,
+  onClose,
+  children,
+}: {
+  visible: boolean;
+  title: string;
+  subtitle: string;
+  onClose: (source: HoldCloseSource) => void;
+  children: ReactNode;
+}) {
+  const insets = useSafeAreaInsets();
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={() => onClose('back')} statusBarTranslucent>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: 'flex-end', paddingTop: insets.top + space.lg }}>
+          <Pressable
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.55)' }}
+            onPress={() => onClose('backdrop')}
+            accessible={false}
+          />
+          <View
+            accessibilityViewIsModal
+            style={{
+              maxHeight: '90%',
+              backgroundColor: color.surfaceRaised,
+              borderTopLeftRadius: radius.xl,
+              borderTopRightRadius: radius.xl,
+              borderWidth: 1,
+              borderColor: color.borderStrong,
+              paddingTop: space.sm,
+              paddingBottom: Math.max(insets.bottom, space.lg) + space.md,
+            }}
+          >
+            <View
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+              style={{ alignSelf: 'center', width: 36, height: 4, borderRadius: 2, backgroundColor: color.borderStrong, marginBottom: space.xs }}
+            />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingLeft: space.xl, paddingRight: space.sm }}>
+              <View style={{ flex: 1 }}>
+                <Text accessibilityRole="header" numberOfLines={2} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
+                  {title}
+                </Text>
+                <Text numberOfLines={3} style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, marginTop: 2 }}>
+                  {subtitle}
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => onClose('close')}
+                accessibilityRole="button"
+                accessibilityLabel="Close timer"
+                style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Icon name="close" size={22} color={color.inkMuted} />
+              </Pressable>
+            </View>
+            <ScrollView
+              style={{ flexGrow: 0, flexShrink: 1 }}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={{ paddingHorizontal: space.xl, paddingTop: space.sm, gap: space.md }}
+            >
+              {children}
+            </ScrollView>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
+function AskButton({ label, onPress, strong, danger }: { label: string; onPress: () => void; strong?: boolean; danger?: boolean }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => ({
+        minHeight: 48,
+        borderRadius: radius.pill,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: space.lg,
+        borderWidth: 1,
+        borderColor: strong ? color.accent : danger ? color.critical : color.border,
+        backgroundColor: strong ? color.accent : pressed ? color.surfaceRaised : 'transparent',
+      })}
+    >
+      <Text
+        style={{
+          fontFamily: type.bodyBold,
+          fontSize: type.size.body,
+          color: strong ? '#1A0B03' : danger ? color.criticalText : color.ink,
+        }}
+      >
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 

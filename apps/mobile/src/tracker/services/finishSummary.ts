@@ -18,10 +18,12 @@ import { fmtVol } from '@/lib/units';
 import { countWord } from '@/lib/words';
 import { fmtTotalDistance } from '@/tracker/engine/logTypes';
 import { getSessionSetMeta } from '@/tracker/db/trackerSets';
+import { splitCards } from '@/tracker/services/cardSplit';
 import type { SetMeta } from '@/tracker/db/trackerSets';
 import type { TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { RECORD_KINDS } from '@/tracker/engine/records';
 import { missesBodyweight, muscleSets, type MuscleSetsSlice } from '@/tracker/engine/volume';
+import { durationText } from '@/tracker/services/finishCheck';
 import { getSessionRecords, type RecordEventRow } from '@/tracker/services/recordsService';
 import { applyVolume, getVolumeContext, toVolumeSession } from '@/tracker/services/volumeService';
 import type { SessionDetail } from '@/types/models';
@@ -109,14 +111,19 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
     getSessionSetMeta(sessionId),
     getVolumeContext(raw.exercises.map((g) => g.exercise.id)),
     getDb()
-      .getFirstAsync<{ easy_week: number | null }>('SELECT easy_week FROM workout_sessions WHERE id = ?', [sessionId])
+      .getFirstAsync<{ easy_week: number | null; title: string | null }>(
+        'SELECT easy_week, title FROM workout_sessions WHERE id = ?',
+        [sessionId],
+      )
       .catch(() => null),
   ]);
   const { records, prs } = orderSessionRecords(
     rawRecords,
     raw.exercises.map((g) => g.exercise.id),
   );
-  const session = applyVolume(raw, ctx);
+  // LW-10: the workout's own name rides on the session (the frozen reader doesn't map it).
+  // LW-28: heavy and back-off cards of one lift come back as two cards, in their places.
+  const session = { ...applyVolume(splitCards(raw, setMeta), ctx), title: easy?.title ?? null };
   const vs = toVolumeSession(session, ctx);
   const durationSec =
     session.endedAt != null ? Math.max(0, Math.round((session.endedAt - session.startedAt) / 1000)) : 0;
@@ -162,6 +169,26 @@ export function finishHeadline(data: Pick<SessionSummaryData, 'session' | 'setMe
   return m > 0 ? `${fmtTotalDistance(m)} · ${sets}` : sets;
 }
 
+/**
+ * The finish screen's answer, in one line (LW-21): "52 min · 18 sets · 12,480 kg lifted ·
+ * 2 records". With no kilos it says the distance; records only when there are some. PURE.
+ */
+export function finishAnswer(
+  data: Pick<SessionSummaryData, 'session' | 'setMeta' | 'totalVolumeKg' | 'workingSetCount' | 'durationSec' | 'records'>,
+): string {
+  const parts: string[] = [];
+  if (data.durationSec > 0) parts.push(durationText(data.durationSec * 1000));
+  parts.push(countWord(data.workingSetCount, 'set'));
+  if (data.totalVolumeKg > 0) parts.push(`${fmtVol(data.totalVolumeKg)} lifted`);
+  else {
+    const m = workoutDistanceM(data);
+    if (m > 0) parts.push(fmtTotalDistance(m));
+  }
+  const records = data.records?.length ?? 0;
+  if (records > 0) parts.push(countWord(records, 'record'));
+  return parts.join(' · ');
+}
+
 /** "1h 04m" / "42m 10s" / "0m 45s" */
 export function formatDuration(totalSec: number): string {
   const h = Math.floor(totalSec / 3600);
@@ -171,24 +198,41 @@ export function formatDuration(totalSec: number): string {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
-/** A playful weight comparison for the finish screen (total volume moved). */
-export function volumeComparison(kg: number): string {
-  const items: { min: number; label: string }[] = [
-    { min: 300000, label: 'a Boeing 747' },
-    { min: 150000, label: 'a blue whale' },
-    { min: 55000, label: 'an M1 tank' },
-    { min: 12000, label: 'a T-Rex' },
-    { min: 5400, label: 'an African elephant' },
-    { min: 2000, label: 'a hippo' },
-    { min: 900, label: 'a grand piano' },
-    { min: 500, label: 'a grizzly bear' },
-    { min: 250, label: 'a giant panda' },
-    { min: 120, label: 'a baby elephant' },
-    { min: 60, label: 'an adult human' },
-    { min: 20, label: 'a car tyre' },
-  ];
-  for (const it of items) if (kg >= it.min) return it.label;
-  return 'a bag of flour';
+/** Real weights the finish screen compares with (typical adults / models). */
+const COMPARE: readonly { kg: number; label: string }[] = [
+  { kg: 100, label: 'a giant panda' },
+  { kg: 270, label: 'a grizzly bear' },
+  { kg: 450, label: 'a grand piano' },
+  { kg: 1_200, label: 'a small car' },
+  { kg: 5_000, label: 'an African elephant' },
+  { kg: 150_000, label: 'a blue whale' },
+];
+
+/**
+ * A playful but TRUE comparison for the kilos lifted (L-06): "a grizzly bear" only when the
+ * total is within 25 % of one; "2× an African elephant" when it is a clean multiple (within
+ * 10 %) of the biggest thing it passes; otherwise null — no comparison beats a wrong one. PURE.
+ */
+export function volumeComparison(kg: number): string | null {
+  if (!(kg > 0)) return null;
+  let best: { label: string; err: number } | null = null;
+  for (const it of COMPARE) {
+    const err = Math.abs(kg - it.kg) / it.kg;
+    if (err <= 0.25 && (!best || err < best.err)) best = { label: it.label, err };
+  }
+  if (best) return best.label;
+  const below = COMPARE.filter((it) => it.kg <= kg);
+  const big = below[below.length - 1];
+  if (!big) return null;
+  const times = Math.round(kg / big.kg);
+  if (times < 2 || times > 10) return null;
+  return Math.abs(kg - times * big.kg) / (times * big.kg) <= 0.1 ? `${times}× ${big.label}` : null;
+}
+
+/** The workout's name: the one it was saved with, else (older workouts) its day type. PURE. */
+export function sessionTitle(s: { dayType: string; title?: string | null }): string {
+  const t = s.title?.trim();
+  return t ? t : dayTypeLabel(s.dayType);
 }
 
 /** Human label for a day type, matching the coach service. */

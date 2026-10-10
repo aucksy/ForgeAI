@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 8;
+export const TRACKER_SCHEMA_VERSION = 10;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -109,6 +109,14 @@ export async function initTrackerSchema(): Promise<void> {
   // v8 (v0.28.0): the member's own distance exercise is kept in km or metres ('km' / 'm';
   // NULL = the library's unit, else km). Display only — distances are stored in metres.
   await ensureColumn('exercises', 'dist_unit', 'TEXT');
+  // v9 (Phase 2, the calm Finish — LW-10): a workout's own name ("Push Day A", "Evening
+  // workout"; NULL = older workouts, which keep showing their day type).
+  await ensureColumn('workout_sessions', 'title', 'TEXT');
+  // v10 (Phase 2, packet B — LW-05 / LW-28 / TG-05): a set's card among the workout's cards of
+  // the SAME exercise (Bench heavy = 0, Bench back-off = 1). NULL = the first card (every older
+  // set), so a workout logging a lift once is unchanged; the two cards stay two after saving,
+  // and each reads its own last time and Target.
+  await ensureColumn('set_entries', 'card_index', 'INTEGER');
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }

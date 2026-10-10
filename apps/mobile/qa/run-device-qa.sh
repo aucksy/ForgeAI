@@ -143,7 +143,8 @@ log "part H1 start"
 maestro test --format junit --output "$OUT/part-h1.xml" --test-output-dir "$OUT/part-h1" "$QA_DIR/v0261-h.yaml" \
   > "$OUT/part-h1.log" 2>&1 || { status=1; log "PART H1 FAILED"; }
 adb shell dumpsys notification --noredact > "$OUT/h-card-after-plus15.txt"
-# The card must be swipe-away (no ongoing / no-clear flag), on the quiet channel, with both buttons.
+# The card must be swipe-away (no ongoing / no-clear flag), on its Phase 2 channel (rest-card-v2,
+# no sound), with both buttons. Its shade view counts down; notif.py reads the title it still sets.
 python3 "$QA_DIR/notif.py" card "$OUT/h-card-after-plus15.txt" "Rest 3:15" >> "$OUT/timeline.txt" || status=1
 adb shell cmd statusbar collapse >/dev/null 2>&1 || true
 adb shell input keyevent KEYCODE_HOME

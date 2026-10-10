@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The rest card's layout is looked up by name (RestCard.kt): keep it when release builds shrink resources. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@layout/forge_rest_card,@id/forge_rest_left,@id/forge_rest_line,@id/forge_rest_sub" />

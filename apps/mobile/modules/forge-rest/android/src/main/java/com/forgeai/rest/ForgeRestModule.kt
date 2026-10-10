@@ -11,6 +11,10 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *  - getState()                    — the rest as the card knows it ({ endsAt: 0 } = none); first
  *                                    settles a rest that ended while the app was away;
  *  - takeOpenRequest()             — true once if the app was opened from a rest alert.
+ * Phase 2, packet D (D8, RT-02, RT-05, RT-08, RT-12):
+ *  - canScheduleExact() / openExactAlarmSettings()      — "Alarms & reminders";
+ *  - notificationsEnabled() / openNotificationSettings() — ForgeAI's notifications;
+ *  - is24Hour(), ringerMode() (0 silent, 1 vibrate, 2 normal), setRingThroughDnd(on).
  * Events: onRestChange { kind: "add" | "skip" | "end", endsAt, startedAt }, onOpenWorkout.
  */
 class ForgeRestModule : Module() {
@@ -68,12 +72,50 @@ class ForgeRestModule : Module() {
       val c = ctx
       // The app is back: a rest that ended while it was away is alerted or settled now (RT-01).
       if (c != null) RestCard.settle(c)
+      // ...and a running one's alarm is set again, exact if "Alarms & reminders" was just allowed.
+      if (c != null) RestCard.rearm(c)
       val r = if (c != null) RestCard.load(c) else null
       mapOf(
         "endsAt" to (r?.endsAt ?: 0L).toDouble(),
         "startedAt" to (r?.startedAt ?: 0L).toDouble(),
         "next" to r?.next,
       )
+    }
+
+    Function("canScheduleExact") {
+      val c = ctx ?: return@Function true
+      RestCard.canScheduleExact(c)
+    }
+
+    Function("openExactAlarmSettings") {
+      val c: Context = appContext.currentActivity ?: ctx ?: return@Function false
+      RestCard.openExactAlarmSettings(c)
+    }
+
+    Function("notificationsEnabled") {
+      val c = ctx ?: return@Function true
+      RestCard.notificationsEnabled(c)
+    }
+
+    Function("openNotificationSettings") {
+      val c: Context = appContext.currentActivity ?: ctx ?: return@Function false
+      RestCard.openNotificationSettings(c)
+    }
+
+    Function("is24Hour") {
+      val c = ctx ?: return@Function false
+      RestCard.is24Hour(c)
+    }
+
+    Function("ringerMode") {
+      val c = ctx ?: return@Function 2
+      RestCard.ringerMode(c)
+    }
+
+    Function("setRingThroughDnd") { on: Boolean ->
+      val c = ctx ?: return@Function false
+      RestCard.setRingThroughDnd(c, on)
+      true
     }
 
     Function("takeOpenRequest") {

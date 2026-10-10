@@ -68,7 +68,7 @@ function card(patch: Partial<DraftExercise>): DraftExercise {
 }
 
 describe('LW-04 the grey hint follows the weight just lifted (no Target on the card)', () => {
-  it.fails('LW-04 known defect: set 1 ticked at 75 kg (last time 72.5) → set 2 hints 75, not last time\'s 72.5', () => {
+  it('LW-04: set 1 ticked at 75 kg (last time 72.5) → set 2 hints 75, not last time\'s 72.5', () => {
     const s1 = set({ weightKg: 75, reps: 5, done: true });
     const s2 = set();
     const c = card({
@@ -80,7 +80,7 @@ describe('LW-04 the grey hint follows the weight just lifted (no Target on the c
 });
 
 describe('LW-06 a minus sign typed by mistake is not kept (a negative weight is dropped at save)', () => {
-  it.fails('LW-06 known defect: parseTyped("-60") never yields a negative weight', () => {
+  it('LW-06: parseTyped("-60") never yields a negative weight', () => {
     const v = parseTyped('-60');
     expect(v == null || v >= 0).toBe(true);
   });

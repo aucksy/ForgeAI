@@ -64,19 +64,33 @@ appId: com.forgeai.app
 - takeScreenshot: 05-rest-picker
 - tapOn: "Rest 30s"
 - takeScreenshot: 06-rest-set-to-30s
+# Phase 2 (LW-27): every set control names its exercise and set, e.g.
+# "Barbell Bench Press set 1. Change set type", "Mark Barbell Bench Press set 1 complete".
 - tapOn:
-    text: 'Set 1\. Change set type'
+    text: '.* set 1\. Change set type'
     index: 0
 - takeScreenshot: 07-set-type-sheet
 - back
+# Set 1 is empty: the tick saves the grey hint shown in its boxes (Phase 2, packet B).
 - tapOn:
-    text: "Mark set complete"
+    text: 'Mark .* set 1 complete'
     index: 0
 - takeScreenshot: 08-first-set-ticked-rest-running
+# D8: the first rest asks "Get rest alerts on time?" only when exact alarms are off. The script
+# allows them before this part, so it should not show; if it does, answer "Not now".
+- runFlow:
+    when:
+      visible: 'Get rest alerts on time\?'
+    commands:
+      - takeScreenshot: 08a-rest-alerts-question
+      - tapOn:
+          text: "Not now"
+          below:
+            text: "Allow"
 - assertVisible: "Skip rest"
 - tapOn: "Skip rest"
 - tapOn:
-    text: "Weight in kilograms, set 2"
+    text: '.* set 2 weight, kilograms'
     index: 0
 - waitForAnimationToEnd
 - eraseText
@@ -85,7 +99,7 @@ appId: com.forgeai.app
 - takeScreenshot: 08b-typed-300
 - hideKeyboard
 - tapOn:
-    text: "Mark set complete"
+    text: 'Mark .* set 2 complete'
     index: 0
     # The rest countdown re-renders 4x a second, so "wait until the screen is still"
     # would sit out the whole 3.5 s the record toast is up.
@@ -94,4 +108,10 @@ appId: com.forgeai.app
     visible: "New record.*"
     timeout: 3000
 - takeScreenshot: 09-new-record
+# D7: 300 kg is ~4x the demo bench best (72.5 kg), so the row asks "300 kg — that's 4× your
+# best. Keep it?" under the set (already saved; it never refuses). It is on purpose: Keep.
+- tapOn:
+    text: 'Keep 300.*'
+    optional: true
+    waitToSettleTimeoutMs: 300
 - assertVisible: "Skip rest"

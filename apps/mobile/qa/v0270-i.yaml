@@ -1,5 +1,6 @@
 # v0.27.0 device QA, part I — the rest of Phase 5 (runs after parts A–H). Strong import (an
-# older Strong file in pounds and miles, pushed to Downloads by the script) → Units "lb, miles"
+# older Strong file in pounds and miles, pushed to Downloads by the script; since Phase 1 it is
+# the import over the demo: the demo goes, the member gives a name) → Units "lb, miles"
 # → the imported bench in lb and the run's pace per mile → Health Connect: Connect, allow on
 # Health Connect's own screen, send past workouts → workout reminders → a home-screen widget
 # → a workout logged in lb and finished (sent to Health Connect).
@@ -57,6 +58,25 @@ appId: com.forgeai.app
     visible: "This file does not say its units.*"
     timeout: 20000
 - tapOn: "Pounds and miles"
+# Phase 1 (DS-05 / IM-01): part A loaded the demo, so this first import is over the demo. The
+# preview says the whole demo goes first (the member's own workouts from parts A–H stay) and asks
+# for the member's name (required: an empty name is refused with "Your name, please."). The name
+# box is found by its hint; "Your name" is also the label above it.
+- scrollUntilVisible:
+    element: "First and last name"
+    centerElement: true
+    timeout: 15000
+- assertVisible: "The demo goes first"
+- assertVisible: ".*Your own \\d+ workouts? stays?\\."
+- tapOn: "First and last name"
+- inputText: "Test Member"
+- hideKeyboard
+# Replace / Merge sit below the demo card. Merge is already chosen (own workouts are here); tap it
+# anyway, the way a member confirms the choice.
+- scrollUntilVisible:
+    element: "^Merge$"
+    centerElement: true
+    timeout: 15000
 - tapOn: "^Merge$"
 - takeScreenshot: 121-strong-preview
 - scrollUntilVisible:
@@ -67,6 +87,8 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "2 workouts imported"
     timeout: 30000
+# The demo's removal can be undone on this screen (a safety copy was taken first).
+- assertVisible: "Undo import"
 - takeScreenshot: 122-strong-imported
 - tapOn: "^Done$"
 # ---------------------------------------------------------------- pounds and miles
@@ -191,20 +213,23 @@ appId: com.forgeai.app
 - tapOn: "Search exercises"
 - inputText: " bench press"
 - hideKeyboard
+# Phase 2 (LW-15): tick the exercise in the picker, then "Add 1".
 - tapOn:
-    text: "Add Barbell Bench Press"
+    text: "Select Barbell Bench Press"
     index: 0
+- tapOn: "Add 1"
+# LW-27: "Barbell Bench Press set 1 weight, pounds" / "… set 1 reps".
 - extendedWaitUntil:
-    visible: "Weight in pounds, set 1"
+    visible: ".* set 1 weight, pounds"
     timeout: 15000
 - tapOn:
-    text: "Weight in pounds, set 1"
+    text: ".* set 1 weight, pounds"
     below:
       text: "More for Barbell Bench Press"
 - eraseText
 - inputText: " 145"
 - tapOn:
-    text: "Reps, set 1"
+    text: ".* set 1 reps"
     below:
       text: "More for Barbell Bench Press"
 - eraseText
@@ -212,20 +237,33 @@ appId: com.forgeai.app
 - hideKeyboard
 - takeScreenshot: 133-set-in-lb
 - tapOn:
-    text: "Mark set complete"
+    text: "Mark .* set 1 complete"
     index: 0
     waitToSettleTimeoutMs: 300
 - tapOn:
     text: "Skip rest"
     optional: true
     waitToSettleTimeoutMs: 300
+# Phase 2 (LW-02): Finish opens the "Finish workout?" sheet; its own button (above its
+# "Keep going"; the screen's button sits behind it) saves.
 - tapOn:
     text: "Finish workout"
     index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
 - tapOn:
-    text: '(?i)keep original'
-    optional: true
+    text: "Finish workout"
+    above:
+      text: "Keep going"
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+# An empty workout has no routine to update; if the summary ever asks (LW-11, the app's own
+# sheet), keep the routine as it is: the button under "Update routine".
+- tapOn:
+    text: "Keep original"
+    below:
+      text: "Update routine"
+    optional: true
 - takeScreenshot: 134-finish-in-lb

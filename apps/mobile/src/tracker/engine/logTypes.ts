@@ -136,6 +136,17 @@ export function repsPerSide(mode: LoadMode): boolean {
   return mode === 'side' || mode === 'both_side';
 }
 
+/**
+ * TG-03: a weight typed under one counting, read under another. "Each dumbbell" types ONE
+ * dumbbell; "as typed" the whole load — so 50 as typed is 25 each, and 25 each is 50 as
+ * typed. Same physical load, so the Target and PREVIOUS never double or halve when the
+ * member changes Counting. Reps are not touched. `from` unknown → unchanged.
+ */
+export function convertCounting(weightKg: number, from: LoadMode | null | undefined, to: LoadMode): number {
+  if (!from || weightIsEach(from) === weightIsEach(to)) return weightKg;
+  return weightIsEach(from) ? weightKg * 2 : weightKg / 2;
+}
+
 /** Column headers for the set table. */
 export function columnHeads(
   t: LogType,

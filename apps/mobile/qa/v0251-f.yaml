@@ -42,26 +42,29 @@ appId: com.forgeai.app
 - tapOn: "Search exercises"
 - inputText: " treadmill"
 - hideKeyboard
+# Phase 2 (LW-15): tick the exercise in the picker, then "Add 1".
 - tapOn:
-    text: "Add Treadmill Run"
+    text: "Select Treadmill Run"
     index: 0
+- tapOn: "Add 1"
+# LW-27: every box names its exercise and set ("Treadmill Run set 1 distance, kilometres").
 - extendedWaitUntil:
-    visible: "Distance in kilometres, set 1"
+    visible: ".* set 1 distance, kilometres"
     timeout: 15000
 # Set 1: a 400 m sprint at 3:20 /km — faster than 5:00 /km, but under 1 km: no record.
 - tapOn:
-    text: "Distance in kilometres, set 1"
+    text: ".* set 1 distance, kilometres"
     below:
       text: "More for Treadmill Run"
 - inputText: " 0.4"
 - tapOn:
-    text: "Time, minutes and seconds, set 1"
+    text: ".* set 1 time, minutes and seconds"
     below:
       text: "More for Treadmill Run"
 - inputText: " 120"
 - hideKeyboard
 - tapOn:
-    text: "Mark set complete"
+    text: "Mark .* set 1 complete"
     below:
       text: "More for Treadmill Run"
     waitToSettleTimeoutMs: 300
@@ -72,19 +75,18 @@ appId: com.forgeai.app
 # Set 2: 2 km in 9:00 — 4:30 /km beats 5:00 /km.
 - tapOn: "Add set"
 - tapOn:
-    text: "Distance in kilometres, set 2"
+    text: ".* set 2 distance, kilometres"
     below:
       text: "More for Treadmill Run"
 - inputText: " 2"
 - tapOn:
-    text: "Time, minutes and seconds, set 2"
+    text: ".* set 2 time, minutes and seconds"
     below:
       text: "More for Treadmill Run"
 - inputText: " 900"
 - hideKeyboard
-# Set 1 now reads "Set complete, tap to undo": the only "Mark set complete" left is set 2's.
 - tapOn:
-    text: "Mark set complete"
+    text: "Mark .* set 2 complete"
     below:
       text: "More for Treadmill Run"
     waitToSettleTimeoutMs: 300
@@ -95,12 +97,27 @@ appId: com.forgeai.app
 - tapOn:
     text: "Skip rest"
     optional: true
+# Phase 2 (LW-02): Finish opens the "Finish workout?" sheet; its own button (above its
+# "Keep going"; the screen's button sits behind it) saves. Both sets are ticked: nothing to ask.
 - tapOn:
     text: "Finish workout"
     index: 0
 - extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+# LW-21: the records fold shut under "New records": open them before looking for Best pace.
+- scrollUntilVisible:
+    element: "New records"
+    centerElement: true
+    timeout: 20000
+- tapOn: "New records"
 - scrollUntilVisible:
     element: 'Best pace.*'
     centerElement: true

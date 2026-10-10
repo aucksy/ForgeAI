@@ -47,6 +47,9 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    // Real-SQLite (sql.js) tests take a few seconds each when the whole suite runs in parallel
+    // on a slow machine; 5 s timed some out at random. A real hang still fails, after 30 s.
+    testTimeout: 30000,
     include: ['test/**/*.test.ts'],
     // Bundled pictures (Phase 2 exercise demos) load as opaque numbers, as under Metro.
     setupFiles: ['test/setup/assets.ts'],

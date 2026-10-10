@@ -348,3 +348,59 @@ describe('Save my history: pure pieces', () => {
     expect(csv).toContain('"He said ""go"", then\nleft"');
   });
 });
+
+describe('Save my history: workout names and two cards of one lift (review #9)', () => {
+  it('the name, day and notes, and heavy + back-off Bench as two cards in their places, come back exactly', async () => {
+    const dbA = await phone();
+    const { createSession } = await import('@/db/repos/workoutRepo');
+    const { addSetsWithMeta } = await import('@/tracker/db/trackerSets');
+    const { getDb } = await import('@/db');
+    const bench = idOf(dbA, 'Barbell Bench Press');
+    const fly = idOf(dbA, libraryName(dbA, "(log_type IS NULL OR log_type = 'weight_reps') AND name LIKE '%Fly%'"));
+    const named = await createSession({
+      dateISO: '2026-10-03', dayType: 'push', notes: 'Heavy day', source: 'manual',
+      startedAt: new Date(2026, 9, 3, 18, 5, 30, 123).getTime(), endedAt: new Date(2026, 9, 3, 19, 20).getTime(),
+    });
+    await getDb().runAsync('UPDATE workout_sessions SET title = ? WHERE id = ?', ['Morning "A" workout', named.id]);
+    await addSetsWithMeta(named.id, [
+      { exerciseId: bench, weightKg: 100, reps: 5, note: 'Heavy' },
+      { exerciseId: bench, weightKg: 100, reps: 5 },
+      { exerciseId: fly, weightKg: 14, reps: 12 },
+      { exerciseId: bench, weightKg: 70, reps: 10, cardIndex: 1, note: 'Back-off, slow' },
+      { exerciseId: bench, weightKg: 70, reps: 10, cardIndex: 1 },
+    ]);
+    const plain = await createSession({
+      dateISO: '2026-10-05', dayType: 'legs', notes: null, source: 'manual',
+      startedAt: new Date(2026, 9, 5, 7, 0, 10, 5).getTime(), endedAt: new Date(2026, 9, 5, 8, 0).getTime(),
+    });
+    await addSetsWithMeta(plain.id, [{ exerciseId: bench, weightKg: 50, reps: 5 }]);
+
+    const exp = await import('@/tracker/services/historyExport');
+    const csv = exp.hevyCsvFromRows(await exp.readHistoryRows(), 'metric');
+    // The workout's own name is its Hevy title (with the day it was, for this app to read back).
+    expect(csv).toContain('"Push · Morning ""A"" workout","3 Oct 2026, 18:05"');
+    expect(csv).toContain('"Legs","5 Oct 2026, 07:00"');
+
+    const read = (db: RealDb) => ({
+      sessions: db.all<{ title: string | null; day_type: string; notes: string | null }>(
+        'SELECT title, day_type, notes FROM workout_sessions ORDER BY started_at',
+      ),
+      sets: db.all<{ w: number; card: number; note: string | null; ex: string }>(
+        `SELECT se.weight_kg AS w, COALESCE(se.card_index, 0) AS card, se.note, e.name AS ex
+           FROM set_entries se JOIN workout_sessions s ON s.id = se.session_id JOIN exercises e ON e.id = se.exercise_id
+          ORDER BY s.started_at, se.rowid`,
+      ),
+    });
+    const a = read(dbA);
+
+    const dbB = await phone();
+    const { parseHevyBase64, runImport } = await import('@/tracker/services/hevyImport');
+    const res = await runImport(parseHevyBase64(Buffer.from(csv, 'utf8').toString('base64')), { mode: 'replace' });
+    expect(res.imported).toBe(2);
+    const b = read(dbB);
+    expect(b.sessions).toEqual(a.sessions);
+    expect(b.sessions[0]).toEqual({ title: 'Morning "A" workout', day_type: 'push', notes: 'Heavy day' });
+    expect(b.sets).toEqual(a.sets);
+    expect(b.sets.map((s) => [s.w, s.card])).toEqual([[100, 0], [100, 0], [14, 0], [70, 1], [70, 1], [50, 0]]);
+  });
+});

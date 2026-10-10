@@ -59,7 +59,8 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
   {
     name: 'workout_sessions',
     // + `easy_week` (Phase 4, tracker schema v7): a workout of a plan's easy week.
-    cols: ['id', 'date_iso', 'started_at', 'ended_at', 'day_type', 'notes', 'source', 'easy_week'],
+    // + `title` (tracker schema v9): the workout's own name. Older backups → NULL.
+    cols: ['id', 'date_iso', 'started_at', 'ended_at', 'day_type', 'notes', 'source', 'easy_week', 'title'],
   },
   {
     name: 'set_entries',
@@ -67,8 +68,9 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
     // They exist at runtime via initTrackerSchema; SELECTing/INSERTing them keeps the
     // Drive backup lossless. Old backups lack these keys → batchInsert's `row[c] ?? null`
     // restores them as NULL (backward-compatible; no SCHEMA_VERSION bump needed).
+    // + `card_index` (tracker schema v10, LW-28): heavy and back-off cards of one lift stay two.
     cols: ['id', 'session_id', 'exercise_id', 'set_number', 'weight_kg', 'reps', 'is_warmup',
-      'rpe', 'set_type', 'note', 'superset_group', 'duration_sec', 'distance_m', 'load_mode'],
+      'rpe', 'set_type', 'note', 'superset_group', 'duration_sec', 'distance_m', 'load_mode', 'card_index'],
   },
   {
     name: 'personal_records',

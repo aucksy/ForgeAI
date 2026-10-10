@@ -1,6 +1,7 @@
 # Phase 1 device QA, part B — after the phone slept through the rest.
 # Notification shade is already open (adb). Tap the workout card → back in the workout →
-# minimise → mini bar → remove an exercise → finish → "Update routine?" → summary → Profile.
+# minimise → mini bar → remove an exercise → Finish → the "Finish workout?" sheet → summary with
+# its "Update routine?" sheet → Keep original → Profile.
 appId: com.forgeai.app
 ---
 - takeScreenshot: 10-notification-shade
@@ -29,14 +30,33 @@ appId: com.forgeai.app
 - tapOn: "Remove exercise"
 - tapOn: "(?i)^remove$"
 - takeScreenshot: 13-exercise-removed
+# Phase 2 (LW-02): Finish opens the "Finish workout?" sheet; its own "Finish workout" saves.
+# The sheet's button is the one above its "Keep going" (the screen's button sits behind it).
 - tapOn:
     text: "Finish workout"
     index: 0
 - extendedWaitUntil:
-    visible: "Update .*"
-    timeout: 20000
+    visible: 'Finish workout\?'
+    timeout: 10000
+- takeScreenshot: 13b-finish-sheet
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+# LW-11: "Update routine?" is now the app's own sheet over the summary, asked once it shows.
+- extendedWaitUntil:
+    visible: "Update routine"
+    timeout: 30000
+- assertVisible: 'Update ".*"\?'
 - takeScreenshot: 14-update-routine-prompt
-- tapOn: "(?i)keep original"
+# "Keep original" is also the sheet's × and its dimmed backdrop: tap the button under "Update routine".
+- tapOn:
+    text: "Keep original"
+    below:
+      text: "Update routine"
+- extendedWaitUntil:
+    notVisible: "Update routine"
+    timeout: 10000
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000

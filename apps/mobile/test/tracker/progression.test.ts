@@ -405,7 +405,9 @@ describe('review fixes', () => {
     const ramp = (d: string) => sess(d, [[60, 12], [70, 12], [80, 12]]);
     const t = run(ex(), range(8, 12), [ramp('2026-10-03'), ramp('2026-09-30'), ramp('2026-09-27'), ramp('2026-09-24')]);
     expect(t.rule).toBe('R2');
-    expect(t.targetWeightKg).toBe(82.5);
+    // TG-01: every weight he used (60, 70, 80) is a multiple of 5, so his bar moves in 5 kg
+    // (was 82.5, a weight his plates never made).
+    expect(t.targetWeightKg).toBe(85);
     const top = run(ex(), range(8, 12), [sess('2026-10-03', [[100, 6], [90, 8], [85, 10]])]);
     expect(top.reason).toContain('on your top set');
   });
@@ -439,14 +441,16 @@ describe('review fixes', () => {
     expect(t.reason).not.toMatch(/0 kg/);
   });
 
-  it('M4: a comeback ramp (80 → 70 → 60 → 50) does not teach a 10 kg step', () => {
+  it('M4: a comeback ramp (80 → 70 → 60 → 50) goes back up one rung he has used, never past it', () => {
     const h = [
       sess('2026-10-03', [[50, 12], [50, 12], [50, 12]]),
       sess('2026-09-30', [[60, 8], [60, 8], [60, 8]]),
       sess('2026-09-27', [[70, 8], [70, 8], [70, 8]]),
       sess('2026-09-24', [[80, 8], [80, 8], [80, 8]]),
     ];
-    expect(run(ex(), range(8, 12), h).targetWeightKg).toBe(52.5);
+    // TG-01: the next weight on his own ladder (60, lifted a week ago) — not 52.5, never
+    // loaded — and not a learned "+10 kg" past it.
+    expect(run(ex(), range(8, 12), h).targetWeightKg).toBe(60);
   });
 
   it('L2: a cut is the nearest whole steps to 10%, not more', () => {

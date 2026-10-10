@@ -111,6 +111,21 @@ export async function ensureAlertPermission(): Promise<void> {
 }
 
 /**
+ * Phase 2 (RT-02): are notifications on for ForgeAI? Null = unknown (web, tests, no module).
+ * Never asks — only reads.
+ */
+export async function notificationsGranted(): Promise<boolean | null> {
+  const n = N();
+  if (!n) return null;
+  try {
+    const cur = await n.getPermissionsAsync();
+    return cur.granted === true;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Schedule (or move) the "Rest is over" alert. v0.26.1: on a build with the native rest card
  * (`restCard.ts`) the card shows the rest — also on the watch — and posts "Rest is over" itself,
  * so the old scheduled alert is only cancelled. Without it, the Phase 1 alert as before.

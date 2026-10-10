@@ -48,6 +48,7 @@ import { hasReps, type LogType } from '@/tracker/engine/logTypes';
 import { alternativesFor, type Alternative } from '@/tracker/plans/builder';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { swapContextFor } from '@/tracker/services/plansService';
+import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
@@ -291,12 +292,13 @@ export default function RoutineEditorScreen() {
       async () => {
         setStartError(null);
         await hydrate();
-        if (useActiveWorkout.getState().active) {
-          Alert.alert('Finish your current workout first', 'You already have a workout in progress.');
-          return;
+        // LW-24: a workout already open is never a dead end: Resume it, or discard it and start this.
+        if ((await askAboutOpenWorkout()) === 'resume') {
+          showActiveWorkout(router);
+          return 'left' as const;
         }
         await startFromPlanDay(id);
-        router.replace('/session/active');
+        showActiveWorkout(router);
         return 'left' as const;
       },
       () => setStartError(START_FAILED),

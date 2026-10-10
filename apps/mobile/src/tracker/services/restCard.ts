@@ -32,6 +32,14 @@ interface Native {
   clear(dismissOver: boolean): boolean;
   getState(): { endsAt: number; startedAt: number; next: string | null };
   takeOpenRequest(): boolean;
+  /** Phase 2 (D8, RT-02, RT-05, RT-08, RT-12); an older native piece lacks these. */
+  canScheduleExact?(): boolean;
+  openExactAlarmSettings?(): boolean;
+  notificationsEnabled?(): boolean;
+  openNotificationSettings?(): boolean;
+  is24Hour?(): boolean;
+  ringerMode?(): number;
+  setRingThroughDnd?(on: boolean): boolean;
   addListener(event: string, cb: (e: Record<string, unknown>) => void): { remove: () => void };
 }
 
@@ -157,4 +165,66 @@ export function reconcileWithCard(
   }
   if (app.endsAt != null && app.onCard) return { do: 'stop' };
   return { do: 'nothing' };
+}
+
+// ------------------------------------------------------------------ Phase 2: alerts you never miss
+
+/** Call an optional native function; undefined when the piece or the function is missing. */
+function call<T>(pick: (n: Native) => T | undefined): T | undefined {
+  try {
+    const n = N();
+    if (!n) return undefined;
+    return pick(n);
+  } catch {
+    return undefined;
+  }
+}
+
+/** "Workout sounds" changed (RT-07): the running rest's "Rest is over" follows at once. */
+export function setRestQuiet(quiet: boolean): void {
+  call((n) => n.setQuiet?.(quiet));
+}
+
+/** Profile → "Ring through Do Not Disturb" (RT-12). */
+export function setRestRingThroughDnd(on: boolean): void {
+  call((n) => n.setRingThroughDnd?.(on));
+}
+
+/** May the app schedule exact alarms ("Alarms & reminders")? Null = unknown (no native piece). */
+export function canScheduleExact(): boolean | null {
+  const v = call((n) => n.canScheduleExact?.());
+  return typeof v === 'boolean' ? v : null;
+}
+
+/** Are the app's notifications on? Null = unknown here (ask expo-notifications instead). */
+export function nativeNotificationsEnabled(): boolean | null {
+  const v = call((n) => n.notificationsEnabled?.());
+  return typeof v === 'boolean' ? v : null;
+}
+
+/** Android's "Alarms & reminders" page for ForgeAI. False when it could not be opened. */
+export function openExactAlarmSettings(): boolean {
+  return call((n) => n.openExactAlarmSettings?.()) === true;
+}
+
+/** Android's notification settings for ForgeAI. False when it could not be opened. */
+export function openNotificationSettings(): boolean {
+  return call((n) => n.openNotificationSettings?.()) === true;
+}
+
+/** The phone's 12/24-hour setting (RT-05). Null = unknown. */
+export function phoneUses24Hour(): boolean | null {
+  const v = call((n) => n.is24Hour?.());
+  return typeof v === 'boolean' ? v : null;
+}
+
+export type RingerMode = 'normal' | 'vibrate' | 'silent';
+
+/** The phone's ringer (RT-08). Null = unknown (no native piece): the bell plays as before. */
+export function ringerMode(): RingerMode | null {
+  const v = call((n) => n.ringerMode?.());
+  if (v === 0) return 'silent';
+  if (v === 1) return 'vibrate';
+  if (v === 2) return 'normal';
+  return null;
 }

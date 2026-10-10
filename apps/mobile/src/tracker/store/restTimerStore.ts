@@ -11,6 +11,13 @@
  *    fire a second, late alert — the notification already did that job.
  *
  * The default rest length is stored in the frozen `meta` table (unchanged key).
+ *
+ * Phase 2, packet D:
+ *  - RT-03 / LW-29: the rest remembers the set whose tick started it (`source`); unticking
+ *    that set (or the second tap of a quick double tap) cancels the rest, card and alarm too.
+ *  - RT-04: "−15" past zero ends the rest quietly, like Skip — no bell, no "Rest is over".
+ *  - RT-08: the in-app bell follows the ringer: silent or vibrate → no sound (the haptic stays).
+ *  - RT-11: saving the default rest reports whether it was kept.
  */
 import { AppState } from 'react-native';
 import { create } from 'zustand';
@@ -18,13 +25,22 @@ import { create } from 'zustand';
 import { getMeta, setMeta } from '@/db';
 import { success } from '@/lib/haptics';
 
-import { DEFAULT_REST_SEC } from '../services/restRules';
+import { ringerMode } from '../services/restCard';
+import { DEFAULT_REST_SEC, REST_MAX_SEC, REST_MIN_SEC } from '../services/restRules';
 import { cancelRestEnd, scheduleRestEnd } from '../services/workoutAlerts';
 import { playWorkoutSound } from '../services/workoutSounds';
 
 const DEFAULT_KEY = 'restTimerDefaultSec';
-const MIN_SEC = 5;
-const MAX_SEC = 600;
+const MIN_SEC = REST_MIN_SEC;
+const MAX_SEC = REST_MAX_SEC;
+/** A tick noted this recently is the one a `start` belongs to (both run in the same tap). */
+const TICK_LINK_MS = 2000;
+
+/** The set whose tick started a rest. */
+export interface RestSource {
+  exKey: string;
+  setKey: string;
+}
 /** Later than this past zero = the app was asleep; the notification already alerted. */
 const LATE_MS = 1500;
 
@@ -37,11 +53,18 @@ export interface RestTimerState {
   startedAt: number | null;
   /** What comes next, for the notification text ("Bench Press"). */
   nextLabel: string | null;
+  /** RT-03: the set whose tick started this rest (null: adopted from the card, or unknown). */
+  source: RestSource | null;
   defaultSec: number;
   loaded: boolean;
   loadDefault: () => Promise<void>;
-  setDefaultSec: (sec: number) => void;
+  /** RT-11: resolves false when the choice could not be saved (it still applies until restart). */
+  setDefaultSec: (sec: number) => Promise<boolean>;
   start: (sec?: number, nextLabel?: string | null) => void;
+  /** RT-03: a set was just ticked; a rest started in the same tap belongs to it. */
+  noteTick: (exKey: string, setKey: string) => void;
+  /** RT-03: this set was unticked; if its tick started the running rest, cancel that rest. */
+  cancelIfStartedBy: (exKey: string, setKey: string) => void;
   addSec: (delta: number) => void;
   skip: () => void;
   /**
@@ -57,6 +80,17 @@ export interface RestTimerState {
 }
 
 let expiry: ReturnType<typeof setTimeout> | null = null;
+let pendingTick: (RestSource & { at: number }) | null = null;
+
+/** RT-08: may the bell make a sound? Silent or vibrate → no; unknown (no native piece) → yes. */
+function ringerAllowsSound(): boolean {
+  try {
+    const m = ringerMode();
+    return m == null || m === 'normal';
+  } catch {
+    return true;
+  }
+}
 function clearExpiry(): void {
   if (expiry) clearTimeout(expiry);
   expiry = null;
@@ -74,13 +108,13 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
         // bell too would ring twice.
         if (Date.now() - endsAt <= LATE_MS && AppState.currentState === 'active') {
           success();
-          playWorkoutSound('rest');
+          if (ringerAllowsSound()) playWorkoutSound('rest');
         }
         // Do NOT cancel/dismiss the scheduled alert here. In the background it is
         // the member's only alert, and it fires at this same moment — dismissing it
         // would delete it as it appears (seen on the device QA emulator). In the
         // foreground the alert handler suppresses it anyway.
-        set({ endsAt: null });
+        set({ endsAt: null, source: null });
       },
       Math.max(0, endsAt - Date.now()),
     );
@@ -91,6 +125,7 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
     durationSec: DEFAULT_REST_SEC,
     startedAt: null,
     nextLabel: null,
+    source: null,
     defaultSec: DEFAULT_REST_SEC,
     loaded: false,
 
@@ -101,11 +136,16 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
       set({ defaultSec: Number.isFinite(n) && n >= 0 ? n : DEFAULT_REST_SEC, loaded: true });
     },
 
-    setDefaultSec: (sec) => {
+    setDefaultSec: async (sec) => {
       // 0 = no default timer; otherwise clamp to a sane range.
       const clamped = sec <= 0 ? 0 : Math.max(MIN_SEC, Math.min(MAX_SEC, Math.round(sec)));
       set({ defaultSec: clamped, loaded: true });
-      void setMeta(DEFAULT_KEY, String(clamped));
+      try {
+        await setMeta(DEFAULT_KEY, String(clamped));
+        return true;
+      } catch {
+        return false;
+      }
     },
 
     start: (sec, nextLabel = null) => {
@@ -113,15 +153,37 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
       if (!dur || dur <= 0) return;
       const startedAt = Date.now();
       const endsAt = startedAt + dur * 1000;
-      set({ endsAt, durationSec: dur, nextLabel, startedAt });
+      const t = pendingTick;
+      pendingTick = null;
+      const source = t && startedAt - t.at <= TICK_LINK_MS ? { exKey: t.exKey, setKey: t.setKey } : null;
       arm(endsAt);
+      // Hand the rest to the card BEFORE the state changes, so the "Workout in progress" card
+      // (updated on that change) already knows the rest card shows the rest (RT-05).
       void scheduleRestEnd(endsAt, nextLabel, startedAt);
+      set({ endsAt, durationSec: dur, nextLabel, startedAt, source });
+    },
+
+    noteTick: (exKey, setKey) => {
+      pendingTick = { exKey, setKey, at: Date.now() };
+    },
+
+    cancelIfStartedBy: (exKey, setKey) => {
+      if (pendingTick && pendingTick.exKey === exKey && pendingTick.setKey === setKey) pendingTick = null;
+      const s = get();
+      if (s.endsAt == null || !s.source) return;
+      if (s.source.exKey !== exKey || s.source.setKey !== setKey) return;
+      get().skip();
     },
 
     addSec: (delta) => {
       const cur = get().endsAt;
       if (cur == null) return;
-      const newEnds = Math.max(Date.now(), cur + delta * 1000);
+      // RT-04: taken down past zero → the member is ready; end quietly, like Skip.
+      if (cur + delta * 1000 <= Date.now()) {
+        get().skip();
+        return;
+      }
+      const newEnds = cur + delta * 1000;
       set({
         endsAt: newEnds,
         durationSec: Math.max(get().durationSec, Math.ceil((newEnds - Date.now()) / 1000)),
@@ -132,14 +194,14 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
 
     skip: () => {
       clearExpiry();
-      if (get().endsAt != null) set({ endsAt: null });
+      if (get().endsAt != null || get().source) set({ endsAt: null, source: null });
       void cancelRestEnd();
     },
 
     fromCard: (c) => {
       if (c.kind === 'stop') {
         clearExpiry();
-        if (get().endsAt != null) set({ endsAt: null });
+        if (get().endsAt != null || get().source) set({ endsAt: null, source: null });
         return;
       }
       const now = Date.now();
@@ -152,6 +214,7 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
           startedAt: c.startedAt,
           durationSec: Math.max(left, Math.round((c.endsAt - c.startedAt) / 1000)),
           nextLabel: c.next,
+          source: null,
         });
       } else {
         set({ endsAt: c.endsAt, startedAt: c.startedAt, durationSec: Math.max(get().durationSec, left) });

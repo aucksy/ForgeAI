@@ -27,9 +27,10 @@ import {
   setExerciseLoadMode,
   type TrackerExercise,
 } from '@/tracker/db/exerciseInfo';
-import { isLoggable, typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
+import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getCarriedNote, getExerciseRestSec, getPriorBests, setExerciseRestSec } from '@/tracker/db/exercisePrefs';
+import { useRestTimer } from '@/tracker/store/restTimerStore';
 import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { saveSessionEditsUnqueued } from '@/tracker/db/sessionEdit';
@@ -40,11 +41,18 @@ import { buildEditDraft, previousExcludingSession } from '@/tracker/services/edi
 import type { ExerciseKinds, PreviousByExercise } from '@/tracker/services/editDraft';
 import { computeEditedTiming } from '@/tracker/services/sessionTiming';
 import { draftToRichSets, hasWorkingSet, isCommittable } from '@/tracker/services/draftSets';
+import { tickValues, type TickMissing } from '@/tracker/services/setTick';
 import { createSession } from '@/db/repos/workoutRepo';
 import { toISO, todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 import { getTodaysWorkout } from '@/services/coach';
 import { phoneAfterWorkout } from '@/tracker/phone/phoneSync';
+// Packet C (TG-03 / TG-06 / TG-08 / TG-11): Targets loaded with the cards, counting conversion.
+import { convertCounting } from '@/tracker/engine/logTypes';
+import { loadTargets, preloadTargets, seedTargets, targetQuery } from '@/tracker/store/targetStore';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
+// Packet E (LW-12 / LW-26 / LW-31): order, supersets and the swap split.
+import { joinSuperset, moveCard, nextSupersetGroup, swapSplit, tidySupersets } from '@/tracker/services/workoutOrder';
 import type { DayType, Exercise, MuscleGroup, SessionDetail } from '@/types/models';
 
 const DRAFT_KEY = 'activeWorkoutDraft';
@@ -63,6 +71,16 @@ export interface DraftSet {
   distanceM?: number | null;
   isWarmup: boolean;
   done: boolean;
+  /**
+   * Phase 2 (LW-07): when the row was ticked (epoch ms). Finish offers "ended at the last
+   * tick" for a workout left open for hours. Absent on older drafts and unticked rows.
+   */
+  doneAt?: number;
+  /**
+   * Review fix (#6): when a number in the row was last typed (epoch ms). Finish's suggested end
+   * follows the last thing the member did — a tick OR typing — not only the last tick.
+   */
+  editedAt?: number;
   /** Advanced (opt-in) set logging — Phase 5b. Optional so older drafts still load. */
   rpe?: number | null;
   /** Working-set variant; warm-up is carried by `isWarmup`, not here. */
@@ -139,6 +157,33 @@ export interface DraftExercise {
    * sets blank is skipping, not re-planning (Hevy behaves the same way).
    */
   startRows?: number;
+  /**
+   * Phase 2 (LW-09): the routine's exercise this card was swapped from ("for this workout
+   * only. Your routine stays."). "Update routine?" compares the routine against this one.
+   */
+  swappedFrom?: { exerciseId: string; name: string; card?: number };
+  /**
+   * Review fix (#10): this card's number among the workout's cards of the SAME exercise (heavy
+   * Bench 0, back-off 1), given when the card is made and never taken from screen order — so
+   * moving back-off above heavy keeps each card's history, Target and saved `card_index`.
+   * Absent on drafts saved before (their place on screen decides, as before).
+   */
+  card?: number;
+  /**
+   * Phase 2 (LW-31): this card continues the card with this key after a swap mid-exercise (the
+   * ticked sets stayed there). "Update routine?" counts the two as one routine exercise.
+   */
+  splitFrom?: string;
+}
+
+/** Phase 2: what the Finish sheet decided. */
+export interface FinishOptions {
+  /** Save rows that hold numbers but were never ticked (default: leave them out). */
+  keepUnticked?: boolean;
+  /** When the workout ended (default: now). Kept between its start and now. */
+  endedAt?: number | null;
+  /** The workout's name (blank: none — history then shows its day type). */
+  name?: string | null;
 }
 
 interface DraftSnapshot {
@@ -202,7 +247,13 @@ export interface ActiveWorkoutState {
   /** Start a fresh workout pre-filled from a past session (repeat-this-workout). */
   startFromSession: (session: SessionDetail) => Promise<void>;
   addExercise: (ex: Exercise) => Promise<void>;
+  /** LW-15: add several at once, in the order picked. All or none: a failed read adds nothing. */
+  addExercises: (list: Exercise[]) => Promise<void>;
   removeExercise: (exKey: string) => void;
+  /** LW-12: Move up (-1) / Move down (1). A superset moves as one block (see workoutOrder). */
+  moveExercise: (exKey: string, dir: -1 | 1) => void;
+  /** LW-26: start a new superset of exactly these two cards. */
+  pairSuperset: (exKey: string, otherKey: string) => void;
   addSet: (exKey: string) => void;
   removeSet: (exKey: string, setKey: string) => void;
   updateSet: (
@@ -211,15 +262,20 @@ export interface ActiveWorkoutState {
     patch: Partial<Pick<DraftSet, 'weightKg' | 'reps' | 'durationSec' | 'distanceM'>>,
   ) => void;
   toggleWarmup: (exKey: string, setKey: string) => void;
-  /** `fill` = what the row is hinting (its Target-aware fill); omitted → computed from PREVIOUS. */
-  toggleDone: (exKey: string, setKey: string, fill?: SetFill | null) => void;
+  /**
+   * `fill` = what the row is hinting (its Target-aware fill); omitted → computed without a
+   * Target. Packet B (LW-13): returns what is missing when a tick had nothing to save (the row
+   * stays unticked and says so), else null.
+   */
+  toggleDone: (exKey: string, setKey: string, fill?: SetFill | null) => TickMissing | null;
   /** Phase 2 (hold timer): write a measured time into a set and tick it. */
   completeTimedSet: (exKey: string, setKey: string, durationSec: number) => void;
   /** Phase 2: how this exercise's weight counts (dumbbells). Remembered for the exercise. */
   setLoadMode: (exKey: string, mode: LoadMode) => void;
   /**
-   * Phase 2 ("try a harder / easier version"): put another exercise in this card's place.
-   * Only while none of its sets is ticked — logged sets belong to the exercise they were done on.
+   * Phase 2 ("try a harder / easier version", Swap): put another exercise in this card's place.
+   * LW-31: also after a tick — the ticked sets stay with the exercise they were done on (its
+   * card keeps them) and the new exercise gets the open rows on a card right below.
    */
   swapExercise: (exKey: string, ex: Exercise) => Promise<boolean>;
   /** Advanced set logging (opt-in). Set the set's type; 'warmup' toggles isWarmup. */
@@ -231,15 +287,19 @@ export interface ActiveWorkoutState {
   /** Per-exercise note (Phase 5c). */
   setExerciseNote: (exKey: string, note: string) => void;
   /** Phase 1: this exercise's rest length (null = default, 0 = off). Remembered per exercise. */
-  setRestSec: (exKey: string, restSec: number | null) => void;
+  setRestSec: (exKey: string, restSec: number | null) => Promise<boolean>;
   /** Prepend computed warm-up rows (isWarmup) to an exercise. */
   insertWarmupSets: (exKey: string, rows: { weightKg: number; reps: number }[]) => void;
   /** Remove a set but stash it for undo (drives the snackbar). */
   deleteSetWithUndo: (exKey: string, setKey: string) => void;
   undoDelete: () => void;
   dismissUndo: () => void;
-  /** Commit to SQLite; returns the new session id, or null if nothing loggable. */
-  finish: (note?: string | null) => Promise<string | null>;
+  /**
+   * Commit to SQLite; returns the new session id, or null if nothing loggable. Phase 2 (the
+   * calm Finish): rows never ticked are left out unless `keepUnticked`; `endedAt` is the end
+   * the member picked for a workout left open; `name` is the workout's own name.
+   */
+  finish: (note?: string | null, opts?: FinishOptions) => Promise<string | null>;
   /** Phase W4: load a logged session into the draft to correct it. */
   startEditingSession: (session: SessionDetail) => Promise<void>;
   /** Edit mode: move the workout to another day (clamped to today). */
@@ -367,24 +427,90 @@ try {
 }
 
 /** A stored history set in the form the set row shows and types (help positive). PURE. */
-export function toPrevSet(s: Pick<TrackedSetEntry, 'weightKg' | 'reps' | 'durationSec' | 'distanceM'>, logType: LogType): PrevSet {
-  const p: PrevSet = { weightKg: typedWeight(logType, s.weightKg), reps: s.reps };
+export function toPrevSet(
+  s: Pick<TrackedSetEntry, 'weightKg' | 'reps' | 'durationSec' | 'distanceM' | 'loadMode'>,
+  logType: LogType,
+  /** TG-03: the card's counting — a set logged "as typed" reads as each dumbbell, and back. */
+  mode?: LoadMode,
+): PrevSet {
+  const kg = mode ? convertCounting(s.weightKg, s.loadMode, mode) : s.weightKg;
+  const p: PrevSet = { weightKg: typedWeight(logType, kg), reps: s.reps };
   if (s.durationSec != null) p.durationSec = s.durationSec;
   if (s.distanceM != null) p.distanceM = s.distanceM;
   return p;
 }
 
+/**
+ * LW-05 / LW-28: the sets of the `card`-th card of one exercise in a saved workout (sets keep
+ * their card since tracker schema v10; older sets read as the first card). PURE.
+ */
+export function setsOfCard<S extends { cardIndex?: number | null }>(sets: readonly S[], card: number): S[] {
+  return sets.filter((s) => (s.cardIndex ?? 0) === card);
+}
+
+/** Each card's place among the cards of the same exercise, in order (0, 0, 1 for A, B, A). PURE. */
+export function cardOccurrences(exerciseIds: readonly string[]): number[] {
+  const seen = new Map<string, number>();
+  return exerciseIds.map((id) => {
+    const n = seen.get(id) ?? 0;
+    seen.set(id, n + 1);
+    return n;
+  });
+}
+
+/** Sessions a later card reads back through to find its own last sets (#11). */
+const CARD_LOOKBACK = 12;
+
+/**
+ * PREVIOUS for the `card`-th card of a lift: its own sets from the newest workout that had that
+ * card. Review fix (#11): a later card (1, 2…) that never had sets of its own — every set saved
+ * before cards were numbered reads as card 0 — falls back to the first card of the newest
+ * workout, instead of an empty "first time". `hist` is newest first. PURE.
+ */
+export function lastSetsOfCard<S extends { cardIndex?: number | null }>(
+  hist: readonly { sets: readonly S[] }[],
+  card: number,
+): S[] {
+  if (card <= 0) return setsOfCard(hist[0]?.sets ?? [], 0);
+  for (const h of hist) {
+    const own = setsOfCard(h.sets, card);
+    if (own.length > 0) return own;
+  }
+  return setsOfCard(hist[0]?.sets ?? [], 0);
+}
+
+/**
+ * #10: the number a NEW card of `exerciseId` gets: the lowest one no other card of that exercise
+ * holds (0 when it is the only one, 1 for a second Bench…). Cards without a number (an older
+ * draft) hold their place-on-screen number. PURE.
+ */
+export function nextCardNumber(list: readonly Pick<DraftExercise, 'exerciseId' | 'card'>[], exerciseId: string): number {
+  const used = new Set<number>();
+  let place = 0;
+  for (const e of list) {
+    if (e.exerciseId !== exerciseId) continue;
+    used.add(e.card ?? place);
+    place += 1;
+  }
+  let n = 0;
+  while (used.has(n)) n += 1;
+  return n;
+}
+
 async function buildDraftExercise(
   ex: Pick<Exercise, 'id' | 'name' | 'muscleGroup' | 'equipment' | 'incrementKg'>,
   targetSets: number,
-  opts: { exactSets?: boolean } = {},
+  /** `card`: this card's place among the workout's cards of the SAME exercise (0 = first). */
+  opts: { exactSets?: boolean; card?: number } = {},
 ): Promise<DraftExercise> {
   // Bounded in SQL: start-from-plan builds one draft per plan exercise, and the frozen
   // read would materialise each lift's ENTIRE working-set history just to keep its last
   // session. Parity-identical (newest-first, working sets only). Phase 4: PREVIOUS is the
   // last NORMAL workout — an easy week's lighter, shorter sets are not what to beat.
+  const card = opts.card ?? 0;
   const [hist, restSec, note, bests, info] = await Promise.all([
-    getBoundedExerciseHistory(ex.id, 1, { skipEasy: true }),
+    // A later card (back-off) may need to look past last time for its own sets (#11).
+    getBoundedExerciseHistory(ex.id, card > 0 ? CARD_LOOKBACK : 1, { skipEasy: true }),
     // Phase 1 extras never block starting a workout: a failed read just means
     // default rest, no carried note, no live record alert.
     getExerciseRestSec(ex.id).catch(() => null),
@@ -394,15 +520,29 @@ async function buildDraftExercise(
     getTrackerExercise(ex.id).catch(() => null),
   ]);
   const logType: LogType = info?.logType ?? 'weight_reps';
-  const previousSets = (hist[0]?.sets ?? []).map((s) => toPrevSet(s, logType));
+  // TG-03: last time read in today's counting (a set with no counting of its own was logged
+  // under the exercise's saved one, which is today's).
+  const mode: LoadMode = info?.loadMode ?? 'one';
+  // LW-05: heavy + back-off cards of one lift each read their OWN card of last time.
+  const lastSets = lastSetsOfCard(hist, card);
+  const previousSets = lastSets.map((s) => toPrevSet(s, logType, mode));
   // An easy week asks for exactly half the sets, even when last time had more rows.
-  const count = opts.exactSets ? Math.max(1, targetSets) : Math.max(targetSets, previousSets.length, 1);
-  const sets: DraftSet[] = Array.from({ length: count }, () => ({
+  // TG-08: last time's drop sets come back AS drop sets, in their place (their PREVIOUS is the
+  // drop), and only normal sets count toward the routine's set count.
+  const lastTypes = opts.exactSets ? [] : lastSets.map((s) => (s.setType === 'drop' ? 'drop' : 'normal'));
+  const normalLast = lastTypes.filter((t) => t !== 'drop').length;
+  const extra = Math.max(0, targetSets - normalLast);
+  const rowTypes: ('normal' | 'drop')[] = opts.exactSets
+    ? Array.from({ length: Math.max(1, targetSets) }, () => 'normal' as const)
+    : [...lastTypes, ...Array.from({ length: extra }, () => 'normal' as const)];
+  if (rowTypes.length === 0) rowTypes.push('normal');
+  const sets: DraftSet[] = rowTypes.map((t) => ({
     key: uuid(),
     weightKg: null,
     reps: null,
     isWarmup: false,
     done: false,
+    ...(t === 'drop' ? { setType: 'drop' as const } : {}),
   }));
   return {
     key: uuid(),
@@ -415,7 +555,9 @@ async function buildDraftExercise(
     sets,
     restSec,
     bests,
-    startRows: count,
+    // #3: drop rows are not routine sets ("Update routine?" never counts them).
+    startRows: rowTypes.filter((t) => t !== 'drop').length,
+    card,
     logType,
     loadMode: info?.loadMode ?? 'one',
     distUnit: info?.distUnit ?? 'km',
@@ -426,6 +568,63 @@ async function buildDraftExercise(
     // Notes carry forward from the last workout with this exercise (Hevy-style).
     ...(note ? { note } : {}),
   };
+}
+
+/**
+ * TG-11: a routine's cards and their Targets, built TOGETHER (the Target reads run beside the
+ * draft build) and stored before the workout opens, so the first frame shows each card's
+ * Target and its hints. A failed Target read never blocks the start (the screen retries).
+ */
+async function cardsWithTargets(
+  planDayId: string,
+  rows: readonly { exerciseId: string; targetSets: number; exercise: Exercise }[],
+  easy: boolean,
+): Promise<DraftExercise[]> {
+  const effort = useTrackerPrefs.getState().advancedSets;
+  // LW-05: the same lift twice (heavy, then back-off) — each card reads its own card of last time.
+  const cards = cardOccurrences(rows.map((pe) => pe.exerciseId));
+  const [exercises, early] = await Promise.all([
+    Promise.all(
+      rows.map((pe, i) =>
+        buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, { exactSets: easy, card: cards[i] }),
+      ),
+    ),
+    preloadTargets(
+      planDayId,
+      rows.map((pe) => pe.exerciseId),
+      { easy, effort },
+    ),
+  ]);
+  try {
+    seedTargets(targetQuery(planDayId, exercises, { easy, effort }), early);
+  } catch {
+    // The screen loads them itself.
+  }
+  return exercises;
+}
+
+/** How long a restore waits for the Targets before showing the workout anyway. */
+export const RESTORE_TARGETS_WAIT_MS = 3000;
+
+/**
+ * TG-11, the reopen path: a draft restored after the app was closed computes its cards'
+ * Targets BEFORE it opens, so the first hints are the Target's, never last time's. A slow or
+ * failed read never keeps the workout shut (the screen loads them itself after the wait).
+ */
+async function targetsBeforeHints(planDayId: string, exercises: DraftExercise[], easy: boolean): Promise<void> {
+  try {
+    const effort = useTrackerPrefs.getState().advancedSets;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    await Promise.race([
+      loadTargets(targetQuery(planDayId, exercises, { easy, effort })),
+      new Promise<void>((resolve) => {
+        timer = setTimeout(resolve, RESTORE_TARGETS_WAIT_MS);
+      }),
+    ]);
+    if (timer) clearTimeout(timer);
+  } catch {
+    // No Targets yet: the screen loads them.
+  }
 }
 
 /**
@@ -442,71 +641,92 @@ export function prevForSet(ex: DraftExercise, setKey: string): PrevSet | null {
   return null;
 }
 
-/** The fill has what this exercise's type needs (a usable hint / tick value). */
-function fillUsable(lt: LogType, f: PrevSet | null): boolean {
-  if (!f) return false;
-  if (lt === 'time') return (f.durationSec ?? 0) > 0;
-  if (lt === 'distance') return (f.distanceM ?? 0) > 0;
-  if (lt === 'time_distance') return (f.distanceM ?? 0) > 0 || (f.durationSec ?? 0) > 0;
-  return f.reps > 0;
-}
+/** A number worth hinting: a weight of any size (0 = bodyweight), reps / time / distance above 0. */
+const positive = (v: number | null | undefined): number | null => (v != null && v > 0 ? v : null);
+const present = (v: number | null | undefined): number | null => (v != null && Number.isFinite(v) ? v : null);
 
 /**
- * What a blank set is filled with when ticked, and what its inputs show greyed:
- * last workout's matching set (PREVIOUS), or — for a set beyond last time's count —
- * the nearest working set ABOVE it that has numbers (Phase 1: an extra set is one
- * tap, as in Hevy). Only hints: nothing is written into the row until it is ticked,
- * because every row with numbers is saved on finish.
+ * Phase 2 (LW-04, LW-19, LW-22, TG-09) — ONE rule for the grey hint of a set row, and so for
+ * what a tick on an empty box saves (the row passes this exact fill to the tick):
+ *   1. the number typed or ticked in a working set ABOVE in this card (this workout);
+ *   2. else the card's Target (its weight and rep goal; a hold on a timed move);
+ *   3. else last time's same set (PREVIOUS);
+ *   4. else, for an extra set beyond last time's count, last time's numbers of the nearest
+ *      set above (an extra set is one tap, as in Hevy).
+ * Each number follows the rule on its own: a weight typed above with no reps takes the
+ * Target's rep goal. Warm-up rows get no hint. A drop row hints its own last-time drop first
+ * and never the Target. A reps-only move never hints a weight (LW-19). A weight × reps row
+ * with no weight to hint gets no hint at all — a tick then asks for the weight (TG-07).
+ * Only hints: nothing is written into the row until it is ticked.
  */
 export function fillForSet(
   ex: DraftExercise,
   setKey: string,
-  /** The exercise's Target (progression v2): when present, normal and failure rows hint
-   *  its weight and rep goal (or, timed, its hold) instead of last time's numbers, so the
-   *  rows agree with the Target line. A weight the member already typed higher up wins
-   *  (the line never argues). Warm-up and drop rows keep the old hints. */
+  /** The card's Target fill (`targetFill`), or null off-plan / before it is known. */
   target?: SetFill | null,
 ): SetFill | null {
   const lt: LogType = ex.logType ?? 'weight_reps';
-  const repsType = lt === 'weight_reps' || lt === 'reps' || lt === 'weighted' || lt === 'assisted';
   const idx = ex.sets.findIndex((s) => s.key === setKey);
-  if (target && idx >= 0 && !ex.sets[idx].isWarmup && ex.sets[idx].setType !== 'drop') {
-    if (lt === 'time') {
-      return target.durationSec != null && target.durationSec > 0
-        ? { weightKg: 0, reps: 0, durationSec: target.durationSec }
-        : null;
+  if (idx < 0) return null;
+  const row = ex.sets[idx];
+  if (row.isWarmup) return null;
+  const drop = row.setType === 'drop';
+  const own = prevForSet(ex, setKey);
+  // Working rows above, nearest first. A normal row never copies a drop row's lighter numbers.
+  const above = ex.sets
+    .slice(0, idx)
+    .reverse()
+    .filter((s) => !s.isWarmup && (drop || s.setType !== 'drop'));
+  const tgt = drop ? null : target ?? null;
+  const pick = (
+    typedOf: (s: DraftSet) => number | null,
+    prevOf: (p: PrevSet | null | undefined) => number | null,
+  ): number | null => {
+    let typed: number | null = null;
+    for (const s of above) {
+      typed = typedOf(s);
+      if (typed != null) break;
     }
-    if (repsType) {
-      for (let i = idx - 1; i >= 0; i--) {
-        const s = ex.sets[i];
-        if (s.isWarmup || s.setType === 'drop') continue;
-        if (s.weightKg != null) return { weightKg: s.weightKg, reps: target.reps };
-      }
-      return { weightKg: target.weightKg, reps: target.reps };
+    let abovePrev: number | null = null;
+    for (const s of above) {
+      abovePrev = prevOf(prevForSet(ex, s.key));
+      if (abovePrev != null) break;
     }
+    return drop ? prevOf(own) ?? typed ?? abovePrev : typed ?? prevOf(tgt) ?? prevOf(own) ?? abovePrev;
+  };
+
+  if (lt === 'time' || lt === 'distance' || lt === 'time_distance') {
+    const durationSec = lt === 'distance' ? null : pick((s) => positive(s.durationSec), (p) => positive(p?.durationSec));
+    const distanceM = lt === 'time' ? null : pick((s) => positive(s.distanceM), (p) => positive(p?.distanceM));
+    if (durationSec == null && distanceM == null) return null;
+    const out: SetFill = { weightKg: 0, reps: 0 };
+    if (durationSec != null) out.durationSec = durationSec;
+    if (distanceM != null) out.distanceM = distanceM;
+    return out;
   }
-  const prev = prevForSet(ex, setKey);
-  if (prev && fillUsable(lt, prev)) return prev;
-  if (idx < 0 || ex.sets[idx].isWarmup) return null;
-  for (let i = idx - 1; i >= 0; i--) {
-    const s = ex.sets[i];
-    if (s.isWarmup) continue;
-    const prevAbove = prevForSet(ex, s.key);
-    if (repsType) {
-      // A bodyweight move's blank weight is "no added weight", not "missing".
-      const w = s.weightKg ?? prevAbove?.weightKg ?? (lt === 'weight_reps' ? null : 0);
-      const r = s.reps ?? prevAbove?.reps ?? null;
-      if (w != null && r != null && r > 0) return { weightKg: w, reps: r };
-      continue;
-    }
-    const d = s.durationSec ?? prevAbove?.durationSec ?? null;
-    const m = s.distanceM ?? prevAbove?.distanceM ?? null;
-    const cand: SetFill = { weightKg: 0, reps: 0 };
-    if (d != null && (lt === 'time' || lt === 'time_distance')) cand.durationSec = d;
-    if (m != null && (lt === 'distance' || lt === 'time_distance')) cand.distanceM = m;
-    if (fillUsable(lt, cand)) return cand;
-  }
-  return null;
+  const reps = pick((s) => positive(s.reps), (p) => positive(p?.reps));
+  if (reps == null) return null;
+  if (lt === 'reps') return { weightKg: 0, reps };
+  const weightKg = pick((s) => present(s.weightKg), (p) => present(p?.weightKg));
+  if (weightKg == null) return lt === 'weight_reps' ? null : { weightKg: 0, reps };
+  return { weightKg, reps };
+}
+
+/**
+ * LW-25: a new warm-up ramp REPLACES the warm-up rows not yet ticked (asking twice never gives
+ * two ramps). Ticked warm-ups stay — they happened — and the new ramp goes after them, before
+ * the first working set. PURE.
+ */
+export function withWarmups(
+  sets: readonly DraftSet[],
+  rows: readonly { weightKg: number; reps: number }[],
+  makeKey: () => string,
+): DraftSet[] {
+  const warm: DraftSet[] = rows.map((r) => ({ key: makeKey(), weightKg: r.weightKg, reps: r.reps, isWarmup: true, done: false }));
+  const kept = sets.filter((s) => !s.isWarmup || s.done);
+  const firstWorking = kept.findIndex((s) => !s.isWarmup);
+  const at = firstWorking < 0 ? kept.length : firstWorking;
+  return [...kept.slice(0, at), ...warm, ...kept.slice(at)];
 }
 
 /**
@@ -568,13 +788,23 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         try {
           const snap = JSON.parse(raw) as DraftSnapshot;
           if (snap && typeof snap.startedAt === 'number' && Array.isArray(snap.exercises)) {
+            // TG-11 (reopening mid-workout): the Targets are ready before the rows show hints.
+            if (snap.planDayId && !snap.editingSessionId) {
+              await targetsBeforeHints(snap.planDayId, snap.exercises, snap.easyWeek === true);
+              // A workout may have been started while they loaded — don't clobber it.
+              if (get().active || get().hydrated) {
+                set({ hydrated: true });
+                return;
+              }
+            }
             set({
               active: true,
               startedAt: snap.startedAt,
               dayType: snap.dayType,
               planDayId: snap.planDayId ?? null,
               easyWeek: snap.easyWeek === true,
-              exercises: snap.exercises,
+              // LW-26: a draft saved by an older version may hold a superset of one.
+              exercises: tidySupersets(snap.exercises),
               // Pre-W4 drafts have none of these — they restore as a new workout.
               editingSessionId: snap.editingSessionId ?? null,
               editDateISO: snap.dateISO ?? null,
@@ -623,11 +853,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         if (day) {
           dayType = day.dayType;
           planDayId = day.id;
-          exercises = await Promise.all(
-            day.exercises.map((pe) =>
-              buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, { exactSets: easy }),
-            ),
-          );
+          exercises = await cardsWithTargets(day.id, day.exercises, easy);
         }
       }
       set({
@@ -657,11 +883,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       if (day) {
         dayType = day.dayType;
         planDayId = day.id;
-        exercises = await Promise.all(
-          day.exercises.map((pe) =>
-            buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, { exactSets: easy }),
-          ),
-        );
+        exercises = await cardsWithTargets(day.id, day.exercises, easy);
       }
       set({
         active: true,
@@ -683,10 +905,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     },
 
     startFromSession: async (session) => {
+      const cards = cardOccurrences(session.exercises.map((g) => g.exercise.id));
       const exercises = await Promise.all(
-        session.exercises.map((g) => {
+        session.exercises.map((g, i) => {
           const working = g.sets.filter((s) => !s.isWarmup).length;
-          return buildDraftExercise(g.exercise, working > 0 ? working : 1);
+          return buildDraftExercise(g.exercise, working > 0 ? working : 1, { card: cards[i] });
         }),
       );
       set({
@@ -709,16 +932,44 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     },
 
     addExercise: async (ex) => {
-      const draftEx = await buildDraftExercise(ex, 1);
+      // #10: a second Bench added mid-workout is card 1, given now (not from screen order).
+      const draftEx = await buildDraftExercise(ex, 1, { card: nextCardNumber(get().exercises, ex.id) });
       // Correcting a past workout: a note carried from a LATER session would be wrong.
       if (get().editingSessionId) delete draftEx.note;
       mutate((list) => [...list, draftEx]);
     },
 
+    addExercises: async (picked) => {
+      if (picked.length === 0) return;
+      // #10: each new card's number among the cards of its exercise, the picked ones included.
+      const numbered: Pick<DraftExercise, 'exerciseId' | 'card'>[] = [...get().exercises];
+      const cards = picked.map((ex) => {
+        const card = nextCardNumber(numbered, ex.id);
+        numbered.push({ exerciseId: ex.id, card });
+        return card;
+      });
+      const built = await Promise.all(picked.map((ex, i) => buildDraftExercise(ex, 1, { card: cards[i] })));
+      if (get().editingSessionId) for (const d of built) delete d.note;
+      mutate((list) => [...list, ...built], true);
+    },
+
     removeExercise: (exKey) => {
       // Kill a pending undo for this exercise (its set list is going away).
       if (get().lastDeleted?.exKey === exKey) set({ lastDeleted: null });
-      mutate((list) => list.filter((e) => e.key !== exKey));
+      // LW-26: a partner left alone is no longer a superset.
+      mutate((list) => tidySupersets(list.filter((e) => e.key !== exKey)));
+    },
+
+    moveExercise: (exKey, dir) => {
+      mutate((list) => tidySupersets(moveCard(list, exKey, dir)), true);
+    },
+
+    pairSuperset: (exKey, otherKey) => {
+      if (exKey === otherKey) return;
+      mutate((list) => {
+        const g = nextSupersetGroup(list);
+        return tidySupersets(list.map((e) => (e.key === exKey || e.key === otherKey ? { ...e, supersetGroup: g } : e)));
+      });
     },
 
     addSet: (exKey) => {
@@ -741,14 +992,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       if (rows.length === 0) return;
       // Prepending shifts array indices — invalidate any pending undo for this exercise.
       if (get().lastDeleted?.exKey === exKey) set({ lastDeleted: null });
-      const warm: DraftSet[] = rows.map((r) => ({
-        key: uuid(),
-        weightKg: r.weightKg,
-        reps: r.reps,
-        isWarmup: true,
-        done: false,
-      }));
-      mutate((list) => list.map((e) => (e.key === exKey ? { ...e, sets: [...warm, ...e.sets] } : e)));
+      mutate((list) => list.map((e) => (e.key === exKey ? { ...e, sets: withWarmups(e.sets, rows, uuid) } : e)));
     },
 
     deleteSetWithUndo: (exKey, setKey) => {
@@ -789,6 +1033,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
                     ? {
                         ...s,
                         ...patch,
+                        editedAt: Date.now(),
                         autoFilled: s.autoFilled
                           ? {
                               weight: 'weightKg' in patch ? false : s.autoFilled.weight,
@@ -844,28 +1089,44 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     },
 
     setSupersetGroup: (exKey, group) => {
-      mutate((list) => list.map((e) => (e.key === exKey ? { ...e, supersetGroup: group } : e)));
+      // LW-26: leaving a pair dissolves it; letters follow the screen. #13: joining a superset
+      // moves the card next to its group.
+      mutate((list) => tidySupersets(joinSuperset(list, exKey, group)));
     },
 
     setExerciseNote: (exKey, note) => {
       mutate((list) => list.map((e) => (e.key === exKey ? { ...e, note } : e)));
     },
 
-    setRestSec: (exKey, restSec) => {
+    setRestSec: async (exKey, restSec) => {
       const ex = get().exercises.find((e) => e.key === exKey);
-      if (!ex) return;
+      if (!ex) return false;
       // Same lift twice in one workout shares the setting, as it will next time.
       mutate((list) => list.map((e) => (e.exerciseId === ex.exerciseId ? { ...e, restSec } : e)));
-      void setExerciseRestSec(ex.exerciseId, restSec).catch(() => undefined);
+      // Phase 2 (RT-11): report whether it was kept for next time (it applies to this workout
+      // either way), so the picker never claims "Remembered" for a write that failed.
+      try {
+        await setExerciseRestSec(ex.exerciseId, restSec);
+        return true;
+      } catch {
+        return false;
+      }
     },
 
     toggleDone: (exKey, setKey, fill) => {
+      // Phase 2 (RT-03 / LW-29): the STORED state, as the toggle itself reads it — so the second
+      // tap of a quick double tap (an untick) cancels the rest the first tap started.
+      const doneNow = (): boolean =>
+        get().exercises.find((e) => e.key === exKey)?.sets.find((s) => s.key === setKey)?.done === true;
+      const wasDone = doneNow();
+      // Packet B: a row with nothing to save stays unticked and says what is missing (LW-13).
+      let missing: TickMissing | null = null;
       // A tick saves at once (not after the typing pause).
       mutate((list) =>
         list.map((e) => {
           if (e.key !== exKey) return e;
           // The row passes the exact fill it is hinting, so the hint and the tick never disagree.
-          const prev = fill !== undefined ? fill : fillForSet(e, setKey);
+          const hint = fill !== undefined ? fill : fillForSet(e, setKey);
           const lt: LogType = e.logType ?? 'weight_reps';
           return {
             ...e,
@@ -876,6 +1137,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
                 return {
                   ...s,
                   done: false,
+                  doneAt: undefined,
                   weightKg: af?.weight ? null : s.weightKg,
                   reps: af?.reps ? null : s.reps,
                   durationSec: af?.duration ? null : s.durationSec,
@@ -883,40 +1145,33 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
                   autoFilled: undefined,
                 };
               }
-              if (lt === 'time' || lt === 'distance' || lt === 'time_distance') {
-                // Time / distance: fill what this type needs, tick only when there is
-                // something to save (finish() would silently drop an empty row).
-                const durationSec =
-                  lt === 'distance' ? s.durationSec ?? null : s.durationSec ?? prev?.durationSec ?? null;
-                const distanceM = lt === 'time' ? s.distanceM ?? null : s.distanceM ?? prev?.distanceM ?? null;
-                const next = { ...s, durationSec, distanceM };
-                if (!isLoggable(lt, next)) return s;
-                return {
-                  ...next,
-                  done: true,
-                  autoFilled: {
-                    duration: s.durationSec == null && durationSec != null,
-                    distance: s.distanceM == null && distanceM != null,
-                  },
-                };
+              // Exactly what the row shows: typed boxes, else the grey hint (setTick).
+              const out = tickValues(lt, s, hint);
+              if (!out.ok) {
+                missing = out.missing;
+                return s;
               }
-              // Completing: auto-fill blanks from the PREVIOUS value.
-              const reps = s.reps ?? prev?.reps ?? null;
-              // Nothing to log (blank set with no PREVIOUS) — don't fake a "done"
-              // state that finish() would silently drop (isCommittable needs reps > 0).
-              if (reps == null || reps <= 0) return s;
-              return {
+              const next: DraftSet = {
                 ...s,
                 done: true,
-                weightKg: s.weightKg ?? prev?.weightKg ?? 0,
-                reps,
-                autoFilled: { weight: s.weightKg == null, reps: s.reps == null },
+                doneAt: Date.now(),
+                weightKg: out.weightKg,
+                reps: out.reps,
+                autoFilled: out.autoFilled,
               };
+              if (out.durationSec != null || s.durationSec !== undefined) next.durationSec = out.durationSec;
+              if (out.distanceM != null || s.distanceM !== undefined) next.distanceM = out.distanceM;
+              return next;
             }),
           };
         }),
         true,
       );
+      // The rest belongs to the set whose tick started it; unticking that set cancels it.
+      const isDone = doneNow();
+      if (wasDone && !isDone) useRestTimer.getState().cancelIfStartedBy(exKey, setKey);
+      else if (!wasDone && isDone) useRestTimer.getState().noteTick(exKey, setKey);
+      return missing;
     },
 
     completeTimedSet: (exKey, setKey, durationSec) => {
@@ -928,39 +1183,66 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             ? {
                 ...e,
                 sets: e.sets.map((s) =>
-                  s.key === setKey ? { ...s, durationSec: sec, done: true, autoFilled: undefined } : s,
+                  s.key === setKey ? { ...s, durationSec: sec, done: true, doneAt: Date.now(), autoFilled: undefined } : s,
                 ),
               }
             : e,
         ),
         true,
       );
+      useRestTimer.getState().noteTick(exKey, setKey); // RT-03: a rest started now belongs to this set
     },
 
     setLoadMode: (exKey, mode) => {
       const ex = get().exercises.find((e) => e.key === exKey);
       if (!ex) return;
-      // Same lift twice in one workout shares the setting, as it will next time.
-      mutate((list) => list.map((e) => (e.exerciseId === ex.exerciseId ? { ...e, loadMode: mode } : e)));
+      // Same lift twice in one workout shares the setting, as it will next time. TG-03: PREVIOUS
+      // is re-read in the new counting (50 as typed → 25 each), the same physical load; the
+      // Target follows through the card's counting (targetStore).
+      mutate((list) =>
+        list.map((e) =>
+          e.exerciseId === ex.exerciseId
+            ? {
+                ...e,
+                loadMode: mode,
+                previousSets: e.previousSets.map((p) => ({ ...p, weightKg: convertCounting(p.weightKg, e.loadMode ?? 'one', mode) })),
+              }
+            : e,
+        ),
+      );
       void setExerciseLoadMode(ex.exerciseId, mode).catch(() => undefined);
     },
 
     swapExercise: async (exKey, next) => {
       const cur = get().exercises.find((e) => e.key === exKey);
-      if (!cur || cur.sets.some((s) => s.done)) return false;
+      if (!cur) return false;
+      // LW-31: after a tick, the new exercise gets exactly the open rows (the ticked ones stay).
+      const openRows = (e: DraftExercise): number => e.sets.filter((s) => !s.done && !s.isWarmup).length || 1;
+      const split = cur.sets.some((s) => s.done);
+      // #10: the new exercise's card number — beside the old card after a split, in its place
+      // otherwise (the old card is gone then, so its number is free).
+      const others = split ? get().exercises : get().exercises.filter((e) => e.key !== exKey);
       // Phase 4: in an easy week the halved set count stays (not last time's full count).
-      const draftEx = await buildDraftExercise(next, cur.sets.filter((s) => !s.isWarmup).length || 1, { exactSets: get().easyWeek });
-      if (get().editingSessionId) delete draftEx.note;
-      // Re-check after the await: a tick may have landed meanwhile.
-      const still = get().exercises.find((e) => e.key === exKey);
-      if (!still || still.sets.some((s) => s.done)) return false;
-      mutate((list) =>
-        list.map((e) => (e.key === exKey ? { ...draftEx, key: exKey, supersetGroup: e.supersetGroup ?? null } : e)),
+      const draftEx = await buildDraftExercise(
+        next,
+        split ? openRows(cur) : cur.sets.filter((s) => !s.isWarmup).length || 1,
+        { exactSets: split || get().easyWeek, card: nextCardNumber(others, next.id) },
       );
+      if (get().editingSessionId) delete draftEx.note;
+      // Re-check after the await: the card may be gone, or a tick may have landed meanwhile.
+      const still = get().exercises.find((e) => e.key === exKey);
+      if (!still) return false;
+      if (still.sets.some((s) => s.done) && draftEx.sets.length > openRows(still)) {
+        draftEx.sets = draftEx.sets.slice(0, openRows(still));
+      }
+      if (get().lastDeleted?.exKey === exKey) set({ lastDeleted: null });
+      // LW-09: the new card remembers the routine's own exercise (the first one, across repeat
+      // swaps); swapping back to it is no swap at all. LW-31: ticked sets keep their card.
+      mutate((list) => list.flatMap((e) => (e.key === exKey ? swapSplit(e, draftEx) : [e])), true);
       return true;
     },
 
-    finish: async (note) => {
+    finish: async (note, opts = {}) => {
       const s = get();
       // Guard re-entry (double-tap): committing is set synchronously below, before
       // the first await, so a second concurrent call bails here.
@@ -968,10 +1250,12 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // An edit must go through saveEdits — finishing would create a SECOND session
       // and leave the original untouched.
       if (s.editingSessionId) return null;
-      const flat = draftToRichSets(s.exercises);
+      // LW-03: a row that was never ticked is saved only when the member chose "Save them".
+      const flat = draftToRichSets(s.exercises, { tickedOnly: opts.keepUnticked !== true });
       // Need at least one working set — a warm-up-only session would be invisible
       // to history/PREVIOUS (the history read excludes warm-ups).
       if (!hasWorkingSet(flat)) return null;
+      const title = opts.name?.replace(/\s+/g, ' ').trim().slice(0, 60) || null;
       set({ committing: true });
       // Finish writes the whole workout itself; a pending typing-pause save is not needed.
       if (draftTimer) clearTimeout(draftTimer);
@@ -981,7 +1265,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         // workout crossing midnight must not split from its own started_at.
         const startedAt = s.startedAt; // narrowed to number by the guard above
         const dateISO = toISO(new Date(startedAt));
-        const endedAt = Date.now();
+        // LW-07: the end the member picked for a workout left open (never before the start).
+        const now = Date.now();
+        const endedAt = opts.endedAt != null ? Math.min(now, Math.max(startedAt, opts.endedAt)) : now;
         // Commit the whole workout atomically: createSession + addSetsWithMeta +
         // the draft-clear all run inside ONE transaction on the shared getDb()
         // connection (non-exclusive, like hevyImport — the frozen repos join it).
@@ -1003,6 +1289,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             endedAt,
           });
           id = session.id;
+          // LW-10: the workout's own name (additive column, tracker schema v9).
+          if (title) await getDb().runAsync('UPDATE workout_sessions SET title = ? WHERE id = ?', [title, session.id]);
           await addSetsWithMeta(session.id, flat); // auto set_number + PR detection + rpe/type
           // Phase 4: an easy-week workout is marked, so records and the Target leave it out —
           // also the frozen PR log that Home's PR count, the strength score and the coach read.

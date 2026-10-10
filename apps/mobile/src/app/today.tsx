@@ -23,6 +23,7 @@ import { targetLine, type ProgressionTarget } from '@/tracker/engine/progression
 import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
 import { getPlanNow, planLine, type PlanNow } from '@/tracker/services/planState';
 import { doneToday } from '@/tracker/lib/todayLink';
+import { showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 interface Today {
@@ -71,7 +72,7 @@ export default function TodayScreen() {
           // A workout saved before Android closed the app loads first — Start must not replace it.
           await hydrate();
           if (!useActiveWorkout.getState().active) await startFromPlan();
-          router.replace('/session/active');
+          showActiveWorkout(router);
         } finally {
           setStarting(false);
         }

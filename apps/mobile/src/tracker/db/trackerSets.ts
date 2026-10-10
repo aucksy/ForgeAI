@@ -41,6 +41,11 @@ export interface RichSet {
   distanceM?: number | null;
   /** Phase 2: how this set's weight counts, when not the exercise's current way (null = follow it). */
   loadMode?: LoadMode | null;
+  /**
+   * LW-28 (schema v10): the set's card among the workout's cards of the same exercise
+   * (0 / absent = the first). Heavy and back-off Bench stay two cards after saving.
+   */
+  cardIndex?: number | null;
 }
 
 export interface SetMeta {
@@ -53,6 +58,10 @@ export interface SetMeta {
   distanceM?: number | null;
   /** Phase 2: the set's own counting (null = follow the exercise). */
   loadMode?: LoadMode | null;
+  /** LW-28: the set's card among the cards of its exercise (0 = the first, and every older set). */
+  cardIndex?: number;
+  /** LW-28: the order the set was written in (its rowid), so split cards keep their place. */
+  seq?: number;
 }
 
 /** Append sets (frozen set-numbering + PR detection), then persist their rpe/type/note/time/distance. */
@@ -77,6 +86,8 @@ export async function addSetsWithMeta(sessionId: string, sets: RichSet[]): Promi
     const durationSec = s.durationSec != null && s.durationSec > 0 ? s.durationSec : null;
     const distanceM = s.distanceM != null && s.distanceM > 0 ? s.distanceM : null;
     const loadMode = isLoadMode(s.loadMode) ? s.loadMode : null;
+    // The first card of an exercise stays NULL (as every older set), so a plain workout writes nothing new.
+    const cardIndex = s.cardIndex != null && s.cardIndex > 0 ? Math.round(s.cardIndex) : null;
     const hasMeta =
       (s.rpe ?? null) !== null ||
       (s.note ?? null) !== null ||
@@ -84,14 +95,24 @@ export async function addSetsWithMeta(sessionId: string, sets: RichSet[]): Promi
       setType !== 'normal' ||
       durationSec !== null ||
       distanceM !== null ||
-      loadMode !== null;
+      loadMode !== null ||
+      cardIndex !== null;
     if (!hasMeta) continue;
-    await db.runAsync(
-      `UPDATE set_entries SET rpe = ?, set_type = ?, note = ?, superset_group = ?, duration_sec = ?, distance_m = ?,
-              load_mode = ?
-        WHERE id = ?`,
-      [s.rpe ?? null, setType, s.note ?? null, s.supersetGroup ?? null, durationSec, distanceM, loadMode, created[i].id],
-    );
+    if (cardIndex === null) {
+      await db.runAsync(
+        `UPDATE set_entries SET rpe = ?, set_type = ?, note = ?, superset_group = ?, duration_sec = ?, distance_m = ?,
+                load_mode = ?
+          WHERE id = ?`,
+        [s.rpe ?? null, setType, s.note ?? null, s.supersetGroup ?? null, durationSec, distanceM, loadMode, created[i].id],
+      );
+    } else {
+      await db.runAsync(
+        `UPDATE set_entries SET rpe = ?, set_type = ?, note = ?, superset_group = ?, duration_sec = ?, distance_m = ?,
+                load_mode = ?, card_index = ?
+          WHERE id = ?`,
+        [s.rpe ?? null, setType, s.note ?? null, s.supersetGroup ?? null, durationSec, distanceM, loadMode, cardIndex, created[i].id],
+      );
+    }
   }
   return created;
 }
@@ -107,8 +128,10 @@ export async function getSessionSetMeta(sessionId: string): Promise<Record<strin
     duration_sec: number | null;
     distance_m: number | null;
     load_mode: string | null;
+    card_index?: number | null;
+    seq?: number | null;
   }>(
-    'SELECT id, rpe, set_type, note, superset_group, duration_sec, distance_m, load_mode FROM set_entries WHERE session_id = ?',
+    'SELECT id, rpe, set_type, note, superset_group, duration_sec, distance_m, load_mode, card_index, rowid AS seq FROM set_entries WHERE session_id = ?',
     [sessionId],
   );
   const out: Record<string, SetMeta> = {};
@@ -121,6 +144,8 @@ export async function getSessionSetMeta(sessionId: string): Promise<Record<strin
       durationSec: r.duration_sec,
       distanceM: r.distance_m,
       loadMode: isLoadMode(r.load_mode) ? r.load_mode : null,
+      ...(r.card_index != null && r.card_index > 0 ? { cardIndex: Number(r.card_index) } : {}),
+      ...(r.seq != null ? { seq: Number(r.seq) } : {}),
     };
   }
   return out;

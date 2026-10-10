@@ -1,8 +1,12 @@
-/** Read-only session recap: stat tiles, new records, muscle split, per-exercise sets. */
+/**
+ * Read-only workout recap: stat tiles, new records, muscle split, per-exercise sets.
+ * Phase 2 (LW-21, R2): every long list folds shut under a highlighted heading with its count;
+ * the finish screen leads with its own one-line answer, so it hides the tiles (`showTotals`).
+ */
 import { Text, View } from 'react-native';
 
 import { HBarList } from '@/components/charts';
-import { Badge, Card, Icon, SectionHeader, StatTile } from '@/components/ui';
+import { Badge, Card, FoldSection, StatTile } from '@/components/ui';
 import { trimNum } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
@@ -18,7 +22,17 @@ import type { SessionSummaryData } from '../services/finishSummary';
 import { groupByExercise, recordValueText } from '../services/recordText';
 import { showW } from './unitText';
 
-export function SessionSummary({ data }: { data: SessionSummaryData }) {
+export function SessionSummary({
+  data,
+  showTotals = true,
+  exercisesOpen = false,
+}: {
+  data: SessionSummaryData;
+  /** The four tiles (time, kg lifted, sets, exercises). Off where the screen already leads with them. */
+  showTotals?: boolean;
+  /** Start with the exercises open (a workout's own page, where they are the point). */
+  exercisesOpen?: boolean;
+}) {
   const { session, durationSec, totalVolumeKg, workingSetCount, exerciseCount, muscles, setMeta, kinds, needsBodyweight } = data;
   const records = data.records ?? [];
   // v0.27.0: kg or lb.
@@ -28,6 +42,7 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
   return (
     <View style={{ gap: space.lg }}>
       {/* stat tiles */}
+      {showTotals ? (
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
         <View style={{ flexBasis: '47%', flexGrow: 1 }}>
           <StatTile label="Duration" value={durationSec > 0 ? formatDuration(durationSec) : '—'} icon="clock" />
@@ -47,6 +62,7 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
           <StatTile label="Exercises" value={exerciseCount} icon="target" />
         </View>
       </View>
+      ) : null}
       {needsBodyweight ? (
         <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, marginTop: -space.sm }}>
           Log your body weight so pull-ups and dips count in your volume.
@@ -55,13 +71,8 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
 
       {/* new records (Phase 3: all seven kinds), one row per exercise */}
       {records.length > 0 ? (
+        <FoldSection title="New records" count={records.length} noun="record">
         <Card>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginBottom: space.sm }}>
-            <Icon name="trophy" size={18} color={color.accent} />
-            <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-              {records.length === 1 ? 'New personal record' : `${records.length} new personal records`}
-            </Text>
-          </View>
           <View style={{ gap: space.md }}>
             {groupByExercise(records).map((g) => (
               <View key={g.exerciseId} style={{ gap: 6 }}>
@@ -77,27 +88,26 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
             ))}
           </View>
         </Card>
+        </FoldSection>
       ) : null}
 
       {/* muscle split — working sets per muscle (a bench set = 1 chest, ½ triceps) */}
       {muscles.length > 0 ? (
-        <View>
-          <SectionHeader title="Sets per muscle" />
+        <FoldSection title="Sets per muscle" count={muscles.length} noun="muscle">
           <Card>
             <HBarList
               data={muscles.map((m) => ({ label: MUSCLE_LABEL[m.muscle], value: m.sets }))}
               valueFormat={(v) => fmtSets(v)}
             />
           </Card>
-        </View>
+        </FoldSection>
       ) : null}
 
       {/* per-exercise breakdown */}
-      <View>
-        <SectionHeader title="Exercises" />
+      <FoldSection title="Exercises" count={exerciseCount} noun="exercise" defaultOpen={exercisesOpen}>
         <View style={{ gap: space.sm }}>
-          {session.exercises.map((g) => {
-            // superset_group + note are shared across the exercise's sets (note lives on set 1).
+          {session.exercises.map((g, gi) => {
+            // superset_group + note are shared across the card's sets (note lives on its first set).
             const firstMeta = g.sets.length > 0 ? setMeta[g.sets[0].id] : undefined;
             const ssg = firstMeta?.supersetGroup ?? null;
             const exNote =
@@ -116,7 +126,8 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
                     ? `${wu} of help`
                     : null;
             return (
-            <Card key={g.exercise.id}>
+            // LW-28: the same lift can be two cards (heavy, back-off) — the key keeps them apart.
+            <Card key={`${g.exercise.id}:${gi}`}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.xs, flexWrap: 'wrap' }}>
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
                   {g.exercise.name}
@@ -190,7 +201,7 @@ export function SessionSummary({ data }: { data: SessionSummaryData }) {
             );
           })}
         </View>
-      </View>
+      </FoldSection>
     </View>
   );
 }

@@ -12,6 +12,7 @@
  * Phase 4: "Swap exercise" in the menu — for this workout only, before a set is ticked,
  * to one that fits the plan's equipment and sore areas. The routine stays as it is.
  */
+import { useRouter } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 import type { TextInput as TextInputType } from 'react-native';
@@ -32,16 +33,18 @@ import { swapContextFor } from '../services/plansService';
 import { earlierCards, liveRecordFlags } from '../services/liveRecords';
 import { effectiveRestSec, fmtRest } from '../services/restRules';
 import { computeWarmups } from '../services/warmupMath';
+import { moveKind, supersetChoices } from '../services/workoutOrder';
 import { fillForSet, useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
+import { useWorkoutUi } from '../store/workoutUiStore';
 import { ExerciseDemoSheet } from './ExerciseDemoSheet';
 import { ExerciseThumb } from './ExerciseThumb';
 import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
-import { afterTick, SetRow } from './SetRow';
+import { afterTick, SET_ROW, SetRow, useRowLayout } from './SetRow';
 import { SetTypeSheet } from './SetTypeSheet';
 import { SupersetSheet } from './SupersetSheet';
 import { SwapSheet } from './SwapSheet';
@@ -72,11 +75,10 @@ function hasCountingChoice(ex: Pick<DraftExercise, 'equipment' | 'logType' | 'lo
  */
 export const ExerciseLogCard = memo(function ExerciseLogCard({
   exercise,
-  existingGroups,
   target,
 }: {
   exercise: DraftExercise;
-  /** Distinct superset groups in the whole workout (for the chooser). */
+  /** Distinct superset groups in the whole workout (kept for callers; the chooser reads the store). */
   existingGroups: number[];
   /** Progressive-overload prescription for this exercise (v2 engine); null when
    *  the exercise isn't part of the plan day (Start-Empty / ad-hoc add). */
@@ -93,6 +95,12 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const deleteSetWithUndo = useActiveWorkout((s) => s.deleteSetWithUndo);
   const setLoadMode = useActiveWorkout((s) => s.setLoadMode);
   const swapExercise = useActiveWorkout((s) => s.swapExercise);
+  // Packet E: move up / down (LW-12), pair into a superset (LW-26).
+  const moveExercise = useActiveWorkout((s) => s.moveExercise);
+  const pairSuperset = useActiveWorkout((s) => s.pairSuperset);
+  // Correcting a saved workout: its sets are all ticked, so no swap there (as before).
+  const editing = useActiveWorkout((s) => s.editingSessionId != null);
+  const router = useRouter();
   // Phase 4: an easy week stays out of records — no medals on its sets.
   const easyWeek = useActiveWorkout((s) => s.easyWeek);
   const completeTimedSet = useActiveWorkout((s) => s.completeTimedSet);
@@ -105,6 +113,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   useUnits();
 
   const [sheet, setSheet] = useState<SheetName>(null);
+  const [restSaveError, setRestSaveError] = useState<string | null>(null);
   const [typeFor, setTypeFor] = useState<string | null>(null);
   const [timerFor, setTimerFor] = useState<string | null>(null);
   const [showWhy, setShowWhy] = useState(false);
@@ -124,8 +133,32 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   };
 
   const group = exercise.supersetGroup ?? null;
-  const otherGroups = existingGroups.filter((g) => g !== group);
-  const nextGroup = (existingGroups.length > 0 ? Math.max(...existingGroups) : 0) + 1;
+  // Read only while the menu / chooser is open (the card re-renders as it opens), so typing on
+  // another card never re-renders this one.
+  const moves =
+    sheet === 'menu'
+      ? (() => {
+          const list = useActiveWorkout.getState().exercises;
+          return { up: moveKind(list, exercise.key, -1), down: moveKind(list, exercise.key, 1) };
+        })()
+      : null;
+  const ssChoices = sheet === 'superset' ? supersetChoices(useActiveWorkout.getState().exercises, exercise.key) : null;
+  const onMove = (dir: -1 | 1): void => {
+    setSheet(null);
+    moveExercise(exercise.key, dir);
+    // Bring the moved card into view once it has its new place.
+    setTimeout(() => useWorkoutUi.getState().requestScroll(exercise.key), 320);
+  };
+
+  // Item 8 (as in Hevy): the name opens the exercise's page (history and how-to). The workout
+  // screen stays underneath, exactly as it was. A double tap opens one page.
+  const lastOpen = useRef(0);
+  const openExercisePage = (): void => {
+    const now = Date.now();
+    if (now - lastOpen.current < 1000) return;
+    lastOpen.current = now;
+    router.push({ pathname: '/exercise/[id]', params: { id: exercise.exerciseId } });
+  };
 
   // Note — local text (pushed to the store), synced back on external change.
   const noteRef = useRef<TextInputType>(null);
@@ -156,23 +189,31 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const rows = useMemo(() => {
     const flags = easyWeek ? new Map<string, never>() : liveRecordFlags(exercise, earlier);
     let working = 0;
+    let warm = 0;
     return exercise.sets.map((s) => {
       // PREVIOUS aligns by WORKING-set ordinal (previousSets excludes warm-ups),
       // matching prevForSet() in the store so display + auto-fill agree.
       let label: string;
+      // LW-27: how a screen reader names the row ("set 2", "warm-up 1", "drop set 3").
+      let spoken: string;
       let previous: DraftExercise['previousSets'][number] | null;
       if (s.isWarmup) {
         label = 'W';
+        warm += 1;
+        spoken = `warm-up ${warm}`;
         previous = null;
       } else {
         previous = exercise.previousSets[working] ?? null;
         label = String(working + 1);
+        spoken = `${s.setType === 'drop' ? 'drop set' : 'set'} ${label}`;
         working += 1;
       }
-      return { set: s, label, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
+      return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
     });
   }, [exercise, fillTarget, earlier, easyWeek]);
 
+  // Packet B (LW-17): PREVIOUS narrows and RPE moves into the set sheet on a narrow phone.
+  const rowLayout = useRowLayout();
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
   const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);
   const typeSet = typeFor ? exercise.sets.find((s) => s.key === typeFor) ?? null : null;
@@ -182,7 +223,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   // "Try a harder / easier version": switch this card to the linked exercise, while
   // nothing has been ticked yet (logged sets stay with the exercise they were done on).
   const version = target?.version ?? null;
-  const canSwitch = version?.id != null && !exercise.sets.some((s) => s.done);
+  // LW-31: also after a tick (the ticked sets stay with this exercise; see swapExercise).
+  const canSwitch = version?.id != null && !editing;
   const onSwitch = async (): Promise<void> => {
     if (!version?.id) return;
     const next = await getExerciseById(version.id).catch(() => null);
@@ -190,15 +232,22 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       Alert.alert('Not in your library', `${version.name} is not in your exercise library.`);
       return;
     }
-    const ok = await swapExercise(exercise.key, next);
-    if (!ok) Alert.alert('Already started', 'Finish this exercise as it is. Try the other version next time.');
+    const ok = await swapExercise(exercise.key, next).catch(() => false);
+    if (!ok) Alert.alert('Could not switch', 'Please try again.');
   };
 
-  // Phase 4: swap for today — only before a set is ticked, only a library exercise.
-  const canSwapToday = exercise.catalogKey != null && !exercise.sets.some((s) => s.done);
+  // Phase 4: swap for today. LW-31: also after a tick, and for the member's own exercises
+  // (they have no library matches: the full picker opens instead).
+  const canSwapToday = !editing;
+  const openSwapPicker = (): void => {
+    router.push({ pathname: '/session/add-exercise', params: { swap: exercise.key } });
+  };
   const onOpenSwap = async (): Promise<void> => {
     const key = exercise.catalogKey;
-    if (!key) return;
+    if (!key) {
+      openSwapPicker();
+      return;
+    }
     const st = useActiveWorkout.getState();
     const ctx = await swapContextFor(st.planDayId).catch(() => null);
     const exclude = st.exercises.flatMap((e) => (e.catalogKey ? [e.catalogKey] : []));
@@ -221,8 +270,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       Alert.alert('Could not swap', 'Please try again.');
       return;
     }
-    const ok = await swapExercise(exercise.key, next);
-    if (!ok) Alert.alert('Already started', 'Finish this exercise as it is. Swap it next time.');
+    const ok = await swapExercise(exercise.key, next).catch(() => false);
+    if (!ok) Alert.alert('Could not swap', 'Please try again.');
   };
 
   const confirmRemove = (): void => {
@@ -269,9 +318,17 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           onPress={() => setSheet('demo')}
         />
         <View style={{ flex: 1 }}>
-          <Text numberOfLines={1} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-            {exercise.name}
-          </Text>
+          <Pressable
+            onPress={openExercisePage}
+            hitSlop={{ top: 8, bottom: 4 }}
+            accessibilityRole="link"
+            accessibilityLabel={`${exercise.name}. Open its history and how-to`}
+            style={{ alignSelf: 'flex-start', maxWidth: '100%' }}
+          >
+            <Text numberOfLines={1} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
+              {exercise.name}
+            </Text>
+          </Pressable>
           <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
             <Badge label={exercise.muscleLabel ?? cap(exercise.muscleGroup)} tone="accent" />
             {group != null ? (
@@ -364,11 +421,15 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             paddingVertical: 8,
           }}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.xs }}>
-            <Icon name="target" size={14} color={color.accentBright} />
+          {/* TG-10: the whole Target, wrapping onto a second or third line at large text —
+              never "42.5 kg each · aim f…". Icon and badge stay level with the first line. */}
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.xs }}>
+            <View style={{ paddingTop: 3 }}>
+              <Icon name="target" size={14} color={color.accentBright} />
+            </View>
             <Text
-              style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accentBright }}
-              numberOfLines={1}
+              style={{ flex: 1, flexShrink: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accentBright }}
+              numberOfLines={3}
             >
               {line}
             </Text>
@@ -417,9 +478,12 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       ) : null}
 
       {/* column header — the words say what to type ("KG EACH" = one dumbbell) */}
+      {/* Packet B (LW-17): the same widths as the set rows (SetRow's SET_ROW / useRowLayout). */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingHorizontal: space.xs }}>
-        <Text style={[colHead, { width: 34, textAlign: 'center' }]}>SET</Text>
-        <Text style={[colHead, { width: 70 }]}>PREVIOUS</Text>
+        <Text style={[colHead, { width: SET_ROW.set, textAlign: 'center' }]}>SET</Text>
+        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[colHead, { width: rowLayout.prevW }]}>
+          PREVIOUS
+        </Text>
         {heads.distance ? <Text style={[colHead, { flex: 1, textAlign: 'center' }]}>{heads.distance}</Text> : null}
         {heads.weight ? (
           <Text numberOfLines={1} style={[colHead, { flex: 1, textAlign: 'center' }]}>
@@ -432,9 +496,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           </Text>
         ) : null}
         {heads.time ? <Text style={[colHead, { flex: 1, textAlign: 'center' }]}>{heads.time}</Text> : null}
-        {logType === 'time' ? <View style={{ width: 34 }} /> : null}
-        {showRpe ? <Text style={[colHead, { width: 38, textAlign: 'center' }]}>RPE</Text> : null}
-        <View style={{ width: 34 }} />
+        {logType === 'time' ? <View style={{ width: SET_ROW.button }} /> : null}
+        {rowLayout.rpeCell ? <Text style={[colHead, { width: SET_ROW.button, textAlign: 'center' }]}>RPE</Text> : null}
+        <View style={{ width: SET_ROW.button }} />
       </View>
 
       {rows.map((r) => (
@@ -450,6 +514,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           logType={logType}
           distUnit={distUnit}
           onOpenTimer={logType === 'time' ? onOpenTimer : undefined}
+          exName={exercise.name}
+          spoken={r.spoken}
         />
       ))}
 
@@ -500,6 +566,20 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               onPress={() => openAfterMenu('plates')}
             />
           ) : null}
+          {moves?.up ? (
+            <SheetRow
+              label={moves.up === 'superset' ? 'Move superset up' : 'Move up'}
+              leading={<Glyph name="chevron-up" size={20} color={color.accent} />}
+              onPress={() => onMove(-1)}
+            />
+          ) : null}
+          {moves?.down ? (
+            <SheetRow
+              label={moves.down === 'superset' ? 'Move superset down' : 'Move down'}
+              leading={<Glyph name="chevron-down" size={20} color={color.accent} />}
+              onPress={() => onMove(1)}
+            />
+          ) : null}
           <SheetRow
             label="Superset"
             value={group != null ? supersetLabel(group) : undefined}
@@ -535,11 +615,19 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         subtitle={`For ${exercise.name}. Remembered for next time.`}
         value={exercise.restSec ?? null}
         defaultSec={defaultRest}
+        error={restSaveError}
         onChoose={(sec) => {
-          setRestSec(exercise.key, sec);
+          // Phase 2 (RT-11): close only once it is kept for next time; else say so, calmly.
+          setRestSaveError(null);
+          void setRestSec(exercise.key, sec).then((saved) => {
+            if (saved) setSheet(null);
+            else setRestSaveError("Couldn't save it for next time. It applies to this workout.");
+          });
+        }}
+        onClose={() => {
+          setRestSaveError(null);
           setSheet(null);
         }}
-        onClose={() => setSheet(null)}
       />
       <PlateCalcSheet visible={sheet === 'plates'} initialKg={workingWeight ?? 0} onClose={() => setSheet(null)} />
       <SwapSheet
@@ -549,14 +637,26 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         note="For this workout only. Your routine stays."
         onClose={() => setSheet(null)}
         onPick={(a) => void onPickSwap(a)}
+        onPickAny={() => {
+          setSheet(null);
+          setTimeout(openSwapPicker, 260);
+        }}
       />
       <SupersetSheet
         visible={sheet === 'superset'}
         currentGroup={group}
-        otherGroups={otherGroups}
-        nextGroup={nextGroup}
-        onChoose={(g) => {
+        pairWith={ssChoices?.pairWith ?? []}
+        join={ssChoices?.join ?? []}
+        onPair={(other) => {
+          pairSuperset(exercise.key, other);
+          setSheet(null);
+        }}
+        onJoin={(g) => {
           setSupersetGroup(exercise.key, g);
+          setSheet(null);
+        }}
+        onLeave={() => {
+          setSupersetGroup(exercise.key, null);
           setSheet(null);
         }}
         onClose={() => setSheet(null)}

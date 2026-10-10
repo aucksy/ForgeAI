@@ -3,6 +3,7 @@ import { Alert, Text, TextInput, View } from 'react-native';
 
 import { ChipGroup } from '@/components/settings/ChipGroup';
 import type { ChipOption } from '@/components/settings/ChipGroup';
+import { ageToText, EXPERIENCE_OPTIONS, heightForUnits, heightToText, parseProfileExtras } from '@/components/settings/profileFields';
 import { Card, PrimaryButton } from '@/components/ui';
 import { getProfile } from '@/db/repos/userRepo';
 import { updateProfile } from '@/db/queuedWrites';
@@ -10,6 +11,7 @@ import { getMemberPhone, setMemberPhone } from '@/onboarding/db/dataActions';
 import { validateE164 } from '@/onboarding/form';
 import { success } from '@/lib/haptics';
 import { FEATURES } from '@/lib/features';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { UserProfile } from '@/types/models';
 
@@ -58,7 +60,8 @@ const overline = {
   marginBottom: space.sm,
 } as const;
 
-/** Editable member profile — name, goal and daily targets. Reads/writes the frozen
+/** Editable member profile — name, goal, experience, age, height and daily targets
+ *  (SH-09: the welcome answers are no longer fixed forever). Reads/writes the frozen
  *  userRepo (getProfile/updateProfile); on save refreshes the dashboard so the
  *  greeting + calorie/protein rings reflect the new values. */
 export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
@@ -69,6 +72,14 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
   const [phone, setPhone] = useState('');
   const [savedPhone, setSavedPhone] = useState('');
   const [goal, setGoal] = useState<UserProfile['goal']>('muscle');
+  // SH-09: experience changes Targets; age and height were welcome-only.
+  const [experience, setExperience] = useState<UserProfile['experience']>('intermediate');
+  const [ageText, setAgeText] = useState('');
+  const [heightText, setHeightText] = useState('');
+  const seededExtras = useRef({ age: '', height: '' });
+  const units = useUnits();
+  /** The unit the height box is written in (#12). */
+  const shownUnits = useRef(units);
   const [nums, setNums] = useState<Record<NumField['key'], string>>({
     calorieTarget: '',
     proteinTargetG: '',
@@ -88,6 +99,12 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
         setProfile(p);
         setName(p.name);
         setGoal(p.goal);
+        setExperience(p.experience);
+        const a = ageToText(p.age);
+        const h = heightToText(p.heightCm, shownUnits.current); // the unit on screen now (#12)
+        seededExtras.current = { age: a, height: h };
+        setAgeText(a);
+        setHeightText(h);
         setNums({
           calorieTarget: String(p.calorieTarget),
           proteinTargetG: String(p.proteinTargetG),
@@ -112,6 +129,25 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
     };
   }, []);
 
+  // #12: Units switched while this card is open — re-write the height box in the new unit, and
+  // what counts as "unchanged" with it (an untouched height is never refused in the wrong unit).
+  useEffect(() => {
+    const from = shownUnits.current;
+    shownUnits.current = units;
+    if (from === units) return;
+    const next = heightForUnits({
+      text: heightText,
+      seeded: seededExtras.current.height,
+      storedCm: profile?.heightCm ?? 0,
+      from,
+      to: units,
+    });
+    seededExtras.current = { ...seededExtras.current, height: next.seeded };
+    setHeightText(next.text);
+    // Only a unit change converts; typing never re-runs this.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [units]);
+
   const onSave = async (): Promise<void> => {
     if (saving || !profile) return;
     const trimmedName = name.trim();
@@ -122,6 +158,17 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
     const patch: Partial<Omit<UserProfile, 'id'>> = {};
     if (trimmedName !== profile.name) patch.name = trimmedName;
     if (goal !== profile.goal) patch.goal = goal;
+    if (experience !== profile.experience) patch.experience = experience;
+    // Only what the member changed: re-reading an untouched height in inches never nudges the cm.
+    if (ageText !== seededExtras.current.age || heightText !== seededExtras.current.height) {
+      const extras = parseProfileExtras(ageText, heightText, units);
+      if (!extras.ok) {
+        Alert.alert(extras.title, extras.message);
+        return;
+      }
+      if (ageText !== seededExtras.current.age && extras.age !== profile.age) patch.age = extras.age;
+      if (heightText !== seededExtras.current.height && extras.heightCm !== profile.heightCm) patch.heightCm = extras.heightCm;
+    }
     for (const f of NUM_FIELDS) {
       const raw = nums[f.key].trim();
       const n = Number(raw);
@@ -163,6 +210,9 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
       const updated =
         Object.keys(patch).length > 0 ? await updateProfile(patch) : profile;
       setProfile(updated);
+      seededExtras.current = { age: ageToText(updated.age), height: heightToText(updated.heightCm, units) };
+      setAgeText(seededExtras.current.age);
+      setHeightText(seededExtras.current.height);
       success();
       setJustSaved(true);
       onSaved?.();
@@ -215,6 +265,58 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
             setJustSaved(false);
           }}
         />
+      </View>
+
+      <View style={{ marginTop: space.lg }}>
+        <ChipGroup
+          label="Experience"
+          options={EXPERIENCE_OPTIONS}
+          selectedId={experience}
+          onSelect={(x) => {
+            setExperience(x);
+            setJustSaved(false);
+          }}
+        />
+        <Text
+          style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs }}
+        >
+          Your Targets use it: new lifters may jump two steps when a weight looks easy.
+        </Text>
+      </View>
+
+      <View style={{ marginTop: space.lg, flexDirection: 'row', gap: space.sm }}>
+        <View style={{ flex: 1 }}>
+          <Text style={overline}>Age</Text>
+          <TextInput
+            value={ageText}
+            onChangeText={(t) => {
+              setAgeText(t.replace(/[^0-9]/g, ''));
+              setJustSaved(false);
+            }}
+            keyboardType="number-pad"
+            placeholder="Optional"
+            placeholderTextColor={color.inkFaint}
+            maxLength={3}
+            accessibilityLabel="Age in years"
+            style={inputStyle}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={overline}>{units === 'imperial' ? 'Height (in)' : 'Height (cm)'}</Text>
+          <TextInput
+            value={heightText}
+            onChangeText={(t) => {
+              setHeightText(t.replace(/[^0-9.,]/g, ''));
+              setJustSaved(false);
+            }}
+            keyboardType="decimal-pad"
+            placeholder="Optional"
+            placeholderTextColor={color.inkFaint}
+            maxLength={5}
+            accessibilityLabel={units === 'imperial' ? 'Height in inches' : 'Height in centimetres'}
+            style={inputStyle}
+          />
+        </View>
       </View>
 
       {/* Calorie and macro targets only drive nutrition, which is hidden (owner decision D4). */}

@@ -7,7 +7,7 @@ import { fmtDistance, fmtDuration, fmtTotalDistance, weightIsEach, type DistUnit
 import { RECORD_LABEL, sessionUnit } from '../engine/records';
 import { setVolumeKg } from '../engine/volume';
 import type { SetMeta } from '../db/trackerSets';
-import { dayTypeLabel, formatDuration, type SessionSummaryData } from '../services/finishSummary';
+import { formatDuration, sessionTitle, type SessionSummaryData } from '../services/finishSummary';
 import type { RecordEventRow } from '../services/recordsService';
 import { recordValueText } from '../services/recordText';
 import type { WorkoutShareInput } from './workoutCard';
@@ -118,7 +118,7 @@ export function workoutShareInput(data: SessionSummaryData): WorkoutShareInput {
   const lifted = liftedOnPicture(data);
   const records = data.records ?? [];
   return {
-    title: dayTypeLabel(s.dayType),
+    title: sessionTitle(s),
     dateText: shareDate(s.dateISO),
     durationText: data.durationSec > 0 ? formatDuration(data.durationSec) : null,
     volumeLabel: lifted.label,
