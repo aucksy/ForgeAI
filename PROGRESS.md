@@ -1568,6 +1568,22 @@
     lost its fields on the phone — written out plainly; part J caught it) and two part-L selector
     slips (below the fold; the library name "Cable Triceps Kickback" for Hevy's "Triceps Kickback (Cable)").
 
+- 2026-10-10: **Tracker v0.29.1 — continuity with imported history; exercises new to ForgeAI**
+  (owner: after importing routines and history, a routine's session must show the previous
+  figures; offer to create exercises ForgeAI lacks).
+  - Continuity holds by design (link: `exerciseIdsCreating`; file: `exerciseIdsForTitles`;
+    history: `runImport` — all `matchTitle` on `readLibrary`; PREVIOUS =
+    `getBoundedExerciseHistory`, imported sessions are source 'manual'). Proven on the phone:
+    part L starts the linked Push 1 after part J's history → Skull Crusher PREVIOUS shows the
+    fixture's 12 kg × 11 (26.5 × 11 in lb) — `qa-hevy.csv` gained that set on 29 Sep.
+  - `RoutineImportSteps` step "N exercises are new to ForgeAI" (link only; `newExercisesIn` →
+    `hevyImport.titlesNotInLibrary`, `newExerciseAbout`); left-out ones are filtered at save.
+    History import preview: folded "N new to ForgeAI: see them".
+  - Review: routines-before-history guessed types from names ("Cable Crunch" ~ "run" → timed,
+    PREVIOUS blank). Now `GUESSED_TYPE_KEY` (meta) lists link-made exercises; `runImport` sets
+    their type from the real sets when nothing was logged on them; whole-word name check.
+  - **Tests:** 723 vitest.
+
 ## Next (pre-B2B2C, still valid)
 - Gather demo feedback. For a properly release-signed build: run the "Generate
   release keystore" workflow once, set the 4 ANDROID_* Actions secrets

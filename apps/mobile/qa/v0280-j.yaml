@@ -114,8 +114,13 @@ appId: com.forgeai.app
 - tapOn: "Push A"
 # Hevy's "Chest Fly (Machine)" is the library's Pec Deck Fly (the history landed there too).
 - extendedWaitUntil:
-    visible: "Pec Deck Fly"
+    visible: "Push Day · From Hevy"
     timeout: 15000
+# v0.29.1: five exercises now (Skull Crusher added to the file), so it is below the fold.
+- scrollUntilVisible:
+    element: "Pec Deck Fly"
+    centerElement: true
+    timeout: 20000
 - takeScreenshot: 148-push-a-routine
 - back
 - back

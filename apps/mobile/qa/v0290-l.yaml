@@ -106,8 +106,12 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "Start routine"
 - extendedWaitUntil:
-    visible: "Dumbbell Skull Crusher"
+    visible: "ELAPSED"
     timeout: 20000
+- scrollUntilVisible:
+    element: "Dumbbell Skull Crusher"
+    centerElement: true
+    timeout: 30000
 - scrollUntilVisible:
     element: "(26\\.5|12) × 11"
     centerElement: true
