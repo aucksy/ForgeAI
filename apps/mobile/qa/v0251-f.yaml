@@ -23,7 +23,7 @@ appId: com.forgeai.app
 - tapOn: "^Progress$"
 # Audit Phase 5: the last-7-days body map folds shut under "Muscles · last 7 days, N muscles".
 - extendedWaitUntil:
-    visible: "This week vs your usual"
+    visible: "This week.* vs your usual"
     timeout: 30000
 - scrollUntilVisible:
     element: '^Muscles · last 7 days, .*'
@@ -134,9 +134,9 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: '.* · 1 lift beat its best'
     timeout: 15000
-# Audit Phase 5 (PG-04): a run is named after the exercise ("Treadmill Run done"), and so is
-# its share picture (75) — never "Full Body".
-- assertVisible: "Treadmill Run done"
+# LW-10 / PG-04: a workout without a routine is named by when it started ("Morning workout"; the
+# member can rename it on the finish sheet), and so is its share picture (75) — never "Full Body".
+- assertVisible: '(Morning|Afternoon|Evening|Night) workout done'
 - assertNotVisible: "Full Body done"
 # LW-21: the records fold shut under "New records": open them before looking for Best pace.
 - scrollUntilVisible:

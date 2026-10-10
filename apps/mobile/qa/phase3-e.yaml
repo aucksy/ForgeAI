@@ -78,9 +78,9 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: '.* · 1 lift beat its best'
     timeout: 15000
-# Audit Phase 5 (PG-04): an empty workout of one exercise is named after it ("Pull Up done");
-# the share picture below carries the same name as its title — never "Full Body".
-- assertVisible: 'Pull[- ][Uu]p done'
+# LW-10 / PG-04: a workout without a routine is named by when it started ("Afternoon workout
+# done"); the share picture below carries the same name as its title — never "Full Body".
+- assertVisible: '(Morning|Afternoon|Evening|Night) workout done'
 - assertNotVisible: "Full Body done"
 # LW-21: the records fold shut under "New records" with a count. Since Phase 3 (D10) it counts
 # lifts, not kinds of record ("1 lift · see it"): open them.

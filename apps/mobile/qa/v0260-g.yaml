@@ -406,8 +406,10 @@ appId: com.forgeai.app
 - takeScreenshot: 105-trained-normally
 # ---------------------------------------------------------------- open a shared routine file
 - tapOn: "^Routines$"
-- extendedWaitUntil:
-    visible: "Add a routine, folder or file"
+# The list keeps where it was scrolled to: scroll back up to its "+" button.
+- scrollUntilVisible:
+    element: "Add a routine, folder or file"
+    direction: UP
     timeout: 15000
 - tapOn: "Add a routine, folder or file"
 - tapOn: "Import a routine file"
@@ -440,6 +442,10 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- a new routine asks where it goes
 # Audit Phase 4 (RP-08): "New routine" never joins the plan by itself — a folder picker first,
 # "My routines" (not followed) at the top, the followed plan last. Nothing is made here.
+- scrollUntilVisible:
+    element: "Add a routine, folder or file"
+    direction: UP
+    timeout: 15000
 - tapOn: "Add a routine, folder or file"
 - tapOn: "New routine"
 - extendedWaitUntil:
@@ -458,6 +464,10 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- reorder mode
 # RP-07: "Reorder routines and folders" puts Move up / Move down on routines and folders (in the
 # followed folder the order IS the rotation). Looked at; nothing is moved.
+- scrollUntilVisible:
+    element: "Add a routine, folder or file"
+    direction: UP
+    timeout: 15000
 - tapOn: "Add a routine, folder or file"
 - tapOn: "Reorder routines and folders"
 - extendedWaitUntil:

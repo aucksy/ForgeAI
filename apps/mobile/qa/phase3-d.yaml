@@ -17,7 +17,7 @@ appId: com.forgeai.app
     timeout: 60000
 - tapOn: "^Progress$"
 - extendedWaitUntil:
-    visible: "This week vs your usual"
+    visible: "This week.* vs your usual"
     timeout: 30000
 - assertVisible: "Your lifts"
 - assertVisible: "Any exercise.*"
@@ -40,7 +40,7 @@ appId: com.forgeai.app
     text: "Show trend Treadmill Run"
     index: 0
 - extendedWaitUntil:
-    visible: "This week vs your usual"
+    visible: "This week.* vs your usual"
     timeout: 15000
 - scrollUntilVisible:
     element: "Open exercise page"
