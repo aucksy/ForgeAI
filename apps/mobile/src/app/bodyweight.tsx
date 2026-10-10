@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, Text, TextInput, View } from 'react-native';
 
 import { DeltaPill } from '@/components/charts';
-import { AnimatedNumber, Card, EmptyState, IconButton, PrimaryButton, Screen, SectionHeader, Skeleton } from '@/components/ui';
-import { getBodyWeightHistory, logBodyWeight } from '@/db/repos/userRepo';
+import { AnimatedNumber, Card, EmptyState, IconButton, LoadError, PrimaryButton, Screen, SectionHeader, Skeleton } from '@/components/ui';
+import { getBodyWeightHistory } from '@/db/repos/userRepo';
+import { logBodyWeight } from '@/db/queuedWrites';
 import { shortDate, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { success } from '@/lib/haptics';
@@ -28,6 +29,9 @@ export default function BodyWeightScreen() {
 
   const [history, setHistory] = useState<BodyWeightEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  // PG-23: a failed read shows "Couldn't load your weigh-ins", never "No weigh-ins yet".
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [input, setInput] = useState('');
   const [saving, setSaving] = useState(false);
   const savingRef = useRef(false);
@@ -39,15 +43,24 @@ export default function BodyWeightScreen() {
         if (alive) {
           setHistory(h);
           setLoading(false);
+          setFailed(false);
         }
       })
       .catch(() => {
-        if (alive) setLoading(false);
+        if (!alive) return;
+        setLoading(false);
+        setFailed(true);
       });
     return () => {
       alive = false;
     };
-  }, []);
+  }, [attempt]);
+
+  const retry = (): void => {
+    setFailed(false);
+    setLoading(true);
+    setAttempt((n) => n + 1);
+  };
 
   const onLog = async (): Promise<void> => {
     if (savingRef.current) return;
@@ -62,8 +75,14 @@ export default function BodyWeightScreen() {
       await logBodyWeight(todayISO(), shownToKg(v, units));
       success();
       setInput('');
-      const h = await getBodyWeightHistory();
-      setHistory(h);
+      // The weigh-in IS saved: a failed re-read must not say "Could not save" (it would be
+      // logged twice). The list catches up on the next visit.
+      await getBodyWeightHistory()
+        .then((h) => {
+          setHistory(h);
+          setFailed(false);
+        })
+        .catch(() => undefined);
     } catch {
       Alert.alert('Could not save', 'Something went wrong — please try again.');
     } finally {
@@ -123,6 +142,8 @@ export default function BodyWeightScreen() {
 
         {loading ? (
           <Skeleton width="100%" height={220} radius={radius.lg} />
+        ) : failed && history.length === 0 ? (
+          <LoadError what="your weigh-ins" onRetry={retry} />
         ) : history.length === 0 ? (
           <EmptyState icon="scale" title="No weigh-ins yet" body="Log your body weight above to start a trend." />
         ) : (

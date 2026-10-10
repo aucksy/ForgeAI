@@ -17,6 +17,7 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { todayISO } from '@/lib/date';
 import { launchFor, takePendingPick } from '@/lib/pendingPick';
 import { tempPictureDirs } from '@/lib/tempPictures';
@@ -131,7 +132,9 @@ function keep(asset: ImagePicker.ImagePickerAsset): Promise<ProgressPhoto> {
     copy: (from, to) => FileSystem.copyAsync({ from, to }),
     remove: (uri) => FileSystem.deleteAsync(uri, { idempotent: true }),
     insert: async (p) => {
-      await getDb().runAsync('INSERT INTO progress_photos(id, date_iso, uri, created_at) VALUES(?, ?, ?, ?)', [p.id, p.dateISO, p.uri, p.createdAt]);
+      await enqueueWrite(() =>
+        getDb().runAsync('INSERT INTO progress_photos(id, date_iso, uri, created_at) VALUES(?, ?, ?, ?)', [p.id, p.dateISO, p.uri, p.createdAt]),
+      );
     },
     newId: uuid,
     today: todayISO(),
@@ -166,7 +169,7 @@ export async function keepPendingPhoto(): Promise<ProgressPhoto | null> {
 
 /** Delete one photo: the row, then its file. */
 export async function deleteProgressPhoto(photo: Pick<ProgressPhoto, 'id' | 'uri'>): Promise<void> {
-  await getDb().runAsync('DELETE FROM progress_photos WHERE id = ?', [photo.id]);
+  await enqueueWrite(() => getDb().runAsync('DELETE FROM progress_photos WHERE id = ?', [photo.id]));
   if (isOwnPhotoPath(photo.uri)) await FileSystem.deleteAsync(photo.uri, { idempotent: true }).catch(() => undefined);
 }
 

@@ -7,7 +7,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
-import { Card, Chip, EmptyState, IconButton, PrimaryButton, Screen, SectionHeader, Skeleton } from '@/components/ui';
+import { Card, Chip, EmptyState, IconButton, LoadError, PrimaryButton, Screen, SectionHeader, Skeleton } from '@/components/ui';
 import { shortDate, tinyDate } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { useUnits } from '@/lib/useUnits';
@@ -38,21 +38,30 @@ export default function MeasurementsScreen() {
   const units = useUnits();
   const [entries, setEntries] = useState<MeasurementEntry[] | null>(null);
   const [picked, setPicked] = useState<MeasureKind | null>(null);
+  // PG-23: a failed read shows "Couldn't load your measurements", never "No measurements yet".
+  const [failed, setFailed] = useState(false);
 
   const load = useCallback(() => {
     let alive = true;
     getMeasurements()
       .then((e) => {
-        if (alive) setEntries(e);
+        if (!alive) return;
+        setEntries(e);
+        setFailed(false);
       })
       .catch(() => {
-        if (alive) setEntries([]);
+        // Entries already on screen stay; with none, the screen shows LoadError.
+        if (alive) setFailed(true);
       });
     return () => {
       alive = false;
     };
   }, []);
   useFocusEffect(load);
+  const retry = (): void => {
+    setFailed(false);
+    load();
+  };
 
   const summary = useMemo(() => summarize(entries ?? []), [entries]);
   const kind: MeasureKind | null = picked && summary.some((s) => s.kind === picked) ? picked : summary[0]?.kind ?? null;
@@ -83,7 +92,9 @@ export default function MeasurementsScreen() {
       <View style={{ gap: space.lg }}>
         <PrimaryButton label="Log measurements" icon="plus" onPress={() => router.push('/measurements/log')} />
 
-        {entries === null ? (
+        {entries === null && failed ? (
+          <LoadError what="your measurements" onRetry={retry} />
+        ) : entries === null ? (
           <Skeleton width="100%" height={240} radius={radius.lg} />
         ) : summary.length === 0 || !kind || !current ? (
           <EmptyState

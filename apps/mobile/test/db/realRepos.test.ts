@@ -273,17 +273,16 @@ describe('erase all data (real SQL, foreign keys on)', () => {
     const { eraseAllData, hasMemberProfile } = await import('@/onboarding/db/dataActions');
     await eraseAllData();
     expect(await hasMemberProfile()).toBe(false);
-    // Every table except `meta` (migration versions, prefs) and `exercise_prefs` (known gap,
-    // QA-22 — asserted separately below) must be empty.
+    // Every table except `meta` (migration versions) must be empty.
     const left = db
       .tables()
-      .filter((t) => t !== 'meta' && t !== 'exercise_prefs')
+      .filter((t) => t !== 'meta')
       .map((t) => [t, db.count(t)] as const)
       .filter(([, n]) => n > 0);
     expect(left).toEqual([]);
   });
 
-  it.fails('QA-22 known defect: erase also clears per-exercise rest lengths (exercise_prefs)', async () => {
+  it('QA-22 (fixed): erase also clears per-exercise rest lengths (exercise_prefs)', async () => {
     const { setExerciseRestSec } = await import('@/tracker/db/exercisePrefs');
     await setExerciseRestSec(exerciseId('Barbell Bench Press'), 120);
     const { eraseAllData } = await import('@/onboarding/db/dataActions');

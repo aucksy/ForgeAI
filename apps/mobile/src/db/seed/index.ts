@@ -13,6 +13,7 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 import { getDb, getMeta } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
 
@@ -204,7 +205,8 @@ async function seed(): Promise<void> {
   ]);
 
   // ---- one exclusive transaction; seeded flag last so a crash re-seeds clean.
-  await getDb().withExclusiveTransactionAsync(async (tx) => {
+  // DS-04: through the one app-wide write queue, like every other transaction.
+  await enqueueWrite(() => getDb().withExclusiveTransactionAsync(async (tx) => {
     // Idempotency: clear any surviving rows before inserting so a reseed can't
     // collide on UNIQUE(exercises.name) / UNIQUE(body_weight.date_iso).
     for (const table of SEED_TABLES) await tx.runAsync(`DELETE FROM ${table}`);
@@ -240,5 +242,5 @@ async function seed(): Promise<void> {
       `INSERT INTO meta(key, value) VALUES('seeded', '1')
        ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
     );
-  });
+  }));
 }

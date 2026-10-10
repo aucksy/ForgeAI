@@ -15,7 +15,8 @@ import {
   Skeleton,
 } from '@/components/ui';
 import { getProfile } from '@/db/repos/userRepo';
-import { deleteMeal, getMealsForDay, logMeal } from '@/db/repos/nutritionRepo';
+import { getMealsForDay } from '@/db/repos/nutritionRepo';
+import { deleteMeal, logMeal } from '@/db/queuedWrites';
 import { todayISO } from '@/lib/date';
 import { FEATURES } from '@/lib/features';
 import { fmtInt } from '@/lib/format';

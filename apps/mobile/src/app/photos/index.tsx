@@ -9,7 +9,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Modal, Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { EmptyState, GhostButton, Icon, IconButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { EmptyState, GhostButton, Icon, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { shortDate, tinyDate } from '@/lib/date';
 import { color, radius, space, type } from '@/theme/tokens';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
@@ -31,6 +31,8 @@ export default function ProgressPhotosScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [photos, setPhotos] = useState<ProgressPhoto[] | null>(null);
+  // PG-23: a failed read shows "Couldn't load your photos", never "No photos yet".
+  const [failed, setFailed] = useState(false);
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
   const [viewing, setViewing] = useState<ProgressPhoto | null>(null);
@@ -44,16 +46,23 @@ export default function ProgressPhotosScreen() {
       .catch(() => null)
       .then(() => getProgressPhotos())
       .then((p) => {
-        if (alive) setPhotos(p);
+        if (!alive) return;
+        setPhotos(p);
+        setFailed(false);
       })
       .catch(() => {
-        if (alive) setPhotos([]);
+        // Photos already on screen stay; with none, the screen shows LoadError.
+        if (alive) setFailed(true);
       });
     return () => {
       alive = false;
     };
   }, []);
   useFocusEffect(load);
+  const retry = (): void => {
+    setFailed(false);
+    load();
+  };
 
   const add = async (from: 'camera' | 'gallery'): Promise<void> => {
     setAdding(false);
@@ -139,7 +148,9 @@ export default function ProgressPhotosScreen() {
           </View>
         )}
 
-        {photos === null ? (
+        {photos === null && failed ? (
+          <LoadError what="your photos" onRetry={retry} />
+        ) : photos === null ? (
           <Skeleton width="100%" height={tile} radius={radius.md} />
         ) : photos.length === 0 ? (
           <EmptyState

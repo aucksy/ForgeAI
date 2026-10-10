@@ -7,9 +7,18 @@
  * commits via the frozen `workoutRepo.createSession` + `addSets` (the latter already
  * auto-numbers sets AND runs PR detection). No schema change, no frozen file edited.
  */
+import { AppState } from 'react-native';
 import { create } from 'zustand';
 
+import {
+  clearAllSaveProblems,
+  clearSaveProblem,
+  reportActionProblem,
+  reportSaveProblem,
+  retryDelayMs,
+} from '@/components/saveProblemStore';
 import { getDb, getMeta, setMeta } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { getActivePlan } from '@/db/repos/planRepo';
 import { getBoundedExerciseHistory, type TrackedSetEntry } from '@/tracker/db/exerciseHistory';
 import {
@@ -23,7 +32,7 @@ import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getCarriedNote, getExerciseRestSec, getPriorBests, setExerciseRestSec } from '@/tracker/db/exercisePrefs';
 import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
-import { saveSessionEdits } from '@/tracker/db/sessionEdit';
+import { saveSessionEditsUnqueued } from '@/tracker/db/sessionEdit';
 import { easySets } from '@/tracker/plans/easyWeek';
 import { getPlanNow, isEasyForRoutine } from '@/tracker/services/planState';
 import { addSetsWithMeta, getSessionSetMeta } from '@/tracker/db/trackerSets';
@@ -273,6 +282,90 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
   await setMeta(DRAFT_KEY, JSON.stringify(snap));
 }
 
+// ---------------------------------------------------------------- draft autosave (DS-09, LW-01, LW-08)
+//
+// Typing saves the draft 300 ms after the LAST keystroke (one write, not one per key); a tick,
+// a start, Finish and the app going to the background save at once. Every draft write runs in
+// the ONE app-wide write queue, so it can never land inside another transaction (DS-04).
+//
+// LW-08: Finish clears the draft inside its own queued job and bumps `draftGen`. A draft write
+// that was asked for while Finish was running reaches the queue AFTER it, sees the generation
+// changed and does nothing, so a tick during the save can't resurrect a ghost workout.
+//
+// A failed write raises the app-wide SaveProblemBanner and retries by itself (2 s, 4 s ... 30 s);
+// the next successful write clears the banner.
+
+export const DRAFT_SAVE_DEBOUNCE_MS = 300;
+let draftGen = 0;
+let draftDirty = false;
+let draftTimer: ReturnType<typeof setTimeout> | null = null;
+let retryTimer: ReturnType<typeof setTimeout> | null = null;
+let readState: (() => ActiveWorkoutState) | null = null;
+
+function cancelDraftTimers(): void {
+  if (draftTimer) clearTimeout(draftTimer);
+  if (retryTimer) clearTimeout(retryTimer);
+  draftTimer = null;
+  retryTimer = null;
+}
+
+/** Save the draft ~300 ms after the last change (typing). */
+function scheduleDraftSave(): void {
+  draftDirty = true;
+  if (draftTimer) clearTimeout(draftTimer);
+  draftTimer = setTimeout(() => {
+    draftTimer = null;
+    void flushDraft();
+  }, DRAFT_SAVE_DEBOUNCE_MS);
+}
+
+/**
+ * Write any pending draft change NOW (a tick, a start, the app going to the background).
+ * Never rejects: a failure shows the banner and retries by itself.
+ */
+export function flushDraft(): Promise<void> {
+  if (draftTimer) clearTimeout(draftTimer);
+  draftTimer = null;
+  if (!draftDirty || !readState) return Promise.resolve();
+  draftDirty = false;
+  const gen = draftGen;
+  const read = readState;
+  return enqueueWrite(async () => {
+    // The workout ended (Finish / Save / Discard) after this write was asked for: that job
+    // already cleared the draft. Writing now would bring back a ghost (LW-08).
+    if (gen !== draftGen) return;
+    await persistDraft(read());
+  }).then(
+    () => clearSaveProblem(),
+    (e: unknown) => {
+      // Still unsaved: keep it dirty and try again shortly (newer changes ride along).
+      if (gen === draftGen) draftDirty = true;
+      const failures = reportSaveProblem(e);
+      if (retryTimer) clearTimeout(retryTimer);
+      retryTimer = setTimeout(() => {
+        retryTimer = null;
+        void flushDraft();
+      }, retryDelayMs(failures));
+    },
+  );
+}
+
+/** Inside a queued job that ends the workout: later draft writes must not bring it back. */
+function endDraftInJob(): void {
+  draftGen += 1;
+  draftDirty = false;
+  cancelDraftTimers();
+}
+
+// The app going to the background must not lose the last 300 ms of typing.
+try {
+  AppState.addEventListener('change', (next) => {
+    if (next !== 'active') void flushDraft();
+  });
+} catch {
+  // No AppState (unit tests): nothing to listen to.
+}
+
 /** A stored history set in the form the set row shows and types (help positive). PURE. */
 export function toPrevSet(s: Pick<TrackedSetEntry, 'weightKg' | 'reps' | 'durationSec' | 'distanceM'>, logType: LogType): PrevSet {
   const p: PrevSet = { weightKg: typedWeight(logType, s.weightKg), reps: s.reps };
@@ -426,10 +519,18 @@ export function liveStart(now: number = Date.now()): number {
 }
 
 export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
-  /** Apply an exercise-list transform, then persist. */
-  const mutate = (fn: (exercises: DraftExercise[]) => DraftExercise[]): void => {
+  readState = get;
+  /** Persist the draft soon (typing), or now (a tick, a start). */
+  const persistSoon = (): void => scheduleDraftSave();
+  const persistNow = (): void => {
+    draftDirty = true;
+    void flushDraft();
+  };
+  /** Apply an exercise-list transform, then persist (after the typing pause, or `now`). */
+  const mutate = (fn: (exercises: DraftExercise[]) => DraftExercise[], now = false): void => {
     set((s) => ({ exercises: fn(s.exercises) }));
-    void persistDraft(get());
+    if (now) persistNow();
+    else persistSoon();
   };
 
   return {
@@ -506,7 +607,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
       });
-      void persistDraft(get());
+      persistNow();
     },
 
     startFromPlan: async () => {
@@ -545,7 +646,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
       });
-      void persistDraft(get());
+      persistNow();
     },
 
     startFromPlanDay: async (dayId) => {
@@ -578,7 +679,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
       });
-      void persistDraft(get());
+      persistNow();
     },
 
     startFromSession: async (session) => {
@@ -604,7 +705,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
       });
-      void persistDraft(get());
+      persistNow();
     },
 
     addExercise: async (ex) => {
@@ -759,6 +860,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     },
 
     toggleDone: (exKey, setKey, fill) => {
+      // A tick saves at once (not after the typing pause).
       mutate((list) =>
         list.map((e) => {
           if (e.key !== exKey) return e;
@@ -813,6 +915,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             }),
           };
         }),
+        true,
       );
     },
 
@@ -830,6 +933,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               }
             : e,
         ),
+        true,
       );
     },
 
@@ -869,6 +973,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // to history/PREVIOUS (the history read excludes warm-ups).
       if (!hasWorkingSet(flat)) return null;
       set({ committing: true });
+      // Finish writes the whole workout itself; a pending typing-pause save is not needed.
+      if (draftTimer) clearTimeout(draftTimer);
+      draftTimer = null;
       try {
         // The session belongs to the day it STARTED, not the commit instant — a
         // workout crossing midnight must not split from its own started_at.
@@ -880,7 +987,12 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         // connection (non-exclusive, like hevyImport — the frozen repos join it).
         // A kill/error mid-commit now rolls back cleanly instead of leaving an
         // orphan session + a surviving draft that would duplicate it on retry.
-        let sessionId = '';
+        //
+        // DS-04 / LW-08: the transaction AND the store reset run as ONE job in the app-wide
+        // write queue. No other transaction can interleave, and a draft write asked for
+        // during the save (a tick while it spins) runs after it and finds the workout ended.
+        const sessionId = await enqueueWrite(async () => {
+        let id = '';
         await getDb().withTransactionAsync(async () => {
           const session = await createSession({
             dateISO,
@@ -890,7 +1002,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             startedAt,
             endedAt,
           });
-          sessionId = session.id;
+          id = session.id;
           await addSetsWithMeta(session.id, flat); // auto set_number + PR detection + rpe/type
           // Phase 4: an easy-week workout is marked, so records and the Target leave it out —
           // also the frozen PR log that Home's PR count, the strength score and the coach read.
@@ -900,6 +1012,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           }
           await setMeta(DRAFT_KEY, '');
         });
+        endDraftInJob();
         set({
           active: false,
           committing: false,
@@ -911,11 +1024,23 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           exercises: [],
           lastDeleted: null,
         });
+        return id;
+        });
+        clearAllSaveProblems();
         // v0.27.0: Health Connect, widgets and reminders follow (quiet, never in the way).
         void phoneAfterWorkout(sessionId);
         return sessionId;
       } catch (e) {
-        set({ committing: false }); // let the user retry
+        set({ committing: false }); // let the user retry; the workout stays open
+        // LW-01: say why on the app-wide banner. Finish is NOT retried by itself, so the line asks
+        // for another tap (not "we'll keep trying"); it stays up until Finish works or the workout
+        // is discarded — an autosave that works meanwhile neither clears it nor adds to the
+        // autosave's back-off.
+        reportActionProblem('finish', e);
+        // Make sure the draft (with anything typed during the attempt) is on disk; the autosave
+        // retries by itself until it is.
+        draftDirty = true;
+        void flushDraft();
         throw e;
       }
     },
@@ -966,7 +1091,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: session.endedAt,
         editOriginalDateISO: session.dateISO,
       });
-      void persistDraft(get());
+      persistNow();
     },
 
     setEditDate: (dateISO) => {
@@ -974,19 +1099,19 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // header so a stale draft (device clock moved on) can't carry one through.
       if (!get().editingSessionId || dateISO > todayISO()) return;
       set({ editDateISO: dateISO });
-      void persistDraft(get());
+      persistSoon();
     },
 
     setEditDayType: (dayType) => {
       if (!get().editingSessionId) return;
       set({ dayType });
-      void persistDraft(get());
+      persistSoon();
     },
 
     setEditNotes: (notes) => {
       if (!get().editingSessionId) return;
       set({ editNotes: notes });
-      void persistDraft(get());
+      persistSoon();
     },
 
     setEditDuration: (minutes) => {
@@ -994,7 +1119,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       if (!s.editingSessionId || s.startedAt == null) return;
       const mins = Math.max(1, Math.min(600, Math.round(minutes)));
       set({ editEndedAt: s.startedAt + mins * 60_000 });
-      void persistDraft(get());
+      persistSoon();
     },
 
     saveEdits: async () => {
@@ -1016,17 +1141,26 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       });
 
       set({ committing: true });
+      if (draftTimer) clearTimeout(draftTimer);
+      draftTimer = null;
       try {
-        const { reconciled } = await saveSessionEdits(sessionId, {
-          dateISO: timing.dateISO,
-          dayType: s.dayType,
-          notes: s.editNotes?.trim() ? s.editNotes.trim() : null,
-          startedAt: timing.startedAt,
-          endedAt: timing.endedAt,
-          sets: flat,
-        });
+        // One queued job: the edit, the draft-clear (inside the edit's transaction) and the
+        // store reset; the same guarantees as finish() (DS-04 / LW-08).
+        await enqueueWrite(async () => {
+        const { reconciled } = await saveSessionEditsUnqueued(
+          sessionId,
+          {
+            dateISO: timing.dateISO,
+            dayType: s.dayType,
+            notes: s.editNotes?.trim() ? s.editNotes.trim() : null,
+            startedAt: timing.startedAt,
+            endedAt: timing.endedAt,
+            sets: flat,
+          },
+          { inTransaction: () => setMeta(DRAFT_KEY, '') },
+        );
+        endDraftInJob();
         set({ lastSaveReconciled: reconciled });
-        await setMeta(DRAFT_KEY, '');
         set({
           active: false,
           committing: false,
@@ -1041,17 +1175,29 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           editDateISO: null,
           editNotes: null,
         });
+        });
+        clearAllSaveProblems();
         // v0.27.0: Health Connect, widgets and reminders follow (quiet, never in the way).
         void phoneAfterWorkout(sessionId);
         return sessionId;
       } catch (e) {
         set({ committing: false }); // let the user retry; nothing was committed
+        // A deleted workout is not a storage problem; the screen explains that one itself.
+        // Otherwise, like Finish: nothing retries the save, so the line asks for another tap.
+        const gone = e instanceof Error && e.name === 'SessionGoneError';
+        if (!gone) reportActionProblem('save', e);
+        draftDirty = true;
+        void flushDraft();
         throw e;
       }
     },
 
     discard: async () => {
-      await setMeta(DRAFT_KEY, '');
+      await enqueueWrite(async () => {
+        await setMeta(DRAFT_KEY, '');
+        endDraftInJob();
+      });
+      clearAllSaveProblems(); // the workout is gone: nothing is waiting to be saved
       set({
         active: false,
         committing: false,

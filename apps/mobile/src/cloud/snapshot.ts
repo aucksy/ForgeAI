@@ -2,6 +2,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 import { getDb } from '@/db';
 import { SCHEMA_VERSION } from '@/db/schema';
+import { enqueueWrite } from '@/db/writeQueue';
 
 /**
  * Full-history snapshot of the member's local SQLite ↔ a portable JSON envelope,
@@ -110,11 +111,14 @@ export async function exportSnapshot(): Promise<string> {
   // consistent point-in-time view: a concurrent write can't straddle two reads
   // and capture a child row whose parent was already read (which would make the
   // backup fail FK checks on restore). Mirrors the atomicity of the import side.
-  await getDb().withExclusiveTransactionAsync(async (tx) => {
-    for (const t of TABLES) {
-      tables[t.name] = await tx.getAllAsync<Row>(`SELECT ${t.cols.join(', ')} FROM ${t.name}`);
-    }
-  });
+  // Through the app-wide write queue (DS-04): never inside another open transaction.
+  await enqueueWrite(() =>
+    getDb().withExclusiveTransactionAsync(async (tx) => {
+      for (const t of TABLES) {
+        tables[t.name] = await tx.getAllAsync<Row>(`SELECT ${t.cols.join(', ')} FROM ${t.name}`);
+      }
+    }),
+  );
   const envelope: BackupEnvelope = {
     app: APP_TAG,
     schema_version: SCHEMA_VERSION,
@@ -174,13 +178,20 @@ async function batchInsert(tx: TxLike, table: string, cols: readonly string[], r
  * and re-runnable. Never touches `meta` (identity / seeded / last-backup survive).
  */
 export async function importSnapshot(env: BackupEnvelope): Promise<void> {
-  await getDb().withExclusiveTransactionAsync(async (tx) => {
-    const kept = (t: (typeof TABLES)[number]): boolean => t.keepWhenAbsent === true && env.tables[t.name] === undefined;
-    for (let i = TABLES.length - 1; i >= 0; i--) {
-      if (!kept(TABLES[i])) await tx.runAsync(`DELETE FROM ${TABLES[i].name}`);
-    }
-    for (const t of TABLES) {
-      if (!kept(t)) await batchInsert(tx, t.name, t.cols, env.tables[t.name] ?? []);
-    }
-  });
+  // Through the app-wide write queue (DS-04): a workout save can't land half-way through.
+  await enqueueWrite(() => getDb().withExclusiveTransactionAsync((tx) => replaceAllInTransaction(tx, env)));
+}
+
+/**
+ * `importSnapshot`'s work inside the CALLER's transaction (a caller already running in a queued
+ * job, which must also read or write around the replace atomically — the import's safety copy).
+ */
+export async function replaceAllInTransaction(tx: TxLike, env: BackupEnvelope): Promise<void> {
+  const kept = (t: (typeof TABLES)[number]): boolean => t.keepWhenAbsent === true && env.tables[t.name] === undefined;
+  for (let i = TABLES.length - 1; i >= 0; i--) {
+    if (!kept(TABLES[i])) await tx.runAsync(`DELETE FROM ${TABLES[i].name}`);
+  }
+  for (const t of TABLES) {
+    if (!kept(t)) await batchInsert(tx, t.name, t.cols, env.tables[t.name] ?? []);
+  }
 }

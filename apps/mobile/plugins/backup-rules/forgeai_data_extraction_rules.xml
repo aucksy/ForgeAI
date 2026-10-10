@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ForgeAI: Android backup rules for Android 12 and higher (audit DS-01 / L-01).
+  cloud-backup    = Google's automatic backup to the member's Google account.
+  device-transfer = "Copy apps and data" when moving to a new phone.
+  Android 11 and lower read forgeai_backup_rules.xml instead; keep the two in step.
+
+  Once any include is listed, Android copies ONLY the included paths. So:
+  - sharedpref "."           small settings (what expo-secure-store's own rules kept).
+  - sharedpref "SecureStore" EXCLUDED: AI keys encrypted with an Android Keystore key, which
+                             never leaves the phone. Restored, they would be unreadable, so the
+                             app simply starts with no keys (Profile shows "Not set").
+                             Android adds ".xml" to a sharedpref path, so this is SecureStore.xml.
+  - file "SQLite/"           the workout database (expo-sqlite: filesDir/SQLite/forgeai.db with
+                             its -wal and -shm files).
+  - database "RKStorage"     AsyncStorage (units kg/lb, app settings), plus its journal/WAL.
+  Not included (so not backed up): progress photos and exercise photos/videos (files area,
+  outside SQLite/; owner decision D11 makes photos opt-in later), and every cache.
+
+  Size: Android's cloud backup holds at most 25 MB per app. Above that it backs up NOTHING for
+  the app, so never include pictures or videos here. A 5-year history is roughly 9 MB.
+
+  Source of truth: apps/mobile/plugins/backup-rules/ (copied here by the config plugin on a
+  prebuild). A test checks the two copies are identical.
+-->
+<data-extraction-rules>
+  <cloud-backup>
+    <include domain="sharedpref" path="."/>
+    <exclude domain="sharedpref" path="SecureStore"/>
+    <include domain="file" path="SQLite/"/>
+    <include domain="database" path="RKStorage"/>
+    <include domain="database" path="RKStorage-journal"/>
+    <include domain="database" path="RKStorage-wal"/>
+  </cloud-backup>
+  <device-transfer>
+    <include domain="sharedpref" path="."/>
+    <exclude domain="sharedpref" path="SecureStore"/>
+    <include domain="file" path="SQLite/"/>
+    <include domain="database" path="RKStorage"/>
+    <include domain="database" path="RKStorage-journal"/>
+    <include domain="database" path="RKStorage-wal"/>
+  </device-transfer>
+</data-extraction-rules>

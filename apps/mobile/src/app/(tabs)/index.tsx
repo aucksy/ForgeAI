@@ -16,7 +16,7 @@ import {
   StreakRow,
   VolumeCard,
 } from '@/components/dashboard';
-import { Card, Screen } from '@/components/ui';
+import { Card, LoadError, Screen } from '@/components/ui';
 import { getProfile } from '@/db/repos/userRepo';
 import { getWeeklyVolumeKg } from '@/tracker/services/volumeService';
 import { FEATURES, homeParts } from '@/lib/features';
@@ -46,6 +46,8 @@ export default function DashboardScreen() {
   const router = useRouter();
   const data = useDashboard((s) => s.data);
   const refresh = useDashboard((s) => s.refresh);
+  // SH-13: a failed read with nothing to show is said, with a retry — never an endless skeleton.
+  const loadFailed = useDashboard((s) => s.error);
   const unitSystem = useSettings((s) => s.unitSystem);
 
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -237,6 +239,8 @@ export default function DashboardScreen() {
               </Section>
             ) : null}
           </>
+        ) : loadFailed ? (
+          <LoadError what="your summary" onRetry={() => void onRefresh()} />
         ) : (
           <DashboardSkeleton />
         )}

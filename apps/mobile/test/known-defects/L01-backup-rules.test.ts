@@ -66,21 +66,63 @@ describe('L-01 the workout database is in Android automatic backup', () => {
     expect(allowBackup).toBe(true);
   });
 
-  for (const [label, ref] of [
-    ['Android 11 and lower (fullBackupContent)', fullRef],
-    ['Android 12 and higher (dataExtractionRules, cloud-backup)', extractRef],
+  for (const [label, ref, section] of [
+    ['Android 11 and lower (fullBackupContent)', fullRef, null],
+    ['Android 12 and higher (dataExtractionRules, cloud-backup)', extractRef, 'cloud-backup'],
+    ['Android 12 and higher (dataExtractionRules, device-transfer)', extractRef, 'device-transfer'],
   ] as const) {
-    it.fails(`L-01 known defect: ${label}: the rules include the database (or include nothing, which means everything)`, () => {
+    const rulesFor = (): { file: string; xml: string } => {
       expect(ref, 'manifest names a rules file').toBeTruthy();
       const file = findXml(ref!);
       expect(file, `rules file ${ref}.xml found`).toBeTruthy();
-      let xml = readFileSync(file!, 'utf8');
-      if (label.startsWith('Android 12')) {
-        xml = /<cloud-backup[^>]*>([\s\S]*?)<\/cloud-backup>/.exec(xml)?.[1] ?? xml;
+      let xml = readFileSync(file!, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+      if (section) {
+        const m = new RegExp(`<${section}[^>]*>([^]*?)</${section}>`).exec(xml);
+        expect(m, `<${section}> present`).toBeTruthy();
+        xml = m![1];
       }
+      return { file: file!, xml };
+    };
+
+    // Fixed 10 Oct 2026 (Phase 1 packet A): ForgeAI's own rules include file/SQLite/.
+    it(`L-01: ${label}: the rules include the database (or include nothing, which means everything)`, () => {
+      const { file, xml } = rulesFor();
       const { hasInclude, coversDb } = includesCoverDb(xml);
-      // Today: hasInclude = true (sharedpref only), coversDb = false -> the DB is never backed up.
       expect(!hasInclude || coversDb, `rules file used: ${file}`).toBe(true);
     });
+
+    it(`L-01: ${label}: AsyncStorage settings (units) are included, SecureStore AI keys are not, photos are not`, () => {
+      const { xml } = rulesFor();
+      const tags = [...xml.matchAll(/<(include|exclude)\s+([^>]*)\/?>/g)].map((m) => ({
+        kind: m[1],
+        domain: /domain="([^"]+)"/.exec(m[2])?.[1],
+        path: /path="([^"]*)"/.exec(m[2])?.[1] ?? '',
+      }));
+      const has = (kind: string, domain: string, path: string): boolean =>
+        tags.some((t) => t.kind === kind && t.domain === domain && t.path === path);
+      expect(has('include', 'database', 'RKStorage')).toBe(true);
+      expect(has('include', 'sharedpref', '.')).toBe(true);
+      // Keystore keys never restore: restored ciphertext would be garbage.
+      expect(has('exclude', 'sharedpref', 'SecureStore')).toBe(true);
+      // Photos and exercise media live in the files area outside SQLite/ — never included.
+      const fileIncludes = tags.filter((t) => t.kind === 'include' && t.domain === 'file').map((t) => t.path);
+      expect(fileIncludes).toEqual(['SQLite/']);
+      // Only these domains: no "root" (would sweep in caches), no external storage.
+      const domains = new Set(tags.filter((t) => t.kind === 'include').map((t) => t.domain));
+      expect([...domains].sort()).toEqual(['database', 'file', 'sharedpref']);
+    });
   }
+
+  it('the config plugin keeps the same rules after a future prebuild', () => {
+    for (const name of ['forgeai_backup_rules.xml', 'forgeai_data_extraction_rules.xml']) {
+      const committed = readFileSync(join(APP, 'android/app/src/main/res/xml', name), 'utf8');
+      const source = readFileSync(join(APP, 'plugins/backup-rules', name), 'utf8');
+      expect(committed, name).toBe(source);
+    }
+    const appJson = JSON.parse(readFileSync(join(APP, 'app.json'), 'utf8')) as { expo: { plugins: unknown[] } };
+    const plugins = appJson.expo.plugins;
+    expect(plugins).toContain('./plugins/backup-rules/withBackupRules.js');
+    // expo-secure-store must not point the manifest back at its sharedpref-only rules.
+    expect(plugins).toContainEqual(['expo-secure-store', { configureAndroidBackup: false }]);
+  });
 });

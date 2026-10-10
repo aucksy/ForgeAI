@@ -3,39 +3,24 @@
  * Progress → Personal Records → "See all". Tap a record → its exercise page, where each
  * record also opens the workout it was set in.
  */
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useRouter } from 'expo-router';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
-import { Badge, EmptyState, IconButton, Screen, Skeleton } from '@/components/ui';
+import { Badge, EmptyState, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
+import { useLoad } from '@/lib/useLoad';
 import { tinyDate } from '@/lib/date';
 import { countWord } from '@/lib/words';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { recordDetailText, recordValueText, withMonthHeadings } from '@/tracker/services/recordText';
-import { getRecordEvents, type RecordEventRow } from '@/tracker/services/recordsService';
+import { getRecordEvents } from '@/tracker/services/recordsService';
 
 export default function RecordsScreen() {
   useUnits(); // v0.27.0: the record and set texts follow Profile → Units
   const router = useRouter();
-  const [rows, setRows] = useState<RecordEventRow[] | null>(null);
-
-  useFocusEffect(
-    useCallback(() => {
-      let alive = true;
-      getRecordEvents()
-        .then((r) => {
-          if (alive) setRows(r);
-        })
-        .catch(() => {
-          if (alive) setRows([]);
-        });
-      return () => {
-        alive = false;
-      };
-    }, []),
-  );
+  // HI-11: a failed read says "Couldn't load your records", never "No records yet".
+  const { data: rows, state, retry } = useLoad(getRecordEvents, [], { onFocus: true });
 
   return (
     <Screen
@@ -44,7 +29,9 @@ export default function RecordsScreen() {
       scroll={false}
       right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
     >
-      {rows === null ? (
+      {state === 'error' ? (
+        <LoadError what="your records" onRetry={retry} />
+      ) : rows === null ? (
         <View style={{ gap: space.md }}>
           {[0, 1, 2, 3, 4].map((i) => (
             <Skeleton key={i} width="100%" height={58} radius={radius.lg} />

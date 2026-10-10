@@ -6,10 +6,13 @@
  * for today only is in the workout).
  */
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { Text, View } from 'react-native';
 
-import { Card, GhostButton, IconButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { Card, GhostButton, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
+import { START_FAILED, runGuarded } from '@/lib/guardedAction';
+import { useLoad } from '@/lib/useLoad';
 import { fmtWeight } from '@/lib/format';
 import { countWord } from '@/lib/words';
 import { useSettings } from '@/store/settingsStore';
@@ -35,18 +38,20 @@ export default function TodayScreen() {
   const active = useActiveWorkout((s) => s.active);
   const startFromPlan = useActiveWorkout((s) => s.startFromPlan);
   const hydrate = useActiveWorkout((s) => s.hydrate);
-  const [today, setToday] = useState<Today | null>(null);
+  // RP-13: a failed read says "Couldn't load today's workout — Try again", never
+  // "No workout planned for today".
+  const todayLoad = useLoad<Today>(getTodaysWorkoutWithTargets, [], { onFocus: true });
+  const today = todayLoad.data;
   const [plan, setPlan] = useState<PlanNow | null>(null);
-  const [failed, setFailed] = useState(false);
+  // RP-25: a ref guards double taps (state updates too late); the state only drives the spinner.
+  const startGuard = useRef(false);
   const [starting, setStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
       let alive = true;
-      void hydrate();
-      getTodaysWorkoutWithTargets()
-        .then((tw) => alive && setToday(tw))
-        .catch(() => alive && setFailed(true));
+      void hydrate().catch(() => undefined);
       getPlanNow()
         .then((p) => alive && setPlan(p))
         .catch(() => undefined);
@@ -57,18 +62,23 @@ export default function TodayScreen() {
   );
 
   const onStart = async (): Promise<void> => {
-    if (starting) return;
-    setStarting(true);
-    try {
-      // A workout saved before Android closed the app loads first — Start must not replace it.
-      await hydrate();
-      if (!useActiveWorkout.getState().active) await startFromPlan();
-      router.replace('/session/active');
-    } catch {
-      Alert.alert('Couldn’t start the workout', 'Please try again.');
-    } finally {
-      setStarting(false);
-    }
+    await runGuarded(
+      startGuard,
+      async () => {
+        setStarting(true);
+        setStartError(null);
+        try {
+          // A workout saved before Android closed the app loads first — Start must not replace it.
+          await hydrate();
+          if (!useActiveWorkout.getState().active) await startFromPlan();
+          router.replace('/session/active');
+        } finally {
+          setStarting(false);
+        }
+        return 'left' as const;
+      },
+      () => setStartError(START_FAILED),
+    );
   };
 
   const week = plan && !plan.easy ? planLine(plan) : null;
@@ -80,7 +90,9 @@ export default function TodayScreen() {
       title="Today"
       right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
     >
-      {today == null && !failed ? (
+      {todayLoad.state === 'error' ? (
+        <LoadError what="today's workout" onRetry={todayLoad.retry} />
+      ) : today == null ? (
         <View style={{ gap: space.md }}>
           <Skeleton width="60%" height={28} />
           <Skeleton width="100%" height={220} />
@@ -138,6 +150,7 @@ export default function TodayScreen() {
               loading={starting}
               onPress={() => void onStart()}
             />
+            <InlineError message={startError} />
             <GhostButton label="Change this routine" icon="settings" onPress={() => router.push(`/routines/${today.planDayId}`)} />
           </View>
         </View>

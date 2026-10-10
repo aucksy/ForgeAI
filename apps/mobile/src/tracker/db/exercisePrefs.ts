@@ -7,6 +7,7 @@
  * Reads only; the frozen tables are untouched.
  */
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getPriorRecordBests } from '@/tracker/services/recordsService';
 
@@ -19,11 +20,14 @@ export async function getExerciseRestSec(exerciseId: string): Promise<number | n
   return row?.rest_sec ?? null;
 }
 
+/** Queued (DS-04): never call it from inside an `enqueueWrite` job. */
 export async function setExerciseRestSec(exerciseId: string, restSec: number | null): Promise<void> {
-  await getDb().runAsync(
-    `INSERT INTO exercise_prefs(exercise_id, rest_sec) VALUES(?, ?)
-     ON CONFLICT(exercise_id) DO UPDATE SET rest_sec = excluded.rest_sec`,
-    [exerciseId, restSec],
+  await enqueueWrite(() =>
+    getDb().runAsync(
+      `INSERT INTO exercise_prefs(exercise_id, rest_sec) VALUES(?, ?)
+       ON CONFLICT(exercise_id) DO UPDATE SET rest_sec = excluded.rest_sec`,
+      [exerciseId, restSec],
+    ),
   );
 }
 

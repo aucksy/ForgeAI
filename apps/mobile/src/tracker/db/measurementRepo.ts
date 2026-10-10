@@ -3,6 +3,7 @@
  * the same day again replaces it, like the body-weight log.
  */
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { uuid } from '@/lib/uuid';
 
 import { isMeasureKind, MEASURES, type MeasureKind, type MeasurementEntry } from '../engine/measurements';
@@ -18,15 +19,18 @@ interface Row {
 export async function logMeasurements(dateISO: string, values: Partial<Record<MeasureKind, number>>): Promise<number> {
   const kinds = MEASURES.filter((k) => values[k] != null);
   if (kinds.length === 0) return 0;
-  await getDb().withTransactionAsync(async () => {
-    for (const kind of kinds) {
-      await getDb().runAsync(
-        `INSERT INTO body_measurements(id, date_iso, kind, value) VALUES(?, ?, ?, ?)
-         ON CONFLICT(date_iso, kind) DO UPDATE SET value = excluded.value`,
-        [uuid(), dateISO, kind, values[kind] as number],
-      );
-    }
-  });
+  // The one app-wide write queue (DS-04): never nest inside another module's transaction.
+  await enqueueWrite(() =>
+    getDb().withTransactionAsync(async () => {
+      for (const kind of kinds) {
+        await getDb().runAsync(
+          `INSERT INTO body_measurements(id, date_iso, kind, value) VALUES(?, ?, ?, ?)
+           ON CONFLICT(date_iso, kind) DO UPDATE SET value = excluded.value`,
+          [uuid(), dateISO, kind, values[kind] as number],
+        );
+      }
+    }),
+  );
   return kinds.length;
 }
 
@@ -39,5 +43,5 @@ export async function getMeasurements(): Promise<MeasurementEntry[]> {
 }
 
 export async function deleteMeasurement(id: string): Promise<void> {
-  await getDb().runAsync('DELETE FROM body_measurements WHERE id = ?', [id]);
+  await enqueueWrite(() => getDb().runAsync('DELETE FROM body_measurements WHERE id = ?', [id]));
 }

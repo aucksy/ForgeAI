@@ -16,12 +16,17 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { useKeepAwake } from 'expo-keep-awake';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
-import { Card, GhostButton, Icon, IconButton, PrimaryButton, Screen } from '@/components/ui';
-import { adoptImportedData, isDemoData } from '@/onboarding/db/dataActions';
+import { Card, GhostButton, Icon, IconButton, PrimaryButton, Screen, UndoBar, askConfirm } from '@/components/ui';
+import { countOwnWorkouts, isDemoData, prepareImportOverDemo } from '@/onboarding/db/dataActions';
+import { replaceConfirmBody, replaceImpact, restoreSafetyCopy, takeSafetyCopy, type SafetyCopy } from '@/onboarding/db/importSafety';
+import { normalizeName } from '@/onboarding/form';
+import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { shortDate } from '@/lib/date';
 import { success, warn } from '@/lib/haptics';
+import { useBackGuard } from '@/lib/useBackGuard';
+import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
 import {
   parseHevyBase64,
@@ -39,7 +44,7 @@ import { removeWorkoutFromHealth } from '@/tracker/phone/healthConnect';
 import { sharedFileKind } from '@/tracker/phone/sharedImport';
 import { useSettings } from '@/store/settingsStore';
 
-type Phase = 'idle' | 'preview' | 'importing' | 'done' | 'routines';
+type Phase = 'idle' | 'preview' | 'importing' | 'done' | 'routines' | 'undone';
 
 const CAPTION = {
   fontFamily: type.body,
@@ -129,44 +134,117 @@ export default function ImportScreen() {
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [result, setResult] = useState<ImportResult | null>(null);
   const [showNew, setShowNew] = useState(false);
+  // Plain-words problems on the screen itself (no Android pop-ups).
+  const [problem, setProblem] = useState<string | null>(null);
+
+  // DS-05 / IM-01: over the demo, the whole demo goes first and the member gives their name.
+  const [demo, setDemo] = useState(false);
+  const [ownWorkouts, setOwnWorkouts] = useState(0);
+  const [memberName, setMemberName] = useState('');
+  const [nameProblem, setNameProblem] = useState(false);
+
+  // IM-05: a copy of everything from before the import, so it can be undone on this screen.
+  const undoCopy = useRef<SafetyCopy | null>(null);
+  // The workouts the import wrote: Undo takes exactly these away (a workout saved since stays).
+  const undoImported = useRef<string[]>([]);
+  const [canUndo, setCanUndo] = useState(false);
+  const [undoBar, setUndoBar] = useState<string | null>(null);
+  const [undoing, setUndoing] = useState(false);
+  // v0.28.1: workouts Replace deleted are taken out of Health Connect too, once Undo is no
+  // longer possible (the member leaves this screen), so an undo never finds them gone there.
+  const pendingHealth = useRef<string[]>([]);
+  const mounted = useRef(true);
+
+  const flushHealth = (): void => {
+    const gone = pendingHealth.current;
+    pendingHealth.current = [];
+    undoCopy.current = null;
+    if (gone.length === 0) return;
+    void (async () => {
+      for (const id of gone) await removeWorkoutFromHealth(id);
+    })();
+  };
+  useEffect(
+    () => () => {
+      mounted.current = false;
+      flushHealth();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  // IM-10: Android Back. While the import writes, ask (leaving lets it finish; it is never
+  // cancelled half-way); inside the routine steps, go one step back.
+  const leaving = useRef(false);
+  const stepsBack = useRef<(() => boolean) | null>(null);
+  const close = (): void => {
+    leaving.current = true;
+    router.back();
+  };
+  useBackGuard((leave) => {
+    if (leaving.current) return false;
+    if (phase === 'importing') {
+      void askConfirm({
+        title: 'Import is running — keep waiting?',
+        body: 'If you leave, it finishes in the background. It is never stopped half-way.',
+        confirmLabel: 'Leave',
+        cancelLabel: 'Keep waiting',
+      }).then((go) => {
+        if (!go) return;
+        leaving.current = true;
+        leave();
+      });
+      return true;
+    }
+    if (phase === 'routines') return stepsBack.current?.() ?? false;
+    return false;
+  });
 
   /** Read a picked or shared file into the preview. `asStrong` null = tell by its content. */
   const readFile = async (uri: string, name: string, asStrong: boolean | null, kind: 'sheet' | 'text' = 'text'): Promise<void> => {
-    let isStrong = asStrong;
-    if (isStrong === null) {
-      isStrong = kind === 'text' ? looksLikeStrong(await FileSystem.readAsStringAsync(uri)) : false;
-      setStrong(isStrong);
-    }
     let p: ParsedHevy;
-    if (isStrong) {
-      const text = await FileSystem.readAsStringAsync(uri);
-      if (!looksLikeStrong(text)) {
-        throw new Error('That doesn’t look like a Strong export. In Strong, export your data and pick the .csv file.');
+    let isStrong = asStrong;
+    try {
+      if (isStrong === null) {
+        isStrong = kind === 'text' ? looksLikeStrong(await FileSystem.readAsStringAsync(uri)) : false;
+        setStrong(isStrong);
       }
-      const info = strongFileInfo(text);
-      const units: FileUnits = info.fileUnits ?? memberUnits;
-      p = parseStrongText(text, units); // throws a plain-words Error on a bad file
-      setStrongText(info.unitsKnown ? null : text);
-      setFileUnits(info.unitsKnown ? null : units);
-    } else {
-      const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      p = parseHevyBase64(base64); // throws a user-safe Error on a bad file
+      if (isStrong) {
+        const text = await FileSystem.readAsStringAsync(uri);
+        if (!looksLikeStrong(text)) {
+          throw new Error('That doesn’t look like a Strong export. In Strong, export your data and pick the .csv file.');
+        }
+        const info = strongFileInfo(text);
+        const units: FileUnits = info.fileUnits ?? memberUnits;
+        p = parseStrongText(text, units); // throws a plain-words Error on a bad file
+        setStrongText(info.unitsKnown ? null : text);
+        setFileUnits(info.unitsKnown ? null : units);
+      } else {
+        const base64 = await FileSystem.readAsStringAsync(uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        p = parseHevyBase64(base64); // throws a user-safe Error on a bad file
+      }
+    } finally {
+      // v0.28.1 / IM-19: the picked or shared copy (a whole workout history) does not stay in
+      // the cache, also when the file could not be read.
+      const cache = FileSystem.cacheDirectory;
+      if (cache && uri.startsWith(cache)) void FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => undefined);
     }
-    // v0.28.1: the picked or shared copy (a whole workout history) does not stay in the cache.
-    const cache = FileSystem.cacheDirectory;
-    if (cache && uri.startsWith(cache)) void FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => undefined);
     if (p.workouts.length === 0) throw new Error('No workouts were found in that file.');
     const pv = await previewImport(p);
     setParsed(p);
     setPreview(pv);
     setFileName(name || `${isStrong ? 'Strong' : 'Hevy'} export`);
     // v0.27.0: with the member's own workouts here, Merge is the safe start (a second import
-    // must not delete what was logged in ForgeAI since). Replace only over demo data or nothing.
+    // must not delete what was logged in ForgeAI since). Replace only over nothing.
     // v0.28.1: a failed check is NOT demo data — never start on Replace over real workouts.
-    const demo = await isDemoData().catch(() => false);
-    setMode(pv.existingWorkouts > 0 && !demo ? 'merge' : 'replace');
+    const isDemo = await isDemoData().catch(() => false);
+    const own = isDemo ? await countOwnWorkouts().catch(() => pv.existingWorkouts) : pv.existingWorkouts;
+    setDemo(isDemo);
+    setOwnWorkouts(own);
+    // Over the demo the demo goes anyway; Merge keeps any workout the member logged themselves.
+    setMode(own > 0 || isDemo ? 'merge' : 'replace');
     setPhase('preview');
   };
 
@@ -174,6 +252,7 @@ export default function ImportScreen() {
     if (busyRef.current) return;
     busyRef.current = true;
     setBusy(true);
+    setProblem(null);
     try {
       const res = await DocumentPicker.getDocumentAsync({
         type: ['*/*'], // Hevy exports vary (.csv text or a mislabelled .xlsx); parser validates
@@ -188,7 +267,7 @@ export default function ImportScreen() {
       await readFile(asset.uri, asset.name, pickStrong);
     } catch (e) {
       warn();
-      Alert.alert('Couldn’t read that file', e instanceof Error ? e.message : 'Please try again.');
+      setProblem(`Couldn’t read that file. ${e instanceof Error ? e.message : 'Please try again.'}`);
     } finally {
       busyRef.current = false;
       setBusy(false);
@@ -207,7 +286,7 @@ export default function ImportScreen() {
     readFile(uri, name, null, sharedFileKind({ name, type: typeof params.type === 'string' ? params.type : '' }))
       .catch((e: unknown) => {
         warn();
-        Alert.alert('Couldn’t read that file', e instanceof Error ? e.message : 'Please try again.');
+        setProblem(`Couldn’t read that file. ${e instanceof Error ? e.message : 'Please try again.'}`);
       })
       .finally(() => {
         busyRef.current = false;
@@ -218,39 +297,122 @@ export default function ImportScreen() {
 
   const onImport = async (): Promise<void> => {
     if (busyRef.current || !parsed) return;
+    setProblem(null);
+    const name = normalizeName(memberName);
+    if (demo && name.length === 0) {
+      setNameProblem(true);
+      warn();
+      return;
+    }
     busyRef.current = true;
     setBusy(true);
-    setProgress({ done: 0, total: parsed.workouts.length });
-    setPhase('importing');
     try {
-      const r = await runImport(parsed, {
-        mode,
-        onProgress: (done, total) => {
-          if (done % 5 === 0 || done === total) setProgress({ done, total });
-        },
-      });
-      // Real history just landed — if the app was showing demo data, it isn't a
-      // demo any more (Phase O2: the badge must not sit over genuine training).
-      // Phase 3: the demo's own body measurements go with it.
-      const wasDemo = await isDemoData().catch(() => false);
-      if (r.imported > 0) await adoptImportedData();
-      // v0.28.1: Replace deleted workouts already sent to Health Connect — take them out there too
-      // (the imported ones are new workouts; sent again, they were doubled). In the background,
-      // after the done screen (two calls a workout); demo workouts were never sent.
-      const gone = wasDemo ? [] : (r.replacedSessionIds ?? []);
-      void (async () => {
-        for (const id of gone) await removeWorkoutFromHealth(id);
-      })();
-      setResult(r);
-      setPhase('done');
-      success();
-    } catch {
-      warn();
-      setPhase('preview'); // the transaction rolled back — nothing changed
-      Alert.alert('Import failed', 'Nothing was changed. Please try again.');
+      // IM-05: Replace names what it deletes, and how much of it is not in the file.
+      if (mode === 'replace') {
+        const impact = await replaceImpact(parsed.workouts).catch(() => ({ removed: ownWorkouts, onlyHere: ownWorkouts }));
+        if (impact.removed > 0) {
+          const ok = await askConfirm({
+            title: `Delete ${impact.removed} workout${impact.removed === 1 ? '' : 's'} first?`,
+            body: replaceConfirmBody(impact.onlyHere),
+            confirmLabel: 'Replace',
+            destructive: true,
+          });
+          if (!ok) return;
+        }
+      }
+
+      // The copy first: if it cannot be made, nothing is deleted.
+      let copy: SafetyCopy | null = null;
+      if (mode === 'replace' || demo) {
+        try {
+          copy = await takeSafetyCopy();
+        } catch {
+          warn();
+          setProblem('Couldn’t keep a copy of your workouts first, so nothing was changed. Please try again.');
+          return;
+        }
+      }
+
+      setProgress({ done: 0, total: parsed.workouts.length });
+      setPhase('importing');
+      let demoGone = false;
+      try {
+        // DS-05 / IM-01: the whole demo goes BEFORE the import, so Merge never mixes into it.
+        if (demo) {
+          // Refused (no-op) when the stored data is no longer the demo: the import then runs
+          // as an ordinary import over the member's own data.
+          demoGone = (await prepareImportOverDemo(name)).prepared;
+        }
+        const r = await runImport(parsed, {
+          mode,
+          onProgress: (done, total) => {
+            if (done % 5 === 0 || done === total) setProgress({ done, total });
+          },
+        });
+        void useOnboarding.getState().refreshDemoFlag();
+        void useDashboard.getState().refresh().catch(() => undefined);
+        // The demo was removed before the import, so every replaced workout is the member's.
+        pendingHealth.current = r.replacedSessionIds ?? [];
+        if (!mounted.current) {
+          // The member left while it ran: no undo now; Health Connect catches up at once.
+          flushHealth();
+          return;
+        }
+        undoCopy.current = copy;
+        undoImported.current = r.createdSessionIds ?? [];
+        setCanUndo(copy !== null);
+        if (copy) {
+          const n = r.replacedSessionIds?.length ?? 0;
+          setUndoBar(demo ? 'Demo removed, history imported' : `${n} workout${n === 1 ? '' : 's'} replaced`);
+        }
+        setResult(r);
+        setPhase('done');
+        success();
+      } catch {
+        warn();
+        // The import is one transaction and rolled back. Removing the demo was not part of it:
+        // put it back, so "nothing was changed" stays true.
+        let restored = !demoGone;
+        if (demoGone && copy) {
+          restored = await restoreSafetyCopy(copy)
+            .then(() => true)
+            .catch(() => false);
+          void useOnboarding.getState().refreshDemoFlag();
+        }
+        if (mounted.current) setPhase('preview');
+        setProblem(
+          restored
+            ? 'The import failed. Nothing was changed. Please try again.'
+            : 'The import failed. The demo data was removed; your own workouts are untouched. Please try again.',
+        );
+      }
     } finally {
       busyRef.current = false;
       setBusy(false);
+    }
+  };
+
+  // IM-05: Undo — everything back exactly as it was before the import.
+  const onUndo = async (): Promise<void> => {
+    const copy = undoCopy.current;
+    if (!copy || undoing) return;
+    setUndoing(true);
+    setUndoBar(null);
+    setProblem(null);
+    try {
+      await restoreSafetyCopy(copy, { importedSessionIds: undoImported.current });
+      undoCopy.current = null;
+      pendingHealth.current = []; // the replaced workouts are back; Health Connect keeps them
+      setCanUndo(false);
+      void useOnboarding.getState().refreshDemoFlag();
+      void useDashboard.getState().refresh().catch(() => undefined);
+      setPhase('undone');
+      success();
+    } catch {
+      warn();
+      setProblem('Couldn’t undo the import. Your imported workouts are still here. Please try again.');
+    } finally {
+      setUndoing(false);
     }
   };
 
@@ -283,10 +445,14 @@ export default function ImportScreen() {
       title={strong ? 'Import from Strong' : 'Migrate from Hevy'}
       right={
         phase === 'importing' ? undefined : (
-          <IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />
+          <IconButton icon="close" onPress={close} accessibilityLabel="Close" />
         )
       }
     >
+      {problem ? (
+        <Text style={{ ...CAPTION, color: color.criticalText, marginBottom: space.md }}>{problem}</Text>
+      ) : null}
+
       {/* ---------- idle: choose a file ---------- */}
       {phase === 'idle' ? (
         <View style={{ gap: space.lg }}>
@@ -414,25 +580,69 @@ export default function ImportScreen() {
             </View>
           ) : null}
 
-          <View style={{ gap: space.sm }}>
-            <ModeOption
-              label="Replace"
-              danger
-              selected={mode === 'replace'}
-              onPress={() => setMode('replace')}
-              body={
-                preview.existingWorkouts > 0
-                  ? `Delete ALL ${preview.existingWorkouts} of your current workout${preview.existingWorkouts === 1 ? '' : 's'} (demo or your own), then import. Recommended for a fresh migration.`
-                  : 'Import into an empty history. Recommended for a fresh migration.'
-              }
-            />
-            <ModeOption
-              label="Merge"
-              selected={mode === 'merge'}
-              onPress={() => setMode('merge')}
-              body="Keep your current workouts and add these. A workout already here is skipped, also one you logged in ForgeAI too (same day, started within 30 minutes), so it’s safe to re-run."
-            />
-          </View>
+          {/* DS-05 / IM-01: over the demo, the whole demo goes first, and the name with it. */}
+          {demo ? (
+            <Card style={{ gap: space.sm }}>
+              <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>The demo goes first</Text>
+              <Text style={CAPTION}>
+                The sample member’s workouts, body weight, food, plan, records and name are removed, then your history comes in.
+                {ownWorkouts > 0 ? ` Your own ${ownWorkouts} workout${ownWorkouts === 1 ? ' stays' : 's stay'}.` : ''}
+              </Text>
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginTop: space.xs }}>
+                Your name
+              </Text>
+              <View
+                style={{
+                  minHeight: 46,
+                  paddingHorizontal: space.md,
+                  justifyContent: 'center',
+                  borderRadius: radius.md,
+                  backgroundColor: color.surfaceSunken,
+                  borderWidth: 1,
+                  borderColor: nameProblem ? color.criticalText : color.border,
+                }}
+              >
+                <TextInput
+                  value={memberName}
+                  onChangeText={(t) => {
+                    setMemberName(t);
+                    setNameProblem(false);
+                  }}
+                  placeholder="First and last name"
+                  placeholderTextColor={color.inkMuted}
+                  autoCapitalize="words"
+                  maxLength={60}
+                  accessibilityLabel="Your name"
+                  style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink, paddingVertical: space.sm }}
+                />
+              </View>
+              {nameProblem ? (
+                <Text style={{ ...CAPTION, color: color.criticalText }}>Your name, please. The demo’s name goes with the demo.</Text>
+              ) : null}
+            </Card>
+          ) : null}
+
+          {!demo || ownWorkouts > 0 ? (
+            <View style={{ gap: space.sm }}>
+              <ModeOption
+                label="Replace"
+                danger
+                selected={mode === 'replace'}
+                onPress={() => setMode('replace')}
+                body={
+                  ownWorkouts > 0
+                    ? `Delete all ${ownWorkouts} of your workout${ownWorkouts === 1 ? '' : 's'} in ForgeAI, then import. You can undo right after.`
+                    : 'Import into an empty history.'
+                }
+              />
+              <ModeOption
+                label="Merge"
+                selected={mode === 'merge'}
+                onPress={() => setMode('merge')}
+                body="Keep your current workouts and add these. A workout already here is skipped, also one you logged in ForgeAI too (same day, started within 30 minutes), so it’s safe to re-run."
+              />
+            </View>
+          ) : null}
 
           <View style={{ gap: space.md }}>
             <PrimaryButton
@@ -478,7 +688,7 @@ export default function ImportScreen() {
             />
           </View>
           <Text style={{ ...CAPTION, textAlign: 'center' as const }}>
-            Building your history and detecting PRs. Keep the app open.
+            Building your history and detecting PRs. If you leave, it finishes on its own.
           </Text>
         </View>
       ) : null}
@@ -486,6 +696,9 @@ export default function ImportScreen() {
       {/* ---------- done: summary ---------- */}
       {phase === 'done' && result ? (
         <View style={{ gap: space.lg }}>
+          {undoBar ? (
+            <UndoBar message={undoBar} actionLabel="Undo" onAction={() => void onUndo()} onDismiss={() => setUndoBar(null)} />
+          ) : null}
           <Card style={{ alignItems: 'center', paddingVertical: space.xl, gap: space.sm }}>
             <Icon name="trophy" size={30} color={color.accent} />
             <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>
@@ -493,6 +706,10 @@ export default function ImportScreen() {
             </Text>
             <Text style={{ ...CAPTION, textAlign: 'center' as const }}>Your {appName} history is now in ForgeAI.</Text>
           </Card>
+
+          {canUndo ? (
+            <GhostButton label={undoing ? 'Undoing…' : 'Undo import'} icon="close" onPress={() => void onUndo()} />
+          ) : null}
 
           <Card>
             <StatRow label="Workouts added" value={String(result.imported)} tint={color.goodText} />
@@ -523,20 +740,32 @@ export default function ImportScreen() {
                 Next: your {appName} routines. We found {routineCount} in this file.
               </Text>
               <PrimaryButton label="Bring my routines in" icon="chevron-right" onPress={() => setPhase('routines')} />
-              <GhostButton label="Not now" icon="close" onPress={() => router.back()} />
+              <GhostButton label="Not now" icon="close" onPress={close} />
             </View>
           ) : (
             <View style={{ gap: space.md }}>
               <PrimaryButton label="See your workouts" icon="calendar" onPress={() => router.replace('/history')} />
-              <GhostButton label="Done" icon="check" onPress={() => router.back()} />
+              <GhostButton label="Done" icon="check" onPress={close} />
             </View>
           )}
         </View>
       ) : null}
 
+      {/* ---------- IM-05: the import was undone ---------- */}
+      {phase === 'undone' ? (
+        <View style={{ gap: space.lg }}>
+          <Card style={{ alignItems: 'center', paddingVertical: space.xl, gap: space.sm }}>
+            <Icon name="check" size={30} color={color.accent} />
+            <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>Import undone</Text>
+            <Text style={{ ...CAPTION, textAlign: 'center' as const }}>Everything is back as it was before the import.</Text>
+          </Card>
+          <GhostButton label="Done" icon="check" onPress={close} />
+        </View>
+      ) : null}
+
       {/* ---------- v0.28.0: the member's routines, step by step ---------- */}
       {phase === 'routines' && parsed ? (
-        <RoutineImportSteps app={strong ? 'strong' : 'hevy'} workouts={parsed.workouts} onClose={() => router.back()} />
+        <RoutineImportSteps app={strong ? 'strong' : 'hevy'} workouts={parsed.workouts} onClose={close} backRef={stepsBack} />
       ) : null}
     </Screen>
   );

@@ -11,6 +11,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { launchFor, takePendingPick } from '@/lib/pendingPick';
 
 export interface PickedMedia {
@@ -116,7 +117,7 @@ export async function clearMissingExerciseMedia(): Promise<number> {
   for (const r of rows) {
     const info = await FileSystem.getInfoAsync(r.media_uri).catch(() => ({ exists: false }));
     if (info.exists) continue;
-    await getDb().runAsync('UPDATE exercises SET media_uri = NULL, media_type = NULL WHERE id = ?', [r.id]);
+    await enqueueWrite(() => getDb().runAsync('UPDATE exercises SET media_uri = NULL, media_type = NULL WHERE id = ?', [r.id]));
     cleared += 1;
   }
   return cleared;

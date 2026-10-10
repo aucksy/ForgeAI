@@ -7,11 +7,12 @@
  * from its export file (Import from Strong → "Bring my routines in").
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ActivityIndicator, Text, TextInput, View } from 'react-native';
 
 import { Card, GhostButton, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { warn } from '@/lib/haptics';
+import { useBackGuard } from '@/lib/useBackGuard';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { HevyLinkReader } from '@/tracker/components/HevyLinkReader';
@@ -31,6 +32,24 @@ export default function ImportRoutinesScreen() {
   const [problem, setProblem] = useState<string | null>(null);
 
   const link = parseRoutineLink(text);
+
+  // IM-10: Back inside the steps goes to the previous step; while reading, Back cancels the
+  // read (back to the link); on the link screen Back leaves.
+  const stepsBack = useRef<(() => boolean) | null>(null);
+  const leaving = useRef(false);
+  const close = (): void => {
+    leaving.current = true;
+    router.back();
+  };
+  useBackGuard(() => {
+    if (leaving.current) return false;
+    if (phase.kind === 'steps') return stepsBack.current?.() ?? false;
+    if (phase.kind === 'reading') {
+      setPhase({ kind: 'paste' });
+      return true;
+    }
+    return false;
+  });
 
   const onRead = (): void => {
     if (!link) {
@@ -57,9 +76,9 @@ export default function ImportRoutinesScreen() {
   };
 
   return (
-    <Screen title="Import routines" right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
+    <Screen title="Import routines" right={<IconButton icon="close" onPress={close} accessibilityLabel="Close" />}>
       {phase.kind === 'steps' ? (
-        <RoutineImportSteps app="hevy" link={phase.routines} onClose={() => router.back()} />
+        <RoutineImportSteps app="hevy" link={phase.routines} onClose={close} backRef={stepsBack} />
       ) : phase.kind === 'reading' ? (
         <View style={{ gap: space.lg }}>
           <Card style={{ alignItems: 'center', gap: space.md, paddingVertical: space.xl }}>
@@ -114,7 +133,10 @@ export default function ImportRoutinesScreen() {
           <Text style={CAPTION}>
             Coming from Strong? Strong’s links open only in Strong. Import your Strong file instead, then tap “Bring my routines in”.
           </Text>
-          <GhostButton label="Import from Strong" icon="calendar" onPress={() => router.replace({ pathname: '/import', params: { from: 'strong' } })} />
+          <GhostButton label="Import from Strong" icon="calendar" onPress={() => {
+              leaving.current = true;
+              router.replace({ pathname: '/import', params: { from: 'strong' } });
+            }} />
         </View>
       )}
     </Screen>

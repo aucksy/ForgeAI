@@ -6,7 +6,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
-import { Chip, EmptyState, Icon } from '@/components/ui';
+import { Chip, EmptyState, Icon, LoadError, Skeleton } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
+import { viewOf } from '@/lib/loadState';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { Exercise } from '@/types/models';
 
@@ -22,6 +24,7 @@ export function ExercisePickerList({
   isMarked,
   only,
   onCreate,
+  error,
 }: {
   onSelect: (ex: TrackerExercise) => void;
   /** Screen-reader verb for each row (Phase 4: "Leave out" in the plan builder). */
@@ -32,8 +35,15 @@ export function ExercisePickerList({
   only?: (ex: TrackerExercise) => boolean;
   /** v0.28.0: offer "Create “<typed>”" at the end of the results (inside a workout). */
   onCreate?: (typed: string) => void;
+  /** EX-10: a short line when the last pick failed ("Couldn't add it. Try again."); the list stays usable. */
+  error?: string | null;
 }) {
   const [all, setAll] = useState<TrackerExercise[]>([]);
+  // EX-16: until the first read answers, show placeholders — not "No exercises found" (and no
+  // Create row, which would offer to duplicate an exercise that is merely still loading).
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [query, setQuery] = useState('');
   const [muscle, setMuscle] = useState<Muscle | null>(null);
   const [demo, setDemo] = useState<TrackerExercise | null>(null);
@@ -42,15 +52,23 @@ export function ExercisePickerList({
     let alive = true;
     getAllTrackerExercises()
       .then((list) => {
-        if (alive) setAll(list);
+        if (!alive) return;
+        setAll(list);
+        setLoaded(true);
+        setFailed(false);
       })
       .catch(() => {
-        /* unseeded / transient — list stays empty */
+        if (alive) setFailed(true);
       });
     return () => {
       alive = false;
     };
-  }, []);
+  }, [attempt]);
+
+  const retry = (): void => {
+    setFailed(false);
+    setAttempt((n) => n + 1);
+  };
 
   const shown = useMemo(() => (only ? all.filter(only) : all), [all, only]);
 
@@ -61,7 +79,8 @@ export function ExercisePickerList({
   }, [shown]);
 
   const filtered = useMemo(() => filterExercises(shown, { query, muscle, equipment: null }), [shown, query, muscle]);
-  const createName = onCreate ? createOffer(query, shown) : null;
+  const createName = onCreate && loaded ? createOffer(query, shown) : null;
+  const view = viewOf({ loaded, failed, count: filtered.length });
   const createRow = createName ? (
     <Pressable
       onPress={() => onCreate?.(createName)}
@@ -142,6 +161,8 @@ export function ExercisePickerList({
         style={{ flexGrow: 0, flexShrink: 0 }}
       />
 
+      <InlineError message={error} />
+
       {/* results */}
       <FlatList
         data={filtered}
@@ -152,7 +173,17 @@ export function ExercisePickerList({
         windowSize={9}
         contentContainerStyle={{ gap: space.sm, paddingBottom: space.xxl }}
         ListEmptyComponent={
-          createRow ? null : <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search or muscle group." />
+          view === 'loading' ? (
+            <View style={{ gap: space.sm }}>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} width="100%" height={64} radius={radius.md} />
+              ))}
+            </View>
+          ) : view === 'error' ? (
+            <LoadError compact what="your exercises" onRetry={retry} />
+          ) : createRow ? null : (
+            <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search or muscle group." />
+          )
         }
         ListFooterComponent={createRow}
         extraData={isMarked}

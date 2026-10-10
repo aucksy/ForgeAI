@@ -10,6 +10,8 @@ import { setVolumeKg } from '@/tracker/engine/volume';
 const h = vi.hoisted(() => ({ calls: [] as { sql: string; params?: unknown[] }[] }));
 vi.mock('@/db', () => ({
   getDb: () => ({
+    // The switch is one queued transaction now (DS-04); the fake just runs it.
+    withTransactionAsync: async (task: () => Promise<void>) => task(),
     runAsync: async (sql: string, params?: unknown[]) => {
       h.calls.push({ sql, params });
       return { changes: 0, lastInsertRowId: 0 };

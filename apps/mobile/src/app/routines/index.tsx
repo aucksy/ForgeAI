@@ -9,10 +9,12 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
-import { Badge, EmptyState, GhostButton, Icon, IconButton, Screen, Skeleton } from '@/components/ui';
+import { Badge, EmptyState, GhostButton, Icon, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
 import type { IconName } from '@/components/ui';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import { todayISO } from '@/lib/date';
+import { START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -52,7 +54,7 @@ function EntryCard({ icon, title, sub, onPress }: { icon: IconName; title: strin
   );
 }
 
-function RoutineCard({ r, onOpen, onStart }: { r: PlanDayFull; onOpen: () => void; onStart: () => void }) {
+function RoutineCard({ r, onOpen, onStart, error }: { r: PlanDayFull; onOpen: () => void; onStart: () => void; error?: string | null }) {
   return (
     <Pressable
       onPress={onOpen}
@@ -82,7 +84,10 @@ function RoutineCard({ r, onOpen, onStart }: { r: PlanDayFull; onOpen: () => voi
         <Icon name="chevron-right" size={20} color={color.inkMuted} />
       </View>
       {r.exercises.length > 0 ? (
-        <GhostButton label="Start routine" icon="dumbbell" onPress={onStart} />
+        <View style={{ gap: space.sm }}>
+          <GhostButton label="Start routine" icon="dumbbell" onPress={onStart} />
+          <InlineError message={error} />
+        </View>
       ) : (
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
           Add exercises to start this routine.
@@ -100,6 +105,11 @@ export default function RoutinesScreen() {
 
   const [folders, setFolders] = useState<Folder[] | null>(null);
   const [plan, setPlan] = useState<PlanNow | null>(null);
+  // RP-13: a failed read shows "Couldn't load your routines — Try again", never "No routines yet"
+  // (which invites rebuilding or re-importing them as duplicates).
+  const [loadFailed, setLoadFailed] = useState(false);
+  // RP-14: a failed Start says so and the button works again.
+  const [startError, setStartError] = useState<{ dayId: string; message: string } | null>(null);
   /** Folders opened or shut by the member; the followed one starts open, the rest shut. */
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [menuFor, setMenuFor] = useState<Folder | null>(null);
@@ -114,9 +124,11 @@ export default function RoutinesScreen() {
         if (!alive) return;
         setFolders(list);
         setPlan(now);
+        setLoadFailed(false);
       })
       .catch(() => {
-        if (alive) setFolders([]);
+        // Keep folders already on screen; with none, the screen shows LoadError.
+        if (alive) setLoadFailed(true);
       });
     return () => {
       alive = false;
@@ -124,6 +136,12 @@ export default function RoutinesScreen() {
   }, []);
 
   useFocusEffect(reload);
+
+  const retryLoad = (): void => {
+    setLoadFailed(false);
+    setFolders(null);
+    reload();
+  };
 
   // Two RN Modals swapping in the same frame can drop the second on Android.
   const after = (fn: () => void): void => {
@@ -144,22 +162,24 @@ export default function RoutinesScreen() {
   };
 
   const onStart = async (dayId: string): Promise<void> => {
-    if (starting.current) return;
-    starting.current = true;
-    // Hydrate first: a persisted in-progress draft may exist but not be in memory yet
-    // (it only loads on the Workout tab) — starting would overwrite it.
-    await hydrate();
-    if (useActiveWorkout.getState().active) {
-      starting.current = false;
-      Alert.alert('Finish your current workout first', 'You already have a workout in progress.');
-      return;
-    }
-    try {
-      await startFromPlanDay(dayId);
-      router.replace('/session/active');
-    } finally {
-      starting.current = false;
-    }
+    // A ref guard (not state) so a double tap can't start twice; released however it ends.
+    await runGuarded(
+      starting,
+      async () => {
+        setStartError(null);
+        // Hydrate first: a persisted in-progress draft may exist but not be in memory yet
+        // (it only loads on the Workout tab) — starting would overwrite it.
+        await hydrate();
+        if (useActiveWorkout.getState().active) {
+          Alert.alert('Finish your current workout first', 'You already have a workout in progress.');
+          return;
+        }
+        await startFromPlanDay(dayId);
+        router.replace('/session/active');
+        return 'left' as const;
+      },
+      () => setStartError({ dayId, message: START_FAILED }),
+    );
   };
 
   const onImport = async (): Promise<void> => {
@@ -206,7 +226,9 @@ export default function RoutinesScreen() {
         <EntryCard icon="sparkle" title="Build a plan" sub="From your goal, days, equipment and sore spots" onPress={() => router.push('/plan/build')} />
       </View>
 
-      {folders == null ? (
+      {folders == null && loadFailed ? (
+        <LoadError what="your routines" onRetry={retryLoad} />
+      ) : folders == null ? (
         <View style={{ gap: space.md }}>
           <Skeleton width="100%" height={92} radius={radius.lg} />
           <Skeleton width="100%" height={92} radius={radius.lg} />
@@ -271,7 +293,7 @@ export default function RoutinesScreen() {
                     <GhostButton label="Add a routine" icon="plus" onPress={() => void onNewRoutine(f.id)} />
                   ) : (
                     f.routines.map((r) => (
-                      <RoutineCard key={r.id} r={r} onOpen={() => router.push(`/routines/${r.id}`)} onStart={() => void onStart(r.id)} />
+                      <RoutineCard key={r.id} r={r} onOpen={() => router.push(`/routines/${r.id}`)} onStart={() => void onStart(r.id)} error={startError?.dayId === r.id ? startError.message : null} />
                     ))
                   )
                 ) : null}

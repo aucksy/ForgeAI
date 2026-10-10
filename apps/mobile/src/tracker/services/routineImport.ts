@@ -77,6 +77,26 @@ export async function linkFollowQuestion(url: string): Promise<{ followingName: 
  * made (a custom exercise); its rest from the link becomes its own rest unless the member set
  * one. Returns the folder, how many routines and how many new exercises.
  */
+/**
+ * IM-20: the routines were not saved, but `createdExercises` new exercises were already added
+ * to the member's library (and stay there). Anything else thrown means nothing was written.
+ */
+export class RoutineSaveError extends Error {
+  constructor(readonly createdExercises: number) {
+    super('The routines were not saved.');
+    this.name = 'RoutineSaveError';
+  }
+}
+
+/** The failure line for the routine steps: honest about what was already written. PURE. */
+export function routineSaveFailureText(e: unknown): string {
+  if (e instanceof RoutineSaveError && e.createdExercises > 0) {
+    const n = e.createdExercises;
+    return `The routines weren’t saved. ${n} new exercise${n === 1 ? ' was' : 's were'} added to your library and ${n === 1 ? 'stays' : 'stay'} there. Please try again.`;
+  }
+  return 'Nothing was changed. Please try again.';
+}
+
 export async function saveLinkedRoutines(
   link: { url: string; folderName: string; rests: ReadonlyMap<string, number> },
   chosen: readonly { title: string; dayType: NewRoutine['dayType']; exercises: readonly FoundExercise[] }[],
@@ -85,11 +105,20 @@ export async function saveLinkedRoutines(
   const items = new Map<string, boolean>();
   for (const r of chosen) for (const e of r.exercises) items.set(e.title, (items.get(e.title) ?? true) && e.repMin == null);
   const { ids, created } = await exerciseIdsCreating([...items].map(([title, timed]) => ({ title, timed })));
-  const routines = toNewRoutines(chosen, ids);
-  if (routines.length === 0) throw new Error('nothing to save');
-  // The same link copied again: its rests win too (the folder "now matches this link").
-  const again = (await linkFolder(link.url).catch(() => null)) != null;
-  const folderId = await saveLinkFolder(link.url, link.folderName, routines, { follow: opts.follow, todayISO: todayISO() });
+  // IM-20: the new exercises are already saved (their own transaction, owned by hevyImport). If
+  // the folder fails now, the member is told what was kept — never "Nothing was changed".
+  let folderId: string;
+  let routines: NewRoutine[];
+  let again: boolean;
+  try {
+    routines = toNewRoutines(chosen, ids);
+    if (routines.length === 0) throw new Error('nothing to save');
+    // The same link copied again: its rests win too (the folder "now matches this link").
+    again = (await linkFolder(link.url).catch(() => null)) != null;
+    folderId = await saveLinkFolder(link.url, link.folderName, routines, { follow: opts.follow, todayISO: todayISO() });
+  } catch (e) {
+    throw created > 0 ? new RoutineSaveError(created) : e;
+  }
   for (const [title, sec] of link.rests) {
     const id = ids.get(title);
     if (id && (again || (await getExerciseRestSec(id).catch(() => 0)) == null)) await setExerciseRestSec(id, sec).catch(() => undefined);

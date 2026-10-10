@@ -61,7 +61,13 @@
         }
       ],
       "expo-sqlite",
-      "expo-secure-store",
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": false
+        }
+      ],
+      "./plugins/backup-rules/withBackupRules.js",
       "@react-native-google-signin/google-signin",
       "expo-sharing",
       "expo-audio",

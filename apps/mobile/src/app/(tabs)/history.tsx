@@ -1,10 +1,10 @@
 /** History tab — week streak, a calendar heatmap, and the workout feed. */
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
 import { Heatmap } from '@/components/charts';
-import { Card, EmptyState, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
+import { Card, EmptyState, LoadError, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
+import { useLoad } from '@/lib/useLoad';
 import { radius, space } from '@/theme/tokens';
 import type { ConsistencyCell, SessionDetail } from '@/types/models';
 
@@ -16,46 +16,41 @@ import { getConsistencyCells, withVolume } from '@/tracker/services/volumeServic
 
 const CAL_WEEKS = 13;
 
+interface HistoryData {
+  sessions: SessionDetail[];
+  cells: ConsistencyCell[];
+  streak: WeekStreak;
+}
+
+async function loadHistory(): Promise<HistoryData> {
+  // The feed is the one read that must succeed: if it fails the screen says so (HI-11)
+  // instead of "No workouts yet". The streak and heatmap are extras — a failure there
+  // can't blank the feed. The feed read is batched (~3 queries) since this runs on focus.
+  // Phase 2: volume on each card and the heatmap's shading follow the one volume rule.
+  const [sessions, cells, streak] = await Promise.all([
+    getRecentSessionDetailsBatched(50).then((rows) => withVolume(rows).catch(() => rows)),
+    getConsistencyCells(CAL_WEEKS * 7).catch(() => [] as ConsistencyCell[]),
+    getWeekStreak().catch(() => ({ weeks: 0, restDays: 0 }) as WeekStreak),
+  ]);
+  return { sessions, cells, streak };
+}
+
 export default function HistoryScreen() {
   const router = useRouter();
-  const [sessions, setSessions] = useState<SessionDetail[] | null>(null);
-  const [cells, setCells] = useState<ConsistencyCell[]>([]);
-  const [streak, setStreak] = useState<WeekStreak | null>(null);
-
-  useFocusEffect(
-    useCallback(() => {
-      let alive = true;
-      // Fetch each independently so a streak/heatmap read failing can't blank the feed.
-      // The feed read is batched (~3 queries, not 1 + 2×50) — this re-runs on every focus.
-      // Phase 2: volume on each card and the heatmap's shading follow the one volume rule.
-      Promise.all([
-        getRecentSessionDetailsBatched(50)
-          .then((rows) => withVolume(rows).catch(() => rows))
-          .catch(() => [] as SessionDetail[]),
-        getConsistencyCells(CAL_WEEKS * 7).catch(() => [] as ConsistencyCell[]),
-        getWeekStreak().catch(() => ({ weeks: 0, restDays: 0 }) as WeekStreak),
-      ]).then(([rows, c, st]) => {
-        if (alive) {
-          setSessions(rows);
-          setCells(c);
-          setStreak(st);
-        }
-      });
-      return () => {
-        alive = false;
-      };
-    }, []),
-  );
+  const { data, state, retry } = useLoad(loadHistory, [], { onFocus: true });
+  const view = data ? (data.sessions.length === 0 ? 'empty' : 'list') : state;
 
   return (
     <Screen title="History" subtitle="Every workout you've logged.">
-      {sessions === null ? (
+      {view === 'loading' ? (
         <View style={{ gap: space.md }}>
           {[0, 1, 2, 3].map((i) => (
             <Skeleton key={i} width="100%" height={74} radius={radius.lg} />
           ))}
         </View>
-      ) : sessions.length === 0 ? (
+      ) : view === 'error' || !data ? (
+        <LoadError what="your workouts" onRetry={retry} />
+      ) : view === 'empty' ? (
         <EmptyState
           icon="dumbbell"
           title="No workouts yet"
@@ -63,18 +58,18 @@ export default function HistoryScreen() {
         />
       ) : (
         <View style={{ gap: space.lg }}>
-          {streak ? (
+          {data.streak ? (
             <View style={{ flexDirection: 'row', gap: space.md }}>
               <View style={{ flex: 1 }}>
                 <StatTile
                   label="Week streak"
-                  value={streak.weeks}
-                  unit={streak.weeks === 1 ? 'week' : 'weeks'}
+                  value={data.streak.weeks}
+                  unit={data.streak.weeks === 1 ? 'week' : 'weeks'}
                   icon="flame"
                 />
               </View>
               <View style={{ flex: 1 }}>
-                <StatTile label="Rest days" value={streak.restDays} icon="clock" />
+                <StatTile label="Rest days" value={data.streak.restDays} icon="clock" />
               </View>
             </View>
           ) : null}
@@ -82,14 +77,14 @@ export default function HistoryScreen() {
           <View>
             <SectionHeader title="Last 13 weeks" />
             <Card>
-              <Heatmap cells={cells} weeks={CAL_WEEKS} />
+              <Heatmap cells={data.cells} weeks={CAL_WEEKS} />
             </Card>
           </View>
 
           <View>
             <SectionHeader title="Recent workouts" />
             <View style={{ gap: space.md }}>
-              {sessions.map((s) => (
+              {data.sessions.map((s) => (
                 <WorkoutCard key={s.id} session={s} onPress={() => router.push(`/session/${s.id}`)} />
               ))}
             </View>

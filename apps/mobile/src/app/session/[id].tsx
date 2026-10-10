@@ -3,12 +3,15 @@
  * holds Save as routine (Phase 1) and Delete.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, View } from 'react-native';
 
-import { EmptyState, GhostButton, Icon, IconButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
-import { deleteSessionAndReconcile } from '@/tracker/services/prRebuild';
+import { EmptyState, GhostButton, askConfirm, Icon, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
+import { deleteWorkout } from '@/tracker/services/workoutDelete';
 import { shortDate } from '@/lib/date';
+import { EDIT_FAILED, SAVE_ROUTINE_FAILED, START_FAILED, runGuarded } from '@/lib/guardedAction';
+import { useLoad } from '@/lib/useLoad';
 import { useUnits } from '@/lib/useUnits';
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space } from '@/theme/tokens';
@@ -41,8 +44,14 @@ export default function SessionDetailScreen() {
   // Edit-then-Repeat could otherwise start both before either sets `active`.
   const busy = useRef(false);
 
-  const [data, setData] = useState<SessionSummaryData | null>(null);
-  const [loading, setLoading] = useState(true);
+  // HI-11: a failed read says so with Try again — "Workout not found" only when the read
+  // really answered that there is no such workout.
+  const summary = useLoad<SessionSummaryData | null>(() => (id ? getSessionSummary(id) : Promise.resolve(null)), [id]);
+  const data = summary.data;
+  const loading = summary.state === 'loading';
+  const loadFailed = summary.state === 'error';
+  // HI-13 / LW-20: a failed Repeat / Edit / Save as routine says so here and frees the buttons.
+  const [actionError, setActionError] = useState<string | null>(null);
   const [menu, setMenu] = useState(false);
   const [sharing, setSharing] = useState(false);
   // v0.25.1: the body figure chosen in Profile.
@@ -50,115 +59,104 @@ export default function SessionDetailScreen() {
   // Phase 3: the same picture the finish screen shares.
   const scene = useMemo(() => (data ? workoutShareScene({ ...workoutShareInput(data), figure }) : null), [data, figure]);
 
-  useEffect(() => {
-    let alive = true;
-    if (id) {
-      getSessionSummary(id)
-        .then((d) => {
-          if (alive) {
-            setData(d);
-            setLoading(false);
-          }
-        })
-        .catch(() => {
-          if (alive) setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
-    return () => {
-      alive = false;
-    };
-  }, [id]);
-
-  const onRepeat = async (): Promise<void> => {
-    if (!data || busy.current) return;
-    busy.current = true;
-    // Hydrate first: a persisted in-progress draft may exist but not yet be in memory
-    // (it only loads on the Workout tab), and startFromSession would overwrite it.
-    await hydrate();
-    if (useActiveWorkout.getState().active) {
-      busy.current = false;
-      Alert.alert('Finish your current workout first', 'You already have a workout in progress.');
-      return;
-    }
-    await startFromSession(data.session);
-    router.replace('/session/active');
-  };
-
-  const onEdit = async (): Promise<void> => {
-    if (!data || busy.current) return;
-    busy.current = true;
-    // Same guard as Repeat: a persisted in-progress draft only loads on the Workout
-    // tab, so hydrate first or editing would silently overwrite it.
-    await hydrate();
-    if (useActiveWorkout.getState().active) {
-      busy.current = false;
-      Alert.alert(
-        'Finish your current workout first',
-        'You have a workout in progress. Finish or discard it before editing an older one.',
-      );
-      return;
-    }
-    try {
-      // Saving REPLACES every set, so refuse the cases the editor cannot represent
-      // faithfully rather than quietly merging them away.
-      const blocked = uneditableReason(data.session, await getSessionSetMeta(data.session.id));
-      if (blocked) {
-        busy.current = false;
-        Alert.alert("Can't edit this one", blocked);
-        return;
-      }
-      await startEditingSession(data.session);
-      router.replace('/session/active');
-    } catch {
-      busy.current = false;
-      Alert.alert('Could not open the editor', 'Something went wrong. Please try again.');
-    }
-  };
-
-  const onSaveRoutine = async (): Promise<void> => {
-    if (!data || busy.current) return;
-    busy.current = true;
-    try {
-      const s = data.session;
-      const items = s.exercises.map((g) => ({
-        exerciseId: g.exercise.id,
-        workingSets: g.sets.filter((x) => !x.isWarmup).length,
-      }));
-      const routineId = await createRoutineFromWorkout({
-        name: `${dayTypeLabel(s.dayType)} · ${shortDate(s.dateISO)}`,
-        dayType: s.dayType === 'rest' ? 'full' : s.dayType,
-        items,
-      });
-      busy.current = false;
-      Alert.alert('Saved as a routine', 'You can rename it and start it from the Workout tab.', [
-        { text: 'Done', style: 'cancel' },
-        { text: 'Open routine', onPress: () => router.push({ pathname: '/routines/[id]', params: { id: routineId } }) },
-      ]);
-    } catch {
-      busy.current = false;
-      Alert.alert('Could not save the routine', 'Something went wrong. Please try again.');
-    }
-  };
-
-  const onDelete = (): void => {
-    if (!id) return;
-    Alert.alert('Delete workout?', 'This permanently removes this workout and its sets.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          void deleteSessionAndReconcile(id)
-            .then(() => {
-              void useDashboard.getState().refresh();
-              router.back();
-            })
-            .catch(() => Alert.alert('Delete failed', 'Could not delete this workout. Please try again.'));
-        },
+  const onRepeat = (): Promise<unknown> =>
+    runGuarded(
+      busy,
+      async () => {
+        if (!data) return;
+        setActionError(null);
+        // Hydrate first: a persisted in-progress draft may exist but not yet be in memory
+        // (it only loads on the Workout tab), and startFromSession would overwrite it.
+        await hydrate();
+        if (useActiveWorkout.getState().active) {
+          Alert.alert('Finish your current workout first', 'You already have a workout in progress.');
+          return;
+        }
+        await startFromSession(data.session);
+        router.replace('/session/active');
+        return 'left' as const;
       },
-    ]);
+      () => setActionError(START_FAILED),
+    );
+
+  const onEdit = (): Promise<unknown> =>
+    runGuarded(
+      busy,
+      async () => {
+        if (!data) return;
+        setActionError(null);
+        // Same guard as Repeat: a persisted in-progress draft only loads on the Workout
+        // tab, so hydrate first or editing would silently overwrite it.
+        await hydrate();
+        if (useActiveWorkout.getState().active) {
+          Alert.alert(
+            'Finish your current workout first',
+            'You have a workout in progress. Finish or discard it before editing an older one.',
+          );
+          return;
+        }
+        // Saving REPLACES every set, so refuse the cases the editor cannot represent
+        // faithfully rather than quietly merging them away.
+        const blocked = uneditableReason(data.session, await getSessionSetMeta(data.session.id));
+        if (blocked) {
+          Alert.alert("Can't edit this one", blocked);
+          return;
+        }
+        await startEditingSession(data.session);
+        router.replace('/session/active');
+        return 'left' as const;
+      },
+      () => setActionError(EDIT_FAILED),
+    );
+
+  const onSaveRoutine = (): Promise<unknown> =>
+    runGuarded(
+      busy,
+      async () => {
+        if (!data) return;
+        setActionError(null);
+        const s = data.session;
+        const items = s.exercises.map((g) => ({
+          exerciseId: g.exercise.id,
+          workingSets: g.sets.filter((x) => !x.isWarmup).length,
+        }));
+        const routineId = await createRoutineFromWorkout({
+          name: `${dayTypeLabel(s.dayType)} · ${shortDate(s.dateISO)}`,
+          dayType: s.dayType === 'rest' ? 'full' : s.dayType,
+          items,
+        });
+        Alert.alert('Saved as a routine', 'You can rename it and start it from the Workout tab.', [
+          { text: 'Done', style: 'cancel' },
+          { text: 'Open routine', onPress: () => router.push({ pathname: '/routines/[id]', params: { id: routineId } }) },
+        ]);
+      },
+      () => setActionError(SAVE_ROUTINE_FAILED),
+    );
+
+  // HI-12: "failed" only when the workout is really still there. The records, Health Connect
+  // and the widgets catch up on their own; they never turn a done delete into "failed".
+  const onDelete = async (): Promise<void> => {
+    if (!id) return;
+    const ok = await askConfirm({
+      title: 'Delete this workout?',
+      body: 'This removes the workout and its sets.',
+      confirmLabel: 'Delete',
+      destructive: true,
+    });
+    if (!ok) return;
+    setActionError(null);
+    const outcome = await deleteWorkout(id);
+    if (!outcome.deleted) {
+      setActionError('Could not delete this workout. It is still here. Please try again.');
+      return;
+    }
+    void useDashboard.getState().refresh().catch(() => undefined);
+    try {
+      if (router.canGoBack()) router.back();
+      else router.replace('/history');
+    } catch {
+      // the workout is gone either way; the screen shows "not found" on its next read
+    }
   };
 
   return (
@@ -201,6 +199,7 @@ export default function SessionDetailScreen() {
           <View style={{ gap: space.md }}>
             <PrimaryButton label="Repeat this workout" icon="dumbbell" onPress={() => void onRepeat()} />
             <GhostButton label="Edit this workout" icon="check" onPress={() => void onEdit()} />
+            <InlineError message={actionError} />
           </View>
           <TrackerSheet visible={menu} title="This workout" onClose={() => setMenu(false)}>
             <View style={{ gap: 2 }}>
@@ -227,7 +226,7 @@ export default function SessionDetailScreen() {
                 leading={<Glyph name="trash" size={20} color={color.criticalText} />}
                 onPress={() => {
                   setMenu(false);
-                  setTimeout(onDelete, 260);
+                  setTimeout(() => void onDelete(), 260);
                 }}
               />
             </View>
@@ -242,6 +241,8 @@ export default function SessionDetailScreen() {
             />
           ) : null}
         </View>
+      ) : loadFailed ? (
+        <LoadError what="this workout" onRetry={summary.retry} />
       ) : (
         <EmptyState icon="dumbbell" title="Workout not found" body="This session may have been deleted." />
       )}

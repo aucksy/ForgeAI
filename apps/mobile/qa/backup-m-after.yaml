@@ -1,0 +1,28 @@
+# Device QA, part M (after) — the app was uninstalled and the SAME APK installed again; Android
+# restored its backup. The member must land in the app (not the welcome screen) and Profile →
+# Backup must show the same workout count as before the backup.
+# The script passes that line in: maestro test -e WORKOUTS_LINE="12 workouts" ...
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+# A restored member goes straight to the tabs. Without the restore this is the welcome screen
+# ("Start training"), and the wait times out here (Maestro saves a picture of what it saw).
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- assertNotVisible: "Start training"
+- assertNotVisible: "Load demo data instead"
+- takeScreenshot: 181-after-reinstall-first-screen
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "^${WORKOUTS_LINE}$"
+    centerElement: true
+    timeout: 90000
+- assertVisible: "^${WORKOUTS_LINE}$"
+- takeScreenshot: 182-after-reinstall-workouts

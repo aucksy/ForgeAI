@@ -4,8 +4,8 @@
  * Ported from ColorCloset's proven `src/lib/drive.ts` (same Expo SDK 56 / RN 0.85
  * stack). Sign-in is native (`@react-native-google-signin/google-signin`), so it
  * needs a dev/preview build — NOT Expo Go. We request the narrow `drive.file` scope
- * (the app only sees files it created), keep ONE canonical backup file
- * (`forgeai-backup.json`) inside a dedicated "ForgeAI" folder, and talk to the Drive
+ * (the app only sees files it created), keep the last KEEP_BACKUPS dated backup files
+ * (`forgeai-backup-YYYY-MM-DD-HHMMSS.json`, audit DS-10) inside a dedicated "ForgeAI" folder, and talk to the Drive
  * v3 REST API directly with the access token. `drive.file` access is tied to the
  * OAuth client + user, so the backup is still found after a reinstall or new phone.
  *
@@ -25,7 +25,9 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 
+/** The single file versions before v0.30 overwrote; still found and restored. */
 const FILE_NAME = 'forgeai-backup.json';
+const FILE_PREFIX = 'forgeai-backup-';
 const FOLDER_NAME = 'ForgeAI';
 const FOLDER_MIME = 'application/vnd.google-apps.folder';
 const SCOPE = 'https://www.googleapis.com/auth/drive.file';
@@ -189,58 +191,115 @@ async function ensureFolderId(token: string): Promise<string> {
   return created.id;
 }
 
-/** Find our single backup file id inside the ForgeAI folder (most recent), or null. */
-async function findBackupId(token: string, folderId: string): Promise<string | null> {
-  const q = encodeURIComponent(
-    `name = '${FILE_NAME}' and '${folderId}' in parents and trashed = false`,
-  );
-  const url = `${DRIVE}/files?q=${q}&spaces=drive&orderBy=modifiedTime desc&pageSize=1&fields=files(id,modifiedTime)`;
-  const res = await api(token, url);
-  const json = (await res.json()) as { files?: { id: string }[] };
-  return json.files?.[0]?.id ?? null;
+/** How many dated backups Drive keeps (audit DS-10). The oldest beyond this are deleted. */
+export const KEEP_BACKUPS = 5;
+
+/** One backup file on Drive, newest first in every list this module returns. */
+export interface DriveBackupFile {
+  id: string;
+  name: string;
+  modifiedTime: string;
+  /** Workouts in it (written when the backup is made); null for a backup made before v0.30. */
+  workouts: number | null;
+}
+
+/** "forgeai-backup-2026-10-10-1804.json" — sortable, one per backup (DS-10). PURE. */
+export function backupFileName(at: Date): string {
+  const p = (n: number): string => String(n).padStart(2, '0');
+  return `${FILE_PREFIX}${at.getFullYear()}-${p(at.getMonth() + 1)}-${p(at.getDate())}-${p(at.getHours())}${p(at.getMinutes())}${p(at.getSeconds())}.json`;
+}
+
+/** Is this one of our backup files (the dated ones, or the single file older versions wrote)? PURE. */
+export function isBackupFileName(name: string): boolean {
+  return name === FILE_NAME || (name.startsWith(FILE_PREFIX) && name.endsWith('.json'));
+}
+
+/** The backups to delete so only the newest `keep` remain (input in any order). PURE. */
+export function backupsToPrune(files: readonly DriveBackupFile[], keep = KEEP_BACKUPS): DriveBackupFile[] {
+  const newestFirst = [...files].sort((a, b) => b.modifiedTime.localeCompare(a.modifiedTime));
+  return newestFirst.slice(keep);
 }
 
 /**
- * Upload `data` (the exportSnapshot() JSON string) to Drive, creating the backup
- * file the first time and overwriting it after that. Returns an ISO timestamp.
+ * DS-10: never let an empty phone push out a real backup. Returns the reason to refuse, or
+ * null when backing up is safe. A backup whose workout count is unknown (made by an older
+ * version) counts as not empty. PURE.
  */
-export async function backupToDrive(data: string): Promise<string> {
-  const token = await accessToken();
-  const folderId = await ensureFolderId(token);
-  const existing = await findBackupId(token, folderId);
-
-  if (existing) {
-    await api(token, `${UPLOAD}/files/${existing}?uploadType=media&fields=id`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: data,
-    });
-  } else {
-    const boundary = 'forgeai-backup-boundary';
-    const metadata = JSON.stringify({
-      name: FILE_NAME,
-      mimeType: 'application/json',
-      parents: [folderId],
-    });
-    const body =
-      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadata}\r\n` +
-      `--${boundary}\r\nContent-Type: application/json\r\n\r\n${data}\r\n` +
-      `--${boundary}--`;
-    await api(token, `${UPLOAD}/files?uploadType=multipart&fields=id`, {
-      method: 'POST',
-      headers: { 'Content-Type': `multipart/related; boundary=${boundary}` },
-      body,
-    });
-  }
-  return new Date().toISOString();
+export function refuseEmptyOverwrite(localWorkouts: number, newest: DriveBackupFile | null): string | null {
+  if (localWorkouts > 0 || !newest) return null;
+  if (newest.workouts === 0) return null;
+  const what = newest.workouts != null ? `${newest.workouts} workouts` : 'your history';
+  return `This phone has no workouts, but your Drive backup has ${what}. Restore it instead — backing up now would save an empty copy over it.`;
 }
 
-/** Download the backup file contents (the JSON string), or null if none exists. */
+/** Every backup file in the ForgeAI folder, newest first. */
+async function listBackups(token: string, folderId: string): Promise<DriveBackupFile[]> {
+  const q = encodeURIComponent(`'${folderId}' in parents and trashed = false and name contains 'forgeai-backup'`);
+  const url = `${DRIVE}/files?q=${q}&spaces=drive&orderBy=modifiedTime desc&pageSize=50&fields=files(id,name,modifiedTime,appProperties)`;
+  const res = await api(token, url);
+  const json = (await res.json()) as {
+    files?: { id: string; name: string; modifiedTime?: string; appProperties?: Record<string, string> }[];
+  };
+  return (json.files ?? [])
+    .filter((f) => isBackupFileName(f.name))
+    .map((f) => {
+      const n = Number(f.appProperties?.workouts);
+      return { id: f.id, name: f.name, modifiedTime: f.modifiedTime ?? '', workouts: f.appProperties?.workouts != null && Number.isFinite(n) ? n : null };
+    })
+    .sort((a, b) => b.modifiedTime.localeCompare(a.modifiedTime));
+}
+
+/** The newest backup on Drive (no download), or null when there is none. */
+export async function newestDriveBackup(): Promise<DriveBackupFile | null> {
+  const token = await accessToken();
+  const folderId = await ensureFolderId(token);
+  return (await listBackups(token, folderId))[0] ?? null;
+}
+
+/**
+ * Upload `data` (the exportSnapshot() JSON string) as a NEW dated file, then delete the oldest
+ * so the last KEEP_BACKUPS stay (DS-10: earlier versions overwrote one file every time).
+ * `workouts` is stored with the file so the next backup can tell an empty phone from a real
+ * history without downloading. The caller checks `refuseEmptyOverwrite` first. Returns an ISO
+ * timestamp.
+ */
+export async function backupToDrive(data: string, workouts?: number): Promise<string> {
+  const token = await accessToken();
+  const folderId = await ensureFolderId(token);
+  const now = new Date();
+
+  const boundary = 'forgeai-backup-boundary';
+  const metadata = JSON.stringify({
+    name: backupFileName(now),
+    mimeType: 'application/json',
+    parents: [folderId],
+    ...(workouts != null ? { appProperties: { workouts: String(workouts) } } : {}),
+  });
+  const body =
+    `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadata}\r\n` +
+    `--${boundary}\r\nContent-Type: application/json\r\n\r\n${data}\r\n` +
+    `--${boundary}--`;
+  await api(token, `${UPLOAD}/files?uploadType=multipart&fields=id`, {
+    method: 'POST',
+    headers: { 'Content-Type': `multipart/related; boundary=${boundary}` },
+    body,
+  });
+
+  // Only after the new copy is safely up: drop the oldest beyond KEEP_BACKUPS. A failed
+  // delete leaves an extra copy, never fewer.
+  const all = await listBackups(token, folderId).catch(() => [] as DriveBackupFile[]);
+  for (const old of backupsToPrune(all)) {
+    await api(token, `${DRIVE}/files/${old.id}`, { method: 'DELETE' }).catch(() => undefined);
+  }
+  return now.toISOString();
+}
+
+/** Download the newest backup's contents (the JSON string), or null if none exists. */
 export async function restoreFromDrive(): Promise<string | null> {
   const token = await accessToken();
   const folderId = await ensureFolderId(token);
-  const id = await findBackupId(token, folderId);
-  if (!id) return null;
-  const res = await api(token, `${DRIVE}/files/${id}?alt=media`);
+  const newest = (await listBackups(token, folderId))[0];
+  if (!newest) return null;
+  const res = await api(token, `${DRIVE}/files/${newest.id}?alt=media`);
   return res.text();
 }

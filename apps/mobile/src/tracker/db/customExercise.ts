@@ -7,6 +7,7 @@
  * keep their name, muscles and type; only the member's photo/video can be set on them.
  */
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { createExercise } from '@/db/repos/exerciseRepo';
 import type { Exercise } from '@/types/models';
 
@@ -55,14 +56,17 @@ export async function createCustomExercise(
   media: { uri: string | null; type: 'image' | 'video' | null },
 ): Promise<string> {
   let id = '';
-  await getDb().withTransactionAsync(async () => {
-    const created = await createExercise(baseRowOf(input));
-    id = created.id;
-    await getDb().runAsync(
-      `UPDATE exercises SET log_type = ?, muscles = ?, bw_share = ?, media_uri = ?, media_type = ?, dist_unit = ? WHERE id = ?`,
-      [input.logType, JSON.stringify(input.muscles), bwShareOf(input), media.uri, media.type, distUnitOf(input), id],
-    );
-  });
+  // The one app-wide write queue (DS-04): never nest inside another module's transaction.
+  await enqueueWrite(() =>
+    getDb().withTransactionAsync(async () => {
+      const created = await createExercise(baseRowOf(input));
+      id = created.id;
+      await getDb().runAsync(
+        `UPDATE exercises SET log_type = ?, muscles = ?, bw_share = ?, media_uri = ?, media_type = ?, dist_unit = ? WHERE id = ?`,
+        [input.logType, JSON.stringify(input.muscles), bwShareOf(input), media.uri, media.type, distUnitOf(input), id],
+      );
+    }),
+  );
   return id;
 }
 
@@ -74,7 +78,7 @@ export async function updateCustomExercise(
   lockLogType: boolean,
 ): Promise<void> {
   const base = baseRowOf(input);
-  await getDb().runAsync(
+  await enqueueWrite(() => getDb().runAsync(
     `UPDATE exercises
         SET name = ?, muscle_group = ?, secondary_muscles = ?, equipment = ?, is_compound = ?, increment_kg = ?,
             log_type = CASE WHEN ? = 1 THEN log_type ELSE ? END,
@@ -100,10 +104,10 @@ export async function updateCustomExercise(
       input.distUnit ?? 'km',
       id,
     ],
-  );
+  ));
 }
 
 /** Set or clear the member's own photo/video on ANY exercise (library ones too). */
 export async function setExerciseMedia(id: string, media: { uri: string | null; type: 'image' | 'video' | null }): Promise<void> {
-  await getDb().runAsync('UPDATE exercises SET media_uri = ?, media_type = ? WHERE id = ?', [media.uri, media.type, id]);
+  await enqueueWrite(() => getDb().runAsync('UPDATE exercises SET media_uri = ?, media_type = ? WHERE id = ?', [media.uri, media.type, id]));
 }

@@ -9,6 +9,7 @@
  * from, and its settings (easy weeks, start day, the builder's answers).
  */
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import { uuid } from '@/lib/uuid';
 import type { DayType, Exercise, MuscleGroup, PlanExercise } from '@/types/models';
@@ -243,13 +244,12 @@ export async function followedFolder(): Promise<Omit<Folder, 'routines'> | null>
 
 // ---------------------------------------------------------------- writing
 
-/** Serialise transaction-wrapped writes (overlapping BEGINs on one connection fail). */
-let chain: Promise<unknown> = Promise.resolve();
-function serial<T>(fn: () => Promise<T>): Promise<T> {
-  const run = chain.then(fn, fn);
-  chain = run.catch(() => undefined);
-  return run;
-}
+/**
+ * Transaction-wrapped writes go through the ONE app-wide write queue (DS-04): overlapping
+ * BEGINs on the shared connection fail, and an inner ROLLBACK would undo another module's
+ * work. Never call a queued function from inside one of these jobs.
+ */
+const serial = enqueueWrite;
 
 async function nextFolderOrder(): Promise<number> {
   const row = await getDb().getFirstAsync<{ m: number | null }>('SELECT MAX(folder_order) AS m FROM workout_plans');
@@ -257,21 +257,25 @@ async function nextFolderOrder(): Promise<number> {
 }
 
 /** A new, empty folder at the end of the list; returns its id. */
+// Single statements are queued too: an unqueued write issued while an import's transaction is
+// open runs INSIDE it and is rolled back with it.
 export async function createFolder(name: string, opts: { source?: FolderSource | null; settings?: FolderSettings } = {}): Promise<string> {
   const id = uuid();
-  await getDb().runAsync(
-    'INSERT INTO workout_plans(id, name, is_active, folder_order, source, settings) VALUES(?, ?, 0, ?, ?, ?)',
-    [id, name.trim() || 'Folder', await nextFolderOrder(), opts.source ?? null, JSON.stringify(opts.settings ?? {})],
+  await serial(async () =>
+    getDb().runAsync(
+      'INSERT INTO workout_plans(id, name, is_active, folder_order, source, settings) VALUES(?, ?, 0, ?, ?, ?)',
+      [id, name.trim() || 'Folder', await nextFolderOrder(), opts.source ?? null, JSON.stringify(opts.settings ?? {})],
+    ),
   );
   return id;
 }
 
 export async function renameFolder(id: string, name: string): Promise<void> {
-  await getDb().runAsync('UPDATE workout_plans SET name = ? WHERE id = ?', [name.trim() || 'Folder', id]);
+  await serial(() => getDb().runAsync('UPDATE workout_plans SET name = ? WHERE id = ?', [name.trim() || 'Folder', id]));
 }
 
 export async function setFolderSettings(id: string, settings: FolderSettings): Promise<void> {
-  await getDb().runAsync('UPDATE workout_plans SET settings = ? WHERE id = ?', [JSON.stringify(settings), id]);
+  await serial(() => getDb().runAsync('UPDATE workout_plans SET settings = ? WHERE id = ?', [JSON.stringify(settings), id]));
 }
 
 /**
@@ -306,8 +310,10 @@ export async function deleteFolder(id: string): Promise<void> {
 /** Move a routine to the end of another folder. */
 export async function moveRoutine(dayId: string, folderId: string): Promise<void> {
   const db = getDb();
-  const row = await db.getFirstAsync<{ m: number | null }>('SELECT MAX(day_order) AS m FROM plan_days WHERE plan_id = ?', [folderId]);
-  await db.runAsync('UPDATE plan_days SET plan_id = ?, day_order = ? WHERE id = ?', [folderId, (row?.m ?? -1) + 1, dayId]);
+  await serial(async () => {
+    const row = await db.getFirstAsync<{ m: number | null }>('SELECT MAX(day_order) AS m FROM plan_days WHERE plan_id = ?', [folderId]);
+    await db.runAsync('UPDATE plan_days SET plan_id = ?, day_order = ? WHERE id = ?', [folderId, (row?.m ?? -1) + 1, dayId]);
+  });
 }
 
 /** One routine to write: its exercises by library row id. */

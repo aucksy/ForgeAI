@@ -9,6 +9,7 @@
  * same rows. Reads reuse the frozen `getActivePlan`; only writes live here.
  */
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { getExerciseById } from '@/db/repos/exerciseRepo';
 import { getActivePlan } from '@/db/repos/planRepo';
 import { getRoutineAnywhere } from '@/tracker/db/folderRepo';
@@ -22,18 +23,15 @@ import type { DayType, Goal, UserProfile } from '@/types/models';
 export const ROUTINE_DAY_TYPES: DayType[] = ['push', 'pull', 'legs', 'upper', 'lower', 'full'];
 
 /**
- * Serialize transaction-wrapped writes. Two `withTransactionAsync` calls that
- * overlap on the shared connection would nest BEGINs ("cannot start a transaction
- * within a transaction") and the inner ROLLBACK would abort BOTH — e.g. rapid
- * reorder taps. Chaining guarantees one runs fully before the next begins;
- * last-enqueued wins, matching the caller's optimistic UI order.
+ * Transaction-wrapped writes go through the ONE app-wide write queue (DS-04). Two
+ * `withTransactionAsync` calls that overlap on the shared connection would nest BEGINs and
+ * the inner ROLLBACK would abort BOTH — e.g. rapid reorder taps, or a reorder during a
+ * history import. FIFO: last-enqueued wins, matching the caller's optimistic UI order.
  */
-let opChain: Promise<unknown> = Promise.resolve();
-function serialize<T>(fn: () => Promise<T>): Promise<T> {
-  const run = opChain.then(fn, fn);
-  opChain = run.catch(() => undefined);
-  return run;
-}
+const serialize = enqueueWrite;
+// Single statements too: an unqueued write issued while an import's transaction is open runs
+// INSIDE it and is rolled back with it. Nothing here is called from inside a queued job, except
+// `createRoutineUnqueued` (by `duplicateRoutine`'s own job).
 
 /**
  * The id of the active plan, creating an empty one if none exists (e.g. a wiped
@@ -73,7 +71,12 @@ export async function getRoutine(dayId: string): Promise<PlanDayFull | null> {
  * Create a new empty routine at the end of a folder (the followed one when none is given);
  * returns its id.
  */
-export async function createRoutine(input: { name: string; dayType: DayType; folderId?: string | null }): Promise<string> {
+export function createRoutine(input: { name: string; dayType: DayType; folderId?: string | null }): Promise<string> {
+  return serialize(() => createRoutineUnqueued(input));
+}
+
+/** `createRoutine` for a caller already inside a queued job. */
+async function createRoutineUnqueued(input: { name: string; dayType: DayType; folderId?: string | null }): Promise<string> {
   const db = getDb();
   const planId = input.folderId ?? (await ensureActivePlanId());
   const maxRow = await db.getFirstAsync<{ max_o: number | null }>(
@@ -105,23 +108,27 @@ export async function updateRoutine(
     args.push(patch.dayType);
   }
   if (sets.length === 0) return;
-  await getDb().runAsync(`UPDATE plan_days SET ${sets.join(', ')} WHERE id = ?`, [...args, dayId]);
+  await serialize(() => getDb().runAsync(`UPDATE plan_days SET ${sets.join(', ')} WHERE id = ?`, [...args, dayId]));
 }
 
 /** Delete a routine. Its plan_exercises cascade (FK ON DELETE CASCADE, PRAGMA foreign_keys=ON). */
 export async function deleteRoutine(dayId: string): Promise<void> {
-  await getDb().runAsync('DELETE FROM plan_days WHERE id = ?', [dayId]);
+  await serialize(() => getDb().runAsync('DELETE FROM plan_days WHERE id = ?', [dayId]));
 }
 
 /** Clone a routine (name + " (copy)") with all its exercises, in the same folder; returns the new id. */
-export async function duplicateRoutine(dayId: string): Promise<string> {
+export function duplicateRoutine(dayId: string): Promise<string> {
+  return serialize(() => duplicateRoutineUnqueued(dayId));
+}
+
+async function duplicateRoutineUnqueued(dayId: string): Promise<string> {
   const db = getDb();
   const day = await db.getFirstAsync<{ day_type: string; name: string; plan_id: string }>(
     'SELECT day_type, name, plan_id FROM plan_days WHERE id = ?',
     [dayId],
   );
   if (!day) throw new Error(`Routine not found: ${dayId}`);
-  const newId = await createRoutine({ name: `${day.name} (copy)`, dayType: day.day_type as DayType, folderId: day.plan_id });
+  const newId = await createRoutineUnqueued({ name: `${day.name} (copy)`, dayType: day.day_type as DayType, folderId: day.plan_id });
   const exRows = await db.getAllAsync<{
     exercise_id: string;
     ex_order: number;
@@ -188,22 +195,25 @@ export async function addExerciseToRoutine(
   opts?: { targetSets?: number; repRangeMin?: number; repRangeMax?: number },
 ): Promise<string> {
   const db = getDb();
-  const maxRow = await db.getFirstAsync<{ max_o: number | null }>(
-    'SELECT MAX(ex_order) AS max_o FROM plan_exercises WHERE plan_day_id = ?',
-    [dayId],
-  );
-  const order = (maxRow?.max_o ?? -1) + 1;
   const id = uuid();
   const def = (await defaultRangesFor([exerciseId])).get(exerciseId) ?? { repRangeMin: 8, repRangeMax: 12 };
   // Only one end given (e.g. the coach says "max 6"): the default fills the other end
   // without crossing it, so the range stays valid.
   const repMin = opts?.repRangeMin ?? Math.min(def.repRangeMin, opts?.repRangeMax ?? def.repRangeMin);
   const repMax = Math.max(repMin, opts?.repRangeMax ?? def.repRangeMax);
-  await db.runAsync(
-    `INSERT INTO plan_exercises(id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max)
-     VALUES(?, ?, ?, ?, ?, ?, ?)`,
-    [id, dayId, exerciseId, order, opts?.targetSets ?? 3, repMin, repMax],
-  );
+  await serialize(async () => {
+    // The position is read inside the job, so two quick adds never take the same place.
+    const maxRow = await db.getFirstAsync<{ max_o: number | null }>(
+      'SELECT MAX(ex_order) AS max_o FROM plan_exercises WHERE plan_day_id = ?',
+      [dayId],
+    );
+    const order = (maxRow?.max_o ?? -1) + 1;
+    await db.runAsync(
+      `INSERT INTO plan_exercises(id, plan_day_id, exercise_id, ex_order, target_sets, rep_range_min, rep_range_max)
+       VALUES(?, ?, ?, ?, ?, ?, ?)`,
+      [id, dayId, exerciseId, order, opts?.targetSets ?? 3, repMin, repMax],
+    );
+  });
   return id;
 }
 
@@ -227,7 +237,7 @@ export async function updateRoutineExercise(
     args.push(patch.repRangeMax);
   }
   if (sets.length === 0) return;
-  await getDb().runAsync(`UPDATE plan_exercises SET ${sets.join(', ')} WHERE id = ?`, [...args, peId]);
+  await serialize(() => getDb().runAsync(`UPDATE plan_exercises SET ${sets.join(', ')} WHERE id = ?`, [...args, peId]));
 }
 
 /**
@@ -235,12 +245,12 @@ export async function updateRoutineExercise(
  * same sets and rep range (the member's own numbers are never reset).
  */
 export async function replaceRoutineExercise(peId: string, exerciseId: string): Promise<void> {
-  await getDb().runAsync('UPDATE plan_exercises SET exercise_id = ? WHERE id = ?', [exerciseId, peId]);
+  await serialize(() => getDb().runAsync('UPDATE plan_exercises SET exercise_id = ? WHERE id = ?', [exerciseId, peId]));
 }
 
 /** Remove an exercise from a routine. */
 export async function removeRoutineExercise(peId: string): Promise<void> {
-  await getDb().runAsync('DELETE FROM plan_exercises WHERE id = ?', [peId]);
+  await serialize(() => getDb().runAsync('DELETE FROM plan_exercises WHERE id = ?', [peId]));
 }
 
 /** Persist a new exercise order within a routine (full reordered list of plan_exercise ids). */

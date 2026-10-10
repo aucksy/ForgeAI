@@ -15,7 +15,6 @@ import { ProfileCard } from '@/components/settings/ProfileCard';
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
 import { Card, Icon, Screen, SectionHeader } from '@/components/ui';
 import { FEATURES, profileParts } from '@/lib/features';
-import { ExportCard } from '@/tracker/components/ExportCard';
 import { ImportCard } from '@/tracker/components/ImportCard';
 import { WorkoutPrefsCard } from '@/tracker/components/WorkoutPrefsCard';
 import { PhoneCard } from '@/tracker/phone/PhoneCard';
@@ -292,11 +291,10 @@ export default function SettingsScreen() {
         <GymCard />
       </Section>
 
-      <Section title="Backup & restore" delay={280}>
+      {/* SH-27 / DS-01: one true status line, "Save my history", then the imports. The Excel
+          export is gone: it could not be read back (DS-12); the Hevy-format file can. */}
+      <Section title="Backup" delay={280}>
         <BackupCard />
-        <View style={{ marginTop: space.md }}>
-          <ExportCard />
-        </View>
         <View style={{ marginTop: space.md }}>
           <ImportCard />
         </View>

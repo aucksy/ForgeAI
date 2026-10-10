@@ -14,11 +14,14 @@ import {
   GhostButton,
   Icon,
   IconButton,
+  LoadError,
   PrimaryButton,
   Screen,
   Skeleton,
 } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
 import type { PlanDayFull } from '@/db/repos/planRepo';
+import { START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { tap } from '@/lib/haptics';
 import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -61,6 +64,10 @@ export default function RoutineEditorScreen() {
 
   const [routine, setRoutine] = useState<PlanDayFull | null>(null);
   const [loading, setLoading] = useState(true);
+  // RP-13: a failed read says "Couldn't load this routine", not "Routine not found".
+  const [loadFailed, setLoadFailed] = useState(false);
+  // A failed Start says so under the button, which works again (no pop-up).
+  const [startError, setStartError] = useState<string | null>(null);
   const [name, setName] = useState('');
   /** Phase 2: how each exercise is logged — timed and distance rows have no rep range. */
   const [logTypes, setLogTypes] = useState<Map<string, LogType>>(new Map());
@@ -88,6 +95,7 @@ export default function RoutineEditorScreen() {
             seededId.current = r.id;
           }
           setLoading(false);
+          setLoadFailed(false);
           if (r) {
             void getTrackerExercisesByIds(r.exercises.map((pe) => pe.exerciseId))
               .then((infos) => {
@@ -104,7 +112,9 @@ export default function RoutineEditorScreen() {
           }
         })
         .catch(() => {
-          if (alive) setLoading(false);
+          if (!alive) return;
+          setLoading(false);
+          setLoadFailed(true);
         });
     } else {
       setLoading(false);
@@ -115,6 +125,12 @@ export default function RoutineEditorScreen() {
   }, [id]);
 
   useFocusEffect(reload);
+
+  const retryLoad = (): void => {
+    setLoadFailed(false);
+    setLoading(true);
+    reload();
+  };
 
   if (!id) {
     return (
@@ -270,22 +286,21 @@ export default function RoutineEditorScreen() {
   };
 
   const onStart = async (): Promise<void> => {
-    if (starting.current) return;
-    starting.current = true;
-    await hydrate();
-    if (useActiveWorkout.getState().active) {
-      starting.current = false;
-      Alert.alert('Finish your current workout first', 'You already have a workout in progress.');
-      return;
-    }
-    try {
-      await startFromPlanDay(id);
-      router.replace('/session/active');
-    } catch {
-      Alert.alert('Couldn’t start the workout', 'Please try again.');
-    } finally {
-      starting.current = false;
-    }
+    await runGuarded(
+      starting,
+      async () => {
+        setStartError(null);
+        await hydrate();
+        if (useActiveWorkout.getState().active) {
+          Alert.alert('Finish your current workout first', 'You already have a workout in progress.');
+          return;
+        }
+        await startFromPlanDay(id);
+        router.replace('/session/active');
+        return 'left' as const;
+      },
+      () => setStartError(START_FAILED),
+    );
   };
 
   return (
@@ -324,6 +339,8 @@ export default function RoutineEditorScreen() {
           <Skeleton width="100%" height={64} radius={radius.lg} />
           <Skeleton width="100%" height={120} radius={radius.lg} />
         </View>
+      ) : !routine && loadFailed ? (
+        <LoadError what="this routine" onRetry={retryLoad} />
       ) : !routine ? (
         <EmptyState icon="dumbbell" title="Routine not found" body="This routine may have been deleted." />
       ) : (
@@ -503,6 +520,7 @@ export default function RoutineEditorScreen() {
               disabled={routine.exercises.length === 0}
               onPress={() => void onStart()}
             />
+            <InlineError message={startError} />
           </View>
         </ScrollView>
       )}

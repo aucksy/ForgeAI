@@ -22,6 +22,7 @@
  * numbering and PR detection, and `reconcilePrsForExercises` is reused as-is.
  */
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { addSetsWithMeta } from '@/tracker/db/trackerSets';
 import type { RichSet } from '@/tracker/db/trackerSets';
 import { reconcilePrsForExercises } from '@/tracker/services/prRebuild';
@@ -68,10 +69,21 @@ export interface SaveResult {
 /**
  * Apply the edit. Throws `SessionGoneError` if the session was deleted meanwhile
  * (e.g. from another screen while a draft sat open), rather than resurrecting it.
+ * Runs as one job in the app-wide write queue (DS-04).
  */
-export async function saveSessionEdits(
+export function saveSessionEdits(sessionId: string, edits: SessionEdits): Promise<SaveResult> {
+  return enqueueWrite(() => saveSessionEditsUnqueued(sessionId, edits));
+}
+
+/**
+ * The same save, for a caller ALREADY running inside an `enqueueWrite` job (never call it
+ * outside one). `inTransaction` runs last inside the edit's own transaction — the live
+ * workout store clears its draft there, so the edit and the draft-clear commit together.
+ */
+export async function saveSessionEditsUnqueued(
   sessionId: string,
   edits: SessionEdits,
+  opts: { inTransaction?: () => Promise<void> } = {},
 ): Promise<SaveResult> {
   const db = getDb();
   const exists = await db.getFirstAsync<{ id: string }>(
@@ -102,6 +114,7 @@ export async function saveSessionEdits(
       'DELETE FROM personal_records WHERE session_id = ? AND EXISTS (SELECT 1 FROM workout_sessions WHERE id = ? AND easy_week = 1)',
       [sessionId, sessionId],
     );
+    if (opts.inTransaction) await opts.inTransaction();
   });
 
   // Outside the transaction: reconciliation re-runs checkAndRecordPrs on OTHER

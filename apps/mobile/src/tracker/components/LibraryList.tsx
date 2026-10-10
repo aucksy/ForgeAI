@@ -10,7 +10,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FlatList, Text, TextInput, View } from 'react-native';
 
-import { Chip, EmptyState, GhostButton, Icon } from '@/components/ui';
+import { Chip, EmptyState, GhostButton, Icon, LoadError, Skeleton } from '@/components/ui';
+import { viewOf } from '@/lib/loadState';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { Exercise } from '@/types/models';
 
@@ -44,6 +45,11 @@ export function LibraryList({
   const [muscle, setMuscle] = useState<Muscle | null>(null);
   const [equipment, setEquipment] = useState<Equipment | null>(null);
   const [demo, setDemo] = useState<TrackerExercise | null>(null);
+  // EX-16: placeholders until the first read answers; "Couldn't load" (with Try again) when it
+  // fails — "No exercises found" only when a search really matches nothing.
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let alive = true;
@@ -54,6 +60,8 @@ export function LibraryList({
       .then(([list, sessions]) => {
         if (!alive) return;
         setAll(list);
+        setLoaded(true);
+        setFailed(false);
         const byId = new Map(list.map((e) => [e.id, e]));
         const seen = new Set<string>();
         const out: TrackerExercise[] = [];
@@ -70,12 +78,17 @@ export function LibraryList({
         setRecent(out);
       })
       .catch(() => {
-        /* unseeded / transient — list stays empty */
+        if (alive) setFailed(true);
       });
     return () => {
       alive = false;
     };
-  }, []);
+  }, [attempt]);
+
+  const retry = (): void => {
+    setFailed(false);
+    setAttempt((n) => n + 1);
+  };
 
   const muscles = useMemo(() => {
     const seen = new Set<Muscle>();
@@ -90,6 +103,8 @@ export function LibraryList({
   }, [all]);
 
   const filtered = useMemo(() => filterExercises(all, { query, muscle, equipment }), [all, query, muscle, equipment]);
+
+  const view = viewOf({ loaded, failed, count: filtered.length });
 
   const showRecent = query === '' && muscle === null && equipment === null && recent.length > 0;
 
@@ -204,7 +219,17 @@ export function LibraryList({
           </View>
         }
         ListEmptyComponent={
-          <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search, or create a new exercise." />
+          view === 'loading' ? (
+            <View style={{ gap: space.sm }}>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} width="100%" height={64} radius={radius.md} />
+              ))}
+            </View>
+          ) : view === 'error' ? (
+            <LoadError compact what="your exercises" onRetry={retry} />
+          ) : (
+            <EmptyState icon="dumbbell" title="No exercises found" body="Try a different search, or create a new exercise." />
+          )
         }
         renderItem={({ item }) => (
           <ExerciseListRow ex={item} trailing="chevron-right" actionLabel="View" onPress={onSelectExercise} onDemo={setDemo} />

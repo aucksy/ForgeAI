@@ -203,6 +203,116 @@ adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
 log "part L start"
 maestro test --format junit --output "$OUT/part-l.xml" --test-output-dir "$OUT/part-l" "$QA_DIR/v0290-l.yaml"   > "$OUT/part-l.log" 2>&1 || { status=1; log "PART L FAILED"; }
 
+# ---------------------------------------------------------------- part M (backup survives a reinstall)
+# Android's own backup (the app's backup rules: the workout database, AsyncStorage, settings) into
+# the emulator's LOCAL backup store, then uninstall + reinstall the SAME APK. The member's workouts
+# must come back and the welcome screen must not show. Runs LAST: it wipes and reinstalls the app.
+# Evidence: m-before-ui.xml, m-backupnow.txt, m-reinstall.txt, m-restore-events.txt, part-m*/.
+m_fail() { log "PART M FAILED (backup survives a reinstall): $*"; status=1; }
+# The database files as root sees them (google_apis images have su; empty when they don't).
+m_files() { adb shell "su 0 ls /data/data/$PKG/files/SQLite/" 2>/dev/null | tr -d '\r' | tr '\n' ' '; }
+part_m() {
+  local out t res pkgline line restored="" ev i
+  # 1. Backup on, and the local transport (so no Google account is needed).
+  out=$(adb shell bmgr enabled 2>&1 | tr -d '\r')
+  log "bmgr enabled: $out"
+  if echo "$out" | grep -qiE "not activ|inactive"; then
+    log "bmgr activate: $(adb shell bmgr activate true 2>&1 | tr -d '\r')"
+    out=$(adb shell bmgr enabled 2>&1 | tr -d '\r')
+  fi
+  if ! echo "$out" | grep -q "currently enabled"; then
+    log "bmgr enable: $(adb shell bmgr enable true 2>&1 | tr -d '\r')"
+    sleep 2
+    out=$(adb shell bmgr enabled 2>&1 | tr -d '\r')
+    log "bmgr enabled: $out"
+    echo "$out" | grep -q "currently enabled" || { m_fail "Android backup could not be switched on ($out)"; return 1; }
+  fi
+  out=$(adb shell bmgr list transports 2>&1 | tr -d '\r')
+  log "backup transports (* = selected): $(echo "$out" | tr -s ' ' | tr '\n' ';')"
+  # API 34 names it com.android.localtransport/.LocalTransport; old images android/com.android.internal.backup.LocalTransport.
+  t=$(echo "$out" | grep -oE '[A-Za-z0-9_.]+/[A-Za-z0-9_.$]*LocalTransport' | head -1)
+  [ -n "$t" ] || { m_fail "this phone lists no local backup transport"; return 1; }
+  for i in 1 2 3; do
+    res=$(adb shell bmgr transport "$t" 2>&1 | tr -d '\r')
+    echo "$res" | grep -q "Selected transport" && break
+    sleep 3
+  done
+  log "bmgr transport: $res"
+  echo "$res" | grep -q "Selected transport" || { m_fail "could not select $t ($res)"; return 1; }
+  # "Automatic restore" (on by default on a phone) is what brings data back at install.
+  res=$(adb shell settings get secure backup_auto_restore 2>/dev/null | tr -d '\r')
+  if [ "$res" != "1" ]; then
+    adb shell settings put secure backup_auto_restore 1 >/dev/null 2>&1 || true
+    log "automatic restore was '$res'; set to 1 (a phone's default)"
+  fi
+
+  # 2. What must come back: Profile -> Backup's first line, e.g. "12 workouts".
+  free_maestro
+  maestro test --format junit --output "$OUT/part-m-record.xml" --test-output-dir "$OUT/part-m-record" "$QA_DIR/backup-m-record.yaml" \
+    > "$OUT/part-m-record.log" 2>&1 || { m_fail "could not reach Profile -> Backup's workout count before the backup (part-m-record.log)"; return 1; }
+  free_maestro
+  adb shell uiautomator dump /sdcard/qa-m-before.xml >/dev/null 2>&1 || true
+  adb pull /sdcard/qa-m-before.xml "$OUT/m-before-ui.xml" >/dev/null 2>&1 || true
+  line=$(grep -oE '"[0-9]+ workouts?"' "$OUT/m-before-ui.xml" 2>/dev/null | head -1 | tr -d '"')
+  if [ -z "$line" ]; then
+    maestro hierarchy > "$OUT/m-before-hierarchy.json" 2>/dev/null || true
+    line=$(grep -oE '"[0-9]+ workouts?"' "$OUT/m-before-hierarchy.json" 2>/dev/null | head -1 | tr -d '"')
+    free_maestro
+  fi
+  [ -n "$line" ] || { m_fail "could not read the 'N workouts' line off Profile -> Backup (m-before-ui.xml)"; return 1; }
+  log "BACKUP M: before the backup Profile shows '$line'"
+
+  # 3. Back up now. The app goes to the background first (a foreground app can be skipped);
+  # never force-stop it here: Android does not back up a stopped app.
+  adb shell input keyevent KEYCODE_HOME
+  sleep 2
+  log "root probe before uninstall, files/SQLite: '$(m_files)' (empty = no root on this image)"
+  for i in 1 2; do
+    res=$(timeout 180 adb shell bmgr backupnow "$PKG" 2>&1 | tr -d '\r')
+    printf '%s\n' "--- attempt $i" "$res" >> "$OUT/m-backupnow.txt"
+    log "bmgr backupnow (attempt $i): $(echo "$res" | tr '\n' '|')"
+    pkgline=$(echo "$res" | grep -E "Package $PKG with result" | head -1)
+    if echo "$res" | grep -q "Backup finished with result: Success" && echo "$pkgline" | grep -q "result: Success"; then
+      break
+    fi
+    pkgline="${pkgline:-$(echo "$res" | grep -v '^$' | tail -1)}"
+    [ "$i" -eq 2 ] && { m_fail "backup did not succeed: ${pkgline:-no output from bmgr backupnow}"; return 1; }
+    sleep 5
+  done
+  log "BACKUP M: backup finished: $pkgline"
+
+  # 4. Uninstall, reinstall the same APK; Android restores at install.
+  adb logcat -b events -c >/dev/null 2>&1 || true
+  res=$(adb uninstall "$PKG" 2>&1 | tr -d '\r')
+  log "uninstall: $res"
+  echo "$res" | grep -q "Success" || { m_fail "uninstall failed ($res)"; return 1; }
+  adb install "$APK" > "$OUT/m-reinstall.txt" 2>&1 || { m_fail "reinstall of $APK failed: $(tail -1 "$OUT/m-reinstall.txt" | tr -d '\r')"; return 1; }
+  log "reinstalled $APK: $(tail -1 "$OUT/m-reinstall.txt" | tr -d '\r')"
+  # Nothing has opened the app since, so a database on disk can only have come from the restore.
+  for i in $(seq 1 15); do
+    if m_files | grep -q "forgeai.db"; then restored="root probe sees: $(m_files)"; break; fi
+    ev=$(adb logcat -b events -d 2>/dev/null | tr -d '\r' | grep -E "restore_|full_restore" | grep "$PKG" | head -1)
+    if [ -n "$ev" ]; then restored="event log: $ev"; break; fi
+    sleep 2
+  done
+  adb logcat -b events -d 2>/dev/null | grep -iE "restore|backup" > "$OUT/m-restore-events.txt" || true
+  if [ -n "$restored" ]; then
+    log "BACKUP M: restored at install ($restored)"
+  else
+    log "BACKUP M: restore at install NOT SEEN (no root probe hit, no restore event); fallback: bmgr restore $PKG"
+    res=$(timeout 120 adb shell bmgr restore "$PKG" 2>&1 | tr -d '\r')
+    log "bmgr restore: $(echo "$res" | tr '\n' '|')"
+  fi
+
+  # 5. Open the app: no welcome screen, the same workout count.
+  free_maestro
+  maestro test -e WORKOUTS_LINE="$line" --format junit --output "$OUT/part-m.xml" --test-output-dir "$OUT/part-m" "$QA_DIR/backup-m-after.yaml" \
+    > "$OUT/part-m.log" 2>&1 || { adb exec-out screencap -p > "$OUT/m-after-failed.png"; m_fail "after the reinstall the app did not open on '$line' without the welcome screen (part-m.log, m-after-failed.png)"; return 1; }
+  log "BACKUP M: '$line' came back after uninstall + reinstall"
+}
+log "part M start"
+part_m
+
 # ---------------------------------------------------------------- crash / ANR / JS-error check
 # Maestro clears logcat when each part starts, so every part's own device log (in its
 # test-output folder) is read, plus the final logcat and Android's dropbox, which keeps crash

@@ -34,11 +34,18 @@ const h = vi.hoisted(() => {
   /** Records every statement, and really applies meta deletes so reads stay honest. */
   const record = async (sql: string, params?: unknown[]): Promise<void> => {
     state.calls.push({ sql, params });
-    if (sql.includes('DELETE FROM meta') && typeof params?.[0] === 'string') {
+    if (sql.includes('DELETE FROM meta WHERE key NOT IN')) {
+      const keep = new Set(params as string[]);
+      for (const k of [...state.meta.keys()]) if (!keep.has(k)) state.meta.delete(k);
+    } else if (sql.includes('DELETE FROM meta') && typeof params?.[0] === 'string') {
       state.meta.delete(params[0]);
     }
   };
-  const getFirstAsync = async (sql: string): Promise<unknown> => {
+  const getFirstAsync = async (sql: string, params?: unknown[]): Promise<unknown> => {
+    if (sql.includes('FROM meta WHERE key')) {
+      const v = state.meta.get(String(params?.[0]));
+      return v === undefined ? null : { value: v };
+    }
     if (sql.includes('AS profiles')) {
       return { profiles: state.profileCount, sessions: state.sessionCount };
     }
@@ -84,13 +91,21 @@ vi.mock('@/tracker/services/progressPhotos', () => ({
   }),
 }));
 vi.mock('@/tracker/db/demoBody', () => ({ seedDemoMeasurements: vi.fn(async () => undefined) }));
+// Phase 1 (DS-13): files, keys, links and settings outside the database — tested in eraseDevice.test.ts.
+vi.mock('@/onboarding/eraseDevice', () => ({
+  eraseDeviceData: vi.fn(async () => {
+    h.state.calls.push({ sql: 'ERASE DEVICE' });
+    return [];
+  }),
+}));
 
 import { forceReseed } from '@/db/seed';
 import { seedDemoMeasurements } from '@/tracker/db/demoBody';
 import { deleteAllProgressPhotoFiles } from '@/tracker/services/progressPhotos';
+import { eraseDeviceData } from '@/onboarding/eraseDevice';
 import {
   ExistingDataError,
-  OWNED_META_KEYS,
+  KEPT_META_KEYS,
   WIPE_TABLES_IN_ORDER,
   adoptImportedData,
   clearDemoFlag,
@@ -164,6 +179,7 @@ beforeEach(() => {
   vi.mocked(forceReseed).mockClear();
   vi.mocked(deleteAllProgressPhotoFiles).mockClear();
   vi.mocked(seedDemoMeasurements).mockClear();
+  vi.mocked(eraseDeviceData).mockClear();
 });
 
 describe('WIPE_TABLES_IN_ORDER', () => {
@@ -237,13 +253,14 @@ describe('completeOnboarding — the W1 guarantee', () => {
     expect(forceReseed).not.toHaveBeenCalled();
   });
 
-  it('REFUSES to run against a database that already holds training, and writes nothing', async () => {
-    // The boot check said "no profile", but the live rows disagree — a failed read
-    // or a race. Onboarding must not be able to wipe the owner's 487 workouts.
+  it('NEVER wipes a database that already holds workouts — it keeps them and adds the profile (DS-06)', async () => {
+    // Workouts but no profile: "Remove demo data" kept the member's own workouts, or a boot
+    // read went wrong. Onboarding must not be able to wipe the owner's 487 workouts.
     h.state.sessionCount = 487;
-    await expect(completeOnboarding(INPUT)).rejects.toBeInstanceOf(ExistingDataError);
+    await completeOnboarding(INPUT);
     expect(sqls().filter((s) => s.startsWith('DELETE FROM'))).toHaveLength(0);
-    expect(inserts('user_profile')).toHaveLength(0);
+    expect(inserts('user_profile')).toHaveLength(1);
+    for (const table of HISTORY_TABLES) expect(insertedRows(table), table).toBe(0);
   });
 
   it('REFUSES when a profile already exists', async () => {
@@ -252,21 +269,20 @@ describe('completeOnboarding — the W1 guarantee', () => {
     expect(sqls().filter((s) => s.startsWith('DELETE FROM'))).toHaveLength(0);
   });
 
-  it('checks for existing data BEFORE issuing any destructive statement', async () => {
+  it('checks for an existing profile BEFORE issuing any statement', async () => {
+    h.state.profileCount = 1;
     h.state.sessionCount = 1;
     await completeOnboarding(INPUT).catch(() => undefined);
     // Only BEGIN was recorded (the guard read is not a recorded statement).
     expect(sqls()).toEqual(['BEGIN']);
   });
 
-  it('clears any half-finished previous attempt first, all inside one transaction', async () => {
+  it('deletes NOTHING, all inside one transaction (a member’s folders and body weight kept after Remove demo)', async () => {
     await completeOnboarding(INPUT);
     const all = sqls();
     expect(all[0]).toBe('BEGIN');
     expect(all[all.length - 1]).toBe('COMMIT');
-    const firstInsert = all.findIndex((s) => s.includes('INSERT INTO'));
-    const lastDelete = all.map((s) => s.startsWith('DELETE')).lastIndexOf(true);
-    expect(lastDelete).toBeLessThan(firstInsert);
+    expect(all.filter((s) => s.startsWith('DELETE'))).toEqual([]);
   });
 });
 
@@ -289,9 +305,17 @@ describe('eraseAllData', () => {
       'DELETE FROM body_measurements',
       'DELETE FROM progress_photos',
       'DELETE FROM user_profile',
+      'DELETE FROM exercise_prefs',
       'DELETE FROM exercises',
       'DELETE FROM sync_outbox',
     ]);
+  });
+
+  it('Phase 1 (DS-13): clears the files, keys, links and settings outside the database after the wipe', async () => {
+    await eraseAllData();
+    expect(eraseDeviceData).toHaveBeenCalledTimes(1);
+    const all = sqls();
+    expect(all.indexOf('ERASE DEVICE')).toBeGreaterThan(all.indexOf('COMMIT'));
   });
 
   it('Phase 3: deletes the progress photo FILES once the wipe has committed', async () => {
@@ -308,26 +332,25 @@ describe('eraseAllData', () => {
     expect(await isDemoData()).toBe(false);
   });
 
-  it('leaves the cloud and Drive keys in place', async () => {
+  it('Phase 1 (DS-13 / AI-14): a fresh install — the gym link, Drive link, rest default and draft go', async () => {
     h.state.meta.set('cloud_identity', '{"gymId":"g1"}');
-    h.state.meta.set('cloud_client_version', '17');
     h.state.meta.set('drive_linked', '1');
+    h.state.meta.set('restTimerDefaultSec', '120');
+    h.state.meta.set('activeWorkoutDraft', '{}');
+    h.state.meta.set('seeded', '1');
     await eraseAllData();
-    expect(h.state.meta.get('cloud_identity')).toBe('{"gymId":"g1"}');
-    expect(h.state.meta.get('cloud_client_version')).toBe('17');
-    expect(h.state.meta.get('drive_linked')).toBe('1');
+    for (const k of ['cloud_identity', 'drive_linked', 'restTimerDefaultSec', 'activeWorkoutDraft', 'seeded']) {
+      expect(h.state.meta.has(k), k).toBe(false);
+    }
   });
 
-  it('removes only the meta keys the app owns — the gym link and Drive settings survive', async () => {
+  it('keeps only the migration versions, the library stamp and the push counter', async () => {
+    for (const k of KEPT_META_KEYS) h.state.meta.set(k, '7');
     await eraseAllData();
-    const metaDeletes = h.state.calls.filter((c) => c.sql.includes('FROM meta'));
-    expect(metaDeletes.map((c) => (c.params ?? [])[0])).toEqual([...OWNED_META_KEYS]);
-    // A blanket wipe would take cloud_identity / cloud_client_version / drive_linked
-    // with it — resetting the push counter would make the owner's dashboard ignore
-    // every future sync.
-    expect(sqls()).not.toContain('DELETE FROM meta');
-    expect([...OWNED_META_KEYS]).not.toContain('cloud_client_version');
-    expect([...OWNED_META_KEYS]).not.toContain('cloud_identity');
+    for (const k of KEPT_META_KEYS) expect(h.state.meta.get(k), k).toBe('7');
+    // Resetting the push counter would make a later push look stale to the server.
+    expect([...KEPT_META_KEYS]).toContain('cloud_client_version');
+    expect([...KEPT_META_KEYS]).not.toContain('cloud_identity');
   });
 
   it('does NOT regenerate demo data — the whole point of W1', async () => {
@@ -340,8 +363,8 @@ describe('eraseAllData', () => {
   it('runs as a single transaction', async () => {
     await eraseAllData();
     expect(sqls().filter((s) => s === 'BEGIN')).toHaveLength(1);
-    // Every SQL statement sits inside it; only the photo files go after (they are not SQL).
-    expect(sqls().filter((s) => s !== 'DELETE PHOTO FILES').at(-1)).toBe('COMMIT');
+    // Every SQL statement sits inside it; only the files and device data go after (not SQL).
+    expect(sqls().filter((s) => s !== 'DELETE PHOTO FILES' && s !== 'ERASE DEVICE').at(-1)).toBe('COMMIT');
   });
 });
 
@@ -350,7 +373,7 @@ describe('loadDemoData', () => {
     await loadDemoData();
     expect(forceReseed).toHaveBeenCalledTimes(1);
     const deletes = sqls().filter((s) => s.startsWith('DELETE FROM'));
-    expect(deletes.length).toBe(WIPE_TABLES_IN_ORDER.length + OWNED_META_KEYS.length);
+    expect(deletes.length).toBe(WIPE_TABLES_IN_ORDER.length + 1); // + the one meta statement
     // Every wipe statement was recorded before the seed ran.
     expect(h.state.reseedAtCall).toBe(h.state.calls.length);
   });
@@ -382,14 +405,18 @@ describe('loadDemoData', () => {
 describe('adoptImportedData (Phase 3 review)', () => {
   it('a Hevy import over the demo drops the demo\'s measurements (before: they became the member\'s)', async () => {
     h.state.meta.set('demo_data', '1');
-    await adoptImportedData();
-    expect(sqls()).toContain('DELETE FROM body_measurements');
+    await adoptImportedData('Rahul Sharma');
+    // Phase 1 (DS-05): every demo row goes, not only the measurements.
+    for (const t of ['body_measurements', 'body_weight', 'meals', 'chat_messages', 'workout_sessions', 'workout_plans']) {
+      expect(sqls().some((s) => s.startsWith(`DELETE FROM ${t}`)), t).toBe(true);
+    }
     expect(await isDemoData()).toBe(false);
   });
 
   it('a member\'s own measurements stay when the data was not the demo', async () => {
+    h.state.meta.set('demo_legacy_checked', '1');
     await adoptImportedData();
-    expect(sqls()).not.toContain('DELETE FROM body_measurements');
+    expect(sqls().some((s) => s.includes('body_measurements'))).toBe(false);
   });
 });
 

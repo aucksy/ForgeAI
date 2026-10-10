@@ -9,11 +9,11 @@
  * verify against its roster once the platform track opens — it is stored locally
  * only, no SMS is sent). Everything else is optional and editable in Settings.
  */
-import { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { Card, GhostButton, Icon, PrimaryButton, Screen } from '@/components/ui';
+import { Card, ConfirmSheet, GhostButton, Icon, PrimaryButton, Screen } from '@/components/ui';
 import { ChipGroup } from '@/components/settings/ChipGroup';
 import type { ChipOption } from '@/components/settings/ChipGroup';
 import { Logo } from '@/components/ui/Logo';
@@ -22,6 +22,7 @@ import { useSettings } from '@/store/settingsStore';
 import { color, motion, radius, space, type } from '@/theme/tokens';
 import type { Goal, UnitSystem } from '@/types/models';
 
+import { countOwnWorkouts } from '../db/dataActions';
 import type { Experience, OnboardingDraft } from '../form';
 import { emptyDraft, validateOnboarding } from '../form';
 import { useOnboarding } from '../store/onboardingStore';
@@ -130,6 +131,23 @@ export function WelcomeScreen() {
   const errFor = (field: keyof OnboardingDraft): string | null =>
     error && error.field === field ? error.message : null;
 
+  // The app's own sheets: this screen renders before the navigator, so there is no ConfirmHost.
+  const [problem, setProblem] = useState<string | null>(null);
+  const [askDemo, setAskDemo] = useState(false);
+  // Phase 1 (DS-06): "Remove demo data" keeps the member's own workouts and lands here.
+  const [kept, setKept] = useState(0);
+  useEffect(() => {
+    let live = true;
+    countOwnWorkouts()
+      .then((n) => {
+        if (live) setKept(n);
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, []);
+
   const onStart = async (): Promise<void> => {
     if (busy) return;
     const result = validateOnboarding(draft, units);
@@ -138,33 +156,35 @@ export function WelcomeScreen() {
       thud();
       return;
     }
+    setProblem(null);
     try {
       await complete(result.value);
       success();
     } catch {
-      Alert.alert('Could not set up', 'Something went wrong saving your details — please try again.');
+      thud();
+      setProblem('Could not save your details. Please try again.');
     }
   };
 
   const onLoadDemo = (): void => {
     if (busy) return;
-    Alert.alert(
-      'Load demo data?',
-      'Fills the app with a sample member and 13 weeks of made-up training history, for showing ForgeAI off. You can erase it any time in Settings.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Load demo',
-          onPress: () => {
-            if (useOnboarding.getState().busy) return; // re-check: the alert sat open
-            void loadDemo().catch(() => {
-              Alert.alert('Could not load the demo', 'Something went wrong — please try again.');
-            });
-          },
-        },
-      ],
-    );
+    setProblem(null);
+    setAskDemo(true);
   };
+
+  const confirmDemo = (): void => {
+    setAskDemo(false);
+    if (useOnboarding.getState().busy) return; // re-check: the sheet sat open
+    void loadDemo().catch(() => {
+      thud();
+      setProblem('Could not load the demo. Please try again.');
+    });
+  };
+
+  const demoBody =
+    kept > 0
+      ? `Fills the app with a sample member and 13 weeks of made-up training, for showing ForgeAI off. Your ${kept} workout${kept === 1 ? '' : 's'} on this phone ${kept === 1 ? 'is' : 'are'} deleted.`
+      : 'Fills the app with a sample member and 13 weeks of made-up training, for showing ForgeAI off. You can remove it any time.';
 
   return (
     <Screen>
@@ -340,6 +360,16 @@ export function WelcomeScreen() {
             loading={busy}
             onPress={() => void onStart()}
           />
+          {problem ? (
+            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.criticalText, textAlign: 'center' }}>
+              {problem}
+            </Text>
+          ) : null}
+          {kept > 0 ? (
+            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, textAlign: 'center' }}>
+              Your {kept} workout{kept === 1 ? ' is' : 's are'} still here. Add your details to carry on.
+            </Text>
+          ) : null}
           <GhostButton label="Load demo data instead" icon="sparkle" onPress={onLoadDemo} />
           <Text
             style={{
@@ -355,6 +385,15 @@ export function WelcomeScreen() {
           </Text>
         </Animated.View>
       </KeyboardAvoidingView>
+      <ConfirmSheet
+        visible={askDemo}
+        title="Load demo data?"
+        body={demoBody}
+        confirmLabel="Load demo"
+        destructive={kept > 0}
+        onConfirm={confirmDemo}
+        onCancel={() => setAskDemo(false)}
+      />
     </Screen>
   );
 }

@@ -4,6 +4,7 @@
  * hidden-route filter. The frozen `TabBar` is untouched; this new file is swapped
  * into `(tabs)/_layout.tsx`. Keeps the app visually cohesive.
  */
+import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,8 +13,10 @@ import { useKeyboardFrame } from '@/components/KeyboardRoom';
 import { Icon } from '@/components/ui';
 import type { IconName } from '@/components/ui';
 import type { TabBarProps } from '@/components/ui/TabBar';
-import { tap } from '@/lib/haptics';
-import { color, motion, radius, shadow, type } from '@/theme/tokens';
+import { tap, thud } from '@/lib/haptics';
+import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
+import { useOnboarding } from '@/onboarding/store/onboardingStore';
+import { color, motion, radius, shadow, space, type } from '@/theme/tokens';
 
 import { WorkoutMiniBar } from './WorkoutMiniBar';
 
@@ -87,6 +90,59 @@ function TabItem({
   );
 }
 
+/**
+ * Phase 1 (DS-06): while the demo is loaded, every tab says so — a slim strip above the tabs,
+ * "Demo data · Remove". Remove keeps the member's own workouts (onboarding/demoRemoval).
+ */
+function DemoStrip() {
+  const demo = useOnboarding((s) => s.demo);
+  const [busy, setBusy] = useState(false);
+  if (!demo) return null;
+  const onRemove = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await confirmAndRemoveDemo();
+    } catch {
+      thud();
+      setBusy(false);
+      return;
+    }
+    setBusy(false);
+  };
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: space.sm,
+        minHeight: 36,
+        paddingHorizontal: space.lg,
+        backgroundColor: color.surfaceSunken,
+        borderTopWidth: 1,
+        borderTopColor: color.border,
+      }}
+    >
+      <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.warning }}>
+        Demo data
+      </Text>
+      <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>·</Text>
+      <Pressable
+        onPress={() => void onRemove()}
+        accessibilityRole="button"
+        accessibilityLabel="Remove demo data"
+        hitSlop={8}
+        style={{ minHeight: 36, justifyContent: 'center' }}
+      >
+        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.accent }}>
+          {busy ? 'Removing…' : 'Remove'}
+        </Text>
+      </Pressable>
+    </View>
+  );
+}
+
 export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
   // Phase 3 review: every screen now shrinks above the keyboard (KeyboardRoom), so while
@@ -97,6 +153,7 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
     <View>
     {/* Phase 1: a workout left open shows here, on every tab, until finished. */}
     {state.routes[state.index]?.name !== 'workout' ? <WorkoutMiniBar /> : null}
+    <DemoStrip />
     <View
       style={{
         flexDirection: 'row',

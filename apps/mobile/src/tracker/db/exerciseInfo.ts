@@ -9,6 +9,7 @@
  * weight?" asks here, never the raw columns.
  */
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import type { Exercise, MuscleGroup } from '@/types/models';
 
 import { catalogEntry } from '../catalog/exerciseCatalog';
@@ -137,14 +138,19 @@ export async function getExerciseIdsByCatalogKey(keys: readonly string[]): Promi
  */
 export async function setExerciseLoadMode(exerciseId: string, mode: LoadMode): Promise<void> {
   const db = getDb();
-  const current = await getTrackerExercise(exerciseId);
-  if (current && current.loadMode !== mode) {
-    await db.runAsync('UPDATE set_entries SET load_mode = ? WHERE exercise_id = ? AND load_mode IS NULL', [
-      current.loadMode,
-      exerciseId,
-    ]);
-  }
-  await db.runAsync('UPDATE exercises SET load_mode = ? WHERE id = ?', [mode, exerciseId]);
+  // Queued, one transaction (DS-04): never inside another module's open transaction.
+  await enqueueWrite(() =>
+    db.withTransactionAsync(async () => {
+      const current = await getTrackerExercise(exerciseId);
+      if (current && current.loadMode !== mode) {
+        await db.runAsync('UPDATE set_entries SET load_mode = ? WHERE exercise_id = ? AND load_mode IS NULL', [
+          current.loadMode,
+          exerciseId,
+        ]);
+      }
+      await db.runAsync('UPDATE exercises SET load_mode = ? WHERE id = ?', [mode, exerciseId]);
+    }),
+  );
 }
 
 /** Does this exercise have any logged set? (Its log type is then fixed.) */

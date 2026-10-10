@@ -1,0 +1,268 @@
+/**
+ * "Save my history" (audit DS-01 / DS-12) — the whole workout history as a CSV in Hevy's own
+ * export format, so it comes straight back through Settings → "Import from Hevy" (and also
+ * goes into Hevy or Strong). One row per set, the 14 columns `hevyImport.ts` reads:
+ *
+ *   title, start_time, end_time, description, exercise_title, superset_id, exercise_notes,
+ *   set_index, set_type, weight_kg | weight_lbs, reps, distance_km | distance_miles,
+ *   duration_seconds, rpe
+ *
+ * Units: like Hevy, a "lb, miles" member gets `weight_lbs` / `distance_miles` (the importer
+ * reads both); everyone else `weight_kg` / `distance_km`.
+ *
+ * Times (DS-12): an IMPORTED workout keeps its clock time written as UTC (`parseHevyDate`),
+ * a workout logged here keeps the real moment. Both are written as the clock time the member
+ * saw — via `realStartOf` (Health Connect's `realStart`) — so a 6:00 pm Hevy workout stays "18:00", not 23:30.
+ *
+ * Reads only: one SELECT, so no write queue is needed. The file goes to the cache folder (never
+ * backed up, cleared by Android when space is short); the previous export is removed first, and
+ * so are the old Excel exports earlier versions left in the app's documents.
+ */
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
+
+import { getDb } from '@/db';
+import { todayISO } from '@/lib/date';
+import { DAY_LABEL } from '@/tracker/services/hevyImport';
+import type { DayType, UnitSystem } from '@/types/models';
+
+const KG_PER_LB = 0.45359237;
+const M_PER_MILE = 1609.344;
+
+/** Hevy's column order. `weight` / `distance` depend on the member's units. */
+export function hevyColumns(units: UnitSystem): string[] {
+  const imperial = units === 'imperial';
+  return [
+    'title',
+    'start_time',
+    'end_time',
+    'description',
+    'exercise_title',
+    'superset_id',
+    'exercise_notes',
+    'set_index',
+    'set_type',
+    imperial ? 'weight_lbs' : 'weight_kg',
+    'reps',
+    imperial ? 'distance_miles' : 'distance_km',
+    'duration_seconds',
+    'rpe',
+  ];
+}
+
+/** One set as read from the database (the export's input). */
+export interface HistorySetRow {
+  session_id: string;
+  date_iso: string;
+  started_at: number;
+  ended_at: number | null;
+  day_type: string;
+  notes: string | null;
+  exercise_id: string;
+  exercise_name: string;
+  log_type: string | null;
+  weight_kg: number;
+  reps: number;
+  is_warmup: number;
+  rpe: number | null;
+  set_type: string | null;
+  note: string | null;
+  superset_group: number | null;
+  duration_sec: number | null;
+  distance_m: number | null;
+}
+
+/**
+ * The real moment of a workout's start: Health Connect's `realStart`, copied here so this file
+ * does not load the phone-connection modules (a test checks the two agree). An imported start
+ * (a whole second whose UTC day is the workout's day) is clock time written as UTC → read back
+ * as local clock time; a start logged here (it has milliseconds) is already real. PURE.
+ */
+export function realStartOf(startedAt: number, dateISO: string): number {
+  if (startedAt % 1000 !== 0) return startedAt;
+  const d = new Date(startedAt);
+  const utcDay = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+  if (utcDay !== dateISO) return startedAt;
+  return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()).getTime();
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const pad = (n: number): string => String(n).padStart(2, '0');
+
+/** Hevy's "7 Jul 2026, 14:24" from a LOCAL clock reading of `ms`. PURE (uses the phone's zone). */
+export function hevyStamp(ms: number): string {
+  const d = new Date(ms);
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/**
+ * The Hevy `title` for a workout: the day's plain name only ("Push", "Upper body"). The importer
+ * reads the day from it, and — seeing a bare day name — takes the notes from `description`
+ * exactly as written (`workoutNotes`), so they survive the round trip. PURE.
+ */
+export function workoutTitle(dayType: string): string {
+  return DAY_LABEL[dayType as DayType] ?? 'Workout';
+}
+
+/** The minute after a Hevy stamp's minute ("7 Jul 2026, 14:24" → "…, 14:25"). PURE. */
+function nextMinute(ms: number): number {
+  return ms + 60_000;
+}
+
+function csvCell(v: string | number | null | undefined): string {
+  if (v == null) return '""';
+  const s = typeof v === 'number' ? String(v) : v;
+  return `"${s.replace(/"/g, '""')}"`;
+}
+
+const round = (v: number, places: number): number => {
+  const f = 10 ** places;
+  return Math.round(v * f) / f;
+};
+
+function hevySetType(r: HistorySetRow): string {
+  if (r.is_warmup === 1 || r.set_type === 'warmup') return 'warmup';
+  if (r.set_type === 'drop') return 'dropset';
+  if (r.set_type === 'failure') return 'failure';
+  return 'normal';
+}
+
+/**
+ * Rows (ordered by workout, then the order the sets were logged) → Hevy CSV text. Each
+ * exercise's sets are written as one block, in the order its first set was logged. PURE
+ * (apart from the phone's time zone, which decides the clock times written).
+ */
+export function hevyCsvFromRows(rows: readonly HistorySetRow[], units: UnitSystem): string {
+  const imperial = units === 'imperial';
+  const lines = [hevyColumns(units).map(csvCell).join(',')];
+
+  // Group: workout → exercise (first-logged order) → sets.
+  const workouts = new Map<string, { head: HistorySetRow; exercises: Map<string, HistorySetRow[]> }>();
+  for (const r of rows) {
+    let w = workouts.get(r.session_id);
+    if (!w) {
+      w = { head: r, exercises: new Map() };
+      workouts.set(r.session_id, w);
+    }
+    const list = w.exercises.get(r.exercise_id) ?? [];
+    list.push(r);
+    w.exercises.set(r.exercise_id, list);
+  }
+
+  // The importer tells workouts apart by title + start + end. Two workouts the same on all three
+  // (same day name, started and ended in the same minute) would come back as one; the later one
+  // is written a minute later (Hevy's times have no seconds), so both come back.
+  const written = new Set<string>();
+  for (const { head, exercises } of workouts.values()) {
+    const start = realStartOf(head.started_at, head.date_iso);
+    const shift = start - head.started_at;
+    const title = workoutTitle(head.day_type);
+    const endText = head.ended_at != null ? hevyStamp(head.ended_at + shift) : '';
+    let shown = start;
+    while (written.has(`${title}\u0000${hevyStamp(shown)}\u0000${endText}`)) shown = nextMinute(shown);
+    const startText = hevyStamp(shown);
+    written.add(`${title}\u0000${startText}\u0000${endText}`);
+    for (const sets of exercises.values()) {
+      const exNote = sets.find((s) => (s.note ?? '').trim() !== '')?.note ?? '';
+      sets.forEach((s, i) => {
+        const assisted = s.log_type === 'assisted';
+        const kg = assisted ? Math.abs(s.weight_kg) : s.weight_kg;
+        const weight = kg === 0 ? '' : imperial ? round(kg / KG_PER_LB, 2) : kg;
+        const distance =
+          s.distance_m != null && s.distance_m > 0
+            ? imperial
+              ? round(s.distance_m / M_PER_MILE, 5)
+              : s.distance_m / 1000
+            : '';
+        const warm = hevySetType(s) === 'warmup';
+        lines.push(
+          [
+            title,
+            startText,
+            endText,
+            head.notes ?? '',
+            s.exercise_name,
+            s.superset_group != null ? s.superset_group : '',
+            exNote,
+            i,
+            hevySetType(s),
+            weight,
+            s.reps > 0 ? s.reps : '',
+            distance,
+            s.duration_sec != null && s.duration_sec > 0 ? Math.round(s.duration_sec) : '',
+            !warm && s.rpe != null ? s.rpe : '',
+          ]
+            .map(csvCell)
+            .join(','),
+        );
+      });
+    }
+  }
+  return `${lines.join('\n')}\n`;
+}
+
+/** Every logged set, oldest workout first, sets in the order they were logged. Reads only. */
+export async function readHistoryRows(): Promise<HistorySetRow[]> {
+  return getDb().getAllAsync<HistorySetRow>(
+    `SELECT s.id AS session_id, s.date_iso, s.started_at, s.ended_at, s.day_type, s.notes,
+            se.exercise_id, e.name AS exercise_name, e.log_type,
+            se.weight_kg, se.reps, se.is_warmup, se.rpe, se.set_type, se.note, se.superset_group,
+            se.duration_sec, se.distance_m
+       FROM workout_sessions s
+       JOIN set_entries se ON se.session_id = s.id
+       JOIN exercises e ON e.id = se.exercise_id
+      ORDER BY s.started_at, s.id, se.set_number, se.rowid`,
+  );
+}
+
+/** How many workouts are on this phone (the Backup section's first line). */
+export async function countWorkouts(): Promise<number> {
+  const row = await getDb().getFirstAsync<{ n: number }>('SELECT COUNT(*) AS n FROM workout_sessions');
+  return row?.n ?? 0;
+}
+
+export interface SaveHistoryResult {
+  /** false when nothing is logged yet (no file written). */
+  written: boolean;
+  shared: boolean;
+  workouts: number;
+  sets: number;
+  uri: string;
+}
+
+/** Remove the previous history file and the Excel exports older versions left behind. */
+async function clearOldExports(): Promise<void> {
+  const sweep = async (dir: string | null, match: RegExp): Promise<void> => {
+    if (!dir) return;
+    const names = await FileSystem.readDirectoryAsync(dir).catch(() => [] as string[]);
+    for (const n of names) {
+      if (match.test(n)) await FileSystem.deleteAsync(`${dir}${n}`, { idempotent: true }).catch(() => undefined);
+    }
+  };
+  await sweep(FileSystem.cacheDirectory, /^forgeai-history-.*\.csv$/);
+  await sweep(FileSystem.documentDirectory, /^forgeai-workouts-.*\.xlsx$/);
+}
+
+/** Write the whole history as a Hevy CSV and open Android's share sheet. */
+export async function saveMyHistory(units: UnitSystem): Promise<SaveHistoryResult> {
+  const rows = await readHistoryRows();
+  const workouts = new Set(rows.map((r) => r.session_id)).size;
+  if (rows.length === 0) return { written: false, shared: false, workouts: 0, sets: 0, uri: '' };
+
+  await clearOldExports();
+  const csv = hevyCsvFromRows(rows, units);
+  const dir = FileSystem.cacheDirectory ?? FileSystem.documentDirectory ?? '';
+  const uri = `${dir}forgeai-history-${todayISO()}.csv`;
+  await FileSystem.writeAsStringAsync(uri, csv, { encoding: FileSystem.EncodingType.UTF8 });
+
+  let shared = false;
+  if (await Sharing.isAvailableAsync()) {
+    await Sharing.shareAsync(uri, {
+      mimeType: 'text/csv',
+      UTI: 'public.comma-separated-values-text',
+      dialogTitle: 'Save my history',
+    });
+    shared = true;
+  }
+  return { written: true, shared, workouts, sets: rows.length, uri };
+}

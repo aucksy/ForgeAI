@@ -26,6 +26,7 @@
 import * as XLSX from 'xlsx';
 
 import { getDb, getMeta, setMeta } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { createExercise } from '@/db/repos/exerciseRepo';
 import { createSession, deleteSession, getSessionsBetween } from '@/db/repos/workoutRepo';
 import { catalogEntry, catalogEntryByName } from '@/tracker/catalog/exerciseCatalog';
@@ -91,6 +92,11 @@ interface ParsedExercise {
 
 interface ParsedWorkout {
   title: string; // sanitized original workout title (kept in notes)
+  /**
+   * The workout's notes when the file says them (`workoutNotes`: the title and Hevy's
+   * `description`). Absent (another importer's shape) → the title is the notes, as before.
+   */
+  notes?: string | null;
   dayType: DayType;
   startedAt: number; // epoch ms (local)
   endedAt: number | null;
@@ -134,6 +140,8 @@ export interface ImportResult {
   skippedSameWorkout: number;
   /** v0.28.1 (Replace): the workouts deleted, so Health Connect can drop them too. */
   replacedSessionIds?: string[];
+  /** The workouts this import wrote (Undo import takes exactly these away). */
+  createdSessionIds?: string[];
 }
 
 // ---------------------------------------------------------------- text utils
@@ -328,6 +336,41 @@ function defaultIncrement(eq: Equipment): number {
 }
 
 /**
+ * The plain day names "Save my history" writes as a workout's title (its notes go in
+ * `description`). Each reads back as its own day through `inferDayType`.
+ */
+export const DAY_LABEL: Record<DayType, string> = {
+  push: 'Push',
+  pull: 'Pull',
+  legs: 'Legs',
+  upper: 'Upper body',
+  lower: 'Lower body',
+  full: 'Full body',
+  rest: 'Rest',
+};
+const DAY_LABELS = new Set(Object.values(DAY_LABEL).map((l) => l.toLowerCase()));
+
+/**
+ * A workout's notes from its file title and Hevy's `description` (the workout's own
+ * description). PURE.
+ *  - No description: the title, as before (a bare day name from our own export says nothing
+ *    the day type does not, so it is no note).
+ *  - Our own export (the title is a bare day name), or an older one of ours whose title was the
+ *    notes themselves or "Push: notes": the description IS the notes, exactly.
+ *  - A real Hevy workout ("Push Day A" + "felt strong"): the title, then the description.
+ */
+export function workoutNotes(title: string, description: string | null | undefined): string | null {
+  const t = sanitizeTitle(title);
+  const d = (description ?? '').replace(/\r\n?/g, '\n');
+  const bare = DAY_LABELS.has(t.toLowerCase());
+  if (d.trim() === '') return bare || t === '' ? null : t;
+  const flat = sanitizeTitle(d).toLowerCase();
+  const tl = t.toLowerCase();
+  if (bare || t === '' || tl === flat || tl.endsWith(`: ${flat}`)) return d;
+  return `${t}\n${d}`;
+}
+
+/**
  * Infer a ForgeAI DayType from a Hevy workout title. push/pull matched first, then
  * full/leg, then push- vs pull-muscle words, then generic upper/lower; else 'full'.
  */
@@ -463,7 +506,8 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     throw new Error('That doesn’t look like a Hevy export (unexpected columns).');
   }
 
-  // Group by start_time (unique per workout in the Hevy export).
+  // One workout per (title, start_time, end_time). Hevy writes times to the minute, so two
+  // workouts started in the same minute share a start_time; grouping by start alone merged them.
   const byStart = new Map<string, ParsedWorkout>();
   let skippedRows = 0;
   let totalSetRows = 0;
@@ -503,19 +547,21 @@ export function parseHevyBase64(base64: string): ParsedHevy {
     const rpe = asNumber(r['rpe']);
     const setIndex = asNumber(r['set_index']) ?? 0;
 
-    let workout = byStart.get(startRaw);
+    const rawTitle = asString(r['title']);
+    const workoutKey = `${rawTitle}\u0000${startRaw}\u0000${asString(r['end_time'])}`;
+    let workout = byStart.get(workoutKey);
     if (!workout) {
-      const rawTitle = asString(r['title']);
       const endedAt = parseHevyDate(r['end_time']);
       workout = {
         title: sanitizeTitle(rawTitle),
+        notes: workoutNotes(rawTitle, r['description'] !== undefined ? asString(r['description']) : null),
         dayType: inferDayType(rawTitle),
         startedAt,
         endedAt,
         dateISO: utcDateISO(startedAt),
         exercises: [],
       };
-      byStart.set(startRaw, workout);
+      byStart.set(workoutKey, workout);
     }
     let exercise = workout.exercises.find((e) => e.title === exTitle);
     // v0.28.1: Hevy restarts set_index for a second block of the same exercise in one workout;
@@ -551,6 +597,16 @@ export function parseHevyBase64(base64: string): ParsedHevy {
   }
 
   const workouts = [...byStart.values()].sort((a, b) => a.startedAt - b.startedAt);
+  // Two workouts in the same minute: the later one in the file starts a second later, so each
+  // keeps its own start (the import skips a start it has already written, and Merge keys on it).
+  // Same file → same seconds, so a re-run still recognises both.
+  for (let i = 1; i < workouts.length; i++) {
+    if (workouts[i].startedAt <= workouts[i - 1].startedAt) {
+      const shift = workouts[i - 1].startedAt + 1000 - workouts[i].startedAt;
+      workouts[i].startedAt += shift;
+      if (workouts[i].endedAt != null && (workouts[i].endedAt as number) < workouts[i].startedAt) workouts[i].endedAt = workouts[i].startedAt;
+    }
+  }
   // Sets ordered by Hevy's set_index within each exercise (stable, matches log order).
   for (const w of workouts) {
     for (const ex of w.exercises) ex.sets.sort((a, b) => (orderOf.get(a) ?? a.setIndex) - (orderOf.get(b) ?? b.setIndex));
@@ -781,12 +837,17 @@ export async function runImport(
     createdExercises: 0,
     backfilledSets: 0,
     skippedSameWorkout: 0,
+    createdSessionIds: [],
   };
   const total = parsed.workouts.length;
   const backfillDone = (await getMeta(TIMED_BACKFILL_KEY).catch(() => null)) === '1';
   const guessed = new Set(readIds(await getMeta(GUESSED_TYPE_KEY).catch(() => null)));
   const guessedBefore = guessed.size;
 
+  // DS-04: the import runs in the ONE app-wide write queue, so a finish / edit / routine save
+  // made while it runs (e.g. after Back) waits its turn instead of nesting a BEGIN on the
+  // shared connection, whose ROLLBACK would undo the import half-way.
+  await enqueueWrite(async () => {
   await getDb().withTransactionAsync(async () => {
     // 1. Replace mode: clear all existing workouts (PRs cascade via deleteSession).
     if (mode === 'replace') {
@@ -933,12 +994,13 @@ export async function runImport(
       const session = await createSession({
         dateISO: w.dateISO,
         dayType: w.dayType,
-        notes: w.title.length > 0 ? w.title : null,
+        notes: w.notes !== undefined ? w.notes : w.title.length > 0 ? w.title : null,
         source: 'manual',
         startedAt: w.startedAt,
         endedAt: w.endedAt,
       });
       await addSetsWithMeta(session.id, sets);
+      result.createdSessionIds?.push(session.id);
       seenStarts.add(w.startedAt); // guard against duplicate start_times within the file
       result.imported += 1;
       result.setsInserted += sets.length;
@@ -948,5 +1010,6 @@ export async function runImport(
 
   await setMeta(TIMED_BACKFILL_KEY, '1').catch(() => undefined);
   if (guessed.size !== guessedBefore) await setMeta(GUESSED_TYPE_KEY, JSON.stringify([...guessed])).catch(() => undefined);
+  });
   return result;
 }

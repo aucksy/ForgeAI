@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { BarChart, HBarList } from '@/components/charts';
-import { Badge, Card, EmptyState, GlassCard, HeroCard, Icon, IconButton, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
+import { Badge, Card, EmptyState, GlassCard, HeroCard, Icon, IconButton, LoadError, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { fmtCompact, fmtInt, trimNum } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
@@ -249,6 +249,8 @@ export default function ReportScreen() {
   const [failed, setFailed] = useState(false);
   const [first, setFirst] = useState<string | null>(null);
   const [sharing, setSharing] = useState(false);
+  // PG-23: Try again really re-reads (it used to say "Go back and try again").
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let alive = true;
@@ -272,7 +274,7 @@ export default function ReportScreen() {
     return () => {
       alive = false;
     };
-  }, [period, isYear, today]);
+  }, [period, isYear, today, attempt]);
 
   const thisMonth = monthOf(today);
   const prev = isYear ? String(Number(period) - 1) : shiftMonth(period, -1);
@@ -324,7 +326,7 @@ export default function ReportScreen() {
       </View>
 
       {failed ? (
-        <EmptyState icon="calendar" title="Could not load this report" body="Something went wrong. Go back and try again." />
+        <LoadError what="this report" onRetry={() => setAttempt((n) => n + 1)} />
       ) : !loaded ? (
         <View style={{ gap: space.lg }}>
           <Skeleton width="100%" height={130} radius={radius.xl} />

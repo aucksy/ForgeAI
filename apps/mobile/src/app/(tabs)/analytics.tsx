@@ -21,7 +21,7 @@ import {
   useProgressExtras,
 } from '@/components/analytics';
 import type { RangeDays } from '@/components/analytics';
-import { Chip, IconButton, Screen } from '@/components/ui';
+import { Chip, IconButton, LoadError, Screen } from '@/components/ui';
 import { addDays, todayISO } from '@/lib/date';
 import { FEATURES } from '@/lib/features';
 import { tap } from '@/lib/haptics';
@@ -46,7 +46,7 @@ export default function AnalyticsScreen() {
       setFocusKey((k) => k + 1);
     }, []),
   );
-  const { range, setRange, bundle, profile, streak, loading } = useAnalyticsData(focusKey);
+  const { range, setRange, bundle, profile, streak, loading, failed, retry } = useAnalyticsData(focusKey);
   const extras = useProgressExtras();
 
   const pickRange = (r: RangeDays) => {
@@ -86,7 +86,13 @@ export default function AnalyticsScreen() {
           index={0}
           onOpen={openReport}
         />
-        {extras.ready ? <BodyMapSection sets={extras.weekMuscles} index={1} /> : <SectionSkeleton index={1} />}
+        {!extras.ready ? (
+          <SectionSkeleton index={1} />
+        ) : extras.musclesFailed ? (
+          <LoadError what="this week's muscles" onRetry={extras.retry} />
+        ) : (
+          <BodyMapSection sets={extras.weekMuscles} index={1} />
+        )}
 
         {/* range for everything below */}
         <Animated.View entering={FadeInDown.delay(60).duration(motion.slow)} style={{ flexDirection: 'row', gap: space.sm, marginBottom: space.lg }}>
@@ -95,7 +101,9 @@ export default function AnalyticsScreen() {
           ))}
         </Animated.View>
 
-        {extras.ready ? (
+        {extras.ready && extras.eventsFailed ? (
+          <LoadError what="your records" onRetry={extras.retry} />
+        ) : extras.ready ? (
           <PrSection
             events={rangeEvents}
             rangeDays={range}
@@ -107,7 +115,10 @@ export default function AnalyticsScreen() {
           <SectionSkeleton index={2} />
         )}
 
-        {(loading && !bundle) || !bundle ? (
+        {!bundle && failed ? (
+          // PG-23: a failed read is said, with a retry — never "No data yet" on every chart.
+          <LoadError what="your progress" onRetry={retry} />
+        ) : (loading && !bundle) || !bundle ? (
           <View>
             {[0, 1, 2, 3].map((i) => (
               <SectionSkeleton key={i} index={i} />

@@ -177,7 +177,9 @@ describe('the audit fixes are wired where the member meets them', () => {
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
   it('[source-text check] Replace takes the deleted workouts out of Health Connect', () => {
     const s = read('src/app/import/index.tsx');
-    expect(s).toMatch(/const gone = wasDemo \? \[\] : \(r\.replacedSessionIds \?\? \[\]\)/);
+    // Phase 1: the demo is removed before the import, so every replaced workout is the member's;
+    // they leave Health Connect once Undo is no longer possible (the member leaves the screen).
+    expect(s).toMatch(/pendingHealth\.current = r\.replacedSessionIds \?\? \[\]/);
     expect(s).toMatch(/for \(const id of gone\) await removeWorkoutFromHealth\(id\)/);
   });
 });

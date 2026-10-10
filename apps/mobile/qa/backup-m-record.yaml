@@ -1,0 +1,20 @@
+# Device QA, part M (record) — runs after parts A–L, BEFORE Android's backup. Opens Profile and
+# scrolls to the Backup card, whose first line is the member's workout count ("12 workouts").
+# The script reads that exact line off the screen and part M (after) must find it again once the
+# app has been uninstalled, reinstalled and restored from the backup.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn: "^Profile$"
+# The count loads a moment after the card ("Your workouts" first); wait for the number.
+- scrollUntilVisible:
+    element: '^[0-9]+ workouts?$'
+    centerElement: true
+    timeout: 90000
+- takeScreenshot: 180-before-backup-workouts

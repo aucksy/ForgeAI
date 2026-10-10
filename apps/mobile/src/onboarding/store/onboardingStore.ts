@@ -5,19 +5,26 @@
  *   'loading'  DB is still opening
  *   'welcome'  no profile row → a real first run, show the welcome flow
  *   'ready'    a profile exists → the app
+ *   'error'    start-up failed (see `bootError`) → the error screen, never the app
  *
  * Erasing flips the app back to 'welcome' in place, with no restart, because the
  * welcome flow is rendered instead of the navigator rather than pushed onto it.
  */
 import { create } from 'zustand';
 
+import { initDb, resetDb } from '@/db';
+import { startupStep } from '@/db/startupError';
 import { useChat } from '@/store/chatStore';
+import { syncExerciseCatalog } from '@/tracker/catalog/catalogSync';
+import { initTrackerSchema } from '@/tracker/db/trackerSchema';
 import { useDashboard } from '@/store/dashboardStore';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { phoneAfterErase } from '@/tracker/phone/phoneSync';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
+import { bootFailureFrom, type BootFailure } from '../bootFailure';
+import { initMemberSchema } from '../db/memberSchema';
 import type { OnboardingInput } from '../form';
 import {
   ExistingDataError,
@@ -35,7 +42,17 @@ export interface OnboardingState {
   /** True when the CURRENT data is the loaded demo, so the UI can say so. */
   demo: boolean;
   busy: boolean;
-  /** Read the DB and decide what to render. Called once from the root layout. */
+  /** Why start-up failed, when `status` is 'error' (null otherwise). */
+  bootError: BootFailure | null;
+  /**
+   * The whole start-up, called once from the root layout: open the database, run EVERY
+   * upgrade step, sync the bundled exercise library, then `boot()`. Any open or upgrade
+   * failure lands on 'error' — the app never opens on a half-upgraded database (DS-08).
+   */
+  start: () => Promise<void>;
+  /** The error screen's "Try again": drop the database handle and run `start()` again (SH-11). */
+  retry: () => Promise<void>;
+  /** Read the DB and decide what to render (the database must already be open). */
   boot: () => Promise<void>;
   /** Re-read the demo flag only (a restore/import can clear it mid-session). */
   refreshDemoFlag: () => Promise<void>;
@@ -66,20 +83,62 @@ async function resetInMemoryState(): Promise<void> {
   }
 }
 
-export const useOnboarding = create<OnboardingState>()((set) => ({
+/** One start-up at a time: a double tap on "Try again" joins the run already going. */
+let startRun: Promise<void> | null = null;
+
+async function openAndUpgrade(): Promise<void> {
+  await initDb(); // tags its own failures 'open' / 'upgrade'
+  await startupStep('upgrade', async () => {
+    await initTrackerSchema(); // additive tracker columns
+    await initMemberSchema(); // additive member columns (phone)
+  });
+  // Phase 2: once per library version, link this member's exercises to the bundled library
+  // and add the new ones (a fresh install gets the whole library at onboarding instead). A
+  // failure never blocks the app — it retries next launch. (Not an upgrade step: the app
+  // works without it, and the exercise reads do not depend on it.)
+  if (await hasMemberProfile().catch(() => false)) await syncExerciseCatalog().catch(() => false);
+}
+
+export const useOnboarding = create<OnboardingState>()((set, get) => ({
   status: 'loading',
   demo: false,
   busy: false,
+  bootError: null,
+
+  start: () => {
+    startRun ??= (async () => {
+      try {
+        await openAndUpgrade();
+      } catch (e) {
+        // Logged so a phone test's JS-error scan sees it; the screen shows plain words.
+        console.error('[boot] start-up failed:', e);
+        set({ status: 'error', demo: false, bootError: bootFailureFrom(e) });
+        return;
+      }
+      await get().boot();
+    })().finally(() => {
+      startRun = null;
+    });
+    return startRun;
+  },
+
+  retry: async () => {
+    if (startRun) return startRun;
+    set({ status: 'loading', bootError: null });
+    await resetDb();
+    await get().start();
+  },
 
   boot: async () => {
     try {
       const [profile, demo] = await Promise.all([hasMemberProfile(), isDemoData()]);
-      set({ status: profile ? 'ready' : 'welcome', demo });
-    } catch {
+      set({ status: profile ? 'ready' : 'welcome', demo, bootError: null });
+    } catch (e) {
       // NEVER fall back to 'welcome': a transient read failure on a device full of
       // real training would present a first-run screen over it. Show a retry
       // instead — the member's data is safe and untouched behind it.
-      set({ status: 'error', demo: false });
+      console.error('[boot] reading the database failed:', e);
+      set({ status: 'error', demo: false, bootError: bootFailureFrom(e) });
     }
   },
 

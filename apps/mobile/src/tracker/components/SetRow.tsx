@@ -49,7 +49,7 @@ import { recordLabel, toastHit } from '../services/liveRecords';
 import type { RecordKind } from '../services/liveRecords';
 import { afterSetCompleted, nextUpLabel } from '../services/restRules';
 import { playWorkoutSound } from '../services/workoutSounds';
-import { useActiveWorkout } from '../store/activeWorkoutStore';
+import { flushDraft, useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftSet, PrevSet, SetFill } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
@@ -191,6 +191,8 @@ export const SetRow = memo(function SetRow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [set.distanceM, units]);
 
+  // Typing saves the draft after a short pause (the store debounces); leaving a box saves it now.
+  const saveNow = (): void => void flushDraft();
   const onWeight = (t: string): void => {
     setWText(t);
     updateSet(exKey, set.key, { weightKg: typedToKg(t, units) });
@@ -301,6 +303,7 @@ export const SetRow = memo(function SetRow({
           <TextInput
             value={dText}
             onChangeText={onDistance}
+            onBlur={saveNow}
             keyboardType="decimal-pad"
             selectTextOnFocus
             placeholder={fill?.distanceM ? String(distanceToUnit(fill.distanceM, distUnit)) : '—'}
@@ -315,6 +318,7 @@ export const SetRow = memo(function SetRow({
           <TextInput
             value={wText}
             onChangeText={onWeight}
+            onBlur={saveNow}
             keyboardType="decimal-pad"
             selectTextOnFocus
             placeholder={fill && (logType === 'weight_reps' || fill.weightKg) ? showW(fill.weightKg, units) : '—'}
@@ -329,6 +333,7 @@ export const SetRow = memo(function SetRow({
           <TextInput
             value={rText}
             onChangeText={onReps}
+            onBlur={saveNow}
             keyboardType="number-pad"
             selectTextOnFocus
             placeholder={fill && fill.reps > 0 ? String(fill.reps) : '—'}
@@ -348,6 +353,7 @@ export const SetRow = memo(function SetRow({
               if (set.durationSec) setTText(durationDigits(set.durationSec));
             }}
             onBlur={() => {
+              saveNow();
               setTFocused(false);
               setTText(set.durationSec ? fmtDuration(set.durationSec) : '');
             }}

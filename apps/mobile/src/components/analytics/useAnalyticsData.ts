@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getDb } from '@/db';
 import { getProfile } from '@/db/repos/userRepo';
@@ -15,17 +15,6 @@ export type RangeDays = 30 | 90 | 180;
 /** The frozen bundle, with Phase 2's sets per finer muscle. */
 export type AnalyticsBundle = Awaited<ReturnType<typeof getAnalyticsBundle>> & { muscleSets: MuscleSetsSlice[] };
 
-const EMPTY_BUNDLE: AnalyticsBundle = {
-  weight: [],
-  weeklyVolume: [],
-  frequency: [],
-  calories: [],
-  muscleVolume: [],
-  consistency: [],
-  prTimeline: [],
-  strengthTrend: [],
-  muscleSets: [],
-};
 
 export interface AnalyticsState {
   range: RangeDays;
@@ -34,6 +23,13 @@ export interface AnalyticsState {
   profile: UserProfile | null;
   streak: number;
   loading: boolean;
+  /**
+   * PG-23: the read failed and there is nothing true to show → Progress shows LoadError
+   * ("Couldn't load your progress — Try again"), not every chart's "No data yet".
+   */
+  failed: boolean;
+  /** Read again (the Try again button). */
+  retry: () => void;
 }
 
 /** log_type per exercise id, to drop records that say nothing (0 kg, an assisted move's "heaviest" help). */
@@ -69,8 +65,10 @@ async function loadBundle(range: RangeDays): Promise<AnalyticsBundle> {
 
 /**
  * Local analytics state: refetches the full bundle whenever the range changes.
- * Out-of-order responses are dropped (rapid range switching), and any failure
- * degrades to an empty bundle so every section falls back to its EmptyState.
+ * Out-of-order responses are dropped (rapid range switching). PG-23: a failure no longer
+ * degrades to an empty bundle (every section said "No data yet", as if nothing was logged):
+ * a failed re-read of the SAME range keeps the numbers on screen; otherwise `failed` is set
+ * and the screen offers Try again.
  *
  * Phase 3: also refetches when Progress comes back into view (`focusKey`), so a workout
  * finished on another tab shows without switching the range. The old numbers stay on
@@ -82,7 +80,11 @@ export function useAnalyticsData(focusKey = 1): AnalyticsState {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [streak, setStreak] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const reqRef = useRef(0);
+  /** The range the bundle on screen belongs to (old numbers must never sit under a new range). */
+  const bundleRange = useRef<RangeDays | null>(null);
 
   useEffect(() => {
     if (focusKey <= 0) return; // not shown yet
@@ -92,17 +94,28 @@ export function useAnalyticsData(focusKey = 1): AnalyticsState {
       try {
         const [b, p, s] = await Promise.all([loadBundle(range), getProfile(), getStreakDays(todayISO())]);
         if (reqRef.current !== req) return;
+        bundleRange.current = range;
         setBundle(b);
         setProfile(p);
         setStreak(s);
+        setFailed(false);
       } catch {
         if (reqRef.current !== req) return;
-        setBundle(EMPTY_BUNDLE);
+        if (bundleRange.current !== range) {
+          bundleRange.current = null;
+          setBundle(null);
+          setFailed(true);
+        }
       } finally {
         if (reqRef.current === req) setLoading(false);
       }
     })();
-  }, [range, focusKey]);
+  }, [range, focusKey, attempt]);
 
-  return { range, setRange, bundle, profile, streak, loading };
+  const retry = useCallback(() => {
+    setFailed(false);
+    setAttempt((n) => n + 1);
+  }, []);
+
+  return { range, setRange, bundle, profile, streak, loading, failed, retry };
 }

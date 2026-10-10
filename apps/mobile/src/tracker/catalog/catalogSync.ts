@@ -23,6 +23,7 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 import { getDb, getMeta, setMeta } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { uuid } from '@/lib/uuid';
 
 import { isLogType, type LogType } from '../engine/logTypes';
@@ -197,9 +198,12 @@ export async function syncExerciseCatalog(opts: { force?: boolean; demo?: boolea
     if (stored >= CATALOG_VERSION) return false;
   }
   const demo = opts.demo ?? (await getMeta('demo_data')) === '1';
-  await db.withTransactionAsync(async () => {
-    await applyCatalogSync(db, { demo });
-  });
+  // The one app-wide write queue (DS-04). Callers must not hold a queued job while calling this.
+  await enqueueWrite(() =>
+    db.withTransactionAsync(async () => {
+      await applyCatalogSync(db, { demo });
+    }),
+  );
   await setMeta(META_KEY, String(CATALOG_VERSION));
   return true;
 }

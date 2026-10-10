@@ -11,8 +11,8 @@
  * every exercise ticked, saved as the folder named in Hevy.
  */
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { useEffect, useMemo, useState, type MutableRefObject } from 'react';
+import { Pressable, Text, View } from 'react-native';
 
 import { Card, GhostButton, Icon, PrimaryButton } from '@/components/ui';
 import { tinyDate } from '@/lib/date';
@@ -26,6 +26,7 @@ import {
   linkFollowQuestion,
   newExercisesIn,
   saveImportedRoutines,
+  routineSaveFailureText,
   saveLinkedRoutines,
   type NewExercise,
 } from '../services/routineImport';
@@ -104,11 +105,17 @@ export function RoutineImportSteps({
   workouts,
   link,
   onClose,
+  backRef,
 }: {
   app: ImportApp;
   workouts?: readonly RebuildWorkout[];
   link?: LinkRoutines;
   onClose: () => void;
+  /**
+   * IM-10: Android Back inside the steps. The screen calls `backRef.current()`; it goes one
+   * step back and returns true, or returns false on the first and last steps (Back leaves).
+   */
+  backRef?: MutableRefObject<(() => boolean) | null>;
 }) {
   const router = useRouter();
   const appName = app === 'hevy' ? 'Hevy' : 'Strong';
@@ -128,6 +135,26 @@ export function RoutineImportSteps({
   const [busy, setBusy] = useState(false);
   /** v0.29.1: exercises new to ForgeAI the member chose not to add (left out of the routines). */
   const [leaveOut, setLeaveOut] = useState<Set<string>>(() => new Set());
+  const [saveProblem, setSaveProblem] = useState<string | null>(null);
+
+  // IM-10: Back goes to the previous step, exactly like each step's own Back button.
+  useEffect(() => {
+    if (!backRef) return;
+    backRef.current = () => {
+      if (step.kind === 'check') {
+        setStep(step.i === 0 ? { kind: 'list' } : { kind: 'check', i: step.i - 1 });
+        return true;
+      }
+      if (step.kind === 'new' || step.kind === 'follow') {
+        setStep(kept.length > 0 ? { kind: 'check', i: kept.length - 1 } : { kind: 'list' });
+        return true;
+      }
+      return false; // the list (Back leaves the steps) and done
+    };
+    return () => {
+      backRef.current = null;
+    };
+  });
 
   const kept: FoundRoutine[] = found.filter((r) => keep.has(r.title));
   // What Save writes: kept routines with at least one ticked exercise, less the new exercises
@@ -182,6 +209,7 @@ export function RoutineImportSteps({
   const save = async (follow: boolean) => {
     if (busy) return;
     setBusy(true);
+    setSaveProblem(null);
     try {
       // Written out plainly: on the phone, `{ ...(await …) }` inside `a ? b : c` came back
       // without its fields (the done screen read "routines in", v0.29.0 phone test part J).
@@ -196,9 +224,10 @@ export function RoutineImportSteps({
       const today = await homeToday();
       success();
       setStep({ kind: 'done', routines: r.routines, folder: r.name, today, created: r.created });
-    } catch {
+    } catch (e) {
       warn();
-      Alert.alert('Couldn’t save the routines', 'Nothing was changed. Please try again.');
+      // IM-20: say what was already written (new exercises), never "Nothing was changed" then.
+      setSaveProblem(routineSaveFailureText(e));
     } finally {
       setBusy(false);
     }
@@ -393,6 +422,7 @@ export function RoutineImportSteps({
             <Text style={CAPTION}>This replaces the routines in “{question.updatingName}” with these.</Text>
           ) : null}
         </Card>
+        {saveProblem ? <Text style={{ ...CAPTION, color: color.criticalText }}>{saveProblem}</Text> : null}
         <View style={{ gap: space.md }}>
           <PrimaryButton label={busy ? 'Saving…' : 'Follow them'} icon="check" loading={busy} onPress={() => void save(true)} />
           <GhostButton

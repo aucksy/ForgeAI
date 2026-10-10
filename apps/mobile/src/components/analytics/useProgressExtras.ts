@@ -23,9 +23,24 @@ export interface ProgressExtras {
   /** "Waist 81 cm" (or "Waist 31.9 in" under lb, miles — read on each focus), or null. */
   measureLine: string | null;
   photoCount: number;
+  /** PG-23: the records or body-map read failed — show "Couldn't load", never "no records". */
+  eventsFailed: boolean;
+  musclesFailed: boolean;
+  /** Read everything again (Try again). */
+  retry: () => void;
 }
 
-const EMPTY: ProgressExtras = { ready: false, events: [], weekMuscles: [], monthCounts: new Map(), measureLine: null, photoCount: 0 };
+const EMPTY: ProgressExtras = {
+  ready: false,
+  events: [],
+  weekMuscles: [],
+  monthCounts: new Map(),
+  measureLine: null,
+  photoCount: 0,
+  eventsFailed: false,
+  musclesFailed: false,
+  retry: () => {},
+};
 
 async function monthCounts(): Promise<Map<string, number>> {
   const rows = await getDb().getAllAsync<{ ym: string; n: number }>(
@@ -42,28 +57,38 @@ async function measureLine(): Promise<string | null> {
 
 /**
  * Reloads every time Progress comes into view (a workout finished on another tab shows at
- * once). Each part fails on its own: a broken read leaves that card empty, never the screen.
+ * once). Each part fails on its own: a broken records or body-map read says so on that card
+ * (with Try again), never "nothing yet"; the rest of the screen still shows.
  */
 export function useProgressExtras(): ProgressExtras {
-  const [extras, setExtras] = useState<ProgressExtras>(EMPTY);
+  const [extras, setExtras] = useState<Omit<ProgressExtras, 'retry'>>(EMPTY);
   const req = useRef(0);
 
-  useFocusEffect(
-    useCallback(() => {
-      const id = ++req.current;
-      const today = todayISO();
-      void Promise.all([
-        getRecordEvents().catch(() => [] as RecordEventRow[]),
-        getMuscleSetsBetween(addDays(today, -6), today).catch(() => [] as MuscleSetsSlice[]),
-        monthCounts().catch(() => new Map<string, number>()),
-        measureLine().catch(() => null),
-        countProgressPhotos().catch(() => 0),
-      ]).then(([events, weekMuscles, counts, line, photos]) => {
-        if (req.current !== id) return;
-        setExtras({ ready: true, events, weekMuscles, monthCounts: counts, measureLine: line, photoCount: photos });
+  const load = useCallback(() => {
+    const id = ++req.current;
+    const today = todayISO();
+    void Promise.all([
+      getRecordEvents().catch(() => null),
+      getMuscleSetsBetween(addDays(today, -6), today).catch(() => null),
+      monthCounts().catch(() => new Map<string, number>()),
+      measureLine().catch(() => null),
+      countProgressPhotos().catch(() => 0),
+    ]).then(([events, weekMuscles, counts, line, photos]) => {
+      if (req.current !== id) return;
+      setExtras({
+        ready: true,
+        events: events ?? [],
+        weekMuscles: weekMuscles ?? [],
+        monthCounts: counts,
+        measureLine: line,
+        photoCount: photos,
+        eventsFailed: events == null,
+        musclesFailed: weekMuscles == null,
       });
-    }, []),
-  );
+    });
+  }, []);
 
-  return extras;
+  useFocusEffect(load);
+
+  return { ...extras, retry: load };
 }
