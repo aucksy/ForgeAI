@@ -1,17 +1,33 @@
 name: Build & Release (APK + AAB)
 
-# Push a tag like v0.2.0 -> builds a signed release APK (sideloading) AND a signed
-# release AAB (Play upload), then publishes both as a GitHub Release. Manual runs
-# (workflow_dispatch) just build + upload them as run artifacts.
+# Push a tag like v0.33.0 -> builds the release APK (sideloading) AND the release AAB (Play upload),
+# proves the APK updates the previous release in place, then publishes both as a GitHub Release.
+# Manual runs (workflow_dispatch) do everything EXCEPT publish: a dry run on main.
 #
-# Two gates (audit QA-03 / H1):
+# Signing (docs/RELEASE-SIGNING.md; audit DS-02 / QA-01): Gradle signs with the public React Native
+# debug key, exactly as every release up to v0.31.0. When the ANDROID_KEYSTORE_* secrets exist, the
+# APK is then re-signed with APK Signature Scheme v3 key rotation: Android 7-8 keep seeing the debug
+# key (v1/v2), Android 9+ see the release key plus proof that the debug key handed over to it (v3 +
+# lineage). Installed copies therefore update in place and keep their data. The AAB is re-signed
+# with the release key only. The keystore is decoded to $RUNNER_TEMP for that one step and deleted.
+#
+# versionCode = MAJOR*1_000_000 + MINOR*1_000 + PATCH of the tag (0.33.0 -> 33000; audit QA-26), so
+# it never goes backwards even if this workflow is renamed or recreated. Releases up to v0.31.0
+# used the run number (v0.31.0 = 45).
+#
+# Gates, in order (audit QA-03 / H1):
 #  1. phone-gate: the cloud phone test (qa-device.yml) must have PASSED on the tagged commit,
 #     or on its parent when the tag commit only bumps the version / edits PROGRESS, CONTEXT or
 #     docs (scripts/ci/phone_gate.py). Tags can never skip it; a manual run can, with the
 #     skip_phone_gate input, and says so loudly.
-#  2. release checks on the built APK before publishing (scripts/ci/release_checks.py): signing
-#     key (repo variable or secret ALLOWED_CERT_SHA256), versionCode/versionName only go up,
-#     permissions equal scripts/ci/approved-permissions.txt, 16 KB alignment (warn), size (warn).
+#  2. release checks on the built APK (scripts/ci/release_checks.py): signing key + rotation
+#     (repo variable or secret ALLOWED_CERT_SHA256), versionCode derived from the version and above
+#     the last release's, versionName above it, permissions equal scripts/ci/approved-permissions.txt,
+#     16 KB alignment (warn), size (warn).
+#  3. update-proof: on an Android 14 emulator, install the PREVIOUS published release, launch it,
+#     then `adb install -r` this build: must update in place with the same firstInstallTime, the
+#     marker in its data intact, and the signature moved to the new key (scripts/ci/update_proof.py).
+#  4. publish: tags only, and only when 1-3 passed.
 on:
   push:
     tags:
@@ -24,7 +40,7 @@ on:
         default: false
 
 permissions:
-  contents: write # required to create the Release
+  contents: read
 
 jobs:
   phone-gate:
@@ -45,10 +61,10 @@ jobs:
   build:
     needs: phone-gate
     runs-on: ubuntu-latest
-    # Surface the optional keystore secret as an env var so steps can gate on it
-    # (the `secrets` context is NOT allowed inside an `if:` condition).
+    # Only a yes/no reaches the job's environment; the keystore secrets themselves are handed to the
+    # single signing step below (the `secrets` context is NOT allowed inside an `if:` condition).
     env:
-      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      HAS_RELEASE_KEY: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -81,26 +97,39 @@ jobs:
         working-directory: apps/mobile
         run: npm test
 
-      # Release-keystore secrets are OPTIONAL: when absent (early test builds),
-      # the decode step is skipped, ANDROID_KEYSTORE_PATH stays unset and the
-      # Gradle release config falls back to debug signing — still installable.
-      - name: Decode release keystore
-        if: env.ANDROID_KEYSTORE_BASE64 != ''
-        run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > apps/mobile/android/app/release.keystore
-          echo "ANDROID_KEYSTORE_PATH=release.keystore" >> "$GITHUB_ENV"
+      # The release checks' own logic (signing rules, versionCode formula, update-proof parsers).
+      - name: Self-tests (release checks)
+        run: python3 -m unittest discover -s scripts/ci -p 'test_*.py' -v
 
+      # Tag v0.33.0 -> versionName 0.33.0, versionCode 33000. A manual run takes the version from
+      # apps/mobile/app.json and marks the name as a dry run (0.33.0-dryrun.<run number>).
+      - name: Work out the version
+        id: version
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            NAME="$VERSION"
+          else
+            VERSION="$(python3 -c 'import json; print(json.load(open("apps/mobile/app.json"))["expo"]["version"])')"
+            NAME="${VERSION}-dryrun.${GITHUB_RUN_NUMBER}"
+          fi
+          CODE="$(python3 scripts/ci/release_checks.py --version-code "$VERSION")"
+          echo "versionName $NAME, versionCode $CODE"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+
+      # Always signed with the debug config here (build.gradle); the release key is applied below.
       - name: Build release APK + AAB
         working-directory: apps/mobile/android
         env:
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+          VERSION_CODE: ${{ steps.version.outputs.code }}
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease bundleRelease \
-            -PappVersionName="${GITHUB_REF_NAME#v}" \
-            -PappVersionCode="${{ github.run_number }}" \
+            -PappVersionName="$VERSION_NAME" \
+            -PappVersionCode="$VERSION_CODE" \
             --no-daemon --stacktrace
 
       - name: Stage artifacts
@@ -113,6 +142,111 @@ jobs:
           cp "$AAB" "forgeai-${GITHUB_REF_NAME}.aab"
           ls -la forgeai-*
 
+      # Without the secrets (forks, or before the key exists) nothing changes: debug-signed, as today.
+      - name: No release key (debug-signed build)
+        if: env.HAS_RELEASE_KEY != 'true'
+        run: echo "::warning::ANDROID_KEYSTORE_BASE64 is not set, so this build is signed with the PUBLIC debug key only (the same key as v0.31.0 and earlier). The release checks FAIL it once ALLOWED_CERT_SHA256 is set."
+
+      # Key rotation. The keystore exists only inside this step (decoded to $RUNNER_TEMP with 600
+      # permissions, deleted on exit) and only after Gradle and npm have finished. Passwords reach
+      # apksigner / jarsigner as environment-variable NAMES (env:..., :env), never on a command line.
+      # No `set -x`; nothing secret is echoed.
+      - name: Sign with key rotation (APK) and the release key (AAB)
+        if: env.HAS_RELEASE_KEY == 'true'
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ vars.ANDROID_KEY_ALIAS || secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ALLOWED_CERT_SHA256: ${{ vars.ALLOWED_CERT_SHA256 || secrets.ALLOWED_CERT_SHA256 }}
+        run: |
+          set -euo pipefail
+          umask 077
+          for v in ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS; do
+            if [ -z "${!v:-}" ]; then echo "::error::$v is not set; refusing to ship a half-configured signature."; exit 1; fi
+          done
+          # PKCS12: the key password is the store password unless set separately.
+          if [ -z "${ANDROID_KEY_PASSWORD:-}" ]; then ANDROID_KEY_PASSWORD="$ANDROID_KEYSTORE_PASSWORD"; fi
+          export ANDROID_KEY_PASSWORD
+
+          KS="$RUNNER_TEMP/forgeai-release.p12"
+          WORK="$RUNNER_TEMP/forgeai-signing"
+          trap 'rm -f "$KS"; rm -rf "$WORK"' EXIT
+          mkdir -p "$WORK"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '\r\n ' | base64 -d > "$KS"
+          chmod 600 "$KS"
+          unset ANDROID_KEYSTORE_BASE64
+
+          BT="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)"
+          APKSIGNER="${BT%/}/apksigner"
+          ZIPALIGN="${BT%/}/zipalign"
+          echo "build-tools: $BT"
+          "$APKSIGNER" version
+
+          APK="forgeai-${GITHUB_REF_NAME}.apk"
+          AAB="forgeai-${GITHUB_REF_NAME}.aab"
+          LINEAGE="$RUNNER_TEMP/forgeai-lineage.bin"
+          DEBUG_KS="apps/mobile/android/app/debug.keystore"
+          # The OLD key: the public React Native debug key every installed copy is signed with.
+          OLD=(--ks "$DEBUG_KS" --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android)
+          # The NEW key: the private release key (PKCS12).
+          NEW=(--ks "$KS" --ks-type PKCS12 --ks-pass env:ANDROID_KEYSTORE_PASSWORD --ks-key-alias "$ANDROID_KEY_ALIAS" --key-pass env:ANDROID_KEY_PASSWORD)
+
+          # 1. Proof of rotation: the debug key signs over to the release key (public data, not secret).
+          "$APKSIGNER" rotate --out "$LINEAGE" --old-signer "${OLD[@]}" --new-signer "${NEW[@]}"
+
+          # 2. Keep the 16 KB zip alignment: align first, then sign without re-aligning when this
+          #    apksigner can (the check after signing is the real gate).
+          GRADLE_ALIGNED=false
+          if "$ZIPALIGN" -c -P 16 -v 4 "$APK" > /dev/null; then GRADLE_ALIGNED=true; fi
+          "$ZIPALIGN" -f -P 16 4 "$APK" "$WORK/aligned.apk"
+          KEEP_ALIGN=()
+          "$APKSIGNER" sign --help > "$WORK/sign-help.txt" 2>&1 || true
+          if grep -q -- '--alignment-preserved' "$WORK/sign-help.txt"; then
+            KEEP_ALIGN=(--alignment-preserved true)
+          fi
+
+          # 3. v1/v2 = debug key (Android 7-8), v3 = release key + lineage from API 28 (Android 9+).
+          "$APKSIGNER" sign "${OLD[@]}" --next-signer "${NEW[@]}" \
+            --lineage "$LINEAGE" --rotation-min-sdk-version 28 \
+            --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true \
+            --v4-signing-enabled false "${KEEP_ALIGN[@]}" \
+            --out "$WORK/signed.apk" "$WORK/aligned.apk"
+
+          if "$ZIPALIGN" -c -P 16 -v 4 "$WORK/signed.apk" > "$WORK/zipalign.txt"; then
+            echo "16 KB zip alignment kept after signing."
+          elif [ "$GRADLE_ALIGNED" = true ]; then
+            grep -i 'BAD' "$WORK/zipalign.txt" | head -20 || true
+            echo "::error::Signing broke the 16 KB zip alignment that Gradle's APK had."
+            exit 1
+          else
+            echo "::warning::The APK was not 16 KB aligned before signing either (the release checks report it)."
+          fi
+
+          "$APKSIGNER" verify -v --print-certs "$WORK/signed.apk"
+          "$APKSIGNER" lineage --in "$WORK/signed.apk" --print-certs || echo "::warning::apksigner could not print the lineage (the release checks decide)."
+          mv -f "$WORK/signed.apk" "$APK"
+
+          # 4. AAB (Play upload, never sideloaded): the release key ONLY. Drop Gradle's debug JAR
+          #    signature first, or jarsigner would add a second signer next to it.
+          zip -q -d "$AAB" 'META-INF/*.SF' 'META-INF/*.RSA' 'META-INF/*.DSA' 'META-INF/*.EC' || true
+          jarsigner -keystore "$KS" -storetype PKCS12 \
+            -storepass:env ANDROID_KEYSTORE_PASSWORD -keypass:env ANDROID_KEY_PASSWORD \
+            "$AAB" "$ANDROID_KEY_ALIAS" > "$WORK/jarsigner.txt"
+          jarsigner -verify "$AAB" > "$WORK/jarsigner-verify.txt" || { cat "$WORK/jarsigner-verify.txt"; echo "::error::The AAB signature does not verify."; exit 1; }
+          AAB_CERTS="$(keytool -printcert -jarfile "$AAB" | sed -n 's/^[[:space:]]*SHA256: //p' | tr -d ':' | tr 'A-F' 'a-f' | sort -u)"
+          echo "AAB signer SHA-256: $AAB_CERTS"
+          if [ "$(printf '%s\n' "$AAB_CERTS" | grep -c .)" != 1 ]; then
+            echo "::error::The AAB should have exactly one signer (the release key)."; exit 1
+          fi
+          if [ -n "${ALLOWED_CERT_SHA256:-}" ]; then
+            ALLOWED_NORM="$(printf '%s' "$ALLOWED_CERT_SHA256" | tr -d ': ' | tr 'A-F' 'a-f' | tr ',' '\n')"
+            if ! grep -qx "$AAB_CERTS" <<< "$ALLOWED_NORM"; then
+              echo "::error::The AAB is signed by $AAB_CERTS, which is not in ALLOWED_CERT_SHA256."; exit 1
+            fi
+          fi
+          ls -la forgeai-*
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -122,16 +256,91 @@ jobs:
             forgeai-*.aab
 
       # Checks on the built APK itself. A FAIL stops here, before the Release is published
-      # (the run artifact above still holds the APK to inspect). ALLOWED_CERT_SHA256 is a public fingerprint (not a secret); set it as a
-      # repository variable once the real release key exists.
+      # (the run artifact above still holds the APK to inspect). ALLOWED_CERT_SHA256 is a public
+      # fingerprint (not a secret); set it as a repository variable.
       - name: Release checks (signing, version, permissions, 16 KB, size)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ALLOWED_CERT_SHA256: ${{ vars.ALLOWED_CERT_SHA256 || secrets.ALLOWED_CERT_SHA256 }}
         run: python3 scripts/ci/release_checks.py "forgeai-${GITHUB_REF_NAME}.apk"
 
+  # Phones with the previous release must take this build as an in-place update. Runs on tags AND
+  # on manual runs, so a dry run on main proves it without publishing anything.
+  update-proof:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download this build
+        uses: actions/download-artifact@v4
+        with:
+          name: forgeai-build
+          path: dist
+
+      - name: Download the previous published release's APK
+        id: prev
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/update_proof.py fetch --dest "$RUNNER_TEMP/previous.apk"
+          ls -la dist
+
+      - name: ABIs in both APKs and what Android 7-8 see (static)
+        if: steps.prev.outputs.found == 'true'
+        run: |
+          set -euo pipefail
+          for f in "$RUNNER_TEMP/previous.apk" "dist/forgeai-${GITHUB_REF_NAME}.apk"; do
+            echo "$f: $(unzip -l "$f" | awk '{print $4}' | sed -n 's#^lib/\([^/]*\)/.*#\1#p' | sort -u | tr '\n' ' ')"
+          done
+          python3 scripts/ci/update_proof.py static --old "$RUNNER_TEMP/previous.apk" --new "dist/forgeai-${GITHUB_REF_NAME}.apk"
+
+      - name: Enable KVM
+        if: steps.prev.outputs.found == 'true'
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # google_apis (not playstore) so `adb root` can write a marker into the app's data. The
+      # release APK carries ARM libraries only; Android 11+ x86_64 images translate ARM code.
+      - name: Update the previous release in place on an Android 14 emulator
+        if: steps.prev.outputs.found == 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: python3 scripts/ci/update_proof.py device --old "$RUNNER_TEMP/previous.apk" --new "dist/forgeai-${GITHUB_REF_NAME}.apk" --out update-proof-out
+
+      - name: Upload update-proof evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: update-proof
+          path: update-proof-out
+          if-no-files-found: ignore
+          retention-days: 30
+
+  publish:
+    needs: [build, update-proof]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # required to create the Release
+    steps:
+      - name: Download this build
+        uses: actions/download-artifact@v4
+        with:
+          name: forgeai-build
+
       - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           name: ForgeAI ${{ github.ref_name }}

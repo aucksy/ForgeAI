@@ -92,8 +92,9 @@ android {
         applicationId 'com.forgeai.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // versionCode/versionName are driven by CI (the release tag + run number);
-        // they fall back to these defaults for local/manual builds.
+        // versionCode/versionName are driven by CI from the release tag: versionCode =
+        // MAJOR*1_000_000 + MINOR*1_000 + PATCH (v0.33.0 -> 33000; audit QA-26; releases up to
+        // v0.31.0 used the run number, max 45). They fall back to these defaults for local builds.
         versionCode (project.hasProperty('appVersionCode') ? project.property('appVersionCode').toString().toInteger() : 1)
         versionName (project.hasProperty('appVersionName') ? project.property('appVersionName').toString() : "0.1.0")
 
@@ -106,27 +107,18 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-            // Release signing comes from CI env (GitHub Actions secrets). When
-            // ANDROID_KEYSTORE_PATH isn't set (local builds / secret-less CI),
-            // this stays empty and the release buildType falls back to debug
-            // signing below — still installable for testing.
-            def ksPath = System.getenv("ANDROID_KEYSTORE_PATH")
-            if (ksPath) {
-                storeFile file(ksPath)
-                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
-                keyAlias System.getenv("ANDROID_KEY_ALIAS")
-                keyPassword System.getenv("ANDROID_KEY_PASSWORD")
-            }
-        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Sign with the real release keystore when CI provides it, else debug.
-            signingConfig System.getenv("ANDROID_KEYSTORE_PATH") ? signingConfigs.release : signingConfigs.debug
+            // ALWAYS the debug key here, on purpose: every installed copy (v0.31.0 and earlier) is
+            // signed with it. CI then re-signs the APK with v3 key rotation (debug key -> release
+            // key) and the AAB with the release key; Gradle never sees the release keystore.
+            // Signing the release key in here would make every installed copy refuse the update.
+            // See docs/RELEASE-SIGNING.md and .github/workflows/release-apk.yml.
+            signingConfig signingConfigs.debug
             def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'
             shrinkResources enableShrinkResources.toBoolean()
             minifyEnabled enableMinifyInReleaseBuilds
