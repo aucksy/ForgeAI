@@ -308,6 +308,27 @@ export async function deleteSession(id: string): Promise<void> {
   await db.runAsync('DELETE FROM workout_sessions WHERE id = ?', [id]); // sets cascade
 }
 
+/**
+ * Audit Phase 8: `deleteSession` for many workouts at once — the same two deletes (their records,
+ * then the workouts; sets cascade), an IN list of up to `chunk` ids per statement instead of two
+ * statements per workout. `onChunk(done, total)` after each chunk. No transaction here — the
+ * caller (Replace import) already holds one.
+ */
+export async function deleteSessions(
+  ids: readonly string[],
+  opts: { chunk?: number; onChunk?: (done: number, total: number) => void } = {},
+): Promise<void> {
+  const db = getDb();
+  const size = Math.max(1, Math.min(opts.chunk ?? 200, 5000));
+  for (let i = 0; i < ids.length; i += size) {
+    const part = ids.slice(i, i + size);
+    const q = part.map(() => '?').join(', ');
+    await db.runAsync(`DELETE FROM personal_records WHERE session_id IN (${q})`, part as string[]);
+    await db.runAsync(`DELETE FROM workout_sessions WHERE id IN (${q})`, part as string[]);
+    opts.onChunk?.(Math.min(i + size, ids.length), ids.length);
+  }
+}
+
 // ---------------------------------------------------------------- analytics
 
 /**

@@ -97,7 +97,13 @@ describe('fresh phone + the owner\'s Hevy file', () => {
     await runImport(parsed([workout(1, [{ title: 'Lateral Raise (Dumbbell)', sets: [set(10, 12)] }])]), { mode: 'merge' });
     const freeze = h.calls.find((c) => c.sql.includes("SET load_mode = 'one'"));
     expect(freeze?.params).toEqual(['lat']);
-    expect(h.added[0].sets[0].loadMode ?? null).toBeNull(); // follows the exercise, now "as typed"
+    // Audit Phase 8: new workouts go in through the import's own multi-row INSERT (every column
+    // at once), not addSetsWithMeta — read the set's load_mode column from it.
+    const { SET_COLS } = await import('@/tracker/db/importWrite');
+    const insert = h.calls.find((c) => c.sql.startsWith('INSERT INTO set_entries'));
+    expect(insert).toBeTruthy();
+    expect(insert?.params?.[SET_COLS.indexOf('load_mode')]).toBeNull(); // follows the exercise, now "as typed"
+    expect(insert?.params?.[SET_COLS.indexOf('exercise_id')]).toBe('lat');
   });
 });
 

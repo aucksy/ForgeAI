@@ -9,11 +9,16 @@
  *  - "+ Log a past workout": the day, start and length, then the normal editor.
  *
  * Coming back to the tab re-reads quietly what is already on screen (an edit or a delete shows
- * at once) without jumping back to the top.
+ * at once) without jumping back to the top. Audit Phase 8 (five years of data): with nothing
+ * saved since (and the same day), the list stays exactly as it was — no read at all. The list's
+ * stamp is kept only when the whole read worked (the streak and the 13-week squares too) and no
+ * queued write ran during it, so a failed part or a rolled-back write is read again next visit.
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+
+import { quietSince, writeQueueMark } from '@/db/writeQueue';
 
 import { Heatmap } from '@/components/charts';
 import { Card, EmptyState, GhostButton, Icon, LoadError, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
@@ -38,6 +43,7 @@ import {
   getMonthCounts,
   getWorkoutDays,
   historyRows,
+  historyStamp,
   monthHeadingIndexes,
   type HistoryCursor,
   type HistoryItem,
@@ -81,11 +87,23 @@ export default function HistoryScreen() {
   const gen = useRef(0);
   const loaded = useRef(0);
   loaded.current = items.length;
+  // Audit Phase 8: what the list on screen was read at (`historyStamp` + the search), so coming
+  // back with nothing changed reads nothing.
+  const shownAt = useRef<string | null>(null);
 
-  /** Read the first `keep` workouts again (at least a page) — quietly when something is shown. */
-  const refresh = useCallback(async (q: string, keep: number, quiet: boolean): Promise<void> => {
+  /**
+   * Read the first `keep` workouts again (at least a page) — quietly when something is shown.
+   * True when the list on screen was replaced.
+   */
+  const refresh = useCallback(async (q: string, keep: number, quiet: boolean, known?: string | null): Promise<boolean> => {
     const mine = ++gen.current;
     if (!quiet) setStatus('loading');
+    shownAt.current = null;
+    // A queued write (import, Finish, edit) running during the read: its rows may roll back.
+    const mark = writeQueueMark();
+    // Taken BEFORE the read: a save during the read is read again on the next visit.
+    const stamp = known !== undefined ? known : await historyStamp().catch(() => null);
+    const at = stamp == null ? null : `${stamp}|${q}`;
     try {
       const [page, monthCounts, allCounts, first] = await Promise.all([
         // Everything already shown is read again (in pages), so the list never shrinks and jumps.
@@ -94,7 +112,7 @@ export default function HistoryScreen() {
         q ? getMonthCounts(null) : Promise.resolve(null),
         getFirstWorkoutDate(),
       ]);
-      if (mine !== gen.current) return;
+      if (mine !== gen.current) return false;
       setItems(page.items);
       setNext(page.next);
       setCounts(monthCounts);
@@ -103,20 +121,33 @@ export default function HistoryScreen() {
       setFirstDay(first);
       setMore('idle');
       setStatus('ready');
+      // The search's list is all there is to it; the full list also waits for its extras.
+      if (q && quietSince(mark)) shownAt.current = at;
     } catch {
-      if (mine !== gen.current) return;
+      if (mine !== gen.current) return false;
       // HI-11: a failed read never says "No workouts yet" — keep what is shown, else say so.
       setStatus((s) => (quiet && s === 'ready' ? s : 'error'));
+      return false;
     }
-    // The extras never blank the list.
+    // The extras never blank the list. Either failing leaves the list unmarked: read again next visit.
     if (!q) {
-      void getWeekStreak()
-        .then((s) => mine === gen.current && setStreak(s))
-        .catch(() => undefined);
-      void getConsistencyCells(CAL_WEEKS * 7)
-        .then((c) => mine === gen.current && setCells(c))
-        .catch(() => undefined);
+      let failed = false;
+      void Promise.all([
+        getWeekStreak()
+          .then((s) => mine === gen.current && setStreak(s))
+          .catch(() => {
+            failed = true;
+          }),
+        getConsistencyCells(CAL_WEEKS * 7)
+          .then((c) => mine === gen.current && setCells(c))
+          .catch(() => {
+            failed = true;
+          }),
+      ]).then(() => {
+        if (mine === gen.current && !failed && quietSince(mark)) shownAt.current = at;
+      });
     }
+    return true;
   }, []);
 
   // A new search starts from the top.
@@ -131,10 +162,18 @@ export default function HistoryScreen() {
     void refresh(query, 0, false);
   }, [query, refresh]);
 
-  // Focus (first open, back from a workout, an edit or a delete): re-read what is shown.
+  // Focus (first open, back from a workout, an edit or a delete): nothing saved since → keep the
+  // list as it is; else re-read everything shown (quietly when something is shown), so the list
+  // never shrinks and the scroll position stays where the member left it.
   useFocusEffect(
     useCallback(() => {
-      void refresh(queryRef.current, loaded.current, loaded.current > 0);
+      void (async () => {
+        const stamp = await historyStamp().catch(() => null);
+        const q = queryRef.current;
+        const shown = loaded.current;
+        if (shown > 0 && stamp != null && shownAt.current === `${stamp}|${q}`) return;
+        await refresh(q, shown, shown > 0, stamp);
+      })();
     }, [refresh]),
   );
 

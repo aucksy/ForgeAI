@@ -150,17 +150,57 @@ export async function getSessionDetailsBetween(fromISO: string, toISO: string): 
 
 /** HI-01 (History's paged list): details for session rows already read, batched the same way. */
 export async function detailsFor(sessionRows: SessionRow[]): Promise<SessionDetail[]> {
-  if (sessionRows.length === 0) return [];
+  return (await detailsAndModesFor(sessionRows)).details;
+}
+
+/**
+ * Audit Phase 8 (packet C): newest-first details AND the sets that keep their own counting, from
+ * the same three reads (see `detailsAndModesFor`).
+ */
+export async function getRecentSessionDetailsAndModes(limit: number): Promise<DetailsAndModes> {
+  if (limit <= 0) return { details: [], setModes: new Map() };
+  const sessionRows = await getDb().getAllAsync<SessionRow>(
+    'SELECT * FROM workout_sessions ORDER BY date_iso DESC, started_at DESC LIMIT ?',
+    [limit],
+  );
+  return detailsAndModesFor(sessionRows);
+}
+
+export interface DetailsAndModes {
+  details: SessionDetail[];
+  /**
+   * Sets of these workouts that keep their own counting (`set_entries.load_mode`), by set id —
+   * the raw stored value; the volume rule decides whether it is a valid mode.
+   */
+  setModes: Map<string, string>;
+}
+
+/** Only the columns a detail (and the volume rule) needs: History reads 30 workouts a page. */
+const SET_COLS = 'id, session_id, exercise_id, set_number, weight_kg, reps, is_warmup, load_mode';
+
+/**
+ * Audit Phase 8 (packet C): `detailsFor`, plus each set's own counting read from the SAME set
+ * rows — History and Home used to look those up again with a second read that walked every set
+ * of the page's lifts across all history.
+ */
+export async function detailsAndModesFor(sessionRows: SessionRow[]): Promise<DetailsAndModes> {
+  if (sessionRows.length === 0) return { details: [], setModes: new Map() };
   const db = getDb();
   const sessionIds = sessionRows.map((r) => r.id);
-  const setRows: SetRow[] = [];
+  const setRows: (SetRow & { load_mode?: string | null })[] = [];
   for (const ids of chunked(sessionIds)) {
-    const rows = await db.getAllAsync<SetRow>(
-      `SELECT * FROM set_entries WHERE session_id IN (${placeholders(ids.length)}) ORDER BY rowid ASC`,
-      ids,
-    );
+    const where = `WHERE session_id IN (${placeholders(ids.length)}) ORDER BY rowid ASC`;
+    let rows: (SetRow & { load_mode?: string | null })[];
+    try {
+      rows = await db.getAllAsync(`SELECT ${SET_COLS} FROM set_entries ${where}`, ids);
+    } catch {
+      // A database from before the counting column (never after start-up's upgrade): every column.
+      rows = await db.getAllAsync(`SELECT * FROM set_entries ${where}`, ids);
+    }
     setRows.push(...rows);
   }
+  const setModes = new Map<string, string>();
+  for (const r of setRows) if (r.load_mode != null) setModes.set(r.id, r.load_mode);
 
   const exerciseIds = [...new Set(setRows.map((r) => r.exercise_id))];
   const exercises = new Map<string, Exercise>();
@@ -181,7 +221,7 @@ export async function detailsFor(sessionRows: SessionRow[]): Promise<SessionDeta
     else setsBySession.set(r.session_id, [r]);
   }
 
-  return sessionRows.map((sr) => {
+  const details = sessionRows.map((sr) => {
     const session = mapSession(sr);
     const groups: SessionDetail['exercises'] = [];
     const groupByExercise = new Map<string, SessionDetail['exercises'][number]>();
@@ -205,4 +245,5 @@ export async function detailsFor(sessionRows: SessionRow[]): Promise<SessionDeta
       totalVolumeKg: groups.reduce((sum, g) => sum + g.volumeKg, 0),
     };
   });
+  return { details, setModes };
 }

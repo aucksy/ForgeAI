@@ -13,7 +13,9 @@
  * Volume on every card follows the one volume rule (`withVolume`).
  */
 import { getDb } from '@/db';
-import { detailsFor, type SessionRow } from '@/tracker/db/sessionDetails';
+import { todayISO } from '@/lib/date';
+import { dataStamp } from '@/tracker/db/dataStamp';
+import { detailsAndModesFor, type SessionRow } from '@/tracker/db/sessionDetails';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { withVolume } from '@/tracker/services/volumeService';
 import type { DayType, SessionDetail } from '@/types/models';
@@ -102,7 +104,8 @@ async function extrasFor(ids: string[]): Promise<Map<string, { easy: boolean; di
 async function itemsFor(rows: SessionRow[]): Promise<HistoryItem[]> {
   if (rows.length === 0) return [];
   const [details, extras] = await Promise.all([
-    detailsFor(rows).then((d) => withVolume(d).catch(() => d)),
+    // Audit Phase 8: each set's own counting comes with the set rows (no second walk).
+    detailsAndModesFor(rows).then(({ details: d, setModes }) => withVolume(d, setModes).catch(() => d)),
     extrasFor(rows.map((r) => r.id)),
   ]);
   return details.map((d) => {
@@ -159,6 +162,17 @@ export async function getHistoryUpTo(opts: { keep: number; query?: string | null
     next = page.next;
   } while (next && items.length < want);
   return { items, next };
+}
+
+/**
+ * Audit Phase 8 (packet C): what History's list was read at — anything saved since, or a new day
+ * (the streak and the 13-week squares move at midnight), changes it. Coming back to the tab with
+ * the same stamp keeps the list as it is instead of reading every workout on screen again.
+ * null = can't tell (read again).
+ */
+export async function historyStamp(): Promise<string | null> {
+  const s = await dataStamp();
+  return s == null ? null : `${s}|${todayISO()}`;
 }
 
 /** Workouts per month ("2026-10" → 12), for the month headings — matching `query` if given. */

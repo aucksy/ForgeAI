@@ -189,6 +189,11 @@ export async function getBoundedExerciseHistory(
           [exerciseId, ...b1.params, exerciseId, ...b2.params, limit],
         );
 
+  return groupHistoryRows(rows);
+}
+
+/** Rows in session order → sessions with their sets (the frozen grouping). PURE. */
+function groupHistoryRows(rows: readonly HistoryRow[]): ExerciseHistoryEntry[] {
   // Group exactly like the frozen fn — minus its `break`, since SQL already bounded us.
   const out: ExerciseHistoryEntry[] = [];
   const bySession = new Map<string, ExerciseHistoryEntry>();
@@ -204,6 +209,60 @@ export async function getBoundedExerciseHistory(
     const set = mapSet(r);
     group.sets.push(set);
     group.volumeKg += set.weightKg * set.reps;
+  }
+  return out;
+}
+
+/**
+ * Audit Phase 8: `getBoundedExerciseHistory(id, limit, opts)` for many exercises in ONE
+ * statement (per 400) — starting a routine read each card's last time on its own. Window
+ * functions rank each lift's workouts by the same keys; same sessions, sets and order.
+ */
+export async function getBoundedExerciseHistories(
+  exerciseIds: readonly string[],
+  limit: number,
+  opts: { skipEasy?: boolean; before?: HistoryBefore } = {},
+): Promise<Map<string, ExerciseHistoryEntry[]>> {
+  const out = new Map<string, ExerciseHistoryEntry[]>();
+  const unique = [...new Set(exerciseIds)];
+  for (const id of unique) out.set(id, []);
+  if (limit <= 0 || unique.length === 0) return out;
+  const b2 = beforeSql('w2', opts.before);
+  const easy2 = `${opts.skipEasy ? 'AND COALESCE(w2.easy_week, 0) = 0' : ''} ${b2.sql}`;
+  for (let i = 0; i < unique.length; i += 400) {
+    const chunk = unique.slice(i, i + 400);
+    const rows = await getDb().getAllAsync<HistoryRow & { ex: string }>(
+      // Each lift's workouts from the covering index alone (`g`), then dated and ranked (as
+      // progressionHistory's batch: one statement, as fast as the per-lift reads together).
+      `WITH g AS (
+         SELECT s2.exercise_id AS ex, s2.session_id AS sid
+           FROM set_entries s2
+          WHERE s2.exercise_id IN (${chunk.map(() => '?').join(', ')}) AND s2.is_warmup = 0
+          GROUP BY s2.exercise_id, s2.session_id
+       ),
+       ranked AS (
+         SELECT g.ex, g.sid, ROW_NUMBER() OVER (PARTITION BY g.ex ORDER BY w2.started_at DESC, w2.date_iso DESC) AS rn
+           FROM g JOIN workout_sessions w2 ON w2.id = g.sid
+          WHERE 1 = 1 ${easy2}
+       )
+       SELECT r.ex AS ex, ${COLS}
+         FROM ranked r
+         JOIN set_entries se ON se.session_id = r.sid AND se.exercise_id = r.ex AND se.is_warmup = 0
+         JOIN workout_sessions ws ON ws.id = se.session_id
+        WHERE r.rn <= ?
+        ORDER BY r.ex, ws.started_at DESC, ws.date_iso DESC, se.set_number ASC`,
+      [...chunk, ...b2.params, limit],
+    );
+    const byEx = new Map<string, HistoryRow[]>();
+    for (const r of rows) {
+      let list = byEx.get(r.ex);
+      if (!list) {
+        list = [];
+        byEx.set(r.ex, list);
+      }
+      list.push(r);
+    }
+    for (const [ex, list] of byEx) out.set(ex, groupHistoryRows(list));
   }
   return out;
 }

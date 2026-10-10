@@ -186,11 +186,14 @@ describe('the reports say true things', () => {
 });
 
 // ------------------------------------------------------------------ records kept between visits
-const db = vi.hoisted(() => ({ version: 'v1', setReads: 0 }));
+const db = vi.hoisted(() => ({ version: 1, setReads: 0 }));
 vi.mock('@/db', () => ({
   getDb: () => ({
-    getFirstAsync: async (sql: string) => (sql.includes('sets_n') ? { v: db.version } : null),
+    // Audit Phase 8: the training data's version (tracker schema v13's trigger-kept counter).
+    getFirstAsync: async (sql: string) => (sql.includes('training_changes') ? { seq: db.version } : null),
     getAllAsync: async (sql: string) => {
+      // What changed since: a body weight (everything is worked out again).
+      if (sql.includes('FROM training_changes')) return [{ id: '#all' }];
       if (sql.includes('FROM set_entries se')) {
         db.setReads += 1;
         return [
@@ -210,7 +213,7 @@ describe('Progress keeps the records until the data changes', () => {
   beforeEach(async () => {
     const { forgetRecordCache } = await import('@/tracker/services/recordsService');
     forgetRecordCache();
-    db.version = 'v1';
+    db.version = 1;
     db.setReads = 0;
   });
 
@@ -224,7 +227,7 @@ describe('Progress keeps the records until the data changes', () => {
     expect((await getPriorRecordBests('x'))?.by?.weight).toBe(60);
     expect(db.setReads).toBe(1);
     // New data: read again.
-    db.version = 'v2';
+    db.version = 2;
     await getRecordEvents();
     expect(db.setReads).toBe(2);
   });

@@ -120,3 +120,113 @@ export async function getWeightLadder(exerciseId: string): Promise<LadderWeight[
   );
   return rows.map((r) => ({ weightKg: Number(r.weight_kg), loadMode: isLoadMode(r.load_mode) ? r.load_mode : null }));
 }
+
+// ------------------------------------------------------------------ audit Phase 8: batched reads
+
+/** One Target's history to read: an exercise, and optionally one card of it (as `getProgressionHistory`). */
+export interface ProgressionRequest {
+  exerciseId: string;
+  card?: number;
+}
+
+const CHUNK = 400;
+
+function chunks<T>(list: readonly T[]): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < list.length; i += CHUNK) out.push(list.slice(i, i + CHUNK));
+  return out;
+}
+
+interface BatchRow extends Row {
+  ex: string;
+  card: number | null;
+}
+
+/**
+ * The newest `limit` normal (not easy-week) workouts of each exercise — of each of its cards when
+ * `byCard` — with their working sets, in ONE statement per 400 exercises. Same rows and order as
+ * `readHistory` per exercise (and card); window functions rank each lift's workouts.
+ */
+async function readHistoryBatch(exerciseIds: readonly string[], limit: number, byCard: boolean): Promise<Map<string, Row[]>> {
+  const out = new Map<string, Row[]>();
+  const cardOf = (alias: string): string => (byCard ? `COALESCE(${alias}.card_index, 0)` : 'NULL');
+  for (const chunk of chunks([...new Set(exerciseIds)])) {
+    // Each lift's workouts are found from the covering index alone (`g`), THEN dated and ranked —
+    // measured on five years: as fast as the per-lift reads together, in one statement.
+    const rows = await getDb().getAllAsync<BatchRow>(
+      `WITH g AS (
+         SELECT s2.exercise_id AS ex, ${cardOf('s2')} AS card, s2.session_id AS sid
+           FROM set_entries s2
+          WHERE s2.exercise_id IN (${chunk.map(() => '?').join(', ')}) AND s2.is_warmup = 0
+          GROUP BY s2.exercise_id, ${byCard ? 'COALESCE(s2.card_index, 0), ' : ''}s2.session_id
+       ),
+       ranked AS (
+         SELECT g.ex, g.card, g.sid,
+                ROW_NUMBER() OVER (PARTITION BY g.ex, g.card ORDER BY w2.started_at DESC, w2.date_iso DESC) AS rn
+           FROM g JOIN workout_sessions w2 ON w2.id = g.sid
+          WHERE COALESCE(w2.easy_week, 0) = 0
+       )
+       SELECT r.ex AS ex, r.card AS card, se.session_id, ws.date_iso AS date_iso, se.weight_kg, se.reps, se.rpe,
+              se.set_type, se.duration_sec, se.load_mode
+         FROM ranked r
+         JOIN set_entries se ON se.session_id = r.sid AND se.exercise_id = r.ex AND se.is_warmup = 0
+              ${byCard ? 'AND COALESCE(se.card_index, 0) = r.card' : ''}
+         JOIN workout_sessions ws ON ws.id = se.session_id
+        WHERE r.rn <= ?
+        ORDER BY r.ex, r.card, ws.started_at DESC, ws.date_iso DESC, se.set_number ASC`,
+      [...chunk, limit],
+    );
+    for (const r of rows) {
+      const key = byCard ? `${r.ex}|${Number(r.card ?? 0)}` : r.ex;
+      let list = out.get(key);
+      if (!list) {
+        list = [];
+        out.set(key, list);
+      }
+      list.push(r);
+    }
+  }
+  return out;
+}
+
+/**
+ * Audit Phase 8: `getProgressionHistory` for many Targets at once (the Workout tab's stalled
+ * lifts, Home's and a routine's Targets) — two statements at most instead of one or two per
+ * lift. The same sessions, sets and order, the same card fall-back (#11). Result i belongs to
+ * request i.
+ */
+export async function getProgressionHistoryMany(requests: readonly ProgressionRequest[], limit: number): Promise<ProgSession[][]> {
+  if (limit <= 0 || requests.length === 0) return requests.map(() => []);
+  const whole = requests.filter((r) => r.card == null).map((r) => r.exerciseId);
+  const carded = requests.filter((r) => r.card != null).map((r) => r.exerciseId);
+  const [byExercise, byCard] = await Promise.all([
+    whole.length > 0 ? readHistoryBatch(whole, limit, false) : Promise.resolve(new Map<string, Row[]>()),
+    carded.length > 0 ? readHistoryBatch(carded, limit, true) : Promise.resolve(new Map<string, Row[]>()),
+  ]);
+  return requests.map((r) => {
+    if (r.card == null) return groupRows(byExercise.get(r.exerciseId) ?? []);
+    const own = byCard.get(`${r.exerciseId}|${r.card}`) ?? [];
+    if (own.length > 0 || r.card <= 0) return groupRows(own);
+    return groupRows(byCard.get(`${r.exerciseId}|0`) ?? []);
+  });
+}
+
+/** Audit Phase 8: `getWeightLadder` for many exercises in one statement (per 400). */
+export async function getWeightLadders(exerciseIds: readonly string[]): Promise<Map<string, LadderWeight[]>> {
+  const out = new Map<string, LadderWeight[]>();
+  const unique = [...new Set(exerciseIds)];
+  for (const id of unique) out.set(id, []);
+  for (const chunk of chunks(unique)) {
+    const rows = await getDb().getAllAsync<{ exercise_id: string; weight_kg: number; load_mode: string | null }>(
+      `SELECT DISTINCT exercise_id, weight_kg, load_mode
+         FROM set_entries
+        WHERE exercise_id IN (${chunk.map(() => '?').join(', ')}) AND is_warmup = 0
+          AND COALESCE(set_type, 'normal') <> 'warmup' AND reps > 0 AND weight_kg > 0`,
+      chunk,
+    );
+    for (const r of rows) {
+      out.get(r.exercise_id)?.push({ weightKg: Number(r.weight_kg), loadMode: isLoadMode(r.load_mode) ? r.load_mode : null });
+    }
+  }
+  return out;
+}

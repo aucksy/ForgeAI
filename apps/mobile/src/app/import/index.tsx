@@ -46,6 +46,7 @@ import {
 import { dateOrderQuestion, type DateOrder } from '@/tracker/services/importDates';
 import { matchesFrom, suggestMatches, type NameSuggestion } from '@/tracker/services/importMatch';
 import { allHereText, dateRangeText, doneTitle, importButtonLabel, unitsQuestion } from '@/tracker/services/importWords';
+import { forgetKeptTrainingData } from '@/tracker/services/keptData';
 import { findRoutines } from '@/tracker/services/routineRebuild';
 import { looksLikeStrong, parseStrongText, strongFileInfo, unitsExample, type FileUnits } from '@/tracker/services/strongImport';
 import { NewNamesCard, RenamedList } from '@/tracker/components/NewNamesCard';
@@ -152,6 +153,9 @@ export default function ImportScreen() {
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [mode, setMode] = useState<ImportMode>('replace');
   const [progress, setProgress] = useState({ done: 0, total: 0 });
+  // Replace: the workouts already here are removed first (in chunks) — shown as its own step so a
+  // long history never sits at 0 %. null once removing is done (or for Merge).
+  const [removing, setRemoving] = useState<{ done: number; total: number } | null>(null);
   const [result, setResult] = useState<ImportResult | null>(null);
   // Plain-words problems on the screen itself (no Android pop-ups). IM-17: a shared file ForgeAI
   // could not take says why.
@@ -381,6 +385,7 @@ export default function ImportScreen() {
       }
 
       setProgress({ done: 0, total: parsed.workouts.length });
+      setRemoving(null);
       setPhase('importing');
       let demoGone = false;
       try {
@@ -393,6 +398,9 @@ export default function ImportScreen() {
         const r = await runImport(parsed, {
           mode,
           matches: matchesFrom(suggestions, same),
+          onDeleteProgress: (done, total) => {
+            if (mounted.current) setRemoving(done < total ? { done, total } : null);
+          },
           onProgress: (done, total) => {
             if (done % 5 === 0 || done === total) setProgress({ done, total });
           },
@@ -419,6 +427,7 @@ export default function ImportScreen() {
         success();
       } catch {
         warn();
+        setRemoving(null);
         // The import is one transaction and rolled back. Removing the demo was not part of it:
         // put it back, so "nothing was changed" stays true.
         let restored = !demoGone;
@@ -428,6 +437,9 @@ export default function ImportScreen() {
             .catch(() => false);
           void useOnboarding.getState().refreshDemoFlag();
         }
+        // Anything read while the import ran (Home, Progress, Targets) may have shown workouts
+        // that the rollback took away again: drop it all and read Home again.
+        forgetKeptTrainingData();
         if (mounted.current) setPhase('preview');
         setProblem(
           restored
@@ -502,7 +514,11 @@ export default function ImportScreen() {
     return recent > 0 ? recent : found.length;
   }, [parsed]);
 
-  const pct = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
+  const pct = removing
+    ? Math.round((removing.done / Math.max(1, removing.total)) * 100)
+    : progress.total > 0
+      ? Math.round((progress.done / progress.total) * 100)
+      : 0;
 
   return (
     <Screen
@@ -741,7 +757,9 @@ export default function ImportScreen() {
           <View style={{ alignItems: 'center', gap: space.sm }}>
             <Text style={{ fontFamily: type.mono, fontSize: type.size.hero, color: color.ink }}>{pct}%</Text>
             <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>
-              Importing {progress.done} / {progress.total} workouts
+              {removing
+                ? `Removing your old workouts… ${removing.done} / ${removing.total}`
+                : `Importing ${progress.done} / ${progress.total} workouts`}
             </Text>
           </View>
           <View

@@ -53,6 +53,35 @@ describe('enqueueWrite: one FIFO for the whole app', () => {
     await expect(good).resolves.toBe(42);
   });
 
+  it('audit Phase 8 review: the quiet mark (null while a job runs, moves when one starts) and failure listeners', async () => {
+    const { enqueueWrite, onWriteFailed, quietSince, writeQueueMark, writeQueueIdle } = await import('@/db/writeQueue');
+    const failed = vi.fn();
+    const stop = onWriteFailed(failed);
+    const before = writeQueueMark();
+    expect(before).not.toBeNull();
+    expect(quietSince(before)).toBe(true);
+    let inside: number | null | undefined;
+    await enqueueWrite(async () => {
+      inside = writeQueueMark();
+      expect(quietSince(before)).toBe(false);
+    });
+    expect(inside).toBeNull();
+    // A job started and ended since `before`: whatever was read across it is not kept.
+    expect(quietSince(before)).toBe(false);
+    expect(quietSince(null)).toBe(false);
+    expect(failed).not.toHaveBeenCalled();
+    await enqueueWrite(async () => {
+      throw new Error('rolled back');
+    }).catch(() => undefined);
+    await writeQueueIdle();
+    expect(failed).toHaveBeenCalledTimes(1);
+    stop();
+    await enqueueWrite(async () => {
+      throw new Error('again');
+    }).catch(() => undefined);
+    expect(failed).toHaveBeenCalledTimes(1);
+  });
+
   it('a job calls plain (unqueued) helpers inside it — no deadlock', async () => {
     const { enqueueWrite, writeQueueIdle } = await import('@/db/writeQueue');
     const inner = async () => 'inner';

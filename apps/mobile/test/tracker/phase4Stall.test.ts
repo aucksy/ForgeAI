@@ -27,8 +27,8 @@ vi.mock('@/services/coach', () => ({ getTodaysWorkout: async () => ({ planDayId:
 vi.mock('@/db/repos/userRepo', () => ({ getProfile: async () => ({ experience: 'intermediate' }) }));
 vi.mock('@/tracker/db/exerciseInfo', () => ({ getExerciseIdsByCatalogKey: async () => new Map(), getTrackerExercisesByIds: async () => new Map() }));
 // Four workouts at 60 kg × 9 (stuck: R4) for bench, squat and press; row and curl move up.
-vi.mock('@/tracker/db/progressionHistory', () => ({
-  getProgressionHistory: async (id: string) =>
+vi.mock('@/tracker/db/progressionHistory', () => {
+  const getProgressionHistory = async (id: string) =>
     ['2026-10-17', '2026-10-14', '2026-10-10', '2026-10-07'].map((dateISO, i) => ({
       dateISO,
       sets: [0, 1, 2].map(() => ({
@@ -37,8 +37,14 @@ vi.mock('@/tracker/db/progressionHistory', () => ({
         rpe: null,
         setType: 'normal' as const,
       })),
-    })),
-}));
+    }));
+  // Audit Phase 8: the Targets read every lift's history in one go.
+  return {
+    getProgressionHistory,
+    getProgressionHistoryMany: async (reqs: { exerciseId: string }[]) => Promise.all(reqs.map((r) => getProgressionHistory(r.exerciseId))),
+    getWeightLadders: async () => new Map(),
+  };
+});
 
 const { stalledLiftsInPlan } = await import('@/tracker/services/coachTargets');
 

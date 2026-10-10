@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 12;
+export const TRACKER_SCHEMA_VERSION = 13;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -130,6 +130,105 @@ export async function initTrackerSchema(): Promise<void> {
   await ensureColumn('plan_exercises', 'rest_sec', 'INTEGER');
   await ensureColumn('plan_exercises', 'superset_group', 'INTEGER');
   await ensureColumn('plan_exercises', 'note', 'TEXT');
+  // v13 (audit Phase 8 — speed with years of data): a change counter for the training data.
+  await ensureTrainingChanges();
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
+}
+
+/**
+ * v13: `training_changes` — what changed in the training data, kept by SQLite itself.
+ *
+ * Records and Targets are worked out from every set the member ever logged (28,000+ rows after
+ * five years). They are kept in memory until the data they were made from changes. The old
+ * "has it changed?" check counted writes of ANY kind, so a draft save or a settings write threw
+ * the kept records away. Now triggers on the tables records and Targets read keep:
+ *  - `#version`: a number that goes up with every change that can alter a record or a Target
+ *    (a set added, edited or deleted; a workout deleted or moved; an exercise added, renamed,
+ *    re-typed or merged; a body weight). A draft save, a set's or workout's note, a superset,
+ *    a workout's name, a meta row, a meal, a routine never move it.
+ *  - one row per exercise touched, holding the `#version` of its last change, so after a
+ *    Finish or an edit only those exercises are worked out again;
+ *  - `#all`: a change that touches every exercise (body weight: the share of body weight a
+ *    pull-up lifts) — the next read rebuilds everything.
+ * The table holds one row per exercise at most. It is never backed up or erased: the number
+ * only ever goes up on this phone, and every erase, restore or import moves it like any write.
+ *
+ * Triggers fire for every connection (a Drive restore on its own connection too), which is why
+ * this replaces SQLite's per-connection write counters. Every statement in a trigger body is
+ * conflict-free (UPDATE by key, INSERT … WHERE NOT EXISTS), so an outer `INSERT OR IGNORE`
+ * can never skip a mark.
+ *
+ * CHANGING THESE TRIGGERS — read before editing. They are created with CREATE TRIGGER IF NOT
+ * EXISTS, so on every phone that already ran v13 an edited body below is silently IGNORED (the
+ * old trigger stays). To change one: add a NEW schema version whose migration runs
+ * `DROP TRIGGER IF EXISTS <name>` and then creates the new body. And any migration that
+ * rebuilds `set_entries`, `exercises`, `workout_sessions` or `body_weight` (create a new table,
+ * copy, drop the old, rename) drops that table's triggers with it: it must run
+ * `ensureTrainingChanges()` again afterwards, or records and Targets stop seeing changes.
+ */
+const V = "COALESCE((SELECT seq FROM training_changes WHERE id = '#version'), 0)";
+const BUMP = "UPDATE training_changes SET seq = seq + 1 WHERE id = '#version';";
+
+/** Mark the exercise ids `idsSql` (a SELECT of one column named `id`) as changed at the current version. */
+function markIds(idsSql: string): string {
+  return `UPDATE training_changes SET seq = ${V} WHERE id IN (SELECT id FROM (${idsSql}));
+          INSERT INTO training_changes(id, seq)
+            SELECT DISTINCT x.id, ${V} FROM (${idsSql}) AS x
+             WHERE x.id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM training_changes t WHERE t.id = x.id);`;
+}
+
+/** Mark ONE exercise id (`expr`, e.g. NEW.exercise_id): by key, so a set insert stays cheap. */
+function markOne(expr: string): string {
+  return `UPDATE training_changes SET seq = ${V} WHERE id = ${expr};
+          INSERT INTO training_changes(id, seq) SELECT ${expr}, ${V}
+           WHERE ${expr} IS NOT NULL AND NOT EXISTS (SELECT 1 FROM training_changes WHERE id = ${expr});`;
+}
+
+const MARK_ALL = `UPDATE training_changes SET seq = ${V} WHERE id = '#all';
+                  INSERT INTO training_changes(id, seq) SELECT '#all', ${V}
+                   WHERE NOT EXISTS (SELECT 1 FROM training_changes WHERE id = '#all');`;
+
+/** Columns of a set that records or Targets read (not its note or superset). */
+const SET_COLS = ['session_id', 'exercise_id', 'set_number', 'weight_kg', 'reps', 'is_warmup', 'duration_sec', 'distance_m', 'load_mode', 'rpe', 'set_type', 'card_index'];
+const changed = (cols: readonly string[]): string => cols.map((c) => `OLD.${c} IS NOT NEW.${c}`).join(' OR ');
+
+export const TRAINING_CHANGE_TRIGGERS: readonly string[] = [
+  `CREATE TRIGGER IF NOT EXISTS tc_sets_ins AFTER INSERT ON set_entries BEGIN
+     ${BUMP} ${markOne('NEW.exercise_id')}
+   END`,
+  `CREATE TRIGGER IF NOT EXISTS tc_sets_del AFTER DELETE ON set_entries BEGIN
+     ${BUMP} ${markOne('OLD.exercise_id')}
+   END`,
+  `CREATE TRIGGER IF NOT EXISTS tc_sets_upd AFTER UPDATE ON set_entries WHEN ${changed(SET_COLS)} BEGIN
+     ${BUMP} ${markOne('OLD.exercise_id')} ${markOne('NEW.exercise_id')}
+   END`,
+  // BEFORE: the workout's sets are still there to say which exercises it touched.
+  `CREATE TRIGGER IF NOT EXISTS tc_sessions_del BEFORE DELETE ON workout_sessions BEGIN
+     ${BUMP} ${markIds('SELECT exercise_id AS id FROM set_entries WHERE session_id = OLD.id')}
+   END`,
+  `CREATE TRIGGER IF NOT EXISTS tc_sessions_upd AFTER UPDATE ON workout_sessions
+     WHEN ${changed(['id', 'date_iso', 'started_at', 'easy_week'])} BEGIN
+     ${BUMP} ${markIds('SELECT exercise_id AS id FROM set_entries WHERE session_id IN (OLD.id, NEW.id)')}
+   END`,
+  // Any real change to an exercise row (its name, type, counting, share of body weight, library link…).
+  `CREATE TRIGGER IF NOT EXISTS tc_exercises_upd AFTER UPDATE ON exercises
+     WHEN ${changed(['id', 'name', 'aliases', 'muscle_group', 'secondary_muscles', 'equipment', 'is_compound', 'increment_kg', 'catalog_key', 'log_type', 'load_mode', 'bw_share', 'muscles', 'media_uri', 'media_type', 'dist_unit'])} BEGIN
+     ${BUMP} ${markOne('OLD.id')} ${markOne('NEW.id')}
+   END`,
+  // A new exercise has no sets (no record), but it can be the easier / harder version a Target links to.
+  `CREATE TRIGGER IF NOT EXISTS tc_exercises_ins AFTER INSERT ON exercises BEGIN ${BUMP} END`,
+  `CREATE TRIGGER IF NOT EXISTS tc_exercises_del AFTER DELETE ON exercises BEGIN
+     ${BUMP} ${markOne('OLD.id')}
+   END`,
+  `CREATE TRIGGER IF NOT EXISTS tc_bw_ins AFTER INSERT ON body_weight BEGIN ${BUMP} ${MARK_ALL} END`,
+  `CREATE TRIGGER IF NOT EXISTS tc_bw_upd AFTER UPDATE ON body_weight WHEN ${changed(['date_iso', 'weight_kg'])} BEGIN ${BUMP} ${MARK_ALL} END`,
+  `CREATE TRIGGER IF NOT EXISTS tc_bw_del AFTER DELETE ON body_weight BEGIN ${BUMP} ${MARK_ALL} END`,
+];
+
+async function ensureTrainingChanges(): Promise<void> {
+  const db = getDb();
+  await db.execAsync('CREATE TABLE IF NOT EXISTS training_changes (id TEXT PRIMARY KEY, seq INTEGER NOT NULL)');
+  await db.runAsync("INSERT INTO training_changes(id, seq) SELECT '#version', 0 WHERE NOT EXISTS (SELECT 1 FROM training_changes WHERE id = '#version')");
+  for (const sql of TRAINING_CHANGE_TRIGGERS) await db.execAsync(sql);
 }

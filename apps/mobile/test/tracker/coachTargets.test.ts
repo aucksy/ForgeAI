@@ -43,7 +43,12 @@ vi.mock('@/services/coach', () => ({
     targets: plan.map((p) => ({ exerciseId: p.exerciseId })),
   }),
 }));
-vi.mock('@/tracker/db/progressionHistory', () => ({ getProgressionHistory: async () => [] }));
+vi.mock('@/tracker/db/progressionHistory', () => ({
+  getProgressionHistory: async () => [],
+  // Audit Phase 8: the Targets read every lift's history in one go.
+  getProgressionHistoryMany: async (reqs: unknown[]) => reqs.map(() => []),
+  getWeightLadders: async () => new Map(),
+}));
 vi.mock('@/tracker/db/exerciseInfo', () => ({
   getExerciseIdsByCatalogKey: async () => new Map(),
   getTrackerExercisesByIds: async () =>

@@ -145,7 +145,7 @@ describe('every table the tracker adds is backed up (or left out on purpose)', (
     const schema = readFileSync('src/tracker/db/trackerSchema.ts', 'utf8');
     const snap = readFileSync('src/cloud/snapshot.ts', 'utf8');
     const tables = [...schema.matchAll(/CREATE TABLE IF NOT EXISTS (\w+)/g)].map((m) => m[1]);
-    expect(tables.filter((t) => !snap.includes(`name: '${t}'`))).toEqual(['progress_photos']); // photos stay on the phone
+    expect(tables.filter((t) => !snap.includes(`name: '${t}'`))).toEqual(['progress_photos', 'training_changes']); // photos stay on the phone; the change counter is this phone's own
   });
 });
 

@@ -9,7 +9,7 @@
 import { getDb } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 import type { PriorBests } from '@/tracker/services/liveRecords';
-import { getPriorRecordBests } from '@/tracker/services/recordsService';
+import { getPriorRecordBests, getPriorRecordBestsMany } from '@/tracker/services/recordsService';
 
 /** NULL = default rest, 0 = off, >0 = seconds. */
 export async function getExerciseRestSec(exerciseId: string): Promise<number | null> {
@@ -61,4 +61,63 @@ export async function getCarriedNote(exerciseId: string): Promise<string | null>
  */
 export async function getPriorBests(exerciseId: string): Promise<PriorBests | null> {
   return getPriorRecordBests(exerciseId);
+}
+
+// ------------------------------------------------------------------ audit Phase 8: every card at once
+
+const CHUNK = 400;
+
+/** `getExerciseRestSec` for many exercises: one statement (per 400). Absent = default rest. */
+export async function getExerciseRestSecs(exerciseIds: readonly string[]): Promise<Map<string, number | null>> {
+  const out = new Map<string, number | null>();
+  const unique = [...new Set(exerciseIds)];
+  for (let i = 0; i < unique.length; i += CHUNK) {
+    const chunk = unique.slice(i, i + CHUNK);
+    const rows = await getDb().getAllAsync<{ exercise_id: string; rest_sec: number | null }>(
+      `SELECT exercise_id, rest_sec FROM exercise_prefs WHERE exercise_id IN (${chunk.map(() => '?').join(', ')})`,
+      chunk,
+    );
+    for (const r of rows) out.set(r.exercise_id, r.rest_sec ?? null);
+  }
+  return out;
+}
+
+/**
+ * `getCarriedNote` for many exercises: one statement (per 400). Each exercise's newest workout
+ * (by start) is ranked with a window function; its first non-empty note (in saved order) carries.
+ */
+export async function getCarriedNotes(exerciseIds: readonly string[]): Promise<Map<string, string | null>> {
+  const out = new Map<string, string | null>();
+  const unique = [...new Set(exerciseIds)];
+  for (let i = 0; i < unique.length; i += CHUNK) {
+    const chunk = unique.slice(i, i + CHUNK);
+    const rows = await getDb().getAllAsync<{ ex: string; note: string | null }>(
+      `WITH latest AS (
+         SELECT ex, sid FROM (
+           SELECT s2.exercise_id AS ex, ws.id AS sid,
+                  ROW_NUMBER() OVER (PARTITION BY s2.exercise_id ORDER BY ws.started_at DESC) AS rn
+             FROM set_entries s2
+             JOIN workout_sessions ws ON ws.id = s2.session_id
+            WHERE s2.exercise_id IN (${chunk.map(() => '?').join(', ')})
+         ) WHERE rn = 1
+       )
+       SELECT l.ex AS ex, se.note AS note
+         FROM latest l
+         JOIN set_entries se ON se.session_id = l.sid AND se.exercise_id = l.ex
+        WHERE se.note IS NOT NULL AND TRIM(se.note) <> ''
+        ORDER BY l.ex, se.rowid`,
+      chunk,
+    );
+    for (const r of rows) {
+      if (out.has(r.ex)) continue;
+      const n = r.note?.trim();
+      if (n) out.set(r.ex, n);
+    }
+  }
+  return out;
+}
+
+/** `getPriorBests` for many exercises (one records read for the lot). */
+export async function getPriorBestsMany(exerciseIds: readonly string[]): Promise<Map<string, PriorBests | null>> {
+  return getPriorRecordBestsMany(exerciseIds);
 }

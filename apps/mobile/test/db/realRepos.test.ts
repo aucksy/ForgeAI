@@ -56,7 +56,7 @@ describe('start-up on a fresh install (real schema)', () => {
     expect(db.all('PRAGMA foreign_keys')[0]).toEqual({ foreign_keys: 1 });
     const meta = Object.fromEntries(db.all<{ key: string; value: string }>('SELECT key, value FROM meta').map((r) => [r.key, r.value]));
     expect(meta.schema_version).toBe('1');
-    expect(meta.tracker_schema_version).toBe('12');
+    expect(meta.tracker_schema_version).toBe('13');
     expect(meta.member_schema_version).toBe('1');
   });
 
@@ -276,10 +276,12 @@ describe('erase all data (real SQL, foreign keys on)', () => {
     const { eraseAllData, hasMemberProfile } = await import('@/onboarding/db/dataActions');
     await eraseAllData();
     expect(await hasMemberProfile()).toBe(false);
-    // Every table except `meta` (migration versions) must be empty.
+    // Every table except `meta` (migration versions) and `training_changes` (tracker schema v13:
+    // a change counter and the ids of exercises changed — no member data; it must keep counting
+    // up across an erase so nothing kept in memory is mistaken for current) must be empty.
     const left = db
       .tables()
-      .filter((t) => t !== 'meta')
+      .filter((t) => t !== 'meta' && t !== 'training_changes')
       .map((t) => [t, db.count(t)] as const)
       .filter(([, n]) => n > 0);
     expect(left).toEqual([]);

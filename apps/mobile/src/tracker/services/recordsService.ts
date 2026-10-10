@@ -5,9 +5,11 @@
  * while every Phase 3 screen derives its records here.
  */
 import { getDb } from '@/db';
+import { onWriteFailed, quietSince, writeQueueMark } from '@/db/writeQueue';
 import { todayISO } from '@/lib/date';
 
 import { getTrackerExercisesByIds, type TrackerExercise } from '../db/exerciseInfo';
+import { trainingChangesSince, trainingVersion } from '../db/trainingVersion';
 import { isLoadMode } from '../engine/logTypes';
 import { exerciseRecords, type ExerciseRecords, type RecordEvent, type RecordKind, type RecordSession } from '../engine/records';
 import { bodyweightOn, type BodyweightPoint } from '../engine/volume';
@@ -90,71 +92,131 @@ export interface ExerciseRecordSet {
 
 /**
  * Phase 3 review: Progress re-read every working set on each visit (8,800 rows after a big
- * Hevy import). The full read is now kept until the data it was made from changes. The
- * fingerprint is one cheap query over what records depend on: the sets (count, newest row,
- * how many carry their own counting), the workouts (count, start times, days, newest id),
- * body weight, and each exercise's name and settings.
+ * Hevy import). The full read is now kept until the data it was made from changes.
  *
- * Third review: counts alone missed an edit. Saving an edited workout deletes its sets and
- * inserts them again, and when it is the newest workout SQLite gives the new rows the same
- * row numbers — so fixing "600 kg" to "60 kg" left every count as it was and Progress kept
- * the old record until a restart. SQLite's own write counters close that: total_changes()
- * moves with every row this connection writes, `PRAGMA data_version` with every commit from
- * another connection (demo data, erase and Drive restore use one of their own).
+ * Audit Phase 8: "has it changed?" used to be SQLite's own write counters (total_changes() and
+ * `PRAGMA data_version`), which move with EVERY write — so a draft save, a note or a settings
+ * row threw the kept records away and the next screen re-read all 28,000 sets of five years.
+ * Now the tracker schema's `training_changes` table (v13, kept by triggers — see
+ * trackerSchema.ts) says exactly what changed: its `#version` moves only when a set, a
+ * workout's day or time, an exercise or a body weight changes, and each exercise row holds the
+ * version of its own last change. After a Finish or an edit only those exercises are worked
+ * out again and merged into the kept records; a body-weight change (`#all`) rebuilds all.
+ * Each exercise's records depend only on its own sets, its own row and the body weight, so the
+ * merge equals a full rebuild (test/tracker/phase8Records.test.ts checks it on random edits).
+ *
+ * Audit Phase 8 review — a write that rolls back: a read while a queued write (an import, a
+ * Finish, an edit, a merge) is open on the shared connection sees its uncommitted rows and a
+ * higher `#version`; when it rolls back the version drops again. So (1) nothing read while a
+ * write runs, or while one started and ended during the read, is ever kept (`quietSince`);
+ * (2) a kept version HIGHER than the current one is a rolled-back write's (or another
+ * database's) — dropped and rebuilt; (3) a failed write drops the kept records at once.
  */
-let cache: { version: string; data: Map<string, ExerciseRecordSet> } | null = null;
+let cache: { version: number; data: Map<string, ExerciseRecordSet> } | null = null;
 /**
  * Review fix (Phase 5): the full read in progress. Progress's top card and its records section
  * both ask for every record as the tab opens; the second caller now shares the first one's read
  * (same data version) instead of reading every working set again alongside it.
  */
-let inflight: { version: string | null; promise: Promise<Map<string, ExerciseRecordSet>> } | null = null;
+let inflight: { version: number | null; mark: number; promise: Promise<Map<string, ExerciseRecordSet>> } | null = null;
 
-async function dataVersion(): Promise<string> {
-  const db = getDb();
-  const other = await db.getFirstAsync<{ data_version: number }>('PRAGMA data_version');
-  const row = await db.getFirstAsync<Record<string, string | number | null>>(
-    `SELECT total_changes() AS changes,
-            (SELECT COUNT(*) FROM set_entries) AS sets_n,
-            (SELECT MAX(rowid) FROM set_entries) AS sets_max,
-            (SELECT COUNT(*) FROM set_entries WHERE load_mode IS NOT NULL) AS sets_modes,
-            (SELECT COUNT(*) FROM workout_sessions) AS ws_n,
-            (SELECT TOTAL(started_at) FROM workout_sessions) AS ws_starts,
-            (SELECT TOTAL(CAST(replace(date_iso, '-', '') AS INTEGER)) FROM workout_sessions) AS ws_days,
-            (SELECT MAX(id) FROM workout_sessions) AS ws_max,
-            (SELECT COUNT(*) FROM body_weight) AS bw_n,
-            (SELECT TOTAL(weight_kg) FROM body_weight) AS bw_sum,
-            (SELECT group_concat(id || ':' || name || ':' || COALESCE(log_type, '') || ':' || COALESCE(load_mode, '') || ':' || COALESCE(bw_share, ''), '|')
-               FROM exercises) AS ex`,
-  );
-  return JSON.stringify([other?.data_version ?? null, row ?? null]);
-}
+export { trainingVersion } from '../db/trainingVersion';
 
 /** Drop the kept records (tests; a new data source). */
 export function forgetRecordCache(): void {
   cache = null;
   inflight = null;
+  catching = null;
+}
+
+function pick(data: ReadonlyMap<string, ExerciseRecordSet>, exerciseIds: readonly string[]): Map<string, ExerciseRecordSet> {
+  const some = new Map<string, ExerciseRecordSet>();
+  for (const id of exerciseIds) {
+    const r = data.get(id);
+    if (r) some.set(id, r);
+  }
+  return some;
+}
+
+/** A catch-up in progress (see `catchUp`). */
+let catching: { version: number; mark: number; promise: Promise<Map<string, ExerciseRecordSet> | null> } | null = null;
+
+// A failed (rolled-back) write: nothing read while it ran is trusted.
+onWriteFailed(forgetRecordCache);
+
+/**
+ * The kept records brought up to `version`: only the exercises changed since they were kept are
+ * worked out again. null when that is not possible (nothing kept, a body-weight change) — the
+ * caller rebuilds.
+ */
+async function catchUp(version: number, mark: number | null): Promise<Map<string, ExerciseRecordSet> | null> {
+  const kept = cache;
+  if (kept == null) return null;
+  if (kept.version === version) return kept.data;
+  if (kept.version > version) {
+    // A write landed after `version` was read (and the kept records already include it), or
+    // the kept version is a rolled-back write's / another database's: then the version is
+    // still below it — drop it and rebuild.
+    const now = await trainingVersion();
+    if (now != null && now >= kept.version && cache === kept) return kept.data;
+    if (cache === kept) cache = null;
+    return null;
+  }
+  // While a write runs: worked out for this read only, never shared or kept.
+  if (mark == null) return mergeChanged(kept, version, mark);
+  // Home reads records from two places at once: the second waits for the first one's catch-up.
+  if (catching && catching.version === version && catching.mark === mark) return catching.promise;
+  const promise = mergeChanged(kept, version, mark);
+  const mine = { version, mark, promise };
+  catching = mine;
+  const done = (): void => {
+    if (catching === mine) catching = null;
+  };
+  promise.then(done, done);
+  return promise;
+}
+
+async function mergeChanged(
+  kept: { version: number; data: Map<string, ExerciseRecordSet> },
+  version: number,
+  mark: number | null,
+): Promise<Map<string, ExerciseRecordSet> | null> {
+  const changed = await trainingChangesSince(kept.version);
+  if (changed.includes('#all')) return null;
+  const ids = changed.filter((id) => !id.startsWith('#'));
+  const fresh = ids.length > 0 ? await computeRecords(ids) : new Map<string, ExerciseRecordSet>();
+  const data = new Map(kept.data);
+  for (const id of ids) {
+    const r = fresh.get(id);
+    if (r) data.set(id, r);
+    else data.delete(id);
+  }
+  // Rows read after `version` was read are at least that new; anything changed since is marked
+  // with a later version and is worked out again on the next read.
+  if (quietSince(mark) && (cache === kept || cache == null || cache.version < version)) cache = { version, data };
+  return data;
 }
 
 /** Every record of these exercises (all exercises when omitted). */
 export async function getRecordsByExercise(exerciseIds?: readonly string[]): Promise<Map<string, ExerciseRecordSet>> {
-  const version = await dataVersion().catch(() => null);
-  if (version != null && cache != null && cache.version === version) {
-    if (exerciseIds == null) return cache.data;
-    const some = new Map<string, ExerciseRecordSet>();
-    for (const id of exerciseIds) {
-      const r = cache.data.get(id);
-      if (r) some.set(id, r);
-    }
-    return some;
+  // Taken before anything is read: a write that starts during the read makes it unkeepable.
+  const mark = writeQueueMark();
+  const version = await trainingVersion();
+  if (version != null && cache != null) {
+    const data = await catchUp(version, mark).catch(() => null);
+    if (data) return exerciseIds == null ? data : pick(data, exerciseIds);
   }
+  // Nothing kept: a few exercises (a workout's cards) are cheaper read on their own.
   if (exerciseIds != null) return computeRecords(exerciseIds);
-  if (inflight && inflight.version === version) return inflight.promise;
+  // While a write runs: read for this caller only, never shared or kept.
+  if (mark == null) return computeRecords();
+  // Shared only within one quiet spell: a read that a rolled-back write ran under is never handed on.
+  if (inflight && inflight.version === version && inflight.mark === mark) return inflight.promise;
   const promise = computeRecords().then((data) => {
-    if (version != null) cache = { version, data };
+    if (version != null && quietSince(mark) && (cache == null || cache.version <= version)) cache = { version, data };
     return data;
   });
-  const mine = { version, promise };
+  const mine = { version, mark, promise };
   inflight = mine;
   const done = (): void => {
     if (inflight === mine) inflight = null;
@@ -163,7 +225,8 @@ export async function getRecordsByExercise(exerciseIds?: readonly string[]): Pro
   return promise;
 }
 
-async function computeRecords(exerciseIds?: readonly string[]): Promise<Map<string, ExerciseRecordSet>> {
+/** Records worked out from the database now, nothing kept (exported for tests: the full rebuild). */
+export async function computeRecords(exerciseIds?: readonly string[]): Promise<Map<string, ExerciseRecordSet>> {
   const [rows, bw] = await Promise.all([readWorkingSets(exerciseIds), getBodyweightTimeline()]);
   const grouped = groupRecordSessions(rows);
   const infos = await getTrackerExercisesByIds([...grouped.keys()]);
@@ -231,10 +294,21 @@ export function priorBestsFrom(records: ExerciseRecords, info: Pick<TrackerExerc
 }
 
 export async function getPriorRecordBests(exerciseId: string): Promise<PriorBests | null> {
-  // Starting a workout builds every card at once: one read per exercise, or none at all when
-  // Progress already worked the records out and nothing has changed since.
-  const [byExercise, bw] = await Promise.all([getRecordsByExercise([exerciseId]), getBodyweightTimeline()]);
-  const r = byExercise.get(exerciseId);
-  if (!r) return null;
-  return priorBestsFrom(r.records, r.info, bw, todayISO());
+  return (await getPriorRecordBestsMany([exerciseId])).get(exerciseId) ?? null;
+}
+
+/**
+ * Audit Phase 8: every card of a workout at once — one version check, one records read (none
+ * when the kept records are current) and one body-weight read, instead of those per card.
+ */
+export async function getPriorRecordBestsMany(exerciseIds: readonly string[]): Promise<Map<string, PriorBests | null>> {
+  const out = new Map<string, PriorBests | null>();
+  if (exerciseIds.length === 0) return out;
+  const [byExercise, bw] = await Promise.all([getRecordsByExercise(exerciseIds), getBodyweightTimeline()]);
+  const today = todayISO();
+  for (const id of exerciseIds) {
+    const r = byExercise.get(id);
+    out.set(id, r ? priorBestsFrom(r.records, r.info, bw, today) : null);
+  }
+  return out;
 }

@@ -1,9 +1,10 @@
 /**
  * Analytics service — per-exercise stats and the full analytics bundle.
  */
+import { getDb } from '@/db';
 import { getAllExercises, getExerciseById } from '@/db/repos/exerciseRepo';
 import { getNutritionRange } from '@/db/repos/nutritionRepo';
-import { getAllPrs, getPrHistory } from '@/db/repos/prRepo';
+import { getAllPrs } from '@/db/repos/prRepo';
 import { getBodyWeightHistory } from '@/db/repos/userRepo';
 import {
   getConsistency,
@@ -129,10 +130,12 @@ async function buildStrengthTrend(
 ): Promise<{ dateISO: string; score: number }[]> {
   const [exercises, weights] = await Promise.all([getAllExercises(), getBodyWeightHistory()]);
   const keyExercises = exercises.filter((e) => KEY_LIFT.test(e.name));
-  const histories = await Promise.all(keyExercises.map((e) => getPrHistory(e.id))); // asc
+  // Audit Phase 8: one read for every key lift (was one per library lift — 87 on a phone with
+  // the full library, most of them never logged).
+  const histories = await getPrHistories(keyExercises.map((e) => e.id)); // asc
 
   const progressions = keyExercises
-    .map((e, i) => ({ name: e.name, prs: histories[i].filter((p) => p.kind === 'e1rm') }))
+    .map((e) => ({ name: e.name, prs: (histories.get(e.id) ?? []).filter((p) => p.kind === 'e1rm') }))
     .filter((p) => p.prs.length > 0);
 
   return monthEndPoints(from, today).map((dateISO) => {
@@ -149,6 +152,50 @@ async function buildStrengthTrend(
     const score = computeStrengthScore({ bodyWeightKg: bodyWeightAt(weights, dateISO), lifts }).score;
     return { dateISO, score };
   });
+}
+
+interface PrRow {
+  id: string;
+  exercise_id: string;
+  kind: string;
+  value: number;
+  weight_kg: number;
+  reps: number;
+  date_iso: string;
+  session_id: string;
+}
+
+/**
+ * `prRepo.getPrHistory` for many exercises in one read (400 ids a statement): each exercise's
+ * records oldest first (by day, then as stored) — the same lists, the same order.
+ */
+async function getPrHistories(exerciseIds: readonly string[]): Promise<Map<string, PersonalRecord[]>> {
+  const out = new Map<string, PersonalRecord[]>();
+  const unique = [...new Set(exerciseIds)];
+  for (let i = 0; i < unique.length; i += 400) {
+    const chunk = unique.slice(i, i + 400);
+    const rows = await getDb().getAllAsync<PrRow>(
+      `SELECT * FROM personal_records WHERE exercise_id IN (${chunk.map(() => '?').join(', ')})
+        ORDER BY date_iso ASC, rowid ASC`,
+      chunk,
+    );
+    for (const r of rows) {
+      const pr: PersonalRecord = {
+        id: r.id,
+        exerciseId: r.exercise_id,
+        kind: r.kind as PersonalRecord['kind'],
+        value: r.value,
+        weightKg: r.weight_kg,
+        reps: r.reps,
+        dateISO: r.date_iso,
+        sessionId: r.session_id,
+      };
+      const list = out.get(r.exercise_id);
+      if (list) list.push(pr);
+      else out.set(r.exercise_id, [pr]);
+    }
+  }
+  return out;
 }
 
 function bodyWeightAt(entries: { dateISO: string; weightKg: number }[], dateISO: string): number {

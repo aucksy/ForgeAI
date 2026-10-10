@@ -11,13 +11,16 @@
  * numbers change) or replaced by an equivalent read.
  */
 import { getDb } from '@/db';
-import { getRecentSessionDetails, getSessionDetail } from '@/db/repos/workoutRepo';
+import { onWriteFailed, quietSince, writeQueueMark } from '@/db/writeQueue';
+import { getSessionDetail } from '@/db/repos/workoutRepo';
 import { buildInsight } from '@/engine/insights';
 import { computeRecovery } from '@/engine/recovery';
 import { addDays, todayISO, weekStartISO } from '@/lib/date';
 import type { ConsistencyCell, DashboardData, MuscleGroup, RecoveryStatus, SessionDetail, VolumePoint } from '@/types/models';
 
+import { dataStamp } from '../db/dataStamp';
 import { getTrackerExercisesByIds, type TrackerExercise } from '../db/exerciseInfo';
+import { getRecentSessionDetailsAndModes } from '../db/sessionDetails';
 import { isLoadMode, type LoadMode } from '../engine/logTypes';
 import {
   bodyweightOn,
@@ -66,12 +69,96 @@ export async function getSetModes(exerciseIds: readonly string[]): Promise<Map<s
 
 /** What the volume rule needs for these exercise ids (plus the body-weight timeline). */
 export async function getVolumeContext(exerciseIds: readonly string[]): Promise<VolumeContext> {
-  const [bw, exercises, setModes] = await Promise.all([
-    getBodyweightTimeline(),
-    getTrackerExercisesByIds(exerciseIds),
+  const [base, setModes] = await Promise.all([
+    getBaseContext(exerciseIds),
     getSetModes(exerciseIds).catch(() => new Map<string, LoadMode>()),
   ]);
-  return { bw, exercises, setModes };
+  return { ...base, setModes };
+}
+
+/**
+ * Audit Phase 8 (packet C): sets of these WORKOUTS that keep their own counting — found through
+ * the workouts' own sets, where `getSetModes` walked every set of their lifts across all history.
+ * The same answer for any set of these workouts.
+ */
+export async function getSetModesForSessions(sessionIds: readonly string[]): Promise<Map<string, LoadMode>> {
+  const out = new Map<string, LoadMode>();
+  const unique = [...new Set(sessionIds)];
+  for (let i = 0; i < unique.length; i += 400) {
+    const chunk = unique.slice(i, i + 400);
+    const rows = await getDb().getAllAsync<{ id: string; load_mode: string | null }>(
+      `SELECT id, load_mode FROM set_entries
+        WHERE load_mode IS NOT NULL AND session_id IN (${chunk.map(() => '?').join(', ')})`,
+      chunk,
+    );
+    for (const r of rows) if (isLoadMode(r.load_mode)) out.set(r.id, r.load_mode);
+  }
+  return out;
+}
+
+/** Raw stored counting values → the valid ones (as `getSetModes` keeps them). PURE. */
+export function validSetModes(raw: ReadonlyMap<string, string | null>): Map<string, LoadMode> {
+  const out = new Map<string, LoadMode>();
+  for (const [id, m] of raw) if (isLoadMode(m)) out.set(id, m);
+  return out;
+}
+
+/**
+ * Audit Phase 8 (packet C): the body-weight timeline and the exercises' settings, kept until
+ * anything is saved (`dataStamp`). History read both again for every page of 30 workouts, and
+ * Home, Progress and the reports each read them again per call. A kept exercise is only read
+ * once; the timeline once per change. Callers get their own copies.
+ */
+let kept: {
+  stamp: string;
+  bw: Promise<BodyweightPoint[]>;
+  exercises: Map<string, TrackerExercise | null>;
+} | null = null;
+
+/** Drop the kept context (tests; a new data source; a failed write). */
+export function forgetVolumeContext(): void {
+  kept = null;
+}
+
+// Audit Phase 8 review: a failed (rolled-back) write — nothing read while it ran is trusted.
+onWriteFailed(forgetVolumeContext);
+
+async function getBaseContext(exerciseIds: readonly string[]): Promise<Omit<VolumeContext, 'setModes'>> {
+  // A write that starts during the read makes what it read unkeepable (its rows may roll back).
+  const mark = writeQueueMark();
+  const stamp = await dataStamp().catch(() => null);
+  if (stamp == null) {
+    // Can't tell whether anything changed: read it all, keep nothing.
+    const [bw, exercises] = await Promise.all([getBodyweightTimeline(), getTrackerExercisesByIds(exerciseIds)]);
+    return { bw, exercises };
+  }
+  if (!kept || kept.stamp !== stamp) {
+    const bw = getBodyweightTimeline();
+    kept = { stamp, bw, exercises: new Map() };
+    // A failed read is never kept.
+    const mine = kept;
+    bw.catch(() => {
+      if (kept === mine) kept = null;
+    });
+  }
+  const cache = kept;
+  const missing = [...new Set(exerciseIds)].filter((id) => !cache.exercises.has(id));
+  const [bw, fresh] = await Promise.all([
+    cache.bw,
+    missing.length > 0 ? getTrackerExercisesByIds(missing) : Promise.resolve(new Map<string, TrackerExercise>()),
+  ]);
+  if (!quietSince(mark)) {
+    // A write ran during the read: hand this read on, keep none of it.
+    if (kept === cache) kept = null;
+  } else {
+    for (const id of missing) cache.exercises.set(id, fresh.get(id) ?? null);
+  }
+  const exercises = new Map<string, TrackerExercise>();
+  for (const id of exerciseIds) {
+    const info = cache.exercises.has(id) ? cache.exercises.get(id) : fresh.get(id);
+    if (info) exercises.set(id, info);
+  }
+  return { bw: bw.slice(), exercises };
 }
 
 const PLAIN: Omit<VolumeExercise, 'id' | 'muscles'> = { logType: 'weight_reps', loadMode: 'one', bwShare: 0 };
@@ -106,11 +193,23 @@ export function toVolumeSession(detail: SessionDetail, ctx: VolumeContext): Volu
   };
 }
 
-/** Recompute a batch of details (one context read for all of them). */
-export async function withVolume(details: SessionDetail[]): Promise<SessionDetail[]> {
+/**
+ * Recompute a batch of details (one context read for all of them). `setModes` — the details'
+ * own sets' stored counting (`detailsAndModesFor`) — saves looking them up again.
+ */
+export async function withVolume(
+  details: SessionDetail[],
+  setModes?: ReadonlyMap<string, string | null>,
+): Promise<SessionDetail[]> {
   if (details.length === 0) return details;
   const ids = details.flatMap((d) => d.exercises.map((g) => g.exercise.id));
-  const ctx = await getVolumeContext(ids);
+  const [base, modes] = await Promise.all([
+    getBaseContext(ids),
+    setModes
+      ? Promise.resolve(validSetModes(setModes))
+      : getSetModesForSessions(details.map((d) => d.id)).catch(() => new Map<string, LoadMode>()),
+  ]);
+  const ctx: VolumeContext = { ...base, setModes: modes };
   return details.map((d) => applyVolume(d, ctx));
 }
 
@@ -121,9 +220,13 @@ export async function getSessionDetailWithVolume(id: string): Promise<SessionDet
   return (await withVolume([d]))[0];
 }
 
-/** The frozen `getRecentSessionDetails`, with Phase 2 volume. */
+/**
+ * The frozen `getRecentSessionDetails`, with Phase 2 volume. Audit Phase 8: the same details
+ * from three reads (`getRecentSessionDetailsAndModes`), not two per workout.
+ */
 export async function getRecentSessionDetailsWithVolume(limit: number): Promise<SessionDetail[]> {
-  return withVolume(await getRecentSessionDetails(limit));
+  const { details, setModes } = await getRecentSessionDetailsAndModes(limit);
+  return withVolume(details, setModes);
 }
 
 /** A muscle worked only by timed or distance sets (a plank, a run) still counts as worked. */
@@ -254,7 +357,8 @@ async function readRange(fromISO: string, toISO: string): Promise<{ rows: RangeR
       WHERE ws.date_iso BETWEEN ? AND ?`,
     [fromISO, toISO],
   );
-  const ctx = await getVolumeContext([...new Set(rows.map((r) => r.exercise_id))]);
+  // Each row carries its own counting (`load_mode`), so the per-set lookup is not needed here.
+  const ctx = await getBaseContext([...new Set(rows.map((r) => r.exercise_id))]);
   return { rows, ctx };
 }
 

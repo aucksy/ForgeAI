@@ -15,7 +15,8 @@ import { bootRealApp, type RealDb } from '../helpers/realDb';
 type Row = Record<string, string | number>;
 
 /** Tables the backup leaves out ON PURPOSE (see src/cloud/snapshot.ts header). */
-const NOT_BACKED_UP = ['meta', 'progress_photos', 'sync_outbox'];
+// + `training_changes` (tracker schema v13): this phone's change counter, kept by triggers — not member data.
+const NOT_BACKED_UP = ['meta', 'progress_photos', 'sync_outbox', 'training_changes'];
 
 /** One row per table, every column non-NULL. FK-safe insert order. */
 const FULL_ROWS: [string, Row][] = [
@@ -89,7 +90,7 @@ describe('the Drive backup round trip keeps every table and column of the real s
     expect(lost).toEqual([]);
   });
 
-  it('only meta, progress photos and the push outbox stay out of the backup (by design)', async () => {
+  it('only meta, progress photos, the push outbox and the change counter stay out of the backup (by design)', async () => {
     const { exportSnapshot } = await import('@/cloud/snapshot');
     const env = JSON.parse(await exportSnapshot()) as { tables: Record<string, unknown[]> };
     const out = db.tables().filter((t) => !(t in env.tables));

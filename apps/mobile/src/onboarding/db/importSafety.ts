@@ -59,8 +59,54 @@ export async function writeDemoMeta(tx: Pick<SQLiteDatabase, 'runAsync'>, meta: 
 
 export async function takeSafetyCopy(): Promise<SafetyCopy> {
   const json = await exportSnapshot();
+  return { json, meta: await readDemoMeta(), sessionIds: snapshotSessionIds(json) };
+}
+
+/** Index of the `]` or `}` closing the array/object opened at `open`, or -1. Skips strings. PURE. */
+function closingBracket(json: string, open: number): number {
+  let depth = 0;
+  for (let i = open; i < json.length; i++) {
+    const c = json.charCodeAt(i);
+    if (c === 34) {
+      // A string: to its closing quote, past every escaped character.
+      for (i++; i < json.length; i++) {
+        const d = json.charCodeAt(i);
+        if (d === 92) i++;
+        else if (d === 34) break;
+      }
+    } else if (c === 91 || c === 123) depth++;
+    else if (c === 93 || c === 125) {
+      depth--;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
+/**
+ * Audit Phase 8: the workouts in a snapshot (`tables.workout_sessions[].id`) read from just that
+ * part of the text — parsing the whole copy (12.5 MB for 5 years) only for the ids built every
+ * row of every table a second time. `"workout_sessions":` can only be that key: inside a JSON
+ * string every quote is escaped, and no column has that name. Anything unexpected → the whole
+ * text is parsed, as before. PURE.
+ */
+export function snapshotSessionIds(json: string): string[] {
+  const key = '"workout_sessions":';
+  const at = json.indexOf(key);
+  if (at >= 0 && json.charCodeAt(at + key.length) === 91 /* [ */) {
+    const start = at + key.length;
+    const end = closingBracket(json, start);
+    if (end > start) {
+      try {
+        const rows = JSON.parse(json.slice(start, end + 1)) as unknown;
+        if (Array.isArray(rows)) return (rows as { id?: unknown }[]).map((s) => String(s.id));
+      } catch {
+        // fall through to the full parse
+      }
+    }
+  }
   const sessions = (JSON.parse(json) as { tables?: Record<string, { id?: unknown }[]> }).tables?.workout_sessions ?? [];
-  return { json, meta: await readDemoMeta(), sessionIds: sessions.map((s) => String(s.id)) };
+  return sessions.map((s) => String(s.id));
 }
 
 /** Workouts to keep through a restore: the sessions, their sets and the exercises they use. */

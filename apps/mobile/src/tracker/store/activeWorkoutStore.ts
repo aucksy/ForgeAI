@@ -19,7 +19,13 @@ import {
 } from '@/components/saveProblemStore';
 import { getDb, getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
-import { getBoundedExerciseHistory, type HistoryBefore, type TrackedSetEntry } from '@/tracker/db/exerciseHistory';
+import {
+  getBoundedExerciseHistories,
+  getBoundedExerciseHistory,
+  type ExerciseHistoryEntry,
+  type HistoryBefore,
+  type TrackedSetEntry,
+} from '@/tracker/db/exerciseHistory';
 import {
   getTrackerExercise,
   getTrackerExercisesByIds,
@@ -28,7 +34,15 @@ import {
 } from '@/tracker/db/exerciseInfo';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
-import { getCarriedNote, getExerciseRestSec, getPriorBests, setExerciseRestSec } from '@/tracker/db/exercisePrefs';
+import {
+  getCarriedNote,
+  getCarriedNotes,
+  getExerciseRestSec,
+  getExerciseRestSecs,
+  getPriorBests,
+  getPriorBestsMany,
+  setExerciseRestSec,
+} from '@/tracker/db/exercisePrefs';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
@@ -569,14 +583,65 @@ export function nextCardNumber(list: readonly Pick<DraftExercise, 'exerciseId' |
   return n;
 }
 
+/**
+ * Audit Phase 8: what every card of a new workout reads, fetched for ALL cards at once — one
+ * statement per kind (last time, rest, carried note, record bests, how it is logged) instead
+ * of five or more per card (a 7-card routine made ~35 reads and checked the records' version
+ * seven times). Same values as the per-card reads.
+ */
+interface CardFacts {
+  hist: Map<string, ExerciseHistoryEntry[]>;
+  rest: Map<string, number | null>;
+  notes: Map<string, string | null>;
+  bests: Map<string, PriorBests | null>;
+  infos: Map<string, TrackerExercise>;
+}
+
+/**
+ * The facts for these cards; null when last time cannot be read in one go (each card then
+ * reads its own, as before). The extras never block a start: a failed read is "none".
+ */
+async function prefetchCardFacts(
+  cards: readonly { exerciseId: string; card: number }[],
+  before: HistoryBefore | null = null,
+): Promise<CardFacts | null> {
+  if (cards.length === 0) return null;
+  const ids = [...new Set(cards.map((c) => c.exerciseId))];
+  // A later card (back-off) may need to look past last time for its own sets (#11).
+  const deep = new Set(cards.filter((c) => c.card > 0).map((c) => c.exerciseId));
+  const shallow = ids.filter((id) => !deep.has(id));
+  const opts = { skipEasy: true, before: before ?? undefined };
+  const none = <V,>(): Map<string, V> => new Map<string, V>();
+  try {
+    const [h1, h12, rest, notes, bests, infos] = await Promise.all([
+      shallow.length > 0 ? getBoundedExerciseHistories(shallow, 1, opts) : Promise.resolve(none<ExerciseHistoryEntry[]>()),
+      deep.size > 0 ? getBoundedExerciseHistories([...deep], CARD_LOOKBACK, opts) : Promise.resolve(none<ExerciseHistoryEntry[]>()),
+      getExerciseRestSecs(ids).catch(() => none<number | null>()),
+      before ? Promise.resolve(none<string | null>()) : getCarriedNotes(ids).catch(() => none<string | null>()),
+      before ? Promise.resolve(none<PriorBests | null>()) : getPriorBestsMany(ids).catch(() => none<PriorBests | null>()),
+      getTrackerExercisesByIds(ids).catch(() => none<TrackerExercise>()),
+    ]);
+    return { hist: new Map([...h1, ...h12]), rest, notes, bests, infos };
+  } catch {
+    return null;
+  }
+}
+
 async function buildDraftExercise(
   ex: Pick<Exercise, 'id' | 'name' | 'muscleGroup' | 'equipment' | 'incrementKg'>,
   targetSets: number,
   /**
    * `card`: this card's place among the workout's cards of the SAME exercise (0 = first).
    * `routine`: the card comes from a routine — its sets as saved (RP-19), its rest and note.
+   * `facts`: every card's reads made at once (`prefetchCardFacts`); absent = this card reads its own.
    */
-  opts: { exactSets?: boolean; card?: number; before?: HistoryBefore | null; routine?: RoutineExerciseExtras | null } = {},
+  opts: {
+    exactSets?: boolean;
+    card?: number;
+    before?: HistoryBefore | null;
+    routine?: RoutineExerciseExtras | null;
+    facts?: CardFacts | null;
+  } = {},
 ): Promise<DraftExercise> {
   // Bounded in SQL: start-from-plan builds one draft per plan exercise, and the frozen
   // read would materialise each lift's ENTIRE working-set history just to keep its last
@@ -587,7 +652,16 @@ async function buildDraftExercise(
   // never a later one's numbers, which a tick would write into the past — and carries no
   // note or live-record bests from today.
   const before = opts.before ?? undefined;
-  const [hist, restSec, note, bests, info] = await Promise.all([
+  const facts = opts.facts;
+  const [hist, restSec, note, bests, info] = facts
+    ? [
+        facts.hist.get(ex.id) ?? [],
+        facts.rest.get(ex.id) ?? null,
+        before ? null : facts.notes.get(ex.id) ?? null,
+        before ? null : facts.bests.get(ex.id) ?? null,
+        facts.infos.get(ex.id) ?? null,
+      ]
+    : await Promise.all([
     // A later card (back-off) may need to look past last time for its own sets (#11).
     getBoundedExerciseHistory(ex.id, card > 0 ? CARD_LOOKBACK : 1, { skipEasy: true, before }),
     // Phase 1 extras never block starting a workout: a failed read just means
@@ -697,13 +771,16 @@ async function cardsWithTargets(
   // LW-05: the same lift twice (heavy, then back-off) — each card reads its own card of last time.
   const cards = cardOccurrences(rows.map((pe) => pe.exerciseId));
   const [exercises, early] = await Promise.all([
-    Promise.all(
-      rows.map((pe, i) =>
-        buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, {
-          exactSets: easy,
-          card: cards[i],
-          routine: { sets: pe.sets ?? null, restSec: pe.restSec ?? null, note: pe.note ?? null, supersetGroup: pe.supersetGroup ?? null },
-        }),
+    prefetchCardFacts(rows.map((pe, i) => ({ exerciseId: pe.exerciseId, card: cards[i] }))).then((facts) =>
+      Promise.all(
+        rows.map((pe, i) =>
+          buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, {
+            exactSets: easy,
+            card: cards[i],
+            routine: { sets: pe.sets ?? null, restSec: pe.restSec ?? null, note: pe.note ?? null, supersetGroup: pe.supersetGroup ?? null },
+            facts,
+          }),
+        ),
       ),
     ),
     preloadTargets(
@@ -1127,10 +1204,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
 
     startFromSession: async (session) => {
       const cards = cardOccurrences(session.exercises.map((g) => g.exercise.id));
+      const facts = await prefetchCardFacts(session.exercises.map((g, i) => ({ exerciseId: g.exercise.id, card: cards[i] })));
       const exercises = await Promise.all(
         session.exercises.map((g, i) => {
           const working = g.sets.filter((s) => !s.isWarmup).length;
-          return buildDraftExercise(g.exercise, working > 0 ? working : 1, { card: cards[i] });
+          return buildDraftExercise(g.exercise, working > 0 ? working : 1, { card: cards[i], facts });
         }),
       );
       set({
@@ -1176,7 +1254,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         return card;
       });
       const before = correctingBefore(get());
-      const built = await Promise.all(picked.map((ex, i) => buildDraftExercise(ex, 1, { card: cards[i], before })));
+      const facts = picked.length > 1 ? await prefetchCardFacts(picked.map((ex, i) => ({ exerciseId: ex.id, card: cards[i] })), before) : null;
+      const built = await Promise.all(picked.map((ex, i) => buildDraftExercise(ex, 1, { card: cards[i], before, facts })));
       if (isCorrecting(get())) for (const d of built) delete d.note;
       mutate((list) => [...list, ...built], true);
     },

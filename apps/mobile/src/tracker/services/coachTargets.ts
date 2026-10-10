@@ -22,12 +22,15 @@ import { getTodaysWorkout } from '@/services/coach';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { getExerciseIdsByCatalogKey, getTrackerExercisesByIds, type TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { getRoutineAnywhere } from '@/tracker/db/folderRepo';
-import { getProgressionHistory, getWeightLadder } from '@/tracker/db/progressionHistory';
+import { getProgressionHistoryMany, getWeightLadders, type LadderWeight } from '@/tracker/db/progressionHistory';
 import { convertCounting, getsTarget, repsPerSide, weightIsEach, type LoadMode } from '@/tracker/engine/logTypes';
 import { computeProgressionTarget, freeTarget, toEasyTarget, withEffort, type ProgressionTarget, type VersionLink } from '@/tracker/engine/progression';
 import { EASY_REASON, easySets } from '@/tracker/plans/easyWeek';
 import { effortReason, STALL_RULES } from '@/tracker/plans/effort';
 import { getPlanNow, planNowOf } from '@/tracker/services/planState';
+import { trainingVersion } from '@/tracker/db/trainingVersion';
+import { onWriteFailed, quietSince, writeQueueMark } from '@/db/writeQueue';
+import { displayUnits } from '@/lib/units';
 import { folderOfRoutine } from '@/tracker/db/folderRepo';
 import type { Exercise, PlanExercise, TodaysWorkout, UserProfile } from '@/types/models';
 
@@ -81,14 +84,9 @@ function link(key: string | undefined, ids: Map<string, string>): VersionLink | 
   return e ? { id: ids.get(e.key) ?? null, name: e.name } : null;
 }
 
-/** The ladder read (TG-01), never in the way of a Target: a failed read uses the history's own weights. */
-async function ladderOf(exerciseId: string, dbMode: LoadMode, cardMode: LoadMode): Promise<number[] | undefined> {
-  try {
-    const rows = await getWeightLadder(exerciseId);
-    return rows.map((r) => convertCounting(r.weightKg, r.loadMode ?? dbMode, cardMode));
-  } catch {
-    return undefined;
-  }
+/** The ladder (TG-01) in the card's counting; absent when its read failed (the history's own weights are used). */
+function ladderIn(rows: readonly LadderWeight[] | undefined, dbMode: LoadMode, cardMode: LoadMode): number[] | undefined {
+  return rows?.map((r) => convertCounting(r.weightKg, r.loadMode ?? dbMode, cardMode));
 }
 
 /**
@@ -99,54 +97,108 @@ async function ladderOf(exerciseId: string, dbMode: LoadMode, cardMode: LoadMode
 async function targetsFor(items: TargetItem[], includeToday: boolean): Promise<ProgressionTarget[]> {
   const today = todayISO();
   const ids = items.map((it) => it.exerciseId ?? it.pe.exerciseId);
-  const [experience, { infos, versionIds }] = await Promise.all([experienceOrDefault(), extrasFor(ids)]);
-  const targets = await Promise.all(
-    items.map(async (it, i): Promise<ProgressionTarget> => {
-      const { pe } = it;
-      const id = ids[i];
-      const info = infos.get(id);
-      // The routine row's exercise, or (swapped in) the card's own (TG-06).
-      const exercise: Exercise = id === pe.exerciseId ? pe.exercise : info ?? pe.exercise;
-      const logType = info?.logType ?? 'weight_reps';
-      const target = { targetSets: pe.targetSets, repRangeMin: pe.repRangeMin, repRangeMax: pe.repRangeMax };
-      // Distance work and timed cardio get no Target (the "+5 s" rule is for holds).
-      if (!getsTarget(logType, info?.muscles.primary ?? [])) return freeTarget({ exercise, target, logType });
-      const entry = catalogEntry(info?.catalogKey);
-      // TG-03: every old set is read in the card's counting (50 as typed = 25 each), so a
-      // Counting change never doubles or halves the Target. A set with no counting of its own
-      // was logged under the exercise's saved one.
-      const dbMode: LoadMode = info?.loadMode ?? 'one';
-      const mode: LoadMode = it.loadMode ?? dbMode;
-      const [raw, ladder] = await Promise.all([
-        getProgressionHistory(id, HISTORY_SESSIONS + 1, it.card != null ? { card: it.card } : {}),
-        ladderOf(id, dbMode, mode),
-      ]);
-      const history = raw
-        .filter((h) => (includeToday ? h.dateISO <= today : h.dateISO < today))
-        .slice(0, HISTORY_SESSIONS)
-        .map((h) => ({
-          ...h,
-          sets: h.sets.map((x) => ({ ...x, weightKg: convertCounting(x.weightKg, x.loadMode ?? dbMode, mode) })),
-        }));
-      const t = computeProgressionTarget({
-        exercise: { ...exercise, id },
-        target,
-        history,
-        todayISO: today,
-        experience,
-        logType,
-        repCap: entry?.repCap ?? null,
-        holdCapSec: entry?.holdCapSec ?? null,
-        harder: link(entry?.harder, versionIds),
-        easier: link(entry?.easier, versionIds),
-        ...(ladder ? { ladder } : {}),
-      });
-      if (weightIsEach(mode)) t.each = true;
-      if (repsPerSide(mode)) t.perSide = true;
-      return t;
-    }),
-  );
-  return targets;
+  // Audit Phase 8: the same Targets asked again with nothing changed (the Workout tab on every
+  // visit, a routine started twice) come from memory. They depend on the training data (its
+  // version moves with every set, workout, exercise or body-weight change — never a draft),
+  // the day, the member's experience and the items themselves.
+  // Audit Phase 8 review: a read while a queued write runs (its rows uncommitted, its version
+  // possibly rolled back) is worked out for this caller only, never remembered.
+  const mark = writeQueueMark();
+  const [experience, version] = await Promise.all([experienceOrDefault(), trainingVersion()]);
+  // A version below one remembered: that one was a rolled-back write's (or another database's).
+  if (version != null && version < targetMemoTop) forgetTargetMemo();
+  const key = version == null ? null : memoKey(version, today, includeToday, experience, items, ids);
+  const hit = key != null ? targetMemo.get(key) : undefined;
+  if (hit) return [...hit];
+  const [{ infos, versionIds }, histories, ladders] = await Promise.all([
+    extrasFor(ids),
+    // One statement for every lift's history (two when some cards read their own sets), and
+    // one for every ladder — instead of two per lift.
+    getProgressionHistoryMany(
+      items.map((it, i) => (it.card != null ? { exerciseId: ids[i], card: it.card } : { exerciseId: ids[i] })),
+      HISTORY_SESSIONS + 1,
+    ),
+    // The ladder is never in the way of a Target: a failed read uses the history's own weights.
+    (async () => getWeightLadders(ids))().catch(() => null),
+  ]);
+  const targets = items.map((it, i): ProgressionTarget => {
+    const { pe } = it;
+    const id = ids[i];
+    const info = infos.get(id);
+    // The routine row's exercise, or (swapped in) the card's own (TG-06).
+    const exercise: Exercise = id === pe.exerciseId ? pe.exercise : info ?? pe.exercise;
+    const logType = info?.logType ?? 'weight_reps';
+    const target = { targetSets: pe.targetSets, repRangeMin: pe.repRangeMin, repRangeMax: pe.repRangeMax };
+    // Distance work and timed cardio get no Target (the "+5 s" rule is for holds).
+    if (!getsTarget(logType, info?.muscles.primary ?? [])) return freeTarget({ exercise, target, logType });
+    const entry = catalogEntry(info?.catalogKey);
+    // TG-03: every old set is read in the card's counting (50 as typed = 25 each), so a
+    // Counting change never doubles or halves the Target. A set with no counting of its own
+    // was logged under the exercise's saved one.
+    const dbMode: LoadMode = info?.loadMode ?? 'one';
+    const mode: LoadMode = it.loadMode ?? dbMode;
+    const ladder = ladders ? ladderIn(ladders.get(id), dbMode, mode) : undefined;
+    const history = histories[i]
+      .filter((h) => (includeToday ? h.dateISO <= today : h.dateISO < today))
+      .slice(0, HISTORY_SESSIONS)
+      .map((h) => ({
+        ...h,
+        sets: h.sets.map((x) => ({ ...x, weightKg: convertCounting(x.weightKg, x.loadMode ?? dbMode, mode) })),
+      }));
+    const t = computeProgressionTarget({
+      exercise: { ...exercise, id },
+      target,
+      history,
+      todayISO: today,
+      experience,
+      logType,
+      repCap: entry?.repCap ?? null,
+      holdCapSec: entry?.holdCapSec ?? null,
+      harder: link(entry?.harder, versionIds),
+      easier: link(entry?.easier, versionIds),
+      ...(ladder ? { ladder } : {}),
+    });
+    if (weightIsEach(mode)) t.each = true;
+    if (repsPerSide(mode)) t.perSide = true;
+    return t;
+  });
+  if (key != null && version != null && quietSince(mark)) {
+    targetMemo.set(key, targets);
+    targetMemoTop = Math.max(targetMemoTop, version);
+    while (targetMemo.size > TARGET_MEMO_SIZE) targetMemo.delete(targetMemo.keys().next().value as string);
+  }
+  return [...targets];
+}
+
+/** The last few Target computations (Workout tab, Home, the routine being started). */
+const TARGET_MEMO_SIZE = 8;
+const targetMemo = new Map<string, readonly ProgressionTarget[]>();
+/** The highest training version a remembered Target was worked out at. */
+let targetMemoTop = -1;
+
+/** Drop the remembered Targets (tests; a failed write). */
+export function forgetTargetMemo(): void {
+  targetMemo.clear();
+  targetMemoTop = -1;
+}
+
+// A failed (rolled-back) write: nothing read while it ran is trusted.
+onWriteFailed(forgetTargetMemo);
+
+function memoKey(
+  version: number,
+  today: string,
+  includeToday: boolean,
+  experience: string,
+  items: readonly TargetItem[],
+  ids: readonly string[],
+): string {
+  // Display units shape the ladder's rungs (kg / lb).
+  const parts = items.map((it, i) => {
+    const { pe } = it;
+    return [ids[i], pe.exerciseId, pe.targetSets, pe.repRangeMin, pe.repRangeMax, it.loadMode ?? '', it.card ?? ''].join(':');
+  });
+  return JSON.stringify([version, today, includeToday, experience, displayUnits(), parts]);
 }
 
 /** One card of the live workout, as the Target sees it. */

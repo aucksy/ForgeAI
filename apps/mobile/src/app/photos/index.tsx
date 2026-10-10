@@ -9,11 +9,15 @@
  *  - PG-17 / D11: "Save to phone gallery" on each photo (through the share list), and the
  *    opt-in backup copy is kept current when photos are added, re-dated or deleted.
  *  - PG-18: the viewer pinches and double-taps to zoom.
+ *
+ * Audit Phase 8 (PG-19, years of photos): the grid is a virtualised list of rows of three
+ * (`photoRows`), so only the rows near the screen are drawn — 500 photos open as fast as 5.
+ * The tiles, the buttons above them and every state look exactly as before.
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import { useCallback, useState, type ReactNode } from 'react';
-import { Modal, Pressable, Text, useWindowDimensions, View } from 'react-native';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { FlatList, Modal, Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -26,6 +30,7 @@ import { Glyph } from '@/tracker/components/TrackerGlyph';
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { ZoomImage } from '@/tracker/components/ZoomImage';
 import { setPhotoDate } from '@/tracker/db/bodyEntries';
+import { photoRows, tileWidth, type PhotoRow } from '@/tracker/lib/photoGrid';
 import { isPhotoBackupOn, refreshPhotoBackup, relinkPhotosFromBackup } from '@/tracker/services/photoBackup';
 import { savePhotoToGallery } from '@/tracker/services/photoSave';
 import {
@@ -39,6 +44,11 @@ import {
 
 const COLS = 3;
 const GAP = 8;
+
+/** The space between two rows of tiles (the grid's old wrap gap). */
+function RowGap() {
+  return <View style={{ height: GAP }} />;
+}
 
 /** One action line in the dark viewer. */
 function ViewerAction({ label, icon, onPress, danger }: { label: string; icon: ReactNode; onPress: () => void; danger?: boolean }) {
@@ -194,107 +204,126 @@ export default function ProgressPhotosScreen() {
   };
 
   // Screen padding is 20 on each side.
-  const tile = Math.floor((width - space.screenX * 2 - GAP * (COLS - 1)) / COLS);
+  const tile = tileWidth(width, space.screenX, GAP, COLS);
+  const rows = useMemo(() => photoRows(photos ?? [], COLS), [photos]);
+
+  const renderTile = (p: ProgressPhoto) => {
+    const order = picked.indexOf(p.id);
+    return (
+      <Pressable
+        key={p.id}
+        onPress={() => onTap(p)}
+        accessibilityRole="button"
+        accessibilityLabel={`Progress photo, ${dateWithYear(p.dateISO)}${picking ? (order >= 0 ? ', picked' : ', tap to pick') : ''}`}
+        style={{ width: tile, gap: 4 }}
+      >
+        <View
+          style={{
+            width: tile,
+            height: Math.round(tile * 1.33),
+            borderRadius: radius.md,
+            overflow: 'hidden',
+            backgroundColor: color.surfaceRaised,
+            borderWidth: order >= 0 ? 2 : 1,
+            borderColor: order >= 0 ? color.accent : color.border,
+          }}
+        >
+          <Image source={{ uri: p.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" cachePolicy="memory" />
+          {order >= 0 ? (
+            <View
+              style={{
+                position: 'absolute',
+                top: 6,
+                right: 6,
+                width: 22,
+                height: 22,
+                borderRadius: 11,
+                backgroundColor: color.accent,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ fontFamily: type.monoBold, fontSize: type.size.caption, color: '#1F0D05' }}>{order + 1}</Text>
+            </View>
+          ) : null}
+        </View>
+        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted, textAlign: 'center' }}>
+          {tinyDate(p.dateISO)}
+        </Text>
+      </Pressable>
+    );
+  };
 
   return (
     <Screen
       title="Progress photos"
       subtitle={backupOn ? 'Private. Your newest are in your phone’s backup too.' : 'Private. They stay on this phone.'}
       onBack={() => goBack(router, '/analytics')}
+      scroll={false}
     >
-      <View style={{ gap: space.lg }}>
-        {picking ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
-            <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
-              {picked.length === 0 ? 'Tap the first photo' : 'Now tap the second photo'}
-            </Text>
-            <Pressable
-              onPress={() => {
-                setPicking(false);
-                setPicked([]);
-              }}
-              accessibilityRole="button"
-              hitSlop={8}
-            >
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.accent }}>Cancel</Text>
-            </Pressable>
-          </View>
-        ) : (
-          <View style={{ gap: space.md }}>
-            <PrimaryButton label="Add a photo" icon="camera" loading={busy} onPress={() => setAdding(true)} />
-            {photos && photos.length >= 2 ? (
-              <GhostButton label="Compare two photos" icon="camera" onPress={() => setPicking(true)} />
+      <FlatList
+        data={rows}
+        keyExtractor={(r) => r.key}
+        renderItem={({ item }: { item: PhotoRow<ProgressPhoto> }) => (
+          <View style={{ flexDirection: 'row', gap: GAP }}>{item.photos.map(renderTile)}</View>
+        )}
+        // A pick, a cancel or a new width redraws the rows on screen.
+        extraData={`${picking ? 1 : 0}|${picked.join(',')}|${tile}`}
+        ItemSeparatorComponent={RowGap}
+        ListHeaderComponent={
+          <View style={{ gap: space.lg, paddingBottom: space.lg }}>
+            {picking ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
+                <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+                  {picked.length === 0 ? 'Tap the first photo' : 'Now tap the second photo'}
+                </Text>
+                <Pressable
+                  onPress={() => {
+                    setPicking(false);
+                    setPicked([]);
+                  }}
+                  accessibilityRole="button"
+                  hitSlop={8}
+                >
+                  <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.accent }}>Cancel</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <View style={{ gap: space.md }}>
+                <PrimaryButton label="Add a photo" icon="camera" loading={busy} onPress={() => setAdding(true)} />
+                {photos && photos.length >= 2 ? (
+                  <GhostButton label="Compare two photos" icon="camera" onPress={() => setPicking(true)} />
+                ) : null}
+              </View>
+            )}
+
+            {note ? (
+              <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, lineHeight: 17, color: color.criticalText }}>
+                {note}
+              </Text>
             ) : null}
           </View>
-        )}
-
-        {note ? (
-          <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, lineHeight: 17, color: color.criticalText }}>
-            {note}
-          </Text>
-        ) : null}
-
-        {photos === null && failed ? (
-          <LoadError what="your photos" onRetry={retry} />
-        ) : photos === null ? (
-          <Skeleton width="100%" height={tile} radius={radius.md} />
-        ) : photos.length === 0 ? (
-          <EmptyState
-            icon="camera"
-            title="No photos yet"
-            body="Take one in the same spot and light every few weeks. Then compare any two side by side."
-          />
-        ) : (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: GAP }}>
-            {photos.map((p) => {
-              const order = picked.indexOf(p.id);
-              return (
-                <Pressable
-                  key={p.id}
-                  onPress={() => onTap(p)}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Progress photo, ${dateWithYear(p.dateISO)}${picking ? (order >= 0 ? ', picked' : ', tap to pick') : ''}`}
-                  style={{ width: tile, gap: 4 }}
-                >
-                  <View
-                    style={{
-                      width: tile,
-                      height: Math.round(tile * 1.33),
-                      borderRadius: radius.md,
-                      overflow: 'hidden',
-                      backgroundColor: color.surfaceRaised,
-                      borderWidth: order >= 0 ? 2 : 1,
-                      borderColor: order >= 0 ? color.accent : color.border,
-                    }}
-                  >
-                    <Image source={{ uri: p.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" cachePolicy="memory" />
-                    {order >= 0 ? (
-                      <View
-                        style={{
-                          position: 'absolute',
-                          top: 6,
-                          right: 6,
-                          width: 22,
-                          height: 22,
-                          borderRadius: 11,
-                          backgroundColor: color.accent,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <Text style={{ fontFamily: type.monoBold, fontSize: type.size.caption, color: '#1F0D05' }}>{order + 1}</Text>
-                      </View>
-                    ) : null}
-                  </View>
-                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted, textAlign: 'center' }}>
-                    {tinyDate(p.dateISO)}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-        )}
-      </View>
+        }
+        ListEmptyComponent={
+          photos === null && failed ? (
+            <LoadError what="your photos" onRetry={retry} />
+          ) : photos === null ? (
+            <Skeleton width="100%" height={tile} radius={radius.md} />
+          ) : (
+            <EmptyState
+              icon="camera"
+              title="No photos yet"
+              body="Take one in the same spot and light every few weeks. Then compare any two side by side."
+            />
+          )
+        }
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        initialNumToRender={5}
+        maxToRenderPerBatch={4}
+        windowSize={7}
+        contentContainerStyle={{ paddingBottom: space.xxl }}
+      />
 
       <TrackerSheet visible={adding} title="Add a progress photo" subtitle="Same spot, same light, every few weeks." onClose={() => setAdding(false)}>
         <View style={{ gap: 2 }}>

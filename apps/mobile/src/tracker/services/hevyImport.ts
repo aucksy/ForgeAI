@@ -19,9 +19,11 @@
  * — with its picture, steps and type — instead of a new custom copy. A Merge re-run also
  * adds the timed and distance sets that earlier imports skipped to workouts already here.
  *
- * Writes reuse createSession + addSetsWithMeta (which wraps the frozen addSets — its
- * auto set-numbering AND PR detection — then persists rpe/set_type via the additive
- * columns), createExercise and deleteSession — no frozen file/signature edited.
+ * Writes (audit Phase 8): the import's own write path, `tracker/db/importWrite` — multi-row
+ * INSERTs with every column at once and the frozen record rule worked out in JavaScript, giving
+ * the same database the frozen createSession + addSetsWithMeta (set numbering + PR detection)
+ * gave one row at a time; Replace deletes in chunks of ids. createExercise as before — no
+ * frozen file/signature edited.
  */
 import * as XLSX from 'xlsx';
 
@@ -29,9 +31,9 @@ import { getDb, getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 import { createExercise } from '@/db/repos/exerciseRepo';
 import { originalStarts } from '@/tracker/db/importKeys';
-import { createSession, deleteSession, getSessionsBetween } from '@/db/repos/workoutRepo';
+import { getSessionsBetween } from '@/db/repos/workoutRepo';
 import { catalogEntry, catalogEntryByName } from '@/tracker/catalog/exerciseCatalog';
-import { addSetsWithMeta } from '@/tracker/db/trackerSets';
+import { fastImportWriter, legacyImportWriter, type ImportWriter } from '@/tracker/db/importWrite';
 import { isLoadMode, isLogType, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import type { DayType, Exercise, MuscleGroup } from '@/types/models';
 
@@ -212,31 +214,50 @@ export function sanitizeTitle(s: string): string {
 const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 /**
- * v0.28.1 — a .csv export is UTF-8 text with no marker at its start, which SheetJS reads as
- * Latin-1 ("búlgara" became "bÃºlgara", a new exercise). Decode base64 → UTF-8 here; null when
- * the bytes are not UTF-8 (a file Excel saved as Windows-1252 goes to SheetJS as before). PURE.
+ * Audit Phase 8: each character's 6-bit value by its char code (-1 = not a base64 letter, skipped
+ * — '=', white space, line breaks and anything else, exactly as the old `replace` + `indexOf`
+ * did; '-' and '_' are skipped too, as before). `indexOf` per character was ~3x slower on 5 MB.
  */
-export function base64Utf8(base64: string): string | null {
-  const clean = base64.replace(/[^A-Za-z0-9+/]/g, '');
-  const bytes = new Uint8Array(Math.floor((clean.length * 6) / 8));
+const B64_VALUE: Int16Array = (() => {
+  const t = new Int16Array(256).fill(-1);
+  for (let i = 0; i < B64.length; i++) t[B64.charCodeAt(i)] = i;
+  return t;
+})();
+
+/** The bytes a base64 text holds (non-letters skipped) and how many there are. PURE. */
+function base64Bytes(base64: string): { bytes: Uint8Array; n: number } {
+  const bytes = new Uint8Array(Math.floor((base64.length * 6) / 8) + 1);
   let n = 0;
   let buf = 0;
   let bits = 0;
-  for (let i = 0; i < clean.length; i++) {
-    buf = ((buf << 6) | B64.indexOf(clean[i])) & 0xffffff;
+  for (let i = 0; i < base64.length; i++) {
+    const code = base64.charCodeAt(i);
+    const v = code < 256 ? B64_VALUE[code] : -1;
+    if (v < 0) continue;
+    buf = ((buf << 6) | v) & 0xffffff;
     bits += 6;
     if (bits >= 8) {
       bits -= 8;
       bytes[n++] = (buf >> bits) & 0xff;
     }
   }
+  return { bytes, n };
+}
+
+/**
+ * v0.28.1 — a .csv export is UTF-8 text with no marker at its start, which SheetJS reads as
+ * Latin-1 ("búlgara" became "bÃºlgara", a new exercise). Decode base64 → UTF-8 here; null when
+ * the bytes are not UTF-8 (a file Excel saved as Windows-1252 goes to SheetJS as before). PURE.
+ */
+export function base64Utf8(base64: string): string | null {
+  const { bytes, n } = base64Bytes(base64);
   let out = '';
   let chunk: number[] = [];
   const flush = (): void => {
     out += String.fromCharCode(...chunk);
     chunk = [];
   };
-  for (let i = bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf ? 3 : 0; i < n; i++) {
+  for (let i = n >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf ? 3 : 0; i < n; i++) {
     const b = bytes[i];
     let cp = 0xfffd;
     let need = 0;
@@ -575,22 +596,11 @@ function asString(v: unknown): string {
 }
 
 /** Bytes that are not UTF-8 (Excel's "CSV" on Windows): one character per byte. PURE. */
-function base64Latin1(base64: string): string {
-  const clean = base64.replace(/[^A-Za-z0-9+/]/g, '');
+export function base64Latin1(base64: string): string {
+  const { bytes, n } = base64Bytes(base64);
   let out = '';
-  let buf = 0;
-  let bits = 0;
-  const chunk: number[] = [];
-  for (let i = 0; i < clean.length; i++) {
-    buf = ((buf << 6) | B64.indexOf(clean[i])) & 0xffffff;
-    bits += 6;
-    if (bits >= 8) {
-      bits -= 8;
-      chunk.push((buf >> bits) & 0xff);
-      if (chunk.length > 8000) out += String.fromCharCode(...chunk.splice(0));
-    }
-  }
-  return out + String.fromCharCode(...chunk);
+  for (let i = 0; i < n; i += 8000) out += String.fromCharCode(...bytes.subarray(i, Math.min(i + 8000, n)));
+  return out;
 }
 
 /**
@@ -1123,9 +1133,20 @@ export async function runImport(
     onProgress?: (done: number, total: number) => void;
     /** IM-15: file names the member matched to one of their exercises ("Same as …"): title → exercise id. */
     matches?: ReadonlyMap<string, string>;
+    /**
+     * Audit Phase 8: Replace's delete of the workouts here, in chunks — (deleted, to delete), so
+     * a screen can show it moving. `onProgress` stays the workouts of the file.
+     */
+    onDeleteProgress?: (done: number, total: number) => void;
+    /**
+     * Audit Phase 8: 'legacy' writes one row at a time through the frozen repos, as before the
+     * fast path — kept ONLY as the reference the equivalence test compares against.
+     */
+    writePath?: 'fast' | 'legacy';
   },
 ): Promise<ImportResult> {
   const { mode, onProgress } = opts;
+  const writer: ImportWriter = opts.writePath === 'legacy' ? legacyImportWriter() : fastImportWriter();
   // IM-07: the workouts here are on the real-moment footing before any is compared or added.
   await repairImportedClockTimes();
   const result: ImportResult = {
@@ -1149,10 +1170,14 @@ export async function runImport(
   // shared connection, whose ROLLBACK would undo the import half-way.
   await enqueueWrite(async () => {
   await getDb().withTransactionAsync(async () => {
-    // 1. Replace mode: clear all existing workouts (PRs cascade via deleteSession).
+    // 1. Replace mode: clear all existing workouts (their records too; sets cascade). Audit
+    //    Phase 8: in chunks of ids (was two statements per workout before the first progress tick).
     if (mode === 'replace') {
       const existing = await getSessionsBetween(MIN_ISO, MAX_ISO);
-      for (const s of existing) await deleteSession(s.id);
+      await writer.deleteSessions(
+        existing.map((s) => s.id),
+        opts.onDeleteProgress,
+      );
       result.replacedSessionIds = existing.map((s) => s.id);
     }
 
@@ -1172,7 +1197,12 @@ export async function runImport(
     const library = await readLibrary();
     const setsByTitle = new Map<string, ParsedSet[]>();
     for (const w of parsed.workouts) {
-      for (const ex of w.exercises) setsByTitle.set(ex.title, [...(setsByTitle.get(ex.title) ?? []), ...ex.sets]);
+      // Audit Phase 8: appended in place (copying the list once per workout was quadratic).
+      for (const ex of w.exercises) {
+        const list = setsByTitle.get(ex.title);
+        if (list) for (const st of ex.sets) list.push(st);
+        else setsByTitle.set(ex.title, ex.sets.slice());
+      }
     }
     const byTitle = new Map<string, { id: string; logType: LogType; setMode?: LoadMode | null }>();
     for (const title of parsed.distinctExerciseTitles) {
@@ -1291,7 +1321,7 @@ export async function runImport(
               return target && !have.has(target.id) ? toRich(ex, null) : [];
             });
             if (add.length > 0) {
-              await addSetsWithMeta(sessionId, add);
+              await writer.backfill(sessionId, add);
               result.backfilledSets += add.length;
               if (!result.extendedSessionIds?.includes(sessionId)) result.extendedSessionIds?.push(sessionId);
             }
@@ -1340,27 +1370,30 @@ export async function runImport(
         onProgress?.(done, total);
         continue;
       }
-      const session = await createSession({
-        dateISO: w.dateISO,
-        dayType: w.dayType,
-        notes: w.notes !== undefined ? w.notes : w.title.length > 0 ? w.title : null,
-        source: 'manual',
-        startedAt: w.startedAt,
-        endedAt: w.endedAt,
-      });
       // #9 / audit HI-04: the workout's own name (tracker schema v9) — our own "Push · name", or
       // a Hevy title such as "Push 1". Audit RP-02 (schema v11): the routine of that name, if any.
+      // Audit Phase 8: one buffered row with every column; records worked out as it goes.
       const name = importedWorkoutName(w);
-      if (name) await getDb().runAsync('UPDATE workout_sessions SET title = ? WHERE id = ?', [name, session.id]);
-      const routineId = routineIdForName(name, routines);
-      if (routineId) await getDb().runAsync('UPDATE workout_sessions SET routine_id = ? WHERE id = ?', [routineId, session.id]);
-      await addSetsWithMeta(session.id, sets);
-      result.createdSessionIds?.push(session.id);
+      const sessionId = await writer.addWorkout(
+        {
+          dateISO: w.dateISO,
+          dayType: w.dayType,
+          notes: w.notes !== undefined ? w.notes : w.title.length > 0 ? w.title : null,
+          startedAt: w.startedAt,
+          endedAt: w.endedAt,
+          title: name,
+          routineId: routineIdForName(name, routines),
+        },
+        sets,
+      );
+      result.createdSessionIds?.push(sessionId);
       seenStarts.add(w.startedAt); // guard against duplicate start_times within the file
       result.imported += 1;
       result.setsInserted += sets.length;
       onProgress?.(done, total);
     }
+    // Audit Phase 8: the last buffered rows and every record earned, still inside the transaction.
+    await writer.finish();
   });
 
   await setMeta(TIMED_BACKFILL_KEY, '1').catch(() => undefined);

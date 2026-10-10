@@ -40,13 +40,19 @@ vi.mock('@/services/coach', () => ({
   getTodaysWorkout: async () => ({ planDayId: 'd1', dayName: 'Push', dayType: 'push', headline: 'Push day', targets: [{ exerciseId: 'bench' }] }),
 }));
 // Two workouts at the top of the range: a normal week says "Up" to 62.5 kg.
-vi.mock('@/tracker/db/progressionHistory', () => ({
-  getProgressionHistory: async () =>
+vi.mock('@/tracker/db/progressionHistory', () => {
+  const getProgressionHistory = async () =>
     ['2026-10-16', '2026-10-13'].map((dateISO) => ({
       dateISO,
       sets: [0, 1, 2, 3].map(() => ({ weightKg: 60, reps: 12, rpe: null, setType: 'normal' as const })),
-    })),
-}));
+    }));
+  // Audit Phase 8: the Targets read every lift's history in one go.
+  return {
+    getProgressionHistory,
+    getProgressionHistoryMany: async (reqs: unknown[]) => Promise.all(reqs.map(() => getProgressionHistory())),
+    getWeightLadders: async () => new Map(),
+  };
+});
 vi.mock('@/tracker/db/exerciseInfo', () => ({
   getExerciseIdsByCatalogKey: async () => new Map(),
   getTrackerExercisesByIds: async () =>

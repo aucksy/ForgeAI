@@ -27,6 +27,7 @@ import type { WeekVsUsual } from '@/tracker/engine/progressTop';
 import { SwitcherCard, takePendingImport, type SwitchApp } from '@/tracker/components/SwitcherCard';
 import { homeAnswer, homeBelow, openWorkout, type HomeAction } from '@/tracker/lib/homeAnswer';
 import { todayLink } from '@/tracker/lib/todayLink';
+import { homeStamp } from '@/tracker/services/dashboardPhase2';
 import { getWeekVsUsual } from '@/tracker/services/progressTop';
 import { startShownWorkout } from '@/tracker/services/todayStart';
 import { openActiveWorkout } from '@/tracker/services/workoutStart';
@@ -60,6 +61,7 @@ export default function DashboardScreen() {
   const router = useRouter();
   const data = useDashboard((s) => s.data);
   const refresh = useDashboard((s) => s.refresh);
+  const refreshIfChanged = useDashboard((s) => s.refreshIfChanged);
   // SH-13: a failed read with nothing to show is said, with a retry — never an endless skeleton.
   const loadFailed = useDashboard((s) => s.error);
   const unitSystem = useSettings((s) => s.unitSystem);
@@ -108,26 +110,45 @@ export default function DashboardScreen() {
     }, []),
   );
 
-  const loadExtras = useCallback(async () => {
+  // Audit Phase 8: what the greeting and the week card were read at (`homeStamp`).
+  const extrasStamp = useRef<string | null>(null);
+  const loadExtras = useCallback(async (stamp: string | null = null) => {
+    let failed = false;
     const [profile, w] = await Promise.all([
-      getProfile().catch(() => null),
-      getWeekVsUsual().catch(() => null),
+      getProfile().catch(() => {
+        failed = true;
+        return null;
+      }),
+      getWeekVsUsual().catch(() => {
+        failed = true;
+        return null;
+      }),
     ]);
     // unseeded / transient DB error — the greeting and the week card degrade gracefully
     if (profile) setFirstName(profile.name.trim().split(/\s+/)[0] || null);
     setWeek(w);
+    // A failed read is read again on the next visit.
+    extrasStamp.current = failed ? null : stamp;
   }, []);
 
+  // Audit Phase 8 (five years of data): coming back to Home with nothing saved since (and the
+  // same day) keeps what is on screen — before, every visit read it all again (122 reads).
   useFocusEffect(
     useCallback(() => {
-      void refresh();
-      void loadExtras();
-    }, [refresh, loadExtras]),
+      void homeStamp()
+        .catch(() => null)
+        .then((stamp) => {
+          void refreshIfChanged(stamp);
+          if (stamp == null || stamp !== extrasStamp.current) return loadExtras(stamp);
+          return undefined;
+        });
+    }, [refreshIfChanged, loadExtras]),
   );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([refresh(), loadExtras()]);
+    // Pull to refresh always reads again.
+    await Promise.all([refresh(), homeStamp().catch(() => null).then((stamp) => loadExtras(stamp))]);
     setRefreshing(false);
   }, [refresh, loadExtras]);
 

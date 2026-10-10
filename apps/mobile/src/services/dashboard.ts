@@ -1,12 +1,17 @@
 /**
  * Dashboard service — assembles the full DashboardData snapshot from repos + engine.
+ *
+ * Audit Phase 8 (packet C): the newest 12 workouts come from three batched reads (they were
+ * two reads per workout), and Home's own loader (`tracker/services/dashboardPhase2`) can hand
+ * in what it already read and skip what only a hidden card uses (`buildDashboardData`).
+ * `getDashboardData()` itself returns exactly what it always did.
  */
+import { getDb } from '@/db';
 import { getNutritionDay } from '@/db/repos/nutritionRepo';
 import { getAllPrs } from '@/db/repos/prRepo';
 import { getBodyWeightHistory, getLatestBodyWeight, getProfile } from '@/db/repos/userRepo';
 import {
   getExerciseHistory,
-  getRecentSessionDetails,
   getSessionsBetween,
   getStreakDays,
   getWeeklyVolume,
@@ -17,9 +22,34 @@ import { computeStrengthScore } from '@/engine/strength';
 import { addDays, todayISO, weekStartISO } from '@/lib/date';
 import { STREAK_LOOKBACK_DAYS, weekStreak } from '@/lib/streak';
 import { getTodaysWorkout } from '@/services/coach';
-import type { DashboardData, MuscleGroup, SessionDetail } from '@/types/models';
+import { getRecentSessionDetailsBatched } from '@/tracker/db/sessionDetails';
+import type { DashboardData, MuscleGroup, SessionDetail, TodaysWorkout } from '@/types/models';
+
+/** Sessions read for the recovery score and the last workout. */
+const RECENT_SESSIONS = 12;
 
 export async function getDashboardData(): Promise<DashboardData> {
+  return buildDashboardData();
+}
+
+/** Audit Phase 8 (packet C): what a caller already read, and what it can skip. */
+export interface DashboardInputs {
+  /** Today's workout, already read (Home reads it with the v2 Targets) — the v1 read is skipped. */
+  todaysWorkout?: TodaysWorkout;
+  /** The newest 12 workouts (frozen-rule details, newest first), already being read. */
+  recentDetails?: Promise<SessionDetail[]>;
+  /** Look for a flat lift for the insight line — only the coach shows it (default true). */
+  plateau?: boolean;
+  /**
+   * Read the stored records for the strength score — only the coach's score tiles show it
+   * (default true). Skipped, the score has no key lifts: the "can't be worked out" score that
+   * `scoreTiles` never shows.
+   */
+  strength?: boolean;
+}
+
+/** `getDashboardData()`, from what the caller already has. With no inputs, the same snapshot. */
+export async function buildDashboardData(inputs: DashboardInputs = {}): Promise<DashboardData> {
   const today = todayISO();
   const [
     todaysWorkout,
@@ -34,20 +64,24 @@ export async function getDashboardData(): Promise<DashboardData> {
     allPrs,
     streakSessions,
   ] = await Promise.all([
-    getTodaysWorkout(),
+    inputs.todaysWorkout ? Promise.resolve(inputs.todaysWorkout) : getTodaysWorkout(),
     getProfile(),
     getNutritionDay(today),
     getLatestBodyWeight(),
     getBodyWeightHistory(30),
     getStreakDays(today),
     getSessionsBetween(weekStartISO(today), today),
-    getRecentSessionDetails(12),
+    inputs.recentDetails ?? getRecentSessionDetailsBatched(RECENT_SESSIONS),
     getWeeklyVolume(6), // Monday buckets asc; last = current (partial) week
-    getAllPrs(),
-    getSessionsBetween(addDays(today, -STREAK_LOOKBACK_DAYS), today),
+    inputs.strength === false ? Promise.resolve([]) : getAllPrs(),
+    // Only the days count for the streak (was every column of ~3 years of workouts).
+    getDb().getAllAsync<{ date_iso: string }>('SELECT date_iso FROM workout_sessions WHERE date_iso BETWEEN ? AND ?', [
+      addDays(today, -STREAK_LOOKBACK_DAYS),
+      today,
+    ]),
   ]);
   // Phase 3 (D9): THE streak is weeks in a row, the same rule as Progress and History.
-  const streakWeeks = weekStreak(streakSessions.map((s) => s.dateISO), today);
+  const streakWeeks = weekStreak(streakSessions.map((s) => s.date_iso), today);
 
   const cur = weeklyBuckets.length > 0 ? weeklyBuckets[weeklyBuckets.length - 1].volumeKg : 0;
   const prev = weeklyBuckets.length > 1 ? weeklyBuckets[weeklyBuckets.length - 2].volumeKg : 0;
@@ -81,9 +115,10 @@ export async function getDashboardData(): Promise<DashboardData> {
 
   const todayTrained = weekSessions.some((s) => s.dateISO === today);
 
-  const plateauedExercise = await findPlateau(
-    todaysWorkout.targets.map((t) => ({ id: t.exerciseId, name: t.exerciseName })),
-  );
+  const plateauedExercise =
+    inputs.plateau === false
+      ? null
+      : await findPlateau(todaysWorkout.targets.map((t) => ({ id: t.exerciseId, name: t.exerciseName })));
 
   // Phase 3 (D10, SH-05): the stored PR table calls a first-ever set a "PR", so it never
   // speaks here; the lifts that beat a best are counted by the one record rule in

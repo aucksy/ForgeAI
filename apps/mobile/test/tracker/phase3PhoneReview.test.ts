@@ -73,6 +73,9 @@ vi.mock('@/db', () => ({
     getFirstAsync: async (sql: string) => {
       const s = sqlite.state;
       if (/PRAGMA data_version/i.test(sql)) return { data_version: s.dataVersion };
+      // Audit Phase 8: tracker schema v13's counter. Its triggers fire for every row written on
+      // ANY connection, so it moves with this connection's writes and another one's commits.
+      if (sql.includes('training_changes')) return { seq: s.changes + s.dataVersion };
       if (!sql.includes('sets_n')) return null;
       const row: Record<string, string | number | null> = {
         sets_n: s.sets.length,
@@ -91,6 +94,8 @@ vi.mock('@/db', () => ({
     },
     getAllAsync: async (sql: string) => {
       const s = sqlite.state;
+      // What changed since: the one exercise (the triggers mark it).
+      if (sql.includes('FROM training_changes')) return [{ id: 'x' }];
       if (sql.includes('FROM set_entries se')) {
         s.setReads += 1;
         return s.sets
