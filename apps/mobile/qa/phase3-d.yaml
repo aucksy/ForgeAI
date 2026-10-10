@@ -194,8 +194,10 @@ appId: com.forgeai.app
 - tapOn: '^Training · \d+ days, .*'
 # D9: THE streak in weeks, the same rule as Home and History. History owns the calendar now:
 # Progress keeps one line ("12 days trained in 90 days · 5 weeks in a row").
-- extendedWaitUntil:
-    visible: '.*\d+ days? trained in \d+ days.*'
+# The fold opens downward, past the screen edge (run 38091447858): scroll its first line into view.
+- scrollUntilVisible:
+    element: '.*\d+ days? trained in \d+ days.*'
+    centerElement: true
     timeout: 15000
 - assertNotVisible: '(?i).*day streak.*'
 - takeScreenshot: 48c-progress-week-streak

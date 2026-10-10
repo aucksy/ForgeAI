@@ -9,8 +9,8 @@
 # with "Discard workout" (an Android dialog, "Discard workout?" → Discard); a workout an earlier
 # part left open is only looked at, then minimised. The Profile fold is opened (screen state only).
 appId: com.forgeai.app
-env:
-  NAV: gesture
+# NAV comes from the script (maestro test -e NAV=gesture|3button). No `env:` default here: a
+# flow-level env overrides -e, so both tours were photographed as "gesture" (run 38091447858).
 ---
 - launchApp
 - tapOn:

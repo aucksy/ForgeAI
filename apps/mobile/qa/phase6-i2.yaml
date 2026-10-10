@@ -5,7 +5,11 @@
 # for Android's settings). The script gives the permission back after this part.
 appId: com.forgeai.app
 ---
-- launchApp
+# Maestro's launchApp GRANTS every permission by default (run 38091447858: the script had taken
+# the notification permission away — dumpsys said granted=false — and launchApp gave it back).
+- launchApp:
+    permissions:
+      notifications: deny
 - tapOn:
     text: "Wait"
     optional: true
