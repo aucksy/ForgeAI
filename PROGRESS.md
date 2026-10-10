@@ -1584,7 +1584,8 @@
     their type from the real sets when nothing was logged on them; whole-word name check.
   - **Tests:** 723 vitest.
 
-- 2026-10-10: **v0.30.0 — Audit Phase 0: ready the ground** (owner: "go with your picks and start fixing";
+- 2026-10-10: **Audit Phase 0: ready the ground** (shipped in v0.31.0; the v0.30.0 tag was withdrawn —
+  its release check found library permissions missing from the approved list) (owner: "go with your picks and start fixing";
   audit plan kept outside this public repo, see CONTEXT.md; decisions D1–D13 = A).
   - D4: coach, nutrition and gym sync hidden behind `src/lib/features.ts` (Home, Profile, Progress
     nutrition charts, Profile daily targets; coach/nutrition routes redirect Home; gym push and the
@@ -1612,6 +1613,26 @@
   - **Tests:** 871 vitest (5 skipped), dashboard 403.
   - Phone test run 38038041222 on c24ec89: crash/ANR/JS scan clean; E (looked for the hidden coach card)
     and H1/H2 (shade swipe hit the launcher) were test slips — fixed in f819be0, re-run before tagging.
+
+- 2026-10-10: **v0.31.0 — Audit Phases 0, 1 and 2** (one release; Phase 0 above).
+  - **Phase 1, never lose data** (5ac6b1a): Android's own backup now carries the database + settings
+    (forgeai_backup_rules / forgeai_data_extraction_rules, config plugin `plugins/backup-rules`;
+    SecureStore and photos excluded) — phone part M: backupnow → uninstall → reinstall → "76 workouts"
+    back (run 38042806197, restored at install). "Save my history" = Hevy-format CSV, exact round trip.
+    One app-wide write queue (`src/db/writeQueue.ts`, never nested) + queued single writes
+    (`queuedWrites.ts`); debounced draft saves; SaveProblemBanner (storage-full wording). Start-up:
+    open/upgrade/read failures → BootErrorScreen with a real retry (`resetDb`) and "Save my data file";
+    ScreenErrorBoundary per screen. Demo is a sandbox (welcome-only load + hidden long-press, demo
+    strip, removal keeps own data, import over demo removes all demo rows; Replace confirm + safety
+    copy + Undo that carries newer workouts forward; Erase all data erases everything). LoadError on
+    every reading screen; guarded actions. Review: 10 findings fixed.
+  - **Phase 2, the live workout** (d7276b1): FinishSheet (D6), one hint rule + tick saves the hint,
+    typing that can't go negative, typo check (D7), same exercise twice (schema v10 card_index),
+    workout names (schema v9 title), weight ladder Targets (owner's export: 18 → 0 never-used "Up"
+    weights on lifts with 3+ weights), rest timer (D8 ask once, status row, countdown card,
+    rest-card-v2 LOW, rests to 10:00), move/multi-add/swap-after-tick/Resume-Discard/double-tap guards.
+    Review: 13 findings fixed. Phone flows updated (Finish sheet, labels, demo removal on import).
+  - **Tests:** 1,109 vitest. Phone test run 38052813715 on d7276b1.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
