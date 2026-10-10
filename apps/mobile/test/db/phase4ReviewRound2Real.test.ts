@@ -102,7 +102,9 @@ describe('7 · the old-import clock repair', () => {
     const live = await createSession({ dateISO: '2026-07-07', dayType: 'push', notes: null, source: 'manual', startedAt: start, endedAt: start + 3_600_000 + 417 });
     const old = await createSession({ dateISO: '2026-07-07', dayType: 'push', notes: null, source: 'manual', startedAt: start, endedAt: start + 3_600_000 });
     const { repairImportedClockTimes } = await import('@/tracker/services/importClockRepair');
-    expect(await repairImportedClockTimes()).toBe(1);
+    // On a UTC phone the wall clock and UTC agree, so the old import needs no move (0 changed).
+    const shifts = new Date(2026, 6, 7, 21, 0).getTime() !== start ? 1 : 0;
+    expect(await repairImportedClockTimes()).toBe(shifts);
     const at = (id: string) => db.all<{ s: number }>('SELECT started_at AS s FROM workout_sessions WHERE id = ?', [id])[0].s;
     expect(at(live.id)).toBe(start);
     expect(at(old.id)).toBe(new Date(2026, 6, 7, 21, 0).getTime());

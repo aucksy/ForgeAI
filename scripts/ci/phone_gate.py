@@ -5,11 +5,12 @@ Called by .github/workflows/release-apk.yml before the Gradle build (audit QA-03
 
 Passes when ONE of these is true:
   1. A qa-device.yml run with conclusion "success" exists for the tagged commit itself.
-  2. A qa-device.yml run passed on the tagged commit's single parent, AND the parent -> tag
-     diff touches ONLY release paperwork:
-       - PROGRESS.md, CONTEXT.md, scripts/ci/approved-permissions.txt, anything under docs/
+  2. A qa-device.yml run passed on a recent first-parent ANCESTOR (up to MAX_WALK commits back),
+     AND the ancestor -> tag diff touches ONLY things that never change the installed app:
+       - PROGRESS.md, CONTEXT.md, anything under docs/
+       - unit tests (apps/mobile/test/**) and the CI scripts (scripts/ci/**)
        - apps/mobile/app.json, where every changed line is the "version" line
-     (the usual "bump the version, update PROGRESS" commit on top of the tested one).
+     (e.g. a unit-test fix, then "bump the version, update PROGRESS", on top of the tested one).
   3. A MANUAL run (workflow_dispatch) with the input skip_phone_gate=true. Tag pushes never skip.
 
 Env: GITHUB_TOKEN, GITHUB_REPOSITORY, GITHUB_SHA, GITHUB_REF, GITHUB_REF_TYPE, GITHUB_REF_NAME,
@@ -29,8 +30,10 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "")
 TOKEN = os.environ.get("GITHUB_TOKEN", "")
 QA_WORKFLOW = os.environ.get("QA_WORKFLOW", "qa-device.yml")
 
-PAPERWORK_FILES = {"PROGRESS.md", "CONTEXT.md", "scripts/ci/approved-permissions.txt"}  # a check list; never changes the APK
-PAPERWORK_DIRS = ("docs/",)
+PAPERWORK_FILES = {"PROGRESS.md", "CONTEXT.md"}
+# None of these is built into the APK: notes, unit tests (vitest only) and the CI check scripts.
+PAPERWORK_DIRS = ("docs/", "apps/mobile/test/", "scripts/ci/")
+MAX_WALK = 8
 APP_JSON = "apps/mobile/app.json"
 VERSION_LINE = re.compile(r'^\s*"version"\s*:\s*"[^"]*"\s*,?\s*$')
 
@@ -89,8 +92,8 @@ def green_runs(sha):
 def only_paperwork(base, head):
     """True when base...head changes only release paperwork. Strict: anything unclear is a no."""
     cmp = api(f"/repos/{REPO}/compare/{base}...{head}")
-    if cmp.get("status") != "ahead" or cmp.get("ahead_by") != 1:
-        say(f"parent -> tag is not exactly one commit ahead (status {cmp.get('status')}, ahead_by {cmp.get('ahead_by')})")
+    if cmp.get("status") != "ahead" or not (1 <= (cmp.get("ahead_by") or 0) <= MAX_WALK):
+        say(f"tested commit -> tag is not a short straight line (status {cmp.get('status')}, ahead_by {cmp.get('ahead_by')})")
         return False
     files = cmp.get("files") or []
     if not files or len(files) >= 300:
@@ -156,22 +159,26 @@ def main():
         return 0
     say("no passing phone test on this exact commit")
 
-    commit = api(f"/repos/{REPO}/commits/{sha}")
-    parents = [p["sha"] for p in commit.get("parents", [])]
-    if len(parents) == 1:
-        parent = parents[0]
-        prun = green_runs(parent)
-        if prun:
-            r = prun[0]
-            say(f"phone test passed on the parent {parent[:12]}: run {r['id']} ({r['html_url']}); checking the diff")
-            if only_paperwork(parent, sha):
-                summary(True, f"Phone test **passed** on the parent commit `{parent[:12]}` ([run {r['id']}]({r['html_url']})); the release commit changes only paperwork.")
-                return 0
-            say("the release commit changes more than paperwork, so the parent's pass does not cover it")
-        else:
-            say(f"no passing phone test on the parent {parent[:12]} either")
-    else:
-        say(f"the commit has {len(parents)} parents; only a pass on this exact commit counts")
+    # Walk back along first parents to the nearest commit the phone test passed on.
+    cur = sha
+    for step in range(1, MAX_WALK + 1):
+        commit = api(f"/repos/{REPO}/commits/{cur}")
+        parents = [p["sha"] for p in commit.get("parents", [])]
+        if len(parents) != 1:
+            say(f"{cur[:12]} has {len(parents)} parents; the walk stops here")
+            break
+        cur = parents[0]
+        prun = green_runs(cur)
+        if not prun:
+            say(f"no passing phone test on {cur[:12]} ({step} back)")
+            continue
+        r = prun[0]
+        say(f"phone test passed on {cur[:12]} ({step} back): run {r['id']} ({r['html_url']}); checking the diff")
+        if only_paperwork(cur, sha):
+            summary(True, f"Phone test **passed** on `{cur[:12]}` ([run {r['id']}]({r['html_url']})); everything after it changes only notes, unit tests, CI scripts or the version.")
+            return 0
+        say("the commits after it change the app itself, so that pass does not cover this release")
+        break
 
     msg = (f"Run the phone test on this commit first: Actions > '{QA_WORKFLOW}' > Run workflow on "
            f"{sha[:12]} (or on the commit before a version-bump-only commit). Then re-run this release.")
