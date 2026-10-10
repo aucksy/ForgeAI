@@ -20,13 +20,17 @@ appId: com.forgeai.app
     visible: "This week.* vs your usual"
     timeout: 30000
 - assertVisible: "Your lifts"
-- assertVisible: "Any exercise.*"
 # UX-3 (a new member's Progress is one card, "Finish your first workout to see your progress")
 # is NOT checked on the phone: no part reaches the tabs before part A loads the demo (the
 # welcome screen has no tab bar), and part M's reinstall restores the workouts. Only the
 # vitest lane covers the switch (progressMode in phase5ProgressTop.test.ts), not the card.
 - assertNotVisible: "Finish your first workout to see your progress"
 - takeScreenshot: 40-progress-top
+# "Any exercise" sits under the lifts list, below the fold: scroll to it first.
+- scrollUntilVisible:
+    element: "Any exercise.*"
+    centerElement: true
+    timeout: 20000
 # PG-09: "Any exercise" opens the one exercise list; the pick opens its trend on Progress.
 # Part C ran a Treadmill Run today, so a distance lift's trend must show (not "Not done yet").
 - tapOn: "Any exercise.*"
