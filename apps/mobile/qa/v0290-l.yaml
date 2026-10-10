@@ -108,19 +108,27 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "ELAPSED"
     timeout: 20000
-- scrollUntilVisible:
-    element: "Dumbbell Skull Crusher"
-    centerElement: true
-    timeout: 30000
-- scrollUntilVisible:
-    element: "(26\\.5|12) × 11"
-    centerElement: true
-    timeout: 20000
+# Swipe on the set numbers (left edge), not on the number boxes; repeat until it shows.
+- repeat:
+    times: 12
+    while:
+      notVisible: "(26\\.5|12) × 11"
+    commands:
+      - swipe:
+          start: 12%, 75%
+          end: 12%, 35%
+          duration: 500
+- assertVisible: "(26\\.5|12) × 11"
 - takeScreenshot: 179-push-1-previous-from-hevy
-- scrollUntilVisible:
-    element: "Discard workout"
-    centerElement: true
-    timeout: 30000
+- repeat:
+    times: 20
+    while:
+      notVisible: "Discard workout"
+    commands:
+      - swipe:
+          start: 12%, 75%
+          end: 12%, 25%
+          duration: 500
 - tapOn: "Discard workout"
 - tapOn:
     id: "android:id/button1"
