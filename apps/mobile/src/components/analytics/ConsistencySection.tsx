@@ -1,76 +1,34 @@
 import { Text, View } from 'react-native';
 
-import { Heatmap } from '@/components/charts';
-import { EmptyState, Icon } from '@/components/ui';
+import { Icon } from '@/components/ui';
 import { color, space, type } from '@/theme/tokens';
-import { streakText } from '@/lib/streak';
 import type { ConsistencyCell } from '@/types/models';
-
-import { HeaderStat, Section } from './Section';
 
 export interface ConsistencySectionProps {
   cells: ConsistencyCell[];
   rangeDays: number;
   /** THE streak (D9): weeks in a row with at least one workout. */
   streak: number;
-  index: number;
 }
 
-/** GitHub-style training heatmap + the current week streak underneath (D9). */
-export function ConsistencySection({ cells, rangeDays, streak, index }: ConsistencySectionProps) {
-  const weeks = Math.min(26, Math.ceil(rangeDays / 7));
-  const activeDays = cells.reduce((sum, c) => sum + (c.level > 0 ? 1 : 0), 0);
-  const hasData = cells.length > 0;
+/** Days with a workout in the range (PG-24: rest days are cells too — count the trained ones). */
+export function trainedDays(cells: readonly ConsistencyCell[]): number {
+  return cells.reduce((n, c) => n + (c.level > 0 ? 1 : 0), 0);
+}
 
+/**
+ * Audit Phase 5: one compact line — History owns the calendar, so Progress no longer repeats
+ * it. "12 days trained in 30 days · 5 weeks in a row" (D9).
+ */
+export function ConsistencySection({ cells, rangeDays, streak }: ConsistencySectionProps) {
+  const days = trainedDays(cells);
+  const weeks = streak > 0 ? ` · ${streak} ${streak === 1 ? 'week' : 'weeks'} in a row` : '';
   return (
-    <Section
-      title="Consistency"
-      index={index}
-      right={hasData ? <HeaderStat text={`${activeDays} active days`} /> : undefined}
-    >
-      {hasData ? (
-        <>
-          <Heatmap cells={cells} weeks={weeks} />
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: space.sm,
-              marginTop: space.lg,
-            }}
-          >
-            <Icon name="flame" size={16} color={color.accent} />
-            {streak > 0 ? (
-              <Text
-                style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}
-              >
-                {streakText(streak)}{' '}
-                <Text
-                  style={{
-                    fontFamily: type.body,
-                    fontSize: type.size.sub,
-                    color: color.inkMuted,
-                  }}
-                >
-                  — keep the fire burning
-                </Text>
-              </Text>
-            ) : (
-              <Text
-                style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}
-              >
-                No streak yet — one workout this week starts one
-              </Text>
-            )}
-          </View>
-        </>
-      ) : (
-        <EmptyState
-          icon="flame"
-          title="No data yet"
-          body="Every training day fills a cell. Streaks build here."
-        />
-      )}
-    </Section>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginBottom: space.xl, minHeight: 32 }}>
+      <Icon name="flame" size={16} color={color.accent} />
+      <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>
+        {days === 0 ? `No workouts in the last ${rangeDays} days` : `${days} ${days === 1 ? 'day' : 'days'} trained in ${rangeDays} days${weeks}`}
+      </Text>
+    </View>
   );
 }

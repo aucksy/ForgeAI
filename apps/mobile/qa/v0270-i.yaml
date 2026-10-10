@@ -163,8 +163,9 @@ appId: com.forgeai.app
 - tapOn:
     text: "View Outdoor Run"
     index: 0
+# Phase 4: the exercise page leads with "Last time · Best" (no "Records" heading any more).
 - extendedWaitUntil:
-    visible: "Records"
+    visible: "Last time.*"
     timeout: 15000
 - scrollUntilVisible:
     element: '.*/mi.*'

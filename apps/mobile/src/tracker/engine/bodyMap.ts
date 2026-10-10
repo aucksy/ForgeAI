@@ -9,7 +9,7 @@
  * A month uses the same steps scaled to four weeks.
  */
 import type { MuscleSetsSlice } from './volume';
-import { MUSCLES, type Muscle } from '../catalog/muscles';
+import { MUSCLES, setShares, type Muscle, type MuscleMap } from '../catalog/muscles';
 import type { BodyRegion } from '../catalog/bodyMapPaths';
 
 export type MapLevel = 0 | 1 | 2 | 3 | 4;
@@ -62,4 +62,46 @@ export function untrainedLine(names: readonly string[], max = 3): string {
     return names.length <= 1 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
   }
   return `${names.slice(0, max).join(', ')} and ${names.length - max} more`;
+}
+
+// ---------------------------------------------------------------- tap a muscle (audit Phase 5)
+
+/** One exercise's working sets in the window, with the muscles it trains. */
+export interface MuscleGroupSets {
+  exerciseId: string;
+  name: string;
+  muscles: MuscleMap;
+  /** Working sets (warm-ups never count). */
+  working: number;
+}
+
+/** About 10 hard sets a week is a full dose for a muscle (the map's top step). */
+export const FULL_WEEK_SETS = WEEK_STEPS[2];
+
+/**
+ * One muscle's sets and the exercises that trained it, most first — by the same count as the
+ * map and "Sets per muscle" (1 for the main muscle, ½ for each helper, to the nearest ½).
+ */
+export function muscleBreakdown(groups: readonly MuscleGroupSets[], muscle: Muscle): { sets: number; exercises: { exerciseId: string; name: string; sets: number }[] } {
+  const by = new Map<string, { exerciseId: string; name: string; sets: number }>();
+  for (const g of groups) {
+    const share = setShares(g.muscles).get(muscle) ?? 0;
+    if (!(share > 0) || !(g.working > 0)) continue;
+    const cur = by.get(g.exerciseId) ?? { exerciseId: g.exerciseId, name: g.name, sets: 0 };
+    cur.sets += share * g.working;
+    by.set(g.exerciseId, cur);
+  }
+  const exercises = [...by.values()]
+    .map((e) => ({ ...e, sets: Math.round(e.sets * 2) / 2 }))
+    .sort((a, b) => b.sets - a.sets || a.name.localeCompare(b.name));
+  // The total is the sum of the rows as shown (each to the half set), so they always add up.
+  const total = exercises.reduce((n, e) => n + e.sets, 0);
+  return { sets: total, exercises };
+}
+
+/** A gentle "what to train next" hint for a muscle under a full week's dose; null otherwise. */
+export function lowSetsHint(sets: number): string | null {
+  if (sets >= FULL_WEEK_SETS) return null;
+  if (!(sets > 0)) return 'No sets in the last 7 days — a good one to train next.';
+  return `Under ${FULL_WEEK_SETS} sets in the last 7 days — a good one to train next.`;
 }

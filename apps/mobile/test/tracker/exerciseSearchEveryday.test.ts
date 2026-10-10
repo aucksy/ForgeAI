@@ -72,6 +72,8 @@ describe('EX-01 the rules', () => {
     expect(didYouMean('dumbell curl', search('dumbell curl'))?.key).toBe('dumbbell_curl');
     expect(didYouMean('Dumbbell Curl', search('Dumbbell Curl'))).toBeNull();
     expect(didYouMean('zzzz qqqq', search('zzzz qqqq'))).toBeNull();
+    // Phone run 38063413760: "pull-up" is the name "Pull Up" — no "Did you mean Pull Up?".
+    expect(didYouMean('pull-up', [{ name: 'Pull Up', aliases: [], equipment: 'bodyweight', muscles: { primary: ['lats'], secondary: [] } }])).toBeNull();
   });
   it('a Devanagari word keeps its vowel signs (डंड finds the Hindu push-up)', () => {
     expect(search('डंड')[0]?.key).toBe('hindu_push_up');

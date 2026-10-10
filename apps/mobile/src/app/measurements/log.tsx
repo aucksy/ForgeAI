@@ -1,18 +1,24 @@
 /**
- * Log today's measurements (Phase 3). Fill in any of them; blanks are skipped. Each box
- * shows the last value as a grey hint. Logging the same day again replaces that day's value.
+ * Log measurements (Phase 3). Fill in any of them; blanks are skipped. Each box shows the last
+ * value as a grey hint. Logging the same day again replaces that day's value.
+ * Audit PG-16: for today or any earlier day (the Day row; never a future day). Review fix
+ * (Phase 5): an earlier day that already has any of the typed measurements asks first
+ * ("Replace Waist 82 cm on Tue, 3 Oct?") — before, it was replaced without a word.
  */
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Text, TextInput, View } from 'react-native';
 
-import { Card, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { askConfirm, Card, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { success } from '@/lib/haptics';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
+import { DayRow } from '@/tracker/components/BodyEntrySheet';
+import { DatePickerSheet } from '@/tracker/components/DatePickerSheet';
 import { getMeasurements, logMeasurements } from '@/tracker/db/measurementRepo';
+import { replaceMeasurementsQuestion, shouldAskReplace } from '@/tracker/engine/bodyCheck';
 import {
   MEASURES,
   MEASURE_LABEL,
@@ -22,6 +28,7 @@ import {
   shownToMeasure,
   summarize,
   type MeasureKind,
+  type MeasurementEntry,
 } from '@/tracker/engine/measurements';
 
 export default function LogMeasurementsScreen() {
@@ -30,8 +37,11 @@ export default function LogMeasurementsScreen() {
   const units = useUnits();
   const [typed, setTyped] = useState<Partial<Record<MeasureKind, string>>>({});
   const [last, setLast] = useState<Partial<Record<MeasureKind, number>>>({});
+  const [entries, setEntries] = useState<MeasurementEntry[]>([]);
   const [saving, setSaving] = useState(false);
   const savingRef = useRef(false);
+  const [day, setDay] = useState(todayISO());
+  const [pickingDay, setPickingDay] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -41,6 +51,7 @@ export default function LogMeasurementsScreen() {
         const hints: Partial<Record<MeasureKind, number>> = {};
         for (const s of summarize(entries)) hints[s.kind] = s.latest;
         setLast(hints);
+        setEntries(entries);
       })
       .catch(() => undefined);
     return () => {
@@ -64,7 +75,19 @@ export default function LogMeasurementsScreen() {
     savingRef.current = true;
     setSaving(true);
     try {
-      await logMeasurements(todayISO(), values);
+      const today = todayISO();
+      const over = entries.filter((e) => e.dateISO === day && values[e.kind] != null);
+      if (shouldAskReplace(day, today, over.length > 0 ? over : null)) {
+        const parts = over.map((e) => `${MEASURE_LABEL[e.kind]} ${trimNum(measureToShown(e.kind, e.value, units))} ${measureUnit(e.kind, units)}`);
+        const ok = await askConfirm({
+          title: replaceMeasurementsQuestion(parts, day, today),
+          body: 'That day already has these. Saving replaces them.',
+          confirmLabel: 'Replace',
+          destructive: true,
+        });
+        if (!ok) return;
+      }
+      await logMeasurements(day, values);
       success();
       router.back();
     } catch {
@@ -78,10 +101,11 @@ export default function LogMeasurementsScreen() {
   return (
     <Screen
       title="Log measurements"
-      subtitle="Today. Fill in any you like."
+      subtitle="Fill in any you like."
       right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
     >
       <View style={{ gap: space.lg }}>
+        <DayRow dateISO={day} onPress={() => setPickingDay(true)} />
         <Card style={{ gap: space.sm }}>
           {MEASURES.map((kind) => (
             <View key={kind} style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 46 }}>
@@ -116,6 +140,16 @@ export default function LogMeasurementsScreen() {
         </Card>
         <PrimaryButton label="Save measurements" icon="check" loading={saving} onPress={() => void onSave()} />
       </View>
+      <DatePickerSheet
+        visible={pickingDay}
+        title="Measurement date"
+        value={day}
+        onChoose={(iso) => {
+          setDay(iso);
+          setPickingDay(false);
+        }}
+        onClose={() => setPickingDay(false)}
+      />
     </Screen>
   );
 }

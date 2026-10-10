@@ -1,24 +1,31 @@
 /**
  * Body measurements (Phase 3) — free. Pick a measurement to see its trend (points at their
  * real dates), its latest value and change, and its entries; "Log measurements" opens the
- * form. Tap an entry to delete it.
+ * form. Audit PG-03 / PG-16: tap an entry to fix its value or day, or delete it (Undo, not
+ * "Are you sure?"). Review fixes (Phase 5): a "Replace" in the fix sheet can be undone (the
+ * replaced entry AND the edited one's old day and value come back), and several deletes in a
+ * row are all undone by the one Undo.
  */
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
-import { Card, Chip, EmptyState, IconButton, LoadError, PrimaryButton, Screen, SectionHeader, Skeleton } from '@/components/ui';
-import { shortDate, tinyDate } from '@/lib/date';
+import { askConfirm, Card, Chip, EmptyState, IconButton, LoadError, PrimaryButton, Screen, SectionHeader, Skeleton, UndoBar } from '@/components/ui';
+import { dateWithYear, tinyDate, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { useUnits } from '@/lib/useUnits';
 import { chart, color, radius, space, type } from '@/theme/tokens';
+import { BodyEntrySheet, FloatAtBottom } from '@/tracker/components/BodyEntrySheet';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
+import { editMeasurement, undoMeasurements, type MeasurementUndo } from '@/tracker/db/bodyEntries';
 import { deleteMeasurement, getMeasurements } from '@/tracker/db/measurementRepo';
 import {
   MEASURE_LABEL,
   measureToShown,
   measureUnit,
   seriesFor,
+  shownMeasure,
+  shownToMeasure,
   summarize,
   type MeasureKind,
   type MeasurementEntry,
@@ -34,6 +41,8 @@ function signed(n: number): string {
 
 export default function MeasurementsScreen() {
   const router = useRouter();
+  // PG-26: Progress opens this on the measurement it shows (`kind=waist`).
+  const params = useLocalSearchParams<{ kind?: string }>();
   // v0.27.0: sizes shown in cm or inches (stored in cm).
   const units = useUnits();
   const [entries, setEntries] = useState<MeasurementEntry[] | null>(null);
@@ -64,7 +73,11 @@ export default function MeasurementsScreen() {
   };
 
   const summary = useMemo(() => summarize(entries ?? []), [entries]);
-  const kind: MeasureKind | null = picked && summary.some((s) => s.kind === picked) ? picked : summary[0]?.kind ?? null;
+  const kind: MeasureKind | null = shownMeasure(
+    summary.map((s) => s.kind),
+    picked,
+    params.kind,
+  );
   const points = useMemo(
     () => (kind ? seriesFor(entries ?? [], kind).map((p) => ({ ...p, y: measureToShown(kind, p.y, units) })) : []),
     [entries, kind, units],
@@ -72,22 +85,78 @@ export default function MeasurementsScreen() {
   const current = summary.find((s) => s.kind === kind) ?? null;
   const unit = kind ? measureUnit(kind, units) : measureUnit('waist', units);
 
-  const onDelete = (e: MeasurementEntry) => {
-    Alert.alert('Delete this entry?', `${MEASURE_LABEL[e.kind]} ${trimNum(measureToShown(e.kind, e.value, units))} ${measureUnit(e.kind, units)} on ${shortDate(e.dateISO)}.`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          void deleteMeasurement(e.id)
-            .then(load)
-            .catch(() => Alert.alert('Could not delete', 'Something went wrong. Please try again.'));
-        },
-      },
-    ]);
+  // PG-03 / PG-16: the entry being fixed, and every change the Undo bar can still put back.
+  const [editing, setEditing] = useState<MeasurementEntry | null>(null);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [undo, setUndo] = useState<MeasurementUndo[]>([]);
+
+  const shownOf = (e: MeasurementEntry): string => `${trimNum(measureToShown(e.kind, e.value, units))} ${measureUnit(e.kind, units)}`;
+  const sameDay = (iso: string, e: MeasurementEntry): MeasurementEntry | undefined =>
+    (entries ?? []).find((x) => x.kind === e.kind && x.dateISO === iso && x.id !== e.id);
+
+  const onSaveEdit = async (text: string, dateISO: string): Promise<void> => {
+    const e = editing;
+    if (!e || saving) return;
+    setEditError(null);
+    const v = parseFloat(text.replace(',', '.'));
+    if (!Number.isFinite(v) || v <= 0) {
+      setEditError('Type a number above 0, like 82.5.');
+      return;
+    }
+    setSaving(true);
+    try {
+      const other = sameDay(dateISO, e);
+      if (other) {
+        const ok = await askConfirm({
+          title: `${dateWithYear(dateISO)} already has ${MEASURE_LABEL[e.kind]} ${shownOf(other)}`,
+          body: 'Replace it with this one?',
+          confirmLabel: 'Replace',
+          destructive: true,
+        });
+        if (!ok) return;
+      }
+      const out = await editMeasurement(e.id, { dateISO, value: shownToMeasure(e.kind, v, units) });
+      setEditing(null);
+      const replaced = out.replaced;
+      if (replaced) setUndo((cur) => [...cur, { kind: 'edited', before: e, replaced }]);
+      load();
+    } catch {
+      setEditError('Couldn’t save the change. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
+  const onDelete = async (): Promise<void> => {
+    const e = editing;
+    if (!e) return;
+    try {
+      await deleteMeasurement(e.id);
+      setEditing(null);
+      setUndo((cur) => [...cur, { kind: 'deleted', entry: e }]);
+      load();
+    } catch {
+      setEditError('Couldn’t delete it. Please try again.');
+    }
+  };
+
+  const onUndo = async (): Promise<void> => {
+    const items = undo;
+    setUndo([]);
+    if (items.length === 0) return;
+    await undoMeasurements(items).catch(() => undefined);
+    load();
+  };
+
+  const undoText = (u: MeasurementUndo): string =>
+    u.kind === 'deleted'
+      ? `${MEASURE_LABEL[u.entry.kind]} on ${tinyDate(u.entry.dateISO)} deleted`
+      : `Replaced ${MEASURE_LABEL[u.before.kind]} ${u.replaced ? shownOf(u.replaced) : ''} on ${tinyDate(u.replaced?.dateISO ?? u.before.dateISO)}`;
+  const lastUndo = undo.length > 0 ? undo[undo.length - 1] : null;
+
   return (
+    <View style={{ flex: 1 }}>
     <Screen title="Measurements" right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}>
       <View style={{ gap: space.lg }}>
         <PrimaryButton label="Log measurements" icon="plus" onPress={() => router.push('/measurements/log')} />
@@ -159,6 +228,9 @@ export default function MeasurementsScreen() {
 
             <View>
               <SectionHeader title={`${MEASURE_LABEL[kind]} entries`} />
+              <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginBottom: space.sm }}>
+                Tap an entry to fix or delete it.
+              </Text>
               <View style={{ gap: space.sm }}>
                 {[...(entries ?? [])]
                   .filter((e) => e.kind === kind)
@@ -166,10 +238,14 @@ export default function MeasurementsScreen() {
                   .map((e) => (
                     <Pressable
                       key={e.id}
-                      onPress={() => onDelete(e)}
+                      onPress={() => {
+                        setEditError(null);
+                        setEditing(e);
+                      }}
                       accessibilityRole="button"
-                      accessibilityLabel={`${shortDate(e.dateISO)}, ${trimNum(measureToShown(e.kind, e.value, units))} ${unit}. Tap to delete.`}
+                      accessibilityLabel={`${dateWithYear(e.dateISO)}, ${trimNum(measureToShown(e.kind, e.value, units))} ${unit}. Fix or delete`}
                       style={{
+                        minHeight: 48,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         alignItems: 'center',
@@ -181,7 +257,7 @@ export default function MeasurementsScreen() {
                         borderColor: color.border,
                       }}
                     >
-                      <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>{shortDate(e.dateISO)}</Text>
+                      <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>{dateWithYear(e.dateISO)}</Text>
                       <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>
                         {trimNum(measureToShown(e.kind, e.value, units))} {unit}
                       </Text>
@@ -193,5 +269,36 @@ export default function MeasurementsScreen() {
         )}
       </View>
     </Screen>
+    <BodyEntrySheet
+      visible={editing != null}
+      title={editing ? `Fix this ${MEASURE_LABEL[editing.kind].toLowerCase()} entry` : 'Fix this entry'}
+      unit={editing ? measureUnit(editing.kind, units) : ''}
+      value={editing ? trimNum(measureToShown(editing.kind, editing.value, units)) : ''}
+      dateISO={editing?.dateISO ?? todayISO()}
+      valueLabel={editing ? MEASURE_LABEL[editing.kind] : 'Value'}
+      dayTitle="Measurement date"
+      saving={saving}
+      error={editError}
+      noteFor={(iso) => {
+        const other = editing ? sameDay(iso, editing) : undefined;
+        return other ? `Replaces ${shownOf(other)} on ${tinyDate(iso)}.` : null;
+      }}
+      onSave={(text, iso) => void onSaveEdit(text, iso)}
+      onDelete={() => void onDelete()}
+      onClose={() => setEditing(null)}
+    />
+    {lastUndo ? (
+      <FloatAtBottom>
+        {/* A new change restarts the clock; Undo puts back everything still listed. */}
+        <UndoBar
+          key={`${undo.length}-${lastUndo.kind === 'deleted' ? lastUndo.entry.id : lastUndo.before.id}`}
+          message={undo.length === 1 ? undoText(lastUndo) : `${undo.length} changes to your measurements`}
+          actionLabel={undo.length === 1 ? 'Undo' : 'Undo all'}
+          onAction={() => void onUndo()}
+          onDismiss={() => setUndo([])}
+        />
+      </FloatAtBottom>
+    ) : null}
+    </View>
   );
 }

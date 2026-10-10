@@ -20,9 +20,9 @@ export function FrequencySection({ data, index }: FrequencySectionProps) {
 
   return (
     <Section
-      title="Workout Frequency"
+      title="Workouts each week"
       index={index}
-      right={hasData ? <HeaderStat text={`${trimNum(avg)}/wk avg`} /> : undefined}
+      right={hasData ? <HeaderStat text={`about ${trimNum(avg)} a week`} /> : undefined}
     >
       {hasData ? (
         <BarChart
@@ -35,8 +35,8 @@ export function FrequencySection({ data, index }: FrequencySectionProps) {
       ) : (
         <EmptyState
           icon="calendar"
-          title="No data yet"
-          body="Each training week shows up as a bar once you start logging."
+          title="No workouts in this range"
+          body="Each week shows as a bar once you do a workout."
         />
       )}
     </Section>

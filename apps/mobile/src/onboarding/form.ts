@@ -268,7 +268,7 @@ export function validateOnboarding(draft: OnboardingDraft, units: 'metric' | 'im
   const wRule = imperial ? WEIGHT_RULE_LB : WEIGHT_RULE;
   const name = normalizeName(draft.name);
   if (name.length === 0) {
-    return { ok: false, field: 'name', message: 'Enter your name so your coach knows who you are.' };
+    return { ok: false, field: 'name', message: 'Enter your name.' };
   }
   if (name.length > NAME_MAX) {
     return { ok: false, field: 'name', message: `Keep your name under ${NAME_MAX} characters.` };

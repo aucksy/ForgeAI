@@ -5,9 +5,10 @@
  * own storage (`progress-photos/`), so deleting it from the gallery later does not lose it.
  *
  * Private by design, said plainly on the screen:
- *  - the files stay on this phone. Android's own backup copies only small settings (the app's
- *    backup rules include shared preferences only), and the ForgeAI Drive backup leaves the
- *    photos out, rows and files both — restoring a backup never touches them;
+ *  - the files stay on this phone unless the member turns on "Include photos in my backup"
+ *    (audit PG-17 / D11, default off): then the newest that fit are copied into
+ *    `photo-backup/`, the one photo folder Android's own backup includes (`photoBackup.ts`).
+ *    The ForgeAI Drive backup leaves the photos out, rows and files both;
  *  - the screens show them with `cachePolicy="memory"`, so the image library never writes a
  *    copy to its disk cache;
  *  - "Erase all data" deletes the rows and the files, and empties the image caches.
@@ -23,11 +24,18 @@ import { launchFor, takePendingPick } from '@/lib/pendingPick';
 import { tempPictureDirs } from '@/lib/tempPictures';
 import { uuid } from '@/lib/uuid';
 
+import { backupNames } from './photoBackupPlan';
+
 export interface ProgressPhoto {
   id: string;
   dateISO: string;
   uri: string;
   createdAt: number;
+  /**
+   * Audit PG-16: set only by `keepPhoto` — the picture carried no date of its own, so it was
+   * dated today and the screen asks for the real day.
+   */
+  undated?: boolean;
 }
 
 interface Row {
@@ -73,6 +81,11 @@ export async function countProgressPhotos(): Promise<number> {
  * September photo compared as "Same day".
  */
 export function photoDateISO(exif: Record<string, unknown> | null | undefined, today: string): string {
+  return exifDateISO(exif, today) ?? today;
+}
+
+/** The picture's own day from its EXIF, or null when it has none (PG-16). PURE. */
+export function exifDateISO(exif: Record<string, unknown> | null | undefined, today: string): string | null {
   if (exif) {
     for (const key of ['DateTimeOriginal', 'DateTime', 'DateTimeDigitized']) {
       const v = exif[key];
@@ -87,7 +100,7 @@ export function photoDateISO(exif: Record<string, unknown> | null | undefined, t
       return iso > today ? today : iso;
     }
   }
-  return today;
+  return null;
 }
 
 /** What keeping a photo touches — the files and the row — so the order can be tested. */
@@ -113,7 +126,8 @@ export async function keepPhoto(asset: { uri: string; exif?: Record<string, unkn
   const id = d.newId();
   const dest = `${d.dir}${id}.${photoExtension(asset.uri)}`;
   await d.copy(asset.uri, dest);
-  const photo: ProgressPhoto = { id, dateISO: photoDateISO(asset.exif, d.today), uri: dest, createdAt: d.now };
+  const own = exifDateISO(asset.exif, d.today);
+  const photo: ProgressPhoto = { id, dateISO: own ?? d.today, uri: dest, createdAt: d.now, undated: own == null };
   try {
     await d.insert(photo);
   } catch (e) {
@@ -167,10 +181,18 @@ export async function keepPendingPhoto(): Promise<ProgressPhoto | null> {
   return asset ? keep(asset) : null;
 }
 
-/** Delete one photo: the row, then its file. */
+/**
+ * Delete one photo: the row, then its file, then its backup copy (PG-17) if it has one — under
+ * either name (a shrunk copy is "id.jpg" whatever the photo's own type; an older copy kept it).
+ */
 export async function deleteProgressPhoto(photo: Pick<ProgressPhoto, 'id' | 'uri'>): Promise<void> {
   await enqueueWrite(() => getDb().runAsync('DELETE FROM progress_photos WHERE id = ?', [photo.id]));
   if (isOwnPhotoPath(photo.uri)) await FileSystem.deleteAsync(photo.uri, { idempotent: true }).catch(() => undefined);
+  if (FileSystem.documentDirectory) {
+    for (const name of backupNames(photo.id, photo.uri)) {
+      await FileSystem.deleteAsync(`${FileSystem.documentDirectory}photo-backup/${name}`, { idempotent: true }).catch(() => undefined);
+    }
+  }
 }
 
 /**
@@ -206,6 +228,8 @@ export function photoEraseSteps(
     removeFolder: async () => {
       if (typeof files.documentDirectory === 'string' && files.documentDirectory.length > 0) {
         await files.deleteAsync(`${files.documentDirectory}progress-photos/`, { idempotent: true });
+        // PG-17: the opt-in backup copies go too.
+        await files.deleteAsync(`${files.documentDirectory}photo-backup/`, { idempotent: true });
       }
     },
     removeTemp: tempPictureDirs(files.cacheDirectory).map((dir) => () => files.deleteAsync(dir, { idempotent: true })),

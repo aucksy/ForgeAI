@@ -49,6 +49,10 @@ appId: com.forgeai.app
     timeout: 30000
 - assertVisible: 'Update ".*"\?'
 - takeScreenshot: 14-update-routine-prompt
+# Audit Phase 5 (PG-04): the finish screen and its share picture name the workout after the
+# routine it was started from — the name this sheet asks about ('Update "Push 1"?' → "Push 1").
+- copyTextFrom: 'Update ".*"\?'
+- evalScript: '${output.routineName = maestro.copiedText.slice(8, -2)}'
 # "Keep original" is also the sheet's × and its dimmed backdrop: tap the button under "Update routine".
 - tapOn:
     text: "Keep original"
@@ -60,6 +64,8 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+# The banner reads "<workout name> done" (the share picture's title is the same name).
+- assertVisible: "${output.routineName} done"
 - takeScreenshot: 15-finish-summary
 - scrollUntilVisible:
     element: "Done"

@@ -13,6 +13,7 @@ import { startUnitSync } from '@/lib/useUnits';
 import { FEATURES } from '@/lib/features';
 import { useCloud } from '@/store/cloudStore';
 import { WorkoutPresenceHost } from '@/tracker/components/WorkoutPresenceHost';
+import { photoBackupAtStart } from '@/tracker/services/photoBackup';
 import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
@@ -62,6 +63,9 @@ export default function RootLayout() {
       // (status 'error'), never on the app over a half-upgraded database; its "Try again"
       // re-runs all of it (useOnboarding.retry). Never throws.
       await useOnboarding.getState().start();
+      // Audit PG-17 / D11: after a fresh install, photos come back from the backup folder; the
+      // opt-in copies are kept current. In the background, never in the way of the start-up.
+      if (useOnboarding.getState().status === 'ready') void photoBackupAtStart().catch(() => undefined);
       // Cloud is fully gated: init() no-ops (and starts NO network watcher)
       // unless a gym is linked, so the offline app makes zero network calls.
       // Gym sync is hidden until its own phase (D4) — not even started then.

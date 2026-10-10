@@ -25,7 +25,7 @@ import { color, gradients, radius, space, type } from '@/theme/tokens';
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coachNote';
-import { finishAnswer, getSessionSummary, sessionTitle, volumeComparison } from '@/tracker/services/finishSummary';
+import { finishAnswer, getSessionSummary, volumeComparison, workoutName } from '@/tracker/services/finishSummary';
 import { applyRoutineOffer, takeRoutineOffer } from '@/tracker/services/routineOffer';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
@@ -125,7 +125,7 @@ export default function FinishScreen() {
               <Icon name="trophy" size={28} color="#1F0D05" />
               <View style={{ flex: 1 }}>
                 <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: '#1F0D05' }}>
-                  {sessionTitle(data.session)} done
+                  {workoutName(data)} done
                 </Text>
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
                   {finishAnswer(data)}
@@ -153,7 +153,7 @@ export default function FinishScreen() {
                       marginBottom: 3,
                     }}
                   >
-                    COACH
+                    IN SHORT
                   </Text>
                   <Text
                     style={{

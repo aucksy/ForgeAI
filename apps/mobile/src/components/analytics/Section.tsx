@@ -6,7 +6,8 @@ import { Card, Skeleton } from '@/components/ui';
 import { color, motion, space, type } from '@/theme/tokens';
 
 export interface SectionProps {
-  title: string;
+  /** Omit inside a fold, whose heading already names it (the header row then shows only `right`). */
+  title?: string;
   /** Right slot of the header row (inspect readout / mini stat). */
   right?: ReactNode;
   /** Stagger position for the entrance animation. */
@@ -27,20 +28,24 @@ export function Section({ title, right, index, caption, children }: SectionProps
       entering={FadeInDown.delay(60 * Math.min(index, 8)).duration(motion.slow)}
       style={{ marginBottom: space.xxl }}
     >
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: space.md,
-          minHeight: 30,
-        }}
-      >
-        <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-          {title}
-        </Text>
-        {right}
-      </View>
+      {title || right ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: title ? 'space-between' : 'flex-end',
+            marginBottom: space.md,
+            minHeight: 30,
+          }}
+        >
+          {title ? (
+            <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
+              {title}
+            </Text>
+          ) : null}
+          {right}
+        </View>
+      ) : null}
       <Card>{children}</Card>
       {caption ? (
         <Text

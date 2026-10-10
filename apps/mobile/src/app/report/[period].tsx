@@ -20,10 +20,10 @@ import { MonthGrid } from '@/tracker/components/MonthGrid';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { liftsBeatingBest, liftsUpText } from '@/tracker/engine/headline';
 import { RECORD_LABEL } from '@/tracker/engine/records';
-import { bigNumber, changeText, emptyReportText, timeText, type MonthReport, type YearReview } from '@/tracker/engine/reports';
+import { changeText, emptyReportText, heroLine, type MonthReport, type YearReview } from '@/tracker/engine/reports';
 import { setsText } from '@/tracker/engine/volume';
 import { countWord } from '@/lib/words';
-import { isMonthKey, monthName, monthOf, monthTitle, shiftMonth } from '@/tracker/lib/months';
+import { isMonthKey, monthDays, monthName, monthOf, monthTitle, shiftMonth } from '@/tracker/lib/months';
 import { recordValueText } from '@/tracker/services/recordText';
 import { getMonthReport, getTrainedMonths, getYearReview, type MonthReportData } from '@/tracker/services/reportsService';
 import { monthShareScene, yearShareScene } from '@/tracker/share/reportCard';
@@ -48,7 +48,7 @@ function CoachNote({ text }: { text: string }) {
       <View style={{ flexDirection: 'row', gap: space.md }}>
         <Icon name="sparkle" size={20} color={color.accentBright} />
         <View style={{ flex: 1 }}>
-          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, letterSpacing: 0.4, color: color.inkMuted, marginBottom: 3 }}>COACH</Text>
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, letterSpacing: 0.4, color: color.inkMuted, marginBottom: 3 }}>IN SHORT</Text>
           <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.ink, lineHeight: 21 }}>{text}</Text>
         </View>
       </View>
@@ -109,7 +109,18 @@ function BodyweightLine({ change }: { change: MonthReport['bodyweight'] }) {
   );
 }
 
-function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
+function MonthBody({
+  data,
+  today,
+  onSeeRecords,
+  onOpenExercise,
+}: {
+  data: MonthReportData;
+  today: string;
+  /** PG-14: the month's full record list. */
+  onSeeRecords: (month: string) => void;
+  onOpenExercise: (exerciseId: string) => void;
+}) {
   const units = useUnits(); // v0.27.0: kg or lb
   const wu = weightUnitOf(units);
   const r = data.report;
@@ -124,7 +135,8 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
       <Hero
         big={`${t.workouts} ${t.workouts === 1 ? 'workout' : 'workouts'}`}
         label={r.complete ? monthTitle(r.month) : `${monthName(r.month)} so far`}
-        line={`${timeText(t)} · ${fmtInt(kgToShown(t.volumeKg, units))} ${wu} · ${setsText(t.sets)}`}
+        // PG-21: only what applies — never "0 kg" for a month of runs, never a leading "—".
+        line={heroLine(t, r.picture, units)}
       />
       <CoachNote text={r.note} />
       {r.previous && r.complete ? (
@@ -136,7 +148,7 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
             </View>
             <View style={{ flex: 1 }}>
               {/* PG-22: the same full number as the line above — never "228.3k" beside "2,28,288". */}
-              <StatTile label="Volume" value={fmtInt(kgToShown(t.volumeKg, units))} unit={wu} delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct') ?? undefined} />
+              <StatTile label={wu === 'kg' ? 'Kg lifted' : 'Lb lifted'} value={fmtInt(kgToShown(t.volumeKg, units))} unit={wu} delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct') ?? undefined} />
             </View>
             <View style={{ flex: 1 }}>
               <StatTile label="Sets" value={t.sets} delta={changeText(t.sets, r.previous.sets, 'count') ?? undefined} />
@@ -158,7 +170,13 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>No new records this month.</Text>
           ) : (
             data.records.slice(0, 5).map((rec, i) => (
-              <View key={`${rec.exerciseId}-${rec.kind}-${i}`} style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
+              <Pressable
+                key={`${rec.exerciseId}-${rec.kind}-${i}`}
+                onPress={() => onOpenExercise(rec.exerciseId)}
+                accessibilityRole="button"
+                accessibilityLabel={`${rec.exerciseName}, ${RECORD_LABEL[rec.kind]}, ${recordValueText(rec, rec.info)}`}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 48 }}
+              >
                 <View style={{ flex: 1, gap: 4 }}>
                   <Text numberOfLines={2} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
                     {rec.exerciseName}
@@ -168,13 +186,19 @@ function MonthBody({ data, today }: { data: MonthReportData; today: string }) {
                   </View>
                 </View>
                 <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }}>{recordValueText(rec, rec.info)}</Text>
-              </View>
+              </Pressable>
             ))
           )}
           {data.records.length > 5 ? (
-            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
-              and {data.records.length - 5} more
-            </Text>
+            <Pressable
+              onPress={() => onSeeRecords(r.month)}
+              accessibilityRole="button"
+              accessibilityLabel={`See all ${data.records.length} records of ${monthTitle(r.month)}`}
+              style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.xs, minHeight: 48 }}
+            >
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>See all {data.records.length}</Text>
+              <Icon name="chevron-right" size={16} color={color.accent} />
+            </Pressable>
           ) : null}
         </Card>
       </View>
@@ -199,7 +223,7 @@ function YearBody({ y }: { y: YearReview }) {
       <Hero
         big={`${fmtInt(t.workouts)} ${t.workouts === 1 ? 'workout' : 'workouts'}`}
         label={y.complete ? `${y.year} in review` : `${y.year} so far`}
-        line={`${timeText(t)} · ${bigNumber(Math.round(kgToShown(t.volumeKg, units)))} ${wu} · ${setsText(t.sets)}`}
+        line={heroLine(t, y.picture, units, true)}
       />
       <CoachNote text={y.note} />
       <View>
@@ -337,7 +361,15 @@ export default function ReportScreen() {
           <Skeleton width="100%" height={220} radius={radius.lg} />
         </View>
       ) : loaded.kind === 'month' ? (
-        <MonthBody data={loaded.data} today={today} />
+        <MonthBody
+          data={loaded.data}
+          today={today}
+          onSeeRecords={(m) => {
+            const { from, to } = monthDays(m);
+            router.push({ pathname: '/records', params: { from, to, label: monthTitle(m) } });
+          }}
+          onOpenExercise={(id) => router.push({ pathname: '/exercise/[id]', params: { id } })}
+        />
       ) : (
         <YearBody y={loaded.data} />
       )}

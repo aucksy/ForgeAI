@@ -78,6 +78,10 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: '.* · 1 lift beat its best'
     timeout: 15000
+# Audit Phase 5 (PG-04): an empty workout of one exercise is named after it ("Pull Up done");
+# the share picture below carries the same name as its title — never "Full Body".
+- assertVisible: 'Pull[- ][Uu]p done'
+- assertNotVisible: "Full Body done"
 # LW-21: the records fold shut under "New records" with a count. Since Phase 3 (D10) it counts
 # lifts, not kinds of record ("1 lift · see it"): open them.
 - scrollUntilVisible:
@@ -133,9 +137,7 @@ appId: com.forgeai.app
 - assertVisible: 'Last time · .*'
 - assertVisible: 'Best · .*'
 - takeScreenshot: 63b-pull-up-last-time-best
-- scrollUntilVisible:
-    element: "Records"
-    timeout: 20000
+# Phase 4: no "Records" heading on the page any more; the record tiles sit under the chart.
 - scrollUntilVisible:
     element: "Most reps"
     timeout: 20000

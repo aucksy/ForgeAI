@@ -254,6 +254,11 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Workout complete"
     timeout: 30000
+# Audit Phase 5 (PG-04): an empty workout of several lifts is named after the two muscles it
+# trained most ("Lats & Abs done"; the share picture's title is the same name) — never the
+# empty workout's placeholder "Full Body".
+- assertVisible: '.+ & .+ done'
+- assertNotVisible: "Full Body done"
 - takeScreenshot: 29-finish
 # LW-21: long lists fold shut under a heading with a count ("4 muscles · see them"): open them.
 - scrollUntilVisible:

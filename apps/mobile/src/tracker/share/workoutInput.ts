@@ -7,7 +7,7 @@ import { fmtDistance, fmtDuration, fmtTotalDistance, weightIsEach, type DistUnit
 import { RECORD_LABEL, sessionUnit } from '../engine/records';
 import { setVolumeKg } from '../engine/volume';
 import type { SetMeta } from '../db/trackerSets';
-import { formatDuration, sessionTitle, type SessionSummaryData } from '../services/finishSummary';
+import { formatDuration, workoutName, type SessionSummaryData } from '../services/finishSummary';
 import type { RecordEventRow } from '../services/recordsService';
 import { recordValueText } from '../services/recordText';
 import type { WorkoutShareInput } from './workoutCard';
@@ -74,12 +74,13 @@ export const totalDistanceText = fmtTotalDistance;
  * it went (DISTANCE), or — timed work with no distance — how many exercises it had.
  */
 export function liftedOnPicture(data: SessionSummaryData): {
-  label: 'KG LIFTED' | 'LB LIFTED' | 'REPS' | 'DISTANCE' | 'EXERCISES';
+  label: 'KG LIFTED' | 'LB LIFTED' | 'REPS' | 'DISTANCE' | 'TIME' | 'EXERCISES';
   value: string;
 } {
   let kg = 0;
   let reps = 0;
   let metres = 0;
+  let seconds = 0;
   let exercises = 0;
   for (const g of data.session.exercises) {
     const kind = data.kinds[g.exercise.id];
@@ -92,6 +93,7 @@ export function liftedOnPicture(data: SessionSummaryData): {
       kg += setVolumeKg({ weightKg: s.weightKg, reps: s.reps, isWarmup: false, loadMode: data.setMeta[s.id]?.loadMode ?? null }, rule, null);
       if (logType !== 'time' && logType !== 'distance' && logType !== 'time_distance') reps += Math.max(0, s.reps);
       metres += Math.max(0, data.setMeta[s.id]?.distanceM ?? 0);
+      seconds += Math.max(0, data.setMeta[s.id]?.durationSec ?? 0);
     }
     if (working > 0) exercises += 1;
   }
@@ -100,6 +102,8 @@ export function liftedOnPicture(data: SessionSummaryData): {
   if (kg > 0) return { label: lifted, value: fmtInt(kgToShown(kg)) };
   if (reps > 0) return { label: 'REPS', value: fmtInt(reps) };
   if (metres > 0) return { label: 'DISTANCE', value: totalDistanceText(metres) };
+  // Audit PG-04: planks and timed work read their time, not "EXERCISES 1".
+  if (seconds > 0) return { label: 'TIME', value: fmtDuration(seconds) };
   if (exercises > 0) return { label: 'EXERCISES', value: String(exercises) };
   return { label: lifted, value: fmtInt(kgToShown(kg)) };
 }
@@ -118,7 +122,8 @@ export function workoutShareInput(data: SessionSummaryData): WorkoutShareInput {
   const lifted = liftedOnPicture(data);
   const records = data.records ?? [];
   return {
-    title: sessionTitle(s),
+    // PG-04: the workout's real name — never "Full Body" for a run or an empty workout.
+    title: workoutName(data),
     dateText: shareDate(s.dateISO),
     durationText: data.durationSec > 0 ? formatDuration(data.durationSec) : null,
     volumeLabel: lifted.label,

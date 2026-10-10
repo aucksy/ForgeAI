@@ -341,7 +341,7 @@ describe('"Erase all data" leaves no pictures behind', () => {
     const deleted: string[] = [];
     const files = { documentDirectory: 'file:///app/files/', cacheDirectory: 'file:///app/cache/', deleteAsync: async (uri: string) => void deleted.push(uri) };
     await wipePhotoStorage(photoEraseSteps(files, { clearDiskCache: async () => true, clearMemoryCache: async () => true }));
-    expect(deleted).toEqual(['file:///app/files/progress-photos/', 'file:///app/cache/ImagePicker/', 'file:///app/cache/share/']);
+    expect(deleted).toEqual(['file:///app/files/progress-photos/', 'file:///app/files/photo-backup/', 'file:///app/cache/ImagePicker/', 'file:///app/cache/share/']);
     // The share sheet writes into that same folder.
     expect(read('tracker/components/ShareSheet.tsx')).toMatch(/cacheDirectory \?\? ''\}\$\{SHARE_FOLDER\}/);
   });

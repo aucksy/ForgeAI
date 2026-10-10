@@ -21,11 +21,16 @@ export function DatePickerSheet({
   value,
   onChoose,
   onClose,
+  title = 'Workout date',
+  subtitle,
 }: {
   visible: boolean;
   value: string;
   onChoose: (iso: string) => void;
   onClose: () => void;
+  /** Audit PG-16: the body screens reuse it ("Weigh-in date", "Photo date"). */
+  title?: string;
+  subtitle?: string;
 }) {
   const today = todayISO();
   const [cursor, setCursor] = useState(() => {
@@ -47,7 +52,7 @@ export function DatePickerSheet({
   const cells = monthGrid(cursor.y, cursor.m);
 
   return (
-    <TrackerSheet visible={visible} title="Workout date" onClose={onClose}>
+    <TrackerSheet visible={visible} title={title} subtitle={subtitle} onClose={onClose}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Pressable onPress={() => step(-1)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Previous month" style={{ padding: space.sm }}>
           <Icon name="chevron-left" size={20} color={color.ink} />

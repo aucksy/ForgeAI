@@ -17,4 +17,18 @@ appId: com.forgeai.app
     element: '^[0-9]+ workouts?$'
     centerElement: true
     timeout: 90000
+# Audit Phase 5 (PG-17 / D11): under the count, "Include photos in my backup" — OFF unless the
+# member turns it on (part D's photos never did), and the card says what Off means.
+- scrollUntilVisible:
+    element: "Include photos in my backup"
+    centerElement: true
+    timeout: 20000
+- assertVisible: 'Off: photos stay on this phone only\..*'
+- takeScreenshot: 179-backup-photos-off
+# The script reads the count off the screen right after this flow: bring it back into view.
+- scrollUntilVisible:
+    element: '^[0-9]+ workouts?$'
+    direction: UP
+    centerElement: true
+    timeout: 20000
 - takeScreenshot: 180-before-backup-workouts

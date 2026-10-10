@@ -19,6 +19,8 @@ describe('"Create “…”" at the end of the search', () => {
   it('not for an exact name already there, nor for one letter', () => {
     expect(createOffer('sled push', all)).toBeNull();
     expect(createOffer('s', all)).toBeNull();
+    // Punctuation and case don't make a new name.
+    expect(createOffer('pull-up', [{ name: 'Pull Up' }])).toBeNull();
     expect(createOffer('', all)).toBeNull();
   });
 });

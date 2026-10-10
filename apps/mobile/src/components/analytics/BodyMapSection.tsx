@@ -1,44 +1,46 @@
-import { Text, View } from 'react-native';
+import { useState } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 
-import { EmptyState } from '@/components/ui';
+import { Chip, EmptyState } from '@/components/ui';
 import { color, space, type } from '@/theme/tokens';
-import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
+import { MUSCLE_LABEL, type Muscle } from '@/tracker/catalog/muscles';
 import { BodyMap } from '@/tracker/components/BodyMap';
 import { MAPPED_MUSCLES, muscleLevels, untrainedLine, untrainedMuscles, WEEK_LEGEND } from '@/tracker/engine/bodyMap';
-import type { MuscleSetsSlice } from '@/tracker/engine/volume';
+import { fmtSets, type MuscleSetsSlice } from '@/tracker/engine/volume';
 import { MAP_LEVELS } from '@/tracker/lib/bodyMapColors';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
-import { HeaderStat, Section } from './Section';
+import { MuscleSheet } from './MuscleSheet';
+import { Section } from './Section';
 
 export interface BodyMapSectionProps {
   /** Working sets per muscle over the last 7 days. */
   sets: MuscleSetsSlice[];
   index: number;
+  onOpenExercise: (exerciseId: string) => void;
 }
 
 /**
  * Phase 3: the muscles trained in the last 7 days on a body drawing (Hevy's map, praised for
  * showing what you skipped). Brighter = more working sets; the line under it names the
- * muscles that got none. v0.25.1: drawn on the figure chosen in Profile.
+ * muscles that got none. v0.25.1: drawn on the figure chosen in Profile. Audit Phase 5: tap a
+ * muscle (on the drawing or its chip) → its sets, the exercises that trained it, and a hint
+ * when it got under 10 sets.
  */
-export function BodyMapSection({ sets, index }: BodyMapSectionProps) {
+export function BodyMapSection({ sets, index, onOpenExercise }: BodyMapSectionProps) {
   const figure = useTrackerPrefs((s) => s.bodyFigure);
+  const [open, setOpen] = useState<Muscle | null>(null);
   const levels = muscleLevels(sets);
-  const trained = MAPPED_MUSCLES.length - untrainedMuscles(levels).length;
   const skipped = untrainedMuscles(levels).map((m) => MUSCLE_LABEL[m]);
+  const trained = sets.filter((s) => s.sets > 0 && MAPPED_MUSCLES.includes(s.muscle));
 
   return (
-    <Section
-      title="Last 7 days"
-      index={index}
-      right={trained > 0 ? <HeaderStat text={`${trained} of ${MAPPED_MUSCLES.length} muscles`} /> : undefined}
-    >
-      {trained === 0 ? (
-        <EmptyState icon="dumbbell" title="Nothing trained this week" body="Log a workout and the muscles you work light up here." />
+    <Section index={index}>
+      {trained.length === 0 ? (
+        <EmptyState icon="dumbbell" title="Nothing trained in the last 7 days" body="Do a workout and the muscles you work light up here." />
       ) : (
         <View style={{ gap: space.md }}>
-          <BodyMap levels={levels} figure={figure} height={250} />
+          <BodyMap levels={levels} figure={figure} height={250} onPressMuscle={setOpen} />
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.md, flexWrap: 'wrap' }}>
             {WEEK_LEGEND.map((label, i) => (
               <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
@@ -47,16 +49,30 @@ export function BodyMapSection({ sets, index }: BodyMapSectionProps) {
               </View>
             ))}
           </View>
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>Tap a muscle for its sets</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.sm }}>
+            {trained.map((m) => (
+              <Chip key={m.muscle} label={`${MUSCLE_LABEL[m.muscle]} · ${fmtSets(m.sets)}`} onPress={() => setOpen(m.muscle)} />
+            ))}
+          </ScrollView>
           {skipped.length > 0 ? (
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>
               <Text style={{ fontFamily: type.bodySemi, color: color.ink }}>Not trained: </Text>
               {untrainedLine(skipped)}
             </Text>
           ) : (
-            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.goodText }}>Every muscle got some work this week.</Text>
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.goodText }}>Every muscle got some work in the last 7 days.</Text>
           )}
         </View>
       )}
+      <MuscleSheet
+        muscle={open}
+        onClose={() => setOpen(null)}
+        onOpenExercise={(id) => {
+          setOpen(null);
+          onOpenExercise(id);
+        }}
+      />
     </Section>
   );
 }

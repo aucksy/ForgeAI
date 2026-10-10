@@ -14,11 +14,20 @@
   - file "SQLite/"           the workout database (expo-sqlite: filesDir/SQLite/forgeai.db with
                              its -wal and -shm files).
   - database "RKStorage"     AsyncStorage (units kg/lb, app settings), plus its journal/WAL.
-  Not included (so not backed up): progress photos and exercise photos/videos (files area,
-  outside SQLite/; owner decision D11 makes photos opt-in later), and every cache.
+  - file "photo-backup/"     the member's OPT-IN photo copies (audit PG-17, owner decision D11):
+                             empty unless Profile -> Backup -> "Include photos in my backup" is
+                             on; then the newest photos that fit a budget (at most 15 MB, and
+                             database + photos under 22 MB). Turning it off deletes the folder.
+  - file "progress-photos/"  DEVICE-TRANSFER ONLY: the member's own progress photos, full size.
+                             A phone-to-phone copy has no 25 MB limit, so moving to a new phone
+                             brings every photo, not just the budgeted backup copies. Never in
+                             cloud-backup (it would blow the 25 MB limit and back up nothing).
+  Not included (so not backed up): progress-photos/ in cloud-backup, exercise photos/videos
+  (files area, outside SQLite/), and every cache.
 
   Size: Android's cloud backup holds at most 25 MB per app. Above that it backs up NOTHING for
-  the app, so never include pictures or videos here. A 5-year history is roughly 9 MB.
+  the app, so never include pictures or videos here except the budgeted photo-backup/ folder.
+  A 5-year history is roughly 9 MB.
 
   Source of truth: apps/mobile/plugins/backup-rules/ (copied here by the config plugin on a
   prebuild). A test checks the two copies are identical.
@@ -28,6 +37,7 @@
     <include domain="sharedpref" path="."/>
     <exclude domain="sharedpref" path="SecureStore"/>
     <include domain="file" path="SQLite/"/>
+    <include domain="file" path="photo-backup/"/>
     <include domain="database" path="RKStorage"/>
     <include domain="database" path="RKStorage-journal"/>
     <include domain="database" path="RKStorage-wal"/>
@@ -36,6 +46,8 @@
     <include domain="sharedpref" path="."/>
     <exclude domain="sharedpref" path="SecureStore"/>
     <include domain="file" path="SQLite/"/>
+    <include domain="file" path="photo-backup/"/>
+    <include domain="file" path="progress-photos/"/>
     <include domain="database" path="RKStorage"/>
     <include domain="database" path="RKStorage-journal"/>
     <include domain="database" path="RKStorage-wal"/>

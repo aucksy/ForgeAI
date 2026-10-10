@@ -14,6 +14,8 @@ import { color, space, type } from '@/theme/tokens';
 import { countWorkouts, saveMyHistory } from '@/tracker/services/historyExport';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
+import { PhotoBackupCard } from './PhotoBackupCard';
+
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /** ISO → "8 Jul 2026, 14:30" without relying on Intl (spotty on RN Android). */
@@ -69,7 +71,7 @@ function Note({ children, tone = 'muted' }: { children: ReactNode; tone?: 'muted
  * Profile → Backup (audit SH-27, DS-01, DS-12). Leads with what is true today:
  *  - Android's own backup carries the workouts to the member's Google account (the app's backup
  *    rules include the database). Android never tells an app WHEN it backed up, so no time is
- *    claimed. Photos are not in it.
+ *    claimed. Photos only when the member turns on "Include photos in my backup" (PG-17 / D11).
  *  - "Save my history": the whole history as a Hevy-format CSV, which "Import from Hevy" reads
  *    back (also Hevy and Strong).
  * Below that, the member-owned Google Drive backup — still hidden until the build carries a
@@ -118,7 +120,7 @@ export function BackupCard() {
         </Text>
         <Body>
           Android backs this up to your Google account when backup is on in your phone’s settings.
-          Photos stay on this phone.
+          Photos stay on this phone unless you include them below.
         </Body>
         <View style={{ marginTop: space.lg }}>
           <GhostButton
@@ -133,6 +135,7 @@ export function BackupCard() {
         </Note>
         {saveNote ? <Note tone={saveNote.tone}>{saveNote.text}</Note> : null}
       </Card>
+      <PhotoBackupCard />
       {isDriveConfigured() ? <DriveBackup /> : null}
     </View>
   );

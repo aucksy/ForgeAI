@@ -173,4 +173,39 @@ describe('two ways: every headline number agrees on every screen', () => {
     expect(month.report.bodyweight?.start).toBe(octChange?.fromKg);
     expect(month.report.bodyweight?.end).toBe(octChange?.toKg);
   });
+
+  it('Phase 5: the top of Progress and the tappable body map agree with Home, History and the map', async () => {
+    const { weekStartISO, addDays } = await import('@/lib/date');
+    const weekFrom = weekStartISO(TODAY);
+    const { getDashboardDataPhase2 } = await import('@/tracker/services/dashboardPhase2');
+    const { getRecentSessionDetailsBatched } = await import('@/tracker/db/sessionDetails');
+    const { getProgressTop, getMuscleGroupsBetween } = await import('@/tracker/services/progressTop');
+    const { getMuscleSetsBetween } = await import('@/tracker/services/volumeService');
+    const { muscleBreakdown } = await import('@/tracker/engine/bodyMap');
+
+    const home = await getDashboardDataPhase2();
+    const feed = await getRecentSessionDetailsBatched(50); // History's feed read
+    const top = await getProgressTop(TODAY);
+
+    // This week: workouts and working sets = History's cards; lifts up = Home's (D10).
+    const weekFeed = feed.filter((s) => s.dateISO >= weekFrom);
+    expect(top.week.week.workouts).toBe(weekFeed.length);
+    expect(top.week.week.workouts).toBe(1);
+    expect(top.week.week.sets).toBe(weekFeed.reduce((n, s) => n + s.exercises.reduce((m, g) => m + g.sets.filter((x) => !x.isWarmup).length, 0), 0));
+    expect(top.week.week.liftsUp).toBe(home.liftsUpThisWeek);
+    expect(top.totalWorkouts).toBe(feed.length);
+    // The usual week: 8 full weeks before this one (the member started 3 Aug, 10 weeks ago).
+    const usualFrom = addDays(weekFrom, -56);
+    expect(top.week.usual?.weeks).toBe(8);
+    expect(top.week.usual?.workouts).toBeCloseTo(feed.filter((s) => s.dateISO >= usualFrom && s.dateISO < weekFrom).length / 8, 1);
+    // Bench beat its best this week, so it is the lift that went up most; the most-trained lifts lead "Your lifts".
+    expect(top.week.topLift?.name).toBe('Barbell Bench Press');
+    expect(top.lifts.slice(0, 2).map((l) => l.name).sort()).toEqual(['Barbell Bench Press', 'Barbell Squat']);
+
+    // A tapped muscle's sets = the body map's shading count for it.
+    const from = addDays(TODAY, -6);
+    const [groups, map] = await Promise.all([getMuscleGroupsBetween(from, TODAY), getMuscleSetsBetween(from, TODAY)]);
+    expect(map.length).toBeGreaterThan(0);
+    for (const m of map) expect(muscleBreakdown(groups, m.muscle).sets).toBe(m.sets);
+  });
 });

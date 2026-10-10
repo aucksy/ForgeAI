@@ -261,7 +261,7 @@ function NutritionScreen() {
           <EmptyState
             icon="meal"
             title="No meals logged today"
-            body="Add a meal above, or ask your coach to log one for you."
+            body="Add a meal above and it shows here."
           />
         ) : (
           <View style={{ gap: space.sm }}>

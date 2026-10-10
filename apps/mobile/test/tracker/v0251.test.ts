@@ -311,9 +311,9 @@ describe('the share pictures say it right', () => {
     expect(sceneTexts(workoutShareScene({ ...BASE, muscles: [] }))).not.toContain('MUSCLES WORKED');
   });
 
-  it('before: "KG LIFTED 0" on a run — now its distance, or the exercises for timed work', () => {
+  it('before: "KG LIFTED 0" on a run — now its distance, or (audit PG-04) the time of timed work', () => {
     expect(liftedOnPicture(cardioSummary())).toEqual({ label: 'DISTANCE', value: '5 km' });
-    expect(liftedOnPicture(cardioSummary([], { durationSec: 600 }))).toEqual({ label: 'EXERCISES', value: '1' });
+    expect(liftedOnPicture(cardioSummary([], { durationSec: 600 }))).toEqual({ label: 'TIME', value: '10:00' });
     expect(totalDistanceText(800)).toBe('800 m');
     expect(totalDistanceText(10_550)).toBe('10.6 km');
   });

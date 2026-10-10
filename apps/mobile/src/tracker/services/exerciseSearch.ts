@@ -654,8 +654,9 @@ export function filterExercises<T extends SearchableExercise>(
 export function createOffer(query: string, all: readonly Pick<SearchableExercise, 'name'>[]): string | null {
   const typed = query.trim().replace(/\s+/g, ' ');
   if (typed.length < 2) return null;
-  const q = normalize(typed);
-  return all.some((e) => normalize(e.name) === q) ? null : typed;
+  // Punctuation and case don't make a new name: "pull-up" is the existing "Pull Up".
+  const q = fold(typed);
+  return all.some((e) => fold(e.name) === q) ? null : typed;
 }
 
 /**
@@ -666,5 +667,5 @@ export function createOffer(query: string, all: readonly Pick<SearchableExercise
 export function didYouMean<T extends SearchableExercise>(query: string, results: readonly T[]): T | null {
   const top = results[0];
   if (!top || fold(query).length < 2) return null;
-  return normalize(top.name) === normalize(query) ? null : top;
+  return fold(top.name) === fold(query) ? null : top;
 }

@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { Card, Icon } from '@/components/ui';
+import { Card, FoldedList, Icon } from '@/components/ui';
 import { color, motion, space, type } from '@/theme/tokens';
 import { liftsUpShort } from '@/tracker/engine/headline';
 import { yearRowSub } from '@/tracker/engine/reports';
@@ -18,6 +18,11 @@ export interface ReportsCardProps {
   year: number | null;
   yearRunning: boolean;
   yearWorkouts: number;
+  /** PG-15: through January, last year's review beside this year so far (null otherwise). */
+  lastYear?: number | null;
+  lastYearWorkouts?: number;
+  /** PG-15: every other report, newest first. */
+  earlier?: { period: string; title: string }[];
   index: number;
   onOpen: (period: string) => void;
 }
@@ -28,7 +33,7 @@ function Row({ title, sub, onPress, label }: { title: string; sub: string; onPre
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm }}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm, minHeight: 56 }}
     >
       <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
         <Icon name="calendar" size={18} color={color.accentBright} />
@@ -50,7 +55,7 @@ export function ReportsCard(p: ReportsCardProps) {
   if (!p.month && p.year == null) return null;
   const workouts = (n: number) => `${n} ${n === 1 ? 'workout' : 'workouts'}`;
   return (
-    <Animated.View entering={FadeInDown.delay(60 * Math.min(p.index, 8)).duration(motion.slow)} style={{ marginBottom: space.xxl }}>
+    <Animated.View entering={FadeInDown.delay(60 * Math.min(p.index, 8)).duration(motion.slow)} style={{ marginBottom: space.xl }}>
       <Card style={{ paddingVertical: space.sm }}>
         {p.month ? (
           <Row
@@ -69,7 +74,39 @@ export function ReportsCard(p: ReportsCardProps) {
             onPress={() => p.onOpen(String(p.year))}
           />
         ) : null}
+        {p.lastYear != null ? (
+          <>
+            <View style={{ height: 1, backgroundColor: color.border }} />
+            <Row
+              title={`${p.lastYear} in review`}
+              sub={yearRowSub(p.lastYearWorkouts ?? 0, false, p.lastYear)}
+              label={`Open the year in review for ${p.lastYear}`}
+              onPress={() => p.onOpen(String(p.lastYear))}
+            />
+          </>
+        ) : null}
       </Card>
+      {p.earlier && p.earlier.length > 0 ? (
+        <View style={{ marginTop: space.md }}>
+          <FoldedList
+            title="Earlier reports"
+            noun="report"
+            items={p.earlier}
+            keyOf={(r) => r.period}
+            renderItem={(r) => (
+              <Pressable
+                onPress={() => p.onOpen(r.period)}
+                accessibilityRole="button"
+                accessibilityLabel={`Open the ${r.title} report`}
+                style={{ flexDirection: 'row', alignItems: 'center', minHeight: 48, paddingHorizontal: space.lg }}
+              >
+                <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{r.title}</Text>
+                <Icon name="chevron-right" size={16} color={color.inkMuted} />
+              </Pressable>
+            )}
+          />
+        </View>
+      ) : null}
     </Animated.View>
   );
 }

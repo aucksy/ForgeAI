@@ -323,11 +323,11 @@ describe('the report reads', () => {
   });
 
   it('Progress offers last month\'s report and this year so far', () => {
-    expect(reportIndex(['2026-10', '2026-09', '2026-07'], '2026-10-07')).toEqual({ month: '2026-09', year: 2026 });
+    expect(reportIndex(['2026-10', '2026-09', '2026-07'], '2026-10-07')).toEqual({ month: '2026-09', year: 2026, lastYear: null });
     // A new member with only this month: this month so far.
-    expect(reportIndex(['2026-10'], '2026-10-07')).toEqual({ month: '2026-10', year: 2026 });
+    expect(reportIndex(['2026-10'], '2026-10-07')).toEqual({ month: '2026-10', year: 2026, lastYear: null });
     // January with nothing logged yet: last year's review.
-    expect(reportIndex(['2025-12', '2025-11'], '2026-01-03')).toEqual({ month: '2025-12', year: 2025 });
-    expect(reportIndex([], '2026-01-03')).toEqual({ month: null, year: null });
+    expect(reportIndex(['2025-12', '2025-11'], '2026-01-03')).toEqual({ month: '2025-12', year: 2025, lastYear: null });
+    expect(reportIndex([], '2026-01-03')).toEqual({ month: null, year: null, lastYear: null });
   });
 });

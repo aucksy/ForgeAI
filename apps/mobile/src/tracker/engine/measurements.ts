@@ -50,6 +50,18 @@ export function isMeasureKind(v: unknown): v is MeasureKind {
   return typeof v === 'string' && (MEASURES as readonly string[]).includes(v);
 }
 
+/**
+ * The measurement the screen shows (audit PG-26): the one the member tapped, else the one the
+ * screen was opened for (Progress passes `kind=waist`), else the first with entries — each
+ * only when it has entries. PURE.
+ */
+export function shownMeasure(logged: readonly MeasureKind[], picked: MeasureKind | null, opened: unknown): MeasureKind | null {
+  if (picked && logged.includes(picked)) return picked;
+  const asked = Array.isArray(opened) ? opened[0] : opened;
+  if (isMeasureKind(asked) && logged.includes(asked)) return asked;
+  return logged[0] ?? null;
+}
+
 export interface MeasurementEntry {
   id: string;
   dateISO: string;

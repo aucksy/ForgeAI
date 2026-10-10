@@ -22,6 +22,7 @@ import { splitCards } from '@/tracker/services/cardSplit';
 import type { SetMeta } from '@/tracker/db/trackerSets';
 import type { TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { liftsBeatingBest, liftsUpText } from '@/tracker/engine/headline';
+import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { RECORD_KINDS } from '@/tracker/engine/records';
 import { missesBodyweight, muscleSets, type MuscleSetsSlice } from '@/tracker/engine/volume';
 import { durationText } from '@/tracker/services/finishCheck';
@@ -58,6 +59,8 @@ export interface SessionSummaryData {
   kinds: Record<string, Pick<TrackerExercise, 'logType' | 'loadMode' | 'distUnit' | 'catalogKey' | 'bwShare'>>;
   /** Pull-ups or dips were logged but no body weight is known, so they add no volume. */
   needsBodyweight: boolean;
+  /** Audit PG-04: the name of the routine it was started from (null: none, or deleted since). */
+  routineName?: string | null;
   /** Phase 4: a planned easy week of the followed plan (less volume is the point). */
   easyWeek?: boolean;
 }
@@ -112,8 +115,10 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
     getSessionSetMeta(sessionId),
     getVolumeContext(raw.exercises.map((g) => g.exercise.id)),
     getDb()
-      .getFirstAsync<{ easy_week: number | null; title: string | null; routine_id: string | null }>(
-        'SELECT easy_week, title, routine_id FROM workout_sessions WHERE id = ?',
+      .getFirstAsync<{ easy_week: number | null; title: string | null; routine_id: string | null; routine_name: string | null }>(
+        `SELECT ws.easy_week, ws.title, ws.routine_id, pd.name AS routine_name
+           FROM workout_sessions ws LEFT JOIN plan_days pd ON pd.id = ws.routine_id
+          WHERE ws.id = ?`,
         [sessionId],
       )
       .catch(() => null),
@@ -150,6 +155,7 @@ export async function getSessionSummary(sessionId: string): Promise<SessionSumma
     kinds,
     needsBodyweight: missesBodyweight(vs, ctx.bw),
     easyWeek: easy?.easy_week === 1,
+    routineName: easy?.routine_name ?? null,
   };
 }
 
@@ -237,6 +243,38 @@ export function volumeComparison(kg: number): string | null {
 export function sessionTitle(s: { dayType: string; title?: string | null }): string {
   const t = s.title?.trim();
   return t ? t : dayTypeLabel(s.dayType);
+}
+
+/** Logged as a run, ride or row: named after the exercise itself. */
+const CARDIO_TYPES = new Set(['distance', 'time_distance']);
+
+/**
+ * The workout's real name (audit PG-04), for the finish screen and the share picture. PURE.
+ *  1. the name it was saved with;
+ *  2. the routine it was started from ("Push 1", not "Push Day");
+ *  3. a run, ride or row: the exercise ("Treadmill Run"), or "Cardio" for several;
+ *  4. an older workout with a day type of its own: that type ("Push Day");
+ *  5. an empty workout: its one exercise ("Pull Up"), else the two muscles it trained most
+ *     ("Biceps & Lats") — never "Full Body", which was only the empty workout's placeholder.
+ */
+export function workoutName(data: Pick<SessionSummaryData, 'session' | 'kinds' | 'muscles'> & { routineName?: string | null }): string {
+  const s = data.session as SessionSummaryData['session'] & { title?: string | null };
+  const title = s.title?.trim();
+  if (title) return title;
+  const routine = data.routineName?.trim();
+  if (routine) return routine;
+  const worked = s.exercises.filter((g) => g.sets.some((x) => !x.isWarmup));
+  if (worked.length > 0 && worked.every((g) => CARDIO_TYPES.has(data.kinds[g.exercise.id]?.logType ?? ''))) {
+    return worked.length === 1 ? worked[0].exercise.name : 'Cardio';
+  }
+  if (s.dayType !== 'full') return dayTypeLabel(s.dayType);
+  if (worked.length === 1) return worked[0].exercise.name;
+  const top = data.muscles
+    .filter((m) => m.muscle !== 'cardio' && m.sets > 0)
+    .sort((a, b) => b.sets - a.sets)
+    .slice(0, 2)
+    .map((m) => MUSCLE_LABEL[m.muscle]);
+  return top.length > 0 ? top.join(' & ') : 'Workout';
 }
 
 /** Human label for a day type, matching the coach service. */

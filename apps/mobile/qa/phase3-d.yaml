@@ -1,7 +1,11 @@
 # Phase 3 device QA, part D — progress (runs after parts A–C; demo data + today's workouts).
-# Progress: reports card + "last 7 days" body map → the monthly report (calendar, records,
-# muscles, share picture) → the year so far → personal records (all kinds) → measurements
-# (log two) → progress photos (two SAMPLE pictures pushed by run-device-qa.sh) → compare.
+# Audit Phase 5: Progress leads with "This week vs your usual" and "Your lifts"; records, the
+# last-7-days body map, training, body and reports fold shut under counted headings (a fold's
+# spoken name is "<title>, <count> <noun>, see them"). Walk: the top → "Any exercise" → the
+# monthly report (calendar, records, muscles, share picture) → the year so far → records → tap a
+# muscle → training (kg lifted, weeks in a row) → body → a 765 kg weigh-in kept, then fixed →
+# measurements (log three, delete one, Undo) → progress photos (two SAMPLE pictures pushed by
+# run-device-qa.sh: a tall one and a wide one, neither dated) → change a date → compare.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -13,17 +17,57 @@ appId: com.forgeai.app
     timeout: 60000
 - tapOn: "^Progress$"
 - extendedWaitUntil:
-    visible: "Last 7 days"
+    visible: "This week vs your usual"
     timeout: 30000
+- assertVisible: "Your lifts"
+- assertVisible: "Any exercise.*"
+# UX-3 (a new member's Progress is one card, "Finish your first workout to see your progress")
+# is NOT checked on the phone: no part reaches the tabs before part A loads the demo (the
+# welcome screen has no tab bar), and part M's reinstall restores the workouts. Only the
+# vitest lane covers the switch (progressMode in phase5ProgressTop.test.ts), not the card.
+- assertNotVisible: "Finish your first workout to see your progress"
 - takeScreenshot: 40-progress-top
+# PG-09: "Any exercise" opens the one exercise list; the pick opens its trend on Progress.
+# Part C ran a Treadmill Run today, so a distance lift's trend must show (not "Not done yet").
+- tapOn: "Any exercise.*"
+- extendedWaitUntil:
+    visible: "See its trend on Progress"
+    timeout: 15000
+- tapOn: "Search exercises"
+- inputText: " treadmill"
+- hideKeyboard
+- tapOn:
+    text: "Show trend Treadmill Run"
+    index: 0
+- extendedWaitUntil:
+    visible: "This week vs your usual"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Open exercise page"
+    centerElement: true
+    timeout: 20000
+- assertVisible: "Treadmill Run"
+- assertNotVisible: "Not done yet"
+- takeScreenshot: 40b-any-exercise-trend
 # ---------------------------------------------------------------- monthly report
-- tapOn: 'Open the .* report'
+- scrollUntilVisible:
+    element: '^Reports, .*'
+    timeout: 30000
+- tapOn: '^Reports, .*'
+- scrollUntilVisible:
+    element: 'Open the .* report'
+    timeout: 15000
+- tapOn:
+    text: 'Open the .* report'
+    index: 0
 - extendedWaitUntil:
     visible: "Monthly report"
     timeout: 20000
+# PG-30: the rule-written note is no longer signed "COACH" while the coach is hidden.
 - extendedWaitUntil:
-    visible: "COACH"
+    visible: "IN SHORT"
     timeout: 20000
+- assertNotVisible: "COACH"
 - takeScreenshot: 41-month-report
 # Audit Phase 3 (PG-22): full numbers use Latin digits and the PHONE's grouping. This emulator is
 # en-US, so a month's volume reads "228,288 kg", never the Indian "2,28,288" the app used to force.
@@ -49,17 +93,36 @@ appId: com.forgeai.app
     element: "Sets per muscle"
     timeout: 15000
 - takeScreenshot: 43-month-records-muscles
+# PG-14: "and N more" became "See all N", which opens exactly that month's records.
+- scrollUntilVisible:
+    element: 'See all [\d,]+ records of .*'
+    direction: UP
+    timeout: 10000
+    optional: true
+- runFlow:
+    when:
+      visible: 'See all [\d,]+ records of .*'
+    commands:
+      - tapOn: 'See all [\d,]+ records of .*'
+      - extendedWaitUntil:
+          visible: '^Records$'
+          timeout: 15000
+      - assertVisible: '[\d,]+ lifts? beat (its|their) best in .* · [\d,]+ records?, newest first'
+      - takeScreenshot: 43b-month-all-records
+      - back
 - back
 # ---------------------------------------------------------------- year so far
 - extendedWaitUntil:
-    visible: "Last 7 days"
+    visible: 'Open the year in review for .*'
     timeout: 15000
-- tapOn: 'Open the year in review for .*'
+- tapOn:
+    text: 'Open the year in review for .*'
+    index: 0
 - extendedWaitUntil:
     visible: "Year in review"
     timeout: 20000
 - extendedWaitUntil:
-    visible: "COACH"
+    visible: "IN SHORT"
     timeout: 20000
 - takeScreenshot: 45-year-review
 - assertNotVisible: '(?s).*\d,\d\d,\d\d\d.*'
@@ -74,47 +137,64 @@ appId: com.forgeai.app
     timeout: 15000
 - takeScreenshot: 46-year-review-more
 - back
-# ---------------------------------------------------------------- personal records
+# ---------------------------------------------------------------- records
 - extendedWaitUntil:
-    visible: "Last 7 days"
+    visible: 'Open the year in review for .*'
     timeout: 15000
 - scrollUntilVisible:
-    element: "Personal Records"
-    timeout: 20000
-- scrollUntilVisible:
-    element: 'Measurements\..*'
-    timeout: 20000
-- takeScreenshot: 47-records-and-body
-# PG-11: the body-weight change always says its span ("+3.6 kg" over "in 90 days", or "since
-# 13 Jul 2025" for a long one). It sits above the Measurements row.
-- scrollUntilVisible:
-    element: '(in \d+ days?|since \d{1,2} [A-Z][a-z]{2} \d{4})'
+    element: '^Records · \d+ days, .*'
     direction: UP
-    timeout: 15000
-- takeScreenshot: 47b-body-weight-span
-# Audit Phase 3 (D10): the link no longer carries a count ("See all records"); the records page
-# counts LIFTS in its subtitle ("5 lifts beat their best · every record, newest first"). The
-# link shows only with more than 6 records; it sits just above the body-weight card.
+    timeout: 20000
+- tapOn: '^Records · \d+ days, .*'
+- takeScreenshot: 47-records
+# PG-05 / PG-06: "See all 14" opens exactly those 14 (the page names the span); "See all
+# records" opens every record. The records page counts LIFTS in its subtitle (D10).
 - scrollUntilVisible:
-    element: 'See all records'
-    direction: UP
+    element: '^See all .*'
     timeout: 10000
     optional: true
 - runFlow:
     when:
-      visible: 'See all records'
+      visible: '^See all [\d,]+$'
     commands:
-      - tapOn: 'See all records'
+      - tapOn: '^See all [\d,]+$'
       - extendedWaitUntil:
-          visible: 'Personal records'
+          visible: '^Records$'
           timeout: 15000
-      - assertVisible: '[\d,]+ lifts? beat (its|their) best · every record, newest first'
+      - assertVisible: '[\d,]+ lifts? beat (its|their) best in the last \d+ days · [\d,]+ records?, newest first'
       - takeScreenshot: 48-all-records
       - back
-# ---------------------------------------------------------------- volume + streak (Phase 3 numbers)
-# PG-22: the range's volume is a full number grouped the phone's way. The demo's 13 weeks lift
-# well over 100,000 kg, so on this en-US phone it must read "650,000 kg lifted" (Western), never
-# "6,50,000" (Indian) or "650k".
+# ---------------------------------------------------------------- tap a muscle
+- scrollUntilVisible:
+    element: '^Muscles · last 7 days, .*'
+    timeout: 20000
+- tapOn: '^Muscles · last 7 days, .*'
+- scrollUntilVisible:
+    element: "Tap a muscle for its sets"
+    timeout: 15000
+- tapOn:
+    text: '^[A-Z][A-Za-z ]+ · [\d.]+$'
+    index: 0
+- extendedWaitUntil:
+    visible: '.* in the last 7 days'
+    timeout: 15000
+- takeScreenshot: 47c-muscle-sheet
+- back
+# ---------------------------------------------------------------- training (Phase 3 numbers)
+- scrollUntilVisible:
+    element: '^Training · \d+ days, .*'
+    timeout: 20000
+- tapOn: '^Training · \d+ days, .*'
+# D9: THE streak in weeks, the same rule as Home and History. History owns the calendar now:
+# Progress keeps one line ("12 days trained in 90 days · 5 weeks in a row").
+- extendedWaitUntil:
+    visible: '.*\d+ days? trained in \d+ days.*'
+    timeout: 15000
+- assertNotVisible: '(?i).*day streak.*'
+- takeScreenshot: 48c-progress-week-streak
+# PG-22: the range's kg lifted is a full number grouped the phone's way. The demo's 13 weeks
+# lift well over 100,000 kg, so on this en-US phone it must read "650,000 kg lifted" (Western),
+# never "6,50,000" (Indian) or "650k".
 - scrollUntilVisible:
     element: '[\d,]+ kg lifted'
     centerElement: true
@@ -122,27 +202,95 @@ appId: com.forgeai.app
 - assertVisible: '\d{1,3}(,\d{3})* kg lifted'
 - assertNotVisible: '(?s).*\d,\d\d,\d\d\d.*'
 - takeScreenshot: 48b-volume-western-grouping
-# D9: Progress shows THE streak in weeks, the same rule as Home and History.
+# ---------------------------------------------------------------- body
 - scrollUntilVisible:
-    element: '\d+-week streak.*'
+    element: '^Body · \d+ days, .*'
+    timeout: 20000
+- tapOn: '^Body · \d+ days, .*'
+# PG-11: the body-weight change always says its span ("+3.6 kg" over "in 90 days", or "since
+# 13 Jul 2025" for a long one). It sits above the Measurements row.
+- scrollUntilVisible:
+    element: '(in \d+ days?|since \d{1,2} [A-Z][a-z]{2} \d{4})'
+    timeout: 15000
+- takeScreenshot: 47b-body-weight-span
+# ---------------------------------------------------------------- body weight: a 765 kg typo, fixed
+# PG-16: the log form has a Day row. PG-03: 765 (meant 76.5) gets one gentle question
+# ("765 kg — that's 9.5× your last. Keep it?", Keep it / Fix it), never a refusal. Keep it, then
+# tap the entry → its sheet (value, Day, Save, Delete) → 76.5 → Save: the list shows 76.5 kg.
+- scrollUntilVisible:
+    element: 'Body weight\. .*'
+    timeout: 15000
+- tapOn: 'Body weight\. .*'
+- extendedWaitUntil:
+    visible: "Log your weight"
+    timeout: 15000
+- assertVisible: 'Day: Today\. Change the day'
+- tapOn: "Body weight in kg"
+- inputText: " 765"
+- hideKeyboard
+- tapOn: "Log weight"
+- extendedWaitUntil:
+    visible: '765 kg — that.s .*× your last\. Keep it\?'
+    timeout: 10000
+- assertVisible: "Fix it"
+- takeScreenshot: 47d-weight-typo-question
+- tapOn: "Keep it"
+- scrollUntilVisible:
+    element: '.*, 765 kg\. Fix or delete'
     centerElement: true
     timeout: 20000
-- assertNotVisible: '(?i).*day streak.*'
-- takeScreenshot: 48c-progress-week-streak
+- takeScreenshot: 47e-weight-765-kept
+- tapOn: '.*, 765 kg\. Fix or delete'
+- extendedWaitUntil:
+    visible: "Fix this weigh-in"
+    timeout: 10000
+- assertVisible: "Delete this entry"
+- tapOn:
+    text: "Body weight in kg"
+    below:
+      text: "Fix this weigh-in"
+- eraseText
+- inputText: " 76.5"
+- takeScreenshot: 47f-weigh-in-sheet
+# The sheet rides above the keyboard, so its Save is on screen (no hideKeyboard: Back would
+# close the sheet).
+- tapOn: "^Save$"
+- extendedWaitUntil:
+    notVisible: "Fix this weigh-in"
+    timeout: 10000
+- extendedWaitUntil:
+    visible: '.*, 76\.5 kg\. Fix or delete'
+    timeout: 10000
+- assertNotVisible: '.*765 kg.*'
+- takeScreenshot: 47g-weight-fixed
+- back
+- extendedWaitUntil:
+    notVisible: "Log your weight"
+    timeout: 15000
 # ---------------------------------------------------------------- measurements
 - scrollUntilVisible:
     element: 'Measurements\..*'
-    direction: UP
     timeout: 20000
 - tapOn: 'Measurements\..*'
 - extendedWaitUntil:
     visible: "Log measurements"
     timeout: 15000
 - takeScreenshot: 50-measurements
+# PG-26: Progress shows the waist ("Measurements. Waist 81 cm") and opens Measurements on it —
+# not on the first one logged (the demo logs Body fat first).
+- scrollUntilVisible:
+    element: "Waist entries"
+    timeout: 15000
+- assertNotVisible: "Body fat entries"
+- scrollUntilVisible:
+    element: "Log measurements"
+    direction: UP
+    timeout: 15000
 - tapOn: "Log measurements"
 - extendedWaitUntil:
     visible: "Waist in centimetres"
     timeout: 15000
+- assertVisible: 'Day: Today\. Change the day'
 - tapOn: "Waist in centimetres"
 - inputText: " 80.2"
 - tapOn: "Arm in centimetres"
@@ -159,6 +307,10 @@ appId: com.forgeai.app
     element: "Save measurements"
     timeout: 15000
 - tapOn: "Save measurements"
+# The log screen's title is also "Log measurements": wait for it to close first.
+- extendedWaitUntil:
+    notVisible: "Waist in centimetres"
+    timeout: 15000
 - extendedWaitUntil:
     visible: "Log measurements"
     timeout: 15000
@@ -170,6 +322,31 @@ appId: com.forgeai.app
     element: "Latest"
     timeout: 15000
 - takeScreenshot: 53-measurements-latest
+# PG-03 / PG-16: tap an entry → its sheet (value, Day, Save, Delete); Delete shows an Undo bar
+# (never "Are you sure?"), and Undo puts the entry back.
+- scrollUntilVisible:
+    element: '.*, 80\.2 cm\. Fix or delete'
+    centerElement: true
+    timeout: 15000
+- tapOn: '.*, 80\.2 cm\. Fix or delete'
+- extendedWaitUntil:
+    visible: "Fix this waist entry"
+    timeout: 10000
+- assertVisible: 'Day: Today\. Change the day'
+- assertVisible: "^Save$"
+- takeScreenshot: 53b-measurement-entry-sheet
+- tapOn: "Delete this entry"
+- extendedWaitUntil:
+    visible: 'Undo: Waist on .* deleted'
+    timeout: 10000
+- assertNotVisible: '.*, 80\.2 cm\. Fix or delete'
+- takeScreenshot: 53c-measurement-undo-bar
+- tapOn:
+    text: 'Undo: Waist on .* deleted'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: '.*, 80\.2 cm\. Fix or delete'
+    timeout: 10000
 - back
 # ---------------------------------------------------------------- progress photos
 - scrollUntilVisible:
@@ -179,6 +356,8 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Add a photo"
     timeout: 15000
+# D11: photos are not in the backup until the member turns it on (Profile → Backup).
+- assertVisible: 'Private\. They stay on this phone\.'
 - takeScreenshot: 54-photos-empty
 - tapOn: "Add a photo"
 - tapOn: "Choose from gallery"
@@ -200,6 +379,18 @@ appId: com.forgeai.app
           id: '.*icon_thumbnail'
           index: 0
           optional: true
+# PG-16: the sample pictures are PNGs with no date of their own, so the app asks the day
+# instead of silently using today. Day cells are named by their date ("2026-09-01").
+- extendedWaitUntil:
+    visible: 'When was this photo taken\?'
+    timeout: 20000
+- assertVisible: 'It came without a date of its own.*'
+- takeScreenshot: 55b-photo-undated-question
+- tapOn: "Previous month"
+- tapOn: '\d{4}-\d{2}-01'
+- extendedWaitUntil:
+    notVisible: 'When was this photo taken\?'
+    timeout: 10000
 - extendedWaitUntil:
     visible: 'Progress photo, .*'
     timeout: 20000
@@ -221,17 +412,58 @@ appId: com.forgeai.app
           index: 1
           optional: true
 - extendedWaitUntil:
+    visible: 'When was this photo taken\?'
+    timeout: 20000
+- tapOn: "Previous month"
+- tapOn: '\d{4}-\d{2}-15'
+- extendedWaitUntil:
+    notVisible: 'When was this photo taken\?'
+    timeout: 10000
+- extendedWaitUntil:
     visible: "Compare two photos"
     timeout: 20000
 - takeScreenshot: 56-photos-grid
+# The viewer: zoom, "Save to phone gallery", "Change date", "Delete photo" (PG-16/17/18).
 - tapOn:
     text: 'Progress photo, .*'
     index: 0
 - extendedWaitUntil:
     visible: "Delete photo"
     timeout: 10000
+- assertVisible: "Save to phone gallery"
+- assertVisible: "Change date"
 - takeScreenshot: 57-photo-viewer
+# Change date: the photo's own month opens; the 8th is a week from either sample's day (the
+# 1st and the 15th), so the compare below must read "1 week apart" whichever photo this is.
+- tapOn: "Change date"
+- extendedWaitUntil:
+    visible: "Photo date"
+    timeout: 10000
+- tapOn: '\d{4}-\d{2}-08'
+- extendedWaitUntil:
+    visible: "Change date"
+    timeout: 10000
+- assertVisible: '[A-Z][a-z]{2}, 8 [A-Z][a-z]{2}( \d{4})?'
+- takeScreenshot: 57b-photo-date-changed
+# Save to phone gallery hands the photo to Android's share list (the app has no gallery
+# module). Assert text only the SYSTEM chooser shows, as part E does; Back closes it.
+- tapOn: "Save to phone gallery"
+- extendedWaitUntil:
+    visible: '(Sharing image|Sharing 1 image|No recommended people to share with)'
+    timeout: 20000
+- takeScreenshot: 57c-save-to-gallery-share-list
 - back
+- extendedWaitUntil:
+    visible: "Close photo"
+    timeout: 10000
+- tapOn: "Close photo"
+- extendedWaitUntil:
+    visible: "Compare two photos"
+    timeout: 10000
+- assertNotVisible: "This phone has no share list.*"
+- assertNotVisible: "Couldn.t hand the photo over.*"
+# PG-18: compare shows each photo WHOLE (sample 1 is tall 600x800, sample 2 wide 800x600 with
+# orange side bands that a cropped view would cut off — look for both bands in 58).
 - tapOn: "Compare two photos"
 - tapOn:
     text: 'Progress photo, .*'
@@ -242,6 +474,23 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Before"
     timeout: 15000
+- assertVisible: "After"
+- assertVisible: "1 week apart"
+- assertVisible: "Tap a photo to open it and pinch to zoom."
 - takeScreenshot: 58-photo-compare
+- tapOn: 'Before, .*\. Open to zoom'
+- extendedWaitUntil:
+    visible: 'Before · .*'
+    timeout: 10000
+- takeScreenshot: 58b-compare-before-full
+- doubleTapOn: "Before photo"
+- takeScreenshot: 58c-compare-before-zoomed
+- tapOn: "Close photo"
+- tapOn: 'After, .*\. Open to zoom'
+- extendedWaitUntil:
+    visible: 'After · .*'
+    timeout: 10000
+- takeScreenshot: 58d-compare-after-full
+- tapOn: "Close photo"
 - back
 - back

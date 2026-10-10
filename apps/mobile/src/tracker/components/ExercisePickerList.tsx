@@ -10,7 +10,7 @@
  * Small still pictures: tap one for the demo; the rest of the row does the list's job (open the
  * exercise, add it, mark it).
  */
-import { useDeferredValue, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useDeferredValue, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
 import { Chip, EmptyState, Icon, LoadError, Skeleton } from '@/components/ui';
@@ -139,6 +139,12 @@ export function ExercisePickerList({
   // (React drops a stale search when the next letter arrives), so typing never waits on the search.
   const searched = useDeferredValue(query);
   const filtered = useMemo(() => filterExercises(shown, { query: searched, muscle, equipment: gear }), [shown, searched, muscle, gear]);
+  // A new search or filter starts at the top: the best match is first, never left scrolled
+  // out of sight above the list (phone run 38063413760, "pull-up" in the library).
+  const resultsRef = useRef<FlatList<(typeof filtered)[number]>>(null);
+  useEffect(() => {
+    resultsRef.current?.scrollToOffset({ offset: 0, animated: false });
+  }, [searched, muscle, gear]);
   // "Recent" first while nothing is typed or filtered (the full list follows, A→Z).
   const recent = useMemo(() => {
     const ids = recentIds === 'auto' ? autoRecent : recentIds;
@@ -281,6 +287,7 @@ export function ExercisePickerList({
 
       {/* results */}
       <FlatList
+        ref={resultsRef}
         data={filtered}
         keyExtractor={(e) => e.id}
         keyboardShouldPersistTaps="handled"

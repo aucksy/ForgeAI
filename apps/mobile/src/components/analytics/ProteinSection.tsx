@@ -43,7 +43,7 @@ export function ProteinSection({ data, target, index }: ProteinSectionProps) {
         <EmptyState
           icon="meal"
           title="No data yet"
-          body="Log protein-rich meals with the coach and your daily trend appears here."
+          body="Log your meals on the Nutrition screen to see your daily protein."
         />
       )}
     </Section>

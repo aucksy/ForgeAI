@@ -43,7 +43,7 @@ export function CaloriesSection({ data, target, index }: CaloriesSectionProps) {
         <EmptyState
           icon="meal"
           title="No data yet"
-          body="Log meals with the coach — even “2 rotis and dal” — to track intake."
+          body="Log your meals on the Nutrition screen to see your daily calories."
         />
       )}
     </Section>

@@ -14,7 +14,7 @@ import { hasReps } from '../engine/logTypes';
 import { liftsBeatingBest } from '../engine/headline';
 import { buildMonthReport, buildYearReview, type MonthReport, type PictureTotals, type ReportSession, type StrengthPoint, type YearReview } from '../engine/reports';
 import { setVolumeKg } from '../engine/volume';
-import { monthDays, monthOf, shiftMonth, yearDays } from '../lib/months';
+import { monthDays, monthName, monthOf, monthTitle, shiftMonth, yearDays } from '../lib/months';
 import { getRecordEvents, type RecordEventRow } from './recordsService';
 import { applyVolume, getBodyweightTimeline, getMuscleSetsBetween, getVolumeContext, type VolumeContext } from './volumeService';
 
@@ -94,15 +94,42 @@ export async function getTrainedMonths(): Promise<string[]> {
  *  - month: the latest FINISHED month with workouts (Hevy shows last month's report); a new
  *    member with only this month's workouts gets "this month so far".
  *  - year: this year so far, or last year's review when this year has nothing yet.
+ *  - lastYear (audit PG-15): through January, last year's review stays offered beside "this
+ *    year so far" — the first workout of January no longer hides it.
  */
-export function reportIndex(trainedMonths: readonly string[], today: string): { month: string | null; year: number | null } {
+export function reportIndex(trainedMonths: readonly string[], today: string): { month: string | null; year: number | null; lastYear: number | null } {
   const thisMonth = monthOf(today);
   const finished = trainedMonths.filter((m) => m < thisMonth).sort().reverse();
   const month = finished[0] ?? (trainedMonths.includes(thisMonth) ? thisMonth : null);
   const thisYear = Number(today.slice(0, 4));
   const years = new Set(trainedMonths.map((m) => Number(m.slice(0, 4))));
   const year = years.has(thisYear) ? thisYear : years.has(thisYear - 1) ? thisYear - 1 : null;
-  return { month, year };
+  const january = today.slice(5, 7) === '01';
+  const lastYear = january && year === thisYear && years.has(thisYear - 1) ? thisYear - 1 : null;
+  return { month, year, lastYear };
+}
+
+/**
+ * Every other report a member can open (audit PG-15, "Earlier reports"): each trained month
+ * and each past year not already offered, newest first — months, then years. PURE.
+ */
+export function earlierReports(
+  trainedMonths: readonly string[],
+  today: string,
+  shown: { month: string | null; year: number | null; lastYear: number | null },
+): { period: string; title: string }[] {
+  const thisMonth = monthOf(today);
+  const thisYear = Number(today.slice(0, 4));
+  const months = [...new Set(trainedMonths)]
+    .filter((m) => /^\d{4}-\d{2}$/.test(m) && m !== shown.month && m <= thisMonth)
+    .sort()
+    .reverse()
+    .map((m) => ({ period: m, title: m === thisMonth ? `${monthName(m)} ${m.slice(0, 4)} so far` : monthTitle(m) }));
+  const years = [...new Set(trainedMonths.map((m) => Number(m.slice(0, 4))))]
+    .filter((y) => Number.isFinite(y) && y < thisYear && y !== shown.year && y !== shown.lastYear)
+    .sort((a, b) => b - a)
+    .map((y) => ({ period: String(y), title: `${y} in review` }));
+  return [...months, ...years];
 }
 
 export interface MonthReportData {

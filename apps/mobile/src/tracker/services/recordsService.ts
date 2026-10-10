@@ -103,6 +103,12 @@ export interface ExerciseRecordSet {
  * another connection (demo data, erase and Drive restore use one of their own).
  */
 let cache: { version: string; data: Map<string, ExerciseRecordSet> } | null = null;
+/**
+ * Review fix (Phase 5): the full read in progress. Progress's top card and its records section
+ * both ask for every record as the tab opens; the second caller now shares the first one's read
+ * (same data version) instead of reading every working set again alongside it.
+ */
+let inflight: { version: string | null; promise: Promise<Map<string, ExerciseRecordSet>> } | null = null;
 
 async function dataVersion(): Promise<string> {
   const db = getDb();
@@ -127,6 +133,7 @@ async function dataVersion(): Promise<string> {
 /** Drop the kept records (tests; a new data source). */
 export function forgetRecordCache(): void {
   cache = null;
+  inflight = null;
 }
 
 /** Every record of these exercises (all exercises when omitted). */
@@ -141,9 +148,19 @@ export async function getRecordsByExercise(exerciseIds?: readonly string[]): Pro
     }
     return some;
   }
-  const data = await computeRecords(exerciseIds);
-  if (exerciseIds == null && version != null) cache = { version, data };
-  return data;
+  if (exerciseIds != null) return computeRecords(exerciseIds);
+  if (inflight && inflight.version === version) return inflight.promise;
+  const promise = computeRecords().then((data) => {
+    if (version != null) cache = { version, data };
+    return data;
+  });
+  const mine = { version, promise };
+  inflight = mine;
+  const done = (): void => {
+    if (inflight === mine) inflight = null;
+  };
+  promise.then(done, done);
+  return promise;
 }
 
 async function computeRecords(exerciseIds?: readonly string[]): Promise<Map<string, ExerciseRecordSet>> {

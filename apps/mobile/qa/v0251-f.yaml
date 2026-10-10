@@ -21,10 +21,17 @@ appId: com.forgeai.app
 - tapOn: "^Female$"
 - takeScreenshot: 70-profile-body-figure
 - tapOn: "^Progress$"
+# Audit Phase 5: the last-7-days body map folds shut under "Muscles · last 7 days, N muscles".
 - extendedWaitUntil:
-    visible: "Last 7 days"
+    visible: "This week vs your usual"
     timeout: 30000
-- assertVisible: '.*female figure.*'
+- scrollUntilVisible:
+    element: '^Muscles · last 7 days, .*'
+    timeout: 20000
+- tapOn: '^Muscles · last 7 days, .*'
+- scrollUntilVisible:
+    element: '.*female figure.*'
+    timeout: 15000
 - takeScreenshot: 71-body-map-female
 # ---------------------------------------------------------------- a run: best pace
 - tapOn: "^Workout$"
@@ -127,6 +134,10 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: '.* · 1 lift beat its best'
     timeout: 15000
+# Audit Phase 5 (PG-04): a run is named after the exercise ("Treadmill Run done"), and so is
+# its share picture (75) — never "Full Body".
+- assertVisible: "Treadmill Run done"
+- assertNotVisible: "Full Body done"
 # LW-21: the records fold shut under "New records": open them before looking for Best pace.
 - scrollUntilVisible:
     element: "New records"

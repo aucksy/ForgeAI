@@ -11,6 +11,8 @@ import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
 import { weightChange, weightChangeShown, weightChangeTone, weightSpanText } from '@/tracker/engine/headline';
+import { bodyWeightSub } from '@/tracker/engine/progressTop';
+import { todayISO } from '@/lib/date';
 import type { Goal } from '@/types/models';
 
 import { InspectReadout, Section } from './Section';
@@ -21,6 +23,8 @@ export interface BodyWeightSectionProps {
   /** Phase 3: "Waist 81 cm" — the latest measurement, or null when none is logged. */
   measureLine: string | null;
   photoCount: number;
+  /** The newest weigh-in ever (PG-25: "Log it" only when there is none at all). */
+  lastWeighIn: { dateISO: string; weightKg: number } | null;
   onWeight: () => void;
   onMeasurements: () => void;
   onPhotos: () => void;
@@ -34,7 +38,7 @@ function LinkRow({ icon, title, sub, onPress }: { icon: IconName; title: string;
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`${title}. ${sub}`}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm }}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm, minHeight: 48 }}
     >
       <Icon name={icon} size={18} color={color.accent} />
       <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{title}</Text>
@@ -48,7 +52,7 @@ function LinkRow({ icon, title, sub, onPress }: { icon: IconName; title: string;
  * Body: the weight trend (points at their real dates), then the way into measurements and
  * progress photos (Phase 3).
  */
-export function BodyWeightSection({ data, index, measureLine, photoCount, onWeight, onMeasurements, onPhotos, goal }: BodyWeightSectionProps) {
+export function BodyWeightSection({ data, index, measureLine, photoCount, lastWeighIn, onWeight, onMeasurements, onPhotos, goal }: BodyWeightSectionProps) {
   const [inspect, setInspect] = useState<{ x: string; y: number } | null>(null);
   // v0.27.0: kg or lb (stored kg). The chart is drawn in the shown unit.
   const units = useUnits();
@@ -60,7 +64,6 @@ export function BodyWeightSection({ data, index, measureLine, photoCount, onWeig
 
   return (
     <Section
-      title="Body"
       index={index}
       right={inspect ? <InspectReadout value={`${trimNum(inspect.y)} ${unit}`} sub={tinyDate(inspect.x)} /> : undefined}
     >
@@ -80,9 +83,10 @@ export function BodyWeightSection({ data, index, measureLine, photoCount, onWeig
           </View>
           <DateLineChart data={data.map((d) => ({ x: d.dateISO, y: kgToShown(d.weightKg, units) }))} fillGradient yFormat={(n) => trimNum(n)} onInspect={setInspect} />
           <View style={{ height: 1, backgroundColor: color.border, marginVertical: space.md }} />
+          <LinkRow icon="scale" title="Body weight" sub="Log today's" onPress={onWeight} />
         </>
       ) : (
-        <LinkRow icon="scale" title="Body weight" sub="Log it" onPress={onWeight} />
+        <LinkRow icon="scale" title="Body weight" sub={bodyWeightSub(0, lastWeighIn, units, todayISO()) ?? 'Log it'} onPress={onWeight} />
       )}
       <LinkRow icon="target" title="Measurements" sub={measureLine ?? 'Log them'} onPress={onMeasurements} />
       <LinkRow icon="camera" title="Progress photos" sub={photoCount > 0 ? String(photoCount) : 'Add one'} onPress={onPhotos} />

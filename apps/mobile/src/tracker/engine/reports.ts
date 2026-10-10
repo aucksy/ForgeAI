@@ -10,13 +10,15 @@
 import { addDays, weekStartISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
+import type { UnitSystem } from '@/types/models';
 import { countWord } from '@/lib/words';
 
 import { MUSCLE_LABEL, type Muscle } from '../catalog/muscles';
 import { liftsBeatingBest, liftsUpText, weightChange } from './headline';
 import { monthName, shiftMonth } from '../lib/months';
 import type { RecordKind } from './records';
-import type { BodyweightPoint, MuscleSetsSlice } from './volume';
+import { fmtTotalDistance } from './logTypes';
+import { setsText, type BodyweightPoint, type MuscleSetsSlice } from './volume';
 
 /** One workout, as the reports need it. */
 export interface ReportSession {
@@ -380,6 +382,23 @@ export interface YearReview {
 export function bigNumber(n: number): string {
   if (n >= 1_000_000) return `${(Math.round(n / 100_000) / 10).toString()} million`;
   return fmtInt(n);
+}
+
+/**
+ * The report hero's second line, built only from what applies (audit PG-21): the time when any
+ * workout has a length (never a leading "—"), then what was moved — kg lifted, or for a period
+ * with no kilos (only runs, only pull-ups with no body weight) the distance or the reps, never
+ * "0 kg" — then the sets. `big`: the year's style ("1.2 million").
+ */
+export function heroLine(t: PeriodTotals, picture: PictureTotals | undefined, units: UnitSystem, big = false): string {
+  const parts: string[] = [];
+  if (t.durationSec > 0) parts.push(timeText(t));
+  const kg = kgToShown(t.volumeKg, units);
+  if (t.volumeKg > 0) parts.push(`${big ? bigNumber(Math.round(kg)) : fmtInt(kg)} ${weightUnitOf(units)}`);
+  else if (picture && picture.distanceM > 0) parts.push(fmtTotalDistance(picture.distanceM));
+  else if (picture && picture.reps > 0) parts.push(`${fmtInt(picture.reps)} ${picture.reps === 1 ? 'rep' : 'reps'}`);
+  if (t.sets > 0) parts.push(setsText(t.sets));
+  return parts.join(' · ');
 }
 
 /** Hours, rounded: "168 hours", "1 hour". */

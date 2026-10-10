@@ -22,7 +22,7 @@ export function VolumeSection({ data, index }: VolumeSectionProps) {
 
   return (
     <Section
-      title="Weekly Volume"
+      title={weightUnitOf(units) === 'kg' ? 'Kg lifted each week' : 'Lb lifted each week'}
       index={index}
       right={hasData ? <HeaderStat text={`${fmtInt(kgToShown(total, units))} ${weightUnitOf(units)} lifted`} /> : undefined}
     >
@@ -35,8 +35,8 @@ export function VolumeSection({ data, index }: VolumeSectionProps) {
       ) : (
         <EmptyState
           icon="dumbbell"
-          title="No data yet"
-          body="Logged workouts stack up here, week by week."
+          title="No workouts in this range"
+          body="Each week's kg lifted shows here."
         />
       )}
     </Section>

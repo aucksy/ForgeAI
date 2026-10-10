@@ -91,7 +91,7 @@ describe('L-01 the workout database is in Android automatic backup', () => {
       expect(!hasInclude || coversDb, `rules file used: ${file}`).toBe(true);
     });
 
-    it(`L-01: ${label}: AsyncStorage settings (units) are included, SecureStore AI keys are not, photos are not`, () => {
+    it(`L-01: ${label}: AsyncStorage settings (units) are included, SecureStore AI keys are not, photos only through the opt-in folder (and, phone-to-phone, the photo folder)`, () => {
       const { xml } = rulesFor();
       const tags = [...xml.matchAll(/<(include|exclude)\s+([^>]*)\/?>/g)].map((m) => ({
         kind: m[1],
@@ -104,9 +104,19 @@ describe('L-01 the workout database is in Android automatic backup', () => {
       expect(has('include', 'sharedpref', '.')).toBe(true);
       // Keystore keys never restore: restored ciphertext would be garbage.
       expect(has('exclude', 'sharedpref', 'SecureStore')).toBe(true);
-      // Photos and exercise media live in the files area outside SQLite/ — never included.
+      // Photos and exercise media live in the files area outside SQLite/ — never included —
+      // except the opt-in, budgeted photo copies (audit PG-17 / D11): photo-backup/, which is
+      // empty unless the member turns "Include photos in my backup" on.
+      // Review fix (Phase 5): a phone-to-phone transfer (Android 12+) has no 25 MB limit, so it
+      // also carries the full-size photos themselves; cloud backup never does.
       const fileIncludes = tags.filter((t) => t.kind === 'include' && t.domain === 'file').map((t) => t.path);
-      expect(fileIncludes).toEqual(['SQLite/']);
+      if (section === 'device-transfer') {
+        expect(fileIncludes).toEqual(['SQLite/', 'photo-backup/', 'progress-photos/']);
+      } else {
+        expect(fileIncludes).toEqual(['SQLite/', 'photo-backup/']);
+        expect(fileIncludes).not.toContain('progress-photos/');
+      }
+      expect(fileIncludes).not.toContain('.');
       // Only these domains: no "root" (would sweep in caches), no external storage.
       const domains = new Set(tags.filter((t) => t.kind === 'include').map((t) => t.domain));
       expect([...domains].sort()).toEqual(['database', 'file', 'sharedpref']);
