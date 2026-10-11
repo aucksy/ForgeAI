@@ -1,0 +1,12 @@
+// The gym owner's web panel (apps/dashboard) on Cloudflare: static files only, served by a
+// Worker with assets at https://forgeai.aakashpahuja.in. Build first (apps/dashboard: npm run
+// build), then from this folder: npx wrangler deploy
+{
+  "name": "forgeai-panel",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "../../apps/dashboard/dist",
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [{ "pattern": "forgeai.aakashpahuja.in", "custom_domain": true }]
+}
