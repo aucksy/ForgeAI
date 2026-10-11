@@ -296,9 +296,13 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "More for Push Pull Legs — 6 Day"
 - tapOn: "Follow this plan"
-- extendedWaitUntil:
-    visible: "Push Pull Legs — 6 Day folder, .* routines, open, Following"
-    timeout: 15000
+# Following redraws the list (the Up next card and the tag change above), so the folder's own row
+# can land just above the screen (run 38150955406): scroll back up to it.
+- scrollUntilVisible:
+    element: "Push Pull Legs — 6 Day folder, .* routines, open, Following"
+    direction: UP
+    centerElement: true
+    timeout: 20000
 - scrollUntilVisible:
     element: "More for Push Pull Legs — 6 Day"
     centerElement: true

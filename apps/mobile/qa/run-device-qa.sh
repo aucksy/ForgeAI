@@ -58,6 +58,11 @@ force_deep_idle() {
   done
   if [ "$state" = "IDLE" ]; then
     log "doze: deep state IDLE"
+  elif adb shell dumpsys alarm 2>/dev/null | tr -d '\r' | grep -A1 'Next wake from idle' | grep -q "$PKG"; then
+    # Android will not enter deep Doze while a wake-from-idle alarm is under an hour away
+    # (DeviceIdleController: "there is an upcoming alarm"). The rest's alarm-clock alarm is that
+    # alarm (run 38150955406), so Doze cannot hold it back: this is the fix working, not a gap.
+    log "doze: held off by the rest alarm (next wake from idle = $PKG, state ${state:-unknown}); Doze cannot delay it"
   else
     log "DOZE NOT REACHED: deep state ${state:-unknown} after stepping (the rest was not tested in Doze)"
   fi

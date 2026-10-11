@@ -281,6 +281,12 @@ appId: com.forgeai.app
     text: "^Waist$"
     index: 0
 - takeScreenshot: 50-measures-waist
+# The "+" sits in the page's title row, which scrolls with the page: after the history above it
+# can be just off the top (run 38150955406), so bring it back first.
+- scrollUntilVisible:
+    element: "Add measures"
+    direction: UP
+    timeout: 20000
 - tapOn: "Add measures"
 - extendedWaitUntil:
     visible: "Waist in centimetres"
