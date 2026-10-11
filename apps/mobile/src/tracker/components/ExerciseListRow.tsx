@@ -24,6 +24,7 @@ export const ExerciseListRow = memo(function ExerciseListRow({
   actionLabel,
   onPress,
   onDemo,
+  note,
 }: {
   ex: TrackerExercise;
   trailing: IconName;
@@ -31,12 +32,15 @@ export const ExerciseListRow = memo(function ExerciseListRow({
   actionLabel: string;
   onPress: (ex: TrackerExercise) => void;
   onDemo: (ex: TrackerExercise) => void;
+  /** Redesign R5: one more grey line ("Last: 12 Oct" on Profile → Exercises). */
+  note?: string | null;
 }) {
   const muscle = MUSCLE_LABEL[ex.muscles.primary[0]] ?? cap(ex.muscleGroup);
   return (
     <Pressable
       onPress={() => onPress(ex)}
       accessibilityRole="button"
+      // The verb and the name, as before: phone tests find a row by exactly this.
       accessibilityLabel={`${actionLabel} ${ex.name}`}
       style={({ pressed }) => ({
         flexDirection: 'row',
@@ -66,6 +70,11 @@ export const ExerciseListRow = memo(function ExerciseListRow({
           {muscle} · {cap(ex.equipment)}
           {ex.catalogKey ? '' : ' · Yours'}
         </Text>
+        {note ? (
+          <Text numberOfLines={1} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkSecondary }}>
+            {note}
+          </Text>
+        ) : null}
       </View>
       <Icon name={trailing} size={18} color={trailing === 'plus' || trailing === 'check' ? color.accent : color.inkMuted} />
     </Pressable>

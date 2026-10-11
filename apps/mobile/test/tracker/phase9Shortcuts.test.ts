@@ -34,7 +34,7 @@ describe("app icon shortcuts — the Today widget's answer", () => {
     expect(routineParam(q.get('routine') ?? undefined)).toBe('r-push_1');
     expect(widgetTokenOk(q.get('t') ?? undefined, 'k9-abc')).toBe(true);
     expect(widgetStartAction({ routineId: 'r-push_1', open: false, routineExists: true, tokenOk: true })).toBe('start');
-    expect(weight).toEqual({ id: 'weight', short: 'Weight', long: 'Log body weight', uri: 'forgeai://bodyweight' });
+    expect(weight).toEqual({ id: 'weight', short: 'Weight', long: 'Log body weight', uri: 'forgeai://measures?kind=bodyweight' });
   });
 
   it('no key could be read: the same link without it (the calm "Start Push 1?" screen)', () => {

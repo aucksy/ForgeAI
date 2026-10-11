@@ -5,7 +5,7 @@
  *    first" / "Start"), "done" once trained today, or "No plan yet". Tap → the Workout tab.
  *  - This week: workouts done since Monday, day by day, against the member's weekly goal
  *    (audit Phase 9), else the plan's days a week.
- *    Tap → History.
+ *    Tap → the Profile (redesign R1; it was History).
  *
  * Audit Phase 6:
  *  - PH-02: the data holds the next 7 days (each with its own Today and week), and the widget
@@ -154,7 +154,8 @@ function fitLong(prefix: string, name: string): string {
  * Audit Phase 9 (#9): the long-press shortcuts on the app icon, from the same answer as the
  * Today widget — "Resume workout" while one is open; "Start <today's routine>" (the widget's own
  * link, so with its key it starts in one tap; without it the calm "Start …?" screen); else
- * "Start workout" (the Workout tab). Then "Log body weight". PURE.
+ * "Start workout" (the Workout tab). Then "Log body weight" — redesign R6: it opens Measures on
+ * Body weight (`/bodyweight` still works for links an older launcher kept). PURE.
  */
 export function appShortcuts(p: Pick<WidgetPayload, 'days' | 'live' | 'token'>): AppShortcut[] {
   const today = p.days[0]?.today;
@@ -169,7 +170,7 @@ export function appShortcuts(p: Pick<WidgetPayload, 'days' | 'live' | 'token'>):
       uri: `forgeai://workout/start?routine=${encodeURIComponent(today.routineId)}${t}`,
     };
   } else first = { id: 'today', short: 'Start', long: 'Start workout', uri: 'forgeai://workout' };
-  return [first, { id: 'weight', short: 'Weight', long: 'Log body weight', uri: 'forgeai://bodyweight' }];
+  return [first, { id: 'weight', short: 'Weight', long: 'Log body weight', uri: 'forgeai://measures?kind=bodyweight' }];
 }
 
 /** Hand the shortcuts to the launcher. Quiet; an older build without the call does nothing. */

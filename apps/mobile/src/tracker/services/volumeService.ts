@@ -371,6 +371,49 @@ function rowVolume(r: RangeRow, ctx: VolumeContext): number {
   );
 }
 
+/** One workout's totals for the Profile's history chart (redesign R2). */
+export interface SessionTotals {
+  sessionId: string;
+  dateISO: string;
+  /** 0 when the workout has no end time (as in the reports). */
+  durationSec: number;
+  /** By the one volume rule — the same per-set reading as `getWeeklyVolumeKg`. */
+  volumeKg: number;
+  /** Reps of the working sets (warm-ups never count). */
+  reps: number;
+}
+
+/**
+ * Every workout between two days with its length, kg lifted and reps — two reads (the workouts,
+ * their sets), however many workouts. Workouts with no sets are there too (0 kg, 0 reps).
+ */
+export async function getSessionTotalsBetween(fromISO: string, toISO: string): Promise<SessionTotals[]> {
+  const [sessions, { rows, ctx }] = await Promise.all([
+    getDb().getAllAsync<{ id: string; date_iso: string; started_at: number; ended_at: number | null }>(
+      'SELECT id, date_iso, started_at, ended_at FROM workout_sessions WHERE date_iso BETWEEN ? AND ?',
+      [fromISO, toISO],
+    ),
+    readRange(fromISO, toISO),
+  ]);
+  const out = new Map<string, SessionTotals>();
+  for (const s of sessions) {
+    out.set(s.id, {
+      sessionId: s.id,
+      dateISO: s.date_iso,
+      durationSec: s.ended_at != null ? Math.max(0, Math.round((s.ended_at - s.started_at) / 1000)) : 0,
+      volumeKg: 0,
+      reps: 0,
+    });
+  }
+  for (const r of rows) {
+    const t = out.get(r.session_id);
+    if (!t) continue;
+    t.volumeKg += rowVolume(r, ctx);
+    if (r.is_warmup !== 1) t.reps += Math.max(0, r.reps);
+  }
+  return [...out.values()];
+}
+
 /** Weekly volume, Monday buckets, the trailing `weeks` weeks incl. this one (frozen shape). */
 export async function getWeeklyVolumeKg(weeks: number): Promise<VolumePoint[]> {
   if (weeks <= 0) return [];

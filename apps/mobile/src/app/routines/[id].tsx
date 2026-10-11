@@ -364,7 +364,7 @@ export default function RoutineEditorScreen() {
       void listFolders()
         .then((all) => {
           const others = all.filter((f) => !f.routines.some((r) => r.id === id));
-          if (others.length === 0) void tell('No other folder', 'Make a folder on the Routines screen first.');
+          if (others.length === 0) void tell('No other folder', 'Make a folder on the Workout tab first.');
           else setMoveTo(others);
         })
         .catch(() => void tell('Could not load folders', 'Please try again.'));

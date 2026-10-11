@@ -167,7 +167,8 @@ describe('the audit fixes are wired where the member meets them', () => {
     expect(read('src/tracker/services/todayStart.ts')).toMatch(
       /await useActiveWorkout\.getState\(\)\.hydrate\(\);[\s\S]*if \(routineId\) await useActiveWorkout\.getState\(\)\.startFromPlanDay\(routineId\)/,
     );
-    expect(read('src/app/(tabs)/workout.tsx')).toMatch(/await hydrate\(\);\s+if \(!useActiveWorkout\.getState\(\)\.active\) \{\s+(\/\/[^\n]*\n\s+)*if \(preview\?\.dayId\) await startFromPlanDay\(preview\.dayId\)/);
+    // Redesign R1: the Workout tab's Up next card starts through the same shared Start.
+    expect(read('src/app/(tabs)/workout.tsx')).toMatch(/await startShownWorkout\(router, today\?\.nextId \?\? null\)/);
   });
 
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).

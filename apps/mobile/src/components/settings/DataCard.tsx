@@ -74,8 +74,8 @@ export function DataCard() {
     setWorking('remove');
     setProblem(null);
     try {
-      // Leave Profile BEFORE the navigator unmounts, so the member lands on Home afterwards.
-      if (await confirmAndRemoveDemo(() => router.replace('/'))) success();
+      // Leave Settings BEFORE the navigator unmounts, so the member lands on Workout afterwards.
+      if (await confirmAndRemoveDemo(() => router.replace('/workout'))) success();
     } catch {
       thud();
       setProblem('Could not remove the demo. Nothing was changed. Please try again.');
@@ -99,7 +99,7 @@ export function DataCard() {
     try {
       // Leave Profile BEFORE the navigator unmounts, so the retained router
       // state lands a re-onboarded member on the dashboard, not here.
-      router.replace('/');
+      router.replace('/workout');
       await erase();
       success();
     } catch {

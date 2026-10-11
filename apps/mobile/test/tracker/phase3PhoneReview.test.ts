@@ -328,14 +328,15 @@ describe('a picture taken while Android closed the app is kept', () => {
       const text = readFileSync(f, 'utf8');
       for (const m of text.matchAll(/ImagePicker\.(launchImageLibraryAsync|launchCameraAsync)\(/g)) {
         launches += 1;
-        expect(text.slice(Math.max(0, (m.index ?? 0) - 80), m.index), relative(SRC, f)).toMatch(/launchFor\('(progress-photo|exercise-media|chat-photo)', \(\) =>\s*$/);
+        expect(text.slice(Math.max(0, (m.index ?? 0) - 80), m.index), relative(SRC, f)).toMatch(/launchFor\('(progress-photo|exercise-media|chat-photo|profile-photo)', \(\) =>\s*$/);
       }
     }
-    expect(launches).toBe(5); // progress photo ×2, exercise photo/video ×2, chat meal photo
+    expect(launches).toBe(7); // progress photo ×2, exercise photo/video ×2, chat meal photo, profile photo ×2 (R2)
     expect(read('app/photos/index.tsx')).toContain('keepPendingPhoto()');
     // EX-13 (audit Phase 4): the form takes back only the picture noted for its own exercise.
     expect(read('app/library/new.tsx')).toContain("keepPendingMedia(editId ?? 'new')");
     expect(read('app/(tabs)/coach.tsx')).toContain("takePendingPick('chat-photo')");
+    expect(read('app/edit-profile.tsx')).toContain('keepPendingProfilePhoto()');
   });
 });
 
@@ -346,7 +347,7 @@ describe('"Erase all data" leaves no pictures behind', () => {
     const deleted: string[] = [];
     const files = { documentDirectory: 'file:///app/files/', cacheDirectory: 'file:///app/cache/', deleteAsync: async (uri: string) => void deleted.push(uri) };
     await wipePhotoStorage(photoEraseSteps(files, { clearDiskCache: async () => true, clearMemoryCache: async () => true }));
-    expect(deleted).toEqual(['file:///app/files/progress-photos/', 'file:///app/files/photo-backup/', 'file:///app/cache/ImagePicker/', 'file:///app/cache/share/']);
+    expect(deleted).toEqual(['file:///app/files/progress-photos/', 'file:///app/files/photo-backup/', 'file:///app/files/profile-photo/', 'file:///app/cache/ImagePicker/', 'file:///app/cache/share/']);
     // The share sheet writes into that same folder.
     expect(read('tracker/components/ShareSheet.tsx')).toMatch(/cacheDirectory \?\? ''\}\$\{SHARE_FOLDER\}/);
   });

@@ -159,9 +159,9 @@ describe('runs keep their best pace, not their longest time', () => {
   it('[source-text check] the screen says which sets count', () => {
     expect(paceRuleText('km')).toBe("Best pace counts only sets of 1 km or more, so a short sprint can't set it.");
     const src = readFileSync(join(__dirname, '..', '..', 'src', 'tracker', 'components', 'ExercisePrRows.tsx'), 'utf8');
-    // Behind the i beside "Records" (opened on the phone in device QA part F), and a "—" row
+    // Behind the i beside "Personal records" (opened on the phone in device QA part F), and a "—" row
     // until a set of 1 km or more is logged — also on a bike logged by time only (review).
-    expect(src).toMatch(/<InfoHeading title="Records" info=\{paceRuleText\(ctx\.distUnit\)\} \/>/);
+    expect(src).toMatch(/<InfoHeading title="Personal records" info=\{paceRuleText\(ctx\.distUnit\)\} \/>/);
     expect(src).toMatch(/No set of \$\{PACE_BASIS\.km\.words\} or more yet/);
     expect(src).toMatch(/if \(bests\.length === 0 && ladder\.length === 0 && !keepsPace\) return null;/);
   });
@@ -222,7 +222,7 @@ describe('a male or female body figure', () => {
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
   it('[source-text check] Profile offers the choice; Progress, the finish screen and a saved workout follow it', () => {
     expect(read('tracker/store/trackerPrefsStore.ts')).toMatch(/bodyFigure: 'male',/);
-    expect(read('app/(tabs)/settings.tsx')).toMatch(/label="Body figure"/);
+    expect(read('app/settings/units.tsx')).toMatch(/label="Body figure"/);
     expect(read('components/analytics/BodyMapSection.tsx')).toMatch(/<BodyMap levels=\{levels\} figure=\{figure\}/);
     for (const screen of ['app/session/finish.tsx', 'app/session/[id].tsx']) {
       expect(read(screen), screen).toMatch(/workoutShareScene\(\{ \.\.\.workoutShareInput\(data\), figure \}\)/);

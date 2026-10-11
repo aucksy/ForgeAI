@@ -1,6 +1,6 @@
 /**
- * SH-29: a wrong forgeai:// link lands on Home with one calm line. The not-found route
- * leaves the note here; Home takes it (once) when it next comes into view.
+ * SH-29: a wrong forgeai:// link lands on the Workout tab with one calm line. The not-found route
+ * leaves the note here; the Workout tab takes it (once) when it next comes into view.
  */
 export const BAD_LINK_TEXT = "That link didn't work.";
 

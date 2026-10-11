@@ -28,7 +28,7 @@ export function logScreenCrash(error: unknown, componentStack?: string | null): 
 
 export interface ScreenCrashFallbackProps {
   onRetry: () => void;
-  /** Called after "Go back" / "Go to Home" navigates, so the boundary lets the screen draw again. */
+  /** Called after "Go back" / "Go to Workout" navigates, so the boundary lets the screen draw again. */
   onLeave?: () => void;
   /** Hide the navigation buttons (the root layout itself crashed: there is no navigator). */
   noNavigation?: boolean;
@@ -73,7 +73,7 @@ export function ScreenCrashFallback({ onRetry, onLeave, noNavigation }: ScreenCr
         <View style={{ marginTop: space.lg, gap: space.sm }}>
           <PrimaryButton label="Try again" onPress={onRetry} />
           {back ? <GhostButton label="Go back" onPress={leave(() => router.back())} /> : null}
-          {noNavigation ? null : <GhostButton label="Go to Home" onPress={leave(() => router.replace('/'))} />}
+          {noNavigation ? null : <GhostButton label="Go to Workout" onPress={leave(() => router.replace('/workout'))} />}
         </View>
       </Card>
     </Screen>

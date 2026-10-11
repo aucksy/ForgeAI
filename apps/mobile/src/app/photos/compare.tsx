@@ -41,7 +41,7 @@ export default function ComparePhotosScreen() {
     <Screen
       title="Compare"
       subtitle={pair ? apartText(pair[0].dateISO, pair[1].dateISO) : undefined}
-      onBack={() => goBack(router, '/analytics')}
+      onBack={() => goBack(router, '/profile')}
     >
       {load.state === 'error' ? (
         <LoadError what="these photos" onRetry={load.retry} />

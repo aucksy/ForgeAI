@@ -1,43 +1,61 @@
 /**
- * Workout tab — start a workout (empty or from plan) or resume one in progress.
- * Phase 4: the followed plan's week ("Week 3 · easy week in week 6"); in an easy week the
- * note and "Train normally this week"; when 3 or more lifts of the plan have stalled, an easy
- * week now (research v3 §5); with no plan, the ready programs and the plan builder.
+ * Workout tab — the app's first screen (redesign R1: Home is gone, its answer lives here).
+ *
+ * Top: the **Up next** card (PLAN §2 item 2) — a workout in progress (Resume / Discard), else
+ * "Up next: Pull 1" with Start and See exercises, "Done today: Push 1 ✓ · Next: Pull 1" with
+ * Start Pull 1, the weekly goal line, and the followed plan's easy-week line and choices. It
+ * reads the ONE Today answer (`getTodayPlan` — the widgets, reminders, app-icon shortcuts and
+ * every Start button read the same). An empty app shows the Hevy / Strong import offer.
+ *
+ * Below it (redesign R4), Hevy's Workout tab: "+ Start empty workout", the "Routines" heading
+ * with its new-folder button, "New routine" and "Explore", then every folder inline with its
+ * routine cards (`WorkoutRoutines`). The folder Up next comes from and the routine it names
+ * carry small tags; they read the same answer as the card. The Exercise library moved to
+ * Profile → Exercises; ready programs and the plan builder are behind Explore.
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AppState, Text, View } from 'react-native';
+import { AppState, Pressable, Text, View } from 'react-native';
 
 import { DangerLink } from '@/components/DangerLink';
-import { GhostButton, HeroCard, Icon, PrimaryButton, Screen, askConfirm } from '@/components/ui';
-import { getActivePlan } from '@/db/repos/planRepo';
+import { Card, GhostButton, Screen, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
+import { thud } from '@/lib/haptics';
+import { takeLinkNotice } from '@/lib/linkNotice';
+import { tell } from '@/lib/tell';
 import { countWord } from '@/lib/words';
-import { color, gradients, space, type } from '@/theme/tokens';
+import { useOnboarding } from '@/onboarding/store/onboardingStore';
+import { color, space, type } from '@/theme/tokens';
 
 import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
+import { SwitcherCard, takePendingImport, type SwitchApp } from '@/tracker/components/SwitcherCard';
+import { UpNextCard } from '@/tracker/components/UpNextCard';
+import { WorkoutRoutines } from '@/tracker/components/WorkoutRoutines';
 import { followedFolder } from '@/tracker/db/folderRepo';
+import { showsImportOffer, upNextCard, type UpNextAction, type UpNextToday } from '@/tracker/lib/upNext';
 import { offerEarlyEasy } from '@/tracker/plans/effort';
 import { stalledLiftsInPlan } from '@/tracker/services/coachTargets';
-import { getPlanNow, moveEasyWeek, planLine, type PlanNow } from '@/tracker/services/planState';
 import { liveCountsLine } from '@/tracker/services/finishCheck';
+import { getPlanNow, moveEasyWeek, planLine, type PlanNow } from '@/tracker/services/planState';
 import { getTodayPlan } from '@/tracker/services/todayService';
+import { startShownWorkout } from '@/tracker/services/todayStart';
+import {
+  dismissTabsNotice,
+  getWorkoutCounts,
+  tabsNoticeDue,
+  TABS_NOTICE_TEXT,
+  upNextToday,
+} from '@/tracker/services/upNextService';
 import { openActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
-import { tell } from '@/lib/tell';
+import { useFolderOpen } from '@/tracker/store/folderOpenStore';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
-interface PlanPreview {
-  /** The routine Start starts — by id, never worked out again at the tap (RP-03). */
-  dayId: string | null;
-  dayName: string;
-  count: number;
-  hasPlan: boolean;
-  /** Audit Phase 3: the one "Today" answer in words ("Done today: Push 1", "Next: Pull 1"). */
-  status: 'next' | 'doneToday' | 'noPlan' | 'emptyPlan';
-  title: string;
-  line: string;
-}
+/** How long the "That link didn't work." line stays before it fades on its own. */
+const NOTICE_MS = 4000;
+/** A second tap this soon after a push is ignored (one tap, one page). */
+const PUSH_GUARD_MS = 800;
 
 export default function WorkoutScreen() {
   const router = useRouter();
@@ -45,20 +63,28 @@ export default function WorkoutScreen() {
   const active = useActiveWorkout((s) => s.active);
   // LW-23: ticked working sets only — never "6 exercises logged" before anything is logged.
   const countsLine = useActiveWorkout((s) => liveCountsLine(s.exercises));
+  const workoutName = useActiveWorkout((s) => s.workoutName);
   const hydrate = useActiveWorkout((s) => s.hydrate);
   const startEmpty = useActiveWorkout((s) => s.startEmpty);
-  const startFromPlanDay = useActiveWorkout((s) => s.startFromPlanDay);
   const discard = useActiveWorkout((s) => s.discard);
   // Phase W4: the same draft slot holds an in-progress EDIT of a saved workout.
   const editingSessionId = useActiveWorkout((s) => s.editingSessionId);
+  const weeklyGoal = useTrackerPrefs((s) => s.weeklyGoal);
+  const demo = useOnboarding((s) => s.demo);
 
-  const [preview, setPreview] = useState<PlanPreview | null>(null);
+  const [today, setToday] = useState<UpNextToday | null>(null);
+  const [following, setFollowing] = useState(false);
+  /** R4: the folder Up next comes from (followed, or the folder of the routine done last). */
+  const [upFolderId, setUpFolderId] = useState<string | null>(null);
   const [plan, setPlan] = useState<PlanNow | null>(null);
   const [stalled, setStalled] = useState(0);
-  /** The followed plan has routines (a day with nothing planned is not "no plan"). */
-  const [hasRoutines, setHasRoutines] = useState(true);
+  const [counts, setCounts] = useState<{ total: number; daysThisWeek: number } | null>(null);
   const [starting, setStarting] = useState(false);
   const [tick, setTick] = useState(0);
+  // SH-29: a wrong forgeai:// link lands here with one calm line.
+  const [linkNotice, setLinkNotice] = useState<string | null>(null);
+  // Redesign R1: once, after the update — where Home, History and Progress went.
+  const [tabsNotice, setTabsNotice] = useState(false);
 
   // RP-03: a screen left open overnight reads Today again when the phone is back (a new day
   // can mean a new routine); Start always starts the routine on screen.
@@ -74,24 +100,19 @@ export default function WorkoutScreen() {
     useCallback(() => {
       void hydrate();
       let alive = true;
-      shownDay.current = todayISO();
-      getTodayPlan(shownDay.current)
+      const day = todayISO();
+      shownDay.current = day;
+      getTodayPlan(day)
         .then((tp) => {
-          if (alive) {
-            const day = tp.next;
-            setPreview({
-              dayId: day?.id ?? null,
-              dayName: day?.name ?? '',
-              count: day?.exercises.length ?? 0,
-              hasPlan: day != null && day.exercises.length > 0,
-              status: tp.status,
-              title: tp.words.title,
-              line: tp.words.line,
-            });
-          }
+          if (!alive) return;
+          setToday(upNextToday(tp));
+          setFollowing(tp.following);
+          setUpFolderId(tp.folder?.id ?? null);
         })
         .catch(() => {
-          if (alive) setPreview(null);
+          if (!alive) return;
+          setToday(null);
+          setUpFolderId(null);
         });
       getPlanNow()
         .then((p) => {
@@ -100,11 +121,6 @@ export default function WorkoutScreen() {
         .catch(() => {
           if (alive) setPlan(null);
         });
-      getActivePlan()
-        .then((p) => {
-          if (alive) setHasRoutines((p?.days.length ?? 0) > 0);
-        })
-        .catch(() => undefined);
       stalledLiftsInPlan()
         .then((n) => {
           if (alive) setStalled(n);
@@ -112,11 +128,62 @@ export default function WorkoutScreen() {
         .catch(() => {
           if (alive) setStalled(0);
         });
+      getWorkoutCounts(day)
+        .then((c) => {
+          if (alive) setCounts(c);
+        })
+        .catch(() => {
+          if (alive) setCounts(null);
+        });
+      tabsNoticeDue()
+        .then((due) => {
+          if (alive) setTabsNotice(due);
+        })
+        .catch(() => undefined);
       return () => {
         alive = false;
       };
     }, [hydrate, tick]),
   );
+
+  useFocusEffect(
+    useCallback(() => {
+      const t = takeLinkNotice();
+      if (!t) return undefined;
+      setLinkNotice(t);
+      const timer = setTimeout(() => setLinkNotice(null), NOTICE_MS);
+      return () => clearTimeout(timer);
+    }, []),
+  );
+
+  // Audit Phase 4: a switcher's import (Hevy or Strong) opens from the empty app, and right after
+  // the welcome screen when they picked their app there (Home did this before redesign R1).
+  const openImport = useCallback(
+    (app: SwitchApp) => {
+      thud();
+      router.push(app === 'strong' ? { pathname: '/import', params: { from: 'strong' } } : '/import');
+    },
+    [router],
+  );
+  useFocusEffect(
+    useCallback(() => {
+      const app = takePendingImport();
+      if (app) openImport(app);
+    }, [openImport]),
+  );
+
+  const editing = active && editingSessionId != null;
+  const open = active && !editing ? { name: workoutName, countsLine } : null;
+  const card = upNextCard({
+    today,
+    open,
+    editing,
+    weeklyGoal,
+    doneThisWeek: counts?.daysThisWeek ?? null,
+    hasWorkouts: counts ? counts.total > 0 : null,
+    demo,
+  });
+  const importOffer = showsImportOffer({ hasWorkouts: counts ? counts.total > 0 : null, demo, open, editing });
 
   const onEasyNow = async (): Promise<void> => {
     try {
@@ -138,30 +205,29 @@ export default function WorkoutScreen() {
     }
   };
 
-  const week = preview?.hasPlan ? planLine(plan) : null;
-  const offerEasy = plan != null && offerEarlyEasy({ stalled, easyNow: plan.easy, week: plan.week, lastEasy: plan.lastEasy });
+  // The followed plan's week and easy-week choices (Phase 4) — only for a plan he follows.
+  const onRoutine = card.kind === 'next' || card.kind === 'doneToday';
+  const week = following && card.kind === 'next' ? planLine(plan) : null;
+  const easyNow = following && plan?.easy === true;
+  const offerEasy = following && plan != null && offerEarlyEasy({ stalled, easyNow: plan.easy, week: plan.week, lastEasy: plan.lastEasy });
 
-  // RP-25: a double tap never stacks two workout screens — a ref guard on each start (state
-  // updates are async, so two fast taps both saw "not starting"), and one guarded way to open
-  // the screen (ignored while it is open or was opened a moment ago).
+  // RP-25: a double tap never stacks two workout screens — a ref guard on each start, and one
+  // guarded way to open the screen (ignored while it is open or was opened a moment ago).
   const startGuard = useRef(false);
+  const lastPush = useRef(0);
   const goActive = (): void => void openActiveWorkout(router);
   const startFailed = (): void => void tell('Couldn’t start the workout', 'Please try again.');
 
-  const onStartPlan = (): Promise<unknown> =>
+  // RP-03 / SH-23: Start starts the routine named on the card, by its id (never worked out
+  // again at the tap) — after loading a workout saved before Android closed the app, and asking
+  // about an edit left open (the shared Start of `todayStart.ts`).
+  const onStartShown = (): Promise<unknown> =>
     runGuarded(
       startGuard,
       async () => {
         setStarting(true);
         try {
-          // A workout saved before Android closed the app loads first — Start must not replace it.
-          await hydrate();
-          if (!useActiveWorkout.getState().active) {
-            // RP-03: the routine its label names, by id — never re-worked out at the tap.
-            if (preview?.dayId) await startFromPlanDay(preview.dayId);
-            else startEmpty();
-          }
-          goActive();
+          await startShownWorkout(router, today?.nextId ?? null);
         } finally {
           setStarting(false);
         }
@@ -181,12 +247,10 @@ export default function WorkoutScreen() {
     );
 
   const onDiscard = (): void => {
-    const editing = useActiveWorkout.getState().editingSessionId != null;
+    const isEdit = useActiveWorkout.getState().editingSessionId != null;
     void askConfirm({
-      title: editing ? 'Discard changes?' : 'Discard workout?',
-      body: editing
-        ? 'Your edits will be thrown away. The saved workout stays as it was.'
-        : 'Your in-progress workout will be deleted.',
+      title: isEdit ? 'Discard changes?' : 'Discard workout?',
+      body: isEdit ? 'Your edits will be thrown away. The saved workout stays as it was.' : 'Your in-progress workout will be deleted.',
       confirmLabel: 'Discard',
       cancelLabel: 'Keep',
       destructive: true,
@@ -195,81 +259,78 @@ export default function WorkoutScreen() {
     });
   };
 
+  const onAction = (action: UpNextAction): void => {
+    thud();
+    if (action === 'start') {
+      void onStartShown();
+      return;
+    }
+    if (action === 'resume') {
+      goActive();
+      return;
+    }
+    if (action === 'discard') {
+      onDiscard();
+      return;
+    }
+    if (action === 'routines') {
+      // R4: the routines are right below — open the folder Up next comes from.
+      if (upFolderId) useFolderOpen.getState().setOpen(upFolderId, true);
+      return;
+    }
+    const now = Date.now();
+    if (now - lastPush.current < PUSH_GUARD_MS) return;
+    lastPush.current = now;
+    // v0.28.0: the routine opens its preview first (every exercise, then Start).
+    router.push('/today');
+  };
+
   return (
     <Screen title="Workout">
       <View style={{ gap: space.lg }}>
-        {active ? (
-          <>
-          <HeroCard gradient={gradients.ember}>
-            <View style={{ gap: space.md }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-                <Icon name="clock" size={22} color="#1F0D05" />
-                <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: '#1F0D05' }}>
-                  {editingSessionId ? 'Editing a workout' : 'Workout in progress'}
-                </Text>
-              </View>
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
-                {editingSessionId
-                  ? 'You have unsaved changes to a saved workout.'
-                  : countsLine}
-              </Text>
-              <PrimaryButton
-                label={editingSessionId ? 'Resume editing' : 'Resume workout'}
-                icon="dumbbell"
-                onPress={goActive}
-              />
-            </View>
-          </HeroCard>
-          {/* Packet B: the one destructive style — a red link that asks first. Below the ember
-              card (red on orange is unreadable). */}
-          <DangerLink label={editingSessionId ? 'Discard changes' : 'Discard workout'} onPress={onDiscard} />
-          </>
-        ) : (
-          <>
-            <HeroCard>
-              <View style={{ gap: space.md }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-                  <Icon name="dumbbell" size={20} color={color.accent} />
-                  <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-                    {preview?.status === 'doneToday'
-                      ? preview.title
-                      : preview?.hasPlan
-                        ? `Today: ${preview.dayName}`
-                        : preview?.status === 'emptyPlan'
-                          ? preview.title
-                          : 'Start a workout'}
-                  </Text>
-                </View>
-                <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-                  {preview?.status === 'doneToday'
-                    ? `${preview.line} · ${countWord(preview.count, 'exercise')}`
-                    : preview?.hasPlan
-                      ? `${countWord(preview.count, 'exercise')} from your plan, pre-filled with last time's numbers.`
-                      : preview?.status === 'emptyPlan'
-                        ? `${preview.line}, or start an empty workout.`
-                        : preview?.status === 'noPlan'
-                          ? 'No plan yet. Pick a program or build one — or start an empty workout and add exercises as you go.'
-                          : 'Start an empty workout and add exercises as you go.'}
-                </Text>
-                {week && !plan?.easy ? (
+        {linkNotice ? (
+          <Pressable
+            onPress={() => setLinkNotice(null)}
+            accessibilityRole="button"
+            accessibilityLabel={`${linkNotice} Dismiss`}
+            accessibilityLiveRegion="polite"
+          >
+            <Card>
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>{linkNotice}</Text>
+            </Card>
+          </Pressable>
+        ) : null}
+
+        {tabsNotice ? (
+          <Card style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
+            <Text style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 19, color: color.inkSecondary }}>
+              {TABS_NOTICE_TEXT}
+            </Text>
+            <Pressable
+              onPress={() => {
+                setTabsNotice(false);
+                void dismissTabsNotice().catch(() => undefined);
+              }}
+              accessibilityRole="button"
+              accessibilityLabel="Got it. Hide this note"
+              hitSlop={6}
+              style={{ minHeight: 48, minWidth: 48, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Got it</Text>
+            </Pressable>
+          </Card>
+        ) : null}
+
+        {card.kind !== 'none' ? (
+          <UpNextCard card={card} onAction={onAction} starting={starting}>
+            {onRoutine || card.kind === 'emptyPlan' ? (
+              <>
+                {week && !easyNow ? (
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>
                 ) : null}
-                {/* An easy week shows even on a day with no "Today" (trained already, or off-plan). */}
-                {plan?.easy ? <EasyWeekNote until={plan.easyUntil} /> : null}
-                {preview?.hasPlan ? (
-                  <PrimaryButton
-                    label={`Start ${preview.dayName}`}
-                    icon="dumbbell"
-                    loading={starting}
-                    onPress={() => void onStartPlan()}
-                  />
-                ) : null}
-                {preview?.hasPlan ? (
-                  <GhostButton label="See the exercises" icon="chevron-right" onPress={() => router.push('/today')} />
-                ) : null}
-                {plan?.easy ? (
-                  <GhostButton label="Train normally this week" icon="dumbbell" onPress={() => void onTrainNormally()} />
-                ) : null}
+                {/* An easy week shows even on a day with no routine to do (trained already). */}
+                {easyNow ? <EasyWeekNote until={plan?.easyUntil} /> : null}
+                {easyNow ? <GhostButton label="Train normally this week" icon="dumbbell" onPress={() => void onTrainNormally()} /> : null}
                 {offerEasy ? (
                   <View style={{ gap: space.sm }}>
                     <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
@@ -278,21 +339,24 @@ export default function WorkoutScreen() {
                     <GhostButton label="Take an easy week now" icon="heart" onPress={() => void onEasyNow()} />
                   </View>
                 ) : null}
-              </View>
-            </HeroCard>
-
-            <GhostButton label="Start empty workout" icon="plus" onPress={() => void onStartEmpty()} />
-            {/* Only with no plan to follow — not on a day the plan has nothing for (trained already). */}
-            {preview && !preview.hasPlan && !hasRoutines ? (
-              <>
-                <GhostButton label="Ready programs" icon="list" onPress={() => router.push('/programs')} />
-                <GhostButton label="Build a plan" icon="list" onPress={() => router.push('/plan/build')} />
               </>
             ) : null}
-            <GhostButton label="Routines" icon="list" onPress={() => router.push('/routines')} />
-            <GhostButton label="Exercise library" icon="dumbbell" onPress={() => router.push('/library')} />
-          </>
-        )}
+          </UpNextCard>
+        ) : null}
+        {/* Packet B: the one destructive style — a red link that asks first. */}
+        {card.discard ? <DangerLink label={card.discard.label} onPress={onDiscard} /> : null}
+
+        {importOffer ? <SwitcherCard onPick={openImport} /> : null}
+
+        <WorkoutRoutines
+          up={{ folderId: upFolderId, nextId: today?.status === 'next' || today?.status === 'doneToday' ? today.nextId : null }}
+          active={active}
+          plan={following ? plan : null}
+          refreshKey={tick}
+          startGuard={startGuard}
+          onStartEmpty={() => void onStartEmpty()}
+          onChanged={() => setTick((t) => t + 1)}
+        />
       </View>
     </Screen>
   );

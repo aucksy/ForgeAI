@@ -11,7 +11,7 @@ import { getActivePlan, type PlanDayFull } from '@/db/repos/planRepo';
 import { todayISO } from '@/lib/date';
 import type { DayType, TodaySummary, TodaysWorkout } from '@/types/models';
 
-import { followedFolder } from '../db/folderRepo';
+import { followedFolder, listFolders } from '../db/folderRepo';
 import { todayPlan, todayWords, type TodaySessionInput, type TodayStatus, type TodayWords } from '../plans/todayPlan';
 
 /** Workouts read to place the rotation (the frozen rotation read 10). */
@@ -26,6 +26,11 @@ export interface TodayInfo {
   /** The workout done today from the plan. */
   doneToday: { id: string; name: string } | null;
   folder: { id: string; name: string } | null;
+  /**
+   * Redesign R1: true when `folder` is the plan the member follows; false when Up next comes
+   * from the folder of the routine done last (or the first folder).
+   */
+  following: boolean;
   words: TodayWords;
 }
 
@@ -83,13 +88,36 @@ async function recentSessions(today: string, floor: string | null): Promise<Toda
   }));
 }
 
-/** Today's answer, read from the database. */
+/**
+ * Redesign R1 (no folder followed): the newest workout started from a routine that still sits
+ * in a folder, however far back — 30 empty workouts in a row must not lose it.
+ */
+async function newestRoutineSession(today: string): Promise<TodaySessionInput | null> {
+  const r = await getDb().getFirstAsync<SessionRow>(
+    `SELECT ws.id, ws.date_iso, ws.started_at, ws.day_type, ws.title, ws.notes, ws.routine_id FROM workout_sessions ws
+      JOIN plan_days pd ON pd.id = ws.routine_id
+      WHERE ws.date_iso <= ?
+      ORDER BY ws.date_iso DESC, ws.started_at DESC LIMIT 1`,
+    [today],
+  );
+  if (!r) return null;
+  return {
+    id: r.id,
+    dateISO: r.date_iso,
+    startedAt: r.started_at,
+    dayType: r.day_type as DayType,
+    routineId: r.routine_id,
+    routineGone: false,
+    title: r.title,
+    notes: r.notes,
+    exerciseIds: [],
+  };
+}
+
+/** Today's answer ("Up next"), read from the database. */
 export async function getTodayPlan(today: string = todayISO()): Promise<TodayInfo> {
   const [plan, folder] = await Promise.all([getActivePlan(), followedFolder()]);
-  if (!plan) {
-    const a = { status: 'noPlan' as const, routine: null };
-    return { status: 'noPlan', routine: null, next: null, doneToday: null, folder: null, words: todayWords(a) };
-  }
+  if (!plan) return upNextWithoutPlan(today);
   const floor = folder && folder.id === plan.plan.id ? folder.settings.startISO ?? null : null;
   const routines: RoutineIn[] = plan.days.map((d) => ({ ...d, exerciseIds: d.exercises.map((e) => e.exerciseId) }));
   const sessions = await recentSessions(today, floor);
@@ -103,7 +131,31 @@ export async function getTodayPlan(today: string = todayISO()): Promise<TodayInf
     next: strip(a.next),
     doneToday: a.doneToday && doneName ? { id: a.doneToday.id, name: doneName } : null,
     folder: { id: plan.plan.id, name: plan.plan.name },
+    following: true,
     words: todayWords({ status: a.status, routine: a.routine, next: a.next ?? null, doneName, folderName: plan.plan.name }),
+  };
+}
+
+/** Redesign R1: no folder followed — Up next from every folder (rules 2–4 of `todayPlan`). */
+async function upNextWithoutPlan(today: string): Promise<TodayInfo> {
+  const [folders, recent, newest] = await Promise.all([listFolders(), recentSessions(today, null), newestRoutineSession(today)]);
+  const sessions = newest && !recent.some((s) => s.id === newest.id) ? [...recent, newest] : recent;
+  const input = folders.map((f) => ({
+    id: f.id,
+    name: f.name,
+    routines: f.routines.map((d): RoutineIn => ({ ...d, exerciseIds: d.exercises.map((e) => e.exerciseId) })),
+  }));
+  const a = todayPlan({ todayISO: today, folder: null, folders: input, sessions });
+  const doneName = a.doneToday ? a.doneToday.title?.trim() || a.routine?.name || 'Workout' : null;
+  const folderName = a.folder?.name ?? null;
+  return {
+    status: a.status,
+    routine: a.routine ?? null,
+    next: a.next ?? null,
+    doneToday: a.doneToday && doneName ? { id: a.doneToday.id, name: doneName } : null,
+    folder: a.folder ?? null,
+    following: false,
+    words: todayWords({ status: a.status, routine: a.routine, next: a.next ?? null, doneName, folderName, following: false }),
   };
 }
 

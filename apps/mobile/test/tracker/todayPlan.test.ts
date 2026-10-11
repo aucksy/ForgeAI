@@ -126,7 +126,7 @@ describe('todayPlan — the one Today answer', () => {
 
 describe('Home card links', () => {
   const sum = (status: 'next' | 'doneToday' | 'noPlan' | 'emptyPlan') => ({ status, title: '', line: '', nextId: null, nextName: null, doneName: null, doneSessionId: null });
-  // (The card's own words now come from `homeAnswer` — see homeAnswer.test.ts.)
+  // (The Workout tab's Up next card has its own words: see upNext tests.)
   it('no plan → the routines screen; a plan with exercises → its preview; else the Workout tab', () => {
     expect(todayLink({ planDayId: null, targets: [], today: sum('noPlan') })).toBe('/routines');
     expect(todayLink({ planDayId: 'd', targets: [{}], today: sum('emptyPlan') })).toBe('/routines');

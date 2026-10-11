@@ -18,19 +18,18 @@ import { motionMode, useReduceMotion } from '@/components/ui/useReduceMotion';
 import { tap, thud } from '@/lib/haptics';
 import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
-import { useDashboard } from '@/store/dashboardStore';
 import { color, motion, radius, shadow, space, type } from '@/theme/tokens';
 
 import { showsMiniBar } from '../lib/miniBar';
-import { useActiveWorkout } from '../store/activeWorkoutStore';
+import { Glyph, type GlyphName } from './TrackerGlyph';
 import { WorkoutMiniBar } from './WorkoutMiniBar';
 
-const ROUTE_ICON: Record<string, IconName> = {
-  index: 'home',
-  workout: 'dumbbell',
-  history: 'calendar',
-  analytics: 'chart',
-  settings: 'person',
+/** Redesign R1: three tabs, as Hevy — Workout, Profile, Shop (the bag is a tracker glyph). */
+type TabIcon = { icon: IconName } | { glyph: GlyphName };
+const ROUTE_ICON: Record<string, TabIcon> = {
+  workout: { icon: 'dumbbell' },
+  profile: { icon: 'person' },
+  shop: { glyph: 'bag' },
 };
 
 /** Routes present in the navigator but never shown as a tab (still navigable). */
@@ -43,7 +42,7 @@ function TabItem({
   onPress,
 }: {
   label: string;
-  icon: IconName;
+  icon: TabIcon;
   focused: boolean;
   onPress: () => void;
 }) {
@@ -82,10 +81,14 @@ function TabItem({
           ]}
         />
         <Animated.View style={lift}>
-          <Icon name={icon} size={21} color={focused ? color.accent : color.inkMuted} />
+          {'glyph' in icon ? (
+            <Glyph name={icon.glyph} size={21} color={focused ? color.accent : color.inkMuted} />
+          ) : (
+            <Icon name={icon.icon} size={21} color={focused ? color.accent : color.inkMuted} />
+          )}
         </Animated.View>
       </View>
-      {/* Audit Phase 7 (SH-21): five labels share one row — grow less, and shrink to fit rather than split ("Progre/ss"). */}
+      {/* Audit Phase 7 (SH-21): labels share one row — grow less, and shrink to fit rather than split. */}
       <Text
         numberOfLines={1}
         adjustsFontSizeToFit
@@ -161,14 +164,12 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   // Phase 3 review: every screen now shrinks above the keyboard (KeyboardRoom), so while
   // the member types, the tab bar and the workout bar step aside instead of riding up on it.
   const typing = useKeyboardFrame() != null;
-  const homeReady = useDashboard((s) => s.data != null);
-  const editing = useActiveWorkout((s) => s.editingSessionId != null || s.pastLog);
   if (typing) return null;
   return (
     <View>
     {/* Phase 1: a workout left open shows here until finished — on every tab but Workout,
-        and (Phase 7) not on Home once Home's own card says "Workout in progress". */}
-    {showsMiniBar({ tab: state.routes[state.index]?.name, homeReady, editing }) ? <WorkoutMiniBar /> : null}
+        whose Up next card says "Workout in progress" (redesign R1). */}
+    {showsMiniBar({ tab: state.routes[state.index]?.name }) ? <WorkoutMiniBar /> : null}
     <DemoStrip />
     <View
       accessibilityRole="tablist"
@@ -190,7 +191,7 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
           <TabItem
             key={route.key}
             label={label}
-            icon={ROUTE_ICON[route.name] ?? 'sparkle'}
+            icon={ROUTE_ICON[route.name] ?? { icon: 'sparkle' }}
             focused={focused}
             onPress={() => {
               tap();

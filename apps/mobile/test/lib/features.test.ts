@@ -1,25 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { FEATURES, homeParts, linkedDraft, profileParts } from '@/lib/features';
+import { FEATURES, linkedDraft, profileParts } from '@/lib/features';
 
 describe('feature switch (owner decision D4 = A)', () => {
   it('hides the coach, nutrition and gym sync from members', () => {
     expect(FEATURES).toEqual({ coach: false, nutrition: false, gymSync: false });
-  });
-
-  it('Home shows no rings, scores or coach cards with the switch off', () => {
-    const parts = homeParts(FEATURES);
-    expect(parts).toEqual(['today', 'week']);
-    expect(parts).not.toContain('nutritionRings');
-    expect(parts).not.toContain('insight');
-    expect(parts).not.toContain('nextUp');
-    expect(parts).not.toContain('scores');
-  });
-
-  it('Home brings each part back when its switch is on', () => {
-    expect(homeParts({ coach: true, nutrition: true, gymSync: false })).toEqual([
-      'today', 'week', 'nutritionRings', 'scores', 'insight', 'nextUp',
-    ]);
   });
 
   it('Profile hides AI keys, voice, coach notes and gym sync with the switch off', () => {

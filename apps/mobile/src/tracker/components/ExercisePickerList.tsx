@@ -13,7 +13,7 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
-import { Chip, EmptyState, Icon, LoadError, Skeleton } from '@/components/ui';
+import { Chip, EmptyState, Icon, LoadError, Sheet, SheetRow, Skeleton } from '@/components/ui';
 import type { IconName } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { viewOf } from '@/lib/loadState';
@@ -25,6 +25,7 @@ import { getAllTrackerExercises, type TrackerExercise } from '../db/exerciseInfo
 import { getHiddenExerciseIds } from '../db/exerciseManage';
 import { getRecentExerciseIds } from '../db/recentExercises';
 import { createOffer, didYouMean, filterExercises } from '../services/exerciseSearch';
+import { BAND_TITLE, exercisesRows, lastDoneText, type ExercisesRow, type LastDone } from '../lib/exercisesView';
 import { useExerciseList } from '../store/exerciseListStore';
 import { ExerciseDemoSheet } from './ExerciseDemoSheet';
 import { ExerciseListRow } from './ExerciseListRow';
@@ -52,6 +53,9 @@ export function ExercisePickerList({
   trailing = 'plus',
   header,
   placeholderCount = false,
+  lastDone,
+  filterMenus = false,
+  footer,
 }: {
   onSelect: (ex: TrackerExercise) => void;
   /** Screen-reader verb for each row ("Add", "View", "Leave out"). */
@@ -74,6 +78,16 @@ export function ExercisePickerList({
   header?: ReactNode;
   /** The search box says how many exercises there are ("Search 402 exercises"). */
   placeholderCount?: boolean;
+  /**
+   * Redesign R5 (Profile → Exercises, Hevy's order): when each exercise was last done. Given,
+   * the list shows Recent (done, newest first, "Last: 12 Oct") · Made by you · All exercises
+   * while nothing is typed, instead of the "Recent" band of the last few workouts.
+   */
+  lastDone?: ReadonlyMap<string, LastDone>;
+  /** Redesign R5: the filters as two buttons, Equipment and Muscle, each opening a list (Hevy's). */
+  filterMenus?: boolean;
+  /** Shown after the results (Profile → Exercises: "Hidden exercises"). */
+  footer?: ReactNode;
 }) {
   const version = useExerciseList((s) => s.version);
   const [all, setAll] = useState<TrackerExercise[]>([]);
@@ -88,6 +102,7 @@ export function ExercisePickerList({
   const [muscle, setMuscle] = useState<Muscle | null>(null);
   const [gear, setGear] = useState<Equipment | null>(null);
   const [demo, setDemo] = useState<TrackerExercise | null>(null);
+  const [menu, setMenu] = useState<'gear' | 'muscle' | null>(null);
 
   const autoRecentMode = recentIds === 'auto';
   useEffect(() => {
@@ -141,7 +156,7 @@ export function ExercisePickerList({
   const filtered = useMemo(() => filterExercises(shown, { query: searched, muscle, equipment: gear }), [shown, searched, muscle, gear]);
   // A new search or filter starts at the top: the best match is first, never left scrolled
   // out of sight above the list (phone run 38063413760, "pull-up" in the library).
-  const resultsRef = useRef<FlatList<(typeof filtered)[number]>>(null);
+  const resultsRef = useRef<FlatList<ExercisesRow<TrackerExercise>>>(null);
   useEffect(() => {
     resultsRef.current?.scrollToOffset({ offset: 0, animated: false });
   }, [searched, muscle, gear]);
@@ -155,7 +170,12 @@ export function ExercisePickerList({
       return e ? [e] : [];
     });
   }, [shown, recentIds, autoRecent]);
-  const showRecent = recent.length > 0 && searched.trim() === '' && muscle == null && gear == null;
+  const showRecent = !lastDone && recent.length > 0 && searched.trim() === '' && muscle == null && gear == null;
+  // R5: Hevy's bands (or the search's order once something is typed).
+  const rows = useMemo<ExercisesRow<TrackerExercise>[]>(
+    () => (lastDone ? exercisesRows(filtered, lastDone, searched.trim() !== '') : filtered.map((ex) => ({ kind: 'exercise', key: ex.id, ex }))),
+    [filtered, lastDone, searched],
+  );
   const createName = onCreate && loaded ? createOffer(searched, all) : null;
   // EX-01: the nearest exercise, above the Create row ("Did you mean Dumbbell Curl?").
   const suggestion = createName ? didYouMean(searched, filtered) : null;
@@ -169,6 +189,7 @@ export function ExercisePickerList({
       actionLabel={isMarked?.(item) ? markedLabel : actionLabel}
       onPress={onSelect}
       onDemo={setDemo}
+      note={lastDone ? lastDoneText(lastDone.get(item.id)) : null}
     />
   );
 
@@ -244,7 +265,25 @@ export function ExercisePickerList({
         ) : null}
       </View>
 
+      {filterMenus ? (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
+          <Chip
+            label={gear ? GEAR_LABEL[gear] : 'All equipment'}
+            selected={gear != null}
+            onPress={() => setMenu('gear')}
+            accessibilityLabel={`Equipment: ${gear ? GEAR_LABEL[gear] : 'all'}. Change`}
+          />
+          <Chip
+            label={muscle ? MUSCLE_LABEL[muscle] : 'All muscles'}
+            selected={muscle != null}
+            onPress={() => setMenu('muscle')}
+            accessibilityLabel={`Muscle: ${muscle ? MUSCLE_LABEL[muscle] : 'all'}. Change`}
+          />
+        </View>
+      ) : null}
+
       {/* muscle filter chips */}
+      {filterMenus ? null : (
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -262,9 +301,10 @@ export function ExercisePickerList({
         // Never shrink: under a 400-row list the row was squeezed and the chip text clipped.
         style={{ flexGrow: 0, flexShrink: 0 }}
       />
+      )}
 
       {/* gear filter chips */}
-      {gears.length > 1 ? (
+      {!filterMenus && gears.length > 1 ? (
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -288,8 +328,8 @@ export function ExercisePickerList({
       {/* results */}
       <FlatList
         ref={resultsRef}
-        data={filtered}
-        keyExtractor={(e) => e.id}
+        data={rows}
+        keyExtractor={(r) => r.key}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         initialNumToRender={12}
@@ -326,10 +366,49 @@ export function ExercisePickerList({
             </View>
           ) : null
         }
-        ListFooterComponent={createRows}
+        ListFooterComponent={
+          footer ? (
+            <View style={{ gap: space.sm }}>
+              {createRows}
+              {footer}
+            </View>
+          ) : (
+            createRows
+          )
+        }
         extraData={isMarked}
-        renderItem={({ item }) => rowFor(item)}
+        renderItem={({ item }) =>
+          item.kind === 'band' ? (
+            <Text accessibilityRole="header" style={[bandHead, { marginTop: item.band === 'recent' ? 0 : space.sm }]}>
+              {BAND_TITLE[item.band]}
+            </Text>
+          ) : (
+            rowFor(item.ex)
+          )
+        }
       />
+
+      {filterMenus ? (
+        <Sheet visible={menu != null} title={menu === 'gear' ? 'Equipment' : 'Muscle'} onClose={() => setMenu(null)}>
+          <View style={{ gap: 2 }}>
+            {menu === 'gear' ? (
+              <>
+                <SheetRow label="All equipment" selected={gear == null} onPress={() => { setGear(null); setMenu(null); }} />
+                {gears.map((g) => (
+                  <SheetRow key={g} label={GEAR_LABEL[g]} selected={gear === g} onPress={() => { setGear(g); setMenu(null); }} />
+                ))}
+              </>
+            ) : menu === 'muscle' ? (
+              <>
+                <SheetRow label="All muscles" selected={muscle == null} onPress={() => { setMuscle(null); setMenu(null); }} />
+                {muscles.map((m) => (
+                  <SheetRow key={m} label={MUSCLE_LABEL[m]} selected={muscle === m} onPress={() => { setMuscle(m); setMenu(null); }} />
+                ))}
+              </>
+            ) : null}
+          </View>
+        </Sheet>
+      ) : null}
 
       <ExerciseDemoSheet
         visible={demo != null}

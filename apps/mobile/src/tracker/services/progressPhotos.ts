@@ -230,6 +230,8 @@ export function photoEraseSteps(
         await files.deleteAsync(`${files.documentDirectory}progress-photos/`, { idempotent: true });
         // PG-17: the opt-in backup copies go too.
         await files.deleteAsync(`${files.documentDirectory}photo-backup/`, { idempotent: true });
+        // Redesign R2: the Profile photo too.
+        await files.deleteAsync(`${files.documentDirectory}profile-photo/`, { idempotent: true });
       }
     },
     removeTemp: tempPictureDirs(files.cacheDirectory).map((dir) => () => files.deleteAsync(dir, { idempotent: true })),

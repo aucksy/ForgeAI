@@ -21,7 +21,7 @@ export default function PickLiftScreen() {
       scroll={false}
       title="Any exercise"
       subtitle="See its trend on Progress"
-      onBack={() => goBack(router, '/analytics')}
+      onBack={() => goBack(router, '/profile')}
     >
       <ExercisePickerList
         actionLabel="Show trend"

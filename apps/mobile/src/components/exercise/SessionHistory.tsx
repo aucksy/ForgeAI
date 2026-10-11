@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { Card, FoldSection } from '@/components/ui';
-import { shortDate } from '@/lib/date';
-import { fmtCompact, kgToDisplay, weightUnit } from '@/lib/format';
-import { color, motion, radius, space, type } from '@/theme/tokens';
+import { Badge, Card, Icon } from '@/components/ui';
+import { dateWithYear } from '@/lib/date';
+import { kgToDisplay, trimNum, weightUnit } from '@/lib/format';
+import { color, radius, space, type } from '@/theme/tokens';
 import type { ExerciseHistoryEntry, TrackedSetEntry } from '@/tracker/db/exerciseHistory';
 import { type DistUnit, type LogType } from '@/tracker/engine/logTypes';
 import { setLabel } from '@/tracker/services/exerciseHeadline';
@@ -14,11 +13,15 @@ import type { UnitSystem } from '@/types/models';
 export interface SessionHistoryProps {
   history: ExerciseHistoryEntry[];
   units: UnitSystem;
-  /** How many sessions one page shows (newest first); "Show more" adds the next page. Default 15. */
+  /** How many workouts one page shows (newest first); "Show more" adds the next page. Default 15. */
   maxSessions?: number;
   /** Phase 2: how the exercise is logged (absent = weight × reps). */
   logType?: LogType;
   distUnit?: DistUnit;
+  /** Redesign R5: each workout's name (absent = the date alone heads the card). */
+  names?: ReadonlyMap<string, string>;
+  /** Redesign R5: tap a workout → its page. */
+  onOpen?: (sessionId: string) => void;
 }
 
 /** Index of the top working set for emphasis: heaviest then most reps; longest / farthest for time and distance. */
@@ -43,108 +46,75 @@ function topSetIndex(sets: TrackedSetEntry[], lt: LogType): number {
   return top;
 }
 
-function SetChip({
-  set,
-  units,
-  top,
-  lt,
-  distUnit,
-}: {
-  set: TrackedSetEntry;
-  units: UnitSystem;
-  top: boolean;
-  lt: LogType;
-  distUnit: DistUnit;
-}) {
-  const label = setLabel(set, lt, units, distUnit);
-  return (
-    <View
-      style={{
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderRadius: radius.sm,
-        backgroundColor: top ? color.accentSoft : set.isWarmup ? 'transparent' : color.surfaceRaised,
-        borderWidth: 1,
-        borderColor: top ? 'rgba(255, 122, 59, 0.45)' : color.border,
-        opacity: set.isWarmup ? 0.55 : 1,
-      }}
-    >
-      <Text
-        style={{
-          fontFamily: set.isWarmup ? type.mono : type.monoBold,
-          fontSize: type.size.sub,
-          color: top ? color.accentBright : set.isWarmup ? color.inkMuted : color.ink,
-        }}
-      >
-        {label}
-      </Text>
-    </View>
-  );
+/** "60 kg × 8" for weight × reps and assisted (with the unit, as Hevy's table), else the type's own words. */
+function setText(s: TrackedSetEntry, lt: LogType, units: UnitSystem, distUnit: DistUnit): string {
+  if (lt === 'weight_reps' || lt === 'assisted') return `${trimNum(kgToDisplay(Math.abs(s.weightKg), units))} ${weightUnit(units)} × ${s.reps}`;
+  return setLabel(s, lt, units, distUnit);
 }
 
 /**
- * Past sessions: folded shut under a count (audit Phase 4, EX-14 / R2); open, a page of sessions
- * (date, sets as chips — top set embered, warm-ups dimmed) and "Show more" for the next page, so
- * five years of bench are all there, not just the last 15.
+ * Redesign R5 — the exercise page's History tab, as Hevy's: every workout with this exercise,
+ * newest first, open (never folded), a page at a time ("Show more"), so five years of bench are
+ * all there. Each card: the workout's name and date (tap → the workout), then its sets — "1",
+ * "2", or D / F for a drop or failure set — the top set embered.
  */
-export function SessionHistory({ history, units, maxSessions = 15, logType = 'weight_reps', distUnit = 'km' }: SessionHistoryProps) {
+export function SessionHistory({ history, units, maxSessions = 15, logType = 'weight_reps', distUnit = 'km', names, onOpen }: SessionHistoryProps) {
   const [pages, setPages] = useState(1);
   const shown = history.slice(0, maxSessions * pages);
-  const unit = weightUnit(units);
   const left = history.length - shown.length;
 
   return (
-    <Animated.View
-      entering={FadeInDown.duration(motion.slow).delay(320)}
-      style={{ marginTop: space.xl }}
-    >
-      <FoldSection title="Past workouts" count={history.length} noun="workout">
-      <Card style={{ paddingVertical: space.xs }}>
-        {shown.map((h, i) => {
-          const top = topSetIndex(h.sets, logType);
-          return (
-          <View
-            key={h.sessionId}
-            style={{
-              paddingVertical: space.md,
-              borderTopWidth: i === 0 ? 0 : 1,
-              borderTopColor: color.border,
-            }}
-          >
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: space.sm,
-              }}
-            >
-              <Text
-                style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}
-              >
-                {shortDate(h.dateISO)}
-              </Text>
-              {h.volumeKg > 0 ? (
-                <Text
+    <View style={{ gap: space.md }}>
+      {shown.map((h) => {
+        const top = topSetIndex(h.sets, logType);
+        const name = names?.get(h.sessionId) ?? null;
+        const when = dateWithYear(h.dateISO);
+        let n = 0;
+        const head = (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 48 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{name ?? when}</Text>
+              {name ? <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{when}</Text> : null}
+            </View>
+            {h.easyWeek ? <Badge label="Easy week" tone="neutral" /> : null}
+            {onOpen ? <Icon name="chevron-right" size={18} color={color.inkMuted} /> : null}
+          </View>
+        );
+        return (
+          <Card key={h.sessionId} style={{ gap: space.xs }}>
+            {onOpen ? (
+              <Pressable onPress={() => onOpen(h.sessionId)} accessibilityRole="button" accessibilityLabel={`${name ? `${name}, ` : ''}${when}. Open the workout`}>
+                {head}
+              </Pressable>
+            ) : (
+              head
+            )}
+            {h.sets.map((s, i) => {
+              const mark = s.setType === 'drop' ? 'D' : s.setType === 'failure' ? 'F' : String(++n);
+              const isTop = i === top;
+              return (
+                <View
+                  key={s.id}
                   style={{
-                    fontFamily: type.mono,
-                    fontSize: type.size.sub,
-                    color: color.inkSecondary,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: space.md,
+                    paddingVertical: 4,
+                    paddingHorizontal: space.sm,
+                    borderRadius: radius.sm,
+                    backgroundColor: isTop ? color.accentSoft : 'transparent',
                   }}
                 >
-                  {fmtCompact(kgToDisplay(h.volumeKg, units))} {unit} vol
-                </Text>
-              ) : null}
-            </View>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
-              {h.sets.map((s, si) => (
-                <SetChip key={s.id} set={s} units={units} top={si === top} lt={logType} distUnit={distUnit} />
-              ))}
-            </View>
-          </View>
-          );
-        })}
-      </Card>
+                  <Text style={{ width: 20, fontFamily: type.monoBold, fontSize: type.size.sub, color: mark === 'D' || mark === 'F' ? color.accent : color.inkMuted }}>{mark}</Text>
+                  <Text style={{ flex: 1, fontFamily: isTop ? type.monoBold : type.mono, fontSize: type.size.sub, color: isTop ? color.accentBright : color.ink }}>
+                    {setText(s, logType, units, distUnit)}
+                  </Text>
+                </View>
+              );
+            })}
+          </Card>
+        );
+      })}
       {left > 0 ? (
         <Pressable
           onPress={() => setPages((p) => p + 1)}
@@ -157,7 +127,6 @@ export function SessionHistory({ history, units, maxSessions = 15, logType = 'we
           </Text>
         </Pressable>
       ) : null}
-      </FoldSection>
-    </Animated.View>
+    </View>
   );
 }

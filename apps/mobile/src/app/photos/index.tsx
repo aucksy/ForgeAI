@@ -258,7 +258,7 @@ export default function ProgressPhotosScreen() {
     <Screen
       title="Progress photos"
       subtitle={backupOn ? 'Private. Your newest are in your phone’s backup too.' : 'Private. They stay on this phone.'}
-      onBack={() => goBack(router, '/analytics')}
+      onBack={() => goBack(router, '/profile')}
       scroll={false}
     >
       <FlatList

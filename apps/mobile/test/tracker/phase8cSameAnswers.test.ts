@@ -117,8 +117,6 @@ describe('Home — one read of the 12 workouts, the same summary', () => {
   it('coach off (today): identical except the two coach-only parts (insight, strength score)', async () => {
     const old = await import('../helpers/phase8cOld');
     const { getDashboardDataPhase2 } = await import('@/tracker/services/dashboardPhase2');
-    const { homeBelow } = await import('@/tracker/lib/homeAnswer');
-    const { FEATURES, homeParts } = await import('@/lib/features');
     const now = await getDashboardDataPhase2({ coach: false });
     const before = await old.oldGetDashboardDataPhase2();
     const strip = (d: DashboardData) => ({ ...d, insight: '', strength: null });
@@ -129,9 +127,6 @@ describe('Home — one read of the 12 workouts, the same summary', () => {
     // "can't be worked out" score the tile rule never shows.
     expect(before.strength.keyLifts.length).toBeGreaterThan(0);
     expect(now.strength.keyLifts).toEqual([]);
-    // What Home shows (today's parts, coach off) is the same with either.
-    const parts = new Set(homeParts(FEATURES));
-    expect(homeBelow({ parts, demo: false, open: false, data: now })).toEqual(homeBelow({ parts, demo: false, open: false, data: before }));
   });
 
   it('reads far less: no read per workout, no v1 Targets, no plateau walk', async () => {
@@ -151,24 +146,17 @@ describe('Home — one read of the 12 workouts, the same summary', () => {
     expect(noTitle(now)).toEqual(noTitle(await old.oldWithVolume(await getRecentSessionDetails(12))));
   });
 
-  it('a Home read writes nothing, so coming back with nothing saved reads nothing again', async () => {
+  it('a summary read writes nothing, and a refresh after a save shows it', async () => {
     const { useDashboard } = await import('@/store/dashboardStore');
     const { homeStamp } = await import('@/tracker/services/dashboardPhase2');
     const s0 = await homeStamp();
-    expect(await useDashboard.getState().refreshIfChanged()).toBe(true);
+    await useDashboard.getState().refresh();
     expect(await homeStamp()).toBe(s0);
-    const again = await counted(() => useDashboard.getState().refreshIfChanged());
-    expect(again.out).toBe(false);
-    expect(again.n).toBe(1); // the stamp, nothing else
-    // A body weight logged → Home reads again, and shows it.
     const { logBodyWeight } = await import('@/db/repos/userRepo');
     const { todayISO } = await import('@/lib/date');
     await logBodyWeight(todayISO(), 91.5);
-    expect(await useDashboard.getState().refreshIfChanged()).toBe(true);
+    await useDashboard.getState().refresh();
     expect(useDashboard.getState().data?.bodyWeightKg).toBe(91.5);
-    // An explicit refresh (after Finish) always reads.
-    const explicit = await counted(() => useDashboard.getState().refresh());
-    expect(explicit.n).toBeGreaterThan(5);
   });
 });
 

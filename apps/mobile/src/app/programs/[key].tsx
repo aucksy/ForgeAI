@@ -18,6 +18,8 @@ import { EQUIPMENT_LABEL, programByKey, programMeta, programRoutines, setsAndRep
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { addProgram, existingProgramFolder, type ExistingChoice } from '@/tracker/services/plansService';
 import { tell } from '@/lib/tell';
+import { forgetWorkoutFolders } from '@/tracker/services/workoutFolders';
+import { useFolderOpen } from '@/tracker/store/folderOpenStore';
 
 export default function ProgramScreen() {
   const router = useRouter();
@@ -61,9 +63,11 @@ export default function ProgramScreen() {
     try {
       // RP-18: already added → that folder is updated (and followed when asked), never a second
       // one unless the member asked for a copy.
-      await addProgram(p.key, { follow, easyWeeks: easy, existing });
-      // Back to the Routines screen already open (not a second copy on top of the old ones).
-      router.dismissTo('/routines');
+      const folderId = await addProgram(p.key, { follow, easyWeeks: easy, existing });
+      // R4: back to the Workout tab, where folders live now, with this folder open.
+      forgetWorkoutFolders();
+      useFolderOpen.getState().setOpen(folderId, true);
+      router.dismissTo('/workout');
     } catch {
       void tell('Could not add the program', 'Please try again.');
     } finally {

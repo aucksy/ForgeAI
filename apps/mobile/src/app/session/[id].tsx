@@ -1,56 +1,70 @@
 /**
- * Detail of a past workout (from History) — repeat or edit it; the "more" menu
- * holds Save as routine (Phase 1) and Delete.
+ * A saved workout's page — redesign R5, Hevy's Workout Detail (PLAN §4.5): the name, the day and
+ * time, then `WorkoutDetail` (stats, note, muscle split, every exercise with its sets and records;
+ * tap an exercise → its page). Top right, as in Hevy: share (a picture or text) and ⋯ — the same
+ * list as the Profile feed's ⋯ (`useWorkoutActions`): Save as routine · Repeat workout · Edit
+ * workout · Share as a picture · Share as text · Delete workout (asks first).
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { Card, EmptyState, GhostButton, askConfirm, Icon, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { EmptyState, LoadError, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
-import { deleteWorkout } from '@/tracker/services/workoutDelete';
-import { dateWithYear, shortDate } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
-import { EDIT_FAILED, SAVE_ROUTINE_FAILED, START_FAILED, runGuarded } from '@/lib/guardedAction';
+import { navigateOnce } from '@/lib/guardedAction';
 import { useLoad } from '@/lib/useLoad';
 import { useUnits } from '@/lib/useUnits';
-import { useDashboard } from '@/store/dashboardStore';
-import { color, radius, space, type } from '@/theme/tokens';
-import { shownNotes } from '@/tracker/lib/workoutText';
+import { color, radius, space } from '@/theme/tokens';
 
-import { createRoutineFromWorkout } from '@/tracker/db/routineRepo';
-import { listFolders, type Folder } from '@/tracker/db/folderRepo';
+import type { Folder } from '@/tracker/db/folderRepo';
+import { useWorkoutActions } from '@/tracker/lib/useWorkoutActions';
 import { FolderPickerSheet } from '@/tracker/components/FolderPickerSheet';
-import { Glyph } from '@/tracker/components/TrackerGlyph';
+import { Glyph, type GlyphName } from '@/tracker/components/TrackerGlyph';
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 
-import { getSessionSetMeta } from '@/tracker/db/trackerSets';
-import { uneditableReason } from '@/tracker/services/editDraft';
-import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
-import { ShareTextRow } from '@/tracker/components/ShareTextRow';
+import { shareTextNow } from '@/tracker/components/ShareTextRow';
+import { WorkoutDetail } from '@/tracker/components/WorkoutDetail';
 import { workoutText } from '@/tracker/services/shareText';
 import { getSessionSummary, sessionTitle } from '@/tracker/services/finishSummary';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
+import { detailWhen } from '@/tracker/services/workoutDetail';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
 import { workoutShareInput } from '@/tracker/share/workoutInput';
-import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
-import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
-import { tell } from '@/lib/tell';
+
+/** Let one sheet slide away before the next slides up. */
+const SLIDE_MS = 260;
+
+function TopButton({ glyph, label, onPress }: { glyph: GlyphName; label: string; onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => ({
+        width: 48,
+        height: 48,
+        borderRadius: radius.pill,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: color.surfaceRaised,
+        borderWidth: 1,
+        borderColor: color.border,
+        opacity: pressed ? 0.7 : 1,
+      })}
+    >
+      <Glyph name={glyph} size={20} color={color.inkSecondary} />
+    </Pressable>
+  );
+}
 
 export default function SessionDetailScreen() {
-  useUnits(); // v0.27.0: the record and set texts follow Profile → Units
+  useUnits(); // v0.27.0: the record and set texts follow Settings → Units
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = typeof params.id === 'string' ? params.id : params.id?.[0];
-
-  const startFromSession = useActiveWorkout((s) => s.startFromSession);
-  const startEditingSession = useActiveWorkout((s) => s.startEditingSession);
-  const hydrate = useActiveWorkout((s) => s.hydrate);
-  // ONE guard for both actions: they share the single draft slot, so a fast
-  // Edit-then-Repeat could otherwise start both before either sets `active`.
-  const busy = useRef(false);
 
   // HI-11: a failed read says so with Try again — "Workout not found" only when the read
   // really answered that there is no such workout.
@@ -58,160 +72,65 @@ export default function SessionDetailScreen() {
   const data = summary.data;
   const loading = summary.state === 'loading';
   const loadFailed = summary.state === 'error';
-  // HI-13 / LW-20: a failed Repeat / Edit / Save as routine says so here and frees the buttons.
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [menu, setMenu] = useState(false);
+  // Repeat / Edit / Save as routine / Delete — the same actions as the Profile feed's ⋯
+  // (`useWorkoutActions`). HI-13 / LW-20: a failed one says so here and frees the buttons.
+  const actions = useWorkoutActions(router);
+  const { actionError, pickFolders } = actions;
+  const [menu, setMenu] = useState<'menu' | 'share' | null>(null);
   const [sharing, setSharing] = useState(false);
-  // v0.25.1: the body figure chosen in Profile.
+  // v0.25.1: the body figure chosen in Settings → Units.
   const figure = useTrackerPrefs((s) => s.bodyFigure);
   // Phase 3: the same picture the finish screen shares.
   const scene = useMemo(() => (data ? workoutShareScene({ ...workoutShareInput(data), figure }) : null), [data, figure]);
+  // One exercise page per tap, however fast the taps.
+  const nav = useRef(false);
 
-  const onRepeat = (): Promise<unknown> =>
-    runGuarded(
-      busy,
-      async () => {
-        if (!data) return;
-        setActionError(null);
-        // Hydrate first: a persisted in-progress draft may exist but not yet be in memory
-        // (it only loads on the Workout tab), and startFromSession would overwrite it.
-        await hydrate();
-        // LW-24: a workout already open is never a dead end: Resume it, or discard it and start this.
-        if ((await askAboutOpenWorkout()) === 'resume') {
-          showActiveWorkout(router);
-          return 'left' as const;
-        }
-        await startFromSession(data.session);
-        showActiveWorkout(router);
-        return 'left' as const;
-      },
-      () => setActionError(START_FAILED),
-    );
-
-  const onEdit = (): Promise<unknown> =>
-    runGuarded(
-      busy,
-      async () => {
-        if (!data) return;
-        setActionError(null);
-        // Same guard as Repeat: a persisted in-progress draft only loads on the Workout
-        // tab, so hydrate first or editing would silently overwrite it.
-        await hydrate();
-        // LW-24: Resume the open workout, or discard it and edit this one.
-        if ((await askAboutOpenWorkout({ startLabel: 'Discard it and edit this one' })) === 'resume') {
-          showActiveWorkout(router);
-          return 'left' as const;
-        }
-        // Saving REPLACES every set, so refuse the cases the editor cannot represent
-        // faithfully rather than quietly merging them away.
-        const blocked = uneditableReason(data.session, await getSessionSetMeta(data.session.id));
-        if (blocked) {
-          void tell("Can't edit this one", blocked);
-          return;
-        }
-        await startEditingSession(data.session);
-        showActiveWorkout(router);
-        return 'left' as const;
-      },
-      () => setActionError(EDIT_FAILED),
-    );
-
-  /** RP-08: "Save as routine" first asks where it goes ("My routines" first, the plan last). */
-  const [pickFolders, setPickFolders] = useState<Folder[] | null>(null);
-  const askSaveRoutine = (): void => {
-    setActionError(null);
-    listFolders()
-      .then(setPickFolders)
-      .catch(() => setActionError(SAVE_ROUTINE_FAILED));
+  const close = (then?: () => void): void => {
+    setMenu(null);
+    if (then) setTimeout(then, SLIDE_MS);
   };
 
   const onSaveRoutine = (folderId: string | null, choices: readonly Folder[]): Promise<unknown> =>
-    runGuarded(
-      busy,
-      async () => {
-        if (!data) return;
-        setActionError(null);
-        const into = folderId ? choices.find((f) => f.id === folderId) ?? null : null;
-        const s = data.session;
-        const items = s.exercises.map((g) => ({
-          exerciseId: g.exercise.id,
-          workingSets: g.sets.filter((x) => !x.isWarmup).length,
-        }));
-        const routineId = await createRoutineFromWorkout({
-          name: s.title?.trim() ? s.title.trim() : `${sessionTitle(s)} · ${shortDate(s.dateISO)}`,
-          dayType: s.dayType === 'rest' ? 'full' : s.dayType,
-          items,
-          folderId,
-        });
-        void askConfirm({
-          title: 'Saved as a routine',
-          body: into?.following
-            ? `It is in ${into.name}, your plan — Today will include it.`
-            : `It is in ${into?.name ?? 'My routines'}. Your plan has not changed.`,
-          confirmLabel: 'Open routine',
-          cancelLabel: 'Done',
-        }).then((open) => {
-          if (open) router.push({ pathname: '/routines/[id]', params: { id: routineId } });
-        });
-      },
-      () => setActionError(SAVE_ROUTINE_FAILED),
-    );
+    data ? actions.onSaveRoutine(data, folderId, choices) : Promise.resolve();
 
-  // HI-12: "failed" only when the workout is really still there. The records, Health Connect
-  // and the widgets catch up on their own; they never turn a done delete into "failed".
   const onDelete = async (): Promise<void> => {
     if (!id) return;
-    const ok = await askConfirm({
-      title: 'Delete this workout?',
-      body: 'This removes the workout and its sets.',
-      confirmLabel: 'Delete',
-      destructive: true,
+    await actions.onDelete(id, () => {
+      try {
+        if (router.canGoBack()) router.back();
+        else router.replace('/profile');
+      } catch {
+        // the workout is gone either way; the screen shows "not found" on its next read
+      }
     });
-    if (!ok) return;
-    setActionError(null);
-    const outcome = await deleteWorkout(id);
-    if (!outcome.deleted) {
-      setActionError('Could not delete this workout. It is still here. Please try again.');
-      return;
-    }
-    void useDashboard.getState().refresh().catch(() => undefined);
-    try {
-      if (router.canGoBack()) router.back();
-      else router.replace('/history');
-    } catch {
-      // the workout is gone either way; the screen shows "not found" on its next read
-    }
   };
+
+  const title = data ? sessionTitle(data.session) : 'Workout';
+  const shareRows = data ? (
+    <>
+      <SheetRow label="Share as a picture" leading={<Glyph name="image" size={20} color={color.accent} />} onPress={() => close(() => setSharing(true))} />
+      <SheetRow
+        label="Share as text"
+        leading={<Glyph name="share" size={20} color={color.accent} />}
+        onPress={() => close(() => void shareTextNow(() => workoutText(data), sessionTitle(data.session)))}
+      />
+    </>
+  ) : null;
 
   return (
     <Screen
-      title={data ? sessionTitle(data.session) : 'Workout'}
-      // HI-15: the year when it isn't this year. HI-19: an easy-week workout says so.
-      subtitle={data ? `${dateWithYear(data.session.dateISO)}${data.easyWeek ? ' · Easy week' : ''}` : undefined}
+      title={title}
+      // HI-15 / Hevy: the day and the time it started. HI-19: an easy-week workout says so.
+      subtitle={data ? `${detailWhen(data.session.dateISO, data.session.startedAt)}${data.easyWeek ? ' · Easy week' : ''}` : undefined}
       right={
-        <View style={{ flexDirection: 'row', gap: space.sm }}>
-          {data ? (
-            <Pressable
-              onPress={() => setMenu(true)}
-              accessibilityRole="button"
-              accessibilityLabel="More"
-              style={{
-                width: 42,
-                height: 42,
-                borderRadius: radius.pill,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: color.surfaceRaised,
-                borderWidth: 1,
-                borderColor: color.border,
-              }}
-            >
-              <Glyph name="more" size={20} color={color.inkSecondary} />
-            </Pressable>
-          ) : null}
-        </View>
+        data ? (
+          <View style={{ flexDirection: 'row', gap: space.sm }}>
+            <TopButton glyph="share" label="Share" onPress={() => setMenu('share')} />
+            <TopButton glyph="more" label="More" onPress={() => setMenu('menu')} />
+          </View>
+        ) : undefined
       }
-      onBack={() => goBack(router, '/history')}
+      onBack={() => goBack(router, '/profile')}
     >
       {loading ? (
         <View style={{ gap: space.lg }}>
@@ -220,84 +139,39 @@ export default function SessionDetailScreen() {
         </View>
       ) : data ? (
         <View style={{ gap: space.lg }}>
-          <SessionSummary data={data} exercisesOpen />
-          {/* HI-04: the workout's notes, under its summary (the name is the screen's title). */}
-          {(() => {
-            const note = shownNotes(data.session.title, data.session.notes);
-            return note ? (
-              <Card>
-                <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted, letterSpacing: 0.4 }}>Notes</Text>
-                <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.ink, marginTop: space.xs, lineHeight: 21 }}>{note}</Text>
-              </Card>
-            ) : null;
-          })()}
-          <View style={{ gap: space.md }}>
-            <PrimaryButton label="Repeat this workout" icon="dumbbell" onPress={() => void onRepeat()} />
-            <GhostButton label="Edit this workout" icon="check" onPress={() => void onEdit()} />
-            <InlineError message={actionError} />
-          </View>
-          <TrackerSheet visible={menu} title="This workout" onClose={() => setMenu(false)}>
+          <InlineError message={actionError} />
+          <WorkoutDetail
+            data={data}
+            onOpenExercise={(exerciseId) => navigateOnce(nav, () => router.push({ pathname: '/exercise/[id]', params: { id: exerciseId } }))}
+          />
+          <TrackerSheet visible={menu != null} title={menu === 'share' ? 'Share' : 'This workout'} onClose={() => close()}>
             <View style={{ gap: 2 }}>
-              <SheetRow
-                label="Share as a picture"
-                leading={<Glyph name="image" size={20} color={color.accent} />}
-                onPress={() => {
-                  setMenu(false);
-                  // Let the menu slide away before the share sheet slides up.
-                  setTimeout(() => setSharing(true), 260);
-                }}
-              />
-              {/* The same workout as plain text, for any AI chat. */}
-              <ShareTextRow
-                inSheet
-                title={sessionTitle(data.session)}
-                getText={() => workoutText(data)}
-                before={() =>
-                  new Promise<void>((done) => {
-                    setMenu(false);
-                    setTimeout(done, 260);
-                  })
-                }
-              />
-              <SheetRow
-                label="Save as routine"
-                leading={<Glyph name="list" size={20} color={color.accent} />}
-                onPress={() => {
-                  setMenu(false);
-                  setTimeout(askSaveRoutine, 260);
-                }}
-              />
-              <SheetRow
-                label="Delete workout"
-                danger
-                leading={<Glyph name="trash" size={20} color={color.criticalText} />}
-                onPress={() => {
-                  setMenu(false);
-                  setTimeout(() => void onDelete(), 260);
-                }}
-              />
+              {menu === 'share' ? (
+                shareRows
+              ) : (
+                <>
+                  <SheetRow label="Save as routine" leading={<Glyph name="list" size={20} color={color.accent} />} onPress={() => close(actions.askSaveRoutine)} />
+                  <SheetRow label="Repeat workout" leading={<Glyph name="play" size={20} color={color.accent} />} onPress={() => close(() => void actions.onRepeat(data))} />
+                  <SheetRow label="Edit workout" leading={<Glyph name="pencil" size={20} color={color.accent} />} onPress={() => close(() => void actions.onEdit(data))} />
+                  {shareRows}
+                  <SheetRow label="Delete workout" danger leading={<Glyph name="trash" size={20} color={color.criticalText} />} onPress={() => close(() => void onDelete())} />
+                </>
+              )}
             </View>
           </TrackerSheet>
           <FolderPickerSheet
             visible={pickFolders != null}
             title="Where should the routine go?"
             folders={pickFolders ?? []}
-            onClose={() => setPickFolders(null)}
+            onClose={actions.closeFolders}
             onPick={(folderId) => {
               const choices = pickFolders ?? [];
-              setPickFolders(null);
+              actions.closeFolders();
               // Let the sheet slide away before the saved message.
-              setTimeout(() => void onSaveRoutine(folderId, choices), 260);
+              setTimeout(() => void onSaveRoutine(folderId, choices), SLIDE_MS);
             }}
           />
-          {scene ? (
-            <ShareSheet
-              visible={sharing}
-              scene={scene}
-              fileName={`forgeai-workout-${data.session.dateISO}`}
-              onClose={() => setSharing(false)}
-            />
-          ) : null}
+          {scene ? <ShareSheet visible={sharing} scene={scene} fileName={`forgeai-workout-${data.session.dateISO}`} onClose={() => setSharing(false)} /> : null}
         </View>
       ) : loadFailed ? (
         <LoadError what="this workout" onRetry={summary.retry} />

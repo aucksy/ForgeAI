@@ -206,7 +206,7 @@ describe('a rolled-back write leaves nothing behind (audit Phase 8 review)', () 
     // Coming back to the tab: the stamp moved (the rolled-back rows still count as writes), so
     // nothing read under the old one is trusted either.
     expect(await homeStamp()).not.toBe(stampBefore);
-    await useDashboard.getState().refreshIfChanged();
+    await useDashboard.getState().refresh();
     expect(JSON.stringify(useDashboard.getState().data)).toBe(before);
     expect(JSON.stringify(useDashboard.getState().data)).toBe(JSON.stringify(await getDashboardDataPhase2()));
   });

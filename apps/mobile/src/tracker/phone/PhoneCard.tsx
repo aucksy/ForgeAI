@@ -1,7 +1,7 @@
 /**
- * Profile → "Around your phone" (v0.27.0, tracker plan Phase 5): Health Connect, workout
- * reminders and home-screen widgets. One card, three plain rows; each says what it does and
- * what state it is in, with one Action Button where something can be done.
+ * Settings → Notifications, Health Connect and Widgets (v0.27.0, tracker plan Phase 5; redesign
+ * R6 gave each its own page — once one card, "Around your phone"). Each row says what it does
+ * and what state it is in, with one Action Button where something can be done.
  *
  * Audit Phase 6: Health Connect says what "Send past workouts" really did (PH-03); reminders say
  * "Notifications are off — Turn on" when Android blocks them (PH-01, re-checked on every return
@@ -148,7 +148,7 @@ function HealthRow() {
   );
 }
 
-function RemindersRow() {
+function RemindersRow({ divider = true }: { divider?: boolean }) {
   const on = usePhonePrefs((s) => s.remindersOn);
   const days = usePhonePrefs((s) => s.reminderDays);
   const minutes = usePhonePrefs((s) => s.reminderMinutes);
@@ -209,7 +209,7 @@ function RemindersRow() {
 
   return (
     <View>
-      <ToggleRow icon="clock" title="Workout reminders" caption={caption} value={on} onChange={switchOn} divider />
+      <ToggleRow icon="clock" title="Workout reminders" caption={caption} value={on} onChange={switchOn} divider={divider} />
       {on && blocked ? (
         <View style={{ paddingBottom: space.md }}>
           <GhostButton
@@ -368,7 +368,7 @@ function TimeStep({ label, sign, onPress }: { label: string; sign: string; onPre
   );
 }
 
-function WidgetsRow() {
+function WidgetsRow({ divider = true }: { divider?: boolean }) {
   const [placed, setPlaced] = useState(0);
   const [refused, setRefused] = useState(false);
 
@@ -397,7 +397,7 @@ function WidgetsRow() {
             ? `${placed} on your home screen. Add another, or long-press your home screen → Widgets → ForgeAI.`
             : "Today's workout and your week, on your home screen."
         }
-        divider
+        divider={divider}
       />
       <View style={{ flexDirection: 'row', gap: space.sm, paddingBottom: space.sm }}>
         <View style={{ flex: 1 }}>
@@ -416,12 +416,30 @@ function WidgetsRow() {
   );
 }
 
-export function PhoneCard() {
+/**
+ * Redesign R6: Settings is Hevy's list of pages, so the three rows also stand alone — one page
+ * each (Notifications, Health Connect, Widgets), every control working exactly as on the card.
+ */
+export function RemindersCard() {
+  return (
+    <Card style={{ paddingVertical: space.xs }}>
+      <RemindersRow divider={false} />
+    </Card>
+  );
+}
+
+export function HealthCard() {
   return (
     <Card style={{ paddingVertical: space.xs }}>
       <HealthRow />
-      <RemindersRow />
-      <WidgetsRow />
+    </Card>
+  );
+}
+
+export function WidgetsCard() {
+  return (
+    <Card style={{ paddingVertical: space.xs }}>
+      <WidgetsRow divider={false} />
     </Card>
   );
 }

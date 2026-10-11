@@ -8,27 +8,10 @@ export const FEATURES = { coach: false, nutrition: false, gymSync: false } as co
 export type Features = { readonly coach: boolean; readonly nutrition: boolean; readonly gymSync: boolean };
 
 /**
- * Home's parts, top to bottom. Pure so the switch's effect on Home is testable.
- * Audit Phase 7 (a calmer Home): the one Today answer card, then this week's numbers (the same
- * ones Progress shows). Kg lifted per week and body weight live on Progress.
- */
-export type HomePart = 'today' | 'week' | 'nutritionRings' | 'scores' | 'insight' | 'nextUp';
-
-export function homeParts(f: Features): HomePart[] {
-  const parts: HomePart[] = ['today', 'week'];
-  if (f.nutrition) parts.push('nutritionRings');
-  // Recovery and strength scores belong to the coach's engine — shown only with it.
-  if (f.coach) parts.push('scores');
-  // The insight card and "Next up" row both open the coach.
-  if (f.coach) parts.push('insight', 'nextUp');
-  return parts;
-}
-
-/**
  * SH-08: which score tiles can honestly be shown. A strength score needs body weight AND at
  * least one key lift (else it reads "Strength 0" forever); a recovery score needs at least
  * one workout (else day one reads "Recovery 95 · Primed"). A score that can't be worked out
- * is not shown at all. (Both tiles also need the coach switch — `homeParts`.)
+ * is not shown at all. (Both tiles also need the coach switch.)
  */
 export function scoreTiles(d: {
   strength: { keyLifts: readonly unknown[] };

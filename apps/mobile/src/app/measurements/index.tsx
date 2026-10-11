@@ -158,7 +158,7 @@ export default function MeasurementsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-    <Screen title="Measurements" onBack={() => goBack(router, '/analytics')}>
+    <Screen title="Measurements" onBack={() => goBack(router, '/profile')}>
       <View style={{ gap: space.lg }}>
         <PrimaryButton label="Log measurements" icon="plus" onPress={() => router.push('/measurements/log')} />
 

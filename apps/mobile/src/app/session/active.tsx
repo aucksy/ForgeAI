@@ -207,13 +207,13 @@ export default function ActiveWorkoutScreen() {
   const onDiscard = (): void => {
     const back = (): void => {
       leaving.current = true;
-      // Leaving an edit returns to the workout it came from, unchanged; a past log to History.
+      // Leaving an edit returns to the workout it came from, unchanged; a past log to Profile (its workouts).
       const sessionId = editingSessionId;
       const wasPast = pastLog;
       void discard().then(() =>
         sessionId
           ? router.replace({ pathname: '/session/[id]', params: { id: sessionId } })
-          : router.replace(wasPast ? '/history' : '/workout'),
+          : router.replace(wasPast ? '/profile' : '/workout'),
       );
     };
     if (isEditing) {
@@ -300,7 +300,7 @@ export default function ActiveWorkoutScreen() {
         leaving.current = true;
         await discard();
         void tell('Workout deleted', 'This workout was deleted, so your changes were discarded.');
-        router.replace('/history');
+        router.replace('/profile');
         return;
       }
       leaving.current = false;

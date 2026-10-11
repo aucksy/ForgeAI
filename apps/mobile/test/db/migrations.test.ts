@@ -168,7 +168,7 @@ describe.each(TAGS)('upgrade from %s keeps every row', (tag) => {
     const meta = (k: string) => after.meta[k]?.value;
     expect(meta('schema_version')).toBe('1');
     expect(meta('tracker_schema_version')).toBe('14');
-    expect(meta('member_schema_version')).toBe('1');
+    expect(meta('member_schema_version')).toBe('2');
 
     // 4. The library sync linked the library-named exercise and left the member's own alone.
     expect(after.exercises['ex-bench'].catalog_key).toBeTruthy();

@@ -51,3 +51,31 @@ describe('getRecentExerciseIds', () => {
     expect(await getRecentExerciseIds(5)).toEqual([idOf('Barbell Bench Press')]);
   });
 });
+
+describe('getLastDoneDates (redesign R5: Profile → Exercises, "Last: 12 Oct")', () => {
+  it('each done exercise with its newest workout; a never-done one is absent', async () => {
+    const { getLastDoneDates } = await import('@/tracker/db/recentExercises');
+    await logWorkout('2026-10-01', ['Barbell Bench Press', 'Barbell Squat']);
+    await logWorkout('2026-10-03', ['Barbell Bench Press']);
+    const last = await getLastDoneDates();
+    expect(last.get(idOf('Barbell Bench Press'))?.dateISO).toBe('2026-10-03');
+    expect(last.get(idOf('Barbell Squat'))?.dateISO).toBe('2026-10-01');
+    expect(last.get(idOf('Barbell Squat'))?.startedAt).toBe(Date.parse('2026-10-01T07:00:00'));
+    await ensureExercise('Deadlift');
+    expect(last.has(idOf('Deadlift'))).toBe(false);
+  });
+});
+
+describe('getWorkoutNames (redesign R5: the exercise page’s History tab)', () => {
+  it('the saved name, else the day type', async () => {
+    await logWorkout('2026-10-01', ['Barbell Bench Press']);
+    const { getDb } = await import('@/db');
+    const [s] = db.all<{ id: string }>("SELECT id FROM workout_sessions WHERE date_iso = '2026-10-01'");
+    const { getWorkoutNames } = await import('@/tracker/db/workoutNames');
+    const before = await getWorkoutNames([s.id, 'missing']);
+    expect(before.get(s.id)).toBe('Full Body');
+    expect(before.has('missing')).toBe(false);
+    await getDb().runAsync('UPDATE workout_sessions SET title = ? WHERE id = ?', ['Push 1', s.id]);
+    expect((await getWorkoutNames([s.id])).get(s.id)).toBe('Push 1');
+  });
+});

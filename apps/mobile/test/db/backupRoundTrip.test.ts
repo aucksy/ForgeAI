@@ -24,6 +24,7 @@ const FULL_ROWS: [string, Row][] = [
     id: 'p1', name: 'Member', phone: '+919800000001', age: 31, height_cm: 176.5, goal: 'muscle', experience: 'intermediate',
     gym_name: 'Iron Temple', member_since_iso: '2025-11-02', calorie_target: 2600, protein_target_g: 150, carbs_target_g: 300,
     fat_target_g: 70, unit_system: 'imperial', language: 'hi',
+    photo_uri: 'file:///app/files/profile-photo/me.jpg', bio: 'Fitness, music and tech', link: 'https://example.com/me',
   }],
   ['exercises', {
     id: 'ex1', name: 'Own Sled Push', aliases: '["sled"]', muscle_group: 'legs', secondary_muscles: '["glutes"]', equipment: 'other',

@@ -61,6 +61,11 @@ export interface TodayInput {
   todayISO: string;
   /** The followed folder, or null with no plan. */
   folder: { id: string; name: string; startISO?: string | null; routines: readonly TodayRoutineInput[] } | null;
+  /**
+   * Redesign R1 ("Up next"): every folder in the member's order, read only when NO folder is
+   * followed. Absent or empty = no routines anywhere.
+   */
+  folders?: readonly { id: string; name: string; routines: readonly TodayRoutineInput[] }[];
   /** Recent workouts, any order (they are sorted here). */
   sessions: readonly TodaySessionInput[];
 }
@@ -75,6 +80,10 @@ export interface TodayAnswer<R extends TodayRoutineInput = TodayRoutineInput, S 
   doneToday?: S;
   /** The routine Start starts: today's ('next') or the one after today's ('doneToday'). */
   next?: R;
+  /** Redesign R1: the folder the answer comes from (null with no routines at all). */
+  folder?: { id: string; name: string } | null;
+  /** Redesign R1: true when that folder is the one the member follows (the plan). */
+  following?: boolean;
 }
 
 /** A routine "Today" can offer: has exercises and is not a rest day. */
@@ -147,21 +156,89 @@ function placeSession<R extends TodayRoutineInput>(routines: readonly R[], s: To
   return tied[0];
 }
 
-/** Today's answer. PURE. */
+/**
+ * Today's answer — "Up next" on the Workout tab. PURE.
+ *
+ * Redesign R1 (the owner's rule, PLAN §2 "How Up next is chosen"):
+ *  1. a folder he FOLLOWS → its rotation, exactly as before (`folder`);
+ *  2. else the folder of the routine he did LAST (the newest workout whose `routineId` is a
+ *     routine in some folder) → the routine after it in that folder's order, wrapping round,
+ *     skipping empty and rest routines; done today → "Done today: X · Next: Y";
+ *  3. no routine ever done (or the last one's folder has nothing to offer) → the first routine
+ *     of the first folder (folder order);
+ *  4. no routines at all → 'noPlan'.
+ * An empty workout (`routineId` '') or one with no known routine never moves it.
+ */
 export function todayPlan<R extends TodayRoutineInput, S extends TodaySessionInput>(input: {
   todayISO: string;
   folder: { id: string; name: string; startISO?: string | null; routines: readonly R[] } | null;
+  folders?: readonly { id: string; name: string; routines: readonly R[] }[];
   sessions: readonly S[];
 }): TodayAnswer<R, S> {
   const { todayISO, folder } = input;
-  if (!folder) return { status: 'noPlan', routine: null };
+  if (!folder) return upNextFromFolders(todayISO, input.folders ?? [], input.sessions);
+  return { ...followedRotation(todayISO, folder, input.sessions), folder: { id: folder.id, name: folder.name }, following: true };
+}
+
+/** Rule 2–4: no folder followed. PURE. */
+function upNextFromFolders<R extends TodayRoutineInput, S extends TodaySessionInput>(
+  todayISO: string,
+  folders: readonly { id: string; name: string; routines: readonly R[] }[],
+  sessions: readonly S[],
+): TodayAnswer<R, S> {
+  const withRoutines = folders.filter((f) => f.routines.length > 0);
+  if (withRoutines.length === 0) return { status: 'noPlan', routine: null, folder: null, following: false };
+
+  // Where each routine lives: folder index and its place in that folder.
+  const where = new Map<string, { f: number; i: number }>();
+  folders.forEach((f, fi) => f.routines.forEach((r, i) => where.set(r.id, { f: fi, i })));
+
+  // The newest workout started from a routine that still sits in a folder (newest first: day,
+  // then start time). Empty workouts ('') and unknown routines (null) never count.
+  let last: S | null = null;
+  for (const s of sessions) {
+    if (s.dateISO > todayISO || !s.routineId || !where.has(s.routineId)) continue;
+    if (!last || s.dateISO > last.dateISO || (s.dateISO === last.dateISO && s.startedAt > last.startedAt)) last = s;
+  }
+
+  if (last) {
+    const at = where.get(last.routineId as string)!;
+    const f = folders[at.f];
+    const nextIdx = eligibleFrom(f.routines, at.i + 1);
+    if (nextIdx != null) {
+      const next = f.routines[nextIdx];
+      const ref = { id: f.id, name: f.name };
+      if (last.dateISO === todayISO) return { status: 'doneToday', routine: f.routines[at.i], doneToday: last, next, folder: ref, following: false };
+      return { status: 'next', routine: next, next, folder: ref, following: false };
+    }
+    // That folder has nothing to offer now (every routine emptied): the first folder's rule.
+  }
+
+  for (const f of folders) {
+    const i = eligibleFrom(f.routines, 0);
+    if (i != null) {
+      const next = f.routines[i];
+      return { status: 'next', routine: next, next, folder: { id: f.id, name: f.name }, following: false };
+    }
+  }
+  // Routines exist, none with exercises yet.
+  const f = withRoutines[0];
+  return { status: 'emptyPlan', routine: null, folder: { id: f.id, name: f.name }, following: false };
+}
+
+/** Rule 1: the followed folder's rotation (unchanged since audit Phase 3). PURE. */
+function followedRotation<R extends TodayRoutineInput, S extends TodaySessionInput>(
+  todayISO: string,
+  folder: { id: string; name: string; startISO?: string | null; routines: readonly R[] },
+  sessions: readonly S[],
+): TodayAnswer<R, S> {
   const routines = folder.routines;
   const first = eligibleFrom(routines, 0);
   if (first == null) return { status: 'emptyPlan', routine: null };
 
   const floor = folder.startISO ?? null;
   // Oldest first, so each workout is placed knowing what the rotation offered before it.
-  const counted = input.sessions
+  const counted = sessions
     .filter((s) => s.dateISO <= todayISO && (floor == null || s.dateISO >= floor))
     .slice()
     .sort((a, b) => (a.dateISO === b.dateISO ? a.startedAt - b.startedAt : a.dateISO < b.dateISO ? -1 : 1));
@@ -206,6 +283,8 @@ export function todayWords(a: {
   next?: { name: string } | null;
   doneName?: string | null;
   folderName?: string | null;
+  /** Redesign R1: false when the routine comes from a folder the member does not follow. */
+  following?: boolean;
 }): TodayWords {
   switch (a.status) {
     case 'noPlan':
@@ -224,7 +303,12 @@ export function todayWords(a: {
     default: {
       const name = a.routine?.name ?? 'Workout';
       const n = a.routine?.exerciseIds.length ?? 0;
-      const line = `${n} exercise${n === 1 ? '' : 's'} from your plan`;
+      const exercises = `${n} exercise${n === 1 ? '' : 's'}`;
+      if (a.following === false) {
+        const line = a.folderName ? `${exercises} from ${a.folderName}` : exercises;
+        return { title: name, line, sentence: `Up next: ${name} · ${line}` };
+      }
+      const line = `${exercises} from your plan`;
       return { title: name, line, sentence: `Today: ${name} · ${line}` };
     }
   }

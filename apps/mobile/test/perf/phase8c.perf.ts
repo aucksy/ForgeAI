@@ -128,7 +128,7 @@ describe('Phase 8 packet C — five years of data', () => {
     // What Home's focus does now: the store's change check (+ the greeting and week card).
     const homeFocus = async (extrasAt: { s: string | null }) => {
       const stamp = await homeStamp();
-      const reads: Promise<unknown>[] = [useDashboard.getState().refreshIfChanged(stamp)];
+      const reads: Promise<unknown>[] = [useDashboard.getState().refresh()];
       if (stamp == null || stamp !== extrasAt.s) {
         reads.push(Promise.all([getProfile(), getWeekVsUsual()]));
         extrasAt.s = stamp;

@@ -37,7 +37,11 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
     // Drive backup stays lossless; older backups lack the key and restore it as
     // NULL via batchInsert's `row[c] ?? null` — no SCHEMA_VERSION bump needed,
     // exactly as with the 5b/5c set_entries columns below.
-    cols: ['id', 'name', 'phone', 'age', 'height_cm', 'goal', 'experience', 'gym_name', 'member_since_iso', 'calorie_target', 'protein_target_g', 'carbs_target_g', 'fat_target_g', 'unit_system', 'language'],
+    // + redesign R2 (member schema v2): the Profile's photo path, bio and link. The photo FILE
+    // stays on the phone (like a custom exercise's picture); restored elsewhere, the Profile
+    // shows the first letter until a new photo is picked. Older backups lack them → NULL.
+    cols: ['id', 'name', 'phone', 'age', 'height_cm', 'goal', 'experience', 'gym_name', 'member_since_iso', 'calorie_target', 'protein_target_g', 'carbs_target_g', 'fat_target_g', 'unit_system', 'language',
+      'photo_uri', 'bio', 'link'],
   },
   {
     name: 'exercises',

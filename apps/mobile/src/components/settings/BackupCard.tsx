@@ -65,20 +65,16 @@ function Note({ children, tone = 'muted' }: { children: ReactNode; tone?: 'muted
 }
 
 /**
- * Profile → Backup (audit SH-27, DS-01, DS-12). Leads with what is true today:
+ * Settings → Backup (audit SH-27, DS-01, DS-12). Leads with what is true today:
  *  - Android's own backup carries the workouts to the member's Google account (the app's backup
  *    rules include the database). Android never tells an app WHEN it backed up, so no time is
  *    claimed. Photos only when the member turns on "Include photos in my backup" (PG-17 / D11).
- *  - "Save my history": the whole history as a Hevy-format CSV, which "Import from Hevy" reads
- *    back (also Hevy and Strong).
+ *  - ("Save my history" is on Export & import since redesign R6: `SaveHistoryCard`.)
  * Below that, the member-owned Google Drive backup — still hidden until the build carries a
  * Google client id (owner gate), so nothing here promises a backup that doesn't exist.
  */
 export function BackupCard() {
-  const units = useSettings((s) => s.unitSystem);
   const [workouts, setWorkouts] = useState<number | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [saveNote, setSaveNote] = useState<{ text: string; tone: 'muted' | 'error' } | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -91,6 +87,32 @@ export function BackupCard() {
       };
     }, []),
   );
+
+  return (
+    <View style={{ gap: space.md }}>
+      <Card>
+        <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
+          {workoutsLine(workouts)}
+        </Text>
+        <Body>
+          Android backs this up to your Google account when backup is on in your phone’s settings.
+          Photos stay on this phone unless you include them below.
+        </Body>
+      </Card>
+      <PhotoBackupCard />
+      {isDriveConfigured() ? <DriveBackup /> : null}
+    </View>
+  );
+}
+
+/**
+ * Settings → Export & import (redesign R6): "Save my history" — the whole history as a
+ * Hevy-format CSV, which "Import from Hevy" reads back (also Hevy and Strong).
+ */
+export function SaveHistoryCard() {
+  const units = useSettings((s) => s.unitSystem);
+  const [saving, setSaving] = useState(false);
+  const [saveNote, setSaveNote] = useState<{ text: string; tone: 'muted' | 'error' } | null>(null);
 
   const onSave = async (): Promise<void> => {
     if (saving) return;
@@ -110,31 +132,14 @@ export function BackupCard() {
   };
 
   return (
-    <View style={{ gap: space.md }}>
-      <Card>
-        <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-          {workoutsLine(workouts)}
-        </Text>
-        <Body>
-          Android backs this up to your Google account when backup is on in your phone’s settings.
-          Photos stay on this phone unless you include them below.
-        </Body>
-        <View style={{ marginTop: space.lg }}>
-          <GhostButton
-            label={saving ? 'Saving…' : 'Save my history'}
-            icon="calendar"
-            onPress={() => void onSave()}
-          />
-        </View>
-        <Note>
-          Every workout and set in one file (Hevy’s format). Keep it in Drive or email it to
-          yourself — “Import from Hevy” reads it back.
-        </Note>
-        {saveNote ? <Note tone={saveNote.tone}>{saveNote.text}</Note> : null}
-      </Card>
-      <PhotoBackupCard />
-      {isDriveConfigured() ? <DriveBackup /> : null}
-    </View>
+    <Card>
+      <GhostButton label={saving ? 'Saving…' : 'Save my history'} icon="calendar" onPress={() => void onSave()} />
+      <Note>
+        Every workout and set in one file (Hevy’s format). Keep it in Drive or email it to
+        yourself — “Import from Hevy” reads it back.
+      </Note>
+      {saveNote ? <Note tone={saveNote.tone}>{saveNote.text}</Note> : null}
+    </Card>
   );
 }
 

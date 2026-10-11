@@ -840,7 +840,7 @@ export default function ImportScreen() {
             </View>
           ) : (
             <View style={{ gap: space.md }}>
-              <PrimaryButton label="See your workouts" icon="calendar" onPress={() => router.replace('/history')} />
+              <PrimaryButton label="See your workouts" icon="calendar" onPress={() => router.replace('/profile')} />
               <GhostButton label="Done" icon="check" onPress={close} />
             </View>
           )}

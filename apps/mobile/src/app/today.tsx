@@ -133,7 +133,7 @@ export default function TodayScreen() {
             <GhostButton
               label={today.today.status === 'noPlan' ? 'Pick a program or build one' : 'Open your routines'}
               icon="list"
-              onPress={() => router.replace('/routines')}
+              onPress={() => router.replace(today.today?.status === 'noPlan' ? '/programs' : '/workout')}
             />
           ) : null}
           <GhostButton label="Go to Workout" icon="dumbbell" onPress={() => router.replace('/workout')} />

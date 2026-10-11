@@ -21,7 +21,11 @@ export type GlyphName =
   | 'timer'
   | 'image'
   | 'swap'
-  | 'scale-split';
+  | 'scale-split'
+  // Redesign R1/R2: the Shop tab's bag, the Profile's share (box with an arrow up) and its
+  // folder-plus for later; drawn like the rest (24×24, 1.8 stroke).
+  | 'bag'
+  | 'share';
 
 const PATHS: Record<GlyphName, { p?: string[]; dots?: { x: number; y: number }[]; c?: { x: number; y: number; r: number }[] }> = {
   play: { p: ['M8 5.5v13l10.5-6.5Z'] },
@@ -32,6 +36,8 @@ const PATHS: Record<GlyphName, { p?: string[]; dots?: { x: number; y: number }[]
     c: [{ x: 15.2, y: 9.2, r: 1.4 }],
   },
   swap: { p: ['M5 8.5h13', 'M14.5 5l3.5 3.5-3.5 3.5', 'M19 15.5H6', 'M9.5 12 6 15.5 9.5 19'] },
+  bag: { p: ['M5.2 8.2h13.6l-1 11.2a1.6 1.6 0 0 1-1.6 1.4H7.8a1.6 1.6 0 0 1-1.6-1.4Z', 'M8.8 10.6V7a3.2 3.2 0 0 1 6.4 0v3.6'] },
+  share: { p: ['M12 3.6v11', 'M7.8 7.6 12 3.4l4.2 4.2', 'M5 12.6v5.8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5.8'] },
   'scale-split': { p: ['M12 4v16', 'M5.5 8.5h13', 'M5.5 8.5 3 14h5Z', 'M18.5 8.5 16 14h5Z'] },
   more: { dots: [{ x: 5.5, y: 12 }, { x: 12, y: 12 }, { x: 18.5, y: 12 }] },
   'chevron-down': { p: ['M5.5 9.3 12 15.8l6.5-6.5'] },

@@ -24,3 +24,16 @@ export async function getRecentExerciseIds(sessions = 5, limit = 15): Promise<st
   );
   return rows.map((r) => r.id);
 }
+
+/**
+ * Redesign R5 (Profile → Exercises): when each exercise was last done — its newest workout's
+ * day and start — for "Last: 12 Oct" and the "Recent" band. One grouped read over every set.
+ */
+export async function getLastDoneDates(): Promise<Map<string, { dateISO: string; startedAt: number }>> {
+  const rows = await getDb().getAllAsync<{ id: string; d: string; t: number }>(
+    `SELECT se.exercise_id AS id, MAX(ws.date_iso) AS d, MAX(ws.started_at) AS t
+       FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
+      GROUP BY se.exercise_id`,
+  );
+  return new Map(rows.map((r) => [r.id, { dateISO: r.d, startedAt: Number(r.t) }]));
+}

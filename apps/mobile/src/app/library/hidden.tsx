@@ -59,7 +59,7 @@ export default function HiddenExercisesScreen() {
       scroll={false}
       title="Hidden exercises"
       subtitle="Hidden from every exercise list. Show one to bring it back."
-      onBack={() => goBack(router, '/workout')}
+      onBack={() => goBack(router, '/profile')}
     >
       <InlineError message={error} />
       {rows == null && failed ? (

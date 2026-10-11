@@ -21,6 +21,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { BodyFigure } from '../catalog/bodyMapPaths';
+import { DEFAULT_METRIC, DEFAULT_RANGE, isChartMetric, isChartRange, type ChartMetric, type ChartRange } from '../engine/historyChart';
 
 export interface TrackerPrefsState {
   advancedSets: boolean;
@@ -32,11 +33,19 @@ export interface TrackerPrefsState {
    * cards compare with the usual week, and the This week widget with the plan's days).
    */
   weeklyGoal: number | null;
+  /**
+   * Redesign R2: the Profile chart's chip and range — Kg lifted over the last 12 weeks the first
+   * time, then the member's last choice.
+   */
+  chartMetric: ChartMetric;
+  chartRange: ChartRange;
   setAdvancedSets: (value: boolean) => void;
   setCoachNotes: (value: boolean) => void;
   setSounds: (value: boolean) => void;
   setBodyFigure: (value: BodyFigure) => void;
   setWeeklyGoal: (value: number | null) => void;
+  setChartMetric: (value: ChartMetric) => void;
+  setChartRange: (value: ChartRange) => void;
 }
 
 /** A goal the app accepts: a whole 1–7, else off. PURE. */
@@ -52,15 +61,29 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       sounds: true,
       bodyFigure: 'male',
       weeklyGoal: null,
+      chartMetric: DEFAULT_METRIC,
+      chartRange: DEFAULT_RANGE,
       setAdvancedSets: (advancedSets) => set({ advancedSets }),
       setCoachNotes: (coachNotes) => set({ coachNotes }),
       setSounds: (sounds) => set({ sounds }),
       setBodyFigure: (bodyFigure) => set({ bodyFigure }),
       setWeeklyGoal: (value) => set({ weeklyGoal: cleanWeeklyGoal(value) }),
+      setChartMetric: (value) => set({ chartMetric: isChartMetric(value) ? value : DEFAULT_METRIC }),
+      setChartRange: (value) => set({ chartRange: isChartRange(value) ? value : DEFAULT_RANGE }),
     }),
     {
       name: 'forgeai-tracker-prefs',
       storage: createJSONStorage(() => AsyncStorage),
+      // A stored chip or range this version does not know falls back to the first-time choice.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<TrackerPrefsState>;
+        return {
+          ...current,
+          ...p,
+          chartMetric: isChartMetric(p.chartMetric) ? p.chartMetric : current.chartMetric,
+          chartRange: isChartRange(p.chartRange) ? p.chartRange : current.chartRange,
+        };
+      },
     },
   ),
 );

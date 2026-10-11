@@ -33,7 +33,9 @@ import { setsAndReps } from '@/tracker/plans/programs';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { saveBuiltPlan } from '@/tracker/services/plansService';
+import { forgetWorkoutFolders } from '@/tracker/services/workoutFolders';
 import { BUILDER_STEPS, usePlanBuilder } from '@/tracker/store/planBuilderStore';
+import { useFolderOpen } from '@/tracker/store/folderOpenStore';
 import { tell } from '@/lib/tell';
 
 const GOALS = [
@@ -103,10 +105,12 @@ export default function BuildPlanScreen() {
     if (!plan || saving.current) return;
     saving.current = true;
     try {
-      await saveBuiltPlan(plan, input, { follow, easyWeeks: s.easyWeeks });
+      const folderId = await saveBuiltPlan(plan, input, { follow, easyWeeks: s.easyWeeks });
       usePlanBuilder.getState().clearPlan();
-      // Back to the Routines screen already open (not a second copy on top of the old ones).
-      router.dismissTo('/routines');
+      // R4: back to the Workout tab, where folders live now, with this folder open.
+      forgetWorkoutFolders();
+      useFolderOpen.getState().setOpen(folderId, true);
+      router.dismissTo('/workout');
     } catch {
       void tell('Could not save the plan', 'Please try again.');
     } finally {

@@ -58,7 +58,7 @@ const emptyDraft = { description: '', calories: '', proteinG: '', carbsG: '', fa
 
 /** D4 = A: nutrition is hidden until its own phase — an old link here goes Home. */
 export default function NutritionRoute() {
-  if (!FEATURES.nutrition) return <Redirect href="/" />;
+  if (!FEATURES.nutrition) return <Redirect href="/workout" />;
   return <NutritionScreen />;
 }
 

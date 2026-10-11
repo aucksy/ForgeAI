@@ -43,7 +43,6 @@ vi.mock('@/components/ui/confirmStore', () => ({
 
 const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
 const { startMode, startShownWorkout } = await import('@/tracker/services/todayStart');
-const { openWorkout } = await import('@/tracker/lib/homeAnswer');
 type DraftExercise = import('@/tracker/store/activeWorkoutStore').DraftExercise;
 
 const card = (key: string): DraftExercise =>
@@ -86,19 +85,6 @@ describe('startMode — what a Start does with the workout already open (PURE)',
     expect(startMode({ active: true, editingSessionId: null, pastLog: false })).toBe('resume');
     expect(startMode({ active: true, editingSessionId: 's1', pastLog: false })).toBe('ask');
     expect(startMode({ active: true, editingSessionId: null, pastLog: true })).toBe('ask');
-  });
-
-  it('Home and the Today page agree: "resume" exactly when Home counts the workout as open', () => {
-    const cases = [
-      { active: false, editingSessionId: null, pastLog: false },
-      { active: true, editingSessionId: null, pastLog: false },
-      { active: true, editingSessionId: 's1', pastLog: false },
-      { active: true, editingSessionId: null, pastLog: true },
-    ];
-    for (const c of cases) {
-      const homeOpen = openWorkout({ ...c, exercises: [] }) != null;
-      expect(startMode(c) === 'resume').toBe(homeOpen);
-    }
   });
 });
 

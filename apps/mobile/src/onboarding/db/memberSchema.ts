@@ -14,8 +14,9 @@
  *    is silently ignored.
  */
 import { getDb, getMeta, setMeta } from '@/db';
+import { TABS_NOTICE_KEY, tabsNoticeOnUpgrade } from '@/tracker/services/upNextService';
 
-export const MEMBER_SCHEMA_VERSION = 1;
+export const MEMBER_SCHEMA_VERSION = 2;
 const META_KEY = 'member_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -37,6 +38,16 @@ export async function initMemberSchema(): Promise<void> {
 
   // v1 (Phase O2): the member's mobile number in E.164 (e.g. '+919876543210').
   await ensureColumn('user_profile', 'phone', 'TEXT');
+  // v2 (redesign R2, Hevy's Profile): the member's photo (a path in the app's own
+  // `profile-photo/` folder; the file stays on this phone), a short bio (≤ 150 characters) and
+  // one link. NULL = not set. After `phone`, so a fresh install and an upgrade end up with the
+  // same column order.
+  await ensureColumn('user_profile', 'photo_uri', 'TEXT');
+  await ensureColumn('user_profile', 'bio', 'TEXT');
+  await ensureColumn('user_profile', 'link', 'TEXT');
+  // Redesign R1: an install that had Home (an upgrade, never a fresh install) is told once where
+  // Home, History and Progress went.
+  if (tabsNoticeOnUpgrade(stored, MEMBER_SCHEMA_VERSION)) await setMeta(TABS_NOTICE_KEY, '1');
 
   await setMeta(META_KEY, String(MEMBER_SCHEMA_VERSION));
 }

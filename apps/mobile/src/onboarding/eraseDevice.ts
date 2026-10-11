@@ -125,6 +125,16 @@ function deviceSteps(): EraseStep[] {
       },
     },
     {
+      // S1: the Shop's bag and demo orders (AsyncStorage, not the database).
+      name: 'shop',
+      run: async () => {
+        const { useShop } = await import('@/shop/shopStore');
+        useShop.setState({ bag: [], orders: [] });
+        const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+        await AsyncStorage.removeItem('forgeai-shop');
+      },
+    },
+    {
       name: 'pending-pick',
       run: async () => {
         const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;

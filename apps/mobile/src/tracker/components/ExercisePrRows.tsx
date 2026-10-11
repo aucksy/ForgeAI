@@ -2,6 +2,8 @@
  * The exercise's records (Phase 3: every kind it keeps — heaviest weight, best 1-rep max,
  * best set, best session, most reps, longest time, best pace, longest distance) + the xRM
  * "Set Records" ladder for weight exercises. Tap a record → the workout it was set in.
+ * Redesign R5 (Hevy's exercise Summary): "Personal records", then "Set records" — the heaviest
+ * weight at each rep count — as a section of its own.
  *
  * v0.25.1: an exercise that keeps a pace (runs, rows, rides) says behind the i beside
  * "Records" that only sets of 1 km or more count, and shows "Best pace" with "—" until one
@@ -90,7 +92,8 @@ export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession
 
   return (
     <Animated.View entering={FadeInDown.duration(motion.slow).delay(160)} style={{ marginTop: space.xl }}>
-      {keepsPace ? <InfoHeading title="Records" info={paceRuleText(ctx.distUnit)} /> : <SectionHeader title="Records" />}
+      {keepsPace ? <InfoHeading title="Personal records" info={paceRuleText(ctx.distUnit)} /> : <SectionHeader title="Personal records" />}
+      {bests.length > 0 || paceMissing ? (
       <Card>
         {bests.map((b) => {
           const detail = recordDetailText(b, { ...ctx, units });
@@ -114,13 +117,13 @@ export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession
             onPress={null}
           />
         ) : null}
+      </Card>
+      ) : null}
 
-        {ladder.length > 0 ? (
-          <>
-            <View style={{ height: 1, backgroundColor: color.border, marginVertical: space.sm }} />
-            <Text style={{ fontFamily: type.heading, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.xs }}>
-              Set records
-            </Text>
+      {ladder.length > 0 ? (
+        <View style={{ marginTop: space.xl }}>
+          <SectionHeader title="Set records" />
+          <Card>
             {ladder.map((r) => (
               <RecordRow
                 key={`x-${r.reps}`}
@@ -131,9 +134,9 @@ export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession
                 onPress={() => onOpenSession(r.sessionId)}
               />
             ))}
-          </>
-        ) : null}
-      </Card>
+          </Card>
+        </View>
+      ) : null}
     </Animated.View>
   );
 }

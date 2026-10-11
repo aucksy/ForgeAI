@@ -228,8 +228,9 @@ describe('the folder remembers its link', () => {
   });
 
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
-  it('[source-text check] Import routines is reachable from Profile and from Routines → +', () => {
+  // Redesign R4: the Routines screen became the Workout tab; its "+" imports moved to Explore.
+  it('[source-text check] Import routines is reachable from Profile and from Workout → Explore', () => {
     expect(readFileSync('src/tracker/components/ImportCard.tsx', 'utf8')).toMatch(/router\.push\('\/import\/routines'\)/);
-    expect(readFileSync('src/app/routines/index.tsx', 'utf8')).toMatch(/Import routines from Hevy[\s\S]*router\.push\('\/import\/routines'\)/);
+    expect(readFileSync('src/app/programs/index.tsx', 'utf8')).toMatch(/Import routines from Hevy[\s\S]*router\.push\('\/import\/routines'\)/);
   });
 });

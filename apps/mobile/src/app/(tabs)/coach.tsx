@@ -28,7 +28,7 @@ const TIMESTAMP_GAP_MS = 12 * 60_000;
 /** D4 = A: the coach is hidden until its own phase — any route here (an old link,
  *  stale navigation) goes Home. The chat below stays intact for when it returns. */
 export default function CoachRoute() {
-  if (!FEATURES.coach) return <Redirect href="/" />;
+  if (!FEATURES.coach) return <Redirect href="/workout" />;
   return <CoachScreen />;
 }
 

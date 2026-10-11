@@ -24,17 +24,9 @@ export interface DashboardState {
   stamp: string | null;
   /** Refresh from the DB. Call after any logging mutation. */
   refresh: () => Promise<void>;
-  /**
-   * Audit Phase 8 (packet C): Home's focus. Reads again only when something was saved since the
-   * data on screen was read (or a new day began, or there is nothing good to show). True when
-   * it read. `stamp`: one the caller already read (`homeStamp`), else it is read here.
-   */
-  refreshIfChanged: (stamp?: string | null) => Promise<boolean>;
 }
 
 let refreshSeq = 0;
-/** The read in flight and the stamp it was started at (a focus during it waits for it). */
-let inflight: { stamp: string | null; promise: Promise<void> } | null = null;
 
 /** The stamp, or null when it can't be read (a read then always happens). */
 async function currentStamp(): Promise<string | null> {
@@ -57,11 +49,9 @@ export const useDashboard = create<DashboardState>()((set, get) => {
     const seq = ++refreshSeq;
     // Synchronously: a retry in flight shows loading, never the old error.
     set({ loading: true, error: false });
-    const entry: { stamp: string | null; promise: Promise<void> } = { stamp: null, promise: Promise.resolve() };
-    entry.promise = (async () => {
+    return (async () => {
       const mark = writeQueueMark();
       const stamp = await stampRead;
-      entry.stamp = stamp;
       try {
         // The frozen dashboard, with the v2 Targets (same as the workout screen and the
         // chat), Phase 2 volume and recovery, and only records a member would recognise.
@@ -77,12 +67,6 @@ export const useDashboard = create<DashboardState>()((set, get) => {
       // that never keeps uploading in the background.
       if (FEATURES.gymSync) void maybeSync();
     })();
-    inflight = entry;
-    const done = (): void => {
-      if (inflight === entry) inflight = null;
-    };
-    entry.promise.then(done, done);
-    return entry.promise;
   };
 
   return {
@@ -92,21 +76,5 @@ export const useDashboard = create<DashboardState>()((set, get) => {
     stamp: null,
 
     refresh: () => load(currentStamp()),
-
-    refreshIfChanged: async (known) => {
-      const stamp = known !== undefined ? known : await currentStamp();
-      if (stamp != null) {
-        // A read already under way at this same stamp (Finish refreshes Home as it closes).
-        const running = inflight;
-        if (running && running.stamp === stamp) {
-          await running.promise;
-          return false;
-        }
-        const s = get();
-        if (stamp === s.stamp && s.data != null && !s.error && !s.loading) return false;
-      }
-      await load(Promise.resolve(stamp));
-      return true;
-    },
   };
 });

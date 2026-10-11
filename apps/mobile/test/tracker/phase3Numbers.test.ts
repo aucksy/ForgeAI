@@ -232,7 +232,7 @@ describe('PG-22 review: Latin digits and "," always; only the grouping STYLE is 
     expect(as('en-IN', 0)).toBe('0');
   });
   it('no screen formats a count with toLocaleString (native digits on a Marathi phone)', () => {
-    for (const f of ['app/(tabs)/history.tsx', 'components/ui/foldSummary.ts']) {
+    for (const f of ['app/history.tsx', 'components/ui/foldSummary.ts']) {
       expect(readFileSync(join(__dirname, '..', '..', 'src', f), 'utf8')).not.toMatch(/toLocaleString\(/);
     }
   });

@@ -13,14 +13,14 @@ import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { MUSCLE_LABEL } from '../catalog/muscles';
-import { fmtSetCompact, fmtTotalDistance, typedWeight, weightIsEach, repsPerSide } from '../engine/logTypes';
+import { fmtTotalDistance, weightIsEach, repsPerSide } from '../engine/logTypes';
 import { RECORD_LABEL } from '../engine/records';
 import { fmtSets } from '../engine/volume';
 import { supersetLabel } from '../lib/superset';
 import { formatDuration, workoutDistanceM } from '../services/finishSummary';
 import type { SessionSummaryData } from '../services/finishSummary';
 import { groupByExercise, recordValueText } from '../services/recordText';
-import { showW } from './unitText';
+import { summarySetText } from '../services/workoutDetail';
 
 export function SessionSummary({
   data,
@@ -163,14 +163,7 @@ export function SessionSummary({
                         ? 'F '
                         : '';
                   const rpe = !s.isWarmup && meta?.rpe != null ? ` @${trimNum(meta.rpe)}` : '';
-                  const body =
-                    lt === 'assisted'
-                      ? `${showW(typedWeight(lt, s.weightKg), units)} ${wu} × ${s.reps}`
-                      : fmtSetCompact(
-                          { weightKg: s.weightKg, reps: s.reps, durationSec: meta?.durationSec, distanceM: meta?.distanceM },
-                          lt,
-                          kind?.distUnit ?? 'km',
-                        );
+                  const body = summarySetText(s, meta, kind, units);
                   return (
                     <View
                       key={s.id}

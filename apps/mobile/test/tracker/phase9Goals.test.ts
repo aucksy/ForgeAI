@@ -31,7 +31,6 @@ describe('weekly goal', () => {
 
   it('[source-text check] Home, Progress and the This week widget use it; Profile sets it', () => {
     const src = (p: string): string => readFileSync(resolve(__dirname, '../../src', p), 'utf8');
-    expect(src('components/dashboard/ThisWeekCard.tsx')).toContain('weekGoalStat(w.workouts, goal)');
     expect(src('components/analytics/WeekCard.tsx')).toContain('weekGoalStat(w.workouts, goal)');
     expect(src('tracker/phone/widgets.ts')).toContain('goal: ownGoal ?? (hasPlan');
     expect(src('tracker/components/WorkoutPrefsCard.tsx')).toContain('label="Weekly goal"');

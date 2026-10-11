@@ -262,7 +262,7 @@ export default function BodyWeightScreen() {
     <View style={{ flex: 1 }}>
       <Screen
         title="Body weight"
-        onBack={() => goBack(router, '/analytics')}
+        onBack={() => goBack(router, '/profile')}
       >
         <View style={{ gap: space.lg }}>
           {/* quick log — always available */}

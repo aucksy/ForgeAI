@@ -43,11 +43,9 @@ describe('Home summary store (SH-13)', () => {
     await useDashboard.getState().refresh();
     expect(useDashboard.getState()).toMatchObject({ data: { streakDays: 3 }, error: false, stamp: null });
     partial = false;
-    // Same stamp (nothing saved), but the part that failed is read again.
-    expect(await useDashboard.getState().refreshIfChanged()).toBe(true);
+    // Whole again: the read is marked with its stamp.
+    await useDashboard.getState().refresh();
     expect(useDashboard.getState().stamp).toBe('stamp-1');
-    // Now whole: the next visit with nothing saved reads nothing.
-    expect(await useDashboard.getState().refreshIfChanged()).toBe(false);
     expect(read).toHaveBeenCalledTimes(2);
   });
 });

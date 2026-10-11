@@ -236,7 +236,8 @@ object Widgets {
       v.setTextViewText(R.id.forge_week_line, "Open ForgeAI to update")
       paintDays(v, BooleanArray(7), -1, false)
     }
-    v.setOnClickPendingIntent(R.id.forge_week_root, open(ctx, "history", 22))
+    // Redesign R1: the week opens the Profile (its chart and workouts); History is no longer a tab.
+    v.setOnClickPendingIntent(R.id.forge_week_root, open(ctx, "profile", 22))
     return v
   }
 }

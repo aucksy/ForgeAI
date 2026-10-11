@@ -111,7 +111,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
           divider
         />
       ) : null}
-      {/* Audit Phase 9 (#4): the member's own workouts-a-week goal (Home, Progress, the widget). */}
+      {/* Audit Phase 9 (#4): the member's own workouts-a-week goal (Up next on the Workout tab, the widget). */}
       <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
         <ChipGroup
           label="Weekly goal"
@@ -123,7 +123,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
           }}
         />
         <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 }}>
-          Workouts a week. Home and Progress count towards it.
+          Workouts a week. The Workout tab shows how many are left.
         </Text>
       </View>
       <RestPickerSheet

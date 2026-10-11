@@ -1,11 +1,13 @@
 /**
- * Exercise page. Audit Phase 4 (EX-07, EX-09, EX-14) — the answer first:
- *  1. "Last time · Best" — the member's own numbers, in the way the exercise is logged (a
- *     pull-up always at +0 kg reads as reps, never "0 kg" tiles or a flat 0 chart);
- *  2. how to do it — the picture (a tap opens it larger, never repeating the steps) and the
- *     steps, once; a still photo is called a photo, and with no picture there is no link;
- *  3. muscles, logging, easier / harder versions;
- *  4. charts and records; past sessions folded under their count, all of them, page by page.
+ * Exercise page — redesign R5, Hevy's three tabs under the header (PLAN §4.6):
+ *  - Summary: "Last time · Best" (audit EX-07: in the way the exercise is logged — a pull-up
+ *    always at +0 kg reads as reps), then the chart (chips for what it shows, the right ones for
+ *    weight, bodyweight, timed and distance work; 3 months · Year · All time), then Personal
+ *    records (tap → that workout) and Set records (the heaviest weight at each rep count);
+ *  - History: every workout with this exercise and its sets, page by page; tap → the workout;
+ *  - How to: the picture (a tap opens it larger), the steps, the credit; then muscles, logging
+ *    and the easier / harder versions.
+ * The tab chosen holds for this visit only; the page always opens on Summary.
  * The options menu: Edit and "Merge into…" for the member's own exercises (EX-02); "Your photo
  * or video" and "Hide" for library ones they never logged; "Start records fresh…" (tracker
  * schema v14 — a new gym or machine: records count from today, History and charts keep all)
@@ -17,34 +19,32 @@ import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ExerciseHero } from '@/components/exercise/ExerciseHero';
 import { SessionHistory } from '@/components/exercise/SessionHistory';
-import { askConfirm, Badge, Card, EmptyState, IconButton, LoadError, Screen, SectionHeader, Sheet, SheetRow, Skeleton, StatTile } from '@/components/ui';
+import { askConfirm, Badge, Card, EmptyState, IconButton, LoadError, Screen, Sheet, SheetRow, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { relativeDay, tinyDateWithYear } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
-import { trimNum } from '@/lib/format';
 import { navigateOnce } from '@/lib/guardedAction';
 import { liftedWords } from '@/lib/units';
 import { countWord } from '@/lib/words';
 import { useSettings } from '@/store/settingsStore';
-import { chart, color, motion, radius, space, type } from '@/theme/tokens';
+import { color, motion, radius, space, type } from '@/theme/tokens';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { mediaFor } from '@/tracker/catalog/media';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
-import { DateLineChart } from '@/tracker/components/DateLineChart';
 import { DrawingCredit } from '@/tracker/components/DrawingCredit';
 import { ExerciseDemoSheet } from '@/tracker/components/ExerciseDemoSheet';
 import { ExerciseMetricChart } from '@/tracker/components/ExerciseMetricChart';
 import { ExercisePickerList } from '@/tracker/components/ExercisePickerList';
 import { ExercisePrRows } from '@/tracker/components/ExercisePrRows';
 import { ExerciseThumb } from '@/tracker/components/ExerciseThumb';
+import { SegmentedTabs } from '@/tracker/components/SegmentedTabs';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
-import { showW } from '@/tracker/components/unitText';
 import { getExerciseIdsByCatalogKey, type TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { hideRefusal, mergeExercise, mergeRefusal, setExerciseHidden } from '@/tracker/db/exerciseManage';
 import { setRecordsFrom } from '@/tracker/db/recordStart';
-import { fmtDuration, LOAD_MODE_LABEL, LOG_TYPE_LABEL } from '@/tracker/engine/logTypes';
+import { getWorkoutNames } from '@/tracker/db/workoutNames';
+import { isTimedCardio, LOAD_MODE_LABEL, LOG_TYPE_LABEL } from '@/tracker/engine/logTypes';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { xrmLadder } from '@/tracker/services/exerciseAnalytics';
 import { headlineBest, lastTimeLine } from '@/tracker/services/exerciseHeadline';
@@ -55,6 +55,13 @@ import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { exercisesChanged } from '@/tracker/store/exerciseListStore';
 
 const cap = (s: string) => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
+
+type Tab = 'summary' | 'history' | 'howto';
+const TABS: readonly { id: Tab; label: string }[] = [
+  { id: 'summary', label: 'Summary' },
+  { id: 'history', label: 'History' },
+  { id: 'howto', label: 'How to' },
+];
 
 function LoadingSkeleton() {
   return (
@@ -106,6 +113,9 @@ export default function ExerciseScreen() {
   const [merging, setMerging] = useState(false);
   const [canHide, setCanHide] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  // Per visit only: a new visit opens on Summary (Hevy's).
+  const [tab, setTab] = useState<Tab>('summary');
+  const [names, setNames] = useState<Map<string, string>>(new Map());
   // EX-18: one page per tap, however fast the taps.
   const nav = useRef(false);
   const busy = useRef(false);
@@ -131,6 +141,12 @@ export default function ExerciseScreen() {
           void hideRefusal(id)
             .then((why) => {
               if (alive) setCanHide(why == null);
+            })
+            .catch(() => undefined);
+          // The History tab heads each workout with its name.
+          void getWorkoutNames((o?.history ?? []).map((h) => h.sessionId))
+            .then((m) => {
+              if (alive) setNames(m);
             })
             .catch(() => undefined);
           const e = catalogEntry(o?.exercise.catalogKey);
@@ -204,7 +220,7 @@ export default function ExerciseScreen() {
     if (!ex) return;
     const ok = await askConfirm({
       title: `Hide ${ex.name}?`,
-      body: 'It leaves every exercise list. Bring it back any time from "Hidden exercises" in the library.',
+      body: 'It leaves every exercise list. Bring it back any time from "Hidden exercises" at the bottom of Profile → Exercises.',
       confirmLabel: 'Hide',
     });
     if (!ok) return;
@@ -280,10 +296,6 @@ export default function ExerciseScreen() {
   const exType = ex?.logType;
   const mergeOnly = useCallback((e: TrackerExercise) => e.id !== exId && e.logType === exType, [exId, exType]);
 
-  const series = ov?.series ?? null;
-  const seriesFmt = (n: number): string =>
-    series?.unit === 'seconds' ? fmtDuration(n) : series?.unit === 'kg' ? showW(n, units) : trimNum(n);
-
   return (
     <Screen scroll={false}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: space.xxl }}>
@@ -292,7 +304,7 @@ export default function ExerciseScreen() {
           entering={FadeInDown.duration(motion.slow)}
           style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.md, marginBottom: space.lg }}
         >
-          <IconButton icon="chevron-left" onPress={() => goBack(router, '/workout')} accessibilityLabel="Go back" />
+          <IconButton icon="chevron-left" onPress={() => goBack(router, '/profile')} accessibilityLabel="Go back" />
           <View style={{ flex: 1, paddingTop: 2 }}>
             {ex ? (
               <>
@@ -317,7 +329,16 @@ export default function ExerciseScreen() {
               </Text>
             )}
           </View>
-          {ex ? <IconButton icon="settings" onPress={() => setMenu(true)} accessibilityLabel={`Options for ${ex.name}`} /> : null}
+          {ex ? (
+            <Pressable
+              onPress={() => setMenu(true)}
+              accessibilityRole="button"
+              accessibilityLabel={`Options for ${ex.name}`}
+              style={({ pressed }) => ({ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.6 : 1 })}
+            >
+              <Glyph name="more" size={24} color={color.inkSecondary} />
+            </Pressable>
+          ) : null}
         </Animated.View>
 
         <InlineError message={actionError} />
@@ -330,112 +351,124 @@ export default function ExerciseScreen() {
           <EmptyState icon="dumbbell" title="Exercise not found" body="This exercise is missing from your library — head back and pick another." />
         ) : (
           <>
-            {/* EX-07: the answer first — last time and best, in the way it is logged */}
-            {last ? (
-              <Card style={{ gap: space.sm, marginBottom: space.lg }}>
-                <View style={{ gap: 2 }}>
-                  <Text style={headLabel}>Last time · {relativeDay(last.dateISO)}</Text>
-                  <Text style={headValue}>{last.text}</Text>
-                </View>
-                {best ? (
-                  <View style={{ gap: 2 }}>
-                    <Text style={headLabel}>Best · {RECORD_LABEL[best.kind].toLowerCase()}</Text>
-                    <Text style={headValue}>
-                      {recordValueText(best, { logType: shownAs, loadMode: ex.loadMode, distUnit: ex.distUnit, units })}
-                    </Text>
-                  </View>
-                ) : null}
-                {recordsFrom ? <RecordsSinceLine from={recordsFrom} hasBest={best != null} onCountAll={() => void askCountAll()} /> : null}
-              </Card>
-            ) : recordsFrom ? (
-              <Card style={{ marginBottom: space.lg }}>
-                <RecordsSinceLine from={recordsFrom} hasBest={false} onCountAll={() => void askCountAll()} />
-              </Card>
-            ) : null}
+            <SegmentedTabs tabs={TABS} value={tab} onChange={setTab} />
 
-            {/* how to — the picture (a tap opens it larger) and the steps, once */}
-            {hasPicture || (entry?.steps.length ?? 0) > 0 ? (
-              <Card style={{ gap: space.md, marginBottom: space.lg }}>
-                <View style={{ flexDirection: 'row', gap: space.md, alignItems: 'center' }}>
-                  {hasPicture ? (
-                    <ExerciseThumb catalogKey={ex.catalogKey} name={ex.name} size={64} media={media} onPress={() => setDemo(true)} />
-                  ) : null}
-                  <View style={{ flex: 1, gap: 4 }}>
-                    <Text style={{ fontFamily: type.heading, fontSize: type.size.sub, color: color.ink }}>How to do it</Text>
-                    {hasPicture ? (
-                      <Pressable
-                        onPress={() => setDemo(true)}
-                        accessibilityRole="button"
-                        accessibilityLabel={stillPhoto ? `See your photo of ${ex.name}` : `Watch how to do ${ex.name}`}
-                        style={{ minHeight: 48, justifyContent: 'center' }}
-                      >
-                        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>
-                          {stillPhoto ? 'Tap to see your photo' : 'Tap to watch the movement'}
-                        </Text>
-                      </Pressable>
-                    ) : (
-                      <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>No picture yet</Text>
-                    )}
-                  </View>
-                </View>
-                {/* Phase 0 (EX-05): the library drawing is credited where it is shown */}
-                {!ex.mediaUri && mediaFor(ex.catalogKey) != null ? <DrawingCredit /> : null}
-                {(entry?.steps ?? []).map((s, i) => (
-                  <View key={i} style={{ flexDirection: 'row', gap: space.sm }}>
-                    <Text style={{ width: 16, fontFamily: type.monoBold, fontSize: type.size.sub, color: color.accent }}>{i + 1}</Text>
-                    <Text style={{ flex: 1, fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>{s}</Text>
-                  </View>
-                ))}
-              </Card>
-            ) : null}
-
-            {/* muscles, logging, versions */}
-            <Card style={{ gap: 6, marginBottom: space.lg }}>
-              <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-                <Text style={{ fontFamily: type.bodySemi, color: color.ink }}>Works </Text>
-                {ex.muscles.primary.map((m) => MUSCLE_LABEL[m]).join(', ')}
-                {ex.muscles.secondary.length > 0 ? ` · helped by ${ex.muscles.secondary.map((m) => MUSCLE_LABEL[m].toLowerCase()).join(', ')}` : ''}
-              </Text>
-              <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-                <Text style={{ fontFamily: type.bodySemi, color: color.ink }}>Logged as </Text>
-                {LOG_TYPE_LABEL[ex.logType].toLowerCase()}
-                {ex.logType === 'weight_reps' && ex.loadMode !== 'one' ? ` · ${LOAD_MODE_LABEL[ex.loadMode].title.toLowerCase()}` : ''}
-                {ex.bwShare > 0 ? ` · your body weight counts in the ${liftedWords(units)}` : ''}
-              </Text>
-              {easier ? <VersionLink label="Easier:" name={easier.name} onPress={openVersion(entry?.easier)} /> : null}
-              {harder ? <VersionLink label="Harder:" name={harder.name} onPress={openVersion(entry?.harder)} /> : null}
-            </Card>
-
-            {!hasHistory ? (
-              <EmptyState icon="dumbbell" title="No sets logged yet" body="Add this exercise to a workout and your progress will land here." />
-            ) : stats ? (
+            {tab === 'summary' ? (
               <>
-                <ExerciseHero stats={stats} units={units} />
-                <ExerciseMetricChart progress={stats.progress} bestSet={bestSet} units={units} />
-                {recordCtx ? <ExercisePrRows bests={bests} kinds={ov.records.kinds} ctx={recordCtx} ladder={ladder} units={units} onOpenSession={openSession} /> : null}
-                <SessionHistory history={ov.history} units={units} logType={shownAs} distUnit={ex.distUnit} />
-              </>
-            ) : (
-              <>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
-                  {ov.tiles.map((t) => (
-                    <View key={t.label} style={{ flexBasis: '30%', flexGrow: 1 }}>
-                      <StatTile label={t.label} value={t.value} icon="medal" />
+                {/* EX-07: the answer first — last time and best, in the way it is logged */}
+                {last ? (
+                  <Card style={{ gap: space.sm, marginBottom: space.lg }}>
+                    <View style={{ gap: 2 }}>
+                      <Text style={headLabel}>Last time · {relativeDay(last.dateISO)}</Text>
+                      <Text style={headValue}>{last.text}</Text>
                     </View>
-                  ))}
-                </View>
-                {series && series.points.length > 0 ? (
-                  <View style={{ marginTop: space.xl }}>
-                    <SectionHeader title={series.title} />
-                    <Card>
-                      <DateLineChart data={series.points} height={200} color={chart.series[0]} fillGradient yFormat={seriesFmt} onInspect={() => undefined} />
-                    </Card>
-                  </View>
+                    {best ? (
+                      <View style={{ gap: 2 }}>
+                        <Text style={headLabel}>Best · {RECORD_LABEL[best.kind].toLowerCase()}</Text>
+                        <Text style={headValue}>
+                          {recordValueText(best, { logType: shownAs, loadMode: ex.loadMode, distUnit: ex.distUnit, units })}
+                        </Text>
+                      </View>
+                    ) : null}
+                    {recordsFrom ? <RecordsSinceLine from={recordsFrom} hasBest={best != null} onCountAll={() => void askCountAll()} /> : null}
+                  </Card>
+                ) : recordsFrom ? (
+                  <Card style={{ marginBottom: space.lg }}>
+                    <RecordsSinceLine from={recordsFrom} hasBest={false} onCountAll={() => void askCountAll()} />
+                  </Card>
                 ) : null}
-                {recordCtx ? <ExercisePrRows bests={bests} kinds={ov.records.kinds} ctx={recordCtx} ladder={[]} units={units} onOpenSession={openSession} /> : null}
-                <SessionHistory history={ov.history} units={units} logType={shownAs} distUnit={ex.distUnit} />
+
+                {!hasHistory ? (
+                  <EmptyState icon="dumbbell" title="No sets logged yet" body="Add this exercise to a workout and your progress will land here." />
+                ) : (
+                  <>
+                    <ExerciseMetricChart
+                      history={ov.history}
+                      bestSet={bestSet}
+                      shownAs={shownAs}
+                      cardio={isTimedCardio(shownAs, ex.muscles.primary)}
+                      units={units}
+                      distUnit={ex.distUnit}
+                    />
+                    {recordCtx ? (
+                      <ExercisePrRows bests={bests} kinds={ov.records.kinds} ctx={recordCtx} ladder={stats ? ladder : []} units={units} onOpenSession={openSession} />
+                    ) : null}
+                  </>
+                )}
               </>
-            )}
+            ) : null}
+
+            {tab === 'history' ? (
+              hasHistory ? (
+                <SessionHistory history={ov.history} units={units} logType={shownAs} distUnit={ex.distUnit} names={names} onOpen={openSession} />
+              ) : (
+                <EmptyState icon="dumbbell" title="No workouts yet" body="Every workout with this exercise shows here, with its sets." />
+              )
+            ) : null}
+
+            {tab === 'howto' ? (
+              <>
+                {/* how to — the picture (a tap opens it larger) and the steps, once */}
+                {hasPicture || (entry?.steps.length ?? 0) > 0 ? (
+                  <Card style={{ gap: space.md, marginBottom: space.lg }}>
+                    <View style={{ flexDirection: 'row', gap: space.md, alignItems: 'center' }}>
+                      {hasPicture ? (
+                        <ExerciseThumb catalogKey={ex.catalogKey} name={ex.name} size={96} media={media} onPress={() => setDemo(true)} />
+                      ) : null}
+                      <View style={{ flex: 1, gap: 4 }}>
+                        <Text style={{ fontFamily: type.heading, fontSize: type.size.sub, color: color.ink }}>How to do it</Text>
+                        {hasPicture ? (
+                          <Pressable
+                            onPress={() => setDemo(true)}
+                            accessibilityRole="button"
+                            accessibilityLabel={stillPhoto ? `See your photo of ${ex.name}` : `Watch how to do ${ex.name}`}
+                            style={{ minHeight: 48, justifyContent: 'center' }}
+                          >
+                            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>
+                              {stillPhoto ? 'Tap to see your photo' : 'Tap to watch the movement'}
+                            </Text>
+                          </Pressable>
+                        ) : (
+                          <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>No picture yet</Text>
+                        )}
+                      </View>
+                    </View>
+                    {/* Phase 0 (EX-05): the library drawing is credited where it is shown */}
+                    {!ex.mediaUri && mediaFor(ex.catalogKey) != null ? <DrawingCredit /> : null}
+                    {(entry?.steps ?? []).map((st, i) => (
+                      <View key={i} style={{ flexDirection: 'row', gap: space.sm }}>
+                        <Text style={{ width: 16, fontFamily: type.monoBold, fontSize: type.size.sub, color: color.accent }}>{i + 1}</Text>
+                        <Text style={{ flex: 1, fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>{st}</Text>
+                      </View>
+                    ))}
+                  </Card>
+                ) : (
+                  <Card style={{ marginBottom: space.lg }}>
+                    <Text style={{ fontFamily: type.heading, fontSize: type.size.sub, color: color.ink }}>How to do it</Text>
+                    <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, marginTop: 4 }}>
+                      No picture or steps yet. Add your own photo or video from the options at the top.
+                    </Text>
+                  </Card>
+                )}
+
+                {/* muscles, logging, versions */}
+                <Card style={{ gap: 6, marginBottom: space.lg }}>
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
+                    <Text style={{ fontFamily: type.bodySemi, color: color.ink }}>Works </Text>
+                    {ex.muscles.primary.map((m) => MUSCLE_LABEL[m]).join(', ')}
+                    {ex.muscles.secondary.length > 0 ? ` · helped by ${ex.muscles.secondary.map((m) => MUSCLE_LABEL[m].toLowerCase()).join(', ')}` : ''}
+                  </Text>
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
+                    <Text style={{ fontFamily: type.bodySemi, color: color.ink }}>Logged as </Text>
+                    {LOG_TYPE_LABEL[ex.logType].toLowerCase()}
+                    {ex.logType === 'weight_reps' && ex.loadMode !== 'one' ? ` · ${LOAD_MODE_LABEL[ex.loadMode].title.toLowerCase()}` : ''}
+                    {ex.bwShare > 0 ? ` · your body weight counts in the ${liftedWords(units)}` : ''}
+                  </Text>
+                  {easier ? <VersionLink label="Easier:" name={easier.name} onPress={openVersion(entry?.easier)} /> : null}
+                  {harder ? <VersionLink label="Harder:" name={harder.name} onPress={openVersion(entry?.harder)} /> : null}
+                </Card>
+              </>
+            ) : null}
           </>
         )}
       </ScrollView>

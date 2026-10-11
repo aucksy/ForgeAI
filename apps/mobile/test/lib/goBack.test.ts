@@ -13,10 +13,10 @@ describe('the back arrow with nothing to go back to', () => {
 
   it('otherwise goes to the page’s own tab (PURE)', () => {
     expect(backTarget(false, '/workout')).toBe('/workout');
-    expect(backTarget(false, '/')).toBe('/');
+    expect(backTarget(false, '/profile')).toBe('/profile');
   });
 
-  it('drives the router: back, or replace with the tab (Home by default)', () => {
+  it('drives the router: back, or replace with the tab (Workout by default — redesign R1)', () => {
     const calls: string[] = [];
     const nav = (can: boolean) => ({
       canGoBack: () => can,
@@ -26,6 +26,6 @@ describe('the back arrow with nothing to go back to', () => {
     goBack(nav(true), '/workout');
     goBack(nav(false), '/workout');
     goBack(nav(false));
-    expect(calls).toEqual(['back', 'replace:/workout', 'replace:/']);
+    expect(calls).toEqual(['back', 'replace:/workout', 'replace:/workout']);
   });
 });

@@ -347,6 +347,15 @@ export async function followFolder(id: string, todayISO: string): Promise<void> 
 }
 
 /**
+ * Redesign R4 — "Stop following": no folder is the plan any more. Up next then comes from the
+ * folder of the routine done last (`todayService`, the redesign R1 rule). Nothing else changes:
+ * the folder, its routines and its settings stay.
+ */
+export async function unfollowFolder(id: string): Promise<void> {
+  await serial(() => getDb().runAsync('UPDATE workout_plans SET is_active = 0 WHERE id = ?', [id]));
+}
+
+/**
  * RP-05: the plan's weeks start again from `todayISO` — the easy-week rhythm counts from here
  * and no one-off easy week (taken early, or "now") is left over from an earlier time. PURE.
  */

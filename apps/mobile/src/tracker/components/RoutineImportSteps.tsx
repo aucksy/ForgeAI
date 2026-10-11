@@ -496,7 +496,7 @@ export function RoutineImportSteps({
           ))}
         </Card>
         ) : null}
-        <Text style={CAPTION}>Add a photo or change the muscle any time: Workout → Exercise library.</Text>
+        <Text style={CAPTION}>Add a photo or change the muscle any time: Profile → Exercises.</Text>
         <View style={{ gap: space.md }}>
           <PrimaryButton
             label={adding === 0 ? 'Leave them out' : 'Next'}
@@ -565,8 +565,8 @@ export function RoutineImportSteps({
           <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>Follow these as your plan?</Text>
           <Text style={{ ...CAPTION, color: color.inkSecondary }}>
             {realOrder
-              ? `Home will show your next routine each day, in the order you do them: ${shown.map((r) => r.title).join(', ')}.`
-              : `Home will show your next routine each day. As saved in Hevy: ${shown.map((r) => r.title).join(', ')}. Drag them into your order any time in Workout → Routines.`}
+              ? `The Workout tab will show your next routine each day, in the order you do them: ${shown.map((r) => r.title).join(', ')}.`
+              : `The Workout tab will show your next routine each day. As saved in Hevy: ${shown.map((r) => r.title).join(', ')}. Change their order any time on the Workout tab (a routine's ⋯ → Move up or Move down).`}
           </Text>
           {question?.followingName ? (
             <Text style={CAPTION}>You follow “{question.followingName}” now. It stays in your routines if you switch.</Text>
@@ -599,12 +599,12 @@ export function RoutineImportSteps({
         <Text style={{ ...CAPTION, textAlign: 'center' }}>
           {question?.updatingName ? `${step.folder} is updated from this ${link ? 'link' : 'file'}.` : 'Find them in Workout → Routines.'}
           {step.keptEdits.length > 0 ? ` Your own changes to ${step.keptEdits.join(', ')} were kept.` : ''}
-          {step.today && !single ? ` Home shows ${step.today} today.` : ''}
+          {step.today && !single ? ` The Workout tab shows ${step.today} today.` : ''}
           {step.created > 0 ? ` ${countWord(step.created, 'new exercise')} added to your library.` : ''}
         </Text>
       </Card>
       <View style={{ gap: space.md }}>
-        <PrimaryButton label="Open routines" icon="list" onPress={() => router.replace('/routines')} />
+        <PrimaryButton label="Open routines" icon="list" onPress={() => router.dismissTo('/workout')} />
         <GhostButton label="Done" icon="check" onPress={onClose} />
       </View>
     </View>
