@@ -5,7 +5,7 @@
  * in which case the product's stock is their sum — the cloud keeps the same rule.
  */
 
-import { useCallback, useState, type ReactNode } from 'react';
+import { useCallback, useRef, useState, type ReactNode } from 'react';
 
 import {
   Button,
@@ -36,7 +36,8 @@ import {
   type Product,
   type ProductDraft,
 } from './logic';
-import { ProductArt } from './ProductArt';
+import { ProductArt, ProductPicture } from './ProductArt';
+import { PhotoError, uploadProductPhoto } from './photoUpload';
 import { useShop } from './ShopProvider';
 
 export function ProductSheet({
@@ -60,6 +61,7 @@ export function ProductSheet({
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const closeConfirm = useCallback(() => setConfirmDelete(false), []);
 
   const set = <K extends keyof ProductDraft>(k: K, v: ProductDraft[K]) => setD((prev) => ({ ...prev, [k]: v }));
@@ -99,7 +101,8 @@ export function ProductSheet({
         const list = await api.listProducts(cloud.ownerKey);
         onReloaded(list);
         const latest = list.find((x) => x.productId === d.productId);
-        if (latest) setD(draftFromProduct(latest));
+        // Fresh values, but keep a photo the owner just uploaded in this form.
+        if (latest) setD({ ...draftFromProduct(latest), imageUrl: d.imageUrl });
         setError(latest ? words : 'This product was deleted while you were editing it.');
       } catch (e2) {
         setError(handleError(e2));
@@ -168,20 +171,20 @@ export function ProductSheet({
           <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button disabled={saving} onClick={() => void save()}>
-            {saving ? 'Saving…' : product ? 'Save changes' : 'Add product'}
+          <Button disabled={saving || uploading} onClick={() => void save()}>
+            {uploading ? 'Uploading photo…' : saving ? 'Saving…' : product ? 'Save changes' : 'Add product'}
           </Button>
         </>
       }
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
-      <div style={{ display: 'flex', gap: space.lg, alignItems: 'center', marginTop: space.sm }}>
-        <ProductArt kind={d.artKind} tint={d.artTint} size={84} />
-        <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          This is the picture members see in the app. Pick a shape and a colour below.
-        </div>
-      </div>
+      <PhotoBlock
+        draft={d}
+        disabled={saving}
+        onPhoto={(url) => set('imageUrl', url)}
+        onBusy={setUploading}
+      />
 
       <TextField
         label="Name"
@@ -218,7 +221,7 @@ export function ProductSheet({
         multiline
       />
 
-      <FieldGroup label="Picture">
+      <FieldGroup label="Picture if there’s no photo">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', gap: 6 }}>
           {ART_KINDS.map((k) => {
             const on = d.artKind === k.value;
@@ -520,3 +523,124 @@ const twoCol: React.CSSProperties = {
   gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))',
   columnGap: space.md,
 };
+
+/**
+ * The photo at the top of the form: a big preview (the photo, else the drawn
+ * picture), Upload / Change / Remove, and drag-and-drop onto the preview on a
+ * desktop. The photo is uploaded straight away; the product only points at it
+ * once the owner presses Save, so Cancel leaves the product as it was.
+ */
+function PhotoBlock({
+  draft: d,
+  disabled,
+  onPhoto,
+  onBusy,
+}: {
+  draft: ProductDraft;
+  disabled: boolean;
+  onPhoto: (url: string | null) => void;
+  onBusy: (busy: boolean) => void;
+}) {
+  const { cloud } = useShop();
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [over, setOver] = useState(false);
+
+  const take = async (file: File | undefined) => {
+    if (!file || !cloud || busy) return;
+    setBusy(true);
+    onBusy(true);
+    setError(null);
+    try {
+      onPhoto(await uploadProductPhoto(cloud.ownerKey, file));
+    } catch (e) {
+      setError(e instanceof PhotoError ? e.message : 'The photo didn’t upload. Please try again.');
+    } finally {
+      setBusy(false);
+      onBusy(false);
+    }
+  };
+
+  return (
+    <div style={{ marginTop: space.sm }}>
+      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 6 }}>Photo</div>
+      <div style={{ display: 'flex', gap: space.lg, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setOver(true);
+          }}
+          onDragLeave={() => setOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setOver(false);
+            void take(e.dataTransfer.files?.[0]);
+          }}
+          style={{
+            position: 'relative',
+            borderRadius: 16,
+            outline: over ? `2px dashed ${color.accent}` : 'none',
+            outlineOffset: 3,
+          }}
+        >
+          <ProductPicture kind={d.artKind} tint={d.artTint} imageUrl={d.imageUrl} size={132} />
+          {busy && (
+            <div
+              role="status"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: 14,
+                background: 'rgba(7,8,12,0.72)',
+                color: color.ink,
+                fontFamily: font.body,
+                fontSize: 13,
+                fontWeight: 700,
+              }}
+            >
+              Uploading…
+            </div>
+          )}
+        </div>
+        <div style={{ display: 'grid', gap: space.sm, flex: '1 1 180px', minWidth: 0 }}>
+          <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
+            <Button variant="ghost" disabled={busy || disabled} onClick={() => fileRef.current?.click()}>
+              {d.imageUrl ? 'Change photo' : 'Upload photo'}
+            </Button>
+            {d.imageUrl && (
+              <Button variant="quiet" tone="danger" disabled={busy || disabled} onClick={() => onPhoto(null)}>
+                Remove photo
+              </Button>
+            )}
+          </div>
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+            {d.imageUrl
+              ? 'Members see this photo in the app. Remove it to show the drawn picture instead.'
+              : 'A clear photo on a plain background works best. You can also drop a photo on the picture.'}
+          </div>
+          {error && (
+            <div role="alert" style={{ fontFamily: font.body, fontSize: 13, color: color.criticalText }}>
+              {error}
+            </div>
+          )}
+        </div>
+      </div>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        hidden
+        aria-hidden
+        tabIndex={-1}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = '';
+          void take(file);
+        }}
+      />
+    </div>
+  );
+}

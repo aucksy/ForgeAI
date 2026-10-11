@@ -5,6 +5,8 @@
  * see. Decorative: the product's name is always written beside it.
  */
 
+import { useState } from 'react';
+
 import type { ArtKind } from './logic';
 
 const DARK = '#1C2130';
@@ -188,5 +190,47 @@ export function ProductArt({ kind, tint, size }: { kind: ArtKind; tint: string; 
         <Drawing kind={kind} tint={tint} />
       </svg>
     </div>
+  );
+}
+
+/**
+ * The product's picture wherever one shows: the owner's photo when there is one
+ * (cropped to fill the same rounded box), else the drawn picture. A photo that
+ * fails to load (deleted, offline) falls back to the drawing rather than a broken
+ * image icon.
+ */
+export function ProductPicture({
+  kind,
+  tint,
+  imageUrl,
+  size,
+}: {
+  kind: ArtKind;
+  tint: string;
+  imageUrl: string | null;
+  size: number;
+}) {
+  const [failed, setFailed] = useState<string | null>(null);
+  if (!imageUrl || failed === imageUrl) return <ProductArt kind={kind} tint={tint} size={size} />;
+  return (
+    <img
+      src={imageUrl}
+      alt=""
+      width={size}
+      height={size}
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(imageUrl)}
+      style={{
+        width: size,
+        height: size,
+        flexShrink: 0,
+        objectFit: 'cover',
+        borderRadius: 14,
+        border: '1px solid rgba(255,255,255,0.08)',
+        background: '#171B27',
+        display: 'block',
+      }}
+    />
   );
 }

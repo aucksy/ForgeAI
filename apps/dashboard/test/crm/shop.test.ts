@@ -73,6 +73,7 @@ const whey: Product = {
   artTint: '#7A4A2A',
   sort: 1,
   updatedAt: '2026-10-12T04:30:00.123456+00:00',
+  imageUrl: null,
 };
 
 describe('order steps', () => {

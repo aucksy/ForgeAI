@@ -52,7 +52,8 @@ import {
   type OrderStatus,
   type Product,
 } from './logic';
-import { ProductArt } from './ProductArt';
+import { ProductPicture } from './ProductArt';
+import { PhotoError, uploadProductPhoto } from './photoUpload';
 import { ProductSheet } from './ProductSheet';
 import { usePoll, useShop } from './ShopProvider';
 
@@ -322,6 +323,7 @@ function ProductsSection() {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Product | 'new' | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [photoBusyId, setPhotoBusyId] = useState<string | null>(null);
 
   const key = cloud?.ownerKey ?? null;
   // Stable, because the sheet re-focuses itself whenever its onClose changes.
@@ -345,12 +347,18 @@ function ProductsSection() {
   // Members buying changes stock, so the list keeps itself fresh while it is open.
   usePoll(load, 15_000, key !== null && editing === null);
 
+  /** Re-read the list (the truth), THEN say what went wrong — a reload clears the banner. */
+  const showAfterReload = async (message: string) => {
+    await load();
+    setError(message);
+  };
+
   const quick = async (p: Product, kind: 'restock' | 'toggle') => {
     if (!key) return;
     setBusyId(p.productId);
     setError(null);
     const optionId = restockOptionId(p);
-    let failed = false;
+    let failed: string | null = null;
     await gate.run(async () => {
       try {
         // Both ask the cloud for a CHANGE (add 10, flip shown), never send the
@@ -369,12 +377,33 @@ function ProductsSection() {
               : `${saved.name} is hidden from the app.`,
         );
       } catch (e) {
-        failed = true;
-        setError(handleError(e));
+        failed = handleError(e);
       }
     });
     setBusyId(null);
-    if (failed) void load();
+    if (failed) await showAfterReload(failed);
+  };
+
+  /** "Add photo" on a card: upload, then point only the photo at it (no CHANGED risk). */
+  const addPhoto = async (p: Product, file: File) => {
+    if (!key) return;
+    setBusyId(p.productId);
+    setPhotoBusyId(p.productId);
+    setError(null);
+    let failed: string | null = null;
+    await gate.run(async () => {
+      try {
+        const url = await uploadProductPhoto(key, file);
+        const saved = await api.setProductPhoto(key, p.productId, url);
+        setProducts((prev) => prev?.map((x) => (x.productId === saved.productId ? saved : x)) ?? prev);
+        flash(`Photo added to ${saved.name}. Members see it in the app now.`);
+      } catch (e) {
+        failed = e instanceof PhotoError ? e.message : handleError(e);
+      }
+    });
+    setBusyId(null);
+    setPhotoBusyId(null);
+    if (failed) await showAfterReload(failed);
   };
 
   const shown = products?.filter((p) => p.active).length ?? 0;
@@ -408,6 +437,8 @@ function ProductsSection() {
               key={p.productId}
               product={p}
               busy={busyId === p.productId}
+              uploading={photoBusyId === p.productId}
+              onAddPhoto={(file) => void addPhoto(p, file)}
               onEdit={() => setEditing(p)}
               onRestock={() => void quick(p, 'restock')}
               onToggle={() => void quick(p, 'toggle')}
@@ -447,17 +478,22 @@ function ProductsSection() {
 function ProductCard({
   product: p,
   busy,
+  uploading,
+  onAddPhoto,
   onEdit,
   onRestock,
   onToggle,
 }: {
   product: Product;
   busy: boolean;
+  uploading: boolean;
+  onAddPhoto: (file: File) => void;
   onEdit: () => void;
   onRestock: () => void;
   onToggle: () => void;
 }) {
   const stock = stockLabel(p.stock);
+  const fileRef = useRef<HTMLInputElement>(null);
   const category = CATEGORIES.find((c) => c.value === p.category)?.label ?? p.category;
 
   return (
@@ -482,7 +518,7 @@ function ProductCard({
           minHeight: TOUCH,
         }}
       >
-        <ProductArt kind={p.artKind} tint={p.artTint} size={76} />
+        <ProductPicture kind={p.artKind} tint={p.artTint} imageUrl={p.imageUrl} size={76} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: font.body, fontSize: 15, fontWeight: 700, color: color.ink, lineHeight: 1.3 }}>
             {p.name}
@@ -518,9 +554,27 @@ function ProductCard({
         <SmallButton onClick={onToggle} disabled={busy} label={`${p.active ? 'Hide' : 'Show'} ${p.name}`}>
           {p.active ? 'Hide from app' : 'Show in app'}
         </SmallButton>
+        {!p.imageUrl && (
+          <SmallButton onClick={() => fileRef.current?.click()} disabled={busy} label={`Add a photo of ${p.name}`}>
+            {uploading ? 'Uploading…' : 'Add photo'}
+          </SmallButton>
+        )}
         <SmallButton onClick={onEdit} disabled={busy} label={`Edit ${p.name}`}>
           Edit
         </SmallButton>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          hidden
+          aria-hidden
+          tabIndex={-1}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = '';
+            if (file) onAddPhoto(file);
+          }}
+        />
       </div>
     </Card>
   );

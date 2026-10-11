@@ -112,3 +112,15 @@ export async function setProductActive(key: string, productId: string, active: b
   const r = await call<Row>('owner_set_product_active', { p_key: key, p_product: productId, p_active: active });
   return productFromRow(r);
 }
+
+/** A one-time upload ticket (48 hex, 15 minutes): the folder a new photo goes into. */
+export async function photoTicket(key: string): Promise<string> {
+  const t = await call<string>('owner_photo_ticket', { p_key: key });
+  return String(t);
+}
+
+/** Point a product at a photo (null removes it). No CHANGED check: only the photo moves. */
+export async function setProductPhoto(key: string, productId: string, url: string | null): Promise<Product> {
+  const r = await call<Row>('owner_set_product_photo', { p_key: key, p_product: productId, p_url: url });
+  return productFromRow(r);
+}

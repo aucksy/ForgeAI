@@ -97,6 +97,8 @@ export interface Product {
    * order took stock, or another tab saved — instead of overwriting it.
    */
   updatedAt: string;
+  /** A real photo in the product-photos bucket, or null: then the drawn picture shows. */
+  imageUrl: string | null;
 }
 
 export interface OrderLine {
@@ -165,6 +167,7 @@ export function productFromRow(r: Row): Product {
     artTint: str(r.art_tint, '#E8661F'),
     sort: num(r.sort),
     updatedAt: str(r.updated_at),
+    imageUrl: typeof r.image_url === 'string' && r.image_url ? r.image_url : null,
   };
 }
 
@@ -394,6 +397,8 @@ export interface ProductDraft {
   productId: string | null;
   /** The version being edited (see Product.updatedAt); null for a new product. */
   updatedAt: string | null;
+  /** The photo, uploaded already; null shows the drawn picture. */
+  imageUrl: string | null;
   name: string;
   category: Category;
   description: string;
@@ -421,6 +426,7 @@ export function draftFromProduct(p: Product | null): ProductDraft {
     return {
       productId: null,
       updatedAt: null,
+      imageUrl: null,
       name: '',
       category: 'protein',
       description: '',
@@ -437,6 +443,7 @@ export function draftFromProduct(p: Product | null): ProductDraft {
   return {
     productId: p.productId,
     updatedAt: p.updatedAt,
+    imageUrl: p.imageUrl,
     name: p.name,
     category: p.category,
     description: p.description,
@@ -469,6 +476,8 @@ export interface SavePayload {
   productId?: string;
   /** Required by the cloud when updating: the version the owner was editing. */
   updatedAt?: string;
+  /** The photo; null removes it. Left out, the cloud keeps whatever is there. */
+  imageUrl?: string | null;
   name: string;
   category: Category;
   description: string;
@@ -551,6 +560,7 @@ export function validateDraft(
     payload: {
       ...(d.productId ? { productId: d.productId } : {}),
       ...(d.productId && d.updatedAt ? { updatedAt: d.updatedAt } : {}),
+      imageUrl: d.imageUrl,
       name,
       category: d.category,
       description: d.description.trim().slice(0, 600),
@@ -582,6 +592,7 @@ export function toPayload(p: Product): SavePayload {
   return {
     productId: p.productId,
     updatedAt: p.updatedAt,
+    imageUrl: p.imageUrl,
     name: p.name,
     category: p.category,
     description: p.description,
@@ -613,13 +624,14 @@ export type ShopErrorCode =
   | 'BUSY'
   | 'CHANGED'
   | 'TOO_MANY'
+  | 'BAD_PHOTO'
   | 'OFFLINE'
   | 'INVALID'
   | 'UNKNOWN';
 
 export function errorCode(err: unknown): ShopErrorCode {
   const msg = errorText(err);
-  for (const code of ['BAD_KEY', 'GONE', 'BAD_STEP', 'EMPTY', 'BAD_OPTIONS', 'BUSY', 'CHANGED', 'TOO_MANY'] as const) {
+  for (const code of ['BAD_KEY', 'GONE', 'BAD_STEP', 'EMPTY', 'BAD_OPTIONS', 'BUSY', 'CHANGED', 'TOO_MANY', 'BAD_PHOTO'] as const) {
     if (new RegExp(`\\b${code}\\b`).test(msg)) return code;
   }
   if (/failed to fetch|networkerror|network request failed|load failed|fetch failed|timed? ?out/i.test(msg)) {
@@ -650,6 +662,7 @@ const ERROR_WORDS: Record<ShopErrorCode, string> = {
   CHANGED:
     'This product changed while you were editing (someone may have ordered it). We’ve loaded the latest — check and save again.',
   TOO_MANY: 'Too many orders from this member in the last hour.',
+  BAD_PHOTO: 'That photo link can’t be used. Upload the photo again from this screen.',
   OFFLINE: 'Can’t reach the internet. Check the connection and try again.',
   INVALID: 'Something in this form isn’t allowed. Check the price (₹1 to ₹1,00,000) and stock.',
   UNKNOWN: 'Something went wrong. Please try again.',
