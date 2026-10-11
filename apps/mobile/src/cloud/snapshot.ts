@@ -124,9 +124,22 @@ export interface BackupInfo {
   meals: number;
 }
 
-/** Serialize every domain table to a portable JSON string. */
-export async function exportSnapshot(): Promise<string> {
-  const tables: Record<string, Row[]> = {};
+/** Rows read and turned into text at a time by `exportSnapshot`. */
+const EXPORT_PAGE_ROWS = 2000;
+
+/**
+ * Serialize every domain table to a portable JSON string.
+ *
+ * Audit Phase 8 follow-up: the rows are read a page at a time (by rowid, in table order) and each
+ * page is turned into text at once, so at most one page of row objects is held next to the text.
+ * Before, every row of every table was held as an object AND as text at the end — for 5 years of
+ * history several times the size of the text, at the moment Replace or a restore keeps its copy.
+ * The text is exactly what `JSON.stringify` of the whole envelope gives (a test holds it to that).
+ */
+export async function exportSnapshot(pageRows: number = EXPORT_PAGE_ROWS): Promise<string> {
+  // 0, a negative or a fraction would never end the paging (or make SQLite refuse the LIMIT).
+  const perPage = Math.max(1, Math.floor(pageRows) || EXPORT_PAGE_ROWS);
+  const parts: string[] = [];
   const meta: Record<string, string> = {};
   // Read every table inside ONE exclusive transaction so the snapshot is a
   // consistent point-in-time view: a concurrent write can't straddle two reads
@@ -135,8 +148,19 @@ export async function exportSnapshot(): Promise<string> {
   // Through the app-wide write queue (DS-04): never inside another open transaction.
   await enqueueWrite(() =>
     getDb().withExclusiveTransactionAsync(async (tx) => {
-      for (const t of TABLES) {
-        tables[t.name] = await tx.getAllAsync<Row>(`SELECT ${t.cols.join(', ')} FROM ${t.name}`);
+      for (const [i, t] of TABLES.entries()) {
+        parts.push(`${i === 0 ? '' : ','}${JSON.stringify(t.name)}:[`);
+        // OFFSET pages are safe here: nothing can write between them (one exclusive transaction).
+        for (let offset = 0; ; offset += perPage) {
+          const page = await tx.getAllAsync<Row>(
+            `SELECT ${t.cols.join(', ')} FROM ${t.name} ORDER BY rowid LIMIT ? OFFSET ?`,
+            [perPage, offset],
+          );
+          // One stringify per page; its "[" and "]" dropped so the pages join into one list.
+          if (page.length > 0) parts.push(`${offset === 0 ? '' : ','}${JSON.stringify(page).slice(1, -1)}`);
+          if (page.length < perPage) break;
+        }
+        parts.push(']');
       }
       const rows = await tx.getAllAsync<{ key: string; value: string }>(
         `SELECT key, value FROM meta WHERE key IN (${META_KEYS.map(() => '?').join(', ')})`,
@@ -145,14 +169,9 @@ export async function exportSnapshot(): Promise<string> {
       for (const r of rows) if (typeof r.value === 'string') meta[r.key] = r.value;
     }),
   );
-  const envelope: BackupEnvelope = {
-    app: APP_TAG,
-    schema_version: SCHEMA_VERSION,
-    exported_at: new Date().toISOString(),
-    tables,
-    meta,
-  };
-  return JSON.stringify(envelope);
+  // The envelope's keys in the order `BackupEnvelope` has always been written in.
+  const head = `{"app":${JSON.stringify(APP_TAG)},"schema_version":${JSON.stringify(SCHEMA_VERSION)},"exported_at":${JSON.stringify(new Date().toISOString())},"tables":{`;
+  return `${head}${parts.join('')}},"meta":${JSON.stringify(meta)}}`;
 }
 
 /** Parse + validate an envelope. Throws a user-safe Error on anything unusable. */

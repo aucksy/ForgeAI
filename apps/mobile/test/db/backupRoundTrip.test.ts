@@ -113,3 +113,35 @@ describe('review: a moved imported workout stays recognised after a Drive restor
     expect(Object.keys((JSON.parse(json) as { meta?: Record<string, string> }).meta ?? {})).toEqual(['importOriginalStarts']);
   });
 });
+
+describe('audit Phase 8 follow-up: the backup text is built a page of rows at a time', () => {
+  it('the text is exactly JSON.stringify of the whole envelope, whatever the page size (gaps, quotes, unicode)', async () => {
+    for (let n = 2; n <= 12; n++) {
+      db.raw.run(
+        'INSERT INTO set_entries (id, session_id, exercise_id, set_number, weight_kg, reps, is_warmup, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [`se${n}`, 's1', 'ex1', n, 80 + n / 4, 5, 0, n % 3 === 0 ? 'say "slow", then \\ hold — ठीक' : null],
+      );
+    }
+    db.raw.run("DELETE FROM set_entries WHERE id IN ('se4', 'se9')"); // gaps in rowid
+    db.raw.run("INSERT INTO meta(key, value) VALUES('hidden_exercises', '[\"ex9\"]')");
+    const { exportSnapshot } = await import('@/cloud/snapshot');
+    const stamp = (s: string): string => s.replace(/"exported_at":"[^"]*"/, '"exported_at":"T"');
+
+    const whole = JSON.parse(await exportSnapshot()) as { tables: Record<string, Row[]> };
+    expect(whole.tables.set_entries.map((r) => r.id)).toEqual(['se1', 'se2', 'se3', 'se5', 'se6', 'se7', 'se8', 'se10', 'se11', 'se12']);
+    const reference = stamp(JSON.stringify(whole));
+    for (const page of [1, 2, 3, 10, 11, 5000, 0, -1, 2.5]) {
+      expect(stamp(await exportSnapshot(page))).toBe(reference);
+    }
+  });
+
+  it('an empty phone exports every table as an empty list', async () => {
+    const { eraseAllData } = await import('@/onboarding/db/dataActions');
+    await eraseAllData();
+    db.raw.exec('DELETE FROM user_profile; DELETE FROM exercises; DELETE FROM exercise_prefs');
+    const { exportSnapshot, parseSnapshot } = await import('@/cloud/snapshot');
+    const env = parseSnapshot(await exportSnapshot(2));
+    for (const rows of Object.values(env.tables)) expect(rows).toEqual([]);
+    expect(env.meta).toEqual({});
+  });
+});

@@ -250,9 +250,16 @@ export function topLiftText(t: Pick<TopLift, 'unit' | 'now' | 'pct'>, units: Uni
   return `${what} · up ${t.pct}% on your usual`;
 }
 
-/** "usually 3" — a usual week's number, to one decimal at most. */
+/**
+ * "usually 3" — a usual week's number (an average, so "usually 2.5" can stand). Workouts and
+ * sets are whole things, so an average below one never reads as a fraction of one ("usually 0.3"
+ * → "usually under 1"), none reads as "none", and from 10 up the decimal is noise ("usually 14",
+ * not "usually 14.3").
+ */
 export function usualText(n: number): string {
-  return `usually ${trimNum(n)}`;
+  if (n <= 0) return 'usually none';
+  if (n < 1) return 'usually under 1';
+  return `usually ${n >= 10 ? Math.round(n) : trimNum(n)}`;
 }
 
 // ---------------------------------------------------------------- your lifts

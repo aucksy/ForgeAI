@@ -302,6 +302,28 @@ describe('Phase 8 packet B — import / export, old vs new', () => {
       expect(copy.sessionIds).toEqual(ids);
       log({ step: 'safety copy 5y (before Replace)', oldMs: Math.round(oldMs), newMs: Math.round(newMs), oldPeakHeapMB: oldPeak, newPeakHeapMB: peak.mb, copyMB: Math.round((json.length / 1048576) * 10) / 10 });
     }
+    {
+      // Follow-up: the snapshot text a page of rows at a time (new) vs every row held, then turned
+      // into text (old, kept here) — the time only. The memory needs a process of its own each
+      // (this run's earlier steps move the heap baseline): phase8snapshotMem.perf.ts.
+      const { exportSnapshot } = await import('@/cloud/snapshot');
+      const target = db as unknown as Record<string, (...a: unknown[]) => Promise<unknown>>;
+      const oldExport = async (): Promise<string> => {
+        const tables: Record<string, unknown[]> = {};
+        for (const name of ['user_profile', 'exercises', 'exercise_prefs', 'workout_plans', 'plan_days', 'plan_exercises', 'workout_sessions', 'set_entries', 'personal_records', 'body_weight', 'body_measurements', 'meals', 'chat_messages']) {
+          tables[name] = (await target.getAllAsync(`SELECT * FROM ${name}`)) as unknown[];
+        }
+        return JSON.stringify({ app: 'forgeai', tables });
+      };
+      let t = performance.now();
+      const oldLen = (await oldExport()).length;
+      const oldMs = performance.now() - t;
+      t = performance.now();
+      const newLen = (await exportSnapshot()).length;
+      const newMs = performance.now() - t;
+      expect(newLen).toBeGreaterThan(oldLen * 0.8);
+      log({ step: 'snapshot text 5y (backup / safety copy)', oldMs: Math.round(oldMs), newMs: Math.round(newMs), textMB: Math.round((newLen / 1048576) * 10) / 10 });
+    }
     // eslint-disable-next-line no-console
     console.log(`\n[perf8b] summary\n${rows.map((r) => JSON.stringify(r)).join('\n')}`);
   });

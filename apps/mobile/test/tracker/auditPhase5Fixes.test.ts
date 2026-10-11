@@ -491,6 +491,13 @@ describe('9: this week so far against the usual week up to the same day', () => 
     expect(usualByText(1, TODAY)).toBe('usually 1 by Wednesday');
     expect(usualByText(2, '2026-10-18')).toBe('usually 2'); // Sunday: the whole week
   });
+  it('a small usual never reads as a fraction of a workout; a big one drops the decimal', () => {
+    expect(usualByText(0.3, '2026-10-17')).toBe('usually under 1 by Saturday');
+    expect(usualByText(0, TODAY)).toBe('usually none by Wednesday');
+    expect(usualByText(2.5, '2026-10-18')).toBe('usually 2.5');
+    expect(usualByText(14.3, '2026-10-18')).toBe('usually 14');
+    expect(usualByText(9.96, '2026-10-18')).toBe('usually 10');
+  });
   it('[source-text check] the card says "so far", the body map says "in the last 7 days"', () => {
     expect(src('components/analytics/WeekCard.tsx')).toContain('This week so far');
     expect(src('components/analytics/WeekCard.tsx')).toContain('usualByText(');
