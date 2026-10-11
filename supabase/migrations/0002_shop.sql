@@ -17,20 +17,13 @@
 -- Shapes match the app's S1 types (apps/mobile/src/shop/types.ts): a product's options are a small
 -- JSON array [{id,label,priceP?,stock,tint?}] (a flavour or a size, with its own stock).
 --
--- Apply: Supabase SQL editor (after 0001_init.sql). Re-runnable; it drops and rebuilds the shop
--- objects (no real data lives in them yet).
+-- Apply: Supabase SQL editor (after 0001_init.sql), then 0003. Re-runnable without data loss,
+-- except the FORGE1 test gym's products, which are re-seeded.
 
 create extension if not exists pgcrypto;
 
-drop function if exists public.place_order(jsonb);
-drop function if exists public.cancel_my_order(uuid);
-drop function if exists public.set_order_status(uuid, text);
-drop function if exists public.seed_demo_shop();
-drop function if exists public.set_my_display_name(text);
-drop function if exists public._shop_restock(jsonb);
-drop function if exists public._seed_shop(uuid);
-drop table if exists public.shop_orders;
-drop table if exists public.shop_products;
+-- (The first draft's auth-based functions and tables were dropped by hand on 12 Oct 2026; this
+-- file no longer drops anything, so re-running it never wipes a gym's shop. Run 0003 after it.)
 
 -- ------------------------------------------------------------------ tables
 create table if not exists public.gym_owner_keys (
@@ -50,7 +43,7 @@ create table if not exists public.gym_members (
 );
 create index if not exists idx_gym_members_gym on public.gym_members(gym_id, joined_at desc);
 
-create table public.shop_products (
+create table if not exists public.shop_products (
   product_id  uuid primary key default gen_random_uuid(),
   gym_id      uuid not null references public.gyms(gym_id) on delete cascade,
   name        text not null check (length(btrim(name)) between 1 and 80),
@@ -71,7 +64,7 @@ create table public.shop_products (
 );
 create index if not exists idx_products_gym on public.shop_products(gym_id, sort, created_at);
 
-create table public.shop_orders (
+create table if not exists public.shop_orders (
   order_id    uuid primary key default gen_random_uuid(),
   gym_id      uuid not null references public.gyms(gym_id) on delete cascade,
   member_id   uuid references public.gym_members(member_id) on delete set null,
