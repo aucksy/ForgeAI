@@ -24,7 +24,15 @@ import { Toast } from '../ui/kit';
 import { replace } from '../ui/router';
 import * as api from './api';
 import { clearCloudGym, readCloudGym, writeCloudGym, type CloudGym } from './cloudGym';
-import { arrivalMessage, errorCode, errorWords, newArrivals, type Order, type OrderStatus } from './logic';
+import {
+  arrivalMessage,
+  errorCode,
+  errorWords,
+  MutationGate,
+  newArrivals,
+  type Order,
+  type OrderStatus,
+} from './logic';
 
 export const DEMO_GYM_NAME = 'Iron Temple Fitness';
 const ORDER_POLL_MS = 5_000;
@@ -41,8 +49,10 @@ interface ShopContextValue {
   startDemo: () => Promise<void>;
   /** Give a gym that was set up locally its own cloud shop (and join code). */
   connectShop: () => Promise<void>;
-  /** Forget the cloud gym and empty this browser, back to the welcome screen. */
+  /** DEMO GYMS ONLY: forget the cloud gym and empty this browser, back to Welcome. */
   startOver: () => Promise<void>;
+  /** Forget the cloud shop only; the CRM's own records are untouched. */
+  disconnectShop: () => void;
   /** Rename the cloud gym too, when the owner renames theirs in Settings. */
   renameCloudGym: (name: string) => Promise<void>;
   /** Call when any cloud call fails: a dead key closes the gym. Returns plain words. */
@@ -119,6 +129,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [ordersError, setOrdersError] = useState<string | null>(null);
   const seen = useRef<Set<string> | null>(null);
   const sig = useRef('');
+  // A poll already on its way must not repaint over a tap's reply.
+  const gate = useRef(new MutationGate()).current;
 
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
@@ -200,9 +212,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const refreshOrders = useCallback(async () => {
     const gym = cloudRef.current;
     if (!gym) return;
+    const stamp = gate.stamp();
     try {
       const list = await api.listOrders(gym.ownerKey);
       if (cloudRef.current?.ownerKey !== gym.ownerKey) return;
+      // A status change started or finished while this was out: its reply is
+      // newer than this list. The next poll picks up anything else.
+      if (!gate.fresh(stamp)) return;
       setOnline(true);
       setOrdersError(null);
       setOrdersLoaded(true);
@@ -218,7 +234,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     } catch (e) {
       setOrdersError(handleError(e));
     }
-  }, [flash, handleError]);
+  }, [flash, handleError, gate]);
 
   usePoll(refreshOrders, ORDER_POLL_MS, cloud !== null);
 
@@ -226,21 +242,28 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     async (orderId: string, status: OrderStatus) => {
       const gym = cloudRef.current;
       if (!gym) throw new Error('No shop is connected.');
-      try {
-        const updated = await api.setOrderStatus(gym.ownerKey, orderId, status);
-        setOrders((prev) => {
-          const next = prev.map((o) => (o.orderId === orderId ? updated : o));
-          sig.current = signature(next);
-          return next;
-        });
-      } catch (e) {
-        const words = handleError(e);
+      let failure: unknown = null;
+      await gate.run(async () => {
+        try {
+          const updated = await api.setOrderStatus(gym.ownerKey, orderId, status);
+          setOrders((prev) => {
+            const next = prev.map((o) => (o.orderId === orderId ? updated : o));
+            sig.current = signature(next);
+            return next;
+          });
+        } catch (e) {
+          failure = e;
+        }
+      });
+      if (failure !== null) {
+        const words = handleError(failure);
         // The order moved elsewhere (or vanished): show the truth, then say why.
+        // Read only now, after the gate has closed, so the read is not dropped.
         void refreshOrders();
         throw new Error(words);
       }
     },
-    [handleError, refreshOrders],
+    [handleError, refreshOrders, gate],
   );
 
   const adopt = useCallback((gym: CloudGym) => {
@@ -284,6 +307,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   }, [adopt, resetOrders, snapshot.gym.name, updateGym]);
 
   const startOver = useCallback(async () => {
+    // Only ever for a demo gym. A real gym that turned the shop on keeps its own
+    // members and payments in this browser; erasing them here would lose real
+    // records, so it gets `disconnectShop` instead.
+    if (!cloudRef.current?.demo) throw new Error('Only a demo gym can be started over.');
     clearCloudGym();
     setCloud(null);
     resetOrders();
@@ -291,6 +318,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     await startEmptyGym('My Gym');
     replace('/');
   }, [resetOrders, startEmptyGym]);
+
+  const disconnectShop = useCallback(() => {
+    // Forgets the cloud key only. Members, plans, payments and visits stay.
+    clearCloudGym();
+    setCloud(null);
+    resetOrders();
+  }, [resetOrders]);
 
   const renameCloudGym = useCallback(
     async (name: string) => {
@@ -318,6 +352,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       startDemo,
       connectShop,
       startOver,
+      disconnectShop,
       renameCloudGym,
       handleError,
       orders,
@@ -336,6 +371,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       startDemo,
       connectShop,
       startOver,
+      disconnectShop,
       renameCloudGym,
       handleError,
       orders,

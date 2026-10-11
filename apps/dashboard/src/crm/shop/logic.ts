@@ -91,6 +91,12 @@ export interface Product {
   artKind: ArtKind;
   artTint: string;
   sort: number;
+  /**
+   * The row's `updated_at` EXACTLY as the cloud sent it. Sent back on save so the
+   * cloud can refuse (CHANGED) when the product moved on meanwhile — a member's
+   * order took stock, or another tab saved — instead of overwriting it.
+   */
+  updatedAt: string;
 }
 
 export interface OrderLine {
@@ -158,6 +164,7 @@ export function productFromRow(r: Row): Product {
     artKind: str(r.art_kind, 'tub') as ArtKind,
     artTint: str(r.art_tint, '#E8661F'),
     sort: num(r.sort),
+    updatedAt: str(r.updated_at),
   };
 }
 
@@ -385,6 +392,8 @@ export function newOptionId(label: string, taken: ReadonlySet<string>, rand: () 
 /** The form's working copy of a product. Prices and stock are text until saved. */
 export interface ProductDraft {
   productId: string | null;
+  /** The version being edited (see Product.updatedAt); null for a new product. */
+  updatedAt: string | null;
   name: string;
   category: Category;
   description: string;
@@ -411,6 +420,7 @@ export function draftFromProduct(p: Product | null): ProductDraft {
   if (!p) {
     return {
       productId: null,
+      updatedAt: null,
       name: '',
       category: 'protein',
       description: '',
@@ -426,6 +436,7 @@ export function draftFromProduct(p: Product | null): ProductDraft {
   }
   return {
     productId: p.productId,
+    updatedAt: p.updatedAt,
     name: p.name,
     category: p.category,
     description: p.description,
@@ -456,6 +467,8 @@ export function rupeesText(p: Paise): string {
 /** Exactly what `owner_save_product` takes as `p`. */
 export interface SavePayload {
   productId?: string;
+  /** Required by the cloud when updating: the version the owner was editing. */
+  updatedAt?: string;
   name: string;
   category: Category;
   description: string;
@@ -537,6 +550,7 @@ export function validateDraft(
     ok: true,
     payload: {
       ...(d.productId ? { productId: d.productId } : {}),
+      ...(d.productId && d.updatedAt ? { updatedAt: d.updatedAt } : {}),
       name,
       category: d.category,
       description: d.description.trim().slice(0, 600),
@@ -551,33 +565,23 @@ export function validateDraft(
   };
 }
 
-/** A product's save payload with `extra` stock added (the "+10" button). */
-export function restockPayload(p: Product, extra: number): SavePayload {
-  const add = (s: number) => Math.min(MAX_STOCK, Math.max(0, s + extra));
-  const options = p.options.map((o, i) => ({
-    id: o.id,
-    label: o.label,
-    // With options, the extra stock goes to the first choice that is out, else the first one.
-    stock: i === restockTarget(p.options) ? add(o.stock) : o.stock,
-    ...(typeof o.priceP === 'number' && o.priceP > 0 ? { priceP: o.priceP } : {}),
-    ...(o.tint ? { tint: o.tint } : {}),
-  }));
-  return {
-    ...toPayload(p),
-    options,
-    stock: p.options.length > 0 ? optionStockSum(options) : add(p.stock),
-  };
+/**
+ * Which choice "+10 stock" tops up: the first one that is sold out, else the
+ * first. Null for a product without choices. The cloud adds the stock itself
+ * (owner_add_stock), so a member's order landing at the same moment is never
+ * overwritten by an absolute number from this screen.
+ */
+export function restockOptionId(p: Pick<Product, 'options'>): string | null {
+  if (p.options.length === 0) return null;
+  const out = p.options.find((o) => o.stock <= 0);
+  return (out ?? p.options[0]).id;
 }
 
-function restockTarget(options: readonly ProductOption[]): number {
-  const out = options.findIndex((o) => o.stock <= 0);
-  return out >= 0 ? out : 0;
-}
-
-/** A product's own save payload, unchanged — used to flip one field (shown / hidden). */
+/** A product's own save payload, unchanged (with its version) — the form's starting point. */
 export function toPayload(p: Product): SavePayload {
   return {
     productId: p.productId,
+    updatedAt: p.updatedAt,
     name: p.name,
     category: p.category,
     description: p.description,
@@ -607,13 +611,15 @@ export type ShopErrorCode =
   | 'EMPTY'
   | 'BAD_OPTIONS'
   | 'BUSY'
+  | 'CHANGED'
+  | 'TOO_MANY'
   | 'OFFLINE'
   | 'INVALID'
   | 'UNKNOWN';
 
 export function errorCode(err: unknown): ShopErrorCode {
   const msg = errorText(err);
-  for (const code of ['BAD_KEY', 'GONE', 'BAD_STEP', 'EMPTY', 'BAD_OPTIONS', 'BUSY'] as const) {
+  for (const code of ['BAD_KEY', 'GONE', 'BAD_STEP', 'EMPTY', 'BAD_OPTIONS', 'BUSY', 'CHANGED', 'TOO_MANY'] as const) {
     if (new RegExp(`\\b${code}\\b`).test(msg)) return code;
   }
   if (/failed to fetch|networkerror|network request failed|load failed|fetch failed|timed? ?out/i.test(msg)) {
@@ -641,12 +647,62 @@ const ERROR_WORDS: Record<ShopErrorCode, string> = {
   EMPTY: 'Please fill in the name.',
   BAD_OPTIONS: `Too many choices. Keep it to ${MAX_OPTIONS} or fewer.`,
   BUSY: 'Too many demo gyms were started in the last hour. Please try again in a few minutes.',
+  CHANGED:
+    'This product changed while you were editing (someone may have ordered it). We’ve loaded the latest — check and save again.',
+  TOO_MANY: 'Too many orders from this member in the last hour.',
   OFFLINE: 'Can’t reach the internet. Check the connection and try again.',
   INVALID: 'Something in this form isn’t allowed. Check the price (₹1 to ₹1,00,000) and stock.',
   UNKNOWN: 'Something went wrong. Please try again.',
 };
 
-/** What to tell the owner when a cloud call fails. Never a raw database message. */
+/**
+ * What to tell the owner when a cloud call fails. Never a raw database message:
+ * anything unrecognised ("deadlock detected", a stack trace) becomes the UNKNOWN
+ * sentence.
+ */
 export function errorWords(err: unknown): string {
   return ERROR_WORDS[errorCode(err)];
+}
+
+// ---------------------------------------------------------------- stale reads
+
+/**
+ * Keeps a slow poll from undoing a tap. A list read that was already on its way
+ * when the owner pressed "Mark ready" can arrive AFTER the button's reply and
+ * paint the old state back (card flips to New, badge returns). Every mutation
+ * bumps the generation when it starts and again when it finishes; a read is only
+ * applied if no mutation started or finished while it was out, and none is
+ * running now.
+ */
+export class MutationGate {
+  private gen = 0;
+  private active = 0;
+
+  /** Call before sending a read; pass the result to `fresh` when it returns. */
+  stamp(): number {
+    return this.gen;
+  }
+
+  fresh(stamp: number): boolean {
+    return stamp === this.gen && this.active === 0;
+  }
+
+  begin(): void {
+    this.gen += 1;
+    this.active += 1;
+  }
+
+  end(): void {
+    this.gen += 1;
+    this.active = Math.max(0, this.active - 1);
+  }
+
+  async run<T>(fn: () => Promise<T>): Promise<T> {
+    this.begin();
+    try {
+      return await fn();
+    } finally {
+      this.end();
+    }
+  }
 }

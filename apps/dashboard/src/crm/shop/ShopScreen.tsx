@@ -7,7 +7,7 @@
  * prices and stock true.
  */
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { formatINR } from '../logic/money';
 import {
@@ -41,11 +41,11 @@ import {
   filterOrders,
   lineText,
   priceText,
-  restockPayload,
+  MutationGate,
+  restockOptionId,
   STATUS_LABEL,
   stockLabel,
   timeAgo,
-  toPayload,
   type Order,
   type OrderAction,
   type OrderFilter,
@@ -326,17 +326,21 @@ function ProductsSection() {
   const key = cloud?.ownerKey ?? null;
   // Stable, because the sheet re-focuses itself whenever its onClose changes.
   const closeEditor = useCallback(() => setEditing(null), []);
+  // A 15 s read already on its way must not paint over +10 / hide / save.
+  const gate = useRef(new MutationGate()).current;
 
   const load = useCallback(async () => {
     if (!key) return;
+    const stamp = gate.stamp();
     try {
       const list = await api.listProducts(key);
+      if (!gate.fresh(stamp)) return;
       setProducts(list);
       setError(null);
     } catch (e) {
       setError(handleError(e));
     }
-  }, [key, handleError]);
+  }, [key, handleError, gate]);
 
   // Members buying changes stock, so the list keeps itself fresh while it is open.
   usePoll(load, 15_000, key !== null && editing === null);
@@ -345,23 +349,32 @@ function ProductsSection() {
     if (!key) return;
     setBusyId(p.productId);
     setError(null);
-    try {
-      const payload = kind === 'restock' ? restockPayload(p, 10) : { ...toPayload(p), active: !p.active };
-      const saved = await api.saveProduct(key, payload);
-      setProducts((prev) => prev?.map((x) => (x.productId === saved.productId ? saved : x)) ?? prev);
-      flash(
-        kind === 'restock'
-          ? `Added 10 to ${saved.name}. ${saved.stock} in stock now.`
-          : saved.active
-            ? `${saved.name} is shown in the app again.`
-            : `${saved.name} is hidden from the app.`,
-      );
-    } catch (e) {
-      setError(handleError(e));
-      void load();
-    } finally {
-      setBusyId(null);
-    }
+    const optionId = restockOptionId(p);
+    let failed = false;
+    await gate.run(async () => {
+      try {
+        // Both ask the cloud for a CHANGE (add 10, flip shown), never send the
+        // whole product back — a member's order in between is never undone.
+        const saved =
+          kind === 'restock'
+            ? await api.addStock(key, p.productId, optionId, 10)
+            : await api.setProductActive(key, p.productId, !p.active);
+        setProducts((prev) => prev?.map((x) => (x.productId === saved.productId ? saved : x)) ?? prev);
+        const choice = optionId ? saved.options.find((o) => o.id === optionId)?.label : null;
+        flash(
+          kind === 'restock'
+            ? `Added 10 to ${saved.name}${choice ? ` · ${choice}` : ''}. ${saved.stock} in stock now.`
+            : saved.active
+              ? `${saved.name} is shown in the app again.`
+              : `${saved.name} is hidden from the app.`,
+        );
+      } catch (e) {
+        failed = true;
+        setError(handleError(e));
+      }
+    });
+    setBusyId(null);
+    if (failed) void load();
   };
 
   const shown = products?.filter((p) => p.active).length ?? 0;
@@ -407,6 +420,8 @@ function ProductsSection() {
         <ProductSheet
           product={editing === 'new' ? null : editing}
           onClose={closeEditor}
+          gate={gate}
+          onReloaded={(list) => setProducts(list)}
           onSaved={(saved, verb) => {
             setProducts((prev) => {
               if (!prev) return [saved];

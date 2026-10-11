@@ -32,7 +32,7 @@ import {
 export function SettingsScreen() {
   const { snapshot, updateGym, loadDemoGym, startEmptyGym } = useCrm();
   const { gym } = snapshot;
-  const { cloud, startOver, renameCloudGym } = useShop();
+  const { cloud, startOver, disconnectShop, renameCloudGym } = useShop();
 
   const [name, setName] = useState(gym.name);
   const [phone, setPhone] = useState(gym.phone ?? '');
@@ -41,7 +41,7 @@ export function SettingsScreen() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [confirming, setConfirming] = useState<'demo' | 'fresh' | 'over' | null>(null);
+  const [confirming, setConfirming] = useState<'demo' | 'fresh' | 'over' | 'disconnect' | null>(null);
   // Stable, because the sheet re-focuses itself whenever its onClose changes.
   const closeConfirm = useCallback(() => setConfirming(null), []);
 
@@ -134,10 +134,20 @@ export function SettingsScreen() {
               Erase and start fresh
             </Button>
           </div>
-          {cloud && (
+          {/* Only a DEMO gym may be started over: that erases this browser. A real
+              gym that turned the shop on can only disconnect it, which keeps
+              every member and payment here. */}
+          {cloud?.demo && (
             <div style={{ marginTop: space.lg }}>
               <Button variant="ghost" tone="danger" onClick={() => setConfirming('over')}>
                 Start over with a new demo gym
+              </Button>
+            </div>
+          )}
+          {cloud && !cloud.demo && (
+            <div style={{ marginTop: space.lg }}>
+              <Button variant="ghost" tone="danger" onClick={() => setConfirming('disconnect')}>
+                Disconnect the shop
               </Button>
             </div>
           )}
@@ -151,7 +161,9 @@ export function SettingsScreen() {
               ? 'Load the demo gym?'
               : confirming === 'over'
                 ? 'Start over with a new demo gym?'
-                : 'Erase everything?'
+                : confirming === 'disconnect'
+                  ? 'Disconnect the shop?'
+                  : 'Erase everything?'
           }
           onClose={closeConfirm}
           footer={
@@ -164,6 +176,12 @@ export function SettingsScreen() {
                 onClick={async () => {
                   setError(null);
                   try {
+                    if (confirming === 'disconnect') {
+                      disconnectShop();
+                      setConfirming(null);
+                      flash('Shop disconnected. Your members and payments are still here.');
+                      return;
+                    }
                     if (confirming === 'over') {
                       // Back to the welcome screen, where "Start demo" makes a new one.
                       setConfirming(null);
@@ -186,17 +204,27 @@ export function SettingsScreen() {
                   setConfirming(null);
                 }}
               >
-                {confirming === 'demo' ? 'Load demo gym' : confirming === 'over' ? 'Start over' : 'Erase everything'}
+                {confirming === 'demo'
+                  ? 'Load demo gym'
+                  : confirming === 'over'
+                    ? 'Start over'
+                    : confirming === 'disconnect'
+                      ? 'Disconnect'
+                      : 'Erase everything'}
               </Button>
             </>
           }
         >
-          <ErrorBanner>
-            This replaces everything currently in this browser — all {counts.members} members,{' '}
-            {counts.payments} payments and {counts.visits} check-ins. It cannot be undone.
-          </ErrorBanner>
+          {confirming !== 'disconnect' && (
+            <ErrorBanner>
+              This replaces everything currently in this browser — all {counts.members} members,{' '}
+              {counts.payments} payments and {counts.visits} check-ins. It cannot be undone.
+            </ErrorBanner>
+          )}
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-            {confirming === 'over'
+            {confirming === 'disconnect'
+              ? `Your members, plans, payments and check-ins stay exactly as they are. This browser stops showing shop orders and products, and code ${cloud?.joinCode ?? ''} stops being managed from here. Members who already joined can’t be reached from this panel any more.`
+              : confirming === 'over'
               ? `This browser forgets the current demo gym and its shop (join code ${cloud?.joinCode ?? ''} stops being yours here). You go back to the welcome screen, where Start demo makes a fresh gym with a new code.`
               : confirming === 'demo'
               ? 'A sample gym with around 128 members, their payment history and attendance will be created. Use this to show someone the product — not on a gym with real records in it.'

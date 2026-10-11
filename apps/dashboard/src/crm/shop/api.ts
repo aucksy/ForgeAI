@@ -90,3 +90,25 @@ export async function listAppMembers(key: string): Promise<AppMember[]> {
   const rows = await call<Row[]>('owner_app_members', { p_key: key });
   return (rows ?? []).map(appMemberFromRow);
 }
+
+/** Add (or with a negative delta, take away) stock on the cloud — never an absolute number. */
+export async function addStock(
+  key: string,
+  productId: string,
+  optionId: string | null,
+  delta: number,
+): Promise<Product> {
+  const r = await call<Row>('owner_add_stock', {
+    p_key: key,
+    p_product: productId,
+    p_option: optionId,
+    p_delta: delta,
+  });
+  return productFromRow(r);
+}
+
+/** Show or hide a product in the app without touching anything else on it. */
+export async function setProductActive(key: string, productId: string, active: boolean): Promise<Product> {
+  const r = await call<Row>('owner_set_product_active', { p_key: key, p_product: productId, p_active: active });
+  return productFromRow(r);
+}

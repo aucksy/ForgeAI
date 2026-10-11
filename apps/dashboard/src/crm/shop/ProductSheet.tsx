@@ -24,7 +24,9 @@ import {
   ART_KINDS,
   CATEGORIES,
   draftFromProduct,
+  errorCode,
   MAX_OPTIONS,
+  MutationGate,
   optionStockSum,
   parseStock,
   TINT_CHOICES,
@@ -41,10 +43,16 @@ export function ProductSheet({
   product,
   onClose,
   onSaved,
+  gate,
+  onReloaded,
 }: {
   product: Product | null;
   onClose: () => void;
   onSaved: (p: Product, verb: 'added' | 'saved' | 'deleted') => void;
+  /** The product list's gate: a save is a mutation the list's poll must not undo. */
+  gate: MutationGate;
+  /** The fresh list read after a CHANGED refusal, for the screen behind. */
+  onReloaded: (list: Product[]) => void;
 }) {
   const { cloud, handleError } = useShop();
   const [d, setD] = useState<ProductDraft>(() => draftFromProduct(product));
@@ -69,13 +77,37 @@ export function ProductSheet({
     setErrors({});
     setError(null);
     setSaving(true);
-    try {
-      const saved = await api.saveProduct(cloud.ownerKey, v.payload);
+    let failure: { e: unknown } | null = null;
+    let saved: Product | null = null;
+    await gate.run(async () => {
+      try {
+        saved = await api.saveProduct(cloud.ownerKey, v.payload);
+      } catch (e) {
+        failure = { e };
+      }
+    });
+    if (saved) {
       onSaved(saved, product ? 'saved' : 'added');
-    } catch (e) {
-      setError(handleError(e));
-      setSaving(false);
+      return;
     }
+    const err = (failure as { e: unknown } | null)?.e;
+    const words = handleError(err);
+    if (errorCode(err) === 'CHANGED' && d.productId) {
+      // Someone ordered it (or another tab saved) while this was open. Load the
+      // latest into the form — stock especially — and let the owner save again.
+      try {
+        const list = await api.listProducts(cloud.ownerKey);
+        onReloaded(list);
+        const latest = list.find((x) => x.productId === d.productId);
+        if (latest) setD(draftFromProduct(latest));
+        setError(latest ? words : 'This product was deleted while you were editing it.');
+      } catch (e2) {
+        setError(handleError(e2));
+      }
+    } else {
+      setError(words);
+    }
+    setSaving(false);
   };
 
   const remove = async () => {
@@ -83,7 +115,7 @@ export function ProductSheet({
     setSaving(true);
     setError(null);
     try {
-      await api.deleteProduct(cloud.ownerKey, product.productId);
+      await gate.run(() => api.deleteProduct(cloud.ownerKey, product.productId));
       onSaved(product, 'deleted');
     } catch (e) {
       setError(handleError(e));

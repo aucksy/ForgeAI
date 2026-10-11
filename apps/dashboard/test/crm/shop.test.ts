@@ -28,7 +28,8 @@ import {
   parseStock,
   priceText,
   productFromRow,
-  restockPayload,
+  MutationGate,
+  restockOptionId,
   stockLabel,
   timeAgo,
   toPayload,
@@ -71,6 +72,7 @@ const whey: Product = {
   artKind: 'tub',
   artTint: '#7A4A2A',
   sort: 1,
+  updatedAt: '2026-10-12T04:30:00.123456+00:00',
 };
 
 describe('order steps', () => {
@@ -185,13 +187,10 @@ describe('stock', () => {
     expect(parseStock('100001')).toBeNull();
   });
 
-  it('+10 goes to the first sold-out choice and the product total follows', () => {
-    const p = restockPayload(whey, 10);
-    expect(p.options.map((o) => o.stock)).toEqual([12, 10]);
-    expect(p.stock).toBe(22);
-    const plain = restockPayload({ ...whey, options: [], optionName: null, stock: 5 }, 10);
-    expect(plain.stock).toBe(15);
-    expect(plain.options).toEqual([]);
+  it('+10 goes to the first sold-out choice, else the first; none for a plain product', () => {
+    expect(restockOptionId(whey)).toBe('str');
+    expect(restockOptionId({ options: [{ id: 'a', label: 'A', stock: 3 }, { id: 'b', label: 'B', stock: 1 }] })).toBe('a');
+    expect(restockOptionId({ options: [] })).toBeNull();
   });
 });
 
@@ -213,6 +212,13 @@ describe('product form', () => {
     expect(v.payload.options[2].id).toMatch(/^cookies-cream-[0-9a-z]{3}$/);
     expect(v.payload.options[2].priceP).toBe(269_900);
     expect(v.payload.stock).toBe(17);
+  });
+
+  it('sends back the exact version being edited, and none for a new product', () => {
+    const v = validateDraft(draftFromProduct(whey));
+    expect(v.ok && v.payload.updatedAt).toBe('2026-10-12T04:30:00.123456+00:00');
+    const n = validateDraft({ ...draftFromProduct(null), name: 'Towel', price: '299' });
+    expect(n.ok && 'updatedAt' in n.payload).toBe(false);
   });
 
   it('sends an empty option list and the typed stock when choices are off', () => {
@@ -301,6 +307,8 @@ describe('error words', () => {
       [{ message: 'EMPTY' }, 'EMPTY'],
       [{ message: 'BAD_OPTIONS' }, 'BAD_OPTIONS'],
       [{ message: 'BUSY' }, 'BUSY'],
+      [{ message: 'CHANGED', code: 'P0001' }, 'CHANGED'],
+      [{ message: 'TOO_MANY' }, 'TOO_MANY'],
       [new Error('TypeError: Failed to fetch'), 'OFFLINE'],
       [new Error('timed out'), 'OFFLINE'],
       [{ message: 'new row for relation "shop_products" violates check constraint' }, 'INVALID'],
@@ -309,9 +317,18 @@ describe('error words', () => {
     for (const [err, code] of cases) {
       expect(errorCode(err)).toBe(code);
       const words = errorWords(err);
-      expect(words).not.toMatch(/BAD_|GONE|BUSY|EMPTY|constraint|P0001/);
+      expect(words).not.toMatch(/BAD_|GONE|BUSY|EMPTY|CHANGED|TOO_MANY|constraint|P0001/);
       expect(words.length).toBeGreaterThan(10);
     }
+  });
+
+  it('never shows raw database text for an error it does not know', () => {
+    for (const raw of ['deadlock detected', 'integer out of range', 'could not serialize access', 'JWT expired']) {
+      const words = errorWords({ message: raw, code: '40P01' });
+      expect(words.toLowerCase()).not.toContain(raw.toLowerCase());
+      expect(words).toMatch(/^[A-Z].*\.$/);
+    }
+    expect(errorWords({ message: 'CHANGED' })).toContain('changed while you were editing');
   });
 
   it('does not mistake a word inside another word for a code', () => {
@@ -347,5 +364,25 @@ describe('stored cloud gym', () => {
     expect(readCloudGym(s)).toBeNull();
     s.setItem(CLOUD_GYM_KEY, JSON.stringify({ gymId: 'g', ownerKey: 'short' }));
     expect(readCloudGym(s)).toBeNull();
+  });
+});
+
+describe('stale poll guard', () => {
+  it('drops a read that was out while a tap started or finished', () => {
+    const g = new MutationGate();
+    const before = g.stamp();
+    g.begin();
+    const during = g.stamp();
+    expect(g.fresh(before)).toBe(false);
+    expect(g.fresh(during)).toBe(false); // a mutation is still running
+    g.end();
+    expect(g.fresh(during)).toBe(false); // it finished while the read was out
+    expect(g.fresh(g.stamp())).toBe(true); // a read started after it is fine
+  });
+
+  it('closes the gate even when the mutation fails', async () => {
+    const g = new MutationGate();
+    await expect(g.run(async () => Promise.reject(new Error('x')))).rejects.toThrow('x');
+    expect(g.fresh(g.stamp())).toBe(true);
   });
 });
