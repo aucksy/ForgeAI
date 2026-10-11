@@ -35,7 +35,13 @@ The owner **waived the fieldwork gate** on 2026-07-26 ("don't hold the crm on fi
 build one basis online research"), so `VISION.md` §8 / locked decision 3 no longer blocks platform
 code. `FIELDWORK.md` remains the blank kit; the R1 corpus in `docs/overhaul/research/` is the
 evidence base. `VISION.md` (approved 2026-07-22) still governs SCOPE — the ~8-feature narrow build
-and its explicit NO list stand.
+and its explicit NO list stand, except the **gym Shop**, which the owner put in scope on 2026-10-11.
+
+**Member app redesign (owner, 2026-10-11): 3 tabs — Workout, Profile, Shop — copying Hevy's layout.**
+Home, History and Progress tabs go (Up next moves to the top of Workout; history, chart and
+dashboard tiles move to a Hevy-style Profile; settings behind its gear). The Shop starts with clearly
+marked demo products; payments come later. The full plan lives outside the repo at
+`D:\Apps\ForgeAI\Audit\redesign-3-tabs\PLAN.md`.
 
 Background: ForgeAI is a **B2B2C SaaS platform** — the CRM + the existing member app as a
 gym-membership benefit + an owner-paid AI layer. The manual-tracker track is DONE (Phases 1–5c +

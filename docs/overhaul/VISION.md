@@ -7,7 +7,7 @@
 >    value gyms; keep currency, language, tax and payment rails pluggable so a Western/ME/SEA
 >    version needs no rewrite. Accepts the §4 ceiling for now without foreclosing Path B.
 > 2. **Scope = NARROW (§3 recommendation adopted).** ~8 features, not the brief's ~40. Explicit NO
->    to POS, inventory, access-control hardware, payroll, multi-branch roll-ups, class-booking-first,
+>    to POS, access-control hardware, payroll, multi-branch roll-ups, class-booking-first,
 >    white-label per-gym apps, marketing-campaign builders, lead-scoring funnels, digital waivers.
 > 3. **Fieldwork first.** Owner runs `FIELDWORK.md` at the design-partner gym within ~1–2 weeks.
 >    No platform code until those notes return. MVP/architecture/DB/API/UI/sprint docs stay unwritten
@@ -106,9 +106,11 @@ about to quit — early enough to do something."
   churn signal with peer-reviewed multi-country support (35–54% of model power, AUC 0.86)
 - **WhatsApp** for renewals and comeback nudges (table stakes to sell, not the moat)
 
-**Deliberately do NOT build (yet, or ever):** class scheduling depth, POS, inventory, supplements,
-merchandise, access-control hardware, payroll, multi-branch roll-ups, marketing campaign builders,
-lead-scoring funnels, digital waivers. Every one is either commodity, hardware-coupled, or an
+**Deliberately do NOT build (yet, or ever):** class scheduling depth, POS, access-control hardware,
+payroll, multi-branch roll-ups, marketing campaign builders, lead-scoring funnels, digital waivers.
+(Owner decision 2026-10-11: a **gym Shop** — the gym sells supplements, gear and merchandise to its
+members in the app, with the stock count it needs — IS in scope. It replaced "inventory,
+supplements, merchandise" on this list.) Every one is either commodity, hardware-coupled, or an
 enterprise need our target gym doesn't have. **The brief listed ~40 owner features. We are choosing
 about 8.** Saying no to the other 32 *is* the strategy.
 
@@ -243,7 +245,7 @@ dressed as a plan.
 - **My honest challenge to the plan:** building a full gym management system means competing in the cheapest, most crowded, hardest-to-support part of the market — while giving away the one thing we own that nobody else has.
 - **What we own is the members' app.** A genuinely great workout app with an AI coach. Indian gym software ships nothing close.
 - **So my recommendation: be the gym's member-facing product, not its back office.** Great member app + see who's about to quit + chase renewals. Build about 8 features properly instead of 40 badly.
-- **Say no loudly.** No point-of-sale, no inventory, no door hardware, no payroll, no class-booking-first. Those are commodity or hardware problems.
+- **Say no loudly.** No point-of-sale, no door hardware, no payroll, no class-booking-first (the gym Shop is the 2026-10-11 exception). Those are commodity or hardware problems.
 - **Honest money picture: this is a ₹1–4 crore a year business if it goes very well over several years.** Good for one person. Not a big-investor business. You should choose that on purpose.
 - **Keep the export door open.** Western gyms pay 10x Indian prices for the same software, and every winner in this category made its money outside India. Build so we *could* go there later without a rewrite.
 - **The biggest risk is you, alone, doing support** — gyms run 5am to 10pm, and bad support is the #1 reason gym owners leave their software.
