@@ -36,6 +36,11 @@ function withBackupRules(config) {
     app.$['android:allowBackup'] = 'true';
     app.$['android:fullBackupContent'] = '@xml/forgeai_backup_rules';
     app.$['android:dataExtractionRules'] = '@xml/forgeai_data_extraction_rules';
+    // Android 14 samples memory with GWP-ASan in every app; recording a sample's stack walked off
+    // Hermes' own stack and crashed the app (device QA run 38105636933, SIGSEGV in
+    // android_unsafe_frame_pointer_chase under libhermesvm). The sampler only finds bugs for
+    // Google's reports; members lose nothing with it off.
+    app.$['android:gwpAsanMode'] = 'never';
     return cfg;
   });
   return config;
