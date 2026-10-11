@@ -171,7 +171,7 @@ export function linkFromJoin(raw: unknown): GymLink | null {
  * the server comes back with status 0 ("TypeError: Network request failed"), and one cut off by
  * the app's own timer says it was aborted.
  */
-export type GymErrorKind = 'offline' | 'timeout' | 'INVALID_CODE' | 'EMPTY' | 'BUSY' | 'GONE' | 'SOLD_OUT' | 'BAD_KEY' | 'TOO_LATE' | 'other';
+export type GymErrorKind = 'offline' | 'timeout' | 'INVALID_CODE' | 'EMPTY' | 'BUSY' | 'GONE' | 'SOLD_OUT' | 'BAD_KEY' | 'TOO_LATE' | 'TOO_MANY' | 'TOO_BIG' | 'other';
 
 export interface GymError {
   kind: GymErrorKind;
@@ -179,7 +179,7 @@ export interface GymError {
   name?: string;
 }
 
-const CODES: readonly GymErrorKind[] = ['INVALID_CODE', 'EMPTY', 'BUSY', 'GONE', 'BAD_KEY', 'TOO_LATE'];
+const CODES: readonly GymErrorKind[] = ['INVALID_CODE', 'EMPTY', 'BUSY', 'GONE', 'BAD_KEY', 'TOO_LATE', 'TOO_MANY', 'TOO_BIG'];
 
 /** Read an error from a Supabase call ({ message, hint }, plus the HTTP status). PURE. */
 export function classifyRpcError(error: unknown, status?: number): GymError {
@@ -243,6 +243,10 @@ export function placeFailure(err: GymError, bag: readonly BagLine[], products: r
       return { message: 'Something in your bag is no longer sold. We refreshed the shop.', removeKey: null, refresh: true };
     case 'EMPTY':
       return { message: 'Your bag has nothing that can be ordered right now.', removeKey: null, refresh: true };
+    case 'TOO_MANY':
+      return { message: "You've placed a lot of orders in the last hour. Ask at the desk, or try again later.", removeKey: null, refresh: false };
+    case 'TOO_BIG':
+      return { message: 'This order is too big to place in the app. Ask at the desk.', removeKey: null, refresh: false };
     case 'offline':
       return { message: "No internet. Your bag is kept — try again when you're online.", removeKey: null, refresh: false };
     case 'timeout':

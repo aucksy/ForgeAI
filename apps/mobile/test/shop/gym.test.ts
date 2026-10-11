@@ -368,3 +368,14 @@ describe('what the phone kept', () => {
     expect(cleanGymBlob({ link: null, products: productsFromRows([SHAKER_ROW]), bag: [{ productId: 'p', optionId: null, qty: 1 }] }).products).toEqual([]);
   });
 });
+
+describe('order caps (0003)', () => {
+  it('maps TOO_MANY and TOO_BIG to words and keeps the bag', () => {
+    expect(classifyRpcError({ message: 'TOO_MANY' })).toEqual({ kind: 'TOO_MANY' });
+    expect(classifyRpcError({ message: 'TOO_BIG' })).toEqual({ kind: 'TOO_BIG' });
+    const many = placeFailure({ kind: 'TOO_MANY' }, [], []);
+    expect(many.message).toMatch(/last hour/);
+    expect(many.removeKey).toBeNull();
+    expect(placeFailure({ kind: 'TOO_BIG' }, [], []).message).toMatch(/too big/);
+  });
+});
