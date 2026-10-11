@@ -1714,6 +1714,27 @@
   - Review: no blockers; 3 should-fix + 3 nits fixed. **Tests:** 1,793 vitest. Phone test run
     38127032189 on b5ea5a6: all 22 parts passed (new part P9 + the shortcuts in Android's list),
     crash scan clean.
+- 2026-10-11: **v0.35.0 — redesign: 3 tabs like Hevy, demo Shop, rest alert fix** (141fc8a,
+  7a27f70, d88651e, 2c0217b, e2e0405, 37ba976, 33328d9; plan in the private audit folder).
+  - **Tabs: Workout / Profile / Shop** (Home, History and Progress are gone; old links redirect).
+    Workout: the **Up next** card (the next routine of the folder trained last), Start empty
+    workout, folders and routine cards inline, Explore for programs and the plan builder.
+  - **Profile like Hevy**: photo, name, bio, link; Workouts / Weeks in a row / Records; the
+    weekly chart (Duration / Kg lifted / Reps; 12 weeks, year, all time; tap a bar); Dashboard
+    tiles Statistics, Exercises, Measures, Calendar; the workout feed with a menu (edit, share,
+    delete). Settings are their own pages. Member schema v2: `photo_uri`, `bio`, `link`.
+  - **Demo Shop** (S1): sample products, bag, "Place demo order", My orders, cancel. Nothing is
+    charged or sent to the gym; the real gym shop is S2–S5.
+  - **Rest alert (owner: no buzz on the watch, no sound with the screen off)**: USE_EXACT_ALARM
+    and `setAlarmClock` first, so the alert is on time on a fresh install with nothing to allow
+    (the "Get rest alerts on time?" question and the test button are gone; a status row shows
+    only when something is broken). Doze cannot hold it: Android stays out of deep sleep while
+    the rest alarm is pending. Needs a Play Console declaration before any Play upload.
+  - **Load retries** (0.3 s / 1 s / 2.5 s) for the Workout tab, Up next and Profile.
+  - **Tests:** 1,937 vitest, typecheck clean. Phone runs: 38144864717 (10 parts red, fixed),
+    38150955406 (2 flow slips, fixed), **38157467872 on 33328d9: all 23 parts passed**, sound and
+    vibrate = "Rest is over" with nothing granted by hand, 41 redesign screenshots, crash scan
+    clean.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
