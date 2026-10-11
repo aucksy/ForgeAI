@@ -77,3 +77,30 @@ export interface Order {
   /** Every S1 order is a demo: never sent anywhere. */
   demo: true;
 }
+
+/**
+ * S2: this phone's link to the gym's real shop, from `member_join`. The member key is a secret
+ * the gym's database made (only its hash is stored there); it is the member's only way back in,
+ * so it is kept on the phone until "Leave" or "Erase all data".
+ */
+export interface GymLink {
+  memberKey: string;
+  memberId: string;
+  gymId: string;
+  gymName: string;
+  joinCode: string;
+  name: string;
+}
+
+/** S2: an order the gym holds (from `member_orders`). Paid at the desk, never in the app. */
+export interface GymOrder {
+  id: string;
+  /** The gym's running number the desk calls out ("Order 12"). */
+  orderNo: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: OrderLine[];
+  totalP: number;
+  status: OrderStatus;
+  cancelledBy: 'member' | 'gym' | null;
+}

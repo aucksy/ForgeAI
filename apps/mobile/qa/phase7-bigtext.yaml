@@ -5,11 +5,12 @@
 # Android's 3-button bar (NAV=3button). Each screen a member uses is photographed
 # (p7-big-<NAV>-*.png; the script gathers them in qa-out/p7-big/). Redesign (3 tabs): the Workout
 # tab (top, then its folders), an open workout with a set row, the Profile page (top, its chart,
-# its feed), Calendar, Statistics, Settings, the Shop grid and a product page.
+# its feed), Calendar, Statistics, Settings, the Shop's join card, the sample shop's grid and a
+# product page.
 # Changes NOTHING: the workout is an empty one with one exercise and no ticked set, thrown away
 # with "Discard workout" (the app's own sheet, "Discard workout?" → Discard); a workout an earlier
-# part left open is only looked at, then minimised. Nothing is added to the bag.
-# Screenshots every tour takes, whichever way its workout step goes: 11 (P7_SHOTS in
+# part left open is only looked at, then minimised. Nothing is added to the bag; no gym is joined.
+# Screenshots every tour takes, whichever way its workout step goes: 12 (P7_SHOTS in
 # run-device-qa.sh); the empty-workout branch adds 2 (03b, 03c).
 appId: com.forgeai.app
 # NAV comes from the script (maestro test -e NAV=gesture|3button). No `env:` default here: a
@@ -168,7 +169,11 @@ appId: com.forgeai.app
     timeout: 3000
 - takeScreenshot: p7-big-${NAV}-09-settings
 - back
-# ---------------------------------------------------------------- Shop: grid, then a product
+# ---------------------------------------------------------------- Shop: the join card, the sample grid, a product
+# Not joined, the Shop tab is the gym shop's join card (S2). Nothing is joined here: the tour
+# photographs the card, then opens the sample shop (the S1 demo) for its grid and a product page.
+# If an earlier part left this phone joined (part R leaves at its end; a failed R may not), leave
+# first so the card shows.
 - extendedWaitUntil:
     visible: "^Shop$"
     timeout: 20000
@@ -176,11 +181,38 @@ appId: com.forgeai.app
     text: "^Shop$"
     index: 0
 - extendedWaitUntil:
-    visible: 'Demo shop — these are sample products.*'
+    visible: "Your gym's shop.*"
     timeout: 30000
+- runFlow:
+    when:
+      visible: "Your gym's shop · pay at the desk"
+    commands:
+      - scrollUntilVisible:
+          element: "^Leave$"
+          centerElement: true
+          timeout: 30000
+      - tapOn: "^Leave$"
+      - extendedWaitUntil:
+          visible: "Leave shop"
+          timeout: 10000
+      - tapOn: "Leave shop"
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000
 - waitForAnimationToEnd:
     timeout: 3000
-- takeScreenshot: p7-big-${NAV}-10-shop-grid
+- takeScreenshot: p7-big-${NAV}-10-shop-join
+- scrollUntilVisible:
+    element: "See a sample shop"
+    centerElement: true
+    timeout: 30000
+- tapOn: "See a sample shop"
+- extendedWaitUntil:
+    visible: "^Sample shop$"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-10b-shop-grid
 - scrollUntilVisible:
     element: 'Whey protein 1 kg, .*'
     centerElement: true

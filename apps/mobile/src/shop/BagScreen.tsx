@@ -1,43 +1,80 @@
 /**
- * The bag (S1): each line with its picture, price and quantity; remove; the total; and
- * "Place demo order", which makes a demo order (kept on the phone, never sent).
+ * The bag: each line with its picture, price and quantity; remove; the total.
+ *  - Joined (S2): priced against the gym's live list (fetched again when the bag opens), and
+ *    "Place order" sends it to the gym (member_place_order). Nothing is charged: pay at the desk.
+ *  - Sample shop (S1): "Place demo order" makes a pretend order kept on the phone.
  */
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { getCatalog } from './catalog';
+import { placeGymOrder, refreshProducts } from './gymActions';
 import { itemsText, priceBag, rupees, type PricedLine } from './money';
 import { ProductArt } from './ProductArt';
-import { DEMO_ORDER_LINE, DemoNote, QtyStepper, leave } from './ShopParts';
+import { DEMO_ORDER_LINE, DemoNote, PAY_AT_DESK_LINE, QtyStepper, QuietLine, leave } from './ShopParts';
+import { useShopSource } from './shopSource';
 import { useShop } from './shopStore';
 
 export function BagScreen() {
   const router = useRouter();
-  const bag = useShop((s) => s.bag);
-  const setQty = useShop((s) => s.setQty);
-  const remove = useShop((s) => s.remove);
-  const placeOrder = useShop((s) => s.placeOrder);
-  const priced = priceBag(bag, getCatalog());
+  const source = useShopSource();
+  const gym = source.mode === 'gym';
+  const bag = source.bag;
+  const priced = priceBag(bag, source.products);
+  const placeDemo = useShop((s) => s.placeOrder);
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState<string | null>(null);
+  const [stale, setStale] = useState<string | null>(null);
 
-  const onPlace = () => {
-    const order = placeOrder();
-    if (order) router.replace('/shop/orders');
+  // The gym's list may have moved since the shop was opened: price the bag against today's.
+  useFocusEffect(
+    useCallback(() => {
+      if (!gym) return;
+      let live = true;
+      void refreshProducts().then((words) => {
+        if (live) setStale(words);
+      });
+      return () => {
+        live = false;
+      };
+    }, [gym]),
+  );
+
+  const onPlace = async () => {
+    if (busy) return;
+    setProblem(null);
+    if (!gym) {
+      if (placeDemo()) router.replace('/shop/orders');
+      return;
+    }
+    setBusy(true);
+    const r = await placeGymOrder();
+    setBusy(false);
+    if (r.ok) router.replace('/shop/orders');
+    else setProblem(r.message);
   };
 
   return (
     <Screen title="Bag" subtitle={bag.length > 0 ? itemsText(priced.count) : undefined} onBack={() => leave(router, '/shop')}>
       {bag.length === 0 ? (
         <View>
+          {problem ? (
+            <View style={{ marginBottom: space.md }}>
+              <InlineError message={problem} />
+            </View>
+          ) : null}
           <EmptyState icon="list" title="Your bag is empty" body="Add something from the shop and it shows here." />
           <GhostButton label="Browse the shop" onPress={() => leave(router, '/shop')} />
         </View>
       ) : (
         <View style={{ gap: space.md }}>
+          {gym ? <QuietLine text={stale} /> : null}
           {priced.lines.map((l) => (
-            <BagRow key={l.key} line={l} onQty={(q) => setQty(l.key, q)} onRemove={() => remove(l.key)} />
+            <BagRow key={l.key} line={l} onQty={(q) => source.setQty(l.key, q)} onRemove={() => source.remove(l.key)} />
           ))}
 
           <View
@@ -57,10 +94,17 @@ export function BagScreen() {
             <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h2, color: color.ink }}>{rupees(priced.totalP)}</Text>
           </View>
 
-          {/* Review fix: no "pay at the desk" while orders are demos — a member could walk to the
-              desk for an order the gym never got. */}
-          <DemoNote text={`${DEMO_ORDER_LINE}. Nothing is charged and nothing is kept for you yet.`} />
-          <PrimaryButton label="Place demo order" onPress={onPlace} disabled={priced.count === 0} />
+          {/* Review fix (S1): no "pay at the desk" on a demo order — a member could walk to the
+              desk for an order the gym never got. The gym's own orders do reach the desk. */}
+          <DemoNote text={gym ? PAY_AT_DESK_LINE : `${DEMO_ORDER_LINE}. Nothing is charged and nothing is kept for you yet.`} />
+          <InlineError message={problem} />
+          <PrimaryButton
+            label={gym ? 'Place order' : 'Place demo order'}
+            accessibilityLabel={gym ? `Place order, ${rupees(priced.totalP)}, pay at the desk` : undefined}
+            onPress={() => void onPlace()}
+            loading={busy}
+            disabled={priced.count === 0}
+          />
           <GhostButton label="My orders" onPress={() => router.push('/shop/orders')} />
         </View>
       )}

@@ -9,10 +9,12 @@
 #     tapped; the 4 Dashboard tiles' screens (Statistics, Exercises, Measures, Calendar + its Year
 #     view); a feed card and its ⋯; a workout page and its ⋯; an exercise page's 3 tabs.
 #  3. Settings (R6): the list and 3 pages (Units, Workouts, About); Edit profile.
-#  4. Shop (S1): the demo line and grid, a product, Add to bag, the Bag, Place demo order, My
-#     orders ("Demo order — not sent to your gym"), Cancel order.
+#  4. Shop (S2, the gym's real shop on the LIVE server): the join card, join the test gym FORGE1 as
+#     "QA Member", its products, the shaker, Add to bag, the Bag, Place order, "Order N placed",
+#     My orders (Ordered), Cancel order (Cancelled by you), Leave; then the sample shop (S1 demo).
 # Saves no workout (part M reads its count afresh). The chart's chip and range are put back to
-# Kg/Lb lifted and Last 12 weeks. The one demo order placed is cancelled (kept on the phone).
+# Kg/Lb lifted and Last 12 weeks. The one gym order placed is cancelled (its stock goes back) and
+# the phone leaves the gym, so the Shop ends on the join card.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -382,7 +384,11 @@ appId: com.forgeai.app
 - assertVisible: "Link"
 - takeScreenshot: r-20-edit-profile
 - back
-# ---------------------------------------------------------------- 4. the Shop
+# ---------------------------------------------------------------- 4. the Shop (S2: the gym's real shop)
+# Not joined yet, the Shop tab is the join card. Join the fixed test gym (code FORGE1, "ForgeAI
+# Test Gym", supabase/migrations/0002_shop.sql) as "QA Member" — this talks to the LIVE server,
+# so every wait after a tap that calls it is long. The shaker is ordered, then cancelled (its
+# stock goes back), and the phone leaves the gym at the end so later parts (P7) meet the join card.
 - extendedWaitUntil:
     visible: "^Shop$"
     timeout: 15000
@@ -390,17 +396,64 @@ appId: com.forgeai.app
     text: "^Shop$"
     index: 0
 - extendedWaitUntil:
-    visible: 'Demo shop — these are sample products.*'
+    visible: "^Your gym's shop$"
     timeout: 20000
-- assertVisible: "My orders"
-- assertVisible: "^Protein$"
-- assertVisible: "Bag, empty"
-- takeScreenshot: r-21-shop-grid
-- tapOn: 'Whey protein 1 kg, .*'
+- assertVisible: "Enter the code from your gym"
+- assertVisible: "See a sample shop"
+- takeScreenshot: r-21-shop-join
+# The code box cleans what is typed to capitals, letters and digits. The emulator can drop the
+# first key into a freshly focused box (trap 5): if the box does not read FORGE1, type it again.
+- tapOn: "Gym code"
+- inputText: "FORGE1"
+- runFlow:
+    when:
+      notVisible: "^FORGE1$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "FORGE1"
+- assertVisible: "^FORGE1$"
+# The name starts as the profile's name; replace it.
+- tapOn: "Name on your orders"
+- eraseText: 70
+- inputText: " QA Member"
+- takeScreenshot: r-21b-shop-join-filled
+# Enter on the name box joins (it is the keyboard's "Go"). Wait for the gym's shop; only if the
+# phone is still on the join card after that (the keyboard swallowed Enter, or the join failed),
+# tap Join. (The Join button keeps its word while joining, so "still visible" alone proves nothing.)
+- pressKey: Enter
 - extendedWaitUntil:
-    visible: "^Whey protein 1 kg$"
+    visible: "^ForgeAI Test Gym$"
+    timeout: 45000
+    optional: true
+- runFlow:
+    when:
+      visible: "^Your gym's shop$"
+    commands:
+      - scrollUntilVisible:
+          element: "^Join$"
+          centerElement: true
+          timeout: 10000
+      - tapOn: "^Join$"
+- extendedWaitUntil:
+    visible: "^ForgeAI Test Gym$"
+    timeout: 45000
+- extendedWaitUntil:
+    visible: 'Whey protein 1 kg, .*'
+    timeout: 45000
+- assertVisible: "Your gym's shop · pay at the desk"
+- assertVisible: "My orders"
+- assertVisible: "Bag, empty"
+- assertNotVisible: 'Sample shop — .*'
+- takeScreenshot: r-21c-shop-grid
+- scrollUntilVisible:
+    element: 'Shaker bottle 700 ml, .*'
+    centerElement: true
+    timeout: 20000
+- tapOn: 'Shaker bottle 700 ml, .*'
+- extendedWaitUntil:
+    visible: "^Shaker bottle 700 ml$"
     timeout: 15000
-- assertVisible: "Chocolate.*"
 - takeScreenshot: r-22-shop-product
 - scrollUntilVisible:
     element: "Add to bag"
@@ -423,21 +476,29 @@ appId: com.forgeai.app
     visible: "^Bag$"
     timeout: 15000
 - scrollUntilVisible:
-    element: "Place demo order"
+    element: "^Place order$"
     centerElement: true
     timeout: 15000
-- assertVisible: "Demo order — not sent to your gym\\. Nothing is charged and nothing is kept for you yet\\."
+- assertVisible: 'Pay at the desk when you collect it\. Nothing is charged in the app\.'
+- assertNotVisible: "Place demo order"
 - takeScreenshot: r-23-bag
-- tapOn: "Place demo order"
+- tapOn: "^Place order$"
+# The order goes to the gym's server; My orders opens with the placed line on top.
 - extendedWaitUntil:
-    visible: "^My orders$"
-    timeout: 15000
-- assertVisible: "^Demo order — not sent to your gym$"
-- assertVisible: "^Ordered$"
-- assertVisible: "Demo only: your gym does not see this order\\."
+    visible: 'Order \d+ placed\. Pay at the desk when you collect it\.'
+    timeout: 45000
+- assertVisible: "^My orders$"
+- extendedWaitUntil:
+    visible: "Ordered — the gym is getting it ready"
+    timeout: 20000
+- assertVisible: '\d+ × Shaker bottle 700 ml'
 - takeScreenshot: r-24-my-orders
 # Cancel it: the app's own question; its red "Cancel order" is the one under its title (the
 # order card's own "Cancel order" sits behind the sheet).
+- scrollUntilVisible:
+    element: "Cancel order"
+    centerElement: true
+    timeout: 15000
 - tapOn: "Cancel order"
 - extendedWaitUntil:
     visible: 'Cancel this order\?'
@@ -448,8 +509,8 @@ appId: com.forgeai.app
     below:
       text: 'Cancel this order\?'
 - extendedWaitUntil:
-    visible: "^Cancelled$"
-    timeout: 10000
+    visible: "Cancelled by you"
+    timeout: 45000
 # A cancelled order can no longer be cancelled (its button goes once the sheet has slid away).
 - extendedWaitUntil:
     notVisible: "Cancel order"
@@ -459,11 +520,42 @@ appId: com.forgeai.app
 - back
 - runFlow:
     when:
-      notVisible: 'Demo shop — these are sample products.*'
+      notVisible: "^ForgeAI Test Gym$"
     commands:
       - back
 - extendedWaitUntil:
-    visible: 'Demo shop — these are sample products.*'
+    visible: "^ForgeAI Test Gym$"
+    timeout: 15000
+# Leave the gym (the row at the shop's end): the app's own question, then the join card again.
+- scrollUntilVisible:
+    element: "^Leave$"
+    centerElement: true
+    timeout: 20000
+- assertVisible: "Gym: ForgeAI Test Gym"
+- tapOn: "^Leave$"
+- extendedWaitUntil:
+    visible: 'Leave ForgeAI Test Gym''s shop\?'
+    timeout: 10000
+- takeScreenshot: r-27-leave-question
+- tapOn: "Leave shop"
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 15000
+- takeScreenshot: r-27b-shop-join-again
+# The sample shop (S1 demo) opens from the join card, plainly labelled; Back returns to the card.
+- scrollUntilVisible:
+    element: "See a sample shop"
+    centerElement: true
+    timeout: 15000
+- tapOn: "See a sample shop"
+- extendedWaitUntil:
+    visible: "^Sample shop$"
+    timeout: 15000
+- assertVisible: 'Sample shop — these are example products.*'
+- takeScreenshot: r-28-sample-shop
+- back
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
     timeout: 15000
 - tapOn:
     text: "^Workout$"

@@ -1,5 +1,5 @@
 /**
- * One product (S1): its pictures, name, price, stock, description, options (flavour / size /
+ * One product (S1; S2 reads the gym's own list once joined — shopSource.ts): its pictures, name, price, stock, description, options (flavour / size /
  * colour, each with its own price and stock when it has them), a quantity and "Add to bag".
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -10,19 +10,20 @@ import { Chip, EmptyState, GhostButton, PrimaryButton, Screen } from '@/componen
 import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { color, space, type } from '@/theme/tokens';
 
-import { findProduct, getCatalog } from './catalog';
+import { findProduct } from './catalog';
 import { bagBadgeCount, clampQty, defaultOptionId, lineKey, maxQty, picturesOf, rupees, stockFor, stockText, unitPriceP } from './money';
 import { ProductArt } from './ProductArt';
 import { BagButton, QtyStepper, leave } from './ShopParts';
-import { useShop } from './shopStore';
+import { useShopSource } from './shopSource';
 import type { Product } from './types';
 
 export function ProductScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = typeof params.id === 'string' ? params.id : '';
-  const product = findProduct(getCatalog(), id);
-  const bag = useShop((s) => s.bag);
+  const source = useShopSource();
+  const product = findProduct(source.products, id);
+  const bag = source.bag;
   const back = () => leave(router, '/shop');
   const bagButton = <BagButton count={bagBadgeCount(bag)} onPress={() => router.push('/shop/bag')} />;
 
@@ -46,8 +47,9 @@ function ProductBody({ product, onBack, bagButton }: { product: Product; onBack:
   const [optionId, setOptionId] = useState<string | null>(() => defaultOptionId(product));
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState<number | null>(null);
-  const add = useShop((s) => s.add);
-  const inBag = useShop((s) => s.bag.find((l) => lineKey(l.productId, l.optionId) === lineKey(product.id, optionId))?.qty ?? 0);
+  const source = useShopSource();
+  const add = source.add;
+  const inBag = source.bag.find((l) => lineKey(l.productId, l.optionId) === lineKey(product.id, optionId))?.qty ?? 0;
 
   const stock = stockFor(product, optionId);
   const room = Math.max(0, maxQty(product, optionId) - inBag);

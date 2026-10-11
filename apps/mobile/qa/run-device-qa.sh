@@ -380,8 +380,9 @@ fi
 # ---------------------------------------------------------------- part R (the 3-tab redesign, photographed)
 # Workout tab (Up next, folders, a routine's and a folder's ⋯, Explore), Profile (header, the
 # chart in each chip and range, a bar tapped, the 4 tiles' screens, a feed card and its ⋯, a
-# workout page, an exercise page's 3 tabs), Settings and 3 of its pages, Edit profile, and the demo
-# Shop through a demo order and its cancel (redesign-r.yaml). Saves no workout. Its screenshots
+# workout page, an exercise page's 3 tabs), Settings and 3 of its pages, Edit profile, and the
+# gym's real Shop on the LIVE server: join the test gym FORGE1, order the shaker, see it Ordered,
+# cancel it, leave; then the sample shop (redesign-r.yaml). Saves no workout. Its screenshots
 # (r-*.png) are gathered in qa-out/redesign/ (Maestro writes them into the part's output folder,
 # or on an older Maestro the working folder).
 free_maestro
@@ -402,7 +403,7 @@ log "REDESIGN TOUR: $(find "$OUT/redesign" -name "r-*.png" 2>/dev/null | wc -l |
 # Run once with the emulator's gesture navigation (part P7BIG) and once with Android's 3-button
 # bar (part P7NAV3) when this image can switch to it by adb. Font size and navigation are put
 # back before part M. Saves nothing, so part M's workout count is not changed by this part.
-P7_SHOTS=11  # screenshots every tour takes, whichever way its workout step goes (13 when it starts one)
+P7_SHOTS=12  # screenshots every tour takes, whichever way its workout step goes (14 when it starts one)
 p7_font() { adb shell settings get system font_scale 2>/dev/null | tr -d '\r'; }
 # 0 = 3-button, 1 = 2-button, 2 = gestures (Android's own setting, kept in step with the overlay).
 p7_nav() { adb shell settings get secure navigation_mode 2>/dev/null | tr -d '\r'; }

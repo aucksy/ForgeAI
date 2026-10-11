@@ -217,14 +217,15 @@ const DEMO_PRODUCTS: readonly Product[] = [
 ];
 
 /**
- * THE catalog source. Today: the demo products. Later (S4): the gym's own catalog from the
- * server — same shape, so the screens do not change. Only active products are returned.
+ * The SAMPLE shop's catalog (the demo products, opened from the join card's "See a sample shop").
+ * The gym's own list (S2) comes from the server in the same shape (gym.ts → productsFromRows) and
+ * is kept in gymStore.ts; shopSource.ts picks which one a page shows. Only active products.
  */
 export function getCatalog(): readonly Product[] {
   return DEMO_PRODUCTS.filter((p) => p.active);
 }
 
-/** True while the catalog is the built-in demo (drives the "Demo shop" line). */
+/** True: getCatalog() is always the built-in demo (the gym's own list never comes from here). */
 export function isDemoCatalog(): boolean {
   return true;
 }

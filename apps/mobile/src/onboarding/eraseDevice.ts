@@ -8,6 +8,7 @@
  *     cache (picked or shared import files, data files, share pictures, routine files),
  *   - the AI keys (SecureStore) — the next person must not spend the last one's credit,
  *   - the gym link and its signed-in session, and the Drive link,
+ *   - the Shop: the sample shop's bag and demo orders, and the gym shop's member key and lists,
  *   - the app's settings (units, AI choices, tracker and phone preferences).
  *
  * NOT here, and said on the confirm instead: workouts already sent to Health Connect. Android
@@ -132,6 +133,23 @@ function deviceSteps(): EraseStep[] {
         useShop.setState({ bag: [], orders: [] });
         const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
         await AsyncStorage.removeItem('forgeai-shop');
+      },
+    },
+    {
+      // S2: the gym's real shop — its member key, cached list, orders and bag. Forgotten on the
+      // phone first; then the server is told the key is retired (best-effort, a few seconds at
+      // most, so an erase offline never hangs).
+      name: 'gym-shop',
+      run: async () => {
+        const { GYM_SHOP_STORAGE_KEY, useGymShop } = await import('@/shop/gymStore');
+        const key = useGymShop.getState().link?.memberKey ?? null;
+        useGymShop.getState().unlink(null);
+        const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+        await AsyncStorage.removeItem(GYM_SHOP_STORAGE_KEY);
+        if (key) {
+          const { apiLeaveQuietly } = await import('@/shop/gymApi');
+          await apiLeaveQuietly(key);
+        }
       },
     },
     {

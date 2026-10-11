@@ -1,6 +1,6 @@
 /**
- * Small pieces the Shop screens share (S1): the bag button with its count, the quantity stepper,
- * the calm demo line, and the back arrow's fallback.
+ * Small pieces the Shop screens share (S1, S2): the bag button with its count, the quantity
+ * stepper, the calm note, the "My orders" row, and the back arrow's fallback.
  */
 import type { Href } from 'expo-router';
 import { Text, View } from 'react-native';
@@ -10,8 +10,10 @@ import { Icon } from '@/components/ui';
 import { PressScale } from '@/components/ui/PressScale';
 import { color, radius, space, type } from '@/theme/tokens';
 
-/** The words at the top of the Shop while the catalog is the demo. */
-export const DEMO_SHOP_LINE = 'Demo shop — these are sample products. Your gym’s own shop comes later.';
+/** The words at the top of the sample shop (the S1 demo catalog, opened from the join card). */
+export const DEMO_SHOP_LINE = "Sample shop — these are example products, not your gym's. Orders here are demos: nothing is sent or charged.";
+/** Under the gym's own shop and its bag: money never moves in the app. */
+export const PAY_AT_DESK_LINE = 'Pay at the desk when you collect it. Nothing is charged in the app.';
 /** On every demo order. */
 export const DEMO_ORDER_LINE = 'Demo order — not sent to your gym';
 
@@ -126,6 +128,59 @@ export function QtyStepper({ qty, max, onChange, what }: { qty: number; max: num
     </View>
   );
 }
+
+/** The "My orders" row under the shop's title. */
+export function MyOrdersRow({ count, onPress }: { count: number; onPress: () => void }) {
+  return (
+    <PressScale
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={count > 0 ? `My orders, ${count}` : 'My orders'}
+      style={{
+        marginTop: space.md,
+        minHeight: 48,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: space.md,
+        paddingHorizontal: space.md,
+        paddingVertical: space.sm,
+        borderRadius: radius.md,
+        backgroundColor: color.surface,
+        borderWidth: 1,
+        borderColor: color.border,
+      }}
+    >
+      <Icon name="list" size={18} color={color.inkSecondary} />
+      <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>My orders</Text>
+      {count > 0 ? <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.inkMuted }}>{count}</Text> : null}
+      <Icon name="chevron-right" size={18} color={color.inkMuted} />
+    </PressScale>
+  );
+}
+
+/** A quiet grey line ("Couldn't refresh — showing the last list."), spoken when it appears. */
+export function QuietLine({ text }: { text: string | null }) {
+  if (!text) return null;
+  return (
+    <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 }}>
+      {text}
+    </Text>
+  );
+}
+
+/** A text box in the Shop's forms (the join card), as Edit profile draws them. */
+export const shopInputStyle = {
+  backgroundColor: color.surfaceSunken,
+  borderWidth: 1,
+  borderColor: color.border,
+  borderRadius: radius.md,
+  paddingHorizontal: space.md,
+  paddingVertical: space.sm,
+  minHeight: 48,
+  color: color.ink,
+  fontFamily: type.bodyMedium,
+  fontSize: type.size.body,
+} as const;
 
 /** The calm demo note: grey text on a quiet strip, never a warning colour. */
 export function DemoNote({ text }: { text: string }) {
