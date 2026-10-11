@@ -6,6 +6,8 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  onlyLeftText,
+  stockLeftForKey,
   canCancelGymOrder,
   cancelErrorText,
   classifyRpcError,
@@ -377,5 +379,23 @@ describe('order caps (0003)', () => {
     expect(many.message).toMatch(/last hour/);
     expect(many.removeKey).toBeNull();
     expect(placeFailure({ kind: 'TOO_BIG' }, [], []).message).toMatch(/too big/);
+  });
+});
+
+describe('sold out vs fewer left (review)', () => {
+  const plain = { id: 'p1', name: 'Gym towel', category: 'gear', description: '', priceP: 29900, options: [], stock: 2, active: true, art: { kind: 'towel', tint: '#2F7D6D' } } as const;
+  const opt = { ...plain, id: 'p2', name: 'Gloves', stock: 1, options: [{ id: 'm', label: 'M', stock: 1 }, { id: 'l', label: 'L', stock: 0 }] } as const;
+  const bag = [{ productId: 'p1', optionId: null, qty: 3 }, { productId: 'p2', optionId: 'm', qty: 2 }, { productId: 'p2', optionId: 'l', qty: 1 }];
+  it('counts what is still for sale for a bag line', () => {
+    const products = [plain, opt] as never;
+    expect(stockLeftForKey(bag, products, 'p1::')).toBe(2);
+    expect(stockLeftForKey(bag, products, 'p2::m')).toBe(1);
+    expect(stockLeftForKey(bag, products, 'p2::l')).toBe(0);
+    expect(stockLeftForKey(bag, products, 'nope::')).toBe(0);
+    expect(stockLeftForKey(bag, [{ ...plain, active: false }] as never, 'p1::')).toBe(0);
+  });
+  it('says how many are left', () => {
+    expect(onlyLeftText('Gym towel', 2)).toBe('Only 2 of Gym towel left now. Tap Place order again to get those 2.');
+    expect(onlyLeftText('Gym towel', 1)).toMatch(/to get it\.$/);
   });
 });

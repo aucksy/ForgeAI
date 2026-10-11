@@ -13,10 +13,12 @@ import {
   cleanMemberName,
   findLandedOrder,
   joinErrorText,
+  onlyLeftText,
   orderLinesFor,
   orderPlacedText,
   placeFailure,
   refreshErrorText,
+  stockLeftForKey,
   type GymError,
 } from './gym';
 import { useGymShop } from './gymStore';
@@ -105,8 +107,14 @@ export async function placeGymOrder(): Promise<PlaceOutcome> {
     if (lostKey(r.error)) return { ok: false, message: UNLINKED_TEXT };
     const now = useGymShop.getState();
     const f = placeFailure(r.error, now.bag, now.products);
-    if (f.removeKey) now.setBag(removeLine(now.bag, f.removeKey));
     if (f.refresh) await refreshProducts();
+    if (f.removeKey) {
+      // Fetch first, then decide: "sold out" can mean "fewer left than you asked for".
+      const fresh = useGymShop.getState();
+      const left = stockLeftForKey(fresh.bag, fresh.products, f.removeKey);
+      if (left > 0) return { ok: false, message: onlyLeftText(r.error.name || 'this', left) };
+      fresh.setBag(removeLine(fresh.bag, f.removeKey));
+    }
     return { ok: false, message: f.message };
   }
   const after = useGymShop.getState();

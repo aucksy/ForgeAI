@@ -308,9 +308,11 @@ function ProductGrid({
   const { width } = useWindowDimensions();
   const gap = space.md;
   const cardW = Math.floor((width - space.screenX * 2 - gap) / 2);
-  const shown = useMemo(() => (filter === 'all' ? products : products.filter((p) => p.category === filter)), [products, filter]);
   // Only the categories this shop sells (the gym may not stock every kind).
   const chips = useMemo(() => SHOP_CATEGORIES.filter((c) => products.some((p) => p.category === c.id)), [products]);
+  // A chip whose last product went away (hidden by the gym) must not leave an empty grid behind.
+  const active: Filter = filter !== 'all' && chips.length > 1 && chips.some((c) => c.id === filter) ? filter : 'all';
+  const shown = useMemo(() => (active === 'all' ? products : products.filter((p) => p.category === active)), [products, active]);
   const rows: Product[][] = [];
   for (let i = 0; i < shown.length; i += 2) rows.push(shown.slice(i, i + 2));
 
@@ -325,7 +327,7 @@ function ProductGrid({
           contentContainerStyle={{ paddingHorizontal: space.screenX, gap: space.sm, paddingVertical: CHIP_TOUCH_SLOP }}
         >
           {[{ id: 'all' as const, label: 'All' }, ...chips].map((c) => (
-            <Chip key={c.id} role="radio" label={c.label} selected={filter === c.id} onPress={() => onFilter(c.id)} />
+            <Chip key={c.id} role="radio" label={c.label} selected={active === c.id} onPress={() => onFilter(c.id)} />
           ))}
         </ScrollView>
       ) : null}

@@ -278,6 +278,26 @@ export const UNLINKED_TEXT = 'This phone is no longer joined to the gym. Join ag
 // ------------------------------------------------------------------ the bag against the live list
 
 /** The bag line whose name (option included) is `name`, as its key; null when none. PURE. */
+/**
+ * After SOLD_OUT, with the list fetched again: how many of that bag line are still for sale.
+ * The server says SOLD_OUT whenever stock is below the quantity asked for, not only at 0, so a
+ * line with some left stays in the bag (the order sends at most what is left). PURE.
+ */
+export function stockLeftForKey(bag: readonly BagLine[], products: readonly Product[], key: string): number {
+  const l = bag.find((x) => lineKey(x.productId, x.optionId) === key);
+  if (!l) return 0;
+  const p = products.find((x) => x.id === l.productId);
+  if (!p || !p.active) return 0;
+  if (l.optionId === null) return p.options.length > 0 ? 0 : Math.max(0, p.stock);
+  const o = p.options.find((x) => x.id === l.optionId);
+  return o ? Math.max(0, o.stock) : 0;
+}
+
+/** The words when some, but not all, of a bag line is left. PURE. */
+export function onlyLeftText(name: string, left: number): string {
+  return `Only ${left} of ${name} left now. Tap Place order again to get ${left === 1 ? 'it' : `those ${left}`}.`;
+}
+
 export function lineKeyNamed(bag: readonly BagLine[], products: readonly Product[], name: string): string | null {
   const want = name.trim().toLowerCase();
   if (!want) return null;
