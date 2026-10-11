@@ -24,9 +24,12 @@ import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
+import { ShareTextRow } from '@/tracker/components/ShareTextRow';
 import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coachNote';
 import { finishAnswer, getSessionSummary, volumeComparison, workoutName } from '@/tracker/services/finishSummary';
+import { workoutMilestone } from '@/tracker/services/milestones';
 import { applyRoutineOffer, takeRoutineOffer } from '@/tracker/services/routineOffer';
+import { workoutText } from '@/tracker/services/shareText';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
 import { workoutShareInput } from '@/tracker/share/workoutInput';
@@ -109,6 +112,19 @@ export default function FinishScreen() {
     };
   }, [data, coachNotesPref]);
 
+  // Audit Phase 9 (#4): this workout's milestone, if it is one (never blocks the summary).
+  const [milestone, setMilestone] = useState<string | null>(null);
+  useEffect(() => {
+    if (!data || !id) return;
+    let alive = true;
+    void workoutMilestone(id).then((m) => {
+      if (alive) setMilestone(m);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [data, id]);
+
   const comparison = data ? volumeComparison(data.totalVolumeKg) : null;
 
   return (
@@ -127,6 +143,15 @@ export default function FinishScreen() {
                 <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: '#1F0D05' }}>
                   {workoutName(data)} done
                 </Text>
+                {/* Audit Phase 9 (#4): "Your 100th workout" — 1st, 10th, 25th, 50th, 100th… */}
+                {milestone ? (
+                  <Text
+                    accessibilityRole="header"
+                    style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: '#1F0D05', marginBottom: 2 }}
+                  >
+                    {milestone}
+                  </Text>
+                ) : null}
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
                   {finishAnswer(data)}
                 </Text>
@@ -160,6 +185,8 @@ export default function FinishScreen() {
           <View style={{ gap: space.md, marginTop: space.sm }}>
             <PrimaryButton label="Done" icon="check" onPress={() => router.replace('/')} />
             <GhostButton label="Share as a picture" icon="send" onPress={() => setSharing(true)} />
+            {/* Quieter: the workout as plain text, for any AI chat. */}
+            <ShareTextRow title={workoutName(data)} getText={() => workoutText(data)} />
             <GhostButton label="View history" icon="calendar" onPress={() => router.replace('/history')} />
           </View>
           {scene ? (

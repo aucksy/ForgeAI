@@ -31,6 +31,13 @@ interface SetRow {
 const COLS = `se.session_id, se.exercise_id, se.weight_kg, se.reps, se.duration_sec, se.distance_m, se.load_mode,
               ws.date_iso AS date_iso, ws.started_at AS started_at`;
 const ORDER = 'ORDER BY ws.started_at ASC, ws.date_iso ASC, se.session_id ASC, se.set_number ASC';
+/**
+ * Tracker schema v14 ("Start records fresh"): a workout on a day before the exercise's records
+ * start never counts for its records (History and the charts keep it). A day, not a moment: a
+ * workout earlier on the day it was set still counts — including the one being logged.
+ */
+const SINCE_START = `AND NOT EXISTS (SELECT 1 FROM exercise_prefs rp
+                      WHERE rp.exercise_id = se.exercise_id AND rp.records_from IS NOT NULL AND ws.date_iso < rp.records_from)`;
 
 /**
  * Working sets of these exercises (all of them when omitted), oldest workout first. Phase 4:
@@ -41,7 +48,7 @@ async function readWorkingSets(exerciseIds?: readonly string[]): Promise<SetRow[
   if (exerciseIds == null) {
     return db.getAllAsync<SetRow>(
       `SELECT ${COLS} FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
-        WHERE se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0 ${ORDER}`,
+        WHERE se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0 ${SINCE_START} ${ORDER}`,
     );
   }
   const unique = [...new Set(exerciseIds)];
@@ -51,7 +58,7 @@ async function readWorkingSets(exerciseIds?: readonly string[]): Promise<SetRow[
     out.push(
       ...(await db.getAllAsync<SetRow>(
         `SELECT ${COLS} FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
-          WHERE se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0
+          WHERE se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0 ${SINCE_START}
             AND se.exercise_id IN (${chunk.map(() => '?').join(', ')}) ${ORDER}`,
         chunk,
       )),

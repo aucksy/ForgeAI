@@ -244,6 +244,18 @@ export function usualByText(n: number, today: string): string {
   return i >= 6 ? usualText(n) : `${usualText(n)} by ${WEEKDAYS[i]}`;
 }
 
+/**
+ * Audit Phase 9 (#4): the week's workouts against the member's own goal — the stat reads
+ * "2 / of 4 workouts / 2 to go", then "goal met" (never "-1 to go"). PURE.
+ */
+export function weekGoalStat(done: number, goal: number): { label: string; sub: string } {
+  const d = Math.max(0, Math.floor(done));
+  return {
+    label: `of ${goal} ${goal === 1 ? 'workout' : 'workouts'}`,
+    sub: d >= goal ? 'goal met' : `${goal - d} to go`,
+  };
+}
+
 /** "Estimated 1-rep max 99 kg · up 6% on your usual" / "Best set 25 reps · up 25% on your usual". */
 export function topLiftText(t: Pick<TopLift, 'unit' | 'now' | 'pct'>, units: UnitSystem): string {
   const what = t.unit === 'kg' ? `Estimated 1-rep max ${Math.round(kgToShown(t.now, units))} ${weightUnitOf(units)}` : `Best set ${t.now} ${t.now === 1 ? 'rep' : 'reps'}`;

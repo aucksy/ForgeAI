@@ -304,6 +304,24 @@ log "part N start"
 maestro test --format junit --output "$OUT/part-n.xml" --test-output-dir "$OUT/part-n" "$QA_DIR/audit3-n.yaml" \
   > "$OUT/part-n.log" 2>&1 || { status=1; log "PART N FAILED"; }
 
+# ---------------------------------------------------------------- part P9 (audit Phase 9: beyond Hevy)
+# Weekly goal on Home, the entry bar's step and "Copy to sets below", "Share as text" to Android's
+# share menu, "Start records fresh" and back (phase9-p.yaml). Saves one workout (part M reads its
+# count afresh). Then the app icon's long-press shortcuts must be in Android's shortcut list:
+# "Log body weight", and "Start …" / "Resume workout" (Shortcuts.kt, from the Today widget's answer).
+free_maestro
+log "part P9 start"
+maestro test --format junit --output "$OUT/part-p9.xml" --test-output-dir "$OUT/part-p9" "$QA_DIR/phase9-p.yaml" \
+  > "$OUT/part-p9.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/p9-failed.png"; log "PART P9 FAILED (part-p9.log, p9-failed.png)"; }
+adb shell dumpsys shortcut > "$OUT/p9-shortcuts.txt" 2>/dev/null || true
+# Labels may be redacted in the dump on some images; the ids ("today", "weight") never are.
+if grep -qE "Log body weight|id=weight" "$OUT/p9-shortcuts.txt" && grep -qE "Start workout|Start [A-Za-z0-9]|Resume workout|id=today" "$OUT/p9-shortcuts.txt"; then
+  log "APP ICON SHORTCUTS: present ($(grep -oE 'longLabel=[^,}]*' "$OUT/p9-shortcuts.txt" | grep -iE 'Start|Resume|body weight' | sort -u | tr '\n' ';' | cut -c1-200))"
+else
+  status=1
+  log "APP ICON SHORTCUTS: MISSING from dumpsys shortcut (p9-shortcuts.txt)"
+fi
+
 # ---------------------------------------------------------------- part P7 (audit Phase 7: large text)
 # The phone's font size at its largest step (font_scale 2.0, Android 14's top setting) and the app
 # restarted, then a screen tour (phase7-bigtext.yaml): Home, the Workout tab, an open workout with

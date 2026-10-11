@@ -7,7 +7,9 @@
  *  3. muscles, logging, easier / harder versions;
  *  4. charts and records; past sessions folded under their count, all of them, page by page.
  * The options menu: Edit and "Merge into…" for the member's own exercises (EX-02); "Your photo
- * or video" and "Hide" for library ones they never logged.
+ * or video" and "Hide" for library ones they never logged; "Start records fresh…" (tracker
+ * schema v14 — a new gym or machine: records count from today, History and charts keep all)
+ * and, once set, "Count all records again".
  */
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -19,7 +21,7 @@ import { ExerciseHero } from '@/components/exercise/ExerciseHero';
 import { SessionHistory } from '@/components/exercise/SessionHistory';
 import { askConfirm, Badge, Card, EmptyState, IconButton, LoadError, Screen, SectionHeader, Sheet, SheetRow, Skeleton, StatTile } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
-import { relativeDay } from '@/lib/date';
+import { relativeDay, tinyDateWithYear } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
 import { trimNum } from '@/lib/format';
 import { navigateOnce } from '@/lib/guardedAction';
@@ -41,6 +43,7 @@ import { Glyph } from '@/tracker/components/TrackerGlyph';
 import { showW } from '@/tracker/components/unitText';
 import { getExerciseIdsByCatalogKey, type TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { hideRefusal, mergeExercise, mergeRefusal, setExerciseHidden } from '@/tracker/db/exerciseManage';
+import { setRecordsFrom } from '@/tracker/db/recordStart';
 import { fmtDuration, LOAD_MODE_LABEL, LOG_TYPE_LABEL } from '@/tracker/engine/logTypes';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { xrmLadder } from '@/tracker/services/exerciseAnalytics';
@@ -48,6 +51,7 @@ import { headlineBest, lastTimeLine } from '@/tracker/services/exerciseHeadline'
 import { deleteKeptMedia } from '@/tracker/services/exerciseMedia';
 import { getExerciseOverview, type ExerciseOverview } from '@/tracker/services/exerciseStats';
 import { recordValueText } from '@/tracker/services/recordText';
+import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { exercisesChanged } from '@/tracker/store/exerciseListStore';
 
 const cap = (s: string) => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
@@ -152,7 +156,12 @@ export default function ExerciseScreen() {
   const stats = ov?.weightStats ?? null;
   // Same volume rule as the Volume chart (both dumbbells, body weight on pull-ups).
   const bestSet = ov?.bestSet ?? [];
-  const ladder = useMemo(() => (stats ? xrmLadder(stats.history) : []), [stats]);
+  // v14: records (the rep-max ladder too) count from the member's chosen day, when set.
+  const recordsFrom = ov?.recordsFrom ?? null;
+  const ladder = useMemo(
+    () => (stats ? xrmLadder(recordsFrom ? stats.history.filter((h) => h.dateISO >= recordsFrom) : stats.history) : []),
+    [stats, recordsFrom],
+  );
   // Phase 3: every record this exercise keeps, from the one record rule.
   const bests = ov?.records.bests ?? [];
   const recordCtx = ex ? { logType: ex.logType, loadMode: ex.loadMode, distUnit: ex.distUnit } : null;
@@ -231,6 +240,42 @@ export default function ExerciseScreen() {
       router.replace({ pathname: '/exercise/[id]', params: { id: into.id } });
     }, "Couldn't merge them. Nothing changed — try again.");
   };
+  /**
+   * v14 "Start records fresh": a new gym, a new machine, a reset of form. Records count from
+   * today (a workout earlier today counts too); History and the charts keep every workout.
+   */
+  const askRecordsFresh = async (): Promise<void> => {
+    setMenu(false);
+    if (!ex) return;
+    const ok = await askConfirm({
+      title: 'Start records fresh?',
+      body: `Records for ${ex.name} will count from today's workouts on. Past workouts stay in History and charts.`,
+      confirmLabel: 'Start fresh',
+    });
+    if (!ok) return;
+    await runOnce(async () => {
+      await setRecordsFrom(ex.id);
+      // Review fix: an open workout's record pop-ups compare with the new bests at once.
+      await useActiveWorkout.getState().refreshBests(ex.id).catch(() => undefined);
+      setAttempt((n) => n + 1);
+    }, "Couldn't change your records. Nothing changed — try again.");
+  };
+  const askCountAll = async (): Promise<void> => {
+    setMenu(false);
+    if (!ex || !recordsFrom) return;
+    const ok = await askConfirm({
+      title: 'Count all records again?',
+      body: `Records for ${ex.name} will count every workout again, including the ones before ${tinyDateWithYear(recordsFrom)}.`,
+      confirmLabel: 'Count all again',
+    });
+    if (!ok) return;
+    await runOnce(async () => {
+      await setRecordsFrom(ex.id, null);
+      await useActiveWorkout.getState().refreshBests(ex.id).catch(() => undefined);
+      setAttempt((n) => n + 1);
+    }, "Couldn't change your records. Nothing changed — try again.");
+  };
+
   const exId = ex?.id;
   const exType = ex?.logType;
   const mergeOnly = useCallback((e: TrackerExercise) => e.id !== exId && e.logType === exType, [exId, exType]);
@@ -300,6 +345,11 @@ export default function ExerciseScreen() {
                     </Text>
                   </View>
                 ) : null}
+                {recordsFrom ? <RecordsSinceLine from={recordsFrom} hasBest={best != null} onCountAll={() => void askCountAll()} /> : null}
+              </Card>
+            ) : recordsFrom ? (
+              <Card style={{ marginBottom: space.lg }}>
+                <RecordsSinceLine from={recordsFrom} hasBest={false} onCountAll={() => void askCountAll()} />
               </Card>
             ) : null}
 
@@ -411,12 +461,41 @@ export default function ExerciseScreen() {
               />
             </>
           )}
+          {recordsFrom ? (
+            <SheetRow label="Count all records again" onPress={() => void askCountAll()} />
+          ) : hasHistory ? (
+            <SheetRow label="Start records fresh…" onPress={() => void askRecordsFresh()} />
+          ) : null}
         </Sheet>
       ) : null}
       {ex && !ex.catalogKey ? (
         <MergePicker visible={merging} name={ex.name} only={mergeOnly} onPick={(t) => void pickMergeTarget(t)} onClose={() => setMerging(false)} />
       ) : null}
     </Screen>
+  );
+}
+
+/**
+ * v14: "Records since 12 Oct · Count all again" — calm, under the best, so the member knows why
+ * an older, heavier set is not the best any more. The link is a 48 dp target.
+ */
+function RecordsSinceLine({ from, hasBest, onCountAll }: { from: string; hasBest: boolean; onCountAll: () => void }) {
+  const day = tinyDateWithYear(from);
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: space.xs }}>
+      <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>
+        {hasBest ? `Records since ${day}` : `No records since ${day} yet`} ·
+      </Text>
+      <Pressable
+        onPress={onCountAll}
+        accessibilityRole="button"
+        accessibilityLabel={`Count all records again, including workouts before ${day}`}
+        hitSlop={{ top: 8, bottom: 8 }}
+        style={{ minHeight: 48, justifyContent: 'center' }}
+      >
+        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.accent }}>Count all again</Text>
+      </Pressable>
+    </View>
   );
 }
 

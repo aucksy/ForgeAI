@@ -1,0 +1,221 @@
+# Audit Phase 9 device QA, part P9 — "beyond Hevy" (runs after part N, before the P7 tours and M).
+#  1. Profile → Workout → Weekly goal "3": Home's This week reads "of 3 workouts"; then Off again.
+#  2. A workout: Bench Press, two sets. The entry bar on the keyboard: "+ 2.5" (kg) or "+ 5" (lb,
+#     part I's units) steps the weight box; "Copy to sets below" fills set 2 ("Copied to 1 set below"
+#     with Undo); "+ 1" steps the reps. Both sets ticked, then Finish.
+#  3. Finish screen: "Share as text" opens Android's share menu with the workout as text.
+#  4. Bench Press page: ⋯ → "Start records fresh…" → "Start fresh": "Records since …" shows;
+#     ⋯ → "Count all records again" → "Count all again": the line goes.
+# Saves one workout (part M reads its count afresh, before its backup).
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+# ---------------------------------------------------------------- 1. weekly goal
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "(?i)^weekly goal$"
+    centerElement: true
+    timeout: 60000
+- tapOn:
+    text: "^3$"
+    below:
+      text: "(?i)^weekly goal$"
+- assertVisible: "Workouts a week. Home and Progress count towards it."
+- takeScreenshot: p9-01-weekly-goal
+- tapOn:
+    text: "^Home$"
+    index: 0
+- scrollUntilVisible:
+    element: "of 3 workouts"
+    centerElement: true
+    timeout: 30000
+- assertVisible: "(\\d to go|goal met)"
+- takeScreenshot: p9-02-home-goal
+# ---------------------------------------------------------------- 2. the entry bar
+- tapOn: "^Workout$"
+- scrollUntilVisible:
+    element: "Start empty workout"
+    centerElement: true
+    timeout: 30000
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+- tapOn: "Add exercise"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " bench press"
+- tapOn:
+    text: "Select Barbell Bench Press"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: ".* set 1 weight, (kilograms|pounds)"
+    timeout: 20000
+# A second set to copy into (an empty exercise may start with one).
+- runFlow:
+    when:
+      notVisible: ".* set 2 weight, (kilograms|pounds)"
+    commands:
+      - scrollUntilVisible:
+          element: "Add set"
+          centerElement: true
+          timeout: 20000
+      - tapOn: "Add set"
+- extendedWaitUntil:
+    visible: ".* set 2 weight, (kilograms|pounds)"
+    timeout: 10000
+- tapOn: ".* set 1 weight, (kilograms|pounds)"
+- eraseText
+- inputText: "100"
+# The bar sits on the keyboard: one step up (2.5 kg, or 5 lb).
+- extendedWaitUntil:
+    visible: "Copy to sets below"
+    timeout: 10000
+- takeScreenshot: p9-03-entry-bar
+- tapOn: "\\+ (2\\.5|5)"
+- extendedWaitUntil:
+    visible: "^(102\\.5|105)$"
+    timeout: 5000
+- tapOn: "Copy to sets below"
+- extendedWaitUntil:
+    visible: "Copied to 1 set below"
+    timeout: 5000
+- takeScreenshot: p9-04-copied
+- tapOn: ".* set 1 reps"
+- eraseText
+- inputText: "8"
+- tapOn: "\\+ 1"
+- extendedWaitUntil:
+    visible: "^9$"
+    timeout: 5000
+- hideKeyboard
+# Set 2 got set 1's weight (and its reps at the time of the copy: none yet → its own hint).
+- assertVisible:
+    text: "^(102\\.5|105)$"
+    below:
+      text: ".* set 1 reps"
+- tapOn:
+    text: "Mark .* set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- tapOn:
+    text: "Mark .* set 2 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+- takeScreenshot: p9-05-ticked
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- tapOn:
+    text: "Keep original"
+    optional: true
+# ---------------------------------------------------------------- 3. share as text
+- scrollUntilVisible:
+    element: "Share as text"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: p9-06-finish
+- tapOn: "Share as text"
+# Android's share menu (only the SYSTEM chooser has these).
+- extendedWaitUntil:
+    visible: '(Copy|Nearby|Sharing text|Here is my workout from ForgeAI.*)'
+    timeout: 20000
+- takeScreenshot: p9-07-share-text-menu
+- back
+- scrollUntilVisible:
+    element: "Done"
+    timeout: 20000
+- tapOn: "Done"
+# ---------------------------------------------------------------- 4. start records fresh
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 20000
+- tapOn: "^Workout$"
+- tapOn: "Exercise library"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " bench press"
+- hideKeyboard
+- tapOn:
+    text: "View Barbell Bench Press"
+    index: 0
+- extendedWaitUntil:
+    visible: "How to do it|Heaviest weight"
+    timeout: 15000
+- tapOn: "Options for .*"
+- tapOn: "Start records fresh.*"
+- extendedWaitUntil:
+    visible: 'Start records fresh\?'
+    timeout: 10000
+- takeScreenshot: p9-08-records-fresh-ask
+- tapOn: "^Start fresh$"
+- scrollUntilVisible:
+    element: "(Records since|No records since) .*"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: p9-09-records-since
+- scrollUntilVisible:
+    element: "Options for .*"
+    direction: UP
+    timeout: 20000
+- tapOn: "Options for .*"
+- tapOn: "Count all records again"
+- extendedWaitUntil:
+    visible: 'Count all records again\?'
+    timeout: 10000
+- tapOn: "^Count all again$"
+- extendedWaitUntil:
+    notVisible: "(Records since|No records since) .*"
+    timeout: 10000
+- back
+- back
+# ---------------------------------------------------------------- weekly goal off again
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 20000
+- tapOn: "^Profile$"
+- scrollUntilVisible:
+    element: "(?i)^weekly goal$"
+    centerElement: true
+    timeout: 60000
+- tapOn:
+    text: "^Off$"
+    below:
+      text: "(?i)^weekly goal$"

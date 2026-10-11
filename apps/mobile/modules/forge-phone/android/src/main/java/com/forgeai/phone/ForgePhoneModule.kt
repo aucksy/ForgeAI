@@ -127,5 +127,15 @@ class ForgePhoneModule : Module() {
         false
       }
     }
+
+    // ---------------------------------------------------------------- app icon shortcuts (audit Phase 9)
+    Function("shortcutsSave") { json: String ->
+      val c = ctx ?: return@Function false
+      try {
+        Shortcuts.save(c, json)
+      } catch (_: Throwable) {
+        false
+      }
+    }
   }
 }

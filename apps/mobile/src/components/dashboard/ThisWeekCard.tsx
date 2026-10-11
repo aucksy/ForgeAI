@@ -5,7 +5,8 @@ import { todayISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
 import { fmtVol } from '@/lib/units';
 import { color, space, type } from '@/theme/tokens';
-import { usualByText, type WeekVsUsual } from '@/tracker/engine/progressTop';
+import { usualByText, weekGoalStat, type WeekVsUsual } from '@/tracker/engine/progressTop';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import type { UnitSystem } from '@/types/models';
 
 interface ThisWeekCardProps {
@@ -37,6 +38,9 @@ export function ThisWeekCard({ week, streakWeeks, kgLifted, unitSystem }: ThisWe
   const { week: w, usual, usualByNow } = week;
   const by = usual && usualByNow ? usualByNow : null;
   const today = todayISO();
+  // Audit Phase 9: the member's own weekly goal, when set, says how far this week is.
+  const goal = useTrackerPrefs((s) => s.weeklyGoal);
+  const goalStat = goal ? weekGoalStat(w.workouts, goal) : null;
   const facts = [
     streakWeeks > 0 ? `${streakWeeks} ${streakWeeks === 1 ? 'week' : 'weeks'} in a row` : null,
     kgLifted > 0 ? `${fmtVol(kgLifted, unitSystem)} lifted` : null,
@@ -47,7 +51,7 @@ export function ThisWeekCard({ week, streakWeeks, kgLifted, unitSystem }: ThisWe
         This week so far
       </Text>
       <View style={{ flexDirection: 'row', gap: space.md }}>
-        <Stat value={fmtInt(w.workouts)} label={w.workouts === 1 ? 'workout' : 'workouts'} sub={by ? usualByText(by.workouts, today) : null} />
+        <Stat value={fmtInt(w.workouts)} label={goalStat ? goalStat.label : w.workouts === 1 ? 'workout' : 'workouts'} sub={goalStat ? goalStat.sub : by ? usualByText(by.workouts, today) : null} />
         <Stat value={fmtInt(w.sets)} label={w.sets === 1 ? 'set' : 'sets'} sub={by ? usualByText(by.sets, today) : null} />
         <Stat value={fmtInt(w.liftsUp)} label={w.liftsUp === 1 ? 'lift up' : 'lifts up'} sub={null} />
       </View>

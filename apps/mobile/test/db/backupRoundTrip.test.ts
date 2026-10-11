@@ -30,7 +30,7 @@ const FULL_ROWS: [string, Row][] = [
     is_compound: 1, increment_kg: 5, catalog_key: 'own-key', log_type: 'distance', load_mode: 'each', bw_share: 0.5,
     muscles: '{"primary":["quads"]}', media_uri: 'file:///m.jpg', media_type: 'image', dist_unit: 'm',
   }],
-  ['exercise_prefs', { exercise_id: 'ex1', rest_sec: 150 }],
+  ['exercise_prefs', { exercise_id: 'ex1', rest_sec: 150, records_from: '2026-02-01' }],
   ['workout_plans', { id: 'plan1', name: 'PPL', is_active: 1, folder_order: 2, source: 'builder', settings: '{"every":6}' }],
   ['plan_days', { id: 'day1', plan_id: 'plan1', day_type: 'push', day_order: 0, name: 'Push A' }],
   ['plan_exercises', { id: 'pe1', plan_day_id: 'day1', exercise_id: 'ex1', ex_order: 0, target_sets: 4, rep_range_min: 5, rep_range_max: 8,

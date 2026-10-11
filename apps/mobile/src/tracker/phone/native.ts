@@ -15,6 +15,8 @@ export interface ForgePhone {
   widgetSave(json: string): boolean;
   widgetCount(): number;
   widgetPin(kind: 'today' | 'week'): boolean;
+  /** Audit Phase 9: the app icon's long-press shortcuts (JSON list of `AppShortcut`); absent on older builds. */
+  shortcutsSave?(json: string): boolean;
   /** v0.28.0: an export shared to ForgeAI (copied into the app's cache), taken once. */
   takeSharedFile(): Promise<{ uri: string; name: string; type: string } | { error: 'too_big' | 'unreadable' } | null>;
   addListener(event: 'onSharedFile', cb: () => void): { remove: () => void };

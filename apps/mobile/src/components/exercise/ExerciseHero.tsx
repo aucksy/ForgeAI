@@ -40,10 +40,11 @@ export function ExerciseHero({ stats, units }: ExerciseHeroProps) {
         <StatTile label="Heaviest weight" value={bestValue} icon="medal" />
       </View>
       <View style={{ minWidth: 118 }}>
+        {/* v14 "Start records fresh": no 1-rep max since the chosen day reads "—", never "0 kg". */}
         <StatTile
           label="Est. 1-rep max"
-          value={round1(kgToDisplay(stats.prE1rmKg ?? 0, units))}
-          unit={unit}
+          value={stats.prE1rmKg == null ? '—' : round1(kgToDisplay(stats.prE1rmKg, units))}
+          unit={stats.prE1rmKg == null ? undefined : unit}
           icon="medal"
         />
       </View>

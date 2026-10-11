@@ -28,6 +28,8 @@ import { getSessionSetMeta } from '@/tracker/db/trackerSets';
 import { uneditableReason } from '@/tracker/services/editDraft';
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
+import { ShareTextRow } from '@/tracker/components/ShareTextRow';
+import { workoutText } from '@/tracker/services/shareText';
 import { getSessionSummary, sessionTitle } from '@/tracker/services/finishSummary';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
@@ -244,6 +246,18 @@ export default function SessionDetailScreen() {
                   // Let the menu slide away before the share sheet slides up.
                   setTimeout(() => setSharing(true), 260);
                 }}
+              />
+              {/* The same workout as plain text, for any AI chat. */}
+              <ShareTextRow
+                inSheet
+                title={sessionTitle(data.session)}
+                getText={() => workoutText(data)}
+                before={() =>
+                  new Promise<void>((done) => {
+                    setMenu(false);
+                    setTimeout(done, 260);
+                  })
+                }
               />
               <SheetRow
                 label="Save as routine"

@@ -5,17 +5,21 @@
  *  - Track RPE — adds the effort column (set types are always available now);
  *  - AI coach notes — only while the coach is switched on (lib/features.ts, D4).
  *
+ * Audit Phase 9: + "Weekly goal" (Off, 1–7 workouts a week) at the end.
+ *
  * Phase 2, packet D: "Rest alerts: …" (are rest alerts on time? one tap fixes it), the optional
  * "Ring through Do Not Disturb" (Android only, off by default — RT-12), and a default rest that
  * could not be saved says so (RT-11).
  */
 import { useEffect, useState } from 'react';
-import { Platform, Pressable, Text } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 
+import { ChipGroup, type ChipOption } from '@/components/settings/ChipGroup';
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
 import { Card } from '@/components/ui';
 import { color, space, type } from '@/theme/tokens';
 
+import { refreshWidgets } from '../phone/widgets';
 import { fmtRest } from '../services/restRules';
 import { useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { useRestTimer } from '../store/restTimerStore';
@@ -23,7 +27,15 @@ import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { RestAlertsStatusRow } from './RestAlertsStatusRow';
 import { RestPickerSheet } from './RestPickerSheet';
 
+type GoalId = 'off' | '1' | '2' | '3' | '4' | '5' | '6' | '7';
+const GOAL_OPTIONS: readonly ChipOption<GoalId>[] = [
+  { id: 'off', label: 'Off' },
+  ...(['1', '2', '3', '4', '5', '6', '7'] as const).map((n) => ({ id: n, label: n })),
+];
+
 export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: boolean }) {
+  const weeklyGoal = useTrackerPrefs((s) => s.weeklyGoal);
+  const setWeeklyGoal = useTrackerPrefs((s) => s.setWeeklyGoal);
   const advancedSets = useTrackerPrefs((s) => s.advancedSets);
   const setAdvancedSets = useTrackerPrefs((s) => s.setAdvancedSets);
   const coachNotes = useTrackerPrefs((s) => s.coachNotes);
@@ -99,6 +111,21 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
           divider
         />
       ) : null}
+      {/* Audit Phase 9 (#4): the member's own workouts-a-week goal (Home, Progress, the widget). */}
+      <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
+        <ChipGroup
+          label="Weekly goal"
+          options={GOAL_OPTIONS}
+          selectedId={weeklyGoal ? String(weeklyGoal) : 'off'}
+          onSelect={(id) => {
+            setWeeklyGoal(id === 'off' ? null : Number(id));
+            void refreshWidgets();
+          }}
+        />
+        <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 }}>
+          Workouts a week. Home and Progress count towards it.
+        </Text>
+      </View>
       <RestPickerSheet
         visible={picking}
         title="Default rest"

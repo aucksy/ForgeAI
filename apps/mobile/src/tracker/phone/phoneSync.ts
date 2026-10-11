@@ -1,7 +1,8 @@
 /**
  * Keeps the phone-side features in step (v0.27.0): Health Connect, the home-screen widgets and
  * the workout reminders.
- *  - a workout finished or edited → sent to Health Connect (if on), widgets and reminders redone;
+ *  - a workout finished or edited → sent to Health Connect (if on), widgets and reminders redone
+ *    (and, tracker schema v14, the record log of any exercise whose records start on a day);
  *  - a workout deleted → taken out of Health Connect, widgets and reminders redone (HI-17:
  *    deleting today's workout brings today's reminder back);
  *  - a workout opened / closed (audit Phase 6, PH-07 / PH-09) → reminders skip today while it
@@ -19,9 +20,15 @@ import { phoneNative } from './native';
 import { setLiveWorkout, type LiveWorkout } from './liveWorkout';
 import { usePhonePrefs } from './phonePrefs';
 import { refreshReminders } from './reminders';
-import { refreshWidgets } from './widgets';
+import { clearShortcuts, refreshWidgets } from './widgets';
 
 export async function phoneAfterWorkout(sessionId: string): Promise<void> {
+  // Tracker schema v14: an exercise whose records count from a day gets its record log (Home's
+  // record count, the strength score, the coach) put right after the save. Loaded on use:
+  // prRebuild imports this file. Not awaited: Health Connect and the widgets never wait on it.
+  void import('@/tracker/services/prRebuild')
+    .then((m) => m.reconcileRecordStartsForSession(sessionId))
+    .catch(() => undefined);
   await sendWorkoutToHealth(sessionId).catch(() => undefined);
   await refreshWidgets().catch(() => undefined);
   await refreshReminders().catch(() => undefined);
@@ -58,6 +65,7 @@ export async function phoneAfterErase(): Promise<void> {
   } catch {
     // quiet
   }
+  clearShortcuts();
 }
 
 let started = false;

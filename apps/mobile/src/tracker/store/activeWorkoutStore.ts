@@ -59,6 +59,17 @@ import { reconcilePrsForExercises } from '@/tracker/services/prRebuild';
 import { checkMinutes, checkStartTime } from '@/tracker/services/editFields';
 import { draftToRichSets, hasWorkingSet, isCommittable } from '@/tracker/services/draftSets';
 import { tickValues, type TickMissing } from '@/tracker/services/setTick';
+import {
+  applyCopy,
+  copyTargets,
+  copyValues,
+  stepPatch,
+  undoCopyRows,
+  type CopyBefore,
+  type EntryField,
+  type EntryValues,
+} from '@/tracker/services/setEntry';
+import { displayUnits } from '@/lib/units';
 import { createSession } from '@/db/repos/workoutRepo';
 import { fromISO, toISO, todayISO } from '@/lib/date';
 import { uuid } from '@/lib/uuid';
@@ -266,6 +277,11 @@ export interface ActiveWorkoutState {
   exercises: DraftExercise[];
   /** Most recently swipe-deleted set, for the undo snackbar (not persisted). */
   lastDeleted: { exKey: string; index: number; set: DraftSet } | null;
+  /**
+   * The last "Copy to sets below", for its Undo bar (not persisted): the card, what each row
+   * held before, and what was written. `id` gives every copy a fresh Undo clock.
+   */
+  lastCopy: { id: number; exKey: string; count: number; before: CopyBefore[]; values: EntryValues } | null;
   /** Phase W4: id of the session being CORRECTED, or null for a new workout. */
   editingSessionId: string | null;
   /** Edit mode only — the day the corrected session will claim. */
@@ -312,6 +328,26 @@ export interface ActiveWorkoutState {
     setKey: string,
     patch: Partial<Pick<DraftSet, 'weightKg' | 'reps' | 'durationSec' | 'distanceM'>>,
   ) => void;
+  /**
+   * Entry bar: one step of a box (weight ± the exercise's step, reps ± 1, time ± 15 s), from the
+   * typed number or — in an empty box — the row's hint `fill`. Returns false when nothing changed.
+   */
+  stepSetValue: (exKey: string, setKey: string, field: EntryField, dir: 1 | -1, fill: SetFill | null) => boolean;
+  /**
+   * Entry bar: copy what this row shows (typed, else its hint) into every row below of the same
+   * kind that is not ticked. Returns how many rows it filled (0 = none; nothing changes).
+   */
+  copySetDown: (exKey: string, setKey: string, fill: SetFill | null) => number;
+  /** Put the rows of the last copy back as they were (numbers typed since are kept). */
+  undoCopy: () => void;
+  /**
+   * Audit Phase 9 review: "Start records fresh" / "Count all records again" changed what this
+   * exercise's records count from — the open workout's record pop-ups read its bests again.
+   * A correction or past log has none (it never pops up) and is left alone.
+   */
+  refreshBests: (exerciseId: string) => Promise<void>;
+  /** The copy's Undo bar ran out (only that copy's: `id`). */
+  dismissCopy: (id: number) => void;
   toggleWarmup: (exKey: string, setKey: string) => void;
   /**
    * `fill` = what the row is hinting (its Target-aware fill); omitted → computed without a
@@ -443,6 +479,8 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
 
 export const DRAFT_SAVE_DEBOUNCE_MS = 300;
 let draftGen = 0;
+/** Each "Copy to sets below" gets its own number (its Undo bar's clock follows it). */
+let copySeq = 0;
 let draftDirty = false;
 let draftTimer: ReturnType<typeof setTimeout> | null = null;
 let retryTimer: ReturnType<typeof setTimeout> | null = null;
@@ -1011,6 +1049,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         easyWeek: false,
         exercises: [],
         lastDeleted: null,
+        lastCopy: null,
         editingSessionId: null,
         editDateISO: null,
         editNotes: null,
@@ -1041,6 +1080,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     easyWeek: false,
     exercises: [],
     lastDeleted: null,
+    lastCopy: null,
     editingSessionId: null,
     editDateISO: null,
     editNotes: null,
@@ -1118,6 +1158,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         easyWeek: false,
         exercises: [],
         lastDeleted: null,
+        lastCopy: null,
         editingSessionId: null,
         editDateISO: null,
         editNotes: null,
@@ -1160,6 +1201,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         easyWeek: easy && planDayId != null,
         exercises,
         lastDeleted: null,
+        lastCopy: null,
         editingSessionId: null,
         editDateISO: null,
         editNotes: null,
@@ -1192,6 +1234,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         easyWeek: easy && planDayId != null,
         exercises,
         lastDeleted: null,
+        lastCopy: null,
         editingSessionId: null,
         editDateISO: null,
         editNotes: null,
@@ -1223,6 +1266,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         easyWeek: false,
         exercises,
         lastDeleted: null,
+        lastCopy: null,
         editingSessionId: null,
         editDateISO: null,
         editNotes: null,
@@ -1263,6 +1307,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     removeExercise: (exKey) => {
       // Kill a pending undo for this exercise (its set list is going away).
       if (get().lastDeleted?.exKey === exKey) set({ lastDeleted: null });
+      if (get().lastCopy?.exKey === exKey) set({ lastCopy: null });
       // LW-26: a partner left alone is no longer a superset.
       mutate((list) => tidySupersets(list.filter((e) => e.key !== exKey)));
     },
@@ -1356,6 +1401,61 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             : e,
         ),
       );
+    },
+
+    stepSetValue: (exKey, setKey, field, dir, fill) => {
+      const ex = get().exercises.find((e) => e.key === exKey);
+      const row = ex?.sets.find((s) => s.key === setKey);
+      if (!ex || !row) return false;
+      const patch = stepPatch(row, fill, field, dir, {
+        logType: ex.logType ?? 'weight_reps',
+        incrementKg: ex.incrementKg,
+        units: displayUnits(),
+      });
+      if (!patch) return false;
+      // The same path as typing: the draft saves after the short typing pause.
+      get().updateSet(exKey, setKey, patch);
+      return true;
+    },
+
+    copySetDown: (exKey, setKey, fill) => {
+      const ex = get().exercises.find((e) => e.key === exKey);
+      const row = ex?.sets.find((s) => s.key === setKey);
+      if (!ex || !row) return 0;
+      const targets = copyTargets(ex.sets, setKey);
+      const values = copyValues(row, fill, ex.logType ?? 'weight_reps');
+      if (targets.length === 0 || !values) return 0;
+      const done = applyCopy(ex.sets, targets, values, Date.now());
+      if (done.before.length === 0) return 0;
+      copySeq += 1;
+      set({ lastCopy: { id: copySeq, exKey, count: done.before.length, before: done.before, values } });
+      mutate((list) => list.map((e) => (e.key === exKey ? { ...e, sets: done.sets } : e)), true);
+      return done.before.length;
+    },
+
+    refreshBests: async (exerciseId) => {
+      const s = get();
+      if (!s.active || isCorrecting(s) || !s.exercises.some((e) => e.exerciseId === exerciseId)) return;
+      const bests = await getPriorBests(exerciseId).catch(() => undefined);
+      if (bests === undefined) return;
+      const now = get();
+      if (!now.active || isCorrecting(now)) return;
+      set({ exercises: now.exercises.map((e) => (e.exerciseId === exerciseId ? { ...e, bests } : e)) });
+      persistSoon();
+    },
+
+    undoCopy: () => {
+      const lc = get().lastCopy;
+      if (!lc) return;
+      set({ lastCopy: null });
+      mutate(
+        (list) => list.map((e) => (e.key === lc.exKey ? { ...e, sets: undoCopyRows(e.sets, lc.before, lc.values) } : e)),
+        true,
+      );
+    },
+
+    dismissCopy: (id) => {
+      if (get().lastCopy?.id === id) set({ lastCopy: null });
     },
 
     toggleWarmup: (exKey, setKey) => {
@@ -1635,6 +1735,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           easyWeek: false,
           exercises: [],
           lastDeleted: null,
+          lastCopy: null,
         });
         return id;
         });
@@ -1702,6 +1803,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         easyWeek: false,
         exercises,
         lastDeleted: null,
+        lastCopy: null,
         editingSessionId: session.id,
         editDateISO: session.dateISO,
         editNotes: session.notes,
@@ -1779,6 +1881,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         easyWeek: false,
         exercises: [],
         lastDeleted: null,
+        lastCopy: null,
         editingSessionId: null,
         editDateISO: dateISO,
         editNotes: null,
@@ -1842,6 +1945,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           easyWeek: false,
           exercises: [],
           lastDeleted: null,
+          lastCopy: null,
           editingSessionId: null,
           editDateISO: null,
           editNotes: null,
@@ -1884,6 +1988,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         easyWeek: false,
         exercises: [],
         lastDeleted: null,
+        lastCopy: null,
         editingSessionId: null,
         editDateISO: null,
         editNotes: null,

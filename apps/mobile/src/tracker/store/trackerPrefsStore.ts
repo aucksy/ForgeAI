@@ -27,10 +27,21 @@ export interface TrackerPrefsState {
   coachNotes: boolean;
   sounds: boolean;
   bodyFigure: BodyFigure;
+  /**
+   * Audit Phase 9 (#4): the member's own workouts-a-week goal (1–7), or null (off: the week
+   * cards compare with the usual week, and the This week widget with the plan's days).
+   */
+  weeklyGoal: number | null;
   setAdvancedSets: (value: boolean) => void;
   setCoachNotes: (value: boolean) => void;
   setSounds: (value: boolean) => void;
   setBodyFigure: (value: BodyFigure) => void;
+  setWeeklyGoal: (value: number | null) => void;
+}
+
+/** A goal the app accepts: a whole 1–7, else off. PURE. */
+export function cleanWeeklyGoal(v: unknown): number | null {
+  return typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= 7 ? v : null;
 }
 
 export const useTrackerPrefs = create<TrackerPrefsState>()(
@@ -40,10 +51,12 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       coachNotes: false,
       sounds: true,
       bodyFigure: 'male',
+      weeklyGoal: null,
       setAdvancedSets: (advancedSets) => set({ advancedSets }),
       setCoachNotes: (coachNotes) => set({ coachNotes }),
       setSounds: (sounds) => set({ sounds }),
       setBodyFigure: (bodyFigure) => set({ bodyFigure }),
+      setWeeklyGoal: (value) => set({ weeklyGoal: cleanWeeklyGoal(value) }),
     }),
     {
       name: 'forgeai-tracker-prefs',

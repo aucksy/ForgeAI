@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Audit Phase 9: the app icon's "Start" shortcut — a play mark on ForgeAI's orange. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+  <path
+      android:fillColor="#FF7A3B"
+      android:pathData="M24,0A24,24 0,1 1,24 48A24,24 0,1 1,24 0z" />
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M19,15.5L19,32.5L32.5,24Z" />
+</vector>

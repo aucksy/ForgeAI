@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 13;
+export const TRACKER_SCHEMA_VERSION = 14;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -132,6 +132,12 @@ export async function initTrackerSchema(): Promise<void> {
   await ensureColumn('plan_exercises', 'note', 'TEXT');
   // v13 (audit Phase 8 — speed with years of data): a change counter for the training data.
   await ensureTrainingChanges();
+  // v14 (Start records fresh): the day an exercise's records count from ('YYYY-MM-DD'; NULL =
+  // every workout counts). A new gym, a new machine, a reset of form: sets on earlier days stay
+  // in History and the charts but no longer count for its records. Its triggers move the
+  // training change counter, so every kept record is worked out again (see below).
+  await ensureColumn('exercise_prefs', 'records_from', 'TEXT');
+  for (const sql of RECORDS_FROM_TRIGGERS) await getDb().execAsync(sql);
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }
@@ -224,6 +230,27 @@ export const TRAINING_CHANGE_TRIGGERS: readonly string[] = [
   `CREATE TRIGGER IF NOT EXISTS tc_bw_ins AFTER INSERT ON body_weight BEGIN ${BUMP} ${MARK_ALL} END`,
   `CREATE TRIGGER IF NOT EXISTS tc_bw_upd AFTER UPDATE ON body_weight WHEN ${changed(['date_iso', 'weight_kg'])} BEGIN ${BUMP} ${MARK_ALL} END`,
   `CREATE TRIGGER IF NOT EXISTS tc_bw_del AFTER DELETE ON body_weight BEGIN ${BUMP} ${MARK_ALL} END`,
+];
+
+/**
+ * v14: setting or clearing an exercise's records start (`exercise_prefs.records_from`) changes
+ * which of its sets count for its records — the same as editing its sets. These triggers move
+ * `#version` and mark that exercise, so kept records, the live pop-up's bests and the finish
+ * screen all see it at once (and a write that rolls back takes the mark back with it). A rest
+ * length change never moves it. Named apart from the v13 `tc_` set, which they extend.
+ */
+export const RECORDS_FROM_TRIGGERS: readonly string[] = [
+  `CREATE TRIGGER IF NOT EXISTS rf_prefs_ins AFTER INSERT ON exercise_prefs WHEN NEW.records_from IS NOT NULL BEGIN
+     ${BUMP} ${markOne('NEW.exercise_id')}
+   END`,
+  `CREATE TRIGGER IF NOT EXISTS rf_prefs_del AFTER DELETE ON exercise_prefs WHEN OLD.records_from IS NOT NULL BEGIN
+     ${BUMP} ${markOne('OLD.exercise_id')}
+   END`,
+  `CREATE TRIGGER IF NOT EXISTS rf_prefs_upd AFTER UPDATE ON exercise_prefs
+     WHEN OLD.records_from IS NOT NEW.records_from
+       OR (OLD.exercise_id IS NOT NEW.exercise_id AND (OLD.records_from IS NOT NULL OR NEW.records_from IS NOT NULL)) BEGIN
+     ${BUMP} ${markOne('OLD.exercise_id')} ${markOne('NEW.exercise_id')}
+   END`,
 ];
 
 async function ensureTrainingChanges(): Promise<void> {

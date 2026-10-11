@@ -14,7 +14,7 @@ import type { ScrollView as ScrollViewType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DangerLink } from '@/components/DangerLink';
-import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen, askConfirm } from '@/components/ui';
+import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen, UndoBar, askConfirm } from '@/components/ui';
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -23,6 +23,7 @@ import { SessionGoneError } from '@/tracker/db/sessionEdit';
 import { EditSessionHeader } from '@/tracker/components/EditSessionHeader';
 import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
 import { ElapsedClock } from '@/tracker/components/ElapsedClock';
+import { EntryBar, useEntryBar } from '@/tracker/components/EntryBar';
 import { ExerciseLogCard } from '@/tracker/components/ExerciseLogCard';
 import { RecordToast } from '@/tracker/components/RecordToast';
 import { RestTimerBar } from '@/tracker/components/RestTimerBar';
@@ -30,6 +31,7 @@ import { Glyph } from '@/tracker/components/TrackerGlyph';
 import { FinishSheet, type FinishChoice } from '@/tracker/components/FinishSheet';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { defaultWorkoutName } from '@/tracker/services/finishCheck';
+import { copiedText } from '@/tracker/services/setEntry';
 import { bounceEmptyWorkout } from '@/tracker/services/workoutStart';
 import { holdRoutineOffer, routineUpdateOffer } from '@/tracker/services/routineOffer';
 import { ensureAlertPermission } from '@/tracker/services/workoutAlerts';
@@ -77,6 +79,13 @@ export default function ActiveWorkoutScreen() {
   const lastDeleted = useActiveWorkout((s) => s.lastDeleted);
   const undoDelete = useActiveWorkout((s) => s.undoDelete);
   const dismissUndo = useActiveWorkout((s) => s.dismissUndo);
+  // "Copy to sets below" (the entry bar): its Undo.
+  const lastCopy = useActiveWorkout((s) => s.lastCopy);
+  const undoCopy = useActiveWorkout((s) => s.undoCopy);
+  const dismissCopy = useActiveWorkout((s) => s.dismissCopy);
+  // The entry bar on the keyboard (a set box has the cursor). It takes Finish's place only
+  // while the keyboard is open; Finish is back the moment it closes.
+  const entry = useEntryBar();
   const loadRestDefault = useRestTimer((s) => s.loadDefault);
   const defaultRestSec = useRestTimer((s) => s.defaultSec);
 
@@ -482,8 +491,9 @@ export default function ActiveWorkoutScreen() {
         </ScrollView>
         <RecordToast />
 
-        {/* rest timer · undo · finish */}
-        <View style={{ paddingTop: space.md, paddingBottom: Math.max(insets.bottom, space.md) }}>
+        {/* rest timer · undo · finish (the entry bar while typing in a set) */}
+        {/* With the keyboard open the screen already ends at its top: no room for the nav bar. */}
+        <View style={{ paddingTop: space.md, paddingBottom: entry ? space.sm : Math.max(insets.bottom, space.md) }}>
           <RestTimerBar />
           {lastDeleted ? (
             <View
@@ -508,25 +518,39 @@ export default function ActiveWorkoutScreen() {
               </Pressable>
             </View>
           ) : null}
-          <PrimaryButton
-            label={
-              isEditing
-                ? canFinish
-                  ? pastLog
-                    ? 'Save workout'
-                    : 'Save changes'
-                  : pastLog
-                    ? 'Type a set to save'
-                    : 'Keep at least one set'
-                : canFinish
-                  ? 'Finish workout'
-                  : 'Log a set to finish'
-            }
-            icon="check"
-            loading={committing}
-            disabled={!canFinish || committing}
-            onPress={onPrimary}
-          />
+          {lastCopy ? (
+            <View style={{ marginBottom: space.sm }}>
+              <UndoBar
+                key={lastCopy.id}
+                message={copiedText(lastCopy.count)}
+                onAction={undoCopy}
+                onDismiss={() => dismissCopy(lastCopy.id)}
+              />
+            </View>
+          ) : null}
+          {entry ? (
+            <EntryBar model={entry} />
+          ) : (
+            <PrimaryButton
+              label={
+                isEditing
+                  ? canFinish
+                    ? pastLog
+                      ? 'Save workout'
+                      : 'Save changes'
+                    : pastLog
+                      ? 'Type a set to save'
+                      : 'Keep at least one set'
+                  : canFinish
+                    ? 'Finish workout'
+                    : 'Log a set to finish'
+              }
+              icon="check"
+              loading={committing}
+              disabled={!canFinish || committing}
+              onPress={onPrimary}
+            />
+          )}
         </View>
       </KeyboardAvoidingView>
       {!isEditing && startedAt != null ? (

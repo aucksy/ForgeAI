@@ -1399,5 +1399,11 @@ export async function runImport(
   await setMeta(TIMED_BACKFILL_KEY, '1').catch(() => undefined);
   if (guessed.size !== guessedBefore) await setMeta(GUESSED_TYPE_KEY, JSON.stringify([...guessed])).catch(() => undefined);
   });
+  // Audit Phase 9 review (v14): the import's own record pass compares with every workout ever, so
+  // an exercise whose records count from a day gets its record log rebuilt from that day. Queued
+  // after the import, never inside it; a failure leaves it for the next save of that exercise.
+  await import('./prRebuild')
+    .then((m) => m.reconcileAllRecordStarts())
+    .catch(() => undefined);
   return result;
 }

@@ -117,7 +117,7 @@ describe('tracker schema v13: the training change counter', () => {
     expect(
       old.all("SELECT name, sql FROM sqlite_master WHERE type IN ('trigger', 'table') AND (name LIKE 'tc\\_%' ESCAPE '\\' OR name = 'training_changes') ORDER BY name"),
     ).toEqual(fresh);
-    expect(old.all("SELECT value FROM meta WHERE key = 'tracker_schema_version'")).toEqual([{ value: '13' }]);
+    expect(old.all("SELECT value FROM meta WHERE key = 'tracker_schema_version'")).toEqual([{ value: '14' }]);
     expect(old.all("SELECT seq FROM training_changes WHERE id = '#version'")).toEqual([{ seq: 0 }]);
   });
 

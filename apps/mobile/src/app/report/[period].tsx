@@ -19,14 +19,16 @@ import { color, gradients, radius, space, type } from '@/theme/tokens';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { MonthGrid } from '@/tracker/components/MonthGrid';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
+import { ShareTextRow } from '@/tracker/components/ShareTextRow';
 import { liftsBeatingBest, liftsUpText } from '@/tracker/engine/headline';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { changeText, emptyReportText, heroLine, type MonthReport, type YearReview } from '@/tracker/engine/reports';
 import { setsText } from '@/tracker/engine/volume';
 import { countWord } from '@/lib/words';
-import { isMonthKey, monthDays, monthName, monthOf, monthTitle, shiftMonth } from '@/tracker/lib/months';
+import { isMonthKey, monthDays, monthName, monthOf, monthTitle, shiftMonth, yearDays } from '@/tracker/lib/months';
 import { recordValueText } from '@/tracker/services/recordText';
 import { getMonthReport, getTrainedMonths, getYearReview, type MonthReportData } from '@/tracker/services/reportsService';
+import { getPeriodTextInput, periodText } from '@/tracker/services/shareText';
 import { monthShareScene, yearShareScene } from '@/tracker/share/reportCard';
 
 const INK_ON_EMBER = '#1F0D05';
@@ -370,6 +372,26 @@ export default function ReportScreen() {
       ) : (
         <YearBody y={loaded.data} />
       )}
+
+      {/* The period as plain text, for any AI chat (the picture is the header's share button). */}
+      {scene && loaded ? (
+        <View style={{ marginTop: space.lg }}>
+          <ShareTextRow
+            title={title}
+            getText={async () => {
+              const { from, to } = isYear ? yearDays(Number(period)) : monthDays(period);
+              const input = await getPeriodTextInput({
+                kind: isYear ? 'year' : 'month',
+                label: isYear ? period : monthTitle(period),
+                complete: today > to,
+                from,
+                to,
+              });
+              return periodText(input);
+            }}
+          />
+        </View>
+      ) : null}
 
       {scene ? <ShareSheet visible={sharing} scene={scene} fileName={`forgeai-${period}`} onClose={() => setSharing(false)} /> : null}
     </Screen>

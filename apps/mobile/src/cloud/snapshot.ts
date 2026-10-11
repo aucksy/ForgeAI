@@ -51,7 +51,9 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
   },
   // v0.28.1: each exercise's own rest length (tracker schema v3) was not backed up. A backup
   // made before this has no such table: the phone's own rest lengths are kept, not emptied.
-  { name: 'exercise_prefs', cols: ['exercise_id', 'rest_sec'], keepWhenAbsent: true },
+  // + `records_from` (tracker schema v14, "Start records fresh"): the day an exercise's records
+  // count from. Older backups lack it → NULL (every workout counts), like the columns above.
+  { name: 'exercise_prefs', cols: ['exercise_id', 'rest_sec', 'records_from'], keepWhenAbsent: true },
   // + the additive Phase 4 columns (tracker schema v7): a folder's place, where it came from,
   // its settings (easy weeks). Older backups lack them → NULL, like the columns above.
   { name: 'workout_plans', cols: ['id', 'name', 'is_active', 'folder_order', 'source', 'settings'] },

@@ -13,6 +13,8 @@
  *  - the record log (`personal_records` weight / 1-rep max) is rebuilt for the kept exercise
  *    from its merged history, so a record is a record of the whole history;
  *  - rest time: the kept exercise's own wins, else the duplicate's;
+ *  - "Start records fresh" (v14): the kept exercise's own day stays as it was; the duplicate's
+ *    is dropped, never carried — it would silently hide the kept exercise's older records;
  *  - the duplicate's photo or video moves when the kept one has none;
  *  - the duplicate's name becomes a search word of the kept exercise (EX-01: old names still find it).
  *
@@ -101,18 +103,25 @@ async function tablesWithExerciseId(): Promise<string[]> {
  * for each workout that beat everything before it (the frozen rule: working sets, a true single
  * is its own 1-rep max). Review fix — the same rule as the app's record detection: an easy-week
  * workout never SETS a record (its rows are removed when it is saved), but its sets DO count as
- * what a later workout has to beat (the frozen detector's "before" includes them). Inside the
- * caller's transaction.
+ * what a later workout has to beat (the frozen detector's "before" includes them).
+ *
+ * Tracker schema v14 ("Start records fresh"): when the exercise's records count from a day
+ * (`exercise_prefs.records_from`), workouts before that day are left out entirely — they neither
+ * set a record nor stand as one to beat — so Home's record count, the strength score and the
+ * coach agree with the record screens. Inside the caller's transaction or write job (never
+ * queued itself).
  */
-async function rebuildRecordLog(exerciseId: string): Promise<void> {
+export async function rebuildRecordLog(exerciseId: string): Promise<void> {
   const db = getDb();
   await db.runAsync("DELETE FROM personal_records WHERE exercise_id = ? AND kind IN ('weight', 'e1rm')", [exerciseId]);
+  const start = await db.getFirstAsync<{ records_from: string | null }>('SELECT records_from FROM exercise_prefs WHERE exercise_id = ?', [exerciseId]);
+  const from = start?.records_from ?? null;
   const rows = await db.getAllAsync<{ session_id: string; date_iso: string; weight_kg: number; reps: number; easy: number }>(
     `SELECT se.session_id, ws.date_iso, se.weight_kg, se.reps, COALESCE(ws.easy_week, 0) AS easy
        FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
-      WHERE se.exercise_id = ? AND se.is_warmup = 0
+      WHERE se.exercise_id = ? AND se.is_warmup = 0${from ? ' AND ws.date_iso >= ?' : ''}
       ORDER BY ws.started_at ASC, ws.id ASC`,
-    [exerciseId],
+    from ? [exerciseId, from] : [exerciseId],
   );
   const e1 = (w: number, r: number): number => (r === 1 ? w : w * (1 + r / 30));
   let bestW: number | null = null;

@@ -3,7 +3,8 @@
  * only draw what the app hands them; this builds it. Two widgets:
  *  - Today: today's workout from the followed plan ("Push Day" / "6 exercises · Bench Press
  *    first" / "Start"), "done" once trained today, or "No plan yet". Tap → the Workout tab.
- *  - This week: workouts done since Monday, day by day, against the plan's days a week.
+ *  - This week: workouts done since Monday, day by day, against the member's weekly goal
+ *    (audit Phase 9), else the plan's days a week.
  *    Tap → History.
  *
  * Audit Phase 6:
@@ -130,6 +131,62 @@ export function widgetPayload(i: WidgetInput & { live: { name: string } | null }
   };
 }
 
+/** One app-icon shortcut (long-press on ForgeAI's icon). */
+export interface AppShortcut {
+  id: 'today' | 'weight';
+  /** Shown where there is little room. */
+  short: string;
+  /** Shown in the long-press menu (Android: about 25 characters fit). */
+  long: string;
+  uri: string;
+}
+
+const LONG_MAX = 25;
+
+/** "Start Push 1", the name cut with "…" so the line fits the menu. PURE. */
+function fitLong(prefix: string, name: string): string {
+  const room = LONG_MAX - prefix.length;
+  const n = name.trim();
+  return prefix + (n.length <= room ? n : `${n.slice(0, room - 1).trimEnd()}…`);
+}
+
+/**
+ * Audit Phase 9 (#9): the long-press shortcuts on the app icon, from the same answer as the
+ * Today widget — "Resume workout" while one is open; "Start <today's routine>" (the widget's own
+ * link, so with its key it starts in one tap; without it the calm "Start …?" screen); else
+ * "Start workout" (the Workout tab). Then "Log body weight". PURE.
+ */
+export function appShortcuts(p: Pick<WidgetPayload, 'days' | 'live' | 'token'>): AppShortcut[] {
+  const today = p.days[0]?.today;
+  let first: AppShortcut;
+  if (p.live) first = { id: 'today', short: 'Resume', long: 'Resume workout', uri: 'forgeai://workout/start' };
+  else if (today?.action === 'Start' && today.routineId) {
+    const t = p.token ? `&t=${encodeURIComponent(p.token)}` : '';
+    first = {
+      id: 'today',
+      short: 'Start',
+      long: fitLong('Start ', today.title),
+      uri: `forgeai://workout/start?routine=${encodeURIComponent(today.routineId)}${t}`,
+    };
+  } else first = { id: 'today', short: 'Start', long: 'Start workout', uri: 'forgeai://workout' };
+  return [first, { id: 'weight', short: 'Weight', long: 'Log body weight', uri: 'forgeai://bodyweight' }];
+}
+
+/** Hand the shortcuts to the launcher. Quiet; an older build without the call does nothing. */
+function saveShortcuts(list: AppShortcut[]): void {
+  try {
+    const n = phoneNative();
+    if (n && typeof n.shortcutsSave === 'function') n.shortcutsSave(JSON.stringify(list));
+  } catch {
+    // quiet
+  }
+}
+
+/** Erase all data: the shortcuts go too (the launcher keeps nothing of the member's). */
+export function clearShortcuts(): void {
+  saveShortcuts([]);
+}
+
 /** Read what the widgets show and hand it to them. Quiet; does nothing without the native piece. */
 export async function refreshWidgets(): Promise<void> {
   const n = phoneNative();
@@ -148,6 +205,10 @@ export async function refreshWidgets(): Promise<void> {
     const hasPlan = plan != null && plan.days.length > 0;
     const live = liveWorkout();
     const token = await widgetToken().catch(() => '');
+    // Audit Phase 9 (#4): the member's own weekly goal wins over the plan's days a week.
+    const ownGoal = await import('../store/trackerPrefsStore')
+      .then((m) => m.cleanWeeklyGoal(m.useTrackerPrefs.getState().weeklyGoal))
+      .catch(() => null);
     const data: WidgetPayload = widgetPayload({
       todayISO: t,
       today: tp?.next ? { name: tp.next.name, exercises: tp.next.exercises.map((x) => x.exercise.name), routineId: tp.next.id } : null,
@@ -156,11 +217,12 @@ export async function refreshWidgets(): Promise<void> {
       next: tp?.status === 'doneToday' ? (tp.next?.name ?? null) : null,
       doneDates,
       // RP-06: the plan's days a week (3 for a 3-day plan of 2 routines), not its routine count.
-      goal: hasPlan ? planDaysPerWeek(folder?.settings ?? {}, plan.days.length) : null,
+      goal: ownGoal ?? (hasPlan ? planDaysPerWeek(folder?.settings ?? {}, plan.days.length) : null),
       live: live ? { name: live.name } : null,
     });
     if (token) data.token = token;
     n.widgetSave(JSON.stringify(data));
+    saveShortcuts(appShortcuts(data));
   } catch {
     // quiet
   }

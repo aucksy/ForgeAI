@@ -13,6 +13,7 @@ import type { ExerciseProgressPoint, ExerciseStats } from '@/types/models';
 
 import { getBoundedExerciseHistory, type ExerciseHistoryEntry } from '../db/exerciseHistory';
 import { getTrackerExercise, type TrackerExercise } from '../db/exerciseInfo';
+import { getRecordsFrom } from '../db/recordStart';
 import { distanceToUnit, fmtDistance, fmtDuration, isTimedCardio, type DistUnit, type LogType, shownDistUnit } from '../engine/logTypes';
 import { exerciseRecords, RECORD_LABEL, type ExerciseRecords, type RecordSession } from '../engine/records';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint } from '../engine/volume';
@@ -51,6 +52,12 @@ export interface ExerciseOverview {
    * that never carried added weight reads as 'reps' (no "0 kg" tiles or flat 0 charts).
    */
   shownAs?: LogType;
+  /**
+   * Tracker schema v14 ("Start records fresh"): the day this exercise's records count from (null =
+   * every workout). The records, the best line and the heaviest / 1-rep max tiles count only
+   * workouts from that day; the history, the charts and the averages keep every workout.
+   */
+  recordsFrom?: string | null;
 }
 
 /**
@@ -259,17 +266,20 @@ export function overviewFacts(ov: Pick<ExerciseOverview, 'exercise' | 'records' 
 
 /** Everything the exercise page shows, or null when the exercise is gone. */
 export async function getExerciseOverview(exerciseId: string): Promise<ExerciseOverview | null> {
-  const [exercise, raw, bw] = await Promise.all([
+  const [exercise, raw, bw, recordsFrom] = await Promise.all([
     getTrackerExercise(exerciseId),
     getBoundedExerciseHistory(exerciseId),
     getBodyweightTimeline(),
+    getRecordsFrom(exerciseId).catch(() => null),
   ]);
   if (!exercise) return null;
   const history = historyWithVolume(raw, exercise, bw);
   // Phase 4: an easy week's workouts stay in the history list but out of the records, the
   // numbers and the charts — a planned lighter week is not a dip in progress.
   const counted = history.filter((h) => !h.easyWeek);
-  const records = exerciseRecords(recordSessionsFromHistory(counted), exercise, bw);
+  // v14: records count from the member's chosen day (the history and charts keep everything).
+  const forRecords = recordsSince(counted, recordsFrom);
+  const records = exerciseRecords(recordSessionsFromHistory(forRecords), exercise, bw);
   // EX-07: a weight type never logged with added weight reads as reps.
   const shownAs = shownLogType(exercise.logType, counted);
   const weighty = shownAs === 'weight_reps' || shownAs === 'weighted';
@@ -277,16 +287,34 @@ export async function getExerciseOverview(exerciseId: string): Promise<ExerciseO
     return {
       exercise,
       history,
-      weightStats: weightStatsOf(exercise, counted),
+      weightStats: weightStatsWithRecordsFrom(exercise, counted, recordsFrom),
       tiles: [],
       series: null,
       bestSet: bestSetSeriesFor(counted, exercise, bw),
       records,
       shownAs,
+      recordsFrom,
     };
   }
   const { tiles, series } = typedOverview(shownAs, counted, exercise.distUnit, {
     cardio: isTimedCardio(shownAs, exercise.muscles.primary),
   });
-  return { exercise, history, weightStats: null, tiles: tilesBesideRecords(tiles, shownAs), series, bestSet: [], records, shownAs };
+  return { exercise, history, weightStats: null, tiles: tilesBesideRecords(tiles, shownAs), series, bestSet: [], records, shownAs, recordsFrom };
+}
+
+/** The workouts that count for records: from `from` on (all of them when null). PURE. */
+export function recordsSince<T extends { dateISO: string }>(history: readonly T[], from: string | null | undefined): T[] {
+  return from ? history.filter((h) => h.dateISO >= from) : [...history];
+}
+
+/**
+ * The weight page's numbers with records counted from a day (v14): the heaviest set and the
+ * best 1-rep max come from workouts since then — they are records — while the averages, the
+ * progress chart and the history keep every workout. PURE.
+ */
+export function weightStatsWithRecordsFrom(exercise: TrackerExercise, history: ExerciseHistoryEntry[], from: string | null | undefined): ExerciseStats {
+  const all = weightStatsOf(exercise, history);
+  if (!from) return all;
+  const since = weightStatsOf(exercise, recordsSince(history, from));
+  return { ...all, bestSet: since.bestSet, prE1rmKg: since.prE1rmKg };
 }

@@ -38,8 +38,10 @@ import type { TextInput as TextInputType } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 
 import { Icon } from '@/components/ui';
+import { deltaWords } from '@/components/ui/a11y';
 import { success, tap, warn } from '@/lib/haptics';
 import { trimNum } from '@/lib/format';
+import { displayUnits } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -60,12 +62,14 @@ import {
 } from '../engine/logTypes';
 import { rpeColor } from '../lib/rpe';
 import { recordLabel, toastHit } from '../services/liveRecords';
+import type { EntryField } from '../services/setEntry';
+import { vsLastTimeText } from '../services/vsLastTime';
 import type { RecordKind } from '../services/liveRecords';
 import { afterSetCompleted, nextUpLabel } from '../services/restRules';
 import { nextForCard } from '../services/restDoneRun';
 import { missingText, typoCheck, typoText, type TickMissing } from '../services/setTick';
 import { playWorkoutSound } from '../services/workoutSounds';
-import { flushDraft, useActiveWorkout } from '../store/activeWorkoutStore';
+import { flushDraft, isCorrecting, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftSet, PrevSet, SetFill } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
@@ -126,6 +130,24 @@ export function afterTick(exKey: string, setKey: string): void {
     useWorkoutUi
       .getState()
       .showRecord(ex.name, recordLabel(hit, { logType: ex.logType ?? 'weight_reps', loadMode: ex.loadMode ?? 'one', distUnit: ex.distUnit ?? 'km' }));
+  } else if (!st.easyWeek && !isCorrecting(st) && !done.isWarmup && done.setType !== 'drop') {
+    // Review fix: a drop set is lighter on purpose, and last time's same place may have been a
+    // different kind of set (PREVIOUS carries no type), so drop sets are never compared.
+    // Not a record, but better than the same set last time (the PREVIOUS the row shows): one
+    // quiet line in the record toast's place. No sound; the tick's own haptic is enough. Equal
+    // or worse says nothing. An easy week is lighter on purpose, so it is never compared.
+    const text = vsLastTimeText(
+      done,
+      prevForSet(ex, setKey),
+      ex.logType ?? 'weight_reps',
+      ex.loadMode ?? 'one',
+      displayUnits(),
+      ex.distUnit ?? 'km',
+    );
+    if (text) {
+      useWorkoutUi.getState().showLastTime(ex.name, text);
+      AccessibilityInfo.announceForAccessibility(`${ex.name}, ${deltaWords(text)}`);
+    }
   }
 
   const timer = useRestTimer.getState();
@@ -229,6 +251,41 @@ export const SetRow = memo(function SetRow({
 
   // Typing saves the draft after a short pause (the store debounces); leaving a box saves it now.
   const saveNow = (): void => void flushDraft();
+
+  // The entry bar above the keyboard follows the box with the cursor. Leaving waits a moment, so
+  // moving from this row's weight to its reps never drops the bar for a frame.
+  const blurTimers = useRef(new Map<EntryField, ReturnType<typeof setTimeout>>());
+  const onBoxFocus = (field: EntryField): void => {
+    const pending = blurTimers.current.get(field);
+    if (pending) {
+      clearTimeout(pending);
+      blurTimers.current.delete(field);
+    }
+    useWorkoutUi.getState().focusEntry({ exKey, setKey: set.key, field });
+  };
+  const onBoxBlur = (field: EntryField): void => {
+    const key = set.key;
+    const timers = blurTimers.current;
+    const old = timers.get(field);
+    if (old) clearTimeout(old);
+    timers.set(
+      field,
+      setTimeout(() => {
+        timers.delete(field);
+        useWorkoutUi.getState().blurEntry(exKey, key, field);
+      }, 120),
+    );
+  };
+  useEffect(() => {
+    const timers = blurTimers.current;
+    const key = set.key;
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+      timers.clear();
+      // A row removed while typing in it (swipe-delete, Undo): the bar must not stay for it.
+      useWorkoutUi.getState().blurEntry(exKey, key);
+    };
+  }, [exKey, set.key]);
   const onWeight = (t: string): void => {
     const clean = cleanTyped(t, { maxInt: 4, maxDec: 2 });
     setWText(clean);
@@ -471,7 +528,11 @@ export const SetRow = memo(function SetRow({
                 value: dText,
                 hint: hints.distance,
                 onChangeText: onDistance,
-                onBlur: saveNow,
+                onFocus: () => onBoxFocus('distance'),
+                onBlur: () => {
+                  saveNow();
+                  onBoxBlur('distance');
+                },
                 keyboardType: 'decimal-pad',
                 a11y: boxLabel(exName, which, { distance: distWord(shownDistUnit(distUnit)) }, units),
               })
@@ -484,7 +545,11 @@ export const SetRow = memo(function SetRow({
                 value: wText,
                 hint: hints.weight,
                 onChangeText: onWeight,
-                onBlur: saveNow,
+                onFocus: () => onBoxFocus('weight'),
+                onBlur: () => {
+                  saveNow();
+                  onBoxBlur('weight');
+                },
                 keyboardType: 'decimal-pad',
                 a11y: boxLabel(exName, which, weightBox, units),
               })
@@ -497,7 +562,11 @@ export const SetRow = memo(function SetRow({
                 value: rText,
                 hint: hints.reps,
                 onChangeText: onReps,
-                onBlur: saveNow,
+                onFocus: () => onBoxFocus('reps'),
+                onBlur: () => {
+                  saveNow();
+                  onBoxBlur('reps');
+                },
                 keyboardType: 'number-pad',
                 a11y: boxLabel(exName, which, 'reps', units),
               })
@@ -513,9 +582,11 @@ export const SetRow = memo(function SetRow({
                 onFocus: () => {
                   setTFocused(true);
                   if (set.durationSec) setTText(durationDigits(set.durationSec));
+                  onBoxFocus('time');
                 },
                 onBlur: () => {
                   saveNow();
+                  onBoxBlur('time');
                   setTFocused(false);
                   setTText(set.durationSec ? fmtDuration(set.durationSec) : '');
                 },
