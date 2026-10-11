@@ -1735,6 +1735,26 @@
     38150955406 (2 flow slips, fixed), **38157467872 on 33328d9: all 23 parts passed**, sound and
     vibrate = "Rest is over" with nothing granted by hand, 41 redesign screenshots, crash scan
     clean.
+- 2026-10-12: **v0.36.0 — the gym's own Shop, live, with the owner's web panel** (0b8e03c …
+  4bfadf4; owner: "GYM shop ready and the admin panel demo hosted … Member Management and Shop
+  Management and working app").
+  - **Backend (Supabase, migrations 0002–0004)**: no accounts — the panel's "Start demo" gets an
+    OWNER KEY, a member's Join (gym code + name) gets a MEMBER KEY; only SHA-256 hashes stored;
+    every call is a key-checked SECURITY DEFINER function, tables closed to the public roles.
+    Prices and stock checked server-side under row locks; cancel restocks; stale saves refused
+    (CHANGED); 15 orders an hour per member; product photos in a public bucket, uploads only with
+    a 15-minute ticket from the owner key. Test gym FORGE1 for the phone test.
+  - **Panel** at https://forgeai.aakashpahuja.in (Worker `forgeai-panel`, deploy/panel): the CRM
+    (members, plans, payments, receipts, visits, money) plus Shop — live orders (5 s), New →
+    Ready → Collected / Cancel, products with flavours/sizes, stock, hide, photo upload — and
+    "Joined in the app" members, the join code on Today.
+  - **App**: the Shop tab joins the gym with its code; real products and photos (cached for
+    offline), bag, "Place order" (pay at the desk), My orders updating every 10 s, cancel,
+    leave; "See a sample shop" keeps the S1 demo.
+  - Reviews: SQL + panel (no security holes; 4 should-fix fixed), app (2 fixed). **Tests:** app
+    1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
+    passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
+    alert sound + vibrate; crash scan clean.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
