@@ -343,8 +343,11 @@ export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout,
   // work out (each exercise's history) only to throw them away here.
   const tw = await getTodaysWorkout(undefined, { targets: false });
   if (!tw.planDayId) return { ...tw, targets: [] };
+  // Redesign review fix: Up next can come from a folder that is NOT followed (the routine after
+  // the last one done), so the routine is read wherever it lives — not only from the followed plan,
+  // which left "See exercises" with no exercises and no Start.
   const active = await getActivePlan();
-  const day = active?.days.find((d) => d.id === tw.planDayId) ?? null;
+  const day = active?.days.find((d) => d.id === tw.planDayId) ?? (await getRoutineAnywhere(tw.planDayId).catch(() => null));
   if (!day) return { ...tw, targets: [] };
   const [targets, now] = await Promise.all([targetsFor(day.exercises.map((pe) => ({ pe })), false), getPlanNow().catch(() => null)]);
   return { ...tw, targets: now?.easy ? targets.map((t) => toEasyTarget(t, EASY_REASON, easySets)) : targets };

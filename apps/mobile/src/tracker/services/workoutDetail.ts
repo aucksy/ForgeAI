@@ -46,7 +46,7 @@ export function detailWhen(dateISO: string, startedAt: number): string {
   return `${feedDate(dateISO)} · ${clock}`;
 }
 
-/** Time · Kg lifted (or Reps, or Distance) · Sets · Records. PURE. */
+/** Time · Kg lifted (or Reps, or Distance — the feed card's order) · Sets · Records. PURE. */
 export function detailStats(
   data: Pick<SessionSummaryData, 'session' | 'setMeta' | 'durationSec' | 'totalVolumeKg' | 'workingSetCount'> & { records?: readonly unknown[] },
   units: UnitSystem,
@@ -56,8 +56,10 @@ export function detailStats(
   const reps = data.session.exercises.reduce((n, g) => n + g.sets.filter((s) => !s.isWarmup).reduce((r, s) => r + Math.max(0, s.reps), 0), 0);
   const distance = workoutDistanceM(data);
   if (data.totalVolumeKg > 0.5) out.push({ label: `${units === 'imperial' ? 'Lb' : 'Kg'} lifted`, value: fmtInt(kgToShown(data.totalVolumeKg, units)) });
-  else if (distance > 0) out.push({ label: 'Distance', value: fmtTotalDistance(distance) });
+  // Review fix: the feed card's order (Kg lifted → Reps → Distance), so a workout shows the same
+  // number on its card and on its page.
   else if (reps > 0) out.push({ label: 'Reps', value: fmtInt(reps) });
+  else if (distance > 0) out.push({ label: 'Distance', value: fmtTotalDistance(distance) });
   out.push({ label: 'Sets', value: fmtInt(data.workingSetCount) });
   const records = data.records?.length ?? 0;
   if (records > 0) out.push({ label: 'Records', value: fmtInt(records) });

@@ -98,7 +98,7 @@ export default function SessionDetailScreen() {
     await actions.onDelete(id, () => {
       try {
         if (router.canGoBack()) router.back();
-        else router.replace('/profile');
+        else router.dismissTo('/profile');
       } catch {
         // the workout is gone either way; the screen shows "not found" on its next read
       }

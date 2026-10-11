@@ -77,7 +77,7 @@ export function OrdersScreen() {
                 <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>{rupees(o.totalP)}</Text>
               </View>
               {o.status === 'ordered' ? (
-                <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>Pay at the desk when you collect it.</Text>
+                <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>Demo only: your gym does not see this order.</Text>
               ) : null}
               {canCancel(o) ? <GhostButton label="Cancel order" onPress={() => void onCancel(o)} /> : null}
             </View>

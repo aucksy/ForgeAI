@@ -8,7 +8,7 @@
  * The photo is copied into the app's own folder (`profilePhoto.ts`), so deleting it from the
  * gallery does not lose it. It stays on this phone.
  */
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, Text, TextInput, View } from 'react-native';
 
@@ -168,6 +168,11 @@ export default function EditProfileScreen() {
     },
     [save],
   );
+
+  // Review fix: leaving starts the save BEFORE the back animation, so the Profile (which reads
+  // its header when it comes back on screen) already finds the new name, bio and link.
+  const navigation = useNavigation();
+  useEffect(() => navigation.addListener('beforeRemove', () => flush()), [navigation, flush]);
 
   // Leaving the page, or the app going to the background, saves what is waiting.
   useEffect(() => {

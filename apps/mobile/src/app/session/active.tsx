@@ -182,7 +182,7 @@ export default function ActiveWorkoutScreen() {
   // workout opened on top of this one) it waits; the start then comes back here with a workout.
   const focused = useIsFocused();
   useEffect(() => {
-    if (bounceEmptyWorkout({ active, leaving: leaving.current, focused })) router.replace('/workout');
+    if (bounceEmptyWorkout({ active, leaving: leaving.current, focused })) router.dismissTo('/workout');
   }, [active, focused, router]);
 
   // Exactly what a save would write — the same helper the store commits through,
@@ -300,7 +300,7 @@ export default function ActiveWorkoutScreen() {
         leaving.current = true;
         await discard();
         void tell('Workout deleted', 'This workout was deleted, so your changes were discarded.');
-        router.replace('/profile');
+        router.dismissTo('/profile');
         return;
       }
       leaving.current = false;

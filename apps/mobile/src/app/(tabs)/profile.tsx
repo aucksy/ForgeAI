@@ -180,7 +180,14 @@ export default function ProfileScreen() {
     useCallback(() => {
       void (async () => {
         const stamp = await historyStamp().catch(() => null);
-        if (stamp != null && shownAt.current === stamp) return;
+        if (stamp != null && shownAt.current === stamp) {
+          // Review fix: the workouts did not change, but Edit profile may have (name, photo, bio,
+          // link are not workouts): the header is one small read, so it is read on every visit.
+          void getProfileHeader()
+            .then((h) => setHeader(h))
+            .catch(() => undefined);
+          return;
+        }
         await loadAll(stamp);
       })();
     }, [loadAll]),

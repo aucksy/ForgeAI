@@ -8,7 +8,7 @@
  */
 import { Image } from 'expo-image';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { StatHeading, leavePage } from '@/components/stats/parts';
@@ -65,6 +65,11 @@ export default function MeasuresScreen() {
   const units = useUnits();
   const params = useLocalSearchParams<{ kind?: string }>();
   const [chip, setChip] = useState<MeasureChip>(() => openingChip(params.kind));
+  // Review fix: a shortcut tap while this page is already open (on another chip) still opens it
+  // on the measure it names.
+  useEffect(() => {
+    if (params.kind) setChip(openingChip(params.kind));
+  }, [params.kind]);
 
   const [weights, setWeights] = useState<BodyWeightEntry[] | null>(null);
   const [measures, setMeasures] = useState<MeasurementEntry[] | null>(null);

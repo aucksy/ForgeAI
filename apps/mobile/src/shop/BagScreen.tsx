@@ -1,6 +1,6 @@
 /**
  * The bag (S1): each line with its picture, price and quantity; remove; the total; and
- * "Place order · pay at the desk", which makes a demo order (kept on the phone, never sent).
+ * "Place demo order", which makes a demo order (kept on the phone, never sent).
  */
 import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
@@ -57,8 +57,10 @@ export function BagScreen() {
             <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h2, color: color.ink }}>{rupees(priced.totalP)}</Text>
           </View>
 
-          <DemoNote text={`${DEMO_ORDER_LINE}. You pay at the gym’s desk when you collect it.`} />
-          <PrimaryButton label="Place order · pay at the desk" onPress={onPlace} disabled={priced.count === 0} />
+          {/* Review fix: no "pay at the desk" while orders are demos — a member could walk to the
+              desk for an order the gym never got. */}
+          <DemoNote text={`${DEMO_ORDER_LINE}. Nothing is charged and nothing is kept for you yet.`} />
+          <PrimaryButton label="Place demo order" onPress={onPlace} disabled={priced.count === 0} />
           <GhostButton label="My orders" onPress={() => router.push('/shop/orders')} />
         </View>
       )}

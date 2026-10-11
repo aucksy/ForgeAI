@@ -136,7 +136,7 @@ export default function TodayScreen() {
               onPress={() => router.replace(today.today?.status === 'noPlan' ? '/programs' : '/workout')}
             />
           ) : null}
-          <GhostButton label="Go to Workout" icon="dumbbell" onPress={() => router.replace('/workout')} />
+          <GhostButton label="Go to Workout" icon="dumbbell" onPress={() => router.dismissTo('/workout')} />
         </View>
       ) : (
         <View style={{ gap: space.lg }}>

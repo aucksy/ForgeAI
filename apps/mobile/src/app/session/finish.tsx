@@ -128,7 +128,7 @@ export default function FinishScreen() {
   const comparison = data ? volumeComparison(data.totalVolumeKg) : null;
 
   return (
-    <Screen title="Workout complete" subtitle="Saved to your history." onBack={() => router.replace('/workout')}>
+    <Screen title="Workout complete" subtitle="Saved to your history." onBack={() => router.dismissTo('/workout')}>
       {loading ? (
         <View style={{ gap: space.lg }}>
           <Skeleton width="100%" height={128} radius={radius.xl} />
@@ -183,11 +183,11 @@ export default function FinishScreen() {
           <SessionSummary data={data} showTotals={false} />
 
           <View style={{ gap: space.md, marginTop: space.sm }}>
-            <PrimaryButton label="Done" icon="check" onPress={() => router.replace('/workout')} />
+            <PrimaryButton label="Done" icon="check" onPress={() => router.dismissTo('/workout')} />
             <GhostButton label="Share as a picture" icon="send" onPress={() => setSharing(true)} />
             {/* Quieter: the workout as plain text, for any AI chat. */}
             <ShareTextRow title={workoutName(data)} getText={() => workoutText(data)} />
-            <GhostButton label="View history" icon="calendar" onPress={() => router.replace('/profile')} />
+            <GhostButton label="View history" icon="calendar" onPress={() => router.dismissTo('/profile')} />
           </View>
           {scene ? (
             <ShareSheet
@@ -205,7 +205,7 @@ export default function FinishScreen() {
             title="Summary unavailable"
             body="Your workout was saved — we just couldn't load its summary."
           />
-          <PrimaryButton label="Done" icon="check" onPress={() => router.replace('/workout')} />
+          <PrimaryButton label="Done" icon="check" onPress={() => router.dismissTo('/workout')} />
         </View>
       )}
     </Screen>

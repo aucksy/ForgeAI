@@ -54,7 +54,9 @@ export function FeedMenu({ request, onClose, onDeleted }: { request: FeedMenuReq
     let alive = true;
     setFailed(false);
     if (!request) return undefined;
-    if (data?.session.id === request.id) return undefined;
+    // Review fix: read the workout afresh on EVERY open. Kept from an earlier open, an edit saved
+    // since was undone by a second "Edit workout" (it started from the old sets), and Repeat,
+    // Save as routine and Share used the old copy.
     setData(null);
     getSessionSummary(request.id)
       .then((d) => {
@@ -69,9 +71,8 @@ export function FeedMenu({ request, onClose, onDeleted }: { request: FeedMenuReq
     return () => {
       alive = false;
     };
-    // Only a new request reads again.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [request?.id]);
+    // Each open is a new request object (the Profile sets a fresh one per tap).
+  }, [request]);
 
   const close = (then?: () => void): void => {
     onClose();

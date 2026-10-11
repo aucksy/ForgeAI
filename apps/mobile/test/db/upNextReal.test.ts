@@ -144,6 +144,18 @@ describe('Up next from the database, no folder followed', () => {
     await useActiveWorkout.getState().startFromPlan();
     expect(useActiveWorkout.getState().planDayId).toBe(ids.Upper);
   });
+
+  it('review fix: "See exercises" (the Today page) lists the routine of a folder that is NOT followed', async () => {
+    const ids = await twoFolders();
+    const { addDays, todayISO } = await import('@/lib/date');
+    saved(addDays(todayISO(), -1), ids.Push);
+    const { getTodaysWorkoutWithTargets } = await import('@/tracker/services/coachTargets');
+    const tw = await getTodaysWorkoutWithTargets();
+    expect(tw.planDayId).toBe(ids.Pull);
+    // Before: no followed plan → no day found → no exercises and no Start on the page.
+    expect(tw.targets.length).toBe(1);
+    expect(tw.targets[0].exerciseName).toMatch(/Curl/);
+  });
 });
 
 describe('the one-time notice after the update', () => {
