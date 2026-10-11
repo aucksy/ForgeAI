@@ -25,7 +25,7 @@ appId: com.forgeai.app
 - assertVisible: "Search your workouts by exercise or workout name"
 # D9: THE streak, in weeks (today has workouts, so at least "1-week streak").
 - extendedWaitUntil:
-    visible: '[\d,]+-week streak'
+    visible: '[\d,]+ weeks? in a row'
     timeout: 15000
 - assertNotVisible: '(?i).*day streak.*'
 - takeScreenshot: 190-history-top

@@ -273,8 +273,15 @@ appId: com.forgeai.app
 - assertNotVisible: '.*765 kg.*'
 - takeScreenshot: 47g-weight-fixed
 - back
+# Back on Progress: its tab bar is there again (the body weight page has none). One more Back
+# if the first only closed something (run 38101188970: the page stayed, scrolled down).
+- runFlow:
+    when:
+      notVisible: '^Progress$'
+    commands:
+      - back
 - extendedWaitUntil:
-    notVisible: "Log your weight"
+    visible: '^Progress$'
     timeout: 15000
 # ---------------------------------------------------------------- measurements
 - scrollUntilVisible:

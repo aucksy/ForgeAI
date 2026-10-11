@@ -21,9 +21,9 @@ export function weekStreak(dates: readonly string[], today: string): number {
   return weeks;
 }
 
-/** "5-week streak". */
+/** "5 weeks in a row" — the same words as Home and Progress (Phase 7, one word per idea). */
 export function streakText(weeks: number): string {
-  return `${weeks}-week streak`;
+  return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} in a row`;
 }
 
 /** How far back a streak read looks: ~3 years covers any realistic unbroken run. */

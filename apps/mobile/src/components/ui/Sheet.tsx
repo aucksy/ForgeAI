@@ -15,7 +15,7 @@
  * moment (`tell()` / `askConfirm`) waits for it to slide away instead of being dropped.
  */
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { color, radius, space, type } from '@/theme/tokens';
@@ -57,7 +57,12 @@ export function Sheet({ visible, title, subtitle, onClose, children, footer, clo
   // so the time is set before ConfirmHost (a normal effect) looks at it in the same update.
   const wasVisible = useRef(visible);
   useLayoutEffect(() => {
-    if (wasVisible.current && !visible) noteSheetClosed();
+    if (wasVisible.current && !visible) {
+      noteSheetClosed();
+      // A sheet saved or closed while typing takes its keyboard with it (device QA run
+      // 38101188970: after "Save" on a weigh-in the keyboard stayed over the page behind).
+      Keyboard.dismiss();
+    }
     wasVisible.current = visible;
   }, [visible]);
   useLayoutEffect(

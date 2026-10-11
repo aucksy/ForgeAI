@@ -323,7 +323,7 @@ export default function HistoryScreen() {
       <TextInput
         value={queryText}
         onChangeText={setQueryText}
-        placeholder="Search by exercise or workout name"
+        placeholder="Search workouts"
         placeholderTextColor={color.inkMuted}
         autoCorrect={false}
         returnKeyType="search"

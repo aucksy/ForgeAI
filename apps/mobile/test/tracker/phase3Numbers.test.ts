@@ -36,9 +36,9 @@ describe('D9 one streak: weeks in a row with at least one workout', () => {
     expect(weekStreak(['2026-07-21', '2026-07-14'], today)).toBe(2);
     expect(weekStreak([], today)).toBe(0);
   });
-  it('reads "N-week streak"', () => {
-    expect(streakText(1)).toBe('1-week streak');
-    expect(streakText(12)).toBe('12-week streak');
+  it('reads "N weeks in a row" (the same words as Home and Progress)', () => {
+    expect(streakText(1)).toBe('1 week in a row');
+    expect(streakText(12)).toBe('12 weeks in a row');
   });
   it('Home\'s insight line speaks weeks, never days', () => {
     const line = buildInsight({ streakWeeks: 5, proteinGapG: 0, liftsUp: 0, plateauedExercise: null, weeklyVolumeDeltaPct: 0, todayTrained: false });
