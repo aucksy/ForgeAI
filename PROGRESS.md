@@ -1684,6 +1684,16 @@
     Hermes while sampling); flow slips.
   - **Tests:** 1,682 vitest (three time zones) + perf suite (`test/perf`). Phone test run 38109963100 on 5f84646: all 21 parts passed (incl. P7 at font size 200 % with gesture and 3-button navigation, backup restore, rest alert on time, crash scan clean).
 
+- 2026-10-11: **v0.33.1 — the audit's small follow-ups** (97d790b).
+  - **Backup text a page at a time:** `exportSnapshot` (Drive backup, the safety copy before a
+    restore and before Replace) reads 2,000 rows at a time and turns each page into text at once.
+    Same JSON (a test holds it equal to `JSON.stringify` of the whole at any page size). Peak
+    held for 5 years: 34.7 → 22.2 MB (`test/perf/phase8snapshotMem.perf.ts`, a process each);
+    time unchanged.
+  - **"usually under 1 by Saturday"** (was "usually 0.3"), "usually none", whole numbers from 10.
+  - Review: no blockers, 2 nits applied. **Tests:** 1,685 vitest. Phone test run 38117252758 on
+    97d790b: all 21 parts passed, crash scan clean.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
