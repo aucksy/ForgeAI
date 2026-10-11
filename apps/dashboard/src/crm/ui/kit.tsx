@@ -729,6 +729,10 @@ export function Sheet({
         zIndex: 50,
         display: 'grid',
         placeItems: compact ? 'stretch' : 'center',
+        // A definite row on a phone. Without it the grid row grew to fit the form,
+        // `maxHeight: 100%` resolved against that, and a long form (Add product)
+        // pushed its Save button 1,500px below a screen that cannot scroll.
+        gridTemplateRows: compact ? 'minmax(0, 1fr)' : undefined,
         background: 'rgba(3, 4, 8, 0.72)',
         padding: compact ? 0 : space.xl,
       }}
@@ -746,6 +750,7 @@ export function Sheet({
           width: '100%',
           maxWidth: compact ? undefined : wide ? 720 : 520,
           maxHeight: compact ? '100%' : '90vh',
+          minHeight: 0,
           display: 'flex',
           flexDirection: 'column',
           outline: 'none',

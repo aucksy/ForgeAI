@@ -9,6 +9,8 @@
 
 import { useMemo } from 'react';
 
+import { JoinCodeCard } from '../../shop/JoinCode';
+import { ShopTodayCard } from '../../shop/ShopTodayCard';
 import { useCrm } from '../../store';
 import { atRiskList, isRegisterInUse, riskReason } from '../../logic/attendance';
 import { formatDay, monthKey, relativeDay, startOfMonth } from '../../logic/dates';
@@ -96,6 +98,14 @@ export function TodayScreen() {
         subtitle={formatDay(today)}
         actions={<Button onClick={() => navigate('/members')}>Open roster</Button>}
       />
+
+      {/* The join code first: it is how members get into the app, and the shop
+          card beside it is the part of the demo that moves on its own. */}
+      <Grid min={320}>
+        <JoinCodeCard compact flush />
+        <ShopTodayCard flush />
+      </Grid>
+      <div style={{ height: space.md }} />
 
       <Grid min={165}>
         {/* Labelled "with a live plan", not "Active": the roster has an "Active"

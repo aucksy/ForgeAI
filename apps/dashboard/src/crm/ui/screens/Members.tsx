@@ -14,6 +14,7 @@ import { compareByAttention, STATE_LABEL, stateTone } from '../../logic/membersh
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials, matchesQuery } from '../../logic/members';
 import type { MemberState, MemberView } from '../../types';
+import { AppMembersSection } from '../../shop/AppMembers';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
 import {
   Avatar,
@@ -35,11 +36,41 @@ import { Link, navigate } from '../router';
 
 type Filter = 'all' | MemberState | 'dues' | 'archived';
 
-export function MembersScreen() {
+/**
+ * Two lists under one tab: the gym's own roster (everyone who pays), and the
+ * members who joined in the ForgeAI app with the gym's code (`/members/app`).
+ */
+export function MembersScreen({ section }: { section?: 'app' } = {}) {
+  const { memberViews } = useCrm();
+  const [adding, setAdding] = useState(false);
+  const app = section === 'app';
+  return (
+    <>
+      <PageHeader
+        title="Members"
+        subtitle={app ? 'Joined in the ForgeAI app' : `${memberViews.length} on the roster`}
+        actions={app ? undefined : <Button onClick={() => setAdding(true)}>+ Add member</Button>}
+      />
+      <div style={{ marginBottom: space.lg }}>
+        <ChipToggle
+          label="Which members"
+          value={app ? 'app' : 'roster'}
+          onChange={(v) => navigate(v === 'app' ? '/members/app' : '/members')}
+          options={[
+            { value: 'roster', label: 'Gym roster' },
+            { value: 'app', label: 'Joined in the app' },
+          ]}
+        />
+      </div>
+      {app ? <AppMembersSection /> : <RosterSection adding={adding} setAdding={setAdding} />}
+    </>
+  );
+}
+
+function RosterSection({ adding, setAdding }: { adding: boolean; setAdding: (v: boolean) => void }) {
   const { memberViews, allMemberViews, today } = useCrm();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
-  const [adding, setAdding] = useState(false);
   const compact = useIsCompact();
 
   const counts = useMemo(() => {
@@ -72,12 +103,6 @@ export function MembersScreen() {
 
   return (
     <>
-      <PageHeader
-        title="Members"
-        subtitle={`${memberViews.length} on the roster`}
-        actions={<Button onClick={() => setAdding(true)}>+ Add member</Button>}
-      />
-
       <Row gap={space.md}>
         <SearchField value={query} onChange={setQuery} placeholder="Search name or mobile number" />
       </Row>

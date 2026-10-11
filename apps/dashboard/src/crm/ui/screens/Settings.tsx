@@ -7,8 +7,10 @@
  * is the single worst thing this kind of app can do.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { JoinCodeCard } from '../../shop/JoinCode';
+import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import {
@@ -30,6 +32,7 @@ import {
 export function SettingsScreen() {
   const { snapshot, updateGym, loadDemoGym, startEmptyGym } = useCrm();
   const { gym } = snapshot;
+  const { cloud, startOver, renameCloudGym } = useShop();
 
   const [name, setName] = useState(gym.name);
   const [phone, setPhone] = useState(gym.phone ?? '');
@@ -38,7 +41,9 @@ export function SettingsScreen() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [confirming, setConfirming] = useState<'demo' | 'fresh' | null>(null);
+  const [confirming, setConfirming] = useState<'demo' | 'fresh' | 'over' | null>(null);
+  // Stable, because the sheet re-focuses itself whenever its onClose changes.
+  const closeConfirm = useCallback(() => setConfirming(null), []);
 
   const toastTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(toastTimer.current), []);
@@ -59,6 +64,8 @@ export function SettingsScreen() {
         address: address.trim() || null,
         gstin: gstin.trim().toUpperCase() || null,
       });
+      // The app shows members the gym's name, so a rename goes to the cloud too.
+      await renameCloudGym(name.trim() || 'My Gym');
       flash('Saved.');
     } catch (e) {
       // Without this, a failed write (storage full) just stopped the spinner and
@@ -102,24 +109,8 @@ export function SettingsScreen() {
         </div>
       </Card>
 
-      <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Member app</SectionTitle>
-        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          Members enter this code in the ForgeAI app to link their training to your gym.
-        </p>
-        <div
-          style={{
-            marginTop: space.md,
-            fontFamily: font.mono,
-            fontSize: 30,
-            fontWeight: 700,
-            letterSpacing: 4,
-            color: color.accentBright,
-          }}
-        >
-          {gym.joinCode}
-        </div>
-      </Card>
+      <SectionTitle>Member app</SectionTitle>
+      <JoinCodeCard />
 
       <Card>
         <SectionTitle>Your data</SectionTitle>
@@ -143,13 +134,26 @@ export function SettingsScreen() {
               Erase and start fresh
             </Button>
           </div>
+          {cloud && (
+            <div style={{ marginTop: space.lg }}>
+              <Button variant="ghost" tone="danger" onClick={() => setConfirming('over')}>
+                Start over with a new demo gym
+              </Button>
+            </div>
+          )}
         </Row>
       </Card>
 
       {confirming && (
         <Sheet
-          title={confirming === 'demo' ? 'Load the demo gym?' : 'Erase everything?'}
-          onClose={() => setConfirming(null)}
+          title={
+            confirming === 'demo'
+              ? 'Load the demo gym?'
+              : confirming === 'over'
+                ? 'Start over with a new demo gym?'
+                : 'Erase everything?'
+          }
+          onClose={closeConfirm}
           footer={
             <>
               <Button variant="ghost" onClick={() => setConfirming(null)}>
@@ -160,6 +164,12 @@ export function SettingsScreen() {
                 onClick={async () => {
                   setError(null);
                   try {
+                    if (confirming === 'over') {
+                      // Back to the welcome screen, where "Start demo" makes a new one.
+                      setConfirming(null);
+                      await startOver();
+                      return;
+                    }
                     if (confirming === 'demo') {
                       await loadDemoGym();
                       flash('Demo gym loaded.');
@@ -176,7 +186,7 @@ export function SettingsScreen() {
                   setConfirming(null);
                 }}
               >
-                {confirming === 'demo' ? 'Load demo gym' : 'Erase everything'}
+                {confirming === 'demo' ? 'Load demo gym' : confirming === 'over' ? 'Start over' : 'Erase everything'}
               </Button>
             </>
           }
@@ -186,7 +196,9 @@ export function SettingsScreen() {
             {counts.payments} payments and {counts.visits} check-ins. It cannot be undone.
           </ErrorBanner>
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-            {confirming === 'demo'
+            {confirming === 'over'
+              ? `This browser forgets the current demo gym and its shop (join code ${cloud?.joinCode ?? ''} stops being yours here). You go back to the welcome screen, where Start demo makes a fresh gym with a new code.`
+              : confirming === 'demo'
               ? 'A sample gym with around 128 members, their payment history and attendance will be created. Use this to show someone the product — not on a gym with real records in it.'
               : 'You will be left with an empty gym: no members, no plans, no payments.'}
           </p>

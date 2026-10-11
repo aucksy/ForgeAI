@@ -13,6 +13,8 @@ import { useMemo } from 'react';
 import { atRiskList } from './logic/attendance';
 import { duesByMember, duesLedger } from './logic/collections';
 import { needsAttentionToday } from './logic/membership';
+import { ShopProvider, useShop } from './shop/ShopProvider';
+import { ShopScreen } from './shop/ShopScreen';
 import { CrmProvider, useCrm } from './store';
 import { AppShell, type NavItem } from './ui/AppShell';
 import { AttendanceScreen } from './ui/screens/Attendance';
@@ -29,13 +31,16 @@ import { useRoute } from './ui/router';
 export function CrmApp() {
   return (
     <CrmProvider>
-      <Routes />
+      <ShopProvider>
+        <Routes />
+      </ShopProvider>
     </CrmProvider>
   );
 }
 
 function Routes() {
   const { snapshot, memberViews, today } = useCrm();
+  const { newCount } = useShop();
   const route = useRoute();
 
   // Never set up: no plans, no members, and still the placeholder name.
@@ -63,6 +68,9 @@ function Routes() {
     return [
       { path: '/', label: 'Today', glyph: '◆' },
       { path: '/members', label: 'Members', glyph: '☰', badge: needsAttention },
+      // Badged with orders waiting at the desk — the one number on this bar that
+      // changes by itself while the owner watches.
+      { path: '/shop', label: 'Shop', glyph: '▣', badge: newCount },
       // "Visits" rather than "Attendance": six items across a 375px phone leave
       // about 54px of text, and the longer word does not fit. The screen itself is
       // still titled Attendance, which is the word an owner comparing products
@@ -73,7 +81,7 @@ function Routes() {
       { path: '/plans', label: 'Plans', glyph: '₹' },
       { path: '/settings', label: 'Settings', glyph: '⚙' },
     ];
-  }, [memberViews, snapshot, today]);
+  }, [memberViews, snapshot, today, newCount]);
 
   if (isNewGym) return <Welcome />;
 
@@ -91,7 +99,11 @@ function Screen({ segments }: { segments: string[] }) {
     case undefined:
       return <TodayScreen />;
     case 'members':
+      // `/members/app` is the "Joined in the app" list, not a member id (ids are UUIDs).
+      if (id === 'app') return <MembersScreen section="app" />;
       return id ? <MemberDetailScreen memberId={id} /> : <MembersScreen />;
+    case 'shop':
+      return <ShopScreen section={id} />;
     case 'attendance':
       return <AttendanceScreen section={id} />;
     case 'money':

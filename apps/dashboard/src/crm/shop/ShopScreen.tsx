@@ -1,0 +1,549 @@
+/**
+ * Shop — orders members placed in the ForgeAI app, and the products they can buy.
+ *
+ * Orders is the default because it is the part that moves: a member orders on
+ * their phone, the desk sees it here within five seconds, hands it over, and
+ * marks it collected when the money is taken. Products is where the owner keeps
+ * prices and stock true.
+ */
+
+import { useCallback, useMemo, useState } from 'react';
+
+import { formatINR } from '../logic/money';
+import {
+  Button,
+  Card,
+  ChipToggle,
+  EmptyState,
+  ErrorBanner,
+  Grid,
+  PageHeader,
+  Pill,
+  Row,
+  Sheet,
+  TOUCH,
+  color,
+  font,
+  radius,
+  space,
+  type Tone,
+} from '../ui/kit';
+import { navigate } from '../ui/router';
+import * as api from './api';
+import { JoinCodeCard } from './JoinCode';
+import {
+  ACTION_LABEL,
+  ACTION_TARGET,
+  actionsFor,
+  CATEGORIES,
+  clockTime,
+  countByStatus,
+  filterOrders,
+  lineText,
+  priceText,
+  restockPayload,
+  STATUS_LABEL,
+  stockLabel,
+  timeAgo,
+  toPayload,
+  type Order,
+  type OrderAction,
+  type OrderFilter,
+  type OrderStatus,
+  type Product,
+} from './logic';
+import { ProductArt } from './ProductArt';
+import { ProductSheet } from './ProductSheet';
+import { usePoll, useShop } from './ShopProvider';
+
+export function ShopScreen({ section }: { section?: string }) {
+  const { cloud, newCount } = useShop();
+  const tab = section === 'products' ? 'products' : 'orders';
+
+  return (
+    <>
+      <PageHeader title="Shop" subtitle="What members order in the ForgeAI app, and what you sell" />
+
+      {!cloud ? (
+        <JoinCodeCard />
+      ) : (
+        <>
+          <div style={{ marginBottom: space.lg }}>
+            <ChipToggle
+              label="Shop section"
+              value={tab}
+              onChange={(v) => navigate(v === 'products' ? '/shop/products' : '/shop/orders')}
+              options={[
+                { value: 'orders', label: newCount > 0 ? `Orders · ${newCount} new` : 'Orders' },
+                { value: 'products', label: 'Products' },
+              ]}
+            />
+          </div>
+          {tab === 'orders' ? <OrdersSection /> : <ProductsSection />}
+        </>
+      )}
+    </>
+  );
+}
+
+// ---------------------------------------------------------------- orders
+
+const STATUS_TONE: Record<OrderStatus, Tone> = {
+  ordered: 'accent',
+  ready: 'good',
+  collected: 'muted',
+  cancelled: 'critical',
+};
+
+function OrdersSection() {
+  const { cloud, orders, ordersLoaded, ordersError, now } = useShop();
+  const [filter, setFilter] = useState<OrderFilter>('ordered');
+  const [cancelling, setCancelling] = useState<Order | null>(null);
+
+  // Stable, because the sheet re-focuses itself whenever its onClose changes.
+  const closeCancel = useCallback(() => setCancelling(null), []);
+  const counts = useMemo(() => countByStatus(orders), [orders]);
+  const rows = useMemo(() => filterOrders(orders, filter), [orders, filter]);
+  const code = cloud?.joinCode ?? '';
+
+  return (
+    <>
+      {ordersError && <ErrorBanner>{ordersError}</ErrorBanner>}
+
+      <div style={{ marginBottom: space.lg }}>
+        <ChipToggle
+          label="Show orders"
+          value={filter}
+          onChange={(v) => setFilter(v as OrderFilter)}
+          options={[
+            { value: 'ordered', label: 'New', count: counts.ordered },
+            { value: 'ready', label: 'Ready', count: counts.ready },
+            { value: 'collected', label: 'Collected', count: counts.collected },
+            { value: 'cancelled', label: 'Cancelled', count: counts.cancelled },
+            { value: 'all', label: 'All', count: counts.all },
+          ]}
+        />
+      </div>
+
+      {!ordersLoaded && !ordersError ? (
+        <Card>
+          <EmptyState title="Loading orders…" />
+        </Card>
+      ) : orders.length === 0 ? (
+        <Card>
+          <EmptyState
+            title="No orders yet"
+            body={`Members order from the Shop tab in the ForgeAI app after joining with code ${code}.`}
+          />
+        </Card>
+      ) : rows.length === 0 ? (
+        <Card>
+          <EmptyState
+            title={
+              filter === 'ordered'
+                ? 'No new orders right now'
+                : filter === 'ready'
+                  ? 'Nothing waiting to be picked up'
+                  : `No ${STATUS_LABEL[filter as OrderStatus]?.toLowerCase() ?? ''} orders`
+            }
+            body={
+              filter === 'ready'
+                ? 'Orders you mark ready wait here until the member collects and pays.'
+                : 'New orders show up here by themselves within a few seconds.'
+            }
+          />
+        </Card>
+      ) : (
+        <Grid min={300}>
+          {rows.map((o) => (
+            <OrderCard key={o.orderId} order={o} now={now} onCancel={() => setCancelling(o)} />
+          ))}
+        </Grid>
+      )}
+
+      {cancelling && <CancelSheet order={cancelling} onClose={closeCancel} />}
+    </>
+  );
+}
+
+function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCancel: () => void }) {
+  const { setOrderStatus, flash } = useShop();
+  const [busy, setBusy] = useState<OrderAction | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const act = async (a: OrderAction) => {
+    if (a === 'cancel') return onCancel();
+    setBusy(a);
+    setError(null);
+    try {
+      await setOrderStatus(order.orderId, ACTION_TARGET[a]);
+      flash(
+        a === 'ready'
+          ? `Order ${order.orderNo} is ready — ${order.memberName} can see that in the app.`
+          : a === 'collected'
+            ? `Order ${order.orderNo} collected. ${formatINR(order.totalP)} taken.`
+            : `Order ${order.orderNo} is back to new.`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const actions = actionsFor(order.status);
+
+  return (
+    <Card pad={space.lg}>
+      <Row gap={space.sm} wrap={false} align="flex-start">
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: font.display, fontSize: 18, fontWeight: 700, color: color.ink }}>
+            Order {order.orderNo}
+          </div>
+          <div style={{ fontFamily: font.body, fontSize: 14, color: color.ink, marginTop: 2 }}>
+            {order.memberName}
+          </div>
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
+            {timeAgo(order.createdAt, now)} · {clockTime(order.createdAt)}
+          </div>
+        </div>
+        <Pill tone={STATUS_TONE[order.status]}>
+          {order.status === 'cancelled' && order.cancelledBy === 'member'
+            ? 'Cancelled by member'
+            : STATUS_LABEL[order.status]}
+        </Pill>
+      </Row>
+
+      <div
+        style={{
+          marginTop: space.md,
+          paddingTop: space.md,
+          borderTop: `1px solid ${color.border}`,
+          display: 'grid',
+          gap: 6,
+        }}
+      >
+        {order.lines.map((l, i) => (
+          <Row key={`${l.productId}-${l.optionId ?? ''}-${i}`} gap={space.sm} wrap={false} align="baseline">
+            <span style={{ flex: 1, minWidth: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+              {lineText(l)}
+            </span>
+            <span style={{ fontFamily: font.mono, fontSize: 14, color: color.inkSecondary, whiteSpace: 'nowrap' }}>
+              {formatINR(l.unitPriceP * l.qty)}
+            </span>
+          </Row>
+        ))}
+        <Row gap={space.sm} wrap={false} align="baseline">
+          <span style={{ flex: 1, fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>
+            Total
+          </span>
+          <span style={{ fontFamily: font.mono, fontSize: 18, fontWeight: 700, color: color.ink }}>
+            {formatINR(order.totalP)}
+          </span>
+        </Row>
+      </div>
+
+      {error && (
+        <div style={{ marginTop: space.md }}>
+          <ErrorBanner>{error}</ErrorBanner>
+        </div>
+      )}
+
+      {actions.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
+          {actions.map((a, i) => (
+            <Button
+              key={a}
+              variant={i === 0 ? 'primary' : a === 'cancel' ? 'quiet' : 'ghost'}
+              tone={a === 'cancel' ? 'danger' : undefined}
+              disabled={busy !== null}
+              onClick={() => void act(a)}
+              ariaLabel={`${ACTION_LABEL[a]}, order ${order.orderNo}`}
+            >
+              {busy === a ? 'Saving…' : ACTION_LABEL[a]}
+            </Button>
+          ))}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function CancelSheet({ order, onClose }: { order: Order; onClose: () => void }) {
+  const { setOrderStatus, flash } = useShop();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  return (
+    <Sheet
+      title={`Cancel order ${order.orderNo}?`}
+      onClose={onClose}
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>
+            Keep it
+          </Button>
+          <Button
+            tone="danger"
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true);
+              setError(null);
+              try {
+                await setOrderStatus(order.orderId, 'cancelled');
+                flash(`Order ${order.orderNo} cancelled. Stock is back.`);
+                onClose();
+              } catch (e) {
+                setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+                setBusy(false);
+              }
+            }}
+          >
+            {busy ? 'Cancelling…' : 'Cancel order'}
+          </Button>
+        </>
+      }
+    >
+      {error && <ErrorBanner>{error}</ErrorBanner>}
+      <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+        {order.memberName}’s order for <strong style={{ color: color.ink }}>{formatINR(order.totalP)}</strong>{' '}
+        will be cancelled. <strong style={{ color: color.ink }}>The items go back into stock</strong>, and{' '}
+        {order.memberName} sees “Cancelled” in the app. This cannot be undone.
+      </p>
+    </Sheet>
+  );
+}
+
+// ---------------------------------------------------------------- products
+
+function ProductsSection() {
+  const { cloud, handleError, flash } = useShop();
+  const [products, setProducts] = useState<Product[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState<Product | 'new' | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const key = cloud?.ownerKey ?? null;
+  // Stable, because the sheet re-focuses itself whenever its onClose changes.
+  const closeEditor = useCallback(() => setEditing(null), []);
+
+  const load = useCallback(async () => {
+    if (!key) return;
+    try {
+      const list = await api.listProducts(key);
+      setProducts(list);
+      setError(null);
+    } catch (e) {
+      setError(handleError(e));
+    }
+  }, [key, handleError]);
+
+  // Members buying changes stock, so the list keeps itself fresh while it is open.
+  usePoll(load, 15_000, key !== null && editing === null);
+
+  const quick = async (p: Product, kind: 'restock' | 'toggle') => {
+    if (!key) return;
+    setBusyId(p.productId);
+    setError(null);
+    try {
+      const payload = kind === 'restock' ? restockPayload(p, 10) : { ...toPayload(p), active: !p.active };
+      const saved = await api.saveProduct(key, payload);
+      setProducts((prev) => prev?.map((x) => (x.productId === saved.productId ? saved : x)) ?? prev);
+      flash(
+        kind === 'restock'
+          ? `Added 10 to ${saved.name}. ${saved.stock} in stock now.`
+          : saved.active
+            ? `${saved.name} is shown in the app again.`
+            : `${saved.name} is hidden from the app.`,
+      );
+    } catch (e) {
+      setError(handleError(e));
+      void load();
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const shown = products?.filter((p) => p.active).length ?? 0;
+
+  return (
+    <>
+      <Row gap={space.md}>
+        <div style={{ flex: 1, minWidth: 200, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+          {products
+            ? `${products.length} products · ${shown} shown in the app`
+            : 'Loading your products…'}
+        </div>
+        <Button onClick={() => setEditing('new')}>+ Add product</Button>
+      </Row>
+
+      <div style={{ height: space.lg }} />
+      {error && <ErrorBanner>{error}</ErrorBanner>}
+
+      {products && products.length === 0 ? (
+        <Card>
+          <EmptyState
+            title="No products yet"
+            body="Add what you sell at the desk — protein, shakers, T-shirts — and members can order it in the app."
+            action={<Button onClick={() => setEditing('new')}>+ Add product</Button>}
+          />
+        </Card>
+      ) : (
+        <Grid min={290}>
+          {(products ?? []).map((p) => (
+            <ProductCard
+              key={p.productId}
+              product={p}
+              busy={busyId === p.productId}
+              onEdit={() => setEditing(p)}
+              onRestock={() => void quick(p, 'restock')}
+              onToggle={() => void quick(p, 'toggle')}
+            />
+          ))}
+        </Grid>
+      )}
+
+      {editing && (
+        <ProductSheet
+          product={editing === 'new' ? null : editing}
+          onClose={closeEditor}
+          onSaved={(saved, verb) => {
+            setProducts((prev) => {
+              if (!prev) return [saved];
+              if (verb === 'deleted') return prev.filter((x) => x.productId !== saved.productId);
+              const exists = prev.some((x) => x.productId === saved.productId);
+              return exists ? prev.map((x) => (x.productId === saved.productId ? saved : x)) : [...prev, saved];
+            });
+            flash(
+              verb === 'deleted'
+                ? `${saved.name} deleted.`
+                : verb === 'added'
+                  ? `${saved.name} added to the shop.`
+                  : `${saved.name} saved.`,
+            );
+            setEditing(null);
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+function ProductCard({
+  product: p,
+  busy,
+  onEdit,
+  onRestock,
+  onToggle,
+}: {
+  product: Product;
+  busy: boolean;
+  onEdit: () => void;
+  onRestock: () => void;
+  onToggle: () => void;
+}) {
+  const stock = stockLabel(p.stock);
+  const category = CATEGORIES.find((c) => c.value === p.category)?.label ?? p.category;
+
+  return (
+    <Card pad={space.lg} style={{ opacity: p.active ? 1 : 0.72 }}>
+      <button
+        type="button"
+        onClick={onEdit}
+        aria-label={`Edit ${p.name}`}
+        style={{
+          appearance: 'none',
+          background: 'transparent',
+          border: 'none',
+          padding: 0,
+          margin: 0,
+          width: '100%',
+          textAlign: 'left',
+          cursor: 'pointer',
+          color: 'inherit',
+          display: 'flex',
+          gap: space.md,
+          alignItems: 'flex-start',
+          minHeight: TOUCH,
+        }}
+      >
+        <ProductArt kind={p.artKind} tint={p.artTint} size={76} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: font.body, fontSize: 15, fontWeight: 700, color: color.ink, lineHeight: 1.3 }}>
+            {p.name}
+          </div>
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
+            {category}
+            {p.options.length > 0 && ` · ${p.options.length} ${(p.optionName ?? 'choices').toLowerCase()}s`}
+          </div>
+          <div style={{ fontFamily: font.mono, fontSize: 17, fontWeight: 700, color: color.ink, marginTop: 6 }}>
+            {priceText(p)}
+          </div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+            <span
+              style={{
+                fontFamily: font.body,
+                fontSize: 12,
+                fontWeight: 700,
+                color:
+                  stock.tone === 'out' ? color.criticalText : stock.tone === 'low' ? color.warning : color.goodText,
+              }}
+            >
+              {stock.text}
+            </span>
+            {!p.active && <Pill tone="warn">Hidden</Pill>}
+          </div>
+        </div>
+      </button>
+
+      <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap', marginTop: space.md }}>
+        <SmallButton onClick={onRestock} disabled={busy} label={`Add 10 to stock, ${p.name}`}>
+          +10 stock
+        </SmallButton>
+        <SmallButton onClick={onToggle} disabled={busy} label={`${p.active ? 'Hide' : 'Show'} ${p.name}`}>
+          {p.active ? 'Hide from app' : 'Show in app'}
+        </SmallButton>
+        <SmallButton onClick={onEdit} disabled={busy} label={`Edit ${p.name}`}>
+          Edit
+        </SmallButton>
+      </div>
+    </Card>
+  );
+}
+
+function SmallButton({
+  children,
+  onClick,
+  disabled,
+  label,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      style={{
+        appearance: 'none',
+        minHeight: TOUCH,
+        padding: '6px 14px',
+        borderRadius: radius.pill,
+        border: `1px solid ${color.borderStrong}`,
+        background: 'transparent',
+        color: color.ink,
+        fontFamily: font.body,
+        fontSize: 13,
+        fontWeight: 600,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.5 : 1,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
