@@ -25,7 +25,9 @@ import { InlineError } from '@/components/ui/InlineError';
 import { todayISO } from '@/lib/date';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { tap } from '@/lib/haptics';
+import { readWithRetry } from '@/lib/retryRead';
 import { tell } from '@/lib/tell';
+import { useRereadWhenFailed } from '@/lib/useRereadWhenFailed';
 import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -240,7 +242,9 @@ export function WorkoutRoutines({
 
   const reload = useCallback(() => {
     let alive = true;
-    getWorkoutFolders()
+    // Phone test run 38144864717: a read that failed for a moment at app start left
+    // "Couldn't load your routines" up; it is tried again (300 ms, 1 s, 2.5 s) before that shows.
+    readWithRetry(getWorkoutFolders, { wanted: () => alive })
       .then((list) => {
         if (!alive) return;
         setFolders(list);
@@ -259,6 +263,8 @@ export function WorkoutRoutines({
   }, [refreshKey]);
 
   useFocusEffect(reload);
+  // Still failed: read again when the app is back in front, or after the next save.
+  useRereadWhenFailed(folders == null && loadFailed, reload);
 
   /** After a write: forget the kept list, read it and Up next again. */
   const changed = (): void => {

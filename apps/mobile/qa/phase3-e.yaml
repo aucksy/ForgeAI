@@ -8,12 +8,11 @@ appId: com.forgeai.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "^Workout$"
+    visible: "^Profile$"
     timeout: 60000
-- tapOn: "^Workout$"
-- extendedWaitUntil:
-    visible: "Start empty workout"
-    timeout: 30000
+# No workout left open by an earlier part (run 38144864717: one failed part's open workout made
+# the next three fail).
+- runFlow: sub-workout-fresh.yaml
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"
@@ -33,6 +32,64 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "More for Pull[- ][Uu]p"
     timeout: 15000
+# A record needs pull-up history: a first-ever set sets its bests silently, by design ("a first
+# time is not news", liveRecords.ts). Part C logs 8 pull-ups; when it did not get that far (run
+# 38144864717), the PREVIOUS column reads "—" instead of "8 reps". Then log that first set here
+# (8 reps, finished and saved), and start again — so this part never depends on part C.
+- runFlow:
+    when:
+      notVisible: '^\d+ reps?$'
+    commands:
+      - tapOn:
+          text: ".* set 1 reps"
+          below:
+            text: "More for Pull[- ][Uu]p"
+      - inputText: " 8"
+      - hideKeyboard
+      - tapOn:
+          text: "Mark .* set 1 complete"
+          below:
+            text: "More for Pull[- ][Uu]p"
+      - tapOn:
+          text: "Skip rest"
+          optional: true
+      - tapOn:
+          text: "Finish workout"
+          index: 0
+      - extendedWaitUntil:
+          visible: 'Finish workout\?'
+          timeout: 10000
+      - tapOn:
+          text: "Finish workout"
+          above:
+            text: "Keep going"
+      - extendedWaitUntil:
+          visible: "Workout complete"
+          timeout: 30000
+      - scrollUntilVisible:
+          element: "Done"
+          timeout: 20000
+      - tapOn: "Done"
+      - runFlow: sub-workout-fresh.yaml
+      - tapOn: "Start empty workout"
+      - tapOn:
+          text: "(?i)^allow$"
+          optional: true
+      - extendedWaitUntil:
+          visible: "Add exercise"
+          timeout: 20000
+      - tapOn: "Add exercise"
+      - tapOn: "Search exercises"
+      - inputText: " pull-up"
+      - hideKeyboard
+      # Phase 2 (LW-15): tick the exercise in the picker, then "Add 1".
+      - tapOn:
+          text: "Select Pull[- ][Uu]p"
+          index: 0
+      - tapOn: "Add 1"
+      - extendedWaitUntil:
+          visible: "More for Pull[- ][Uu]p"
+          timeout: 15000
 # More pull-ups in one set than ever before: "Most reps" (a Phase 3 record kind).
 - tapOn:
     text: ".* set 1 reps"

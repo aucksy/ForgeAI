@@ -52,10 +52,7 @@ appId: com.forgeai.app
     timeout: 30000
 - takeScreenshot: p9-02-workout-goal
 # ---------------------------------------------------------------- 2. the entry bar
-- scrollUntilVisible:
-    element: "Start empty workout"
-    centerElement: true
-    timeout: 30000
+- runFlow: sub-workout-fresh.yaml
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"

@@ -260,10 +260,7 @@ appId: com.forgeai.app
       - takeScreenshot: 153-today-preview-from-workout
       - back
 # ---------------------------------------------------------------- "Create “…”" inside a workout
-- scrollUntilVisible:
-    element: "Start empty workout"
-    centerElement: true
-    timeout: 15000
+- runFlow: sub-workout-fresh.yaml
 - tapOn: "Start empty workout"
 - scrollUntilVisible:
     element: "Add exercise"

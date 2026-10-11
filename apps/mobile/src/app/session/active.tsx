@@ -207,14 +207,17 @@ export default function ActiveWorkoutScreen() {
   const onDiscard = (): void => {
     const back = (): void => {
       leaving.current = true;
-      // Leaving an edit returns to the workout it came from, unchanged; a past log to Profile (its workouts).
+      // Leaving an edit returns to the workout it came from, unchanged. A discarded past log goes
+      // back to the page that opened it — Calendar, with its "Log a past workout" (redesign R3;
+      // before it, History's own tab) — or to Profile when nothing is behind it. (It used to
+      // replace this page with Profile, dropping Calendar: phone test run 38144864717, part N.)
       const sessionId = editingSessionId;
       const wasPast = pastLog;
-      void discard().then(() =>
-        sessionId
-          ? router.replace({ pathname: '/session/[id]', params: { id: sessionId } })
-          : router.replace(wasPast ? '/profile' : '/workout'),
-      );
+      void discard().then(() => {
+        if (sessionId) router.replace({ pathname: '/session/[id]', params: { id: sessionId } });
+        else if (wasPast) goBack(router, '/profile');
+        else router.replace('/workout');
+      });
     };
     if (isEditing) {
       // HI-07: leaving an edit (✕ or Back) asks first; an edit is never left open behind.

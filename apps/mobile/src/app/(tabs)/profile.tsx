@@ -22,7 +22,9 @@ import { quietSince, writeQueueMark } from '@/db/writeQueue';
 import { todayISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
 import { tap } from '@/lib/haptics';
+import { readWithRetry } from '@/lib/retryRead';
 import { tell } from '@/lib/tell';
+import { useRereadWhenFailed } from '@/lib/useRereadWhenFailed';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -124,7 +126,8 @@ export default function ProfileScreen() {
     }
     setChartLoading(true);
     try {
-      const b = await getHistoryChart(r);
+      // Phone test run 38144864717: a read that fails for a moment is tried again first.
+      const b = await readWithRetry(() => getHistoryChart(r), { wanted: () => rangeRef.current === r });
       if (rangeRef.current !== r) return;
       if (key) chartCache.current.set(key, b);
       setBars(b);
@@ -143,8 +146,9 @@ export default function ProfileScreen() {
       shownAt.current = null;
       if (stamp == null || !chartCache.current.has(`${stamp}|${rangeRef.current}`)) chartCache.current.clear();
       let ok = true;
+      const retry = { wanted: () => mine === gen.current };
       await Promise.all([
-        getProfileHeader()
+        readWithRetry(getProfileHeader, retry)
           .then((h) => {
             if (mine !== gen.current) return;
             setHeader(h);
@@ -155,7 +159,7 @@ export default function ProfileScreen() {
             if (mine === gen.current) setHeaderFailed(true);
           }),
         loadChart(rangeRef.current, stamp),
-        Promise.all([getFeedUpTo(loaded.current), getMonthCounts(null)])
+        readWithRetry(() => Promise.all([getFeedUpTo(loaded.current), getMonthCounts(null)]), retry)
           .then(([page, c]) => {
             if (mine !== gen.current) return;
             setItems(page.items);
@@ -192,6 +196,10 @@ export default function ProfileScreen() {
       })();
     }, [loadAll]),
   );
+
+  // A part still failed after its retries: read again when the app is back in front or after
+  // the next save (not only on a tap on Try again).
+  useRereadWhenFailed(headerFailed || chartFailed || feedStatus === 'error', () => void loadAll(null));
 
   const pickRange = (r: ChartRange): void => {
     setRange(r);

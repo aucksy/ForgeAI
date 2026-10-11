@@ -56,12 +56,16 @@ appId: com.forgeai.app
     timeout: 10000
 - takeScreenshot: 22c-search-benchpress
 # A typed name that is not an exercise: "Did you mean Dumbbell Curl?" sits above "Create “…”".
+# Both are the list's last rows (under the matches): scroll to the LOWER one, centred. Run
+# 38144864717 scrolled to "Did you mean" alone and stopped on a 12-pixel sliver of it at the
+# screen's bottom edge (trap 12), so "Create" was still below the screen.
 - tapOn: "Search exercises"
 - eraseText
 - inputText: " dumbell curl"
 - hideKeyboard
 - scrollUntilVisible:
-    element: 'Did you mean Dumbbell Curl\?.*'
+    element: "Create “dumbell curl”"
+    centerElement: true
     timeout: 20000
 - assertVisible:
     text: "Create “dumbell curl”"
@@ -88,17 +92,8 @@ appId: com.forgeai.app
 - back
 - back
 # ---------------------------------------------------------------- empty workout, new set kinds
-# Back on Profile: the empty workout starts from the Workout tab.
-- extendedWaitUntil:
-    visible: "^Workout$"
-    timeout: 20000
-- tapOn:
-    text: "^Workout$"
-    index: 0
-- scrollUntilVisible:
-    element: "Start empty workout"
-    centerElement: true
-    timeout: 20000
+# Back on Profile: the empty workout starts from the Workout tab (none left open by part B).
+- runFlow: sub-workout-fresh.yaml
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"

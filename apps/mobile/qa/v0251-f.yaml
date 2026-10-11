@@ -40,13 +40,8 @@ appId: com.forgeai.app
 - takeScreenshot: 71-body-map-female
 - back
 # ---------------------------------------------------------------- a run: best pace
-- tapOn:
-    text: "^Workout$"
-    index: 0
-- scrollUntilVisible:
-    element: "Start empty workout"
-    centerElement: true
-    timeout: 30000
+# No workout left open by an earlier part (run 38144864717: part E's open workout failed this).
+- runFlow: sub-workout-fresh.yaml
 - tapOn: "Start empty workout"
 - tapOn:
     text: "(?i)^allow$"

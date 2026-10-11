@@ -19,9 +19,9 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 60000
-- tapOn:
-    text: "^Workout$"
-    index: 0
+# No workout left open by an earlier part: Up next names the plan's routine only when none is
+# open (run 38144864717: part E's open workout made "Up next: Full Body A" never show).
+- runFlow: sub-workout-fresh.yaml
 - scrollUntilVisible:
     element: "^Routines$"
     centerElement: true

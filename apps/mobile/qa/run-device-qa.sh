@@ -39,6 +39,30 @@ wait_media() {
   echo "$n"
 }
 
+# Rest-alert audit: Doze for the screen-off rest. A plain `force-idle` on the emulator answered
+# "Unable to go deep idle; stopped at INACTIVE" (run 38144864717): deep Doze is switched off on an
+# emulator image, so it never got past INACTIVE and the rest was never tested in Doze. Switch deep
+# Doze on, force it, and when it still is not IDLE, step it (INACTIVE -> IDLE_PENDING -> SENSING
+# -> LOCATING -> IDLE) until it is. The final state is logged either way.
+force_deep_idle() {
+  DOZE_WAS=$(adb shell dumpsys deviceidle enabled deep 2>/dev/null | tr -d '\r\n ')
+  adb shell dumpsys deviceidle enable deep >/dev/null 2>&1 || true
+  adb shell dumpsys deviceidle enable all >/dev/null 2>&1 || true
+  log "doze: deep was enabled=${DOZE_WAS:-?}; force-idle deep: $(adb shell dumpsys deviceidle force-idle deep 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-120)"
+  local state i
+  state=$(adb shell dumpsys deviceidle get deep 2>/dev/null | tr -d '\r\n ')
+  for i in $(seq 1 10); do
+    [ "$state" = "IDLE" ] && break
+    adb shell dumpsys deviceidle step deep >/dev/null 2>&1 || true
+    state=$(adb shell dumpsys deviceidle get deep 2>/dev/null | tr -d '\r\n ')
+  done
+  if [ "$state" = "IDLE" ]; then
+    log "doze: deep state IDLE"
+  else
+    log "DOZE NOT REACHED: deep state ${state:-unknown} after stepping (the rest was not tested in Doze)"
+  fi
+}
+
 log "device: $(adb shell getprop ro.build.version.release | tr -d '\r') (API $(adb shell getprop ro.build.version.sdk | tr -d '\r'))"
 adb install -r "$APK" || { log "INSTALL FAILED"; exit 1; }
 # A freshly booted emulator can still be busy; its launcher sometimes throws an
@@ -72,10 +96,14 @@ adb exec-out screencap -p > "$OUT/a-end.png"
 adb shell input keyevent KEYCODE_SLEEP
 log "screen off"
 adb shell dumpsys battery unplug >/dev/null 2>&1 || true
-log "doze: $(adb shell dumpsys deviceidle force-idle 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-120)"
+force_deep_idle
 sleep 50
 adb shell dumpsys notification --noredact > "$OUT/notifications-after-rest.txt"
 adb shell dumpsys deviceidle unforce >/dev/null 2>&1 || true
+# Put the emulator's deep-Doze switch back as it was, so no later part can fall asleep mid-flow.
+if [ "${DOZE_WAS:-}" = "false" ] || [ "${DOZE_WAS:-}" = "0" ]; then
+  adb shell dumpsys deviceidle disable deep >/dev/null 2>&1 || true
+fi
 adb shell dumpsys battery reset >/dev/null 2>&1 || true
 # Rest-alert audit: Android's own record of what last made a SOUND and a BUZZ must be "Rest is
 # over" (id 41002) — a posted but silent alert (the bug the owner heard) fails here.

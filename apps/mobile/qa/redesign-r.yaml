@@ -412,6 +412,12 @@ appId: com.forgeai.app
     timeout: 10000
 - assertVisible: "Bag, 1 item"
 - takeScreenshot: r-22b-added-to-bag
+# "Go to bag" appears under the "Added 1 to your bag" line, at the page's end, so it opens below
+# the screen's edge (trap 23; run 38144864717 failed "Element not found: Go to bag" here).
+- scrollUntilVisible:
+    element: "Go to bag"
+    centerElement: true
+    timeout: 15000
 - tapOn: "Go to bag"
 - extendedWaitUntil:
     visible: "^Bag$"

@@ -24,6 +24,7 @@ let running = 0;
 /** Jobs started so far (see `writeQueueMark`). */
 let started = 0;
 const failedListeners = new Set<() => void>();
+const doneListeners = new Set<() => void>();
 
 export function enqueueWrite<T>(fn: () => Promise<T>): Promise<T> {
   const job = async (): Promise<T> => {
@@ -38,6 +39,7 @@ export function enqueueWrite<T>(fn: () => Promise<T>): Promise<T> {
     } finally {
       running--;
       if (failed) tellWriteFailed();
+      else tell(doneListeners);
     }
   };
   const run = tail.then(job, job);
@@ -76,8 +78,22 @@ export function onWriteFailed(listener: () => void): () => void {
   return () => failedListeners.delete(listener);
 }
 
+/**
+ * Phone test run 38144864717 (part G): called after a queued job SAVED (committed), once it is
+ * off the queue. A screen whose read failed listens here to read again on the next save — "the
+ * next data change" — instead of waiting for a tap on Try again. Returns "stop listening".
+ */
+export function onWriteDone(listener: () => void): () => void {
+  doneListeners.add(listener);
+  return () => doneListeners.delete(listener);
+}
+
 function tellWriteFailed(): void {
-  for (const l of [...failedListeners]) {
+  tell(failedListeners);
+}
+
+function tell(listeners: Set<() => void>): void {
+  for (const l of [...listeners]) {
     try {
       l();
     } catch {

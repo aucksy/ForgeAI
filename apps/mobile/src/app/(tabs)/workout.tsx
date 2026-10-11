@@ -23,7 +23,9 @@ import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
 import { thud } from '@/lib/haptics';
 import { takeLinkNotice } from '@/lib/linkNotice';
+import { readWithRetry } from '@/lib/retryRead';
 import { tell } from '@/lib/tell';
+import { useRereadWhenFailed } from '@/lib/useRereadWhenFailed';
 import { countWord } from '@/lib/words';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, space, type } from '@/theme/tokens';
@@ -85,6 +87,9 @@ export default function WorkoutScreen() {
   const [linkNotice, setLinkNotice] = useState<string | null>(null);
   // Redesign R1: once, after the update — where Home, History and Progress went.
   const [tabsNotice, setTabsNotice] = useState(false);
+  // Phone test run 38144864717: a read that failed even after its retries (Up next or the week's
+  // count) — read again when the app is back in front or after the next save.
+  const [readFailed, setReadFailed] = useState(false);
 
   // RP-03: a screen left open overnight reads Today again when the phone is back (a new day
   // can mean a new routine); Start always starts the routine on screen.
@@ -102,7 +107,10 @@ export default function WorkoutScreen() {
       let alive = true;
       const day = todayISO();
       shownDay.current = day;
-      getTodayPlan(day)
+      // A read that fails for a moment (at app start) is tried again before the card gives up.
+      const retry = { wanted: () => alive };
+      let failedNow = false;
+      const upNext = readWithRetry(() => getTodayPlan(day), retry)
         .then((tp) => {
           if (!alive) return;
           setToday(upNextToday(tp));
@@ -110,31 +118,36 @@ export default function WorkoutScreen() {
           setUpFolderId(tp.folder?.id ?? null);
         })
         .catch(() => {
+          failedNow = true;
           if (!alive) return;
           setToday(null);
           setUpFolderId(null);
         });
-      getPlanNow()
+      readWithRetry(getPlanNow, retry)
         .then((p) => {
           if (alive) setPlan(p);
         })
         .catch(() => {
           if (alive) setPlan(null);
         });
-      stalledLiftsInPlan()
+      readWithRetry(stalledLiftsInPlan, retry)
         .then((n) => {
           if (alive) setStalled(n);
         })
         .catch(() => {
           if (alive) setStalled(0);
         });
-      getWorkoutCounts(day)
+      const week = readWithRetry(() => getWorkoutCounts(day), retry)
         .then((c) => {
           if (alive) setCounts(c);
         })
         .catch(() => {
+          failedNow = true;
           if (alive) setCounts(null);
         });
+      void Promise.all([upNext, week]).then(() => {
+        if (alive) setReadFailed(failedNow);
+      });
       tabsNoticeDue()
         .then((due) => {
           if (alive) setTabsNotice(due);
@@ -145,6 +158,8 @@ export default function WorkoutScreen() {
       };
     }, [hydrate, tick]),
   );
+
+  useRereadWhenFailed(readFailed, () => setTick((t) => t + 1));
 
   useFocusEffect(
     useCallback(() => {
