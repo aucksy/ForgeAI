@@ -79,21 +79,21 @@ revoke insert, update, delete on public.shop_orders from authenticated, anon;
 -- Put stock back for every line of an order (cancel). Options and plain products alike.
 create or replace function public._shop_restock(p_lines jsonb)
   returns void language plpgsql security definer set search_path = public as $$
-declare l jsonb; pid uuid; oid text; q int; p public.shop_products;
+declare l jsonb; pid uuid; opt_id text; q int; p public.shop_products;
 begin
   for l in select * from jsonb_array_elements(p_lines) loop
     pid := nullif(l->>'productId','')::uuid;
-    oid := nullif(l->>'optionId','');
+    opt_id := nullif(l->>'optionId','');
     q   := coalesce((l->>'qty')::int, 0);
     select * into p from public.shop_products where product_id = pid for update;
     if p.product_id is null or q <= 0 then continue; end if;
-    if oid is null then
+    if opt_id is null then
       update public.shop_products set stock = least(100000, stock + q), updated_at = now()
         where product_id = pid;
     else
       update public.shop_products set
         options = (
-          select coalesce(jsonb_agg(case when o->>'id' = oid
+          select coalesce(jsonb_agg(case when o->>'id' = opt_id
                    then jsonb_set(o, '{stock}', to_jsonb(least(100000, coalesce((o->>'stock')::int,0) + q)))
                    else o end order by ord), '[]'::jsonb)
           from jsonb_array_elements(p.options) with ordinality as e(o, ord)),
@@ -124,10 +124,10 @@ create or replace function public.place_order(p_lines jsonb)
 declare
   me uuid := auth.uid();
   my_gym uuid; my_name text;
-  l jsonb; pid uuid; oid text; q int;
+  l jsonb; pid uuid; opt_id text; q int;
   p public.shop_products; opt jsonb; unit int; label text;
   out_lines jsonb := '[]'::jsonb; total int := 0; n int;
-  o public.shop_orders;
+  res public.shop_orders;
 begin
   select gym_id, display_name into my_gym, my_name from public.profiles where id = me;
   if my_gym is null then raise exception 'NOT_IN_GYM'; end if;
@@ -139,19 +139,19 @@ begin
   perform 1 from public.gyms where gym_id = my_gym for update;
   for l in select * from jsonb_array_elements(p_lines) loop
     pid := nullif(l->>'productId','')::uuid;
-    oid := nullif(l->>'optionId','');
+    opt_id := nullif(l->>'optionId','');
     q   := coalesce((l->>'qty')::int, 0);
     if q <= 0 or q > 20 then raise exception 'EMPTY'; end if;
     select * into p from public.shop_products
       where product_id = pid and gym_id = my_gym for update;
     if p.product_id is null or not p.active then raise exception 'GONE'; end if;
-    if oid is null then
+    if opt_id is null then
       if jsonb_array_length(p.options) > 0 then raise exception 'GONE'; end if;
       if p.stock < q then raise exception 'SOLD_OUT:%', p.name; end if;
       unit := p.price_p; label := p.name;
       update public.shop_products set stock = stock - q, updated_at = now() where product_id = pid;
     else
-      select o into opt from jsonb_array_elements(p.options) o where o->>'id' = oid;
+      select o into opt from jsonb_array_elements(p.options) o where o->>'id' = opt_id;
       if opt is null then raise exception 'GONE'; end if;
       if coalesce((opt->>'stock')::int, 0) < q then
         raise exception 'SOLD_OUT:%', p.name || ' · ' || (opt->>'label');
@@ -160,7 +160,7 @@ begin
       label := p.name || ' · ' || (opt->>'label');
       update public.shop_products set
         options = (
-          select jsonb_agg(case when o->>'id' = oid
+          select jsonb_agg(case when o->>'id' = opt_id
                    then jsonb_set(o, '{stock}', to_jsonb(coalesce((o->>'stock')::int,0) - q))
                    else o end order by ord)
           from jsonb_array_elements(p.options) with ordinality as e(o, ord)),
@@ -171,14 +171,14 @@ begin
         where product_id = pid;
     end if;
     out_lines := out_lines || jsonb_build_array(jsonb_build_object(
-      'productId', pid, 'optionId', oid, 'name', label, 'qty', q, 'unitPriceP', unit));
+      'productId', pid, 'optionId', opt_id, 'name', label, 'qty', q, 'unitPriceP', unit));
     total := total + unit * q;
   end loop;
   select coalesce(max(order_no), 0) + 1 into n from public.shop_orders where gym_id = my_gym;
   insert into public.shop_orders(gym_id, member_id, member_name, order_no, lines, total_p)
     values (my_gym, me, my_name, n, out_lines, total)
-    returning * into o;
-  return o;
+    returning * into res;
+  return res;
 end $$;
 
 -- A member cancels their own order while the gym has not got it ready yet.
