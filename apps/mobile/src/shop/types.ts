@@ -47,6 +47,12 @@ export interface Product {
   stock: number;
   active: boolean;
   art: { kind: ArtKind; tint: string };
+  /**
+   * The gym's own photo of it (S2, uploaded in the owner's panel): an https link, or absent. When
+   * set, the Shop shows the photo; the drawn `art` stays as the stand-in if it cannot load. The
+   * sample shop never has one.
+   */
+  imageUrl?: string;
 }
 
 /** One line in the bag: which product, which option, how many. Prices are read live. */

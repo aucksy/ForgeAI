@@ -61,8 +61,20 @@ function optionFromJson(raw: unknown): ProductOption | null {
 }
 
 /**
+ * A product photo link the app will load: https only, a real URL, no spaces, at most 400
+ * characters (the server's own limit). Anything else is no photo (the drawing shows). PURE.
+ */
+export function photoUrlOf(v: unknown): string | undefined {
+  if (typeof v !== 'string') return undefined;
+  const url = v.trim();
+  if (url.length < 9 || url.length > 400 || /\s/.test(url) || !/^https:\/\/[^/?#]+\.[^/?#]+\//i.test(url)) return undefined;
+  return url;
+}
+
+/**
  * One `member_products` row as the app's Product (snake_case → the S1 shape): price_p → priceP,
- * option_name → optionName, options as they are, art_kind/art_tint → art. Null when the row is
+ * option_name → optionName, options as they are, art_kind/art_tint → art, image_url → imageUrl
+ * (https only). Null when the row is
  * not a product the Shop can show (no id, no name, no price). PURE.
  */
 export function productFromRow(raw: unknown): Product | null {
@@ -79,6 +91,7 @@ export function productFromRow(raw: unknown): Product | null {
   const kind = ART_KINDS.includes(raw.art_kind as ArtKind) ? (raw.art_kind as ArtKind) : 'tub';
   const tint = typeof raw.art_tint === 'string' && HEX.test(raw.art_tint) ? raw.art_tint : FALLBACK_TINT;
   const optionName = str(raw.option_name);
+  const imageUrl = photoUrlOf(raw.image_url);
   return {
     id,
     name: name.trim(),
@@ -90,6 +103,7 @@ export function productFromRow(raw: unknown): Product | null {
     stock,
     active: raw.active !== false,
     art: { kind, tint },
+    ...(imageUrl ? { imageUrl } : {}),
   };
 }
 
@@ -402,6 +416,8 @@ function cleanCachedProduct(raw: unknown): Product | null {
     active: raw.active,
     art_kind: raw.art.kind,
     art_tint: raw.art.tint,
+    // A list saved before photos existed has none: it loads as drawings.
+    image_url: raw.imageUrl,
   });
 }
 

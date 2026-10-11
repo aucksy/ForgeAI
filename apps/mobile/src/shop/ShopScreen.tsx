@@ -23,7 +23,7 @@ import { JOIN_CODE_LENGTH, cleanJoinCode } from './gym';
 import { joinGym, leaveGym, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, isOutOfStock } from './money';
-import { ProductArt } from './ProductArt';
+import { ProductPicture } from './ProductPicture';
 import { BagButton, DEMO_SHOP_LINE, DemoNote, MyOrdersRow, QuietLine, shopInputStyle } from './ShopParts';
 import { useGymHydrated } from './shopSource';
 import { useShop } from './shopStore';
@@ -367,7 +367,7 @@ function ProductCard({ product, width, onPress }: { product: Product; width: num
       }}
     >
       <View style={{ opacity: out ? 0.55 : 1 }}>
-        <ProductArt kind={product.art.kind} tint={product.art.tint} size={width - space.sm * 2} />
+        <ProductPicture kind={product.art.kind} tint={product.art.tint} size={width - space.sm * 2} imageUrl={product.imageUrl} />
       </View>
       <View style={{ paddingHorizontal: space.xs, paddingTop: space.sm, paddingBottom: space.xs, gap: 4 }}>
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>{product.name}</Text>

@@ -12,7 +12,7 @@ import { color, space, type } from '@/theme/tokens';
 
 import { findProduct } from './catalog';
 import { bagBadgeCount, clampQty, defaultOptionId, lineKey, maxQty, picturesOf, rupees, stockFor, stockText, unitPriceP } from './money';
-import { ProductArt } from './ProductArt';
+import { ProductPicture } from './ProductPicture';
 import { BagButton, QtyStepper, leave } from './ShopParts';
 import { useShopSource } from './shopSource';
 import type { Product } from './types';
@@ -41,7 +41,8 @@ function ProductBody({ product, onBack, bagButton }: { product: Product; onBack:
   const router = useRouter();
   const { width } = useWindowDimensions();
   const picW = width - space.screenX * 2;
-  const pictures = picturesOf(product);
+  // The gym's photo is one picture; the drawing has one per option colour (a flavour's tub).
+  const pictures = product.imageUrl ? [{ key: 'photo', tint: product.art.tint, optionId: null }] : picturesOf(product);
   const pager = useRef<ScrollView>(null);
   const [page, setPage] = useState(0);
   const [optionId, setOptionId] = useState<string | null>(() => defaultOptionId(product));
@@ -84,7 +85,7 @@ function ProductBody({ product, onBack, bagButton }: { product: Product; onBack:
         style={{ width: picW }}
       >
         {pictures.map((p) => (
-          <ProductArt key={p.key} kind={product.art.kind} tint={p.tint} size={picW} height={Math.round(picW * 0.75)} />
+          <ProductPicture key={p.key} kind={product.art.kind} tint={p.tint} size={picW} height={Math.round(picW * 0.75)} imageUrl={product.imageUrl} />
         ))}
       </ScrollView>
       {pictures.length > 1 ? (

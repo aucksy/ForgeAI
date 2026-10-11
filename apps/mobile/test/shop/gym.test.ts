@@ -24,6 +24,7 @@ import {
   orderLinesFor,
   orderPlacedText,
   ordersFromRows,
+  photoUrlOf,
   placeFailure,
   productFromRow,
   productsFromRows,
@@ -204,6 +205,38 @@ describe('server rows → the app shapes', () => {
     const next = upsertOrder(list, ready);
     expect(next).toHaveLength(2);
     expect(next[1].status).toBe('ready');
+  });
+});
+
+describe('product photos (0004_product_photos.sql)', () => {
+  const PHOTO = 'https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/product-photos/' + 'a'.repeat(48) + '/shaker.jpg';
+
+  it('an https photo link becomes imageUrl', () => {
+    expect(productFromRow({ ...SHAKER_ROW, image_url: PHOTO })?.imageUrl).toBe(PHOTO);
+  });
+
+  it('no photo, or anything but an https link, is no photo (the drawing shows)', () => {
+    for (const bad of [null, undefined, '', 42, 'http://example.com/a.jpg', 'javascript:alert(1)', 'file:///sdcard/x.jpg', 'data:image/png;base64,AAAA', 'https://', 'https://host/a b.jpg', 'https://x.supabase.co/' + 'a'.repeat(400)]) {
+      const p = productFromRow({ ...SHAKER_ROW, image_url: bad })!;
+      expect(p).not.toBeNull();
+      expect(p.imageUrl).toBeUndefined();
+      expect('imageUrl' in p).toBe(false);
+    }
+    expect(photoUrlOf('  ' + PHOTO + ' ')).toBe(PHOTO);
+  });
+
+  it('a list saved before photos loads, and a saved photo survives a restart', () => {
+    const old = productsFromRows([SHAKER_ROW]).map((p) => JSON.parse(JSON.stringify(p)));
+    expect(old[0].imageUrl).toBeUndefined();
+    const kept = cleanGymBlob({ link: JOIN, products: old, productsAt: null, orders: [], bag: [] });
+    expect(kept.products).toHaveLength(1);
+    expect(kept.products[0].imageUrl).toBeUndefined();
+    const withPhoto = productsFromRows([{ ...SHAKER_ROW, image_url: PHOTO }]);
+    const back = cleanGymBlob(JSON.parse(JSON.stringify({ link: JOIN, products: withPhoto, productsAt: null, orders: [], bag: [] })));
+    expect(back.products[0].imageUrl).toBe(PHOTO);
+    // A damaged saved link is dropped, the product stays.
+    const bent = cleanGymBlob({ link: JOIN, products: [{ ...old[0], imageUrl: 'http://x.y/z.jpg' }], productsAt: null, orders: [], bag: [] });
+    expect(bent.products[0].imageUrl).toBeUndefined();
   });
 });
 
