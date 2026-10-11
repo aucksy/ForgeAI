@@ -14,8 +14,12 @@
 import { Linking } from 'react-native';
 
 import {
+  alertChannelState,
+  backgroundRestricted,
   canScheduleExact,
   nativeNotificationsEnabled,
+  openAlertChannelSettings,
+  openAppSettings,
   openExactAlarmSettings,
   openNotificationSettings,
 } from './restCard';
@@ -26,16 +30,35 @@ export interface AlertAccess {
   notifications: boolean | null;
   /** Exact alarms allowed (always true below Android 12); null = unknown (no native piece). */
   exact: boolean | null;
+  /**
+   * Rest-alert audit (11 Oct 2026): the "Rest timer" channel as Android has it now — a member or a
+   * cleaner app can mute it. Absent / null = unknown (counts as fine).
+   */
+  channel?: 'ok' | 'silenced' | 'blocked' | null;
+  /** Android's background restriction for ForgeAI is on (holds alarms back). Absent = unknown. */
+  restricted?: boolean | null;
 }
 
-export type RestAlertStatus = 'on-time' | 'may-be-late' | 'off' | 'unknown';
+export type RestAlertStatus = 'on-time' | 'may-be-late' | 'off' | 'silenced' | 'held-back' | 'unknown';
 
-/** PURE. What the Profile line says. */
+/**
+ * PURE. What the Profile line says. Since the audit, "Alarms & reminders" is granted at install
+ * (USE_EXACT_ALARM), so on a working phone this is 'on-time' and the line is NOT shown at all
+ * (owner: defaults that just work, no options to confuse). It appears only when Android has
+ * something switched off.
+ */
 export function restAlertStatus(a: AlertAccess): RestAlertStatus {
-  if (a.notifications === false) return 'off';
+  if (a.notifications === false || a.channel === 'blocked') return 'off';
+  if (a.channel === 'silenced') return 'silenced';
+  if (a.restricted === true) return 'held-back';
   if (a.exact === false) return 'may-be-late';
   if (a.notifications === true && a.exact === true) return 'on-time';
   return 'unknown';
+}
+
+/** PURE. The line shows only when something stops the alert. */
+export function showAlertStatus(s: RestAlertStatus): boolean {
+  return s !== 'on-time' && s !== 'unknown';
 }
 
 /**
@@ -55,6 +78,10 @@ export function statusText(s: RestAlertStatus): { title: string; caption: string
       return { title: 'Rest alerts: May be late — tap to fix', caption: 'Turns on "Alarms & reminders" for ForgeAI' };
     case 'off':
       return { title: 'Rest alerts: Off — notifications are blocked', caption: 'Tap to turn them on' };
+    case 'silenced':
+      return { title: 'Rest alerts: Silent — tap to fix', caption: 'Android muted "Rest timer" for ForgeAI. Turn its sound back on' };
+    case 'held-back':
+      return { title: 'Rest alerts: May be late — tap to fix', caption: 'Android is holding ForgeAI back in the background. Allow it' };
     default:
       return { title: 'Rest alerts', caption: '' };
   }
@@ -64,13 +91,21 @@ export function statusText(s: RestAlertStatus): { title: string; caption: string
 export async function readAlertAccess(): Promise<AlertAccess> {
   let notifications = nativeNotificationsEnabled();
   if (notifications == null) notifications = await notificationsGranted();
-  return { notifications, exact: canScheduleExact() };
+  return { notifications, exact: canScheduleExact(), channel: alertChannelState(), restricted: backgroundRestricted() };
 }
 
 /** Open the Android page that fixes this status. */
 export function openFixFor(s: RestAlertStatus): void {
   if (s === 'may-be-late') {
     if (!openExactAlarmSettings()) void Linking.openSettings().catch(() => undefined);
+    return;
+  }
+  if (s === 'silenced') {
+    if (!openAlertChannelSettings()) void Linking.openSettings().catch(() => undefined);
+    return;
+  }
+  if (s === 'held-back') {
+    if (!openAppSettings()) void Linking.openSettings().catch(() => undefined);
     return;
   }
   if (s === 'off') {

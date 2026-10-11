@@ -26,8 +26,7 @@ class RestActionReceiver : BroadcastReceiver() {
         RestCard.clear(ctx, dismissOver = false)
         RestCard.listener?.invoke("skip", 0L, 0L)
       }
-      RestCard.ACTION_END -> RestCard.fireEnd(ctx, intent.getLongExtra(RestCard.EXTRA_ENDS, -1L))
-      RestCard.ACTION_DONE -> {
+      RestCard.ACTION_END -> RestCard.fireEnd(ctx, intent.getLongExtra(RestCard.EXTRA_ENDS, -1L))      RestCard.ACTION_DONE -> {
         // Kept for the app, which ticks the row through its own store (never written here).
         val d = RestCard.doneTapped(ctx, intent) ?: return
         val l = RestCard.listener

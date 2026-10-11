@@ -49,6 +49,11 @@ interface Native {
   is24Hour?(): boolean;
   ringerMode?(): number;
   setRingThroughDnd?(on: boolean): boolean;
+  /** Rest-alert audit (11 Oct 2026); an older native piece lacks these. */
+  alertChannelState?(): string;
+  backgroundRestricted?(): boolean;
+  openAlertChannelSettings?(): boolean;
+  openAppSettings?(): boolean;
   /**
    * Phase 6 ("Done"); an older native piece lacks these. exKey null = no Done button. `values`:
    * the row's grey hint (`hintSignature`), carried on the button and handed back with the tap.
@@ -294,6 +299,28 @@ export function canScheduleExact(): boolean | null {
 export function nativeNotificationsEnabled(): boolean | null {
   const v = call((n) => n.notificationsEnabled?.());
   return typeof v === 'boolean' ? v : null;
+}
+
+/** Rest-alert audit: the "Rest timer" channel as Android has it. Null = unknown (old build). */
+export function alertChannelState(): 'ok' | 'silenced' | 'blocked' | null {
+  const v = call((n) => n.alertChannelState?.());
+  return v === 'ok' || v === 'silenced' || v === 'blocked' ? v : null;
+}
+
+/** Rest-alert audit: Android's background restriction for ForgeAI is on. Null = unknown. */
+export function backgroundRestricted(): boolean | null {
+  const v = call((n) => n.backgroundRestricted?.());
+  return typeof v === 'boolean' ? v : null;
+}
+
+/** The "Rest timer" channel's own Android page. False when it could not be opened. */
+export function openAlertChannelSettings(): boolean {
+  return call((n) => n.openAlertChannelSettings?.()) === true;
+}
+
+/** ForgeAI's own Android page (battery and background settings). False when it could not be opened. */
+export function openAppSettings(): boolean {
+  return call((n) => n.openAppSettings?.()) === true;
 }
 
 /** Android's "Alarms & reminders" page for ForgeAI. False when it could not be opened. */

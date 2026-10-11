@@ -1,8 +1,9 @@
 /**
- * Profile → Workout: "Rest alerts: On time" / "May be late — tap to fix" / "Off — notifications
- * are blocked" (Phase 2, packet D: D8, RT-01, RT-02). One tap opens the Android page that fixes
- * it; the line is read again whenever the app comes back to the front (after that page).
- * Renders nothing where the state cannot be known (web, a build without the rest module).
+ * Profile → Workout: "Rest alerts: May be late — tap to fix" / "Off — notifications are blocked" /
+ * "Silent — tap to fix" (Phase 2, packet D: D8, RT-01, RT-02; rest-alert audit 11 Oct 2026). One
+ * tap opens the Android page that fixes it; read again whenever the app comes back to the front.
+ * Renders NOTHING while rest alerts work (owner: defaults that just work) and where the state
+ * cannot be known (web, a build without the rest module).
  */
 import { useEffect, useState } from 'react';
 import { AppState, Platform, Pressable } from 'react-native';
@@ -11,7 +12,7 @@ import { SettingRow } from '@/components/settings/SettingRow';
 import { Icon } from '@/components/ui';
 import { color } from '@/theme/tokens';
 
-import { openFixFor, readAlertAccess, restAlertStatus, statusText, type RestAlertStatus } from '../services/restAlertAccess';
+import { openFixFor, readAlertAccess, restAlertStatus, showAlertStatus, statusText, type RestAlertStatus } from '../services/restAlertAccess';
 
 export function RestAlertsStatusRow({ divider }: { divider?: boolean }) {
   const [status, setStatus] = useState<RestAlertStatus>('unknown');
@@ -36,19 +37,18 @@ export function RestAlertsStatusRow({ divider }: { divider?: boolean }) {
     };
   }, []);
 
-  if (status === 'unknown') return null;
+  // Rest-alert audit (owner: "defaults that just work"): nothing to show while alerts work.
+  if (!showAlertStatus(status)) return null;
   const words = statusText(status);
-  const fixable = status !== 'on-time';
   const row = (
     <SettingRow
       icon="volume"
       title={words.title}
       caption={words.caption}
       divider={divider}
-      right={fixable ? <Icon name="chevron-right" size={18} color={color.inkMuted} /> : undefined}
+      right={<Icon name="chevron-right" size={18} color={color.inkMuted} />}
     />
   );
-  if (!fixable) return row;
   return (
     <Pressable
       onPress={() => openFixFor(status)}

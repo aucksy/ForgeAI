@@ -46,11 +46,13 @@ adb install -r "$APK" || { log "INSTALL FAILED"; exit 1; }
 sleep 30
 adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 adb logcat -c
-# Allow exact alarms ("Alarms & reminders") so the locked-phone rest alert below is measured on
-# the exact path and can be gated on lateness (audit QA-15). Read back again during the rest,
-# because part A's clearState may reset it.
-adb shell appops set $PKG SCHEDULE_EXACT_ALARM allow >/dev/null 2>&1 || log "could not allow exact alarms"
-log "exact alarm permission before part A: $(adb shell appops get $PKG SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' ')"
+# Rest-alert audit (11 Oct 2026): exact alarms are NOT switched on by hand any more. A real phone
+# on Android 14+ has "Alarms & reminders" OFF after a fresh install, and that is where "Rest is
+# over" came minutes late (and the watch never buzzed); this run used to allow it first, so it
+# never saw that phone. The app now gets exact alarms at install (USE_EXACT_ALARM); the run must
+# prove it, as installed, with nothing granted by hand.
+adb shell appops set $PKG SCHEDULE_EXACT_ALARM default >/dev/null 2>&1 || true
+log "exact alarms as installed: USE_EXACT_ALARM $(adb shell dumpsys package $PKG | tr -d '\r' | grep -m1 -oE 'android.permission.USE_EXACT_ALARM: granted=(true|false)' || echo 'not listed'); SCHEDULE_EXACT_ALARM appop $(adb shell appops get $PKG SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' ')"
 
 # ---------------------------------------------------------------- part A
 log "part A start"
@@ -58,15 +60,34 @@ maestro test --format junit --output "$OUT/part-a.xml" --test-output-dir "$OUT/p
   > "$OUT/part-a.log" 2>&1 || { status=1; log "PART A FAILED"; }
 TICK_MS=$(now_ms)
 log "rest (30s) started at about device ms $TICK_MS"
-log "exact alarm permission during the rest: $(adb shell appops get $PKG SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' ')"
 adb shell dumpsys notification --noredact > "$OUT/notifications-during-rest.txt"
+# The rest's alarm as Android holds it (the audit: an alarm-clock alarm, which Doze never delays).
+adb shell dumpsys alarm > "$OUT/alarms-during-rest.txt" 2>/dev/null || true
+log "rest alarm during the rest: $(grep -c "$PKG" "$OUT/alarms-during-rest.txt" 2>/dev/null || echo 0) alarm lines for the app; next alarm clock: $(grep -iA2 'next alarm clock' "$OUT/alarms-during-rest.txt" 2>/dev/null | tr -d '\r' | tr '\n' ' ' | cut -c1-200)"
 adb exec-out screencap -p > "$OUT/a-end.png"
 
-# Phone goes to sleep for the rest, like a phone on the gym floor.
+# Phone goes to sleep for the rest, like a phone on the gym floor: screen off, off the charger,
+# and (rest-alert audit) forced into Doze — the deep sleep where a non-alarm-clock alarm can be held
+# back for many minutes. The alert must still come on time, with sound and vibration.
 adb shell input keyevent KEYCODE_SLEEP
 log "screen off"
+adb shell dumpsys battery unplug >/dev/null 2>&1 || true
+log "doze: $(adb shell dumpsys deviceidle force-idle 2>&1 | tr -d '\r' | tr '\n' ' ' | cut -c1-120)"
 sleep 50
 adb shell dumpsys notification --noredact > "$OUT/notifications-after-rest.txt"
+adb shell dumpsys deviceidle unforce >/dev/null 2>&1 || true
+adb shell dumpsys battery reset >/dev/null 2>&1 || true
+# Rest-alert audit: Android's own record of what last made a SOUND and a BUZZ must be "Rest is
+# over" (id 41002) — a posted but silent alert (the bug the owner heard) fails here.
+for kind in Sound Vibrate; do
+  key=$(grep -oE "m${kind}NotificationKey=[^ ]*" "$OUT/notifications-after-rest.txt" | head -1 | tr -d '\r')
+  if echo "$key" | grep -q "|41002|"; then
+    log "REST ALERT ${kind}: Rest is over ($key)"
+  else
+    status=1
+    log "REST ALERT ${kind}: NOT from Rest is over (${key:-none})"
+  fi
+done
 # Why a notification left the list: Android's events log keeps every enqueue/cancel with its
 # reason (4 = error, 8 = app cancel, 19 = timeout, 10/22 = listener/assistant); logcat -c does
 # not clear this buffer. Saved for part A's "Rest is over" (id 41002).

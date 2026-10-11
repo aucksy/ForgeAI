@@ -200,6 +200,31 @@ describe('D8 / RT-02: rest alert status', () => {
     expect(restAlertStatus({ notifications: false, exact: true })).toBe('off');
     expect(restAlertStatus({ notifications: null, exact: null })).toBe('unknown');
   });
+  it('rest-alert audit: a muted channel or a background restriction is named; the line hides while all works', async () => {
+    const { showAlertStatus } = await import('@/tracker/services/restAlertAccess');
+    const ok = { notifications: true, exact: true } as const;
+    expect(restAlertStatus({ ...ok, channel: 'silenced' })).toBe('silenced');
+    expect(restAlertStatus({ ...ok, channel: 'blocked' })).toBe('off');
+    expect(restAlertStatus({ ...ok, restricted: true })).toBe('held-back');
+    expect(restAlertStatus({ ...ok, channel: 'ok', restricted: false })).toBe('on-time');
+    expect(restAlertStatus({ ...ok, channel: null, restricted: null })).toBe('on-time');
+    // Notifications blocked outranks everything; a muted channel outranks a late alarm.
+    expect(restAlertStatus({ notifications: false, exact: false, channel: 'silenced' })).toBe('off');
+    expect(restAlertStatus({ notifications: true, exact: false, channel: 'silenced' })).toBe('silenced');
+    expect(showAlertStatus('on-time')).toBe(false);
+    expect(showAlertStatus('unknown')).toBe(false);
+    for (const s of ['off', 'silenced', 'held-back', 'may-be-late'] as const) expect(showAlertStatus(s)).toBe(true);
+  });
+  it('[source-text check] exact by default: USE_EXACT_ALARM declared and approved; an alarm-clock alarm first', () => {
+    const fs = require('node:fs') as typeof import('node:fs');
+    const path = require('node:path') as typeof import('node:path');
+    const root = path.resolve(__dirname, '../..');
+    expect(fs.readFileSync(path.join(root, 'modules/forge-rest/android/src/main/AndroidManifest.xml'), 'utf8')).toContain('android.permission.USE_EXACT_ALARM');
+    expect(fs.readFileSync(path.join(root, '../../scripts/ci/approved-permissions.txt'), 'utf8')).toMatch(/^android\.permission\.USE_EXACT_ALARM$/m);
+    const kt = fs.readFileSync(path.join(root, 'modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt'), 'utf8');
+    expect(kt.indexOf('am.setAlarmClock(')).toBeGreaterThan(0);
+    expect(kt.indexOf('am.setAlarmClock(')).toBeLessThan(kt.indexOf('am.setExactAndAllowWhileIdle('));
+  });
   it('asks once, only when alerts would be late', () => {
     expect(shouldAskExact({ notifications: true, exact: false }, false)).toBe(true);
     expect(shouldAskExact({ notifications: true, exact: false }, true)).toBe(false);

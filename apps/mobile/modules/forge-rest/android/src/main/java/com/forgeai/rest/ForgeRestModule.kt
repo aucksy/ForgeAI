@@ -119,6 +119,27 @@ class ForgeRestModule : Module() {
       RestCard.openNotificationSettings(c)
     }
 
+    // Rest-alert audit (11 Oct 2026): what else can keep "Rest is over" quiet (shown only when it does).
+    Function("alertChannelState") {
+      val c = ctx ?: return@Function "ok"
+      RestCard.alertChannelState(c)
+    }
+
+    Function("backgroundRestricted") {
+      val c = ctx ?: return@Function false
+      RestCard.backgroundRestricted(c)
+    }
+
+    Function("openAlertChannelSettings") {
+      val c: Context = appContext.currentActivity ?: ctx ?: return@Function false
+      RestCard.openAlertChannelSettings(c)
+    }
+
+    Function("openAppSettings") {
+      val c: Context = appContext.currentActivity ?: ctx ?: return@Function false
+      RestCard.openAppSettings(c)
+    }
+
     Function("is24Hour") {
       val c = ctx ?: return@Function false
       RestCard.is24Hour(c)

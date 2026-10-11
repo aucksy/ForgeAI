@@ -2,6 +2,11 @@
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+  <!-- Rest-alert audit (11 Oct 2026): Android 13+ grants this at install, so "Rest is over" is on
+       time on a fresh install. Android 14+ turns SCHEDULE_EXACT_ALARM OFF by default, and without
+       it a locked phone rang minutes late or not at all (and the watch never buzzed). For apps whose
+       core is a timer (the rest timer); Android 12 still uses SCHEDULE_EXACT_ALARM above. -->
+  <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
   <application>
     <!-- The rest card's "+15 s" / "Skip" buttons (phone shade or watch) and the end-of-rest alarm. -->
     <receiver android:name="com.forgeai.rest.RestActionReceiver" android:exported="false"/>

@@ -20,6 +20,9 @@ android.permission.WRITE_EXTERNAL_STORAGE
 
 # own native modules (forge-rest, forge-phone)
 android.permission.POST_NOTIFICATIONS
+# Owner, 11 Oct 2026 ("do an audit of that feature and fix everything" — the rest alert): granted at
+# install on Android 13+, so the rest timer's alarm is exact without the member finding a setting.
+android.permission.USE_EXACT_ALARM
 android.permission.health.WRITE_EXERCISE
 android.permission.health.WRITE_ACTIVE_CALORIES_BURNED
 

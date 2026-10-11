@@ -118,17 +118,10 @@ appId: com.forgeai.app
     text: 'Mark .* set 1 complete'
     index: 0
 - takeScreenshot: 08-first-set-ticked-rest-running
-# D8: the first rest asks "Get rest alerts on time?" only when exact alarms are off. The script
-# allows them before this part, so it should not show; if it does, answer "Not now".
-- runFlow:
-    when:
-      visible: 'Get rest alerts on time\?'
-    commands:
-      - takeScreenshot: 08a-rest-alerts-question
-      - tapOn:
-          text: "Not now"
-          below:
-            text: "Allow"
+# D8 / rest-alert audit (owner: "just enable the alarms by default"): exact alarms come with the
+# install (USE_EXACT_ALARM) and the script no longer allows them by hand, so the first rest must
+# NOT ask "Get rest alerts on time?" — the member never has to find a setting.
+- assertNotVisible: 'Get rest alerts on time\?'
 - assertVisible: "Skip rest"
 - tapOn: "Skip rest"
 - tapOn:

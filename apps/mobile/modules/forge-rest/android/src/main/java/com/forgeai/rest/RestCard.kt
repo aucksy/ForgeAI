@@ -609,6 +609,56 @@ object RestCard {
     }
   }
 
+  /**
+   * Rest-alert audit (11 Oct 2026): can "Rest is over" make a sound and a buzz? A member (or a
+   * phone's cleaner app) can silence the channel in Android's settings, and nothing in ForgeAI
+   * showed it. "ok", "silenced" (no sound and no vibration, or importance low/min) or "blocked".
+   */
+  fun alertChannelState(ctx: Context): String {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return "ok"
+    return try {
+      ensureChannels(ctx)
+      val ch = nm(ctx).getNotificationChannel(CH_OVER) ?: return "ok"
+      when {
+        ch.importance == NotificationManager.IMPORTANCE_NONE -> "blocked"
+        ch.importance < NotificationManager.IMPORTANCE_DEFAULT -> "silenced"
+        ch.sound == null && !ch.shouldVibrate() -> "silenced"
+        else -> "ok"
+      }
+    } catch (_: Exception) {
+      "ok"
+    }
+  }
+
+  /** Android's "background restriction" for ForgeAI (Android 9+), which can hold alarms back. */
+  fun backgroundRestricted(ctx: Context): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return false
+    return try {
+      (ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).isBackgroundRestricted
+    } catch (_: Exception) {
+      false
+    }
+  }
+
+  /** Android's settings page of the "Rest timer" channel itself. False if none opened. */
+  fun openAlertChannelSettings(ctx: Context): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return openAppDetails(ctx)
+    return try {
+      ensureChannels(ctx)
+      val i = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+      i.putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+      i.putExtra(Settings.EXTRA_CHANNEL_ID, CH_OVER)
+      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      ctx.startActivity(i)
+      true
+    } catch (_: Exception) {
+      openNotificationSettings(ctx)
+    }
+  }
+
+  /** The app's own Android page (battery and background settings live under it). */
+  fun openAppSettings(ctx: Context): Boolean = openAppDetails(ctx)
+
   /** The phone's 12/24-hour setting (RT-05). */
   fun is24Hour(ctx: Context): Boolean = DateFormat.is24HourFormat(ctx)
 
@@ -649,11 +699,26 @@ object RestCard {
       false
     }
     if (exact) {
+      // Rest-alert audit (11 Oct 2026): an ALARM CLOCK alarm, as timer apps use. It is the one
+      // kind Android delivers on the second in Doze (an allow-while-idle exact alarm may be held
+      // up to 15 minutes there) and that phone makers' battery savers leave alone. Its "show"
+      // intent (the alarm icon in the status bar) opens the workout.
+      try {
+        val show = openIntent(app)
+        if (show != null) {
+          am.setAlarmClock(AlarmManager.AlarmClockInfo(endsAt, show), pi)
+          return
+        }
+      } catch (_: SecurityException) {
+        // The permission was taken away between the check and the call: inexact below.
+      } catch (_: Exception) {
+        // the plain exact alarm below
+      }
       try {
         am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endsAt, pi)
         return
       } catch (_: SecurityException) {
-        // The permission was taken away between the check and the call: inexact below.
+        // inexact below
       } catch (_: Exception) {
         // inexact below
       }
