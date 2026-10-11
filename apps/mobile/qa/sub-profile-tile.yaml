@@ -1,0 +1,36 @@
+# Sub-flow (called with runFlow; not a part of its own). Redesign R2/R3: the Profile page's
+# Dashboard has 4 tiles — Statistics · Exercises · Measures · Calendar (src/tracker/components/
+# profile/DashboardTiles.tsx). Opens the Profile tab and taps the tile passed in:
+#   - runFlow:
+#       file: sub-profile-tile.yaml
+#       env:
+#         TILE: "Exercises"
+# Call it with the tab bar on screen. The Profile tab keeps its scroll position (the feed below
+# the tiles can be scrolled far down), so it looks UP first, then down (at 200 % text the tiles
+# start below the screen's edge). No `env:` default here (trap 22).
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 30000
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^${TILE}$"
+    direction: UP
+    centerElement: true
+    timeout: 8000
+    optional: true
+- runFlow:
+    when:
+      notVisible: "^${TILE}$"
+    commands:
+      - scrollUntilVisible:
+          element: "^${TILE}$"
+          centerElement: true
+          timeout: 20000
+- tapOn: "^${TILE}$"

@@ -12,11 +12,16 @@ appId: com.forgeai.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "Start empty workout"
+    visible: "^Workout$"
     timeout: 30000
 - waitForAnimationToEnd:
     timeout: 5000
-- assertVisible: "Start empty workout"
+# Redesign R1/R4: "Start empty workout" sits under the Up next card (the Workout tab is the
+# first screen); nothing open, so it shows.
+- scrollUntilVisible:
+    element: "Start empty workout"
+    centerElement: true
+    timeout: 30000
 - assertNotVisible: "Workout in progress"
 - assertNotVisible: "Resume workout"
 - assertNotVisible: "Finish workout"

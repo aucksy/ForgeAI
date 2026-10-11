@@ -15,9 +15,13 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 60000
-- tapOn: "^Workout$"
-- extendedWaitUntil:
-    visible: "Start empty workout"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+# Redesign R1/R4: "Start empty workout" sits under the Up next card.
+- scrollUntilVisible:
+    element: "Start empty workout"
+    centerElement: true
     timeout: 30000
 - tapOn: "Start empty workout"
 - tapOn:

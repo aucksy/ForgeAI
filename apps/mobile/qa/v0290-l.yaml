@@ -7,7 +7,9 @@
 # routine checked, then Back) → Next → the one new name, "Same as ForgeAI's …?" → follow, in the
 # order he does them → the folder "Jaipur": Push 1's preview shows the incline bench's 3 working
 # sets with its 2 warm-ups as warm-ups and Hevy's 3:30 rest → start Push 1 (PREVIOUS from part
-# J's Hevy history) → finish it → Home's Today says Pull 1. Needs the internet (hevy.com).
+# J's Hevy history) → finish it → the Workout tab's Up next card says Pull 1. Needs the internet
+# (hevy.com). Redesign: the imports are Settings → Export & import (R6); "Open routines" lands on
+# the Workout tab with the folder inline, "Jaipur (6)" (R4); Home's card is the Up next card (R1).
 appId: com.forgeai.app
 ---
 - launchApp
@@ -18,15 +20,14 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 60000
 # ---------------------------------------------------------------- 0. the owner's Jaipur history
-- tapOn: "^Profile$"
-# Audit Phase 7: the imports sit inside Profile's folded "Gym, backup and data" (it stays open
-# when the import screen closes, for "Import routines" below).
 - runFlow:
-    file: sub-profile-fold-open.yaml
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Export & import"
 - scrollUntilVisible:
     element: "Import from Hevy"
     centerElement: true
-    timeout: 90000
+    timeout: 30000
 - tapOn: "Import from Hevy"
 - extendedWaitUntil:
     visible: "Choose Hevy file"
@@ -66,16 +67,14 @@ appId: com.forgeai.app
     timeout: 15000
 - tapOn: "^(Done|Not now)$"
 # ---------------------------------------------------------------- the link
+# Back on Settings → Export & import: "Import routines" is its last button.
 - extendedWaitUntil:
-    visible: "^Profile$"
+    visible: "Import from Strong"
     timeout: 15000
-# The fold should still be open (same Profile screen); opened again only if it is shut.
-- runFlow:
-    file: sub-profile-fold-open.yaml
 - scrollUntilVisible:
     element: "^Import routines$"
     centerElement: true
-    timeout: 90000
+    timeout: 30000
 - tapOn: "^Import routines$"
 - extendedWaitUntil:
     visible: "Copy your routines from Hevy"
@@ -157,19 +156,22 @@ appId: com.forgeai.app
     visible: "6 routines in Jaipur"
     timeout: 20000
 # His last workout was Leg 2 (4 Oct), so the rotation continues with Push 1.
-- assertVisible: ".*Home shows Push 1 today\\..*"
+- assertVisible: ".*The Workout tab shows Push 1 today\\..*"
 - assertVisible: ".*1 new exercise added to your library\\..*"
 - takeScreenshot: 176-link-saved
+# "Open routines" lands on the Workout tab: the followed folder "Jaipur (6)", open, its cards.
 - tapOn: "Open routines"
-- extendedWaitUntil:
-    visible: "Jaipur"
+- scrollUntilVisible:
+    element: 'Jaipur \(6\)'
+    centerElement: true
     timeout: 15000
+- assertVisible: "Jaipur folder, 6 routines, open, Following"
 - takeScreenshot: 177-jaipur-folder
 - scrollUntilVisible:
-    element: "Push 1"
+    element: "^Push 1$"
     centerElement: true
     timeout: 30000
-- tapOn: "Push 1"
+- tapOn: "^Push 1$"
 # ---------------------------------------------------------------- Push 1's preview
 - extendedWaitUntil:
     visible: 'Push Day · \d+ exercises · Jaipur.*'
@@ -255,15 +257,18 @@ appId: com.forgeai.app
     element: "Done"
     timeout: 20000
 - tapOn: "Done"
+# Done goes to the Workout tab.
 - extendedWaitUntil:
-    visible: "^Home$"
+    visible: "^Workout$"
     timeout: 20000
-- tapOn: "^Home$"
-# The plan's proof: in the folder's rotation, Push 1 is followed by Pull 1. Audit Phase 7: Home's
-# answer card titles "Done today: Push 1" over the line "Next: Pull 1"; the card's text is also
-# one spoken line ("Done today: Push 1. Next: Pull 1"), which the patterns accept too.
-- extendedWaitUntil:
-    visible: '(.*\. )?Next: Pull 1'
+# The plan's proof: in the folder's rotation, Push 1 is followed by Pull 1. Redesign R1: the Up
+# next card titles "Done today: Push 1" over the line "Next: Pull 1", with "Start Pull 1" (a
+# second workout); its spoken title is one line ("Done today: Push 1. Next: Pull 1. Done"),
+# which the patterns accept too.
+- scrollUntilVisible:
+    element: 'Done today: Push 1(\. .*)?'
+    direction: UP
     timeout: 20000
-- assertVisible: 'Done today: Push 1(\. .*)?'
-- takeScreenshot: 179c-home-today-pull-1
+- assertVisible: '(.*\. )?Next: Pull 1(\. .*)?'
+- assertVisible: "Start Pull 1"
+- takeScreenshot: 179c-workout-up-next-pull-1

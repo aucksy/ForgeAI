@@ -1,5 +1,7 @@
 # Phase 2 device QA, part C — exercises (runs after parts A and B; demo data is loaded).
-# Library with pictures and finer muscles → the moving demo behind a tap → exercise page →
+# Redesign R5: the Exercise library is Profile → Exercises (its "New exercise" is "Create" top
+# right), and the exercise page has 3 tabs (Summary · History · How to; "How to do it" and the
+# Easier / Harder versions are on How to). Library with pictures and finer muscles → the moving demo behind a tap → exercise page →
 # an empty workout with every new kind of set: a timed plank on the stopwatch, bodyweight
 # pull-ups (body weight counts in volume), an assisted pull-up, dumbbells "kg each" with the
 # Counting choice, a treadmill run (distance + time) → finish → sets per muscle → new exercise form.
@@ -10,13 +12,12 @@ appId: com.forgeai.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "^Workout$"
+    visible: "^Profile$"
     timeout: 60000
-- tapOn: "^Workout$"
-- extendedWaitUntil:
-    visible: "Exercise library"
-    timeout: 30000
-- tapOn: "Exercise library"
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -74,6 +75,11 @@ appId: com.forgeai.app
 - tapOn:
     text: "View Pull[- ][Uu]p"
     index: 0
+# The page opens on Summary; "How to do it" and the versions are on the How to tab.
+- extendedWaitUntil:
+    visible: "^How to$"
+    timeout: 15000
+- tapOn: "^How to$"
 - extendedWaitUntil:
     visible: "How to do it"
     timeout: 15000
@@ -82,8 +88,16 @@ appId: com.forgeai.app
 - back
 - back
 # ---------------------------------------------------------------- empty workout, new set kinds
+# Back on Profile: the empty workout starts from the Workout tab.
 - extendedWaitUntil:
-    visible: "Start empty workout"
+    visible: "^Workout$"
+    timeout: 20000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Start empty workout"
+    centerElement: true
     timeout: 20000
 - tapOn: "Start empty workout"
 - tapOn:
@@ -283,12 +297,15 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "Done"
 # ---------------------------------------------------------------- custom exercise form
+# Done goes to the Workout tab; the form is Profile → Exercises → "Create" (was "New exercise").
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
 - extendedWaitUntil:
-    visible: "^Workout$"
+    visible: "Search exercises"
     timeout: 20000
-- tapOn: "^Workout$"
-- tapOn: "Exercise library"
-- tapOn: "New exercise"
+- tapOn: "Create an exercise"
 - extendedWaitUntil:
     visible: "How you log it"
     timeout: 15000

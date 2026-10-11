@@ -1,5 +1,5 @@
 # Device QA, part M (after) — the app was uninstalled and the SAME APK installed again; Android
-# restored its backup. The member must land in the app (not the welcome screen) and Profile →
+# restored its backup. The member must land in the app (not the welcome screen) and Settings →
 # Backup must show the same workout count as before the backup.
 # The script passes that line in: maestro test -e WORKOUTS_LINE="12 workouts" ...
 appId: com.forgeai.app
@@ -20,13 +20,14 @@ appId: com.forgeai.app
 - assertNotVisible: "Step 1 of 3"
 - assertNotVisible: "Load demo data instead"
 - takeScreenshot: 181-after-reinstall-first-screen
-- tapOn: "^Profile$"
-# Audit Phase 7: Backup sits inside Profile's folded "Gym, backup and data".
+# Redesign R6: the Backup card is Settings → Backup (the Profile page's gear).
 - runFlow:
-    file: sub-profile-fold-open.yaml
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Backup"
 - scrollUntilVisible:
     element: "^${WORKOUTS_LINE}$"
     centerElement: true
-    timeout: 90000
+    timeout: 30000
 - assertVisible: "^${WORKOUTS_LINE}$"
 - takeScreenshot: 182-after-reinstall-workouts

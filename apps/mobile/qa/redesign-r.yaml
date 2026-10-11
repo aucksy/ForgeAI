@@ -1,0 +1,464 @@
+# Redesign device QA, part R — the 3-tab redesign, photographed screen by screen (runs after part
+# P9 and its shortcut check, before the P7 large-text tours and M). Normal text, gesture
+# navigation. Screenshots r-*.png (the script gathers them in qa-out/redesign/).
+#  1. Workout tab (R1/R4): only Workout · Profile · Shop; the Up next card; Start empty workout,
+#     Routines with New folder, New routine and Explore; the followed folder "Jaipur (6)" open,
+#     tagged Following, its "Next" routine; a routine's ⋯ and a folder's ⋯; Explore.
+#  2. Profile (R2): header (Edit profile, share, Settings), stats, the history chart in each chip
+#     (Duration · Kg/Lb lifted · Reps) and each range (Last 12 weeks · Year · All time), a bar
+#     tapped; the 4 Dashboard tiles' screens (Statistics, Exercises, Measures, Calendar + its Year
+#     view); a feed card and its ⋯; a workout page and its ⋯; an exercise page's 3 tabs.
+#  3. Settings (R6): the list and 3 pages (Units, Workouts, About); Edit profile.
+#  4. Shop (S1): the demo line and grid, a product, Add to bag, the Bag, Place demo order, My
+#     orders ("Demo order — not sent to your gym"), Cancel order.
+# Saves no workout (part M reads its count afresh). The chart's chip and range are put back to
+# Kg/Lb lifted and Last 12 weeks. The one demo order placed is cancelled (kept on the phone).
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+# ---------------------------------------------------------------- 1. the Workout tab
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Up next: .*|Done today: .*|Workout in progress"
+    timeout: 30000
+# Three tabs: Workout (opens first), Profile, Shop. Home, History and Progress are gone (this
+# part runs with gesture navigation, so no system "Home" button is on screen).
+- assertVisible: "^Shop$"
+- assertNotVisible: "^Home$"
+- assertNotVisible: "^History$"
+- assertNotVisible: "^Progress$"
+- takeScreenshot: r-01-workout-top
+- scrollUntilVisible:
+    element: "^Routines$"
+    centerElement: true
+    timeout: 30000
+- assertVisible: "Start empty workout"
+- assertVisible: "New folder"
+- assertVisible: "New routine"
+- assertVisible: "Explore"
+# Part L follows "Jaipur": its folder is first, open, tagged "Following".
+- scrollUntilVisible:
+    element: 'Jaipur \(6\)'
+    centerElement: true
+    timeout: 20000
+- assertVisible: "Jaipur folder, 6 routines, open, Following"
+- takeScreenshot: r-02-workout-folders
+# The routine Up next names carries the "Next" tag (part L did Push 1 today: Pull 1 is next).
+- scrollUntilVisible:
+    element: "Start routine Pull 1"
+    centerElement: true
+    timeout: 20000
+- assertVisible: "Pull 1, next, .*"
+- takeScreenshot: r-02b-workout-next-routine
+# ---------------------------------------------------------------- a routine's ⋯
+- tapOn: "More for Pull 1"
+- extendedWaitUntil:
+    visible: "Share routine"
+    timeout: 10000
+- assertVisible: "Duplicate routine"
+- assertVisible: "Edit routine"
+- assertVisible: "Move up"
+- assertVisible: "Move down"
+- assertVisible: "Move to folder…"
+- assertVisible: "Delete routine"
+- takeScreenshot: r-03-routine-menu
+- back
+- extendedWaitUntil:
+    notVisible: "Duplicate routine"
+    timeout: 10000
+# ---------------------------------------------------------------- a folder's ⋯
+- scrollUntilVisible:
+    element: "More for Jaipur"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- tapOn: "More for Jaipur"
+- extendedWaitUntil:
+    visible: "Rename folder"
+    timeout: 10000
+- assertVisible: "Add new routine"
+- assertVisible: "Share folder"
+- assertVisible: "Easy weeks….*"
+- assertVisible: "Stop following"
+- assertVisible: "Delete folder"
+- takeScreenshot: r-04-folder-menu
+- back
+- extendedWaitUntil:
+    notVisible: "Rename folder"
+    timeout: 10000
+# ---------------------------------------------------------------- Explore
+- scrollUntilVisible:
+    element: "Explore"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- tapOn: "Explore"
+- extendedWaitUntil:
+    visible: "Build a plan"
+    timeout: 20000
+- assertVisible: "A plan built for you, or a ready program."
+- takeScreenshot: r-05-explore
+- scrollUntilVisible:
+    element: "Import routines from Hevy"
+    centerElement: true
+    timeout: 30000
+- assertVisible: "Bring routines in"
+- assertVisible: "Import a routine file"
+- takeScreenshot: r-05b-explore-bring-routines-in
+- back
+- extendedWaitUntil:
+    visible: "^Routines$|Up next: .*|Done today: .*"
+    timeout: 15000
+# ---------------------------------------------------------------- 2. the Profile page
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- assertVisible: "Settings"
+- assertVisible: "Share this month as a picture"
+- assertVisible: '^Workouts: [\d,]+$'
+- assertVisible: '^Weeks in a row: [\d,]+$'
+- assertVisible: '^Records: [\d,]+$'
+- assertVisible: "Range: Last 12 weeks. Change"
+- takeScreenshot: r-06-profile-top
+# The chart's chips: Duration · Kg lifted (Lb lifted after part I's units) · Reps.
+- scrollUntilVisible:
+    element: "^Duration$"
+    centerElement: true
+    timeout: 20000
+# index 0: the chip (a feed card below can carry a "Reps" or "Lb lifted" figure too).
+- tapOn:
+    text: "^Duration$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Duration, last 12 weeks.*"
+    timeout: 10000
+- takeScreenshot: r-07-chart-duration
+- tapOn:
+    text: "^Reps$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Reps, last 12 weeks.*"
+    timeout: 10000
+- takeScreenshot: r-07b-chart-reps
+- tapOn:
+    text: '^(Kg|Lb) lifted$'
+    index: 0
+- extendedWaitUntil:
+    visible: '(Kg|Lb) lifted, last 12 weeks.*'
+    timeout: 10000
+- takeScreenshot: r-07c-chart-lifted
+# Tap a bar (each is a button "<period>: <number>"): the big number shows that bar.
+- tapOn:
+    text: '.*: [1-9][\d,]* (kg|lb)'
+    index: 0
+- takeScreenshot: r-08-chart-bar-tapped
+# The ranges: Last 12 weeks · Year · All time (the "Show" sheet).
+- tapOn: "Range: Last 12 weeks. Change"
+- extendedWaitUntil:
+    visible: "^Show$"
+    timeout: 10000
+- assertVisible: "^All time$"
+- takeScreenshot: r-08b-chart-range-sheet
+- tapOn: "^Year$"
+- extendedWaitUntil:
+    visible: "Range: Year. Change"
+    timeout: 15000
+- takeScreenshot: r-08c-chart-year
+- tapOn: "Range: Year. Change"
+- extendedWaitUntil:
+    visible: "^Show$"
+    timeout: 10000
+- tapOn: "^All time$"
+- extendedWaitUntil:
+    visible: "Range: All time. Change"
+    timeout: 15000
+- takeScreenshot: r-08d-chart-all-time
+# Put the range back (the chart keeps the last choice).
+- tapOn: "Range: All time. Change"
+- extendedWaitUntil:
+    visible: "^Show$"
+    timeout: 10000
+- tapOn:
+    text: "^Last 12 weeks$"
+    below:
+      text: "^Show$"
+- extendedWaitUntil:
+    visible: "Range: Last 12 weeks. Change"
+    timeout: 15000
+# ---------------------------------------------------------------- the 4 tiles
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Statistics"
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 30000
+- assertVisible: "Sets per muscle group"
+- takeScreenshot: r-09-statistics
+- scrollUntilVisible:
+    element: "Main exercises"
+    centerElement: true
+    timeout: 30000
+- takeScreenshot: r-09b-statistics-main-exercises
+- back
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- assertVisible: "Create an exercise"
+- takeScreenshot: r-10-exercises
+- back
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Measures"
+- extendedWaitUntil:
+    visible: "Progress photos"
+    timeout: 20000
+- assertVisible: "Add measures"
+- assertVisible: "^Body weight$"
+- takeScreenshot: r-11-measures
+- back
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 20000
+- assertVisible: "^Streak$"
+- assertVisible: "Search workouts"
+- takeScreenshot: r-12-calendar
+- tapOn: "^Year$"
+- extendedWaitUntil:
+    visible: 'Show 20\d\d'
+    timeout: 15000
+- takeScreenshot: r-12b-calendar-year
+- back
+# ---------------------------------------------------------------- a feed card and its ⋯
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "More for .*"
+    centerElement: true
+    timeout: 30000
+- takeScreenshot: r-13-feed-card
+- tapOn:
+    text: "More for .*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Save as routine"
+    timeout: 10000
+- assertVisible: "Repeat workout"
+- assertVisible: "Edit workout"
+- assertVisible: "Share as a picture"
+- assertVisible: "Share as text"
+- assertVisible: "Delete workout"
+- takeScreenshot: r-13b-feed-menu
+- back
+- extendedWaitUntil:
+    notVisible: "Save as routine"
+    timeout: 10000
+# ---------------------------------------------------------------- a workout page
+- tapOn:
+    text: '.*\. Open$'
+    index: 0
+- extendedWaitUntil:
+    visible: '[A-Z][a-z]+day, [A-Z][a-z]{2} \d{1,2}, \d{4} · \d\d:\d\d.*'
+    timeout: 15000
+- takeScreenshot: r-14-workout-page
+# Redesign R5: Edit / Repeat sit behind ⋯ ("More"), as on the feed.
+- tapOn: "More"
+- extendedWaitUntil:
+    visible: "Edit workout"
+    timeout: 10000
+- assertVisible: "Repeat workout"
+- takeScreenshot: r-14b-workout-page-more
+- back
+- extendedWaitUntil:
+    notVisible: "Repeat workout"
+    timeout: 10000
+# ---------------------------------------------------------------- an exercise page's 3 tabs
+# Tap an exercise on the workout page → its page, which opens on Summary.
+- scrollUntilVisible:
+    element: '.*\. Open the exercise'
+    centerElement: true
+    timeout: 20000
+- tapOn:
+    text: '.*\. Open the exercise'
+    index: 0
+- extendedWaitUntil:
+    visible: "^Summary$"
+    timeout: 15000
+- assertVisible: "^History$"
+- assertVisible: "^How to$"
+- takeScreenshot: r-15-exercise-summary
+- tapOn: "^History$"
+- extendedWaitUntil:
+    visible: '.*Open the workout'
+    timeout: 15000
+- takeScreenshot: r-15b-exercise-history
+- tapOn: "^How to$"
+- extendedWaitUntil:
+    visible: "How to do it"
+    timeout: 15000
+- takeScreenshot: r-15c-exercise-how-to
+# The exercise page → the workout page → Profile.
+- back
+- back
+# ---------------------------------------------------------------- 3. Settings and Edit profile
+- runFlow:
+    file: sub-settings-open.yaml
+- assertVisible: "^Workouts$"
+- assertVisible: "^Units$"
+- assertVisible: "^Notifications$"
+- assertVisible: "^Widgets$"
+- takeScreenshot: r-16-settings
+- scrollUntilVisible:
+    element: "^About$"
+    centerElement: true
+    timeout: 20000
+- assertVisible: "^Your gym$"
+- assertVisible: "^Backup$"
+- assertVisible: "^Export & import$"
+- assertVisible: "^Your data$"
+- takeScreenshot: r-16b-settings-bottom
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Units"
+- extendedWaitUntil:
+    visible: "lb, miles"
+    timeout: 15000
+- assertVisible: "(?i)body figure"
+- takeScreenshot: r-17-settings-units
+- back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Workouts"
+- extendedWaitUntil:
+    visible: "Workout sounds"
+    timeout: 15000
+- takeScreenshot: r-18-settings-workouts
+- back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "About"
+- extendedWaitUntil:
+    visible: "Credits"
+    timeout: 15000
+- takeScreenshot: r-19-settings-about
+- back
+# Settings → Profile → Edit profile (the pencil). Nothing is typed, so nothing changes.
+- back
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- tapOn: "Edit profile"
+- extendedWaitUntil:
+    visible: 'Bio, up to \d+ characters'
+    timeout: 15000
+- assertVisible: "Name"
+- assertVisible: "Link"
+- takeScreenshot: r-20-edit-profile
+- back
+# ---------------------------------------------------------------- 4. the Shop
+- extendedWaitUntil:
+    visible: "^Shop$"
+    timeout: 15000
+- tapOn:
+    text: "^Shop$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Demo shop — these are sample products.*'
+    timeout: 20000
+- assertVisible: "My orders"
+- assertVisible: "^Protein$"
+- assertVisible: "Bag, empty"
+- takeScreenshot: r-21-shop-grid
+- tapOn: 'Whey protein 1 kg, .*'
+- extendedWaitUntil:
+    visible: "^Whey protein 1 kg$"
+    timeout: 15000
+- assertVisible: "Chocolate.*"
+- takeScreenshot: r-22-shop-product
+- scrollUntilVisible:
+    element: "Add to bag"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Add to bag"
+- extendedWaitUntil:
+    visible: "Added 1 to your bag"
+    timeout: 10000
+- assertVisible: "Bag, 1 item"
+- takeScreenshot: r-22b-added-to-bag
+- tapOn: "Go to bag"
+- extendedWaitUntil:
+    visible: "^Bag$"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Place demo order"
+    centerElement: true
+    timeout: 15000
+- assertVisible: "Demo order — not sent to your gym\\. Nothing is charged and nothing is kept for you yet\\."
+- takeScreenshot: r-23-bag
+- tapOn: "Place demo order"
+- extendedWaitUntil:
+    visible: "^My orders$"
+    timeout: 15000
+- assertVisible: "^Demo order — not sent to your gym$"
+- assertVisible: "^Ordered$"
+- assertVisible: "Demo only: your gym does not see this order\\."
+- takeScreenshot: r-24-my-orders
+# Cancel it: the app's own question; its red "Cancel order" is the one under its title (the
+# order card's own "Cancel order" sits behind the sheet).
+- tapOn: "Cancel order"
+- extendedWaitUntil:
+    visible: 'Cancel this order\?'
+    timeout: 10000
+- takeScreenshot: r-25-cancel-order-question
+- tapOn:
+    text: "Cancel order"
+    below:
+      text: 'Cancel this order\?'
+- extendedWaitUntil:
+    visible: "^Cancelled$"
+    timeout: 10000
+# A cancelled order can no longer be cancelled (its button goes once the sheet has slid away).
+- extendedWaitUntil:
+    notVisible: "Cancel order"
+    timeout: 10000
+- takeScreenshot: r-26-order-cancelled
+# My orders replaced the Bag, so Back may land on the product page first, then the Shop.
+- back
+- runFlow:
+    when:
+      notVisible: 'Demo shop — these are sample products.*'
+    commands:
+      - back
+- extendedWaitUntil:
+    visible: 'Demo shop — these are sample products.*'
+    timeout: 15000
+- tapOn:
+    text: "^Workout$"
+    index: 0

@@ -1,10 +1,11 @@
 # Audit Phase 9 device QA, part P9 — "beyond Hevy" (runs after part N, before the P7 tours and M).
-#  1. Profile → Workout → Weekly goal "3": Home's This week reads "of 3 workouts"; then Off again.
+#  1. Settings → Workouts → Weekly goal "3" (redesign R6): the Workout tab's Up next card reads
+#     "This week: N of 3 workouts" (redesign R1: Home is gone); then Off again.
 #  2. A workout: Bench Press, two sets. The entry bar on the keyboard: "+ 2.5" (kg) or "+ 5" (lb,
 #     part I's units) steps the weight box; "Copy to sets below" fills set 2 ("Copied to 1 set below"
 #     with Undo); "+ 1" steps the reps. Both sets ticked, then Finish.
 #  3. Finish screen: "Share as text" opens Android's share menu with the workout as text.
-#  4. Bench Press page: ⋯ → "Start records fresh…" → "Start fresh": "Records since …" shows;
+#  4. Bench Press page (Profile → Exercises, redesign R5): ⋯ → "Start records fresh…" → "Start fresh": "Records since …" shows;
 #     ⋯ → "Count all records again" → "Count all again": the line goes.
 # Saves one workout (part M reads its count afresh, before its backup).
 appId: com.forgeai.app
@@ -20,28 +21,37 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 90000
 # ---------------------------------------------------------------- 1. weekly goal
-- tapOn: "^Profile$"
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Workouts"
 - scrollUntilVisible:
     element: "(?i)^weekly goal$"
     centerElement: true
-    timeout: 60000
+    timeout: 30000
 - tapOn:
     text: "^3$"
     below:
       text: "(?i)^weekly goal$"
-- assertVisible: "Workouts a week. Home and Progress count towards it."
+- assertVisible: "Workouts a week. The Workout tab shows how many are left."
 - takeScreenshot: p9-01-weekly-goal
+# Workouts → Settings → Profile → the Workout tab. Part L finished Push 1 today, so the card is
+# "Done today: Push 1" with its goal line, "This week: N of 3 workouts".
+- back
+- back
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 20000
 - tapOn:
-    text: "^Home$"
+    text: "^Workout$"
     index: 0
 - scrollUntilVisible:
-    element: "of 3 workouts"
+    element: '.*This week: \d+ of 3 workouts.*'
+    direction: UP
     centerElement: true
     timeout: 30000
-- assertVisible: "(\\d to go|goal met)"
-- takeScreenshot: p9-02-home-goal
+- takeScreenshot: p9-02-workout-goal
 # ---------------------------------------------------------------- 2. the entry bar
-- tapOn: "^Workout$"
 - scrollUntilVisible:
     element: "Start empty workout"
     centerElement: true
@@ -162,11 +172,14 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "Done"
 # ---------------------------------------------------------------- 4. start records fresh
+# Done goes to the Workout tab; the exercise is Profile → Exercises (redesign R5).
 - extendedWaitUntil:
-    visible: "^Workout$"
+    visible: "^Profile$"
     timeout: 20000
-- tapOn: "^Workout$"
-- tapOn: "Exercise library"
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -177,7 +190,7 @@ appId: com.forgeai.app
     text: "View Barbell Bench Press"
     index: 0
 - extendedWaitUntil:
-    visible: "How to do it|Heaviest weight"
+    visible: "Heaviest weight"
     timeout: 15000
 - tapOn: "Options for .*"
 - tapOn: "Start records fresh.*"
@@ -210,11 +223,14 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 20000
-- tapOn: "^Profile$"
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Workouts"
 - scrollUntilVisible:
     element: "(?i)^weekly goal$"
     centerElement: true
-    timeout: 60000
+    timeout: 30000
 - tapOn:
     text: "^Off$"
     below:

@@ -1,13 +1,16 @@
 # Audit Phase 7 device QA, parts P7BIG and P7NAV3 — the large-text screen tour (runs after parts
-# A–L and N, before M). The script has set the phone's font size to its largest step
+# A–L, N, P9 and R, before M). The script has set the phone's font size to its largest step
 # (adb: settings put system font_scale 2.0) and stopped the app; it runs this flow twice: with
 # the emulator's usual gesture navigation (NAV=gesture) and, when the image can switch, with
 # Android's 3-button bar (NAV=3button). Each screen a member uses is photographed
-# (p7-big-<NAV>-*.png; the script gathers them in qa-out/p7-big/): Home (top, then This week),
-# the Workout tab, an open workout with a set row, History, Progress, Profile (and its fold).
+# (p7-big-<NAV>-*.png; the script gathers them in qa-out/p7-big/). Redesign (3 tabs): the Workout
+# tab (top, then its folders), an open workout with a set row, the Profile page (top, its chart,
+# its feed), Calendar, Statistics, Settings, the Shop grid and a product page.
 # Changes NOTHING: the workout is an empty one with one exercise and no ticked set, thrown away
-# with "Discard workout" (an Android dialog, "Discard workout?" → Discard); a workout an earlier
-# part left open is only looked at, then minimised. The Profile fold is opened (screen state only).
+# with "Discard workout" (the app's own sheet, "Discard workout?" → Discard); a workout an earlier
+# part left open is only looked at, then minimised. Nothing is added to the bag.
+# Screenshots every tour takes, whichever way its workout step goes: 11 (P7_SHOTS in
+# run-device-qa.sh); the empty-workout branch adds 2 (03b, 03c).
 appId: com.forgeai.app
 # NAV comes from the script (maestro test -e NAV=gesture|3button). No `env:` default here: a
 # flow-level env overrides -e, so both tours were photographed as "gesture" (run 38091447858).
@@ -19,38 +22,33 @@ appId: com.forgeai.app
 - tapOn:
     text: "(?i)^allow$"
     optional: true
-# With Android's 3-button bar the bar's own home button is ALSO called "Home" (device QA run
-# 38081757903, part P7NAV3: a plain "^Home$" was already "visible" on that button before the app
-# drew, and the tap pressed it and left the app for the launcher). So wait for a tab name the
-# system bar does not have, and tap the app's Home tab by position: index 0 is the top-most
-# match (Maestro sorts matches by y), and the app's tab bar always sits above the system bar.
+# With Android's 3-button bar the bar's own home button is called "Home" (device QA run
+# 38081757903): wait for a tab name the system bar does not have, and tap the app's tabs by
+# position (index 0 is the top-most match; the app's tab bar sits above the system bar).
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 90000
-# ---------------------------------------------------------------- Home
+# ---------------------------------------------------------------- Workout tab: top, then folders
 - tapOn:
-    text: "^Home$"
+    text: "^Workout$"
     index: 0
 - extendedWaitUntil:
-    visible: "(?i)good (morning|afternoon|evening).*|This week so far"
+    visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
     timeout: 30000
 - waitForAnimationToEnd:
     timeout: 3000
-- takeScreenshot: p7-big-${NAV}-01-home
+- takeScreenshot: p7-big-${NAV}-01-workout-top
 - scrollUntilVisible:
-    element: "This week so far"
-    centerElement: true
-    timeout: 20000
-    optional: true
-- takeScreenshot: p7-big-${NAV}-02-home-this-week
-# ---------------------------------------------------------------- Workout tab
-- tapOn: "^Workout$"
-- scrollUntilVisible:
-    element: "Start empty workout|Resume workout"
+    element: "^Routines$"
     centerElement: true
     timeout: 30000
-- takeScreenshot: p7-big-${NAV}-03-workout-tab
+- takeScreenshot: p7-big-${NAV}-02-workout-folders
 # ---------------------------------------------------------------- an open workout with a set row
+- scrollUntilVisible:
+    element: "Start empty workout|Resume workout"
+    direction: UP
+    centerElement: true
+    timeout: 30000
 # An earlier part left a workout open: show it as it is, then minimise it (nothing changes).
 - runFlow:
     when:
@@ -60,12 +58,12 @@ appId: com.forgeai.app
       - extendedWaitUntil:
           visible: "Log a set to finish|Finish workout"
           timeout: 30000
-      - takeScreenshot: p7-big-${NAV}-04-open-workout
+      - takeScreenshot: p7-big-${NAV}-03-open-workout
       - tapOn: "Minimise workout.*"
       - extendedWaitUntil:
           visible: "Resume workout"
           timeout: 15000
-# None open (the usual case after part N): an empty workout, one exercise, then discarded.
+# None open (the usual case): an empty workout, one exercise, then discarded.
 - runFlow:
     when:
       notVisible: "Resume workout"
@@ -97,17 +95,17 @@ appId: com.forgeai.app
           timeout: 20000
       - waitForAnimationToEnd:
           timeout: 3000
-      - takeScreenshot: p7-big-${NAV}-04-open-workout
+      - takeScreenshot: p7-big-${NAV}-03-open-workout
       - scrollUntilVisible:
           element: "Discard workout"
           centerElement: true
           timeout: 20000
-      - takeScreenshot: p7-big-${NAV}-04b-open-workout-bottom
+      - takeScreenshot: p7-big-${NAV}-03b-open-workout-bottom
       - tapOn: "Discard workout"
       - extendedWaitUntil:
           visible: 'Discard workout\?'
           timeout: 10000
-      - takeScreenshot: p7-big-${NAV}-04c-discard-question
+      - takeScreenshot: p7-big-${NAV}-03c-discard-question
       # The app's own confirm sheet: its "Discard" button (the link behind it says "Discard workout").
       - tapOn: "^Discard$"
       - scrollUntilVisible:
@@ -115,35 +113,89 @@ appId: com.forgeai.app
           centerElement: true
           timeout: 30000
       - assertNotVisible: "Resume workout"
-# ---------------------------------------------------------------- History
-- tapOn: "^History$"
-- scrollUntilVisible:
-    element: "Log a past workout"
-    direction: UP
-    timeout: 30000
-- waitForAnimationToEnd:
-    timeout: 3000
-- takeScreenshot: p7-big-${NAV}-05-history
-# ---------------------------------------------------------------- Progress
-- tapOn: "^Progress$"
-- extendedWaitUntil:
-    visible: "This week.* vs your usual"
-    timeout: 30000
-- waitForAnimationToEnd:
-    timeout: 3000
-- takeScreenshot: p7-big-${NAV}-06-progress
-# ---------------------------------------------------------------- Profile
-- tapOn: "^Profile$"
-- scrollUntilVisible:
-    element: "^Your details$"
-    direction: UP
-    timeout: 30000
-- waitForAnimationToEnd:
-    timeout: 3000
-- takeScreenshot: p7-big-${NAV}-07-profile
-- runFlow:
-    file: sub-profile-fold-open.yaml
-- takeScreenshot: p7-big-${NAV}-08-profile-fold-open
+# ---------------------------------------------------------------- Profile: top, chart, feed
 - tapOn:
-    text: "^Home$"
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Weeks in a row$"
+    direction: UP
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-04-profile-top
+- scrollUntilVisible:
+    element: '^(Kg|Lb) lifted$'
+    centerElement: true
+    timeout: 30000
+- takeScreenshot: p7-big-${NAV}-05-profile-chart
+- scrollUntilVisible:
+    element: "More for .*"
+    centerElement: true
+    timeout: 30000
+- takeScreenshot: p7-big-${NAV}-06-profile-feed
+# ---------------------------------------------------------------- Calendar
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-07-calendar
+- back
+# ---------------------------------------------------------------- Statistics
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Statistics"
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-08-statistics
+- back
+# ---------------------------------------------------------------- Settings
+- runFlow:
+    file: sub-settings-open.yaml
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-09-settings
+- back
+# ---------------------------------------------------------------- Shop: grid, then a product
+- extendedWaitUntil:
+    visible: "^Shop$"
+    timeout: 20000
+- tapOn:
+    text: "^Shop$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Demo shop — these are sample products.*'
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-10-shop-grid
+- scrollUntilVisible:
+    element: 'Whey protein 1 kg, .*'
+    centerElement: true
+    timeout: 30000
+- tapOn: 'Whey protein 1 kg, .*'
+- extendedWaitUntil:
+    visible: "^Whey protein 1 kg$"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-11-shop-product
+- back
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 20000
+- tapOn:
+    text: "^Workout$"
     index: 0

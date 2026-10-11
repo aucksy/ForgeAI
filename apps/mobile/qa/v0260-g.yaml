@@ -1,11 +1,15 @@
 # v0.26.0 device QA, part G — Phase 4 routines and plans (runs after parts A–F, on the demo
 # member: muscle, intermediate, the demo "Push Pull Legs — 6 Day" plan).
-# Ready programs → follow one → the plan builder, step by step (Upper / Lower, 4 days, dumbbells
-# only, a sore knee, leave out Goblet Squat) → swap in the plan → save and follow it → a routine's
-# calm preview → Edit routine: swap for good, share as text, move to another folder → share a
-# folder as a file → back on the demo plan: easy weeks on, take one now (with its end date) → the
-# easy workout (half the sets, no record pop-up, swap for today) → train normally → open a
-# routine file someone shared → "New routine" asks where it goes → reorder mode.
+# Redesign R4: folders and routine cards sit inline on the Workout tab (Hevy's layout); ready
+# programs and the plan builder are behind "Explore"; the old Routines screen (its "+" menu and
+# reorder mode) is gone — "Import a routine file" is on Explore, "New routine" on the Workout tab,
+# and Move up / Move down in a routine's ⋯.
+# Explore → follow a ready program → the plan builder, step by step (Upper / Lower, 4 days,
+# dumbbells only, a sore knee, leave out Goblet Squat) → swap in the plan → save and follow it → a
+# routine's calm preview → Edit routine: swap for good, share as text, move to another folder →
+# share a folder as a file → back on the demo plan: easy weeks on, take one now (with its end
+# date) → the easy workout (half the sets, no record pop-up, swap for today) → train normally →
+# open a routine file someone shared → "New routine" asks where it goes → a routine's ⋯ moves.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -13,23 +17,26 @@ appId: com.forgeai.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "^Workout$"
+    visible: "^Profile$"
     timeout: 60000
-- tapOn: "^Workout$"
-- extendedWaitUntil:
-    visible: "Start empty workout"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "^Routines$"
+    centerElement: true
     timeout: 30000
-- tapOn: "^Routines$"
-- extendedWaitUntil:
-    visible: "Ready programs"
-    timeout: 20000
-- takeScreenshot: 80-routines-folders
+- assertVisible: "New folder"
+- assertVisible: "New routine"
+- assertVisible: "Explore"
+- takeScreenshot: 80-workout-folders
 # ---------------------------------------------------------------- ready programs
-- tapOn: "Ready programs"
+- tapOn: "Explore"
 - extendedWaitUntil:
-    visible: "Full Body Basics.*"
-    timeout: 15000
-- takeScreenshot: 81-programs
+    visible: "Build a plan"
+    timeout: 20000
+- assertVisible: "Full Body Basics.*"
+- takeScreenshot: 81-explore-programs
 - scrollUntilVisible:
     element: "Dumbbell Full Body,.*"
     centerElement: true
@@ -40,20 +47,27 @@ appId: com.forgeai.app
     timeout: 15000
 - takeScreenshot: 82-program-dumbbell
 - tapOn: "Follow this plan"
-# Easy weeks start on (the open owner decision's default): week 1, the easy one in week 6.
+# Following lands back on the Workout tab. Easy weeks start on (the open owner decision's
+# default): the Up next card names the plan's routine with its week line, week 1 with the easy
+# one in week 6.
 - extendedWaitUntil:
-    visible: "Dumbbell Full Body, 2 routines, your plan, Week 1 · easy week in week 6"
-    timeout: 20000
-- takeScreenshot: 83-program-followed
-# Routines sits above the tabs (no tab bar): Back returns to the Workout tab.
-- back
-- extendedWaitUntil:
-    visible: "Today: Full Body [AB]"
+    visible: "Up next: Full Body [AB]"
     timeout: 20000
 - assertVisible: "Week 1 · easy week in week 6"
 - takeScreenshot: 84-workout-today-program
+# The program is a folder on the Workout tab, open, tagged "Following".
+- scrollUntilVisible:
+    element: "Dumbbell Full Body folder, 2 routines, open, Following"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: 83-program-followed
 # ---------------------------------------------------------------- the plan builder
-- tapOn: "^Routines$"
+- scrollUntilVisible:
+    element: "Explore"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- tapOn: "Explore"
 - extendedWaitUntil:
     visible: "Build a plan"
     timeout: 20000
@@ -174,15 +188,28 @@ appId: com.forgeai.app
     direction: UP
     timeout: 20000
 - tapOn: "Save and follow"
+# Saved and followed: back on the Workout tab, the plan's folder open and tagged "Following".
 - extendedWaitUntil:
-    visible: "Upper / Lower · 4 days, 4 routines, your plan.*"
+    visible: "Up next: .*"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Upper / Lower · 4 days folder, 4 routines, open, Following"
+    centerElement: true
     timeout: 20000
 - takeScreenshot: 91-built-plan-followed
 # ---------------------------------------------------------------- the routine preview, then the editor
-# Audit Phase 4: routines are compact rows ("Upper A, 5 exercises · Upper") with a small Start
-# ("Start Upper A"); a tap on the row opens a calm preview with "Start routine"; Edit sits behind
-# "Edit routine" ("Edit Upper A" is gone).
-- assertVisible: "Start Upper A"
+# Redesign R4: a routine card (name, a grey line of its exercises, ⋯, "Start routine", spoken
+# "Start routine Upper A"); a tap on the card opens the calm preview with "Start routine"; Edit
+# sits behind "Edit routine".
+- scrollUntilVisible:
+    element: "Start routine Upper A"
+    centerElement: true
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Upper A, .*"
+    direction: UP
+    centerElement: true
+    timeout: 20000
 - tapOn: "Upper A, .*"
 - extendedWaitUntil:
     visible: "Start routine"
@@ -233,7 +260,8 @@ appId: com.forgeai.app
     visible: ".*· Dumbbell Full Body"
     timeout: 10000
 - takeScreenshot: 96-routine-moved
-# Close the editor (back on the preview, which reads the routine again), then the preview.
+# Close the editor (back on the preview, which reads the routine again), then the preview: back
+# on the Workout tab.
 - tapOn: "Go back"
 - extendedWaitUntil:
     notVisible: "More for this routine"
@@ -243,9 +271,10 @@ appId: com.forgeai.app
     timeout: 10000
 - tapOn: "Go back"
 # ---------------------------------------------------------------- share a folder as a file
-- extendedWaitUntil:
-    visible: "More for Upper / Lower · 4 days"
-    timeout: 15000
+- scrollUntilVisible:
+    element: "More for Upper / Lower · 4 days"
+    centerElement: true
+    timeout: 20000
 - tapOn: "More for Upper / Lower · 4 days"
 - tapOn: "Share folder"
 - extendedWaitUntil:
@@ -259,50 +288,64 @@ appId: com.forgeai.app
 - takeScreenshot: 97-share-file
 - back
 # ---------------------------------------------------------------- an easy week on the demo plan
+# The folder's ⋯ (Hevy's menu, with ForgeAI's plan rows): "Follow this plan", then "Easy weeks…"
+# opens its own sheet ("Easy week every 6 weeks", then "Take an easy week now").
 - scrollUntilVisible:
     element: "More for Push Pull Legs — 6 Day"
     centerElement: true
     timeout: 20000
 - tapOn: "More for Push Pull Legs — 6 Day"
-- tapOn: "Follow this plan, Today's workout"
+- tapOn: "Follow this plan"
 - extendedWaitUntil:
-    visible: "Push Pull Legs — 6 Day, .* routines, your plan, Week 1"
+    visible: "Push Pull Legs — 6 Day folder, .* routines, open, Following"
     timeout: 15000
+- scrollUntilVisible:
+    element: "More for Push Pull Legs — 6 Day"
+    centerElement: true
+    timeout: 20000
 - tapOn: "More for Push Pull Legs — 6 Day"
+- extendedWaitUntil:
+    visible: "Easy weeks…, Off"
+    timeout: 10000
+- tapOn: "Easy weeks…, Off"
+- extendedWaitUntil:
+    visible: "Easy week every 6 weeks, Off"
+    timeout: 10000
 - tapOn: "Easy week every 6 weeks, Off"
 - extendedWaitUntil:
-    visible: "Push Pull Legs — 6 Day, .*, Week 1 · easy week in week 6"
-    timeout: 15000
+    notVisible: "Easy week every 6 weeks, Off"
+    timeout: 10000
 - tapOn: "More for Push Pull Legs — 6 Day"
+- extendedWaitUntil:
+    visible: "Easy weeks…, On"
+    timeout: 10000
+- tapOn: "Easy weeks…, On"
 - extendedWaitUntil:
     visible: "Take an easy week now"
     timeout: 10000
+- assertVisible: "Easy week every 6 weeks, On"
 - takeScreenshot: 98-folder-menu
 - tapOn: "Take an easy week now"
-# RP-04: an easy week taken now is the 7 days from the tap, its end date always shown
-# ("Easy week until Fri, 16 Oct").
-- extendedWaitUntil:
-    visible: 'Push Pull Legs — 6 Day, .*, Easy week until [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}'
-    timeout: 15000
-- back
-# The easy-week note and "Train normally this week" must show whatever Today says (review, HIGH 2).
-# Since audit Phase 3 an empty workout (parts C, E, F) never moves or hides Today, so the card
-# may read "Today: <routine>" or, with part A's routine counted, "Done today: … · Next: …".
-- extendedWaitUntil:
-    visible: "Easy week: half the sets, the same weights.*"
+# RP-04: an easy week taken now is the 7 days from the tap, its end date always shown. The
+# easy-week note and "Train normally this week" must show on the Up next card whatever it says
+# (review, HIGH 2): an empty workout (parts C, E, F) never moves or hides it, so the card may read
+# "Up next: <routine>" or, with part A's routine counted, "Done today: …" / "Next: …".
+- scrollUntilVisible:
+    element: "Easy week: half the sets, the same weights.*"
+    direction: UP
+    centerElement: true
     timeout: 20000
-# RP-04: the note carries the end date too.
+# RP-04: the note carries the end date ("Until Fri, 16 Oct.").
 - assertVisible: 'Easy week: half the sets, the same weights\. Until [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}\.'
 - assertVisible: "Train normally this week"
 - takeScreenshot: 99-workout-easy-week
-# Start a routine of the plan from Routines: the followed folder sits first, open; its first row's
-# small Start ("Start Push Day A", whose second lift is Overhead Press).
-- tapOn: "^Routines$"
+# Start a routine of the plan from its card: the followed folder sits first, open; its first
+# routine "Push Day A" (whose second lift is Overhead Press), spoken "Start routine Push Day A".
 - scrollUntilVisible:
-    element: "Start Push Day A"
+    element: "Start routine Push Day A"
     centerElement: true
-    timeout: 15000
-- tapOn: "Start Push Day A"
+    timeout: 20000
+- tapOn: "Start routine Push Day A"
 # LW-24: with a workout already open the app asks (Resume / Discard and start new) instead of
 # "Finish your current workout first". None should be open here; if one is, start this one.
 - runFlow:
@@ -395,12 +438,14 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 20000
 - tapOn: "Done"
+# Done goes to the Workout tab: the Up next card still carries the easy week's choices.
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 20000
-- tapOn: "^Workout$"
-- extendedWaitUntil:
-    visible: "Train normally this week"
+- scrollUntilVisible:
+    element: "Train normally this week"
+    direction: UP
+    centerElement: true
     timeout: 15000
 - tapOn: "Train normally this week"
 - extendedWaitUntil:
@@ -408,13 +453,16 @@ appId: com.forgeai.app
     timeout: 15000
 - takeScreenshot: 105-trained-normally
 # ---------------------------------------------------------------- open a shared routine file
-- tapOn: "^Routines$"
-# The list keeps where it was scrolled to: scroll back up to its "+" button.
+# Redesign R4: Explore → Bring routines in → "Import a routine file".
 - scrollUntilVisible:
-    element: "Add a routine, folder or file"
-    direction: UP
+    element: "Explore"
+    centerElement: true
     timeout: 15000
-- tapOn: "Add a routine, folder or file"
+- tapOn: "Explore"
+- scrollUntilVisible:
+    element: "Import a routine file"
+    centerElement: true
+    timeout: 20000
 - tapOn: "Import a routine file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-shared).*'
@@ -437,13 +485,14 @@ appId: com.forgeai.app
 - assertVisible: "New in your library: Sam's Band Pull.*"
 - takeScreenshot: 107-import-done
 # Audit Phase 7 (packet B): the notice is the app's own sheet now, not Android's pop-up; its one
-# button names what it does, "Close" (src/lib/tell.ts NOTICE_BUTTON), never "OK".
+# button names what it does, "Close" (src/lib/tell.ts NOTICE_BUTTON), never "OK". Closing it
+# lands on the Workout tab, the new folder open.
 - tapOn: "^Close$"
 - extendedWaitUntil:
     notVisible: "Routines added"
     timeout: 10000
 - scrollUntilVisible:
-    element: "Shared by Sam, 1 routine.*"
+    element: 'Shared by Sam \(1\)'
     centerElement: true
     timeout: 20000
 - takeScreenshot: 108-imported-folder
@@ -451,10 +500,10 @@ appId: com.forgeai.app
 # Audit Phase 4 (RP-08): "New routine" never joins the plan by itself — a folder picker first,
 # "My routines" (not followed) at the top, the followed plan last. Nothing is made here.
 - scrollUntilVisible:
-    element: "Add a routine, folder or file"
+    element: "New routine"
     direction: UP
+    centerElement: true
     timeout: 15000
-- tapOn: "Add a routine, folder or file"
 - tapOn: "New routine"
 - extendedWaitUntil:
     visible: 'Where should the routine go\?'
@@ -469,22 +518,26 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     notVisible: 'Where should the routine go\?'
     timeout: 10000
-# ---------------------------------------------------------------- reorder mode
-# RP-07: "Reorder routines and folders" puts Move up / Move down on routines and folders (in the
-# followed folder the order IS the rotation). Looked at; nothing is moved.
+# ---------------------------------------------------------------- a routine's moves
+# RP-07 / redesign R4: drag is not built; a routine's ⋯ has Move up / Move down / Move to folder…
+# (in the followed folder the order IS the rotation). Push Day A is the plan's first routine, so
+# it offers Move down and no Move up. Looked at; nothing is moved.
 - scrollUntilVisible:
-    element: "Add a routine, folder or file"
-    direction: UP
-    timeout: 15000
-- tapOn: "Add a routine, folder or file"
-- tapOn: "Reorder routines and folders"
+    element: "More for Push Day A"
+    centerElement: true
+    timeout: 20000
+- tapOn: "More for Push Day A"
 - extendedWaitUntil:
-    visible: "Move routines and folders. Your plan goes in this order."
+    visible: "Move down"
     timeout: 10000
-- assertVisible: "Today goes in this order."
-- assertVisible: "Move Push Day A down"
-- takeScreenshot: 110-reorder-mode
-- tapOn: "Done reordering"
+- assertNotVisible: "Move up"
+- assertVisible: "Move to folder…"
+- assertVisible: "Share routine"
+- assertVisible: "Duplicate routine"
+- assertVisible: "Edit routine"
+- assertVisible: "Delete routine"
+- takeScreenshot: 110-routine-menu-moves
+- back
 - extendedWaitUntil:
-    visible: "Ready programs"
+    notVisible: "Duplicate routine"
     timeout: 10000

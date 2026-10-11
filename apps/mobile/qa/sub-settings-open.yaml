@@ -1,0 +1,27 @@
+# Sub-flow (not a part of its own; called with runFlow from other flows). Redesign R6: every old
+# Profile setting lives behind the Profile page's gear (accessibilityLabel "Settings", src/app/
+# (tabs)/profile.tsx) on Hevy's list of pages (src/app/settings/index.tsx): Your details,
+# Workouts, Units, Notifications, Health Connect, Widgets, Your gym, Backup, Export & import,
+# Your data, About. The old fold "Gym, backup and data" is gone; this helper replaces sub-profile-fold-open.yaml.
+# This opens that list. Call it with the app's tab bar on screen (any tab), or already on the list.
+# The Profile tab is tapped with index 0: the top-most match (trap 18, 3-button navigation).
+appId: com.forgeai.app
+---
+- runFlow:
+    when:
+      notVisible: "^Your details$"
+    commands:
+      - extendedWaitUntil:
+          visible: "^Profile$"
+          timeout: 30000
+      - tapOn:
+          text: "^Profile$"
+          index: 0
+      # The gear sits in the Profile page's header (never scrolls away).
+      - extendedWaitUntil:
+          visible: "Edit profile"
+          timeout: 30000
+      - tapOn: "Settings"
+- extendedWaitUntil:
+    visible: "^Your details$"
+    timeout: 20000

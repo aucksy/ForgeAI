@@ -267,8 +267,8 @@ free_maestro
 adb shell input keyevent KEYCODE_HOME
 
 # ---------------------------------------------------------------- part I2 (audit Phase 6, PH-01: notifications off)
-# Notifications blocked for ForgeAI: Profile's reminders row says so and offers "Turn on
-# notifications". Blocked here by taking the notification permission away (Android stops the app);
+# Notifications blocked for ForgeAI: Settings → Notifications (redesign R6) says so and offers
+# "Turn on notifications". Blocked here by taking the notification permission away (Android stops the app);
 # given back right after, for the parts that follow.
 adb shell pm revoke "$PKG" android.permission.POST_NOTIFICATIONS > "$OUT/i2-revoke.txt" 2>&1 || log "NOTIFICATIONS OFF: could not revoke the permission ($(tr -d '\r' < "$OUT/i2-revoke.txt"))"
 sleep 2
@@ -318,15 +318,16 @@ log "part L start"
 maestro test --format junit --output "$OUT/part-l.xml" --test-output-dir "$OUT/part-l" "$QA_DIR/v0290-l.yaml"   > "$OUT/part-l.log" 2>&1 || { status=1; log "PART L FAILED"; }
 
 # ---------------------------------------------------------------- part N (audit Phase 3: History holds everything)
-# List / Calendar / search across years (part J's March 2024 Hevy workouts), an old workout's
-# edit asks before Back throws it away, Log a past workout. Saves nothing, so part M's count holds.
+# Redesign: the Profile feed / Calendar (its search across years: part J's March 2024 Hevy
+# workouts), an old workout's edit (⋯ → Edit workout) asks before Back throws it away, Log a past
+# workout. Saves nothing, so part M's count holds.
 free_maestro
 log "part N start"
 maestro test --format junit --output "$OUT/part-n.xml" --test-output-dir "$OUT/part-n" "$QA_DIR/audit3-n.yaml" \
   > "$OUT/part-n.log" 2>&1 || { status=1; log "PART N FAILED"; }
 
 # ---------------------------------------------------------------- part P9 (audit Phase 9: beyond Hevy)
-# Weekly goal on Home, the entry bar's step and "Copy to sets below", "Share as text" to Android's
+# Weekly goal on the Workout tab's Up next card, the entry bar's step and "Copy to sets below", "Share as text" to Android's
 # share menu, "Start records fresh" and back (phase9-p.yaml). Saves one workout (part M reads its
 # count afresh). Then the app icon's long-press shortcuts must be in Android's shortcut list:
 # "Log body weight", and "Start …" / "Resume workout" (Shortcuts.kt, from the Today widget's answer).
@@ -343,15 +344,32 @@ else
   log "APP ICON SHORTCUTS: MISSING from dumpsys shortcut (p9-shortcuts.txt)"
 fi
 
+# ---------------------------------------------------------------- part R (the 3-tab redesign, photographed)
+# Workout tab (Up next, folders, a routine's and a folder's ⋯, Explore), Profile (header, the
+# chart in each chip and range, a bar tapped, the 4 tiles' screens, a feed card and its ⋯, a
+# workout page, an exercise page's 3 tabs), Settings and 3 of its pages, Edit profile, and the demo
+# Shop through a demo order and its cancel (redesign-r.yaml). Saves no workout. Its screenshots
+# (r-*.png) are gathered in qa-out/redesign/ (Maestro writes them into the part's output folder,
+# or on an older Maestro the working folder).
+free_maestro
+log "part R start"
+maestro test --format junit --output "$OUT/part-r.xml" --test-output-dir "$OUT/part-r" "$QA_DIR/redesign-r.yaml" \
+  > "$OUT/part-r.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/r-failed.png"; log "PART R FAILED (part-r.log, r-failed.png)"; }
+mkdir -p "$OUT/redesign"
+{ find "$OUT/part-r" -name "r-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "r-*.png" 2>/dev/null; } \
+  | while read -r f; do cp "$f" "$OUT/redesign/" 2>/dev/null; done
+log "REDESIGN TOUR: $(find "$OUT/redesign" -name "r-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/redesign/"
+
 # ---------------------------------------------------------------- part P7 (audit Phase 7: large text)
 # The phone's font size at its largest step (font_scale 2.0, Android 14's top setting) and the app
-# restarted, then a screen tour (phase7-bigtext.yaml): Home, the Workout tab, an open workout with
-# a set row (an empty workout with one exercise, then discarded: nothing saved), History, Progress,
-# Profile and its fold, each photographed (p7-big-<nav>-*.png, also gathered in qa-out/p7-big/).
+# restarted, then a screen tour (phase7-bigtext.yaml): the Workout tab (top, folders), an open
+# workout with a set row (an empty workout with one exercise, then discarded: nothing saved), the
+# Profile page (top, chart, feed), Calendar, Statistics, Settings, the Shop grid and a product
+# page, each photographed (p7-big-<nav>-*.png, also gathered in qa-out/p7-big/).
 # Run once with the emulator's gesture navigation (part P7BIG) and once with Android's 3-button
 # bar (part P7NAV3) when this image can switch to it by adb. Font size and navigation are put
 # back before part M. Saves nothing, so part M's workout count is not changed by this part.
-P7_SHOTS=8   # screenshots every tour takes, whichever way its workout step goes
+P7_SHOTS=11  # screenshots every tour takes, whichever way its workout step goes (13 when it starts one)
 p7_font() { adb shell settings get system font_scale 2>/dev/null | tr -d '\r'; }
 # 0 = 3-button, 1 = 2-button, 2 = gestures (Android's own setting, kept in step with the overlay).
 p7_nav() { adb shell settings get secure navigation_mode 2>/dev/null | tr -d '\r'; }
@@ -476,10 +494,10 @@ part_m() {
     log "automatic restore was '$res'; set to 1 (a phone's default)"
   fi
 
-  # 2. What must come back: Profile -> Backup's first line, e.g. "12 workouts".
+  # 2. What must come back: Settings -> Backup's first line, e.g. "12 workouts".
   free_maestro
   maestro test --format junit --output "$OUT/part-m-record.xml" --test-output-dir "$OUT/part-m-record" "$QA_DIR/backup-m-record.yaml" \
-    > "$OUT/part-m-record.log" 2>&1 || { m_fail "could not reach Profile -> Backup's workout count before the backup (part-m-record.log)"; return 1; }
+    > "$OUT/part-m-record.log" 2>&1 || { m_fail "could not reach Settings -> Backup's workout count before the backup (part-m-record.log)"; return 1; }
   free_maestro
   adb shell uiautomator dump /sdcard/qa-m-before.xml >/dev/null 2>&1 || true
   adb pull /sdcard/qa-m-before.xml "$OUT/m-before-ui.xml" >/dev/null 2>&1 || true
@@ -489,8 +507,8 @@ part_m() {
     line=$(grep -oE '"[0-9]+ workouts?"' "$OUT/m-before-hierarchy.json" 2>/dev/null | head -1 | tr -d '"')
     free_maestro
   fi
-  [ -n "$line" ] || { m_fail "could not read the 'N workouts' line off Profile -> Backup (m-before-ui.xml)"; return 1; }
-  log "BACKUP M: before the backup Profile shows '$line'"
+  [ -n "$line" ] || { m_fail "could not read the 'N workouts' line off Settings -> Backup (m-before-ui.xml)"; return 1; }
+  log "BACKUP M: before the backup Settings -> Backup shows '$line'"
 
   # 3. Back up now. The app goes to the background first (a foreground app can be skipped);
   # never force-stop it here: Android does not back up a stopped app.

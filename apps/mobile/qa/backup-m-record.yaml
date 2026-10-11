@@ -1,5 +1,5 @@
-# Device QA, part M (record) — runs after parts A–L, N and P7, BEFORE Android's backup. Opens Profile and
-# scrolls to the Backup card, whose first line is the member's workout count ("12 workouts").
+# Device QA, part M (record) — runs after parts A–L, N and P7, BEFORE Android's backup. Opens Settings → Backup
+# (redesign R6) and scrolls to its card, whose first line is the member's workout count ("12 workouts").
 # The script reads that exact line off the screen and part M (after) must find it again once the
 # app has been uninstalled, reinstalled and restored from the backup.
 appId: com.forgeai.app
@@ -11,15 +11,16 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 60000
-- tapOn: "^Profile$"
-# Audit Phase 7: Backup sits inside Profile's folded "Gym, backup and data".
+# Redesign R6: the Backup card is Settings → Backup (the Profile page's gear).
 - runFlow:
-    file: sub-profile-fold-open.yaml
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Backup"
 # The count loads a moment after the card ("Your workouts" first); wait for the number.
 - scrollUntilVisible:
     element: '^[0-9]+ workouts?$'
     centerElement: true
-    timeout: 90000
+    timeout: 30000
 # Audit Phase 5 (PG-17 / D11): under the count, "Include photos in my backup" — OFF unless the
 # member turns it on (part D's photos never did), and the card says what Off means.
 - scrollUntilVisible:

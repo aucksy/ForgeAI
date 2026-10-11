@@ -115,11 +115,15 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "Done"
 # ---------------------------------------------------------------- exercise page records
+# Done goes to the Workout tab. Redesign R5: the library is Profile → Exercises, and the exercise
+# page opens on its Summary tab (Summary · History · How to).
 - extendedWaitUntil:
-    visible: "^Workout$"
+    visible: "^Profile$"
     timeout: 20000
-- tapOn: "^Workout$"
-- tapOn: "Exercise library"
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -130,17 +134,18 @@ appId: com.forgeai.app
     text: "View Pull[- ][Uu]p"
     index: 0
 - extendedWaitUntil:
-    visible: "How to do it"
+    visible: "^Summary$"
     timeout: 15000
-# Audit Phase 4 (EX-07): the page leads with the member's own answer — "Last time · Today" and
+# Audit Phase 4 (EX-07): the Summary leads with the member's own answer — "Last time · Today" and
 # "Best · <kind>", in the way the exercise is logged.
 - assertVisible: 'Last time · .*'
 - assertVisible: 'Best · .*'
 - takeScreenshot: 63b-pull-up-last-time-best
-# Phase 4: no "Records" heading on the page any more; the record tiles sit under the chart.
+# Redesign R5: the record rows sit under the chart, under "Personal records" (Hevy's words).
 - scrollUntilVisible:
     element: "Most reps"
     timeout: 20000
+- assertVisible: "Personal records"
 - takeScreenshot: 64-pull-up-records
 - back
 - tapOn: "Search exercises"
@@ -150,8 +155,9 @@ appId: com.forgeai.app
 - tapOn:
     text: "View .*Bench Press.*"
     index: 0
+# Redesign R5: "Heaviest weight" (the chart's first choice) is on the Summary.
 - extendedWaitUntil:
-    visible: "How to do it|Heaviest weight"
+    visible: "Heaviest weight"
     timeout: 15000
 - scrollUntilVisible:
     element: "Best set"
@@ -161,24 +167,34 @@ appId: com.forgeai.app
     element: "Best workout"
     timeout: 20000
 - takeScreenshot: 66-bench-records
-# Audit Phase 4 (EX-14 / R2): every past session is there, folded shut under its count
-# ("Past workouts" · "13 workouts · see them"), no longer just "the last 15".
+# Audit Phase 4 (EX-14 / R2) / redesign R5: every past session is there — "Past workouts" is the
+# History tab now: every workout with this exercise, open, a page at a time ("Show N more"),
+# never "the last 15".
 - scrollUntilVisible:
-    element: "Past workouts"
+    element: "^History$"
+    direction: UP
     centerElement: true
     timeout: 20000
-- assertVisible: '[\d,]+ workouts? · see (it|them)'
+- tapOn: "^History$"
+- extendedWaitUntil:
+    visible: '.*Open the workout'
+    timeout: 15000
 - assertNotVisible: 'Showing the last .*'
-- takeScreenshot: 66b-bench-past-sessions-folded
+- takeScreenshot: 66b-bench-history-tab
 # ---------------------------------------------------------------- the coach is hidden
-# Owner decision D4 (Phase 0): coach, nutrition and gym sync are hidden from members. Home must
-# show no coach card and no calorie rings, and a coach link must land on Home, unsent.
+# Owner decision D4 (Phase 0): coach, nutrition and gym sync are hidden from members. The first
+# screen (the Workout tab since redesign R1) must show no coach card and no calorie rings.
 - back
 - back
 - extendedWaitUntil:
-    visible: "^Home$"
+    visible: "^Workout$"
     timeout: 20000
-- tapOn: "^Home$"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Up next: .*|Done today: .*|Workout in progress"
+    timeout: 20000
 - assertNotVisible: 'Coach insight: .*'
 - assertNotVisible: '(?i)^calories$'
-- takeScreenshot: 67-home-no-coach
+- takeScreenshot: 67-workout-no-coach

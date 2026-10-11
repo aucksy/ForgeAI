@@ -11,6 +11,9 @@
 # reminders row off and on (day picker + "Reminder time … Change"), the widgets row before and
 # after a widget is placed ("1 on your home screen. …"). Part I2 (phase6-i2.yaml) checks the
 # reminders row with notifications blocked.
+# Redesign R6: the imports are Settings → Export & import; Units, Health Connect, Notifications
+# (reminders) and Widgets are their own Settings pages (sub-settings-page.yaml). History in lb is
+# the Profile feed; the exercise library is Profile → Exercises.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -21,7 +24,9 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 60000
 # Part H2 leaves its workout open: discard it first (its own Discard, then the dialog's).
-- tapOn: "^Workout$"
+- tapOn:
+    text: "^Workout$"
+    index: 0
 - extendedWaitUntil:
     visible: "Start empty workout|Resume workout"
     timeout: 30000
@@ -35,16 +40,14 @@ appId: com.forgeai.app
           visible: "Start empty workout"
           timeout: 15000
 # ---------------------------------------------------------------- import from Strong
-- tapOn: "^Profile$"
-# Audit Phase 7: the imports sit inside Profile's folded "Gym, backup and data" (it stays open
-# for the rest of this part: the tab is not restarted until the widget step, which needs only
-# the open half).
 - runFlow:
-    file: sub-profile-fold-open.yaml
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Export & import"
 - scrollUntilVisible:
     element: "Import from Strong"
     centerElement: true
-    timeout: 90000
+    timeout: 30000
 - tapOn: "Import from Strong"
 - extendedWaitUntil:
     visible: "Choose Strong file"
@@ -120,9 +123,7 @@ appId: com.forgeai.app
 # Audit Phase 4 (IM-18): a file is told apart by its content — the Strong file picked through
 # "Import from Hevy" reads as Strong (the screen turns into "Import from Strong"); IM-09: it was
 # just imported, so "All 2 workouts are already here". Closed without importing.
-# The fold should still be open (same Profile screen); opened again only if it is shut.
-- runFlow:
-    file: sub-profile-fold-open.yaml
+# Done closes the import: back on Settings → Export & import.
 - scrollUntilVisible:
     element: "Import from Hevy"
     centerElement: true
@@ -154,28 +155,46 @@ appId: com.forgeai.app
 - takeScreenshot: 122b-strong-through-hevy-all-here
 - tapOn: "Go back"
 # ---------------------------------------------------------------- pounds and miles
-- scrollUntilVisible:
-    element: "lb, miles"
-    direction: UP
-    centerElement: true
-    timeout: 90000
+# Back on Export & import → Settings → Units.
+- extendedWaitUntil:
+    visible: "Import from Strong"
+    timeout: 15000
+- back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Units"
+- extendedWaitUntil:
+    visible: "lb, miles"
+    timeout: 15000
 - tapOn: "lb, miles"
 - takeScreenshot: 123-units-lb-miles
-- tapOn: "^History$"
-- waitForAnimationToEnd
-- takeScreenshot: 124-history-lb
-- tapOn: "^Workout$"
+# Units → Settings → Profile: the feed (History's list until redesign R2) in lb.
+- back
+- back
 - extendedWaitUntil:
-    visible: "Exercise library"
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "More for .*"
+    centerElement: true
     timeout: 30000
-- tapOn: "Exercise library"
+- waitForAnimationToEnd
+- takeScreenshot: 124-profile-feed-lb
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
 - tapOn: "Search exercises"
 - inputText: " outdoor run"
 - hideKeyboard
 - tapOn:
     text: "View Outdoor Run"
     index: 0
-# Phase 4: the exercise page leads with "Last time · Best" (no "Records" heading any more).
+# The exercise page opens on Summary, which leads with "Last time · Best".
 - extendedWaitUntil:
     visible: "Last time.*"
     timeout: 15000
@@ -187,12 +206,19 @@ appId: com.forgeai.app
 - back
 - back
 # ---------------------------------------------------------------- around your phone
-- tapOn: "^Profile$"
+# Redesign R6: Settings lists Health Connect (only once the app has read its state, so it is
+# waited for), Notifications and Widgets as pages of their own.
+- runFlow:
+    file: sub-settings-open.yaml
 - scrollUntilVisible:
-    element: "Health Connect"
+    element: "^Health Connect$"
     centerElement: true
-    timeout: 90000
-- takeScreenshot: 126-around-your-phone
+    timeout: 30000
+- takeScreenshot: 126-settings-list
+- tapOn: "^Health Connect$"
+- extendedWaitUntil:
+    visible: "^(Connect|Turn on)$|Send past workouts"
+    timeout: 15000
 # "Connect" opens Health Connect's own screen. The cloud phone grants every permission at
 # install, so it may show "Turn on" (already allowed) instead — both lead to "Send past workouts".
 - tapOn:
@@ -226,6 +252,12 @@ appId: com.forgeai.app
     timeout: 30000
 - takeScreenshot: 129-health-connect-sent
 # ---------------------------------------------------------------- reminders
+# Health Connect → Settings → Notifications.
+- back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Notifications"
 - scrollUntilVisible:
     element: "Workout reminders"
     centerElement: true
@@ -264,6 +296,12 @@ appId: com.forgeai.app
 - assertNotVisible: 'Notifications are off for ForgeAI, so no reminder can arrive\.'
 - takeScreenshot: 130-reminders-on
 # ---------------------------------------------------------------- widgets
+# Notifications → Settings → Widgets.
+- back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Widgets"
 - scrollUntilVisible:
     element: "Add Today"
     centerElement: true
@@ -283,38 +321,41 @@ appId: com.forgeai.app
     visible: '^TODAY$'
     timeout: 15000
 - takeScreenshot: 132-home-screen-widget
-# Back in the app, the widgets row counts the one just placed (re-read on every return).
+# Back in the app, the Widgets page counts the one just placed (re-read on every return). The app
+# comes back on that page; if Android restarted it, it opens on the Workout tab: go there again.
 - launchApp:
     stopApp: false
 - tapOn:
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "^Profile$"
+    visible: "Home-screen widgets|^Profile$"
     timeout: 30000
-- tapOn: "^Profile$"
-# The tab kept its scroll (just under the row) or starts at the top: up first, then down.
-- scrollUntilVisible:
-    element: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
-    direction: UP
-    centerElement: true
-    timeout: 10000
-    optional: true
 - runFlow:
     when:
-      notVisible: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
+      notVisible: "Home-screen widgets"
     commands:
-      - scrollUntilVisible:
-          element: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
-          centerElement: true
-          timeout: 30000
+      - runFlow:
+          file: sub-settings-page.yaml
+          env:
+            PAGE: "Widgets"
+- extendedWaitUntil:
+    visible: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
+    timeout: 15000
 - takeScreenshot: 132b-widgets-row-counts-it
 # ---------------------------------------------------------------- a workout in lb
+# Widgets → Settings → Profile, then the Workout tab.
+- back
+- back
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
 - tapOn:
     text: "^Workout$"
-    optional: true
-- extendedWaitUntil:
-    visible: "Start empty workout"
+    index: 0
+- scrollUntilVisible:
+    element: "Start empty workout"
+    centerElement: true
     timeout: 30000
 - tapOn: "Start empty workout"
 - extendedWaitUntil:

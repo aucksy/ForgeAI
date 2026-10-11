@@ -1,8 +1,9 @@
 # Phase 1 device QA, part B — after the phone slept through the rest.
 # Notification shade is already open (adb). Tap the workout card → back in the workout →
-# minimise → Home's "Workout in progress · Continue" card (no bar on Home since Phase 7) →
-# minimise → the bar on History → remove an exercise → Finish → the "Finish workout?" sheet → summary with
-# its "Update routine?" sheet → Keep original → Profile.
+# minimise → the Workout tab's Up next card says "Workout in progress" with Resume workout (no bar
+# on the Workout tab, redesign R1) → Resume → minimise → the bar on Profile → remove an exercise →
+# Finish → the "Finish workout?" sheet → summary with its "Update routine?" sheet → Keep original
+# → Profile → Settings → Workouts.
 appId: com.forgeai.app
 ---
 - takeScreenshot: 10-notification-shade
@@ -16,30 +17,29 @@ appId: com.forgeai.app
     visible: "Resume workout"
     timeout: 15000
 - takeScreenshot: 12a-workout-tab-resume-card
-# Audit Phase 7 (packet B, src/tracker/lib/miniBar.ts): on Home the answer card itself says
-# "Workout in progress" with Continue, so the minimised bar is NOT shown there (two of the same
-# thing). Home's way back is Continue; every other tab keeps the bar (History, below).
-- tapOn: "^Home$"
-- extendedWaitUntil:
-    visible: "^Continue$"
-    timeout: 15000
+# Audit Phase 7 (packet B, src/tracker/lib/miniBar.ts) / redesign R1: on the Workout tab the Up
+# next card itself says "Workout in progress" with "Resume workout", so the minimised bar is NOT
+# shown there (two of the same thing). Every other tab keeps the bar (Profile, below).
 - assertVisible: "Workout in progress"
+- assertVisible: "Discard workout"
 - assertNotVisible: ".*Tap to open the workout"
-- takeScreenshot: 12-home-answer-card
-- tapOn: "^Continue$"
+- takeScreenshot: 12-workout-in-progress-card
+- tapOn: "Resume workout"
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
     timeout: 15000
-# Minimise goes back to where the workout was opened from: Home, its card still there.
+# Minimise goes back to where the workout was opened from: the Workout tab, its card still there.
 - tapOn: "Minimise workout.*"
 - extendedWaitUntil:
-    visible: "^Continue$"
+    visible: "Resume workout"
     timeout: 15000
-- tapOn: "^History$"
+- tapOn:
+    text: "^Profile$"
+    index: 0
 - extendedWaitUntil:
     visible: ".*Tap to open the workout"
     timeout: 15000
-- takeScreenshot: 12b-minimised-bar-on-history
+- takeScreenshot: 12b-minimised-bar-on-profile
 - tapOn: ".*Tap to open the workout"
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
@@ -91,13 +91,14 @@ appId: com.forgeai.app
     element: "Done"
     timeout: 15000
 - tapOn: "Done"
-- extendedWaitUntil:
-    visible: "Profile"
-    timeout: 20000
-- tapOn: "^Profile$"
+# Done goes to the Workout tab. Redesign R6: the workout settings are Profile → Settings → Workouts.
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Workouts"
 - scrollUntilVisible:
     element: "Track RPE"
     timeout: 30000
-- takeScreenshot: 16-profile-workout-settings
+- takeScreenshot: 16-settings-workouts
 - assertVisible: "Workout sounds"
 - assertVisible: "Track RPE"

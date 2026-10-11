@@ -59,7 +59,9 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 60000
-- tapOn: "^Workout$"
+- tapOn:
+    text: "^Workout$"
+    index: 0
 - extendedWaitUntil:
     visible: "Resume workout"
     timeout: 30000

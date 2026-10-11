@@ -1,11 +1,15 @@
 # Audit Phase 3 device QA, part N — History holds everything (runs after parts A–L, before M).
-# By now History holds today's workouts (parts A–I), part I's Strong import (Sep 2026, shown in lb)
-# and part J's Hevy import, which has three "Legs Old" workouts from March 2024 (Fridays 1, 8 and
-# 15 Mar, 4:10–5:15). History tab → List / Calendar / Log a past workout / search, THE streak in
-# weeks, month headings with their counts → Calendar → search "legs old" → the March 2024 card
-# (date WITH its year) → its page → Edit → Android Back asks "Discard changes?" → nothing is left
-# open → Log a past workout (yesterday 18:00) → Back asks "Discard this workout?". Nothing is
-# saved, so part M's workout count is not changed by this part.
+# By now the history holds today's workouts (parts A–I, L), part I's Strong import (Sep 2026,
+# shown in lb), part J's Hevy import with three "Legs Old" workouts from March 2024 (Fridays 1, 8
+# and 15 Mar, 4:10–5:15) and part L's Jaipur history.
+# Redesign R2/R3/R5: the History tab is gone. Its list is the Profile page's Workouts feed (month
+# lines with their counts); its calendar, streak, rest days, search and "Log a past workout" are
+# Profile → Calendar; a workout's page has Edit behind its ⋯ ("More" → "Edit workout").
+# Profile feed (month line, dates, the phone's grouping) → Calendar (THE streak in weeks, Month
+# and Year views) → search "legs old" → the March 2024 card (date WITH its year) → its page → ⋯ →
+# Edit workout → Android Back asks "Discard changes?" → nothing is left open → Log a past workout
+# (yesterday 18:00) → Back asks "Discard this workout?". Nothing is saved, so part M's workout
+# count is not changed by this part.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -13,69 +17,98 @@ appId: com.forgeai.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "^History$"
+    visible: "^Profile$"
     timeout: 60000
-- tapOn: "^History$"
+- tapOn:
+    text: "^Profile$"
+    index: 0
 - extendedWaitUntil:
-    visible: "Log a past workout"
+    visible: "Edit profile"
     timeout: 30000
-# ---------------------------------------------------------------- the top of History
-- assertVisible: "^List$"
-- assertVisible: "^Calendar$"
-- assertVisible: "Search your workouts by exercise or workout name"
-# D9: THE streak, in weeks (today has workouts, so at least "1-week streak").
-- extendedWaitUntil:
-    visible: '[\d,]+ weeks? in a row'
-    timeout: 15000
-- assertNotVisible: '(?i).*day streak.*'
-- takeScreenshot: 190-history-top
-# HI-01: an endless list under month headings that carry their own count ("October 2026 · 9 workouts").
+# ---------------------------------------------------------------- the Profile feed (History's list)
+# HI-01: an endless list under month lines that carry their own count ("October · 9 workouts";
+# "March 2024 · 3 workouts" for another year).
 - scrollUntilVisible:
-    element: '[A-Z][a-z]+ 20\d\d · [\d,]+ workouts?'
-    timeout: 20000
-# Cards say "Today", "Yesterday" or the date — never "3 days ago", never "-1 days ago" (HI-20).
+    element: '[A-Z][a-z]+( 20\d\d)? · [\d,]+ workouts?'
+    centerElement: true
+    timeout: 30000
+# Cards say the day ("Sunday, Oct 11, 2026") — never "3 days ago", never "-1 days ago" (HI-20).
 - assertNotVisible: '.*\d+ days ago.*'
 # PG-22: Latin digits, the phone's grouping (en-US: Western), never the Indian "1,02,450".
 - assertNotVisible: '(?s).*\d,\d\d,\d\d\d.*'
-- takeScreenshot: 191-history-month-heading
-- scrollUntilVisible:
-    element: "Search your workouts by exercise or workout name"
-    direction: UP
-    timeout: 20000
-# ---------------------------------------------------------------- calendar
-- tapOn: "^Calendar$"
+- takeScreenshot: 191-profile-feed-month-line
+# ---------------------------------------------------------------- the top of Calendar
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
 - extendedWaitUntil:
-    visible: '[A-Z][a-z]+ 20\d\d · [\d,]+ workouts?\. Tap a day to see its workouts\.'
+    visible: "Log a past workout"
+    timeout: 30000
+- assertVisible: "^Month$"
+- assertVisible: "^Year$"
+- assertVisible: "Search workouts"
+- assertVisible: "Rest days.*"
+# D9: THE streak, in weeks (today has workouts, so at least "1 week in a row").
+- extendedWaitUntil:
+    visible: '.*[\d,]+ weeks? in a row.*'
     timeout: 15000
-- takeScreenshot: 192-history-calendar
-- tapOn: "^List$"
+- assertNotVisible: '(?i).*day streak.*'
+- takeScreenshot: 190-calendar-top
+# ---------------------------------------------------------------- calendar: month and year views
+# Each month back to the first workout, headed with its count ("October 2026  ·  9 workouts").
+- scrollUntilVisible:
+    element: '[A-Z][a-z]+ 20\d\d +· +[\d,]+ workouts?'
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: 192-calendar-month
+- scrollUntilVisible:
+    element: "^Year$"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Year$"
+- extendedWaitUntil:
+    visible: 'Show 20\d\d'
+    timeout: 15000
+- takeScreenshot: 192b-calendar-year
+- tapOn: "^Month$"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 15000
+# ---------------------------------------------------------------- search across all years
+# The search icon (spoken "Search workouts") opens the box, already focused.
+- tapOn: "Search workouts"
 - extendedWaitUntil:
     visible: "Search your workouts by exercise or workout name"
     timeout: 15000
-# ---------------------------------------------------------------- search across all years
 - tapOn: "Search your workouts by exercise or workout name"
 - inputText: " legs old"
 - hideKeyboard
-# The three Hevy "Legs Old" workouts of March 2024, found by their kept name (HI-04).
-- extendedWaitUntil:
-    visible: '3 workouts match .legs old.\.'
-    timeout: 15000
-- assertVisible: "March 2024 · 3 workouts"
-# HI-15: an old workout's date carries its year, then its start and its length (4:10 to 5:15):
+# The three Hevy "Legs Old" workouts of March 2024, found by their kept name (HI-04). HI-15: an
+# old workout's date carries its year, then its start and its length (4:10 to 5:15):
 # "Fri, 15 Mar 2024 · 04:10 · 1h 05m".
-- assertVisible: 'Fri, 15 Mar 2024 · \d\d:\d\d · 1h 05m'
-- takeScreenshot: 193-history-search-2024
+- extendedWaitUntil:
+    visible: 'Fri, 15 Mar 2024 · \d\d:\d\d · 1h 05m'
+    timeout: 15000
+- assertVisible: 'Fri, 8 Mar 2024 · .*'
+- assertVisible: 'Fri, 1 Mar 2024 · .*'
+- takeScreenshot: 193-calendar-search-2024
 # ---------------------------------------------------------------- an old workout, edited
 - tapOn: 'Fri, 15 Mar 2024 · \d\d:\d\d.*'
+# Redesign R5: the workout page says the day the Hevy way, with its year and start time.
 - extendedWaitUntil:
-    visible: "Fri, 15 Mar 2024"
+    visible: 'Friday, Mar 15, 2024 · \d\d:\d\d'
     timeout: 15000
 - takeScreenshot: 194-old-workout-page
-- scrollUntilVisible:
-    element: "Edit this workout"
-    centerElement: true
-    timeout: 15000
-- tapOn: "Edit this workout"
+# "Edit this workout" is gone from the page: ⋯ ("More") → "Edit workout".
+- tapOn: "More"
+- extendedWaitUntil:
+    visible: "Edit workout"
+    timeout: 10000
+- assertVisible: "Repeat workout"
+- takeScreenshot: 194a-old-workout-more
+- tapOn: "Edit workout"
 # LW-24: nothing should be open here; if one is (an earlier part stopped mid-workout), discard it.
 - runFlow:
     when:
@@ -98,30 +131,48 @@ appId: com.forgeai.app
     timeout: 10000
 - takeScreenshot: 196-edit-back-asks
 - tapOn: "^Discard$"
-# Back on the saved workout, unchanged (the editor's Date box also says "Fri, 15 Mar 2024", so
-# wait for the editor to go first).
+# Back on the saved workout, unchanged (wait for the editor to go first).
 - extendedWaitUntil:
     notVisible: "Editing a saved workout"
     timeout: 15000
 - extendedWaitUntil:
-    visible: "Fri, 15 Mar 2024"
+    visible: 'Friday, Mar 15, 2024 · \d\d:\d\d'
+    timeout: 15000
+# The workout page → Calendar's search (closed with its ×, so a focused search box and its
+# keyboard cannot eat the next Back) → Profile; then the Workout tab: nothing left open.
+- back
+- extendedWaitUntil:
+    visible: "Close search|Search workouts"
+    timeout: 15000
+- runFlow:
+    when:
+      visible: "Close search"
+    commands:
+      - tapOn: "Close search"
+- extendedWaitUntil:
+    visible: "Log a past workout"
     timeout: 15000
 - back
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 15000
-- tapOn: "^Workout$"
-- extendedWaitUntil:
-    visible: "Start empty workout"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Start empty workout"
+    centerElement: true
     timeout: 20000
 - assertNotVisible: "Resume editing"
 - assertNotVisible: "Editing a workout"
 - takeScreenshot: 197-no-edit-left-open
 # ---------------------------------------------------------------- log a past workout
-- tapOn: "^History$"
-- scrollUntilVisible:
-    element: "Log a past workout"
-    direction: UP
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
+- extendedWaitUntil:
+    visible: "Log a past workout"
     timeout: 20000
 - tapOn: "Log a past workout"
 - extendedWaitUntil:
@@ -141,7 +192,7 @@ appId: com.forgeai.app
     visible: 'Discard this workout\?'
     timeout: 10000
 - tapOn: "^Discard$"
-# Back to History, nothing saved.
+# Back to Calendar, nothing saved.
 - extendedWaitUntil:
     visible: "Log a past workout"
     timeout: 15000

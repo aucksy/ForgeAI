@@ -3,9 +3,11 @@
 # in it are checked one per screen, followed, and land in the folder "From Hevy" (a tap on a routine
 # opens its preview). The same file imported again says "All 12 workouts are already here", adds
 # nothing, and updates "From Hevy" (no second folder). Since Phase 1 the demo is
-# already gone (part I's import removed it), so this preview has no demo card. Then: Home's Today card
-# opens the day's exercises first, and "Add exercise" inside a workout offers "Create “…”" (a
-# distance exercise in metres), which lands in the workout.
+# already gone (part I's import removed it), so this preview has no demo card. Then: the Workout
+# tab's Up next card opens the day's exercises first, and "Add exercise" inside a workout offers
+# "Create “…”" (a distance exercise in metres), which lands in the workout.
+# Redesign: the imports are Settings → Export & import (R6); "Open routines" lands on the Workout
+# tab, where folders sit inline as "From Hevy (2)" with routine cards (R4); Home is gone (R1).
 appId: com.forgeai.app
 ---
 - launchApp
@@ -15,14 +17,14 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 60000
-- tapOn: "^Profile$"
-# Audit Phase 7: the imports sit inside Profile's folded "Gym, backup and data".
 - runFlow:
-    file: sub-profile-fold-open.yaml
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Export & import"
 - scrollUntilVisible:
     element: "Import from Hevy"
     centerElement: true
-    timeout: 90000
+    timeout: 30000
 - tapOn: "Import from Hevy"
 - extendedWaitUntil:
     visible: "Choose Hevy file"
@@ -120,18 +122,25 @@ appId: com.forgeai.app
     visible: "2 routines in From Hevy"
     timeout: 15000
 - takeScreenshot: 146-routines-saved
+# "Open routines" lands on the Workout tab: the followed folder, open, "From Hevy (2)".
 - tapOn: "Open routines"
-- extendedWaitUntil:
-    visible: "From Hevy"
+- scrollUntilVisible:
+    element: 'From Hevy \(2\)'
+    centerElement: true
     timeout: 15000
+- assertVisible: "From Hevy folder, 2 routines, open, Following"
 - takeScreenshot: 147-from-hevy-folder
 - scrollUntilVisible:
-    element: "Push A"
+    element: "Start routine Push A"
     centerElement: true
     timeout: 30000
-# Audit Phase 4: a compact row with a small Start; the row opens the routine's calm preview.
-- assertVisible: "Start Push A"
-- tapOn: "Push A"
+# Redesign R4: a routine card with "Start routine"; the card opens the routine's calm preview.
+- scrollUntilVisible:
+    element: "^Push A$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Push A$"
 # Hevy's "Chest Fly (Machine)" is the library's Pec Deck Fly (the history landed there too).
 - extendedWaitUntil:
     visible: 'Push Day · \d+ exercises · From Hevy.*'
@@ -144,34 +153,37 @@ appId: com.forgeai.app
     timeout: 20000
 - takeScreenshot: 148-push-a-routine
 - back
-- back
-# ---------------------------------------------------------------- Home: the next routine
-- tapOn: "^Home$"
-- takeScreenshot: 149-home-today
-# Audit Phase 3 / Phase 7: the answer card's link names where it goes — "See exercises" under
-# "Next: <routine>" (whose own button is "Start"), or "See what’s next" once today's routine is
-# done ("Done today: Push A" / "Next: Pull A"); both open the Today page. Never "Start workout"
-# on a tap that only opens another screen (SH-23).
+# ---------------------------------------------------------------- the Workout tab: the next routine
+- scrollUntilVisible:
+    element: "Up next: .*|Done today: .*"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: 149-workout-up-next
+# Audit Phase 3 / Phase 7 / redesign R1: the card's link names where it goes — "See exercises"
+# under "Up next: <routine>" (whose own button is "Start"), and under "Done today: …" / "Next: …"
+# once today's routine is done; it opens the Today page. Never "Start workout" on a tap that only
+# opens another screen (SH-23).
 - assertNotVisible: "Start workout"
 - runFlow:
     when:
-      visible: "See exercises|See what.s next"
+      visible: "See exercises"
     commands:
-      - tapOn: "See exercises|See what.s next"
+      - tapOn: "See exercises"
       - extendedWaitUntil:
           visible: "Change this routine"
           timeout: 15000
       - takeScreenshot: 149b-today-preview
       - back
 # ---------------------------------------------------------------- the same file again
-- tapOn: "^Profile$"
-# The fold should still be open (the Profile tab kept its screen); opened again only if shut.
 - runFlow:
-    file: sub-profile-fold-open.yaml
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Export & import"
 - scrollUntilVisible:
     element: "Import from Hevy"
     centerElement: true
-    timeout: 90000
+    timeout: 30000
 - tapOn: "Import from Hevy"
 - tapOn: "Choose Hevy file"
 - extendedWaitUntil:
@@ -223,27 +235,34 @@ appId: com.forgeai.app
     visible: ".*From Hevy is updated from this file.*"
     timeout: 15000
 - takeScreenshot: 151-reimport-updated
+# One "From Hevy" folder (updated), not a second one. "Open routines" lands on the Workout tab:
+# no Back here (Back on the first tab leaves the app).
 - tapOn: "Open routines"
-- extendedWaitUntil:
-    visible: "From Hevy"
+- scrollUntilVisible:
+    element: 'From Hevy \(2\)'
+    centerElement: true
     timeout: 15000
 - takeScreenshot: 152-one-from-hevy-folder
-- back
-# ---------------------------------------------------------------- the Workout tab's "See the exercises"
-- tapOn: "^Workout$"
+# ---------------------------------------------------------------- the Up next card's "See exercises" again
+- scrollUntilVisible:
+    element: "Up next: .*|Done today: .*"
+    direction: UP
+    centerElement: true
+    timeout: 20000
 - runFlow:
     when:
-      visible: "See the exercises"
+      visible: "See exercises"
     commands:
-      - tapOn: "See the exercises"
+      - tapOn: "See exercises"
       - extendedWaitUntil:
           visible: "Change this routine"
           timeout: 15000
       - takeScreenshot: 153-today-preview-from-workout
       - back
 # ---------------------------------------------------------------- "Create “…”" inside a workout
-- extendedWaitUntil:
-    visible: "Start empty workout"
+- scrollUntilVisible:
+    element: "Start empty workout"
+    centerElement: true
     timeout: 15000
 - tapOn: "Start empty workout"
 - scrollUntilVisible:

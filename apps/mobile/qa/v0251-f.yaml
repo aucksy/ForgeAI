@@ -1,6 +1,6 @@
 # v0.25.1 device QA, part F — the owner's Phase 3 decisions on a real phone (runs after
 # parts A–E; part C logged a Treadmill Run of 2.4 km in 12:00, i.e. a best pace of 5:00 /km).
-# Profile → Body figure: Female → the Progress body map → a run: a 400 m sprint (sets no pace)
+# Settings → Units → Body figure: Female → the Statistics body map (redesign R3/R6) → a run: a 400 m sprint (sets no pace)
 # and 2 km in 9:00 (a new best pace, 4:30 /km) → finish → the share picture on the female figure
 # → the run's exercise page: Best pace in Records, and the 1 km rule behind the i.
 appId: com.forgeai.app
@@ -13,30 +13,39 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 60000
 # ---------------------------------------------------------------- body figure
-- tapOn: "^Profile$"
+# Redesign R6: Body figure is on Settings → Units.
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Units"
 - scrollUntilVisible:
     element: '(?i)body figure'
     centerElement: true
     timeout: 20000
 - tapOn: "^Female$"
-- takeScreenshot: 70-profile-body-figure
-- tapOn: "^Progress$"
-# Audit Phase 5: the last-7-days body map folds shut under "Muscles · last 7 days, N muscles".
+- takeScreenshot: 70-settings-units-body-figure
+# Back to Profile (Units → Settings → Profile); the last-7-days body map is Statistics' first part.
+- back
+- back
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Statistics"
 - extendedWaitUntil:
-    visible: "This week.* vs your usual"
+    visible: "Last 7 days"
     timeout: 30000
-- scrollUntilVisible:
-    element: '^Muscles · last 7 days, .*'
-    timeout: 20000
-- tapOn: '^Muscles · last 7 days, .*'
 - scrollUntilVisible:
     element: '.*female figure.*'
     timeout: 15000
 - takeScreenshot: 71-body-map-female
+- back
 # ---------------------------------------------------------------- a run: best pace
-- tapOn: "^Workout$"
-- extendedWaitUntil:
-    visible: "Start empty workout"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Start empty workout"
+    centerElement: true
     timeout: 30000
 - tapOn: "Start empty workout"
 - tapOn:
@@ -163,11 +172,15 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "Done"
 # ---------------------------------------------------------------- the run's records + the 1 km rule
+# Done goes to the Workout tab; the exercise is Profile → Exercises (redesign R5), its page opens
+# on Summary, where the records are.
 - extendedWaitUntil:
-    visible: "^Workout$"
+    visible: "^Profile$"
     timeout: 20000
-- tapOn: "^Workout$"
-- tapOn: "Exercise library"
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -178,7 +191,7 @@ appId: com.forgeai.app
     text: "View Treadmill Run"
     index: 0
 - extendedWaitUntil:
-    visible: "How to do it"
+    visible: "^Summary$"
     timeout: 15000
 - scrollUntilVisible:
     element: "Longest distance"
@@ -188,6 +201,7 @@ appId: com.forgeai.app
 - assertVisible: "4:30 /km"
 - assertNotVisible: "Best pace counts only.*"
 - takeScreenshot: 76-run-records
-- tapOn: "Records, more information"
+# Redesign R5: the heading is "Personal records" (Hevy's words), its i spoken so.
+- tapOn: "Personal records, more information"
 - assertVisible: "Best pace counts only sets of 1 km or more, so a short sprint can't set it."
 - takeScreenshot: 77-run-records-info

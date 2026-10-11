@@ -1,0 +1,19 @@
+# Sub-flow (called with runFlow; not a part of its own). Opens Settings (sub-settings-open.yaml),
+# then one of its pages by the row's title, passed in by the caller:
+#   - runFlow:
+#       file: sub-settings-page.yaml
+#       env:
+#         PAGE: "Export & import"
+# PAGE is a regex for the row's visible title (src/components/settings/settingsLines.ts
+# SETTINGS_PAGES). No `env:` default here: a flow-level default would override the caller's (trap 22).
+# The page's own title is the same words, so the caller waits for something ON the page after this.
+# Health Connect's row shows only once the app has read Health Connect's state: it is waited for.
+appId: com.forgeai.app
+---
+- runFlow:
+    file: sub-settings-open.yaml
+- scrollUntilVisible:
+    element: "^${PAGE}$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^${PAGE}$"
