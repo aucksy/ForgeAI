@@ -1694,6 +1694,27 @@
   - Review: no blockers, 2 nits applied. **Tests:** 1,685 vitest. Phone test run 38117252758 on
     97d790b: all 21 parts passed, crash scan clean.
 
+- 2026-10-11: **v0.34.0 — Audit Phase 9, beyond Hevy** (b5ea5a6; owner: "You decide what part").
+  - **Entry bar** on the keyboard for the set box with the cursor: − / + the exercise's step (kg,
+    or the lb step Targets use), reps ± 1, time ± 15 s, "Copy to sets below" with Undo.
+  - **"+2.5 kg on last time"**: a quiet line after a tick that beats the same set last time (a
+    record always wins; never warm-ups, drop sets, easy weeks, corrections).
+  - **Weekly goal** (Profile → Workout, Off / 1–7): Home, Progress and the This week widget count to
+    it. **Milestones** on the finish screen: 1st, 10th, 25th, 50th, 100th, 250th, 500th, 750th,
+    1,000th workout, then every 500 (the demo's never count).
+  - **Share as text** for any AI chat (workout page, finish, month and year report); body weight
+    never derivable.
+  - **Start records fresh** per exercise (tracker schema v14 `exercise_prefs.records_from` + 3
+    triggers): records, live pop-ups, finish and the record log count from that day; History and
+    charts keep everything; backup, merge, erase, imports and an open workout handled.
+  - **App icon shortcuts**: "Start <today's routine>" / "Resume workout" / "Start workout", and
+    "Log body weight".
+  - Not built (owner's call or not provable yet): exercise animations (~$405), Health Connect
+    weight read, Hindi screens, Android 16 status-bar countdown, a Wear OS app.
+  - Review: no blockers; 3 should-fix + 3 nits fixed. **Tests:** 1,793 vitest. Phone test run
+    38127032189 on b5ea5a6: all 22 parts passed (new part P9 + the shortcuts in Android's list),
+    crash scan clean.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
