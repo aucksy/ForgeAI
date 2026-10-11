@@ -4,9 +4,12 @@
  * the room it has — so at 200 % text or on a 360 × 640 dp phone the title and × never leave
  * the screen. The panel is capped at 90 % of the screen and never goes under the status bar.
  *
- * Keyboard: a React Native Modal is its own window, which Android still shrinks for the
- * keyboard (the app-wide KeyboardRoom only covers the main window), so the capped panel simply
- * rides up above it. iOS gets a KeyboardAvoidingView.
+ * Keyboard: a React Native Modal is its own window, but drawn edge to edge (statusBarTranslucent)
+ * Android does NOT shrink it for the keyboard either — device QA run 38096433558: the keyboard
+ * covered "Fix this weigh-in" up to its title, box and Save hidden. So the sheet pads its bottom
+ * by the part of the screen the keyboard covers, exactly like the app-wide KeyboardRoom (if a
+ * phone does shrink the window, that part is zero and nothing changes). iOS gets a
+ * KeyboardAvoidingView.
  *
  * Review fix: it notes when it closes (`sheetClock`), so a notice or question opened in the same
  * moment (`tell()` / `askConfirm`) waits for it to slide away instead of being dropped.
@@ -16,6 +19,9 @@ import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, Vie
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { color, radius, space, type } from '@/theme/tokens';
+
+import { keyboardRoom } from '@/lib/keyboardRoom';
+import { useKeyboardFrame } from '@/components/KeyboardRoom';
 
 import { Icon } from './Icon';
 import { noteSheetClosed } from './sheetClock';
@@ -39,6 +45,9 @@ export function Sheet({ visible, title, subtitle, onClose, children, footer, clo
   // Phase 7: with "reduce motion" on, the sheet appears in place instead of sliding up.
   const reduced = useReduceMotion();
   const [viewH, setViewH] = useState(0);
+  // Android: the keyboard's frame and this window's height (see the header).
+  const kb = useKeyboardFrame();
+  const [windowH, setWindowH] = useState(0);
   const [contentH, setContentH] = useState(0);
   // Scroll only when the body overflows: a short sheet stays still, and a list that scrolls
   // inside a short sheet keeps its own gestures.
@@ -61,7 +70,10 @@ export function Sheet({ visible, title, subtitle, onClose, children, footer, clo
   return (
     <Modal visible={visible} transparent animationType={reduced ? 'none' : 'slide'} onRequestClose={onClose} statusBarTranslucent>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <View style={{ flex: 1, justifyContent: 'flex-end', paddingTop: insets.top + space.lg }}>
+        <View
+          style={{ flex: 1, justifyContent: 'flex-end', paddingTop: insets.top + space.lg, paddingBottom: keyboardRoom(windowH, kb) }}
+          onLayout={(e) => setWindowH(e.nativeEvent.layout.height)}
+        >
           <Pressable
             style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.55)' }}
             onPress={onClose}
