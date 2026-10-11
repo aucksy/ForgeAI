@@ -1634,7 +1634,8 @@
     Review: 13 findings fixed. Phone flows updated (Finish sheet, labels, demo removal on import).
   - **Tests:** 1,109 vitest. Phone test run 38052813715 on d7276b1.
 
-- 2026-10-10: **v0.32.0 — Audit Phases 3, 4 and 5** (one release).
+- 2026-10-10: **Audit Phases 3, 4 and 5** (shipped in v0.33.0; the planned v0.32.0 tag was never made —
+  its phone runs kept finding flow slips while Phases 6–8 landed, so all ship together).
   - **Phase 3, trust every number** (5f4b05b): schema v11 `routine_id` — a workout remembers its
     routine; one `todayPlan()` answer for Home, Workout tab, Today, Start, reminders and widgets.
     One rule per number (records D10, weeks streak D9, body-weight change, Latin digits with the
@@ -1650,7 +1651,38 @@
     1 blocker + 10 fixed.
   - Phone flows matched to the new screens (5a421b0): a workout without a routine keeps its
     time-of-day name (LW-10, e.g. "Afternoon workout"); Routines list scroll.
-  - **Tests:** 1,438 vitest (three time zones). Phone test run 38077330571 on bf8a17a (Progress "Any exercise" scroll fix).
+  - **Tests:** 1,438 vitest at Phase 5.
+
+- 2026-10-11: **v0.33.0 — Audit Phases 3–8 and the private signing key** (one release).
+  - **Phase 6, around the phone** (39dbe48): weekly reminders (a skipped day bridged 52 weeks),
+    7-day widgets with a one-shot per-install key on "Start", honest Health Connect, Done / +15 s /
+    Skip on the rest card (Done ticks with the numbers the card showed). Review: 3 + 7 fixed.
+  - **Phase 7, calm and usable by everyone** (26203d1): Welcome in 3 steps (D12: optional
+    any-country number), Profile autosave + fold, Home's one answer card, one design language
+    (workout / record / kg lifted; back arrow; the app's own confirm sheet everywhere; one icon
+    per meaning), text grows with the phone's size up to caps, headings, chip states, spoken
+    numbers and errors, reduced motion, 48 dp targets. Review: 5 + 8 fixed. Phone part P7: the
+    main screens at font size 200 % (and 3-button navigation).
+  - **Phase 8, fast with years of data** (a12e149): schema v13 `training_changes` + triggers,
+    records cache that catches up per lift, batched Targets/Start, import 5 years ~14 s → ~2 s
+    (68k → 490 statements, proven row-for-row equal), export in pages, Home 1 read on refocus,
+    photos grid virtualised. Review: a rollback could leave phantom records — fixed in the write
+    queue.
+  - **Signing key switch** (2eaf220; DS-02, QA-01, QA-26): APK v1/v2 = the old public debug key
+    (Android 7–8 update as before), v3 = the private release key with a rotation lineage
+    (Android 9+ move over in place). versionCode = semver (33000). A new update-proof job installs
+    the previous release on an emulator, then this one with `adb install -r`: same install, data
+    kept, new key with the old one in its history (dry run 38082880514).
+  - **Phone-run fixes** (7c085a5, 6d3c6aa): History search no longer drops its box mid-word;
+    "Rest is over" lost its Done button (Android 14 removed the alert seconds after posting it on
+    a locked phone) and each alert has its own tag (an old setTimeoutAfter timer can't remove the
+    next one).
+  - **Phone-run fixes, part 2** (b80bff1, 795e3e4, 8010982): every sheet rises above the keyboard and
+    takes it away when it closes (it covered
+    "Fix this weigh-in"); Profile says "Notifications are off" as soon as it opens
+    (two independent checks); GWP-ASan off (5f84646: Android 14 crashed the app at launch inside
+    Hermes while sampling); flow slips.
+  - **Tests:** 1,682 vitest (three time zones) + perf suite (`test/perf`). Phone test run 38109963100 on 5f84646: all 21 parts passed (incl. P7 at font size 200 % with gesture and 3-button navigation, backup restore, rest alert on time, crash scan clean).
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
