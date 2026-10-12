@@ -124,6 +124,6 @@ grant execute on function public.owner_save_product(text, jsonb)           to an
 -- (The file was uploaded once with a hand-made ticket; re-running 0002 re-seeds FORGE1's
 -- products, so re-run this file after it.)
 update public.shop_products set image_url =
-  'https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/product-photos/f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0/shaker.jpg'
+  'https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/product-photos/f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0/shaker-dark.jpg'
 where name = 'Shaker bottle 700 ml'
   and gym_id = (select gym_id from public.gyms where join_code = 'FORGE1');
