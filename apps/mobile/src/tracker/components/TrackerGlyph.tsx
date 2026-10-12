@@ -11,6 +11,7 @@ export type GlyphName =
   | 'more'
   | 'chevron-down'
   | 'chevron-up'
+  | 'chevron-left'
   | 'medal'
   | 'trash'
   | 'pencil'
@@ -42,6 +43,7 @@ const PATHS: Record<GlyphName, { p?: string[]; dots?: { x: number; y: number }[]
   more: { dots: [{ x: 5.5, y: 12 }, { x: 12, y: 12 }, { x: 18.5, y: 12 }] },
   'chevron-down': { p: ['M5.5 9.3 12 15.8l6.5-6.5'] },
   'chevron-up': { p: ['M5.5 14.7 12 8.2l6.5 6.5'] },
+  'chevron-left': { p: ['M14.7 5.5 8.2 12l6.5 6.5'] },
   medal: {
     p: ['M8.2 3.5 10.6 9', 'M15.8 3.5 13.4 9', 'M12 13.2v.01'],
     c: [{ x: 12, y: 15, r: 5.4 }],

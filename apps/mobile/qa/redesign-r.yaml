@@ -5,7 +5,7 @@
 #     Routines with New folder, New routine and Explore; the followed folder "Jaipur (6)" open,
 #     tagged Following, its "Next" routine; a routine's ⋯ and a folder's ⋯; Explore.
 #  2. Profile (R2): header (Edit profile, share, Settings), stats, the history chart in each chip
-#     (Duration · Kg/Lb lifted · Reps) and each range (Last 12 weeks · Year · All time), a bar
+#     (Duration · Kg/Lb lifted · Reps) and each range (Last 12 weeks · Last 12 months · All time), a bar
 #     tapped; the 4 Dashboard tiles' screens (Statistics, Exercises, Measures, Calendar + its Year
 #     view); a feed card and its ⋯; a workout page and its ⋯; an exercise page's 3 tabs.
 #  3. Settings (R6): the list and 3 pages (Units, Workouts, About); Edit profile.
@@ -169,19 +169,24 @@ appId: com.forgeai.app
     text: '.*: [1-9][\d,]* (kg|lb)'
     index: 0
 - takeScreenshot: r-08-chart-bar-tapped
-# The ranges: Last 12 weeks · Year · All time (the "Show" sheet).
+# The way back to the range's total (the big number is the 12-week total until a bar is tapped).
+- tapOn: "Show 12-week total"
+- extendedWaitUntil:
+    visible: "(Kg|Lb) lifted in the last 12 weeks · .*"
+    timeout: 10000
+# The ranges: Last 12 weeks · Last 12 months · All time (the "Show" sheet).
 - tapOn: "Range: Last 12 weeks. Change"
 - extendedWaitUntil:
     visible: "^Show$"
     timeout: 10000
 - assertVisible: "^All time$"
 - takeScreenshot: r-08b-chart-range-sheet
-- tapOn: "^Year$"
+- tapOn: "^Last 12 months$"
 - extendedWaitUntil:
-    visible: "Range: Year. Change"
+    visible: "Range: Last 12 months. Change"
     timeout: 15000
 - takeScreenshot: r-08c-chart-year
-- tapOn: "Range: Year. Change"
+- tapOn: "Range: Last 12 months. Change"
 - extendedWaitUntil:
     visible: "^Show$"
     timeout: 10000
@@ -189,6 +194,9 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Range: All time. Change"
     timeout: 15000
+- extendedWaitUntil:
+    visible: "(Kg|Lb) lifted since .* · .*"
+    timeout: 10000
 - takeScreenshot: r-08d-chart-all-time
 # Put the range back (the chart keeps the last choice).
 - tapOn: "Range: All time. Change"

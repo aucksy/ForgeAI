@@ -1,17 +1,21 @@
 /**
  * Redesign R2 — the Profile's history chart, laid out like Hevy's (PLAN §3 item 4):
  *
- *   9,201 kg  Oct                         Last 12 weeks ⌄
+ *   41,230 kg                                Last 12 weeks ⌄
+ *   Kg lifted in the last 12 weeks · 27 workouts
  *   200k kg ┤ ▂ ▅ █ ▃ …
  *   [Duration] [Kg lifted] [Reps]
  *
- * Tap a bar → the big number shows that bar and its period; the same bar again → the latest.
+ * The big number is the range's total. Tap a bar → it shows that bar and its period, with
+ * "Show … total" under it; that, or the same bar again → the total. A week or month with no
+ * workout keeps a faint mark on the baseline, so the bars stay evenly spaced to the eye; bars
+ * sit on whole pixels, so 40+ thin bars don't blur into uneven gaps.
  * The numbers come from the pure engine (`engine/historyChart.ts`). Screen reader: the chart
  * says its summary (latest and highest), and every bar is a button that says its period and
  * number. Large text wraps the top line instead of cutting it.
  */
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { PixelRatio, Pressable, Text, View } from 'react-native';
 import Svg, { Line, Path, Text as SvgText } from 'react-native-svg';
 
 import { Chip, Skeleton } from '@/components/ui';
@@ -24,15 +28,17 @@ import {
   barValue,
   CHART_RANGES,
   chartAxisText,
+  chartBackText,
   chartMetricLabel,
   chartCaptionText,
   chartPeriodText,
   chartSummary,
   chartTicks,
+  chartTotalCaptionText,
   chartValueText,
   chartXLabelIndexes,
   chartXText,
-  shownBar,
+  rangeTotals,
   tapBar,
   type ChartBar,
   type ChartMetric,
@@ -82,8 +88,10 @@ export function HistoryChartCard({
 
   const list = bars ?? [];
   const empty = list.length === 0 || list.every((b) => b.workouts === 0);
-  const idx = shownBar(list, selected);
+  // The tapped bar, or null = the whole range's total.
+  const idx = selected != null && selected >= 0 && selected < list.length ? selected : -1;
   const bar = idx >= 0 ? list[idx] : null;
+  const shown = bar ?? rangeTotals(list);
   const rangeLabel = CHART_RANGES.find((r) => r.id === range)?.label ?? '';
 
   const values = list.map((b) => barValue(b, metric));
@@ -92,8 +100,16 @@ export function HistoryChartCard({
   const plotW = Math.max(0, width - AXIS_W);
   const plotH = CHART_H - PAD_T - PAD_B;
   const slot = list.length > 0 ? plotW / list.length : 0;
-  const barW = Math.max(2, Math.min(28, slot * 0.62));
-  const y = (v: number) => PAD_T + plotH - (Math.max(0, v) / top) * plotH;
+  // Whole pixels: a 4.6 dp bar at x = 213.37 is drawn smeared, and 45 of them look unevenly spaced.
+  const px = (v: number) => PixelRatio.roundToNearestPixel(v);
+  const barW = Math.max(2, px(Math.min(28, slot * 0.62)));
+  const base = PAD_T + plotH;
+  const y = (v: number) => base - (Math.max(0, v) / top) * plotH;
+  // The last label sits under its own bar, kept inside the card (about 6.5 dp a letter at 11).
+  const labelX = (i: number, text: string) => {
+    const half = (text.length * 6.5) / 2;
+    return Math.min(width - half, Math.max(AXIS_W + half, AXIS_W + slot * i + slot / 2));
+  };
   const labels = new Set(chartXLabelIndexes(list.length, list.length > 12 ? 5 : 4));
 
   return (
@@ -108,7 +124,7 @@ export function HistoryChartCard({
             minimumFontScale={0.7}
             style={{ flex: 1, fontFamily: type.display, fontSize: type.size.h2, color: color.ink }}
           >
-            {bar && !empty ? chartValueText(barValue(bar, metric), metric, units) : chartValueText(0, metric, units)}
+            {chartValueText(empty ? 0 : barValue(shown, metric), metric, units)}
           </Text>
           <Pressable
             onPress={() => {
@@ -124,10 +140,24 @@ export function HistoryChartCard({
             <Glyph name="chevron-down" size={18} color={color.accent} />
           </Pressable>
         </View>
-        {bar && !empty ? (
+        {!empty ? (
           <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>
-            {chartCaptionText(bar, metric, units, today)}
+            {bar ? chartCaptionText(bar, metric, units, today) : chartTotalCaptionText(list, range, metric, units)}
           </Text>
+        ) : null}
+        {bar && !empty ? (
+          <Pressable
+            onPress={() => {
+              tap();
+              setSelected(null);
+            }}
+            accessibilityRole="button"
+            hitSlop={4}
+            style={({ pressed }) => ({ alignSelf: 'flex-start', minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 4, opacity: pressed ? 0.7 : 1 })}
+          >
+            <Glyph name="chevron-left" size={16} color={color.accent} />
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>{chartBackText(range)}</Text>
+          </Pressable>
         ) : null}
       </View>
 
@@ -165,15 +195,19 @@ export function HistoryChartCard({
               ))}
               {list.map((b, i) => {
                 const v = values[i];
-                if (v <= 0) return null;
-                const x = AXIS_W + slot * i + (slot - barW) / 2;
-                const yt = y(v);
-                const dim = selected != null && i !== idx;
+                const x = px(AXIS_W + slot * i + (slot - barW) / 2);
+                const dim = idx >= 0 && i !== idx;
+                if (v <= 0) {
+                  // Nothing that week or month: a faint mark, so the gap reads as empty, not missing.
+                  return <Path key={b.start} d={barTopPath(x, base - 2, barW, 2, 1)} fill={chart.series[0]} opacity={0.3} />;
+                }
+                // A small but real number is never thinner than the empty mark.
+                const yt = Math.min(base - 3, y(v));
                 return (
                   <Path
                     key={b.start}
-                    d={barTopPath(x, yt, barW, PAD_T + plotH - yt, chart.barRadius)}
-                    fill={i === idx && selected != null ? color.accentBright : chart.series[0]}
+                    d={barTopPath(x, yt, barW, base - yt, chart.barRadius)}
+                    fill={i === idx ? color.accentBright : chart.series[0]}
                     opacity={dim ? 0.45 : 1}
                   />
                 );
@@ -182,12 +216,12 @@ export function HistoryChartCard({
                 labels.has(i) ? (
                   <SvgText
                     key={`x${b.start}`}
-                    x={Math.min(width - 2, Math.max(AXIS_W + 2, AXIS_W + slot * i + slot / 2))}
+                    x={labelX(i, chartXText(b))}
                     y={CHART_H - 6}
                     fontSize={11}
                     fontFamily={type.mono}
                     fill={color.inkMuted}
-                    textAnchor={i === list.length - 1 ? 'end' : 'middle'}
+                    textAnchor="middle"
                   >
                     {chartXText(b)}
                   </SvgText>

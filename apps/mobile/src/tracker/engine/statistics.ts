@@ -10,12 +10,12 @@
  *   - totals are `totalsOf` (engine/reports) over sessions whose volume came from the ONE
  *     volume rule.
  */
-import { addDays, weekStartISO } from '@/lib/date';
+import { addDays, tinyDateWithYear, weekStartISO } from '@/lib/date';
 
 import { setShares, type Muscle, type MuscleMap } from '../catalog/muscles';
 import { monthName } from '../lib/months';
 import { totalsOf, type PeriodTotals, type ReportSession } from './reports';
-import type { VolumeSession } from './volume';
+import { setsText, type VolumeSession } from './volume';
 
 export type StatGroup = 'chest' | 'back' | 'shoulders' | 'arms' | 'legs' | 'core';
 
@@ -108,6 +108,28 @@ export function periodPair(range: Exclude<StatRange, 'all'>, today: string): { c
   return { cur: { from, to: today }, prev: { from: addDays(from, -days), to: addDays(from, -1) } };
 }
 
+/**
+ * 12 Oct 2026 statistics audit: the period before is only a fair yardstick when the member's
+ * log covers ALL of it. A member who started 40 days ago compared 30 days of training with the
+ * 10 days they had trained in "the 30 days before" and read "+200%". false = no arrows.
+ */
+export function fullPeriodBefore(pair: { prev: { from: string } }, firstWorkoutISO: string | null): boolean {
+  return firstWorkoutISO != null && firstWorkoutISO <= pair.prev.from;
+}
+
+const PERIOD_WORDS: Record<Exclude<StatRange, 'all'>, { cur: string; before: string }> = {
+  '30d': { cur: 'Last 30 days', before: 'the 30 days before' },
+  '3m': { cur: 'Last 3 months', before: 'the 3 months before' },
+  // A rolling 365 days: "Last year" read as 2025 (12 Oct 2026 statistics audit).
+  '1y': { cur: 'Last 12 months', before: 'the 12 months before' },
+};
+
+/** The line over the tiles, saying what the numbers cover and what the arrows compare with. */
+export function comparisonText(range: Exclude<StatRange, 'all'>, comparable: boolean): string {
+  const w = PERIOD_WORDS[range];
+  return comparable ? `${w.cur}, against ${w.before}` : `${w.cur}. Your log is too new to compare with ${w.before}.`;
+}
+
 // ---------------------------------------------------------------- sets per group over time
 
 export type StatGrouping = 'week' | 'month';
@@ -115,6 +137,24 @@ export type StatGrouping = 'week' | 'month';
 /** The bucket a day falls in: its Monday, or the 1st of its month. */
 export function bucketOf(dateISO: string, grouping: StatGrouping): string {
   return grouping === 'week' ? weekStartISO(dateISO) : `${dateISO.slice(0, 7)}-01`;
+}
+
+/**
+ * The first day the sets chart counts: the range's first day moved back to the start of its
+ * week or month, so the first bar is a whole week or month like the others (12 Oct 2026 audit:
+ * "30 days" by week opened on a bar labelled "Sep 7" that held only Sunday 13 Sep, and "Year"
+ * by month on an "Oct '25" holding 13–31 Oct — both read as a slump that never happened).
+ */
+export function chartFrom(range: StatRange, today: string, firstWorkoutISO: string | null, grouping: StatGrouping): string {
+  return bucketOf(rangeFrom(range, today, firstWorkoutISO), grouping);
+}
+
+/**
+ * The sets chart's headline: the total of every bar and the day it counts from — "412 sets
+ * since 7 Sep" — never a bare number with no period.
+ */
+export function setsSinceText(total: number, from: string, today: string): string {
+  return `${setsText(total)} since ${tinyDateWithYear(from, today)}`;
 }
 
 /** Every bucket from `from` to `to`, oldest first (empty ones included, so gaps show). */

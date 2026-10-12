@@ -16,7 +16,7 @@ import { LinkRow, StatHeading, leavePage } from '@/components/stats/parts';
 import { Card, Chip, EmptyState, LoadError, Screen, StatTile } from '@/components/ui';
 import { getLatestBodyWeight } from '@/db/repos/userRepo';
 import { getAnalyticsBundle } from '@/services/analytics';
-import { addDays, tinyDate, todayISO } from '@/lib/date';
+import { addDays, tinyDateWithYear, todayISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
 import { fmtVol, liftedWords } from '@/lib/units';
 import { useLoad } from '@/lib/useLoad';
@@ -30,10 +30,13 @@ import {
   STAT_GROUPS,
   STAT_RANGES,
   bucketLabel,
+  chartFrom,
+  comparisonText,
   distribution,
+  fullPeriodBefore,
   periodPair,
-  rangeFrom,
   setsSeries,
+  setsSinceText,
   timesText,
   totalsBetween,
   type StatGroup,
@@ -56,8 +59,6 @@ const GROUPINGS: { id: StatGrouping; label: string }[] = [
   { id: 'month', label: 'Month' },
 ];
 const RECENT_RECORDS = 3;
-/** What the tiles' arrows compare with: the same length of time just before (`periodPair`). */
-const BEFORE: Record<DistRange, string> = { '30d': 'the 30 days before', '3m': 'the 3 months before', '1y': 'the year before' };
 const workoutsWord = (n: number) => `${fmtInt(n)} ${n === 1 ? 'workout' : 'workouts'}`;
 
 export default function StatisticsScreen() {
@@ -93,8 +94,11 @@ export default function StatisticsScreen() {
 
   const today = top.data?.today ?? todayISO();
   const first = top.data?.first ?? null;
-  const setsFrom = rangeFrom(range, today, first);
+  // The chart starts on a whole week or month (`chartFrom`), so its first bar is never a stub.
+  const setsFrom = chartFrom(range, today, first, grouping);
   const pair = periodPair(distRange, today);
+  // No arrows against a "period before" the member's log only partly covers.
+  const comparable = fullPeriodBefore(pair, first);
   const readFrom = setsFrom < pair.prev.from ? setsFrom : pair.prev.from;
 
   // One read covers both range sections: again when the earliest day changes, and on each visit.
@@ -107,7 +111,7 @@ export default function StatisticsScreen() {
   const crossesYear = series.length > 0 && series[0].bucket.slice(0, 4) !== series[series.length - 1].bucket.slice(0, 4);
   const setsTotal = series.reduce((n, p) => n + p.sets, 0);
   const dist = win.data ? distribution(win.data, pair) : [];
-  const distMax = Math.max(1, ...dist.map((d) => Math.max(d.cur, d.prev)));
+  const distMax = Math.max(1, ...dist.map((d) => Math.max(d.cur, comparable ? d.prev : 0)));
   const cur = win.data ? totalsBetween(win.data, pair.cur.from, pair.cur.to) : null;
   const prev = win.data ? totalsBetween(win.data, pair.prev.from, pair.prev.to) : null;
 
@@ -142,7 +146,7 @@ export default function StatisticsScreen() {
             scrolls to the card's edges. Three rows of orange chips left "Week · Month" alone. */}
         <StatHeading
           title="Sets per muscle group"
-          sub={win.data ? `${fmtSets(setsTotal)} ${setsTotal === 1 ? 'set' : 'sets'}` : undefined}
+          sub={win.data ? setsSinceText(setsTotal, setsFrom, today) : undefined}
           right={<SegmentedControl compact label="Group by" options={GROUPINGS} value={grouping} onChange={setGrouping} />}
         />
         <Card style={{ gap: space.md }}>
@@ -179,7 +183,9 @@ export default function StatisticsScreen() {
                 height={180}
                 labelEvery={Math.max(1, Math.ceil(series.length / 5))}
                 yFormat={(n) => fmtSets(Math.round(n))}
-                highlightLast
+                // This week or month with nothing in it yet (a Monday morning) is not the bar to
+                // light up and label: then the chart labels its biggest bar instead.
+                highlightLast={series[series.length - 1].sets > 0}
               />
             </View>
           )}
@@ -191,20 +197,20 @@ export default function StatisticsScreen() {
           <SegmentedControl label="Period" options={DIST_RANGES} value={distRange} onChange={setDistRange} />
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
             <Legend tint={chart.series[0]} text="This period" />
-            <Legend tint={color.axis} text="Before" />
+            {comparable ? <Legend tint={color.axis} text="Before" /> : null}
           </View>
           {win.data
             ? dist.map((row) => (
-                <View key={row.group} accessible accessibilityLabel={`${row.label}: ${fmtSets(row.cur)} sets, ${fmtSets(row.prev)} before`} style={{ gap: 4 }}>
+                <View key={row.group} accessible accessibilityLabel={`${row.label}: ${fmtSets(row.cur)} sets${comparable ? `, ${fmtSets(row.prev)} before` : ''}`} style={{ gap: 4 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: space.sm }}>
                     <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>{row.label}</Text>
                     <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.inkSecondary }}>
                       {fmtSets(row.cur)}
-                      <Text style={{ color: color.inkMuted }}>{` · ${fmtSets(row.prev)}`}</Text>
+                      {comparable ? <Text style={{ color: color.inkMuted }}>{` · ${fmtSets(row.prev)}`}</Text> : null}
                     </Text>
                   </View>
                   <Bar pct={row.cur / distMax} tint={chart.series[0]} />
-                  <Bar pct={row.prev / distMax} tint={color.axis} />
+                  {comparable ? <Bar pct={row.prev / distMax} tint={color.axis} /> : null}
                 </View>
               ))
             : null}
@@ -212,15 +218,15 @@ export default function StatisticsScreen() {
         {cur && prev ? (
           // The arrows under each number say "+19": this line says against what.
           <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted, marginTop: space.lg }}>
-            {`Last ${DIST_RANGES.find((r) => r.id === distRange)?.label.toLowerCase() ?? ''}, against ${BEFORE[distRange]}`}
+            {comparisonText(distRange, comparable)}
           </Text>
         ) : null}
         {cur && prev ? (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md, marginTop: space.sm }}>
-            <Tile label="Workouts" value={fmtInt(cur.workouts)} delta={changeText(cur.workouts, prev.workouts, 'count')} />
-            <Tile label="Time" value={durationText(cur.durationSec)} delta={changeText(cur.durationSec, prev.durationSec, 'pct')} />
-            <Tile label={liftedWords(units, true)} value={fmtVol(cur.volumeKg, units)} delta={changeText(cur.volumeKg, prev.volumeKg, 'pct')} />
-            <Tile label="Sets" value={fmtInt(cur.sets)} delta={changeText(cur.sets, prev.sets, 'count')} />
+            <Tile label="Workouts" value={fmtInt(cur.workouts)} delta={comparable ? changeText(cur.workouts, prev.workouts, 'count') : null} />
+            <Tile label="Time" value={durationText(cur.durationSec)} delta={comparable ? changeText(cur.durationSec, prev.durationSec, 'pct') : null} />
+            <Tile label={liftedWords(units, true)} value={fmtVol(cur.volumeKg, units)} delta={comparable ? changeText(cur.volumeKg, prev.volumeKg, 'pct') : null} />
+            <Tile label="Sets" value={fmtInt(cur.sets)} delta={comparable ? changeText(cur.sets, prev.sets, 'count') : null} />
           </View>
         ) : null}
 
@@ -228,7 +234,7 @@ export default function StatisticsScreen() {
         <StatHeading title="Main exercises" />
         <View style={{ gap: space.sm }}>
           {d.main.map((m) => (
-            <LinkRow key={m.exerciseId} title={m.name} sub={`Last: ${tinyDate(m.lastISO)}`} value={timesText(m.times)} onPress={() => openExercise(m.exerciseId)} />
+            <LinkRow key={m.exerciseId} title={m.name} sub={`Last: ${tinyDateWithYear(m.lastISO, today)}`} value={timesText(m.times)} onPress={() => openExercise(m.exerciseId)} />
           ))}
         </View>
 
@@ -246,7 +252,7 @@ export default function StatisticsScreen() {
               <LinkRow
                 key={`${r.exerciseId}-${r.kind}-${r.dateISO}-${r.startedAt ?? 0}`}
                 title={r.exerciseName}
-                sub={`${RECORD_LABEL[r.kind]} · ${tinyDate(r.dateISO)}`}
+                sub={`${RECORD_LABEL[r.kind]} · ${tinyDateWithYear(r.dateISO, today)}`}
                 value={recordValueText(r, r.info)}
                 onPress={() => openExercise(r.exerciseId)}
               />

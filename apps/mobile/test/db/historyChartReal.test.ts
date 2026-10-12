@@ -51,6 +51,10 @@ describe('the chart is the one volume rule, the same numbers as everywhere else'
     const year = await getHistoryChart('year');
     const sum = (bs: { volumeKg: number }[]) => bs.reduce((n, b) => n + b.volumeKg, 0);
     expect(sum(all)).toBeCloseTo(sum(year), 6);
+    // The all-time total's workouts equal the Profile header's Workouts (the owner compares them).
+    const { getProfileHeader } = await import('@/tracker/services/profileService');
+    const { rangeTotals } = await import('@/tracker/engine/historyChart');
+    expect(rangeTotals(all).workouts).toBe((await getProfileHeader()).workouts);
     for (const b of all) {
       const row = db.all<{ r: number | null }>(
         `SELECT SUM(se.reps) AS r FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id

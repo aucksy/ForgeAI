@@ -9,8 +9,10 @@
  *    chart, the month report and the finish screen for the same days (tested). Reps are the
  *    working sets' reps; duration is each workout's length (one with no end time adds 0, as
  *    in the reports).
- *  - The big number shows the latest bar; a tapped bar shows that bar ("12,480 kg 3–9 Mar");
- *    the same bar tapped again goes back to the latest.
+ *  - The big number is the TOTAL of the range the member picked ("All time" = everything since
+ *    the first workout); a tapped bar shows that bar ("12,480 kg 3–9 Mar"); the same bar again,
+ *    or "Show … total", goes back to the total. It used to show the latest bar, so "All time"
+ *    read as this month and "Last 12 weeks" read 0 on a Monday (owner, 12 Oct 2026).
  */
 import { addDays, weekStartISO } from '@/lib/date';
 import { fmtCompact, fmtInt, fmtTotalTime, trimNum } from '@/lib/format';
@@ -21,7 +23,7 @@ export type ChartRange = 'weeks' | 'year' | 'all';
 
 export const CHART_RANGES: readonly { id: ChartRange; label: string }[] = [
   { id: 'weeks', label: 'Last 12 weeks' },
-  { id: 'year', label: 'Year' },
+  { id: 'year', label: 'Last 12 months' },
   { id: 'all', label: 'All time' },
 ];
 
@@ -120,17 +122,32 @@ export function chartBars(sessions: readonly ChartSession[], range: ChartRange, 
   return bars;
 }
 
+/** The numbers a bar (or a whole range) carries. */
+export type ChartTotals = Pick<ChartBar, 'workouts' | 'durationSec' | 'volumeKg' | 'reps'>;
+
 /** A bar's number for a chip. PURE. */
-export function barValue(b: ChartBar, metric: ChartMetric): number {
+export function barValue(b: ChartTotals, metric: ChartMetric): number {
   return metric === 'duration' ? b.durationSec : metric === 'reps' ? b.reps : b.volumeKg;
 }
 
-/** Tap a bar: shows it; the same bar again goes back to the latest (null). PURE. */
+/** The whole range added up: what the big number shows until a bar is tapped. PURE. */
+export function rangeTotals(bars: readonly ChartBar[]): ChartTotals {
+  const t: ChartTotals = { workouts: 0, durationSec: 0, volumeKg: 0, reps: 0 };
+  for (const b of bars) {
+    t.workouts += b.workouts;
+    t.durationSec += b.durationSec;
+    t.volumeKg += b.volumeKg;
+    t.reps += b.reps;
+  }
+  return t;
+}
+
+/** Tap a bar: shows it; the same bar again goes back to the range's total (null). PURE. */
 export function tapBar(selected: number | null, tapped: number): number | null {
   return selected === tapped ? null : tapped;
 }
 
-/** The bar the big number shows: the tapped one, else the latest. PURE. */
+/** The bar to show: the tapped one, else the latest (-1 when there are none). PURE. */
 export function shownBar(bars: readonly ChartBar[], selected: number | null): number {
   if (bars.length === 0) return -1;
   return selected != null && selected >= 0 && selected < bars.length ? selected : bars.length - 1;
@@ -192,10 +209,32 @@ export function chartPeriodText(b: ChartBar, today: string): string {
  * "1,67,252 kg  Jan 2023" as an all-time total; it was one month (12 Oct 2026). PURE.
  */
 export function chartCaptionText(b: ChartBar, metric: ChartMetric, units: UnitSystem, today: string): string {
-  const what =
-    metric === 'volume' ? `${weightUnitOf(units) === 'lb' ? 'Lb' : 'Kg'} lifted` : metric === 'duration' ? 'Time trained' : 'Reps';
-  const n = b.workouts;
-  return `${what} in ${chartPeriodText(b, today)} · ${fmtInt(n)} ${n === 1 ? 'workout' : 'workouts'}`;
+  return `${what(metric, units)} in ${chartPeriodText(b, today)} · ${workoutsText(b.workouts)}`;
+}
+
+const what = (metric: ChartMetric, units: UnitSystem): string =>
+  metric === 'volume' ? `${weightUnitOf(units) === 'lb' ? 'Lb' : 'Kg'} lifted` : metric === 'duration' ? 'Time trained' : 'Reps';
+const workoutsText = (n: number): string => `${fmtInt(n)} ${n === 1 ? 'workout' : 'workouts'}`;
+
+/** The range in words: "the last 12 weeks", "the last 12 months", "Jan 2023" (All time). PURE. */
+export function chartRangeWords(range: ChartRange, bars: readonly ChartBar[]): string {
+  if (range === 'weeks') return 'the last 12 weeks';
+  if (range === 'year') return 'the last 12 months';
+  return bars.length > 0 ? `${mon(bars[0].start)} ${bars[0].start.slice(0, 4)}` : 'your first workout';
+}
+
+/**
+ * The line under the range's total: "Kg lifted in the last 12 weeks · 27 workouts", "Kg lifted
+ * since Jan 2023 · 509 workouts". PURE.
+ */
+export function chartTotalCaptionText(bars: readonly ChartBar[], range: ChartRange, metric: ChartMetric, units: UnitSystem): string {
+  const when = range === 'all' ? `since ${chartRangeWords(range, bars)}` : `in ${chartRangeWords(range, bars)}`;
+  return `${what(metric, units)} ${when} · ${workoutsText(rangeTotals(bars).workouts)}`;
+}
+
+/** The way back from a tapped bar: "Show all-time total", "Show 12-week total". PURE. */
+export function chartBackText(range: ChartRange): string {
+  return range === 'weeks' ? 'Show 12-week total' : range === 'year' ? 'Show 12-month total' : 'Show all-time total';
 }
 
 /** A label under the bars: "5 Oct" for a week, "May '22" for a month. PURE. */
@@ -227,8 +266,7 @@ export function chartSummary(bars: readonly ChartBar[], metric: ChartMetric, ran
   const name = chartMetricLabel(metric, units);
   const rangeName = CHART_RANGES.find((r) => r.id === range)?.label ?? '';
   if (bars.length === 0 || bars.every((b) => barValue(b, metric) === 0)) return `${name}, ${rangeName.toLowerCase()}. No workouts yet.`;
-  const last = bars[bars.length - 1];
   let best = bars[0];
   for (const b of bars) if (barValue(b, metric) > barValue(best, metric)) best = b;
-  return `${name}, ${rangeName.toLowerCase()}. Latest ${chartValueText(barValue(last, metric), metric, units)}, ${chartPeriodText(last, today)}. Highest ${chartValueText(barValue(best, metric), metric, units)}, ${chartPeriodText(best, today)}.`;
+  return `${name}, ${rangeName.toLowerCase()}. Total ${chartValueText(barValue(rangeTotals(bars), metric), metric, units)}. Highest ${chartValueText(barValue(best, metric), metric, units)}, ${chartPeriodText(best, today)}.`;
 }

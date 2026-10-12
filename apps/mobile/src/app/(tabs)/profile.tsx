@@ -4,7 +4,7 @@
  *     gear (Settings) top right;
  *  2. photo (or the first letter), full name, and Workouts · Weeks in a row · Records;
  *  3. bio and link, when set;
- *  4. the history chart — big number + period, Last 12 weeks / Year / All time, tap a bar,
+ *  4. the history chart — the range's total, Last 12 weeks / Last 12 months / All time, tap a bar,
  *     Duration · Kg lifted · Reps (Kg lifted the first time, then the last choice);
  *  5. Dashboard: Statistics · Exercises · Measures · Calendar;
  *  6. the Workouts feed, newest first, 30 at a time, a thin month line between months.

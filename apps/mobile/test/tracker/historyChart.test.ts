@@ -7,7 +7,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   barValue,
+  CHART_RANGES,
   chartAxisText,
+  chartBackText,
   chartBars,
   chartBuckets,
   chartMetricLabel,
@@ -16,9 +18,11 @@ import {
   chartSpan,
   chartSummary,
   chartTicks,
+  chartTotalCaptionText,
   chartValueText,
   chartXLabelIndexes,
   chartXText,
+  rangeTotals,
   shownBar,
   tapBar,
   type ChartSession,
@@ -126,7 +130,7 @@ describe('the big number, its period, and tapping a bar', () => {
     expect(chartMetricLabel('volume', 'imperial')).toBe('Lb lifted');
     const bars = chartBars([s('2026-10-06', 9201), s('2026-08-04', 12480)], 'weeks', TODAY);
     expect(chartSummary(bars, 'volume', 'weeks', 'metric', TODAY)).toBe(
-      'Kg lifted, last 12 weeks. Latest 9,201 kg, 5–11 Oct. Highest 12,480 kg, 3–9 Aug.',
+      'Kg lifted, last 12 weeks. Total 21,681 kg. Highest 12,480 kg, 3–9 Aug.',
     );
     expect(chartSummary(chartBars([], 'weeks', TODAY), 'reps', 'weeks', 'metric', TODAY)).toBe('Reps, last 12 weeks. No workouts yet.');
   });
@@ -207,5 +211,32 @@ describe('chart caption (owner, 12 Oct 2026: "1,67,252 kg Jan 2023" read as a to
     expect(chartCaptionText(m, 'reps', 'metric', '2026-10-12')).toBe('Reps in Jan 2023 · 19 workouts');
     expect(chartCaptionText({ ...(m as object), workouts: 1 } as never, 'duration', 'metric', '2026-10-12')).toBe('Time trained in Jan 2023 · 1 workout');
     expect(chartCaptionText(m, 'volume', 'imperial', '2026-10-12')).toMatch(/^Lb lifted/);
+  });
+});
+
+describe('the big number is the range’s total (owner, 12 Oct 2026: "All time" showed only Oct; Last 12 weeks read 0 on a Monday)', () => {
+  const MONDAY = '2026-10-12'; // a new week with no workout yet
+  it('adds up every bar of the range, not the latest one', () => {
+    const bars = chartBars([s('2026-10-06', 9201, 3600, 40), s('2026-08-04', 12480, 1800, 60)], 'weeks', MONDAY);
+    expect(barValue(bars[bars.length - 1], 'volume')).toBe(0); // this week: nothing yet
+    const t = rangeTotals(bars);
+    expect(t).toEqual({ workouts: 2, volumeKg: 21681, durationSec: 5400, reps: 100 });
+    expect(chartTotalCaptionText(bars, 'weeks', 'volume', 'metric')).toBe('Kg lifted in the last 12 weeks · 2 workouts');
+  });
+
+  it('All time counts from the first workout’s month and says so', () => {
+    const bars = chartBars([s('2023-01-09', 167252), s('2026-10-06', 3965)], 'all', MONDAY);
+    expect(barValue(rangeTotals(bars), 'volume')).toBe(171217);
+    expect(chartTotalCaptionText(bars, 'all', 'reps', 'metric')).toBe('Reps since Jan 2023 · 2 workouts');
+    expect(chartTotalCaptionText(chartBars([s('2026-10-06')], 'year', MONDAY), 'year', 'duration', 'metric')).toBe(
+      'Time trained in the last 12 months · 1 workout',
+    );
+  });
+
+  it('a tapped bar has a way back that names the range; the range names say their length', () => {
+    expect(chartBackText('all')).toBe('Show all-time total');
+    expect(chartBackText('weeks')).toBe('Show 12-week total');
+    expect(chartBackText('year')).toBe('Show 12-month total');
+    expect(CHART_RANGES.map((r) => r.label)).toEqual(['Last 12 weeks', 'Last 12 months', 'All time']);
   });
 });
