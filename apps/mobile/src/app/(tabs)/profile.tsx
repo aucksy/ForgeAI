@@ -73,11 +73,21 @@ function HeaderButton({ glyph, icon, label, onPress }: { glyph?: GlyphName; icon
   );
 }
 
+/**
+ * One of the three numbers beside the photo (Hevy's Workouts · Followers · Following row). The
+ * three always share ONE row in equal columns: at a large phone font size the label and number
+ * shrink to fit instead of wrapping, so "Records" can never drop alone onto a second row
+ * (owner's phone, 12 Oct 2026).
+ */
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <View accessible accessibilityLabel={`${label}: ${value}`} style={{ flexGrow: 1, flexBasis: 0, minWidth: 72 }}>
-      <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{label}</Text>
-      <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>{value}</Text>
+    <View accessible accessibilityLabel={`${label}: ${value}`} style={{ flex: 1, minWidth: 0 }}>
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
+        {label}
+      </Text>
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>
+        {value}
+      </Text>
     </View>
   );
 }
@@ -270,10 +280,10 @@ export default function ProfileScreen() {
       {header ? (
         <View style={{ gap: space.md }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.lg }}>
-            <Avatar uri={photo} name={name} size={84} />
-            <View style={{ flex: 1, gap: space.sm }}>
-              <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{name}</Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
+            <Avatar uri={photo} name={name} size={76} />
+            <View style={{ flex: 1, minWidth: 0, gap: space.sm }}>
+              <Text numberOfLines={1} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{name}</Text>
+              <View style={{ flexDirection: 'row', gap: space.sm }}>
                 <Stat label="Workouts" value={fmtInt(header.workouts)} />
                 <Stat label="Weeks in a row" value={fmtInt(header.weeksInARow)} />
                 <Stat label="Records" value={fmtInt(header.records)} />
@@ -378,7 +388,10 @@ export default function ProfileScreen() {
 
   return (
     <Screen
-      title={name}
+      // The tab's own name, short enough never to wrap; the member's name shows once, beside the
+      // photo (it showed twice, and a long name broke the title onto two lines and left the
+      // three buttons floating — owner's phone, 12 Oct 2026).
+      title="Profile"
       scroll={false}
       right={
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>

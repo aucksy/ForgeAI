@@ -25,6 +25,7 @@ import {
   CHART_RANGES,
   chartAxisText,
   chartMetricLabel,
+  chartCaptionText,
   chartPeriodText,
   chartSummary,
   chartTicks,
@@ -97,29 +98,37 @@ export function HistoryChartCard({
 
   return (
     <View style={{ gap: space.md }}>
-      {/* The big number and the range. */}
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: space.sm }}>
-        <Text accessibilityLiveRegion="polite" style={{ flexShrink: 1 }}>
-          <Text style={{ fontFamily: type.display, fontSize: type.size.h2, color: color.ink }}>
+      {/* The big number and the range, then one line saying what the number counts. */}
+      <View style={{ gap: 2 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space.md }}>
+          <Text
+            accessibilityLiveRegion="polite"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+            style={{ flex: 1, fontFamily: type.display, fontSize: type.size.h2, color: color.ink }}
+          >
             {bar && !empty ? chartValueText(barValue(bar, metric), metric, units) : chartValueText(0, metric, units)}
           </Text>
-          {bar && !empty ? (
-            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkMuted }}>{`  ${chartPeriodText(bar, today)}`}</Text>
-          ) : null}
-        </Text>
-        <Pressable
-          onPress={() => {
-            tap();
-            setRangeOpen(true);
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={`Range: ${rangeLabel}. Change`}
-          hitSlop={4}
-          style={({ pressed }) => ({ minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 4, opacity: pressed ? 0.7 : 1 })}
-        >
-          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.accent }}>{rangeLabel}</Text>
-          <Glyph name="chevron-down" size={18} color={color.accent} />
-        </Pressable>
+          <Pressable
+            onPress={() => {
+              tap();
+              setRangeOpen(true);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={`Range: ${rangeLabel}. Change`}
+            hitSlop={4}
+            style={({ pressed }) => ({ minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 4, opacity: pressed ? 0.7 : 1 })}
+          >
+            <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.accent }}>{rangeLabel}</Text>
+            <Glyph name="chevron-down" size={18} color={color.accent} />
+          </Pressable>
+        </View>
+        {bar && !empty ? (
+          <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>
+            {chartCaptionText(bar, metric, units, today)}
+          </Text>
+        ) : null}
       </View>
 
       {/* The bars. */}

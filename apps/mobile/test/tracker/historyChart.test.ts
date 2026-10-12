@@ -11,6 +11,7 @@ import {
   chartBars,
   chartBuckets,
   chartMetricLabel,
+  chartCaptionText,
   chartPeriodText,
   chartSpan,
   chartSummary,
@@ -196,5 +197,15 @@ describe('Edit profile: bio and link', () => {
     expect(cleanLink('javascript:alert(1)').error).toBeTruthy();
     expect(cleanLink('nodot').error).toBeTruthy();
     expect(linkLabel('https://www.instagram.com/me/')).toBe('www.instagram.com/me');
+  });
+});
+
+describe('chart caption (owner, 12 Oct 2026: "1,67,252 kg Jan 2023" read as a total)', () => {
+  it('says what the big number counts, for which period, from how many workouts', () => {
+    const m = { kind: 'month', start: '2023-01-01', end: '2023-01-31', workouts: 19, volumeKg: 167252, durationSec: 0, reps: 0 } as never;
+    expect(chartCaptionText(m, 'volume', 'metric', '2026-10-12')).toBe('Kg lifted in Jan 2023 · 19 workouts');
+    expect(chartCaptionText(m, 'reps', 'metric', '2026-10-12')).toBe('Reps in Jan 2023 · 19 workouts');
+    expect(chartCaptionText({ ...(m as object), workouts: 1 } as never, 'duration', 'metric', '2026-10-12')).toBe('Time trained in Jan 2023 · 1 workout');
+    expect(chartCaptionText(m, 'volume', 'imperial', '2026-10-12')).toMatch(/^Lb lifted/);
   });
 });

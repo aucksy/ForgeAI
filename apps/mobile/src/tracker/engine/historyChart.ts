@@ -184,6 +184,18 @@ export function chartPeriodText(b: ChartBar, today: string): string {
   return same ? `${day(b.start)}–${day(b.end)} ${mon(b.end)}${year}` : `${day(b.start)} ${mon(b.start)}–${day(b.end)} ${mon(b.end)}${year}`;
 }
 
+/**
+ * The line under the big number, saying exactly what it counts: "Kg lifted in Jan 2023 · 19
+ * workouts", "Time trained in 5–11 Oct · 3 workouts", "Reps in Oct · 1 workout". The owner read
+ * "1,67,252 kg  Jan 2023" as an all-time total; it was one month (12 Oct 2026). PURE.
+ */
+export function chartCaptionText(b: ChartBar, metric: ChartMetric, units: UnitSystem, today: string): string {
+  const what =
+    metric === 'volume' ? `${weightUnitOf(units) === 'lb' ? 'Lb' : 'Kg'} lifted` : metric === 'duration' ? 'Time trained' : 'Reps';
+  const n = b.workouts;
+  return `${what} in ${chartPeriodText(b, today)} · ${fmtInt(n)} ${n === 1 ? 'workout' : 'workouts'}`;
+}
+
 /** A label under the bars: "5 Oct" for a week, "May '22" for a month. PURE. */
 export function chartXText(b: ChartBar): string {
   if (b.kind === 'week') return `${day(b.start)} ${mon(b.start)}`;
