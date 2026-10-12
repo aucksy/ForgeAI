@@ -197,7 +197,7 @@ def cmd_static(a):
 
 
 def adb(*args, timeout=600, check=False):
-    p = subprocess.run(["adb", *args], capture_output=True, text=True, timeout=timeout)
+    p = subprocess.run(["adb", *args], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
     out = (p.stdout or "") + (p.stderr or "")
     if check and p.returncode != 0:
         raise RuntimeError(f"adb {' '.join(args)} failed: {out.strip()[-800:]}")
