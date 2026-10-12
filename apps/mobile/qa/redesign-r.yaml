@@ -285,7 +285,7 @@ appId: com.forgeai.app
     text: '.*\. Open$'
     index: 0
 - extendedWaitUntil:
-    visible: '[A-Z][a-z]+day, [A-Z][a-z]{2} \d{1,2}, \d{4} · \d\d:\d\d.*'
+    visible: '[A-Z][a-z]+day, \d{1,2} [A-Z][a-z]{2} \d{4} · \d\d:\d\d.*'
     timeout: 15000
 - takeScreenshot: r-14-workout-page
 # Redesign R5: Edit / Repeat sit behind ⋯ ("More"), as on the feed.
