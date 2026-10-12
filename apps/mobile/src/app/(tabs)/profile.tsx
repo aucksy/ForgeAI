@@ -82,10 +82,10 @@ function HeaderButton({ glyph, icon, label, onPress }: { glyph?: GlyphName; icon
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <View accessible accessibilityLabel={`${label}: ${value}`} style={{ flex: 1, minWidth: 0 }}>
-      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
         {label}
       </Text>
-      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>
         {value}
       </Text>
     </View>

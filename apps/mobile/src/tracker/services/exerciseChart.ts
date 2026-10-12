@@ -206,16 +206,15 @@ export function metricSeries(
  */
 export function bestPerDay(m: ChartMetric, points: readonly { x: string; y: number }[]): { x: string; y: number }[] {
   const lowerIsBetter = m === 'leastHelp';
-  const out: { x: string; y: number }[] = [];
+  // Grouped by day with a map, not only against the previous point: the list is sorted by start
+  // time, and a past-logged or imported workout's start time need not match its date, so two
+  // same-day points can arrive apart (design-pass review, 12 Oct 2026).
+  const best = new Map<string, number>();
   for (const p of points) {
-    const last = out[out.length - 1];
-    if (last && last.x === p.x) {
-      if (lowerIsBetter ? p.y < last.y : p.y > last.y) out[out.length - 1] = { x: p.x, y: p.y };
-    } else {
-      out.push({ x: p.x, y: p.y });
-    }
+    const had = best.get(p.x);
+    if (had === undefined || (lowerIsBetter ? p.y < had : p.y > had)) best.set(p.x, p.y);
   }
-  return out;
+  return [...best.entries()].sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)).map(([x, y]) => ({ x, y }));
 }
 
 /** The first day a range shows (null = all time). PURE. */

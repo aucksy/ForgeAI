@@ -32,7 +32,7 @@ this. Shared pieces live in `apps/mobile/src/components/ui` and are imported fro
 
 - Clocks and rests: `1:30`, `0:45`, and `1:02:30` past an hour (`fmtDuration`, `fmtRest`).
   Lengths of time: `45 min`, `1h 05m`, `25h 39m`, `2h` (`fmtTotalTime`). Never `0m 12s`,
-  `45s` or `11 h 20 min`. Buttons that add time: `+15 s`.
+  `45s` or `11 h 20 min`. Buttons that add time: `+15 s` (the rest bar's pills read `+15` / `−15` to keep its one row; TalkBack still says "15 seconds more").
 - Weights and reps: `80 kg × 8` — spaces and the unit always; a space before `%`.
 - Big numbers: full, in the member's own grouping on result screens; short forms (`228k`) only
   inside charts. One style per screen.

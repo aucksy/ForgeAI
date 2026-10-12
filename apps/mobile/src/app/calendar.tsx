@@ -236,7 +236,7 @@ function CountCard({ label, icon, value, unit, caption, spoken }: { label: strin
       style={{ flex: 1, minWidth: 0, padding: space.lg, gap: space.xs, borderRadius: radius.lg, backgroundColor: color.surface, borderWidth: 1, borderColor: color.border }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.xs }}>
-        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
           {label}
         </Text>
         <View style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
@@ -247,7 +247,7 @@ function CountCard({ label, icon, value, unit, caption, spoken }: { label: strin
         {value}
         {unit ? <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.inkSecondary }}>{` ${unit}`}</Text> : null}
       </Text>
-      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
         {caption}
       </Text>
     </View>

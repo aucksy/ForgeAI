@@ -188,9 +188,14 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Summary$"
     timeout: 15000
+# "Longest distance" is also the chart picker's label above the chart now (design pass): scroll
+# to the records heading first, then to the row.
 - scrollUntilVisible:
-    element: "Longest distance"
+    element: "Personal records"
     centerElement: true
+    timeout: 20000
+- scrollUntilVisible:
+    element: "4:30 /km"
     timeout: 20000
 # The pace itself, not just its label: the "—" row before any 1 km set has the label too.
 - assertVisible: "4:30 /km"

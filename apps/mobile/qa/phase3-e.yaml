@@ -199,8 +199,11 @@ appId: com.forgeai.app
 - assertVisible: 'Best · .*'
 - takeScreenshot: 63b-pull-up-last-time-best
 # Redesign R5: the record rows sit under the chart, under "Personal records" (Hevy's words).
+# "Most reps" is also the chart picker's label above the chart now (design pass): scroll to the
+# records heading itself.
 - scrollUntilVisible:
-    element: "Most reps"
+    element: "Personal records"
+    centerElement: true
     timeout: 20000
 - assertVisible: "Personal records"
 - takeScreenshot: 64-pull-up-records
