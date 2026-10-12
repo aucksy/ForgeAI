@@ -18,6 +18,7 @@ import {
   font,
   radius,
   space,
+  useIsCompact,
 } from '../ui/kit';
 import * as api from './api';
 import {
@@ -56,6 +57,7 @@ export function ProductSheet({
   onReloaded: (list: Product[]) => void;
 }) {
   const { cloud, handleError } = useShop();
+  const compact = useIsCompact();
   const [d, setD] = useState<ProductDraft>(() => draftFromProduct(product));
   const [errors, setErrors] = useState<DraftErrors>({});
   const [error, setError] = useState<string | null>(null);
@@ -222,7 +224,15 @@ export function ProductSheet({
       />
 
       <FieldGroup label="Picture if there’s no photo">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', gap: 6 }}>
+        {/* A fixed count that divides the twelve pictures: auto-fill put nine on the
+            first row and three on the second. Six across in the sheet, four on a phone. */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${compact ? 4 : 6}, minmax(0, 1fr))`,
+            gap: 6,
+          }}
+        >
           {ART_KINDS.map((k) => {
             const on = d.artKind === k.value;
             return (

@@ -10,13 +10,14 @@
 
 import type { ReactNode } from 'react';
 
+import { Icon, type IconName } from './icons';
 import { color, font, radius, space, TOUCH, useIsCompact } from './kit';
 import { Link, useRoute } from './router';
 
 export interface NavItem {
   path: string;
   label: string;
-  glyph: string;
+  icon: IconName;
   /** Number shown as an attention badge (dues, expiries) — hidden at 0. */
   badge?: number;
 }
@@ -117,9 +118,7 @@ function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
           fontWeight: active ? 700 : 500,
         }}
       >
-        <span aria-hidden style={{ fontSize: 16, width: 20, textAlign: 'center' }}>
-          {item.glyph}
-        </span>
+        <Icon name={item.icon} size={20} />
         <span style={{ flex: 1 }}>{item.label}</span>
         {item.badge ? <Badge count={item.badge} /> : null}
       </span>
@@ -180,9 +179,7 @@ function BottomNav({ nav, activePath }: { nav: NavItem[]; activePath: string }) 
                 position: 'relative',
               }}
             >
-              <span aria-hidden style={{ fontSize: 18 }}>
-                {item.glyph}
-              </span>
+              <Icon name={item.icon} size={22} />
               {/* Six items across a 375px phone leaves ~54px of text room. Without
                   this the label is sized to its own content and bleeds over its
                   neighbour rather than being clipped, which is invisible until a

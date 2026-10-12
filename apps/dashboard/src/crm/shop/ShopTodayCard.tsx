@@ -32,11 +32,18 @@ export function ShopTodayCard({ flush = false }: { flush?: boolean }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: space.md }}>
         <Figure
           value={ordersLoaded ? String(newCount) : '…'}
-          label={newCount === 1 ? 'new order waiting' : 'new orders waiting'}
+          label={newCount === 1 ? 'new order' : 'new orders'}
           tone={newCount > 0 ? color.accentBright : color.ink}
         />
         <Figure value={ordersLoaded ? String(readyCount) : '…'} label="ready for pickup" tone={color.ink} />
-        <Figure value={ordersLoaded ? formatINR(today) : '…'} label="collected today" tone={color.goodText} />
+        {/* "Sold", not "collected": it sits above "Collected this month" for
+            memberships, and two different "collected" figures on one screen read as
+            one number that disagrees with itself. Green only once there is money. */}
+        <Figure
+          value={ordersLoaded ? formatINR(today) : '…'}
+          label="sold today"
+          tone={today > 0 ? color.goodText : color.ink}
+        />
       </div>
     </Card>
   );

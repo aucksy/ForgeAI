@@ -114,12 +114,13 @@ export function Welcome() {
         <div
           style={{
             marginTop: space.lg,
-            padding: space.lg,
+            // Same inset as the card above, so both cards' text shares one left edge.
+            padding: space.xl,
             border: `1px dashed ${color.borderStrong}`,
             borderRadius: radius.lg,
           }}
         >
-          <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 15, fontWeight: 600, color: color.ink }}>
+          <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
             Or set up your own gym
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>

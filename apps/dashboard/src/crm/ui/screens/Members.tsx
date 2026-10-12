@@ -48,11 +48,12 @@ export function MembersScreen({ section }: { section?: 'app' } = {}) {
     <>
       <PageHeader
         title="Members"
-        subtitle={app ? 'Joined in the ForgeAI app' : `${memberViews.length} on the roster`}
+        subtitle={app ? 'Who has the ForgeAI app on their phone' : `${memberViews.length} on the roster`}
         actions={app ? undefined : <Button onClick={() => setAdding(true)}>+ Add member</Button>}
       />
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
+          variant="tabs"
           label="Which members"
           value={app ? 'app' : 'roster'}
           onChange={(v) => navigate(v === 'app' ? '/members/app' : '/members')}
@@ -262,7 +263,10 @@ function MemberCard({ view, today }: { view: MemberView; today: string }) {
             </div>
             <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginTop: 6 }}>
               {current
-                ? `${current.planName} · ends ${relativeDay(view.coversUntil ?? current.endsOn, today)}`
+                ? `${current.planName} · ${view.state === 'expired' ? 'ended' : 'ends'} ${relativeDay(
+                    view.coversUntil ?? current.endsOn,
+                    today,
+                  )}`
                 : 'No membership'}
               {view.outstandingP > 0 && (
                 <span style={{ color: color.warning, fontWeight: 700 }}>

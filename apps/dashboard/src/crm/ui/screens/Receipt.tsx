@@ -64,7 +64,9 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
   }
 
   return (
-    <>
+    // One centred column the width of the paper, so Back and Print sit on the
+    // receipt's own right edge instead of 400px away across empty page.
+    <div style={{ maxWidth: 720, margin: '0 auto' }}>
       <div className="no-print">
         <PageHeader
           title={`Receipt ${doc.receiptNo}`}
@@ -125,7 +127,7 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
 
         <Footer doc={doc} />
       </div>
-    </>
+    </div>
   );
 }
 

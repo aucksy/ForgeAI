@@ -36,6 +36,7 @@ import {
   rhythmGap,
   riskBandFor,
   riskReason,
+  riskReasonShort,
   riskTotals,
   RISK_LABEL,
   usualHourOf,
@@ -1032,5 +1033,30 @@ describe('attendanceSummary', () => {
     const s = attendanceSummary(imported, '2026-07-23', '2026-07-26');
     expect(s.visitsN).toBe(1);
     expect(s.busiestHour).toBeNull();
+  });
+});
+
+describe('riskReasonShort', () => {
+  it('says the same thing in fewer words, and still never mentions money', () => {
+    const settling = profileOf([], { member: { joinedOn: addDays(TODAY, -14) } });
+    const oneVisit = profileOf([visitDaysAgo(12)], { member: { joinedOn: addDays(TODAY, -14) } });
+    const rhythm = profileOf([visitDaysAgo(14), visitDaysAgo(17), visitDaysAgo(20), visitDaysAgo(23)]);
+    const quiet = profileOf([visitDaysAgo(30)]);
+
+    const out = [
+      riskReasonShort({ profile: settling, band: 'settling_in' }),
+      riskReasonShort({ profile: oneVisit, band: 'settling_in' }),
+      riskReasonShort({ profile: rhythm, band: 'slipping' }),
+      riskReasonShort({ profile: quiet, band: 'gone_quiet' }),
+      riskReasonShort({ profile: profileOf([]), band: 'gone_quiet' }),
+    ];
+    expect(out).toEqual([
+      'Joined 14 days ago · no visits yet',
+      '1 visit in 14 days',
+      'Away 14 days · usually every 3 days',
+      'Away 30 days',
+      'Never checked in',
+    ]);
+    for (const reason of out) expect(reason).not.toMatch(/renew|membership|expir|pay|due|₹/i);
   });
 });

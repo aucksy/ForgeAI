@@ -30,6 +30,7 @@ import {
   color,
   font,
   space,
+  useIsCompact,
 } from '../kit';
 
 export function PlansScreen() {
@@ -103,11 +104,14 @@ export function PlansScreen() {
           />
         </Card>
       ) : (
-        <Grid min={280}>
-          {plans.map((plan) => (
-            <PlanCard key={plan.id} plan={plan} today={today} onEdit={() => setEditing(plan)} />
+        // One price list, one row per plan. As cards, five plans left two on the
+        // second row beside an empty slot — and a gym can have any number of plans,
+        // so any card count orphans somewhere. A list has no last row to be short.
+        <Card pad={0}>
+          {plans.map((plan, i) => (
+            <PlanRow key={plan.id} plan={plan} today={today} first={i === 0} onEdit={() => setEditing(plan)} />
           ))}
-        </Grid>
+        </Card>
       )}
 
       {(adding || editing) && (
@@ -124,41 +128,97 @@ export function PlansScreen() {
   );
 }
 
-function PlanCard({ plan, today, onEdit }: { plan: Plan; today: string; onEdit: () => void }) {
+function PlanRow({
+  plan,
+  today,
+  first,
+  onEdit,
+}: {
+  plan: Plan;
+  today: string;
+  first: boolean;
+  onEdit: () => void;
+}) {
+  const compact = useIsCompact();
   const sample = computeEndDate(today, plan.durationUnit, plan.durationCount);
-  return (
-    <Card>
+
+  const name = (
+    <div style={{ minWidth: 0 }}>
       <Row gap={space.sm}>
-        <span style={{ fontFamily: font.display, fontSize: 16, fontWeight: 700, color: color.ink, flex: 1 }}>
-          {plan.name}
-        </span>
+        <span style={{ fontFamily: font.display, fontSize: 16, fontWeight: 700, color: color.ink }}>{plan.name}</span>
         {!plan.active && <Pill tone="muted">Retired</Pill>}
       </Row>
-
-      <div style={{ fontFamily: font.mono, fontSize: 26, fontWeight: 700, color: color.accentBright, marginTop: 6 }}>
-        {formatINR(plan.priceP)}
-      </div>
-      <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, marginTop: 2 }}>
-        {durationLabel(plan.durationUnit, plan.durationCount)}
-        {plan.joiningFeeP > 0 && ` · ${formatINR(plan.joiningFeeP)} joining fee`}
-      </div>
-
       {plan.description && (
-        <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+        <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, marginTop: 2 }}>
           {plan.description}
-        </p>
+        </div>
       )}
-
-      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: space.md }}>
-        Sold today, it would run until {formatDay(sample)}.
+    </div>
+  );
+  const price = (
+    <div style={{ fontFamily: font.mono, fontSize: 22, fontWeight: 700, color: color.accentBright, whiteSpace: 'nowrap' }}>
+      {formatINR(plan.priceP)}
+    </div>
+  );
+  const terms = (
+    <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+      {durationLabel(plan.durationUnit, plan.durationCount)}
+      <div style={{ color: color.inkMuted, fontSize: 12, marginTop: 2 }}>
+        {plan.joiningFeeP > 0 ? `+ ${formatINR(plan.joiningFeeP)} joining fee` : 'No joining fee'}
       </div>
+    </div>
+  );
+  const runs = (
+    <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+      Sold today, runs until
+      <div style={{ color: color.inkSecondary, fontSize: 13, marginTop: 2 }}>{formatDay(sample)}</div>
+    </div>
+  );
+  const edit = (
+    <Button variant="ghost" onClick={onEdit} ariaLabel={`Edit ${plan.name}`}>
+      Edit
+    </Button>
+  );
 
-      <div style={{ marginTop: space.md }}>
-        <Button variant="ghost" onClick={onEdit}>
-          Edit
-        </Button>
+  const shell: React.CSSProperties = {
+    padding: `${space.lg}px ${space.xl}px`,
+    borderTop: first ? 'none' : `1px solid ${color.border}`,
+  };
+
+  if (compact) {
+    return (
+      <div style={{ ...shell, display: 'grid', gap: space.md }}>
+        <Row gap={space.md} wrap={false} align="flex-start">
+          <div style={{ flex: 1, minWidth: 0 }}>{name}</div>
+          {price}
+        </Row>
+        <Row gap={space.md} wrap={false} align="center">
+          <div style={{ flex: 1, minWidth: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: space.md }}>
+            {terms}
+            {runs}
+          </div>
+          {edit}
+        </Row>
       </div>
-    </Card>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        ...shell,
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1.2fr) auto',
+        gap: space.lg,
+        alignItems: 'center',
+      }}
+    >
+      {name}
+      {price}
+      {terms}
+      {runs}
+      {edit}
+    </div>
   );
 }
 

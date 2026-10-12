@@ -12,7 +12,7 @@ import { useMemo } from 'react';
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { ShopTodayCard } from '../../shop/ShopTodayCard';
 import { useCrm } from '../../store';
-import { atRiskList, isRegisterInUse, riskReason } from '../../logic/attendance';
+import { atRiskList, isRegisterInUse, riskReasonShort } from '../../logic/attendance';
 import { formatDay, monthKey, relativeDay, startOfMonth } from '../../logic/dates';
 import { compareByAttention, needsAttentionToday, WINBACK_WINDOW_DAYS } from '../../logic/membership';
 import { formatINR, formatINRShort, sumPaise } from '../../logic/money';
@@ -30,6 +30,7 @@ import {
   StatTile,
   TOUCH,
   color,
+  useIsCompact,
   font,
   space,
 } from '../kit';
@@ -37,6 +38,7 @@ import { Link, navigate } from '../router';
 
 export function TodayScreen() {
   const { snapshot, memberViews, allMemberViews, today } = useCrm();
+  const compact = useIsCompact();
 
   const stats = useMemo(() => {
     const active = memberViews.filter((v) => v.state === 'active' || v.state === 'expiring');
@@ -94,7 +96,9 @@ export function TodayScreen() {
   return (
     <>
       <PageHeader
-        title={snapshot.gym.name}
+        // The gym's name is already in the sidebar (and the phone's top bar); a
+        // second copy as the page title said nothing about which page this is.
+        title="Today"
         subtitle={formatDay(today)}
         actions={<Button onClick={() => navigate('/members')}>Open roster</Button>}
       />
@@ -107,12 +111,20 @@ export function TodayScreen() {
       </Grid>
       <div style={{ height: space.md }} />
 
-      <Grid min={165}>
+      {/* Three across on a desk screen (two rows of three), two across on a phone:
+          six tiles squeezed into one row wrapped some labels onto two lines and not
+          others, so the figures under them no longer lined up. */}
+      <Grid min={compact ? 140 : 220}>
         {/* Labelled "with a live plan", not "Active": the roster has an "Active"
             filter chip that counts a strictly narrower thing (it excludes the
             expiring), and two different numbers under the same word one click
             apart is how a report loses trust. */}
-        <StatTile label="Members with a live plan" value={stats.active} tone="accent" />
+        <StatTile
+          label="Members with a live plan"
+          value={stats.active}
+          tone="accent"
+          sub={`${stats.active - stats.expiring.length} active · ${stats.expiring.length} expiring`}
+        />
         <StatTile
           label="Expiring this week"
           value={stats.expiring.length}
@@ -143,20 +155,13 @@ export function TodayScreen() {
           onClick={() => navigate('/attendance')}
           sub="Open the register"
         />
-        {/* "Stopped coming" was wrong for a third of this list — a new member two
-            visits into their first month has not stopped, they never started. */}
-        <StatTile
-          label="Losing the habit"
-          value={atRisk.length}
-          tone={atRisk.length > 0 ? 'critical' : undefined}
-          onClick={() => navigate('/attendance/risk')}
-          sub="Paying, but barely training"
-        />
+        {/* "Losing the habit" is not a tile: it is the list right below, and the
+            same number twice on one screen is a duplicate, not a summary. */}
       </Grid>
 
       <div style={{ height: space.xl }} />
 
-      <Grid min={330}>
+      <Grid min={290}>
         <Card>
           <SectionTitle
             action={
@@ -222,7 +227,7 @@ export function TodayScreen() {
                 <PersonRow
                   key={r.member.id}
                   member={r.member}
-                  detail={riskReason(r)}
+                  detail={riskReasonShort(r)}
                   tone={r.band === 'settling_in' ? color.criticalText : color.warning}
                 />
               ))}
@@ -231,7 +236,17 @@ export function TodayScreen() {
         </Card>
 
         <Card>
-          <SectionTitle>Money to collect</SectionTitle>
+          {/* Every list on this screen has a "See all" — without one this title sat
+              11px higher than its neighbours. */}
+          <SectionTitle
+            action={
+              <Link to="/money/dues">
+                <span style={moreLink}>See all</span>
+              </Link>
+            }
+          >
+            Money to collect
+          </SectionTitle>
           {duesList.length === 0 ? (
             <EmptyState title="Everyone's paid up" body="No outstanding dues on the roster." />
           ) : (
@@ -273,7 +288,8 @@ function PersonRow({ member, detail, tone }: { member: Member; detail: string; t
             <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.ink }}>
               {member.fullName}
             </div>
-            <div style={{ fontFamily: font.body, fontSize: 12, color: tone }}>{detail}</div>
+            {/* `pretty` keeps a lone last word ("ago") off a line of its own. */}
+            <div style={{ fontFamily: font.body, fontSize: 12, color: tone, textWrap: 'pretty' }}>{detail}</div>
           </div>
         </span>
       </Link>

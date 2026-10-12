@@ -71,6 +71,7 @@ export function ShopScreen({ section }: { section?: string }) {
         <>
           <div style={{ marginBottom: space.lg }}>
             <ChipToggle
+              variant="tabs"
               label="Shop section"
               value={tab}
               onChange={(v) => navigate(v === 'products' ? '/shop/products' : '/shop/orders')}
@@ -155,7 +156,7 @@ function OrdersSection() {
           />
         </Card>
       ) : (
-        <Grid min={300}>
+        <Grid min={320}>
           {rows.map((o) => (
             <OrderCard key={o.orderId} order={o} now={now} onCancel={() => setCancelling(o)} />
           ))}
@@ -195,7 +196,7 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
   const actions = actionsFor(order.status);
 
   return (
-    <Card pad={space.lg}>
+    <Card pad={space.lg} style={{ display: 'flex', flexDirection: 'column' }}>
       <Row gap={space.sm} wrap={false} align="flex-start">
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: font.display, fontSize: 18, fontWeight: 700, color: color.ink }}>
@@ -251,19 +252,41 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
       )}
 
       {actions.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
-          {actions.map((a, i) => (
+        // Two equal buttons side by side (each takes a full row when the card is too
+        // narrow for both), and Cancel as a full-width quiet line under them. It used
+        // to wrap onto a row of its own, indented by its padding, under two buttons
+        // of different widths. `marginTop: auto` pins the block to the card's bottom
+        // so cards in one row keep their buttons on one line.
+        <div style={{ marginTop: 'auto', paddingTop: space.md, display: 'grid', gap: space.xs }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
+            {actions
+              .filter((a) => a !== 'cancel')
+              .map((a, i) => (
+                <div key={a} style={{ flex: '1 1 0', minWidth: 'max-content' }}>
+                  <Button
+                    full
+                    variant={i === 0 ? 'primary' : 'ghost'}
+                    disabled={busy !== null}
+                    onClick={() => void act(a)}
+                    ariaLabel={`${ACTION_LABEL[a]}, order ${order.orderNo}`}
+                  >
+                    {busy === a ? 'Saving…' : ACTION_LABEL[a]}
+                  </Button>
+                </div>
+              ))}
+          </div>
+          {actions.includes('cancel') && (
             <Button
-              key={a}
-              variant={i === 0 ? 'primary' : a === 'cancel' ? 'quiet' : 'ghost'}
-              tone={a === 'cancel' ? 'danger' : undefined}
+              full
+              variant="quiet"
+              tone="danger"
               disabled={busy !== null}
-              onClick={() => void act(a)}
-              ariaLabel={`${ACTION_LABEL[a]}, order ${order.orderNo}`}
+              onClick={() => void act('cancel')}
+              ariaLabel={`${ACTION_LABEL.cancel}, order ${order.orderNo}`}
             >
-              {busy === a ? 'Saving…' : ACTION_LABEL[a]}
+              {ACTION_LABEL.cancel}
             </Button>
-          ))}
+          )}
         </div>
       )}
     </Card>
@@ -497,7 +520,7 @@ function ProductCard({
   const category = CATEGORIES.find((c) => c.value === p.category)?.label ?? p.category;
 
   return (
-    <Card pad={space.lg} style={{ opacity: p.active ? 1 : 0.72 }}>
+    <Card pad={space.lg} style={{ opacity: p.active ? 1 : 0.72, display: 'flex', flexDirection: 'column' }}>
       <button
         type="button"
         onClick={onEdit}
@@ -520,7 +543,18 @@ function ProductCard({
       >
         <ProductPicture kind={p.artKind} tint={p.artTint} imageUrl={p.imageUrl} size={76} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: font.body, fontSize: 15, fontWeight: 700, color: color.ink, lineHeight: 1.3 }}>
+          {/* Balanced, so a long name breaks into two even lines rather than leaving
+              "g" alone on the second ("Creatine monohydrate 250 / g"). */}
+          <div
+            style={{
+              fontFamily: font.body,
+              fontSize: 15,
+              fontWeight: 700,
+              color: color.ink,
+              lineHeight: 1.3,
+              textWrap: 'balance',
+            }}
+          >
             {p.name}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
@@ -547,7 +581,19 @@ function ProductCard({
         </div>
       </button>
 
-      <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap', marginTop: space.md }}>
+      {/* A 2-column grid of equal buttons pinned to the card's bottom. Wrapping
+          buttons left "Edit" alone on a second row, and a card with a two-line name
+          pushed its buttons below its neighbours'. With three buttons the last one
+          spans the row, so the block is always a full rectangle. */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          gap: space.sm,
+          marginTop: 'auto',
+          paddingTop: space.md,
+        }}
+      >
         <SmallButton onClick={onRestock} disabled={busy} label={`Add 10 to stock, ${p.name}`}>
           +10 stock
         </SmallButton>
@@ -559,7 +605,7 @@ function ProductCard({
             {uploading ? 'Uploading…' : 'Add photo'}
           </SmallButton>
         )}
-        <SmallButton onClick={onEdit} disabled={busy} label={`Edit ${p.name}`}>
+        <SmallButton onClick={onEdit} disabled={busy} label={`Edit ${p.name}`} span={!p.imageUrl ? 1 : 2}>
           Edit
         </SmallButton>
         <input
@@ -585,11 +631,13 @@ function SmallButton({
   onClick,
   disabled,
   label,
+  span = 1,
 }: {
   children: React.ReactNode;
   onClick: () => void;
   disabled?: boolean;
   label: string;
+  span?: 1 | 2;
 }) {
   return (
     <button
@@ -610,6 +658,9 @@ function SmallButton({
         fontWeight: 600,
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.5 : 1,
+        width: '100%',
+        whiteSpace: 'nowrap',
+        gridColumn: span === 2 ? '1 / -1' : undefined,
       }}
     >
       {children}

@@ -504,6 +504,28 @@ export function riskReason(row: { profile: AttendanceProfile; band: RiskBand }):
   return `${absence}.`;
 }
 
+/**
+ * The same reason in about half the words, for a list row beside a name and a
+ * Message link (Today's "Losing the habit" card). The long form ran to three lines
+ * in a third-width card on a laptop. Same facts, same rule: never about money.
+ */
+export function riskReasonShort(row: { profile: AttendanceProfile; band: RiskBand }): string {
+  const { profile, band } = row;
+
+  if (band === 'settling_in') {
+    if (profile.totalVisitsN === 0) return `Joined ${describeDays(profile.tenureDays)} ago · no visits yet`;
+    return `${profile.totalVisitsN} ${profile.totalVisitsN === 1 ? 'visit' : 'visits'} in ${describeDays(profile.tenureDays)}`;
+  }
+
+  if (profile.daysSinceVisit === null) return 'Never checked in';
+
+  const away = `Away ${describeDays(profile.daysSinceVisit)}`;
+  if (profile.medianGapDays !== null) {
+    return `${away} · usually every ${describeDays(Math.round(profile.medianGapDays))}`;
+  }
+  return away;
+}
+
 function describeDays(days: number): string {
   if (days <= 0) return 'today';
   if (days === 1) return '1 day';

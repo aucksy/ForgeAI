@@ -109,8 +109,9 @@ export function SettingsScreen() {
         </div>
       </Card>
 
-      <SectionTitle>Member app</SectionTitle>
-      <JoinCodeCard />
+      {/* Titled inside its card like the sections above and below it — the title
+          used to sit outside, on the page, the only one that did. */}
+      <JoinCodeCard title="Member app" />
 
       <Card>
         <SectionTitle>Your data</SectionTitle>

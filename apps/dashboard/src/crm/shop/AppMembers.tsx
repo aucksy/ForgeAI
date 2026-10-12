@@ -67,13 +67,15 @@ export function AppMembersSection() {
                     Joined {timeAgo(m.joinedAt, now)} · last seen {timeAgo(m.lastSeen, now)}
                   </div>
                 </div>
+                {/* Two lines facing the two on the left. A bold "₹0" over "paid at the
+                    desk" read as the member's headline figure while their order was
+                    still open; the count of orders is the fact, the money is its note. */}
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <div style={{ fontFamily: font.mono, fontSize: 15, fontWeight: 700, color: color.ink }}>
-                    {formatINR(m.spentP)}
+                  <div style={{ fontFamily: font.body, fontSize: 15, fontWeight: 600, color: color.ink }}>
+                    {m.orders === 0 ? 'No orders yet' : m.orders === 1 ? '1 order' : `${m.orders} orders`}
                   </div>
-                  <div style={{ fontFamily: font.body, fontSize: 11, color: color.inkMuted }}>paid at the desk</div>
-                  <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-                    {m.orders === 1 ? '1 order' : `${m.orders} orders`}
+                  <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
+                    {m.spentP > 0 ? `${formatINR(m.spentP)} paid at the desk` : 'Nothing paid at the desk yet'}
                   </div>
                 </div>
               </Row>

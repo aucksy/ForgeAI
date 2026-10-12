@@ -49,7 +49,6 @@ import {
   Pill,
   Row,
   ScrollX,
-  SearchField,
   SectionTitle,
   SelectField,
   StatTile,
@@ -94,6 +93,7 @@ export function MoneyScreen({ section }: { section?: string }) {
 
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
+          variant="tabs"
           label="Money view"
           value={tab}
           onChange={(v) => navigate(v === 'dues' ? '/money/dues' : '/money')}
@@ -222,8 +222,8 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
           tone="good"
           sub={`${summary.receiptsN} ${summary.receiptsN === 1 ? 'receipt' : 'receipts'}`}
         />
-        <StatTile label="Average receipt" value={formatINRShort(summary.averageP)} />
-        <StatTile label="Largest" value={formatINRShort(summary.largestP)} />
+        <StatTile label="Average receipt" value={formatINRShort(summary.averageP)} sub="Per payment in this period" />
+        <StatTile label="Largest receipt" value={formatINRShort(summary.largestP)} sub="Single payment in this period" />
         <StatTile
           label="Voided"
           value={formatINRShort(summary.voidedP)}
@@ -271,9 +271,20 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
           {filterNote}
         </div>
 
-        <Row gap={space.sm}>
-          <SearchField value={query} onChange={setQuery} placeholder="Receipt no, name, mobile or reference" />
-          <div style={{ minWidth: 180 }}>
+        {/* Both controls carry a label so their boxes sit on one line — the search
+            had none and the Method box sat 16px lower beside it. On a phone each
+            takes the full width instead of the select floating at half. */}
+        <Row gap={space.sm} align="flex-end">
+          <div style={{ flex: '2 1 260px', maxWidth: 440, minWidth: 0 }}>
+            <TextField
+              label="Search"
+              type="search"
+              value={query}
+              onChange={setQuery}
+              placeholder="Receipt no, name, mobile or reference"
+            />
+          </div>
+          <div style={{ flex: '1 1 180px', maxWidth: compact ? undefined : 240, minWidth: 0 }}>
             <SelectField
               label="Method"
               value={method}
@@ -407,7 +418,7 @@ function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid: () => void })
             <span style={{ color: color.ink }}>{member.fullName}</span>
           </Link>
         ) : (
-          <span style={{ color: color.inkFaint }}>Unknown member</span>
+          <span style={{ color: color.inkMuted }}>Unknown member</span>
         )}
       </Td>
       <Td>{membership?.planName ?? '—'}</Td>
@@ -467,7 +478,7 @@ function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid: () => void }) {
               </span>
             </Link>
           ) : (
-            <span style={{ ...tapTarget, fontSize: 14, color: color.inkFaint }}>Unknown member</span>
+            <span style={{ ...tapTarget, fontSize: 14, color: color.inkMuted }}>Unknown member</span>
           )}
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>
             {formatDay(payment.paidOn)} · {methodLabel(payment.method)}
@@ -509,15 +520,17 @@ function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid: () => void }) {
 
 // ---------------------------------------------------------------- dues
 
-const BUCKET_TONE: Record<AgingBucket, 'good' | 'warn' | 'critical' | 'muted'> = {
+// Owed money is never green: green is this app's "good news" colour, and a debt
+// under 30 days old is still a debt. Orange → amber → red as it ages.
+const BUCKET_TONE: Record<AgingBucket, 'accent' | 'warn' | 'critical' | 'muted'> = {
   upcoming: 'muted',
-  d0_30: 'good',
+  d0_30: 'accent',
   d31_60: 'warn',
   d60plus: 'critical',
 };
 
 /** A stat tile has no muted tone — an unfilled bucket simply reads as ordinary. */
-function tileTone(bucket: AgingBucket): 'good' | 'warn' | 'critical' | undefined {
+function tileTone(bucket: AgingBucket): 'accent' | 'warn' | 'critical' | undefined {
   const tone = BUCKET_TONE[bucket];
   return tone === 'muted' ? undefined : tone;
 }
@@ -603,7 +616,11 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
           label="Total owed"
           value={formatINRShort(owedP)}
           tone="warn"
-          sub={`${people.length} of ${allPeople.length} members shown`}
+          sub={
+            people.length === allPeople.length
+              ? `${allPeople.length} ${allPeople.length === 1 ? 'member' : 'members'}`
+              : `${people.length} of ${allPeople.length} members shown`
+          }
         />
         {totals.map((t) => (
           <StatTile
@@ -634,7 +651,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
           value={bucket}
           onChange={(v) => setBucket(v as AgingBucket | 'all')}
           options={[
-            { value: 'all', label: 'All' },
+            { value: 'all', label: 'All', count: totals.reduce((n, t) => n + t.countN, 0) },
             ...totals.map((t) => ({ value: t.bucket, label: AGING_LABEL[t.bucket], count: t.countN })),
           ]}
         />

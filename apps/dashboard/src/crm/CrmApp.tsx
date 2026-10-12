@@ -66,20 +66,20 @@ function Routes() {
     // Counted in PEOPLE like the two badges beside it, and like the list it opens.
     const atRisk = atRiskList(snapshot.members, snapshot.memberships, snapshot.visits, today).length;
     return [
-      { path: '/', label: 'Today', glyph: '◆' },
-      { path: '/members', label: 'Members', glyph: '☰', badge: needsAttention },
+      { path: '/', label: 'Today', icon: 'today' },
+      { path: '/members', label: 'Members', icon: 'members', badge: needsAttention },
       // Badged with orders waiting at the desk — the one number on this bar that
       // changes by itself while the owner watches.
-      { path: '/shop', label: 'Shop', glyph: '▣', badge: newCount },
+      { path: '/shop', label: 'Shop', icon: 'shop', badge: newCount },
       // "Visits" rather than "Attendance": six items across a 375px phone leave
       // about 54px of text, and the longer word does not fit. The screen itself is
       // still titled Attendance, which is the word an owner comparing products
       // looks for — a short tab label under a fuller page title is the ordinary
       // pattern on both mobile platforms.
-      { path: '/attendance', label: 'Visits', glyph: '✓', badge: atRisk },
-      { path: '/money', label: 'Money', glyph: '▤', badge: overdue },
-      { path: '/plans', label: 'Plans', glyph: '₹' },
-      { path: '/settings', label: 'Settings', glyph: '⚙' },
+      { path: '/attendance', label: 'Visits', icon: 'visits', badge: atRisk },
+      { path: '/money', label: 'Money', icon: 'money', badge: overdue },
+      { path: '/plans', label: 'Plans', icon: 'plans' },
+      { path: '/settings', label: 'Settings', icon: 'settings' },
     ];
   }, [memberViews, snapshot, today, newCount]);
 

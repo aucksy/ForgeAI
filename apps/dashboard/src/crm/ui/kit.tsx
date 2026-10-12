@@ -14,8 +14,11 @@
  */
 
 import {
+  Children,
+  isValidElement,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -99,6 +102,7 @@ export function PageHeader({
   subtitle?: string;
   actions?: ReactNode;
 }) {
+  const compact = useIsCompact();
   return (
     <header
       style={{
@@ -129,7 +133,16 @@ export function PageHeader({
           </p>
         )}
       </div>
-      {actions && <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>{actions}</div>}
+      {actions &&
+        (compact ? (
+          // On a phone the buttons share the full row. Left alone they
+          // hung under the title at their own widths, anchored to nothing.
+          <div style={{ display: 'grid', gridAutoFlow: 'column', gridAutoColumns: 'auto', gap: space.sm, width: '100%' }}>
+            {actions}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>{actions}</div>
+        ))}
     </header>
   );
 }
@@ -221,6 +234,14 @@ export function StatTile({
     minWidth: 0,
     textAlign: 'left',
     width: '100%',
+    // A <button> centres its content vertically, so a clickable tile's number sat
+    // 8px lower than the plain tiles beside it. Every tile now starts at the top.
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+    font: 'inherit',
+    color: 'inherit',
   };
 
   if (!onClick) return <div style={shell}>{body}</div>;
@@ -598,14 +619,86 @@ export function ChipToggle({
   value,
   onChange,
   label,
+  variant = 'filter',
 }: {
   options: { value: string; label: string; count?: number }[];
   value: string;
   onChange: (v: string) => void;
   label: string;
+  /**
+   * `tabs` switches between sections of a screen and is drawn as one segmented
+   * control; `filter` narrows a list and is drawn as separate chips. They used to be
+   * the same pill, so a screen showed two identical rows that did different things.
+   */
+  variant?: 'filter' | 'tabs';
 }) {
+  const compact = useIsCompact();
+
+  if (variant === 'tabs') {
+    return (
+      <div
+        role="group"
+        aria-label={label}
+        style={{
+          display: 'inline-flex',
+          maxWidth: '100%',
+          gap: 2,
+          padding: 3,
+          borderRadius: radius.pill,
+          background: color.surfaceSunken,
+          border: `1px solid ${color.border}`,
+        }}
+      >
+        {options.map((o) => {
+          const selected = o.value === value;
+          return (
+            <button
+              key={o.value}
+              aria-pressed={selected}
+              type="button"
+              onClick={() => onChange(o.value)}
+              style={{
+                appearance: 'none',
+                minHeight: TOUCH - 4,
+                padding: '6px 18px',
+                borderRadius: radius.pill,
+                border: `1px solid ${selected ? color.borderStrong : 'transparent'}`,
+                background: selected ? color.surfaceRaised : 'transparent',
+                color: selected ? color.ink : color.inkSecondary,
+                fontFamily: font.body,
+                fontSize: 14,
+                fontWeight: selected ? 700 : 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flex: compact ? '1 1 0' : undefined,
+              }}
+            >
+              {o.label}
+              {o.count !== undefined && (
+                <span style={{ marginLeft: 6, color: selected ? color.accentBright : color.inkMuted }}>{o.count}</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
-    <div role="group" aria-label={label} style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
+    <div
+      role="group"
+      aria-label={label}
+      style={{
+        display: 'flex',
+        gap: space.sm,
+        // One row that scrolls sideways on a phone: wrapping left three ragged rows
+        // with a single chip stranded on the last one.
+        flexWrap: compact ? 'nowrap' : 'wrap',
+        overflowX: compact ? 'auto' : undefined,
+        scrollbarWidth: 'none',
+        minWidth: 0,
+      }}
+    >
       {options.map((o) => {
         const selected = o.value === value;
         return (
@@ -626,6 +719,8 @@ export function ChipToggle({
               fontSize: 13,
               fontWeight: 600,
               cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
             }}
           >
             {o.label}
@@ -885,16 +980,90 @@ export function Row({
   );
 }
 
+/**
+ * Pick a column count that never leaves a lonely card.
+ *
+ * Exported for tests. `max` is how many columns physically fit. Prefer the widest
+ * count (down to half of `max`) that divides the items exactly — four orders read
+ * as 2 x 2, never 3 + 1. When nothing divides, keep `max`; the grid then stretches
+ * the last row so it still fills the width (see `lastRowSpan`).
+ */
+export function balancedColumns(count: number, max: number): number {
+  if (count <= 1 || max <= 1) return 1;
+  const top = Math.min(max, count);
+  const floor = Math.max(2, Math.ceil(top / 2));
+  for (let c = top; c >= floor; c--) if (count % c === 0) return c;
+  return top;
+}
+
+function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+/**
+ * Track columns and spans for `count` items in `cols` columns with every row full.
+ * The track is lcm(cols, remainder) wide: ordinary items span track/cols, items in
+ * a short last row span track/remainder, so 3 + 2 becomes three thirds over two
+ * halves instead of two cards and a hole.
+ */
+export function gridPlan(count: number, cols: number): { track: number; span: number; lastSpan: number; lastFrom: number } {
+  const rem = count % cols;
+  if (rem === 0) return { track: cols, span: 1, lastSpan: 1, lastFrom: count };
+  const track = (cols * rem) / gcd(cols, rem);
+  return { track, span: track / cols, lastSpan: track / rem, lastFrom: count - rem };
+}
+
+/**
+ * Responsive card grid that never orphans a card.
+ *
+ * `repeat(auto-fit, minmax())` — what this used to be — fills as many columns as
+ * fit and drops the rest onto a new row, so seven stat tiles became 6 + 1 at 1440px
+ * and 5 + 2 at 1280px. This measures its own width, picks a balanced column count
+ * and fills any short last row edge to edge. Children keep their own height: each
+ * is wrapped in a one-cell grid, so a Card inside still stretches to the row.
+ */
 export function Grid({ children, min = 200 }: { children: ReactNode; min?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState<number | null>(null);
+  const gap = space.md;
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const read = () => setWidth(el.clientWidth);
+    read();
+    const ro = new ResizeObserver(read);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const items = Children.toArray(children).filter((c) => isValidElement(c) || typeof c === 'string');
+
+  if (width === null) {
+    return (
+      <div
+        ref={ref}
+        style={{ display: 'grid', gap, gridTemplateColumns: `repeat(auto-fit, minmax(min(${min}px, 100%), 1fr))` }}
+      >
+        {items}
+      </div>
+    );
+  }
+
+  const max = Math.max(1, Math.floor((width + gap) / (min + gap)));
+  const cols = balancedColumns(items.length, max);
+  const plan = gridPlan(items.length, cols);
+
   return (
-    <div
-      style={{
-        display: 'grid',
-        gap: space.md,
-        gridTemplateColumns: `repeat(auto-fit, minmax(min(${min}px, 100%), 1fr))`,
-      }}
-    >
-      {children}
+    <div ref={ref} style={{ display: 'grid', gap, gridTemplateColumns: `repeat(${plan.track}, minmax(0, 1fr))` }}>
+      {items.map((child, i) => (
+        <div
+          key={isValidElement(child) && child.key != null ? child.key : i}
+          style={{ display: 'grid', minWidth: 0, gridColumn: `span ${i >= plan.lastFrom ? plan.lastSpan : plan.span}` }}
+        >
+          {child}
+        </div>
+      ))}
     </div>
   );
 }

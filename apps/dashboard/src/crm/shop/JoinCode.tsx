@@ -7,7 +7,7 @@
 
 import { useRef, useState } from 'react';
 
-import { Button, Card, ErrorBanner, color, font, radius, space } from '../ui/kit';
+import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } from '../ui/kit';
 import { useShop } from './ShopProvider';
 
 async function copyText(text: string): Promise<boolean> {
@@ -35,7 +35,16 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
-export function JoinCodeCard({ compact = false, flush = false }: { compact?: boolean; flush?: boolean }) {
+export function JoinCodeCard({
+  compact = false,
+  flush = false,
+  title,
+}: {
+  compact?: boolean;
+  flush?: boolean;
+  /** A section title drawn INSIDE the card, like every other settings section. */
+  title?: string;
+}) {
   const { cloud, connectShop, online } = useShop();
   const [copied, setCopied] = useState<'yes' | 'no' | null>(null);
   const codeRef = useRef<HTMLSpanElement>(null);
@@ -80,7 +89,8 @@ export function JoinCodeCard({ compact = false, flush = false }: { compact?: boo
   }
 
   return (
-    <Card style={{ marginBottom: flush ? 0 : space.lg }} pad={compact ? space.lg : space.xl}>
+    <Card style={{ marginBottom: flush ? 0 : space.lg }} pad={space.xl}>
+      {title && <SectionTitle>{title}</SectionTitle>}
       <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         Members join in the <strong style={{ color: color.ink }}>ForgeAI app</strong> with code
       </div>

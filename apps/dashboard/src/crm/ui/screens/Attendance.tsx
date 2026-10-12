@@ -107,6 +107,7 @@ export function AttendanceScreen({ section }: { section?: string }) {
 
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
+          variant="tabs"
           label="Attendance view"
           value={tab}
           onChange={(v) => navigate(v === 'risk' ? '/attendance/risk' : '/attendance')}
@@ -115,7 +116,7 @@ export function AttendanceScreen({ section }: { section?: string }) {
             // The count rides on the chip because the navigation badge that brings
             // people here lands on the Register tab: without it the badge shows a
             // number over a screen that never explains it.
-            { value: 'risk', label: 'At risk', count: atRiskN },
+            { value: 'risk', label: 'Losing the habit', count: atRiskN },
           ]}
         />
       </div>
@@ -329,17 +330,22 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
           label={isToday || !viewing ? 'Check-ins today' : `Check-ins on ${formatDayShort(viewing)}`}
           value={viewing ? register.length : todayRegisterN}
           tone="accent"
+          sub={isToday || !viewing ? 'So far today' : 'On that day'}
         />
         <StatTile
           label={`Visits in ${TREND_DAYS} days`}
           value={summary.visitsN}
           sub={`${summary.membersN} different members`}
         />
-        <StatTile label="Average a day" value={summary.perDay.toFixed(1)} />
+        <StatTile
+          label="Check-ins a day"
+          value={summary.perDay.toFixed(1)}
+          sub={`Average over the last ${TREND_DAYS} days`}
+        />
         <StatTile
           label="Busiest hour"
           value={summary.busiestHour === null ? '—' : hourLabel(summary.busiestHour)}
-          sub={summary.busiestHour === null ? 'No timed check-ins yet' : 'Across the last month'}
+          sub={summary.busiestHour === null ? 'No timed check-ins yet' : `Over the last ${TREND_DAYS} days`}
         />
       </Grid>
 
@@ -480,7 +486,7 @@ function RegisterRowView({
             <span style={{ ...tapTarget, fontSize: 14, color: color.ink }}>{name}</span>
           </Link>
         ) : (
-          <span style={{ ...tapTarget, fontSize: 14, color: color.inkFaint }}>{name}</span>
+          <span style={{ ...tapTarget, fontSize: 14, color: color.inkMuted }}>{name}</span>
         )}
       </span>
       {visit.source !== 'desk' && <Pill tone="muted">{visit.source === 'app' ? 'App' : 'Imported'}</Pill>}

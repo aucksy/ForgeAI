@@ -21,6 +21,7 @@ import { addDays, formatDay, relativeDay } from '../../logic/dates';
 import { isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials, phoneDigits } from '../../logic/members';
+import { methodLabel } from '../../logic/payments';
 import type { Membership, Payment } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
@@ -45,12 +46,15 @@ import {
   font,
   radius,
   space,
+  TOUCH,
+  useIsCompact,
 } from '../kit';
 import { Link, navigate } from '../router';
 
 export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const { snapshot, today, viewFor, checkIn, setMemberArchived, cancelMembership, uncancelMembership } =
     useCrm();
+  const compact = useIsCompact();
   const [editing, setEditing] = useState(false);
   const [selling, setSelling] = useState(false);
   const [collecting, setCollecting] = useState(false);
@@ -135,6 +139,42 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     }
   };
 
+  // Check-in and archive live inside the member's card. On their own they floated
+  // between two cards, anchored to nothing, with "Archive" drawn as bare text.
+  const heroActions = (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: compact ? 'repeat(2, minmax(0, 1fr))' : 'auto',
+        gap: space.sm,
+        flexShrink: 0,
+        alignSelf: 'center',
+      }}
+    >
+      <Button
+        full
+        variant="ghost"
+        disabled={visitedToday}
+        onClick={() => run(() => checkIn(memberId, 'desk'), 'Checked in for today.')}
+      >
+        {visitedToday ? 'Checked in today' : 'Check in'}
+      </Button>
+      <Button
+        full
+        variant="ghost"
+        tone={member.archived ? undefined : 'danger'}
+        onClick={() =>
+          run(
+            () => setMemberArchived(memberId, !member.archived),
+            member.archived ? 'Member restored.' : 'Member archived.',
+          )
+        }
+      >
+        {member.archived ? 'Restore member' : 'Archive member'}
+      </Button>
+    </div>
+  );
+
   return (
     <>
       <PageHeader
@@ -198,10 +238,12 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
               </a>
             </Row>
           </div>
+          {!compact && heroActions}
         </Row>
+        {compact && <div style={{ marginTop: space.md }}>{heroActions}</div>}
       </Card>
 
-      <Grid min={190}>
+      <Grid min={150}>
         <StatTile
           label="Outstanding"
           value={view.outstandingP > 0 ? formatINR(view.outstandingP) : '—'}
@@ -218,32 +260,18 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           label="Days left"
           value={view.daysRemaining === null ? '—' : view.daysRemaining < 0 ? 'Expired' : view.daysRemaining}
           tone={view.daysRemaining !== null && view.daysRemaining <= 7 ? 'warn' : undefined}
+          sub={
+            view.coversUntil
+              ? view.daysRemaining === 0
+                ? 'Last day is today'
+                : `Covered until ${formatDay(view.coversUntil)}`
+              : 'No live membership'
+          }
         />
-        <StatTile label="Total visits" value={visitCount} />
+        <StatTile label="Total visits" value={visitCount} sub={`Since ${formatDay(member.joinedOn)}`} />
       </Grid>
 
-      <div style={{ margin: `${space.lg}px 0` }}>
-        <Row gap={space.sm}>
-          <Button
-            variant="ghost"
-            disabled={visitedToday}
-            onClick={() => run(() => checkIn(memberId, 'desk'), 'Checked in for today.')}
-          >
-            {visitedToday ? '✓ Checked in today' : 'Check in'}
-          </Button>
-          <Button
-            variant="quiet"
-            onClick={() =>
-              run(
-                () => setMemberArchived(memberId, !member.archived),
-                member.archived ? 'Member restored.' : 'Member archived.',
-              )
-            }
-          >
-            {member.archived ? 'Restore member' : 'Archive member'}
-          </Button>
-        </Row>
-      </div>
+      <div style={{ height: space.lg }} />
 
       {profile && (
         <Card style={{ marginBottom: space.lg }}>
@@ -291,7 +319,16 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       <Card>
         <SectionTitle>Details</SectionTitle>
-        <dl style={{ margin: 0, display: 'grid', gap: space.md }}>
+        {/* Three across on a desk screen: one column of six short pairs left a
+            thousand pixels of empty card beside them. */}
+        <dl
+          style={{
+            margin: 0,
+            display: 'grid',
+            gap: `${space.lg}px ${space.xl}px`,
+            gridTemplateColumns: compact ? 'minmax(0, 1fr)' : 'repeat(3, minmax(0, 1fr))',
+          }}
+        >
           <Detail label="Mobile" value={formatPhone(member.phone)} />
           <Detail label="Email" value={member.email} />
           <Detail label="Date of birth" value={member.dateOfBirth ? formatDay(member.dateOfBirth) : null} />
@@ -514,33 +551,45 @@ function MembershipRow({
       <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginTop: 4 }}>
         {formatDay(membership.startsOn)} → {formatDay(membership.endsOn)}
       </div>
-      <Row gap={space.md}>
-        <span style={{ fontFamily: font.mono, fontSize: 13, color: color.ink }}>
-          {formatINR(view.totalDueP)}
-        </span>
-        {unpaid > 0 ? (
-          // A cancelled term still shows what was never collected, but says
-          // plainly that it is not being chased — otherwise this figure and the
-          // "Outstanding" tile above disagree with no explanation.
-          <span
-            style={{
-              fontFamily: font.mono,
-              fontSize: 13,
-              color: chased ? color.warning : color.inkMuted,
-              fontWeight: 700,
-            }}
-          >
-            {formatINR(unpaid)} {chased ? 'due' : 'unpaid · not chased'}
-          </span>
-        ) : (
-          <span style={{ fontFamily: font.body, fontSize: 12, color: color.goodText }}>Paid</span>
-        )}
-        {membership.listPriceP > membership.priceP && (
-          <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-            {formatINR(membership.listPriceP - membership.priceP)} discount
-          </span>
-        )}
-        <span style={{ flex: 1 }} />
+      {/* Figures wrap inside their own box; Cancel stays on the same line at the
+          right. It used to wrap onto its own indented row on a phone for two of
+          three cards and not the third. */}
+      <Row gap={space.sm} wrap={false}>
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'baseline',
+            columnGap: space.md,
+            rowGap: 2,
+          }}
+        >
+          <span style={{ fontFamily: font.mono, fontSize: 13, color: color.ink }}>{formatINR(view.totalDueP)}</span>
+          {unpaid > 0 ? (
+            // A cancelled term still shows what was never collected, but says
+            // plainly that it is not being chased — otherwise this figure and the
+            // "Outstanding" tile above disagree with no explanation.
+            <span
+              style={{
+                fontFamily: font.mono,
+                fontSize: 13,
+                color: chased ? color.warning : color.inkMuted,
+                fontWeight: 700,
+              }}
+            >
+              {formatINR(unpaid)} {chased ? 'due' : 'unpaid · not chased'}
+            </span>
+          ) : (
+            <span style={{ fontFamily: font.body, fontSize: 12, color: color.goodText }}>Paid</span>
+          )}
+          {membership.listPriceP > membership.priceP && (
+            <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+              {formatINR(membership.listPriceP - membership.priceP)} discount
+            </span>
+          )}
+        </div>
         {membership.cancelled ? (
           <Button variant="quiet" onClick={onRestore}>
             Undo cancel
@@ -560,30 +609,36 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid: () => void 
     <Row gap={space.md} wrap={false}>
       {/* The receipt number is the handle on the printable copy — a member asking
           for "the receipt for July" is the commonest counter request there is. */}
-      <Link to={`/receipts/${payment.id}`} title="Open printable receipt">
-        <span
-          style={{
-            fontFamily: font.mono,
-            fontSize: 12,
-            color: color.accentBright,
-            minWidth: 96,
-            display: 'inline-block',
-            minHeight: 44,
-            lineHeight: '44px',
-          }}
-        >
-          {payment.receiptNo}
-        </span>
-      </Link>
-      <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, flex: 1, minWidth: 0 }}>
-        {formatDay(payment.paidOn)} · {payment.method.toUpperCase()}
-        {payment.reference ? ` · ${payment.reference}` : ''}
+      {/* Receipt number over date and method, as one tap target: side by side
+          they left the date 60px on a phone and it broke into three lines. */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <Link to={`/receipts/${payment.id}`} title="Open printable receipt">
+          <span style={{ display: 'block', minHeight: TOUCH, padding: '4px 0' }}>
+            <span style={{ display: 'block', fontFamily: font.mono, fontSize: 13, color: color.accentBright }}>
+              {payment.receiptNo}
+            </span>
+            <span
+              style={{
+                display: 'block',
+                fontFamily: font.body,
+                fontSize: 12,
+                color: color.inkSecondary,
+                marginTop: 2,
+              }}
+            >
+              {formatDay(payment.paidOn)} · {methodLabel(payment.method)}
+              {payment.reference ? ` · ${payment.reference}` : ''}
+            </span>
+          </span>
+        </Link>
         {payment.voided && (
           // Colour + strikethrough alone is invisible to a screen reader, which
           // would read a cancelled receipt as a normal one.
-          <strong style={{ color: color.criticalText }}> · VOIDED{payment.voidReason ? `: ${payment.voidReason}` : ''}</strong>
+          <div style={{ fontFamily: font.body, fontSize: 12, fontWeight: 700, color: color.criticalText }}>
+            Voided{payment.voidReason ? `: ${payment.voidReason}` : ''}
+          </div>
         )}
-      </span>
+      </div>
       <span
         style={{
           fontFamily: font.mono,
@@ -613,7 +668,7 @@ function Detail({ label, value }: { label: string; value: string | null }) {
           margin: '2px 0 0',
           fontFamily: font.body,
           fontSize: 14,
-          color: value ? color.ink : color.inkFaint,
+          color: value ? color.ink : color.inkMuted,
           whiteSpace: 'pre-wrap',
         }}
       >
