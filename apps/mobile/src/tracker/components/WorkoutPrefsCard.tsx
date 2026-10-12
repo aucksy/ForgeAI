@@ -5,7 +5,10 @@
  *  - Track RPE — adds the effort column (set types are always available now);
  *  - AI coach notes — only while the coach is switched on (lib/features.ts, D4).
  *
- * Audit Phase 9: + "Weekly goal" (Off, 1–7 workouts a week) at the end.
+ * Audit Phase 9: + "Weekly goal" (Off, 1–7 workouts a week) at the end. Oct 2026: a − N +
+ * stepper. Eight round chips (Off, 1–7) wrapped at large text, leaving "7" alone on a second
+ * line; squeezed into one row they would be about 26 dp each on a large-display phone, under
+ * the app's 48 dp touch rule. The stepper is one row with two 48 dp buttons at every size.
  *
  * Phase 2, packet D: "Rest alerts: …" (are rest alerts on time? one tap fixes it), the optional
  * "Ring through Do Not Disturb" (Android only, off by default — RT-12), and a default rest that
@@ -14,24 +17,88 @@
 import { useEffect, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
-import { ChipGroup, type ChipOption } from '@/components/settings/ChipGroup';
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
-import { Card } from '@/components/ui';
-import { color, space, type } from '@/theme/tokens';
+import { Card, Icon } from '@/components/ui';
+import { tap } from '@/lib/haptics';
+import { color, radius, space, type } from '@/theme/tokens';
 
 import { refreshWidgets } from '../phone/widgets';
 import { fmtRest } from '../services/restRules';
 import { useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { useRestTimer } from '../store/restTimerStore';
-import { useTrackerPrefs } from '../store/trackerPrefsStore';
+import { stepWeeklyGoal, useTrackerPrefs } from '../store/trackerPrefsStore';
 import { RestAlertsStatusRow } from './RestAlertsStatusRow';
 import { RestPickerSheet } from './RestPickerSheet';
 
-type GoalId = 'off' | '1' | '2' | '3' | '4' | '5' | '6' | '7';
-const GOAL_OPTIONS: readonly ChipOption<GoalId>[] = [
-  { id: 'off', label: 'Off' },
-  ...(['1', '2', '3', '4', '5', '6', '7'] as const).map((n) => ({ id: n, label: n })),
-];
+/** The stepper's − and + : 48 dp round, dimmed (and inert) at the end of the range. */
+function StepButton({ sign, label, disabled, onPress }: { sign: '−' | '+'; label: string; disabled: boolean; onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={() => {
+        if (disabled) return;
+        tap();
+        onPress();
+      }}
+      disabled={disabled}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled }}
+      style={({ pressed }) => ({
+        width: 48,
+        height: 48,
+        borderRadius: radius.pill,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: color.surfaceSunken,
+        borderWidth: 1,
+        borderColor: color.borderStrong,
+        opacity: disabled ? 0.4 : pressed ? 0.7 : 1,
+      })}
+    >
+      {sign === '+' ? (
+        <Icon name="plus" size={20} color={color.ink} />
+      ) : (
+        <View style={{ width: 14, height: 2, borderRadius: 1, backgroundColor: color.ink }} />
+      )}
+    </Pressable>
+  );
+}
+
+/** Weekly goal: [−]  3 a week  [+]. Off when below 1. */
+function WeeklyGoalStepper({ goal, onChange }: { goal: number | null; onChange: (next: number | null) => void }) {
+  const spoken = goal ? `${goal} ${goal === 1 ? 'workout' : 'workouts'} a week` : 'Off';
+  const down = () => onChange(stepWeeklyGoal(goal, -1));
+  const up = () => onChange(stepWeeklyGoal(goal, 1));
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
+      <StepButton sign="−" label="Fewer workouts a week" disabled={goal == null} onPress={down} />
+      <View
+        accessible
+        accessibilityRole="adjustable"
+        // Not "Weekly goal": phone tests find the heading above by that exact text.
+        accessibilityLabel="Workouts a week"
+        accessibilityValue={{ text: spoken }}
+        accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+        onAccessibilityAction={(e) => {
+          if (e.nativeEvent.actionName === 'increment') up();
+          else if (e.nativeEvent.actionName === 'decrement') down();
+        }}
+        style={{ flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', gap: space.xs }}
+      >
+        {/* Its own Text, so a phone test can find the number alone ("^3$", "^Off$"). */}
+        <Text numberOfLines={1} style={{ fontFamily: type.monoBold, fontSize: type.size.h2, color: goal ? color.ink : color.inkSecondary }}>
+          {goal ? String(goal) : 'Off'}
+        </Text>
+        {goal ? (
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ flexShrink: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+            a week
+          </Text>
+        ) : null}
+      </View>
+      <StepButton sign="+" label="More workouts a week" disabled={goal === 7} onPress={up} />
+    </View>
+  );
+}
 
 export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: boolean }) {
   const weeklyGoal = useTrackerPrefs((s) => s.weeklyGoal);
@@ -113,12 +180,23 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
       ) : null}
       {/* Audit Phase 9 (#4): the member's own workouts-a-week goal (Up next on the Workout tab, the widget). */}
       <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
-        <ChipGroup
-          label="Weekly goal"
-          options={GOAL_OPTIONS}
-          selectedId={weeklyGoal ? String(weeklyGoal) : 'off'}
-          onSelect={(id) => {
-            setWeeklyGoal(id === 'off' ? null : Number(id));
+        <Text
+          accessibilityRole="header"
+          style={{
+            fontFamily: type.bodySemi,
+            fontSize: type.size.caption,
+            color: color.inkMuted,
+            letterSpacing: 1.1,
+            textTransform: 'uppercase',
+            marginBottom: space.sm,
+          }}
+        >
+          Weekly goal
+        </Text>
+        <WeeklyGoalStepper
+          goal={weeklyGoal}
+          onChange={(next) => {
+            setWeeklyGoal(next);
             void refreshWidgets();
           }}
         />

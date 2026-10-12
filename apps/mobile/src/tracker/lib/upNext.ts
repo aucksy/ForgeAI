@@ -60,8 +60,6 @@ export interface UpNextInput {
 
 export interface UpNextCard {
   kind: UpNextKind;
-  /** Small overline above the title. */
-  overline: string;
   title: string;
   /** The grey line under the title ('' = none). */
   line: string;
@@ -102,7 +100,6 @@ export function upNextCard(i: UpNextInput): UpNextCard {
   if (i.editing) {
     return card({
       kind: 'editing',
-      overline: 'In progress',
       title: 'Editing a workout',
       line: 'You have unsaved changes to a saved workout.',
       goalLine: null,
@@ -116,7 +113,6 @@ export function upNextCard(i: UpNextInput): UpNextCard {
     const line = [i.open.name?.trim() || null, i.open.countsLine].filter((x): x is string => !!x).join(' · ');
     return card({
       kind: 'continue',
-      overline: 'In progress',
       title: 'Workout in progress',
       line,
       goalLine: null,
@@ -132,7 +128,6 @@ export function upNextCard(i: UpNextInput): UpNextCard {
     const done = t.doneName?.trim() || 'Workout';
     return card({
       kind: 'doneToday',
-      overline: 'Today',
       title: `Done today: ${done}`,
       line: t.nextName ? `Next: ${t.nextName}` : '',
       goalLine: goal,
@@ -145,7 +140,6 @@ export function upNextCard(i: UpNextInput): UpNextCard {
   if (t?.status === 'next' && t.nextId && t.nextName) {
     return card({
       kind: 'next',
-      overline: 'Up next',
       title: `Up next: ${t.nextName}`,
       line: routineLine(t),
       goalLine: goal,
@@ -158,7 +152,6 @@ export function upNextCard(i: UpNextInput): UpNextCard {
   if (t?.status === 'emptyPlan') {
     return card({
       kind: 'emptyPlan',
-      overline: 'Up next',
       title: t.title,
       line: t.line,
       goalLine: null,
@@ -168,7 +161,7 @@ export function upNextCard(i: UpNextInput): UpNextCard {
       discard: null,
     });
   }
-  return card({ kind: 'none', overline: '', title: '', line: '', goalLine: null, done: false, primary: null, secondary: null, discard: null });
+  return card({ kind: 'none', title: '', line: '', goalLine: null, done: false, primary: null, secondary: null, discard: null });
 }
 
 /** "Moving from Hevy or Strong?" — a truly empty app only: no workout, no demo, nothing open. PURE. */

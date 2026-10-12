@@ -49,24 +49,17 @@ describe('finish note (audit Phase 7: facts, not a coach)', () => {
     expect(note).toBe('Easy week: 7 working sets at your usual weights, lighter on purpose.');
   });
 
-  it('keeps the record line — one lift, by the one record rule', () => {
-    expect(buildSessionNote(data({ records: [rec('Bench Press', 'weight', 100, { weightKg: 100, reps: 5 })] }), null)).toBe(
-      'Record on Bench Press: heaviest weight 100 kg.',
+  it('never repeats the records — the hero line and the "New records" row already say them (Oct 2026)', () => {
+    const one = [rec('Bench Press', 'weight', 100, { weightKg: 100, reps: 5 })];
+    // Nothing else to say: no card (it used to read "Record on Bench Press: heaviest weight 100 kg.").
+    expect(buildSessionNote(data({ records: one }), null)).toBeNull();
+    // A record workout still gets the kg comparison when there is one.
+    expect(buildSessionNote(data({ records: one, totalVolumeKg: 10500 }), prev(10000))).toBe(
+      '5% more kg lifted than your last push workout (10,000 kg).',
     );
-    expect(buildSessionNote(data({ records: [rec('Pull Up', 'reps', 15, { weightKg: 0, reps: 15 })] }), prev(10000))).toBe(
-      'Record on Pull Up: most reps 15 reps.',
-    );
-  });
-
-  it('several lifts with records are named, not counted twice', () => {
-    const records = [
-      rec('Bench Press', 'weight', 100, { weightKg: 100, reps: 5 }),
-      rec('Bench Press', 'e1rm', 116),
-      rec('Squat', 'weight', 140, { weightKg: 140, reps: 3 }),
-    ];
-    expect(buildSessionNote(data({ records }), null)).toBe('Records on Bench Press and Squat.');
-    const four = [...records, rec('Row', 'weight', 80), rec('Curl', 'weight', 20)];
-    expect(buildSessionNote(data({ records: four }), null)).toBe('Records on Bench Press, Squat and 2 more lifts.');
+    const several = [...one, rec('Squat', 'weight', 140, { weightKg: 140, reps: 3 })];
+    const note = buildSessionNote(data({ records: several, totalVolumeKg: 9000 }), prev(10000));
+    expect(note).not.toMatch(/^Records? on/);
   });
 
   it('kg lifted against the last workout of the same kind, in plain words', () => {

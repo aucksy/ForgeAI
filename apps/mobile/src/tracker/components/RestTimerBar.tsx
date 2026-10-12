@@ -4,8 +4,8 @@
  * `restTimerStore` (Phase 1), so the timer keeps running when this bar is off screen.
  *
  * Phase 2, packet D:
- *  - RT-10: at 200 % text on a small phone the row wraps (time on top, buttons below) instead
- *    of clipping "Skip"; every button is at least 48 dp tall.
+ *  - RT-10: every button is at least 48 dp tall. (Oct 2026: the bar no longer wraps. It is ONE
+ *    row at every text size, [−15] [Rest 0:20] [+15] [Skip]; labels and clock shrink to fit.)
  *  - RT-02: notifications blocked → a small "Alerts off" line under the bar, once per workout,
  *    that opens Android's notification settings.
  *  - D8: the first rest on a phone whose alerts would come late (no "Alarms & reminders") asks
@@ -23,6 +23,9 @@ import { openExactAlarmSettings } from '../services/restCard';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { restAlertPrefsReady, useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { restRemainingSec, useRestTimer } from '../store/restTimerStore';
+
+/** The three pills share one width, so the row reads as a set; 52 dp holds "Skip" at large text. */
+const PILL_W = 52;
 
 export function fmtClock(sec: number): string {
   const m = Math.floor(sec / 60);
@@ -44,6 +47,7 @@ export function useRestRemaining(): number {
   return restRemainingSec(endsAt, durationSec, now);
 }
 
+/** One of the bar's three pills: all the same width, 48 dp tall, the label never wraps. */
 function TimerBtn({ label, onPress, a11y }: { label: string; onPress: () => void; a11y: string }) {
   return (
     <Pressable
@@ -53,19 +57,27 @@ function TimerBtn({ label, onPress, a11y }: { label: string; onPress: () => void
       }}
       accessibilityRole="button"
       accessibilityLabel={a11y}
-      style={{
-        minWidth: 56,
-        minHeight: 48,
+      style={({ pressed }) => ({
+        width: PILL_W,
+        height: 48,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: space.md,
+        paddingHorizontal: space.xs,
         borderRadius: radius.pill,
         backgroundColor: color.surfaceSunken,
         borderWidth: 1,
         borderColor: color.border,
-      }}
+        opacity: pressed ? 0.7 : 1,
+      })}
     >
-      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>{label}</Text>
+      <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.6}
+        style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 }
@@ -157,40 +169,27 @@ export function RestTimerBar() {
         <View
           style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${pct * 100}%`, backgroundColor: color.accentSoft }}
         />
-        {/* RT-10: wraps at large text — the buttons drop to a second line, never off the edge. */}
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            columnGap: space.sm,
-            rowGap: space.sm,
-            padding: space.md,
-          }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, flexGrow: 1 }}>
-            <Icon name="clock" size={18} color={color.accent} />
-            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Rest</Text>
+        {/* ONE row at every text size (design critique, Oct 2026): [−15] [Rest 0:20] [+15] [Skip].
+            It used to wrap at large text: −15 and +15 on one line, Skip alone below, and the time
+            pinned left over dead space. The pills keep one width; the clock shrinks to fit.
+            The gap after Rest is an en space, so this text never reads "Rest 0:30" (the rest
+            picker's own option, which phone tests tap by that text). */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, padding: space.sm }}>
+          <TimerBtn label="−15" a11y="15 seconds less" onPress={() => addSec(-15)} />
+          <View style={{ flex: 1, minWidth: 0, alignItems: 'center', justifyContent: 'center' }}>
             <Text
               accessibilityLabel={`Rest, ${remaining} seconds left`}
-              style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink, minWidth: 52 }}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.5}
+              style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink, textAlign: 'center' }}
             >
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Rest </Text>
               {fmtClock(remaining)}
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: space.sm,
-              marginLeft: 'auto',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <TimerBtn label="−15 s" a11y="15 seconds less" onPress={() => addSec(-15)} />
-            <TimerBtn label="+15 s" a11y="15 seconds more" onPress={() => addSec(15)} />
-            <TimerBtn label="Skip" a11y="Skip rest" onPress={() => skip()} />
-          </View>
+          <TimerBtn label="+15" a11y="15 seconds more" onPress={() => addSec(15)} />
+          <TimerBtn label="Skip" a11y="Skip rest" onPress={() => skip()} />
         </View>
       </View>
       {checks.alertsOff ? (

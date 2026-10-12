@@ -53,6 +53,16 @@ export function cleanWeeklyGoal(v: unknown): number | null {
   return typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= 7 ? v : null;
 }
 
+/**
+ * One tap of the weekly-goal stepper (Settings → Workouts): Off ↔ 1 … 7, never past either end.
+ * Off counts as 0. PURE.
+ */
+export function stepWeeklyGoal(goal: number | null, by: 1 | -1): number | null {
+  const now = cleanWeeklyGoal(goal) ?? 0;
+  const next = Math.min(7, Math.max(0, now + by));
+  return next === 0 ? null : next;
+}
+
 export const useTrackerPrefs = create<TrackerPrefsState>()(
   persist(
     (set) => ({

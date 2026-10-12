@@ -10,6 +10,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { BarChart, HBarList } from '@/components/charts';
 import { Badge, Card, EmptyState, GlassCard, HeroCard, Icon, IconButton, LoadError, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
+import { deltaDirection, statLabel } from '@/components/ui/a11y';
 import { todayISO } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
 import { fmtInt, trimNum } from '@/lib/format';
@@ -25,6 +26,7 @@ import { RECORD_LABEL } from '@/tracker/engine/records';
 import { changeText, emptyReportText, heroLine, type MonthReport, type YearReview } from '@/tracker/engine/reports';
 import { setsText } from '@/tracker/engine/volume';
 import { countWord } from '@/lib/words';
+import { compareValueSize } from '@/tracker/lib/compareTiles';
 import { isMonthKey, monthDays, monthName, monthOf, monthTitle, shiftMonth, yearDays } from '@/tracker/lib/months';
 import { recordValueText } from '@/tracker/services/recordText';
 import { getMonthReport, getTrainedMonths, getYearReview, type MonthReportData } from '@/tracker/services/reportsService';
@@ -112,6 +114,64 @@ function BodyweightLine({ change }: { change: MonthReport['bodyweight'] }) {
   );
 }
 
+/**
+ * One "Against <month>" card. Three sit in a row as equal columns of equal height (the row
+ * stretches them): label, then the number on ONE line (it shrinks to fit at large text, never
+ * breaks "236,885" in two), then the change. `unit` is only spoken; the label shows it.
+ */
+function CompareTile({
+  label,
+  value,
+  unit,
+  delta,
+  size,
+}: {
+  label: string;
+  value: string;
+  unit?: string;
+  delta: { value: string; good: boolean } | null;
+  /** One size for all three numbers, so "22" never towers over a shrunk "236,885". */
+  size: number;
+}) {
+  const dir = delta ? deltaDirection(delta.value) : 'same';
+  const deltaColor = !delta || dir === 'same' ? color.inkSecondary : delta.good ? color.goodText : color.criticalText;
+  return (
+    <View
+      accessible
+      accessibilityLabel={statLabel({ label, value, unit, delta: delta?.value })}
+      style={{
+        flex: 1,
+        minWidth: 0,
+        backgroundColor: color.surface,
+        borderRadius: radius.lg,
+        borderWidth: 1,
+        borderColor: color.border,
+        padding: space.md,
+        gap: space.xs,
+      }}
+    >
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+        {label}
+      </Text>
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ fontFamily: type.monoBold, fontSize: size, color: color.ink }}>
+        {value}
+      </Text>
+      {delta ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+          {dir === 'same' ? null : (
+            <View style={{ transform: [{ rotate: dir === 'up' ? '-90deg' : '90deg' }] }}>
+              <Icon name="chevron-right" size={12} color={deltaColor} />
+            </View>
+          )}
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ flexShrink: 1, fontFamily: type.bodySemi, fontSize: type.size.caption, color: deltaColor }}>
+            {delta.value}
+          </Text>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
 function MonthBody({
   data,
   today,
@@ -129,6 +189,8 @@ function MonthBody({
   const r = data.report;
   const t = r.totals;
   const prevName = monthName(shiftMonth(r.month, -1));
+  const vs = { workouts: fmtInt(t.workouts), lifted: fmtInt(kgToShown(t.volumeKg, units)), sets: fmtInt(t.sets) };
+  const vsSize = compareValueSize(Object.values(vs));
   if (t.workouts === 0) {
     const e = emptyReportText('month', r.complete, monthName(r.month));
     return <EmptyState icon="calendar" title={e.title} body={e.body} />;
@@ -145,17 +207,20 @@ function MonthBody({
       {r.previous && r.complete ? (
         <View>
           <SectionHeader title={`Against ${prevName}`} />
-          <View style={{ flexDirection: 'row', gap: space.md }}>
-            <View style={{ flex: 1 }}>
-              <StatTile label="Workouts" value={t.workouts} delta={changeText(t.workouts, r.previous.workouts, 'count') ?? undefined} />
-            </View>
-            <View style={{ flex: 1 }}>
-              {/* PG-22: the same full number as the line above — never "228.3k" beside "2,28,288". */}
-              <StatTile label={wu === 'kg' ? 'Kg lifted' : 'Lb lifted'} value={fmtInt(kgToShown(t.volumeKg, units))} unit={wu} delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct') ?? undefined} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <StatTile label="Sets" value={t.sets} delta={changeText(t.sets, r.previous.sets, 'count') ?? undefined} />
-            </View>
+          {/* Oct 2026: three equal cards in ONE row, all the same height. "236,885" used to break
+              across two lines and make the middle card taller. The number never wraps (it
+              shrinks to fit), and "Kg lifted" already names the unit, so no "kg" under it. */}
+          <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: space.sm }}>
+            <CompareTile label="Workouts" value={vs.workouts} size={vsSize} delta={changeText(t.workouts, r.previous.workouts, 'count')} />
+            {/* PG-22: the same full number as the line above — never "228.3k" beside "2,28,288". */}
+            <CompareTile
+              label={wu === 'kg' ? 'Kg lifted' : 'Lb lifted'}
+              value={vs.lifted}
+              unit={wu}
+              size={vsSize}
+              delta={changeText(t.volumeKg, r.previous.volumeKg, 'pct')}
+            />
+            <CompareTile label="Sets" value={vs.sets} size={vsSize} delta={changeText(t.sets, r.previous.sets, 'count')} />
           </View>
         </View>
       ) : null}

@@ -4,6 +4,9 @@
  * button — only its buttons act, each 48 dp or more. The title is its own heading and says the
  * whole answer to a screen reader. `children` holds the easy-week line and its choices (they
  * stay inside the card, as on the old Workout tab).
+ *
+ * No small eyebrow label over the title: "TODAY" over "Done today: Push 1" and "UP NEXT" over
+ * "Up next: Full Body A" said the same thing twice (design critique, Oct 2026). The title leads.
  */
 import type { ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -24,7 +27,7 @@ export function UpNextCard({
   starting?: boolean;
   children?: ReactNode;
 }) {
-  const { overline, title, line, goalLine, done, primary, secondary } = card;
+  const { title, line, goalLine, done, primary, secondary } = card;
   const live = card.kind === 'continue' || card.kind === 'editing';
   return (
     <View
@@ -38,13 +41,6 @@ export function UpNextCard({
       }}
     >
       <View style={{ gap: space.xs }}>
-        <Text
-          accessibilityElementsHidden
-          importantForAccessibility="no"
-          style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.accentBright, letterSpacing: 1.2, textTransform: 'uppercase' }}
-        >
-          {overline}
-        </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
           <Text
             accessibilityRole="header"

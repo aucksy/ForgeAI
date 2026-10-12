@@ -4,8 +4,8 @@
  * question worked out on the workout screen is asked here, in the app's own sheet.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
 
 import {
   askConfirm,
@@ -24,7 +24,8 @@ import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
-import { ShareTextRow } from '@/tracker/components/ShareTextRow';
+import { SHARE_TEXT_HINT, SHARE_TEXT_LABEL, shareTextNow } from '@/tracker/components/ShareTextRow';
+import { Glyph, type GlyphName } from '@/tracker/components/TrackerGlyph';
 import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coachNote';
 import { finishAnswer, getSessionSummary, volumeComparison, workoutName } from '@/tracker/services/finishSummary';
 import { workoutMilestone } from '@/tracker/services/milestones';
@@ -34,6 +35,57 @@ import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
 import { workoutShareInput } from '@/tracker/share/workoutInput';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
+
+const INK_ON_EMBER = '#1F0D05';
+const TICK = 24;
+
+/** A half-width secondary button: hairline pill, glyph + one short word that never wraps. */
+function ShareButton({
+  glyph,
+  label,
+  spoken,
+  hint,
+  onPress,
+}: {
+  glyph: GlyphName;
+  label: string;
+  spoken: string;
+  hint?: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={spoken}
+      accessibilityHint={hint}
+      style={({ pressed }) => ({
+        flex: 1,
+        minWidth: 0,
+        minHeight: 50,
+        paddingHorizontal: space.md,
+        borderRadius: radius.pill,
+        borderWidth: 1,
+        borderColor: color.borderStrong,
+        backgroundColor: pressed ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: space.sm,
+      })}
+    >
+      <Glyph name={glyph} size={18} color={color.accent} />
+      <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+        style={{ flexShrink: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
 
 export default function FinishScreen() {
   useUnits(); // v0.27.0: the record and set texts follow Profile → Units
@@ -127,6 +179,15 @@ export default function FinishScreen() {
 
   const comparison = data ? volumeComparison(data.totalVolumeKg) : null;
 
+  const sharingText = useRef(false);
+  const shareText = (title: string, getText: () => string): void => {
+    if (sharingText.current) return;
+    sharingText.current = true;
+    void shareTextNow(getText, title).finally(() => {
+      sharingText.current = false;
+    });
+  };
+
   return (
     <Screen title="Workout complete" subtitle="Saved to your history." onBack={() => router.dismissTo('/workout')}>
       {loading ? (
@@ -137,30 +198,32 @@ export default function FinishScreen() {
       ) : data ? (
         <View style={{ gap: space.lg }}>
           <HeroCard gradient={gradients.ember}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
-              <Icon name="check" size={28} color="#1F0D05" />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: '#1F0D05' }}>
-                  {workoutName(data)} done
+            {/* Oct 2026: the tick sits ON the title's line (it used to float beside the whole
+                block); the lines below start where the title's words start. */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+              <Icon name="check" size={TICK} color={INK_ON_EMBER} />
+              <Text style={{ flex: 1, fontFamily: type.displaySemi, fontSize: type.size.h2, color: INK_ON_EMBER }}>
+                {workoutName(data)} done
+              </Text>
+            </View>
+            <View style={{ marginLeft: TICK + space.sm, marginTop: 2 }}>
+              {/* Audit Phase 9 (#4): "Your 100th workout" — 1st, 10th, 25th, 50th, 100th… */}
+              {milestone ? (
+                <Text
+                  accessibilityRole="header"
+                  style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: INK_ON_EMBER, marginBottom: 2 }}
+                >
+                  {milestone}
                 </Text>
-                {/* Audit Phase 9 (#4): "Your 100th workout" — 1st, 10th, 25th, 50th, 100th… */}
-                {milestone ? (
-                  <Text
-                    accessibilityRole="header"
-                    style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: '#1F0D05', marginBottom: 2 }}
-                  >
-                    {milestone}
-                  </Text>
-                ) : null}
-                <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
-                  {finishAnswer(data)}
+              ) : null}
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
+                {finishAnswer(data)}
+              </Text>
+              {comparison ? (
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: 'rgba(31,13,5,0.6)', marginTop: 2 }}>
+                  That's about {comparison}.
                 </Text>
-                {comparison ? (
-                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: 'rgba(31,13,5,0.6)', marginTop: 2 }}>
-                    That's about {comparison}.
-                  </Text>
-                ) : null}
-              </View>
+              ) : null}
             </View>
           </HeroCard>
 
@@ -182,11 +245,27 @@ export default function FinishScreen() {
           {/* The totals already lead in the card above — no second copy in tiles. */}
           <SessionSummary data={data} showTotals={false} />
 
+          {/* Oct 2026: one primary (Done), then the two ways to share side by side as equal
+              buttons, then View history. It used to be four actions in three styles, with
+              "Share as text" an off-centre link. The words stay short so the row never wraps;
+              each says its whole name to a screen reader (and to the phone tests). */}
           <View style={{ gap: space.md, marginTop: space.sm }}>
             <PrimaryButton label="Done" icon="check" onPress={() => router.dismissTo('/workout')} />
-            <GhostButton label="Share as a picture" icon="send" onPress={() => setSharing(true)} />
-            {/* Quieter: the workout as plain text, for any AI chat. */}
-            <ShareTextRow title={workoutName(data)} getText={() => workoutText(data)} />
+            <View style={{ flexDirection: 'row', gap: space.md }}>
+              <ShareButton
+                glyph="image"
+                label="Picture"
+                spoken="Share as a picture"
+                onPress={() => setSharing(true)}
+              />
+              <ShareButton
+                glyph="list"
+                label="Text"
+                spoken={SHARE_TEXT_LABEL}
+                hint={SHARE_TEXT_HINT}
+                onPress={() => shareText(workoutName(data), () => workoutText(data))}
+              />
+            </View>
             <GhostButton label="View history" icon="calendar" onPress={() => router.dismissTo('/profile')} />
           </View>
           {scene ? (

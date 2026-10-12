@@ -14,7 +14,7 @@ import type { ScrollView as ScrollViewType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DangerLink } from '@/components/DangerLink';
-import { EmptyState, GhostButton, IconButton, PrimaryButton, Screen, UndoBar, askConfirm } from '@/components/ui';
+import { EmptyState, GhostButton, Icon, IconButton, PrimaryButton, Screen, UndoBar, askConfirm } from '@/components/ui';
 import { useDashboard } from '@/store/dashboardStore';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -44,6 +44,46 @@ import { useRestTimer } from '@/tracker/store/restTimerStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import { useWorkoutUi } from '@/tracker/store/workoutUiStore';
 import { tell } from '@/lib/tell';
+
+/**
+ * Finish before any set is logged: a calm neutral pill with readable words (design critique,
+ * Oct 2026). The orange button at 45 % opacity read as dark brown on brown, well under 4.5:1.
+ * Grey text on the raised surface is about 7.7:1. Not a button yet, so nothing happens on a tap;
+ * a screen reader hears it as a dimmed button with its words.
+ */
+function NotYetButton({ label }: { label: string }) {
+  return (
+    <View
+      accessible
+      accessibilityRole="button"
+      accessibilityState={{ disabled: true }}
+      accessibilityLabel={label}
+      style={{
+        minHeight: 54,
+        paddingVertical: space.sm,
+        paddingHorizontal: space.xxl,
+        borderRadius: radius.pill,
+        backgroundColor: color.surfaceRaised,
+        borderWidth: 1,
+        borderColor: color.border,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: space.sm,
+      }}
+    >
+      <Icon name="check" size={19} color={color.inkSecondary} />
+      <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+        style={{ flexShrink: 1, fontFamily: type.bodyBold, fontSize: 16, letterSpacing: 0.2, color: color.inkSecondary }}
+      >
+        {label}
+      </Text>
+    </View>
+  );
+}
 
 export default function ActiveWorkoutScreen() {
   const router = useRouter();
@@ -533,25 +573,17 @@ export default function ActiveWorkoutScreen() {
           ) : null}
           {entry ? (
             <EntryBar model={entry} />
-          ) : (
+          ) : canFinish || committing ? (
             <PrimaryButton
-              label={
-                isEditing
-                  ? canFinish
-                    ? pastLog
-                      ? 'Save workout'
-                      : 'Save changes'
-                    : pastLog
-                      ? 'Type a set to save'
-                      : 'Keep at least one set'
-                  : canFinish
-                    ? 'Finish workout'
-                    : 'Log a set to finish'
-              }
+              label={isEditing ? (pastLog ? 'Save workout' : 'Save changes') : 'Finish workout'}
               icon="check"
               loading={committing}
-              disabled={!canFinish || committing}
+              disabled={committing}
               onPress={onPrimary}
+            />
+          ) : (
+            <NotYetButton
+              label={isEditing ? (pastLog ? 'Type a set to save' : 'Keep at least one set') : 'Log a set to finish'}
             />
           )}
         </View>

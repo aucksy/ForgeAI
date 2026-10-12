@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { weekGoalStat } from '@/tracker/engine/progressTop';
 import { isMilestone, milestoneText, ordinal } from '@/tracker/services/milestones';
-import { cleanWeeklyGoal } from '@/tracker/store/trackerPrefsStore';
+import { cleanWeeklyGoal, stepWeeklyGoal } from '@/tracker/store/trackerPrefsStore';
 
 import { bootRealApp, type RealDb } from '../helpers/realDb';
 
@@ -33,7 +33,26 @@ describe('weekly goal', () => {
     const src = (p: string): string => readFileSync(resolve(__dirname, '../../src', p), 'utf8');
     expect(src('components/analytics/WeekCard.tsx')).toContain('weekGoalStat(w.workouts, goal)');
     expect(src('tracker/phone/widgets.ts')).toContain('goal: ownGoal ?? (hasPlan');
-    expect(src('tracker/components/WorkoutPrefsCard.tsx')).toContain('label="Weekly goal"');
+    // Oct 2026: a − N + stepper under a "Weekly goal" heading (eight chips wrapped at large text).
+    const card = src('tracker/components/WorkoutPrefsCard.tsx');
+    expect(card).toMatch(/>\s*Weekly goal\s*</);
+    expect(card).toContain('<WeeklyGoalStepper');
+    expect(card).not.toContain('ChipGroup');
+  });
+
+  it('the stepper walks Off ↔ 1 … 7 and never past either end', () => {
+    expect(stepWeeklyGoal(null, 1)).toBe(1);
+    expect(stepWeeklyGoal(1, -1)).toBeNull();
+    expect(stepWeeklyGoal(null, -1)).toBeNull();
+    expect(stepWeeklyGoal(3, 1)).toBe(4);
+    expect(stepWeeklyGoal(3, -1)).toBe(2);
+    expect(stepWeeklyGoal(7, 1)).toBe(7);
+    // Seven taps down from anywhere is Off; three up from Off is 3 (what the phone test does).
+    let g: number | null = 5;
+    for (let i = 0; i < 7; i++) g = stepWeeklyGoal(g, -1);
+    expect(g).toBeNull();
+    for (let i = 0; i < 3; i++) g = stepWeeklyGoal(g, 1);
+    expect(g).toBe(3);
   });
 });
 

@@ -1,6 +1,6 @@
 # Audit Phase 9 device QA, part P9 — "beyond Hevy" (runs after part N, before the P7 tours and M).
-#  1. Settings → Workouts → Weekly goal "3" (redesign R6): the Workout tab's Up next card reads
-#     "This week: N of 3 workouts" (redesign R1: Home is gone); then Off again.
+#  1. Settings → Workouts → Weekly goal 3 on the − / + stepper (redesign R6): the Workout tab's
+#     Up next card reads "This week: N of 3 workouts" (redesign R1: Home is gone); then Off again.
 #  2. A workout: Bench Press, two sets. The entry bar on the keyboard: "+ 2.5" (kg) or "+ 5" (lb,
 #     part I's units) steps the weight box; "Copy to sets below" fills set 2 ("Copied to 1 set below"
 #     with Undo); "+ 1" steps the reps. Both sets ticked, then Finish.
@@ -29,7 +29,21 @@ appId: com.forgeai.app
     element: "(?i)^weekly goal$"
     centerElement: true
     timeout: 30000
-- tapOn:
+# Oct 2026: the goal is a "− N +" stepper (eight round chips did not fit one row at large text).
+# From whatever it was: down to Off (a tap on the dimmed − does nothing), then up three.
+- repeat:
+    times: 7
+    commands:
+      - tapOn: "Fewer workouts a week"
+- assertVisible:
+    text: "^Off$"
+    below:
+      text: "(?i)^weekly goal$"
+- repeat:
+    times: 3
+    commands:
+      - tapOn: "More workouts a week"
+- assertVisible:
     text: "^3$"
     below:
       text: "(?i)^weekly goal$"
@@ -228,7 +242,11 @@ appId: com.forgeai.app
     element: "(?i)^weekly goal$"
     centerElement: true
     timeout: 30000
-- tapOn:
+- repeat:
+    times: 7
+    commands:
+      - tapOn: "Fewer workouts a week"
+- assertVisible:
     text: "^Off$"
     below:
       text: "(?i)^weekly goal$"

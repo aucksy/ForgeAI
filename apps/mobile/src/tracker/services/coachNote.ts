@@ -1,6 +1,7 @@
 /**
  * The finish screen's short note — a line of facts under "… done", grounded in the JUST-SAVED
- * workout: an easy week, its records, or its kg lifted against the last workout of its kind.
+ * workout: an easy week, or its kg lifted against the last workout of its kind. (Its records are
+ * the "New records" row's job — never said twice.)
  *
  * Audit Phase 7: while the coach is hidden (owner decision D4) the note is not a coach. No
  * coach voice, no cheering ("Keep feeding it", "Recover hard and it'll show"), and never food,
@@ -65,18 +66,10 @@ function kindWord(dayType: string): string | null {
   }
 }
 
-/** "Bench Press", "Bench Press and Squat", "Bench Press, Squat and 2 more lifts". */
-function liftList(names: readonly string[]): string {
-  if (names.length <= 1) return names[0] ?? '';
-  if (names.length === 2) return `${names[0]} and ${names[1]}`;
-  const more = names.length - 2;
-  return `${names[0]}, ${names[1]} and ${more} more ${more === 1 ? 'lift' : 'lifts'}`;
-}
-
 /**
- * The deterministic note: an easy week > its records > kg lifted against the last workout of
- * the same kind. null when none applies (no card). PURE. `units`: the member's choice — "lb
- * lifted" and pounds under "lb, miles" (review fix: it said "kg lifted" beside a pound total).
+ * The deterministic note: an easy week > kg lifted against the last workout of the same kind.
+ * null when none applies (no card). PURE. `units`: the member's choice — "lb lifted" and pounds
+ * under "lb, miles" (review fix: it said "kg lifted" beside a pound total).
  */
 export function buildSessionNote(
   data: SessionSummaryData,
@@ -88,17 +81,9 @@ export function buildSessionNote(
     return `Easy week: ${countWord(data.workingSetCount, 'working set')} at your usual weights, lighter on purpose.`;
   }
 
-  // Records, by the one record rule (the same the list below shows), in the workout's order.
-  const records = data.records ?? [];
-  if (records.length > 0) {
-    const lifts: string[] = [];
-    for (const r of records) if (!lifts.includes(r.exerciseName)) lifts.push(r.exerciseName);
-    if (lifts.length === 1) {
-      const r = records[0];
-      return `Record on ${r.exerciseName}: ${RECORD_LABEL[r.kind].toLowerCase()} ${recordValueText(r, r.info)}.`;
-    }
-    return `Records on ${liftList(lifts)}.`;
-  }
+  // Records are NOT repeated here: the hero line already counts them ("1 lift beat its best")
+  // and the "New records" row right below lists them (design critique, Oct 2026: the same record
+  // showed twice on the finish screen). A record workout falls through to the kg comparison.
 
   // Kg lifted against the last workout of the same kind.
   const kind = kindWord(data.session.dayType);
