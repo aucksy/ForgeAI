@@ -1755,6 +1755,24 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-12: **v0.36.1 — design pass on every screen** (7b4a085 … fbe7e00; owner, on his phone's
+  Profile at large text: "are you not able to judge how assymtrical and bad this looks").
+  - Owner's screenshot: name twice, title wrapping with the buttons floating, "Records" alone on a
+    second row. Now: title "Profile", name once, Workouts · Streak · Records in one shrink-to-fit
+    row; the chart's number gets a caption ("Kg lifted in Jan 2023 · 19 workouts") — 1,67,252 kg
+    was checked against his Hevy export (Jan 2023, warm-ups not counted) and is correct.
+  - A designer critique of all 46 tour screens + the large-text tour found 18 issues; fixed: one-
+    row rest bar, even month-report cards, weekly goal stepper, no eyebrow over Up next, finish
+    summary without the duplicate record, readable disabled finish button, tiles that never break
+    words, a calm exercise chart (one point per day, inside its plot, metric picker sheet,
+    segmented ranges), even Calendar cards with periods, Statistics switches on the title row,
+    feed share in the card's top row, workout/product titles on their own row, one status per
+    order card, the placed banner clearing, even shop rows, day-first dates everywhere.
+  - Panel (deployed): 21 fixes from its own critique — even card grids, readable greys,
+    clearer numbers, segmented section tabs, drawn icons, product cards with aligned buttons.
+  - Process: Brain rule judge-every-screenshot-like-a-designer; impeccable skill updated and
+    wired to every screen review. **Tests:** 2,000 vitest; panel 450. Phone run **38219118445 on
+    fbe7e00: all 23 parts passed**; screenshots reviewed by hand at normal and large text.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
