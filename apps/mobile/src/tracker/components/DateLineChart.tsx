@@ -15,7 +15,13 @@ import { AXIS_FONT, areaPath, monotonePath, niceTicks, padDomain, r2, xLabel } f
 import { clamp, fmtCompact } from '@/lib/format';
 import { chart, color as palette, radius, type } from '@/theme/tokens';
 
-import { dateXs, nearestIndex } from '../lib/chartTime';
+import { coveringTicks, dateXs, lastLabelY, nearestIndex } from '../lib/chartTime';
+
+/** The frozen `niceTicks`' step for a range (its first gap), for `coveringTicks`. */
+const niceStep = (lo: number, hi: number): number => {
+  const t = niceTicks(lo, hi, 4);
+  return t.length > 1 ? t[1] - t[0] : (hi - lo) / 3;
+};
 
 export interface DateLineChartProps {
   /** Oldest first; `x` is a 'YYYY-MM-DD' day. */
@@ -77,12 +83,14 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
       yMin = Math.min(yMin, target);
       yMax = Math.max(yMax, target);
     }
-    const [lo, hi] = padDomain(yMin, yMax, 0.08);
+    const [padLo, padHi] = padDomain(yMin, yMax, 0.08);
+    // 12 Oct 2026: the grid now runs from a line under the lowest point to a line over the
+    // highest, so no dot hangs below the last line or above the first.
+    const { lo, hi, ticks } = coveringTicks(padLo, padHi, niceStep, yMin);
     const plotH = height - PAD_T - PAD_B;
     const yFor = (v: number) => PAD_T + (1 - (v - lo) / (hi - lo)) * plotH;
 
     const pts = data.map((d, i) => ({ x: xs[i], y: yFor(d.y) }));
-    const ticks = niceTicks(lo, hi, 4);
     const last = data[n - 1];
     const lastPt = pts[n - 1];
     const activePt = active !== null ? pts[active] ?? null : null;
@@ -140,8 +148,8 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
           <Circle cx={r2(lastPt.x)} cy={r2(lastPt.y)} r={chart.markerRadius} fill={stroke} stroke={palette.surface} strokeWidth={2} />
           {active === null ? (
             <SvgText
-              x={r2(Math.min(lastPt.x, w - PAD_R - 2))}
-              y={r2(Math.max(lastPt.y - 10, 10))}
+              x={r2(Math.min(lastPt.x - 6, w - PAD_R - 2))}
+              y={r2(lastLabelY(lastPt.y, n > 1 ? pts[n - 2].y : null, PAD_T, height - PAD_B))}
               fill={palette.inkSecondary}
               textAnchor="end"
               {...AXIS_FONT}

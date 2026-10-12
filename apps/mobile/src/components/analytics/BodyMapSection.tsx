@@ -50,7 +50,9 @@ export function BodyMapSection({ sets, index, onOpenExercise }: BodyMapSectionPr
             ))}
           </View>
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>Tap a muscle for its sets</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.sm }}>
+          {/* The chips run to the card's edges (12 Oct 2026: they were cut at the card's padding,
+              "Front s", which read as a clipped word rather than a row that scrolls). */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -space.lg }} contentContainerStyle={{ gap: space.sm, paddingHorizontal: space.lg }}>
             {trained.map((m) => (
               <Chip key={m.muscle} label={`${MUSCLE_LABEL[m.muscle]} · ${fmtSets(m.sets)}`} onPress={() => setOpen(m.muscle)} />
             ))}

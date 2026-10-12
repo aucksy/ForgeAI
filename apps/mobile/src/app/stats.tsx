@@ -8,13 +8,12 @@
  */
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { BodyMapSection, ReportsCard, SectionSkeleton, StrengthSection } from '@/components/analytics';
 import { BarChart } from '@/components/charts';
-import { ChoiceRow, LinkRow, StatHeading, leavePage } from '@/components/stats/parts';
+import { LinkRow, StatHeading, leavePage } from '@/components/stats/parts';
 import { Card, Chip, EmptyState, LoadError, Screen, StatTile } from '@/components/ui';
-import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { getLatestBodyWeight } from '@/db/repos/userRepo';
 import { getAnalyticsBundle } from '@/services/analytics';
 import { addDays, tinyDate, todayISO } from '@/lib/date';
@@ -25,6 +24,7 @@ import { useUnits } from '@/lib/useUnits';
 import { chart, color, radius, space, type } from '@/theme/tokens';
 import { liftsBeatingBest } from '@/tracker/engine/headline';
 import { RECORD_LABEL } from '@/tracker/engine/records';
+import { SegmentedControl } from '@/tracker/components/SegmentedControl';
 import { changeText, durationText } from '@/tracker/engine/reports';
 import {
   STAT_GROUPS,
@@ -56,6 +56,8 @@ const GROUPINGS: { id: StatGrouping; label: string }[] = [
   { id: 'month', label: 'Month' },
 ];
 const RECENT_RECORDS = 3;
+/** What the tiles' arrows compare with: the same length of time just before (`periodPair`). */
+const BEFORE: Record<DistRange, string> = { '30d': 'the 30 days before', '3m': 'the 3 months before', '1y': 'the year before' };
 const workoutsWord = (n: number) => `${fmtInt(n)} ${n === 1 ? 'workout' : 'workouts'}`;
 
 export default function StatisticsScreen() {
@@ -135,18 +137,27 @@ export default function StatisticsScreen() {
         <BodyMapSection sets={d.weekMuscles} index={0} onOpenExercise={openExercise} />
 
         {/* 2. Sets per muscle group */}
-        <StatHeading title="Sets per muscle group" sub={win.data ? `${fmtSets(setsTotal)} ${setsTotal === 1 ? 'set' : 'sets'}` : undefined} />
+        {/* 12 Oct 2026 design pass: Week · Month is a small switch on the title row, the range a
+            segmented control, and the muscle groups (pick several) the only chips — one row that
+            scrolls to the card's edges. Three rows of orange chips left "Week · Month" alone. */}
+        <StatHeading
+          title="Sets per muscle group"
+          sub={win.data ? `${fmtSets(setsTotal)} ${setsTotal === 1 ? 'set' : 'sets'}` : undefined}
+          right={<SegmentedControl compact label="Group by" options={GROUPINGS} value={grouping} onChange={setGrouping} />}
+        />
         <Card style={{ gap: space.md }}>
-          <ChoiceRow label="Range" options={STAT_RANGES} value={range} onChange={setRange} />
-          <ChoiceRow label="Group by" options={GROUPINGS} value={grouping} onChange={setGrouping} />
-          <View
+          <SegmentedControl label="Range" options={STAT_RANGES} value={range} onChange={setRange} />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
             accessibilityLabel="Muscle groups"
-            style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm, paddingVertical: CHIP_TOUCH_SLOP, marginVertical: -CHIP_TOUCH_SLOP }}
+            style={{ marginHorizontal: -space.lg }}
+            contentContainerStyle={{ gap: space.sm, paddingHorizontal: space.lg }}
           >
             {STAT_GROUPS.map((g) => (
               <Chip key={g.id} role="checkbox" label={g.label} selected={picked.includes(g.id)} onPress={() => togglePick(g.id)} />
             ))}
-          </View>
+          </ScrollView>
           {win.state === 'error' ? (
             <LoadError what="your sets" onRetry={win.retry} />
           ) : !win.data ? (
@@ -177,7 +188,7 @@ export default function StatisticsScreen() {
         {/* 3. Muscle distribution */}
         <StatHeading title="Muscle distribution" sub="Sets this period against the one before" />
         <Card style={{ gap: space.md }}>
-          <ChoiceRow label="Period" options={DIST_RANGES} value={distRange} onChange={setDistRange} />
+          <SegmentedControl label="Period" options={DIST_RANGES} value={distRange} onChange={setDistRange} />
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
             <Legend tint={chart.series[0]} text="This period" />
             <Legend tint={color.axis} text="Before" />
@@ -199,7 +210,13 @@ export default function StatisticsScreen() {
             : null}
         </Card>
         {cur && prev ? (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md, marginTop: space.md }}>
+          // The arrows under each number say "+19": this line says against what.
+          <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted, marginTop: space.lg }}>
+            {`Last ${DIST_RANGES.find((r) => r.id === distRange)?.label.toLowerCase() ?? ''}, against ${BEFORE[distRange]}`}
+          </Text>
+        ) : null}
+        {cur && prev ? (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md, marginTop: space.sm }}>
             <Tile label="Workouts" value={fmtInt(cur.workouts)} delta={changeText(cur.workouts, prev.workouts, 'count')} />
             <Tile label="Time" value={durationText(cur.durationSec)} delta={changeText(cur.durationSec, prev.durationSec, 'pct')} />
             <Tile label={liftedWords(units, true)} value={fmtVol(cur.volumeKg, units)} delta={changeText(cur.volumeKg, prev.volumeKg, 'pct')} />

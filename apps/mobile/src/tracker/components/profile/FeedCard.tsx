@@ -2,13 +2,14 @@
  * Redesign R2 — one card of the Profile's Workouts feed, laid out like Hevy's (PLAN §3 item 6):
  * the member's photo or letter, name and full date, ⋯; the workout's name; Time · Kg lifted ·
  * Records; the first 3 exercises with their pictures in circles ("3 sets Chin Up"), then
- * "See 2 more exercises"; one share button at the bottom. No likes, no comments. The words are
- * `feedCardFacts` (PURE, tested). Tap the card → the workout.
+ * "See 2 more exercises". Share and ⋯ sit together at the top right, beside the name (12 Oct
+ * 2026: share had a row of its own at the bottom, alone in empty space). No likes, no comments.
+ * The words are `feedCardFacts` (PURE, tested). Tap the card → the workout.
  */
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { color, radius, space, type } from '@/theme/tokens';
+import { color, space, type } from '@/theme/tokens';
 import type { UnitSystem } from '@/lib/units';
 
 import type { FeedThumb, FeedItem } from '../../services/profileService';
@@ -18,6 +19,21 @@ import { Glyph } from '../TrackerGlyph';
 import { Avatar } from './Avatar';
 
 const THUMB = 40;
+const TOP_BUTTON = 48;
+
+/** One of the two round buttons at the card's top right (share, ⋯): a 48 dp target. */
+function TopButton({ glyph, label, onPress }: { glyph: 'share' | 'more'; label: string; onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => ({ width: TOP_BUTTON, height: TOP_BUTTON, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.6 : 1 })}
+    >
+      <Glyph name={glyph} size={22} color={color.inkSecondary} />
+    </Pressable>
+  );
+}
 
 function Round({ thumb, name }: { thumb: FeedThumb | undefined; name: string }) {
   return (
@@ -62,13 +78,15 @@ export const FeedCard = memo(function FeedCard({
         style={({ pressed }) => ({ gap: space.md, opacity: pressed ? 0.85 : 1 })}
       >
         {/* Who and when. */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingRight: 48 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 48, paddingRight: 2 * TOP_BUTTON - 8 }}>
           <Avatar uri={photoUri} name={name} size={40} />
           <View style={{ flex: 1 }}>
             <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
               {name}
             </Text>
-            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{f.date}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>
+              {f.date}
+            </Text>
           </View>
         </View>
 
@@ -102,33 +120,11 @@ export const FeedCard = memo(function FeedCard({
         ) : null}
       </Pressable>
 
-      {/* ⋯ top right (over the card's top row). */}
-      <Pressable
-        onPress={() => onMore(id)}
-        accessibilityRole="button"
-        accessibilityLabel={`More for ${f.title}`}
-        style={{ position: 'absolute', top: space.lg - 4, right: -8, width: 48, height: 48, alignItems: 'center', justifyContent: 'center' }}
-      >
-        <Glyph name="more" size={22} color={color.inkSecondary} />
-      </Pressable>
-
-      {/* The one bottom button: share (picture or text). */}
-      <Pressable
-        onPress={() => onShare(id)}
-        accessibilityRole="button"
-        accessibilityLabel={`Share ${f.title}`}
-        style={({ pressed }) => ({
-          width: 48,
-          height: 48,
-          marginLeft: -12,
-          borderRadius: radius.pill,
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: pressed ? 0.7 : 1,
-        })}
-      >
-        <Glyph name="share" size={22} color={color.inkSecondary} />
-      </Pressable>
+      {/* Share and ⋯, top right, centred on the name row (which is at least 48 dp tall). */}
+      <View style={{ position: 'absolute', top: space.lg, right: -8, height: TOP_BUTTON, flexDirection: 'row', alignItems: 'center' }}>
+        <TopButton glyph="share" label={`Share ${f.title}`} onPress={() => onShare(id)} />
+        <TopButton glyph="more" label={`More for ${f.title}`} onPress={() => onMore(id)} />
+      </View>
     </View>
   );
 });

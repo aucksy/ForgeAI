@@ -16,7 +16,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { MUSCLE_LABEL } from '../catalog/muscles';
 import { repsPerSide, weightIsEach, type LogType } from '../engine/logTypes';
 import { RECORD_LABEL } from '../engine/records';
-import { fmtSets } from '../engine/volume';
+import { setsText } from '../engine/volume';
 import { shownNotes } from '../lib/workoutText';
 import { supersetLabel } from '../lib/superset';
 import type { SessionSummaryData } from '../services/finishSummary';
@@ -69,14 +69,15 @@ export function WorkoutDetail({ data, onOpenExercise }: { data: SessionSummaryDa
       {/* HI-04: the workout's note (the name is the page's title). */}
       {note ? <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.ink, lineHeight: 21 }}>{note}</Text> : null}
 
-      {/* Muscle split — working sets per muscle (a bench set = 1 chest, ½ triceps). */}
+      {/* Muscle split — working sets per muscle (a bench set = 1 chest, ½ triceps). Each number
+          says "sets" (12 Oct 2026: a bare "2" beside Chest never said what it counted). */}
       {muscles.length > 0 ? (
         <View style={{ gap: space.sm }}>
           <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
             Muscle split
           </Text>
           <Card>
-            <HBarList data={muscles.map((m) => ({ label: MUSCLE_LABEL[m.muscle], value: m.sets }))} valueFormat={(v) => fmtSets(v)} />
+            <HBarList data={muscles.map((m) => ({ label: MUSCLE_LABEL[m.muscle], value: m.sets }))} valueFormat={(v) => setsText(v)} />
           </Card>
         </View>
       ) : null}

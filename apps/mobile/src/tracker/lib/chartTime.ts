@@ -57,3 +57,45 @@ export function nearestIndex(xs: readonly number[], x: number): number {
   }
   return best;
 }
+
+/**
+ * The y range and grid lines of a line chart, so that EVERY point sits between two grid lines:
+ * the padded data range is widened out to whole steps (a 105 kg low point gets a 0 line under
+ * it instead of hanging below the last line, owner's emulator, 12 Oct 2026). Never below 0 when
+ * no value is. At most 5 lines. `step` comes from the frozen `niceTicks` (passed in, so this
+ * stays a pure tracker helper). PURE.
+ */
+export function coveringTicks(lo: number, hi: number, stepOf: (lo: number, hi: number) => number, dataMin: number): { lo: number; hi: number; ticks: number[] } {
+  let a = dataMin >= 0 ? Math.max(0, lo) : lo;
+  let b = hi > a ? hi : a + 1;
+  let step = stepOf(a, b);
+  if (!(step > 0) || !Number.isFinite(step)) step = (b - a) / 3 || 1;
+  let from = Math.floor(a / step + 1e-9) * step;
+  let to = Math.ceil(b / step - 1e-9) * step;
+  while ((to - from) / step > 4.0001) {
+    step *= 2;
+    from = Math.floor(a / step + 1e-9) * step;
+    to = Math.ceil(b / step - 1e-9) * step;
+  }
+  if (to <= from) to = from + step;
+  const ticks: number[] = [];
+  for (let v = from; v <= to + step * 1e-6; v += step) ticks.push(Math.round(v * 1000) / 1000);
+  a = ticks[0];
+  b = ticks[ticks.length - 1];
+  return { lo: a, hi: b, ticks };
+}
+
+/**
+ * Where the latest value's label sits: on the side of the last dot AWAY from the line that
+ * runs into it (below a dot the line falls onto, above a dot it climbs to), kept inside the
+ * plot. The old label always sat above and was struck through by a falling line. PURE.
+ */
+export function lastLabelY(lastY: number, prevY: number | null, top: number, bottom: number): number {
+  const above = lastY - 10;
+  const below = lastY + 16;
+  const fallingIn = prevY != null && prevY < lastY - 0.5;
+  let y = fallingIn ? below : above;
+  if (y > bottom - 2) y = above;
+  if (y < top + 10) y = below;
+  return Math.max(top + 10, Math.min(bottom - 2, y));
+}

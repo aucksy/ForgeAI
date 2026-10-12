@@ -7,7 +7,7 @@
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { EmptyState, LoadError, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
@@ -15,7 +15,7 @@ import { goBack } from '@/lib/goBack';
 import { navigateOnce } from '@/lib/guardedAction';
 import { useLoad } from '@/lib/useLoad';
 import { useUnits } from '@/lib/useUnits';
-import { color, radius, space } from '@/theme/tokens';
+import { color, radius, space, type } from '@/theme/tokens';
 
 import type { Folder } from '@/tracker/db/folderRepo';
 import { useWorkoutActions } from '@/tracker/lib/useWorkoutActions';
@@ -119,9 +119,9 @@ export default function SessionDetailScreen() {
 
   return (
     <Screen
-      title={title}
-      // HI-15 / Hevy: the day and the time it started. HI-19: an easy-week workout says so.
-      subtitle={data ? `${detailWhen(data.session.dateISO, data.session.startedAt)}${data.easyWeek ? ' · Easy week' : ''}` : undefined}
+      // 12 Oct 2026 design pass: a compact top bar (back · share · ⋯) and the workout's name on its
+      // own full-width row under it. Beside two big round buttons a name like "Night workout"
+      // broke onto two cramped lines.
       right={
         data ? (
           <View style={{ flexDirection: 'row', gap: space.sm }}>
@@ -139,6 +139,15 @@ export default function SessionDetailScreen() {
         </View>
       ) : data ? (
         <View style={{ gap: space.lg }}>
+          <View style={{ marginTop: -space.sm }}>
+            <Text accessibilityRole="header" style={{ fontFamily: type.display, fontSize: type.size.h1, color: color.ink, letterSpacing: -0.5 }}>
+              {title}
+            </Text>
+            {/* HI-15 / Hevy: the day and the time it started. HI-19: an easy-week workout says so. */}
+            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginTop: 3 }}>
+              {`${detailWhen(data.session.dateISO, data.session.startedAt)}${data.easyWeek ? ' · Easy week' : ''}`}
+            </Text>
+          </View>
           <InlineError message={actionError} />
           <WorkoutDetail
             data={data}

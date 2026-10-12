@@ -1,23 +1,29 @@
 /**
- * The exercise page's Summary chart, as Hevy's (redesign R5): the latest number (or the point
- * under a finger) big at the top, the chart, then the chips for what it shows — the right ones
- * for how the exercise is logged (`exerciseChart.chartMetrics`) — and the range: 3 months · Year ·
- * All time. It opens on 3 months, or the smallest range with something in it.
+ * The exercise page's Summary chart, as Hevy's (redesign R5): what it shows as ONE control
+ * ("Heaviest weight ⌄", which opens a sheet of the choices for how the exercise is logged —
+ * `exerciseChart.chartMetrics`), the latest number (or the point under a finger) big with its
+ * day, the chart, then the range as a segmented control: 3 months · Year · All time. It opens on
+ * 3 months, or the smallest range with something in it.
+ *
+ * 12 Oct 2026 design pass (owner's emulator): the five choices were chips that wrapped 2 + 2 + 1
+ * and left "Total reps" alone on a row, and the range chips looked exactly like them. One point
+ * per day now (`bestPerDay`): two workouts on one day drew a cliff straight down.
  */
 import { useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { ChoiceRow } from '@/components/stats/parts';
 import { Card } from '@/components/ui';
 import { tinyDateWithYear, todayISO } from '@/lib/date';
 import { fmtCompact, trimNum } from '@/lib/format';
+import { tap } from '@/lib/haptics';
 import { chart, color, motion, space, type } from '@/theme/tokens';
 import type { ExerciseHistoryEntry } from '@/tracker/db/exerciseHistory';
 import type { DistUnit, LogType } from '@/tracker/engine/logTypes';
 import { fmtDuration } from '@/tracker/engine/logTypes';
 import type { BestSetPoint } from '@/tracker/services/exerciseAnalytics';
 import {
+  bestPerDay,
   CHART_RANGES,
   chartMetrics,
   metricLabel,
@@ -32,6 +38,9 @@ import {
 import type { UnitSystem } from '@/types/models';
 
 import { DateLineChart } from './DateLineChart';
+import { SegmentedControl } from './SegmentedControl';
+import { Glyph } from './TrackerGlyph';
+import { SheetRow, TrackerSheet } from './TrackerSheet';
 
 export interface ExerciseMetricChartProps {
   /** Newest first, volume by the one rule (the page's history). */
@@ -52,38 +61,55 @@ export function ExerciseMetricChart({ history, bestSet, shownAs, cardio = false,
   const today = todayISO();
   const [range, setRange] = useState<ChartRange>(() => openingRange(history.map((h) => h.dateISO), today));
   const [inspect, setInspect] = useState<{ x: string; y: number } | null>(null);
+  const [picking, setPicking] = useState(false);
 
-  const all = useMemo(() => metricSeries(metric, history, bestSet, units, distUnit), [metric, history, bestSet, units, distUnit]);
+  const all = useMemo(() => bestPerDay(metric, metricSeries(metric, history, bestSet, units, distUnit)), [metric, history, bestSet, units, distUnit]);
   const data = useMemo(() => pointsInRange(all, range, today), [all, range, today]);
   const shown = inspect ?? data[data.length - 1] ?? null;
   const unit = metricUnit(metric);
   const yFormat = (n: number): string => (unit === 'seconds' ? fmtDuration(n) : unit === 'weight' && n >= 10_000 ? fmtCompact(n) : trimNum(n));
 
+  const words = (m: ChartMetric): string => metricLabel(m, units, { shownAs, cardio });
+  const shownLabel = words(metric);
+
   return (
     <Animated.View entering={FadeInDown.duration(motion.slow).delay(80)} style={{ gap: space.md }}>
       <Card>
-        <View accessible accessibilityLabel={shown ? `${metricLabel(metric, units, { shownAs, cardio })}: ${metricValueText(metric, shown.y, units, distUnit)}, ${tinyDateWithYear(shown.x)}` : undefined} style={{ marginBottom: space.sm }}>
-          <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h2, color: color.ink }}>
+        {/* What the chart shows: one control, the choices in a sheet (Hevy's dropdown). */}
+        {metrics.length > 1 ? (
+          <Pressable
+            onPress={() => {
+              tap();
+              setPicking(true);
+            }}
+            // The words alone, so a test or a screen reader finds "Heaviest weight" as it reads.
+            accessibilityRole="button"
+            accessibilityLabel={shownLabel}
+            accessibilityHint="Changes what the chart shows"
+            hitSlop={4}
+            style={({ pressed }) => ({ alignSelf: 'flex-start', maxWidth: '100%', minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 4, opacity: pressed ? 0.7 : 1 })}
+          >
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ flexShrink: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.accent }}>
+              {shownLabel}
+            </Text>
+            <Glyph name="chevron-down" size={18} color={color.accent} />
+          </Pressable>
+        ) : (
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.inkSecondary, marginBottom: space.xs }}>{shownLabel}</Text>
+        )}
+        <View accessible accessibilityLabel={shown ? `${shownLabel}: ${metricValueText(metric, shown.y, units, distUnit)}, ${tinyDateWithYear(shown.x)}` : undefined} style={{ marginBottom: space.sm }}>
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontFamily: type.monoBold, fontSize: type.size.h2, color: color.ink }}>
             {shown ? metricValueText(metric, shown.y, units, distUnit) : '—'}
           </Text>
           <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
-            {shown ? `${metricLabel(metric, units, { shownAs, cardio })} · ${tinyDateWithYear(shown.x)}` : 'Nothing in this range yet'}
+            {shown ? tinyDateWithYear(shown.x) : 'Nothing in this range yet'}
           </Text>
         </View>
         {data.length > 0 ? (
           <DateLineChart data={data} height={200} color={chart.series[0]} fillGradient yFormat={yFormat} onInspect={setInspect} />
         ) : null}
       </Card>
-      <ChoiceRow
-        label="What the chart shows"
-        options={metrics.map((m) => ({ id: m, label: metricLabel(m, units, { shownAs, cardio }) }))}
-        value={metric}
-        onChange={(m) => {
-          setInspect(null);
-          setPicked(m);
-        }}
-      />
-      <ChoiceRow
+      <SegmentedControl
         label="Range"
         options={CHART_RANGES}
         value={range}
@@ -92,6 +118,23 @@ export function ExerciseMetricChart({ history, bestSet, shownAs, cardio = false,
           setRange(r);
         }}
       />
+      <TrackerSheet visible={picking} title="Chart shows" onClose={() => setPicking(false)}>
+        <View style={{ gap: 2 }}>
+          {metrics.map((m) => (
+            <SheetRow
+              key={m}
+              label={words(m)}
+              selected={m === metric}
+              onPress={() => {
+                setPicking(false);
+                if (m === metric) return;
+                setInspect(null);
+                setPicked(m);
+              }}
+            />
+          ))}
+        </View>
+      </TrackerSheet>
     </Animated.View>
   );
 }

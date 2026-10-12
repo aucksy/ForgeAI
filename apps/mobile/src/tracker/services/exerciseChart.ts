@@ -198,6 +198,26 @@ export function metricSeries(
   return out;
 }
 
+/**
+ * One point per day: the day's best for the chip (the least help for an assisted lift, the most
+ * for every other chip). Two workouts on one day (a morning 300 kg test and an evening 105 kg
+ * back-off) used to be two points a few pixels apart, which the chart drew as a cliff straight
+ * down (owner's emulator, 12 Oct 2026). Points arrive oldest first and leave oldest first. PURE.
+ */
+export function bestPerDay(m: ChartMetric, points: readonly { x: string; y: number }[]): { x: string; y: number }[] {
+  const lowerIsBetter = m === 'leastHelp';
+  const out: { x: string; y: number }[] = [];
+  for (const p of points) {
+    const last = out[out.length - 1];
+    if (last && last.x === p.x) {
+      if (lowerIsBetter ? p.y < last.y : p.y > last.y) out[out.length - 1] = { x: p.x, y: p.y };
+    } else {
+      out.push({ x: p.x, y: p.y });
+    }
+  }
+  return out;
+}
+
 /** The first day a range shows (null = all time). PURE. */
 export function rangeStart(range: ChartRange, today: string): string | null {
   if (range === '3m') return addDays(today, -90);

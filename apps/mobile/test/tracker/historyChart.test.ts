@@ -83,12 +83,12 @@ describe('the big number, its period, and tapping a bar', () => {
     expect(shownBar([], null)).toBe(-1);
   });
 
-  it('periods read like the app’s dates, with the year when it isn’t this year', () => {
+  it('periods read like the app’s dates: a week with the year when it isn’t this year, a month always with its year', () => {
     const w = chartBuckets('weeks', TODAY, null);
     expect(chartPeriodText(w[11], TODAY)).toBe('5–11 Oct');
     expect(chartPeriodText({ ...w[0], start: '2026-09-28', end: '2026-10-04' }, TODAY)).toBe('28 Sep–4 Oct');
     const m = chartBuckets('year', TODAY, null);
-    expect(chartPeriodText(m[11], TODAY)).toBe('Oct');
+    expect(chartPeriodText(m[11], TODAY)).toBe('Oct 2026');
     expect(chartPeriodText(m[0], TODAY)).toBe('Nov 2025');
     expect(chartXText(m[0])).toBe("Nov '25");
     expect(chartXText(w[11])).toBe('5 Oct');

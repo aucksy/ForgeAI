@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { leavePage } from '@/components/stats/parts';
-import { EmptyState, GhostButton, Icon, IconButton, LoadError, Screen, Sheet, Skeleton, StatTile } from '@/components/ui';
+import { EmptyState, GhostButton, Icon, IconButton, LoadError, Screen, Sheet, Skeleton, type IconName } from '@/components/ui';
 import { dateWithYear, todayISO } from '@/lib/date';
 import { streakText } from '@/lib/streak';
 import { useLoad } from '@/lib/useLoad';
@@ -96,14 +96,32 @@ export default function CalendarScreen() {
   const top = (
     <View style={{ gap: space.lg, paddingBottom: space.lg, paddingHorizontal: space.screenX }}>
       {data.data ? (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
-          <View style={{ flexGrow: 1, flexBasis: '45%', minWidth: 150 }}>
-            {/* D9: the app's one streak (weeks in a row) and its one label. */}
-            <StatTile label="Streak" value={streakText(data.data.streak.weeks)} icon="flame" />
-          </View>
-          <View style={{ flexGrow: 1, flexBasis: '45%', minWidth: 150 }}>
-            <StatTile label="Rest days" value={data.data.streak.restDays} icon="calendar" />
-          </View>
+        // 12 Oct 2026 design pass: two cards of one height in one row at any font size — a number,
+        // a small unit beside it and one line saying what it counts. "6 weeks in a row" used to
+        // wrap and make Streak taller than Rest days, and "Rest days 0" never said since when.
+        <View style={{ flexDirection: 'row', gap: space.md }}>
+          {/* D9: the app's one streak (weeks in a row) and its one label. */}
+          <CountCard
+            label="Streak"
+            icon="flame"
+            value={String(data.data.streak.weeks)}
+            unit={data.data.streak.weeks === 1 ? 'week' : 'weeks'}
+            caption="in a row"
+            spoken={`Streak: ${streakText(data.data.streak.weeks)}`}
+          />
+          {/* Days since the last workout (history.getWeekStreak's restDays). */}
+          {data.data.first ? (
+            <CountCard
+              label="Rest days"
+              icon="calendar"
+              value={String(data.data.streak.restDays)}
+              unit={data.data.streak.restDays === 1 ? 'day' : 'days'}
+              caption="since last workout"
+              spoken={`Rest days: ${restDaysText(data.data.streak.restDays)}`}
+            />
+          ) : (
+            <CountCard label="Rest days" icon="calendar" value="—" unit="" caption="no workouts yet" spoken="Rest days: no workouts yet" />
+          )}
         </View>
       ) : null}
       <Toggle mode={mode} onMode={setMode} />
@@ -203,6 +221,39 @@ export default function CalendarScreen() {
   );
 }
 
+const restDaysText = (n: number): string => `${n} ${n === 1 ? 'day' : 'days'} since your last workout`;
+
+/**
+ * One of the two cards at the top: label and icon, then the number big with its unit small
+ * beside it, then one quiet line. Every line stays one line (it shrinks to fit at a large font),
+ * and the two cards share the row's height.
+ */
+function CountCard({ label, icon, value, unit, caption, spoken }: { label: string; icon: IconName; value: string; unit: string; caption: string; spoken: string }) {
+  return (
+    <View
+      accessible
+      accessibilityLabel={spoken}
+      style={{ flex: 1, minWidth: 0, padding: space.lg, gap: space.xs, borderRadius: radius.lg, backgroundColor: color.surface, borderWidth: 1, borderColor: color.border }}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.xs }}>
+        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+          {label}
+        </Text>
+        <View style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
+          <Icon name={icon} size={14} color={color.accent} />
+        </View>
+      </View>
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontFamily: type.monoBold, fontSize: type.size.h1, color: color.ink }}>
+        {value}
+        {unit ? <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.inkSecondary }}>{` ${unit}`}</Text> : null}
+      </Text>
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
+        {caption}
+      </Text>
+    </View>
+  );
+}
+
 function Toggle({ mode, onMode }: { mode: View_; onMode: (m: View_) => void }) {
   return (
     <View
@@ -241,10 +292,16 @@ function MonthBlock({ ym, days, today, onDay }: { ym: string; days: Record<strin
   const total = monthTotal(days, ym);
   return (
     <View style={{ paddingHorizontal: space.sm, paddingBottom: space.xl }}>
-      <Text accessibilityRole="header" style={{ paddingHorizontal: space.md, marginBottom: space.sm, fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-        {monthTitle(ym)}
-        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{`  ·  ${workoutsLine(total)}`}</Text>
-      </Text>
+      {/* The month, then its count on its own line: at a large font "· 19" no longer leaves
+          "workouts" alone on a second line. One heading for a screen reader. */}
+      <View accessible accessibilityRole="header" accessibilityLabel={`${monthTitle(ym)} · ${workoutsLine(total)}`} style={{ paddingHorizontal: space.md, marginBottom: space.sm }}>
+        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
+          {monthTitle(ym)}
+        </Text>
+        <Text numberOfLines={1} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted, marginTop: 2 }}>
+          {workoutsLine(total)}
+        </Text>
+      </View>
       <View style={{ flexDirection: 'row' }} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
         {HEAD.map((h, i) => (
           <Text key={i} style={{ flex: 1, textAlign: 'center', fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>

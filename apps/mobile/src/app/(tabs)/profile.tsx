@@ -332,9 +332,8 @@ export default function ProfileScreen() {
 
       <DashboardTiles onOpen={onTile} />
 
-      <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.inkMuted }}>
-        Workouts
-      </Text>
+      {/* 12 Oct 2026: no "Workouts" heading over the feed — the first month line ("October ·
+          12 workouts") already heads it, and the two stacked with a gap. */}
       {feedStatus === 'loading' && items.length === 0 ? (
         <View style={{ gap: space.md }}>
           {[0, 1].map((i) => (

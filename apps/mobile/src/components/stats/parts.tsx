@@ -24,8 +24,12 @@ export function leavePage(router: Nav, fallback: Href = '/profile'): void {
   else router.replace(fallback);
 }
 
-/** A section title in Hevy's style, with an optional action on the right ("See all"). */
-export function StatHeading({ title, action, sub }: { title: string; sub?: string; action?: { label: string; onPress: () => void; spoken?: string } }) {
+/**
+ * A section title in Hevy's style, with an optional action on the right ("See all") or any small
+ * control (`right`: Statistics' Week · Month). The ONE section-title look of the Profile pages
+ * (white, semibold, 17): Profile's Dashboard, the workout page's Muscle split and these.
+ */
+export function StatHeading({ title, action, sub, right }: { title: string; sub?: string; action?: { label: string; onPress: () => void; spoken?: string }; right?: ReactNode }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: space.sm, marginTop: space.xl, marginBottom: space.md }}>
       <View style={{ flex: 1, minWidth: 140 }}>
@@ -45,6 +49,7 @@ export function StatHeading({ title, action, sub }: { title: string; sub?: strin
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>{action.label}</Text>
         </PressScale>
       ) : null}
+      {right}
     </View>
   );
 }

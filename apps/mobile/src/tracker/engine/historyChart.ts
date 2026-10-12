@@ -179,14 +179,16 @@ const mon = (iso: string) => MON[Number(iso.slice(5, 7)) - 1];
  */
 export function chartPeriodText(b: ChartBar, today: string): string {
   const year = b.end.slice(0, 4) !== today.slice(0, 4) ? ` ${b.end.slice(0, 4)}` : '';
-  if (b.kind === 'month') return `${mon(b.start)}${year}`;
+  // A month always says its year: on Year and All time the bars run across years, and a bare
+  // "Oct" under the big number could be any October (12 Oct 2026 design pass).
+  if (b.kind === 'month') return `${mon(b.start)} ${b.start.slice(0, 4)}`;
   const same = b.start.slice(0, 7) === b.end.slice(0, 7);
   return same ? `${day(b.start)}–${day(b.end)} ${mon(b.end)}${year}` : `${day(b.start)} ${mon(b.start)}–${day(b.end)} ${mon(b.end)}${year}`;
 }
 
 /**
  * The line under the big number, saying exactly what it counts: "Kg lifted in Jan 2023 · 19
- * workouts", "Time trained in 5–11 Oct · 3 workouts", "Reps in Oct · 1 workout". The owner read
+ * workouts", "Time trained in 5–11 Oct · 3 workouts", "Reps in Oct 2026 · 1 workout". The owner read
  * "1,67,252 kg  Jan 2023" as an all-time total; it was one month (12 Oct 2026). PURE.
  */
 export function chartCaptionText(b: ChartBar, metric: ChartMetric, units: UnitSystem, today: string): string {
