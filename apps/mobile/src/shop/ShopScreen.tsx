@@ -22,7 +22,7 @@ import { SHOP_CATEGORIES, getCatalog } from './catalog';
 import { JOIN_CODE_LENGTH, cleanJoinCode } from './gym';
 import { joinGym, leaveGym, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
-import { bagBadgeCount, cardPriceText, isOutOfStock } from './money';
+import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { ProductPicture } from './ProductPicture';
 import { BagButton, DEMO_SHOP_LINE, DemoNote, MyOrdersRow, QuietLine, shopInputStyle } from './ShopParts';
 import { useGymHydrated } from './shopSource';
@@ -333,13 +333,17 @@ function ProductGrid({
       ) : null}
 
       <View style={{ marginTop: chips.length > 1 ? space.md - CHIP_TOUCH_SLOP : space.lg, gap }}>
-        {rows.map((row) => (
-          <View key={row.map((p) => p.id).join('|')} style={{ flexDirection: 'row', gap, alignItems: 'stretch' }}>
-            {row.map((p) => (
-              <ProductCard key={p.id} product={p} width={cardW} onPress={() => onOpen(p.id)} />
-            ))}
-          </View>
-        ))}
+        {rows.map((row) => {
+          // A row with a sold-out card keeps the stock line's room in both, so the prices line up.
+          const stockLine = row.some(isOutOfStock);
+          return (
+            <View key={row.map((p) => p.id).join('|')} style={{ flexDirection: 'row', gap, alignItems: 'stretch' }}>
+              {row.map((p) => (
+                <ProductCard key={p.id} product={p} width={cardW} stockLine={stockLine} onPress={() => onOpen(p.id)} />
+              ))}
+            </View>
+          );
+        })}
         {shown.length === 0 ? (
           <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.inkMuted, textAlign: 'center', marginTop: space.xl }}>{emptyText}</Text>
         ) : null}
@@ -348,7 +352,13 @@ function ProductGrid({
   );
 }
 
-function ProductCard({ product, width, onPress }: { product: Product; width: number; onPress: () => void }) {
+/**
+ * One card of the grid. Both cards in a row are the row's height (the row stretches them; the
+ * card's surface grows to fill — PressScale puts the style on its inner view, so it needs the
+ * flexGrow), the name sits under the picture and the price is pinned to the card's foot, so two
+ * cards side by side line up at any font size even when one name takes two lines.
+ */
+function ProductCard({ product, width, stockLine, onPress }: { product: Product; width: number; stockLine: boolean; onPress: () => void }) {
   const out = isOutOfStock(product);
   const price = cardPriceText(product);
   return (
@@ -358,6 +368,7 @@ function ProductCard({ product, width, onPress }: { product: Product; width: num
       accessibilityRole="button"
       accessibilityLabel={`${product.name}, ${price}${out ? ', out of stock' : ''}`}
       style={{
+        flexGrow: 1,
         width,
         borderRadius: radius.lg,
         backgroundColor: color.surface,
@@ -369,10 +380,21 @@ function ProductCard({ product, width, onPress }: { product: Product; width: num
       <View style={{ opacity: out ? 0.55 : 1 }}>
         <ProductPicture kind={product.art.kind} tint={product.art.tint} size={width - space.sm * 2} imageUrl={product.imageUrl} />
       </View>
-      <View style={{ paddingHorizontal: space.xs, paddingTop: space.sm, paddingBottom: space.xs, gap: 4 }}>
-        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>{product.name}</Text>
-        <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: out ? color.inkMuted : color.ink }}>{price}</Text>
-        {out ? <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted }}>Out of stock</Text> : null}
+      <View style={{ flexGrow: 1, paddingHorizontal: space.xs, paddingTop: space.sm, paddingBottom: space.xs, gap: 4 }}>
+        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>{displayName(product.name)}</Text>
+        <View style={{ marginTop: 'auto', gap: 4 }}>
+          <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: out ? color.inkMuted : color.ink }}>{price}</Text>
+          {stockLine ? (
+            // Kept (empty) on the in-stock card beside a sold-out one: same height, prices level.
+            <Text
+              accessibilityElementsHidden={!out}
+              importantForAccessibility={out ? 'auto' : 'no-hide-descendants'}
+              style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted }}
+            >
+              {out ? 'Out of stock' : ' '}
+            </Text>
+          ) : null}
+        </View>
       </View>
     </PressScale>
   );

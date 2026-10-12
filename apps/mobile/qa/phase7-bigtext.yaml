@@ -218,8 +218,9 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 30000
 - tapOn: 'Whey protein 1 kg, .*'
+# The title writes "1 kg" with a no-break space (never "1" / "kg" on two lines): "." matches it.
 - extendedWaitUntil:
-    visible: "^Whey protein 1 kg$"
+    visible: '^Whey protein 1.kg$'
     timeout: 20000
 - waitForAnimationToEnd:
     timeout: 3000

@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { EMPTY_GYM_BLOB, cleanGymBlob, upsertOrder, type GymBlob } from './gym';
+import { EMPTY_GYM_BLOB, cleanGymBlob, upsertOrder, type GymBlob, type OrderFlash } from './gym';
 import { addToBag, removeLine, setLineQty } from './money';
 import type { BagLine, GymLink, GymOrder, Product } from './types';
 
@@ -23,8 +23,8 @@ export interface GymShopState extends GymBlob {
   sampleOpen: boolean;
   /** A line for the join card (the gym no longer knows this phone). Not saved. */
   notice: string | null;
-  /** "Order 12 placed…" for My orders to show once. Not saved. */
-  flash: string | null;
+  /** "Order 12 placed…" for My orders to show once, with the order it is about. Not saved. */
+  flash: OrderFlash | null;
   setLink: (link: GymLink) => void;
   /** Forget the gym on this phone: link, lists and bag. */
   unlink: (notice?: string | null) => void;
@@ -38,7 +38,7 @@ export interface GymShopState extends GymBlob {
   setBag: (bag: BagLine[]) => void;
   setSampleOpen: (open: boolean) => void;
   setNotice: (notice: string | null) => void;
-  setFlash: (flash: string | null) => void;
+  setFlash: (flash: OrderFlash | null) => void;
 }
 
 export const useGymShop = create<GymShopState>()(

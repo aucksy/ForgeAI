@@ -267,3 +267,16 @@ export function picturesOf(product: Product): { key: string; tint: string; optio
   }
   return out.length > 0 ? out : [{ key: 'main', tint: product.art.tint, optionId: null }];
 }
+
+const NBSP = String.fromCharCode(0xa0);
+/** A number and its unit: "1 kg", "700 ml", "60 caps" (the space, or spaces, between them). */
+const NUMBER_UNIT = /(\d) +(kg|g|mg|mcg|ml|l|lb|lbs|oz|cm|mm|m|pcs|pc|caps|tabs|servings|scoops)(?![A-Za-z])/gi;
+
+/**
+ * A product name for the screen: the space between a number and its unit becomes a non-breaking
+ * one, so a large font never wraps "Whey protein 1" away from "kg". Display only — the name sent
+ * to the gym's server, and every TalkBack label, keep the plain name. PURE.
+ */
+export function displayName(name: string): string {
+  return name.replace(NUMBER_UNIT, `$1${NBSP}$2`);
+}

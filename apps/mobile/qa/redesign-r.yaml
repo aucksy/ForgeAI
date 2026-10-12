@@ -11,7 +11,8 @@
 #  3. Settings (R6): the list and 3 pages (Units, Workouts, About); Edit profile.
 #  4. Shop (S2, the gym's real shop on the LIVE server): the join card, join the test gym FORGE1 as
 #     "QA Member", its products, the shaker, Add to bag, the Bag, Place order, "Order N placed",
-#     My orders (Ordered), Cancel order (Cancelled by you), Leave; then the sample shop (S1 demo).
+#     My orders (Ordered: "The gym is getting it ready"), Cancel order ("You cancelled this order",
+#     the placed line gone), Leave; then the sample shop (S1 demo).
 # Saves no workout (part M reads its count afresh). The chart's chip and range are put back to
 # Kg/Lb lifted and Last 12 weeks. The one gym order placed is cancelled (its stock goes back) and
 # the phone leaves the gym, so the Shop ends on the join card.
@@ -451,8 +452,10 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 20000
 - tapOn: 'Shaker bottle 700 ml, .*'
+# The product page writes "700 ml" with a no-break space (the number never wraps from its unit),
+# so the title is matched with "." there; the grid card's spoken label keeps the plain name.
 - extendedWaitUntil:
-    visible: "^Shaker bottle 700 ml$"
+    visible: '^Shaker bottle 700.ml$'
     timeout: 15000
 - takeScreenshot: r-22-shop-product
 - scrollUntilVisible:
@@ -488,10 +491,12 @@ appId: com.forgeai.app
     visible: 'Order \d+ placed\. Pay at the desk when you collect it\.'
     timeout: 45000
 - assertVisible: "^My orders$"
+# The pill says "Ordered"; the line under it only adds what the pill does not (never the word again).
 - extendedWaitUntil:
-    visible: "Ordered — the gym is getting it ready"
+    visible: "^The gym is getting it ready$"
     timeout: 20000
-- assertVisible: '\d+ × Shaker bottle 700 ml'
+- assertNotVisible: 'Ordered — .*'
+- assertVisible: '\d+ × Shaker bottle 700.ml'
 - takeScreenshot: r-24-my-orders
 # Cancel it: the app's own question; its red "Cancel order" is the one under its title (the
 # order card's own "Cancel order" sits behind the sheet).
@@ -509,12 +514,14 @@ appId: com.forgeai.app
     below:
       text: 'Cancel this order\?'
 - extendedWaitUntil:
-    visible: "Cancelled by you"
+    visible: "^You cancelled this order$"
     timeout: 45000
 # A cancelled order can no longer be cancelled (its button goes once the sheet has slid away).
 - extendedWaitUntil:
     notVisible: "Cancel order"
     timeout: 10000
+# The green "Order N placed" line is gone once its order is cancelled (it sat over the Cancelled card).
+- assertNotVisible: 'Order \d+ placed.*'
 - takeScreenshot: r-26-order-cancelled
 # My orders replaced the Bag, so Back may land on the product page first, then the Shop.
 - back

@@ -11,6 +11,7 @@ import {
   cardPriceText,
   clampQty,
   defaultOptionId,
+  displayName,
   isOutOfStock,
   leftAfterOrder,
   lineKey,
@@ -255,5 +256,26 @@ describe('the demo catalog', () => {
     const whey = findProduct(all, 'whey-1kg') as Product;
     expect(picturesOf(whey).map((p) => p.optionId)).toEqual(['chocolate', 'vanilla']);
     expect(picturesOf(findProduct(all, 'towel') as Product)).toHaveLength(1);
+  });
+});
+
+describe('product names on screen', () => {
+  const NB = String.fromCharCode(0xa0);
+  it('a number keeps its unit on the same line', () => {
+    expect(displayName('Whey protein 1 kg')).toBe(`Whey protein 1${NB}kg`);
+    expect(displayName('Shaker bottle 700 ml')).toBe(`Shaker bottle 700${NB}ml`);
+    expect(displayName('Creatine 250 g, 60 caps')).toBe(`Creatine 250${NB}g, 60${NB}caps`);
+    expect(displayName('Mass gainer 3 KG')).toBe(`Mass gainer 3${NB}KG`);
+  });
+  it('leaves everything else alone', () => {
+    expect(displayName('Protein bars, box of 12')).toBe('Protein bars, box of 12');
+    expect(displayName('Gym T-shirt 2 large')).toBe('Gym T-shirt 2 large');
+    expect(displayName('Towel')).toBe('Towel');
+  });
+  it('on every catalog name only the spaces change', () => {
+    for (const p of getCatalog()) {
+      const shown = displayName(p.name);
+      expect(shown.replace(new RegExp(NB, 'g'), ' ')).toBe(p.name);
+    }
   });
 });

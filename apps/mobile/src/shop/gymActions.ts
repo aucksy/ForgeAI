@@ -122,7 +122,7 @@ export async function placeGymOrder(): Promise<PlaceOutcome> {
   const sent = new Set(lines.map((l) => `${l.productId}::${l.optionId ?? ''}`));
   after.setBag(after.bag.filter((l) => !sent.has(`${l.productId}::${l.optionId ?? ''}`)));
   after.putOrder(r.data);
-  after.setFlash(orderPlacedText(r.data.orderNo));
+  after.setFlash({ orderId: r.data.id, text: orderPlacedText(r.data.orderNo) });
   void refreshProducts();
   return { ok: true, order: r.data };
 }

@@ -15,6 +15,7 @@ import {
   cleanGymBlob,
   cleanJoinCode,
   cleanMemberName,
+  gymPayText,
   gymStatusBadge,
   gymStatusText,
   joinErrorText,
@@ -30,6 +31,7 @@ import {
   productsFromRows,
   refreshErrorText,
   upsertOrder,
+  visibleFlash,
 } from '@/shop/gym';
 import { addToBag, lineKey, priceBag } from '@/shop/money';
 import type { BagLine, GymOrder } from '@/shop/types';
@@ -349,13 +351,41 @@ describe('an order call the app stopped waiting for', () => {
 describe('order words', () => {
   const o = (status: GymOrder['status'], cancelledBy: GymOrder['cancelledBy'] = null) => ({ status, cancelledBy });
 
-  it('each status in a sentence', () => {
-    expect(gymStatusText(o('ordered'))).toBe('Ordered — the gym is getting it ready');
-    expect(gymStatusText(o('ready'))).toBe('Ready — collect it at the desk');
-    expect(gymStatusText(o('collected'))).toBe('Collected');
-    expect(gymStatusText(o('cancelled', 'member'))).toBe('Cancelled by you');
-    expect(gymStatusText(o('cancelled', 'gym'))).toBe('Cancelled by the gym');
+  it('each status in a sentence that adds to the pill', () => {
+    expect(gymStatusText(o('ordered'))).toBe('The gym is getting it ready');
+    expect(gymStatusText(o('ready'))).toBe('Collect it at the desk');
+    expect(gymStatusText(o('collected'))).toBeNull();
+    expect(gymStatusText(o('cancelled', 'member'))).toBe('You cancelled this order');
+    expect(gymStatusText(o('cancelled', 'gym'))).toBe('The gym cancelled this order');
     expect(gymStatusBadge(o('ready'))).toBe('Ready');
+  });
+
+  it('the sentence never repeats the pill word (the owner saw "Ordered" twice on one card)', () => {
+    for (const status of ['ordered', 'ready', 'collected', 'cancelled'] as const) {
+      for (const by of ['member', 'gym', null] as const) {
+        const pill = gymStatusBadge(o(status, by)).toLowerCase();
+        const line = (gymStatusText(o(status, by)) ?? '').toLowerCase();
+        // "Ordered — the gym is…", "Cancelled by you": the pill's word again at the head. (Who
+        // cancelled is new information, so "You cancelled this order" is fine.)
+        expect(line.startsWith(pill), `${status}/${by}: "${line}"`).toBe(false);
+      }
+    }
+  });
+
+  it('the pay line shows only while the order is still to be collected', () => {
+    expect(gymPayText(o('ordered'))).toBe('Pay at the desk when you collect it.');
+    expect(gymPayText(o('ready'))).toBe('Pay when you collect it.');
+    expect(gymPayText(o('collected'))).toBeNull();
+    expect(gymPayText(o('cancelled'))).toBeNull();
+  });
+
+  it('the green "placed" line goes once its order is no longer Ordered', () => {
+    const flash = { orderId: 'a', text: orderPlacedText(3) };
+    expect(visibleFlash(flash, [{ id: 'a', status: 'ordered' }])).toBe(flash.text);
+    expect(visibleFlash(flash, [{ id: 'a', status: 'cancelled' }])).toBeNull();
+    expect(visibleFlash(flash, [{ id: 'a', status: 'ready' }])).toBeNull();
+    expect(visibleFlash(flash, [{ id: 'b', status: 'ordered' }])).toBeNull();
+    expect(visibleFlash(null, [{ id: 'a', status: 'ordered' }])).toBeNull();
   });
 
   it('the member cancels only while Ordered', () => {

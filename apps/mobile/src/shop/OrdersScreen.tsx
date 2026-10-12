@@ -1,11 +1,11 @@
 /**
  * My orders, newest first, each with its items, total, status and when it was placed.
  *  - Joined (S2): the gym's own record (member_orders), fetched when the page opens, on pull, and
- *    every 10 s while it is open — so "Ready — collect it at the desk" arrives while the member
- *    looks. Cancel only while Ordered (the server's rule); after that it is the desk's call.
+ *    every 10 s while it is open — so Ready ("Collect it at the desk") arrives while the member
+ *    looks. The pill says the state; the sentence under it only adds what the pill does not. Cancel only while Ordered (the server's rule); after that it is the desk's call.
  *  - Sample shop (S1): the pretend orders on the phone, each marked "Demo order".
  */
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { RefreshControl, ScrollView, Text, View } from 'react-native';
 
@@ -14,10 +14,10 @@ import { InlineError } from '@/components/ui/InlineError';
 import { useAnnounce } from '@/components/ui/useAnnounce';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { canCancelGymOrder, gymStatusBadge, gymStatusText } from './gym';
+import { canCancelGymOrder, gymPayText, gymStatusBadge, gymStatusText, visibleFlash } from './gym';
 import { cancelGymOrder, refreshOrders } from './gymActions';
 import { useGymShop } from './gymStore';
-import { ORDER_STATUS_TEXT, canCancel, itemsText, orderTimeText, rupees } from './money';
+import { ORDER_STATUS_TEXT, canCancel, displayName, itemsText, orderTimeText, rupees } from './money';
 import { DEMO_ORDER_LINE, QuietLine, leave } from './ShopParts';
 import { useShop } from './shopStore';
 import type { GymOrder, Order, OrderLine } from './types';
@@ -41,15 +41,20 @@ export function OrdersScreen() {
 
 function GymOrders() {
   const router = useRouter();
+  const navigation = useNavigation();
   const orders = useGymShop((s) => s.orders);
   // "Order 12 placed…" is said once, on the My orders the bag opened: read it here, clear it in
   // the store (state, not a cleanup, so React's double effect run in development keeps it).
-  const [flash] = useState(() => useGymShop.getState().flash);
+  const [flash, setFlash] = useState(() => useGymShop.getState().flash);
   useEffect(() => {
     useGymShop.getState().setFlash(null);
   }, []);
+  // It goes once the member leaves this page, and as soon as that order is no longer Ordered (a
+  // green "placed" over a Cancelled card contradicts it).
+  useEffect(() => navigation.addListener('blur', () => setFlash(null)), [navigation]);
+  const flashText = visibleFlash(flash, orders);
   // A line that is on screen when the page opens is not read by a live region: say it.
-  useAnnounce(flash);
+  useAnnounce(flash?.text ?? null);
   const [pulling, setPulling] = useState(false);
   const [stale, setStale] = useState<string | null>(null);
   const [problems, setProblems] = useState<Record<string, string>>({});
@@ -105,11 +110,11 @@ function GymOrders() {
           <RefreshControl refreshing={pulling} onRefresh={() => void refresh(true)} colors={[color.accent]} tintColor={color.accent} progressBackgroundColor={color.surfaceRaised} />
         }
       >
-        {flash ? (
+        {flashText ? (
           <View
             style={{ padding: space.md, borderRadius: radius.md, backgroundColor: 'rgba(61, 203, 108, 0.12)', borderWidth: 1, borderColor: 'rgba(61, 203, 108, 0.35)' }}
           >
-            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.goodText, lineHeight: 22 }}>{flash}</Text>
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.goodText, lineHeight: 22 }}>{flashText}</Text>
           </View>
         ) : null}
         <QuietLine text={stale} />
@@ -130,7 +135,7 @@ function GymOrders() {
               lines={o.lines}
               totalP={o.totalP}
               cancelled={o.status === 'cancelled'}
-              foot={o.status === 'ordered' || o.status === 'ready' ? 'Pay at the desk when you collect it.' : null}
+              foot={gymPayText(o)}
             >
               <InlineError message={problems[o.id] ?? null} />
               {canCancelGymOrder(o) ? (
@@ -254,7 +259,7 @@ function OrderCard({
       <View style={{ gap: 6, marginTop: space.xs }}>
         {lines.map((l, i) => (
           <View key={`${l.productId}::${l.optionId ?? ''}::${i}`} style={{ flexDirection: 'row', gap: space.sm }}>
-            <Text style={{ flex: 1, fontFamily: type.body, fontSize: type.size.body, color: cancelled ? color.inkMuted : color.ink }}>{`${l.qty} × ${l.name}`}</Text>
+            <Text style={{ flex: 1, fontFamily: type.body, fontSize: type.size.body, color: cancelled ? color.inkMuted : color.ink }}>{`${l.qty} × ${displayName(l.name)}`}</Text>
             <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.inkSecondary }}>{rupees(l.unitPriceP * l.qty)}</Text>
           </View>
         ))}

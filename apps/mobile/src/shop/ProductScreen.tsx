@@ -11,7 +11,7 @@ import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { color, space, type } from '@/theme/tokens';
 
 import { findProduct } from './catalog';
-import { bagBadgeCount, clampQty, defaultOptionId, lineKey, maxQty, picturesOf, rupees, stockFor, stockText, unitPriceP } from './money';
+import { bagBadgeCount, clampQty, defaultOptionId, displayName, lineKey, maxQty, picturesOf, rupees, stockFor, stockText, unitPriceP } from './money';
 import { ProductPicture } from './ProductPicture';
 import { BagButton, QtyStepper, leave } from './ShopParts';
 import { useShopSource } from './shopSource';
@@ -75,7 +75,16 @@ function ProductBody({ product, onBack, bagButton }: { product: Product; onBack:
   };
 
   return (
-    <Screen title={product.name} onBack={onBack} right={bagButton}>
+    // The top bar carries only Back and the bag; the name gets its own full-width row under it, so a
+    // long name (or a large font) never wraps in the narrow gap between the two round buttons.
+    <Screen onBack={onBack} right={bagButton}>
+      <Text
+        accessibilityRole="header"
+        accessibilityLabel={product.name}
+        style={{ marginTop: -space.sm, marginBottom: space.lg, fontFamily: type.display, fontSize: type.size.h1, color: color.ink, letterSpacing: -0.5 }}
+      >
+        {displayName(product.name)}
+      </Text>
       <ScrollView
         ref={pager}
         horizontal

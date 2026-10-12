@@ -355,18 +355,28 @@ export function gymStatusBadge(o: Pick<GymOrder, 'status'>): string {
   return { ordered: 'Ordered', ready: 'Ready', collected: 'Collected', cancelled: 'Cancelled' }[o.status];
 }
 
-/** The order's state in a sentence. PURE. */
-export function gymStatusText(o: Pick<GymOrder, 'status' | 'cancelledBy'>): string {
+/**
+ * What the status pill does not already say, in a sentence (the pill shows the state word; this
+ * never repeats it). Null when the pill says it all (Collected). PURE.
+ */
+export function gymStatusText(o: Pick<GymOrder, 'status' | 'cancelledBy'>): string | null {
   switch (o.status) {
     case 'ordered':
-      return 'Ordered — the gym is getting it ready';
+      return 'The gym is getting it ready';
     case 'ready':
-      return 'Ready — collect it at the desk';
+      return 'Collect it at the desk';
     case 'collected':
-      return 'Collected';
+      return null;
     case 'cancelled':
-      return o.cancelledBy === 'gym' ? 'Cancelled by the gym' : 'Cancelled by you';
+      return o.cancelledBy === 'gym' ? 'The gym cancelled this order' : 'You cancelled this order';
   }
+}
+
+/** The line under an order card, about paying (only while it is still to be collected). PURE. */
+export function gymPayText(o: Pick<GymOrder, 'status'>): string | null {
+  if (o.status === 'ordered') return 'Pay at the desk when you collect it.';
+  if (o.status === 'ready') return 'Pay when you collect it.';
+  return null;
 }
 
 /** The member cancels only while the gym has not got it ready (the server's own rule). PURE. */
@@ -377,6 +387,22 @@ export function canCancelGymOrder(o: Pick<GymOrder, 'status'>): boolean {
 /** After a placed order. PURE. */
 export function orderPlacedText(orderNo: number): string {
   return `Order ${orderNo} placed. Pay at the desk when you collect it.`;
+}
+
+/** "Order 12 placed…", said once on the My orders the bag opened, tied to the order it is about. */
+export interface OrderFlash {
+  orderId: string;
+  text: string;
+}
+
+/**
+ * The placed line, only while its order is still Ordered: once the member (or the gym) cancels it,
+ * or it moves on to Ready, a green "placed" banner over that card would contradict it. PURE.
+ */
+export function visibleFlash(flash: OrderFlash | null, orders: readonly Pick<GymOrder, 'id' | 'status'>[]): string | null {
+  if (!flash) return null;
+  const o = orders.find((x) => x.id === flash.orderId);
+  return o && o.status === 'ordered' ? flash.text : null;
 }
 
 // ------------------------------------------------------------------ the persisted blob

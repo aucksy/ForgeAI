@@ -13,7 +13,7 @@ import { InlineError } from '@/components/ui/InlineError';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { placeGymOrder, refreshProducts } from './gymActions';
-import { itemsText, priceBag, rupees, type PricedLine } from './money';
+import { displayName, itemsText, priceBag, rupees, type PricedLine } from './money';
 import { ProductPicture } from './ProductPicture';
 import { DEMO_ORDER_LINE, DemoNote, PAY_AT_DESK_LINE, QtyStepper, QuietLine, leave } from './ShopParts';
 import { useShopSource } from './shopSource';
@@ -129,7 +129,7 @@ function BagRow({ line, onQty, onRemove }: { line: PricedLine; onQty: (q: number
       {p ? <ProductPicture kind={p.art.kind} tint={p.options.find((o) => o.id === line.line.optionId)?.tint ?? p.art.tint} size={64} imageUrl={p.imageUrl} /> : null}
       <View style={{ flex: 1, gap: space.xs }}>
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.sm }}>
-          <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{line.name}</Text>
+          <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{displayName(line.name)}</Text>
           <IconButton icon="trash" size={36} onPress={onRemove} accessibilityLabel={`Remove ${line.name} from bag`} tint={color.inkSecondary} />
         </View>
         {line.available ? (
