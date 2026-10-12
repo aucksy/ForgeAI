@@ -151,7 +151,7 @@ const item = (o: Record<string, unknown> = {}) => ({
 describe('a feed card (Hevy’s)', () => {
   it('date, title, Time · Kg lifted · Records, the first 3 exercises and "See 2 more exercises"', () => {
     const f = feedCardFacts(item() as never, 2, 'metric');
-    expect(f.date).toBe('Saturday, Oct 10, 2026');
+    expect(f.date).toBe('Saturday, 10 Oct 2026');
     expect(f.title).toBe('Pull 1');
     expect(f.stats).toEqual([
       { label: 'Time', value: '46 min' },
@@ -176,7 +176,7 @@ describe('a feed card (Hevy’s)', () => {
     expect(feedMonthLine('2025-12', 1, TODAY)).toBe('December 2025 · 1 workout');
     const rows = feedRows([{ id: 'x', dateISO: '2026-10-02' }, { id: 'y', dateISO: '2026-10-01' }, { id: 'z', dateISO: '2026-09-30' }], { '2026-10': 5 });
     expect(rows.map((r) => (r.kind === 'month' ? `${r.ym}:${r.count}` : r.key))).toEqual(['2026-10:5', 'x', 'y', '2026-09:1', 'z']);
-    expect(feedDate('2026-02-01')).toBe('Sunday, Feb 1, 2026');
+    expect(feedDate('2026-02-01')).toBe('Sunday, 1 Feb 2026');
   });
 });
 

@@ -79,14 +79,15 @@ function HeaderButton({ glyph, icon, label, onPress }: { glyph?: GlyphName; icon
  * shrink to fit instead of wrapping, so "Records" can never drop alone onto a second row
  * (owner's phone, 12 Oct 2026).
  */
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, unit, spoken }: { label: string; value: string; unit?: string; spoken?: string }) {
   return (
-    <View accessible accessibilityLabel={`${label}: ${value}`} style={{ flex: 1, minWidth: 0 }}>
+    <View accessible accessibilityLabel={spoken ?? `${label}: ${value}`} style={{ flex: 1, minWidth: 0 }}>
       <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
         {label}
       </Text>
       <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>
         {value}
+        {unit ? <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{` ${unit}`}</Text> : null}
       </Text>
     </View>
   );
@@ -285,7 +286,7 @@ export default function ProfileScreen() {
               <Text numberOfLines={1} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{name}</Text>
               <View style={{ flexDirection: 'row', gap: space.sm }}>
                 <Stat label="Workouts" value={fmtInt(header.workouts)} />
-                <Stat label="Weeks in a row" value={fmtInt(header.weeksInARow)} />
+                <Stat label="Streak" value={fmtInt(header.weeksInARow)} unit={header.weeksInARow === 1 ? 'week' : 'weeks'} spoken={`Weeks in a row: ${fmtInt(header.weeksInARow)}`} />
                 <Stat label="Records" value={fmtInt(header.records)} />
               </View>
             </View>

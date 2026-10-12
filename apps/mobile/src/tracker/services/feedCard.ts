@@ -59,11 +59,15 @@ const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-/** "Saturday, Oct 10, 2026" — Hevy's feed date. PURE. */
+/**
+ * "Saturday, 10 Oct 2026" — Hevy's full feed date, written day-first like every other date in the
+ * app ("12 Oct 2026, 5:49 am"); the American "Oct 10, 2026" stood out (design review, 12 Oct
+ * 2026). PURE.
+ */
 export function feedDate(iso: string): string {
   const [y, m, d] = iso.split('-').map(Number);
   const dow = new Date(y, m - 1, d).getDay();
-  return `${DAYS[dow]}, ${MON[m - 1]} ${d}, ${y}`;
+  return `${DAYS[dow]}, ${d} ${MON[m - 1]} ${y}`;
 }
 
 /** "October · 12 workouts" ("October 2025 · …" when not this year). PURE. */

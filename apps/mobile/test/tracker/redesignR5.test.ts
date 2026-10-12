@@ -230,7 +230,7 @@ describe('a saved workout’s page', () => {
 
   it('the day and the time it started', () => {
     const start = new Date(2026, 9, 10, 7, 2).getTime();
-    expect(detailWhen('2026-10-10', start)).toBe('Saturday, Oct 10, 2026 · 07:02');
+    expect(detailWhen('2026-10-10', start)).toBe('Saturday, 10 Oct 2026 · 07:02');
   });
 });
 

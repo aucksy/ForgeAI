@@ -122,7 +122,7 @@ appId: com.forgeai.app
     visible: "Edit profile"
     timeout: 30000
 - scrollUntilVisible:
-    element: "^Weeks in a row$"
+    element: "^Streak$"
     direction: UP
     timeout: 20000
 - waitForAnimationToEnd:
