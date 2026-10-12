@@ -164,6 +164,7 @@ appId: com.forgeai.app
     visible: '(Kg|Lb) lifted, last 12 weeks.*'
     timeout: 10000
 - takeScreenshot: r-07c-chart-lifted
+- assertVisible: "Tap a bar to see one week"
 # Tap a bar (each is a button "<period>: <number>"): the big number shows that bar.
 - tapOn:
     text: '.*: [1-9][\d,]* (kg|lb)'

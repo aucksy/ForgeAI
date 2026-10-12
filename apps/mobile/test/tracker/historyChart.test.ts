@@ -10,6 +10,7 @@ import {
   CHART_RANGES,
   chartAxisText,
   chartBackText,
+  chartHintText,
   chartBars,
   chartBuckets,
   chartMetricLabel,
@@ -237,6 +238,8 @@ describe('the big number is the range’s total (owner, 12 Oct 2026: "All time" 
     expect(chartBackText('all')).toBe('Show all-time total');
     expect(chartBackText('weeks')).toBe('Show 12-week total');
     expect(chartBackText('year')).toBe('Show 12-month total');
+    expect(chartHintText('weeks')).toBe('Tap a bar to see one week');
+    expect(chartHintText('all')).toBe('Tap a bar to see one month');
     expect(CHART_RANGES.map((r) => r.label)).toEqual(['Last 12 weeks', 'Last 12 months', 'All time']);
   });
 });

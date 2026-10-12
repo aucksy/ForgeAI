@@ -1755,6 +1755,23 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-12: **v0.36.2 — Profile chart shows the range's total; Statistics audit** (9f338ee + review
+  fixes; owner: "I selected All Time … why is it showing the total KG lifted just for Oct", "gaps
+  between the months not equal", "Last 12 Weeks … showing 0 for all 3 modes").
+  - Root cause: the big number was the LATEST bar (this month / this week); on a Monday the new
+    week is empty, so Last 12 weeks read 0. Now: the range's total ("Kg lifted since Jan 2023 ·
+    509 workouts"), a tapped bar shows that bar, "Show all-time total" (or the same bar) goes
+    back. A fixed one-line caption + a fixed-height hint/back line, so a tap never moves the bars.
+    "Year" → "Last 12 months" (it always was). Bars pixel-snapped; empty periods get a faint
+    baseline mark; the last x label sits under its bar. Real-SQL test: all-time workouts = header.
+  - Review fixes: the bars carry the range they were read for (no old bars under a new range
+    name); a tap resets when the bars change; the hint is plain text, not a disabled button.
+  - Statistics (helper audit): sets chart starts on a whole week/month; an empty current bar is
+    not highlighted; "N sets since <date>"; no "vs before" arrows when the log is younger than
+    the earlier period; "Last 12 months, against the 12 months before"; dates with a year.
+  - Left: Statistics "Year" chip vs "Last 12 months" naming (3 flows tap "^Year$"); All time by
+    week is ~150+ bars in the frozen BarChart; the heading "Sets this period against the one
+    before" stays when nothing compares (a flow anchors on it).
 - 2026-10-12: **v0.36.1 — design pass on every screen** (7b4a085 … fbe7e00; owner, on his phone's
   Profile at large text: "are you not able to judge how assymtrical and bad this looks").
   - Owner's screenshot: name twice, title wrapping with the buttons floating, "Records" alone on a

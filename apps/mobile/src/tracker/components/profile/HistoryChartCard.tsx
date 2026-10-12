@@ -6,8 +6,9 @@
  *   200k kg ┤ ▂ ▅ █ ▃ …
  *   [Duration] [Kg lifted] [Reps]
  *
- * The big number is the range's total. Tap a bar → it shows that bar and its period, with
- * "Show … total" under it; that, or the same bar again → the total. A week or month with no
+ * The big number is the range's total. Tap a bar → it shows that bar and its period; the line
+ * under the caption turns from "Tap a bar to see one week" into "Show … total"; that, or the
+ * same bar again → the total. A week or month with no
  * workout keeps a faint mark on the baseline, so the bars stay evenly spaced to the eye; bars
  * sit on whole pixels, so 40+ thin bars don't blur into uneven gaps.
  * The numbers come from the pure engine (`engine/historyChart.ts`). Screen reader: the chart
@@ -29,6 +30,7 @@ import {
   CHART_RANGES,
   chartAxisText,
   chartBackText,
+  chartHintText,
   chartMetricLabel,
   chartCaptionText,
   chartPeriodText,
@@ -79,10 +81,11 @@ export function HistoryChartCard({
   const [width, setWidth] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [rangeOpen, setRangeOpen] = useState(false);
-  // A new range or chip starts from the latest bar again.
-  const [shownFor, setShownFor] = useState(`${range}|${metric}`);
-  if (shownFor !== `${range}|${metric}`) {
-    setShownFor(`${range}|${metric}`);
+  // A new range, chip or set of bars (a reread, a new week) starts from the total again: a tap
+  // is a position, and in new bars that position can be another week.
+  const [shownFor, setShownFor] = useState<{ key: string; bars: ChartBar[] | null }>({ key: `${range}|${metric}`, bars });
+  if (shownFor.key !== `${range}|${metric}` || shownFor.bars !== bars) {
+    setShownFor({ key: `${range}|${metric}`, bars });
     setSelected(null);
   }
 
@@ -141,11 +144,14 @@ export function HistoryChartCard({
           </Pressable>
         </View>
         {!empty ? (
-          <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>
+          // One line always (it shrinks before it wraps), so a tap never moves the bars.
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>
             {bar ? chartCaptionText(bar, metric, units, today) : chartTotalCaptionText(list, range, metric, units)}
           </Text>
         ) : null}
-        {bar && !empty ? (
+        {/* One fixed-height line: the hint before a tap, the way back after it. It never appears
+            or disappears, so the bars don't jump under the finger that tapped them. */}
+        {!empty && bar ? (
           <Pressable
             onPress={() => {
               tap();
@@ -158,6 +164,10 @@ export function HistoryChartCard({
             <Glyph name="chevron-left" size={16} color={color.accent} />
             <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>{chartBackText(range)}</Text>
           </Pressable>
+        ) : !empty ? (
+          <View style={{ minHeight: 44, justifyContent: 'center' }}>
+            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>{chartHintText(range)}</Text>
+          </View>
         ) : null}
       </View>
 

@@ -104,7 +104,9 @@ export default function ProfileScreen() {
 
   const [header, setHeader] = useState<ProfileHeader | null>(null);
   const [headerFailed, setHeaderFailed] = useState(false);
-  const [bars, setBars] = useState<ChartBar[] | null>(null);
+  // The bars and the range they were read for: a new range shows no old bars under its name.
+  const [chart, setChart] = useState<{ range: ChartRange; bars: ChartBar[] } | null>(null);
+  const bars = chart && chart.range === range ? chart.bars : null;
   const [chartLoading, setChartLoading] = useState(true);
   const [chartFailed, setChartFailed] = useState(false);
   const [items, setItems] = useState<FeedItem[]>([]);
@@ -130,7 +132,7 @@ export default function ProfileScreen() {
     const key = stamp == null ? null : `${stamp}|${r}`;
     const kept = key ? chartCache.current.get(key) : undefined;
     if (kept) {
-      setBars(kept);
+      setChart({ range: r, bars: kept });
       setChartFailed(false);
       setChartLoading(false);
       return;
@@ -141,7 +143,7 @@ export default function ProfileScreen() {
       const b = await readWithRetry(() => getHistoryChart(r), { wanted: () => rangeRef.current === r });
       if (rangeRef.current !== r) return;
       if (key) chartCache.current.set(key, b);
-      setBars(b);
+      setChart({ range: r, bars: b });
       setChartFailed(false);
     } catch {
       if (rangeRef.current === r) setChartFailed(true);
