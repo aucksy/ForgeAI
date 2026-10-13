@@ -154,13 +154,13 @@ appId: com.forgeai.app
 # PG-22: Muscle distribution's "Kg lifted" tile over a Year (the whole demo: well over 100,000 kg)
 # is a full number grouped the phone's way: on this en-US phone "650,000 kg", never "6,50,000"
 # (Indian) or "650k". Its Period chips sit right under "Sets this period against the one before"
-# (the Year chip above it belongs to Sets per muscle group).
+# (the 12 months chip above it belongs to Sets per muscle group; "Year" until the 13 Oct 2026 audit).
 - scrollUntilVisible:
     element: "Sets this period against the one before"
     centerElement: true
     timeout: 20000
 - tapOn:
-    text: "^Year$"
+    text: "^12 months$"
     below:
       text: "Sets this period against the one before"
 - scrollUntilVisible:
