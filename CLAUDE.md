@@ -15,6 +15,13 @@ owner's gym fieldwork (`docs/overhaul/FIELDWORK.md`); app-quality work proceeds 
 The owner is **not a developer**. In chat, lead with what changed for them and why. All technical
 detail goes in `PROGRESS.md`, commit messages, and code comments — not chat.
 
+## ⭐ Research demand before building a feature
+Before building any NEW feature the owner asks for (not a bug fix): search the web first —
+Hevy/Strong and other competitor apps, their help pages and feature-request boards, Reddit.
+Tell him in plain English whether most members would use it (mainstream vs niche, who has it),
+recommend one of at most 2 options (build for everyone / keep it for his personal variant),
+and STOP until he decides. A personal-only idea goes to his own variant, not the product.
+
 ## Frozen files (read-only — import and TEST them, never edit)
 `src/engine/*`, `src/components/ui/*`, `src/components/charts/*`, `src/db/schema.ts`, and existing
 `src/db/repos/*` / `src/services/*` signatures. Any schema change is **additive only** (a new
