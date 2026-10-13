@@ -1755,6 +1755,36 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-13: **v0.37.1 — audit of v0.37.0 "the improved way" (owner: "There should be no bugs")**
+  (85840de … d4fff30; findings log: Audit/v037-audit/FINDINGS.md).
+  - How: 4 read-only helpers (live workout, records/charts, notifications, branding) with the
+    lesson's lens; NEW phone-test part W = one real workout on a phone set like the owner's
+    (~360 dp, font 1.3) pinned to Monday 1 March 2027 IST with a ~500-workout Hevy history
+    (qa/tools/make_big_hevy.py), every rest waited out, the shade checked after ticks (incl. what
+    a watch gets: notif.py watch), screenshots read number-by-label; partial runs via
+    qa-device.yml input only=w (named "(partial w)", never opens the release gate); one
+    adversarial review round (9 findings, all fixed). ~60 defects fixed in all.
+  - Live workout: typed numbers shrink to fit their box (22.5/102.5 were cut at 360 dp);
+    Repeat/edit of an imported workout and routine rename keep "Same routine/folder" history;
+    Create keeps ticked picks; no Name box on a Repeat of a routine workout; routines rebuilt from
+    a Hevy export KEEP their warm-ups / drop / failure sets (found by part W: warm-up PREVIOUS never
+    showed for them); import preview label/value no longer run together.
+  - Records/charts: e1RM counts reps above 12 as 12 (a lighter high-rep set is no "Estimated
+    1-rep max" record; stored records rebuilt once); Profile chart: no "No workouts yet" with
+    history, "—" while loading, even bar gaps; chart taps (hold keeps, scroll restores, metric
+    change clears); Set records wording (+ / each), rep-record line, Statistics "12 months";
+    record subtitles wrap at large text.
+  - Notifications: "Complete set" / "Done" work with ForgeAI closed (OfflineTick.kt + queued tick
+    applied once at next start, with the tap's own time); "Rest is over" times out (2 min) and
+    clears on foreground/tick so the live card returns; one-at-a-time for notes; "All sets done"
+    after the last set; cards in the gym's accent. QA: alone fails when nothing shows, live-back,
+    new part H3 (Complete set with the app killed).
+  - Branding: looks change only at a safe moment (≥60 s away, no workout; under the logo),
+    hourly foreground re-check, unlink deferred; palette checks (accent on tint, rounded hex,
+    near-white accents); logo must be in the gym-logos bucket (0006_brand_logo_check.sql, applied
+    live); logo prefetch; wide logos; widgets/reminders tinted; panel redeployed.
+  - Kept/for the owner: Chip outline (frozen, waiting "yes"); shortcut icons orange; reboot
+    mid-rest (needs a permission); "Best workout" can pop for a lighter but bigger-volume workout.
 - 2026-10-13: **v0.37.0 — the owner's first real gym session, fixed** (7e91df6 … afe840b; owner used
   the app for a full workout and compared it with Hevy screen by screen).
   - Workout: rest starts after EVERY set type (warm-ups and before drops used to start none); warm-up
