@@ -35,7 +35,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Kilograms or pounds\\?"
     timeout: 15000
-- tapOn: "Kilograms.*"
+- tapOn: "^Kilograms$"
 - scrollUntilVisible:
     element: "^Next$"
     centerElement: true

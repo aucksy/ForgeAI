@@ -671,7 +671,7 @@ part_w() {
   ms=$(date -u -d '2027-03-01T04:30:00Z' +%s)000
   adb shell cmd alarm set-time "$ms" >/dev/null 2>&1 || adb shell date 030110002027.00 >/dev/null 2>&1 || true
   adb shell am broadcast -a android.intent.action.TIME_SET >/dev/null 2>&1 || true
-  W_DATE=$(adb shell date '+%a %d %b %Y %H:%M %Z' | tr -d '\r')
+  W_DATE=$(adb shell "date '+%a %d %b %Y %H:%M %Z'" | tr -d '\r')
   log "REAL WORKOUT: phone clock $W_DATE (want Mon 01 Mar 2027 10:0x IST)"
   case "$W_DATE" in
     "Mon 01 Mar 2027"*) ;;
