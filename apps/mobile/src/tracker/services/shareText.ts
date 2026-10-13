@@ -18,8 +18,8 @@
 import { Share } from 'react-native';
 
 import { getDb } from '@/db';
-import { epleyE1rm } from '@/engine/overload';
 import { tinyDate } from '@/lib/date';
+import { E1RM_MAX_REPS, estimatedOneRepMax } from '@/lib/e1rm';
 import { fmtInt, fmtTotalTime } from '@/lib/format';
 import { displayUnits, fmtW, kgToShown, weightUnitOf } from '@/lib/units';
 import { countWord } from '@/lib/words';
@@ -278,7 +278,7 @@ export interface PeriodTextInput {
 }
 
 /** Sets with more reps than this say little about a 1-rep max (the year review's rule). */
-const MAX_E1RM_REPS = 12;
+const MAX_E1RM_REPS = E1RM_MAX_REPS; // the app's one cap (lib/e1rm, 13 Oct 2026 audit)
 
 /** The one set worth naming for an exercise over the period, by how it is logged. PURE. */
 export function bestPeriodSet(sets: readonly TextSet[], kind: TextKind): TextSet | null {
@@ -356,7 +356,7 @@ export function periodText(input: PeriodTextInput): string {
         const per = new Map<string, { at: number; e1rm: number }>();
         for (const s of row.sets) {
           if (!(s.weightKg > 0) || s.reps <= 0 || s.reps > MAX_E1RM_REPS) continue;
-          const e = epleyE1rm(s.weightKg, s.reps);
+          const e = estimatedOneRepMax(s.weightKg, s.reps);
           const cur = per.get(s.sessionId);
           if (!cur || e > cur.e1rm) per.set(s.sessionId, { at: s.startedAt, e1rm: e });
         }

@@ -104,6 +104,12 @@ async function openAndUpgrade(): Promise<void> {
     const { fixSingleE1rmRecords } = await import('@/tracker/services/prRebuild');
     await fixSingleE1rmRecords();
   }).catch(() => undefined);
+  // Once (13 Oct 2026 audit): a long set's 1-rep max stored with every rep counted (70 × 25 as
+  // 128.3 over 100 × 5's 116.7) is put right — reps above 12 count as 12. Never blocks start-up.
+  await enqueueWrite(async () => {
+    const { fixLongSetE1rmRecords } = await import('@/tracker/services/prRebuild');
+    await fixLongSetE1rmRecords();
+  }).catch(() => undefined);
   // Audit Phase 4, once each (never blocks start-up; a failure tries again next launch):
   //  - IM-07: imported workouts' times become the real moment (they were clock time as UTC);
   //  - IM-02 / IM-03: folders copied from a Hevy link get their warm-ups and real order back.

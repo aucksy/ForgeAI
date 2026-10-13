@@ -12,8 +12,8 @@
  *  - "Your lifts": the member's most-trained lifts with a point per workout.
  *  - Small honest-number rules for the sections below.
  */
-import { epleyE1rm } from '@/engine/overload';
 import { addDays, tinyDate, tinyDateWithYear, weekStartISO } from '@/lib/date';
+import { E1RM_MAX_REPS, estimatedOneRepMax } from '@/lib/e1rm';
 import { trimNum } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import type { UnitSystem } from '@/types/models';
@@ -51,7 +51,7 @@ export interface ProgressLiftInfo {
 /** How many full weeks make "your usual". */
 export const USUAL_WEEKS = 8;
 /** Sets with more reps than this say little about a 1-rep max (as the year's biggest gain). */
-const MAX_E1RM_REPS = 12;
+const MAX_E1RM_REPS = E1RM_MAX_REPS; // the app's one cap (lib/e1rm, 13 Oct 2026 audit)
 
 export type LiftUnit = 'kg' | 'reps';
 
@@ -117,7 +117,7 @@ export function liftPoints(sets: readonly ProgressSet[], infos: ReadonlyMap<stri
       for (const s of ws) {
         if (unit === 'kg') {
           if (!(s.weightKg > 0) || !(s.reps > 0)) continue;
-          if (s.reps <= MAX_E1RM_REPS) value = Math.max(value, epleyE1rm(s.weightKg, s.reps));
+          if (s.reps <= MAX_E1RM_REPS) value = Math.max(value, estimatedOneRepMax(s.weightKg, s.reps));
           if (!best || s.weightKg > best.weightKg || (s.weightKg === best.weightKg && s.reps > best.reps)) best = { weightKg: s.weightKg, reps: s.reps };
         } else {
           if (!(s.reps > 0)) continue;

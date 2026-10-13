@@ -29,13 +29,26 @@ function each(hit: RecordHit, ctx: RecordTextContext): string {
   return ctx.logType === 'weight_reps' && weightIsEach(mode) ? ' each' : '';
 }
 
+/**
+ * A record's weight as a member reads it: "+10 kg" on an added-weight move (a weighted pull-up),
+ * "20 kg each" for one of two dumbbells, else "100 kg". The pop-up's "Heaviest weight" and the
+ * exercise page's Set records rows both say it this way (13 Oct 2026 audit, B7: the Set records
+ * printed a bare "10 kg" for a +10 kg belt). `loadMode`: the set's own counting, when known.
+ */
+export function recordWeightText(weightKg: number, ctx: RecordTextContext, loadMode?: LoadMode | null): string {
+  const units = ctx.units ?? displayUnits();
+  if (ctx.logType === 'weighted') return `+${kg(weightKg, units)}`;
+  const mode = loadMode ?? ctx.loadMode;
+  return `${kg(weightKg, units)}${ctx.logType === 'weight_reps' && weightIsEach(mode) ? ' each' : ''}`;
+}
+
 /** The record's number as a member reads it: "85 kg", "80 kg × 8", "15 reps", "1:30", "5:12 /km", "5 km". */
 export function recordValueText(hit: RecordHit, ctx: RecordTextContext): string {
   const units = ctx.units ?? displayUnits();
   const s = hit.set;
   switch (hit.kind) {
     case 'weight':
-      return ctx.logType === 'weighted' ? `+${kg(hit.value, units)}` : `${kg(hit.value, units)}${each(hit, ctx)}`;
+      return recordWeightText(hit.value, { ...ctx, units }, hit.set?.loadMode);
     case 'e1rm':
       return kg(hit.value, units);
     case 'rep_record':
@@ -78,9 +91,11 @@ export function recordDetailText(hit: RecordHit, ctx: RecordTextContext): string
       return s ? `from ${kg(s.weightKg, units)}${each(hit, ctx)} × ${s.reps}` : null;
     case 'rep_record': {
       // Review fix: what it beat — fewer reps before ("more reps at this weight"), or a lighter
-      // weight for at least these reps ("more weight for these reps").
+      // weight for at least these reps ("more weight for these reps"). 13 Oct 2026 audit (B8): fewer
+      // reps AND a lighter weight before (40 × 12, now 60 × 15) is "more weight and more reps".
       const prev = (hit as RecordHit & { previousSet?: { weightKg: number; reps: number } | null }).previousSet;
-      return s && prev && prev.reps < s.reps ? 'more reps at this weight' : 'more weight for these reps';
+      if (s && prev && prev.reps < s.reps) return s.weightKg > prev.weightKg ? 'more weight and more reps' : 'more reps at this weight';
+      return 'more weight for these reps';
     }
     case 'best_set':
       return `${fmtInt(kgToDisplay(hit.value, units))} ${weightUnit(units)} in one set`;

@@ -11,7 +11,7 @@
  *   distance + time, same distance      "30 s faster than last time"
  * Equal or worse says nothing — never discouraging. Warm-ups never.
  */
-import { epleyE1rm } from '@/engine/overload';
+import { estimatedOneRepMax } from '@/lib/e1rm';
 import { trimNum } from '@/lib/format';
 import { kgToShown, M_PER_MILE, weightUnitOf, type UnitSystem } from '@/lib/units';
 
@@ -106,9 +106,10 @@ export function vsLastTimeText(
   if (more > 0 && r >= pr) return `+${trimNum(more, dp)} ${unit}${each} on last time`;
   if (more === 0 && r > pr) return `+${repsWords(r - pr)} on last time`;
   if (more > 0 && r < pr && logType === 'weight_reps') {
-    const before = epleyE1rm(pw, pr);
+    // 13 Oct 2026 audit (B1): the records' estimate (reps above 12 count as 12).
+    const before = estimatedOneRepMax(pw, pr);
     if (!(before > 0)) return null;
-    const pct = Math.floor((epleyE1rm(w, r) / before - 1) * 100 + 1e-9);
+    const pct = Math.floor((estimatedOneRepMax(w, r) / before - 1) * 100 + 1e-9);
     return pct >= 1 ? `+${pct}% on last time` : null;
   }
   return null;

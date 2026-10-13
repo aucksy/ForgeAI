@@ -16,6 +16,7 @@
  *   day) so getStreakDays sees one long unbroken run.
  */
 import { addDays, fromISO } from '@/lib/date';
+import { estimatedOneRepMax } from '@/lib/e1rm';
 import { uuid } from '@/lib/uuid';
 import type { DayType } from '@/types/models';
 
@@ -128,10 +129,8 @@ const SESSION_NOTES = [
   'Great pump, form felt dialled in.',
 ] as const;
 
-export function epleyE1rm(weightKg: number, reps: number): number {
-  if (reps === 1) return weightKg; // a single is its own 1-rep max (as the engine)
-  return weightKg * (1 + reps / 30);
-}
+/** The app's one estimate (`lib/e1rm`: a single is itself; 13 Oct 2026 audit — reps above 12 count as 12). */
+const e1rmOf = estimatedOneRepMax;
 
 function roundToIncrement(weightKg: number, incrementKg: number): number {
   return Math.round((Math.round(weightKg / incrementKg) * incrementKg) * 1000) / 1000;
@@ -357,7 +356,7 @@ export function generateHistory(todayISO: string, rng: Rng): GeneratedHistory {
     for (const [key, list] of byKey) {
       let topW = list[0].weightKg;
       let topWReps = list[0].reps;
-      let bestE = epleyE1rm(list[0].weightKg, list[0].reps);
+      let bestE = e1rmOf(list[0].weightKg, list[0].reps);
       let bestESet = list[0];
       for (let i = 1; i < list.length; i++) {
         const st = list[i];
@@ -365,7 +364,7 @@ export function generateHistory(todayISO: string, rng: Rng): GeneratedHistory {
           topW = st.weightKg;
           topWReps = st.reps;
         }
-        const e = epleyE1rm(st.weightKg, st.reps);
+        const e = e1rmOf(st.weightKg, st.reps);
         if (e > bestE) {
           bestE = e;
           bestESet = st;

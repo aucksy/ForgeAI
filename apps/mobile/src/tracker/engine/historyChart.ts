@@ -18,6 +18,8 @@ import { addDays, weekStartISO } from '@/lib/date';
 import { fmtCompact, fmtInt, fmtTotalTime, trimNum } from '@/lib/format';
 import { fmtVol, kgToShown, weightUnitOf, type UnitSystem } from '@/lib/units';
 
+import { TAP_MAX_MS } from '../lib/chartTime';
+
 export type ChartMetric = 'duration' | 'volume' | 'reps';
 export type ChartRange = 'weeks' | 'year' | 'all';
 
@@ -142,9 +144,60 @@ export function rangeTotals(bars: readonly ChartBar[]): ChartTotals {
   return t;
 }
 
-/** Tap a bar: shows it; the same bar again goes back to the range's total (null). PURE. */
-export function tapBar(selected: number | null, tapped: number): number | null {
-  return selected === tapped ? null : tapped;
+/**
+ * Tap a bar: shows it; the same bar again goes back to the range's total (null). PURE.
+ * 13 Oct 2026 audit (B6): only a SHORT tap (under `TAP_MAX_MS`) on the shown bar puts it away — a
+ * finger held on it and lifted keeps it, as on the line charts (`chartTap`). `heldMs`: how long the
+ * finger was down (0 = a tap).
+ */
+export function tapBar(selected: number | null, tapped: number, heldMs = 0): number | null {
+  if (selected !== tapped) return tapped;
+  return heldMs < TAP_MAX_MS ? null : selected;
+}
+
+/**
+ * 13 Oct 2026 audit (B2) — what the card draws under its numbers once bars are read: 'none' (the
+ * "No workouts yet" line) ONLY for a member with no workouts at all, else 'bars' — a range with no
+ * workout in it draws its empty bars with the normal caption ("Kg lifted in the last 12 weeks · 0
+ * workouts"), never "No workouts yet" to a member with a long history. `workoutsEver`: the
+ * member's workout count (Profile's header), null while it is unknown. PURE.
+ */
+export function chartCardBody(bars: readonly ChartBar[], workoutsEver: number | null): 'none' | 'bars' {
+  if (bars.length === 0) return 'none'; // All time before the first workout: nothing to draw
+  if (workoutsEver === 0 && bars.every((b) => b.workouts === 0)) return 'none';
+  return 'bars';
+}
+
+/**
+ * The big number (13 Oct 2026 audit, B3): a dash until there are bars (loading, or a failed read)
+ * — never a "0 kg" that reads as a real total; then the tapped bar's number, or the range's. PURE.
+ */
+export function chartBigNumberText(bars: readonly ChartBar[] | null, selected: number | null, metric: ChartMetric, units: UnitSystem): string {
+  if (!bars) return '—';
+  const bar = selected != null && selected >= 0 && selected < bars.length ? bars[selected] : null;
+  return chartValueText(barValue(bar ?? rangeTotals(bars), metric), metric, units);
+}
+
+/**
+ * Where the bars sit (13 Oct 2026 audit, B9). Each bar's x used to be rounded on its own while the
+ * slot was fractional (354.5 / 12 = 29.54 dp), so the gaps alternated 7 / 8 px. Now the SLOT is a
+ * whole number of device pixels (`scale` = PixelRatio.get()), every bar sits at slot × index, and
+ * the pixels left over (under one slot) are split either side — every gap identical, the chart
+ * still filling its width. `left`: from the plot's left edge; `xs`: each bar's left edge, also from
+ * the plot's left edge. Bars as before: 62% of the slot, 2 to 28 dp. PURE.
+ */
+export function barLayout(plotW: number, count: number, scale: number): { slot: number; barW: number; left: number; xs: number[] } {
+  const k = scale > 0 && Number.isFinite(scale) ? scale : 1;
+  const dev = (v: number): number => Math.round(v * k) / k; // nearest device pixel
+  if (count <= 0 || !(plotW > 0)) return { slot: 0, barW: 0, left: 0, xs: [] };
+  const slotPx = Math.max(1, Math.floor((plotW * k + 1e-6) / count));
+  const slot = slotPx / k;
+  const barPx = Math.min(slotPx - 1, Math.max(Math.round(2 * k), Math.round(Math.min(28, slot * 0.62) * k)));
+  const barW = Math.max(1, barPx) / k;
+  const leftPx = Math.floor((plotW * k - slotPx * count) / 2);
+  const innerPx = Math.floor((slotPx - Math.max(1, barPx)) / 2);
+  const xs = Array.from({ length: count }, (_, i) => dev((leftPx + slotPx * i + innerPx) / k));
+  return { slot, barW, left: leftPx / k, xs };
 }
 
 /** The bar to show: the tapped one, else the latest (-1 when there are none). PURE. */

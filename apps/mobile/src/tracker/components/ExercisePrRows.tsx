@@ -15,11 +15,10 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Card, Icon, SectionHeader } from '@/components/ui';
 import type { IconName } from '@/components/ui';
 import { tinyDateWithYear } from '@/lib/date';
-import { kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { color, motion, space, type } from '@/theme/tokens';
 import { PACE_BASIS, paceRuleText, RECORD_LABEL, type RecordHit, type RecordKind } from '@/tracker/engine/records';
 import type { XrmRecord } from '@/tracker/services/exerciseAnalytics';
-import { recordDetailText, recordValueText, type RecordTextContext } from '@/tracker/services/recordText';
+import { recordDetailText, recordValueText, recordWeightText, type RecordTextContext } from '@/tracker/services/recordText';
 import type { UnitSystem } from '@/types/models';
 
 import { InfoHeading } from './InfoHeading';
@@ -83,7 +82,6 @@ function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label
 }
 
 export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession }: ExercisePrRowsProps) {
-  const unit = weightUnit(units);
   // Runs, rows and rides keep a pace: say which sets count, and hold its place until one does —
   // also when nothing else is a record yet (a bike logged by time only).
   const keepsPace = kinds.includes('pace');
@@ -129,7 +127,8 @@ export function ExercisePrRows({ bests, kinds, ctx, ladder, units, onOpenSession
                 key={`x-${r.reps}`}
                 icon={RECORD_ICON}
                 label={`${r.reps} ${r.reps === 1 ? 'rep' : 'reps'}`}
-                value={`${trimNum(kgToDisplay(r.weightKg, units))} ${unit}`}
+                // 13 Oct 2026 audit: the pop-up's words — "+10 kg" (weighted), "20 kg each" (dumbbells).
+                value={recordWeightText(r.weightKg, { ...ctx, units })}
                 sub={recDate(r.dateISO)}
                 onPress={() => onOpenSession(r.sessionId)}
               />

@@ -89,7 +89,9 @@ export type StatRange = '30d' | '3m' | '1y' | 'all';
 export const STAT_RANGES: readonly { id: StatRange; label: string }[] = [
   { id: '30d', label: '30 days' },
   { id: '3m', label: '3 months' },
-  { id: '1y', label: 'Year' },
+  // 13 Oct 2026 audit: "12 months", as Profile ("Last 12 months") and the line over the tiles
+  // say — the range is a rolling 365 days, not a calendar year.
+  { id: '1y', label: '12 months' },
   { id: 'all', label: 'All time' },
 ];
 

@@ -5,7 +5,8 @@
  * weight and best estimated 1-rep max. Hevy keeps seven. Phase 3 adds the other five:
  *
  *   weight        Heaviest weight      the heaviest working set (added weight on a weighted move)
- *   e1rm          Estimated 1-rep max  Epley estimate, weight × (1 + reps / 30); a single is itself
+ *   e1rm          Estimated 1-rep max  Epley estimate, weight × (1 + reps / 30); a single is itself;
+ *                                      reps above 12 count as 12 (`lib/e1rm`, 13 Oct 2026 audit)
  *   best_set      Best set             most volume in one set (the one volume rule)
  *   best_session  Best workout         most volume in one workout — most reps for a bodyweight move
  *   reps          Most reps            most reps in one set
@@ -47,7 +48,7 @@
  *    medal, the finish screen and the feed card's count all follow it (they all read events
  *    or `liveRecords`, which use these same functions).
  */
-import { epleyE1rm } from '@/engine/overload';
+import { estimatedOneRepMax } from '@/lib/e1rm';
 
 import { fmtDuration, shownDistUnit, type DistUnit, type LoadMode, type LogType } from './logTypes';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint, type VolumeRule } from './volume';
@@ -328,7 +329,9 @@ export function setRecordValue(kind: RecordKind, s: RecordSet, rule: RecordRule,
     case 'weight':
       return r > 0 && w > 0 ? w : null;
     case 'e1rm':
-      return r > 0 && w > 0 ? epleyE1rm(w, r) : null;
+      // 13 Oct 2026 audit (B1): reps above 12 count as 12, so 70 kg × 25 (98) never out-scores
+      // 100 kg × 5 (116.7) — a lighter set doing more reps is not progressive overload.
+      return r > 0 && w > 0 ? estimatedOneRepMax(w, r) : null;
     case 'best_set': {
       const v = setVolumeKg({ weightKg: w, reps: r, isWarmup: false, loadMode: s.loadMode ?? null }, rule, bodyweightKg);
       return v > 0 ? v : null;

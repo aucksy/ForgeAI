@@ -194,7 +194,7 @@ export default function MeasurementsScreen() {
                 </Text>
               ) : null}
               {points.length >= 2 ? (
-                <DateLineChart data={points} color={chart.series[1]} fillGradient yFormat={(n) => trimNum(n)} onInspect={noopInspect} />
+                <DateLineChart data={points} color={chart.series[1]} fillGradient yFormat={(n) => trimNum(n)} onInspect={noopInspect} resetKey={kind} />
               ) : (
                 <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>
                   Log it again on another day to see a trend line.
