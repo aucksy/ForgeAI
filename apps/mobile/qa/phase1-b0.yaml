@@ -1,0 +1,16 @@
+# Phase 1 device QA, part B0 — after the phone slept through the rest (v0.37.1: split out of part B,
+# audit C4). The notification shade is already open (adb). Tap the workout's notification → back
+# in the workout. The script then reads the notification list: "Rest is over" has gone and the
+# live workout card is BACK (notif.py live-back) — the return the "alone" check could not prove.
+appId: com.forgeai.app
+---
+- takeScreenshot: 10-notification-shade
+# 13 Oct 2026: ONE workout notification at a time — after the rest it is "Rest is over" alone (the
+# live card, titled with the exercise, "Set N of M · …", is back once that alert goes; v0.37.1: it
+# goes when the app comes to the front). Either opens the workout; an older build's "Workout in
+# progress" card too.
+- tapOn: 'Rest is over|Set \d+ of \d+.*|Workout in progress'
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- takeScreenshot: 11-back-from-notification

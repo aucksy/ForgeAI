@@ -4,17 +4,15 @@
 # on the Workout tab, redesign R1) → Resume → minimise → the bar on Profile → remove an exercise →
 # Finish → the "Finish workout?" sheet → summary with its "Update routine?" sheet → Keep original
 # → Profile → Settings → Workouts.
+#
+# v0.37.1 (audit C4): the tap on the notification is part B0 (phase1-b0.yaml), so the script can
+# read the notification list between the tap and this part (the live card must be back). This part
+# starts on the workout screen B0 left open.
 appId: com.forgeai.app
 ---
-- takeScreenshot: 10-notification-shade
-# 13 Oct 2026: ONE workout notification at a time — after the rest it is "Rest is over" alone (the
-# live card, titled with the exercise, "Set N of M · …", is back once that alert goes). Either opens
-# the workout; an older build's "Workout in progress" card too.
-- tapOn: 'Rest is over|Set \d+ of \d+.*|Workout in progress'
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
     timeout: 30000
-- takeScreenshot: 11-back-from-notification
 - tapOn: "Minimise workout.*"
 - extendedWaitUntil:
     visible: "Resume workout"
