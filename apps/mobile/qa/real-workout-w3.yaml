@@ -149,10 +149,20 @@ appId: com.forgeai.app
     text: "Skip rest"
     optional: true
 # ---------------------------------------------------------------- superset: Lateral Raise + Triceps Pushdown
+# Each card's rest is set to 0:30 on the way DOWN (scrolling back up to a card's header can
+# leave its ⋯ under the top bar), then the two are made a superset.
 - scrollUntilVisible:
     element: "More for .*Lateral Raise.*"
     centerElement: true
     timeout: 30000
+- tapOn:
+    text: "More for .*Lateral Raise.*"
+    index: 0
+- tapOn: "Rest timer"
+- tapOn: "Rest 0:30"
+- extendedWaitUntil:
+    notVisible: 'For .*Remembered for next time\.'
+    timeout: 10000
 - tapOn:
     text: "More for .*Lateral Raise.*"
     index: 0
@@ -164,7 +174,6 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Edit superset"
     timeout: 10000
-# The round's rest is 0:30 (both exercises), so the journey waits it out.
 - scrollUntilVisible:
     element: "More for .*Triceps.*"
     centerElement: true
@@ -177,23 +186,10 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'
     timeout: 10000
-# Lateral Raise sits ABOVE Triceps Pushdown: scroll back up to it.
-- scrollUntilVisible:
-    element: "More for .*Lateral Raise.*"
-    direction: UP
-    centerElement: true
-    timeout: 30000
-- tapOn:
-    text: "More for .*Lateral Raise.*"
-    index: 0
-- tapOn: "Rest timer"
-- tapOn: "Rest 0:30"
-- extendedWaitUntil:
-    notVisible: 'For .*Remembered for next time\.'
-    timeout: 10000
 - takeScreenshot: w-37-superset-made
 - scrollUntilVisible:
     element: 'Mark .*Lateral Raise set 1 complete'
+    direction: UP
     centerElement: true
     timeout: 30000
 - tapOn:
