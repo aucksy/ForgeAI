@@ -144,11 +144,11 @@ export function historyScopeOrAll(routineId: string | null | undefined, setting?
 
 /** Settings → Workouts → Previous values: each choice and the line under it. */
 export const PREVIOUS_FROM_CHOICES: readonly { value: PreviousFrom; label: string; line: string }[] = [
-  { value: 'any', label: 'Any workout', line: 'Previous, Target and notes come from the last time you did the exercise.' },
-  { value: 'routine', label: 'Same routine', line: 'Previous, Target and notes come from the last time you did it in this routine.' },
+  { value: 'any', label: 'Any workout', line: 'Previous, Target and notes come from the last time you did the exercise. Applies from your next workout.' },
+  { value: 'routine', label: 'Same routine', line: 'Previous, Target and notes come from the last time you did it in this routine. Applies from your next workout.' },
   {
     value: 'folder',
     label: 'Same folder',
-    line: 'Previous, Target and notes come from the last time you did it in any routine of this folder. Handy when each folder is a gym.',
+    line: 'Previous, Target and notes come from the last time you did it in any routine of this folder. Handy when each folder is a gym. Applies from your next workout.',
   },
 ];

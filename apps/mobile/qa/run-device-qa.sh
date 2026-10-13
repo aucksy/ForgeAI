@@ -283,7 +283,7 @@ widget_link() {
   fi
   # A "Workout in progress" card that was not there before the link = a workout was started.
   if python3 "$QA_DIR/notif.py" no-ongoing "$before" > /dev/null; then
-    python3 "$QA_DIR/notif.py" no-ongoing "$after" > /dev/null || bad="${bad:+$bad; }a \"Workout in progress\" notification appeared after the link"
+    python3 "$QA_DIR/notif.py" no-ongoing "$after" > /dev/null || bad="${bad:+$bad; }a live workout notification appeared after the link"
   else
     log "WIDGET LINK $name: note, a \"Workout in progress\" notification was already showing before the link (none should be after part I)"
   fi

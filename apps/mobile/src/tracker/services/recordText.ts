@@ -76,8 +76,12 @@ export function recordDetailText(hit: RecordHit, ctx: RecordTextContext): string
       return s ? `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}` : null;
     case 'e1rm':
       return s ? `from ${kg(s.weightKg, units)}${each(hit, ctx)} × ${s.reps}` : null;
-    case 'rep_record':
-      return 'more weight for these reps';
+    case 'rep_record': {
+      // Review fix: what it beat — fewer reps before ("more reps at this weight"), or a lighter
+      // weight for at least these reps ("more weight for these reps").
+      const prev = (hit as RecordHit & { previousSet?: { weightKg: number; reps: number } | null }).previousSet;
+      return s && prev && prev.reps < s.reps ? 'more reps at this weight' : 'more weight for these reps';
+    }
     case 'best_set':
       return `${fmtInt(kgToDisplay(hit.value, units))} ${weightUnit(units)} in one set`;
     case 'best_session':

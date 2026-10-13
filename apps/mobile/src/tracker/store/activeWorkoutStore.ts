@@ -83,7 +83,7 @@ import { phoneAfterWorkout } from '@/tracker/phone/phoneSync';
 // Packet C (TG-03 / TG-06 / TG-08 / TG-11): Targets loaded with the cards, counting conversion.
 import { convertCounting } from '@/tracker/engine/logTypes';
 import { loadTargets, preloadTargets, seedTargets, targetQuery } from '@/tracker/store/targetStore';
-import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
+import { useTrackerPrefs, type PreviousFrom } from '@/tracker/store/trackerPrefsStore';
 // Packet E (LW-12 / LW-26 / LW-31): order, supersets and the swap split.
 import { joinSuperset, moveCard, nextSupersetGroup, swapSplit, tidySupersets } from '@/tracker/services/workoutOrder';
 import type { DayType, Exercise, MuscleGroup, SessionDetail } from '@/types/models';
@@ -263,6 +263,8 @@ interface DraftSnapshot {
   /** See `ActiveWorkoutState.routineId`. Absent on older drafts (they saved '' at Finish). */
   routineId?: string | null;
   workoutName?: string | null;
+  /** 13 Oct 2026: the "Previous values" choice frozen at the start (absent: older drafts). */
+  previousFrom?: PreviousFrom | null;
   /** Phase 4: started in an easy week of the followed plan. Absent on older drafts. */
   easyWeek?: boolean;
   exercises: DraftExercise[];
@@ -304,6 +306,13 @@ export interface ActiveWorkoutState {
   routineId: string | null;
   /** The name this workout starts with (a Repeat: its source's; a past log: the routine picked). */
   workoutName: string | null;
+  /**
+   * 13 Oct 2026 review fix: the "Previous values" choice frozen when this workout started, so
+   * PREVIOUS, warm-ups, carried notes and the Target all read ONE scope for the whole workout; a
+   * change in Settings applies from the next workout. null = not frozen (no workout, or a draft
+   * saved before): the setting as it is now.
+   */
+  previousFrom: PreviousFrom | null;
   /**
    * Phase 4: this workout is an easy week of the followed plan — half the sets, the same
    * weights; saved marked, so records and the Target leave it out.
@@ -487,8 +496,13 @@ export function historyRoutineOf(s: Pick<ActiveWorkoutState, 'planDayId' | 'rout
 }
 
 /** The live workout's "Previous values" scope (null = every workout). Never throws. */
-function scopeOfWorkout(s: Pick<ActiveWorkoutState, 'planDayId' | 'routineId'>): Promise<HistoryScope | null> {
-  return historyScopeOrAll(historyRoutineOf(s));
+function scopeOfWorkout(s: Pick<ActiveWorkoutState, 'planDayId' | 'routineId'> & { previousFrom?: PreviousFrom | null }): Promise<HistoryScope | null> {
+  return historyScopeOrAll(historyRoutineOf(s), s.previousFrom ?? undefined);
+}
+
+/** The "Previous values" choice a workout starting now freezes (the setting as it is). */
+function previousFromNow(): PreviousFrom {
+  return useTrackerPrefs.getState().previousFrom;
 }
 
 async function persistDraft(s: ActiveWorkoutState): Promise<void> {
@@ -502,6 +516,7 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
     planDayId: s.planDayId,
     routineId: s.routineId,
     workoutName: s.workoutName,
+    previousFrom: s.previousFrom,
     easyWeek: s.easyWeek,
     exercises: s.exercises,
     editingSessionId: s.editingSessionId,
@@ -1044,12 +1059,12 @@ export const RESTORE_TARGETS_WAIT_MS = 3000;
  * Targets BEFORE it opens, so the first hints are the Target's, never last time's. A slow or
  * failed read never keeps the workout shut (the screen loads them itself after the wait).
  */
-async function targetsBeforeHints(planDayId: string, exercises: DraftExercise[], easy: boolean): Promise<void> {
+async function targetsBeforeHints(planDayId: string, exercises: DraftExercise[], easy: boolean, previousFrom?: PreviousFrom | null): Promise<void> {
   try {
     const effort = useTrackerPrefs.getState().advancedSets;
     let timer: ReturnType<typeof setTimeout> | null = null;
     await Promise.race([
-      loadTargets(targetQuery(planDayId, exercises, { easy, effort })),
+      loadTargets(targetQuery(planDayId, exercises, { easy, effort, previousFrom: previousFrom ?? undefined })),
       new Promise<void>((resolve) => {
         timer = setTimeout(resolve, RESTORE_TARGETS_WAIT_MS);
       }),
@@ -1255,6 +1270,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId: null,
         routineId: '',
         workoutName: null,
+        previousFrom: null,
         easyWeek: false,
         exercises: [],
         lastDeleted: null,
@@ -1286,6 +1302,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     planDayId: null,
     routineId: '',
     workoutName: null,
+    previousFrom: null,
     easyWeek: false,
     exercises: [],
     lastDeleted: null,
@@ -1321,7 +1338,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           } else if (snap && typeof snap.startedAt === 'number' && Array.isArray(snap.exercises)) {
             // TG-11 (reopening mid-workout): the Targets are ready before the rows show hints.
             if (snap.planDayId && !snap.editingSessionId) {
-              await targetsBeforeHints(snap.planDayId, snap.exercises, snap.easyWeek === true);
+              await targetsBeforeHints(snap.planDayId, snap.exercises, snap.easyWeek === true, snap.previousFrom ?? null);
               // A workout may have been started while they loaded — don't clobber it.
               if (get().active || get().hydrated) {
                 set({ hydrated: true });
@@ -1335,6 +1352,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               planDayId: snap.planDayId ?? null,
               routineId: snap.routineId === undefined ? '' : snap.routineId,
               workoutName: snap.workoutName ?? null,
+              previousFrom: snap.previousFrom ?? null,
               easyWeek: snap.easyWeek === true,
               // LW-26: a draft saved by an older version may hold a superset of one.
               exercises: tidySupersets(snap.exercises),
@@ -1364,6 +1382,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId: null,
         routineId: '',
         workoutName: null,
+        previousFrom: previousFromNow(),
         easyWeek: false,
         exercises: [],
         lastDeleted: null,
@@ -1407,6 +1426,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId,
         routineId: '',
         workoutName: null,
+        previousFrom: previousFromNow(),
         easyWeek: easy && planDayId != null,
         exercises,
         lastDeleted: null,
@@ -1440,6 +1460,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId,
         routineId: '',
         workoutName: null,
+        previousFrom: previousFromNow(),
         easyWeek: easy && planDayId != null,
         exercises,
         lastDeleted: null,
@@ -1474,6 +1495,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId: null,
         routineId: session.routineId ?? null,
         workoutName: session.title?.trim() ? session.title.trim() : null,
+        previousFrom: previousFromNow(),
         easyWeek: false,
         exercises,
         lastDeleted: null,
@@ -1962,6 +1984,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           planDayId: null,
           routineId: '',
           workoutName: null,
+          previousFrom: null,
           easyWeek: false,
           exercises: [],
           lastDeleted: null,
@@ -2062,6 +2085,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         // Its own routine: exercises added while editing read the same "Previous values" scope.
         routineId: session.routineId ?? '',
         workoutName: null,
+        previousFrom: previousFromNow(),
         easyWeek: false,
         exercises,
         lastDeleted: null,
@@ -2140,6 +2164,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId: null,
         routineId: routine === 'none' ? '' : routine ? routine.id : null,
         workoutName: routine && routine !== 'none' ? routine.name : null,
+        previousFrom: previousFromNow(),
         easyWeek: false,
         exercises: [],
         lastDeleted: null,
@@ -2204,6 +2229,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           planDayId: null,
           routineId: '',
           workoutName: null,
+          previousFrom: null,
           easyWeek: false,
           exercises: [],
           lastDeleted: null,
@@ -2247,6 +2273,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId: null,
         routineId: '',
         workoutName: null,
+        previousFrom: null,
         easyWeek: false,
         exercises: [],
         lastDeleted: null,

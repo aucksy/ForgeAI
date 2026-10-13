@@ -123,7 +123,8 @@ export function startWorkoutPresence(): () => void {
       if (last !== 'off') {
         last = 'off';
         stopLiveTimer();
-        if (live) clearLiveWorkoutCard();
+        // Always (review fix): a card left by a killed app run goes too, as the old card does.
+        clearLiveWorkoutCard();
         live = false;
         void clearWorkoutOngoing();
         // Also covers an alarm left by a previous app run that was killed mid-rest.

@@ -154,6 +154,25 @@ describe('the three settings, on PREVIOUS, the Target and the carried note', () 
 });
 
 describe('the live workout', () => {
+  it('review fix: the choice is frozen at the start — a change mid-workout applies from the next one', async () => {
+    await setting('folder');
+    const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
+    await useActiveWorkout.getState().startFromPlanDay(A1);
+    expect(useActiveWorkout.getState().previousFrom).toBe('folder');
+    // Changed in Settings mid-workout: an exercise added now still reads Gym A (80 × 6), not
+    // every workout (60 × 8).
+    await setting('any');
+    const { getExerciseById } = await import('@/db/repos/exerciseRepo');
+    await useActiveWorkout.getState().addExercise((await getExerciseById(bench))!);
+    expect(useActiveWorkout.getState().exercises[1].previousSets[0]).toMatchObject({ weightKg: 80, reps: 6 });
+    await useActiveWorkout.getState().discard();
+    // The next workout uses the new setting.
+    await useActiveWorkout.getState().startFromPlanDay(A1);
+    expect(useActiveWorkout.getState().previousFrom).toBe('any');
+    expect(useActiveWorkout.getState().exercises[0].previousSets[0]).toMatchObject({ weightKg: 60, reps: 8 });
+    await useActiveWorkout.getState().discard();
+  });
+
   it('a routine started under Same folder: its card’s PREVIOUS, note and Target come from Gym A', async () => {
     await setting('folder');
     const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');

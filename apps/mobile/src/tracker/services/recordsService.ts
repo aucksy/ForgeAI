@@ -295,6 +295,8 @@ export function priorBestsFrom(records: ExerciseRecords, info: Pick<TrackerExerc
     by[h.kind] = h.value;
     if (h.set) holderKg[h.kind] = h.set.weightKg;
   }
+  // Review fix: the overload bar never comes down to a quiet lighter holder (engine/records).
+  for (const [k, kg] of Object.entries(records.bars ?? {})) if (kg != null) holderKg[k as RecordKind] = kg;
   return {
     weightKg: by.weight ?? 0,
     e1rm: by.e1rm ?? 0,
@@ -303,7 +305,8 @@ export function priorBestsFrom(records: ExerciseRecords, info: Pick<TrackerExerc
     bodyweightKg: bodyweightOn(bw, today),
     kinds: records.kinds,
     holderKg,
-    ladder: (records.ladder ?? []).map((r) => [r.reps, r.weightKg] as [number, number]),
+    // Review fix: the rep-record bar (no quiet lighter sets), else the table's ladder (older data).
+    ladder: records.barLadder ?? (records.ladder ?? []).map((r) => [r.reps, r.weightKg] as [number, number]),
   };
 }
 

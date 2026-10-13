@@ -19,6 +19,7 @@ import type { UnitSystem } from '@/lib/units';
 import { setInWords } from '../lib/previousSource';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 import { cardDoneTarget, restTarget, rowLabel, type CardDone, type RowFill } from './restDone';
+import { afterSetCompleted } from './restRules';
 import { tickValues } from './setTick';
 
 export interface LiveCard {
@@ -32,15 +33,27 @@ export interface LiveCard {
   label: string | null;
 }
 
-/** The exercise of the most recently ticked set (by tick time), else the first exercise. PURE. */
-export function liveFrom(exercises: readonly DraftExercise[]): string | null {
-  let best: { key: string; at: number } | null = null;
+/** The most recently ticked set (by tick time), or null. PURE. */
+export function lastTick(exercises: readonly DraftExercise[]): { exKey: string; setKey: string } | null {
+  let best: { exKey: string; setKey: string; at: number } | null = null;
   for (const e of exercises) {
     for (const s of e.sets) {
-      if (s.done && s.doneAt != null && (!best || s.doneAt > best.at)) best = { key: e.key, at: s.doneAt };
+      if (s.done && s.doneAt != null && (!best || s.doneAt > best.at)) best = { exKey: e.key, setKey: s.key, at: s.doneAt };
     }
   }
-  return best?.key ?? exercises[0]?.key ?? null;
+  return best ? { exKey: best.exKey, setKey: best.setKey } : null;
+}
+
+/**
+ * Where the card looks for the next set: the exercise the screen goes to after the last tick —
+ * the same rule as the set row's tick (`afterSetCompleted(...).nextExKey ?? exKey`), so in a
+ * superset the card names the partner, as the rest card's Done does (review fix) — else the
+ * first exercise. PURE.
+ */
+export function liveFrom(exercises: readonly DraftExercise[]): string | null {
+  const last = lastTick(exercises);
+  if (!last) return exercises[0]?.key ?? null;
+  return afterSetCompleted([...exercises], last.exKey, last.setKey, 0).nextExKey ?? last.exKey;
 }
 
 /** "Set 3 of 5" / "Warm-up 1 of 2" for a row of `ex`. PURE. */

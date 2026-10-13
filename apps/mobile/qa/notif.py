@@ -13,8 +13,9 @@ Usage: notif.py <check> <dump-file> [args]
                           REST_LATE_BUDGET_S (default 5) late, or more than 2 s early.
                           Without that dump the due time is tick + 30 s (approximate): lateness
                           is then printed but cannot fail the run.
-  ongoing                 the "Workout in progress" card is showing
-  no-ongoing              NO "Workout in progress" card (no workout was started)
+  ongoing                 the live workout card is showing (channel "workout-live", id 41004;
+                          an older build's "Workout in progress" card counts too)
+  no-ongoing              NO live workout card (no workout was started)
   card <title-prefix> [text-part]
                           the rest card is showing: swipe-away, its three buttons in the order
                           Done, +15 s, Skip (Phase 6), the given title (and, if given, a text
@@ -87,6 +88,18 @@ def is_card(block):
     return channel_of(block) in CARD_CHANNELS
 
 
+# 13 Oct 2026: the live workout card (WorkoutCard.kt: channel "workout-live", id 41004) replaced
+# the quiet "Workout in progress" card; its title is the exercise's name. A build without the
+# native card still posts the old one, so that title counts too.
+LIVE_CHANNEL = "workout-live"
+LIVE_ID = 41004
+
+
+def is_ongoing(block):
+    head = header(block)
+    return channel_of(block) == LIVE_CHANNEL or re.search(rf"\bid={LIVE_ID}\b", head) is not None or title(block) == "Workout in progress"
+
+
 def main():
     check, path = sys.argv[1], sys.argv[2]
     recs = records(open(path, encoding="utf-8", errors="replace").read())
@@ -125,11 +138,11 @@ def main():
         print(f"[qa] REST ALERT posted (channel {channel}); due {due} (the rest card's end time), posted {posted}, late by {late:.1f}s; budget {budget:g}s: {verdict}")
         return 0 if ok else 1
     if check == "ongoing":
-        ok = any(title(b) == "Workout in progress" for b in recs)
+        ok = any(is_ongoing(b) for b in recs)
         print("[qa] ONGOING CARD present" if ok else "[qa] ONGOING CARD MISSING")
         return 0 if ok else 1
     if check == "no-ongoing":
-        live = [b for b in recs if title(b) == "Workout in progress"]
+        live = [b for b in recs if is_ongoing(b)]
         print("[qa] ONGOING CARD absent (no workout open)" if not live else "[qa] ONGOING CARD PRESENT: a workout is open")
         return 0 if not live else 1
     if check == "card":

@@ -117,6 +117,10 @@ export function afterSetCompleted(
   const rest = effectiveRestSec(ex, defaultSec);
   const restSec = rest > 0 ? rest : null;
 
+  // Review fix (13 Oct 2026): a warm-up is not a superset round — it rests here and stays on
+  // this exercise (it never jumps to the partner or cancels the rest).
+  if (set.isWarmup) return { restSec, nextExKey: null };
+
   const group = ex.supersetGroup ?? null;
   if (group == null) return { restSec, nextExKey: null };
 

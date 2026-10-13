@@ -231,6 +231,18 @@ export interface ExerciseRecords {
    * reps ascending — what a rep record is judged against, and what the exercise page lists.
    */
   ladder?: RepBest[];
+  /**
+   * 13 Oct 2026 review fix: the overload gate's bar for "Most reps" / "Best set" — the heaviest
+   * weight any announced holder lifted (the first holder counts). A gated lighter set may take
+   * the best but never lowers the bar, so 5 kg × 26 after a quiet 5 kg × 25 is still no news.
+   */
+  bars?: Partial<Record<RecordKind, number>>;
+  /**
+   * Review fix: the ladder a rep record is judged against — the first workout's sets and every
+   * rep record since, never a quiet lighter set (5 kg × 25 must not make 6 kg × 20 "news").
+   * [reps, kg] pairs. The Set records table (`ladder`) still shows every set.
+   */
+  barLadder?: [number, number][];
 }
 
 // ------------------------------------------------------------------ 13 Oct 2026: rep records
@@ -271,6 +283,22 @@ export function repRecordOver(ladder: ReadonlyMap<number, number>, s: Pick<Recor
   }
   if (atLeast) return beats(w, atLeast.weightKg) ? atLeast : null;
   return longest && !beats(longest.weightKg, w) ? longest : null;
+}
+
+/**
+ * The Set records table as the rep-record rule reads it (review fix): for each rep count done,
+ * the heaviest weight lifted for AT LEAST that many reps, and where — so 90 kg × 6 shows 90 kg
+ * for 5 reps too (never an 80 kg × 5 that 90 × 6 already beats). Reps ascending. PURE.
+ */
+export function ladderAtLeast(rungs: readonly RepBest[]): RepBest[] {
+  const sorted = [...rungs].sort((a, b) => b.reps - a.reps);
+  const out: RepBest[] = [];
+  let best: RepBest | null = null;
+  for (const r of sorted) {
+    if (!best || beats(r.weightKg, best.weightKg)) best = r;
+    out.push({ ...best, reps: r.reps });
+  }
+  return out.reverse();
 }
 
 /** A ladder as a list, reps ascending (for `PriorBests` and the Set records table). PURE. */
@@ -399,7 +427,15 @@ export function exerciseRecords(sessions: readonly RecordSession[], rule: Record
   const events: RecordEvent[] = [];
   const reps = keepsRepRecords(rule.logType);
   const ladder: RepLadder = new Map();
+  /** What a rep record must beat (review fix: quiet lighter sets never enter it). */
+  const bar: RepLadder = new Map();
   const rungs = new Map<number, RepBest>();
+  const bars: Partial<Record<RecordKind, number>> = {};
+  const raiseBar = (kind: RecordKind, set: RecordSet | null): void => {
+    if (!set || !overloadGatedKind(kind, rule.logType)) return;
+    const cur = bars[kind];
+    bars[kind] = cur == null ? finite(set.weightKg) : Math.max(cur, finite(set.weightKg));
+  };
   for (const session of chronological(sessions)) {
     const body = bodyweightOn(bw, session.dateISO);
     const top = sessionBests(session, rule, kinds, body);
@@ -409,14 +445,19 @@ export function exerciseRecords(sessions: readonly RecordSession[], rule: Record
       const prior = bests.get(kind);
       if (!prior) {
         bests.set(kind, hit);
+        raiseBar(kind, hit.set);
         continue;
       }
       if (!beats(hit.value, prior.value)) continue;
       // The overload gate: the news is the best set of this workout that beat the record at no
-      // less weight than its holder's (a lighter set can still take the best, unannounced).
-      const gate = overloadGatedKind(kind, rule.logType) ? prior.set?.weightKg : null;
+      // less weight than the bar — the heaviest announced holder's (a lighter set can still take
+      // the best, unannounced, and never lowers the bar).
+      const gate = overloadGatedKind(kind, rule.logType) ? bars[kind] : null;
       const news = gate == null ? hit : gatedNews(kind, session, rule, body, prior, gate);
-      if (news) events.push({ ...news, previous: prior.value });
+      if (news) {
+        events.push({ ...news, previous: prior.value });
+        raiseBar(kind, news.set);
+      }
       bests.set(kind, hit);
     }
     if (reps) {
@@ -424,7 +465,7 @@ export function exerciseRecords(sessions: readonly RecordSession[], rule: Record
       // heaviest such set (more reps on a tie).
       let news: { set: RecordSet; over: { weightKg: number; reps: number } } | null = null;
       for (const st of session.sets) {
-        const over = repRecordOver(ladder, st);
+        const over = repRecordOver(bar, st);
         if (!over) continue;
         if (!news || beats(finite(st.weightKg), finite(news.set.weightKg)) || (!beats(finite(news.set.weightKg), finite(st.weightKg)) && finite(st.reps) > finite(news.set.reps))) {
           news = { set: st, over };
@@ -442,6 +483,13 @@ export function exerciseRecords(sessions: readonly RecordSession[], rule: Record
           previousSet: news.over,
         });
       }
+      // The bar takes the first workout whole, then only rep records, set by set (as live).
+      const first = bar.size === 0;
+      for (const st of session.sets) if (first || repRecordOver(bar, st)) addToLadder(bar, st);
+    }
+    // The Set records ladder: also kept for a bodyweight move logged with added weight (its table
+    // on the exercise page; review fix), which announces no rep records.
+    if (reps || rule.logType === 'reps') {
       for (const st of session.sets) {
         const r = Math.round(finite(st.reps));
         const before = ladder.get(r);
@@ -455,6 +503,8 @@ export function exerciseRecords(sessions: readonly RecordSession[], rule: Record
     bests: kinds.map((k) => bests.get(k)).filter((h): h is RecordHit => h != null),
     events,
     ladder: [...rungs.values()].sort((a, b) => a.reps - b.reps),
+    bars,
+    barLadder: ladderEntries(bar),
   };
 }
 

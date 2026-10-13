@@ -18,7 +18,7 @@
  * still news — the same as the finish screen counts it.
  */
 import type { DraftSet } from '@/tracker/store/activeWorkoutStore';
-import { storedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
+import { storedWeight, weightIsEach, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import {
   RECORD_KINDS,
   addToLadder,
@@ -143,7 +143,8 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
         const best = running[kind];
         running[kind] = best == null ? v : Math.max(best, v);
       }
-      if (repLadder) addToLadder(repLadder, set);
+      // Only a rep record raises the rep bar (a quiet lighter set never does; review fix).
+      if (repLadder && repRecordOver(repLadder, set)) addToLadder(repLadder, set);
       sessionTotal += sessionContribution(set, rule, body);
     }
   }
@@ -157,8 +158,10 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
       if (kind === 'rep_record') {
         if (!repLadder) continue;
         const over = repRecordOver(repLadder, set);
-        if (over) all.push({ kind, value: set.weightKg, set, previousSet: over });
-        addToLadder(repLadder, set);
+        if (over) {
+          all.push({ kind, value: set.weightKg, set, previousSet: over });
+          addToLadder(repLadder, set);
+        }
         continue;
       }
       if (kind === 'best_session' || !kinds.includes(kind) || gated(kind, set)) continue;
@@ -250,9 +253,11 @@ export function recordLabel(hit: LiveHit, ctx: RecordTextContext): string {
 }
 
 /** "was 20 kg" (the same or more reps), or "was 20 kg × 10" (the most reps before). PURE. */
-export function wasText(prev: { weightKg: number; reps: number }, set: Pick<RecordSet, 'reps'>, ctx: RecordTextContext): string {
+export function wasText(prev: { weightKg: number; reps: number }, set: Pick<RecordSet, 'reps' | 'loadMode'>, ctx: RecordTextContext): string {
   const units = ctx.units ?? displayUnits();
   const plus = ctx.logType === 'weighted' ? '+' : '';
-  const kg = `${plus}${trimNum(kgToDisplay(prev.weightKg, units))} ${weightUnit(units)}`;
+  // Review fix: "each" on a per-dumbbell move, as the set's own words say it.
+  const each = ctx.logType === 'weight_reps' && weightIsEach(set.loadMode ?? ctx.loadMode) ? ' each' : '';
+  const kg = `${plus}${trimNum(kgToDisplay(prev.weightKg, units))} ${weightUnit(units)}${each}`;
   return prev.reps >= set.reps ? `was ${kg}` : `was ${kg} × ${prev.reps}`;
 }

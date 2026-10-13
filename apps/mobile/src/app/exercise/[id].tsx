@@ -48,7 +48,7 @@ import { hideRefusal, mergeExercise, mergeRefusal, setExerciseHidden } from '@/t
 import { setRecordsFrom } from '@/tracker/db/recordStart';
 import { getWorkoutNames } from '@/tracker/db/workoutNames';
 import { isTimedCardio, LOAD_MODE_LABEL, LOG_TYPE_LABEL } from '@/tracker/engine/logTypes';
-import { RECORD_LABEL } from '@/tracker/engine/records';
+import { ladderAtLeast, RECORD_LABEL } from '@/tracker/engine/records';
 import { headlineBest } from '@/tracker/services/exerciseHeadline';
 import { lastTimeRows } from '@/tracker/services/workoutDetail';
 import { SetTable } from '@/tracker/components/SetTable';
@@ -200,10 +200,9 @@ export default function ExerciseScreen() {
   const recordsFrom = ov?.recordsFrom ?? null;
   // 13 Oct 2026: the Set records ladder IS the rep-record rule's (engine/records), so the
   // table and the live "Rep record" pop-up agree; easy weeks and the records day as for records.
-  const ladder = useMemo(
-    () => (stats ? (ov?.records.ladder ?? []).filter((r) => r.reps <= SET_RECORD_MAX_REPS) : []),
-    [stats, ov],
-  );
+  // Review fix: the "at least that many reps" reading (90 × 6 shows 90 kg for 5 reps), and also
+  // for a bodyweight move logged with added weight.
+  const ladder = useMemo(() => ladderAtLeast(ov?.records.ladder ?? []).filter((r) => r.reps <= SET_RECORD_MAX_REPS), [ov]);
   // Phase 3: every record this exercise keeps, from the one record rule.
   const bests = ov?.records.bests ?? [];
   const recordCtx = ex ? { logType: ex.logType, loadMode: ex.loadMode, distUnit: ex.distUnit } : null;
@@ -435,7 +434,7 @@ export default function ExerciseScreen() {
                       onRangeChange={setChartRange}
                     />
                     {recordCtx ? (
-                      <ExercisePrRows bests={bests} kinds={ov.records.kinds} ctx={recordCtx} ladder={stats ? ladder : []} units={units} onOpenSession={openSession} />
+                      <ExercisePrRows bests={bests} kinds={ov.records.kinds} ctx={recordCtx} ladder={ladder} units={units} onOpenSession={openSession} />
                     ) : null}
                   </>
                 )}

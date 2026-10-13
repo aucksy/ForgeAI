@@ -97,8 +97,12 @@ export default function ActiveWorkoutScreen() {
   const easyWeek = useActiveWorkout((s) => s.easyWeek);
   // Phase 4: members who log RPE see this plan week's effort on the Target.
   const logsRpe = useTrackerPrefs((s) => s.advancedSets);
-  // "Previous values" (Settings → Workouts): a change re-reads the Targets from those workouts.
-  const previousFrom = useTrackerPrefs((s) => s.previousFrom);
+  // "Previous values" (Settings → Workouts): the choice this workout started with (13 Oct 2026
+  // review fix: frozen, so the Target reads the same workouts as PREVIOUS); an older draft
+  // without one follows the setting.
+  const settingPreviousFrom = useTrackerPrefs((s) => s.previousFrom);
+  const frozenPreviousFrom = useActiveWorkout((s) => s.previousFrom);
+  const previousFrom = frozenPreviousFrom ?? settingPreviousFrom;
   const exercises = useActiveWorkout((s) => s.exercises);
   const committing = useActiveWorkout((s) => s.committing);
   const finish = useActiveWorkout((s) => s.finish);
