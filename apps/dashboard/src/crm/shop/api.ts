@@ -5,6 +5,8 @@
  * message such as BAD_KEY) and turned into plain words by `errorWords`.
  */
 
+import { parseGymBrand, type GymBrand, type HeadingStyle } from '@forgeai/theme';
+
 import { supabase } from '../../lib/supabase';
 import {
   appMemberFromRow,
@@ -40,6 +42,8 @@ export interface CloudGymInfo {
   gymId: string;
   name: string;
   joinCode: string;
+  /** Gym branding (0005): null when the gym has none, or the server predates branding. */
+  brand?: GymBrand | null;
 }
 
 export async function startDemoGym(name: string): Promise<CloudGymInfo & { ownerKey: string }> {
@@ -54,7 +58,19 @@ export async function startDemoGym(name: string): Promise<CloudGymInfo & { owner
 
 export async function ownerGym(key: string): Promise<CloudGymInfo> {
   const r = await call<Row>('owner_gym', { p_key: key });
-  return { gymId: String(r.gymId), name: String(r.name), joinCode: String(r.joinCode) };
+  return { gymId: String(r.gymId), name: String(r.name), joinCode: String(r.joinCode), brand: parseGymBrand(r.brand) };
+}
+
+/**
+ * Gym branding: save the gym's whole look (owner_set_brand, 0005). Nulls clear; all nulls and
+ * 'normal' are ForgeAI's own look. Members get it on their next app launch (new members at once).
+ */
+export async function setBrand(
+  key: string,
+  args: { p_accent: string | null; p_bg: string | null; p_logo_url: string | null; p_heading: HeadingStyle },
+): Promise<GymBrand | null> {
+  const r = await call<Row>('owner_set_brand', { p_key: key, ...args });
+  return parseGymBrand(r.brand);
 }
 
 export async function renameGym(key: string, name: string): Promise<CloudGymInfo> {
