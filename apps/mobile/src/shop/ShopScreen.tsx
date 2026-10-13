@@ -17,6 +17,7 @@ import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { PressScale } from '@/components/ui/PressScale';
 import { getProfile } from '@/db/repos/userRepo';
 import { GymBrandMark } from '@/components/GymBrandMark';
+import { useGymTheme } from '@/theme/gymTheme';
 import { color, radius, space, type } from '@/theme/tokens';
 import { isBranded } from '@forgeai/theme';
 
@@ -191,8 +192,10 @@ function GymShop({ link }: { link: GymLink }) {
   );
 
   // Gym branding: a branded gym's page is "Shop" under the gym's own logo and name (as the
-  // Workout and Profile tabs); an unbranded gym keeps its name as the title.
-  const branded = isBranded(link.brand);
+  // Workout and Profile tabs); an unbranded gym keeps its name as the title. Read from the look the
+  // app is painted in (it can wait for a safe moment), so the title and the header mark agree.
+  const look = useGymTheme((s) => s.look);
+  const branded = look?.gymId === link.gymId && isBranded(look.brand);
 
   const onLeave = async () => {
     const ok = await askConfirm({

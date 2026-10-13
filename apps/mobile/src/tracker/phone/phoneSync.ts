@@ -34,6 +34,16 @@ export async function phoneAfterWorkout(sessionId: string): Promise<void> {
   await refreshReminders().catch(() => undefined);
 }
 
+/**
+ * Gym branding: the app's look changed (a join, Leave gym, the owner's new look shown). The
+ * widgets are drawn again in the new accent, and the reminders — which keep the colour they were
+ * scheduled with — are set again (their stamp holds the accent: reminders.ts reminderStampKey).
+ */
+export async function phoneAfterLookChange(): Promise<void> {
+  await refreshWidgets().catch(() => undefined);
+  await refreshReminders().catch(() => undefined);
+}
+
 export async function phoneAfterDelete(sessionId: string): Promise<void> {
   await removeWorkoutFromHealth(sessionId).catch(() => undefined);
   await refreshWidgets().catch(() => undefined);

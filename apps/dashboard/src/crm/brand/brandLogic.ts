@@ -65,10 +65,20 @@ export function previewPalette(d: BrandDraft): BrandPalette | null {
   return buildBrandPalette({ accent: normalizeHex(d.accent)!, bg: d.useBg ? normalizeHex(d.bg) : null });
 }
 
+/**
+ * The colour to save: none while it is ForgeAI's own ember (the picker's starting colour). A gym
+ * that only uploads a logo then keeps ForgeAI's hand-tuned colours on the phone, instead of
+ * ForgeAI's orange pushed through the palette engine (D9). PURE.
+ */
+export function accentToSave(raw: string | null | undefined): string | null {
+  const hex = normalizeHex(raw);
+  return hex === FORGE_ACCENT ? null : hex;
+}
+
 /** owner_set_brand's arguments (minus the key) for this draft. */
 export function saveArgs(d: BrandDraft): { p_accent: string | null; p_bg: string | null; p_logo_url: string | null; p_heading: HeadingStyle } {
   return {
-    p_accent: normalizeHex(d.accent),
+    p_accent: accentToSave(d.accent),
     p_bg: d.useBg ? normalizeHex(d.bg) : null,
     p_logo_url: d.logoUrl,
     p_heading: d.heading,
@@ -82,7 +92,7 @@ export const CLEAR_ARGS = { p_accent: null, p_bg: null, p_logo_url: null, p_head
 export function draftChanged(d: BrandDraft, saved: GymBrand | null): boolean {
   const a = saveArgs(d);
   return (
-    a.p_accent !== (saved?.accent ?? null) ||
+    a.p_accent !== accentToSave(saved?.accent) ||
     a.p_bg !== (saved?.bg ?? null) ||
     a.p_logo_url !== (saved?.logoUrl ?? null) ||
     a.p_heading !== (saved?.heading ?? 'normal')

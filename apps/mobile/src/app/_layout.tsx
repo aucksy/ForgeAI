@@ -2,7 +2,7 @@ import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, type ReactElement } from 'react';
-import { View } from 'react-native';
+import { AppState, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { BrandOpening } from '@/components/BrandOpening';
@@ -14,12 +14,14 @@ import { startUnitSync } from '@/lib/useUnits';
 import { FEATURES } from '@/lib/features';
 import { useCloud } from '@/store/cloudStore';
 import { WorkoutPresenceHost } from '@/tracker/components/WorkoutPresenceHost';
+import { phoneAfterLookChange } from '@/tracker/phone/phoneSync';
 import { photoBackupAtStart } from '@/tracker/services/photoBackup';
+import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
 import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingStore';
-import { refreshGymNow } from '@/shop/gymActions';
-import { dismissOpening, startGymTheme, useGymTheme } from '@/theme/gymTheme';
+import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
+import { dismissOpening, setWorkoutCheck, showWaitingLook, startGymTheme, useGymTheme } from '@/theme/gymTheme';
 import { color } from '@/theme/tokens';
 import { useAppFonts } from '@/theme/fonts';
 
@@ -27,7 +29,9 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 // v0.27.0: kg / lb and km / miles — the pure formatters follow Profile → Units.
 startUnitSync();
 // Gym branding: the joined gym's look (already in the tokens since index.js) follows the gym
-// shop's saved link from here on — join, Leave gym, erase (theme/gymTheme.ts).
+// shop's saved link from here on — join, Leave gym, erase (theme/gymTheme.ts). A look the member
+// did not ask for waits while a workout is open: the theme sees one through this check.
+setWorkoutCheck(() => useActiveWorkout.getState().active);
 startGymTheme();
 
 /**
@@ -91,9 +95,26 @@ export default function RootLayout() {
     if (!ready) return;
     SplashScreen.hideAsync().catch(() => {});
     // Gym branding: the gym's name and look as they are now (the owner may have changed them).
-    // Back while the logo is still up → shown at once; later → from the next launch. Joined
-    // phones only; quiet on failure.
+    // Back while the logo is still up → shown at once; later → the next time the app comes back
+    // with no workout open (below). Joined phones only; quiet on failure.
     void refreshGymNow().catch(() => undefined);
+    // Back to the foreground: a look that is waiting is shown now (under the gym's logo) unless a
+    // workout is open, and the gym is asked again at most about once an hour.
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s !== 'active') return;
+      showWaitingLook();
+      void refreshGymIfDue().catch(() => undefined);
+    });
+    // A new look once the app is up (join, Leave, an owner's change shown): the home-screen
+    // widgets and the reminders scheduled with the old colour are drawn again in the new one.
+    // (The look the app starts in reaches them through the phone sync's own start.)
+    const unwatch = useGymTheme.subscribe((s, prev) => {
+      if (s.epoch !== prev.epoch) void phoneAfterLookChange().catch(() => undefined);
+    });
+    return () => {
+      sub.remove();
+      unwatch();
+    };
   }, [ready]);
 
   return (

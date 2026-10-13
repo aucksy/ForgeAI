@@ -5,8 +5,10 @@
  * headings); the shared palette engine builds everything else — shades, the words on the colour,
  * chart colours — checks every pair for readability, nudges a colour that would be hard to read,
  * and the phone beside the form shows the result live. Save sends it to the cloud
- * (owner_set_brand); members see it the next time they open the app, new members straight after
- * joining. "Use ForgeAI's look" clears it.
+ * (owner_set_brand). New members get it straight after joining; members already in the gym once
+ * their app has checked with the gym (on opening, and on coming back at most once an hour), the
+ * next time they open or come back to the app, under the gym's logo and never mid-workout
+ * (apps/mobile theme/gymTheme.ts). "Use ForgeAI's look" clears it.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -21,6 +23,14 @@ import { navigate } from '../ui/router';
 import { CLEAR_ARGS, brandErrorWords, draftChanged, draftFromBrand, hexError, previewPalette, saveArgs, type BrandDraft } from './brandLogic';
 import { LogoError, uploadGymLogo } from './logoUpload';
 import { PhonePreview } from './PhonePreview';
+
+/**
+ * What Save promises, exactly as the phone behaves (apps/mobile theme/gymTheme.ts): it checks
+ * with the gym when the app opens, and when the member comes back to it at most once an hour; a
+ * new look then shows the next time they open or come back to the app — never mid-workout.
+ */
+const SAVED_WORDS =
+  'Saved. New members get it at once. Members already joined get it on one of their next visits to the app (it checks with your gym at most once an hour) — never in the middle of a workout.';
 
 export function BrandingScreen() {
   const { cloud } = useShop();
@@ -114,7 +124,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
       const next = await api.setBrand(ownerKey, saveArgs(draft));
       setLoad({ state: 'ready', saved: next });
       setDraft(draftFromBrand(next));
-      flash('Saved. Members see it the next time they open the app.');
+      flash(SAVED_WORDS);
     } catch (e) {
       setError(brandErrorWords(e));
     } finally {
@@ -283,7 +293,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           }
         >
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-            Your logo and colours are removed from the member app. Members see ForgeAI’s own look the next time they open it.
+            Your logo and colours are removed from the member app. Members see ForgeAI’s own look on one of their next visits to the app — never in the middle of a workout.
           </p>
         </Sheet>
       )}

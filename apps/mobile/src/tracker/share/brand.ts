@@ -2,12 +2,18 @@
  * The ForgeAI mark and wordmark as scene nodes (Phase 3 share pictures). Same geometry as
  * the frozen `components/ui/Logo` (authored in a 512 box, shown through a 384 window), in a
  * flat ember instead of its gradient.
+ *
+ * Gym branding (D6): ForgeAI's mark is ForgeAI's — the bar, the spark, the dot and "AI" are all
+ * drawn in ForgeAI's own fixed colours, whatever gym look the app wears (the picture's other parts
+ * take the gym's colours from the tokens). Only "FORGE" uses the ink, which no gym changes.
  */
 import { color } from '@/theme/tokens';
 
 import { textWidth, type SceneNode } from './scene';
 
-const EMBER = '#FF7A3B';
+/** ForgeAI's own colours (theme/tokens.ts defaults), never the gym's. */
+export const FORGE_MARK = { ember: '#FF7A3B', spark: '#FF8B4A', dot: '#FFA043' } as const;
+const EMBER = FORGE_MARK.ember;
 
 /** The barbell-"F" mark, `size` pixels square, top-left at (x, y). */
 export function logoMark(x: number, y: number, size: number): SceneNode[] {
@@ -31,8 +37,8 @@ export function logoMark(x: number, y: number, size: number): SceneNode[] {
     rect(398, 72, 40, 120, 20),
     rect(120, 96, 72, 320, 30),
     rect(120, 252, 168, 64, 28),
-    { t: 'path', d: spark, fill: '#FF8B4A', x: X(0), y: Y(0), scale: k },
-    { t: 'circle', cx: X(448), cy: Y(240), r: 13 * k, fill: color.accentBright },
+    { t: 'path', d: spark, fill: FORGE_MARK.spark, x: X(0), y: Y(0), scale: k },
+    { t: 'circle', cx: X(448), cy: Y(240), r: 13 * k, fill: FORGE_MARK.dot },
   ];
 }
 
@@ -46,7 +52,7 @@ export function wordmark(x: number, y: number, size: number): { nodes: SceneNode
   const nodes: SceneNode[] = [
     ...logoMark(x, y, size),
     { t: 'text', x: tx, y: baseline, text: 'FORGE', font: 'display', size: font, fill: color.ink },
-    { t: 'text', x: tx + forge, y: baseline, text: 'AI', font: 'display', size: font, fill: color.accent },
+    { t: 'text', x: tx + forge, y: baseline, text: 'AI', font: 'display', size: font, fill: EMBER },
   ];
   return { nodes, width: size + gap + forge + textWidth('AI', 'display', font) };
 }

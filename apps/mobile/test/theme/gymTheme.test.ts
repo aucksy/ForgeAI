@@ -2,7 +2,8 @@
  * Gym branding (Level 1): the theme on the phone — the gym's palette written into the theme
  * tokens (theme/brandTokens.ts), ForgeAI's own values back on Leave, and the controller
  * (theme/gymTheme.ts) that follows the gym shop's link: join → repaint + the logo opening; leave /
- * erase → ForgeAI's look; an owner's change mid-use → saved for the next launch.
+ * erase → ForgeAI's look; an owner's change mid-use, or the gym dropping this phone → saved, and
+ * shown at the next safe moment (back to the foreground with no workout open, under the logo).
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -28,10 +29,12 @@ import type { GymBrand } from '@forgeai/theme';
 import { useGymShop } from '@/shop/gymStore';
 import type { GymLink } from '@/shop/types';
 import { appliedBrand, applyBrandToTokens, brandHeadingStyle, defaultColor, paletteForBrand } from '@/theme/brandTokens';
-import { dismissOpening, reconcileGymTheme, resetGymThemeForTests, useGymTheme } from '@/theme/gymTheme';
+import { UNLINKED_TEXT } from '@/shop/gym';
+import { logoMarkWidth } from '@/components/GymBrandMark';
+import { dismissOpening, reconcileGymTheme, resetGymThemeForTests, setWorkoutCheck, showWaitingLook, useGymTheme } from '@/theme/gymTheme';
 import { chart, color, gradients, shadow } from '@/theme/tokens';
 
-const RAMS: GymBrand = { accent: '#F7D411', bg: '#0A0A0C', logoUrl: 'https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/gym-logos/aa/logo.png', heading: 'bold-italic', updatedAt: '2026-10-13T10:00:00Z' };
+const RAMS: GymBrand = { accent: '#F7D411', bg: '#0A0A0C', logoUrl: `https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/gym-logos/${'ab'.repeat(24)}/logo.png`, heading: 'bold-italic', updatedAt: '2026-10-13T10:00:00Z' };
 const LINK: GymLink = { memberKey: 'k'.repeat(48), memberId: 'm1', gymId: 'g-rams', gymName: "RAM'S FITNESS CLUB IMPACT", joinCode: 'RAMS01', name: 'Asha', brand: RAMS };
 const PLAIN: GymLink = { memberKey: 'p'.repeat(48), memberId: 'm2', gymId: 'g-forge', gymName: 'ForgeAI Test Gym', joinCode: 'FORGE1', name: 'Asha' };
 
@@ -126,7 +129,7 @@ describe('gym theme controller', () => {
     expect(mirror.value).toEqual({ gymId: 'g-forge', gymName: 'ForgeAI Test Gym', brand: null });
   });
 
-  it("the owner's new colour mid-use waits for the next launch (never a redraw mid-workout)", () => {
+  it("the owner's new colour mid-use is saved, never re-drawn on the spot", () => {
     useGymShop.getState().setLink(LINK);
     reconcileGymTheme(false);
     dismissOpening();
@@ -136,6 +139,84 @@ describe('gym theme controller', () => {
     expect(useGymTheme.getState().epoch).toBe(1); // no redraw
     expect(color.accent).toBe('#F7D411');
     expect((mirror.value as { brand: GymBrand }).brand.accent).toBe('#D32F2F'); // next launch
+  });
+
+  it('D1: …and shown when the app next comes back to the foreground, under the logo — not during a workout', () => {
+    useGymShop.getState().setLink(LINK);
+    reconcileGymTheme(false);
+    dismissOpening();
+    useGymShop.getState().setGymNow({ gymId: 'g-rams', gymName: LINK.gymName, brand: { ...RAMS, accent: '#D32F2F' } });
+    reconcileGymTheme(false);
+    let lifting = true;
+    setWorkoutCheck(() => lifting);
+    expect(showWaitingLook()).toBe(false); // a workout is open: it keeps waiting
+    expect(useGymTheme.getState().epoch).toBe(1);
+    expect(color.accent).toBe('#F7D411');
+    lifting = false;
+    expect(showWaitingLook()).toBe(true);
+    const s = useGymTheme.getState();
+    expect(s.epoch).toBe(2);
+    expect(color.accent).not.toBe('#F7D411');
+    expect(s.opening).toMatchObject({ gymName: LINK.gymName, logoUrl: RAMS.logoUrl }); // the logo covers the redraw
+    expect(showWaitingLook()).toBe(false); // nothing waits any more
+    expect(useGymTheme.getState().epoch).toBe(2);
+  });
+
+  it("D1: a member's gym that newly gets a look sees it at the next foreground (not two launches later)", () => {
+    useGymShop.getState().setLink(PLAIN);
+    reconcileGymTheme(false);
+    useGymShop.getState().setGymNow({ gymId: 'g-forge', gymName: PLAIN.gymName, brand: RAMS });
+    reconcileGymTheme(false);
+    expect(useGymTheme.getState().epoch).toBe(0);
+    expect((mirror.value as { brand: GymBrand }).brand).toEqual(RAMS); // a cold start would show it too
+    expect(showWaitingLook()).toBe(true);
+    expect(color.accent).toBe('#F7D411');
+    expect(useGymTheme.getState().opening?.gymName).toBe(PLAIN.gymName);
+  });
+
+  it('D2: the gym dropping this phone (left on another phone, removed) never redraws mid-use', () => {
+    useGymShop.getState().setLink(LINK);
+    reconcileGymTheme(false);
+    dismissOpening();
+    useGymShop.getState().unlink(UNLINKED_TEXT);
+    reconcileGymTheme(false);
+    expect(useGymTheme.getState().epoch).toBe(1); // no redraw now (a running hold timer survives)
+    expect(color.accent).toBe('#F7D411');
+    expect(mirror.value).toBeNull(); // the next launch starts in ForgeAI's look
+    expect(useGymTheme.getState().look?.gymId).toBe('g-rams'); // the header still matches the colours
+    setWorkoutCheck(() => true);
+    expect(showWaitingLook()).toBe(false);
+    expect(color.accent).toBe('#F7D411');
+    setWorkoutCheck(() => false);
+    expect(showWaitingLook()).toBe(true);
+    expect(color.accent).toBe(FORGE.accent);
+    expect(useGymTheme.getState().epoch).toBe(2);
+    expect(useGymTheme.getState().opening).toBeNull();
+    expect(useGymTheme.getState().look).toBeNull();
+  });
+
+  it("D12: the header's gym (logo and name) switches together with the colours, never before", () => {
+    useGymShop.getState().setLink(LINK);
+    reconcileGymTheme(false);
+    expect(useGymTheme.getState().look).toEqual({ gymId: 'g-rams', gymName: LINK.gymName, brand: RAMS });
+    dismissOpening();
+    const next: GymBrand = { ...RAMS, accent: '#D32F2F', logoUrl: null };
+    useGymShop.getState().setGymNow({ gymId: 'g-rams', gymName: 'RAMS', brand: next });
+    reconcileGymTheme(false);
+    expect(useGymTheme.getState().look?.brand).toEqual(RAMS); // still the colours on screen
+    expect(useGymTheme.getState().look?.gymName).toBe(LINK.gymName);
+    showWaitingLook();
+    expect(useGymTheme.getState().look).toEqual({ gymId: 'g-rams', gymName: 'RAMS', brand: next });
+  });
+
+  it('a renamed gym with the same look just takes the new name (no redraw)', () => {
+    useGymShop.getState().setLink(LINK);
+    reconcileGymTheme(false);
+    dismissOpening();
+    useGymShop.getState().setGymNow({ gymId: 'g-rams', gymName: 'RAMS Club', brand: RAMS });
+    reconcileGymTheme(false);
+    expect(useGymTheme.getState().epoch).toBe(1);
+    expect(useGymTheme.getState().look?.gymName).toBe('RAMS Club');
   });
 
   it('…but while the logo is still on screen it is applied at once, under it', () => {
@@ -156,5 +237,17 @@ describe('gym theme controller', () => {
     reconcileGymTheme(true);
     expect(useGymTheme.getState().epoch).toBe(0); // the boot already painted it
     expect(color.accent).toBe('#F7D411');
+  });
+});
+
+describe('the header mark keeps a logo whole (D14)', () => {
+  it('a square badge stays 28 dp; a wide wordmark gets its own width (up to 4:1), never squeezed', () => {
+    expect(logoMarkWidth(512, 512)).toBe(28);
+    expect(logoMarkWidth(512, 128)).toBe(112);
+    expect(logoMarkWidth(900, 100)).toBe(112); // capped at 4:1
+    expect(logoMarkWidth(300, 200)).toBe(42);
+    expect(logoMarkWidth(100, 400)).toBe(28); // a tall one: contained in the square
+    expect(logoMarkWidth(0, 0)).toBe(28); // not known yet
+    expect(logoMarkWidth(null, undefined)).toBe(28);
   });
 });

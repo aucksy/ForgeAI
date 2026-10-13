@@ -5,6 +5,11 @@
  * scale-up — holds, and fades away. With the phone's "Remove animations" on it simply shows and
  * goes. A tap skips it. Without a logo (or when it cannot load offline) the gym's name stands in.
  *
+ * D13: the logo is fetched ahead (theme/logoPrefetch.ts, after a join and each check with the
+ * gym), and until it has actually loaded the gym's name shows LARGE — a slow logo never leaves
+ * the opening empty. The logo loads unseen meanwhile, then takes its place with the name small
+ * beneath it.
+ *
  * Draws only from its `opening` prop (taken when the look was applied), never from the tokens:
  * it sits outside the re-drawn tree and must not keep a stale colour.
  */
@@ -24,6 +29,7 @@ export function BrandOpening({ opening, onDone }: { opening: Opening; onDone: ()
   const reduced = useReduceMotion();
   const { width, height } = useWindowDimensions();
   const [logoFailed, setLogoFailed] = useState(false);
+  const [logoLoaded, setLogoLoaded] = useState(false);
   const fade = useSharedValue(reduced ? 1 : 0);
   const grow = useSharedValue(reduced ? 1 : 0.92);
   const out = useSharedValue(1);
@@ -46,7 +52,9 @@ export function BrandOpening({ opening, onDone }: { opening: Opening; onDone: ()
   const mark = useAnimatedStyle(() => ({ opacity: fade.value, transform: [{ scale: grow.value }] }));
 
   const size = Math.round(Math.min(width * 0.56, height * 0.32, 260));
-  const showLogo = opening.logoUrl != null && !logoFailed;
+  const wantLogo = opening.logoUrl != null && !logoFailed;
+  // The logo takes the stage only once it is on screen; until then the name stands large.
+  const showLogo = wantLogo && logoLoaded;
   const italic = opening.heading === 'bold-italic';
 
   return (
@@ -62,14 +70,16 @@ export function BrandOpening({ opening, onDone }: { opening: Opening; onDone: ()
         style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}
       >
         <Animated.View style={[{ alignItems: 'center', gap: 20 }, mark]}>
-          {showLogo ? (
+          {wantLogo ? (
             <Image
               source={{ uri: opening.logoUrl ?? undefined }}
-              style={{ width: size, height: size }}
+              // Loading: full size but unseen and out of the layout (the name is centred alone).
+              style={showLogo ? { width: size, height: size } : { position: 'absolute', width: size, height: size, opacity: 0 }}
               contentFit="contain"
               cachePolicy="memory-disk"
               priority="high"
               accessible={false}
+              onLoad={() => setLogoLoaded(true)}
               onError={() => setLogoFailed(true)}
             />
           ) : null}

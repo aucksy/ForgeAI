@@ -8,9 +8,9 @@ import { resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { BUTTON_INK, FORGE_PLANES, FORGE_SERIES, PHONE_INK } from '@forgeai/theme';
+import { BUTTON_INK, FORGE_PLANES, FORGE_SERIES, PHONE_INK, buildBrandPalette } from '@forgeai/theme';
 
-import { chart, color, gradients } from '@/theme/tokens';
+import { chart, color, gradients, shadow } from '@/theme/tokens';
 
 describe('palette engine ↔ the phone tokens', () => {
   it('planes and chart lines', () => {
@@ -34,6 +34,19 @@ describe('palette engine ↔ the phone tokens', () => {
 
   it('chart slots', () => {
     expect([...FORGE_SERIES]).toEqual([...chart.series]);
+  });
+
+  it("D9: the engine's ForgeAI palette (logo-only gyms) is exactly the phone's own tokens", () => {
+    const p = buildBrandPalette({ accent: color.accent });
+    for (const k of Object.keys(p.color) as (keyof typeof p.color)[]) expect(p.color[k], k).toBe((color as Record<string, string>)[k]);
+    expect(p.gradients).toEqual({
+      ember: [...gradients.ember],
+      emberSubtle: [...gradients.emberSubtle],
+      steel: [...gradients.steel],
+      backdrop: [...gradients.backdrop],
+    });
+    expect(p.glow).toBe(shadow.glow.shadowColor);
+    expect(p.chart).toEqual({ series: [...chart.series], ramp: [...chart.ramp], diverging: { ...chart.diverging } });
   });
 
   it("the primary button's ink (frozen) and the ink on the accent", () => {

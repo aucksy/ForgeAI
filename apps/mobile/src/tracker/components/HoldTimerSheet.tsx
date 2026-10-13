@@ -167,8 +167,8 @@ export function HoldTimerSheet({ visible, title, goalSec, onSave, onClose }: Hol
             borderColor: running ? color.borderStrong : color.accent,
           }}
         >
-          <Glyph name={running ? 'pause' : 'play'} size={20} color={running ? color.ink : '#1A0B03'} />
-          <Text style={{ fontFamily: type.bodyBold, fontSize: type.size.body, color: running ? color.ink : '#1A0B03' }}>
+          <Glyph name={running ? 'pause' : 'play'} size={20} color={running ? color.ink : color.onAccent} />
+          <Text style={{ fontFamily: type.bodyBold, fontSize: type.size.body, color: running ? color.ink : color.onAccent }}>
             {mainLabel}
           </Text>
         </Pressable>
@@ -318,7 +318,7 @@ function AskButton({ label, onPress, strong, danger }: { label: string; onPress:
         style={{
           fontFamily: type.bodyBold,
           fontSize: type.size.body,
-          color: strong ? '#1A0B03' : danger ? color.criticalText : color.ink,
+          color: strong ? color.onAccent : danger ? color.criticalText : color.ink,
         }}
       >
         {label}

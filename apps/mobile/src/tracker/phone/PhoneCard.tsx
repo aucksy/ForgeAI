@@ -250,7 +250,7 @@ function RemindersRow({ divider = true }: { divider?: boolean }) {
                       borderColor: sel ? color.accent : color.border,
                     }}
                   >
-                    <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: sel ? color.bg : color.inkSecondary }}>{l}</Text>
+                    <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: sel ? color.onAccent : color.inkSecondary }}>{l}</Text>
                   </View>
                 </Pressable>
               );
