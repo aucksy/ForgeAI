@@ -31,7 +31,7 @@ deliberate difference listed for his approval, never silently encoded in a test)
 to HIS phone (Pixel dp width, large display size, font scale) on a Monday and a 1st of the month
 with a ~500-workout history; one full "real workout" journey (warm-ups, drops, RPE, superset,
 every rest, notification shade after ticks); every interaction tried (tap, hold, release, again);
-every number on a screenshot read against its label. Lesson: D:\Brain\Lessonsorgeai-audits-missed-what-a-real-workout-shows.md
+every number on a screenshot read against its label. Lesson: D:/Brain/Lessons/forgeai-audits-missed-what-a-real-workout-shows.md
 
 ## Frozen files (read-only — import and TEST them, never edit)
 `src/engine/*`, `src/components/ui/*`, `src/components/charts/*`, `src/db/schema.ts`, and existing
