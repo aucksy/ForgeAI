@@ -201,7 +201,7 @@ appId: com.forgeai.app
       - takeScreenshot: 178b-workout-already-open
       - tapOn: "Discard and start new"
 - extendedWaitUntil:
-    visible: "ELAPSED"
+    visible: "WORKOUT DURATION"
     timeout: 20000
 # Swipe on the set numbers (left edge), not on the number boxes; repeat until it shows.
 - repeat:

@@ -1,5 +1,5 @@
 /**
- * The active workout's ELAPSED readout — and the ONLY thing on that screen that
+ * The active workout's WORKOUT DURATION readout (it said "ELAPSED" until v0.37.0; owner, 13 Oct 2026) — and the ONLY thing on that screen that
  * re-renders every second.
  *
  * The tick used to live in the screen component, so each interval fire reconciled the
@@ -31,7 +31,7 @@ export const ElapsedClock = memo(function ElapsedClock({ startedAt }: { startedA
   return (
     <View style={{ alignItems: 'center' }}>
       <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted }}>
-        ELAPSED
+        WORKOUT DURATION
       </Text>
       <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>
         {fmtDuration(elapsed)}
