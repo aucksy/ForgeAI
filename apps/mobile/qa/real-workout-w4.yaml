@@ -160,5 +160,10 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 20000
 - takeScreenshot: w-51-exercise-records
+# The page's tabs are at its top: scroll back up to them.
+- scrollUntilVisible:
+    element: "^History$"
+    direction: UP
+    timeout: 20000
 - tapOn: "^History$"
 - takeScreenshot: w-52-exercise-history

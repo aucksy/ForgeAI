@@ -56,7 +56,9 @@ function RecordRow({ icon, label, value, sub, onPress }: { icon: IconName; label
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{label}</Text>
-        <Text numberOfLines={1} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
+        {/* 13 Oct 2026 audit (part W, ~360 dp at large text): two lines, so the date is never cut
+            ("720 kg in one s…", "from 100 kg × 6 · 1 M…"). */}
+        <Text numberOfLines={2} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
           {sub}
         </Text>
       </View>
