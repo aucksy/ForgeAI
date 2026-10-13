@@ -9,7 +9,10 @@
  *    that name, newest first (offered, not ticked) — Hevy keeps an exercise the member skips in
  *    the routine, and members often do another routine's exercise without saving it;
  *  - each exercise's sets and rep range are the working sets of the last time it was done under
- *    that name (Hevy counts warm-ups in a routine; ForgeAI suggests its own warm-ups).
+ *    that name. 13 Oct 2026 audit (part W): its warm-ups, drop sets and failure sets come along
+ *    too, as in the Hevy routine they were started from (and as a routine copied from a Hevy link
+ *    keeps them, IM-02) — dropping them hid every warm-up's PREVIOUS ("I don't see my previous
+ *    warm-up sets", the owner's first gym session).
  * Measured 8 Oct 2026 against the owner's saved Hevy folder "Jaipur" (6 routines, 36 exercises):
  * 34 of 36 shown, 22 of 24 ticked ones right, about 3 taps a routine — the best of 30+ rules
  * tried (`Resources/Hevy Backups/rebuild_routines_study.py`). No rule recovers a saved routine
@@ -28,7 +31,7 @@ export interface RebuildWorkout {
   dateISO: string;
   exercises: readonly {
     title: string;
-    sets: readonly { reps: number; isWarmup: boolean }[];
+    sets: readonly { reps: number; isWarmup: boolean; setType?: 'normal' | 'drop' | 'failure' }[];
   }[];
 }
 
@@ -187,14 +190,27 @@ function daysBetween(aISO: string, bISO: string): number {
   return Math.round((Date.parse(`${bISO}T00:00:00Z`) - Date.parse(`${aISO}T00:00:00Z`)) / 86_400_000);
 }
 
-function summary(ex: RebuildWorkout['exercises'][number]): { sets: number; repMin: number | null; repMax: number | null } {
+function summary(ex: RebuildWorkout['exercises'][number]): {
+  sets: number;
+  repMin: number | null;
+  repMax: number | null;
+  setList?: PlanSet[];
+} {
   const working = ex.sets.filter((s) => !s.isWarmup);
   const counted = working.length > 0 ? working : ex.sets;
-  const reps = counted.map((s) => s.reps).filter((r) => r > 0);
+  // A drop set's many reps are not the routine's rep target (13 Oct 2026 audit).
+  const straight = counted.filter((s) => s.setType !== 'drop');
+  const reps = (straight.length > 0 ? straight : counted).map((s) => s.reps).filter((r) => r > 0);
+  // 13 Oct 2026 audit: warm-ups (with last time's reps) and drop / failure sets stay what they
+  // were. Plain working sets only: no list (the rows are as before, sets + rep range).
+  const typed = working.length > 0 && ex.sets.some((s) => s.isWarmup || (s.setType != null && s.setType !== 'normal'));
   return {
     sets: Math.max(1, counted.length),
     repMin: reps.length > 0 ? Math.min(...reps) : null,
     repMax: reps.length > 0 ? Math.max(...reps) : null,
+    ...(typed
+      ? { setList: ex.sets.map((s): PlanSet => (s.isWarmup ? { type: 'warmup', reps: s.reps > 0 ? s.reps : null } : { type: s.setType ?? 'normal' })) }
+      : {}),
   };
 }
 

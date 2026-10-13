@@ -222,3 +222,39 @@ describe("Home's Today card (owner: see the exercises before the clock starts)",
     expect(todayLink({ planDayId: 'd1', targets: [] })).toBe('/workout');
   });
 });
+
+// 13 Oct 2026 audit (part W, a ~500-workout Hevy history): a routine rebuilt from the export kept
+// only its working sets, so the bench's two warm-ups never reached the routine and the workout
+// never showed last time's warm-ups. They come along now, with drop / failure sets as they were.
+describe('a rebuilt routine keeps warm-ups and set types (13 Oct 2026 audit)', () => {
+  const bench = (reps: number[], warm: number[], drop = false) => ({
+    title: 'Bench Press (Barbell)',
+    sets: [
+      ...warm.map((r) => ({ reps: r, isWarmup: true })),
+      ...reps.map((r) => ({ reps: r, isWarmup: false, setType: 'normal' as const })),
+      ...(drop ? [{ reps: 12, isWarmup: false, setType: 'drop' as const }] : []),
+    ],
+  });
+  it('2 warm-ups + 3 sets + a drop set: the list says so; the count and rep range are the working sets', () => {
+    const found = findRoutines([
+      w('2027-02-15', 'Push A', bench([8, 7, 6], [12, 8])),
+      w('2027-02-18', 'Push A', bench([8, 7, 6], [12, 8])),
+      w('2027-02-22', 'Push A', bench([6, 6, 5], [12, 8], true)),
+    ]);
+    const b = found[0].exercises[0];
+    expect(b.setList).toEqual([
+      { type: 'warmup', reps: 12 },
+      { type: 'warmup', reps: 8 },
+      { type: 'normal' },
+      { type: 'normal' },
+      { type: 'normal' },
+      { type: 'drop' },
+    ]);
+    expect(b.sets).toBe(4);
+    expect([b.repMin, b.repMax]).toEqual([5, 6]); // the drop set's 12 is not the target
+  });
+  it('plain working sets: no list (as before)', () => {
+    const found = findRoutines([w('2027-02-15', 'Pull A', ex('Lat Pulldown (Cable)', 10, 10)), w('2027-02-18', 'Pull A', ex('Lat Pulldown (Cable)', 10, 9)), w('2027-02-22', 'Pull A', ex('Lat Pulldown (Cable)', 10, 8))]);
+    expect(found[0].exercises[0].setList).toBeUndefined();
+  });
+});
