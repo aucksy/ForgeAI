@@ -26,6 +26,11 @@
  * kept natively, the next set); when the rest ends, is skipped or Done, it is posted again with
  * the then-next set (`liveCardShown`). "Rest is over" keeps it down natively until it goes; with
  * the app open that alert leaves after 60 s, so the card is posted again then too.
+ *
+ * v0.37.1 (notification audit): each post also hands over the plan of the sets ahead (`livePlan`)
+ * so "Complete set" works with the app closed (C1); a tick or a rest starting / ending is posted
+ * at once, past the re-wording throttle (C8); the app coming to the front clears an old "Rest is
+ * over" (C2).
  */
 import { AppState } from 'react-native';
 
@@ -36,6 +41,7 @@ import { useRestTimer } from '../store/restTimerStore';
 import { useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import {
+  dismissRestOver,
   onRestCardChange,
   phoneUses24Hour,
   readRestCard,
@@ -50,8 +56,9 @@ import { displayUnits } from '@/lib/units';
 
 import { useTargets } from '../store/targetStore';
 import { clearLiveWorkoutCard, hideLiveWorkoutCard, liveWorkoutCardAvailable, showLiveWorkoutCard } from './restCard';
-import { liveCardContent, liveCardKey } from './liveCard';
+import { liveCardContent, liveCardKey, type LiveCard } from './liveCard';
 import { liveCardImage } from './liveCardImage';
+import { livePlan } from './livePlan';
 import { rowFill } from './restDoneRun';
 
 /** The live card is re-posted at most this often (Android drops faster updates). */
@@ -96,6 +103,20 @@ export function ongoingText(
   return `${done} of ${countWord(total, 'set')} done`;
 }
 
+/** The row the live card names (a change is a tick, or a set added / removed ahead of it). PURE. */
+export function liveRow(c: Pick<LiveCard, 'exKey' | 'done'>): string {
+  return JSON.stringify([c.exKey, c.done?.setKey ?? null]);
+}
+
+/**
+ * v0.37.1 (C8): must the live card be posted now, past the re-wording throttle? Yes when it goes
+ * up or down (a rest started or ended) or names another row than the one last posted.
+ */
+function mustPostNow(lastShown: boolean | null, lastRow: string): boolean {
+  if (liveCardShown(useRestTimer.getState(), restCardHolds()) !== lastShown) return true;
+  return liveRow(liveCardContent(useActiveWorkout.getState(), rowFill, displayUnits())) !== lastRow;
+}
+
 let started = false;
 
 export function startWorkoutPresence(): () => void {
@@ -116,19 +137,34 @@ export function startWorkoutPresence(): () => void {
     afterOver = null;
   };
 
+  /** The live card as last posted: up or down, and the row it names (v0.37.1, C8). */
+  let lastShown: boolean | null = null;
+  let lastRow = '';
+
   /** Post the live card for the workout as it is now; false = no native card (use the old one). */
   const postLive = (): boolean => {
     if (!liveWorkoutCardAvailable()) return false;
     const w = useActiveWorkout.getState();
-    const card = liveCardContent(w, rowFill, displayUnits());
+    const units = displayUnits();
+    const card = liveCardContent(w, rowFill, units);
     const image = liveCardImage(w.exercises.find((e) => e.key === card.exKey));
     const shown = liveCardShown(useRestTimer.getState(), restCardHolds());
-    const key = `live:${shown ? 'up' : 'down'}:${liveCardKey(card, image)}`;
+    // v0.37.1 (C1): the sets ahead, so "Complete set" works with the app closed (OfflineTick.kt).
+    const images = new Map<string, string | null>();
+    const imageFor = (exKey: string): string | null => {
+      if (!images.has(exKey)) images.set(exKey, liveCardImage(w.exercises.find((e) => e.key === exKey)));
+      return images.get(exKey) ?? null;
+    };
+    const plan = livePlan(w, rowFill, units, useRestTimer.getState().defaultSec, imageFor);
+    const planJson = plan ? JSON.stringify(plan) : null;
+    const key = `live:${shown ? 'up' : 'down'}:${liveCardKey(card, image)}:${planJson ?? ''}`;
     if (key === last) return true;
     const ok = shown
-      ? showLiveWorkoutCard(card.title, card.text, image, card.done, card.label)
-      : hideLiveWorkoutCard(card.title, card.text, image, card.done, card.label);
+      ? showLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson)
+      : hideLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson);
     if (!ok) return false;
+    lastShown = shown;
+    lastRow = liveRow(card);
     if (shown && downForRest) {
       // Back after a rest: once more when an app-open "Rest is over" (60 s) has surely left.
       if (afterOver) clearTimeout(afterOver);
@@ -165,6 +201,8 @@ export function startWorkoutPresence(): () => void {
         clearLiveWorkoutCard();
         live = false;
         downForRest = false;
+        lastShown = null;
+        lastRow = '';
         void clearWorkoutOngoing();
         // Also covers an alarm left by a previous app run that was killed mid-rest.
         if (!w.active) void cancelRestEnd();
@@ -175,7 +213,11 @@ export function startWorkoutPresence(): () => void {
     // 13 Oct 2026: the live card, when the native piece has it (at most every LIVE_CARD_EVERY_MS).
     if (live || last === '' || last === 'off') {
       const wait = LIVE_CARD_EVERY_MS - (Date.now() - liveLastAt);
-      if (live && wait > 0) {
+      // v0.37.1 (C8): only re-wording (typing) waits. A tick (the card names another row) or the
+      // card going up / down for a rest is posted AT ONCE: the native side brings the card back
+      // with the last words it was given (a tick that skips a running rest showed the set just
+      // done for up to 0.4 s).
+      if (live && wait > 0 && !mustPostNow(lastShown, lastRow)) {
         if (!liveTimer) {
           liveTimer = setTimeout(() => {
             liveTimer = null;
@@ -217,8 +259,13 @@ export function startWorkoutPresence(): () => void {
     else if (c.kind === 'skip') r.fromCard({ kind: 'stop' });
   });
   const appState = AppState.addEventListener('change', (s) => {
-    if (s === 'active') catchUp();
+    if (s !== 'active') return;
+    // v0.37.1 (C2): the member is looking at the app: an old "Rest is over" has done its job; it
+    // goes and the live card comes back (one at a time). A running rest is left alone.
+    dismissRestOver();
+    catchUp();
   });
+  if (AppState.currentState === 'active') dismissRestOver();
 
   const u1 = useActiveWorkout.subscribe((s) => {
     if (s.hydrated && !wasHydrated) {

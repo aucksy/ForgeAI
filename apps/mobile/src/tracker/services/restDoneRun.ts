@@ -16,6 +16,12 @@
  * quiet note that opens ForgeAI when tapped. Review fix: once the tap is handled and its save
  * has left the write queue, the native piece is told (`settleDone`), which ends the broadcast
  * it kept open so Android could not freeze the app before the tick.
+ *
+ * v0.37.1 (C1): a tap made while Android had closed ForgeAI is handled on the phone (OfflineTick.kt:
+ * the rest starts there, the cards move on); its tick waits as a queue the app saves first thing
+ * when it next reads the workout back (`decideQueuedTick`). The "Open ForgeAI to …" note below is
+ * now only for taps the phone could not place; the native side keeps the live card away while it
+ * shows (one notification at a time, C3).
  */
 import { AppState } from 'react-native';
 
@@ -24,8 +30,8 @@ import { writeQueueIdle } from '@/db/writeQueue';
 import { targetFill } from '../engine/progression';
 import { fillForSet, useActiveWorkout, type ActiveWorkoutState, type DraftExercise, type SetFill } from '../store/activeWorkoutStore';
 import { useTargets } from '../store/targetStore';
-import { onRestCardChange, postDoneNote, settleDone, takePendingDone } from './restCard';
-import { cardDoneTarget, decideRestDone, restTarget, type CardDone } from './restDone';
+import { onRestCardChange, postDoneNote, settleDone, takePendingDone, takeQueuedTicks } from './restCard';
+import { cardDoneTarget, decideQueuedTick, decideRestDone, restTarget, type CardDone } from './restDone';
 import { missingText, type TickMissing } from './setTick';
 
 /** The grey hint the row shows on screen: `fillForSet` with the card's Target (as the card does). */
@@ -53,12 +59,32 @@ export interface RestDoneDeps {
 
 /** Start listening for Done taps. Returns the stop function. */
 export function startRestDone(deps: RestDoneDeps): () => void {
+  /**
+   * v0.37.1 (C1): the ticks the phone made with the app closed (it started their rests itself),
+   * saved now, in order, each once, with the numbers the card showed. No rest is started here
+   * (the phone's rest runs on; the timer adopts it, workoutPresence's catch-up).
+   */
+  const applyQueued = (): void => {
+    const queued = takeQueuedTicks();
+    for (const q of queued) {
+      const w = useActiveWorkout.getState();
+      const step = decideQueuedTick(q, w);
+      if (step.do === 'tick') {
+        const missing = w.toggleDone(step.exKey, step.setKey, step.fill);
+        if (missing && AppState.currentState === 'active') deps.openSet(step.exKey, step.setKey, missing);
+      } else if (step.do === 'open' && AppState.currentState === 'active') {
+        deps.openSet(step.exKey, step.setKey, step.missing);
+      }
+    }
+  };
+
   const run = (): void => {
     const w = useActiveWorkout.getState();
     // Before the saved workout is read back nothing can match: leave the tap with the phone.
     if (!w.hydrated) return;
     try {
-      handle(w);
+      applyQueued();
+      handle(useActiveWorkout.getState());
     } finally {
       // The tick's draft save is queued: tell the phone once it has been written (or failed).
       void writeQueueIdle().then(settleDone, settleDone);

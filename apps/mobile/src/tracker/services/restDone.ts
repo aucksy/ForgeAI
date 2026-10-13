@@ -141,6 +141,66 @@ export function cardDoneTarget(
   return { workout: w.startedAt, exKey: t.exKey, setKey: t.setKey, open: !c.ok, values: c.ok ? hintSignature(c.fill) : null };
 }
 
+/**
+ * v0.37.1 (C1): a "Complete set" / Done tapped while ForgeAI was closed. The phone already started
+ * that set's rest and moved its cards on (OfflineTick.kt); the tick waits for the app.
+ */
+export interface QueuedTick {
+  workout: number;
+  exKey: string;
+  setKey: string;
+  /** The numbers the card showed (`hintSignature`), which the tick saves; null = none carried. */
+  values: string | null;
+  /** When it was tapped (epoch ms). */
+  at: number;
+  label: string | null;
+}
+
+/** The fill a `hintSignature` stands for ("80|8||" → 80 kg × 8; "none" → null). PURE. */
+export function fillFromSignature(sig: string | null): SetFill | null {
+  if (sig == null || sig === 'none') return null;
+  const [w, r, d, m] = sig.split('|');
+  const num = (v: string | undefined): number | null => {
+    if (v == null || v === '') return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+  const out: SetFill = { weightKg: num(w) ?? 0, reps: num(r) ?? 0 };
+  const dur = num(d);
+  const dist = num(m);
+  if (dur != null) out.durationSec = dur;
+  if (dist != null) out.distanceM = dist;
+  return out;
+}
+
+/**
+ * What the app does with a tick the phone queued while it was closed: save exactly the numbers
+ * the card showed — even when the row's hint has changed since (a cold start before the Targets
+ * are back): the member saw those numbers and the rest already ran — unless the row is already
+ * ticked (never twice) or the workout is not that one any more (nothing is saved). Never a rest:
+ * the phone started it. PURE.
+ */
+export function decideQueuedTick(
+  q: QueuedTick,
+  w: {
+    active: boolean;
+    startedAt: number | null;
+    editingSessionId: string | null;
+    pastLog: boolean;
+    exercises: readonly DraftExercise[];
+  },
+): DoneStep {
+  if (!w.active || w.editingSessionId != null || w.pastLog || w.startedAt !== q.workout) return { do: 'stale' };
+  const ex = w.exercises.find((e) => e.key === q.exKey);
+  const s = ex?.sets.find((x) => x.key === q.setKey);
+  if (!ex || !s) return { do: 'stale' };
+  if (s.done) return { do: 'already' };
+  const fill = fillFromSignature(q.values);
+  const out = tickValues(ex.logType ?? 'weight_reps', s, fill);
+  if (!out.ok) return { do: 'open', exKey: ex.key, setKey: s.key, missing: out.missing, text: missingText(out.missing) };
+  return { do: 'tick', exKey: ex.key, setKey: s.key, fill };
+}
+
 /** What a Done tap does, read against the workout as it is now. */
 export function decideRestDone(
   req: DoneRequest,

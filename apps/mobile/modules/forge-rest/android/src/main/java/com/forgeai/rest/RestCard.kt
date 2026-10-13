@@ -61,6 +61,13 @@ import java.util.Locale
  * the app ticks only while the row still shows it; an "open" Done is never read again from a
  * launch out of Recents; and a Done tap keeps its broadcast open (at most [DONE_HOLD_MS]) until
  * the app says it has acted ([releaseDone]), so Android cannot freeze the app before the tick.
+ *
+ * v0.37.1 (notification audit): a Done / "Complete set" tap with the app's JS not running (Android
+ * closed it) works on the phone itself ([OfflineTick]: the rest starts here, the tick waits for the
+ * app); every "Rest is over" times out ([OVER_TIMEOUT_MS]) and goes when the app comes to the
+ * front or a set is ticked ([dismissOver]); the "Open ForgeAI to …" note keeps the live workout
+ * card away while it shows; the rest after the last set says "All sets done"; both cards take the
+ * gym's accent ([color]).
  */
 object RestCard {
   const val CARD_ID = 41001
@@ -77,6 +84,8 @@ object RestCard {
   const val ACTION_DONE = "com.forgeai.rest.DONE"
   /** 13 Oct 2026: "Rest is over" swiped away — the live workout card comes back ([WorkoutCard]). */
   const val ACTION_OVER_GONE = "com.forgeai.rest.OVER_GONE"
+  /** v0.37.1 (C3): the "Open ForgeAI to …" note went (swiped, timed out): the live card comes back. */
+  const val ACTION_NOTE_GONE = "com.forgeai.rest.NOTE_GONE"
   const val NOTE_ID = 41003
   const val EXTRA_DONE_WORKOUT = "forgeai_done_workout"
   const val EXTRA_DONE_EX = "forgeai_done_ex"
@@ -97,7 +106,18 @@ object RestCard {
   private const val PREFS_QUIET = "forgeai_rest_quiet"
   /** Phase 6: the last Done tap (kept apart from the rest, which [forget] clears). */
   private const val PREFS_DONE = "forgeai_rest_done"
+  /** v0.37.1 (C3): when the "Open ForgeAI to …" note was posted (0 = none up). */
+  private const val PREFS_NOTE = "forgeai_rest_note"
+  /** ForgeAI orange: the cards' tint when the app has not handed over a gym's accent ([color]). */
   internal const val COLOR = 0xFFFF7A3B.toInt()
+  /**
+   * v0.37.1 (C2): every "Rest is over" removes itself after this long (the app-open one after 60 s,
+   * as before). Long enough to be seen after a pocket buzz; its removal brings the live workout
+   * card back (the delete intent: Android sends it on a timeout too).
+   */
+  const val OVER_TIMEOUT_MS = 120_000L
+  /** v0.37.1 (C9): the words after a rest that followed the workout's last set. */
+  const val ALL_DONE_TEXT = "All sets done · Finish when ready"
   /** An end that fires this much early (an inexact alarm never does) is re-armed instead. */
   private const val EARLY_MS = 1500L
   /** Logcat tag for the end-of-rest path (the device QA saves these lines). */
@@ -105,7 +125,11 @@ object RestCard {
   /** [load] reports a rest this long past its end as none (the app's view only). */
   private const val STALE_MS = 60_000L
 
-  data class Rest(val startedAt: Long, val endsAt: Long, val next: String?)
+  /**
+   * [allDone] (v0.37.1, C9): the rest after the workout's LAST set — nothing is left to do, so the
+   * card and "Rest is over" say "All sets done · Finish when ready" instead of a next set.
+   */
+  data class Rest(val startedAt: Long, val endsAt: Long, val next: String?, val allDone: Boolean = false)
 
   /**
    * The row the card's Done ticks. [open]: the row has nothing to save, so Done opens the app.
@@ -148,7 +172,7 @@ object RestCard {
     val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     val ends = p.getLong("endsAt", 0L)
     if (ends <= 0L) return null
-    return Rest(p.getLong("startedAt", ends), ends, p.getString("next", null))
+    return Rest(p.getLong("startedAt", ends), ends, p.getString("next", null), p.getBoolean("allDone", false))
   }
 
   /**
@@ -188,6 +212,41 @@ object RestCard {
         .putString("doneValues", t.values)
     }
     e.apply()
+  }
+
+  /**
+   * v0.37.1 (C9): the next rest follows the workout's last set (true) or not. Called by the app just
+   * before [show], like [setDoneTarget]; kept with the rest ("+15 s" keeps it) and wiped with it.
+   */
+  @Synchronized
+  fun setAllDone(ctx: Context, on: Boolean) {
+    ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean("allDone", on).apply()
+  }
+
+  /**
+   * D5 (gym branding): the gym's accent ("#RRGGBB") the app shows, for both cards' tint; null =
+   * ForgeAI orange. Kept apart from the rest ([forget] clears that), so a card posted with the
+   * app's JS asleep is the gym's colour too.
+   */
+  fun setAccent(ctx: Context, hex: String?) {
+    val e = ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).edit()
+    if (hex.isNullOrEmpty()) e.remove("accent") else e.putString("accent", hex)
+    e.apply()
+  }
+
+  /** The cards' tint: the gym's accent the app handed over ([setAccent]), else ForgeAI orange. */
+  internal fun color(ctx: Context): Int {
+    val s: String? = try {
+      ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).getString("accent", null)
+    } catch (_: Exception) {
+      null
+    }
+    if (s == null || !s.startsWith("#")) return COLOR
+    return try {
+      android.graphics.Color.parseColor(s)
+    } catch (_: Exception) {
+      COLOR
+    }
   }
 
   @Synchronized
@@ -257,6 +316,8 @@ object RestCard {
    */
   fun restUp(ctx: Context): Boolean {
     if (ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong("endsAt", 0L) > 0L) return true
+    // v0.37.1 (C3): an "Open ForgeAI to …" note keeps the live card away too (one at a time).
+    if (noteUp(ctx)) return true
     val p = ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE)
     val tag = p.getString("tag", null) ?: return false
     // Just posted: the system may not list it yet.
@@ -269,9 +330,41 @@ object RestCard {
     }
   }
 
-  /** "Rest is over" was swiped away: forget it and bring the live workout card back. */
+  /** Is the "Open ForgeAI to …" note up? Preferences and the system's list only (no lock). */
+  private fun noteUp(ctx: Context): Boolean {
+    val at = ctx.getSharedPreferences(PREFS_NOTE, Context.MODE_PRIVATE).getLong("at", 0L)
+    if (at <= 0L) return false
+    val age = System.currentTimeMillis() - at
+    if (age < 3_000L) return true
+    if (age > DONE_MAX_AGE_MS + 5_000L) return false // timed out (its delete intent may have been lost)
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
+    return try {
+      nm(ctx).activeNotifications.any { it.id == NOTE_ID }
+    } catch (_: Exception) {
+      false
+    }
+  }
+
+  /** "Rest is over" was swiped away (or timed out): forget it and bring the live workout card back. */
   fun overGone(ctx: Context) {
     ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE).edit().remove("tag").remove("at").apply()
+    WorkoutCard.restore(ctx)
+  }
+
+  /** v0.37.1 (C3): the "Open ForgeAI to …" note went (swiped or timed out): the live card is back. */
+  fun noteGone(ctx: Context) {
+    ctx.getSharedPreferences(PREFS_NOTE, Context.MODE_PRIVATE).edit().clear().apply()
+    WorkoutCard.restore(ctx)
+  }
+
+  /**
+   * v0.37.1 (C2): the app came to the front, or a set was ticked with no rest to start: an old
+   * "Rest is over" has done its job, so it goes and the live workout card comes back (one at a
+   * time). A running rest is left alone (its card stays; [restore] keeps the live card down).
+   */
+  @Synchronized
+  fun dismissOver(ctx: Context) {
+    cancelOver(ctx)
     WorkoutCard.restore(ctx)
   }
 
@@ -336,7 +429,7 @@ object RestCard {
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
     endLog(expected, "posting Rest is over, ${now - expected} ms late")
-    postOver(ctx, cur.next, expected, now - expected)
+    postOver(ctx, cur.next, expected, now - expected, cur.allDone)
     listener?.invoke("end", 0L, 0L)
   }
 
@@ -477,6 +570,12 @@ object RestCard {
     } catch (_: Exception) {
       // ignore
     }
+    // v0.37.1 (C3): the note kept the live card away; with it gone the card comes back.
+    val notes = ctx.getSharedPreferences(PREFS_NOTE, Context.MODE_PRIVATE)
+    if (notes.getLong("at", 0L) > 0L) {
+      notes.edit().clear().apply()
+      WorkoutCard.restore(ctx)
+    }
     return d
   }
 
@@ -518,6 +617,10 @@ object RestCard {
   /**
    * A quiet note (the card's LOW channel: no sound, no watch buzz) that opens ForgeAI when tapped
    * and goes by itself after 10 minutes, when a Done tap is no longer acted on.
+   *
+   * v0.37.1 (C3), one ForgeAI workout notification at a time: while the note shows, the live
+   * workout card is down ([restUp] counts the note); it comes back when the note is tapped (the
+   * app opens), swiped away or times out ([noteGone], its delete intent), or the app takes the tap.
    */
   @Suppress("DEPRECATION")
   fun postNote(ctx: Context, title: String, text: String) {
@@ -525,7 +628,7 @@ object RestCard {
       ensureChannels(ctx)
       val b = builder(ctx, CH_CARD)
         .setSmallIcon(iconRes(ctx))
-        .setColor(COLOR)
+        .setColor(color(ctx))
         .setContentTitle(title)
         .setContentText(text)
         .setAutoCancel(true)
@@ -538,6 +641,9 @@ object RestCard {
         b.setPriority(Notification.PRIORITY_LOW)
       }
       openIntent(ctx)?.let { b.setContentIntent(it) }
+      b.setDeleteIntent(actionIntent(ctx, ACTION_NOTE_GONE, 7))
+      ctx.getSharedPreferences(PREFS_NOTE, Context.MODE_PRIVATE).edit().putLong("at", System.currentTimeMillis()).commit()
+      WorkoutCard.hide(ctx)
       nm(ctx).notify(NOTE_ID, b.build())
     } catch (_: Exception) {
       // No permission to post: the tap still waits for the app.
@@ -915,7 +1021,7 @@ object RestCard {
       val base = SystemClock.elapsedRealtime() + (r.endsAt - System.currentTimeMillis())
       v.setChronometer(left, base, null, true)
       v.setChronometerCountDown(left, true)
-      v.setTextViewText(line, if (r.next != null) " left · ${r.next}" else " left")
+      v.setTextViewText(line, if (r.allDone) " left · All sets done" else if (r.next != null) " left · ${r.next}" else " left")
       v.setTextViewText(sub, title(ctx, r))
       v
     } catch (_: Exception) {
@@ -930,9 +1036,9 @@ object RestCard {
       val icon = iconRes(ctx)
       val b = builder(ctx, CH_CARD)
         .setSmallIcon(icon)
-        .setColor(COLOR)
+        .setColor(color(ctx))
         .setContentTitle(title(ctx, r))
-        .setContentText(if (r.next != null) "Next: ${r.next}" else "Time to rest")
+        .setContentText(if (r.allDone) ALL_DONE_TEXT else if (r.next != null) "Next: ${r.next}" else "Time to rest")
         .setOnlyAlertOnce(true)
         .setAutoCancel(false)
         .setOngoing(false)
@@ -991,14 +1097,15 @@ object RestCard {
    * The "Rest is over" text. On time: "Next: …" (one word per idea, Phase 7). A minute or more late (RT-01):
    * "Ended 2 min ago · Next: …", so a late alert is not taken for a fresh one.
    */
-  fun overText(next: String?, lateMs: Long): String {
-    val base = if (next != null) "Next: $next" else "Time for your next set"
+  fun overText(next: String?, lateMs: Long, allDone: Boolean = false): String {
+    // v0.37.1 (C9): after the workout's last set nothing is next (the live card's "All sets done · Finish").
+    val base = if (allDone) ALL_DONE_TEXT else if (next != null) "Next: $next" else "Time for your next set"
     val mins = lateMs / 60_000L
     return if (mins >= 1L) "Ended $mins min ago · $base" else base
   }
 
   @Suppress("DEPRECATION")
-  private fun postOver(ctx: Context, next: String?, endsAt: Long, lateMs: Long) {
+  private fun postOver(ctx: Context, next: String?, endsAt: Long, lateMs: Long, allDone: Boolean) {
     try {
       ensureChannels(ctx)
       val icon = iconRes(ctx)
@@ -1018,9 +1125,9 @@ object RestCard {
       val category = if (dndOn(ctx) && !ringThroughDnd(ctx)) Notification.CATEGORY_REMINDER else Notification.CATEGORY_ALARM
       val b = builder(ctx, channel)
         .setSmallIcon(icon)
-        .setColor(COLOR)
+        .setColor(color(ctx))
         .setContentTitle("Rest is over")
-        .setContentText(overText(next, lateMs))
+        .setContentText(overText(next, lateMs, allDone))
         .setShowWhen(true)
         .setWhen(endsAt)
         .setAutoCancel(true)
@@ -1032,7 +1139,12 @@ object RestCard {
           .setDefaults(if (open) Notification.DEFAULT_VIBRATE else Notification.DEFAULT_ALL)
       }
       // App on screen: the watch has buzzed by the time this goes; the app shows the rest is over.
-      if (open && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) b.setTimeoutAfter(60_000L)
+      // v0.37.1 (C2): EVERY "Rest is over" goes by itself — one posted with the app in the
+      // background used to stay until swiped, keeping the live workout card away all that time.
+      // Its timeout sends the delete intent below (Android cancels with sendDelete on a timeout),
+      // which brings the live card back; the app coming to the front or a tick also clear it
+      // ([dismissOver]).
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) b.setTimeoutAfter(if (open) 60_000L else OVER_TIMEOUT_MS)
       // No "Done" here (it stays on the rest card): with that action on this alert, Android 14
       // removed "Rest is over" seconds after posting it on a locked phone (device QA run
       // 38081757903: posted with 1 action, then gone, not by the app). The alert is back to the

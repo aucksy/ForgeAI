@@ -19,7 +19,9 @@
  */
 import { Platform } from 'react-native';
 
-import type { CardDone, DoneRequest } from './restDone';
+import { color } from '@/theme/tokens';
+
+import type { CardDone, DoneRequest, QueuedTick } from './restDone';
 
 export interface CardRest {
   startedAt: number;
@@ -67,10 +69,18 @@ interface Native {
    * 13 Oct 2026, the live workout card (WorkoutCard.kt); an older native piece lacks these.
    * `done`: JSON { workout, exKey, setKey, open, values, label } for "Complete set", or null.
    */
-  showWorkoutCard?(title: string, text: string, image: string | null, done: string | null): boolean;
+  showWorkoutCard?(title: string, text: string, image: string | null, done: string | null, plan: string | null): boolean;
   clearWorkoutCard?(): boolean;
   /** One at a time (13 Oct 2026): keep the card's words but take it down while a rest runs. */
-  hideWorkoutCard?(title: string, text: string, image: string | null, done: string | null): boolean;
+  hideWorkoutCard?(title: string, text: string, image: string | null, done: string | null, plan: string | null): boolean;
+  /** v0.37.1 (C1): the ticks made with the app closed (JSON array), taken once. */
+  takeQueuedTicks?(): string | null;
+  /** v0.37.1 (C9): the next rest follows the workout's last set (called just before show). */
+  setRestAllDone?(on: boolean): boolean;
+  /** v0.37.1 (C2): an old "Rest is over" goes and the live card comes back. */
+  dismissRestOver?(): boolean;
+  /** D5: the gym's accent for both cards ("#RRGGBB"; null = ForgeAI orange). */
+  setAccent?(hex: string | null): boolean;
   addListener(event: string, cb: (e: Record<string, unknown>) => void): { remove: () => void };
 }
 
@@ -109,6 +119,7 @@ export function showRestCard(
   const n = N();
   if (!n) return false;
   try {
+    syncNotifAccent();
     try {
       if (quiet !== undefined) n.setQuiet?.(quiet); // "Workout sounds" off: "Rest is over" only vibrates
     } catch {
@@ -117,6 +128,8 @@ export function showRestCard(
     try {
       if (done !== undefined) {
         n.setDoneTarget?.(done?.workout ?? 0, done?.exKey ?? null, done?.setKey ?? null, done?.open === true, done?.values ?? null);
+        // v0.37.1 (C9): no next row and no next label = the rest after the last set.
+        n.setRestAllDone?.(restEndsWorkout(next, done));
       }
     } catch {
       // ignore: the card shows without Done
@@ -126,6 +139,51 @@ export function showRestCard(
   } catch {
     handed = false;
     return false;
+  }
+}
+
+/**
+ * v0.37.1 (C9): does this rest follow the workout's LAST set? Yes when the tick handed over no
+ * next row (`done === null`) and no next label: the card and "Rest is over" then say "All sets
+ * done · Finish when ready", not "Time for your next set". `done` left out (+15 s, a rest adopted
+ * from the card) says nothing: the card keeps what it has. PURE.
+ */
+export function restEndsWorkout(next: string | null, done: CardDone | null | undefined): boolean {
+  return done === null && (next == null || next === '');
+}
+
+/** The words after a rest that followed the last set (the native card says the same). */
+export const ALL_DONE_TEXT = 'All sets done · Finish when ready';
+
+/**
+ * D5 (gym branding): the accent as the native cards take it — "#RRGGBB" (a CSS "#RRGGBBAA" loses
+ * its alpha, "#RGB" is spelled out); null for anything else (the cards stay ForgeAI orange). PURE.
+ */
+export function notifAccent(c: string | null | undefined): string | null {
+  if (typeof c !== 'string') return null;
+  const s = c.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(s)) return s.toUpperCase();
+  if (/^#[0-9a-fA-F]{8}$/.test(s)) return s.slice(0, 7).toUpperCase();
+  if (/^#[0-9a-fA-F]{3}$/.test(s)) return `#${s[1]}${s[1]}${s[2]}${s[2]}${s[3]}${s[3]}`.toUpperCase();
+  return null;
+}
+
+let accentSent: string | null | undefined;
+/**
+ * D5: hand the accent the app shows now (`color.accent`, the gym's after its brand is applied) to
+ * the native cards, when it changed. Called before every card post, so a brand change reaches the
+ * next card; kept natively, so a card posted with the app closed is the gym's colour too.
+ */
+export function syncNotifAccent(): void {
+  const n = N();
+  if (!n?.setAccent) return;
+  const hex = notifAccent(color.accent);
+  if (hex === accentSent) return;
+  try {
+    n.setAccent(hex);
+    accentSent = hex;
+  } catch {
+    // ignore: ForgeAI orange
   }
 }
 
@@ -209,6 +267,58 @@ export function takePendingDone(): DoneRequest | null {
   } catch {
     return null;
   }
+}
+
+/** PURE. The ticks the phone queued with the app closed (OfflineTick.kt), oldest first; bad entries dropped. */
+export function parseQueuedTicks(raw: unknown): QueuedTick[] {
+  let list: unknown = raw;
+  if (typeof raw === 'string') {
+    try {
+      list = JSON.parse(raw);
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(list)) return [];
+  const out: QueuedTick[] = [];
+  for (const item of list) {
+    if (!item || typeof item !== 'object') continue;
+    const r = item as Record<string, unknown>;
+    const exKey = typeof r.exKey === 'string' && r.exKey ? r.exKey : null;
+    const setKey = typeof r.setKey === 'string' && r.setKey ? r.setKey : null;
+    const workout = Number(r.workout);
+    const at = Number(r.at);
+    if (!exKey || !setKey || !(workout > 0)) continue;
+    out.push({
+      workout,
+      exKey,
+      setKey,
+      values: typeof r.values === 'string' && r.values ? r.values : null,
+      at: Number.isFinite(at) ? at : 0,
+      label: typeof r.label === 'string' ? r.label : null,
+    });
+  }
+  return out;
+}
+
+/**
+ * v0.37.1 (C1): the "Complete set" / Done taps the phone handled while ForgeAI was closed (it
+ * started their rests itself), taken ONCE — the native piece forgets them. Empty when none.
+ */
+export function takeQueuedTicks(): QueuedTick[] {
+  try {
+    return parseQueuedTicks(N()?.takeQueuedTicks?.() ?? null);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * v0.37.1 (C2): an old "Rest is over" has done its job (the app came to the front, or a set was
+ * ticked with no rest to start): it goes, and the live workout card comes back (one at a time).
+ */
+export function dismissRestOver(): void {
+  call((n) => n.dismissRestOver?.());
 }
 
 /**
@@ -364,12 +474,21 @@ export function ringerMode(): RingerMode | null {
  * Post or update the live workout card (the next set and "Complete set"; WorkoutCard.kt). False
  * = no native piece, or an older one (the app then posts its old quiet card).
  */
-export function showLiveWorkoutCard(title: string, text: string, image: string | null, done: CardDone | null, label: string | null): boolean {
+export function showLiveWorkoutCard(
+  title: string,
+  text: string,
+  image: string | null,
+  done: CardDone | null,
+  label: string | null,
+  /** v0.37.1 (C1): the plan of the sets ahead (`livePlan`, JSON) for taps with the app closed. */
+  plan: string | null = null,
+): boolean {
   const n = N();
   if (!n?.showWorkoutCard) return false;
   try {
+    syncNotifAccent();
     const json = done ? JSON.stringify({ workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label }) : null;
-    return n.showWorkoutCard(title, text, image, json) === true;
+    return n.showWorkoutCard(title, text, image, json, plan) === true;
   } catch {
     return false;
   }
@@ -380,12 +499,20 @@ export function showLiveWorkoutCard(title: string, text: string, image: string |
  * the live card keeps its words natively (`WorkoutCard.hide`) and comes back when the rest and
  * "Rest is over" are gone. False = no native piece / an older one.
  */
-export function hideLiveWorkoutCard(title: string, text: string, image: string | null, done: CardDone | null, label: string | null): boolean {
+export function hideLiveWorkoutCard(
+  title: string,
+  text: string,
+  image: string | null,
+  done: CardDone | null,
+  label: string | null,
+  plan: string | null = null,
+): boolean {
   const n = N();
   if (!n?.hideWorkoutCard) return false;
   try {
+    syncNotifAccent();
     const json = done ? JSON.stringify({ workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label }) : null;
-    return n.hideWorkoutCard(title, text, image, json) === true;
+    return n.hideWorkoutCard(title, text, image, json, plan) === true;
   } catch {
     return false;
   }

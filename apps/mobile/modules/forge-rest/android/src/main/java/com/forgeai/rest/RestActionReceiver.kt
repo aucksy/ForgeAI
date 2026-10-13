@@ -13,6 +13,8 @@ import android.content.Intent
  * Review fix: a Done handed to the running app keeps this broadcast open (goAsync) until the app
  * says it has acted, at most [RestCard.DONE_HOLD_MS], so Android does not freeze a cached app
  * between the tap and the tick. The hold is always finished ([RestCard.releaseDone]).
+ *
+ * v0.37.1 (C1): a Done / "Complete set" with no JS running is handled on the phone ([OfflineTick]).
  */
 class RestActionReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context, intent: Intent) {
@@ -27,16 +29,24 @@ class RestActionReceiver : BroadcastReceiver() {
         RestCard.listener?.invoke("skip", 0L, 0L)
       }
       RestCard.ACTION_END -> RestCard.fireEnd(ctx, intent.getLongExtra(RestCard.EXTRA_ENDS, -1L))
-      // 13 Oct 2026: "Rest is over" swiped away — the live workout card comes back.
+      // 13 Oct 2026: "Rest is over" swiped away (v0.37.1: or timed out) — the live workout card comes back.
       RestCard.ACTION_OVER_GONE -> RestCard.overGone(ctx)
+      // v0.37.1 (C3): the "Open ForgeAI to …" note went — the live workout card comes back.
+      RestCard.ACTION_NOTE_GONE -> RestCard.noteGone(ctx)
       RestCard.ACTION_DONE -> {
-        // Kept for the app, which ticks the row through its own store (never written here).
-        val d = RestCard.doneTapped(ctx, intent) ?: return
         val l = RestCard.listener
         if (l == null) {
-          RestCard.noteQueued(ctx, d.label)
+          // v0.37.1 (C1): ForgeAI is closed (no JS). The phone starts the rest and moves the live
+          // card on by itself, from the app's plan; the tick waits for the app (OfflineTick).
+          if (OfflineTick.run(ctx, intent)) return
+          // Not in the plan: the tap is kept for the app, and a note says so (it keeps the live
+          // card away while it shows: one notification at a time).
+          val q = RestCard.doneTapped(ctx, intent) ?: return
+          RestCard.noteQueued(ctx, q.label)
           return
         }
+        // Kept for the app, which ticks the row through its own store (never written here).
+        val d = RestCard.doneTapped(ctx, intent) ?: return
         // Held before JS is told, so an answer that comes at once still finds the hold.
         RestCard.holdForDone(goAsync(), RestCard.DONE_HOLD_MS)
         try {

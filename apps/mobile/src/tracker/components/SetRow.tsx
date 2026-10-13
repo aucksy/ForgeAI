@@ -160,10 +160,10 @@ export function afterTick(exKey: string, setKey: string): void {
   // "Done" ticks exactly the row it names, so the name comes from that row.
   const card = nextForCard(d.nextExKey ?? exKey);
   const nextName = card.label ?? nextUpLabel(st.exercises, d.nextExKey ?? exKey);
-  if (d.restSec) timer.start(d.restSec, nextName, card.done);
   // Ticked during an older rest, and this set means "no rest" (drop set next,
-  // mid-superset, rest off) → the old bell must not ring mid-set.
-  else if (timer.endsAt != null) timer.skip();
+  // mid-superset, rest off) → the old bell must not ring mid-set; v0.37.1 (C2): and an old
+  // "Rest is over" goes, the live workout card back on the next set.
+  timer.afterTickRest(d.restSec, nextName, card.done);
   if (d.nextExKey) useWorkoutUi.getState().requestScroll(d.nextExKey);
 }
 
