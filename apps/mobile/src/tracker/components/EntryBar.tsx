@@ -70,9 +70,9 @@ export function EntryBar({ model }: { model: EntryBarModel }) {
         accessibilityRole="button"
         accessibilityLabel={spokenStep(dir)}
         accessibilityState={{ disabled: !enabled }}
-        style={({ pressed }) => [stepStyle, pressed && enabled ? { backgroundColor: color.accentSoft } : null, { opacity: enabled ? 1 : 0.4 }]}
+        style={({ pressed }) => [stepStyle(), pressed && enabled ? { backgroundColor: color.accentSoft } : null, { opacity: enabled ? 1 : 0.4 }]}
       >
-        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={stepText}>
+        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={stepText()}>
           {dir > 0 ? steps.plus : steps.minus}
         </Text>
       </Pressable>
@@ -96,9 +96,9 @@ export function EntryBar({ model }: { model: EntryBarModel }) {
           onPress={onCopy}
           accessibilityRole="button"
           accessibilityLabel={`Copy ${who} to the sets below`}
-          style={({ pressed }) => [copyStyle, pressed ? { backgroundColor: color.accentSoft } : null]}
+          style={({ pressed }) => [copyStyle(), pressed ? { backgroundColor: color.accentSoft } : null]}
         >
-          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={copyText}>
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={copyText()}>
             Copy to sets below
           </Text>
         </Pressable>
@@ -107,7 +107,8 @@ export function EntryBar({ model }: { model: EntryBarModel }) {
   );
 }
 
-const stepStyle = {
+// Read when drawn: gym branding repaints the tokens.
+const stepStyle = () => ({
   minHeight: 48,
   minWidth: 64,
   paddingHorizontal: space.md,
@@ -117,15 +118,16 @@ const stepStyle = {
   backgroundColor: color.surfaceRaised,
   alignItems: 'center' as const,
   justifyContent: 'center' as const,
-};
+});
 
-const stepText = {
+// Read when drawn: gym branding repaints the tokens.
+const stepText = () => ({
   fontFamily: type.monoBold,
   fontSize: type.size.body,
   color: color.ink,
-};
+});
 
-const copyStyle = {
+const copyStyle = () => ({
   minHeight: 48,
   flexShrink: 1,
   paddingHorizontal: space.md,
@@ -135,10 +137,11 @@ const copyStyle = {
   backgroundColor: color.surfaceRaised,
   alignItems: 'center' as const,
   justifyContent: 'center' as const,
-};
+});
 
-const copyText = {
+// Read when drawn: gym branding repaints the tokens.
+const copyText = () => ({
   fontFamily: type.bodySemi,
   fontSize: type.size.sub,
   color: color.accent,
-};
+});

@@ -95,7 +95,8 @@ function Question({ text }: { text: string }) {
   return <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>{text}</Text>;
 }
 
-const field = {
+// Read when drawn: gym branding repaints the tokens.
+const field = () => ({
   minHeight: 48,
   paddingHorizontal: space.md,
   paddingVertical: 10,
@@ -106,7 +107,7 @@ const field = {
   fontFamily: type.body,
   fontSize: type.size.body,
   color: color.ink,
-} as const;
+}) as const;
 
 export function FinishSheet({ visible, exercises, startedAt, defaultName, askName, defaultRestSec, saving, onFinish, onClose }: FinishSheetProps) {
   // Everything below is decided when the sheet opens, so the numbers stand still while it's up.
@@ -201,7 +202,7 @@ export function FinishSheet({ visible, exercises, startedAt, defaultName, askNam
           maxLength={60}
           returnKeyType="done"
           accessibilityLabel="Workout name"
-          style={[field, { fontFamily: type.bodySemi }]}
+          style={[field(), { fontFamily: type.bodySemi }]}
         />
       </View>
       ) : null}
@@ -215,7 +216,7 @@ export function FinishSheet({ visible, exercises, startedAt, defaultName, askNam
           multiline
           maxLength={500}
           accessibilityLabel="Workout note, optional"
-          style={[field, { textAlignVertical: 'top' }]}
+          style={[field(), { textAlignVertical: 'top' }]}
         />
       </View>
     </Sheet>

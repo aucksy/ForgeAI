@@ -10,6 +10,7 @@
 
 import { useMemo } from 'react';
 
+import { BrandingScreen } from './brand/BrandingScreen';
 import { atRiskList } from './logic/attendance';
 import { duesByMember, duesLedger } from './logic/collections';
 import { needsAttentionToday } from './logic/membership';
@@ -114,7 +115,8 @@ function Screen({ segments }: { segments: string[] }) {
     case 'plans':
       return <PlansScreen />;
     case 'settings':
-      return <SettingsScreen />;
+      // Gym branding: Settings -> Branding (the gym's look in the member app).
+      return id === 'branding' ? <BrandingScreen /> : <SettingsScreen />;
     default:
       return <TodayScreen />;
   }

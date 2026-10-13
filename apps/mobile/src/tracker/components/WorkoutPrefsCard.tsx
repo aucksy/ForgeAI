@@ -35,18 +35,18 @@ import { stepWeeklyGoal, useTrackerPrefs } from '../store/trackerPrefsStore';
 import { RestAlertsStatusRow } from './RestAlertsStatusRow';
 import { RestPickerSheet } from './RestPickerSheet';
 
-/** A section's small heading (Weekly goal, Previous values). */
-const HEADING = {
+/** A section's small heading (Weekly goal, Previous values). Read when drawn: gym branding repaints the tokens. */
+const HEADING = () => ({
   fontFamily: type.bodySemi,
   fontSize: type.size.caption,
   color: color.inkMuted,
   letterSpacing: 1.1,
   textTransform: 'uppercase',
   marginBottom: space.sm,
-} as const;
+}) as const;
 
-/** The plain line under a section. */
-const SECTION_LINE = { fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 } as const;
+/** The plain line under a section. Read when drawn: gym branding repaints the tokens. */
+const SECTION_LINE = () => ({ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 }) as const;
 
 /** The stepper's − and + : 48 dp round, dimmed (and inert) at the end of the range. */
 function StepButton({ sign, label, disabled, onPress }: { sign: '−' | '+'; label: string; disabled: boolean; onPress: () => void }) {
@@ -201,7 +201,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
       ) : null}
       {/* Audit Phase 9 (#4): the member's own workouts-a-week goal (Up next on the Workout tab, the widget). */}
       <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
-        <Text accessibilityRole="header" style={HEADING}>
+        <Text accessibilityRole="header" style={HEADING()}>
           Weekly goal
         </Text>
         <WeeklyGoalStepper
@@ -211,11 +211,11 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
             void refreshWidgets();
           }}
         />
-        <Text style={SECTION_LINE}>Workouts a week. The Workout tab shows how many are left.</Text>
+        <Text style={SECTION_LINE()}>Workouts a week. The Workout tab shows how many are left.</Text>
       </View>
       {/* 13 Oct 2026: where PREVIOUS, the Target and carried notes come from (tracker/db/historyScope.ts). */}
       <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
-        <Text accessibilityRole="header" style={HEADING}>
+        <Text accessibilityRole="header" style={HEADING()}>
           Previous values
         </Text>
         <View accessibilityRole="radiogroup" style={{ gap: space.xs }}>
@@ -232,7 +232,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
             />
           ))}
         </View>
-        <Text style={SECTION_LINE}>{previousChoice.line}</Text>
+        <Text style={SECTION_LINE()}>{previousChoice.line}</Text>
       </View>
       <RestPickerSheet
         visible={picking}

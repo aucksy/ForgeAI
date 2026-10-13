@@ -56,12 +56,13 @@ import { shareProblemText, sharedFileKind } from '@/tracker/phone/sharedImport';
 
 type Phase = 'idle' | 'preview' | 'importing' | 'done' | 'routines' | 'undone';
 
-const CAPTION = {
+// Read when drawn: gym branding repaints the tokens.
+const CAPTION = () => ({
   fontFamily: type.body,
   fontSize: type.size.sub,
   color: color.inkMuted,
   lineHeight: 19,
-} as const;
+}) as const;
 
 function StatRow({ label, value, tint }: { label: string; value: string; tint?: string }) {
   return (
@@ -117,7 +118,7 @@ function ModeOption({
         />
         <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{label}</Text>
       </View>
-      <Text style={{ ...CAPTION, color: danger && selected ? color.criticalText : color.inkMuted }}>{body}</Text>
+      <Text style={{ ...CAPTION(), color: danger && selected ? color.criticalText : color.inkMuted }}>{body}</Text>
     </Pressable>
   );
 }
@@ -527,7 +528,7 @@ export default function ImportScreen() {
       onBack={phase === 'importing' ? undefined : close}
     >
       {problem ? (
-        <Text style={{ ...CAPTION, color: color.criticalText, marginBottom: space.md }}>{problem}</Text>
+        <Text style={{ ...CAPTION(), color: color.criticalText, marginBottom: space.md }}>{problem}</Text>
       ) : null}
 
       {/* ---------- idle: choose a file ---------- */}
@@ -542,19 +543,19 @@ export default function ImportScreen() {
                 </Text>
               </View>
               {strong ? (
-                <Text style={CAPTION}>
+                <Text style={CAPTION()}>
                   In Strong, go to <Text style={{ color: color.inkSecondary }}>Settings → Export Strong Data</Text> and
                   save the <Text style={{ color: color.inkSecondary }}>.csv</Text> file. Then pick that file here.
                   Kilograms or pounds: both are read.
                 </Text>
               ) : (
-                <Text style={CAPTION}>
+                <Text style={CAPTION()}>
                   In Hevy, go to <Text style={{ color: color.inkSecondary }}>Settings → Export &amp; Backup Data</Text> and
                   export your workouts. Then pick that <Text style={{ color: color.inkSecondary }}>.csv</Text> (or{' '}
                   <Text style={{ color: color.inkSecondary }}>.xlsx</Text>) file here. Kilograms or pounds: both are read.
                 </Text>
               )}
-              <Text style={CAPTION}>Everything is processed on your phone — nothing is uploaded.</Text>
+              <Text style={CAPTION()}>Everything is processed on your phone — nothing is uploaded.</Text>
             </View>
           </Card>
           <PrimaryButton
@@ -611,7 +612,7 @@ export default function ImportScreen() {
           {allHereText(preview) && mode === 'merge' ? (
             <Card style={{ gap: space.xs }}>
               <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{allHereText(preview)}</Text>
-              <Text style={CAPTION}>Nothing in this file is new to ForgeAI, so nothing will be added.</Text>
+              <Text style={CAPTION()}>Nothing in this file is new to ForgeAI, so nothing will be added.</Text>
             </Card>
           ) : null}
 
@@ -632,7 +633,7 @@ export default function ImportScreen() {
 
           {/* Review fix: rows whose date could not be read are said, with one of them. */}
           {preview.badDateRows > 0 ? (
-            <Text style={CAPTION}>
+            <Text style={CAPTION()}>
               {preview.badDateRows} row{preview.badDateRows === 1 ? '' : 's'} could not be read as a date
               {preview.badDateExample ? ` (for example “${preview.badDateExample}”)` : ''}, so {preview.badDateRows === 1 ? 'it is' : 'they are'} left out. Everything else comes in.
             </Text>
@@ -642,7 +643,7 @@ export default function ImportScreen() {
           {dateAsk ? (
             <View style={{ gap: space.sm }}>
               <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{dateOrderQuestion(dateAsk).question}</Text>
-              <Text style={CAPTION}>This file writes dates as numbers only, and they can be read two ways. Pick the one that matches your workouts.</Text>
+              <Text style={CAPTION()}>This file writes dates as numbers only, and they can be read two ways. Pick the one that matches your workouts.</Text>
               <ModeOption label={dateOrderQuestion(dateAsk).dayFirst} selected={dateAnswer === 'dmy'} onPress={() => void onDateOrder('dmy')} body="Day, then month (as most of the world writes it)." />
               <ModeOption label={dateOrderQuestion(dateAsk).monthFirst} selected={dateAnswer === 'mdy'} onPress={() => void onDateOrder('mdy')} body="Month, then day (as the US writes it)." />
             </View>
@@ -651,7 +652,7 @@ export default function ImportScreen() {
           {unitsAsk && strongText != null ? (
             <View style={{ gap: space.sm }}>
               <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{unitsQuestion(unitsExampleSet)}</Text>
-              <Text style={{ ...CAPTION }}>This file does not say its units. Pick the one Strong showed you.</Text>
+              <Text style={{ ...CAPTION() }}>This file does not say its units. Pick the one Strong showed you.</Text>
               <ModeOption
                 label="Kilograms and km"
                 selected={fileUnits === 'metric'}
@@ -671,7 +672,7 @@ export default function ImportScreen() {
           {demo ? (
             <Card style={{ gap: space.sm }}>
               <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>The demo goes first</Text>
-              <Text style={CAPTION}>
+              <Text style={CAPTION()}>
                 The sample member’s workouts, body weight, food, plan, records and name are removed, then your history comes in.
                 {ownWorkouts > 0 ? ` Your own ${ownWorkouts} workout${ownWorkouts === 1 ? ' stays' : 's stay'}.` : ''}
               </Text>
@@ -704,7 +705,7 @@ export default function ImportScreen() {
                 />
               </View>
               {nameProblem ? (
-                <Text style={{ ...CAPTION, color: color.criticalText }}>Your name, please. The demo’s name goes with the demo.</Text>
+                <Text style={{ ...CAPTION(), color: color.criticalText }}>Your name, please. The demo’s name goes with the demo.</Text>
               ) : null}
             </Card>
           ) : null}
@@ -781,7 +782,7 @@ export default function ImportScreen() {
               }}
             />
           </View>
-          <Text style={{ ...CAPTION, textAlign: 'center' as const }}>
+          <Text style={{ ...CAPTION(), textAlign: 'center' as const }}>
             Building your history and finding your records. If you leave, it finishes on its own.
           </Text>
         </View>
@@ -798,7 +799,7 @@ export default function ImportScreen() {
             <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>
               {doneTitle(result.imported)}
             </Text>
-            <Text style={{ ...CAPTION, textAlign: 'center' as const }}>
+            <Text style={{ ...CAPTION(), textAlign: 'center' as const }}>
               {result.imported > 0 ? `Your ${appName} history is now in ForgeAI.` : `Every workout in this file was already in ForgeAI.`}
             </Text>
           </Card>
@@ -832,7 +833,7 @@ export default function ImportScreen() {
 
           {routineCount > 0 ? (
             <View style={{ gap: space.md }}>
-              <Text style={{ ...CAPTION, color: color.inkSecondary }}>
+              <Text style={{ ...CAPTION(), color: color.inkSecondary }}>
                 Next: your {appName} routines. We found {routineCount} in this file.
               </Text>
               <PrimaryButton label="Bring my routines in" icon="chevron-right" onPress={() => setPhase('routines')} />
@@ -853,7 +854,7 @@ export default function ImportScreen() {
           <Card style={{ alignItems: 'center', paddingVertical: space.xl, gap: space.sm }}>
             <Icon name="check" size={30} color={color.accent} />
             <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>Import undone</Text>
-            <Text style={{ ...CAPTION, textAlign: 'center' as const }}>Everything is back as it was before the import.</Text>
+            <Text style={{ ...CAPTION(), textAlign: 'center' as const }}>Everything is back as it was before the import.</Text>
           </Card>
           <GhostButton label="Done" icon="check" onPress={close} />
         </View>

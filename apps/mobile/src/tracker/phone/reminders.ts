@@ -32,6 +32,7 @@ import { getSessionsBetween } from '@/db/repos/workoutRepo';
 import { followedFolder } from '@/tracker/db/folderRepo';
 import { planDaysPerWeek } from '@/tracker/services/planState';
 import { getTodayPlan } from '@/tracker/services/todayService';
+import { color } from '@/theme/tokens';
 
 import { nativeNotificationsEnabled } from '../services/restCard';
 import { ensureAlertPermission, notificationsGranted } from '../services/workoutAlerts';
@@ -363,7 +364,7 @@ async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }): Pr
             title: 'Time to train',
             body,
             data: { kind: 'reminder', route: '/workout' },
-            color: '#FF7A3B',
+            color: color.accent,
           },
           trigger:
             x.kind === 'weekly'

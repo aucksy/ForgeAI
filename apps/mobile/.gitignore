@@ -32,3 +32,6 @@ android/app/release.keystore
 
 # Phase 2: downloaded Everkinetic SVGs for scripts/build-exercise-media.py (re-fetched on demand)
 .media-cache/
+
+# Client logos and other test pictures (gym branding): not for a public repo. qa/tools/ makes them.
+qa/test-assets/

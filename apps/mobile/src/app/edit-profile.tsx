@@ -35,7 +35,8 @@ import {
 
 type Field = 'name' | 'bio' | 'link';
 
-const inputStyle = {
+// Read when drawn: gym branding repaints the tokens.
+const inputStyle = () => ({
   backgroundColor: color.surfaceSunken,
   borderWidth: 1,
   borderColor: color.border,
@@ -46,9 +47,10 @@ const inputStyle = {
   color: color.ink,
   fontFamily: type.bodyMedium,
   fontSize: type.size.body,
-} as const;
+}) as const;
 
-const labelStyle = { fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.xs } as const;
+// Read when drawn: gym branding repaints the tokens.
+const labelStyle = () => ({ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.xs }) as const;
 
 export default function EditProfileScreen() {
   const router = useRouter();
@@ -237,7 +239,7 @@ export default function EditProfileScreen() {
 
           <Card style={{ gap: space.lg }}>
             <View>
-              <Text style={labelStyle}>Name</Text>
+              <Text style={labelStyle()}>Name</Text>
               <TextInput
                 value={name}
                 onChangeText={(t) => {
@@ -249,14 +251,14 @@ export default function EditProfileScreen() {
                 autoCapitalize="words"
                 autoComplete="name"
                 accessibilityLabel="Name"
-                style={inputStyle}
+                style={inputStyle()}
                 placeholderTextColor={color.inkFaint}
               />
               {error('name')}
             </View>
 
             <View>
-              <Text style={labelStyle}>Bio</Text>
+              <Text style={labelStyle()}>Bio</Text>
               <TextInput
                 value={bio}
                 onChangeText={(t) => {
@@ -269,7 +271,7 @@ export default function EditProfileScreen() {
                 placeholder="A line about you"
                 placeholderTextColor={color.inkFaint}
                 accessibilityLabel={`Bio, up to ${BIO_MAX} characters`}
-                style={[inputStyle, { minHeight: 88, textAlignVertical: 'top' }]}
+                style={[inputStyle(), { minHeight: 88, textAlignVertical: 'top' }]}
               />
               <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, textAlign: 'right' }}>
                 {`${bio.length} / ${BIO_MAX}`}
@@ -278,7 +280,7 @@ export default function EditProfileScreen() {
             </View>
 
             <View>
-              <Text style={labelStyle}>Link</Text>
+              <Text style={labelStyle()}>Link</Text>
               <TextInput
                 value={link}
                 onChangeText={(t) => {
@@ -293,7 +295,7 @@ export default function EditProfileScreen() {
                 placeholder="instagram.com/yourname"
                 placeholderTextColor={color.inkFaint}
                 accessibilityLabel="Link"
-                style={inputStyle}
+                style={inputStyle()}
               />
               {error('link')}
             </View>

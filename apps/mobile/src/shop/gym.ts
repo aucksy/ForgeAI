@@ -6,6 +6,8 @@
  * and the persisted blob's cleaning. No Supabase here (it is a native-backed client); the calls
  * live in gymApi.ts and the store in gymStore.ts.
  */
+import { parseGymBrand, sameBrand, type GymBrand } from '@forgeai/theme';
+
 import { SHOP_CATEGORIES } from './catalog';
 import { lineKey, lineName, priceBag } from './money';
 import type { ArtKind, BagLine, GymLink, GymOrder, OrderLine, OrderStatus, Product, ProductOption, ShopCategory } from './types';
@@ -167,6 +169,8 @@ export function linkFromJoin(raw: unknown): GymLink | null {
   const gymId = str(raw.gymId);
   const gymName = str(raw.gymName);
   if (!memberKey || !memberId || !gymId || !gymName) return null;
+  // Gym branding: the join's (and a saved link's) brand; an unbranded gym carries none.
+  const brand = parseGymBrand(raw.brand);
   return {
     memberKey,
     memberId,
@@ -174,7 +178,38 @@ export function linkFromJoin(raw: unknown): GymLink | null {
     gymName: gymName.trim(),
     joinCode: typeof raw.joinCode === 'string' ? raw.joinCode : '',
     name: typeof raw.name === 'string' ? raw.name : '',
+    ...(brand ? { brand } : {}),
   };
+}
+
+/** What member_me says about the gym now: its name and brand (the owner may have changed them). */
+export interface GymNow {
+  gymId: string;
+  gymName: string;
+  brand: GymBrand | null;
+}
+
+/** member_me's answer, read; null when anything needed is missing. PURE. */
+export function gymNowFromMe(raw: unknown): GymNow | null {
+  if (!isObj(raw)) return null;
+  const gymId = str(raw.gymId);
+  const gymName = str(raw.gymName);
+  if (!gymId || !gymName) return null;
+  return { gymId, gymName: gymName.trim(), brand: parseGymBrand(raw.brand) };
+}
+
+/**
+ * The link with member_me's news applied: the same link (same object) when nothing changed, so
+ * the store and the theme only move when the gym really changed its name or look. PURE.
+ */
+export function linkWithNow(link: GymLink, now: GymNow): GymLink {
+  if (now.gymId !== link.gymId) return link;
+  const brand = now.brand;
+  if (now.gymName === link.gymName && sameBrand(link.brand ?? null, brand)) return link;
+  const next: GymLink = { ...link, gymName: now.gymName };
+  if (brand) next.brand = brand;
+  else delete next.brand;
+  return next;
 }
 
 // ------------------------------------------------------------------ errors → words

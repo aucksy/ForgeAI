@@ -505,24 +505,24 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         {/* column header — the words say what to type ("KG EACH" = one dumbbell); the same widths
             and gaps as the set rows (useRowLayout). Two lines rather than cut off at a large text size. */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: rowLayout.gap, paddingHorizontal: rowLayout.padX }}>
-          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[colHead, { width: rowLayout.setW, textAlign: 'center' }]}>
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[colHead(), { width: rowLayout.setW, textAlign: 'center' }]}>
             SET
           </Text>
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.6}
-            style={[colHead, { width: rowLayout.prevW, marginHorizontal: rowLayout.prevGap - rowLayout.gap }]}
+            style={[colHead(), { width: rowLayout.prevW, marginHorizontal: rowLayout.prevGap - rowLayout.gap }]}
           >
             PREVIOUS
           </Text>
-          {heads.distance ? <Text {...headFit} style={[colHead, colFlex]}>{heads.distance}</Text> : null}
-          {heads.weight ? <Text {...headFit} style={[colHead, colFlex]}>{heads.weight}</Text> : null}
-          {heads.reps ? <Text {...headFit} style={[colHead, colFlex]}>{heads.reps}</Text> : null}
-          {heads.time ? <Text {...headFit} style={[colHead, colFlex]}>{heads.time}</Text> : null}
+          {heads.distance ? <Text {...headFit} style={[colHead(), colFlex]}>{heads.distance}</Text> : null}
+          {heads.weight ? <Text {...headFit} style={[colHead(), colFlex]}>{heads.weight}</Text> : null}
+          {heads.reps ? <Text {...headFit} style={[colHead(), colFlex]}>{heads.reps}</Text> : null}
+          {heads.time ? <Text {...headFit} style={[colHead(), colFlex]}>{heads.time}</Text> : null}
           {logType === 'time' ? <View style={{ width: rowLayout.checkW }} /> : null}
           {rowLayout.rpeCell ? (
-            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[colHead, { width: rowLayout.rpeW, textAlign: 'center' }]}>
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[colHead(), { width: rowLayout.rpeW, textAlign: 'center' }]}>
               RPE
             </Text>
           ) : null}
@@ -784,12 +784,13 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   );
 });
 
-const colHead = {
+// Read when drawn: gym branding repaints the tokens.
+const colHead = () => ({
   fontFamily: type.bodySemi,
   fontSize: type.size.caption,
   color: color.inkMuted,
   letterSpacing: 0.4,
-} as const;
+}) as const;
 
 /** A number column's head: centred over its box, on two lines ("KG / EACH") before it is cut off. */
 const colFlex = { flex: 1, textAlign: 'center' } as const;

@@ -273,7 +273,7 @@ export function CloudCard() {
             justifyContent: 'center',
           }}
         >
-          {consent ? <Icon name="check" size={14} color="#1F0D05" /> : null}
+          {consent ? <Icon name="check" size={14} color={color.onAccent} /> : null}
         </View>
         <Text
           style={{

@@ -34,14 +34,15 @@ const DAY_TYPES: { id: DayType; label: string }[] = [
   { id: 'full', label: 'Full body' },
 ];
 
-const overline = {
+// Read when drawn: gym branding repaints the tokens.
+const overline = () => ({
   fontFamily: type.bodySemi,
   fontSize: type.size.caption,
   color: color.inkMuted,
   letterSpacing: 1.1,
   textTransform: 'uppercase',
   marginBottom: space.sm,
-} as const;
+}) as const;
 
 export interface EditSessionHeaderProps {
   /** "Editing a saved workout" / "Logging a past workout". */
@@ -133,12 +134,12 @@ export const EditSessionHeader = memo(function EditSessionHeader({
 
       <View style={{ flexDirection: 'row', gap: space.md }}>
         <View style={{ flex: 3 }}>
-          <Text style={overline}>Date</Text>
+          <Text style={overline()}>Date</Text>
           <Pressable
             onPress={() => setPicking(true)}
             accessibilityRole="button"
             accessibilityLabel={`Date, ${dateISO ? dateWithYear(dateISO) : 'not set'}. Change`}
-            style={fieldBox}
+            style={fieldBox()}
           >
             <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
               {dateISO ? dateWithYear(dateISO) : '—'}
@@ -148,7 +149,7 @@ export const EditSessionHeader = memo(function EditSessionHeader({
         </View>
         {shown && onStartTimeChange ? (
           <View style={{ flex: 2 }}>
-            <Text style={overline}>Start</Text>
+            <Text style={overline()}>Start</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
               <TextInput
                 value={hText}
@@ -158,7 +159,7 @@ export const EditSessionHeader = memo(function EditSessionHeader({
                 keyboardType="number-pad"
                 selectTextOnFocus
                 accessibilityLabel="Start hour, 0 to 23"
-                style={[fieldBox, { flex: 1, paddingHorizontal: 0, textAlign: 'center', fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }]}
+                style={[fieldBox(), { flex: 1, paddingHorizontal: 0, textAlign: 'center', fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }]}
               />
               <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }}>:</Text>
               <TextInput
@@ -169,7 +170,7 @@ export const EditSessionHeader = memo(function EditSessionHeader({
                 keyboardType="number-pad"
                 selectTextOnFocus
                 accessibilityLabel="Start minute, 0 to 59"
-                style={[fieldBox, { flex: 1, paddingHorizontal: 0, textAlign: 'center', fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }]}
+                style={[fieldBox(), { flex: 1, paddingHorizontal: 0, textAlign: 'center', fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }]}
               />
             </View>
           </View>
@@ -177,7 +178,7 @@ export const EditSessionHeader = memo(function EditSessionHeader({
       </View>
 
       <View>
-        <Text style={overline}>Minutes</Text>
+        <Text style={overline()}>Minutes</Text>
         <TextInput
           value={minText}
           onChangeText={(t) => {
@@ -197,7 +198,7 @@ export const EditSessionHeader = memo(function EditSessionHeader({
           placeholder="—"
           placeholderTextColor={color.inkFaint}
           accessibilityLabel="Workout length in minutes, 1 to 600"
-          style={[fieldBox, { fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }]}
+          style={[fieldBox(), { fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }]}
         />
         {minError || startError ? (
           <Text
@@ -211,7 +212,7 @@ export const EditSessionHeader = memo(function EditSessionHeader({
       </View>
 
       <View>
-        <Text style={overline}>Type</Text>
+        <Text style={overline()}>Type</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
           {DAY_TYPES.map((d) => (
             <Chip
@@ -227,7 +228,7 @@ export const EditSessionHeader = memo(function EditSessionHeader({
       </View>
 
       <View>
-        <Text style={overline}>Notes</Text>
+        <Text style={overline()}>Notes</Text>
         <TextInput
           value={notes}
           onChangeText={onNotesChange}
@@ -262,7 +263,8 @@ export const EditSessionHeader = memo(function EditSessionHeader({
   );
 });
 
-const fieldBox = {
+// Read when drawn: gym branding repaints the tokens.
+const fieldBox = () => ({
   height: 44,
   flexDirection: 'row' as const,
   alignItems: 'center' as const,
@@ -272,4 +274,4 @@ const fieldBox = {
   backgroundColor: color.surfaceSunken,
   borderWidth: 1,
   borderColor: color.borderStrong,
-};
+});

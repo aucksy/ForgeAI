@@ -47,8 +47,9 @@ import { chosenRoutines, findRoutines, rowKey, type FoundExercise, type FoundRou
 import { renamedIn } from '../services/hevyImport';
 import { MatchRow, RenamedList } from './NewNamesCard';
 
-const CAPTION = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 } as const;
-const HEAD = { fontFamily: type.heading, fontSize: type.size.h3, color: color.ink } as const;
+// Read when drawn: gym branding repaints the tokens.
+const CAPTION = () => ({ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 }) as const;
+const HEAD = () => ({ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }) as const;
 
 /** "5 Oct", or "5 Dec 2023" in another year (the shared list date). */
 function when(iso: string): string {
@@ -95,7 +96,7 @@ function TickRow({ label, sub, ticked, onPress }: { label: string; sub: string; 
       </View>
       <View style={{ flex: 1, gap: 2 }}>
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: ticked ? color.ink : color.inkSecondary }}>{label}</Text>
-        <Text style={CAPTION}>{sub}</Text>
+        <Text style={CAPTION()}>{sub}</Text>
       </View>
     </Pressable>
   );
@@ -306,12 +307,12 @@ export function RoutineImportSteps({
     return (
       <View style={{ gap: space.lg }}>
         <View style={{ gap: space.xs }}>
-          <Text style={HEAD}>
+          <Text style={HEAD()}>
             {link
               ? `We found ${shownCount} routine${shownCount === 1 ? '' : 's'} in “${link.folderName}”`
               : `We found ${shownCount} routine${shownCount === 1 ? '' : 's'} in your ${appName} workouts`}
           </Text>
-          <Text style={CAPTION}>
+          <Text style={CAPTION()}>
             {link
               ? link.exact
                 ? 'Copied exactly as saved in Hevy: warm-ups, sets, reps and rest.'
@@ -329,7 +330,7 @@ export function RoutineImportSteps({
                 style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingVertical: space.sm + 2 }}
               >
                 <Icon name="chevron-right" size={16} color={color.inkMuted} />
-                <Text style={{ ...CAPTION, color: color.inkSecondary }}>
+                <Text style={{ ...CAPTION(), color: color.inkSecondary }}>
                   {showOlder ? 'Hide the older names' : `${older.length} older name${older.length === 1 ? '' : 's'} (not used for a year)`}
                 </Text>
               </Pressable>
@@ -388,11 +389,11 @@ export function RoutineImportSteps({
     return (
       <View style={{ gap: space.lg }}>
         <View style={{ gap: space.xs }}>
-          <Text style={{ ...CAPTION, color: color.inkSecondary }}>
+          <Text style={{ ...CAPTION(), color: color.inkSecondary }}>
             {step.i + 1} of {kept.length}
           </Text>
           <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>{r.title}</Text>
-          <Text style={CAPTION}>
+          <Text style={CAPTION()}>
             {link
               ? 'As saved in Hevy. Untick anything you don’t want.'
               : `From your last ${r.title} (${when(r.lastISO)}). Untick anything that is not in this routine.`}
@@ -406,8 +407,8 @@ export function RoutineImportSteps({
         {more.length > 0 ? (
           <View style={{ gap: space.sm }}>
             <View style={{ gap: 2 }}>
-              <Text style={HEAD}>Also done in {r.title}</Text>
-              <Text style={CAPTION}>Tick any you skip some days but keep in the routine.</Text>
+              <Text style={HEAD()}>Also done in {r.title}</Text>
+              <Text style={CAPTION()}>Tick any you skip some days but keep in the routine.</Text>
             </View>
             <Card>
               {more.map((e) => (
@@ -422,7 +423,7 @@ export function RoutineImportSteps({
             </Card>
           </View>
         ) : null}
-        <Text style={CAPTION}>
+        <Text style={CAPTION()}>
           {link
             ? 'Sets, warm-ups, reps and rest are as saved in Hevy. You can change them later in the routine.'
             : 'Sets and reps are from the last time you did each one. You can change them later in the routine.'}
@@ -448,10 +449,10 @@ export function RoutineImportSteps({
     return (
       <View style={{ gap: space.lg }}>
         <View style={{ gap: space.xs }}>
-          <Text style={HEAD}>
+          <Text style={HEAD()}>
             {step.items.length} name{step.items.length === 1 ? ' is' : 's are'} new to ForgeAI
           </Text>
-          <Text style={CAPTION}>
+          <Text style={CAPTION()}>
             {asked.length > 0
               ? 'Say “Yes” and the routine uses ForgeAI’s exercise, with your history. “Keep as new” adds it as your own exercise with this name.'
               : `We add ${step.items.length === 1 ? 'it' : 'them'} to your exercises with the same name, so your Hevy history and these routines stay together. Untick one to leave it out.`}
@@ -496,7 +497,7 @@ export function RoutineImportSteps({
           ))}
         </Card>
         ) : null}
-        <Text style={CAPTION}>Add a photo or change the muscle any time: Profile → Exercises.</Text>
+        <Text style={CAPTION()}>Add a photo or change the muscle any time: Profile → Exercises.</Text>
         <View style={{ gap: space.md }}>
           <PrimaryButton
             label={adding === 0 ? 'Leave them out' : 'Next'}
@@ -515,8 +516,8 @@ export function RoutineImportSteps({
     return (
       <View style={{ gap: space.lg }}>
         <View style={{ gap: space.xs }}>
-          <Text style={HEAD}>Add {r ? `“${r.title}”` : 'it'} to which folder?</Text>
-          <Text style={CAPTION}>Your plan only changes if you pick it. A routine of the same name there is updated, not doubled.</Text>
+          <Text style={HEAD()}>Add {r ? `“${r.title}”` : 'it'} to which folder?</Text>
+          <Text style={CAPTION()}>Your plan only changes if you pick it. A routine of the same name there is updated, not doubled.</Text>
         </View>
         <Card>
           {step.choices.map((c) => (
@@ -531,13 +532,13 @@ export function RoutineImportSteps({
               <Icon name={c.following ? 'check' : 'list'} size={18} color={color.accent} />
               <View style={{ flex: 1, gap: 2 }}>
                 <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink }}>{c.label}</Text>
-                <Text style={CAPTION}>{c.value}</Text>
+                <Text style={CAPTION()}>{c.value}</Text>
               </View>
               <Icon name="chevron-right" size={16} color={color.inkMuted} />
             </Pressable>
           ))}
         </Card>
-        {saveProblem ? <Text style={{ ...CAPTION, color: color.criticalText }}>{saveProblem}</Text> : null}
+        {saveProblem ? <Text style={{ ...CAPTION(), color: color.criticalText }}>{saveProblem}</Text> : null}
         <GhostButton label="Back" icon="chevron-left" onPress={() => setStep(beforeQuestions())} />
       </View>
     );
@@ -553,7 +554,7 @@ export function RoutineImportSteps({
     if (saved.length === 0) {
       return (
         <View style={{ gap: space.lg }}>
-          <Text style={{ ...CAPTION, color: color.inkSecondary }}>Every exercise is unticked, so there is nothing to save. Go back and tick the ones in each routine.</Text>
+          <Text style={{ ...CAPTION(), color: color.inkSecondary }}>Every exercise is unticked, so there is nothing to save. Go back and tick the ones in each routine.</Text>
           <GhostButton label="Back" icon="chevron-left" onPress={back} />
         </View>
       );
@@ -563,19 +564,19 @@ export function RoutineImportSteps({
         <Card style={{ gap: space.md, paddingVertical: space.xl }}>
           <Icon name="list" size={26} color={color.accent} />
           <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>Follow these as your plan?</Text>
-          <Text style={{ ...CAPTION, color: color.inkSecondary }}>
+          <Text style={{ ...CAPTION(), color: color.inkSecondary }}>
             {realOrder
               ? `The Workout tab will show your next routine each day, in the order you do them: ${shown.map((r) => r.title).join(', ')}.`
               : `The Workout tab will show your next routine each day. As saved in Hevy: ${shown.map((r) => r.title).join(', ')}. Change their order any time on the Workout tab (a routine's ⋯ → Move up or Move down).`}
           </Text>
           {question?.followingName ? (
-            <Text style={CAPTION}>You follow “{question.followingName}” now. It stays in your routines if you switch.</Text>
+            <Text style={CAPTION()}>You follow “{question.followingName}” now. It stays in your routines if you switch.</Text>
           ) : null}
           {question?.updatingName ? (
-            <Text style={CAPTION}>This updates the routines in “{question.updatingName}”. Anything you changed in them yourself is kept.</Text>
+            <Text style={CAPTION()}>This updates the routines in “{question.updatingName}”. Anything you changed in them yourself is kept.</Text>
           ) : null}
         </Card>
-        {saveProblem ? <Text style={{ ...CAPTION, color: color.criticalText }}>{saveProblem}</Text> : null}
+        {saveProblem ? <Text style={{ ...CAPTION(), color: color.criticalText }}>{saveProblem}</Text> : null}
         <View style={{ gap: space.md }}>
           <PrimaryButton label={busy ? 'Saving…' : 'Follow them'} icon="check" loading={busy} onPress={() => void save(true)} />
           <GhostButton
@@ -596,7 +597,7 @@ export function RoutineImportSteps({
         <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink, textAlign: 'center' }}>
           {step.routines} routine{step.routines === 1 ? '' : 's'} in {step.folder}
         </Text>
-        <Text style={{ ...CAPTION, textAlign: 'center' }}>
+        <Text style={{ ...CAPTION(), textAlign: 'center' }}>
           {question?.updatingName ? `${step.folder} is updated from this ${link ? 'link' : 'file'}.` : 'Find them in Workout → Routines.'}
           {step.keptEdits.length > 0 ? ` Your own changes to ${step.keptEdits.join(', ')} were kept.` : ''}
           {step.today && !single ? ` The Workout tab shows ${step.today} today.` : ''}

@@ -25,7 +25,8 @@ import { detailSetRows, detailStats, recordSets } from '../services/workoutDetai
 import { ExerciseThumb } from './ExerciseThumb';
 import { SetTable } from './SetTable';
 
-const label = { fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted } as const;
+// Read when drawn: gym branding repaints the tokens.
+const label = () => ({ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }) as const;
 
 export function WorkoutDetail({ data, onOpenExercise }: { data: SessionSummaryData; onOpenExercise: (exerciseId: string) => void }) {
   const units = useUnits();
@@ -44,7 +45,7 @@ export function WorkoutDetail({ data, onOpenExercise }: { data: SessionSummaryDa
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: space.xl, rowGap: space.sm }}>
         {stats.map((st) => (
           <View key={st.label} accessible accessibilityLabel={`${st.label}: ${st.value}`}>
-            <Text style={label}>{st.label}</Text>
+            <Text style={label()}>{st.label}</Text>
             <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>{st.value}</Text>
           </View>
         ))}
@@ -107,7 +108,7 @@ export function WorkoutDetail({ data, onOpenExercise }: { data: SessionSummaryDa
                 </View>
                 <View style={{ flex: 1, gap: 2 }}>
                   <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.accent }}>{g.exercise.name}</Text>
-                  {counting ? <Text style={label}>{counting}</Text> : null}
+                  {counting ? <Text style={label()}>{counting}</Text> : null}
                 </View>
                 {ssg != null ? <Badge label={`Superset ${supersetLabel(ssg)}`} tone="neutral" /> : null}
               </Pressable>

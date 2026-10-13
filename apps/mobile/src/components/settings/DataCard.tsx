@@ -25,13 +25,14 @@ import { healthConnectWasUsed } from '@/onboarding/eraseDevice';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, space, type } from '@/theme/tokens';
 
-const caption = {
+// Read when drawn: gym branding repaints the tokens.
+const caption = () => ({
   fontFamily: type.body,
   fontSize: type.size.caption,
   color: color.inkMuted,
   lineHeight: 16,
   marginTop: space.sm,
-} as const;
+}) as const;
 
 /** How long the hidden demo switch must be held. */
 export const DEMO_SWITCH_HOLD_MS = 2000;
@@ -143,7 +144,7 @@ export function DataCard() {
             <Badge label="Demo data loaded" tone="warn" />
           </View>
           <DangerLink label={working === 'remove' ? 'Removing…' : 'Remove demo data'} onPress={() => void onRemoveDemo()} />
-          <Text style={caption}>
+          <Text style={caption()}>
             This app is showing a sample member, not your training. Workouts you logged yourself stay.
           </Text>
           <View style={{ height: 1, backgroundColor: color.border, marginVertical: space.lg }} />
@@ -154,15 +155,15 @@ export function DataCard() {
         label={working === 'erase' ? 'Erasing…' : working === 'demo' ? 'Loading demo…' : 'Erase all data'}
         onPress={() => void onErase()}
       />
-      <Text style={caption}>Deletes everything on this phone and starts over from the welcome screen.</Text>
-      {problem ? <Text style={{ ...caption, color: color.criticalText }}>{problem}</Text> : null}
+      <Text style={caption()}>Deletes everything on this phone and starts over from the welcome screen.</Text>
+      {problem ? <Text style={{ ...caption(), color: color.criticalText }}>{problem}</Text> : null}
 
       <Pressable
         onLongPress={() => void onHiddenDemo()}
         delayLongPress={DEMO_SWITCH_HOLD_MS}
         accessible={false}
       >
-        <Text style={caption}>Your training is stored on this phone.</Text>
+        <Text style={caption()}>Your training is stored on this phone.</Text>
       </Pressable>
     </Card>
   );

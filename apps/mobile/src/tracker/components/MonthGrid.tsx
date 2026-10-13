@@ -47,7 +47,7 @@ export function MonthGrid({ month, trained, today }: { month: string; trained: r
                     borderColor: color.borderStrong,
                   }}
                 >
-                  <Text style={{ fontFamily: on ? type.monoBold : type.mono, fontSize: type.size.caption, color: on ? '#1F0D05' : color.inkSecondary }}>
+                  <Text style={{ fontFamily: on ? type.monoBold : type.mono, fontSize: type.size.caption, color: on ? color.onAccent : color.inkSecondary }}>
                     {d}
                   </Text>
                 </View>

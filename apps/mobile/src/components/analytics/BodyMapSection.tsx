@@ -7,7 +7,7 @@ import { MUSCLE_LABEL, type Muscle } from '@/tracker/catalog/muscles';
 import { BodyMap } from '@/tracker/components/BodyMap';
 import { MAPPED_MUSCLES, muscleLevels, untrainedLine, untrainedMuscles, WEEK_LEGEND } from '@/tracker/engine/bodyMap';
 import { fmtSets, type MuscleSetsSlice } from '@/tracker/engine/volume';
-import { MAP_LEVELS } from '@/tracker/lib/bodyMapColors';
+import { mapLevels } from '@/tracker/lib/bodyMapColors';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
 import { MuscleSheet } from './MuscleSheet';
@@ -44,7 +44,7 @@ export function BodyMapSection({ sets, index, onOpenExercise }: BodyMapSectionPr
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.md, flexWrap: 'wrap' }}>
             {WEEK_LEGEND.map((label, i) => (
               <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-                <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: MAP_LEVELS[i + 1] }} />
+                <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: mapLevels()[i + 1] }} />
                 <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{label}</Text>
               </View>
             ))}

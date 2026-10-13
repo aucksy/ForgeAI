@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { EMPTY_GYM_BLOB, cleanGymBlob, upsertOrder, type GymBlob, type OrderFlash } from './gym';
+import { EMPTY_GYM_BLOB, cleanGymBlob, linkWithNow, upsertOrder, type GymBlob, type GymNow, type OrderFlash } from './gym';
 import { addToBag, removeLine, setLineQty } from './money';
 import type { BagLine, GymLink, GymOrder, Product } from './types';
 
@@ -26,6 +26,8 @@ export interface GymShopState extends GymBlob {
   /** "Order 12 placed…" for My orders to show once, with the order it is about. Not saved. */
   flash: OrderFlash | null;
   setLink: (link: GymLink) => void;
+  /** member_me's news (the gym's name and brand now). Nothing moves when nothing changed. */
+  setGymNow: (now: GymNow) => void;
   /** Forget the gym on this phone: link, lists and bag. */
   unlink: (notice?: string | null) => void;
   setProducts: (products: Product[], atISO: string) => void;
@@ -49,6 +51,12 @@ export const useGymShop = create<GymShopState>()(
       notice: null,
       flash: null,
       setLink: (link) => set({ ...EMPTY_GYM_BLOB, link, notice: null, flash: null, sampleOpen: false }),
+      setGymNow: (now) => {
+        const link = get().link;
+        if (!link) return;
+        const next = linkWithNow(link, now);
+        if (next !== link) set({ link: next });
+      },
       unlink: (notice = null) => set({ ...EMPTY_GYM_BLOB, notice, flash: null, sampleOpen: false }),
       setProducts: (products, atISO) => set({ products, productsAt: atISO }),
       setOrders: (orders) => set({ orders }),

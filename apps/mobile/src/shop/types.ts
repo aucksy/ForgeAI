@@ -6,6 +6,8 @@
  *   order    → orders + order_lines (each line keeps the name and price it was ordered at)
  */
 
+import type { GymBrand } from '@forgeai/theme';
+
 export type ShopCategory = 'protein' | 'preworkout' | 'creatine' | 'gear' | 'clothing' | 'drinks';
 
 /** What the drawn product picture shows (ProductArt). */
@@ -96,6 +98,12 @@ export interface GymLink {
   gymName: string;
   joinCode: string;
   name: string;
+  /**
+   * Gym branding (Level 1): the gym's colour, background tone, logo and heading style, from the
+   * join and every launch (member_me). Null when the gym has none (ForgeAI's own look). The app's
+   * theme follows it (theme/gymTheme.ts).
+   */
+  brand?: GymBrand | null;
 }
 
 /** S2: an order the gym holds (from `member_orders`). Paid at the desk, never in the app. */

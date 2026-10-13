@@ -397,14 +397,14 @@ export default function ExerciseScreen() {
                       accessibilityLabel={`Last time · ${relativeDay(last.dateISO)}. Open the workout`}
                       style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 48, opacity: pressed ? 0.7 : 1 })}
                     >
-                      <Text style={[sectionLabel, { flex: 1 }]}>Last time · {relativeDay(last.dateISO)}</Text>
+                      <Text style={[sectionLabel(), { flex: 1 }]}>Last time · {relativeDay(last.dateISO)}</Text>
                       <Icon name="chevron-right" size={18} color={color.inkMuted} />
                     </Pressable>
                     <SetTable rows={last.rows} logType={shownAs} />
                     {best ? (
                       <View style={{ gap: 2, marginTop: space.sm, paddingTop: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
-                        <Text style={sectionLabel}>Best · {RECORD_LABEL[best.kind].toLowerCase()}</Text>
-                        <Text style={headValue}>
+                        <Text style={sectionLabel()}>Best · {RECORD_LABEL[best.kind].toLowerCase()}</Text>
+                        <Text style={headValue()}>
                           {recordValueText(best, { logType: shownAs, loadMode: ex.loadMode, distUnit: ex.distUnit, units })}
                         </Text>
                       </View>
@@ -626,6 +626,6 @@ function MergePicker({
   );
 }
 
-/** The Summary card's two headings ("Last time · …", "Best · …"): one style. */
-const sectionLabel = { fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary } as const;
-const headValue = { fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink } as const;
+/** The Summary card's two headings ("Last time · …", "Best · …"): one style. Read when drawn: gym branding repaints the tokens. */
+const sectionLabel = () => ({ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }) as const;
+const headValue = () => ({ fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }) as const;

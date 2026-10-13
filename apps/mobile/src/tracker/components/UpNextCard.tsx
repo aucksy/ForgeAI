@@ -12,6 +12,7 @@ import type { ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { Icon, PrimaryButton } from '@/components/ui';
+import { accentTint } from '@/theme/tint';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import type { UpNextAction, UpNextCard as Answer } from '../lib/upNext';
@@ -35,7 +36,7 @@ export function UpNextCard({
         backgroundColor: color.surface,
         borderRadius: radius.lg,
         borderWidth: 1,
-        borderColor: live ? 'rgba(255, 122, 59, 0.45)' : color.border,
+        borderColor: live ? accentTint(0.45) : color.border,
         padding: space.lg,
         gap: space.md,
       }}

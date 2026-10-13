@@ -211,11 +211,11 @@ export function LiftsSection({ lifts, rangeDays, focusKey, index }: LiftsSection
                 {ov.exercise.name}
               </Text>
               {view.note ? <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>{view.note}</Text> : null}
-              <Text style={styles.chartLabel}>{chart.title}</Text>
+              <Text style={styles().chartLabel}>{chart.title}</Text>
               <DateLineChart data={view.points} fillGradient yFormat={chart.yFormat} onInspect={setInspect} />
               {bars && bars.length > 0 ? (
                 <>
-                  <Text style={[styles.chartLabel, { marginTop: space.md }]}>{`${weightUnitOf(units)} lifted per workout`}</Text>
+                  <Text style={[styles().chartLabel, { marginTop: space.md }]}>{`${weightUnitOf(units)} lifted per workout`}</Text>
                   <BarChart data={bars} height={110} labelEvery={labelStep(bars.length)} />
                 </>
               ) : null}
@@ -239,11 +239,12 @@ export function LiftsSection({ lifts, rangeDays, focusKey, index }: LiftsSection
   );
 }
 
-const styles = {
+// Read when drawn: gym branding repaints the tokens.
+const styles = () => ({
   chartLabel: {
     fontFamily: type.bodySemi,
     fontSize: type.size.sub,
     color: color.inkSecondary,
     marginTop: space.xs,
   },
-} as const;
+}) as const;

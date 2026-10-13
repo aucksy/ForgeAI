@@ -34,7 +34,8 @@ import {
   type RoutineLink,
 } from '@/tracker/services/routineLink';
 
-const CAPTION = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 } as const;
+// Read when drawn: gym branding repaints the tokens.
+const CAPTION = () => ({ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 }) as const;
 
 type Phase =
   | { kind: 'paste' }
@@ -112,7 +113,7 @@ export default function ImportRoutinesScreen() {
         <View style={{ gap: space.lg }}>
           <Card style={{ gap: space.sm, paddingVertical: space.xl }}>
             <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{phase.text}</Text>
-            <Text style={CAPTION}>
+            <Text style={CAPTION()}>
               Hevy’s page did not finish loading. Trying again usually gets them all. You can also copy the {phase.folder.routines.length} that came through.
             </Text>
           </Card>
@@ -128,7 +129,7 @@ export default function ImportRoutinesScreen() {
           <Card style={{ alignItems: 'center', gap: space.md, paddingVertical: space.xl }}>
             <ActivityIndicator color={color.accent} />
             <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Reading your Hevy link…</Text>
-            <Text style={{ ...CAPTION, textAlign: 'center' }}>This takes a few seconds.</Text>
+            <Text style={{ ...CAPTION(), textAlign: 'center' }}>This takes a few seconds.</Text>
           </Card>
           <GhostButton label="Cancel" icon="close" onPress={() => setPhase({ kind: 'paste' })} />
           <HevyLinkReader key={phase.link.url} url={phase.link.url} onRead={(r) => onPageRead(phase.link, r)} />
@@ -137,7 +138,7 @@ export default function ImportRoutinesScreen() {
         <View style={{ gap: space.lg }}>
           <View style={{ gap: space.xs }}>
             <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Copy your routines from Hevy</Text>
-            <Text style={CAPTION}>Paste a Hevy share link. Your routines come in exactly as saved: exercises, warm-ups, sets, reps and rest.</Text>
+            <Text style={CAPTION()}>Paste a Hevy share link. Your routines come in exactly as saved: exercises, warm-ups, sets, reps and rest.</Text>
           </View>
           <View
             style={{
@@ -167,14 +168,14 @@ export default function ImportRoutinesScreen() {
               style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink, paddingVertical: space.sm }}
             />
           </View>
-          {problem ? <Text style={{ ...CAPTION, color: color.criticalText }}>{problem}</Text> : null}
+          {problem ? <Text style={{ ...CAPTION(), color: color.criticalText }}>{problem}</Text> : null}
           <PrimaryButton label="Read link" icon="chevron-right" disabled={text.trim() === ''} onPress={onRead} />
           <Card style={{ gap: space.sm }}>
             <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>How to get the link in Hevy</Text>
-            <Text style={CAPTION}>A folder: Workout tab → ⋯ on the folder → Share Folder → Copy Link.</Text>
-            <Text style={CAPTION}>One routine: Workout tab → ⋯ on the routine → Share Routine → Copy Link.</Text>
+            <Text style={CAPTION()}>A folder: Workout tab → ⋯ on the folder → Share Folder → Copy Link.</Text>
+            <Text style={CAPTION()}>One routine: Workout tab → ⋯ on the routine → Share Routine → Copy Link.</Text>
           </Card>
-          <Text style={CAPTION}>
+          <Text style={CAPTION()}>
             Coming from Strong? Strong’s links open only in Strong. Import your Strong file instead, then tap “Bring my routines in”.
           </Text>
           <GhostButton label="Import from Strong" icon="import" onPress={() => {

@@ -14,6 +14,8 @@
  */
 import { AppState, Platform } from 'react-native';
 
+import { color } from '@/theme/tokens';
+
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { clearRestCard, showRestCard } from './restCard';
 import type { CardDone } from './restDone';
@@ -159,7 +161,7 @@ export async function scheduleRestEnd(
         data: { kind: 'rest', route: WORKOUT_ROUTE },
         sound: quiet ? false : 'default',
         priority: 'max',
-        color: '#FF7A3B',
+        color: color.accent,
       },
       trigger: { type: n.SchedulableTriggerInputTypes.DATE, date: endsAt, channelId: REST_CHANNEL },
     });
@@ -196,7 +198,7 @@ export async function showWorkoutOngoing(title: string, body: string): Promise<v
         autoDismiss: false,
         sound: false,
         priority: 'low',
-        color: '#FF7A3B',
+        color: color.accent,
       },
       trigger: { channelId: ONGOING_CHANNEL },
     });

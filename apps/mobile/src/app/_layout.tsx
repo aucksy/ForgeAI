@@ -5,6 +5,7 @@ import { useEffect, type ReactElement } from 'react';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { BrandOpening } from '@/components/BrandOpening';
 import { KeyboardRoom } from '@/components/KeyboardRoom';
 import { logScreenCrash, ScreenCrashFallback, ScreenErrorBoundary } from '@/components/ScreenErrorBoundary';
 import { SaveProblemBanner } from '@/components/SaveProblemBanner';
@@ -16,13 +17,18 @@ import { WorkoutPresenceHost } from '@/tracker/components/WorkoutPresenceHost';
 import { photoBackupAtStart } from '@/tracker/services/photoBackup';
 import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
-import { useOnboarding } from '@/onboarding/store/onboardingStore';
+import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingStore';
+import { refreshGymNow } from '@/shop/gymActions';
+import { dismissOpening, startGymTheme, useGymTheme } from '@/theme/gymTheme';
 import { color } from '@/theme/tokens';
 import { useAppFonts } from '@/theme/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 // v0.27.0: kg / lb and km / miles — the pure formatters follow Profile → Units.
 startUnitSync();
+// Gym branding: the joined gym's look (already in the tokens since index.js) follows the gym
+// shop's saved link from here on — join, Leave gym, erase (theme/gymTheme.ts).
+startGymTheme();
 
 /**
  * Last resort: the root layout ITSELF threw while drawing (each screen has its own
@@ -55,6 +61,12 @@ export default function RootLayout() {
   // profile row lands on the welcome flow; the demo seed runs only when the
   // member explicitly asks for it (welcome screen / Settings → Your data).
   const status = useOnboarding((s) => s.status);
+  // Gym branding: `epoch` changes whenever a gym's colours are written into the theme tokens
+  // (a join, Leave gym, an erase); the app below is keyed on it, so every screen — the frozen
+  // shared pieces too — draws again from the new values.
+  const epoch = useGymTheme((s) => s.epoch);
+  const themeReady = useGymTheme((s) => s.ready);
+  const opening = useGymTheme((s) => s.opening);
 
   useEffect(() => {
     (async () => {
@@ -73,12 +85,30 @@ export default function RootLayout() {
     })();
   }, []);
 
-  const ready = fontsLoaded && status !== 'loading';
+  const ready = fontsLoaded && status !== 'loading' && themeReady;
 
   useEffect(() => {
-    if (ready) SplashScreen.hideAsync().catch(() => {});
+    if (!ready) return;
+    SplashScreen.hideAsync().catch(() => {});
+    // Gym branding: the gym's name and look as they are now (the owner may have changed them).
+    // Back while the logo is still up → shown at once; later → from the next launch. Joined
+    // phones only; quiet on failure.
+    void refreshGymNow().catch(() => undefined);
   }, [ready]);
 
+  return (
+    <>
+      <RootFrame key={epoch} ready={ready} status={status} />
+      {ready && opening ? <BrandOpening key={opening.id} opening={opening} onDone={dismissOpening} /> : null}
+    </>
+  );
+}
+
+/**
+ * The app itself. Created afresh whenever the gym's look changes (keyed on the theme's epoch in
+ * RootLayout), so nothing keeps a colour from before.
+ */
+function RootFrame({ ready, status }: { ready: boolean; status: BootStatus }) {
   if (!ready) return <View style={{ flex: 1, backgroundColor: color.bg }} />;
 
   // Rendered INSTEAD of the navigator (not pushed onto it) so the tabs never mount

@@ -44,7 +44,8 @@ const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Satu
 /** PH-11 / design language: every tap target at least 48 dp. */
 const TOUCH = 48;
 
-const CAPTION = { fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 15 } as const;
+// Read when drawn: gym branding repaints the tokens.
+const CAPTION = () => ({ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 15 }) as const;
 
 function HealthRow() {
   const on = usePhonePrefs((s) => s.healthConnect);
@@ -138,7 +139,7 @@ function HealthRow() {
             }}
           />
           {sent != null ? (
-            <Text accessibilityLiveRegion="polite" style={{ ...CAPTION, textAlign: 'center' }}>
+            <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), textAlign: 'center' }}>
               {sendResultText(sent)}
             </Text>
           ) : null}
@@ -408,7 +409,7 @@ function WidgetsRow({ divider = true }: { divider?: boolean }) {
         </View>
       </View>
       {refused ? (
-        <Text style={{ ...CAPTION, textAlign: 'center', paddingBottom: space.sm }}>
+        <Text style={{ ...CAPTION(), textAlign: 'center', paddingBottom: space.sm }}>
           Your home screen can't add it from here. Long-press your home screen → Widgets → ForgeAI.
         </Text>
       ) : null}

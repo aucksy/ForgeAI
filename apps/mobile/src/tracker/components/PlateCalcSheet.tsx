@@ -8,6 +8,7 @@ import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import { Icon } from '@/components/ui';
 import { shownToKg, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
+import { accentTint } from '@/theme/tint';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { barOptionsKg, computePlates, defaultBarKg, platesKg } from '../services/plateMath';
@@ -117,7 +118,7 @@ export function PlateCalcSheet({
                   borderRadius: radius.pill,
                   backgroundColor: on ? color.accentSoft : color.surfaceSunken,
                   borderWidth: 1,
-                  borderColor: on ? 'rgba(255,122,59,0.45)' : color.border,
+                  borderColor: on ? accentTint(0.45) : color.border,
                 }}
               >
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: on ? color.accent : color.inkSecondary }}>
@@ -145,7 +146,7 @@ export function PlateCalcSheet({
                       borderRadius: radius.sm,
                       backgroundColor: color.accentSoft,
                       borderWidth: 1,
-                      borderColor: 'rgba(255,122,59,0.35)',
+                      borderColor: accentTint(0.35),
                     }}
                   >
                     <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.accentBright }}>

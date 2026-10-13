@@ -6,7 +6,7 @@
 import { forwardRef } from 'react';
 import Svg, { Circle, Defs, G, LinearGradient, Path, RadialGradient, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
-import { MAP_OUTLINE, NATIVE_FONT, bodyPaths, bodyView, type Scene } from './scene';
+import { mapOutline, NATIVE_FONT, bodyPaths, bodyView, type Scene } from './scene';
 
 export interface SceneSvgProps {
   scene: Scene;
@@ -110,7 +110,7 @@ export const SceneSvg = forwardRef<Svg, SceneSvgProps>(function SceneSvg({ scene
                 {bodyPaths(n).map((p, k) => (
                   <Path key={k} d={p.d} fill={p.fill} />
                 ))}
-                <Path d={view.outline} fill="none" stroke={MAP_OUTLINE} strokeWidth={1.5 / s} />
+                <Path d={view.outline} fill="none" stroke={mapOutline()} strokeWidth={1.5 / s} />
               </G>
             );
           }

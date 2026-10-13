@@ -394,6 +394,35 @@ mkdir -p "$OUT/redesign"
   | while read -r f; do cp "$f" "$OUT/redesign/" 2>/dev/null; done
 log "REDESIGN TOUR: $(find "$OUT/redesign" -name "r-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/redesign/"
 
+# ---------------------------------------------------------------- part BR (gym branding, Level 1)
+# Join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT) on the LIVE server, photograph the
+# opening, Workout, Profile, Shop and a product in the gym's colours, relaunch (the opening again),
+# leave (ForgeAI's look back) — brand-theme.yaml. Needs supabase/migrations/0005_gym_theme.sql on
+# the server: probed first with a harmless call (a made-up owner key): 404 = the function is not
+# there yet, so the part is skipped and says so, instead of failing on "That code didn't match".
+br_probe() {
+  local url key
+  url=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabaseUrl'])" "$QA_DIR/../app.json" 2>/dev/null)
+  key=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabasePublishableKey'])" "$QA_DIR/../app.json" 2>/dev/null)
+  [ -n "$url" ] && [ -n "$key" ] || { echo "no-config"; return; }
+  curl -s -o /dev/null -w '%{http_code}' -X POST "$url/rest/v1/rpc/owner_set_brand" \
+    -H "apikey: $key" -H "Authorization: Bearer $key" -H "Content-Type: application/json" \
+    -d '{"p_key":"qa-probe","p_accent":null,"p_bg":null,"p_logo_url":null,"p_heading":null}' 2>/dev/null || echo "000"
+}
+BR_PROBE=$(br_probe)
+if [ "$BR_PROBE" = "404" ] || [ "$BR_PROBE" = "no-config" ]; then
+  log "PART BR SKIPPED: gym branding is not on the server yet (owner_set_brand probe: $BR_PROBE) — apply 0005_gym_theme.sql"
+else
+  free_maestro
+  log "part BR start (owner_set_brand probe: $BR_PROBE)"
+  maestro test --format junit --output "$OUT/part-br.xml" --test-output-dir "$OUT/part-br" "$QA_DIR/brand-theme.yaml" \
+    > "$OUT/part-br.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/br-failed.png"; log "PART BR FAILED (part-br.log, br-failed.png)"; }
+  mkdir -p "$OUT/brand"
+  { find "$OUT/part-br" -name "br-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "br-*.png" 2>/dev/null; } \
+    | while read -r f; do cp "$f" "$OUT/brand/" 2>/dev/null; done
+  log "BRAND TOUR: $(find "$OUT/brand" -name "br-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/brand/"
+fi
+
 # ---------------------------------------------------------------- part P7 (audit Phase 7: large text)
 # The phone's font size at its largest step (font_scale 2.0, Android 14's top setting) and the app
 # restarted, then a screen tour (phase7-bigtext.yaml): the Workout tab (top, folders), an open

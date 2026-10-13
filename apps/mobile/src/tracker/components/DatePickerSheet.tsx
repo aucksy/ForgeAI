@@ -109,7 +109,7 @@ export function DatePickerSheet({
                   style={{
                     fontFamily: selected ? type.bodyBold : type.bodyMedium,
                     fontSize: type.size.sub,
-                    color: selected ? '#1F0D05' : future ? color.inkFaint : color.ink,
+                    color: selected ? color.onAccent : future ? color.inkFaint : color.ink,
                   }}
                 >
                   {day}

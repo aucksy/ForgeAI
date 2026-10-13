@@ -104,7 +104,7 @@ export const MonthCalendar = memo(function MonthCalendar({ ym, onMonth, firstYm,
                   style={{
                     fontFamily: isSel || n > 0 ? type.bodyBold : type.bodyMedium,
                     fontSize: type.size.sub,
-                    color: isSel ? '#1F0D05' : future ? color.inkFaint : color.ink,
+                    color: isSel ? color.onAccent : future ? color.inkFaint : color.ink,
                   }}
                 >
                   {Number(iso.slice(8, 10))}
@@ -117,7 +117,7 @@ export const MonthCalendar = memo(function MonthCalendar({ ym, onMonth, firstYm,
                       width: 5,
                       height: 5,
                       borderRadius: 3,
-                      backgroundColor: isSel ? '#1F0D05' : color.accent,
+                      backgroundColor: isSel ? color.onAccent : color.accent,
                     }}
                   />
                 ) : null}

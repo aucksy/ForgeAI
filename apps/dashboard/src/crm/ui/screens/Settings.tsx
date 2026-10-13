@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
+import { navigate } from '../router';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import {
   Button,
@@ -112,6 +113,21 @@ export function SettingsScreen() {
       {/* Titled inside its card like the sections above and below it — the title
           used to sit outside, on the page, the only one that did. */}
       <JoinCodeCard title="Member app" />
+
+      {/* Gym branding: the gym's own logo and colours in the member app. */}
+      <Card style={{ marginBottom: space.lg }}>
+        <SectionTitle>Your look in the app</SectionTitle>
+        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+          {cloud
+            ? 'Your logo opens the app, and your colour runs through every screen members see.'
+            : 'Turn on the member app above first; then your logo and colour can run through it.'}
+        </p>
+        <div style={{ marginTop: space.lg }}>
+          <Button variant="ghost" disabled={!cloud} onClick={() => navigate('/settings/branding')}>
+            Open branding
+          </Button>
+        </div>
+      </Card>
 
       <Card>
         <SectionTitle>Your data</SectionTitle>

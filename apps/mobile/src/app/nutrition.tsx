@@ -42,7 +42,8 @@ const MACROS: readonly MacroField[] = [
   { key: 'fatG', label: 'Fat', unit: 'g', target: (p) => p.fatTargetG },
 ];
 
-const inputStyle = {
+// Read when drawn: gym branding repaints the tokens.
+const inputStyle = () => ({
   backgroundColor: color.surfaceSunken,
   borderWidth: 1,
   borderColor: color.border,
@@ -52,7 +53,7 @@ const inputStyle = {
   color: color.ink,
   fontFamily: type.body,
   fontSize: type.size.sub,
-} as const;
+}) as const;
 
 const emptyDraft = { description: '', calories: '', proteinG: '', carbsG: '', fatG: '' };
 
@@ -216,7 +217,7 @@ function NutritionScreen() {
               placeholder="e.g. 2 rotis, dal and paneer"
               placeholderTextColor={color.inkFaint}
               maxLength={120}
-              style={inputStyle}
+              style={inputStyle()}
             />
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
               {MACROS.map((m) => (
@@ -240,7 +241,7 @@ function NutritionScreen() {
                     placeholder="0"
                     placeholderTextColor={color.inkFaint}
                     maxLength={6}
-                    style={inputStyle}
+                    style={inputStyle()}
                   />
                 </View>
               ))}

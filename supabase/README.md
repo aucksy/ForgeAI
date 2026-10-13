@@ -45,3 +45,22 @@ functions / the future owner dashboard's server side.
 ## Free-tier gotcha
 A free Supabase project **pauses after ~7 days of no activity**. If sync stops, open the
 dashboard to un-pause it (or add a tiny scheduled ping). Upgrade to Pro before launch.
+
+## Gym branding (0005_gym_theme.sql)
+Run `migrations/0005_gym_theme.sql` after 0004 (SQL Editor → paste → Run; re-runnable). It adds the
+brand columns on `gyms`, the public `gym-logos` bucket, `owner_set_brand`, and the `brand` object in
+`member_join` / `member_me` / `owner_gym`.
+
+- **Branding a gym:** the owner opens the panel → Settings → **Branding**, uploads a logo, picks a
+  colour (and optionally a background tone and bold-italic headings), checks the phone preview and
+  presses Save. Members see it the next time they open the app (new members: straight after joining).
+- **Test gyms:** `FORGE1` stays unbranded (ForgeAI's own look). `RAMS01` — RAM'S FITNESS CLUB IMPACT —
+  is seeded in their colours (#F7D411 on #0A0A0C, bold italic headings) but has no owner key, so the
+  panel cannot open it. To give it a logo: in the panel's own gym, upload the logo on the Branding
+  screen, copy the logo link it shows, then run
+  ```sql
+  update public.gyms set brand_logo_url = '<that link>' where join_code = 'RAMS01';
+  ```
+  (The test picture is made by `apps/mobile/qa/tools/extract_rams_logo.py` from their proposal PDF;
+  it is not in the repo.)
+- **Removing a brand:** Branding → "Use ForgeAI's look" (saves all colours and the logo as empty).

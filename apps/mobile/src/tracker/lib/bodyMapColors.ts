@@ -12,12 +12,17 @@ import type { Muscle } from '../catalog/muscles';
 
 export const MAP_BODY = '#1B1F2B';
 export const MAP_IDLE = '#2A3040';
-export const MAP_OUTLINE = color.borderStrong;
+/** Read when drawn: gym branding repaints the tokens. */
+export function mapOutline(): string {
+  return color.borderStrong;
+}
 
-/** Fill for levels 0..4. */
-export const MAP_LEVELS: readonly [string, string, string, string, string] = [MAP_IDLE, chart.ramp[2], chart.ramp[3], chart.ramp[4], chart.ramp[5]];
+/** Fill for levels 0..4 (read when drawn: gym branding repaints the chart ramp). */
+export function mapLevels(): readonly [string, string, string, string, string] {
+  return [MAP_IDLE, chart.ramp[2], chart.ramp[3], chart.ramp[4], chart.ramp[5]];
+}
 
 export function regionFill(region: BodyRegion, levels: ReadonlyMap<Muscle, MapLevel>): string {
   if (region === 'body') return MAP_BODY;
-  return MAP_LEVELS[regionLevel(region, levels)];
+  return mapLevels()[regionLevel(region, levels)];
 }
