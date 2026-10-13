@@ -18,6 +18,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, Text, View } from 'react-native';
 
 import { DangerLink } from '@/components/DangerLink';
+import { GymBrandMark } from '@/components/GymBrandMark';
 import { Card, GhostButton, Screen, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
@@ -303,6 +304,8 @@ export default function WorkoutScreen() {
   return (
     <Screen title="Workout">
       <View style={{ gap: space.lg }}>
+        {/* Gym branding: the member's gym, small, under the title (branded gyms only). */}
+        <GymBrandMark />
         {linkNotice ? (
           <Pressable
             onPress={() => setLinkNotice(null)}

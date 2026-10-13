@@ -16,11 +16,13 @@ import { InlineError } from '@/components/ui/InlineError';
 import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { PressScale } from '@/components/ui/PressScale';
 import { getProfile } from '@/db/repos/userRepo';
+import { GymBrandMark } from '@/components/GymBrandMark';
 import { color, radius, space, type } from '@/theme/tokens';
+import { isBranded } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES, getCatalog } from './catalog';
 import { JOIN_CODE_LENGTH, cleanJoinCode } from './gym';
-import { joinGym, leaveGym, refreshOrders, refreshProducts } from './gymActions';
+import { joinGym, leaveGym, refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { ProductPicture } from './ProductPicture';
@@ -93,7 +95,7 @@ function JoinShop() {
         </View>
 
         <View>
-          <Text style={labelStyle}>Enter the code from your gym</Text>
+          <Text style={labelStyle()}>Enter the code from your gym</Text>
           <TextInput
             value={code}
             onChangeText={(t) => {
@@ -111,12 +113,12 @@ function JoinShop() {
             placeholderTextColor={color.inkFaint}
             accessibilityLabel="Gym code"
             accessibilityHint={`The ${JOIN_CODE_LENGTH} letters and numbers your gym gave you`}
-            style={[shopInputStyle, { fontFamily: type.monoBold, letterSpacing: 2 }]}
+            style={[shopInputStyle(), { fontFamily: type.monoBold, letterSpacing: 2 }]}
           />
         </View>
 
         <View>
-          <Text style={labelStyle}>Your name</Text>
+          <Text style={labelStyle()}>Your name</Text>
           <TextInput
             ref={nameBox}
             value={name}
@@ -132,7 +134,7 @@ function JoinShop() {
             placeholder="So the desk knows whose order it is"
             placeholderTextColor={color.inkFaint}
             accessibilityLabel="Name on your orders"
-            style={shopInputStyle}
+            style={shopInputStyle()}
           />
         </View>
 
@@ -152,7 +154,8 @@ function JoinShop() {
   );
 }
 
-const labelStyle = { fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.xs } as const;
+/** Read when drawn: gym branding repaints the tokens. */
+const labelStyle = () => ({ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.xs }) as const;
 
 // ------------------------------------------------------------------ joined: the gym's own shop
 
@@ -173,7 +176,8 @@ function GymShop({ link }: { link: GymLink }) {
     running.current = true;
     if (byPull) setPulling(true);
     else setLoading(true);
-    const [words] = await Promise.all([refreshProducts(), refreshOrders()]);
+    // Gym branding: the gym's name and look as they are now ride along (quiet on failure).
+    const [words] = await Promise.all([refreshProducts(), refreshOrders(), refreshGymNow().catch(() => undefined)]);
     running.current = false;
     setProblem(words);
     setPulling(false);
@@ -186,10 +190,16 @@ function GymShop({ link }: { link: GymLink }) {
     }, [refresh]),
   );
 
+  // Gym branding: a branded gym's page is "Shop" under the gym's own logo and name (as the
+  // Workout and Profile tabs); an unbranded gym keeps its name as the title.
+  const branded = isBranded(link.brand);
+
   const onLeave = async () => {
     const ok = await askConfirm({
       title: `Leave ${link.gymName}'s shop?`,
-      body: 'Your bag on this phone is emptied. Orders you placed stay with the gym. You can join again with the code.',
+      body: branded
+        ? "Your bag on this phone is emptied and the app goes back to ForgeAI's colours. Orders you placed stay with the gym. You can join again with the code."
+        : 'Your bag on this phone is emptied. Orders you placed stay with the gym. You can join again with the code.',
       confirmLabel: 'Leave shop',
       cancelLabel: 'Stay',
       destructive: true,
@@ -199,8 +209,8 @@ function GymShop({ link }: { link: GymLink }) {
 
   return (
     <Screen
-      title={link.gymName}
-      subtitle="Your gym's shop · pay at the desk"
+      title={branded ? 'Shop' : link.gymName}
+      subtitle={branded ? undefined : "Your gym's shop · pay at the desk"}
       scroll={false}
       noPad
       right={<BagButton count={bagBadgeCount(bag)} onPress={() => router.push('/shop/bag')} />}
@@ -213,6 +223,12 @@ function GymShop({ link }: { link: GymLink }) {
           <RefreshControl refreshing={pulling} onRefresh={() => void refresh(true)} colors={[color.accent]} tintColor={color.accent} progressBackgroundColor={color.surfaceRaised} />
         }
       >
+        {branded ? (
+          <View style={{ gap: space.xs, marginBottom: space.md }}>
+            <GymBrandMark />
+            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Your gym's shop · pay at the desk</Text>
+          </View>
+        ) : null}
         {!hasList && loading ? (
           <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingVertical: space.lg }}>
             <ActivityIndicator color={color.accent} />

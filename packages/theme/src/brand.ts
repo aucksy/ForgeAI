@@ -427,7 +427,7 @@ export function buildBrandPalette(input: BrandInput): BrandPalette {
       what: 'chart',
       from: swapped,
       to: FORGE_SERIES[0],
-      words: `Charts with several lines use ${FORGE_SERIES[0]} in place of ${swapped}, which looked too much like your colour.`,
+      words: "In charts with several lines, the line that looked too much like your colour is drawn in orange instead.",
     });
   }
   const ramp = FORGE_RAMP.map((stop, i) => {

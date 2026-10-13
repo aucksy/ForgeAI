@@ -16,6 +16,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Linking, Pressable, Text, View } from 'react-native';
 
+import { GymBrandMark } from '@/components/GymBrandMark';
 import { GhostButton, Icon, LoadError, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { quietSince, writeQueueMark } from '@/db/writeQueue';
@@ -280,6 +281,8 @@ export default function ProfileScreen() {
 
   const top = (
     <View style={{ gap: space.xl, paddingBottom: space.md }}>
+      {/* Gym branding: the member's gym, small, under the title (branded gyms only). */}
+      <GymBrandMark />
       {header ? (
         <View style={{ gap: space.md }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.lg }}>

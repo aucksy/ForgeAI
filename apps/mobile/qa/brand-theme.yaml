@@ -1,0 +1,141 @@
+# Gym branding device QA, part BR — join a branded gym and photograph the app in its look.
+# Talks to the LIVE server: needs supabase/migrations/0005_gym_theme.sql applied there (the
+# runner skips this part when it is not — run-device-qa.sh probes owner_set_brand first).
+#  1. Shop → join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT, yellow #F7D411 on
+#     #0A0A0C) as "QA Member". The app re-draws in the gym's colours behind the gym's opening
+#     (logo, or its name while the test gym has no logo) and comes back on the Workout tab.
+#  2. Workout, Profile and Shop tabs, each with the gym's mark under the title; a product page
+#     (the yellow "Add to bag" button with black words).
+#  3. The app closed and opened again: the gym's opening shows at launch, then the gym's colours.
+#  4. Leave the gym: ForgeAI's own look is back and the Shop is the join card again.
+# Screenshots br-*.png (gathered in qa-out/brand/). The opening lasts about a second, so its two
+# photos are best-effort (optional waits); everything after them is asserted.
+# Saves no workout and places no order; the phone ends outside the gym, as it started.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+# ---------------------------------------------------------------- 1. join the branded gym
+- tapOn:
+    text: "^Shop$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000
+- takeScreenshot: br-00-join-card-forgeai-look
+# The emulator can drop the first key into a freshly focused box: type the code again if needed.
+- tapOn: "Gym code"
+- inputText: "RAMS01"
+- runFlow:
+    when:
+      notVisible: "^RAMS01$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "RAMS01"
+- assertVisible: "^RAMS01$"
+- tapOn: "Name on your orders"
+- eraseText: 70
+- inputText: " QA Member"
+- hideKeyboard
+- tapOn: "Join your gym's shop"
+# The opening: the gym's logo (or name), full screen, for about a second.
+- extendedWaitUntil:
+    visible:
+      id: "brand-opening"
+    timeout: 45000
+    optional: true
+- takeScreenshot: br-01-opening-after-join
+# ---------------------------------------------------------------- 2. the app in the gym's look
+- extendedWaitUntil:
+    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    timeout: 30000
+- extendedWaitUntil:
+    notVisible:
+      id: "brand-opening"
+    timeout: 10000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+    optional: true
+- extendedWaitUntil:
+    visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
+    timeout: 20000
+- assertVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+- takeScreenshot: br-02-workout
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    timeout: 15000
+- takeScreenshot: br-03-profile
+- tapOn:
+    text: "^Shop$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Your gym's shop · pay at the desk"
+    timeout: 30000
+- assertVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+- takeScreenshot: br-04-shop
+- scrollUntilVisible:
+    element: 'Shaker bottle 700 ml, .*'
+    centerElement: true
+    timeout: 20000
+- tapOn: 'Shaker bottle 700 ml, .*'
+# The product page writes "700 ml" with a no-break space, hence the ".".
+- extendedWaitUntil:
+    visible: '^Shaker bottle 700.ml$'
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Add to bag"
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: br-05-product-yellow-button
+- back
+# ---------------------------------------------------------------- 3. a fresh launch: the opening again
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "brand-opening"
+    timeout: 90000
+    optional: true
+- takeScreenshot: br-06-opening-at-launch
+- extendedWaitUntil:
+    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    timeout: 30000
+- takeScreenshot: br-07-workout-after-relaunch
+# ---------------------------------------------------------------- 4. leave: ForgeAI's look again
+- tapOn:
+    text: "^Shop$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Your gym's shop · pay at the desk"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Leave$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Leave$"
+- extendedWaitUntil:
+    visible: "Leave RAM'S FITNESS CLUB IMPACT's shop\\?"
+    timeout: 10000
+- assertVisible: ".*goes back to ForgeAI's colours.*"
+- tapOn: "Leave shop"
+# The app re-draws in ForgeAI's look (it may come back on the Workout tab).
+- extendedWaitUntil:
+    notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    timeout: 15000
+- tapOn:
+    text: "^Shop$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 15000
+- takeScreenshot: br-08-left-forgeai-look
