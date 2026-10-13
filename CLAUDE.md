@@ -24,6 +24,15 @@ their users complain about) and 1-3 ideas to make ours better than theirs. Recom
 most 2 options (build for everyone / keep it for his personal variant) and STOP until he
 decides. A personal-only idea goes to his own variant, not the product.
 
+## ⭐ Audits and release QA must test what a real workout shows
+Two full audits missed what the owner found in one gym session (13 Oct 2026). Every audit/QA:
+behaviour checked against the REAL Hevy app (owner's screen recordings → a behaviour table; any
+deliberate difference listed for his approval, never silently encoded in a test); the QA phone set
+to HIS phone (Pixel dp width, large display size, font scale) on a Monday and a 1st of the month
+with a ~500-workout history; one full "real workout" journey (warm-ups, drops, RPE, superset,
+every rest, notification shade after ticks); every interaction tried (tap, hold, release, again);
+every number on a screenshot read against its label. Lesson: D:\Brain\Lessonsorgeai-audits-missed-what-a-real-workout-shows.md
+
 ## Frozen files (read-only — import and TEST them, never edit)
 `src/engine/*`, `src/components/ui/*`, `src/components/charts/*`, `src/db/schema.ts`, and existing
 `src/db/repos/*` / `src/services/*` signatures. Any schema change is **additive only** (a new
