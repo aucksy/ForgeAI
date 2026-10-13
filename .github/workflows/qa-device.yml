@@ -12,7 +12,15 @@ name: Device QA (Android emulator)
 # note that a called run is recorded under the CALLER's workflow, not under this file's name.
 on:
   workflow_dispatch:
+    inputs:
+      only:
+        description: "Run only these parts (e.g. w = the real-workout journey). Empty = the whole phone test. A partial run never opens the release gate."
+        required: false
+        default: ""
   workflow_call:
+
+# A partial run is named so (scripts/ci/phone_gate.py ignores it for releases).
+run-name: ${{ inputs.only != '' && inputs.only != null && format('Device QA (partial {0})', inputs.only) || 'Device QA (Android emulator)' }}
 
 jobs:
   device-qa:
@@ -73,7 +81,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: bash apps/mobile/qa/run-device-qa.sh "$GITHUB_WORKSPACE/qa.apk"
+          script: QA_ONLY="${{ inputs.only }}" bash apps/mobile/qa/run-device-qa.sh "$GITHUB_WORKSPACE/qa.apk"
 
       # Parts run / passed / failed, every skipped step, the crash / ANR / JS-error scan and the
       # rest-alert timing, on the run's summary page.

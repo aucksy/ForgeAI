@@ -1,0 +1,59 @@
+# Part W2 — the "real workout" journey, step 2 of 4: start Push A on the narrow, large-text phone.
+# What the owner's first gym session got wrong, checked as he would see it:
+#   - "WORKOUT DURATION" (not "ELAPSED") over the clock;
+#   - the RPE column header is there at ~360 dp (it used to hide under 380 dp);
+#   - the warm-up rows show last time's warm-ups under PREVIOUS (they used to be blank);
+#   - "Last: <day> · Push A" says where PREVIOUS comes from;
+#   - a WARM-UP tick starts the rest (it used to start none).
+# Ends with that rest running; run-device-qa.sh then checks the shade (the rest card alone).
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: 'Up next: Push A.*'
+    timeout: 60000
+- tapOn: "^Start$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- assertVisible: "WORKOUT DURATION"
+- assertNotVisible: "ELAPSED"
+- takeScreenshot: w-20-workout-open
+# The set table's header carries RPE (Track RPE on), at this width too.
+- scrollUntilVisible:
+    element: "^RPE$"
+    centerElement: true
+    timeout: 20000
+# Where PREVIOUS comes from: the last Push A (Saturday's workout was Legs A; Push A was earlier).
+- assertVisible: 'Last: .* · Push A'
+# Two warm-ups for the bench (from the Hevy history), each with a PREVIOUS from last time.
+- assertVisible: 'Mark .*Bench Press warm-up 1 complete'
+- assertVisible: 'Mark .*Bench Press warm-up 2 complete'
+- assertVisible: 'Add RPE for .*Bench Press set 1'
+# Warm-up 1 last time was the empty bar for 12 (tools/make_big_hevy.py): its PREVIOUS shows it.
+- assertVisible: '20( kg)? × 12'
+- takeScreenshot: w-21-bench-table
+# Rest 0:30 for the bench, so the journey waits for every rest without taking an hour.
+- tapOn:
+    text: "More for .*Bench Press.*"
+    index: 0
+- tapOn: "Rest timer"
+- tapOn: "Rest 0:30"
+- extendedWaitUntil:
+    notVisible: 'For .*Remembered for next time\.'
+    timeout: 10000
+# A warm-up tick: its PREVIOUS numbers are saved and the rest starts, as after any set.
+- tapOn:
+    text: 'Mark .*Bench Press warm-up 1 complete'
+    index: 0
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 5000
+- takeScreenshot: w-22-warmup-rest-running

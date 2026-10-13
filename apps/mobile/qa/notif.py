@@ -24,6 +24,8 @@ Usage: notif.py <check> <dump-file> [args]
                           Done, +15 s, Skip (Phase 6), the given title (and, if given, a text
                           "Next: ..." containing text-part), on the Phase 2 channel "rest-card-v2"
   over-open               "Rest is over" posted while the app was open, and the rest card gone
+  watch                   "Rest is over" reaches a paired watch (not local-only) as an alarm
+                          (category=alarm); the live workout card stays on the phone (local-only)
 
 Phase 2 (RT-05 / RT-06): the card moved to the channel "rest-card-v2" (the old "rest-card" is
 deleted) and the shade draws its own view (a countdown "2:53 left · Bench Press, set 2" over
@@ -193,6 +195,27 @@ def main():
         want_text = f" (want '{part}' in it: {'yes' if text_ok else 'NO'})" if part else ""
         print(f"[qa] REST CARD: title='{t}' (want '{want}...') text='{text_of(b)}'{want_text} channel={chan} flags={hex(f)} swipe-away={'yes' if swipe else 'NO'} done={'yes' if done else 'NO'} +15={'yes' if plus else 'NO'} skip={'yes' if skip else 'NO'} buttons={acts} order-Done,+15 s,Skip={'yes' if order else 'NO'} chronometer={'yes' if chrono else 'no'} countdown={'yes' if down else 'no'} countdown-view={'yes' if view else 'no'}")
         return 0 if swipe and order and on_v2 and t.startswith(want) and text_ok else 1
+    if check == "watch":
+        # Part W (13 Oct 2026 audit): what a paired watch gets. "Rest is over" must reach it (not
+        # FLAG_LOCAL_ONLY 0x100) and ring as an alarm (category=alarm, which skips Android's
+        # notification cooldown); the live workout card must stay on the phone (local only).
+        if not over:
+            print("[qa] WATCH: no 'Rest is over' in the list")
+            return 1
+        b = over[0]
+        fm = re.search(r"flags=(0x[0-9a-fA-F]+)", header(b)) or re.search(r"\bflags=(0x[0-9a-fA-F]+)", b)
+        f = int(fm.group(1), 16) if fm else -1
+        local = f >= 0 and bool(f & 0x100)
+        cat = re.search(r"\bcategory=(\w+)", b)
+        category = cat.group(1) if cat else "?"
+        lives = [x for x in recs if is_ongoing(x)]
+        live_local = []
+        for x in lives:
+            lm = re.search(r"flags=(0x[0-9a-fA-F]+)", header(x)) or re.search(r"\bflags=(0x[0-9a-fA-F]+)", x)
+            live_local.append(bool(lm and int(lm.group(1), 16) & 0x100))
+        ok = f >= 0 and not local and category == "alarm" and all(live_local)
+        print(f"[qa] WATCH: 'Rest is over' flags={hex(f)} local-only={'YES (the watch never gets it)' if local else 'no'} category={category} (want alarm); live cards local-only={live_local}: {'ok' if ok else 'FAILED'}")
+        return 0 if ok else 1
     if check == "over-open":
         if not over:
             print("[qa] REST IS OVER (app open) NOT FOUND")

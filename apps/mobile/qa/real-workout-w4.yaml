@@ -1,0 +1,160 @@
+# Part W4 — the "real workout" journey, step 4 of 4. The shade is open after the superset's rest
+# ran out. Back into the workout → Finish: a ROUTINE workout asks no name (it takes "Push A") →
+# summary → Keep original → then what the member reads afterwards, each number against its label:
+#   - Profile: the chart's 12-week total (today's workout in it), a tapped bar STAYS shown after the
+#     finger lifts (and after a wait), the way back to the total;
+#   - the workout's own page: More → Rename workout (only a routine-less finish asks a name);
+#   - the bench's exercise page: one tap on the chart keeps that point (it used to vanish on
+#     release), its Records with the new record.
+appId: com.forgeai.app
+---
+- takeScreenshot: w-40-shade-after-superset-rest
+- tapOn: 'Rest is over|Set \d+ of \d+.*|.*Lateral Raise.*|Workout in progress'
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+# Started from the routine Push A: no name box (13 Oct 2026; an empty workout still has one).
+- assertNotVisible: "Workout name"
+- takeScreenshot: w-41-finish-sheet-no-name
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Update routine|Workout complete"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Update routine"
+    commands:
+      - takeScreenshot: w-42-update-routine
+      - tapOn:
+          text: "Keep original"
+          below:
+            text: "Update routine"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- assertVisible: "Push A done"
+- takeScreenshot: w-43-finish-summary
+- scrollUntilVisible:
+    element: "New records.*"
+    centerElement: true
+    timeout: 15000
+    optional: true
+- takeScreenshot: w-43b-finish-records
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 15000
+- tapOn: "^Done$"
+# ---------------------------------------------------------------- Profile: numbers vs labels
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '^(Kg|Lb) lifted$'
+    centerElement: true
+    timeout: 20000
+- tapOn:
+    text: '^(Kg|Lb) lifted$'
+    index: 0
+- extendedWaitUntil:
+    visible: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    timeout: 10000
+- takeScreenshot: w-44-chart-after-workout
+# Tap a bar (each is a button "<period>: <number>"): the big number shows that bar.
+- tapOn:
+    text: '.*: [1-9][\d,]* (kg|lb)'
+    index: 0
+- extendedWaitUntil:
+    visible: "Show 12-week total"
+    timeout: 5000
+- takeScreenshot: w-45-bar-tapped
+# One tap, it stays (owner, 13 Oct 2026): still shown seconds later, with no finger on it.
+- extendedWaitUntil:
+    notVisible: "Show 12-week total"
+    timeout: 4000
+    optional: true
+- assertVisible: "Show 12-week total"
+- takeScreenshot: w-46-bar-still-shown
+- tapOn: "Show 12-week total"
+- extendedWaitUntil:
+    visible: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    timeout: 10000
+# ---------------------------------------------------------------- the workout's page: Rename
+- scrollUntilVisible:
+    element: '.*\. Open$'
+    centerElement: true
+    timeout: 30000
+- tapOn:
+    text: '.*\. Open$'
+    index: 0
+- extendedWaitUntil:
+    visible: '[A-Z][a-z]+day, \d{1,2} [A-Z][a-z]{2} \d{4} · \d\d:\d\d.*'
+    timeout: 15000
+- assertVisible: "Push A"
+- tapOn: "More"
+- tapOn: "Rename workout"
+- extendedWaitUntil:
+    visible: "Save name"
+    timeout: 10000
+- eraseText
+- inputText: "Push A at Jaipur"
+- tapOn: "Save name"
+- extendedWaitUntil:
+    visible: "Push A at Jaipur"
+    timeout: 10000
+- takeScreenshot: w-47-renamed
+# ---------------------------------------------------------------- the bench's exercise page
+- scrollUntilVisible:
+    element: '.*Bench Press.*\. Open the exercise'
+    centerElement: true
+    timeout: 20000
+- tapOn:
+    text: '.*Bench Press.*\. Open the exercise'
+    index: 0
+- extendedWaitUntil:
+    visible: "^Summary$"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: "date-line-chart"
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: w-48-exercise-chart
+# One tap on the middle of the chart: an older point shows, and stays after the finger lifts.
+- tapOn:
+    id: "date-line-chart"
+- takeScreenshot: w-49-chart-tapped
+- copyTextFrom:
+    id: "chart-readout"
+- evalScript: '${output.picked = maestro.copiedText}'
+- extendedWaitUntil:
+    notVisible:
+      id: "chart-readout"
+      text: "${output.picked}"
+    timeout: 4000
+    optional: true
+- assertVisible:
+    id: "chart-readout"
+    text: "${output.picked}"
+- takeScreenshot: w-50-chart-point-stays
+- scrollUntilVisible:
+    element: "(?i).*records.*"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: w-51-exercise-records
+- tapOn: "^History$"
+- takeScreenshot: w-52-exercise-history

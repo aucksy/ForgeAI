@@ -83,6 +83,11 @@ adb logcat -c
 adb shell appops set $PKG SCHEDULE_EXACT_ALARM default >/dev/null 2>&1 || true
 log "exact alarms as installed: USE_EXACT_ALARM $(adb shell dumpsys package $PKG | tr -d '\r' | grep -m1 -oE 'android.permission.USE_EXACT_ALARM: granted=(true|false)' || echo 'not listed'); SCHEDULE_EXACT_ALARM appop $(adb shell appops get $PKG SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' ')"
 
+# QA_ONLY=w (qa-device.yml's `only` input): only part W, the real-workout journey, for building
+# that flow quickly. Such a run is named "(partial w)" and never opens the release gate.
+if [ "${QA_ONLY:-}" = "w" ]; then
+  log "QA_ONLY=w: only part W runs (a partial run: it cannot release)"
+else
 # ---------------------------------------------------------------- part A
 log "part A start"
 maestro test --format junit --output "$OUT/part-a.xml" --test-output-dir "$OUT/part-a" "$QA_DIR/phase1-a.yaml" \
@@ -626,6 +631,103 @@ part_m() {
 }
 log "part M start"
 part_m
+
+fi  # QA_ONLY
+
+# ---------------------------------------------------------------- part W (the "real workout" journey)
+# Audit lesson (13 Oct 2026): two audits missed what the owner found in ONE gym session, because
+# the test phone was not his phone and nobody did a real workout. Part W: the phone set like his
+# (a ~360 dp screen = a Pixel at a large display size, and a larger font), pinned to MONDAY
+# 1 MARCH 2027 10:00 IST (a Monday AND the 1st of a month), a real-sized Hevy history (~500
+# workouts over 3 years, tools/make_big_hevy.py), then one full workout (real-workout-w1..w4.yaml):
+# warm-ups, RPE, a drop set, a lighter set, a record, a superset, rests waited out with the phone
+# asleep, the shade after ticks (one notification at a time; what a watch gets), finish, then the
+# Profile chart, the workout page and the exercise page read against their labels. Runs LAST: it
+# changes the phone's clock, size and font.
+W_DENSITY=${W_DENSITY:-480}   # 1080 px / (480/160) = 360 dp wide
+W_FONT=${W_FONT:-1.3}
+w_part() {  # $1 = part name, $2 = flow file
+  free_maestro
+  log "part $1 start"
+  maestro test --format junit --output "$OUT/part-$1.xml" --test-output-dir "$OUT/part-$1" "$QA_DIR/$2" \
+    > "$OUT/part-$1.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/$1-failed.png"; log "PART $(echo "$1" | tr '[:lower:]' '[:upper:]') FAILED ($2: part-$1.log, $1-failed.png)"; return 1; }
+  return 0
+}
+w_gather() {
+  mkdir -p "$OUT/real-workout"
+  { find "$OUT" -path "$OUT/real-workout" -prune -o -name "w-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "w-*.png" 2>/dev/null; } \
+    | while read -r f; do cp "$f" "$OUT/real-workout/" 2>/dev/null; done
+  log "REAL WORKOUT: $(find "$OUT/real-workout" -name "w-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/real-workout/"
+}
+part_w() {
+  local ms
+  # 1. The clock: Monday 1 March 2027, 10:00 in India (root on the google_apis image).
+  adb root >/dev/null 2>&1 || true
+  sleep 3
+  adb wait-for-device
+  adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
+  adb shell settings put global auto_time_zone 0 >/dev/null 2>&1 || true
+  adb shell cmd alarm set-timezone Asia/Kolkata >/dev/null 2>&1 || adb shell setprop persist.sys.timezone Asia/Kolkata >/dev/null 2>&1 || true
+  ms=$(date -u -d '2027-03-01T04:30:00Z' +%s)000
+  adb shell cmd alarm set-time "$ms" >/dev/null 2>&1 || adb shell date 030110002027.00 >/dev/null 2>&1 || true
+  adb shell am broadcast -a android.intent.action.TIME_SET >/dev/null 2>&1 || true
+  W_DATE=$(adb shell date '+%a %d %b %Y %H:%M %Z' | tr -d '\r')
+  log "REAL WORKOUT: phone clock $W_DATE (want Mon 01 Mar 2027 10:0x IST)"
+  case "$W_DATE" in
+    "Mon 01 Mar 2027"*) ;;
+    *) log "REAL WORKOUT FAILED: the phone clock could not be pinned to Monday 1 March 2027 ($W_DATE)"; status=1 ;;
+  esac
+  # 2. His phone's size: ~360 dp wide (a large display size) and a larger font.
+  adb shell wm density "$W_DENSITY" >/dev/null 2>&1 || true
+  adb shell settings put system font_scale "$W_FONT" >/dev/null 2>&1 || true
+  sleep 3
+  log "REAL WORKOUT: screen $(adb shell wm size | tr -d '\r' | tail -1), density $(adb shell wm density | tr -d '\r' | tail -1), font scale $(adb shell settings get system font_scale | tr -d '\r')"
+  # 3. A real-sized Hevy history ending the Saturday before (generated here, never committed).
+  python3 "$QA_DIR/tools/make_big_hevy.py" "$OUT/qa-hevy-big.csv" --today 2027-03-01 | tee -a "$OUT/timeline.txt"
+  push_fixture "$OUT/qa-hevy-big.csv" /sdcard/Download/qa-hevy-big.csv
+  adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+  log "downloads: $(wait_media qa-hevy-big 1 20 downloads) big Hevy history file"
+  adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  # 4. The journey.
+  w_part w1 real-workout-w1.yaml || { w_gather; return; }
+  w_part w2 real-workout-w2.yaml || { w_gather; return; }
+  # The warm-up's rest (0:30) is running: the rest card ALONE in the shade, naming the bench.
+  adb shell dumpsys notification --noredact > "$OUT/w-notif-warmup-rest.txt"
+  python3 "$QA_DIR/notif.py" alone "$OUT/w-notif-warmup-rest.txt" >> "$OUT/timeline.txt" || status=1
+  python3 "$QA_DIR/notif.py" card "$OUT/w-notif-warmup-rest.txt" "Rest 0:30" "Bench Press" >> "$OUT/timeline.txt" || status=1
+  adb shell cmd statusbar expand-notifications
+  sleep 2
+  adb exec-out screencap -p > "$OUT/real-workout-shade-during-warmup-rest.png"
+  adb shell cmd statusbar collapse >/dev/null 2>&1 || true
+  # Phone in the pocket for the rest: screen off. "Rest is over" must come, alone, as an alarm a
+  # watch also gets.
+  adb shell input keyevent KEYCODE_SLEEP
+  sleep 45
+  adb shell dumpsys notification --noredact > "$OUT/w-notif-after-warmup-rest.txt"
+  python3 "$QA_DIR/notif.py" alone "$OUT/w-notif-after-warmup-rest.txt" >> "$OUT/timeline.txt" || status=1
+  python3 "$QA_DIR/notif.py" watch "$OUT/w-notif-after-warmup-rest.txt" >> "$OUT/timeline.txt" || status=1
+  adb shell input keyevent KEYCODE_WAKEUP
+  sleep 1
+  adb shell wm dismiss-keyguard || true
+  adb shell cmd statusbar expand-notifications
+  sleep 2
+  w_part w3 real-workout-w3.yaml || { adb shell cmd statusbar collapse >/dev/null 2>&1; w_gather; return; }
+  # The superset round's rest: the card alone, naming the next set (Lateral Raise, set 2).
+  adb shell dumpsys notification --noredact > "$OUT/w-notif-superset-rest.txt"
+  python3 "$QA_DIR/notif.py" alone "$OUT/w-notif-superset-rest.txt" >> "$OUT/timeline.txt" || status=1
+  python3 "$QA_DIR/notif.py" card "$OUT/w-notif-superset-rest.txt" "Rest 0:30" "Lateral Raise" >> "$OUT/timeline.txt" || status=1
+  sleep 40
+  adb shell dumpsys notification --noredact > "$OUT/w-notif-after-superset-rest.txt"
+  python3 "$QA_DIR/notif.py" alone "$OUT/w-notif-after-superset-rest.txt" >> "$OUT/timeline.txt" || status=1
+  adb shell cmd statusbar expand-notifications
+  sleep 2
+  w_part w4 real-workout-w4.yaml
+  adb shell cmd statusbar collapse >/dev/null 2>&1 || true
+  w_gather
+}
+
+log "part W start"
+part_w
 
 # ---------------------------------------------------------------- crash / ANR / JS-error check
 # Maestro clears logcat when each part starts, so every part's own device log (in its

@@ -143,7 +143,7 @@ export function ExerciseMetricChart({
             }}
           />
         </View>
-        <View accessible accessibilityLabel={shown ? `${shownLabel}: ${metricValueText(metric, shown.y, units, distUnit)}, ${tinyDateWithYear(shown.x)}` : undefined} style={{ marginBottom: space.sm }}>
+        <View testID="chart-readout" accessible accessibilityLabel={shown ? `${shownLabel}: ${metricValueText(metric, shown.y, units, distUnit)}, ${tinyDateWithYear(shown.x)}` : undefined} style={{ marginBottom: space.sm }}>
           <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontFamily: type.monoBold, fontSize: type.size.h2, color: color.ink }}>
             {shown ? metricValueText(metric, shown.y, units, distUnit) : '—'}
           </Text>

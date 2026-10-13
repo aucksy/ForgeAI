@@ -86,7 +86,10 @@ def tag_commit(tag, fallback):
 
 def green_runs(sha):
     data = api(f"/repos/{REPO}/actions/workflows/{QA_WORKFLOW}/runs?head_sha={sha}&status=success&per_page=20")
-    return [r for r in data.get("workflow_runs", []) if r.get("conclusion") == "success" and r.get("head_sha") == sha]
+    # A PARTIAL run (qa-device.yml dispatched with `only`, e.g. only part W while building a flow)
+    # ran a few parts, not the whole phone test: it never opens the gate. Its run name says so.
+    return [r for r in data.get("workflow_runs", []) if r.get("conclusion") == "success" and r.get("head_sha") == sha
+            and "(partial" not in (r.get("display_title") or "")]
 
 
 def only_paperwork(base, head):

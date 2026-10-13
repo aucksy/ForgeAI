@@ -238,6 +238,7 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
 
   return (
     <View
+      testID="date-line-chart"
       style={{ width: '100%', height }}
       onLayout={(e) => setW(e.nativeEvent.layout.width)}
       onStartShouldSetResponder={() => Boolean(onInspect)}

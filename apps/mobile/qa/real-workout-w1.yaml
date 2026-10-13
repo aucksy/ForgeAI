@@ -1,0 +1,230 @@
+# Part W1 — the "real workout" journey, step 1 of 4: a new member coming from Hevy.
+# Audit lesson (13 Oct 2026, D:/Brain/Lessons/forgeai-audits-missed-what-a-real-workout-shows.md):
+# the phone is set like the owner's (narrow ~360 dp screen, larger font) and pinned to MONDAY
+# 1 MARCH 2027 by run-device-qa.sh; the history is a real-sized Hevy export (~500 workouts over 3
+# years, tools/make_big_hevy.py) ending on Saturday 27 Feb. Here: the welcome with "From Hevy",
+# the import, "Bring my routines in" → follow them, "Track RPE" on, then the Profile page's numbers
+# on a Monday that is also the 1st of a month (the day "Last 12 weeks" read 0 for the owner).
+appId: com.forgeai.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 90000
+- tapOn: "Your name"
+- inputText: "Aakash"
+- hideKeyboard
+- takeScreenshot: w-00-welcome
+# The switcher's way in: "Coming from Hevy or Strong?" → From Hevy (its import opens after Start).
+- scrollUntilVisible:
+    element: "From Hevy"
+    centerElement: true
+    timeout: 20000
+- tapOn: "From Hevy"
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Kilograms or pounds\\?"
+    timeout: 15000
+- tapOn: "Kilograms.*"
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 3 of 3"
+    timeout: 15000
+- tapOn: "Build muscle"
+- scrollUntilVisible:
+    element: "Intermediate"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Intermediate"
+- scrollUntilVisible:
+    element: "Start training"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: w-01-welcome-step-3
+- tapOn: "Start training"
+# ---------------------------------------------------------------- the Hevy import (~500 workouts)
+- extendedWaitUntil:
+    visible: "Choose Hevy file|^Profile$"
+    timeout: 60000
+- runFlow:
+    when:
+      notVisible: "Choose Hevy file"
+    commands:
+      - runFlow:
+          file: sub-settings-page.yaml
+          env:
+            PAGE: "Export & import"
+      - scrollUntilVisible:
+          element: "Import from Hevy"
+          centerElement: true
+          timeout: 30000
+      - tapOn: "Import from Hevy"
+      - extendedWaitUntil:
+          visible: "Choose Hevy file"
+          timeout: 15000
+- tapOn: "Choose Hevy file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-hevy).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-hevy-big.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "qa-hevy-big.*"
+- extendedWaitUntil:
+    visible: "^Date range$"
+    timeout: 120000
+- takeScreenshot: w-02-import-preview
+# Three years: the range must carry its years (Feb 2024 → Feb 2027).
+- assertVisible: '.*2024 → .*2027'
+- tapOn:
+    text: "^Merge$"
+    optional: true
+- scrollUntilVisible:
+    element: 'Import [\d,]+ workouts'
+    centerElement: true
+    timeout: 30000
+- copyTextFrom: 'Import [\d,]+ workouts'
+- evalScript: '${output.imported = maestro.copiedText.replace(/^Import /, "")}'
+- tapOn: 'Import [\d,]+ workouts'
+- extendedWaitUntil:
+    visible: '[\d,]+ workouts imported'
+    timeout: 300000
+- assertVisible: "${output.imported} imported"
+- takeScreenshot: w-03-imported
+- scrollUntilVisible:
+    element: "Bring my routines in"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Bring my routines in"
+- extendedWaitUntil:
+    visible: "We found 3 routines in your Hevy workouts"
+    timeout: 60000
+- takeScreenshot: w-04-routines-found
+- tapOn: "Check these 3"
+- repeat:
+    times: 3
+    commands:
+      - extendedWaitUntil:
+          visible: "[123] of 3"
+          timeout: 20000
+      - scrollUntilVisible:
+          element: "^Next$"
+          centerElement: true
+          timeout: 15000
+      - tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Follow these as your plan\\?"
+    timeout: 15000
+- tapOn: "Follow them"
+- extendedWaitUntil:
+    visible: "3 routines in From Hevy"
+    timeout: 20000
+- tapOn: "Open routines"
+# ---------------------------------------------------------------- Track RPE on (as the owner has it)
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Workouts"
+- scrollUntilVisible:
+    element: "Track RPE"
+    centerElement: true
+    timeout: 30000
+- tapOn: "Track RPE"
+- takeScreenshot: w-05-track-rpe-on
+- scrollUntilVisible:
+    element: "(?i)^previous values$"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: w-05b-previous-values
+- back
+- back
+# ---------------------------------------------------------------- Profile on a Monday the 1st
+# Monday 1 March 2027, history to Saturday: the last 12 weeks hold ~40 workouts, so the 12-week
+# total can never be 0, and "All time" (3 years) must be bigger than the last 12 months.
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- assertVisible: '^Workouts: [1-9][\d,]+$'
+- assertVisible: '^Weeks in a row: [1-9][\d,]*$'
+- takeScreenshot: w-06-profile-top
+- scrollUntilVisible:
+    element: '^(Kg|Lb) lifted$'
+    centerElement: true
+    timeout: 20000
+- tapOn:
+    text: '^(Kg|Lb) lifted$'
+    index: 0
+- extendedWaitUntil:
+    visible: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    timeout: 10000
+- assertNotVisible: '(Kg|Lb) lifted in the last 12 weeks · 0 .*'
+- takeScreenshot: w-07-chart-12-weeks
+- tapOn: "Range: Last 12 weeks. Change"
+- extendedWaitUntil:
+    visible: "^Show$"
+    timeout: 10000
+- tapOn: "^Last 12 months$"
+- extendedWaitUntil:
+    visible: "Range: Last 12 months. Change"
+    timeout: 15000
+- takeScreenshot: w-08-chart-12-months
+- tapOn: "Range: Last 12 months. Change"
+- extendedWaitUntil:
+    visible: "^Show$"
+    timeout: 10000
+- tapOn: "^All time$"
+- extendedWaitUntil:
+    visible: "(Kg|Lb) lifted since .* · .*"
+    timeout: 15000
+- takeScreenshot: w-09-chart-all-time
+- tapOn: "Range: All time. Change"
+- extendedWaitUntil:
+    visible: "^Show$"
+    timeout: 10000
+- tapOn:
+    text: "^Last 12 weeks$"
+    below:
+      text: "^Show$"
+- extendedWaitUntil:
+    visible: "Range: Last 12 weeks. Change"
+    timeout: 15000
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Statistics"
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 30000
+- takeScreenshot: w-10-statistics-monday
+- back
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Up next: Push A.*'
+    timeout: 30000
+- takeScreenshot: w-11-up-next
