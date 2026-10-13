@@ -1,7 +1,7 @@
 # v0.37.1 device QA, part H3A (audit C1: "Complete set" with ForgeAI closed). Runs after part H2,
-# which left its workout open with Barbell Bench Press's three sets ticked and a 0:30 rest on the
-# exercise. Here: a fourth set is added (its grey hint is set 3's numbers, so it can be ticked
-# from the shade), then the app goes to the background. The script then STOPS the app's process
+# which left its workout open with Barbell Bench Press's sets 1-3 ticked, its LAST set (4 of 4)
+# still to do, and a 0:30 rest on the exercise (run 38390826292: the live card read "Set 4 of 4";
+# adding a set made it "4 of 5"). Here: the app goes to the background on that set. The script then STOPS the app's process
 # (Android closed it) and checks the live card is up with "Complete set" (part H3B taps it).
 appId: com.forgeai.app
 ---
@@ -30,13 +30,8 @@ appId: com.forgeai.app
     visible: "More for Barbell Bench Press"
     timeout: 20000
 - scrollUntilVisible:
-    element: "Add set"
-    centerElement: true
-    timeout: 15000
-- tapOn: "Add set"
-- scrollUntilVisible:
     element: 'Mark Barbell Bench Press set 4 complete'
     centerElement: true
     timeout: 10000
-- takeScreenshot: h3a-set-4-added
+- takeScreenshot: h3a-set-4-to-do
 - pressKey: Home

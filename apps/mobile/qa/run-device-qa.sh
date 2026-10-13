@@ -258,9 +258,9 @@ sleep 2
 adb exec-out screencap -p > "$OUT/h-117-shade-rest-over.png"
 adb shell cmd statusbar collapse >/dev/null 2>&1 || true
 python3 "$QA_DIR/notif.py" over-open "$OUT/h-after-rest-app-open.txt" >> "$OUT/timeline.txt" || status=1
-# v0.37.1 (audit C9): set 3 was the workout's last set, so "Rest is over" says the workout is done
-# ("All sets done · Finish when ready"), not "Time for your next set".
-python3 "$QA_DIR/notif.py" over-text "$OUT/h-after-rest-app-open.txt" "All sets done" >> "$OUT/timeline.txt" || status=1
+# v0.37.1: "Rest is over" names the set that is next (set 4 of 4 is still to do here). The last
+# set's "All sets done" is checked in part H3, after that set.
+python3 "$QA_DIR/notif.py" over-text "$OUT/h-after-rest-app-open.txt" "Bench Press, set 4" >> "$OUT/timeline.txt" || status=1
 # v0.37.1 (audit C4): the app-open "Rest is over" goes by itself after 60 s, and the live workout
 # card comes BACK (its timeout's delete intent, and the app's own re-post).
 sleep 65
@@ -269,7 +269,7 @@ python3 "$QA_DIR/notif.py" live-back "$OUT/h-after-over-timeout.txt" >> "$OUT/ti
 
 # ---------------------------------------------------------------- part H3 (v0.37.1, audit C1)
 # "Complete set" on the live workout card with ForgeAI CLOSED (Android stopped it in the
-# background; phone in a pocket, a watch tap). H3A adds a 4th set in the app and goes home; the
+# background; phone in a pocket, a watch tap). H3A leaves the app on set 4 (the last) and goes home; the
 # script stops the app's process; H3B taps "Complete set" in the shade: the phone itself starts
 # set 4's rest (the rest card alone, "All sets done": set 4 is the last) - never the old "Open
 # ForgeAI to save ..." note beside the live card. The rest runs out ("Rest is over", alone); H3C
