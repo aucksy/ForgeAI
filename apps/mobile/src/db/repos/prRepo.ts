@@ -1,4 +1,5 @@
 import { getDb } from '@/db';
+import { e1rmSql, estimatedOneRepMax } from '@/lib/e1rm';
 import { uuid } from '@/lib/uuid';
 import type { PersonalRecord } from '@/types/models';
 
@@ -29,16 +30,13 @@ function mapPr(r: PrRow): PersonalRecord {
 }
 
 /**
- * Epley estimated 1RM — inlined so repos stay independent of the engine module. As the
- * engine's (audit HI-10): a true single IS a 1-rep max — 100 kg × 1 is 100, never "103.3".
+ * The stored 1-rep max is the app's one estimate (`lib/e1rm`): Epley, a true single is itself
+ * (audit HI-10: 100 kg × 1 is 100, never "103.3"), and — 13 Oct 2026 audit (B1) — reps above 12
+ * count as 12, so a lighter set doing many reps (70 kg × 25) never becomes a 1-rep max record
+ * over a heavy one (100 kg × 5). Was an inlined copy; now the shared helper, so it cannot drift.
+ * The same estimate in SQL, for a `set_entries` row aliased `se`:
  */
-function epleyE1rm(weightKg: number, reps: number): number {
-  if (reps === 1) return weightKg;
-  return weightKg * (1 + reps / 30);
-}
-
-/** The same estimate in SQL, for a `set_entries` row aliased `se`. */
-export const E1RM_SQL = 'CASE WHEN se.reps = 1 THEN se.weight_kg ELSE se.weight_kg * (1 + se.reps / 30.0) END';
+export const E1RM_SQL = e1rmSql('se');
 
 function round1(n: number): number {
   return Math.round(n * 10) / 10;
@@ -93,7 +91,7 @@ export async function checkAndRecordPrs(sessionId: string): Promise<PersonalReco
   }
   const perExercise = new Map<string, Tops>();
   for (const s of sets) {
-    const e1rm = epleyE1rm(s.weight_kg, s.reps);
+    const e1rm = estimatedOneRepMax(s.weight_kg, s.reps);
     const cur = perExercise.get(s.exercise_id);
     if (!cur) {
       perExercise.set(s.exercise_id, {

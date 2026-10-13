@@ -11,11 +11,16 @@
  * same bar again → the total. A week or month with no
  * workout keeps a faint mark on the baseline, so the bars stay evenly spaced to the eye; bars
  * sit on whole pixels, so 40+ thin bars don't blur into uneven gaps.
+ *
+ * 13 Oct 2026 audit of v0.37.0: "No workouts yet" only for a member with NO workouts (a range with
+ * none in it draws its empty bars and "· 0 workouts" — `chartCardBody`); the big number is a dash
+ * until the bars are read (`chartBigNumberText`); the slot is whole device pixels, so every gap is
+ * identical (`barLayout`); a finger HELD on the shown bar and lifted keeps it (`tapBar`).
  * The numbers come from the pure engine (`engine/historyChart.ts`). Screen reader: the chart
  * says its summary (latest and highest), and every bar is a button that says its period and
  * number. Large text wraps the top line instead of cutting it.
  */
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { PixelRatio, Pressable, Text, View } from 'react-native';
 import Svg, { Line, Path, Text as SvgText } from 'react-native-svg';
 
@@ -26,10 +31,13 @@ import type { UnitSystem } from '@/lib/units';
 import { chart, color, radius, space, type } from '@/theme/tokens';
 
 import {
+  barLayout,
   barValue,
   CHART_RANGES,
   chartAxisText,
   chartBackText,
+  chartBigNumberText,
+  chartCardBody,
   chartHintText,
   chartMetricLabel,
   chartCaptionText,
@@ -40,7 +48,6 @@ import {
   chartValueText,
   chartXLabelIndexes,
   chartXText,
-  rangeTotals,
   tapBar,
   type ChartBar,
   type ChartMetric,
@@ -63,6 +70,7 @@ export function HistoryChartCard({
   today,
   loading,
   failed,
+  workoutsEver,
   onMetric,
   onRange,
   onRetry,
@@ -74,6 +82,8 @@ export function HistoryChartCard({
   today: string;
   loading: boolean;
   failed: boolean;
+  /** The member's workout count (Profile's header); null while it is unknown. */
+  workoutsEver: number | null;
   onMetric: (m: ChartMetric) => void;
   onRange: (r: ChartRange) => void;
   onRetry: () => void;
@@ -89,12 +99,15 @@ export function HistoryChartCard({
     setSelected(null);
   }
 
+  // When the finger went down on a bar: a short tap on the shown bar puts it away, a hold keeps it.
+  const pressedAt = useRef(0);
+
   const list = bars ?? [];
-  const empty = list.length === 0 || list.every((b) => b.workouts === 0);
+  // Nothing to draw yet (reading, or a failed read), or nothing ever logged: no caption, no hint.
+  const empty = !bars || chartCardBody(bars, workoutsEver) === 'none';
   // The tapped bar, or null = the whole range's total.
   const idx = selected != null && selected >= 0 && selected < list.length ? selected : -1;
   const bar = idx >= 0 ? list[idx] : null;
-  const shown = bar ?? rangeTotals(list);
   const rangeLabel = CHART_RANGES.find((r) => r.id === range)?.label ?? '';
 
   const values = list.map((b) => barValue(b, metric));
@@ -102,16 +115,16 @@ export function HistoryChartCard({
   const top = ticks[ticks.length - 1] || 1;
   const plotW = Math.max(0, width - AXIS_W);
   const plotH = CHART_H - PAD_T - PAD_B;
-  const slot = list.length > 0 ? plotW / list.length : 0;
-  // Whole pixels: a 4.6 dp bar at x = 213.37 is drawn smeared, and 45 of them look unevenly spaced.
-  const px = (v: number) => PixelRatio.roundToNearestPixel(v);
-  const barW = Math.max(2, px(Math.min(28, slot * 0.62)));
+  // Whole device pixels for the slot AND each bar, so every gap is the same (13 Oct 2026 audit).
+  const layout = barLayout(plotW, list.length, PixelRatio.get());
+  const { slot, barW } = layout;
+  const slotX = (i: number) => AXIS_W + layout.left + slot * i;
   const base = PAD_T + plotH;
   const y = (v: number) => base - (Math.max(0, v) / top) * plotH;
   // The last label sits under its own bar, kept inside the card (about 6.5 dp a letter at 11).
   const labelX = (i: number, text: string) => {
     const half = (text.length * 6.5) / 2;
-    return Math.min(width - half, Math.max(AXIS_W + half, AXIS_W + slot * i + slot / 2));
+    return Math.min(width - half, Math.max(AXIS_W + half, slotX(i) + slot / 2));
   };
   const labels = new Set(chartXLabelIndexes(list.length, list.length > 12 ? 5 : 4));
 
@@ -127,7 +140,7 @@ export function HistoryChartCard({
             minimumFontScale={0.7}
             style={{ flex: 1, fontFamily: type.display, fontSize: type.size.h2, color: color.ink }}
           >
-            {chartValueText(empty ? 0 : barValue(shown, metric), metric, units)}
+            {chartBigNumberText(bars, idx >= 0 ? idx : null, metric, units)}
           </Text>
           <Pressable
             onPress={() => {
@@ -205,7 +218,8 @@ export function HistoryChartCard({
               ))}
               {list.map((b, i) => {
                 const v = values[i];
-                const x = px(AXIS_W + slot * i + (slot - barW) / 2);
+                // Every bar is a whole number of slots from the first, so one rounding moves all alike.
+                const x = PixelRatio.roundToNearestPixel(AXIS_W + layout.xs[i]);
                 const dim = idx >= 0 && i !== idx;
                 if (v <= 0) {
                   // Nothing that week or month: a faint mark, so the gap reads as empty, not missing.
@@ -245,14 +259,18 @@ export function HistoryChartCard({
             ? list.map((b, i) => (
                 <Pressable
                   key={`p${b.start}`}
+                  onPressIn={() => {
+                    pressedAt.current = Date.now();
+                  }}
                   onPress={() => {
                     tap();
-                    setSelected((s) => tapBar(s, i));
+                    const held = pressedAt.current > 0 ? Date.now() - pressedAt.current : 0;
+                    setSelected((s) => tapBar(s, i, held));
                   }}
                   accessibilityRole="button"
                   accessibilityLabel={`${chartPeriodText(b, today)}: ${chartValueText(values[i], metric, units)}`}
                   accessibilityState={{ selected: selected === i }}
-                  style={{ position: 'absolute', left: AXIS_W + slot * i, top: 0, width: slot, height: CHART_H - PAD_B }}
+                  style={{ position: 'absolute', left: slotX(i), top: 0, width: slot, height: CHART_H - PAD_B }}
                 />
               ))
             : null}

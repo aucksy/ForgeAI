@@ -21,6 +21,7 @@
 import { getDb } from '@/db';
 import { E1RM_SQL } from '@/db/repos/prRepo';
 import { createSession, deleteSession, deleteSessions } from '@/db/repos/workoutRepo';
+import { estimatedOneRepMax } from '@/lib/e1rm';
 import { uuid } from '@/lib/uuid';
 import type { DayType } from '@/types/models';
 
@@ -142,11 +143,8 @@ export function importSetRow(id: string, sessionId: string, setNumber: number, s
 
 // ---------------------------------------------------------------- records (the frozen rule, in JS)
 
-/** prRepo's Epley (a true single IS the 1-rep max), written the same way so the doubles match. */
-function e1rmOf(weightKg: number, reps: number): number {
-  if (reps === 1) return weightKg;
-  return weightKg * (1 + reps / 30);
-}
+/** prRepo's estimate — the app's one (`lib/e1rm`), so the doubles match the frozen rule's exactly. */
+const e1rmOf = estimatedOneRepMax;
 
 const round1 = (n: number): number => Math.round(n * 10) / 10;
 

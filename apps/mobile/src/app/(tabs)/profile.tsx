@@ -331,6 +331,7 @@ export default function ProfileScreen() {
         today={today}
         loading={chartLoading}
         failed={chartFailed}
+        workoutsEver={header ? header.workouts : null}
         onMetric={setMetric}
         onRange={pickRange}
         onRetry={() => void historyStamp().catch(() => null).then((stamp) => loadChart(rangeRef.current, stamp))}

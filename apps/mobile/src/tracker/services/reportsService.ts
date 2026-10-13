@@ -4,8 +4,8 @@
  * rule, sets per muscle as on Progress.
  */
 import { getDb } from '@/db';
-import { epleyE1rm } from '@/engine/overload';
 import { todayISO } from '@/lib/date';
+import { E1RM_MAX_REPS, estimatedOneRepMax } from '@/lib/e1rm';
 import type { SessionDetail } from '@/types/models';
 
 import { getTrackerExercisesByIds } from '../db/exerciseInfo';
@@ -169,7 +169,7 @@ export async function getMonthReport(month: string, today: string = todayISO()):
  * Sets with more reps than this say little about a 1-rep max (Epley overshoots a 25-rep
  * set), so they never feed the year's "biggest gain" (PG-02).
  */
-const MAX_E1RM_REPS = 12;
+const MAX_E1RM_REPS = E1RM_MAX_REPS; // the app's one cap (lib/e1rm, 13 Oct 2026 audit)
 
 /** Best estimated 1-rep max per workout of each weight × reps exercise. PURE. */
 export function strengthPoints(details: readonly SessionDetail[], weightExercises: ReadonlySet<string>): StrengthPoint[] {
@@ -180,7 +180,7 @@ export function strengthPoints(details: readonly SessionDetail[], weightExercise
       let best = 0;
       for (const s of g.sets) {
         if (s.isWarmup || s.weightKg <= 0 || s.reps <= 0 || s.reps > MAX_E1RM_REPS) continue;
-        best = Math.max(best, epleyE1rm(s.weightKg, s.reps));
+        best = Math.max(best, estimatedOneRepMax(s.weightKg, s.reps));
       }
       if (best > 0) out.push({ exerciseId: g.exercise.id, name: g.exercise.name, dateISO: d.dateISO, e1rm: best });
     }

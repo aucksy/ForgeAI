@@ -212,7 +212,7 @@ export function LiftsSection({ lifts, rangeDays, focusKey, index }: LiftsSection
               </Text>
               {view.note ? <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>{view.note}</Text> : null}
               <Text style={styles().chartLabel}>{chart.title}</Text>
-              <DateLineChart data={view.points} fillGradient yFormat={chart.yFormat} onInspect={setInspect} />
+              <DateLineChart data={view.points} fillGradient yFormat={chart.yFormat} onInspect={setInspect} resetKey={selected} />
               {bars && bars.length > 0 ? (
                 <>
                   <Text style={[styles().chartLabel, { marginTop: space.md }]}>{`${weightUnitOf(units)} lifted per workout`}</Text>

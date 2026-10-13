@@ -10,6 +10,11 @@
  * point and keeps it shown after the finger lifts; a tap or drag elsewhere moves it; a tap on the
  * same point again, or outside the plot (the axis labels), clears it. New data (another range,
  * metric or entry) clears it too. The rule is `chartTap` (lib/chartTime, PURE, tested).
+ *
+ * 13 Oct 2026 audit of v0.37.0: a finger that went down to SCROLL the page (the touch is taken by
+ * the scroll view) leaves the chart as it was before the touch (B4); a finger HELD on the picked
+ * point and lifted keeps it — only a short tap puts it away (B6); `resetKey` (what the chart shows)
+ * clears the pick when the member switches between two metrics with identical numbers (B10).
  */
 import { useEffect, useId, useRef, useState } from 'react';
 import { Text as RNText, View } from 'react-native';
@@ -43,6 +48,11 @@ export interface DateLineChartProps {
    * lifts), and with null when it is cleared (a second tap on it, a tap outside the plot, new data).
    */
   onInspect?: (p: { x: string; y: number } | null) => void;
+  /**
+   * What the chart shows (e.g. `${metric}|${range}`): a change clears the picked point even when the
+   * new points equal the old ones (13 Oct 2026 audit).
+   */
+  resetKey?: string;
 }
 
 const PAD_L = 40;
@@ -50,7 +60,7 @@ const PAD_R = 12;
 const PAD_T = 16;
 const PAD_B = 20;
 
-export function DateLineChart({ data, height = 180, color, fillGradient, yFormat, target, onInspect }: DateLineChartProps) {
+export function DateLineChart({ data, height = 180, color, fillGradient, yFormat, target, onInspect, resetKey }: DateLineChartProps) {
   const [w, setW] = useState(0);
   const [active, setActive] = useState<number | null>(null);
   const gradId = `dl${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
@@ -66,7 +76,7 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
   );
 
   // New data (another range, metric or entry): the picked point means nothing any more.
-  const dataKey = chartDataKey(data);
+  const dataKey = chartDataKey(data, resetKey);
   const firstKey = useRef(dataKey);
   useEffect(() => {
     if (firstKey.current === dataKey) return;
@@ -76,8 +86,8 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataKey]);
 
-  // One touch: where it went down, which point was picked then, and whether it dragged.
-  const touch = useRef<{ startIdx: number | null; before: number | null; moved: boolean; outside: boolean } | null>(null);
+  // One touch: where and when it went down, which point was picked then, and whether it dragged.
+  const touch = useRef<{ startIdx: number | null; before: number | null; moved: boolean; outside: boolean; downAt: number } | null>(null);
   const pick = (idx: number | null) => {
     if (!onInspect) return;
     setActive(idx);
@@ -88,7 +98,7 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
     const { locationX } = e.nativeEvent;
     const outside = locationX < PAD_L - 4 || locationX > w - PAD_R + 4;
     const idx = outside ? null : nearestIndex(xs, locationX);
-    touch.current = { startIdx: idx != null && idx >= 0 ? idx : null, before: active, moved: false, outside };
+    touch.current = { startIdx: idx != null && idx >= 0 ? idx : null, before: active, moved: false, outside, downAt: Date.now() };
     // A finger on a new point shows it at once (it stays after the finger lifts).
     if (!outside && idx != null && idx >= 0 && idx !== active) pick(idx);
   };
@@ -103,7 +113,16 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
     const t = touch.current;
     touch.current = null;
     if (!onInspect || !t) return;
-    const next = chartTap({ before: t.before, at: t.startIdx, moved: t.moved, outside: t.outside, now: active });
+    const next = chartTap({ before: t.before, at: t.startIdx, moved: t.moved, outside: t.outside, now: active, heldMs: Date.now() - t.downAt });
+    if (next !== active) pick(next);
+  };
+  // Another view took the touch (the page scrolled under the finger): back to what was picked
+  // before it went down — the point it brushed on the way is not a pick.
+  const onTaken = () => {
+    const t = touch.current;
+    touch.current = null;
+    if (!onInspect || !t) return;
+    const next = chartTap({ before: t.before, at: t.startIdx, moved: t.moved, outside: t.outside, now: active, taken: true });
     if (next !== active) pick(next);
   };
 
@@ -247,10 +266,7 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
       onResponderGrant={onDown}
       onResponderMove={onMove}
       onResponderRelease={onUp}
-      onResponderTerminate={() => {
-        // Another view took the touch: keep whatever is shown, forget the touch.
-        touch.current = null;
-      }}
+      onResponderTerminate={onTaken}
     >
       {body}
     </View>

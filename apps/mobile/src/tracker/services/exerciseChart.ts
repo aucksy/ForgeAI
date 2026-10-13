@@ -16,8 +16,8 @@
  * page's history arrives with it already applied (`historyWithVolume`), and the best set comes
  * from `bestSetSeriesFor`, the same as before. Easy-week workouts stay out, as on every chart.
  */
-import { epleyE1rm } from '@/engine/overload';
 import { addDays } from '@/lib/date';
+import { estimatedOneRepMax } from '@/lib/e1rm';
 import { fmtCompact, fmtInt, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { liftedWords } from '@/lib/units';
 import type { UnitSystem } from '@/types/models';
@@ -176,7 +176,8 @@ export function metricSeries(
         y = kgToDisplay(maxOf(sets.map((s) => s.weightKg)), units);
         break;
       case 'e1rm':
-        y = kgToDisplay(maxOf(sets.map((s) => epleyE1rm(s.weightKg, s.reps))), units);
+        // 13 Oct 2026 audit (B1): the records' estimate (reps above 12 count as 12).
+        y = kgToDisplay(maxOf(sets.map((s) => estimatedOneRepMax(s.weightKg, s.reps))), units);
         break;
       case 'workoutLifted':
         y = h.volumeKg > 0 ? kgToDisplay(h.volumeKg, units) : null;

@@ -20,6 +20,7 @@ import { getDb, getMeta, setMeta } from '@/db';
 import { E1RM_SQL, checkAndRecordPrs } from '@/db/repos/prRepo';
 import { deleteSession } from '@/db/queuedWrites';
 import { enqueueWrite } from '@/db/writeQueue';
+import { E1RM_MAX_REPS } from '@/lib/e1rm';
 import { rebuildRecordLog } from '@/tracker/db/exerciseManage';
 import { phoneAfterDelete } from '@/tracker/phone/phoneSync';
 
@@ -106,6 +107,25 @@ export async function fixSingleE1rmRecords(): Promise<void> {
     await reconcilePrsForExercises(rows.map((r) => r.exercise_id));
   }
   await setMeta(SINGLE_FIX_KEY, '1');
+}
+
+const LONG_SET_FIX_KEY = 'pr_long_set_e1rm_fix';
+
+/**
+ * Once per install — 13 Oct 2026 audit (B1): an older version stored a long set's 1-rep max with
+ * every rep counted (70 kg × 25 as 128.3 kg, over 100 kg × 5's 116.7), so Home's strength numbers
+ * and the coach named a lighter set as the member's best, and a truly heavier later set (95 × 8 =
+ * 120.3) was hidden behind it and never got its row. Reps above 12 now count as 12 (`lib/e1rm`).
+ * Each exercise with such a row has its record log rebuilt from its sets by today's rule. Run it
+ * inside the write queue.
+ */
+export async function fixLongSetE1rmRecords(): Promise<void> {
+  if ((await getMeta(LONG_SET_FIX_KEY)) === '1') return;
+  const rows = await getDb().getAllAsync<{ exercise_id: string }>(
+    `SELECT DISTINCT exercise_id FROM personal_records WHERE kind = 'e1rm' AND reps > ${E1RM_MAX_REPS}`,
+  );
+  for (const r of rows) await rebuildRecordLog(r.exercise_id);
+  await setMeta(LONG_SET_FIX_KEY, '1');
 }
 
 /**

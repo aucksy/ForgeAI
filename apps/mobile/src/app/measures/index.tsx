@@ -283,7 +283,7 @@ export default function MeasuresScreen() {
                 </Text>
               ) : null}
               {points.length >= 2 ? (
-                <DateLineChart data={points} color={chip === 'bodyweight' ? chart.series[0] : chart.series[1]} fillGradient yFormat={(n) => trimNum(n)} onInspect={noopInspect} />
+                <DateLineChart data={points} color={chip === 'bodyweight' ? chart.series[0] : chart.series[1]} fillGradient yFormat={(n) => trimNum(n)} onInspect={noopInspect} resetKey={chip} />
               ) : (
                 <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>Add it again on another day to see a graph.</Text>
               )}

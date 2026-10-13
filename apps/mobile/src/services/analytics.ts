@@ -13,9 +13,9 @@ import {
   getWeeklyVolume,
   getWorkoutFrequency,
 } from '@/db/repos/workoutRepo';
-import { epleyE1rm } from '@/engine/overload';
 import { computeStrengthScore } from '@/engine/strength';
 import { addDays, fromISO, toISO, todayISO } from '@/lib/date';
+import { estimatedOneRepMax } from '@/lib/e1rm';
 import type {
   ConsistencyCell,
   ExerciseProgressPoint,
@@ -47,7 +47,8 @@ export async function getExerciseStats(exerciseId: string): Promise<ExerciseStat
       weightSum += s.weightKg;
       repsSum += s.reps;
       setCount++;
-      const e1 = epleyE1rm(s.weightKg, s.reps);
+      // 13 Oct 2026 audit (B1): the records' estimate (reps above 12 count as 12).
+      const e1 = estimatedOneRepMax(s.weightKg, s.reps);
       if (e1 > sessionE1rm) sessionE1rm = e1;
       if (bestE1rm === null || e1 > bestE1rm) bestE1rm = e1;
       if (s.weightKg > topW || (s.weightKg === topW && s.reps > topR)) {

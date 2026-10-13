@@ -26,6 +26,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
+import { estimatedOneRepMax } from '@/lib/e1rm';
 import { uuid } from '@/lib/uuid';
 
 import { exerciseHasSets, getTrackerExercise } from './exerciseInfo';
@@ -123,7 +124,8 @@ export async function rebuildRecordLog(exerciseId: string): Promise<void> {
       ORDER BY ws.started_at ASC, ws.id ASC`,
     from ? [exerciseId, from] : [exerciseId],
   );
-  const e1 = (w: number, r: number): number => (r === 1 ? w : w * (1 + r / 30));
+  // The app's one estimate (`lib/e1rm`; 13 Oct 2026 audit: reps above 12 count as 12).
+  const e1 = estimatedOneRepMax;
   let bestW: number | null = null;
   let bestE: number | null = null;
   let i = 0;

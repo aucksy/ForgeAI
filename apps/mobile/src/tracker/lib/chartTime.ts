@@ -101,26 +101,40 @@ export function lastLabelY(lastY: number, prevY: number | null, top: number, bot
 }
 
 /**
+ * A touch shorter than this (ms), that did not move, is a TAP; longer is a hold (13 Oct 2026 audit,
+ * B6). Only a tap on the picked point (or bar) puts it away — a hold and release keeps it.
+ */
+export const TAP_MAX_MS = 250;
+
+/**
  * 13 Oct 2026 — what one finished touch on a line chart leaves picked (an index, or null):
  *  - a touch outside the plot (on the axis labels) clears it;
  *  - a drag keeps the point it ended on (`now`);
- *  - a tap on the point already picked clears it (a second tap = "put it away");
- *  - a tap on another point picks that one, and it STAYS after the finger lifts.
- * `before`: picked when the finger went down; `at`: the point under it then. PURE.
+ *  - a SHORT tap (`heldMs` under `TAP_MAX_MS`) on the point already picked clears it (a second tap
+ *    = "put it away"); a finger held on it and lifted keeps it (audit B6);
+ *  - a tap on another point picks that one, and it STAYS after the finger lifts;
+ *  - a touch another view TOOK (`taken`: the page scrolled under the finger) leaves what was
+ *    picked before it — never a point the finger only brushed on its way to scroll (audit B4).
+ * `before`: picked when the finger went down; `at`: the point under it then; `heldMs`: how long it
+ * was down (absent = a tap). PURE.
  */
-export function chartTap(t: { before: number | null; at: number | null; moved: boolean; outside: boolean; now: number | null }): number | null {
+export function chartTap(t: { before: number | null; at: number | null; moved: boolean; outside: boolean; now: number | null; heldMs?: number; taken?: boolean }): number | null {
+  if (t.taken) return t.before;
   if (t.outside) return null;
   if (t.moved) return t.now;
   if (t.at == null) return t.before;
-  return t.at === t.before ? null : t.at;
+  if (t.at !== t.before) return t.at;
+  return (t.heldMs ?? 0) < TAP_MAX_MS ? null : t.before;
 }
 
 /**
  * A short key that changes when a chart's points change (another range, metric or entry), so
  * a picked point is cleared — and stays the same when a screen rebuilds the same points. PURE.
+ * `reset` (13 Oct 2026 audit, B10): what the chart shows (metric, range), so switching between two
+ * metrics with identical numbers still clears the pick, as it clears the readout above the chart.
  */
-export function chartDataKey(data: readonly { x: string; y: number }[]): string {
+export function chartDataKey(data: readonly { x: string; y: number }[], reset = ''): string {
   let sum = 0;
   for (let i = 0; i < data.length; i++) sum = (sum * 31 + Math.round(data[i].y * 1000) + i) % 2147483647;
-  return `${data.length}|${data[0]?.x ?? ''}|${data[data.length - 1]?.x ?? ''}|${sum}`;
+  return `${data.length}|${data[0]?.x ?? ''}|${data[data.length - 1]?.x ?? ''}|${sum}|${reset}`;
 }

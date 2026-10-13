@@ -152,7 +152,9 @@ export function ExerciseMetricChart({
           </Text>
         </View>
         {data.length > 0 ? (
-          <DateLineChart data={data} height={200} color={chart.series[0]} fillGradient yFormat={yFormat} onInspect={setInspect} />
+          // resetKey: switching to a metric (or range) with the same numbers still clears the
+          // picked point, as it clears the readout above (13 Oct 2026 audit).
+          <DateLineChart data={data} height={200} color={chart.series[0]} fillGradient yFormat={yFormat} onInspect={setInspect} resetKey={`${metric}|${range}`} />
         ) : null}
       </Card>
       <TrackerSheet visible={picking} title="Chart shows" onClose={() => setPicking(false)}>
