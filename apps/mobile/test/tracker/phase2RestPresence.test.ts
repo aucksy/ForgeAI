@@ -20,6 +20,10 @@ vi.mock('@/tracker/services/restCard', () => ({
   reconcileWithCard: () => ({ do: 'nothing' }),
   restCardHolds: () => holds,
   showRestCard: () => true,
+  // 13 Oct 2026: no native live workout card here (the old quiet card is what this checks).
+  liveWorkoutCardAvailable: () => false,
+  showLiveWorkoutCard: () => false,
+  clearLiveWorkoutCard: () => undefined,
   phoneUses24Hour: () => true,
   ringerMode: () => 'normal',
   setRestQuiet: (q: boolean) => {

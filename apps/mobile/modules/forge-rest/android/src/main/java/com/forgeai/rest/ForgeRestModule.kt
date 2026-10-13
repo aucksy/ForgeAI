@@ -23,6 +23,11 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *                                    at, open, label, values } or null);
  *  - postDoneNote(title, text)     — a quiet note that opens the app (a tap it could not act on);
  *  - doneSettled()                 — the app acted on the Done tap: its broadcast may end.
+ * 13 Oct 2026 (the live workout card, Hevy's):
+ *  - showWorkoutCard(title, text, image, done) — post or update it ([WorkoutCard]); `done` is a
+ *                                    JSON object { workout, exKey, setKey, open, values, label }
+ *                                    for "Complete set", or null (no button);
+ *  - clearWorkoutCard()            — the workout ended (or is being edited).
  * Events: onRestChange { kind: "add" | "skip" | "end" | "done", endsAt, startedAt }, onOpenWorkout.
  */
 class ForgeRestModule : Module() {
@@ -192,6 +197,17 @@ class ForgeRestModule : Module() {
     Function("postDoneNote") { title: String, text: String ->
       val c = ctx ?: return@Function false
       RestCard.postNote(c, title, text)
+      true
+    }
+
+    Function("showWorkoutCard") { title: String, text: String, image: String?, done: String? ->
+      val c = ctx ?: return@Function false
+      WorkoutCard.show(c, title, text, image, done)
+    }
+
+    Function("clearWorkoutCard") {
+      val c = ctx ?: return@Function false
+      WorkoutCard.clear(c)
       true
     }
 

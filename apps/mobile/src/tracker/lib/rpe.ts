@@ -24,3 +24,14 @@ export function rpeMeaning(rpe: number): string {
   if (rpe >= 7) return '3 more reps left';
   return '4 or more reps left';
 }
+
+/**
+ * 13 Oct 2026 (owner: at large text the chips wrapped 6 + 3, three left alone): the choices as an
+ * even grid — rows of `perRow` (3 × 3 for the nine), every row full, so no row is ever an orphan.
+ * PURE.
+ */
+export function rpeGrid(choices: readonly number[] = RPE_CHOICES, perRow = 3): number[][] {
+  const rows: number[][] = [];
+  for (let i = 0; i < choices.length; i += perRow) rows.push(choices.slice(i, i + perRow));
+  return rows;
+}

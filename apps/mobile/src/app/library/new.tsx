@@ -10,6 +10,8 @@
  * v0.28.0: opened from "Add exercise" inside a workout (`?for=workout&name=…`), the typed name
  * is filled in and Save adds the new exercise to the workout; a distance exercise is kept in
  * km (miles under "lb, miles") or metres.
+ * 13 Oct 2026: opened from a routine's "Add exercise" (`?for=routine&dayId=…&name=…`), Save adds
+ * the new exercise to that routine and goes back to it, as 'workout' does for a workout.
  * Audit Phase 4: the form guesses the main muscle, gear and type from the typed name (EX-08)
  * and Save says what is still missing; Edit opens with the exercise filled in, and if it
  * cannot be read says so — it never saves a copy as a new exercise (EX-19); a photo brought
@@ -38,6 +40,7 @@ import { exercisesChanged } from '@/tracker/store/exerciseListStore';
 import { guessFromName, missingForSave } from '@/tracker/services/exerciseGuess';
 import { LOG_TYPE_LABEL, LOG_TYPES, type LogType } from '@/tracker/engine/logTypes';
 import { tell } from '@/lib/tell';
+import { addExerciseToRoutine } from '@/tracker/db/routineRepo';
 import {
   deleteKeptMedia,
   keepPendingMedia,
@@ -74,9 +77,11 @@ function FieldLabel({ children }: { children: string }) {
 
 export default function NewExerciseScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ id?: string | string[]; name?: string; for?: string }>();
+  const params = useLocalSearchParams<{ id?: string | string[]; name?: string; for?: string; dayId?: string }>();
   const editId = typeof params.id === 'string' ? params.id : params.id?.[0];
   const forWorkout = params.for === 'workout';
+  // 13 Oct 2026: made from a routine's picker — Save puts it in that routine.
+  const forRoutine = params.for === 'routine' && typeof params.dayId === 'string' && params.dayId !== '' ? params.dayId : null;
   // v0.27.0: the increment chips read kg or lb; the step is stored in kg.
   const units = useUnits();
 
@@ -270,13 +275,22 @@ export default function NewExerciseScreen() {
               router.dismissTo('/session/active');
             } else router.replace({ pathname: '/exercise/[id]', params: { id: clash.id } });
           };
+          const addClashToRoutine = async (dayId: string): Promise<void> => {
+            try {
+              await addExerciseToRoutine(dayId, clash.id);
+              router.dismissTo({ pathname: '/routines/[id]', params: { id: dayId } });
+            } catch {
+              void tell('Could not add exercise', 'Please try again.');
+            }
+          };
           void askConfirm({
             title: 'Already in your library',
             body: `"${clash.name}" already exists.`,
-            confirmLabel: forWorkout ? 'Add it to the workout' : 'Open it',
+            confirmLabel: forWorkout ? 'Add it to the workout' : forRoutine ? 'Add it to the routine' : 'Open it',
           }).then((ok) => {
             if (!ok) return;
             if (forWorkout) void addClash();
+            else if (forRoutine) void addClashToRoutine(forRoutine);
             else router.replace({ pathname: '/exercise/[id]', params: { id: clash.id } });
           });
           return;
@@ -307,6 +321,17 @@ export default function NewExerciseScreen() {
               return;
             }
             // The workout was closed meanwhile: show the new exercise instead of an empty workout.
+          }
+          if (forRoutine) {
+            // Straight into the routine it was made for, back on the routine (the picker goes too).
+            const added = await addExerciseToRoutine(forRoutine, id).then(
+              () => true,
+              () => false,
+            );
+            router.dismissTo({ pathname: '/routines/[id]', params: { id: forRoutine } });
+            // Saved either way; a failed add says so (the routine's own "Add exercise" finds it).
+            if (!added) void tell('Saved, but not added', `${trimmed} is in your library. Add it to the routine from "Add exercise".`);
+            return;
           }
           router.replace({ pathname: '/exercise/[id]', params: { id } });
           return;

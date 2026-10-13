@@ -56,6 +56,7 @@ export function ExercisePickerList({
   lastDone,
   filterMenus = false,
   footer,
+  onQueryChange,
 }: {
   onSelect: (ex: TrackerExercise) => void;
   /** Screen-reader verb for each row ("Add", "View", "Leave out"). */
@@ -88,6 +89,8 @@ export function ExercisePickerList({
   filterMenus?: boolean;
   /** Shown after the results (Profile → Exercises: "Hidden exercises"). */
   footer?: ReactNode;
+  /** 13 Oct 2026: the search text as typed, for the screen's "Create" button (it prefills the name). */
+  onQueryChange?: (query: string) => void;
 }) {
   const version = useExerciseList((s) => s.version);
   const [all, setAll] = useState<TrackerExercise[]>([]);
@@ -99,6 +102,10 @@ export function ExercisePickerList({
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [query, setQuery] = useState('');
+  useEffect(() => {
+    onQueryChange?.(query);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
   const [muscle, setMuscle] = useState<Muscle | null>(null);
   const [gear, setGear] = useState<Equipment | null>(null);
   const [demo, setDemo] = useState<TrackerExercise | null>(null);

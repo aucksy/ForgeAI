@@ -13,6 +13,12 @@
  *    one rest, one card; its clock follows the phone's 12/24-hour setting.
  *  - RT-07 / RT-12: "Workout sounds" and "Ring through Do Not Disturb" reach the running
  *    rest's "Rest is over" the moment they change.
+ *
+ * 13 Oct 2026 (Hevy's live card): on a build with the native piece the card is the LIVE workout
+ * card instead — the exercise being trained, its next set ("Set 3 of 5 · 35 kg × 11"), its
+ * picture and "Complete set" (`liveCard.ts`, WorkoutCard.kt), in the phone's normal section.
+ * Re-posted only when it changes, at most every ~0.4 s (typing re-words it; Android drops
+ * updates that come faster). An older build keeps the quiet card above.
  */
 import { AppState } from 'react-native';
 
@@ -33,6 +39,16 @@ import {
   showRestCard,
 } from './restCard';
 import { cancelRestEnd, clearWorkoutOngoing, showWorkoutOngoing } from './workoutAlerts';
+import { displayUnits } from '@/lib/units';
+
+import { useTargets } from '../store/targetStore';
+import { clearLiveWorkoutCard, liveWorkoutCardAvailable, showLiveWorkoutCard } from './restCard';
+import { liveCardContent, liveCardKey } from './liveCard';
+import { liveCardImage } from './liveCardImage';
+import { rowFill } from './restDoneRun';
+
+/** The live card is re-posted at most this often (Android drops faster updates). */
+export const LIVE_CARD_EVERY_MS = 400;
 
 /** "6:42 pm" in the phone's local time, or "18:42" when the phone uses the 24-hour clock. */
 export function clockTime(epochMs: number, use24Hour = false): string {
@@ -69,6 +85,32 @@ export function startWorkoutPresence(): () => void {
   if (started) return () => undefined;
   started = true;
   let last = '';
+  /** The live card (native) is showing: the old quiet card has been removed. */
+  let live = false;
+  let liveTimer: ReturnType<typeof setTimeout> | null = null;
+  let liveLastAt = 0;
+  const stopLiveTimer = (): void => {
+    if (liveTimer) clearTimeout(liveTimer);
+    liveTimer = null;
+  };
+
+  /** Post the live card for the workout as it is now; false = no native card (use the old one). */
+  const postLive = (): boolean => {
+    if (!liveWorkoutCardAvailable()) return false;
+    const w = useActiveWorkout.getState();
+    const card = liveCardContent(w, rowFill, displayUnits());
+    const image = liveCardImage(w.exercises.find((e) => e.key === card.exKey));
+    const key = `live:${liveCardKey(card, image)}`;
+    if (key === last) return true;
+    if (!showLiveWorkoutCard(card.title, card.text, image, card.done, card.label)) return false;
+    last = key;
+    liveLastAt = Date.now();
+    if (!live) {
+      live = true;
+      void clearWorkoutOngoing(); // the old quiet card, if one was up
+    }
+    return true;
+  };
 
   const update = (): void => {
     const w = useActiveWorkout.getState();
@@ -80,11 +122,29 @@ export function startWorkoutPresence(): () => void {
       if (!w.active && r.endsAt != null) r.skip(); // workout over → no stray bell
       if (last !== 'off') {
         last = 'off';
+        stopLiveTimer();
+        if (live) clearLiveWorkoutCard();
+        live = false;
         void clearWorkoutOngoing();
         // Also covers an alarm left by a previous app run that was killed mid-rest.
         if (!w.active) void cancelRestEnd();
       }
       return;
+    }
+    // 13 Oct 2026: the live card, when the native piece has it (at most every LIVE_CARD_EVERY_MS).
+    if (live || last === '' || last === 'off') {
+      const wait = LIVE_CARD_EVERY_MS - (Date.now() - liveLastAt);
+      if (live && wait > 0) {
+        if (!liveTimer) {
+          liveTimer = setTimeout(() => {
+            liveTimer = null;
+            const now = useActiveWorkout.getState();
+            if (now.active && !now.editingSessionId && !now.pastLog) postLive();
+          }, wait);
+        }
+        return;
+      }
+      if (postLive()) return;
     }
     // RT-05: the rest card shows the rest (counting down); this card keeps the set count.
     const restForThisCard = r.endsAt != null && !restCardHolds() ? r.endsAt : null;
@@ -127,6 +187,8 @@ export function startWorkoutPresence(): () => void {
     update();
   });
   const u2 = useRestTimer.subscribe(update);
+  // The card's numbers follow the Targets (they are the rows' grey hints).
+  const u5 = useTargets.subscribe(update);
   // RT-07 / RT-12: push alert choices to the native card as they change (and once now).
   setRestQuiet(!useTrackerPrefs.getState().sounds);
   setRestRingThroughDnd(useRestAlertPrefs.getState().ringThroughDnd);
@@ -143,6 +205,8 @@ export function startWorkoutPresence(): () => void {
     u2();
     u3();
     u4();
+    u5();
+    stopLiveTimer();
     offCard();
     appState.remove();
     started = false;

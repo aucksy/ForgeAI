@@ -63,6 +63,12 @@ interface Native {
   postDoneNote?(title: string, text: string): boolean;
   /** Review fix: the app has acted on a Done tap (its broadcast may end; else it ends after ~2 s). */
   doneSettled?(): boolean;
+  /**
+   * 13 Oct 2026, the live workout card (WorkoutCard.kt); an older native piece lacks these.
+   * `done`: JSON { workout, exKey, setKey, open, values, label } for "Complete set", or null.
+   */
+  showWorkoutCard?(title: string, text: string, image: string | null, done: string | null): boolean;
+  clearWorkoutCard?(): boolean;
   addListener(event: string, cb: (e: Record<string, unknown>) => void): { remove: () => void };
 }
 
@@ -348,4 +354,31 @@ export function ringerMode(): RingerMode | null {
   if (v === 1) return 'vibrate';
   if (v === 2) return 'normal';
   return null;
+}
+
+// ------------------------------------------------------------------ 13 Oct 2026: the live workout card
+
+/**
+ * Post or update the live workout card (the next set and "Complete set"; WorkoutCard.kt). False
+ * = no native piece, or an older one (the app then posts its old quiet card).
+ */
+export function showLiveWorkoutCard(title: string, text: string, image: string | null, done: CardDone | null, label: string | null): boolean {
+  const n = N();
+  if (!n?.showWorkoutCard) return false;
+  try {
+    const json = done ? JSON.stringify({ workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label }) : null;
+    return n.showWorkoutCard(title, text, image, json) === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Does this build's native piece have the live workout card? (False: web, tests, an older build.) */
+export function liveWorkoutCardAvailable(): boolean {
+  return call((n) => typeof n.showWorkoutCard === 'function') === true;
+}
+
+/** Remove the live workout card (the workout ended). */
+export function clearLiveWorkoutCard(): void {
+  call((n) => n.clearWorkoutCard?.());
 }

@@ -11,10 +11,10 @@ import { HBarList } from '@/components/charts';
 import { Badge, Card } from '@/components/ui';
 import { liftedWords, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
-import { color, radius, space, type } from '@/theme/tokens';
+import { color, space, type } from '@/theme/tokens';
 
 import { MUSCLE_LABEL } from '../catalog/muscles';
-import { repsPerSide, weightIsEach, type LogType } from '../engine/logTypes';
+import { repsPerSide, weightIsEach } from '../engine/logTypes';
 import { RECORD_LABEL } from '../engine/records';
 import { setsText } from '../engine/volume';
 import { shownNotes } from '../lib/workoutText';
@@ -23,17 +23,7 @@ import type { SessionSummaryData } from '../services/finishSummary';
 import { groupByExercise, recordValueText } from '../services/recordText';
 import { detailSetRows, detailStats, recordSets } from '../services/workoutDetail';
 import { ExerciseThumb } from './ExerciseThumb';
-import { Glyph } from './TrackerGlyph';
-
-const TABLE_HEAD: Record<LogType, string> = {
-  weight_reps: 'Weight & reps',
-  weighted: 'Added weight & reps',
-  reps: 'Reps',
-  assisted: 'Help & reps',
-  time: 'Time',
-  distance: 'Distance',
-  time_distance: 'Distance & time',
-};
+import { SetTable } from './SetTable';
 
 const label = { fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted } as const;
 
@@ -132,33 +122,7 @@ export function WorkoutDetail({ data, onOpenExercise }: { data: SessionSummaryDa
                 </View>
               ) : null}
 
-              <View style={{ flexDirection: 'row', gap: space.md, paddingHorizontal: space.sm }}>
-                <Text style={[label, { width: 28 }]}>Set</Text>
-                <Text style={[label, { flex: 1 }]}>{TABLE_HEAD[lt]}</Text>
-              </View>
-              {rows.map((r, i) => (
-                <View
-                  key={r.id}
-                  accessible
-                  accessibilityLabel={`Set ${r.mark}: ${r.text}${r.rpe ? `, effort ${r.rpe.slice(1)}` : ''}${r.records.length > 0 ? `, a record: ${r.records.map((k) => RECORD_LABEL[k].toLowerCase()).join(', ')}` : ''}`}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: space.md,
-                    minHeight: 36,
-                    paddingHorizontal: space.sm,
-                    borderRadius: radius.sm,
-                    backgroundColor: i % 2 === 0 ? color.surfaceSunken : 'transparent',
-                  }}
-                >
-                  <Text style={{ width: 28, fontFamily: type.monoBold, fontSize: type.size.sub, color: r.warmup ? color.inkMuted : /^\d+$/.test(r.mark) ? color.inkSecondary : color.accent }}>{r.mark}</Text>
-                  <Text style={{ flex: 1, fontFamily: type.mono, fontSize: type.size.sub, color: r.warmup ? color.inkMuted : color.ink }}>
-                    {r.text}
-                    {r.rpe ? <Text style={{ color: color.inkMuted }}>{`  ${r.rpe}`}</Text> : null}
-                  </Text>
-                  {r.records.length > 0 ? <Glyph name="medal" size={18} color={color.accent} /> : null}
-                </View>
-              ))}
+              <SetTable rows={rows} logType={lt} />
             </Card>
           );
         })}

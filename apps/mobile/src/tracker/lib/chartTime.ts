@@ -99,3 +99,28 @@ export function lastLabelY(lastY: number, prevY: number | null, top: number, bot
   if (y < top + 10) y = below;
   return Math.max(top + 10, Math.min(bottom - 2, y));
 }
+
+/**
+ * 13 Oct 2026 — what one finished touch on a line chart leaves picked (an index, or null):
+ *  - a touch outside the plot (on the axis labels) clears it;
+ *  - a drag keeps the point it ended on (`now`);
+ *  - a tap on the point already picked clears it (a second tap = "put it away");
+ *  - a tap on another point picks that one, and it STAYS after the finger lifts.
+ * `before`: picked when the finger went down; `at`: the point under it then. PURE.
+ */
+export function chartTap(t: { before: number | null; at: number | null; moved: boolean; outside: boolean; now: number | null }): number | null {
+  if (t.outside) return null;
+  if (t.moved) return t.now;
+  if (t.at == null) return t.before;
+  return t.at === t.before ? null : t.at;
+}
+
+/**
+ * A short key that changes when a chart's points change (another range, metric or entry), so
+ * a picked point is cleared — and stays the same when a screen rebuilds the same points. PURE.
+ */
+export function chartDataKey(data: readonly { x: string; y: number }[]): string {
+  let sum = 0;
+  for (let i = 0; i < data.length; i++) sum = (sum * 31 + Math.round(data[i].y * 1000) + i) % 2147483647;
+  return `${data.length}|${data[0]?.x ?? ''}|${data[data.length - 1]?.x ?? ''}|${sum}`;
+}

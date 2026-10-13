@@ -2,8 +2,9 @@
  * The exercise page's Summary chart, as Hevy's (redesign R5): what it shows as ONE control
  * ("Heaviest weight ⌄", which opens a sheet of the choices for how the exercise is logged —
  * `exerciseChart.chartMetrics`), the latest number (or the point under a finger) big with its
- * day, the chart, then the range as a segmented control: 3 months · Year · All time. It opens on
- * 3 months, or the smallest range with something in it.
+ * day, the chart, and the range as a segmented control: 3 months · Year · All time (13 Oct 2026:
+ * under the title row, inside the card). It opens on 3 months, or the smallest range with
+ * something in it. One tap on the chart picks a point and keeps it (DateLineChart).
  *
  * 12 Oct 2026 design pass (owner's emulator): the five choices were chips that wrapped 2 + 2 + 1
  * and left "Total reps" alone on a row, and the range chips looked exactly like them. One point
@@ -19,7 +20,6 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Card } from '@/components/ui';
 import { tinyDateWithYear, todayISO } from '@/lib/date';
-import { fmtCompact, trimNum } from '@/lib/format';
 import { tap } from '@/lib/haptics';
 import { chart, color, motion, space, type } from '@/theme/tokens';
 import type { ExerciseHistoryEntry } from '@/tracker/db/exerciseHistory';
@@ -28,6 +28,7 @@ import { fmtDuration } from '@/tracker/engine/logTypes';
 import type { BestSetPoint } from '@/tracker/services/exerciseAnalytics';
 import {
   bestPerDay,
+  chartAxisNumber,
   CHART_RANGES,
   chartMetrics,
   metricLabel,
@@ -98,7 +99,8 @@ export function ExerciseMetricChart({
   const data = useMemo(() => pointsInRange(all, range, today), [all, range, today]);
   const shown = inspect ?? data[data.length - 1] ?? null;
   const unit = metricUnit(metric);
-  const yFormat = (n: number): string => (unit === 'seconds' ? fmtDuration(n) : unit === 'weight' && n >= 10_000 ? fmtCompact(n) : trimNum(n));
+  // 13 Oct 2026: axis labels and the readout grouped the phone's way ("1,330"), as elsewhere.
+  const yFormat = (n: number): string => (unit === 'seconds' ? fmtDuration(n) : chartAxisNumber(n));
 
   const words = (m: ChartMetric): string => metricLabel(m, units, { shownAs, cardio });
   const shownLabel = words(metric);
@@ -128,6 +130,19 @@ export function ExerciseMetricChart({
         ) : (
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.inkSecondary, marginBottom: space.xs }}>{shownLabel}</Text>
         )}
+        {/* 13 Oct 2026: the range sits right under what the chart shows, inside the card — under the
+            chart it fell below the fold on the owner's phone. */}
+        <View style={{ marginTop: space.xs, marginBottom: space.md }}>
+          <SegmentedControl
+            label="Range"
+            options={CHART_RANGES}
+            value={range}
+            onChange={(r) => {
+              setInspect(null);
+              setRange(r);
+            }}
+          />
+        </View>
         <View accessible accessibilityLabel={shown ? `${shownLabel}: ${metricValueText(metric, shown.y, units, distUnit)}, ${tinyDateWithYear(shown.x)}` : undefined} style={{ marginBottom: space.sm }}>
           <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontFamily: type.monoBold, fontSize: type.size.h2, color: color.ink }}>
             {shown ? metricValueText(metric, shown.y, units, distUnit) : '—'}
@@ -140,15 +155,6 @@ export function ExerciseMetricChart({
           <DateLineChart data={data} height={200} color={chart.series[0]} fillGradient yFormat={yFormat} onInspect={setInspect} />
         ) : null}
       </Card>
-      <SegmentedControl
-        label="Range"
-        options={CHART_RANGES}
-        value={range}
-        onChange={(r) => {
-          setInspect(null);
-          setRange(r);
-        }}
-      />
       <TrackerSheet visible={picking} title="Chart shows" onClose={() => setPicking(false)}>
         <View style={{ gap: 2 }}>
           {metrics.map((m) => (

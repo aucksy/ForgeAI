@@ -1,7 +1,8 @@
 /**
  * Exercise page — redesign R5, Hevy's three tabs under the header (PLAN §4.6):
  *  - Summary: "Last time · Best" (audit EX-07: in the way the exercise is logged — a pull-up
- *    always at +0 kg reads as reps), then the chart (chips for what it shows, the right ones for
+ *    always at +0 kg reads as reps; 13 Oct 2026: last time's sets as the workout page's set table,
+ *    warm-ups and RPE included — tap its heading for that workout), then the chart (chips for what it shows, the right ones for
  *    weight, bodyweight, timed and distance work; 3 months · Year · All time), then Personal
  *    records (tap → that workout) and Set records (the heaviest weight at each rep count);
  *  - History: the same chart at the top (13 Oct 2026 — the owner looked for it there; both tabs
@@ -22,7 +23,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SessionHistory } from '@/components/exercise/SessionHistory';
-import { askConfirm, Badge, Card, EmptyState, IconButton, LoadError, Screen, Sheet, SheetRow, Skeleton } from '@/components/ui';
+import { askConfirm, Badge, Card, EmptyState, Icon, IconButton, LoadError, Screen, Sheet, SheetRow, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { relativeDay, tinyDateWithYear } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
@@ -49,7 +50,10 @@ import { getWorkoutNames } from '@/tracker/db/workoutNames';
 import { isTimedCardio, LOAD_MODE_LABEL, LOG_TYPE_LABEL } from '@/tracker/engine/logTypes';
 import { RECORD_LABEL } from '@/tracker/engine/records';
 import { xrmLadder } from '@/tracker/services/exerciseAnalytics';
-import { headlineBest, lastTimeLine } from '@/tracker/services/exerciseHeadline';
+import { headlineBest } from '@/tracker/services/exerciseHeadline';
+import { lastTimeRows } from '@/tracker/services/workoutDetail';
+import { SetTable } from '@/tracker/components/SetTable';
+import { getWarmupSets, type TrackedSetEntry } from '@/tracker/db/exerciseHistory';
 import { deleteKeptMedia } from '@/tracker/services/exerciseMedia';
 import { getExerciseOverview, type ExerciseOverview } from '@/tracker/services/exerciseStats';
 import type { ChartMetric, ChartRange } from '@/tracker/services/exerciseChart';
@@ -106,6 +110,7 @@ export default function ExerciseScreen() {
   const id = typeof params.id === 'string' ? params.id : params.id?.[0];
 
   const units = useSettings((s) => s.unitSystem);
+  const insets = useSafeAreaInsets();
   const [ov, setOv] = useState<ExerciseOverview | null>(null);
   const [versionIds, setVersionIds] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
@@ -119,6 +124,8 @@ export default function ExerciseScreen() {
   // Per visit only: a new visit opens on Summary (Hevy's).
   const [tab, setTab] = useState<Tab>('summary');
   const [names, setNames] = useState<Map<string, string>>(new Map());
+  // 13 Oct 2026: last time's warm-ups, for the "Last time" set table (none until read; a failed read = none).
+  const [lastWarm, setLastWarm] = useState<{ sessionId: string; sets: TrackedSetEntry[] } | null>(null);
   // 13 Oct 2026: the chart's choice and range, shared by Summary and History (null = its opening one).
   const [chartMetric, setChartMetric] = useState<ChartMetric | null>(null);
   const [chartRange, setChartRange] = useState<ChartRange | null>(null);
@@ -149,6 +156,15 @@ export default function ExerciseScreen() {
               if (alive) setCanHide(why == null);
             })
             .catch(() => undefined);
+          // The "Last time" table shows that workout's warm-ups too (the history read has working sets only).
+          const lastSid = o?.history[0]?.sessionId;
+          if (lastSid) {
+            void getWarmupSets([{ sessionId: lastSid, exerciseId: id }])
+              .then((m) => {
+                if (alive) setLastWarm({ sessionId: lastSid, sets: m.get(lastSid)?.get(id) ?? [] });
+              })
+              .catch(() => undefined);
+          }
           // The History tab heads each workout with its name.
           void getWorkoutNames((o?.history ?? []).map((h) => h.sessionId))
             .then((m) => {
@@ -205,7 +221,13 @@ export default function ExerciseScreen() {
 
   // EX-07: numbers in the way the exercise is logged — or as reps when it never carried weight.
   const shownAs = ov?.shownAs ?? ex?.logType ?? 'weight_reps';
-  const last = ov && ex ? lastTimeLine(ov.history, shownAs, units, ex.distUnit) : null;
+  const lastEntry = ov?.history[0] ?? null;
+  const last = useMemo(() => {
+    if (!lastEntry || !ex) return null;
+    const warm = lastWarm?.sessionId === lastEntry.sessionId ? lastWarm.sets : [];
+    const rows = lastTimeRows(lastEntry.sets, warm, { logType: shownAs, loadMode: ex.loadMode, distUnit: ex.distUnit }, units);
+    return rows.length > 0 ? { dateISO: lastEntry.dateISO, sessionId: lastEntry.sessionId, rows } : null;
+  }, [lastEntry, lastWarm, ex, shownAs, units]);
   const best = ov && ex ? headlineBest(ov.records.bests, shownAs) : null;
 
   const runOnce = async (action: () => Promise<void>, failText: string): Promise<void> => {
@@ -304,7 +326,8 @@ export default function ExerciseScreen() {
 
   return (
     <Screen scroll={false}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: space.xxl }}>
+      {/* 13 Oct 2026: room under the last control for the phone's gesture bar, so it is never cut off */}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: space.xxl + insets.bottom }}>
         {/* header: back chevron + name + muscle + equipment */}
         <Animated.View
           entering={FadeInDown.duration(motion.slow)}
@@ -364,13 +387,20 @@ export default function ExerciseScreen() {
                 {/* EX-07: the answer first — last time and best, in the way it is logged */}
                 {last ? (
                   <Card style={{ gap: space.sm, marginBottom: space.lg }}>
-                    <View style={{ gap: 2 }}>
-                      <Text style={headLabel}>Last time · {relativeDay(last.dateISO)}</Text>
-                      <Text style={headValue}>{last.text}</Text>
-                    </View>
+                    {/* 13 Oct 2026: last time's sets as the workout page's table; the heading opens that workout */}
+                    <Pressable
+                      onPress={() => openSession(last.sessionId)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Last time · ${relativeDay(last.dateISO)}. Open the workout`}
+                      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 48, opacity: pressed ? 0.7 : 1 })}
+                    >
+                      <Text style={[sectionLabel, { flex: 1 }]}>Last time · {relativeDay(last.dateISO)}</Text>
+                      <Icon name="chevron-right" size={18} color={color.inkMuted} />
+                    </Pressable>
+                    <SetTable rows={last.rows} logType={shownAs} />
                     {best ? (
-                      <View style={{ gap: 2 }}>
-                        <Text style={headLabel}>Best · {RECORD_LABEL[best.kind].toLowerCase()}</Text>
+                      <View style={{ gap: 2, marginTop: space.sm, paddingTop: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
+                        <Text style={sectionLabel}>Best · {RECORD_LABEL[best.kind].toLowerCase()}</Text>
                         <Text style={headValue}>
                           {recordValueText(best, { logType: shownAs, loadMode: ex.loadMode, distUnit: ex.distUnit, units })}
                         </Text>
@@ -593,5 +623,6 @@ function MergePicker({
   );
 }
 
-const headLabel = { fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted } as const;
+/** The Summary card's two headings ("Last time · …", "Best · …"): one style. */
+const sectionLabel = { fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary } as const;
 const headValue = { fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink } as const;

@@ -83,14 +83,15 @@ const h = (dateISO: string, sets: ExerciseHistoryEntry['sets'], extra: Partial<E
 describe('the exercise Summary chart', () => {
   it('chips follow how the exercise is logged (Hevy’s sets, our words)', () => {
     const words = (lt: Parameters<typeof chartMetrics>[0], cardio = false) => chartMetrics(lt).map((m) => metricLabel(m, 'metric', { shownAs: lt, cardio }));
-    expect(words('weight_reps')).toEqual(['Heaviest weight', 'One rep max', 'Best set kg lifted', 'Workout kg lifted', 'Total reps']);
-    expect(words('reps')).toEqual(['Most reps', 'Workout reps']);
-    expect(words('assisted')).toEqual(['Least help', 'Most reps', 'Workout reps']);
-    expect(words('time')).toEqual(['Best time', 'Workout time']);
-    expect(words('time', true)).toEqual(['Longest time', 'Workout time']);
-    expect(words('distance')).toEqual(['Longest distance', 'Workout distance']);
-    expect(words('time_distance')).toEqual(['Longest distance', 'Longest time', 'Workout distance']);
-    expect(metricLabel('workoutLifted', 'imperial')).toBe('Workout lb lifted');
+    // 13 Oct 2026: the app's own words ("Kg lifted", "Estimated 1-rep max", "Total …").
+    expect(words('weight_reps')).toEqual(['Heaviest weight', 'Estimated 1-rep max', 'Kg lifted in best set', 'Kg lifted', 'Total reps']);
+    expect(words('reps')).toEqual(['Most reps', 'Total reps']);
+    expect(words('assisted')).toEqual(['Least help', 'Most reps', 'Total reps']);
+    expect(words('time')).toEqual(['Best time', 'Total time']);
+    expect(words('time', true)).toEqual(['Longest time', 'Total time']);
+    expect(words('distance')).toEqual(['Longest distance', 'Total distance']);
+    expect(words('time_distance')).toEqual(['Longest distance', 'Longest time', 'Total distance']);
+    expect(metricLabel('workoutLifted', 'imperial')).toBe('Lb lifted');
   });
 
   // Newest first, as the page reads it.

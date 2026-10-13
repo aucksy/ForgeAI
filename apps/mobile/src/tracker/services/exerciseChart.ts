@@ -3,13 +3,14 @@
  *
  * One chart, a row of chips for what it shows, and a range (3 months · Year · All time). The
  * chips follow how the exercise is logged (Hevy's sets):
- *   weight × reps, added weight  Heaviest weight · One rep max · Best set kg lifted ·
- *                                Workout kg lifted · Total reps
- *   bodyweight reps              Most reps · Workout reps
- *   assisted                     Least help · Most reps · Workout reps
- *   timed (plank, stair climber) Best time (Longest time for cardio) · Workout time
- *   distance                     Longest distance · Workout distance
- *   distance + time (a run)      Longest distance · Longest time · Workout distance
+ *   weight × reps, added weight  Heaviest weight · Estimated 1-rep max · Kg lifted in best set ·
+ *                                Kg lifted · Total reps
+ *   bodyweight reps              Most reps · Total reps
+ *   assisted                     Least help · Most reps · Total reps
+ *   timed (plank, stair climber) Best time (Longest time for cardio) · Total time
+ *   distance                     Longest distance · Total distance
+ *   distance + time (a run)      Longest distance · Longest time · Total distance
+ * ("Kg lifted", "Total …" = in the whole workout; 13 Oct 2026 renames.)
  * Our words, never Hevy's "volume" / "session" (test/lib/memberWords.test.ts): kg lifted and
  * workout. Kg lifted follows the one volume rule (both dumbbells, body weight on pull-ups) — the
  * page's history arrives with it already applied (`historyWithVolume`), and the best set comes
@@ -17,7 +18,7 @@
  */
 import { epleyE1rm } from '@/engine/overload';
 import { addDays } from '@/lib/date';
-import { kgToDisplay, trimNum, weightUnit } from '@/lib/format';
+import { fmtCompact, fmtInt, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { liftedWords } from '@/lib/units';
 import type { UnitSystem } from '@/types/models';
 
@@ -67,34 +68,39 @@ export function chartMetrics(shownAs: LogType): ChartMetric[] {
   }
 }
 
-/** A chip's words. `cardio`: a timed exercise that is cardio (a stair climber) has a longest time, not a best hold. PURE. */
+/**
+ * A chip's words. `cardio`: a timed exercise that is cardio (a stair climber) has a longest time,
+ * not a best hold. 13 Oct 2026 (owner: "Workout kg lifted" read oddly): the app's own words —
+ * "Kg lifted" as in Statistics, "Estimated 1-rep max" as the design language says, and each
+ * per-workout sum is a "Total …". PURE.
+ */
 export function metricLabel(m: ChartMetric, units: UnitSystem, o: { shownAs?: LogType; cardio?: boolean } = {}): string {
   switch (m) {
     case 'heaviest':
       return 'Heaviest weight';
     case 'e1rm':
-      return 'One rep max';
+      return 'Estimated 1-rep max';
     case 'bestSet':
-      return `Best set ${liftedWords(units)}`;
+      return `${liftedWords(units, true)} in best set`;
     case 'workoutLifted':
-      return `Workout ${liftedWords(units)}`;
+      return liftedWords(units, true);
     case 'totalReps':
       return 'Total reps';
     case 'mostReps':
       return 'Most reps';
     case 'workoutReps':
-      return 'Workout reps';
+      return 'Total reps';
     case 'leastHelp':
       return 'Least help';
     case 'bestTime':
       return o.cardio || o.shownAs === 'time_distance' ? 'Longest time' : 'Best time';
     case 'workoutTime':
-      return 'Workout time';
+      return 'Total time';
     case 'longestDistance':
       return 'Longest distance';
     case 'workoutDistance':
     default:
-      return 'Workout distance';
+      return 'Total distance';
   }
 }
 
@@ -107,18 +113,35 @@ export function metricUnit(m: ChartMetric): MetricUnit {
   return 'reps';
 }
 
-/** How a y value reads ("82.5 kg", "12 reps", "1:30", "5.2 km"). PURE. */
+/**
+ * A number on the chart and its readout: whole and grouped the phone's way from 1,000 up
+ * ("1,330", as everywhere else — 13 Oct 2026, the owner saw "1330 kg"), trimmed below it
+ * ("82.5"). PURE.
+ */
+export function chartNumber(n: number, dp = 1): string {
+  return Math.abs(n) >= 1000 ? fmtInt(n) : trimNum(n, dp);
+}
+
+/**
+ * A y-axis label: `chartNumber`, and the short form ("125k") only from 100,000 up, where the
+ * grouped number would not fit beside the axis. PURE.
+ */
+export function chartAxisNumber(n: number): string {
+  return Math.abs(n) >= 100_000 ? fmtCompact(n) : chartNumber(n);
+}
+
+/** How a y value reads ("82.5 kg", "1,330 kg", "12 reps", "1:30", "5.2 km"). PURE. */
 export function metricValueText(m: ChartMetric, y: number, units: UnitSystem, distUnit: DistUnit): string {
   switch (metricUnit(m)) {
     case 'weight':
-      return `${trimNum(y)} ${weightUnit(units)}`;
+      return `${chartNumber(y)} ${weightUnit(units)}`;
     case 'seconds':
       return fmtDuration(y);
     case 'distance':
-      return `${trimNum(y, 2)} ${shownDistUnit(distUnit)}`;
+      return `${chartNumber(y, 2)} ${shownDistUnit(distUnit)}`;
     case 'reps':
     default:
-      return `${trimNum(y)} ${y === 1 ? 'rep' : 'reps'}`;
+      return `${chartNumber(y)} ${y === 1 ? 'rep' : 'reps'}`;
   }
 }
 

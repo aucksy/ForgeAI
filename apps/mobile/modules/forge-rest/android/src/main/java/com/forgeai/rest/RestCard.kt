@@ -95,7 +95,7 @@ object RestCard {
   private const val PREFS_QUIET = "forgeai_rest_quiet"
   /** Phase 6: the last Done tap (kept apart from the rest, which [forget] clears). */
   private const val PREFS_DONE = "forgeai_rest_done"
-  private const val COLOR = 0xFFFF7A3B.toInt()
+  internal const val COLOR = 0xFFFF7A3B.toInt()
   /** An end that fires this much early (an inexact alarm never does) is re-armed instead. */
   private const val EARLY_MS = 1500L
   /** Logcat tag for the end-of-rest path (the device QA saves these lines). */
@@ -517,7 +517,11 @@ object RestCard {
     return 10_000 + ((key.hashCode() and 0x7fffffff) % 1_000_000)
   }
 
-  private fun doneIntent(ctx: Context, t: DoneTarget, endsAt: Long, label: String?): PendingIntent? {
+  /**
+   * The Done button's intent. 13 Oct 2026: also the live workout card's "Complete set"
+   * ([WorkoutCard]), which passes [codeShift] so its PendingIntent never replaces the rest card's.
+   */
+  internal fun doneIntent(ctx: Context, t: DoneTarget, endsAt: Long, label: String?, codeShift: Int = 0): PendingIntent? {
     val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     val i: Intent
     if (t.open) {
@@ -535,9 +539,9 @@ object RestCard {
     i.putExtra(EXTRA_DONE_VALUES, t.values)
     i.putExtra(EXTRA_ENDS, endsAt)
     return if (t.open) {
-      PendingIntent.getActivity(ctx, doneCode(t), i, flags)
+      PendingIntent.getActivity(ctx, doneCode(t) + codeShift, i, flags)
     } else {
-      PendingIntent.getBroadcast(ctx, doneCode(t), i, flags)
+      PendingIntent.getBroadcast(ctx, doneCode(t) + codeShift, i, flags)
     }
   }
 
@@ -742,9 +746,9 @@ object RestCard {
   }
 
   // ------------------------------------------------------------------ notifications
-  private fun nm(ctx: Context) = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+  internal fun nm(ctx: Context) = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-  private fun iconRes(ctx: Context): Int {
+  internal fun iconRes(ctx: Context): Int {
     val id = ctx.resources.getIdentifier("notification_icon", "drawable", ctx.packageName)
     return if (id != 0) id else ctx.applicationInfo.icon
   }
@@ -761,7 +765,7 @@ object RestCard {
     return SimpleDateFormat(pattern, Locale.ENGLISH).format(Date(ms)).lowercase(Locale.ENGLISH)
   }
 
-  private fun openIntent(ctx: Context): PendingIntent? {
+  internal fun openIntent(ctx: Context): PendingIntent? {
     val launch = ctx.packageManager.getLaunchIntentForPackage(ctx.packageName) ?: return null
     launch.putExtra(EXTRA_OPEN, true)
     launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -774,7 +778,7 @@ object RestCard {
   }
 
   @Suppress("DEPRECATION")
-  private fun builder(ctx: Context, channel: String): Notification.Builder =
+  internal fun builder(ctx: Context, channel: String): Notification.Builder =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(ctx, channel)
     else Notification.Builder(ctx)
 
@@ -969,6 +973,12 @@ object RestCard {
       // times the alert follows the ringer as before.
       val alarm = !open && ringThroughDnd(ctx) && dndOn(ctx)
       val channel = if (open) CH_OVER_OPEN else if (alarm) CH_OVER_ALARM else CH_OVER
+      // 13 Oct 2026: Android 15+ "notification cooldown" (on by default on Pixel, and a Pixel Watch
+      // follows it) mutes the buzz of a second alert from one app within ~2 minutes — one rest
+      // after another. Alarm-category alerts skip it, so every "Rest is over" is an alarm on every
+      // channel... except while Do Not Disturb is on and the member has NOT chosen "Ring through
+      // Do Not Disturb": Do Not Disturb lets alarms through, so there it stays a reminder (RT-12).
+      val category = if (dndOn(ctx) && !ringThroughDnd(ctx)) Notification.CATEGORY_REMINDER else Notification.CATEGORY_ALARM
       val b = builder(ctx, channel)
         .setSmallIcon(icon)
         .setColor(COLOR)
@@ -978,7 +988,7 @@ object RestCard {
         .setWhen(endsAt)
         .setAutoCancel(true)
         .setOngoing(false)
-        .setCategory(if (alarm) Notification.CATEGORY_ALARM else Notification.CATEGORY_REMINDER)
+        .setCategory(category)
         .setVisibility(Notification.VISIBILITY_PUBLIC)
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
         b.setPriority(if (open) Notification.PRIORITY_DEFAULT else Notification.PRIORITY_MAX)

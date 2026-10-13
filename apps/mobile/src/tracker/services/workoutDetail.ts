@@ -23,6 +23,7 @@ import { trimNum, fmtInt } from '@/lib/format';
 import { kgToShown, weightUnitOf, type UnitSystem } from '@/lib/units';
 import type { SetEntry } from '@/types/models';
 
+import type { TrackedSetEntry } from '../db/exerciseHistory';
 import type { SetMeta } from '../db/trackerSets';
 import type { TrackerExercise } from '../db/exerciseInfo';
 import { fmtSetCompact, fmtTotalDistance, typedWeight } from '../engine/logTypes';
@@ -135,4 +136,35 @@ export function detailSetRows(
       records: held.get(s.id) ?? [],
     };
   });
+}
+
+/**
+ * 13 Oct 2026 — the exercise page's "Last time" card as the same set table the workout's page
+ * uses (owner: the run-on line "20 × 18, 20 × 16, … kg" was out of the theme): the last workout's
+ * warm-ups and working sets in the order they were done (W / 1 / 2 / D / F, the type's own words,
+ * "@8" when an RPE was logged). `working` = that workout's sets from the history read (working
+ * sets only); `warmups` = its warm-ups (`getWarmupSets`), [] when none or not read. PURE.
+ */
+export function lastTimeRows(
+  working: readonly TrackedSetEntry[],
+  warmups: readonly TrackedSetEntry[],
+  kind: Kind | undefined,
+  units: UnitSystem,
+): DetailSetRow[] {
+  const all = [...warmups.map((s) => ({ ...s, isWarmup: true })), ...working].sort(
+    (a, b) => (a.cardIndex ?? 0) - (b.cardIndex ?? 0) || a.setNumber - b.setNumber,
+  );
+  const meta: Record<string, SetMeta> = {};
+  for (const s of all) {
+    meta[s.id] = {
+      rpe: s.rpe ?? null,
+      setType: s.isWarmup ? 'warmup' : s.setType ?? 'normal',
+      note: null,
+      supersetGroup: null,
+      durationSec: s.durationSec ?? null,
+      distanceM: s.distanceM ?? null,
+      loadMode: s.loadMode ?? null,
+    };
+  }
+  return detailSetRows(all, meta, kind, units);
 }

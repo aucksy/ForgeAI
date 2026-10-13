@@ -5,6 +5,8 @@
  * first under "Recent". A failed add says so and the list keeps working (EX-10).
  * LW-31: with `?swap=<card key>` it is the "Swap exercise" picker for any exercise (custom
  * ones too): one tap swaps it for this workout only.
+ * 13 Oct 2026: "Create" in the top bar, always (Hevy's), with the search text as the new
+ * exercise's name; Save adds it to this workout. Not in the swap picker.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -15,6 +17,7 @@ import { ADD_EXERCISE_FAILED, navigateOnce, runGuarded } from '@/lib/guardedActi
 import { space } from '@/theme/tokens';
 
 import { ExercisePickerList } from '@/tracker/components/ExercisePickerList';
+import { HeaderCreateButton } from '@/tracker/components/HeaderCreateButton';
 import type { TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { getRecentExerciseIds } from '@/tracker/db/recentExercises';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
@@ -36,6 +39,10 @@ export default function AddExerciseScreen() {
   const [error, setError] = useState<string | null>(null);
   const [picked, setPicked] = useState<TrackerExercise[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
+  const [typed, setTyped] = useState('');
+  const create = (name: string): void => {
+    navigateOnce(nav, () => router.push({ pathname: '/library/new', params: { for: 'workout', name: name.trim() } }));
+  };
 
   useEffect(() => {
     let alive = true;
@@ -90,7 +97,12 @@ export default function AddExerciseScreen() {
       scroll={false}
       title={swapKey ? 'Swap exercise' : 'Add exercise'}
       subtitle={swapKey ? (swapName ? `Instead of ${swapName}, for this workout only` : 'For this workout only') : undefined}
-      right={<IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />}
+      right={
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.xs }}>
+          {swapKey ? null : <HeaderCreateButton onPress={() => create(typed)} />}
+          <IconButton icon="close" onPress={() => router.back()} accessibilityLabel="Close" />
+        </View>
+      }
     >
       <ExercisePickerList
         error={error}
@@ -100,11 +112,8 @@ export default function AddExerciseScreen() {
         isMarked={swapKey ? undefined : isMarked}
         onSelect={onSelect}
         // v0.28.0: not in the list? Make it here (the form adds it to this workout on Save).
-        onCreate={
-          swapKey
-            ? undefined
-            : (typed) => navigateOnce(nav, () => router.push({ pathname: '/library/new', params: { for: 'workout', name: typed } }))
-        }
+        onCreate={swapKey ? undefined : create}
+        onQueryChange={setTyped}
       />
       {swapKey ? null : (
         <View style={{ paddingTop: space.sm }}>
