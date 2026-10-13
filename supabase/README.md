@@ -53,7 +53,11 @@ brand columns on `gyms`, the public `gym-logos` bucket, `owner_set_brand`, and t
 
 - **Branding a gym:** the owner opens the panel → Settings → **Branding**, uploads a logo, picks a
   colour (and optionally a background tone and bold-italic headings), checks the phone preview and
-  presses Save. Members see it the next time they open the app (new members: straight after joining).
+  presses Save. New members get it straight after joining. Members already in the gym get it after
+  their app next checks with the gym (on opening, and on coming back to it at most once an hour),
+  the next time they open or come back to the app — under the gym's logo, never in the middle of
+  a workout.
+  Keeping ForgeAI's orange saves no colour, so a logo-only gym keeps ForgeAI's own colours.
 - **Test gyms:** `FORGE1` stays unbranded (ForgeAI's own look). `RAMS01` — RAM'S FITNESS CLUB IMPACT —
   is seeded in their colours (#F7D411 on #0A0A0C, bold italic headings) but has no owner key, so the
   panel cannot open it. To give it a logo: in the panel's own gym, upload the logo on the Branding
@@ -64,3 +68,17 @@ brand columns on `gyms`, the public `gym-logos` bucket, `owner_set_brand`, and t
   (The test picture is made by `apps/mobile/qa/tools/extract_rams_logo.py` from their proposal PDF;
   it is not in the repo.)
 - **Removing a brand:** Branding → "Use ForgeAI's look" (saves all colours and the logo as empty).
+
+## Gym logos: only our bucket (0006_brand_logo_check.sql)
+Run `migrations/0006_brand_logo_check.sql` after 0005 (SQL Editor → paste → Run; re-runnable). It
+puts the logo rule on the `gyms.brand_logo_url` column itself as a CHECK constraint
+(`gyms_brand_logo_url_ok`, using 0005's `_logo_url_ok`): a gym's logo is either empty or a file in
+this project's public `gym-logos` bucket, in an upload-ticket folder. Before it, the rule lived only
+inside `owner_set_brand`, and a signed-in owner account could write any link straight into the
+column (the owner's update policy from 0001) — for example a tracking pixel every member's phone
+would load. The member app also refuses any logo link that is not a `gym-logos` bucket file.
+
+- If the VALIDATE step fails, a row holds a link from elsewhere. Find it with
+  `select gym_id, brand_logo_url from public.gyms where not public._logo_url_ok(brand_logo_url);`,
+  set that `brand_logo_url` to null, and run the file again.
+- The RAMS01 step above still works: the panel's logo link passes the check.

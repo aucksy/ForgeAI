@@ -324,6 +324,18 @@ export function cancelErrorText(err: GymError): string {
 /** Shown on the join card when the gym no longer knows this phone's key. */
 export const UNLINKED_TEXT = 'This phone is no longer joined to the gym. Join again with its code.';
 
+/** Gym branding: the gym's name and look are asked again on return to the app at most this often. */
+export const GYM_CHECK_EVERY_MS = 60 * 60 * 1000;
+
+/**
+ * Ask the gym again (member_me) now? Yes the first time, then once `GYM_CHECK_EVERY_MS` has passed
+ * since the last ask — or when the phone's clock went back past it. PURE.
+ */
+export function gymCheckDue(lastAtMs: number | null, nowMs: number): boolean {
+  if (lastAtMs == null) return true;
+  return nowMs - lastAtMs >= GYM_CHECK_EVERY_MS || nowMs < lastAtMs;
+}
+
 // ------------------------------------------------------------------ the bag against the live list
 
 /** The bag line whose name (option included) is `name`, as its key; null when none. PURE. */

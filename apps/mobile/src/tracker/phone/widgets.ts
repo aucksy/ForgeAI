@@ -27,6 +27,7 @@ import { countWord } from '@/lib/words';
 import { getTodayPlan } from '@/tracker/services/todayService';
 import { followedFolder } from '@/tracker/db/folderRepo';
 import { planDaysPerWeek } from '@/tracker/services/planState';
+import { color } from '@/theme/tokens';
 
 import { liveWorkout } from './liveWorkout';
 import { phoneNative } from './native';
@@ -103,6 +104,17 @@ export interface WidgetPayload {
   later: { today: WidgetToday; week: { count: string; line: string } };
   /** Review fix: the widget's key, added to its Start / Resume link (absent: none could be read). */
   token?: string;
+  /**
+   * Gym branding: the app's accent ('#RRGGBB') and the ink that reads on it, so the widgets wear
+   * the gym's colour (labels, the day marks). Absent or damaged: the widget keeps ForgeAI's orange.
+   */
+  accent?: string;
+  onAccent?: string;
+}
+
+/** Gym branding: the colours the widgets draw in — the app's live accent (theme tokens). PURE read. */
+export function widgetLook(): { accent: string; onAccent: string } {
+  return { accent: color.accent, onAccent: color.onAccent };
 }
 
 export const WIDGET_DAYS = 7;
@@ -222,6 +234,7 @@ export async function refreshWidgets(): Promise<void> {
       live: live ? { name: live.name } : null,
     });
     if (token) data.token = token;
+    Object.assign(data, widgetLook());
     n.widgetSave(JSON.stringify(data));
     saveShortcuts(appShortcuts(data));
   } catch {

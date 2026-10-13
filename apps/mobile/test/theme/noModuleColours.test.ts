@@ -54,24 +54,52 @@ function moduleLevelTokenReads(path: string, text: string): string[] {
     }
   }
   const hits: string[] = [];
+  /** A function run right where it is written (`(() => …)()`) runs at load time: not a shelter. */
+  const runsAtOnce = (fn: ts.Node): boolean => {
+    let e: ts.Node = fn;
+    while (e.parent && ts.isParenthesizedExpression(e.parent)) e = e.parent;
+    return !!e.parent && ts.isCallExpression(e.parent) && e.parent.expression === e;
+  };
   const insideFunction = (n: ts.Node): boolean => {
     for (let p: ts.Node | undefined = n.parent; p; p = p.parent) {
-      if (ts.isFunctionLike(p) || ts.isClassStaticBlockDeclaration(p)) return true;
+      if (ts.isFunctionLike(p) && !runsAtOnce(p)) return true;
+      if (ts.isClassStaticBlockDeclaration(p)) return true;
       if (ts.isTypeNode(p)) return true; // `typeof color.accent` reads nothing
     }
     return false;
   };
+  /** The token object an expression IS (`color`, `tokens.color`, an alias of either), or null. */
+  const tokenObject = (e: ts.Expression): string | null => {
+    while (ts.isParenthesizedExpression(e) || ts.isAsExpression(e) || ts.isNonNullExpression(e) || ts.isSatisfiesExpression(e)) e = e.expression;
+    if (ts.isIdentifier(e) && local.has(e.text)) return local.get(e.text)!;
+    if (ts.isPropertyAccessExpression(e) && ts.isIdentifier(e.expression) && namespaces.has(e.expression.text) && TOKEN_OBJECTS.has(e.name.text)) {
+      return e.name.text;
+    }
+    return null;
+  };
+  const report = (n: ts.Node) => {
+    const { line } = sf.getLineAndCharacterOfPosition(n.getStart());
+    hits.push(`${rel(path)}:${line + 1} ${n.getText().slice(0, 60)}`);
+  };
+  // Aliases: `const c = color` (or `= tokens.color`) — a later `c.accent` is a token read too.
+  // Followed in source order, at any depth (an alias made inside a component shelters its reads).
+  const aliases = (n: ts.Node) => {
+    if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name) && n.initializer) {
+      const obj = tokenObject(n.initializer);
+      if (obj) local.set(n.name.text, obj);
+    }
+    ts.forEachChild(n, aliases);
+  };
+  aliases(sf);
   const visit = (n: ts.Node) => {
+    // `const { accent } = color` outside a function copies the colour at load time.
+    if (ts.isVariableDeclaration(n) && n.initializer && (ts.isObjectBindingPattern(n.name) || ts.isArrayBindingPattern(n.name)) && tokenObject(n.initializer) && !insideFunction(n)) {
+      report(n);
+      return;
+    }
     if (ts.isPropertyAccessExpression(n) || ts.isElementAccessExpression(n)) {
-      const base = n.expression;
-      let hit: string | null = null;
-      if (ts.isIdentifier(base) && local.has(base.text)) hit = `${local.get(base.text)}`;
-      else if (ts.isPropertyAccessExpression(base) && ts.isIdentifier(base.expression) && namespaces.has(base.expression.text) && TOKEN_OBJECTS.has(base.name.text)) {
-        hit = base.name.text;
-      }
-      if (hit && !insideFunction(n)) {
-        const { line } = sf.getLineAndCharacterOfPosition(n.getStart());
-        hits.push(`${rel(path)}:${line + 1} ${n.getText().slice(0, 60)}`);
+      if (tokenObject(n.expression) && !insideFunction(n)) {
+        report(n);
         return; // one report per outermost read
       }
     }
@@ -103,6 +131,31 @@ describe('no token colour is copied at load time (gym branding repaints the app)
     expect(hits).toEqual([]);
   });
 
+  it('D7: no hand-typed ink colour where a token belongs (text and icons on the accent use onAccent)', () => {
+    // A text or icon colour typed out as a near-black or near-white hex. On the accent it must be
+    // `color.onAccent` (the engine picks black or white for the gym's colour; a fixed one vanished
+    // on RAM's yellow). The few left are on colours no gym changes, each with its reason.
+    const ALLOWED: Record<string, string> = {
+      'tracker/components/SetRow.tsx #05140A': 'the tick on the green "done" fill (color.good)',
+      'tracker/components/SetRow.tsx #FFFFFF': '"Delete" on the red swipe action',
+      'tracker/components/DoneSheet.tsx #1A0F08': 'fixed in its own change (out of this one)',
+    };
+    const lum = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((s) => (s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4));
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const hits: string[] = [];
+    for (const p of all) {
+      const r = rel(p);
+      if (isFrozen(r) || r in HAND_TYPED_OK) continue;
+      for (const m of readFileSync(p, 'utf8').matchAll(/\b(?:color|tintColor)\s*[=:]\s*\{?[^,;\n]*?['"](#[0-9A-Fa-f]{6})['"]/g)) {
+        const hex = m[1].toUpperCase();
+        if (lum(hex) < 0.02 || lum(hex) > 0.8) hits.push(`${r} ${hex}`);
+      }
+    }
+    expect([...new Set(hits)].filter((h) => !(h in ALLOWED))).toEqual([]);
+  });
+
   it("no screen types ForgeAI's accent out by hand", () => {
     const hits = all
       .map((p) => rel(p))
@@ -121,6 +174,26 @@ describe('no token colour is copied at load time (gym branding repaints the app)
     const hits = moduleLevelTokenReads(join(SRC, 'x.tsx'), src);
     expect(hits).toHaveLength(1);
     expect(hits[0]).toContain('x.tsx:2');
+  });
+
+  it('…and through destructuring, an alias, and a helper run at load time', () => {
+    const src = [
+      "import { color, gradients } from '@/theme/tokens';",
+      "import * as tokens from '@/theme/tokens';",
+      'const { accent } = color;', // 3: copies the accent at load time
+      'const [top] = gradients.ember;', // 4: the property read is caught
+      'const c = color;', // an alias: harmless itself…
+      'const BADGE = { fill: c.accentSoft };', // 6: …but a load-time read through it is not
+      'const t = tokens.color;',
+      'const RING = t.focusRing;', // 8
+      'const TINT = (() => color.accentBright)();', // 9: a helper run right away
+      'export function Row() { const { ink } = color; const k = c; return [ink, k.accent, top, accent]; }',
+      'const later = () => c.ink;',
+      'const memo = (fn: () => string) => fn;',
+      'const lazy = memo(() => color.ink);', // passed, not run: read when drawn
+    ].join('\n');
+    const lines = moduleLevelTokenReads(join(SRC, 'y.tsx'), src).map((h) => Number(h.split(' ')[0].split(':')[1]));
+    expect(lines).toEqual([3, 4, 6, 8, 9]);
   });
 
   it('frozen files: what they still capture is known (they may not be edited)', () => {

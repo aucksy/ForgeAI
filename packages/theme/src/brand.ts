@@ -14,9 +14,16 @@
  *  - text ON the accent (onAccent): >= 4.5:1; the primary button's frozen dark ink (#1F0D05)
  *    on both stops of the button gradient: >= 4.5:1;
  *  - every grey text colour (ink … inkFaint): >= 4.5:1 on every plane;
- *  - chart marks (series slot 0) and the deep accent: >= 3:1 on a card (non-text UI).
+ *  - text in the accent on its own light tint (accentSoft: selected chips, tinted pills) laid over
+ *    the page, a card and a sheet: >= 4.5:1;
+ *  - chart marks (series slot 0) and the deep accent: >= 3:1 on a card (non-text UI);
+ *  - a switch that is on (bright knob on the deep track): >= 1.5:1, about ForgeAI's own 1.65.
  * A colour that fails is moved in LIGHTNESS only (hue kept, chroma clipped to sRGB) until it
- * passes, and the move is reported in plain words.
+ * passes, and the move is reported in plain words. Every check is made on the colours exactly as
+ * they come out (rounded to hex), never on the unrounded lightness the search tried.
+ *
+ * ForgeAI's own ember with ForgeAI's own page (a gym that only uploads a logo) is ForgeAI's
+ * HAND-TUNED palette, not the engine's reading of it.
  *
  * Colour maths: OKLab/OKLCH (perceptual lightness, so "lighten" keeps the hue) and WCAG 2.x
  * relative luminance for the ratios. Deterministic: same input, same output, no randomness.
@@ -34,7 +41,7 @@ export interface GymBrand {
   accent: string | null;
   /** '#RRGGBB' or null (ForgeAI's planes stay). */
   bg: string | null;
-  /** Public https URL of the logo (the gym-logos bucket), or null. */
+  /** Public https URL of the logo (a file in the gym-logos bucket: see `logoUrlOf`), or null. */
   logoUrl: string | null;
   heading: HeadingStyle;
   /** ISO time the owner last saved it, or null. */
@@ -135,6 +142,31 @@ export const FORGE_SERIES = ['#E8641F', '#3987E5', '#19A97A', '#9085E9', '#C9850
 const FORGE_RAMP = ['#1A1510', '#4A2C15', '#7C4218', '#B4571B', '#E8641F', '#FF8B4A'] as const;
 const DIVERGING_MID = '#383E4E';
 const GLASS_ALPHA = 0.72;
+/** accentSoft: the accent's see-through tint behind accent text (chips, pills). */
+const SOFT_ALPHA = 0.14;
+/** A switch that is on: its bright knob against its deep track. */
+const SWITCH_MIN = 1.5;
+
+/** ForgeAI's own accent ("forge" ember). */
+export const FORGE_ACCENT = sharedColor.accent;
+
+/**
+ * ForgeAI's hand-tuned look, exactly as the phone's tokens hold it (apps/mobile/src/theme/
+ * tokens.ts; parity asserted in apps/mobile/test/theme/brandParity.test.ts). The engine returns
+ * this for ForgeAI's own ember on ForgeAI's own page, so a gym that only uploads a logo keeps
+ * ForgeAI's colours to the last shade.
+ */
+const FORGE_LOOK = {
+  color: {
+    accentBright: sharedColor.accentBright,
+    accentDeep: sharedColor.accentDeep,
+    accentSoft: sharedColor.accentSoft,
+    focusRing: sharedColor.accentBright,
+  },
+  ember: ['#FF8B4A', '#F0570F'] as [string, string],
+  emberSubtle: ['rgba(255, 122, 59, 0.16)', 'rgba(255, 122, 59, 0.02)'] as [string, string],
+  diverging: { neg: FORGE_SERIES[1], mid: DIVERGING_MID, pos: FORGE_SERIES[0] },
+};
 
 const NEAR_BLACK = '#0A0A0A';
 const WHITE = '#FFFFFF';
@@ -323,6 +355,11 @@ function textPlanes(p: Record<PlaneKey, string>): Record<string, string> {
 const minOver = (fg: string, planes: Record<string, string>) =>
   Math.min(...Object.values(planes).map((b) => contrastRatio(fg, b)));
 
+/** Each plane with the accent's own tint (accentSoft) laid over it, as a selected chip shows it. */
+function onSoft(accent: string, planes: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(Object.entries(planes).map(([k, p]) => [k, over(rgba(accent, SOFT_ALPHA), p)]));
+}
+
 function greysPass(p: Record<PlaneKey, string>): boolean {
   const planes = textPlanes(p);
   return Object.values(PHONE_INK).every((ink) => minOver(ink, planes) >= 4.5);
@@ -342,6 +379,9 @@ export function buildBrandPalette(input: BrandInput): BrandPalette {
   if (!brandHex) throw new Error(`not a colour: ${input.accent}`);
   const toneHex = input.bg == null || input.bg === '' ? null : normalizeHex(input.bg);
   if (input.bg != null && input.bg !== '' && !toneHex) throw new Error(`not a colour: ${input.bg}`);
+  // ForgeAI's own ember on ForgeAI's own page: ForgeAI's hand-tuned look, not a derivation of it
+  // (a gym that only uploads a logo would otherwise get #FF9C72 shades ForgeAI never had).
+  if (brandHex === FORGE_ACCENT && (toneHex == null || toneHex === FORGE_PLANES.bg)) return forgePalette();
   const nudges: BrandNudge[] = [];
 
   // 1. Planes: ForgeAI's own, or stepped up from the gym's tone (darkened until grey text reads).
@@ -379,18 +419,29 @@ export function buildBrandPalette(input: BrandInput): BrandPalette {
   }
   const planeSet = textPlanes(planes);
 
-  // 2. Accent: lightened (hue kept) until text in it reads on every plane and the primary
-  //    button's dark ink reads on both stops of its gradient.
+  // 2. Accent: lightened (hue kept) until text in it reads on every plane and on its own tint,
+  //    and the primary button's dark ink reads on both stops of its gradient.
   const brand = hexToOklch(brandHex);
-  const emberFor = (L: number): [string, string] => [withL(brand, Math.min(0.97, L + 0.05)), withL(brand, L - 0.03)];
+  // The button gradient: a little lighter and a little darker than the accent. Near white the
+  // light end runs out of room (it stops at 0.97), so the dark end keeps the 0.08 step below it
+  // — a white accent still gets a visible sweep, not a flat fill.
+  const emberFor = (L: number): [string, string] => {
+    const top = Math.min(0.97, L + 0.05);
+    return [withL(brand, top), withL(brand, Math.min(L - 0.03, top - 0.08))];
+  };
+  const softPlanes = { page: planes.bg, card: planes.surface, sheet: planes.surfaceRaised };
+  const accentAt = (L: number) => (L === brand.L ? brandHex : withL(brand, L));
   const accentOk = (L: number) => {
-    const a = L === brand.L ? brandHex : withL(brand, L);
+    const a = accentAt(L);
     if (minOver(a, planeSet) < 4.5) return false;
-    return emberFor(L).every((stop) => contrastRatio(BUTTON_INK, stop) >= 4.5);
+    if (minOver(a, onSoft(a, softPlanes)) < 4.5) return false;
+    // D10: the gradient exactly as it will be drawn — from the ROUNDED accent's own lightness
+    // (checking the unrounded `L` let a stop land at 4.44:1 once rounded).
+    return emberFor(hexToOklch(a).L).every((stop) => contrastRatio(BUTTON_INK, stop) >= 4.5);
   };
   let aL = brand.L;
   for (let i = 0; i < 100 && !accentOk(aL) && aL < 0.98; i += 1) aL = Math.min(0.98, aL + 0.01);
-  const accent = aL === brand.L ? brandHex : withL(brand, aL);
+  const accent = accentAt(aL);
   if (accent !== brandHex) {
     nudges.push({
       what: 'accent',
@@ -400,8 +451,12 @@ export function buildBrandPalette(input: BrandInput): BrandPalette {
     });
   }
   const acc = hexToOklch(accent);
-  const accentBright = withL(acc, Math.min(0.96, acc.L + 0.06));
+  // "Bright" is never darker than the accent itself (a white accent: white, not a grey).
+  const accentBright = withL(acc, Math.max(acc.L, Math.min(0.96, acc.L + 0.06)));
+  // "Deep": a step below, dark enough that a switch's bright knob shows on it (near white the
+  // usual step is not), yet still a mark on a card.
   let deepL = acc.L - 0.07;
+  while (contrastRatio(accentBright, withL(acc, deepL)) < SWITCH_MIN && deepL > 0) deepL -= 0.01;
   while (contrastRatio(withL(acc, deepL), planes.surface) < 3 && deepL < acc.L) deepL += 0.01;
   const accentDeep = withL(acc, Math.min(acc.L, deepL));
   const ember = emberFor(acc.L);
@@ -447,7 +502,7 @@ export function buildBrandPalette(input: BrandInput): BrandPalette {
       accent,
       accentBright,
       accentDeep,
-      accentSoft: rgba(accent, 0.14),
+      accentSoft: rgba(accent, SOFT_ALPHA),
       onAccent,
       focusRing: accentBright,
       grid: planes.grid,
@@ -492,6 +547,10 @@ export function brandChecks(p: BrandPalette): BrandCheck[] {
   for (const [name, plane] of Object.entries(planes)) {
     add(`accent-on-${name}`, `Text in your colour on the ${name}`, p.color.accent, plane, 4.5);
   }
+  // Selected chips and tinted pills: text in the colour on its own light tint.
+  for (const [name, plane] of Object.entries({ page: planes.page, card: planes.card, sheet: planes.sheet })) {
+    add(`accent-on-soft-${name}`, `Text in your colour on its own tint (on the ${name})`, p.color.accent, over(p.color.accentSoft, plane), 4.5);
+  }
   add('on-accent', 'Text on your colour', p.color.onAccent, p.color.accent, 4.5);
   add('button-top', 'Button words on the button (light end)', BUTTON_INK, p.gradients.ember[0], 4.5);
   add('button-bottom', 'Button words on the button (dark end)', BUTTON_INK, p.gradients.ember[1], 4.5);
@@ -503,7 +562,44 @@ export function brandChecks(p: BrandPalette): BrandCheck[] {
   add('chart-on-card', 'Chart line on a card', p.chart.series[0], p.color.surface, 3);
   add('deep-on-card', 'Dark shade of your colour on a card', p.color.accentDeep, p.color.surface, 3);
   add('focus-on-page', 'Focus ring on the page', p.color.focusRing, p.color.bg, 3);
+  add('switch-on', 'A switch that is on (knob on its track)', p.color.accentBright, p.color.accentDeep, SWITCH_MIN);
   return checks;
+}
+
+/** ForgeAI's hand-tuned palette (see FORGE_LOOK), measured like any other. PURE. */
+function forgePalette(): BrandPalette {
+  const palette: BrandPalette = {
+    color: {
+      bg: FORGE_PLANES.bg,
+      surface: FORGE_PLANES.surface,
+      surfaceRaised: FORGE_PLANES.surfaceRaised,
+      surfaceSunken: FORGE_PLANES.surfaceSunken,
+      glass: sharedColor.glass,
+      accent: FORGE_ACCENT,
+      ...FORGE_LOOK.color,
+      onAccent: BUTTON_INK,
+      grid: FORGE_PLANES.grid,
+      axis: FORGE_PLANES.axis,
+    },
+    gradients: {
+      ember: [...FORGE_LOOK.ember],
+      emberSubtle: [...FORGE_LOOK.emberSubtle],
+      steel: [FORGE_PLANES.steelTop, FORGE_PLANES.surface],
+      backdrop: [FORGE_PLANES.backdropTop, FORGE_PLANES.bg],
+    },
+    glow: FORGE_ACCENT,
+    chart: {
+      series: [...FORGE_SERIES] as BrandPalette['chart']['series'],
+      ramp: [...FORGE_RAMP] as BrandPalette['chart']['ramp'],
+      diverging: { ...FORGE_LOOK.diverging },
+    },
+    checks: [],
+    nudges: [],
+    ok: true,
+  };
+  palette.checks = brandChecks(palette);
+  palette.ok = palette.checks.every((c) => c.pass);
+  return palette;
 }
 
 /**
@@ -528,11 +624,19 @@ export function brandReport(p: BrandPalette): string[] {
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 
-/** A logo link the app will load: https, a real host and path, no spaces, at most 400 characters. */
+/**
+ * A gym logo is a file in the public `gym-logos` bucket, in an upload-ticket folder:
+ * https://<host>/storage/v1/object/public/gym-logos/<48 hex>/<name>. The server holds every row to
+ * the same shape (supabase/migrations/0006_brand_logo_check.sql, which also pins the host), so
+ * a link to anywhere else — a tracking pixel every member's phone would fetch — is never loaded.
+ */
+const LOGO_URL_RE = /^https:\/\/[A-Za-z0-9.-]+\.[A-Za-z]{2,}\/storage\/v1\/object\/public\/gym-logos\/[0-9a-f]{48}\/[A-Za-z0-9._-]{1,80}$/;
+
+/** A logo link the app will load (see LOGO_URL_RE), at most 400 characters; else null. */
 export function logoUrlOf(v: unknown): string | null {
   if (typeof v !== 'string') return null;
   const url = v.trim();
-  if (url.length < 9 || url.length > 400 || /\s/.test(url) || !/^https:\/\/[^/?#]+\.[^/?#]+\//i.test(url)) return null;
+  if (url.length > 400 || !LOGO_URL_RE.test(url)) return null;
   return url;
 }
 
@@ -551,9 +655,13 @@ export function parseGymBrand(raw: unknown): GymBrand | null {
   return { accent, bg, logoUrl, heading, updatedAt };
 }
 
-/** The gym has a look of its own: a colour or a logo. Colours alone may be absent (logo only). */
+/**
+ * The gym has a look of its own: a colour, a background tone or a logo (any may be absent: a
+ * logo only; a tone only, which keeps ForgeAI's ember — the panel saves no colour while the owner
+ * keeps ForgeAI's).
+ */
 export function isBranded(b: GymBrand | null | undefined): b is GymBrand {
-  return !!b && (b.accent != null || b.logoUrl != null);
+  return !!b && (b.accent != null || b.bg != null || b.logoUrl != null);
 }
 
 /** Two brands that would draw the same app. */

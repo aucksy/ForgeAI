@@ -67,7 +67,31 @@ describe('the Branding form', () => {
   it('knows when Save has something to save', () => {
     expect(draftChanged(draftFromBrand(RAMS), RAMS)).toBe(false);
     expect(draftChanged({ ...draftFromBrand(RAMS), heading: 'normal' }, RAMS)).toBe(true);
-    expect(draftChanged(draftFromBrand(null), null)).toBe(true); // a gym with no look yet: the ember is a choice to save
+    // A gym with no look yet: ForgeAI's ember IS no look — nothing to save until something changes.
+    expect(draftChanged(draftFromBrand(null), null)).toBe(false);
+    expect(draftChanged({ ...draftFromBrand(null), logoUrl: LOGO }, null)).toBe(true);
+    // A look saved earlier with ForgeAI's ember written out: the same look, nothing to save.
+    const oldSave = parseGymBrand({ accent: '#FF7A3B', logoUrl: LOGO })!;
+    expect(draftChanged(draftFromBrand(oldSave), oldSave)).toBe(false);
+  });
+
+  it("D9: a logo-only gym saves NO colour — the phone keeps ForgeAI's hand-tuned look", () => {
+    const logoOnly = { ...draftFromBrand(null), logoUrl: LOGO };
+    expect(saveArgs(logoOnly)).toEqual({ p_accent: null, p_bg: null, p_logo_url: LOGO, p_heading: 'normal' });
+    expect(saveArgs({ ...logoOnly, accent: '#ff7a3b' }).p_accent).toBeNull();
+    // A colour the owner picked is saved as picked.
+    expect(saveArgs({ ...logoOnly, accent: '#D32F2F' }).p_accent).toBe('#D32F2F');
+    // …and the preview of the untouched form is ForgeAI's own palette, shade for shade.
+    const p = previewPalette(logoOnly)!;
+    expect(p.color.accentBright).toBe('#FFA043');
+    expect(p.gradients.ember).toEqual(['#FF8B4A', '#F0570F']);
+    expect(p.nudges).toEqual([]);
+  });
+
+  it('D1: the promise under Save is what the phone does (no "next time they open the app")', () => {
+    const screen = readFileSync(resolve(__dirname, '../../src/crm/brand/BrandingScreen.tsx'), 'utf8');
+    expect(screen).not.toMatch(/next time they open (the app|it)/);
+    expect(screen).toMatch(/never in the middle of a workout/);
   });
 });
 
@@ -95,6 +119,16 @@ describe('the logo', () => {
     const re = new RegExp(m![1]);
     expect(re.test(LOGO)).toBe(true);
     expect(re.test(LOGO.replace('gym-logos', 'product-photos'))).toBe(false);
+  });
+
+  it('D8: the server holds every gym row to it (0006: a CHECK, not only owner_set_brand)', () => {
+    const sql = readFileSync(resolve(__dirname, '../../../../supabase/migrations/0006_brand_logo_check.sql'), 'utf8');
+    const body = sql.replace(/--.*$/gm, '');
+    expect(body).toMatch(/add constraint gyms_brand_logo_url_ok\s+check \(public\._logo_url_ok\(brand_logo_url\)\) not valid/i);
+    expect(body).toMatch(/validate constraint gyms_brand_logo_url_ok/i);
+    // The app refuses the same links on its side (packages/theme logoUrlOf).
+    expect(parseGymBrand({ accent: '#F7D411', logoUrl: 'https://tracker.example.com/p.gif' })?.logoUrl).toBeNull();
+    expect(parseGymBrand({ accent: '#F7D411', logoUrl: LOGO })?.logoUrl).toBe(LOGO);
   });
 });
 

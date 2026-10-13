@@ -92,7 +92,7 @@ function TickRow({ label, sub, ticked, onPress }: { label: string; sub: string; 
           justifyContent: 'center',
         }}
       >
-        {ticked ? <Icon name="check" size={14} color={color.ink} /> : null}
+        {ticked ? <Icon name="check" size={14} color={color.onAccent} /> : null}
       </View>
       <View style={{ flex: 1, gap: 2 }}>
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: ticked ? color.ink : color.inkSecondary }}>{label}</Text>

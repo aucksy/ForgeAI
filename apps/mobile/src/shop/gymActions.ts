@@ -4,6 +4,8 @@
  * knows (BAD_KEY: the member left on another phone, or the gym removed them) unlinks this phone
  * and the join card says why.
  */
+import { prefetchGymLogo } from '@/theme/logoPrefetch';
+
 import { apiCancelOrder, apiJoin, apiLeaveQuietly, apiMe, apiOrders, apiPlaceOrder, apiProducts } from './gymApi';
 import {
   JOIN_CODE_LENGTH,
@@ -12,6 +14,7 @@ import {
   cleanJoinCode,
   cleanMemberName,
   findLandedOrder,
+  gymCheckDue,
   joinErrorText,
   onlyLeftText,
   orderLinesFor,
@@ -48,27 +51,42 @@ export async function joinGym(rawCode: string, rawName: string): Promise<ActionW
   if (!name) return joinErrorText({ kind: 'EMPTY' });
   const r = await apiJoin(code, name);
   if (!r.ok) return joinErrorText(r.error);
+  // The logo starts downloading now, while the opening is still being laid out (D13).
+  prefetchGymLogo(r.data.brand?.logoUrl);
   // The shop page that replaces this card fetches the list as it opens.
   useGymShop.getState().setLink(r.data);
   return null;
 }
 
+/** When member_me was last asked (epoch ms), for the once-an-hour check on return to the app. */
+let gymCheckedAt: number | null = null;
+
 /**
- * Gym branding: ask the gym for its name and look as they are now (member_me), on launch and when
- * the Shop opens. A changed brand is kept on the phone; the theme decides when to show it
- * (theme/gymTheme.ts — at once while the gym's logo is on screen, else on the next launch).
- * Quiet: no words for the member, a failure just keeps what the phone has.
+ * Gym branding: ask the gym for its name and look as they are now (member_me), on launch, when
+ * the Shop opens, and on return to the app at most about once an hour (`refreshGymIfDue`). A
+ * changed brand is kept on the phone; the theme decides when to show it (theme/gymTheme.ts — at
+ * once while the gym's logo is on screen, else the next time the app comes back with no workout
+ * open). Quiet: no words for the member, a failure just keeps what the phone has.
  */
 export async function refreshGymNow(): Promise<void> {
   const key = useGymShop.getState().link?.memberKey;
   if (!key) return;
+  gymCheckedAt = Date.now();
   const r = await apiMe(key);
   if (useGymShop.getState().link?.memberKey !== key) return;
   if (!r.ok) {
     lostKey(r.error);
     return;
   }
+  // A new logo is in the cache before the opening that will show it (D13).
+  prefetchGymLogo(r.data.brand?.logoUrl);
   useGymShop.getState().setGymNow(r.data);
+}
+
+/** The app came back to the foreground: ask the gym again if the last ask is an hour old. */
+export async function refreshGymIfDue(now: number = Date.now()): Promise<void> {
+  if (!gymCheckDue(gymCheckedAt, now)) return;
+  await refreshGymNow();
 }
 
 /** Fetch the gym's list. Returns words when it failed (with or without a cached list), else null. */

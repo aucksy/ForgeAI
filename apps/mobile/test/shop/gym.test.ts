@@ -12,6 +12,8 @@ import {
   cancelErrorText,
   classifyRpcError,
   findLandedOrder,
+  GYM_CHECK_EVERY_MS,
+  gymCheckDue,
   cleanGymBlob,
   cleanJoinCode,
   cleanMemberName,
@@ -460,5 +462,18 @@ describe('sold out vs fewer left (review)', () => {
   it('says how many are left', () => {
     expect(onlyLeftText('Gym towel', 2)).toBe('Only 2 of Gym towel left now. Tap Place order again to get those 2.');
     expect(onlyLeftText('Gym towel', 1)).toMatch(/to get it\.$/);
+  });
+});
+
+describe('gym branding: when the app asks the gym again (D1)', () => {
+  const H = 60 * 60 * 1000;
+  it('the first time, then at most about once an hour on return to the app', () => {
+    expect(GYM_CHECK_EVERY_MS).toBe(H);
+    expect(gymCheckDue(null, 1_000)).toBe(true);
+    expect(gymCheckDue(10 * H, 10 * H + 5 * 60_000)).toBe(false);
+    expect(gymCheckDue(10 * H, 11 * H - 1)).toBe(false);
+    expect(gymCheckDue(10 * H, 11 * H)).toBe(true);
+    // The phone's clock went back: ask rather than wait for hours.
+    expect(gymCheckDue(10 * H, 9 * H)).toBe(true);
   });
 });

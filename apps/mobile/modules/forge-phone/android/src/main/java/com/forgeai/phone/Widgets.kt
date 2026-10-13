@@ -7,6 +7,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.widget.RemoteViews
@@ -38,6 +39,13 @@ import java.util.Locale
  *    permission needed) and when the clock or time zone is changed (TIME_SET and
  *    TIMEZONE_CHANGED, which Android still delivers to a receiver in the manifest), so the new
  *    day's entry shows at once instead of up to 30 minutes later.
+ *
+ * Gym branding (v0.37): the app's data carries its accent ("accent", "#RRGGBB") and the ink that
+ * reads on it ("onAccent"). The labels, the action and the day marks wear them — a member of a
+ * branded gym sees the gym's colour on the home screen too. Missing or damaged: ForgeAI's orange.
+ * The app writes the data again whenever its look changes. Each day mark's shape is an image
+ * tinted with a colour filter (the layout puts the letter on top), which every Android version
+ * can do on a home-screen widget.
  */
 object Widgets {
   private const val PREFS = "forgeai_widgets"
@@ -45,6 +53,7 @@ object Widgets {
   private const val ACCENT = 0xFFFF7A3B.toInt()
   private const val MUTED = 0xFFA0A4AE.toInt()
   private const val INK = 0xFF07080C.toInt()
+  private val HEX = Regex("^#[0-9A-Fa-f]{6}$")
   /** The just-after-midnight redraw (an explicit broadcast to [TodayWidget]). */
   const val ACTION_TICK = "com.forgeai.phone.WIDGET_TICK"
   /** How long after midnight the redraw is asked for, and how late Android may run it. */
@@ -61,6 +70,17 @@ object Widgets {
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY, null)?.let { JSONObject(it) }
   } catch (_: Exception) {
     null
+  }
+
+  /** A colour the app wrote ("#RRGGBB"), or `fallback` when it is missing or damaged. */
+  private fun colourOf(d: JSONObject?, key: String, fallback: Int): Int {
+    val s = d?.optString(key, "") ?: ""
+    if (!HEX.matches(s)) return fallback
+    return try {
+      Color.parseColor(s)
+    } catch (_: Exception) {
+      fallback
+    }
   }
 
   fun todayISO(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
@@ -160,6 +180,9 @@ object Widgets {
     val fromDays = entryFor(d, day)?.optJSONObject("today")
     val fromLater = if (fromDays == null && pastLast(d, day)) d?.optJSONObject("later")?.optJSONObject("today") else null
     val t = live ?: fromDays ?: fromLater
+    val accent = colourOf(d, "accent", ACCENT)
+    v.setTextColor(R.id.forge_today_label, accent)
+    v.setTextColor(R.id.forge_today_action, accent)
     var path = "workout"
     if (t == null) {
       v.setTextViewText(R.id.forge_today_title, "ForgeAI")
@@ -193,16 +216,27 @@ object Widgets {
     R.id.forge_week_d4, R.id.forge_week_d5, R.id.forge_week_d6,
   )
 
-  /** The seven day marks. `known` = false: nothing to say about them (no data yet). */
-  private fun paintDays(v: RemoteViews, done: BooleanArray, todayIndex: Int, known: Boolean) {
+  /** Each day mark's shape (an image under the letter, tinted with the accent). */
+  private val MARK_IDS = intArrayOf(
+    R.id.forge_week_m0, R.id.forge_week_m1, R.id.forge_week_m2, R.id.forge_week_m3,
+    R.id.forge_week_m4, R.id.forge_week_m5, R.id.forge_week_m6,
+  )
+
+  /**
+   * The seven day marks. `known` = false: nothing to say about them (no data yet). `accent` fills
+   * a trained day and rings today; `onAccent` is the letter on a filled one. An open day keeps its
+   * own grey ring (a fully see-through filter leaves the shape as drawn).
+   */
+  private fun paintDays(v: RemoteViews, done: BooleanArray, todayIndex: Int, known: Boolean, accent: Int, onAccent: Int) {
     for (i in 0 until 7) {
       val bg = when {
         done[i] -> R.drawable.forge_day_done
         i == todayIndex -> R.drawable.forge_day_today
         else -> R.drawable.forge_day_open
       }
-      v.setInt(DAY_IDS[i], "setBackgroundResource", bg)
-      v.setTextColor(DAY_IDS[i], if (done[i]) INK else if (i == todayIndex) ACCENT else MUTED)
+      v.setImageViewResource(MARK_IDS[i], bg)
+      v.setInt(MARK_IDS[i], "setColorFilter", if (done[i] || i == todayIndex) accent else Color.TRANSPARENT)
+      v.setTextColor(DAY_IDS[i], if (done[i]) onAccent else if (i == todayIndex) accent else MUTED)
       val said = when {
         !known -> DAY_NAMES[i]
         done[i] -> DAY_NAMES[i] + ", trained"
@@ -221,20 +255,23 @@ object Widgets {
     val w = entryFor(d, day)?.optJSONObject("week")
     val days = w?.optJSONArray("days")
     val later = if (w == null && pastLast(d, day)) d?.optJSONObject("later")?.optJSONObject("week") else null
+    val accent = colourOf(d, "accent", ACCENT)
+    val onAccent = colourOf(d, "onAccent", INK)
+    v.setTextColor(R.id.forge_week_label, accent)
     if (w != null && days != null && days.length() == 7) {
       v.setTextViewText(R.id.forge_week_count, w.optString("count", ""))
       v.setTextViewText(R.id.forge_week_line, w.optString("line", ""))
       val done = BooleanArray(7) { days.optBoolean(it, false) }
-      paintDays(v, done, w.optInt("todayIndex", -1), true)
+      paintDays(v, done, w.optInt("todayIndex", -1), true, accent, onAccent)
     } else if (later != null) {
       // A week the app has not seen yet: nothing done in it so far.
       v.setTextViewText(R.id.forge_week_count, later.optString("count", ""))
       v.setTextViewText(R.id.forge_week_line, later.optString("line", ""))
-      paintDays(v, BooleanArray(7), todayIndexNow(), true)
+      paintDays(v, BooleanArray(7), todayIndexNow(), true, accent, onAccent)
     } else {
       v.setTextViewText(R.id.forge_week_count, "ForgeAI")
       v.setTextViewText(R.id.forge_week_line, "Open ForgeAI to update")
-      paintDays(v, BooleanArray(7), -1, false)
+      paintDays(v, BooleanArray(7), -1, false, accent, onAccent)
     }
     // Redesign R1: the week opens the Profile (its chart and workouts); History is no longer a tab.
     v.setOnClickPendingIntent(R.id.forge_week_root, open(ctx, "profile", 22))

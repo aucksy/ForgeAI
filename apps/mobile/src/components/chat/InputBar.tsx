@@ -12,6 +12,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { BUTTON_INK } from '@forgeai/theme';
+
 import { Icon, IconButton } from '@/components/ui';
 import { tap, thud } from '@/lib/haptics';
 import { useVoiceInput } from '@/lib/voice';
@@ -278,7 +280,9 @@ export function InputBar({
               canSend ? shadow.glow : null,
             ]}
           >
-            <Icon name="send" size={19} color="#FFF6EF" />
+            {/* The ink the palette engine keeps readable on both ends of the ember sweep (as the
+                primary button's words) — a light ink vanished on a light gym colour. */}
+            <Icon name="send" size={19} color={BUTTON_INK} />
           </LinearGradient>
         </Pressable>
       </View>

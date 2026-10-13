@@ -243,6 +243,15 @@ export function needsReschedule(
   return expectedIds.some((id) => !have.has(id)) || scheduledIds.some((id) => !want.has(id));
 }
 
+/**
+ * PURE. What was set, as the stamp keeps it: the times, the words — and the colour Android
+ * draws them in (the accent at scheduling time). Gym branding: a scheduled reminder keeps the
+ * colour it was set with, so a new look (join, Leave, the owner's change) must set them again.
+ */
+export function reminderStampKey(triggers: unknown, body: string, accent: string): string {
+  return JSON.stringify({ triggers, body, accent });
+}
+
 /** PURE. The caption under "Workout reminders" (PH-01: never a next time that cannot come). */
 export function reminderCaption(o: { on: boolean; blocked: boolean; next: string | null; days: number }): string {
   if (!o.on) return 'A quiet reminder on your usual training days, at your usual time.';
@@ -351,7 +360,7 @@ async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }): Pr
     const body = next ? `Next: ${next}` : 'Open ForgeAI to start your workout';
     const stamp: ScheduleStamp = {
       offset: now.getTimezoneOffset(),
-      key: JSON.stringify({ triggers, body }),
+      key: reminderStampKey(triggers, body, color.accent),
     };
     const have = await scheduledIds(n);
     const expected = triggers.map((x) => x.id);
