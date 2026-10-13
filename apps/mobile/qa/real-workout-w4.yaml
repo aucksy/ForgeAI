@@ -70,9 +70,11 @@ appId: com.forgeai.app
 - tapOn:
     text: '^(Kg|Lb) lifted$'
     index: 0
-- extendedWaitUntil:
-    visible: '(Kg|Lb) lifted in the last 12 weeks · .*'
-    timeout: 10000
+# The caption sits above the bars: after the chip the page can be scrolled past it.
+- scrollUntilVisible:
+    element: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    direction: UP
+    timeout: 15000
 - takeScreenshot: w-44-chart-after-workout
 # Tap a bar (each is a button "<period>: <number>"): the big number shows that bar.
 - tapOn:
@@ -90,9 +92,11 @@ appId: com.forgeai.app
 - assertVisible: "Show 12-week total"
 - takeScreenshot: w-46-bar-still-shown
 - tapOn: "Show 12-week total"
-- extendedWaitUntil:
-    visible: '(Kg|Lb) lifted in the last 12 weeks · .*'
-    timeout: 10000
+# The caption sits above the bars: after the chip the page can be scrolled past it.
+- scrollUntilVisible:
+    element: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    direction: UP
+    timeout: 15000
 # ---------------------------------------------------------------- the workout's page: Rename
 - scrollUntilVisible:
     element: '.*\. Open$'

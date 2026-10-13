@@ -178,9 +178,11 @@ appId: com.forgeai.app
 - tapOn:
     text: '^(Kg|Lb) lifted$'
     index: 0
-- extendedWaitUntil:
-    visible: '(Kg|Lb) lifted in the last 12 weeks · .*'
-    timeout: 10000
+# The caption sits above the bars: after the chip the page can be scrolled past it.
+- scrollUntilVisible:
+    element: '(Kg|Lb) lifted in the last 12 weeks · .*'
+    direction: UP
+    timeout: 15000
 - assertNotVisible: '(Kg|Lb) lifted in the last 12 weeks · 0 .*'
 - takeScreenshot: w-07-chart-12-weeks
 - tapOn: "Range: Last 12 weeks. Change"

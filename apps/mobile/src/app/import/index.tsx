@@ -69,15 +69,19 @@ function StatRow({ label, value, tint }: { label: string; value: string; tint?: 
     <View
       style={{
         flexDirection: 'row',
+        flexWrap: 'wrap',
         justifyContent: 'space-between',
         alignItems: 'center',
+        // 13 Oct 2026 audit (part W, ~360 dp at large text): "Date rangeFeb 2024 → Feb 2027" ran
+        // together and to the edge. A gap always, and a long value goes under its label, right-aligned.
+        columnGap: space.md,
         paddingVertical: space.sm + 2,
       }}
     >
       <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>
         {label}
       </Text>
-      <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: tint ?? color.ink }}>
+      <Text style={{ marginLeft: 'auto', flexShrink: 1, textAlign: 'right', fontFamily: type.mono, fontSize: type.size.body, color: tint ?? color.ink }}>
         {value}
       </Text>
     </View>
