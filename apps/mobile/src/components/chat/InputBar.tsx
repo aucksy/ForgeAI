@@ -15,6 +15,7 @@ import Animated, {
 import { Icon, IconButton } from '@/components/ui';
 import { tap, thud } from '@/lib/haptics';
 import { useVoiceInput } from '@/lib/voice';
+import { accentTint } from '@/theme/tint';
 import { color, gradients, motion, radius, shadow, space, type } from '@/theme/tokens';
 import type { AppLanguage } from '@/types/models';
 
@@ -201,7 +202,7 @@ export function InputBar({
             backgroundColor: color.surfaceSunken,
             borderRadius: 22,
             borderWidth: 1,
-            borderColor: micActive ? 'rgba(255, 122, 59, 0.5)' : color.border,
+            borderColor: micActive ? accentTint(0.5) : color.border,
             paddingHorizontal: space.lg,
             justifyContent: 'center',
             minHeight: 44,
@@ -244,7 +245,7 @@ export function InputBar({
                   justifyContent: 'center',
                   backgroundColor: micActive ? color.accentSoft : color.surfaceRaised,
                   borderWidth: 1,
-                  borderColor: micActive ? 'rgba(255, 122, 59, 0.5)' : color.border,
+                  borderColor: micActive ? accentTint(0.5) : color.border,
                 },
                 micStyle,
               ]}

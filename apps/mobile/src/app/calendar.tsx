@@ -330,7 +330,7 @@ function MonthBlock({ ym, days, today, onDay }: { ym: string; days: Record<strin
                   borderColor: color.borderStrong,
                 }}
               >
-                <Text maxFontSizeMultiplier={1.3} style={{ fontFamily: on ? type.monoBold : type.mono, fontSize: type.size.sub, color: on ? '#1F0D05' : iso > today ? color.inkDisabled : color.inkSecondary }}>
+                <Text maxFontSizeMultiplier={1.3} style={{ fontFamily: on ? type.monoBold : type.mono, fontSize: type.size.sub, color: on ? color.onAccent : iso > today ? color.inkDisabled : color.inkSecondary }}>
                   {d}
                 </Text>
               </View>

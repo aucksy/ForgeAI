@@ -9,7 +9,7 @@
 import { BODY_VIEWS, type BodyFigure, type BodyView } from '../catalog/bodyMapPaths';
 import type { Muscle } from '../catalog/muscles';
 import type { MapLevel } from '../engine/bodyMap';
-import { MAP_OUTLINE, regionFill } from '../lib/bodyMapColors';
+import { mapOutline, regionFill } from '../lib/bodyMapColors';
 import { ASCII_WIDTHS, EXTRA_WIDTHS } from './fontMetrics';
 
 export type FontToken = 'display' | 'displaySemi' | 'body' | 'bodyMedium' | 'bodySemi' | 'bodyBold' | 'mono' | 'monoBold';
@@ -143,7 +143,7 @@ export function bodyView(node: Extract<SceneNode, { t: 'body' }>): BodyView {
   return BODY_VIEWS[node.figure ?? 'male'][node.view];
 }
 
-export { MAP_OUTLINE };
+export { mapOutline };
 
 // ---------------------------------------------------------------- SVG text (computer side)
 
@@ -200,7 +200,7 @@ export function sceneToSvg(scene: Scene): string {
           .map((p) => `<path d="${p.d}" fill="${p.fill}"/>`)
           .join('');
         parts.push(
-          `<g transform="translate(${n.x} ${n.y}) scale(${s}) translate(${-view.viewBox.x} ${-view.viewBox.y})">${inner}<path d="${view.outline}" fill="none" stroke="${MAP_OUTLINE}" stroke-width="${(1.5 / s).toFixed(2)}"/></g>`,
+          `<g transform="translate(${n.x} ${n.y}) scale(${s}) translate(${-view.viewBox.x} ${-view.viewBox.y})">${inner}<path d="${view.outline}" fill="none" stroke="${mapOutline()}" stroke-width="${(1.5 / s).toFixed(2)}"/></g>`,
         );
         break;
       }

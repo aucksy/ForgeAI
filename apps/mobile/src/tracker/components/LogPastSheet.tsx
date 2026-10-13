@@ -29,16 +29,18 @@ export interface PastWorkoutChoice {
   routine?: PastRoutine | 'none' | null;
 }
 
-const overline = {
+// Read when drawn: gym branding repaints the tokens.
+const overline = () => ({
   fontFamily: type.bodySemi,
   fontSize: type.size.caption,
   color: color.inkMuted,
   letterSpacing: 1.1,
   textTransform: 'uppercase',
   marginBottom: space.sm,
-} as const;
+}) as const;
 
-const box = {
+// Read when drawn: gym branding repaints the tokens.
+const box = () => ({
   height: 48,
   paddingHorizontal: space.md,
   borderRadius: radius.md,
@@ -49,7 +51,7 @@ const box = {
   fontSize: type.size.body,
   color: color.ink,
   textAlign: 'center',
-} as const;
+}) as const;
 
 export function LogPastSheet({
   visible,
@@ -144,7 +146,7 @@ export function LogPastSheet({
         <MonthCalendar ym={ym} onMonth={setYm} selected={day} onPick={setDay} />
         <View style={{ flexDirection: 'row', gap: space.md }}>
           <View style={{ flex: 3 }}>
-            <Text style={overline}>Started at</Text>
+            <Text style={overline()}>Started at</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.xs }}>
               <TextInput
                 value={hh}
@@ -152,7 +154,7 @@ export function LogPastSheet({
                 keyboardType="number-pad"
                 selectTextOnFocus
                 accessibilityLabel="Start hour, 0 to 23"
-                style={[box, { flex: 1 }]}
+                style={[box(), { flex: 1 }]}
               />
               <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }}>:</Text>
               <TextInput
@@ -161,25 +163,25 @@ export function LogPastSheet({
                 keyboardType="number-pad"
                 selectTextOnFocus
                 accessibilityLabel="Start minute, 0 to 59"
-                style={[box, { flex: 1 }]}
+                style={[box(), { flex: 1 }]}
               />
             </View>
           </View>
           <View style={{ flex: 2 }}>
-            <Text style={overline}>Minutes</Text>
+            <Text style={overline()}>Minutes</Text>
             <TextInput
               value={mins}
               onChangeText={(t) => setMins(t.replace(/[^0-9]/g, '').slice(0, 3))}
               keyboardType="number-pad"
               selectTextOnFocus
               accessibilityLabel="Workout length in minutes, 1 to 600"
-              style={box}
+              style={box()}
             />
           </View>
         </View>
         {routines.length > 0 ? (
           <View>
-            <Text style={overline}>Which routine?</Text>
+            <Text style={overline()}>Which routine?</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
               {routines.map((r) => (
                 <Chip key={r.id} label={r.name} selected={picked(r)} onPress={() => pick(r)} />

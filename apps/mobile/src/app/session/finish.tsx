@@ -20,6 +20,7 @@ import {
 } from '@/components/ui';
 import { fmtInt } from '@/lib/format';
 import { useUnits } from '@/lib/useUnits';
+import { onAccentTint } from '@/theme/tint';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { SessionSummary } from '@/tracker/components/SessionSummary';
@@ -36,7 +37,6 @@ import { workoutShareScene } from '@/tracker/share/workoutCard';
 import { workoutShareInput } from '@/tracker/share/workoutInput';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
-const INK_ON_EMBER = '#1F0D05';
 const TICK = 24;
 
 /** A half-width secondary button: hairline pill, glyph + one short word that never wraps. */
@@ -201,8 +201,8 @@ export default function FinishScreen() {
             {/* Oct 2026: the tick sits ON the title's line (it used to float beside the whole
                 block); the lines below start where the title's words start. */}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-              <Icon name="check" size={TICK} color={INK_ON_EMBER} />
-              <Text style={{ flex: 1, fontFamily: type.displaySemi, fontSize: type.size.h2, color: INK_ON_EMBER }}>
+              <Icon name="check" size={TICK} color={color.onAccent} />
+              <Text style={{ flex: 1, fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.onAccent }}>
                 {workoutName(data)} done
               </Text>
             </View>
@@ -211,16 +211,16 @@ export default function FinishScreen() {
               {milestone ? (
                 <Text
                   accessibilityRole="header"
-                  style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: INK_ON_EMBER, marginBottom: 2 }}
+                  style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.onAccent, marginBottom: 2 }}
                 >
                   {milestone}
                 </Text>
               ) : null}
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: 'rgba(31,13,5,0.72)' }}>
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: onAccentTint(0.72) }}>
                 {finishAnswer(data)}
               </Text>
               {comparison ? (
-                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: 'rgba(31,13,5,0.6)', marginTop: 2 }}>
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: onAccentTint(0.6), marginTop: 2 }}>
                   That's about {comparison}.
                 </Text>
               ) : null}

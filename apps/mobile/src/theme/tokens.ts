@@ -30,6 +30,14 @@ export const color = {
   inkFaint: '#82899B',
   /** Inactive controls ONLY (WCAG-exempt). Never for information. ≥ 3:1 on bg/surface. */
   inkDisabled: '#5E6577',
+  /**
+   * Text and marks drawn ON the accent (a selected calendar day, a count on an accent dot). The
+   * same near-black as the primary button's ink; a gym's palette sets the colour its accent needs
+   * (black on RAM's yellow). Gym branding: see theme/gymTheme.ts.
+   */
+  onAccent: '#1F0D05',
+  /** Keyboard / switch-access focus outline. */
+  focusRing: '#FFA043',
 } as const;
 
 export const chart = {

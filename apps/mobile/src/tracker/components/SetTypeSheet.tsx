@@ -24,12 +24,15 @@ import { SheetRow, TrackerSheet } from './TrackerSheet';
 
 export type SetTypeChoice = 'normal' | 'warmup' | 'drop' | 'failure';
 
-const TYPES: { id: SetTypeChoice; label: string; glyph: string; tint: string }[] = [
-  { id: 'normal', label: 'Normal set', glyph: '1', tint: color.inkSecondary },
-  { id: 'warmup', label: 'Warm-up', glyph: 'W', tint: color.warning },
-  { id: 'drop', label: 'Drop set', glyph: 'D', tint: color.accent },
-  { id: 'failure', label: 'Failure', glyph: 'F', tint: color.criticalText },
-];
+// Read when drawn: gym branding repaints the tokens.
+function types(): { id: SetTypeChoice; label: string; glyph: string; tint: string }[] {
+  return [
+    { id: 'normal', label: 'Normal set', glyph: '1', tint: color.inkSecondary },
+    { id: 'warmup', label: 'Warm-up', glyph: 'W', tint: color.warning },
+    { id: 'drop', label: 'Drop set', glyph: 'D', tint: color.accent },
+    { id: 'failure', label: 'Failure', glyph: 'F', tint: color.criticalText },
+  ];
+}
 
 export function currentTypeOf(set: Pick<DraftSet, 'isWarmup' | 'setType'>): SetTypeChoice {
   return set.isWarmup ? 'warmup' : set.setType ?? 'normal';
@@ -63,7 +66,7 @@ export function SetTypeSheet({
   return (
     <TrackerSheet visible={visible} title="Set type" onClose={onClose} onDone={onClose} changed={changed}>
       <View style={{ gap: 2 }}>
-        {TYPES.map((t) => (
+        {types().map((t) => (
           <SheetRow
             key={t.id}
             label={t.label}

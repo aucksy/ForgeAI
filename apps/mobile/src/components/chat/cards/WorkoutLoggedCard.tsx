@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AnimatedNumber, Badge } from '@/components/ui';
 import { relativeDay } from '@/lib/date';
@@ -31,27 +31,27 @@ export function WorkoutLoggedCard({ data }: { data: WorkoutLoggedView }) {
       subtitle={data.dateISO ? relativeDay(data.dateISO) : 'Saved to your training log'}
     >
       <View style={{ flexDirection: 'row', gap: space.sm, marginTop: space.lg }}>
-        <View style={styles.statBox}>
+        <View style={styles().statBox}>
           <AnimatedNumber
             value={kgToShown(data.totalVolumeKg, u)}
             format={(n) => fmtCompact(n)}
-            style={styles.statValue}
+            style={styles().statValue}
           />
-          <Text style={styles.statLabel}>{liftedWords(u)}</Text>
+          <Text style={styles().statLabel}>{liftedWords(u)}</Text>
         </View>
-        <View style={styles.statBox}>
-          <Text style={styles.statValue}>{fmtInt(data.setCount)}</Text>
-          <Text style={styles.statLabel}>sets</Text>
+        <View style={styles().statBox}>
+          <Text style={styles().statValue}>{fmtInt(data.setCount)}</Text>
+          <Text style={styles().statLabel}>sets</Text>
         </View>
-        <View style={styles.statBox}>
-          <Text style={styles.statValue}>{fmtInt(data.exercises.length)}</Text>
-          <Text style={styles.statLabel}>exercises</Text>
+        <View style={styles().statBox}>
+          <Text style={styles().statValue}>{fmtInt(data.exercises.length)}</Text>
+          <Text style={styles().statLabel}>exercises</Text>
         </View>
       </View>
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
         {data.exercises.map((e, i) => (
-          <View key={`${e.name}-${i}`} style={styles.chip}>
+          <View key={`${e.name}-${i}`} style={styles().chip}>
             <Text
               numberOfLines={1}
               style={{
@@ -115,7 +115,8 @@ export function WorkoutLoggedCard({ data }: { data: WorkoutLoggedView }) {
   );
 }
 
-const styles = StyleSheet.create({
+// Read when drawn: gym branding repaints the tokens.
+const styles = () => ({
   statBox: {
     flex: 1,
     alignItems: 'center',
@@ -146,4 +147,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: color.border,
   },
-});
+}) as const;

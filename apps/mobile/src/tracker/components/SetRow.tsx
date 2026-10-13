@@ -443,11 +443,11 @@ export const SetRow = memo(function SetRow({
         selectTextOnFocus
         accessibilityLabel={p.a11y}
         accessibilityHint={p.value === '' && p.hint !== '—' ? `Empty. A tick saves ${p.hint}` : undefined}
-        style={inputStyle}
+        style={inputStyle()}
       />
       {p.value === '' ? (
         <View pointerEvents="none" style={hintWrap} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={hintStyle}>
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={hintStyle()}>
             {p.hint}
           </Text>
         </View>
@@ -513,11 +513,11 @@ export const SetRow = memo(function SetRow({
 
           {/* PREVIOUS — the numbers (a second line rather than cut off), then "@ 9" with Track RPE */}
           <View style={{ width: prevW, marginHorizontal: L.prevGap - L.gap, justifyContent: 'center' }}>
-            <Text numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.7} style={prevStyle}>
+            <Text numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.7} style={prevStyle()}>
               {prevMain}
             </Text>
             {prevRpe ? (
-              <Text numberOfLines={1} accessibilityLabel={`RPE ${prevRpe.replace('@', '').trim()} last time`} style={prevStyle}>
+              <Text numberOfLines={1} accessibilityLabel={`RPE ${prevRpe.replace('@', '').trim()} last time`} style={prevStyle()}>
                 {prevRpe}
               </Text>
             ) : null}
@@ -699,7 +699,7 @@ export const SetRow = memo(function SetRow({
               onPress={() => setTypo(null)}
               accessibilityRole="button"
               accessibilityLabel={`Keep ${typo.text.split(' — ')[0]}`}
-              style={typoButton}
+              style={typoButton()}
             >
               <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>Keep</Text>
             </Pressable>
@@ -707,7 +707,7 @@ export const SetRow = memo(function SetRow({
               onPress={onFix}
               accessibilityRole="button"
               accessibilityLabel={typo.kind === 'weight' ? `Fix the weight of ${who}` : `Fix the reps of ${who}`}
-              style={[typoButton, { borderColor: color.accent }]}
+              style={[typoButton(), { borderColor: color.accent }]}
             >
               <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Fix</Text>
             </Pressable>
@@ -718,7 +718,8 @@ export const SetRow = memo(function SetRow({
   );
 });
 
-const inputStyle = {
+// Read when drawn: gym branding repaints the tokens.
+const inputStyle = () => ({
   width: '100%' as const,
   minHeight: SET_ROW.height,
   borderRadius: radius.sm,
@@ -731,9 +732,10 @@ const inputStyle = {
   color: color.ink,
   paddingVertical: 0,
   paddingHorizontal: 2,
-};
+});
 
-const prevStyle = { fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted } as const;
+// Read when drawn: gym branding repaints the tokens.
+const prevStyle = () => ({ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted }) as const;
 
 const hintWrap = {
   position: 'absolute' as const,
@@ -746,13 +748,14 @@ const hintWrap = {
   paddingHorizontal: 4,
 };
 
-const hintStyle = {
+// Read when drawn: gym branding repaints the tokens.
+const hintStyle = () => ({
   fontFamily: type.monoBold,
   fontSize: type.size.body,
   color: color.inkFaint,
-};
+});
 
-const typoButton = {
+const typoButton = () => ({
   minHeight: 48,
   minWidth: 64,
   paddingHorizontal: space.md,
@@ -761,4 +764,4 @@ const typoButton = {
   borderColor: color.border,
   alignItems: 'center' as const,
   justifyContent: 'center' as const,
-};
+});

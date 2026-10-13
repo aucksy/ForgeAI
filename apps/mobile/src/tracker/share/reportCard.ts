@@ -127,7 +127,7 @@ export function monthShareScene(r: MonthReport, liftsUp: number): Scene {
     const iso = `${r.month}-${String(d).padStart(2, '0')}`;
     const on = trained.has(iso);
     if (on) nodes.push({ t: 'circle', cx, cy, r: 27, fill: color.accent });
-    nodes.push({ t: 'text', x: cx, y: cy + 9, text: String(d), font: on ? 'monoBold' : 'mono', size: 25, fill: on ? '#1F0D05' : color.inkSecondary, anchor: 'middle' });
+    nodes.push({ t: 'text', x: cx, y: cy + 9, text: String(d), font: on ? 'monoBold' : 'mono', size: 25, fill: on ? color.onAccent : color.inkSecondary, anchor: 'middle' });
   }
 
   const muscles = r.muscles.filter((m) => m.muscle !== 'cardio').slice(0, 3);

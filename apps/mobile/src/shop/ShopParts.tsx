@@ -75,7 +75,7 @@ export function BagButton({ count, onPress }: { count: number; onPress: () => vo
             alignItems: 'center',
           }}
         >
-          <Text maxFontSizeMultiplier={1.3} style={{ fontFamily: type.bodyBold, fontSize: type.size.caption, color: '#1F0D05' }}>
+          <Text maxFontSizeMultiplier={1.3} style={{ fontFamily: type.bodyBold, fontSize: type.size.caption, color: color.onAccent }}>
             {count > 99 ? '99+' : String(count)}
           </Text>
         </View>
@@ -168,8 +168,8 @@ export function QuietLine({ text }: { text: string | null }) {
   );
 }
 
-/** A text box in the Shop's forms (the join card), as Edit profile draws them. */
-export const shopInputStyle = {
+/** A text box in the Shop's forms (the join card), as Edit profile draws them. Read when drawn: gym branding repaints the tokens. */
+export const shopInputStyle = () => ({
   backgroundColor: color.surfaceSunken,
   borderWidth: 1,
   borderColor: color.border,
@@ -180,7 +180,7 @@ export const shopInputStyle = {
   color: color.ink,
   fontFamily: type.bodyMedium,
   fontSize: type.size.body,
-} as const;
+}) as const;
 
 /** The calm demo note: grey text on a quiet strip, never a warning colour. */
 export function DemoNote({ text }: { text: string }) {

@@ -29,6 +29,7 @@ import { readWithRetry } from '@/lib/retryRead';
 import { tell } from '@/lib/tell';
 import { useRereadWhenFailed } from '@/lib/useRereadWhenFailed';
 import { countWord } from '@/lib/words';
+import { accentTint } from '@/theme/tint';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import {
@@ -154,7 +155,7 @@ function RoutineCard({
 }) {
   const empty = r.exercises.length === 0;
   return (
-    <View style={{ backgroundColor: color.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: tag ? 'rgba(255, 122, 59, 0.45)' : color.border, padding: space.md, gap: space.sm }}>
+    <View style={{ backgroundColor: color.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: tag ? accentTint(0.45) : color.border, padding: space.md, gap: space.sm }}>
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.xs }}>
         <Pressable
           onPress={onOpen}
@@ -184,7 +185,7 @@ function RoutineCard({
           borderRadius: radius.md,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: pressed ? color.accentSoft : empty ? 'transparent' : 'rgba(255, 122, 59, 0.10)',
+          backgroundColor: pressed ? color.accentSoft : empty ? 'transparent' : accentTint(0.1),
           borderWidth: 1,
           borderColor: empty ? color.borderStrong : color.accent,
         })}

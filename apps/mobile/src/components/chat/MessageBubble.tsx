@@ -1,10 +1,11 @@
 import { Image } from 'expo-image';
 import type { ReactElement } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Icon } from '@/components/ui';
 import { relativeDay, toISO } from '@/lib/date';
+import { accentTint } from '@/theme/tint';
 import { color, motion, radius, space, type } from '@/theme/tokens';
 import type { ChatMessage } from '@/types/models';
 
@@ -42,7 +43,7 @@ function fmtClock(ms: number): string {
 
 function Timestamp({ ms }: { ms: number }) {
   return (
-    <Text style={styles.timestamp}>{`${relativeDay(toISO(new Date(ms)))} · ${fmtClock(ms)}`}</Text>
+    <Text style={styles().timestamp}>{`${relativeDay(toISO(new Date(ms)))} · ${fmtClock(ms)}`}</Text>
   );
 }
 
@@ -84,7 +85,7 @@ function renderCard(message: ChatMessage): ReactElement | null {
 function UserBubble({ message }: { message: ChatMessage }) {
   return (
     <View style={{ alignItems: 'flex-end' }}>
-      <View style={styles.userBubble}>
+      <View style={styles().userBubble}>
         {message.imageUri ? (
           <Image
             source={{ uri: message.imageUri }}
@@ -98,7 +99,7 @@ function UserBubble({ message }: { message: ChatMessage }) {
             transition={150}
           />
         ) : null}
-        {message.text ? <Text style={styles.userText}>{message.text}</Text> : null}
+        {message.text ? <Text style={styles().userText}>{message.text}</Text> : null}
       </View>
     </View>
   );
@@ -108,7 +109,7 @@ function CoachContent({ message }: { message: ChatMessage }) {
   if (message.pending) {
     return (
       <View style={{ alignItems: 'flex-start' }}>
-        <View style={styles.coachBubble}>
+        <View style={styles().coachBubble}>
           <TypingDots />
         </View>
       </View>
@@ -118,9 +119,9 @@ function CoachContent({ message }: { message: ChatMessage }) {
   if (message.kind === 'error') {
     return (
       <View style={{ alignItems: 'flex-start' }}>
-        <View style={styles.errorBubble}>
+        <View style={styles().errorBubble}>
           <Icon name="sparkle" size={15} color={color.warning} />
-          <Text style={styles.errorText}>{message.text || 'Something went wrong.'}</Text>
+          <Text style={styles().errorText}>{message.text || 'Something went wrong.'}</Text>
         </View>
       </View>
     );
@@ -132,14 +133,14 @@ function CoachContent({ message }: { message: ChatMessage }) {
   return (
     <View style={{ alignItems: 'flex-start', gap: space.sm }}>
       {hasText ? (
-        <View style={styles.coachBubble}>
-          <Text style={styles.coachText}>{message.text}</Text>
+        <View style={styles().coachBubble}>
+          <Text style={styles().coachText}>{message.text}</Text>
         </View>
       ) : null}
-      {card ? <View style={styles.cardWrap}>{card}</View> : null}
+      {card ? <View style={styles().cardWrap}>{card}</View> : null}
       {!hasText && !card ? (
-        <View style={styles.coachBubble}>
-          <Text style={styles.coachText}>…</Text>
+        <View style={styles().coachBubble}>
+          <Text style={styles().coachText}>…</Text>
         </View>
       ) : null}
     </View>
@@ -162,7 +163,8 @@ export function MessageBubble({ message, showTimestamp }: MessageBubbleProps) {
   );
 }
 
-const styles = StyleSheet.create({
+// Read when drawn: gym branding repaints the tokens.
+const styles = () => ({
   timestamp: {
     alignSelf: 'center',
     fontFamily: type.bodyMedium,
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
     maxWidth: '82%',
     backgroundColor: color.accentSoft,
     borderWidth: 1,
-    borderColor: 'rgba(255, 122, 59, 0.22)',
+    borderColor: accentTint(0.22),
     borderRadius: radius.lg,
     borderBottomRightRadius: 6,
     paddingHorizontal: space.lg - 2,
@@ -227,4 +229,4 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 480,
   },
-});
+}) as const;

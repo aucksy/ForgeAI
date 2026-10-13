@@ -55,7 +55,8 @@ const GOAL_OPTIONS = [
 
 const TARGET_KEYS: readonly TargetKey[] = ['calorieTarget', 'proteinTargetG', 'carbsTargetG', 'fatTargetG'];
 
-const inputStyle = {
+// Read when drawn: gym branding repaints the tokens.
+const inputStyle = () => ({
   backgroundColor: color.surfaceSunken,
   borderWidth: 1,
   borderColor: color.borderStrong,
@@ -66,16 +67,17 @@ const inputStyle = {
   color: color.ink,
   fontFamily: type.body,
   fontSize: type.size.body,
-} as const;
+}) as const;
 
-const overline = {
+// Read when drawn: gym branding repaints the tokens.
+const overline = () => ({
   fontFamily: type.bodySemi,
   fontSize: type.size.caption,
   color: color.inkMuted,
   letterSpacing: 1.1,
   textTransform: 'uppercase',
   marginBottom: space.sm,
-} as const;
+}) as const;
 
 type Texts = Record<ProfileTextField, string>;
 
@@ -357,7 +359,7 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
       placeholderTextColor={color.inkFaint}
       accessibilityLabel={label}
       returnKeyType="done"
-      style={[inputStyle, errors[field] ? { borderColor: color.criticalText } : null]}
+      style={[inputStyle(), errors[field] ? { borderColor: color.criticalText } : null]}
       {...extra}
     />
   );
@@ -393,12 +395,12 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
         </View>
       ) : null}
 
-      <Text style={overline}>Name</Text>
+      <Text style={overline()}>Name</Text>
       {box('name', { label: 'Your name', placeholder: 'Your name', maxLength: NAME_MAX + 20, autoCapitalize: 'words', autoComplete: 'name' })}
       <FieldError message={errors.name} />
 
       <View style={{ marginTop: space.lg }}>
-        <Text style={overline}>Mobile number · optional</Text>
+        <Text style={overline()}>Mobile number · optional</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
           <View style={{ flex: 1 }}>
             {box('phone', {
@@ -444,7 +446,7 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
       </View>
 
       <View style={{ marginTop: space.lg }}>
-        <Text style={overline}>Your gym · optional</Text>
+        <Text style={overline()}>Your gym · optional</Text>
         {box('gymName', { label: 'Your gym, optional', placeholder: 'e.g. Iron Temple Fitness', maxLength: 80, autoCapitalize: 'words' })}
         <FieldError message={errors.gymName} />
       </View>
@@ -469,12 +471,12 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
           when the phone's text is large. */}
       <View style={{ marginTop: space.lg, flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
         <View style={{ flexGrow: 1, flexBasis: 140 }}>
-          <Text style={overline}>Age · optional</Text>
+          <Text style={overline()}>Age · optional</Text>
           {box('age', { label: 'Age in years, optional', placeholder: 'e.g. 28', keyboardType: 'number-pad', maxLength: 3 })}
           <FieldError message={errors.age} />
         </View>
         <View style={{ flexGrow: 1, flexBasis: 140 }}>
-          <Text style={overline}>{units === 'imperial' ? 'Height (in) · optional' : 'Height (cm) · optional'}</Text>
+          <Text style={overline()}>{units === 'imperial' ? 'Height (in) · optional' : 'Height (cm) · optional'}</Text>
           {box('height', {
             label: units === 'imperial' ? 'Height in inches, optional' : 'Height in centimetres, optional',
             placeholder: units === 'imperial' ? 'e.g. 69' : 'e.g. 175',
@@ -488,7 +490,7 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
       {/* Calorie and macro targets only drive nutrition, which is hidden (owner decision D4). */}
       {FEATURES.nutrition ? (
         <View style={{ marginTop: space.lg }}>
-          <Text style={overline}>Daily targets</Text>
+          <Text style={overline()}>Daily targets</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
             {TARGET_KEYS.map((k) => {
               const rule = TARGET_RULES[k];

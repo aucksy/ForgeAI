@@ -207,10 +207,10 @@ export function ExercisePickerList({
           onPress={() => onSelect(suggestion)}
           accessibilityRole="button"
           accessibilityLabel={`Did you mean ${suggestion.name}? ${actionLabel}`}
-          style={({ pressed }) => [offerRow, { borderStyle: 'solid', opacity: pressed ? 0.7 : 1 }]}
+          style={({ pressed }) => [offerRow(), { borderStyle: 'solid', opacity: pressed ? 0.7 : 1 }]}
         >
           <Icon name="check" size={18} color={color.accent} />
-          <Text style={offerText} numberOfLines={2}>
+          <Text style={offerText()} numberOfLines={2}>
             Did you mean <Text style={{ fontFamily: type.bodySemi, color: color.accent }}>{suggestion.name}</Text>?
           </Text>
         </Pressable>
@@ -219,10 +219,10 @@ export function ExercisePickerList({
         onPress={() => onCreate?.(createName)}
         accessibilityRole="button"
         accessibilityLabel={`Create “${createName}”`}
-        style={({ pressed }) => [offerRow, { opacity: pressed ? 0.7 : 1 }]}
+        style={({ pressed }) => [offerRow(), { opacity: pressed ? 0.7 : 1 }]}
       >
         <Icon name="plus" size={18} color={color.accent} />
-        <Text numberOfLines={2} style={offerText}>
+        <Text numberOfLines={2} style={offerText()}>
           Create “{createName}”
         </Text>
       </Pressable>
@@ -361,11 +361,11 @@ export function ExercisePickerList({
               {header}
               {showRecent ? (
                 <>
-                  <Text accessibilityRole="header" style={bandHead}>
+                  <Text accessibilityRole="header" style={bandHead()}>
                     Recent
                   </Text>
                   {recent.map((item) => rowFor(item, `recent-${item.id}`))}
-                  <Text accessibilityRole="header" style={[bandHead, { marginTop: space.sm }]}>
+                  <Text accessibilityRole="header" style={[bandHead(), { marginTop: space.sm }]}>
                     All exercises
                   </Text>
                 </>
@@ -386,7 +386,7 @@ export function ExercisePickerList({
         extraData={isMarked}
         renderItem={({ item }) =>
           item.kind === 'band' ? (
-            <Text accessibilityRole="header" style={[bandHead, { marginTop: item.band === 'recent' ? 0 : space.sm }]}>
+            <Text accessibilityRole="header" style={[bandHead(), { marginTop: item.band === 'recent' ? 0 : space.sm }]}>
               {BAND_TITLE[item.band]}
             </Text>
           ) : (
@@ -428,15 +428,17 @@ export function ExercisePickerList({
   );
 }
 
-const bandHead = {
+// Read when drawn: gym branding repaints the tokens.
+const bandHead = () => ({
   fontFamily: type.bodySemi,
   fontSize: type.size.caption,
   color: color.inkMuted,
   letterSpacing: 0.4,
   textTransform: 'uppercase',
-} as const;
+}) as const;
 
-const offerRow = {
+// Read when drawn: gym branding repaints the tokens.
+const offerRow = () => ({
   flexDirection: 'row',
   alignItems: 'center',
   gap: space.sm,
@@ -447,6 +449,7 @@ const offerRow = {
   borderWidth: 1,
   borderColor: color.border,
   borderStyle: 'dashed',
-} as const;
+}) as const;
 
-const offerText = { flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink } as const;
+// Read when drawn: gym branding repaints the tokens.
+const offerText = () => ({ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink }) as const;

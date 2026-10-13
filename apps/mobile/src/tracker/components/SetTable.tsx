@@ -24,14 +24,15 @@ const TABLE_HEAD: Record<LogType, string> = {
   time_distance: 'Distance & time',
 };
 
-const label = { fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted } as const;
+// Read when drawn: gym branding repaints the tokens.
+const label = () => ({ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }) as const;
 
 export function SetTable({ rows, logType }: { rows: readonly DetailSetRow[]; logType: LogType }) {
   return (
     <View style={{ gap: space.sm }}>
       <View style={{ flexDirection: 'row', gap: space.md, paddingHorizontal: space.sm }}>
-        <Text style={[label, { width: 28 }]}>Set</Text>
-        <Text style={[label, { flex: 1 }]}>{TABLE_HEAD[logType]}</Text>
+        <Text style={[label(), { width: 28 }]}>Set</Text>
+        <Text style={[label(), { flex: 1 }]}>{TABLE_HEAD[logType]}</Text>
       </View>
       {rows.map((r, i) => (
         <View

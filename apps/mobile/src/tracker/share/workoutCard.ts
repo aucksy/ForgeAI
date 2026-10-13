@@ -62,7 +62,7 @@ export function statBox(x: number, y: number, w: number, label: string, value: s
 
 /** The soft ember glow in the top corner, like the app's own screens. */
 export function cornerGlow(): SceneNode {
-  return { t: 'glow', cx: SHARE_W - 60, cy: 40, r: 560, color: '#FF7A3B', opacity: 0.16 };
+  return { t: 'glow', cx: SHARE_W - 60, cy: 40, r: 560, color: color.accent, opacity: 0.16 };
 }
 
 export function workoutShareScene(input: WorkoutShareInput): Scene {

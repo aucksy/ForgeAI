@@ -11,7 +11,8 @@ import { color, space, type } from '@/theme/tokens';
 
 import type { NameSuggestion } from '../services/importMatch';
 
-const CAPTION = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 } as const;
+// Read when drawn: gym branding repaints the tokens.
+const CAPTION = () => ({ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 }) as const;
 
 /** One name with a suggested match: the question and its two answers. */
 export function MatchRow({ s, same, onAnswer }: { s: NameSuggestion; same: boolean; onAnswer: (same: boolean) => void }) {
@@ -19,7 +20,7 @@ export function MatchRow({ s, same, onAnswer }: { s: NameSuggestion; same: boole
   return (
     <View style={{ gap: space.xs, paddingVertical: space.sm }}>
       <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink }}>{s.title}</Text>
-      <Text style={CAPTION}>Same as ForgeAI’s {s.match.name}?</Text>
+      <Text style={CAPTION()}>Same as ForgeAI’s {s.match.name}?</Text>
       <View style={{ flexDirection: 'row', gap: space.sm, marginTop: 2 }}>
         <Chip label="Yes" icon={same ? 'check' : undefined} selected={same} onPress={() => onAnswer(true)} />
         <Chip label="Keep as new" icon={!same ? 'check' : undefined} selected={!same} onPress={() => onAnswer(false)} />
@@ -66,7 +67,7 @@ export function NewNamesCard({
         <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
           {suggestions.length} name{suggestions.length === 1 ? ' is' : 's are'} new to ForgeAI
         </Text>
-        <Text style={CAPTION}>
+        <Text style={CAPTION()}>
           {asked.length > 0
             ? 'Say “Yes” and its history joins ForgeAI’s exercise. “Keep as new” adds it as your own exercise with this name.'
             : 'Each is added as your own exercise with the same name, so its history stays with it.'}

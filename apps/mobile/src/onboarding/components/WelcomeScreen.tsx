@@ -86,7 +86,8 @@ const STEP_TEXT: Record<WelcomeStep, { title: string; sub: string }> = {
   2: { title: 'Your goal and experience', sub: 'They shape your Targets. You can change them in Profile.' },
 };
 
-const inputStyle = {
+// Read when drawn: gym branding repaints the tokens.
+const inputStyle = () => ({
   backgroundColor: color.surfaceSunken,
   borderWidth: 1,
   borderColor: color.borderStrong,
@@ -97,16 +98,17 @@ const inputStyle = {
   color: color.ink,
   fontFamily: type.body,
   fontSize: type.size.body,
-} as const;
+}) as const;
 
-const overline = {
+// Read when drawn: gym branding repaints the tokens.
+const overline = () => ({
   fontFamily: type.bodySemi,
   fontSize: type.size.caption,
   color: color.inkMuted,
   letterSpacing: 1.1,
   textTransform: 'uppercase',
   marginBottom: space.sm,
-} as const;
+}) as const;
 
 /**
  * The line under a field. Spoken by `showProblem`'s announcement each time it is shown — no
@@ -340,7 +342,7 @@ export function WelcomeScreen() {
             {step === 0 ? (
               <>
                 <View onLayout={at('name')} style={{ marginBottom: space.lg }}>
-                  <Text style={overline}>Your name</Text>
+                  <Text style={overline()}>Your name</Text>
                   <TextInput
                     ref={nameRef}
                     value={draft.name}
@@ -355,13 +357,13 @@ export function WelcomeScreen() {
                     blurOnSubmit={false}
                     onSubmitEditing={() => phoneRef.current?.focus()}
                     maxLength={80}
-                    style={[inputStyle, errFor('name') ? { borderColor: color.criticalText } : null]}
+                    style={[inputStyle(), errFor('name') ? { borderColor: color.criticalText } : null]}
                   />
                   <FieldError message={errFor('name')} />
                 </View>
 
                 <View onLayout={at('phone')} style={{ marginBottom: space.lg }}>
-                  <Text style={overline}>Mobile number · optional</Text>
+                  <Text style={overline()}>Mobile number · optional</Text>
                   <TextInput
                     ref={phoneRef}
                     value={draft.phone}
@@ -374,7 +376,7 @@ export function WelcomeScreen() {
                     returnKeyType="done"
                     onSubmitEditing={onNext}
                     maxLength={24}
-                    style={[inputStyle, errFor('phone') ? { borderColor: color.criticalText } : null]}
+                    style={[inputStyle(), errFor('phone') ? { borderColor: color.criticalText } : null]}
                   />
                   <FieldError message={errFor('phone')} />
                   <Hint>Any country. Only for your gym, once you link one. Add or remove it any time in Profile.</Hint>
@@ -446,7 +448,7 @@ export function WelcomeScreen() {
             {step === 2 ? (
               <>
                 <View onLayout={at('goal')} style={{ marginBottom: space.xl }}>
-                  <Text style={overline} accessibilityRole="header">
+                  <Text style={overline()} accessibilityRole="header">
                     Your goal
                   </Text>
                   <RadioList
@@ -458,7 +460,7 @@ export function WelcomeScreen() {
                   <FieldError message={errFor('goal')} />
                 </View>
                 <View onLayout={at('experience')} style={{ marginBottom: space.xl }}>
-                  <Text style={overline} accessibilityRole="header">
+                  <Text style={overline()} accessibilityRole="header">
                     Experience
                   </Text>
                   <RadioList

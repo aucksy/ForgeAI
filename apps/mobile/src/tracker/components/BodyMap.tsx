@@ -11,7 +11,7 @@ import { color, space, type } from '@/theme/tokens';
 import { BODY_VIEWS, type BodyFigure, type BodyView } from '../catalog/bodyMapPaths';
 import type { Muscle } from '../catalog/muscles';
 import type { MapLevel } from '../engine/bodyMap';
-import { MAP_OUTLINE, regionFill } from '../lib/bodyMapColors';
+import { mapOutline, regionFill } from '../lib/bodyMapColors';
 
 function Figure({
   view,
@@ -35,7 +35,7 @@ function Figure({
           onPress={onPressMuscle && p.region !== 'body' ? () => onPressMuscle(p.region as Muscle) : undefined}
         />
       ))}
-      <Path d={view.outline} fill="none" stroke={MAP_OUTLINE} strokeWidth={1} vectorEffect="non-scaling-stroke" />
+      <Path d={view.outline} fill="none" stroke={mapOutline()} strokeWidth={1} vectorEffect="non-scaling-stroke" />
     </Svg>
   );
 }

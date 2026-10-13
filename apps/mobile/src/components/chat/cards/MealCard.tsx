@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { fmtGrams, fmtInt } from '@/lib/format';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -9,14 +9,14 @@ import { CardShell } from './CardShell';
 
 function Macro({ value, label, highlight }: { value: string; label: string; highlight?: boolean }) {
   return (
-    <View style={styles.macroBox}>
+    <View style={styles().macroBox}>
       <Text
         numberOfLines={1}
-        style={[styles.macroValue, highlight ? { color: color.accentBright } : null]}
+        style={[styles().macroValue, highlight ? { color: color.accentBright } : null]}
       >
         {value}
       </Text>
-      <Text style={styles.macroLabel}>{label}</Text>
+      <Text style={styles().macroLabel}>{label}</Text>
     </View>
   );
 }
@@ -43,7 +43,8 @@ export function MealCard({ meal }: { meal: MealView }) {
   );
 }
 
-const styles = StyleSheet.create({
+// Read when drawn: gym branding repaints the tokens.
+const styles = () => ({
   macroBox: {
     flex: 1,
     alignItems: 'center',
@@ -63,4 +64,4 @@ const styles = StyleSheet.create({
     color: color.inkMuted,
     marginTop: 2,
   },
-});
+}) as const;

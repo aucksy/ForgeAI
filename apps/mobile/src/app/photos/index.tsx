@@ -243,7 +243,7 @@ export default function ProgressPhotosScreen() {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontFamily: type.monoBold, fontSize: type.size.caption, color: '#1F0D05' }}>{order + 1}</Text>
+              <Text style={{ fontFamily: type.monoBold, fontSize: type.size.caption, color: color.onAccent }}>{order + 1}</Text>
             </View>
           ) : null}
         </View>
