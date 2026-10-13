@@ -600,6 +600,8 @@ export default function ActiveWorkoutScreen() {
           exercises={exercises}
           startedAt={startedAt}
           defaultName={defaultName}
+          // A routine's workout keeps the routine's name: no Name box (owner, 13 Oct 2026).
+          askName={!routineName}
           defaultRestSec={defaultRestSec}
           saving={committing}
           onFinish={(choice) => void onFinish(choice)}

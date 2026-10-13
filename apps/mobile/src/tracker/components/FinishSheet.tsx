@@ -4,7 +4,10 @@
  * ("5 exercises · 18 sets · 52 min") and asks only what matters:
  *  - rows that hold numbers but were never ticked — "Leave them out" (default) / "Save them";
  *  - a workout left open for hours — "Ended at 6:42 pm" (default) / "Now";
- *  - the workout's name (the routine's, else "Evening workout") and an optional note.
+ *  - the workout's name — asked ONLY for a workout with no routine ("Evening workout" says
+ *    nothing later); a routine's workout simply takes the routine's name, so names stay the same
+ *    and become habit (owner, 13 Oct 2026: a name box on every finish read as renaming the
+ *    routine). It can still be renamed later from the workout's page — and an optional note.
  * "Finish workout" saves; "Keep going", ×, back or a tap outside closes it and changes nothing.
  */
 import { useEffect, useMemo, useState } from 'react';
@@ -39,8 +42,10 @@ export interface FinishSheetProps {
   visible: boolean;
   exercises: DraftExercise[];
   startedAt: number;
-  /** The routine's name, else "Evening workout" — editable here. */
+  /** The routine's name, else "Evening workout". */
   defaultName: string;
+  /** Show the Name box: only for a workout with no routine. */
+  askName: boolean;
   /** The default rest, for "ended at the last tick + one rest". */
   defaultRestSec: number;
   saving: boolean;
@@ -103,7 +108,7 @@ const field = {
   color: color.ink,
 } as const;
 
-export function FinishSheet({ visible, exercises, startedAt, defaultName, defaultRestSec, saving, onFinish, onClose }: FinishSheetProps) {
+export function FinishSheet({ visible, exercises, startedAt, defaultName, askName, defaultRestSec, saving, onFinish, onClose }: FinishSheetProps) {
   // Everything below is decided when the sheet opens, so the numbers stand still while it's up.
   const [openedAt, setOpenedAt] = useState(() => Date.now());
   const unticked = useMemo(() => untickedWithNumbers(exercises), [exercises]);
@@ -185,6 +190,7 @@ export function FinishSheet({ visible, exercises, startedAt, defaultName, defaul
         </View>
       ) : null}
 
+      {askName ? (
       <View style={{ gap: space.xs }}>
         <Question text="Name" />
         <TextInput
@@ -198,6 +204,7 @@ export function FinishSheet({ visible, exercises, startedAt, defaultName, defaul
           style={[field, { fontFamily: type.bodySemi }]}
         />
       </View>
+      ) : null}
       <View style={{ gap: space.xs, marginBottom: space.sm }}>
         <Question text="Note (optional)" />
         <TextInput

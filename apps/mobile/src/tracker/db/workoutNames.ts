@@ -4,6 +4,7 @@
  * rule (`sessionTitle`). Read in pieces of 500 (SQLite's limit on ? marks).
  */
 import { getDb } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 
 import { sessionTitle } from '../services/finishSummary';
 
@@ -19,4 +20,23 @@ export async function getWorkoutNames(ids: readonly string[]): Promise<Map<strin
     for (const r of rows) out.set(r.id, sessionTitle({ dayType: r.day_type, title: r.title }));
   }
   return out;
+}
+
+/** Longest workout name (the Finish sheet's limit). */
+export const WORKOUT_NAME_MAX = 60;
+
+/** A typed name made safe to save: trimmed, one space between words, at most 60 characters; '' = none. PURE. */
+export function cleanWorkoutName(name: string): string {
+  return name.replace(/\s+/g, ' ').trim().slice(0, WORKOUT_NAME_MAX).trim();
+}
+
+/**
+ * Rename a saved workout (owner, 13 Oct 2026: Finish no longer asks for a routine workout's
+ * name, so a name is changed here, from the workout's page). Its routine is untouched.
+ * Queued (DS-04): never call it from inside an `enqueueWrite` job.
+ */
+export async function renameWorkout(sessionId: string, name: string): Promise<void> {
+  const clean = cleanWorkoutName(name);
+  if (!clean) return;
+  await enqueueWrite(() => getDb().runAsync('UPDATE workout_sessions SET title = ? WHERE id = ?', [clean, sessionId]));
 }

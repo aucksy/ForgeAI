@@ -26,6 +26,9 @@ import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { shareTextNow } from '@/tracker/components/ShareTextRow';
 import { WorkoutDetail } from '@/tracker/components/WorkoutDetail';
+import { NameSheet } from '@/tracker/components/NameSheet';
+import { renameWorkout } from '@/tracker/db/workoutNames';
+import { tell } from '@/lib/tell';
 import { workoutText } from '@/tracker/services/shareText';
 import { getSessionSummary, sessionTitle } from '@/tracker/services/finishSummary';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
@@ -77,6 +80,7 @@ export default function SessionDetailScreen() {
   const actions = useWorkoutActions(router);
   const { actionError, pickFolders } = actions;
   const [menu, setMenu] = useState<'menu' | 'share' | null>(null);
+  const [renaming, setRenaming] = useState(false);
   const [sharing, setSharing] = useState(false);
   // v0.25.1: the body figure chosen in Settings → Units.
   const figure = useTrackerPrefs((s) => s.bodyFigure);
@@ -161,6 +165,7 @@ export default function SessionDetailScreen() {
                 <>
                   <SheetRow label="Save as routine" leading={<Glyph name="list" size={20} color={color.accent} />} onPress={() => close(actions.askSaveRoutine)} />
                   <SheetRow label="Repeat workout" leading={<Glyph name="play" size={20} color={color.accent} />} onPress={() => close(() => void actions.onRepeat(data))} />
+                  <SheetRow label="Rename workout" leading={<Glyph name="pencil" size={20} color={color.accent} />} onPress={() => close(() => setRenaming(true))} />
                   <SheetRow label="Edit workout" leading={<Glyph name="pencil" size={20} color={color.accent} />} onPress={() => close(() => void actions.onEdit(data))} />
                   {shareRows}
                   <SheetRow label="Delete workout" danger leading={<Glyph name="trash" size={20} color={color.criticalText} />} onPress={() => close(() => void onDelete())} />
@@ -168,6 +173,21 @@ export default function SessionDetailScreen() {
               )}
             </View>
           </TrackerSheet>
+          <NameSheet
+            visible={renaming}
+            title="Rename workout"
+            initial={title}
+            placeholder={title}
+            action="Save name"
+            onClose={() => setRenaming(false)}
+            onSave={(name) => {
+              setRenaming(false);
+              if (!id) return;
+              void renameWorkout(id, name)
+                .then(() => summary.reload())
+                .catch(() => void tell('Could not rename', 'The workout keeps its name. Try again.'));
+            }}
+          />
           <FolderPickerSheet
             visible={pickFolders != null}
             title="Where should the routine go?"
