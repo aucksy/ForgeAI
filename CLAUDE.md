@@ -18,9 +18,11 @@ detail goes in `PROGRESS.md`, commit messages, and code comments — not chat.
 ## ⭐ Research demand before building a feature
 Before building any NEW feature the owner asks for (not a bug fix): search the web first —
 Hevy/Strong and other competitor apps, their help pages and feature-request boards, Reddit.
-Tell him in plain English whether most members would use it (mainstream vs niche, who has it),
-recommend one of at most 2 options (build for everyone / keep it for his personal variant),
-and STOP until he decides. A personal-only idea goes to his own variant, not the product.
+Tell him in plain English whether most members would use it (mainstream vs niche, who has it).
+If it is mainstream, also research the BEST way to build it (how the leading apps do it, what
+their users complain about) and 1-3 ideas to make ours better than theirs. Recommend one of at
+most 2 options (build for everyone / keep it for his personal variant) and STOP until he
+decides. A personal-only idea goes to his own variant, not the product.
 
 ## Frozen files (read-only — import and TEST them, never edit)
 `src/engine/*`, `src/components/ui/*`, `src/components/charts/*`, `src/db/schema.ts`, and existing
