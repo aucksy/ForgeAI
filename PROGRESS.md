@@ -1755,6 +1755,26 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-13: **v0.37.0 — the owner's first real gym session, fixed** (7e91df6 … afe840b; owner used
+  the app for a full workout and compared it with Hevy screen by screen).
+  - Workout: rest starts after EVERY set type (warm-ups and before drops used to start none); warm-up
+    rows show last time's warm-ups; RPE in PREVIOUS ("30 × 15 / @ 9") and the RPE column at every
+    width (it hid under 380 dp — his Pixel at large display size); "Last: 3 Oct · Push 1A" and a
+    first-time hint; Set type sheet ✓ beside ✕, RPE 3×3; target row aligned; Create in both
+    add-exercise pickers.
+  - "Previous values" setting (Any workout / Same routine / Same folder — his one-folder-per-gym
+    setup), frozen per workout; scopes PREVIOUS, warm-ups, Target and notes (historyScope.ts).
+  - Records: new "Rep record" (heavier for at least that many reps); "Most reps"/"Best set" only
+    announce at no lighter weight; the bar never drops (review HIGH). Records are derived, so old
+    workouts' counts can change.
+  - Exercise page: Last time as a set table; chart point stays after one tap (every line chart);
+    grouped numbers; range control in the chart card; chart on the History tab too.
+  - Notifications: live workout card like Hevy's (exercise, next set, picture, Complete set;
+    WorkoutCard.kt, channel workout-live, phone only); every "Rest is over" is CATEGORY_ALARM
+    (Notification cooldown exemption) and vibrates. Watch buzz during a Pixel exercise: owner to
+    turn off Notification cooldown and "Mute notifications from phone"; a watch app if not enough.
+  - Review (9 findings) fixed with regression tests. 2,134 tests.
+  - Process lesson: Brain/Lessons/forgeai-audits-missed-what-a-real-workout-shows.md + CLAUDE.md rule.
 - 2026-10-12: **v0.36.2 — Profile chart shows the range's total; Statistics audit** (9f338ee + review
   fixes; owner: "I selected All Time … why is it showing the total KG lifted just for Oct", "gaps
   between the months not equal", "Last 12 Weeks … showing 0 for all 3 modes").
