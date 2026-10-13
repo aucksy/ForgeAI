@@ -177,8 +177,10 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'
     timeout: 10000
+# Lateral Raise sits ABOVE Triceps Pushdown: scroll back up to it.
 - scrollUntilVisible:
     element: "More for .*Lateral Raise.*"
+    direction: UP
     centerElement: true
     timeout: 30000
 - tapOn:
