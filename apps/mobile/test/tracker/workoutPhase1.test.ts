@@ -55,19 +55,19 @@ describe('rest timer rules', () => {
     expect(afterSetCompleted([a], a.key, a.sets[0].key, 90)).toEqual({ restSec: 120, nextExKey: null });
   });
 
-  it('starts no timer after a warm-up, or when rest is off', () => {
-    const w = ex({ sets: [set({ isWarmup: true, done: true }), set()] });
-    expect(afterSetCompleted([w], w.key, w.sets[0].key, 90).restSec).toBeNull();
+  it('starts the same rest after a warm-up (owner, 13 Oct 2026); none when rest is off', () => {
+    const w = ex({ restSec: 75, sets: [set({ isWarmup: true, done: true }), set()] });
+    expect(afterSetCompleted([w], w.key, w.sets[0].key, 90).restSec).toBe(75);
     const off = ex({ restSec: 0, sets: [set({ done: true })] });
     expect(afterSetCompleted([off], off.key, off.sets[0].key, 90).restSec).toBeNull();
     const defaultOff = ex({ sets: [set({ done: true })] });
     expect(afterSetCompleted([defaultOff], defaultOff.key, defaultOff.sets[0].key, 0).restSec).toBeNull();
   });
 
-  it('starts no timer when the next set is a drop set', () => {
+  it('starts the same rest before and after a drop set (every set type alike)', () => {
     const d = ex({ sets: [set({ done: true }), set({ setType: 'drop' })] });
-    expect(afterSetCompleted([d], d.key, d.sets[0].key, 90).restSec).toBeNull();
-    // ...but does once the drop set itself is done
+    expect(afterSetCompleted([d], d.key, d.sets[0].key, 90).restSec).toBe(90);
+    // ...and once the drop set itself is done
     d.sets[1].done = true;
     expect(afterSetCompleted([d], d.key, d.sets[1].key, 90).restSec).toBe(90);
   });

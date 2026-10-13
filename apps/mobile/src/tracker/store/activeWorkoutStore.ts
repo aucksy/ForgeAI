@@ -22,9 +22,11 @@ import { enqueueWrite } from '@/db/writeQueue';
 import {
   getBoundedExerciseHistories,
   getBoundedExerciseHistory,
+  getWarmupSets,
   type ExerciseHistoryEntry,
   type HistoryBefore,
   type TrackedSetEntry,
+  type WarmupsBySession,
 } from '@/tracker/db/exerciseHistory';
 import {
   getTrackerExercise,
@@ -43,6 +45,7 @@ import {
   getPriorBestsMany,
   setExerciseRestSec,
 } from '@/tracker/db/exercisePrefs';
+import { historyScopeOrAll, type HistoryScope } from '@/tracker/db/historyScope';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
@@ -157,6 +160,13 @@ export interface DraftExercise {
   note?: string;
   /** Last session's working sets — powers the PREVIOUS column + auto-fill (typed form). */
   previousSets: PrevSet[];
+  /**
+   * 13 Oct 2026: last time's warm-ups (typed form), from the SAME workout and card as
+   * `previousSets` — the warm-up rows' PREVIOUS, matched by warm-up order. Kept apart so nothing
+   * that reads working sets (Targets, records, "vs last time") ever sees them. Optional so drafts
+   * saved before still load (absent = none).
+   */
+  previousWarmups?: PrevSet[];
   sets: DraftSet[];
   /**
    * Phase 2 — how this exercise is logged and counted. Optional so drafts saved before
@@ -265,6 +275,8 @@ export interface ActiveWorkoutState {
    * saved as its `routine_id` (tracker schema v11): a Repeat copies its source's, a past log the
    * routine picked. `''` = known to have none (an empty workout — never moves "Today"); null =
    * not known (a past log with nothing picked — "Today" places it by its name and exercises).
+   * Editing a saved workout: its saved routine, read only for "Previous values" (Save leaves the
+   * saved `routine_id` alone).
    */
   routineId: string | null;
   /** The name this workout starts with (a Repeat: its source's; a past log: the routine picked). */
@@ -442,6 +454,20 @@ export function correctingBefore(
   return { dateISO: day, startedAt: s.startedAt + dayDeltaMs(original, day), excludeSessionId: s.editingSessionId };
 }
 
+/**
+ * "Previous values": the routine whose scope this workout's past numbers come from — the one it
+ * was started from, else the one it counts as (a Repeat's, a past log's pick, an edited workout's).
+ * null = none (an empty workout reads every workout). PURE.
+ */
+export function historyRoutineOf(s: Pick<ActiveWorkoutState, 'planDayId' | 'routineId'>): string | null {
+  return s.planDayId || s.routineId || null;
+}
+
+/** The live workout's "Previous values" scope (null = every workout). Never throws. */
+function scopeOfWorkout(s: Pick<ActiveWorkoutState, 'planDayId' | 'routineId'>): Promise<HistoryScope | null> {
+  return historyScopeOrAll(historyRoutineOf(s));
+}
+
 async function persistDraft(s: ActiveWorkoutState): Promise<void> {
   if (!s.active || s.startedAt == null || isCorrecting(s)) {
     await setMeta(DRAFT_KEY, '');
@@ -604,6 +630,46 @@ export function lastSetsOfCard<S extends { cardIndex?: number | null }>(
 }
 
 /**
+ * Where `lastSetsOfCard(hist, card)` takes its sets from: that workout and card (null = no
+ * history). The warm-ups' PREVIOUS reads this same workout and card. PURE.
+ */
+export function lastCardSource<S extends { cardIndex?: number | null }>(
+  hist: readonly { sessionId: string; sets: readonly S[] }[],
+  card: number,
+): { sessionId: string; card: number } | null {
+  if (card > 0) {
+    for (const h of hist) {
+      if (setsOfCard(h.sets, card).length > 0) return { sessionId: h.sessionId, card };
+    }
+  }
+  return hist[0] ? { sessionId: hist[0].sessionId, card: 0 } : null;
+}
+
+/**
+ * Last time's warm-ups for a card: the warm-ups of `source`'s card, from `getWarmupSets`
+ * (`[]`: no history; undefined: that workout was not read). PURE.
+ */
+export function warmupsOfSource<S extends { cardIndex?: number | null }>(
+  warm: ReadonlyMap<string, ReadonlyMap<string, readonly S[]>>,
+  exerciseId: string,
+  source: { sessionId: string; card: number } | null,
+): S[] | undefined {
+  if (!source) return [];
+  const all = warm.get(source.sessionId)?.get(exerciseId);
+  return all ? setsOfCard(all, source.card) : undefined;
+}
+
+/** `getWarmupSets` that never throws: a failed read is none (warm-up rows then show no PREVIOUS). */
+async function readWarmups(pairs: readonly { sessionId: string; exerciseId: string }[]): Promise<WarmupsBySession> {
+  if (pairs.length === 0) return new Map();
+  try {
+    return await getWarmupSets(pairs);
+  } catch {
+    return new Map();
+  }
+}
+
+/**
  * #10: the number a NEW card of `exerciseId` gets: the lowest one no other card of that exercise
  * holds (0 when it is the only one, 1 for a second Bench…). Cards without a number (an older
  * draft) hold their place-on-screen number. PURE.
@@ -633,33 +699,45 @@ interface CardFacts {
   notes: Map<string, string | null>;
   bests: Map<string, PriorBests | null>;
   infos: Map<string, TrackerExercise>;
+  /** Last time's warm-ups (`getWarmupSets`) of each card's workout; empty when they could not be read. */
+  warm: WarmupsBySession;
 }
 
 /**
  * The facts for these cards; null when last time cannot be read in one go (each card then
  * reads its own, as before). The extras never block a start: a failed read is "none".
+ * `scope` ("Previous values"): last time and the carried note come from those workouts only.
  */
 async function prefetchCardFacts(
   cards: readonly { exerciseId: string; card: number }[],
   before: HistoryBefore | null = null,
+  scope: HistoryScope | null = null,
 ): Promise<CardFacts | null> {
   if (cards.length === 0) return null;
   const ids = [...new Set(cards.map((c) => c.exerciseId))];
   // A later card (back-off) may need to look past last time for its own sets (#11).
   const deep = new Set(cards.filter((c) => c.card > 0).map((c) => c.exerciseId));
   const shallow = ids.filter((id) => !deep.has(id));
-  const opts = { skipEasy: true, before: before ?? undefined };
+  const opts = { skipEasy: true, before: before ?? undefined, scope };
   const none = <V,>(): Map<string, V> => new Map<string, V>();
   try {
     const [h1, h12, rest, notes, bests, infos] = await Promise.all([
       shallow.length > 0 ? getBoundedExerciseHistories(shallow, 1, opts) : Promise.resolve(none<ExerciseHistoryEntry[]>()),
       deep.size > 0 ? getBoundedExerciseHistories([...deep], CARD_LOOKBACK, opts) : Promise.resolve(none<ExerciseHistoryEntry[]>()),
       getExerciseRestSecs(ids).catch(() => none<number | null>()),
-      before ? Promise.resolve(none<string | null>()) : getCarriedNotes(ids).catch(() => none<string | null>()),
+      before ? Promise.resolve(none<string | null>()) : getCarriedNotes(ids, { scope }).catch(() => none<string | null>()),
       before ? Promise.resolve(none<PriorBests | null>()) : getPriorBestsMany(ids).catch(() => none<PriorBests | null>()),
       getTrackerExercisesByIds(ids).catch(() => none<TrackerExercise>()),
     ]);
-    return { hist: new Map([...h1, ...h12]), rest, notes, bests, infos };
+    const hist = new Map([...h1, ...h12]);
+    // Warm-ups on PREVIOUS: one more read for every card, from the workout each card's PREVIOUS
+    // comes from. A failed read never blocks a start (the warm-up rows then show no PREVIOUS).
+    const sources = cards.flatMap((c) => {
+      const src = lastCardSource(hist.get(c.exerciseId) ?? [], c.card);
+      return src ? [{ sessionId: src.sessionId, exerciseId: c.exerciseId }] : [];
+    });
+    const warm = await readWarmups(sources);
+    return { hist, rest, notes, bests, infos, warm };
   } catch {
     return null;
   }
@@ -672,6 +750,7 @@ async function buildDraftExercise(
    * `card`: this card's place among the workout's cards of the SAME exercise (0 = first).
    * `routine`: the card comes from a routine — its sets as saved (RP-19), its rest and note.
    * `facts`: every card's reads made at once (`prefetchCardFacts`); absent = this card reads its own.
+   * `scope`: the workout's "Previous values" scope (absent / null = every workout).
    */
   opts: {
     exactSets?: boolean;
@@ -679,6 +758,7 @@ async function buildDraftExercise(
     before?: HistoryBefore | null;
     routine?: RoutineExerciseExtras | null;
     facts?: CardFacts | null;
+    scope?: HistoryScope | null;
   } = {},
 ): Promise<DraftExercise> {
   // Bounded in SQL: start-from-plan builds one draft per plan exercise, and the frozen
@@ -691,6 +771,7 @@ async function buildDraftExercise(
   // note or live-record bests from today.
   const before = opts.before ?? undefined;
   const facts = opts.facts;
+  const scope = opts.scope ?? null;
   const [hist, restSec, note, bests, info] = facts
     ? [
         facts.hist.get(ex.id) ?? [],
@@ -701,11 +782,11 @@ async function buildDraftExercise(
       ]
     : await Promise.all([
     // A later card (back-off) may need to look past last time for its own sets (#11).
-    getBoundedExerciseHistory(ex.id, card > 0 ? CARD_LOOKBACK : 1, { skipEasy: true, before }),
+    getBoundedExerciseHistory(ex.id, card > 0 ? CARD_LOOKBACK : 1, { skipEasy: true, before, scope }),
     // Phase 1 extras never block starting a workout: a failed read just means
     // default rest, no carried note, no live record alert.
     getExerciseRestSec(ex.id).catch(() => null),
-    before ? Promise.resolve(null) : getCarriedNote(ex.id).catch(() => null),
+    before ? Promise.resolve(null) : getCarriedNote(ex.id, { scope }).catch(() => null),
     before ? Promise.resolve(null) : getPriorBests(ex.id).catch(() => null),
     // Phase 2: how it is logged. A failed read logs it as weight × reps, as before.
     getTrackerExercise(ex.id).catch(() => null),
@@ -717,6 +798,15 @@ async function buildDraftExercise(
   // LW-05: heavy + back-off cards of one lift each read their OWN card of last time.
   const lastSets = lastSetsOfCard(hist, card);
   const previousSets = lastSets.map((s) => toPrevSet(s, logType, mode));
+  // Warm-ups on PREVIOUS (13 Oct 2026): last time's warm-ups of the same workout and card, in
+  // the same counting. Read with every card's (facts), else on their own; a failed read is none.
+  const source = lastCardSource(hist, card);
+  let lastWarm = facts ? warmupsOfSource(facts.warm, ex.id, source) : undefined;
+  if (lastWarm === undefined) {
+    const warm = source ? await readWarmups([{ sessionId: source.sessionId, exerciseId: ex.id }]) : new Map();
+    lastWarm = warmupsOfSource(warm, ex.id, source) ?? [];
+  }
+  const previousWarmups = lastWarm.map((s) => toPrevSet(s, logType, mode));
   // An easy week asks for exactly half the sets, even when last time had more rows.
   // TG-08: last time's drop sets come back AS drop sets, in their place (their PREVIOUS is the
   // drop), and only normal sets count toward the routine's set count.
@@ -768,6 +858,7 @@ async function buildDraftExercise(
     equipment: ex.equipment,
     incrementKg: ex.incrementKg,
     previousSets,
+    previousWarmups,
     sets,
     restSec: cardRest,
     bests,
@@ -806,10 +897,13 @@ async function cardsWithTargets(
   easy: boolean,
 ): Promise<DraftExercise[]> {
   const effort = useTrackerPrefs.getState().advancedSets;
+  // "Previous values": PREVIOUS, notes and Targets all read this routine's scope.
+  const previousFrom = useTrackerPrefs.getState().previousFrom;
+  const scope = await historyScopeOrAll(planDayId, previousFrom);
   // LW-05: the same lift twice (heavy, then back-off) — each card reads its own card of last time.
   const cards = cardOccurrences(rows.map((pe) => pe.exerciseId));
   const [exercises, early] = await Promise.all([
-    prefetchCardFacts(rows.map((pe, i) => ({ exerciseId: pe.exerciseId, card: cards[i] }))).then((facts) =>
+    prefetchCardFacts(rows.map((pe, i) => ({ exerciseId: pe.exerciseId, card: cards[i] })), null, scope).then((facts) =>
       Promise.all(
         rows.map((pe, i) =>
           buildDraftExercise(pe.exercise, easy ? easySets(pe.targetSets) : pe.targetSets, {
@@ -817,6 +911,7 @@ async function cardsWithTargets(
             card: cards[i],
             routine: { sets: pe.sets ?? null, restSec: pe.restSec ?? null, note: pe.note ?? null, supersetGroup: pe.supersetGroup ?? null },
             facts,
+            scope,
           }),
         ),
       ),
@@ -824,11 +919,11 @@ async function cardsWithTargets(
     preloadTargets(
       planDayId,
       rows.map((pe) => pe.exerciseId),
-      { easy, effort },
+      { easy, effort, previousFrom },
     ),
   ]);
   try {
-    seedTargets(targetQuery(planDayId, exercises, { easy, effort }), early);
+    seedTargets(targetQuery(planDayId, exercises, { easy, effort, previousFrom }), early);
   } catch {
     // The screen loads them itself.
   }
@@ -863,13 +958,17 @@ async function targetsBeforeHints(planDayId: string, exercises: DraftExercise[],
 /**
  * PREVIOUS entry for a set, matched by WORKING-set ordinal. `previousSets` holds
  * last session's working sets only (the history read excludes warm-ups), so
- * warm-up rows have no PREVIOUS and never shift the mapping of the working rows.
+ * warm-up rows never shift the mapping of the working rows. 13 Oct 2026: a warm-up row
+ * reads last time's warm-ups instead (`previousWarmups`, same workout and card), matched by
+ * warm-up order: the 1st W row ↔ last time's 1st warm-up.
  */
 export function prevForSet(ex: DraftExercise, setKey: string): PrevSet | null {
   let working = 0;
+  let warm = 0;
   for (const s of ex.sets) {
-    if (s.key === setKey) return s.isWarmup ? null : ex.previousSets[working] ?? null;
-    if (!s.isWarmup) working += 1;
+    if (s.key === setKey) return s.isWarmup ? ex.previousWarmups?.[warm] ?? null : ex.previousSets[working] ?? null;
+    if (s.isWarmup) warm += 1;
+    else working += 1;
   }
   return null;
 }
@@ -887,7 +986,8 @@ const present = (v: number | null | undefined): number | null => (v != null && N
  *   4. else, for an extra set beyond last time's count, last time's numbers of the nearest
  *      set above (an extra set is one tap, as in Hevy).
  * Each number follows the rule on its own: a weight typed above with no reps takes the
- * Target's rep goal. Warm-up rows get no hint. A drop row hints its own last-time drop first
+ * Target's rep goal. A warm-up row follows rule 3 only, with last time's same warm-up
+ * (`prevForSet`): no warm-up last time, no hint. A drop row hints its own last-time drop first
  * and never the Target. A reps-only move never hints a weight (LW-19). A weight × reps row
  * with no weight to hint gets no hint at all — a tick then asks for the weight (TG-07).
  * Only hints: nothing is written into the row until it is ticked.
@@ -902,15 +1002,19 @@ export function fillForSet(
   const idx = ex.sets.findIndex((s) => s.key === setKey);
   if (idx < 0) return null;
   const row = ex.sets[idx];
-  if (row.isWarmup) return null;
-  const drop = row.setType === 'drop';
+  // 13 Oct 2026: a warm-up row hints last time's same warm-up (its PREVIOUS) and nothing else —
+  // never a working set's numbers, a row above, or the Target.
+  const warmup = row.isWarmup;
+  const drop = !warmup && row.setType === 'drop';
   const own = prevForSet(ex, setKey);
   // Working rows above, nearest first. A normal row never copies a drop row's lighter numbers.
-  const above = ex.sets
-    .slice(0, idx)
-    .reverse()
-    .filter((s) => !s.isWarmup && (drop || s.setType !== 'drop'));
-  const tgt = drop ? null : target ?? null;
+  const above = warmup
+    ? []
+    : ex.sets
+        .slice(0, idx)
+        .reverse()
+        .filter((s) => !s.isWarmup && (drop || s.setType !== 'drop'));
+  const tgt = drop || warmup ? null : target ?? null;
   const pick = (
     typedOf: (s: DraftSet) => number | null,
     prevOf: (p: PrevSet | null | undefined) => number | null,
@@ -1247,11 +1351,13 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
 
     startFromSession: async (session) => {
       const cards = cardOccurrences(session.exercises.map((g) => g.exercise.id));
-      const facts = await prefetchCardFacts(session.exercises.map((g, i) => ({ exerciseId: g.exercise.id, card: cards[i] })));
+      // "Previous values": a Repeat counts as its source's routine, so it reads that scope.
+      const scope = await scopeOfWorkout({ planDayId: null, routineId: session.routineId ?? null });
+      const facts = await prefetchCardFacts(session.exercises.map((g, i) => ({ exerciseId: g.exercise.id, card: cards[i] })), null, scope);
       const exercises = await Promise.all(
         session.exercises.map((g, i) => {
           const working = g.sets.filter((s) => !s.isWarmup).length;
-          return buildDraftExercise(g.exercise, working > 0 ? working : 1, { card: cards[i], facts });
+          return buildDraftExercise(g.exercise, working > 0 ? working : 1, { card: cards[i], facts, scope });
         }),
       );
       set({
@@ -1282,6 +1388,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const draftEx = await buildDraftExercise(ex, 1, {
         card: nextCardNumber(get().exercises, ex.id),
         before: correctingBefore(get()),
+        scope: await scopeOfWorkout(get()),
       });
       // Correcting a past workout: a note carried from a LATER session would be wrong.
       if (isCorrecting(get())) delete draftEx.note;
@@ -1298,8 +1405,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         return card;
       });
       const before = correctingBefore(get());
-      const facts = picked.length > 1 ? await prefetchCardFacts(picked.map((ex, i) => ({ exerciseId: ex.id, card: cards[i] })), before) : null;
-      const built = await Promise.all(picked.map((ex, i) => buildDraftExercise(ex, 1, { card: cards[i], before, facts })));
+      const scope = await scopeOfWorkout(get());
+      const facts = picked.length > 1 ? await prefetchCardFacts(picked.map((ex, i) => ({ exerciseId: ex.id, card: cards[i] })), before, scope) : null;
+      const built = await Promise.all(picked.map((ex, i) => buildDraftExercise(ex, 1, { card: cards[i], before, facts, scope })));
       if (isCorrecting(get())) for (const d of built) delete d.note;
       mutate((list) => [...list, ...built], true);
     },
@@ -1622,6 +1730,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
                 ...e,
                 loadMode: mode,
                 previousSets: e.previousSets.map((p) => ({ ...p, weightKg: convertCounting(p.weightKg, e.loadMode ?? 'one', mode) })),
+                ...(e.previousWarmups
+                  ? { previousWarmups: e.previousWarmups.map((p) => ({ ...p, weightKg: convertCounting(p.weightKg, e.loadMode ?? 'one', mode) })) }
+                  : {}),
                 ...(correcting ? { sets: e.sets.map((st) => ({ ...st, loadMode: mode })) } : {}),
               }
             : e,
@@ -1643,7 +1754,12 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const draftEx = await buildDraftExercise(
         next,
         split ? openRows(cur) : cur.sets.filter((s) => !s.isWarmup).length || 1,
-        { exactSets: split || get().easyWeek, card: nextCardNumber(others, next.id), before: correctingBefore(get()) },
+        {
+          exactSets: split || get().easyWeek,
+          card: nextCardNumber(others, next.id),
+          before: correctingBefore(get()),
+          scope: await scopeOfWorkout(get()),
+        },
       );
       if (isCorrecting(get())) delete draftEx.note;
       // Re-check after the await: the card may be gone, or a tick may have landed meanwhile.
@@ -1765,12 +1881,14 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // HI-16: read straight "the newest workout with this exercise BEFORE this one" (one per
       // exercise) - not the 4 newest, which a workout from 6 weeks ago never reaches.
       const before: HistoryBefore = { dateISO: session.dateISO, startedAt: session.startedAt, excludeSessionId: session.id };
+      // "Previous values": the edited workout's own routine decides the scope.
+      const scope = await scopeOfWorkout({ planDayId: null, routineId: session.routineId ?? null });
       const [meta, histories, infos] = await Promise.all([
         getSessionSetMeta(session.id),
         Promise.all(
           session.exercises.map(async (g) => ({
             exerciseId: g.exercise.id,
-            history: await getBoundedExerciseHistory(g.exercise.id, 1, { before }),
+            history: await getBoundedExerciseHistory(g.exercise.id, 1, { before, scope }),
           })),
         ),
         // No fallback: without each exercise's type, Save would drop timed and assisted sets.
@@ -1782,13 +1900,25 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         kinds[id] = { logType: info.logType, loadMode: info.loadMode, distUnit: info.distUnit, catalogKey: info.catalogKey };
       }
       const previous: PreviousByExercise = {};
+      // Warm-ups on PREVIOUS: the warm-ups of the workout each exercise's PREVIOUS comes from.
+      const sources: { sessionId: string; exerciseId: string }[] = [];
       for (const h of histories) {
         const lt = kinds[h.exerciseId]?.logType ?? 'weight_reps';
-        previous[h.exerciseId] = previousExcludingSession(h.history, session.id, session.dateISO).map((s) =>
-          toPrevSet(s, lt),
-        );
+        const prior = previousExcludingSession(h.history, session.id, session.dateISO);
+        previous[h.exerciseId] = prior.map((s) => toPrevSet(s, lt));
+        if (prior[0]) sources.push({ sessionId: prior[0].sessionId, exerciseId: h.exerciseId });
       }
-      const exercises = buildEditDraft(session, meta, previous, { makeKey: uuid }, kinds);
+      // A failed read never refuses the edit: the warm-up rows then show no PREVIOUS.
+      const warm = await readWarmups(sources);
+      const warmOf = (exerciseId: string): PrevSet[] => {
+        const src = sources.find((x) => x.exerciseId === exerciseId);
+        const lt = kinds[exerciseId]?.logType ?? 'weight_reps';
+        return src ? (warm.get(src.sessionId)?.get(exerciseId) ?? []).map((s) => toPrevSet(s, lt)) : [];
+      };
+      const exercises = buildEditDraft(session, meta, previous, { makeKey: uuid }, kinds).map((e) => ({
+        ...e,
+        previousWarmups: warmOf(e.exerciseId),
+      }));
       set({
         active: true,
         hydrated: true,
@@ -1798,7 +1928,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: session.startedAt,
         dayType: session.dayType,
         planDayId: null,
-        routineId: '',
+        // Its own routine: exercises added while editing read the same "Previous values" scope.
+        routineId: session.routineId ?? '',
         workoutName: null,
         easyWeek: false,
         exercises,

@@ -91,14 +91,21 @@ export function isTodayRoutine(r: TodayRoutineInput): boolean {
   return r.exerciseIds.length > 0 && r.dayType !== 'rest';
 }
 
-const nameKey = (s: string | null | undefined): string => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+/** A name as the name match compares it: spaces collapsed, trimmed, lower case. PURE. */
+export const nameKey = (s: string | null | undefined): string => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/**
+ * The name a workout goes by for the name match: its own name, else (old imports) its notes'
+ * first line; '' = none. Also the "Previous values" name rule (`tracker/db/historyScope.ts`). PURE.
+ */
+export function workoutNameKey(title: string | null | undefined, notes?: string | null): string {
+  return nameKey(title) || nameKey((notes ?? '').split('\n')[0]);
+}
 
 /** The names a workout may go by: its own name, else (old imports) its notes' first line. */
 function sessionNames(s: TodaySessionInput): string[] {
-  const t = nameKey(s.title);
-  if (t) return [t];
-  const first = nameKey((s.notes ?? '').split('\n')[0]);
-  return first ? [first] : [];
+  const name = workoutNameKey(s.title, s.notes);
+  return name ? [name] : [];
 }
 
 /** The first routine Today can offer at or after `from` (cyclic), as an index; null if none. */

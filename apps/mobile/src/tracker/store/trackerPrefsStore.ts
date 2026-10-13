@@ -12,6 +12,9 @@
  *  - `bodyFigure` (v0.25.1): the figure the body map and the share picture draw — male or
  *    female, chosen in Profile. The profile has no sex field, so it starts on the male
  *    figure every install had before.
+ *  - `previousFrom` (13 Oct 2026, Hevy's "Previous Workout Values" plus "Same folder"): which past
+ *    workouts PREVIOUS, the Target and carried notes read (`tracker/db/historyScope.ts`). Any
+ *    workout by default — what every install did before.
  *
  * New keys backfill to their default for pre-existing persisted blobs via zustand's
  * default shallow merge (persisted state lacks the key → default kept).
@@ -22,6 +25,14 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { BodyFigure } from '../catalog/bodyMapPaths';
 import { DEFAULT_METRIC, DEFAULT_RANGE, isChartMetric, isChartRange, type ChartMetric, type ChartRange } from '../engine/historyChart';
+
+/** Where an exercise's past numbers come from in a workout: any workout, this routine, this folder. */
+export type PreviousFrom = 'any' | 'routine' | 'folder';
+
+/** A choice this version knows. PURE. */
+export function isPreviousFrom(v: unknown): v is PreviousFrom {
+  return v === 'any' || v === 'routine' || v === 'folder';
+}
 
 export interface TrackerPrefsState {
   advancedSets: boolean;
@@ -39,6 +50,8 @@ export interface TrackerPrefsState {
    */
   chartMetric: ChartMetric;
   chartRange: ChartRange;
+  /** Settings → Workouts → Previous values. */
+  previousFrom: PreviousFrom;
   setAdvancedSets: (value: boolean) => void;
   setCoachNotes: (value: boolean) => void;
   setSounds: (value: boolean) => void;
@@ -46,6 +59,7 @@ export interface TrackerPrefsState {
   setWeeklyGoal: (value: number | null) => void;
   setChartMetric: (value: ChartMetric) => void;
   setChartRange: (value: ChartRange) => void;
+  setPreviousFrom: (value: PreviousFrom) => void;
 }
 
 /** A goal the app accepts: a whole 1–7, else off. PURE. */
@@ -73,6 +87,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       weeklyGoal: null,
       chartMetric: DEFAULT_METRIC,
       chartRange: DEFAULT_RANGE,
+      previousFrom: 'any',
       setAdvancedSets: (advancedSets) => set({ advancedSets }),
       setCoachNotes: (coachNotes) => set({ coachNotes }),
       setSounds: (sounds) => set({ sounds }),
@@ -80,11 +95,13 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       setWeeklyGoal: (value) => set({ weeklyGoal: cleanWeeklyGoal(value) }),
       setChartMetric: (value) => set({ chartMetric: isChartMetric(value) ? value : DEFAULT_METRIC }),
       setChartRange: (value) => set({ chartRange: isChartRange(value) ? value : DEFAULT_RANGE }),
+      setPreviousFrom: (value) => set({ previousFrom: isPreviousFrom(value) ? value : 'any' }),
     }),
     {
       name: 'forgeai-tracker-prefs',
       storage: createJSONStorage(() => AsyncStorage),
-      // A stored chip or range this version does not know falls back to the first-time choice.
+      // A stored chip, range or Previous choice this version does not know falls back to the
+      // first-time one.
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<TrackerPrefsState>;
         return {
@@ -92,6 +109,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           ...p,
           chartMetric: isChartMetric(p.chartMetric) ? p.chartMetric : current.chartMetric,
           chartRange: isChartRange(p.chartRange) ? p.chartRange : current.chartRange,
+          previousFrom: isPreviousFrom(p.previousFrom) ? p.previousFrom : current.previousFrom,
         };
       },
     },

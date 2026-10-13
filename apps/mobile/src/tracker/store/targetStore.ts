@@ -1,8 +1,8 @@
 /**
  * The live workout's Targets, one per card (audit TG-04 / TG-06 / TG-11). Not persisted:
  * Targets are derived from the member's history and recomputed when anything they depend on
- * changes — the cards (added, removed, swapped, Counting changed), the easy week, RPE logging
- * and the unit on screen.
+ * changes — the cards (added, removed, swapped, Counting changed), the easy week, RPE logging,
+ * the unit on screen and the "Previous values" setting (which workouts the history comes from).
  *
  * TG-11: starting a routine fills this store TOGETHER with the cards (`preloadTargets` runs
  * beside the draft build, `seedTargets` stores the result before the workout opens), so the
@@ -15,6 +15,7 @@ import { displayUnits, type UnitSystem } from '@/lib/units';
 import type { LoadMode } from '@/tracker/engine/logTypes';
 import type { ProgressionTarget } from '@/tracker/engine/progression';
 import { getTargetsForCards, type TargetCard } from '@/tracker/services/coachTargets';
+import { useTrackerPrefs, type PreviousFrom } from '@/tracker/store/trackerPrefsStore';
 
 /** What a card tells the Target (a slice of the draft exercise). */
 export interface CardForTarget {
@@ -35,12 +36,14 @@ export interface TargetQuery {
   easy: boolean;
   effort: boolean;
   units: UnitSystem;
+  /** Settings → Workouts → Previous values (absent = any workout). */
+  previousFrom?: PreviousFrom;
 }
 
 export function targetQuery(
   planDayId: string | null,
   exercises: readonly CardForTarget[],
-  opts: { easy: boolean; effort: boolean; units?: UnitSystem },
+  opts: { easy: boolean; effort: boolean; units?: UnitSystem; previousFrom?: PreviousFrom },
 ): TargetQuery {
   return {
     planDayId,
@@ -56,6 +59,7 @@ export function targetQuery(
     easy: opts.easy,
     effort: opts.effort,
     units: opts.units ?? displayUnits(),
+    previousFrom: opts.previousFrom ?? useTrackerPrefs.getState().previousFrom,
   };
 }
 
@@ -64,7 +68,7 @@ export function querySignature(q: TargetQuery): string {
   const cards = q.cards
     .map((c) => `${c.key}:${c.exerciseId}:${c.planExerciseId ?? ''}:${c.loadMode ?? ''}:${c.card ?? ''}:${c.planCard ?? ''}:${c.splitFrom ?? ''}`)
     .join(',');
-  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${cards}`;
+  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${q.previousFrom ?? 'any'}|${cards}`;
 }
 
 interface TargetState {
@@ -85,7 +89,9 @@ export async function loadTargets(q: TargetQuery): Promise<void> {
   inflight = sig;
   let map: Map<string, ProgressionTarget>;
   try {
-    map = q.planDayId ? await getTargetsForCards(q.planDayId, q.cards, { easy: q.easy, effort: q.effort }) : new Map();
+    map = q.planDayId
+      ? await getTargetsForCards(q.planDayId, q.cards, { easy: q.easy, effort: q.effort, previousFrom: q.previousFrom ?? 'any' })
+      : new Map();
   } catch {
     map = new Map();
   }
@@ -103,7 +109,7 @@ export async function loadTargets(q: TargetQuery): Promise<void> {
 export async function preloadTargets(
   planDayId: string | null,
   exerciseIds: readonly string[],
-  opts: { easy: boolean; effort: boolean },
+  opts: { easy: boolean; effort: boolean; previousFrom?: PreviousFrom },
 ): Promise<Map<string, ProgressionTarget>> {
   if (!planDayId) return new Map();
   try {

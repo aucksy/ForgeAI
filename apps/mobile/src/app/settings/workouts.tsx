@@ -1,6 +1,7 @@
 /**
- * Settings → Workouts (redesign R6): default rest, sounds, Do Not Disturb, RPE, weekly goal — and
- * the rest-alert check, which shows only when rest alerts would not ring on time.
+ * Settings → Workouts (redesign R6): default rest, sounds, Do Not Disturb, RPE, weekly goal, and
+ * (13 Oct 2026) previous values — and the rest-alert check, which shows only when rest alerts
+ * would not ring on time.
  */
 import { SettingsPage } from '@/components/settings/SettingsPage';
 import { FEATURES, profileParts } from '@/lib/features';

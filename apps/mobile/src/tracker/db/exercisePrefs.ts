@@ -11,6 +11,8 @@ import { enqueueWrite } from '@/db/writeQueue';
 import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getPriorRecordBests, getPriorRecordBestsMany } from '@/tracker/services/recordsService';
 
+import { historyScopeSql, type HistoryScope } from './historyScope';
+
 /** NULL = default rest, 0 = off, >0 = seconds. */
 export async function getExerciseRestSec(exerciseId: string): Promise<number | null> {
   const row = await getDb().getFirstAsync<{ rest_sec: number | null }>(
@@ -34,21 +36,23 @@ export async function setExerciseRestSec(exerciseId: string, restSec: number | n
 /**
  * The note left on this exercise in the MOST RECENT workout that included it.
  * Clearing a note in a workout therefore stops it carrying forward.
+ * "Previous values": with a `scope`, the most recent workout of that routine / folder.
  */
-export async function getCarriedNote(exerciseId: string): Promise<string | null> {
+export async function getCarriedNote(exerciseId: string, opts: { scope?: HistoryScope | null } = {}): Promise<string | null> {
+  const inScope = historyScopeSql('ws', opts.scope ?? null);
   const row = await getDb().getFirstAsync<{ note: string | null }>(
     `SELECT se.note AS note
        FROM set_entries se
       WHERE se.session_id = (
               SELECT ws.id FROM set_entries s2
                 JOIN workout_sessions ws ON ws.id = s2.session_id
-               WHERE s2.exercise_id = ?
+               WHERE s2.exercise_id = ? ${inScope.sql}
                ORDER BY ws.started_at DESC
                LIMIT 1)
         AND se.exercise_id = ?
         AND se.note IS NOT NULL AND TRIM(se.note) <> ''
       LIMIT 1`,
-    [exerciseId, exerciseId],
+    [exerciseId, ...inScope.params, exerciseId],
   );
   const n = row?.note?.trim();
   return n ? n : null;
@@ -85,9 +89,14 @@ export async function getExerciseRestSecs(exerciseIds: readonly string[]): Promi
 /**
  * `getCarriedNote` for many exercises: one statement (per 400). Each exercise's newest workout
  * (by start) is ranked with a window function; its first non-empty note (in saved order) carries.
+ * With a `scope`, the newest workout of that routine / folder.
  */
-export async function getCarriedNotes(exerciseIds: readonly string[]): Promise<Map<string, string | null>> {
+export async function getCarriedNotes(
+  exerciseIds: readonly string[],
+  opts: { scope?: HistoryScope | null } = {},
+): Promise<Map<string, string | null>> {
   const out = new Map<string, string | null>();
+  const inScope = historyScopeSql('ws', opts.scope ?? null);
   const unique = [...new Set(exerciseIds)];
   for (let i = 0; i < unique.length; i += CHUNK) {
     const chunk = unique.slice(i, i + CHUNK);
@@ -98,7 +107,7 @@ export async function getCarriedNotes(exerciseIds: readonly string[]): Promise<M
                   ROW_NUMBER() OVER (PARTITION BY s2.exercise_id ORDER BY ws.started_at DESC) AS rn
              FROM set_entries s2
              JOIN workout_sessions ws ON ws.id = s2.session_id
-            WHERE s2.exercise_id IN (${chunk.map(() => '?').join(', ')})
+            WHERE s2.exercise_id IN (${chunk.map(() => '?').join(', ')}) ${inScope.sql}
          ) WHERE rn = 1
        )
        SELECT l.ex AS ex, se.note AS note
@@ -106,7 +115,7 @@ export async function getCarriedNotes(exerciseIds: readonly string[]): Promise<M
          JOIN set_entries se ON se.session_id = l.sid AND se.exercise_id = l.ex
         WHERE se.note IS NOT NULL AND TRIM(se.note) <> ''
         ORDER BY l.ex, se.rowid`,
-      chunk,
+      [...chunk, ...inScope.params],
     );
     for (const r of rows) {
       if (out.has(r.ex)) continue;

@@ -5,8 +5,8 @@
  *  - Tapping the SET number opens the set-type sheet (warm-up / drop / failure /
  *    remove). The old always-visible second row of chips is gone.
  *  - "Track RPE" adds one narrow RPE cell, coloured by effort; tap it for the sheet.
- *  - Ticking a set: decides the rest timer (per-exercise length, no rest before a
- *    drop set, supersets rest per round) and announces a new record on the spot.
+ *  - Ticking a set: decides the rest timer (per-exercise length, the same for every set type,
+ *    supersets rest per round) and announces a new record on the spot.
  *
  * Phase 2 — the inputs follow the exercise's type (engine/logTypes):
  *   weight × reps: KG · REPS        bodyweight: REPS        weighted: +KG · REPS

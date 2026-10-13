@@ -13,15 +13,20 @@
  * Phase 2, packet D: "Rest alerts: …" (are rest alerts on time? one tap fixes it), the optional
  * "Ring through Do Not Disturb" (Android only, off by default — RT-12), and a default rest that
  * could not be saved says so (RT-11).
+ *
+ * 13 Oct 2026: + "Previous values" at the end (Hevy's "Previous Workout Values", plus the owner's
+ * "Same folder"): three full-width rows, one line under them saying what the chosen one does. Three
+ * choices with long words do not fit a segmented control at large text; rows wrap instead.
  */
 import { useEffect, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
-import { Card, Icon } from '@/components/ui';
+import { Card, Icon, SheetRow } from '@/components/ui';
 import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
+import { PREVIOUS_FROM_CHOICES } from '../db/historyScope';
 import { refreshWidgets } from '../phone/widgets';
 import { fmtRest } from '../services/restRules';
 import { useRestAlertPrefs } from '../store/restAlertPrefsStore';
@@ -29,6 +34,19 @@ import { useRestTimer } from '../store/restTimerStore';
 import { stepWeeklyGoal, useTrackerPrefs } from '../store/trackerPrefsStore';
 import { RestAlertsStatusRow } from './RestAlertsStatusRow';
 import { RestPickerSheet } from './RestPickerSheet';
+
+/** A section's small heading (Weekly goal, Previous values). */
+const HEADING = {
+  fontFamily: type.bodySemi,
+  fontSize: type.size.caption,
+  color: color.inkMuted,
+  letterSpacing: 1.1,
+  textTransform: 'uppercase',
+  marginBottom: space.sm,
+} as const;
+
+/** The plain line under a section. */
+const SECTION_LINE = { fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 } as const;
 
 /** The stepper's − and + : 48 dp round, dimmed (and inert) at the end of the range. */
 function StepButton({ sign, label, disabled, onPress }: { sign: '−' | '+'; label: string; disabled: boolean; onPress: () => void }) {
@@ -103,6 +121,9 @@ function WeeklyGoalStepper({ goal, onChange }: { goal: number | null; onChange: 
 export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: boolean }) {
   const weeklyGoal = useTrackerPrefs((s) => s.weeklyGoal);
   const setWeeklyGoal = useTrackerPrefs((s) => s.setWeeklyGoal);
+  const previousFrom = useTrackerPrefs((s) => s.previousFrom);
+  const setPreviousFrom = useTrackerPrefs((s) => s.setPreviousFrom);
+  const previousChoice = PREVIOUS_FROM_CHOICES.find((c) => c.value === previousFrom) ?? PREVIOUS_FROM_CHOICES[0];
   const advancedSets = useTrackerPrefs((s) => s.advancedSets);
   const setAdvancedSets = useTrackerPrefs((s) => s.setAdvancedSets);
   const coachNotes = useTrackerPrefs((s) => s.coachNotes);
@@ -180,17 +201,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
       ) : null}
       {/* Audit Phase 9 (#4): the member's own workouts-a-week goal (Up next on the Workout tab, the widget). */}
       <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
-        <Text
-          accessibilityRole="header"
-          style={{
-            fontFamily: type.bodySemi,
-            fontSize: type.size.caption,
-            color: color.inkMuted,
-            letterSpacing: 1.1,
-            textTransform: 'uppercase',
-            marginBottom: space.sm,
-          }}
-        >
+        <Text accessibilityRole="header" style={HEADING}>
           Weekly goal
         </Text>
         <WeeklyGoalStepper
@@ -200,9 +211,28 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
             void refreshWidgets();
           }}
         />
-        <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 }}>
-          Workouts a week. The Workout tab shows how many are left.
+        <Text style={SECTION_LINE}>Workouts a week. The Workout tab shows how many are left.</Text>
+      </View>
+      {/* 13 Oct 2026: where PREVIOUS, the Target and carried notes come from (tracker/db/historyScope.ts). */}
+      <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
+        <Text accessibilityRole="header" style={HEADING}>
+          Previous values
         </Text>
+        <View accessibilityRole="radiogroup" style={{ gap: space.xs }}>
+          {PREVIOUS_FROM_CHOICES.map((c) => (
+            <SheetRow
+              key={c.value}
+              label={c.label}
+              selected={previousFrom === c.value}
+              onPress={() => {
+                if (previousFrom === c.value) return;
+                tap();
+                setPreviousFrom(c.value);
+              }}
+            />
+          ))}
+        </View>
+        <Text style={SECTION_LINE}>{previousChoice.line}</Text>
       </View>
       <RestPickerSheet
         visible={picking}

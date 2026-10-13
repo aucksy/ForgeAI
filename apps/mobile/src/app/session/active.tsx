@@ -97,6 +97,8 @@ export default function ActiveWorkoutScreen() {
   const easyWeek = useActiveWorkout((s) => s.easyWeek);
   // Phase 4: members who log RPE see this plan week's effort on the Target.
   const logsRpe = useTrackerPrefs((s) => s.advancedSets);
+  // "Previous values" (Settings → Workouts): a change re-reads the Targets from those workouts.
+  const previousFrom = useTrackerPrefs((s) => s.previousFrom);
   const exercises = useActiveWorkout((s) => s.exercises);
   const committing = useActiveWorkout((s) => s.committing);
   const finish = useActiveWorkout((s) => s.finish);
@@ -196,7 +198,7 @@ export default function ActiveWorkoutScreen() {
   // and its "why" in the new unit (TG-04). Starting a routine stores them WITH the cards
   // (TG-11), so this only loads what is missing or out of date. Empty for Start-Empty.
   const units = useUnits();
-  const targetQ = targetQuery(planDayId, exercises, { easy: easyWeek, effort: logsRpe, units });
+  const targetQ = targetQuery(planDayId, exercises, { easy: easyWeek, effort: logsRpe, units, previousFrom });
   const targetSig = querySignature(targetQ);
   const targetQRef = useRef(targetQ);
   targetQRef.current = targetQ;

@@ -35,7 +35,7 @@ import { earlierCards, liveRecordFlags } from '../services/liveRecords';
 import { effectiveRestSec, fmtRest } from '../services/restRules';
 import { computeWarmups } from '../services/warmupMath';
 import { moveKind, supersetChoices } from '../services/workoutOrder';
-import { fillForSet, useActiveWorkout } from '../store/activeWorkoutStore';
+import { fillForSet, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
@@ -193,19 +193,18 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     let working = 0;
     let warm = 0;
     return exercise.sets.map((s) => {
-      // PREVIOUS aligns by WORKING-set ordinal (previousSets excludes warm-ups),
-      // matching prevForSet() in the store so display + auto-fill agree.
+      // PREVIOUS is prevForSet() itself, so display + auto-fill agree: a working row by
+      // WORKING-set ordinal (previousSets excludes warm-ups), a warm-up row by warm-up order
+      // (previousWarmups, last time's warm-ups of the same workout).
       let label: string;
       // LW-27: how a screen reader names the row ("set 2", "warm-up 1", "drop set 3").
       let spoken: string;
-      let previous: DraftExercise['previousSets'][number] | null;
+      const previous: DraftExercise['previousSets'][number] | null = prevForSet(exercise, s.key);
       if (s.isWarmup) {
         label = 'W';
         warm += 1;
         spoken = `warm-up ${warm}`;
-        previous = null;
       } else {
-        previous = exercise.previousSets[working] ?? null;
         label = String(working + 1);
         spoken = `${s.setType === 'drop' ? 'drop set' : 'set'} ${label}`;
         working += 1;

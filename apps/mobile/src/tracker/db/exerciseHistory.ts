@@ -46,6 +46,7 @@ import { getDb } from '@/db';
 import type { SetEntry } from '@/types/models';
 
 import { isLoadMode, type LoadMode } from '../engine/logTypes';
+import { historyScopeSql, type HistoryScope } from './historyScope';
 
 /** A working set plus Phase 2's time and distance (null on weight × reps rows). */
 export interface TrackedSetEntry extends SetEntry {
@@ -135,6 +136,16 @@ export interface HistoryBefore {
   excludeSessionId?: string | null;
 }
 
+/**
+ * "Previous values" (13 Oct 2026): `scope` reads only the workouts of this routine or folder
+ * (`historyScope.ts`); absent / null = every workout.
+ */
+export interface HistoryReadOpts {
+  skipEasy?: boolean;
+  before?: HistoryBefore;
+  scope?: HistoryScope | null;
+}
+
 /** The "before" condition on a sessions alias, with its parameters. PURE. */
 function beforeSql(alias: string, b: HistoryBefore | undefined): { sql: string; params: (string | number)[] } {
   if (!b) return { sql: '', params: [] };
@@ -147,7 +158,7 @@ function beforeSql(alias: string, b: HistoryBefore | undefined): { sql: string; 
 export async function getBoundedExerciseHistory(
   exerciseId: string,
   limit?: number,
-  opts: { skipEasy?: boolean; before?: HistoryBefore } = {},
+  opts: HistoryReadOpts = {},
 ): Promise<ExerciseHistoryEntry[]> {
   // The frozen fn's JS trim yields nothing for a non-positive limit; don't emit
   // `LIMIT 0`/`LIMIT -1` (SQLite reads a negative limit as "no limit").
@@ -156,8 +167,10 @@ export async function getBoundedExerciseHistory(
   const db = getDb();
   const b1 = beforeSql('ws', opts.before);
   const b2 = beforeSql('w2', opts.before);
-  const easy = `${opts.skipEasy ? 'AND COALESCE(ws.easy_week, 0) = 0' : ''} ${b1.sql}`;
-  const easy2 = `${opts.skipEasy ? 'AND COALESCE(w2.easy_week, 0) = 0' : ''} ${b2.sql}`;
+  const s1 = historyScopeSql('ws', opts.scope ?? null);
+  const s2 = historyScopeSql('w2', opts.scope ?? null);
+  const easy = `${opts.skipEasy ? 'AND COALESCE(ws.easy_week, 0) = 0' : ''} ${b1.sql} ${s1.sql}`;
+  const easy2 = `${opts.skipEasy ? 'AND COALESCE(w2.easy_week, 0) = 0' : ''} ${b2.sql} ${s2.sql}`;
   const rows =
     limit == null
       ? await db.getAllAsync<HistoryRow>(
@@ -166,7 +179,7 @@ export async function getBoundedExerciseHistory(
              JOIN workout_sessions ws ON ws.id = se.session_id
             WHERE se.exercise_id = ? AND se.is_warmup = 0 ${easy}
             ${ORDER}`,
-          [exerciseId, ...b1.params],
+          [exerciseId, ...b1.params, ...s1.params],
         )
       : await db.getAllAsync<HistoryRow>(
           // Bound the SESSION list first, then read only those sessions' sets. The
@@ -186,7 +199,7 @@ export async function getBoundedExerciseHistory(
                  LIMIT ?
               )
             ${ORDER}`,
-          [exerciseId, ...b1.params, exerciseId, ...b2.params, limit],
+          [exerciseId, ...b1.params, ...s1.params, exerciseId, ...b2.params, ...s2.params, limit],
         );
 
   return groupHistoryRows(rows);
@@ -213,6 +226,47 @@ function groupHistoryRows(rows: readonly HistoryRow[]): ExerciseHistoryEntry[] {
   return out;
 }
 
+/** Warm-up sets per workout, then per exercise (`getWarmupSets`). */
+export type WarmupsBySession = Map<string, Map<string, TrackedSetEntry[]>>;
+
+/**
+ * Warm-ups on PREVIOUS (13 Oct 2026): the warm-up sets (`is_warmup = 1`) of each exercise in
+ * each given workout, `set_number` ASC, in ONE statement (per 400 pairs), as
+ * `out.get(sessionId).get(exerciseId)`; every pair asked for has an entry (empty: none).
+ *
+ * The workout is not chosen here: the caller passes the one the working-set history above picked
+ * (the same scope, easy-week skip and "before" rule), so warm-ups always come from the workout
+ * PREVIOUS quotes. Warm-ups never enter the reads above, so Targets, records and charts never see
+ * them.
+ */
+export async function getWarmupSets(pairs: readonly { sessionId: string; exerciseId: string }[]): Promise<WarmupsBySession> {
+  const out: WarmupsBySession = new Map();
+  const unique: { sessionId: string; exerciseId: string }[] = [];
+  for (const p of pairs) {
+    let bySession = out.get(p.sessionId);
+    if (!bySession) {
+      bySession = new Map();
+      out.set(p.sessionId, bySession);
+    }
+    if (bySession.has(p.exerciseId)) continue;
+    bySession.set(p.exerciseId, []);
+    unique.push(p);
+  }
+  for (let i = 0; i < unique.length; i += 400) {
+    const chunk = unique.slice(i, i + 400);
+    const rows = await getDb().getAllAsync<HistoryRow>(
+      `SELECT ${COLS}
+         FROM set_entries se
+         JOIN workout_sessions ws ON ws.id = se.session_id
+        WHERE se.is_warmup = 1 AND (${chunk.map(() => '(se.session_id = ? AND se.exercise_id = ?)').join(' OR ')})
+        ORDER BY se.session_id, se.exercise_id, se.set_number ASC`,
+      chunk.flatMap((p) => [p.sessionId, p.exerciseId]),
+    );
+    for (const r of rows) out.get(r.session_id)?.get(r.exercise_id)?.push(mapSet(r));
+  }
+  return out;
+}
+
 /**
  * Audit Phase 8: `getBoundedExerciseHistory(id, limit, opts)` for many exercises in ONE
  * statement (per 400) — starting a routine read each card's last time on its own. Window
@@ -221,14 +275,16 @@ function groupHistoryRows(rows: readonly HistoryRow[]): ExerciseHistoryEntry[] {
 export async function getBoundedExerciseHistories(
   exerciseIds: readonly string[],
   limit: number,
-  opts: { skipEasy?: boolean; before?: HistoryBefore } = {},
+  opts: HistoryReadOpts = {},
 ): Promise<Map<string, ExerciseHistoryEntry[]>> {
   const out = new Map<string, ExerciseHistoryEntry[]>();
   const unique = [...new Set(exerciseIds)];
   for (const id of unique) out.set(id, []);
   if (limit <= 0 || unique.length === 0) return out;
   const b2 = beforeSql('w2', opts.before);
-  const easy2 = `${opts.skipEasy ? 'AND COALESCE(w2.easy_week, 0) = 0' : ''} ${b2.sql}`;
+  const s2 = historyScopeSql('w2', opts.scope ?? null);
+  // The scope is applied where the workouts are ranked; the outer read takes only ranked ones.
+  const easy2 = `${opts.skipEasy ? 'AND COALESCE(w2.easy_week, 0) = 0' : ''} ${b2.sql} ${s2.sql}`;
   for (let i = 0; i < unique.length; i += 400) {
     const chunk = unique.slice(i, i + 400);
     const rows = await getDb().getAllAsync<HistoryRow & { ex: string }>(
@@ -251,7 +307,7 @@ export async function getBoundedExerciseHistories(
          JOIN workout_sessions ws ON ws.id = se.session_id
         WHERE r.rn <= ?
         ORDER BY r.ex, ws.started_at DESC, ws.date_iso DESC, se.set_number ASC`,
-      [...chunk, ...b2.params, limit],
+      [...chunk, ...b2.params, ...s2.params, limit],
     );
     const byEx = new Map<string, HistoryRow[]>();
     for (const r of rows) {

@@ -7,8 +7,9 @@
  *
  *  - Each exercise may carry its own rest length (`restSec`); `null`/absent means
  *    "use the default", `0` means "no timer for this exercise".
- *  - A warm-up set never starts a timer (unchanged from before Phase 1).
- *  - A set followed by a DROP set starts no timer — a drop set is done straight away.
+ *  - EVERY ticked set starts the same rest — warm-up, drop, failure or normal (owner, 13 Oct
+ *    2026: "rest timer should behave exactly the same across all types"; it used to skip
+ *    warm-ups and the set before a drop set, which read as a broken timer).
  *  - Supersets rest per ROUND, not per exercise: ticking A1 jumps to B1 with no
  *    timer; ticking the last exercise of the round starts the rest and points back
  *    at the first exercise that still has a set to do.
@@ -111,11 +112,7 @@ export function afterSetCompleted(
   const setIndex = ex.sets.findIndex((s) => s.key === setKey);
   if (setIndex < 0) return NONE;
   const set = ex.sets[setIndex];
-  if (set.isWarmup) return NONE;
-
-  // A drop set follows immediately — no rest before it.
-  const next = ex.sets[setIndex + 1];
-  if (next && !next.done && !next.isWarmup && next.setType === 'drop') return NONE;
+  if (!set) return NONE;
 
   const rest = effectiveRestSec(ex, defaultSec);
   const restSec = rest > 0 ? rest : null;

@@ -22,6 +22,7 @@ import { getTodaysWorkout } from '@/services/coach';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { getExerciseIdsByCatalogKey, getTrackerExercisesByIds, type TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { getRoutineAnywhere } from '@/tracker/db/folderRepo';
+import { historyScopeOrAll, scopeKey, type HistoryScope } from '@/tracker/db/historyScope';
 import { getProgressionHistoryMany, getWeightLadders, type LadderWeight } from '@/tracker/db/progressionHistory';
 import { convertCounting, getsTarget, repsPerSide, weightIsEach, type LoadMode } from '@/tracker/engine/logTypes';
 import { computeProgressionTarget, freeTarget, toEasyTarget, withEffort, type ProgressionTarget, type VersionLink } from '@/tracker/engine/progression';
@@ -32,6 +33,7 @@ import { trainingVersion } from '@/tracker/db/trainingVersion';
 import { onWriteFailed, quietSince, writeQueueMark } from '@/db/writeQueue';
 import { displayUnits } from '@/lib/units';
 import { folderOfRoutine } from '@/tracker/db/folderRepo';
+import type { PreviousFrom } from '@/tracker/store/trackerPrefsStore';
 import type { Exercise, PlanExercise, TodaysWorkout, UserProfile } from '@/types/models';
 
 /** Sessions read per lift: 4 for the rules, the rest to learn the weight step. */
@@ -93,21 +95,24 @@ function ladderIn(rows: readonly LadderWeight[] | undefined, dbMode: LoadMode, c
  * `includeToday`: the live workout counts a workout finished earlier today (its PREVIOUS
  * column already shows it; the open draft is not saved yet, so it never counts itself).
  * The chat's "today's workout" keeps sessions before today so it stays stable all day.
+ * `scope` ("Previous values"): the history read is only that routine's / folder's workouts
+ * (null = every workout).
  */
-async function targetsFor(items: TargetItem[], includeToday: boolean): Promise<ProgressionTarget[]> {
+async function targetsFor(items: TargetItem[], includeToday: boolean, scope: HistoryScope | null): Promise<ProgressionTarget[]> {
   const today = todayISO();
   const ids = items.map((it) => it.exerciseId ?? it.pe.exerciseId);
   // Audit Phase 8: the same Targets asked again with nothing changed (the Workout tab on every
   // visit, a routine started twice) come from memory. They depend on the training data (its
   // version moves with every set, workout, exercise or body-weight change — never a draft),
-  // the day, the member's experience and the items themselves.
+  // the day, the member's experience, the items themselves and the "Previous values" scope (a
+  // remembered answer must never cross a setting change).
   // Audit Phase 8 review: a read while a queued write runs (its rows uncommitted, its version
   // possibly rolled back) is worked out for this caller only, never remembered.
   const mark = writeQueueMark();
   const [experience, version] = await Promise.all([experienceOrDefault(), trainingVersion()]);
   // A version below one remembered: that one was a rolled-back write's (or another database's).
   if (version != null && version < targetMemoTop) forgetTargetMemo();
-  const key = version == null ? null : memoKey(version, today, includeToday, experience, items, ids);
+  const key = version == null ? null : memoKey(version, today, includeToday, experience, items, ids, scope);
   const hit = key != null ? targetMemo.get(key) : undefined;
   if (hit) return [...hit];
   const [{ infos, versionIds }, histories, ladders] = await Promise.all([
@@ -117,6 +122,7 @@ async function targetsFor(items: TargetItem[], includeToday: boolean): Promise<P
     getProgressionHistoryMany(
       items.map((it, i) => (it.card != null ? { exerciseId: ids[i], card: it.card } : { exerciseId: ids[i] })),
       HISTORY_SESSIONS + 1,
+      { scope },
     ),
     // The ladder is never in the way of a Target: a failed read uses the history's own weights.
     (async () => getWeightLadders(ids))().catch(() => null),
@@ -192,13 +198,14 @@ function memoKey(
   experience: string,
   items: readonly TargetItem[],
   ids: readonly string[],
+  scope: HistoryScope | null,
 ): string {
   // Display units shape the ladder's rungs (kg / lb).
   const parts = items.map((it, i) => {
     const { pe } = it;
     return [ids[i], pe.exerciseId, pe.targetSets, pe.repRangeMin, pe.repRangeMax, it.loadMode ?? '', it.card ?? ''].join(':');
   });
-  return JSON.stringify([version, today, includeToday, experience, displayUnits(), parts]);
+  return JSON.stringify([version, today, includeToday, experience, displayUnits(), scopeKey(scope), parts]);
 }
 
 /** One card of the live workout, as the Target sees it. */
@@ -235,11 +242,14 @@ async function effortRir(planDayId: string, opts: { easy?: boolean; effort?: boo
  * n-th card of that lift the routine's n-th row of it, and a Target from that card's own sets
  * (cards are stored with their sets since tracker schema v10). A card beyond the routine's rows
  * of that lift (added on the spot) gets none.
+ *
+ * "Previous values": the Targets read the history of this routine's scope (`previousFrom`;
+ * absent = the member's setting now).
  */
 export async function getTargetsForCards(
   planDayId: string | null,
   cards: readonly TargetCard[],
-  opts: { easy?: boolean; effort?: boolean } = {},
+  opts: { easy?: boolean; effort?: boolean; previousFrom?: PreviousFrom } = {},
 ): Promise<Map<string, ProgressionTarget>> {
   const out = new Map<string, ProgressionTarget>();
   if (!planDayId || cards.length === 0) return out;
@@ -286,7 +296,8 @@ export async function getTargetsForCards(
     });
   }
   if (items.length === 0) return out;
-  const [targets, rir] = await Promise.all([targetsFor(items, true), effortRir(planDayId, opts)]);
+  const scope = await historyScopeOrAll(planDayId, opts.previousFrom);
+  const [targets, rir] = await Promise.all([targetsFor(items, true, scope), effortRir(planDayId, opts)]);
   targets.forEach((t, i) => {
     if (t.free) return; // no line for distance work and timed cardio
     out.set(keys[i], opts.easy ? toEasyTarget(t, EASY_REASON, easySets) : withEffort(t, rir, rir != null ? effortReason(rir) : ''));
@@ -305,7 +316,7 @@ export async function getTargetsForCards(
  */
 export async function getTargetsForPlanDay(
   planDayId: string | null,
-  opts: { easy?: boolean; effort?: boolean } = {},
+  opts: { easy?: boolean; effort?: boolean; previousFrom?: PreviousFrom } = {},
 ): Promise<Map<string, ProgressionTarget>> {
   const out = new Map<string, ProgressionTarget>();
   if (!planDayId) return out;
@@ -330,7 +341,8 @@ export async function stalledLiftsInPlan(): Promise<number> {
   if (!active) return 0;
   const seen = new Set<string>();
   const exercises = active.days.flatMap((d) => d.exercises).filter((pe) => !seen.has(pe.exerciseId) && seen.add(pe.exerciseId));
-  const targets = await targetsFor(exercises.map((pe) => ({ pe })), true);
+  // Every workout: the stall count is about the plan as a whole, not one routine's history.
+  const targets = await targetsFor(exercises.map((pe) => ({ pe })), true, null);
   return targets.filter((t) => !t.free && STALL_RULES.has(t.rule)).length;
 }
 
@@ -349,6 +361,8 @@ export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout,
   const active = await getActivePlan();
   const day = active?.days.find((d) => d.id === tw.planDayId) ?? (await getRoutineAnywhere(tw.planDayId).catch(() => null));
   if (!day) return { ...tw, targets: [] };
-  const [targets, now] = await Promise.all([targetsFor(day.exercises.map((pe) => ({ pe })), false), getPlanNow().catch(() => null)]);
+  // "Previous values": the Up next routine's scope, as the workout it starts will read.
+  const scope = await historyScopeOrAll(day.id);
+  const [targets, now] = await Promise.all([targetsFor(day.exercises.map((pe) => ({ pe })), false, scope), getPlanNow().catch(() => null)]);
   return { ...tw, targets: now?.easy ? targets.map((t) => toEasyTarget(t, EASY_REASON, easySets)) : targets };
 }

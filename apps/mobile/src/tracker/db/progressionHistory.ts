@@ -11,6 +11,8 @@ import { getDb } from '@/db';
 import { isLoadMode, type LoadMode } from '@/tracker/engine/logTypes';
 import type { ProgSession, ProgSet, ProgSetType } from '@/tracker/engine/progression';
 
+import { historyScopeSql, type HistoryScope } from './historyScope';
+
 interface Row {
   session_id: string;
   date_iso: string;
@@ -147,8 +149,15 @@ interface BatchRow extends Row {
  * `byCard` — with their working sets, in ONE statement per 400 exercises. Same rows and order as
  * `readHistory` per exercise (and card); window functions rank each lift's workouts.
  */
-async function readHistoryBatch(exerciseIds: readonly string[], limit: number, byCard: boolean): Promise<Map<string, Row[]>> {
+async function readHistoryBatch(
+  exerciseIds: readonly string[],
+  limit: number,
+  byCard: boolean,
+  scope: HistoryScope | null,
+): Promise<Map<string, Row[]>> {
   const out = new Map<string, Row[]>();
+  // "Previous values": only this routine's / folder's workouts are ranked (null = every one).
+  const inScope = historyScopeSql('w2', scope);
   const cardOf = (alias: string): string => (byCard ? `COALESCE(${alias}.card_index, 0)` : 'NULL');
   for (const chunk of chunks([...new Set(exerciseIds)])) {
     // Each lift's workouts are found from the covering index alone (`g`), THEN dated and ranked —
@@ -164,7 +173,7 @@ async function readHistoryBatch(exerciseIds: readonly string[], limit: number, b
          SELECT g.ex, g.card, g.sid,
                 ROW_NUMBER() OVER (PARTITION BY g.ex, g.card ORDER BY w2.started_at DESC, w2.date_iso DESC) AS rn
            FROM g JOIN workout_sessions w2 ON w2.id = g.sid
-          WHERE COALESCE(w2.easy_week, 0) = 0
+          WHERE COALESCE(w2.easy_week, 0) = 0 ${inScope.sql}
        )
        SELECT r.ex AS ex, r.card AS card, se.session_id, ws.date_iso AS date_iso, se.weight_kg, se.reps, se.rpe,
               se.set_type, se.duration_sec, se.load_mode
@@ -174,7 +183,7 @@ async function readHistoryBatch(exerciseIds: readonly string[], limit: number, b
          JOIN workout_sessions ws ON ws.id = se.session_id
         WHERE r.rn <= ?
         ORDER BY r.ex, r.card, ws.started_at DESC, ws.date_iso DESC, se.set_number ASC`,
-      [...chunk, limit],
+      [...chunk, ...inScope.params, limit],
     );
     for (const r of rows) {
       const key = byCard ? `${r.ex}|${Number(r.card ?? 0)}` : r.ex;
@@ -193,15 +202,19 @@ async function readHistoryBatch(exerciseIds: readonly string[], limit: number, b
  * Audit Phase 8: `getProgressionHistory` for many Targets at once (the Workout tab's stalled
  * lifts, Home's and a routine's Targets) — two statements at most instead of one or two per
  * lift. The same sessions, sets and order, the same card fall-back (#11). Result i belongs to
- * request i.
+ * request i. `scope` ("Previous values"): only that routine's / folder's workouts; absent = every one.
  */
-export async function getProgressionHistoryMany(requests: readonly ProgressionRequest[], limit: number): Promise<ProgSession[][]> {
+export async function getProgressionHistoryMany(
+  requests: readonly ProgressionRequest[],
+  limit: number,
+  opts: { scope?: HistoryScope | null } = {},
+): Promise<ProgSession[][]> {
   if (limit <= 0 || requests.length === 0) return requests.map(() => []);
   const whole = requests.filter((r) => r.card == null).map((r) => r.exerciseId);
   const carded = requests.filter((r) => r.card != null).map((r) => r.exerciseId);
   const [byExercise, byCard] = await Promise.all([
-    whole.length > 0 ? readHistoryBatch(whole, limit, false) : Promise.resolve(new Map<string, Row[]>()),
-    carded.length > 0 ? readHistoryBatch(carded, limit, true) : Promise.resolve(new Map<string, Row[]>()),
+    whole.length > 0 ? readHistoryBatch(whole, limit, false, opts.scope ?? null) : Promise.resolve(new Map<string, Row[]>()),
+    carded.length > 0 ? readHistoryBatch(carded, limit, true, opts.scope ?? null) : Promise.resolve(new Map<string, Row[]>()),
   ]);
   return requests.map((r) => {
     if (r.card == null) return groupRows(byExercise.get(r.exerciseId) ?? []);

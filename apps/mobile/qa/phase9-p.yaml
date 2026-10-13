@@ -1,6 +1,7 @@
 # Audit Phase 9 device QA, part P9 — "beyond Hevy" (runs after part N, before the P7 tours and M).
 #  1. Settings → Workouts → Weekly goal 3 on the − / + stepper (redesign R6): the Workout tab's
 #     Up next card reads "This week: N of 3 workouts" (redesign R1: Home is gone); then Off again.
+#     On the same page (13 Oct 2026): "Previous values" with its three choices, left on Any workout.
 #  2. A workout: Bench Press, two sets. The entry bar on the keyboard: "+ 2.5" (kg) or "+ 5" (lb,
 #     part I's units) steps the weight box; "Copy to sets below" fills set 2 ("Copied to 1 set below"
 #     with Undo); "+ 1" steps the reps. Both sets ticked, then Finish.
@@ -49,6 +50,21 @@ appId: com.forgeai.app
       text: "(?i)^weekly goal$"
 - assertVisible: "Workouts a week. The Workout tab shows how many are left."
 - takeScreenshot: p9-01-weekly-goal
+# 13 Oct 2026: "Previous values" (Any workout / Same routine / Same folder), under the weekly goal.
+- scrollUntilVisible:
+    element: "(?i)^previous values$"
+    centerElement: true
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Same folder$"
+    timeout: 30000
+- assertVisible: "^Any workout$"
+- assertVisible: "^Same routine$"
+- tapOn: "^Any workout$"
+- scrollUntilVisible:
+    element: "Previous, Target and notes come from the last time you did the exercise."
+    timeout: 30000
+- takeScreenshot: p9-01b-previous-values
 # Workouts → Settings → Profile → the Workout tab. Part L finished Push 1 today, so the card is
 # "Done today: Push 1" with its goal line, "This week: N of 3 workouts".
 - back
