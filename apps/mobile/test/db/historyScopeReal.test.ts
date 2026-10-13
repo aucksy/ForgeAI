@@ -249,3 +249,44 @@ describe('older workouts with no known routine count by their name', () => {
     expect((await readsFor(A1)).previous).toBe('30×12');
   });
 });
+
+// 13 Oct 2026 audit: imported workouts (no routine id) must keep counting as their routine when
+// the member renames it (A3), and a Repeat / an edit of one reads that routine's scope (A2).
+describe('imported workouts stay with their routine', () => {
+  it('A3: renaming a routine keeps its imported history (PREVIOUS still 90×4 under Same routine)', async () => {
+    await setting('routine');
+    const imported = await logBench(null, NAMES.A1, 90, 4, 'imported A1');
+    expect((await readsFor(A1)).previous).toBe('90×4');
+    const { updateRoutine } = await import('@/tracker/db/routineRepo');
+    await updateRoutine(A1, { name: 'Gym A Push' });
+    expect((await readsFor(A1)).previous).toBe('90×4');
+    expect(db.all<{ routine_id: string | null }>('SELECT routine_id FROM workout_sessions WHERE id = ?', [imported])[0].routine_id).toBe(A1);
+  });
+
+  it('A3: a name two routines share is left alone (those workouts count for both by name)', async () => {
+    await setting('routine');
+    const { updateRoutine } = await import('@/tracker/db/routineRepo');
+    await updateRoutine(B1, { name: NAMES.A1 }); // B1 now shares A1's name
+    const imported = await logBench(null, NAMES.A1, 90, 4, 'imported');
+    await updateRoutine(A1, { name: 'Gym A Push' });
+    expect(db.all<{ routine_id: string | null }>('SELECT routine_id FROM workout_sessions WHERE id = ?', [imported])[0].routine_id).toBeNull();
+  });
+
+  it('A2: a Repeat of an imported workout reads the scope of the routine of its name', async () => {
+    await setting('folder');
+    const imported = await logBench(null, NAMES.A1, 100, 5, 'imported A1');
+    await logBench(B1, NAMES.B1, 60, 8, 'newer from B1');
+    const { routineIdByName } = await import('@/tracker/db/historyScope');
+    expect(await routineIdByName('  gym a PUSH 1 ')).toBe(A1);
+    expect(await routineIdByName('Never a routine')).toBeNull();
+    const { getSessionSummary } = await import('@/tracker/services/finishSummary');
+    const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
+    const data = (await getSessionSummary(imported))!;
+    await useActiveWorkout.getState().startFromSession(data.session);
+    const s = useActiveWorkout.getState();
+    expect(s.routineId).toBe(A1);
+    // Gym A's newest Bench is the imported 100×5 — never Gym B's newer 60×8.
+    expect(s.exercises[0].previousSets[0]).toMatchObject({ weightKg: 100, reps: 5 });
+    await useActiveWorkout.getState().discard();
+  });
+});

@@ -27,6 +27,8 @@ import { getProfile } from '@/db/repos/userRepo';
 import { defaultRepRange } from '@/tracker/engine/repRanges';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import { uuid } from '@/lib/uuid';
+import { adoptWorkoutsByName } from '@/tracker/db/historyScope';
+import { nameKey } from '@/tracker/plans/todayPlan';
 import type { DayType, Goal, UserProfile } from '@/types/models';
 
 /** Day types offered in the editor (rotation days — 'rest' isn't a startable routine). */
@@ -119,7 +121,14 @@ export async function updateRoutine(
     args.push(patch.dayType);
   }
   if (sets.length === 0) return;
-  await serialize(() => getDb().runAsync(`UPDATE plan_days SET ${sets.join(', ')} WHERE id = ?`, [...args, dayId]));
+  await serialize(async () => {
+    const before = patch.name != null ? await getDb().getFirstAsync<{ name: string }>('SELECT name FROM plan_days WHERE id = ?', [dayId]) : null;
+    await getDb().runAsync(`UPDATE plan_days SET ${sets.join(', ')} WHERE id = ?`, [...args, dayId]);
+    // 13 Oct 2026 audit (A3): its imported workouts (known only by the old name) stay its own.
+    if (before && patch.name != null && nameKey(before.name) !== nameKey(patch.name)) {
+      await adoptWorkoutsByName(dayId, before.name).catch(() => 0);
+    }
+  });
 }
 
 /** Delete a routine. Its plan_exercises cascade (FK ON DELETE CASCADE, PRAGMA foreign_keys=ON). */

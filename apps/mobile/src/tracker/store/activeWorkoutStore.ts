@@ -45,7 +45,7 @@ import {
   getPriorBestsMany,
   setExerciseRestSec,
 } from '@/tracker/db/exercisePrefs';
-import { historyScopeOrAll, type HistoryScope } from '@/tracker/db/historyScope';
+import { historyScopeOrAll, routineIdByName, type HistoryScope } from '@/tracker/db/historyScope';
 import { getWorkoutSourceNames } from '@/tracker/db/workoutSourceNames';
 import { bestSetOf } from '@/tracker/lib/previousSource';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
@@ -1477,8 +1477,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
 
     startFromSession: async (session) => {
       const cards = cardOccurrences(session.exercises.map((g) => g.exercise.id));
-      // "Previous values": a Repeat counts as its source's routine, so it reads that scope.
-      const scope = await scopeOfWorkout({ planDayId: null, routineId: session.routineId ?? null });
+      // "Previous values": a Repeat counts as its source's routine, so it reads that scope. An
+      // imported source (no routine id) counts as the routine of its name (13 Oct 2026 audit, A2).
+      const ownRoutine = session.routineId ?? (await routineIdByName(session.title).catch(() => null));
+      const scope = await scopeOfWorkout({ planDayId: null, routineId: ownRoutine });
       const facts = await prefetchCardFacts(session.exercises.map((g, i) => ({ exerciseId: g.exercise.id, card: cards[i] })), null, scope);
       const exercises = await Promise.all(
         session.exercises.map((g, i) => {
@@ -1493,7 +1495,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         startedAt: liveStart(),
         dayType: session.dayType,
         planDayId: null,
-        routineId: session.routineId ?? null,
+        routineId: ownRoutine,
         workoutName: session.title?.trim() ? session.title.trim() : null,
         previousFrom: previousFromNow(),
         easyWeek: false,
@@ -2018,8 +2020,12 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // HI-16: read straight "the newest workout with this exercise BEFORE this one" (one per
       // exercise) - not the 4 newest, which a workout from 6 weeks ago never reaches.
       const before: HistoryBefore = { dateISO: session.dateISO, startedAt: session.startedAt, excludeSessionId: session.id };
-      // "Previous values": the edited workout's own routine decides the scope.
-      const scope = await scopeOfWorkout({ planDayId: null, routineId: session.routineId ?? null });
+      // "Previous values": the edited workout's own routine decides the scope (an import: the
+      // routine of its name, A2).
+      const scope = await scopeOfWorkout({
+        planDayId: null,
+        routineId: session.routineId ?? (await routineIdByName(session.title).catch(() => null)),
+      });
       const [meta, histories, infos] = await Promise.all([
         getSessionSetMeta(session.id),
         Promise.all(

@@ -79,7 +79,7 @@ import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
 import { Glyph } from './TrackerGlyph';
-import { hintTexts, prevLabel, rowLayout, SET_ROW, touchSlop, type RowLayout } from './setRowLayout';
+import { boxFontSize, hintTexts, prevLabel, rowLayout, SET_ROW, touchSlop, type RowLayout } from './setRowLayout';
 import { boxLabel, cleanTyped, distWord, kgToTyped, parseTyped, typedToKg, typedWeightMatches } from './unitText';
 
 export { hintTexts, prevLabel, rowLayout, SET_ROW } from './setRowLayout';
@@ -192,6 +192,7 @@ export const SetRow = memo(function SetRow({
   const showRpe = useTrackerPrefs((s) => s.advancedSets);
   const L = useRowLayout(logType);
   const { prevW, rpeCell } = L;
+  const { fontScale } = useWindowDimensions();
   // v0.27.0: kg or lb — typed pounds are stored as kg; the box shows the member's unit.
   const units = useUnits();
 
@@ -443,7 +444,10 @@ export const SetRow = memo(function SetRow({
         selectTextOnFocus
         accessibilityLabel={p.a11y}
         accessibilityHint={p.value === '' && p.hint !== '—' ? `Empty. A tick saves ${p.hint}` : undefined}
-        style={inputStyle()}
+        // A1 (13 Oct 2026 audit): the size already holds the phone's text scale, shrunk only so
+        // the whole number fits its box ("102.5", never "102").
+        allowFontScaling={false}
+        style={inputStyle(boxFontSize(p.value, L.inputW, fontScale, type.size.body))}
       />
       {p.value === '' ? (
         <View pointerEvents="none" style={hintWrap} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
@@ -719,7 +723,7 @@ export const SetRow = memo(function SetRow({
 });
 
 // Read when drawn: gym branding repaints the tokens.
-const inputStyle = () => ({
+const inputStyle = (fontSize: number) => ({
   width: '100%' as const,
   minHeight: SET_ROW.height,
   borderRadius: radius.sm,
@@ -728,7 +732,7 @@ const inputStyle = () => ({
   borderColor: color.border,
   textAlign: 'center' as const,
   fontFamily: type.monoBold,
-  fontSize: type.size.body,
+  fontSize,
   color: color.ink,
   paddingVertical: 0,
   paddingHorizontal: 2,

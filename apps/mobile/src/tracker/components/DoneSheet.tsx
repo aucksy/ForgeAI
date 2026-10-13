@@ -118,7 +118,9 @@ export function DoneSheet({ visible, title, subtitle, onClose, onDone, showDone,
                         opacity: pressed ? 0.8 : 1,
                       }}
                     >
-                      <Icon name="check" size={22} color="#1A0F08" />
+                      {/* 13 Oct 2026 audit (A6): the gym look's own "on accent" colour (a dark
+                          gym accent gets a light tick), never a fixed near-black. */}
+                      <Icon name="check" size={22} color={color.onAccent} />
                     </View>
                   )}
                 </Pressable>

@@ -77,7 +77,9 @@ function FieldLabel({ children }: { children: string }) {
 
 export default function NewExerciseScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ id?: string | string[]; name?: string; for?: string; dayId?: string }>();
+  const params = useLocalSearchParams<{ id?: string | string[]; name?: string; for?: string; dayId?: string; with?: string }>();
+  // A4 (13 Oct 2026 audit): exercises ticked in the workout's picker before Create, added with the new one.
+  const withIds = typeof params.with === 'string' ? params.with.split(',').filter((s) => s !== '') : [];
   const editId = typeof params.id === 'string' ? params.id : params.id?.[0];
   const forWorkout = params.for === 'workout';
   // 13 Oct 2026: made from a routine's picker — Save puts it in that routine.
@@ -316,7 +318,11 @@ export default function NewExerciseScreen() {
             // Straight into the workout it was made for (the picker under this screen goes too).
             const made = await getTrackerExercise(id);
             if (made && useActiveWorkout.getState().active) {
-              await useActiveWorkout.getState().addExercise(made);
+              const ticked = (await Promise.all(withIds.map((x) => getTrackerExercise(x).catch(() => null)))).filter(
+                (e): e is NonNullable<typeof e> => e != null,
+              );
+              if (ticked.length > 0) await useActiveWorkout.getState().addExercises([...ticked, made]);
+              else await useActiveWorkout.getState().addExercise(made);
               router.dismissTo('/session/active');
               return;
             }

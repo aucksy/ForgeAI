@@ -189,10 +189,17 @@ export function timeOfDayName(startedAt: number): string {
   return 'Night workout';
 }
 
-/** LW-10: the routine's own name; a workout without one is named by when it started. */
+/** The four names a workout without a routine gets from its start time. */
+const TIME_OF_DAY_NAMES: ReadonlySet<string> = new Set(['Morning workout', 'Afternoon workout', 'Evening workout', 'Night workout']);
+
+/**
+ * LW-10: the routine's own name; a workout without one is named by when it started. 13 Oct 2026
+ * audit: a Repeat of an "Evening workout" started at 7 am is a "Morning workout" — a time-of-day
+ * name is worked out again, never copied.
+ */
 export function defaultWorkoutName(routineName: string | null | undefined, startedAt: number): string {
   const r = routineName?.trim();
-  return r ? r : timeOfDayName(startedAt);
+  return r && !TIME_OF_DAY_NAMES.has(r) ? r : timeOfDayName(startedAt);
 }
 
 /** A name worth storing: trimmed, at most 60 characters; blank → null. */

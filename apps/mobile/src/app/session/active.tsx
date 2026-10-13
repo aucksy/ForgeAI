@@ -92,6 +92,9 @@ export default function ActiveWorkoutScreen() {
   const active = useActiveWorkout((s) => s.active);
   const startedAt = useActiveWorkout((s) => s.startedAt);
   const planDayId = useActiveWorkout((s) => s.planDayId);
+  // A Repeat of a routine's workout carries the routine's id without a plan day (A5, 13 Oct audit).
+  const routineId = useActiveWorkout((s) => s.routineId);
+  const ownRoutineId = planDayId || routineId || null;
   const workoutName = useActiveWorkout((s) => s.workoutName);
   // Phase 4: an easy week of the followed plan (half the sets, the same weights).
   const easyWeek = useActiveWorkout((s) => s.easyWeek);
@@ -137,13 +140,14 @@ export default function ActiveWorkoutScreen() {
 
   // Phase 2 (LW-02): Finish opens a calm sheet first; nothing is saved until it says so.
   const [finishOpen, setFinishOpen] = useState(false);
-  // LW-10: the routine's own name is the workout's default name.
+  // LW-10: the routine's own name is the workout's default name — also on a Repeat of a
+  // routine's workout (13 Oct 2026 audit, A5: it asked a name there).
   const [routineName, setRoutineName] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
     setRoutineName(null);
-    if (planDayId) {
-      void getRoutine(planDayId)
+    if (ownRoutineId) {
+      void getRoutine(ownRoutineId)
         .then((r) => {
           if (alive) setRoutineName(r?.name ?? null);
         })
@@ -152,7 +156,7 @@ export default function ActiveWorkoutScreen() {
     return () => {
       alive = false;
     };
-  }, [planDayId]);
+  }, [ownRoutineId]);
 
   // Keep the screen awake and load the rest-timer default while logging. The rest
   // timer is NOT cleared on leaving this screen any more — minimising keeps it

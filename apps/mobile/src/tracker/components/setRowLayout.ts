@@ -121,6 +121,42 @@ export function rowLayout(
   return { prevW, rpeCell: showRpe, setW, rpeW, checkW, gap, prevGap, padX, bleed, inputW };
 }
 
+/**
+ * 13 Oct 2026 audit (A1): the number font's widths (Space Grotesk Bold, `type.monoBold`), in ems,
+ * measured from the app's .ttf. A character not listed counts as the widest digit.
+ */
+const NUM_EM: Readonly<Record<string, number>> = {
+  '0': 0.648, '1': 0.452, '2': 0.594, '3': 0.608, '4': 0.636, '5': 0.6, '6': 0.618, '7': 0.554, '8': 0.6, '9': 0.618,
+  '.': 0.298, ':': 0.298, ',': 0.294, '-': 0.432, ' ': 0.254,
+};
+
+/** How wide `text` is in the number font, in ems. PURE. */
+export function numberEm(text: string): number {
+  let em = 0;
+  for (const ch of text) em += NUM_EM[ch] ?? 0.65;
+  return em;
+}
+
+/** A number box's border + side padding + a little slack: what of its width the text cannot use. */
+export const BOX_TEXT_INSET = 8;
+/** The smallest a typed number gets to fit its box (still readable at arm's length). */
+export const BOX_FONT_MIN = 10;
+
+/**
+ * 13 Oct 2026 audit (A1): the size a typed number is drawn at in its box — the phone's own size
+ * (`base` × its text scale), smaller only when the number would not fit. On the owner's ~360 dp
+ * phone at a large text size with "Track RPE" on, a box is ~44 dp, and "22.5" / "102.5" / "1:30"
+ * at 15 × 1.3 were cut off ("22.", "102"); the grey hint already shrank to fit, the ticked value
+ * did not. A TextInput cannot shrink its own text, so the size is worked out here. PURE.
+ */
+export function boxFontSize(text: string, boxWidth: number, fontScale = 1, base = 15): number {
+  const want = base * (fontScale > 0 ? fontScale : 1);
+  const em = numberEm(text);
+  if (em <= 0 || boxWidth <= 0) return want;
+  const fits = Math.floor(((boxWidth - BOX_TEXT_INSET) / em) * 10) / 10;
+  return Math.max(BOX_FONT_MIN, Math.min(want, fits));
+}
+
 /** The touch margin that makes a cell `width` wide 48 dp to the finger, split left and right. PURE. */
 export function touchSlop(width: number): number {
   return Math.max(0, Math.ceil((SET_ROW.touch - width) / 2));

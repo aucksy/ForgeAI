@@ -40,8 +40,14 @@ export default function AddExerciseScreen() {
   const [picked, setPicked] = useState<TrackerExercise[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
   const [typed, setTyped] = useState('');
+  // 13 Oct 2026 audit (A4): the exercises already ticked go along ("with"), so the form adds them
+  // with the new one on Save — Create used to drop them silently. Backing out of the form keeps
+  // them ticked here.
   const create = (name: string): void => {
-    navigateOnce(nav, () => router.push({ pathname: '/library/new', params: { for: 'workout', name: name.trim() } }));
+    const withIds = picked.map((p) => p.id).join(',');
+    navigateOnce(nav, () =>
+      router.push({ pathname: '/library/new', params: { for: 'workout', name: name.trim(), ...(withIds ? { with: withIds } : {}) } }),
+    );
   };
 
   useEffect(() => {

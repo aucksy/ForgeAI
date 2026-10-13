@@ -137,6 +137,40 @@ export async function historyScopeFor(
   return { routineIds: days.map((d) => d.id), names, kind: setting };
 }
 
+/**
+ * 13 Oct 2026 audit (A2): the routine a workout with no known routine (an import) counts as —
+ * the ONE routine whose name is the workout's name (the scope's own name rule). A Repeat or an
+ * edit of an imported "Gym A Push 1" then reads that routine's scope, not every workout. null when
+ * no routine has the name, or two do (it then counts for both by name, as before).
+ */
+export async function routineIdByName(title: string | null | undefined, notes?: string | null): Promise<string | null> {
+  const key = workoutNameKey(title, notes);
+  if (!key) return null;
+  const rows = await getDb().getAllAsync<{ id: string; name: string }>('SELECT id, name FROM plan_days');
+  const hits = rows.filter((r) => nameKey(r.name) === key);
+  return hits.length === 1 ? hits[0].id : null;
+}
+
+/**
+ * 13 Oct 2026 audit (A3): a routine renamed from `oldName` keeps its workouts that were known
+ * only by that name (imports: no routine id) — they get its id, so "Same routine" / "Same
+ * folder", PREVIOUS and the Target still find three years of history after a rename. Skipped
+ * when another routine also has the old name (those workouts count for both). Returns how many
+ * workouts were linked. Call inside the routine write queue.
+ */
+export async function adoptWorkoutsByName(routineId: string, oldName: string): Promise<number> {
+  const key = nameKey(oldName);
+  if (!key) return 0;
+  const db = getDb();
+  const others = await db.getAllAsync<{ name: string }>('SELECT name FROM plan_days WHERE id <> ?', [routineId]);
+  if (others.some((o) => nameKey(o.name) === key)) return 0;
+  const r = await db.runAsync(
+    `UPDATE workout_sessions SET routine_id = ? WHERE routine_id IS NULL AND ${workoutNameSql('workout_sessions')} = ?`,
+    [routineId, key],
+  );
+  return r.changes ?? 0;
+}
+
 /** `historyScopeFor` that never throws: a failed read is every workout (never blocks a start). */
 export function historyScopeOrAll(routineId: string | null | undefined, setting?: PreviousFrom): Promise<HistoryScope | null> {
   return historyScopeFor(routineId, setting).catch(() => null);
