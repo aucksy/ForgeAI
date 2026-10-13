@@ -117,8 +117,9 @@ def main() -> None:
         for name, ss, idx, kind, w, reps, rpe in block:
             rows.append([title, hevy_time(start), hevy_time(end), "", name, ss, "", idx, kind,
                          f"{w:g}", reps, "", "", rpe])
-    # Hevy lists the newest workout first.
-    rows.reverse()
+    # As Hevy writes its export (and qa-hevy.csv has it): oldest workout first, each workout's
+    # exercises and sets in the order they were done. (Reversing it turned every routine upside
+    # down: Triceps Pushdown first, the bench last.)
     # As Hevy writes it (and qa-hevy.csv has it): text quoted, numbers bare, an empty number empty.
     text_cols = {0, 1, 2, 3, 4, 6, 8}
 
