@@ -25,7 +25,7 @@ import { create } from 'zustand';
 import { getMeta, setMeta } from '@/db';
 import { success } from '@/lib/haptics';
 
-import { ringerMode } from '../services/restCard';
+import { dismissRestOver, ringerMode } from '../services/restCard';
 import type { CardDone } from '../services/restDone';
 import { DEFAULT_REST_SEC, REST_MAX_SEC, REST_MIN_SEC } from '../services/restRules';
 import { cancelRestEnd, scheduleRestEnd } from '../services/workoutAlerts';
@@ -63,6 +63,12 @@ export interface RestTimerState {
   setDefaultSec: (sec: number) => Promise<boolean>;
   /** Phase 6: `done` = the row the card's "Done" ticks (null: no Done button). */
   start: (sec?: number, nextLabel?: string | null, done?: CardDone | null) => void;
+  /**
+   * A set was just ticked: its rest starts (`sec`), or — no rest after it (rest off, mid-superset)
+   * — a running rest is skipped (its bell must not ring mid-set) and, v0.37.1 (C2), an old "Rest
+   * is over" still showing goes, so the live workout card is back (one notification at a time).
+   */
+  afterTickRest: (sec: number | null, nextLabel: string | null, done: CardDone | null) => void;
   /** RT-03: a set was just ticked; a rest started in the same tap belongs to it. */
   noteTick: (exKey: string, setKey: string) => void;
   /** RT-03: this set was unticked; if its tick started the running rest, cancel that rest. */
@@ -163,6 +169,16 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
       // (updated on that change) already knows the rest card shows the rest (RT-05).
       void (done === undefined ? scheduleRestEnd(endsAt, nextLabel, startedAt) : scheduleRestEnd(endsAt, nextLabel, startedAt, done));
       set({ endsAt, durationSec: dur, nextLabel, startedAt, source });
+    },
+
+    afterTickRest: (sec, nextLabel, done) => {
+      if (sec) {
+        get().start(sec, nextLabel, done);
+        return;
+      }
+      // Skip clears the card and "Rest is over" too (clearRestCard(true)).
+      if (get().endsAt != null) get().skip();
+      else dismissRestOver();
     },
 
     noteTick: (exKey, setKey) => {

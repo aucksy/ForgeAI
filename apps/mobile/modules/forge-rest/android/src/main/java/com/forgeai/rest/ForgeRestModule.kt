@@ -31,6 +31,13 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *                                    (ONE workout notification at a time; it comes back when the
  *                                    rest and "Rest is over" are gone);
  *  - clearWorkoutCard()            — the workout ended (or is being edited).
+ * v0.37.1 (notification audit):
+ *  - showWorkoutCard / hideWorkoutCard take a 5th argument, `plan` (JSON, livePlan.ts): the sets
+ *    ahead, so a tap with the app closed works on the phone ([OfflineTick]);
+ *  - takeQueuedTicks()             — those taps' ticks (JSON array), once;
+ *  - setRestAllDone(on)            — the next rest follows the last set (before show());
+ *  - dismissRestOver()             — an old "Rest is over" goes, the live card is back;
+ *  - setAccent(hex)                — the gym's accent for both cards.
  * Events: onRestChange { kind: "add" | "skip" | "end" | "done", endsAt, startedAt }, onOpenWorkout.
  */
 class ForgeRestModule : Module() {
@@ -205,14 +212,41 @@ class ForgeRestModule : Module() {
       true
     }
 
-    Function("showWorkoutCard") { title: String, text: String, image: String?, done: String? ->
+    Function("showWorkoutCard") { title: String, text: String, image: String?, done: String?, plan: String? ->
       val c = ctx ?: return@Function false
-      WorkoutCard.show(c, title, text, image, done)
+      WorkoutCard.show(c, title, text, image, done, plan)
     }
 
-    Function("hideWorkoutCard") { title: String, text: String, image: String?, done: String? ->
+    Function("hideWorkoutCard") { title: String, text: String, image: String?, done: String?, plan: String? ->
       val c = ctx ?: return@Function false
-      WorkoutCard.hide(c, title, text, image, done)
+      WorkoutCard.hide(c, title, text, image, done, plan)
+      true
+    }
+
+    // v0.37.1 (C1): the ticks a "Complete set" / Done made while ForgeAI was closed (JSON array).
+    Function("takeQueuedTicks") {
+      val c = ctx ?: return@Function null
+      OfflineTick.take(c)
+    }
+
+    // v0.37.1 (C9): the next rest follows the workout's last set.
+    Function("setRestAllDone") { on: Boolean ->
+      val c = ctx ?: return@Function false
+      RestCard.setAllDone(c, on)
+      true
+    }
+
+    // v0.37.1 (C2): the app came to the front / a set was ticked with no rest: "Rest is over" goes.
+    Function("dismissRestOver") {
+      val c = ctx ?: return@Function false
+      RestCard.dismissOver(c)
+      true
+    }
+
+    // D5 (gym branding): the accent both cards are tinted with ("#RRGGBB"; null = ForgeAI orange).
+    Function("setAccent") { hex: String? ->
+      val c = ctx ?: return@Function false
+      RestCard.setAccent(c, hex)
       true
     }
 

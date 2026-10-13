@@ -1,0 +1,63 @@
+# v0.37.1 device QA, part H3B (audit C1). The app's process has been STOPPED by the script (as
+# Android does to a background app). "Complete set" on the live workout card, from the shade:
+# the phone itself ticks set 4 for the app and starts that set's rest — the rest card ALONE
+# ("Rest 0:30 · ends …"; set 4 is the last set, so it says "All sets done") — and NOT the old
+# "Open ForgeAI to save …" note. The script reads the notification list after this part.
+appId: com.forgeai.app
+---
+- swipe:
+    start: 50%, 1%
+    end: 50%, 75%
+    duration: 600
+- waitForAnimationToEnd:
+    timeout: 3000
+# The shade swipe sometimes lands on the launcher instead (run 38038041222): try twice more.
+- runFlow:
+    when:
+      notVisible: 'Set 4 of 4.*'
+    commands:
+      - swipe:
+          start: 50%, 0%
+          end: 50%, 80%
+          duration: 800
+      - waitForAnimationToEnd:
+          timeout: 3000
+- runFlow:
+    when:
+      notVisible: 'Set 4 of 4.*'
+    commands:
+      - swipe:
+          start: 50%, 0%
+          end: 50%, 80%
+          duration: 800
+- extendedWaitUntil:
+    visible: 'Set 4 of 4.*'
+    timeout: 15000
+# A notification lower in the shade shows its buttons only when opened out.
+- runFlow:
+    when:
+      notVisible: '^Complete set$'
+    commands:
+      - swipe:
+          from:
+            text: 'Set 4 of 4.*'
+          direction: DOWN
+- takeScreenshot: h3b-shade-live-card-app-closed
+- tapOn:
+    text: '^Complete set$'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Rest 0:30 · ends .*'
+    timeout: 15000
+- runFlow:
+    when:
+      notVisible: '.*All sets done.*'
+    commands:
+      - swipe:
+          from:
+            text: 'Rest 0:30 · ends .*'
+          direction: DOWN
+- assertVisible: '.*All sets done.*'
+- assertNotVisible: 'Open ForgeAI to .*'
+- takeScreenshot: h3b-shade-rest-after-complete-set-app-closed
+- pressKey: Back

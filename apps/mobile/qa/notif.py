@@ -18,7 +18,17 @@ Usage: notif.py <check> <dump-file> [args]
   no-ongoing              NO live workout card (no workout was started)
   alone                   ONE ForgeAI workout notification at a time (13 Oct 2026): never the live
                           workout card beside the rest card or "Rest is over" (Android grouped
-                          them under one header, both collapsed, hiding Done / +15 s / Skip)
+                          them under one header, both collapsed, hiding Done / +15 s / Skip).
+                          v0.37.1 (audit C4): FAILS when NO workout notification shows at all (it
+                          used to pass, so a build whose live card never came back passed)
+  live-back [action]      v0.37.1 (C4): the live workout card is BACK - showing, with no rest card,
+                          no "Rest is over" and no "Open ForgeAI to ..." note; with [action], the
+                          card also carries that button (e.g. "Complete set")
+  rest-up <title-prefix> [text-part]
+                          v0.37.1 (C1): a rest card titled <title-prefix> (its text containing
+                          text-part) is showing ALONE (no live card) - any buttons (after the last
+                          set it has no Done)
+  over-text <text-part>   v0.37.1 (C9): "Rest is over" is showing and its text contains text-part
   card <title-prefix> [text-part]
                           the rest card is showing: swipe-away, its three buttons in the order
                           Done, +15 s, Skip (Phase 6), the given title (and, if given, a text
@@ -93,6 +103,11 @@ def is_card(block):
     return channel_of(block) in CARD_CHANNELS
 
 
+def actions(block):
+    """A record's notification ACTIONS in order ('[1] "Skip" -> PendingIntent...'), not any text."""
+    return [a for _, a in sorted((int(i), a) for i, a in re.findall(r'^\s*\[(\d+)\] "(.*?)" ->', block, re.M))]
+
+
 # 13 Oct 2026: the live workout card (WorkoutCard.kt: channel "workout-live", id 41004) replaced
 # the quiet "Workout in progress" card; its title is the exercise's name. A build without the
 # native card still posts the old one, so that title counts too.
@@ -149,8 +164,38 @@ def main():
     if check == "alone":
         lives = [b for b in recs if is_ongoing(b)]
         rests = [b for b in recs if (is_card(b) and title(b).startswith("Rest ")) or title(b) == "Rest is over"]
-        ok = not (lives and rests)
-        print(f"[qa] ONE AT A TIME: live cards {len(lives)}, rest card / Rest is over {len(rests)}: {'ok' if ok else 'BOTH SHOWING'}")
+        # v0.37.1 (audit C4): nothing showing is not "one at a time" - it is a lost notification.
+        ok = bool(lives or rests) and not (lives and rests)
+        verdict = "ok" if ok else ("BOTH SHOWING" if lives and rests else "NOTHING SHOWING")
+        print(f"[qa] ONE AT A TIME: live cards {len(lives)}, rest card / Rest is over {len(rests)}: {verdict}")
+        return 0 if ok else 1
+    if check == "live-back":
+        lives = [b for b in recs if is_ongoing(b)]
+        rests = [b for b in recs if (is_card(b) and title(b).startswith("Rest ")) or title(b) == "Rest is over"]
+        notes = [title(b) for b in cards if not title(b).startswith("Rest ")]
+        want = sys.argv[3] if len(sys.argv) > 3 else ""
+        acts = actions(lives[0]) if lives else []
+        has = not want or want in acts
+        ok = bool(lives) and not rests and not notes and has
+        live = f"'{title(lives[0])}' / '{text_of(lives[0])}' buttons={acts}" if lives else "NONE"
+        want_s = f" (want button '{want}': {'yes' if has else 'NO'})" if want else ""
+        print(f"[qa] LIVE CARD BACK: live card {live}{want_s}; rest card / Rest is over {len(rests)}; notes {notes}: {'ok' if ok else 'NOT BACK'}")
+        return 0 if ok else 1
+    if check == "rest-up":
+        want = sys.argv[3]
+        part = sys.argv[4] if len(sys.argv) > 4 else ""
+        rest = [x for x in cards if title(x).startswith(want)]
+        lives = [b for b in recs if is_ongoing(b)]
+        text_ok = bool(rest) and (not part or part in text_of(rest[0]))
+        ok = bool(rest) and text_ok and not lives
+        got = f"'{title(rest[0])}' / '{text_of(rest[0])}' buttons={actions(rest[0])}" if rest else "NONE"
+        print(f"[qa] REST CARD UP: {got} (want '{want}...'{', text with ' + repr(part) if part else ''}); live cards beside it {len(lives)}: {'ok' if ok else 'FAILED'}")
+        return 0 if ok else 1
+    if check == "over-text":
+        part = sys.argv[3]
+        got = text_of(over[0]) if over else None
+        ok = got is not None and part in got
+        print(f"[qa] REST IS OVER TEXT: {repr(got) if got is not None else 'no Rest is over'} (want {part!r} in it): {'ok' if ok else 'FAILED'}")
         return 0 if ok else 1
     if check == "no-ongoing":
         live = [b for b in recs if is_ongoing(b)]

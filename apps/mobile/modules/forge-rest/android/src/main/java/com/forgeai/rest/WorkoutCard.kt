@@ -22,7 +22,8 @@ import org.json.JSONObject
  *  - the exercise's picture as the large icon, when there is one;
  *  - "Complete set": the rest card's own Done ([RestCard.doneIntent] → [RestActionReceiver]), so it
  *    ticks exactly that set with those numbers and starts the rest, also with the app stopped
- *    (the tap is kept and the app acts on it when it starts, as for the rest card);
+ *    (v0.37.1: then the rest starts here at once from the app's plan, [OfflineTick], and the app
+ *    saves the tick when it next starts);
  *  - all sets done: "All sets done · Finish", no button.
  *
  * Channel traps (read RestCard's notes first):
@@ -91,7 +92,8 @@ object WorkoutCard {
     }
   }
 
-  private fun keep(ctx: Context, title: String, text: String, image: String?, doneJson: String?) {
+  /** The card's words for [restore] (also written by [OfflineTick] after a tap with the app closed). */
+  internal fun keep(ctx: Context, title: String, text: String, image: String?, doneJson: String?) {
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
       .putString("title", title)
       .putString("text", text)
@@ -101,12 +103,33 @@ object WorkoutCard {
   }
 
   /**
+   * v0.37.1 (C1): the app's plan of the sets ahead (JSON, livePlan.ts): each row's words, what a
+   * tick saves and the rest after it, so a "Complete set" tapped with the app closed can start the
+   * rest and move this card on by itself ([OfflineTick]). Null = keep the plan already kept.
+   */
+  private fun keepPlan(ctx: Context, plan: String?) {
+    if (plan == null) return
+    ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("plan", plan).apply()
+  }
+
+  /** The plan last kept ([keepPlan]); null when none or unreadable. */
+  internal fun plan(ctx: Context): JSONObject? {
+    val raw = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("plan", null) ?: return null
+    return try {
+      JSONObject(raw)
+    } catch (_: Exception) {
+      null
+    }
+  }
+
+  /**
    * Post or update the card — or, while a rest card or "Rest is over" is up, only keep its words
    * for later (one at a time). False when it could not be posted (the app then uses its old card).
    */
   @Synchronized
-  fun show(ctx: Context, title: String, text: String, image: String?, doneJson: String?): Boolean {
+  fun show(ctx: Context, title: String, text: String, image: String?, doneJson: String?, plan: String? = null): Boolean {
     keep(ctx, title, text, image, doneJson)
+    keepPlan(ctx, plan)
     if (RestCard.restUp(ctx)) {
       cancel(ctx)
       return true
@@ -116,8 +139,9 @@ object WorkoutCard {
 
   /** A rest started: down it goes (the app's words kept when given, for [restore]). */
   @Synchronized
-  fun hide(ctx: Context, title: String? = null, text: String? = null, image: String? = null, doneJson: String? = null) {
+  fun hide(ctx: Context, title: String? = null, text: String? = null, image: String? = null, doneJson: String? = null, plan: String? = null) {
     if (title != null && text != null) keep(ctx, title, text, image, doneJson)
+    keepPlan(ctx, plan)
     cancel(ctx)
   }
 
@@ -146,7 +170,7 @@ object WorkoutCard {
       val icon = RestCard.iconRes(ctx)
       val b = RestCard.builder(ctx, CH)
         .setSmallIcon(icon)
-        .setColor(RestCard.COLOR)
+        .setColor(RestCard.color(ctx)) // D5: the gym's accent, else ForgeAI orange
         .setContentTitle(title)
         .setContentText(text)
         .setOnlyAlertOnce(true)

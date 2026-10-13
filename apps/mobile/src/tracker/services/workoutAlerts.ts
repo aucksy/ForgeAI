@@ -17,7 +17,7 @@ import { AppState, Platform } from 'react-native';
 import { color } from '@/theme/tokens';
 
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
-import { clearRestCard, showRestCard } from './restCard';
+import { ALL_DONE_TEXT, clearRestCard, restEndsWorkout, showRestCard } from './restCard';
 import type { CardDone } from './restDone';
 
 type NotificationsModule = typeof import('expo-notifications');
@@ -157,7 +157,8 @@ export async function scheduleRestEnd(
       identifier: REST_ID,
       content: {
         title: 'Rest is over',
-        body: nextLabel ? `Next: ${nextLabel}` : 'Time for your next set',
+        // v0.37.1 (C9): after the last set nothing is next.
+        body: nextLabel ? `Next: ${nextLabel}` : restEndsWorkout(nextLabel, done) ? ALL_DONE_TEXT : 'Time for your next set',
         data: { kind: 'rest', route: WORKOUT_ROUTE },
         sound: quiet ? false : 'default',
         priority: 'max',

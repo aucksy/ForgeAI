@@ -24,7 +24,10 @@ export function WorkoutPresenceHost() {
   useEffect(() => {
     void setupWorkoutAlerts();
     void useRestTimer.getState().loadDefault().catch(() => undefined);
-    const stop = startWorkoutPresence();
+    // v0.37.1: the cards' coordinator starts after the Done listener (below), so when the saved
+    // workout is read back the ticks made with the app closed are saved FIRST, and the cards
+    // are then posted from the ticked workout (never once from the stale one).
+    let stop: () => void = () => undefined;
     // v0.27.0: Health Connect, widgets and reminders kept in step (quiet, never in the way).
     startPhoneSync();
     // Audit Phase 6 (PH-07, PH-09): a workout open → no reminder today, the widget says
@@ -76,6 +79,7 @@ export function WorkoutPresenceHost() {
         }, 900);
       },
     });
+    stop = startWorkoutPresence();
     // v0.28.0: an export shared to ForgeAI opens the import with it (after the navigator mounts).
     // Audit IM-17: one ForgeAI could not take opens the import too, saying why.
     const unlistenShare = listenForShares((f) =>

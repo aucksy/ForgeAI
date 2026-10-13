@@ -1,0 +1,39 @@
+# v0.37.1 device QA, part H3C (audit C1). Set 4 was "Complete set" in the shade with the app's
+# process stopped (part H3B), and its rest has run out ("Rest is over"). The app is opened (NOT
+# force-stopped first, so its notifications stay): set 4 is ticked, saved from the phone's queue,
+# and no second rest starts. The script then reads the notification list: "Rest is over" went
+# when the app came to the front and the live card is back.
+appId: com.forgeai.app
+---
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "More for Barbell Bench Press|Resume workout|^Workout$"
+    timeout: 60000
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      notVisible: "More for Barbell Bench Press"
+    commands:
+      - tapOn:
+          text: "^Workout$"
+          optional: true
+      - extendedWaitUntil:
+          visible: "Resume workout"
+          timeout: 20000
+      - tapOn: "Resume workout"
+- extendedWaitUntil:
+    visible: "More for Barbell Bench Press"
+    timeout: 20000
+- scrollUntilVisible:
+    element: 'Barbell Bench Press set 4 complete\. Tap to undo'
+    centerElement: true
+    timeout: 10000
+- assertNotVisible: 'Mark Barbell Bench Press set 4 complete'
+# The rest ran on the phone while the app was closed; opening the app starts no second one.
+- assertNotVisible: "Skip rest"
+- takeScreenshot: h3c-app-after-complete-set-app-closed

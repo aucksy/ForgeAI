@@ -26,6 +26,7 @@ vi.mock('@/tracker/services/restCard', () => ({
   clearLiveWorkoutCard: () => undefined,
   phoneUses24Hour: () => true,
   ringerMode: () => 'normal',
+  dismissRestOver: () => undefined,
   setRestQuiet: (q: boolean) => {
     seen.quiet.push(q);
   },

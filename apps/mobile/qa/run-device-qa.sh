@@ -158,6 +158,16 @@ python3 "$QA_DIR/notif.py" card "$OUT/notifications-during-rest.txt" "Rest 0:30"
 adb shell cmd statusbar expand-notifications
 sleep 2
 adb exec-out screencap -p > "$OUT/b-shade.png"
+log "part B0 start"
+maestro test --format junit --output "$OUT/part-b0.xml" --test-output-dir "$OUT/part-b0" "$QA_DIR/phase1-b0.yaml" \
+  > "$OUT/part-b0.log" 2>&1 || { status=1; log "PART B0 FAILED"; }
+# v0.37.1 (audit C4): the notification was tapped and the app is back on the workout: "Rest is
+# over" has gone and the live workout card is BACK. ("alone" cannot tell a live card that never
+# returned from one that did.)
+sleep 3
+adb shell dumpsys notification --noredact > "$OUT/b-after-tap.txt"
+python3 "$QA_DIR/notif.py" live-back "$OUT/b-after-tap.txt" >> "$OUT/timeline.txt" || status=1
+free_maestro
 log "part B start"
 maestro test --format junit --output "$OUT/part-b.xml" --test-output-dir "$OUT/part-b" "$QA_DIR/phase1-b.yaml" \
   > "$OUT/part-b.log" 2>&1 || { status=1; log "PART B FAILED"; }
@@ -248,6 +258,54 @@ sleep 2
 adb exec-out screencap -p > "$OUT/h-117-shade-rest-over.png"
 adb shell cmd statusbar collapse >/dev/null 2>&1 || true
 python3 "$QA_DIR/notif.py" over-open "$OUT/h-after-rest-app-open.txt" >> "$OUT/timeline.txt" || status=1
+# v0.37.1 (audit C9): set 3 was the workout's last set, so "Rest is over" says the workout is done
+# ("All sets done · Finish when ready"), not "Time for your next set".
+python3 "$QA_DIR/notif.py" over-text "$OUT/h-after-rest-app-open.txt" "All sets done" >> "$OUT/timeline.txt" || status=1
+# v0.37.1 (audit C4): the app-open "Rest is over" goes by itself after 60 s, and the live workout
+# card comes BACK (its timeout's delete intent, and the app's own re-post).
+sleep 65
+adb shell dumpsys notification --noredact > "$OUT/h-after-over-timeout.txt"
+python3 "$QA_DIR/notif.py" live-back "$OUT/h-after-over-timeout.txt" >> "$OUT/timeline.txt" || status=1
+
+# ---------------------------------------------------------------- part H3 (v0.37.1, audit C1)
+# "Complete set" on the live workout card with ForgeAI CLOSED (Android stopped it in the
+# background; phone in a pocket, a watch tap). H3A adds a 4th set in the app and goes home; the
+# script stops the app's process; H3B taps "Complete set" in the shade: the phone itself starts
+# set 4's rest (the rest card alone, "All sets done": set 4 is the last) - never the old "Open
+# ForgeAI to save ..." note beside the live card. The rest runs out ("Rest is over", alone); H3C
+# opens the app: set 4 is ticked (saved from the phone's queue) and no second rest starts; the
+# app in front clears "Rest is over" and the live card is back.
+free_maestro
+log "part H3A start"
+maestro test --format junit --output "$OUT/part-h3a.xml" --test-output-dir "$OUT/part-h3a" "$QA_DIR/v0371-h3a.yaml" \
+  > "$OUT/part-h3a.log" 2>&1 || { status=1; log "PART H3A FAILED"; }
+sleep 3
+adb shell am kill "$PKG"
+sleep 3
+log "H3: app process after kill: '$(adb shell pidof $PKG | tr -d '\r')' (empty = stopped)"
+adb shell dumpsys notification --noredact > "$OUT/h3-before-tap.txt"
+python3 "$QA_DIR/notif.py" live-back "$OUT/h3-before-tap.txt" "Complete set" >> "$OUT/timeline.txt" || status=1
+free_maestro
+log "part H3B start"
+maestro test --format junit --output "$OUT/part-h3b.xml" --test-output-dir "$OUT/part-h3b" "$QA_DIR/v0371-h3b.yaml" \
+  > "$OUT/part-h3b.log" 2>&1 || { status=1; log "PART H3B FAILED"; }
+adb shell dumpsys notification --noredact > "$OUT/h3-after-tap.txt"
+adb shell cmd statusbar collapse >/dev/null 2>&1 || true
+python3 "$QA_DIR/notif.py" rest-up "$OUT/h3-after-tap.txt" "Rest 0:30" "All sets done" >> "$OUT/timeline.txt" || status=1
+python3 "$QA_DIR/notif.py" alone "$OUT/h3-after-tap.txt" >> "$OUT/timeline.txt" || status=1
+sleep 40
+adb shell dumpsys notification --noredact > "$OUT/h3-after-rest.txt"
+adb logcat -d -v time > "$OUT/h3-logcat.txt" 2>/dev/null || true
+log "H3 tap and rest path (ForgeRest lines): $(grep 'ForgeRest' "$OUT/h3-logcat.txt" 2>/dev/null | sed 's/^.*ForgeRest[^:]*: //' | tr '\n' ';' | cut -c1-600)"
+python3 "$QA_DIR/notif.py" over-text "$OUT/h3-after-rest.txt" "All sets done" >> "$OUT/timeline.txt" || status=1
+python3 "$QA_DIR/notif.py" alone "$OUT/h3-after-rest.txt" >> "$OUT/timeline.txt" || status=1
+free_maestro
+log "part H3C start"
+maestro test --format junit --output "$OUT/part-h3c.xml" --test-output-dir "$OUT/part-h3c" "$QA_DIR/v0371-h3c.yaml" \
+  > "$OUT/part-h3c.log" 2>&1 || { status=1; log "PART H3C FAILED"; }
+sleep 3
+adb shell dumpsys notification --noredact > "$OUT/h3-app-open.txt"
+python3 "$QA_DIR/notif.py" live-back "$OUT/h3-app-open.txt" >> "$OUT/timeline.txt" || status=1
 
 # ---------------------------------------------------------------- part I (v0.27.0: the rest of Phase 5)
 # A Strong export "someone made" (older layout, pounds and miles), in Downloads, for the import.
