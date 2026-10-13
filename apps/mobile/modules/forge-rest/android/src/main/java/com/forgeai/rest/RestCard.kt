@@ -75,6 +75,8 @@ object RestCard {
   const val ACTION_SKIP = "com.forgeai.rest.SKIP"
   const val ACTION_END = "com.forgeai.rest.END"
   const val ACTION_DONE = "com.forgeai.rest.DONE"
+  /** 13 Oct 2026: "Rest is over" swiped away — the live workout card comes back ([WorkoutCard]). */
+  const val ACTION_OVER_GONE = "com.forgeai.rest.OVER_GONE"
   const val NOTE_ID = 41003
   const val EXTRA_DONE_WORKOUT = "forgeai_done_workout"
   const val EXTRA_DONE_EX = "forgeai_done_ex"
@@ -241,7 +243,36 @@ object RestCard {
   private fun cancelOver(ctx: Context) {
     val nm = nm(ctx)
     nm.cancel(OVER_ID)
-    ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE).getString("tag", null)?.let { nm.cancel(it, OVER_ID) }
+    val p = ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE)
+    p.getString("tag", null)?.let { nm.cancel(it, OVER_ID) }
+    p.edit().remove("tag").remove("at").apply()
+  }
+
+  /**
+   * 13 Oct 2026 — ONE ForgeAI workout notification at a time (device QA: with two, Android
+   * grouped them under one "ForgeAI" header, both collapsed, and the rest card's Done / +15 s /
+   * Skip were hidden). Is a rest card or a "Rest is over" up now? The live workout card stays
+   * away while it is ([WorkoutCard]). Reads preferences only — never this object's lock, so
+   * [WorkoutCard] can ask from the app's thread while a broadcast holds it.
+   */
+  fun restUp(ctx: Context): Boolean {
+    if (ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong("endsAt", 0L) > 0L) return true
+    val p = ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE)
+    val tag = p.getString("tag", null) ?: return false
+    // Just posted: the system may not list it yet.
+    if (System.currentTimeMillis() - p.getLong("at", 0L) < 3_000L) return true
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
+    return try {
+      nm(ctx).activeNotifications.any { it.id == OVER_ID && it.tag == tag }
+    } catch (_: Exception) {
+      false
+    }
+  }
+
+  /** "Rest is over" was swiped away: forget it and bring the live workout card back. */
+  fun overGone(ctx: Context) {
+    ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE).edit().remove("tag").remove("at").apply()
+    WorkoutCard.restore(ctx)
   }
 
   // ------------------------------------------------------------------ actions
@@ -278,6 +309,8 @@ object RestCard {
     nm(ctx).cancel(CARD_ID)
     if (dismissOver) cancelOver(ctx)
     android.util.Log.i(LOG_TAG, "rest cleared (dismissOver=$dismissOver)")
+    // One at a time: the rest is gone, so the live workout card comes back (none after Finish).
+    WorkoutCard.restore(ctx)
   }
 
   /**
@@ -332,6 +365,7 @@ object RestCard {
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
     android.util.Log.i(LOG_TAG, "rest settled quietly (ended ${now - cur.endsAt} ms ago, app on screen)")
+    WorkoutCard.restore(ctx)
   }
 
   /**
@@ -931,6 +965,9 @@ object RestCard {
       }
       openIntent(ctx)?.let { b.setContentIntent(it) }
       nm(ctx).notify(CARD_ID, b.build())
+      // One at a time: the rest card alone while the rest runs (it names the next set, and its
+      // Done ticks it) — also when the rest started with the app's JS asleep.
+      WorkoutCard.hide(ctx)
     } catch (_: Exception) {
       // No permission to post: the in-app timer still works.
     }
@@ -1001,8 +1038,11 @@ object RestCard {
       // 38081757903: posted with 1 action, then gone, not by the app). The alert is back to the
       // shape every earlier phone run passed with.
       openIntent(ctx)?.let { b.setContentIntent(it) }
+      // Swiped away: the live workout card comes back (one at a time).
+      b.setDeleteIntent(actionIntent(ctx, ACTION_OVER_GONE, 6))
       val tag = "over-$endsAt"
-      ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE).edit().putString("tag", tag).commit()
+      ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE).edit().putString("tag", tag).putLong("at", System.currentTimeMillis()).commit()
+      WorkoutCard.hide(ctx)
       nm(ctx).notify(tag, OVER_ID, b.build())
       android.util.Log.i(LOG_TAG, "Rest is over posted on $channel")
     } catch (e: Exception) {

@@ -27,6 +27,9 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *  - showWorkoutCard(title, text, image, done) — post or update it ([WorkoutCard]); `done` is a
  *                                    JSON object { workout, exKey, setKey, open, values, label }
  *                                    for "Complete set", or null (no button);
+ *  - hideWorkoutCard(title, text, image, done) — keep its words but take it down: a rest runs
+ *                                    (ONE workout notification at a time; it comes back when the
+ *                                    rest and "Rest is over" are gone);
  *  - clearWorkoutCard()            — the workout ended (or is being edited).
  * Events: onRestChange { kind: "add" | "skip" | "end" | "done", endsAt, startedAt }, onOpenWorkout.
  */
@@ -96,6 +99,8 @@ class ForgeRestModule : Module() {
       if (c != null) RestCard.settle(c)
       // ...and a running one's alarm is set again, exact if "Alarms & reminders" was just allowed.
       if (c != null) RestCard.rearm(c)
+      // ...and with no rest or "Rest is over" left (tapped, timed out), the live workout card is back.
+      if (c != null) WorkoutCard.restore(c)
       val r = if (c != null) RestCard.load(c) else null
       mapOf(
         "endsAt" to (r?.endsAt ?: 0L).toDouble(),
@@ -203,6 +208,12 @@ class ForgeRestModule : Module() {
     Function("showWorkoutCard") { title: String, text: String, image: String?, done: String? ->
       val c = ctx ?: return@Function false
       WorkoutCard.show(c, title, text, image, done)
+    }
+
+    Function("hideWorkoutCard") { title: String, text: String, image: String?, done: String? ->
+      val c = ctx ?: return@Function false
+      WorkoutCard.hide(c, title, text, image, done)
+      true
     }
 
     Function("clearWorkoutCard") {

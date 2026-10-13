@@ -69,6 +69,8 @@ interface Native {
    */
   showWorkoutCard?(title: string, text: string, image: string | null, done: string | null): boolean;
   clearWorkoutCard?(): boolean;
+  /** One at a time (13 Oct 2026): keep the card's words but take it down while a rest runs. */
+  hideWorkoutCard?(title: string, text: string, image: string | null, done: string | null): boolean;
   addListener(event: string, cb: (e: Record<string, unknown>) => void): { remove: () => void };
 }
 
@@ -368,6 +370,22 @@ export function showLiveWorkoutCard(title: string, text: string, image: string |
   try {
     const json = done ? JSON.stringify({ workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label }) : null;
     return n.showWorkoutCard(title, text, image, json) === true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * ONE workout notification at a time (13 Oct 2026): while a rest runs the rest card is alone;
+ * the live card keeps its words natively (`WorkoutCard.hide`) and comes back when the rest and
+ * "Rest is over" are gone. False = no native piece / an older one.
+ */
+export function hideLiveWorkoutCard(title: string, text: string, image: string | null, done: CardDone | null, label: string | null): boolean {
+  const n = N();
+  if (!n?.hideWorkoutCard) return false;
+  try {
+    const json = done ? JSON.stringify({ workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label }) : null;
+    return n.hideWorkoutCard(title, text, image, json) === true;
   } catch {
     return false;
   }

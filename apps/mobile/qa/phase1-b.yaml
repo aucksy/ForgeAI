@@ -1,5 +1,5 @@
 # Phase 1 device QA, part B — after the phone slept through the rest.
-# Notification shade is already open (adb). Tap the workout card → back in the workout →
+# Notification shade is already open (adb). Tap the workout's notification → back in the workout →
 # minimise → the Workout tab's Up next card says "Workout in progress" with Resume workout (no bar
 # on the Workout tab, redesign R1) → Resume → minimise → the bar on Profile → remove an exercise →
 # Finish → the "Finish workout?" sheet → summary with its "Update routine?" sheet → Keep original
@@ -7,7 +7,10 @@
 appId: com.forgeai.app
 ---
 - takeScreenshot: 10-notification-shade
-- tapOn: "Workout in progress"
+# 13 Oct 2026: ONE workout notification at a time — after the rest it is "Rest is over" alone (the
+# live card, titled with the exercise, "Set N of M · …", is back once that alert goes). Either opens
+# the workout; an older build's "Workout in progress" card too.
+- tapOn: 'Rest is over|Set \d+ of \d+.*|Workout in progress'
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
     timeout: 30000

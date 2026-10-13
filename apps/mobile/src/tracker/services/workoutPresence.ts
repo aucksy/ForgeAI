@@ -19,6 +19,13 @@
  * picture and "Complete set" (`liveCard.ts`, WorkoutCard.kt), in the phone's normal section.
  * Re-posted only when it changes, at most every ~0.4 s (typing re-words it; Android drops
  * updates that come faster). An older build keeps the quiet card above.
+ *
+ * ONE workout notification at a time (13 Oct 2026, device QA: the live card and the rest card
+ * side by side were grouped under one "ForgeAI" header, both collapsed — Done / +15 s / Skip and
+ * Complete set hidden). While the rest card holds a rest, the live card is taken down (its words
+ * kept natively, the next set); when the rest ends, is skipped or Done, it is posted again with
+ * the then-next set (`liveCardShown`). "Rest is over" keeps it down natively until it goes; with
+ * the app open that alert leaves after 60 s, so the card is posted again then too.
  */
 import { AppState } from 'react-native';
 
@@ -42,13 +49,23 @@ import { cancelRestEnd, clearWorkoutOngoing, showWorkoutOngoing } from './workou
 import { displayUnits } from '@/lib/units';
 
 import { useTargets } from '../store/targetStore';
-import { clearLiveWorkoutCard, liveWorkoutCardAvailable, showLiveWorkoutCard } from './restCard';
+import { clearLiveWorkoutCard, hideLiveWorkoutCard, liveWorkoutCardAvailable, showLiveWorkoutCard } from './restCard';
 import { liveCardContent, liveCardKey } from './liveCard';
 import { liveCardImage } from './liveCardImage';
 import { rowFill } from './restDoneRun';
 
 /** The live card is re-posted at most this often (Android drops faster updates). */
 export const LIVE_CARD_EVERY_MS = 400;
+/** After a rest, the live card is posted once more when the app-open "Rest is over" has left (60 s). */
+export const AFTER_OVER_MS = 61_000;
+
+/**
+ * One workout notification at a time: is the live card up (true) or down for the rest card
+ * (false)? Down while a rest runs on the native rest card; up otherwise. PURE.
+ */
+export function liveCardShown(rest: { endsAt: number | null }, restCardHoldsIt: boolean): boolean {
+  return !(rest.endsAt != null && restCardHoldsIt);
+}
 
 /** "6:42 pm" in the phone's local time, or "18:42" when the phone uses the 24-hour clock. */
 export function clockTime(epochMs: number, use24Hour = false): string {
@@ -89,9 +106,14 @@ export function startWorkoutPresence(): () => void {
   let live = false;
   let liveTimer: ReturnType<typeof setTimeout> | null = null;
   let liveLastAt = 0;
+  /** The live card was down for a rest (the next post after it is never skipped as unchanged). */
+  let downForRest = false;
+  let afterOver: ReturnType<typeof setTimeout> | null = null;
   const stopLiveTimer = (): void => {
     if (liveTimer) clearTimeout(liveTimer);
     liveTimer = null;
+    if (afterOver) clearTimeout(afterOver);
+    afterOver = null;
   };
 
   /** Post the live card for the workout as it is now; false = no native card (use the old one). */
@@ -100,9 +122,25 @@ export function startWorkoutPresence(): () => void {
     const w = useActiveWorkout.getState();
     const card = liveCardContent(w, rowFill, displayUnits());
     const image = liveCardImage(w.exercises.find((e) => e.key === card.exKey));
-    const key = `live:${liveCardKey(card, image)}`;
+    const shown = liveCardShown(useRestTimer.getState(), restCardHolds());
+    const key = `live:${shown ? 'up' : 'down'}:${liveCardKey(card, image)}`;
     if (key === last) return true;
-    if (!showLiveWorkoutCard(card.title, card.text, image, card.done, card.label)) return false;
+    const ok = shown
+      ? showLiveWorkoutCard(card.title, card.text, image, card.done, card.label)
+      : hideLiveWorkoutCard(card.title, card.text, image, card.done, card.label);
+    if (!ok) return false;
+    if (shown && downForRest) {
+      // Back after a rest: once more when an app-open "Rest is over" (60 s) has surely left.
+      if (afterOver) clearTimeout(afterOver);
+      afterOver = setTimeout(() => {
+        afterOver = null;
+        const now = useActiveWorkout.getState();
+        if (!now.active || now.editingSessionId || now.pastLog || !liveCardShown(useRestTimer.getState(), restCardHolds())) return;
+        last = '';
+        postLive();
+      }, AFTER_OVER_MS);
+    }
+    downForRest = !shown;
     last = key;
     liveLastAt = Date.now();
     if (!live) {
@@ -119,17 +157,19 @@ export function startWorkoutPresence(): () => void {
     // the watch card kept running while the app was closed must survive until then.
     if (!w.active && !w.hydrated) return;
     if (!w.active || w.editingSessionId || w.pastLog) {
-      if (!w.active && r.endsAt != null) r.skip(); // workout over → no stray bell
       if (last !== 'off') {
         last = 'off';
         stopLiveTimer();
         // Always (review fix): a card left by a killed app run goes too, as the old card does.
+        // First, so the rest's clearing below never brings it back (WorkoutCard.restore).
         clearLiveWorkoutCard();
         live = false;
+        downForRest = false;
         void clearWorkoutOngoing();
         // Also covers an alarm left by a previous app run that was killed mid-rest.
         if (!w.active) void cancelRestEnd();
       }
+      if (!w.active && r.endsAt != null) r.skip(); // workout over → no stray bell
       return;
     }
     // 13 Oct 2026: the live card, when the native piece has it (at most every LIVE_CARD_EVERY_MS).

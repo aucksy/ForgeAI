@@ -34,6 +34,13 @@ import org.json.JSONObject
  *    the phone. The watch gets the rest countdown and "Rest is over" only.
  *  - Ongoing (cannot be swiped away while the workout is open); the app removes it at Finish /
  *    Discard ([clear]).
+ *
+ * ONE ForgeAI workout notification at a time (13 Oct 2026, device QA): with the rest card beside
+ * it Android grouped both under one "ForgeAI" header, both collapsed, hiding Done / +15 s / Skip
+ * and Complete set. So while a rest card or "Rest is over" is up ([RestCard.restUp]) this card is
+ * down: its words are kept ([hide], preferences, so a stopped app keeps them too) and it comes
+ * back ([restore]) when the rest is skipped or settled, "Rest is over" is swiped away, or the
+ * app comes back. The app also hides it itself as each rest starts (workoutPresence.ts).
  */
 object WorkoutCard {
   const val ID = 41004
@@ -44,6 +51,9 @@ object WorkoutCard {
   private const val ICON_PX = 192
   /** The app's dark surface behind a drawing (the library's drawings are light lines). */
   private const val ICON_BG = 0xFF1E1A17.toInt()
+
+  /** The card's words as last given ([show] / [hide]), so [restore] can put it back. */
+  private const val PREFS = "forgeai_workout_card"
 
   private var iconSrc: String? = null
   private var iconBitmap: Bitmap? = null
@@ -81,10 +91,56 @@ object WorkoutCard {
     }
   }
 
-  /** Post or update the card. False when it could not be posted (the app then uses its old card). */
-  @Suppress("DEPRECATION")
+  private fun keep(ctx: Context, title: String, text: String, image: String?, doneJson: String?) {
+    ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+      .putString("title", title)
+      .putString("text", text)
+      .putString("image", image)
+      .putString("done", doneJson)
+      .apply()
+  }
+
+  /**
+   * Post or update the card — or, while a rest card or "Rest is over" is up, only keep its words
+   * for later (one at a time). False when it could not be posted (the app then uses its old card).
+   */
   @Synchronized
   fun show(ctx: Context, title: String, text: String, image: String?, doneJson: String?): Boolean {
+    keep(ctx, title, text, image, doneJson)
+    if (RestCard.restUp(ctx)) {
+      cancel(ctx)
+      return true
+    }
+    return post(ctx, title, text, image, doneJson)
+  }
+
+  /** A rest started: down it goes (the app's words kept when given, for [restore]). */
+  @Synchronized
+  fun hide(ctx: Context, title: String? = null, text: String? = null, image: String? = null, doneJson: String? = null) {
+    if (title != null && text != null) keep(ctx, title, text, image, doneJson)
+    cancel(ctx)
+  }
+
+  /** The rest and "Rest is over" are gone: the card is back with its kept words (none kept: nothing). */
+  @Synchronized
+  fun restore(ctx: Context) {
+    val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    val title = p.getString("title", null) ?: return
+    val text = p.getString("text", null) ?: return
+    if (RestCard.restUp(ctx)) return
+    post(ctx, title, text, p.getString("image", null), p.getString("done", null))
+  }
+
+  private fun cancel(ctx: Context) {
+    try {
+      RestCard.nm(ctx).cancel(ID)
+    } catch (_: Exception) {
+      // ignore
+    }
+  }
+
+  @Suppress("DEPRECATION")
+  private fun post(ctx: Context, title: String, text: String, image: String?, doneJson: String?): Boolean {
     return try {
       ensureChannel(ctx)
       val icon = RestCard.iconRes(ctx)
@@ -119,13 +175,11 @@ object WorkoutCard {
     }
   }
 
-  /** The workout ended: the card goes. */
+  /** The workout ended: the card goes, and its kept words with it (nothing to restore). */
+  @Synchronized
   fun clear(ctx: Context) {
-    try {
-      RestCard.nm(ctx).cancel(ID)
-    } catch (_: Exception) {
-      // ignore
-    }
+    ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().clear().apply()
+    cancel(ctx)
   }
 
   /**

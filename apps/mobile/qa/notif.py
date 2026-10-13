@@ -16,6 +16,9 @@ Usage: notif.py <check> <dump-file> [args]
   ongoing                 the live workout card is showing (channel "workout-live", id 41004;
                           an older build's "Workout in progress" card counts too)
   no-ongoing              NO live workout card (no workout was started)
+  alone                   ONE ForgeAI workout notification at a time (13 Oct 2026): never the live
+                          workout card beside the rest card or "Rest is over" (Android grouped
+                          them under one header, both collapsed, hiding Done / +15 s / Skip)
   card <title-prefix> [text-part]
                           the rest card is showing: swipe-away, its three buttons in the order
                           Done, +15 s, Skip (Phase 6), the given title (and, if given, a text
@@ -140,6 +143,12 @@ def main():
     if check == "ongoing":
         ok = any(is_ongoing(b) for b in recs)
         print("[qa] ONGOING CARD present" if ok else "[qa] ONGOING CARD MISSING")
+        return 0 if ok else 1
+    if check == "alone":
+        lives = [b for b in recs if is_ongoing(b)]
+        rests = [b for b in recs if (is_card(b) and title(b).startswith("Rest ")) or title(b) == "Rest is over"]
+        ok = not (lives and rests)
+        print(f"[qa] ONE AT A TIME: live cards {len(lives)}, rest card / Rest is over {len(rests)}: {'ok' if ok else 'BOTH SHOWING'}")
         return 0 if ok else 1
     if check == "no-ongoing":
         live = [b for b in recs if is_ongoing(b)]

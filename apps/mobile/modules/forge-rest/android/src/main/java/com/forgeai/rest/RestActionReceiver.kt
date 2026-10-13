@@ -27,6 +27,8 @@ class RestActionReceiver : BroadcastReceiver() {
         RestCard.listener?.invoke("skip", 0L, 0L)
       }
       RestCard.ACTION_END -> RestCard.fireEnd(ctx, intent.getLongExtra(RestCard.EXTRA_ENDS, -1L))
+      // 13 Oct 2026: "Rest is over" swiped away — the live workout card comes back.
+      RestCard.ACTION_OVER_GONE -> RestCard.overGone(ctx)
       RestCard.ACTION_DONE -> {
         // Kept for the app, which ticks the row through its own store (never written here).
         val d = RestCard.doneTapped(ctx, intent) ?: return

@@ -141,7 +141,10 @@ log "screen on"
 # When did "Rest is over" post, compared with when it was due (the rest card's end time, read
 # from the dump taken during the rest)? Fails when more than REST_LATE_BUDGET_S (5 s) late.
 python3 "$QA_DIR/notif.py" over-locked "$OUT/notifications-after-rest.txt" "$TICK_MS" "$OUT/notifications-during-rest.txt" >> "$OUT/timeline.txt" || status=1
-python3 "$QA_DIR/notif.py" ongoing "$OUT/notifications-after-rest.txt" >> "$OUT/timeline.txt" || status=1
+# 13 Oct 2026: ONE workout notification at a time — after the rest "Rest is over" shows ALONE (the
+# live workout card is down until it goes), and during the rest the rest card was alone.
+python3 "$QA_DIR/notif.py" alone "$OUT/notifications-after-rest.txt" >> "$OUT/timeline.txt" || status=1
+python3 "$QA_DIR/notif.py" alone "$OUT/notifications-during-rest.txt" >> "$OUT/timeline.txt" || status=1
 # v0.26.1: the rest card was showing during the rest (what a paired watch would show); Phase 6:
 # with its three buttons in the order Done, +15 s, Skip (the next set exists, so Done shows).
 python3 "$QA_DIR/notif.py" card "$OUT/notifications-during-rest.txt" "Rest 0:30" >> "$OUT/timeline.txt" || status=1
