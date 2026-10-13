@@ -31,7 +31,7 @@ import type { GymLink } from '@/shop/types';
 import { appliedBrand, applyBrandToTokens, brandHeadingStyle, defaultColor, paletteForBrand } from '@/theme/brandTokens';
 import { UNLINKED_TEXT } from '@/shop/gym';
 import { logoMarkWidth } from '@/components/GymBrandMark';
-import { dismissOpening, reconcileGymTheme, resetGymThemeForTests, setWorkoutCheck, showWaitingLook, useGymTheme } from '@/theme/gymTheme';
+import { dismissOpening, reconcileGymTheme, resetGymThemeForTests, setWorkoutCheck, showWaitingLook, useGymTheme, WAITING_LOOK_AWAY_MS } from '@/theme/gymTheme';
 import { chart, color, gradients, shadow } from '@/theme/tokens';
 
 const RAMS: GymBrand = { accent: '#F7D411', bg: '#0A0A0C', logoUrl: `https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/gym-logos/${'ab'.repeat(24)}/logo.png`, heading: 'bold-italic', updatedAt: '2026-10-13T10:00:00Z' };
@@ -193,6 +193,32 @@ describe('gym theme controller', () => {
     expect(useGymTheme.getState().epoch).toBe(2);
     expect(useGymTheme.getState().opening).toBeNull();
     expect(useGymTheme.getState().look).toBeNull();
+  });
+
+  it('review fix: a quick trip out (share sheet, picker) is not a visit — the waiting look keeps waiting', () => {
+    useGymShop.getState().setLink(LINK);
+    reconcileGymTheme(false);
+    dismissOpening();
+    useGymShop.getState().setGymNow({ gymId: 'g-rams', gymName: LINK.gymName, brand: { ...RAMS, accent: '#D32F2F' } });
+    reconcileGymTheme(false);
+    setWorkoutCheck(() => false);
+    expect(showWaitingLook(5_000)).toBe(false);
+    expect(color.accent).toBe('#F7D411');
+    expect(showWaitingLook(WAITING_LOOK_AWAY_MS)).toBe(true);
+    expect(color.accent).not.toBe('#F7D411');
+  });
+
+  it('review fix: an owner change arriving while the logo is up at start-up never redraws over an open workout', () => {
+    useGymShop.getState().setLink(LINK);
+    reconcileGymTheme(false); // the opening is up
+    expect(useGymTheme.getState().opening).not.toBeNull();
+    const epoch = useGymTheme.getState().epoch;
+    setWorkoutCheck(() => true);
+    useGymShop.getState().setGymNow({ gymId: 'g-rams', gymName: LINK.gymName, brand: { ...RAMS, accent: '#D32F2F' } });
+    reconcileGymTheme(false);
+    expect(useGymTheme.getState().epoch).toBe(epoch);
+    expect(color.accent).toBe('#F7D411');
+    expect((mirror.value as { brand: GymBrand }).brand.accent).toBe('#D32F2F'); // waits for the next launch / visit
   });
 
   it("D12: the header's gym (logo and name) switches together with the colours, never before", () => {

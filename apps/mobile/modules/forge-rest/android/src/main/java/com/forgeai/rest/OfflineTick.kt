@@ -149,6 +149,9 @@ object OfflineTick {
       val o = arr.optJSONObject(k) ?: continue
       if (o.optLong("workout", 0L) == s.workout && str(o, "exKey") == s.exKey && str(o, "setKey") == s.setKey) return Queued.ALREADY
     }
+    // Review fix: a row the app already took (a watch's late copy of the card, tapped after the
+    // app read the queue but before it posted a new plan) is not ticked or rested a second time.
+    if (keyOf(s.workout, s.exKey, s.setKey) in takenKeys(p)) return Queued.ALREADY
     if (arr.length() >= MAX_QUEUED) return Queued.FULL
     return try {
       arr.put(
@@ -172,7 +175,34 @@ object OfflineTick {
   fun take(ctx: Context): String? {
     val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     val raw = p.getString("ticks", null)
-    if (raw != null) p.edit().remove("ticks").commit()
+    if (raw != null) {
+      // Remember what was taken (the last [MAX_TAKEN] rows), so a late duplicate tap is ignored.
+      val taken = takenKeys(p).toMutableList()
+      try {
+        val arr = JSONArray(raw)
+        for (k in 0 until arr.length()) {
+          val o = arr.optJSONObject(k) ?: continue
+          val ex = str(o, "exKey") ?: continue
+          val set = str(o, "setKey") ?: continue
+          taken.add(keyOf(o.optLong("workout", 0L), ex, set))
+        }
+      } catch (_: Exception) {
+        // A queue that does not read back: nothing to remember.
+      }
+      p.edit().remove("ticks").putString("taken", JSONArray(taken.takeLast(MAX_TAKEN)).toString()).commit()
+    }
     return raw
   }
+
+  private const val MAX_TAKEN = 100
+
+  private fun keyOf(workout: Long, exKey: String, setKey: String): String = "$workout|$exKey|$setKey"
+
+  private fun takenKeys(p: android.content.SharedPreferences): List<String> =
+    try {
+      val a = JSONArray(p.getString("taken", null) ?: "[]")
+      (0 until a.length()).mapNotNull { a.optString(it, "").ifEmpty { null } }
+    } catch (_: Exception) {
+      emptyList()
+    }
 }

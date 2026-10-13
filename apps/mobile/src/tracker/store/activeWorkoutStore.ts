@@ -398,7 +398,8 @@ export interface ActiveWorkoutState {
    * Target. Packet B (LW-13): returns what is missing when a tick had nothing to save (the row
    * stays unticked and says so), else null.
    */
-  toggleDone: (exKey: string, setKey: string, fill?: SetFill | null) => TickMissing | null;
+  /** `at` (v0.37.1 review): when the set was really ticked — a tap the phone kept with the app closed. */
+  toggleDone: (exKey: string, setKey: string, fill?: SetFill | null, at?: number) => TickMissing | null;
   /** Phase 2 (hold timer): write a measured time into a set and tick it. */
   completeTimedSet: (exKey: string, setKey: string, durationSec: number) => void;
   /** Phase 2: how this exercise's weight counts (dumbbells). Remembered for the exercise. */
@@ -1479,7 +1480,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const cards = cardOccurrences(session.exercises.map((g) => g.exercise.id));
       // "Previous values": a Repeat counts as its source's routine, so it reads that scope. An
       // imported source (no routine id) counts as the routine of its name (13 Oct 2026 audit, A2).
-      const ownRoutine = session.routineId ?? (await routineIdByName(session.title).catch(() => null));
+      const ownRoutine = session.routineId ?? (await routineIdByName(session.title, session.notes).catch(() => null));
       const scope = await scopeOfWorkout({ planDayId: null, routineId: ownRoutine });
       const facts = await prefetchCardFacts(session.exercises.map((g, i) => ({ exerciseId: g.exercise.id, card: cards[i] })), null, scope);
       const exercises = await Promise.all(
@@ -1760,7 +1761,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       }
     },
 
-    toggleDone: (exKey, setKey, fill) => {
+    toggleDone: (exKey, setKey, fill, at) => {
       // Phase 2 (RT-03 / LW-29): the STORED state, as the toggle itself reads it — so the second
       // tap of a quick double tap (an untick) cancels the rest the first tap started.
       const doneNow = (): boolean =>
@@ -1801,7 +1802,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               const next: DraftSet = {
                 ...s,
                 done: true,
-                doneAt: Date.now(),
+                // A tick the phone kept with the app closed keeps its own moment (review fix): a
+                // workout logged from the shade or a watch keeps its real length and end time.
+                doneAt: at != null && Number.isFinite(at) && at > 0 && at <= Date.now() ? at : Date.now(),
                 weightKg: out.weightKg,
                 reps: out.reps,
                 autoFilled: out.autoFilled,
@@ -2024,7 +2027,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // routine of its name, A2).
       const scope = await scopeOfWorkout({
         planDayId: null,
-        routineId: session.routineId ?? (await routineIdByName(session.title).catch(() => null)),
+        routineId: session.routineId ?? (await routineIdByName(session.title, session.notes).catch(() => null)),
       });
       const [meta, histories, infos] = await Promise.all([
         getSessionSetMeta(session.id),

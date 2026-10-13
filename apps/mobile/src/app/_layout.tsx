@@ -31,7 +31,11 @@ startUnitSync();
 // Gym branding: the joined gym's look (already in the tokens since index.js) follows the gym
 // shop's saved link from here on — join, Leave gym, erase (theme/gymTheme.ts). A look the member
 // did not ask for waits while a workout is open: the theme sees one through this check.
-setWorkoutCheck(() => useActiveWorkout.getState().active);
+// An open workout — or one not read back yet (unknown counts as open): never re-draw over it.
+setWorkoutCheck(() => {
+  const w = useActiveWorkout.getState();
+  return w.active || !w.hydrated;
+});
 startGymTheme();
 
 /**
@@ -100,9 +104,17 @@ export default function RootLayout() {
     void refreshGymNow().catch(() => undefined);
     // Back to the foreground: a look that is waiting is shown now (under the gym's logo) unless a
     // workout is open, and the gym is asked again at most about once an hour.
+    // Review fix: only after a real time away (a share sheet or picker is not a new visit).
+    let awaySince: number | null = null;
     const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'background') {
+        awaySince = Date.now();
+        return;
+      }
       if (s !== 'active') return;
-      showWaitingLook();
+      const away = awaySince == null ? 0 : Date.now() - awaySince;
+      awaySince = null;
+      showWaitingLook(away);
       void refreshGymIfDue().catch(() => undefined);
     });
     // A new look once the app is up (join, Leave, an owner's change shown): the home-screen

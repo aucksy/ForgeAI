@@ -137,8 +137,8 @@ export function numberEm(text: string): number {
   return em;
 }
 
-/** A number box's border + side padding + a little slack: what of its width the text cannot use. */
-export const BOX_TEXT_INSET = 8;
+/** A number box's border + side padding + room for Android's cursor: what of its width the text cannot use. */
+export const BOX_TEXT_INSET = 11;
 /** The smallest a typed number gets to fit its box (still readable at arm's length). */
 export const BOX_FONT_MIN = 10;
 

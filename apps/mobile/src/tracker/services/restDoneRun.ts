@@ -65,12 +65,17 @@ export function startRestDone(deps: RestDoneDeps): () => void {
    * (the phone's rest runs on; the timer adopts it, workoutPresence's catch-up).
    */
   const applyQueued = (): void => {
+    // Review fix: the phone keeps its ticks until a live workout is here to take them — a failed
+    // read-back (hydrated, not active) must never throw away sets logged from a watch.
+    const live = useActiveWorkout.getState();
+    if (!live.active || live.editingSessionId || live.pastLog) return;
     const queued = takeQueuedTicks();
     for (const q of queued) {
       const w = useActiveWorkout.getState();
       const step = decideQueuedTick(q, w);
       if (step.do === 'tick') {
-        const missing = w.toggleDone(step.exKey, step.setKey, step.fill);
+        // Its own moment (review fix): the workout's length and end time stay real.
+        const missing = w.toggleDone(step.exKey, step.setKey, step.fill, q.at);
         if (missing && AppState.currentState === 'active') deps.openSet(step.exKey, step.setKey, missing);
       } else if (step.do === 'open' && AppState.currentState === 'active') {
         deps.openSet(step.exKey, step.setKey, step.missing);

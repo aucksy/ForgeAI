@@ -217,6 +217,19 @@ describe('the app takes the queue when it next reads the workout back', () => {
     expect(restStarts).toEqual([]);
     expect(useRestTimer.getState().endsAt).toBeNull();
     expect(queued).toBeNull(); // taken once
+    // Review fix: a set keeps the moment it was tapped (the workout's length stays real); a time
+    // from the future (a wrong phone clock) is the moment it was saved.
+    expect(sets()[0].doneAt).toBe(START + 1000);
+    expect(sets()[1].doneAt).toBe(START + 60_000);
+  });
+
+  it('review fix: a failed read-back (no live workout) leaves the queue with the phone — nothing is lost', () => {
+    const kept = JSON.stringify([{ workout: START, exKey: 'a', setKey: 'a1', values: '82.5|8||', at: START + 1000, label: 'Bench Press, set 1' }]);
+    queued = kept;
+    useActiveWorkout.setState({ active: false });
+    stop = startRestDone({ afterTick: (e, s) => ticks.push([e, s]), openSet: () => undefined });
+    useActiveWorkout.setState({ hydrated: true });
+    expect(queued).toBe(kept);
   });
 });
 
@@ -227,6 +240,13 @@ describe('the native side (source checks; Kotlin builds only in cloud CI)', () =
   const card = fs.readFileSync(path.join(DIR, 'WorkoutCard.kt'), 'utf8');
   const mod = fs.readFileSync(path.join(DIR, 'ForgeRestModule.kt'), 'utf8');
 
+  it('review fixes: the last-set card says "All sets done" from its first post; a late duplicate tap after the app took the queue is ignored', () => {
+    const rest = fs.readFileSync(path.join(DIR, 'RestCard.kt'), 'utf8');
+    expect(rest).toMatch(/val r = Rest\(startedAt, endsAt, next, takeAllDone\(ctx\)\)/);
+    expect(rest).toMatch(/\.putBoolean\("allDone", r\.allDone\)/);
+    expect(offline).toMatch(/if \(keyOf\(s\.workout, s\.exKey, s\.setKey\) in takenKeys\(p\)\) return Queued\.ALREADY/);
+    expect(offline).toMatch(/remove\("ticks"\)\.putString\("taken"/);
+  });
   it('with no JS running, a Done / Complete set goes to OfflineTick first; the note only when the plan cannot place it', () => {
     expect(receiver).toMatch(/if \(l == null\) \{[\s\S]*?if \(OfflineTick\.run\(ctx, intent\)\) return[\s\S]*?RestCard\.noteQueued/);
   });

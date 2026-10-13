@@ -133,7 +133,9 @@ export function reconcileGymTheme(launch: boolean): void {
   const openingUp = useGymTheme.getState().opening != null;
   // The member's own join, Leave or erase: at once (they are in the Shop or Settings, not lifting).
   const ownMove = gymChanged && !(target == null && unlinkedByGym());
-  if (launch || ownMove || openingUp) {
+  // Review fix: under the logo at start-up too, never over a workout (Android closed the app
+  // mid-workout and the member came back through the live card) — it waits like any change.
+  if (launch || ownMove || (openingUp && !workoutOpen())) {
     show(target, launch || (ownMove && target != null));
     return;
   }
@@ -148,7 +150,7 @@ export function reconcileGymTheme(launch: boolean): void {
  * in it). A gym's look comes in under its logo opening; ForgeAI's look simply re-draws as the app
  * comes back. Returns whether it re-drew. Exported for tests.
  */
-export function showWaitingLook(): boolean {
+export function showWaitingLook(awayMs: number = Number.POSITIVE_INFINITY): boolean {
   if (!linkRead) return false;
   const target = mirrorOf(useGymShop.getState().link);
   if (!lookDiffers(target)) {
@@ -159,9 +161,15 @@ export function showWaitingLook(): boolean {
     return false;
   }
   if (workoutOpen()) return false;
+  // Review fix: a quick trip out (the share sheet, a file or photo picker, a permission box) is
+  // not a "next visit": re-drawing then would drop the screen the member is on.
+  if (awayMs < WAITING_LOOK_AWAY_MS) return false;
   show(target, true);
   return true;
 }
+
+/** How long the app must have been away before a waiting look is shown on its return. */
+export const WAITING_LOOK_AWAY_MS = 60_000;
 
 /** The root layout tells the theme how to see an open workout (never re-draw during one). */
 export function setWorkoutCheck(check: () => boolean): void {

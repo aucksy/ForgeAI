@@ -101,6 +101,8 @@ object RestCard {
   const val ADD_SEC = 15
 
   private const val PREFS = "forgeai_rest_card"
+  /** How long a [setAllDone] waits for its [show]. */
+  private const val ALL_DONE_PENDING_MS = 5_000L
   /** The tag of the "Rest is over" now showing ([cancelOver]). */
   private const val PREFS_OVER = "forgeai_rest_over"
   private const val PREFS_QUIET = "forgeai_rest_quiet"
@@ -192,6 +194,7 @@ object RestCard {
       .putLong("startedAt", r.startedAt)
       .putLong("endsAt", r.endsAt)
       .putString("next", r.next)
+      .putBoolean("allDone", r.allDone)
       .apply()
   }
 
@@ -220,7 +223,21 @@ object RestCard {
    */
   @Synchronized
   fun setAllDone(ctx: Context, on: Boolean) {
-    ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean("allDone", on).apply()
+    // Review fix: a pending flag, taken by the [show] that follows within a few seconds — a rest
+    // started without one (a manual start) never inherits an old "All sets done".
+    ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+      .putBoolean("pendingAllDone", on)
+      .putLong("pendingAllDoneAt", System.currentTimeMillis())
+      .apply()
+  }
+
+  /** The [setAllDone] just before this [show] (at most [ALL_DONE_PENDING_MS] old), taken once. */
+  private fun takeAllDone(ctx: Context): Boolean {
+    val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    val on = p.getBoolean("pendingAllDone", false) &&
+      System.currentTimeMillis() - p.getLong("pendingAllDoneAt", 0L) in 0L..ALL_DONE_PENDING_MS
+    p.edit().remove("pendingAllDone").remove("pendingAllDoneAt").apply()
+    return on
   }
 
   /**
@@ -372,7 +389,8 @@ object RestCard {
   /** A rest started or changed in the app. */
   @Synchronized
   fun show(ctx: Context, startedAt: Long, endsAt: Long, next: String?) {
-    val r = Rest(startedAt, endsAt, next)
+    // Review fix: the card after the LAST set says "All sets done" from its first post.
+    val r = Rest(startedAt, endsAt, next, takeAllDone(ctx))
     save(ctx, r)
     cancelOver(ctx) // an old "Rest is over" goes when the next rest starts
     post(ctx, r)
