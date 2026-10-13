@@ -1774,6 +1774,13 @@
     (Notification cooldown exemption) and vibrates. Watch buzz during a Pixel exercise: owner to
     turn off Notification cooldown and "Mute notifications from phone"; a watch app if not enough.
   - Review (9 findings) fixed with regression tests. 2,134 tests.
+  - Also in this release: "ELAPSED" → "WORKOUT DURATION"; Finish asks for a name only without a
+    routine + "Rename workout" on a workout's page; ONE ForgeAI workout notification at a time (the
+    first phone run showed the live card and the rest card grouped and collapsed, hiding the rest
+    buttons — 1608189); gym branding Level 1 (ed251eb: palette engine with WCAG nudging, colours
+    read at draw time — ~75 load-time copies swept, logo opening, panel Settings → Branding with
+    live preview, 0005_gym_theme.sql applied live, test gym RAMS01 = RAM'S FITNESS CLUB IMPACT with
+    logo). 2,190 tests.
   - Process lesson: Brain/Lessons/forgeai-audits-missed-what-a-real-workout-shows.md + CLAUDE.md rule.
 - 2026-10-12: **v0.36.2 — Profile chart shows the range's total; Statistics audit** (9f338ee + review
   fixes; owner: "I selected All Time … why is it showing the total KG lifted just for Oct", "gaps
