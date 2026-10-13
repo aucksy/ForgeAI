@@ -157,3 +157,14 @@ describe('D: the "Set type" sheet', () => {
     expect(g.every((row) => row.length === 3)).toBe(true);
   });
 });
+
+describe('the Target row (13 Oct 2026, owner: the pill sat low, the ⓘ high)', () => {
+  it('◎, the words, the pill and ⓘ share one vertical centre with even gaps', () => {
+    const card = read('src/tracker/components/ExerciseLogCard.tsx');
+    const at = card.indexOf('TG-10: the whole Target');
+    const row = card.slice(at, card.indexOf('{showWhy && target.reason', at));
+    expect(row).toContain("flexDirection: 'row', alignItems: 'center', gap: space.sm");
+    expect(row).not.toContain("alignItems: 'flex-start'");
+    expect(row).not.toContain('paddingTop');
+  });
+});

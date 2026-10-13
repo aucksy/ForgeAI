@@ -38,6 +38,10 @@ export function recordValueText(hit: RecordHit, ctx: RecordTextContext): string 
       return ctx.logType === 'weighted' ? `+${kg(hit.value, units)}` : `${kg(hit.value, units)}${each(hit, ctx)}`;
     case 'e1rm':
       return kg(hit.value, units);
+    case 'rep_record':
+      // 13 Oct 2026: the set itself — "22.5 kg × 12" ("+10 kg × 8" on an added-weight move).
+      if (!s) return kg(hit.value, units);
+      return ctx.logType === 'weighted' ? `+${kg(s.weightKg, units)} × ${s.reps}` : `${kg(s.weightKg, units)}${each(hit, ctx)} × ${s.reps}`;
     case 'best_set': {
       if (!s) return kg(hit.value, units);
       if (ctx.logType === 'weighted' || ctx.logType === 'reps' || ctx.logType === 'assisted') {
@@ -72,6 +76,8 @@ export function recordDetailText(hit: RecordHit, ctx: RecordTextContext): string
       return s ? `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}` : null;
     case 'e1rm':
       return s ? `from ${kg(s.weightKg, units)}${each(hit, ctx)} × ${s.reps}` : null;
+    case 'rep_record':
+      return 'more weight for these reps';
     case 'best_set':
       return `${fmtInt(kgToDisplay(hit.value, units))} ${weightUnit(units)} in one set`;
     case 'best_session':

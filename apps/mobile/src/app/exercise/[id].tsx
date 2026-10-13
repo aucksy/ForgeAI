@@ -49,7 +49,6 @@ import { setRecordsFrom } from '@/tracker/db/recordStart';
 import { getWorkoutNames } from '@/tracker/db/workoutNames';
 import { isTimedCardio, LOAD_MODE_LABEL, LOG_TYPE_LABEL } from '@/tracker/engine/logTypes';
 import { RECORD_LABEL } from '@/tracker/engine/records';
-import { xrmLadder } from '@/tracker/services/exerciseAnalytics';
 import { headlineBest } from '@/tracker/services/exerciseHeadline';
 import { lastTimeRows } from '@/tracker/services/workoutDetail';
 import { SetTable } from '@/tracker/components/SetTable';
@@ -60,6 +59,9 @@ import type { ChartMetric, ChartRange } from '@/tracker/services/exerciseChart';
 import { recordValueText } from '@/tracker/services/recordText';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { exercisesChanged } from '@/tracker/store/exerciseListStore';
+
+/** The Set records table stops at 12 reps (a tidy strength table, as before). */
+const SET_RECORD_MAX_REPS = 12;
 
 const cap = (s: string) => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
 
@@ -196,9 +198,11 @@ export default function ExerciseScreen() {
   const bestSet = ov?.bestSet ?? [];
   // v14: records (the rep-max ladder too) count from the member's chosen day, when set.
   const recordsFrom = ov?.recordsFrom ?? null;
+  // 13 Oct 2026: the Set records ladder IS the rep-record rule's (engine/records), so the
+  // table and the live "Rep record" pop-up agree; easy weeks and the records day as for records.
   const ladder = useMemo(
-    () => (stats ? xrmLadder(recordsFrom ? stats.history.filter((h) => h.dateISO >= recordsFrom) : stats.history) : []),
-    [stats, recordsFrom],
+    () => (stats ? (ov?.records.ladder ?? []).filter((r) => r.reps <= SET_RECORD_MAX_REPS) : []),
+    [stats, ov],
   );
   // Phase 3: every record this exercise keeps, from the one record rule.
   const bests = ov?.records.bests ?? [];

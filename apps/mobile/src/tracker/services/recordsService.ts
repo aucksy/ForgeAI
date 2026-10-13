@@ -289,7 +289,12 @@ export async function getSessionRecords(sessionId: string): Promise<RecordEventR
 export function priorBestsFrom(records: ExerciseRecords, info: Pick<TrackerExercise, 'bwShare'>, bw: readonly BodyweightPoint[], today: string): PriorBests | null {
   if (records.bests.length === 0) return null;
   const by: Partial<Record<RecordKind, number>> = {};
-  for (const h of records.bests) by[h.kind] = h.value;
+  // 13 Oct 2026: who held each record (the overload gate's bar) and the Set records ladder.
+  const holderKg: Partial<Record<RecordKind, number>> = {};
+  for (const h of records.bests) {
+    by[h.kind] = h.value;
+    if (h.set) holderKg[h.kind] = h.set.weightKg;
+  }
   return {
     weightKg: by.weight ?? 0,
     e1rm: by.e1rm ?? 0,
@@ -297,6 +302,8 @@ export function priorBestsFrom(records: ExerciseRecords, info: Pick<TrackerExerc
     bwShare: info.bwShare,
     bodyweightKg: bodyweightOn(bw, today),
     kinds: records.kinds,
+    holderKg,
+    ladder: (records.ladder ?? []).map((r) => [r.reps, r.weightKg] as [number, number]),
   };
 }
 

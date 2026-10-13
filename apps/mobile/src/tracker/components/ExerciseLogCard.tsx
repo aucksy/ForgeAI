@@ -437,11 +437,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           }}
         >
           {/* TG-10: the whole Target, wrapping onto a second or third line at large text —
-              never "42.5 kg each · aim f…". Icon and badge stay level with the first line. */}
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.xs }}>
-            <View style={{ paddingTop: 3 }}>
-              <Icon name="target" size={14} color={color.accentBright} />
-            </View>
+              never "42.5 kg each · aim f…". 13 Oct 2026 (owner: the pill sat low and the ⓘ high):
+              ◎, the words, the pill and ⓘ share ONE vertical centre with even 8 dp gaps; when the
+              words wrap, the others centre on the whole block. */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+            <Icon name="target" size={14} color={color.accentBright} />
             <Text
               style={{ flex: 1, flexShrink: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accentBright }}
               numberOfLines={3}

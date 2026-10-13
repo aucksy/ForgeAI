@@ -30,23 +30,42 @@
  * only when it beats an earlier workout: the first time an exercise is logged sets its
  * bests but announces nothing — the same rule the live workout screen has followed since
  * Phase 1 (seven "records" on a member's first day would be noise).
+ *
+ * 13 Oct 2026 — progressive overload (owner: "I can increase the number of reps with low weight.
+ * That doesn't necessarily give me the progressive overload I need"):
+ *  - REP RECORD (`rep_record`, weight × reps and added-weight moves): a working set whose weight
+ *    beats the heaviest weight ever lifted for AT LEAST that many reps — more weight for the same
+ *    reps, or more reps at the same weight. More reps than ever before count only at no less than
+ *    the weight of the set that held the most reps (`repRecordOver`), so 5 kg × 25 never is one.
+ *    It is news only (events, the live pop-up, a set's medal), never a single "best": its bests
+ *    are the Set records ladder (`ExerciseRecords.ladder`, the heaviest weight at each rep count),
+ *    which the exercise page shows — one rule for both.
+ *  - THE OVERLOAD GATE (`overloadGated`): "Most reps" and "Best set" are NEWS only when the set's
+ *    weight is at least that of the set that held the record before (assisted: no more help). A
+ *    lighter set can still hold the best (the records list is unchanged); it just is not
+ *    announced, medalled or counted as a record of that workout. The live pop-up, the set's
+ *    medal, the finish screen and the feed card's count all follow it (they all read events
+ *    or `liveRecords`, which use these same functions).
  */
 import { epleyE1rm } from '@/engine/overload';
 
 import { fmtDuration, shownDistUnit, type DistUnit, type LoadMode, type LogType } from './logTypes';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint, type VolumeRule } from './volume';
 
-export type RecordKind = 'weight' | 'e1rm' | 'best_set' | 'best_session' | 'reps' | 'duration' | 'pace' | 'distance';
+export type RecordKind = 'weight' | 'e1rm' | 'rep_record' | 'best_set' | 'best_session' | 'reps' | 'duration' | 'pace' | 'distance';
 
 /**
  * Display order, and the order a set's medal picks from when one set beats several records
- * at once (a heavier set usually also lifts the 1-rep max and the best set).
+ * at once (a heavier set usually also lifts the 1-rep max and the best set). 13 Oct 2026: a
+ * rep record ranks right after the 1-rep max, so a set that is also a "Best set" says the
+ * overload ("Rep record · 22.5 kg × 12").
  */
-export const RECORD_KINDS: readonly RecordKind[] = ['weight', 'e1rm', 'best_set', 'reps', 'duration', 'pace', 'distance', 'best_session'];
+export const RECORD_KINDS: readonly RecordKind[] = ['weight', 'e1rm', 'rep_record', 'best_set', 'reps', 'duration', 'pace', 'distance', 'best_session'];
 
 export const RECORD_LABEL: Record<RecordKind, string> = {
   weight: 'Heaviest weight',
   e1rm: 'Estimated 1-rep max',
+  rep_record: 'Rep record',
   best_set: 'Best set',
   best_session: 'Best workout',
   reps: 'Most reps',
@@ -188,6 +207,16 @@ export interface RecordHit {
 /** A workout that beat the best before it. */
 export interface RecordEvent extends RecordHit {
   previous: number;
+  /** Rep record: the set it beat ("was 20 kg", or "was 20 kg × 10" for more reps than ever). */
+  previousSet?: { weightKg: number; reps: number } | null;
+}
+
+/** One rung of the Set records ladder: the heaviest weight lifted for exactly `reps`. */
+export interface RepBest {
+  reps: number;
+  weightKg: number;
+  sessionId: string;
+  dateISO: string;
 }
 
 export interface ExerciseRecords {
@@ -197,6 +226,68 @@ export interface ExerciseRecords {
   bests: RecordHit[];
   /** Every time a workout beat the best before it, oldest first. */
   events: RecordEvent[];
+  /**
+   * 13 Oct 2026: the Set records ladder (weight × reps and added-weight moves; [] otherwise),
+   * reps ascending — what a rep record is judged against, and what the exercise page lists.
+   */
+  ladder?: RepBest[];
+}
+
+// ------------------------------------------------------------------ 13 Oct 2026: rep records
+
+/** Does this exercise keep rep records (a weight that means "how heavy")? */
+export function keepsRepRecords(t: LogType): boolean {
+  return t === 'weight_reps' || t === 'weighted';
+}
+
+/** The heaviest weight lifted at each rep count (reps → kg), built set by set. */
+export type RepLadder = Map<number, number>;
+
+/** Add a working set to a ladder (a weight above 0 and some reps; else nothing). PURE. */
+export function addToLadder(ladder: RepLadder, s: Pick<RecordSet, 'weightKg' | 'reps'>): void {
+  const w = finite(s.weightKg);
+  const r = Math.round(finite(s.reps));
+  if (!(w > 0) || !(r > 0)) return;
+  const cur = ladder.get(r);
+  if (cur == null || beats(w, cur)) ladder.set(r, w);
+}
+
+/**
+ * Is this set a rep record over `ladder` (everything lifted before it)? Its weight must beat
+ * the heaviest weight lifted for at least as many reps. With more reps than ever before (no
+ * earlier set that long), it must be at least as heavy as the set that held the most reps —
+ * more reps at the same weight counts, a lighter set doing more reps does not. An empty ladder
+ * (the first time) is never a record. Returns what it beat, or null. PURE.
+ */
+export function repRecordOver(ladder: ReadonlyMap<number, number>, s: Pick<RecordSet, 'weightKg' | 'reps'>): { weightKg: number; reps: number } | null {
+  const w = finite(s.weightKg);
+  const r = Math.round(finite(s.reps));
+  if (!(w > 0) || !(r > 0) || ladder.size === 0) return null;
+  let atLeast: { weightKg: number; reps: number } | null = null;
+  let longest: { weightKg: number; reps: number } | null = null;
+  for (const [reps, kg] of ladder) {
+    if (reps >= r && (!atLeast || kg > atLeast.weightKg)) atLeast = { weightKg: kg, reps };
+    if (!longest || reps > longest.reps) longest = { weightKg: kg, reps };
+  }
+  if (atLeast) return beats(w, atLeast.weightKg) ? atLeast : null;
+  return longest && !beats(longest.weightKg, w) ? longest : null;
+}
+
+/** A ladder as a list, reps ascending (for `PriorBests` and the Set records table). PURE. */
+export function ladderEntries(ladder: ReadonlyMap<number, number>): [number, number][] {
+  return [...ladder].sort((a, b) => a[0] - b[0]);
+}
+
+/**
+ * The overload gate: "Most reps" and "Best set" on a weight-based move are news only when the
+ * set is at least as heavy as the set that held the record before (assisted: no more help —
+ * help is stored negative, so "heavier" is the bigger number there too). Other kinds and types
+ * are never gated. `holder` = the previous holder's stored weight (absent: no gate). PURE.
+ */
+export function overloadGated(kind: RecordKind, t: LogType, setWeightKg: number, holderKg: number | null | undefined): boolean {
+  if (!overloadGatedKind(kind, t)) return false;
+  if (holderKg == null || !Number.isFinite(holderKg)) return false;
+  return beats(holderKg, finite(setWeightKg));
 }
 
 const finite = (n: number | null | undefined): number => (n != null && Number.isFinite(n) ? n : 0);
@@ -306,19 +397,80 @@ export function exerciseRecords(sessions: readonly RecordSession[], rule: Record
   const kinds = kindsForRule(rule);
   const bests = new Map<RecordKind, RecordHit>();
   const events: RecordEvent[] = [];
+  const reps = keepsRepRecords(rule.logType);
+  const ladder: RepLadder = new Map();
+  const rungs = new Map<number, RepBest>();
   for (const session of chronological(sessions)) {
-    const top = sessionBests(session, rule, kinds, bodyweightOn(bw, session.dateISO));
+    const body = bodyweightOn(bw, session.dateISO);
+    const top = sessionBests(session, rule, kinds, body);
     for (const kind of kinds) {
       const hit = top.get(kind);
       if (!hit) continue;
       const prior = bests.get(kind);
       if (!prior) {
         bests.set(kind, hit);
-      } else if (beats(hit.value, prior.value)) {
-        events.push({ ...hit, previous: prior.value });
-        bests.set(kind, hit);
+        continue;
+      }
+      if (!beats(hit.value, prior.value)) continue;
+      // The overload gate: the news is the best set of this workout that beat the record at no
+      // less weight than its holder's (a lighter set can still take the best, unannounced).
+      const gate = overloadGatedKind(kind, rule.logType) ? prior.set?.weightKg : null;
+      const news = gate == null ? hit : gatedNews(kind, session, rule, body, prior, gate);
+      if (news) events.push({ ...news, previous: prior.value });
+      bests.set(kind, hit);
+    }
+    if (reps) {
+      // Rep record: judged against everything lifted BEFORE this workout; its news is the
+      // heaviest such set (more reps on a tie).
+      let news: { set: RecordSet; over: { weightKg: number; reps: number } } | null = null;
+      for (const st of session.sets) {
+        const over = repRecordOver(ladder, st);
+        if (!over) continue;
+        if (!news || beats(finite(st.weightKg), finite(news.set.weightKg)) || (!beats(finite(news.set.weightKg), finite(st.weightKg)) && finite(st.reps) > finite(news.set.reps))) {
+          news = { set: st, over };
+        }
+      }
+      if (news) {
+        events.push({
+          kind: 'rep_record',
+          value: finite(news.set.weightKg),
+          sessionId: session.sessionId,
+          dateISO: session.dateISO,
+          startedAt: session.startedAt,
+          set: news.set,
+          previous: news.over.weightKg,
+          previousSet: news.over,
+        });
+      }
+      for (const st of session.sets) {
+        const r = Math.round(finite(st.reps));
+        const before = ladder.get(r);
+        addToLadder(ladder, st);
+        if (ladder.get(r) !== before) rungs.set(r, { reps: r, weightKg: ladder.get(r) as number, sessionId: session.sessionId, dateISO: session.dateISO });
       }
     }
   }
-  return { kinds, bests: kinds.map((k) => bests.get(k)).filter((h): h is RecordHit => h != null), events };
+  return {
+    kinds,
+    bests: kinds.map((k) => bests.get(k)).filter((h): h is RecordHit => h != null),
+    events,
+    ladder: [...rungs.values()].sort((a, b) => a.reps - b.reps),
+  };
+}
+
+/** Kinds the overload gate can hold back on this type (a quick check before reading sets). */
+function overloadGatedKind(kind: RecordKind, t: LogType): boolean {
+  return (kind === 'reps' || kind === 'best_set') && (t === 'weight_reps' || t === 'weighted' || t === 'assisted');
+}
+
+/** Of one workout's sets, the best that beat `prior` at no less weight than `gateKg`; null = none. */
+function gatedNews(kind: RecordKind, session: RecordSession, rule: RecordRule, body: number | null, prior: RecordHit, gateKg: number): RecordHit | null {
+  let best: RecordHit | null = null;
+  for (const st of session.sets) {
+    if (overloadGated(kind, rule.logType, st.weightKg, gateKg)) continue;
+    const v = setRecordValue(kind, st, rule, body);
+    if (v == null || !beats(v, prior.value)) continue;
+    if (!best || beats(v, best.value)) best = { kind, value: v, sessionId: session.sessionId, dateISO: session.dateISO, startedAt: session.startedAt, set: st };
+  }
+  return best;
 }

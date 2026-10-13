@@ -51,6 +51,7 @@ describe('which records an exercise keeps', () => {
     expect(Object.values(RECORD_LABEL)).toEqual([
       'Heaviest weight',
       'Estimated 1-rep max',
+      'Rep record',
       'Best set',
       'Best workout',
       'Most reps',
@@ -85,11 +86,15 @@ describe('the record rule', () => {
       W,
       [],
     );
+    // 13 Oct 2026: 65 × 5 and 62.5 × 10 are also rep records (more weight for at least those
+    // reps than the 60 × 8 before; 10 reps at more than 60 kg).
     expect(r.events.map((e) => [e.dateISO, e.kind, e.value, e.previous])).toEqual([
       ['2026-09-04', 'weight', 65, 60],
+      ['2026-09-04', 'rep_record', 65, 60],
       ['2026-09-08', 'e1rm', 62.5 * (1 + 10 / 30), 60 * (1 + 8 / 30)],
       ['2026-09-08', 'best_set', 625, 480],
       ['2026-09-08', 'best_session', 1875, 960],
+      ['2026-09-08', 'rep_record', 62.5, 60],
     ]);
   });
 
@@ -153,7 +158,8 @@ describe('the record rule', () => {
       ['reps', 8],
       ['best_session', 720],
     ]);
-    expect(r.events.map((e) => e.kind)).toEqual(['weight']);
+    // 13 Oct 2026: 15 kg for 6 reps beats the 10 kg lifted for 6+ before: a rep record too.
+    expect(r.events.map((e) => e.kind)).toEqual(['weight', 'rep_record']);
   });
 
   it('heaviest weight names the set with more reps when two tie', () => {
@@ -226,6 +232,9 @@ describe('the live pop-up knows every kind', () => {
       bwShare: 1,
       bodyweightKg: 81,
       kinds: ['reps', 'best_session'],
+      // 13 Oct 2026: the overload gate's bar and the (empty, bodyweight) Set records ladder.
+      holderKg: expect.any(Object),
+      ladder: [],
     });
     expect(priorBestsFrom({ kinds: [], bests: [], events: [] }, { bwShare: 0 }, [], '2026-10-01')).toBeNull();
   });
