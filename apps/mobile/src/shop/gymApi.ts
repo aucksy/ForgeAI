@@ -9,7 +9,7 @@
  */
 import { getSupabase } from '@/cloud/client';
 
-import { classifyRpcError, linkFromJoin, orderFromRow, ordersFromRows, productsFromRows, type GymError } from './gym';
+import { classifyRpcError, gymNowFromMe, linkFromJoin, orderFromRow, ordersFromRows, productsFromRows, type GymError, type GymNow } from './gym';
 import type { GymLink, GymOrder, Product } from './types';
 
 export type GymResult<T> = { ok: true; data: T } | { ok: false; error: GymError };
@@ -40,6 +40,14 @@ export async function apiJoin(code: string, name: string): Promise<GymResult<Gym
   if (!r.ok) return r;
   const link = linkFromJoin(r.data);
   return link ? { ok: true, data: link } : { ok: false, error: { kind: 'other' } };
+}
+
+/** The gym as it is now (name, brand) — member_me. Also tells the gym this phone is still in use. */
+export async function apiMe(key: string): Promise<GymResult<GymNow>> {
+  const r = await call('member_me', { p_key: key }, READ_MS);
+  if (!r.ok) return r;
+  const now = gymNowFromMe(Array.isArray(r.data) ? r.data[0] : r.data);
+  return now ? { ok: true, data: now } : { ok: false, error: { kind: 'other' } };
 }
 
 export async function apiProducts(key: string): Promise<GymResult<Product[]>> {

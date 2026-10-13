@@ -4,7 +4,7 @@
  * knows (BAD_KEY: the member left on another phone, or the gym removed them) unlinks this phone
  * and the join card says why.
  */
-import { apiCancelOrder, apiJoin, apiLeaveQuietly, apiOrders, apiPlaceOrder, apiProducts } from './gymApi';
+import { apiCancelOrder, apiJoin, apiLeaveQuietly, apiMe, apiOrders, apiPlaceOrder, apiProducts } from './gymApi';
 import {
   JOIN_CODE_LENGTH,
   UNLINKED_TEXT,
@@ -51,6 +51,24 @@ export async function joinGym(rawCode: string, rawName: string): Promise<ActionW
   // The shop page that replaces this card fetches the list as it opens.
   useGymShop.getState().setLink(r.data);
   return null;
+}
+
+/**
+ * Gym branding: ask the gym for its name and look as they are now (member_me), on launch and when
+ * the Shop opens. A changed brand is kept on the phone; the theme decides when to show it
+ * (theme/gymTheme.ts — at once while the gym's logo is on screen, else on the next launch).
+ * Quiet: no words for the member, a failure just keeps what the phone has.
+ */
+export async function refreshGymNow(): Promise<void> {
+  const key = useGymShop.getState().link?.memberKey;
+  if (!key) return;
+  const r = await apiMe(key);
+  if (useGymShop.getState().link?.memberKey !== key) return;
+  if (!r.ok) {
+    lostKey(r.error);
+    return;
+  }
+  useGymShop.getState().setGymNow(r.data);
 }
 
 /** Fetch the gym's list. Returns words when it failed (with or without a cached list), else null. */
