@@ -262,11 +262,13 @@ describe('LW-27: every box has its own spoken name', () => {
 });
 
 describe('LW-17 / SH-22: the row fits a 360 dp phone', () => {
-  it('under 380 dp PREVIOUS narrows and the RPE cell moves into the set sheet', async () => {
+  it('the RPE cell shows at every width with Track RPE on (13 Oct 2026; it used to hide under 380 dp)', async () => {
     const { rowLayout, SET_ROW, hintTexts } = await import('@/tracker/components/setRowLayout');
-    expect(rowLayout(360, true)).toEqual({ prevW: SET_ROW.prevNarrow, rpeCell: false });
-    expect(rowLayout(412, true)).toEqual({ prevW: SET_ROW.prevWide, rpeCell: true });
+    expect(rowLayout(360, true).rpeCell).toBe(true);
+    expect(rowLayout(412, true).rpeCell).toBe(true);
     expect(rowLayout(412, false).rpeCell).toBe(false);
+    // Off: PREVIOUS keeps its old width on a roomy phone.
+    expect(rowLayout(412, false).prevW).toBe(SET_ROW.prevWide);
     // ✓ / RPE / timer: 48 wide and 44 high + 2 dp of touch above and below = 48 × 48.
     expect(SET_ROW.button).toBeGreaterThanOrEqual(48);
     expect(SET_ROW.height + 4).toBeGreaterThanOrEqual(48);

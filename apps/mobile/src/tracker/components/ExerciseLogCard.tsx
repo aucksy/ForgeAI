@@ -45,7 +45,8 @@ import { ExerciseThumb } from './ExerciseThumb';
 import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
-import { afterTick, SET_ROW, SetRow, useRowLayout } from './SetRow';
+import { cardSourceLine } from '../lib/previousSource';
+import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { SetTypeSheet } from './SetTypeSheet';
 import { SupersetSheet } from './SupersetSheet';
 import { SwapSheet } from './SwapSheet';
@@ -112,7 +113,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const defaultRest = useRestTimer((s) => s.defaultSec);
   const showRpe = useTrackerPrefs((s) => s.advancedSets);
   // v0.27.0: the column heads (KG / LB, KM / MI) and the Target line follow Profile → Units.
-  useUnits();
+  const units = useUnits();
 
   const [sheet, setSheet] = useState<SheetName>(null);
   const [restSaveError, setRestSaveError] = useState<string | null>(null);
@@ -213,8 +214,15 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     });
   }, [exercise, fillTarget, earlier, easyWeek]);
 
-  // Packet B (LW-17): PREVIOUS narrows and RPE moves into the set sheet on a narrow phone.
-  const rowLayout = useRowLayout();
+  // 13 Oct 2026: the rows' widths for this phone and text size; RPE shows at every width.
+  const rowLayout = useRowLayout(logType);
+  // Where PREVIOUS comes from ("Last: 3 Oct · Push 1A"), or the first time in this routine /
+  // folder ("First time in this folder · last anywhere 100 kg × 5, 3 Oct"). Information only.
+  const sourceLine = useMemo(
+    () => cardSourceLine(exercise, units),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [exercise.previousSets, exercise.lastFrom, exercise.elsewhere, exercise.logType, exercise.loadMode, exercise.distUnit, units],
+  );
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
   const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);
   const typeSet = typeFor ? exercise.sets.find((s) => s.key === typeFor) ?? null : null;
@@ -485,47 +493,62 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         </Pressable>
       ) : null}
 
-      {/* column header — the words say what to type ("KG EACH" = one dumbbell) */}
-      {/* Packet B (LW-17): the same widths as the set rows (SetRow's SET_ROW / useRowLayout). */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingHorizontal: space.xs }}>
-        <Text style={[colHead, { width: SET_ROW.set, textAlign: 'center' }]}>SET</Text>
-        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[colHead, { width: rowLayout.prevW }]}>
-          PREVIOUS
+      {/* 13 Oct 2026: where PREVIOUS comes from — one muted line above the set table */}
+      {sourceLine ? (
+        <Text accessibilityLabel={sourceLine.spoken} style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>
+          {sourceLine.text}
         </Text>
-        {heads.distance ? <Text style={[colHead, { flex: 1, textAlign: 'center' }]}>{heads.distance}</Text> : null}
-        {heads.weight ? (
-          <Text numberOfLines={1} style={[colHead, { flex: 1, textAlign: 'center' }]}>
-            {heads.weight}
-          </Text>
-        ) : null}
-        {heads.reps ? (
-          <Text numberOfLines={1} style={[colHead, { flex: 1, textAlign: 'center' }]}>
-            {heads.reps}
-          </Text>
-        ) : null}
-        {heads.time ? <Text style={[colHead, { flex: 1, textAlign: 'center' }]}>{heads.time}</Text> : null}
-        {logType === 'time' ? <View style={{ width: SET_ROW.button }} /> : null}
-        {rowLayout.rpeCell ? <Text style={[colHead, { width: SET_ROW.button, textAlign: 'center' }]}>RPE</Text> : null}
-        <View style={{ width: SET_ROW.button }} />
-      </View>
+      ) : null}
 
-      {rows.map((r) => (
-        <SetRow
-          key={r.set.key}
-          exKey={exercise.key}
-          set={r.set}
-          label={r.label}
-          previous={r.previous}
-          fill={r.fill}
-          record={r.record}
-          onOpenType={onOpenType}
-          logType={logType}
-          distUnit={distUnit}
-          onOpenTimer={logType === 'time' ? onOpenTimer : undefined}
-          exName={exercise.name}
-          spoken={r.spoken}
-        />
-      ))}
+      {/* the set table; on a phone under 400 dp it reaches into the card's padding (rowLayout.bleed) */}
+      <View style={{ gap: space.sm, marginHorizontal: -rowLayout.bleed }}>
+        {/* column header — the words say what to type ("KG EACH" = one dumbbell); the same widths
+            and gaps as the set rows (useRowLayout). Two lines rather than cut off at a large text size. */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: rowLayout.gap, paddingHorizontal: rowLayout.padX }}>
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[colHead, { width: rowLayout.setW, textAlign: 'center' }]}>
+            SET
+          </Text>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.6}
+            style={[colHead, { width: rowLayout.prevW, marginHorizontal: rowLayout.prevGap - rowLayout.gap }]}
+          >
+            PREVIOUS
+          </Text>
+          {heads.distance ? <Text {...headFit} style={[colHead, colFlex]}>{heads.distance}</Text> : null}
+          {heads.weight ? <Text {...headFit} style={[colHead, colFlex]}>{heads.weight}</Text> : null}
+          {heads.reps ? <Text {...headFit} style={[colHead, colFlex]}>{heads.reps}</Text> : null}
+          {heads.time ? <Text {...headFit} style={[colHead, colFlex]}>{heads.time}</Text> : null}
+          {logType === 'time' ? <View style={{ width: rowLayout.checkW }} /> : null}
+          {rowLayout.rpeCell ? (
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[colHead, { width: rowLayout.rpeW, textAlign: 'center' }]}>
+              RPE
+            </Text>
+          ) : null}
+          <View style={{ width: rowLayout.checkW, alignItems: 'center' }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <Icon name="check" size={14} color={color.inkMuted} />
+          </View>
+        </View>
+
+        {rows.map((r) => (
+          <SetRow
+            key={r.set.key}
+            exKey={exercise.key}
+            set={r.set}
+            label={r.label}
+            previous={r.previous}
+            fill={r.fill}
+            record={r.record}
+            onOpenType={onOpenType}
+            logType={logType}
+            distUnit={distUnit}
+            onOpenTimer={logType === 'time' ? onOpenTimer : undefined}
+            exName={exercise.name}
+            spoken={r.spoken}
+          />
+        ))}
+      </View>
 
       <View style={{ marginTop: space.xs }}>
         <GhostButton label="Add set" icon="plus" onPress={() => addSet(exercise.key)} />
@@ -767,3 +790,7 @@ const colHead = {
   color: color.inkMuted,
   letterSpacing: 0.4,
 } as const;
+
+/** A number column's head: centred over its box, on two lines ("KG / EACH") before it is cut off. */
+const colFlex = { flex: 1, textAlign: 'center' } as const;
+const headFit = { numberOfLines: 2, adjustsFontSizeToFit: true, minimumFontScale: 0.75 } as const;

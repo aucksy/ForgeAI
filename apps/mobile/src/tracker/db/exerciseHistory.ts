@@ -61,6 +61,11 @@ export interface TrackedSetEntry extends SetEntry {
    * exercise (heavy = 0, back-off = 1). Absent = the first card (and every older set).
    */
   cardIndex?: number;
+  /**
+   * 13 Oct 2026: how hard the set felt (RPE), when it was logged. PREVIOUS shows it with
+   * "Track RPE" on (Hevy's "30 kg × 15 @ 9"). Absent = none, so older rows keep their shape.
+   */
+  rpe?: number;
 }
 
 export interface ExerciseHistoryEntry {
@@ -87,6 +92,7 @@ interface HistoryRow {
   easy_week: number | null;
   set_type?: string | null;
   card_index?: number | null;
+  rpe?: number | null;
 }
 
 function mapSet(r: HistoryRow): TrackedSetEntry {
@@ -105,13 +111,14 @@ function mapSet(r: HistoryRow): TrackedSetEntry {
   if (isLoadMode(r.load_mode)) s.loadMode = r.load_mode;
   if (r.set_type === 'drop' || r.set_type === 'failure') s.setType = r.set_type;
   if (r.card_index != null && r.card_index > 0) s.cardIndex = Number(r.card_index);
+  if (r.rpe != null && Number.isFinite(Number(r.rpe))) s.rpe = Number(r.rpe);
   return s;
 }
 
 /** Columns of the frozen `SetRow` shape, plus the session's date and Phase 2's time/distance. */
 const COLS = `se.id, se.session_id, se.exercise_id, se.set_number, se.weight_kg, se.reps,
               se.is_warmup, ws.date_iso AS date_iso, se.duration_sec, se.distance_m, se.load_mode,
-              ws.easy_week AS easy_week, se.set_type, se.card_index`;
+              ws.easy_week AS easy_week, se.set_type, se.card_index, se.rpe`;
 
 const ORDER = 'ORDER BY ws.started_at DESC, ws.date_iso DESC, se.set_number ASC';
 

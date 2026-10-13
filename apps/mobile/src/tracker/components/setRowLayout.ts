@@ -5,7 +5,7 @@
 import { trimNum } from '@/lib/format';
 import { displayUnits } from '@/lib/units';
 
-import { distanceToUnit, fmtDuration, shownDistUnit, type DistUnit, type LogType } from '../engine/logTypes';
+import { distanceToUnit, fmtDuration, hasDistance, hasReps, hasTime, hasWeight, shownDistUnit, type DistUnit, type LogType } from '../engine/logTypes';
 import type { PrevSet, SetFill } from '../store/activeWorkoutStore';
 import { showW } from './unitText';
 
@@ -21,7 +21,7 @@ export function setW(kg: number, units?: Units): string {
   return showW(kg, u, u === 'imperial' ? 1 : 2);
 }
 
-/** Packet B (LW-17 / SH-22): the row's fixed widths, shared with the card's column header. */
+/** Packet B (LW-17 / SH-22): the row's widths on a roomy phone, shared with the card's column header. */
 export const SET_ROW = {
   /** SET cell: 44 wide + 4 dp of touch on its left (the row's padding) = 48. */
   set: 44,
@@ -30,17 +30,100 @@ export const SET_ROW = {
   height: 44,
   /** The row's touch height: every box and button is at least 48 dp to the finger. */
   touch: 48,
+  /** PREVIOUS at its widest (at the phone's normal text size). */
   prevWide: 70,
-  prevNarrow: 52,
 } as const;
 
-/** Under this window width the row tightens (PREVIOUS narrower, RPE in the sheet). */
-export const NARROW_DP = 380;
+/**
+ * 13 Oct 2026: under this window width the set table is "compact" — narrower SET, RPE and ✓
+ * cells (each still 48 dp to the finger through its touch margin) and the table reaching 12 dp
+ * into the card's side padding (Hevy's rows run nearly edge to edge). The owner's Pixel at a
+ * large display size is about 360 dp wide.
+ */
+export const COMPACT_DP = 400;
+/** Under this width the gap between two tap targets closes from 8 to 6 dp (a 320 dp phone). */
+export const TIGHT_DP = 340;
 
-/** The row's layout for this phone: PREVIOUS width, and whether the RPE cell fits. PURE. */
-export function rowLayout(windowWidth: number, showRpe: boolean): { prevW: number; rpeCell: boolean } {
-  const narrow = windowWidth < NARROW_DP;
-  return { prevW: narrow ? SET_ROW.prevNarrow : SET_ROW.prevWide, rpeCell: showRpe && !narrow };
+/** What sits outside the row: the screen's 20 dp sides, the card's 16 dp padding, its borders (3 + 1 on a superset). */
+const OUTSIDE_ROW = 2 * 20 + 2 * 16 + 3 + 1;
+/** A number box's width when there is room, and the least it gets before PREVIOUS gives way. */
+const INPUT_PREF = 48;
+const INPUT_MIN = 44;
+/** PREVIOUS never narrower than this ("@ 9" and a wrapped, shrunk "30 ×" still fit on a 320 dp phone). */
+const PREV_MIN = 28;
+
+/** The set row's widths for this phone. PURE. */
+export interface RowLayout {
+  /** PREVIOUS column width. */
+  prevW: number;
+  /** The RPE cell shows: "Track RPE" is on — at every width since 13 Oct 2026. */
+  rpeCell: boolean;
+  /** SET cell width (its touch margin makes it 48). */
+  setW: number;
+  /** RPE cell width (its touch margin makes it 48). */
+  rpeW: number;
+  /** ✓ and the timer button width (their touch margin makes them 48). */
+  checkW: number;
+  /** Gap between two tap targets. */
+  gap: number;
+  /** Gap either side of PREVIOUS (it is not a tap target, so it can sit closer). */
+  prevGap: number;
+  /** The row's own side padding. */
+  padX: number;
+  /** How far the table reaches into the card's side padding (0 = not at all). */
+  bleed: number;
+  /** About how wide each number box comes out (the boxes share what is left). */
+  inputW: number;
+}
+
+/** How many number boxes and buttons a row of this type has. PURE. */
+function rowCells(lt: LogType): { inputs: number; timer: boolean } {
+  const inputs = [hasWeight(lt), hasReps(lt), hasTime(lt), hasDistance(lt)].filter(Boolean).length;
+  return { inputs: Math.max(1, inputs), timer: lt === 'time' };
+}
+
+/**
+ * The row's layout for this phone (13 Oct 2026, rebalanced): SET · PREVIOUS · boxes · (timer) ·
+ * (RPE) · ✓. The RPE cell shows whenever "Track RPE" is on, at any width and text size — the owner
+ * could not find it when it hid under 380 dp. The number boxes get 48 dp first; PREVIOUS takes
+ * what is left, up to its widest (wider at a larger text size); when that is less than PREVIOUS
+ * needs at this text size, the boxes give way down to 44 dp, and PREVIOUS wraps onto a second
+ * line rather than cutting its numbers off. `fontScale` is the phone's text size (1 = normal).
+ * PURE.
+ */
+export function rowLayout(
+  windowWidth: number,
+  showRpe: boolean,
+  opts: { fontScale?: number; logType?: LogType } = {},
+): RowLayout {
+  const fs = Math.min(1.6, Math.max(1, opts.fontScale ?? 1));
+  const { inputs, timer } = rowCells(opts.logType ?? 'weight_reps');
+  const compact = windowWidth < COMPACT_DP;
+  const setW = compact ? 40 : SET_ROW.set;
+  const rpeW = compact ? 40 : SET_ROW.button;
+  const checkW = compact ? 44 : SET_ROW.button;
+  const gap = compact && windowWidth < TIGHT_DP ? 6 : 8;
+  const prevGap = compact ? 4 : 8;
+  const padX = compact ? 2 : 4;
+  const bleed = compact ? 12 : 0;
+  const inner = windowWidth - OUTSIDE_ROW + 2 * bleed - 2 * padX;
+  // Gaps between tap targets: box to box, the timer, RPE and ✓ each after the one before.
+  const targetGaps = inputs - 1 + (timer ? 1 : 0) + (showRpe ? 1 : 0) + 1;
+  const fixed = setW + checkW * (timer ? 2 : 1) + (showRpe ? rpeW : 0) + 2 * prevGap + gap * targetGaps;
+  const avail = inner - fixed;
+  // PREVIOUS: what "100 × 10" needs at this text size, and its widest.
+  const prevNeed = Math.round(48 * fs);
+  const prevMax = Math.round(SET_ROW.prevWide * Math.min(fs, 1.3));
+  const rest = avail - inputs * INPUT_PREF;
+  let prevW = rest >= prevNeed ? Math.min(rest, prevMax) : Math.min(prevNeed, avail - inputs * INPUT_MIN);
+  prevW = Math.max(PREV_MIN, Math.round(prevW));
+  const inputW = Math.floor((avail - prevW) / inputs);
+  return { prevW, rpeCell: showRpe, setW, rpeW, checkW, gap, prevGap, padX, bleed, inputW };
+}
+
+/** The touch margin that makes a cell `width` wide 48 dp to the finger, split left and right. PURE. */
+export function touchSlop(width: number): number {
+  return Math.max(0, Math.ceil((SET_ROW.touch - width) / 2));
 }
 
 /** The grey hint each box shows (and a tick saves). PURE (exported for tests). */
@@ -59,8 +142,18 @@ export function hintTexts(
 }
 
 
-/** What the PREVIOUS cell says for last time's set. PURE (exported for tests). */
-export function prevLabel(p: PrevSet | null, lt: LogType, unit: DistUnit, units?: Units): string {
+/**
+ * What the PREVIOUS cell says for last time's set. PURE (exported for tests).
+ * 13 Oct 2026: with `withRpe` ("Track RPE" on) and an RPE logged last time, a second line
+ * "@ 9" follows the numbers (Hevy's "30 kg × 15 @ 9 rpe"): "30 × 15\n@ 9". Off, or no RPE: as before.
+ */
+export function prevLabel(p: PrevSet | null, lt: LogType, unit: DistUnit, units?: Units, withRpe = false): string {
+  const main = prevNumbers(p, lt, unit, units);
+  return withRpe && p?.rpe != null && main !== '—' ? `${main}\n@ ${trimNum(p.rpe)}` : main;
+}
+
+/** The numbers line of PREVIOUS. PURE. */
+function prevNumbers(p: PrevSet | null, lt: LogType, unit: DistUnit, units?: Units): string {
   if (!p) return '—';
   switch (lt) {
     case 'reps':

@@ -27,8 +27,12 @@
  *    your best. Keep it?" [Keep] [Fix]. It never refuses; Keep keeps it as typed.
  *  - LW-27 / SH-22: ✓, SET, RPE, the timer and every box are 48 dp to touch, and each says
  *    which exercise and set it is ("Mark Bench Press set 2 complete").
- *  - LW-17: under 380 dp the PREVIOUS column narrows and the RPE cell moves into the set-type
- *    sheet (tap the set number), so the number boxes keep room for "102.5".
+ *  - 13 Oct 2026 (replaces LW-17's "RPE moves into the sheet under 380 dp"): with "Track RPE" on
+ *    the RPE cell shows at every width and text size, as in Hevy. On a phone under 400 dp the
+ *    table uses narrower SET / RPE / ✓ cells (48 dp to the finger through their touch margins)
+ *    and reaches into the card's padding; PREVIOUS wraps onto a second line instead of cutting
+ *    its numbers off, and shows last time's RPE under them ("@ 9"). The set-number sheet still
+ *    sets RPE too. Widths: `rowLayout` (setRowLayout.ts).
  *
  * The ✓ fires its haptic on finger-DOWN (house rule).
  */
@@ -75,7 +79,7 @@ import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
 import { Glyph } from './TrackerGlyph';
-import { hintTexts, prevLabel, rowLayout, SET_ROW } from './setRowLayout';
+import { hintTexts, prevLabel, rowLayout, SET_ROW, touchSlop, type RowLayout } from './setRowLayout';
 import { boxLabel, cleanTyped, distWord, kgToTyped, parseTyped, typedToKg, typedWeightMatches } from './unitText';
 
 export { hintTexts, prevLabel, rowLayout, SET_ROW } from './setRowLayout';
@@ -105,11 +109,11 @@ interface SetRowProps {
 
 const parseNum = parseTyped;
 
-/** The same layout, following the window (the card's header uses it too). */
-export function useRowLayout(): { prevW: number; rpeCell: boolean } {
-  const { width } = useWindowDimensions();
+/** The same layout, following the window and text size (the card's header uses it too). */
+export function useRowLayout(logType: LogType = 'weight_reps'): RowLayout {
+  const { width, fontScale } = useWindowDimensions();
   const showRpe = useTrackerPrefs((s) => s.advancedSets);
-  return rowLayout(width, showRpe);
+  return rowLayout(width, showRpe, { fontScale, logType });
 }
 
 /** After a tick lands in the store: record alert + rest timer + superset hand-off. */
@@ -186,7 +190,8 @@ export const SetRow = memo(function SetRow({
   const toggleDone = useActiveWorkout((s) => s.toggleDone);
   const deleteSetWithUndo = useActiveWorkout((s) => s.deleteSetWithUndo);
   const showRpe = useTrackerPrefs((s) => s.advancedSets);
-  const { prevW, rpeCell } = useRowLayout();
+  const L = useRowLayout(logType);
+  const { prevW, rpeCell } = L;
   // v0.27.0: kg or lb — typed pounds are stored as kg; the box shows the member's unit.
   const units = useUnits();
 
@@ -385,7 +390,8 @@ export const SetRow = memo(function SetRow({
     setTimeout(() => (kind === 'weight' ? wRef : rRef).current?.focus(), 50);
   };
 
-  const prevText = prevLabel(previous, logType, distUnit, units);
+  // 13 Oct 2026: with "Track RPE" on, last time's RPE goes on a second line ("@ 9").
+  const [prevMain, prevRpe] = prevLabel(previous, logType, distUnit, units, showRpe).split('\n');
   const done = set.done;
   // Opaque so the Swipeable reveal is clean (the card behind is also color.surface).
   const rowBg = done ? 'rgba(12, 163, 12, 0.12)' : color.surface;
@@ -479,21 +485,21 @@ export const SetRow = memo(function SetRow({
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            gap: space.sm,
+            gap: L.gap,
             // The boxes carry their own 48 dp touch height, so the row needs no padding of its own.
             minHeight: SET_ROW.touch,
-            paddingHorizontal: space.xs,
+            paddingHorizontal: L.padX,
             transform: [{ translateX: shakeX }],
           }}
         >
-          {/* SET cell — tap for the set-type sheet (and RPE on a narrow phone) */}
+          {/* SET cell — tap for the set-type sheet (RPE too, with "Track RPE" on) */}
           <Pressable
             onPress={() => {
               tap();
               onOpenType(set.key);
             }}
-            hitSlop={{ top: 2, bottom: 2, left: 4 }}
-            style={{ width: SET_ROW.set, height: SET_ROW.height, alignItems: 'center', justifyContent: 'center' }}
+            hitSlop={{ top: 2, bottom: 2, left: 4, right: Math.max(0, SET_ROW.touch - 4 - L.setW) }}
+            style={{ width: L.setW, height: SET_ROW.height, alignItems: 'center', justifyContent: 'center' }}
             accessibilityRole="button"
             accessibilityLabel={`${who}${rpeSpoken}. Change set type`}
           >
@@ -503,23 +509,19 @@ export const SetRow = memo(function SetRow({
                 <Glyph name="medal" size={14} color={color.accentBright} />
               </View>
             ) : null}
-            {/* RPE lives in the sheet on a narrow phone: a small mark says one is set. */}
-            {showRpe && !rpeCell && !set.isWarmup && set.rpe != null ? (
-              <Text style={{ position: 'absolute', bottom: 1, fontFamily: type.mono, fontSize: 9, color: rpeColor(set.rpe) }}>
-                @{trimNum(set.rpe)}
-              </Text>
-            ) : null}
           </Pressable>
 
-          {/* PREVIOUS */}
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.7}
-            style={{ width: prevW, fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted }}
-          >
-            {prevText}
-          </Text>
+          {/* PREVIOUS — the numbers (a second line rather than cut off), then "@ 9" with Track RPE */}
+          <View style={{ width: prevW, marginHorizontal: L.prevGap - L.gap, justifyContent: 'center' }}>
+            <Text numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.7} style={prevStyle}>
+              {prevMain}
+            </Text>
+            {prevRpe ? (
+              <Text numberOfLines={1} accessibilityLabel={`RPE ${prevRpe.replace('@', '').trim()} last time`} style={prevStyle}>
+                {prevRpe}
+              </Text>
+            ) : null}
+          </View>
 
           {/* DISTANCE */}
           {hasDistance(logType)
@@ -603,11 +605,11 @@ export const SetRow = memo(function SetRow({
                 onOpenTimer(set.key);
               }}
               disabled={done}
-              hitSlop={{ top: 2, bottom: 2 }}
+              hitSlop={{ top: 2, bottom: 2, left: touchSlop(L.checkW), right: touchSlop(L.checkW) }}
               accessibilityRole="button"
               accessibilityLabel={`Start the timer for ${who}`}
               style={{
-                width: SET_ROW.button,
+                width: L.checkW,
                 height: SET_ROW.height,
                 borderRadius: radius.sm,
                 alignItems: 'center',
@@ -622,17 +624,17 @@ export const SetRow = memo(function SetRow({
             </Pressable>
           ) : null}
 
-          {/* RPE (opt-in; in the set-type sheet on a narrow phone) */}
+          {/* RPE (opt-in "Track RPE"; at every width since 13 Oct 2026) */}
           {rpeCell ? (
             <Pressable
               onPress={() => onOpenType(set.key)}
-              hitSlop={{ top: 2, bottom: 2 }}
+              hitSlop={{ top: 2, bottom: 2, left: touchSlop(L.rpeW), right: touchSlop(L.rpeW) }}
               disabled={set.isWarmup}
               accessibilityRole="button"
               accessibilityLabel={set.rpe != null ? `${who} RPE ${trimNum(set.rpe)}. Change` : `Add RPE for ${who}`}
-              style={{ width: SET_ROW.button, height: SET_ROW.height, alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: L.rpeW, height: SET_ROW.height, alignItems: 'center', justifyContent: 'center' }}
             >
-              <Text style={{ fontFamily: type.monoBold, fontSize: type.size.sub, color: rpeColor(set.rpe) }}>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontFamily: type.monoBold, fontSize: type.size.sub, color: rpeColor(set.rpe) }}>
                 {set.isWarmup ? '' : set.rpe != null ? trimNum(set.rpe) : '—'}
               </Text>
             </Pressable>
@@ -642,12 +644,12 @@ export const SetRow = memo(function SetRow({
           <Pressable
             onPressIn={() => tap()}
             onPress={onTick}
-            hitSlop={{ top: 2, bottom: 2 }}
+            hitSlop={{ top: 2, bottom: 2, left: touchSlop(L.checkW), right: touchSlop(L.checkW) }}
             accessibilityRole="button"
             accessibilityState={{ checked: done }}
             accessibilityLabel={done ? `${who} complete. Tap to undo` : `Mark ${who} complete`}
             style={{
-              width: SET_ROW.button,
+              width: L.checkW,
               height: SET_ROW.height,
               borderRadius: radius.sm,
               alignItems: 'center',
@@ -730,6 +732,8 @@ const inputStyle = {
   paddingVertical: 0,
   paddingHorizontal: 2,
 };
+
+const prevStyle = { fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted } as const;
 
 const hintWrap = {
   position: 'absolute' as const,

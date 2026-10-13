@@ -35,6 +35,11 @@ export interface HistoryScope {
   routineIds: string[];
   /** Their names (`nameKey`), for workouts with no known routine or a routine that is gone. */
   names: string[];
+  /**
+   * Which setting made it ("Same routine" / "Same folder"), for the card's "First time in this
+   * folder" line. Absent on a scope built by hand (tests); `scopeKey` ignores it.
+   */
+  kind?: 'routine' | 'folder';
 }
 
 /** A saved workout as the scope sees it. */
@@ -129,7 +134,7 @@ export async function historyScopeFor(
         ])
       : [day];
   const names = [...new Set(days.map((d) => nameKey(d.name)).filter((n) => n !== ''))];
-  return { routineIds: days.map((d) => d.id), names };
+  return { routineIds: days.map((d) => d.id), names, kind: setting };
 }
 
 /** `historyScopeFor` that never throws: a failed read is every workout (never blocks a start). */

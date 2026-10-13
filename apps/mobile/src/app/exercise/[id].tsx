@@ -4,7 +4,9 @@
  *    always at +0 kg reads as reps), then the chart (chips for what it shows, the right ones for
  *    weight, bodyweight, timed and distance work; 3 months · Year · All time), then Personal
  *    records (tap → that workout) and Set records (the heaviest weight at each rep count);
- *  - History: every workout with this exercise and its sets, page by page; tap → the workout;
+ *  - History: the same chart at the top (13 Oct 2026 — the owner looked for it there; both tabs
+ *    share what it shows and its range), then every workout with this exercise and its sets,
+ *    page by page; tap → the workout;
  *  - How to: the picture (a tap opens it larger), the steps, the credit; then muscles, logging
  *    and the easier / harder versions.
  * The tab chosen holds for this visit only; the page always opens on Summary.
@@ -50,6 +52,7 @@ import { xrmLadder } from '@/tracker/services/exerciseAnalytics';
 import { headlineBest, lastTimeLine } from '@/tracker/services/exerciseHeadline';
 import { deleteKeptMedia } from '@/tracker/services/exerciseMedia';
 import { getExerciseOverview, type ExerciseOverview } from '@/tracker/services/exerciseStats';
+import type { ChartMetric, ChartRange } from '@/tracker/services/exerciseChart';
 import { recordValueText } from '@/tracker/services/recordText';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { exercisesChanged } from '@/tracker/store/exerciseListStore';
@@ -116,6 +119,9 @@ export default function ExerciseScreen() {
   // Per visit only: a new visit opens on Summary (Hevy's).
   const [tab, setTab] = useState<Tab>('summary');
   const [names, setNames] = useState<Map<string, string>>(new Map());
+  // 13 Oct 2026: the chart's choice and range, shared by Summary and History (null = its opening one).
+  const [chartMetric, setChartMetric] = useState<ChartMetric | null>(null);
+  const [chartRange, setChartRange] = useState<ChartRange | null>(null);
   // EX-18: one page per tap, however fast the taps.
   const nav = useRef(false);
   const busy = useRef(false);
@@ -389,6 +395,10 @@ export default function ExerciseScreen() {
                       cardio={isTimedCardio(shownAs, ex.muscles.primary)}
                       units={units}
                       distUnit={ex.distUnit}
+                      metric={chartMetric}
+                      onMetricChange={setChartMetric}
+                      range={chartRange}
+                      onRangeChange={setChartRange}
                     />
                     {recordCtx ? (
                       <ExercisePrRows bests={bests} kinds={ov.records.kinds} ctx={recordCtx} ladder={stats ? ladder : []} units={units} onOpenSession={openSession} />
@@ -400,7 +410,23 @@ export default function ExerciseScreen() {
 
             {tab === 'history' ? (
               hasHistory ? (
-                <SessionHistory history={ov.history} units={units} logType={shownAs} distUnit={ex.distUnit} names={names} onOpen={openSession} />
+                <>
+                  {/* 13 Oct 2026: the Summary's chart on top, sharing its choice and range */}
+                  <ExerciseMetricChart
+                    history={ov.history}
+                    bestSet={bestSet}
+                    shownAs={shownAs}
+                    cardio={isTimedCardio(shownAs, ex.muscles.primary)}
+                    units={units}
+                    distUnit={ex.distUnit}
+                    metric={chartMetric}
+                    onMetricChange={setChartMetric}
+                    range={chartRange}
+                    onRangeChange={setChartRange}
+                  />
+                  <View style={{ height: space.lg }} />
+                  <SessionHistory history={ov.history} units={units} logType={shownAs} distUnit={ex.distUnit} names={names} onOpen={openSession} />
+                </>
               ) : (
                 <EmptyState icon="dumbbell" title="No workouts yet" body="Every workout with this exercise shows here, with its sets." />
               )

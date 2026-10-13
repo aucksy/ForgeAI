@@ -8,6 +8,10 @@
  * 12 Oct 2026 design pass (owner's emulator): the five choices were chips that wrapped 2 + 2 + 1
  * and left "Total reps" alone on a row, and the range chips looked exactly like them. One point
  * per day now (`bestPerDay`): two workouts on one day drew a cliff straight down.
+ *
+ * 13 Oct 2026: the History tab shows the same chart at its top. The page passes `metric` /
+ * `range` and their setters, so both tabs share what the member picked (switching tabs keeps
+ * them); without them the chart keeps its own choice, as before.
  */
 import { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -52,14 +56,41 @@ export interface ExerciseMetricChartProps {
   cardio?: boolean;
   units: UnitSystem;
   distUnit: DistUnit;
+  /** What the chart shows, held by the page (shared by its tabs); absent/null = the chart's own. */
+  metric?: ChartMetric | null;
+  onMetricChange?: (m: ChartMetric) => void;
+  /** The range, held by the page; absent/null = the chart's own (opening on `openingRange`). */
+  range?: ChartRange | null;
+  onRangeChange?: (r: ChartRange) => void;
 }
 
-export function ExerciseMetricChart({ history, bestSet, shownAs, cardio = false, units, distUnit }: ExerciseMetricChartProps) {
+export function ExerciseMetricChart({
+  history,
+  bestSet,
+  shownAs,
+  cardio = false,
+  units,
+  distUnit,
+  metric: heldMetric,
+  onMetricChange,
+  range: heldRange,
+  onRangeChange,
+}: ExerciseMetricChartProps) {
   const metrics = useMemo(() => chartMetrics(shownAs), [shownAs]);
-  const [picked, setPicked] = useState<ChartMetric>(metrics[0]);
+  const [ownMetric, setOwnMetric] = useState<ChartMetric>(metrics[0]);
+  const picked = heldMetric ?? ownMetric;
   const metric = metrics.includes(picked) ? picked : metrics[0];
+  const setPicked = (m: ChartMetric): void => {
+    setOwnMetric(m);
+    onMetricChange?.(m);
+  };
   const today = todayISO();
-  const [range, setRange] = useState<ChartRange>(() => openingRange(history.map((h) => h.dateISO), today));
+  const [ownRange, setOwnRange] = useState<ChartRange>(() => openingRange(history.map((h) => h.dateISO), today));
+  const range = heldRange ?? ownRange;
+  const setRange = (r: ChartRange): void => {
+    setOwnRange(r);
+    onRangeChange?.(r);
+  };
   const [inspect, setInspect] = useState<{ x: string; y: number } | null>(null);
   const [picking, setPicking] = useState(false);
 
