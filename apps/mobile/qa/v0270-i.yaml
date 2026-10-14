@@ -16,7 +16,14 @@
 # the Profile feed; the exercise library is Profile → Exercises.
 appId: com.forgeai.app
 ---
-- launchApp
+# v0.39.0: Maestro's launchApp ALLOWS EVERY PERMISSION by default (pm grant on each one), which
+# undid the script's revoke and is why Connect was never pressed with nothing allowed. Health
+# Connect's two permissions are denied here; everything else stays allowed.
+- launchApp:
+    permissions:
+      all: allow
+      android.permission.health.WRITE_EXERCISE: deny
+      android.permission.health.WRITE_ACTIVE_CALORIES_BURNED: deny
 - tapOn:
     text: "Wait"
     optional: true

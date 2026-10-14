@@ -1755,6 +1755,36 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-14: **v0.39.0 — Gym panel step 1 (records online + sign-in with an owner-made code), and
+  the Health Connect "Connect" fix** (76e1a2a 0010, c68eba9 0011, 07dbe13; owner: "give GYM owner the
+  option to generate the OTP to give to user till we integrate real OTP service").
+  - Server 0010 + 0011 (live, tested in rolled-back blocks): gym_staff (name, Indian mobile, owner |
+    staff), gym_signin_codes (6 digits, one use, 30 min, hash only), gym_sessions (session keys;
+    _owner_gym accepts them so every owner_* call works), crm_records + gyms.crm_version
+    (crm_pull since a version; crm_push all-or-nothing with a base version -> STALE, and a push id
+    remembered a day -> a resent push returns its first version). Only owners manage people/codes.
+    Sign-in tries counted per mobile per caller IP (5 / 15 min) and per mobile overall (50 / 30 min),
+    advisory lock per mobile, one reply for no/wrong code, wrong guesses never burn a code, a new
+    code clears the tries. Only check-ins can be deleted (data kept). New gyms: 5 an hour per caller.
+    owner_retire_key after a gym goes online. support_make_signin_code for a lost-every-device owner
+    (SQL editor only).
+  - Panel: CloudCrmData runs each action on a private LocalCrmData copy (same checks + receipt
+    series), pushes only changed rows; STALE -> pull + redo; failure -> same push resent twice, then
+    kept and sent first (if it lands then, the next action stops and says so); 15 s refresh; one
+    queue. Welcome: Sign in / Set up your gym (online) / demo. Settings: Put your records online
+    (re-reads the browser copy until stable; demo gym excluded), Staff & sign-in screen (add, make
+    code with a WhatsApp message in English + Hinglish, sign out everywhere, remove). Tested live end
+    to end: create gym -> member + check-in on the server -> staff added -> code -> wrong code
+    message -> staff signed in, sees the owner's member, cannot make codes -> demo gym (1,909 rows)
+    copied up in 2.5 s -> reopens in 2 s. Test gyms deleted after. Review: 8 findings, all fixed.
+  - App: Health Connect "Connect" did nothing on Android 14+ since v0.27.0 (androidx-only
+    REQUEST_PERMISSIONS intent sent by startActivityForResult -> ActivityNotFoundException,
+    swallowed). Now launched through the activity-result registry; errors logged (ForgeHealth);
+    "Open Health Connect" offered after Connect when access is still off; on 14+ it opens ForgeAI's
+    own permission page first. QA part I now revokes the health permissions first, requires
+    "Connect" and the system permission screen, and fails on a ForgeHealth "did not open" line.
+    Why the audits missed it: Maestro's launchApp grants every permission by default (now denied for
+    the two health permissions in part I), so Connect was never pressed with nothing allowed (Audit/audit-toolkit/RESEARCH.md; queue item 0).
 - 2026-10-14: **v0.38.0 — invite link + front-desk QR, and gym messages (Phase 1: inbox)**
   (49db908, 1561d2e, a17e394, e21ec07; phone run 38537123277 passed every part incl. new INV; owner: "Start the invite link and front-desk QR, then gym
   notifications").
