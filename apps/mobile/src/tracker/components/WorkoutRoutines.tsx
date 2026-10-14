@@ -13,8 +13,10 @@
  * in `lib/workoutTab.ts`; every write goes through the existing queued repos (folderRepo,
  * routineRepo, planState) and keeps their safety rules: a delete asks first, a new or copied
  * routine never joins the followed plan by itself (RP-08), the followed folder stays first.
- * Drag to reorder is not built: the routine ⋯ has Move up / Move down / Move to folder….
+ * Reorder: press and hold a routine, then drag it within its folder (15 Oct 2026, as Hevy does;
+ * DragList). The routine ⋯ keeps Move up / Move down / Move to folder… (moving between folders).
  */
+import { DragList } from './DragList';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState, type MutableRefObject } from 'react';
 import { Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
@@ -341,6 +343,16 @@ export function WorkoutRoutines({
     reorderFolders(order).then(changed, failed('Could not save the new order'));
   };
 
+  /** A new order for a folder's routines (Move up / down, or a drag): shown at once, then saved. */
+  const reorderWithin = (f: Folder, order: string[]): void => {
+    const byId = new Map(f.routines.map((x) => [x.id, x]));
+    const routines = order.flatMap((id) => (byId.has(id) ? [byId.get(id) as RoutineFull] : []));
+    if (routines.length !== f.routines.length) return;
+    setFolders(list.map((x) => (x.id === f.id ? { ...x, routines } : x)));
+    // RP-07: in the followed folder the order IS the rotation — Up next reads it again.
+    reorderRoutines(order).then(changed, failed('Could not save the new order'));
+  };
+
   const moveWithin = (f: Folder, r: RoutineFull, dir: -1 | 1): void => {
     const order = movedRoutineOrder(f.routines, r.id, dir);
     if (!order) return;
@@ -539,10 +551,13 @@ export function WorkoutRoutines({
                       <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>Add new routine</Text>
                     </Pressable>
                   ) : (
-                    <View style={{ gap: space.md, marginBottom: space.sm }}>
-                      {f.routines.map((r) => (
+                    <DragList
+                      items={f.routines}
+                      gap={space.md}
+                      style={{ marginBottom: space.sm }}
+                      onReorder={(ids) => reorderWithin(f, ids)}
+                      renderItem={(r) => (
                         <RoutineCard
-                          key={r.id}
                           r={r}
                           tag={routineTag(r, up)}
                           error={startError?.id === r.id ? startError.message : null}
@@ -550,8 +565,8 @@ export function WorkoutRoutines({
                           onStart={() => onStartRoutine(r)}
                           onMore={() => setRoutineFor({ folder: f, routine: r })}
                         />
-                      ))}
-                    </View>
+                      )}
+                    />
                   )
                 ) : null}
               </View>

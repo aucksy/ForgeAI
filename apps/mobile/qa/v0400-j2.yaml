@@ -1,0 +1,24 @@
+# v0.40.0 device QA, part J2 — press, hold and drag a routine (owner asked 15 Oct 2026; Hevy:
+# "tap and hold on a routine to activate drag-and-drop"). After part J the followed folder
+# "From Hevy" holds Push A then Pull A. This flow only brings both cards on screen; the script
+# then drags with Android's own `input draganddrop` (a real press, a hold, a move) and reads the
+# order back from the screen (qa/drag_check.py), then drags it back so later parts see Push A first.
+appId: com.forgeai.app
+---
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Start routine Pull A"
+    centerElement: true
+    timeout: 30000
+- assertVisible: "Start routine Push A"
+- takeScreenshot: j2-before-drag

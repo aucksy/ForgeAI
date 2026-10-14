@@ -405,6 +405,45 @@ free_maestro
 log "part J start"
 maestro test --format junit --output "$OUT/part-j.xml" --test-output-dir "$OUT/part-j" "$QA_DIR/v0280-j.yaml"   > "$OUT/part-j.log" 2>&1 || { status=1; log "PART J FAILED"; }
 
+# ---------------------------------------------------------------- part J2 (v0.40.0: press, hold, drag a routine)
+# The flow brings Push A and Pull A on screen; then Android's own drag (down, hold, move, up)
+# moves Push A below Pull A, the screen is read back, and the same drag puts it back.
+free_maestro
+log "part J2 start"
+if maestro test --format junit --output "$OUT/part-j2.xml" --test-output-dir "$OUT/part-j2" "$QA_DIR/v0400-j2.yaml" > "$OUT/part-j2.log" 2>&1; then
+  j2_dump() { adb shell uiautomator dump /sdcard/j2.xml >/dev/null 2>&1; adb pull /sdcard/j2.xml "$OUT/$1" >/dev/null 2>&1; }
+  j2_dump j2-before.xml
+  before=$(python3 "$QA_DIR/drag_check.py" order "$OUT/j2-before.xml" "Push A" "Pull A")
+  coords=$(python3 "$QA_DIR/drag_check.py" drag "$OUT/j2-before.xml" "Push A" "Pull A")
+  log "J2 before: $before; drag $coords"
+  if [ "$before" = "A-first" ] && [ "$coords" != "missing" ]; then
+    adb shell input draganddrop $coords 1500
+    sleep 2
+    j2_dump j2-after.xml
+    adb exec-out screencap -p > "$OUT/j2-after-drag.png" 2>/dev/null || true
+    after=$(python3 "$QA_DIR/drag_check.py" order "$OUT/j2-after.xml" "Push A" "Pull A")
+    if [ "$after" = "B-first" ]; then
+      log "J2 DRAG OK: Pull A is now above Push A"
+      back=$(python3 "$QA_DIR/drag_check.py" drag "$OUT/j2-after.xml" "Push A" "Pull A")
+      adb shell input draganddrop $back 1500
+      sleep 2
+      j2_dump j2-back.xml
+      again=$(python3 "$QA_DIR/drag_check.py" order "$OUT/j2-back.xml" "Push A" "Pull A")
+      [ "$again" = "A-first" ] && log "J2 DRAG BACK OK" || { status=1; log "J2 DRAG BACK FAILED ($again)"; }
+    else
+      status=1
+      log "J2 DRAG FAILED: the order did not change after press-hold-drag ($after)"
+    fi
+  else
+    status=1
+    log "J2 DRAG FAILED: cards not found as expected ($before / $coords)"
+  fi
+else
+  status=1
+  log "PART J2 FAILED"
+fi
+adb shell input keyevent KEYCODE_HOME
+
 # ---------------------------------------------------------------- part K (v0.28.0: an export shared to ForgeAI)
 # The Files app, as a person shares a file (qa-hevy.csv was pushed to Downloads for part J).
 adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
