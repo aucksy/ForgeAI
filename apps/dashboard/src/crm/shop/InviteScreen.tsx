@@ -279,6 +279,9 @@ function PrintSheet(props: { gymName: string; joinCode: string; link: string; br
           body > *:not(#invite-print) { display: none !important; }
           html, body { background: #FFFFFF !important; }
           #invite-print { display: block; }
+          /* index.css hides every element for the receipt's print ("body * { visibility: hidden }"):
+             without this the poster came out as a blank page (found 15 Oct 2026). */
+          #invite-print, #invite-print * { visibility: visible !important; }
         }
       `}</style>
       <Poster {...props} print />
@@ -371,7 +374,7 @@ async function downloadPoster(gymName: string, joinCode: string, link: string, b
 }
 
 /** The logo for the picture; null when it cannot be drawn (it must allow other sites to read it). */
-function loadImage(src: string): Promise<HTMLImageElement | null> {
+export function loadImage(src: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -381,7 +384,7 @@ function loadImage(src: string): Promise<HTMLImageElement | null> {
   });
 }
 
-function roundRect(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+export function roundRect(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   g.beginPath();
   g.moveTo(x + r, y);
   g.arcTo(x + w, y, x + w, y + h, r);

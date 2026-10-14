@@ -51,6 +51,8 @@ import { useCan } from '../../auth/AuthProvider';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
 import { SellMembershipSheet } from '../forms/SellMembershipSheet';
 import { VoidPaymentSheet } from '../forms/VoidPaymentSheet';
+import { MemberCardSheet } from '../MemberCardSheet';
+import { memberCardFacts } from '../../logic/memberCard';
 import {
   Avatar,
   Button,
@@ -107,6 +109,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [whatsApp, setWhatsApp] = useState(false);
+  /** The member ID card sheet (owner and staff alike). */
+  const [card, setCard] = useState(false);
 
   // A stray `setTimeout` that outlives the screen sets state on an unmounted tree.
   const toastTimer = useRef<number | undefined>(undefined);
@@ -254,6 +258,12 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       >
         {member.archived ? tr('Restore member', 'Member wapas lao') : tr('Archive member', 'Archive karo')}
       </Button>
+      {/* Owner and staff both: the card is printed at the desk. Full width under the two on a phone. */}
+      <div style={{ gridColumn: compact ? '1 / -1' : undefined }}>
+        <Button full variant="ghost" onClick={() => setCard(true)}>
+          {tr('Member card', 'Member card')}
+        </Button>
+      </div>
     </div>
   );
 
@@ -479,6 +489,14 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         </dl>
       </Card>
 
+      {card && (
+        <MemberCardSheet
+          facts={memberCardFacts(snapshot.gym.name, member, view)}
+          phone={member.phone}
+          onClose={() => setCard(false)}
+          say={flash}
+        />
+      )}
       {editing && <MemberFormSheet editing={member} onClose={() => setEditing(false)} />}
       {selling && (
         <SellMembershipSheet
