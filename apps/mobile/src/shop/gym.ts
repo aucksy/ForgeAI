@@ -526,3 +526,47 @@ export function cleanGymBlob(raw: unknown): GymBlob {
     bag: cleanBag(r.bag),
   };
 }
+
+// ------------------------------------------------------------------ invite link (14 Oct 2026)
+
+/** What gym_preview (0007) says a code is: the gym's name and look, before anyone joins. */
+export interface GymPreview {
+  gymName: string;
+  joinCode: string;
+  brand: GymBrand | null;
+}
+
+/** gym_preview's answer → a preview; null for an unknown code (the server answers null). PURE. */
+export function previewFromRow(raw: unknown): GymPreview | null {
+  const row = Array.isArray(raw) ? raw[0] : raw;
+  if (!isObj(row)) return null;
+  const gymName = str(row.gymName);
+  const joinCode = str(row.joinCode);
+  if (!gymName || !joinCode) return null;
+  return { gymName: gymName.trim(), joinCode, brand: parseGymBrand(row.brand) };
+}
+
+/**
+ * The code in an invite link's path (/j/RAMS01, or forgeai://j/RAMS01): cleaned like a typed code.
+ * Null when it cannot be a code at all, so the screen says "not a gym link" without asking. PURE.
+ */
+export function codeFromInvite(raw: unknown): string | null {
+  const s = Array.isArray(raw) ? raw[0] : raw;
+  if (typeof s !== 'string') return null;
+  const code = cleanJoinCode(s);
+  return code.length === JOIN_CODE_LENGTH ? code : null;
+}
+
+/** Where this phone stands against an invite: not in a gym, already in that one, or in another. PURE. */
+export type InviteStanding = 'fresh' | 'same' | 'other';
+/** Words when the gym could not be asked about an invite's code. PURE. */
+export function previewErrorText(err: GymError): string {
+  if (err.kind === 'offline') return OFFLINE;
+  if (err.kind === 'timeout') return SLOW;
+  return "Couldn't reach your gym. Try again.";
+}
+
+export function inviteStanding(link: Pick<GymLink, 'joinCode'> | null, code: string): InviteStanding {
+  if (!link) return 'fresh';
+  return cleanJoinCode(link.joinCode) === code ? 'same' : 'other';
+}

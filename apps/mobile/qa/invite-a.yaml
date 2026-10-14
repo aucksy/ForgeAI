@@ -1,0 +1,20 @@
+# Invite link device QA, part INV (v0.38.0), step A. run-device-qa.sh opened the gym's link
+# https://forgeai.aakashpahuja.in/j/FORGE1 at the app (am start -d … -p com.forgeai.app), with the
+# phone in no gym. The "Join your gym" screen shows the gym (from the live gym_preview) and ONE
+# button; joining lands on the gym's shop.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "Gym code FORGE1"
+    timeout: 30000
+- assertVisible: "^Join your gym$"
+- takeScreenshot: inv-01-join-screen
+- tapOn: "Your name"
+- eraseText: 70
+- inputText: "QA Member"
+- hideKeyboard
+- tapOn: "^Join .*"
+- extendedWaitUntil:
+    visible: "Your gym's shop · pay at the desk"
+    timeout: 30000
+- takeScreenshot: inv-02-joined-shop

@@ -1,0 +1,11 @@
+# Part INV, step B: the same link again while in that gym — "already in", nothing to do.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "You're already in .*"
+    timeout: 30000
+- takeScreenshot: inv-03-already-in
+- tapOn: "^Open .*'s shop$"
+- extendedWaitUntil:
+    visible: "Your gym's shop · pay at the desk"
+    timeout: 20000

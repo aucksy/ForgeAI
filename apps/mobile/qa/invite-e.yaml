@@ -1,0 +1,40 @@
+# Part INV, step E (gym messages, Phase 1): run-device-qa.sh made a fresh demo gym on the live
+# server, sent it one announcement ("QA: gym closed on Sunday") with that gym's own key, and
+# opened the gym's invite link. Join it; the bell on the Shop tab shows 1 new; the inbox shows the
+# message; back on the shop the count is gone. Then Leave, so the phone ends in no gym.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Join .*"
+    timeout: 30000
+- tapOn: "Your name"
+- eraseText: 70
+- inputText: "QA Member"
+- hideKeyboard
+- tapOn: "^Join .*"
+- extendedWaitUntil:
+    visible: "Your gym's shop · pay at the desk"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Messages from your gym, 1 new"
+    timeout: 30000
+- takeScreenshot: inv-07-bell-one-new
+- tapOn: "Messages from your gym, 1 new"
+- extendedWaitUntil:
+    visible: "QA: gym closed on Sunday"
+    timeout: 20000
+- assertVisible: "Gym closed"
+- takeScreenshot: inv-08-inbox
+- back
+- extendedWaitUntil:
+    visible: "^Messages from your gym$"
+    timeout: 20000
+- assertNotVisible: "Messages from your gym, 1 new"
+- scrollUntilVisible:
+    element: "^Leave$"
+    timeout: 20000
+- tapOn: "^Leave$"
+- tapOn: "Leave shop"
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000

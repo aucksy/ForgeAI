@@ -19,6 +19,9 @@ import { tap, thud } from '@/lib/haptics';
 import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, motion, radius, shadow, space, type } from '@/theme/tokens';
+import { useGymShop } from '@/shop/gymStore';
+import { unreadCount } from '@/shop/inbox';
+import { inboxFor, useGymInbox } from '@/shop/inboxStore';
 
 import { showsMiniBar } from '../lib/miniBar';
 import { Glyph, type GlyphName } from './TrackerGlyph';
@@ -40,11 +43,14 @@ function TabItem({
   icon,
   focused,
   onPress,
+  badge = 0,
 }: {
   label: string;
   icon: TabIcon;
   focused: boolean;
   onPress: () => void;
+  /** Gym messages: the Shop tab's unread count (0 = no badge). */
+  badge?: number;
 }) {
   // Audit Phase 7: the pill and lift stay still when the phone asks for less motion.
   const rm = motionMode(useReduceMotion());
@@ -59,7 +65,7 @@ function TabItem({
   return (
     <Pressable
       accessibilityRole="tab"
-      accessibilityLabel={label}
+      accessibilityLabel={badge > 0 ? `${label}, ${badge} new ${badge === 1 ? 'message' : 'messages'}` : label}
       accessibilityState={{ selected: focused }}
       onPress={onPress}
       style={{ flex: 1, alignItems: 'center', gap: 3, minHeight: 48 }}
@@ -87,6 +93,24 @@ function TabItem({
             <Icon name={icon.icon} size={21} color={focused ? color.accent : color.inkMuted} />
           )}
         </Animated.View>
+        {badge > 0 ? (
+          <View
+            style={{
+              position: 'absolute',
+              top: -3,
+              right: 4,
+              minWidth: 18,
+              paddingHorizontal: 4,
+              borderRadius: radius.pill,
+              backgroundColor: color.accent,
+              alignItems: 'center',
+            }}
+          >
+            <Text maxFontSizeMultiplier={1.2} style={{ fontFamily: type.bodyBold, fontSize: 11, color: color.onAccent }}>
+              {badge > 9 ? '9+' : String(badge)}
+            </Text>
+          </View>
+        ) : null}
       </View>
       {/* Audit Phase 7 (SH-21): labels share one row — grow less, and shrink to fit rather than split. */}
       <Text
@@ -164,6 +188,9 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   // Phase 3 review: every screen now shrinks above the keyboard (KeyboardRoom), so while
   // the member types, the tab bar and the workout bar step aside instead of riding up on it.
   const typing = useKeyboardFrame() != null;
+  // Gym messages: unread messages from the member's gym badge the Shop tab.
+  const memberId = useGymShop((s) => s.link?.memberId ?? null);
+  const unread = useGymInbox((s) => unreadCount(inboxFor(s, memberId)));
   if (typing) return null;
   return (
     <View>
@@ -193,6 +220,7 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
             label={label}
             icon={ROUTE_ICON[route.name] ?? { icon: 'sparkle' }}
             focused={focused}
+            badge={route.name === 'shop' ? unread : 0}
             onPress={() => {
               tap();
               const event = navigation.emit({

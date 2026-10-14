@@ -39,6 +39,14 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="forgeai"/>
       </intent-filter>
+      <!-- v0.38.0 invite link: a gym's link (WhatsApp, front-desk QR) opens the app on "Join <gym>".
+           Verified against https://forgeai.aakashpahuja.in/.well-known/assetlinks.json. -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="https" android:host="forgeai.aakashpahuja.in" android:pathPrefix="/j/"/>
+      </intent-filter>
       <!-- Health Connect (Android 13 and older): "why ForgeAI asks" opens the app. -->
       <intent-filter>
         <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>

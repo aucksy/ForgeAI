@@ -1,0 +1,12 @@
+# Part INV, step D: a link whose code no gym has — says so, and points at the Shop tab.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "This link is not a gym's"
+    timeout: 30000
+- assertVisible: "No gym has the code ZZZZZ9.*"
+- takeScreenshot: inv-06-unknown-code
+- tapOn: "Go to the Shop tab"
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000

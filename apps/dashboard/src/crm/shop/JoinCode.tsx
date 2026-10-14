@@ -9,8 +9,10 @@ import { useRef, useState } from 'react';
 
 import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } from '../ui/kit';
 import { useShop } from './ShopProvider';
+import { inviteMessage, whatsAppHref } from './invite';
+import { navigate } from '../ui/router';
 
-async function copyText(text: string): Promise<boolean> {
+export async function copyText(text: string): Promise<boolean> {
   try {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(text);
@@ -147,7 +149,16 @@ export function JoinCodeCard({
         </div>
       )}
       <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        In the app: open the Shop tab, type this code and their name, tap Join. Their orders show up here.
+        Easiest: send members your gym's link — one tap in the app and they are in. Or they type this code
+        in the app's Shop tab. Their orders show up here.
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
+        <Button onClick={() => window.open(whatsAppHref(inviteMessage(cloud.name, cloud.joinCode)), '_blank', 'noopener')}>
+          Send link on WhatsApp
+        </Button>
+        <Button variant="ghost" onClick={() => navigate('/settings/invite')}>
+          Invite &amp; QR poster
+        </Button>
       </div>
       {!online && (
         <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>

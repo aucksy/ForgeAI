@@ -1,4 +1,5 @@
-import { Stack, type ErrorBoundaryProps } from 'expo-router';
+import * as Linking from 'expo-linking';
+import { Stack, router, type ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, type ReactElement } from 'react';
@@ -21,6 +22,10 @@ import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
 import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingStore';
 import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
+import { inviteCodeFromUrl, setPendingInvite, takePendingInvite } from '@/shop/pendingInvite';
+
+/** The link the app was started with is read once per run: an erase later must not bring it back. */
+let launchLinkRead = false;
 import { dismissOpening, setWorkoutCheck, showWaitingLook, startGymTheme, useGymTheme } from '@/theme/gymTheme';
 import { color } from '@/theme/tokens';
 import { useAppFonts } from '@/theme/fonts';
@@ -128,6 +133,31 @@ export default function RootLayout() {
       unwatch();
     };
   }, [ready]);
+
+  // Invite link on a phone that is not set up yet: the welcome flow stands in for the app's
+  // screens, so the gym's link is kept (shop/pendingInvite.ts) and its "Join <gym>" screen opens
+  // once the welcome flow is done. A screen the link already opened takes the code first.
+  useEffect(() => {
+    if (status !== 'welcome') return;
+    const keep = (url: string | null) => {
+      const code = inviteCodeFromUrl(url);
+      if (code) setPendingInvite(code);
+    };
+    if (!launchLinkRead) {
+      launchLinkRead = true;
+      void Linking.getInitialURL().then(keep).catch(() => undefined);
+    }
+    const sub = Linking.addEventListener('url', ({ url }) => keep(url));
+    return () => sub.remove();
+  }, [status]);
+  useEffect(() => {
+    if (status !== 'ready') return;
+    const t = setTimeout(() => {
+      const code = takePendingInvite();
+      if (code) router.push(`/j/${code}`);
+    }, 600);
+    return () => clearTimeout(t);
+  }, [status]);
 
   return (
     <>

@@ -9,7 +9,8 @@
  */
 import { getSupabase } from '@/cloud/client';
 
-import { classifyRpcError, gymNowFromMe, linkFromJoin, orderFromRow, ordersFromRows, productsFromRows, type GymError, type GymNow } from './gym';
+import { classifyRpcError, gymNowFromMe, linkFromJoin, orderFromRow, ordersFromRows, previewFromRow, productsFromRows, type GymError, type GymNow, type GymPreview } from './gym';
+import { inboxFromRows, type InboxMessage } from './inbox';
 import type { GymLink, GymOrder, Product } from './types';
 
 export type GymResult<T> = { ok: true; data: T } | { ok: false; error: GymError };
@@ -40,6 +41,24 @@ export async function apiJoin(code: string, name: string): Promise<GymResult<Gym
   if (!r.ok) return r;
   const link = linkFromJoin(r.data);
   return link ? { ok: true, data: link } : { ok: false, error: { kind: 'other' } };
+}
+
+/** The gym's messages for this member (member_messages, 0008), newest first. */
+export async function apiMessages(key: string): Promise<GymResult<InboxMessage[]>> {
+  const r = await call('member_messages', { p_key: key }, READ_MS);
+  return r.ok ? { ok: true, data: inboxFromRows(r.data) } : r;
+}
+
+/** Tell the gym these messages were shown (member_saw_messages, 0008). */
+export async function apiSawMessages(key: string, ids: string[]): Promise<GymResult<number>> {
+  const r = await call('member_saw_messages', { p_key: key, p_ids: ids }, READ_MS);
+  return r.ok ? { ok: true, data: Number(r.data) || 0 } : r;
+}
+
+/** What a join code is, before joining (gym_preview, 0007): null data = no gym has that code. */
+export async function apiPreview(code: string): Promise<GymResult<GymPreview | null>> {
+  const r = await call('gym_preview', { p_code: code }, READ_MS);
+  return r.ok ? { ok: true, data: previewFromRow(r.data) } : r;
 }
 
 /** The gym as it is now (name, brand) — member_me. Also tells the gym this phone is still in use. */

@@ -489,6 +489,55 @@ else
   log "BRAND TOUR: $(find "$OUT/brand" -name "br-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/brand/"
 fi
 
+# ---------------------------------------------------------------- part INV (v0.38.0: invite link)
+# The gym's invite link opens the app on "Join <gym>" (invite-a..d.yaml): join FORGE1 from its link;
+# the same link again says "already in"; RAMS01's link switches gyms (then Leave); a code no gym has
+# says so. Each link is opened at the app by adb with the package named, as Android does once the
+# link is verified (a QA build is not signed with the release key, so it is never verified here).
+# Needs supabase/migrations/0007_invite_link.sql live: probed first (404 = skipped and said so).
+inv_probe() {
+  local url key
+  url=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabaseUrl'])" "$QA_DIR/../app.json" 2>/dev/null)
+  key=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabasePublishableKey'])" "$QA_DIR/../app.json" 2>/dev/null)
+  [ -n "$url" ] && [ -n "$key" ] || { echo "no-config"; return; }
+  curl -s -o /dev/null -w '%{http_code}' -X POST "$url/rest/v1/rpc/gym_preview"     -H "apikey: $key" -H "Content-Type: application/json" -d '{"p_code":"FORGE1"}' 2>/dev/null || true
+}
+inv_open() {
+  adb shell am start -W -a android.intent.action.VIEW -d "$1" -p "$PKG" >/dev/null 2>&1 || true
+  sleep 3
+}
+INV_PROBE=$(inv_probe)
+if [ "$INV_PROBE" != "200" ]; then
+  log "PART INV SKIPPED: the invite link is not on the server yet (gym_preview probe: $INV_PROBE) — apply 0007_invite_link.sql"
+else
+  # Step E (gym messages): a fresh demo gym (anyone can start one; its key lives only in this run)
+  # gets one announcement, then its invite link opens the app.
+  inv_url=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabaseUrl'])" "$QA_DIR/../app.json" 2>/dev/null)
+  inv_key=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabasePublishableKey'])" "$QA_DIR/../app.json" 2>/dev/null)
+  inv_rpc() { curl -s -X POST "$inv_url/rest/v1/rpc/$1" -H "apikey: $inv_key" -H "Content-Type: application/json" -d "$2"; }
+  for step in a b c d e; do
+    case $step in
+      a|b) inv_open "https://forgeai.aakashpahuja.in/j/FORGE1" ;;
+      c) inv_open "https://forgeai.aakashpahuja.in/j/RAMS01" ;;
+      d) inv_open "forgeai://j/ZZZZZ9" ;;
+      e)
+        demo=$(inv_rpc demo_start_gym '{"p_name":"QA Inbox Gym"}')
+        demo_key=$(printf '%s' "$demo" | python3 -c "import json,sys;print(json.load(sys.stdin).get('ownerKey',''))" 2>/dev/null)
+        demo_code=$(printf '%s' "$demo" | python3 -c "import json,sys;print(json.load(sys.stdin).get('joinCode',''))" 2>/dev/null)
+        sent=$(inv_rpc owner_send_message "{\"p_key\":\"$demo_key\",\"p_kind\":\"closed\",\"p_title\":\"QA: gym closed on Sunday\",\"p_body\":\"Sent by the phone test.\"}")
+        log "INV-e: demo gym $demo_code, message: $(printf '%s' "$sent" | head -c 80)"
+        inv_open "https://forgeai.aakashpahuja.in/j/$demo_code"
+        ;;
+    esac
+    free_maestro
+    log "part INV-$step start (gym_preview probe: $INV_PROBE)"
+    maestro test --format junit --output "$OUT/part-inv-$step.xml" --test-output-dir "$OUT/part-inv-$step" "$QA_DIR/invite-$step.yaml"       > "$OUT/part-inv-$step.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/inv-$step-failed.png"; log "PART INV-$step FAILED (part-inv-$step.log, inv-$step-failed.png)"; }
+  done
+  mkdir -p "$OUT/invite"
+  { find "$OUT"/part-inv-* -name "inv-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "inv-*.png" 2>/dev/null; }     | while read -r f; do cp "$f" "$OUT/invite/" 2>/dev/null; done
+  log "INVITE TOUR: $(find "$OUT/invite" -name "inv-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/invite/"
+fi
+
 # ---------------------------------------------------------------- part P7 (audit Phase 7: large text)
 # The phone's font size at its largest step (font_scale 2.0, Android 14's top setting) and the app
 # restarted, then a screen tour (phase7-bigtext.yaml): the Workout tab (top, folders), an open

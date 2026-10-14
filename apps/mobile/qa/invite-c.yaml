@@ -1,0 +1,32 @@
+# Part INV, step C: another gym's link (RAMS01) while in FORGE1 — "Switch to <gym>" joins the new
+# gym first and only then lets FORGE1 go; then Leave, so the phone ends in no gym as it started.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "Gym code RAMS01"
+    timeout: 30000
+- assertVisible: 'You''re in .* now\. Switching .*'
+- takeScreenshot: inv-04-switch
+- tapOn: "^Switch to .*"
+- extendedWaitUntil:
+    visible: "Your gym: RAM'S FITNESS CLUB IMPACT|Your gym's shop · pay at the desk"
+    timeout: 30000
+- tapOn:
+    text: "^Shop$"
+    index: 0
+    optional: true
+- extendedWaitUntil:
+    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    timeout: 30000
+- takeScreenshot: inv-05-switched
+- scrollUntilVisible:
+    element: "^Leave$"
+    timeout: 20000
+- tapOn: "^Leave$"
+- extendedWaitUntil:
+    visible: 'Leave RAM''S FITNESS CLUB IMPACT''s shop\?'
+    timeout: 10000
+- tapOn: "Leave shop"
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000

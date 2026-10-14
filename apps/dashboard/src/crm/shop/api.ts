@@ -19,6 +19,8 @@ import {
   type SavePayload,
 } from './logic';
 
+import { sentFromRow, sentFromRows, type MessageDraft, type SentMessage } from './messages';
+
 type Row = Record<string, unknown>;
 
 /** Give up on a call after this long — a hung request must not freeze a button. */
@@ -105,6 +107,26 @@ export async function setOrderStatus(key: string, orderId: string, status: Order
 export async function listAppMembers(key: string): Promise<AppMember[]> {
   const rows = await call<Row[]>('owner_app_members', { p_key: key });
   return (rows ?? []).map(appMemberFromRow);
+}
+
+// ---------------------------------------------------------------- gym messages (0008)
+
+/** Send one message to every app member of the gym. Throws OFFER_TODAY / OFFER_WEEK / TOO_MANY. */
+export async function sendMessage(key: string, d: MessageDraft): Promise<SentMessage> {
+  const r = await call<Row>('owner_send_message', { p_key: key, p_kind: d.kind, p_title: d.title.trim(), p_body: d.body.trim() });
+  const m = sentFromRow(r);
+  if (!m) throw new Error('UNKNOWN');
+  return m;
+}
+
+/** The Sent list, newest first, with how many members have seen each. */
+export async function listMessages(key: string): Promise<SentMessage[]> {
+  return sentFromRows(await call<unknown>('owner_messages', { p_key: key }));
+}
+
+/** Take a sent message back out of every member's inbox. */
+export async function withdrawMessage(key: string, messageId: string): Promise<void> {
+  await call<null>('owner_withdraw_message', { p_key: key, p_message: messageId });
 }
 
 /** Add (or with a negative delta, take away) stock on the cloud — never an absolute number. */

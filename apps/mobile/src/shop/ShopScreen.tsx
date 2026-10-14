@@ -23,11 +23,13 @@ import { isBranded } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES, getCatalog } from './catalog';
 import { JOIN_CODE_LENGTH, cleanJoinCode } from './gym';
-import { joinGym, leaveGym, refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
+import { joinGym, leaveGym, refreshGymNow, refreshInbox, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { ProductPicture } from './ProductPicture';
-import { BagButton, DEMO_SHOP_LINE, DemoNote, MyOrdersRow, QuietLine, shopInputStyle } from './ShopParts';
+import { BagButton, BellButton, DEMO_SHOP_LINE, DemoNote, MyOrdersRow, QuietLine, shopInputStyle } from './ShopParts';
+import { unreadCount } from './inbox';
+import { inboxFor, useGymInbox } from './inboxStore';
 import { useGymHydrated } from './shopSource';
 import { useShop } from './shopStore';
 import type { GymLink, Product, ShopCategory } from './types';
@@ -166,6 +168,7 @@ function GymShop({ link }: { link: GymLink }) {
   const hasList = useGymShop((s) => s.productsAt != null);
   const bag = useGymShop((s) => s.bag);
   const orderCount = useGymShop((s) => s.orders.length);
+  const unread = useGymInbox((s) => unreadCount(inboxFor(s, link.memberId)));
   const [filter, setFilter] = useState<Filter>('all');
   const [loading, setLoading] = useState(false);
   const [pulling, setPulling] = useState(false);
@@ -178,7 +181,7 @@ function GymShop({ link }: { link: GymLink }) {
     if (byPull) setPulling(true);
     else setLoading(true);
     // Gym branding: the gym's name and look as they are now ride along (quiet on failure).
-    const [words] = await Promise.all([refreshProducts(), refreshOrders(), refreshGymNow().catch(() => undefined)]);
+    const [words] = await Promise.all([refreshProducts(), refreshOrders(), refreshGymNow().catch(() => undefined), refreshInbox().catch(() => null)]);
     running.current = false;
     setProblem(words);
     setPulling(false);
@@ -216,7 +219,12 @@ function GymShop({ link }: { link: GymLink }) {
       subtitle={branded ? undefined : "Your gym's shop · pay at the desk"}
       scroll={false}
       noPad
-      right={<BagButton count={bagBadgeCount(bag)} onPress={() => router.push('/shop/bag')} />}
+      right={
+        <View style={{ flexDirection: 'row', gap: space.sm }}>
+          <BellButton count={unread} onPress={() => router.push('/shop/inbox')} />
+          <BagButton count={bagBadgeCount(bag)} onPress={() => router.push('/shop/bag')} />
+        </View>
+      }
     >
       <ScrollView
         style={{ flex: 1 }}

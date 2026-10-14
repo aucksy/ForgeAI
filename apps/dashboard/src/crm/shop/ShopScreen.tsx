@@ -54,16 +54,17 @@ import {
 } from './logic';
 import { ProductPicture } from './ProductArt';
 import { PhotoError, uploadProductPhoto } from './photoUpload';
+import { MessagesSection } from './MessagesSection';
 import { ProductSheet } from './ProductSheet';
 import { usePoll, useShop } from './ShopProvider';
 
 export function ShopScreen({ section }: { section?: string }) {
   const { cloud, newCount } = useShop();
-  const tab = section === 'products' ? 'products' : 'orders';
+  const tab = section === 'products' || section === 'messages' ? section : 'orders';
 
   return (
     <>
-      <PageHeader title="Shop" subtitle="What members order in the ForgeAI app, and what you sell" />
+      <PageHeader title="Shop" subtitle="What members order in the ForgeAI app, what you sell, and your messages to them" />
 
       {!cloud ? (
         <JoinCodeCard />
@@ -74,14 +75,15 @@ export function ShopScreen({ section }: { section?: string }) {
               variant="tabs"
               label="Shop section"
               value={tab}
-              onChange={(v) => navigate(v === 'products' ? '/shop/products' : '/shop/orders')}
+              onChange={(v) => navigate(`/shop/${v}`)}
               options={[
                 { value: 'orders', label: newCount > 0 ? `Orders · ${newCount} new` : 'Orders' },
                 { value: 'products', label: 'Products' },
+                { value: 'messages', label: 'Messages' },
               ]}
             />
           </div>
-          {tab === 'orders' ? <OrdersSection /> : <ProductsSection />}
+          {tab === 'orders' ? <OrdersSection /> : tab === 'products' ? <ProductsSection /> : <MessagesSection />}
         </>
       )}
     </>

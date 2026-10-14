@@ -6,7 +6,8 @@
  */
 import { prefetchGymLogo } from '@/theme/logoPrefetch';
 
-import { apiCancelOrder, apiJoin, apiLeaveQuietly, apiMe, apiOrders, apiPlaceOrder, apiProducts } from './gymApi';
+import { apiCancelOrder, apiJoin, apiLeaveQuietly, apiMe, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
+import { useGymInbox } from './inboxStore';
 import {
   JOIN_CODE_LENGTH,
   UNLINKED_TEXT,
@@ -58,6 +59,20 @@ export async function joinGym(rawCode: string, rawName: string): Promise<ActionW
   return null;
 }
 
+/**
+ * Invite link: join the gym the link names. A phone already in ANOTHER gym joins the new one
+ * first and only then lets the old key go — a failed join (offline, wrong code) leaves the member
+ * exactly where they were, never in no gym at all.
+ */
+export async function joinFromInvite(rawCode: string, rawName: string): Promise<ActionWords> {
+  const oldKey = useGymShop.getState().link?.memberKey ?? null;
+  const words = await joinGym(rawCode, rawName);
+  if (words) return words;
+  // Not waited for: the new gym is already on screen, and the leave call can take its full timeout.
+  if (oldKey && oldKey !== useGymShop.getState().link?.memberKey) void apiLeaveQuietly(oldKey);
+  return null;
+}
+
 /** When member_me was last asked (epoch ms), for the once-an-hour check on return to the app. */
 let gymCheckedAt: number | null = null;
 
@@ -81,6 +96,42 @@ export async function refreshGymNow(): Promise<void> {
   // A new logo is in the cache before the opening that will show it (D13).
   prefetchGymLogo(r.data.brand?.logoUrl);
   useGymShop.getState().setGymNow(r.data);
+  // Gym messages: the bell's count is fresh whenever the gym was asked anyway (launch, hourly).
+  void refreshInbox().catch(() => undefined);
+}
+
+/**
+ * Gym messages: the inbox from the gym (member_messages), and any "seen" the server missed sent
+ * again. Returns words when it failed (the last list stays on screen), else null.
+ */
+export async function refreshInbox(): Promise<ActionWords> {
+  const link = useGymShop.getState().link;
+  if (!link) return null;
+  const r = await apiMessages(link.memberKey);
+  if (useGymShop.getState().link?.memberKey !== link.memberKey) return null;
+  if (!r.ok) {
+    if (lostKey(r.error)) return null;
+    return r.error.kind === 'offline' ? "No internet — showing the last messages." : "Couldn't refresh — showing the last messages.";
+  }
+  useGymInbox.getState().setList(link.memberId, r.data);
+  const unsent = useGymInbox.getState().unsent;
+  if (unsent.length > 0) await sendSeen(link.memberKey, unsent);
+  return null;
+}
+
+/** The inbox showed these messages: seen here at once, and the gym is told (again later if offline). */
+export async function markInboxSeen(ids: string[]): Promise<void> {
+  const link = useGymShop.getState().link;
+  if (!link || ids.length === 0) return;
+  useGymInbox.getState().markSeen(link.memberId, ids);
+  await sendSeen(link.memberKey, useGymInbox.getState().unsent);
+}
+
+async function sendSeen(key: string, ids: string[]): Promise<void> {
+  if (ids.length === 0) return;
+  const batch = ids.slice(0, 100);
+  const r = await apiSawMessages(key, batch);
+  if (r.ok) useGymInbox.getState().confirmSeen(batch);
 }
 
 /** The app came back to the foreground: ask the gym again if the last ask is an hour old. */
@@ -183,5 +234,6 @@ export async function cancelGymOrder(orderId: string): Promise<ActionWords> {
 export async function leaveGym(): Promise<void> {
   const key = useGymShop.getState().link?.memberKey;
   useGymShop.getState().unlink(null);
+  useGymInbox.getState().clear();
   if (key) await apiLeaveQuietly(key);
 }

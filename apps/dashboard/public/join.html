@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Join your gym on ForgeAI</title>
+<meta name="description" content="Your gym invited you to the ForgeAI app.">
+<meta property="og:title" content="Join your gym on ForgeAI">
+<meta property="og:description" content="Tap to join your gym in the ForgeAI app.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#07080C">
+<!--
+  Invite link page (14 Oct 2026): https://forgeai.aakashpahuja.in/j/<CODE>, served by the panel's
+  Worker (deploy/panel/worker.js), which also fills in the gym (window.__GYM__) and the WhatsApp
+  preview (og: tags) before sending it. On a phone WITH the app, Android opens the app instead and
+  this page is never seen. Here: the gym, one button that opens the app's "Join <gym>" screen, and
+  — when the app is not there — how to get it (/app = the newest APK), with the code as fallback.
+  English first, Hinglish under it: most members read one of the two more easily.
+-->
+<style>
+  :root { --bg:#07080C; --surface:#12141B; --ink:#F4F5F8; --ink2:#B9BFCC; --muted:#8B92A3; --accent:#F0570F; --on-accent:#1F0D05; --line:#262A35; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  main { max-width:440px; margin:0 auto; padding:28px 16px 40px; }
+  .logo { width:88px; height:88px; border-radius:20px; background:var(--surface); display:flex; align-items:center; justify-content:center; overflow:hidden; margin:0 auto 14px; }
+  .logo img { max-width:76px; max-height:76px; object-fit:contain; }
+  .logo span { font-size:40px; font-weight:800; color:var(--accent); }
+  h1 { font-size:26px; line-height:1.2; text-align:center; margin:0 0 6px; text-wrap:balance; }
+  .hi { color:var(--ink2); font-size:15px; text-align:center; margin:0; }
+  .lead { text-align:center; margin:16px 0 22px; font-size:16px; line-height:1.45; }
+  .lead small { display:block; color:var(--ink2); font-size:15px; margin-top:2px; }
+  .btn { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; min-height:60px; border:0; border-radius:16px; background:var(--accent); color:var(--on-accent); font:inherit; font-size:18px; font-weight:800; text-decoration:none; padding:10px 16px; cursor:pointer; }
+  .btn small { font-size:14px; font-weight:600; opacity:.85; }
+  .btn.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; margin-top:16px; }
+  .card h2 { font-size:16px; margin:0 0 8px; }
+  ol { margin:0; padding-left:22px; line-height:1.55; }
+  ol li small, .note small { display:block; color:var(--ink2); }
+  .code { font-family:ui-monospace,Menlo,monospace; font-size:28px; font-weight:800; letter-spacing:4px; color:var(--accent); margin:6px 0 2px; }
+  .note { color:var(--muted); font-size:13px; line-height:1.45; margin-top:10px; }
+  .hide { display:none !important; }
+  .gap { height:12px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="logo" id="logo"><span id="initial">F</span></div>
+  <h1 id="title">Join your gym</h1>
+  <p class="hi" id="sub">on the ForgeAI app</p>
+
+  <div id="found">
+    <p class="lead">Your gym invited you. Track your workouts and order from the gym shop.
+      <small>Aapke gym ne aapko bulaaya hai. Workout track kijiye aur gym shop se order kijiye.</small></p>
+
+    <!-- Android: opens the app's Join screen; without the app Chrome comes back here with ?noapp=1. -->
+    <a class="btn" id="open" href="#">Join in the ForgeAI app<small>ForgeAI app mein join karein</small></a>
+
+    <div class="card hide" id="getapp">
+      <h2>First, get the ForgeAI app<br><small style="color:var(--ink2);font-weight:600">Pehle ForgeAI app lijiye</small></h2>
+      <ol>
+        <li>Tap “Download the app” below.<small>Neeche “Download the app” dabaayein.</small></li>
+        <li>Open the downloaded file and tap Install. If the phone asks, allow installs from Chrome.<small>File kholkar Install dabaayein. Phone pooche to Chrome se install allow karein.</small></li>
+        <li>Come back here and tap “Join in the ForgeAI app”.<small>Wapas aakar “Join in the ForgeAI app” dabaayein.</small></li>
+      </ol>
+      <div class="gap"></div>
+      <a class="btn ghost" id="download" href="/app">Download the app<small>App download karein</small></a>
+    </div>
+
+    <div class="card hide" id="notandroid">
+      <h2>ForgeAI is an Android app for now</h2>
+      <p class="note" style="margin:0">Open this link on an Android phone, or ask the front desk.<small>Abhi ForgeAI sirf Android phone par hai. Yeh link Android phone par kholiye.</small></p>
+    </div>
+
+    <div class="card">
+      <h2>Or type your gym’s code in the app<br><small style="color:var(--ink2);font-weight:600">Ya app ke Shop tab mein yeh code daalein</small></h2>
+      <div class="code" id="code">——————</div>
+      <p class="note">Open ForgeAI → Shop → type the code and your name → Join.</p>
+    </div>
+  </div>
+
+  <div class="card hide" id="none">
+    <h2>This link doesn’t match a gym</h2>
+    <p class="note" style="margin:0">Ask your gym for a new link or their gym code.<small>Apne gym se naya link ya gym code maangiye.</small></p>
+  </div>
+
+  <div class="card hide" id="offline">
+    <h2>Couldn’t reach the gym</h2>
+    <p class="note" style="margin:0">Check your internet and open the link again.<small>Internet check karke link dobara kholiye.</small></p>
+  </div>
+</main>
+<script>
+(function () {
+  var KEY = 'sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo';
+  var API = 'https://hdxzqbdiokjklnypfisq.supabase.co/rest/v1/rpc/gym_preview';
+  var m = /^\/j\/([A-Za-z0-9]{6})\/?$/.exec(location.pathname);
+  var code = m ? m[1].toUpperCase() : null;
+  var $ = function (id) { return document.getElementById(id); };
+  var show = function (id, on) { $(id).classList.toggle('hide', !on); };
+  var android = /Android/i.test(navigator.userAgent);
+  var noApp = /[?&]noapp=1/.test(location.search);
+
+  function hexOk(h) { return typeof h === 'string' && /^#[0-9A-Fa-f]{6}$/.test(h); }
+  // Black or white words on the gym's colour, whichever reads better.
+  function onColour(h) {
+    var n = parseInt(h.slice(1), 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255;
+    var lin = function (c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    var L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? '#111111' : '#FFFFFF';
+  }
+
+  function render(gym) {
+    if (!gym) { show('found', false); show('none', true); $('title').textContent = 'Gym not found'; $('sub').textContent = ''; return; }
+    document.title = 'Join ' + gym.gymName + ' on ForgeAI';
+    $('title').textContent = gym.gymName;
+    $('sub').textContent = 'invites you to the ForgeAI app';
+    $('code').textContent = gym.joinCode;
+    $('initial').textContent = (gym.gymName.trim().charAt(0) || 'F').toUpperCase();
+    var b = gym.brand || {};
+    if (hexOk(b.accent)) {
+      document.documentElement.style.setProperty('--accent', b.accent);
+      document.documentElement.style.setProperty('--on-accent', onColour(b.accent));
+    }
+    if (hexOk(b.bg)) $('logo').style.background = b.bg;
+    if (typeof b.logoUrl === 'string' && /^https:\/\/hdxzqbdiokjklnypfisq\.supabase\.co\//.test(b.logoUrl)) {
+      var img = new Image();
+      img.alt = '';
+      img.onload = function () { $('logo').innerHTML = ''; $('logo').appendChild(img); };
+      img.src = b.logoUrl;
+    }
+    // The app's own link; Chrome falls back to this page marked "no app" when it is not installed.
+    var back = location.origin + '/j/' + gym.joinCode + '?noapp=1';
+    $('open').href = 'intent://j/' + gym.joinCode + '#Intent;scheme=forgeai;package=com.forgeai.app;S.browser_fallback_url=' + encodeURIComponent(back) + ';end';
+    if (!android) { show('open', false); show('notandroid', true); }
+    else if (noApp) {
+      // No app yet: getting it comes first and is the big button; "Join" waits under it.
+      show('getapp', true);
+      $('open').parentNode.insertBefore($('getapp'), $('open'));
+      $('getapp').style.margin = '0 0 16px';
+      $('download').className = 'btn';
+      $('open').className = 'btn ghost';
+    }
+  }
+
+  if (!code) { render(null); return; }
+  if (window.__GYM__ !== undefined) { render(window.__GYM__); return; }
+  fetch(API, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_code: code }) })
+    .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    .then(function (g) { render(g && g.gymName ? g : null); })
+    .catch(function () { show('found', false); show('offline', true); });
+})();
+</script>
+</body>
+</html>

@@ -29,6 +29,54 @@ export function leave(router: Nav, fallback: Href): void {
   else router.replace(fallback);
 }
 
+/** Gym messages: the bell beside the bag, with the unread count. Opens the inbox. */
+export function BellButton({ count, onPress }: { count: number; onPress: () => void }) {
+  const label = count === 0 ? 'Messages from your gym' : `Messages from your gym, ${count} new`;
+  return (
+    <PressScale
+      onPress={onPress}
+      scaleTo={0.92}
+      hitSlop={6}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={{
+        width: 48,
+        height: 48,
+        borderRadius: radius.pill,
+        backgroundColor: color.surfaceRaised,
+        borderWidth: 1,
+        borderColor: color.border,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={color.ink} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z" />
+        <Path d="M10 20.5a2 2 0 0 0 4 0" />
+      </Svg>
+      {count > 0 ? (
+        <View
+          style={{
+            position: 'absolute',
+            top: -4,
+            right: -4,
+            minWidth: 20,
+            paddingHorizontal: 5,
+            paddingVertical: 1,
+            borderRadius: radius.pill,
+            backgroundColor: color.accent,
+            alignItems: 'center',
+          }}
+        >
+          <Text maxFontSizeMultiplier={1.3} style={{ fontFamily: type.bodyBold, fontSize: type.size.caption, color: color.onAccent }}>
+            {count > 99 ? '99+' : String(count)}
+          </Text>
+        </View>
+      ) : null}
+    </PressScale>
+  );
+}
+
 /** A shopping bag outline (the ui Icon set has none, and it is frozen). */
 export function BagGlyph({ size = 20, tint = color.ink }: { size?: number; tint?: string }) {
   return (

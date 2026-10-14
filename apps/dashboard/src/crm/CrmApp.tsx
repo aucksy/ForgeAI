@@ -14,6 +14,7 @@ import { BrandingScreen } from './brand/BrandingScreen';
 import { atRiskList } from './logic/attendance';
 import { duesByMember, duesLedger } from './logic/collections';
 import { needsAttentionToday } from './logic/membership';
+import { InviteScreen } from './shop/InviteScreen';
 import { ShopProvider, useShop } from './shop/ShopProvider';
 import { ShopScreen } from './shop/ShopScreen';
 import { CrmProvider, useCrm } from './store';
@@ -116,7 +117,10 @@ function Screen({ segments }: { segments: string[] }) {
       return <PlansScreen />;
     case 'settings':
       // Gym branding: Settings -> Branding (the gym's look in the member app).
-      return id === 'branding' ? <BrandingScreen /> : <SettingsScreen />;
+      if (id === 'branding') return <BrandingScreen />;
+      // Invite link + front-desk QR poster.
+      if (id === 'invite') return <InviteScreen />;
+      return <SettingsScreen />;
     default:
       return <TodayScreen />;
   }

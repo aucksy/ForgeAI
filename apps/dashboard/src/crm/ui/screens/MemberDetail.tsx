@@ -9,6 +9,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCrm } from '../../store';
+import { inviteMessage, whatsAppHref } from '../../shop/invite';
+import { useShop } from '../../shop/ShopProvider';
 import {
   attendanceProfile,
   hourLabel,
@@ -55,6 +57,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const { snapshot, today, viewFor, checkIn, setMemberArchived, cancelMembership, uncancelMembership } =
     useCrm();
   const compact = useIsCompact();
+  const { cloud } = useShop();
   const [editing, setEditing] = useState(false);
   const [selling, setSelling] = useState(false);
   const [collecting, setCollecting] = useState(false);
@@ -236,6 +239,17 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
               >
                 WhatsApp
               </a>
+              {/* Invite link: WhatsApp opens on this member with the gym's link typed in. */}
+              {cloud && !member.appUserId && (
+                <a
+                  href={whatsAppHref(inviteMessage(cloud.name, cloud.joinCode, member.fullName), member.phone)}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={linkStyle}
+                >
+                  Send app invite
+                </a>
+              )}
             </Row>
           </div>
           {!compact && heroActions}

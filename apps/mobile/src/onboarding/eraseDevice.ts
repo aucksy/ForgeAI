@@ -144,8 +144,11 @@ function deviceSteps(): EraseStep[] {
         const { GYM_SHOP_STORAGE_KEY, useGymShop } = await import('@/shop/gymStore');
         const key = useGymShop.getState().link?.memberKey ?? null;
         useGymShop.getState().unlink(null);
+        const { GYM_INBOX_STORAGE_KEY, useGymInbox } = await import('@/shop/inboxStore');
+        useGymInbox.getState().clear();
         const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
         await AsyncStorage.removeItem(GYM_SHOP_STORAGE_KEY);
+        await AsyncStorage.removeItem(GYM_INBOX_STORAGE_KEY);
         if (key) {
           const { apiLeaveQuietly } = await import('@/shop/gymApi');
           await apiLeaveQuietly(key);
