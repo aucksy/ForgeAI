@@ -8,6 +8,7 @@
  */
 
 import { collectedOn, tileCounts } from '../../logic/homeTiles';
+import { dueCount } from '../../logic/enquiries';
 import { InstallCard } from '../InstallCard';
 import { tr } from '../../i18n';
 import { useMemo } from 'react';
@@ -72,6 +73,7 @@ export function TodayScreen() {
 
   const tiles = useMemo(() => tileCounts(memberViews, today), [memberViews, today]);
   const collectedToday = useMemo(() => collectedOn(snapshot.payments, today), [snapshot.payments, today]);
+  const enquiriesDue = useMemo(() => dueCount(snapshot.enquiries ?? [], today), [snapshot.enquiries, today]);
 
   // Only people still worth a conversation today. A member who left two years ago
   // is a win-back campaign, not a phone call this morning — and a list that never
@@ -191,6 +193,13 @@ export function TodayScreen() {
           value={stats.visitsToday}
           onClick={() => navigate('/attendance')}
           sub={tr('Open the register', 'Hazri register kholo')}
+        />
+        <StatTile
+          label={tr('Enquiries to call', 'Enquiry: aaj call karo')}
+          value={enquiriesDue}
+          tone={enquiriesDue > 0 ? 'warn' : undefined}
+          onClick={() => navigate('/enquiries')}
+          sub={tr('Follow-ups due', 'Follow-up baaki')}
         />
         {/* "Losing the habit" is not a tile: it is the list right below, and the
             same number twice on one screen is a duplicate, not a summary. */}

@@ -192,6 +192,42 @@ export interface Visit extends GymScoped {
   source: 'desk' | 'app' | 'import';
 }
 
+// ---------------------------------------------------------------- enquiries and expenses (step 5)
+
+/**
+ * Someone who asked about joining but has not joined yet (a walk-in, a call). Owners chase these
+ * with a follow-up date; "Member banao" turns one into a member. Never deleted: closed as
+ * `joined` (with the member) or `lost`.
+ */
+export interface Enquiry extends GymScoped {
+  name: string;
+  /** E.164, like a member's. */
+  phone: string;
+  /** What they asked about, in the owner's words ("3 months, evening batch"). */
+  interest: string | null;
+  /** Day to call them again; null = no date set. */
+  followUpOn: DateISO | null;
+  status: 'open' | 'joined' | 'lost';
+  memberId: string | null;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export type EnquiryDraft = Pick<Enquiry, 'name' | 'phone' | 'interest' | 'followUpOn'>;
+
+export type ExpenseCategory = 'rent' | 'salary' | 'electricity' | 'equipment' | 'stock' | 'repairs' | 'other';
+
+/** Money going OUT (kharcha): rent, salaries, electricity… so the panel can show profit. */
+export interface Expense extends GymScoped {
+  spentOn: DateISO;
+  amountP: Paise;
+  category: ExpenseCategory;
+  note: string | null;
+  createdAt: number;
+}
+
+export type ExpenseDraft = Pick<Expense, 'spentOn' | 'amountP' | 'category' | 'note'>;
+
 // ---------------------------------------------------------------- roster view
 
 /** Roster-level status for a member, derived from their memberships. */

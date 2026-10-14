@@ -28,6 +28,7 @@ import { formatPhone, initials } from '../../logic/members';
 import { methodLabel } from '../../logic/payments';
 import type { Membership, Payment } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
+import { ExtendMembershipSheet } from '../forms/ExtendMembershipSheet';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
 import { SellMembershipSheet } from '../forms/SellMembershipSheet';
 import { VoidPaymentSheet } from '../forms/VoidPaymentSheet';
@@ -64,6 +65,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const [selling, setSelling] = useState(false);
   const [collecting, setCollecting] = useState(false);
   const [cancelling, setCancelling] = useState<Membership | null>(null);
+  const [extending, setExtending] = useState<Membership | null>(null);
   const [voiding, setVoiding] = useState<Payment | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -81,6 +83,17 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         .filter((m) => m.memberId === memberId)
         .sort((a, b) => b.startsOn.localeCompare(a.startsOn)),
     [snapshot.memberships, memberId],
+  );
+
+  // Freeze / Extra din goes on the plan that ends LAST (not cancelled): extending an earlier
+  // term when a renewal is already queued would make the two overlap and give the member nothing.
+  // An ended plan qualifies too — the days are given back from its old last day.
+  const extendTarget = useMemo(
+    () =>
+      memberships
+        .filter((m) => !m.cancelled)
+        .reduce<Membership | null>((best, m) => (!best || m.endsOn > best.endsOn ? m : best), null),
+    [memberships],
   );
 
   const payments = useMemo(
@@ -324,6 +337,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 payments={payments}
                 today={today}
                 onCancel={() => setCancelling(m)}
+                onExtend={extendTarget?.id === m.id ? () => setExtending(m) : undefined}
                 onRestore={() => run(() => uncancelMembership(m.id), tr('Cancellation reversed.', 'Cancel wapas liya.'))}
               />
             ))}
@@ -406,6 +420,13 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
               setCancelling(null);
             }, tr('Membership cancelled.', 'Plan cancel ho gaya.'))
           }
+        />
+      )}
+      {extending && (
+        <ExtendMembershipSheet
+          membership={extending}
+          onClose={() => setExtending(null)}
+          onDone={(days) => flash(tr(`Plan moved ${days} days later.`, `Plan ${days} din aage badh gaya.`))}
         />
       )}
       {voiding && (
@@ -582,12 +603,15 @@ function MembershipRow({
   today,
   onCancel,
   onRestore,
+  onExtend,
 }: {
   membership: Membership;
   payments: Payment[];
   today: string;
   onCancel: () => void;
   onRestore: () => void;
+  /** Only on the plan that ends last: opens Freeze / Extra din. */
+  onExtend?: () => void;
 }) {
   const view = toMembershipView(membership, today);
   const unpaid = unpaidForMembership(membership, payments);
@@ -664,6 +688,13 @@ function MembershipRow({
           </Button>
         )}
       </Row>
+      {onExtend && (
+        <div style={{ marginTop: space.sm }}>
+          <Button variant="ghost" full onClick={onExtend}>
+            {tr('Freeze / extra days', 'Freeze / Extra din')}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

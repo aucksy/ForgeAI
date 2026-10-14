@@ -298,7 +298,7 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
     issued.push({ receiptNo: p.receiptNo });
   }
 
-  return { gym, members, plans, memberships, payments, visits };
+  return { gym, members, plans, memberships, payments, visits, enquiries: [], expenses: [] };
 }
 
 /** Epoch ms for local noon on `day` — timezone-correct, unlike parsing a `Z` string. */

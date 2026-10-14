@@ -23,7 +23,7 @@
  * Server side: supabase/migrations/0010_signin_and_records.sql (crm_pull, crm_push).
  */
 
-import type { Member, Membership, Payment, Plan, Visit } from '../types';
+import type { Enquiry, Expense, Member, Membership, Payment, Plan, Visit } from '../types';
 import {
   type CrmData,
   type CrmSnapshot,
@@ -35,7 +35,7 @@ import {
 import { authErrorWords } from '../auth/signin';
 import { LocalCrmData, memoryStore, SCHEMA_VERSION } from './local';
 
-export type RecordKind = 'gym' | 'member' | 'plan' | 'membership' | 'payment' | 'visit';
+export type RecordKind = 'gym' | 'member' | 'plan' | 'membership' | 'payment' | 'visit' | 'enquiry' | 'expense';
 
 /** One row on the wire: `d` is the record, or `x: true` when it was deleted. */
 export interface CrmRecord {
@@ -77,6 +77,8 @@ const COLLECTIONS = [
   ['membership', 'memberships'],
   ['payment', 'payments'],
   ['visit', 'visits'],
+  ['enquiry', 'enquiries'],
+  ['expense', 'expenses'],
 ] as const;
 
 type ListKey = (typeof COLLECTIONS)[number][1];
@@ -85,7 +87,16 @@ type ListKey = (typeof COLLECTIONS)[number][1];
 export type Rows = Record<Exclude<RecordKind, 'gym'>, Map<string, unknown>> & { gym: GymDetails | null };
 
 export function emptyRows(): Rows {
-  return { gym: null, member: new Map(), plan: new Map(), membership: new Map(), payment: new Map(), visit: new Map() };
+  return {
+    gym: null,
+    member: new Map(),
+    plan: new Map(),
+    membership: new Map(),
+    payment: new Map(),
+    visit: new Map(),
+    enquiry: new Map(),
+    expense: new Map(),
+  };
 }
 
 export function isStale(err: unknown): boolean {
@@ -143,6 +154,8 @@ export function buildSnapshot(rows: Rows, gym: CloudGymRow): CrmSnapshot {
     memberships: byTime(list<Membership>(rows.membership), (m) => m.createdAt ?? 0),
     payments: byTime(list<Payment>(rows.payment), (p) => p.createdAt ?? 0),
     visits: byTime(list<Visit>(rows.visit), (v) => v.checkedInAt ?? 0),
+    enquiries: byTime(list<Enquiry>(rows.enquiry), (e) => e.createdAt ?? 0),
+    expenses: byTime(list<Expense>(rows.expense), (e) => e.createdAt ?? 0),
   };
 }
 
@@ -455,5 +468,20 @@ export class CloudCrmData implements CrmData {
   }
   undoCheckIn(memberId: string, day: string) {
     return this.run((d) => d.undoCheckIn(memberId, day));
+  }
+  createEnquiry(draft: Parameters<CrmData['createEnquiry']>[0]) {
+    return this.run((d) => d.createEnquiry(draft));
+  }
+  updateEnquiry(id: string, patch: Parameters<CrmData['updateEnquiry']>[1]) {
+    return this.run((d) => d.updateEnquiry(id, patch));
+  }
+  addExpense(draft: Parameters<CrmData['addExpense']>[0]) {
+    return this.run((d) => d.addExpense(draft));
+  }
+  removeExpense(id: string) {
+    return this.run((d) => d.removeExpense(id));
+  }
+  extendMembership(id: string, days: number, reason: string) {
+    return this.run((d) => d.extendMembership(id, days, reason));
   }
 }

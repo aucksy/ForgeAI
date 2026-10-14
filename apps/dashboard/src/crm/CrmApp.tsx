@@ -8,6 +8,9 @@
  * navigation race.
  */
 
+import { dueCount } from './logic/enquiries';
+import { EnquiriesScreen } from './ui/screens/Enquiries';
+import { ExpensesScreen } from './ui/screens/Expenses';
 import { MoreScreen } from './ui/screens/More';
 import { isTileFilter } from './logic/homeTiles';
 import { useMemo, useRef } from 'react';
@@ -102,6 +105,7 @@ function Routes({ online }: { online: boolean }) {
     ).length;
     // Counted in PEOPLE like the two badges beside it, and like the list it opens.
     const atRisk = atRiskList(snapshot.members, snapshot.memberships, snapshot.visits, today).length;
+    const enquiriesDue = dueCount(snapshot.enquiries, today);
     return [
       { path: '/', label: tr('Today', 'Aaj'), icon: 'today' },
       { path: '/members', label: tr('Members', 'Members'), icon: 'members', badge: needsAttention },
@@ -116,6 +120,9 @@ function Routes({ online }: { online: boolean }) {
       { path: '/attendance', label: tr('Visits', 'Hazri'), icon: 'visits', badge: atRisk },
       { path: '/money', label: tr('Money', 'Hisaab'), icon: 'money', badge: overdue },
       { path: '/plans', label: tr('Plans', 'Plan'), icon: 'plans' },
+      // Step 5 (15 Oct 2026): people who asked about joining, and money going out.
+      { path: '/enquiries', label: tr('Enquiries', 'Enquiry'), icon: 'members', badge: enquiriesDue || undefined },
+      { path: '/expenses', label: tr('Expenses', 'Kharcha'), icon: 'money' },
       { path: '/settings', label: tr('Settings', 'Settings'), icon: 'settings' },
     ];
   }, [memberViews, snapshot, today, newCount]);
@@ -164,6 +171,10 @@ function Screen({ segments }: { segments: string[] }) {
       return <PlansScreen />;
     case 'more':
       return <MoreScreen />;
+    case 'enquiries':
+      return <EnquiriesScreen />;
+    case 'expenses':
+      return <ExpensesScreen />;
     case 'settings':
       // Gym branding: Settings -> Branding (the gym's look in the member app).
       if (id === 'branding') return <BrandingScreen />;

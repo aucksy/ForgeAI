@@ -23,6 +23,10 @@ import type {
   Plan,
   PlanDraft,
   Visit,
+  Enquiry,
+  EnquiryDraft,
+  Expense,
+  ExpenseDraft,
 } from '../types';
 
 /** The gym itself — the tenant row. */
@@ -46,6 +50,9 @@ export interface CrmSnapshot {
   memberships: Membership[];
   payments: Payment[];
   visits: Visit[];
+  /** Step 5 (15 Oct 2026). Older saved gyms have none: read as []. */
+  enquiries: Enquiry[];
+  expenses: Expense[];
 }
 
 /**
@@ -215,4 +222,16 @@ export interface CrmData {
    * was no such visit, so a double-tap on Undo cannot fail.
    */
   undoCheckIn(memberId: string, day: DateISO): Promise<void>;
+
+  // Step 5 (15 Oct 2026)
+  createEnquiry(draft: EnquiryDraft): Promise<Enquiry>;
+  updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId'>>): Promise<Enquiry>;
+  addExpense(draft: ExpenseDraft): Promise<Expense>;
+  /** An expense typed wrong is taken out (it is not a receipt: no number to keep). */
+  removeExpense(id: string): Promise<void>;
+  /**
+   * Freeze or gift days: the membership's last day moves `days` (1-365) later, with the reason in
+   * its notes. Days only move forward here; a mistake is fixed by cancelling and selling again.
+   */
+  extendMembership(id: string, days: number, reason: string): Promise<Membership>;
 }

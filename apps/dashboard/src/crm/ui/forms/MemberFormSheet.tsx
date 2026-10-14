@@ -23,6 +23,7 @@ import {
   DIAL_CODES,
   emptyMemberForm,
   memberToForm,
+  splitE164,
   validateMember,
   type MemberField,
   type MemberFormDraft,
@@ -33,17 +34,29 @@ import { navigate } from '../router';
 
 export function MemberFormSheet({
   editing,
+  initial,
   onClose,
   onSaved,
 }: {
   editing?: Member;
+  /** A new member's name and E.164 mobile, filled in already (an enquiry being converted). */
+  initial?: { fullName?: string; phone?: string };
   onClose: () => void;
   onSaved?: (member: Member) => void;
 }) {
   const { today, createMember, updateMember, setMemberArchived } = useCrm();
-  const [form, setForm] = useState<MemberFormDraft>(() =>
-    editing ? memberToForm(editing) : emptyMemberForm(today),
-  );
+  const [form, setForm] = useState<MemberFormDraft>(() => {
+    if (editing) return memberToForm(editing);
+    const blank = emptyMemberForm(today);
+    if (!initial) return blank;
+    const phone = initial.phone ? splitE164(initial.phone) : null;
+    return {
+      ...blank,
+      fullName: initial.fullName ?? '',
+      dialCode: phone?.dialCode ?? blank.dialCode,
+      phone: phone?.national ?? '',
+    };
+  });
   const [fieldError, setFieldError] = useState<{ field: MemberField; message: string } | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [archivedClash, setArchivedClash] = useState<Member | null>(null);

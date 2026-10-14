@@ -39,8 +39,12 @@ import type {
   Plan,
   PlanDraft,
   Visit,
+  Enquiry,
+  EnquiryDraft,
+  Expense,
+  ExpenseDraft,
 } from '../types';
-import { isValidDateISO, type DateISO } from '../logic/dates';
+import { addDays, isValidDateISO, type DateISO } from '../logic/dates';
 import { tr } from '../i18n';
 import { endDateForPlan } from '../logic/membership';
 import { findDuplicatePhone } from '../logic/members';
@@ -457,6 +461,69 @@ export class LocalCrmData implements CrmData {
     });
   }
 
+  // ------------------------------------------------------------ enquiries, expenses, freeze
+
+  async createEnquiry(draft: EnquiryDraft): Promise<Enquiry> {
+    return this.update((db) => {
+      if (draft.followUpOn) requireDay(draft.followUpOn, tr('The follow-up date', 'Dobara call ki tareekh'));
+      const ts = this.now();
+      const enquiry: Enquiry = {
+        ...draft,
+        id: newId(),
+        gymId: db.gym.gymId,
+        status: 'open',
+        memberId: null,
+        createdAt: ts,
+        updatedAt: ts,
+      };
+      db.enquiries.push(enquiry);
+      return { ...enquiry };
+    });
+  }
+
+  async updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId'>>): Promise<Enquiry> {
+    return this.update((db) => {
+      const enquiry = db.enquiries.find((e) => e.id === id);
+      if (!enquiry) throw new NotFoundError(tr('That enquiry', 'Woh enquiry'));
+      if (patch.followUpOn) requireDay(patch.followUpOn, tr('The follow-up date', 'Dobara call ki tareekh'));
+      Object.assign(enquiry, patch, { updatedAt: this.now() });
+      return { ...enquiry };
+    });
+  }
+
+  async addExpense(draft: ExpenseDraft): Promise<Expense> {
+    return this.update((db) => {
+      requireDay(draft.spentOn, tr('The date', 'Tareekh'));
+      if (!Number.isInteger(draft.amountP) || draft.amountP <= 0) {
+        throw new Error(tr('Type the amount spent.', 'Kitna kharcha hua, likhiye.'));
+      }
+      const expense: Expense = { ...draft, id: newId(), gymId: db.gym.gymId, createdAt: this.now() };
+      db.expenses.push(expense);
+      return { ...expense };
+    });
+  }
+
+  async removeExpense(id: string): Promise<void> {
+    return this.update((db) => {
+      db.expenses = db.expenses.filter((e) => e.id !== id);
+    });
+  }
+
+  async extendMembership(id: string, days: number, reason: string): Promise<Membership> {
+    return this.update((db) => {
+      const membership = db.memberships.find((m) => m.id === id);
+      if (!membership) throw new NotFoundError(tr('That membership', 'Woh plan'));
+      if (!Number.isInteger(days) || days < 1 || days > 365) {
+        throw new Error(tr('Days must be a whole number from 1 to 365.', 'Din 1 se 365 ke beech poora number hona chahiye.'));
+      }
+      const before = membership.endsOn;
+      membership.endsOn = addDays(membership.endsOn, days);
+      membership.notes = appendNote(membership.notes, `+${days} days (${reason.trim() || 'extra days'}): ${before} -> ${membership.endsOn}`);
+      membership.updatedAt = this.now();
+      return { ...membership };
+    });
+  }
+
   async undoCheckIn(memberId: string, day: DateISO): Promise<void> {
     return this.update((db) => {
       requireDay(day, tr('The visit date', 'Hazri ki tareekh'));
@@ -502,6 +569,8 @@ export function emptySnapshot(now: number, gymName = 'My Gym'): CrmSnapshot {
     memberships: [],
     payments: [],
     visits: [],
+    enquiries: [],
+    expenses: [],
   };
 }
 
@@ -523,6 +592,8 @@ function normalize(s: CrmSnapshot): CrmSnapshot {
     memberships: s.memberships ?? [],
     payments: s.payments ?? [],
     visits: s.visits ?? [],
+    enquiries: s.enquiries ?? [],
+    expenses: s.expenses ?? [],
   };
 }
 

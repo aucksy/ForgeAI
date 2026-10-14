@@ -31,7 +31,17 @@ import { emptySnapshot, LocalCrmData } from './data/local';
 import { todayISO, type DateISO } from './logic/dates';
 import { buildMemberView } from './logic/membership';
 import { tr } from './i18n';
-import type { Member, MemberDraft, MemberView, Payment, PlanDraft, Visit } from './types';
+import type {
+  Enquiry,
+  EnquiryDraft,
+  ExpenseDraft,
+  Member,
+  MemberDraft,
+  MemberView,
+  Payment,
+  PlanDraft,
+  Visit,
+} from './types';
 
 interface CrmContextValue {
   snapshot: CrmSnapshot;
@@ -71,6 +81,13 @@ interface CrmContextValue {
   checkIn: (memberId: string, source: Visit['source'], day?: DateISO) => Promise<void>;
   undoCheckIn: (memberId: string, day: DateISO) => Promise<void>;
   updateGym: (patch: Partial<Omit<GymRecord, 'gymId' | 'createdAt'>>) => Promise<void>;
+
+  // Step 5 (15 Oct 2026): enquiries, expenses, freeze / extra days.
+  createEnquiry: (draft: EnquiryDraft) => Promise<Enquiry>;
+  updateEnquiry: (id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId'>>) => Promise<void>;
+  addExpense: (draft: ExpenseDraft) => Promise<void>;
+  removeExpense: (id: string) => Promise<void>;
+  extendMembership: (id: string, days: number, reason: string) => Promise<void>;
 
   /** Destructive resets, used by the welcome screen and settings. */
   loadDemoGym: () => Promise<void>;
@@ -277,6 +294,11 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
         void (await mutate((a) => a.checkIn(memberId, day ?? today, source, today))),
       undoCheckIn: async (memberId, day) => void (await mutate((a) => a.undoCheckIn(memberId, day))),
       updateGym: async (patch) => void (await mutate((a) => a.updateGym(patch))),
+      createEnquiry: (draft) => mutate((a) => a.createEnquiry(draft)),
+      updateEnquiry: async (id, patch) => void (await mutate((a) => a.updateEnquiry(id, patch))),
+      addExpense: async (draft) => void (await mutate((a) => a.addExpense(draft))),
+      removeExpense: async (id) => void (await mutate((a) => a.removeExpense(id))),
+      extendMembership: async (id, days, reason) => void (await mutate((a) => a.extendMembership(id, days, reason))),
       // Browser records only: an online gym is never wiped or filled with sample members.
       loadDemoGym: async () => {
         if (!db.replaceAll) throw new Error(tr('An online gym can’t be replaced with the demo gym.', 'Online gym ki jagah demo gym nahi aa sakta.'));

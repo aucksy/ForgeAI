@@ -5,7 +5,9 @@
  */
 
 import { tr } from '../../i18n';
+import { dueCount } from '../../logic/enquiries';
 import { useShop } from '../../shop/ShopProvider';
+import { useCrm } from '../../store';
 import { Icon, type IconName } from '../icons';
 import { Card, PageHeader, TOUCH, color, font, radius, space } from '../kit';
 import { Link } from '../router';
@@ -20,8 +22,18 @@ interface Row {
 
 export function MoreScreen() {
   const { newCount } = useShop();
+  const { snapshot, today } = useCrm();
+  const enquiriesDue = dueCount(snapshot.enquiries, today);
   const rows: Row[] = [
     { path: '/plans', label: tr('Plans', 'Plan'), hint: tr('Prices and durations', 'Fees aur samay'), icon: 'plans' },
+    {
+      path: '/enquiries',
+      label: tr('Enquiries', 'Enquiry'),
+      hint: tr('People who asked about joining', 'Jinhone join karne ke baare mein poocha'),
+      icon: 'members',
+      badge: enquiriesDue,
+    },
+    { path: '/expenses', label: tr('Expenses', 'Kharcha'), hint: tr('Money going out, and profit', 'Kharcha aur munafa'), icon: 'money' },
     { path: '/shop', label: tr('Shop', 'Shop'), hint: tr('Orders from the app', 'App se aaye orders'), icon: 'shop', badge: newCount },
     {
       path: '/settings/people',
