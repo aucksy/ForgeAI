@@ -71,6 +71,19 @@ describe('inbox store', () => {
     expect(useGymInbox.getState().unsent).toEqual([]);
   });
 
+  it('an empty inbox is the same list every time (a fresh [] makes the screen loop)', () => {
+    expect(inboxFor(useGymInbox.getState(), 'm9')).toBe(inboxFor(useGymInbox.getState(), null));
+  });
+
+  it('a late list from before the "seen" reached the server does not bring "new" back', () => {
+    const s = useGymInbox.getState();
+    s.setList('m1', inboxFromRows(ROWS));
+    s.markSeen('m1', ['b']);
+    useGymInbox.getState().confirmSeen(['b']);
+    useGymInbox.getState().setList('m1', inboxFromRows(ROWS));
+    expect(unreadCount(useGymInbox.getState().messages)).toBe(0);
+  });
+
   it('another member link starts clean', () => {
     useGymInbox.getState().setList('m1', inboxFromRows(ROWS));
     useGymInbox.getState().markSeen('m1', ['b']);

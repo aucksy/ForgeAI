@@ -23,7 +23,7 @@ import { isBranded } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES, getCatalog } from './catalog';
 import { JOIN_CODE_LENGTH, cleanJoinCode } from './gym';
-import { joinGym, leaveGym, refreshGymNow, refreshInbox, refreshOrders, refreshProducts } from './gymActions';
+import { joinGym, leaveGym, refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { ProductPicture } from './ProductPicture';
@@ -181,7 +181,8 @@ function GymShop({ link }: { link: GymLink }) {
     if (byPull) setPulling(true);
     else setLoading(true);
     // Gym branding: the gym's name and look as they are now ride along (quiet on failure).
-    const [words] = await Promise.all([refreshProducts(), refreshOrders(), refreshGymNow().catch(() => undefined), refreshInbox().catch(() => null)]);
+    // Gym messages: refreshGymNow also refreshes the inbox (the bell's count).
+    const [words] = await Promise.all([refreshProducts(), refreshOrders(), refreshGymNow().catch(() => undefined)]);
     running.current = false;
     setProblem(words);
     setPulling(false);

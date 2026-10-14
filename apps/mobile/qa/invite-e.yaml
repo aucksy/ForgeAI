@@ -5,13 +5,13 @@
 appId: com.forgeai.app
 ---
 - extendedWaitUntil:
-    visible: "^Join .*"
+    visible: "Gym code .*"
     timeout: 30000
 - tapOn: "Your name"
 - eraseText: 70
 - inputText: "QA Member"
 - hideKeyboard
-- tapOn: "^Join .*"
+- tapOn: "^Join QA Inbox Gym$"
 - extendedWaitUntil:
     visible: "Your gym's shop · pay at the desk"
     timeout: 30000

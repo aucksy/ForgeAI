@@ -69,7 +69,7 @@ export function draftProblem(d: MessageDraft): string | null {
   if (!title) return 'Write a title.';
   if (title.length > TITLE_MAX) return `Keep the title to ${TITLE_MAX} letters.`;
   if (body.length > BODY_MAX) return `Keep the message to ${BODY_MAX} letters.`;
-  if (/\[[^\]]*\]/.test(title) || /\[[^\]]*\]/.test(body)) return 'Fill in the words in [brackets] first.';
+  if (/[[\]]/.test(title) || /[[\]]/.test(body)) return 'Fill in the words in [brackets] first.';
   return null;
 }
 
@@ -128,5 +128,6 @@ export function messageErrorWords(err: unknown): string {
   if (/\bTOO_MANY\b/.test(text)) return 'That is 20 messages today, the most for one day. Send it tomorrow.';
   if (/\bTOO_LONG\b/.test(text)) return `Keep the title to ${TITLE_MAX} letters and the message to ${BODY_MAX}.`;
   if (/\bEMPTY\b/.test(text)) return 'Write a title.';
-  return errorWords(err);
+  // A send that timed out may still have gone: say so, so the owner looks before sending again.
+  return `${errorWords(err)} Check the Sent list below before sending it again.`;
 }

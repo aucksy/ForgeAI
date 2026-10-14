@@ -7,7 +7,7 @@ appId: com.forgeai.app
     timeout: 30000
 - assertVisible: 'You''re in .* now\. Switching .*'
 - takeScreenshot: inv-04-switch
-- tapOn: "^Switch to .*"
+- tapOn: "^Switch to RAM'S FITNESS CLUB IMPACT$"
 - extendedWaitUntil:
     visible: "Your gym: RAM'S FITNESS CLUB IMPACT|Your gym's shop · pay at the desk"
     timeout: 30000

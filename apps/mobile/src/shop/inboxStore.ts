@@ -21,6 +21,11 @@ interface InboxBlob {
   messages: InboxMessage[];
   /** Seen on this phone, not yet confirmed by the server. */
   unsent: string[];
+  /**
+   * Everything seen on this phone (kept after the server confirms): a list the server answered
+   * BEFORE it heard the "seen" can arrive late and must not bring the "new" count back.
+   */
+  seenHere: string[];
 }
 
 export interface InboxState extends InboxBlob {
@@ -33,7 +38,10 @@ export interface InboxState extends InboxBlob {
   clear: () => void;
 }
 
-const EMPTY: InboxBlob = { memberId: null, messages: [], unsent: [] };
+const EMPTY: InboxBlob = { memberId: null, messages: [], unsent: [], seenHere: [] };
+
+/** One empty list for every "nothing to show": a fresh [] per call makes a zustand selector loop. */
+const NONE: InboxMessage[] = [];
 
 /** What was saved, checked; anything damaged is dropped. PURE. */
 export function cleanInboxBlob(raw: unknown): InboxBlob {
@@ -42,8 +50,8 @@ export function cleanInboxBlob(raw: unknown): InboxBlob {
   const memberId = typeof r.memberId === 'string' && r.memberId ? r.memberId : null;
   if (!memberId) return { ...EMPTY };
   const messages = (Array.isArray(r.messages) ? r.messages : []).map(inboxFromRow).filter((m): m is InboxMessage => m !== null);
-  const unsent = (Array.isArray(r.unsent) ? r.unsent : []).filter((x): x is string => typeof x === 'string').slice(0, 100);
-  return { memberId, messages, unsent };
+  const ids = (v: unknown, max: number) => (Array.isArray(v) ? v : []).filter((x): x is string => typeof x === 'string').slice(-max);
+  return { memberId, messages, unsent: ids(r.unsent, 100), seenHere: ids(r.seenHere, 200) };
 }
 
 export const useGymInbox = create<InboxState>()(
@@ -52,8 +60,10 @@ export const useGymInbox = create<InboxState>()(
       ...EMPTY,
       setList: (memberId, messages) => {
         const s = get();
-        const unsent = s.memberId === memberId ? s.unsent : [];
-        set({ memberId, messages: mergeSeen(messages, new Set(unsent)), unsent });
+        const same = s.memberId === memberId;
+        const unsent = same ? s.unsent : [];
+        const seenHere = same ? s.seenHere : [];
+        set({ memberId, messages: mergeSeen(messages, new Set([...seenHere, ...unsent])), unsent, seenHere });
       },
       markSeen: (memberId, ids) => {
         const s = get();
@@ -64,6 +74,7 @@ export const useGymInbox = create<InboxState>()(
         set({
           messages: s.messages.map((m) => (add.has(m.id) ? { ...m, seen: true } : m)),
           unsent: [...new Set([...s.unsent, ...fresh])].slice(-100),
+          seenHere: [...new Set([...s.seenHere, ...fresh])].slice(-200),
         });
       },
       confirmSeen: (ids) => {
@@ -76,7 +87,7 @@ export const useGymInbox = create<InboxState>()(
       name: GYM_INBOX_STORAGE_KEY,
       version: 1,
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s): InboxBlob => ({ memberId: s.memberId, messages: s.messages, unsent: s.unsent }),
+      partialize: (s): InboxBlob => ({ memberId: s.memberId, messages: s.messages, unsent: s.unsent, seenHere: s.seenHere }),
       merge: (persisted, current) => ({ ...current, ...cleanInboxBlob(persisted) }),
     },
   ),
@@ -84,5 +95,5 @@ export const useGymInbox = create<InboxState>()(
 
 /** The messages for the member this phone is linked as now — none for any other. */
 export function inboxFor(s: Pick<InboxState, 'memberId' | 'messages'>, memberId: string | null | undefined): InboxMessage[] {
-  return memberId && s.memberId === memberId ? s.messages : [];
+  return memberId && s.memberId === memberId ? s.messages : NONE;
 }

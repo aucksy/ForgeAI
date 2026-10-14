@@ -13,7 +13,8 @@ appId: com.forgeai.app
 - eraseText: 70
 - inputText: "QA Member"
 - hideKeyboard
-- tapOn: "^Join .*"
+# The button by its full words: "Join your gym" (title) and "Join to order…" (intro) also start with Join.
+- tapOn: "^Join ForgeAI Test Gym$"
 - extendedWaitUntil:
     visible: "Your gym's shop · pay at the desk"
     timeout: 30000

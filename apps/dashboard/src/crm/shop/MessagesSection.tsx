@@ -6,11 +6,11 @@
  * Words and checks: messages.ts. Server: 0008_gym_messages.sql.
  */
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Button, Card, ChipToggle, EmptyState, ErrorBanner, Pill, SectionTitle, TextField, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import * as api from './api';
-import { timeAgo } from './logic';
+import { MutationGate, timeAgo } from './logic';
 import {
   BODY_MAX,
   MESSAGE_KINDS,
@@ -41,16 +41,21 @@ export function MessagesSection() {
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
+  // A refresh that left before a Send or Take back must not paint the list as it was (logic.ts).
+  const gate = useRef(new MutationGate()).current;
+
   const load = useCallback(async () => {
     if (!key) return;
+    const stamp = gate.stamp();
     try {
       const [list, people] = await Promise.all([api.listMessages(key), api.listAppMembers(key)]);
+      if (!gate.fresh(stamp)) return;
       setSent(list);
       setMembers(people.length);
     } catch (e) {
       setError(handleError(e));
     }
-  }, [key, handleError]);
+  }, [key, handleError, gate]);
 
   usePoll(load, 30_000, key !== null);
 
@@ -72,7 +77,7 @@ export function MessagesSection() {
     setBusy(true);
     setError(null);
     try {
-      const m = await api.sendMessage(key, draft);
+      const m = await gate.run(() => api.sendMessage(key, draft));
       setSent((prev) => [m, ...(prev ?? [])]);
       setDraft(FIRST);
       setTouched(false);
@@ -83,6 +88,8 @@ export function MessagesSection() {
       const words = messageErrorWords(e);
       setError(/BAD_KEY/.test(String((e as { message?: unknown })?.message ?? '')) ? handleError(e) : words);
       setConfirming(false);
+      // A slow answer can come after the message was saved: look again before the owner re-sends.
+      void load();
     } finally {
       setBusy(false);
     }
@@ -91,7 +98,7 @@ export function MessagesSection() {
   const takeBack = async (m: SentMessage) => {
     if (!window.confirm(`Take back “${m.title}”? It leaves every member's inbox.`)) return;
     try {
-      await api.withdrawMessage(key, m.id);
+      await gate.run(() => api.withdrawMessage(key, m.id));
       setSent((prev) => prev?.map((x) => (x.id === m.id ? { ...x, withdrawn: true } : x)) ?? prev);
     } catch (e) {
       setError(messageErrorWords(e));

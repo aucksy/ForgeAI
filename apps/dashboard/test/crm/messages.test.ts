@@ -41,6 +41,7 @@ describe('the Sent list', () => {
     expect(messageErrorWords(new Error('OFFER_TODAY'))).toMatch(/one a day/);
     expect(messageErrorWords({ message: 'OFFER_WEEK' })).toMatch(/3 a week/);
     expect(messageErrorWords(new Error('TOO_MANY'))).toMatch(/20 messages/);
-    expect(messageErrorWords(new Error('deadlock detected'))).toBe('Something went wrong. Please try again.');
+    expect(messageErrorWords(new Error('deadlock detected'))).toBe('Something went wrong. Please try again. Check the Sent list below before sending it again.');
+    expect(draftProblem({ kind: 'announcement', title: 'Closed [', body: '' })).toMatch(/brackets/);
   });
 });
