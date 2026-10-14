@@ -17,18 +17,25 @@
  * 13 Oct 2026: + "Previous values" at the end (Hevy's "Previous Workout Values", plus the owner's
  * "Same folder"): three full-width rows, one line under them saying what the chosen one does. Three
  * choices with long words do not fit a segmented control at large text; rows wrap instead.
+ *
+ * Oct 2026: + "Plates and bars" (Hevy's Settings → Workouts → Plate Calculator): opens its own page,
+ * the plates the gym has and the bar the plate calculator starts on.
  */
+import { useRouter, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
 import { Card, Icon, SheetRow } from '@/components/ui';
 import { tap } from '@/lib/haptics';
+import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { PREVIOUS_FROM_CHOICES } from '../db/historyScope';
 import { refreshWidgets } from '../phone/widgets';
+import { plateSetupLine } from '../services/plateMath';
 import { fmtRest } from '../services/restRules';
+import { usePlateSetupFor } from '../store/plateSetupStore';
 import { useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { stepWeeklyGoal, useTrackerPrefs } from '../store/trackerPrefsStore';
@@ -136,6 +143,10 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
   const [picking, setPicking] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const ringThroughDnd = useRestAlertPrefs((s) => s.ringThroughDnd);
+  const router = useRouter();
+  const units = useUnits();
+  const plateSetup = usePlateSetupFor(units);
+  const [openError, setOpenError] = useState<string | null>(null);
   const setRingThroughDnd = useRestAlertPrefs((s) => s.setRingThroughDnd);
 
   useEffect(() => {
@@ -198,6 +209,30 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
           onChange={setCoachNotes}
           divider
         />
+      ) : null}
+      <Pressable
+        onPress={() => {
+          setOpenError(null);
+          try {
+            router.push('/settings/plates' as Href);
+          } catch (e) {
+            console.warn('[ForgeErr] plates and bars page did not open', e);
+            setOpenError("Couldn't open Plates and bars. Try again.");
+          }
+        }}
+        accessibilityRole="button"
+        accessibilityLabel={`Plates and bars, ${plateSetupLine(plateSetup, units)}. Change`}
+      >
+        <SettingRow
+          icon="dumbbell"
+          title="Plates and bars"
+          caption={`For the plate calculator: ${plateSetupLine(plateSetup, units)}`}
+          right={<Icon name="chevron-right" size={18} color={color.inkMuted} />}
+          divider
+        />
+      </Pressable>
+      {openError ? (
+        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.criticalText, paddingBottom: space.sm }}>{openError}</Text>
       ) : null}
       {/* Audit Phase 9 (#4): the member's own workouts-a-week goal (Up next on the Workout tab, the widget). */}
       <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>

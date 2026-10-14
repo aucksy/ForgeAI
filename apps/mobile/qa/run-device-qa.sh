@@ -307,6 +307,12 @@ sleep 3
 adb shell dumpsys notification --noredact > "$OUT/h3-app-open.txt"
 python3 "$QA_DIR/notif.py" live-back "$OUT/h3-app-open.txt" >> "$OUT/timeline.txt" || status=1
 
+# ---------------------------------------------------------------- part P1 (15 Oct 2026: plates and bars)
+free_maestro
+log "part P1 start"
+maestro test --format junit --output "$OUT/part-p1.xml" --test-output-dir "$OUT/part-p1" "$QA_DIR/p1-plates.yaml" > "$OUT/part-p1.log" 2>&1 || { status=1; log "PART P1 FAILED"; }
+adb shell input keyevent KEYCODE_HOME
+
 # ---------------------------------------------------------------- part I (v0.27.0: the rest of Phase 5)
 # A Strong export "someone made" (older layout, pounds and miles), in Downloads, for the import.
 push_fixture "$QA_DIR/fixtures/qa-strong.csv" /sdcard/Download/qa-strong.csv

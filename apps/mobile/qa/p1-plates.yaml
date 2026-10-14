@@ -1,0 +1,38 @@
+# Part P1 (15 Oct 2026): Settings -> Workouts -> Plates and bars, every control pressed once
+# (audit rule: every button on every screen). Runs before part I switches the units to lb, so the
+# plates read in kg. A plate turned off, then the standard set brought back.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Workouts"
+- scrollUntilVisible:
+    element: "Plates and bars"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Plates and bars"
+- extendedWaitUntil:
+    visible: "Turn off the plates your gym doesn.t have.*"
+    timeout: 15000
+- takeScreenshot: p1-plates-page
+- scrollUntilVisible:
+    element: "^2\.5 kg$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^2\.5 kg$"
+- scrollUntilVisible:
+    element: "Back to the standard set"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: p1-plate-off
+- tapOn: "Back to the standard set"
+- takeScreenshot: p1-standard-again
+- back
