@@ -131,6 +131,46 @@ describe('only plates the gym has; nearest below AND above', () => {
   });
 });
 
+describe('review fix: standard sets show the same stacks as the old greedy fill', () => {
+  /** The calculator before Oct 2026, copied verbatim (heaviest-first greedy). */
+  function oldGreedy(targetKg: number, barKg: number, plates: readonly number[]): { perSide: number[]; achievableKg: number } {
+    if (!(targetKg > barKg)) return { perSide: [], achievableKg: barKg };
+    let remaining = (targetKg - barKg) / 2;
+    const perSide: number[] = [];
+    for (const p of plates) {
+      while (remaining + 1e-6 >= p) {
+        perSide.push(p);
+        remaining -= p;
+      }
+    }
+    return { perSide, achievableKg: barKg + 2 * perSide.reduce((a, b) => a + b, 0) };
+  }
+
+  it('lb: 50 to 600 lb in 5 lb steps, identical stacks (165 lb = 45 + 10 + 5, not 35 + 25)', () => {
+    const plates = gymPlatesKg(EMPTY_SETUP, 'imperial');
+    const bar = gymBarKg(EMPTY_SETUP, 'imperial');
+    for (let t = 50; t <= 600; t += 5) {
+      const now = computePlates(lb(t), bar, plates);
+      const old = oldGreedy(lb(t), bar, plates);
+      expect(now.perSide, `${t} lb`).toEqual(old.perSide);
+      expect(now.achievableKg, `${t} lb`).toBeCloseTo(old.achievableKg, 6);
+    }
+    expect(computePlates(lb(165), bar, plates).perSide.map((p) => showW(p, 'imperial'))).toEqual(['45', '10', '5']);
+    expect(computePlates(lb(255), bar, plates).perSide.map((p) => showW(p, 'imperial'))).toEqual(['45', '45', '10', '5']);
+  });
+
+  it('kg: 20 to 400 kg in 2.5 kg steps, identical stacks', () => {
+    const plates = gymPlatesKg(EMPTY_SETUP, 'metric');
+    for (let i = 0; i <= (400 - 20) / 2.5; i++) {
+      const t = 20 + i * 2.5;
+      const now = computePlates(t, 20, plates);
+      const old = oldGreedy(t, 20, plates);
+      expect(now.perSide, `${t} kg`).toEqual(old.perSide);
+      expect(now.achievableKg, `${t} kg`).toBeCloseTo(old.achievableKg, 6);
+    }
+  });
+});
+
 function standardOff(): PlateSetup {
   return [25, 20, 15, 10, 5, 2.5, 1.25].reduce((s, n) => togglePlate(s, n, false), EMPTY_SETUP);
 }

@@ -128,11 +128,23 @@ export function computePlates(
   }
   const perSideTarget = (targetKg - barKg) / 2;
   const smallest = usable.length > 0 ? usable[usable.length - 1] : null;
+  // Review fix: the stacks members already know come first. Greedy heaviest-first is what the
+  // calculator always showed (165 lb = 45 + 10 + 5 a side, not 35 + 25 — gyms run short of 35s);
+  // the search below only decides a load greedy cannot make or finds below it.
+  const fill = greedy(perSideTarget, usable);
+  const fillTotal = sum(fill);
+  /** Plates for a per-side load: greedy's stack when greedy makes it exactly, else the search's. */
+  const stackFor = (s: Seen, k: number, total: number): number[] => {
+    const g = greedy(total, usable);
+    return Math.abs(sum(g) - total) < EPS ? g : platesOf(s, k);
+  };
+  if (Math.abs(fillTotal - perSideTarget) < EPS) {
+    return { targetKg, barKg, perSide: fill, achievableKg: barKg + 2 * fillTotal, exact: true, higherKg: null, higherPerSide: null };
+  }
   const seen = smallest == null ? null : searchLoads(perSideTarget + smallest, usable);
   if (!seen) {
-    const perSide = greedy(perSideTarget, usable);
-    const achievableKg = barKg + 2 * sum(perSide);
-    return { targetKg, barKg, perSide, achievableKg, exact: Math.abs(achievableKg - targetKg) < EPS, higherKg: null, higherPerSide: null };
+    const achievableKg = barKg + 2 * fillTotal;
+    return { targetKg, barKg, perSide: fill, achievableKg, exact: Math.abs(achievableKg - targetKg) < EPS, higherKg: null, higherPerSide: null };
   }
   let below = 0;
   let belowTotal = 0;
@@ -149,11 +161,12 @@ export function computePlates(
       aboveTotal = v.total;
     }
   }
-  const perSide = platesOf(seen, below);
+  // Greedy's own answer whenever it reaches the same load as the search.
+  const perSide = Math.abs(fillTotal - belowTotal) < EPS ? fill : stackFor(seen, below, belowTotal);
   const achievableKg = barKg + 2 * sum(perSide);
   const exact = Math.abs(achievableKg - targetKg) < EPS;
   if (exact || above == null) return { targetKg, barKg, perSide, achievableKg, exact, higherKg: null, higherPerSide: null };
-  const higherPerSide = platesOf(seen, above);
+  const higherPerSide = stackFor(seen, above, aboveTotal);
   return { targetKg, barKg, perSide, achievableKg, exact, higherKg: barKg + 2 * sum(higherPerSide), higherPerSide };
 }
 

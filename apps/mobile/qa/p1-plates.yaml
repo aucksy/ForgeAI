@@ -27,7 +27,14 @@ appId: com.forgeai.app
     element: "^2\.5 kg$"
     centerElement: true
     timeout: 15000
-- tapOn: "^2\.5 kg$"
+# The title text cannot be tapped; the switch carries the same label (review): tap it, then
+# require it really turned off.
+- tapOn:
+    text: "^2\.5 kg$"
+    checked: true
+- assertVisible:
+    text: "^2\.5 kg$"
+    checked: false
 - scrollUntilVisible:
     element: "Back to the standard set"
     centerElement: true

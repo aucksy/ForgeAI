@@ -315,6 +315,8 @@ adb shell input keyevent KEYCODE_HOME
 
 # ---------------------------------------------------------------- part P2 (15 Oct 2026: pause the workout)
 # Paused, the duration must not move: its accessibility label is read twice, 70 s apart.
+# The 70 s wait reads the SCREEN: keep it awake (review).
+adb shell svc power stayon true >/dev/null 2>&1 || true
 free_maestro
 log "part P2 start"
 if maestro test --format junit --output "$OUT/part-p2a.xml" --test-output-dir "$OUT/part-p2a" "$QA_DIR/p2-pause-a.yaml" > "$OUT/part-p2a.log" 2>&1; then
