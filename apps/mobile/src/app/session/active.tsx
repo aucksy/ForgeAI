@@ -29,6 +29,8 @@ import { RecordToast } from '@/tracker/components/RecordToast';
 import { RestTimerBar } from '@/tracker/components/RestTimerBar';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
 import { FinishSheet, type FinishChoice } from '@/tracker/components/FinishSheet';
+import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
+import { PAUSE_WORDS, type PauseState } from '@/tracker/services/workoutPause';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { defaultWorkoutName } from '@/tracker/services/finishCheck';
 import { copiedText } from '@/tracker/services/setEntry';
@@ -108,6 +110,15 @@ export default function ActiveWorkoutScreen() {
   const previousFrom = frozenPreviousFrom ?? settingPreviousFrom;
   const exercises = useActiveWorkout((s) => s.exercises);
   const committing = useActiveWorkout((s) => s.committing);
+  // 15 Oct 2026 (pause the workout, as Hevy): tap the duration → "Pause Workout Timer".
+  const pausedAt = useActiveWorkout((s) => s.pausedAt);
+  const pausedTotalMs = useActiveWorkout((s) => s.pausedTotalMs);
+  const pauses = useActiveWorkout((s) => s.pauses);
+  const pause = useMemo<PauseState>(() => ({ pausedAt, pausedTotalMs, pauses }), [pausedAt, pausedTotalMs, pauses]);
+  const paused = pausedAt != null;
+  const pauseWorkout = useActiveWorkout((s) => s.pauseWorkout);
+  const resumeWorkout = useActiveWorkout((s) => s.resumeWorkout);
+  const [timerMenu, setTimerMenu] = useState(false);
   const finish = useActiveWorkout((s) => s.finish);
   const discard = useActiveWorkout((s) => s.discard);
   // Phase W4 — the same screen doubles as the editor for a saved workout.
@@ -456,7 +467,7 @@ export default function ActiveWorkoutScreen() {
             {pastLog ? 'PAST WORKOUT' : 'EDITING'}
           </Text>
         ) : (
-          <ElapsedClock startedAt={startedAt} />
+          <ElapsedClock startedAt={startedAt} pause={pause} onPress={() => setTimerMenu(true)} />
         )}
         {/* LW-02: no second ✓ up here — the one Finish button sits at the bottom. Keeps the clock centred. */}
         <View style={{ width: 42 }} />
@@ -493,6 +504,25 @@ export default function ActiveWorkoutScreen() {
               onDayTypeChange={setEditDayType}
               onNotesChange={setEditNotes}
             />
+          ) : null}
+
+          {/* 15 Oct 2026: while paused, one line says so and what a tick does. */}
+          {paused && !isEditing ? (
+            <View
+              accessible
+              accessibilityRole="text"
+              accessibilityLabel={PAUSE_WORDS.note}
+              style={{
+                paddingHorizontal: space.md,
+                paddingVertical: space.sm,
+                borderRadius: radius.md,
+                backgroundColor: color.surfaceRaised,
+                borderWidth: 1,
+                borderColor: color.border,
+              }}
+            >
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>{PAUSE_WORDS.note}</Text>
+            </View>
           ) : null}
 
           {/* Phase 4: the followed plan's easy week — the fact on screen, the why behind the i */}
@@ -603,6 +633,7 @@ export default function ActiveWorkoutScreen() {
           visible={finishOpen}
           exercises={exercises}
           startedAt={startedAt}
+          pause={pause}
           defaultName={defaultName}
           // A routine's workout keeps the routine's name: no Name box (owner, 13 Oct 2026).
           askName={!routineName}
@@ -611,6 +642,35 @@ export default function ActiveWorkoutScreen() {
           onFinish={(choice) => void onFinish(choice)}
           onClose={() => setFinishOpen(false)}
         />
+      ) : null}
+      {/* 15 Oct 2026: the workout timer's menu (Hevy: tap the duration). */}
+      {!isEditing ? (
+        <TrackerSheet
+          visible={timerMenu}
+          title={PAUSE_WORDS.sheetTitle}
+          subtitle={PAUSE_WORDS.runningHint}
+          onClose={() => setTimerMenu(false)}
+        >
+          {paused ? (
+            <SheetRow
+              label={PAUSE_WORDS.resume}
+              leading={<Glyph name="play" size={20} color={color.accent} />}
+              onPress={() => {
+                resumeWorkout();
+                setTimerMenu(false);
+              }}
+            />
+          ) : (
+            <SheetRow
+              label={PAUSE_WORDS.pause}
+              leading={<Glyph name="pause" size={20} color={color.accent} />}
+              onPress={() => {
+                pauseWorkout();
+                setTimerMenu(false);
+              }}
+            />
+          )}
+        </TrackerSheet>
       ) : null}
     </Screen>
   );

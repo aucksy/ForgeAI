@@ -1,0 +1,15 @@
+# Part P2b: resume the paused workout from the same control.
+appId: com.forgeai.app
+---
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Workout duration .*paused\. Tap to resume\."
+    timeout: 20000
+- tapOn: "Workout duration .*paused\. Tap to resume\."
+- tapOn: "Resume Workout Timer"
+- extendedWaitUntil:
+    notVisible: "^Paused$"
+    timeout: 10000
+- assertVisible: "Workout duration .*Tap to pause\."
+- takeScreenshot: p2-resumed

@@ -14,6 +14,17 @@ import { countWord } from '@/lib/words';
 import { draftLogType, isCommittable } from '@/tracker/services/draftSets';
 import type { DraftExercise } from '@/tracker/store/activeWorkoutStore';
 
+import { activeMs, type PauseState } from './workoutPause';
+
+/**
+ * 15 Oct 2026 (pause the workout): time TRAINED between `from` and `to` — paused time left out.
+ * No pause given: plain clock time, exactly as before.
+ */
+function trainedBetween(startedAt: number, pause: PauseState | undefined, from: number, to: number): number {
+  if (!pause) return to - from;
+  return activeMs(startedAt, pause, to) - activeMs(startedAt, pause, Math.max(startedAt, from));
+}
+
 /** A workout open longer than this is probably one left open by mistake. */
 export const LONG_OPEN_MS = 3 * 60 * 60 * 1000;
 /** No tick for this long before Finish: the workout probably ended at the last tick. */
@@ -129,8 +140,8 @@ export function lastActivity(
  * ("Save them"), they were still lifting after the last tick: "Now" — unless the workout has
  * been open over 3 h (then it was most likely left open, and the suggested end stays). PURE.
  */
-export function endDefault(p: { keepUnticked: boolean; startedAt: number; now: number }): 'suggested' | 'now' {
-  if (p.keepUnticked && p.now - p.startedAt <= LONG_OPEN_MS) return 'now';
+export function endDefault(p: { keepUnticked: boolean; startedAt: number; now: number; pause?: PauseState }): 'suggested' | 'now' {
+  if (p.keepUnticked && trainedBetween(p.startedAt, p.pause, p.startedAt, p.now) <= LONG_OPEN_MS) return 'now';
   return 'suggested';
 }
 
@@ -139,10 +150,17 @@ export function endDefault(p: { keepUnticked: boolean; startedAt: number; now: n
  * in the last hour, the workout most likely ended at the last tick plus one rest. Returns that
  * time, or null when there is nothing worth asking (no tick times, or it is close to now).
  */
-export function suggestedEnd(p: { startedAt: number; lastTickAt: number | null; restSec: number; now: number }): number | null {
+export function suggestedEnd(p: {
+  startedAt: number;
+  lastTickAt: number | null;
+  restSec: number;
+  now: number;
+  /** Paused time is a break the member chose, not a workout left open: it never counts here. */
+  pause?: PauseState;
+}): number | null {
   if (p.lastTickAt == null) return null;
-  const longOpen = p.now - p.startedAt > LONG_OPEN_MS;
-  const idle = p.now - p.lastTickAt > IDLE_MS;
+  const longOpen = trainedBetween(p.startedAt, p.pause, p.startedAt, p.now) > LONG_OPEN_MS;
+  const idle = trainedBetween(p.startedAt, p.pause, p.lastTickAt, p.now) > IDLE_MS;
   if (!longOpen && !idle) return null;
   const end = Math.min(p.now, Math.max(p.startedAt + 60_000, p.lastTickAt + Math.max(0, p.restSec) * 1000));
   if (p.now - end < CLOSE_ENOUGH_MS) return null;

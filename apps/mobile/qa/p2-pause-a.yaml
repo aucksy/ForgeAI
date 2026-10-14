@@ -1,0 +1,42 @@
+# Part P2a (15 Oct 2026): pause the workout timer, as Hevy (tap the duration -> Pause). Part H2 left
+# a workout open: resume it (or start an empty one). The script then waits 70 s and checks the
+# duration did not move (uiautomator dump), and P2b resumes it. Part I discards the workout after.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Start empty workout|Resume workout"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Resume workout"
+    commands:
+      - tapOn: "Resume workout"
+- runFlow:
+    when:
+      visible: "Start empty workout"
+    commands:
+      - tapOn: "Start empty workout"
+- extendedWaitUntil:
+    visible: "Workout duration .*Tap to pause\."
+    timeout: 20000
+- tapOn: "Workout duration .*Tap to pause\."
+- extendedWaitUntil:
+    visible: "Pause Workout Timer"
+    timeout: 10000
+- takeScreenshot: p2-timer-menu
+- tapOn: "Pause Workout Timer"
+- extendedWaitUntil:
+    visible: "Workout paused\. Ticking a set resumes it\..*"
+    timeout: 10000
+- assertVisible: "^Paused$"
+- takeScreenshot: p2-paused

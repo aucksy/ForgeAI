@@ -60,6 +60,7 @@ import { addSetsWithMeta, getSessionSetMeta } from '@/tracker/db/trackerSets';
 import { buildEditDraft, previousExcludingSession } from '@/tracker/services/editDraft';
 import type { ExerciseKinds, PreviousByExercise } from '@/tracker/services/editDraft';
 import { computeEditedTiming, dayDeltaMs } from '@/tracker/services/sessionTiming';
+import { NO_PAUSE, pauseAt, pauseFromDraft, resumeAt, savedEnd, type PauseSpan } from '@/tracker/services/workoutPause';
 import { reconcilePrsForExercises } from '@/tracker/services/prRebuild';
 import { checkMinutes, checkStartTime } from '@/tracker/services/editFields';
 import { draftToRichSets, hasWorkingSet, isCommittable } from '@/tracker/services/draftSets';
@@ -278,6 +279,10 @@ interface DraftSnapshot {
   endedAt?: number | null;
   /** Edit mode only: the day the session was stored under BEFORE any move. */
   originalDateISO?: string | null;
+  /** 15 Oct 2026 (pause the workout): absent on older drafts = never paused. See workoutPause.ts. */
+  pausedAt?: number | null;
+  pausedTotalMs?: number;
+  pauses?: PauseSpan[];
 }
 
 /** "Log a past workout": the routine it was (its id, name and day type). */
@@ -347,6 +352,15 @@ export interface ActiveWorkoutState {
    * edit, it is never "a workout in progress": it is not kept across an app restart.
    */
   pastLog: boolean;
+  /**
+   * 15 Oct 2026 — the workout timer is paused (Hevy's "Pause Workout Timer"): when the running
+   * pause began, or null. Live workouts only; kept in the draft, so a restart stays paused.
+   */
+  pausedAt: number | null;
+  /** The finished pauses, added up (ms) — never counted in the workout's duration. */
+  pausedTotalMs: number;
+  /** The finished pauses themselves (for an "Ended at" earlier than now; workoutPause.ts). */
+  pauses: PauseSpan[];
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
@@ -462,6 +476,10 @@ export interface ActiveWorkoutState {
   discard: () => Promise<void>;
   /** Number of sets that would actually be logged (positive reps + a weight). */
   committableSetCount: () => number;
+  /** Pause the workout timer now (a live workout only; already paused: nothing changes). */
+  pauseWorkout: () => void;
+  /** Resume the workout timer — now, or at `at` (a tick's own moment). Not paused: nothing. */
+  resumeWorkout: (at?: number) => void;
 }
 
 /**
@@ -525,6 +543,9 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
     notes: s.editNotes,
     endedAt: s.editEndedAt,
     originalDateISO: s.editOriginalDateISO,
+    pausedAt: s.pausedAt,
+    pausedTotalMs: s.pausedTotalMs,
+    pauses: s.pauses,
   };
   await setMeta(DRAFT_KEY, JSON.stringify(snap));
 }
@@ -1187,6 +1208,15 @@ export function withWarmups(
   return [...kept.slice(0, at), ...warm, ...kept.slice(at)];
 }
 
+/** A pause as the store keeps it (the finished pauses always an array). PURE. */
+function withSpans(p: { pausedAt: number | null; pausedTotalMs: number; pauses?: readonly PauseSpan[] }): {
+  pausedAt: number | null;
+  pausedTotalMs: number;
+  pauses: PauseSpan[];
+} {
+  return { pausedAt: p.pausedAt, pausedTotalMs: p.pausedTotalMs, pauses: [...(p.pauses ?? [])] };
+}
+
 /**
  * v0.28.1 — a live workout's start never falls on a whole second. Imported workouts do (their
  * clock time is kept as UTC), and Health Connect tells the two apart that way (`realStart`): a
@@ -1282,6 +1312,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
         pastLog: false,
+        ...NO_PAUSE,
         lastSaveReconciled: reconciled,
       });
       clearAllSaveProblems();
@@ -1314,6 +1345,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     editEndedAt: null,
     editOriginalDateISO: null,
     pastLog: false,
+    pausedAt: null,
+    pausedTotalMs: 0,
+    pauses: [],
     lastSaveReconciled: true,
 
     hydrate: async () => {
@@ -1364,10 +1398,13 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               editEndedAt: snap.endedAt ?? null,
               editOriginalDateISO: snap.originalDateISO ?? null,
               pastLog: false,
+              // A workout paused when the app was closed is still paused (its clock stood still).
+              ...withSpans(pauseFromDraft(snap, snap.startedAt)),
             });
           }
-        } catch {
+        } catch (e) {
           // corrupt draft — ignore, start clean
+          console.warn('[ForgeErr] The saved workout could not be read back, so it was not reopened.', e);
         }
       }
       set({ hydrated: true });
@@ -1394,6 +1431,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
         pastLog: false,
+        ...NO_PAUSE,
       });
       persistNow();
     },
@@ -1438,6 +1476,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
         pastLog: false,
+        ...NO_PAUSE,
       });
       persistNow();
     },
@@ -1472,6 +1511,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
         pastLog: false,
+        ...NO_PAUSE,
       });
       persistNow();
     },
@@ -1509,6 +1549,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
         pastLog: false,
+        ...NO_PAUSE,
       });
       persistNow();
     },
@@ -1822,7 +1863,15 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // No rest timer while correcting the past (nothing is being trained).
       if (isCorrecting(get())) return missing;
       if (wasDone && !isDone) useRestTimer.getState().cancelIfStartedBy(exKey, setKey);
-      else if (!wasDone && isDone) useRestTimer.getState().noteTick(exKey, setKey);
+      else if (!wasDone && isDone) {
+        useRestTimer.getState().noteTick(exKey, setKey);
+        // 15 Oct 2026: a tick while paused means training again — the workout resumes at the
+        // tick's own moment (a tap kept by the phone with the app closed keeps its time).
+        if (get().pausedAt != null) {
+          const doneAt = get().exercises.find((e) => e.key === exKey)?.sets.find((x) => x.key === setKey)?.doneAt;
+          get().resumeWorkout(doneAt ?? Date.now());
+        }
+      }
       return missing;
     },
 
@@ -1842,7 +1891,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         ),
         true,
       );
-      if (!isCorrecting(get())) useRestTimer.getState().noteTick(exKey, setKey); // RT-03: a rest started now belongs to this set
+      if (!isCorrecting(get())) {
+        useRestTimer.getState().noteTick(exKey, setKey); // RT-03: a rest started now belongs to this set
+        if (get().pausedAt != null) get().resumeWorkout(); // a timed set done while paused: training again
+      }
     },
 
     setLoadMode: (exKey, mode) => {
@@ -1943,6 +1995,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         // LW-07: the end the member picked for a workout left open (never before the start).
         const now = Date.now();
         const endedAt = opts.endedAt != null ? Math.min(now, Math.max(startedAt, opts.endedAt)) : now;
+        // 15 Oct 2026: paused time never counts. The start stays the real moment; the end saved is
+        // start + the time trained, so every reader's `ended_at − started_at` is the real
+        // duration (history, summary, stats, share picture, Health Connect). workoutPause.ts.
+        const savedEndedAt = savedEnd(startedAt, s, endedAt);
         // Commit the whole workout atomically: createSession + addSetsWithMeta +
         // the draft-clear all run inside ONE transaction on the shared getDb()
         // connection (non-exclusive, like hevyImport — the frozen repos join it).
@@ -1961,7 +2017,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             notes: note ?? null,
             source: 'manual',
             startedAt,
-            endedAt,
+            endedAt: savedEndedAt,
           });
           id = session.id;
           // LW-10: the workout's own name (additive column, tracker schema v9).
@@ -1994,6 +2050,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           exercises: [],
           lastDeleted: null,
           lastCopy: null,
+          ...NO_PAUSE,
         });
         return id;
         });
@@ -2104,6 +2161,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editNotes: session.notes,
         editEndedAt: session.endedAt,
         editOriginalDateISO: session.dateISO,
+        ...NO_PAUSE,
       });
       persistNow();
     },
@@ -2184,6 +2242,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: startedAt + mins * 60_000,
         editOriginalDateISO: dateISO,
         pastLog: true,
+        ...NO_PAUSE,
       });
       return null;
     },
@@ -2249,6 +2308,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           editEndedAt: null,
           editOriginalDateISO: null,
           pastLog: false,
+          ...NO_PAUSE,
         });
         });
         clearAllSaveProblems();
@@ -2293,7 +2353,26 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: null,
         editOriginalDateISO: null,
         pastLog: false,
+        ...NO_PAUSE,
       });
+    },
+
+    pauseWorkout: () => {
+      const s = get();
+      // Only a live workout has a running clock (an edit or a past log shows none).
+      if (!s.active || s.startedAt == null || isCorrecting(s) || s.committing || s.pausedAt != null) return;
+      set(withSpans(pauseAt(s, Date.now())));
+      persistNow();
+    },
+
+    resumeWorkout: (at) => {
+      const s = get();
+      if (s.pausedAt == null) return;
+      const now = Date.now();
+      // Never before the pause began, never in the future.
+      const when = at != null && Number.isFinite(at) ? Math.min(now, Math.max(s.pausedAt, at)) : now;
+      set(withSpans(resumeAt(s, when)));
+      persistNow();
     },
 
     committableSetCount: () => {

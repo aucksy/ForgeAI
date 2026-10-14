@@ -88,6 +88,17 @@ export function ongoingText(
   exercises: { sets: { done: boolean; isWarmup: boolean }[] }[],
   restEndsAt: number | null,
   use24Hour = false,
+  /** 15 Oct 2026: the workout timer is paused (the text then starts "Paused · "). */
+  paused = false,
+): string {
+  const text = ongoingBody(exercises, restEndsAt, use24Hour);
+  return paused ? `Paused · ${text}` : text;
+}
+
+function ongoingBody(
+  exercises: { sets: { done: boolean; isWarmup: boolean }[] }[],
+  restEndsAt: number | null,
+  use24Hour: boolean,
 ): string {
   if (restEndsAt != null) return `Rest · next set at ${clockTime(restEndsAt, use24Hour)}`;
   let total = 0;
@@ -231,7 +242,7 @@ export function startWorkoutPresence(): () => void {
     }
     // RT-05: the rest card shows the rest (counting down); this card keeps the set count.
     const restForThisCard = r.endsAt != null && !restCardHolds() ? r.endsAt : null;
-    const body = ongoingText(w.exercises, restForThisCard, phoneUses24Hour() === true);
+    const body = ongoingText(w.exercises, restForThisCard, phoneUses24Hour() === true, w.pausedAt != null);
     if (body === last) return;
     last = body;
     void showWorkoutOngoing('Workout in progress', body);

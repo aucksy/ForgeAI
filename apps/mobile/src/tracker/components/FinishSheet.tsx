@@ -28,6 +28,7 @@ import {
   untickedWithNumbers,
 } from '../services/finishCheck';
 import { phoneUses24Hour } from '../services/restCard';
+import { activeMs, type PauseState } from '../services/workoutPause';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 
 export interface FinishChoice {
@@ -42,6 +43,8 @@ export interface FinishSheetProps {
   visible: boolean;
   exercises: DraftExercise[];
   startedAt: number;
+  /** 15 Oct 2026: the workout timer's pauses — paused time never counts in the duration shown. */
+  pause: PauseState;
   /** The routine's name, else "Evening workout". */
   defaultName: string;
   /** Show the Name box: only for a workout with no routine. */
@@ -109,7 +112,7 @@ const field = () => ({
   color: color.ink,
 }) as const;
 
-export function FinishSheet({ visible, exercises, startedAt, defaultName, askName, defaultRestSec, saving, onFinish, onClose }: FinishSheetProps) {
+export function FinishSheet({ visible, exercises, startedAt, pause, defaultName, askName, defaultRestSec, saving, onFinish, onClose }: FinishSheetProps) {
   // Everything below is decided when the sheet opens, so the numbers stand still while it's up.
   const [openedAt, setOpenedAt] = useState(() => Date.now());
   const unticked = useMemo(() => untickedWithNumbers(exercises), [exercises]);
@@ -118,8 +121,8 @@ export function FinishSheet({ visible, exercises, startedAt, defaultName, askNam
   // #6: from the member's last action — a tick (plus its rest) or a number typed after it.
   const suggested = useMemo(() => {
     const last = lastActivity(exercises, defaultRestSec);
-    return suggestedEnd({ startedAt, lastTickAt: last.at, restSec: last.restSec, now: openedAt });
-  }, [exercises, startedAt, defaultRestSec, openedAt]);
+    return suggestedEnd({ startedAt, lastTickAt: last.at, restSec: last.restSec, now: openedAt, pause });
+  }, [exercises, startedAt, defaultRestSec, openedAt, pause]);
   const [useSuggested, setUseSuggested] = useState(true);
   const [name, setName] = useState(defaultName);
   const [note, setNote] = useState('');
@@ -131,7 +134,7 @@ export function FinishSheet({ visible, exercises, startedAt, defaultName, askNam
     // Leave unticked rows out — unless that would leave nothing at all to save.
     const keep = tickedOnly.sets === 0 && unticked > 0;
     setKeepUnticked(keep);
-    setUseSuggested(endDefault({ keepUnticked: keep, startedAt, now }) === 'suggested');
+    setUseSuggested(endDefault({ keepUnticked: keep, startedAt, now, pause }) === 'suggested');
     setName(defaultName);
     setNote('');
     // Reset only when the sheet opens (or the default name arrives), not on every tick.
@@ -142,7 +145,7 @@ export function FinishSheet({ visible, exercises, startedAt, defaultName, askNam
   // Now (unless the workout has been open over 3 h). "Leave them out" goes back to the suggestion.
   const pickKeep = (keep: boolean): void => {
     setKeepUnticked(keep);
-    setUseSuggested(endDefault({ keepUnticked: keep, startedAt, now: openedAt }) === 'suggested');
+    setUseSuggested(endDefault({ keepUnticked: keep, startedAt, now: openedAt, pause }) === 'suggested');
   };
   // #8: the phone's 12/24-hour setting (Android's own, else the locale's), read when it opens.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -150,7 +153,8 @@ export function FinishSheet({ visible, exercises, startedAt, defaultName, askNam
 
   const overview = finishOverview(exercises, keepUnticked);
   const endedAt = suggested != null && useSuggested ? suggested : null;
-  const durationMs = (endedAt ?? openedAt) - startedAt;
+  // The duration that will be saved: paused time left out (as the store saves it).
+  const durationMs = activeMs(startedAt, pause, endedAt ?? openedAt);
   const nothing = overview.sets === 0;
 
   return (
@@ -185,7 +189,7 @@ export function FinishSheet({ visible, exercises, startedAt, defaultName, askNam
 
       {suggested != null ? (
         <View style={{ gap: space.xs }}>
-          <Question text={`Open for ${durationText(openedAt - startedAt)}. When did you finish?`} />
+          <Question text={`Open for ${durationText(activeMs(startedAt, pause, openedAt))}. When did you finish?`} />
           <Choice label={`Ended at ${clockTime(suggested, openedAt, h24)}`} selected={useSuggested} onPress={() => setUseSuggested(true)} />
           <Choice label="Now" selected={!useSuggested} onPress={() => setUseSuggested(false)} />
         </View>

@@ -313,6 +313,30 @@ log "part P1 start"
 maestro test --format junit --output "$OUT/part-p1.xml" --test-output-dir "$OUT/part-p1" "$QA_DIR/p1-plates.yaml" > "$OUT/part-p1.log" 2>&1 || { status=1; log "PART P1 FAILED"; }
 adb shell input keyevent KEYCODE_HOME
 
+# ---------------------------------------------------------------- part P2 (15 Oct 2026: pause the workout)
+# Paused, the duration must not move: its accessibility label is read twice, 70 s apart.
+free_maestro
+log "part P2 start"
+if maestro test --format junit --output "$OUT/part-p2a.xml" --test-output-dir "$OUT/part-p2a" "$QA_DIR/p2-pause-a.yaml" > "$OUT/part-p2a.log" 2>&1; then
+  p2_label() { adb shell uiautomator dump /sdcard/p2.xml >/dev/null 2>&1; adb pull /sdcard/p2.xml "$OUT/$1" >/dev/null 2>&1; grep -o 'content-desc="Workout duration[^"]*"' "$OUT/$1" | head -1; }
+  first=$(p2_label p2-first.xml)
+  sleep 70
+  second=$(p2_label p2-second.xml)
+  log "P2 paused label: $first / 70 s later: $second"
+  if [ -n "$first" ] && [ "$first" = "$second" ]; then
+    log "P2 PAUSE OK: the duration did not move in 70 s"
+  else
+    status=1
+    log "P2 PAUSE FAILED: the paused duration moved or was not found"
+  fi
+  free_maestro
+  maestro test --format junit --output "$OUT/part-p2b.xml" --test-output-dir "$OUT/part-p2b" "$QA_DIR/p2-pause-b.yaml" > "$OUT/part-p2b.log" 2>&1 || { status=1; log "PART P2B FAILED"; }
+else
+  status=1
+  log "PART P2A FAILED"
+fi
+adb shell input keyevent KEYCODE_HOME
+
 # ---------------------------------------------------------------- part I (v0.27.0: the rest of Phase 5)
 # A Strong export "someone made" (older layout, pounds and miles), in Downloads, for the import.
 push_fixture "$QA_DIR/fixtures/qa-strong.csv" /sdcard/Download/qa-strong.csv

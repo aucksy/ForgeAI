@@ -73,8 +73,23 @@ const NOT_SAVED: Record<'reps' | 'weight' | 'time' | 'distance', string> = {
   distance: 'add a distance in the app',
 };
 
-/** The card for the workout as it is now. PURE. */
+/**
+ * The card for the workout as it is now. PURE.
+ *
+ * 15 Oct 2026 (pause the workout): while the workout timer is paused the text starts "Paused · ".
+ * The card shows no workout clock (only the rest card counts, and a rest keeps running while
+ * paused), so nothing in the shade keeps counting the workout.
+ */
 export function liveCardContent(
+  w: { startedAt: number | null; exercises: readonly DraftExercise[]; workoutName?: string | null; pausedAt?: number | null },
+  fillFor: RowFill,
+  units: UnitSystem,
+): LiveCard {
+  const card = cardNow(w, fillFor, units);
+  return w.pausedAt != null ? { ...card, text: `Paused · ${card.text}` } : card;
+}
+
+function cardNow(
   w: { startedAt: number | null; exercises: readonly DraftExercise[]; workoutName?: string | null },
   fillFor: RowFill,
   units: UnitSystem,

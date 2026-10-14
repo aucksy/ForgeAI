@@ -13,6 +13,7 @@ import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { liveCounts } from '../services/finishCheck';
+import { activeMs } from '../services/workoutPause';
 import { openActiveWorkout } from '../services/workoutStart';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { fmtClock, useRestRemaining } from './RestTimerBar';
@@ -29,6 +30,11 @@ export function WorkoutMiniBar() {
   const router = useRouter();
   const active = useActiveWorkout((s) => s.active);
   const startedAt = useActiveWorkout((s) => s.startedAt);
+  // 15 Oct 2026: a paused workout's time stands still here too (paused time never counts).
+  const pausedAt = useActiveWorkout((s) => s.pausedAt);
+  const pausedTotalMs = useActiveWorkout((s) => s.pausedTotalMs);
+  const pauses = useActiveWorkout((s) => s.pauses);
+  const paused = pausedAt != null;
   // An edit or a past log (never left open: Back asks to discard — HI-07).
   const editing = useActiveWorkout((s) => s.editingSessionId != null || s.pastLog);
   // LW-23: ticked WORKING sets, as the summary counts them (warm-ups never count).
@@ -37,16 +43,23 @@ export function WorkoutMiniBar() {
 
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    if (!active || editing) return;
+    setNow(Date.now());
+    if (!active || editing || paused) return;
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, [active, editing]);
+  }, [active, editing, paused]);
 
   if (!active) return null;
 
   const resting = remaining > 0;
-  const title = editing ? 'Editing a workout' : resting ? 'Rest' : 'Workout in progress';
-  const right = editing ? 'Open' : resting ? fmtClock(remaining) : startedAt ? fmtElapsed(now - startedAt) : '';
+  const title = editing ? 'Editing a workout' : resting ? 'Rest' : paused ? 'Workout paused' : 'Workout in progress';
+  const right = editing
+    ? 'Open'
+    : resting
+      ? fmtClock(remaining)
+      : startedAt
+        ? fmtElapsed(activeMs(startedAt, { pausedAt, pausedTotalMs, pauses }, now))
+        : '';
 
   return (
     <Pressable
