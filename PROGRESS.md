@@ -1755,6 +1755,41 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-14: **v0.38.0 — invite link + front-desk QR, and gym messages (Phase 1: inbox)**
+  (49db908, 1561d2e, a17e394, e21ec07; phone run 38537123277 passed every part incl. new INV; owner: "Start the invite link and front-desk QR, then gym
+  notifications").
+  - Invite link: one link per gym, https://forgeai.aakashpahuja.in/j/<CODE> (0007 gym_preview).
+    Android App Link (autoVerify; assetlinks.json with the release key, Google's checker accepts
+    it) opens "Join <gym>": the gym's name and logo first, then Join / "already in" / Switch gyms
+    (the new gym is joined before the old key goes, so a failed join never leaves the member in no
+    gym). A phone still in the welcome flow keeps the code and opens the screen after it.
+    Without the app: the panel Worker (deploy/panel/worker.js, main + run_worker_first) serves
+    join.html with the gym filled in (WhatsApp link preview with the gym's name and logo, the gym's
+    colours), an intent:// "Join in the ForgeAI app" button that falls back to "First, get the app"
+    (/app = 302 to the newest release APK), and the code as the way in. English + Hinglish.
+    Panel: Settings → Invite members (the link, a WhatsApp message in English + Hinglish, copy,
+    an A4 QR poster to print or save as a picture), buttons on every join-code card, and "Send app
+    invite" on a member's page (wa.me only with a full +country number).
+  - Gym messages Phase 1 (0008 + 0009): panel Shop → Messages (6 types with ready words, [blanks]
+    must be filled, a phone preview, "Goes to N members. Send now?", Sent list with "Seen by x of
+    y", Take back; offers/events 1 a day and 3 a week per gym, India days, a quick take-back within
+    10 min frees the slot; 20 a day as a runaway stop; sends queue on the gym row). App: a bell beside
+    the bag with the unread count, a badge on the Shop tab, the Messages inbox (shows what the gym
+    sent from 14 days before joining; marks shown messages seen; a missed "seen" is sent again and
+    never lost to a late list); cleared on Leave and Erase all data. member_leave now stamps
+    left_at; left members are not counted or shown in the panel. Push to the shade (Phase 1b)
+    waits for the owner's Firebase project.
+  - Security: the /j/ page's injected JSON escapes "<" (found by review; a hostile gym name could
+    have run script on the panel origin for ~40 min before the fix went live; no gym name holds <
+    or >). Every new SQL function is SECURITY DEFINER with search_path and RLS on, no table grants.
+  - QA: new part INV (a-e): join FORGE1 from its link, the same link says "already in", RAMS01's
+    link switches gyms (then Leave), an unknown code says so, and a fresh demo gym's message reaches
+    the inbox and the bell's count (a demo gym per run: a lasting owner key for FORGE1 was refused).
+    Two adversarial reviews (invite: 8 findings; messages: 11), all real ones fixed.
+  - Research (no code): Audit/crm-research/RESEARCH.md — Jaipur gym software (GoGym4U/GGMS made in
+    Jaipur lead, GymBook second), the tile home owners know, a 63-term Hinglish glossary, a gap table
+    against our panel; owner doc https://claude.ai/artifact/NqVVc5LMWQmd1gT1zeayA8; queue item 6 is
+    now "Gym Panel for Jaipur owners".
 - 2026-10-13: **v0.37.1 — audit of v0.37.0 "the improved way" (owner: "There should be no bugs")**
   (85840de … d4fff30; findings log: Audit/v037-audit/FINDINGS.md).
   - How: 4 read-only helpers (live workout, records/charts, notifications, branding) with the
