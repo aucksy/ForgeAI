@@ -183,11 +183,15 @@ export function diffSnapshots(before: CrmSnapshot, after: CrmSnapshot): CrmRecor
   return out;
 }
 
-/** Every row of a gym, ready to upload (moving a browser's records online). PURE. */
+/**
+ * Every row of a gym, ready to upload (moving a browser's records online). PURE.
+ * A browser gym saved before enquiries and expenses existed has no such lists at all: a missing
+ * list is an empty one, never a crash half-way through putting the gym online.
+ */
 export function allRecords(snap: CrmSnapshot, gymId: string): CrmRecord[] {
   const out: CrmRecord[] = [{ k: 'gym', id: 'gym', d: gymDetails(snap.gym) }];
   for (const [kind, key] of COLLECTIONS) {
-    for (const row of snap[key as ListKey] as readonly { id: string }[]) {
+    for (const row of (snap[key as ListKey] ?? []) as readonly { id: string }[]) {
       out.push({ k: kind, id: row.id, d: { ...row, gymId } });
     }
   }

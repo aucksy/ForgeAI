@@ -38,7 +38,11 @@ import {
 } from '../kit';
 import { Link, navigate } from '../router';
 
-type Filter = 'all' | MemberState | 'dues' | 'archived' | TileFilter;
+/**
+ * A home tile's list is kept apart from the status chips (`tile:<id>`): the "Active members" tile
+ * counts active AND ending-soon members, while the "Active" chip is only the first of those.
+ */
+type Filter = 'all' | MemberState | 'dues' | 'archived' | `tile:${TileFilter}`;
 
 /**
  * Two lists under one tab: the gym's own roster (everyone who pays), and the
@@ -88,16 +92,19 @@ function RosterSection({
 }) {
   const { memberViews, allMemberViews, today } = useCrm();
   const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState<Filter>(initialFilter ?? 'all');
+  const [filter, setFilter] = useState<Filter>(initialFilter ? `tile:${initialFilter}` : 'all');
+  const tileId = filter.startsWith('tile:') ? filter.slice(5) : undefined;
+  const tile: TileFilter | null = isTileFilter(tileId) ? tileId : null;
   const [queue, setQueue] = useState(false);
+  const which = tile ?? filter;
   const queueKind: MessageKind | null =
-    filter === 'dues'
+    which === 'dues'
       ? 'fees'
-      : filter === 'expired'
+      : which === 'expired'
         ? 'ended'
-        : filter === 'birthday'
+        : which === 'birthday'
           ? 'birthday'
-          : filter === 'expiring' || (typeof filter === 'string' && filter.startsWith('exp-'))
+          : which === 'expiring' || which.startsWith('exp-')
             ? 'ending'
             : null;
   const compact = useIsCompact();
@@ -125,11 +132,11 @@ function RosterSection({
       if (filter === 'all') return true;
       if (filter === 'dues') return v.outstandingP > 0;
       if (filter === 'archived') return v.member.archived;
-      if (isTileFilter(filter)) return inTile(v, filter, today);
+      if (tile) return inTile(v, tile, today);
       return v.state === filter;
     });
     return filtered.sort(compareByAttention);
-  }, [memberViews, allMemberViews, query, filter, today]);
+  }, [memberViews, allMemberViews, query, filter, tile, today]);
 
   return (
     <>
@@ -151,7 +158,7 @@ function RosterSection({
             { value: 'never', label: tr('No membership', 'Koi plan nahi'), count: counts.never ?? 0 },
             { value: 'archived', label: tr('Archived', 'Archive kiye'), count: counts.archived },
             // A home tile's list: its own chip, first in mind, until another chip is picked.
-            ...(isTileFilter(filter) ? [{ value: filter, label: tileLabel(filter), count: rows.length }] : []),
+            ...(tile ? [{ value: filter, label: tileLabel(tile), count: rows.length }] : []),
           ]}
         />
       </div>

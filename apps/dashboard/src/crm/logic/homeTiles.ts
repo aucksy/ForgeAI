@@ -1,6 +1,6 @@
 /**
  * The home screen's tiles in the shape Jaipur owners already know (Gym Panel step 3, 15 Oct 2026;
- * Audit/crm-research/RESEARCH.md §4.1): today's collection first, then the expiry buckets
+ * Audit/crm-research/RESEARCH.md §4.1): today's collection first, active members (a live plan), the expiry buckets
  * (ending today, in 1-3, 4-7 and 8-15 days), expired, fees due, birthdays today and who came in
  * today. Every tile opens its list: the roster filtered by the same rule (`/members/f/<id>`), so the
  * number on the tile and the length of the list it opens can never disagree. PURE.
@@ -10,9 +10,18 @@ import { tr } from '../i18n';
 import type { DateISO } from './dates';
 import type { MemberView, Payment } from '../types';
 
-export type TileFilter = 'exp-today' | 'exp-1-3' | 'exp-4-7' | 'exp-8-15' | 'expired' | 'birthday' | 'visited-today';
+export type TileFilter =
+  | 'active'
+  | 'exp-today'
+  | 'exp-1-3'
+  | 'exp-4-7'
+  | 'exp-8-15'
+  | 'expired'
+  | 'birthday'
+  | 'visited-today';
 
 export const TILE_FILTERS: readonly TileFilter[] = [
+  'active',
   'exp-today',
   'exp-1-3',
   'exp-4-7',
@@ -51,6 +60,9 @@ export function isBirthdayToday(dateOfBirth: string | null, today: DateISO): boo
 
 export function inTile(v: MemberView, id: TileFilter, today: DateISO): boolean {
   switch (id) {
+    case 'active':
+      // A live plan today: running, or running and about to end.
+      return v.state === 'active' || v.state === 'expiring';
     case 'exp-today':
       return endsWithin(v, 0, 0);
     case 'exp-1-3':
@@ -86,6 +98,8 @@ export function collectedOn(payments: readonly Payment[], day: DateISO): number 
 /** The tile's words, for the chip that shows which list is open. */
 export function tileLabel(id: TileFilter): string {
   switch (id) {
+    case 'active':
+      return tr('Active members', 'Chalu members');
     case 'exp-today':
       return tr('Ending today', 'Aaj khatam');
     case 'exp-1-3':

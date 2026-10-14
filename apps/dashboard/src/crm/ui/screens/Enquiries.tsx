@@ -275,24 +275,24 @@ function EnquiryRow({
         </a>
         {open && (
           <>
-            <Button onClick={onConvert} ariaLabel={tr(`Make ${e.name} a member`, `${e.name} ko Member banao`)}>
+            <Button wrap onClick={onConvert} ariaLabel={tr(`Make ${e.name} a member`, `${e.name} ko Member banao`)}>
               {tr('Convert to member', 'Member banao')}
             </Button>
-            <Button variant="ghost" onClick={onReschedule} ariaLabel={tr(`Change follow-up date for ${e.name}`, `${e.name}: Dobara call kab`)}>
+            <Button wrap variant="ghost" onClick={onReschedule} ariaLabel={tr(`Change follow-up date for ${e.name}`, `${e.name}: Dobara call kab`)}>
               {tr('Follow-up date', 'Dobara call kab')}
             </Button>
-            <Button variant="quiet" tone="danger" onClick={onLost} ariaLabel={tr(`${e.name} is not interested`, `${e.name} Nahi aayenge`)}>
+            <Button wrap variant="quiet" tone="danger" onClick={onLost} ariaLabel={tr(`${e.name} is not interested`, `${e.name} Nahi aayenge`)}>
               {tr('Not interested', 'Nahi aayenge')}
             </Button>
           </>
         )}
         {e.status === 'joined' && e.memberId && (
-          <Button variant="ghost" onClick={() => navigate(`/members/${e.memberId}`)}>
+          <Button wrap variant="ghost" onClick={() => navigate(`/members/${e.memberId}`)}>
             {tr('Open member', 'Member dekho')}
           </Button>
         )}
         {e.status === 'lost' && (
-          <Button variant="ghost" onClick={onReopen} ariaLabel={tr(`Reopen ${e.name}`, `${e.name} ko wapas kholo`)}>
+          <Button wrap variant="ghost" onClick={onReopen} ariaLabel={tr(`Reopen ${e.name}`, `${e.name} ko wapas kholo`)}>
             {tr('Reopen', 'Wapas kholo')}
           </Button>
         )}
@@ -316,7 +316,11 @@ function StatusPill({ bucket }: { bucket: ReturnType<typeof enquiryBucket> }) {
   }
 }
 
-/** Two buttons a row on a 375px phone, more on a wider screen; every one at least 44px tall. */
+/**
+ * Two buttons a row on a 375px phone, more on a wider screen, one a row on a very narrow one;
+ * every one at least 44px tall. A label too long for its half ("Convert to member", a Hinglish
+ * one) wraps onto a second line inside its button instead of spilling out of it.
+ */
 const actionsGrid: CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(min(140px, 100%), 1fr))',
@@ -336,7 +340,10 @@ const linkButton: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  whiteSpace: 'nowrap',
+  textAlign: 'center',
+  lineHeight: 1.25,
+  minWidth: 0,
+  overflowWrap: 'anywhere',
 };
 
 function UndoBar({ message, onUndo }: { message: string; onUndo: () => void }) {
@@ -591,9 +598,12 @@ function ConvertFlow({
   onClose: () => void;
   onError: (message: string) => void;
 }) {
-  const { updateEnquiry } = useCrm();
-  const existing = useMemo(() => findDuplicatePhone(members, enquiry.phone), [members, enquiry.phone]);
+  const { updateEnquiry, setMemberArchived } = useCrm();
+  // Frozen when the flow opens: bringing an archived member back must not swap this sheet for the
+  // "Already a member" one half-way through.
+  const [existing] = useState(() => findDuplicatePhone(members, enquiry.phone));
   const [busy, setBusy] = useState(false);
+  const [restoreError, setRestoreError] = useState<string | null>(null);
 
   const link = async (member: Member) => {
     try {
@@ -608,7 +618,53 @@ function ConvertFlow({
     }
   };
 
-  if (existing && !existing.archived) {
+  if (existing?.archived) {
+    // The number belongs to someone who was archived: the Add form would refuse it, and the
+    // owner cannot see them in the roster. Bring them back and link the enquiry in one tap.
+    return (
+      <Sheet
+        title={tr('Already a member (archived)', 'Pehle se member hain (archive mein)')}
+        onClose={onClose}
+        footer={
+          <>
+            <Button variant="ghost" onClick={onClose}>
+              {tr('Cancel', 'Cancel')}
+            </Button>
+            <Button
+              wrap
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                setRestoreError(null);
+                try {
+                  await setMemberArchived(existing.id, false);
+                } catch (e) {
+                  setRestoreError(e instanceof Error ? e.message : tr('Could not restore that member.', 'Member wapas nahi aaya.'));
+                  setBusy(false);
+                  return;
+                }
+                await link({ ...existing, archived: false });
+                setBusy(false);
+                onClose();
+              }}
+            >
+              {tr(`Bring back ${existing.fullName} and link`, `${existing.fullName} ko wapas lao aur jodo`)}
+            </Button>
+          </>
+        }
+      >
+        {restoreError && <ErrorBanner>{restoreError}</ErrorBanner>}
+        <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 14, color: color.ink, overflowWrap: 'anywhere' }}>
+          {tr(
+            `${existing.fullName} already has ${formatPhone(enquiry.phone)}, but they were archived, so they are not in the list.`,
+            `${existing.fullName} ke paas ${formatPhone(enquiry.phone)} number hai, par woh archive mein hain, isliye list mein nahi dikhte.`,
+          )}
+        </p>
+      </Sheet>
+    );
+  }
+
+  if (existing) {
     return (
       <Sheet
         title={tr('Already a member', 'Pehle se member hain')}

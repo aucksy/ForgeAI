@@ -124,6 +124,8 @@ export function MemberFormSheet({
     setSaving(true);
     try {
       await setMemberArchived(archivedClash.id, false);
+      // The restored member IS the one being saved (an enquiry being converted links to them).
+      onSaved?.({ ...archivedClash, archived: false });
       onClose();
       navigate(`/members/${archivedClash.id}`);
     } catch (e) {

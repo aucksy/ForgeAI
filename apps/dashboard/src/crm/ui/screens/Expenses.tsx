@@ -21,7 +21,7 @@ import {
   shiftMonth,
   totalsByCategory,
 } from '../../logic/expenses';
-import { formatINR, parseRupeeInput } from '../../logic/money';
+import { formatINR, formatINRShort, parseRupeeInput } from '../../logic/money';
 import { EARLIEST_DATE } from '../../data/adapter';
 import type { Expense, ExpenseCategory } from '../../types';
 import {
@@ -103,7 +103,8 @@ export function ExpensesScreen() {
                   fontSize: 12,
                   fontWeight: 700,
                   cursor: 'pointer',
-                  minHeight: 28,
+                  minHeight: TOUCH,
+                  padding: '0 12px',
                 }}
               >
                 {tr('Back to this month', 'Is mahine par jao')}
@@ -117,11 +118,24 @@ export function ExpensesScreen() {
       </Card>
 
       <Grid min={150}>
-        <StatTile label={tr('Collected', 'Collection')} value={formatINR(summary.collectedP)} tone="good" />
-        <StatTile label={tr('Expenses', 'Kharcha')} value={formatINR(summary.spentP)} tone={summary.spentP > 0 ? 'warn' : undefined} />
+        {/* Short figures (₹1.2L) so a big month never breaks across lines on a phone; the exact
+            amount is on hover and read out by screen readers. */}
+        <StatTile
+          label={tr('Collected', 'Collection')}
+          value={formatINRShort(summary.collectedP)}
+          fullValue={formatINR(summary.collectedP)}
+          tone="good"
+        />
+        <StatTile
+          label={tr('Expenses', 'Kharcha')}
+          value={formatINRShort(summary.spentP)}
+          fullValue={formatINR(summary.spentP)}
+          tone={summary.spentP > 0 ? 'warn' : undefined}
+        />
         <StatTile
           label={tr('Profit', 'Munafa')}
-          value={formatINR(summary.profitP)}
+          value={formatINRShort(summary.profitP)}
+          fullValue={formatINR(summary.profitP)}
           tone={summary.profitP < 0 ? 'critical' : 'accent'}
           sub={summary.profitP < 0 ? tr('Spent more than collected', 'Collection se zyada kharcha hua') : undefined}
         />

@@ -778,3 +778,62 @@ describe('the gym’s GST registration is snapshotted onto every receipt', () =>
     expect(second.gstinAtSale).toBe('27AAPFU0939F1ZV');
   });
 });
+
+describe('Freeze / extra days', () => {
+  const sellFrom = async (memberId: string, planId: string, startsOn: string) =>
+    (
+      await db.sellMembership({
+        memberId,
+        planId,
+        startsOn,
+        priceP: 300_000,
+        joiningFeeP: 0,
+        notes: null,
+        collectNowP: 0,
+        method: 'cash',
+        reference: null,
+        paidOn: TODAY,
+        soldBy: null,
+      })
+    ).membership;
+
+  it('moves the end date and records why in the plan notes', async () => {
+    const m = await db.createMember(memberDraft());
+    const plan = await db.createPlan(planDraft());
+    const term = await sellFrom(m.id, plan.id, TODAY);
+    const extended = await db.extendMembership(term.id, 15, 'Freeze - medical');
+    expect(extended.endsOn).toBe('2026-11-09');
+    expect(extended.notes).toBe('+15 days (Freeze - medical): 2026-10-25 -> 2026-11-09');
+  });
+
+  it('refuses a cancelled plan', async () => {
+    const m = await db.createMember(memberDraft());
+    const plan = await db.createPlan(planDraft());
+    const term = await sellFrom(m.id, plan.id, TODAY);
+    await db.cancelMembership(term.id, null);
+    await expect(db.extendMembership(term.id, 10, 'Freeze')).rejects.toThrow(/cancelled/);
+    expect((await db.load()).memberships[0].endsOn).toBe('2026-10-25');
+  });
+
+  it('refuses an earlier plan when a later one is queued, but not when the later one is cancelled', async () => {
+    const m = await db.createMember(memberDraft());
+    const plan = await db.createPlan(planDraft());
+    const first = await sellFrom(m.id, plan.id, TODAY);
+    const renewal = await sellFrom(m.id, plan.id, '2026-10-26');
+    await expect(db.extendMembership(first.id, 10, 'Freeze')).rejects.toThrow(/later plan/);
+    // The plan that ends last takes the days.
+    expect((await db.extendMembership(renewal.id, 10, 'Freeze')).endsOn).toBe('2027-02-04');
+    // With the renewal cancelled, the first plan is the one that ends last again.
+    await db.cancelMembership(renewal.id, null);
+    expect((await db.extendMembership(first.id, 5, 'Freeze')).endsOn).toBe('2026-10-30');
+  });
+
+  it('another member\'s later plan does not block this one', async () => {
+    const a = await db.createMember(memberDraft());
+    const b = await db.createMember(memberDraft({ fullName: 'Aman Gupta', phone: '+919811112222' }));
+    const plan = await db.createPlan(planDraft());
+    const mine = await sellFrom(a.id, plan.id, TODAY);
+    await sellFrom(b.id, plan.id, '2026-12-01');
+    expect((await db.extendMembership(mine.id, 3, 'Extra')).endsOn).toBe('2026-10-28');
+  });
+});

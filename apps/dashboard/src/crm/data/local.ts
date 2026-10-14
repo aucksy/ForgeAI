@@ -147,7 +147,7 @@ export class LocalCrmData implements CrmData {
 
       if (parsed && typeof parsed.version === 'number' && parsed.snapshot) {
         if (parsed.version === SCHEMA_VERSION) {
-          this.cache = normalize(parsed.snapshot);
+          this.cache = normalizeSnapshot(parsed.snapshot);
           this.lastRaw = raw;
           return this.cache;
         }
@@ -168,7 +168,7 @@ export class LocalCrmData implements CrmData {
       this.backUp(raw);
     }
 
-    const seeded = this.seed ? normalize(this.seed()) : emptySnapshot(this.now());
+    const seeded = this.seed ? normalizeSnapshot(this.seed()) : emptySnapshot(this.now());
     this.persist(seeded);
     return seeded;
   }
@@ -213,7 +213,7 @@ export class LocalCrmData implements CrmData {
 
   /** Replace everything — used by "load demo gym" and "start fresh". */
   replaceAll(snapshot: CrmSnapshot): void {
-    this.persist(normalize(snapshot));
+    this.persist(normalizeSnapshot(snapshot));
   }
 
   // ------------------------------------------------------------ reads
@@ -513,6 +513,22 @@ export class LocalCrmData implements CrmData {
     return this.update((db) => {
       const membership = db.memberships.find((m) => m.id === id);
       if (!membership) throw new NotFoundError(tr('That membership', 'Woh plan'));
+      // Same rule as the button on the member's page: only the plan that ends last, and never a
+      // cancelled one. Extending an earlier term under a queued renewal makes the two overlap and
+      // gives the member nothing; extending a cancelled one gives days on a plan that is not on.
+      if (membership.cancelled) {
+        throw new Error(
+          tr('This plan was cancelled. Undo the cancel first, or add the days to their current plan.', 'Yeh plan cancel ho chuka hai. Pehle cancel wapas lo, ya din unke chalu plan mein jodo.'),
+        );
+      }
+      const later = db.memberships.some(
+        (m) => m.memberId === membership.memberId && m.id !== membership.id && !m.cancelled && m.endsOn > membership.endsOn,
+      );
+      if (later) {
+        throw new Error(
+          tr('This member has a later plan. Add the days to the plan that ends last.', 'Is member ka aage ka plan hai. Din us plan mein jodo jo sabse baad mein khatam hota hai.'),
+        );
+      }
       if (!Number.isInteger(days) || days < 1 || days > 365) {
         throw new Error(tr('Days must be a whole number from 1 to 365.', 'Din 1 se 365 ke beech poora number hona chahiye.'));
       }
@@ -583,8 +599,11 @@ export function randomJoinCode(): string {
   return out;
 }
 
-/** Guard against a hand-edited or partially-written blob missing whole collections. */
-function normalize(s: CrmSnapshot): CrmSnapshot {
+/**
+ * Guard against a hand-edited or partially-written blob missing whole collections, or one saved
+ * before a collection existed (enquiries and expenses arrived on 15 Oct 2026).
+ */
+export function normalizeSnapshot(s: CrmSnapshot): CrmSnapshot {
   return {
     gym: s.gym,
     members: s.members ?? [],

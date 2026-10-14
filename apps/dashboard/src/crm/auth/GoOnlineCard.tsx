@@ -18,7 +18,7 @@ import { useCallback, useState } from 'react';
 import type { CrmSnapshot } from '../data/adapter';
 import { uploadSnapshot } from '../data/cloud';
 import { tr } from '../i18n';
-import { STORAGE_KEY } from '../data/local';
+import { normalizeSnapshot, STORAGE_KEY } from '../data/local';
 import { readCloudGym, writeCloudGym } from '../shop/cloudGym';
 import { useCrm } from '../store';
 import { Button, Card, ErrorBanner, SectionTitle, Sheet, TextField, color, font, space } from '../ui/kit';
@@ -66,7 +66,9 @@ function readBrowserGym(): { raw: string | null; snap: CrmSnapshot | null } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { raw, snap: null };
-    return { raw, snap: (JSON.parse(raw) as { snapshot: CrmSnapshot }).snapshot ?? null };
+    // An older browser gym has no enquiries or expenses lists: fill them in before copying it up.
+    const snap = (JSON.parse(raw) as { snapshot?: CrmSnapshot }).snapshot;
+    return { raw, snap: snap ? normalizeSnapshot(snap) : null };
   } catch {
     return { raw: null, snap: null };
   }

@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { collectedOn, inTile, isBirthdayToday, tileCounts } from '../../src/crm/logic/homeTiles';
+import {
+  collectedOn,
+  inTile,
+  isBirthdayToday,
+  isTileFilter,
+  TILE_FILTERS,
+  tileCounts,
+  tileLabel,
+} from '../../src/crm/logic/homeTiles';
 import type { MemberView, Payment } from '../../src/crm/types';
 
 const TODAY = '2026-10-15';
@@ -40,6 +48,33 @@ describe('home tiles', () => {
     expect(isBirthdayToday('2000-02-29', '2028-02-28')).toBe(false);
     expect(isBirthdayToday('2000-02-29', '2028-02-29')).toBe(true);
     expect(isBirthdayToday(null, TODAY)).toBe(false);
+  });
+
+  it('active members: a live plan (running or ending soon), and the tile number is the list it opens', () => {
+    const vs = [
+      view({ state: 'active', daysRemaining: 40 }),
+      view({ state: 'expiring', daysRemaining: 2 }),
+      view({ state: 'expired', coversUntil: null, daysRemaining: -3 }),
+      view({ state: 'upcoming', coversUntil: null, daysRemaining: null }),
+      view({ state: 'never', coversUntil: null, daysRemaining: null }),
+      view({ state: 'cancelled', coversUntil: null, daysRemaining: null }),
+    ];
+    const list = vs.filter((v) => inTile(v, 'active', TODAY));
+    expect(list.map((v) => v.state)).toEqual(['active', 'expiring']);
+    expect(tileCounts(vs, TODAY).active).toBe(list.length);
+    expect(isTileFilter('active')).toBe(true);
+    expect(tileLabel('active')).toBe('Active members');
+  });
+
+  it('every tile number equals the length of the list it opens', () => {
+    const vs = [
+      view({ state: 'active', daysRemaining: 40, lastVisitOn: TODAY }),
+      view({ state: 'expiring', daysRemaining: 0, dob: '1990-10-15' }),
+      view({ state: 'expiring', daysRemaining: 6 }),
+      view({ state: 'expired', coversUntil: null, daysRemaining: -3 }),
+    ];
+    const counts = tileCounts(vs, TODAY);
+    for (const id of TILE_FILTERS) expect(counts[id]).toBe(vs.filter((v) => inTile(v, id, TODAY)).length);
   });
 
   it('came in today, and today\'s collection skips voided receipts', () => {

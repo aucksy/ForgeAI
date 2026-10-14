@@ -45,7 +45,6 @@ export function TodayScreen() {
   const compact = useIsCompact();
 
   const stats = useMemo(() => {
-    const active = memberViews.filter((v) => v.state === 'active' || v.state === 'expiring');
     const expiring = memberViews.filter((v) => v.state === 'expiring');
     const expired = memberViews.filter((v) => v.state === 'expired');
     // Over EVERY member, archived included: archiving someone who owes ₹5,000
@@ -60,7 +59,6 @@ export function TodayScreen() {
     const visitsToday = snapshot.visits.filter((v) => v.visitedOn === today).length;
 
     return {
-      active: active.length,
       expiring,
       expired,
       recentlyLapsed: expired.filter((v) => needsAttentionToday(v)).length,
@@ -136,9 +134,9 @@ export function TodayScreen() {
         />
         <StatTile
           label={tr('Active members', 'Chalu members')}
-          value={stats.active}
+          value={tiles.active}
           tone="accent"
-          onClick={() => navigate('/members')}
+          onClick={() => navigate('/members/f/active')}
           sub={tr('With a live plan', 'Plan chal raha hai')}
         />
         <StatTile

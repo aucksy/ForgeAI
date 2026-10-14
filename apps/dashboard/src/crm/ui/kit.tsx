@@ -169,18 +169,34 @@ export function SectionTitle({ children, action }: { children: ReactNode; action
 
 // ---------------------------------------------------------------- data display
 
+/** Read by screen readers, never seen. */
+const visuallyHidden: CSSProperties = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+};
+
 export function StatTile({
   label,
   value,
   sub,
   tone,
   onClick,
+  fullValue,
 }: {
   label: string;
   value: string | number;
   sub?: string;
   tone?: 'accent' | 'good' | 'warn' | 'critical';
   onClick?: () => void;
+  /** The exact figure behind a short one (₹1.2L → ₹1,23,456), on hover and for screen readers. */
+  fullValue?: string;
 }) {
   const valueColor =
     tone === 'good'
@@ -196,6 +212,7 @@ export function StatTile({
   const body = (
     <>
       <div
+        title={fullValue}
         style={{
           fontFamily: font.mono,
           fontSize: 28,
@@ -205,7 +222,14 @@ export function StatTile({
           overflowWrap: 'anywhere',
         }}
       >
-        {value}
+        {fullValue ? (
+          <>
+            <span aria-hidden="true">{value}</span>
+            <span style={visuallyHidden}>{fullValue}</span>
+          </>
+        ) : (
+          value
+        )}
       </div>
       <div
         style={{
@@ -349,6 +373,7 @@ export function Button({
   tone,
   full,
   ariaLabel,
+  wrap,
 }: {
   children: ReactNode;
   onClick?: () => void;
@@ -364,6 +389,8 @@ export function Button({
    * control in the product.
    */
   ariaLabel?: string;
+  /** Let a long label (a member's name, Hinglish) wrap onto a second line instead of overflowing. */
+  wrap?: boolean;
 }) {
   const danger = tone === 'danger';
   const base: CSSProperties = {
@@ -381,7 +408,9 @@ export function Button({
     alignItems: 'center',
     justifyContent: 'center',
     gap: space.sm,
-    whiteSpace: 'nowrap',
+    ...(wrap
+      ? { whiteSpace: 'normal', textAlign: 'center', overflowWrap: 'anywhere', lineHeight: 1.25, minWidth: 0 }
+      : { whiteSpace: 'nowrap' }),
   };
 
   const skin: CSSProperties =

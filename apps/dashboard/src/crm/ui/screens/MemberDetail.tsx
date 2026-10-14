@@ -635,6 +635,22 @@ function MembershipRow({
       <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginTop: 4 }}>
         {formatDay(membership.startsOn)} → {formatDay(membership.endsOn)}
       </div>
+      {/* The plan's own notes, which is where Freeze / Extra din records itself
+          ("+15 days (Freeze - medical): …"), so the owner can see why the end date moved. */}
+      {membership.notes?.trim() && (
+        <div
+          style={{
+            fontFamily: font.body,
+            fontSize: 12,
+            color: color.inkMuted,
+            marginTop: 4,
+            whiteSpace: 'pre-line',
+            overflowWrap: 'anywhere',
+          }}
+        >
+          {membership.notes.trim()}
+        </div>
+      )}
       {/* Figures wrap inside their own box; Cancel stays on the same line at the
           right. It used to wrap onto its own indented row on a phone for two of
           three cards and not the third. */}

@@ -11,7 +11,7 @@ import {
   type CrmRecord,
   type PullResult,
 } from '../../src/crm/data/cloud';
-import { emptySnapshot } from '../../src/crm/data/local';
+import { emptySnapshot, normalizeSnapshot } from '../../src/crm/data/local';
 import type { MemberDraft, PlanDraft } from '../../src/crm/types';
 
 const TODAY = '2026-10-14';
@@ -261,5 +261,23 @@ describe('uploadSnapshot', () => {
     expect(back.visits).toHaveLength(UPLOAD_CHUNK + 5);
     expect(back.visits.every((v) => v.gymId === 'g1')).toBe(true);
     expect(allRecords(snap, 'g1')[0]).toEqual({ k: 'gym', id: 'gym', d: { name: 'Old Gym', phone: null, address: null, gstin: null } });
+  });
+
+  it('an old browser gym saved before enquiries and expenses existed still goes online', async () => {
+    const server = new FakeServer();
+    const full = emptySnapshot(1, 'Old Gym');
+    full.visits.push({ id: 'v1', gymId: 'local', memberId: 'm', visitedOn: TODAY, checkedInAt: 1, source: 'desk' } as never);
+    // Exactly what an older browser has stored: no `enquiries`, no `expenses` key at all.
+    const old: Partial<typeof full> = { ...full };
+    delete old.enquiries;
+    delete old.expenses;
+    expect('enquiries' in old || 'expenses' in old).toBe(false);
+    await expect(uploadSnapshot(server, 'k', old as never, 'g1')).resolves.toBeUndefined();
+    const back = await new CloudCrmData('k', server).load();
+    expect(back.visits).toHaveLength(1);
+    expect(back.enquiries).toEqual([]);
+    expect(back.expenses).toEqual([]);
+    // The same snapshot after the panel fills the missing lists in.
+    expect(allRecords(normalizeSnapshot(old as never), 'g1')).toEqual(allRecords(old as never, 'g1'));
   });
 });

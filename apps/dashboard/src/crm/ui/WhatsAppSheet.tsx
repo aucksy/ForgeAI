@@ -85,9 +85,13 @@ export function WhatsAppSheet({ view, onClose }: { view: MemberView; onClose: ()
 
 export function WhatsAppQueue({ views, kind, onClose }: { views: MemberView[]; kind: MessageKind; onClose: () => void }) {
   const { snapshot, today } = useCrm();
-  const people = useMemo(() => views.filter((v) => validateE164(v.member.phone) !== null), [views]);
-  const skipped = views.length - people.length;
-  const [i, setI] = useState(0);
+  // The list as it was when the queue opened. Working through it changes it (a member who pays
+  // drops off "fees due"), and a live list would skip people or point past its end.
+  const [list] = useState(() => views);
+  const people = useMemo(() => list.filter((v) => validateE164(v.member.phone) !== null), [list]);
+  const skipped = list.length - people.length;
+  const [at, setI] = useState(0);
+  const i = Math.min(at, Math.max(0, people.length - 1));
   const [sent, setSent] = useState<Set<string>>(() => new Set());
   const v = people[i];
   const [edited, setEdited] = useState<Record<string, string>>({});
@@ -103,11 +107,11 @@ export function WhatsAppQueue({ views, kind, onClose }: { views: MemberView[]; k
       onClose={onClose}
       footer={
         <>
-          <Button variant="ghost" disabled={i === 0} onClick={() => setI((n) => Math.max(0, n - 1))}>
+          <Button variant="ghost" disabled={i === 0} onClick={() => setI(Math.max(0, i - 1))}>
             {tr('Back', 'Peeche')}
           </Button>
           {i < people.length - 1 ? (
-            <Button onClick={() => setI((n) => n + 1)}>{sent.has(v?.member.id ?? '') ? tr('Next', 'Agla') : tr('Skip', 'Chhodo')}</Button>
+            <Button onClick={() => setI(Math.min(people.length - 1, i + 1))}>{sent.has(v?.member.id ?? '') ? tr('Next', 'Agla') : tr('Skip', 'Chhodo')}</Button>
           ) : (
             <Button onClick={onClose}>{tr('Done', 'Ho gaya')}</Button>
           )}
