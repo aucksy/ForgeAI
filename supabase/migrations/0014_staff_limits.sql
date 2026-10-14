@@ -10,7 +10,7 @@
 create or replace function public.crm_push(p_key text, p_base bigint, p_records jsonb, p_push_id uuid default null)
   returns bigint language plpgsql security definer set search_path = public as $$
 declare g uuid := public._owner_gym(p_key); cur bigint; v bigint; r jsonb; k text; rid text; n int; done bigint;
-  st public.gym_staff := public._staff(p_key); is_staff boolean; old jsonb;
+  st public.gym_staff := public._staff(p_key); is_staff boolean; prev jsonb;
 begin
   if jsonb_typeof(p_records) is distinct from 'array' then raise exception 'INVALID'; end if;
   n := jsonb_array_length(p_records);
@@ -33,14 +33,14 @@ begin
       -- Front desk: no plans, expenses or gym details; no voiding a receipt; no cancelling,
       -- un-cancelling or moving the end of an existing membership (freeze / extra days).
       if k in ('plan','expense','gym') then raise exception 'OWNER_ONLY'; end if;
-      select data into old from public.crm_records where gym_id = g and kind = k and id = rid and not deleted;
-      if old is not null and k = 'payment'
-         and coalesce(old->>'voided','false') <> coalesce(r->'d'->>'voided','false') then
+      select data into prev from public.crm_records where gym_id = g and kind = k and id = rid and not deleted;
+      if prev is not null and k = 'payment'
+         and coalesce(prev->>'voided','false') <> coalesce(r->'d'->>'voided','false') then
         raise exception 'OWNER_ONLY';
       end if;
-      if old is not null and k = 'membership'
-         and (coalesce(old->>'cancelled','false') <> coalesce(r->'d'->>'cancelled','false')
-              or coalesce(old->>'endsOn','') <> coalesce(r->'d'->>'endsOn','')) then
+      if prev is not null and k = 'membership'
+         and (coalesce(prev->>'cancelled','false') <> coalesce(r->'d'->>'cancelled','false')
+              or coalesce(prev->>'endsOn','') <> coalesce(r->'d'->>'endsOn','')) then
         raise exception 'OWNER_ONLY';
       end if;
     end if;
