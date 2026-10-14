@@ -32,6 +32,11 @@ JS_ERROR = re.compile(r"\s[EF][/ ]\s*(ReactNativeJS|ReactNative|unknown:ReactNat
 JS_ANY = re.compile(r"\s[VDIWEF][/ ]\s*ReactNativeJS\s*[(:]")
 UNHANDLED = re.compile(r"(?i)unhandled (promise )?rejection|unhandled (js )?exception")
 JS_WARN = re.compile(r"\sW[/ ]\s*(ReactNativeJS|ForgeQA)\s*[(:]")
+# Audit toolkit (14 Oct 2026): an error the app catches on purpose is logged at warn level under
+# "ForgeErr" (or a feature tag such as "ForgeHealth") instead of being dropped. Any such line in a
+# phone test means something a person tapped quietly did not work — it fails the test, as the
+# dead Health Connect button would have.
+SWALLOWED = re.compile(r"\s[WEF][/ ]\s*(ForgeErr|ForgeHealth)\s*[(:]")
 
 
 def read(path):
@@ -76,6 +81,8 @@ def scan(out):
                 findings.append(f"ANR ({where}): {l.strip()}")
             elif JS_ERROR.search(l):
                 findings.append(f"JS ERROR ({where}): {l.strip()}")
+            elif SWALLOWED.search(l):
+                findings.append(f"CAUGHT ERROR ({where}): {l.strip()}")
             elif JS_ANY.search(l) and UNHANDLED.search(l):
                 findings.append(f"UNHANDLED JS ERROR ({where}): {l.strip()}")
             elif JS_WARN.search(l):

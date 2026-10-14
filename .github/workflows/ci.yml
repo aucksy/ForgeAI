@@ -20,6 +20,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Audit toolkit (14 Oct 2026): a caught-and-dropped error hid the dead Health Connect button
+      # for 11 releases. The count of silent catches may only go down; a new one fails here.
+      - name: Silent-catch ratchet
+        run: python3 scripts/ci/silent_catch_ratchet.py
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
