@@ -9,6 +9,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useAuth } from '../../auth/AuthProvider';
+import { SignInCard } from '../../auth/GoOnlineCard';
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
@@ -34,6 +36,8 @@ export function SettingsScreen() {
   const { snapshot, updateGym, loadDemoGym, startEmptyGym } = useCrm();
   const { gym } = snapshot;
   const { cloud, startOver, disconnectShop, renameCloudGym } = useShop();
+  // Online records are never wiped, replaced with the demo, or cut off from here.
+  const online = useAuth().session?.online === true;
 
   const [name, setName] = useState(gym.name);
   const [phone, setPhone] = useState(gym.phone ?? '');
@@ -90,6 +94,9 @@ export function SettingsScreen() {
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
+      {/* Sign-in first: "put your records online" is the one thing here that protects the gym. */}
+      <SignInCard />
+
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Gym details</SectionTitle>
         <TextField label="Gym name" value={name} onChange={setName} />
@@ -136,10 +143,12 @@ export function SettingsScreen() {
           {counts.visits} check-ins. Set up {formatDay(dateISOFromEpoch(gym.createdAt))}.
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-          This gym is stored in this browser. Signing in to the cloud (coming next) is what makes it
-          reachable from any device and safe if this computer dies.
+          {online
+            ? 'Stored online. Safe if a phone or computer breaks, and the same on every device you sign in on.'
+            : 'Stored in this browser only. Put your records online (above) to keep them safe and open them anywhere.'}
         </p>
 
+        {!online && (
         <Row gap={space.sm}>
           <div style={{ marginTop: space.lg }}>
             <Button variant="ghost" onClick={() => setConfirming('demo')}>
@@ -169,6 +178,7 @@ export function SettingsScreen() {
             </div>
           )}
         </Row>
+        )}
       </Card>
 
       {confirming && (

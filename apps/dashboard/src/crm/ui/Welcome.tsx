@@ -1,6 +1,10 @@
 /**
  * First run — a brand new, empty CRM.
  *
+ * Since 14 Oct 2026 (Gym Panel step 1) three doors, the commonest first: SIGN IN with a mobile
+ * number and the code the gym owner made; START MY GYM, online from the first minute; and the
+ * demo. "Create my gym" no longer makes a gym that lives only in this browser.
+ *
  * Two doors, stated plainly: start the demo (a real cloud gym with a join code and
  * a shop, plus sample members in this browser), or set up your own gym, empty. The
  * mobile app's Phase O2 lesson applies exactly here — a real gym owner must never
@@ -11,19 +15,22 @@
 
 import { useState } from 'react';
 
+import { useAuth } from '../auth/AuthProvider';
+import { SignInForm, StartGymForm } from '../auth/SignInForms';
 import { useShop } from '../shop/ShopProvider';
 import { useCrm } from '../store';
-import { Button, Card, ErrorBanner, TextField, color, font, radius, space } from './kit';
+import { Button, Card, ErrorBanner, color, font, radius, space } from './kit';
 
 export function Welcome() {
-  const { loadDemoGym, startEmptyGym } = useCrm();
-  const { startDemo, notice } = useShop();
-  const [name, setName] = useState('');
-  const [busy, setBusy] = useState<'demo' | 'gym' | 'local' | null>(null);
+  const { loadDemoGym } = useCrm();
+  const { startDemo, notice: shopNotice } = useShop();
+  const { notice: authNotice } = useAuth();
+  const notice = authNotice ?? shopNotice;
+  const [busy, setBusy] = useState<'demo' | 'local' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [demoFailed, setDemoFailed] = useState(false);
 
-  const run = async (which: 'demo' | 'gym' | 'local', fn: () => Promise<void>) => {
+  const run = async (which: 'demo' | 'local', fn: () => Promise<void>) => {
     setBusy(which);
     setError(null);
     try {
@@ -83,6 +90,34 @@ export function Welcome() {
 
         <Card>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
+            Sign in
+          </h2>
+          <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+            Your gym already uses ForgeAI? Sign in with your mobile number and the code from your gym owner.
+          </p>
+          <SignInForm />
+        </Card>
+
+        <div
+          style={{
+            marginTop: space.lg,
+            // Same inset as the cards around it, so all their text shares one left edge.
+            padding: space.xl,
+            border: `1px dashed ${color.borderStrong}`,
+            borderRadius: radius.lg,
+          }}
+        >
+          <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
+            New here? Set up your gym
+          </h2>
+          <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+            Starts empty. You add your members and your prices — nothing is made up for you.
+          </p>
+          <StartGymForm />
+        </div>
+
+        <Card style={{ marginTop: space.lg }}>
+          <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
             See it working
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
@@ -110,41 +145,6 @@ export function Welcome() {
             </div>
           )}
         </Card>
-
-        <div
-          style={{
-            marginTop: space.lg,
-            // Same inset as the card above, so both cards' text shares one left edge.
-            padding: space.xl,
-            border: `1px dashed ${color.borderStrong}`,
-            borderRadius: radius.lg,
-          }}
-        >
-          <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            Or set up your own gym
-          </h2>
-          <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Starts empty. You add your members and your prices — nothing is made up for you.
-          </p>
-
-          <TextField
-            label="Gym name"
-            value={name}
-            onChange={setName}
-            placeholder="Iron Temple Fitness"
-          />
-
-          <div style={{ marginTop: space.lg }}>
-            <Button
-              variant="ghost"
-              full
-              disabled={busy !== null || name.trim().length < 2}
-              onClick={() => run('gym', () => startEmptyGym(name.trim()))}
-            >
-              {busy === 'gym' ? 'Setting up…' : 'Create my gym'}
-            </Button>
-          </div>
-        </div>
       </div>
     </div>
   );

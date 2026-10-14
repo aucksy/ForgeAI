@@ -26,7 +26,7 @@ type Row = Record<string, unknown>;
 /** Give up on a call after this long — a hung request must not freeze a button. */
 const TIMEOUT_MS = 15_000;
 
-async function call<T>(fn: string, args: Record<string, unknown>): Promise<T> {
+export async function call<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   let timer: number | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timer = window.setTimeout(() => reject(new Error('timed out')), TIMEOUT_MS);

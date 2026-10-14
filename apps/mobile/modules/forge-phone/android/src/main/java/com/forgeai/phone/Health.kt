@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -55,11 +57,30 @@ object Health {
     return runBlocking { c.permissionController.getGrantedPermissions().containsAll(PERMISSIONS) }
   }
 
-  /** Open Health Connect's own permission screen. The app checks `granted` when it is back. */
+  /**
+   * Open Health Connect's own permission screen. The app checks `granted` when it is back.
+   *
+   * v0.39.0 fix: on Android 14+ the library's contract builds an androidx-only intent
+   * (`androidx.activity.result.contract.action.REQUEST_PERMISSIONS`) that ONLY an activity-result
+   * registry understands. Sent with plain startActivityForResult it threw ActivityNotFoundException,
+   * the error was swallowed, and "Connect" did nothing on every Android 14-16 phone. The registry
+   * turns it into the system's real permission request. Must run on the UI thread.
+   */
   fun request(activity: Activity): Boolean {
     if (status(activity) != "available") return false
-    val intent = PermissionController.createRequestPermissionResultContract(PROVIDER).createIntent(activity, PERMISSIONS)
-    activity.startActivityForResult(intent, REQUEST_CODE)
+    val contract = PermissionController.createRequestPermissionResultContract(PROVIDER)
+    val owner = activity as? ComponentActivity
+    if (owner != null) {
+      // One-shot: the launcher unregisters itself once Health Connect answers.
+      val holder = arrayOfNulls<ActivityResultLauncher<Set<String>>>(1)
+      val launcher = owner.activityResultRegistry.register("forge-health-${System.nanoTime()}", contract) { _ ->
+        holder[0]?.unregister()
+      }
+      holder[0] = launcher
+      launcher.launch(PERMISSIONS)
+      return true
+    }
+    activity.startActivityForResult(contract.createIntent(activity, PERMISSIONS), REQUEST_CODE)
     return true
   }
 
@@ -72,6 +93,14 @@ object Health {
       listOf(
         Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$PROVIDER&url=healthconnect%3A%2F%2Fonboarding")).setPackage("com.android.vending"),
         Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$PROVIDER")),
+      )
+    } else if (Build.VERSION.SDK_INT >= 34) {
+      // v0.39.0: Android 14+ — ForgeAI's own page in Health Connect first (where access refused
+      // twice is switched back on), then Health Connect's home.
+      listOf(
+        Intent("android.health.connect.action.MANAGE_HEALTH_PERMISSIONS").putExtra(Intent.EXTRA_PACKAGE_NAME, ctx.packageName),
+        Intent("android.health.connect.action.HEALTH_HOME_SETTINGS"),
+        Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS),
       )
     } else {
       listOf(Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS))

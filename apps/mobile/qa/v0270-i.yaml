@@ -216,27 +216,28 @@ appId: com.forgeai.app
     timeout: 30000
 - takeScreenshot: 126-settings-list
 - tapOn: "^Health Connect$"
+# v0.39.0: the script took Health Connect access AWAY before this part (the install grants it),
+# so the page must say "Connect" and Connect must really open the system's permission screen.
+# Before v0.39.0 this step accepted "Turn on" and an optional permission screen, so it never saw
+# that Connect did nothing on Android 14+ (the screen never opened). Both are required now.
 - extendedWaitUntil:
-    visible: "^(Connect|Turn on)$|Send past workouts"
+    visible: "^Connect$"
     timeout: 15000
-# "Connect" opens Health Connect's own screen. The cloud phone grants every permission at
-# install, so it may show "Turn on" (already allowed) instead — both lead to "Send past workouts".
 - tapOn:
-    text: "^(Connect|Turn on)$"
+    text: "^Connect$"
     below:
       text: "Health Connect"
-- runFlow:
-    when:
-      visible: '(?i)^(allow all|allow|get started)$'
-    commands:
-      - tapOn:
-          text: '(?i)^(get started|continue|next)$'
-          optional: true
-      - takeScreenshot: 127-health-connect-permissions
-      - tapOn:
-          text: '(?i)^allow all$'
-          optional: true
-      - tapOn: '(?i)^allow$'
+- extendedWaitUntil:
+    visible: '(?i)^(allow all|allow|get started)$'
+    timeout: 20000
+- tapOn:
+    text: '(?i)^(get started|continue|next)$'
+    optional: true
+- takeScreenshot: 127-health-connect-permissions
+- tapOn:
+    text: '(?i)^allow all$'
+    optional: true
+- tapOn: '(?i)^allow$'
 - extendedWaitUntil:
     visible: "Send past workouts"
     timeout: 20000

@@ -69,8 +69,10 @@ class ForgePhoneModule : Module() {
       a.runOnUiThread {
         try {
           Health.request(a)
-        } catch (_: Throwable) {
-          // nothing opens; Profile still shows "Connect"
+        } catch (e: Throwable) {
+          // Nothing opened. Logged (v0.39.0: the silent catch hid that Android 14+ refused it); the
+          // Health Connect page then offers "Open Health Connect" as the way round.
+          android.util.Log.w("ForgeHealth", "permission screen did not open", e)
         }
       }
       true

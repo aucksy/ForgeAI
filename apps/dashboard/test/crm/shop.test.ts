@@ -354,7 +354,8 @@ describe('stored cloud gym', () => {
     expect(readCloudGym(s)).toBeNull();
     const gym = { gymId: 'g', ownerKey: 'a'.repeat(48), joinCode: 'AB12CD', name: 'Iron Temple Fitness', demo: true };
     writeCloudGym(gym, s);
-    expect(readCloudGym(s)).toEqual(gym);
+    // 0010 added who is signed in and whether the records are online; an old key has neither.
+    expect(readCloudGym(s)).toEqual({ ...gym, online: false, person: null });
     clearCloudGym(s);
     expect(readCloudGym(s)).toBeNull();
   });

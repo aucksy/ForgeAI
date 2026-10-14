@@ -5,9 +5,15 @@
  * the cloud only stores its hash, so this browser holding the key IS the login.
  * Lose it and the gym is unreachable, which is acceptable for a demo gym and is why
  * Settings offers "Start over with a new demo gym" rather than a recovery path.
+ *
+ * Since 0010 (14 Oct 2026) a person can SIGN IN with their mobile number and a code: then
+ * `ownerKey` holds that person's SESSION key (every owner call accepts it), `person` says who is
+ * signed in, and `online` is true once the gym's records live in the cloud rather than in this
+ * browser.
  */
 
 import type { KeyValueStore } from '../data/local';
+import { personFromRow, type Person } from '../auth/signin';
 
 export const CLOUD_GYM_KEY = 'forgeai.cloudGym.v1';
 
@@ -22,6 +28,10 @@ export interface CloudGym {
    * the shop on must never lose its own members because the shop went away.
    */
   demo: boolean;
+  /** The records live online (CloudCrmData), not in this browser. */
+  online?: boolean;
+  /** Who is signed in on this device; absent for an old owner key. */
+  person?: Person | null;
 }
 
 function store(s?: KeyValueStore): KeyValueStore | null {
@@ -47,6 +57,8 @@ export function readCloudGym(s?: KeyValueStore): CloudGym | null {
       joinCode: typeof v.joinCode === 'string' ? v.joinCode : '',
       name: typeof v.name === 'string' ? v.name : '',
       demo: v.demo === true,
+      online: v.online === true,
+      person: personFromRow(v.person),
     };
   } catch {
     return null;

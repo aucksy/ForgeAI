@@ -53,6 +53,9 @@ function HealthRow() {
   const [state, setState] = useState<HealthState | null>(null);
   const [sent, setSent] = useState<SendResult | null>(null);
   const [busy, setBusy] = useState(false);
+  // v0.39.0: Connect was pressed and access is still off — Android shows no screen after two
+  // refusals, so offer Health Connect's own page as the way round.
+  const [asked, setAsked] = useState(false);
 
   const check = useCallback(async () => {
     setState(await healthState().catch(() => 'none' as const));
@@ -110,8 +113,17 @@ function HealthRow() {
             // On from now; it only counts once Health Connect's screen allows it (checked on return).
             setOn(true);
             askHealthConnect();
+            setAsked(true);
           }}
         />
+      ) : null}
+      {state === 'off' && asked ? (
+        <View style={{ gap: space.xs, paddingBottom: space.sm }}>
+          <Text style={{ ...CAPTION(), textAlign: 'center' }}>
+            Nothing opened? Open Health Connect, find ForgeAI and allow it there.
+          </Text>
+          <GhostButton label="Open Health Connect" icon="heart" onPress={() => void openHealthConnect()} />
+        </View>
       ) : null}
       {state === 'allowed' ? (
         <GhostButton

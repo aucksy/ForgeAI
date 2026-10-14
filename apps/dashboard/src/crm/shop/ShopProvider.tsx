@@ -19,6 +19,7 @@ import {
   type ReactNode,
 } from 'react';
 
+import { useAuth } from '../auth/AuthProvider';
 import { useCrm } from '../store';
 import { Toast } from '../ui/kit';
 import { replace } from '../ui/router';
@@ -120,6 +121,7 @@ function signature(orders: readonly Order[]): string {
 
 export function ShopProvider({ children }: { children: ReactNode }) {
   const { snapshot, loadDemoGym, updateGym, startEmptyGym } = useCrm();
+  const { lost } = useAuth();
   const [cloud, setCloud] = useState<CloudGym | null>(() => readCloudGym());
   const [online, setOnline] = useState(true);
   const [notice, setNotice] = useState<string | null>(null);
@@ -158,6 +160,11 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   /** The key no longer opens a gym. Drop it; a demo CRM goes with it. */
   const keyLost = useCallback(
     async (gym: CloudGym) => {
+      // A signed-in person's key: the whole panel goes back to the sign-in door.
+      if (gym.person) {
+        lost();
+        return;
+      }
       clearCloudGym();
       setCloud(null);
       resetOrders();
@@ -167,7 +174,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         replace('/');
       }
     },
-    [resetOrders, startEmptyGym],
+    [resetOrders, startEmptyGym, lost],
   );
 
   const cloudRef = useRef(cloud);

@@ -8,7 +8,12 @@
  * navigation race.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
+
+import { cloudApi } from './auth/api';
+import { AuthProvider, useAuth } from './auth/AuthProvider';
+import { PeopleScreen } from './auth/PeopleScreen';
+import { CloudCrmData } from './data/cloud';
 
 import { BrandingScreen } from './brand/BrandingScreen';
 import { atRiskList } from './logic/attendance';
@@ -32,21 +37,44 @@ import { useRoute } from './ui/router';
 
 export function CrmApp() {
   return (
-    <CrmProvider>
+    <AuthProvider>
+      <SessionRoot />
+    </AuthProvider>
+  );
+}
+
+/**
+ * One panel per key. Signing in, out, or putting the records online changes the key, and the
+ * whole panel remounts on it — so one gym's screens never keep another gym's records.
+ */
+function SessionRoot() {
+  const { session, lost } = useAuth();
+  const lostRef = useRef(lost);
+  lostRef.current = lost;
+  const onlineKey = session?.online ? session.ownerKey : null;
+  const data = useMemo(
+    () => (onlineKey ? new CloudCrmData(onlineKey, cloudApi, { onSignedOut: () => lostRef.current() }) : undefined),
+    [onlineKey],
+  );
+  return (
+    <CrmProvider key={`${session?.ownerKey ?? 'none'}:${onlineKey ? 'online' : 'browser'}`} data={data}>
       <ShopProvider>
-        <Routes />
+        <Routes online={onlineKey !== null} />
       </ShopProvider>
     </CrmProvider>
   );
 }
 
-function Routes() {
+function Routes({ online }: { online: boolean }) {
   const { snapshot, memberViews, today } = useCrm();
   const { newCount } = useShop();
   const route = useRoute();
 
   // Never set up: no plans, no members, and still the placeholder name.
+  // An online gym is always set up: it was named when it was made, and its welcome screen's
+  // demo and erase buttons must never touch online records.
   const isNewGym =
+    !online &&
     snapshot.members.length === 0 && snapshot.plans.length === 0 && snapshot.gym.name === 'My Gym';
 
   const nav = useMemo<NavItem[]>(() => {
@@ -120,6 +148,8 @@ function Screen({ segments }: { segments: string[] }) {
       if (id === 'branding') return <BrandingScreen />;
       // Invite link + front-desk QR poster.
       if (id === 'invite') return <InviteScreen />;
+      // Staff & sign-in: people who may sign in, and the codes the owner makes for them.
+      if (id === 'people') return <PeopleScreen />;
       return <SettingsScreen />;
     default:
       return <TodayScreen />;

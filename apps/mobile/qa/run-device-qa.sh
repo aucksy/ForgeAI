@@ -311,9 +311,21 @@ python3 "$QA_DIR/notif.py" live-back "$OUT/h3-app-open.txt" >> "$OUT/timeline.tx
 # A Strong export "someone made" (older layout, pounds and miles), in Downloads, for the import.
 push_fixture "$QA_DIR/fixtures/qa-strong.csv" /sdcard/Download/qa-strong.csv
 adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+# v0.39.0: take Health Connect access away first (the install grants every permission), so part I
+# presses "Connect" for real and must see the system's permission screen open. Logcat is read
+# after: the app logs "permission screen did not open" when Android refuses the request.
+for perm in android.permission.health.WRITE_EXERCISE android.permission.health.WRITE_ACTIVE_CALORIES_BURNED; do
+  adb shell pm revoke "$PKG" "$perm" > "$OUT/i-hc-revoke.txt" 2>&1 || log "HEALTH CONNECT: could not revoke $perm ($(tr -d '\r' < "$OUT/i-hc-revoke.txt"))"
+done
+adb logcat -c 2>/dev/null || true
 free_maestro
 log "part I start"
 maestro test --format junit --output "$OUT/part-i.xml" --test-output-dir "$OUT/part-i" "$QA_DIR/v0270-i.yaml"   > "$OUT/part-i.log" 2>&1 || { status=1; log "PART I FAILED"; }
+adb logcat -d -s ForgeHealth > "$OUT/i-health-logcat.txt" 2>/dev/null || true
+if grep -q "did not open" "$OUT/i-health-logcat.txt"; then
+  status=1
+  log "HEALTH CONNECT: the permission screen did not open (see i-health-logcat.txt)"
+fi
 # The reminders the app set (expo keeps them as alarms) and the widget the home screen holds.
 # NB: a count of dumpsys LINES that mention the app, not a count of alarms (audit QA-27).
 adb shell dumpsys alarm | grep -c "com.forgeai.app" > "$OUT/i-alarm-count.txt" 2>/dev/null || true

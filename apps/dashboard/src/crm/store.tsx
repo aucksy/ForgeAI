@@ -84,8 +84,23 @@ export function useCrm(): CrmContextValue {
   return ctx;
 }
 
-export function CrmProvider({ data, children }: { data?: LocalCrmData; children: ReactNode }) {
-  const db = useMemo(() => data ?? new LocalCrmData({ seed: () => emptySnapshot(Date.now()) }), [data]);
+/**
+ * Where the records live: this browser (`LocalCrmData`, which can also be replaced wholesale for
+ * the demo) or online (`CloudCrmData`, which can be refreshed with other devices' changes).
+ */
+export type CrmBackend = CrmData & {
+  replaceAll?: (snapshot: CrmSnapshot) => void;
+  refresh?: () => Promise<boolean>;
+};
+
+/** How often an online gym looks for changes made on other phones and computers. */
+const REFRESH_MS = 15_000;
+
+export function CrmProvider({ data, children }: { data?: CrmBackend; children: ReactNode }) {
+  const db = useMemo<CrmBackend>(
+    () => data ?? new LocalCrmData({ seed: () => emptySnapshot(Date.now()) }),
+    [data],
+  );
 
   // A front desk leaves this tab open for days. Freezing `today` at mount meant
   // that after midnight every check-in, receipt date and membership start date
@@ -129,13 +144,49 @@ export function CrmProvider({ data, children }: { data?: LocalCrmData; children:
     void reload();
   }, [reload]);
 
+  // Online records: pick up what other devices saved — every few seconds while this tab is in
+  // front, and at once when it comes back. Only a real change redraws the screens.
+  useEffect(() => {
+    const refresh = db.refresh?.bind(db);
+    if (!refresh) return;
+    let busy = false;
+    const tick = async () => {
+      if (busy || document.visibilityState !== 'visible') return;
+      busy = true;
+      try {
+        if (await refresh()) setSnapshot(await db.load());
+      } catch {
+        // Offline for a moment: the next tick tries again; a save shows its own error.
+      } finally {
+        busy = false;
+      }
+    };
+    const timer = window.setInterval(() => void tick(), REFRESH_MS);
+    const onShow = () => void tick();
+    window.addEventListener('focus', onShow);
+    document.addEventListener('visibilitychange', onShow);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('focus', onShow);
+      document.removeEventListener('visibilitychange', onShow);
+    };
+  }, [db]);
+
   /**
    * Run a write, then re-read. Errors are re-thrown so the calling form can show
    * them next to the field that caused them rather than as a page-level failure.
    */
   const mutate = useCallback(
     async <T,>(op: (adapter: CrmData) => Promise<T>): Promise<T> => {
-      const result = await op(db);
+      let result: T;
+      try {
+        result = await op(db);
+      } catch (e) {
+        // Online records: a failed action can still have brought news (a late save, another
+        // desk's change). Show the truth before the form shows why it failed.
+        if (db.refresh) await db.load().then(setSnapshot, () => undefined);
+        throw e;
+      }
       setSnapshot(await db.load());
       return result;
     },
@@ -225,11 +276,14 @@ export function CrmProvider({ data, children }: { data?: LocalCrmData; children:
         void (await mutate((a) => a.checkIn(memberId, day ?? today, source, today))),
       undoCheckIn: async (memberId, day) => void (await mutate((a) => a.undoCheckIn(memberId, day))),
       updateGym: async (patch) => void (await mutate((a) => a.updateGym(patch))),
+      // Browser records only: an online gym is never wiped or filled with sample members.
       loadDemoGym: async () => {
+        if (!db.replaceAll) throw new Error('An online gym can’t be replaced with the demo gym.');
         db.replaceAll(demoSnapshot(today));
         await reload();
       },
       startEmptyGym: async (gymName) => {
+        if (!db.replaceAll) throw new Error('An online gym can’t be erased from here.');
         db.replaceAll(emptySnapshot(Date.now(), gymName));
         await reload();
       },
