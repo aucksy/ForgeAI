@@ -1756,7 +1756,7 @@
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
 - 2026-10-15: **v0.42.0 — the small Hevy gaps: pause the workout, your gym's plates and bars, share
-  picture Story size and See-through** (94bdf98, fb73ad5, 1f05da3, cab3c94).
+  picture Story size and See-through, photos on a workout** (94bdf98, fb73ad5, 1f05da3, cab3c94, 67d5925).
   - Pause (Hevy: tap the duration -> Pause / Resume): pausedAt + pausedTotalMs on the draft (survives
     a restart); saved ended_at = start + time trained so every reader shows the real duration; rest
     timers keep running; a tick resumes. Phone part P2: label unchanged after 70 s, then resume.
@@ -1766,6 +1766,11 @@
   - Share picture: Post (1080x1350) or Story (1080x1920, clear of Instagram's bars); Dark or
     See-through (transparent PNG, white words + shadow); no new figures. Phone steps in part D.
   - Reviewed: no high findings; lb stacks restored; P1 checks the switch really turned off.
+  - Photos on a workout (67d5925): up to 4, private, on Workout complete / workout page / Edit;
+    feed thumbnails; removed with the workout and by Erase all data; not in the Drive backup.
+  - First phone run 38631192810 failed only P1/P2A: their YAML could not be parsed (a heredoc ate a
+    backslash); fixed 637b45b, and CI now parses every qa/*.yaml first. Panel (live): Front desk
+    (Staff) limits, panel crawl in CI (51903dd).
 - 2026-10-15: **v0.41.0 — press-and-hold drag to reorder routines; Save my measurements; panel steps
   3-5 (live) + 0012/0013** (owner asleep: "continue working till end").
   - Routines: hold a routine card ~350 ms, drag within its folder (as Hevy: "tap and hold on a routine
