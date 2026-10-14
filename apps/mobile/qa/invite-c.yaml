@@ -27,6 +27,14 @@ appId: com.forgeai.app
     visible: 'Leave RAM''S FITNESS CLUB IMPACT''s shop\?'
     timeout: 10000
 - tapOn: "Leave shop"
+# Leaving a branded gym redraws the app in ForgeAI's colours, which lands on the Workout tab
+# (as in part BR): back to the Shop tab to see the join card.
+- extendedWaitUntil:
+    visible: "^Shop$"
+    timeout: 20000
+- tapOn:
+    text: "^Shop$"
+    index: 0
 - extendedWaitUntil:
     visible: "^Your gym's shop$"
     timeout: 20000
