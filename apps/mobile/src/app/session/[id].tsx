@@ -4,6 +4,7 @@
  * tap an exercise → its page). Top right, as in Hevy: share (a picture or text) and ⋯ — the same
  * list as the Profile feed's ⋯ (`useWorkoutActions`): Save as routine · Repeat workout · Edit
  * workout · Share as a picture · Share as text · Delete workout (asks first).
+ * 15 Oct 2026: the workout's photos under its name, with "Add photo" (up to 4) and remove.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
@@ -26,6 +27,7 @@ import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { shareTextNow } from '@/tracker/components/ShareTextRow';
 import { WorkoutDetail } from '@/tracker/components/WorkoutDetail';
+import { WorkoutPhotos } from '@/tracker/components/WorkoutPhotos';
 import { NameSheet } from '@/tracker/components/NameSheet';
 import { renameWorkout } from '@/tracker/db/workoutNames';
 import { tell } from '@/lib/tell';
@@ -153,6 +155,7 @@ export default function SessionDetailScreen() {
             </Text>
           </View>
           <InlineError message={actionError} />
+          {id ? <WorkoutPhotos sessionId={id} /> : null}
           <WorkoutDetail
             data={data}
             onOpenExercise={(exerciseId) => navigateOnce(nav, () => router.push({ pathname: '/exercise/[id]', params: { id: exerciseId } }))}

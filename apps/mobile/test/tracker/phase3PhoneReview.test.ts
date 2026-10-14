@@ -328,15 +328,17 @@ describe('a picture taken while Android closed the app is kept', () => {
       const text = readFileSync(f, 'utf8');
       for (const m of text.matchAll(/ImagePicker\.(launchImageLibraryAsync|launchCameraAsync)\(/g)) {
         launches += 1;
-        expect(text.slice(Math.max(0, (m.index ?? 0) - 80), m.index), relative(SRC, f)).toMatch(/launchFor\('(progress-photo|exercise-media|chat-photo|profile-photo)', \(\) =>\s*$/);
+        expect(text.slice(Math.max(0, (m.index ?? 0) - 80), m.index), relative(SRC, f)).toMatch(/launchFor\('(progress-photo|exercise-media|chat-photo|profile-photo|workout-photo)', \(\) =>\s*$/);
       }
     }
-    expect(launches).toBe(7); // progress photo ×2, exercise photo/video ×2, chat meal photo, profile photo ×2 (R2)
+    expect(launches).toBe(9); // progress photo ×2, exercise photo/video ×2, chat meal photo, profile photo ×2 (R2), workout photo ×2 (15 Oct 2026)
     expect(read('app/photos/index.tsx')).toContain('keepPendingPhoto()');
     // EX-13 (audit Phase 4): the form takes back only the picture noted for its own exercise.
     expect(read('app/library/new.tsx')).toContain("keepPendingMedia(editId ?? 'new')");
     expect(read('app/(tabs)/coach.tsx')).toContain("takePendingPick('chat-photo')");
     expect(read('app/edit-profile.tsx')).toContain('keepPendingProfilePhoto()');
+    // 15 Oct 2026: a workout takes back only the picture noted for that same workout.
+    expect(read('tracker/components/WorkoutPhotos.tsx')).toContain('keepPendingWorkoutPhoto(sessionId)');
   });
 });
 

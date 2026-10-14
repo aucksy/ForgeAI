@@ -223,6 +223,7 @@ describe('DS-13 / EX-04: erase clears what lives outside the database', () => {
     expect(await runEraseSteps(steps)).toEqual([]);
     expect(deleted).toEqual([
       'file:///docs/exercise-media/',
+      'file:///docs/workout-photos/',
       'file:///docs/forgeai-workouts-2026-10-01.xlsx',
       'file:///cache/DocumentPicker',
       'file:///cache/forgeai-data-2026.db',

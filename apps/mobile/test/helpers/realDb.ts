@@ -195,6 +195,8 @@ export async function runStartup(): Promise<void> {
   await initDb();
   await initTrackerSchema();
   await initMemberSchema();
+  const { initWorkoutPhotoSchema } = await import('@/tracker/db/workoutPhotoRepo');
+  await initWorkoutPhotoSchema();
   const { ensureHistoryIndexes } = await import('@/tracker/db/historyIndexes');
   await ensureHistoryIndexes();
   if (await hasMemberProfile()) await syncExerciseCatalog();

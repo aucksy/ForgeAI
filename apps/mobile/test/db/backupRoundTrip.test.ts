@@ -16,7 +16,8 @@ type Row = Record<string, string | number>;
 
 /** Tables the backup leaves out ON PURPOSE (see src/cloud/snapshot.ts header). */
 // + `training_changes` (tracker schema v13): this phone's change counter, kept by triggers — not member data.
-const NOT_BACKED_UP = ['meta', 'progress_photos', 'sync_outbox', 'training_changes'];
+// + `workout_photos` (15 Oct 2026): photos on a workout stay on this phone, like progress photos.
+const NOT_BACKED_UP = ['meta', 'progress_photos', 'sync_outbox', 'training_changes', 'workout_photos'];
 
 /** One row per table, every column non-NULL. FK-safe insert order. */
 const FULL_ROWS: [string, Row][] = [

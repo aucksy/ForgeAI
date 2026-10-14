@@ -18,6 +18,7 @@ import { enqueueWrite } from '@/db/writeQueue';
 import { phoneAfterDelete } from '@/tracker/phone/phoneSync';
 
 import { reconcilePrsForExercises } from './prRebuild';
+import { removeWorkoutPhotos } from './workoutPhotos';
 
 export interface DeleteDeps {
   exerciseIds: (sessionId: string) => Promise<string[]>;
@@ -25,6 +26,8 @@ export interface DeleteDeps {
   stillThere: (sessionId: string) => Promise<boolean>;
   afterDelete: (sessionId: string) => Promise<void>;
   reconcile: (exerciseIds: string[]) => Promise<void>;
+  /** 15 Oct 2026: the workout's photos, rows and files (never throws; the start-up sweep retries). */
+  removePhotos?: (sessionId: string) => Promise<void>;
 }
 
 export type DeleteOutcome = { deleted: true; recordsCatchUp: boolean } | { deleted: false };
@@ -45,6 +48,7 @@ const realDeps: DeleteDeps = {
   afterDelete: phoneAfterDelete,
   // Record rows are writes too: queued for the same reason as the delete.
   reconcile: (exerciseIds) => enqueueWrite(() => reconcilePrsForExercises(exerciseIds)),
+  removePhotos: removeWorkoutPhotos,
 };
 
 export async function deleteWorkout(sessionId: string, deps: DeleteDeps = realDeps): Promise<DeleteOutcome> {
@@ -57,6 +61,7 @@ export async function deleteWorkout(sessionId: string, deps: DeleteDeps = realDe
     if (there) return { deleted: false };
   }
   void deps.afterDelete(sessionId).catch(() => undefined);
+  if (deps.removePhotos) await deps.removePhotos(sessionId).catch((e: unknown) => console.warn('[ForgeErr] workout photo', e));
   try {
     await deps.reconcile(exerciseIds);
     return { deleted: true, recordsCatchUp: false };

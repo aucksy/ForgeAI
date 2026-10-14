@@ -94,6 +94,7 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
   // Phase 3 (tracker schema v6). Older backups lack it → restored empty, like any table.
   // `progress_photos` is deliberately NOT here: the pictures stay on this phone, and a
   // restore must neither drop the member's photos nor bring back rows whose files are gone.
+  // `workout_photos` (photos on a workout, 15 Oct 2026) is left out for the same reason.
   { name: 'body_measurements', cols: ['id', 'date_iso', 'kind', 'value'] },
   {
     name: 'meals',

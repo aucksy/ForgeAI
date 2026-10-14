@@ -19,6 +19,7 @@ import { useChat } from '@/store/chatStore';
 import { syncExerciseCatalog } from '@/tracker/catalog/catalogSync';
 import { ensureHistoryIndexes } from '@/tracker/db/historyIndexes';
 import { initTrackerSchema } from '@/tracker/db/trackerSchema';
+import { initWorkoutPhotoSchema } from '@/tracker/db/workoutPhotoRepo';
 import { useDashboard } from '@/store/dashboardStore';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { phoneAfterErase } from '@/tracker/phone/phoneSync';
@@ -112,7 +113,13 @@ async function openAndUpgrade(): Promise<void> {
   await startupStep('upgrade', async () => {
     await initTrackerSchema(); // additive tracker columns
     await initMemberSchema(); // additive member columns (phone)
+    await initWorkoutPhotoSchema(); // additive: photos on a workout (15 Oct 2026)
   });
+  // Photos whose workout is gone (an import's Replace, Remove demo data, an older restore): rows
+  // and files go. Never blocks start-up; it logs and tries again next launch.
+  await import('@/tracker/services/workoutPhotos')
+    .then(({ sweepOrphanWorkoutPhotos }) => sweepOrphanWorkoutPhotos())
+    .catch((e: unknown) => console.warn('[ForgeErr] workout photo', e));
   // History's paging index (Phase 3). Speed only — History is correct without it — so a failure
   // never blocks start-up. Not inside initTrackerSchema: that returns early once its version is
   // stored, so existing installs would never get the index.

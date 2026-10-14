@@ -90,6 +90,12 @@ vi.mock('@/tracker/services/progressPhotos', () => ({
     h.state.calls.push({ sql: 'DELETE PHOTO FILES' });
   }),
 }));
+// 15 Oct 2026: photos on a workout — their files too.
+vi.mock('@/tracker/services/workoutPhotos', () => ({
+  deleteAllWorkoutPhotoFiles: vi.fn(async () => {
+    h.state.calls.push({ sql: 'DELETE WORKOUT PHOTO FILES' });
+  }),
+}));
 vi.mock('@/tracker/db/demoBody', () => ({ seedDemoMeasurements: vi.fn(async () => undefined) }));
 // Phase 1 (DS-13): files, keys, links and settings outside the database — tested in eraseDevice.test.ts.
 vi.mock('@/onboarding/eraseDevice', () => ({
@@ -298,6 +304,7 @@ describe('eraseAllData', () => {
       'DELETE FROM plan_exercises',
       'DELETE FROM plan_days',
       'DELETE FROM workout_plans',
+      'DELETE FROM workout_photos',
       'DELETE FROM workout_sessions',
       'DELETE FROM meals',
       'DELETE FROM chat_messages',
@@ -364,7 +371,7 @@ describe('eraseAllData', () => {
     await eraseAllData();
     expect(sqls().filter((s) => s === 'BEGIN')).toHaveLength(1);
     // Every SQL statement sits inside it; only the files and device data go after (not SQL).
-    expect(sqls().filter((s) => s !== 'DELETE PHOTO FILES' && s !== 'ERASE DEVICE').at(-1)).toBe('COMMIT');
+    expect(sqls().filter((s) => s !== 'DELETE PHOTO FILES' && s !== 'DELETE WORKOUT PHOTO FILES' && s !== 'ERASE DEVICE').at(-1)).toBe('COMMIT');
   });
 });
 

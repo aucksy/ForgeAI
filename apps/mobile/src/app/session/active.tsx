@@ -21,6 +21,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { SessionGoneError } from '@/tracker/db/sessionEdit';
 import { EditSessionHeader } from '@/tracker/components/EditSessionHeader';
+import { WorkoutPhotos } from '@/tracker/components/WorkoutPhotos';
 import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
 import { ElapsedClock } from '@/tracker/components/ElapsedClock';
 import { EntryBar, useEntryBar } from '@/tracker/components/EntryBar';
@@ -505,6 +506,9 @@ export default function ActiveWorkoutScreen() {
               onNotesChange={setEditNotes}
             />
           ) : null}
+          {/* 15 Oct 2026: a saved workout's photos (Hevy: media in Edit Workout). Saved the moment
+              they are picked — not part of the edit, so Discard does not take them back. */}
+          {editingSessionId && !pastLog ? <WorkoutPhotos sessionId={editingSessionId} /> : null}
 
           {/* 15 Oct 2026: while paused, one line says so and what a tick does. */}
           {paused && !isEditing ? (

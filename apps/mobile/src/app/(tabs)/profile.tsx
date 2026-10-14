@@ -58,6 +58,8 @@ import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
 type Row = FeedRow<{ id: string; dateISO: string; feed: FeedItem }>;
 
+const NO_PHOTOS: readonly string[] = [];
+
 function HeaderButton({ glyph, icon, label, onPress }: { glyph?: GlyphName; icon?: 'settings'; label: string; onPress: () => void }) {
   return (
     <Pressable
@@ -112,6 +114,8 @@ export default function ProfileScreen() {
   const [chartFailed, setChartFailed] = useState(false);
   const [items, setItems] = useState<FeedItem[]>([]);
   const [thumbs, setThumbs] = useState<Map<string, FeedThumb>>(new Map());
+  // 15 Oct 2026: each workout's photo paths, for the small strip on its card.
+  const [photos, setPhotos] = useState<Map<string, string[]>>(new Map());
   const [next, setNext] = useState<HistoryCursor | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [feedStatus, setFeedStatus] = useState<'loading' | 'error' | 'ready'>('loading');
@@ -178,6 +182,7 @@ export default function ProfileScreen() {
             if (mine !== gen.current) return;
             setItems(page.items);
             setThumbs(page.thumbs);
+            setPhotos(page.photos);
             setNext(page.next);
             setCounts(c);
             setMore('idle');
@@ -235,6 +240,7 @@ export default function ProfileScreen() {
         return [...prev, ...page.items.filter((x) => !seen.has(x.item.id))];
       });
       setThumbs((prev) => new Map([...prev, ...page.thumbs]));
+      setPhotos((prev) => new Map([...prev, ...page.photos]));
       setNext(page.next);
       setMore('idle');
     } catch {
@@ -369,6 +375,7 @@ export default function ProfileScreen() {
         <FeedCard
           feed={item.item.feed}
           thumbs={thumbs}
+          photos={photos.get(item.item.feed.item.id) ?? NO_PHOTOS}
           name={name}
           photoUri={photo}
           units={units}
@@ -377,7 +384,7 @@ export default function ProfileScreen() {
           onShare={onShare}
         />
       ),
-    [thumbs, name, photo, units, openWorkout, onMore, onShare],
+    [thumbs, photos, name, photo, units, openWorkout, onMore, onShare],
   );
 
   const footer =

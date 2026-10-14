@@ -5,7 +5,12 @@
  * "See 2 more exercises". Share and ⋯ sit together at the top right, beside the name (12 Oct
  * 2026: share had a row of its own at the bottom, alone in empty space). No likes, no comments.
  * The words are `feedCardFacts` (PURE, tested). Tap the card → the workout.
+ *
+ * 15 Oct 2026: a workout's photos (up to 4, `workoutPhotos.ts`) show as a small strip of squares
+ * under its numbers, as Hevy shows a workout's pictures on its feed card. Private: shown from the
+ * app's own folder with `cachePolicy="memory"`, never written to the image disk cache.
  */
+import { Image } from 'expo-image';
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
@@ -19,6 +24,8 @@ import { Glyph } from '../TrackerGlyph';
 import { Avatar } from './Avatar';
 
 const THUMB = 40;
+/** A workout photo's square on the card. */
+const PHOTO = 56;
 const TOP_BUTTON = 48;
 
 /** One of the two round buttons at the card's top right (share, ⋯): a 48 dp target. */
@@ -51,6 +58,7 @@ function Round({ thumb, name }: { thumb: FeedThumb | undefined; name: string }) 
 export const FeedCard = memo(function FeedCard({
   feed,
   thumbs,
+  photos = [],
   name,
   photoUri,
   units,
@@ -60,6 +68,8 @@ export const FeedCard = memo(function FeedCard({
 }: {
   feed: FeedItem;
   thumbs: ReadonlyMap<string, FeedThumb>;
+  /** This workout's photo paths, in order (15 Oct 2026). */
+  photos?: readonly string[];
   name: string;
   photoUri: string | null;
   units: UnitSystem;
@@ -98,6 +108,20 @@ export const FeedCard = memo(function FeedCard({
               <View key={st.label}>
                 <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{st.label}</Text>
                 <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }}>{st.value}</Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
+
+        {photos.length > 0 ? (
+          <View
+            accessible
+            accessibilityLabel={photos.length === 1 ? '1 photo' : `${photos.length} photos`}
+            style={{ flexDirection: 'row', gap: space.sm }}
+          >
+            {photos.slice(0, 4).map((uri) => (
+              <View key={uri} style={{ width: PHOTO, height: PHOTO, borderRadius: 10, overflow: 'hidden', backgroundColor: color.surfaceRaised, borderWidth: 1, borderColor: color.border }}>
+                <Image source={{ uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" cachePolicy="memory" />
               </View>
             ))}
           </View>

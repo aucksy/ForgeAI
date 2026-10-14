@@ -28,6 +28,7 @@ import { uuid } from '@/lib/uuid';
 import { applyCatalogSync, forgetCatalogSync, markCatalogSynced, resyncExerciseCatalog } from '@/tracker/catalog/catalogSync';
 import { seedDemoMeasurements } from '@/tracker/db/demoBody';
 import { deleteAllProgressPhotoFiles } from '@/tracker/services/progressPhotos';
+import { deleteAllWorkoutPhotoFiles } from '@/tracker/services/workoutPhotos';
 
 import { insertExerciseCatalog } from './catalog';
 import { computeTargets, normalizeName, type OnboardingInput } from '../form';
@@ -73,6 +74,9 @@ export const WIPE_TABLES_IN_ORDER = [
   'plan_exercises',
   'plan_days',
   'workout_plans',
+  // 15 Oct 2026: photos on a workout (no foreign key). The FILES go after the wipe commits, and
+  // again in the erase's own 'workout-photos' step (eraseDevice.ts), which reports a failure.
+  'workout_photos',
   'workout_sessions',
   'meals',
   'chat_messages',
@@ -375,6 +379,7 @@ async function wipeDatabaseAndFiles(): Promise<void> {
   // Phase 3: progress photos are files in the app's storage. The rows went in the wipe;
   // the pictures go now, so nothing private outlives an erase.
   await deleteAllProgressPhotoFiles().catch(() => undefined);
+  await deleteAllWorkoutPhotoFiles().catch((e: unknown) => console.warn('[ForgeErr] workout photo', e));
 }
 
 /**

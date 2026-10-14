@@ -2,6 +2,8 @@
  * Post-workout summary. Phase 2 (LW-21): the answer leads in one line (time · sets · kg lifted ·
  * records); long lists fold. LW-11: Finish lands here at once, and the "Update routine?"
  * question worked out on the workout screen is asked here, in the app's own sheet.
+ * 15 Oct 2026: "Add photo" (Camera or Gallery, up to 4) — Hevy's "Add a photo / video" on Finish;
+ * the workout is already saved here, so each photo is kept the moment it is picked.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -25,6 +27,7 @@ import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
+import { WorkoutPhotos } from '@/tracker/components/WorkoutPhotos';
 import { SHARE_TEXT_HINT, SHARE_TEXT_LABEL, shareTextNow } from '@/tracker/components/ShareTextRow';
 import { Glyph, type GlyphName } from '@/tracker/components/TrackerGlyph';
 import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coachNote';
@@ -241,6 +244,9 @@ export default function FinishScreen() {
           {routineLine ? (
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>{routineLine}</Text>
           ) : null}
+
+          {/* 15 Oct 2026: photos on this workout (private, on this phone). */}
+          {id ? <WorkoutPhotos sessionId={id} /> : null}
 
           {/* The totals already lead in the card above — no second copy in tiles. */}
           <SessionSummary data={data} showTotals={false} />

@@ -4,6 +4,7 @@
  * Erase means a fresh install: the next person to use this phone inherits nothing. The
  * database is wiped in `db/dataActions.ts`; this file clears what lives elsewhere:
  *   - the member's own exercise photos and videos (documents/exercise-media/, up to 80 MB each),
+ *   - the photos on workouts (documents/workout-photos/; their rows go in the database wipe),
  *   - exported spreadsheets (documents/forgeai-*.xlsx) and the member's files in the app's
  *     cache (picked or shared import files, data files, share pictures, routine files),
  *   - the AI keys (SecureStore) — the next person must not spend the last one's credit,
@@ -44,6 +45,7 @@ export async function runEraseSteps(steps: readonly EraseStep[]): Promise<string
 /** What each erase step clears, in the member's words. */
 const STEP_WORDS: Record<string, string> = {
   'exercise-media': 'exercise photos and videos',
+  'workout-photos': 'workout photos',
   exports: 'saved spreadsheets',
   cache: 'shared and imported files',
   'ai-keys': 'AI keys',
@@ -100,6 +102,13 @@ export function fileEraseSteps(fs: FileApi): EraseStep[] {
       name: 'exercise-media',
       run: async () => {
         if (docs) await fs.deleteAsync(`${docs}exercise-media/`, { idempotent: true });
+      },
+    },
+    {
+      // 15 Oct 2026: photos on a workout (`tracker/services/workoutPhotos.ts`).
+      name: 'workout-photos',
+      run: async () => {
+        if (docs) await fs.deleteAsync(`${docs}workout-photos/`, { idempotent: true });
       },
     },
     {

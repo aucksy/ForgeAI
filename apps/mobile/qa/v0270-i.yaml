@@ -427,3 +427,18 @@ appId: com.forgeai.app
       text: "Update routine"
     optional: true
 - takeScreenshot: 134-finish-in-lb
+# 15 Oct 2026: photos on a workout (as Hevy). The finish screen's Photos box opens the camera /
+# gallery choice; closed again without picking (a picker on an emulator is not a member's photo).
+- scrollUntilVisible:
+    element: "Add photo"
+    centerElement: true
+    timeout: 15000
+- assertVisible: "0 of 4"
+- tapOn: "Add photo"
+- extendedWaitUntil:
+    visible: "Add a photo to this workout"
+    timeout: 10000
+- assertVisible: "Take a photo"
+- assertVisible: "Choose from gallery"
+- takeScreenshot: 134b-workout-photo-choice
+- back

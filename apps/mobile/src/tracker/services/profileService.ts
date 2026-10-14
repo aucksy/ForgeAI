@@ -15,6 +15,7 @@ import { todayISO } from '@/lib/date';
 
 import { getTrackerExercisesByIds } from '../db/exerciseInfo';
 import { getProfileExtras, type ProfileExtras } from '../db/profileExtras';
+import { getWorkoutPhotoUris } from '../db/workoutPhotoRepo';
 import { chartBars, chartSpan, type ChartBar, type ChartRange } from '../engine/historyChart';
 import { recordsPerWorkout } from './feedCard';
 import { getWeekStreak } from './history';
@@ -64,6 +65,8 @@ export interface FeedPage {
   items: FeedItem[];
   next: HistoryCursor | null;
   thumbs: Map<string, FeedThumb>;
+  /** 15 Oct 2026: each workout's photo paths, in order (only workouts that have photos). */
+  photos: Map<string, string[]>;
 }
 
 /** One page of the feed: 30 workouts after `after` (or the newest), with records and pictures. */
@@ -74,20 +77,27 @@ export async function getFeedPage(after: HistoryCursor | null = null, limit?: nu
   const infos = await getTrackerExercisesByIds(ids).catch(() => new Map());
   const thumbs = new Map<string, FeedThumb>();
   for (const [id, x] of infos) thumbs.set(id, { catalogKey: x.catalogKey ?? null, mediaUri: x.mediaUri ?? null, mediaType: x.mediaType ?? null });
-  return { items: page.items.map((item) => ({ item, records: counts.get(item.id) ?? 0 })), next: page.next, thumbs };
+  // A failed photo read never hides the feed: the cards show without their strips, and it is logged.
+  const photos = await getWorkoutPhotoUris(page.items.map((i) => i.id)).catch((e: unknown) => {
+    console.warn('[ForgeErr] workout photo', e);
+    return new Map<string, string[]>();
+  });
+  return { items: page.items.map((item) => ({ item, records: counts.get(item.id) ?? 0 })), next: page.next, thumbs, photos };
 }
 
 /** The first `keep` workouts again (at least a page), for coming back with something saved. */
 export async function getFeedUpTo(keep: number): Promise<FeedPage> {
   const items: FeedItem[] = [];
   const thumbs = new Map<string, FeedThumb>();
+  const photos = new Map<string, string[]>();
   let next: HistoryCursor | null = null;
   const want = Math.max(30, Math.floor(keep));
   do {
     const page = await getFeedPage(next, Math.min(200, want - items.length));
     items.push(...page.items);
     for (const [k, v] of page.thumbs) thumbs.set(k, v);
+    for (const [k, v] of page.photos) photos.set(k, v);
     next = page.next;
   } while (next && items.length < want);
-  return { items, next, thumbs };
+  return { items, next, thumbs, photos };
 }

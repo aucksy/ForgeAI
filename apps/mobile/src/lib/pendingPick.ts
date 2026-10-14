@@ -9,7 +9,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 
-export type PickPurpose = 'progress-photo' | 'exercise-media' | 'chat-photo' | 'profile-photo';
+export type PickPurpose = 'progress-photo' | 'exercise-media' | 'chat-photo' | 'profile-photo' | 'workout-photo';
 
 const KEY = 'forgeai.pendingPick';
 
