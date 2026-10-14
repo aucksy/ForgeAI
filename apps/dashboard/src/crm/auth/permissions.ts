@@ -11,10 +11,11 @@
  *
  * Screens HIDE what a role cannot do (never a greyed-out button, never a blank hole in a layout).
  *
- * HONEST LIMIT: these rules live in the panel only. The server still lets ANY signed-in person of
- * the gym write records (crm_push in supabase/migrations/0010_signin_and_records.sql checks the
- * gym, not the role), so a determined staff member with the browser's developer tools could still
- * void a receipt or read the totals. Checking the role on the server is a later step.
+ * The server enforces the WRITES too (supabase/migrations/0014_staff_limits.sql, 15 Oct 2026):
+ * crm_push refuses a Staff session's plan / expense / gym rows, voiding a receipt, and cancelling or
+ * moving the end of a membership (OWNER_ONLY). HONEST LIMIT that remains: READING — the whole gym
+ * is pulled to every signed-in device, so a determined staff member with the browser's developer
+ * tools could still add up the totals the panel hides from them.
  */
 
 import { tr } from '../i18n';
