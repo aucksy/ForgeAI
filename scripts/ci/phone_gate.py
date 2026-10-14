@@ -13,6 +13,10 @@ Passes when ONE of these is true:
      (e.g. a unit-test fix, then "bump the version, update PROGRESS", on top of the tested one).
   3. A MANUAL run (workflow_dispatch) with the input skip_phone_gate=true. Tag pushes never skip.
 
+AND (14 Oct 2026) the build check (ci.yml: typecheck + unit tests + silent-catch ratchet) must have
+passed on the commit under release; one still running is waited for (up to 25 minutes). v0.38.0
+and v0.39.0 went out while ci.yml was red on their commits, because nothing here looked at it.
+
 Env: GITHUB_TOKEN, GITHUB_REPOSITORY, GITHUB_SHA, GITHUB_REF, GITHUB_REF_TYPE, GITHUB_REF_NAME,
      GITHUB_EVENT_NAME, SKIP_PHONE_GATE ("true" to skip; honoured only for workflow_dispatch),
      QA_WORKFLOW (default qa-device.yml), GITHUB_STEP_SUMMARY (optional).
@@ -22,6 +26,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -29,6 +34,8 @@ API = os.environ.get("GITHUB_API_URL", "https://api.github.com")
 REPO = os.environ.get("GITHUB_REPOSITORY", "")
 TOKEN = os.environ.get("GITHUB_TOKEN", "")
 QA_WORKFLOW = os.environ.get("QA_WORKFLOW", "qa-device.yml")
+CI_WORKFLOW = os.environ.get("CI_WORKFLOW", "ci.yml")
+CI_WAIT_SECONDS = int(os.environ.get("CI_WAIT_SECONDS", "1500"))
 
 PAPERWORK_FILES = {"PROGRESS.md", "CONTEXT.md"}
 # None of these is built into the APK: notes, unit tests (vitest only) and the CI check scripts.
@@ -132,6 +139,39 @@ def only_paperwork(base, head):
     return ok
 
 
+def ci_verdict(runs):
+    """'pass', 'fail' or 'wait' for the build-check runs of one commit. PURE."""
+    done = [r for r in runs if r.get("status") == "completed"]
+    if any(r.get("conclusion") == "success" for r in done):
+        return "pass"
+    if any(r.get("status") != "completed" for r in runs):
+        return "wait"
+    return "fail"
+
+
+def ci_ok(sha):
+    """The build check passed on `sha` (waits for a run still going)."""
+    deadline = time.time() + CI_WAIT_SECONDS
+    while True:
+        data = api(f"/repos/{REPO}/actions/workflows/{CI_WORKFLOW}/runs?head_sha={sha}&per_page=20")
+        runs = [r for r in data.get("workflow_runs", []) if r.get("head_sha") == sha]
+        verdict = ci_verdict(runs)
+        if verdict == "pass":
+            r = next(r for r in runs if r.get("conclusion") == "success")
+            say(f"build check passed on this commit: run {r['id']} ({r['html_url']})")
+            return True
+        if verdict == "fail":
+            say(f"::error::The build check ({CI_WORKFLOW}) did not pass on {sha[:12]}"
+                + (f" (run {runs[0]['id']}: {runs[0].get('conclusion')})" if runs else " (no run found)")
+                + ". Fix it before releasing.")
+            return False
+        if time.time() > deadline:
+            say(f"::error::The build check on {sha[:12]} is still running after {CI_WAIT_SECONDS // 60} minutes.")
+            return False
+        say("build check still running; waiting 30 s")
+        time.sleep(30)
+
+
 def is_paperwork_path(name):
     return name in PAPERWORK_FILES or name.startswith(PAPERWORK_DIRS)
 
@@ -158,7 +198,10 @@ def main():
     if runs:
         r = runs[0]
         say(f"phone test passed on this exact commit: run {r['id']} ({r['html_url']})")
-        summary(True, f"Phone test **passed** on this commit: [run {r['id']}]({r['html_url']}).")
+        if not ci_ok(sha):
+            summary(False, "**Blocked.** The phone test passed, but the build check (typecheck + unit tests) did not pass on this commit.")
+            return 1
+        summary(True, f"Phone test **passed** on this commit: [run {r['id']}]({r['html_url']}); build check passed too.")
         return 0
     say("no passing phone test on this exact commit")
 
@@ -178,6 +221,9 @@ def main():
         r = prun[0]
         say(f"phone test passed on {cur[:12]} ({step} back): run {r['id']} ({r['html_url']}); checking the diff")
         if only_paperwork(cur, sha):
+            if not ci_ok(sha):
+                summary(False, "**Blocked.** The phone test passed, but the build check (typecheck + unit tests) did not pass on this commit.")
+                return 1
             summary(True, f"Phone test **passed** on `{cur[:12]}` ([run {r['id']}]({r['html_url']})); everything after it changes only notes, unit tests, CI scripts or the version.")
             return 0
         say("the commits after it change the app itself, so that pass does not cover this release")
