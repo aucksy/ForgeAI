@@ -27,10 +27,14 @@ export interface NavItem {
 export function AppShell({
   gymName,
   nav,
+  phoneNav,
   children,
 }: {
   gymName: string;
+  /** Every page: the sidebar on a computer. */
   nav: NavItem[];
+  /** The phone's bottom bar (step 3: five, like the rival apps); the rest sit under More. */
+  phoneNav?: NavItem[];
   children: ReactNode;
 }) {
   const compact = useIsCompact();
@@ -63,7 +67,7 @@ export function AppShell({
         {children}
       </main>
 
-      {compact && <BottomNav nav={nav} activePath={activePath} />}
+      {compact && <BottomNav nav={phoneNav ?? nav} activePath={activePath} />}
     </div>
   );
 }
@@ -173,7 +177,8 @@ function BottomNav({ nav, activePath }: { nav: NavItem[]; activePath: string }) 
       }}
     >
       {nav.map((item) => {
-        const active = item.path === activePath;
+        // A page that is not on the bar itself (Plans, Shop, Settings) lights up More.
+        const active = item.path === activePath || (item.path === '/more' && !nav.some((n) => n.path === activePath));
         return (
           <Link key={item.path} to={item.path}>
             <span
@@ -186,7 +191,7 @@ function BottomNav({ nav, activePath }: { nav: NavItem[]; activePath: string }) 
                 minHeight: 58,
                 color: active ? color.accentBright : color.inkMuted,
                 fontFamily: font.body,
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: active ? 700 : 500,
                 position: 'relative',
               }}

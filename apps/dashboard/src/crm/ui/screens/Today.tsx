@@ -7,6 +7,7 @@
  * category on whether it saves them a task, not on how it looks.
  */
 
+import { collectedOn, tileCounts } from '../../logic/homeTiles';
 import { InstallCard } from '../InstallCard';
 import { tr } from '../../i18n';
 import { useMemo } from 'react';
@@ -15,7 +16,7 @@ import { JoinCodeCard } from '../../shop/JoinCode';
 import { ShopTodayCard } from '../../shop/ShopTodayCard';
 import { useCrm } from '../../store';
 import { atRiskList, isRegisterInUse, riskReasonShort } from '../../logic/attendance';
-import { formatDay, monthKey, relativeDay, startOfMonth } from '../../logic/dates';
+import { formatDay, monthKey, relativeDay } from '../../logic/dates';
 import { compareByAttention, needsAttentionToday, WINBACK_WINDOW_DAYS } from '../../logic/membership';
 import { formatINR, formatINRShort, sumPaise } from '../../logic/money';
 import { formatPhone, initials, phoneDigits } from '../../logic/members';
@@ -69,6 +70,9 @@ export function TodayScreen() {
     };
   }, [memberViews, allMemberViews, snapshot, today]);
 
+  const tiles = useMemo(() => tileCounts(memberViews, today), [memberViews, today]);
+  const collectedToday = useMemo(() => collectedOn(snapshot.payments, today), [snapshot.payments, today]);
+
   // Only people still worth a conversation today. A member who left two years ago
   // is a win-back campaign, not a phone call this morning — and a list that never
   // forgets anyone is a list the owner stops opening.
@@ -116,49 +120,74 @@ export function TodayScreen() {
       </Grid>
       <div style={{ height: space.md }} />
 
-      {/* Three across on a desk screen (two rows of three), two across on a phone:
-          six tiles squeezed into one row wrapped some labels onto two lines and not
-          others, so the figures under them no longer lined up. */}
-      <Grid min={compact ? 140 : 220}>
-        {/* Labelled "with a live plan", not "Active": the roster has an "Active"
-            filter chip that counts a strictly narrower thing (it excludes the
-            expiring), and two different numbers under the same word one click
-            apart is how a report loses trust. */}
+      {/* Gym Panel step 3 (15 Oct 2026): the tiles Jaipur owners already know from GoGym4U and
+          GymBook, in their order — today's money first, then who is about to end (today, 1-3,
+          4-7, 8-15 days), who has ended, fees due, birthdays and who came in today. Every tile
+          opens its own list, filtered by the same rule as the number (logic/homeTiles.ts). */}
+      <Grid min={compact ? 140 : 200}>
         <StatTile
-          label={tr('Members with a live plan', 'Chalu members')}
+          label={tr("Today's collection", 'Aaj ki collection')}
+          value={formatINRShort(collectedToday)}
+          tone="good"
+          onClick={() => navigate('/money/today')}
+          sub={tr(`This month ${formatINRShort(stats.collectedThisMonth)}`, `Is mahine ${formatINRShort(stats.collectedThisMonth)}`)}
+        />
+        <StatTile
+          label={tr('Active members', 'Chalu members')}
           value={stats.active}
           tone="accent"
-          sub={tr(
-            `${stats.active - stats.expiring.length} active · ${stats.expiring.length} expiring`,
-            `${stats.active - stats.expiring.length} chalu · ${stats.expiring.length} jaldi khatam`,
-          )}
+          onClick={() => navigate('/members')}
+          sub={tr('With a live plan', 'Plan chal raha hai')}
         />
         <StatTile
-          label={tr('Expiring this week', 'Is hafte khatam')}
-          value={stats.expiring.length}
-          tone={stats.expiring.length > 0 ? 'warn' : undefined}
-          sub={tr('Renew before they lapse', 'Khatam hone se pehle Renew karo')}
+          label={tr('Ending today', 'Aaj khatam')}
+          value={tiles['exp-today']}
+          tone={tiles['exp-today'] > 0 ? 'critical' : undefined}
+          onClick={() => navigate('/members/f/exp-today')}
+          sub={tr('Last day of their plan', 'Plan ka aakhri din')}
         />
         <StatTile
-          label={tr('Recently lapsed', 'Abhi khatam hue')}
-          value={stats.recentlyLapsed}
-          tone={stats.recentlyLapsed > 0 ? 'critical' : undefined}
-          sub={tr(`Left in the last ${WINBACK_WINDOW_DAYS} days`, `Pichhle ${WINBACK_WINDOW_DAYS} din mein gaye`)}
+          label={tr('Ending in 1-3 days', '1-3 din mein khatam')}
+          value={tiles['exp-1-3']}
+          tone={tiles['exp-1-3'] > 0 ? 'warn' : undefined}
+          onClick={() => navigate('/members/f/exp-1-3')}
+          sub={tr('Renew them now', 'Abhi Renew karo')}
         />
         <StatTile
-          label={tr('Money owed', 'Fees baaki')}
+          label={tr('Ending in 4-7 days', '4-7 din mein khatam')}
+          value={tiles['exp-4-7']}
+          tone={tiles['exp-4-7'] > 0 ? 'warn' : undefined}
+          onClick={() => navigate('/members/f/exp-4-7')}
+          sub={tr('Remind them this week', 'Is hafte yaad dilao')}
+        />
+        <StatTile
+          label={tr('Ending in 8-15 days', '8-15 din mein khatam')}
+          value={tiles['exp-8-15']}
+          onClick={() => navigate('/members/f/exp-8-15')}
+          sub={tr('Coming up', 'Aage aane wale')}
+        />
+        <StatTile
+          label={tr('Expired', 'Khatam ho gaye')}
+          value={tiles.expired}
+          tone={tiles.expired > 0 ? 'critical' : undefined}
+          onClick={() => navigate('/members/f/expired')}
+          sub={tr(`${stats.recentlyLapsed} in the last ${WINBACK_WINDOW_DAYS} days`, `${stats.recentlyLapsed} pichhle ${WINBACK_WINDOW_DAYS} din mein`)}
+        />
+        <StatTile
+          label={tr('Fees due', 'Fees baaki')}
           value={formatINRShort(stats.duesTotalP)}
           tone={stats.duesTotalP > 0 ? 'warn' : undefined}
+          onClick={() => navigate('/money/dues')}
           sub={tr(`${stats.dues.length} members`, `${stats.dues.length} members`)}
         />
         <StatTile
-          label={tr('Collected this month', 'Is mahine ki collection')}
-          value={formatINRShort(stats.collectedThisMonth)}
-          tone="good"
-          sub={tr(`Since ${formatDay(startOfMonth(today))}`, `${formatDay(startOfMonth(today))} se`)}
+          label={tr('Birthdays today', 'Aaj birthday')}
+          value={tiles.birthday}
+          onClick={() => navigate('/members/f/birthday')}
+          sub={tr('Send a wish', 'Badhai bhejo')}
         />
         <StatTile
-          label={tr('Check-ins today', 'Aaj aaye')}
+          label={tr('Came in today', 'Aaj aaye')}
           value={stats.visitsToday}
           onClick={() => navigate('/attendance')}
           sub={tr('Open the register', 'Hazri register kholo')}

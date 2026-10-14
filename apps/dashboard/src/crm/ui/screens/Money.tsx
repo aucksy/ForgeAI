@@ -110,7 +110,12 @@ export function MoneyScreen({ section }: { section?: string }) {
         />
       </div>
 
-      {tab === 'collections' ? <Collections onToast={flash} /> : <Dues onToast={flash} />}
+      {tab === 'collections' ? (
+        // `/money/today` (the home screen's "Today's collection" tile) opens on today.
+        <Collections onToast={flash} startOn={section === 'today' ? 'today' : 'thisMonth'} />
+      ) : (
+        <Dues onToast={flash} />
+      )}
 
       {toast && <Toast key={toast.id} message={toast.text} />}
     </>
@@ -119,12 +124,12 @@ export function MoneyScreen({ section }: { section?: string }) {
 
 // ---------------------------------------------------------------- collections
 
-function Collections({ onToast }: { onToast: (msg: string) => void }) {
+function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string) => void; startOn?: RangePresetId }) {
   const { snapshot, today } = useCrm();
   const compact = useIsCompact();
 
-  const [presetId, setPresetId] = useState<RangePresetId | 'custom'>('thisMonth');
-  const [custom, setCustom] = useState<DateRange>(() => presetRange('thisMonth', today));
+  const [presetId, setPresetId] = useState<RangePresetId | 'custom'>(startOn);
+  const [custom, setCustom] = useState<DateRange>(() => presetRange(startOn, today));
   const [method, setMethod] = useState<PaymentMethod | 'all'>('all');
   const [query, setQuery] = useState('');
   const [includeVoided, setIncludeVoided] = useState(false);

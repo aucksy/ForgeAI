@@ -8,6 +8,8 @@
  * navigation race.
  */
 
+import { MoreScreen } from './ui/screens/More';
+import { isTileFilter } from './logic/homeTiles';
 import { useMemo, useRef } from 'react';
 
 import { cloudApi } from './auth/api';
@@ -117,11 +119,21 @@ function Routes({ online }: { online: boolean }) {
       { path: '/settings', label: tr('Settings', 'Settings'), icon: 'settings' },
     ];
   }, [memberViews, snapshot, today, newCount]);
+  // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
+  // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
+  const phoneNav = useMemo<NavItem[]>(() => {
+    const by = (path: string) => nav.find((n) => n.path === path);
+    const kept = ['/', '/members', '/money', '/attendance'].map(by).filter((n): n is NavItem => Boolean(n));
+    const rest = nav.filter((n) => !kept.includes(n));
+    const restBadge = rest.reduce((sum, n) => sum + (n.badge ?? 0), 0);
+    return [...kept, { path: '/more', label: tr('More', 'Aur'), icon: 'more', badge: restBadge || undefined }];
+  }, [nav]);
+
 
   if (isNewGym) return <Welcome />;
 
   return (
-    <AppShell gymName={snapshot.gym.name} nav={nav}>
+    <AppShell gymName={snapshot.gym.name} nav={nav} phoneNav={phoneNav}>
       <Screen segments={route.segments} />
     </AppShell>
   );
@@ -136,6 +148,8 @@ function Screen({ segments }: { segments: string[] }) {
     case 'members':
       // `/members/app` is the "Joined in the app" list, not a member id (ids are UUIDs).
       if (id === 'app') return <MembersScreen section="app" />;
+      // `/members/f/<tile>`: the roster filtered like the home tile that was tapped.
+      if (id === 'f') return <MembersScreen key={segments[2]} filter={isTileFilter(segments[2]) ? segments[2] : undefined} />;
       return id ? <MemberDetailScreen memberId={id} /> : <MembersScreen />;
     case 'shop':
       return <ShopScreen section={id} />;
@@ -148,6 +162,8 @@ function Screen({ segments }: { segments: string[] }) {
       return id ? <ReceiptScreen paymentId={id} /> : <MoneyScreen />;
     case 'plans':
       return <PlansScreen />;
+    case 'more':
+      return <MoreScreen />;
     case 'settings':
       // Gym branding: Settings -> Branding (the gym's look in the member app).
       if (id === 'branding') return <BrandingScreen />;

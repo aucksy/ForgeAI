@@ -6,6 +6,7 @@
  * not "find me the S's". Alphabetical is one click away via search.
  */
 
+import { inTile, isTileFilter, tileLabel, type TileFilter } from '../../logic/homeTiles';
 import { useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
@@ -35,13 +36,13 @@ import {
 } from '../kit';
 import { Link, navigate } from '../router';
 
-type Filter = 'all' | MemberState | 'dues' | 'archived';
+type Filter = 'all' | MemberState | 'dues' | 'archived' | TileFilter;
 
 /**
  * Two lists under one tab: the gym's own roster (everyone who pays), and the
  * members who joined in the ForgeAI app with the gym's code (`/members/app`).
  */
-export function MembersScreen({ section }: { section?: 'app' } = {}) {
+export function MembersScreen({ section, filter: initialFilter }: { section?: 'app'; filter?: TileFilter } = {}) {
   const { memberViews } = useCrm();
   const [adding, setAdding] = useState(false);
   const app = section === 'app';
@@ -68,15 +69,24 @@ export function MembersScreen({ section }: { section?: 'app' } = {}) {
           ]}
         />
       </div>
-      {app ? <AppMembersSection /> : <RosterSection adding={adding} setAdding={setAdding} />}
+      {app ? <AppMembersSection /> : <RosterSection adding={adding} setAdding={setAdding} initialFilter={initialFilter} />}
     </>
   );
 }
 
-function RosterSection({ adding, setAdding }: { adding: boolean; setAdding: (v: boolean) => void }) {
+function RosterSection({
+  adding,
+  setAdding,
+  initialFilter,
+}: {
+  adding: boolean;
+  setAdding: (v: boolean) => void;
+  /** Opened from a home tile: the same rule as the tile's number. */
+  initialFilter?: TileFilter;
+}) {
   const { memberViews, allMemberViews, today } = useCrm();
   const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<Filter>(initialFilter ?? 'all');
   const compact = useIsCompact();
 
   const counts = useMemo(() => {
@@ -102,10 +112,11 @@ function RosterSection({ adding, setAdding }: { adding: boolean; setAdding: (v: 
       if (filter === 'all') return true;
       if (filter === 'dues') return v.outstandingP > 0;
       if (filter === 'archived') return v.member.archived;
+      if (isTileFilter(filter)) return inTile(v, filter, today);
       return v.state === filter;
     });
     return filtered.sort(compareByAttention);
-  }, [memberViews, allMemberViews, query, filter]);
+  }, [memberViews, allMemberViews, query, filter, today]);
 
   return (
     <>
@@ -126,6 +137,8 @@ function RosterSection({ adding, setAdding }: { adding: boolean; setAdding: (v: 
             { value: 'dues', label: tr('Owes money', 'Fees baaki'), count: counts.dues },
             { value: 'never', label: tr('No membership', 'Koi plan nahi'), count: counts.never ?? 0 },
             { value: 'archived', label: tr('Archived', 'Archive kiye'), count: counts.archived },
+            // A home tile's list: its own chip, first in mind, until another chip is picked.
+            ...(isTileFilter(filter) ? [{ value: filter, label: tileLabel(filter), count: rows.length }] : []),
           ]}
         />
       </div>
