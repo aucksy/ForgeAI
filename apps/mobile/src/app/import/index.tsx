@@ -25,6 +25,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { Card, GhostButton, Icon, PrimaryButton, Screen, UndoBar, askConfirm } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
 import { countOwnWorkouts, isDemoData, prepareImportOverDemo } from '@/onboarding/db/dataActions';
 import { replaceConfirmBody, replaceImpact, restoreSafetyCopy, takeSafetyCopy, type SafetyCopy } from '@/onboarding/db/importSafety';
 import { normalizeName } from '@/onboarding/form';
@@ -45,7 +46,7 @@ import {
 } from '@/tracker/services/hevyImport';
 import { dateOrderQuestion, type DateOrder } from '@/tracker/services/importDates';
 import { matchesFrom, suggestMatches, type NameSuggestion } from '@/tracker/services/importMatch';
-import { allHereText, dateRangeText, doneTitle, importButtonLabel, unitsQuestion } from '@/tracker/services/importWords';
+import { allHereText, answerReadProblemText, dateRangeText, doneTitle, importButtonLabel, unitsQuestion } from '@/tracker/services/importWords';
 import { forgetKeptTrainingData } from '@/tracker/services/keptData';
 import { findRoutines } from '@/tracker/services/routineRebuild';
 import { looksLikeStrong, parseStrongText, strongFileInfo, unitsExample, type FileUnits } from '@/tracker/services/strongImport';
@@ -143,6 +144,10 @@ export default function ImportScreen() {
   // settles it — the member says which (never guessed); Import waits for the answer.
   const [dateAsk, setDateAsk] = useState<string | null>(null);
   const [dateAnswer, setDateAnswer] = useState<DateOrder | null>(null);
+  // Audit M5: the file could not be read again with the member's answer (shown by the question).
+  const [answerProblem, setAnswerProblem] = useState<{ what: 'units' | 'dates'; text: string } | null>(null);
+  // The file is being read again with an answer: Import waits for it.
+  const [rereading, setRereading] = useState(false);
   const hevyBase64 = useRef<string | null>(null);
   // An older Strong file that does not say its units (IM-06): the units question is shown.
   const [unitsAsk, setUnitsAsk] = useState(false);
@@ -276,6 +281,7 @@ export default function ImportScreen() {
       }
       setDateAsk(p.dateQuestion ?? null);
       setDateAnswer(null);
+      setAnswerProblem(null);
     } finally {
       // v0.28.1 / IM-19: the picked or shared copy (a whole workout history) does not stay in
       // the cache, also when the file could not be read.
@@ -486,28 +492,52 @@ export default function ImportScreen() {
   // An older Strong file: the member says which units it was written in; read it again.
   const needsUnits = unitsAsk && fileUnits == null;
   const needsDate = dateAsk != null && dateAnswer == null;
+  // Audit M5: a re-read that fails undoes the answer and says so — Import never runs on the
+  // earlier reading (lb written as kg, or day and month swapped).
   const onFileUnits = async (u: FileUnits): Promise<void> => {
     if (!strongText || busyRef.current) return;
+    const before = fileUnits;
     setFileUnits(u);
+    setAnswerProblem(null);
+    // Review: Import waits for the new reading (a tap meanwhile would use the old one).
+    busyRef.current = true;
+    setRereading(true);
     try {
       const p = parseStrongText(strongText, u, dateAnswer ?? undefined);
+      // Both or neither: the preview must be the reading Import will use.
+      const pv = await previewImport(p);
       setParsed(p);
-      setPreview(await previewImport(p));
-    } catch {
-      // the file read fine a moment ago; keep what is shown
+      setPreview(pv);
+    } catch (e) {
+      console.warn('[ForgeErr] import: re-read with the chosen units failed', e);
+      setFileUnits(before);
+      setAnswerProblem({ what: 'units', text: answerReadProblemText('units') });
+    } finally {
+      busyRef.current = false;
+      setRereading(false);
     }
   };
   // The member's answer to the date question: the file is read again that way round.
   const onDateOrder = async (o: DateOrder): Promise<void> => {
     if (busyRef.current) return;
+    const before = dateAnswer;
     setDateAnswer(o);
+    setAnswerProblem(null);
+    busyRef.current = true;
+    setRereading(true);
     try {
       const p = strongText != null ? parseStrongText(strongText, fileUnits ?? 'metric', o) : hevyBase64.current ? parseHevyBase64(hevyBase64.current, { dateOrder: o }) : null;
-      if (!p) return;
+      if (!p) throw new Error('The file is no longer open. Pick it again.');
+      const pv = await previewImport(p);
       setParsed(p);
-      setPreview(await previewImport(p));
-    } catch {
-      // the file read fine a moment ago; keep what is shown
+      setPreview(pv);
+    } catch (e) {
+      console.warn('[ForgeErr] import: re-read with the chosen date order failed', e);
+      setDateAnswer(before);
+      setAnswerProblem({ what: 'dates', text: answerReadProblemText('dates') });
+    } finally {
+      busyRef.current = false;
+      setRereading(false);
     }
   };
 
@@ -650,6 +680,7 @@ export default function ImportScreen() {
               <Text style={CAPTION()}>This file writes dates as numbers only, and they can be read two ways. Pick the one that matches your workouts.</Text>
               <ModeOption label={dateOrderQuestion(dateAsk).dayFirst} selected={dateAnswer === 'dmy'} onPress={() => void onDateOrder('dmy')} body="Day, then month (as most of the world writes it)." />
               <ModeOption label={dateOrderQuestion(dateAsk).monthFirst} selected={dateAnswer === 'mdy'} onPress={() => void onDateOrder('mdy')} body="Month, then day (as the US writes it)." />
+              <InlineError message={answerProblem?.what === 'dates' ? answerProblem.text : null} />
             </View>
           ) : null}
 
@@ -669,6 +700,7 @@ export default function ImportScreen() {
                 onPress={() => void onFileUnits('imperial')}
                 body={unitsExampleSet ? `${unitsExampleSet.exercise}: ${unitsExampleSet.value} lb (${Math.round(unitsExampleSet.value * 0.45359237 * 10) / 10} kg)` : 'Choose this if Strong showed your weights in lb.'}
               />
+              <InlineError message={answerProblem?.what === 'units' ? answerProblem.text : null} />
             </View>
           ) : null}
 
@@ -745,9 +777,17 @@ export default function ImportScreen() {
               )
             ) : (
               <PrimaryButton
-                label={needsUnits ? 'Choose kg or lb first' : needsDate ? 'Answer the date question first' : importButtonLabel(mode, preview)}
+                label={
+                  rereading
+                    ? 'Reading the file again…'
+                    : needsUnits
+                      ? 'Choose kg or lb first'
+                      : needsDate
+                        ? 'Answer the date question first'
+                        : importButtonLabel(mode, preview)
+                }
                 icon="check"
-                disabled={needsUnits || needsDate}
+                disabled={rereading || needsUnits || needsDate}
                 onPress={() => void onImport()}
               />
             )}

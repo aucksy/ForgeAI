@@ -6,6 +6,7 @@ import type { ListRenderItemInfo } from 'react-native';
 
 import { ChatSkeleton, InputBar, MessageBubble, SuggestedPrompts } from '@/components/chat';
 import { EmptyState, IconButton, Screen, askConfirm } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
 import * as userRepo from '@/db/repos/userRepo';
 import { FEATURES, linkedDraft } from '@/lib/features';
 import { success, thud } from '@/lib/haptics';
@@ -21,6 +22,9 @@ interface Row {
   message: ChatMessage;
   showTimestamp: boolean;
 }
+
+/** Audit M4: "Upload food photo" could not open or read the photo. */
+const COACH_PHOTO_FAILED = 'Couldn’t open your photos. Please try again.';
 
 /** A new time group (tiny centred timestamp) starts after this gap. */
 const TIMESTAMP_GAP_MS = 12 * 60_000;
@@ -45,6 +49,8 @@ function CoachScreen() {
 
   const [gymName, setGymName] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
+  // Audit M4: the photo picker failed — said under the chat, never silent.
+  const [photoProblem, setPhotoProblem] = useState<string | null>(null);
   const listRef = useRef<FlatList<Row>>(null);
 
   useEffect(() => {
@@ -126,6 +132,7 @@ function CoachScreen() {
   );
 
   const pickImage = useCallback(async () => {
+    setPhotoProblem(null);
     try {
       const result = await launchFor('chat-photo', () =>
         ImagePicker.launchImageLibraryAsync({
@@ -136,8 +143,11 @@ function CoachScreen() {
       );
       const asset = result.canceled ? null : (result.assets[0] ?? null);
       if (asset) setImageUri(asset.uri);
-    } catch {
-      /* picker unavailable (web/emulator) — silently ignore */
+    } catch (e) {
+      // Audit M4: this runs on real phones too (a picker that will not open, a photo it cannot
+      // read) — never silent.
+      console.warn('[ForgeErr] coach photo picker failed', e);
+      setPhotoProblem(COACH_PHOTO_FAILED);
     }
   }, []);
 
@@ -221,6 +231,11 @@ function CoachScreen() {
             initialNumToRender={14}
           />
         )}
+        {photoProblem ? (
+          <View style={{ paddingHorizontal: space.screenX, paddingBottom: space.sm }}>
+            <InlineError message={photoProblem} />
+          </View>
+        ) : null}
         <SuggestedPrompts onPrompt={handlePrompt} />
         <InputBar
           sending={sending}

@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { Linking, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
@@ -17,6 +17,7 @@ import { BUTTON_INK } from '@forgeai/theme';
 import { Icon, IconButton } from '@/components/ui';
 import { tap, thud } from '@/lib/haptics';
 import { useVoiceInput } from '@/lib/voice';
+import { voiceProblemText } from '@/lib/voiceProblem';
 import { accentTint } from '@/theme/tint';
 import { color, gradients, motion, radius, shadow, space, type } from '@/theme/tokens';
 import type { AppLanguage } from '@/types/models';
@@ -144,6 +145,30 @@ export function InputBar({
         paddingBottom: space.md,
       }}
     >
+      {/* Audit M3: why the mic did not listen, and the way round — never a mic that vanishes. */}
+      {showMic && voice.problem && !micActive ? (
+        <View
+          accessibilityLiveRegion="polite"
+          style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: space.sm, marginBottom: space.sm }}
+        >
+          <Text style={{ flexShrink: 1, fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkSecondary }}>
+            {voiceProblemText(voice.problem)}
+          </Text>
+          {voice.problem === 'denied' ? (
+            <Pressable
+              onPress={() => {
+                tap();
+                Linking.openSettings().catch((e: unknown) => console.warn('[ForgeErr] app settings did not open', e));
+              }}
+              accessibilityRole="button"
+              style={{ minHeight: 44, justifyContent: 'center' }}
+            >
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.accent }}>Allow microphone</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      ) : null}
+
       {imageUri ? (
         <View
           style={{

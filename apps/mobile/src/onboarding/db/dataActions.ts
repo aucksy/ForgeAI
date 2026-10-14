@@ -383,11 +383,13 @@ async function wipeDatabaseAndFiles(): Promise<void> {
  * the W1 defect. Phase 1 (DS-13 / EX-04 / SH-14 / AI-14 / QA-22): also every rest length
  * and preference, the member's exercise photos and videos, exports, AI keys, the gym and
  * Drive links and the app's settings (see eraseDevice.ts). Health Connect's copies cannot be
- * deleted from here; the confirm says so.
+ * deleted from here; the confirm says so. Throws when the database could not be wiped (nothing
+ * was deleted); otherwise returns the names of the steps outside the database that failed.
  */
-export async function eraseAllData(): Promise<void> {
+export async function eraseAllData(): Promise<string[]> {
   await wipeDatabaseAndFiles();
-  await eraseDeviceData();
+  // Audit H1: the steps that failed reach the Erase button, which names them.
+  return eraseDeviceData();
 }
 
 /**

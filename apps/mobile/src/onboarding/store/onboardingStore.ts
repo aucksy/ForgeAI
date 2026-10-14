@@ -60,8 +60,27 @@ export interface OnboardingState {
   refreshDemoFlag: () => Promise<void>;
   complete: (input: OnboardingInput) => Promise<void>;
   loadDemo: () => Promise<void>;
-  erase: () => Promise<void>;
+  /**
+   * Erase everything. Resolves with the names of the steps outside the database that failed
+   * ([] = all gone, and the app is back on the welcome screen). With a failed step the app
+   * stays where it is, so the screen can say what was left (audit H1). `beforeWelcome` runs
+   * only on full success, just before the welcome screen replaces the app (it leaves Settings).
+   * Throws when the database could not be wiped: nothing was deleted.
+   */
+  erase: (opts?: { beforeWelcome?: () => void }) => Promise<string[]>;
+  /** After a partial erase, the member chose to go on: the welcome screen. */
+  welcomeAfterErase: (beforeWelcome?: () => void) => Promise<void>;
 }
+
+/** Leave the current screen, and give the navigator a moment to take it before it unmounts. */
+async function leaveFirst(beforeWelcome?: () => void): Promise<void> {
+  if (!beforeWelcome) return;
+  beforeWelcome();
+  await new Promise((r) => setTimeout(r, LEAVE_SETTLE_MS));
+}
+
+/** How long the navigator gets to apply a "leave" before the welcome screen replaces it. */
+export const LEAVE_SETTLE_MS = 120;
 
 /**
  * Drop every in-memory cache that could still be holding pre-wipe rows (an
@@ -214,22 +233,34 @@ export const useOnboarding = create<OnboardingState>()((set, get) => ({
     }
   },
 
-  erase: async () => {
+  erase: async (opts) => {
     set({ busy: true });
     try {
-      await eraseAllData();
+      const failed = (await eraseAllData()) ?? [];
       await resetInMemoryState();
       // v0.25.1: the body figure is the member's own choice — the next member on this phone
       // starts on the default figure, like a fresh install.
       try {
         useTrackerPrefs.getState().setBodyFigure('male');
-      } catch {
-        /* a preference only — the erase stands */
+      } catch (e) {
+        console.warn('[ForgeErr] erase: body figure not reset', e);
       }
+      if (failed.length > 0) {
+        // The database is empty, but something outside it stayed: stay put and say what.
+        set({ demo: false, busy: false });
+        return failed;
+      }
+      await leaveFirst(opts?.beforeWelcome);
       set({ status: 'welcome', demo: false, busy: false });
+      return [];
     } catch (err) {
       set({ busy: false });
       throw err;
     }
+  },
+
+  welcomeAfterErase: async (beforeWelcome) => {
+    await leaveFirst(beforeWelcome);
+    set({ status: 'welcome', demo: false, busy: false });
   },
 }));

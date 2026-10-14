@@ -1,0 +1,33 @@
+# Audit toolkit, part P0 (14 Oct 2026): a button that hands off to Android must really reach
+# Android when the permission is NOT already given. Maestro allows every permission by default,
+# which is how the dead Health Connect "Connect" button stayed hidden for 11 releases (part I now
+# covers Health Connect; part I2 covers notifications off). This part covers the camera: with the
+# camera permission taken away, Photos -> Add a photo -> Take a photo must show Android's own
+# camera question, and after "Don't allow" the app must say what happened and the way round.
+appId: com.forgeai.app
+---
+- launchApp:
+    permissions:
+      all: allow
+      camera: deny
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- openLink: forgeai://photos
+- extendedWaitUntil:
+    visible: "Add a photo"
+    timeout: 20000
+- tapOn: "Add a photo"
+- tapOn: "Take a photo"
+- extendedWaitUntil:
+    visible: '(?i).*(take pictures and record video|allow forgeai to take).*'
+    timeout: 15000
+- takeScreenshot: p0-camera-permission-asked
+- tapOn: "(?i)^don.t allow$"
+- extendedWaitUntil:
+    visible: 'Camera not allowed\..*'
+    timeout: 15000
+- takeScreenshot: p0-camera-denied-message

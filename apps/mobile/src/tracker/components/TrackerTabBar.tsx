@@ -10,7 +10,7 @@ import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useKeyboardFrame } from '@/components/KeyboardRoom';
-import { Icon } from '@/components/ui';
+import { Icon, askConfirm } from '@/components/ui';
 import type { IconName } from '@/components/ui';
 import { TEXT_SCALE_CAP } from '@/components/ui/a11y';
 import type { TabBarProps } from '@/components/ui/TabBar';
@@ -143,9 +143,17 @@ function DemoStrip() {
     setBusy(true);
     try {
       await confirmAndRemoveDemo();
-    } catch {
+    } catch (e) {
+      // Audit H1: never a silent failure — the member is told, and can tap Remove again.
+      console.warn('[ForgeErr] remove demo failed', e);
       thud();
       setBusy(false);
+      void askConfirm({
+        title: 'Could not remove the demo',
+        body: 'Nothing was changed. Please try again.',
+        confirmLabel: 'OK',
+        notice: true,
+      });
       return;
     }
     setBusy(false);

@@ -251,11 +251,31 @@ export function widgetsPlaced(): number {
   }
 }
 
+/**
+ * PURE (audit H3). Android's "yes" to a pin request only means the home screen supports it — not
+ * that a widget was placed (the member can cancel, and some home screens show nothing). So the
+ * count is read again when the member is back: no more widgets than before means none was added.
+ */
+export function pinNotPlaced(before: number, after: number): boolean {
+  return after <= before;
+}
+
+/** How long to wait for a home screen's "Add widget?" before checking (it may show nothing). */
+export const PIN_CHECK_MS = 6000;
+
+/** PURE (audit H3). The long-press hint: the home screen said no, or nothing was added. */
+export function widgetHintText(why: 'refused' | 'notPlaced'): string {
+  return why === 'refused'
+    ? "Your home screen can't add it from here. Long-press your home screen → Widgets → ForgeAI."
+    : 'No widget added? Long-press your home screen → Widgets → ForgeAI.';
+}
+
 /** Ask the home screen to add one. False when this phone's home screen cannot. */
 export function placeWidget(kind: 'today' | 'week'): boolean {
   try {
     return phoneNative()?.widgetPin(kind) ?? false;
-  } catch {
+  } catch (e) {
+    console.warn('[ForgeErr] widget pin request failed', e);
     return false;
   }
 }

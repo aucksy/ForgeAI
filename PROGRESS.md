@@ -1755,6 +1755,28 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-14: **v0.40.0 — audit toolkit first picks, 9 silent failures fixed; panel English | Hinglish
+  + install as an app** (8e6c84d, ae7aebc, f8e5ad3, 05a3a95 + this commit; owner: "research skills /
+  repos for professional audit... enough is enough", then "go ahead").
+  - Audit toolkit (Audit/audit-toolkit/RESEARCH.md): silent-catch ratchet in CI (app TS 304, panel 12,
+    Kotlin 60; may only fall; a deliberate quiet catch says `quiet:` + why); the phone test fails on
+    any ForgeErr/ForgeHealth warn line, native or JS ([ForgeErr] in ReactNativeJS); new part P0 takes
+    the camera permission away and requires Android's camera question + the app's "Camera not
+    allowed." message; release gate (phone_gate.py) now also requires a green ci.yml run.
+  - CI had been red since v0.38.0 (panel tests could not load on Node 20: the Supabase client was made
+    at import and needs WebSocket) — client now made on first use; lesson
+    D:/Brain/Lessons/release-gate-ignored-red-ci.md.
+  - Silent-failure sweep (Audit/audit-toolkit/SILENT-FAILURES.md), fixed: Erase all data / Remove demo
+    leave only after success and name what failed; reminders say "Couldn't set reminders. Try again."
+    instead of "Set."; widget Add re-counts on return and shows the long-press hint if none was added;
+    "Open Health Connect" failing says where to go; workouts that miss Health Connect are kept (newest
+    500) with "Send again" (only while on; Stop clears); Coach mic no longer vanishes (says why; voice
+    typing off has its own words); food-photo upload failure says so; import kg/lb or date answer
+    re-read blocks Import while reading and undoes on failure; widget/shortcut Start failing says
+    "Couldn't start <routine>." Reviewed (3 medium + 5 low), all fixed.
+  - Panel (live 14 Oct): English | Hinglish switch (~1,050 strings, CSVs and the printed receipt stay
+    English, switch redraws without reloading the gym), install as an app (manifest, icons,
+    pass-through service worker, "Phone par app lagao" card + phone banner). Reviewed, fixed.
 - 2026-10-14: **v0.39.0 — Gym panel step 1 (records online + sign-in with an owner-made code), and
   the Health Connect "Connect" fix** (76e1a2a 0010, c68eba9 0011, 07dbe13; owner: "give GYM owner the
   option to generate the OTP to give to user till we integrate real OTP service").

@@ -41,3 +41,14 @@ export function unitsQuestion(example: { exercise: string; value: number } | nul
   if (!example) return 'This file does not say its units. Were your weights in kg or lb?';
   return `${example.exercise} ${example.value} — kg or lb?`;
 }
+
+/**
+ * Audit M5: the file could not be read again with the member's answer (kg or lb, day or month
+ * first). The answer is undone, so the question is asked again and Import waits for it. Plain
+ * words only — the error itself (it can be database text) goes to the log, never the screen.
+ */
+export function answerReadProblemText(what: 'units' | 'dates'): string {
+  return what === 'units'
+    ? 'Couldn’t read the file in those units. Please choose again.'
+    : 'Couldn’t read the dates that way. Please choose again.';
+}

@@ -5,7 +5,8 @@
  *  - Then every finished workout is sent; an edited one is sent again (it replaces the old
  *    copy — the native side keys each record on the workout id), a deleted one is taken out.
  *  - "Send past workouts" sends the member's own history. Demo data is never sent.
- * Every call is quiet on failure: Health Connect is a nice-to-have, never in the way.
+ * A failure never gets in the way of a workout, but it is never silent either (audit M2): it is
+ * logged, and a refused workout is kept until "Send again" on the Health Connect page sends it.
  *
  * Audit Phase 6:
  *  - PH-03: "Send past workouts" says what really happened — "Sent 750 of 1,500" when Health
@@ -45,6 +46,10 @@ export function askHealthConnect(): boolean {
   return phoneNative()?.healthRequest() ?? false;
 }
 
+/** Audit M1: what "Open Health Connect" says when nothing opened. */
+export const HC_OPEN_FAILED = "Couldn't open Health Connect. Open your phone's Settings → Health Connect.";
+
+/** Health Connect's own page (else its Play Store page). False when nothing could open. */
 export function openHealthConnect(): boolean {
   return phoneNative()?.healthOpenSettings() ?? false;
 }
@@ -206,44 +211,123 @@ async function send(rows: Row[]): Promise<SendResult> {
   return { kind: 'sent', sent, total: payload.length };
 }
 
-/** After a workout is finished or edited: send it, if Health Connect is on. */
-export async function sendWorkoutToHealth(sessionId: string): Promise<void> {
-  if (!usePhonePrefs.getState().healthConnect) return;
-  try {
-    await send(await readRows('s.id = ?', [sessionId]));
-  } catch {
-    // quiet
+/**
+ * PURE (audit M2). The workouts still owed to Health Connect after a send: every id asked about
+ * leaves the list (sent, deleted since, or demo data that is never sent), then the ones a
+ * failed send did not reach go back on (`order` = the ids in the order they were sent).
+ */
+export function unsentAfter(prev: readonly string[], asked: readonly string[], order: readonly string[], r: SendResult): string[] {
+  const askedSet = new Set(asked);
+  const out = prev.filter((id) => !askedSet.has(id));
+  if (r.kind === 'failed') {
+    const have = new Set(out);
+    for (const id of order.slice(r.sent)) if (!have.has(id)) out.push(id);
   }
+  // Never grows for ever (Health Connect gone for months): the newest UNSENT_CAP stay.
+  return out.length > UNSENT_CAP ? out.slice(out.length - UNSENT_CAP) : out;
 }
 
-/** IM-16: workouts just imported — sent, if Health Connect is on. Quiet. */
+/** The most workouts kept for "Send again"; "Send past workouts" still sends every one. */
+export const UNSENT_CAP = 500;
+
+/** PURE (audit M2). The line above "Send again" on the Health Connect page. */
+export function unsentText(n: number): string {
+  return `${fmtInt(n)} workout${n === 1 ? '' : 's'} didn't reach Health Connect.`;
+}
+
+function noteUnsent(asked: readonly string[], order: readonly string[], r: SendResult): void {
+  const p = usePhonePrefs.getState();
+  const next = unsentAfter(p.healthUnsent ?? [], asked, order, r);
+  const prev = p.healthUnsent ?? [];
+  if (next.length !== prev.length || next.some((id, i) => id !== prev[i])) p.setHealthUnsent(next);
+}
+
+/** How many ids go in one read (SQLite's limit on `?` is far above it). */
+const READ_PART = 500;
+
+/** Send these workouts; keep the ones that did not go for "Send again" (audit M2). */
+async function sendIds(ids: readonly string[]): Promise<SendResult> {
+  let order: string[] = [...ids];
+  let r: SendResult;
+  let err: unknown = null;
+  try {
+    const rows = await readRows(`s.id IN (${ids.map(() => '?').join(', ')})`, [...ids]);
+    order = rows.map((x) => x.id);
+    r = await send(rows);
+  } catch (e) {
+    err = e;
+    r = { kind: 'failed', sent: 0, total: ids.length, reason: 'error' };
+  }
+  if (r.kind === 'failed') {
+    console.warn(`[ForgeErr] ${r.total - r.sent} workout(s) did not reach Health Connect (${r.reason})`, err);
+  }
+  noteUnsent(ids, order, r);
+  return r;
+}
+
+/** Send in parts; one result for them all (the first failure's reason). */
+async function sendInParts(ids: readonly string[]): Promise<SendResult> {
+  let sent = 0;
+  let total = 0;
+  let failed: 'access' | 'unavailable' | 'error' | null = null;
+  let demo = false;
+  for (let i = 0; i < ids.length; i += READ_PART) {
+    const r = await sendIds(ids.slice(i, i + READ_PART));
+    if (r.kind === 'demo') demo = true;
+    if (r.kind === 'sent' || r.kind === 'failed') {
+      sent += r.sent;
+      total += r.total;
+    }
+    if (r.kind === 'failed') failed ??= r.reason;
+  }
+  if (failed) return { kind: 'failed', sent, total, reason: failed };
+  if (demo && total === 0) return { kind: 'demo' };
+  return total === 0 ? { kind: 'none' } : { kind: 'sent', sent, total };
+}
+
+/** After a workout is finished or edited: send it, if Health Connect is on. A refusal is kept. */
+export async function sendWorkoutToHealth(sessionId: string): Promise<void> {
+  if (!usePhonePrefs.getState().healthConnect) return;
+  await sendIds([sessionId]);
+}
+
+/** IM-16: workouts just imported — sent, if Health Connect is on. A refusal is kept. */
 export async function sendWorkoutsToHealth(sessionIds: readonly string[]): Promise<void> {
   if (!usePhonePrefs.getState().healthConnect || sessionIds.length === 0) return;
-  try {
-    for (let i = 0; i < sessionIds.length; i += 500) {
-      const ids = sessionIds.slice(i, i + 500);
-      await send(await readRows(`s.id IN (${ids.map(() => '?').join(', ')})`, [...ids]));
-    }
-  } catch {
-    // quiet
-  }
+  await sendInParts(sessionIds);
+}
+
+/** Audit M2: "Send again" — the workouts Health Connect refused before. */
+export async function resendUnsentToHealth(): Promise<SendResult> {
+  // Sending switched off (Stop): nothing goes, whatever the list says.
+  if (!usePhonePrefs.getState().healthConnect) return { kind: 'none' };
+  const ids = [...(usePhonePrefs.getState().healthUnsent ?? [])];
+  if (ids.length === 0) return { kind: 'none' };
+  return sendInParts(ids);
 }
 
 /** "Send past workouts": every workout of the member's own. Says what happened. */
 export async function sendAllWorkoutsToHealth(): Promise<SendResult> {
   try {
-    return await send(await readRows('1 = 1', []));
-  } catch {
+    const r = await send(await readRows('1 = 1', []));
+    // Every workout went, so none is still owed.
+    if (r.kind === 'sent' && (usePhonePrefs.getState().healthUnsent ?? []).length > 0) usePhonePrefs.getState().setHealthUnsent([]);
+    if (r.kind === 'failed') console.warn(`[ForgeErr] past workouts did not reach Health Connect (${r.reason}, ${r.sent} of ${r.total})`);
+    return r;
+  } catch (e) {
+    console.warn('[ForgeErr] send past workouts to Health Connect failed', e);
     return { kind: 'failed', sent: 0, total: 0, reason: 'error' };
   }
 }
 
 /** A workout was deleted: take it out of Health Connect too. */
 export async function removeWorkoutFromHealth(sessionId: string): Promise<void> {
+  const owed = usePhonePrefs.getState().healthUnsent ?? [];
+  if (owed.includes(sessionId)) usePhonePrefs.getState().setHealthUnsent(owed.filter((id) => id !== sessionId));
   if (!usePhonePrefs.getState().healthConnect) return;
   try {
     await phoneNative()?.healthDelete(sessionId);
-  } catch {
-    // quiet
+  } catch (e) {
+    console.warn('[ForgeErr] Health Connect: deleted workout not removed', e);
   }
 }

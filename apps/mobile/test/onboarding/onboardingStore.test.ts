@@ -18,6 +18,8 @@ const h = vi.hoisted(() => ({
     erased: 0,
     demoLoaded: 0,
     resets: 0,
+    eraseFailed: [] as string[],
+    eraseError: null as Error | null,
   },
   // Declared inside vi.hoisted so the mock factory (also hoisted) can reference it.
   FakeExistingDataError: class FakeExistingDataError extends Error {},
@@ -39,9 +41,11 @@ vi.mock('@/onboarding/db/dataActions', () => ({
     h.state.hasProfile = true;
   },
   eraseAllData: async () => {
+    if (h.state.eraseError) throw h.state.eraseError;
     h.state.erased += 1;
     h.state.hasProfile = false;
     h.state.demo = false;
+    return h.state.eraseFailed;
   },
   loadDemoData: async () => {
     h.state.demoLoaded += 1;
@@ -102,6 +106,8 @@ beforeEach(() => {
   h.state.erased = 0;
   h.state.demoLoaded = 0;
   h.state.resets = 0;
+  h.state.eraseFailed = [];
+  h.state.eraseError = null;
   failing.discard = false;
   useOnboarding.setState({ status: 'loading', demo: false, busy: false });
 });
@@ -191,8 +197,39 @@ describe('erase / loadDemo', () => {
     // nothing happened and invite them to run it again.
     useOnboarding.setState({ status: 'ready' });
     failing.discard = true;
-    await expect(useOnboarding.getState().erase()).resolves.toBeUndefined();
+    await expect(useOnboarding.getState().erase()).resolves.toEqual([]);
     expect(useOnboarding.getState().status).toBe('welcome');
+  });
+
+  it('audit H1: leaves for the welcome screen only after a full erase', async () => {
+    useOnboarding.setState({ status: 'ready', demo: true });
+    const left: string[] = [];
+    await expect(useOnboarding.getState().erase({ beforeWelcome: () => left.push(useOnboarding.getState().status) })).resolves.toEqual([]);
+    // The screen was left while the app was still showing (before the welcome screen replaced it).
+    expect(left).toEqual(['ready']);
+    expect(useOnboarding.getState().status).toBe('welcome');
+  });
+
+  it('audit H1: a step left behind keeps the member on the screen and names it', async () => {
+    useOnboarding.setState({ status: 'ready', demo: true });
+    h.state.eraseFailed = ['ai-keys', 'drive-link'];
+    const leave = vi.fn();
+    await expect(useOnboarding.getState().erase({ beforeWelcome: leave })).resolves.toEqual(['ai-keys', 'drive-link']);
+    expect(leave).not.toHaveBeenCalled();
+    expect(useOnboarding.getState()).toMatchObject({ status: 'ready', demo: false, busy: false });
+    // "Start over anyway": then the welcome screen, after leaving.
+    await useOnboarding.getState().welcomeAfterErase(leave);
+    expect(leave).toHaveBeenCalledTimes(1);
+    expect(useOnboarding.getState().status).toBe('welcome');
+  });
+
+  it('audit H1: a database that could not be wiped throws, and nothing moves', async () => {
+    useOnboarding.setState({ status: 'ready' });
+    h.state.eraseError = new Error('disk I/O error');
+    const leave = vi.fn();
+    await expect(useOnboarding.getState().erase({ beforeWelcome: leave })).rejects.toThrow('disk I/O error');
+    expect(leave).not.toHaveBeenCalled();
+    expect(useOnboarding.getState()).toMatchObject({ status: 'ready', busy: false });
   });
 
   it('loadDemo enters the app flagged as demo', async () => {

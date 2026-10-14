@@ -37,6 +37,9 @@ JS_WARN = re.compile(r"\sW[/ ]\s*(ReactNativeJS|ForgeQA)\s*[(:]")
 # phone test means something a person tapped quietly did not work — it fails the test, as the
 # dead Health Connect button would have.
 SWALLOWED = re.compile(r"\s[WEF][/ ]\s*(ForgeErr|ForgeHealth)\s*[(:]")
+# The app's JavaScript logs a caught error as console.warn('[ForgeErr] ...'), which reaches logcat as
+# "W ReactNativeJS: '[ForgeErr] ..." — a JS warning line, so it needs its own failing rule.
+JS_SWALLOWED = re.compile(r"ReactNativeJS.*\[ForgeErr\]")
 
 
 def read(path):
@@ -81,7 +84,7 @@ def scan(out):
                 findings.append(f"ANR ({where}): {l.strip()}")
             elif JS_ERROR.search(l):
                 findings.append(f"JS ERROR ({where}): {l.strip()}")
-            elif SWALLOWED.search(l):
+            elif SWALLOWED.search(l) or JS_SWALLOWED.search(l):
                 findings.append(f"CAUGHT ERROR ({where}): {l.strip()}")
             elif JS_ANY.search(l) and UNHANDLED.search(l):
                 findings.append(f"UNHANDLED JS ERROR ({where}): {l.strip()}")

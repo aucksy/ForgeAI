@@ -17,9 +17,10 @@ import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 
 import { GhostButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
+import { InlineError } from '@/components/ui/InlineError';
 import { space } from '@/theme/tokens';
 import { getRoutine } from '@/tracker/db/routineRepo';
-import { routineParam, widgetStartAction, widgetTokenOk } from '@/tracker/phone/widgetLink';
+import { routineParam, startFailedText, widgetStartAction, widgetTokenOk } from '@/tracker/phone/widgetLink';
 import { keptWidgetToken, rotateWidgetToken } from '@/tracker/phone/widgetToken';
 import { refreshWidgets } from '@/tracker/phone/widgets';
 import { showActiveWorkout } from '@/tracker/services/workoutStart';
@@ -53,6 +54,8 @@ export default function WidgetStart() {
   // A link without the widget's key: the routine to offer ("Start Push 1?").
   const [ask, setAsk] = useState<{ id: string; name: string } | null>(null);
   const [starting, setStarting] = useState(false);
+  // Audit M6: the start failed — said here, with Try again (when the routine is known).
+  const [failed, setFailed] = useState<string | null>(null);
 
   useEffect(() => {
     // Once: a re-render must never start a second workout.
@@ -60,12 +63,14 @@ export default function WidgetStart() {
     ran.current = true;
     const id = routineParam(routine);
     void oneAtATime(async () => {
+      let found: { name: string } | null = null;
+      let keyUsed = false;
       try {
         // A workout saved before Android closed the app loads first — never replaced.
         await useActiveWorkout.getState().hydrate();
         const s = useActiveWorkout.getState();
         const open = s.active;
-        const found = !open && id != null ? await getRoutine(id).catch(() => null) : null;
+        found = !open && id != null ? await getRoutine(id).catch(() => null) : null;
         const tokenOk = widgetTokenOk(t, await keptWidgetToken().catch(() => ''));
         const action = widgetStartAction({ routineId: id, open, correcting: isCorrecting(s), routineExists: found != null, tokenOk });
         if (action === 'tab') {
@@ -77,6 +82,7 @@ export default function WidgetStart() {
           return;
         }
         if (action === 'start' && id != null) {
+          keyUsed = true;
           if (await startAndShow(id, router)) {
             // One-shot: this key is spent; the widget is redrawn with a new one.
             rotateWidgetToken();
@@ -85,8 +91,17 @@ export default function WidgetStart() {
           return;
         }
         showActiveWorkout(router);
-      } catch {
-        router.replace('/workout');
+      } catch (e) {
+        console.warn('[ForgeErr] widget or shortcut start failed', e);
+        if (keyUsed) {
+          // Review: the key is spent by a failed start too — the link can never start again,
+          // and Try again below is the one-tap confirm, which needs no key.
+          rotateWidgetToken();
+          void refreshWidgets();
+        }
+        // Stay here and say so; a known routine gets Try again.
+        if (id != null && found) setAsk({ id, name: found.name });
+        setFailed(startFailedText(found?.name));
       }
     });
   }, [routine, t, router]);
@@ -95,6 +110,7 @@ export default function WidgetStart() {
     const onStart = (): void => {
       if (starting) return;
       setStarting(true);
+      setFailed(null);
       void oneAtATime(async () => {
         try {
           // A correction opened meanwhile is never replaced: the Workout tab instead.
@@ -104,16 +120,30 @@ export default function WidgetStart() {
             return;
           }
           await startAndShow(ask.id, router);
-        } catch {
-          router.replace('/workout');
+        } catch (e) {
+          console.warn('[ForgeErr] start from the widget link failed', e);
+          setFailed(startFailedText(ask.name));
+          setStarting(false);
         }
       });
     };
     return (
       <Screen title={`Start ${ask.name}?`}>
         <View style={{ gap: space.md }}>
-          <PrimaryButton label={`Start ${ask.name}`} onPress={onStart} loading={starting} />
+          <InlineError message={failed} />
+          <PrimaryButton label={failed ? 'Try again' : `Start ${ask.name}`} onPress={onStart} loading={starting} />
           <GhostButton label="Not now" onPress={() => router.replace('/workout')} />
+        </View>
+      </Screen>
+    );
+  }
+
+  if (failed) {
+    return (
+      <Screen title="Workout">
+        <View style={{ gap: space.md }}>
+          <InlineError message={failed} />
+          <GhostButton label="Go to Workout" onPress={() => router.replace('/workout')} />
         </View>
       </Screen>
     );

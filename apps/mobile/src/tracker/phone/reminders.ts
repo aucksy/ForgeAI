@@ -252,11 +252,15 @@ export function reminderStampKey(triggers: unknown, body: string, accent: string
   return JSON.stringify({ triggers, body, accent });
 }
 
-/** PURE. The caption under "Workout reminders" (PH-01: never a next time that cannot come). */
-export function reminderCaption(o: { on: boolean; blocked: boolean; next: string | null; days: number }): string {
+/**
+ * PURE. The caption under "Workout reminders" (PH-01: never a next time that cannot come; audit
+ * H2: never "Set." when setting them failed).
+ */
+export function reminderCaption(o: { on: boolean; blocked: boolean; next: string | null; days: number; failed?: boolean }): string {
   if (!o.on) return 'A quiet reminder on your usual training days, at your usual time.';
   if (o.blocked) return 'Notifications are off for ForgeAI, so no reminder can arrive.';
   if (o.days === 0) return 'Pick at least one day.';
+  if (o.failed) return "Couldn't set reminders. Try again.";
   if (o.next) return `Next: ${o.next}. None on a day you already trained or while a workout is open.`;
   return 'Set. None on a day you already trained or while a workout is open.';
 }
@@ -321,18 +325,24 @@ export async function remindersBlocked(): Promise<boolean | null> {
 
 let chain: Promise<unknown> = Promise.resolve();
 
+/** What setting the reminders came to: the next one (epoch ms), none, or REMINDERS_FAILED. */
+export type ReminderResult = number | null | typeof REMINDERS_FAILED;
+/** Audit H2: setting the reminders failed (Profile says so, never "Set."). */
+export const REMINDERS_FAILED = 'failed' as const;
+
 /**
  * Set the reminders from the member's choice — only when something changed (see
- * `needsReschedule`). Returns the next one (epoch ms) or null. One at a time: a finish and a
- * workout closing ask at once, and two runs must not cancel each other's alerts.
+ * `needsReschedule`). Returns the next one (epoch ms), null when none is set, or
+ * REMINDERS_FAILED when Android refused (logged). One at a time: a finish and a workout closing
+ * ask at once, and two runs must not cancel each other's alerts.
  */
-export function refreshReminders(opts: { ask?: boolean; force?: boolean } = {}): Promise<number | null> {
+export function refreshReminders(opts: { ask?: boolean; force?: boolean } = {}): Promise<ReminderResult> {
   const run = chain.then(() => refreshRemindersNow(opts));
   chain = run.catch(() => undefined);
   return run;
 }
 
-async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }): Promise<number | null> {
+async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }): Promise<ReminderResult> {
   const n = N();
   if (!n) return null;
   try {
@@ -384,8 +394,10 @@ async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }): Pr
       await writeStamp(stamp);
     }
     return planReminders({ days: p.reminderDays, minutes: p.reminderMinutes, now, trainedToday: skipToday })[0] ?? null;
-  } catch {
-    return null;
+  } catch (e) {
+    // Audit H2: the old ones may already be cancelled — say so, never "Set.".
+    console.warn('[ForgeErr] workout reminders could not be set', e);
+    return REMINDERS_FAILED;
   }
 }
 

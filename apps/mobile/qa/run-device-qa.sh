@@ -641,6 +641,15 @@ else
 fi
 adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
 
+# ---------------------------------------------------------------- part P0 (audit toolkit: permission off)
+# The camera permission is taken away in the flow's own launchApp; Android's camera question must
+# appear and the app must explain a refusal. Runs before part M, whose reinstall could leave the
+# app on its welcome screen; part M reinstalls anyway, and later launches allow every permission.
+free_maestro
+log "part P0 start"
+maestro test --format junit --output "$OUT/part-p0.xml" --test-output-dir "$OUT/part-p0" "$QA_DIR/p0-permissions-off.yaml" > "$OUT/part-p0.log" 2>&1 || { status=1; log "PART P0 FAILED"; }
+adb shell input keyevent KEYCODE_HOME
+
 # ---------------------------------------------------------------- part M (backup survives a reinstall)
 # Android's own backup (the app's backup rules: the workout database, AsyncStorage, settings) into
 # the emulator's LOCAL backup store, then uninstall + reinstall the SAME APK. The member's workouts

@@ -87,7 +87,9 @@ class ForgePhoneModule : Module() {
       val c = ctx ?: return@AsyncFunction -1
       try {
         Health.write(c, json)
-      } catch (_: Throwable) {
+      } catch (e: Throwable) {
+        // Audit M2: the reason was dropped here. Logged; the app keeps the workout for "Send again".
+        android.util.Log.w("ForgeErr", "Health Connect write failed", e)
         -1
       }
     }
@@ -125,7 +127,9 @@ class ForgePhoneModule : Module() {
       val c = ctx ?: return@Function false
       try {
         Widgets.pin(c, kind)
-      } catch (_: Throwable) {
+      } catch (e: Throwable) {
+        // Audit H3: logged; Settings shows the long-press hint.
+        android.util.Log.w("ForgeErr", "widget pin request failed", e)
         false
       }
     }

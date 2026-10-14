@@ -24,17 +24,50 @@ export interface EraseStep {
   run: () => Promise<unknown>;
 }
 
-/** Run every step; return the names of the ones that failed (for tests and logs). */
+/**
+ * Run every step; return the names of the ones that failed. Each failure is logged, and the
+ * names reach the Erase button, which says what was left behind (silent-failure audit H1).
+ */
 export async function runEraseSteps(steps: readonly EraseStep[]): Promise<string[]> {
   const failed: string[] = [];
   for (const step of steps) {
     try {
       await step.run();
-    } catch {
+    } catch (e) {
+      console.warn(`[ForgeErr] erase step "${step.name}" failed`, e);
       failed.push(step.name);
     }
   }
   return failed;
+}
+
+/** What each erase step clears, in the member's words. */
+const STEP_WORDS: Record<string, string> = {
+  'exercise-media': 'exercise photos and videos',
+  exports: 'saved spreadsheets',
+  cache: 'shared and imported files',
+  'ai-keys': 'AI keys',
+  'gym-link': 'gym sign-in',
+  'drive-link': 'Google Drive link',
+  settings: 'settings',
+  shop: 'shop bag and orders',
+  'gym-shop': 'gym shop',
+  'pending-pick': 'picked photo',
+};
+
+/** PURE. A failed step's name in plain words. */
+export function eraseStepWords(name: string): string {
+  return STEP_WORDS[name] ?? name;
+}
+
+/**
+ * PURE (audit H1). The message under "Erase all data" when the workouts went but some steps
+ * did not: it names what is still on the phone and how to finish.
+ */
+export function eraseLeftBehindText(failed: readonly string[]): string {
+  const words = [...new Set(failed.map(eraseStepWords))];
+  const list = words.length <= 1 ? (words[0] ?? 'some data') : `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}`;
+  return `Your workouts were erased, but not your ${list}. Tap Erase all data to try again.`;
 }
 
 /** Files the app wrote into the documents folder for the member to share (spreadsheets). */
@@ -97,7 +130,10 @@ function deviceSteps(): EraseStep[] {
       name: 'ai-keys',
       run: async () => {
         const keys = await import('@/lib/keys');
-        await Promise.allSettled([keys.setOpenAiKey(''), keys.setAnthropicKey(''), keys.setGroqKey('')]);
+        // Every key is tried; any one left behind fails the step (audit H1: it never failed).
+        const results = await Promise.allSettled([keys.setOpenAiKey(''), keys.setAnthropicKey(''), keys.setGroqKey('')]);
+        const left = results.find((r): r is PromiseRejectedResult => r.status === 'rejected');
+        if (left) throw left.reason;
       },
     },
     {

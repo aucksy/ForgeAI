@@ -16,7 +16,13 @@ export interface PhonePrefsState {
   reminderDays: number[];
   reminderMinutes: number;
   reminderChosen: boolean;
+  /**
+   * Audit M2: finished workouts that Health Connect refused (ids, oldest first). Health Connect
+   * says "N workouts didn't reach Health Connect. Send again" until they go.
+   */
+  healthUnsent: string[];
   setHealthConnect: (on: boolean) => void;
+  setHealthUnsent: (ids: string[]) => void;
   setReminders: (p: Partial<Pick<PhonePrefsState, 'remindersOn' | 'reminderDays' | 'reminderMinutes' | 'reminderChosen'>>) => void;
   reset: () => void;
 }
@@ -32,7 +38,9 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       reminderDays: DEFAULT_REMINDER_DAYS,
       reminderMinutes: DEFAULT_REMINDER_MINUTES,
       reminderChosen: false,
+      healthUnsent: [],
       setHealthConnect: (healthConnect) => set({ healthConnect }),
+      setHealthUnsent: (healthUnsent) => set({ healthUnsent }),
       setReminders: (p) => set(p),
       reset: () =>
         set({
@@ -41,6 +49,7 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           reminderDays: DEFAULT_REMINDER_DAYS,
           reminderMinutes: DEFAULT_REMINDER_MINUTES,
           reminderChosen: false,
+          healthUnsent: [],
         }),
     }),
     {

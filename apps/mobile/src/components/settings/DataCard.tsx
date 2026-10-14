@@ -21,7 +21,7 @@ import { Badge, Card, GhostButton, askConfirm } from '@/components/ui';
 import { success, thud, warn } from '@/lib/haptics';
 import { countOwnWorkouts } from '@/onboarding/db/dataActions';
 import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
-import { healthConnectWasUsed } from '@/onboarding/eraseDevice';
+import { eraseLeftBehindText, healthConnectWasUsed } from '@/onboarding/eraseDevice';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, space, type } from '@/theme/tokens';
 
@@ -63,6 +63,9 @@ export function DataCard() {
   const refreshDemoFlag = useOnboarding((s) => s.refreshDemoFlag);
   const [working, setWorking] = useState<null | 'demo' | 'erase' | 'remove'>(null);
   const [problem, setProblem] = useState<string | null>(null);
+  // An erase emptied the workouts but left something outside them (named in `problem`).
+  const [leftBehind, setLeftBehind] = useState(false);
+  const welcomeAfterErase = useOnboarding((s) => s.welcomeAfterErase);
 
   // A Drive restore or a history import can have replaced demo data with real data
   // since boot; re-read so the badge and the buttons tell the truth.
@@ -75,9 +78,11 @@ export function DataCard() {
     setWorking('remove');
     setProblem(null);
     try {
-      // Leave Settings BEFORE the navigator unmounts, so the member lands on Workout afterwards.
+      // Leave Settings only once the demo is gone (before the navigator unmounts), so the member
+      // lands on Workout afterwards — and a failure is said here, on the screen they are on.
       if (await confirmAndRemoveDemo(() => router.dismissTo('/workout'))) success();
-    } catch {
+    } catch (e) {
+      console.warn('[ForgeErr] remove demo failed', e);
       thud();
       setProblem('Could not remove the demo. Nothing was changed. Please try again.');
     } finally {
@@ -97,18 +102,34 @@ export function DataCard() {
     });
     if (!ok) return;
     setWorking('erase');
+    setLeftBehind(false);
     try {
-      // Leave Profile BEFORE the navigator unmounts, so the retained router
-      // state lands a re-onboarded member on the dashboard, not here.
-      router.dismissTo('/workout');
-      await erase();
-      success();
-    } catch {
+      // Audit H1: leave Settings only once everything is gone (just before the navigator
+      // unmounts, so a re-onboarded member lands on Workout, not here). Anything left behind
+      // is said here, by name.
+      const failed = await erase({ beforeWelcome: () => router.dismissTo('/workout') });
+      if (failed.length === 0) {
+        success();
+        return;
+      }
       thud();
-      setProblem('Could not erase everything. Please try again.');
+      setLeftBehind(true);
+      setProblem(eraseLeftBehindText(failed));
+    } catch (e) {
+      console.warn('[ForgeErr] erase all data failed', e);
+      thud();
+      setProblem('Could not erase your data. Nothing was deleted. Please try again.');
     } finally {
       setWorking(null);
     }
+  };
+
+  // After a partial erase: the member can still start over without what was left behind.
+  const onStartOver = (): void => {
+    if (working) return;
+    setProblem(null);
+    setLeftBehind(false);
+    void welcomeAfterErase(() => router.dismissTo('/workout'));
   };
 
   // The hidden sales switch (see the header).
@@ -157,6 +178,11 @@ export function DataCard() {
       />
       <Text style={caption()}>Deletes everything on this phone and starts over from the welcome screen.</Text>
       {problem ? <Text style={{ ...caption(), color: color.criticalText }}>{problem}</Text> : null}
+      {leftBehind ? (
+        <View style={{ marginTop: space.sm }}>
+          <GhostButton label="Start over anyway" onPress={onStartOver} />
+        </View>
+      ) : null}
 
       <Pressable
         onLongPress={() => void onHiddenDemo()}

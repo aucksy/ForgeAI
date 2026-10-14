@@ -47,3 +47,9 @@ export function widgetStartAction(o: {
   if (o.routineId && o.routineExists) return o.tokenOk ? 'start' : 'confirm';
   return 'tab';
 }
+
+/** Audit M6: a widget or shortcut Start that failed — said, never a silent Workout tab. */
+export function startFailedText(routineName: string | null | undefined): string {
+  const name = routineName?.trim();
+  return name ? `Couldn't start ${name}.` : "Couldn't start the workout.";
+}

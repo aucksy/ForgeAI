@@ -8,7 +8,7 @@
  * to the app), start on "your usual days and time", and pick the time with an hour and a
  * minute (5-minute steps) in a sheet (PH-06); every tap target is 48 dp tall (PH-11).
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, Text, View } from 'react-native';
 
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
@@ -17,11 +17,14 @@ import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import {
+  HC_OPEN_FAILED,
   askHealthConnect,
   healthState,
   openHealthConnect,
+  resendUnsentToHealth,
   sendAllWorkoutsToHealth,
   sendResultText,
+  unsentText,
   type HealthState,
   type SendResult,
 } from './healthConnect';
@@ -31,13 +34,15 @@ import {
   fmtNextReminder,
   fmtReminderTime,
   readUsualSlot,
+  REMINDERS_FAILED,
   refreshReminders,
   reminderCaption,
   remindersBlocked,
   stepReminderHour,
   stepReminderMinute,
+  type ReminderResult,
 } from './reminders';
-import { placeWidget, refreshWidgets, widgetsPlaced } from './widgets';
+import { PIN_CHECK_MS, pinNotPlaced, placeWidget, refreshWidgets, widgetHintText, widgetsPlaced } from './widgets';
 
 const DAY_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -46,16 +51,41 @@ const TOUCH = 48;
 
 // Read when drawn: gym branding repaints the tokens.
 const CAPTION = () => ({ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 15 }) as const;
+const NONE: string[] = [];
 
 function HealthRow() {
   const on = usePhonePrefs((s) => s.healthConnect);
   const setOn = usePhonePrefs((s) => s.setHealthConnect);
+  const setUnsent = usePhonePrefs((s) => s.setHealthUnsent);
   const [state, setState] = useState<HealthState | null>(null);
   const [sent, setSent] = useState<SendResult | null>(null);
   const [busy, setBusy] = useState(false);
   // v0.39.0: Connect was pressed and access is still off — Android shows no screen after two
   // refusals, so offer Health Connect's own page as the way round.
   const [asked, setAsked] = useState(false);
+  // Audit M1: "Open Health Connect" opened nothing — say where to find it instead.
+  const [openFailed, setOpenFailed] = useState(false);
+  // Audit M2: finished workouts Health Connect refused, and the result of "Send again".
+  const unsent = usePhonePrefs((s) => s.healthUnsent ?? NONE);
+  const [resent, setResent] = useState<SendResult | null>(null);
+  const [resending, setResending] = useState(false);
+
+  const openHc = (): void => {
+    tap();
+    const opened = openHealthConnect();
+    if (!opened) console.warn('[ForgeErr] Health Connect did not open');
+    setOpenFailed(!opened);
+  };
+
+  const resend = (): void => {
+    if (resending) return;
+    tap();
+    setResending(true);
+    setResent(null);
+    void resendUnsentToHealth()
+      .then((r) => setResent(r))
+      .finally(() => setResending(false));
+  };
 
   const check = useCallback(async () => {
     setState(await healthState().catch(() => 'none' as const));
@@ -96,6 +126,10 @@ function HealthRow() {
                 tap();
                 setOn(false);
                 setSent(null);
+                // Stopped on purpose: nothing is owed any more ("Send past workouts" after a
+                // Connect again sends every workout).
+                setUnsent([]);
+                setResent(null);
               }}
               style={{ minHeight: TOUCH, minWidth: TOUCH, alignItems: 'center', justifyContent: 'center' }}
             >
@@ -122,7 +156,7 @@ function HealthRow() {
           <Text style={{ ...CAPTION(), textAlign: 'center' }}>
             Nothing opened? Open Health Connect, find ForgeAI and allow it there.
           </Text>
-          <GhostButton label="Open Health Connect" icon="heart" onPress={() => void openHealthConnect()} />
+          <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />
         </View>
       ) : null}
       {state === 'allowed' ? (
@@ -135,7 +169,12 @@ function HealthRow() {
           }}
         />
       ) : null}
-      {state === 'update' ? <GhostButton label="Open Health Connect" icon="heart" onPress={() => void openHealthConnect()} /> : null}
+      {state === 'update' ? <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} /> : null}
+      {openFailed && (state === 'off' || state === 'update') ? (
+        <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), color: color.criticalText, textAlign: 'center', paddingBottom: space.sm }}>
+          {HC_OPEN_FAILED}
+        </Text>
+      ) : null}
       {state === 'on' ? (
         <View style={{ gap: space.xs, paddingBottom: space.sm }}>
           <GhostButton
@@ -157,6 +196,23 @@ function HealthRow() {
           ) : null}
         </View>
       ) : null}
+      {state === 'on' && (unsent.length > 0 || resent != null) ? (
+        <View style={{ gap: space.xs, paddingBottom: space.sm }}>
+          {unsent.length > 0 ? (
+            <>
+              <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), color: color.criticalText, textAlign: 'center' }}>
+                {unsentText(unsent.length)}
+              </Text>
+              <GhostButton label={resending ? 'Sending…' : 'Send again'} icon="heart" onPress={resend} />
+            </>
+          ) : null}
+          {resent != null ? (
+            <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), textAlign: 'center' }}>
+              {sendResultText(resent)}
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -167,9 +223,21 @@ function RemindersRow({ divider = true }: { divider?: boolean }) {
   const minutes = usePhonePrefs((s) => s.reminderMinutes);
   const chosen = usePhonePrefs((s) => s.reminderChosen);
   const setReminders = usePhonePrefs((s) => s.setReminders);
-  const [next, setNext] = useState<number | null>(null);
+  const [next, setNext] = useState<ReminderResult>(null);
   const [blocked, setBlocked] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  const failed = next === REMINDERS_FAILED;
+
+  // Audit H2: setting them failed — try again, from scratch.
+  const retry = (): void => {
+    if (retrying) return;
+    tap();
+    setRetrying(true);
+    void refreshReminders({ force: true })
+      .then(setNext)
+      .finally(() => setRetrying(false));
+  };
 
   useEffect(() => {
     let alive = true;
@@ -218,7 +286,13 @@ function RemindersRow({ divider = true }: { divider?: boolean }) {
     setReminders({ reminderDays: [...set].sort((a, b) => a - b), reminderChosen: true });
   };
 
-  const caption = reminderCaption({ on, blocked, next: next != null ? fmtNextReminder(next) : null, days: days.length });
+  const caption = reminderCaption({
+    on,
+    blocked,
+    next: typeof next === 'number' ? fmtNextReminder(next) : null,
+    days: days.length,
+    failed,
+  });
 
   return (
     <View>
@@ -233,6 +307,11 @@ function RemindersRow({ divider = true }: { divider?: boolean }) {
               openFixFor('off');
             }}
           />
+        </View>
+      ) : null}
+      {on && failed && !blocked && days.length > 0 ? (
+        <View style={{ paddingBottom: space.md }}>
+          <GhostButton label={retrying ? 'Setting…' : 'Try again'} icon="clock" onPress={retry} />
         </View>
       ) : null}
       {on ? (
@@ -383,21 +462,57 @@ function TimeStep({ label, sign, onPress }: { label: string; sign: string; onPre
 
 function WidgetsRow({ divider = true }: { divider?: boolean }) {
   const [placed, setPlaced] = useState(0);
-  const [refused, setRefused] = useState(false);
+  const [hint, setHint] = useState<'refused' | 'notPlaced' | null>(null);
+  // Audit H3: the widget count when a pin was asked for (null = none waiting). Android's "yes"
+  // does not mean placed, so the count is read again when the member is back.
+  const pinBefore = useRef<number | null>(null);
+  const pinTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const settlePin = useCallback(() => {
+    const now = widgetsPlaced();
+    setPlaced(now);
+    if (pinBefore.current == null) return;
+    if (pinNotPlaced(pinBefore.current, now)) setHint('notPlaced');
+    pinBefore.current = null;
+    if (pinTimer.current) clearTimeout(pinTimer.current);
+    pinTimer.current = null;
+  }, []);
 
   useEffect(() => {
     setPlaced(widgetsPlaced());
     void refreshWidgets();
+    let back: ReturnType<typeof setTimeout> | null = null;
     const sub = AppState.addEventListener('change', (a) => {
-      if (a === 'active') setPlaced(widgetsPlaced());
+      if (a !== 'active') return;
+      // A moment for the home screen to finish adding it.
+      if (back) clearTimeout(back);
+      back = setTimeout(settlePin, 700);
     });
-    return () => sub.remove();
-  }, []);
+    return () => {
+      sub.remove();
+      if (back) clearTimeout(back);
+      if (pinTimer.current) clearTimeout(pinTimer.current);
+    };
+  }, [settlePin]);
 
   const add = (kind: 'today' | 'week'): void => {
     tap();
     void refreshWidgets();
-    setRefused(!placeWidget(kind));
+    setHint(null);
+    const before = widgetsPlaced();
+    if (!placeWidget(kind)) {
+      pinBefore.current = null;
+      setHint('refused');
+      return;
+    }
+    pinBefore.current = before;
+    // Some home screens accept and show nothing, so the app never leaves: check after a while,
+    // unless the member is still on the home screen's own "Add widget?" (checked on return).
+    if (pinTimer.current) clearTimeout(pinTimer.current);
+    pinTimer.current = setTimeout(() => {
+      pinTimer.current = null;
+      if (AppState.currentState === 'active') settlePin();
+    }, PIN_CHECK_MS);
   };
 
   return (
@@ -420,9 +535,9 @@ function WidgetsRow({ divider = true }: { divider?: boolean }) {
           <GhostButton label="Add This week" icon="plus" onPress={() => add('week')} />
         </View>
       </View>
-      {refused ? (
-        <Text style={{ ...CAPTION(), textAlign: 'center', paddingBottom: space.sm }}>
-          Your home screen can't add it from here. Long-press your home screen → Widgets → ForgeAI.
+      {hint ? (
+        <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), textAlign: 'center', paddingBottom: space.sm }}>
+          {widgetHintText(hint)}
         </Text>
       ) : null}
     </View>
