@@ -33,6 +33,7 @@ import { ShopScreen } from './shop/ShopScreen';
 import { CrmProvider, useCrm } from './store';
 import { AppShell, type NavItem } from './ui/AppShell';
 import { AttendanceScreen } from './ui/screens/Attendance';
+import { ImportMembersScreen } from './ui/screens/ImportMembers';
 import { MemberDetailScreen } from './ui/screens/MemberDetail';
 import { MembersScreen } from './ui/screens/Members';
 import { MoneyScreen } from './ui/screens/Money';
@@ -159,6 +160,8 @@ function Screen({ segments }: { segments: string[] }) {
     case 'members':
       // `/members/app` is the "Joined in the app" list, not a member id (ids are UUIDs).
       if (id === 'app') return <MembersScreen section="app" />;
+      // `/members/import`: bring members in from an Excel or CSV file (owner and Staff).
+      if (id === 'import') return <ImportMembersScreen />;
       // `/members/f/<tile>`: the roster filtered like the home tile that was tapped.
       if (id === 'f') return <MembersScreen key={segments[2]} filter={isTileFilter(segments[2]) ? segments[2] : undefined} />;
       return id ? <MemberDetailScreen memberId={id} /> : <MembersScreen />;

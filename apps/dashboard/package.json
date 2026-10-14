@@ -16,7 +16,8 @@
     "@supabase/supabase-js": "^2.110.1",
     "qrcode-generator": "^2.0.4",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "read-excel-file": "9.3.10"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

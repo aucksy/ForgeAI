@@ -1,0 +1,741 @@
+/**
+ * Import members from Excel or CSV (15 Oct 2026) — PURE (no network, no storage, no React).
+ *
+ * Research (Audit/crm-research/RESEARCH.md §9 rec 9): "Excel import for day one, so an owner can
+ * move off his register or sheet in minutes." Rivals call it Bulk Upload (OkGym, GymBook).
+ *
+ * The screen reads the file (the spreadsheet library is loaded only when a file is picked) and hands
+ * the rows here. Everything that decides something lives in this file and is tested:
+ *
+ *  - which row holds the column names, and which column is which field (English, Hinglish and
+ *    Hindi headers);
+ *  - Indian dates (15/08/2026, 15-08-26, 15-Aug-2026, Excel's own date numbers), and a whole
+ *    column written month-first is noticed instead of read wrongly;
+ *  - mobiles through the SAME rules as the add-member form (`normalizePhone` / `validateMember`),
+ *    so an imported member is exactly as valid as a typed one;
+ *  - duplicates inside the file and against the gym's members (archived ones too).
+ *
+ * Plan, fees and expiry columns are NOT turned into memberships or payments: a payment needs a
+ * date, a method and a receipt number the sheet does not have, and a plan sold with no money
+ * creates a due the member never owed. They are kept, word for word, in the member's notes.
+ */
+
+import type { Gender, Member, MemberDraft } from '../types';
+import { tr } from '../i18n';
+import { csvDocument } from './csv';
+import { addDays, formatDay, isValidDateISO, toISO, type DateISO } from './dates';
+import { EARLIEST_DATE } from '../data/adapter';
+import { BATCH_MAX, listBatches, resolveBatch } from './batches';
+import { formatINR, parseRupeeInput } from './money';
+import { DEFAULT_DIAL_CODE, findDuplicatePhone, normalizeName, normalizePhone, splitE164, validateMember } from './members';
+
+// ---------------------------------------------------------------- fields
+
+export type ImportField =
+  | 'fullName'
+  | 'phone'
+  | 'joinedOn'
+  | 'gender'
+  | 'dateOfBirth'
+  | 'email'
+  | 'address'
+  | 'batch'
+  | 'plan'
+  | 'amount'
+  | 'expiry'
+  | 'notes';
+
+export const IMPORT_FIELDS: readonly ImportField[] = [
+  'fullName', 'phone', 'joinedOn', 'gender', 'dateOfBirth', 'email', 'address', 'batch', 'plan', 'amount', 'expiry', 'notes',
+];
+
+/** Which column (0-based) holds each field; null = not in the file. */
+export type ColumnMap = Record<ImportField, number | null>;
+
+export function emptyColumnMap(): ColumnMap {
+  return Object.fromEntries(IMPORT_FIELDS.map((f) => [f, null])) as ColumnMap;
+}
+
+/** The field's name on screen. */
+export function fieldLabel(field: ImportField): string {
+  switch (field) {
+    case 'fullName': return tr('Name', 'Naam');
+    case 'phone': return tr('Mobile', 'Mobile');
+    case 'joinedOn': return tr('Joining date', 'Joining date');
+    case 'gender': return tr('Gender', 'Gender');
+    case 'dateOfBirth': return tr('Date of birth', 'Janam din');
+    case 'email': return tr('Email', 'Email');
+    case 'address': return tr('Address', 'Pata');
+    case 'batch': return tr('Batch', 'Batch');
+    case 'plan': return tr('Plan', 'Plan');
+    case 'amount': return tr('Fees', 'Fees');
+    case 'expiry': return tr('Valid till', 'Valid till');
+    case 'notes': return tr('Notes', 'Notes');
+  }
+}
+
+// ---------------------------------------------------------------- header guessing
+
+/**
+ * Words owners put at the top of a column. A leading `=` means "only when the WHOLE header is
+ * this word": "Member" alone is the name, but "Member ID" must not become the name, and "Number"
+ * alone is the mobile, but "Receipt Number" is not.
+ */
+const SYNONYMS: Record<ImportField, readonly string[]> = {
+  fullName: [
+    'name', 'naam', 'full name', 'member name', 'customer name', 'client name', 'name of member',
+    'member ka naam', 'sadasya', '=member', '=customer', '=client', '=members', 'नाम', 'सदस्य',
+  ],
+  phone: [
+    'mobile', 'mobile no', 'mobile number', 'mob no', 'phone', 'phone no', 'phone number', 'contact',
+    'contact no', 'contact number', 'whatsapp', 'whatsapp no', 'whatsapp number', 'cell no',
+    '=number', '=mob', '=ph', '=cell', 'मोबाइल', 'फोन', 'फ़ोन', 'नंबर',
+  ],
+  joinedOn: [
+    'joining date', 'date of joining', 'doj', 'd o j', 'join date', 'joined on', '=joined', '=joining',
+    'admission date', 'date of admission', '=admission', 'start date', 'starting date', 'joining tarikh',
+    'bharti', '=date', 'जॉइनिंग', 'भर्ती',
+  ],
+  gender: ['gender', 'male female', 'male or female', 'ling', '=sex', '=m f', '=mf', 'लिंग'],
+  dateOfBirth: [
+    'dob', 'd o b', 'date of birth', 'birth date', 'birthday', 'birth day', 'bday', 'b day', 'janam din',
+    'janamdin', 'janam tithi', 'janam tarikh', 'जन्म तिथि', 'जन्मदिन', 'जन्म तारीख',
+  ],
+  email: ['email', 'e mail', 'email id', 'mail id', 'gmail', '=mail'],
+  address: ['address', 'pata', 'addr', 'area', 'locality', 'location', 'residence', 'पता'],
+  batch: ['batch', 'batch time', 'slot', 'timing', 'timings', 'shift', '=time', 'बैच'],
+  plan: [
+    'plan', 'plan name', 'package', 'package name', 'membership', 'membership type', 'plan type', 'scheme',
+    'subscription', 'प्लान', 'पैकेज',
+  ],
+  amount: [
+    'amount', 'fees', 'fee', 'fees paid', 'fee paid', 'amount paid', 'paid amount', 'price', 'rupees',
+    '=payment', 'package amount', 'plan amount', 'plan fees', 'total amount', 'joining fees', 'joining fee', 'admission fees', 'admission fee', 'shulk', '=rs', '=paid',
+    '=total', 'फीस', 'राशि',
+  ],
+  expiry: [
+    'expiry', 'expiry date', 'expire', 'expires', 'expires on', 'end date', 'ending date', 'valid till',
+    'valid upto', 'valid up to', 'validity', 'renewal date', '=renewal', 'due date', 'next due',
+    '=till', 'khatam', 'समाप्ति',
+  ],
+  notes: ['notes', 'note', 'remarks', 'remark', 'comment', 'comments', '=other', 'टिप्पणी'],
+};
+
+/** Lower case, every run of punctuation one space, Devanagari kept (with its vowel marks). */
+export function normalizeHeader(raw: unknown): string {
+  return cellText(raw)
+    .normalize('NFC')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ')
+    .trim();
+}
+
+interface Candidate {
+  col: number;
+  field: ImportField;
+  score: number;
+}
+
+/**
+ * Guess each field's column from a header row. A whole-header match beats a word inside a header,
+ * and a longer word beats a shorter one ("Plan Expiry Date" is the expiry, not the plan). Each
+ * column feeds one field and each field reads one column.
+ */
+export function guessColumns(headers: readonly unknown[]): ColumnMap {
+  const map = emptyColumnMap();
+  const candidates: Candidate[] = [];
+  headers.forEach((raw, col) => {
+    const h = normalizeHeader(raw);
+    if (!h) return;
+    const padded = ` ${h} `;
+    IMPORT_FIELDS.forEach((field) => {
+      let best = 0;
+      for (const entry of SYNONYMS[field]) {
+        const exactOnly = entry.startsWith('=');
+        const syn = normalizeHeader(exactOnly ? entry.slice(1) : entry);
+        if (!syn) continue;
+        if (h === syn) best = Math.max(best, 100 + syn.length);
+        else if (!exactOnly && padded.includes(` ${syn} `)) best = Math.max(best, syn.length);
+      }
+      if (best > 0) candidates.push({ col, field, score: best });
+    });
+  });
+  candidates.sort(
+    (a, b) => b.score - a.score || a.col - b.col || IMPORT_FIELDS.indexOf(a.field) - IMPORT_FIELDS.indexOf(b.field),
+  );
+  const usedCols = new Set<number>();
+  for (const c of candidates) {
+    if (map[c.field] !== null || usedCols.has(c.col)) continue;
+    map[c.field] = c.col;
+    usedCols.add(c.col);
+  }
+  return map;
+}
+
+function mappedCount(map: ColumnMap): number {
+  return IMPORT_FIELDS.filter((f) => map[f] !== null).length;
+}
+
+/**
+ * The row with the column names: a register often starts with the gym's name or a blank line.
+ * The row among the first ten that names the most fields wins; with no recognisable row, the first.
+ */
+export function findHeaderRow(rows: readonly (readonly unknown[])[]): number {
+  let best = 0;
+  let bestCount = 0;
+  for (let i = 0; i < Math.min(rows.length, 10); i += 1) {
+    const n = mappedCount(guessColumns(rows[i] ?? []));
+    if (n > bestCount) {
+      best = i;
+      bestCount = n;
+    }
+  }
+  return best;
+}
+
+/** `A`, `B` … `Z`, `AA` — the letter Excel shows above a column. */
+export function columnLetter(index: number): string {
+  let n = index + 1;
+  let out = '';
+  while (n > 0) {
+    const r = (n - 1) % 26;
+    out = String.fromCharCode(65 + r) + out;
+    n = Math.floor((n - 1) / 26);
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------- cells
+
+/** One cell as the spreadsheet library hands it over. */
+export type Cell = string | number | boolean | Date | null | undefined;
+
+function isDate(v: unknown): v is Date {
+  return v instanceof Date;
+}
+
+/** A cell as text: trimmed, numbers without exponent where they are whole, dates as `YYYY-MM-DD`. */
+export function cellText(v: unknown): string {
+  if (v === null || v === undefined) return '';
+  if (typeof v === 'string') return v.trim();
+  if (typeof v === 'number') {
+    if (!Number.isFinite(v)) return '';
+    return Number.isInteger(v) && Math.abs(v) < 1e21 ? v.toFixed(0) : String(v);
+  }
+  if (typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
+  if (isDate(v)) {
+    if (Number.isNaN(v.getTime())) return '';
+    // The spreadsheet library builds dates at UTC midnight, so the UTC parts are the day written.
+    return toISO(v.getUTCFullYear(), v.getUTCMonth() + 1, v.getUTCDate());
+  }
+  return String(v).trim();
+}
+
+// ---------------------------------------------------------------- dates
+
+/**
+ * Excel's date number (days since 1900, with Excel's famous fake 29 Feb 1900) to a day.
+ * 45519 is 15 Aug 2024.
+ */
+export function excelSerialToISO(serial: number): DateISO | null {
+  if (!Number.isFinite(serial)) return null;
+  const n = Math.floor(serial);
+  if (n < 1 || n > 2958465 || n === 60) return null;
+  // Serial 1 = 1 Jan 1900. After the fake leap day (60), every serial is one day "ahead".
+  return n < 60 ? addDays('1899-12-31', n) : addDays('1899-12-30', n);
+}
+
+const MONTHS: Record<string, number> = {
+  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+};
+
+function monthFromName(name: string): number | null {
+  const key = name.toLowerCase().slice(0, 3);
+  return MONTHS[key] ?? null;
+}
+
+/** `26` -> 2026, `95` -> 1995: a two-digit year more than ten years ahead is last century. */
+export function fullYear(yy: number, todayYear: number): number {
+  if (yy >= 100) return yy;
+  return 2000 + yy <= todayYear + 10 ? 2000 + yy : 1900 + yy;
+}
+
+function checked(y: number, m: number, d: number): DateISO | null {
+  const iso = toISO(y, m, d);
+  return isValidDateISO(iso) ? iso : null;
+}
+
+const NUMERIC_DATE = /^(\d{1,2})[-/. ](\d{1,2})[-/. ](\d{2}|\d{4})(?:[ T].*)?$/;
+
+/**
+ * Is this column written day-first (Indian: 15/08/2026)? Day-first unless some date has a middle
+ * number above 12 and none has a first number above 12 — then the sheet was saved month-first
+ * (a US-set Google Sheet), and reading it day-first would swap day and month without a word.
+ */
+export function detectDayFirst(values: readonly unknown[]): boolean {
+  let firstOver12 = false;
+  let secondOver12 = false;
+  for (const v of values) {
+    if (typeof v !== 'string') continue;
+    const m = NUMERIC_DATE.exec(v.trim());
+    if (!m) continue;
+    if (Number(m[1]) > 12) firstOver12 = true;
+    if (Number(m[2]) > 12) secondOver12 = true;
+  }
+  return !(secondOver12 && !firstOver12);
+}
+
+/**
+ * Read one date cell. Returns the day, or null when the cell is not a date we can read with
+ * certainty (blank cells are the caller's business: they are not wrong, just empty).
+ */
+export function parseSheetDate(v: unknown, today: DateISO, dayFirst = true): DateISO | null {
+  if (isDate(v)) {
+    const t = cellText(v);
+    return isValidDateISO(t) ? t : null;
+  }
+  if (typeof v === 'number') return excelSerialToISO(v);
+  const s = cellText(v);
+  if (!s) return null;
+  const todayYear = Number(today.slice(0, 4));
+
+  // 2026-08-15 (and 2026/08/15), maybe with a time after it.
+  let m = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})(?:[ T].*)?$/.exec(s);
+  if (m) return checked(Number(m[1]), Number(m[2]), Number(m[3]));
+
+  // 15/08/2026, 15-08-26, 15.8.2026
+  m = NUMERIC_DATE.exec(s);
+  if (m) {
+    const a = Number(m[1]);
+    const b = Number(m[2]);
+    const y = fullYear(Number(m[3]), todayYear);
+    return dayFirst ? checked(y, b, a) : checked(y, a, b);
+  }
+
+  // 15 Aug 2026, 15-Aug-26, 15th August, 2026
+  m = /^(\d{1,2})(?:st|nd|rd|th)?[-/. ]*([a-z]{3,9})[-/., ]*(\d{2}|\d{4})$/i.exec(s);
+  if (m) {
+    const month = monthFromName(m[2]);
+    return month ? checked(fullYear(Number(m[3]), todayYear), month, Number(m[1])) : null;
+  }
+
+  // Aug 15, 2026
+  m = /^([a-z]{3,9})[-/. ]+(\d{1,2})(?:st|nd|rd|th)?[,]?[-/. ]+(\d{2}|\d{4})$/i.exec(s);
+  if (m) {
+    const month = monthFromName(m[1]);
+    return month ? checked(fullYear(Number(m[3]), todayYear), month, Number(m[2])) : null;
+  }
+
+  // 15082026 (ddmmyyyy) or 20260815 (yyyymmdd), typed without separators.
+  m = /^(\d{2})(\d{2})(\d{4})$/.exec(s);
+  if (m) {
+    const ymd = checked(Number(s.slice(0, 4)), Number(s.slice(4, 6)), Number(s.slice(6, 8)));
+    if (ymd && /^(19|20)/.test(s)) return ymd;
+    return dayFirst ? checked(Number(m[3]), Number(m[2]), Number(m[1])) : checked(Number(m[3]), Number(m[1]), Number(m[2]));
+  }
+
+  // A bare Excel date number that came through as text (a CSV saved from a date column).
+  if (/^\d{4,6}(\.\d+)?$/.test(s)) return excelSerialToISO(Number(s));
+
+  return null;
+}
+
+// ---------------------------------------------------------------- phone, gender
+
+export type PhoneRead =
+  | { ok: true; e164: string; extra: string | null }
+  | { ok: false; why: 'missing' | 'shortened' | 'invalid' };
+
+/**
+ * A mobile from a cell, through the add-member form's own rules (+91 unless the cell says
+ * otherwise). A cell with two numbers ("98290 12345 / 94140 54321") keeps the first; the rest is
+ * handed back so it can go into notes rather than vanish.
+ */
+export function parseImportPhone(v: unknown): PhoneRead {
+  const raw = cellText(v);
+  if (!raw) return { ok: false, why: 'missing' };
+  // Excel showed a long number as 9.87654E+09 and the CSV saved the SHORTENED digits.
+  if (/^\+?\d+(\.\d+)?e\+?\d+$/i.test(raw.replace(/\s/g, ''))) return { ok: false, why: 'shortened' };
+
+  const parts = raw.split(/[,;/|\n]+/).map((p) => p.trim()).filter(Boolean);
+  const first = parts[0] ?? '';
+  const extra = parts.slice(1).join(', ') || null;
+
+  let compact = first.replace(/[\s().-]/g, '');
+  if (compact.startsWith('00')) compact = `+${compact.slice(2)}`;
+  let parsed;
+  if (compact.startsWith('+')) {
+    const { dialCode, national } = splitE164(`+${compact.replace(/\D/g, '')}`);
+    parsed = normalizePhone(dialCode, national);
+  } else {
+    parsed = normalizePhone(DEFAULT_DIAL_CODE, first);
+  }
+  return parsed ? { ok: true, e164: parsed.e164, extra } : { ok: false, why: 'invalid' };
+}
+
+const MALE = new Set(['m', 'male', 'man', 'boy', 'gents', 'gent', 'purush', 'mard', 'ladka', 'पुरुष', 'mr']);
+const FEMALE = new Set(['f', 'female', 'woman', 'girl', 'lady', 'ladies', 'mahila', 'aurat', 'ladki', 'महिला', 'स्त्री', 'mrs', 'ms']);
+const OTHER = new Set(['o', 'other', 'others', 'trans', 'transgender', 'anya']);
+
+/** `M`, `Male`, `ladka`, `F`, `Mahila` … -> a gender; blank -> null; anything else -> 'unknown'. */
+export function parseGender(v: unknown): Gender | null | 'unknown' {
+  const s = normalizeHeader(v);
+  if (!s) return null;
+  if (MALE.has(s)) return 'male';
+  if (FEMALE.has(s)) return 'female';
+  if (OTHER.has(s)) return 'other';
+  return 'unknown';
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+// ---------------------------------------------------------------- CSV and files
+
+/**
+ * Parse CSV text (quotes, doubled quotes, line breaks inside quotes, CRLF). The separator is
+ * whichever of comma, semicolon or tab the first line uses most: Excel in many locales saves `;`.
+ */
+export function parseCsv(text: string): string[][] {
+  const body = text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+  const firstLine = body.split(/\r?\n/, 1)[0] ?? '';
+  const count = (ch: string) => firstLine.split(ch).length - 1;
+  const seps = [',', ';', '\t'];
+  const sep = seps.reduce((best, ch) => (count(ch) > count(best) ? ch : best), ',');
+
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = '';
+  let quoted = false;
+  for (let i = 0; i < body.length; i += 1) {
+    const c = body[i];
+    if (quoted) {
+      if (c === '"') {
+        if (body[i + 1] === '"') {
+          field += '"';
+          i += 1;
+        } else quoted = false;
+      } else field += c;
+      continue;
+    }
+    if (c === '"' && field === '') quoted = true;
+    else if (c === sep) {
+      row.push(field);
+      field = '';
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && body[i + 1] === '\n') i += 1;
+      row.push(field);
+      rows.push(row);
+      row = [];
+      field = '';
+    } else field += c;
+  }
+  if (field !== '' || row.length > 0) {
+    row.push(field);
+    rows.push(row);
+  }
+  return rows.map((r) => r.map((f) => f.trim()));
+}
+
+/** CSV bytes to text: UTF-8 when it is valid UTF-8, else the Windows code page old Excel saves in. */
+export function decodeCsvBytes(bytes: Uint8Array): string {
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch {
+    // Not UTF-8: an older Excel "CSV" is Windows-1252. Reading it that way keeps every name.
+    return new TextDecoder('windows-1252').decode(bytes);
+  }
+}
+
+export type FileKind = 'xlsx' | 'csv' | 'xls' | 'unknown';
+
+/** What kind of file this really is: by its first bytes first, by its name second. */
+export function sniffFile(name: string, head: Uint8Array): FileKind {
+  if (head[0] === 0x50 && head[1] === 0x4b && head[2] === 0x03 && head[3] === 0x04) return 'xlsx';
+  if (head[0] === 0xd0 && head[1] === 0xcf && head[2] === 0x11 && head[3] === 0xe0) return 'xls';
+  const ext = name.toLowerCase().split('.').pop() ?? '';
+  // Some gym software saves a tab-separated text file and names it .xls.
+  if (ext === 'csv' || ext === 'txt' || ext === 'tsv' || ext === 'xls') return 'csv';
+  return 'unknown';
+}
+
+// ---------------------------------------------------------------- the plan
+
+/** The most rows one import takes: one browser holds a gym, not a city. */
+export const MAX_IMPORT_ROWS = 2000;
+
+export type RowStatus = 'add' | 'duplicate' | 'problem';
+
+export interface ImportRow {
+  /** The row number Excel shows on the left. */
+  rowNumber: number;
+  /** The row's cells as text, for the skipped-rows file. */
+  cells: string[];
+  /** The name as written (blank when the row has none), to show the row by. */
+  name: string;
+  status: RowStatus;
+  /** Ready to save when the row is fine (`add`) or a duplicate of a member already here. */
+  draft: MemberDraft | null;
+  /** A duplicate of this member already in the gym. */
+  existing: Member | null;
+  /** A duplicate of an earlier row in this same file. */
+  sameAsRow: number | null;
+  /** Why the row cannot be added, in plain words. */
+  problems: string[];
+  /** Added anyway, but something was left out or assumed. */
+  warnings: string[];
+}
+
+export interface ImportPlan {
+  rows: ImportRow[];
+  counts: { add: number; duplicate: number; problem: number };
+  /** Rows past `MAX_IMPORT_ROWS`, not looked at. */
+  leftOut: number;
+}
+
+function cellAt(row: readonly unknown[], col: number | null): unknown {
+  return col === null ? undefined : row[col];
+}
+
+function isBlankRow(row: readonly unknown[]): boolean {
+  return row.every((c) => cellText(c) === '');
+}
+
+/**
+ * Turn the sheet into a row-by-row plan: who will be added, who is already a member, and what is
+ * wrong with the rest. `roster` is every member of the gym, archived ones included.
+ */
+export function planImport(
+  rows: readonly (readonly unknown[])[],
+  headerRow: number,
+  map: ColumnMap,
+  roster: readonly Member[],
+  today: DateISO,
+): ImportPlan {
+  const data: { row: readonly unknown[]; rowNumber: number }[] = [];
+  for (let i = headerRow + 1; i < rows.length; i += 1) {
+    const row = rows[i] ?? [];
+    if (!isBlankRow(row)) data.push({ row, rowNumber: i + 1 });
+  }
+  const leftOut = Math.max(0, data.length - MAX_IMPORT_ROWS);
+  const taken = data.slice(0, MAX_IMPORT_ROWS);
+
+  const colValues = (col: number | null) => (col === null ? [] : taken.map((d) => d.row[col]));
+  const joinDayFirst = detectDayFirst(colValues(map.joinedOn));
+  const dobDayFirst = detectDayFirst(colValues(map.dateOfBirth));
+  const expiryDayFirst = detectDayFirst(colValues(map.expiry));
+
+  const batchNames = listBatches(roster).map((b) => b.name);
+  const seen = new Map<string, number>();
+  const out: ImportRow[] = [];
+
+  for (const { row, rowNumber } of taken) {
+    const problems: string[] = [];
+    const warnings: string[] = [];
+    const text = (f: ImportField) => cellText(cellAt(row, map[f]));
+
+    // Name
+    const fullName = normalizeName(text('fullName'));
+    if (!fullName) problems.push(tr('No name.', 'Naam nahi hai.'));
+
+    // Mobile
+    const phoneRead = parseImportPhone(cellAt(row, map.phone));
+    if (!phoneRead.ok) {
+      const shown = text('phone');
+      problems.push(
+        phoneRead.why === 'missing'
+          ? tr('No mobile number.', 'Mobile number nahi hai.')
+          : phoneRead.why === 'shortened'
+            ? tr(
+                `Mobile “${shown}” was shortened by Excel. Set that column to Text in Excel and save again.`,
+                `Excel ne mobile “${shown}” chhota kar diya. Excel mein us column ko Text karke phir save karo.`,
+              )
+            : tr(`Mobile “${shown}” is not a valid 10-digit number.`, `Mobile “${shown}” sahi 10 ank ka number nahi hai.`),
+      );
+    }
+
+    // Joining date: blank = today (said once on screen when the column is missing, per row otherwise).
+    let joinedOn = today;
+    const joinRaw = cellAt(row, map.joinedOn);
+    if (text('joinedOn')) {
+      const d = parseSheetDate(joinRaw, today, joinDayFirst);
+      if (!d) {
+        problems.push(
+          tr(
+            `Joining date “${text('joinedOn')}” is not a date we can read. Write it like 15/08/2026.`,
+            `Joining date “${text('joinedOn')}” samajh nahi aayi. Aise likho: 15/08/2026.`,
+          ),
+        );
+      } else if (d < EARLIEST_DATE) {
+        problems.push(tr(`Joining date ${formatDay(d)} looks like a typo — check the year.`, `Joining date ${formatDay(d)} galat lag rahi hai — saal check karo.`));
+      } else {
+        joinedOn = d;
+        if (d > today) warnings.push(tr(`Joining date ${formatDay(d)} is in the future.`, `Joining date ${formatDay(d)} aage ki hai.`));
+      }
+    } else if (map.joinedOn !== null) {
+      warnings.push(tr('No joining date — today is used.', 'Joining date nahi hai — aaj ki date lagi.'));
+    }
+
+    // Date of birth: optional, so a bad one is left out (and said), never a reason to skip someone.
+    let dateOfBirth = '';
+    if (text('dateOfBirth')) {
+      const d = parseSheetDate(cellAt(row, map.dateOfBirth), today, dobDayFirst);
+      if (!d) warnings.push(tr(`Birthday “${text('dateOfBirth')}” not readable — left blank.`, `Janam din “${text('dateOfBirth')}” samajh nahi aaya — khaali chhoda.`));
+      else if (d > today) warnings.push(tr(`Birthday ${formatDay(d)} is in the future — left blank.`, `Janam din ${formatDay(d)} aage ki date hai — khaali chhoda.`));
+      else dateOfBirth = d;
+    }
+
+    // Gender
+    let gender = '';
+    const g = parseGender(cellAt(row, map.gender));
+    if (g === 'unknown') warnings.push(tr(`Gender “${text('gender')}” not understood — left blank.`, `Gender “${text('gender')}” samajh nahi aaya — khaali chhoda.`));
+    else if (g) gender = g;
+
+    // Email
+    let email = text('email');
+    if (email && !EMAIL_RE.test(email)) {
+      warnings.push(tr(`Email “${email}” doesn’t look right — left blank.`, `Email “${email}” sahi nahi lag raha — khaali chhoda.`));
+      email = '';
+    }
+
+    // Batch: the gym's own spelling when it already has this batch.
+    let batch = resolveBatch(text('batch'), batchNames) ?? '';
+    if (batch.length > BATCH_MAX) {
+      warnings.push(tr(`Batch name cut to ${BATCH_MAX} letters.`, `Batch ka naam ${BATCH_MAX} akshar tak chhota kiya.`));
+      batch = batch.slice(0, BATCH_MAX).trim();
+    }
+    if (batch && !batchNames.includes(batch)) batchNames.push(batch);
+
+    // Notes: the sheet's notes, plus plan / fees / expiry kept as written (not made into a sale).
+    const extras: string[] = [];
+    if (text('plan')) extras.push(tr(`Plan: ${text('plan')}`, `Plan: ${text('plan')}`));
+    if (text('amount')) {
+      const p = parseRupeeInput(text('amount'));
+      extras.push(tr(`Fees: ${p !== null ? formatINR(p) : text('amount')}`, `Fees: ${p !== null ? formatINR(p) : text('amount')}`));
+    }
+    if (text('expiry')) {
+      const d = parseSheetDate(cellAt(row, map.expiry), today, expiryDayFirst);
+      extras.push(tr(`Valid till: ${d ? formatDay(d) : text('expiry')}`, `Valid till: ${d ? formatDay(d) : text('expiry')}`));
+    }
+    if (phoneRead.ok && phoneRead.extra) extras.push(tr(`Other number: ${phoneRead.extra}`, `Doosra number: ${phoneRead.extra}`));
+    const notes = [text('notes'), extras.length ? tr(`From Excel — ${extras.join(' · ')}`, `Excel se — ${extras.join(' · ')}`) : '']
+      .filter(Boolean)
+      .join('\n');
+
+    let draft: MemberDraft | null = null;
+    if (problems.length === 0 && phoneRead.ok) {
+      const { dialCode, national } = splitE164(phoneRead.e164);
+      const result = validateMember(
+        {
+          fullName,
+          dialCode,
+          phone: national,
+          email,
+          gender,
+          dateOfBirth,
+          address: text('address'),
+          emergencyName: '',
+          emergencyPhone: '',
+          joinedOn,
+          notes,
+          batch,
+        },
+        today,
+      );
+      if (result.ok) draft = { ...result.value, archived: false, photoUri: null };
+      else problems.push(result.message);
+    }
+
+    const cells = row.map(cellText);
+    if (!draft) {
+      out.push({ rowNumber, cells, name: fullName, status: 'problem', draft: null, existing: null, sameAsRow: null, problems, warnings });
+      continue;
+    }
+
+    const earlier = seen.get(draft.phone);
+    if (earlier !== undefined) {
+      out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier, problems, warnings });
+      continue;
+    }
+    seen.set(draft.phone, rowNumber);
+    const existing = findDuplicatePhone(roster, draft.phone);
+    out.push({ rowNumber, cells, name: fullName, status: existing ? 'duplicate' : 'add', draft, existing, sameAsRow: null, problems, warnings });
+  }
+
+  const counts = { add: 0, duplicate: 0, problem: 0 };
+  for (const r of out) counts[r.status] += 1;
+  return { rows: out, counts, leftOut };
+}
+
+/** One plain line: what happens to this row. */
+export function rowVerdict(row: ImportRow): string {
+  if (row.status === 'add') return tr('Will be added', 'Jud jayega');
+  if (row.status === 'problem') return tr('Problem — will be skipped', 'Gadbad — chhoda jayega');
+  if (row.sameAsRow !== null) {
+    return tr(`Same mobile as row ${row.sameAsRow} — skipped`, `Row ${row.sameAsRow} wala hi mobile — chhoda jayega`);
+  }
+  const who = row.existing?.fullName ?? '';
+  return row.existing?.archived
+    ? tr(`Already a member (${who}, archived)`, `Pehle se member hai (${who}, archive mein)`)
+    : tr(`Already a member (${who})`, `Pehle se member hai (${who})`);
+}
+
+/**
+ * For "fill in what is missing" on a member already in the gym: only the fields that member has
+ * BLANK. Name, mobile and joining date are never touched — the gym's own record wins.
+ */
+export function fillBlanksPatch(existing: Member, draft: MemberDraft): Partial<MemberDraft> {
+  const patch: Partial<MemberDraft> = {};
+  const blank = (v: unknown) => v === null || v === undefined || v === '';
+  if (blank(existing.email) && draft.email) patch.email = draft.email;
+  if (blank(existing.gender) && draft.gender) patch.gender = draft.gender;
+  if (blank(existing.dateOfBirth) && draft.dateOfBirth) patch.dateOfBirth = draft.dateOfBirth;
+  if (blank(existing.address) && draft.address) patch.address = draft.address;
+  if (blank(existing.batch) && draft.batch) patch.batch = draft.batch;
+  if (blank(existing.notes) && draft.notes) patch.notes = draft.notes;
+  return patch;
+}
+
+// ---------------------------------------------------------------- files out
+
+/** Column names for the sample file, in the panel's language (both languages are recognised). */
+export function templateHeaders(): string[] {
+  return [
+    tr('Name', 'Naam'),
+    tr('Mobile', 'Mobile'),
+    tr('Joining date', 'Joining date'),
+    tr('Gender', 'Gender'),
+    tr('Date of birth', 'Janam din'),
+    tr('Address', 'Pata'),
+    tr('Batch', 'Batch'),
+    tr('Plan', 'Plan'),
+    tr('Fees', 'Fees'),
+    tr('Valid till', 'Valid till'),
+    tr('Notes', 'Notes'),
+  ];
+}
+
+/** The sample file: column names only, so nothing made-up gets imported by mistake. */
+export function templateCsv(): string {
+  return csvDocument(templateHeaders(), []);
+}
+
+/** The rows that were not added, with the reason first, to fix and import again. */
+export function skippedRowsCsv(
+  headers: readonly string[],
+  skipped: readonly { row: ImportRow; reason: string }[],
+): string {
+  const width = Math.max(headers.length, ...skipped.map((s) => s.row.cells.length));
+  const head = [tr('Row', 'Row'), tr('Why skipped', 'Kyun chhoda'), ...Array.from({ length: width }, (_, i) => headers[i] || columnLetter(i))];
+  const body = skipped.map(({ row, reason }) => [
+    row.rowNumber,
+    reason,
+    ...Array.from({ length: width }, (_, i) => row.cells[i] ?? ''),
+  ]);
+  return csvDocument(head, body);
+}
+
+/** Why a row was skipped, in one line, for the skipped-rows file. */
+export function skipReason(row: ImportRow): string {
+  if (row.status === 'problem') return row.problems.join(' ');
+  return rowVerdict(row);
+}

@@ -174,6 +174,12 @@ export function SettingsScreen() {
               )}
         </p>
 
+        <div style={{ marginTop: space.lg }}>
+          <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
+            {tr('Import members from Excel', 'Excel se members import karo')}
+          </Button>
+        </div>
+
         {!online && canErase && (
         <Row gap={space.sm}>
           <div style={{ marginTop: space.lg }}>
@@ -313,6 +319,13 @@ function StaffSettings() {
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>{tr('Language', 'Bhasha')}</SectionTitle>
         <LangToggle />
+      </Card>
+      {/* Adding members is front-desk work, so Staff may import a list too. */}
+      <Card style={{ marginBottom: space.lg }}>
+        <SectionTitle>{tr('Members', 'Members')}</SectionTitle>
+        <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
+          {tr('Import members from Excel', 'Excel se members import karo')}
+        </Button>
       </Card>
       <SignInCard />
       <InstallCard />

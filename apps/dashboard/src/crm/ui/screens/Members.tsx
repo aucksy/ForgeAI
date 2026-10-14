@@ -63,7 +63,17 @@ export function MembersScreen({ section, filter: initialFilter }: { section?: 'a
             ? tr('Who has the ForgeAI app on their phone', 'Kiske phone par ForgeAI App hai')
             : tr(`${memberViews.length} on the roster`, `${memberViews.length} members gym mein`)
         }
-        actions={app ? undefined : <Button onClick={() => setAdding(true)}>{tr('+ Add member', '+ Naya member jodo')}</Button>}
+        actions={
+          app ? undefined : (
+            <>
+              <Button wrap onClick={() => setAdding(true)}>{tr('+ Add member', '+ Naya member jodo')}</Button>
+              {/* Day one: a register or sheet comes in all at once (RESEARCH.md §9 rec 9). */}
+              <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
+                {tr('Import from Excel', 'Excel se import')}
+              </Button>
+            </>
+          )
+        }
       />
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
@@ -230,7 +240,18 @@ function RosterSection({
                     'Pehla member jodo, phir turant unhe Plan do.',
                   )
             }
-            action={!narrowed && <Button onClick={() => setAdding(true)}>{tr('+ Add member', '+ Naya member jodo')}</Button>}
+            action={
+              !narrowed && (
+                <Row gap={space.sm}>
+                  <Button wrap onClick={() => setAdding(true)}>{tr('+ Add member', '+ Naya member jodo')}</Button>
+                  {memberViews.length === 0 && (
+                    <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
+                      {tr('Import from Excel', 'Excel se import')}
+                    </Button>
+                  )}
+                </Row>
+              )
+            }
           />
         </Card>
       ) : compact ? (

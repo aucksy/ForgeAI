@@ -27,7 +27,7 @@ function rpcAnswer(fn) {
 }
 
 const ROUTES = [
-  '/', '/members', '/members/f/exp-1-3', '/members/f/active', '/members/app', 'MEMBER', '/shop', '/shop/messages',
+  '/', '/members', '/members/import', '/members/f/exp-1-3', '/members/f/active', '/members/app', 'MEMBER', '/shop', '/shop/messages',
   '/attendance', '/money', '/money/dues', '/money/today', 'RECEIPT', '/plans', '/enquiries', '/expenses',
   '/settings', '/settings/invite', '/settings/people', '/settings/branding', '/more',
 ];
