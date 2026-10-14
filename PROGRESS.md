@@ -1755,6 +1755,21 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-15: **v0.41.0 — press-and-hold drag to reorder routines; Save my measurements; panel steps
+  3-5 (live) + 0012/0013** (owner asleep: "continue working till end").
+  - Routines: hold a routine card ~350 ms, drag within its folder (as Hevy: "tap and hold on a routine
+    to activate drag-and-drop"); DragList (gesture-handler Pan + reanimated; heights on the UI thread,
+    held card keyed by id, only a real release saves); maths in tracker/lib/dragOrder.ts (tested).
+    Phone test part J2 drags Push A below Pull A with stepped motion events, reads the order back from
+    a uiautomator dump, drags it back. Reviewed (1 high, 2 medium) and fixed.
+  - Save my measurements (Settings -> Export & import): CSV of weight, fat %, measurements by day,
+    Hevy API field names, units by the app setting, refuses on the sample member.
+  - Server: 0012 security advisor clean-up (no unintended anon-callable functions; fixed search_path
+    on 7); 0013 enquiry/expense record kinds.
+  - Panel (live): step 3 home tiles in the rivals' order with lists that match each number, 5-item
+    phone bar + More; step 4 WhatsApp typed messages (fees, ending, ended, birthday, welcome,
+    receipt) + one-by-one queue; step 5 Enquiries, Expenses (profit), Freeze / Extra din. Reviewed
+    (9 findings) and fixed.
 - 2026-10-14: **v0.40.0 — audit toolkit first picks, 9 silent failures fixed; panel English | Hinglish
   + install as an app** (8e6c84d, ae7aebc, f8e5ad3, 05a3a95 + this commit; owner: "research skills /
   repos for professional audit... enough is enough", then "go ahead").
