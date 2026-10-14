@@ -14,7 +14,7 @@
  *    saved again without retyping the number as Indian.
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
 import { tr } from '../../i18n';
@@ -28,8 +28,9 @@ import {
   type MemberField,
   type MemberFormDraft,
 } from '../../logic/members';
+import { batchKey, BATCH_MAX, listBatches, resolveBatch, type BatchCount } from '../../logic/batches';
 import { DuplicatePhoneError } from '../../data/adapter';
-import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
+import { Button, ChipToggle, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
 import { navigate } from '../router';
 
 export function MemberFormSheet({
@@ -44,7 +45,9 @@ export function MemberFormSheet({
   onClose: () => void;
   onSaved?: (member: Member) => void;
 }) {
-  const { today, createMember, updateMember, setMemberArchived } = useCrm();
+  const { today, memberViews, createMember, updateMember, setMemberArchived } = useCrm();
+  // The batches this gym already uses, most used first: the usual pick is one tap.
+  const batches = useMemo(() => listBatches(memberViews.map((v) => v.member)), [memberViews]);
   const [form, setForm] = useState<MemberFormDraft>(() => {
     if (editing) return memberToForm(editing);
     const blank = emptyMemberForm(today);
@@ -78,7 +81,9 @@ export function MemberFormSheet({
   }));
 
   const save = async () => {
-    const result = validateMember(form, today);
+    // "morning 6-8" typed as new joins the gym's existing "Morning 6-8", never a second chip.
+    const typed = { ...form, batch: resolveBatch(form.batch, batches.map((b) => b.name)) ?? '' };
+    const result = validateMember(typed, today);
     if (!result.ok) {
       setFieldError({ field: result.field, message: result.message });
       return;
@@ -209,6 +214,13 @@ export function MemberFormSheet({
         </div>
       </Row>
 
+      <BatchField
+        value={form.batch}
+        onChange={set('batch')}
+        batches={batches}
+        error={errorFor('batch')}
+      />
+
       <Grid min={220}>
         <TextField
           label={tr('Joining date', 'Joining date')}
@@ -282,5 +294,87 @@ export function MemberFormSheet({
         </p>
       )}
     </Sheet>
+  );
+}
+
+const NEW_BATCH = ' new';
+const NONE = ' none';
+
+/**
+ * The member's batch: chips of the batches already in use (most used first), "None", and
+ * "+ New batch" which opens a text box. A gym with no batches yet gets the text box alone. On a
+ * phone the chips are one row that scrolls sideways, so the form grows by one line, not a grid.
+ */
+function BatchField({
+  value,
+  onChange,
+  batches,
+  error,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  batches: BatchCount[];
+  error: string | null;
+}) {
+  const key = batchKey(value);
+  // Typing a new name: held as its own mode so the text box stays open while the name is blank.
+  const [typing, setTyping] = useState(() => key !== null && !batches.some((b) => b.key === key));
+
+  if (batches.length === 0) {
+    return (
+      <TextField
+        label={tr('Batch (optional)', 'Batch (zaroori nahi)')}
+        value={value}
+        onChange={onChange}
+        error={error}
+        placeholder={tr('Morning 6-8', 'Subah 6-8')}
+        hint={tr('The time they train. Later members pick it with one tap.', 'Kis time aate hain. Agle members ek tap mein chun lenge.')}
+      />
+    );
+  }
+
+  const picked = typing ? NEW_BATCH : key ?? NONE;
+  return (
+    // `width: 0` + `minWidth: 100%`: the one-line chip row must not count toward the sheet's own
+    // width. The sheet sizes itself to its content on a phone, so a row of five chips made the
+    // whole form 570px wide on a 375px screen; this way the row fills the form and scrolls.
+    <div style={{ marginTop: space.md, width: 0, minWidth: '100%' }}>
+      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
+        {tr('Batch (optional)', 'Batch (zaroori nahi)')}
+      </div>
+      <ChipToggle
+        label={tr('Batch', 'Batch')}
+        value={picked}
+        onChange={(v) => {
+          if (v === NEW_BATCH) {
+            setTyping(true);
+            onChange('');
+          } else {
+            setTyping(false);
+            onChange(v === NONE ? '' : (batches.find((b) => b.key === v)?.name ?? ''));
+          }
+        }}
+        options={[
+          ...batches.map((b) => ({ value: b.key, label: b.name, count: b.countN })),
+          { value: NONE, label: tr('None', 'Koi nahi') },
+          { value: NEW_BATCH, label: tr('+ New batch', '+ Naya Batch') },
+        ]}
+      />
+      {typing ? (
+        <TextField
+          label={tr('New batch name', 'Naye Batch ka naam')}
+          value={value}
+          onChange={onChange}
+          error={error}
+          autoFocus
+          placeholder={tr('Evening 6-9', 'Shaam 6-9')}
+          hint={tr(`Up to ${BATCH_MAX} letters.`, `${BATCH_MAX} akshar tak.`)}
+        />
+      ) : (
+        error && (
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.criticalText, marginTop: 5 }}>{error}</div>
+        )
+      )}
+    </div>
   );
 }

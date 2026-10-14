@@ -17,6 +17,7 @@ import { formatDay, relativeDay } from '../../logic/dates';
 import { compareByAttention, STATE_LABEL, stateTone } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials, matchesQuery } from '../../logic/members';
+import { ALL_BATCHES, countWithoutBatch, inBatch, listBatches, memberBatch, NO_BATCH } from '../../logic/batches';
 import type { MemberState, MemberView } from '../../types';
 import { AppMembersSection } from '../../shop/AppMembers';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
@@ -33,6 +34,7 @@ import {
   SearchField,
   color,
   font,
+  radius,
   space,
   useIsCompact,
 } from '../kit';
@@ -108,22 +110,28 @@ function RosterSection({
             ? 'ending'
             : null;
   const compact = useIsCompact();
+  // Batch filter (15 Oct 2026): combines with the status chips — "Expired" + "Morning 6-8". Each
+  // side's counts are worked out with the other side applied, so every number is what a tap shows.
+  const [batch, setBatch] = useState<string>(ALL_BATCHES);
+  const batches = useMemo(() => listBatches(allMemberViews.map((v) => v.member)), [allMemberViews]);
 
   const counts = useMemo(() => {
-    const c: Record<string, number> = { all: memberViews.length, dues: 0, archived: 0 };
+    const inB = (v: MemberView) => inBatch(v.member, batch);
+    const c: Record<string, number> = { all: memberViews.filter(inB).length, dues: 0, archived: 0 };
     for (const v of memberViews) {
-      c[v.state] = (c[v.state] ?? 0) + 1;
+      if (inB(v)) c[v.state] = (c[v.state] ?? 0) + 1;
     }
     // Dues count over EVERY member: archiving someone does not cancel their debt,
     // and a dues figure that quietly drops when you archive is a way to lose money.
     for (const v of allMemberViews) {
+      if (!inB(v)) continue;
       if (v.outstandingP > 0) c.dues += 1;
       if (v.member.archived) c.archived += 1;
     }
     return c;
-  }, [memberViews, allMemberViews]);
+  }, [memberViews, allMemberViews, batch]);
 
-  const rows = useMemo(() => {
+  const statusRows = useMemo(() => {
     // Archived members are reachable through their own filter and through the
     // dues filter — otherwise an archived debtor is invisible everywhere.
     const source = filter === 'archived' || filter === 'dues' ? allMemberViews : memberViews;
@@ -135,13 +143,45 @@ function RosterSection({
       if (tile) return inTile(v, tile, today);
       return v.state === filter;
     });
-    return filtered.sort(compareByAttention);
+    return filtered;
   }, [memberViews, allMemberViews, query, filter, tile, today]);
+
+  const rows = useMemo(
+    () => statusRows.filter((v) => inBatch(v.member, batch)).sort(compareByAttention),
+    [statusRows, batch],
+  );
+
+  const batchOptions = useMemo(() => {
+    const members = statusRows.map((v) => v.member);
+    const here = new Map(listBatches(members).map((b) => [b.key, b.countN]));
+    const none = countWithoutBatch(members);
+    return [
+      { value: ALL_BATCHES, label: tr(`All batches (${members.length})`, `Saare Batch (${members.length})`) },
+      ...batches.map((b) => ({ value: b.key, label: `${b.name} (${here.get(b.key) ?? 0})` })),
+      { value: NO_BATCH, label: tr(`No batch (${none})`, `Koi Batch nahi (${none})`) },
+    ];
+  }, [statusRows, batches]);
+  const narrowed = Boolean(query.trim()) || batch !== ALL_BATCHES;
 
   return (
     <>
       <Row gap={space.md}>
         <SearchField value={query} onChange={setQuery} placeholder={tr('Search name or mobile number', 'Naam ya mobile se dhoondo')} />
+        {/* Only once the gym uses batches: a filter with nothing in it is a blank hole. */}
+        {(batches.length > 0 || batch !== ALL_BATCHES) && (
+          <select
+            aria-label={tr('Filter by batch', 'Batch se chhaano')}
+            value={batch}
+            onChange={(e) => setBatch(e.target.value)}
+            style={batchSelect}
+          >
+            {batchOptions.map((o) => (
+              <option key={o.value} value={o.value} style={{ background: color.surface }}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        )}
       </Row>
 
       <div style={{ margin: `${space.md}px 0 ${space.lg}px` }}>
@@ -176,9 +216,11 @@ function RosterSection({
       {rows.length === 0 ? (
         <Card>
           <EmptyState
-            title={query ? tr('Nobody matches that', 'Koi nahi mila') : tr('No members yet', 'Abhi koi member nahi')}
+            title={narrowed ? tr('Nobody matches that', 'Koi nahi mila') : tr('No members yet', 'Abhi koi member nahi')}
             body={
-              query
+              !query.trim() && batch !== ALL_BATCHES
+                ? tr('Nobody in this batch fits this filter. Pick “All batches” to see everyone.', 'Is Batch mein is filter wala koi nahi. Sabko dekhne ke liye “Saare Batch” chuno.')
+                : query
                 ? tr(
                     'Try part of a name, or the last four digits of their mobile number.',
                     'Naam ka thoda hissa, ya mobile number ke aakhri 4 ank likho.',
@@ -188,7 +230,7 @@ function RosterSection({
                     'Pehla member jodo, phir turant unhe Plan do.',
                   )
             }
-            action={!query && <Button onClick={() => setAdding(true)}>{tr('+ Add member', '+ Naya member jodo')}</Button>}
+            action={!narrowed && <Button onClick={() => setAdding(true)}>{tr('+ Add member', '+ Naya member jodo')}</Button>}
           />
         </Card>
       ) : compact ? (
@@ -274,6 +316,7 @@ function MemberRow({ view, today }: { view: MemberView; today: string }) {
             <div style={{ fontSize: 12, color: color.inkMuted, fontFamily: font.mono }}>
               {formatPhone(member.phone)}
             </div>
+            {memberBatch(member) && <BatchLine name={memberBatch(member) as string} />}
           </div>
         </Row>
       </td>
@@ -324,6 +367,7 @@ function MemberCard({ view, today }: { view: MemberView; today: string }) {
             <div style={{ fontFamily: font.mono, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
               {formatPhone(member.phone)}
             </div>
+            {memberBatch(member) && <BatchLine name={memberBatch(member) as string} />}
             <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginTop: 6 }}>
               {current
                 ? `${current.planName} · ${view.state === 'expired' ? tr('ended', 'khatam hua') : tr('ends', 'khatam hoga')} ${relativeDay(
@@ -344,5 +388,36 @@ function MemberCard({ view, today }: { view: MemberView; today: string }) {
     </Link>
   );
 }
+
+/** The member's batch under their mobile number, in a row or a card. */
+function BatchLine({ name }: { name: string }) {
+  return (
+    <div
+      style={{
+        fontFamily: font.body,
+        fontSize: 12,
+        color: color.inkSecondary,
+        marginTop: 2,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {tr(`Batch: ${name}`, `Batch: ${name}`)}
+    </div>
+  );
+}
+
+const batchSelect: React.CSSProperties = {
+  minHeight: 44,
+  maxWidth: '100%',
+  padding: '0 12px',
+  borderRadius: radius.md,
+  border: `1px solid ${color.borderStrong}`,
+  background: color.surfaceSunken,
+  color: color.ink,
+  fontFamily: font.body,
+  fontSize: 15,
+};
 
 const cell: React.CSSProperties = { padding: `${space.md}px ${space.lg}px`, verticalAlign: 'middle' };

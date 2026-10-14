@@ -25,6 +25,7 @@ import { addDays, formatDay, relativeDay } from '../../logic/dates';
 import { isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials } from '../../logic/members';
+import { memberBatch } from '../../logic/batches';
 import { methodLabel } from '../../logic/payments';
 import type { Membership, Payment } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
@@ -206,7 +207,10 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     <>
       <PageHeader
         title={member.fullName}
-        subtitle={tr(`Member since ${formatDay(member.joinedOn)}`, `${formatDay(member.joinedOn)} se member`)}
+        subtitle={
+          (memberBatch(member) ? tr(`${memberBatch(member)} batch · `, `${memberBatch(member)} Batch · `) : '') +
+          tr(`Member since ${formatDay(member.joinedOn)}`, `${formatDay(member.joinedOn)} se member`)
+        }
         actions={
           <>
             <Button variant="ghost" onClick={() => setEditing(true)}>

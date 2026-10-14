@@ -38,6 +38,7 @@ import {
   type RiskBand,
 } from '../../logic/attendance';
 import { csvDocument, csvFilename } from '../../logic/csv';
+import { ALL_BATCHES, inBatch, listBatches, memberBatch } from '../../logic/batches';
 import { addDays, formatDay, formatDayShort, isValidDateISO, relativeDay } from '../../logic/dates';
 import { STATE_LABEL, stateTone } from '../../logic/membership';
 import { formatPhone, initials, matchesQuery, phoneDigits, phoneForExport } from '../../logic/members';
@@ -147,6 +148,11 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
   const [mode, setMode] = useState<'today' | 'yesterday' | 'other'>('today');
   const [customDay, setCustomDay] = useState(() => addDays(today, -2));
   const [query, setQuery] = useState('');
+  // Batch (15 Oct 2026): the 6 am desk picks "Morning 6-8" and gets that batch as a tick list,
+  // no typing; a search typed with a batch picked looks only inside it.
+  const [batch, setBatch] = useState<string>(ALL_BATCHES);
+  const batches = useMemo(() => listBatches(memberViews.map((v) => v.member)), [memberViews]);
+  const batchName = batches.find((b) => b.key === batch)?.name ?? null;
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -173,8 +179,17 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
-    return memberViews.filter((v) => matchesQuery(v.member, query));
-  }, [memberViews, query]);
+    return memberViews.filter((v) => matchesQuery(v.member, query) && inBatch(v.member, batch));
+  }, [memberViews, query, batch]);
+
+  /** The picked batch, A to Z, when nothing is typed. A fixed order: rows never jump under a finger. */
+  const batchList = useMemo(() => {
+    if (batch === ALL_BATCHES || query.trim()) return [];
+    return memberViews
+      .filter((v) => inBatch(v.member, batch))
+      .sort((a, b) => a.member.fullName.localeCompare(b.member.fullName));
+  }, [memberViews, query, batch]);
+  const batchInN = batchList.filter((v) => checkedInOn.has(v.member.id)).length;
 
   const register = useMemo(
     () => (viewing ? registerFor(snapshot.visits, snapshot.members, viewing) : []),
@@ -246,6 +261,20 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
           ]}
         />
 
+        {batches.length > 0 && (
+          <div style={{ marginTop: space.md }}>
+            <ChipToggle
+              label={tr('Batch', 'Batch')}
+              value={batch}
+              onChange={setBatch}
+              options={[
+                { value: ALL_BATCHES, label: tr('All batches', 'Saare Batch') },
+                ...batches.map((b) => ({ value: b.key, label: b.name, count: b.countN })),
+              ]}
+            />
+          </div>
+        )}
+
         {mode === 'other' && (
           <TextField
             label={tr('Register date', 'Register ki tareekh')}
@@ -310,10 +339,17 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
             {results.length === 0 ? (
               <EmptyState
                 title={tr('Nobody matches that', 'Koi nahi mila')}
-                body={tr(
-                  'Check the spelling, or add them to the roster first.',
-                  'Spelling check karo, ya pehle unhe members mein jodo.',
-                )}
+                body={
+                  batchName
+                    ? tr(
+                        `Only ${batchName} is being searched. Pick “All batches” to look through everyone.`,
+                        `Sirf ${batchName} mein dhoondh rahe hain. Sabme dhoondhne ke liye “Saare Batch” chuno.`,
+                      )
+                    : tr(
+                        'Check the spelling, or add them to the roster first.',
+                        'Spelling check karo, ya pehle unhe members mein jodo.',
+                      )
+                }
                 action={<Button onClick={() => navigate('/members')}>{tr('Open roster', 'Members kholo')}</Button>}
               />
             ) : (
@@ -336,6 +372,32 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                   </div>
                 )}
               </>
+            )}
+          </div>
+        )}
+
+        {viewing && batchName && !query.trim() && (
+          <div style={{ marginTop: space.md }}>
+            <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, marginBottom: space.sm }}>
+              {tr(
+                `${batchName}: ${batchInN} of ${batchList.length} in`,
+                `${batchName}: ${batchList.length} mein se ${batchInN} aa gaye`,
+              )}
+            </div>
+            {batchList.length === 0 ? (
+              <EmptyState title={tr('Nobody in this batch', 'Is Batch mein koi nahi')} />
+            ) : (
+              <div style={{ display: 'grid', gap: space.sm }}>
+                {batchList.map((v) => (
+                  <SearchResult
+                    key={v.member.id}
+                    view={v}
+                    already={checkedInOn.has(v.member.id)}
+                    busy={busyId === v.member.id}
+                    onCheckIn={() => doCheckIn(v)}
+                  />
+                ))}
+              </div>
             )}
           </div>
         )}
@@ -480,6 +542,9 @@ function SearchResult({
           </Row>
           <div style={{ fontFamily: font.mono, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
             {formatPhone(member.phone)}
+            {memberBatch(member) && (
+              <span style={{ fontFamily: font.body }}>{tr(` · ${memberBatch(member)}`, ` · ${memberBatch(member)}`)}</span>
+            )}
           </div>
         </div>
         {already ? (
@@ -668,10 +733,11 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
     // trainer phoning people the owner filtered out.
     // Downloads stay English in every language (an accountant reads them).
     const contents = inEnglish(() => csvDocument(
-      ['Member', 'Mobile', 'Status', 'Last visit', 'Days since visit', 'Visits in last 8 weeks', 'Why'],
+      ['Member', 'Mobile', 'Batch', 'Status', 'Last visit', 'Days since visit', 'Visits in last 8 weeks', 'Why'],
       shown.map((r) => [
         r.member.fullName,
         phoneForExport(r.member.phone),
+        memberBatch(r.member) ?? '',
         RISK_LABEL[r.band],
         r.profile.lastVisitOn ?? 'Never',
         r.profile.daysSinceVisit ?? '',

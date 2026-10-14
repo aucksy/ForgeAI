@@ -50,6 +50,12 @@ export interface Member extends GymScoped {
   joinedOn: DateISO;
   photoUri: string | null;
   notes: string | null;
+  /**
+   * The time slot they train in ("Morning 6-8", "Ladies 11-12"); null = no batch. OPTIONAL only so
+   * a member saved before batches existed (15 Oct 2026) still opens: undefined reads as null
+   * everywhere (`logic/batches.ts`), and the stores fill it in when they load.
+   */
+  batch?: string | null;
   archived: boolean;
   /** Set once the member installs the app and links; null for everyone else. */
   appUserId: string | null;

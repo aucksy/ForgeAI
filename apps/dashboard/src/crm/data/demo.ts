@@ -155,6 +155,9 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
       joinedOn,
       photoUri: null,
       notes: pick(NOTES),
+      // Chosen by position, not by `rnd()`: drawing another random number here would shift every
+      // later draw and change the whole demo gym.
+      batch: demoBatch(i, female),
       archived: rnd() < 0.04,
       appUserId: null,
       createdAt: createdAt - joinedDaysAgo * 86_400_000,
@@ -320,4 +323,13 @@ export function demoSnapshot(today: DateISO): CrmSnapshot {
 /** Plan list only — used to give a brand-new empty gym something sellable on day one. */
 export function starterPlans(today: DateISO): Plan[] {
   return buildDemoGym({ today, memberCount: 0 }).plans;
+}
+
+/** Most of a demo gym trains mornings or evenings; some women in the ladies' slot; a few unset. */
+function demoBatch(i: number, female: boolean): string | null {
+  const slot = i % 10;
+  if (slot < 4) return 'Morning 6-8';
+  if (slot < 8) return 'Evening 6-9';
+  if (slot === 8) return female ? 'Ladies 11-12' : 'Morning 6-8';
+  return null;
 }

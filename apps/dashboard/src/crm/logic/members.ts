@@ -15,6 +15,7 @@
 import type { Member, MemberDraft } from '../types';
 import { isValidDateISO, type DateISO } from './dates';
 import { tr } from '../i18n';
+import { BATCH_MAX, memberBatch, normalizeBatch } from './batches';
 
 export const DEFAULT_DIAL_CODE = '+91';
 const NAME_MAX = 80;
@@ -159,6 +160,8 @@ export interface MemberFormDraft {
   emergencyPhone: string;
   joinedOn: string;
   notes: string;
+  /** The batch as typed or picked; '' = no batch. */
+  batch: string;
 }
 
 export function emptyMemberForm(today: DateISO): MemberFormDraft {
@@ -174,6 +177,7 @@ export function emptyMemberForm(today: DateISO): MemberFormDraft {
     emergencyPhone: '',
     joinedOn: today,
     notes: '',
+    batch: '',
   };
 }
 
@@ -226,6 +230,7 @@ export function memberToForm(m: Member): MemberFormDraft {
     emergencyPhone: m.emergencyPhone ?? '',
     joinedOn: m.joinedOn,
     notes: m.notes ?? '',
+    batch: memberBatch(m) ?? '',
   };
 }
 
@@ -277,6 +282,11 @@ export function validateMember(form: MemberFormDraft, today: DateISO): MemberVal
     emergencyPhone = parsed.e164;
   }
 
+  const batch = normalizeBatch(form.batch);
+  if (batch !== null && batch.length > BATCH_MAX) {
+    return { ok: false, field: 'batch', message: tr(`Batch name must be ${BATCH_MAX} characters or fewer.`, `Batch ka naam ${BATCH_MAX} akshar se zyada nahi ho sakta.`) };
+  }
+
   const gender = form.gender === 'male' || form.gender === 'female' || form.gender === 'other'
     ? form.gender
     : null;
@@ -294,6 +304,7 @@ export function validateMember(form: MemberFormDraft, today: DateISO): MemberVal
       emergencyPhone,
       joinedOn: form.joinedOn,
       notes: form.notes.trim() || null,
+      batch,
     },
   };
 }

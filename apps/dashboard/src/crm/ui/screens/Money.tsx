@@ -40,6 +40,7 @@ import { methodLabel, methodOptions } from '../../logic/payments';
 import type { MemberView, Payment, PaymentMethod } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
 import { VoidPaymentSheet } from '../forms/VoidPaymentSheet';
+import { memberBatch } from '../../logic/batches';
 import { downloadCsv } from '../download';
 import {
   Button,
@@ -615,10 +616,11 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
     // screen it came from.
     // Downloads stay English in every language (an accountant reads them).
     const contents = inEnglish(() => csvDocument(
-      ['Member', 'Mobile', 'Membership', 'Started', 'Days outstanding', 'Age', 'Amount due (INR)', 'Archived'],
+      ['Member', 'Mobile', 'Batch', 'Membership', 'Started', 'Days outstanding', 'Age', 'Amount due (INR)', 'Archived'],
       shownRows.map((r) => [
         r.member.fullName,
         phoneForExport(r.member.phone),
+        memberBatch(r.member) ?? '',
         r.membership.planName,
         r.membership.startsOn,
         r.ageDays,

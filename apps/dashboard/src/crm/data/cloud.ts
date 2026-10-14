@@ -33,7 +33,7 @@ import {
   type SellMembershipResult,
 } from './adapter';
 import { authErrorWords } from '../auth/signin';
-import { LocalCrmData, memoryStore, SCHEMA_VERSION } from './local';
+import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
 
 export type RecordKind = 'gym' | 'member' | 'plan' | 'membership' | 'payment' | 'visit' | 'enquiry' | 'expense';
 
@@ -149,7 +149,7 @@ export function buildSnapshot(rows: Rows, gym: CloudGymRow): CrmSnapshot {
       gstin: rows.gym?.gstin ?? null,
       createdAt: gym.createdAt,
     },
-    members: byTime(list<Member>(rows.member), (m) => m.createdAt ?? 0),
+    members: byTime(list<Member>(rows.member), (m) => m.createdAt ?? 0).map(normalizeMember),
     plans: byTime(list<Plan>(rows.plan), (p) => p.createdAt ?? 0),
     memberships: byTime(list<Membership>(rows.membership), (m) => m.createdAt ?? 0),
     payments: byTime(list<Payment>(rows.payment), (p) => p.createdAt ?? 0),

@@ -48,6 +48,7 @@ import { addDays, isValidDateISO, type DateISO } from '../logic/dates';
 import { tr } from '../i18n';
 import { endDateForPlan } from '../logic/membership';
 import { findDuplicatePhone } from '../logic/members';
+import { normalizeBatch } from '../logic/batches';
 import { nextReceiptNo } from '../logic/receipts';
 import {
   DuplicatePhoneError,
@@ -241,6 +242,7 @@ export class LocalCrmData implements CrmData {
       const ts = this.now();
       const member: Member = {
         ...draft,
+        batch: normalizeBatch(draft.batch),
         id: newId(),
         gymId: db.gym.gymId,
         appUserId: null,
@@ -262,7 +264,8 @@ export class LocalCrmData implements CrmData {
         if (duplicate) throw new DuplicatePhoneError(duplicate);
       }
 
-      Object.assign(member, patch, { updatedAt: this.now() });
+      const clean = 'batch' in patch ? { ...patch, batch: normalizeBatch(patch.batch) } : patch;
+      Object.assign(member, clean, { updatedAt: this.now() });
       return { ...member };
     });
   }
@@ -606,7 +609,7 @@ export function randomJoinCode(): string {
 export function normalizeSnapshot(s: CrmSnapshot): CrmSnapshot {
   return {
     gym: s.gym,
-    members: s.members ?? [],
+    members: (s.members ?? []).map(normalizeMember),
     plans: s.plans ?? [],
     memberships: s.memberships ?? [],
     payments: s.payments ?? [],
@@ -614,6 +617,16 @@ export function normalizeSnapshot(s: CrmSnapshot): CrmSnapshot {
     enquiries: s.enquiries ?? [],
     expenses: s.expenses ?? [],
   };
+}
+
+/**
+ * A member as every screen expects it. A member saved before batches existed has no `batch`: it
+ * reads as null (no batch), and a stray spelling ("  Morning   6-8 ") is cleaned. The cloud copy
+ * builds its snapshot through this too, so its before/after copies agree and an action never
+ * re-sends every untouched member just because one side gained `batch: null`.
+ */
+export function normalizeMember(m: Member): Member {
+  return { ...m, batch: normalizeBatch(m.batch) };
 }
 
 function clone<T>(value: T): T {
