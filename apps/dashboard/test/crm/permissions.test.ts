@@ -41,6 +41,7 @@ describe('can', () => {
         'seeExpenses',
         'seeTotals',
         'voidReceipt',
+        'undoOldPtSession',
       ].sort(),
     );
   });

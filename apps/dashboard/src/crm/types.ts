@@ -88,6 +88,15 @@ export interface Plan extends GymScoped {
   active: boolean;
   /** Display order in the sell flow; ties break by name. */
   sortOrder: number;
+  /**
+   * Personal training (15 Oct 2026): how many PT sessions this plan includes ("PT 12 sessions"),
+   * or null for an ordinary gym plan. OPTIONAL so a plan saved before PT existed still opens:
+   * undefined reads as null everywhere (`logic/pt.ts`). A PT plan is an ADD-ON — it is sold on top
+   * of a running gym plan and never decides the member's gym status while they have a gym plan.
+   */
+  ptSessions?: number | null;
+  /** The trainer named on a PT plan ("Rohit"); null when none is named. */
+  trainer?: string | null;
   createdAt: number;
   updatedAt: number;
 }
@@ -125,6 +134,18 @@ export interface Membership extends GymScoped {
   notes: string | null;
   /** Who sold it — a staff member id, or null in single-operator gyms. */
   soldBy: string | null;
+  /**
+   * PT snapshot (15 Oct 2026), copied from the plan at sale like `planName`: the sessions bought
+   * and the trainer. Absent on an ordinary gym plan (and on every row sold before PT existed).
+   */
+  ptSessions?: number | null;
+  trainer?: string | null;
+  /**
+   * The days a PT session was used, oldest first, at most one per day. Sessions used is its
+   * length. Kept on the membership row on purpose: the server (0014) lets Staff save a membership
+   * as long as `cancelled` and `endsOn` stay the same, so the front desk can mark a session.
+   */
+  ptLog?: DateISO[];
   createdAt: number;
   updatedAt: number;
 }

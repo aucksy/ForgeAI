@@ -281,3 +281,45 @@ describe('uploadSnapshot', () => {
     expect(allRecords(normalizeSnapshot(old as never), 'g1')).toEqual(allRecords(old as never, 'g1'));
   });
 });
+
+describe('PT sessions online', () => {
+  it('marking a session sends ONLY the membership row, with cancelled and endsOn unchanged (0014 lets Staff do it)', async () => {
+    const server = new FakeServer();
+    const owner = new CloudCrmData('k', server);
+    const m = await owner.createMember(member());
+    // An old plan saved before PT existed (no PT fields) must never be re-sent by a PT action.
+    await owner.createPlan(plan);
+    const ptPlan = await owner.createPlan({ ...plan, name: 'PT 12', durationCount: 1, sortOrder: 2, ptSessions: 12, trainer: 'Rohit' } as PlanDraft);
+    const { membership } = await owner.sellMembership({
+      memberId: m.id,
+      planId: ptPlan.id,
+      startsOn: TODAY,
+      priceP: 600000,
+      joiningFeeP: 0,
+      notes: null,
+      collectNowP: 0,
+      method: 'cash',
+      reference: null,
+      paidOn: TODAY,
+      soldBy: null,
+    });
+
+    const sent: CrmRecord[][] = [];
+    const realPush = server.push.bind(server);
+    server.push = async (key, base, records, pushId) => {
+      sent.push(JSON.parse(JSON.stringify(records)));
+      return realPush(key, base, records, pushId);
+    };
+    const staffDesk = new CloudCrmData('k', server);
+    await staffDesk.markPtSession(membership.id, TODAY, TODAY);
+    expect(sent).toHaveLength(1);
+    expect(sent[0].map((r) => `${r.k}:${r.id}`)).toEqual([`membership:${membership.id}`]);
+    const d = sent[0][0].d as { cancelled: boolean; endsOn: string; ptLog: string[] };
+    expect(d.cancelled).toBe(membership.cancelled);
+    expect(d.endsOn).toBe(membership.endsOn);
+    expect(d.ptLog).toEqual([TODAY]);
+
+    await staffDesk.undoPtSession(membership.id, TODAY);
+    expect((await new CloudCrmData('k', server).load()).memberships[0].ptLog).toEqual([]);
+  });
+});

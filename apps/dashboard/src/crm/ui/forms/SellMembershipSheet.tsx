@@ -23,13 +23,17 @@ import type { MemberView, PaymentMethod, Plan } from '../../types';
 import type { SellMembershipResult } from '../../data/adapter';
 import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
 import { tr } from '../../i18n';
+import { isPtPlan, ptPlanLine } from '../../logic/pt';
 
 export function SellMembershipSheet({
   view,
+  initialPlanId,
   onClose,
   onSold,
 }: {
   view: MemberView;
+  /** Open on this plan (Renew PT); the first plan when it is not on sale. */
+  initialPlanId?: string;
   onClose: () => void;
   /** Handed the sale, including the receipt when money was taken at the counter. */
   onSold?: (result: SellMembershipResult) => void;
@@ -49,7 +53,9 @@ export function SellMembershipSheet({
     [snapshot.memberships, view.member.id],
   );
 
-  const [planId, setPlanId] = useState<string>(plans[0]?.id ?? '');
+  const [planId, setPlanId] = useState<string>(
+    (initialPlanId && plans.some((p) => p.id === initialPlanId) ? initialPlanId : plans[0]?.id) ?? '',
+  );
   const plan: Plan | undefined = plans.find((p) => p.id === planId);
 
   // Defaults come from the coverage CHAIN, not the term running today — otherwise
@@ -86,7 +92,7 @@ export function SellMembershipSheet({
 
   const submit = async () => {
     const found = validateSale(
-      { planId: plan?.id ?? null, startsOn, priceP, joiningFeeP: joiningP, collectNowP: collectP },
+      { planId: plan?.id ?? null, startsOn, priceP, joiningFeeP: joiningP, collectNowP: collectP, pt: plan ? isPtPlan(plan) : false },
       memberships,
       today,
     );
@@ -176,6 +182,12 @@ export function SellMembershipSheet({
         }}
         options={plans.map((p) => ({ value: p.id, label: `${p.name} — ${formatINR(p.priceP)}` }))}
       />
+      {plan && ptPlanLine(plan) && (
+        <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, overflowWrap: 'anywhere' }}>
+          <strong style={{ color: color.accentBright }}>{ptPlanLine(plan)}</strong>
+          {tr(' — runs alongside their gym plan.', ' — gym plan ke saath alag se chalega.')}
+        </div>
+      )}
 
       <Grid min={220}>
         <TextField

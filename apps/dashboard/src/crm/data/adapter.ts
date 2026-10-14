@@ -234,4 +234,15 @@ export interface CrmData {
    * its notes. Days only move forward here; a mistake is fixed by cancelling and selling again.
    */
   extendMembership(id: string, days: number, reason: string): Promise<Membership>;
+
+  /**
+   * PT (15 Oct 2026, logic/pt.ts): one session used on `day` on a PT pack. Refuses a day that is not
+   * real or is after `today`, a pack that is not PT or is cancelled, a day before the pack started,
+   * and a pack with every session used. At most one session a day: marking the same day again
+   * changes nothing. Only `ptLog` moves, never `cancelled` or `endsOn`, so the server (0014) lets
+   * Staff do it.
+   */
+  markPtSession(membershipId: string, day: DateISO, today: DateISO): Promise<Membership>;
+  /** Take back the session marked on `day`. Silent no-op when there is none (a double tap). */
+  undoPtSession(membershipId: string, day: DateISO): Promise<Membership>;
 }

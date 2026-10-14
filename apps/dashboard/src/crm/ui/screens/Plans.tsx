@@ -15,6 +15,7 @@ import { formatDay } from '../../logic/dates';
 import { computeEndDate } from '../../logic/membership';
 import { formatINR, parseCount, parseRupeeInput } from '../../logic/money';
 import { starterPlans } from '../../data/demo';
+import { cleanTrainer, isPtPlan, PT_MAX_SESSIONS, ptPlanLine } from '../../logic/pt';
 import type { DurationUnit, Plan, PlanDraft } from '../../types';
 import {
   Button,
@@ -171,6 +172,11 @@ function PlanRow({
         <span style={{ fontFamily: font.display, fontSize: 16, fontWeight: 700, color: color.ink }}>{plan.name}</span>
         {!plan.active && <Pill tone="muted">{tr('Retired', 'Band')}</Pill>}
       </Row>
+      {ptPlanLine(plan) && (
+        <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 2, overflowWrap: 'anywhere' }}>
+          {ptPlanLine(plan)}
+        </div>
+      )}
       {plan.description && (
         <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, marginTop: 2 }}>
           {plan.description}
@@ -271,6 +277,10 @@ function PlanSheet({
   const [joining, setJoining] = useState(editing ? String(editing.joiningFeeP / 100) : '0');
   const [description, setDescription] = useState(editing?.description ?? '');
   const [active, setActive] = useState(editing ? editing.active : true);
+  // PT plan (15 Oct 2026): a pack of sessions, maybe with a named trainer (logic/pt.ts).
+  const [pt, setPt] = useState(editing ? isPtPlan(editing) : false);
+  const [sessions, setSessions] = useState(editing && isPtPlan(editing) ? String(editing.ptSessions) : '12');
+  const [trainer, setTrainer] = useState(editing?.trainer ?? '');
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -296,6 +306,16 @@ function PlanSheet({
     const joiningFeeP = joining.trim() === '' ? 0 : parseRupeeInput(joining);
     if (joiningFeeP === null) return setError(tr('Joining fee isn’t a valid amount.', 'Admission fees sahi rakam nahi hai.'));
 
+    const ptSessions = pt ? parseCount(sessions, 1, PT_MAX_SESSIONS) : null;
+    if (pt && ptSessions === null) {
+      return setError(
+        tr(
+          `PT sessions must be a whole number between 1 and ${PT_MAX_SESSIONS}.`,
+          `PT session 1 se ${PT_MAX_SESSIONS} ke beech poora number likho.`,
+        ),
+      );
+    }
+
     const draft: PlanDraft = {
       name: trimmed,
       durationUnit: unit,
@@ -305,6 +325,8 @@ function PlanSheet({
       description: description.trim() || null,
       active,
       sortOrder: editing?.sortOrder ?? nextSortOrder,
+      ptSessions,
+      trainer: pt ? cleanTrainer(trainer) : null,
     };
 
     setSaving(true);
@@ -372,6 +394,26 @@ function PlanSheet({
         />
       </Grid>
 
+      <PtSwitch on={pt} onChange={setPt} />
+      {pt && (
+        <Grid min={200}>
+          <TextField
+            label={tr('PT sessions', 'PT session')}
+            value={sessions}
+            onChange={setSessions}
+            inputMode="numeric"
+            placeholder="12"
+            hint={tr('How many sessions this plan includes.', 'Is plan mein kitne session hain.')}
+          />
+          <TextField
+            label={tr('Trainer (optional)', 'Trainer (zaroori nahi)')}
+            value={trainer}
+            onChange={setTrainer}
+            placeholder="Rohit"
+          />
+        </Grid>
+      )}
+
       <TextField label={tr('Description (optional)', 'Jaankari (zaroori nahi)')} value={description} onChange={setDescription} multiline />
 
       <SelectField
@@ -384,5 +426,47 @@ function PlanSheet({
         ]}
       />
     </Sheet>
+  );
+}
+
+/**
+ * "PT plan" on or off. A real checkbox with role="switch", inside its label, so the whole row is
+ * one 44 px tap target and a screen reader says "PT plan, switch, on".
+ */
+function PtSwitch({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: space.md,
+        minHeight: 44,
+        marginTop: space.md,
+        padding: `${space.sm}px ${space.md}px`,
+        borderRadius: 12,
+        border: `1px solid ${on ? color.accent : color.border}`,
+        background: on ? color.accentSoft : color.surfaceSunken,
+        cursor: 'pointer',
+      }}
+    >
+      <input
+        type="checkbox"
+        role="switch"
+        checked={on}
+        onChange={(e) => onChange(e.target.checked)}
+        style={{ width: 20, height: 20, margin: 0, accentColor: color.accent, flexShrink: 0 }}
+      />
+      <span style={{ minWidth: 0 }}>
+        <span style={{ display: 'block', fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>
+          {tr('PT plan', 'PT plan')}
+        </span>
+        <span style={{ display: 'block', fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>
+          {tr(
+            'Personal training with a set number of sessions. Sold on top of their gym plan.',
+            'Personal training, gine hue session ke saath. Gym plan ke upar alag se diya jaata hai.',
+          )}
+        </span>
+      </span>
+    </label>
   );
 }

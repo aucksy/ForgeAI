@@ -36,7 +36,12 @@ export type Action =
   /** Gym details, branding, shop products and prices, messages to members. (The invite poster is fine for staff.) */
   | 'manageGym'
   /** Freeze / extra days: moving a plan's end date for free. */
-  | 'freeze';
+  | 'freeze'
+  /**
+   * PT: take back a session marked on an EARLIER day (a free session given back). Anyone may mark a
+   * session, and take back one marked today (a tap on the wrong member).
+   */
+  | 'undoOldPtSession';
 
 export const ACTIONS: readonly Action[] = [
   'seeTotals',
@@ -48,6 +53,7 @@ export const ACTIONS: readonly Action[] = [
   'eraseOrDemo',
   'manageGym',
   'freeze',
+  'undoOldPtSession',
 ];
 
 /** Everything listed above is owner-only today; a new action must be added here on purpose. */
@@ -61,6 +67,7 @@ const STAFF_MAY: Readonly<Record<Action, boolean>> = {
   eraseOrDemo: false,
   manageGym: false,
   freeze: false,
+  undoOldPtSession: false,
 };
 
 /** May this role do this? Owners may do everything. */

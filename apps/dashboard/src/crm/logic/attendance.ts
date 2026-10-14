@@ -44,6 +44,7 @@ import {
   type DateISO,
 } from './dates';
 import { coverageEndsOn, EXPIRING_WINDOW_DAYS } from './membership';
+import { gymTerms } from './pt';
 import { tr } from '../i18n';
 
 // ---------------------------------------------------------------- constants
@@ -616,7 +617,8 @@ export function atRiskList(
     // scroll apart, about the same person. One person, one conversation: while a
     // renewal is imminent that conversation wins, and it comes back here if they
     // renew and still do not show up.
-    const coversUntil = coverageEndsOn(theirTerms, today);
+    // Same terms the roster judges by: a PT pack never decides gym status (logic/pt.ts).
+    const coversUntil = coverageEndsOn(gymTerms(theirTerms), today);
     if (coversUntil === null) continue;
     if (diffDays(today, coversUntil) <= EXPIRING_WINDOW_DAYS) continue;
 

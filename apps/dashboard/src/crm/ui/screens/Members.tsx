@@ -17,6 +17,7 @@ import { formatDay, relativeDay } from '../../logic/dates';
 import { compareByAttention, STATE_LABEL, stateTone } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials, matchesQuery } from '../../logic/members';
+import { isPtMembership, ptEndingMemberIds } from '../../logic/pt';
 import { ALL_BATCHES, countWithoutBatch, inBatch, listBatches, memberBatch, NO_BATCH } from '../../logic/batches';
 import type { MemberState, MemberView } from '../../types';
 import { AppMembersSection } from '../../shop/AppMembers';
@@ -44,7 +45,7 @@ import { Link, navigate } from '../router';
  * A home tile's list is kept apart from the status chips (`tile:<id>`): the "Active members" tile
  * counts active AND ending-soon members, while the "Active" chip is only the first of those.
  */
-type Filter = 'all' | MemberState | 'dues' | 'archived' | `tile:${TileFilter}`;
+type Filter = 'all' | MemberState | 'dues' | 'archived' | 'pt-ending' | `tile:${TileFilter}`;
 
 /**
  * Two lists under one tab: the gym's own roster (everyone who pays), and the
@@ -102,8 +103,12 @@ function RosterSection({
   /** Opened from a home tile: the same rule as the tile's number. */
   initialFilter?: TileFilter;
 }) {
-  const { memberViews, allMemberViews, today } = useCrm();
+  const { memberViews, allMemberViews, today, snapshot } = useCrm();
   const [query, setQuery] = useState('');
+  // PT ending (15 Oct 2026, logic/pt.ts): their PT pack has 2 sessions left or fewer. The chip is
+  // drawn only once the gym has sold a PT plan — a filter that can never hold anyone is a blank hole.
+  const ptEnding = useMemo(() => ptEndingMemberIds(snapshot.memberships, today), [snapshot.memberships, today]);
+  const sellsPt = useMemo(() => snapshot.memberships.some(isPtMembership), [snapshot.memberships]);
   const [filter, setFilter] = useState<Filter>(initialFilter ? `tile:${initialFilter}` : 'all');
   const tileId = filter.startsWith('tile:') ? filter.slice(5) : undefined;
   const tile: TileFilter | null = isTileFilter(tileId) ? tileId : null;
@@ -127,9 +132,11 @@ function RosterSection({
 
   const counts = useMemo(() => {
     const inB = (v: MemberView) => inBatch(v.member, batch);
-    const c: Record<string, number> = { all: memberViews.filter(inB).length, dues: 0, archived: 0 };
+    const c: Record<string, number> = { all: memberViews.filter(inB).length, dues: 0, archived: 0, 'pt-ending': 0 };
     for (const v of memberViews) {
-      if (inB(v)) c[v.state] = (c[v.state] ?? 0) + 1;
+      if (!inB(v)) continue;
+      c[v.state] = (c[v.state] ?? 0) + 1;
+      if (ptEnding.has(v.member.id)) c['pt-ending'] += 1;
     }
     // Dues count over EVERY member: archiving someone does not cancel their debt,
     // and a dues figure that quietly drops when you archive is a way to lose money.
@@ -139,7 +146,7 @@ function RosterSection({
       if (v.member.archived) c.archived += 1;
     }
     return c;
-  }, [memberViews, allMemberViews, batch]);
+  }, [memberViews, allMemberViews, batch, ptEnding]);
 
   const statusRows = useMemo(() => {
     // Archived members are reachable through their own filter and through the
@@ -150,11 +157,12 @@ function RosterSection({
       if (filter === 'all') return true;
       if (filter === 'dues') return v.outstandingP > 0;
       if (filter === 'archived') return v.member.archived;
+      if (filter === 'pt-ending') return ptEnding.has(v.member.id);
       if (tile) return inTile(v, tile, today);
       return v.state === filter;
     });
     return filtered;
-  }, [memberViews, allMemberViews, query, filter, tile, today]);
+  }, [memberViews, allMemberViews, query, filter, tile, today, ptEnding]);
 
   const rows = useMemo(
     () => statusRows.filter((v) => inBatch(v.member, batch)).sort(compareByAttention),
@@ -206,6 +214,9 @@ function RosterSection({
             { value: 'active', label: tr('Active', 'Chalu'), count: counts.active ?? 0 },
             { value: 'dues', label: tr('Owes money', 'Fees baaki'), count: counts.dues },
             { value: 'never', label: tr('No membership', 'Koi plan nahi'), count: counts.never ?? 0 },
+            ...(sellsPt || filter === 'pt-ending'
+              ? [{ value: 'pt-ending', label: tr('PT ending', 'PT khatam hone wala'), count: counts['pt-ending'] ?? 0 }]
+              : []),
             { value: 'archived', label: tr('Archived', 'Archive kiye'), count: counts.archived },
             // A home tile's list: its own chip, first in mind, until another chip is picked.
             ...(tile ? [{ value: filter, label: tileLabel(tile), count: rows.length }] : []),

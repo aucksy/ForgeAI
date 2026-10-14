@@ -19,6 +19,7 @@ import type { DateISO, Membership, Paise, Plan } from '../types';
 import { formatDay } from './dates';
 import { coverageEndsOn, endDateForPlan, nextTermStart } from './membership';
 import { tr } from '../i18n';
+import { gymPlansOnly, isPtMembership, isPtPlan } from './pt';
 
 export interface SaleDefaults {
   /** First day of the new term. */
@@ -50,14 +51,26 @@ export function saleDefaults(
   plan: Plan,
   today: DateISO,
 ): SaleDefaults {
-  const coversUntil = coverageEndsOn(memberships, today);
+  const joiningFeeP = hasPaidJoiningFee(memberships) ? 0 : plan.joiningFeeP;
+  // A PT pack is an add-on (logic/pt.ts): it starts today, on top of whatever gym plan is running.
+  if (isPtPlan(plan)) {
+    return {
+      startsOn: today,
+      endsOn: endDateForPlan(today, plan),
+      priceP: plan.priceP,
+      joiningFeeP,
+      isRenewal: memberships.some((m) => isPtMembership(m) && !m.cancelled),
+    };
+  }
+  // A gym plan follows the gym plans' cover only — a PT pack running does not push it later.
+  const coversUntil = coverageEndsOn(gymPlansOnly(memberships), today);
   const startsOn = nextTermStart(coversUntil, today);
 
   return {
     startsOn,
     endsOn: endDateForPlan(startsOn, plan),
     priceP: plan.priceP,
-    joiningFeeP: hasPaidJoiningFee(memberships) ? 0 : plan.joiningFeeP,
+    joiningFeeP,
     isRenewal: coversUntil !== null,
   };
 }
@@ -75,6 +88,8 @@ export interface SaleInput {
   priceP: Paise | null;
   joiningFeeP: Paise | null;
   collectNowP: Paise | null;
+  /** Selling a PT plan (an add-on): no overlap rule. */
+  pt?: boolean;
 }
 
 /**
@@ -105,7 +120,8 @@ export function validateSale(
     return { field: 'collectNowP', message: tr('Amount received is more than the total.', 'Kitne mile, woh kul fees se zyada hai.') };
   }
 
-  const coversUntil = coverageEndsOn(memberships, today);
+  // A PT pack may run alongside a gym plan; a gym plan may not overlap another gym plan.
+  const coversUntil = input.pt ? null : coverageEndsOn(gymPlansOnly(memberships), today);
   if (coversUntil && input.startsOn <= coversUntil) {
     return {
       field: 'startsOn',

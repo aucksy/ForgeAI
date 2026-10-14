@@ -837,3 +837,111 @@ describe('Freeze / extra days', () => {
     expect((await db.extendMembership(mine.id, 3, 'Extra')).endsOn).toBe('2026-10-28');
   });
 });
+describe('PT sessions (markPtSession / undoPtSession)', () => {
+  const DAY = '2026-10-15';
+  const sale = (memberId: string, planId: string, startsOn: string, priceP = 600_000) =>
+    db.sellMembership({
+      memberId,
+      planId,
+      startsOn,
+      priceP,
+      joiningFeeP: 0,
+      notes: null,
+      collectNowP: 0,
+      method: 'cash',
+      reference: null,
+      paidOn: DAY,
+      soldBy: null,
+    });
+  const sellPt = async (sessions = 3) => {
+    const m = await db.createMember(memberDraft());
+    const pt = await db.createPlan(planDraft({ name: 'PT', durationCount: 1, ptSessions: sessions, trainer: '  Rohit  ' }));
+    const { membership } = await sale(m.id, pt.id, '2026-10-01');
+    return { m, pt, membership };
+  };
+
+  it('snapshots the PT plan onto the sale, and a gym plan gets no PT fields at all', async () => {
+    const { pt, membership } = await sellPt(12);
+    expect(pt.trainer).toBe('Rohit');
+    expect(membership.ptSessions).toBe(12);
+    expect(membership.trainer).toBe('Rohit');
+    expect(membership.ptLog).toEqual([]);
+    // Editing the plan later does not touch the pack already sold.
+    await db.updatePlan(pt.id, { ptSessions: 20, trainer: 'Amit' });
+    const again = (await db.load()).memberships.find((x) => x.id === membership.id)!;
+    expect(again.ptSessions).toBe(12);
+    expect(again.trainer).toBe('Rohit');
+
+    const other = await db.createMember(memberDraft({ fullName: 'Aman Gupta', phone: '+919811112222' }));
+    const gym = await db.createPlan(planDraft());
+    const sold = await sale(other.id, gym.id, DAY, 300_000);
+    expect('ptSessions' in sold.membership).toBe(false);
+    expect('ptLog' in sold.membership).toBe(false);
+  });
+
+  it('refuses PT sessions that are not a whole number from 1 to 200', async () => {
+    await expect(db.createPlan(planDraft({ ptSessions: 2.5 }))).rejects.toThrow(/whole number/);
+    await expect(db.createPlan(planDraft({ ptSessions: 201 }))).rejects.toThrow(/whole number/);
+    expect((await db.createPlan(planDraft({ ptSessions: 0 }))).ptSessions).toBeNull();
+  });
+
+  it('marks a session, once per day, and counts it', async () => {
+    const { membership } = await sellPt();
+    await db.markPtSession(membership.id, DAY, DAY);
+    const twice = await db.markPtSession(membership.id, DAY, DAY);
+    expect(twice.ptLog).toEqual([DAY]);
+    const back = await db.markPtSession(membership.id, '2026-10-10', DAY);
+    expect(back.ptLog).toEqual(['2026-10-10', DAY]);
+  });
+
+  it('refuses past the sessions bought, and says to renew', async () => {
+    const { membership } = await sellPt(2);
+    await db.markPtSession(membership.id, '2026-10-13', DAY);
+    await db.markPtSession(membership.id, '2026-10-14', DAY);
+    await expect(db.markPtSession(membership.id, DAY, DAY)).rejects.toThrow(/All 2 PT sessions are used/);
+    expect((await db.load()).memberships[0].ptLog).toHaveLength(2);
+  });
+
+  it('refuses a future day, a broken date, a day before the pack started, and a missing pack', async () => {
+    const { membership } = await sellPt();
+    await expect(db.markPtSession(membership.id, '2026-10-16', DAY)).rejects.toThrow(/happened yet/);
+    await expect(db.markPtSession(membership.id, '2026-02-30', DAY)).rejects.toBeInstanceOf(InvalidDateError);
+    await expect(db.markPtSession(membership.id, '', DAY)).rejects.toBeInstanceOf(InvalidDateError);
+    await expect(db.markPtSession(membership.id, '2026-09-30', DAY)).rejects.toThrow(/not started/);
+    await expect(db.markPtSession('nope', DAY, DAY)).rejects.toBeInstanceOf(NotFoundError);
+    expect((await db.load()).memberships[0].ptLog).toEqual([]);
+  });
+
+  it('refuses a gym plan and a cancelled PT pack', async () => {
+    const { m, membership } = await sellPt();
+    const gym = await db.createPlan(planDraft());
+    const sold = await sale(m.id, gym.id, '2026-10-01', 300_000);
+    await expect(db.markPtSession(sold.membership.id, DAY, DAY)).rejects.toThrow(/no PT sessions/);
+    await db.cancelMembership(membership.id, null);
+    await expect(db.markPtSession(membership.id, DAY, DAY)).rejects.toThrow(/cancelled/);
+  });
+
+  it('undo takes back only that day, and a second undo changes nothing', async () => {
+    const { membership } = await sellPt();
+    await db.markPtSession(membership.id, '2026-10-14', DAY);
+    await db.markPtSession(membership.id, DAY, DAY);
+    expect((await db.undoPtSession(membership.id, DAY)).ptLog).toEqual(['2026-10-14']);
+    expect((await db.undoPtSession(membership.id, DAY)).ptLog).toEqual(['2026-10-14']);
+    await expect(db.undoPtSession(membership.id, 'x')).rejects.toBeInstanceOf(InvalidDateError);
+  });
+
+  it('never moves the end date or the cancelled flag (so Staff may do it online)', async () => {
+    const { membership } = await sellPt();
+    const after = await db.markPtSession(membership.id, DAY, DAY);
+    expect(after.endsOn).toBe(membership.endsOn);
+    expect(after.cancelled).toBe(false);
+  });
+
+  it('freeze: a running PT pack does not count as a later gym plan', async () => {
+    const { m } = await sellPt();
+    const gym = await db.createPlan(planDraft({ durationCount: 1 }));
+    const g = await sale(m.id, gym.id, '2026-09-20', 120_000);
+    // The gym plan ends 19 Oct, the PT pack 31 Oct: the gym plan can still be frozen.
+    expect((await db.extendMembership(g.membership.id, 5, 'Freeze')).endsOn).toBe('2026-10-24');
+  });
+});

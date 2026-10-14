@@ -25,6 +25,7 @@ import type {
 import { addDays, addMonths, diffDays, type DateISO } from './dates';
 import { sumPaise, type Paise } from './money';
 import { tr } from '../i18n';
+import { gymTerms } from './pt';
 
 /** A term inside this many days of its end is surfaced as "expiring". */
 export const EXPIRING_WINDOW_DAYS = 7;
@@ -207,12 +208,14 @@ export function lastVisitOn(visits: readonly Visit[]): DateISO | null {
  */
 export function buildMemberView(
   member: Member,
-  memberships: readonly Membership[],
+  allMemberships: readonly Membership[],
   payments: readonly Payment[],
   visits: readonly Visit[],
   today: DateISO,
   windowDays: number = EXPIRING_WINDOW_DAYS,
 ): MemberView {
+  // PT packs are add-ons (logic/pt.ts): they never decide gym status while a gym plan exists.
+  const memberships = gymTerms(allMemberships);
   const currentRow = currentMembership(memberships, today);
   const current = currentRow ? toMembershipView(currentRow, today, windowDays) : null;
   const visitedOn = lastVisitOn(visits);
@@ -247,7 +250,8 @@ export function buildMemberView(
     state,
     coversUntil,
     daysRemaining,
-    outstandingP: outstandingForMember(memberships, payments),
+    // Money: every term, PT packs included — a PT pack sold on credit is still owed.
+    outstandingP: outstandingForMember(allMemberships, payments),
     lastVisitOn: visitedOn,
     daysSinceVisit: visitedOn ? diffDays(visitedOn, today) : null,
   };

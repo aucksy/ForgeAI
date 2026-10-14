@@ -50,6 +50,7 @@ import { endDateForPlan } from '../logic/membership';
 import { findDuplicatePhone } from '../logic/members';
 import { normalizeBatch } from '../logic/batches';
 import { nextReceiptNo } from '../logic/receipts';
+import { cleanTrainer, isPtMembership, isPtPlan, PT_MAX_SESSIONS, ptDays, ptTotal } from '../logic/pt';
 import {
   DuplicatePhoneError,
   EARLIEST_DATE,
@@ -281,6 +282,7 @@ export class LocalCrmData implements CrmData {
       const ts = this.now();
       const plan: Plan = {
         ...draft,
+        ...cleanPtFields(draft),
         id: newId(),
         gymId: db.gym.gymId,
         createdAt: ts,
@@ -295,7 +297,7 @@ export class LocalCrmData implements CrmData {
     return this.update((db) => {
       const plan = db.plans.find((p) => p.id === id);
       if (!plan) throw new NotFoundError(tr('That plan', 'Yeh plan'));
-      Object.assign(plan, patch, { updatedAt: this.now() });
+      Object.assign(plan, patch, cleanPtFields(patch), { updatedAt: this.now() });
       return { ...plan };
     });
   }
@@ -327,6 +329,9 @@ export class LocalCrmData implements CrmData {
         cancelled: false,
         notes: input.notes,
         soldBy: input.soldBy,
+        // PT snapshot, like the name and price: editing the plan later never changes this pack.
+        // A gym plan gets no PT fields at all, so its row is exactly what it always was.
+        ...(isPtPlan(plan) ? { ptSessions: plan.ptSessions, trainer: cleanTrainer(plan.trainer), ptLog: [] } : {}),
         createdAt: ts,
         updatedAt: ts,
       };
@@ -524,8 +529,14 @@ export class LocalCrmData implements CrmData {
           tr('This plan was cancelled. Undo the cancel first, or add the days to their current plan.', 'Yeh plan cancel ho chuka hai. Pehle cancel wapas lo, ya din unke chalu plan mein jodo.'),
         );
       }
+      // Gym plans and PT packs run side by side (logic/pt.ts), so only the same kind counts as later.
       const later = db.memberships.some(
-        (m) => m.memberId === membership.memberId && m.id !== membership.id && !m.cancelled && m.endsOn > membership.endsOn,
+        (m) =>
+          m.memberId === membership.memberId &&
+          m.id !== membership.id &&
+          !m.cancelled &&
+          m.endsOn > membership.endsOn &&
+          isPtMembership(m) === isPtMembership(membership),
       );
       if (later) {
         throw new Error(
@@ -543,6 +554,52 @@ export class LocalCrmData implements CrmData {
     });
   }
 
+  // ------------------------------------------------------------ PT sessions
+
+  async markPtSession(membershipId: string, day: DateISO, today: DateISO): Promise<Membership> {
+    return this.update((db) => {
+      requireDay(day, tr('The session date', 'Session ki tareekh'));
+      requireDay(today, tr('Today’s date', 'Aaj ki tareekh'));
+      if (day > today) {
+        throw new Error(tr('You can’t mark a session for a day that hasn’t happened yet.', 'Jo din abhi aaya nahi, uska session nahi lag sakta.'));
+      }
+      const membership = db.memberships.find((m) => m.id === membershipId);
+      if (!membership) throw new NotFoundError(tr('That plan', 'Woh plan'));
+      if (!isPtMembership(membership)) throw new Error(tr('This plan has no PT sessions.', 'Is plan mein PT session nahi hain.'));
+      if (membership.cancelled) throw new Error(tr('This PT plan was cancelled.', 'Yeh PT plan cancel ho chuka hai.'));
+      if (day < membership.startsOn) {
+        throw new Error(tr('This PT plan had not started on that day.', 'Us din yeh PT plan shuru nahi hua tha.'));
+      }
+      const days = ptDays(membership);
+      // One session a day: a double tap at the desk must not use up two.
+      if (days.includes(day)) return { ...membership };
+      const total = ptTotal(membership);
+      if (days.length >= total) {
+        throw new Error(
+          tr(`All ${total} PT sessions are used. Renew the PT plan first.`, `Saare ${total} PT session ho gaye. Pehle PT plan Renew karo.`),
+        );
+      }
+      membership.ptLog = [...days, day].sort();
+      membership.updatedAt = this.now();
+      return { ...membership };
+    });
+  }
+
+  async undoPtSession(membershipId: string, day: DateISO): Promise<Membership> {
+    return this.update((db) => {
+      requireDay(day, tr('The session date', 'Session ki tareekh'));
+      const membership = db.memberships.find((m) => m.id === membershipId);
+      if (!membership) throw new NotFoundError(tr('That plan', 'Woh plan'));
+      if (!isPtMembership(membership)) throw new Error(tr('This plan has no PT sessions.', 'Is plan mein PT session nahi hain.'));
+      const days = ptDays(membership);
+      // Nothing on that day (a double tap on Undo): a quiet no-op, never a second session gone.
+      if (!days.includes(day)) return { ...membership };
+      membership.ptLog = days.filter((d) => d !== day);
+      membership.updatedAt = this.now();
+      return { ...membership };
+    });
+  }
+
   async undoCheckIn(memberId: string, day: DateISO): Promise<void> {
     return this.update((db) => {
       requireDay(day, tr('The visit date', 'Hazri ki tareekh'));
@@ -555,6 +612,26 @@ export class LocalCrmData implements CrmData {
 }
 
 // ---------------------------------------------------------------- helpers
+
+/**
+ * A plan's PT fields as they are saved: sessions a whole number from 1 to PT_MAX_SESSIONS (or null
+ * for a gym plan), the trainer trimmed. Only the fields the caller sent: a patch without them
+ * leaves an old plan exactly as it was (no `ptSessions: null` added to a plan nobody touched).
+ */
+function cleanPtFields(p: Partial<Pick<Plan, 'ptSessions' | 'trainer'>>): Partial<Pick<Plan, 'ptSessions' | 'trainer'>> {
+  const out: Partial<Pick<Plan, 'ptSessions' | 'trainer'>> = {};
+  if ('ptSessions' in p) {
+    const n = p.ptSessions;
+    if (n === null || n === undefined || n === 0) out.ptSessions = null;
+    else if (!Number.isInteger(n) || n < 1 || n > PT_MAX_SESSIONS) {
+      throw new Error(
+        tr(`PT sessions must be a whole number from 1 to ${PT_MAX_SESSIONS}.`, `PT session 1 se ${PT_MAX_SESSIONS} ke beech poora number hona chahiye.`),
+      );
+    } else out.ptSessions = n;
+  }
+  if ('trainer' in p) out.trainer = cleanTrainer(p.trainer);
+  return out;
+}
 
 function appendNote(existing: string | null, line: string): string {
   return existing ? `${existing}\n${line}` : line;
