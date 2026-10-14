@@ -15,6 +15,9 @@
  *  - `previousFrom` (13 Oct 2026, Hevy's "Previous Workout Values" plus "Same folder"): which past
  *    workouts PREVIOUS, the Target and carried notes read (`tracker/db/historyScope.ts`). Any
  *    workout by default — what every install did before.
+ *  - `shareSize` / `shareLook` (15 Oct 2026, Hevy's share backgrounds): the share picture's size
+ *    (Post or Story) and background (Dark or See-through), as last picked on the share sheet.
+ *    Post + Dark — the only picture before — the first time.
  *
  * New keys backfill to their default for pre-existing persisted blobs via zustand's
  * default shallow merge (persisted state lacks the key → default kept).
@@ -24,6 +27,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { BodyFigure } from '../catalog/bodyMapPaths';
+import { isShareLook, isShareSize, type ShareLook, type ShareSize } from '../share/frame';
 import { DEFAULT_METRIC, DEFAULT_RANGE, isChartMetric, isChartRange, type ChartMetric, type ChartRange } from '../engine/historyChart';
 
 /** Where an exercise's past numbers come from in a workout: any workout, this routine, this folder. */
@@ -52,6 +56,9 @@ export interface TrackerPrefsState {
   chartRange: ChartRange;
   /** Settings → Workouts → Previous values. */
   previousFrom: PreviousFrom;
+  /** The share sheet's Size and Background choices. */
+  shareSize: ShareSize;
+  shareLook: ShareLook;
   setAdvancedSets: (value: boolean) => void;
   setCoachNotes: (value: boolean) => void;
   setSounds: (value: boolean) => void;
@@ -60,6 +67,8 @@ export interface TrackerPrefsState {
   setChartMetric: (value: ChartMetric) => void;
   setChartRange: (value: ChartRange) => void;
   setPreviousFrom: (value: PreviousFrom) => void;
+  setShareSize: (value: ShareSize) => void;
+  setShareLook: (value: ShareLook) => void;
 }
 
 /** A goal the app accepts: a whole 1–7, else off. PURE. */
@@ -88,6 +97,8 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       chartMetric: DEFAULT_METRIC,
       chartRange: DEFAULT_RANGE,
       previousFrom: 'any',
+      shareSize: 'post',
+      shareLook: 'dark',
       setAdvancedSets: (advancedSets) => set({ advancedSets }),
       setCoachNotes: (coachNotes) => set({ coachNotes }),
       setSounds: (sounds) => set({ sounds }),
@@ -96,11 +107,13 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       setChartMetric: (value) => set({ chartMetric: isChartMetric(value) ? value : DEFAULT_METRIC }),
       setChartRange: (value) => set({ chartRange: isChartRange(value) ? value : DEFAULT_RANGE }),
       setPreviousFrom: (value) => set({ previousFrom: isPreviousFrom(value) ? value : 'any' }),
+      setShareSize: (value) => set({ shareSize: isShareSize(value) ? value : 'post' }),
+      setShareLook: (value) => set({ shareLook: isShareLook(value) ? value : 'dark' }),
     }),
     {
       name: 'forgeai-tracker-prefs',
       storage: createJSONStorage(() => AsyncStorage),
-      // A stored chip, range or Previous choice this version does not know falls back to the
+      // A stored chip, range, Previous or share choice this version does not know falls back to the
       // first-time one.
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<TrackerPrefsState>;
@@ -110,6 +123,8 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           chartMetric: isChartMetric(p.chartMetric) ? p.chartMetric : current.chartMetric,
           chartRange: isChartRange(p.chartRange) ? p.chartRange : current.chartRange,
           previousFrom: isPreviousFrom(p.previousFrom) ? p.previousFrom : current.previousFrom,
+          shareSize: isShareSize(p.shareSize) ? p.shareSize : current.shareSize,
+          shareLook: isShareLook(p.shareLook) ? p.shareLook : current.shareLook,
         };
       },
     },

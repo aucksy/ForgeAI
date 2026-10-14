@@ -6,7 +6,7 @@
 import { forwardRef } from 'react';
 import Svg, { Circle, Defs, G, LinearGradient, Path, RadialGradient, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
-import { mapOutline, NATIVE_FONT, bodyPaths, bodyView, type Scene } from './scene';
+import { CLEAR_BACKGROUND, mapOutline, NATIVE_FONT, bodyPaths, bodyView, textShadows, type Scene } from './scene';
 
 export interface SceneSvgProps {
   scene: Scene;
@@ -19,7 +19,8 @@ export const SceneSvg = forwardRef<Svg, SceneSvgProps>(function SceneSvg({ scene
   let gid = 0;
   return (
     <Svg ref={ref} width={width} height={height} viewBox={`0 0 ${scene.width} ${scene.height}`}>
-      <Rect x={0} y={0} width={scene.width} height={scene.height} fill={scene.background} />
+      {/* See-through: nothing behind, so the saved PNG keeps its transparency. */}
+      {scene.background === CLEAR_BACKGROUND ? null : <Rect x={0} y={0} width={scene.width} height={scene.height} fill={scene.background} />}
       {scene.nodes.map((n, i) => {
         switch (n.t) {
           case 'rect':
@@ -67,21 +68,29 @@ export const SceneSvg = forwardRef<Svg, SceneSvgProps>(function SceneSvg({ scene
           }
           case 'circle':
             return <Circle key={i} cx={n.cx} cy={n.cy} r={n.r} fill={n.fill} />;
-          case 'text':
-            return (
+          case 'text': {
+            const text = (y: number, fill: string, opacity: number | undefined, key: string | number) => (
               <SvgText
-                key={i}
+                key={key}
                 x={n.x}
-                y={n.y}
-                fill={n.fill}
+                y={y}
+                fill={fill}
                 fontFamily={NATIVE_FONT[n.font]}
                 fontSize={n.size}
                 textAnchor={n.anchor ?? 'start'}
-                opacity={n.opacity}
+                opacity={opacity}
               >
                 {n.text}
               </SvgText>
             );
+            if (!n.shadow) return text(n.y, n.fill, n.opacity, i);
+            return (
+              <G key={i}>
+                {textShadows(n.size).map((sh, k) => text(n.y + sh.dy, '#000000', sh.opacity * (n.opacity ?? 1), `s${k}`))}
+                {text(n.y, n.fill, n.opacity, 'w')}
+              </G>
+            );
+          }
           case 'path': {
             const moved = n.x != null || n.y != null || n.scale != null;
             const path = (

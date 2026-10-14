@@ -19,6 +19,7 @@ export function SegmentedControl<T extends string>({
   onChange,
   label,
   compact = false,
+  large = false,
 }: {
   options: readonly { id: T; label: string }[];
   value: T;
@@ -26,6 +27,8 @@ export function SegmentedControl<T extends string>({
   /** What the control picks, for a screen reader ("Range"). */
   label: string;
   compact?: boolean;
+  /** 15 Oct 2026 (share sheet): a full 48-point-high tap target, taller still at a large font. */
+  large?: boolean;
 }) {
   return (
     <View
@@ -58,8 +61,9 @@ export function SegmentedControl<T extends string>({
             style={({ pressed }) => ({
               flex: compact ? undefined : 1,
               minWidth: compact ? 60 : 0,
-              minHeight: compact ? 32 : 40,
+              minHeight: compact ? 32 : large ? 48 : 40,
               paddingHorizontal: compact ? 12 : 4,
+              paddingVertical: large ? 8 : 0,
               borderRadius: radius.pill,
               alignItems: 'center',
               justifyContent: 'center',

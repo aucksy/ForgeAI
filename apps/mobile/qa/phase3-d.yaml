@@ -55,6 +55,19 @@ appId: com.forgeai.app
     visible: "Share picture"
     timeout: 15000
 - takeScreenshot: 44-month-share-picture
+# 15 Oct 2026: the picture's Size (Post | Story) and Background (Dark | See-through), as Hevy.
+- scrollUntilVisible:
+    element: "^Story$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Story$"
+- tapOn: "^See-through$"
+- extendedWaitUntil:
+    visible: "See-through: no background.*"
+    timeout: 15000
+- takeScreenshot: 44b-share-story-see-through
+- tapOn: "^Post$"
+- tapOn: "^Dark$"
 - back
 - scrollUntilVisible:
     element: 'Days you trained.*'

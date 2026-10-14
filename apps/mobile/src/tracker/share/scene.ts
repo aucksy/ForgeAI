@@ -44,7 +44,8 @@ export type SceneNode =
   | { t: 'circle'; cx: number; cy: number; r: number; fill: string }
   /** A soft round glow: `color` at `opacity` in the middle, fading to nothing at `r`. */
   | { t: 'glow'; cx: number; cy: number; r: number; color: string; opacity: number }
-  | { t: 'text'; x: number; y: number; text: string; font: FontToken; size: number; fill: string; anchor?: 'start' | 'middle' | 'end'; opacity?: number }
+  /** `shadow` (15 Oct 2026, See-through pictures): a soft dark shadow under the words (`textShadows`). */
+  | { t: 'text'; x: number; y: number; text: string; font: FontToken; size: number; fill: string; anchor?: 'start' | 'middle' | 'end'; opacity?: number; shadow?: boolean }
   | { t: 'path'; d: string; fill?: string; stroke?: string; strokeWidth?: number; x?: number; y?: number; scale?: number }
   /** v0.25.1: `figure` is the member's choice in Profile (absent = male). */
   | { t: 'body'; x: number; y: number; height: number; view: 'front' | 'back'; levels: readonly (readonly [Muscle, MapLevel])[]; figure?: BodyFigure };
@@ -52,8 +53,24 @@ export type SceneNode =
 export interface Scene {
   width: number;
   height: number;
+  /** A colour, or `CLEAR_BACKGROUND`: nothing drawn behind, so the saved PNG is see-through. */
   background: string;
   nodes: SceneNode[];
+}
+
+/** The See-through picture's background: none at all. */
+export const CLEAR_BACKGROUND = 'none';
+
+/**
+ * The soft shadow under a `shadow` text: two dark copies a little lower, the nearer one darker,
+ * so white words read on a bright photo (no SVG filter — both renderers draw plain text). PURE.
+ */
+export function textShadows(size: number): { dy: number; opacity: number }[] {
+  const d = Math.max(2, Math.round(size * 0.03));
+  return [
+    { dy: d, opacity: 0.4 },
+    { dy: d * 2, opacity: 0.16 },
+  ];
 }
 
 // ---------------------------------------------------------------- text
@@ -181,6 +198,13 @@ export function sceneToSvg(scene: Scene): string {
       }
       case 'text': {
         const f = WEB_FONT[n.font];
+        if (n.shadow) {
+          for (const sh of textShadows(n.size)) {
+            parts.push(
+              `<text x="${n.x}" y="${n.y + sh.dy}" font-family="${f.family}" font-weight="${f.weight}" font-size="${n.size}" fill="#000000" text-anchor="${n.anchor ?? 'start'}" opacity="${sh.opacity * (n.opacity ?? 1)}" xml:space="preserve">${esc(n.text)}</text>`,
+            );
+          }
+        }
         parts.push(
           `<text x="${n.x}" y="${n.y}" font-family="${f.family}" font-weight="${f.weight}" font-size="${n.size}" fill="${n.fill}" text-anchor="${n.anchor ?? 'start'}"${n.opacity != null ? ` opacity="${n.opacity}"` : ''} xml:space="preserve">${esc(n.text)}</text>`,
         );
@@ -206,7 +230,7 @@ export function sceneToSvg(scene: Scene): string {
       }
     }
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${scene.width}" height="${scene.height}" viewBox="0 0 ${scene.width} ${scene.height}"><rect width="${scene.width}" height="${scene.height}" fill="${scene.background}"/>${parts.join('')}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${scene.width}" height="${scene.height}" viewBox="0 0 ${scene.width} ${scene.height}">${scene.background === CLEAR_BACKGROUND ? '' : `<rect width="${scene.width}" height="${scene.height}" fill="${scene.background}"/>`}${parts.join('')}</svg>`;
 }
 
 /** A safe file name for the saved picture: letters, digits and dashes only. */
