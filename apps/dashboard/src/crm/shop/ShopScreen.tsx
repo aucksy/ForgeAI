@@ -55,44 +55,56 @@ import {
 } from './logic';
 import { ProductPicture } from './ProductArt';
 import { PhotoError, uploadProductPhoto } from './photoUpload';
+import { useRole } from '../auth/AuthProvider';
+import { shopTabFor, shopTabs } from '../auth/permissions';
 import { MessagesSection } from './MessagesSection';
 import { ProductSheet } from './ProductSheet';
 import { usePoll, useShop } from './ShopProvider';
 
 export function ShopScreen({ section }: { section?: string }) {
   const { cloud, newCount } = useShop();
-  const tab = section === 'products' || section === 'messages' ? section : 'orders';
+  // Staff (front desk) hands over orders; products, prices and messages to members are the
+  // owner's (permissions.ts), so Staff gets the Orders list with no tabs above it.
+  const role = useRole();
+  const tab = shopTabFor(role, section);
+  const tabs = shopTabs(role);
 
   return (
     <>
       <PageHeader
         title={tr('Shop', 'Shop')}
-        subtitle={tr(
-          'What members order in the ForgeAI app, what you sell, and your messages to them',
-          'Members ForgeAI app mein kya order karte hain, aap kya bechte hain, aur unke liye aapke messages',
-        )}
+        subtitle={
+          tabs.length > 1
+            ? tr(
+                'What members order in the ForgeAI app, what you sell, and your messages to them',
+                'Members ForgeAI app mein kya order karte hain, aap kya bechte hain, aur unke liye aapke messages',
+              )
+            : tr('What members order in the ForgeAI app', 'Members ForgeAI app mein kya order karte hain')
+        }
       />
 
       {!cloud ? (
         <JoinCodeCard />
       ) : (
         <>
-          <div style={{ marginBottom: space.lg }}>
-            <ChipToggle
-              variant="tabs"
-              label={tr('Shop section', 'Shop ka hissa')}
-              value={tab}
-              onChange={(v) => navigate(`/shop/${v}`)}
-              options={[
-                {
-                  value: 'orders',
-                  label: newCount > 0 ? tr(`Orders · ${newCount} new`, `Orders · ${newCount} naye`) : tr('Orders', 'Orders'),
-                },
-                { value: 'products', label: tr('Products', 'Products') },
-                { value: 'messages', label: tr('Messages', 'Messages') },
-              ]}
-            />
-          </div>
+          {tabs.length > 1 && (
+            <div style={{ marginBottom: space.lg }}>
+              <ChipToggle
+                variant="tabs"
+                label={tr('Shop section', 'Shop ka hissa')}
+                value={tab}
+                onChange={(v) => navigate(`/shop/${v}`)}
+                options={[
+                  {
+                    value: 'orders',
+                    label: newCount > 0 ? tr(`Orders · ${newCount} new`, `Orders · ${newCount} naye`) : tr('Orders', 'Orders'),
+                  },
+                  { value: 'products', label: tr('Products', 'Products') },
+                  { value: 'messages', label: tr('Messages', 'Messages') },
+                ]}
+              />
+            </div>
+          )}
           {tab === 'orders' ? <OrdersSection /> : tab === 'products' ? <ProductsSection /> : <MessagesSection />}
         </>
       )}

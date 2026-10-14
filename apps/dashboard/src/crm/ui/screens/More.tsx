@@ -4,6 +4,8 @@
  * most (Staff & sign-in, Invite members). On a computer the sidebar shows them all instead.
  */
 
+import { useRole } from '../../auth/AuthProvider';
+import { navFor } from '../../auth/permissions';
 import { tr } from '../../i18n';
 import { dueCount } from '../../logic/enquiries';
 import { useShop } from '../../shop/ShopProvider';
@@ -24,7 +26,10 @@ export function MoreScreen() {
   const { newCount } = useShop();
   const { snapshot, today } = useCrm();
   const enquiriesDue = dueCount(snapshot.enquiries, today);
-  const rows: Row[] = [
+  const role = useRole();
+  const owner = role === 'owner';
+  // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
+  const rows: Row[] = navFor<Row>(role, [
     { path: '/plans', label: tr('Plans', 'Plan'), hint: tr('Prices and durations', 'Fees aur samay'), icon: 'plans' },
     {
       path: '/enquiries',
@@ -38,7 +43,7 @@ export function MoreScreen() {
     {
       path: '/settings/people',
       label: tr('Staff & sign-in', 'Staff ka login'),
-      hint: tr('Who can open this panel', 'Panel kaun khol sakta hai'),
+      hint: owner ? tr('Who can open this panel', 'Panel kaun khol sakta hai') : tr('You, and signing out', 'Aap, aur sign out'),
       icon: 'members',
     },
     {
@@ -47,8 +52,13 @@ export function MoreScreen() {
       hint: tr('Link and QR poster', 'Link aur QR poster'),
       icon: 'today',
     },
-    { path: '/settings', label: tr('Settings', 'Settings'), hint: tr('Gym details, language, app', 'Gym ki details, bhasha, app'), icon: 'settings' },
-  ];
+    {
+      path: '/settings',
+      label: tr('Settings', 'Settings'),
+      hint: owner ? tr('Gym details, language, app', 'Gym ki details, bhasha, app') : tr('Language, app, sign-in', 'Bhasha, app, sign in'),
+      icon: 'settings',
+    },
+  ]);
   return (
     <>
       <PageHeader title={tr('More', 'Aur')} />

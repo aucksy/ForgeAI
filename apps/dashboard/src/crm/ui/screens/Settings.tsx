@@ -9,9 +9,10 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useAuth } from '../../auth/AuthProvider';
+import { useAuth, useCan } from '../../auth/AuthProvider';
 import { SignInCard } from '../../auth/GoOnlineCard';
 import { InstallCard } from '../InstallCard';
+import { LangToggle } from '../LangToggle';
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
@@ -40,6 +41,11 @@ export function SettingsScreen() {
   const { cloud, startOver, disconnectShop, renameCloudGym } = useShop();
   // Online records are never wiped, replaced with the demo, or cut off from here.
   const online = useAuth().session?.online === true;
+  // Staff (front desk) sees only the language, the app install and their own sign-in card;
+  // gym details, branding, the member app switch and the data actions are the owner's.
+  const allowed = useCan();
+  const canManage = allowed('manageGym');
+  const canErase = allowed('eraseOrDemo');
 
   const [name, setName] = useState(gym.name);
   const [phone, setPhone] = useState(gym.phone ?? '');
@@ -89,6 +95,8 @@ export function SettingsScreen() {
     payments: snapshot.payments.length,
     visits: snapshot.visits.length,
   };
+
+  if (!canManage) return <StaffSettings />;
 
   return (
     <>
@@ -166,7 +174,7 @@ export function SettingsScreen() {
               )}
         </p>
 
-        {!online && (
+        {!online && canErase && (
         <Row gap={space.sm}>
           <div style={{ marginTop: space.lg }}>
             <Button variant="ghost" onClick={() => setConfirming('demo')}>
@@ -293,6 +301,21 @@ export function SettingsScreen() {
       )}
 
       {toast && <Toast message={toast} />}
+    </>
+  );
+}
+
+/** Settings for a Staff person: language, the app on this phone, and their own sign-in (sign out). */
+function StaffSettings() {
+  return (
+    <>
+      <PageHeader title={tr('Settings', 'Settings')} subtitle={tr('Language, app and your sign-in', 'Bhasha, app aur aapka sign in')} />
+      <Card style={{ marginBottom: space.lg }}>
+        <SectionTitle>{tr('Language', 'Bhasha')}</SectionTitle>
+        <LangToggle />
+      </Card>
+      <SignInCard />
+      <InstallCard />
     </>
   );
 }

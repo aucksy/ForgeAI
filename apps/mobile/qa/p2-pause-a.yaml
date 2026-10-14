@@ -27,16 +27,16 @@ appId: com.forgeai.app
     commands:
       - tapOn: "Start empty workout"
 - extendedWaitUntil:
-    visible: "Workout duration .*Tap to pause\."
+    visible: 'Workout duration .*Tap to pause\.'
     timeout: 20000
-- tapOn: "Workout duration .*Tap to pause\."
+- tapOn: 'Workout duration .*Tap to pause\.'
 - extendedWaitUntil:
     visible: "Pause Workout Timer"
     timeout: 10000
 - takeScreenshot: p2-timer-menu
 - tapOn: "Pause Workout Timer"
 - extendedWaitUntil:
-    visible: "Workout paused\. Ticking a set resumes it\..*"
+    visible: 'Workout paused\. Ticking a set resumes it\..*'
     timeout: 10000
 - assertVisible: "^Paused$"
 - takeScreenshot: p2-paused

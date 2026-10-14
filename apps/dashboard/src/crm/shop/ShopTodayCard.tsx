@@ -5,6 +5,7 @@
 
 import { useMemo } from 'react';
 
+import { useCan } from '../auth/AuthProvider';
 import { tr } from '../i18n';
 import { formatINR } from '../logic/money';
 import { Button, Card, SectionTitle, color, font, space } from '../ui/kit';
@@ -16,6 +17,8 @@ export function ShopTodayCard({ flush = false }: { flush?: boolean }) {
   const { cloud, orders, ordersLoaded, newCount, now } = useShop();
   const today = useMemo(() => collectedTodayP(orders, now), [orders, now]);
   const readyCount = useMemo(() => orders.filter((o) => o.status === 'ready').length, [orders]);
+  // Staff sees the orders to hand over, not the day's takings (permissions.ts).
+  const seeTotals = useCan()('seeTotals');
 
   if (!cloud) return null;
 
@@ -30,7 +33,7 @@ export function ShopTodayCard({ flush = false }: { flush?: boolean }) {
       >
         {tr('Shop today', 'Aaj ka shop')}
       </SectionTitle>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: space.md }}>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${seeTotals ? 3 : 2}, minmax(0, 1fr))`, gap: space.md }}>
         <Figure
           value={ordersLoaded ? String(newCount) : '…'}
           label={newCount === 1 ? tr('new order', 'naya order') : tr('new orders', 'naye orders')}
@@ -40,11 +43,13 @@ export function ShopTodayCard({ flush = false }: { flush?: boolean }) {
         {/* "Sold", not "collected": it sits above "Collected this month" for
             memberships, and two different "collected" figures on one screen read as
             one number that disagrees with itself. Green only once there is money. */}
-        <Figure
-          value={ordersLoaded ? formatINR(today) : '…'}
-          label={tr('sold today', 'aaj bika')}
-          tone={today > 0 ? color.goodText : color.ink}
-        />
+        {seeTotals && (
+          <Figure
+            value={ordersLoaded ? formatINR(today) : '…'}
+            label={tr('sold today', 'aaj bika')}
+            tone={today > 0 ? color.goodText : color.ink}
+          />
+        )}
       </div>
     </Card>
   );

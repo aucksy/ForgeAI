@@ -10,6 +10,7 @@
 import { collectedOn, tileCounts } from '../../logic/homeTiles';
 import { dueCount } from '../../logic/enquiries';
 import { InstallCard } from '../InstallCard';
+import { useCan } from '../../auth/AuthProvider';
 import { tr } from '../../i18n';
 import { useMemo } from 'react';
 
@@ -43,6 +44,8 @@ import { Link, navigate } from '../router';
 export function TodayScreen() {
   const { snapshot, memberViews, allMemberViews, today } = useCrm();
   const compact = useIsCompact();
+  // Staff (front desk) sees counts of people, never the gym's money totals (permissions.ts).
+  const seeTotals = useCan()('seeTotals');
 
   const stats = useMemo(() => {
     const expiring = memberViews.filter((v) => v.state === 'expiring');
@@ -125,13 +128,15 @@ export function TodayScreen() {
           4-7, 8-15 days), who has ended, fees due, birthdays and who came in today. Every tile
           opens its own list, filtered by the same rule as the number (logic/homeTiles.ts). */}
       <Grid min={compact ? 140 : 200}>
-        <StatTile
-          label={tr("Today's collection", 'Aaj ki collection')}
-          value={formatINRShort(collectedToday)}
-          tone="good"
-          onClick={() => navigate('/money/today')}
-          sub={tr(`This month ${formatINRShort(stats.collectedThisMonth)}`, `Is mahine ${formatINRShort(stats.collectedThisMonth)}`)}
-        />
+        {seeTotals && (
+          <StatTile
+            label={tr("Today's collection", 'Aaj ki collection')}
+            value={formatINRShort(collectedToday)}
+            tone="good"
+            onClick={() => navigate('/money/today')}
+            sub={tr(`This month ${formatINRShort(stats.collectedThisMonth)}`, `Is mahine ${formatINRShort(stats.collectedThisMonth)}`)}
+          />
+        )}
         <StatTile
           label={tr('Active members', 'Chalu members')}
           value={tiles.active}
@@ -173,13 +178,15 @@ export function TodayScreen() {
           onClick={() => navigate('/members/f/expired')}
           sub={tr(`${stats.recentlyLapsed} in the last ${WINBACK_WINDOW_DAYS} days`, `${stats.recentlyLapsed} pichhle ${WINBACK_WINDOW_DAYS} din mein`)}
         />
-        <StatTile
-          label={tr('Fees due', 'Fees baaki')}
-          value={formatINRShort(stats.duesTotalP)}
-          tone={stats.duesTotalP > 0 ? 'warn' : undefined}
-          onClick={() => navigate('/money/dues')}
-          sub={tr(`${stats.dues.length} members`, `${stats.dues.length} members`)}
-        />
+        {seeTotals && (
+          <StatTile
+            label={tr('Fees due', 'Fees baaki')}
+            value={formatINRShort(stats.duesTotalP)}
+            tone={stats.duesTotalP > 0 ? 'warn' : undefined}
+            onClick={() => navigate('/money/dues')}
+            sub={tr(`${stats.dues.length} members`, `${stats.dues.length} members`)}
+          />
+        )}
         <StatTile
           label={tr('Birthdays today', 'Aaj birthday')}
           value={tiles.birthday}

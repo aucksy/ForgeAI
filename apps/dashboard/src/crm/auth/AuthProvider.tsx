@@ -16,7 +16,8 @@ import { STORAGE_KEY } from '../data/local';
 import { CLOUD_GYM_KEY, clearCloudGym, readCloudGym, writeCloudGym, type CloudGym } from '../shop/cloudGym';
 import { tr } from '../i18n';
 import * as authApi from './api';
-import type { SignedIn } from './signin';
+import { can, roleOf, type Action } from './permissions';
+import type { Role, SignedIn } from './signin';
 
 interface AuthContextValue {
   /** This device's cloud gym and key, or null for a browser-only gym. */
@@ -37,6 +38,17 @@ export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>');
   return ctx;
+}
+
+/** The signed-in person's role; a browser-only gym or an old owner key is the owner. */
+export function useRole(): Role {
+  return roleOf(useAuth().session);
+}
+
+/** `const allowed = useCan(); allowed('voidReceipt')` — what this device's person may do (permissions.ts). */
+export function useCan(): (action: Action) => boolean {
+  const role = useRole();
+  return useCallback((action: Action) => can(role, action), [role]);
 }
 
 /** Move this browser's own copy of the gym aside, if it holds anything. Never deletes it. */

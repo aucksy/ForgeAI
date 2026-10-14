@@ -13,6 +13,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { useCan, useRole } from '../../auth/AuthProvider';
+import { moneyTabFor, moneyTabs } from '../../auth/permissions';
 import { useCrm } from '../../store';
 import { formatDay, formatDayShort, isValidDateISO } from '../../logic/dates';
 import {
@@ -64,10 +66,12 @@ import {
 import { Link, navigate } from '../router';
 import { inEnglish, tr } from '../../i18n';
 
-type Tab = 'collections' | 'dues';
-
 export function MoneyScreen({ section }: { section?: string }) {
-  const tab: Tab = section === 'dues' ? 'dues' : 'collections';
+  // Staff (front desk) gets only Dues — the PEOPLE to collect from — with no ₹ totals, charts or
+  // exports; Collections is all totals (permissions.ts).
+  const role = useRole();
+  const tab = moneyTabFor(role, section);
+  const tabs = moneyTabs(role);
 
   // A toast with no timer is a banner. `Toast` is presentational — every other
   // screen pairs it with this dismissal, and without it "Receipt voided" sat
@@ -92,23 +96,27 @@ export function MoneyScreen({ section }: { section?: string }) {
         title={tr('Money', 'Hisaab')}
         subtitle={
           tab === 'dues'
-            ? tr('Everything still owed to the gym', 'Gym ki saari fees baaki')
+            ? tabs.length > 1
+              ? tr('Everything still owed to the gym', 'Gym ki saari fees baaki')
+              : tr('Who still owes fees, to collect', 'Kiski fees baaki hai, lena hai')
             : tr('Every rupee that came in', 'Jo bhi paisa aaya')
         }
       />
 
-      <div style={{ marginBottom: space.lg }}>
-        <ChipToggle
-          variant="tabs"
-          label={tr('Money view', 'Hisaab dekho')}
-          value={tab}
-          onChange={(v) => navigate(v === 'dues' ? '/money/dues' : '/money')}
-          options={[
-            { value: 'collections', label: tr('Collections', 'Collection') },
-            { value: 'dues', label: tr('Dues', 'Fees baaki') },
-          ]}
-        />
-      </div>
+      {tabs.length > 1 && (
+        <div style={{ marginBottom: space.lg }}>
+          <ChipToggle
+            variant="tabs"
+            label={tr('Money view', 'Hisaab dekho')}
+            value={tab}
+            onChange={(v) => navigate(v === 'dues' ? '/money/dues' : '/money')}
+            options={[
+              { value: 'collections', label: tr('Collections', 'Collection') },
+              { value: 'dues', label: tr('Dues', 'Fees baaki') },
+            ]}
+          />
+        </div>
+      )}
 
       {tab === 'collections' ? (
         // `/money/today` (the home screen's "Today's collection" tile) opens on today.
@@ -134,6 +142,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
   const [query, setQuery] = useState('');
   const [includeVoided, setIncludeVoided] = useState(false);
   const [voiding, setVoiding] = useState<Payment | null>(null);
+  const canVoid = useCan()('voidReceipt');
 
   // A half-typed date in a `type="date"` field arrives as '' or as a partial
   // string. Falling back to the preset keeps the whole page from blanking out
@@ -350,7 +359,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
         ) : compact ? (
           <div style={{ display: 'grid', gap: space.sm, marginTop: space.md }}>
             {visible.map((r) => (
-              <LedgerCard key={r.payment.id} row={r} onVoid={() => setVoiding(r.payment)} />
+              <LedgerCard key={r.payment.id} row={r} onVoid={canVoid ? () => setVoiding(r.payment) : undefined} />
             ))}
           </div>
         ) : (
@@ -369,7 +378,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
               </thead>
               <tbody>
                 {visible.map((r) => (
-                  <LedgerTableRow key={r.payment.id} row={r} onVoid={() => setVoiding(r.payment)} />
+                  <LedgerTableRow key={r.payment.id} row={r} onVoid={canVoid ? () => setVoiding(r.payment) : undefined} />
                 ))}
               </tbody>
             </table>
@@ -437,7 +446,7 @@ function MethodBar({
   );
 }
 
-function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid: () => void }) {
+function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid?: () => void }) {
   const { payment, member, membership } = row;
   return (
     <tr>
@@ -480,7 +489,7 @@ function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid: () => void })
         )}
       </Td>
       <Td align="right">
-        {!payment.voided && (
+        {!payment.voided && onVoid && (
           <Button variant="quiet" tone="danger" onClick={onVoid}>
             {tr('Void', 'Raseed cancel karo')}
           </Button>
@@ -490,7 +499,7 @@ function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid: () => void })
   );
 }
 
-function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid: () => void }) {
+function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid?: () => void }) {
   const { payment, member, membership } = row;
   return (
     <div
@@ -543,11 +552,11 @@ function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid: () => void }) {
         <span style={{ flex: 1 }} />
         {payment.voided ? (
           <span style={{ ...tapTarget, fontSize: 11, color: color.criticalText }}>{tr('VOIDED', 'CANCEL')}</span>
-        ) : (
+        ) : onVoid ? (
           <Button variant="quiet" tone="danger" onClick={onVoid}>
             {tr('Void', 'Raseed cancel karo')}
           </Button>
-        )}
+        ) : null}
       </Row>
     </div>
   );
@@ -576,6 +585,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
   const [collecting, setCollecting] = useState<MemberView | null>(null);
   const [bucket, setBucket] = useState<AgingBucket | 'all'>('all');
   const [error, setError] = useState<string | null>(null);
+  const seeTotals = useCan()('seeTotals');
 
   // Over EVERY member including archived ones: archiving somebody does not cancel
   // what they owe, and a dues total that drops when the roster is tidied is a way
@@ -656,45 +666,51 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
     <>
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
-      <Grid min={165}>
-        <StatTile
-          label={tr('Total owed', 'Kul fees baaki')}
-          value={formatINRShort(owedP)}
-          tone="warn"
-          sub={
-            people.length === allPeople.length
-              ? allPeople.length === 1
-                ? tr(`${allPeople.length} member`, `${allPeople.length} member`)
-                : tr(`${allPeople.length} members`, `${allPeople.length} members`)
-              : tr(
-                  `${people.length} of ${allPeople.length} members shown`,
-                  `${allPeople.length} mein se ${people.length} members dikh rahe`,
-                )
-          }
-        />
-        {totals.map((t) => (
+      {seeTotals && (
+        <>
+        <Grid min={165}>
           <StatTile
-            key={t.bucket}
-            label={agingLabel(t.bucket)}
-            value={formatINRShort(t.amountP)}
-            tone={t.amountP > 0 ? tileTone(t.bucket) : undefined}
+            label={tr('Total owed', 'Kul fees baaki')}
+            value={formatINRShort(owedP)}
+            tone="warn"
             sub={
-              t.countN === 1
-                ? tr(`${t.countN} membership`, `${t.countN} plan`)
-                : tr(`${t.countN} memberships`, `${t.countN} plan`)
+              people.length === allPeople.length
+                ? allPeople.length === 1
+                  ? tr(`${allPeople.length} member`, `${allPeople.length} member`)
+                  : tr(`${allPeople.length} members`, `${allPeople.length} members`)
+                : tr(
+                    `${people.length} of ${allPeople.length} members shown`,
+                    `${allPeople.length} mein se ${people.length} members dikh rahe`,
+                  )
             }
           />
-        ))}
-      </Grid>
+          {totals.map((t) => (
+            <StatTile
+              key={t.bucket}
+              label={agingLabel(t.bucket)}
+              value={formatINRShort(t.amountP)}
+              tone={t.amountP > 0 ? tileTone(t.bucket) : undefined}
+              sub={
+                t.countN === 1
+                  ? tr(`${t.countN} membership`, `${t.countN} plan`)
+                  : tr(`${t.countN} memberships`, `${t.countN} plan`)
+              }
+            />
+          ))}
+        </Grid>
 
-      <div style={{ height: space.lg }} />
+        <div style={{ height: space.lg }} />
+        </>
+      )}
 
       <Card>
         <SectionTitle
           action={
-            <Button variant="ghost" onClick={exportCsv}>
-              {tr('Export CSV', 'CSV nikalo')}
-            </Button>
+            seeTotals ? (
+              <Button variant="ghost" onClick={exportCsv}>
+                {tr('Export CSV', 'CSV nikalo')}
+              </Button>
+            ) : undefined
           }
         >
           {tr('Who owes', 'Kiski fees baaki')}

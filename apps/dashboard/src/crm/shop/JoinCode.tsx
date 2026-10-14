@@ -9,6 +9,7 @@ import { useRef, useState } from 'react';
 
 import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } from '../ui/kit';
 import { tr } from '../i18n';
+import { useCan } from '../auth/AuthProvider';
 import { useShop } from './ShopProvider';
 import { inviteMessage, whatsAppHref } from './invite';
 import { navigate } from '../ui/router';
@@ -53,6 +54,21 @@ export function JoinCodeCard({
   const codeRef = useRef<HTMLSpanElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Turning the shop on changes the gym: an owner's job (permissions.ts).
+  const canManage = useCan()('manageGym');
+
+  if (!cloud && !canManage) {
+    return (
+      <Card style={{ marginBottom: flush ? 0 : space.lg }}>
+        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+          {tr(
+            'The member app and shop are not turned on yet. Only an owner can turn them on.',
+            'Member app aur Shop abhi chalu nahi hai. Sirf Owner ise chalu kar sakta hai.',
+          )}
+        </p>
+      </Card>
+    );
+  }
 
   if (!cloud) {
     return (

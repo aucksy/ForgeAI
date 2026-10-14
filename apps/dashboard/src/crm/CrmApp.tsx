@@ -16,7 +16,9 @@ import { isTileFilter } from './logic/homeTiles';
 import { useMemo, useRef } from 'react';
 
 import { cloudApi } from './auth/api';
-import { AuthProvider, useAuth } from './auth/AuthProvider';
+import { AuthProvider, useAuth, useRole } from './auth/AuthProvider';
+import { OwnerOnly } from './auth/OwnerOnly';
+import { canOpen, navFor } from './auth/permissions';
 import { LangProvider, useLang, tr } from './i18n';
 import { PeopleScreen } from './auth/PeopleScreen';
 import { CloudCrmData } from './data/cloud';
@@ -79,6 +81,7 @@ function Routes({ online }: { online: boolean }) {
   const { snapshot, memberViews, today } = useCrm();
   const { newCount } = useShop();
   const route = useRoute();
+  const role = useRole();
 
   // Never set up: no plans, no members, and still the placeholder name.
   // An online gym is always set up: it was named when it was made, and its welcome screen's
@@ -106,7 +109,8 @@ function Routes({ online }: { online: boolean }) {
     // Counted in PEOPLE like the two badges beside it, and like the list it opens.
     const atRisk = atRiskList(snapshot.members, snapshot.memberships, snapshot.visits, today).length;
     const enquiriesDue = dueCount(snapshot.enquiries, today);
-    return [
+    // A Staff person never sees a page they cannot open (permissions.ts): no Expenses.
+    return navFor<NavItem>(role, [
       { path: '/', label: tr('Today', 'Aaj'), icon: 'today' },
       { path: '/members', label: tr('Members', 'Members'), icon: 'members', badge: needsAttention },
       // Badged with orders waiting at the desk — the one number on this bar that
@@ -124,8 +128,8 @@ function Routes({ online }: { online: boolean }) {
       { path: '/enquiries', label: tr('Enquiries', 'Enquiry'), icon: 'members', badge: enquiriesDue || undefined },
       { path: '/expenses', label: tr('Expenses', 'Kharcha'), icon: 'money' },
       { path: '/settings', label: tr('Settings', 'Settings'), icon: 'settings' },
-    ];
-  }, [memberViews, snapshot, today, newCount]);
+    ]);
+  }, [memberViews, snapshot, today, newCount, role]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {
@@ -141,7 +145,7 @@ function Routes({ online }: { online: boolean }) {
 
   return (
     <AppShell gymName={snapshot.gym.name} nav={nav} phoneNav={phoneNav}>
-      <Screen segments={route.segments} />
+      {canOpen(role, `/${route.segments.join('/')}`) ? <Screen segments={route.segments} /> : <OwnerOnly />}
     </AppShell>
   );
 }

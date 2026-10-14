@@ -9,6 +9,7 @@
 
 import { useMemo, useState } from 'react';
 
+import { useCan } from '../../auth/AuthProvider';
 import { useCrm } from '../../store';
 import { formatDay } from '../../logic/dates';
 import { computeEndDate } from '../../logic/membership';
@@ -36,6 +37,8 @@ import { tr } from '../../i18n';
 
 export function PlansScreen() {
   const { snapshot, today, createPlan } = useCrm();
+  // Staff (front desk) reads the price list to sell from; only an owner adds or edits plans.
+  const canEdit = useCan()('editPlans');
   const [editing, setEditing] = useState<Plan | null>(null);
   const [adding, setAdding] = useState(false);
   const [seeding, setSeeding] = useState(false);
@@ -87,7 +90,7 @@ export function PlansScreen() {
       <PageHeader
         title={tr('Plans', 'Plan / Package')}
         subtitle={tr('What you sell, and for how much', 'Aap kya bechte hain, kitne mein')}
-        actions={<Button onClick={() => setAdding(true)}>{tr('+ Add plan', '+ Naya plan jodo')}</Button>}
+        actions={canEdit ? <Button onClick={() => setAdding(true)}>{tr('+ Add plan', '+ Naya plan jodo')}</Button> : undefined}
       />
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
@@ -96,17 +99,23 @@ export function PlansScreen() {
         <Card>
           <EmptyState
             title={tr('No plans yet', 'Abhi koi plan nahi')}
-            body={tr(
-              'Add your own, or start from a typical Indian gym price list and edit the numbers.',
-              'Apna plan jodo, ya ek aam Indian gym ki rate list se shuru karke fees badlo.',
-            )}
+            body={
+              canEdit
+                ? tr(
+                    'Add your own, or start from a typical Indian gym price list and edit the numbers.',
+                    'Apna plan jodo, ya ek aam Indian gym ki rate list se shuru karke fees badlo.',
+                  )
+                : tr('Ask your gym owner to add the plans you sell.', 'Gym Owner se bolo ki Plan jod dein.')
+            }
             action={
+              canEdit && (
               <Row gap={space.sm}>
                 <Button onClick={() => setAdding(true)}>{tr('+ Add plan', '+ Naya plan jodo')}</Button>
                 <Button variant="ghost" onClick={addStarterPlans} disabled={seeding}>
                   {seeding ? tr('Adding…', 'Jod rahe hain…') : tr('Use a starter price list', 'Taiyaar rate list lo')}
                 </Button>
               </Row>
+              )
             }
           />
         </Card>
@@ -116,7 +125,13 @@ export function PlansScreen() {
         // so any card count orphans somewhere. A list has no last row to be short.
         <Card pad={0}>
           {plans.map((plan, i) => (
-            <PlanRow key={plan.id} plan={plan} today={today} first={i === 0} onEdit={() => setEditing(plan)} />
+            <PlanRow
+              key={plan.id}
+              plan={plan}
+              today={today}
+              first={i === 0}
+              onEdit={canEdit ? () => setEditing(plan) : undefined}
+            />
           ))}
         </Card>
       )}
@@ -144,7 +159,8 @@ function PlanRow({
   plan: Plan;
   today: string;
   first: boolean;
-  onEdit: () => void;
+  /** Owners only: absent for Staff, and the Edit button is not drawn. */
+  onEdit?: () => void;
 }) {
   const compact = useIsCompact();
   const sample = computeEndDate(today, plan.durationUnit, plan.durationCount);
@@ -183,11 +199,11 @@ function PlanRow({
       <div style={{ color: color.inkSecondary, fontSize: 13, marginTop: 2 }}>{formatDay(sample)}</div>
     </div>
   );
-  const edit = (
+  const edit = onEdit ? (
     <Button variant="ghost" onClick={onEdit} ariaLabel={tr(`Edit ${plan.name}`, `${plan.name} badlo`)}>
       {tr('Edit', 'Badlo')}
     </Button>
-  );
+  ) : null;
 
   const shell: React.CSSProperties = {
     padding: `${space.lg}px ${space.xl}px`,
@@ -217,7 +233,8 @@ function PlanRow({
       style={{
         ...shell,
         display: 'grid',
-        gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1.2fr) auto',
+        // No Edit column for Staff: an empty fifth column would still add a gap at the right.
+        gridTemplateColumns: `minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1.2fr)${edit ? ' auto' : ''}`,
         gap: space.lg,
         alignItems: 'center',
       }}

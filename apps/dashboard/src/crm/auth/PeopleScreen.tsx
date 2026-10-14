@@ -34,6 +34,7 @@ import {
 import { navigate } from '../ui/router';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
+import { staffRightsWords } from './permissions';
 import {
   authErrorCode,
   authErrorWords,
@@ -178,6 +179,7 @@ export function PeopleScreen() {
               'Sirf Owner log jod sakta hai ya Sign-in code bana sakta hai. Gym Owner se poochho.',
             )}
           </p>
+          <p style={{ ...bodyText, marginTop: space.md, fontSize: 13, color: color.inkMuted }}>{staffRightsWords()}</p>
         </Card>
       )}
 
@@ -247,10 +249,7 @@ export function PeopleScreen() {
             ))}
           </div>
           <p style={{ ...bodyText, marginTop: space.lg, fontSize: 13, color: color.inkMuted }}>
-            {tr(
-              'Owner: everything, including adding people and making codes. Staff: everything else. A front-desk role with fewer rights comes later.',
-              'Owner: sab kuch, log jodna aur Code banana bhi. Staff: baaki sab. Kam rights wala front-desk role baad mein aayega.',
-            )}
+            {staffRightsWords()}
           </p>
         </Card>
       )}
@@ -387,8 +386,8 @@ function AddPersonSheet({
         value={role}
         onChange={(v) => setRole(v === 'owner' ? 'owner' : 'staff')}
         options={[
-          { value: 'staff', label: tr('Staff — everything except adding people', 'Staff — log jodne ke alawa sab kuch') },
-          { value: 'owner', label: tr('Owner — everything, including adding people', 'Owner — sab kuch, log jodna bhi') },
+          { value: 'staff', label: tr('Staff — front desk: add, collect, check in', 'Staff — front desk: jodo, Fees lo, Hazri') },
+          { value: 'owner', label: tr('Owner — everything, including money totals', 'Owner — sab kuch, kul paisa bhi') },
         ]}
       />
     </Sheet>

@@ -29,6 +29,7 @@ import { methodLabel } from '../../logic/payments';
 import type { Membership, Payment } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
 import { ExtendMembershipSheet } from '../forms/ExtendMembershipSheet';
+import { useCan } from '../../auth/AuthProvider';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
 import { SellMembershipSheet } from '../forms/SellMembershipSheet';
 import { VoidPaymentSheet } from '../forms/VoidPaymentSheet';
@@ -61,6 +62,11 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     useCrm();
   const compact = useIsCompact();
   const { cloud } = useShop();
+  // Staff (front desk) can sell, collect and check in, but cannot cancel, freeze or void (permissions.ts).
+  const allowed = useCan();
+  const canCancel = allowed('cancelMembership');
+  const canFreeze = allowed('freeze');
+  const canVoid = allowed('voidReceipt');
   const [editing, setEditing] = useState(false);
   const [selling, setSelling] = useState(false);
   const [collecting, setCollecting] = useState(false);
@@ -336,9 +342,11 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 membership={m}
                 payments={payments}
                 today={today}
-                onCancel={() => setCancelling(m)}
-                onExtend={extendTarget?.id === m.id ? () => setExtending(m) : undefined}
-                onRestore={() => run(() => uncancelMembership(m.id), tr('Cancellation reversed.', 'Cancel wapas liya.'))}
+                onCancel={canCancel ? () => setCancelling(m) : undefined}
+                onExtend={canFreeze && extendTarget?.id === m.id ? () => setExtending(m) : undefined}
+                onRestore={
+                  canCancel ? () => run(() => uncancelMembership(m.id), tr('Cancellation reversed.', 'Cancel wapas liya.')) : undefined
+                }
               />
             ))}
           </div>
@@ -352,7 +360,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         ) : (
           <div style={{ display: 'grid', gap: space.xs }}>
             {payments.map((p) => (
-              <PaymentRow key={p.id} payment={p} onVoid={() => setVoiding(p)} />
+              <PaymentRow key={p.id} payment={p} onVoid={canVoid ? () => setVoiding(p) : undefined} />
             ))}
           </div>
         )}
@@ -608,8 +616,9 @@ function MembershipRow({
   membership: Membership;
   payments: Payment[];
   today: string;
-  onCancel: () => void;
-  onRestore: () => void;
+  /** Owners only: absent for Staff, and the button is not drawn. */
+  onCancel?: () => void;
+  onRestore?: () => void;
   /** Only on the plan that ends last: opens Freeze / Extra din. */
   onExtend?: () => void;
 }) {
@@ -694,15 +703,17 @@ function MembershipRow({
             </span>
           )}
         </div>
-        {membership.cancelled ? (
-          <Button variant="quiet" onClick={onRestore}>
-            {tr('Undo cancel', 'Cancel wapas lo')}
-          </Button>
-        ) : (
-          <Button variant="quiet" tone="danger" onClick={onCancel}>
-            {tr('Cancel', 'Cancel')}
-          </Button>
-        )}
+        {membership.cancelled
+          ? onRestore && (
+              <Button variant="quiet" onClick={onRestore}>
+                {tr('Undo cancel', 'Cancel wapas lo')}
+              </Button>
+            )
+          : onCancel && (
+              <Button variant="quiet" tone="danger" onClick={onCancel}>
+                {tr('Cancel', 'Cancel')}
+              </Button>
+            )}
       </Row>
       {onExtend && (
         <div style={{ marginTop: space.sm }}>
@@ -715,7 +726,7 @@ function MembershipRow({
   );
 }
 
-function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid: () => void }) {
+function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid?: () => void }) {
   return (
     <Row gap={space.md} wrap={false}>
       {/* The receipt number is the handle on the printable copy — a member asking
@@ -762,7 +773,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid: () => void 
       >
         {formatINR(payment.amountP)}
       </span>
-      {!payment.voided && (
+      {!payment.voided && onVoid && (
         <Button variant="quiet" tone="danger" onClick={onVoid}>
           {tr('Void', 'Raseed cancel karo')}
         </Button>

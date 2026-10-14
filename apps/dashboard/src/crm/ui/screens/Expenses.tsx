@@ -9,6 +9,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { useCan } from '../../auth/AuthProvider';
 import { useCrm } from '../../store';
 import { tr } from '../../i18n';
 import { formatDay, isValidDateISO, monthKey } from '../../logic/dates';
@@ -51,6 +52,8 @@ export function ExpensesScreen() {
   const [month, setMonth] = useState(thisMonth);
   const [adding, setAdding] = useState(false);
   const [removing, setRemoving] = useState<Expense | null>(null);
+  // The route itself is owner-only (CrmApp + permissions.ts); this keeps Remove tied to its own rule too.
+  const canRemove = useCan()('removeExpense');
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
@@ -157,7 +160,7 @@ export function ExpensesScreen() {
         ) : (
           <div style={{ display: 'grid' }}>
             {rows.map((e, i) => (
-              <ExpenseRow key={e.id} expense={e} first={i === 0} onRemove={() => setRemoving(e)} />
+              <ExpenseRow key={e.id} expense={e} first={i === 0} onRemove={canRemove ? () => setRemoving(e) : undefined} />
             ))}
           </div>
         )}
@@ -282,7 +285,7 @@ function MonthArrow({
   );
 }
 
-function ExpenseRow({ expense, first, onRemove }: { expense: Expense; first: boolean; onRemove: () => void }) {
+function ExpenseRow({ expense, first, onRemove }: { expense: Expense; first: boolean; onRemove?: () => void }) {
   return (
     <div style={{ borderTop: first ? undefined : `1px solid ${color.border}`, padding: `${space.sm}px 0` }}>
       <Row gap={space.sm} wrap={false}>
@@ -296,17 +299,19 @@ function ExpenseRow({ expense, first, onRemove }: { expense: Expense; first: boo
         <span style={{ fontFamily: font.mono, fontSize: 14, fontWeight: 700, color: color.ink, whiteSpace: 'nowrap' }}>
           {formatINR(expense.amountP)}
         </span>
-        <Button
-          variant="quiet"
-          tone="danger"
-          onClick={onRemove}
-          ariaLabel={tr(
-            `Remove ${categoryLabel(expense.category)} ${formatINR(expense.amountP)} on ${formatDay(expense.spentOn)}`,
-            `${formatDay(expense.spentOn)} ka ${categoryLabel(expense.category)} ${formatINR(expense.amountP)} hatao`,
-          )}
-        >
-          {tr('Remove', 'Hatao')}
-        </Button>
+        {onRemove && (
+          <Button
+            variant="quiet"
+            tone="danger"
+            onClick={onRemove}
+            ariaLabel={tr(
+              `Remove ${categoryLabel(expense.category)} ${formatINR(expense.amountP)} on ${formatDay(expense.spentOn)}`,
+              `${formatDay(expense.spentOn)} ka ${categoryLabel(expense.category)} ${formatINR(expense.amountP)} hatao`,
+            )}
+          >
+            {tr('Remove', 'Hatao')}
+          </Button>
+        )}
       </Row>
     </div>
   );

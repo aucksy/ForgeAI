@@ -32,7 +32,8 @@ const bodyText = { margin: 0, fontFamily: font.body, fontSize: 14, color: color.
 
 export function SignInCard() {
   const { session } = useAuth();
-  if (session?.online && session.person) return <SignedInCard />;
+  // A Staff person never puts a gym online (that is the owner's step): they only see who they are.
+  if (session?.person && (session.online || session.person.role === 'staff')) return <SignedInCard />;
   return <GoOnlineCard />;
 }
 
@@ -54,7 +55,7 @@ function SignedInCard() {
       </p>
       <div style={{ marginTop: space.lg }}>
         <Button onClick={() => navigate('/settings/people')}>
-          {me.role === 'owner' ? tr('Staff & sign-in codes', 'Staff aur Sign-in code') : tr('Open', 'Kholo')}
+          {me.role === 'owner' ? tr('Staff & sign-in codes', 'Staff aur Sign-in code') : tr('Your sign-in, or sign out', 'Aapka sign in, ya sign out')}
         </Button>
       </div>
     </Card>

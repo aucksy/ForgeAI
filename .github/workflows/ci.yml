@@ -22,6 +22,17 @@ jobs:
 
       # Audit toolkit (14 Oct 2026): a caught-and-dropped error hid the dead Health Connect button
       # for 11 releases. The count of silent catches may only go down; a new one fails here.
+      # 15 Oct 2026: a phone-test file Maestro cannot parse wasted a 2-hour cloud run (a heredoc
+      # ate a backslash). Every qa/*.yaml must parse before anything else runs.
+      - name: Phone-test files parse
+        run: |
+          python3 -m pip install --quiet pyyaml
+          python3 -c "import glob,yaml,sys; bad=[]
+          for p in glob.glob('apps/mobile/qa/*.yaml'):
+              try: list(yaml.safe_load_all(open(p, encoding='utf-8')))
+              except Exception as e: bad.append(f'{p}: {e}')
+          print(chr(10).join(bad) or 'all phone-test files parse'); sys.exit(1 if bad else 0)"
+
       - name: Silent-catch ratchet
         run: python3 scripts/ci/silent_catch_ratchet.py
 
