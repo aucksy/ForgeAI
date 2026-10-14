@@ -13,6 +13,7 @@ import { useDashboard } from '@/store/dashboardStore';
 import { useSettings } from '@/store/settingsStore';
 import { color, space, type } from '@/theme/tokens';
 import { countWorkouts, saveMyHistory } from '@/tracker/services/historyExport';
+import { measurementsNote, saveMyMeasurements } from '@/tracker/services/measurementsExport';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 import { PhotoBackupCard } from './PhotoBackupCard';
@@ -137,6 +138,40 @@ export function SaveHistoryCard() {
       <Note>
         Every workout and set in one file (Hevy’s format). Keep it in Drive or email it to
         yourself — “Import from Hevy” reads it back.
+      </Note>
+      {saveNote ? <Note tone={saveNote.tone}>{saveNote.text}</Note> : null}
+    </Card>
+  );
+}
+
+/**
+ * Settings → Export & import: "Save my measurements" — body weight and body measurements as a
+ * CSV (Hevy's "Export measurements"), one row per day. The sample member's data is never saved.
+ */
+export function SaveMeasurementsCard() {
+  const units = useSettings((s) => s.unitSystem);
+  const [saving, setSaving] = useState(false);
+  const [saveNote, setSaveNote] = useState<{ text: string; tone: 'muted' | 'error' } | null>(null);
+
+  const onSave = async (): Promise<void> => {
+    if (saving) return;
+    setSaving(true);
+    setSaveNote(null);
+    // saveMyMeasurements never throws: every failure comes back as a result with plain words.
+    const res = await saveMyMeasurements(units);
+    const note = measurementsNote(res);
+    if (res.kind === 'saved' && res.shared) success();
+    else if (note?.tone === 'error') warn();
+    setSaveNote(note);
+    setSaving(false);
+  };
+
+  return (
+    <Card>
+      <GhostButton label={saving ? 'Saving…' : 'Save my measurements'} icon="ruler" onPress={() => void onSave()} />
+      <Note>
+        Your body weight, body fat and body measurements in one file, a row per day. Opens in any
+        spreadsheet.
       </Note>
       {saveNote ? <Note tone={saveNote.tone}>{saveNote.text}</Note> : null}
     </Card>
