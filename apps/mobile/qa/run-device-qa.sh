@@ -406,18 +406,30 @@ log "part J start"
 maestro test --format junit --output "$OUT/part-j.xml" --test-output-dir "$OUT/part-j" "$QA_DIR/v0280-j.yaml"   > "$OUT/part-j.log" 2>&1 || { status=1; log "PART J FAILED"; }
 
 # ---------------------------------------------------------------- part J2 (v0.40.0: press, hold, drag a routine)
-# The flow brings Push A and Pull A on screen; then Android's own drag (down, hold, move, up)
+# The flow brings Push A and Pull A on screen; then a real finger's touch events (down, hold, move, up)
 # moves Push A below Pull A, the screen is read back, and the same drag puts it back.
 free_maestro
 log "part J2 start"
 if maestro test --format junit --output "$OUT/part-j2.xml" --test-output-dir "$OUT/part-j2" "$QA_DIR/v0400-j2.yaml" > "$OUT/part-j2.log" 2>&1; then
   j2_dump() { adb shell uiautomator dump /sdcard/j2.xml >/dev/null 2>&1; adb pull /sdcard/j2.xml "$OUT/$1" >/dev/null 2>&1; }
+  # A finger: down, hold 0.8 s (past the 350 ms lift, with room for a slow emulator), then move in
+  # ten small steps and lift. `input draganddrop` held only ~400 ms and jumped a quarter of the way
+  # at once, which a slow UI thread could read as a scroll (review).
+  j2_drag() {
+    adb shell input motionevent DOWN "$1" "$2"
+    sleep 0.8
+    for k in 1 2 3 4 5 6 7 8 9 10; do
+      adb shell input motionevent MOVE "$1" $(( $2 + ($4 - $2) * k / 10 ))
+      sleep 0.05
+    done
+    adb shell input motionevent UP "$3" "$4"
+  }
   j2_dump j2-before.xml
   before=$(python3 "$QA_DIR/drag_check.py" order "$OUT/j2-before.xml" "Push A" "Pull A")
   coords=$(python3 "$QA_DIR/drag_check.py" drag "$OUT/j2-before.xml" "Push A" "Pull A")
   log "J2 before: $before; drag $coords"
   if [ "$before" = "A-first" ] && [ "$coords" != "missing" ]; then
-    adb shell input draganddrop $coords 1500
+    j2_drag $coords
     sleep 2
     j2_dump j2-after.xml
     adb exec-out screencap -p > "$OUT/j2-after-drag.png" 2>/dev/null || true
@@ -425,7 +437,7 @@ if maestro test --format junit --output "$OUT/part-j2.xml" --test-output-dir "$O
     if [ "$after" = "B-first" ]; then
       log "J2 DRAG OK: Pull A is now above Push A"
       back=$(python3 "$QA_DIR/drag_check.py" drag "$OUT/j2-after.xml" "Push A" "Pull A")
-      adb shell input draganddrop $back 1500
+      j2_drag $back
       sleep 2
       j2_dump j2-back.xml
       again=$(python3 "$QA_DIR/drag_check.py" order "$OUT/j2-back.xml" "Push A" "Pull A")
