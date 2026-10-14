@@ -26,6 +26,7 @@ import {
 } from 'react';
 
 import { color, font, gradients, radius, space } from '../../theme';
+import { tr } from '../i18n';
 
 /** Minimum comfortable touch target. Google and Apple both land near 44px. */
 export const TOUCH = 44;
@@ -867,7 +868,7 @@ export function Sheet({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={tr('Close', 'Band karo')}
             style={{
               appearance: 'none',
               background: 'transparent',

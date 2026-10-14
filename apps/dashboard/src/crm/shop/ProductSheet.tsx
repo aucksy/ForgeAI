@@ -20,6 +20,7 @@ import {
   space,
   useIsCompact,
 } from '../ui/kit';
+import { tr } from '../i18n';
 import * as api from './api';
 import {
   ART_KINDS,
@@ -75,7 +76,7 @@ export function ProductSheet({
     const v = validateDraft(d);
     if (!v.ok) {
       setErrors(v.errors);
-      setError('Please fix the highlighted fields.');
+      setError(tr('Please fix the highlighted fields.', 'Laal wale fields theek karo.'));
       return;
     }
     setErrors({});
@@ -105,7 +106,7 @@ export function ProductSheet({
         const latest = list.find((x) => x.productId === d.productId);
         // Fresh values, but keep a photo the owner just uploaded in this form.
         if (latest) setD({ ...draftFromProduct(latest), imageUrl: d.imageUrl });
-        setError(latest ? words : 'This product was deleted while you were editing it.');
+        setError(latest ? words : tr('This product was deleted while you were editing it.', 'Aap badal rahe the tab tak yeh product hata diya gaya.'));
       } catch (e2) {
         setError(handleError(e2));
       }
@@ -134,23 +135,27 @@ export function ProductSheet({
   if (confirmDelete && product) {
     return (
       <Sheet
-        title={`Delete ${product.name}?`}
+        title={tr(`Delete ${product.name}?`, `${product.name} hatayein?`)}
         onClose={closeConfirm}
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
-              Keep it
+              {tr('Keep it', 'Rehne do')}
             </Button>
             <Button tone="danger" disabled={saving} onClick={() => void remove()}>
-              {saving ? 'Deleting…' : 'Delete product'}
+              {saving ? tr('Deleting…', 'Hata rahe hain…') : tr('Delete product', 'Product hatao')}
             </Button>
           </>
         }
       >
         {error && <ErrorBanner>{error}</ErrorBanner>}
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          It disappears from the app straight away. Orders already placed for it stay as they are. If you
-          might sell it again, use <strong style={{ color: color.ink }}>Hide from app</strong> instead.
+          {tr(
+            'It disappears from the app straight away. Orders already placed for it stay as they are. If you might sell it again, use ',
+            'Yeh app se turant hat jayega. Iske pehle se diye orders waise hi rahenge. Agar phir se bech sakte hain, to iski jagah ',
+          )}
+          <strong style={{ color: color.ink }}>{tr('Hide from app', 'App se chhupao')}</strong>
+          {tr(' instead.', ' use karo.')}
         </p>
       </Sheet>
     );
@@ -158,7 +163,7 @@ export function ProductSheet({
 
   return (
     <Sheet
-      title={product ? 'Edit product' : 'Add product'}
+      title={product ? tr('Edit product', 'Product badlo') : tr('Add product', 'Product jodo')}
       onClose={onClose}
       wide
       footer={
@@ -166,15 +171,21 @@ export function ProductSheet({
           {product && (
             <span style={{ marginRight: 'auto' }}>
               <Button variant="quiet" tone="danger" onClick={() => setConfirmDelete(true)}>
-                Delete
+                {tr('Delete', 'Hatao')}
               </Button>
             </span>
           )}
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {tr('Cancel', 'Cancel')}
           </Button>
           <Button disabled={saving || uploading} onClick={() => void save()}>
-            {uploading ? 'Uploading photo…' : saving ? 'Saving…' : product ? 'Save changes' : 'Add product'}
+            {uploading
+              ? tr('Uploading photo…', 'Photo upload ho rahi hai…')
+              : saving
+                ? tr('Saving…', 'Save ho raha hai…')
+                : product
+                  ? tr('Save changes', 'Badlav save karo')
+                  : tr('Add product', 'Product jodo')}
           </Button>
         </>
       }
@@ -189,23 +200,23 @@ export function ProductSheet({
       />
 
       <TextField
-        label="Name"
+        label={tr('Name', 'Naam')}
         value={d.name}
         onChange={(v) => set('name', v)}
-        placeholder="Whey protein 1 kg"
+        placeholder={tr('Whey protein 1 kg', 'Whey protein 1 kg')}
         error={errors.name}
         autoFocus={!product}
       />
 
       <div style={twoCol}>
         <SelectField
-          label="Category"
+          label={tr('Category', 'Category')}
           value={d.category}
           onChange={(v) => set('category', v as ProductDraft['category'])}
           options={CATEGORIES}
         />
         <TextField
-          label="Price"
+          label={tr('Price', 'Price')}
           prefix="₹"
           inputMode="decimal"
           value={d.price}
@@ -216,14 +227,14 @@ export function ProductSheet({
       </div>
 
       <TextField
-        label="Description (optional)"
+        label={tr('Description (optional)', 'Jaankari (optional)')}
         value={d.description}
         onChange={(v) => set('description', v.slice(0, 600))}
-        placeholder="One line members see, like the size or how to use it"
+        placeholder={tr('One line members see, like the size or how to use it', 'Ek line jo members dekhenge, jaise size ya kaise use karein')}
         multiline
       />
 
-      <FieldGroup label="Picture if there’s no photo">
+      <FieldGroup label={tr('Picture if there’s no photo', 'Photo na ho to yeh picture')}>
         {/* A fixed count that divides the twelve pictures: auto-fill put nine on the
             first row and three on the second. Six across in the sheet, four on a phone. */}
         <div
@@ -265,19 +276,23 @@ export function ProductSheet({
         </div>
       </FieldGroup>
 
-      <FieldGroup label="Colour">
+      <FieldGroup label={tr('Colour', 'Rang')}>
         <Swatches value={d.artTint} onChange={(t) => set('artTint', t)} />
       </FieldGroup>
 
-      <FieldGroup label="Shown in the app">
+      <FieldGroup label={tr('Shown in the app', 'App mein dikhe')}>
         <Switch
           on={d.active}
           onChange={(v) => set('active', v)}
-          label={d.active ? 'Members can see and order this' : 'Hidden — members can’t see it'}
+          label={
+            d.active
+              ? tr('Members can see and order this', 'Members ise dekh kar order kar sakte hain')
+              : tr('Hidden — members can’t see it', 'Chhupa hua — members ko nahi dikhega')
+          }
         />
       </FieldGroup>
 
-      <FieldGroup label="Choices">
+      <FieldGroup label={tr('Choices', 'Choices')}>
         <Switch
           on={d.useOptions}
           onChange={(v) =>
@@ -290,29 +305,33 @@ export function ProductSheet({
                   : prev.options,
             }))
           }
-          label={d.useOptions ? 'Comes in flavours or sizes, each with its own stock' : 'One kind, one stock number'}
+          label={
+            d.useOptions
+              ? tr('Comes in flavours or sizes, each with its own stock', 'Alag flavour ya size, har ek ka apna stock')
+              : tr('One kind, one stock number', 'Ek hi type, ek stock number')
+          }
         />
       </FieldGroup>
 
       {!d.useOptions ? (
         <div style={{ maxWidth: 220 }}>
           <TextField
-            label="Stock"
+            label={tr('Stock', 'Stock')}
             inputMode="numeric"
             value={d.stock}
             onChange={(v) => set('stock', v)}
             error={errors.stock}
-            hint="How many you have at the desk."
+            hint={tr('How many you have at the desk.', 'Desk par kitne hain.')}
           />
         </div>
       ) : (
         <>
           <div style={{ maxWidth: 260 }}>
             <TextField
-              label="What is the choice?"
+              label={tr('What is the choice?', 'Choice kya hai?')}
               value={d.optionName}
               onChange={(v) => set('optionName', v)}
-              placeholder="Flavour or Size"
+              placeholder={tr('Flavour or Size', 'Flavour ya Size')}
               error={errors.optionName}
             />
           </div>
@@ -344,10 +363,10 @@ export function ProductSheet({
                 }))
               }
             >
-              + Add a choice
+              {tr('+ Add a choice', '+ Choice jodo')}
             </Button>
             <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-              Total stock: <strong style={{ color: color.ink }}>{optionTotal}</strong>
+              {tr('Total stock:', 'Kul stock:')} <strong style={{ color: color.ink }}>{optionTotal}</strong>
             </span>
           </Row2>
         </>
@@ -379,23 +398,33 @@ function OptionRow({
       }}
     >
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(120px, 100%), 1fr))', gap: space.sm }}>
-        <TextField label={`Choice ${index + 1}`} value={o.label} onChange={(v) => onChange({ label: v })} placeholder="Chocolate" />
-        <TextField label="Stock" inputMode="numeric" value={o.stock} onChange={(v) => onChange({ stock: v })} />
         <TextField
-          label="Own price (optional)"
+          label={tr(`Choice ${index + 1}`, `Choice ${index + 1}`)}
+          value={o.label}
+          onChange={(v) => onChange({ label: v })}
+          placeholder={tr('Chocolate', 'Chocolate')}
+        />
+        <TextField label={tr('Stock', 'Stock')} inputMode="numeric" value={o.stock} onChange={(v) => onChange({ stock: v })} />
+        <TextField
+          label={tr('Own price (optional)', 'Apna price (optional)')}
           prefix="₹"
           inputMode="decimal"
           value={o.price}
           onChange={(v) => onChange({ price: v })}
-          placeholder="Same"
+          placeholder={tr('Same', 'Same')}
         />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: space.sm, flexWrap: 'wrap', marginTop: space.sm }}>
-        <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>Colour (optional)</span>
+        <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>{tr('Colour (optional)', 'Rang (optional)')}</span>
         <Swatches value={o.tint} onChange={(t) => onChange({ tint: t === o.tint ? null : t })} small />
         <span style={{ flex: 1 }} />
-        <Button variant="quiet" tone="danger" onClick={onRemove} ariaLabel={`Remove choice ${o.label || index + 1}`}>
-          Remove
+        <Button
+          variant="quiet"
+          tone="danger"
+          onClick={onRemove}
+          ariaLabel={tr(`Remove choice ${o.label || index + 1}`, `Choice ${o.label || index + 1} hatao`)}
+        >
+          {tr('Remove', 'Hatao')}
         </Button>
       </div>
       {error && (
@@ -408,7 +437,7 @@ function OptionRow({
 function Swatches({ value, onChange, small }: { value: string | null; onChange: (t: string) => void; small?: boolean }) {
   const size = small ? 28 : 36;
   return (
-    <div role="group" aria-label="Colour" style={{ display: 'flex', flexWrap: 'wrap', gap: small ? 4 : 8 }}>
+    <div role="group" aria-label={tr('Colour', 'Rang')} style={{ display: 'flex', flexWrap: 'wrap', gap: small ? 4 : 8 }}>
       {TINT_CHOICES.map(({ value: t, name }) => {
         const on = value?.toLowerCase() === t.toLowerCase();
         return (
@@ -565,7 +594,7 @@ function PhotoBlock({
     try {
       onPhoto(await uploadProductPhoto(cloud.ownerKey, file));
     } catch (e) {
-      setError(e instanceof PhotoError ? e.message : 'The photo didn’t upload. Please try again.');
+      setError(e instanceof PhotoError ? e.message : tr('The photo didn’t upload. Please try again.', 'Photo upload nahi hui. Phir se try karo.'));
     } finally {
       setBusy(false);
       onBusy(false);
@@ -574,7 +603,7 @@ function PhotoBlock({
 
   return (
     <div style={{ marginTop: space.sm }}>
-      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 6 }}>Photo</div>
+      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 6 }}>{tr('Photo', 'Photo')}</div>
       <div style={{ display: 'flex', gap: space.lg, alignItems: 'center', flexWrap: 'wrap' }}>
         <div
           onDragOver={(e) => {
@@ -611,25 +640,31 @@ function PhotoBlock({
                 fontWeight: 700,
               }}
             >
-              Uploading…
+              {tr('Uploading…', 'Upload ho raha hai…')}
             </div>
           )}
         </div>
         <div style={{ display: 'grid', gap: space.sm, flex: '1 1 180px', minWidth: 0 }}>
           <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
             <Button variant="ghost" disabled={busy || disabled} onClick={() => fileRef.current?.click()}>
-              {d.imageUrl ? 'Change photo' : 'Upload photo'}
+              {d.imageUrl ? tr('Change photo', 'Photo badlo') : tr('Upload photo', 'Photo upload karo')}
             </Button>
             {d.imageUrl && (
               <Button variant="quiet" tone="danger" disabled={busy || disabled} onClick={() => onPhoto(null)}>
-                Remove photo
+                {tr('Remove photo', 'Photo hatao')}
               </Button>
             )}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
             {d.imageUrl
-              ? 'Members see this photo in the app. Remove it to show the drawn picture instead.'
-              : 'A clear photo on a plain background works best. You can also drop a photo on the picture.'}
+              ? tr(
+                  'Members see this photo in the app. Remove it to show the drawn picture instead.',
+                  'Members app mein yeh photo dekhte hain. Hatane par bani hui picture dikhegi.',
+                )
+              : tr(
+                  'A clear photo on a plain background works best. You can also drop a photo on the picture.',
+                  'Saade background par saaf photo sabse achhi lagti hai. Photo ko picture par drop bhi kar sakte hain.',
+                )}
           </div>
           {error && (
             <div role="alert" style={{ fontFamily: font.body, fontSize: 13, color: color.criticalText }}>

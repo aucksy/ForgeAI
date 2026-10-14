@@ -11,6 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { tr } from '../i18n';
 import { copyText } from '../shop/JoinCode';
 import { useCrm } from '../store';
 import {
@@ -52,8 +53,8 @@ function clock(ms: number): string {
 }
 
 function seenWords(p: PersonRow): string {
-  if (p.devices === 0) return p.lastSeenAt ? 'Signed out' : 'Not signed in yet';
-  return p.devices === 1 ? 'Signed in on 1 device' : `Signed in on ${p.devices} devices`;
+  if (p.devices === 0) return p.lastSeenAt ? tr('Signed out', 'Sign out hai') : tr('Not signed in yet', 'Abhi sign in nahi kiya');
+  return p.devices === 1 ? tr('Signed in on 1 device', '1 device par sign in') : tr(`Signed in on ${p.devices} devices`, `${p.devices} devices par sign in`);
 }
 
 const bodyText = { margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary } as const;
@@ -128,14 +129,19 @@ export function PeopleScreen() {
   if (!session?.online || !me) {
     return (
       <>
-        <PageHeader title="Staff & sign-in" subtitle="Who can open this gym, on which phone" />
+        <PageHeader
+          title={tr('Staff & sign-in', 'Staff ka login')}
+          subtitle={tr('Who can open this gym, on which phone', 'Yeh gym kaun khol sakta hai, kis phone par')}
+        />
         <Card>
           <p style={bodyText}>
-            Put your records online first (Settings → Put your records online). Then you and your staff
-            sign in with a mobile number, on any phone or computer.
+            {tr(
+              'Put your records online first (Settings → Put your records online). Then you and your staff sign in with a mobile number, on any phone or computer.',
+              'Pehle records Online daalo (Settings → Records online daalo). Phir aap aur aapka Staff Mobile number se kisi bhi phone ya computer par Sign in karenge.',
+            )}
           </p>
           <div style={{ marginTop: space.lg }}>
-            <Button onClick={() => navigate('/settings')}>Go to Settings</Button>
+            <Button onClick={() => navigate('/settings')}>{tr('Go to Settings', 'Settings kholo')}</Button>
           </div>
         </Card>
       </>
@@ -145,37 +151,49 @@ export function PeopleScreen() {
   return (
     <>
       <PageHeader
-        title="Staff & sign-in"
-        subtitle="Who can open this gym, on which phone"
-        actions={isOwner ? <Button onClick={() => setSheet({ kind: 'add' })}>Add a person</Button> : undefined}
+        title={tr('Staff & sign-in', 'Staff ka login')}
+        subtitle={tr('Who can open this gym, on which phone', 'Yeh gym kaun khol sakta hai, kis phone par')}
+        actions={isOwner ? <Button onClick={() => setSheet({ kind: 'add' })}>{tr('Add a person', 'Naya vyakti jodo')}</Button> : undefined}
       />
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>You</SectionTitle>
+        <SectionTitle>{tr('You', 'Aap')}</SectionTitle>
         <Row gap={space.sm}>
           <strong style={{ fontFamily: font.body, fontSize: 16, color: color.ink }}>{me.name}</strong>
-          <Pill tone={isOwner ? 'accent' : 'muted'}>{isOwner ? 'Owner' : 'Staff'}</Pill>
+          <Pill tone={isOwner ? 'accent' : 'muted'}>{isOwner ? tr('Owner', 'Owner') : tr('Staff', 'Staff')}</Pill>
         </Row>
         <p style={{ ...bodyText, marginTop: 4 }}>+91 {formatMobile(me.phone)}</p>
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" onClick={() => setSheet({ kind: 'me-signout' })}>
-            Sign out of this device
+            {tr('Sign out of this device', 'Is device se sign out karo')}
           </Button>
         </div>
       </Card>
 
       {!isOwner && (
         <Card>
-          <p style={bodyText}>Only an owner can add people or make sign-in codes. Ask your gym owner.</p>
+          <p style={bodyText}>
+            {tr(
+              'Only an owner can add people or make sign-in codes. Ask your gym owner.',
+              'Sirf Owner log jod sakta hai ya Sign-in code bana sakta hai. Gym Owner se poochho.',
+            )}
+          </p>
         </Card>
       )}
 
       {isOwner && (
         <Card>
-          <SectionTitle>People who can sign in</SectionTitle>
+          <SectionTitle>{tr('People who can sign in', 'Kaun sign in kar sakta hai')}</SectionTitle>
           <p style={bodyText}>
-            To let someone in — or to use a new phone yourself — tap <b>Make sign-in code</b> and give
-            them the code. It works once, for {CODE_MINUTES} minutes.
+            {tr(
+              'To let someone in — or to use a new phone yourself — tap ',
+              'Kisi ko andar aane dene ke liye — ya khud naya phone use karne ke liye — ',
+            )}
+            <b>{tr('Make sign-in code', 'Sign-in code banao')}</b>
+            {tr(
+              ` and give them the code. It works once, for ${CODE_MINUTES} minutes.`,
+              ` dabao aur unhe Code do. Yeh ek baar, ${CODE_MINUTES} minute tak chalta hai.`,
+            )}
           </p>
           {loadError && (
             <div style={{ marginTop: space.md }}>
@@ -187,7 +205,7 @@ export function PeopleScreen() {
               <ErrorBanner>{rowError}</ErrorBanner>
             </div>
           )}
-          {people === null && !loadError && <p style={{ ...bodyText, marginTop: space.lg }}>Loading…</p>}
+          {people === null && !loadError && <p style={{ ...bodyText, marginTop: space.lg }}>{tr('Loading…', 'Load ho raha hai…')}</p>}
           <div style={{ display: 'grid', gap: space.md, marginTop: space.lg }}>
             {(people ?? []).map((p) => (
               <div
@@ -201,26 +219,26 @@ export function PeopleScreen() {
               >
                 <Row gap={space.sm}>
                   <strong style={{ fontFamily: font.body, fontSize: 16, color: color.ink }}>{p.name}</strong>
-                  <Pill tone={p.role === 'owner' ? 'accent' : 'muted'}>{p.role === 'owner' ? 'Owner' : 'Staff'}</Pill>
-                  {p.me && <Pill tone="good">You</Pill>}
+                  <Pill tone={p.role === 'owner' ? 'accent' : 'muted'}>{p.role === 'owner' ? tr('Owner', 'Owner') : tr('Staff', 'Staff')}</Pill>
+                  {p.me && <Pill tone="good">{tr('You', 'Aap')}</Pill>}
                 </Row>
                 <p style={{ ...bodyText, marginTop: 4 }}>
                   +91 {formatMobile(p.phone)} · {seenWords(p)}
-                  {p.codeUntil ? ` · Code waiting till ${clock(p.codeUntil)}` : ''}
+                  {p.codeUntil ? tr(` · Code waiting till ${clock(p.codeUntil)}`, ` · Code ${clock(p.codeUntil)} tak chalega`) : ''}
                 </p>
                 <div style={{ marginTop: space.md }}>
                   <Row gap={space.sm}>
                     <Button disabled={busyId !== null} onClick={() => void makeCode(p)}>
-                      {busyId === p.staffId ? 'Making…' : 'Make sign-in code'}
+                      {busyId === p.staffId ? tr('Making…', 'Ban raha hai…') : tr('Make sign-in code', 'Sign-in code banao')}
                     </Button>
                     {p.devices > (p.me ? 1 : 0) && (
                       <Button variant="ghost" onClick={() => setSheet({ kind: 'signout', person: p })}>
-                        {p.me ? 'Sign out other devices' : 'Sign out everywhere'}
+                        {p.me ? tr('Sign out other devices', 'Baaki devices se sign out karo') : tr('Sign out everywhere', 'Har jagah se sign out karo')}
                       </Button>
                     )}
                     {!p.me && (
                       <Button variant="quiet" tone="danger" onClick={() => setSheet({ kind: 'remove', person: p })}>
-                        Remove
+                        {tr('Remove', 'Hatao')}
                       </Button>
                     )}
                   </Row>
@@ -229,8 +247,10 @@ export function PeopleScreen() {
             ))}
           </div>
           <p style={{ ...bodyText, marginTop: space.lg, fontSize: 13, color: color.inkMuted }}>
-            Owner: everything, including adding people and making codes. Staff: everything else. A front-desk
-            role with fewer rights comes later.
+            {tr(
+              'Owner: everything, including adding people and making codes. Staff: everything else. A front-desk role with fewer rights comes later.',
+              'Owner: sab kuch, log jodna aur Code banana bhi. Staff: baaki sab. Kam rights wala front-desk role baad mein aayega.',
+            )}
           </p>
         </Card>
       )}
@@ -240,7 +260,7 @@ export function PeopleScreen() {
           onClose={closeSheet}
           onAdded={async (name) => {
             setSheet(null);
-            setToast(`${name} added. Now make a sign-in code for them.`);
+            setToast(tr(`${name} added. Now make a sign-in code for them.`, `${name} jud gaye. Ab unke liye Sign-in code banao.`));
             await load();
           }}
           add={(name, phone, role) => authApi.addPerson(key, name, phone, role)}
@@ -256,25 +276,34 @@ export function PeopleScreen() {
         <ConfirmSheet
           title={
             sheet.kind === 'remove'
-              ? `Remove ${sheet.person.name}?`
+              ? tr(`Remove ${sheet.person.name}?`, `${sheet.person.name} ko hatayein?`)
               : sheet.person.me
-                ? 'Sign out your other devices?'
-                : `Sign ${sheet.person.name} out everywhere?`
+                ? tr('Sign out your other devices?', 'Apne baaki devices se sign out karein?')
+                : tr(`Sign ${sheet.person.name} out everywhere?`, `${sheet.person.name} ko har jagah se sign out karein?`)
           }
           words={
             sheet.kind === 'remove'
-              ? `${sheet.person.name} is signed out of every phone and computer and can’t sign in again. Your records stay as they are.`
+              ? tr(
+                  `${sheet.person.name} is signed out of every phone and computer and can’t sign in again. Your records stay as they are.`,
+                  `${sheet.person.name} har phone aur computer se Sign out ho jayenge aur phir Sign in nahi kar payenge. Aapke records waise hi rahenge.`,
+                )
               : sheet.person.me
-                ? 'Every other phone or computer signed in as you is signed out. This one stays signed in.'
-                : `${sheet.person.name} is signed out of every phone and computer. They can sign in again with a new code.`
+                ? tr(
+                    'Every other phone or computer signed in as you is signed out. This one stays signed in.',
+                    'Aapke naam se Sign in baaki har phone ya computer Sign out ho jayega. Yeh wala Sign in rahega.',
+                  )
+                : tr(
+                    `${sheet.person.name} is signed out of every phone and computer. They can sign in again with a new code.`,
+                    `${sheet.person.name} har phone aur computer se Sign out ho jayenge. Naye Code se phir Sign in kar sakte hain.`,
+                  )
           }
-          action={sheet.kind === 'remove' ? 'Remove' : 'Sign out'}
+          action={sheet.kind === 'remove' ? tr('Remove', 'Hatao') : tr('Sign out', 'Sign out')}
           onClose={closeSheet}
           run={async () => {
             if (sheet.kind === 'remove') await authApi.removePerson(key, sheet.person.staffId);
             else await authApi.signOutPerson(key, sheet.person.staffId);
             setSheet(null);
-            setToast(sheet.kind === 'remove' ? `${sheet.person.name} removed.` : 'Signed out.');
+            setToast(sheet.kind === 'remove' ? tr(`${sheet.person.name} removed.`, `${sheet.person.name} hata diye.`) : tr('Signed out.', 'Sign out ho gaya.'));
             await load();
           }}
           fail={fail}
@@ -283,9 +312,12 @@ export function PeopleScreen() {
 
       {sheet?.kind === 'me-signout' && (
         <ConfirmSheet
-          title="Sign out of this device?"
-          words="Your records stay online. To come back, sign in with your mobile number and a new code (an owner makes it in Staff & sign-in)."
-          action="Sign out"
+          title={tr('Sign out of this device?', 'Is device se sign out karein?')}
+          words={tr(
+            'Your records stay online. To come back, sign in with your mobile number and a new code (an owner makes it in Staff & sign-in).',
+            'Aapke records Online rahenge. Wapas aane ke liye Mobile number aur naye Code se Sign in karo (Owner ise Staff ka login mein banata hai).',
+          )}
+          action={tr('Sign out', 'Sign out')}
           onClose={closeSheet}
           run={async () => {
             navigate('/');
@@ -319,8 +351,8 @@ function AddPersonSheet({
 
   const save = async () => {
     const ten = normalizeMobile(phone);
-    if (!name.trim()) return setError('Type their name.');
-    if (!ten) return setError('Type a 10-digit mobile number, like 98290 12345.');
+    if (!name.trim()) return setError(tr('Type their name.', 'Unka naam likho.'));
+    if (!ten) return setError(tr('Type a 10-digit mobile number, like 98290 12345.', '10 digit ka mobile number likho, jaise 98290 12345.'));
     setBusy(true);
     setError(null);
     try {
@@ -334,29 +366,29 @@ function AddPersonSheet({
 
   return (
     <Sheet
-      title="Add a person"
+      title={tr('Add a person', 'Naya vyakti jodo')}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {tr('Cancel', 'Cancel')}
           </Button>
           <Button disabled={busy} onClick={() => void save()}>
-            {busy ? 'Adding…' : 'Add'}
+            {busy ? tr('Adding…', 'Jod rahe hain…') : tr('Add', 'Jodo')}
           </Button>
         </>
       }
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
-      <TextField label="Name" value={name} onChange={setName} placeholder="Suresh" autoFocus />
-      <TextField label="Mobile number" prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
+      <TextField label={tr('Name', 'Naam')} value={name} onChange={setName} placeholder="Suresh" autoFocus />
+      <TextField label={tr('Mobile number', 'Mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
       <SelectField
-        label="What can they do?"
+        label={tr('What can they do?', 'Yeh kya kar sakte hain?')}
         value={role}
         onChange={(v) => setRole(v === 'owner' ? 'owner' : 'staff')}
         options={[
-          { value: 'staff', label: 'Staff — everything except adding people' },
-          { value: 'owner', label: 'Owner — everything, including adding people' },
+          { value: 'staff', label: tr('Staff — everything except adding people', 'Staff — log jodne ke alawa sab kuch') },
+          { value: 'owner', label: tr('Owner — everything, including adding people', 'Owner — sab kuch, log jodna bhi') },
         ]}
       />
     </Sheet>
@@ -368,16 +400,16 @@ function CodeSheet({ code, gymName, forMe, onClose }: { code: MadeCode; gymName:
   const message = codeMessage(code.name, gymName, code.phone, code.code);
   return (
     <Sheet
-      title={forMe ? 'Your sign-in code' : `Sign-in code for ${code.name}`}
+      title={forMe ? tr('Your sign-in code', 'Aapka Sign-in code') : tr(`Sign-in code for ${code.name}`, `${code.name} ka Sign-in code`)}
       onClose={onClose}
       footer={
         <Button variant="ghost" onClick={onClose}>
-          Done
+          {tr('Done', 'Ho gaya')}
         </Button>
       }
     >
       <div
-        aria-label={`Code ${code.code.split('').join(' ')}`}
+        aria-label={tr(`Code ${code.code.split('').join(' ')}`, `Code ${code.code.split('').join(' ')}`)}
         style={{
           textAlign: 'center',
           fontFamily: font.mono,
@@ -391,12 +423,21 @@ function CodeSheet({ code, gymName, forMe, onClose }: { code: MadeCode; gymName:
         {formatCode(code.code)}
       </div>
       <p style={{ ...bodyText, textAlign: 'center' }}>
-        Works once, till {clock(code.expiresAt)} ({CODE_MINUTES} minutes).
+        {tr(
+          `Works once, till ${clock(code.expiresAt)} (${CODE_MINUTES} minutes).`,
+          `Ek baar chalega, ${clock(code.expiresAt)} tak (${CODE_MINUTES} minute).`,
+        )}
       </p>
       <p style={{ ...bodyText, marginTop: space.md }}>
         {forMe
-          ? `On your new phone or computer, open forgeai.aakashpahuja.in, tap Sign in, and type +91 ${formatMobile(code.phone)} and this code.`
-          : `${code.name} opens forgeai.aakashpahuja.in, taps Sign in, and types +91 ${formatMobile(code.phone)} and this code. Read it out, or send it on WhatsApp.`}
+          ? tr(
+              `On your new phone or computer, open forgeai.aakashpahuja.in, tap Sign in, and type +91 ${formatMobile(code.phone)} and this code.`,
+              `Naye phone ya computer par forgeai.aakashpahuja.in kholo, Sign in dabao, aur +91 ${formatMobile(code.phone)} aur yeh Code likho.`,
+            )
+          : tr(
+              `${code.name} opens forgeai.aakashpahuja.in, taps Sign in, and types +91 ${formatMobile(code.phone)} and this code. Read it out, or send it on WhatsApp.`,
+              `${code.name} forgeai.aakashpahuja.in kholein, Sign in dabayein, aur +91 ${formatMobile(code.phone)} aur yeh Code likhein. Bol kar batao, ya WhatsApp par bhejo.`,
+            )}
       </p>
       <div style={{ marginTop: space.lg, display: 'grid', gap: space.sm }}>
         {!forMe && (
@@ -418,7 +459,7 @@ function CodeSheet({ code, gymName, forMe, onClose }: { code: MadeCode; gymName:
               textDecoration: 'none',
             }}
           >
-            Send on WhatsApp
+            {tr('Send on WhatsApp', 'WhatsApp par bhejo')}
           </a>
         )}
         <Button
@@ -428,7 +469,7 @@ function CodeSheet({ code, gymName, forMe, onClose }: { code: MadeCode; gymName:
             setCopied(await copyText(code.code));
           }}
         >
-          {copied ? 'Code copied' : 'Copy the code'}
+          {copied ? tr('Code copied', 'Code copy ho gaya') : tr('Copy the code', 'Code copy karo')}
         </Button>
       </div>
     </Sheet>
@@ -459,7 +500,7 @@ function ConfirmSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {tr('Cancel', 'Cancel')}
           </Button>
           <Button
             tone="danger"
@@ -475,7 +516,7 @@ function ConfirmSheet({
               }
             }}
           >
-            {busy ? 'Working…' : action}
+            {busy ? tr('Working…', 'Ho raha hai…') : action}
           </Button>
         </>
       }

@@ -32,6 +32,7 @@ import {
   space,
   useIsCompact,
 } from '../kit';
+import { tr } from '../../i18n';
 
 export function PlansScreen() {
   const { snapshot, today, createPlan } = useCrm();
@@ -70,8 +71,11 @@ export function PlansScreen() {
     } catch (e) {
       setError(
         e instanceof Error
-          ? `${e.message} Some plans may already have been added — check the list.`
-          : 'Could not add the starter plans.',
+          ? tr(
+              `${e.message} Some plans may already have been added — check the list.`,
+              `${e.message} Kuch plan shayad jud chuke hain — list dekho.`,
+            )
+          : tr('Could not add the starter plans.', 'Starter plan jud nahi paaye.'),
       );
     } finally {
       setSeeding(false);
@@ -81,9 +85,9 @@ export function PlansScreen() {
   return (
     <>
       <PageHeader
-        title="Plans"
-        subtitle="What you sell, and for how much"
-        actions={<Button onClick={() => setAdding(true)}>+ Add plan</Button>}
+        title={tr('Plans', 'Plan / Package')}
+        subtitle={tr('What you sell, and for how much', 'Aap kya bechte hain, kitne mein')}
+        actions={<Button onClick={() => setAdding(true)}>{tr('+ Add plan', '+ Naya plan jodo')}</Button>}
       />
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
@@ -91,13 +95,16 @@ export function PlansScreen() {
       {plans.length === 0 ? (
         <Card>
           <EmptyState
-            title="No plans yet"
-            body="Add your own, or start from a typical Indian gym price list and edit the numbers."
+            title={tr('No plans yet', 'Abhi koi plan nahi')}
+            body={tr(
+              'Add your own, or start from a typical Indian gym price list and edit the numbers.',
+              'Apna plan jodo, ya ek aam Indian gym ki rate list se shuru karke fees badlo.',
+            )}
             action={
               <Row gap={space.sm}>
-                <Button onClick={() => setAdding(true)}>+ Add plan</Button>
+                <Button onClick={() => setAdding(true)}>{tr('+ Add plan', '+ Naya plan jodo')}</Button>
                 <Button variant="ghost" onClick={addStarterPlans} disabled={seeding}>
-                  {seeding ? 'Adding…' : 'Use a starter price list'}
+                  {seeding ? tr('Adding…', 'Jod rahe hain…') : tr('Use a starter price list', 'Taiyaar rate list lo')}
                 </Button>
               </Row>
             }
@@ -146,7 +153,7 @@ function PlanRow({
     <div style={{ minWidth: 0 }}>
       <Row gap={space.sm}>
         <span style={{ fontFamily: font.display, fontSize: 16, fontWeight: 700, color: color.ink }}>{plan.name}</span>
-        {!plan.active && <Pill tone="muted">Retired</Pill>}
+        {!plan.active && <Pill tone="muted">{tr('Retired', 'Band')}</Pill>}
       </Row>
       {plan.description && (
         <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, marginTop: 2 }}>
@@ -164,19 +171,21 @@ function PlanRow({
     <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
       {durationLabel(plan.durationUnit, plan.durationCount)}
       <div style={{ color: color.inkMuted, fontSize: 12, marginTop: 2 }}>
-        {plan.joiningFeeP > 0 ? `+ ${formatINR(plan.joiningFeeP)} joining fee` : 'No joining fee'}
+        {plan.joiningFeeP > 0
+          ? tr(`+ ${formatINR(plan.joiningFeeP)} joining fee`, `+ ${formatINR(plan.joiningFeeP)} admission fees`)
+          : tr('No joining fee', 'Admission fees nahi')}
       </div>
     </div>
   );
   const runs = (
     <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-      Sold today, runs until
+      {tr('Sold today, runs until', 'Aaj diya to chalega')}
       <div style={{ color: color.inkSecondary, fontSize: 13, marginTop: 2 }}>{formatDay(sample)}</div>
     </div>
   );
   const edit = (
-    <Button variant="ghost" onClick={onEdit} ariaLabel={`Edit ${plan.name}`}>
-      Edit
+    <Button variant="ghost" onClick={onEdit} ariaLabel={tr(`Edit ${plan.name}`, `${plan.name} badlo`)}>
+      {tr('Edit', 'Badlo')}
     </Button>
   );
 
@@ -223,9 +232,9 @@ function PlanRow({
 }
 
 function durationLabel(unit: DurationUnit, count: number): string {
-  if (unit === 'day') return count === 1 ? '1 day' : `${count} days`;
-  if (count === 12) return '12 months (1 year)';
-  return count === 1 ? '1 month' : `${count} months`;
+  if (unit === 'day') return count === 1 ? tr('1 day', '1 din') : tr(`${count} days`, `${count} din`);
+  if (count === 12) return tr('12 months (1 year)', '12 mahine (1 saal)');
+  return count === 1 ? tr('1 month', '1 mahina') : tr(`${count} months`, `${count} mahine`);
 }
 
 function PlanSheet({
@@ -250,20 +259,25 @@ function PlanSheet({
 
   const submit = async () => {
     const trimmed = name.trim();
-    if (trimmed.length < 2) return setError('Give the plan a name.');
+    if (trimmed.length < 2) return setError(tr('Give the plan a name.', 'Plan ka naam likho.'));
 
     // Strict: `Number('0x10')` is 16 and `Number('1e2')` is 100 — the same trap
     // `parseRupeeInput` two lines below already guards against.
     const countNum = parseCount(count, 1, 120);
     if (countNum === null) {
-      return setError('Duration must be a whole number between 1 and 120.');
+      return setError(
+        tr(
+          'Duration must be a whole number between 1 and 120.',
+          'Kitna samay (mahine / din): 1 se 120 ke beech poora number likho.',
+        ),
+      );
     }
 
     const priceP = parseRupeeInput(price);
-    if (priceP === null) return setError('Price isn’t a valid amount.');
+    if (priceP === null) return setError(tr('Price isn’t a valid amount.', 'Fees sahi rakam nahi hai.'));
 
     const joiningFeeP = joining.trim() === '' ? 0 : parseRupeeInput(joining);
-    if (joiningFeeP === null) return setError('Joining fee isn’t a valid amount.');
+    if (joiningFeeP === null) return setError(tr('Joining fee isn’t a valid amount.', 'Admission fees sahi rakam nahi hai.'));
 
     const draft: PlanDraft = {
       name: trimmed,
@@ -283,7 +297,7 @@ function PlanSheet({
       else await createPlan(draft);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not save this plan.');
+      setError(e instanceof Error ? e.message : tr('Could not save this plan.', 'Yeh plan save nahi hua.'));
     } finally {
       setSaving(false);
     }
@@ -291,15 +305,15 @@ function PlanSheet({
 
   return (
     <Sheet
-      title={editing ? 'Edit plan' : 'Add plan'}
+      title={editing ? tr('Edit plan', 'Plan badlo') : tr('Add plan', 'Naya plan jodo')}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {tr('Cancel', 'Cancel')}
           </Button>
           <Button onClick={submit} disabled={saving}>
-            {saving ? 'Saving…' : 'Save plan'}
+            {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save plan', 'Plan save karo')}
           </Button>
         </>
       }
@@ -308,46 +322,48 @@ function PlanSheet({
 
       {editing && (
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-          Changing the price here only affects future sales. Memberships already sold keep the price
-          they were sold at.
+          {tr(
+            'Changing the price here only affects future sales. Memberships already sold keep the price they were sold at.',
+            'Yahan fees badalne se sirf aage ke plan par asar hoga. Jo plan pehle de chuke hain, unki fees wahi rahegi.',
+          )}
         </p>
       )}
 
-      <TextField label="Plan name" value={name} onChange={setName} placeholder="Quarterly" autoFocus />
+      <TextField label={tr('Plan name', 'Plan ka naam')} value={name} onChange={setName} placeholder="Quarterly" autoFocus />
 
       <Grid min={200}>
-        <TextField label="Duration" value={count} onChange={setCount} inputMode="numeric" />
+        <TextField label={tr('Duration', 'Kitna samay')} value={count} onChange={setCount} inputMode="numeric" />
         <SelectField
-          label="Unit"
+          label={tr('Unit', 'Mahine ya din')}
           value={unit}
           onChange={(v) => setUnit(v as DurationUnit)}
           options={[
-            { value: 'month', label: 'Months' },
-            { value: 'day', label: 'Days' },
+            { value: 'month', label: tr('Months', 'Mahine') },
+            { value: 'day', label: tr('Days', 'Din') },
           ]}
         />
       </Grid>
 
       <Grid min={200}>
-        <TextField label="Price (₹)" value={price} onChange={setPrice} inputMode="decimal" placeholder="3000" />
+        <TextField label={tr('Price (₹)', 'Fees (₹)')} value={price} onChange={setPrice} inputMode="decimal" placeholder="3000" />
         <TextField
-          label="Joining fee (₹)"
+          label={tr('Joining fee (₹)', 'Admission fees (₹)')}
           value={joining}
           onChange={setJoining}
           inputMode="decimal"
-          hint="Charged once, on a member's first plan."
+          hint={tr("Charged once, on a member's first plan.", 'Member ke pehle plan par ek baar lagti hai.')}
         />
       </Grid>
 
-      <TextField label="Description (optional)" value={description} onChange={setDescription} multiline />
+      <TextField label={tr('Description (optional)', 'Jaankari (zaroori nahi)')} value={description} onChange={setDescription} multiline />
 
       <SelectField
-        label="Availability"
+        label={tr('Availability', 'Chalu ya band')}
         value={active ? 'active' : 'retired'}
         onChange={(v) => setActive(v === 'active')}
         options={[
-          { value: 'active', label: 'Sellable' },
-          { value: 'retired', label: 'Retired — hidden from new sales' },
+          { value: 'active', label: tr('Sellable', 'Chalu — de sakte hain') },
+          { value: 'retired', label: tr('Retired — hidden from new sales', 'Band — naye members ko nahi dikhega') },
         ]}
       />
     </Sheet>

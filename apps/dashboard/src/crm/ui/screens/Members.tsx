@@ -9,6 +9,7 @@
 import { useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
+import { tr } from '../../i18n';
 import { formatDay, relativeDay } from '../../logic/dates';
 import { compareByAttention, STATE_LABEL, stateTone } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
@@ -47,19 +48,23 @@ export function MembersScreen({ section }: { section?: 'app' } = {}) {
   return (
     <>
       <PageHeader
-        title="Members"
-        subtitle={app ? 'Who has the ForgeAI app on their phone' : `${memberViews.length} on the roster`}
-        actions={app ? undefined : <Button onClick={() => setAdding(true)}>+ Add member</Button>}
+        title={tr('Members', 'Members')}
+        subtitle={
+          app
+            ? tr('Who has the ForgeAI app on their phone', 'Kiske phone par ForgeAI App hai')
+            : tr(`${memberViews.length} on the roster`, `${memberViews.length} members gym mein`)
+        }
+        actions={app ? undefined : <Button onClick={() => setAdding(true)}>{tr('+ Add member', '+ Naya member jodo')}</Button>}
       />
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
           variant="tabs"
-          label="Which members"
+          label={tr('Which members', 'Kaun se members')}
           value={app ? 'app' : 'roster'}
           onChange={(v) => navigate(v === 'app' ? '/members/app' : '/members')}
           options={[
-            { value: 'roster', label: 'Gym roster' },
-            { value: 'app', label: 'Joined in the app' },
+            { value: 'roster', label: tr('Gym roster', 'Gym ke members') },
+            { value: 'app', label: tr('Joined in the app', 'App se jude') },
           ]}
         />
       </div>
@@ -105,22 +110,22 @@ function RosterSection({ adding, setAdding }: { adding: boolean; setAdding: (v: 
   return (
     <>
       <Row gap={space.md}>
-        <SearchField value={query} onChange={setQuery} placeholder="Search name or mobile number" />
+        <SearchField value={query} onChange={setQuery} placeholder={tr('Search name or mobile number', 'Naam ya mobile se dhoondo')} />
       </Row>
 
       <div style={{ margin: `${space.md}px 0 ${space.lg}px` }}>
         <ChipToggle
-          label="Filter members"
+          label={tr('Filter members', 'Members chhaano')}
           value={filter}
           onChange={(v) => setFilter(v as Filter)}
           options={[
-            { value: 'all', label: 'All', count: counts.all },
-            { value: 'expired', label: 'Expired', count: counts.expired ?? 0 },
-            { value: 'expiring', label: 'Expiring', count: counts.expiring ?? 0 },
-            { value: 'active', label: 'Active', count: counts.active ?? 0 },
-            { value: 'dues', label: 'Owes money', count: counts.dues },
-            { value: 'never', label: 'No membership', count: counts.never ?? 0 },
-            { value: 'archived', label: 'Archived', count: counts.archived },
+            { value: 'all', label: tr('All', 'Sab'), count: counts.all },
+            { value: 'expired', label: tr('Expired', 'Khatam ho gaye'), count: counts.expired ?? 0 },
+            { value: 'expiring', label: tr('Expiring', 'Jaldi khatam'), count: counts.expiring ?? 0 },
+            { value: 'active', label: tr('Active', 'Chalu'), count: counts.active ?? 0 },
+            { value: 'dues', label: tr('Owes money', 'Fees baaki'), count: counts.dues },
+            { value: 'never', label: tr('No membership', 'Koi plan nahi'), count: counts.never ?? 0 },
+            { value: 'archived', label: tr('Archived', 'Archive kiye'), count: counts.archived },
           ]}
         />
       </div>
@@ -128,13 +133,19 @@ function RosterSection({ adding, setAdding }: { adding: boolean; setAdding: (v: 
       {rows.length === 0 ? (
         <Card>
           <EmptyState
-            title={query ? 'Nobody matches that' : 'No members yet'}
+            title={query ? tr('Nobody matches that', 'Koi nahi mila') : tr('No members yet', 'Abhi koi member nahi')}
             body={
               query
-                ? 'Try part of a name, or the last four digits of their mobile number.'
-                : 'Add your first member and you can sell them a membership straight away.'
+                ? tr(
+                    'Try part of a name, or the last four digits of their mobile number.',
+                    'Naam ka thoda hissa, ya mobile number ke aakhri 4 ank likho.',
+                  )
+                : tr(
+                    'Add your first member and you can sell them a membership straight away.',
+                    'Pehla member jodo, phir turant unhe Plan do.',
+                  )
             }
-            action={!query && <Button onClick={() => setAdding(true)}>+ Add member</Button>}
+            action={!query && <Button onClick={() => setAdding(true)}>{tr('+ Add member', '+ Naya member jodo')}</Button>}
           />
         </Card>
       ) : compact ? (
@@ -149,7 +160,16 @@ function RosterSection({ adding, setAdding }: { adding: boolean; setAdding: (v: 
             <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: font.body }}>
               <thead>
                 <tr>
-                  {['Member', 'Status', 'Plan', 'Expires', 'Last visit', 'Dues'].map((h) => (
+                  {(
+                    [
+                      ['Member', 'Member'],
+                      ['Status', 'Haal'],
+                      ['Plan', 'Plan'],
+                      ['Expires', 'Khatam'],
+                      ['Last visit', 'Aakhri hazri'],
+                      ['Dues', 'Fees baaki'],
+                    ] as const
+                  ).map(([h, hi]) => (
                     <th
                       key={h}
                       scope="col"
@@ -164,7 +184,7 @@ function RosterSection({ adding, setAdding }: { adding: boolean; setAdding: (v: 
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      {h}
+                      {tr(h, hi)}
                     </th>
                   ))}
                 </tr>
@@ -229,7 +249,7 @@ function MemberRow({ view, today }: { view: MemberView; today: string }) {
         )}
       </td>
       <td style={{ ...cell, fontSize: 13, color: color.inkSecondary }}>
-        {view.lastVisitOn ? relativeDay(view.lastVisitOn, today) : 'never'}
+        {view.lastVisitOn ? relativeDay(view.lastVisitOn, today) : tr('never', 'kabhi nahi')}
       </td>
       <td style={{ ...cell, textAlign: 'right' }}>
         {view.outstandingP > 0 ? (
@@ -263,15 +283,15 @@ function MemberCard({ view, today }: { view: MemberView; today: string }) {
             </div>
             <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginTop: 6 }}>
               {current
-                ? `${current.planName} · ${view.state === 'expired' ? 'ended' : 'ends'} ${relativeDay(
+                ? `${current.planName} · ${view.state === 'expired' ? tr('ended', 'khatam hua') : tr('ends', 'khatam hoga')} ${relativeDay(
                     view.coversUntil ?? current.endsOn,
                     today,
                   )}`
-                : 'No membership'}
+                : tr('No membership', 'Koi plan nahi')}
               {view.outstandingP > 0 && (
                 <span style={{ color: color.warning, fontWeight: 700 }}>
                   {' '}
-                  · {formatINR(view.outstandingP)} due
+                  · {tr(`${formatINR(view.outstandingP)} due`, `${formatINR(view.outstandingP)} baaki`)}
                 </span>
               )}
             </div>

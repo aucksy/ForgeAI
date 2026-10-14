@@ -15,6 +15,7 @@ import { createPortal } from 'react-dom';
 
 import type { GymBrand } from '@forgeai/theme';
 
+import { tr } from '../i18n';
 import * as api from './api';
 import { JoinCodeCard, copyText } from './JoinCode';
 import { useShop } from './ShopProvider';
@@ -27,18 +28,21 @@ export function InviteScreen() {
   return (
     <>
       <PageHeader
-        title="Invite members"
-        subtitle="Send your gym's link on WhatsApp, or put a QR at the front desk"
+        title={tr('Invite members', 'Members ko bulao')}
+        subtitle={tr(
+          "Send your gym's link on WhatsApp, or put a QR at the front desk",
+          'Apne gym ka Link WhatsApp par bhejo, ya front desk par QR lagao',
+        )}
         actions={
           <Button variant="ghost" onClick={() => navigate('/settings')}>
-            Back to Settings
+            {tr('Back to Settings', 'Settings par wapas')}
           </Button>
         }
       />
       {cloud ? (
         <InviteBody ownerKey={cloud.ownerKey} gymName={cloud.name} joinCode={cloud.joinCode} />
       ) : (
-        <JoinCodeCard title="Turn on the member app first" />
+        <JoinCodeCard title={tr('Turn on the member app first', 'Pehle member app chalu karo')} />
       )}
     </>
   );
@@ -103,7 +107,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   return (
     <div style={{ display: 'grid', gap: space.lg, gridTemplateColumns: compact ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', alignItems: 'start' }}>
       <Card>
-        <SectionTitle>Your gym's link</SectionTitle>
+        <SectionTitle>{tr("Your gym's link", 'Aapke gym ka Link')}</SectionTitle>
         <div
           style={{
             fontFamily: font.mono,
@@ -120,20 +124,32 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {link}
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          A member taps it on their phone: the ForgeAI app opens on “Join {gymName}” — one tap and they are in.
-          Without the app, the link shows how to get it, and your code {joinCode}.
+          {tr(
+            `A member taps it on their phone: the ForgeAI app opens on “Join ${gymName}” — one tap and they are in. Without the app, the link shows how to get it, and your code ${joinCode}.`,
+            `Member phone par tap kare: ForgeAI app “Join ${gymName}” par khulega — ek tap aur woh jud gaye. App na ho to Link app lene ka tareeka aur aapka code ${joinCode} dikhata hai.`,
+          )}
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.open(whatsAppHref(message), '_blank', 'noopener')}>Send on WhatsApp</Button>
-          <Button variant="ghost" onClick={async () => say((await copyText(link)) ? 'Link copied.' : 'This browser blocked copying.')}>
-            Copy link
+          <Button onClick={() => window.open(whatsAppHref(message), '_blank', 'noopener')}>{tr('Send on WhatsApp', 'WhatsApp par bhejo')}</Button>
+          <Button
+            variant="ghost"
+            onClick={async () =>
+              say((await copyText(link)) ? tr('Link copied.', 'Link copy ho gaya.') : tr('This browser blocked copying.', 'Is browser ne copy rok diya.'))
+            }
+          >
+            {tr('Copy link', 'Link copy karo')}
           </Button>
-          <Button variant="ghost" onClick={async () => say((await copyText(message)) ? 'Message copied.' : 'This browser blocked copying.')}>
-            Copy message
+          <Button
+            variant="ghost"
+            onClick={async () =>
+              say((await copyText(message)) ? tr('Message copied.', 'Message copy ho gaya.') : tr('This browser blocked copying.', 'Is browser ne copy rok diya.'))
+            }
+          >
+            {tr('Copy message', 'Message copy karo')}
           </Button>
         </div>
         <div style={{ height: space.xl }} />
-        <SectionTitle>The message members get</SectionTitle>
+        <SectionTitle>{tr('The message members get', 'Members ko yeh message milega')}</SectionTitle>
         <pre
           style={{
             margin: 0,
@@ -150,31 +166,41 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {message}
         </pre>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          To invite one member, open them in Members and tap “Send app invite”.
+          {tr(
+            'To invite one member, open them in Members and tap “Send app invite”.',
+            'Ek member ko bulane ke liye, Members mein unhe kholo aur “Send app invite” dabao.',
+          )}
         </p>
       </Card>
 
       <Card>
-        <SectionTitle>Front-desk QR poster</SectionTitle>
+        <SectionTitle>{tr('Front-desk QR poster', 'Front desk ka QR Poster')}</SectionTitle>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: '100%', maxWidth: 360 }}>
             <Poster gymName={gymName} joinCode={joinCode} link={link} brand={brand} />
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.print()}>Print poster</Button>
+          <Button onClick={() => window.print()}>{tr('Print poster', 'Poster print karo')}</Button>
           <Button
             variant="ghost"
             onClick={async () => {
               const ok = await downloadPoster(gymName, joinCode, link, brand);
-              say(ok ? 'Poster saved as a picture.' : 'Could not make the picture. Try Print poster.');
+              say(
+                ok
+                  ? tr('Poster saved as a picture.', 'Poster picture ki tarah save ho gaya.')
+                  : tr('Could not make the picture. Try Print poster.', 'Picture nahi bani. Poster print karo try karo.'),
+              );
             }}
           >
-            Download picture
+            {tr('Download picture', 'Picture download karo')}
           </Button>
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.
+          {tr(
+            'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.',
+            'A4 par print karke desk par lagao. Phone par Print → “Save as PDF” bhi chalta hai; picture print shop ke liye hai.',
+          )}
         </p>
       </Card>
 
@@ -221,7 +247,7 @@ function Poster({ gymName, joinCode, link, brand, print = false }: { gymName: st
       <div style={{ fontWeight: 700, fontSize: print ? '7mm' : 14, marginTop: u(8) }}>{POSTER.lead}</div>
       <div style={{ fontSize: print ? '6mm' : 13, color: '#333333' }}>{POSTER.leadHi}</div>
       <div style={{ display: 'flex', justifyContent: 'center', margin: `${u(14)} 0` }}>
-        <QrSvg text={link} px={print ? '95mm' : '72%'} label={`QR code for ${link}`} />
+        <QrSvg text={link} px={print ? '95mm' : '72%'} label={tr(`QR code for ${link}`, `${link} ka QR code`)} />
       </div>
       <ol style={{ listStyle: 'none', padding: 0, margin: 0, fontWeight: 700, fontSize: print ? '6mm' : 13 }}>
         {POSTER.steps.map((s, i) => (

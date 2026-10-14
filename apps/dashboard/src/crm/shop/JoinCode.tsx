@@ -8,6 +8,7 @@
 import { useRef, useState } from 'react';
 
 import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } from '../ui/kit';
+import { tr } from '../i18n';
 import { useShop } from './ShopProvider';
 import { inviteMessage, whatsAppHref } from './invite';
 import { navigate } from '../ui/router';
@@ -57,11 +58,13 @@ export function JoinCodeCard({
     return (
       <Card style={{ marginBottom: flush ? 0 : space.lg }}>
         <div style={{ fontFamily: font.display, fontSize: 16, fontWeight: 600, color: color.ink }}>
-          Let members order from your gym in the ForgeAI app
+          {tr('Let members order from your gym in the ForgeAI app', 'Members ko ForgeAI app mein aapke gym se order karne do')}
         </div>
         <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          Turn on the shop to get your gym’s join code. It comes with 12 sample products you can change
-          or delete.
+          {tr(
+            'Turn on the shop to get your gym’s join code. It comes with 12 sample products you can change or delete.',
+            'Gym ka join code paane ke liye Shop chalu karo. Saath mein 12 sample products milte hain jo aap badal ya hata sakte hain.',
+          )}
         </p>
         {error && (
           <div style={{ marginTop: space.md }}>
@@ -77,13 +80,13 @@ export function JoinCodeCard({
               try {
                 await connectShop();
               } catch (e) {
-                setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+                setError(e instanceof Error ? e.message : tr('Something went wrong. Please try again.', 'Kuch gadbad hui. Phir se try karo.'));
               } finally {
                 setBusy(false);
               }
             }}
           >
-            {busy ? 'Turning on…' : 'Turn on the shop'}
+            {busy ? tr('Turning on…', 'Chalu ho raha hai…') : tr('Turn on the shop', 'Shop chalu karo')}
           </Button>
         </div>
       </Card>
@@ -94,7 +97,9 @@ export function JoinCodeCard({
     <Card style={{ marginBottom: flush ? 0 : space.lg }} pad={space.xl}>
       {title && <SectionTitle>{title}</SectionTitle>}
       <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        Members join in the <strong style={{ color: color.ink }}>ForgeAI app</strong> with code
+        {tr('Members join in the ', 'Members ')}
+        <strong style={{ color: color.ink }}>{tr('ForgeAI app', 'ForgeAI app')}</strong>
+        {tr(' with code', ' mein is code se judte hain')}
       </div>
       <div
         style={{
@@ -107,7 +112,7 @@ export function JoinCodeCard({
       >
         <span
           ref={codeRef}
-          aria-label={`Join code ${cloud.joinCode.split('').join(' ')}`}
+          aria-label={tr(`Join code ${cloud.joinCode.split('').join(' ')}`, `Join code ${cloud.joinCode.split('').join(' ')}`)}
           style={{
             fontFamily: font.mono,
             userSelect: 'all',
@@ -140,29 +145,34 @@ export function JoinCodeCard({
             window.setTimeout(() => setCopied(null), 3000);
           }}
         >
-          {copied === 'yes' ? 'Copied ✓' : 'Copy code'}
+          {copied === 'yes' ? tr('Copied ✓', 'Copy ho gaya ✓') : tr('Copy code', 'Code copy karo')}
         </Button>
       </div>
       {copied === 'no' && (
         <div role="status" style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          This browser blocked copying. The code is selected — press Ctrl+C.
+          {tr('This browser blocked copying. The code is selected — press Ctrl+C.', 'Is browser ne copy rok diya. Code select hai — Ctrl+C dabao.')}
         </div>
       )}
       <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        Easiest: send members your gym's link — one tap in the app and they are in. Or they type this code
-        in the app's Shop tab. Their orders show up here.
+        {tr(
+          "Easiest: send members your gym's link — one tap in the app and they are in. Or they type this code in the app's Shop tab. Their orders show up here.",
+          'Sabse aasaan: members ko gym ka Link bhejo — app mein ek tap aur woh jud gaye. Ya woh app ke Shop tab mein yeh code daalein. Unke orders yahan dikhenge.',
+        )}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
         <Button onClick={() => window.open(whatsAppHref(inviteMessage(cloud.name, cloud.joinCode)), '_blank', 'noopener')}>
-          Send link on WhatsApp
+          {tr('Send link on WhatsApp', 'Link WhatsApp par bhejo')}
         </Button>
         <Button variant="ghost" onClick={() => navigate('/settings/invite')}>
-          Invite &amp; QR poster
+          {tr('Invite & QR poster', 'Invite aur QR Poster')}
         </Button>
       </div>
       {!online && (
         <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          Offline right now — the code still works; new orders show up when the internet is back.
+          {tr(
+            'Offline right now — the code still works; new orders show up when the internet is back.',
+            'Abhi offline hain — code phir bhi chalega; internet aane par naye orders dikhenge.',
+          )}
         </div>
       )}
     </Card>

@@ -11,9 +11,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useAuth } from '../../auth/AuthProvider';
 import { SignInCard } from '../../auth/GoOnlineCard';
+import { InstallCard } from '../InstallCard';
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
+import { tr } from '../../i18n';
 import { navigate } from '../router';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import {
@@ -71,11 +73,11 @@ export function SettingsScreen() {
       });
       // The app shows members the gym's name, so a rename goes to the cloud too.
       await renameCloudGym(name.trim() || 'My Gym');
-      flash('Saved.');
+      flash(tr('Saved.', 'Save ho gaya.'));
     } catch (e) {
       // Without this, a failed write (storage full) just stopped the spinner and
       // said nothing — the owner would assume it saved.
-      setError(e instanceof Error ? e.message : 'Could not save your gym details.');
+      setError(e instanceof Error ? e.message : tr('Could not save your gym details.', 'Gym ki details save nahi hui.'));
     } finally {
       setSaving(false);
     }
@@ -90,74 +92,90 @@ export function SettingsScreen() {
 
   return (
     <>
-      <PageHeader title="Settings" subtitle="Your gym's details and data" />
+      <PageHeader title={tr('Settings', 'Settings')} subtitle={tr("Your gym's details and data", 'Aapke gym ki details aur data')} />
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
       {/* Sign-in first: "put your records online" is the one thing here that protects the gym. */}
       <SignInCard />
 
+      <InstallCard />
+
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Gym details</SectionTitle>
-        <TextField label="Gym name" value={name} onChange={setName} />
+        <SectionTitle>{tr('Gym details', 'Gym ki details')}</SectionTitle>
+        <TextField label={tr('Gym name', 'Gym ka naam')} value={name} onChange={setName} />
         <Grid min={220}>
-          <TextField label="Phone" value={phone} onChange={setPhone} inputMode="tel" />
+          <TextField label={tr('Phone', 'Phone')} value={phone} onChange={setPhone} inputMode="tel" />
           <TextField
-            label="GSTIN (optional)"
+            label={tr('GSTIN (optional)', 'GSTIN (zaroori nahi)')}
             value={gstin}
             onChange={setGstin}
-            hint="Only if you're GST registered — used on invoices."
+            hint={tr("Only if you're GST registered — used on invoices.", 'Sirf agar aap GST mein registered hain — bill par chhapta hai.')}
           />
         </Grid>
-        <TextField label="Address" value={address} onChange={setAddress} multiline />
+        <TextField label={tr('Address', 'Pata')} value={address} onChange={setAddress} multiline />
         <div style={{ marginTop: space.lg }}>
           <Button onClick={save} disabled={saving}>
-            {saving ? 'Saving…' : 'Save details'}
+            {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save details', 'Details save karo')}
           </Button>
         </div>
       </Card>
 
       {/* Titled inside its card like the sections above and below it — the title
           used to sit outside, on the page, the only one that did. */}
-      <JoinCodeCard title="Member app" />
+      <JoinCodeCard title={tr('Member app', 'Member app')} />
 
       {/* Gym branding: the gym's own logo and colours in the member app. */}
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Your look in the app</SectionTitle>
+        <SectionTitle>{tr('Your look in the app', 'App mein aapka look')}</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {cloud
-            ? 'Your logo opens the app, and your colour runs through every screen members see.'
-            : 'Turn on the member app above first; then your logo and colour can run through it.'}
+            ? tr(
+                'Your logo opens the app, and your colour runs through every screen members see.',
+                'App aapke logo se khulti hai, aur aapka rang members ki har screen par dikhta hai.',
+              )
+            : tr(
+                'Turn on the member app above first; then your logo and colour can run through it.',
+                'Pehle upar Member App chalu karo; phir aapka logo aur rang usmein dikhega.',
+              )}
         </p>
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" disabled={!cloud} onClick={() => navigate('/settings/branding')}>
-            Open branding
+            {tr('Open branding', 'Branding kholo')}
           </Button>
         </div>
       </Card>
 
       <Card>
-        <SectionTitle>Your data</SectionTitle>
+        <SectionTitle>{tr('Your data', 'Aapka data')}</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {counts.members} members · {counts.memberships} memberships · {counts.payments} payments ·{' '}
-          {counts.visits} check-ins. Set up {formatDay(dateISOFromEpoch(gym.createdAt))}.
+          {tr(
+            `${counts.members} members · ${counts.memberships} memberships · ${counts.payments} payments · ${counts.visits} check-ins. Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`,
+            `${counts.members} members · ${counts.memberships} memberships · ${counts.payments} payments · ${counts.visits} Check-in. Shuru kiya ${formatDay(dateISOFromEpoch(gym.createdAt))}.`,
+          )}
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
           {online
-            ? 'Stored online. Safe if a phone or computer breaks, and the same on every device you sign in on.'
-            : 'Stored in this browser only. Put your records online (above) to keep them safe and open them anywhere.'}
+            ? tr(
+                'Stored online. Safe if a phone or computer breaks, and the same on every device you sign in on.',
+                'Online save hai. Phone ya computer toote tab bhi safe, aur jis bhi device par sign in karo wahan same.',
+              )
+            : tr(
+                'Stored in this browser only. Put your records online (above) to keep them safe and open them anywhere.',
+                'Sirf is browser mein save hai. Data safe rakhne aur kahin bhi kholne ke liye upar se Online karo.',
+              )}
         </p>
 
         {!online && (
         <Row gap={space.sm}>
           <div style={{ marginTop: space.lg }}>
             <Button variant="ghost" onClick={() => setConfirming('demo')}>
-              Load demo gym
+              {tr('Load demo gym', 'Demo gym kholo')}
             </Button>
           </div>
           <div style={{ marginTop: space.lg }}>
             <Button variant="ghost" tone="danger" onClick={() => setConfirming('fresh')}>
-              Erase and start fresh
+              {tr('Erase and start fresh', 'Sab mitao, naya shuru karo')}
             </Button>
           </div>
           {/* Only a DEMO gym may be started over: that erases this browser. A real
@@ -166,14 +184,14 @@ export function SettingsScreen() {
           {cloud?.demo && (
             <div style={{ marginTop: space.lg }}>
               <Button variant="ghost" tone="danger" onClick={() => setConfirming('over')}>
-                Start over with a new demo gym
+                {tr('Start over with a new demo gym', 'Naye demo gym se shuru karo')}
               </Button>
             </div>
           )}
           {cloud && !cloud.demo && (
             <div style={{ marginTop: space.lg }}>
               <Button variant="ghost" tone="danger" onClick={() => setConfirming('disconnect')}>
-                Disconnect the shop
+                {tr('Disconnect the shop', 'Shop band karo')}
               </Button>
             </div>
           )}
@@ -185,18 +203,18 @@ export function SettingsScreen() {
         <Sheet
           title={
             confirming === 'demo'
-              ? 'Load the demo gym?'
+              ? tr('Load the demo gym?', 'Demo gym kholein?')
               : confirming === 'over'
-                ? 'Start over with a new demo gym?'
+                ? tr('Start over with a new demo gym?', 'Naye demo gym se shuru karein?')
                 : confirming === 'disconnect'
-                  ? 'Disconnect the shop?'
-                  : 'Erase everything?'
+                  ? tr('Disconnect the shop?', 'Shop band karein?')
+                  : tr('Erase everything?', 'Sab kuch mitayein?')
           }
           onClose={closeConfirm}
           footer={
             <>
               <Button variant="ghost" onClick={() => setConfirming(null)}>
-                Cancel
+                {tr('Cancel', 'Cancel')}
               </Button>
               <Button
                 tone="danger"
@@ -206,7 +224,7 @@ export function SettingsScreen() {
                     if (confirming === 'disconnect') {
                       disconnectShop();
                       setConfirming(null);
-                      flash('Shop disconnected. Your members and payments are still here.');
+                      flash(tr('Shop disconnected. Your members and payments are still here.', 'Shop band ho gayi. Aapke members aur payments yahin hain.'));
                       return;
                     }
                     if (confirming === 'over') {
@@ -217,45 +235,59 @@ export function SettingsScreen() {
                     }
                     if (confirming === 'demo') {
                       await loadDemoGym();
-                      flash('Demo gym loaded.');
+                      flash(tr('Demo gym loaded.', 'Demo gym khul gaya.'));
                     } else {
                       // The PERSISTED name, not the unsaved form field: an
                       // unsaved edit here decided whether the fresh gym counted
                       // as "never set up" and bounced back to the welcome screen.
                       await startEmptyGym(gym.name);
-                      flash('Started fresh.');
+                      flash(tr('Started fresh.', 'Naya shuru ho gaya.'));
                     }
                   } catch (e) {
-                    setError(e instanceof Error ? e.message : 'That didn’t work. Please try again.');
+                    setError(e instanceof Error ? e.message : tr('That didn’t work. Please try again.', 'Nahi hua. Phir se try karo.'));
                   }
                   setConfirming(null);
                 }}
               >
                 {confirming === 'demo'
-                  ? 'Load demo gym'
+                  ? tr('Load demo gym', 'Demo gym kholo')
                   : confirming === 'over'
-                    ? 'Start over'
+                    ? tr('Start over', 'Naya shuru karo')
                     : confirming === 'disconnect'
-                      ? 'Disconnect'
-                      : 'Erase everything'}
+                      ? tr('Disconnect', 'Band karo')
+                      : tr('Erase everything', 'Sab mitao')}
               </Button>
             </>
           }
         >
           {confirming !== 'disconnect' && (
             <ErrorBanner>
-              This replaces everything currently in this browser — all {counts.members} members,{' '}
-              {counts.payments} payments and {counts.visits} check-ins. It cannot be undone.
+              {tr(
+                `This replaces everything currently in this browser — all ${counts.members} members, ${counts.payments} payments and ${counts.visits} check-ins. It cannot be undone.`,
+                `Is browser mein jo kuch hai sab badal jayega — saare ${counts.members} members, ${counts.payments} payments aur ${counts.visits} Check-in. Yeh wapas nahi hoga.`,
+              )}
             </ErrorBanner>
           )}
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
             {confirming === 'disconnect'
-              ? `Your members, plans, payments and check-ins stay exactly as they are. This browser stops showing shop orders and products, and code ${cloud?.joinCode ?? ''} stops being managed from here. Members who already joined can’t be reached from this panel any more.`
+              ? tr(
+                  `Your members, plans, payments and check-ins stay exactly as they are. This browser stops showing shop orders and products, and code ${cloud?.joinCode ?? ''} stops being managed from here. Members who already joined can’t be reached from this panel any more.`,
+                  `Aapke members, Plan, payments aur Check-in jaise hain waise rahenge. Yeh browser Shop ke Order aur products dikhana band karega, aur Code ${cloud?.joinCode ?? ''} yahan se nahi chalega. Jo members pehle join kar chuke hain, unse is panel se baat nahi ho payegi.`,
+                )
               : confirming === 'over'
-              ? `This browser forgets the current demo gym and its shop (join code ${cloud?.joinCode ?? ''} stops being yours here). You go back to the welcome screen, where Start demo makes a fresh gym with a new code.`
+              ? tr(
+                  `This browser forgets the current demo gym and its shop (join code ${cloud?.joinCode ?? ''} stops being yours here). You go back to the welcome screen, where Start demo makes a fresh gym with a new code.`,
+                  `Yeh browser abhi wala Demo gym aur uski Shop bhool jayega (join Code ${cloud?.joinCode ?? ''} yahan aapka nahi rahega). Aap shuru wali screen par pahunchenge, jahan "Demo shuru karo" naye Code ke saath naya gym banata hai.`,
+                )
               : confirming === 'demo'
-              ? 'A sample gym with around 128 members, their payment history and attendance will be created. Use this to show someone the product — not on a gym with real records in it.'
-              : 'You will be left with an empty gym: no members, no plans, no payments.'}
+              ? tr(
+                  'A sample gym with around 128 members, their payment history and attendance will be created. Use this to show someone the product — not on a gym with real records in it.',
+                  'Lagbhag 128 members, unki payments aur hazri ke saath ek Demo gym banega. Ise kisi ko product dikhane ke liye use karein — asli data wale gym par nahi.',
+                )
+              : tr(
+                  'You will be left with an empty gym: no members, no plans, no payments.',
+                  'Gym khaali ho jayega: koi member nahi, koi Plan nahi, koi payment nahi.',
+                )}
           </p>
         </Sheet>
       )}

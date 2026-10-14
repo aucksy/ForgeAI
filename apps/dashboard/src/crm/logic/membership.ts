@@ -24,6 +24,7 @@ import type {
 } from '../types';
 import { addDays, addMonths, diffDays, type DateISO } from './dates';
 import { sumPaise, type Paise } from './money';
+import { tr } from '../i18n';
 
 /** A term inside this many days of its end is surfaced as "expiring". */
 export const EXPIRING_WINDOW_DAYS = 7;
@@ -255,13 +256,14 @@ export function buildMemberView(
 // ---------------------------------------------------------------- presentation
 
 /** Short label for a status pill. */
+// Getters, not values: the words are read in the panel's language at the moment a pill draws.
 export const STATE_LABEL: Record<MemberState, string> = {
-  active: 'Active',
-  expiring: 'Expiring',
-  expired: 'Expired',
-  upcoming: 'Upcoming',
-  cancelled: 'Cancelled',
-  never: 'No membership',
+  get active() { return tr('Active', 'Chalu'); },
+  get expiring() { return tr('Expiring', 'Jaldi khatam'); },
+  get expired() { return tr('Expired', 'Khatam ho gaye'); },
+  get upcoming() { return tr('Upcoming', 'Aage shuru'); },
+  get cancelled() { return tr('Cancelled', 'Cancel ho gaya'); },
+  get never() { return tr('No membership', 'Koi plan nahi'); },
 };
 
 /** Tone for a status pill — `critical` is reserved for "costs the gym money today". */

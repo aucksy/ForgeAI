@@ -21,6 +21,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCrm } from '../../store';
+import { inEnglish, tr } from '../../i18n';
 import {
   atRiskList,
   attendanceSummary,
@@ -101,22 +102,26 @@ export function AttendanceScreen({ section }: { section?: string }) {
   return (
     <>
       <PageHeader
-        title="Attendance"
-        subtitle={tab === 'risk' ? 'Paying members who are losing the habit' : 'Who trained, and when'}
+        title={tr('Attendance', 'Hazri')}
+        subtitle={
+          tab === 'risk'
+            ? tr('Paying members who are losing the habit', 'Paise dene wale members jo kaafi din se nahi aaye')
+            : tr('Who trained, and when', 'Kaun aaya, kab aaya')
+        }
       />
 
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
           variant="tabs"
-          label="Attendance view"
+          label={tr('Attendance view', 'Hazri ka view')}
           value={tab}
           onChange={(v) => navigate(v === 'risk' ? '/attendance/risk' : '/attendance')}
           options={[
-            { value: 'register', label: 'Register' },
+            { value: 'register', label: tr('Register', 'Register') },
             // The count rides on the chip because the navigation badge that brings
             // people here lands on the Register tab: without it the badge shows a
             // number over a screen that never explains it.
-            { value: 'risk', label: 'Losing the habit', count: atRiskN },
+            { value: 'risk', label: tr('Losing the habit', 'Kaafi din se nahi aaye'), count: atRiskN },
           ]}
         />
       </div>
@@ -203,7 +208,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
       await fn();
       onToast(done);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'That didn’t work. Please try again.');
+      setError(e instanceof Error ? e.message : tr('That didn’t work. Please try again.', 'Nahi hua. Phir se try karo.'));
     } finally {
       setBusyId(null);
     }
@@ -219,7 +224,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
         // is a queue, not a form.
         setQuery('');
       },
-      `${view.member.fullName} checked in.`,
+      tr(`${view.member.fullName} checked in.`, `${view.member.fullName} ki hazri lag gayi.`),
     );
   };
 
@@ -228,31 +233,31 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Check someone in</SectionTitle>
+        <SectionTitle>{tr('Check someone in', 'Hazri lagao')}</SectionTitle>
 
         <ChipToggle
-          label="Day"
+          label={tr('Day', 'Din')}
           value={mode}
           onChange={(v) => setMode(v as 'today' | 'yesterday' | 'other')}
           options={[
-            { value: 'today', label: 'Today' },
-            { value: 'yesterday', label: 'Yesterday' },
-            { value: 'other', label: 'Another day' },
+            { value: 'today', label: tr('Today', 'Aaj') },
+            { value: 'yesterday', label: tr('Yesterday', 'Beete kal') },
+            { value: 'other', label: tr('Another day', 'Koi aur din') },
           ]}
         />
 
         {mode === 'other' && (
           <TextField
-            label="Register date"
+            label={tr('Register date', 'Register ki tareekh')}
             type="date"
             value={customDay}
             onChange={setCustomDay}
             error={
               isValidDateISO(customDay) && customDay > today
-                ? 'That day hasn’t happened yet.'
+                ? tr('That day hasn’t happened yet.', 'Yeh din abhi aaya nahi.')
                 : null
             }
-            hint="Catching up a day the desk missed. Future days are refused."
+            hint={tr('Catching up a day the desk missed. Future days are refused.', 'Chhoota hua din bharne ke liye. Aage ke din nahi chalenge.')}
           />
         )}
 
@@ -276,7 +281,9 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
               color: color.warning,
             }}
           >
-            Recording for <strong>{formatDay(viewing)}</strong> — not today.
+            {tr('Recording for ', '')}
+            <strong>{formatDay(viewing)}</strong>
+            {tr(' — not today.', ' ki hazri lag rahi hai — aaj ki nahi.')}
           </div>
         )}
 
@@ -285,13 +292,16 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
             <SearchField
               value={query}
               onChange={setQuery}
-              placeholder="Type a name or the last 4 digits of a mobile"
+              placeholder={tr('Type a name or the last 4 digits of a mobile', 'Naam ya mobile number ke aakhri 4 ank likho')}
             />
           </div>
         ) : (
           <EmptyState
-            title="Pick a day first"
-            body="Choose a real day that has already happened, and the check-in box comes back."
+            title={tr('Pick a day first', 'Pehle din chuno')}
+            body={tr(
+              'Choose a real day that has already happened, and the check-in box comes back.',
+              'Jo din beet chuka hai woh chuno, phir Check-in box wapas aa jayega.',
+            )}
           />
         )}
 
@@ -299,9 +309,12 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
           <div style={{ marginTop: space.md, display: 'grid', gap: space.sm }}>
             {results.length === 0 ? (
               <EmptyState
-                title="Nobody matches that"
-                body="Check the spelling, or add them to the roster first."
-                action={<Button onClick={() => navigate('/members')}>Open roster</Button>}
+                title={tr('Nobody matches that', 'Koi nahi mila')}
+                body={tr(
+                  'Check the spelling, or add them to the roster first.',
+                  'Spelling check karo, ya pehle unhe members mein jodo.',
+                )}
+                action={<Button onClick={() => navigate('/members')}>{tr('Open roster', 'Members kholo')}</Button>}
               />
             ) : (
               <>
@@ -316,7 +329,10 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                 ))}
                 {results.length > MAX_RESULTS && (
                   <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-                    {results.length - MAX_RESULTS} more match — keep typing to narrow it down.
+                    {tr(
+                      `${results.length - MAX_RESULTS} more match — keep typing to narrow it down.`,
+                      `${results.length - MAX_RESULTS} aur mile — aur likho taaki list chhoti ho.`,
+                    )}
                   </div>
                 )}
               </>
@@ -327,25 +343,33 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
 
       <Grid min={165}>
         <StatTile
-          label={isToday || !viewing ? 'Check-ins today' : `Check-ins on ${formatDayShort(viewing)}`}
+          label={
+            isToday || !viewing
+              ? tr('Check-ins today', 'Aaj aaye')
+              : tr(`Check-ins on ${formatDayShort(viewing)}`, `${formatDayShort(viewing)} ko aaye`)
+          }
           value={viewing ? register.length : todayRegisterN}
           tone="accent"
-          sub={isToday || !viewing ? 'So far today' : 'On that day'}
+          sub={isToday || !viewing ? tr('So far today', 'Aaj ab tak') : tr('On that day', 'Us din')}
         />
         <StatTile
-          label={`Visits in ${TREND_DAYS} days`}
+          label={tr(`Visits in ${TREND_DAYS} days`, `${TREND_DAYS} din mein hazri`)}
           value={summary.visitsN}
-          sub={`${summary.membersN} different members`}
+          sub={tr(`${summary.membersN} different members`, `${summary.membersN} alag members`)}
         />
         <StatTile
-          label="Check-ins a day"
+          label={tr('Check-ins a day', 'Roz ki hazri')}
           value={summary.perDay.toFixed(1)}
-          sub={`Average over the last ${TREND_DAYS} days`}
+          sub={tr(`Average over the last ${TREND_DAYS} days`, `Pichhle ${TREND_DAYS} din ka average`)}
         />
         <StatTile
-          label="Busiest hour"
+          label={tr('Busiest hour', 'Sabse bheed ka time')}
           value={summary.busiestHour === null ? '—' : hourLabel(summary.busiestHour)}
-          sub={summary.busiestHour === null ? 'No timed check-ins yet' : `Over the last ${TREND_DAYS} days`}
+          sub={
+            summary.busiestHour === null
+              ? tr('No timed check-ins yet', 'Abhi time wali hazri nahi')
+              : tr(`Over the last ${TREND_DAYS} days`, `Pichhle ${TREND_DAYS} din mein`)
+          }
         />
       </Grid>
 
@@ -353,17 +377,21 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>
-          {!viewing ? 'The register' : isToday ? 'In today' : `In on ${formatDay(viewing)}`}
+          {!viewing
+            ? tr('The register', 'Register')
+            : isToday
+              ? tr('In today', 'Aaj aaye')
+              : tr(`In on ${formatDay(viewing)}`, `${formatDay(viewing)} ko aaye`)}
         </SectionTitle>
         {register.length === 0 ? (
           <EmptyState
-            title={viewing ? 'Nobody yet' : 'No day selected'}
+            title={viewing ? tr('Nobody yet', 'Abhi koi nahi') : tr('No day selected', 'Koi din nahi chuna')}
             body={
               !viewing
-                ? 'Pick a day above to see who trained.'
+                ? tr('Pick a day above to see who trained.', 'Kaun aaya dekhne ke liye upar din chuno.')
                 : isToday
-                  ? 'Check-ins appear here the moment you record them.'
-                  : 'No visits were recorded on this day.'
+                  ? tr('Check-ins appear here the moment you record them.', 'Hazri lagate hi yahan dikhegi.')
+                  : tr('No visits were recorded on this day.', 'Is din koi hazri nahi lagi.')
             }
           />
         ) : (
@@ -372,14 +400,17 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
               <RegisterRowView
                 key={row.visit.id}
                 visit={row.visit}
-                name={row.member?.fullName ?? 'Unknown member'}
+                name={row.member?.fullName ?? tr('Unknown member', 'Anjaan member')}
                 memberId={row.member?.id ?? null}
                 busy={busyId === row.visit.memberId}
                 onUndo={() =>
                   run(
                     row.visit.memberId,
                     () => undoCheckIn(row.visit.memberId, row.visit.visitedOn),
-                    `Check-in removed for ${row.member?.fullName ?? 'that member'}.`,
+                    tr(
+                      `Check-in removed for ${row.member?.fullName ?? 'that member'}.`,
+                      `${row.member?.fullName ?? 'us member'} ki hazri hata di.`,
+                    ),
                   )
                 }
               />
@@ -389,16 +420,19 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
       </Card>
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Last {TREND_DAYS} days</SectionTitle>
+        <SectionTitle>{tr(`Last ${TREND_DAYS} days`, `Pichhle ${TREND_DAYS} din`)}</SectionTitle>
         <TrendBars days={trend} today={today} />
       </Card>
 
       <Card>
-        <SectionTitle>When the gym is busy</SectionTitle>
+        <SectionTitle>{tr('When the gym is busy', 'Gym mein bheed kab hoti hai')}</SectionTitle>
         {summary.busiestHour === null ? (
           <EmptyState
-            title="No timed check-ins yet"
-            body="Check-ins recorded here carry the time, so this fills in as the register is used."
+            title={tr('No timed check-ins yet', 'Abhi time wali hazri nahi')}
+            body={tr(
+              'Check-ins recorded here carry the time, so this fills in as the register is used.',
+              'Yahan lagi hazri mein time hota hai, toh register chalne ke saath yeh bharta jayega.',
+            )}
           />
         ) : (
           <HourBars hours={hours} />
@@ -442,7 +476,7 @@ function SearchResult({
                 waving somebody through — but neither blocks the check-in. Whether
                 a member trains today is the owner's call, not the software's. */}
             <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>
-            {view.outstandingP > 0 && <Pill tone="warn">{formatINR(view.outstandingP)} due</Pill>}
+            {view.outstandingP > 0 && <Pill tone="warn">{tr(`${formatINR(view.outstandingP)} due`, `${formatINR(view.outstandingP)} baaki`)}</Pill>}
           </Row>
           <div style={{ fontFamily: font.mono, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
             {formatPhone(member.phone)}
@@ -450,11 +484,11 @@ function SearchResult({
         </div>
         {already ? (
           <span style={{ ...tapTarget, fontSize: 13, fontWeight: 700, color: color.goodText }}>
-            ✓ Already in
+            {tr('✓ Already in', '✓ Aa chuke')}
           </span>
         ) : (
           <Button onClick={onCheckIn} disabled={busy}>
-            {busy ? 'Saving…' : 'Check in'}
+            {busy ? tr('Saving…', 'Save ho raha hai…') : tr('Check in', 'Hazri lagao')}
           </Button>
         )}
       </Row>
@@ -489,14 +523,14 @@ function RegisterRowView({
           <span style={{ ...tapTarget, fontSize: 14, color: color.inkMuted }}>{name}</span>
         )}
       </span>
-      {visit.source !== 'desk' && <Pill tone="muted">{visit.source === 'app' ? 'App' : 'Imported'}</Pill>}
+      {visit.source !== 'desk' && <Pill tone="muted">{visit.source === 'app' ? tr('App', 'App') : tr('Imported', 'Import kiya')}</Pill>}
       <Button
         variant="quiet"
         onClick={onUndo}
         disabled={busy}
-        ariaLabel={`Undo check-in for ${name}`}
+        ariaLabel={tr(`Undo check-in for ${name}`, `${name} ki hazri wapas lo`)}
       >
-        Undo
+        {tr('Undo', 'Wapas lo')}
       </Button>
     </Row>
   );
@@ -528,7 +562,9 @@ function TrendBars({ days, today }: { days: { day: string; countN: number }[]; t
             key={d.day}
             // "today" is marked by a brighter bar; the title carries it in words as
             // well, because colour alone is not a label.
-            title={`${formatDay(d.day)}${d.day === today ? ' (today)' : ''}: ${d.countN} ${d.countN === 1 ? 'check-in' : 'check-ins'}`}
+            title={`${formatDay(d.day)}${d.day === today ? tr(' (today)', ' (aaj)') : ''}: ${d.countN} ${
+              d.countN === 1 ? tr('check-in', 'Check-in') : tr('check-ins', 'Check-in')
+            }`}
             style={{
               flex: 1,
               minWidth: 0,
@@ -548,7 +584,7 @@ function TrendBars({ days, today }: { days: { day: string; countN: number }[]; t
         </span>
         <span style={{ flex: 1 }} />
         <span style={{ fontFamily: font.body, fontSize: 11, color: color.inkMuted }}>
-          Peak {peak} in a day
+          {tr(`Peak ${peak} in a day`, `Ek din mein sabse zyada ${peak}`)}
         </span>
       </Row>
     </div>
@@ -630,7 +666,8 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
     // Exports exactly the rows on screen, like both Money exports. A file that
     // quietly contains more than the screen it came from is a file that gets a
     // trainer phoning people the owner filtered out.
-    const contents = csvDocument(
+    // Downloads stay English in every language (an accountant reads them).
+    const contents = inEnglish(() => csvDocument(
       ['Member', 'Mobile', 'Status', 'Last visit', 'Days since visit', 'Visits in last 8 weeks', 'Why'],
       shown.map((r) => [
         r.member.fullName,
@@ -641,9 +678,13 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
         r.profile.visitsInWindowN,
         riskReason(r),
       ]),
-    );
+    ));
     downloadCsv(csvFilename([snapshot.gym.name, 'at-risk', today]), contents);
-    onToast(`Exported ${shown.length} ${shown.length === 1 ? 'member' : 'members'}.`);
+    onToast(
+      shown.length === 1
+        ? tr(`Exported ${shown.length} member.`, `${shown.length} member export ho gaya.`)
+        : tr(`Exported ${shown.length} members.`, `${shown.length} members export ho gaye.`),
+    );
   };
 
   if (rows.length === 0) {
@@ -651,17 +692,23 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
       <Card>
         {registerUsed ? (
           <EmptyState
-            title="Everybody is training"
-            body="No member with a live plan has drifted away from their usual routine."
-            action={<Button onClick={() => navigate('/attendance')}>Back to the register</Button>}
+            title={tr('Everybody is training', 'Sab aa rahe hain')}
+            body={tr(
+              'No member with a live plan has drifted away from their usual routine.',
+              'Chalu Plan wala koi member apni routine se nahi bhatka.',
+            )}
+            action={<Button onClick={() => navigate('/attendance')}>{tr('Back to the register', 'Register par wapas')}</Button>}
           />
         ) : (
           // NOT "everybody is training" — that would be a claim, and this gym has
           // given us no evidence for it either way.
           <EmptyState
-            title="Start checking members in"
-            body="This list needs a few days of the register before it can tell you anything. Check people in as they arrive and it fills itself in — nobody is judged on attendance that was never recorded."
-            action={<Button onClick={() => navigate('/attendance')}>Open the register</Button>}
+            title={tr('Start checking members in', 'Members ki hazri lagana shuru karo')}
+            body={tr(
+              'This list needs a few days of the register before it can tell you anything. Check people in as they arrive and it fills itself in — nobody is judged on attendance that was never recorded.',
+              'Yeh list kuch din ke register ke baad hi kuch bata payegi. Jaise log aayein hazri lagao, list apne aap bharegi — jo hazri kabhi lagi hi nahi, uspar kisi ko judge nahi kiya jata.',
+            )}
+            action={<Button onClick={() => navigate('/attendance')}>{tr('Open the register', 'Register kholo')}</Button>}
           />
         )}
       </Card>
@@ -672,10 +719,10 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
     <>
       <Grid min={165}>
         <StatTile
-          label="Need a word"
+          label={tr('Need a word', 'Baat karni hai')}
           value={shown.length}
           tone="warn"
-          sub={`of ${rows.length} flagged`}
+          sub={tr(`of ${rows.length} flagged`, `${rows.length} mein se`)}
         />
         {totals.map((t) => (
           <StatTile
@@ -694,34 +741,35 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
         <SectionTitle
           action={
             <Button variant="ghost" onClick={exportCsv} disabled={shown.length === 0}>
-              Export CSV
+              {tr('Export CSV', 'CSV export karo')}
             </Button>
           }
         >
-          Who to talk to
+          {tr('Who to talk to', 'Kisse baat karein')}
         </SectionTitle>
 
         <p style={{ margin: `0 0 ${space.md}px`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
           {/* "Stopped coming" was wrong for a third of this list: a new member who
               has been in twice in three weeks has not stopped, they never started,
               and the heading read absurdly above their "last visit 2 days ago". */}
-          Everyone here has a plan with weeks left on it — they have stopped coming, or never really
-          started. Ask about their training, not their membership: the evidence says a renewal pitch
-          to someone who has drifted makes them likelier to leave, not less.
+          {tr(
+            'Everyone here has a plan with weeks left on it — they have stopped coming, or never really started. Ask about their training, not their membership: the evidence says a renewal pitch to someone who has drifted makes them likelier to leave, not less.',
+            'Yahan sabka Plan abhi hafton chalega — inhone aana band kar diya, ya kabhi theek se shuru hi nahi kiya. Inse training ki baat karein, membership ki nahi: research kehta hai ki bhatke hue member se Renew ki baat karne se woh chhodne ki taraf aur badhta hai, kam nahi.',
+          )}
         </p>
 
         <ChipToggle
-          label="Filter by what is happening"
+          label={tr('Filter by what is happening', 'Kya ho raha hai, us hisaab se chuno')}
           value={band}
           onChange={(v) => setBand(v as RiskBand | 'all')}
           options={[
-            { value: 'all', label: 'Everyone', count: rows.length },
+            { value: 'all', label: tr('Everyone', 'Sab'), count: rows.length },
             ...totals.map((t) => ({ value: t.band, label: RISK_LABEL[t.band], count: t.countN })),
           ]}
         />
 
         {shown.length === 0 ? (
-          <EmptyState title="Nobody in this group" />
+          <EmptyState title={tr('Nobody in this group', 'Is group mein koi nahi')} />
         ) : (
           <div style={{ display: 'grid', gap: space.sm, marginTop: space.md }}>
             {shown.map((row) => (
@@ -734,12 +782,19 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
   );
 }
 
+// Getters, so the words follow the panel's language rather than the one on when this loaded.
 const BAND_SUB: Record<RiskBand, string> = {
-  settling_in: 'New, and the habit hasn’t formed',
+  get settling_in() {
+    return tr('New, and the habit hasn’t formed', 'Naye hain, aadat nahi bani');
+  },
   // Not "past their own usual gap": a member with too few visits to have a rhythm
   // is on the fixed fallback and has no gap of their own to be past.
-  slipping: 'Away longer than they usually are',
-  gone_quiet: 'Weeks without a visit',
+  get slipping() {
+    return tr('Away longer than they usually are', 'Aam taur se zyada din se nahi aaye');
+  },
+  get gone_quiet() {
+    return tr('Weeks without a visit', 'Hafton se nahi aaye');
+  },
   ok: '',
 };
 
@@ -773,11 +828,16 @@ function RiskCard({ row, today }: { row: AtRiskRow; today: string }) {
           </div>
           <Row gap={space.xs}>
             <Pill tone={BAND_TONE[row.band]}>{RISK_LABEL[row.band]}</Pill>
-            {profile.usualHour !== null && <Pill tone="muted">Usually {hourLabel(profile.usualHour)}</Pill>}
+            {profile.usualHour !== null && <Pill tone="muted">{tr(`Usually ${hourLabel(profile.usualHour)}`, `Aksar ${hourLabel(profile.usualHour)}`)}</Pill>}
             {profile.lastVisitOn && (
               // "Last visit 3 weeks ago", not "Last in 3 weeks ago" — `relativeDay`
               // already carries the "ago".
-              <Pill tone="muted">Last visit {relativeDay(profile.lastVisitOn, today)}</Pill>
+              <Pill tone="muted">
+                {tr(
+                  `Last visit ${relativeDay(profile.lastVisitOn, today)}`,
+                  `Pichhli baar ${relativeDay(profile.lastVisitOn, today)}`,
+                )}
+              </Pill>
             )}
           </Row>
         </div>
@@ -785,7 +845,7 @@ function RiskCard({ row, today }: { row: AtRiskRow; today: string }) {
           href={`https://wa.me/${phoneDigits(member.phone)}`}
           target="_blank"
           rel="noreferrer"
-          title={`WhatsApp ${formatPhone(member.phone)}`}
+          title={tr(`WhatsApp ${formatPhone(member.phone)}`, `WhatsApp ${formatPhone(member.phone)}`)}
           style={{
             fontFamily: font.body,
             fontSize: 12,
@@ -800,7 +860,7 @@ function RiskCard({ row, today }: { row: AtRiskRow; today: string }) {
             justifyContent: 'center',
           }}
         >
-          Message
+          {tr('Message', 'Message karo')}
         </a>
       </Row>
     </div>

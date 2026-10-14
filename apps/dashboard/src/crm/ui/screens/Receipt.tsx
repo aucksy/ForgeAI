@@ -19,6 +19,7 @@ import { formatINR } from '../../logic/money';
 import { buildReceiptDoc, type ReceiptDoc } from '../../logic/receiptDoc';
 import { Button, Card, EmptyState, PageHeader, space } from '../kit';
 import { navigate } from '../router';
+import { inEnglish, tr } from '../../i18n';
 
 const PAPER = {
   ink: '#101014',
@@ -39,7 +40,8 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
     const payment = snapshot.payments.find((p) => p.id === paymentId);
     if (!payment) return null;
 
-    return buildReceiptDoc({
+    // The printed receipt is English in every language (it is a money document).
+    return inEnglish(() => buildReceiptDoc({
       gym: snapshot.gym,
       payment,
       member: snapshot.members.find((m) => m.id === payment.memberId) ?? null,
@@ -48,16 +50,19 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
         : null,
       memberPayments: snapshot.payments.filter((p) => p.memberId === payment.memberId),
       today,
-    });
+    }));
   }, [snapshot, paymentId, today]);
 
   if (!doc) {
     return (
       <Card>
         <EmptyState
-          title="Receipt not found"
-          body="This receipt no longer exists. It may have been on a gym you have since erased."
-          action={<Button onClick={() => navigate('/money')}>Back to money</Button>}
+          title={tr('Receipt not found', 'Raseed nahi mili')}
+          body={tr(
+            'This receipt no longer exists. It may have been on a gym you have since erased.',
+            'Yeh raseed ab nahi hai. Shayad yeh us gym ki thi jise aapne mita diya.',
+          )}
+          action={<Button onClick={() => navigate('/money')}>{tr('Back to money', 'Hisaab par wapas')}</Button>}
         />
       </Card>
     );
@@ -69,14 +74,14 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
     <div style={{ maxWidth: 720, margin: '0 auto' }}>
       <div className="no-print">
         <PageHeader
-          title={`Receipt ${doc.receiptNo}`}
+          title={tr(`Receipt ${doc.receiptNo}`, `Raseed ${doc.receiptNo}`)}
           subtitle={`${doc.memberName} · ${doc.paidOnLabel}`}
           actions={
             <>
               <Button variant="ghost" onClick={() => window.history.back()}>
-                Back
+                {tr('Back', 'Peeche')}
               </Button>
-              <Button onClick={() => window.print()}>Print</Button>
+              <Button onClick={() => window.print()}>{tr('Print', 'Print karo')}</Button>
             </>
           }
         />

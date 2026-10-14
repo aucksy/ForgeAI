@@ -18,6 +18,7 @@
 import type { DateISO, Membership, Paise, Plan } from '../types';
 import { formatDay } from './dates';
 import { coverageEndsOn, endDateForPlan, nextTermStart } from './membership';
+import { tr } from '../i18n';
 
 export interface SaleDefaults {
   /** First day of the new term. */
@@ -87,28 +88,31 @@ export function validateSale(
   memberships: readonly Membership[],
   today: DateISO,
 ): SaleProblem | null {
-  if (!input.planId) return { field: 'plan', message: 'Choose a plan first.' };
+  if (!input.planId) return { field: 'plan', message: tr('Choose a plan first.', 'Pehle plan chuno.') };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.startsOn)) {
-    return { field: 'startsOn', message: 'Start date must be a real date.' };
+    return { field: 'startsOn', message: tr('Start date must be a real date.', 'Shuru ki tareekh sahi likho.') };
   }
-  if (input.priceP === null) return { field: 'priceP', message: 'Price isn’t a valid amount.' };
+  if (input.priceP === null) return { field: 'priceP', message: tr('Price isn’t a valid amount.', 'Fees sahi rakam nahi hai.') };
   if (input.joiningFeeP === null) {
-    return { field: 'joiningFeeP', message: 'Joining fee isn’t a valid amount.' };
+    return { field: 'joiningFeeP', message: tr('Joining fee isn’t a valid amount.', 'Admission fees sahi rakam nahi hai.') };
   }
   if (input.collectNowP === null) {
-    return { field: 'collectNowP', message: 'Amount received isn’t a valid amount.' };
+    return { field: 'collectNowP', message: tr('Amount received isn’t a valid amount.', 'Kitne mile — yeh sahi rakam nahi hai.') };
   }
 
   const total = input.priceP + input.joiningFeeP;
   if (input.collectNowP > total) {
-    return { field: 'collectNowP', message: 'Amount received is more than the total.' };
+    return { field: 'collectNowP', message: tr('Amount received is more than the total.', 'Kitne mile, woh kul fees se zyada hai.') };
   }
 
   const coversUntil = coverageEndsOn(memberships, today);
   if (coversUntil && input.startsOn <= coversUntil) {
     return {
       field: 'startsOn',
-      message: `They're already covered until ${formatDay(coversUntil)}. Start the new plan after that.`,
+      message: tr(
+        `They're already covered until ${formatDay(coversUntil)}. Start the new plan after that.`,
+        `Inka plan ${formatDay(coversUntil)} tak chalu hai. Naya plan uske baad shuru karo.`,
+      ),
     };
   }
 

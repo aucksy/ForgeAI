@@ -17,6 +17,7 @@ import { useCrm } from '../../store';
 import { formatDay, formatDayShort, isValidDateISO } from '../../logic/dates';
 import {
   AGING_LABEL,
+  agingLabel,
   agingTotals,
   buildLedger,
   collectionSummary,
@@ -61,6 +62,7 @@ import {
   useIsCompact,
 } from '../kit';
 import { Link, navigate } from '../router';
+import { inEnglish, tr } from '../../i18n';
 
 type Tab = 'collections' | 'dues';
 
@@ -87,19 +89,23 @@ export function MoneyScreen({ section }: { section?: string }) {
   return (
     <>
       <PageHeader
-        title="Money"
-        subtitle={tab === 'dues' ? 'Everything still owed to the gym' : 'Every rupee that came in'}
+        title={tr('Money', 'Hisaab')}
+        subtitle={
+          tab === 'dues'
+            ? tr('Everything still owed to the gym', 'Gym ki saari fees baaki')
+            : tr('Every rupee that came in', 'Jo bhi paisa aaya')
+        }
       />
 
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
           variant="tabs"
-          label="Money view"
+          label={tr('Money view', 'Hisaab dekho')}
           value={tab}
           onChange={(v) => navigate(v === 'dues' ? '/money/dues' : '/money')}
           options={[
-            { value: 'collections', label: 'Collections' },
-            { value: 'dues', label: 'Dues' },
+            { value: 'collections', label: tr('Collections', 'Collection') },
+            { value: 'dues', label: tr('Dues', 'Fees baaki') },
           ]}
         />
       </div>
@@ -159,7 +165,8 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
   };
 
   const exportCsv = () => {
-    const contents = csvDocument(
+    // Downloads stay English in every language (an accountant reads them).
+    const contents = inEnglish(() => csvDocument(
       ['Receipt no', 'Date', 'Member', 'Mobile', 'Membership', 'Method', 'Reference', 'Amount (INR)', 'Status'],
       visible.map((r) => [
         r.payment.receiptNo,
@@ -174,9 +181,13 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
         paiseToRupees(r.payment.amountP),
         r.payment.voided ? `Voided: ${r.payment.voidReason ?? 'no reason given'}` : 'Received',
       ]),
-    );
+    ));
     downloadCsv(csvFilename([snapshot.gym.name, 'collections', range.from, range.to]), contents);
-    onToast(`Exported ${visible.length} ${visible.length === 1 ? 'receipt' : 'receipts'}.`);
+    onToast(
+      visible.length === 1
+        ? tr(`Exported ${visible.length} receipt.`, `${visible.length} raseed export hui.`)
+        : tr(`Exported ${visible.length} receipts.`, `${visible.length} raseed export hui.`),
+    );
   };
 
   const filterNote = [
@@ -190,23 +201,23 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
   return (
     <>
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Period</SectionTitle>
+        <SectionTitle>{tr('Period', 'Samay')}</SectionTitle>
         <ChipToggle
-          label="Period"
+          label={tr('Period', 'Samay')}
           value={presetId}
           onChange={(v) => usePreset(v as RangePresetId | 'custom')}
-          options={[...RANGE_PRESETS.map((p) => ({ value: p.id, label: p.label })), { value: 'custom', label: 'Custom' }]}
+          options={[...RANGE_PRESETS.map((p) => ({ value: p.id, label: p.label })), { value: 'custom', label: tr('Custom', 'Apni tareekh') }]}
         />
         {presetId === 'custom' && (
           <Grid min={200}>
             <TextField
-              label="From"
+              label={tr('From', 'Kab se')}
               type="date"
               value={custom.from}
               onChange={(v) => setCustom((c) => ({ ...c, from: v }))}
             />
             <TextField
-              label="To"
+              label={tr('To', 'Kab tak')}
               type="date"
               value={custom.to}
               onChange={(v) => setCustom((c) => ({ ...c, to: v }))}
@@ -217,27 +228,39 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
 
       <Grid min={165}>
         <StatTile
-          label="Collected"
+          label={tr('Collected', 'Collection')}
           value={formatINRShort(summary.netP)}
           tone="good"
-          sub={`${summary.receiptsN} ${summary.receiptsN === 1 ? 'receipt' : 'receipts'}`}
+          sub={
+            summary.receiptsN === 1
+              ? tr(`${summary.receiptsN} receipt`, `${summary.receiptsN} raseed`)
+              : tr(`${summary.receiptsN} receipts`, `${summary.receiptsN} raseed`)
+          }
         />
-        <StatTile label="Average receipt" value={formatINRShort(summary.averageP)} sub="Per payment in this period" />
-        <StatTile label="Largest receipt" value={formatINRShort(summary.largestP)} sub="Single payment in this period" />
         <StatTile
-          label="Voided"
+          label={tr('Average receipt', 'Average raseed')}
+          value={formatINRShort(summary.averageP)}
+          sub={tr('Per payment in this period', 'Is samay mein har payment')}
+        />
+        <StatTile
+          label={tr('Largest receipt', 'Sabse badi raseed')}
+          value={formatINRShort(summary.largestP)}
+          sub={tr('Single payment in this period', 'Is samay ki ek payment')}
+        />
+        <StatTile
+          label={tr('Voided', 'Cancel hui')}
           value={formatINRShort(summary.voidedP)}
           tone={summary.voidedN > 0 ? 'critical' : undefined}
-          sub={`${summary.voidedN} not counted`}
+          sub={tr(`${summary.voidedN} not counted`, `${summary.voidedN} gini nahi gayi`)}
         />
       </Grid>
 
       <div style={{ height: space.lg }} />
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>How it came in</SectionTitle>
+        <SectionTitle>{tr('How it came in', 'Kaise aaya')}</SectionTitle>
         {summary.netP === 0 ? (
-          <EmptyState title="Nothing collected in this period" />
+          <EmptyState title={tr('Nothing collected in this period', 'Is samay koi collection nahi')} />
         ) : (
           <div style={{ display: 'grid', gap: space.sm }}>
             {summary.byMethod
@@ -260,11 +283,11 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
         <SectionTitle
           action={
             <Button variant="ghost" onClick={exportCsv} disabled={visible.length === 0}>
-              Export CSV
+              {tr('Export CSV', 'CSV nikalo')}
             </Button>
           }
         >
-          Receipts
+          {tr('Receipts', 'Raseed')}
         </SectionTitle>
 
         <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: -space.sm, marginBottom: space.md }}>
@@ -277,19 +300,19 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
         <Row gap={space.sm} align="flex-end">
           <div style={{ flex: '2 1 260px', maxWidth: 440, minWidth: 0 }}>
             <TextField
-              label="Search"
+              label={tr('Search', 'Dhoondo')}
               type="search"
               value={query}
               onChange={setQuery}
-              placeholder="Receipt no, name, mobile or reference"
+              placeholder={tr('Receipt no, name, mobile or reference', 'Raseed no, naam, mobile ya reference')}
             />
           </div>
           <div style={{ flex: '1 1 180px', maxWidth: compact ? undefined : 240, minWidth: 0 }}>
             <SelectField
-              label="Method"
+              label={tr('Method', 'Kaise diya')}
               value={method}
               onChange={(v) => setMethod(v as PaymentMethod | 'all')}
-              options={[{ value: 'all', label: 'All methods' }, ...methodOptions()]}
+              options={[{ value: 'all', label: tr('All methods', 'Sab tarike') }, ...methodOptions()]}
             />
           </div>
         </Row>
@@ -311,13 +334,13 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
             checked={includeVoided}
             onChange={(e) => setIncludeVoided(e.target.checked)}
           />
-          Show voided receipts
+          {tr('Show voided receipts', 'Cancel hui raseed dikhao')}
         </label>
 
         {visible.length === 0 ? (
           <EmptyState
-            title="No receipts here"
-            body="Nothing matches this period and these filters."
+            title={tr('No receipts here', 'Yahan koi raseed nahi')}
+            body={tr('Nothing matches this period and these filters.', 'Is samay aur in filters mein kuch nahi mila.')}
           />
         ) : compact ? (
           <div style={{ display: 'grid', gap: space.sm, marginTop: space.md }}>
@@ -330,13 +353,13 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
             <table style={{ marginTop: space.md, minWidth: 780 }}>
               <thead>
                 <tr>
-                  <Th>Date</Th>
-                  <Th>Receipt</Th>
-                  <Th>Member</Th>
-                  <Th>For</Th>
-                  <Th>Method</Th>
-                  <Th align="right">Amount</Th>
-                  <Th align="right">Actions</Th>
+                  <Th>{tr('Date', 'Tareekh')}</Th>
+                  <Th>{tr('Receipt', 'Raseed')}</Th>
+                  <Th>{tr('Member', 'Member')}</Th>
+                  <Th>{tr('For', 'Kiske liye')}</Th>
+                  <Th>{tr('Method', 'Kaise diya')}</Th>
+                  <Th align="right">{tr('Amount', 'Rakam')}</Th>
+                  <Th align="right">{tr('Actions', 'Kaam')}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -354,7 +377,14 @@ function Collections({ onToast }: { onToast: (msg: string) => void }) {
           payment={voiding}
           onClose={() => setVoiding(null)}
           onVoided={(restored) =>
-            onToast(restored ? 'Receipt voided. The amount is back on their dues.' : 'Receipt voided.')
+            onToast(
+              restored
+                ? tr(
+                    'Receipt voided. The amount is back on their dues.',
+                    'Raseed cancel ho gayi. Rakam wapas fees baaki mein jud gayi.',
+                  )
+                : tr('Receipt voided.', 'Raseed cancel ho gayi.'),
+            )
           }
         />
       )}
@@ -418,7 +448,7 @@ function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid: () => void })
             <span style={{ color: color.ink }}>{member.fullName}</span>
           </Link>
         ) : (
-          <span style={{ color: color.inkMuted }}>Unknown member</span>
+          <span style={{ color: color.inkMuted }}>{tr('Unknown member', 'Anjaan member')}</span>
         )}
       </Td>
       <Td>{membership?.planName ?? '—'}</Td>
@@ -441,13 +471,13 @@ function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid: () => void })
         {payment.voided && (
           // Never colour alone: struck-through text reads as a normal amount to a
           // screen reader, and as a normal amount on a mono printer.
-          <div style={{ fontSize: 11, color: color.criticalText, fontFamily: font.body }}>VOIDED</div>
+          <div style={{ fontSize: 11, color: color.criticalText, fontFamily: font.body }}>{tr('VOIDED', 'CANCEL')}</div>
         )}
       </Td>
       <Td align="right">
         {!payment.voided && (
           <Button variant="quiet" tone="danger" onClick={onVoid}>
-            Void
+            {tr('Void', 'Raseed cancel karo')}
           </Button>
         )}
       </Td>
@@ -478,7 +508,7 @@ function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid: () => void }) {
               </span>
             </Link>
           ) : (
-            <span style={{ ...tapTarget, fontSize: 14, color: color.inkMuted }}>Unknown member</span>
+            <span style={{ ...tapTarget, fontSize: 14, color: color.inkMuted }}>{tr('Unknown member', 'Anjaan member')}</span>
           )}
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>
             {formatDay(payment.paidOn)} · {methodLabel(payment.method)}
@@ -500,17 +530,17 @@ function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid: () => void }) {
       </Row>
 
       <Row gap={space.sm} wrap={false}>
-        <Link to={`/receipts/${payment.id}`} title="Open printable receipt">
+        <Link to={`/receipts/${payment.id}`} title={tr('Open printable receipt', 'Print wali raseed kholo')}>
           <span style={{ ...tapTarget, fontFamily: font.mono, fontSize: 12, color: color.accentBright }}>
             {payment.receiptNo}
           </span>
         </Link>
         <span style={{ flex: 1 }} />
         {payment.voided ? (
-          <span style={{ ...tapTarget, fontSize: 11, color: color.criticalText }}>VOIDED</span>
+          <span style={{ ...tapTarget, fontSize: 11, color: color.criticalText }}>{tr('VOIDED', 'CANCEL')}</span>
         ) : (
           <Button variant="quiet" tone="danger" onClick={onVoid}>
-            Void
+            {tr('Void', 'Raseed cancel karo')}
           </Button>
         )}
       </Row>
@@ -568,7 +598,8 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
     // Exports what is on screen, matching the Collections tab. Exporting all 42
     // dues from a list filtered to 5 is a file that quietly disagrees with the
     // screen it came from.
-    const contents = csvDocument(
+    // Downloads stay English in every language (an accountant reads them).
+    const contents = inEnglish(() => csvDocument(
       ['Member', 'Mobile', 'Membership', 'Started', 'Days outstanding', 'Age', 'Amount due (INR)', 'Archived'],
       shownRows.map((r) => [
         r.member.fullName,
@@ -580,15 +611,24 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
         paiseToRupees(r.unpaidP),
         r.member.archived ? 'Yes' : 'No',
       ]),
-    );
+    ));
     downloadCsv(csvFilename([snapshot.gym.name, 'dues', today]), contents);
-    onToast(`Exported ${shownRows.length} ${shownRows.length === 1 ? 'due' : 'dues'}.`);
+    onToast(
+      shownRows.length === 1
+        ? tr(`Exported ${shownRows.length} due.`, `${shownRows.length} baaki fees export hui.`)
+        : tr(`Exported ${shownRows.length} dues.`, `${shownRows.length} baaki fees export hui.`),
+    );
   };
 
   const openCollect = (memberId: string) => {
     const view = viewFor(memberId);
     if (!view) {
-      setError('That member could not be opened. Try reloading the page.');
+      setError(
+        tr(
+          'That member could not be opened. Try reloading the page.',
+          'Yeh member khul nahi paaya. Page dobara load karo.',
+        ),
+      );
       return;
     }
     setError(null);
@@ -599,9 +639,9 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
     return (
       <Card>
         <EmptyState
-          title="Nobody owes anything"
-          body="Every membership on the roster is fully paid."
-          action={<Button onClick={() => navigate('/members')}>Open roster</Button>}
+          title={tr('Nobody owes anything', 'Kisi ki fees baaki nahi')}
+          body={tr('Every membership on the roster is fully paid.', 'Sabhi members ne poori fees di hai.')}
+          action={<Button onClick={() => navigate('/members')}>{tr('Open roster', 'Members dekho')}</Button>}
         />
       </Card>
     );
@@ -613,22 +653,31 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
 
       <Grid min={165}>
         <StatTile
-          label="Total owed"
+          label={tr('Total owed', 'Kul fees baaki')}
           value={formatINRShort(owedP)}
           tone="warn"
           sub={
             people.length === allPeople.length
-              ? `${allPeople.length} ${allPeople.length === 1 ? 'member' : 'members'}`
-              : `${people.length} of ${allPeople.length} members shown`
+              ? allPeople.length === 1
+                ? tr(`${allPeople.length} member`, `${allPeople.length} member`)
+                : tr(`${allPeople.length} members`, `${allPeople.length} members`)
+              : tr(
+                  `${people.length} of ${allPeople.length} members shown`,
+                  `${allPeople.length} mein se ${people.length} members dikh rahe`,
+                )
           }
         />
         {totals.map((t) => (
           <StatTile
             key={t.bucket}
-            label={AGING_LABEL[t.bucket]}
+            label={agingLabel(t.bucket)}
             value={formatINRShort(t.amountP)}
             tone={t.amountP > 0 ? tileTone(t.bucket) : undefined}
-            sub={`${t.countN} ${t.countN === 1 ? 'membership' : 'memberships'}`}
+            sub={
+              t.countN === 1
+                ? tr(`${t.countN} membership`, `${t.countN} plan`)
+                : tr(`${t.countN} memberships`, `${t.countN} plan`)
+            }
           />
         ))}
       </Grid>
@@ -639,25 +688,25 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
         <SectionTitle
           action={
             <Button variant="ghost" onClick={exportCsv}>
-              Export CSV
+              {tr('Export CSV', 'CSV nikalo')}
             </Button>
           }
         >
-          Who owes
+          {tr('Who owes', 'Kiski fees baaki')}
         </SectionTitle>
 
         <ChipToggle
-          label="Filter by how old the debt is"
+          label={tr('Filter by how old the debt is', 'Kitni purani baaki hai')}
           value={bucket}
           onChange={(v) => setBucket(v as AgingBucket | 'all')}
           options={[
-            { value: 'all', label: 'All', count: totals.reduce((n, t) => n + t.countN, 0) },
-            ...totals.map((t) => ({ value: t.bucket, label: AGING_LABEL[t.bucket], count: t.countN })),
+            { value: 'all', label: tr('All', 'Sab'), count: totals.reduce((n, t) => n + t.countN, 0) },
+            ...totals.map((t) => ({ value: t.bucket, label: agingLabel(t.bucket), count: t.countN })),
           ]}
         />
 
         {people.length === 0 ? (
-          <EmptyState title="Nothing in this age group" />
+          <EmptyState title={tr('Nothing in this age group', 'Is group mein koi nahi')} />
         ) : compact ? (
           <div style={{ display: 'grid', gap: space.sm, marginTop: space.md }}>
             {people.map((p) => (
@@ -678,12 +727,13 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
                       </span>
                     </Link>
                     <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>
-                      {p.terms.length} {p.terms.length === 1 ? 'membership' : 'memberships'} ·{' '}
+                      {p.terms.length}{' '}
+                      {p.terms.length === 1 ? tr('membership', 'plan') : tr('memberships', 'plan')} ·{' '}
                       {ageLabel(p.oldestAgeDays)}
                     </div>
                     <Row gap={space.xs}>
-                      <Pill tone={BUCKET_TONE[p.bucket]}>{AGING_LABEL[p.bucket]}</Pill>
-                      {p.member.archived && <Pill tone="muted">Archived</Pill>}
+                      <Pill tone={BUCKET_TONE[p.bucket]}>{agingLabel(p.bucket)}</Pill>
+                      {p.member.archived && <Pill tone="muted">{tr('Archived', 'Archive kiye')}</Pill>}
                     </Row>
                   </div>
                   <div style={{ textAlign: 'right' }}>
@@ -691,7 +741,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
                       {formatINR(p.totalP)}
                     </div>
                     <Button variant="quiet" onClick={() => openCollect(p.member.id)}>
-                      Collect
+                      {tr('Collect', 'Fees lo')}
                     </Button>
                   </div>
                 </Row>
@@ -703,12 +753,12 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
             <table style={{ marginTop: space.md, minWidth: 720 }}>
               <thead>
                 <tr>
-                  <Th>Member</Th>
-                  <Th>Mobile</Th>
-                  <Th>Oldest debt</Th>
-                  <Th>Age</Th>
-                  <Th align="right">Owed</Th>
-                  <Th align="right">Actions</Th>
+                  <Th>{tr('Member', 'Member')}</Th>
+                  <Th>{tr('Mobile', 'Mobile')}</Th>
+                  <Th>{tr('Oldest debt', 'Sabse purani baaki')}</Th>
+                  <Th>{tr('Age', 'Kitne din')}</Th>
+                  <Th align="right">{tr('Owed', 'Baaki')}</Th>
+                  <Th align="right">{tr('Actions', 'Kaam')}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -720,21 +770,21 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
                       </Link>
                       {p.member.archived && (
                         <span style={{ marginLeft: space.sm }}>
-                          <Pill tone="muted">Archived</Pill>
+                          <Pill tone="muted">{tr('Archived', 'Archive kiye')}</Pill>
                         </span>
                       )}
                     </Td>
                     <Td mono>{formatPhone(p.member.phone)}</Td>
                     <Td>{ageLabel(p.oldestAgeDays)}</Td>
                     <Td>
-                      <Pill tone={BUCKET_TONE[p.bucket]}>{AGING_LABEL[p.bucket]}</Pill>
+                      <Pill tone={BUCKET_TONE[p.bucket]}>{agingLabel(p.bucket)}</Pill>
                     </Td>
                     <Td align="right" mono>
                       <span style={{ color: color.warning, fontWeight: 700 }}>{formatINR(p.totalP)}</span>
                     </Td>
                     <Td align="right">
                       <Button variant="quiet" onClick={() => openCollect(p.member.id)}>
-                        Collect
+                        {tr('Collect', 'Fees lo')}
                       </Button>
                     </Td>
                   </tr>
@@ -749,7 +799,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
         <CollectPaymentSheet
           view={collecting}
           onClose={() => setCollecting(null)}
-          onCollected={() => onToast('Payment recorded.')}
+          onCollected={() => onToast(tr('Payment recorded.', 'Fees le li gayi.'))}
         />
       )}
     </>
@@ -769,9 +819,9 @@ const tapTarget: React.CSSProperties = {
 
 /** How long the money has been owed, in the plainest words available. */
 function ageLabel(ageDays: number): string {
-  if (ageDays < 0) return 'Not started yet';
-  if (ageDays === 0) return 'Due today';
-  return `${ageDays} ${ageDays === 1 ? 'day' : 'days'}`;
+  if (ageDays < 0) return tr('Not started yet', 'Abhi shuru nahi hua');
+  if (ageDays === 0) return tr('Due today', 'Aaj due');
+  return ageDays === 1 ? tr(`${ageDays} day`, `${ageDays} din`) : tr(`${ageDays} days`, `${ageDays} din`);
 }
 
 // ---------------------------------------------------------------- table bits

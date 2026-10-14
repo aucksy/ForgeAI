@@ -16,9 +16,11 @@
 import { useState } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
+import { LangToggle } from './LangToggle';
 import { SignInForm, StartGymForm } from '../auth/SignInForms';
 import { useShop } from '../shop/ShopProvider';
 import { useCrm } from '../store';
+import { tr } from '../i18n';
 import { Button, Card, ErrorBanner, color, font, radius, space } from './kit';
 
 export function Welcome() {
@@ -37,7 +39,7 @@ export function Welcome() {
       await fn();
     } catch (e) {
       if (which === 'demo') setDemoFailed(true);
-      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+      setError(e instanceof Error ? e.message : tr('Something went wrong. Please try again.', 'Kuch gadbad hui. Phir se try karo.'));
       setBusy(null);
     }
   };
@@ -53,6 +55,9 @@ export function Welcome() {
       }}
     >
       <div style={{ width: '100%', maxWidth: 460 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: space.lg }}>
+          <LangToggle />
+        </div>
         <div style={{ textAlign: 'center', marginBottom: space.xxl }}>
           <div
             style={{
@@ -66,8 +71,10 @@ export function Welcome() {
             FORGE<span style={{ color: color.accent }}>AI</span>
           </div>
           <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 15, color: color.inkSecondary }}>
-            Run your gym: members, renewals, dues, attendance — and a shop your members order from in the
-            ForgeAI app.
+            {tr(
+              'Run your gym: members, renewals, dues, attendance — and a shop your members order from in the ForgeAI app.',
+              'Apna gym chalao: members, renew, fees baaki, hazri — aur ek shop jahan se members ForgeAI app mein order karte hain.',
+            )}
           </p>
         </div>
 
@@ -90,10 +97,13 @@ export function Welcome() {
 
         <Card>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            Sign in
+            {tr('Sign in', 'Sign in')}
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Your gym already uses ForgeAI? Sign in with your mobile number and the code from your gym owner.
+            {tr(
+              'Your gym already uses ForgeAI? Sign in with your mobile number and the code from your gym owner.',
+              'Aapka gym pehle se ForgeAI par hai? Apne Mobile number aur gym owner ke diye Code se sign in karein.',
+            )}
           </p>
           <SignInForm />
         </Card>
@@ -108,21 +118,26 @@ export function Welcome() {
           }}
         >
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            New here? Set up your gym
+            {tr('New here? Set up your gym', 'Naye hain? Apna gym banao')}
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Starts empty. You add your members and your prices — nothing is made up for you.
+            {tr(
+              'Starts empty. You add your members and your prices — nothing is made up for you.',
+              'Khaali shuru hota hai. Aap apne members aur daam khud daalte hain — kuch bhi apne aap nahi banta.',
+            )}
           </p>
           <StartGymForm />
         </div>
 
         <Card style={{ marginTop: space.lg }}>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            See it working
+            {tr('See it working', 'Chalta hua dekho')}
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Opens a sample gym with made-up members, payments and a shop. You get a real join code, so a
-            phone with the ForgeAI app can join and order — and you see the order here.
+            {tr(
+              'Opens a sample gym with made-up members, payments and a shop. You get a real join code, so a phone with the ForgeAI app can join and order — and you see the order here.',
+              'Ek Demo gym khulega — nakli members, payments aur ek shop ke saath. Aapko asli join Code milega, toh ForgeAI app wala phone join karke order kar sakta hai — aur order aapko yahan dikhega.',
+            )}
           </p>
 
           {error && (
@@ -133,14 +148,18 @@ export function Welcome() {
 
           <div style={{ marginTop: space.lg }}>
             <Button full disabled={busy !== null} onClick={() => run('demo', startDemo)}>
-              {busy === 'demo' ? 'Starting your demo gym…' : demoFailed ? 'Try again' : 'Start demo'}
+              {busy === 'demo'
+                ? tr('Starting your demo gym…', 'Demo gym shuru ho raha hai…')
+                : demoFailed
+                  ? tr('Try again', 'Phir se try karo')
+                  : tr('Start demo', 'Demo shuru karo')}
             </Button>
           </div>
 
           {demoFailed && (
             <div style={{ marginTop: space.sm, textAlign: 'center' }}>
               <Button variant="quiet" disabled={busy !== null} onClick={() => run('local', loadDemoGym)}>
-                Open the demo without the shop (works offline)
+                {tr('Open the demo without the shop (works offline)', 'Shop ke bina demo kholo (bina internet chalega)')}
               </Button>
             </div>
           )}

@@ -11,6 +11,7 @@
  * has to learn about pagination or query state to switch backends.
  */
 
+import { tr } from '../i18n';
 import type {
   DateISO,
   Member,
@@ -88,14 +89,14 @@ export interface RecordPaymentInput {
 /** Named errors the UI can react to rather than showing a raw message. */
 export class DuplicatePhoneError extends Error {
   constructor(public readonly existing: Member) {
-    super('A member with this mobile number already exists.');
+    super(tr('A member with this mobile number already exists.', 'Is mobile number ka member pehle se hai.'));
     this.name = 'DuplicatePhoneError';
   }
 }
 
 export class NotFoundError extends Error {
   constructor(what: string) {
-    super(`${what} no longer exists.`);
+    super(tr(`${what} no longer exists.`, `${what} ab nahi hai.`));
     this.name = 'NotFoundError';
   }
 }
@@ -112,7 +113,7 @@ export class NotFoundError extends Error {
  */
 export class InvalidDateError extends Error {
   constructor(what: string) {
-    super(`${what} is not a valid date.`);
+    super(tr(`${what} is not a valid date.`, `${what} sahi tareekh nahi hai.`));
     this.name = 'InvalidDateError';
   }
 }
@@ -128,7 +129,7 @@ export class InvalidDateError extends Error {
  */
 export class FutureVisitError extends Error {
   constructor() {
-    super('You can’t record a visit for a day that hasn’t happened yet.');
+    super(tr('You can’t record a visit for a day that hasn’t happened yet.', 'Jo din abhi aaya nahi, uski hazri nahi lag sakti.'));
     this.name = 'FutureVisitError';
   }
 }
@@ -145,7 +146,10 @@ export const LATEST_DATE: DateISO = '2100-12-31';
 export class StorageFullError extends Error {
   constructor() {
     super(
-      'This browser can’t save any more data. Nothing was saved — free up space or switch to the cloud.',
+      tr(
+        'This browser can’t save any more data. Nothing was saved — free up space or switch to the cloud.',
+        'Is browser mein aur data save nahi ho sakta. Kuch save nahi hua — jagah khaali karo ya Online chalo.',
+      ),
     );
     this.name = 'StorageFullError';
   }
@@ -163,8 +167,12 @@ export class FutureSchemaError extends Error {
     public readonly supported: number,
   ) {
     super(
-      `This gym's data was saved by a newer version of ForgeAI (v${found}; this app reads v${supported}). ` +
-        'Reload to get the latest version — your data is untouched.',
+      tr(
+        `This gym's data was saved by a newer version of ForgeAI (v${found}; this app reads v${supported}). ` +
+          'Reload to get the latest version — your data is untouched.',
+        `Is gym ka data ForgeAI ke naye version se save hua hai (v${found}; yeh App v${supported} padhta hai). ` +
+          'Naya version lene ke liye page reload karo — aapka data safe hai.',
+      ),
     );
     this.name = 'FutureSchemaError';
   }

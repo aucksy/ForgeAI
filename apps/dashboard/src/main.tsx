@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { CrmApp } from './crm/CrmApp';
+import { listenForInstall } from './crm/install';
 import './index.css';
 
 /**
@@ -10,6 +11,9 @@ import './index.css';
  * when the cloud adapter lands in P7 — it is the only code that knows how to read
  * `member_summary`, which is what the phone pushes.
  */
+// Chrome's install offer can arrive before React draws anything: catch it first.
+listenForInstall();
+
 const root = document.getElementById('root');
 if (root) {
   createRoot(root).render(

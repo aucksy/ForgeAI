@@ -7,6 +7,7 @@
  * the number they actually care about.
  */
 
+import { tr } from '../i18n';
 import type { PaymentMethod } from '../types';
 
 /** Every method, in the order they appear in forms and reports. */
@@ -18,13 +19,14 @@ export const PAYMENT_METHODS: readonly PaymentMethod[] = [
   'other',
 ] as const;
 
-const METHOD_LABEL: Record<PaymentMethod, string> = {
+// Read each time it is shown, so it follows the English | Hinglish switch.
+const METHOD_LABEL = (): Record<PaymentMethod, string> => ({
   cash: 'Cash',
   upi: 'UPI',
   card: 'Card',
-  bank: 'Bank transfer',
-  other: 'Other',
-};
+  bank: tr('Bank transfer', 'Bank transfer'),
+  other: tr('Other', 'Kuch aur'),
+});
 
 /**
  * Human label for a method. Falls back to the raw value rather than an empty
@@ -32,7 +34,7 @@ const METHOD_LABEL: Record<PaymentMethod, string> = {
  * be readable in the ledger, not blank.
  */
 export function methodLabel(method: PaymentMethod): string {
-  return METHOD_LABEL[method] ?? String(method);
+  return METHOD_LABEL()[method] ?? String(method);
 }
 
 /** Options for a `<select>`, in report order. */

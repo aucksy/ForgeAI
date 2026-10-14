@@ -13,3 +13,7 @@
 # Built files carry their content hash in the name: keep them for a year.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# The service worker is always re-checked, so a change to it reaches every installed panel.
+/sw.js
+  Cache-Control: no-cache

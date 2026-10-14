@@ -21,6 +21,7 @@ import { isChased, unpaidForMembership } from './membership';
 import { phoneDigits } from './members';
 import { sumPaise, type Paise } from './money';
 import { PAYMENT_METHODS } from './payments';
+import { tr } from '../i18n';
 
 // ---------------------------------------------------------------- ranges
 
@@ -47,12 +48,13 @@ export function inRange(day: DateISO, range: DateRange): boolean {
 
 export type RangePresetId = 'today' | 'last7' | 'thisMonth' | 'lastMonth' | 'thisFy';
 
-export const RANGE_PRESETS: readonly { id: RangePresetId; label: string }[] = [
-  { id: 'today', label: 'Today' },
-  { id: 'last7', label: 'Last 7 days' },
-  { id: 'thisMonth', label: 'This month' },
-  { id: 'lastMonth', label: 'Last month' },
-  { id: 'thisFy', label: 'This financial year' },
+// Labels are getters so they are read in the panel's language at the moment they are drawn.
+export const RANGE_PRESETS: readonly { id: RangePresetId; readonly label: string }[] = [
+  { id: 'today', get label() { return tr('Today', 'Aaj'); } },
+  { id: 'last7', get label() { return tr('Last 7 days', 'Pichhle 7 din'); } },
+  { id: 'thisMonth', get label() { return tr('This month', 'Is mahine'); } },
+  { id: 'lastMonth', get label() { return tr('Last month', 'Pichhle mahine'); } },
+  { id: 'thisFy', get label() { return tr('This financial year', 'Is financial year'); } },
 ] as const;
 
 /**
@@ -251,6 +253,23 @@ export const AGING_LABEL: Record<AgingBucket, string> = {
   d31_60: '31–60 days',
   d60plus: 'Over 60 days',
 };
+
+/**
+ * The bucket's name on SCREEN, in the panel's language. `AGING_LABEL` stays English
+ * because the dues CSV export writes it, and exports stay English.
+ */
+export function agingLabel(bucket: AgingBucket): string {
+  switch (bucket) {
+    case 'upcoming':
+      return tr(AGING_LABEL.upcoming, 'Abhi shuru nahi hua');
+    case 'd0_30':
+      return tr(AGING_LABEL.d0_30, '30 din tak');
+    case 'd31_60':
+      return tr(AGING_LABEL.d31_60, '31–60 din');
+    case 'd60plus':
+      return tr(AGING_LABEL.d60plus, '60 din se zyada');
+  }
+}
 
 /** Most urgent first — the order the report and the call list are built in. */
 export const AGING_ORDER: readonly AgingBucket[] = ['d60plus', 'd31_60', 'd0_30', 'upcoming'] as const;

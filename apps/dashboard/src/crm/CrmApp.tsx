@@ -12,6 +12,7 @@ import { useMemo, useRef } from 'react';
 
 import { cloudApi } from './auth/api';
 import { AuthProvider, useAuth } from './auth/AuthProvider';
+import { LangProvider, useLang, tr } from './i18n';
 import { PeopleScreen } from './auth/PeopleScreen';
 import { CloudCrmData } from './data/cloud';
 
@@ -37,9 +38,11 @@ import { useRoute } from './ui/router';
 
 export function CrmApp() {
   return (
-    <AuthProvider>
-      <SessionRoot />
-    </AuthProvider>
+    <LangProvider>
+      <AuthProvider>
+        <SessionRoot />
+      </AuthProvider>
+    </LangProvider>
   );
 }
 
@@ -49,6 +52,8 @@ export function CrmApp() {
  */
 function SessionRoot() {
   const { session, lost } = useAuth();
+  // The language keys the screens only: a switch redraws every word without reloading the gym.
+  const { lang } = useLang();
   const lostRef = useRef(lost);
   lostRef.current = lost;
   const onlineKey = session?.online ? session.ownerKey : null;
@@ -59,7 +64,7 @@ function SessionRoot() {
   return (
     <CrmProvider key={`${session?.ownerKey ?? 'none'}:${onlineKey ? 'online' : 'browser'}`} data={data}>
       <ShopProvider>
-        <Routes online={onlineKey !== null} />
+        <Routes key={lang} online={onlineKey !== null} />
       </ShopProvider>
     </CrmProvider>
   );
@@ -96,20 +101,20 @@ function Routes({ online }: { online: boolean }) {
     // Counted in PEOPLE like the two badges beside it, and like the list it opens.
     const atRisk = atRiskList(snapshot.members, snapshot.memberships, snapshot.visits, today).length;
     return [
-      { path: '/', label: 'Today', icon: 'today' },
-      { path: '/members', label: 'Members', icon: 'members', badge: needsAttention },
+      { path: '/', label: tr('Today', 'Aaj'), icon: 'today' },
+      { path: '/members', label: tr('Members', 'Members'), icon: 'members', badge: needsAttention },
       // Badged with orders waiting at the desk — the one number on this bar that
       // changes by itself while the owner watches.
-      { path: '/shop', label: 'Shop', icon: 'shop', badge: newCount },
+      { path: '/shop', label: tr('Shop', 'Shop'), icon: 'shop', badge: newCount },
       // "Visits" rather than "Attendance": six items across a 375px phone leave
       // about 54px of text, and the longer word does not fit. The screen itself is
       // still titled Attendance, which is the word an owner comparing products
       // looks for — a short tab label under a fuller page title is the ordinary
       // pattern on both mobile platforms.
-      { path: '/attendance', label: 'Visits', icon: 'visits', badge: atRisk },
-      { path: '/money', label: 'Money', icon: 'money', badge: overdue },
-      { path: '/plans', label: 'Plans', icon: 'plans' },
-      { path: '/settings', label: 'Settings', icon: 'settings' },
+      { path: '/attendance', label: tr('Visits', 'Hazri'), icon: 'visits', badge: atRisk },
+      { path: '/money', label: tr('Money', 'Hisaab'), icon: 'money', badge: overdue },
+      { path: '/plans', label: tr('Plans', 'Plan'), icon: 'plans' },
+      { path: '/settings', label: tr('Settings', 'Settings'), icon: 'settings' },
     ];
   }, [memberViews, snapshot, today, newCount]);
 

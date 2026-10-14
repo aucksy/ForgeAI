@@ -9,6 +9,7 @@
  */
 
 import { formatINR, parseRupeeInput, type Paise } from '../logic/money';
+import { tr } from '../i18n';
 
 // ---------------------------------------------------------------- shapes
 
@@ -176,7 +177,7 @@ export function orderFromRow(r: Row): Order {
   return {
     orderId: str(r.order_id),
     orderNo: num(r.order_no),
-    memberName: str(r.member_name) || 'A member',
+    memberName: str(r.member_name) || tr('A member', 'Ek member'),
     lines: lines.map((l) => ({
       productId: str(l.productId),
       optionId: typeof l.optionId === 'string' ? l.optionId : null,
@@ -206,20 +207,37 @@ export function appMemberFromRow(r: Row): AppMember {
 
 // ---------------------------------------------------------------- orders
 
+/** Getters, so each read is in the panel's language at that moment. */
 export const STATUS_LABEL: Record<OrderStatus, string> = {
-  ordered: 'New',
-  ready: 'Ready',
-  collected: 'Collected',
-  cancelled: 'Cancelled',
+  get ordered() {
+    return tr('New', 'Naya');
+  },
+  get ready() {
+    return tr('Ready', 'Taiyaar');
+  },
+  get collected() {
+    return tr('Collected', 'Le gaye');
+  },
+  get cancelled() {
+    return tr('Cancelled', 'Cancel hua');
+  },
 };
 
 export type OrderAction = 'ready' | 'collected' | 'back' | 'cancel';
 
 export const ACTION_LABEL: Record<OrderAction, string> = {
-  ready: 'Mark ready',
-  collected: 'Collected (paid)',
-  back: 'Back to new',
-  cancel: 'Cancel order',
+  get ready() {
+    return tr('Mark ready', 'Taiyaar karo');
+  },
+  get collected() {
+    return tr('Collected (paid)', 'Le gaye (paid)');
+  },
+  get back() {
+    return tr('Back to new', 'Wapas Naya karo');
+  },
+  get cancel() {
+    return tr('Cancel order', 'Order cancel karo');
+  },
 };
 
 /** The status each button moves the order to — the server's allowed steps. */
@@ -284,13 +302,16 @@ export function arrivalMessage(arrivals: readonly Order[]): string | null {
   if (arrivals.length === 0) return null;
   if (arrivals.length === 1) {
     const o = arrivals[0];
-    return `New order from ${firstName(o.memberName)} — ${formatINR(o.totalP)}`;
+    return tr(
+      `New order from ${firstName(o.memberName)} — ${formatINR(o.totalP)}`,
+      `${firstName(o.memberName)} ka naya order — ${formatINR(o.totalP)}`,
+    );
   }
-  return `${arrivals.length} new orders`;
+  return tr(`${arrivals.length} new orders`, `${arrivals.length} naye orders`);
 }
 
 function firstName(name: string): string {
-  return name.trim().split(/\s+/)[0] || 'a member';
+  return name.trim().split(/\s+/)[0] || tr('a member', 'ek member');
 }
 
 export function lineText(l: OrderLine): string {
@@ -303,14 +324,14 @@ export function lineText(l: OrderLine): string {
 export function timeAgo(then: number, now: number): string {
   if (!then) return '';
   const s = Math.max(0, Math.round((now - then) / 1000));
-  if (s < 45) return 'just now';
+  if (s < 45) return tr('just now', 'abhi');
   const m = Math.round(s / 60);
-  if (m < 60) return `${m} min ago`;
+  if (m < 60) return tr(`${m} min ago`, `${m} min pehle`);
   const h = Math.round(m / 60);
-  if (h < 24 && isSameLocalDay(then, now)) return h === 1 ? '1 hour ago' : `${h} hours ago`;
+  if (h < 24 && isSameLocalDay(then, now)) return h === 1 ? tr('1 hour ago', '1 ghanta pehle') : tr(`${h} hours ago`, `${h} ghante pehle`);
   const d = Math.max(1, Math.round((startOfDay(now) - startOfDay(then)) / 86_400_000));
-  if (d === 1) return 'yesterday';
-  if (d < 30) return `${d} days ago`;
+  if (d === 1) return tr('yesterday', 'beete kal');
+  if (d < 30) return tr(`${d} days ago`, `${d} din pehle`);
   return new Date(then).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
@@ -334,11 +355,11 @@ export const MAX_OPTIONS = 12;
 
 /** A typed rupee price -> paise, or a plain-English reason it is not allowed. */
 export function parsePrice(text: string): { ok: true; paise: Paise } | { ok: false; error: string } {
-  if (text.trim() === '') return { ok: false, error: 'Enter a price.' };
+  if (text.trim() === '') return { ok: false, error: tr('Enter a price.', 'Price daalo.') };
   const p = parseRupeeInput(text);
-  if (p === null) return { ok: false, error: 'Type the price in rupees, like 2499.' };
-  if (p < MIN_PRICE_P) return { ok: false, error: 'The price must be at least ₹1.' };
-  if (p > MAX_PRICE_P) return { ok: false, error: 'The price can be at most ₹1,00,000.' };
+  if (p === null) return { ok: false, error: tr('Type the price in rupees, like 2499.', 'Price rupees mein likho, jaise 2499.') };
+  if (p < MIN_PRICE_P) return { ok: false, error: tr('The price must be at least ₹1.', 'Price kam se kam ₹1 hona chahiye.') };
+  if (p > MAX_PRICE_P) return { ok: false, error: tr('The price can be at most ₹1,00,000.', 'Price zyada se zyada ₹1,00,000 ho sakta hai.') };
   return { ok: true, paise: p };
 }
 
@@ -361,9 +382,9 @@ export function optionStockSum(options: readonly Pick<ProductOption, 'stock'>[])
 export type StockTone = 'out' | 'low' | 'ok';
 
 export function stockLabel(stock: number): { text: string; tone: StockTone } {
-  if (stock <= 0) return { text: 'Out of stock', tone: 'out' };
-  if (stock <= 3) return { text: `Low: ${stock} left`, tone: 'low' };
-  return { text: `${stock} in stock`, tone: 'ok' };
+  if (stock <= 0) return { text: tr('Out of stock', 'Stock khatam'), tone: 'out' };
+  if (stock <= 3) return { text: tr(`Low: ${stock} left`, `Kam: ${stock} bache`), tone: 'low' };
+  return { text: tr(`${stock} in stock`, `${stock} stock mein`), tone: 'ok' };
 }
 
 /** "₹2,499" or "From ₹1,799" when an option has its own, lower price. */
@@ -371,7 +392,7 @@ export function priceText(p: Pick<Product, 'priceP' | 'options'>): string {
   const own = p.options.map((o) => o.priceP).filter((x): x is number => typeof x === 'number' && x > 0);
   const lowest = Math.min(p.priceP, ...own);
   const varies = own.some((x) => x !== p.priceP);
-  return varies ? `From ${formatINR(lowest)}` : formatINR(p.priceP);
+  return varies ? tr(`From ${formatINR(lowest)}`, `${formatINR(lowest)} se shuru`) : formatINR(p.priceP);
 }
 
 /** A stable id for a new option, from its label ("Cookies & Cream" -> "cookies-cream-x7k"). */
@@ -501,8 +522,8 @@ export function validateDraft(
 ): { ok: true; payload: SavePayload } | { ok: false; errors: DraftErrors } {
   const errors: DraftErrors = {};
   const name = d.name.trim();
-  if (name.length === 0) errors.name = 'Give the product a name.';
-  else if (name.length > 80) errors.name = 'Keep the name under 80 letters.';
+  if (name.length === 0) errors.name = tr('Give the product a name.', 'Product ka naam likho.');
+  else if (name.length > 80) errors.name = tr('Keep the name under 80 letters.', 'Naam 80 letters se chhota rakho.');
 
   const price = parsePrice(d.price);
   if (!price.ok) errors.price = price.error;
@@ -513,10 +534,10 @@ export function validateDraft(
 
   if (d.useOptions) {
     optionName = d.optionName.trim() || null;
-    if (!optionName) errors.optionName = 'Say what the choice is, like Flavour or Size.';
-    else if (optionName.length > 30) errors.optionName = 'Keep this under 30 letters.';
-    if (d.options.length === 0) errors.options = 'Add at least one choice, or turn choices off.';
-    if (d.options.length > MAX_OPTIONS) errors.options = `At most ${MAX_OPTIONS} choices.`;
+    if (!optionName) errors.optionName = tr('Say what the choice is, like Flavour or Size.', 'Choice kya hai likho, jaise Flavour ya Size.');
+    else if (optionName.length > 30) errors.optionName = tr('Keep this under 30 letters.', 'Ise 30 letters se chhota rakho.');
+    if (d.options.length === 0) errors.options = tr('Add at least one choice, or turn choices off.', 'Kam se kam ek choice jodo, ya choices band karo.');
+    if (d.options.length > MAX_OPTIONS) errors.options = tr(`At most ${MAX_OPTIONS} choices.`, `Zyada se zyada ${MAX_OPTIONS} choices.`);
 
     const rowErrors: Record<number, string> = {};
     const taken = new Set(d.options.map((o) => o.id).filter((x): x is string => Boolean(x)));
@@ -524,9 +545,9 @@ export function validateDraft(
     d.options.forEach((o, i) => {
       const label = o.label.trim();
       const s = parseStock(o.stock);
-      if (!label) rowErrors[i] = 'Give this choice a name.';
-      else if (labels.has(label.toLowerCase())) rowErrors[i] = 'Two choices have the same name.';
-      else if (s === null) rowErrors[i] = 'Stock must be a whole number.';
+      if (!label) rowErrors[i] = tr('Give this choice a name.', 'Is choice ka naam likho.');
+      else if (labels.has(label.toLowerCase())) rowErrors[i] = tr('Two choices have the same name.', 'Do choices ka naam same hai.');
+      else if (s === null) rowErrors[i] = tr('Stock must be a whole number.', 'Stock poora number hona chahiye.');
       labels.add(label.toLowerCase());
 
       let ownPrice: Paise | undefined;
@@ -549,7 +570,7 @@ export function validateDraft(
     stock = optionStockSum(options);
   } else {
     const s = parseStock(d.stock);
-    if (s === null) errors.stock = 'Stock must be a whole number from 0 to 1,00,000.';
+    if (s === null) errors.stock = tr('Stock must be a whole number from 0 to 1,00,000.', 'Stock 0 se 1,00,000 tak ka poora number hona chahiye.');
     else stock = s;
   }
 
@@ -652,20 +673,53 @@ function errorText(err: unknown): string {
   return String(err);
 }
 
+/** Getters, so the words are in the panel's language at the moment they are shown. */
 const ERROR_WORDS: Record<ShopErrorCode, string> = {
-  BAD_KEY: 'This demo gym is no longer available. Start a new demo gym.',
-  GONE: 'That was already removed or changed. The list has been refreshed.',
-  BAD_STEP: 'That order has already moved on. The list has been refreshed.',
-  EMPTY: 'Please fill in the name.',
-  BAD_OPTIONS: `Too many choices. Keep it to ${MAX_OPTIONS} or fewer.`,
-  BUSY: 'Too many demo gyms were started in the last hour. Please try again in a few minutes.',
-  CHANGED:
-    'This product changed while you were editing (someone may have ordered it). We’ve loaded the latest — check and save again.',
-  TOO_MANY: 'Too many orders from this member in the last hour.',
-  BAD_PHOTO: 'That photo link can’t be used. Upload the photo again from this screen.',
-  OFFLINE: 'Can’t reach the internet. Check the connection and try again.',
-  INVALID: 'Something in this form isn’t allowed. Check the price (₹1 to ₹1,00,000) and stock.',
-  UNKNOWN: 'Something went wrong. Please try again.',
+  get BAD_KEY() {
+    return tr('This demo gym is no longer available. Start a new demo gym.', 'Yeh demo gym ab nahi hai. Naya demo gym shuru karo.');
+  },
+  get GONE() {
+    return tr('That was already removed or changed. The list has been refreshed.', 'Yeh pehle hi hata diya ya badal gaya tha. List refresh ho gayi hai.');
+  },
+  get BAD_STEP() {
+    return tr('That order has already moved on. The list has been refreshed.', 'Yeh order pehle hi aage badh gaya. List refresh ho gayi hai.');
+  },
+  get EMPTY() {
+    return tr('Please fill in the name.', 'Naam bhariye.');
+  },
+  get BAD_OPTIONS() {
+    return tr(`Too many choices. Keep it to ${MAX_OPTIONS} or fewer.`, `Bahut zyada choices. ${MAX_OPTIONS} ya kam rakho.`);
+  },
+  get BUSY() {
+    return tr(
+      'Too many demo gyms were started in the last hour. Please try again in a few minutes.',
+      'Pichhle ghante mein bahut demo gym bane. Kuch minute baad phir se try karo.',
+    );
+  },
+  get CHANGED() {
+    return tr(
+      'This product changed while you were editing (someone may have ordered it). We’ve loaded the latest — check and save again.',
+      'Aap badal rahe the tab tak yeh product badal gaya (shayad kisi ne order kiya). Naya version load ho gaya — dekh kar phir se Save karo.',
+    );
+  },
+  get TOO_MANY() {
+    return tr('Too many orders from this member in the last hour.', 'Is member ke pichhle ghante mein bahut zyada orders aaye.');
+  },
+  get BAD_PHOTO() {
+    return tr('That photo link can’t be used. Upload the photo again from this screen.', 'Yeh photo link kaam nahi karega. Isi screen se photo phir se upload karo.');
+  },
+  get OFFLINE() {
+    return tr('Can’t reach the internet. Check the connection and try again.', 'Internet nahi mil raha. Connection check karke phir se try karo.');
+  },
+  get INVALID() {
+    return tr(
+      'Something in this form isn’t allowed. Check the price (₹1 to ₹1,00,000) and stock.',
+      'Form mein kuch galat hai. Price (₹1 se ₹1,00,000) aur Stock check karo.',
+    );
+  },
+  get UNKNOWN() {
+    return tr('Something went wrong. Please try again.', 'Kuch gadbad hui. Phir se try karo.');
+  },
 };
 
 /**

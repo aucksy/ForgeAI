@@ -13,6 +13,8 @@
 /** A local calendar day, `'YYYY-MM-DD'`. */
 export type DateISO = string;
 
+import { tr } from '../i18n';
+
 const ISO_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 /** True for a well-formed `'YYYY-MM-DD'` that is a real calendar day. */
@@ -143,21 +145,21 @@ export function formatDayShort(date: DateISO): string {
  */
 export function relativeDay(date: DateISO, today: DateISO): string {
   const d = diffDays(today, date);
-  if (d === 0) return 'today';
-  if (d === 1) return 'tomorrow';
-  if (d === -1) return 'yesterday';
-  if (d < 0) return `${describeSpan(-d)} ago`;
-  return `in ${describeSpan(d)}`;
+  if (d === 0) return tr('today', 'aaj');
+  if (d === 1) return tr('tomorrow', 'kal');
+  if (d === -1) return tr('yesterday', 'beete kal');
+  if (d < 0) return tr(`${describeSpan(-d)} ago`, `${describeSpan(-d)} pehle`);
+  return tr(`in ${describeSpan(d)}`, `${describeSpan(d)} mein`);
 }
 
 function describeSpan(days: number): string {
-  if (days < 14) return `${days} days`;
-  if (days < 60) return `${Math.round(days / 7)} weeks`;
+  if (days < 14) return tr(`${days} days`, `${days} din`);
+  if (days < 60) return tr(`${Math.round(days / 7)} weeks`, `${Math.round(days / 7)} hafte`);
   // Switch to years at 11 months rather than 12, so the scale never reads
   // "12 months" one day and "1 year" the next for what is the same span.
-  if (days < 335) return `${Math.round(days / 30)} months`;
+  if (days < 335) return tr(`${Math.round(days / 30)} months`, `${Math.round(days / 30)} mahine`);
   const years = days / 365;
-  return years < 1.5 ? '1 year' : `${Math.round(years)} years`;
+  return years < 1.5 ? tr('1 year', '1 saal') : tr(`${Math.round(years)} years`, `${Math.round(years)} saal`);
 }
 
 /** Month key `'YYYY-MM'` — the bucket every revenue report groups by. */

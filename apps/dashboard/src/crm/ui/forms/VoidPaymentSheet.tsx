@@ -16,6 +16,7 @@ import { formatDay } from '../../logic/dates';
 import { formatINR } from '../../logic/money';
 import type { Payment } from '../../types';
 import { Button, ErrorBanner, Sheet, TextField, color, font } from '../kit';
+import { tr } from '../../i18n';
 
 /** A reason shorter than this is not a reason anyone can act on months later. */
 const MIN_REASON = 3;
@@ -45,7 +46,7 @@ export function VoidPaymentSheet({
 
   const submit = async () => {
     const trimmed = reason.trim();
-    if (trimmed.length < MIN_REASON) return setError('Say briefly why, so this makes sense later.');
+    if (trimmed.length < MIN_REASON) return setError(tr('Say briefly why, so this makes sense later.', 'Thodi si wajah likho, taaki baad mein samajh aaye.'));
 
     setSaving(true);
     setError(null);
@@ -54,7 +55,7 @@ export function VoidPaymentSheet({
       onVoided?.(restoresDues);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not void this receipt.');
+      setError(e instanceof Error ? e.message : tr('Could not void this receipt.', 'Raseed cancel nahi hui.'));
     } finally {
       setSaving(false);
     }
@@ -62,15 +63,15 @@ export function VoidPaymentSheet({
 
   return (
     <Sheet
-      title="Void this receipt?"
+      title={tr('Void this receipt?', 'Yeh raseed cancel karein?')}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Keep it
+            {tr('Keep it', 'Rehne do')}
           </Button>
           <Button tone="danger" disabled={saving || reason.trim().length < MIN_REASON} onClick={submit}>
-            {saving ? 'Voiding…' : 'Void receipt'}
+            {saving ? tr('Voiding…', 'Cancel ho rahi hai…') : tr('Void receipt', 'Raseed cancel karo')}
           </Button>
         </>
       }
@@ -78,34 +79,52 @@ export function VoidPaymentSheet({
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        Receipt <strong style={{ color: color.ink }}>{payment.receiptNo}</strong> for{' '}
-        <strong style={{ color: color.ink }}>{formatINR(payment.amountP)}</strong>, taken on{' '}
-        {formatDay(payment.paidOn)}, will stop counting as money received.{' '}
+        {tr('Receipt', 'Raseed')} <strong style={{ color: color.ink }}>{payment.receiptNo}</strong>{' '}
+        {tr('for', '·')} <strong style={{ color: color.ink }}>{formatINR(payment.amountP)}</strong>
+        {tr(', taken on', ', tareekh')} {formatDay(payment.paidOn)}
+        {tr(', will stop counting as money received.', ', ab mili hui rakam mein nahi gini jayegi.')}{' '}
         {restoresDues ? (
           <>
-            <strong style={{ color: color.ink }}>The amount goes back onto what this member owes.</strong>
+            <strong style={{ color: color.ink }}>
+              {tr(
+                'The amount goes back onto what this member owes.',
+                'Yeh rakam wapas is member ki fees baaki mein judegi.',
+              )}
+            </strong>
           </>
         ) : membership ? (
           <>
-            Because that membership is <strong style={{ color: color.ink }}>cancelled</strong>, this will
-            not add anything back to their dues — the gym stopped chasing that term when it was cancelled.
+            {tr('Because that membership is', 'Woh plan')}{' '}
+            <strong style={{ color: color.ink }}>{tr('cancelled', 'cancel')}</strong>
+            {tr(
+              ', this will not add anything back to their dues — the gym stopped chasing that term when it was cancelled.',
+              ' ho chuka hai, isliye fees baaki mein kuch wapas nahi judega — cancel hote hi gym ne us plan ki fees maangna band kar diya.',
+            )}
           </>
         ) : (
-          <>This receipt is not against a membership, so no balance changes.</>
+          <>
+            {tr(
+              'This receipt is not against a membership, so no balance changes.',
+              'Yeh raseed kisi plan ki nahi hai, isliye baaki fees nahi badlegi.',
+            )}
+          </>
         )}{' '}
-        The row stays in the ledger and its number is never reused — that is what an auditor expects.
+        {tr(
+          'The row stays in the ledger and its number is never reused — that is what an auditor expects.',
+          'Entry hisaab mein rahegi aur iska number dobara use nahi hoga — auditor yahi chahta hai.',
+        )}
       </p>
 
       <TextField
-        label="Reason"
+        label={tr('Reason', 'Wajah')}
         value={reason}
         onChange={(v) => {
           setReason(v);
           setError(null);
         }}
         autoFocus
-        placeholder="Entered twice"
-        hint="Recorded against the receipt so it makes sense months later."
+        placeholder={tr('Entered twice', 'Do baar likh di')}
+        hint={tr('Recorded against the receipt so it makes sense months later.', 'Raseed ke saath save hoga taaki mahino baad bhi samajh aaye.')}
       />
     </Sheet>
   );

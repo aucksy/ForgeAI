@@ -14,6 +14,11 @@ What counts as silent:
     or reports (no Log., throw, error, warn, reject, return with an error/false);
   - a promise `.catch(() => {})`, `.catch(() => undefined)`, `.catch(() => null)`.
 
+A catch that is quiet ON PURPOSE (nothing the person needs can be lost, e.g. saving a display
+preference in a private window) says so in writing: a comment starting `quiet:` with the reason
+inside the catch body. Those are not counted, and `--list` still shows none of them as silent, so
+every exception is a reviewed, written decision rather than a habit.
+
 Usage: python3 scripts/ci/silent_catch_ratchet.py [--update] [--list]
 """
 
@@ -63,7 +68,7 @@ def findings(path: Path, kotlin: bool) -> list[tuple[int, str]]:
     for m in CATCH_OPEN.finditer(text):
         body = block_after(text, m.end() - 1)
         bare = strip_comments(body)
-        silent = bare == "" or (kotlin and not KT_REPORTS.search(bare))
+        silent = (bare == "" or (kotlin and not KT_REPORTS.search(bare))) and "quiet:" not in body
         if silent:
             line = text.count("\n", 0, m.start()) + 1
             out.append((line, "catch block drops the error"))

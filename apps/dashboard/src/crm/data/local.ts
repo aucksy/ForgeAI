@@ -41,6 +41,7 @@ import type {
   Visit,
 } from '../types';
 import { isValidDateISO, type DateISO } from '../logic/dates';
+import { tr } from '../i18n';
 import { endDateForPlan } from '../logic/membership';
 import { findDuplicatePhone } from '../logic/members';
 import { nextReceiptNo } from '../logic/receipts';
@@ -250,7 +251,7 @@ export class LocalCrmData implements CrmData {
   async updateMember(id: string, patch: Partial<MemberDraft>): Promise<Member> {
     return this.update((db) => {
       const member = db.members.find((m) => m.id === id);
-      if (!member) throw new NotFoundError('That member');
+      if (!member) throw new NotFoundError(tr('That member', 'Yeh member'));
 
       if (patch.phone && patch.phone !== member.phone) {
         const duplicate = findDuplicatePhone(db.members, patch.phone, id);
@@ -286,7 +287,7 @@ export class LocalCrmData implements CrmData {
   async updatePlan(id: string, patch: Partial<PlanDraft>): Promise<Plan> {
     return this.update((db) => {
       const plan = db.plans.find((p) => p.id === id);
-      if (!plan) throw new NotFoundError('That plan');
+      if (!plan) throw new NotFoundError(tr('That plan', 'Yeh plan'));
       Object.assign(plan, patch, { updatedAt: this.now() });
       return { ...plan };
     });
@@ -297,12 +298,12 @@ export class LocalCrmData implements CrmData {
   async sellMembership(input: SellMembershipInput): Promise<SellMembershipResult> {
     return this.update((db) => {
       const member = db.members.find((m) => m.id === input.memberId);
-      if (!member) throw new NotFoundError('That member');
+      if (!member) throw new NotFoundError(tr('That member', 'Yeh member'));
       const plan = db.plans.find((p) => p.id === input.planId);
-      if (!plan) throw new NotFoundError('That plan');
+      if (!plan) throw new NotFoundError(tr('That plan', 'Yeh plan'));
 
-      requireDay(input.startsOn, 'The start date');
-      if (input.collectNowP > 0) requireDay(input.paidOn, 'The payment date');
+      requireDay(input.startsOn, tr('The start date', 'Shuru ki tareekh'));
+      if (input.collectNowP > 0) requireDay(input.paidOn, tr('The payment date', 'Payment ki tareekh'));
 
       const ts = this.now();
       const membership: Membership = {
@@ -357,7 +358,7 @@ export class LocalCrmData implements CrmData {
   async cancelMembership(id: string, reason: string | null): Promise<Membership> {
     return this.update((db) => {
       const membership = db.memberships.find((m) => m.id === id);
-      if (!membership) throw new NotFoundError('That membership');
+      if (!membership) throw new NotFoundError(tr('That membership', 'Yeh membership'));
       membership.cancelled = true;
       if (reason) membership.notes = appendNote(membership.notes, `Cancelled: ${reason}`);
       membership.updatedAt = this.now();
@@ -368,7 +369,7 @@ export class LocalCrmData implements CrmData {
   async uncancelMembership(id: string): Promise<Membership> {
     return this.update((db) => {
       const membership = db.memberships.find((m) => m.id === id);
-      if (!membership) throw new NotFoundError('That membership');
+      if (!membership) throw new NotFoundError(tr('That membership', 'Yeh membership'));
       membership.cancelled = false;
       membership.notes = appendNote(membership.notes, 'Cancellation reversed.');
       membership.updatedAt = this.now();
@@ -380,11 +381,11 @@ export class LocalCrmData implements CrmData {
 
   async recordPayment(input: RecordPaymentInput): Promise<Payment> {
     return this.update((db) => {
-      if (!db.members.some((m) => m.id === input.memberId)) throw new NotFoundError('That member');
+      if (!db.members.some((m) => m.id === input.memberId)) throw new NotFoundError(tr('That member', 'Yeh member'));
       if (input.membershipId && !db.memberships.some((m) => m.id === input.membershipId)) {
-        throw new NotFoundError('That membership');
+        throw new NotFoundError(tr('That membership', 'Yeh membership'));
       }
-      requireDay(input.paidOn, 'The payment date');
+      requireDay(input.paidOn, tr('The payment date', 'Payment ki tareekh'));
 
       const payment: Payment = {
         id: newId(),
@@ -416,7 +417,7 @@ export class LocalCrmData implements CrmData {
   async voidPayment(id: string, reason: string): Promise<Payment> {
     return this.update((db) => {
       const payment = db.payments.find((p) => p.id === id);
-      if (!payment) throw new NotFoundError('That payment');
+      if (!payment) throw new NotFoundError(tr('That payment', 'Yeh payment'));
       payment.voided = true;
       payment.voidReason = reason;
       return { ...payment };
@@ -432,12 +433,12 @@ export class LocalCrmData implements CrmData {
     today: DateISO,
   ): Promise<Visit> {
     return this.update((db) => {
-      if (!db.members.some((m) => m.id === memberId)) throw new NotFoundError('That member');
+      if (!db.members.some((m) => m.id === memberId)) throw new NotFoundError(tr('That member', 'Yeh member'));
 
       // Same guard the money paths get: a `type="date"` field hands over year 0002
       // without complaint, and a visit is what the at-risk list is computed from.
-      requireDay(day, 'The visit date');
-      requireDay(today, 'Today’s date');
+      requireDay(day, tr('The visit date', 'Hazri ki tareekh'));
+      requireDay(today, tr('Today’s date', 'Aaj ki tareekh'));
       if (day > today) throw new FutureVisitError();
 
       const existing = db.visits.find((v) => v.memberId === memberId && v.visitedOn === day);
@@ -458,7 +459,7 @@ export class LocalCrmData implements CrmData {
 
   async undoCheckIn(memberId: string, day: DateISO): Promise<void> {
     return this.update((db) => {
-      requireDay(day, 'The visit date');
+      requireDay(day, tr('The visit date', 'Hazri ki tareekh'));
       // Filtered on BOTH keys. Dropping either one deletes a member's whole
       // attendance history, or everybody's attendance for the day, from what the
       // desk thinks is a single undo.

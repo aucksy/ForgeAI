@@ -6,49 +6,70 @@
  */
 
 import { errorWords } from './logic';
+import { tr } from '../i18n';
 
 export type MessageKind = 'announcement' | 'closed' | 'timing' | 'offer' | 'event' | 'reminder';
 
 export const TITLE_MAX = 60;
 export const BODY_MAX = 300;
 
-/** The types in the order the owner picks from, each with words to start from (edited freely). */
+/**
+ * The types in the order the owner picks from, each with words to start from (edited freely).
+ * `label` is a getter so it is read in the panel's language; title/body stay English for now.
+ */
 export const MESSAGE_KINDS: readonly { kind: MessageKind; label: string; title: string; body: string }[] = [
-  { kind: 'announcement', label: 'Announcement', title: '', body: '' },
+  {
+    kind: 'announcement',
+    get label() {
+      return tr('Announcement', 'Announcement');
+    },
+    title: '',
+    body: '',
+  },
   {
     kind: 'closed',
-    label: 'Gym closed',
+    get label() {
+      return tr('Gym closed', 'Gym band');
+    },
     title: 'Gym closed on [day]',
     body: 'The gym is closed on [day] for [reason]. We open again on [day] at [time].',
   },
   {
     kind: 'timing',
-    label: 'New timings',
+    get label() {
+      return tr('New timings', 'Naya timing');
+    },
     title: 'New gym timings',
     body: 'From [date], the gym is open [time] to [time]. Sunday: [time] to [time].',
   },
   {
     kind: 'offer',
-    label: 'Offer',
+    get label() {
+      return tr('Offer', 'Offer');
+    },
     title: 'Offer: [what]',
     body: '[Offer] till [date]. Ask at the front desk.',
   },
   {
     kind: 'event',
-    label: 'Event',
+    get label() {
+      return tr('Event', 'Event');
+    },
     title: '[Event] on [date]',
     body: 'Join us for [event] on [date] at [time]. Everyone is welcome.',
   },
   {
     kind: 'reminder',
-    label: 'Reminder',
+    get label() {
+      return tr('Reminder', 'Yaad dilao');
+    },
     title: 'Reminder: [what]',
     body: '',
   },
 ];
 
 export function kindLabel(kind: MessageKind): string {
-  return MESSAGE_KINDS.find((k) => k.kind === kind)?.label ?? 'Message';
+  return MESSAGE_KINDS.find((k) => k.kind === kind)?.label ?? tr('Message', 'Message');
 }
 
 /** Offers and events are capped: 1 a day, 3 a week (the server checks too). */
@@ -66,10 +87,10 @@ export interface MessageDraft {
 export function draftProblem(d: MessageDraft): string | null {
   const title = d.title.trim();
   const body = d.body.trim();
-  if (!title) return 'Write a title.';
-  if (title.length > TITLE_MAX) return `Keep the title to ${TITLE_MAX} letters.`;
-  if (body.length > BODY_MAX) return `Keep the message to ${BODY_MAX} letters.`;
-  if (/[[\]]/.test(title) || /[[\]]/.test(body)) return 'Fill in the words in [brackets] first.';
+  if (!title) return tr('Write a title.', 'Title likho.');
+  if (title.length > TITLE_MAX) return tr(`Keep the title to ${TITLE_MAX} letters.`, `Title ${TITLE_MAX} letters tak rakho.`);
+  if (body.length > BODY_MAX) return tr(`Keep the message to ${BODY_MAX} letters.`, `Message ${BODY_MAX} letters tak rakho.`);
+  if (/[[\]]/.test(title) || /[[\]]/.test(body)) return tr('Fill in the words in [brackets] first.', 'Pehle [brackets] wale words bharo.');
   return null;
 }
 
@@ -116,18 +137,31 @@ export function sentFromRows(raw: unknown): SentMessage[] {
 
 /** "Seen by 12 of 40" — never more seen than sent (a member can join after it went). PURE. */
 export function seenText(m: Pick<SentMessage, 'seen' | 'recipients'>): string {
-  if (m.recipients === 0) return 'No app members yet';
-  return `Seen by ${Math.min(m.seen, m.recipients)} of ${m.recipients}`;
+  if (m.recipients === 0) return tr('No app members yet', 'Abhi koi app member nahi');
+  return tr(`Seen by ${Math.min(m.seen, m.recipients)} of ${m.recipients}`, `${Math.min(m.seen, m.recipients)} / ${m.recipients} ne dekha`);
 }
 
 /** The words for a failed send or take-back. PURE. */
 export function messageErrorWords(err: unknown): string {
   const text = err instanceof Error ? err.message : typeof err === 'object' && err ? String((err as { message?: unknown }).message ?? '') : String(err ?? '');
-  if (/\bOFFER_TODAY\b/.test(text)) return 'You already sent an offer or event today. Members get at most one a day — send it tomorrow.';
-  if (/\bOFFER_WEEK\b/.test(text)) return 'You sent 3 offers or events this week. Members get at most 3 a week — wait a few days.';
-  if (/\bTOO_MANY\b/.test(text)) return 'That is 20 messages today, the most for one day. Send it tomorrow.';
-  if (/\bTOO_LONG\b/.test(text)) return `Keep the title to ${TITLE_MAX} letters and the message to ${BODY_MAX}.`;
-  if (/\bEMPTY\b/.test(text)) return 'Write a title.';
+  if (/\bOFFER_TODAY\b/.test(text))
+    return tr(
+      'You already sent an offer or event today. Members get at most one a day — send it tomorrow.',
+      'Aaj aap ek Offer ya Event bhej chuke hain. Members ko din mein ek hi milta hai — kal bhejo.',
+    );
+  if (/\bOFFER_WEEK\b/.test(text))
+    return tr(
+      'You sent 3 offers or events this week. Members get at most 3 a week — wait a few days.',
+      'Is hafte aap 3 Offer ya Event bhej chuke hain. Members ko hafte mein 3 hi milte hain — kuch din ruko.',
+    );
+  if (/\bTOO_MANY\b/.test(text))
+    return tr('That is 20 messages today, the most for one day. Send it tomorrow.', 'Aaj 20 messages ho gaye, ek din ki limit. Kal bhejo.');
+  if (/\bTOO_LONG\b/.test(text))
+    return tr(`Keep the title to ${TITLE_MAX} letters and the message to ${BODY_MAX}.`, `Title ${TITLE_MAX} letters aur message ${BODY_MAX} letters tak rakho.`);
+  if (/\bEMPTY\b/.test(text)) return tr('Write a title.', 'Title likho.');
   // A send that timed out may still have gone: say so, so the owner looks before sending again.
-  return `${errorWords(err)} Check the Sent list below before sending it again.`;
+  return tr(
+    `${errorWords(err)} Check the Sent list below before sending it again.`,
+    `${errorWords(err)} Phir se bhejne se pehle neeche Sent list dekho.`,
+  );
 }

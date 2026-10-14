@@ -17,6 +17,7 @@
 import { useState } from 'react';
 
 import { useCrm } from '../../store';
+import { tr } from '../../i18n';
 import type { Member } from '../../types';
 import {
   DIAL_CODES,
@@ -91,11 +92,14 @@ export function MemberFormSheet({
         } else {
           setFieldError({
             field: 'phone',
-            message: `${e.existing.fullName} is already on the roster with this number.`,
+            message: tr(
+              `${e.existing.fullName} is already on the roster with this number.`,
+              `${e.existing.fullName} is number se pehle se member hai.`,
+            ),
           });
         }
       } else {
-        setFormError(e instanceof Error ? e.message : 'Could not save this member.');
+        setFormError(e instanceof Error ? e.message : tr('Could not save this member.', 'Member save nahi hua.'));
       }
     } finally {
       setSaving(false);
@@ -110,7 +114,7 @@ export function MemberFormSheet({
       onClose();
       navigate(`/members/${archivedClash.id}`);
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : 'Could not restore that member.');
+      setFormError(e instanceof Error ? e.message : tr('Could not restore that member.', 'Member wapas nahi aaya.'));
     } finally {
       setSaving(false);
     }
@@ -118,16 +122,20 @@ export function MemberFormSheet({
 
   return (
     <Sheet
-      title={editing ? 'Edit member' : 'Add member'}
+      title={editing ? tr('Edit member', 'Member badlo') : tr('Add member', 'Naya member jodo')}
       onClose={onClose}
       wide
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {tr('Cancel', 'Cancel')}
           </Button>
           <Button onClick={save} disabled={saving}>
-            {saving ? 'Saving…' : editing ? 'Save changes' : 'Add member'}
+            {saving
+              ? tr('Saving…', 'Save ho raha hai…')
+              : editing
+                ? tr('Save changes', 'Save karo')
+                : tr('Add member', 'Naya member jodo')}
           </Button>
         </>
       }
@@ -137,12 +145,15 @@ export function MemberFormSheet({
       {archivedClash && (
         <ErrorBanner>
           <div style={{ marginBottom: space.sm }}>
-            <strong>{archivedClash.fullName}</strong> already has this number, but they were archived
-            — that’s why you can’t see them in the list.
+            <strong>{archivedClash.fullName}</strong>
+            {tr(
+              ' already has this number, but they were archived — that’s why you can’t see them in the list.',
+              ' ke paas yeh number hai, par woh archive mein hain — isliye list mein nahi dikh rahe.',
+            )}
           </div>
           <Row gap={space.sm}>
             <Button onClick={restoreArchived} disabled={saving}>
-              Bring them back
+              {tr('Bring them back', 'Wapas lao')}
             </Button>
             <Button
               variant="ghost"
@@ -151,14 +162,14 @@ export function MemberFormSheet({
                 navigate(`/members/${archivedClash.id}`);
               }}
             >
-              Open their record
+              {tr('Open their record', 'Unka record kholo')}
             </Button>
           </Row>
         </ErrorBanner>
       )}
 
       <TextField
-        label="Full name"
+        label={tr('Full name', 'Poora naam')}
         value={form.fullName}
         onChange={set('fullName')}
         error={errorFor('fullName')}
@@ -168,52 +179,52 @@ export function MemberFormSheet({
 
       <Row gap={space.sm} align="flex-start">
         <div style={{ width: 110 }}>
-          <SelectField label="Code" value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
+          <SelectField label={tr('Code', 'Code')} value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
         </div>
         <div style={{ flex: 1, minWidth: 180 }}>
           <TextField
-            label="Mobile number"
+            label={tr('Mobile number', 'Mobile number')}
             value={form.phone}
             onChange={set('phone')}
             error={errorFor('phone')}
             inputMode="tel"
             placeholder="98765 43210"
-            hint="How you'll find them, and how WhatsApp reaches them."
+            hint={tr("How you'll find them, and how WhatsApp reaches them.", 'Isi se member milega, aur WhatsApp bhi isi par jayega.')}
           />
         </div>
       </Row>
 
       <Grid min={220}>
         <TextField
-          label="Joining date"
+          label={tr('Joining date', 'Joining date')}
           value={form.joinedOn}
           onChange={set('joinedOn')}
           type="date"
           error={errorFor('joinedOn')}
         />
         <SelectField
-          label="Gender (optional)"
+          label={tr('Gender (optional)', 'Gender (zaroori nahi)')}
           value={form.gender}
           onChange={set('gender')}
           options={[
-            { value: '', label: 'Not stated' },
-            { value: 'male', label: 'Male' },
-            { value: 'female', label: 'Female' },
-            { value: 'other', label: 'Other' },
+            { value: '', label: tr('Not stated', 'Nahi bataya') },
+            { value: 'male', label: tr('Male', 'Male') },
+            { value: 'female', label: tr('Female', 'Female') },
+            { value: 'other', label: tr('Other', 'Anya') },
           ]}
         />
       </Grid>
 
       <Grid min={220}>
         <TextField
-          label="Date of birth (optional)"
+          label={tr('Date of birth (optional)', 'Janam din (zaroori nahi)')}
           value={form.dateOfBirth}
           onChange={set('dateOfBirth')}
           type="date"
           error={errorFor('dateOfBirth')}
         />
         <TextField
-          label="Email (optional)"
+          label={tr('Email (optional)', 'Email (zaroori nahi)')}
           value={form.email}
           onChange={set('email')}
           type="email"
@@ -222,16 +233,16 @@ export function MemberFormSheet({
         />
       </Grid>
 
-      <TextField label="Address (optional)" value={form.address} onChange={set('address')} />
+      <TextField label={tr('Address (optional)', 'Pata (zaroori nahi)')} value={form.address} onChange={set('address')} />
 
       <Grid min={220}>
         <TextField
-          label="Emergency contact (optional)"
+          label={tr('Emergency contact (optional)', 'Ghar wale ka naam (zaroori nahi)')}
           value={form.emergencyName}
           onChange={set('emergencyName')}
         />
         <TextField
-          label="Emergency number (optional)"
+          label={tr('Emergency number (optional)', 'Ghar ka number (zaroori nahi)')}
           value={form.emergencyPhone}
           onChange={set('emergencyPhone')}
           inputMode="tel"
@@ -240,16 +251,19 @@ export function MemberFormSheet({
       </Grid>
 
       <TextField
-        label="Notes (optional)"
+        label={tr('Notes (optional)', 'Notes (zaroori nahi)')}
         value={form.notes}
         onChange={set('notes')}
         multiline
-        placeholder="Injuries, preferences, who referred them…"
+        placeholder={tr('Injuries, preferences, who referred them…', 'Chot, pasand, kisne bheja…')}
       />
 
       {editing?.archived && (
         <p style={{ margin: `${space.lg}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          This member is archived. Saving here won’t change that — use “Restore member” on their page.
+          {tr(
+            'This member is archived. Saving here won’t change that — use “Restore member” on their page.',
+            'Yeh member archive mein hai. Yahan Save karne se yeh nahi badlega — unke page par “Member wapas lao” dabao.',
+          )}
         </p>
       )}
     </Sheet>

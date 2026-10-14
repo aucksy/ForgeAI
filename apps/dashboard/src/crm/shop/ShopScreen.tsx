@@ -9,6 +9,7 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
+import { tr } from '../i18n';
 import { formatINR } from '../logic/money';
 import {
   Button,
@@ -64,7 +65,13 @@ export function ShopScreen({ section }: { section?: string }) {
 
   return (
     <>
-      <PageHeader title="Shop" subtitle="What members order in the ForgeAI app, what you sell, and your messages to them" />
+      <PageHeader
+        title={tr('Shop', 'Shop')}
+        subtitle={tr(
+          'What members order in the ForgeAI app, what you sell, and your messages to them',
+          'Members ForgeAI app mein kya order karte hain, aap kya bechte hain, aur unke liye aapke messages',
+        )}
+      />
 
       {!cloud ? (
         <JoinCodeCard />
@@ -73,13 +80,16 @@ export function ShopScreen({ section }: { section?: string }) {
           <div style={{ marginBottom: space.lg }}>
             <ChipToggle
               variant="tabs"
-              label="Shop section"
+              label={tr('Shop section', 'Shop ka hissa')}
               value={tab}
               onChange={(v) => navigate(`/shop/${v}`)}
               options={[
-                { value: 'orders', label: newCount > 0 ? `Orders · ${newCount} new` : 'Orders' },
-                { value: 'products', label: 'Products' },
-                { value: 'messages', label: 'Messages' },
+                {
+                  value: 'orders',
+                  label: newCount > 0 ? tr(`Orders · ${newCount} new`, `Orders · ${newCount} naye`) : tr('Orders', 'Orders'),
+                },
+                { value: 'products', label: tr('Products', 'Products') },
+                { value: 'messages', label: tr('Messages', 'Messages') },
               ]}
             />
           </div>
@@ -116,28 +126,31 @@ function OrdersSection() {
 
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
-          label="Show orders"
+          label={tr('Show orders', 'Orders dikhao')}
           value={filter}
           onChange={(v) => setFilter(v as OrderFilter)}
           options={[
-            { value: 'ordered', label: 'New', count: counts.ordered },
-            { value: 'ready', label: 'Ready', count: counts.ready },
-            { value: 'collected', label: 'Collected', count: counts.collected },
-            { value: 'cancelled', label: 'Cancelled', count: counts.cancelled },
-            { value: 'all', label: 'All', count: counts.all },
+            { value: 'ordered', label: tr('New', 'Naya'), count: counts.ordered },
+            { value: 'ready', label: tr('Ready', 'Taiyaar'), count: counts.ready },
+            { value: 'collected', label: tr('Collected', 'Le gaye'), count: counts.collected },
+            { value: 'cancelled', label: tr('Cancelled', 'Cancel hua'), count: counts.cancelled },
+            { value: 'all', label: tr('All', 'Sab'), count: counts.all },
           ]}
         />
       </div>
 
       {!ordersLoaded && !ordersError ? (
         <Card>
-          <EmptyState title="Loading orders…" />
+          <EmptyState title={tr('Loading orders…', 'Orders load ho rahe hain…')} />
         </Card>
       ) : orders.length === 0 ? (
         <Card>
           <EmptyState
-            title="No orders yet"
-            body={`Members order from the Shop tab in the ForgeAI app after joining with code ${code}.`}
+            title={tr('No orders yet', 'Abhi koi order nahi')}
+            body={tr(
+              `Members order from the Shop tab in the ForgeAI app after joining with code ${code}.`,
+              `Members code ${code} se judkar ForgeAI app ke Shop tab se order karte hain.`,
+            )}
           />
         </Card>
       ) : rows.length === 0 ? (
@@ -145,15 +158,24 @@ function OrdersSection() {
           <EmptyState
             title={
               filter === 'ordered'
-                ? 'No new orders right now'
+                ? tr('No new orders right now', 'Abhi koi naya order nahi')
                 : filter === 'ready'
-                  ? 'Nothing waiting to be picked up'
-                  : `No ${STATUS_LABEL[filter as OrderStatus]?.toLowerCase() ?? ''} orders`
+                  ? tr('Nothing waiting to be picked up', 'Lene ke liye kuch baaki nahi')
+                  : tr(
+                      `No ${STATUS_LABEL[filter as OrderStatus]?.toLowerCase() ?? ''} orders`,
+                      `Koi ${STATUS_LABEL[filter as OrderStatus]?.toLowerCase() ?? ''} order nahi`,
+                    )
             }
             body={
               filter === 'ready'
-                ? 'Orders you mark ready wait here until the member collects and pays.'
-                : 'New orders show up here by themselves within a few seconds.'
+                ? tr(
+                    'Orders you mark ready wait here until the member collects and pays.',
+                    'Taiyaar kiye orders yahan rehte hain jab tak member le kar pay na kare.',
+                  )
+                : tr(
+                    'New orders show up here by themselves within a few seconds.',
+                    'Naye orders kuch second mein yahan khud aa jaate hain.',
+                  )
             }
           />
         </Card>
@@ -183,13 +205,19 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
       await setOrderStatus(order.orderId, ACTION_TARGET[a]);
       flash(
         a === 'ready'
-          ? `Order ${order.orderNo} is ready — ${order.memberName} can see that in the app.`
+          ? tr(
+              `Order ${order.orderNo} is ready — ${order.memberName} can see that in the app.`,
+              `Order ${order.orderNo} taiyaar hai — ${order.memberName} ise app mein dekh sakte hain.`,
+            )
           : a === 'collected'
-            ? `Order ${order.orderNo} collected. ${formatINR(order.totalP)} taken.`
-            : `Order ${order.orderNo} is back to new.`,
+            ? tr(
+                `Order ${order.orderNo} collected. ${formatINR(order.totalP)} taken.`,
+                `Order ${order.orderNo} le gaye. ${formatINR(order.totalP)} mil gaye.`,
+              )
+            : tr(`Order ${order.orderNo} is back to new.`, `Order ${order.orderNo} wapas Naya ho gaya.`),
       );
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+      setError(e instanceof Error ? e.message : tr('Something went wrong. Please try again.', 'Kuch gadbad hui. Phir se try karo.'));
     } finally {
       setBusy(null);
     }
@@ -202,7 +230,7 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
       <Row gap={space.sm} wrap={false} align="flex-start">
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: font.display, fontSize: 18, fontWeight: 700, color: color.ink }}>
-            Order {order.orderNo}
+            {tr('Order', 'Order')} {order.orderNo}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 14, color: color.ink, marginTop: 2 }}>
             {order.memberName}
@@ -213,7 +241,7 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
         </div>
         <Pill tone={STATUS_TONE[order.status]}>
           {order.status === 'cancelled' && order.cancelledBy === 'member'
-            ? 'Cancelled by member'
+            ? tr('Cancelled by member', 'Member ne cancel kiya')
             : STATUS_LABEL[order.status]}
         </Pill>
       </Row>
@@ -239,7 +267,7 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
         ))}
         <Row gap={space.sm} wrap={false} align="baseline">
           <span style={{ flex: 1, fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>
-            Total
+            {tr('Total', 'Kul')}
           </span>
           <span style={{ fontFamily: font.mono, fontSize: 18, fontWeight: 700, color: color.ink }}>
             {formatINR(order.totalP)}
@@ -270,9 +298,9 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
                     variant={i === 0 ? 'primary' : 'ghost'}
                     disabled={busy !== null}
                     onClick={() => void act(a)}
-                    ariaLabel={`${ACTION_LABEL[a]}, order ${order.orderNo}`}
+                    ariaLabel={tr(`${ACTION_LABEL[a]}, order ${order.orderNo}`, `${ACTION_LABEL[a]}, order ${order.orderNo}`)}
                   >
-                    {busy === a ? 'Saving…' : ACTION_LABEL[a]}
+                    {busy === a ? tr('Saving…', 'Save ho raha hai…') : ACTION_LABEL[a]}
                   </Button>
                 </div>
               ))}
@@ -284,7 +312,7 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
               tone="danger"
               disabled={busy !== null}
               onClick={() => void act('cancel')}
-              ariaLabel={`${ACTION_LABEL.cancel}, order ${order.orderNo}`}
+              ariaLabel={tr(`${ACTION_LABEL.cancel}, order ${order.orderNo}`, `${ACTION_LABEL.cancel}, order ${order.orderNo}`)}
             >
               {ACTION_LABEL.cancel}
             </Button>
@@ -302,12 +330,12 @@ function CancelSheet({ order, onClose }: { order: Order; onClose: () => void }) 
 
   return (
     <Sheet
-      title={`Cancel order ${order.orderNo}?`}
+      title={tr(`Cancel order ${order.orderNo}?`, `Order ${order.orderNo} cancel karein?`)}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Keep it
+            {tr('Keep it', 'Rehne do')}
           </Button>
           <Button
             tone="danger"
@@ -317,24 +345,29 @@ function CancelSheet({ order, onClose }: { order: Order; onClose: () => void }) 
               setError(null);
               try {
                 await setOrderStatus(order.orderId, 'cancelled');
-                flash(`Order ${order.orderNo} cancelled. Stock is back.`);
+                flash(tr(`Order ${order.orderNo} cancelled. Stock is back.`, `Order ${order.orderNo} cancel ho gaya. Stock wapas aa gaya.`));
                 onClose();
               } catch (e) {
-                setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+                setError(e instanceof Error ? e.message : tr('Something went wrong. Please try again.', 'Kuch gadbad hui. Phir se try karo.'));
                 setBusy(false);
               }
             }}
           >
-            {busy ? 'Cancelling…' : 'Cancel order'}
+            {busy ? tr('Cancelling…', 'Cancel ho raha hai…') : tr('Cancel order', 'Order cancel karo')}
           </Button>
         </>
       }
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {order.memberName}’s order for <strong style={{ color: color.ink }}>{formatINR(order.totalP)}</strong>{' '}
-        will be cancelled. <strong style={{ color: color.ink }}>The items go back into stock</strong>, and{' '}
-        {order.memberName} sees “Cancelled” in the app. This cannot be undone.
+        {order.memberName}
+        {tr('’s order for ', ' ka ')}
+        <strong style={{ color: color.ink }}>{formatINR(order.totalP)}</strong>
+        {tr(' will be cancelled. ', ' ka order cancel hoga. ')}
+        <strong style={{ color: color.ink }}>{tr('The items go back into stock', 'Saaman wapas stock mein jayega')}</strong>
+        {tr(', and ', ', aur ')}
+        {order.memberName}
+        {tr(' sees “Cancelled” in the app. This cannot be undone.', ' ko app mein “Cancelled” dikhega. Yeh wapas nahi hoga.')}
       </p>
     </Sheet>
   );
@@ -396,10 +429,13 @@ function ProductsSection() {
         const choice = optionId ? saved.options.find((o) => o.id === optionId)?.label : null;
         flash(
           kind === 'restock'
-            ? `Added 10 to ${saved.name}${choice ? ` · ${choice}` : ''}. ${saved.stock} in stock now.`
+            ? tr(
+                `Added 10 to ${saved.name}${choice ? ` · ${choice}` : ''}. ${saved.stock} in stock now.`,
+                `${saved.name}${choice ? ` · ${choice}` : ''} mein 10 jode. Ab ${saved.stock} stock mein.`,
+              )
             : saved.active
-              ? `${saved.name} is shown in the app again.`
-              : `${saved.name} is hidden from the app.`,
+              ? tr(`${saved.name} is shown in the app again.`, `${saved.name} app mein phir se dikh raha hai.`)
+              : tr(`${saved.name} is hidden from the app.`, `${saved.name} app se chhupa diya.`),
         );
       } catch (e) {
         failed = handleError(e);
@@ -421,7 +457,7 @@ function ProductsSection() {
         const url = await uploadProductPhoto(key, file);
         const saved = await api.setProductPhoto(key, p.productId, url);
         setProducts((prev) => prev?.map((x) => (x.productId === saved.productId ? saved : x)) ?? prev);
-        flash(`Photo added to ${saved.name}. Members see it in the app now.`);
+        flash(tr(`Photo added to ${saved.name}. Members see it in the app now.`, `${saved.name} ki photo lag gayi. Members ab app mein dekh sakte hain.`));
       } catch (e) {
         failed = e instanceof PhotoError ? e.message : handleError(e);
       }
@@ -438,10 +474,10 @@ function ProductsSection() {
       <Row gap={space.md}>
         <div style={{ flex: 1, minWidth: 200, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {products
-            ? `${products.length} products · ${shown} shown in the app`
-            : 'Loading your products…'}
+            ? tr(`${products.length} products · ${shown} shown in the app`, `${products.length} products · ${shown} app mein dikh rahe`)
+            : tr('Loading your products…', 'Aapke products load ho rahe hain…')}
         </div>
-        <Button onClick={() => setEditing('new')}>+ Add product</Button>
+        <Button onClick={() => setEditing('new')}>{tr('+ Add product', '+ Product jodo')}</Button>
       </Row>
 
       <div style={{ height: space.lg }} />
@@ -450,9 +486,12 @@ function ProductsSection() {
       {products && products.length === 0 ? (
         <Card>
           <EmptyState
-            title="No products yet"
-            body="Add what you sell at the desk — protein, shakers, T-shirts — and members can order it in the app."
-            action={<Button onClick={() => setEditing('new')}>+ Add product</Button>}
+            title={tr('No products yet', 'Abhi koi product nahi')}
+            body={tr(
+              'Add what you sell at the desk — protein, shakers, T-shirts — and members can order it in the app.',
+              'Desk par jo bechte hain woh jodo — protein, shakers, T-shirts — members app mein order kar sakte hain.',
+            )}
+            action={<Button onClick={() => setEditing('new')}>{tr('+ Add product', '+ Product jodo')}</Button>}
           />
         </Card>
       ) : (
@@ -487,10 +526,10 @@ function ProductsSection() {
             });
             flash(
               verb === 'deleted'
-                ? `${saved.name} deleted.`
+                ? tr(`${saved.name} deleted.`, `${saved.name} hata diya.`)
                 : verb === 'added'
-                  ? `${saved.name} added to the shop.`
-                  : `${saved.name} saved.`,
+                  ? tr(`${saved.name} added to the shop.`, `${saved.name} Shop mein jud gaya.`)
+                  : tr(`${saved.name} saved.`, `${saved.name} save ho gaya.`),
             );
             setEditing(null);
           }}
@@ -526,7 +565,7 @@ function ProductCard({
       <button
         type="button"
         onClick={onEdit}
-        aria-label={`Edit ${p.name}`}
+        aria-label={tr(`Edit ${p.name}`, `${p.name} badlo`)}
         style={{
           appearance: 'none',
           background: 'transparent',
@@ -561,7 +600,7 @@ function ProductCard({
           </div>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
             {category}
-            {p.options.length > 0 && ` · ${p.options.length} ${(p.optionName ?? 'choices').toLowerCase()}s`}
+            {p.options.length > 0 && ` · ${p.options.length} ${(p.optionName ?? tr('choices', 'choices')).toLowerCase()}s`}
           </div>
           <div style={{ fontFamily: font.mono, fontSize: 17, fontWeight: 700, color: color.ink, marginTop: 6 }}>
             {priceText(p)}
@@ -578,7 +617,7 @@ function ProductCard({
             >
               {stock.text}
             </span>
-            {!p.active && <Pill tone="warn">Hidden</Pill>}
+            {!p.active && <Pill tone="warn">{tr('Hidden', 'Chhupa hua')}</Pill>}
           </div>
         </div>
       </button>
@@ -596,19 +635,23 @@ function ProductCard({
           paddingTop: space.md,
         }}
       >
-        <SmallButton onClick={onRestock} disabled={busy} label={`Add 10 to stock, ${p.name}`}>
-          +10 stock
+        <SmallButton onClick={onRestock} disabled={busy} label={tr(`Add 10 to stock, ${p.name}`, `${p.name} ke stock mein 10 jodo`)}>
+          {tr('+10 stock', '+10 stock')}
         </SmallButton>
-        <SmallButton onClick={onToggle} disabled={busy} label={`${p.active ? 'Hide' : 'Show'} ${p.name}`}>
-          {p.active ? 'Hide from app' : 'Show in app'}
+        <SmallButton
+          onClick={onToggle}
+          disabled={busy}
+          label={p.active ? tr(`Hide ${p.name}`, `${p.name} chhupao`) : tr(`Show ${p.name}`, `${p.name} dikhao`)}
+        >
+          {p.active ? tr('Hide from app', 'App se chhupao') : tr('Show in app', 'App mein dikhao')}
         </SmallButton>
         {!p.imageUrl && (
-          <SmallButton onClick={() => fileRef.current?.click()} disabled={busy} label={`Add a photo of ${p.name}`}>
-            {uploading ? 'Uploading…' : 'Add photo'}
+          <SmallButton onClick={() => fileRef.current?.click()} disabled={busy} label={tr(`Add a photo of ${p.name}`, `${p.name} ki photo lagao`)}>
+            {uploading ? tr('Uploading…', 'Upload ho raha hai…') : tr('Add photo', 'Photo lagao')}
           </SmallButton>
         )}
-        <SmallButton onClick={onEdit} disabled={busy} label={`Edit ${p.name}`} span={!p.imageUrl ? 1 : 2}>
-          Edit
+        <SmallButton onClick={onEdit} disabled={busy} label={tr(`Edit ${p.name}`, `${p.name} badlo`)} span={!p.imageUrl ? 1 : 2}>
+          {tr('Edit', 'Badlo')}
         </SmallButton>
         <input
           ref={fileRef}

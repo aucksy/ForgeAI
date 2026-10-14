@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { brandReport, normalizeHex, type BrandPalette, type GymBrand, type HeadingStyle } from '@forgeai/theme';
 
+import { tr } from '../i18n';
 import * as api from '../shop/api';
 import { JoinCodeCard } from '../shop/JoinCode';
 import { useShop } from '../shop/ShopProvider';
@@ -29,23 +30,30 @@ import { PhonePreview } from './PhonePreview';
  * with the gym when the app opens, and when the member comes back to it at most once an hour; a
  * new look then shows the next time they open or come back to the app — never mid-workout.
  */
-const SAVED_WORDS =
-  'Saved. New members get it at once. Members already joined get it on one of their next visits to the app (it checks with your gym at most once an hour) — never in the middle of a workout.';
+const savedWords = () =>
+  tr(
+    'Saved. New members get it at once. Members already joined get it on one of their next visits to the app (it checks with your gym at most once an hour) — never in the middle of a workout.',
+    'Save ho gaya. Naye members ko turant milega. Pehle se jude members ko app ke agle kuch visits mein milega (app ghante mein ek baar gym se check karta hai) — workout ke beech kabhi nahi.',
+  );
 
 export function BrandingScreen() {
   const { cloud } = useShop();
   return (
     <>
       <PageHeader
-        title="Branding"
-        subtitle="Your gym's logo and colours in the ForgeAI app"
+        title={tr('Branding', 'Gym ka look')}
+        subtitle={tr("Your gym's logo and colours in the ForgeAI app", 'ForgeAI app mein aapke gym ka Logo aur rang')}
         actions={
           <Button variant="ghost" onClick={() => navigate('/settings')}>
-            Back to Settings
+            {tr('Back to Settings', 'Settings par wapas')}
           </Button>
         }
       />
-      {cloud ? <BrandingForm ownerKey={cloud.ownerKey} gymName={cloud.name} /> : <JoinCodeCard title="Turn on the member app first" />}
+      {cloud ? (
+        <BrandingForm ownerKey={cloud.ownerKey} gymName={cloud.name} />
+      ) : (
+        <JoinCodeCard title={tr('Turn on the member app first', 'Pehle member app chalu karo')} />
+      )}
     </>
   );
 }
@@ -97,7 +105,9 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
   if (load.state === 'loading') {
     return (
       <Card>
-        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>Loading your gym’s look…</p>
+        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+          {tr('Loading your gym’s look…', 'Aapke gym ka look load ho raha hai…')}
+        </p>
       </Card>
     );
   }
@@ -106,7 +116,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
       <Card>
         <ErrorBanner>{load.message}</ErrorBanner>
         <Button variant="ghost" onClick={() => void fetchBrand()}>
-          Try again
+          {tr('Try again', 'Phir se try karo')}
         </Button>
       </Card>
     );
@@ -124,7 +134,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
       const next = await api.setBrand(ownerKey, saveArgs(draft));
       setLoad({ state: 'ready', saved: next });
       setDraft(draftFromBrand(next));
-      flash(SAVED_WORDS);
+      flash(savedWords());
     } catch (e) {
       setError(brandErrorWords(e));
     } finally {
@@ -140,7 +150,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
       await api.setBrand(ownerKey, CLEAR_ARGS);
       setLoad({ state: 'ready', saved: null });
       setDraft(draftFromBrand(null));
-      flash('Back to ForgeAI’s look.');
+      flash(tr('Back to ForgeAI’s look.', 'ForgeAI ka look wapas aa gaya.'));
     } catch (e) {
       setError(brandErrorWords(e));
     } finally {
@@ -152,7 +162,10 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
     <div style={{ display: 'grid', justifyItems: 'center', gap: space.md }}>
       <PhonePreview palette={palette} gymName={gymName} logoUrl={draft.logoUrl} heading={draft.heading} scale={compact ? 0.86 : 1} />
       <p style={{ margin: 0, maxWidth: 300, textAlign: 'center', fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        The Workout tab as members will see it. The app opens with your logo for a second, then these colours.
+        {tr(
+          'The Workout tab as members will see it. The app opens with your logo for a second, then these colours.',
+          'Members ko Workout tab aisa dikhega. App ek second aapke Logo ke saath khulta hai, phir yeh rang.',
+        )}
       </p>
     </div>
   );
@@ -181,22 +194,25 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           />
 
           <Card>
-            <SectionTitle>Colour</SectionTitle>
+            <SectionTitle>{tr('Colour', 'Rang')}</SectionTitle>
             <ColourField
-              label="Your brand colour"
-              hint="Buttons, the active tab, highlights and charts."
+              label={tr('Your brand colour', 'Aapka brand rang')}
+              hint={tr('Buttons, the active tab, highlights and charts.', 'Buttons, chalu tab, highlights aur charts.')}
               value={draft.accent}
               onChange={(v) => set({ accent: v })}
             />
             <div style={{ marginTop: space.lg }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: space.sm, minHeight: 44, cursor: 'pointer', fontFamily: font.body, fontSize: 14, color: color.ink }}>
                 <input type="checkbox" checked={draft.useBg} onChange={(e) => set({ useBg: e.target.checked })} style={{ width: 20, height: 20, accentColor: color.accent }} />
-                Use my own background tone
+                {tr('Use my own background tone', 'Apna background rang lagao')}
               </label>
               {draft.useBg && (
                 <ColourField
-                  label="Background tone"
-                  hint="A dark colour for the page; cards and sheets are made a little lighter from it."
+                  label={tr('Background tone', 'Background rang')}
+                  hint={tr(
+                    'A dark colour for the page; cards and sheets are made a little lighter from it.',
+                    'Page ke liye gehra rang; cards aur sheets isse thode halke banenge.',
+                  )}
                   value={draft.bg}
                   onChange={(v) => set({ bg: v })}
                 />
@@ -205,12 +221,12 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           </Card>
 
           <Card>
-            <SectionTitle>Headings</SectionTitle>
-            <div role="radiogroup" aria-label="Heading style" style={{ display: 'grid', gap: space.sm }}>
+            <SectionTitle>{tr('Headings', 'Headings')}</SectionTitle>
+            <div role="radiogroup" aria-label={tr('Heading style', 'Heading ka style')} style={{ display: 'grid', gap: space.sm }}>
               {(
                 [
-                  ['normal', 'Normal', 'ForgeAI’s own headings'],
-                  ['bold-italic', 'Bold italic', 'Slanted headings, for a sporty look'],
+                  ['normal', tr('Normal', 'Normal'), tr('ForgeAI’s own headings', 'ForgeAI ki apni headings')],
+                  ['bold-italic', tr('Bold italic', 'Bold italic'), tr('Slanted headings, for a sporty look', 'Tirchhi headings, sporty look ke liye')],
                 ] as [HeadingStyle, string, string][]
               ).map(([value, label, note]) => (
                 <label
@@ -236,7 +252,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           </Card>
 
           <Card>
-            <SectionTitle>Readability check</SectionTitle>
+            <SectionTitle>{tr('Readability check', 'Padhne mein aasaan?')}</SectionTitle>
             {live ? (
               <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'grid', gap: space.sm }}>
                 {report.map((line) => {
@@ -250,26 +266,34 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
                 })}
               </ul>
             ) : (
-              <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkMuted }}>Finish typing the colour code to check it.</p>
+              <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkMuted }}>
+                {tr('Finish typing the colour code to check it.', 'Check karne ke liye rang ka code poora likho.')}
+              </p>
             )}
             {live && live.nudges.some((n) => n.what === 'accent' || n.what === 'background') && (
               <p style={{ margin: `${space.md}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-                Members get the adjusted colour. Save keeps the colour you picked.
+                {tr(
+                  'Members get the adjusted colour. Save keeps the colour you picked.',
+                  'Members ko theek kiya hua rang milega. Save aapka chuna hua rang rakhta hai.',
+                )}
               </p>
             )}
           </Card>
 
           <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap', alignItems: 'center' }}>
             <Button onClick={() => void save()} disabled={!live || !changed || saving || uploading}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save', 'Save karo')}
             </Button>
             {saved && (
               <Button variant="quiet" tone="danger" onClick={() => setConfirmClear(true)} disabled={saving || uploading}>
-                Use ForgeAI’s look
+                {tr('Use ForgeAI’s look', 'ForgeAI ka look lagao')}
               </Button>
             )}
             {!changed && saved && (
-              <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>Saved{saved.updatedAt ? ` · ${new Date(saved.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}` : ''}</span>
+              <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
+                {tr('Saved', 'Save hua')}
+                {saved.updatedAt ? ` · ${new Date(saved.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}` : ''}
+              </span>
             )}
           </div>
         </div>
@@ -279,21 +303,24 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
 
       {confirmClear && (
         <Sheet
-          title="Go back to ForgeAI’s look?"
+          title={tr('Go back to ForgeAI’s look?', 'ForgeAI ka look wapas lagayein?')}
           onClose={closeClear}
           footer={
             <>
               <Button variant="ghost" onClick={closeClear}>
-                Keep my look
+                {tr('Keep my look', 'Mera look rakho')}
               </Button>
               <Button tone="danger" onClick={() => void clear()}>
-                Use ForgeAI’s look
+                {tr('Use ForgeAI’s look', 'ForgeAI ka look lagao')}
               </Button>
             </>
           }
         >
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-            Your logo and colours are removed from the member app. Members see ForgeAI’s own look on one of their next visits to the app — never in the middle of a workout.
+            {tr(
+              'Your logo and colours are removed from the member app. Members see ForgeAI’s own look on one of their next visits to the app — never in the middle of a workout.',
+              'Aapka Logo aur rang member App se hat jayenge. Members ko app ke agle kuch visits mein ForgeAI ka apna look dikhega — workout ke beech kabhi nahi.',
+            )}
           </p>
         </Sheet>
       )}
@@ -322,7 +349,7 @@ function ColourField({ label, hint, value, onChange }: { label: string; hint: st
       <div style={{ display: 'flex', gap: space.sm, alignItems: 'stretch' }}>
         <input
           type="color"
-          aria-label={`${label}: picker`}
+          aria-label={tr(`${label}: picker`, `${label}: chuno`)}
           value={(hex ?? '#000000').toLowerCase()}
           onChange={(e) => onChange(e.target.value.toUpperCase())}
           style={{ width: 52, minHeight: 44, padding: 2, border: `1px solid ${color.borderStrong}`, borderRadius: radius.md, background: color.surfaceSunken, cursor: 'pointer' }}
@@ -387,7 +414,7 @@ function LogoCard({
     try {
       onLogo(await uploadGymLogo(ownerKey, file));
     } catch (e) {
-      setError(e instanceof LogoError ? e.message : 'The logo didn’t upload. Please try again.');
+      setError(e instanceof LogoError ? e.message : tr('The logo didn’t upload. Please try again.', 'Logo upload nahi hua. Phir se try karo.'));
     } finally {
       setBusy(false);
       onBusy(false);
@@ -396,7 +423,7 @@ function LogoCard({
 
   return (
     <Card>
-      <SectionTitle>Logo</SectionTitle>
+      <SectionTitle>{tr('Logo', 'Logo')}</SectionTitle>
       <div style={{ display: 'flex', gap: space.lg, alignItems: 'center', flexWrap: 'wrap' }}>
         <div
           onDragOver={(e) => {
@@ -423,29 +450,34 @@ function LogoCard({
           }}
         >
           {logoUrl ? (
-            <img src={logoUrl} alt="Your logo" style={{ width: 96, height: 96, objectFit: 'contain' }} />
+            <img src={logoUrl} alt={tr('Your logo', 'Aapka logo')} style={{ width: 96, height: 96, objectFit: 'contain' }} />
           ) : (
-            <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, textAlign: 'center', padding: space.sm }}>No logo yet</span>
+            <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, textAlign: 'center', padding: space.sm }}>
+              {tr('No logo yet', 'Abhi logo nahi')}
+            </span>
           )}
           {busy && (
             <div role="status" style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', borderRadius: radius.lg, background: 'rgba(7,8,12,0.72)', color: color.ink, fontFamily: font.body, fontSize: 13, fontWeight: 700 }}>
-              Uploading…
+              {tr('Uploading…', 'Upload ho raha hai…')}
             </div>
           )}
         </div>
         <div style={{ display: 'grid', gap: space.sm, flex: '1 1 200px', minWidth: 0 }}>
           <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
             <Button variant="ghost" disabled={busy || disabled} onClick={() => fileRef.current?.click()}>
-              {logoUrl ? 'Change logo' : 'Upload logo'}
+              {logoUrl ? tr('Change logo', 'Logo badlo') : tr('Upload logo', 'Logo upload karo')}
             </Button>
             {logoUrl && (
               <Button variant="quiet" tone="danger" disabled={busy || disabled} onClick={() => onLogo(null)}>
-                Remove logo
+                {tr('Remove logo', 'Logo hatao')}
               </Button>
             )}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-            A square PNG with a see-through background works best. Members see it full-screen as the app opens, and small at the top of their tabs. You can also drop it on the box.
+            {tr(
+              'A square PNG with a see-through background works best. Members see it full-screen as the app opens, and small at the top of their tabs. You can also drop it on the box.',
+              'Transparent background wala square PNG sabse achha hai. App khulte hi members ise poori screen par dekhte hain, aur tabs ke upar chhota. Ise box par drop bhi kar sakte hain.',
+            )}
           </div>
           {error && (
             <div role="alert" style={{ fontFamily: font.body, fontSize: 13, color: color.criticalText }}>

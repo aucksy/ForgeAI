@@ -9,6 +9,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCrm } from '../../store';
+import { tr } from '../../i18n';
 import { inviteMessage, whatsAppHref } from '../../shop/invite';
 import { useShop } from '../../shop/ShopProvider';
 import {
@@ -116,9 +117,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     return (
       <Card>
         <EmptyState
-          title="Member not found"
-          body="They may have been removed."
-          action={<Button onClick={() => navigate('/members')}>Back to members</Button>}
+          title={tr('Member not found', 'Member nahi mila')}
+          body={tr('They may have been removed.', 'Shayad hata diya gaya hai.')}
+          action={<Button onClick={() => navigate('/members')}>{tr('Back to members', 'Peeche, members par')}</Button>}
         />
       </Card>
     );
@@ -138,7 +139,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       await fn();
       flash(done);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'That didn’t work. Please try again.');
+      setError(e instanceof Error ? e.message : tr('That didn’t work. Please try again.', 'Kuch gadbad hui. Phir se try karo.'));
     }
   };
 
@@ -158,9 +159,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         full
         variant="ghost"
         disabled={visitedToday}
-        onClick={() => run(() => checkIn(memberId, 'desk'), 'Checked in for today.')}
+        onClick={() => run(() => checkIn(memberId, 'desk'), tr('Checked in for today.', 'Aaj ki Hazri lag gayi.'))}
       >
-        {visitedToday ? 'Checked in today' : 'Check in'}
+        {visitedToday ? tr('Checked in today', 'Aaj Hazri lag gayi') : tr('Check in', 'Hazri lagao')}
       </Button>
       <Button
         full
@@ -169,11 +170,13 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         onClick={() =>
           run(
             () => setMemberArchived(memberId, !member.archived),
-            member.archived ? 'Member restored.' : 'Member archived.',
+            member.archived
+              ? tr('Member restored.', 'Member wapas aa gaya.')
+              : tr('Member archived.', 'Member archive ho gaya.'),
           )
         }
       >
-        {member.archived ? 'Restore member' : 'Archive member'}
+        {member.archived ? tr('Restore member', 'Member wapas lao') : tr('Archive member', 'Archive karo')}
       </Button>
     </div>
   );
@@ -182,19 +185,19 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     <>
       <PageHeader
         title={member.fullName}
-        subtitle={`Member since ${formatDay(member.joinedOn)}`}
+        subtitle={tr(`Member since ${formatDay(member.joinedOn)}`, `${formatDay(member.joinedOn)} se member`)}
         actions={
           <>
             <Button variant="ghost" onClick={() => setEditing(true)}>
-              Edit
+              {tr('Edit', 'Badlo')}
             </Button>
             {view.outstandingP > 0 && (
               <Button variant="ghost" onClick={() => setCollecting(true)}>
-                Record payment
+                {tr('Record payment', 'Fees lo')}
               </Button>
             )}
             <Button onClick={() => setSelling(true)}>
-              {view.coversUntil ? 'Renew' : 'Sell membership'}
+              {view.coversUntil ? tr('Renew', 'Renew karo') : tr('Sell membership', 'Plan do')}
             </Button>
           </>
         }
@@ -208,8 +211,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           <div style={{ flex: 1, minWidth: 0 }}>
             <Row gap={space.sm}>
               <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>
-              {member.archived && <Pill tone="muted">Archived</Pill>}
-              {member.appUserId && <Pill tone="accent">Using the app</Pill>}
+              {member.archived && <Pill tone="muted">{tr('Archived', 'Archive kiye')}</Pill>}
+              {member.appUserId && <Pill tone="accent">{tr('Using the app', 'App chala rahe')}</Pill>}
             </Row>
             <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
               {current ? (
@@ -218,13 +221,18 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                   {view.coversUntil && view.coversUntil !== current.endsOn ? (
                     // Already renewed: lead with where the cover actually runs to,
                     // so nobody chases a member who has paid.
-                    <> · renewed through {formatDay(view.coversUntil)} ({relativeDay(view.coversUntil, today)})</>
+                    <>
+                      {tr(
+                        ` · renewed through ${formatDay(view.coversUntil)} (${relativeDay(view.coversUntil, today)})`,
+                        ` · ${formatDay(view.coversUntil)} tak Renew hai (${relativeDay(view.coversUntil, today)})`,
+                      )}
+                    </>
                   ) : (
                     <> ({relativeDay(current.endsOn, today)})</>
                   )}
                 </>
               ) : (
-                'No membership on record.'
+                tr('No membership on record.', 'Koi plan nahi hai.')
               )}
             </div>
             <Row gap={space.sm}>
@@ -237,7 +245,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 rel="noreferrer"
                 style={linkStyle}
               >
-                WhatsApp
+                {tr('WhatsApp', 'WhatsApp')}
               </a>
               {/* Invite link: WhatsApp opens on this member with the gym's link typed in. */}
               {cloud && !member.appUserId && (
@@ -247,7 +255,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                   rel="noreferrer"
                   style={linkStyle}
                 >
-                  Send app invite
+                  {tr('Send app invite', 'App ka invite bhejo')}
                 </a>
               )}
             </Row>
@@ -259,48 +267,55 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       <Grid min={150}>
         <StatTile
-          label="Outstanding"
+          label={tr('Outstanding', 'Baaki')}
           value={view.outstandingP > 0 ? formatINR(view.outstandingP) : '—'}
           tone={view.outstandingP > 0 ? 'warn' : undefined}
-          sub={view.outstandingP > 0 ? 'Money still owed' : 'Fully paid'}
+          sub={view.outstandingP > 0 ? tr('Money still owed', 'Fees baaki hai') : tr('Fully paid', 'Poori fees di')}
         />
         <StatTile
-          label="Last visit"
-          value={view.lastVisitOn ? relativeDay(view.lastVisitOn, today) : 'never'}
+          label={tr('Last visit', 'Aakhri hazri')}
+          value={view.lastVisitOn ? relativeDay(view.lastVisitOn, today) : tr('never', 'kabhi nahi')}
           tone={view.daysSinceVisit !== null && view.daysSinceVisit >= 14 ? 'critical' : undefined}
-          sub={view.lastVisitOn ? formatDay(view.lastVisitOn) : 'No check-ins recorded'}
+          sub={view.lastVisitOn ? formatDay(view.lastVisitOn) : tr('No check-ins recorded', 'Koi Hazri nahi lagi')}
         />
         <StatTile
-          label="Days left"
-          value={view.daysRemaining === null ? '—' : view.daysRemaining < 0 ? 'Expired' : view.daysRemaining}
+          label={tr('Days left', 'Kitne din bache')}
+          value={view.daysRemaining === null ? '—' : view.daysRemaining < 0 ? tr('Expired', 'Khatam ho gaye') : view.daysRemaining}
           tone={view.daysRemaining !== null && view.daysRemaining <= 7 ? 'warn' : undefined}
           sub={
             view.coversUntil
               ? view.daysRemaining === 0
-                ? 'Last day is today'
-                : `Covered until ${formatDay(view.coversUntil)}`
-              : 'No live membership'
+                ? tr('Last day is today', 'Aaj aakhri din hai')
+                : tr(`Covered until ${formatDay(view.coversUntil)}`, `${formatDay(view.coversUntil)} tak chalu`)
+              : tr('No live membership', 'Koi chalu plan nahi')
           }
         />
-        <StatTile label="Total visits" value={visitCount} sub={`Since ${formatDay(member.joinedOn)}`} />
+        <StatTile
+          label={tr('Total visits', 'Kul hazri')}
+          value={visitCount}
+          sub={tr(`Since ${formatDay(member.joinedOn)}`, `${formatDay(member.joinedOn)} se`)}
+        />
       </Grid>
 
       <div style={{ height: space.lg }} />
 
       {profile && (
         <Card style={{ marginBottom: space.lg }}>
-          <SectionTitle>Training pattern</SectionTitle>
+          <SectionTitle>{tr('Training pattern', 'Aane ka pattern')}</SectionTitle>
           <AttendanceStrip profile={profile} today={today} />
         </Card>
       )}
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Memberships</SectionTitle>
+        <SectionTitle>{tr('Memberships', 'Plan')}</SectionTitle>
         {memberships.length === 0 ? (
           <EmptyState
-            title="No memberships yet"
-            body="Sell one and their expiry date starts driving the renewals list."
-            action={<Button onClick={() => setSelling(true)}>Sell membership</Button>}
+            title={tr('No memberships yet', 'Abhi koi plan nahi')}
+            body={tr(
+              'Sell one and their expiry date starts driving the renewals list.',
+              'Plan do, phir khatam hone ki date Renew list mein aayegi.',
+            )}
+            action={<Button onClick={() => setSelling(true)}>{tr('Sell membership', 'Plan do')}</Button>}
           />
         ) : (
           <div style={{ display: 'grid', gap: space.sm }}>
@@ -311,7 +326,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 payments={payments}
                 today={today}
                 onCancel={() => setCancelling(m)}
-                onRestore={() => run(() => uncancelMembership(m.id), 'Cancellation reversed.')}
+                onRestore={() => run(() => uncancelMembership(m.id), tr('Cancellation reversed.', 'Cancel wapas liya.'))}
               />
             ))}
           </div>
@@ -319,9 +334,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       </Card>
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Payments</SectionTitle>
+        <SectionTitle>{tr('Payments', 'Fees ka hisaab')}</SectionTitle>
         {payments.length === 0 ? (
-          <EmptyState title="No payments recorded" />
+          <EmptyState title={tr('No payments recorded', 'Abhi koi fees nahi li')} />
         ) : (
           <div style={{ display: 'grid', gap: space.xs }}>
             {payments.map((p) => (
@@ -332,7 +347,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       </Card>
 
       <Card>
-        <SectionTitle>Details</SectionTitle>
+        <SectionTitle>{tr('Details', 'Jaankari')}</SectionTitle>
         {/* Three across on a desk screen: one column of six short pairs left a
             thousand pixels of empty card beside them. */}
         <dl
@@ -343,19 +358,19 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
             gridTemplateColumns: compact ? 'minmax(0, 1fr)' : 'repeat(3, minmax(0, 1fr))',
           }}
         >
-          <Detail label="Mobile" value={formatPhone(member.phone)} />
-          <Detail label="Email" value={member.email} />
-          <Detail label="Date of birth" value={member.dateOfBirth ? formatDay(member.dateOfBirth) : null} />
-          <Detail label="Address" value={member.address} />
+          <Detail label={tr('Mobile', 'Mobile')} value={formatPhone(member.phone)} />
+          <Detail label={tr('Email', 'Email')} value={member.email} />
+          <Detail label={tr('Date of birth', 'Janam din')} value={member.dateOfBirth ? formatDay(member.dateOfBirth) : null} />
+          <Detail label={tr('Address', 'Pata')} value={member.address} />
           <Detail
-            label="Emergency contact"
+            label={tr('Emergency contact', 'Ghar ka number')}
             value={
               member.emergencyName || member.emergencyPhone
                 ? `${member.emergencyName ?? ''} ${member.emergencyPhone ? formatPhone(member.emergencyPhone) : ''}`.trim()
                 : null
             }
           />
-          <Detail label="Notes" value={member.notes} />
+          <Detail label={tr('Notes', 'Notes')} value={member.notes} />
         </dl>
       </Card>
 
@@ -367,8 +382,11 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           onSold={(result) =>
             flash(
               result.payment
-                ? `Membership saved. Receipt ${result.payment.receiptNo}.`
-                : 'Membership saved — nothing collected yet.',
+                ? tr(
+                    `Membership saved. Receipt ${result.payment.receiptNo}.`,
+                    `Plan save ho gaya. Raseed ${result.payment.receiptNo}.`,
+                  )
+                : tr('Membership saved — nothing collected yet.', 'Plan save ho gaya — abhi fees nahi li.'),
             )
           }
         />
@@ -377,7 +395,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <CollectPaymentSheet
           view={view}
           onClose={() => setCollecting(false)}
-          onCollected={(payment) => flash(`Payment recorded. Receipt ${payment.receiptNo}.`)}
+          onCollected={(payment) => flash(tr(`Payment recorded. Receipt ${payment.receiptNo}.`, `Fees le li. Raseed ${payment.receiptNo}.`))}
         />
       )}
       {cancelling && (
@@ -388,7 +406,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
             run(async () => {
               await cancelMembership(cancelling.id, reason);
               setCancelling(null);
-            }, 'Membership cancelled.')
+            }, tr('Membership cancelled.', 'Plan cancel ho gaya.'))
           }
         />
       )}
@@ -397,7 +415,14 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           payment={voiding}
           onClose={() => setVoiding(null)}
           onVoided={(restored) =>
-            flash(restored ? 'Receipt voided. The amount is back on their dues.' : 'Receipt voided.')
+            flash(
+              restored
+                ? tr(
+                    'Receipt voided. The amount is back on their dues.',
+                    'Raseed cancel ho gayi. Paise wapas Fees baaki mein jud gaye.',
+                  )
+                : tr('Receipt voided.', 'Raseed cancel ho gayi.'),
+            )
           }
         />
       )}
@@ -426,32 +451,37 @@ function CancelMembershipSheet({
 
   return (
     <Sheet
-      title="Cancel this membership?"
+      title={tr('Cancel this membership?', 'Yeh plan cancel karein?')}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Keep it
+            {tr('Keep it', 'Rehne do')}
           </Button>
           <Button tone="danger" disabled={reason.trim().length < 3} onClick={() => onConfirm(reason.trim())}>
-            Cancel membership
+            {tr('Cancel membership', 'Plan cancel karo')}
           </Button>
         </>
       }
     >
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        <strong style={{ color: color.ink }}>{membership.planName}</strong> (
-        {formatDay(membership.startsOn)} → {formatDay(membership.endsOn)}) will stop counting as cover and
-        will no longer be chased for money. The record stays, and you can undo this afterwards.
+        <strong style={{ color: color.ink }}>{membership.planName}</strong>
+        {tr(
+          ` (${formatDay(membership.startsOn)} → ${formatDay(membership.endsOn)}) will stop counting as cover and will no longer be chased for money. The record stays, and you can undo this afterwards.`,
+          ` (${formatDay(membership.startsOn)} → ${formatDay(membership.endsOn)}) ab cover mein nahi ginega aur iski fees nahi maangi jayegi. Record rahega, aur aap baad mein ise wapas kar sakte hain.`,
+        )}
       </p>
 
       <TextField
-        label="Reason"
+        label={tr('Reason', 'Kaaran')}
         value={reason}
         onChange={setReason}
         autoFocus
-        placeholder="Moved city"
-        hint="Recorded against the record so it makes sense months later."
+        placeholder={tr('Moved city', 'Shehar badal liya')}
+        hint={tr(
+          'Recorded against the record so it makes sense months later.',
+          'Record mein likha rahega, taaki mahino baad bhi samajh aaye.',
+        )}
       />
     </Sheet>
   );
@@ -485,10 +515,17 @@ function AttendanceStrip({
     <>
       <Row gap={space.xs}>
         <Pill tone={verdict.tone}>{verdict.label}</Pill>
-        {profile.usualHour !== null && <Pill tone="muted">Usually {hourLabel(profile.usualHour)}</Pill>}
+        {profile.usualHour !== null && <Pill tone="muted">
+            {tr(`Usually ${hourLabel(profile.usualHour)}`, `Aksar ${hourLabel(profile.usualHour)}`)}
+          </Pill>}
         {profile.medianGapDays !== null && (
           <Pill tone="muted">
-            Every {Math.round(profile.medianGapDays)} {Math.round(profile.medianGapDays) === 1 ? 'day' : 'days'}
+            {Math.round(profile.medianGapDays) === 1
+              ? tr(`Every ${Math.round(profile.medianGapDays)} day`, 'Har din')
+              : tr(
+                  `Every ${Math.round(profile.medianGapDays)} days`,
+                  `Har ${Math.round(profile.medianGapDays)} din mein`,
+                )}
           </Pill>
         )}
       </Row>
@@ -504,7 +541,7 @@ function AttendanceStrip({
         {days.map((day) => (
           <span
             key={day}
-            title={`${formatDay(day)}${present.has(day) ? ' — trained' : ''}`}
+            title={`${formatDay(day)}${present.has(day) ? tr(' — trained', ' — aaye') : ''}`}
             style={{
               width: 12,
               height: 12,
@@ -517,13 +554,23 @@ function AttendanceStrip({
       </div>
 
       <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-        {profile.visitsInWindowN} {profile.visitsInWindowN === 1 ? 'visit' : 'visits'} in the last{' '}
-        {RHYTHM_WINDOW_DAYS} days
+        {profile.visitsInWindowN === 1
+          ? tr(
+              `${profile.visitsInWindowN} visit in the last ${RHYTHM_WINDOW_DAYS} days`,
+              `Pichhle ${RHYTHM_WINDOW_DAYS} din mein ${profile.visitsInWindowN} baar aaye`,
+            )
+          : tr(
+              `${profile.visitsInWindowN} visits in the last ${RHYTHM_WINDOW_DAYS} days`,
+              `Pichhle ${RHYTHM_WINDOW_DAYS} din mein ${profile.visitsInWindowN} baar aaye`,
+            )}
         {/* The rate is measured over the days their plan actually covered, so it says
             so — otherwise a member who renewed six days ago reads "20 visits in 56
             days · about 20.0 a week" and the two numbers cannot both be true. */}
         {profile.weeklyRate > 0 &&
-          ` · about ${profile.weeklyRate.toFixed(1)} a week while their plan was running`}
+          tr(
+            ` · about ${profile.weeklyRate.toFixed(1)} a week while their plan was running`,
+            ` · plan chalte waqt hafte mein lagbhag ${profile.weeklyRate.toFixed(1)} baar`,
+          )}
         {band !== 'ok' && ` · ${riskReason({ profile, band })}`}
       </div>
     </>
@@ -593,24 +640,28 @@ function MembershipRow({
                 fontWeight: 700,
               }}
             >
-              {formatINR(unpaid)} {chased ? 'due' : 'unpaid · not chased'}
+              {formatINR(unpaid)}{' '}
+              {chased ? tr('due', 'baaki') : tr('unpaid · not chased', 'Fees nahi di · maangi nahi jayegi')}
             </span>
           ) : (
-            <span style={{ fontFamily: font.body, fontSize: 12, color: color.goodText }}>Paid</span>
+            <span style={{ fontFamily: font.body, fontSize: 12, color: color.goodText }}>{tr('Paid', 'Poori fees di')}</span>
           )}
           {membership.listPriceP > membership.priceP && (
             <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-              {formatINR(membership.listPriceP - membership.priceP)} discount
+              {tr(
+                `${formatINR(membership.listPriceP - membership.priceP)} discount`,
+                `${formatINR(membership.listPriceP - membership.priceP)} Chhoot`,
+              )}
             </span>
           )}
         </div>
         {membership.cancelled ? (
           <Button variant="quiet" onClick={onRestore}>
-            Undo cancel
+            {tr('Undo cancel', 'Cancel wapas lo')}
           </Button>
         ) : (
           <Button variant="quiet" tone="danger" onClick={onCancel}>
-            Cancel
+            {tr('Cancel', 'Cancel')}
           </Button>
         )}
       </Row>
@@ -626,7 +677,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid: () => void 
       {/* Receipt number over date and method, as one tap target: side by side
           they left the date 60px on a phone and it broke into three lines. */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <Link to={`/receipts/${payment.id}`} title="Open printable receipt">
+        <Link to={`/receipts/${payment.id}`} title={tr('Open printable receipt', 'Raseed kholo')}>
           <span style={{ display: 'block', minHeight: TOUCH, padding: '4px 0' }}>
             <span style={{ display: 'block', fontFamily: font.mono, fontSize: 13, color: color.accentBright }}>
               {payment.receiptNo}
@@ -649,7 +700,8 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid: () => void 
           // Colour + strikethrough alone is invisible to a screen reader, which
           // would read a cancelled receipt as a normal one.
           <div style={{ fontFamily: font.body, fontSize: 12, fontWeight: 700, color: color.criticalText }}>
-            Voided{payment.voidReason ? `: ${payment.voidReason}` : ''}
+            {tr('Voided', 'Raseed cancel hui')}
+            {payment.voidReason ? `: ${payment.voidReason}` : ''}
           </div>
         )}
       </div>
@@ -666,7 +718,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid: () => void 
       </span>
       {!payment.voided && (
         <Button variant="quiet" tone="danger" onClick={onVoid}>
-          Void
+          {tr('Void', 'Raseed cancel karo')}
         </Button>
       )}
     </Row>
@@ -686,7 +738,7 @@ function Detail({ label, value }: { label: string; value: string | null }) {
           whiteSpace: 'pre-wrap',
         }}
       >
-        {value || 'Not recorded'}
+        {value || tr('Not recorded', 'Nahi likha')}
       </dd>
     </div>
   );
