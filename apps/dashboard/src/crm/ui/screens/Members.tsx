@@ -6,6 +6,8 @@
  * not "find me the S's". Alphabetical is one click away via search.
  */
 
+import type { MessageKind } from '../../logic/whatsapp';
+import { WhatsAppQueue } from '../WhatsAppSheet';
 import { inTile, isTileFilter, tileLabel, type TileFilter } from '../../logic/homeTiles';
 import { useMemo, useState } from 'react';
 
@@ -87,6 +89,17 @@ function RosterSection({
   const { memberViews, allMemberViews, today } = useCrm();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>(initialFilter ?? 'all');
+  const [queue, setQueue] = useState(false);
+  const queueKind: MessageKind | null =
+    filter === 'dues'
+      ? 'fees'
+      : filter === 'expired'
+        ? 'ended'
+        : filter === 'birthday'
+          ? 'birthday'
+          : filter === 'expiring' || (typeof filter === 'string' && filter.startsWith('exp-'))
+            ? 'ending'
+            : null;
   const compact = useIsCompact();
 
   const counts = useMemo(() => {
@@ -142,6 +155,16 @@ function RosterSection({
           ]}
         />
       </div>
+
+      {/* Step 4: the whole list on WhatsApp, one person at a time, with the message typed. */}
+      {queueKind && rows.length > 0 && (
+        <div style={{ marginBottom: space.lg }}>
+          <Button onClick={() => setQueue(true)}>
+            {tr(`WhatsApp all ${rows.length}, one by one`, `Sabko WhatsApp (${rows.length}), ek-ek karke`)}
+          </Button>
+        </div>
+      )}
+      {queue && queueKind && <WhatsAppQueue views={rows} kind={queueKind} onClose={() => setQueue(false)} />}
 
       {rows.length === 0 ? (
         <Card>

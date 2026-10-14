@@ -11,6 +11,9 @@
  * theme is a dark-UI palette, and this is paper.
  */
 
+import { validateE164 } from '../../logic/members';
+import { receiptMessage } from '../../logic/whatsapp';
+import { whatsAppHref } from '../../shop/invite';
 import { useMemo } from 'react';
 
 import { useCrm } from '../../store';
@@ -53,6 +56,13 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
     }));
   }, [snapshot, paymentId, today]);
 
+  const waHref = useMemo(() => {
+    const payment = snapshot.payments.find((p) => p.id === paymentId);
+    const member = payment ? snapshot.members.find((m) => m.id === payment.memberId) : undefined;
+    if (!payment || !member || payment.voided || !validateE164(member.phone)) return null;
+    return whatsAppHref(receiptMessage(payment, member.fullName, snapshot.gym), member.phone);
+  }, [snapshot, paymentId]);
+
   if (!doc) {
     return (
       <Card>
@@ -81,6 +91,12 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
               <Button variant="ghost" onClick={() => window.history.back()}>
                 {tr('Back', 'Peeche')}
               </Button>
+              {/* Step 4: the receipt as a WhatsApp message to the member (the print stays the record). */}
+              {waHref && (
+                <a href={waHref} target="_blank" rel="noreferrer" style={waLink}>
+                  {tr('Send on WhatsApp', 'WhatsApp par bhejo')}
+                </a>
+              )}
               <Button onClick={() => window.print()}>{tr('Print', 'Print karo')}</Button>
             </>
           }
@@ -378,3 +394,16 @@ function Td({
     </td>
   );
 }
+
+const waLink: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  minHeight: 44,
+  padding: '0 18px',
+  borderRadius: 999,
+  background: '#25D366',
+  color: '#06280F',
+  fontWeight: 800,
+  fontSize: 14,
+  textDecoration: 'none',
+};

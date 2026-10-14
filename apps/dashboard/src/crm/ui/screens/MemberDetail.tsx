@@ -6,6 +6,7 @@
  * below, because the person is usually in front of you.
  */
 
+import { WhatsAppSheet } from '../WhatsAppSheet';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCrm } from '../../store';
@@ -23,7 +24,7 @@ import {
 import { addDays, formatDay, relativeDay } from '../../logic/dates';
 import { isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
-import { formatPhone, initials, phoneDigits } from '../../logic/members';
+import { formatPhone, initials } from '../../logic/members';
 import { methodLabel } from '../../logic/payments';
 import type { Membership, Payment } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
@@ -66,6 +67,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const [voiding, setVoiding] = useState<Payment | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [whatsApp, setWhatsApp] = useState(false);
 
   // A stray `setTimeout` that outlives the screen sets state on an unmounted tree.
   const toastTimer = useRef<number | undefined>(undefined);
@@ -239,14 +241,10 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
               <a href={`tel:${member.phone}`} style={linkStyle}>
                 {formatPhone(member.phone)}
               </a>
-              <a
-                href={`https://wa.me/${phoneDigits(member.phone)}`}
-                target="_blank"
-                rel="noreferrer"
-                style={linkStyle}
-              >
-                {tr('WhatsApp', 'WhatsApp')}
-              </a>
+              {/* Step 4: WhatsApp with the message already typed (fees, plan ending, birthday…). */}
+              <button type="button" onClick={() => setWhatsApp(true)} style={{ ...linkStyle, background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit' }}>
+                {tr('WhatsApp', 'WhatsApp bhejo')}
+              </button>
               {/* Invite link: WhatsApp opens on this member with the gym's link typed in. */}
               {cloud && !member.appUserId && (
                 <a
@@ -426,6 +424,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           }
         />
       )}
+      {whatsApp && view && <WhatsAppSheet view={view} onClose={() => setWhatsApp(false)} />}
       {toast && <Toast message={toast} />}
     </>
   );
