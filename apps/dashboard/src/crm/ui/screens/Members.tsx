@@ -18,7 +18,7 @@ import { compareByAttention, STATE_LABEL, stateTone } from '../../logic/membersh
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials, matchesQuery } from '../../logic/members';
 import { isPtMembership, ptEndingMemberIds } from '../../logic/pt';
-import { ALL_BATCHES, countWithoutBatch, inBatch, listBatches, memberBatch, NO_BATCH } from '../../logic/batches';
+import { activeBatches, ALL_BATCHES, countWithoutBatch, inBatch, listBatches, memberBatch, NO_BATCH } from '../../logic/batches';
 import type { MemberState, MemberView } from '../../types';
 import { AppMembersSection } from '../../shop/AppMembers';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
@@ -128,7 +128,8 @@ function RosterSection({
   // Batch filter (15 Oct 2026): combines with the status chips — "Expired" + "Morning 6-8". Each
   // side's counts are worked out with the other side applied, so every number is what a tap shows.
   const [batch, setBatch] = useState<string>(ALL_BATCHES);
-  const batches = useMemo(() => listBatches(allMemberViews.map((v) => v.member)), [allMemberViews]);
+  // From members who are not archived: a batch only archived members carry is not offered as "(0)".
+  const batches = useMemo(() => activeBatches(allMemberViews.map((v) => v.member)), [allMemberViews]);
 
   const counts = useMemo(() => {
     const inB = (v: MemberView) => inBatch(v.member, batch);
@@ -171,14 +172,21 @@ function RosterSection({
 
   const batchOptions = useMemo(() => {
     const members = statusRows.map((v) => v.member);
-    const here = new Map(listBatches(members).map((b) => [b.key, b.countN]));
+    const inRows = listBatches(members);
+    const here = new Map(inRows.map((b) => [b.key, b.countN]));
     const none = countWithoutBatch(members);
+    // The batch picked a moment ago stays in the list even if its last member was just archived.
+    const picked =
+      batch !== ALL_BATCHES && batch !== NO_BATCH && !batches.some((b) => b.key === batch)
+        ? [{ value: batch, label: `${inRows.find((b) => b.key === batch)?.name ?? batch} (${here.get(batch) ?? 0})` }]
+        : [];
     return [
       { value: ALL_BATCHES, label: tr(`All batches (${members.length})`, `Saare Batch (${members.length})`) },
       ...batches.map((b) => ({ value: b.key, label: `${b.name} (${here.get(b.key) ?? 0})` })),
+      ...picked,
       { value: NO_BATCH, label: tr(`No batch (${none})`, `Koi Batch nahi (${none})`) },
     ];
-  }, [statusRows, batches]);
+  }, [statusRows, batches, batch]);
   const narrowed = Boolean(query.trim()) || batch !== ALL_BATCHES;
 
   return (

@@ -23,8 +23,9 @@
  * Server side: supabase/migrations/0010_signin_and_records.sql (crm_pull, crm_push).
  */
 
-import type { Enquiry, Expense, Member, Membership, Payment, Plan, Visit } from '../types';
+import type { Enquiry, Expense, Member, MemberDraft, Membership, Payment, Plan, Visit } from '../types';
 import {
+  PartialSaveError,
   type CrmData,
   type CrmSnapshot,
   type GymRecord,
@@ -199,6 +200,11 @@ export function allRecords(snap: CrmSnapshot, gymId: string): CrmRecord[] {
 }
 
 export const UPLOAD_CHUNK = 400;
+
+/** `createMembers`: up to this many new members go in one push (the server's cap is 1000 rows). */
+export const BULK_ONE_PUSH = 900;
+/** `createMembers` over BULK_ONE_PUSH: this many members per push. */
+export const BULK_BATCH = 500;
 
 /**
  * Send a whole browser gym to the cloud gym `key` opens, in chunks. Safe to run again after a
@@ -439,6 +445,25 @@ export class CloudCrmData implements CrmData {
   }
   createMember(draft: Parameters<CrmData['createMember']>[0]) {
     return this.run((d) => d.createMember(draft));
+  }
+  /**
+   * The import's bulk save: one push for up to BULK_ONE_PUSH members (the server takes at most 1000
+   * rows a push). A bigger list goes BULK_BATCH at a time, each its own push; if one fails after
+   * others went through, `PartialSaveError` says which members are saved.
+   */
+  async createMembers(drafts: readonly MemberDraft[]): Promise<Member[]> {
+    if (drafts.length <= BULK_ONE_PUSH) return this.run((d) => d.createMembers(drafts));
+    const saved: Member[] = [];
+    for (let i = 0; i < drafts.length; i += BULK_BATCH) {
+      const part = drafts.slice(i, i + BULK_BATCH);
+      try {
+        saved.push(...(await this.run((d) => d.createMembers(part))));
+      } catch (e) {
+        if (saved.length === 0) throw e;
+        throw new PartialSaveError(saved, e);
+      }
+    }
+    return saved;
   }
   updateMember(id: string, patch: Parameters<CrmData['updateMember']>[1]) {
     return this.run((d) => d.updateMember(id, patch));

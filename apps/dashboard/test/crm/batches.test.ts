@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  activeBatches,
   ALL_BATCHES,
   batchKey,
   countWithoutBatch,
@@ -71,6 +72,15 @@ describe('listBatches', () => {
 
   it('is empty for a gym with no batches', () => {
     expect(listBatches([{}, { batch: '' }])).toEqual([]);
+  });
+
+  it('the Members filter lists batches of members who are not archived (no "(0)" batches)', () => {
+    const members = [
+      { batch: 'Morning 6-8', archived: false },
+      { batch: 'Ladies 11-12', archived: true },
+      { batch: 'morning 6-8', archived: true },
+    ];
+    expect(activeBatches(members)).toEqual([{ name: 'Morning 6-8', key: 'morning 6-8', countN: 1 }]);
   });
 });
 

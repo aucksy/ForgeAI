@@ -41,6 +41,7 @@ import type { MemberView, Payment, PaymentMethod } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
 import { VoidPaymentSheet } from '../forms/VoidPaymentSheet';
 import { memberBatch } from '../../logic/batches';
+import { ptExportCells } from '../../logic/pt';
 import { downloadCsv } from '../download';
 import {
   Button,
@@ -616,12 +617,14 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
     // screen it came from.
     // Downloads stay English in every language (an accountant reads them).
     const contents = inEnglish(() => csvDocument(
-      ['Member', 'Mobile', 'Batch', 'Membership', 'Started', 'Days outstanding', 'Age', 'Amount due (INR)', 'Archived'],
+      ['Member', 'Mobile', 'Batch', 'Membership', 'PT sessions used', 'Trainer', 'Started', 'Days outstanding', 'Age', 'Amount due (INR)', 'Archived'],
       shownRows.map((r) => [
         r.member.fullName,
         phoneForExport(r.member.phone),
         memberBatch(r.member) ?? '',
         r.membership.planName,
+        // A PT pack on credit: how much of it was used, and with whom (blank for a gym plan).
+        ...ptExportCells(r.membership),
         r.membership.startsOn,
         r.ageDays,
         AGING_LABEL[r.bucket],

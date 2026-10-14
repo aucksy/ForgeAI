@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { canOpen } from '../../src/crm/auth/permissions';
+import { DuplicatePhoneError, PartialSaveError } from '../../src/crm/data/adapter';
 import { setCurrentLang } from '../../src/crm/i18n';
 import {
   cellText,
@@ -8,6 +9,7 @@ import {
   decodeCsvBytes,
   detectDayFirst,
   emptyColumnMap,
+  englishSkipReasons,
   excelSerialToISO,
   fillBlanksPatch,
   findHeaderRow,
@@ -18,8 +20,10 @@ import {
   parseGender,
   parseImportPhone,
   parseSheetDate,
+  pastYear,
   planImport,
   rowVerdict,
+  saveInBatches,
   skippedRowsCsv,
   skipReason,
   sniffFile,
@@ -124,7 +128,8 @@ describe('dates', () => {
     expect(excelSerialToISO(60)).toBeNull();
     expect(excelSerialToISO(0)).toBeNull();
     expect(parseSheetDate(45519, TODAY)).toBe('2024-08-15');
-    expect(parseSheetDate('45519', TODAY)).toBe('2024-08-15');
+    // Text is never a date number: only a real number cell is.
+    expect(parseSheetDate('45519', TODAY)).toBeNull();
   });
 
   it('reads Indian day-first dates in every common spelling', () => {
@@ -255,7 +260,141 @@ function plan(rows: unknown[][], roster = [] as ReturnType<typeof makeMember>[],
   return planImport(all, 0, map ?? guessColumns(HEAD), roster, TODAY);
 }
 
+describe('digits typed as a date', () => {
+  it('a number cell is an Excel date number only from 20000 to 60000', () => {
+    expect(parseSheetDate(20000, TODAY)).toBe('1954-10-03');
+    expect(parseSheetDate(60000, TODAY)).toBe('2064-04-08');
+    // 150826 typed into a number cell: not a date number (that read as the year 2312), not a date.
+    expect(parseSheetDate(150826, TODAY)).toBeNull();
+    expect(parseSheetDate('150826', TODAY)).toBeNull();
+    expect(parseSheetDate(19999, TODAY)).toBeNull();
+    expect(parseSheetDate(60001, TODAY)).toBeNull();
+    expect(parseSheetDate(45519.5, TODAY)).toBe('2024-08-15');
+    expect(parseSheetDate(150826.5, TODAY)).toBeNull();
+  });
+
+  it('8 digits are ddmmyyyy, as text or as a number cell (Excel drops the leading zero)', () => {
+    expect(parseSheetDate('15082026', TODAY)).toBe('2026-08-15');
+    expect(parseSheetDate(15082026, TODAY)).toBe('2026-08-15');
+    expect(parseSheetDate(1082026, TODAY)).toBe('2026-08-01');
+    expect(parseSheetDate('01082026', TODAY)).toBe('2026-08-01');
+    expect(parseSheetDate(20260815, TODAY)).toBe('2026-08-15');
+    expect(parseSheetDate('31132026', TODAY)).toBeNull();
+  });
+
+  it('a joining date typed as 150826 is a problem, never a member who joins in 2312', () => {
+    const p = planImport([['Name', 'Mobile', 'DOJ'], ['Riya', '9876543210', 150826]], 0, guessColumns(['Name', 'Mobile', 'DOJ']), [], TODAY);
+    expect(p.rows[0]!.status).toBe('problem');
+    expect(p.rows[0]!.problems[0]).toBe('Joining date “150826” is not a date we can read. Write it like 15/08/2026.');
+  });
+});
+
+describe('two-digit birthday years', () => {
+  it("'27-'99 are the 1900s, '00-'26 the 2000s, and never a birthday ahead of today", () => {
+    expect(pastYear(27, 2026)).toBe(1927);
+    expect(pastYear(99, 2026)).toBe(1999);
+    expect(pastYear(0, 2026)).toBe(2000);
+    expect(pastYear(26, 2026)).toBe(2026);
+    expect(parseSheetDate('01/01/27', TODAY, true, true)).toBe('1927-01-01');
+    expect(parseSheetDate('01/01/05', TODAY, true, true)).toBe('2005-01-01');
+    expect(parseSheetDate('15-Aug-95', TODAY, true, true)).toBe('1995-08-15');
+    // '26 but after today: a century back, never a future birthday.
+    expect(parseSheetDate('15/12/26', TODAY, true, true)).toBe('1926-12-15');
+    expect(parseSheetDate('01/01/26', TODAY, true, true)).toBe('2026-01-01');
+    // A joining date keeps the old rule ('27 is next year).
+    expect(parseSheetDate('01/01/27', TODAY)).toBe('2027-01-01');
+  });
+
+  it('the plan reads a 2-digit birthday year as the past', () => {
+    const p = plan([['Riya', '9876543210', '', '', '05/03/30']]);
+    expect(p.rows[0]!.draft?.dateOfBirth).toBe('1930-03-05');
+    expect(p.rows[0]!.warnings.some((w) => w.includes('Birthday'))).toBe(false);
+  });
+});
+
+describe('downloads stay English', () => {
+  it('the sample file and the skipped-rows file, in a Hinglish panel', () => {
+    setCurrentLang('hi');
+    expect(templateCsv()).toContain('Name,Mobile,Joining date,Gender,Date of birth');
+    const p = plan([['', '9876543210']]);
+    expect(p.rows[0]!.problems).toEqual(['Naam nahi hai.']);
+    const reasons = englishSkipReasons([HEAD, ['', '9876543210']], 0, guessColumns(HEAD), [], TODAY);
+    expect(reasons.get(2)).toBe('No name.');
+    const csv = skippedRowsCsv(HEAD, [{ row: p.rows[0]!, reason: reasons.get(2)! }]);
+    expect(csv.slice(1).split('\r\n')[0]!.startsWith('Row,Why skipped,Name')).toBe(true);
+    expect(csv).toContain('No name.');
+    expect(csv).not.toContain('Naam nahi');
+  });
+});
+
+describe('saveInBatches', () => {
+  const rowsFor = (n: number) =>
+    plan(Array.from({ length: n }, (_, i) => [`Member ${i}`, String(6000000000 + i)])).rows;
+
+  it('saves in batches with progress after each, one save per batch', async () => {
+    const rows = rowsFor(7);
+    const calls: number[] = [];
+    const progress: number[] = [];
+    const out = await saveInBatches(
+      rows,
+      async (drafts) => {
+        calls.push(drafts.length);
+        return drafts.map((d) => makeMember({ phone: d.phone }));
+      },
+      (n) => progress.push(n),
+      3,
+    );
+    expect(calls).toEqual([3, 3, 1]);
+    expect(progress).toEqual([3, 6, 7]);
+    expect(out).toMatchObject({ duplicates: [], notSaved: [], stopped: null });
+    expect(out.added).toHaveLength(7);
+  });
+
+  it('a mobile another desk added meanwhile: that row is set aside, the batch saved again without it', async () => {
+    const rows = rowsFor(4);
+    const taken = rows[1]!.draft!.phone;
+    const out = await saveInBatches(rows, async (drafts) => {
+      if (drafts.some((d) => d.phone === taken)) throw new DuplicatePhoneError(makeMember({ phone: taken }));
+      return drafts.map((d) => makeMember({ phone: d.phone }));
+    }, () => undefined);
+    expect(out.duplicates.map((r) => r.rowNumber)).toEqual([rows[1]!.rowNumber]);
+    expect(out.added).toHaveLength(3);
+    expect(out.stopped).toBeNull();
+  });
+
+  it('no internet: stops, says which rows were saved, and the rest are not saved', async () => {
+    const rows = rowsFor(7);
+    let n = 0;
+    const out = await saveInBatches(rows, async (drafts) => {
+      n += 1;
+      if (n === 2) throw new Error('No internet. Check the connection.');
+      return drafts.map((d) => makeMember({ phone: d.phone }));
+    }, () => undefined, 3);
+    expect(out.added.map((r) => r.rowNumber)).toEqual(rows.slice(0, 3).map((r) => r.rowNumber));
+    expect(out.notSaved).toHaveLength(4);
+    expect(out.stopped).toBe('No internet. Check the connection.');
+  });
+
+  it('a batch the cloud split part-saved: the saved part counts as added', async () => {
+    const rows = rowsFor(4);
+    const out = await saveInBatches(rows, async (drafts) => {
+      throw new PartialSaveError([makeMember({ phone: drafts[0]!.phone }), makeMember({ phone: drafts[1]!.phone })], new Error('Failed to fetch'));
+    }, () => undefined);
+    expect(out.added.map((r) => r.rowNumber)).toEqual([rows[0]!.rowNumber, rows[1]!.rowNumber]);
+    expect(out.notSaved.map((r) => r.rowNumber)).toEqual([rows[2]!.rowNumber, rows[3]!.rowNumber]);
+    expect(out.stopped).toBe('Failed to fetch');
+  });
+});
+
 describe('planImport', () => {
+  it('a joining date more than a year ahead is a problem; within a year, a warning', () => {
+    const p = plan([['Riya', '9876543210', '01/01/2028'], ['Amit', '9876500001', '14/10/2027']]);
+    expect(p.rows[0]!.status).toBe('problem');
+    expect(p.rows[0]!.problems).toEqual(['Joining date 1 Jan 2028 is more than a year away — check the year.']);
+    expect(p.rows[1]!.status).toBe('add');
+    expect(p.rows[1]!.warnings).toEqual(['Joining date 14 Oct 2027 is in the future.']);
+  });
+
   it('turns a clean row into a member as valid as a typed one', () => {
     const p = plan([['  Riya   Sharma ', '98765 43210', '15/08/2026', 'F', '01/01/1995', 'morning 6-8', 'Monthly', '1,500', '14/09/2026', 'Knee pain']]);
     expect(p.counts).toEqual({ add: 1, duplicate: 0, problem: 0 });

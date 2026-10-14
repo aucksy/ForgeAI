@@ -14,6 +14,7 @@ import { useCrm } from '../../store';
 import { tr } from '../../i18n';
 import { addDays, formatDay, relativeDay } from '../../logic/dates';
 import { parseCount } from '../../logic/money';
+import { isPtMembership, ptLeft } from '../../logic/pt';
 import type { Membership } from '../../types';
 import { Button, ChipToggle, ErrorBanner, Sheet, TextField, color, font, space } from '../kit';
 
@@ -55,6 +56,7 @@ export function ExtendMembershipSheet({
   const days = parseCount(daysText, 1, 365);
   const newEnd = days !== null ? addDays(membership.endsOn, days) : null;
   const wasEnded = membership.endsOn < today;
+  const pt = isPtMembership(membership);
 
   const submit = async () => {
     if (days === null) return setError(tr('Days must be a whole number from 1 to 365.', 'Din 1 se 365 ke beech poora number likho.'));
@@ -97,6 +99,11 @@ export function ExtendMembershipSheet({
         {wasEnded
           ? tr(` ended on ${formatDay(membership.endsOn)}.`, ` ${formatDay(membership.endsOn)} ko khatam hua.`)
           : tr(` last day: ${formatDay(membership.endsOn)}.`, ` aakhri din: ${formatDay(membership.endsOn)}.`)}
+        {/* A PT pack: the days give its unused sessions time to be used. */}
+        {pt &&
+          (ptLeft(membership) === 1
+            ? tr(' 1 PT session left.', ' 1 PT session baaki.')
+            : tr(` ${ptLeft(membership)} PT sessions left.`, ` ${ptLeft(membership)} PT session baaki.`))}
       </p>
 
       <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>

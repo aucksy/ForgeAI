@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { DuplicatePhoneError } from '../../src/crm/data/adapter';
+import { DuplicatePhoneError, PartialSaveError } from '../../src/crm/data/adapter';
 import {
   allRecords,
   CloudCrmData,
@@ -321,5 +321,70 @@ describe('PT sessions online', () => {
 
     await staffDesk.undoPtSession(membership.id, TODAY);
     expect((await new CloudCrmData('k', server).load()).memberships[0].ptLog).toEqual([]);
+  });
+});
+
+describe('createMembers online (the import)', () => {
+  const many = (n: number, from = 0): MemberDraft[] =>
+    Array.from({ length: n }, (_, i) => member({ fullName: `Member ${from + i}`, phone: `+9198${String(10_000_000 + from + i).slice(-8)}` }));
+  const noSleep = { wait: async () => undefined };
+
+  /** Records per push, and the server's own cap (crm_push refuses more than 1000 rows). */
+  function counting(server: FakeServer): number[] {
+    const sizes: number[] = [];
+    const realPush = server.push.bind(server);
+    server.push = async (key, base, records, pushId) => {
+      if (records.length > 1000) throw new Error('INVALID');
+      sizes.push(records.length);
+      return realPush(key, base, records, pushId);
+    };
+    return sizes;
+  }
+
+  it('up to 900 members go in ONE push', async () => {
+    const server = new FakeServer();
+    const sizes = counting(server);
+    const desk = new CloudCrmData('k', server);
+    const made = await desk.createMembers(many(900));
+    expect(made).toHaveLength(900);
+    expect(sizes).toEqual([900]);
+    expect((await new CloudCrmData('k', server).load()).members).toHaveLength(900);
+  });
+
+  it('more than 900: 500 per push, all saved', async () => {
+    const server = new FakeServer();
+    const sizes = counting(server);
+    const made = await new CloudCrmData('k', server).createMembers(many(1200));
+    expect(made).toHaveLength(1200);
+    expect(sizes).toEqual([500, 500, 200]);
+  });
+
+  it('the internet drops after the first push: PartialSaveError names the members saved', async () => {
+    const server = new FakeServer();
+    const desk = new CloudCrmData('k', server, noSleep);
+    await desk.load();
+    let pushes = 0;
+    const realPush = server.push.bind(server);
+    server.push = async (key, base, records, pushId) => {
+      pushes += 1;
+      if (pushes > 1) throw new Error('Failed to fetch');
+      return realPush(key, base, records, pushId);
+    };
+    const err = await desk.createMembers(many(1000)).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(PartialSaveError);
+    expect((err as PartialSaveError).saved).toHaveLength(500);
+    expect((err as PartialSaveError).saved[0]!.fullName).toBe('Member 0');
+    server.push = realPush;
+    expect((await new CloudCrmData('k', server).load()).members).toHaveLength(500);
+  });
+
+  it('a mobile another desk already added refuses the push, naming it', async () => {
+    const server = new FakeServer();
+    const deskA = new CloudCrmData('k', server);
+    const deskB = new CloudCrmData('k', server);
+    await deskB.load();
+    await deskA.createMember(many(1, 5)[0]!);
+    await expect(deskB.createMembers(many(10))).rejects.toBeInstanceOf(DuplicatePhoneError);
+    expect((await new CloudCrmData('k', server).load()).members).toHaveLength(1);
   });
 });

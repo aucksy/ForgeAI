@@ -117,7 +117,12 @@ try {
   }
 } finally {
   await browser?.close();
-  server.kill();
+  // On Windows the server runs under a shell: end the whole process tree, not just the shell.
+  if (process.platform === 'win32' && server.pid) {
+    spawn('taskkill', ['/pid', String(server.pid), '/T', '/F'], { stdio: 'ignore' });
+  } else {
+    server.kill();
+  }
 }
 
 if (failures.length) {

@@ -21,7 +21,7 @@ import {
   riskReason,
   RHYTHM_WINDOW_DAYS,
 } from '../../logic/attendance';
-import { addDays, formatDay, relativeDay } from '../../logic/dates';
+import { addDays, diffDays, formatDay, relativeDay } from '../../logic/dates';
 import { isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials } from '../../logic/members';
@@ -29,14 +29,20 @@ import { memberBatch } from '../../logic/batches';
 import { methodLabel } from '../../logic/payments';
 import {
   canUndoPtSession,
+  endedPtPacksWithSessionsLeft,
   isPtMembership,
   lastPtDay,
   livePtPack,
+  PT_ENDING_DAYS,
   PT_LOW_LEFT,
   ptDays,
   ptLeft,
+  ptPackToMark,
+  ptPackToUndo,
   ptSummary,
   ptTotal,
+  ptUsed,
+  runningPtPacks,
 } from '../../logic/pt';
 import type { Membership, Payment } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
@@ -116,18 +122,29 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     [snapshot.memberships, memberId],
   );
 
-  // Freeze / Extra din goes on the plan that ends LAST (not cancelled): extending an earlier
+  // Freeze / Extra din goes on the GYM plan that ends LAST (not cancelled): extending an earlier
   // term when a renewal is already queued would make the two overlap and give the member nothing.
   // An ended plan qualifies too — the days are given back from its old last day.
-  // A PT pack runs beside the gym plan (logic/pt.ts), so the gym plan that ends last is the target;
-  // a member with only PT packs gets the PT pack that ends last.
-  const extendTarget = useMemo(() => {
-    const live = memberships.filter((m) => !m.cancelled);
-    const gym = live.filter((m) => !isPtMembership(m));
-    return (gym.length > 0 ? gym : live).reduce<Membership | null>((best, m) => (!best || m.endsOn > best.endsOn ? m : best), null);
-  }, [memberships]);
+  // A PT pack runs beside the gym plan (logic/pt.ts) and has its own Freeze / extra days: any PT
+  // pack, not cancelled, with sessions still unused (see `canExtendRow`).
+  const extendTarget = useMemo(
+    () =>
+      memberships
+        .filter((m) => !m.cancelled && !isPtMembership(m))
+        .reduce<Membership | null>((best, m) => (!best || m.endsOn > best.endsOn ? m : best), null),
+    [memberships],
+  );
+  const canExtendRow = (m: Membership) =>
+    canFreeze && !m.cancelled && (isPtMembership(m) ? ptLeft(m) > 0 : extendTarget?.id === m.id);
 
-  const ptPack = useMemo(() => livePtPack(memberships, today), [memberships, today]);
+  // PT: every pack running today (sessions used oldest pack first), the pack the next session
+  // comes off, the pack Undo takes back from, and packs that ended with sessions unused.
+  const ptRunning = useMemo(() => runningPtPacks(memberships, today), [memberships, today]);
+  const ptMark = useMemo(() => ptPackToMark(memberships, today), [memberships, today]);
+  const ptUndo = useMemo(() => ptPackToUndo(memberships, today), [memberships, today]);
+  const ptNewest = useMemo(() => livePtPack(memberships, today), [memberships, today]);
+  const ptEnded = useMemo(() => endedPtPacksWithSessionsLeft(memberships, today), [memberships, today]);
+  const ptRenewFrom = ptNewest ?? ptEnded[0] ?? null;
 
   const payments = useMemo(
     () =>
@@ -357,22 +374,30 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       <div style={{ height: space.lg }} />
 
-      {ptPack && (
+      {(ptRunning.length > 0 || ptEnded.length > 0) && (
         <PtCard
-          pack={ptPack}
+          running={ptRunning}
+          markPack={ptMark}
+          newest={ptNewest}
+          ended={ptEnded}
           today={today}
           busy={ptBusy}
-          canUndo={canUndoPtSession(lastPtDay(ptPack), today, canUndoOldPt)}
-          canRenew={snapshot.plans.some((p) => p.id === ptPack.planId && p.active)}
-          onMark={() => runPt(() => markPtSession(ptPack.id), tr('PT session marked.', 'PT session lag gaya.'))}
+          canUndo={canUndoPtSession(ptUndo ? lastPtDay(ptUndo) : null, today, canUndoOldPt)}
+          canRenew={ptRenewFrom !== null && snapshot.plans.some((p) => p.id === ptRenewFrom.planId && p.active)}
+          canExtend={canFreeze}
+          onMark={() => {
+            if (ptMark) void runPt(() => markPtSession(ptMark.id), tr('PT session marked.', 'PT session lag gaya.'));
+          }}
           onUndo={() => {
-            const last = lastPtDay(ptPack);
-            if (last) void runPt(() => undoPtSession(ptPack.id, last), tr('Last PT session taken back.', 'Aakhri PT session hata diya.'));
+            const last = ptUndo ? lastPtDay(ptUndo) : null;
+            if (ptUndo && last) void runPt(() => undoPtSession(ptUndo.id, last), tr('Last PT session taken back.', 'Aakhri PT session hata diya.'));
           }}
           onRenew={() => {
-            setSellPlanId(ptPack.planId);
+            if (!ptRenewFrom) return;
+            setSellPlanId(ptRenewFrom.planId);
             setSelling(true);
           }}
+          onExtend={(m) => setExtending(m)}
         />
       )}
 
@@ -403,7 +428,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 payments={payments}
                 today={today}
                 onCancel={canCancel ? () => setCancelling(m) : undefined}
-                onExtend={canFreeze && extendTarget?.id === m.id ? () => setExtending(m) : undefined}
+                onExtend={canExtendRow(m) ? () => setExtending(m) : undefined}
                 onRestore={
                   canCancel ? () => run(() => uncancelMembership(m.id), tr('Cancellation reversed.', 'Cancel wapas liya.')) : undefined
                 }
@@ -670,96 +695,201 @@ function AttendanceStrip({
 }
 
 /**
- * The member's running PT pack: how many sessions are used, Mark session (owner and Staff), Undo
- * last session (anyone the same day, only an owner for an older day), the days used, and a Renew
- * prompt when they run out (logic/pt.ts).
+ * The member's PT: the running pack(s) — how many sessions are used, Mark session (owner and Staff;
+ * the session comes off the OLDEST running pack with sessions left, so an early renewal never
+ * strands paid sessions), Undo last session (anyone the same day, only an owner for an older day),
+ * the days used, a Renew prompt when they run out — and every pack that ENDED with sessions unused,
+ * which an owner can Extend (logic/pt.ts).
  */
 function PtCard({
-  pack,
+  running,
+  markPack,
+  newest,
+  ended,
   today,
   busy,
   canUndo,
   canRenew,
+  canExtend,
   onMark,
   onUndo,
   onRenew,
+  onExtend,
 }: {
-  pack: Membership;
+  /** Running packs, in the order sessions are used. */
+  running: Membership[];
+  /** The pack the next session comes off; null when every running pack is used up. */
+  markPack: Membership | null;
+  /** The newest running pack (shown when all are used up). */
+  newest: Membership | null;
+  /** Packs that ended with sessions unused, latest first. */
+  ended: Membership[];
   today: string;
   busy: boolean;
   canUndo: boolean;
   /** The PT plan is still on sale, so Renew can open on it. */
   canRenew: boolean;
+  /** Owner: may move a pack's last day (Freeze / extra days). Staff see a plain note. */
+  canExtend: boolean;
   onMark: () => void;
   onUndo: () => void;
   onRenew: () => void;
+  onExtend: (pack: Membership) => void;
 }) {
-  const total = ptTotal(pack);
-  const left = ptLeft(pack);
-  const days = ptDays(pack);
-  const markedToday = days.includes(today);
-  const usedUp = left === 0;
+  const main = markPack ?? newest;
+  const total = main ? ptTotal(main) : 0;
+  const left = main ? ptLeft(main) : 0;
+  const days = main ? ptDays(main) : [];
+  const leftAll = running.reduce((sum, m) => sum + ptLeft(m), 0);
+  // One session a day at the desk: marked on any running pack today greys the button.
+  const markedToday = running.some((m) => ptDays(m).includes(today));
+  const usedUp = running.length > 0 && markPack === null;
   const pct = total > 0 ? Math.round(((total - left) / total) * 100) : 0;
+  const lastEnd = running.reduce<string | null>((max, m) => (max === null || m.endsOn > max ? m.endsOn : max), null);
+  const endsSoon = !usedUp && lastEnd !== null && diffDays(today, lastEnd) <= PT_ENDING_DAYS;
+  const note = { fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.warning, marginTop: space.md } as const;
 
   return (
     <Card style={{ marginBottom: space.lg }}>
       <SectionTitle>{tr('Personal training (PT)', 'Personal training (PT)')}</SectionTitle>
-      <div style={{ fontFamily: font.body, fontSize: 15, fontWeight: 700, color: color.ink, overflowWrap: 'anywhere' }}>
-        {ptSummary(pack)}
-      </div>
-      <div
-        role="progressbar"
-        aria-label={tr('PT sessions used', 'PT session ho gaye')}
-        aria-valuemin={0}
-        aria-valuemax={total}
-        aria-valuenow={total - left}
-        style={{ height: 8, borderRadius: 999, background: color.surfaceSunken, border: `1px solid ${color.border}`, margin: `${space.sm}px 0`, overflow: 'hidden' }}
-      >
-        <div style={{ width: `${pct}%`, height: '100%', background: usedUp ? color.warning : color.accent }} />
-      </div>
-      <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-        {pack.planName} · {tr(`runs until ${formatDay(pack.endsOn)}`, `${formatDay(pack.endsOn)} tak`)}
-      </div>
-
-      {usedUp ? (
-        <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.warning }}>
-          {tr(`All ${total} PT sessions used — time to renew`, `Saare ${total} PT session ho gaye — Renew karo`)}
-        </div>
-      ) : (
-        left <= PT_LOW_LEFT && (
-          <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.warning }}>
-            {left === 1
-              ? tr('Only 1 PT session left', 'Sirf 1 PT session bacha hai')
-              : tr(`Only ${left} PT sessions left`, `Sirf ${left} PT session bache hain`)}
+      {main && (
+        <>
+          <div style={{ fontFamily: font.body, fontSize: 15, fontWeight: 700, color: color.ink, overflowWrap: 'anywhere' }}>
+            {ptSummary(main)}
           </div>
-        )
+          <div
+            role="progressbar"
+            aria-label={tr('PT sessions used', 'PT session ho gaye')}
+            aria-valuemin={0}
+            aria-valuemax={total}
+            aria-valuenow={total - left}
+            style={{ height: 8, borderRadius: 999, background: color.surfaceSunken, border: `1px solid ${color.border}`, margin: `${space.sm}px 0`, overflow: 'hidden' }}
+          >
+            <div style={{ width: `${pct}%`, height: '100%', background: usedUp ? color.warning : color.accent }} />
+          </div>
+          <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, overflowWrap: 'anywhere' }}>
+            {main.planName} · {tr(`runs until ${formatDay(main.endsOn)}`, `${formatDay(main.endsOn)} tak`)}
+          </div>
+        </>
       )}
 
-      <div style={{ marginTop: space.md, display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
-        {usedUp ? (
-          canRenew && <Button onClick={onRenew}>{tr('Renew PT', 'PT Renew karo')}</Button>
-        ) : (
-          <Button onClick={onMark} disabled={busy || markedToday}>
-            {markedToday ? tr('Session marked today', 'Aaj ka session lag gaya') : tr('Mark session', 'Session lagao')}
-          </Button>
-        )}
-        {canUndo && (
-          <Button variant="ghost" onClick={onUndo} disabled={busy}>
-            {tr('Undo last session', 'Aakhri session hatao')}
-          </Button>
-        )}
-      </div>
-
-      <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        {days.length === 0 ? tr('No sessions used yet.', 'Abhi koi session nahi hua.') : tr('Sessions used on', 'Session in din hue')}
-      </div>
-      {days.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.xs, marginTop: space.xs }}>
-          {[...days].reverse().map((d, i) => (
-            <Pill key={d} tone={i === 0 ? 'accent' : 'muted'}>
-              {formatDay(d)}
-            </Pill>
+      {running.length > 1 && (
+        // Two packs at once (one renewed early): each pack's own count, and which one is in use.
+        <div style={{ marginTop: space.md, display: 'grid', gap: 4 }}>
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+            {tr(`${running.length} PT packs running — sessions come off the oldest first`, `${running.length} PT pack chal rahe hain — session pehle purane pack se katega`)}
+          </div>
+          {running.map((m) => (
+            <div key={m.id} style={{ fontFamily: font.body, fontSize: 13, color: color.ink, overflowWrap: 'anywhere' }}>
+              {m.planName} · {tr(`${ptUsed(m)} of ${ptTotal(m)} used`, `${ptTotal(m)} mein se ${ptUsed(m)} hue`)} ·{' '}
+              {tr(`until ${formatDay(m.endsOn)}`, `${formatDay(m.endsOn)} tak`)}
+              {m.id === markPack?.id && (
+                <span style={{ color: color.accentBright, fontWeight: 700 }}>{tr(' · next session', ' · agla session isse')}</span>
+              )}
+            </div>
           ))}
+        </div>
+      )}
+
+      {running.length > 0 &&
+        (usedUp ? (
+          <div style={{ ...note, fontSize: 14, fontWeight: 700 }}>
+            {running.length === 1
+              ? tr(`All ${total} PT sessions used — time to renew`, `Saare ${total} PT session ho gaye — Renew karo`)
+              : tr('All PT sessions used — time to renew', 'Saare PT session ho gaye — Renew karo')}
+          </div>
+        ) : leftAll <= PT_LOW_LEFT ? (
+          <div style={note}>
+            {leftAll === 1
+              ? tr('Only 1 PT session left', 'Sirf 1 PT session bacha hai')
+              : tr(`Only ${leftAll} PT sessions left`, `Sirf ${leftAll} PT session bache hain`)}
+          </div>
+        ) : (
+          endsSoon &&
+          lastEnd && (
+            <div style={note}>
+              {tr(
+                `PT ends ${formatDay(lastEnd)} (${relativeDay(lastEnd, today)}) with ${leftAll} sessions left`,
+                `PT ${formatDay(lastEnd)} ko khatam (${relativeDay(lastEnd, today)}), ${leftAll} session baaki`,
+              )}
+            </div>
+          )
+        ))}
+
+      {running.length > 0 && (
+        <div style={{ marginTop: space.md, display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
+          {usedUp ? (
+            canRenew && <Button onClick={onRenew}>{tr('Renew PT', 'PT Renew karo')}</Button>
+          ) : (
+            <Button onClick={onMark} disabled={busy || markedToday}>
+              {markedToday ? tr('Session marked today', 'Aaj ka session lag gaya') : tr('Mark session', 'Session lagao')}
+            </Button>
+          )}
+          {canUndo && (
+            <Button variant="ghost" onClick={onUndo} disabled={busy}>
+              {tr('Undo last session', 'Aakhri session hatao')}
+            </Button>
+          )}
+        </div>
+      )}
+
+      {main && (
+        <>
+          <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+            {days.length === 0 ? tr('No sessions used yet.', 'Abhi koi session nahi hua.') : tr('Sessions used on', 'Session in din hue')}
+          </div>
+          {days.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.xs, marginTop: space.xs }}>
+              {[...days].reverse().map((d, i) => (
+                <Pill key={d} tone={i === 0 ? 'accent' : 'muted'}>
+                  {formatDay(d)}
+                </Pill>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {ended.map((m) => {
+        const n = ptLeft(m);
+        return (
+          <div
+            key={m.id}
+            style={{
+              marginTop: space.md,
+              padding: space.md,
+              border: `1px solid ${color.border}`,
+              borderRadius: radius.md,
+              background: color.surfaceSunken,
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: space.sm,
+            }}
+          >
+            <span style={{ flex: '1 1 220px', minWidth: 0, fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.warning, overflowWrap: 'anywhere' }}>
+              {m.planName} ·{' '}
+              {n === 1
+                ? tr(`Ended on ${formatDay(m.endsOn)} with 1 session left`, `${formatDay(m.endsOn)} ko khatam, 1 session baaki`)
+                : tr(`Ended on ${formatDay(m.endsOn)} with ${n} sessions left`, `${formatDay(m.endsOn)} ko khatam, ${n} session baaki`)}
+              {!canExtend && (
+                <span style={{ display: 'block', fontWeight: 400, color: color.inkSecondary }}>
+                  {tr('Only the owner can extend it.', 'Sirf owner ise badha sakte hain.')}
+                </span>
+              )}
+            </span>
+            {canExtend && (
+              <Button variant="ghost" onClick={() => onExtend(m)}>
+                {tr('Extend', 'Badhao')}
+              </Button>
+            )}
+          </div>
+        );
+      })}
+
+      {running.length === 0 && canRenew && (
+        <div style={{ marginTop: space.md }}>
+          <Button onClick={onRenew}>{tr('Renew PT', 'PT Renew karo')}</Button>
         </div>
       )}
     </Card>

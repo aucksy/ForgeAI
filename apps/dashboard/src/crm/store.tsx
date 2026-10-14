@@ -67,6 +67,8 @@ interface CrmContextValue {
 
   reload: () => Promise<void>;
   createMember: (draft: MemberDraft) => Promise<Member>;
+  /** Import: many members in one save (see CrmData.createMembers). */
+  createMembers: (drafts: readonly MemberDraft[]) => Promise<Member[]>;
   updateMember: (id: string, patch: Partial<MemberDraft>) => Promise<Member>;
   setMemberArchived: (id: string, archived: boolean) => Promise<void>;
   createPlan: (draft: PlanDraft) => Promise<void>;
@@ -285,6 +287,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       viewFor,
       reload,
       createMember: (draft) => mutate((a) => a.createMember(draft)),
+      createMembers: (drafts) => mutate((a) => a.createMembers(drafts)),
       updateMember: (id, patch) => mutate((a) => a.updateMember(id, patch)),
       setMemberArchived: async (id, archived) => void (await mutate((a) => a.setMemberArchived(id, archived))),
       createPlan: async (draft) => void (await mutate((a) => a.createPlan(draft))),

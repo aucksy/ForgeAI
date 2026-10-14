@@ -68,6 +68,14 @@ export function listBatches(members: readonly { batch?: unknown }[]): BatchCount
 }
 
 /**
+ * The batches the Members filter offers: those carried by members who are NOT archived, so a batch
+ * only archived members still carry never sits in the list as "(0)".
+ */
+export function activeBatches(members: readonly { batch?: unknown; archived?: boolean }[]): BatchCount[] {
+  return listBatches(members.filter((m) => !m.archived));
+}
+
+/**
  * What to store for a typed batch name: the gym's existing spelling when it matches one
  * case-insensitively, else the cleaned name, else null for blank.
  */

@@ -3,7 +3,8 @@
  *
  * Research (Audit/crm-research/RESEARCH.md §9 rec 9): an owner moving off his register or sheet
  * on day one. One screen: pick a file -> check which column is which -> see every row's fate ->
- * add them one by one with progress -> a summary and the skipped rows as a file to fix.
+ * add them in batches of 500 (one save each — one push online) with progress -> a summary and the
+ * skipped rows as a file to fix (in English, like every download).
  *
  * The spreadsheet reader (read-excel-file, MIT) is loaded only when a file is picked, so the
  * panel's first load does not grow. Every decision is in `logic/importMembers.ts` and tested.
@@ -12,14 +13,14 @@
 
 import { useMemo, useRef, useState, type CSSProperties } from 'react';
 
-import { DuplicatePhoneError } from '../../data/adapter';
-import { tr } from '../../i18n';
+import { inEnglish, tr } from '../../i18n';
 import { csvFilename } from '../../logic/csv';
 import {
   cellText,
   columnLetter,
   decodeCsvBytes,
   emptyColumnMap,
+  englishSkipReasons,
   fieldLabel,
   fillBlanksPatch,
   findHeaderRow,
@@ -29,6 +30,7 @@ import {
   parseCsv,
   planImport,
   rowVerdict,
+  saveInBatches,
   skippedRowsCsv,
   skipReason,
   sniffFile,
@@ -62,10 +64,22 @@ interface Result {
   added: number;
   updated: number;
   skipped: { row: ImportRow; reason: string }[];
+  /** Why saving stopped part-way (no internet), or null when everything went through. */
+  stopped: string | null;
+  /** The last Excel row saved as a member (0 when none). */
+  lastSavedRow: number;
+}
+
+/**
+ * Let the browser draw before heavy work: "Reading the file…" shows before a big sheet is parsed.
+ * A plain timer, not an animation frame, so a tab in the background still moves on.
+ */
+function letThePagePaint(): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, 50));
 }
 
 export function ImportMembersScreen() {
-  const { snapshot, today, createMember, updateMember } = useCrm();
+  const { snapshot, today, createMembers, updateMember } = useCrm();
   const [stage, setStage] = useState<Stage>('pick');
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<Loaded | null>(null);
@@ -98,6 +112,8 @@ export function ImportMembersScreen() {
       return fail(tr('That file is over 5 MB — too big for a member list. Pick the Excel or CSV file with your members.', 'Yeh file 5 MB se badi hai — member list itni badi nahi hoti. Members wali Excel ya CSV file chuno.'));
     }
     setStage('reading');
+    // A big .xlsx takes seconds to read and the page cannot draw meanwhile: show "Reading the file…" first.
+    await letThePagePaint();
     let rows: Cell[][];
     try {
       const buffer = await f.arrayBuffer();
@@ -114,6 +130,7 @@ export function ImportMembersScreen() {
       } else {
         // Loaded only now, so the panel's first load stays small.
         const { readSheet } = await import('read-excel-file/universal');
+        await letThePagePaint();
         rows = (await readSheet(buffer)) as unknown as Cell[][];
       }
     } catch (e) {
@@ -123,6 +140,8 @@ export function ImportMembersScreen() {
     if (filled.length < 2) {
       return fail(tr('That file has no member rows — it needs a row of column names and one row per member.', 'Is file mein members nahi hain — ek row mein column ke naam aur har member ki ek row chahiye.'));
     }
+    // Checking every row comes next (the list below): let the page draw once more first.
+    await letThePagePaint();
     const h = findHeaderRow(rows);
     setFile({ name: f.name, rows });
     setHeaderRow(h);
@@ -150,48 +169,61 @@ export function ImportMembersScreen() {
   };
 
   const run = async () => {
-    if (!plan) return;
+    if (!plan || !file) return;
     // Frozen now: each save re-reads the gym, and a live plan would start calling the members
     // just added "already a member".
     const rows = plan.rows;
-    const work = rows.filter((r) => r.status === 'add' || (dupMode === 'fill' && r.existing !== null && r.sameAsRow === null));
-    const skipped = rows.filter((r) => !work.includes(r)).map((row) => ({ row, reason: skipReason(row) }));
-    let added = 0;
-    let updated = 0;
+    const adds = rows.filter((r) => r.status === 'add' && r.draft !== null);
+    const fills = dupMode === 'fill' ? rows.filter((r) => r.existing !== null && r.sameAsRow === null && r.draft !== null) : [];
+    const work = new Set([...adds, ...fills]);
+    // The skipped-rows file is English in every language: the same plan, worked out in English.
+    const english = englishSkipReasons(file.rows, headerRow, map, snapshot.members, today);
+    const reasonFor = (row: ImportRow) => english.get(row.rowNumber) ?? inEnglish(() => skipReason(row));
+    const skipped = rows.filter((r) => !work.has(r)).map((row) => ({ row, reason: reasonFor(row) }));
+    const total = adds.length + fills.length;
     setStage('running');
-    setProgress({ done: 0, total: work.length });
-    for (let i = 0; i < work.length; i += 1) {
-      const row = work[i]!;
-      try {
-        if (row.status === 'add' && row.draft) {
-          await createMember(row.draft);
-          added += 1;
-        } else if (row.existing && row.draft) {
-          const patch = fillBlanksPatch(row.existing, row.draft);
-          if (Object.keys(patch).length === 0) {
-            skipped.push({ row, reason: tr('Already a member — nothing new to fill in.', 'Pehle se member — bharne ko kuch naya nahi.') });
+    setProgress({ done: 0, total });
+
+    // New members: one save per batch (one push online), never one per row.
+    const outcome = await saveInBatches(adds, (drafts) => createMembers(drafts), (done) => setProgress({ done, total }));
+    for (const row of outcome.duplicates) {
+      skipped.push({ row, reason: inEnglish(() => tr('Already a member.', 'Pehle se member hai.')) });
+    }
+    const notSavedReason = inEnglish(() =>
+      tr(
+        'Not saved — saving stopped (no internet?). Import this file again: members already added are skipped.',
+        'Save nahi hua — save ruk gaya (internet?). Yeh file phir import karo: jo jud gaye woh chhod diye jayenge.',
+      ),
+    );
+    for (const row of outcome.notSaved) skipped.push({ row, reason: notSavedReason });
+    if (outcome.stopped) console.warn('[ForgeErr] import members: saving stopped', outcome.stopped);
+
+    let updated = 0;
+    if (outcome.stopped) {
+      // The connection is gone: filling in details would fail row by row too.
+      for (const row of fills) skipped.push({ row, reason: notSavedReason });
+    } else {
+      for (let i = 0; i < fills.length; i += 1) {
+        const row = fills[i]!;
+        try {
+          const patch = row.existing && row.draft ? fillBlanksPatch(row.existing, row.draft) : {};
+          if (!row.existing || Object.keys(patch).length === 0) {
+            skipped.push({ row, reason: inEnglish(() => tr('Already a member — nothing new to fill in.', 'Pehle se member — bharne ko kuch naya nahi.')) });
           } else {
             await updateMember(row.existing.id, patch);
             updated += 1;
           }
+        } catch (e) {
+          // One bad row never stops the rest.
+          console.warn(`[ForgeErr] import members: row ${row.rowNumber} not filled in`, e);
+          skipped.push({ row, reason: inEnglish(() => tr('Could not be saved.', 'Save nahi hua.')) });
         }
-      } catch (e) {
-        // One bad row never stops the rest.
-        console.warn(`[ForgeErr] import members: row ${row.rowNumber} not saved`, e);
-        skipped.push({
-          row,
-          reason:
-            e instanceof DuplicatePhoneError
-              ? tr('Already a member.', 'Pehle se member hai.')
-              : e instanceof Error && e.message
-                ? e.message
-                : tr('Could not be saved.', 'Save nahi hua.'),
-        });
+        setProgress({ done: adds.length + i + 1, total });
       }
-      setProgress({ done: i + 1, total: work.length });
     }
     skipped.sort((a, b) => a.row.rowNumber - b.row.rowNumber);
-    setResult({ added, updated, skipped });
+    const lastSavedRow = outcome.added.reduce((max, r) => Math.max(max, r.rowNumber), 0);
+    setResult({ added: outcome.added.length, updated, skipped, stopped: outcome.stopped, lastSavedRow });
     setStage('done');
   };
 
@@ -257,6 +289,11 @@ export function ImportMembersScreen() {
               )}
             </li>
           </ol>
+          {stage === 'reading' && (
+            <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700, marginBottom: space.md }}>
+              {tr('Reading the file… a big sheet can take a few seconds.', 'File padh rahe hain… badi sheet mein kuch second lagte hain.')}
+            </p>
+          )}
           <Row gap={space.sm}>
             <Button wrap disabled={stage === 'reading'} onClick={() => input.current?.click()}>
               {stage === 'reading' ? tr('Reading the file…', 'File padh rahe hain…') : tr('Choose file', 'File chuno')}
@@ -382,6 +419,23 @@ export function ImportMembersScreen() {
             {tr(`${result.added} added, ${result.skipped.length} skipped`, `${result.added} jude, ${result.skipped.length} chhode`)}
             {result.updated > 0 ? tr(`, ${result.updated} filled in`, `, ${result.updated} mein details bhari`) : ''}
           </p>
+          {result.stopped && (
+            <div style={{ marginTop: space.md }}>
+              <ErrorBanner>
+                {tr(`Saving stopped part-way: ${result.stopped} `, `Save beech mein ruk gaya: ${result.stopped} `)}
+                {result.added > 0
+                  ? tr(
+                      `${result.added} members were saved (up to row ${result.lastSavedRow}); the rest may not have been. `,
+                      `${result.added} members save ho gaye (row ${result.lastSavedRow} tak); baaki shayad nahi hue. `,
+                    )
+                  : tr('No new members were saved. ', 'Koi naya member save nahi hua. ')}
+                {tr(
+                  'Import the same file again when the internet is back — members already added are skipped, so nobody is added twice.',
+                  'Internet aane par wahi file phir import karo — jo pehle jud gaye woh chhod diye jayenge, koi do baar nahi judega.',
+                )}
+              </ErrorBanner>
+            </div>
+          )}
           {result.skipped.length > 0 && (
             <p style={{ ...muted, marginTop: space.sm }}>
               {tr(

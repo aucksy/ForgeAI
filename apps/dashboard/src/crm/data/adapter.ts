@@ -141,6 +141,25 @@ export class FutureVisitError extends Error {
   }
 }
 
+/**
+ * A bulk save (`createMembers` online, split into several pushes) stopped part-way. `saved` are the
+ * members that DID reach the server, so the import can say exactly which rows went in; the rest did
+ * not (or are still waiting to be resent). `reason` is the failure that stopped it.
+ */
+export class PartialSaveError extends Error {
+  constructor(
+    public readonly saved: Member[],
+    public readonly reason: unknown,
+  ) {
+    super(
+      reason instanceof Error && reason.message
+        ? reason.message
+        : tr('Saving stopped part-way. Please try again.', 'Save beech mein ruk gaya. Phir se try karo.'),
+    );
+    this.name = 'PartialSaveError';
+  }
+}
+
 /** No gym transacts outside this window; anything else is a mistyped year. */
 export const EARLIEST_DATE: DateISO = '2000-01-01';
 export const LATEST_DATE: DateISO = '2100-12-31';
@@ -192,6 +211,14 @@ export interface CrmData {
   updateGym(patch: Partial<Omit<GymRecord, 'gymId' | 'createdAt'>>): Promise<GymRecord>;
 
   createMember(draft: MemberDraft): Promise<Member>;
+  /**
+   * Import (15 Oct 2026): many members in ONE save. Every mobile is checked against the roster and
+   * against the members earlier in the same list, exactly like `createMember`; one duplicate throws
+   * `DuplicatePhoneError` (naming it) and saves NONE of the list. Online it is one push, unless the
+   * list is too big for one (`BULK_ONE_PUSH`): then several, and a failure after the first throws
+   * `PartialSaveError` with the members already saved.
+   */
+  createMembers(drafts: readonly MemberDraft[]): Promise<Member[]>;
   updateMember(id: string, patch: Partial<MemberDraft>): Promise<Member>;
   setMemberArchived(id: string, archived: boolean): Promise<Member>;
 
@@ -237,8 +264,8 @@ export interface CrmData {
 
   /**
    * PT (15 Oct 2026, logic/pt.ts): one session used on `day` on a PT pack. Refuses a day that is not
-   * real or is after `today`, a pack that is not PT or is cancelled, a day before the pack started,
-   * and a pack with every session used. At most one session a day: marking the same day again
+   * real or is after `today`, a pack that is not PT or is cancelled, a day before the pack started or
+   * after its last day, and a pack with every session used. At most one session a day: marking the same day again
    * changes nothing. Only `ptLog` moves, never `cancelled` or `endsOn`, so the server (0014) lets
    * Staff do it.
    */

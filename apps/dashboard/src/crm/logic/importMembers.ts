@@ -21,10 +21,10 @@
  */
 
 import type { Gender, Member, MemberDraft } from '../types';
-import { tr } from '../i18n';
+import { inEnglish, tr } from '../i18n';
 import { csvDocument } from './csv';
 import { addDays, formatDay, isValidDateISO, toISO, type DateISO } from './dates';
-import { EARLIEST_DATE } from '../data/adapter';
+import { DuplicatePhoneError, EARLIEST_DATE, PartialSaveError } from '../data/adapter';
 import { BATCH_MAX, listBatches, resolveBatch } from './batches';
 import { formatINR, parseRupeeInput } from './money';
 import { DEFAULT_DIAL_CODE, findDuplicatePhone, normalizeName, normalizePhone, splitE164, validateMember } from './members';
@@ -260,6 +260,23 @@ export function fullYear(yy: number, todayYear: number): number {
   return 2000 + yy <= todayYear + 10 ? 2000 + yy : 1900 + yy;
 }
 
+/**
+ * A two-digit year of a day that has already happened (a birthday): never ahead of this year. In
+ * 2026, `'00`-`'26` are 2000-2026 and `'27`-`'99` are 1927-1999.
+ */
+export function pastYear(yy: number, todayYear: number): number {
+  if (yy >= 100) return yy;
+  return 2000 + yy <= todayYear ? 2000 + yy : 1900 + yy;
+}
+
+/**
+ * The Excel date numbers a NUMBER cell may be read as: 20000 (Oct 1954) to 60000 (Apr 2064). Any
+ * other number in a date column is digits typed in (150826, 15082026), never a date number — read as
+ * one, 150826 became a joining date in the year 2312.
+ */
+export const EXCEL_SERIAL_MIN = 20000;
+export const EXCEL_SERIAL_MAX = 60000;
+
 function checked(y: number, m: number, d: number): DateISO | null {
   const iso = toISO(y, m, d);
   return isValidDateISO(iso) ? iso : null;
@@ -288,16 +305,38 @@ export function detectDayFirst(values: readonly unknown[]): boolean {
 /**
  * Read one date cell. Returns the day, or null when the cell is not a date we can read with
  * certainty (blank cells are the caller's business: they are not wrong, just empty).
+ *
+ * `past`: the day has already happened (a birthday). A two-digit year then never lands ahead of
+ * today: '27-'99 are the 1900s, '00-'26 the 2000s (in 2026), and a 2000s day still ahead of today
+ * goes back a century.
  */
-export function parseSheetDate(v: unknown, today: DateISO, dayFirst = true): DateISO | null {
+export function parseSheetDate(v: unknown, today: DateISO, dayFirst = true, past = false): DateISO | null {
   if (isDate(v)) {
     const t = cellText(v);
     return isValidDateISO(t) ? t : null;
   }
-  if (typeof v === 'number') return excelSerialToISO(v);
-  const s = cellText(v);
+  let s: string;
+  if (typeof v === 'number') {
+    if (!Number.isFinite(v)) return null;
+    // Only a real number cell in the date-number range is one of Excel's date numbers.
+    if (v >= EXCEL_SERIAL_MIN && v <= EXCEL_SERIAL_MAX) return excelSerialToISO(v);
+    if (!Number.isInteger(v) || v < 0) return null;
+    // Digits typed into a number cell: Excel drops the leading zero of 01082026.
+    s = String(v);
+    if (s.length === 7) s = `0${s}`;
+  } else {
+    s = cellText(v);
+  }
   if (!s) return null;
   const todayYear = Number(today.slice(0, 4));
+  /** The year as written: 4 digits as is, 2 digits by the rule for this kind of date. */
+  const yearOf = (raw: string) =>
+    raw.length === 2 ? (past ? pastYear(Number(raw), todayYear) : fullYear(Number(raw), todayYear)) : Number(raw);
+  const day = (rawYear: string, month: number, d: number): DateISO | null => {
+    const iso = checked(yearOf(rawYear), month, d);
+    if (iso && past && rawYear.length === 2 && iso > today) return checked(yearOf(rawYear) - 100, month, d);
+    return iso;
+  };
 
   // 2026-08-15 (and 2026/08/15), maybe with a time after it.
   let m = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})(?:[ T].*)?$/.exec(s);
@@ -308,35 +347,37 @@ export function parseSheetDate(v: unknown, today: DateISO, dayFirst = true): Dat
   if (m) {
     const a = Number(m[1]);
     const b = Number(m[2]);
-    const y = fullYear(Number(m[3]), todayYear);
-    return dayFirst ? checked(y, b, a) : checked(y, a, b);
+    return dayFirst ? day(m[3]!, b, a) : day(m[3]!, a, b);
   }
 
   // 15 Aug 2026, 15-Aug-26, 15th August, 2026
   m = /^(\d{1,2})(?:st|nd|rd|th)?[-/. ]*([a-z]{3,9})[-/., ]*(\d{2}|\d{4})$/i.exec(s);
   if (m) {
-    const month = monthFromName(m[2]);
-    return month ? checked(fullYear(Number(m[3]), todayYear), month, Number(m[1])) : null;
+    const month = monthFromName(m[2]!);
+    return month ? day(m[3]!, month, Number(m[1])) : null;
   }
 
   // Aug 15, 2026
   m = /^([a-z]{3,9})[-/. ]+(\d{1,2})(?:st|nd|rd|th)?[,]?[-/. ]+(\d{2}|\d{4})$/i.exec(s);
   if (m) {
-    const month = monthFromName(m[1]);
-    return month ? checked(fullYear(Number(m[3]), todayYear), month, Number(m[2])) : null;
+    const month = monthFromName(m[1]!);
+    return month ? day(m[3]!, month, Number(m[2])) : null;
   }
 
-  // 15082026 (ddmmyyyy) or 20260815 (yyyymmdd), typed without separators.
+  // 15082026 (ddmmyyyy, the Indian way, read first) or 20260815 (yyyymmdd), typed without
+  // separators. The two can never both be real days with a 19xx/20xx year.
   m = /^(\d{2})(\d{2})(\d{4})$/.exec(s);
   if (m) {
+    const dmy = dayFirst
+      ? checked(Number(m[3]), Number(m[2]), Number(m[1]))
+      : checked(Number(m[3]), Number(m[1]), Number(m[2]));
+    if (dmy && /^(19|20)/.test(m[3]!)) return dmy;
     const ymd = checked(Number(s.slice(0, 4)), Number(s.slice(4, 6)), Number(s.slice(6, 8)));
     if (ymd && /^(19|20)/.test(s)) return ymd;
-    return dayFirst ? checked(Number(m[3]), Number(m[2]), Number(m[1])) : checked(Number(m[3]), Number(m[1]), Number(m[2]));
+    return dmy;
   }
 
-  // A bare Excel date number that came through as text (a CSV saved from a date column).
-  if (/^\d{4,6}(\.\d+)?$/.test(s)) return excelSerialToISO(Number(s));
-
+  // Anything else (150826, 45519 typed as text) is not a date we can be sure of.
   return null;
 }
 
@@ -463,6 +504,9 @@ export function sniffFile(name: string, head: Uint8Array): FileKind {
 /** The most rows one import takes: one browser holds a gym, not a city. */
 export const MAX_IMPORT_ROWS = 2000;
 
+/** A joining date further ahead than this is a problem (a typo), not a warning. */
+export const JOIN_AHEAD_MAX_DAYS = 365;
+
 export type RowStatus = 'add' | 'duplicate' | 'problem';
 
 export interface ImportRow {
@@ -567,6 +611,14 @@ export function planImport(
         );
       } else if (d < EARLIEST_DATE) {
         problems.push(tr(`Joining date ${formatDay(d)} looks like a typo — check the year.`, `Joining date ${formatDay(d)} galat lag rahi hai — saal check karo.`));
+      } else if (d > addDays(today, JOIN_AHEAD_MAX_DAYS)) {
+        // Nobody joins more than a year ahead: this is a typed year (2062) or digits misread.
+        problems.push(
+          tr(
+            `Joining date ${formatDay(d)} is more than a year away — check the year.`,
+            `Joining date ${formatDay(d)} ek saal se zyada aage hai — saal check karo.`,
+          ),
+        );
       } else {
         joinedOn = d;
         if (d > today) warnings.push(tr(`Joining date ${formatDay(d)} is in the future.`, `Joining date ${formatDay(d)} aage ki hai.`));
@@ -578,7 +630,7 @@ export function planImport(
     // Date of birth: optional, so a bad one is left out (and said), never a reason to skip someone.
     let dateOfBirth = '';
     if (text('dateOfBirth')) {
-      const d = parseSheetDate(cellAt(row, map.dateOfBirth), today, dobDayFirst);
+      const d = parseSheetDate(cellAt(row, map.dateOfBirth), today, dobDayFirst, true);
       if (!d) warnings.push(tr(`Birthday “${text('dateOfBirth')}” not readable — left blank.`, `Janam din “${text('dateOfBirth')}” samajh nahi aaya — khaali chhoda.`));
       else if (d > today) warnings.push(tr(`Birthday ${formatDay(d)} is in the future — left blank.`, `Janam din ${formatDay(d)} aage ki date hai — khaali chhoda.`));
       else dateOfBirth = d;
@@ -714,28 +766,124 @@ export function templateHeaders(): string[] {
   ];
 }
 
-/** The sample file: column names only, so nothing made-up gets imported by mistake. */
+/**
+ * The sample file: column names only, so nothing made-up gets imported by mistake. In English in
+ * every language, like every download (both languages' headers are recognised on the way back in).
+ */
 export function templateCsv(): string {
-  return csvDocument(templateHeaders(), []);
+  return inEnglish(() => csvDocument(templateHeaders(), []));
 }
 
-/** The rows that were not added, with the reason first, to fix and import again. */
+/**
+ * The rows that were not added, with the reason first, to fix and import again. English in every
+ * language: pass reasons made in English too (`englishSkipReasons`, or words read in `inEnglish`).
+ */
 export function skippedRowsCsv(
   headers: readonly string[],
   skipped: readonly { row: ImportRow; reason: string }[],
 ): string {
-  const width = Math.max(headers.length, ...skipped.map((s) => s.row.cells.length));
-  const head = [tr('Row', 'Row'), tr('Why skipped', 'Kyun chhoda'), ...Array.from({ length: width }, (_, i) => headers[i] || columnLetter(i))];
-  const body = skipped.map(({ row, reason }) => [
-    row.rowNumber,
-    reason,
-    ...Array.from({ length: width }, (_, i) => row.cells[i] ?? ''),
-  ]);
-  return csvDocument(head, body);
+  return inEnglish(() => {
+    const width = Math.max(headers.length, ...skipped.map((s) => s.row.cells.length));
+    const head = [tr('Row', 'Row'), tr('Why skipped', 'Kyun chhoda'), ...Array.from({ length: width }, (_, i) => headers[i] || columnLetter(i))];
+    const body = skipped.map(({ row, reason }) => [
+      row.rowNumber,
+      reason,
+      ...Array.from({ length: width }, (_, i) => row.cells[i] ?? ''),
+    ]);
+    return csvDocument(head, body);
+  });
 }
 
 /** Why a row was skipped, in one line, for the skipped-rows file. */
 export function skipReason(row: ImportRow): string {
   if (row.status === 'problem') return row.problems.join(' ');
   return rowVerdict(row);
+}
+
+/**
+ * Every row's skip reason in ENGLISH, by Excel row number, whatever language the panel shows: the
+ * same plan worked out again in English (it is pure, so the same file and roster give the same rows).
+ */
+export function englishSkipReasons(
+  rows: readonly (readonly unknown[])[],
+  headerRow: number,
+  map: ColumnMap,
+  roster: readonly Member[],
+  today: DateISO,
+): Map<number, string> {
+  return inEnglish(() => {
+    const plan = planImport(rows, headerRow, map, roster, today);
+    return new Map(plan.rows.map((r) => [r.rowNumber, skipReason(r)]));
+  });
+}
+
+// ---------------------------------------------------------------- saving
+
+/** Members saved per save during an import: one write (one push online) each, with progress between. */
+export const IMPORT_BATCH_SIZE = 500;
+
+export interface BatchSaveOutcome {
+  /** Rows now saved as members. */
+  added: ImportRow[];
+  /** Rows refused at save time because the mobile was already in the gym (another desk added it). */
+  duplicates: ImportRow[];
+  /** Rows not saved because saving stopped part-way. Empty when everything went through. */
+  notSaved: ImportRow[];
+  /** Why saving stopped, in the panel's words; null when it did not stop. */
+  stopped: string | null;
+}
+
+/**
+ * Save the `add` rows `size` at a time through `save` (the store's `createMembers`), calling
+ * `onProgress` with how many rows are dealt with after each batch.
+ *
+ * A duplicate mobile (another desk added that member meanwhile) makes the whole batch refuse: that
+ * row is set aside and the batch saved again without it. Any other failure (no internet) STOPS:
+ * the rows already saved are reported as added — including the saved part of a batch the cloud
+ * split (`PartialSaveError`) — and every other row as not saved. Importing the same file again is
+ * safe: the saved members now read as "already a member" and are skipped.
+ */
+export async function saveInBatches(
+  rows: readonly ImportRow[],
+  save: (drafts: MemberDraft[]) => Promise<Member[]>,
+  onProgress: (done: number) => void,
+  size: number = IMPORT_BATCH_SIZE,
+): Promise<BatchSaveOutcome> {
+  const work = rows.filter((r) => r.draft !== null);
+  const added: ImportRow[] = [];
+  const duplicates: ImportRow[] = [];
+  for (let start = 0; start < work.length; start += size) {
+    let batch = work.slice(start, start + size);
+    while (batch.length > 0) {
+      try {
+        await save(batch.map((r) => r.draft as MemberDraft));
+        added.push(...batch);
+        break;
+      } catch (e) {
+        if (e instanceof DuplicatePhoneError) {
+          // The LAST row with that mobile: within one batch, the first one is the one to keep.
+          let at = -1;
+          batch.forEach((r, i) => {
+            if (r.draft?.phone === e.existing.phone) at = i;
+          });
+          if (at >= 0) {
+            duplicates.push(batch[at]!);
+            batch = batch.filter((_, i) => i !== at);
+            continue;
+          }
+        }
+        const savedPhones = new Set(e instanceof PartialSaveError ? e.saved.map((m) => m.phone) : []);
+        const savedHere = batch.filter((r) => savedPhones.has(r.draft?.phone ?? ''));
+        added.push(...savedHere);
+        return {
+          added,
+          duplicates,
+          notSaved: [...batch.filter((r) => !savedHere.includes(r)), ...work.slice(start + size)],
+          stopped: e instanceof Error && e.message ? e.message : tr('Saving stopped.', 'Save ruk gaya.'),
+        };
+      }
+    }
+    onProgress(Math.min(work.length, start + size));
+  }
+  return { added, duplicates, notSaved: [], stopped: null };
 }

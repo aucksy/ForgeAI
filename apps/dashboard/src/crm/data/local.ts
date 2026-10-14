@@ -44,7 +44,7 @@ import type {
   Expense,
   ExpenseDraft,
 } from '../types';
-import { addDays, isValidDateISO, type DateISO } from '../logic/dates';
+import { addDays, formatDay, isValidDateISO, type DateISO } from '../logic/dates';
 import { tr } from '../i18n';
 import { endDateForPlan } from '../logic/membership';
 import { findDuplicatePhone } from '../logic/members';
@@ -236,23 +236,38 @@ export class LocalCrmData implements CrmData {
   // ------------------------------------------------------------ members
 
   async createMember(draft: MemberDraft): Promise<Member> {
-    return this.update((db) => {
-      const duplicate = findDuplicatePhone(db.members, draft.phone);
-      if (duplicate) throw new DuplicatePhoneError(duplicate);
+    return this.update((db) => this.addMember(db, draft, this.now()));
+  }
 
+  /**
+   * Many members in one write (the import). Each is checked against the roster AND the members added
+   * before it in this list, so the same mobile twice in one list is caught too; one duplicate throws
+   * and, because `update` only keeps a copy that finished, nothing of the list is saved.
+   */
+  async createMembers(drafts: readonly MemberDraft[]): Promise<Member[]> {
+    if (drafts.length === 0) return [];
+    return this.update((db) => {
       const ts = this.now();
-      const member: Member = {
-        ...draft,
-        batch: normalizeBatch(draft.batch),
-        id: newId(),
-        gymId: db.gym.gymId,
-        appUserId: null,
-        createdAt: ts,
-        updatedAt: ts,
-      };
-      db.members.push(member);
-      return { ...member };
+      // One clock reading, a millisecond apart: the list keeps the file's order when sorted by time.
+      return drafts.map((draft, i) => this.addMember(db, draft, ts + i));
     });
+  }
+
+  /** The one place a member is made: duplicate check, clean batch, ids. Mutates `db`. */
+  private addMember(db: CrmSnapshot, draft: MemberDraft, ts: number): Member {
+    const duplicate = findDuplicatePhone(db.members, draft.phone);
+    if (duplicate) throw new DuplicatePhoneError(duplicate);
+    const member: Member = {
+      ...draft,
+      batch: normalizeBatch(draft.batch),
+      id: newId(),
+      gymId: db.gym.gymId,
+      appUserId: null,
+      createdAt: ts,
+      updatedAt: ts,
+    };
+    db.members.push(member);
+    return { ...member };
   }
 
   async updateMember(id: string, patch: Partial<MemberDraft>): Promise<Member> {
@@ -529,15 +544,20 @@ export class LocalCrmData implements CrmData {
           tr('This plan was cancelled. Undo the cancel first, or add the days to their current plan.', 'Yeh plan cancel ho chuka hai. Pehle cancel wapas lo, ya din unke chalu plan mein jodo.'),
         );
       }
-      // Gym plans and PT packs run side by side (logic/pt.ts), so only the same kind counts as later.
-      const later = db.memberships.some(
-        (m) =>
-          m.memberId === membership.memberId &&
-          m.id !== membership.id &&
-          !m.cancelled &&
-          m.endsOn > membership.endsOn &&
-          isPtMembership(m) === isPtMembership(membership),
-      );
+      // Gym plans and PT packs run side by side (logic/pt.ts), so they never block each other. Only a
+      // later GYM plan blocks a gym plan. A PT pack is never blocked: packs may overlap (sessions are
+      // counted per pack and used oldest first), and extending an old pack under a new one is exactly
+      // how its unused paid sessions get time to be used.
+      const later =
+        !isPtMembership(membership) &&
+        db.memberships.some(
+          (m) =>
+            m.memberId === membership.memberId &&
+            m.id !== membership.id &&
+            !m.cancelled &&
+            m.endsOn > membership.endsOn &&
+            !isPtMembership(m),
+        );
       if (later) {
         throw new Error(
           tr('This member has a later plan. Add the days to the plan that ends last.', 'Is member ka aage ka plan hai. Din us plan mein jodo jo sabse baad mein khatam hota hai.'),
@@ -569,6 +589,15 @@ export class LocalCrmData implements CrmData {
       if (membership.cancelled) throw new Error(tr('This PT plan was cancelled.', 'Yeh PT plan cancel ho chuka hai.'));
       if (day < membership.startsOn) {
         throw new Error(tr('This PT plan had not started on that day.', 'Us din yeh PT plan shuru nahi hua tha.'));
+      }
+      if (day > membership.endsOn) {
+        // A session after the last day is a free session; the owner gives days back with Extend.
+        throw new Error(
+          tr(
+            `This PT plan ended on ${formatDay(membership.endsOn)}. The owner can extend it (Freeze / extra days).`,
+            `Yeh PT plan ${formatDay(membership.endsOn)} ko khatam ho gaya. Owner ise badha sakte hain (Freeze / Extra din).`,
+          ),
+        );
       }
       const days = ptDays(membership);
       // One session a day: a double tap at the desk must not use up two.

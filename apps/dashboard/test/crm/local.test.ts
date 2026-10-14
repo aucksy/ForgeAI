@@ -837,6 +837,49 @@ describe('Freeze / extra days', () => {
     expect((await db.extendMembership(mine.id, 3, 'Extra')).endsOn).toBe('2026-10-28');
   });
 });
+describe('createMembers (import: one write)', () => {
+  it('saves every member in ONE write, in order', async () => {
+    await db.load();
+    let writes = 0;
+    const counted: KeyValueStore = {
+      getItem: (k) => store.getItem(k),
+      setItem: (k, v) => {
+        writes += 1;
+        store.setItem(k, v);
+      },
+      removeItem: (k) => store.removeItem(k),
+    };
+    const bulk = new LocalCrmData({ store: counted, now: () => (clock += 1) });
+    const made = await bulk.createMembers([
+      memberDraft(),
+      memberDraft({ fullName: 'Aman Gupta', phone: '+919811112222', batch: '  Morning   6-8 ' }),
+    ]);
+    expect(writes).toBe(1);
+    expect(made.map((m) => m.fullName)).toEqual(['Riya Sharma', 'Aman Gupta']);
+    expect(made[1]!.batch).toBe('Morning 6-8');
+    expect(made[1]!.createdAt).toBeGreaterThan(made[0]!.createdAt);
+    expect((await db.load()).members).toHaveLength(2);
+    expect(await bulk.createMembers([])).toEqual([]);
+  });
+
+  it('a mobile already in the gym refuses the whole list and saves none of it', async () => {
+    const riya = await db.createMember(memberDraft());
+    const err = await db
+      .createMembers([memberDraft({ fullName: 'New', phone: '+919811112222' }), memberDraft({ fullName: 'Riya again' })])
+      .catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(DuplicatePhoneError);
+    expect((err as DuplicatePhoneError).existing.id).toBe(riya.id);
+    expect((await db.load()).members).toHaveLength(1);
+  });
+
+  it('the same mobile twice in one list is caught too', async () => {
+    await expect(
+      db.createMembers([memberDraft(), memberDraft({ fullName: 'Twin' })]),
+    ).rejects.toBeInstanceOf(DuplicatePhoneError);
+    expect((await db.load()).members).toHaveLength(0);
+  });
+});
+
 describe('PT sessions (markPtSession / undoPtSession)', () => {
   const DAY = '2026-10-15';
   const sale = (memberId: string, planId: string, startsOn: string, priceP = 600_000) =>
@@ -935,6 +978,32 @@ describe('PT sessions (markPtSession / undoPtSession)', () => {
     const after = await db.markPtSession(membership.id, DAY, DAY);
     expect(after.endsOn).toBe(membership.endsOn);
     expect(after.cancelled).toBe(false);
+  });
+
+  it('refuses a day after the pack’s last day (the owner extends it instead)', async () => {
+    const m = await db.createMember(memberDraft());
+    const pt = await db.createPlan(planDraft({ name: 'PT', durationCount: 1, ptSessions: 12 }));
+    const { membership } = await sale(m.id, pt.id, '2026-08-01'); // ends 31 Aug
+    await expect(db.markPtSession(membership.id, '2026-09-05', DAY)).rejects.toThrow(/ended on 31 Aug 2026/);
+    expect((await db.markPtSession(membership.id, '2026-08-31', DAY)).ptLog).toEqual(['2026-08-31']);
+    // Extended by the owner: the same day is now inside the pack.
+    await db.extendMembership(membership.id, 10, 'Freeze');
+    expect((await db.markPtSession(membership.id, '2026-09-05', DAY)).ptLog).toEqual(['2026-08-31', '2026-09-05']);
+  });
+
+  it('extend: a PT pack is never blocked by a later PT pack or gym plan, and never blocks a gym plan', async () => {
+    const m = await db.createMember(memberDraft());
+    const pt = await db.createPlan(planDraft({ name: 'PT', durationCount: 1, ptSessions: 12 }));
+    const gym = await db.createPlan(planDraft({ durationCount: 1 }));
+    const old = (await sale(m.id, pt.id, '2026-08-01')).membership; // PT, ends 31 Aug
+    await sale(m.id, pt.id, '2026-10-01'); // PT renewal, ends 31 Oct
+    const g = (await sale(m.id, gym.id, '2026-10-01', 120_000)).membership; // gym, ends 31 Oct
+    await sale(m.id, pt.id, '2026-11-01'); // a PT pack ending after the gym plan
+    expect((await db.extendMembership(old.id, 20, 'Freeze')).endsOn).toBe('2026-09-20');
+    expect((await db.extendMembership(g.id, 5, 'Freeze')).endsOn).toBe('2026-11-05');
+    // A later GYM plan still blocks an earlier gym plan.
+    await sale(m.id, gym.id, '2026-11-06', 120_000);
+    await expect(db.extendMembership(g.id, 5, 'Freeze')).rejects.toThrow(/later plan/);
   });
 
   it('freeze: a running PT pack does not count as a later gym plan', async () => {

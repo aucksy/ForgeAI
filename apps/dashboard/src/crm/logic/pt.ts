@@ -13,6 +13,7 @@
  */
 
 import { tr } from '../i18n';
+import { diffDays } from './dates';
 import type { DateISO, Membership, Plan } from '../types';
 
 /** "PT ending": this many sessions left or fewer. */
@@ -57,11 +58,13 @@ export function lastPtDay(m: Pick<Membership, 'ptLog'>): DateISO | null {
 
 /**
  * The terms that decide a member's GYM status: every gym plan, never a PT pack — unless they have
- * no gym plan at all, when their PT packs are their membership.
+ * no gym plan that is still on (none at all, or every one cancelled), when their PT packs are their
+ * membership. A member whose gym plan was cancelled but who still trains with a running PT pack
+ * reads by the PT pack, never as "Cancelled".
  */
-export function gymTerms<T extends Pick<Membership, 'ptSessions'>>(memberships: readonly T[]): T[] {
+export function gymTerms<T extends Pick<Membership, 'ptSessions' | 'cancelled'>>(memberships: readonly T[]): T[] {
   const gym = memberships.filter((m) => !isPtMembership(m));
-  return gym.length > 0 ? gym : [...memberships];
+  return gym.some((m) => !m.cancelled) ? gym : [...memberships];
 }
 
 /** Only the gym plans (no PT packs at all). Sales of a gym plan check overlap against these. */
@@ -83,13 +86,68 @@ export function livePtPack(memberships: readonly Membership[], today: DateISO): 
 }
 
 /**
- * "PT ending": the member's running pack has PT_LOW_LEFT sessions left or fewer (all used counts),
- * and no newer PT pack is already bought and waiting to start.
+ * Every PT pack running today (not cancelled, started, not past its last day), in the order its
+ * sessions are used: the OLDEST pack first, so a pack renewed early never leaves the old pack's paid
+ * sessions stranded. Two packs that start the same day: the newer sale first.
+ */
+export function runningPtPacks(memberships: readonly Membership[], today: DateISO): Membership[] {
+  return memberships
+    .filter((m) => isPtMembership(m) && !m.cancelled && m.startsOn <= today && m.endsOn >= today)
+    .sort((a, b) => a.startsOn.localeCompare(b.startsOn) || b.createdAt - a.createdAt || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+}
+
+/** The pack "Mark session" uses today: the oldest running pack that still has sessions left. */
+export function ptPackToMark(memberships: readonly Membership[], today: DateISO): Membership | null {
+  return runningPtPacks(memberships, today).find((m) => ptLeft(m) > 0) ?? null;
+}
+
+/**
+ * The pack "Undo last session" takes back from: the running pack with the latest marked day. When
+ * two packs were marked the same day, the one used later (later in `runningPtPacks` order).
+ */
+export function ptPackToUndo(memberships: readonly Membership[], today: DateISO): Membership | null {
+  let best: Membership | null = null;
+  let bestDay: DateISO | null = null;
+  for (const m of runningPtPacks(memberships, today)) {
+    const d = lastPtDay(m);
+    if (d && (bestDay === null || d >= bestDay)) {
+      best = m;
+      bestDay = d;
+    }
+  }
+  return best;
+}
+
+/** Sessions left across every running pack. */
+export function ptLeftRunning(memberships: readonly Membership[], today: DateISO): number {
+  return runningPtPacks(memberships, today).reduce((sum, m) => sum + ptLeft(m), 0);
+}
+
+/**
+ * PT packs that ENDED (last day before today, not cancelled) with sessions still unused, the latest
+ * ended first. The member's page names each one so the owner can give the days back (Extend).
+ */
+export function endedPtPacksWithSessionsLeft(memberships: readonly Membership[], today: DateISO): Membership[] {
+  return memberships
+    .filter((m) => isPtMembership(m) && !m.cancelled && m.endsOn < today && ptLeft(m) > 0)
+    .sort((a, b) => b.endsOn.localeCompare(a.endsOn));
+}
+
+/** "PT ending" also flags PT that runs out within this many days. */
+export const PT_ENDING_DAYS = 7;
+
+/**
+ * "PT ending": with no PT pack already bought and waiting to start, either the running packs have
+ * PT_LOW_LEFT sessions left or fewer between them (all used counts), or the last of them ends within
+ * PT_ENDING_DAYS days.
  */
 export function isPtEnding(memberships: readonly Membership[], today: DateISO): boolean {
-  const pack = livePtPack(memberships, today);
-  if (!pack || ptLeft(pack) > PT_LOW_LEFT) return false;
-  return !memberships.some((m) => isPtMembership(m) && !m.cancelled && m.id !== pack.id && m.startsOn > today);
+  const running = runningPtPacks(memberships, today);
+  if (running.length === 0) return false;
+  if (memberships.some((m) => isPtMembership(m) && !m.cancelled && m.startsOn > today)) return false;
+  if (running.reduce((sum, m) => sum + ptLeft(m), 0) <= PT_LOW_LEFT) return true;
+  const lastDay = running.reduce((max, m) => (m.endsOn > max ? m.endsOn : max), running[0]!.endsOn);
+  return diffDays(today, lastDay) <= PT_ENDING_DAYS;
 }
 
 /** The ids of members whose PT is ending (see `isPtEnding`). */
@@ -113,6 +171,15 @@ export function ptSummary(m: Pick<Membership, 'ptSessions' | 'ptLog' | 'trainer'
   const head = tr(`PT: ${used} of ${total} sessions used`, `PT: ${total} mein se ${used} session ho gaye`);
   const trainer = m.trainer?.trim();
   return trainer ? `${head} · ${tr(`Trainer ${trainer}`, `Trainer ${trainer}`)}` : head;
+}
+
+/**
+ * The PT columns of the dues file (English, for an accountant): sessions "4 of 12" — words, so Excel
+ * never reads it as a date — and the trainer. Blank for a gym plan.
+ */
+export function ptExportCells(m: Pick<Membership, 'ptSessions' | 'ptLog' | 'trainer'>): [string, string] {
+  if (!isPtMembership(m)) return ['', ''];
+  return [`${ptUsed(m)} of ${ptTotal(m)}`, m.trainer?.trim() ?? ''];
 }
 
 /** The plan's PT line for the price list: "PT · 12 sessions · Trainer Rohit". Null for a gym plan. */
