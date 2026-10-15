@@ -146,6 +146,17 @@ log "screen on"
 # When did "Rest is over" post, compared with when it was due (the rest card's end time, read
 # from the dump taken during the rest)? Fails when more than REST_LATE_BUDGET_S (5 s) late.
 python3 "$QA_DIR/notif.py" over-locked "$OUT/notifications-after-rest.txt" "$TICK_MS" "$OUT/notifications-during-rest.txt" >> "$OUT/timeline.txt" || status=1
+# 15 Oct 2026 (owner: "the sound should not change"): the screen-off "Rest is over" channel plays
+# the app's own rest-done sound (a raw resource of the app), not the phone's default tone, and the
+# old default-tone channel "rest-timer" is gone.
+REST_SOUND_CH=$(grep -o "NotificationChannel{mId='rest-over-sound'[^}]*" "$OUT/notifications-after-rest.txt" 2>/dev/null | head -1)
+if printf '%s' "$REST_SOUND_CH" | grep -q "mSound=android.resource://com.forgeai.app/" \
+   && ! grep -q "NotificationChannel{mId='rest-timer'.*mDeleted=false" "$OUT/notifications-after-rest.txt"; then
+  log "REST SOUND: OK (rest-over-sound plays the app's own rest sound; old rest-timer channel gone)"
+else
+  status=1
+  log "REST SOUND FAILED: $(printf '%s' "$REST_SOUND_CH" | grep -o 'mSound=[^,]*' || echo 'no rest-over-sound channel')"
+fi
 # 13 Oct 2026: ONE workout notification at a time — after the rest "Rest is over" shows ALONE (the
 # live workout card is down until it goes), and during the rest the rest card was alone.
 python3 "$QA_DIR/notif.py" alone "$OUT/notifications-after-rest.txt" >> "$OUT/timeline.txt" || status=1

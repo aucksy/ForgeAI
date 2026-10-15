@@ -17,7 +17,7 @@ import { AppState, Platform } from 'react-native';
 import { color } from '@/theme/tokens';
 
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
-import { ALL_DONE_TEXT, clearRestCard, restEndsWorkout, showRestCard } from './restCard';
+import { ALL_DONE_TEXT, clearRestCard, hasRestCard, restEndsWorkout, showRestCard } from './restCard';
 import type { CardDone } from './restDone';
 
 type NotificationsModule = typeof import('expo-notifications');
@@ -71,7 +71,10 @@ export function setupWorkoutAlerts(): Promise<void> {
           };
         },
       });
-      await n.setNotificationChannelAsync(REST_CHANNEL, {
+      // 15 Oct 2026: with the native rest card, "Rest is over" is posted natively on its own channel
+      // with the app's rest sound (RestCard.kt); this old JS channel ("rest-timer", the phone's
+      // default tone) is then not made at all, so it cannot come back after the card deletes it.
+      if (!hasRestCard()) await n.setNotificationChannelAsync(REST_CHANNEL, {
         name: 'Rest timer',
         description: 'Tells you when your rest is over',
         importance: n.AndroidImportance.HIGH,

@@ -90,6 +90,10 @@ let handed = false;
 export function restCardHolds(): boolean {
   return handed;
 }
+/** The native rest card is in this build (it then owns "Rest is over" and its channels). */
+export function hasRestCard(): boolean {
+  return N() != null;
+}
 function N(): Native | null {
   if (mod !== undefined) return mod;
   mod = null;

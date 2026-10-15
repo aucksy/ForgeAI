@@ -1764,6 +1764,20 @@
   `.github/workflows/exercise-clips.yml` (manual; one job per recipe, publishes to the
   `exercise-clips` release). How-to: the `making-forgeai-exercise-clips` skill. Not wired into the
   app yet: the demo sheet still shows the Everkinetic drawings.
+- 2026-10-15: **v0.44.0 — owner's gym-test fixes: RPE one-tap sheet; the rest sound never changes**
+  (34db130 + this commit). Owner testing in the gym ("Keep adding the improvements I send in the plan").
+  - RPE: the RPE cell opens its own sheet (RpeSheet.tsx): 10 -> 6 with meanings, ONE tap saves and
+    closes, no check mark; Clear RPE when set. The set-type sheet is set type only and closes on a tap.
+  - Rest sound: with the screen off "Rest is over" played the phone's default tone; the open app
+    plays its own rest-done.wav. New channels rest-over-sound / rest-over-alarm-sound play that same
+    sound (module raw forge_rest_done, kept from the shrinker); old rest-timer / rest-over-alarm
+    deleted; the JS no longer makes rest-timer on a build with the native card. Phone test checks
+    the channel's sound URI after part A.
+  - Watch did not buzz (no watch workout): code checked against Google's bridging rules — "Rest is
+    over" is not local-only, not ongoing, clearable, HIGH (DEFAULT with the app open). Most likely
+    the Pixel Watch app's "Mute notifications" under Watch (mutes the watch while the phone is in
+    use, i.e. app open in the gym), or ForgeAI off under its phone-app list. The cloud phone cannot
+    pair a watch, so this stays the owner's check.
 - 2026-10-15: **v0.43.0 — QR self check-in; database safety check and promise ratchet in CI**
   (49fcac0, e93a2cd, 4f4420a, 34dcbd8).
   - QR check-in: panel Attendance -> Check-in QR poster (print / picture) of

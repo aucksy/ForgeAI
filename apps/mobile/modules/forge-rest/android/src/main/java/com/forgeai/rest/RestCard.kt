@@ -13,7 +13,6 @@ import android.content.Intent
 import android.graphics.drawable.Icon
 import android.media.AudioAttributes
 import android.media.AudioManager
-import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -75,9 +74,17 @@ object RestCard {
   const val CH_CARD = "rest-card-v2"
   /** The v0.26.1 card channel (LOW importance, filed under "Silent"); deleted on first use. */
   private const val CH_CARD_OLD = "rest-card"
-  const val CH_OVER = "rest-timer" // the same loud channel the app has used since v0.22
+  /**
+   * 15 Oct 2026 (owner, in the gym: "the sound should not change"): with the screen off, "Rest is
+   * over" played the phone's default notification tone, while the open app plays its own
+   * rest-done sound. These channels now play that same sound (res/raw/forge_rest_done.wav, a copy
+   * of assets/sounds/rest-done.wav). Android never changes a channel's sound after it is made, so
+   * they have new ids; the old ones ("rest-timer", "rest-over-alarm") are deleted.
+   */
+  const val CH_OVER = "rest-over-sound"
   const val CH_OVER_OPEN = "rest-over-open"
-  const val CH_OVER_ALARM = "rest-over-alarm"
+  const val CH_OVER_ALARM = "rest-over-alarm-sound"
+  private val CH_OVER_OLD = listOf("rest-timer", "rest-over-alarm")
   const val ACTION_ADD = "com.forgeai.rest.ADD15"
   const val ACTION_SKIP = "com.forgeai.rest.SKIP"
   const val ACTION_END = "com.forgeai.rest.END"
@@ -940,9 +947,22 @@ object RestCard {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(ctx, channel)
     else Notification.Builder(ctx)
 
+  /** The app's own rest-done sound (the one the open app plays), for the loud channels. */
+  private fun restSound(ctx: Context): Uri =
+    Uri.parse("android.resource://${ctx.packageName}/${R.raw.forge_rest_done}")
+
   private fun ensureChannels(ctx: Context) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
     val m = nm(ctx)
+    for (old in CH_OVER_OLD) {
+      if (m.getNotificationChannel(old) != null) {
+        try {
+          m.deleteNotificationChannel(old)
+        } catch (e: Exception) {
+          android.util.Log.w("ForgeErr", "old rest channel $old not deleted", e)
+        }
+      }
+    }
     if (m.getNotificationChannel(CH_CARD) == null) {
       // Review fix: LOW importance again. A Wear OS watch buzzes for a bridged notification of
       // DEFAULT importance even when its channel has no sound or vibration, so DEFAULT made the
@@ -972,7 +992,7 @@ object RestCard {
         NotificationChannel(CH_OVER_ALARM, "Rest is over, through Do Not Disturb", NotificationManager.IMPORTANCE_HIGH).apply {
           description = "Used only when you turn on Ring through Do Not Disturb in ForgeAI"
           setSound(
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+            restSound(ctx),
             AudioAttributes.Builder()
               .setUsage(AudioAttributes.USAGE_ALARM)
               .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -990,7 +1010,7 @@ object RestCard {
         NotificationChannel(CH_OVER, "Rest timer", NotificationManager.IMPORTANCE_HIGH).apply {
           description = "Tells you when your rest is over"
           setSound(
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+            restSound(ctx),
             AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build(),
           )
           enableVibration(true)
