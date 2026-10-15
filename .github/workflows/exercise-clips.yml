@@ -1,0 +1,116 @@
+# Exercise demo clips: render recipes in tools/exercise-anim/specs with Blender (Cycles, CPU) and
+# publish the WebP/MP4/poster files to the "exercise-clips" release. Manual runs only.
+# Local runs on the owner's laptop take ~12 min per clip; here each clip is its own job (up to 20 at once).
+name: exercise-clips
+
+on:
+  workflow_dispatch:
+    inputs:
+      keys:
+        description: 'Recipe keys, comma-separated (blank = every recipe in specs/)'
+        required: false
+        default: ''
+      version:
+        description: 'Clip version written into the file names (e.g. 1 -> key.v1.webp)'
+        required: true
+        default: '1'
+      publish:
+        description: 'Upload the finished clips to the exercise-clips release'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+env:
+  BLENDER_VERSION: '4.5.14'
+  MPFB_URL: 'https://extensions.blender.org/download/sha256:c075b3e9b94b8e5556a5f03f4653602d02ea306de08126e8f55ed6dee28a2dad/add-on-mpfb-v2.0.18.zip?repository=%2Fapi%2Fv1%2Fextensions%2F&blender_version_min=4.2.0'
+  MPFB_SHA256: 'c075b3e9b94b8e5556a5f03f4653602d02ea306de08126e8f55ed6dee28a2dad'
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      keys: ${{ steps.m.outputs.keys }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: m
+        run: python3 tools/exercise-anim/pipeline/ci_matrix.py "${{ inputs.keys }}" >> "$GITHUB_OUTPUT"
+
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        key: ${{ fromJson(needs.plan.outputs.keys) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Blender and the CC0 MakeHuman packs
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/blender
+            ~/mh-dl
+          key: exclips-blender-${{ env.BLENDER_VERSION }}-mpfb-2.0.18-mh-v1
+
+      - name: Install Blender ${{ env.BLENDER_VERSION }} (official build, checksum verified)
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          cd ~
+          curl -sSL -o blender.tar.xz "https://download.blender.org/release/Blender4.5/blender-${BLENDER_VERSION}-linux-x64.tar.xz"
+          curl -sSL "https://download.blender.org/release/Blender4.5/blender-${BLENDER_VERSION}.sha256" | grep linux-x64.tar.xz | sed 's/blender-.*$/blender.tar.xz/' | sha256sum -c -
+          tar -xJf blender.tar.xz && mv "blender-${BLENDER_VERSION}-linux-x64" blender && rm blender.tar.xz
+
+      - name: System libraries + Python packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libxi6 libxxf86vm1 libxfixes3 libxrender1 libgl1 libegl1 libxkbcommon0 libsm6 >/dev/null
+          pip install -q numpy opencv-python-headless pillow imageio-ffmpeg
+
+      - name: Install MPFB (MakeHuman for Blender)
+        run: |
+          curl -sSL -o /tmp/mpfb.zip "$MPFB_URL"
+          echo "$MPFB_SHA256  /tmp/mpfb.zip" | sha256sum -c -
+          ~/blender/blender -b --command extension install-file -r user_default -e /tmp/mpfb.zip
+
+      - name: CC0 assets + derived maps
+        run: |
+          FORGEANIM_DL=~/mh-dl python3 tools/exercise-anim/pipeline/setup_assets.py
+          python3 tools/exercise-anim/pipeline/make_maps.py
+
+      - name: Render ${{ matrix.key }}
+        working-directory: tools/exercise-anim/pipeline
+        run: BLENDER=~/blender/blender sh render_all.sh ../specs/${{ matrix.key }}.json
+
+      - name: Encode ${{ matrix.key }}
+        working-directory: tools/exercise-anim/pipeline
+        run: python3 encode.py ${{ matrix.key }} ${{ inputs.version }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clip-${{ matrix.key }}
+          path: tools/exercise-anim/out/${{ matrix.key }}/${{ matrix.key }}.v*
+          retention-days: 14
+
+  publish:
+    needs: render
+    if: ${{ inputs.publish && !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: clip-*
+          merge-multiple: true
+          path: clips
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: exercise-clips
+          name: Exercise clips
+          body: Demo clips rendered by tools/exercise-anim (CC0 athlete, our own equipment). Files are key.vN.webp / .mp4 / .poster.webp.
+          files: clips/*
+          make_latest: false

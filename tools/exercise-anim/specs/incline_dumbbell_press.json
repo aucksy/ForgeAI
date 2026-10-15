@@ -1,0 +1,174 @@
+{
+  "key": "incline_dumbbell_press",
+  "name": "Incline Dumbbell Press",
+  "primary": [
+    "chest"
+  ],
+  "secondary": [
+    "front_delts",
+    "triceps"
+  ],
+  "scene": {
+    "bench": {
+      "deg": 35
+    }
+  },
+  "props": {
+    "db_L": {
+      "type": "dumbbell"
+    },
+    "db_R": {
+      "type": "dumbbell"
+    }
+  },
+  "camera": {
+    "yaw": 35,
+    "pitch": 22,
+    "lens": 50,
+    "fill": 0.84,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "bottom"
+      ],
+      [
+        0.25,
+        "bottom"
+      ],
+      [
+        1.35,
+        "top"
+      ],
+      [
+        1.7,
+        "top"
+      ],
+      [
+        3.1,
+        "bottom"
+      ]
+    ]
+  },
+  "defaults": {
+    "root": {
+      "loc": [
+        0,
+        0.092,
+        0.49
+      ],
+      "rot": [
+        -32,
+        0,
+        0
+      ]
+    },
+    "bones": {
+      "spine05": [
+        -7,
+        0,
+        0
+      ],
+      "spine04": [
+        -7,
+        0,
+        0
+      ],
+      "spine03": [
+        -7,
+        0,
+        0
+      ],
+      "spine02": [
+        -6,
+        0,
+        0
+      ],
+      "neck01": [
+        8,
+        0,
+        0
+      ],
+      "head": [
+        6,
+        0,
+        0
+      ]
+    },
+    "feet": {
+      "L": {
+        "at": [
+          0.37,
+          -0.4,
+          0.075
+        ],
+        "rot": [
+          0,
+          0,
+          18
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.62,
+        -1.0,
+        0.9
+      ]
+    }
+  },
+  "poses": {
+    "bottom": {
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "at": [
+            0.29,
+            0.1,
+            -0.05
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.55,
+          -0.3,
+          -0.35
+        ]
+      }
+    },
+    "top": {
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "at": [
+            0.12,
+            0.5,
+            0.15
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.55,
+          0.15,
+          -0.35
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+# downloaded CC0 packs and derived maps (re-made by pipeline/setup_assets.py + make_maps.py)
+assets/
+# renders and encoded clips (published to the exercise-clips release, never committed)
+out/
+__pycache__/

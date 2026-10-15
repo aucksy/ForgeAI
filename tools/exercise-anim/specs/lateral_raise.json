@@ -1,0 +1,131 @@
+{
+  "key": "lateral_raise",
+  "name": "Lateral Raise",
+  "primary": [
+    "side_delts"
+  ],
+  "secondary": [
+    "traps"
+  ],
+  "props": {
+    "db_L": {
+      "type": "dumbbell"
+    },
+    "db_R": {
+      "type": "dumbbell"
+    }
+  },
+  "camera": {
+    "yaw": -28,
+    "pitch": 8,
+    "lens": 50,
+    "fill": 0.84,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "down"
+      ],
+      [
+        0.25,
+        "down"
+      ],
+      [
+        1.3,
+        "up"
+      ],
+      [
+        1.65,
+        "up"
+      ],
+      [
+        3.0,
+        "down"
+      ]
+    ]
+  },
+  "defaults": {
+    "feet": {
+      "L": {
+        "at": [
+          0.13,
+          -0.01,
+          0.074
+        ],
+        "rot": [
+          0,
+          0,
+          6
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.16,
+        -1.0,
+        0.52
+      ]
+    }
+  },
+  "poses": {
+    "down": {
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "at": [
+            0.24,
+            0.07,
+            -0.68
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.35,
+          -0.45,
+          -0.3
+        ]
+      }
+    },
+    "up": {
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "at": [
+            0.74,
+            0.1,
+            -0.03
+          ],
+          "axis": [
+            0,
+            1,
+            0.15
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.42,
+          -0.5,
+          0.15
+        ]
+      },
+      "bones": {
+        "clavicle.L": [
+          0,
+          0,
+          6
+        ]
+      }
+    }
+  }
+}

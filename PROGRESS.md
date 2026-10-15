@@ -1755,6 +1755,15 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-15: **Exercise demo clips — pipeline + first 2 clips (no app change yet)** —
+  `tools/exercise-anim/`: Blender 4.5 LTS + MPFB (CC0 MakeHuman athlete, CC0 Mindfront "Aksel"
+  muscle normal map, our own shorts/dumbbell/bench/shaders), 19 muscle masks keyed to the app's
+  muscle names, IK hands locked to the handles, JSON recipe per exercise, Cycles CPU (8 s/frame,
+  ~12 min/clip locally). Clips: `incline_dumbbell_press` (WebP 305 KB, MP4 100 KB) and
+  `lateral_raise` (247 / 92 KB), 3 s seamless loops, 480 px WebP for expo-image. Cloud batch:
+  `.github/workflows/exercise-clips.yml` (manual; one job per recipe, publishes to the
+  `exercise-clips` release). How-to: the `making-forgeai-exercise-clips` skill. Not wired into the
+  app yet: the demo sheet still shows the Everkinetic drawings.
 - 2026-10-15: **v0.43.0 — QR self check-in; database safety check and promise ratchet in CI**
   (49fcac0, e93a2cd, 4f4420a, 34dcbd8).
   - QR check-in: panel Attendance -> Check-in QR poster (print / picture) of
