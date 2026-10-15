@@ -3,6 +3,9 @@
 //  - /j/<CODE>  the gym's invite link page (join.html), with the gym filled in before it is sent —
 //               so WhatsApp's link preview shows "Join <gym>" and the gym's logo, and the page
 //               draws at once. On a phone with the app, Android opens the app instead.
+//  - /c/<CODE>  the gym's check-in poster link (checkin.html), filled in the same way: on a phone
+//               with the app, Android opens the app's "Check in at <gym>" screen instead; this page
+//               is for phones without it ("Open this in the ForgeAI app to check in" + get the app).
 //  - /app       the newest ForgeAI APK (whatever the latest GitHub release is), so the page, the
 //               poster and old messages never point at an old version.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
@@ -18,6 +21,9 @@ export default {
     const invite = /^\/j\/([A-Za-z0-9]{6})\/?$/.exec(url.pathname);
     if (invite) return joinPage(request, env, ctx, url, invite[1].toUpperCase());
     if (url.pathname.startsWith('/j/')) return joinPage(request, env, ctx, url, null);
+    const checkIn = /^\/c\/([A-Za-z0-9]{6})\/?$/.exec(url.pathname);
+    if (checkIn) return joinPage(request, env, ctx, url, checkIn[1].toUpperCase(), CHECKIN);
+    if (url.pathname.startsWith('/c/')) return joinPage(request, env, ctx, url, null, CHECKIN);
     if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);
     return env.ASSETS.fetch(request);
   },
@@ -45,10 +51,22 @@ async function preview(code, ctx) {
   }
 }
 
-async function joinPage(request, env, ctx, url, code) {
-  // html_handling serves /join.html at /join. Never a "not modified" answer: the page carries this
+/** The two gym pages: what each one is called, and which static page it fills in. */
+const JOIN = {
+  asset: '/join',
+  title: (g) => `Join ${g.gymName} on ForgeAI`,
+  desc: (g) => `${g.gymName} invites you to the ForgeAI app. Tap to join. Gym code ${g.joinCode}.`,
+};
+const CHECKIN = {
+  asset: '/checkin',
+  title: (g) => `Check in at ${g.gymName}`,
+  desc: (g) => `Open this in the ForgeAI app to check in at ${g.gymName}. Gym code ${g.joinCode}.`,
+};
+
+async function joinPage(request, env, ctx, url, code, kind = JOIN) {
+  // html_handling serves /join.html at /join (and /checkin.html at /checkin). Never a "not modified" answer: the page carries this
   // gym's name and logo, so a browser's copy of another visit must not be reused.
-  const ask = new Request(new URL('/join', url), request);
+  const ask = new Request(new URL(kind.asset, url), request);
   ask.headers.delete('If-None-Match');
   ask.headers.delete('If-Modified-Since');
   const page = await env.ASSETS.fetch(ask);
@@ -61,8 +79,8 @@ async function joinPage(request, env, ctx, url, code) {
     rw = rw.on('head', { element: (e) => e.append(`<script>window.__GYM__=${json};</script>`, { html: true }) });
   }
   if (gym) {
-    const title = `Join ${gym.gymName} on ForgeAI`;
-    const desc = `${gym.gymName} invites you to the ForgeAI app. Tap to join. Gym code ${gym.joinCode}.`;
+    const title = kind.title(gym);
+    const desc = kind.desc(gym);
     rw = rw
       .on('title', { element: (e) => e.setInnerContent(title) })
       .on('meta[property="og:title"]', { element: (e) => e.setAttribute('content', title) })

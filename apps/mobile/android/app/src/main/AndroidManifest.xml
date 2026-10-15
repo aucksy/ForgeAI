@@ -47,6 +47,14 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="https" android:host="forgeai.aakashpahuja.in" android:pathPrefix="/j/"/>
       </intent-filter>
+      <!-- QR self check-in: the gym's check-in poster (/c/<CODE>) opens the app on "Check in at <gym>".
+           Same host and the same assetlinks.json as the invite link. -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="https" android:host="forgeai.aakashpahuja.in" android:pathPrefix="/c/"/>
+      </intent-filter>
       <!-- Health Connect (Android 13 and older): "why ForgeAI asks" opens the app. -->
       <intent-filter>
         <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>

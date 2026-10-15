@@ -61,7 +61,7 @@ export function qrModules(text: string): { size: number; path: string } {
   return { size: n, path };
 }
 
-function QrSvg({ text, px, label }: { text: string; px: number | string; label: string }) {
+export function QrSvg({ text, px, label }: { text: string; px: number | string; label: string }) {
   const { size, path } = useMemo(() => qrModules(text), [text]);
   const q = 4; // the quiet margin scanners need, in squares
   return (
@@ -177,7 +177,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
         <SectionTitle>{tr('Front-desk QR poster', 'Front desk ka QR Poster')}</SectionTitle>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: '100%', maxWidth: 360 }}>
-            <Poster gymName={gymName} joinCode={joinCode} link={link} brand={brand} />
+            <Poster words={POSTER} gymName={gymName} joinCode={joinCode} link={link} brand={brand} />
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
@@ -185,7 +185,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           <Button
             variant="ghost"
             onClick={async () => {
-              const ok = await downloadPoster(gymName, joinCode, link, brand);
+              const ok = await downloadPoster(POSTER, gymName, joinCode, link, brand);
               say(
                 ok
                   ? tr('Poster saved as a picture.', 'Poster picture ki tarah save ho gaya.')
@@ -206,24 +206,55 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
 
       {/* Always on the page (hidden on screen): phone Chrome draws its print preview after the
           button's tap has returned, so a sheet added only for the print could already be gone. */}
-      {createPortal(<PrintSheet gymName={gymName} joinCode={joinCode} link={link} brand={brand} />, document.body)}
+      {createPortal(<PrintSheet sheetId="invite-print" words={POSTER} gymName={gymName} joinCode={joinCode} link={link} brand={brand} />, document.body)}
       {toast && <Toast message={toast} />}
     </div>
   );
 }
 
-/** Words on the poster, English with Hinglish under it. Shared by the screen, the print and the picture. */
-export const POSTER = {
+/**
+ * Words on a poster, English with Hinglish under it — BOTH languages are printed, whatever the
+ * panel shows, because the members reading the wall read one or the other. Shared by the screen,
+ * the print and the picture. The invite poster (POSTER) and the check-in poster
+ * (checkin.ts CHECKIN_POSTER) are the same drawing with different words.
+ */
+export interface PosterWords {
+  lead: string;
+  leadHi: string;
+  steps: readonly string[];
+  stepsHi: string;
+  codeLine: (code: string) => string;
+  codeLineHi: (code: string) => string;
+  /** The downloaded picture's name, before the code ("invite-poster" → invite-poster-RAMS01.png). */
+  file: string;
+}
+
+export const POSTER: PosterWords = {
   lead: 'Join our gym in the ForgeAI app',
   leadHi: 'ForgeAI app mein hamare gym se judiye',
   steps: ['Scan with your phone camera', 'Get the ForgeAI app', 'Tap Join'],
   stepsHi: 'Camera se scan karein · App lein · Join dabaayein',
   codeLine: (code: string) => `Or type gym code ${code} in the app's Shop tab`,
   codeLineHi: (code: string) => `Ya app ke Shop tab mein code ${code} daalein`,
-} as const;
+  file: 'invite-poster',
+};
 
 /** The poster as it looks on screen and on paper: white, black text, the gym's logo on top. */
-function Poster({ gymName, joinCode, link, brand, print = false }: { gymName: string; joinCode: string; link: string; brand: GymBrand | null; print?: boolean }) {
+export function Poster({
+  words,
+  gymName,
+  joinCode,
+  link,
+  brand,
+  print = false,
+}: {
+  words: PosterWords;
+  gymName: string;
+  joinCode: string;
+  link: string;
+  brand: GymBrand | null;
+  print?: boolean;
+}) {
   const u = (n: number) => (print ? `${n * 0.5}mm` : `${n}px`);
   return (
     <div
@@ -244,23 +275,23 @@ function Poster({ gymName, joinCode, link, brand, print = false }: { gymName: st
         </div>
       )}
       <div style={{ fontFamily: "'Sora', system-ui, sans-serif", fontWeight: 800, fontSize: print ? '13mm' : 22, lineHeight: 1.15 }}>{gymName}</div>
-      <div style={{ fontWeight: 700, fontSize: print ? '7mm' : 14, marginTop: u(8) }}>{POSTER.lead}</div>
-      <div style={{ fontSize: print ? '6mm' : 13, color: '#333333' }}>{POSTER.leadHi}</div>
+      <div style={{ fontWeight: 700, fontSize: print ? '7mm' : 14, marginTop: u(8) }}>{words.lead}</div>
+      <div style={{ fontSize: print ? '6mm' : 13, color: '#333333' }}>{words.leadHi}</div>
       <div style={{ display: 'flex', justifyContent: 'center', margin: `${u(14)} 0` }}>
         <QrSvg text={link} px={print ? '95mm' : '72%'} label={tr(`QR code for ${link}`, `${link} ka QR code`)} />
       </div>
       <ol style={{ listStyle: 'none', padding: 0, margin: 0, fontWeight: 700, fontSize: print ? '6mm' : 13 }}>
-        {POSTER.steps.map((s, i) => (
+        {words.steps.map((s, i) => (
           <li key={s}>
             {i + 1}. {s}
           </li>
         ))}
       </ol>
-      <div style={{ fontSize: print ? '5mm' : 12, color: '#333333', marginTop: u(4) }}>{POSTER.stepsHi}</div>
+      <div style={{ fontSize: print ? '5mm' : 12, color: '#333333', marginTop: u(4) }}>{words.stepsHi}</div>
       <div style={{ fontSize: print ? '5mm' : 12, marginTop: u(12) }}>
-        {POSTER.codeLine(joinCode)}
+        {words.codeLine(joinCode)}
         <br />
-        <span style={{ color: '#333333' }}>{POSTER.codeLineHi(joinCode)}</span>
+        <span style={{ color: '#333333' }}>{words.codeLineHi(joinCode)}</span>
       </div>
       <div style={{ fontFamily: "'Space Grotesk', monospace", fontSize: print ? '4mm' : 11, color: '#555555', marginTop: u(8) }}>{link.replace(/^https:\/\//, '')}</div>
     </div>
@@ -268,20 +299,31 @@ function Poster({ gymName, joinCode, link, brand, print = false }: { gymName: st
 }
 
 /** Only the poster on the paper: everything else on the page is hidden while printing. */
-function PrintSheet(props: { gymName: string; joinCode: string; link: string; brand: GymBrand | null }) {
+export function PrintSheet({
+  sheetId,
+  ...props
+}: {
+  sheetId: string;
+  words: PosterWords;
+  gymName: string;
+  joinCode: string;
+  link: string;
+  brand: GymBrand | null;
+}) {
+  const id = `#${sheetId}`;
   return (
-    <div id="invite-print">
+    <div id={sheetId}>
       <style>{`
-        #invite-print { display: none; }
+        ${id} { display: none; }
         @media print {
           @page { size: A4; margin: 10mm; }
-          #invite-print { break-inside: avoid; page-break-inside: avoid; }
-          body > *:not(#invite-print) { display: none !important; }
+          ${id} { break-inside: avoid; page-break-inside: avoid; }
+          body > *:not(${id}) { display: none !important; }
           html, body { background: #FFFFFF !important; }
-          #invite-print { display: block; }
+          ${id} { display: block; }
           /* index.css hides every element for the receipt's print ("body * { visibility: hidden }"):
              without this the poster came out as a blank page (found 15 Oct 2026). */
-          #invite-print, #invite-print * { visibility: visible !important; }
+          ${id}, ${id} * { visibility: visible !important; }
         }
       `}</style>
       <Poster {...props} print />
@@ -290,7 +332,7 @@ function PrintSheet(props: { gymName: string; joinCode: string; link: string; br
 }
 
 /** The poster drawn as an A4 picture (1240 × 1754, 150 dpi) and saved. False when the browser refused. */
-async function downloadPoster(gymName: string, joinCode: string, link: string, brand: GymBrand | null): Promise<boolean> {
+export async function downloadPoster(words: PosterWords, gymName: string, joinCode: string, link: string, brand: GymBrand | null): Promise<boolean> {
   try {
     const W = 1240;
     const H = 1754;
@@ -319,9 +361,9 @@ async function downloadPoster(gymName: string, joinCode: string, link: string, b
 
     g.fillStyle = '#111111';
     y = wrapText(g, gymName, W / 2, y, W - 160, 84, '800 76px Sora, system-ui, sans-serif');
-    y = wrapText(g, POSTER.lead, W / 2, y + 30, W - 160, 52, '700 44px Manrope, system-ui, sans-serif');
+    y = wrapText(g, words.lead, W / 2, y + 30, W - 160, 52, '700 44px Manrope, system-ui, sans-serif');
     g.fillStyle = '#333333';
-    y = wrapText(g, POSTER.leadHi, W / 2, y, W - 160, 48, '400 38px Manrope, system-ui, sans-serif');
+    y = wrapText(g, words.leadHi, W / 2, y, W - 160, 48, '400 38px Manrope, system-ui, sans-serif');
 
     const qr = qrcode(0, 'M');
     qr.addData(link);
@@ -339,15 +381,15 @@ async function downloadPoster(gymName: string, joinCode: string, link: string, b
     y = qy + side + 70;
 
     g.fillStyle = '#111111';
-    POSTER.steps.forEach((s, i) => {
+    words.steps.forEach((s, i) => {
       y = wrapText(g, `${i + 1}. ${s}`, W / 2, y, W - 160, 50, '700 40px Manrope, system-ui, sans-serif');
     });
     g.fillStyle = '#333333';
-    y = wrapText(g, POSTER.stepsHi, W / 2, y + 6, W - 160, 44, '400 34px Manrope, system-ui, sans-serif');
+    y = wrapText(g, words.stepsHi, W / 2, y + 6, W - 160, 44, '400 34px Manrope, system-ui, sans-serif');
     g.fillStyle = '#111111';
-    y = wrapText(g, POSTER.codeLine(joinCode), W / 2, y + 40, W - 160, 44, '400 34px Manrope, system-ui, sans-serif');
+    y = wrapText(g, words.codeLine(joinCode), W / 2, y + 40, W - 160, 44, '400 34px Manrope, system-ui, sans-serif');
     g.fillStyle = '#333333';
-    y = wrapText(g, POSTER.codeLineHi(joinCode), W / 2, y, W - 160, 44, '400 34px Manrope, system-ui, sans-serif');
+    y = wrapText(g, words.codeLineHi(joinCode), W / 2, y, W - 160, 44, '400 34px Manrope, system-ui, sans-serif');
     g.fillStyle = '#555555';
     y = wrapText(g, link.replace(/^https:\/\//, ''), W / 2, y + 20, W - 160, 40, '500 30px "Space Grotesk", monospace');
 
@@ -363,7 +405,7 @@ async function downloadPoster(gymName: string, joinCode: string, link: string, b
     const url = out.toDataURL('image/png');
     const a = document.createElement('a');
     a.href = url;
-    a.download = `invite-poster-${joinCode}.png`;
+    a.download = `${words.file}-${joinCode}.png`;
     document.body.appendChild(a);
     a.click();
     a.remove();

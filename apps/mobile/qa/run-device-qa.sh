@@ -633,6 +633,61 @@ else
   log "INVITE TOUR: $(find "$OUT/invite" -name "inv-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/invite/"
 fi
 
+# ---------------------------------------------------------------- part INV-f (QR self check-in, 15 Oct 2026)
+# The gym's check-in poster link /c/<CODE> opens "Check in at <gym>" (checkin-f1..f3.yaml). A fresh
+# ONLINE gym is made on the live server (gym_create_online; at most 5 an hour from one address)
+# with ONE roster member, mobile +91 98765 00002 (crm_push). F1 joins it from its invite link;
+# F2 opens the check-in link: the number is asked once, a wrong one gets the desk words, the
+# roster's one checks in; F3 opens it again: "already checked in", then Leave.
+# Needs supabase/migrations/0015_qr_checkin.sql live: probed first with a made-up member key
+# (404 = member_check_in is not there yet: skipped and said so).
+ci_probe() {
+  [ -n "$inv_url" ] && [ -n "$inv_key" ] || { echo "no-config"; return; }
+  curl -s -o /dev/null -w '%{http_code}' -X POST "$inv_url/rest/v1/rpc/member_check_in" \
+    -H "apikey: $inv_key" -H "Content-Type: application/json" -d '{"p_key":"qa-probe"}' 2>/dev/null || echo "000"
+}
+inv_url=${inv_url:-$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabaseUrl'])" "$QA_DIR/../app.json" 2>/dev/null)}
+inv_key=${inv_key:-$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabasePublishableKey'])" "$QA_DIR/../app.json" 2>/dev/null)}
+CI_PROBE=$(ci_probe)
+if [ "$CI_PROBE" = "404" ] || [ "$CI_PROBE" = "no-config" ]; then
+  log "PART INV-f SKIPPED: QR check-in is not on the server yet (member_check_in probe: $CI_PROBE) — apply 0015_qr_checkin.sql"
+else
+  ci_rpc() { curl -s -X POST "$inv_url/rest/v1/rpc/$1" -H "apikey: $inv_key" -H "Content-Type: application/json" -d "$2"; }
+  ci_gym=$(ci_rpc gym_create_online '{"p_gym_name":"QA Check-in Gym","p_name":"QA Owner","p_phone":"9876500001"}')
+  ci_session=$(printf '%s' "$ci_gym" | python3 -c "import json,sys;print(json.load(sys.stdin).get('sessionKey',''))" 2>/dev/null)
+  ci_code=$(printf '%s' "$ci_gym" | python3 -c "import json,sys;print(json.load(sys.stdin).get('joinCode',''))" 2>/dev/null)
+  ci_gym_id=$(printf '%s' "$ci_gym" | python3 -c "import json,sys;print(json.load(sys.stdin).get('gymId',''))" 2>/dev/null)
+  ci_body=$(python3 -c "
+import json, sys, uuid
+key, gym = sys.argv[1], sys.argv[2]
+m = {'id': 'qa-roster-1', 'gymId': gym, 'fullName': 'QA Roster Member', 'phone': '+919876500002', 'email': None,
+     'gender': None, 'dateOfBirth': None, 'address': None, 'emergencyName': None, 'emergencyPhone': None,
+     'joinedOn': '2026-10-01', 'photoUri': None, 'notes': None, 'batch': None, 'archived': False,
+     'appUserId': None, 'createdAt': 1, 'updatedAt': 1}
+print(json.dumps({'p_key': key, 'p_base': 0, 'p_records': [{'k': 'member', 'id': m['id'], 'd': m}], 'p_push_id': str(uuid.uuid4())}))
+" "$ci_session" "$ci_gym_id" 2>/dev/null)
+  ci_pushed=$(ci_rpc crm_push "$ci_body")
+  log "INV-f: online gym $ci_code (roster push answered: $(printf '%s' "$ci_pushed" | head -c 60))"
+  if [ -z "$ci_code" ] || [ -z "$ci_session" ]; then
+    status=1
+    log "PART INV-f FAILED: could not make the online test gym ($(printf '%s' "$ci_gym" | head -c 120))"
+  else
+    for step in f1 f2 f3; do
+      case $step in
+        f1) inv_open "https://forgeai.aakashpahuja.in/j/$ci_code" ;;
+        f2|f3) inv_open "https://forgeai.aakashpahuja.in/c/$ci_code" ;;
+      esac
+      free_maestro
+      log "part INV-$step start (member_check_in probe: $CI_PROBE)"
+      maestro test --format junit --output "$OUT/part-inv-$step.xml" --test-output-dir "$OUT/part-inv-$step" "$QA_DIR/checkin-$step.yaml" \
+        > "$OUT/part-inv-$step.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/inv-$step-failed.png"; log "PART INV-$step FAILED (part-inv-$step.log, inv-$step-failed.png)"; }
+    done
+    mkdir -p "$OUT/invite"
+    { find "$OUT"/part-inv-f* -name "inv-f*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "inv-f*.png" 2>/dev/null; } \
+      | while read -r f; do cp "$f" "$OUT/invite/" 2>/dev/null; done
+  fi
+fi
+
 # ---------------------------------------------------------------- part P7 (audit Phase 7: large text)
 # The phone's font size at its largest step (font_scale 2.0, Android 14's top setting) and the app
 # restarted, then a screen tour (phase7-bigtext.yaml): the Workout tab (top, folders), an open

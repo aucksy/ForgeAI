@@ -22,6 +22,12 @@
           "autoVerify": true,
           "data": [{ "scheme": "https", "host": "forgeai.aakashpahuja.in", "pathPrefix": "/j/" }],
           "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [{ "scheme": "https", "host": "forgeai.aakashpahuja.in", "pathPrefix": "/c/" }],
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
       "permissions": [

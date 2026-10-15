@@ -34,6 +34,7 @@ import {
   riskReason,
   riskTotals,
   RISK_LABEL,
+  visitSourceTag,
   type AtRiskRow,
   type RiskBand,
 } from '../../logic/attendance';
@@ -67,6 +68,7 @@ import {
   space,
 } from '../kit';
 import { Link, navigate } from '../router';
+import { CheckInQrScreen } from '../../shop/CheckInQrScreen';
 
 type Tab = 'register' | 'risk';
 
@@ -77,6 +79,12 @@ const MAX_RESULTS = 8;
 const TREND_DAYS = 30;
 
 export function AttendanceScreen({ section }: { section?: string }) {
+  // `/attendance/qr`: the "Scan to check in" poster (QR self check-in, 15 Oct 2026).
+  if (section === 'qr') return <CheckInQrScreen />;
+  return <AttendanceTabs section={section} />;
+}
+
+function AttendanceTabs({ section }: { section?: string }) {
   const tab: Tab = section === 'risk' ? 'risk' : 'register';
   const { snapshot, today } = useCrm();
 
@@ -108,6 +116,11 @@ export function AttendanceScreen({ section }: { section?: string }) {
           tab === 'risk'
             ? tr('Paying members who are losing the habit', 'Paise dene wale members jo kaafi din se nahi aaye')
             : tr('Who trained, and when', 'Kaun aaya, kab aaya')
+        }
+        actions={
+          <Button variant="ghost" onClick={() => navigate('/attendance/qr')}>
+            {tr('Check-in QR', 'Check-in QR')}
+          </Button>
         }
       />
 
@@ -588,7 +601,11 @@ function RegisterRowView({
           <span style={{ ...tapTarget, fontSize: 14, color: color.inkMuted }}>{name}</span>
         )}
       </span>
-      {visit.source !== 'desk' && <Pill tone="muted">{visit.source === 'app' ? tr('App', 'App') : tr('Imported', 'Import kiya')}</Pill>}
+      {visitSourceTag(visit.source) && (
+        <Pill tone="muted">
+          <span title={visit.source === 'app' ? tr('Checked in with the ForgeAI app', 'ForgeAI app se hazri lagi') : undefined}>{visitSourceTag(visit.source)}</span>
+        </Pill>
+      )}
       <Button
         variant="quiet"
         onClick={onUndo}

@@ -37,3 +37,18 @@ export function takePendingInvite(): string | null {
   pending = null;
   return c;
 }
+
+// QR self check-in (15 Oct 2026): a check-in poster (/c/CODE) scanned on a phone not set up yet is
+// kept the same way, and its "Check in at <gym>" screen opens once the welcome flow is done.
+let pendingCheckIn: string | null = null;
+
+export function setPendingCheckIn(code: string | null): void {
+  pendingCheckIn = code;
+}
+
+/** The waiting check-in code, once. */
+export function takePendingCheckIn(): string | null {
+  const c = pendingCheckIn;
+  pendingCheckIn = null;
+  return c;
+}

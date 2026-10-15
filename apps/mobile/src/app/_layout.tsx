@@ -22,7 +22,8 @@ import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
 import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingStore';
 import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
-import { inviteCodeFromUrl, setPendingInvite, takePendingInvite } from '@/shop/pendingInvite';
+import { checkInCodeFromUrl } from '@/shop/checkIn';
+import { inviteCodeFromUrl, setPendingCheckIn, setPendingInvite, takePendingCheckIn, takePendingInvite } from '@/shop/pendingInvite';
 
 /** The link the app was started with is read once per run: an erase later must not bring it back. */
 let launchLinkRead = false;
@@ -142,6 +143,9 @@ export default function RootLayout() {
     const keep = (url: string | null) => {
       const code = inviteCodeFromUrl(url);
       if (code) setPendingInvite(code);
+      // QR self check-in: a check-in poster scanned before setup opens "Check in at <gym>" after it.
+      const checkIn = checkInCodeFromUrl(url);
+      if (checkIn) setPendingCheckIn(checkIn);
     };
     if (!launchLinkRead) {
       launchLinkRead = true;
@@ -155,6 +159,8 @@ export default function RootLayout() {
     const t = setTimeout(() => {
       const code = takePendingInvite();
       if (code) router.push(`/j/${code}`);
+      const checkIn = takePendingCheckIn();
+      if (checkIn) router.push(`/c/${checkIn}`);
     }, 600);
     return () => clearTimeout(t);
   }, [status]);

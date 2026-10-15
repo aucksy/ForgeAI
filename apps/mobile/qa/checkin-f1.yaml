@@ -1,0 +1,18 @@
+# Part INV, step F1 (QR self check-in, 15 Oct 2026). run-device-qa.sh made a fresh ONLINE gym on
+# the live server (gym_create_online, "QA Check-in Gym"), put one member on its roster with the
+# mobile +91 98765 00002 (crm_push), and opened the gym's INVITE link /j/<CODE> at the app. Join it,
+# so the phone is that gym's member before the check-in poster's link is opened (F2).
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: 'Gym code .*'
+    timeout: 30000
+- tapOn: 'Your name'
+- eraseText: 70
+- inputText: 'QA Member'
+- hideKeyboard
+- tapOn: '^Join QA Check-in Gym$'
+- extendedWaitUntil:
+    visible: 'Your gym''s shop · pay at the desk'
+    timeout: 30000
+- takeScreenshot: inv-f1-joined

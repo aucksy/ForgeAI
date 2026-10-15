@@ -10,6 +10,7 @@
 import { getSupabase } from '@/cloud/client';
 
 import { classifyRpcError, gymNowFromMe, linkFromJoin, orderFromRow, ordersFromRows, previewFromRow, productsFromRows, type GymError, type GymNow, type GymPreview } from './gym';
+import { checkInFromRow, type CheckInAnswer } from './checkIn';
 import { inboxFromRows, type InboxMessage } from './inbox';
 import type { GymLink, GymOrder, Product } from './types';
 
@@ -92,6 +93,17 @@ export async function apiCancelOrder(key: string, orderId: string): Promise<GymR
   if (!r.ok) return r;
   const order = orderFromRow(Array.isArray(r.data) ? r.data[0] : r.data);
   return order ? { ok: true, data: order } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * QR self check-in (member_check_in, 0015): this member at the gym whose code the poster carries.
+ * `phone` only when the member just typed it (the server keeps it for next time).
+ */
+export async function apiCheckIn(key: string, code: string, phone: string | null): Promise<GymResult<CheckInAnswer>> {
+  const r = await call('member_check_in', { p_key: key, p_code: code, p_phone: phone }, WRITE_MS);
+  if (!r.ok) return r;
+  const answer = checkInFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
 }
 
 /** Stop the key working on the server. Best-effort and short: Leave and Erase never wait on it. */

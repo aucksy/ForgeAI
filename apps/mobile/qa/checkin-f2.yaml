@@ -1,0 +1,31 @@
+# Part INV, step F2 (QR self check-in). run-device-qa.sh opened the gym's CHECK-IN link
+# https://forgeai.aakashpahuja.in/c/<CODE> at the app (am start -d … -p com.forgeai.app), as the
+# camera does when the poster's QR is scanned. The phone is in that gym (F1), so the app checks in
+# by itself: the app never sent a mobile number at Join, so it asks for it ONCE. A wrong number
+# first (not on the roster: the desk words, with the number), then the roster's number → in.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: '^Check in at QA Check-in Gym$'
+    timeout: 30000
+- assertVisible: 'Type the mobile number your gym has for you\. The app asks only once\.'
+- takeScreenshot: inv-f2-ask-number
+- tapOn: 'Your mobile number'
+- inputText: '9876500003'
+- hideKeyboard
+- tapOn: '^Check in$'
+- extendedWaitUntil:
+    visible: 'The gym doesn''t have your mobile number yet\. Ask the desk to add \+91 98765 00003 — then scan again\.'
+    timeout: 30000
+- takeScreenshot: inv-f2-not-on-roster
+- tapOn: '^Change my number$'
+- tapOn: 'Your mobile number'
+- inputText: '98765 00002'
+- hideKeyboard
+- tapOn: '^Check in$'
+- extendedWaitUntil:
+    visible: 'You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m'
+    timeout: 30000
+- assertVisible: 'Checked in at QA Check-in Gym as QA Roster Member\. Have a good workout\.'
+- takeScreenshot: inv-f2-checked-in
+- tapOn: '^Done$'

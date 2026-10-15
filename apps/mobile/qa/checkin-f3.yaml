@@ -1,0 +1,23 @@
+# Part INV, step F3 (QR self check-in): the same poster scanned again the same day. No number is
+# asked (the gym kept it), nothing is written twice: "already checked in". Then Leave, so the
+# phone ends in no gym, like step E.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: 'You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m'
+    timeout: 30000
+- assertVisible: 'You were already checked in at QA Check-in Gym today\. Nothing more to do\.'
+- assertNotVisible: 'Your mobile number'
+- takeScreenshot: inv-f3-already-in
+- tapOn: '^Done$'
+- extendedWaitUntil:
+    visible: 'Your gym''s shop · pay at the desk'
+    timeout: 20000
+- scrollUntilVisible:
+    element: '^Leave$'
+    timeout: 20000
+- tapOn: '^Leave$'
+- tapOn: 'Leave shop'
+- extendedWaitUntil:
+    visible: '^Your gym''s shop$'
+    timeout: 20000

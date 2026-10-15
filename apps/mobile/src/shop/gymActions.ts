@@ -6,7 +6,7 @@
  */
 import { prefetchGymLogo } from '@/theme/logoPrefetch';
 
-import { apiCancelOrder, apiJoin, apiLeaveQuietly, apiMe, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
+import { apiCancelOrder, apiCheckIn, apiJoin, apiLeaveQuietly, apiMe, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
 import { useGymInbox } from './inboxStore';
 import {
   JOIN_CODE_LENGTH,
@@ -25,6 +25,7 @@ import {
   stockLeftForKey,
   type GymError,
 } from './gym';
+import type { CheckInAnswer } from './checkIn';
 import { useGymShop } from './gymStore';
 import { removeLine } from './money';
 import type { GymOrder } from './types';
@@ -71,6 +72,27 @@ export async function joinFromInvite(rawCode: string, rawName: string): Promise<
   // Not waited for: the new gym is already on screen, and the leave call can take its full timeout.
   if (oldKey && oldKey !== useGymShop.getState().link?.memberKey) void apiLeaveQuietly(oldKey);
   return null;
+}
+
+/** What a check-in came to: the server's answer, a key the gym no longer knows, or no answer. */
+export type CheckInOutcome =
+  | { kind: 'answer'; answer: CheckInAnswer }
+  | { kind: 'unlinked' }
+  | { kind: 'not-joined' }
+  | { kind: 'failed'; error: GymError };
+
+/**
+ * QR self check-in: check this phone's member in at the gym the poster names (member_check_in).
+ * `phone` is sent only when the member just typed it. A key the gym no longer knows unlinks the
+ * phone, as every other call does.
+ */
+export async function checkInAtGym(code: string, phone: string | null): Promise<CheckInOutcome> {
+  const key = useGymShop.getState().link?.memberKey;
+  if (!key) return { kind: 'not-joined' };
+  const r = await apiCheckIn(key, cleanJoinCode(code), phone);
+  if (r.ok) return { kind: 'answer', answer: r.data };
+  if (lostKey(r.error)) return { kind: 'unlinked' };
+  return { kind: 'failed', error: r.error };
 }
 
 /** When member_me was last asked (epoch ms), for the once-an-hour check on return to the app. */

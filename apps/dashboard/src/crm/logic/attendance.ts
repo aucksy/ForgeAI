@@ -784,3 +784,16 @@ function groupBy<T>(rows: readonly T[], key: (row: T) => string): Map<string, T[
   }
   return map;
 }
+
+// ---------------------------------------------------------------- where a check-in came from
+
+/**
+ * The small tag beside a register row: "App" for a member who checked themselves in by scanning
+ * the gym's QR (QR self check-in, 0015), "Imported" for a row from a paper register; nothing for
+ * the desk's own check-ins, which are most of them. PURE.
+ */
+export function visitSourceTag(source: Visit['source']): string | null {
+  if (source === 'app') return tr('App', 'App');
+  if (source === 'import') return tr('Imported', 'Import kiya');
+  return null;
+}
