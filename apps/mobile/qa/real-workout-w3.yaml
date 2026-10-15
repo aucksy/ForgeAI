@@ -50,13 +50,11 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: '.*Bench Press set 1 RPE 8\. Change'
     timeout: 5000
-- tapOn:
-    text: 'Mark .*Bench Press set 1 complete'
-    index: 0
-    waitToSettleTimeoutMs: 300
+# 15 Oct 2026 (owner): the RPE tap also ticked the set — the rest starts with no ✓ tap.
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 5000
+- assertVisible: '.*Bench Press set 1 complete\. Tap to undo'
 - takeScreenshot: w-33-set-1-rpe-ticked
 - tapOn: "Skip rest"
 # ---------------------------------------------------------------- set 2 as a drop set

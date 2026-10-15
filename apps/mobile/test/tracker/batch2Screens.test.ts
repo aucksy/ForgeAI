@@ -144,6 +144,8 @@ describe('D: the "Set type" sheet', () => {
     expect(rpeSheet).not.toContain('onDone=');
     const card = read('src/tracker/components/ExerciseLogCard.tsx');
     expect(card).toContain('onOpenRpe={onOpenRpe}');
+    // Owner: an RPE on a set not yet ticked also ticks it and starts the rest (the ✓'s own path).
+    expect(card).toMatch(/if \(v == null \|\| rpeSet\.done\) return;[\s\S]{0,200}toggleDone\(exercise\.key, rpeSet\.key, row\?\.fill \?\? null\)[\s\S]{0,80}afterTick\(exercise\.key, rpeSet\.key\)/);
     expect(read('src/tracker/components/SetRow.tsx')).toContain('(onOpenRpe ?? onOpenType)(set.key)');
   });
   it('the ✓ elsewhere is a 48 dp "Done" beside the ×', () => {

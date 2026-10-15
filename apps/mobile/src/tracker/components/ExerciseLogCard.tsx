@@ -21,6 +21,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { Badge, GhostButton, Icon, askConfirm } from '@/components/ui';
 import type { BadgeProps } from '@/components/ui';
 import { getExerciseById } from '@/db/repos/exerciseRepo';
+import { tap } from '@/lib/haptics';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { columnHeads, LOAD_MODE_LABEL, LOAD_MODES, repsPerSide, weightIsEach } from '@/tracker/engine/logTypes';
@@ -102,6 +103,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const setRestSec = useActiveWorkout((s) => s.setRestSec);
   const setSetType = useActiveWorkout((s) => s.setSetType);
   const setRpe = useActiveWorkout((s) => s.setRpe);
+  const toggleDone = useActiveWorkout((s) => s.toggleDone);
   const deleteSetWithUndo = useActiveWorkout((s) => s.deleteSetWithUndo);
   const setLoadMode = useActiveWorkout((s) => s.setLoadMode);
   const swapExercise = useActiveWorkout((s) => s.swapExercise);
@@ -737,7 +739,19 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         rpe={rpeSet?.rpe ?? null}
         who={rpeSet ? `${exercise.name}, ${rows.find((r) => r.set.key === rpeSet.key)?.spoken ?? 'set'}` : ''}
         onPick={(v) => {
-          if (rpeSet) setRpe(exercise.key, rpeSet.key, v);
+          if (!rpeSet) return;
+          setRpe(exercise.key, rpeSet.key, v);
+          // 15 Oct 2026 (owner, in the gym: "rest timer should start right after tapping rpe value...
+          // no need to tap the checkmark again"): an RPE on a set not yet ticked also ticks it —
+          // the same tick as the ✓ (its grey hint fills empty boxes) and the same rest. A set with
+          // nothing to fill keeps its RPE and stays unticked.
+          if (v == null || rpeSet.done) return;
+          const row = rows.find((r) => r.set.key === rpeSet.key);
+          const missing = toggleDone(exercise.key, rpeSet.key, row?.fill ?? null);
+          if (!missing) {
+            tap();
+            afterTick(exercise.key, rpeSet.key);
+          }
         }}
         onClose={() => setRpeFor(null)}
       />
