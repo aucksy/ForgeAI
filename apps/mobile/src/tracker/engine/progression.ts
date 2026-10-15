@@ -6,7 +6,9 @@
  * `Resources/Progressive-Overload-Research-v3.docx` §4 (outside the repo).
  *
  * Core: double progression — same weight, add reps until every main set reaches the top
- * of the range, then add one weight step and start from the bottom again. Around it:
+ * of the range, then add weight and start from the bottom again. Oct 2026 (owner): the jump is
+ * the member's "Weight jumps" setting (about 2.5 / 5 / 10%, always at least the gym's smallest
+ * step — `jumpRungKg`), and each set gets its own rep goal (`perSetGoals`, `setGoals`). Around it:
  *  - drop sets and lighter back-off sets never block progress (main-weight rule);
  *  - the weight step is LEARNED from the weights the member actually logs;
  *  - a step bigger than 20% of the weight asks for more reps first (big-jump guard);
@@ -36,7 +38,21 @@ import { isImperial, roundToShownStep, stepFor } from '@/lib/units';
 import type { Exercise, OverloadTarget, UserProfile } from '@/types/models';
 
 import { fmtDurationWords, isBodyweightFamily, type LoadMode, type LogType } from './logTypes';
-import { buildLadder, downRungKg, ladderKind, sameRungKg, upRungsKg } from './weightLadder';
+import { buildLadder, downRungKg, jumpRungKg, ladderKind, sameRungKg, upRungsKg } from './weightLadder';
+
+/**
+ * Settings → Workouts → Weight jumps (Oct 2026, owner): how much a Target adds when every main
+ * set reached the top of the range. Always at least one step of the member's ladder (the gym's
+ * smallest plates), so on a light lift all three give the smallest step.
+ */
+export type WeightJump = 'small' | 'standard' | 'large';
+export const JUMP_SHARE: Readonly<Record<WeightJump, number>> = { small: 0.025, standard: 0.05, large: 0.1 };
+export const DEFAULT_JUMP: WeightJump = 'standard';
+
+/** A choice this version knows. PURE. */
+export function isWeightJump(v: unknown): v is WeightJump {
+  return v === 'small' || v === 'standard' || v === 'large';
+}
 
 export type ProgSetType = 'normal' | 'warmup' | 'drop' | 'failure';
 
@@ -70,8 +86,18 @@ export interface VersionLink {
 }
 
 export interface ProgressionTarget extends OverloadTarget {
-  /** One rep number to beat on every main set; null on the first time (show the range). */
+  /**
+   * The rep goal; null on the first time (show the range). With per-set goals, the highest of
+   * them (`setGoals` is the one source of each set's number).
+   */
   repGoal: number | null;
+  /**
+   * Oct 2026 (owner): the rep goal of each working set, in working-set order — the Target line
+   * prints them when they differ ("40 kg · 11, 9, 8") and each set row hints its own
+   * (`targetFill` → `fillForSet`). Same weight: set 1 aims one more than last time's set 1, the
+   * rest last time's same set. Empty when there is no rep goal (first time, a hold, an easy week).
+   */
+  setGoals: number[];
   /** The weight moved from last time's main weight. null = same weight / first time. */
   change: 'up' | 'down' | null;
   /** Bodyweight move the member has never loaded: show no kilos at all. */
@@ -122,6 +148,7 @@ export function toEasyTarget(t: ProgressionTarget, reason: string, sets: (n: num
     targetWeightKg: same,
     change: null,
     repGoal: null,
+    setGoals: [],
     version: null,
     reason,
   };
@@ -146,8 +173,10 @@ export const RULE_WINDOW = 4;
  * 20 → 22.5 kg on the bar and 12.5 → 15 kg dumbbells are not.
  */
 const BIG_STEP_SHARE = 0.2;
-/** A beginner's double step must stay within ACSM's 10%. */
-const DOUBLE_STEP_SHARE = 0.1;
+/** A beginner who found it easy may jump as far as the "Large" setting (10%). */
+const EASY_JUMP_SHARE = JUMP_SHARE.large;
+/** Logged RPE at or under this on the set that gets the extra rep: aim 2 more instead of 1. */
+const EASY_SET_RPE = 7;
 /** At most this many reps-in-reserve count toward a set's score. */
 const MAX_EFFORT_CREDIT = 2;
 /** Timed holds: seconds added when every set reached its target (research §4.5). */
@@ -182,6 +211,13 @@ export interface ProgressionInput {
    * weights in `history`.
    */
   ladder?: readonly number[];
+  /** Settings → Workouts → Weight jumps (absent = Standard, about 5%). */
+  jump?: WeightJump;
+  /**
+   * The smallest jump the gym's plates make on a bar, kg (smallest plate × 2; Plates and bars).
+   * Used for a barbell's ladder only; absent = 2.5 kg / 5 lb.
+   */
+  plateStepKg?: number | null;
 }
 
 /** Loaded equipment: a blank weight here is "no weight logged", never "bodyweight" (TG-07). */
@@ -236,6 +272,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       last: null,
       targetWeightKg: 0,
       repGoal: null,
+      setGoals: [],
       change: null,
       action: 'start',
       reason: assisted
@@ -274,6 +311,8 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const ladder = buildLadder(ladderWeights, ladderKind(exercise.equipment, logType), {
     learnedStepKg: learnedGap(all, false),
     catalogStepKg: exercise.incrementKg,
+    // The gym's plates make a bar's smallest jump (a belt on a pull-up keeps the usual step).
+    ...(exercise.equipment === 'barbell' && logType === 'weight_reps' && input.plateStepKg ? { plateStepKg: input.plateStepKg } : {}),
   });
   /** Last time's weight as the Target shows and fills it (a clean number in this unit). */
   const same = assisted || bodyweightOnly ? w : sameRungKg(w, ladder);
@@ -291,16 +330,20 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     repGoal: number,
     reason: string,
     version: ProgressionTarget['version'] = null,
+    /** Each working set's goal; absent = `repGoal` on every set. */
+    perSet?: number[],
   ): ProgressionTarget => {
     // Last time's weight on the ladder is "the same weight", even when it reads cleaner.
     const change = sameWeight(weightKg, same) ? null : weightKg > w + 1e-6 ? 'up' : weightKg < w - 1e-6 ? 'down' : null;
+    const setGoals = perSet && perSet.length > 0 ? perSet : Array.from({ length: Math.max(1, target.targetSets) }, () => repGoal);
     return {
       ...base,
       last,
       sameWeightKg: round3(same),
       targetWeightKg: round3(weightKg),
-      targetRepsMax: Math.max(max, repGoal),
+      targetRepsMax: Math.max(max, repGoal, ...setGoals),
       repGoal,
+      setGoals,
       change,
       action: change === 'up' ? 'increase' : change === 'down' ? 'deload' : 'hold',
       reason,
@@ -394,7 +437,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       }
       return out('R2', next, min, `${did} Time for ${load(next)}.`);
     }
-    // The next rung of the member's own ladder (TG-01): never a weight further away.
+    // The next rung of the member's own ladder (TG-01) — the single smallest step up.
     const up = upTo(1);
     // Added weight on a bodyweight move is small next to the body itself: never "big".
     const big = !isBodyweight && w > 0 && (up - w) / w > BIG_STEP_SHARE + 1e-9;
@@ -408,13 +451,18 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       const pct = Math.round(((up - w) / w) * 100);
       return out('R2b', same, goal, `The next step is ${kgText(up)}, a ${pct}% jump. Add reps first: aim for ${goal}.`);
     }
-    if (input.experience === 'beginner' && minScore >= max + 3 && w > 0) {
-      const jump = upTo(2);
-      if ((jump - w) / w <= DOUBLE_STEP_SHARE + 1e-9) {
+    // Oct 2026 (owner, "Weight jumps"): the heaviest rung within the chosen 2.5 / 5 / 10% —
+    // never less than one step (overrules TG-01's "never more than one rung").
+    const share = JUMP_SHARE[input.jump ?? DEFAULT_JUMP] ?? JUMP_SHARE[DEFAULT_JUMP];
+    const next = w > 0 ? jumpRungKg(w, share, ladder) : up;
+    // R2c — a beginner who found it easy may go as far as "Large" (10%).
+    if (input.experience === 'beginner' && minScore >= max + 3 && w > 0 && share < EASY_JUMP_SHARE) {
+      const jump = jumpRungKg(w, EASY_JUMP_SHARE, ladder);
+      if (jump > next + 1e-6) {
         return out('R2c', jump, min, `That looked easy: ${repsList}${at(w)}. Jumping to ${kgText(jump)}.`);
       }
     }
-    return out('R2', up, min, `${did} Time for ${kgText(up)}.`);
+    return out('R2', next, min, `${did} Time for ${kgText(next)}.`);
   }
 
   // Sessions at today's main weight, newest first (the "run").
@@ -461,13 +509,55 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   }
 
   // R5 — same weight, one more rep.
-  const goal = Math.min(max, Math.max(min, lowestReps + 1));
+  // Assisted moves and pyramids keep one goal for every set (their own rules).
+  if (assisted || L.ramp) {
+    const goal = Math.min(max, Math.max(min, lowestReps + 1));
+    return out(
+      'R5',
+      same,
+      goal,
+      `Last time ${repsList}${at(w)}. ${assisted ? 'Same help' : 'Same weight'}, aim for ${goal} ${L.ramp ? 'at your heaviest weight' : 'on every set'}.`,
+    );
+  }
+  // Oct 2026 (owner): a goal per set. Last time under the range on every set (RPE 10 gives no
+  // credit, so a hard set under the range is a miss) → the same numbers again; else one more
+  // rep on the first set still below the top, every other set last time's own number.
+  const miss = best(L) < min;
+  const goals = perSetGoals(L.mainSets, target.targetSets, max, miss);
+  const top = Math.max(...goals);
+  const uniform = goals.every((g) => g === goals[0]);
+  const aim = uniform ? `aim for ${goals[0]} on every set` : `aim for ${goals.join(', ')}`;
   return out(
     'R5',
     same,
-    goal,
-    `Last time ${repsList}${at(w)}. ${assisted ? 'Same help' : 'Same weight'}, aim for ${goal} ${L.ramp ? 'at your heaviest weight' : 'on every set'}.`,
+    top,
+    miss
+      ? `Last time ${repsList}${at(w)}. Same weight: match it, ${uniform ? `${goals[0]} on every set` : goals.join(', ')}, then build from there.`
+      : `Last time ${repsList}${at(w)}. Same weight, ${aim}.`,
+    null,
+    goals,
   );
+}
+
+/**
+ * Each working set's rep goal at the same weight (Oct 2026, owner). PURE.
+ *  - Last time's set i is set i's floor (sets beyond last time's count take its last set).
+ *  - Not a miss: the first set still below the top of the range aims one more (two when that
+ *    set was logged at RPE 7 or easier), never past the top. So 10, 9, 8 → 11, 9, 8 and
+ *    12, 9, 8 (range 8–12) → 12, 10, 8.
+ *  - A miss: last time's numbers again.
+ */
+export function perSetGoals(sets: readonly ProgSet[], targetSets: number, max: number, miss: boolean): number[] {
+  if (sets.length === 0) return [];
+  const n = Math.max(1, targetSets);
+  const goals = Array.from({ length: n }, (_, i) => sets[Math.min(i, sets.length - 1)].reps);
+  if (miss) return goals;
+  const i = goals.findIndex((g) => g < max);
+  if (i < 0) return goals;
+  const rpe = i < sets.length ? sets[i].rpe : null;
+  const easy = rpe != null && Number.isFinite(rpe) && rpe >= 6 && rpe <= EASY_SET_RPE;
+  goals[i] = Math.min(max, goals[i] + (easy ? 2 : 1));
+  return goals;
 }
 
 /** The entry for an exercise with no Target rule (distance work, timed cardio). */
@@ -483,6 +573,7 @@ export function freeTarget(input: Pick<ProgressionInput, 'exercise' | 'target'> 
     targetWeightKg: 0,
     last: null,
     repGoal: null,
+    setGoals: [],
     change: null,
     action: 'hold',
     reason: '',
@@ -535,6 +626,7 @@ function holdTarget(input: ProgressionInput): ProgressionTarget {
     logType: 'time' as const,
     targetWeightKg: 0,
     repGoal: null,
+    setGoals: [],
     topSetOnly: false,
   };
 
@@ -615,6 +707,8 @@ function holdTarget(input: ProgressionInput): ProgressionTarget {
 
 type LineInput = Pick<OverloadTarget, 'targetWeightKg' | 'targetRepsMin' | 'targetRepsMax' | 'action'> & {
   repGoal?: number | null;
+  /** Oct 2026: each working set's goal; printed when they differ ("40 kg · 11, 9, 8"). */
+  setGoals?: readonly number[] | null;
   bodyweightOnly?: boolean;
   /** Phase 2 (absent on older saved cards = weight × reps). */
   logType?: LogType;
@@ -669,15 +763,29 @@ export function targetLine(t: LineInput, fmtKg: (kg: number) => string = (kg) =>
   const side = t.perSide ? ' per side' : '';
   // Phase 4: this plan week's effort, for members who log RPE.
   const effort = t.effortRpe != null ? ` · RPE ${t.effortRpe}` : '';
+  const goals = perSetLine(t.setGoals);
+  if (t.repGoal != null && goals) return `${load} · ${goals}${side}${effort}`;
   if (t.repGoal != null) return `${load} · aim for ${t.repGoal}${side}${effort}`;
   return `${load} × ${range}${effort}`;
+}
+
+/** "11, 9, 8" when the per-set goals differ; null when there is one goal for every set. */
+function perSetLine(goals: readonly number[] | null | undefined): string | null {
+  if (!goals || goals.length < 2 || goals.every((g) => g === goals[0])) return null;
+  return goals.join(', ');
 }
 
 /** What a Target fills into a set row: the TYPED values (help as a positive number). */
 export interface TargetFill {
   weightKg: number;
+  /** The rep goal (every set's, unless `setReps` says otherwise). */
   reps: number;
   durationSec?: number;
+  /**
+   * Oct 2026: each working set's rep goal, in working-set order (`ProgressionTarget.setGoals`) —
+   * only when they differ. `fillForSet` gives a row the goal of its working-set number.
+   */
+  setReps?: number[];
 }
 
 /** An easy week stops with this many reps left (easyWeek.ts: "stop with 3 or more reps left"). */
@@ -691,7 +799,7 @@ export const EASY_REPS_LEFT = 3;
  */
 export function targetFill(
   t: Pick<ProgressionTarget, 'targetWeightKg' | 'repGoal' | 'action' | 'topSetOnly'> &
-    Partial<Pick<ProgressionTarget, 'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last'>>,
+    Partial<Pick<ProgressionTarget, 'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last' | 'setGoals'>>,
 ): TargetFill | null {
   if (t.action === 'start' || t.version || t.free) return null;
   if (t.logType === 'time') return t.holdSec != null && t.holdSec > 0 ? { weightKg: 0, reps: 0, durationSec: t.holdSec } : null;
@@ -704,7 +812,8 @@ export function targetFill(
     return top > 0 ? { weightKg, reps: Math.max(1, top - EASY_REPS_LEFT) } : null;
   }
   if (t.repGoal == null) return null;
-  return { weightKg, reps: t.repGoal };
+  const perSet = !t.easy && perSetLine(t.setGoals) != null ? [...(t.setGoals as readonly number[])] : null;
+  return perSet ? { weightKg, reps: t.repGoal, setReps: perSet } : { weightKg, reps: t.repGoal };
 }
 
 /** A word only when the weight changes. null = say nothing (the first-time line already says "First time"). */

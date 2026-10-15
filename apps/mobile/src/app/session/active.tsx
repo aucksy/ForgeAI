@@ -47,6 +47,8 @@ import { draftToRichSets, hasWorkingSet } from '@/tracker/services/draftSets';
 import { isCorrecting, useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
+import { usePlateSetupFor } from '@/tracker/store/plateSetupStore';
+import { barStepKg } from '@/tracker/services/plateMath';
 import { useWorkoutUi } from '@/tracker/store/workoutUiStore';
 import { tell } from '@/lib/tell';
 
@@ -297,7 +299,19 @@ export default function ActiveWorkoutScreen() {
   // and its "why" in the new unit (TG-04). Starting a routine stores them WITH the cards
   // (TG-11), so this only loads what is missing or out of date. Empty for Start-Empty.
   const units = useUnits();
-  const targetQ = targetQuery(planDayId, exercises, { easy: easyWeek, effort: logsRpe, units, previousFrom });
+  // Oct 2026: "Weight jumps", "Rep range" and the gym's plates change the Targets at once.
+  const weightJump = useTrackerPrefs((s) => s.weightJump);
+  const repRangeChoice = useTrackerPrefs((s) => s.repRange);
+  const plateSetup = usePlateSetupFor(units);
+  const targetQ = targetQuery(planDayId, exercises, {
+    easy: easyWeek,
+    effort: logsRpe,
+    units,
+    previousFrom,
+    jump: weightJump,
+    repRange: repRangeChoice,
+    barStepKg: barStepKg(plateSetup, units),
+  });
   const targetSig = querySignature(targetQ);
   const targetQRef = useRef(targetQ);
   targetQRef.current = targetQ;

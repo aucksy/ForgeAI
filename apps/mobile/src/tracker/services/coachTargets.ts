@@ -14,6 +14,12 @@
  * library (so "Switch to …" can open it). Distance work and timed cardio get no Target — the
  * research gives no rule for them; the PREVIOUS column already shows last time. They stay in
  * today's workout (Home, chat) as `free` entries; the workout card shows no line for them.
+ *
+ * Oct 2026 (owner): every Target here follows the member's two settings — "Weight jumps" (how
+ * far an Up goes) and "Rep range" (rows still on their default range take the chosen range) —
+ * and the gym's plates (a bar's smallest jump). They come with the call (the live workout's
+ * query) or, for Home, the chat and the stall count, from the saved settings; all of them are in
+ * the memo key, so a change never serves an old answer.
  */
 import { getActivePlan } from '@/db/repos/planRepo';
 import { getProfile } from '@/db/repos/userRepo';
@@ -25,7 +31,18 @@ import { getRoutineAnywhere } from '@/tracker/db/folderRepo';
 import { historyScopeOrAll, scopeKey, type HistoryScope } from '@/tracker/db/historyScope';
 import { getProgressionHistoryMany, getWeightLadders, type LadderWeight } from '@/tracker/db/progressionHistory';
 import { convertCounting, getsTarget, repsPerSide, weightIsEach, type LoadMode } from '@/tracker/engine/logTypes';
-import { computeProgressionTarget, freeTarget, toEasyTarget, withEffort, type ProgressionTarget, type VersionLink } from '@/tracker/engine/progression';
+import {
+  computeProgressionTarget,
+  DEFAULT_JUMP,
+  freeTarget,
+  isWeightJump,
+  toEasyTarget,
+  withEffort,
+  type ProgressionTarget,
+  type VersionLink,
+  type WeightJump,
+} from '@/tracker/engine/progression';
+import { isRepRangeChoice, rangeForRow, type RepRangeChoice } from '@/tracker/engine/repRanges';
 import { EASY_REASON, easySets } from '@/tracker/plans/easyWeek';
 import { effortReason, STALL_RULES } from '@/tracker/plans/effort';
 import { getPlanNow, planNowOf } from '@/tracker/services/planState';
@@ -33,8 +50,10 @@ import { trainingVersion } from '@/tracker/db/trainingVersion';
 import { onWriteFailed, quietSince, writeQueueMark } from '@/db/writeQueue';
 import { displayUnits } from '@/lib/units';
 import { folderOfRoutine } from '@/tracker/db/folderRepo';
-import type { PreviousFrom } from '@/tracker/store/trackerPrefsStore';
-import type { Exercise, PlanExercise, TodaysWorkout, UserProfile } from '@/types/models';
+import { barStepKg } from '@/tracker/services/plateMath';
+import { usePlateSetup } from '@/tracker/store/plateSetupStore';
+import { useTrackerPrefs, type PreviousFrom } from '@/tracker/store/trackerPrefsStore';
+import type { Exercise, Goal, PlanExercise, TodaysWorkout, UserProfile } from '@/types/models';
 
 /** Sessions read per lift: 4 for the rules, the rest to learn the weight step. */
 const HISTORY_SESSIONS = 12;
@@ -55,12 +74,50 @@ interface TargetItem {
   card?: number;
 }
 
-async function experienceOrDefault(): Promise<UserProfile['experience']> {
+/** The member's experience and goal (the goal decides which rep range is a row's default). */
+async function profileFacts(): Promise<{ experience: UserProfile['experience']; goal: Goal | null }> {
   try {
-    return (await getProfile()).experience;
+    const p = await getProfile();
+    return { experience: p.experience, goal: p.goal ?? null };
   } catch {
-    return 'intermediate'; // no profile yet — never the beginner fast lane
+    return { experience: 'intermediate', goal: null }; // no profile yet — never the beginner fast lane
   }
+}
+
+/** The settings a Target follows (Oct 2026). */
+export interface TargetPrefs {
+  jump: WeightJump;
+  repRange: RepRangeChoice;
+  /** The gym's smallest bar jump, kg; null = the usual 2.5 kg / 5 lb. */
+  barStepKg: number | null;
+}
+
+/** The saved settings, with any given ones on top. Never throws (a store that cannot be read = the defaults). */
+export function targetPrefs(given: Partial<TargetPrefs> = {}): TargetPrefs {
+  let jump: WeightJump = DEFAULT_JUMP;
+  let repRange: RepRangeChoice = 'goal';
+  let bar: number | null = null;
+  try {
+    const p = useTrackerPrefs.getState();
+    if (isWeightJump(p.weightJump)) jump = p.weightJump;
+    if (isRepRangeChoice(p.repRange)) repRange = p.repRange;
+  } catch {
+    // defaults
+  }
+  if (given.barStepKg === undefined) {
+    try {
+      const u = displayUnits();
+      const st = usePlateSetup.getState();
+      bar = barStepKg(u === 'imperial' ? st.imperial : st.metric, u);
+    } catch {
+      bar = null;
+    }
+  }
+  return {
+    jump: given.jump && isWeightJump(given.jump) ? given.jump : jump,
+    repRange: given.repRange && isRepRangeChoice(given.repRange) ? given.repRange : repRange,
+    barStepKg: given.barStepKg !== undefined ? given.barStepKg : bar,
+  };
 }
 
 /** Phase 2 facts per exercise: its type and caps, and its linked versions in this library. */
@@ -98,7 +155,12 @@ function ladderIn(rows: readonly LadderWeight[] | undefined, dbMode: LoadMode, c
  * `scope` ("Previous values"): the history read is only that routine's / folder's workouts
  * (null = every workout).
  */
-async function targetsFor(items: TargetItem[], includeToday: boolean, scope: HistoryScope | null): Promise<ProgressionTarget[]> {
+async function targetsFor(
+  items: TargetItem[],
+  includeToday: boolean,
+  scope: HistoryScope | null,
+  prefs: TargetPrefs = targetPrefs(),
+): Promise<ProgressionTarget[]> {
   const today = todayISO();
   const ids = items.map((it) => it.exerciseId ?? it.pe.exerciseId);
   // Audit Phase 8: the same Targets asked again with nothing changed (the Workout tab on every
@@ -109,10 +171,10 @@ async function targetsFor(items: TargetItem[], includeToday: boolean, scope: His
   // Audit Phase 8 review: a read while a queued write runs (its rows uncommitted, its version
   // possibly rolled back) is worked out for this caller only, never remembered.
   const mark = writeQueueMark();
-  const [experience, version] = await Promise.all([experienceOrDefault(), trainingVersion()]);
+  const [{ experience, goal }, version] = await Promise.all([profileFacts(), trainingVersion()]);
   // A version below one remembered: that one was a rolled-back write's (or another database's).
   if (version != null && version < targetMemoTop) forgetTargetMemo();
-  const key = version == null ? null : memoKey(version, today, includeToday, experience, items, ids, scope);
+  const key = version == null ? null : memoKey(version, today, includeToday, experience, items, ids, scope, goal, prefs);
   const hit = key != null ? targetMemo.get(key) : undefined;
   if (hit) return [...hit];
   const [{ infos, versionIds }, histories, ladders] = await Promise.all([
@@ -134,7 +196,10 @@ async function targetsFor(items: TargetItem[], includeToday: boolean, scope: His
     // The routine row's exercise, or (swapped in) the card's own (TG-06).
     const exercise: Exercise = id === pe.exerciseId ? pe.exercise : info ?? pe.exercise;
     const logType = info?.logType ?? 'weight_reps';
-    const target = { targetSets: pe.targetSets, repRangeMin: pe.repRangeMin, repRangeMax: pe.repRangeMax };
+    const row = { repRangeMin: pe.repRangeMin, repRangeMax: pe.repRangeMax };
+    // "Rep range": a row still on its default range takes the chosen one (never a hold's).
+    const range = logType === 'time' ? row : rangeForRow(row, exercise, prefs.repRange, goal, experience);
+    const target = { targetSets: pe.targetSets, ...range };
     // Distance work and timed cardio get no Target (the "+5 s" rule is for holds).
     if (!getsTarget(logType, info?.muscles.primary ?? [])) return freeTarget({ exercise, target, logType });
     const entry = catalogEntry(info?.catalogKey);
@@ -163,6 +228,8 @@ async function targetsFor(items: TargetItem[], includeToday: boolean, scope: His
       harder: link(entry?.harder, versionIds),
       easier: link(entry?.easier, versionIds),
       ...(ladder ? { ladder } : {}),
+      jump: prefs.jump,
+      plateStepKg: prefs.barStepKg,
     });
     if (weightIsEach(mode)) t.each = true;
     if (repsPerSide(mode)) t.perSide = true;
@@ -199,13 +266,28 @@ function memoKey(
   items: readonly TargetItem[],
   ids: readonly string[],
   scope: HistoryScope | null,
+  goal: Goal | null,
+  prefs: TargetPrefs,
 ): string {
   // Display units shape the ladder's rungs (kg / lb).
   const parts = items.map((it, i) => {
     const { pe } = it;
     return [ids[i], pe.exerciseId, pe.targetSets, pe.repRangeMin, pe.repRangeMax, it.loadMode ?? '', it.card ?? ''].join(':');
   });
-  return JSON.stringify([version, today, includeToday, experience, displayUnits(), scopeKey(scope), parts]);
+  // The member's goal (a row's default range), the two settings and the gym's plates (Oct 2026).
+  return JSON.stringify([
+    version,
+    today,
+    includeToday,
+    experience,
+    goal ?? '',
+    prefs.jump,
+    prefs.repRange,
+    prefs.barStepKg ?? '',
+    displayUnits(),
+    scopeKey(scope),
+    parts,
+  ]);
 }
 
 /** One card of the live workout, as the Target sees it. */
@@ -249,7 +331,7 @@ async function effortRir(planDayId: string, opts: { easy?: boolean; effort?: boo
 export async function getTargetsForCards(
   planDayId: string | null,
   cards: readonly TargetCard[],
-  opts: { easy?: boolean; effort?: boolean; previousFrom?: PreviousFrom } = {},
+  opts: { easy?: boolean; effort?: boolean; previousFrom?: PreviousFrom } & Partial<TargetPrefs> = {},
 ): Promise<Map<string, ProgressionTarget>> {
   const out = new Map<string, ProgressionTarget>();
   if (!planDayId || cards.length === 0) return out;
@@ -297,7 +379,8 @@ export async function getTargetsForCards(
   }
   if (items.length === 0) return out;
   const scope = await historyScopeOrAll(planDayId, opts.previousFrom);
-  const [targets, rir] = await Promise.all([targetsFor(items, true, scope), effortRir(planDayId, opts)]);
+  const prefs = targetPrefs({ jump: opts.jump, repRange: opts.repRange, barStepKg: opts.barStepKg });
+  const [targets, rir] = await Promise.all([targetsFor(items, true, scope, prefs), effortRir(planDayId, opts)]);
   targets.forEach((t, i) => {
     if (t.free) return; // no line for distance work and timed cardio
     out.set(keys[i], opts.easy ? toEasyTarget(t, EASY_REASON, easySets) : withEffort(t, rir, rir != null ? effortReason(rir) : ''));
@@ -316,7 +399,7 @@ export async function getTargetsForCards(
  */
 export async function getTargetsForPlanDay(
   planDayId: string | null,
-  opts: { easy?: boolean; effort?: boolean; previousFrom?: PreviousFrom } = {},
+  opts: { easy?: boolean; effort?: boolean; previousFrom?: PreviousFrom } & Partial<TargetPrefs> = {},
 ): Promise<Map<string, ProgressionTarget>> {
   const out = new Map<string, ProgressionTarget>();
   if (!planDayId) return out;

@@ -111,7 +111,9 @@ describe('defects found in the old engine', () => {
     const t = run(ex(), range(8, 12), h);
     expect(t.rule).toBe('R5');
     expect(t.targetWeightKg).toBe(40);
-    expect(t.repGoal).toBe(11);
+    // Oct 2026 per-set goals: set 1 is at the top (12), so the extra rep goes to set 2.
+    expect(t.setGoals).toEqual([12, 12, 10]);
+    expect(t.repGoal).toBe(12);
   });
 
   it('G: the stall rule waits for 4 workouts and says "workouts", not "weeks"', () => {
@@ -196,7 +198,7 @@ describe('rules', () => {
     expect(run(ex(), range(8, 12), [sess('2026-10-03', [[40, 12]])]).rule).toBe('R5');
   });
 
-  it('R2c: a beginner who found it easy jumps two steps when that stays within 10%', () => {
+  it('R2c: a beginner who found it easy may jump as far as 10% (the "Large" setting)', () => {
     const h = [sess('2026-10-03', [[60, 15], [60, 15], [60, 15]])];
     expect(run(ex(), range(8, 12), h, 'beginner').targetWeightKg).toBe(65);
     expect(run(ex(), range(8, 12), h, 'intermediate').targetWeightKg).toBe(62.5);
@@ -242,10 +244,12 @@ describe('rules', () => {
     expect(run(ex(), range(5, 8), h).rule).toBe('R5');
   });
 
-  it('R5: aims one rep above the lowest main set, within the range', () => {
+  it('R5 (Oct 2026): set 1 aims one more than last time, every other set last time’s own', () => {
     const t = run(ex(), range(8, 12), [sess('2026-10-03', [[50, 10], [50, 9], [50, 8]])]);
-    expect(t.repGoal).toBe(9);
-    expect(targetLine(t)).toBe('50 kg · aim for 9');
+    expect(t.setGoals).toEqual([11, 9, 8]);
+    expect(t.repGoal).toBe(11);
+    expect(targetLine(t)).toBe('50 kg · 11, 9, 8');
+    expect(t.reason).toBe('Last time 10, 9, 8 at 50 kg. Same weight, aim for 11, 9, 8.');
     expect(targetBadge(t)).toBeNull();
     expect(t.action).toBe('hold');
   });
@@ -508,6 +512,6 @@ describe('first time everywhere (Option A, third review)', () => {
 
   it('the Home card can show pounds through the same line', () => {
     const t = run(ex(), range(8, 12), [sess('2026-10-03', [[50, 10], [50, 9], [50, 8]])]);
-    expect(targetLine(t, (kg) => `${Math.round(kg * 2.2046)} lb`)).toBe('110 lb · aim for 9');
+    expect(targetLine(t, (kg) => `${Math.round(kg * 2.2046)} lb`)).toBe('110 lb · 11, 9, 8');
   });
 });

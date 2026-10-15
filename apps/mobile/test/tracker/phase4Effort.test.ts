@@ -107,7 +107,8 @@ describe('the Target shows this week\'s effort to members who log RPE', () => {
 
   it('"· RPE 7" in week 1, and one more sentence behind the i', () => {
     const e = withEffort(t, 3, effortReason(3));
-    expect(targetLine(e)).toBe('60 kg · aim for 10 · RPE 7');
+    // Oct 2026 per-set goals: 9, 9, 9 last time → set 1 aims 10, the others 9.
+    expect(targetLine(e)).toBe('60 kg · 10, 9, 9 · RPE 7');
     expect(e.reason).toBe(`${t.reason} ${effortReason(3)}`);
     expect(withEffort(t, null, '')).toBe(t);
   });

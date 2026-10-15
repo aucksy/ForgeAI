@@ -8,10 +8,12 @@
  *
  * Now every suggested weight is a RUNG of a ladder made of the weights the member has
  * actually logged on that exercise (all history), in the unit on screen:
- *  - Up → the next rung above last time's weight (never further than one rung). Nothing
- *    above → one step past the top: the jump the member repeats, else his own spacing,
- *    else the gym's usual step (bar: 2.5 kg, or 5 kg when every weight he used is a
- *    multiple of 5; pounds 5 / 10 lb; dumbbells: the next dumbbell in the rack).
+ *  - Up → the next rung above last time's weight. Oct 2026 ("Weight jumps" setting,
+ *    `jumpRungKg`): the heaviest rung within the chosen 2.5 / 5 / 10% of it, never less than
+ *    the next rung. Nothing above → one step past the top: the jump the member repeats, else
+ *    his own spacing, else the gym's usual step (bar: the gym's smallest plate pair — 2.5 kg
+ *    with the usual plates, or twice that when every weight he used is a multiple of it;
+ *    pounds 5 / 10 lb; dumbbells: the next dumbbell in the rack).
  *  - Lighter → the rung nearest to 10% lighter (within 25%), else whole steps down.
  *  - With fewer than 3 different weights logged, a bar and dumbbells also get the gym's
  *    usual steps as rungs; a machine or cable stack only ever its own (its stack is unknown).
@@ -116,20 +118,36 @@ export const THIN_LADDER = 3;
 export function buildLadder(
   weightsKg: readonly number[],
   kind: LadderKind,
-  opts: { learnedStepKg?: number; catalogStepKg?: number; units?: UnitSystem } = {},
+  opts: {
+    learnedStepKg?: number;
+    catalogStepKg?: number;
+    units?: UnitSystem;
+    /**
+     * Oct 2026 (owner: "use the gym's real plates"): the smallest jump the gym's plates make on a
+     * bar (kg) — the smallest plate it has × 2 (Settings → Workouts → Plates and bars). Replaces
+     * the fixed 2.5 kg / 5 lb on a `plates` ladder; absent / 0 = that fixed grid.
+     */
+    plateStepKg?: number | null;
+  } = {},
 ): Ladder {
   const u = opts.units ?? displayUnits();
   const own = [...new Set(weightsKg.filter((w) => Number.isFinite(w) && w > EPS).map((kg) => cleanRung(kgToUnit(kg, u), kind, u)))].sort(
     (a, b) => a - b,
   );
   const thin = own.length < THIN_LADDER;
+  const gym = kind === 'plates' && opts.plateStepKg != null && opts.plateStepKg > EPS ? r3(kgToUnit(opts.plateStepKg, u)) : null;
+  /** The smallest jump on a bar: the gym's own plates, else 2.5 kg / 5 lb. */
+  const smallest = gym ?? plateGrid(u);
 
   let step: number | null = null;
-  const learned = opts.learnedStepKg && opts.learnedStepKg > 0 ? cleanStep(kgToUnit(opts.learnedStepKg, u), kind, u) : 0;
+  let learned = opts.learnedStepKg && opts.learnedStepKg > 0 ? cleanStep(kgToUnit(opts.learnedStepKg, u), kind, u) : 0;
+  // A learned jump the gym's plates cannot make (2.5 kg with no 1.25 kg plates) is rounded UP to
+  // what they can (5 kg).
+  if (gym != null && learned > 0 && !isMultiple(learned, gym)) learned = r3(Math.ceil(learned / gym - EPS) * gym);
   if (learned > 0) step = learned;
   else if (kind === 'plates') {
-    const big = plateGrid(u) * 2; // 5 kg / 10 lb
-    step = !thin && own.every((r) => isMultiple(r, big)) ? big : plateGrid(u);
+    const big = smallest * 2; // 5 kg / 10 lb with the usual plates
+    step = !thin && own.every((r) => isMultiple(r, big)) ? big : smallest;
   } else {
     step = ownSpacing(own);
     if (step == null && kind === 'own') {
@@ -144,7 +162,7 @@ export function buildLadder(
       kind === 'dumbbell'
         ? dumbbellSeries(u)
         : (() => {
-            const g = plateGrid(u);
+            const g = smallest;
             const top = Math.max(own[own.length - 1] ?? 0, 0) * 2 + 20 * g;
             const out: number[] = [];
             for (let v = g; v <= top + EPS; v += g) out.push(r3(v));
@@ -203,6 +221,23 @@ export function upRungsKg(wKg: number, n: number, l: Ladder): number[] {
     cur = next;
   }
   return out.map((v) => unitToKg(v, l.units));
+}
+
+/**
+ * Oct 2026 (owner's "Weight jumps" setting): the weight to move up to (kg) — the HEAVIEST rung
+ * at or below last time's weight × (1 + `share`), and always at least the next rung. So a light
+ * lift gets the smallest step whatever the setting (20 kg + 10% = 22, under the first rung 22.5),
+ * and a heavy one can skip rungs (60 kg + 10% = 66 → 65).
+ */
+export function jumpRungKg(wKg: number, share: number, l: Ladder): number {
+  const limit = kgToUnit(wKg, l.units) * (1 + Math.max(0, share)) + EPS;
+  const ups = upRungsKg(wKg, 40, l);
+  let best = ups[0];
+  for (const kg of ups) {
+    if (kgToUnit(kg, l.units) > limit) break;
+    best = kg;
+  }
+  return best;
 }
 
 /**

@@ -1135,12 +1135,18 @@ const present = (v: number | null | undefined): number | null => (v != null && N
  * and never the Target. A reps-only move never hints a weight (LW-19). A weight × reps row
  * with no weight to hint gets no hint at all — a tick then asks for the weight (TG-07).
  * Only hints: nothing is written into the row until it is ticked.
+ *
+ * Oct 2026 (owner, per-set goals): with a Target, a working row's REPS are its own goal — the
+ * Target's goal for its working-set number (`setReps`: 11, 9, 8) — but never more than the reps
+ * done in the nearest working row above at the same weight, so a hint never asks for more than
+ * was just done at that weight. The weight still follows rule 1 (a weight typed above carries
+ * down).
  */
 export function fillForSet(
   ex: DraftExercise,
   setKey: string,
   /** The card's Target fill (`targetFill`), or null off-plan / before it is known. */
-  target?: SetFill | null,
+  target?: (SetFill & { setReps?: readonly number[] }) | null,
 ): SetFill | null {
   const lt: LogType = ex.logType ?? 'weight_reps';
   const idx = ex.sets.findIndex((s) => s.key === setKey);
@@ -1185,10 +1191,26 @@ export function fillForSet(
     if (distanceM != null) out.distanceM = distanceM;
     return out;
   }
-  const reps = pick((s) => positive(s.reps), (p) => positive(p?.reps));
+  const weightKg = lt === 'reps' ? 0 : pick((s) => present(s.weightKg), (p) => present(p?.weightKg));
+  // The row's own goal: the Target's goal for its working-set number (warm-ups and drops not counted).
+  let goal: number | null = null;
+  if (tgt) {
+    const n = ex.sets.slice(0, idx).filter((s) => !s.isWarmup && s.setType !== 'drop').length;
+    const list = tgt.setReps;
+    goal = positive(list && list.length > 0 ? list[Math.min(n, list.length - 1)] : tgt.reps);
+  }
+  let reps: number | null;
+  if (goal != null) {
+    // Never more than the nearest working row above at the same weight just did.
+    const done = above.find(
+      (s) => positive(s.reps) != null && (lt === 'reps' || (weightKg != null && s.weightKg != null && Math.abs(s.weightKg - weightKg) < 1e-6)),
+    );
+    reps = done?.reps != null ? Math.min(goal, done.reps) : goal;
+  } else {
+    reps = pick((s) => positive(s.reps), (p) => positive(p?.reps));
+  }
   if (reps == null) return null;
   if (lt === 'reps') return { weightKg: 0, reps };
-  const weightKg = pick((s) => present(s.weightKg), (p) => present(p?.weightKg));
   if (weightKg == null) return lt === 'weight_reps' ? null : { weightKg: 0, reps };
   return { weightKg, reps };
 }

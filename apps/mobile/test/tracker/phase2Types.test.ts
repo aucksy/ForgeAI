@@ -345,8 +345,9 @@ describe('a weighted bodyweight move shows "+kg"', () => {
       history: [reps('2026-10-03', [[25, 10], [25, 9], [25, 9]])],
       todayISO: TODAY,
     });
-    expect(targetLine({ ...t, each: true })).toBe('25 kg each · aim for 10');
-    expect(targetLine({ ...t, perSide: true })).toBe('25 kg · aim for 10 per side');
+    // Oct 2026 per-set goals (10, 9, 9 → 11, 9, 9).
+    expect(targetLine({ ...t, each: true })).toBe('25 kg each · 11, 9, 9');
+    expect(targetLine({ ...t, perSide: true })).toBe('25 kg · 11, 9, 9 per side');
   });
 });
 

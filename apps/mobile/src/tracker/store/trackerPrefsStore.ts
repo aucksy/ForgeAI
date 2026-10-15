@@ -18,6 +18,11 @@
  *  - `shareSize` / `shareLook` (15 Oct 2026, Hevy's share backgrounds): the share picture's size
  *    (Post or Story) and background (Dark or See-through), as last picked on the share sheet.
  *    Post + Dark — the only picture before — the first time.
+ *  - `weightJump` / `repRange` (Oct 2026, owner: "scientific Targets that follow two simple
+ *    settings"): how much a Target adds when it is time to go up (Small ~2.5% · Standard ~5%,
+ *    the default · Large ~10%) and which rep range routine rows with the default range use
+ *    (Match my goal, the default · Strength · Muscle · Higher reps). The Target and the grey
+ *    set hints follow both (`targetStore.ts` query, `coachTargets.ts` memo).
  *
  * New keys backfill to their default for pre-existing persisted blobs via zustand's
  * default shallow merge (persisted state lacks the key → default kept).
@@ -28,6 +33,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { BodyFigure } from '../catalog/bodyMapPaths';
 import { isShareLook, isShareSize, type ShareLook, type ShareSize } from '../share/frame';
+import { DEFAULT_JUMP, isWeightJump, type WeightJump } from '../engine/progression';
+import { isRepRangeChoice, type RepRangeChoice } from '../engine/repRanges';
 import { DEFAULT_METRIC, DEFAULT_RANGE, isChartMetric, isChartRange, type ChartMetric, type ChartRange } from '../engine/historyChart';
 
 /** Where an exercise's past numbers come from in a workout: any workout, this routine, this folder. */
@@ -59,6 +66,10 @@ export interface TrackerPrefsState {
   /** The share sheet's Size and Background choices. */
   shareSize: ShareSize;
   shareLook: ShareLook;
+  /** Settings → Workouts → Weight jumps. */
+  weightJump: WeightJump;
+  /** Settings → Workouts → Rep range. */
+  repRange: RepRangeChoice;
   setAdvancedSets: (value: boolean) => void;
   setCoachNotes: (value: boolean) => void;
   setSounds: (value: boolean) => void;
@@ -69,6 +80,8 @@ export interface TrackerPrefsState {
   setPreviousFrom: (value: PreviousFrom) => void;
   setShareSize: (value: ShareSize) => void;
   setShareLook: (value: ShareLook) => void;
+  setWeightJump: (value: WeightJump) => void;
+  setRepRange: (value: RepRangeChoice) => void;
 }
 
 /** A goal the app accepts: a whole 1–7, else off. PURE. */
@@ -99,6 +112,8 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       previousFrom: 'any',
       shareSize: 'post',
       shareLook: 'dark',
+      weightJump: DEFAULT_JUMP,
+      repRange: 'goal',
       setAdvancedSets: (advancedSets) => set({ advancedSets }),
       setCoachNotes: (coachNotes) => set({ coachNotes }),
       setSounds: (sounds) => set({ sounds }),
@@ -109,12 +124,14 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       setPreviousFrom: (value) => set({ previousFrom: isPreviousFrom(value) ? value : 'any' }),
       setShareSize: (value) => set({ shareSize: isShareSize(value) ? value : 'post' }),
       setShareLook: (value) => set({ shareLook: isShareLook(value) ? value : 'dark' }),
+      setWeightJump: (value) => set({ weightJump: isWeightJump(value) ? value : DEFAULT_JUMP }),
+      setRepRange: (value) => set({ repRange: isRepRangeChoice(value) ? value : 'goal' }),
     }),
     {
       name: 'forgeai-tracker-prefs',
       storage: createJSONStorage(() => AsyncStorage),
-      // A stored chip, range, Previous or share choice this version does not know falls back to the
-      // first-time one.
+      // A stored chip, range, Previous, share, weight-jump or rep-range choice this version does not
+      // know falls back to the first-time one.
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<TrackerPrefsState>;
         return {
@@ -125,6 +142,8 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           previousFrom: isPreviousFrom(p.previousFrom) ? p.previousFrom : current.previousFrom,
           shareSize: isShareSize(p.shareSize) ? p.shareSize : current.shareSize,
           shareLook: isShareLook(p.shareLook) ? p.shareLook : current.shareLook,
+          weightJump: isWeightJump(p.weightJump) ? p.weightJump : current.weightJump,
+          repRange: isRepRangeChoice(p.repRange) ? p.repRange : current.repRange,
         };
       },
     },

@@ -23,6 +23,8 @@ export interface PlanTargetView {
   action: 'increase' | 'hold' | 'deload' | 'start';
   /** v2 progression fields; absent on cards saved before Oct 2026. */
   repGoal?: number | null;
+  /** Oct 2026: each working set's goal (the line prints them when they differ). */
+  setGoals?: number[] | null;
   change?: 'up' | 'down' | null;
   bodyweightOnly?: boolean;
   /** Phase 2 fields; absent on cards saved before them (= weight × reps). */
@@ -172,6 +174,9 @@ export function parseWorkoutPlan(payload: unknown): WorkoutPlanView | null {
       ...('change' in raw
         ? {
             repGoal: num(raw.repGoal) ? raw.repGoal : null,
+            ...(Array.isArray(raw.setGoals) && raw.setGoals.length > 0 && raw.setGoals.every(num)
+              ? { setGoals: raw.setGoals as number[] }
+              : {}),
             change: raw.change === 'up' || raw.change === 'down' ? raw.change : null,
             bodyweightOnly: raw.bodyweightOnly === true,
           }

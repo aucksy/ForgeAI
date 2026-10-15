@@ -20,6 +20,10 @@
  *
  * Oct 2026: + "Plates and bars" (Hevy's Settings → Workouts → Plate Calculator): opens its own page,
  * the plates the gym has and the bar the plate calculator starts on.
+ *
+ * Oct 2026 (owner): + "Weight jumps" and "Rep range", just above Plates and bars. Each opens a
+ * choice sheet like Default rest does (`PrefChoiceSheet`): every choice with one plain line, the
+ * default tagged "Recommended". The Target and the grey set hints follow both.
  */
 import { useRouter, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -35,10 +39,20 @@ import { PREVIOUS_FROM_CHOICES } from '../db/historyScope';
 import { refreshWidgets } from '../phone/widgets';
 import { plateSetupLine } from '../services/plateMath';
 import { fmtRest } from '../services/restRules';
+import {
+  choiceDetail,
+  choiceLabel,
+  REP_RANGE_CHOICES,
+  REP_RANGE_HELP,
+  REP_RANGE_KEEP,
+  WEIGHT_JUMP_CHOICES,
+  WEIGHT_JUMP_HELP,
+} from '../services/targetChoices';
 import { usePlateSetupFor } from '../store/plateSetupStore';
 import { useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { stepWeeklyGoal, useTrackerPrefs } from '../store/trackerPrefsStore';
+import { PrefChoiceSheet } from './PrefChoiceSheet';
 import { RestAlertsStatusRow } from './RestAlertsStatusRow';
 import { RestPickerSheet } from './RestPickerSheet';
 
@@ -54,6 +68,9 @@ const HEADING = () => ({
 
 /** The plain line under a section. Read when drawn: gym branding repaints the tokens. */
 const SECTION_LINE = () => ({ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 }) as const;
+
+/** The chosen value on the right of a row that opens a sheet. Read when drawn: gym branding repaints the tokens. */
+const ROW_VALUE = () => ({ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent, maxWidth: 140, textAlign: 'right' }) as const;
 
 /** The stepper's − and + : 48 dp round, dimmed (and inert) at the end of the range. */
 function StepButton({ sign, label, disabled, onPress }: { sign: '−' | '+'; label: string; disabled: boolean; onPress: () => void }) {
@@ -141,6 +158,13 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
   const setDefaultSec = useRestTimer((s) => s.setDefaultSec);
   const loadDefault = useRestTimer((s) => s.loadDefault);
   const [picking, setPicking] = useState(false);
+  const weightJump = useTrackerPrefs((s) => s.weightJump);
+  const setWeightJump = useTrackerPrefs((s) => s.setWeightJump);
+  const repRange = useTrackerPrefs((s) => s.repRange);
+  const setRepRange = useTrackerPrefs((s) => s.setRepRange);
+  const [choosing, setChoosing] = useState<'jump' | 'range' | null>(null);
+  const jumpLabel = choiceLabel(WEIGHT_JUMP_CHOICES, weightJump);
+  const rangeLabel = choiceLabel(REP_RANGE_CHOICES, repRange);
   const [saveError, setSaveError] = useState<string | null>(null);
   const ringThroughDnd = useRestAlertPrefs((s) => s.ringThroughDnd);
   const router = useRouter();
@@ -210,6 +234,32 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
           divider
         />
       ) : null}
+      <Pressable onPress={() => setChoosing('jump')} accessibilityRole="button" accessibilityLabel={`Weight jumps, ${jumpLabel}. Change`}>
+        <SettingRow
+          icon="trend"
+          title="Weight jumps"
+          caption={choiceDetail(WEIGHT_JUMP_CHOICES, weightJump)}
+          right={
+            <Text numberOfLines={2} style={ROW_VALUE()}>
+              {jumpLabel}
+            </Text>
+          }
+          divider
+        />
+      </Pressable>
+      <Pressable onPress={() => setChoosing('range')} accessibilityRole="button" accessibilityLabel={`Rep range, ${rangeLabel}. Change`}>
+        <SettingRow
+          icon="target"
+          title="Rep range"
+          caption={choiceDetail(REP_RANGE_CHOICES, repRange)}
+          right={
+            <Text numberOfLines={2} style={ROW_VALUE()}>
+              {rangeLabel}
+            </Text>
+          }
+          divider
+        />
+      </Pressable>
       <Pressable
         onPress={() => {
           setOpenError(null);
@@ -269,6 +319,31 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
         </View>
         <Text style={SECTION_LINE()}>{previousChoice.line}</Text>
       </View>
+      <PrefChoiceSheet
+        visible={choosing === 'jump'}
+        title="Weight jumps"
+        subtitle={WEIGHT_JUMP_HELP}
+        choices={WEIGHT_JUMP_CHOICES}
+        value={weightJump}
+        onChoose={(v) => {
+          setWeightJump(v);
+          setChoosing(null);
+        }}
+        onClose={() => setChoosing(null)}
+      />
+      <PrefChoiceSheet
+        visible={choosing === 'range'}
+        title="Rep range"
+        subtitle={REP_RANGE_HELP}
+        footnote={REP_RANGE_KEEP}
+        choices={REP_RANGE_CHOICES}
+        value={repRange}
+        onChoose={(v) => {
+          setRepRange(v);
+          setChoosing(null);
+        }}
+        onClose={() => setChoosing(null)}
+      />
       <RestPickerSheet
         visible={picking}
         title="Default rest"

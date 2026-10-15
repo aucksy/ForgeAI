@@ -2,7 +2,8 @@
  * The live workout's Targets, one per card (audit TG-04 / TG-06 / TG-11). Not persisted:
  * Targets are derived from the member's history and recomputed when anything they depend on
  * changes — the cards (added, removed, swapped, Counting changed), the easy week, RPE logging,
- * the unit on screen and the "Previous values" setting (which workouts the history comes from).
+ * the unit on screen and the "Previous values" setting (which workouts the history comes from),
+ * and (Oct 2026) the "Weight jumps" and "Rep range" settings and the gym's plates.
  *
  * TG-11: starting a routine fills this store TOGETHER with the cards (`preloadTargets` runs
  * beside the draft build, `seedTargets` stores the result before the workout opens), so the
@@ -13,8 +14,11 @@ import { create } from 'zustand';
 
 import { displayUnits, type UnitSystem } from '@/lib/units';
 import type { LoadMode } from '@/tracker/engine/logTypes';
-import type { ProgressionTarget } from '@/tracker/engine/progression';
+import type { ProgressionTarget, WeightJump } from '@/tracker/engine/progression';
+import type { RepRangeChoice } from '@/tracker/engine/repRanges';
 import { getTargetsForCards, type TargetCard } from '@/tracker/services/coachTargets';
+import { barStepKg } from '@/tracker/services/plateMath';
+import { usePlateSetup } from '@/tracker/store/plateSetupStore';
 import { useTrackerPrefs, type PreviousFrom } from '@/tracker/store/trackerPrefsStore';
 
 /** What a card tells the Target (a slice of the draft exercise). */
@@ -38,13 +42,39 @@ export interface TargetQuery {
   units: UnitSystem;
   /** Settings → Workouts → Previous values (absent = any workout). */
   previousFrom?: PreviousFrom;
+  /** Settings → Workouts → Weight jumps. */
+  jump: WeightJump;
+  /** Settings → Workouts → Rep range. */
+  repRange: RepRangeChoice;
+  /** The gym's smallest bar jump, kg (Plates and bars); null = no plate on. */
+  barStepKg: number | null;
+}
+
+/** The gym's smallest bar jump (kg) for a unit, from the saved Plates and bars. Never throws. */
+export function gymBarStepKg(units: UnitSystem): number | null {
+  try {
+    const st = usePlateSetup.getState();
+    return barStepKg(units === 'imperial' ? st.imperial : st.metric, units);
+  } catch {
+    return null;
+  }
 }
 
 export function targetQuery(
   planDayId: string | null,
   exercises: readonly CardForTarget[],
-  opts: { easy: boolean; effort: boolean; units?: UnitSystem; previousFrom?: PreviousFrom },
+  opts: {
+    easy: boolean;
+    effort: boolean;
+    units?: UnitSystem;
+    previousFrom?: PreviousFrom;
+    jump?: WeightJump;
+    repRange?: RepRangeChoice;
+    barStepKg?: number | null;
+  },
 ): TargetQuery {
+  const units = opts.units ?? displayUnits();
+  const prefs = useTrackerPrefs.getState();
   return {
     planDayId,
     cards: exercises.map((e) => ({
@@ -58,8 +88,11 @@ export function targetQuery(
     })),
     easy: opts.easy,
     effort: opts.effort,
-    units: opts.units ?? displayUnits(),
-    previousFrom: opts.previousFrom ?? useTrackerPrefs.getState().previousFrom,
+    units,
+    previousFrom: opts.previousFrom ?? prefs.previousFrom,
+    jump: opts.jump ?? prefs.weightJump,
+    repRange: opts.repRange ?? prefs.repRange,
+    barStepKg: opts.barStepKg !== undefined ? opts.barStepKg : gymBarStepKg(units),
   };
 }
 
@@ -68,7 +101,7 @@ export function querySignature(q: TargetQuery): string {
   const cards = q.cards
     .map((c) => `${c.key}:${c.exerciseId}:${c.planExerciseId ?? ''}:${c.loadMode ?? ''}:${c.card ?? ''}:${c.planCard ?? ''}:${c.splitFrom ?? ''}`)
     .join(',');
-  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${q.previousFrom ?? 'any'}|${cards}`;
+  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${q.previousFrom ?? 'any'}|${q.jump}|${q.repRange}|${q.barStepKg ?? ''}|${cards}`;
 }
 
 interface TargetState {
@@ -90,7 +123,14 @@ export async function loadTargets(q: TargetQuery): Promise<void> {
   let map: Map<string, ProgressionTarget>;
   try {
     map = q.planDayId
-      ? await getTargetsForCards(q.planDayId, q.cards, { easy: q.easy, effort: q.effort, previousFrom: q.previousFrom ?? 'any' })
+      ? await getTargetsForCards(q.planDayId, q.cards, {
+          easy: q.easy,
+          effort: q.effort,
+          previousFrom: q.previousFrom ?? 'any',
+          jump: q.jump,
+          repRange: q.repRange,
+          barStepKg: q.barStepKg,
+        })
       : new Map();
   } catch {
     map = new Map();
@@ -109,7 +149,7 @@ export async function loadTargets(q: TargetQuery): Promise<void> {
 export async function preloadTargets(
   planDayId: string | null,
   exerciseIds: readonly string[],
-  opts: { easy: boolean; effort: boolean; previousFrom?: PreviousFrom },
+  opts: { easy: boolean; effort: boolean; previousFrom?: PreviousFrom; jump?: WeightJump; repRange?: RepRangeChoice; barStepKg?: number | null },
 ): Promise<Map<string, ProgressionTarget>> {
   if (!planDayId) return new Map();
   try {

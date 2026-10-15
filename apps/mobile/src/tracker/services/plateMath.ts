@@ -242,6 +242,17 @@ export function gymPlatesKg(setup: PlateSetup, u: UnitSystem): number[] {
     .map((n) => toKg(n, u));
 }
 
+/**
+ * Oct 2026: the smallest jump this gym's plates make on a bar, in kg — its smallest plate on a
+ * side (× 2). The usual plates: 2.5 kg (1.25 a side) / 5 lb. No 1.25 kg plates: 5 kg. The
+ * Target's ladder uses it (`buildLadder`'s `plateStepKg`); null when no plate is on. PURE.
+ */
+export function barStepKg(setup: PlateSetup, u: UnitSystem): number | null {
+  const plates = gymPlatesKg(setup, u);
+  if (plates.length === 0) return null;
+  return Math.round(Math.min(...plates) * 2 * 1e6) / 1e6;
+}
+
 /** The bar the calculator starts on, in kg. PURE. */
 export function gymBarKg(setup: PlateSetup, u: UnitSystem): number {
   return setup.bar != null ? toKg(setup.bar, u) : defaultBarKg(u);
