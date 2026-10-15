@@ -506,8 +506,23 @@ adb shell input keyevent KEYCODE_HOME
 # (drag_check.py ex-names) and j3-end.yaml discards the workout.
 free_maestro
 log "part J3 start"
+# The live workout's clock ticks every second, so `uiautomator dump` can fail to find an idle
+# screen (the first v0.44 run got no file at all). Try it a few times, logging why; then fall back
+# to Maestro's own view tree (JSON), which drag_check.py also reads.
+j3_dump() {
+  rm -f "$OUT/$1"
+  for t in 1 2 3 4; do
+    adb shell rm -f /sdcard/j3.xml >/dev/null 2>&1
+    why=$(adb shell uiautomator dump /sdcard/j3.xml 2>&1)
+    adb pull /sdcard/j3.xml "$OUT/$1" >/dev/null 2>&1 && [ -s "$OUT/$1" ] && return 0
+    log "J3 screen read $t failed: $why"
+    sleep 1
+  done
+  maestro hierarchy > "$OUT/$1" 2> "$OUT/$1.err" && [ -s "$OUT/$1" ] && { log "J3 screen read: Maestro view tree used"; return 0; }
+  log "J3 screen read: Maestro view tree failed too ($OUT/$1.err)"
+}
 if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$OUT/part-j3" "$QA_DIR/j3-workout-drag.yaml" > "$OUT/part-j3.log" 2>&1; then
-  adb shell uiautomator dump /sdcard/j3.xml >/dev/null 2>&1; adb pull /sdcard/j3.xml "$OUT/j3-before.xml" >/dev/null 2>&1
+  j3_dump j3-before.xml
   j3_before=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-before.xml")
   j3_coords=$(python3 "$QA_DIR/drag_check.py" ex-drag "$OUT/j3-before.xml")
   log "J3 before: $j3_before; drag $j3_coords"
@@ -523,7 +538,7 @@ if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$O
     done
     adb shell input motionevent UP "$j3x2" "$j3y2"
     sleep 2
-    adb shell uiautomator dump /sdcard/j3.xml >/dev/null 2>&1; adb pull /sdcard/j3.xml "$OUT/j3-after.xml" >/dev/null 2>&1
+    j3_dump j3-after.xml
     j3_after=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-after.xml")
     j3_first=${j3_before%%|*}; j3_second=${j3_before##*|}
     if [ "$j3_after" = "$j3_second|$j3_first" ]; then

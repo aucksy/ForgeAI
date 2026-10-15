@@ -102,7 +102,7 @@ export function targetPrefs(given: Partial<TargetPrefs> = {}): TargetPrefs {
     if (isWeightJump(p.weightJump)) jump = p.weightJump;
     if (isRepRangeChoice(p.repRange)) repRange = p.repRange;
   } catch {
-    // defaults
+    // quiet: an unreadable settings store means the defaults; nothing the member typed is lost
   }
   if (given.barStepKg === undefined) {
     try {
