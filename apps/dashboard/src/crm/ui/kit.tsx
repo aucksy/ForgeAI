@@ -364,6 +364,17 @@ export function EmptyState({
 
 // ---------------------------------------------------------------- controls
 
+/** Run a click handler; an async one's uncaught error is logged, never dropped. */
+export function runClick(handler: () => unknown): void {
+  try {
+    const out = handler();
+    if (out instanceof Promise) out.catch((e: unknown) => console.error('[ForgeErr] button', e));
+  } catch (e) {
+    console.error('[ForgeErr] button', e);
+    throw e;
+  }
+}
+
 export function Button({
   children,
   onClick,
@@ -376,7 +387,11 @@ export function Button({
   wrap,
 }: {
   children: ReactNode;
-  onClick?: () => void;
+  /**
+   * May be async (15 Oct 2026, promise ratchet): an error the handler did not catch itself is
+   * logged as [ForgeErr] here instead of vanishing as an unhandled rejection.
+   */
+  onClick?: () => unknown;
   type?: 'button' | 'submit';
   disabled?: boolean;
   variant?: 'primary' | 'ghost' | 'quiet';
@@ -435,7 +450,7 @@ export function Button({
   return (
     <button
       type={type}
-      onClick={onClick}
+      onClick={onClick ? () => runClick(onClick) : undefined}
       disabled={disabled}
       aria-label={ariaLabel}
       style={{ ...base, ...skin }}

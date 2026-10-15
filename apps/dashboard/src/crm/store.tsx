@@ -324,7 +324,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
   }, [snapshot, today, loading, error, memberViews, allMemberViews, viewFor, reload, mutate, db]);
 
   if (!value) {
-    return <>{loading ? <Booting /> : <BootFailed message={error} onRetry={reload} />}</>;
+    return <>{loading ? <Booting /> : <BootFailed message={error} onRetry={() => void reload()} />}</>;
   }
 
   return <CrmContext.Provider value={value}>{children}</CrmContext.Provider>;

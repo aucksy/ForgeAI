@@ -586,10 +586,29 @@ else
   # (no ForgeAI logo before the gym's), and Leave must give ForgeAI's back — in that order.
   BR_SDK=$(adb shell getprop ro.build.version.sdk 2>/dev/null | tr -d '\r')
   adb logcat -d -s ForgeSplash:I > "$OUT/br-splash-log.txt" 2>/dev/null
-  if [ "${BR_SDK:-0}" -lt 33 ]; then
+  # Order (review): the join AND the relaunch inside the gym each ask for the plain screen (2+ "plain"
+  # lines after the last earlier "ForgeAI" line), then Leave asks for ForgeAI's (the last line).
+  # The relaunch alone would not prove the join's own call.
+  br_splash_order() {
+    python3 -c "
+import sys
+ls = [l for l in open(sys.argv[1], encoding='utf-8', errors='replace') if 'start-up screen set' in l]
+kinds = ['plain' if 'plain start-up' in l else 'forge' for l in ls]
+if not kinds or kinds[-1] != 'forge': sys.exit(1)
+body = kinds[:-1]
+plain_run = 0
+for k in reversed(body):
+    if k != 'plain': break
+    plain_run += 1
+sys.exit(0 if plain_run >= 2 else 1)
+" "$OUT/br-splash-log.txt"
+  }
+  if [ -z "$BR_SDK" ]; then
+    status=1
+    log "PART BR FAILED: could not read the emulator's Android version for the start-up screen check"
+  elif [ "$BR_SDK" -lt 33 ]; then
     log "BR start-up screen: SKIPPED (Android API $BR_SDK; needs 33+)"
-  elif grep -q "plain start-up screen set" "$OUT/br-splash-log.txt" \
-       && grep "start-up screen set" "$OUT/br-splash-log.txt" | tail -1 | grep -q "ForgeAI start-up screen set"; then
+  elif br_splash_order; then
     log "BR start-up screen: OK (plain while in RAMS01, ForgeAI's after Leave; br-splash-log.txt)"
   else
     status=1

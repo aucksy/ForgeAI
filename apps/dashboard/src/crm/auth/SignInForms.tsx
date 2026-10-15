@@ -40,7 +40,7 @@ export function SignInForm({ submitLabel = tr('Sign in', 'Sign in') }: { submitL
   };
 
   return (
-    <form onSubmit={submit} noValidate>
+    <form onSubmit={(e) => void submit(e)} noValidate>
       <TextField label={tr('Your mobile number', 'Aapka mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
       <TextField
         label={tr('Sign-in code (6 digits)', 'Sign-in code (6 digit)')}
@@ -91,7 +91,7 @@ export function StartGymForm() {
   };
 
   return (
-    <form onSubmit={submit} noValidate>
+    <form onSubmit={(e) => void submit(e)} noValidate>
       <TextField label={tr('Gym name', 'Gym ka naam')} value={gymName} onChange={setGymName} placeholder="Iron Temple Fitness" />
       <TextField label={tr('Your name', 'Aapka naam')} value={name} onChange={setName} placeholder="Ramesh Sharma" />
       <TextField

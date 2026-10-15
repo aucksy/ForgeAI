@@ -440,7 +440,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 onCancel={canCancel ? () => setCancelling(m) : undefined}
                 onExtend={canExtendRow(m) ? () => setExtending(m) : undefined}
                 onRestore={
-                  canCancel ? () => run(() => uncancelMembership(m.id), tr('Cancellation reversed.', 'Cancel wapas liya.')) : undefined
+                  canCancel ? () => void run(() => uncancelMembership(m.id), tr('Cancellation reversed.', 'Cancel wapas liya.')) : undefined
                 }
               />
             ))}
@@ -530,7 +530,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           membership={cancelling}
           onClose={() => setCancelling(null)}
           onConfirm={(reason) =>
-            run(async () => {
+            void run(async () => {
               await cancelMembership(cancelling.id, reason);
               setCancelling(null);
             }, tr('Membership cancelled.', 'Plan cancel ho gaya.'))

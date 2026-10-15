@@ -374,7 +374,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                     view={v}
                     already={checkedInOn.has(v.member.id)}
                     busy={busyId === v.member.id}
-                    onCheckIn={() => doCheckIn(v)}
+                    onCheckIn={() => void doCheckIn(v)}
                   />
                 ))}
                 {results.length > MAX_RESULTS && (
@@ -408,7 +408,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                     view={v}
                     already={checkedInOn.has(v.member.id)}
                     busy={busyId === v.member.id}
-                    onCheckIn={() => doCheckIn(v)}
+                    onCheckIn={() => void doCheckIn(v)}
                   />
                 ))}
               </div>
@@ -481,7 +481,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                 view={row.visit.source === 'app' ? viewById.get(row.visit.memberId) ?? null : null}
                 busy={busyId === row.visit.memberId}
                 onUndo={() =>
-                  run(
+                  void run(
                     row.visit.memberId,
                     () => undoCheckIn(row.visit.memberId, row.visit.visitedOn),
                     tr(

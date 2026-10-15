@@ -146,15 +146,16 @@ class ForgePhoneModule : Module() {
         android.util.Log.w("ForgeErr", "start-up screen: Theme.App.SplashPlain is missing")
         return@Function "unsupported"
       }
-      a.runOnUiThread {
-        try {
-          if (android.os.Build.VERSION.SDK_INT >= 33) a.splashScreen.setSplashScreenTheme(if (plain) theme else android.content.res.Resources.ID_NULL)
-          android.util.Log.i("ForgeSplash", if (plain) "plain start-up screen set" else "ForgeAI start-up screen set")
-        } catch (e: Throwable) {
-          android.util.Log.w("ForgeErr", "start-up screen could not be set", e)
-        }
+      // Called here, not posted to the UI thread (review): it is one call to the system, safe from
+      // any thread, and the answer then says whether it really happened (JS retries otherwise).
+      try {
+        if (android.os.Build.VERSION.SDK_INT >= 33) a.splashScreen.setSplashScreenTheme(if (plain) theme else android.content.res.Resources.ID_NULL)
+        android.util.Log.i("ForgeSplash", if (plain) "plain start-up screen set" else "ForgeAI start-up screen set")
+        if (plain) "set" else "reset"
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "start-up screen could not be set", e)
+        "unsupported"
       }
-      if (plain) "set" else "reset"
     }
 
     // ---------------------------------------------------------------- app icon shortcuts (audit Phase 9)
