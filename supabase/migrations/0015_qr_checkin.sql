@@ -17,7 +17,7 @@
 -- the register shows the "App" tag, so a check-in the desk did not expect stands out.
 --
 -- ANSWERS (never a raise after the key check, so the try count and a saved number are kept):
---   {ok:true, alreadyIn, gymName, memberName, day, checkedInAt}
+--   {ok:true, alreadyIn, gymName, memberName (first name only), day, checkedInAt}
 --   {error:'TOO_MANY'}        more than 10 calls in a minute from this member key
 --   {error:'OTHER_GYM', gymName}   the scanned code is not this member's gym
 --   {error:'BAD_PHONE'}       the number typed is not an Indian mobile
@@ -198,7 +198,7 @@ begin
   -- 2. Match: app '9829012345' against roster '+919829012345'.
   r := public.member_check_in(ka, 'qrtst1');
   checks := checks + 1;
-  if not coalesce((r->>'ok')::boolean, false) or (r->>'alreadyIn')::boolean or r->>'memberName' is distinct from 'Asha Verma'
+  if not coalesce((r->>'ok')::boolean, false) or (r->>'alreadyIn')::boolean or r->>'memberName' is distinct from 'Asha'
      or r->>'day' is distinct from day or r->>'gymName' is distinct from 'QR Test Gym' then fails := fails || ' 2:' || r::text; end if;
   select crm_version into ver from public.gyms where gym_id = gid;
   select count(*) into n from public.crm_records
@@ -230,7 +230,7 @@ begin
   if r->>'error' is distinct from 'BAD_PHONE' then fails := fails || ' 5b:' || r::text; end if;
   r := public.member_check_in(kb, 'QRTST1', '+91 98290-54321');
   checks := checks + 1;
-  if not coalesce((r->>'ok')::boolean, false) or r->>'memberName' is distinct from 'Bilal Khan' then fails := fails || ' 5c:' || r::text; end if;
+  if not coalesce((r->>'ok')::boolean, false) or r->>'memberName' is distinct from 'Bilal' then fails := fails || ' 5c:' || r::text; end if;
   select count(*) into n from public.gym_members where key_hash = public._hash_key(kb) and phone = '+919829054321';
   checks := checks + 1;
   if n <> 1 then fails := fails || ' 5d:phone not kept'; end if;
