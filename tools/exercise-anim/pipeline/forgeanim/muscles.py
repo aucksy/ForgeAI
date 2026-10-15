@@ -7,7 +7,7 @@ only; right-side vertices are mirrored (x -> |x|) so both sides always match.
 import math
 import numpy as np
 
-MUSCLES = ["chest", "front_delts", "side_delts", "rear_delts", "lats", "upper_back", "traps", "lower_back",
+MUSCLES = ["chest", "chest_upper", "chest_lower", "front_delts", "side_delts", "rear_delts", "lats", "upper_back", "traps", "lower_back",
            "biceps", "triceps", "forearms", "abs", "obliques", "glutes", "quads", "hamstrings", "adductors",
            "abductors", "calves"]
 SECONDARY_LEVEL = 0.5
@@ -108,9 +108,15 @@ def compute(P, N, G, LM):
     near_arm = 1 - smooth(r_u, 0.085, 0.12)
     upper = np.clip(armw + shw, 0, 1)
     cap = window(t_u, -0.25, 0.42, 0.12) * near_arm * np.clip(upper + 0.3 * torw, 0, 1) * (1 - smooth(torw - upper, 0.0, 0.35))
-    m["front_delts"] = cap * ang_window(th_u, -45, 35, 25) * ang_window(tp_u, -60, 45, 25) * (1 - smooth(-t_u, 0.05, 0.25) * back)
-    m["side_delts"] = cap * ang_window(th_u, 30, 125, 22) * ang_window(tp_u, 25, 130, 20)
-    m["rear_delts"] = cap * ang_window(th_u, 120, 205, 22) * ang_window(tp_u, 115, 215, 22) * smooth(ny, -0.2, 0.2)
+    # deltoid = three heads from collarbone / acromion / scapular spine converging on the deltoid tuberosity
+    # (~40 % down the upper arm): each head's angular band narrows and drifts toward the outside as it descends
+    tt = np.clip(t_u / 0.42, 0, 1)
+    def head(c0, c1, w0, w1):
+        c = c0 + (c1 - c0) * tt; w = w0 + (w1 - w0) * tt
+        return ang_window(th_u, c - w, c + w, 18) * ang_window(tp_u, c - w - 10, c + w + 10, 20)
+    m["front_delts"] = cap * head(-8, 55, 42, 14) * (1 - smooth(-t_u, 0.05, 0.25) * back)
+    m["side_delts"] = cap * head(80, 82, 38, 16)
+    m["rear_delts"] = cap * head(168, 112, 36, 14) * smooth(ny, -0.2, 0.2)
     biceps_len = window(t_u, 0.38, 0.9, 0.1) * near_arm * armw
     m["biceps"] = biceps_len * ang_window(th_u, -50, 40, 25)
     m["triceps"] = window(t_u, 0.22, 0.92, 0.1) * near_arm * armw * ang_window(th_u, 130, 265, 25)
@@ -120,9 +126,20 @@ def compute(P, N, G, LM):
 
     # ---- torso
     torso = np.clip(torw + 0.6 * shw, 0, 1) * (1 - smooth(armw, 0.25, 0.6))
-    pec_c = np.array([0.098, 0.0, (nip_z + clav_z) * 0.5 + 0.012])
-    ex = (x - pec_c[0]) / 0.098; ez = (z - pec_c[2]) / ((clav_z - nip_z) * 0.5 + 0.045)
-    m["chest"] = torso * front * (1 - smooth(ex * ex + ez * ez, 0.55, 1.15)) * smooth(-ny, 0.2, 0.5)
+    # pectoralis major as a fan (front-facing torso skin):
+    #   medial border = sternum, top = just under the collarbone, outer border = the deltopectoral groove
+    #   (x ~0.12 under the collarbone, widening to the armpit fold ~0.18), lower border = from the 6th rib at the
+    #   sternum (~6 cm below the nipple line) rising toward the armpit fold.
+    xa = 0.185
+    fx = np.clip(x / xa, 0, 1)
+    top = clav_z - 0.008 + 0.012 * fx
+    bottom = (nip_z - 0.062) + 0.115 * fx ** 1.7
+    xmax = 0.145 + (0.19 - 0.145) * np.clip((top - z) / max(1e-3, (clav_z - nip_z)), 0, 1)
+    m["chest"] = torso * smooth(-ny, 0.15, 0.45) * window(x, 0.008, 1, 0.01) * (1 - smooth(x, xmax - 0.012, xmax + 0.012))         * smooth(z, bottom - 0.012, bottom + 0.012) * (1 - smooth(z, top - 0.012, top + 0.006))
+    split = top - (top - bottom) * 0.38   # top third of the fan at every x (clavicular head reaches the armpit)
+    up = smooth(z, split - 0.02, split + 0.02)
+    m["chest_upper"] = m["chest"] * up
+    m["chest_lower"] = m["chest"] * (1 - up)
     m["abs"] = torso * front * window(x, -1, 0.062, 0.025) * window(z, navel_z - 0.075, nip_z - 0.075, 0.03)
     m["obliques"] = torso * window(x, 0.088, 0.22, 0.02) * window(z, navel_z - 0.08, nip_z - 0.08, 0.04)         * smooth(np.abs(Nm[:, 0]), 0.35, 0.7) * smooth(-ny, -0.5, -0.15)
     m["lower_back"] = torso * back * window(x, -1, 0.07, 0.03) * window(z, pel_z, navel_z + 0.12, 0.04)
@@ -147,7 +164,7 @@ def compute(P, N, G, LM):
     return {k: np.clip(v, 0, 1).astype(np.float32) for k, v in m.items()}
 
 
-def _smooth_on_mesh(me, values, iters=8):
+def _smooth_on_mesh(me, values, iters=4):
     """Laplacian smoothing over mesh edges: soft, even edges, then a domed core (centre darker)."""
     e = np.zeros(len(me.edges) * 2, np.int32); me.edges.foreach_get("vertices", e); e = e.reshape(-1, 2)
     n = len(me.vertices)
@@ -162,8 +179,8 @@ def _smooth_on_mesh(me, values, iters=8):
         for _ in range(iters):
             acc = np.bincount(e[:, 0], weights=core[e[:, 1]], minlength=n) + np.bincount(e[:, 1], weights=core[e[:, 0]], minlength=n)
             core = 0.5 * core + 0.5 * acc / deg
-        # edge = soft mask; core term pushes the middle of big muscles toward 1, the rim toward ~0.6
-        out[k] = np.clip(m * (0.6 + 0.4 * smooth(core, 0.3, 0.95)), 0, 1).astype(np.float32)
+        # muscles fill to their borders (a light 15 % fade toward the rim), edges softened by 4 smoothing passes
+        out[k] = np.clip(m * (0.85 + 0.15 * smooth(core, 0.3, 0.95)), 0, 1).astype(np.float32)
     return out
 
 
@@ -180,13 +197,15 @@ def write_masks(body, rig, pos, normals):
     return masks
 
 
-def set_highlight(obj, primary, secondary=(), level=SECONDARY_LEVEL):
-    """Write fa_hl on any mesh that carries m_<key> attributes (body or shorts)."""
+def set_highlight(obj, primary, secondary=(), level=SECONDARY_LEVEL, weights=None):
+    """Write fa_hl on any mesh that carries m_<key> attributes (body or shorts).
+    weights = {mask: strength} overrides primary/secondary (e.g. {"chest_upper": 1, "chest_lower": 0.45})."""
     me = obj.data
     n = len(me.vertices)
     hl = np.zeros(n, np.float32)
     buf = np.zeros(n, np.float32)
-    for keys, w in ((primary, 1.0), (secondary, level)):
+    groups = [([k], w) for k, w in weights.items()] if weights else [(primary, 1.0), (secondary, level)]
+    for keys, w in groups:
         for k in keys:
             a = me.attributes.get("m_" + k)
             if a is None:

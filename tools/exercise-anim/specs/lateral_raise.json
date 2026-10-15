@@ -5,7 +5,9 @@
     "side_delts"
   ],
   "secondary": [
-    "traps"
+    "traps",
+    "front_delts",
+    "rear_delts"
   ],
   "props": {
     "db_L": {
@@ -31,19 +33,19 @@
         "down"
       ],
       [
-        0.25,
+        0.3,
         "down"
       ],
       [
-        1.3,
+        1.9,
         "up"
       ],
       [
-        1.65,
+        2.3,
         "up"
       ],
       [
-        3.0,
+        4.2,
         "down"
       ]
     ]
@@ -76,28 +78,28 @@
       "hands": {
         "L": {
           "prop": "db_L",
-          "at": [
-            0.24,
-            0.07,
-            -0.68
-          ],
           "axis": [
             0,
             1,
             0
           ],
-          "pivot": [
-            0.2,
-            0.0,
-            0.0
-          ]
+          "arm": {
+            "elev": 8,
+            "plane": 20,
+            "elbow": 15,
+            "bend": [
+              0,
+              1,
+              -0.2
+            ]
+          }
         }
       },
-      "elbows": {
-        "L": [
-          0.35,
-          -0.45,
-          -0.3
+      "bones": {
+        "clavicle.L": [
+          0,
+          0,
+          0
         ]
       }
     },
@@ -105,37 +107,37 @@
       "hands": {
         "L": {
           "prop": "db_L",
-          "at": [
-            0.74,
-            0.1,
-            -0.03
-          ],
           "axis": [
             0,
             1,
             0.15
           ],
-          "pivot": [
-            0.2,
-            0.0,
-            0.0
-          ]
+          "arm": {
+            "elev": 88,
+            "plane": 20,
+            "elbow": 18,
+            "bend": [
+              0,
+              1,
+              -0.3
+            ]
+          }
         }
-      },
-      "elbows": {
-        "L": [
-          0.42,
-          -0.5,
-          0.15
-        ]
       },
       "bones": {
         "clavicle.L": [
           0,
           0,
-          6
+          7
         ]
       }
     }
+  },
+  "research": "Top 90 deg (ACE, Coratella 2020), ~20 deg forward of frontal (scapular plane), soft 15-20 deg elbow held, hand at/below elbow, no thumb-down turn. EMG: side delt 30%, rear 24%, front 21% MVIC (Campos 2020). Tempo ~2 s up / 0.5 hold / 2 s down.",
+  "highlight": {
+    "side_delts": 1.0,
+    "traps": 0.5,
+    "front_delts": 0.4,
+    "rear_delts": 0.4
   }
 }

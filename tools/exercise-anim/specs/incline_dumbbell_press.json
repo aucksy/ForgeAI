@@ -10,7 +10,7 @@
   ],
   "scene": {
     "bench": {
-      "deg": 35
+      "deg": 30
     }
   },
   "props": {
@@ -37,19 +37,19 @@
         "bottom"
       ],
       [
-        0.25,
+        0.3,
         "bottom"
       ],
       [
-        1.35,
+        1.9,
         "top"
       ],
       [
-        1.7,
+        2.3,
         "top"
       ],
       [
-        3.1,
+        4.3,
         "bottom"
       ]
     ]
@@ -62,7 +62,7 @@
         0.49
       ],
       "rot": [
-        -32,
+        -38,
         0,
         0
       ]
@@ -126,49 +126,52 @@
       "hands": {
         "L": {
           "prop": "db_L",
-          "at": [
-            0.29,
-            0.1,
-            -0.05
-          ],
           "axis": [
             -1,
             0,
             0
-          ]
+          ],
+          "arm": {
+            "elev": 55,
+            "plane": 10,
+            "elbow": 100,
+            "bend_world": [
+              0,
+              0,
+              1
+            ]
+          }
         }
-      },
-      "elbows": {
-        "L": [
-          0.55,
-          -0.3,
-          -0.35
-        ]
       }
     },
     "top": {
       "hands": {
         "L": {
           "prop": "db_L",
-          "at": [
-            0.12,
-            0.5,
-            0.15
-          ],
           "axis": [
             -1,
             0,
             0
-          ]
+          ],
+          "arm": {
+            "elev": 118,
+            "plane": 97,
+            "elbow": 15,
+            "bend_world": [
+              0,
+              0,
+              1
+            ]
+          }
         }
-      },
-      "elbows": {
-        "L": [
-          0.55,
-          0.15,
-          -0.35
-        ]
       }
     }
+  },
+  "research": "Bench 30 deg (upper-chest EMG peak, PMC7579505). Bottom: elbows 45-60 deg from torso, ~90 deg bend, forearm vertical (NASM/ACE). Top: near-straight, dumbbells over eyes/upper chest, not touching (ACE). Tempo 2 s up / 2 s down.",
+  "highlight": {
+    "chest_upper": 1.0,
+    "front_delts": 1.0,
+    "chest_lower": 0.45,
+    "triceps": 0.55
   }
 }

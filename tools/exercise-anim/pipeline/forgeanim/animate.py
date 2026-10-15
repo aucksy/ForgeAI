@@ -9,6 +9,8 @@ Pose keys (all optional, missing = rest / previous):
   root:   {"loc": [x,y,z] world position of the root (pelvis) joint, "rot": [rx,ry,rz] degrees applied to the whole body}
   bones:  {"spine03": [rx,ry,rz], "neck01": [...], "head": [...], "clavicle.L": [...], ...}  local euler degrees
   hands:  {"L": {"prop": "db_L", "at": [x,y,z], "axis": [x,y,z], "frame": "torso"|"world", "pivot": [x,y,z]}}
+          or, preferred: {"L": {"prop": "db_L", "axis": [...], "arm": {"elev": 55, "plane": -25, "elbow": 90,
+          "bend": [0,1,0]} }}  (joint angles; "fore_world": [0,0,1] instead of elbow/bend = forearm points that way)
           axis = pinky->index; pivot (optional, torso frame) = the joint the hand swings around between poses
   elbows: {"L": [x,y,z]}  pole position, torso frame
   feet:   {"L": {"at": [x,y,z] world ankle, "rot": [rx,ry,rz] degrees world}}
@@ -132,6 +134,13 @@ class Clip:
                     for key in ("at", "axis", "rot"):
                         if key in ha and key in hb:
                             h[key] = lerp(ha[key], hb[key], u)
+                    if "arm" in ha and "arm" in hb:   # joint-space interpolation: angles, not positions
+                        aa, ab = ha["arm"], hb["arm"]
+                        h["arm"] = {k2: (lerp(aa[k2], ab[k2], u) if isinstance(aa.get(k2), list) else aa[k2] + (ab[k2] - aa[k2]) * u)
+                                    for k2 in aa if k2 in ab and not isinstance(aa[k2], str)}
+                        for k2 in aa:
+                            if isinstance(aa[k2], str):
+                                h["arm"][k2] = aa[k2]
                     piv = ha.get("pivot") or hb.get("pivot")
                     if piv and "at" in ha and "at" in hb:
                         # swing around a joint (elbow for curls, shoulder for raises/flies): angle + radius, not a straight chord
@@ -164,6 +173,7 @@ class Clip:
                 pb[name].rotation_euler = Euler([math.radians(a) for a in e], "XYZ")
         R.update()
         T = torso_frame(rig)
+        self.resolve_arms(pose, T)
         for s, pos in pose.get("elbows", {}).items():
             self.ctl[f"elbow.{s}"].location = T @ Vector(pos)
         for s, pos in pose.get("knees", {}).items():
@@ -185,6 +195,46 @@ class Clip:
                 prop.matrix_world = R.frame_from(c, axis if s == "L" else -axis, up)
             R.place_hand(rig, s, c, axis, self.G[s])
         R.update()
+
+    def arm_lengths(self):
+        if not hasattr(self, "_len"):
+            B = self.rig.data.bones
+            L1 = (B["lowerarm01.L"].head_local - B["upperarm01.L"].head_local).length
+            L2 = (B["wrist.L"].head_local - B["lowerarm01.L"].head_local).length
+            self._len = (L1, L2, self.G["L"].translation.length)
+        return self._len
+
+    def resolve_arms(self, pose, T):
+        """hands.<s>.arm = {elev, plane, elbow, bend | fore_world} (degrees, torso frame, side-local: plane 0 = out to the
+        side, +90 = forward, negative = behind). Turns joint angles into the handle position and the elbow pole."""
+        L1, L2, hoff = self.arm_lengths()
+        Ti = T.inverted(); R3 = Ti.to_3x3()
+        for s, h in pose.get("hands", {}).items():
+            a = h.get("arm")
+            if not a:
+                continue
+            sx = 1.0 if s == "L" else -1.0
+            S = Ti @ R.world_head(self.rig, f"upperarm01.{s}")
+            e = math.radians(a["elev"]); p = math.radians(a["plane"])
+            du = Vector((sx * math.sin(e) * math.cos(p), math.sin(e) * math.sin(p), -math.cos(e)))
+            E = S + du * L1
+            if "fore_world" in a:
+                fore = (R3 @ Vector(a["fore_world"])).normalized()
+                bperp = (fore - du * fore.dot(du))
+                bperp = bperp.normalized() if bperp.length > 1e-6 else Vector((0, 1, 0))
+            else:
+                if "bend_world" in a:      # bend toward a WORLD direction (e.g. straight up for presses)
+                    b = R3 @ Vector(a["bend_world"])
+                else:
+                    b = Vector(a.get("bend", (0, 1, 0))); b.x *= sx
+                if a.get("elbow") == "fore_vertical":   # pick the bend that makes the forearm point exactly along b
+                    a = dict(a, elbow=math.degrees(du.angle(b)))
+                bperp = (b - du * b.dot(du)).normalized()
+                k = math.radians(a.get("elbow", 10) if not isinstance(a.get("elbow"), str) else 10)
+                fore = (du * math.cos(k) + bperp * math.sin(k)).normalized()
+            Wr = E + fore * L2
+            h["at"] = list(Wr + fore * hoff)
+            pose.setdefault("elbows", {})[s] = list(E - bperp * 0.45)
 
     # ---------------- bake ----------------
     def timeline(self):
@@ -238,8 +288,9 @@ class Clip:
 
     def highlight(self):
         prim = self.spec.get("primary", []); sec = self.spec.get("secondary", [])
-        MU.set_highlight(self.ch["body"], prim, sec)
-        MU.set_highlight(self.ch["shorts"], prim, sec)
+        w = self.spec.get("highlight")   # research-based per-muscle strengths; falls back to primary/secondary
+        MU.set_highlight(self.ch["body"], prim, sec, weights=w)
+        MU.set_highlight(self.ch["shorts"], prim, sec, weights=w)
 
 
 def _fcurves(action):
