@@ -1,12 +1,20 @@
 # Part INV, step F2 (QR self check-in). run-device-qa.sh opened the gym's CHECK-IN link
 # https://forgeai.aakashpahuja.in/c/<CODE> at the app (am start -d … -p com.forgeai.app), as the
-# camera does when the poster's QR is scanned. The phone is in that gym (F1), so the app checks in
-# by itself: the app never sent a mobile number at Join, so it asks for it ONCE. A wrong number
-# first (not on the roster: the desk words, with the number), then the roster's number → in.
+# camera does when the poster's QR is scanned. The phone is in that gym (F1): one tap "Check in"
+# (never by itself: a forwarded link must not check anyone in). The app never sent a mobile number
+# at Join, so it asks for it ONCE. A wrong number first (not on the roster: the desk words, with
+# the number), then the roster's number → in, as the first name only. The roster member has no
+# plan, so "Please see the desk" shows under it (0016).
 appId: com.forgeai.app
 ---
 - extendedWaitUntil:
     visible: '^Check in at QA Check-in Gym$'
+    timeout: 30000
+- assertVisible: 'Tap Check in when you are at the gym\.'
+- takeScreenshot: inv-f2-ready
+- tapOn: '^Check in$'
+- extendedWaitUntil:
+    visible: 'Type the mobile number your gym has for you\. The app asks only once\.'
     timeout: 30000
 - assertVisible: 'Type the mobile number your gym has for you\. The app asks only once\.'
 - takeScreenshot: inv-f2-ask-number
@@ -26,6 +34,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: 'You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m'
     timeout: 30000
-- assertVisible: 'Checked in at QA Check-in Gym as QA Roster Member\. Have a good workout\.'
+- assertVisible: 'Checked in at QA Check-in Gym as QA\. Have a good workout\.'
+- assertVisible: 'The gym has no running plan for you today\. Please see the desk\.'
 - takeScreenshot: inv-f2-checked-in
 - tapOn: '^Done$'

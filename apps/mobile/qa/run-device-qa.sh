@@ -637,9 +637,9 @@ fi
 # The gym's check-in poster link /c/<CODE> opens "Check in at <gym>" (checkin-f1..f3.yaml). A fresh
 # ONLINE gym is made on the live server (gym_create_online; at most 5 an hour from one address)
 # with ONE roster member, mobile +91 98765 00002 (crm_push). F1 joins it from its invite link;
-# F2 opens the check-in link: the number is asked once, a wrong one gets the desk words, the
+# F2 opens the check-in link: one tap, the number is asked once, a wrong one gets the desk words, the
 # roster's one checks in; F3 opens it again: "already checked in", then Leave.
-# Needs supabase/migrations/0015_qr_checkin.sql live: probed first with a made-up member key
+# Needs supabase/migrations/0015_qr_checkin.sql and 0016_checkin_fixes.sql live: probed first with a made-up member key
 # (404 = member_check_in is not there yet: skipped and said so).
 ci_probe() {
   [ -n "$inv_url" ] && [ -n "$inv_key" ] || { echo "no-config"; return; }

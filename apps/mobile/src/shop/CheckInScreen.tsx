@@ -2,14 +2,17 @@
  * QR self check-in (15 Oct 2026): the screen the gym's check-in poster opens —
  * https://forgeai.aakashpahuja.in/c/RAMS01 scanned with the phone's camera (Android opens the app
  * straight here), or forgeai://c/RAMS01 from the poster link's web page.
- *  - in that gym     → checks in at once (member_check_in, 0015) → "You're in ✓ 6:42 pm";
+ *  - in that gym     → one tap "Check in" (member_check_in, 0015/0016) → "You're in ✓ 6:42 pm".
+ *    A tap, not at once (review, 15 Oct 2026): a poster link forwarded into a WhatsApp group must
+ *    not check in everyone who opens it at home;
  *  - the first time  → asks once for the mobile number the gym has, then one tap "Check in";
+ *  - no plan covers today → still checked in, with "Please see the desk" under it;
  *  - not on the gym's list, gym not online, too many tries, offline → plain words, never a dead end;
  *  - in no gym, or another → "Join <gym>" (the invite screen), then scan again.
  * The words are all in checkIn.ts (tested); this file only lays them out.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Text, TextInput, View } from 'react-native';
 
 import { Card, GhostButton, PrimaryButton, Screen } from '@/components/ui';
@@ -18,6 +21,7 @@ import { color, space, type } from '@/theme/tokens';
 
 import {
   ASK_PHONE_TEXT,
+  checkInCodeFromUrl,
   checkInErrorText,
   checkInStanding,
   checkInTitle,
@@ -26,10 +30,12 @@ import {
   isRealFailure,
   mobileDigits,
   notMemberText,
+  PLAN_ENDED_TEXT,
   problemText,
+  READY_TEXT,
   type CheckInAnswer,
 } from './checkIn';
-import { codeFromInvite, previewErrorText, UNLINKED_TEXT, type GymPreview } from './gym';
+import { previewErrorText, UNLINKED_TEXT, type GymPreview } from './gym';
 import { checkInAtGym } from './gymActions';
 import { apiPreview } from './gymApi';
 import { useGymShop } from './gymStore';
@@ -41,6 +47,7 @@ type Done = Extract<CheckInAnswer, { ok: true }>;
 type Problem = Extract<CheckInAnswer, { ok: false }>;
 
 type View_ =
+  | { state: 'ready' }
   | { state: 'working' }
   | { state: 'done'; done: Done }
   | { state: 'ask-phone'; error: string | null }
@@ -53,15 +60,15 @@ type Look = { state: 'loading' } | { state: 'found'; gym: GymPreview } | { state
 export function CheckInScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ code?: string | string[] }>();
-  const code = codeFromInvite(params.code);
+  // Exactly 6 letters or digits (review, 15 Oct 2026): /c/RAMS01XYZ is not RAMS01's poster.
+  const code = checkInCodeFromUrl(`forgeai://c/${Array.isArray(params.code) ? params.code[0] ?? '' : params.code ?? ''}`);
   const hydrated = useGymHydrated();
   const link = useGymShop((s) => s.link);
   const standing = code && hydrated ? checkInStanding(link, code) : null;
 
-  const [view, setView] = useState<View_>({ state: 'working' });
+  const [view, setView] = useState<View_>({ state: 'ready' });
   const [look, setLook] = useState<Look>({ state: 'loading' });
   const [phone, setPhone] = useState('');
-  const started = useRef(false);
 
   // This screen is open: a code kept from the welcome flow (app/_layout.tsx) has done its job.
   useEffect(() => {
@@ -86,17 +93,11 @@ export function CheckInScreen() {
       if (a.ok) setView({ state: 'done', done: a });
       else if (a.problem === 'NO_PHONE') setView({ state: 'ask-phone', error: null });
       else if (a.problem === 'BAD_PHONE') setView({ state: 'ask-phone', error: problemText(a) });
+      else if (a.problem === 'TOO_MANY_NUMBERS' && typed !== null) setView({ state: 'ask-phone', error: problemText(a) });
       else setView({ state: 'problem', problem: a, typed });
     },
     [code],
   );
-
-  // In that gym: check in straight away, once.
-  useEffect(() => {
-    if (standing !== 'same' || started.current) return;
-    started.current = true;
-    void run(null);
-  }, [standing, run]);
 
   // Not in that gym: show which gym the poster is (gym_preview), and offer to join it.
   const ask = useCallback(async () => {
@@ -153,6 +154,17 @@ export function CheckInScreen() {
           <GhostButton label="Not now" onPress={done} />
         </Card>
       );
+  } else if (view.state === 'ready') {
+    body = (
+      <Card style={{ gap: space.md }}>
+        <Text accessibilityRole="header" style={heading()}>
+          {checkInTitle(gymName)}
+        </Text>
+        <Text style={bodyText()}>{READY_TEXT}</Text>
+        <PrimaryButton label="Check in" onPress={() => void run(null)} />
+        <GhostButton label="Not now" onPress={done} />
+      </Card>
+    );
   } else if (view.state === 'working') {
     body = <Busy words={gymName ? `Checking you in at ${gymName}…` : 'Checking you in…'} />;
   } else if (view.state === 'done') {
@@ -162,6 +174,7 @@ export function CheckInScreen() {
           {doneHeadline(view.done)}
         </Text>
         <Text style={[bodyText(), { textAlign: 'center' }]}>{doneDetail(view.done)}</Text>
+        {view.done.planOk === false && <InlineError message={PLAN_ENDED_TEXT} />}
         <View style={{ alignSelf: 'stretch' }}>
           <PrimaryButton label="Done" onPress={done} />
         </View>
@@ -207,7 +220,7 @@ export function CheckInScreen() {
         <Text style={bodyText()}>{problemText(p, view.typed)}</Text>
         {p.problem === 'NOT_ON_ROSTER' ? (
           <>
-            <PrimaryButton label="Check in" onPress={() => void run(null)} />
+            <PrimaryButton label="Check in" onPress={() => void run(view.typed)} />
             <GhostButton label="Change my number" onPress={() => setView({ state: 'ask-phone', error: null })} />
           </>
         ) : p.problem === 'TOO_MANY' ? (

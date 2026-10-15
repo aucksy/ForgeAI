@@ -165,6 +165,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
   // no typing; a search typed with a batch picked looks only inside it.
   const [batch, setBatch] = useState<string>(ALL_BATCHES);
   const batches = useMemo(() => listBatches(memberViews.map((v) => v.member)), [memberViews]);
+  const viewById = useMemo(() => new Map(memberViews.map((v) => [v.member.id, v])), [memberViews]);
   const batchName = batches.find((b) => b.key === batch)?.name ?? null;
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -477,6 +478,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                 visit={row.visit}
                 name={row.member?.fullName ?? tr('Unknown member', 'Anjaan member')}
                 memberId={row.member?.id ?? null}
+                view={row.visit.source === 'app' ? viewById.get(row.visit.memberId) ?? null : null}
                 busy={busyId === row.visit.memberId}
                 onUndo={() =>
                   run(
@@ -578,15 +580,22 @@ function RegisterRowView({
   visit,
   name,
   memberId,
+  view,
   busy,
   onUndo,
 }: {
   visit: Visit;
   name: string;
   memberId: string | null;
+  /**
+   * Only for a check-in made with the app (review, 15 Oct 2026): the desk never saw this member's
+   * plan or balance before they walked in, so an ended plan or money due shows here instead.
+   */
+  view: MemberView | null;
   busy: boolean;
   onUndo: () => void;
 }) {
+  const planWarn = view !== null && view.state !== 'active' && view.state !== 'expiring';
   return (
     <Row gap={space.md} wrap={false}>
       <span style={{ fontFamily: font.mono, fontSize: 12, color: color.inkMuted, minWidth: 62 }}>
@@ -601,6 +610,10 @@ function RegisterRowView({
           <span style={{ ...tapTarget, fontSize: 14, color: color.inkMuted }}>{name}</span>
         )}
       </span>
+      {view !== null && planWarn && <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>}
+      {view !== null && view.outstandingP > 0 && (
+        <Pill tone="warn">{tr(`${formatINR(view.outstandingP)} due`, `${formatINR(view.outstandingP)} baaki`)}</Pill>
+      )}
       {visitSourceTag(visit.source) && (
         <Pill tone="muted">
           <span title={visit.source === 'app' ? tr('Checked in with the ForgeAI app', 'ForgeAI app se hazri lagi') : undefined}>{visitSourceTag(visit.source)}</span>

@@ -112,13 +112,17 @@ describe('the mobile number', () => {
 describe("member_check_in's answer", () => {
   it('reads a check-in', () => {
     const a = checkInFromRow({ ok: true, alreadyIn: false, gymName: "RAM'S", memberName: 'Asha Verma', day: '2026-10-15', checkedInAt: 1760531520000 });
-    expect(a).toEqual({ ok: true, alreadyIn: false, gymName: "RAM'S", memberName: 'Asha Verma', day: '2026-10-15', checkedInAt: 1760531520000 });
+    expect(a).toEqual({ ok: true, alreadyIn: false, gymName: "RAM'S", memberName: 'Asha Verma', day: '2026-10-15', checkedInAt: 1760531520000, planOk: null });
+    // 0016 says whether a plan covers today; anything but a true/false is "not said".
+    expect(checkInFromRow({ ok: true, day: '2026-10-15', checkedInAt: 1, planOk: false })).toMatchObject({ planOk: false });
+    expect(checkInFromRow({ ok: true, day: '2026-10-15', checkedInAt: 1, planOk: true })).toMatchObject({ planOk: true });
+    expect(checkInFromRow({ ok: true, day: '2026-10-15', checkedInAt: 1, planOk: 'no' })).toMatchObject({ planOk: null });
     // Postgres bigints may arrive as text.
     expect(checkInFromRow({ ok: true, alreadyIn: true, day: '2026-10-15', checkedInAt: '1760531520000' })).toMatchObject({ alreadyIn: true, checkedInAt: 1760531520000, gymName: '' });
   });
 
   it('reads every problem the server answers', () => {
-    for (const p of ['TOO_MANY', 'OTHER_GYM', 'BAD_PHONE', 'NO_PHONE', 'GYM_NOT_ONLINE', 'NOT_ON_ROSTER'] as const) {
+    for (const p of ['TOO_MANY', 'TOO_MANY_NUMBERS', 'OTHER_GYM', 'BAD_PHONE', 'NO_PHONE', 'GYM_NOT_ONLINE', 'NOT_ON_ROSTER'] as const) {
       expect(checkInFromRow({ error: p, gymName: 'G' })).toEqual({ ok: false, problem: p, gymName: 'G', phone: null });
     }
     expect(checkInFromRow({ error: 'NOT_ON_ROSTER', phone: '+919829012345' })).toMatchObject({ phone: '+919829012345', gymName: null });
@@ -160,6 +164,10 @@ describe('the words', () => {
   it('has plain words for every other problem', () => {
     expect(problemText({ problem: 'GYM_NOT_ONLINE', gymName: "RAM'S", phone: null })).toBe("RAM'S doesn't take check-ins in the app yet. Check in at the desk today.");
     expect(problemText({ problem: 'TOO_MANY', gymName: null, phone: null })).toMatch(/Wait a minute/);
+    // Too many NUMBERS is not "wait a minute": the limit lasts the day, so it sends them to the desk.
+    expect(problemText({ problem: 'TOO_MANY_NUMBERS', gymName: null, phone: null })).toBe(
+      'Too many numbers were tried today. Check in at the desk, and ask them to check your mobile number.',
+    );
     expect(problemText({ problem: 'BAD_PHONE', gymName: null, phone: null })).toMatch(/10-digit/);
     expect(problemText({ problem: 'OTHER_GYM', gymName: 'G', phone: null })).toBe("You're not a member of G in the app.");
     expect(notMemberText('fresh', "RAM'S", null)).toBe("Join RAM'S in the app first — then scan again to check in.");

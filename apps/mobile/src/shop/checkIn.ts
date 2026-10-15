@@ -58,13 +58,29 @@ export function formatMobile(raw: string | null | undefined): string {
 
 // ------------------------------------------------------------------ the answer
 
-export type CheckInProblem = 'TOO_MANY' | 'OTHER_GYM' | 'BAD_PHONE' | 'NO_PHONE' | 'GYM_NOT_ONLINE' | 'NOT_ON_ROSTER';
+export type CheckInProblem =
+  | 'TOO_MANY'
+  | 'TOO_MANY_NUMBERS'
+  | 'OTHER_GYM'
+  | 'BAD_PHONE'
+  | 'NO_PHONE'
+  | 'GYM_NOT_ONLINE'
+  | 'NOT_ON_ROSTER';
 
 export type CheckInAnswer =
-  | { ok: true; alreadyIn: boolean; gymName: string; memberName: string; day: string; checkedInAt: number }
+  | {
+      ok: true;
+      alreadyIn: boolean;
+      gymName: string;
+      memberName: string;
+      day: string;
+      checkedInAt: number;
+      /** False when no plan covers today (0016): the member is told to see the desk. Null = not said. */
+      planOk: boolean | null;
+    }
   | { ok: false; problem: CheckInProblem; gymName: string | null; phone: string | null };
 
-const PROBLEMS: readonly CheckInProblem[] = ['TOO_MANY', 'OTHER_GYM', 'BAD_PHONE', 'NO_PHONE', 'GYM_NOT_ONLINE', 'NOT_ON_ROSTER'];
+const PROBLEMS: readonly CheckInProblem[] = ['TOO_MANY', 'TOO_MANY_NUMBERS', 'OTHER_GYM', 'BAD_PHONE', 'NO_PHONE', 'GYM_NOT_ONLINE', 'NOT_ON_ROSTER'];
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const text = (v: unknown): string | null => (typeof v === 'string' && v.trim().length > 0 ? v.trim() : null);
 
@@ -83,6 +99,7 @@ export function checkInFromRow(raw: unknown): CheckInAnswer | null {
       memberName: text(row.memberName) ?? '',
       day,
       checkedInAt: at,
+      planOk: typeof row.planOk === 'boolean' ? row.planOk : null,
     };
   }
   const problem = PROBLEMS.find((p) => p === row.error);
@@ -114,6 +131,12 @@ export function doneDetail(a: { alreadyIn: boolean; gymName: string; memberName:
   return a.memberName ? `Checked in at ${gym} as ${a.memberName}. Have a good workout.` : `Checked in at ${gym}. Have a good workout.`;
 }
 
+/** Shown under the check-in when no plan covers today. The visit is still recorded. PURE. */
+export const PLAN_ENDED_TEXT = "The gym has no running plan for you today. Please see the desk.";
+
+/** The line on the ready screen: one tap, so a forwarded link never checks anyone in by itself. */
+export const READY_TEXT = 'Tap Check in when you are at the gym.';
+
 /** The heading on the screen before the check-in. PURE. */
 export function checkInTitle(gymName: string | null): string {
   return gymName ? `Check in at ${gymName}` : 'Check in';
@@ -138,6 +161,8 @@ export function problemText(p: { problem: CheckInProblem; gymName: string | null
       return "That isn't a 10-digit mobile number. Check it and try again.";
     case 'TOO_MANY':
       return 'Too many tries in a minute. Wait a minute, then scan again.';
+    case 'TOO_MANY_NUMBERS':
+      return 'Too many numbers were tried today. Check in at the desk, and ask them to check your mobile number.';
     case 'OTHER_GYM':
       return `You're not a member of ${p.gymName ?? 'this gym'} in the app.`;
   }
