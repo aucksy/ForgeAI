@@ -947,9 +947,16 @@ object RestCard {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(ctx, channel)
     else Notification.Builder(ctx)
 
-  /** The app's own rest-done sound (the one the open app plays), for the loud channels. */
-  private fun restSound(ctx: Context): Uri =
-    Uri.parse("android.resource://${ctx.packageName}/${R.raw.forge_rest_done}")
+  /**
+   * The app's own rest-done sound (the one the open app plays), for the loud channels. By NAME,
+   * not by number (review): a channel keeps its sound address for ever, and a raw resource's
+   * number shifts whenever another raw file is added or removed in a later version — the name form
+   * is looked up each time it plays. (R.raw is still referenced so the shrinker keeps the file.)
+   */
+  private fun restSound(ctx: Context): Uri {
+    if (R.raw.forge_rest_done == 0) android.util.Log.w("ForgeErr", "rest sound resource missing")
+    return Uri.parse("android.resource://${ctx.packageName}/raw/forge_rest_done")
+  }
 
   private fun ensureChannels(ctx: Context) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return

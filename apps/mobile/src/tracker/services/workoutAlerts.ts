@@ -167,7 +167,8 @@ export async function scheduleRestEnd(
         priority: 'max',
         color: color.accent,
       },
-      trigger: { type: n.SchedulableTriggerInputTypes.DATE, date: endsAt, channelId: REST_CHANNEL },
+      // Review: with the native card in the build, its sound channel (the old one is deleted).
+      trigger: { type: n.SchedulableTriggerInputTypes.DATE, date: endsAt, channelId: hasRestCard() ? 'rest-over-sound' : REST_CHANNEL },
     });
   } catch {
     // ignore

@@ -150,7 +150,7 @@ python3 "$QA_DIR/notif.py" over-locked "$OUT/notifications-after-rest.txt" "$TIC
 # the app's own rest-done sound (a raw resource of the app), not the phone's default tone, and the
 # old default-tone channel "rest-timer" is gone.
 REST_SOUND_CH=$(grep -o "NotificationChannel{mId='rest-over-sound'[^}]*" "$OUT/notifications-after-rest.txt" 2>/dev/null | head -1)
-if printf '%s' "$REST_SOUND_CH" | grep -q "mSound=android.resource://com.forgeai.app/" \
+if printf '%s' "$REST_SOUND_CH" | grep -q "mSound=android.resource://com.forgeai.app/raw/forge_rest_done" \
    && ! grep -q "NotificationChannel{mId='rest-timer'.*mDeleted=false" "$OUT/notifications-after-rest.txt"; then
   log "REST SOUND: OK (rest-over-sound plays the app's own rest sound; old rest-timer channel gone)"
 else

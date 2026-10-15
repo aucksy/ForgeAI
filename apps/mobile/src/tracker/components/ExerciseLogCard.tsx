@@ -230,6 +230,10 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);
   const typeSet = typeFor ? exercise.sets.find((s) => s.key === typeFor) ?? null : null;
   const rpeSet = rpeFor ? exercise.sets.find((s) => s.key === rpeFor) ?? null : null;
+  // Review: the set went while its RPE sheet was open — forget it, so an Undo cannot reopen the sheet.
+  useEffect(() => {
+    if (rpeFor && !rpeSet) setRpeFor(null);
+  }, [rpeFor, rpeSet]);
   const timerRow = timerFor ? rows.find((r) => r.set.key === timerFor) ?? null : null;
   const timerGoal = timerRow ? timerRow.set.durationSec ?? timerRow.fill?.durationSec ?? null : null;
 
@@ -716,7 +720,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       <RpeSheet
         visible={rpeSet != null}
         rpe={rpeSet?.rpe ?? null}
-        who={rpeSet ? `${exercise.name}, set ${exercise.sets.filter((x) => !x.isWarmup).indexOf(rpeSet) + 1}` : ''}
+        who={rpeSet ? `${exercise.name}, ${rows.find((r) => r.set.key === rpeSet.key)?.spoken ?? 'set'}` : ''}
         onPick={(v) => {
           if (rpeSet) setRpe(exercise.key, rpeSet.key, v);
         }}
