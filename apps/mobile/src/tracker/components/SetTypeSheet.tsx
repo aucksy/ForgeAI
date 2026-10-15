@@ -1,23 +1,16 @@
 /**
  * Tap the set number → this sheet (Phase 1, Hevy-style): choose Normal, Warm-up,
- * Drop set or Failure, or remove the set. With "Track RPE" on, the same sheet
- * also sets how hard the set felt. Replaces the old always-visible second row of
+ * Drop set or Failure, or remove the set. Replaces the old always-visible second row of
  * chips, so the set table stays one clean line per set.
  *
- * 13 Oct 2026 (owner's screenshot): a choice applies at once, so once the type or RPE changed a
- * ✓ "Done" shows beside the × (keep and close; `setChoiceChanged`). The RPE choices are an even
- * 3 × 3 grid of equal 48 dp cells (`rpeGrid`) — at large text they used to wrap 6 + 3 — and the
- * picked one is filled, outlined and ticked.
+ * 15 Oct 2026 (owner, testing in the gym: "Keep RPE section just for RPE"): RPE moved to its own
+ * one-tap sheet on the RPE cell (RpeSheet.tsx). This sheet is set type only, and a type applies
+ * and closes at once — so it needs no ✓ "Done" (the 13 Oct ✓ was there for the RPE grid).
  */
-import { useRef } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { Icon } from '@/components/ui';
+import { color, type } from '@/theme/tokens';
 
-import { color, radius, space, type } from '@/theme/tokens';
-
-import { rpeColor, rpeGrid, rpeMeaning } from '../lib/rpe';
-import { setChoiceChanged, setChoiceOf, type SetChoice } from '../lib/sheetChange';
 import type { DraftSet } from '../store/activeWorkoutStore';
 import { Glyph } from './TrackerGlyph';
 import { SheetRow, TrackerSheet } from './TrackerSheet';
@@ -41,30 +34,20 @@ export function currentTypeOf(set: Pick<DraftSet, 'isWarmup' | 'setType'>): SetT
 export function SetTypeSheet({
   visible,
   set,
-  showRpe,
   onType,
-  onRpe,
   onRemove,
   onClose,
 }: {
   visible: boolean;
   set: DraftSet | null;
-  showRpe: boolean;
   onType: (t: SetTypeChoice) => void;
-  onRpe: (rpe: number | null) => void;
   onRemove: () => void;
   onClose: () => void;
 }) {
-  // What the set was when the sheet opened for it (a new set = a fresh start).
-  const start = useRef<{ key: string; choice: SetChoice } | null>(null);
-  if (!visible || !set) start.current = null;
-  else if (start.current?.key !== set.key) start.current = { key: set.key, choice: setChoiceOf(set) };
   if (!set) return null;
   const cur = currentTypeOf(set);
-  const rpe = set.rpe ?? null;
-  const changed = setChoiceChanged(start.current?.choice ?? null, setChoiceOf(set));
   return (
-    <TrackerSheet visible={visible} title="Set type" onClose={onClose} onDone={onClose} changed={changed}>
+    <TrackerSheet visible={visible} title="Set type" onClose={onClose}>
       <View style={{ gap: 2 }}>
         {types().map((t) => (
           <SheetRow
@@ -78,52 +61,6 @@ export function SetTypeSheet({
           />
         ))}
       </View>
-
-      {showRpe && !set.isWarmup ? (
-        <View style={{ gap: space.sm }}>
-          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted, letterSpacing: 1 }}>
-            HOW HARD WAS IT? (RPE)
-          </Text>
-          <View style={{ gap: space.sm }}>
-            {rpeGrid().map((row) => (
-              <View key={row.join()} style={{ flexDirection: 'row', gap: space.sm }}>
-                {row.map((v) => {
-                  const selected = rpe === v;
-                  return (
-                    <Pressable
-                      key={v}
-                      onPress={() => onRpe(selected ? null : v)}
-                      accessibilityRole="radio"
-                      accessibilityState={{ checked: selected }}
-                      accessibilityLabel={`RPE ${v}`}
-                      style={({ pressed }) => ({
-                        flex: 1,
-                        minHeight: 48,
-                        flexDirection: 'row',
-                        gap: 4,
-                        borderRadius: radius.sm,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderWidth: selected ? 2 : 1,
-                        borderColor: selected ? rpeColor(v) : color.border,
-                        backgroundColor: selected ? color.accentSoft : pressed ? color.surface : color.surfaceSunken,
-                      })}
-                    >
-                      {selected ? <Icon name="check" size={14} color={rpeColor(v)} /> : null}
-                      <Text numberOfLines={1} style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: rpeColor(v) }}>
-                        {v}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            ))}
-          </View>
-          <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-            {rpe != null ? rpeMeaning(rpe) : 'Optional. Tap again to clear.'}
-          </Text>
-        </View>
-      ) : null}
 
       <SheetRow label="Remove set" danger onPress={onRemove} leading={<Glyph name="trash" size={20} color={color.criticalText} />} />
     </TrackerSheet>

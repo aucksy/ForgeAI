@@ -47,6 +47,7 @@ import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
+import { RpeSheet } from './RpeSheet';
 import { SetTypeSheet } from './SetTypeSheet';
 import { SupersetSheet } from './SupersetSheet';
 import { SwapSheet } from './SwapSheet';
@@ -118,6 +119,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const [sheet, setSheet] = useState<SheetName>(null);
   const [restSaveError, setRestSaveError] = useState<string | null>(null);
   const [typeFor, setTypeFor] = useState<string | null>(null);
+  const [rpeFor, setRpeFor] = useState<string | null>(null);
   const [timerFor, setTimerFor] = useState<string | null>(null);
   const [showWhy, setShowWhy] = useState(false);
   const [swapOptions, setSwapOptions] = useState<Alternative[]>([]);
@@ -224,8 +226,10 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     [exercise.previousSets, exercise.lastFrom, exercise.elsewhere, exercise.logType, exercise.loadMode, exercise.distUnit, units],
   );
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
+  const onOpenRpe = useCallback((setKey: string) => setRpeFor(setKey), []);
   const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);
   const typeSet = typeFor ? exercise.sets.find((s) => s.key === typeFor) ?? null : null;
+  const rpeSet = rpeFor ? exercise.sets.find((s) => s.key === rpeFor) ?? null : null;
   const timerRow = timerFor ? rows.find((r) => r.set.key === timerFor) ?? null : null;
   const timerGoal = timerRow ? timerRow.set.durationSec ?? timerRow.fill?.durationSec ?? null : null;
 
@@ -541,6 +545,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             fill={r.fill}
             record={r.record}
             onOpenType={onOpenType}
+            onOpenRpe={onOpenRpe}
             logType={logType}
             distUnit={distUnit}
             onOpenTimer={logType === 'time' ? onOpenTimer : undefined}
@@ -697,20 +702,25 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       <SetTypeSheet
         visible={typeSet != null}
         set={typeSet}
-        showRpe={showRpe}
         onType={(t) => {
           if (typeSet) setSetType(exercise.key, typeSet.key, t);
-          // With RPE on, stay open so effort can be set in the same visit.
-          if (!showRpe || t === 'warmup') setTypeFor(null);
-        }}
-        onRpe={(v) => {
-          if (typeSet) setRpe(exercise.key, typeSet.key, v);
+          // 15 Oct 2026: RPE has its own sheet, so a type choice applies and closes at once.
+          setTypeFor(null);
         }}
         onRemove={() => {
           if (typeSet) deleteSetWithUndo(exercise.key, typeSet.key);
           setTypeFor(null);
         }}
         onClose={() => setTypeFor(null)}
+      />
+      <RpeSheet
+        visible={rpeSet != null}
+        rpe={rpeSet?.rpe ?? null}
+        who={rpeSet ? `${exercise.name}, set ${exercise.sets.filter((x) => !x.isWarmup).indexOf(rpeSet) + 1}` : ''}
+        onPick={(v) => {
+          if (rpeSet) setRpe(exercise.key, rpeSet.key, v);
+        }}
+        onClose={() => setRpeFor(null)}
       />
 
       {/* Counting — what the typed weight means (Hevy's top complaint). */}

@@ -31,8 +31,8 @@
  *    the RPE cell shows at every width and text size, as in Hevy. On a phone under 400 dp the
  *    table uses narrower SET / RPE / ✓ cells (48 dp to the finger through their touch margins)
  *    and reaches into the card's padding; PREVIOUS wraps onto a second line instead of cutting
- *    its numbers off, and shows last time's RPE under them ("@ 9"). The set-number sheet still
- *    sets RPE too. Widths: `rowLayout` (setRowLayout.ts).
+ *    its numbers off, and shows last time's RPE under them ("@ 9"). 15 Oct 2026 (owner): the RPE
+ *    cell opens its own one-tap RPE sheet (RpeSheet.tsx); the set-number sheet is set type only. Widths: `rowLayout` (setRowLayout.ts).
  *
  * The ✓ fires its haptic on finger-DOWN (house rule).
  */
@@ -96,6 +96,8 @@ interface SetRowProps {
   /** This set beats the member's history so far. */
   record: RecordKind | null;
   onOpenType: (setKey: string) => void;
+  /** 15 Oct 2026: the RPE cell opens its own one-tap RPE sheet (falls back to the set sheet). */
+  onOpenRpe?: (setKey: string) => void;
   /** Phase 2: how this exercise is logged (absent = weight × reps). */
   logType?: LogType;
   distUnit?: DistUnit;
@@ -180,6 +182,7 @@ export const SetRow = memo(function SetRow({
   fill,
   record,
   onOpenType,
+  onOpenRpe,
   logType = 'weight_reps',
   distUnit = 'km',
   onOpenTimer,
@@ -496,7 +499,7 @@ export const SetRow = memo(function SetRow({
             transform: [{ translateX: shakeX }],
           }}
         >
-          {/* SET cell — tap for the set-type sheet (RPE too, with "Track RPE" on) */}
+          {/* SET cell — tap for the set-type sheet */}
           <Pressable
             onPress={() => {
               tap();
@@ -631,7 +634,7 @@ export const SetRow = memo(function SetRow({
           {/* RPE (opt-in "Track RPE"; at every width since 13 Oct 2026) */}
           {rpeCell ? (
             <Pressable
-              onPress={() => onOpenType(set.key)}
+              onPress={() => (onOpenRpe ?? onOpenType)(set.key)}
               hitSlop={{ top: 2, bottom: 2, left: touchSlop(L.rpeW), right: touchSlop(L.rpeW) }}
               disabled={set.isWarmup}
               accessibilityRole="button"

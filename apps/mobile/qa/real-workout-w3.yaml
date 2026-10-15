@@ -1,7 +1,7 @@
 # Part W3 — the "real workout" journey, step 3 of 4. The shade is open (run-device-qa.sh) after the
 # warm-up's rest ran out with the phone idle: "Rest is over" (or the live card) opens the workout.
 # Then every kind of set, each tick checked for its rest, as the owner trains:
-#   - warm-up 2 → a rest;  set 1 with RPE 8 (the sheet's ✓ "Done" shows once it changed) → a rest;
+#   - warm-up 2 → a rest;  set 1 with RPE 8 (one tap in the RPE sheet saves and closes it) → a rest;
 #   - set 2 made a DROP set (✓ again) → a rest (a drop set used to start none);
 #   - set 3 LIGHTER for more reps (40 kg × 15 after 90 kg+ for 5–8) → NO "New record" (it used to
 #     announce "Most reps" — not progressive overload); an added set 4 at 100 kg × 6 → a record;
@@ -38,16 +38,15 @@ appId: com.forgeai.app
     text: 'Add RPE for .*Bench Press set 1'
     index: 0
 - extendedWaitUntil:
-    visible: "HOW HARD WAS IT\\? \\(RPE\\)"
+    visible: "How hard was it\\? \\(RPE\\)"
     timeout: 10000
+- takeScreenshot: w-32-rpe-sheet
+# 15 Oct 2026 (owner): RPE is its own sheet; ONE tap saves it and closes it — no ✓ "Done".
 - assertNotVisible: "^Done$"
-- tapOn: "RPE 8"
-# 13 Oct 2026 rule: a sheet where a choice applies shows a ✓ beside the × once something changed.
+- tapOn: "RPE 8: .*"
 - extendedWaitUntil:
-    visible: "^Done$"
+    notVisible: "How hard was it\\? \\(RPE\\)"
     timeout: 5000
-- takeScreenshot: w-32-rpe-sheet-changed
-- tapOn: "^Done$"
 - extendedWaitUntil:
     visible: '.*Bench Press set 1 RPE 8\. Change'
     timeout: 5000
@@ -67,11 +66,11 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Drop set$"
     timeout: 10000
+# 15 Oct 2026: the set-type sheet is set type only — a tap applies and closes it (no ✓ "Done").
 - tapOn: "^Drop set$"
 - extendedWaitUntil:
-    visible: "^Done$"
+    notVisible: "^Drop set$"
     timeout: 5000
-- tapOn: "^Done$"
 - extendedWaitUntil:
     visible: 'Mark .*Bench Press drop set 2 complete'
     timeout: 5000

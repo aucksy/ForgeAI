@@ -134,8 +134,19 @@ describe('D: the "Set type" sheet', () => {
     expect(setChoiceChanged(start, setChoiceOf({ isWarmup: false, rpe: 8 }))).toBe(true);
     expect(setChoiceChanged(null, start)).toBe(false);
   });
-  it('the sheet passes it, and the ✓ is a 48 dp "Done" beside the ×', () => {
-    expect(read('src/tracker/components/SetTypeSheet.tsx')).toContain('onDone={onClose} changed={changed}');
+  it('15 Oct 2026: the set-type sheet is set type only; RPE is its own one-tap sheet with no ✓', () => {
+    const typeSheet = read('src/tracker/components/SetTypeSheet.tsx');
+    expect(typeSheet).not.toMatch(/onRpe|rpeGrid/);
+    expect(typeSheet).not.toContain('onDone=');
+    const rpeSheet = read('src/tracker/components/RpeSheet.tsx');
+    // One tap: the value is saved and the sheet closes; no "Done" to press.
+    expect(rpeSheet).toMatch(/onPick\(v\);\s*onClose\(\);/);
+    expect(rpeSheet).not.toContain('onDone=');
+    const card = read('src/tracker/components/ExerciseLogCard.tsx');
+    expect(card).toContain('onOpenRpe={onOpenRpe}');
+    expect(read('src/tracker/components/SetRow.tsx')).toContain('(onOpenRpe ?? onOpenType)(set.key)');
+  });
+  it('the ✓ elsewhere is a 48 dp "Done" beside the ×', () => {
     const done = read('src/tracker/components/DoneSheet.tsx');
     expect(done).toContain('accessibilityLabel="Done"');
     expect(done.indexOf('accessibilityLabel="Done"')).toBeLessThan(done.indexOf('<Icon name="close"'));
