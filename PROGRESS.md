@@ -1785,6 +1785,9 @@
     (test fixed: clear the box); part A got "Couldn't start the workout" with no reason logged, and
     B0/B/H3B/H3C/P2/W followed. Every failed guarded action now logs [ForgeErr] (lib/guardedAction.ts)
     so the next run shows the cause.
+  - Rerun 38671642219 on c7e6f8f: every part passed (P2/W rows are the summary's usual split into
+    P2A/P2B and w1-w4); no [ForgeErr]; the start failure did not come back (cause unknown, now
+    logged if it does). INV-f screens read; BR start-up screen order OK. Tagged v0.43.0 on c7e6f8f.
 - 2026-10-15: **v0.42.0 — the small Hevy gaps: pause the workout, your gym's plates and bars, share
   picture Story size and See-through, photos on a workout** (94bdf98, fb73ad5, 1f05da3, cab3c94, 67d5925).
   - Pause (Hevy: tap the duration -> Pause / Resume): pausedAt + pausedTotalMs on the draft (survives
