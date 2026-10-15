@@ -27,7 +27,7 @@ describe('weight × reps', () => {
 
   it('heavier but fewer reps: the estimated 1-rep max, only when it went up', () => {
     // 110 × 4 (e1RM 124.67) vs 100 × 6 (120): +3 %.
-    expect(kg(set({ weightKg: 110, reps: 4 }), prev({ weightKg: 100, reps: 6 }))).toBe('+3% on last time');
+    expect(kg(set({ weightKg: 110, reps: 4 }), prev({ weightKg: 100, reps: 6 }))).toBe('Heavier for fewer reps: +3% strength on last time');
     // 102.5 × 2 (109.3) vs 100 × 5 (116.7): down — nothing.
     expect(kg(set({ weightKg: 102.5, reps: 2 }), prev({ weightKg: 100, reps: 5 }))).toBeNull();
     // Under 1 %: nothing (never "+0%").

@@ -57,6 +57,7 @@ import { deleteKeptMedia } from '@/tracker/services/exerciseMedia';
 import { getExerciseOverview, type ExerciseOverview } from '@/tracker/services/exerciseStats';
 import type { ChartMetric, ChartRange } from '@/tracker/services/exerciseChart';
 import { recordValueText } from '@/tracker/services/recordText';
+import { currentWorkoutSets } from '@/tracker/services/currentInHistory';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { exercisesChanged } from '@/tracker/store/exerciseListStore';
 
@@ -113,6 +114,10 @@ export default function ExerciseScreen() {
 
   const units = useSettings((s) => s.unitSystem);
   const insets = useSafeAreaInsets();
+  // 15 Oct 2026 (owner): the workout in progress heads the History tab, to compare with last time.
+  const workoutOpen = useActiveWorkout((s) => s.active);
+  const draftExercises = useActiveWorkout((s) => s.exercises);
+  const current = useMemo(() => currentWorkoutSets(workoutOpen, draftExercises, id), [workoutOpen, draftExercises, id]);
   const [ov, setOv] = useState<ExerciseOverview | null>(null);
   const [versionIds, setVersionIds] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
@@ -442,9 +447,10 @@ export default function ExerciseScreen() {
             ) : null}
 
             {tab === 'history' ? (
-              hasHistory ? (
+              hasHistory || current ? (
                 <>
                   {/* 13 Oct 2026: the Summary's chart on top, sharing its choice and range */}
+                  {hasHistory ? (
                   <ExerciseMetricChart
                     history={ov.history}
                     bestSet={bestSet}
@@ -457,8 +463,9 @@ export default function ExerciseScreen() {
                     range={chartRange}
                     onRangeChange={setChartRange}
                   />
-                  <View style={{ height: space.lg }} />
-                  <SessionHistory history={ov.history} units={units} logType={shownAs} distUnit={ex.distUnit} names={names} onOpen={openSession} />
+                  ) : null}
+                  {hasHistory ? <View style={{ height: space.lg }} /> : null}
+                  <SessionHistory history={ov?.history ?? []} units={units} logType={shownAs} distUnit={ex.distUnit} names={names} onOpen={openSession} current={current} />
                 </>
               ) : (
                 <EmptyState icon="dumbbell" title="No workouts yet" body="Every workout with this exercise shows here, with its sets." />

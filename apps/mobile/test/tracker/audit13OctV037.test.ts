@@ -110,7 +110,7 @@ describe('B1: a lighter set doing many reps is never an estimated 1-rep max reco
     const set = (p: Partial<DraftSet>): DraftSet => ({ key: 's', weightKg: null, reps: null, isWarmup: false, done: true, ...p });
     const prev = (p: Partial<PrevSet>): PrevSet => ({ weightKg: 0, reps: 0, ...p });
     // 60 × 20 last time, 65 × 15 now: both count 12 reps → +8 % (the heavier weight), not +1 %.
-    expect(vsLastTimeText(set({ weightKg: 65, reps: 15 }), prev({ weightKg: 60, reps: 20 }), 'weight_reps', 'one', 'metric')).toBe('+8% on last time');
+    expect(vsLastTimeText(set({ weightKg: 65, reps: 15 }), prev({ weightKg: 60, reps: 20 }), 'weight_reps', 'one', 'metric')).toBe('Heavier for fewer reps: +8% strength on last time');
   });
 
   it('the stored record log’s SQL is the same estimate (one helper, never a copy)', () => {

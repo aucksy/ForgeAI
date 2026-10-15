@@ -3,7 +3,9 @@
  * says how it beat the same set last time (the PREVIOUS the row shows):
  *   heavier, at least the same reps     "+2.5 kg on last time"
  *   same weight, more reps              "+2 reps on last time"
- *   heavier, fewer reps                 "+3% on last time" (estimated 1-rep max, only if up)
+ *   heavier, fewer reps                 "Heavier for fewer reps: +3% strength on last time"
+ *                                       (estimated 1-rep max, only if up; 15 Oct 2026 owner: a bare
+ *                                       "+30% on last time" read as 30% more reps)
  *   less help on an assisted move       "2.5 kg less assistance than last time"
  *   bodyweight / reps only              "+2 reps on last time"
  *   time                                "+15 s on last time"
@@ -110,7 +112,7 @@ export function vsLastTimeText(
     const before = estimatedOneRepMax(pw, pr);
     if (!(before > 0)) return null;
     const pct = Math.floor((estimatedOneRepMax(w, r) / before - 1) * 100 + 1e-9);
-    return pct >= 1 ? `+${pct}% on last time` : null;
+    return pct >= 1 ? `Heavier for fewer reps: +${pct}% strength on last time` : null;
   }
   return null;
 }

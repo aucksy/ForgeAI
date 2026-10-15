@@ -22,6 +22,12 @@ export interface SessionHistoryProps {
   names?: ReadonlyMap<string, string>;
   /** Redesign R5: tap a workout → its page. */
   onOpen?: (sessionId: string) => void;
+  /**
+   * 15 Oct 2026 (owner, mid-workout): the workout in progress — its ticked sets of this exercise
+   * (tracker/services/currentInHistory.ts) — shown FIRST, highlighted, so it sits right above the
+   * last time to compare. Null/absent = no workout open with this exercise.
+   */
+  current?: TrackedSetEntry[] | null;
 }
 
 /** Index of the top working set for emphasis: heaviest then most reps; longest / farthest for time and distance. */
@@ -58,13 +64,14 @@ function setText(s: TrackedSetEntry, lt: LogType, units: UnitSystem, distUnit: D
  * all there. Each card: the workout's name and date (tap → the workout), then its sets — "1",
  * "2", or D / F for a drop or failure set — the top set embered.
  */
-export function SessionHistory({ history, units, maxSessions = 15, logType = 'weight_reps', distUnit = 'km', names, onOpen }: SessionHistoryProps) {
+export function SessionHistory({ history, units, maxSessions = 15, logType = 'weight_reps', distUnit = 'km', names, onOpen, current }: SessionHistoryProps) {
   const [pages, setPages] = useState(1);
   const shown = history.slice(0, maxSessions * pages);
   const left = history.length - shown.length;
 
   return (
     <View style={{ gap: space.md }}>
+      {current ? <CurrentCard sets={current} units={units} logType={logType} distUnit={distUnit} /> : null}
       {shown.map((h) => {
         const top = topSetIndex(h.sets, logType);
         const name = names?.get(h.sessionId) ?? null;
@@ -128,5 +135,55 @@ export function SessionHistory({ history, units, maxSessions = 15, logType = 'we
         </Pressable>
       ) : null}
     </View>
+  );
+}
+
+/** The workout in progress: an accent-edged card headed "This workout · in progress". */
+function CurrentCard({ sets, units, logType, distUnit }: { sets: TrackedSetEntry[]; units: UnitSystem; logType: LogType; distUnit: DistUnit }) {
+  const top = topSetIndex(sets, logType);
+  let n = 0;
+  return (
+    <Card style={{ gap: space.xs, borderWidth: 2, borderColor: color.accent }}>
+      <View
+        accessible
+        accessibilityLabel={`This workout, in progress. ${sets.length === 0 ? 'No sets ticked yet' : `${sets.length} sets ticked`}`}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 48 }}
+      >
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>This workout</Text>
+          <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>Today · ticked sets so far</Text>
+        </View>
+        <Badge label="In progress" tone="accent" />
+      </View>
+      {sets.length === 0 ? (
+        <Text style={{ paddingHorizontal: space.sm, fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>
+          No sets ticked yet. They show here as you tick them.
+        </Text>
+      ) : (
+        sets.map((s, i) => {
+          const mark = s.setType === 'drop' ? 'D' : s.setType === 'failure' ? 'F' : String(++n);
+          const isTop = i === top;
+          return (
+            <View
+              key={s.id}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: space.md,
+                paddingVertical: 4,
+                paddingHorizontal: space.sm,
+                borderRadius: radius.sm,
+                backgroundColor: isTop ? color.accentSoft : 'transparent',
+              }}
+            >
+              <Text style={{ width: 20, fontFamily: type.monoBold, fontSize: type.size.sub, color: mark === 'D' || mark === 'F' ? color.accent : color.inkMuted }}>{mark}</Text>
+              <Text style={{ flex: 1, fontFamily: isTop ? type.monoBold : type.mono, fontSize: type.size.sub, color: isTop ? color.accentBright : color.ink }}>
+                {setText(s, logType, units, distUnit)}
+              </Text>
+            </View>
+          );
+        })
+      )}
+    </Card>
   );
 }
