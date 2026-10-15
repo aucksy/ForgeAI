@@ -1755,6 +1755,28 @@
     1,977 vitest, panel 442. Phone runs 38171234386 and **38177927296 on 4bfadf4: all parts
     passed**, the shop tour joins FORGE1, orders and cancels, the shaker's photo shows; rest
     alert sound + vibrate; crash scan clean.
+- 2026-10-15: **v0.43.0 — QR self check-in; database safety check and promise ratchet in CI**
+  (49fcac0, e93a2cd, 4f4420a, 34dcbd8).
+  - QR check-in: panel Attendance -> Check-in QR poster (print / picture) of
+    forgeai.aakashpahuja.in/c/<JOIN CODE>. The app opens "Check in at <gym>" (App Link /c/), one tap,
+    asks the mobile once; the server (0015 + 0016) matches it to the roster by number and writes one
+    visit a day (source 'app', India's date) under the gym lock. The register shows an "App" tag
+    and, for app check-ins, the member's plan state and money due. Phones without the app get a
+    web page (worker /c/*). Phone part INV-f (F1 join, F2 tap + number + first name + "see the
+    desk", F3 already in + Leave).
+  - Safety review (1 high, 3 medium, 4 low), all fixed in 0016 + app: the number from Join is not
+    trusted (only a number that matched once); 3 typed numbers a day per member and 20 misses an
+    hour per gym (stops a script making new keys to guess numbers); code required; a number is kept
+    only when it matches; Leave clears it; planOk; TOO_MANY_NUMBERS; lock only before the write;
+    one tap so a forwarded link checks nobody in; exact 6-character code. KNOWN LIMIT: the poster
+    code never changes, so a member who has the link can still check in from home with one tap; a
+    code that changes daily would close it.
+  - CI database job (audit pick 6): a throw-away local Supabase applies every migration, runs the
+    plpgsql lint, then supabase/tests/*.sql (security.sql: RLS on, fixed search paths, the exact
+    anon / signed-in function lists, every table empty for anon, gym A never reads or writes gym B;
+    the check-in test, 24 checks). Same tests pass on the live database.
+  - CI promise ratchet (audit pick 4): type-aware ESLint (floating / misused promises, empty
+    catch); mobile 0 findings (5 fixed), panel 37 baseline, may only go down.
 - 2026-10-15: **v0.42.0 — the small Hevy gaps: pause the workout, your gym's plates and bars, share
   picture Story size and See-through, photos on a workout** (94bdf98, fb73ad5, 1f05da3, cab3c94, 67d5925).
   - Pause (Hevy: tap the duration -> Pause / Resume): pausedAt + pausedTotalMs on the draft (survives
@@ -1771,6 +1793,8 @@
   - First phone run 38631192810 failed only P1/P2A: their YAML could not be parsed (a heredoc ate a
     backslash); fixed 637b45b, and CI now parses every qa/*.yaml first. Panel (live): Front desk
     (Staff) limits, panel crawl in CI (51903dd).
+  - Phone run 38648169401 on 9dedb0a: all parts passed (P1 plate off, P2 9:32 held while paused, photo
+    sheet on Workout complete read from the screenshots). Tagged v0.42.0 on 9dedb0a.
 - 2026-10-15: **v0.41.0 — press-and-hold drag to reorder routines; Save my measurements; panel steps
   3-5 (live) + 0012/0013** (owner asleep: "continue working till end").
   - Routines: hold a routine card ~350 ms, drag within its folder (as Hevy: "tap and hold on a routine
