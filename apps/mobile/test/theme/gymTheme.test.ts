@@ -24,6 +24,12 @@ vi.mock('@/theme/themeMirror', () => ({
   },
 }));
 
+// The native start-up-screen switch (modules/forge-phone splashPlain), recorded.
+const splashCalls: boolean[] = [];
+vi.mock('@/tracker/phone/native', () => ({
+  phoneNative: () => ({ splashPlain: (plain: boolean) => (splashCalls.push(plain), plain ? 'set' : 'reset') }),
+}));
+
 import type { GymBrand } from '@forgeai/theme';
 
 import { useGymShop } from '@/shop/gymStore';
@@ -119,6 +125,21 @@ describe('gym theme controller', () => {
     expect(useGymTheme.getState().opening).toBeNull();
     expect(color.accent).toBe(FORGE.accent);
     expect(mirror.value).toBeNull();
+  });
+
+  it("the next start-up screen is plain while in a branded gym, ForgeAI's after Leave (asked once per change)", () => {
+    splashCalls.length = 0;
+    useGymShop.getState().setLink(LINK);
+    reconcileGymTheme(false);
+    dismissOpening();
+    reconcileGymTheme(false); // nothing changed: not asked again
+    useGymShop.getState().unlink(null);
+    reconcileGymTheme(false);
+    expect(splashCalls).toEqual([true, false]);
+    // An unbranded gym keeps ForgeAI's screen (already asked for: no new call).
+    useGymShop.getState().setLink(PLAIN);
+    reconcileGymTheme(false);
+    expect(splashCalls).toEqual([true, false]);
   });
 
   it('joining an unbranded gym redraws nothing', () => {

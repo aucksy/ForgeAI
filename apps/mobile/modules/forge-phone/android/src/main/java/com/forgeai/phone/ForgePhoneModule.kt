@@ -134,6 +134,29 @@ class ForgePhoneModule : Module() {
       }
     }
 
+    // ---------------------------------------------------------------- start-up screen (15 Oct 2026)
+    // A phone in a branded gym starts on a plain screen (no ForgeAI logo) so the gym's logo is the
+    // first one shown; out of a gym, ForgeAI's own. Android 13+ only (setSplashScreenTheme picks the
+    // NEXT launch's screen); older phones keep ForgeAI's. Returns "set", "reset" or "unsupported".
+    Function("splashPlain") { plain: Boolean ->
+      val a = appContext.currentActivity ?: return@Function "unsupported"
+      if (android.os.Build.VERSION.SDK_INT < 33) return@Function "unsupported"
+      val theme = a.resources.getIdentifier("Theme.App.SplashPlain", "style", a.packageName)
+      if (plain && theme == 0) {
+        android.util.Log.w("ForgeErr", "start-up screen: Theme.App.SplashPlain is missing")
+        return@Function "unsupported"
+      }
+      a.runOnUiThread {
+        try {
+          if (android.os.Build.VERSION.SDK_INT >= 33) a.splashScreen.setSplashScreenTheme(if (plain) theme else android.content.res.Resources.ID_NULL)
+          android.util.Log.i("ForgeSplash", if (plain) "plain start-up screen set" else "ForgeAI start-up screen set")
+        } catch (e: Throwable) {
+          android.util.Log.w("ForgeErr", "start-up screen could not be set", e)
+        }
+      }
+      if (plain) "set" else "reset"
+    }
+
     // ---------------------------------------------------------------- app icon shortcuts (audit Phase 9)
     Function("shortcutsSave") { json: String ->
       val c = ctx ?: return@Function false

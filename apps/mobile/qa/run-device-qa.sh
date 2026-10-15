@@ -582,6 +582,19 @@ else
   { find "$OUT/part-br" -name "br-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "br-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/brand/" 2>/dev/null; done
   log "BRAND TOUR: $(find "$OUT/brand" -name "br-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/brand/"
+  # Start-up screen (15 Oct 2026): joining RAMS01 must ask Android 13+ for the plain start-up screen
+  # (no ForgeAI logo before the gym's), and Leave must give ForgeAI's back — in that order.
+  BR_SDK=$(adb shell getprop ro.build.version.sdk 2>/dev/null | tr -d '\r')
+  adb logcat -d -s ForgeSplash:I > "$OUT/br-splash-log.txt" 2>/dev/null
+  if [ "${BR_SDK:-0}" -lt 33 ]; then
+    log "BR start-up screen: SKIPPED (Android API $BR_SDK; needs 33+)"
+  elif grep -q "plain start-up screen set" "$OUT/br-splash-log.txt" \
+       && grep "start-up screen set" "$OUT/br-splash-log.txt" | tail -1 | grep -q "ForgeAI start-up screen set"; then
+    log "BR start-up screen: OK (plain while in RAMS01, ForgeAI's after Leave; br-splash-log.txt)"
+  else
+    status=1
+    log "PART BR FAILED: the start-up screen was not switched (br-splash-log.txt)"
+  fi
 fi
 
 # ---------------------------------------------------------------- part INV (v0.38.0: invite link)

@@ -24,6 +24,7 @@ import { create } from 'zustand';
 import { isBranded, sameBrand, type HeadingStyle } from '@forgeai/theme';
 
 import { useGymShop } from '@/shop/gymStore';
+import { phoneNative } from '@/tracker/phone/native';
 import type { GymLink } from '@/shop/types';
 
 import { applyBrandToTokens } from './brandTokens';
@@ -63,6 +64,31 @@ let openings = 0;
 /** "A workout is open now" — set by the root layout (theme code does not load the workout store). */
 let workoutOpen: () => boolean = () => false;
 
+/** The start-up screen last asked for this session (null = not asked yet). */
+let splashPlainAsked: boolean | null = null;
+
+/**
+ * The NEXT launch's start-up screen (15 Oct 2026, branding leftover): plain while in a branded gym,
+ * so the gym's logo is the first one the member sees; ForgeAI's own otherwise. Android 13+ (older
+ * phones keep ForgeAI's). Asked once per change; quiet when the native piece is not there.
+ */
+function syncSplash(m: ThemeMirror | null): void {
+  const plain = m != null && isBranded(m.brand);
+  if (plain === splashPlainAsked) return;
+  try {
+    const r = phoneNative()?.splashPlain?.(plain);
+    if (r === 'set' || r === 'reset') splashPlainAsked = plain;
+  } catch (e) {
+    console.warn('[ForgeErr] start-up screen', e);
+  }
+}
+
+/** Save the look the next launch starts in, and its start-up screen. */
+function saveLook(m: ThemeMirror | null): void {
+  writeMirror(m);
+  syncSplash(m);
+}
+
 function mirrorOf(link: GymLink | null): ThemeMirror | null {
   return link ? { gymId: link.gymId, gymName: link.gymName, brand: link.brand ?? null } : null;
 }
@@ -87,7 +113,7 @@ function openingFor(m: ThemeMirror): Opening {
 /** Write the look into the tokens and the mirror, and re-draw the app (with the opening if asked). */
 function show(target: ThemeMirror | null, withOpening: boolean): void {
   applyBrandToTokens(target?.brand ?? null);
-  writeMirror(target);
+  saveLook(target);
   const current = useGymTheme.getState().opening;
   let opening: Opening | null = null;
   if (target && isBranded(target.brand)) {
@@ -126,7 +152,7 @@ export function reconcileGymTheme(launch: boolean): void {
     // Same look (or a gym without one): nothing to re-draw; keep the name and gym current.
     if (gymChanged || target?.gymName !== shown?.gymName) {
       setShown(target);
-      writeMirror(target);
+      saveLook(target);
     }
     return;
   }
@@ -141,7 +167,7 @@ export function reconcileGymTheme(launch: boolean): void {
   }
   // Not the member's doing (the owner changed the look; the gym dropped this phone): the next
   // launch starts in it, and it waits for the next safe moment (showWaitingLook).
-  writeMirror(target);
+  saveLook(target);
 }
 
 /**
@@ -156,7 +182,7 @@ export function showWaitingLook(awayMs: number = Number.POSITIVE_INFINITY): bool
   if (!lookDiffers(target)) {
     if ((shown?.gymId ?? null) !== (target?.gymId ?? null) || target?.gymName !== shown?.gymName) {
       setShown(target);
-      writeMirror(target);
+      saveLook(target);
     }
     return false;
   }
@@ -185,6 +211,8 @@ export function startGymTheme(): void {
   const onHydrated = () => {
     linkRead = true;
     reconcileGymTheme(true);
+    // Also when nothing changed (an app update, or the screen was never set before this version).
+    syncSplash(mirrorOf(useGymShop.getState().link));
     useGymTheme.setState({ ready: true });
     useGymShop.subscribe((s, prev) => {
       if (s.link !== prev.link) reconcileGymTheme(false);
@@ -213,6 +241,7 @@ export function resetGymThemeForTests(boot: ThemeMirror | null = null): void {
   started = false;
   linkRead = true;
   openings = 0;
+  splashPlainAsked = null;
   workoutOpen = () => false;
   useGymTheme.setState({ epoch: 0, ready: false, opening: null, look: boot });
 }

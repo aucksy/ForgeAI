@@ -17,6 +17,11 @@ export interface ForgePhone {
   widgetPin(kind: 'today' | 'week'): boolean;
   /** Audit Phase 9: the app icon's long-press shortcuts (JSON list of `AppShortcut`); absent on older builds. */
   shortcutsSave?(json: string): boolean;
+  /**
+   * 15 Oct 2026: the NEXT launch's start-up screen — plain (no ForgeAI logo) while in a branded gym.
+   * Android 13+; absent on older builds.
+   */
+  splashPlain?(plain: boolean): 'set' | 'reset' | 'unsupported';
   /** v0.28.0: an export shared to ForgeAI (copied into the app's cache), taken once. */
   takeSharedFile(): Promise<{ uri: string; name: string; type: string } | { error: 'too_big' | 'unreadable' } | null>;
   addListener(event: 'onSharedFile', cb: () => void): { remove: () => void };

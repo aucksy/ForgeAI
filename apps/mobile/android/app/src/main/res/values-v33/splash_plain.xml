@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Branding leftover (15 Oct 2026): a phone in a branded gym showed ForgeAI's logo first, then the
+  gym's. Android 13+ lets the app choose the start-up screen of its NEXT launch
+  (SplashScreen.setSplashScreenTheme): while the phone is in a branded gym the app picks this one,
+  the same dark background with no logo, so the gym's logo (components/BrandOpening.tsx) is the
+  first one shown. Leave the gym and ForgeAI's own start-up screen comes back.
+  Set from JS: theme/gymTheme.ts -> ForgePhone.splashPlain (modules/forge-phone).
+-->
+<resources>
+  <style name="Theme.App.SplashPlain" parent="Theme.App.SplashScreen">
+    <item name="android:windowSplashScreenBackground">@color/splashscreen_background</item>
+    <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_blank</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/splash_blank</item>
+  </style>
+</resources>
