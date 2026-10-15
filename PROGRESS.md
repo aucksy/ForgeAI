@@ -1776,7 +1776,15 @@
     anon / signed-in function lists, every table empty for anon, gym A never reads or writes gym B;
     the check-in test, 24 checks). Same tests pass on the live database.
   - CI promise ratchet (audit pick 4): type-aware ESLint (floating / misused promises, empty
-    catch); mobile 0 findings (5 fixed), panel 37 baseline, may only go down.
+    catch); mobile 0 (5 fixed); panel 37 -> 0 (Button catches and logs an async handler's error).
+  - Branding leftover (queue item 2, 0986822 + review fixes ce8783e): on Android 13+ a phone in a
+    branded gym starts on a plain screen (setSplashScreenTheme, Theme.App.SplashPlain kept from the
+    release shrinker), so the gym's logo is the first logo; Leave brings ForgeAI's back. Phone part
+    BR checks the ForgeSplash log order.
+  - First phone run 38660884469 on 8f95a62 failed: INV-f2 typed the second number after the first
+    (test fixed: clear the box); part A got "Couldn't start the workout" with no reason logged, and
+    B0/B/H3B/H3C/P2/W followed. Every failed guarded action now logs [ForgeErr] (lib/guardedAction.ts)
+    so the next run shows the cause.
 - 2026-10-15: **v0.42.0 — the small Hevy gaps: pause the workout, your gym's plates and bars, share
   picture Story size and See-through, photos on a workout** (94bdf98, fb73ad5, 1f05da3, cab3c94, 67d5925).
   - Pause (Hevy: tap the duration -> Pause / Resume): pausedAt + pausedTotalMs on the draft (survives

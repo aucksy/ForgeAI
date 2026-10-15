@@ -28,6 +28,8 @@ appId: com.forgeai.app
 - takeScreenshot: inv-f2-not-on-roster
 - tapOn: '^Change my number$'
 - tapOn: 'Your mobile number'
+# The box still holds the number typed before (kept on purpose, to fix a typo): clear it first.
+- eraseText: 20
 - inputText: '98765 00002'
 - hideKeyboard
 - tapOn: '^Check in$'

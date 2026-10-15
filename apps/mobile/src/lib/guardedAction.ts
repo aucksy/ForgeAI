@@ -27,6 +27,9 @@ export async function runGuarded(
     hold = (await action()) === 'left';
     return 'ok';
   } catch (e) {
+    // v0.43.0 phone test: "Couldn't start the workout" showed with no reason anywhere. Every
+    // failed action is logged (the phone test fails on it), then shown calmly by onError.
+    console.warn('[ForgeErr] action failed', e);
     onError(e);
     return 'failed';
   } finally {
