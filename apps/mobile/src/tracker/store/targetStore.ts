@@ -17,7 +17,7 @@ import type { LoadMode } from '@/tracker/engine/logTypes';
 import type { ProgressionTarget, WeightJump } from '@/tracker/engine/progression';
 import type { RepRangeChoice } from '@/tracker/engine/repRanges';
 import { getTargetsForCards, type TargetCard } from '@/tracker/services/coachTargets';
-import { barStepKg } from '@/tracker/services/plateMath';
+import { gymKey, gymPlatesFor, type GymPlates } from '@/tracker/services/plateMath';
 import { usePlateSetup } from '@/tracker/store/plateSetupStore';
 import { useTrackerPrefs, type PreviousFrom } from '@/tracker/store/trackerPrefsStore';
 
@@ -46,16 +46,20 @@ export interface TargetQuery {
   jump: WeightJump;
   /** Settings → Workouts → Rep range. */
   repRange: RepRangeChoice;
-  /** The gym's smallest bar jump, kg (Plates and bars); null = no plate on. */
-  barStepKg: number | null;
+  /**
+   * The gym's bar and plates (kg) when the member set up Plates and bars; null = the default setup
+   * (his own steps, as before) or no plate on (review fix).
+   */
+  gym: GymPlates | null;
 }
 
-/** The gym's smallest bar jump (kg) for a unit, from the saved Plates and bars. Never throws. */
-export function gymBarStepKg(units: UnitSystem): number | null {
+/** The gym's bar and plates for a unit, from the saved Plates and bars (null = not set up). Never throws. */
+export function gymPlatesNow(units: UnitSystem): GymPlates | null {
   try {
     const st = usePlateSetup.getState();
-    return barStepKg(units === 'imperial' ? st.imperial : st.metric, units);
-  } catch {
+    return gymPlatesFor(units === 'imperial' ? st.imperial : st.metric, units);
+  } catch (e) {
+    console.warn('[ForgeErr] targets: the plates and bars setup could not be read', e);
     return null;
   }
 }
@@ -70,7 +74,7 @@ export function targetQuery(
     previousFrom?: PreviousFrom;
     jump?: WeightJump;
     repRange?: RepRangeChoice;
-    barStepKg?: number | null;
+    gym?: GymPlates | null;
   },
 ): TargetQuery {
   const units = opts.units ?? displayUnits();
@@ -92,7 +96,7 @@ export function targetQuery(
     previousFrom: opts.previousFrom ?? prefs.previousFrom,
     jump: opts.jump ?? prefs.weightJump,
     repRange: opts.repRange ?? prefs.repRange,
-    barStepKg: opts.barStepKg !== undefined ? opts.barStepKg : gymBarStepKg(units),
+    gym: opts.gym !== undefined ? opts.gym : gymPlatesNow(units),
   };
 }
 
@@ -101,7 +105,7 @@ export function querySignature(q: TargetQuery): string {
   const cards = q.cards
     .map((c) => `${c.key}:${c.exerciseId}:${c.planExerciseId ?? ''}:${c.loadMode ?? ''}:${c.card ?? ''}:${c.planCard ?? ''}:${c.splitFrom ?? ''}`)
     .join(',');
-  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${q.previousFrom ?? 'any'}|${q.jump}|${q.repRange}|${q.barStepKg ?? ''}|${cards}`;
+  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${q.previousFrom ?? 'any'}|${q.jump}|${q.repRange}|${gymKey(q.gym)}|${cards}`;
 }
 
 interface TargetState {
@@ -129,7 +133,7 @@ export async function loadTargets(q: TargetQuery): Promise<void> {
           previousFrom: q.previousFrom ?? 'any',
           jump: q.jump,
           repRange: q.repRange,
-          barStepKg: q.barStepKg,
+          gym: q.gym,
         })
       : new Map();
   } catch {
@@ -149,7 +153,7 @@ export async function loadTargets(q: TargetQuery): Promise<void> {
 export async function preloadTargets(
   planDayId: string | null,
   exerciseIds: readonly string[],
-  opts: { easy: boolean; effort: boolean; previousFrom?: PreviousFrom; jump?: WeightJump; repRange?: RepRangeChoice; barStepKg?: number | null },
+  opts: { easy: boolean; effort: boolean; previousFrom?: PreviousFrom; jump?: WeightJump; repRange?: RepRangeChoice; gym?: GymPlates | null },
 ): Promise<Map<string, ProgressionTarget>> {
   if (!planDayId) return new Map();
   try {

@@ -253,6 +253,71 @@ export function barStepKg(setup: PlateSetup, u: UnitSystem): number | null {
   return Math.round(Math.min(...plates) * 2 * 1e6) / 1e6;
 }
 
+/** The gym's bar and plates, in kg — what the Targets load a barbell with (review fix, Oct 2026). */
+export interface GymPlates {
+  barKg: number;
+  /** The plate sizes the gym has, kg, heaviest first (never empty). */
+  platesKg: readonly number[];
+}
+
+/** Has the member changed anything on Plates and bars (a plate off, a plate added, another bar)? PURE. */
+export function isCustomSetup(setup: PlateSetup): boolean {
+  return setup.off.length > 0 || setup.extra.length > 0 || setup.bar != null;
+}
+
+/**
+ * Review fix (Oct 2026): the gym's bar and plates for the Targets — ONLY when the member set up
+ * Plates and bars (a setup that differs from the app's default). The default setup gives null:
+ * the Targets then keep the member's own steps from his history, as before. null too when no
+ * plate is on. PURE.
+ */
+export function gymPlatesFor(setup: PlateSetup, u: UnitSystem): GymPlates | null {
+  if (!isCustomSetup(setup)) return null;
+  const plates = gymPlatesKg(setup, u);
+  if (plates.length === 0) return null;
+  return { barKg: gymBarKg(setup, u), platesKg: plates };
+}
+
+/** A short key for a gym (memo keys, query signatures); '' = none. PURE. */
+export function gymKey(gym: GymPlates | null | undefined): string {
+  if (!gym) return '';
+  const k = (n: number): string => String(Math.round(n * 1e6) / 1e6);
+  return `${k(gym.barKg)}/${gym.platesKg.map(k).join(',')}`;
+}
+
+/** The gym's smallest jump on a bar (kg): its smallest plate on each side. PURE. */
+function gymStepKg(gym: GymPlates): number {
+  return Math.round(Math.min(...gym.platesKg) * 2 * 1e6) / 1e6;
+}
+
+/**
+ * The lightest weight this gym can load at or above `kg` (the empty bar when `kg` is at or under
+ * it). Uses the plate maths (`computePlates`'s `higherKg`). PURE.
+ */
+export function gymCeilKg(kg: number, gym: GymPlates): number {
+  if (!(kg > gym.barKg + EPS)) return gym.barKg;
+  const r = computePlates(kg, gym.barKg, gym.platesKg);
+  if (r.exact) return r.achievableKg;
+  if (r.higherKg != null) return r.higherKg;
+  // Too many loads to search (tiny plates, huge weight): whole smallest-plate pairs from the bar.
+  const step = gymStepKg(gym);
+  return Math.round((gym.barKg + Math.ceil((kg - gym.barKg) / step - EPS) * step) * 1e6) / 1e6;
+}
+
+/** The heaviest weight this gym can load at or below `kg`, never under the empty bar. PURE. */
+export function gymFloorKg(kg: number, gym: GymPlates): number {
+  if (!(kg > gym.barKg + EPS)) return gym.barKg;
+  return computePlates(kg, gym.barKg, gym.platesKg).achievableKg;
+}
+
+/** A gram: a Target's weight is kept to 3 decimals of a kg (145 lb = 65.771 kg). */
+const GRAM = 1e-3;
+
+/** Can this gym load `kg`, to the gram (the empty bar counts)? PURE. */
+export function gymCanLoad(kg: number, gym: GymPlates): boolean {
+  return Math.abs(gymCeilKg(kg - GRAM, gym) - kg) <= GRAM + EPS;
+}
+
 /** The bar the calculator starts on, in kg. PURE. */
 export function gymBarKg(setup: PlateSetup, u: UnitSystem): number {
   return setup.bar != null ? toKg(setup.bar, u) : defaultBarKg(u);

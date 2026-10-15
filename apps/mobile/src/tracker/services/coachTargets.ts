@@ -16,8 +16,9 @@
  * today's workout (Home, chat) as `free` entries; the workout card shows no line for them.
  *
  * Oct 2026 (owner): every Target here follows the member's two settings — "Weight jumps" (how
- * far an Up goes) and "Rep range" (rows still on their default range take the chosen range) —
- * and the gym's plates (a bar's smallest jump). They come with the call (the live workout's
+ * far an Up goes) and "Rep range" (review fix: "Match my goal" keeps each row's own range, any
+ * other choice sets every row's) — and, when he set up Plates and bars, the gym's bar and plates
+ * (every barbell weight is one they can load). They come with the call (the live workout's
  * query) or, for Home, the chat and the stall count, from the saved settings; all of them are in
  * the memo key, so a change never serves an old answer.
  */
@@ -50,7 +51,7 @@ import { trainingVersion } from '@/tracker/db/trainingVersion';
 import { onWriteFailed, quietSince, writeQueueMark } from '@/db/writeQueue';
 import { displayUnits } from '@/lib/units';
 import { folderOfRoutine } from '@/tracker/db/folderRepo';
-import { barStepKg } from '@/tracker/services/plateMath';
+import { gymKey, gymPlatesFor, type GymPlates } from '@/tracker/services/plateMath';
 import { usePlateSetup } from '@/tracker/store/plateSetupStore';
 import { useTrackerPrefs, type PreviousFrom } from '@/tracker/store/trackerPrefsStore';
 import type { Exercise, Goal, PlanExercise, TodaysWorkout, UserProfile } from '@/types/models';
@@ -88,15 +89,18 @@ async function profileFacts(): Promise<{ experience: UserProfile['experience']; 
 export interface TargetPrefs {
   jump: WeightJump;
   repRange: RepRangeChoice;
-  /** The gym's smallest bar jump, kg; null = the usual 2.5 kg / 5 lb. */
-  barStepKg: number | null;
+  /**
+   * The gym's bar and plates (kg) — only when the member set up Plates and bars (`gymPlatesFor`);
+   * null = his own steps from his history, as before (review fix).
+   */
+  gym: GymPlates | null;
 }
 
 /** The saved settings, with any given ones on top. Never throws (a store that cannot be read = the defaults). */
 export function targetPrefs(given: Partial<TargetPrefs> = {}): TargetPrefs {
   let jump: WeightJump = DEFAULT_JUMP;
   let repRange: RepRangeChoice = 'goal';
-  let bar: number | null = null;
+  let gym: GymPlates | null = null;
   try {
     const p = useTrackerPrefs.getState();
     if (isWeightJump(p.weightJump)) jump = p.weightJump;
@@ -104,19 +108,20 @@ export function targetPrefs(given: Partial<TargetPrefs> = {}): TargetPrefs {
   } catch {
     // quiet: an unreadable settings store means the defaults; nothing the member typed is lost
   }
-  if (given.barStepKg === undefined) {
+  if (given.gym === undefined) {
     try {
       const u = displayUnits();
       const st = usePlateSetup.getState();
-      bar = barStepKg(u === 'imperial' ? st.imperial : st.metric, u);
-    } catch {
-      bar = null;
+      gym = gymPlatesFor(u === 'imperial' ? st.imperial : st.metric, u);
+    } catch (e) {
+      console.warn('[ForgeErr] targets: the plates and bars setup could not be read', e);
+      gym = null;
     }
   }
   return {
     jump: given.jump && isWeightJump(given.jump) ? given.jump : jump,
     repRange: given.repRange && isRepRangeChoice(given.repRange) ? given.repRange : repRange,
-    barStepKg: given.barStepKg !== undefined ? given.barStepKg : bar,
+    gym: given.gym !== undefined ? given.gym : gym,
   };
 }
 
@@ -197,8 +202,8 @@ async function targetsFor(
     const exercise: Exercise = id === pe.exerciseId ? pe.exercise : info ?? pe.exercise;
     const logType = info?.logType ?? 'weight_reps';
     const row = { repRangeMin: pe.repRangeMin, repRangeMax: pe.repRangeMax };
-    // "Rep range": a row still on its default range takes the chosen one (never a hold's).
-    const range = logType === 'time' ? row : rangeForRow(row, exercise, prefs.repRange, goal, experience);
+    // "Rep range": "Match my goal" keeps the row's range; any other choice sets it (never a hold's).
+    const range = logType === 'time' ? row : rangeForRow(row, exercise, prefs.repRange);
     const target = { targetSets: pe.targetSets, ...range };
     // Distance work and timed cardio get no Target (the "+5 s" rule is for holds).
     if (!getsTarget(logType, info?.muscles.primary ?? [])) return freeTarget({ exercise, target, logType });
@@ -229,7 +234,7 @@ async function targetsFor(
       easier: link(entry?.easier, versionIds),
       ...(ladder ? { ladder } : {}),
       jump: prefs.jump,
-      plateStepKg: prefs.barStepKg,
+      gym: prefs.gym,
     });
     if (weightIsEach(mode)) t.each = true;
     if (repsPerSide(mode)) t.perSide = true;
@@ -283,7 +288,7 @@ function memoKey(
     goal ?? '',
     prefs.jump,
     prefs.repRange,
-    prefs.barStepKg ?? '',
+    gymKey(prefs.gym),
     displayUnits(),
     scopeKey(scope),
     parts,
@@ -379,7 +384,7 @@ export async function getTargetsForCards(
   }
   if (items.length === 0) return out;
   const scope = await historyScopeOrAll(planDayId, opts.previousFrom);
-  const prefs = targetPrefs({ jump: opts.jump, repRange: opts.repRange, barStepKg: opts.barStepKg });
+  const prefs = targetPrefs({ jump: opts.jump, repRange: opts.repRange, gym: opts.gym });
   const [targets, rir] = await Promise.all([targetsFor(items, true, scope, prefs), effortRir(planDayId, opts)]);
   targets.forEach((t, i) => {
     if (t.free) return; // no line for distance work and timed cardio

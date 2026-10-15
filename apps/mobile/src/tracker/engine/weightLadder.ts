@@ -25,6 +25,7 @@
  * Every value here is in the SHOWN unit except where a name says Kg.
  */
 import { displayUnits, KG_PER_LB, type UnitSystem } from '@/lib/units';
+import { gymCanLoad, gymCeilKg, gymFloorKg, type GymPlates } from '@/tracker/services/plateMath';
 import type { Exercise } from '@/types/models';
 
 import type { LogType } from './logTypes';
@@ -105,6 +106,11 @@ export interface Ladder {
   rungs: number[];
   /** One step past the top (shown unit); null on dumbbells with no step of their own (the rack is used). */
   step: number | null;
+  /**
+   * Review fix (Oct 2026): the gym's bar and plates (kg) on a barbell whose member set up Plates
+   * and bars; every rung and step is then a weight those plates can load. null = no setup.
+   */
+  gym: GymPlates | null;
 }
 
 /** Fewer distinct weights than this and a bar / dumbbells also get the gym's usual steps. */
@@ -123,11 +129,13 @@ export function buildLadder(
     catalogStepKg?: number;
     units?: UnitSystem;
     /**
-     * Oct 2026 (owner: "use the gym's real plates"): the smallest jump the gym's plates make on a
-     * bar (kg) — the smallest plate it has × 2 (Settings → Workouts → Plates and bars). Replaces
-     * the fixed 2.5 kg / 5 lb on a `plates` ladder; absent / 0 = that fixed grid.
+     * Oct 2026 (owner: "use the gym's real plates"), review fix: the gym's bar and plates (kg),
+     * passed ONLY when the member set up Plates and bars (`gymPlatesFor`). On a `plates` ladder
+     * the smallest jump is then its smallest plate × 2, the thin-ladder grid counts up from the
+     * bar, and every rung (his own weights too) is a weight those plates can load. Absent = the
+     * member's own steps and the fixed 2.5 kg / 5 lb grid, as before.
      */
-    plateStepKg?: number | null;
+    gym?: GymPlates | null;
   } = {},
 ): Ladder {
   const u = opts.units ?? displayUnits();
@@ -135,7 +143,8 @@ export function buildLadder(
     (a, b) => a - b,
   );
   const thin = own.length < THIN_LADDER;
-  const gym = kind === 'plates' && opts.plateStepKg != null && opts.plateStepKg > EPS ? r3(kgToUnit(opts.plateStepKg, u)) : null;
+  const plates = kind === 'plates' && opts.gym && opts.gym.platesKg.some((p) => p > EPS) ? opts.gym : null;
+  const gym = plates ? r3(kgToUnit(Math.min(...plates.platesKg.filter((p) => p > EPS)) * 2, u)) : null;
   /** The smallest jump on a bar: the gym's own plates, else 2.5 kg / 5 lb. */
   const smallest = gym ?? plateGrid(u);
 
@@ -156,21 +165,33 @@ export function buildLadder(
     }
   }
 
-  let rungs = own;
+  // Review fix: with the gym's plates, each of his own weights is put on a weight they can load
+  // (61 kg with no 0.5 kg plates → 62.5), and nothing under the bar is a rung.
+  let rungs = plates
+    ? [...new Set(own.map((v) => r3(kgToUnit(gymCeilKg(unitToKg(v, u), plates), u))))].sort((a, b) => a - b)
+    : own;
   if (thin && kind !== 'own') {
     const grid =
       kind === 'dumbbell'
         ? dumbbellSeries(u)
         : (() => {
             const g = smallest;
+            // Review fix: on the gym's bar the grid is bar + k × step (45, 55 … 135, 145 lb with a
+            // 10 lb step), never k × step from 0 (140 lb would need 2.5 lb plates).
+            const from = plates ? r3(kgToUnit(plates.barKg, u)) : g;
             const top = Math.max(own[own.length - 1] ?? 0, 0) * 2 + 20 * g;
             const out: number[] = [];
-            for (let v = g; v <= top + EPS; v += g) out.push(r3(v));
+            for (let v = from; v <= top + EPS; v += g) out.push(r3(v));
             return out;
           })();
-    rungs = [...new Set([...own, ...grid])].sort((a, b) => a - b);
+    rungs = [...new Set([...rungs, ...grid])].sort((a, b) => a - b);
   }
-  return { kind, units: u, own, rungs, step };
+  return { kind, units: u, own, rungs, step, gym: plates };
+}
+
+/** Can the gym load this weight (shown unit)? Always true with no gym. */
+function loadable(v: number, l: Ladder): boolean {
+  return l.gym == null || gymCanLoad(unitToKg(v, l.units), l.gym);
 }
 
 /** The member's own spacing between neighbouring weights, seen at least twice (ties → smaller). */
@@ -198,6 +219,9 @@ export function rungOf(wKg: number, l: Ladder): number {
 
 /** One step past `v` when the ladder has nothing above it. */
 function beyond(v: number, l: Ladder): number {
+  // Review fix: from a weight the gym's plates cannot make, the lightest one above it they can;
+  // from one they can, a whole step (a multiple of the smallest pair) keeps it loadable.
+  if (l.gym != null && !loadable(v, l)) return r3(kgToUnit(gymCeilKg(unitToKg(v, l.units), l.gym), l.units));
   if (l.step == null) {
     const next = dumbbellSeries(l.units).find((x) => x > v + EPS);
     return next ?? r3(v + (imperial(l.units) ? 10 : 5));
@@ -261,6 +285,14 @@ export function downRungKg(wKg: number, l: Ladder): number | null {
   } else {
     const steps = Math.max(1, Math.round((w * 0.1) / l.step));
     v = r3(rungOf(wKg, l) - steps * l.step);
+  }
+  if (l.gym != null && v > EPS) {
+    // Review fix: a weight the gym's plates can load — the nearest at or above, else below.
+    const kg = unitToKg(v, l.units);
+    let snapped = gymCeilKg(kg, l.gym);
+    if (kgToUnit(snapped, l.units) >= w - EPS) snapped = gymFloorKg(kg, l.gym);
+    v = r3(kgToUnit(snapped, l.units));
+    if (v >= w - EPS) return null;
   }
   return v > EPS ? unitToKg(v, l.units) : null;
 }

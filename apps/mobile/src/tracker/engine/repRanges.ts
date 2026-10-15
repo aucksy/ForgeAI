@@ -47,8 +47,9 @@ export function defaultRepRange(
 // ---------------------------------------------------------------- the member's "Rep range" setting
 
 /**
- * Settings → Workouts → Rep range (Oct 2026, owner). "goal" (Recommended, the default) keeps the
- * per-goal tables above; the others set every routine row that still has its default range.
+ * Settings → Workouts → Rep range (Oct 2026, owner). "goal" (Recommended, the default): every
+ * routine row keeps its own range, as before. Review fix: any other choice sets the range of
+ * EVERY row (a program's, an edited one, a new one) - so the setting always does what it says.
  */
 export type RepRangeChoice = 'goal' | 'strength' | 'muscle' | 'higher';
 
@@ -80,19 +81,11 @@ export function choiceRepRange(ex: Pick<Exercise, 'name' | 'equipment' | 'isComp
 }
 
 /**
- * The range a Target uses for a routine row. A row whose range is still the default for the
- * member's goal (what the app gave it) follows the choice; a row the member or a trainer edited
- * keeps its own range, whatever the choice. PURE.
+ * The range in use for a routine row - the one its Target follows and every screen prints next to
+ * it (review fix, Oct 2026). "Match my goal": the row's own range. Strength / Muscle / Higher
+ * reps: the chosen range, on every row. PURE.
  */
-export function rangeForRow(
-  row: Range,
-  ex: Pick<Exercise, 'name' | 'equipment' | 'isCompound'>,
-  choice: RepRangeChoice,
-  goal: Goal | null | undefined,
-  experience: UserProfile['experience'] | null | undefined,
-): Range {
+export function rangeForRow(row: Range, ex: Pick<Exercise, 'name' | 'equipment' | 'isCompound'>, choice: RepRangeChoice): Range {
   const chosen = choiceRepRange(ex, choice);
-  if (!chosen) return row;
-  const def = defaultRepRange(ex, goal, experience);
-  return def.repRangeMin === row.repRangeMin && def.repRangeMax === row.repRangeMax ? chosen : row;
+  return chosen ? { repRangeMin: chosen.repRangeMin, repRangeMax: chosen.repRangeMax } : { repRangeMin: row.repRangeMin, repRangeMax: row.repRangeMax };
 }

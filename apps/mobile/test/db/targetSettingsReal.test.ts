@@ -3,7 +3,8 @@
  * REAL SQL (test/helpers/realDb.ts). Synthetic history only.
  *  - a change of either setting (or of the plates) gives a new answer at once — never a
  *    remembered one (the Target memo is keyed on them);
- *  - a routine row still on its default range follows "Rep range"; a row given its own keeps it;
+ *  - "Rep range": "Match my goal" keeps every row's range; any other choice sets every row's
+ *    (review fix: a row given its own range follows it too);
  *  - the live workout's Targets (the query the screen sends) follow the same settings.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -85,6 +86,25 @@ describe('Weight jumps and the gym plates reach the Target, with no stale answer
     expect((await targetOf(routine, bench)).targetWeightKg).toBe(65);
   });
 
+  it('review fix: the default plates never override his own 1 kg jumps (60 → 61 → 62 kg, Small → 63)', async () => {
+    const bench = idOf("name = 'Barbell Bench Press'");
+    await logged(bench, 9, [[60, 12], [60, 12], [60, 12]]);
+    await logged(bench, 6, [[61, 12], [61, 12], [61, 12]]);
+    await logged(bench, 3, [[62, 12], [62, 12], [62, 12]]);
+    const routine = await routineOf(bench, { repRangeMin: 8, repRangeMax: 12 });
+    const { useTrackerPrefs } = await import('@/tracker/store/trackerPrefsStore');
+    const { usePlateSetup } = await import('@/tracker/store/plateSetupStore');
+    const { EMPTY_SETUP, gymCanLoad, gymPlatesFor, togglePlate } = await import('@/tracker/services/plateMath');
+    useTrackerPrefs.getState().setWeightJump('small');
+    expect((await targetOf(routine, bench)).targetWeightKg).toBe(63);
+    // Once he sets up Plates and bars (no 1.25 kg plates), only weights they can load.
+    const setup = togglePlate(EMPTY_SETUP, 1.25, false);
+    usePlateSetup.getState().setSetup('metric', setup);
+    const t = await targetOf(routine, bench);
+    expect(t.targetWeightKg).toBe(65);
+    expect(gymCanLoad(t.targetWeightKg, gymPlatesFor(setup, 'metric')!)).toBe(true);
+  });
+
   it('the live workout: starting a routine stores Targets that follow the setting, under the screen’s own query', async () => {
     const bench = idOf("name = 'Barbell Bench Press'");
     await logged(bench, 3, [[60, 12], [60, 12], [60, 12]]);
@@ -101,7 +121,7 @@ describe('Weight jumps and the gym plates reach the Target, with no stale answer
 });
 
 describe('Rep range reaches the Target', () => {
-  it('a row on its default range follows the choice; a row given its own keeps it', async () => {
+  it('Match my goal keeps each row; any other choice sets every row, its own range or not', async () => {
     const bench = idOf("name = 'Barbell Bench Press'");
     await logged(bench, 3, [[60, 9], [60, 8], [60, 8]]);
     const byDefault = await routineOf(bench); // goal "muscle": the bench's default 6–10
@@ -117,11 +137,16 @@ describe('Rep range reaches the Target', () => {
     expect([t1.targetRepsMin, t1.targetRepsMax]).toEqual([3, 6]);
     expect(t1.rule).toBe('R2'); // 9, 8, 8 is past the top of 3–6: time to add weight
     expect(t1.targetWeightKg).toBe(62.5);
-    const kept = await targetOf(own, bench);
-    expect([kept.targetRepsMin, kept.targetRepsMax]).toEqual([8, 12]);
+    const ownRow = await targetOf(own, bench);
+    expect([ownRow.targetRepsMin, ownRow.targetRepsMax]).toEqual([3, 6]);
 
     useTrackerPrefs.getState().setRepRange('higher');
     const t2 = await targetOf(byDefault, bench);
     expect([t2.targetRepsMin, t2.targetRepsMax]).toEqual([12, 20]);
+    expect([(await targetOf(own, bench)).targetRepsMin, (await targetOf(own, bench)).targetRepsMax]).toEqual([12, 20]);
+
+    useTrackerPrefs.getState().setRepRange('goal');
+    const back = await targetOf(own, bench);
+    expect([back.targetRepsMin, back.targetRepsMax]).toEqual([8, 12]);
   });
 });

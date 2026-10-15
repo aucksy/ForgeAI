@@ -19,17 +19,25 @@ import { folderOfRoutine, type RoutineExercise, type RoutineFull } from '@/track
 import { getTrackerExercisesByIds } from '@/tracker/db/exerciseInfo';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { hasReps, type LogType } from '@/tracker/engine/logTypes';
+import { rangeForRow, type RepRangeChoice } from '@/tracker/engine/repRanges';
 import { setsOf, setsSummary } from '@/tracker/plans/routineSets';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { fmtRest } from '@/tracker/services/restRules';
 import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
-/** "3 sets · 6–8 reps", with warm-ups / drops / failure sets and any per-set targets. */
-function setsLine(pe: RoutineExercise, logType: LogType): string {
+/**
+ * "3 sets · 6–8 reps", with warm-ups / drops / failure sets and any per-set targets. Review fix
+ * (Oct 2026): the range is the one the Target uses — the "Rep range" setting's on every row when
+ * it is not "Match my goal" (`rangeForRow`), so this page never shows a different range.
+ */
+function setsLine(pe: RoutineExercise, logType: LogType, choice: RepRangeChoice): string {
   const sets = setsOf(pe);
   const parts = [setsSummary(sets)];
-  if (hasReps(logType)) parts.push(pe.repRangeMin === pe.repRangeMax ? `${pe.repRangeMin} reps` : `${pe.repRangeMin}–${pe.repRangeMax} reps`);
+  // A timed hold keeps its own row (the Target never changes a hold's range).
+  const r = logType === 'time' ? pe : rangeForRow(pe, pe.exercise, choice);
+  if (hasReps(logType)) parts.push(r.repRangeMin === r.repRangeMax ? `${r.repRangeMin} reps` : `${r.repRangeMin}–${r.repRangeMax} reps`);
   return parts.join(' · ');
 }
 
@@ -60,6 +68,7 @@ export default function RoutinePreviewScreen() {
   const hydrate = useActiveWorkout((s) => s.hydrate);
   const startFromPlanDay = useActiveWorkout((s) => s.startFromPlanDay);
   const starting = useRef(false);
+  const repRangeChoice = useTrackerPrefs((s) => s.repRange);
 
   const [routine, setRoutine] = useState<RoutineFull | null>(null);
   const [loading, setLoading] = useState(true);
@@ -176,7 +185,7 @@ export default function RoutinePreviewScreen() {
                   ) : null}
                   <Text style={{ fontFamily: type.heading, fontSize: type.size.sub, color: color.ink }}>{pe.exercise.name}</Text>
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
-                    {setsLine(pe, logTypes.get(pe.exerciseId) ?? 'weight_reps')}
+                    {setsLine(pe, logTypes.get(pe.exerciseId) ?? 'weight_reps', repRangeChoice)}
                     {pe.restSec != null ? ` · Rest ${fmtRest(pe.restSec)}` : ''}
                   </Text>
                   {targets ? (

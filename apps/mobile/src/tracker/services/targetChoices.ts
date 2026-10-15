@@ -29,10 +29,10 @@ export const WEIGHT_JUMP_CHOICES: readonly PrefChoice<WeightJump>[] = [
 ];
 
 /** The line under "Weight jumps" (the row and the sheet). */
-export const WEIGHT_JUMP_HELP = "How much to add when you reach the top of your reps. We always use your gym's smallest plates.";
+export const WEIGHT_JUMP_HELP = "How much to add when you reach the top of your reps. On barbell lifts we use your gym's smallest plates.";
 
 export const REP_RANGE_CHOICES: readonly PrefChoice<RepRangeChoice>[] = [
-  { value: 'goal', label: 'Match my goal', detail: 'Set for each exercise from the goal in your profile', recommended: true },
+  { value: 'goal', label: 'Match my goal', detail: 'Each exercise keeps the range in its routine', recommended: true },
   { value: 'strength', label: 'Strength', detail: '3–6 reps on big compound lifts, 6–10 on the rest' },
   { value: 'muscle', label: 'Muscle', detail: '6–10 on big lifts, 8–12 on the rest, 10–15 on small isolation moves' },
   { value: 'higher', label: 'Higher reps', detail: '12–20 reps on every exercise' },
@@ -40,8 +40,8 @@ export const REP_RANGE_CHOICES: readonly PrefChoice<RepRangeChoice>[] = [
 
 /** The line under "Rep range" (the row and the sheet). */
 export const REP_RANGE_HELP = 'Muscle grows in any of these if you finish close to your limit. Strength likes fewer reps.';
-/** Said once in the sheet: a range the member or a trainer set by hand is never changed. */
-export const REP_RANGE_KEEP = 'Exercises with a range you set yourself keep it.';
+/** Said once in the sheet (review fix): what "Match my goal" and the other choices do to a routine's ranges. */
+export const REP_RANGE_KEEP = 'Match my goal keeps the range each exercise has in its routine. Any other choice sets the range for every exercise.';
 
 /** The choice's label for a value (the first choice for one this version does not know). PURE. */
 export function choiceLabel<T extends string>(choices: readonly PrefChoice<T>[], value: T): string {

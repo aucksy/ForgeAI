@@ -2,13 +2,16 @@
  * Oct 2026 (owner) — scientific Targets that follow two simple settings. PURE parts:
  *  - "Weight jumps" (Small ~2.5% · Standard ~5% · Large ~10%): the heaviest rung of the member's
  *    ladder within the share, always at least one step; the big-jump guard is unchanged;
- *  - the gym's real plates make a bar's smallest step (no 1.25 kg plates → 5 kg);
+ *  - the gym's real plates make a bar's smallest step (no 1.25 kg plates → 5 kg) — only once the
+ *    member set up Plates and bars; every barbell weight is then one they can load (review fix);
  *  - per-set goals (10, 9, 8 last time → 11, 9, 8), never below last time's same set; one miss
  *    repeats last time; RPE 10 under the range is a miss;
  *  - ONE source for the set hints: `setGoals` → `targetFill` → `fillForSet` (by working-set
  *    number), a weight typed above carries down, and a hint never asks for more reps than were
  *    just done at that weight;
- *  - "Rep range": rows still on the default follow the choice, edited rows keep theirs;
+ *  - "Rep range": "Match my goal" keeps every row's own range; any other choice sets every row's;
+ *  - review fixes: the beginner fast lane goes at most one size past the choice, later sets never
+ *    aim under the range, warm-ups follow a moved working weight;
  *  - the settings persist with guards and are part of the Target query.
  * The real-SQL path (settings reaching the Targets) is in test/db/targetSettingsReal.test.ts.
  */
@@ -22,14 +25,25 @@ import {
   perSetGoals,
   targetFill,
   targetLine,
+  warmupWeightKg,
   type ProgSession,
   type ProgSetType,
   type WeightJump,
 } from '@/tracker/engine/progression';
 import { choiceRepRange, isRepRangeChoice, rangeForRow } from '@/tracker/engine/repRanges';
-import { buildLadder } from '@/tracker/engine/weightLadder';
-import { barStepKg, EMPTY_SETUP, togglePlate } from '@/tracker/services/plateMath';
-import { REP_RANGE_CHOICES, REP_RANGE_HELP, WEIGHT_JUMP_CHOICES, WEIGHT_JUMP_HELP, choiceLabel } from '@/tracker/services/targetChoices';
+import { buildLadder, upRungsKg } from '@/tracker/engine/weightLadder';
+import {
+  addPlate,
+  barStepKg,
+  EMPTY_SETUP,
+  gymCanLoad,
+  gymPlatesFor,
+  isCustomSetup,
+  togglePlate,
+  type GymPlates,
+  type PlateSetup,
+} from '@/tracker/services/plateMath';
+import { REP_RANGE_CHOICES, REP_RANGE_HELP, REP_RANGE_KEEP, WEIGHT_JUMP_CHOICES, WEIGHT_JUMP_HELP, choiceLabel } from '@/tracker/services/targetChoices';
 import { fillForSet, type DraftExercise, type DraftSet } from '@/tracker/store/activeWorkoutStore';
 import { querySignature, targetQuery } from '@/tracker/store/targetStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
@@ -66,7 +80,7 @@ const three = (kg: number, reps: number, d = '2026-10-03') => sess(d, [[kg, reps
 function run(
   exercise: Exercise,
   history: ProgSession[],
-  opts: { min?: number; max?: number; sets?: number; jump?: WeightJump; plateStepKg?: number | null; experience?: 'beginner' | 'intermediate' } = {},
+  opts: { min?: number; max?: number; sets?: number; jump?: WeightJump; gym?: GymPlates | null; experience?: 'beginner' | 'intermediate' } = {},
 ) {
   return computeProgressionTarget({
     exercise,
@@ -75,9 +89,14 @@ function run(
     todayISO: TODAY,
     experience: opts.experience,
     jump: opts.jump,
-    plateStepKg: opts.plateStepKg,
+    gym: opts.gym,
   });
 }
+
+/** A gym with no 1.25 kg plates (kg): its smallest bar jump is 5 kg. */
+const noSmall = gymPlatesFor(togglePlate(EMPTY_SETUP, 1.25, false), 'metric')!;
+/** A gym set up with the standard plates plus a 0.5 kg plate (its smallest jump 1 kg). */
+const withHalf = gymPlatesFor(addPlate(EMPTY_SETUP, 0.5, 'metric') as PlateSetup, 'metric')!;
 
 describe('Weight jumps: the heaviest rung within the chosen share, always at least one step', () => {
   it('barbell 60 kg at the top: Small and Standard → 62.5, Large → 65', () => {
@@ -126,12 +145,15 @@ describe('Weight jumps: the heaviest rung within the chosen share, always at lea
     expect(run(machine, [three(20, 15)], { min: 10, max: 15, jump: 'large' }).rule).toBe('R2b');
   });
 
-  it('a beginner who found it easy may go as far as Large (R2c); on Large it is a plain R2', () => {
+  it('a beginner who found it easy may go one size further (R2c); on Large it is a plain R2', () => {
     const easy = [three(60, 15)];
     const std = run(ex(), easy, { experience: 'beginner', jump: 'standard' });
     expect(std.rule).toBe('R2c');
     expect(std.targetWeightKg).toBe(65);
-    expect(run(ex(), easy, { experience: 'beginner', jump: 'small' }).targetWeightKg).toBe(65);
+    // Review fix: on Small the fast lane stops at the Standard share (60 + 5% = 63 → 62.5), never 65.
+    const small = run(ex(), easy, { experience: 'beginner', jump: 'small' });
+    expect(small.targetWeightKg).toBe(62.5);
+    expect(small.targetWeightKg).toBeLessThanOrEqual(60 * 1.05);
     const large = run(ex(), easy, { experience: 'beginner', jump: 'large' });
     expect(large.rule).toBe('R2');
     expect(large.targetWeightKg).toBe(65);
@@ -146,6 +168,62 @@ describe('Weight jumps: the heaviest rung within the chosen share, always at lea
 });
 
 describe("the gym's real plates", () => {
+  it('only a setup the member changed counts: the default setup gives no gym', () => {
+    expect(isCustomSetup(EMPTY_SETUP)).toBe(false);
+    expect(gymPlatesFor(EMPTY_SETUP, 'metric')).toBeNull();
+    expect(gymPlatesFor(EMPTY_SETUP, 'imperial')).toBeNull();
+    // Switched off and on again = the default.
+    expect(gymPlatesFor(togglePlate(togglePlate(EMPTY_SETUP, 1.25, false), 1.25, true), 'metric')).toBeNull();
+    expect(noSmall).toEqual({ barKg: 20, platesKg: [25, 20, 15, 10, 5, 2.5] });
+  });
+
+  it('no setup: his own small jumps stay (60 → 61 → 62 kg: Small 63, Standard 65 on his 1 kg steps, never 64.5)', () => {
+    const h = [three(62, 12), three(61, 12, '2026-09-30'), three(60, 12, '2026-09-27')];
+    expect(run(ex(), h, { jump: 'small' }).targetWeightKg).toBe(63);
+    expect(run(ex(), h, { jump: 'standard' }).targetWeightKg).toBe(65);
+    expect(run(ex(), h, { jump: 'standard', gym: null }).targetWeightKg).toBe(65);
+    // A setup with a 0.5 kg plate makes 1 kg jumps: 63 on Small too.
+    expect(run(ex(), h, { jump: 'small', gym: withHalf }).targetWeightKg).toBe(63);
+  });
+
+  it('with a setup, every suggested barbell weight is one the plates can load', () => {
+    const h = [three(62, 12), three(61, 12, '2026-09-30'), three(60, 12, '2026-09-27')];
+    for (const jump of ['small', 'standard', 'large'] as const) {
+      const t = run(ex(), h, { jump, gym: noSmall });
+      expect(gymCanLoad(t.targetWeightKg, noSmall)).toBe(true);
+      expect(t.targetWeightKg).toBe(65);
+    }
+    // Lighter (a long break) lands on a loadable weight too: 62 kg → 55, never 57.
+    const back = run(ex(), [three(62, 10, '2026-08-01')], { gym: noSmall });
+    expect(back.rule).toBe('R1b');
+    expect(gymCanLoad(back.targetWeightKg, noSmall)).toBe(true);
+    expect(back.targetWeightKg).toBeLessThan(62);
+  });
+
+  it('pounds, 2.5 lb plates off (10 lb jumps): the grid counts from the 45 lb bar (135 → 145, bar → 55)', () => {
+    setDisplayUnits('imperial');
+    const lb = (n: number) => n * KG_PER_LB;
+    const gym = gymPlatesFor(togglePlate(EMPTY_SETUP, 2.5, false), 'imperial')!;
+    expect(run(ex(), [three(lb(135), 12)], { jump: 'standard', gym }).targetWeightKg / KG_PER_LB).toBeCloseTo(145, 2);
+    expect(upRungsKg(lb(45), 1, buildLadder([lb(45)], 'plates', { units: 'imperial', gym }))[0] / KG_PER_LB).toBeCloseTo(55, 2);
+    const ladder = buildLadder([lb(135)], 'plates', { units: 'imperial', gym });
+    for (const r of ladder.rungs) expect(Math.abs((r - 45) / 10 - Math.round((r - 45) / 10))).toBeLessThan(1e-6);
+    // No setup: the old 5 lb grid (135 → 140).
+    expect(run(ex(), [three(lb(135), 12)], { jump: 'standard' }).targetWeightKg / KG_PER_LB).toBeCloseTo(140, 2);
+  });
+
+  it('his own weights the gym can no longer load are moved onto ones it can (140 lb → 145)', () => {
+    setDisplayUnits('imperial');
+    const lb = (n: number) => n * KG_PER_LB;
+    const gym = gymPlatesFor(togglePlate(EMPTY_SETUP, 2.5, false), 'imperial')!;
+    const h = [three(lb(135), 12), three(lb(140), 8, '2026-09-30'), three(lb(130), 8, '2026-09-27')];
+    const t = run(ex(), h, { jump: 'standard', gym });
+    expect(t.targetWeightKg / KG_PER_LB).toBeCloseTo(145, 2);
+    expect(gymCanLoad(t.targetWeightKg, gym)).toBe(true);
+    // Without the setup his own 140 lb rung is the next one.
+    expect(run(ex(), h, { jump: 'standard' }).targetWeightKg / KG_PER_LB).toBeCloseTo(140, 2);
+  });
+
   it('the smallest bar jump is the smallest plate on each side: 2.5 kg, 5 kg without 1.25s, 5 lb', () => {
     expect(barStepKg(EMPTY_SETUP, 'metric')).toBe(2.5);
     expect(barStepKg(togglePlate(EMPTY_SETUP, 1.25, false), 'metric')).toBe(5);
@@ -156,22 +234,22 @@ describe("the gym's real plates", () => {
 
   it('no 1.25 kg plates → 2.5 kg pairs = a 5 kg barbell step (60 → 65 on every setting)', () => {
     for (const jump of ['small', 'standard', 'large'] as const) {
-      expect(run(ex(), [three(60, 12)], { jump, plateStepKg: 5 }).targetWeightKg).toBe(65);
+      expect(run(ex(), [three(60, 12)], { jump, gym: noSmall }).targetWeightKg).toBe(65);
     }
     // The usual plates (2.5 kg step) keep 62.5.
-    expect(run(ex(), [three(60, 12)], { jump: 'standard', plateStepKg: 2.5 }).targetWeightKg).toBe(62.5);
+    expect(run(ex(), [three(60, 12)], { jump: 'standard', gym: { barKg: 20, platesKg: [25, 20, 15, 10, 5, 2.5, 1.25] } }).targetWeightKg).toBe(62.5);
   });
 
   it('a learned 2.5 kg jump the plates cannot make is rounded up to 5 kg', () => {
     const h = [three(60, 12), three(57.5, 12, '2026-09-30'), three(55, 12, '2026-09-27')];
     expect(run(ex(), h, { jump: 'standard' }).targetWeightKg).toBe(62.5);
-    expect(run(ex(), h, { jump: 'standard', plateStepKg: 5 }).targetWeightKg).toBe(65);
-    expect(buildLadder([55, 57.5, 60], 'plates', { learnedStepKg: 2.5, plateStepKg: 5, units: 'metric' }).step).toBe(5);
+    expect(run(ex(), h, { jump: 'standard', gym: noSmall }).targetWeightKg).toBe(65);
+    expect(buildLadder([55, 57.5, 60], 'plates', { learnedStepKg: 2.5, gym: noSmall, units: 'metric' }).step).toBe(5);
   });
 
   it('dumbbells and machines keep their own steps', () => {
-    expect(run(dumbbell(), [three(12, 12)], { plateStepKg: 5 }).targetWeightKg).toBe(12.5);
-    expect(buildLadder([12], 'dumbbell', { plateStepKg: 5, units: 'metric' }).step).toBeNull();
+    expect(run(dumbbell(), [three(12, 12)], { gym: noSmall }).targetWeightKg).toBe(12.5);
+    expect(buildLadder([12], 'dumbbell', { gym: noSmall, units: 'metric' }).step).toBeNull();
   });
 });
 
@@ -220,7 +298,21 @@ describe('per-set goals at the same weight', () => {
 
   it('RPE 10 under the range is a miss; RPE 8 under it has reps to spare and is not', () => {
     expect(run(ex(), [sess('2026-10-03', [[40, 7, 10], [40, 7, 10], [40, 7, 10]])]).setGoals).toEqual([7, 7, 7]);
-    expect(run(ex(), [sess('2026-10-03', [[40, 7, 8], [40, 7, 8], [40, 7, 8]])]).setGoals).toEqual([8, 7, 7]);
+    // Not a miss: no set aims under the bottom of the range (review fix), so 8, 8, 8.
+    expect(run(ex(), [sess('2026-10-03', [[40, 7, 8], [40, 7, 8], [40, 7, 8]])]).setGoals).toEqual([8, 8, 8]);
+  });
+
+  it('review fix: a later set never aims under the bottom of the range (10, 7, 6 in 8–12 → 11, 8, 8)', () => {
+    const t = run(ex(), [sess('2026-10-03', [[60, 10], [60, 7], [60, 6]])]);
+    expect(t.setGoals).toEqual([11, 8, 8]);
+    expect(targetLine(t)).toBe('60 kg · 11, 8, 8');
+    // The first set under the range takes the +1 and is floored too: 7, 9, 10 → 8, 9, 10.
+    expect(run(ex(), [sess('2026-10-03', [[60, 7], [60, 9], [60, 10]])]).setGoals).toEqual([8, 9, 10]);
+    for (const reps of [[12, 7, 5], [9, 6, 6], [10, 8, 3]]) {
+      const g = run(ex(), [sess('2026-10-03', reps.map((r) => [60, r] as S))]).setGoals;
+      g.forEach((x) => expect(x).toBeGreaterThanOrEqual(8));
+    }
+    expect(perSetGoals([{ weightKg: 60, reps: 10, rpe: null, setType: 'normal' }, { weightKg: 60, reps: 6, rpe: null, setType: 'normal' }], 2, 12, false, 8)).toEqual([11, 8]);
   });
 
   it('perSetGoals is PURE and empty with no sets', () => {
@@ -293,6 +385,36 @@ describe('ONE source: targetFill → fillForSet', () => {
     expect(fillForSet(card([h1, h2]), h2.key, fill)).toEqual({ weightKg: 55, reps: 6 });
   });
 
+  it('review fix: warm-ups follow a moved working weight (40 × 8 for 60 → 42.5 × 8 for 65)', () => {
+    const h = [sess('2026-10-03', [[40, 8, null, 'warmup'], [60, 12], [60, 12], [60, 12]])];
+    const up = run(ex(), h, { jump: 'large' });
+    expect(up.targetWeightKg).toBe(65);
+    const upFill = targetFill(up)!;
+    const [w, s1] = [row({ isWarmup: true }), row()];
+    const c = { ...card([w, s1]), previousSets: [{ weightKg: 60, reps: 12 }], previousWarmups: [{ weightKg: 40, reps: 8 }] } as DraftExercise;
+    expect(fillForSet(c, w.key, upFill)).toEqual({ weightKg: 42.5, reps: 8 });
+    expect(fillForSet(c, s1.key, upFill)).toEqual({ weightKg: 65, reps: 8 });
+    // No change of working weight: last time's warm-up as it was.
+    const same = run(ex(), [sess('2026-10-03', [[40, 8, null, 'warmup'], [60, 10], [60, 9], [60, 8]])]);
+    expect(same.change).toBeNull();
+    expect(fillForSet(c, w.key, targetFill(same))).toEqual({ weightKg: 40, reps: 8 });
+    // No Target at all: last time's warm-up.
+    expect(fillForSet(c, w.key, null)).toEqual({ weightKg: 40, reps: 8 });
+  });
+
+  it('warmupWeightKg: rounded down to a loadable step, never under the bar, never above the new weight', () => {
+    const bar = { fromKg: 60, stepKg: 2.5, barKg: 20 };
+    expect(warmupWeightKg(40, 65, bar)).toBe(42.5);
+    expect(warmupWeightKg(40, 60, bar)).toBe(40);
+    expect(warmupWeightKg(20, 50, bar)).toBe(20); // 20 × 50/60 = 16.7 → the empty bar
+    expect(warmupWeightKg(70, 65, bar)).toBe(65); // never above the new working weight
+    expect(warmupWeightKg(40, 65, { ...bar, gym: noSmall })).toBe(40); // 43.3 → the plates make 40
+    expect(warmupWeightKg(10, 13, { fromKg: 12, stepKg: 2.5, barKg: null })).toBe(10); // dumbbells: 10.8 → 10
+    // Pounds: 95 lb warm-up for 135 → 145: 102 → 100 lb.
+    const lb = (n: number) => n * KG_PER_LB;
+    expect(warmupWeightKg(lb(95), lb(145), { fromKg: lb(135), stepKg: lb(5), barKg: lb(45) }) / KG_PER_LB).toBeCloseTo(100, 4);
+  });
+
   it('a drop row still hints its own last-time drop, never the Target', () => {
     const [s1, d] = [row({ weightKg: 50, reps: 10, done: true }), row({ setType: 'drop' })];
     const c = { ...card([s1, d]), previousSets: [{ weightKg: 50, reps: 10 }, { weightKg: 30, reps: 12 }] } as DraftExercise;
@@ -316,13 +438,14 @@ describe('Rep range', () => {
     expect(choiceRepRange(bench, 'goal')).toBeNull();
   });
 
-  it('a row still on the default follows the choice; an edited row keeps its own', () => {
-    // Goal "muscle": the bench's default is 6–10.
-    expect(rangeForRow({ repRangeMin: 6, repRangeMax: 10 }, bench, 'strength', 'muscle', 'intermediate')).toEqual({ repRangeMin: 3, repRangeMax: 6 });
-    expect(rangeForRow({ repRangeMin: 5, repRangeMax: 8 }, bench, 'strength', 'muscle', 'intermediate')).toEqual({ repRangeMin: 5, repRangeMax: 8 });
-    expect(rangeForRow({ repRangeMin: 6, repRangeMax: 10 }, bench, 'goal', 'muscle', 'intermediate')).toEqual({ repRangeMin: 6, repRangeMax: 10 });
-    // No profile: the old 8–12 is the default.
-    expect(rangeForRow({ repRangeMin: 8, repRangeMax: 12 }, curl, 'higher', null, null)).toEqual({ repRangeMin: 12, repRangeMax: 20 });
+  it('review fix: Match my goal keeps every row; any other choice sets EVERY row (a program row too)', () => {
+    expect(rangeForRow({ repRangeMin: 6, repRangeMax: 10 }, bench, 'goal')).toEqual({ repRangeMin: 6, repRangeMax: 10 });
+    expect(rangeForRow({ repRangeMin: 5, repRangeMax: 8 }, bench, 'goal')).toEqual({ repRangeMin: 5, repRangeMax: 8 });
+    expect(rangeForRow({ repRangeMin: 6, repRangeMax: 10 }, bench, 'strength')).toEqual({ repRangeMin: 3, repRangeMax: 6 });
+    // A row with a range of its own (a program's 5–8) follows the choice too.
+    expect(rangeForRow({ repRangeMin: 5, repRangeMax: 8 }, bench, 'strength')).toEqual({ repRangeMin: 3, repRangeMax: 6 });
+    expect(rangeForRow({ repRangeMin: 8, repRangeMax: 12 }, curl, 'higher')).toEqual({ repRangeMin: 12, repRangeMax: 20 });
+    expect(rangeForRow({ repRangeMin: 4, repRangeMax: 6 }, curl, 'muscle')).toEqual({ repRangeMin: 10, repRangeMax: 15 });
   });
 
   it('a Higher-reps range changes the Target the same way any range does', () => {
@@ -365,13 +488,13 @@ describe('the two settings: saved, guarded, and part of the Target query', () =>
   it('a change of either setting, or of the plates, changes the query signature', () => {
     const base = { easy: false, effort: false, units: 'metric' as const, previousFrom: 'any' as const };
     const sig = (o: object) => querySignature(targetQuery('day', [{ key: 'k', exerciseId: 'bench' }], { ...base, ...o }));
-    const std = sig({ jump: 'standard', repRange: 'goal', barStepKg: 2.5 });
-    expect(sig({ jump: 'large', repRange: 'goal', barStepKg: 2.5 })).not.toBe(std);
-    expect(sig({ jump: 'standard', repRange: 'strength', barStepKg: 2.5 })).not.toBe(std);
-    expect(sig({ jump: 'standard', repRange: 'goal', barStepKg: 5 })).not.toBe(std);
-    // Absent = the saved settings and plates.
+    const std = sig({ jump: 'standard', repRange: 'goal', gym: null });
+    expect(sig({ jump: 'large', repRange: 'goal', gym: null })).not.toBe(std);
+    expect(sig({ jump: 'standard', repRange: 'strength', gym: null })).not.toBe(std);
+    expect(sig({ jump: 'standard', repRange: 'goal', gym: noSmall })).not.toBe(std);
+    // Absent = the saved settings and plates (the default setup = no gym: his own steps).
     const q = targetQuery('day', [], base);
-    expect(q).toMatchObject({ jump: 'standard', repRange: 'goal', barStepKg: 2.5 });
+    expect(q).toMatchObject({ jump: 'standard', repRange: 'goal', gym: null });
   });
 });
 
@@ -380,7 +503,12 @@ describe('the words on the settings page', () => {
     expect(WEIGHT_JUMP_CHOICES.map((c) => c.label)).toEqual(['Small', 'Standard', 'Large']);
     expect(WEIGHT_JUMP_CHOICES.filter((c) => c.recommended).map((c) => c.value)).toEqual(['standard']);
     expect(WEIGHT_JUMP_CHOICES.map((c) => c.detail)).toEqual(['About 2.5% more each time', 'About 5% more each time', 'About 10% more each time']);
-    expect(WEIGHT_JUMP_HELP).toBe("How much to add when you reach the top of your reps. We always use your gym's smallest plates.");
+    expect(WEIGHT_JUMP_HELP).toBe("How much to add when you reach the top of your reps. On barbell lifts we use your gym's smallest plates.");
+    expect(REP_RANGE_KEEP).toBe('Match my goal keeps the range each exercise has in its routine. Any other choice sets the range for every exercise.');
+    expect(REP_RANGE_KEEP).not.toContain('set yourself');
+    // Member-visible words never say "volume", "PR" or "session".
+    const words = [WEIGHT_JUMP_HELP, REP_RANGE_KEEP, REP_RANGE_HELP, ...REP_RANGE_CHOICES.map((c) => c.detail), ...WEIGHT_JUMP_CHOICES.map((c) => c.detail)].join(' ');
+    expect(words).not.toMatch(/volume|\bPR\b|session/i);
     expect(REP_RANGE_CHOICES.map((c) => c.label)).toEqual(['Match my goal', 'Strength', 'Muscle', 'Higher reps']);
     expect(REP_RANGE_CHOICES.filter((c) => c.recommended).map((c) => c.value)).toEqual(['goal']);
     expect(REP_RANGE_HELP).toBe('Muscle grows in any of these if you finish close to your limit. Strength likes fewer reps.');

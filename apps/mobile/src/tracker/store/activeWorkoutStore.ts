@@ -35,6 +35,7 @@ import {
   type TrackerExercise,
 } from '@/tracker/db/exerciseInfo';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
+import { warmupWeightKg, type WarmScale } from '@/tracker/engine/progression';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import {
   getCarriedNote,
@@ -1148,12 +1149,17 @@ const present = (v: number | null | undefined): number | null => (v != null && N
  * done in the nearest working row above at the same weight, so a hint never asks for more than
  * was just done at that weight. The weight still follows rule 1 (a weight typed above carries
  * down).
+ *
+ * Review fix (Oct 2026): when the Target moves the working weight (`warm`), a warm-up row's
+ * last-time weight scales by the same ratio (40 kg for 60 -> 42.5 kg for 65), rounded down to a
+ * weight that can be loaded, never under the empty bar, never above the new working weight; its
+ * reps stay last time's. The same working weight = last time's warm-ups as they were.
  */
 export function fillForSet(
   ex: DraftExercise,
   setKey: string,
   /** The card's Target fill (`targetFill`), or null off-plan / before it is known. */
-  target?: (SetFill & { setReps?: readonly number[] }) | null,
+  target?: (SetFill & { setReps?: readonly number[]; warm?: WarmScale }) | null,
 ): SetFill | null {
   const lt: LogType = ex.logType ?? 'weight_reps';
   const idx = ex.sets.findIndex((s) => s.key === setKey);
@@ -1198,7 +1204,11 @@ export function fillForSet(
     if (distanceM != null) out.distanceM = distanceM;
     return out;
   }
-  const weightKg = lt === 'reps' ? 0 : pick((s) => present(s.weightKg), (p) => present(p?.weightKg));
+  let weightKg = lt === 'reps' ? 0 : pick((s) => present(s.weightKg), (p) => present(p?.weightKg));
+  // Review fix: a warm-up follows a moved working weight (last time's warm-up x new / last).
+  if (warmup && lt === 'weight_reps' && weightKg != null && weightKg > 0 && target?.warm && target.weightKg > 0) {
+    weightKg = warmupWeightKg(weightKg, target.weightKg, target.warm);
+  }
   // The row's own goal: the Target's goal for its working-set number (warm-ups and drops not counted).
   let goal: number | null = null;
   if (tgt) {
