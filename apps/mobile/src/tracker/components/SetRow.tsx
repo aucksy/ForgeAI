@@ -647,10 +647,14 @@ export const SetRow = memo(function SetRow({
             </Pressable>
           ) : null}
 
-          {/* ✓ complete — haptic on finger-DOWN */}
+          {/* ✓ complete — haptic on a real tap only. 15 Oct 2026 (owner, in the gym): it buzzed on
+              finger-DOWN, so scrolling the list over the ✓ column buzzed again and again; a scroll
+              cancels the press, so the buzz now comes with onPress. */}
           <Pressable
-            onPressIn={() => tap()}
-            onPress={onTick}
+            onPress={() => {
+              tap();
+              onTick();
+            }}
             hitSlop={{ top: 2, bottom: 2, left: touchSlop(L.checkW), right: touchSlop(L.checkW) }}
             accessibilityRole="button"
             accessibilityState={{ checked: done }}

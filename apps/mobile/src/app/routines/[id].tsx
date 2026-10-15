@@ -838,11 +838,11 @@ function StepBtn({
 }) {
   return (
     <Pressable
-      onPressIn={() => {
-        if (!disabled) tap();
-      }}
+      // 15 Oct 2026: buzz on a real tap, not on finger-down (a scroll over it buzzed too).
       onPress={() => {
-        if (!disabled) onPress();
+        if (disabled) return;
+        tap();
+        onPress();
       }}
       hitSlop={8}
       accessibilityRole="button"
