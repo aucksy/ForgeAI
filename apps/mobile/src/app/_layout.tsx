@@ -30,6 +30,7 @@ let launchLinkRead = false;
 import { dismissOpening, setWorkoutCheck, showWaitingLook, startGymTheme, useGymTheme } from '@/theme/gymTheme';
 import { color } from '@/theme/tokens';
 import { useAppFonts } from '@/theme/fonts';
+import { useIdlePause } from '@/tracker/services/idlePause';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 // v0.27.0: kg / lb and km / miles — the pure formatters follow Profile → Units.
@@ -100,6 +101,8 @@ export default function RootLayout() {
   }, []);
 
   const ready = fontsLoaded && status !== 'loading' && themeReady;
+  // Forgotten Finish: a workout with no sets for an hour pauses its own timer.
+  useIdlePause(ready);
 
   useEffect(() => {
     if (!ready) return;

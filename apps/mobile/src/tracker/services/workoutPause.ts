@@ -36,10 +36,11 @@ export interface PauseState {
   pauses?: readonly PauseSpan[];
 }
 
-export const NO_PAUSE: { pausedAt: null; pausedTotalMs: 0; pauses: PauseSpan[] } = {
+export const NO_PAUSE: { pausedAt: null; pausedTotalMs: 0; pauses: PauseSpan[]; pausedAuto: false } = {
   pausedAt: null,
   pausedTotalMs: 0,
   pauses: [],
+  pausedAuto: false,
 };
 
 const finite = (n: unknown): n is number => typeof n === 'number' && Number.isFinite(n);

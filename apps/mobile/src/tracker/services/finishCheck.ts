@@ -136,6 +136,34 @@ export function lastActivity(
 }
 
 /**
+ * 15 Oct 2026 (owner: "people forget to tap Finish workout and the duration keeps going"): no set
+ * ticked or typed for an hour of trained time, and the workout timer pauses ITSELF, back-dated to
+ * the last action plus the rest that followed it. A tick resumes it like any pause, so a real
+ * long break only leaves out the idle time, and a forgotten workout saves its real length.
+ * Returns the moment the pause starts, or null (already paused, or not idle that long). PURE.
+ */
+export function idlePauseAt(p: {
+  startedAt: number;
+  lastActionAt: number | null;
+  restSec: number;
+  now: number;
+  pause: PauseState;
+}): number | null {
+  if (p.pause.pausedAt != null || !Number.isFinite(p.now) || !Number.isFinite(p.startedAt)) return null;
+  const from = p.lastActionAt ?? p.startedAt;
+  if (trainedBetween(p.startedAt, p.pause, from, p.now) <= IDLE_MS) return null;
+  // Never inside a pause already taken (a new pause starts after the last one ended).
+  let floor = p.startedAt;
+  for (const s of p.pause.pauses ?? []) floor = Math.max(floor, s.to);
+  return Math.min(p.now, Math.max(floor, from + Math.max(0, p.restSec) * 1000));
+}
+
+/** The workout screen's line while the timer paused itself. */
+export function idlePauseNote(pausedAt: number, now: number = Date.now(), use24Hour?: boolean | null): string {
+  return `Paused at ${clockTime(pausedAt, now, use24Hour)}: no sets for an hour. Tick a set to carry on, or finish the workout.`;
+}
+
+/**
  * Review fix (#6): which end the sheet picks first. When the member keeps the unticked rows
  * ("Save them"), they were still lifting after the last tick: "Now" — unless the workout has
  * been open over 3 h (then it was most likely left open, and the suggested end stays). PURE.

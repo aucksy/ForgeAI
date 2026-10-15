@@ -35,7 +35,7 @@ import { FinishSheet, type FinishChoice } from '@/tracker/components/FinishSheet
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { PAUSE_WORDS, type PauseState } from '@/tracker/services/workoutPause';
 import { getRoutine } from '@/tracker/db/routineRepo';
-import { defaultWorkoutName } from '@/tracker/services/finishCheck';
+import { defaultWorkoutName, idlePauseNote } from '@/tracker/services/finishCheck';
 import { copiedText } from '@/tracker/services/setEntry';
 import { bounceEmptyWorkout } from '@/tracker/services/workoutStart';
 import { holdRoutineOffer, routineUpdateOffer } from '@/tracker/services/routineOffer';
@@ -121,6 +121,8 @@ export default function ActiveWorkoutScreen() {
   const pauses = useActiveWorkout((s) => s.pauses);
   const pause = useMemo<PauseState>(() => ({ pausedAt, pausedTotalMs, pauses }), [pausedAt, pausedTotalMs, pauses]);
   const paused = pausedAt != null;
+  const pausedAuto = useActiveWorkout((s) => s.pausedAuto);
+  const pauseNote = pausedAuto && pausedAt != null ? idlePauseNote(pausedAt) : PAUSE_WORDS.note;
   const pauseWorkout = useActiveWorkout((s) => s.pauseWorkout);
   const resumeWorkout = useActiveWorkout((s) => s.resumeWorkout);
   const [timerMenu, setTimerMenu] = useState(false);
@@ -631,7 +633,7 @@ export default function ActiveWorkoutScreen() {
             <View
               accessible
               accessibilityRole="text"
-              accessibilityLabel={PAUSE_WORDS.note}
+              accessibilityLabel={pauseNote}
               style={{
                 paddingHorizontal: space.md,
                 paddingVertical: space.sm,
@@ -641,7 +643,7 @@ export default function ActiveWorkoutScreen() {
                 borderColor: color.border,
               }}
             >
-              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>{PAUSE_WORDS.note}</Text>
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>{pauseNote}</Text>
             </View>
           ) : null}
 

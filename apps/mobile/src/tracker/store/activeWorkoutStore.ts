@@ -283,6 +283,8 @@ interface DraftSnapshot {
   pausedAt?: number | null;
   pausedTotalMs?: number;
   pauses?: PauseSpan[];
+  /** The running pause was started by the app itself after an hour with no sets (idlePauseAt). */
+  pausedAuto?: boolean;
 }
 
 /** "Log a past workout": the routine it was (its id, name and day type). */
@@ -361,6 +363,8 @@ export interface ActiveWorkoutState {
   pausedTotalMs: number;
   /** The finished pauses themselves (for an "Ended at" earlier than now; workoutPause.ts). */
   pauses: PauseSpan[];
+  /** The running pause was started by the app after an hour with no sets (forgotten Finish). */
+  pausedAuto: boolean;
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
@@ -482,6 +486,8 @@ export interface ActiveWorkoutState {
   pauseWorkout: () => void;
   /** Resume the workout timer — now, or at `at` (a tick's own moment). Not paused: nothing. */
   resumeWorkout: (at?: number) => void;
+  /** The app pauses the timer itself at `at` (an hour with no sets; finishCheck.idlePauseAt). */
+  autoPause: (at: number) => void;
 }
 
 /**
@@ -548,6 +554,7 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
     pausedAt: s.pausedAt,
     pausedTotalMs: s.pausedTotalMs,
     pauses: s.pauses,
+    pausedAuto: s.pausedAt != null && s.pausedAuto,
   };
   await setMeta(DRAFT_KEY, JSON.stringify(snap));
 }
@@ -1372,6 +1379,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     pausedAt: null,
     pausedTotalMs: 0,
     pauses: [],
+    pausedAuto: false,
     lastSaveReconciled: true,
 
     hydrate: async () => {
@@ -1424,6 +1432,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               pastLog: false,
               // A workout paused when the app was closed is still paused (its clock stood still).
               ...withSpans(pauseFromDraft(snap, snap.startedAt)),
+              pausedAuto: snap.pausedAuto === true && pauseFromDraft(snap, snap.startedAt).pausedAt != null,
             });
           }
         } catch (e) {
@@ -2389,7 +2398,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const s = get();
       // Only a live workout has a running clock (an edit or a past log shows none).
       if (!s.active || s.startedAt == null || isCorrecting(s) || s.committing || s.pausedAt != null) return;
-      set(withSpans(pauseAt(s, Date.now())));
+      set({ ...withSpans(pauseAt(s, Date.now())), pausedAuto: false });
       persistNow();
     },
 
@@ -2399,7 +2408,14 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const now = Date.now();
       // Never before the pause began, never in the future.
       const when = at != null && Number.isFinite(at) ? Math.min(now, Math.max(s.pausedAt, at)) : now;
-      set(withSpans(resumeAt(s, when)));
+      set({ ...withSpans(resumeAt(s, when)), pausedAuto: false });
+      persistNow();
+    },
+
+    autoPause: (at) => {
+      const s = get();
+      if (!s.active || s.startedAt == null || isCorrecting(s) || s.committing || s.pausedAt != null || !Number.isFinite(at)) return;
+      set({ ...withSpans(pauseAt(s, Math.min(Date.now(), Math.max(s.startedAt, at)))), pausedAuto: true });
       persistNow();
     },
 
