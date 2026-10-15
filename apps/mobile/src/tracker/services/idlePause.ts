@@ -10,12 +10,14 @@ import { AppState } from 'react-native';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { idlePauseAt, lastActivity } from './finishCheck';
+import { holdTimerOpen } from './holdTimerState';
 
 /** Pause the open workout now if it has been idle an hour. Never throws. */
 export function checkIdlePause(now: number = Date.now()): void {
   try {
     const s = useActiveWorkout.getState();
-    if (!s.active || s.startedAt == null || s.pausedAt != null || s.editingSessionId != null || s.pastLog) return;
+    // A set being timed on the hold timer is training, never an idle hour.
+    if (holdTimerOpen() || !s.active || s.startedAt == null || s.pausedAt != null || s.editingSessionId != null || s.pastLog) return;
     const last = lastActivity(s.exercises, useRestTimer.getState().defaultSec);
     const at = idlePauseAt({
       startedAt: s.startedAt,
@@ -35,8 +37,13 @@ export function useIdlePause(enabled: boolean): void {
   useEffect(() => {
     if (!enabled) return;
     checkIdlePause();
+    // Review: on coming back, sets ticked from the shade or watch while the app was closed are
+    // saved first (restDoneRun), so wait a moment before measuring the idle time.
+    let later: ReturnType<typeof setTimeout> | null = null;
     const sub = AppState.addEventListener('change', (st) => {
-      if (st === 'active') checkIdlePause();
+      if (st !== 'active') return;
+      if (later) clearTimeout(later);
+      later = setTimeout(() => checkIdlePause(), 3000);
     });
     const timer = setInterval(() => {
       if (AppState.currentState === 'active') checkIdlePause();
@@ -44,6 +51,7 @@ export function useIdlePause(enabled: boolean): void {
     return () => {
       sub.remove();
       clearInterval(timer);
+      if (later) clearTimeout(later);
     };
   }, [enabled]);
 }

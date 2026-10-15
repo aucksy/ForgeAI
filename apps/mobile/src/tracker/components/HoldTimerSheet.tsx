@@ -27,6 +27,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { fmtDuration } from '../engine/logTypes';
 import { holdCloseIntent, type HoldCloseSource } from '../services/holdTimerRules';
+import { noteHoldTimer } from '../services/holdTimerState';
 import { playWorkoutSound } from '../services/workoutSounds';
 import { Glyph } from './TrackerGlyph';
 
@@ -72,6 +73,11 @@ export function HoldTimerSheet({ visible, title, goalSec, onSave, onClose }: Hol
   }, [visible, goalSec]);
 
   const running = startedAt != null;
+  // Forgotten Finish: a set being timed is training, never an idle hour.
+  useEffect(() => {
+    noteHoldTimer(visible);
+    return () => noteHoldTimer(false);
+  }, [visible]);
   useEffect(() => {
     if (!running) return;
     const id = setInterval(() => setNow(Date.now()), 200);

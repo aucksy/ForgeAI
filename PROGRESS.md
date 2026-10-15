@@ -1778,6 +1778,26 @@
     the Pixel Watch app's "Mute notifications" under Watch (mutes the watch while the phone is in
     use, i.e. app open in the gym), or ForgeAI off under its phone-app list. The cloud phone cannot
     pair a watch, so this stays the owner's check.
+  - Also in v0.44.0 (56fb3c4, 8b7c0c9, e83e470, 0bc15c0 + this commit):
+    - Record pop-up: confetti and the record type named ("Most reps", "Heaviest weight", "Most
+      lifted in one set / workout"); 4.2 s, an X button; last-time pop-up 3 s.
+    - Exercise History during a workout shows the current workout first, marked as current.
+    - Press-and-hold drag of exercises in the LIVE workout (all cards shrink to their name row, a
+      buzz at each crossing), like routines. Phone part J3.
+    - Rest starts on the RPE tap (no second tap on the check); checks no longer buzz on scroll.
+    - Science-based suggestions: Settings -> Workouts -> Weight jumps (Small / Standard / Large,
+      ~2.5/5/10%) and Rep range (Match my goal / Strength / Muscle / Higher reps). Review fixes:
+      gym plates only when Plates and bars was changed, every barbell suggestion loadable, Small
+      caps the beginner fast lane, an explicit rep range applies to every row (the routine view
+      shows it), warm-ups scale with the working weight, later sets never below the range.
+    - Forgotten Finish: no set ticked or typed for an hour pauses the workout timer itself,
+      back-dated to the last set + its rest ("Paused at 7:12 pm: no sets for an hour"). A tick or
+      typing resumes it; then "Timer paused 7:12 pm to 8:10 pm while no sets were logged. Count it"
+      on the workout screen and the Finish sheet gives the time back (a member who logs at the
+      end). Not while the hold timer is open; checked 3 s after coming back so shade/watch ticks
+      land first; no auto-pause when a manual pause ended after the last set (Finish asks instead).
+    - Phone test: J3's screen read retries and falls back to `maestro hierarchy` (the live clock
+      can stop uiautomator finding an idle screen; run 38692714816 got no file).
 - 2026-10-15: **v0.43.0 — QR self check-in; database safety check and promise ratchet in CI**
   (49fcac0, e93a2cd, 4f4420a, 34dcbd8).
   - QR check-in: panel Attendance -> Check-in QR poster (print / picture) of

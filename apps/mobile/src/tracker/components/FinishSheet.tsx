@@ -18,7 +18,9 @@ import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import {
+  autoSpanText,
   clockTime,
+  COUNT_IT,
   durationText,
   endDefault,
   finishOverview,
@@ -54,6 +56,9 @@ export interface FinishSheetProps {
   saving: boolean;
   onFinish: (choice: FinishChoice) => void;
   onClose: () => void;
+  /** Forgotten Finish: the time the app paused itself, which the member may still count. */
+  autoSpan?: { from: number; to: number } | null;
+  onCountAutoPause?: () => void;
 }
 
 /** One-of-many choice with a radio circle (DESIGN-LANGUAGE: Choices). 48 dp. */
@@ -112,7 +117,20 @@ const field = () => ({
   color: color.ink,
 }) as const;
 
-export function FinishSheet({ visible, exercises, startedAt, pause, defaultName, askName, defaultRestSec, saving, onFinish, onClose }: FinishSheetProps) {
+export function FinishSheet({
+  visible,
+  exercises,
+  startedAt,
+  pause,
+  defaultName,
+  askName,
+  defaultRestSec,
+  saving,
+  onFinish,
+  onClose,
+  autoSpan,
+  onCountAutoPause,
+}: FinishSheetProps) {
   // Everything below is decided when the sheet opens, so the numbers stand still while it's up.
   const [openedAt, setOpenedAt] = useState(() => Date.now());
   const unticked = useMemo(() => untickedWithNumbers(exercises), [exercises]);
@@ -184,6 +202,13 @@ export function FinishSheet({ visible, exercises, startedAt, pause, defaultName,
           />
           <Choice label="Leave them out" selected={!keepUnticked} onPress={() => pickKeep(false)} />
           <Choice label="Save them" selected={keepUnticked} onPress={() => pickKeep(true)} />
+        </View>
+      ) : null}
+
+      {autoSpan && onCountAutoPause ? (
+        <View style={{ gap: space.xs }}>
+          <Question text={autoSpanText(autoSpan, openedAt, h24)} />
+          <GhostButton label={COUNT_IT} accessibilityLabel="Count the paused time in the workout" onPress={onCountAutoPause} />
         </View>
       ) : null}
 

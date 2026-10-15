@@ -155,8 +155,21 @@ export function idlePauseAt(p: {
   // Never inside a pause already taken (a new pause starts after the last one ended).
   let floor = p.startedAt;
   for (const s of p.pause.pauses ?? []) floor = Math.max(floor, s.to);
-  return Math.min(p.now, Math.max(floor, from + Math.max(0, p.restSec) * 1000));
+  const at = from + Math.max(0, p.restSec) * 1000;
+  // Review: a pause that ended AFTER the last set's rest means the member came back and then
+  // left it open; Finish's own "Ended at" question gets that right, an auto-pause would not.
+  if (floor > at) return null;
+  return Math.min(p.now, at);
 }
+
+/**
+ * Review: after the member is back, the time the app left out, with a "Count it" button. A
+ * member who logs every set at the end (or did a long set away from the app) gets it back.
+ */
+export function autoSpanText(span: { from: number; to: number }, now: number = Date.now(), use24Hour?: boolean | null): string {
+  return `Timer paused ${clockTime(span.from, now, use24Hour)} to ${clockTime(span.to, now, use24Hour)} while no sets were logged.`;
+}
+export const COUNT_IT = 'Count it';
 
 /** The workout screen's line while the timer paused itself. */
 export function idlePauseNote(pausedAt: number, now: number = Date.now(), use24Hour?: boolean | null): string {

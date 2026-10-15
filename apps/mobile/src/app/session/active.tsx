@@ -35,11 +35,12 @@ import { FinishSheet, type FinishChoice } from '@/tracker/components/FinishSheet
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { PAUSE_WORDS, type PauseState } from '@/tracker/services/workoutPause';
 import { getRoutine } from '@/tracker/db/routineRepo';
-import { defaultWorkoutName, idlePauseNote } from '@/tracker/services/finishCheck';
+import { autoSpanText, COUNT_IT, defaultWorkoutName, idlePauseNote } from '@/tracker/services/finishCheck';
 import { copiedText } from '@/tracker/services/setEntry';
 import { bounceEmptyWorkout } from '@/tracker/services/workoutStart';
 import { holdRoutineOffer, routineUpdateOffer } from '@/tracker/services/routineOffer';
 import { ensureAlertPermission } from '@/tracker/services/workoutAlerts';
+import { phoneUses24Hour } from '@/tracker/services/restCard';
 import { loadTargets, querySignature, targetQuery, useTargets } from '@/tracker/store/targetStore';
 import { useUnits } from '@/lib/useUnits';
 import { goBack } from '@/lib/goBack';
@@ -122,7 +123,9 @@ export default function ActiveWorkoutScreen() {
   const pause = useMemo<PauseState>(() => ({ pausedAt, pausedTotalMs, pauses }), [pausedAt, pausedTotalMs, pauses]);
   const paused = pausedAt != null;
   const pausedAuto = useActiveWorkout((s) => s.pausedAuto);
-  const pauseNote = pausedAuto && pausedAt != null ? idlePauseNote(pausedAt) : PAUSE_WORDS.note;
+  const autoSpan = useActiveWorkout((s) => s.autoSpan);
+  const countAutoPause = useActiveWorkout((s) => s.countAutoPause);
+  const pauseNote = pausedAuto && pausedAt != null ? idlePauseNote(pausedAt, Date.now(), phoneUses24Hour()) : PAUSE_WORDS.note;
   const pauseWorkout = useActiveWorkout((s) => s.pauseWorkout);
   const resumeWorkout = useActiveWorkout((s) => s.resumeWorkout);
   const [timerMenu, setTimerMenu] = useState(false);
@@ -648,6 +651,26 @@ export default function ActiveWorkoutScreen() {
             </View>
           ) : null}
 
+          {/* Forgotten Finish (review): the time the app left out, and a way to count it. */}
+          {autoSpan && !paused && !isEditing ? (
+            <View
+              style={{
+                paddingHorizontal: space.md,
+                paddingVertical: space.sm,
+                gap: space.sm,
+                borderRadius: radius.md,
+                backgroundColor: color.surfaceRaised,
+                borderWidth: 1,
+                borderColor: color.border,
+              }}
+            >
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+                {autoSpanText(autoSpan, Date.now(), phoneUses24Hour())}
+              </Text>
+              <GhostButton label={COUNT_IT} accessibilityLabel="Count the paused time in the workout" onPress={countAutoPause} />
+            </View>
+          ) : null}
+
           {/* Phase 4: the followed plan's easy week — the fact on screen, the why behind the i */}
           {easyWeek && !isEditing ? <EasyWeekNote /> : null}
 
@@ -764,6 +787,8 @@ export default function ActiveWorkoutScreen() {
           saving={committing}
           onFinish={(choice) => void onFinish(choice)}
           onClose={() => setFinishOpen(false)}
+          autoSpan={autoSpan}
+          onCountAutoPause={countAutoPause}
         />
       ) : null}
       {/* 15 Oct 2026: the workout timer's menu (Hevy: tap the duration). */}

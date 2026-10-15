@@ -286,6 +286,8 @@ interface DraftSnapshot {
   pauses?: PauseSpan[];
   /** The running pause was started by the app itself after an hour with no sets (idlePauseAt). */
   pausedAuto?: boolean;
+  /** The last finished auto-pause (the member can still "Count it"). */
+  autoSpan?: PauseSpan | null;
 }
 
 /** "Log a past workout": the routine it was (its id, name and day type). */
@@ -366,6 +368,8 @@ export interface ActiveWorkoutState {
   pauses: PauseSpan[];
   /** The running pause was started by the app after an hour with no sets (forgotten Finish). */
   pausedAuto: boolean;
+  /** The last auto-pause once the member was back: shown with "Count it" until Finish. */
+  autoSpan: PauseSpan | null;
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
@@ -489,6 +493,8 @@ export interface ActiveWorkoutState {
   resumeWorkout: (at?: number) => void;
   /** The app pauses the timer itself at `at` (an hour with no sets; finishCheck.idlePauseAt). */
   autoPause: (at: number) => void;
+  /** "Count it": the last auto-pause counts as workout time after all. */
+  countAutoPause: () => void;
 }
 
 /**
@@ -556,6 +562,7 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
     pausedTotalMs: s.pausedTotalMs,
     pauses: s.pauses,
     pausedAuto: s.pausedAt != null && s.pausedAuto,
+    autoSpan: s.autoSpan,
   };
   await setMeta(DRAFT_KEY, JSON.stringify(snap));
 }
@@ -1249,6 +1256,13 @@ export function withWarmups(
   return [...kept.slice(0, at), ...warm, ...kept.slice(at)];
 }
 
+/** The saved "Count it" span, only when it is still one of the workout's pauses. PURE. */
+function autoSpanFromDraft(raw: unknown, pauses: readonly PauseSpan[] | undefined): PauseSpan | null {
+  const s = raw as { from?: unknown; to?: unknown } | null | undefined;
+  if (!s || typeof s.from !== 'number' || typeof s.to !== 'number') return null;
+  return (pauses ?? []).some((p) => p.from === s.from && p.to === s.to) ? { from: s.from, to: s.to } : null;
+}
+
 /** A pause as the store keeps it (the finished pauses always an array). PURE. */
 function withSpans(p: { pausedAt: number | null; pausedTotalMs: number; pauses?: readonly PauseSpan[] }): {
   pausedAt: number | null;
@@ -1390,6 +1404,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     pausedTotalMs: 0,
     pauses: [],
     pausedAuto: false,
+    autoSpan: null,
     lastSaveReconciled: true,
 
     hydrate: async () => {
@@ -1443,6 +1458,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               // A workout paused when the app was closed is still paused (its clock stood still).
               ...withSpans(pauseFromDraft(snap, snap.startedAt)),
               pausedAuto: snap.pausedAuto === true && pauseFromDraft(snap, snap.startedAt).pausedAt != null,
+              autoSpan: autoSpanFromDraft(snap.autoSpan, pauseFromDraft(snap, snap.startedAt).pauses),
             });
           }
         } catch (e) {
@@ -1701,6 +1717,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     dismissUndo: () => set({ lastDeleted: null }),
 
     updateSet: (exKey, setKey, patch) => {
+      // Review: typing a number is training again, like a tick (only the member's typing calls this).
+      if (get().pausedAuto) get().resumeWorkout(Date.now());
       mutate((list) =>
         list.map((e) =>
           e.key === exKey
@@ -2418,7 +2436,27 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const now = Date.now();
       // Never before the pause began, never in the future.
       const when = at != null && Number.isFinite(at) ? Math.min(now, Math.max(s.pausedAt, at)) : now;
-      set({ ...withSpans(resumeAt(s, when)), pausedAuto: false });
+      const next = withSpans(resumeAt(s, when));
+      // An auto-pause that ends becomes the span the member may still "Count it".
+      const autoSpan = s.pausedAuto ? (next.pauses[next.pauses.length - 1] ?? null) : s.autoSpan;
+      set({ ...next, pausedAuto: false, autoSpan });
+      persistNow();
+    },
+
+    countAutoPause: () => {
+      const s = get();
+      const span = s.autoSpan;
+      if (!span) return;
+      const i = s.pauses.findIndex((p) => p.from === span.from && p.to === span.to);
+      if (i < 0) {
+        set({ autoSpan: null });
+        return;
+      }
+      set({
+        pauses: s.pauses.filter((_, j) => j !== i),
+        pausedTotalMs: Math.max(0, s.pausedTotalMs - (span.to - span.from)),
+        autoSpan: null,
+      });
       persistNow();
     },
 
