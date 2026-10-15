@@ -134,7 +134,7 @@
           "arm": {
             "elev": 55,
             "plane": 10,
-            "elbow": 100,
+            "elbow": "fore_vertical",
             "bend_world": [
               0,
               0,
@@ -155,8 +155,8 @@
           ],
           "arm": {
             "elev": 118,
-            "plane": 97,
-            "elbow": 15,
+            "plane": 88,
+            "elbow": "fore_vertical",
             "bend_world": [
               0,
               0,

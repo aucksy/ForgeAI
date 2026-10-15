@@ -186,6 +186,9 @@ class Clip:
                 ft.rotation_quaternion = Euler([math.radians(a) for a in f["rot"]], "XYZ").to_quaternion() @ self.foot_rest[s]
         R.update()
         for s, h in pose.get("hands", {}).items():
+            if "_fk" in h:
+                self.pose_arm_fk(s, h, T)
+                continue
             frame = T if h.get("frame", "torso") == "torso" else Matrix.Identity(4)
             c = frame @ Vector(h["at"])
             axis = (frame.to_3x3() @ Vector(h["axis"])).normalized()
@@ -194,6 +197,65 @@ class Clip:
                 up = frame.to_3x3() @ Vector((0, 0, 1))
                 prop.matrix_world = R.frame_from(c, axis if s == "L" else -axis, up)
             R.place_hand(rig, s, c, axis, self.G[s])
+        R.update()
+
+    FK_BONES = ("upperarm01", "upperarm02", "lowerarm01", "lowerarm02")
+
+    def pose_arm_fk(self, s, h, T):
+        """Set the arm bones directly: each segment takes the shortest swing from where it points to where it must point,
+        so the upper arm never spins about its own length (the IK solver's free roll caused an uncanny shoulder twist)."""
+        rig = self.rig; pb = rig.pose.bones
+        con = pb[f"lowerarm02.{s}"].constraints.get("FA_IK")
+        if con:
+            con.mute = True
+        for b in self.FK_BONES:
+            p = pb[f"{b}.{s}"]; p.rotation_mode = "QUATERNION"; p.rotation_quaternion = (1, 0, 0, 0)
+        R.update()
+        S, E, W, fold = h["_fk"]
+        up_b = pb[f"upperarm01.{s}"]; lo_b = pb[f"lowerarm01.{s}"]
+
+        def rotate_about(p, pivot, q):
+            p.matrix = Matrix.Translation(pivot) @ q.to_matrix().to_4x4() @ Matrix.Translation(-pivot) @ p.matrix
+            R.update()
+        # a) point the upper arm (shoulder -> elbow)
+        sh = R.world_head(rig, f"upperarm01.{s}")
+        rotate_about(up_b, sh, (R.world_head(rig, f"lowerarm01.{s}") - sh).rotation_difference(E - S))
+        # b) roll it about its own length so the elbow hinge folds the forearm toward `fold` (real humeral rotation,
+        #    continuous because `fold` is continuous)
+        du = (E - S).normalized()
+        el = R.world_head(rig, f"lowerarm01.{s}")
+        f_cur = R.world_head(rig, f"wrist.{s}") - el
+        fp = f_cur - du * f_cur.dot(du)
+        if fp.length > 1e-6:
+            ang = fp.normalized().angle(fold)
+            if fp.normalized().cross(fold).dot(du) < 0:
+                ang = -ang
+            rotate_about(up_b, sh, Quaternion(du, ang))
+        # c) bend the elbow about its hinge only
+        el = R.world_head(rig, f"lowerarm01.{s}")
+        rotate_about(lo_b, el, (R.world_head(rig, f"wrist.{s}") - el).rotation_difference(W - E))
+        # hand orientation and the dumbbell from the wrist we actually reached
+        wr = R.world_head(rig, f"wrist.{s}"); el = R.world_head(rig, f"lowerarm01.{s}")
+        axis = (T.to_3x3() @ Vector(h["axis"])).normalized()
+        Gw = R.frame_from(Vector((0, 0, 0)), axis, el - wr)
+        Ginv = self.G[s].inverted()
+        Rg = Gw.to_3x3()
+        c = wr - Rg @ Ginv.translation
+        Gw.translation = c
+        Wm = Gw @ Ginv
+        hand = self.ctl[f"hand.{s}"]; hand.location = Wm.translation; hand.rotation_quaternion = Wm.to_quaternion()
+        prop = self.props.get(h.get("prop", ""))
+        if prop is not None:
+            prop.matrix_world = R.frame_from(c, axis if s == "L" else -axis, T.to_3x3() @ Vector((0, 0, 1)))
+        R.update()
+        # forearm pronation lives in the forearm (radius over ulna), not the wrist joint: hand most of the wrist's
+        # spin to the forearm twist bone so the skin twists along the forearm instead of snapping at the wrist
+        w = pb[f"wrist.{s}"]
+        rest = w.parent.bone.matrix_local.inverted() @ w.bone.matrix_local
+        q = (rest.inverted() @ (w.parent.matrix.inverted() @ w.matrix)).to_quaternion()
+        tw = 2 * math.atan2(q.y, q.w)
+        tw = (tw + math.pi) % (2 * math.pi) - math.pi
+        pb[f"lowerarm02.{s}"].rotation_quaternion = Quaternion((0, 1, 0), tw * 0.85)
         R.update()
 
     def arm_lengths(self):
@@ -227,14 +289,37 @@ class Clip:
                     b = R3 @ Vector(a["bend_world"])
                 else:
                     b = Vector(a.get("bend", (0, 1, 0))); b.x *= sx
+                # when the upper arm points almost along b (arm straight up in a press) the fold direction is undefined
+                # and flips; ease toward a fallback (torso frame: toward the midline and the head) instead
+                b_raw = b.normalized()
+                bp = b_raw - du * b_raw.dot(du)
+                fb = Vector(a.get("bend_fallback", (-0.6, 0.0, 0.8))); fb.x *= sx
+                fbp = (fb - du * fb.dot(du)).normalized()
+                wgt = min(1.0, bp.length / 0.35)
+                b = (bp.normalized() * wgt + fbp * (1 - wgt)) if bp.length > 1e-6 else fbp
                 if a.get("elbow") == "fore_vertical":   # pick the bend that makes the forearm point exactly along b
-                    a = dict(a, elbow=math.degrees(du.angle(b)))
+                    a = dict(a, elbow=math.degrees(du.angle(b_raw)))
                 bperp = (b - du * b.dot(du)).normalized()
                 k = math.radians(a.get("elbow", 10) if not isinstance(a.get("elbow"), str) else 10)
                 fore = (du * math.cos(k) + bperp * math.sin(k)).normalized()
             Wr = E + fore * L2
             h["at"] = list(Wr + fore * hoff)
-            pose.setdefault("elbows", {})[s] = list(E - bperp * 0.45)
+            h["_fk"] = (T @ S, T @ E, T @ Wr, (T.to_3x3() @ bperp).normalized())   # world; used by pose_arm_fk
+            # elbow pole: aim it at the elbow the angles ask for (away from the shoulder-wrist line), so the IK lands the
+            # elbow there. When the arm is nearly straight that direction vanishes and flips sides, and the solver rolls
+            # the whole upper arm over (seen: 114 deg shoulder twist). "pole" (torso frame, x = outward) is the tie-break.
+            line = Wr - S; tpar = (E - S).dot(line) / max(1e-9, line.length_squared)
+            away = E - (S + line * tpar)
+            hint = Vector(a.get("pole", (0, 0, 0))); hint.x *= sx
+            if hint.length > 0:
+                hint.normalize()
+                if away.length < 0.04:
+                    away = hint * 0.04 + away       # straight arm: lean on the fixed hint
+                elif away.dot(hint) < 0:
+                    away = -away                    # never let the pole cross to the other side
+            elif away.length < 1e-4:
+                away = -bperp
+            pose.setdefault("elbows", {})[s] = list(E + away.normalized() * 0.45)
 
     # ---------------- bake ----------------
     def timeline(self):
@@ -267,6 +352,8 @@ class Clip:
         for p in self.spec["poses"].values():
             bone_names |= set(p.get("bones", {}).keys())
         bone_names |= {b[:-2] + ".R" for b in bone_names if b.endswith(".L")}
+        fk = any("arm" in h for p in self.spec["poses"].values() for h in p.get("hands", {}).values())
+        fk_bones = [f"{b}.{s}" for b in self.FK_BONES for s in R.SIDES] if fk else []
         animated = [o for o in self.ctl.values()] + list(self.props.values())
         for f in range(n):
             scene.frame_set(f)
@@ -275,6 +362,8 @@ class Clip:
             for b in bone_names:
                 if b in pb:
                     pb[b].keyframe_insert("rotation_euler", frame=f)
+            for b in fk_bones:
+                pb[b].keyframe_insert("rotation_quaternion", frame=f)
             for o in animated:
                 o.keyframe_insert("location", frame=f)
                 o.keyframe_insert("rotation_quaternion" if o.rotation_mode == "QUATERNION" else "rotation_euler", frame=f)

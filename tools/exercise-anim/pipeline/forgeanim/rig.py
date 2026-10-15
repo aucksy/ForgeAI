@@ -83,6 +83,8 @@ def setup(rig):
             if b in TWIST_LOCK:
                 p.lock_ik_x, p.lock_ik_y, p.lock_ik_z = TWIST_LOCK[b]
             p.ik_stretch = 0.0
+        # the solver may otherwise roll the whole upper arm about its length (uncanny shoulder twist)
+        rig.pose.bones[f"upperarm01.{s}"].ik_stiffness_y = 0.85
         cr = rig.pose.bones[f"wrist.{s}"].constraints.new("COPY_ROTATION"); cr.name = "FA_HandRot"; cr.target = hand
         _calibrate_pole(rig, c, f"lowerarm02.{s}", f"lowerarm01.{s}")
         # leg
