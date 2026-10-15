@@ -161,7 +161,7 @@ export default function CalendarScreen() {
         data={months}
         keyExtractor={(m) => m}
         ListHeaderComponent={top}
-        renderItem={({ item }) => <MonthBlock ym={item} days={days} today={today} onDay={onDay} />}
+        renderItem={({ item }) => <MonthBlock ym={item} days={days} today={today} onDay={(d, n) => void onDay(d, n)} />}
         initialNumToRender={3}
         windowSize={5}
         onScrollToIndexFailed={(e) => setTimeout(() => list.current?.scrollToOffset({ offset: e.averageItemLength * e.index, animated: false }), 50)}

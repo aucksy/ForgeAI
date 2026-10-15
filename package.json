@@ -11,5 +11,9 @@
     "typecheck:mobile": "npm run typecheck --workspace apps/mobile",
     "typecheck:dashboard": "npm run typecheck --workspace apps/dashboard",
     "build:dashboard": "npm run build --workspace apps/dashboard"
+  },
+  "devDependencies": {
+    "eslint": "9.39.5",
+    "typescript-eslint": "8.71.2"
   }
 }

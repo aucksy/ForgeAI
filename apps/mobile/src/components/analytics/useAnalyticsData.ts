@@ -97,7 +97,8 @@ export function useAnalyticsData(focusKey = 1): AnalyticsState {
     if (focusKey <= 0) return; // not shown yet
     const req = ++reqRef.current;
     setLoading(true);
-    (async () => {
+    // Handles its own failure (catch → the "couldn't load" state), so nothing is left to reject.
+    void (async () => {
       try {
         const { bundle: b, profile: p, streak: s } = await loadProgress(range);
         if (reqRef.current !== req) return;

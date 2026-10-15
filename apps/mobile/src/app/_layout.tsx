@@ -96,7 +96,7 @@ export default function RootLayout() {
       // unless a gym is linked, so the offline app makes zero network calls.
       // Gym sync is hidden until its own phase (D4) — not even started then.
       if (FEATURES.gymSync) void useCloud.getState().init();
-    })();
+    })().catch((e: unknown) => console.warn('[ForgeErr] start-up', e));
   }, []);
 
   const ready = fontsLoaded && status !== 'loading' && themeReady;

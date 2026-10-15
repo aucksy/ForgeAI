@@ -45,6 +45,12 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
+      # Audit toolkit pick 4 (15 Oct 2026): type-aware ESLint for promise errors nobody sees
+      # (never awaited, async handler whose rejection is dropped, empty catch). The count per
+      # workspace may only go down (scripts/ci/promise_baseline.json).
+      - name: Promise ratchet
+        run: node scripts/ci/promise_ratchet.mjs
+
       - name: Typecheck (mobile)
         working-directory: apps/mobile
         run: npm run typecheck

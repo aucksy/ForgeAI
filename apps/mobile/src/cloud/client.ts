@@ -33,8 +33,9 @@ export function getSupabase(): SupabaseClient {
       // Refresh the auth token only while the app is foregrounded.
       AppState.addEventListener('change', (state) => {
         if (!client) return;
-        if (state === 'active') client.auth.startAutoRefresh();
-        else client.auth.stopAutoRefresh();
+        // quiet: a refresh that fails (offline) is retried by the client itself.
+        if (state === 'active') void client.auth.startAutoRefresh();
+        else void client.auth.stopAutoRefresh();
       });
     }
   }
