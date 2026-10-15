@@ -18,11 +18,21 @@ def srgb(hexstr):
     return (*out, 1.0)
 
 
+LOOK = {  # v2 look (15 Oct 2026): matched side by side against the Gymvisual/Hevy reference
+    "normal_strength": 2.0, "cav_from": 0.2, "cav_to": 0.9, "cav_amount": 0.95, "ao_floor": 0.45,
+    "world": 0.16, "key": 340, "fill": 22, "rim": 190, "top": 40, "roughness": 0.58, "sheen": 0.15,
+    "hl_cav": 0.8,
+}
+_ov = os.environ.get("FA_LOOK")
+if _ov:
+    import json as _json
+    LOOK.update(_json.loads(_ov))
+
 PALETTE = {
-    "skin": "#CDD0D4",        # cool light grey anatomy
-    "groove": "#6E7177",      # colour the deepest grooves fall to
-    "hl_core": "#E2401F",     # muscle highlight, centre
-    "hl_edge": "#FF7A3B",     # muscle highlight, edge (ForgeAI ember)
+    "skin": os.environ.get("FA_SKIN", "#C6C9CD"),        # cool light grey anatomy
+    "groove": os.environ.get("FA_GROOVE", "#43464C"),      # colour the deepest grooves fall to
+    "hl_core": os.environ.get("FA_HL_CORE", "#D2321C"),     # muscle highlight, centre
+    "hl_edge": os.environ.get("FA_HL_EDGE", "#F25A2C"),     # muscle highlight, edge (ForgeAI ember)
     "shorts": "#1D1F23",
     "hair": "#2A2B2E",
     "iron": "#18191B",        # dumbbell / plate rubber
@@ -57,8 +67,8 @@ def skin_material(name="FA_Skin"):
     uv = N.new("ShaderNodeUVMap"); uv.location = (-1200, 0)
 
     nrm = N.new("ShaderNodeTexImage"); nrm.location = (-900, -400); nrm.name = "NRM"
-    nrm.image = _img(os.path.join(MAPS, "body_nrm.png"))  # blurred copy of the CC0 Aksel normal map
-    nmap = N.new("ShaderNodeNormalMap"); nmap.location = (-600, -400); nmap.inputs["Strength"].default_value = 1.15
+    nrm.image = _img(os.path.join(MAPS, os.environ.get("FA_NRM", "body_nrm.png")))  # blurred copy of the CC0 Aksel normal map
+    nmap = N.new("ShaderNodeNormalMap"); nmap.location = (-600, -400); nmap.inputs["Strength"].default_value = LOOK["normal_strength"]
     L.new(uv.outputs[0], nrm.inputs[0]); L.new(nrm.outputs[0], nmap.inputs["Color"])
     flat = N.new("ShaderNodeAttribute"); flat.attribute_name = "fa_flat"; flat.location = (-600, -650); flat.name = "FLAT"
     geo = N.new("ShaderNodeNewGeometry"); geo.location = (-600, -800)
@@ -72,10 +82,10 @@ def skin_material(name="FA_Skin"):
     cav.image = _img(os.path.join(MAPS, "cavity.png"))
     L.new(uv.outputs[0], cav.inputs[0])
     cr = N.new("ShaderNodeMapRange"); cr.location = (-600, 200)
-    cr.inputs["From Min"].default_value = 0.22; cr.inputs["From Max"].default_value = 0.9
+    cr.inputs["From Min"].default_value = LOOK["cav_from"]; cr.inputs["From Max"].default_value = LOOK["cav_to"]
     L.new(cav.outputs[0], cr.inputs["Value"])
     cav_amt = N.new("ShaderNodeMath"); cav_amt.operation = "MULTIPLY"; cav_amt.location = (-400, 200)
-    cav_amt.inputs[1].default_value = 0.55; cav_amt.name = "CAV_AMOUNT"
+    cav_amt.inputs[1].default_value = LOOK["cav_amount"]; cav_amt.name = "CAV_AMOUNT"
     flat_inv = N.new("ShaderNodeMath"); flat_inv.operation = "SUBTRACT"; flat_inv.inputs[0].default_value = 1.0; flat_inv.location = (-600, 350)
     L.new(flat.outputs["Fac"], flat_inv.inputs[1])
     cav_pre = N.new("ShaderNodeMath"); cav_pre.operation = "MULTIPLY"; cav_pre.location = (-500, 250)
@@ -88,7 +98,7 @@ def skin_material(name="FA_Skin"):
     L.new(nmap.outputs[0], ao.inputs["Normal"])
     ao_r = N.new("ShaderNodeMapRange"); ao_r.location = (-400, 500)
     ao_r.inputs["From Min"].default_value = 0.0; ao_r.inputs["From Max"].default_value = 1.0
-    ao_r.inputs["To Min"].default_value = 0.55; ao_r.inputs["To Max"].default_value = 1.0
+    ao_r.inputs["To Min"].default_value = LOOK["ao_floor"]; ao_r.inputs["To Max"].default_value = 1.0
     L.new(ao.outputs["AO"], ao_r.inputs["Value"])
 
     base = N.new("ShaderNodeRGB"); base.location = (-400, 0); base.outputs[0].default_value = srgb(PALETTE["skin"])
@@ -110,7 +120,7 @@ def skin_material(name="FA_Skin"):
     hl_dark = N.new("ShaderNodeMix"); hl_dark.data_type = "RGBA"; hl_dark.blend_type = "MULTIPLY"; hl_dark.location = (-300, 800)
     L.new(cr.outputs[0], hl_dark.inputs["Factor"]); hl_dark.inputs["Factor"].default_value = 0.4
     L.new(hl_ramp.outputs[0], hl_dark.inputs[6]); hl_dark.inputs[7].default_value = (0.55, 0.2, 0.12, 1)
-    cav_hl = N.new("ShaderNodeMath"); cav_hl.operation = "MULTIPLY"; cav_hl.inputs[1].default_value = 0.5; cav_hl.location = (-450, 650)
+    cav_hl = N.new("ShaderNodeMath"); cav_hl.operation = "MULTIPLY"; cav_hl.inputs[1].default_value = LOOK["hl_cav"]; cav_hl.location = (-450, 650)
     L.new(cr.outputs[0], cav_hl.inputs[0]); L.new(cav_hl.outputs[0], hl_dark.inputs["Factor"])
     mix_h = N.new("ShaderNodeMix"); mix_h.data_type = "RGBA"; mix_h.location = (100, 300)
     L.new(hl_f.outputs[0], mix_h.inputs["Factor"]); L.new(mix_g.outputs[2], mix_h.inputs[6]); L.new(hl_dark.outputs[2], mix_h.inputs[7])
@@ -130,12 +140,12 @@ def skin_material(name="FA_Skin"):
     sc_m.inputs[7].default_value = srgb(PALETTE["hair"])
     L.new(sc_m.outputs[2], bsdf.inputs["Base Color"])
 
-    bsdf.inputs["Roughness"].default_value = 0.58
+    bsdf.inputs["Roughness"].default_value = LOOK["roughness"]
     bsdf.inputs["Specular IOR Level"].default_value = 0.32
     bsdf.inputs["Subsurface Weight"].default_value = 0.0   # SSS costs ~2x render time for little gain at app size
     bsdf.inputs["Subsurface Radius"].default_value = (1.0, 0.45, 0.3)
     bsdf.inputs["Subsurface Scale"].default_value = 0.012
-    bsdf.inputs["Sheen Weight"].default_value = 0.15
+    bsdf.inputs["Sheen Weight"].default_value = LOOK["sheen"]
     bsdf.inputs["Sheen Roughness"].default_value = 0.4
     L.new(bsdf.outputs[0], out.inputs[0])
     return mat
@@ -205,7 +215,7 @@ def setup_world_and_render(scene, res=720, samples=48, transparent=False):
     w = bpy.data.worlds.get("FA_World") or bpy.data.worlds.new("FA_World"); scene.world = w; w.use_nodes = True
     N = w.node_tree.nodes; L = w.node_tree.links; N.clear()
     out = N.new("ShaderNodeOutputWorld")
-    env = N.new("ShaderNodeBackground"); env.inputs[0].default_value = (1, 1, 1, 1); env.inputs[1].default_value = 0.22
+    env = N.new("ShaderNodeBackground"); env.inputs[0].default_value = (1, 1, 1, 1); env.inputs[1].default_value = LOOK["world"]
     camv = N.new("ShaderNodeBackground"); camv.inputs[0].default_value = srgb(PALETTE["bg"]); camv.inputs[1].default_value = 1.0
     lp = N.new("ShaderNodeLightPath"); mix = N.new("ShaderNodeMixShader")
     L.new(lp.outputs["Is Camera Ray"], mix.inputs[0]); L.new(env.outputs[0], mix.inputs[1]); L.new(camv.outputs[0], mix.inputs[2])
@@ -225,10 +235,10 @@ def setup_lights(scene, center=(0, 0, 1.0), yaw_deg=-35.0):
     for o in [o for o in scene.objects if o.name.startswith("FA_Light")]:
         bpy.data.objects.remove(o)
     rig = [  # name, offset in camera-relative frame (camera looks along +Y from -Y), energy W, size m
-        ("FA_Light_Key", (-2.6, -2.4, 2.6), 300, 2.2),
-        ("FA_Light_Fill", (2.8, -1.8, 0.9), 45, 3.2),
-        ("FA_Light_Rim", (1.2, 3.2, 2.2), 190, 1.6),
-        ("FA_Light_Top", (0.0, 0.0, 4.0), 40, 3.0),
+        ("FA_Light_Key", (-2.6, -2.4, 2.6), LOOK["key"], 2.2),
+        ("FA_Light_Fill", (2.8, -1.8, 0.9), LOOK["fill"], 3.2),
+        ("FA_Light_Rim", (1.2, 3.2, 2.2), LOOK["rim"], 1.6),
+        ("FA_Light_Top", (0.0, 0.0, 4.0), LOOK["top"], 3.0),
     ]
     for name, off, energy, size in rig:
         d = bpy.data.lights.new(name, "AREA"); d.energy = energy; d.size = size; d.shape = "DISK"

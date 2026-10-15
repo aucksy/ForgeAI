@@ -8,7 +8,8 @@ Right-hand values mirror the left ones (x -> -x) unless a pose gives an explicit
 Pose keys (all optional, missing = rest / previous):
   root:   {"loc": [x,y,z] world position of the root (pelvis) joint, "rot": [rx,ry,rz] degrees applied to the whole body}
   bones:  {"spine03": [rx,ry,rz], "neck01": [...], "head": [...], "clavicle.L": [...], ...}  local euler degrees
-  hands:  {"L": {"prop": "db_L", "at": [x,y,z], "axis": [x,y,z], "frame": "torso"|"world"}}   axis = pinky->index
+  hands:  {"L": {"prop": "db_L", "at": [x,y,z], "axis": [x,y,z], "frame": "torso"|"world", "pivot": [x,y,z]}}
+          axis = pinky->index; pivot (optional, torso frame) = the joint the hand swings around between poses
   elbows: {"L": [x,y,z]}  pole position, torso frame
   feet:   {"L": {"at": [x,y,z] world ankle, "rot": [rx,ry,rz] degrees world}}
   knees:  {"L": [x,y,z]}  pole position, world
@@ -93,7 +94,7 @@ class Clip:
                 l = g["L"]
                 if isinstance(l, dict):
                     r = dict(l)
-                    for key in ("at", "axis"):
+                    for key in ("at", "axis", "pivot"):
                         if key in r:
                             r[key] = list(mirror(r[key]))
                     if "rot" in r:
@@ -131,6 +132,13 @@ class Clip:
                     for key in ("at", "axis", "rot"):
                         if key in ha and key in hb:
                             h[key] = lerp(ha[key], hb[key], u)
+                    piv = ha.get("pivot") or hb.get("pivot")
+                    if piv and "at" in ha and "at" in hb:
+                        # swing around a joint (elbow for curls, shoulder for raises/flies): angle + radius, not a straight chord
+                        pv = Vector(piv); ra = Vector(ha["at"]) - pv; rb = Vector(hb["at"]) - pv
+                        q = ra.normalized().rotation_difference(rb.normalized())
+                        dirn = Quaternion().slerp(q, u) @ ra.normalized()
+                        h["at"] = list(pv + dirn * (ra.length + (rb.length - ra.length) * u))
                     out[k][s] = h
             elif k in ("elbows", "knees"):
                 out[k] = {s: lerp(va.get(s, vb.get(s)), vb.get(s, va.get(s)), u) for s in set(va) | set(vb)}

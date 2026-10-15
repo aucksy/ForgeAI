@@ -34,9 +34,10 @@ def main():
     # cleaned normal map: drop body hair and pores, keep the muscle forms
     raw = cv2.imread(SRC, cv2.IMREAD_UNCHANGED)[:, :, :3].astype(np.float32) / 255.0  # BGR
     v = raw * 2 - 1
-    v = cv2.GaussianBlur(v, (0, 0), 2.2)
+    sigma = float(sys.argv[1]) if len(sys.argv) > 1 else 2.0
+    v = cv2.GaussianBlur(v, (0, 0), sigma)
     v /= np.linalg.norm(v, axis=2, keepdims=True) + 1e-6
-    cv2.imwrite(os.path.join(OUT, "body_nrm.png"), np.clip((v + 1) * 0.5 * 255 + 0.5, 0, 255).astype(np.uint8))
+    cv2.imwrite(os.path.join(OUT, sys.argv[2] if len(sys.argv) > 2 else "body_nrm.png"), np.clip((v + 1) * 0.5 * 255 + 0.5, 0, 255).astype(np.uint8))
     print("ok", cav.shape)
 
 if __name__ == "__main__":

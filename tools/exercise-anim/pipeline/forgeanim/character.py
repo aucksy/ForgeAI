@@ -12,14 +12,16 @@ from . import MH
 from . import look
 from . import muscles
 
-MACROS = {"gender": 1.0, "age": 0.42, "muscle": 1.0, "weight": 0.40, "proportions": 1.0, "height": 0.58,
+MACROS = {"gender": 1.0, "age": 0.42, "muscle": 1.0, "weight": float(os.environ.get("FA_WEIGHT", 0.40)), "proportions": 1.0,
+          "height": float(os.environ.get("FA_HEIGHT", 0.66)),
           "race": {"asian": 0.25, "caucasian": 0.5, "african": 0.25}}
 
 # extra MPFB targets (all CC0) that push the body toward a defined athletic build
 TARGETS = {
     "torso/torso-muscle-pectoral-incr": 0.55,
     "torso/torso-muscle-dorsi-incr": 0.6,
-    "torso/torso-vshape-incr": 0.45,
+    "torso/torso-vshape-incr": float(os.environ.get("FA_VSHAPE", 0.85)),
+    "torso/measure-waist-circ-decr": float(os.environ.get("FA_WAIST", 0.45)),
     "stomach/stomach-tone-incr": 0.0,
     "arms/l-upperarm-muscle-incr": 0.55, "arms/r-upperarm-muscle-incr": 0.55,
     "arms/l-upperarm-shoulder-muscle-incr": 0.65, "arms/r-upperarm-shoulder-muscle-incr": 0.65,
@@ -89,7 +91,7 @@ def _make_shorts(body, rig):
     me = body.data
     groups = body.vertex_groups
     hip = rig.matrix_world @ rig.data.bones["upperleg01.L"].head_local
-    hem_z = hip.z - 0.235
+    hem_z = hip.z - float(os.environ.get("FA_HEM", 0.17))
     waist_z = hip.z + 0.115
     # evaluated rest shape (with targets) for positions
     pos = rest_positions(body)
@@ -124,7 +126,7 @@ def _make_shorts(body, rig):
         _cut(bm, (side * 0.11, 0, hem_z + 0.012), n, only=lambda c, s=side: c.x * s > 0.01)
     bm.to_mesh(shorts.data); bm.free()
     shorts.data.materials.clear(); shorts.data.materials.append(look.shorts_material())
-    disp = shorts.modifiers.new("Gap", "DISPLACE"); disp.strength = 0.0045; disp.mid_level = 0.0
+    disp = shorts.modifiers.new("Gap", "DISPLACE"); disp.strength = float(os.environ.get("FA_SHORTS_GAP", 0.003)); disp.mid_level = 0.0
     sol = shorts.modifiers.new("Thick", "SOLIDIFY"); sol.thickness = 0.0035; sol.offset = 1.0; sol.use_rim = True
     sub = shorts.modifiers.new("Subdiv", "SUBSURF"); sub.levels = 1; sub.render_levels = 2
     for p in shorts.data.polygons:

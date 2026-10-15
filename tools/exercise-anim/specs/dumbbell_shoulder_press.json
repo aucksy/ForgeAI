@@ -1,0 +1,164 @@
+{
+  "key": "dumbbell_shoulder_press",
+  "name": "Dumbbell Shoulder Press",
+  "primary": [
+    "front_delts"
+  ],
+  "secondary": [
+    "side_delts",
+    "triceps"
+  ],
+  "scene": {
+    "bench": {
+      "deg": 85
+    }
+  },
+  "props": {
+    "db_L": {
+      "type": "dumbbell"
+    },
+    "db_R": {
+      "type": "dumbbell"
+    }
+  },
+  "camera": {
+    "yaw": 35,
+    "pitch": 15,
+    "lens": 50,
+    "fill": 0.9,
+    "res": 640,
+    "samples": 20
+  },
+  "timing": {
+    "fps": 30,
+    "keys": [
+      [
+        0,
+        "bottom"
+      ],
+      [
+        0.25,
+        "bottom"
+      ],
+      [
+        1.35,
+        "top"
+      ],
+      [
+        1.7,
+        "top"
+      ],
+      [
+        3.1,
+        "bottom"
+      ]
+    ]
+  },
+  "defaults": {
+    "root": {
+      "loc": [
+        0,
+        -0.035,
+        0.5
+      ],
+      "rot": [
+        -6,
+        0,
+        0
+      ]
+    },
+    "bones": {
+      "spine05": [
+        0,
+        0,
+        0
+      ],
+      "spine04": [
+        0,
+        0,
+        0
+      ],
+      "spine03": [
+        0,
+        0,
+        0
+      ],
+      "spine02": [
+        0,
+        0,
+        0
+      ]
+    },
+    "feet": {
+      "L": {
+        "at": [
+          0.37,
+          -0.58,
+          0.075
+        ],
+        "rot": [
+          0,
+          0,
+          18
+        ]
+      }
+    },
+    "knees": {
+      "L": [
+        0.62,
+        -1.0,
+        0.9
+      ]
+    }
+  },
+  "poses": {
+    "bottom": {
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "at": [
+            0.4,
+            0.1,
+            0.19
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.8,
+          0.05,
+          -0.4
+        ]
+      }
+    },
+    "top": {
+      "hands": {
+        "L": {
+          "prop": "db_L",
+          "at": [
+            0.24,
+            0.05,
+            0.575
+          ],
+          "axis": [
+            -1,
+            0,
+            0
+          ]
+        }
+      },
+      "elbows": {
+        "L": [
+          0.8,
+          0.0,
+          -0.1
+        ]
+      }
+    }
+  }
+}

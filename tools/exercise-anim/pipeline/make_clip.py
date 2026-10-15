@@ -1,7 +1,8 @@
 """Build one exercise clip from its spec.
 
 blender -b --addons bl_ext.user_default.mpfb --python make_clip.py -- <spec.json> [preview|full] [--side]
-  preview : the key poses only, small and fast, from the clip camera (+ a side view with --side)
+  preview : the key poses only, small and fast, from the clip camera (+ a side view with --side;
+            --frames=8,16,24 previews those frames instead of the key poses)
   full    : every frame at clip quality into out/<key>/frames (resumable: existing frames are skipped)
 Then run encode.py (plain Python) to make the WebP / MP4 / poster.
 """
@@ -15,6 +16,7 @@ args = sys.argv[sys.argv.index("--") + 1:]
 spec_path = args[0]
 mode = args[1] if len(args) > 1 else "preview"
 side = "--side" in args
+pick = next((a.split("=", 1)[1] for a in args if a.startswith("--frames=")), None)   # e.g. --frames=8,16,24
 spec = json.load(open(spec_path, encoding="utf-8"))
 key = spec["key"]
 out = os.path.join(OUT, key); os.makedirs(out, exist_ok=True)
@@ -49,13 +51,19 @@ if mode == "preview":
     for tag, yaw in views:
         if yaw is not None:
             RD.frame_camera(scene, cam, objs, yaw, 5, 50, 0.9, sample_frames=key_frames)
-        for f in key_frames:
+        for f in ([int(x) for x in pick.split(",")] if pick else key_frames):
             scene.frame_set(f)
             p = os.path.join(out, f"_prev_{tag}_{f:03d}.png"); scene.render.filepath = p
             bpy.ops.render.render(write_still=True); paths.append(p)
     print("PREVIEW", ";".join(paths))
 else:
     RD.render_frames(scene, os.path.join(out, "frames"), n)
-    poster = min(n - 1, int(round(keys[2][0] * fps))) if len(keys) >= 3 else 0  # end of the lift = top of the rep
+    # poster = top of the rep: timing.poster (seconds) if given, else the first hold that is not the start pose
+    # (keys[2] alone breaks once a recipe adds mid poses on the way up, e.g. curls)
+    tp = spec["timing"].get("poster")
+    if tp is None:
+        holds = [k[0] for i, k in enumerate(keys[:-1]) if i > 0 and k[1] == keys[i + 1][1] and k[1] != keys[0][1]]
+        tp = holds[0] if holds else (keys[2][0] if len(keys) >= 3 else 0)
+    poster = min(n - 1, int(round(tp * fps)))
     json.dump({"key": key, "frames": n, "fps": fps, "res": res, "poster": poster}, open(os.path.join(out, "frames", "meta.json"), "w"))
     print(f"[clip] rendered {n} frames in {time.time() - t0:.1f}s")
