@@ -65,7 +65,7 @@ import {
   type LogType,
 } from '../engine/logTypes';
 import { rpeColor } from '../lib/rpe';
-import { recordLabel, toastHit } from '../services/liveRecords';
+import { recordLabel, recordLines, toastHit } from '../services/liveRecords';
 import type { EntryField } from '../services/setEntry';
 import { vsLastTimeText } from '../services/vsLastTime';
 import type { RecordKind } from '../services/liveRecords';
@@ -133,9 +133,8 @@ export function afterTick(exKey: string, setKey: string): void {
   if (hit) {
     success();
     playWorkoutSound('record');
-    useWorkoutUi
-      .getState()
-      .showRecord(ex.name, recordLabel(hit, { logType: ex.logType ?? 'weight_reps', loadMode: ex.loadMode ?? 'one', distUnit: ex.distUnit ?? 'km' }));
+    const ctx = { logType: ex.logType ?? 'weight_reps', loadMode: ex.loadMode ?? 'one', distUnit: ex.distUnit ?? 'km' } as const;
+    useWorkoutUi.getState().showRecord(ex.name, recordLabel(hit, ctx), recordLines(hit, ctx));
   } else if (!st.easyWeek && !isCorrecting(st) && !done.isWarmup && done.setType !== 'drop') {
     // Review fix: a drop set is lighter on purpose, and last time's same place may have been a
     // different kind of set (PREVIOUS carries no type), so drop sets are never compared.

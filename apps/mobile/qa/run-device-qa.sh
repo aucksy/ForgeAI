@@ -536,13 +536,14 @@ if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$O
     status=1
     log "J3 DRAG FAILED: two exercises not found on screen ($j3_before / $j3_coords)"
   fi
-  free_maestro
-  maestro test --format junit --output "$OUT/part-j3-end.xml" --test-output-dir "$OUT/part-j3-end" "$QA_DIR/j3-end.yaml" > "$OUT/part-j3-end.log" 2>&1 \
-    || { status=1; log "PART J3 END FAILED (the workout may still be open)"; }
 else
   status=1
   log "PART J3 FAILED"
 fi
+# Review: always discard (a setup that failed after Push A started would leave it open for later parts).
+free_maestro
+maestro test --format junit --output "$OUT/j3-end.xml" --test-output-dir "$OUT/j3-end" "$QA_DIR/j3-end.yaml" > "$OUT/j3-end.log" 2>&1 \
+  || log "J3 end: no workout to discard, or the discard flow failed (j3-end.log)"
 adb shell input keyevent KEYCODE_HOME
 
 # ---------------------------------------------------------------- part K (v0.28.0: an export shared to ForgeAI)

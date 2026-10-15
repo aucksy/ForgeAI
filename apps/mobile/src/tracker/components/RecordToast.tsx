@@ -15,6 +15,7 @@ import { useReduceMotion } from '@/components/ui/useReduceMotion';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { useWorkoutUi } from '../store/workoutUiStore';
+import { Confetti } from './Confetti';
 import { Glyph } from './TrackerGlyph';
 
 /**
@@ -57,6 +58,7 @@ export function RecordToast() {
         pointerEvents="box-none"
       >
         <View
+          pointerEvents="box-none"
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -71,6 +73,7 @@ export function RecordToast() {
           }}
         >
           <Text
+            pointerEvents="none"
             numberOfLines={2}
             style={{ flexShrink: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}
           >
@@ -82,42 +85,60 @@ export function RecordToast() {
       </Animated.View>
     );
   }
+  // 15 Oct 2026 (owner): confetti, and every record the set beat on its own clear line — what
+  // kind (heaviest weight, most reps, best volume) and the number — so it is never a guess.
+  const lines = record.lines && record.lines.length > 0 ? record.lines : null;
   return (
-    <Animated.View
-      key={record.id}
-      entering={reduced ? undefined : FadeInUp.duration(220)}
-      exiting={reduced ? undefined : FadeOutUp.duration(200)}
-      accessibilityLiveRegion="polite"
-      accessibilityLabel={`New record. ${record.exercise}. ${record.label}`}
-      style={{ position: 'absolute', left: 0, right: 0, top: 0, zIndex: 10, alignItems: 'center' }}
-      pointerEvents="box-none"
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: space.sm,
-          paddingHorizontal: space.lg,
-          paddingVertical: space.md,
-          borderRadius: radius.pill,
-          backgroundColor: color.surfaceRaised,
-          borderWidth: 1,
-          borderColor: color.accent,
-          maxWidth: '100%',
-        }}
+    <>
+      <Confetti burst={record.id} />
+      <Animated.View
+        key={record.id}
+        entering={reduced ? undefined : FadeInUp.duration(220)}
+        exiting={reduced ? undefined : FadeOutUp.duration(200)}
+        accessibilityLiveRegion="polite"
+        accessibilityLabel={`New record, ${record.exercise}. ${lines ? lines.map((l) => `${l.title}: ${l.value}`).join('. ') : record.label}`}
+        style={{ position: 'absolute', left: 0, right: 0, top: 0, zIndex: 10, alignItems: 'center' }}
+        pointerEvents="box-none"
       >
-        <Glyph name="medal" size={20} color={color.accentBright} />
-        <View style={{ flexShrink: 1 }}>
-          <Text numberOfLines={1} style={{ fontFamily: type.bodyBold, fontSize: type.size.sub, color: color.ink }}>
-            New record · {record.exercise}
-          </Text>
-          <Text numberOfLines={1} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.accentBright }}>
-            {record.label}
-          </Text>
+        <View
+          pointerEvents="box-none"
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            gap: space.sm,
+            paddingHorizontal: space.lg,
+            paddingVertical: space.md,
+            borderRadius: radius.lg,
+            backgroundColor: color.surfaceRaised,
+            borderWidth: 1,
+            borderColor: color.accent,
+            maxWidth: '100%',
+          }}
+        >
+          <View pointerEvents="none">
+            <Glyph name="medal" size={22} color={color.accentBright} />
+          </View>
+          <View pointerEvents="none" style={{ flexShrink: 1, gap: 2 }}>
+            <Text numberOfLines={2} style={{ fontFamily: type.bodyBold, fontSize: type.size.sub, color: color.ink }}>
+              New record · {record.exercise}
+            </Text>
+            {lines ? (
+              lines.map((l) => (
+                <Text key={l.kind} numberOfLines={2} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+                  <Text style={{ fontFamily: type.bodyBold, color: color.accentBright }}>{l.title}</Text>
+                  {` · ${l.value}`}
+                </Text>
+              ))
+            ) : (
+              <Text numberOfLines={2} style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.accentBright }}>
+                {record.label}
+              </Text>
+            )}
+          </View>
+          <CloseX onPress={() => clear(record.id)} />
         </View>
-        <CloseX onPress={() => clear(record.id)} />
-      </View>
-    </Animated.View>
+      </Animated.View>
+    </>
   );
 }
 

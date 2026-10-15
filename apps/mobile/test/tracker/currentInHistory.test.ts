@@ -39,3 +39,9 @@ describe('the workout in progress on the History tab', () => {
     expect(out?.map((s) => s.setNumber)).toEqual([1, 2]);
   });
 });
+
+describe('review: not while editing a saved workout or logging a past one', () => {
+  it('no card then (the saved one is already in History; a past day is not "today")', () => {
+    expect(currentWorkoutSets(true, [ex('a', 'bench', [set('1', {})])], 'bench', true)).toBeNull();
+  });
+});

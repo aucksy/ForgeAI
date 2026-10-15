@@ -117,7 +117,8 @@ export default function ExerciseScreen() {
   // 15 Oct 2026 (owner): the workout in progress heads the History tab, to compare with last time.
   const workoutOpen = useActiveWorkout((s) => s.active);
   const draftExercises = useActiveWorkout((s) => s.exercises);
-  const current = useMemo(() => currentWorkoutSets(workoutOpen, draftExercises, id), [workoutOpen, draftExercises, id]);
+  const notLive = useActiveWorkout((s) => s.editingSessionId != null || s.pastLog);
+  const current = useMemo(() => currentWorkoutSets(workoutOpen, draftExercises, id, notLive), [workoutOpen, draftExercises, id, notLive]);
   const [ov, setOv] = useState<ExerciseOverview | null>(null);
   const [versionIds, setVersionIds] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);

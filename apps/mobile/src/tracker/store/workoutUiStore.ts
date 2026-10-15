@@ -22,7 +22,8 @@ export interface EntryFocus {
 }
 
 export interface WorkoutUiState {
-  record: { id: number; exercise: string; label: string } | null;
+  /** `lines`: one per record the set beat (15 Oct 2026); absent = the single `label`. */
+  record: { id: number; exercise: string; label: string; lines?: { kind: string; title: string; value: string }[] } | null;
   scrollTo: { id: number; exKey: string } | null;
   rowNote: { id: number; exKey: string; setKey: string; missing: TickMissing } | null;
   lastTime: { id: number; exercise: string; text: string } | null;
@@ -30,7 +31,7 @@ export interface WorkoutUiState {
   /** True while the workout screen is mounted — a notification tap must not push a second copy. */
   screenOpen: boolean;
   setScreenOpen: (open: boolean) => void;
-  showRecord: (exercise: string, label: string) => void;
+  showRecord: (exercise: string, label: string, lines?: { kind: string; title: string; value: string }[]) => void;
   clearRecord: (id: number) => void;
   requestScroll: (exKey: string) => void;
   showRowNote: (exKey: string, setKey: string, missing: TickMissing) => void;
@@ -63,7 +64,7 @@ export const useWorkoutUi = create<WorkoutUiState>()((set, get) => ({
     set({ screenOpen: mounted > 0 });
   },
   // A record always wins over the quieter "on last time" line.
-  showRecord: (exercise, label) => set({ record: { id: ++seq, exercise, label }, lastTime: null }),
+  showRecord: (exercise, label, lines) => set({ record: { id: ++seq, exercise, label, lines }, lastTime: null }),
   clearRecord: (id) => {
     if (get().record?.id === id) set({ record: null });
   },

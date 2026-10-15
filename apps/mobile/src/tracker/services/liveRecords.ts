@@ -235,12 +235,46 @@ export function toastHit<T extends LiveExercise & { key: string; exerciseId: str
     }
     return false;
   };
+  // 15 Oct 2026 (owner): the pop-up names EVERY record this set beat that no other ticked set has
+  // matched (heaviest weight AND best volume, say), the first one leading as before.
+  const news: LiveHit[] = [];
   for (const c of hit.all ?? [hit]) {
     if (c.kind === 'best_session' || !matchedElsewhere(c)) {
-      return c.previousSet ? { kind: c.kind, value: c.value, set: c.set, previousSet: c.previousSet } : { kind: c.kind, value: c.value, set: c.set };
+      news.push(c.previousSet ? { kind: c.kind, value: c.value, set: c.set, previousSet: c.previousSet } : { kind: c.kind, value: c.value, set: c.set });
     }
   }
-  return null;
+  if (news.length === 0) return null;
+  return news.length > 1 ? { ...news[0], all: news } : news[0];
+}
+
+/**
+ * The record pop-up's titles (15 Oct 2026, owner: "clearly shown whether this is the rep related
+ * PR or ... highest weight or the total" lifted). Plainer than the records list's names: it
+ * says which total (one set, or the exercise's whole workout), in the app's words ("lifted").
+ */
+export const RECORD_TOAST_TITLE: Record<LiveHit['kind'], string> = {
+  weight: 'Heaviest weight',
+  e1rm: 'Strongest set (est. 1-rep max)',
+  rep_record: 'Rep record',
+  reps: 'Most reps',
+  best_set: 'Most lifted in one set',
+  best_session: 'Most lifted in one workout',
+  duration: 'Longest time',
+  pace: 'Best pace',
+  distance: 'Longest distance',
+};
+
+const TOAST_ORDER: readonly LiveHit['kind'][] = ['weight', 'rep_record', 'reps', 'best_set', 'best_session', 'duration', 'distance', 'pace', 'e1rm'];
+
+/** One line per record the set beat, at most 3: { title, value }. PURE. */
+export function recordLines(hit: LiveHit, ctx: RecordTextContext): { kind: LiveHit['kind']; title: string; value: string }[] {
+  // The owner's three first (weight, reps, lifted), the estimate last: at most 3 lines fit.
+  const rank = (k: LiveHit['kind']): number => TOAST_ORDER.indexOf(k);
+  return [...(hit.all ?? [hit])].sort((x, y) => rank(x.kind) - rank(y.kind)).slice(0, 3).map((c) => {
+    const full = recordLabel(c, ctx);
+    const value = full.includes(' · ') ? full.slice(full.indexOf(' · ') + 3) : full;
+    return { kind: c.kind, title: RECORD_TOAST_TITLE[c.kind], value };
+  });
 }
 
 /**

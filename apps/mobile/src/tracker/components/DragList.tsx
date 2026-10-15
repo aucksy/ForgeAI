@@ -18,7 +18,7 @@
  * the app already ships (no new native code).
  */
 
-import { memo, useCallback, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
+import { memo, useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { runOnJS, runOnUI, useAnimatedStyle, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
@@ -70,6 +70,9 @@ export function DragList<T extends { id: string }>({
   const noShift = useSharedValue(0);
   const extra = shift ?? noShift;
   const dragging = useRef(false);
+  // Review (15 Oct 2026): every drop counts, so the lift is dropped even when the saved order comes
+  // back the same (a card let go inside a superset jumps back after it) — it used to stay floating.
+  const [drops, setDrops] = useState(0);
 
   const ids = items.map((it) => it.id);
   const idsKey = ids.join('|');
@@ -82,7 +85,7 @@ export function DragList<T extends { id: string }>({
     from.value = -1;
     to.value = -1;
     dy.value = 0;
-  }, [idsKey, fromId, from, to, dy]);
+  }, [idsKey, drops, fromId, from, to, dy]);
 
   // Callbacks read the latest props through a ref, so the rows (memoised) keep stable props.
   const latest = useRef({ idsKey, onReorder, onLift, onSettle, onRowLayout });
@@ -95,6 +98,7 @@ export function DragList<T extends { id: string }>({
       const order = movedIds(keys, f, t);
       if (order) {
         latest.current.onReorder(order, keys[f]);
+        setDrops((d) => d + 1);
       } else {
         fromId.value = '';
         from.value = -1;

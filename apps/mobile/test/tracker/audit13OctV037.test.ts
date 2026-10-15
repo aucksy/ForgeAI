@@ -28,7 +28,7 @@ import { STAT_RANGES, comparisonText } from '@/tracker/engine/statistics';
 import { chartDataKey, chartTap, TAP_MAX_MS } from '@/tracker/lib/chartTime';
 import { metricSeries } from '@/tracker/services/exerciseChart';
 import { weightStatsOf } from '@/tracker/services/exerciseStats';
-import { liveRecordHits, recordLabel, toastHit, type PriorBests } from '@/tracker/services/liveRecords';
+import { liveRecordHits, RECORD_TOAST_TITLE, recordLabel, recordLines, toastHit, type PriorBests } from '@/tracker/services/liveRecords';
 import { recordDetailText, recordValueText, recordWeightText } from '@/tracker/services/recordText';
 import { priorBestsFrom } from '@/tracker/services/recordsService';
 import { vsLastTimeText } from '@/tracker/services/vsLastTime';
@@ -321,5 +321,30 @@ describe('B11: the Statistics range says "12 months", as its caption does', () =
   });
   it('the caption over the tiles names the same period', () => {
     expect(comparisonText('1y', true)).toBe('Last 12 months, against the 12 months before');
+  });
+});
+
+describe('15 Oct 2026: the record pop-up names every record the set beat, clearly', () => {
+  it('a heavier set that also lifts the most in one set gets one line for each, in plain titles', () => {
+    const s = tick(110, 5);
+    const hit = toastHit([card([s])], 'c', s.key);
+    expect(hit).not.toBeNull();
+    const lines = recordLines(hit!, ctx);
+    expect(lines.length).toBeGreaterThanOrEqual(2);
+    expect(lines[0]).toMatchObject({ kind: 'weight', title: 'Heaviest weight' });
+    expect(lines.map((l) => l.title)).toContain('Most lifted in one set');
+    for (const l of lines) expect(l.value).not.toContain(' · ');
+  });
+  it('every kind has a title, and none says "volume" or "PR"', () => {
+    for (const t of Object.values(RECORD_TOAST_TITLE)) {
+      expect(t.length).toBeGreaterThan(0);
+      expect(t).not.toMatch(/\bvolume\b|\bPR\b/i);
+    }
+  });
+  it('the pop-up draws confetti and lets taps through except on the ×', () => {
+    const src = read('tracker/components/RecordToast.tsx');
+    expect(src).toContain('<Confetti burst={record.id} />');
+    expect((src.match(/pointerEvents="box-none"/g) ?? []).length).toBeGreaterThanOrEqual(4);
+    expect(read('tracker/components/Confetti.tsx')).toContain('if (reduced) return null;');
   });
 });

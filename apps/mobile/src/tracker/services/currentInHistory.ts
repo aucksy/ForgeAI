@@ -19,8 +19,10 @@ export function currentWorkoutSets(
   active: boolean,
   exercises: readonly DraftExercise[],
   exerciseId: string | null | undefined,
+  /** Review: editing a saved workout (it is already in History) or logging a past one (not "today"). */
+  notLive = false,
 ): TrackedSetEntry[] | null {
-  if (!active || !exerciseId) return null;
+  if (!active || notLive || !exerciseId) return null;
   const cards = exercises.filter((e) => e.exerciseId === exerciseId);
   if (cards.length === 0) return null;
   const out: TrackedSetEntry[] = [];

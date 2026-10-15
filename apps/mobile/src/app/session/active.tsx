@@ -9,7 +9,7 @@
 import { useKeepAwake } from 'expo-keep-awake';
 import { useFocusEffect, useIsFocused, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { BackHandler, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import type { ScrollView as ScrollViewType } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -210,7 +210,10 @@ export default function ActiveWorkoutScreen() {
   const scrollTo = useWorkoutUi((s) => s.scrollTo);
   useEffect(() => {
     if (!scrollTo) return;
-    const y = cardY.current[scrollTo.exKey];
+    // Review (15 Oct 2026): worked out now (the list's top + the card's place in it), never a
+    // stored position that a note above the list could have moved.
+    const row = rowY.current[scrollTo.exKey];
+    const y = row != null ? listTop.current + row : cardY.current[scrollTo.exKey];
     if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, y - 8), animated: true });
   }, [scrollTo]);
 
@@ -226,18 +229,30 @@ export default function ActiveWorkoutScreen() {
   const listTop = useRef(0);
   const rowY = useRef<Record<string, number>>({});
   const lift = useRef<{ key: string; screenY: number; desired: number | null } | null>(null);
+  // Review (15 Oct 2026): the scroll could not always reach `desired` (near the top it is below 0;
+  // a short list cannot scroll far), and the held card was then drawn away from its slot — letting
+  // go without moving dropped it elsewhere. A blank spacer above (`padTop`) and below (`padBottom`)
+  // the list while a card is held lets the scroll reach it, so the card sits on its slot.
+  const [dragPad, setDragPad] = useState({ top: 0, bottom: 0 });
+  const viewH = useRef(0);
   const fixLift = useCallback(() => {
     const l = lift.current;
     if (!l || l.desired != null) return;
     const y = rowY.current[l.key];
     if (y == null) return;
-    const desired = listTop.current + y - l.screenY;
+    const raw = listTop.current + y - l.screenY;
+    const top = Math.max(0, -raw);
+    const desired = raw + top;
     l.desired = desired;
     dragShift.value = scrollY.current - desired;
-    scrollRef.current?.scrollTo({ y: Math.max(0, desired), animated: false });
+    setDragPad({ top, bottom: desired > 0 ? desired + viewH.current : 0 });
+    // After the spacers are drawn.
+    requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: desired, animated: false }));
   }, [dragShift]);
   const onLift = useCallback(
     (key: string) => {
+      // Review: the cards fold, so a box being typed in goes — close the keyboard first.
+      Keyboard.dismiss();
       lift.current = { key, screenY: listTop.current + (rowY.current[key] ?? 0) - scrollY.current, desired: null };
       dragShift.value = 0;
       setDragKey(key);
@@ -255,6 +270,7 @@ export default function ActiveWorkoutScreen() {
     const key = lift.current?.key ?? null;
     lift.current = null;
     dragShift.value = 0;
+    setDragPad({ top: 0, bottom: 0 });
     setDragKey(null);
     // Back to full cards: bring the moved one into view once it has its new place.
     if (key) setTimeout(() => useWorkoutUi.getState().requestScroll(key), 150);
@@ -562,6 +578,9 @@ export default function ActiveWorkoutScreen() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ gap: space.md, paddingBottom: space.xl }}
           scrollEventThrottle={16}
+          onLayout={(e) => {
+            viewH.current = e.nativeEvent.layout.height;
+          }}
           onScroll={(e) => {
             const y = e.nativeEvent.contentOffset.y;
             scrollY.current = y;
@@ -627,6 +646,7 @@ export default function ActiveWorkoutScreen() {
                 listTop.current = e.nativeEvent.layout.y;
               }}
             >
+              {dragPad.top > 0 ? <View style={{ height: dragPad.top }} /> : null}
               <DragList
                 items={dragItems}
                 gap={space.md}
@@ -638,6 +658,7 @@ export default function ActiveWorkoutScreen() {
                 onRowLayout={onRowLayout}
                 shift={dragShift}
               />
+              {dragPad.bottom > 0 ? <View style={{ height: dragPad.bottom }} /> : null}
             </View>
           )}
           <GhostButton
