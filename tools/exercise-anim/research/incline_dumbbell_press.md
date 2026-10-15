@@ -1,4 +1,4 @@
-# Incline Dumbbell Press — research targets vs the clip (v4, 15 Oct 2026)
+# Incline Dumbbell Press — research targets vs the clip (v5, 15 Oct 2026)
 
 Sources: Rodríguez-Ridao 2020 (bench angle EMG, https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/), Lauver 2016
 (https://pubmed.ncbi.nlm.nih.gov/25799093/), Coratella 2020, ACE (https://www.acefitness.org/exercise-library-details/8/25/),
@@ -13,6 +13,10 @@ NASM. No study measured the dumbbell version's joint angles: angles below combin
 | Depth | handles level with the upper chest | — | upper arm just below the torso line |
 | Top | arms straight but soft, dumbbells over eyes/upper chest, nearly touching | 74° bent | ~7° soft, handles 0.42 m apart |
 | Path | vertical to the floor, slight inward arc | — | vertical (side view) |
+| Upper-arm roll (no visible shoulder twist) | smooth, small | v4: 114° roll near the top (owner: "uncanny") | 10–23°, smooth |
+| Elbow bends as a hinge | 0° sideways | — | 0° drift |
+| Hand turn at the wrist joint | small (pronation lives in the forearm) | v4: 147° | 6–11° |
+| Forearm in v5 | vertical all rep | — | 0–3° |
 | Tempo | ~2 s up, ~2 s down | 1.1 / 1.4 s | 1.6 s up, 0.4 hold, 2.0 down, 0.3 pause |
 
 Muscles (EMG, barbell incline): upper (clavicular) chest ~30 % MVIC and front delt ~33 % at 30° → both primary;
