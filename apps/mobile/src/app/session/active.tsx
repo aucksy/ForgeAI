@@ -11,6 +11,7 @@ import { useFocusEffect, useIsFocused, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import type { ScrollView as ScrollViewType } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DangerLink } from '@/components/DangerLink';
@@ -25,6 +26,7 @@ import { WorkoutPhotos } from '@/tracker/components/WorkoutPhotos';
 import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
 import { ElapsedClock } from '@/tracker/components/ElapsedClock';
 import { EntryBar, useEntryBar } from '@/tracker/components/EntryBar';
+import { DragList, type DragWrap } from '@/tracker/components/DragList';
 import { ExerciseLogCard } from '@/tracker/components/ExerciseLogCard';
 import { RecordToast } from '@/tracker/components/RecordToast';
 import { RestTimerBar } from '@/tracker/components/RestTimerBar';
@@ -212,6 +214,67 @@ export default function ActiveWorkoutScreen() {
     if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, y - 8), animated: true });
   }, [scrollTo]);
 
+  // 15 Oct 2026 (owner, in the gym): press and hold an exercise's name row, then drag it. While a
+  // card is held every card shows only its name row (Hevy), and the held card is kept under the
+  // finger as the cards around it shrink: `desired` is the scroll at which its new (short) place
+  // sits where the finger is; the ScrollView may not reach it (top, or a short list), so the
+  // held card is moved by what is left (`dragShift` = actual scroll - desired), on every scroll.
+  const reorderExercises = useActiveWorkout((s) => s.reorderExercises);
+  const [dragKey, setDragKey] = useState<string | null>(null);
+  const dragShift = useSharedValue(0);
+  const scrollY = useRef(0);
+  const listTop = useRef(0);
+  const rowY = useRef<Record<string, number>>({});
+  const lift = useRef<{ key: string; screenY: number; desired: number | null } | null>(null);
+  const fixLift = useCallback(() => {
+    const l = lift.current;
+    if (!l || l.desired != null) return;
+    const y = rowY.current[l.key];
+    if (y == null) return;
+    const desired = listTop.current + y - l.screenY;
+    l.desired = desired;
+    dragShift.value = scrollY.current - desired;
+    scrollRef.current?.scrollTo({ y: Math.max(0, desired), animated: false });
+  }, [dragShift]);
+  const onLift = useCallback(
+    (key: string) => {
+      lift.current = { key, screenY: listTop.current + (rowY.current[key] ?? 0) - scrollY.current, desired: null };
+      dragShift.value = 0;
+      setDragKey(key);
+    },
+    [dragShift],
+  );
+  // The cards are short now: place the held one (its own layout usually comes first; this is
+  // the fallback when its place did not change).
+  useEffect(() => {
+    if (!dragKey) return;
+    const t = setTimeout(fixLift, 90);
+    return () => clearTimeout(t);
+  }, [dragKey, fixLift]);
+  const onSettle = useCallback(() => {
+    const key = lift.current?.key ?? null;
+    lift.current = null;
+    dragShift.value = 0;
+    setDragKey(null);
+    // Back to full cards: bring the moved one into view once it has its new place.
+    if (key) setTimeout(() => useWorkoutUi.getState().requestScroll(key), 150);
+  }, [dragShift]);
+  const onRowLayout = useCallback(
+    (key: string, y: number) => {
+      rowY.current[key] = y;
+      const abs = listTop.current + y;
+      cardY.current[key] = abs;
+      if (scrollToNew.current === key) {
+        scrollToNew.current = null;
+        scrollRef.current?.scrollTo({ y: Math.max(0, abs - 8), animated: true });
+      }
+      if (lift.current?.key === key && dragKeyRef.current === key) fixLift();
+    },
+    [fixLift],
+  );
+  const dragKeyRef = useRef<string | null>(null);
+  dragKeyRef.current = dragKey;
+
   // Coach targets — the progressive-overload prescription, one per CARD (Packet C). Derived
   // (SQLite only), never persisted in the draft. A swapped-in exercise keeps a Target (TG-06),
   // a Counting change re-reads it in the new counting (TG-03), Profile → Units recomputes it
@@ -257,6 +320,7 @@ export default function ActiveWorkoutScreen() {
   // primitive key, NOT on `exercises`: the store replaces that array on every keystroke,
   // so a plain dep would hand every card a fresh array and defeat their React.memo.
   const groupsKey = exercises.map((e) => e.supersetGroup ?? '').join(',');
+  const dragItems = useMemo(() => exercises.map((ex) => ({ id: ex.key, ex })), [exercises]);
   const existingGroups = useMemo(
     () =>
       [
@@ -264,6 +328,18 @@ export default function ActiveWorkoutScreen() {
       ].sort((a, b) => a - b),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [groupsKey],
+  );
+  const renderCard = useCallback(
+    (item: { id: string; ex: (typeof exercises)[number] }, wrap: DragWrap) => (
+      <ExerciseLogCard
+        exercise={item.ex}
+        existingGroups={existingGroups}
+        target={targets.get(item.ex.key) ?? null}
+        compact={dragKey != null}
+        wrapHandle={wrap}
+      />
+    ),
+    [existingGroups, targets, dragKey],
   );
 
   const onDiscard = (): void => {
@@ -485,6 +561,13 @@ export default function ActiveWorkoutScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ gap: space.md, paddingBottom: space.xl }}
+          scrollEventThrottle={16}
+          onScroll={(e) => {
+            const y = e.nativeEvent.contentOffset.y;
+            scrollY.current = y;
+            const l = lift.current;
+            if (l && l.desired != null) dragShift.value = y - l.desired;
+          }}
         >
           {isEditing ? (
             <EditSessionHeader
@@ -539,25 +622,23 @@ export default function ActiveWorkoutScreen() {
               body="Pick an exercise to start logging sets."
             />
           ) : (
-            exercises.map((ex) => (
-              <View
-                key={ex.key}
-                onLayout={(e) => {
-                  const y = e.nativeEvent.layout.y;
-                  cardY.current[ex.key] = y;
-                  if (scrollToNew.current === ex.key) {
-                    scrollToNew.current = null;
-                    scrollRef.current?.scrollTo({ y: Math.max(0, y - 8), animated: true });
-                  }
-                }}
-              >
-                <ExerciseLogCard
-                  exercise={ex}
-                  existingGroups={existingGroups}
-                  target={targets.get(ex.key) ?? null}
-                />
-              </View>
-            ))
+            <View
+              onLayout={(e) => {
+                listTop.current = e.nativeEvent.layout.y;
+              }}
+            >
+              <DragList
+                items={dragItems}
+                gap={space.md}
+                handle
+                renderItem={renderCard}
+                onReorder={(keys, moved) => reorderExercises(keys, moved)}
+                onLift={onLift}
+                onSettle={onSettle}
+                onRowLayout={onRowLayout}
+                shift={dragShift}
+              />
+            </View>
           )}
           <GhostButton
             label="Add exercise"

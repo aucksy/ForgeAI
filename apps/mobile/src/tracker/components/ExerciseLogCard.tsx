@@ -47,6 +47,7 @@ import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
+import type { DragWrap } from './DragList';
 import { RpeSheet } from './RpeSheet';
 import { SetTypeSheet } from './SetTypeSheet';
 import { SupersetSheet } from './SupersetSheet';
@@ -79,6 +80,8 @@ function hasCountingChoice(ex: Pick<DraftExercise, 'equipment' | 'logType' | 'lo
 export const ExerciseLogCard = memo(function ExerciseLogCard({
   exercise,
   target,
+  compact = false,
+  wrapHandle,
 }: {
   exercise: DraftExercise;
   /** Distinct superset groups in the whole workout (kept for callers; the chooser reads the store). */
@@ -86,6 +89,10 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   /** Progressive-overload prescription for this exercise (v2 engine); null when
    *  the exercise isn't part of the plan day (Start-Empty / ad-hoc add). */
   target?: ProgressionTarget | null;
+  /** 15 Oct 2026: a card is being dragged — show only the name row (picture, name, badges). */
+  compact?: boolean;
+  /** 15 Oct 2026: wraps the name row so press-and-hold there drags the card (DragList handle). */
+  wrapHandle?: DragWrap;
 }) {
   const addSet = useActiveWorkout((s) => s.addSet);
   const removeExercise = useActiveWorkout((s) => s.removeExercise);
@@ -330,6 +337,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       }}
     >
       {/* header — the small picture opens the moving demo (never autoplays here) */}
+      {(wrapHandle ?? noWrap)(
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.sm }}>
         <ExerciseThumb
           catalogKey={exercise.catalogKey ?? null}
@@ -397,8 +405,12 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         >
           <Glyph name="more" size={20} color={color.inkSecondary} />
         </Pressable>
-      </View>
+      </View>,
+      )}
 
+      {/* 15 Oct 2026: while a card is held to drag, every card shows only its name row. */}
+      {compact ? null : (
+      <>
       {/* note — carries forward to the next workout with this exercise */}
       {noteOpen ? (
         <TextInput
@@ -562,6 +574,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       <View style={{ marginTop: space.xs }}>
         <GhostButton label="Add set" icon="plus" onPress={() => addSet(exercise.key)} />
       </View>
+
+      </>
+      )}
 
       {/* ---- sheets ---- */}
       <TrackerSheet visible={sheet === 'menu'} title={exercise.name} onClose={() => setSheet(null)}>
@@ -797,6 +812,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     </View>
   );
 });
+
+const noWrap: DragWrap = (node) => node;
 
 // Read when drawn: gym branding repaints the tokens.
 const colHead = () => ({

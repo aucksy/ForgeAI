@@ -1,0 +1,17 @@
+# Part J3, end: photograph the order after the drag, then discard the workout (the app's own
+# "Discard workout?" sheet), so later parts start with no workout open.
+appId: com.forgeai.app
+---
+- takeScreenshot: j3-after-drag
+- scrollUntilVisible:
+    element: "Discard workout"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Discard workout"
+- extendedWaitUntil:
+    visible: 'Discard workout\?'
+    timeout: 10000
+- tapOn: "^Discard$"
+- extendedWaitUntil:
+    visible: "Start empty workout|Start routine.*"
+    timeout: 30000

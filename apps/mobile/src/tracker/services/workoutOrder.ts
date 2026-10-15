@@ -162,3 +162,26 @@ export function swapSplit(cur: DraftExercise, built: DraftExercise): DraftExerci
   const old: DraftExercise = { ...cur, sets: cur.sets.filter((s) => s.done) };
   return [old, withFrom({ ...built, supersetGroup: group, splitFrom: cur.key })];
 }
+
+/**
+ * 15 Oct 2026 (owner, in the gym): press, hold and drag a card to a new place. `keys` is the order
+ * the member dropped the cards in; `dragged` is the card they moved. The superset rules stay:
+ *  - a dragged superset member that no longer sits next to a partner leaves its superset;
+ *  - a card that lands between members of a superset jumps after the whole superset (a superset
+ *    is never split by a card that is not in it);
+ *  - supersets are then renumbered in screen order (A, B…), and a superset of one dissolves.
+ * Unknown or missing keys leave the list as it was. PURE.
+ */
+export function dropCard(list: DraftExercise[], keys: readonly string[], dragged: string): DraftExercise[] {
+  const byKey = new Map(list.map((e) => [e.key, e]));
+  if (keys.length !== list.length || keys.some((k) => !byKey.has(k)) || new Set(keys).size !== keys.length) return list;
+  let order = keys.map((k) => byKey.get(k) as DraftExercise);
+  const at = order.findIndex((e) => e.key === dragged);
+  const me = order[at];
+  if (me && me.supersetGroup != null) {
+    const g = me.supersetGroup;
+    const nextTo = (order[at - 1]?.supersetGroup ?? null) === g || (order[at + 1]?.supersetGroup ?? null) === g;
+    if (!nextTo) order = order.map((e) => (e.key === dragged ? { ...e, supersetGroup: null } : e));
+  }
+  return tidySupersets(blocksOf(order).flat());
+}

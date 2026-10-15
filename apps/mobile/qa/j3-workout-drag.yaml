@@ -1,0 +1,36 @@
+# Part J3 (15 Oct 2026, owner in the gym): press, hold and drag an exercise inside a LIVE workout.
+# This flow starts routine Push A (it has several exercises) and leaves the open workout at its
+# top; run-device-qa.sh then holds the 2nd exercise's name row with real touch events (every card
+# shrinks to its name row), drags it above the 1st, reads the order back (drag_check.py ex-names)
+# and runs j3-end.yaml, which discards the workout so later parts see none open.
+appId: com.forgeai.app
+---
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Start routine Push A"
+    centerElement: true
+    timeout: 30000
+- tapOn: "Start routine Push A"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 20000
+- scrollUntilVisible:
+    element: '.*\. Open its history and how-to'
+    direction: UP
+    timeout: 10000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: j3-before-drag

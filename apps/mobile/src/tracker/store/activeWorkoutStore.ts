@@ -86,7 +86,7 @@ import { convertCounting } from '@/tracker/engine/logTypes';
 import { loadTargets, preloadTargets, seedTargets, targetQuery } from '@/tracker/store/targetStore';
 import { useTrackerPrefs, type PreviousFrom } from '@/tracker/store/trackerPrefsStore';
 // Packet E (LW-12 / LW-26 / LW-31): order, supersets and the swap split.
-import { joinSuperset, moveCard, nextSupersetGroup, swapSplit, tidySupersets } from '@/tracker/services/workoutOrder';
+import { dropCard, joinSuperset, moveCard, nextSupersetGroup, swapSplit, tidySupersets } from '@/tracker/services/workoutOrder';
 import type { DayType, Exercise, MuscleGroup, SessionDetail } from '@/types/models';
 
 const DRAFT_KEY = 'activeWorkoutDraft';
@@ -377,6 +377,8 @@ export interface ActiveWorkoutState {
   removeExercise: (exKey: string) => void;
   /** LW-12: Move up (-1) / Move down (1). A superset moves as one block (see workoutOrder). */
   moveExercise: (exKey: string, dir: -1 | 1) => void;
+  /** 15 Oct 2026: press, hold and drag — the cards in the dropped order (superset rules: workoutOrder.dropCard). */
+  reorderExercises: (keys: string[], dragged: string) => void;
   /** LW-26: start a new superset of exactly these two cards. */
   pairSuperset: (exKey: string, otherKey: string) => void;
   addSet: (exKey: string) => void;
@@ -1593,6 +1595,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
 
     moveExercise: (exKey, dir) => {
       mutate((list) => tidySupersets(moveCard(list, exKey, dir)), true);
+    },
+
+    reorderExercises: (keys, dragged) => {
+      mutate((list) => dropCard(list, keys, dragged), true);
     },
 
     pairSuperset: (exKey, otherKey) => {

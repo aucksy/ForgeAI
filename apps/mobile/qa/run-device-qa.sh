@@ -499,6 +499,52 @@ else
 fi
 adb shell input keyevent KEYCODE_HOME
 
+# ---------------------------------------------------------------- part J3 (15 Oct 2026: drag an exercise mid-workout)
+# Owner, in the gym: press and hold an exercise in the LIVE workout, every card shrinks to its name
+# row, drag it, a buzz as it passes one. j3-workout-drag.yaml opens Push A; the same real finger
+# as J2 holds the 2nd exercise's name row and drags it above the 1st; the order is read back
+# (drag_check.py ex-names) and j3-end.yaml discards the workout.
+free_maestro
+log "part J3 start"
+if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$OUT/part-j3" "$QA_DIR/j3-workout-drag.yaml" > "$OUT/part-j3.log" 2>&1; then
+  adb shell uiautomator dump /sdcard/j3.xml >/dev/null 2>&1; adb pull /sdcard/j3.xml "$OUT/j3-before.xml" >/dev/null 2>&1
+  j3_before=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-before.xml")
+  j3_coords=$(python3 "$QA_DIR/drag_check.py" ex-drag "$OUT/j3-before.xml")
+  log "J3 before: $j3_before; drag $j3_coords"
+  if [ "$j3_coords" != "missing" ] && [ "$j3_before" != "missing" ]; then
+    read -r j3x1 j3y1 j3x2 j3y2 <<< "$j3_coords"
+    adb shell input motionevent DOWN "$j3x1" "$j3y1"
+    sleep 0.8
+    # The cards shrink as the hold lifts the card: photograph that (shrunk list, held card lifted).
+    adb exec-out screencap -p > "$OUT/j3-held.png" 2>/dev/null || true
+    for k in 1 2 3 4 5 6 7 8 9 10; do
+      adb shell input motionevent MOVE "$j3x1" $(( j3y1 + (j3y2 - j3y1) * k / 10 ))
+      sleep 0.05
+    done
+    adb shell input motionevent UP "$j3x2" "$j3y2"
+    sleep 2
+    adb shell uiautomator dump /sdcard/j3.xml >/dev/null 2>&1; adb pull /sdcard/j3.xml "$OUT/j3-after.xml" >/dev/null 2>&1
+    j3_after=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-after.xml")
+    j3_first=${j3_before%%|*}; j3_second=${j3_before##*|}
+    if [ "$j3_after" = "$j3_second|$j3_first" ]; then
+      log "J3 DRAG OK: $j3_second is now above $j3_first"
+    else
+      status=1
+      log "J3 DRAG FAILED: order after the drag is '$j3_after' (want '$j3_second|$j3_first')"
+    fi
+  else
+    status=1
+    log "J3 DRAG FAILED: two exercises not found on screen ($j3_before / $j3_coords)"
+  fi
+  free_maestro
+  maestro test --format junit --output "$OUT/part-j3-end.xml" --test-output-dir "$OUT/part-j3-end" "$QA_DIR/j3-end.yaml" > "$OUT/part-j3-end.log" 2>&1 \
+    || { status=1; log "PART J3 END FAILED (the workout may still be open)"; }
+else
+  status=1
+  log "PART J3 FAILED"
+fi
+adb shell input keyevent KEYCODE_HOME
+
 # ---------------------------------------------------------------- part K (v0.28.0: an export shared to ForgeAI)
 # The Files app, as a person shares a file (qa-hevy.csv was pushed to Downloads for part J).
 adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
