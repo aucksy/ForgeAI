@@ -21,7 +21,7 @@ def srgb(hexstr):
 LOOK = {  # v2 look (15 Oct 2026): matched side by side against the Gymvisual/Hevy reference
     "normal_strength": 2.0, "cav_from": 0.2, "cav_to": 0.9, "cav_amount": 0.95, "ao_floor": 0.45,
     "world": 0.16, "key": 340, "fill": 22, "rim": 190, "top": 40, "roughness": 0.58, "sheen": 0.15,
-    "hl_cav": 0.8,
+    "hl_cav": 0.8, "hl_full": 0.85,  # helper muscles (0.5) stay visibly lighter than the main muscle (1.0)
 }
 _ov = os.environ.get("FA_LOOK")
 if _ov:
@@ -114,7 +114,7 @@ def skin_material(name="FA_Skin"):
     cr_.elements[1].position = 0.9; cr_.elements[1].color = srgb(PALETTE["hl_core"])
     L.new(hl.outputs["Fac"], hl_ramp.inputs[0])
     hl_f = N.new("ShaderNodeMapRange"); hl_f.location = (-600, 650); hl_f.name = "HL_FACTOR"
-    hl_f.inputs["From Min"].default_value = 0.03; hl_f.inputs["From Max"].default_value = 0.4
+    hl_f.inputs["From Min"].default_value = 0.03; hl_f.inputs["From Max"].default_value = LOOK["hl_full"]
     hl_f.interpolation_type = "SMOOTHSTEP"
     L.new(hl.outputs["Fac"], hl_f.inputs["Value"])
     hl_dark = N.new("ShaderNodeMix"); hl_dark.data_type = "RGBA"; hl_dark.blend_type = "MULTIPLY"; hl_dark.location = (-300, 800)
