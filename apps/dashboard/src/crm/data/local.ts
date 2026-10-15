@@ -66,6 +66,8 @@ import {
   type RecordPaymentInput,
   type SellMembershipInput,
   type SellMembershipResult,
+  type ImportTermItem,
+  type ImportTermsResult,
 } from './adapter';
 
 /** The `localStorage` surface we actually use — trivial to stub in tests. */
@@ -379,6 +381,97 @@ export class LocalCrmData implements CrmData {
       if (payment) db.payments.push(payment);
 
       return { membership: { ...membership }, payment: payment ? { ...payment } : null };
+    });
+  }
+
+  async importTerms(items: readonly ImportTermItem[], importId: string): Promise<ImportTermsResult> {
+    if (items.length === 0) return { plans: 0, memberships: 0, payments: 0, skipped: 0 };
+    return this.update((db) => {
+      const result: ImportTermsResult = { plans: 0, memberships: 0, payments: 0, skipped: 0 };
+      const ts = this.now();
+      const byPhone = new Map(db.members.map((m) => [m.phone, m]));
+      const planKey = (name: string) => name.trim().toLowerCase();
+      const plans = new Map(db.plans.map((p) => [planKey(p.name), p]));
+      let order = db.plans.reduce((max, p) => Math.max(max, p.sortOrder), 0);
+      items.forEach(({ phone, term }, i) => {
+        const member = byPhone.get(phone);
+        if (!member) {
+          result.skipped += 1;
+          return;
+        }
+        // Already here (this file imported before, or typed in by hand): never twice.
+        const same = db.memberships.some(
+          (m) => m.memberId === member.id && planKey(m.planName) === planKey(term.planName) && m.startsOn === term.startsOn && m.endsOn === term.endsOn,
+        );
+        if (same) {
+          result.skipped += 1;
+          return;
+        }
+        let plan = plans.get(planKey(term.planName));
+        if (!plan) {
+          order += 1;
+          plan = {
+            id: newId(),
+            gymId: db.gym.gymId,
+            name: term.planName.trim(),
+            durationUnit: term.length.unit,
+            durationCount: term.length.count,
+            priceP: term.priceP,
+            joiningFeeP: 0,
+            description: null,
+            active: true,
+            sortOrder: order,
+            importId,
+            createdAt: ts,
+            updatedAt: ts,
+          };
+          db.plans.push(plan);
+          plans.set(planKey(plan.name), plan);
+          result.plans += 1;
+        }
+        const membership: Membership = {
+          id: newId(),
+          gymId: db.gym.gymId,
+          memberId: member.id,
+          planId: plan.id,
+          planName: plan.name,
+          priceP: term.priceP,
+          joiningFeeP: 0,
+          listPriceP: plan.priceP,
+          startsOn: term.startsOn,
+          endsOn: term.endsOn,
+          cancelled: false,
+          notes: 'Imported from Excel',
+          soldBy: null,
+          importId,
+          createdAt: ts + i,
+          updatedAt: ts + i,
+        };
+        db.memberships.push(membership);
+        result.memberships += 1;
+        if (term.paidP > 0) {
+          db.payments.push({
+            id: newId(),
+            gymId: db.gym.gymId,
+            memberId: member.id,
+            membershipId: membership.id,
+            amountP: term.paidP,
+            method: 'other',
+            paidOn: term.startsOn,
+            receiptNo: nextReceiptNo(db.payments, term.startsOn),
+            reference: null,
+            note: 'Imported from Excel',
+            voided: false,
+            voidReason: null,
+            collectedBy: null,
+            createdAt: ts + i,
+            gstinAtSale: null,
+            importId,
+          });
+          result.payments += 1;
+        }
+      });
+      return result;
     });
   }
 

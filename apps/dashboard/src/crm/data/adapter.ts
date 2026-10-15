@@ -11,6 +11,7 @@
  * has to learn about pagination or query state to switch backends.
  */
 
+import type { ImportTerm } from '../logic/importTerms';
 import { tr } from '../i18n';
 import type {
   DateISO,
@@ -80,6 +81,20 @@ export interface SellMembershipResult {
   membership: Membership;
   /** Null when nothing was collected at the time of sale. */
   payment: Payment | null;
+}
+
+/** Data migration (15 Oct 2026): one imported row's membership, for the member with this mobile. */
+export interface ImportTermItem {
+  phone: string;
+  term: ImportTerm;
+}
+
+export interface ImportTermsResult {
+  plans: number;
+  memberships: number;
+  payments: number;
+  /** Already in the gym (same member, plan, start and end) or the member was not found. */
+  skipped: number;
 }
 
 export interface RecordPaymentInput {
@@ -226,6 +241,14 @@ export interface CrmData {
   updatePlan(id: string, patch: Partial<PlanDraft>): Promise<Plan>;
 
   sellMembership(input: SellMembershipInput): Promise<SellMembershipResult>;
+  /**
+   * Data migration (15 Oct 2026): memberships exactly as the old system had them (its own start and
+   * end — never re-computed from a plan), with one receipt for what was already paid. A plan of
+   * that name is used, or made (its length from the sheet). Each record carries `importId`. A term
+   * already here (same member, plan name, start and end) is skipped, so importing the same file
+   * twice adds nothing. All in ONE save; online it is split so no push passes the server's cap.
+   */
+  importTerms(items: readonly ImportTermItem[], importId: string): Promise<ImportTermsResult>;
   cancelMembership(id: string, reason: string | null): Promise<Membership>;
   /** Undo a cancellation — a misclick on an irreversible money action is not acceptable. */
   uncancelMembership(id: string): Promise<Membership>;

@@ -32,6 +32,8 @@ import {
   type RecordPaymentInput,
   type SellMembershipInput,
   type SellMembershipResult,
+  type ImportTermItem,
+  type ImportTermsResult,
 } from './adapter';
 import { authErrorWords } from '../auth/signin';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
@@ -203,6 +205,8 @@ export const UPLOAD_CHUNK = 400;
 
 /** `createMembers`: up to this many new members go in one push (the server's cap is 1000 rows). */
 export const BULK_ONE_PUSH = 900;
+/** `importTerms`: this many imported terms per push. */
+export const IMPORT_TERMS_BATCH = 300;
 /** `createMembers` over BULK_ONE_PUSH: this many members per push. */
 export const BULK_BATCH = 500;
 
@@ -476,6 +480,23 @@ export class CloudCrmData implements CrmData {
   }
   updatePlan(id: string, patch: Parameters<CrmData['updatePlan']>[1]) {
     return this.run((d) => d.updatePlan(id, patch));
+  }
+  /**
+   * Data migration: terms in pushes of IMPORT_TERMS_BATCH (a term is up to 3 records: plan,
+   * membership, receipt — well under the server's 1000-row cap). Already-imported terms are
+   * skipped inside each push, so a stop part-way is safe to run again.
+   */
+  async importTerms(items: readonly ImportTermItem[], importId: string): Promise<ImportTermsResult> {
+    const total: ImportTermsResult = { plans: 0, memberships: 0, payments: 0, skipped: 0 };
+    for (let i = 0; i < items.length; i += IMPORT_TERMS_BATCH) {
+      const part = items.slice(i, i + IMPORT_TERMS_BATCH);
+      const r = await this.run((d) => d.importTerms(part, importId));
+      total.plans += r.plans;
+      total.memberships += r.memberships;
+      total.payments += r.payments;
+      total.skipped += r.skipped;
+    }
+    return total;
   }
   sellMembership(input: SellMembershipInput): Promise<SellMembershipResult> {
     return this.run((d) => d.sellMembership(input));

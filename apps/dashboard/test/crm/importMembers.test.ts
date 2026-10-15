@@ -42,6 +42,7 @@ describe('guessColumns', () => {
     const m = guessColumns(['Name', 'Mobile', 'Joining date', 'Gender', 'DOB', 'Address', 'Batch', 'Plan', 'Amount', 'Expiry', 'Notes', 'Email']);
     expect(m).toEqual({
       fullName: 0, phone: 1, joinedOn: 2, gender: 3, dateOfBirth: 4, address: 5, batch: 6, plan: 7, amount: 8, expiry: 9, notes: 10, email: 11,
+      startDate: null, total: null, due: null,
     });
   });
 
@@ -80,7 +81,9 @@ describe('guessColumns', () => {
     const m = guessColumns(['Name', 'Plan Expiry Date', 'Plan', 'Package Amount', 'Joining Fees']);
     expect(m.expiry).toBe(1);
     expect(m.plan).toBe(2);
-    expect(m.amount).toBe(3);
+    // 15 Oct 2026: "Package Amount" is the plan's price; "Joining Fees" what was paid.
+    expect(m.total).toBe(3);
+    expect(m.amount).toBe(4);
     // "Joining Fees" is money, never the joining date.
     expect(m.joinedOn).toBeNull();
   });
@@ -411,7 +414,10 @@ describe('planImport', () => {
       photoUri: null,
     });
     // Plan, fees and expiry are kept as words, never turned into a sale.
-    expect(r.draft!.notes).toBe('Knee pain\nFrom Excel — Plan: Monthly · Fees: ₹1,500 · Valid till: 14 Sep 2026');
+    // 15 Oct 2026 (data migration): the plan with its end date is a real membership and receipt now,
+    // not a line in the notes.
+    expect(r.draft!.notes).toBe('Knee pain');
+    expect(r.term).toMatchObject({ planName: 'Monthly', startsOn: '2026-08-15', endsOn: '2026-09-14', priceP: 150000, paidP: 150000, length: { unit: 'month', count: 1 } });
     expect(rowVerdict(r)).toBe('Will be added');
   });
 

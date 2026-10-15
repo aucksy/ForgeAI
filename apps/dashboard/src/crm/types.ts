@@ -37,6 +37,11 @@ export type Gender = 'male' | 'female' | 'other';
  * ordinary use.
  */
 export interface Member extends GymScoped {
+  /**
+   * Data migration (15 Oct 2026): which import made this record (absent = made in the panel).
+   * "Undo this import" finds the records by it.
+   */
+  importId?: string | null;
   fullName: string;
   /** Normalised to `+91XXXXXXXXXX` where possible. The gym's real primary key for a human. */
   phone: string;
@@ -77,6 +82,11 @@ export type DurationUnit = 'day' | 'month';
  * a receipt printed last year must not change because the owner raised prices today.
  */
 export interface Plan extends GymScoped {
+  /**
+   * Data migration (15 Oct 2026): which import made this record (absent = made in the panel).
+   * "Undo this import" finds the records by it.
+   */
+  importId?: string | null;
   name: string;
   durationUnit: DurationUnit;
   durationCount: number;
@@ -118,6 +128,11 @@ export type MembershipState =
  * a 1-month membership starting 26 Jul ends 25 Aug and the next one starts 26 Aug.
  */
 export interface Membership extends GymScoped {
+  /**
+   * Data migration (15 Oct 2026): which import made this record (absent = made in the panel).
+   * "Undo this import" finds the records by it.
+   */
+  importId?: string | null;
   memberId: string;
   planId: string;
   /** Snapshot — the plan may be renamed or deleted later. */
@@ -172,6 +187,11 @@ export type PaymentMethod = 'cash' | 'upi' | 'card' | 'bank' | 'other';
  * never an in-place edit of the original amount.
  */
 export interface Payment extends GymScoped {
+  /**
+   * Data migration (15 Oct 2026): which import made this record (absent = made in the panel).
+   * "Undo this import" finds the records by it.
+   */
+  importId?: string | null;
   memberId: string;
   /** Null for money not tied to a term (a PT pack, a joining fee taken standalone). */
   membershipId: string | null;

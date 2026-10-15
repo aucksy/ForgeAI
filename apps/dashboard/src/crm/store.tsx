@@ -25,6 +25,8 @@ import type {
   RecordPaymentInput,
   SellMembershipInput,
   SellMembershipResult,
+  ImportTermItem,
+  ImportTermsResult,
 } from './data/adapter';
 import { demoSnapshot } from './data/demo';
 import { emptySnapshot, LocalCrmData } from './data/local';
@@ -69,6 +71,8 @@ interface CrmContextValue {
   createMember: (draft: MemberDraft) => Promise<Member>;
   /** Import: many members in one save (see CrmData.createMembers). */
   createMembers: (drafts: readonly MemberDraft[]) => Promise<Member[]>;
+  /** Data migration: imported memberships and receipts (see CrmData.importTerms). */
+  importTerms: (items: readonly ImportTermItem[], importId: string) => Promise<ImportTermsResult>;
   updateMember: (id: string, patch: Partial<MemberDraft>) => Promise<Member>;
   setMemberArchived: (id: string, archived: boolean) => Promise<void>;
   createPlan: (draft: PlanDraft) => Promise<void>;
@@ -288,6 +292,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       reload,
       createMember: (draft) => mutate((a) => a.createMember(draft)),
       createMembers: (drafts) => mutate((a) => a.createMembers(drafts)),
+      importTerms: (items, importId) => mutate((a) => a.importTerms(items, importId)),
       updateMember: (id, patch) => mutate((a) => a.updateMember(id, patch)),
       setMemberArchived: async (id, archived) => void (await mutate((a) => a.setMemberArchived(id, archived))),
       createPlan: async (draft) => void (await mutate((a) => a.createPlan(draft))),

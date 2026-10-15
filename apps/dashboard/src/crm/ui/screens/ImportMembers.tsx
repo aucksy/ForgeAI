@@ -25,6 +25,7 @@ import {
   fillBlanksPatch,
   findHeaderRow,
   guessColumns,
+  guessFromValues,
   IMPORT_FIELDS,
   MAX_IMPORT_ROWS,
   parseCsv,
@@ -43,6 +44,9 @@ import {
 } from '../../logic/importMembers';
 import { formatPhone } from '../../logic/members';
 import { useCrm } from '../../store';
+import { useRole } from '../../auth/AuthProvider';
+import type { ImportTermsResult } from '../../data/adapter';
+import { formatINR } from '../../logic/money';
 import { downloadCsv } from '../download';
 import { Button, Card, ChipToggle, ErrorBanner, Grid, PageHeader, Row, SectionTitle, SelectField, color, font, radius, space } from '../kit';
 import { navigate } from '../router';
@@ -68,6 +72,11 @@ interface Result {
   stopped: string | null;
   /** The last Excel row saved as a member (0 when none). */
   lastSavedRow: number;
+  /** Data migration: the plans, memberships and receipts made (null when none were tried). */
+  terms: ImportTermsResult | null;
+  termsError: string | null;
+  /** A Staff session: the plans in the file were left for the owner. */
+  termsForStaff: boolean;
 }
 
 /**
@@ -79,7 +88,9 @@ function letThePagePaint(): Promise<void> {
 }
 
 export function ImportMembersScreen() {
-  const { snapshot, today, createMembers, updateMember } = useCrm();
+  const { snapshot, today, createMembers, updateMember, importTerms } = useCrm();
+  // Data migration: memberships and receipts are the owner's (the server refuses a Staff session's plans).
+  const role = useRole();
   const [stage, setStage] = useState<Stage>('pick');
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<Loaded | null>(null);
@@ -145,7 +156,7 @@ export function ImportMembersScreen() {
     const h = findHeaderRow(rows);
     setFile({ name: f.name, rows });
     setHeaderRow(h);
-    setMap(guessColumns(rows[h] ?? []));
+    setMap(guessFromValues(rows, h, guessColumns(rows[h] ?? []), today));
     setFilter('all');
     setStage('review');
   };
@@ -165,7 +176,7 @@ export function ImportMembersScreen() {
     if (!file) return;
     const h = Number(value);
     setHeaderRow(h);
-    setMap(guessColumns(file.rows[h] ?? []));
+    setMap(guessFromValues(file.rows, h, guessColumns(file.rows[h] ?? []), today));
   };
 
   const run = async () => {
@@ -184,8 +195,10 @@ export function ImportMembersScreen() {
     setStage('running');
     setProgress({ done: 0, total });
 
-    // New members: one save per batch (one push online), never one per row.
-    const outcome = await saveInBatches(adds, (drafts) => createMembers(drafts), (done) => setProgress({ done, total }));
+    // New members: one save per batch (one push online), never one per row. Every record this
+    // import makes carries one id (data migration, 15 Oct 2026).
+    const importId = `import-${Date.now().toString(36)}`;
+    const outcome = await saveInBatches(adds, (drafts) => createMembers(drafts.map((d) => ({ ...d, importId }))), (done) => setProgress({ done, total }));
     for (const row of outcome.duplicates) {
       skipped.push({ row, reason: inEnglish(() => tr('Already a member.', 'Pehle se member hai.')) });
     }
@@ -221,9 +234,26 @@ export function ImportMembersScreen() {
         setProgress({ done: adds.length + i + 1, total });
       }
     }
+    // Data migration (15 Oct 2026): each row's plan with its dates becomes a real membership, and
+    // what was paid a receipt — for new members and for members already here (a term already in
+    // the gym is skipped, so importing again adds nothing).
+    let terms: ImportTermsResult | null = null;
+    let termsError: string | null = null;
+    const termRows = [...outcome.added, ...rows.filter((r) => r.existing !== null && r.sameAsRow === null)].filter((r) => r.term && r.draft);
+    if (!outcome.stopped && termRows.length > 0 && role === 'owner') {
+      try {
+        terms = await importTerms(
+          termRows.map((r) => ({ phone: r.draft!.phone, term: r.term! })),
+          importId,
+        );
+      } catch (e) {
+        console.warn('[ForgeErr] import members: plans and payments not saved', e);
+        termsError = e instanceof Error && e.message ? e.message : tr('Saving stopped.', 'Save ruk gaya.');
+      }
+    }
     skipped.sort((a, b) => a.row.rowNumber - b.row.rowNumber);
     const lastSavedRow = outcome.added.reduce((max, r) => Math.max(max, r.rowNumber), 0);
-    setResult({ added: outcome.added.length, updated, skipped, stopped: outcome.stopped, lastSavedRow });
+    setResult({ added: outcome.added.length, updated, skipped, stopped: outcome.stopped, lastSavedRow, terms, termsError, termsForStaff: role !== 'owner' && termRows.length > 0 });
     setStage('done');
   };
 
@@ -341,17 +371,19 @@ export function ImportMembersScreen() {
                 />
               ))}
             </Grid>
-            {(map.plan !== null || map.amount !== null || map.expiry !== null) && (
+            {(map.plan !== null || map.amount !== null || map.expiry !== null) && map.expiry === null && map.startDate === null && (
               <p style={{ ...muted, marginTop: space.lg }}>
                 {tr(
-                  'Plan, fees and valid till are written into each member’s notes, not made into plans or payments. Give each member their plan from their page, so no fees or dues are made up.',
-                  'Plan, Fees aur valid till har member ke notes mein likhe jayenge, Plan ya payment nahi banenge. Har member ko unke page se Plan do, taaki koi Fees ya baaki galat na bane.',
+                  'Pick the “Valid till” or “Plan start” column to bring each plan in with its dates. Without either, the plan and fees go into the member’s notes.',
+                  'Har plan uski dates ke saath laane ke liye “Valid till” ya “Plan shuru” column chuno. Dono na ho to plan aur fees member ke notes mein jayenge.',
                 )}
               </p>
             )}
             {map.joinedOn === null && (
               <p style={{ ...muted, marginTop: space.sm }}>
-                {tr('No joining date column: everyone gets today’s date.', 'Joining date ka column nahi: sabko aaj ki date milegi.')}
+                {map.expiry !== null || map.startDate !== null
+                  ? tr('No joining date column: each member’s plan start is used (today when there is none).', 'Joining date ka column nahi: har member ke plan ki shuru date lagegi (na ho to aaj ki).')
+                  : tr('No joining date column: everyone gets today’s date.', 'Joining date ka column nahi: sabko aaj ki date milegi.')}
               </p>
             )}
           </Card>
@@ -375,6 +407,8 @@ export function ImportMembersScreen() {
             dupMode={dupMode}
             setDupMode={setDupMode}
           />
+
+          <TermsLine rows={plan.rows} owner={role === 'owner'} />
 
           <ActionBar
             plan={plan.rows}
@@ -419,6 +453,32 @@ export function ImportMembersScreen() {
             {tr(`${result.added} added, ${result.skipped.length} skipped`, `${result.added} jude, ${result.skipped.length} chhode`)}
             {result.updated > 0 ? tr(`, ${result.updated} filled in`, `, ${result.updated} mein details bhari`) : ''}
           </p>
+          {result.terms && (result.terms.memberships > 0 || result.terms.skipped > 0) && (
+            <p style={{ ...muted, marginTop: space.sm }}>
+              {tr(
+                `${result.terms.memberships} plans with their dates · ${result.terms.payments} receipts${result.terms.plans > 0 ? ` · ${result.terms.plans} new plan names added to Plans` : ''}${result.terms.skipped > 0 ? ` · ${result.terms.skipped} already here, not added again` : ''}.`,
+                `${result.terms.memberships} plan unki dates ke saath · ${result.terms.payments} raseed${result.terms.plans > 0 ? ` · ${result.terms.plans} naye plan Plans mein jude` : ''}${result.terms.skipped > 0 ? ` · ${result.terms.skipped} pehle se the, dobara nahi jude` : ''}.`,
+              )}
+            </p>
+          )}
+          {result.termsError && (
+            <div style={{ marginTop: space.md }}>
+              <ErrorBanner>
+                {tr(
+                  `Members are saved, but their plans and payments did not save: ${result.termsError} Import the same file again — members already here are skipped and their plans are added then.`,
+                  `Members save ho gaye, par unke plan aur payment save nahi hue: ${result.termsError} Wahi file phir import karo — jo members hain woh chhod diye jayenge aur plan jud jayenge.`,
+                )}
+              </ErrorBanner>
+            </div>
+          )}
+          {result.termsForStaff && (
+            <p style={{ ...muted, marginTop: space.sm }}>
+              {tr(
+                'Plans and payments in this file are added by the owner: ask them to import the same file (members already added are skipped).',
+                'Is file ke plan aur payment owner jodte hain: unhe yahi file import karne ko kaho (jo members jud gaye woh chhod diye jayenge).',
+              )}
+            </p>
+          )}
           {result.stopped && (
             <div style={{ marginTop: space.md }}>
               <ErrorBanner>
@@ -663,3 +723,30 @@ const list: CSSProperties = {
   fontSize: 14,
   color: color.inkSecondary,
 };
+
+/**
+ * Data migration (15 Oct 2026): before importing, what the plans in the sheet become — so the owner
+ * sees their members will arrive WITH their plans, end dates and payments, not as bare names.
+ */
+function TermsLine({ rows, owner }: { rows: readonly ImportRow[]; owner: boolean }) {
+  const withTerm = rows.filter((r) => r.term && r.status !== 'problem' && r.sameAsRow === null);
+  if (withTerm.length === 0) return null;
+  const paid = withTerm.reduce((sum, r) => sum + (r.term?.paidP ?? 0), 0);
+  const names = new Set(withTerm.map((r) => r.term!.planName.toLowerCase())).size;
+  return (
+    <Card>
+      <SectionTitle>{tr('Plans and payments', 'Plan aur payment')}</SectionTitle>
+      <p style={{ margin: 0, fontSize: 14, color: color.ink }}>
+        {owner
+          ? tr(
+              `${withTerm.length} members come with their plan and its dates (${names} plan names)${paid > 0 ? `, and ${formatINR(paid)} already paid as receipts` : ''}. Expiry reminders work for them from day one.`,
+              `${withTerm.length} members apne plan aur uski dates ke saath aayenge (${names} plan)${paid > 0 ? `, aur ${formatINR(paid)} di hui fees raseed ban kar` : ''}. Expiry reminder pehle din se chalenge.`,
+            )
+          : tr(
+              `${withTerm.length} members have a plan in this file. The owner adds plans and payments: members are added now, plans when the owner imports the same file.`,
+              `Is file mein ${withTerm.length} members ka plan hai. Plan aur payment owner jodte hain: members abhi judenge, plan tab jab owner yahi file import karenge.`,
+            )}
+      </p>
+    </Card>
+  );
+}

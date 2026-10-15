@@ -28,6 +28,7 @@ import { DuplicatePhoneError, EARLIEST_DATE, PartialSaveError } from '../data/ad
 import { BATCH_MAX, listBatches, resolveBatch } from './batches';
 import { formatINR, parseRupeeInput } from './money';
 import { DEFAULT_DIAL_CODE, findDuplicatePhone, normalizeName, normalizePhone, splitE164, validateMember } from './members';
+import { termFromRow, type ImportTerm } from './importTerms';
 
 // ---------------------------------------------------------------- fields
 
@@ -41,12 +42,15 @@ export type ImportField =
   | 'address'
   | 'batch'
   | 'plan'
+  | 'startDate'
+  | 'total'
   | 'amount'
+  | 'due'
   | 'expiry'
   | 'notes';
 
 export const IMPORT_FIELDS: readonly ImportField[] = [
-  'fullName', 'phone', 'joinedOn', 'gender', 'dateOfBirth', 'email', 'address', 'batch', 'plan', 'amount', 'expiry', 'notes',
+  'fullName', 'phone', 'joinedOn', 'gender', 'dateOfBirth', 'email', 'address', 'batch', 'plan', 'startDate', 'total', 'amount', 'due', 'expiry', 'notes',
 ];
 
 /** Which column (0-based) holds each field; null = not in the file. */
@@ -68,7 +72,10 @@ export function fieldLabel(field: ImportField): string {
     case 'address': return tr('Address', 'Pata');
     case 'batch': return tr('Batch', 'Batch');
     case 'plan': return tr('Plan', 'Plan');
-    case 'amount': return tr('Fees', 'Fees');
+    case 'startDate': return tr('Plan start', 'Plan shuru');
+    case 'total': return tr('Plan price', 'Plan ki fees');
+    case 'amount': return tr('Fees paid', 'Fees di');
+    case 'due': return tr('Balance due', 'Baaki');
     case 'expiry': return tr('Valid till', 'Valid till');
     case 'notes': return tr('Notes', 'Notes');
   }
@@ -93,7 +100,7 @@ const SYNONYMS: Record<ImportField, readonly string[]> = {
   ],
   joinedOn: [
     'joining date', 'date of joining', 'doj', 'd o j', 'join date', 'joined on', '=joined', '=joining',
-    'admission date', 'date of admission', '=admission', 'start date', 'starting date', 'joining tarikh',
+    'admission date', 'date of admission', '=admission', 'joining tarikh',
     'bharti', '=date', 'जॉइनिंग', 'भर्ती',
   ],
   gender: ['gender', 'male female', 'male or female', 'ling', '=sex', '=m f', '=mf', 'लिंग'],
@@ -108,10 +115,25 @@ const SYNONYMS: Record<ImportField, readonly string[]> = {
     'plan', 'plan name', 'package', 'package name', 'membership', 'membership type', 'plan type', 'scheme',
     'subscription', 'प्लान', 'पैकेज',
   ],
+  // 15 Oct 2026 (data migration): plan start, the plan's price and the balance due are their own
+  // columns now, so a rival's export becomes real memberships and receipts, not notes.
+  startDate: [
+    'start date', 'starting date', 'plan start', 'plan start date', 'membership start', 'membership start date',
+    'package start', 'from date', 'valid from', '=from', 'renewed on', 'last renewal', 'शुरू',
+  ],
+  total: [
+    'total amount', 'package amount', 'plan amount', 'plan fees', 'plan price', 'package price', 'package fees',
+    'membership fee', 'membership fees', 'membership value', 'total membership value', 'net amount', 'price',
+    '=total', '=mrp', 'final amount',
+  ],
   amount: [
-    'amount', 'fees', 'fee', 'fees paid', 'fee paid', 'amount paid', 'paid amount', 'price', 'rupees',
-    '=payment', 'package amount', 'plan amount', 'plan fees', 'total amount', 'joining fees', 'joining fee', 'admission fees', 'admission fee', 'shulk', '=rs', '=paid',
-    '=total', 'फीस', 'राशि',
+    'amount', 'fees', 'fee', 'fees paid', 'fee paid', 'amount paid', 'paid amount', 'rupees', 'received',
+    'amount received', '=payment', 'payment amount', 'joining fees', 'joining fee', 'admission fees', 'admission fee',
+    'shulk', '=rs', '=paid', 'jama', 'फीस', 'राशि',
+  ],
+  due: [
+    '=due', 'balance', 'balance due', 'balance amount', 'due amount', 'amount due', 'pending', 'pending amount',
+    'pending fees', 'remaining', 'remaining amount', 'outstanding', 'baaki', 'baki', 'बाकी',
   ],
   expiry: [
     'expiry', 'expiry date', 'expire', 'expires', 'expires on', 'end date', 'ending date', 'valid till',
@@ -191,6 +213,100 @@ export function findHeaderRow(rows: readonly (readonly unknown[])[]): number {
     }
   }
   return best;
+}
+
+/**
+ * 15 Oct 2026 (data migration — "I don't want to build a logic that fails with every new
+ * format"): columns whose NAME said nothing are placed by what is IN them. Up to 60 rows under the
+ * header are read; a column is a type when at least 60% of its filled cells read as it:
+ *  - mobile: a valid mobile (the same rules as the form);
+ *  - email: name@place;
+ *  - gender: M / F / Male / Female / पुरुष …;
+ *  - dates: the earliest-centred column whose years are mostly 15+ years ago is the birthday; of
+ *    the other date columns, the later-centred one is the end ("valid till"), the earlier one the
+ *    start (or the joining date when the sheet has no start);
+ *  - money: amounts 100–5,00,000 (₹, commas, "/-" allowed) that are not mobiles — the plan's
+ *    price when its column is unplaced and there are two money columns (the larger one), else paid.
+ * Only fields still empty are filled, and only from columns no field uses. PURE.
+ */
+export function guessFromValues(rows: readonly (readonly unknown[])[], headerRow: number, map: ColumnMap, today: DateISO): ColumnMap {
+  const out: ColumnMap = { ...map };
+  const used = new Set<number>(IMPORT_FIELDS.map((f) => out[f]).filter((c): c is number => c !== null));
+  const body = rows.slice(headerRow + 1, headerRow + 61).filter((r) => !isBlankRow(r));
+  const width = Math.max(0, ...rows.slice(headerRow, headerRow + 61).map((r) => r.length));
+  const share = (col: number, test: (v: unknown) => boolean): number => {
+    const filled = body.map((r) => r[col]).filter((v) => cellText(v) !== '');
+    if (filled.length < 2) return 0;
+    return filled.filter(test).length / filled.length;
+  };
+  const yearOf = (d: DateISO) => Number(d.slice(0, 4));
+  const free = () => Array.from({ length: width }, (_, c) => c).filter((c) => !used.has(c));
+  const take = (field: ImportField, col: number) => {
+    out[field] = col;
+    used.add(col);
+  };
+
+  for (const c of free()) {
+    if (out.phone === null && share(c, (v) => parseImportPhone(v).ok) >= 0.6) take('phone', c);
+  }
+  for (const c of free()) {
+    if (out.email === null && share(c, (v) => EMAIL_RE.test(cellText(v))) >= 0.6) take('email', c);
+  }
+  for (const c of free()) {
+    if (out.gender === null && share(c, (v) => { const g = parseGender(v); return g !== null && g !== 'unknown'; }) >= 0.6) take('gender', c);
+  }
+
+  // Dates: every free column that is mostly dates, with the middle of its years / days.
+  const dateCols: { col: number; mid: DateISO; oldShare: number }[] = [];
+  for (const c of free()) {
+    const vals = body.map((r) => r[c]).filter((v) => cellText(v) !== '');
+    if (vals.length < 2) continue;
+    const dayFirst = detectDayFirst(vals);
+    const days = vals.map((v) => (typeof v === 'number' && (v < 20000 || v > 60000) ? null : parseSheetDate(v, today, dayFirst))).filter((d): d is DateISO => d !== null);
+    if (days.length / vals.length < 0.6) continue;
+    days.sort();
+    const mid = days[Math.floor(days.length / 2)]!;
+    const oldShare = days.filter((d) => yearOf(d) <= yearOf(today) - 15).length / days.length;
+    dateCols.push({ col: c, mid, oldShare });
+  }
+  const births = dateCols.filter((d) => d.oldShare >= 0.6);
+  if (out.dateOfBirth === null && births.length > 0) take('dateOfBirth', births[0]!.col);
+  const others = dateCols.filter((d) => !used.has(d.col)).sort((a, b) => (a.mid < b.mid ? -1 : a.mid > b.mid ? 1 : 0));
+  if (others.length === 1) {
+    // One date column: an end date when its middle is recent or ahead, else the joining date.
+    const only = others[0]!;
+    if (out.expiry === null && only.mid >= addDays(today, -45)) take('expiry', only.col);
+    else if (out.joinedOn === null) take('joinedOn', only.col);
+  } else if (others.length > 1) {
+    if (out.expiry === null) take('expiry', others[others.length - 1]!.col);
+    const rest = others.filter((d) => !used.has(d.col));
+    // Two left: the later is the plan's start, the earlier the joining date; one left: joining.
+    if (rest.length >= 2 && out.startDate === null) take('startDate', rest[rest.length - 1]!.col);
+    const first = rest.find((d) => !used.has(d.col));
+    if (first && out.joinedOn === null) take('joinedOn', first.col);
+  }
+
+  // Money: amounts that are not mobiles.
+  const isMoney = (v: unknown): boolean => {
+    if (parseImportPhone(v).ok) return false;
+    const t = cellText(v).replace(/\/-$|,|₹|rs\.?|inr/gi, '').trim();
+    if (!/^\d+(\.\d{1,2})?$/.test(t)) return false;
+    const n = Number(t);
+    return n >= 100 && n <= 500000;
+  };
+  const moneyCols = free().filter((c) => share(c, isMoney) >= 0.6);
+  const avg = (c: number) => {
+    const ns = body.map((r) => Number(cellText(r[c]).replace(/\/-$|,|₹|rs\.?|inr/gi, ''))).filter((n) => Number.isFinite(n) && n > 0);
+    return ns.length ? ns.reduce((a, b) => a + b, 0) / ns.length : 0;
+  };
+  if (moneyCols.length >= 2 && out.total === null && out.amount === null) {
+    const [big, small] = [...moneyCols].sort((a, b) => avg(b) - avg(a));
+    take('total', big!);
+    take('amount', small!);
+  } else if (moneyCols.length >= 1 && out.amount === null) {
+    take('amount', moneyCols[0]!);
+  }
+  return out;
 }
 
 /** `A`, `B` … `Z`, `AA` — the letter Excel shows above a column. */
@@ -527,6 +643,11 @@ export interface ImportRow {
   problems: string[];
   /** Added anyway, but something was left out or assumed. */
   warnings: string[];
+  /**
+   * 15 Oct 2026: the membership (and receipt) this row describes — saved after the member
+   * (`importTerms.ts`). Null when the row names no plan with dates.
+   */
+  term: ImportTerm | null;
 }
 
 export interface ImportPlan {
@@ -567,6 +688,7 @@ export function planImport(
   const joinDayFirst = detectDayFirst(colValues(map.joinedOn));
   const dobDayFirst = detectDayFirst(colValues(map.dateOfBirth));
   const expiryDayFirst = detectDayFirst(colValues(map.expiry));
+  const startDayFirst = detectDayFirst(colValues(map.startDate));
 
   const batchNames = listBatches(roster).map((b) => b.name);
   const seen = new Map<string, number>();
@@ -657,16 +779,31 @@ export function planImport(
     }
     if (batch && !batchNames.includes(batch)) batchNames.push(batch);
 
-    // Notes: the sheet's notes, plus plan / fees / expiry kept as written (not made into a sale).
-    const extras: string[] = [];
-    if (text('plan')) extras.push(tr(`Plan: ${text('plan')}`, `Plan: ${text('plan')}`));
-    if (text('amount')) {
-      const p = parseRupeeInput(text('amount'));
-      extras.push(tr(`Fees: ${p !== null ? formatINR(p) : text('amount')}`, `Fees: ${p !== null ? formatINR(p) : text('amount')}`));
+    // 15 Oct 2026 (data migration): the plan with its dates becomes a real membership, and what
+    // was paid a real receipt (`termFromRow`). Only a plan the row cannot date stays in the notes.
+    const money = (f: ImportField) => (text(f) ? parseRupeeInput(text(f).replace(/\/-$|,/g, '')) : null);
+    const endsOn = text('expiry') ? parseSheetDate(cellAt(row, map.expiry), today, expiryDayFirst) : null;
+    const startsOn = text('startDate') ? parseSheetDate(cellAt(row, map.startDate), today, startDayFirst) : null;
+    const term = termFromRow({
+      planName: text('plan'),
+      startsOn,
+      endsOn,
+      joinedOn: text('joinedOn') ? joinedOn : null,
+      totalP: money('total'),
+      paidP: money('amount'),
+      dueP: money('due'),
+    });
+    // No joining-date column: the plan's start is a better joining date than today.
+    if (map.joinedOn === null && term && term.startsOn >= EARLIEST_DATE && term.startsOn <= today) joinedOn = term.startsOn;
+    if (text('expiry') && !endsOn) {
+      warnings.push(tr(`Valid till “${text('expiry')}” not readable — no plan added.`, `Valid till “${text('expiry')}” samajh nahi aaya — plan nahi juda.`));
     }
-    if (text('expiry')) {
-      const d = parseSheetDate(cellAt(row, map.expiry), today, expiryDayFirst);
-      extras.push(tr(`Valid till: ${d ? formatDay(d) : text('expiry')}`, `Valid till: ${d ? formatDay(d) : text('expiry')}`));
+    const extras: string[] = [];
+    if (!term) {
+      if (text('plan')) extras.push(tr(`Plan: ${text('plan')}`, `Plan: ${text('plan')}`));
+      const p = money('amount');
+      if (text('amount')) extras.push(tr(`Fees: ${p !== null ? formatINR(p) : text('amount')}`, `Fees: ${p !== null ? formatINR(p) : text('amount')}`));
+      if (text('expiry')) extras.push(tr(`Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`, `Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`));
     }
     if (phoneRead.ok && phoneRead.extra) extras.push(tr(`Other number: ${phoneRead.extra}`, `Doosra number: ${phoneRead.extra}`));
     const notes = [text('notes'), extras.length ? tr(`From Excel — ${extras.join(' · ')}`, `Excel se — ${extras.join(' · ')}`) : '']
@@ -699,18 +836,18 @@ export function planImport(
 
     const cells = row.map(cellText);
     if (!draft) {
-      out.push({ rowNumber, cells, name: fullName, status: 'problem', draft: null, existing: null, sameAsRow: null, problems, warnings });
+      out.push({ rowNumber, cells, name: fullName, status: 'problem', draft: null, existing: null, sameAsRow: null, problems, warnings, term: null });
       continue;
     }
 
     const earlier = seen.get(draft.phone);
     if (earlier !== undefined) {
-      out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier, problems, warnings });
+      out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier, problems, warnings, term });
       continue;
     }
     seen.set(draft.phone, rowNumber);
     const existing = findDuplicatePhone(roster, draft.phone);
-    out.push({ rowNumber, cells, name: fullName, status: existing ? 'duplicate' : 'add', draft, existing, sameAsRow: null, problems, warnings });
+    out.push({ rowNumber, cells, name: fullName, status: existing ? 'duplicate' : 'add', draft, existing, sameAsRow: null, problems, warnings, term });
   }
 
   const counts = { add: 0, duplicate: 0, problem: 0 };
