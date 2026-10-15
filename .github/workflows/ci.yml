@@ -91,3 +91,27 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
           node scripts/crawl.mjs
+
+  # Audit toolkit pick 6 (15 Oct 2026): every migration applied, in order, to a throw-away local
+  # Supabase. Then the security check (RLS on, fixed search paths, the exact list of functions
+  # callable without signing in, gym A never reads gym B) and the feature tests must all pass.
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start a local Supabase (applies every migration)
+        run: supabase start -x studio,imgproxy,mailpit,realtime,edge-runtime,logflare,vector,supavisor,postgres-meta
+
+      - name: plpgsql lint (broken function bodies)
+        run: supabase db lint --level error --fail-on error
+
+      - name: Security check and feature tests
+        run: bash scripts/ci/db_checks.sh

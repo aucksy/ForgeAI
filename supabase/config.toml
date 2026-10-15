@@ -1,0 +1,18 @@
+# Local Supabase for the CI database check only (scripts/ci/db_checks.sh, 15 Oct 2026).
+# The live project is on Postgres 17. Nothing here changes the live project.
+project_id = "forgeai"
+
+[db]
+major_version = 17
+
+[studio]
+enabled = false
+
+[realtime]
+enabled = false
+
+[edge_runtime]
+enabled = false
+
+[analytics]
+enabled = false
