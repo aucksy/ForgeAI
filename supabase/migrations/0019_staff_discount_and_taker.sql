@@ -7,8 +7,10 @@
 --    of the day could not be traced. Now every NEW receipt saved from a signed-in phone or PC carries
 --    that person's id and name (collectedBy, collectedByName), and every new plan sold carries who
 --    sold it (soldBy, soldByName). The server writes them from the session, so a desk can never put
---    a colleague's name on a receipt. Imported records and the old owner key (no person) are left
---    as they are. Once saved, who took it never changes (a void or a PT session keeps it). The
+--    a colleague's name on a receipt (a front-desk record is ALWAYS stamped). An owner's record is
+--    stamped when the panel named a taker; old records copied up when a browser gym goes online,
+--    imported records and the old owner key (no person) are left as they are, never shown as taken
+--    by the owner. Once saved, who took it never changes (a void or a PT session keeps it). The
 --    panel shows "Taken by Ramesh" on the Money list and can filter by person.
 -- 2. FRONT-DESK DISCOUNTS (C7-13). The front desk could sell any plan for Rs 0 (the panel promised
 --    "Staff cannot change prices" but nothing stopped it). Owner's decision as the audit suggested:
@@ -174,11 +176,17 @@ begin
       end if;
       -- 0018: what the front desk may save (C8-1).
       if is_staff then perform public._staff_write_ok(g, k, rid, r->'d'); end if;
-      -- 0019 (C7-12): a NEW receipt or plan typed in the panel says who took the money / sold it:
-      -- the signed-in person, from the session (never what the device wrote). Imported records and
-      -- an old owner key (no person) are left as they are.
+      -- 0019 (C7-12): a NEW receipt or plan says who took the money / sold it: the signed-in
+      -- person, from the session (never what the device wrote).
+      --  - A front-desk session: ALWAYS (an import mark or a blank does not skip it).
+      --  - An owner's session: only when the panel named a taker (collectedBy / soldBy). Records
+      --    without one are history: moving a browser gym online, an import. They stay as they are.
+      --  - The old owner key (no person): left as written.
       d := r->'d';
-      if st.staff_id is not null and prev is null and coalesce(d->>'importId', '') = '' then
+      if st.staff_id is not null and prev is null
+         and (is_staff
+              or (coalesce(d->>'importId', '') = ''
+                  and coalesce(d->>(case when k = 'payment' then 'collectedBy' else 'soldBy' end), '') <> '')) then
         if k = 'payment' then
           d := d || jsonb_build_object('collectedBy', st.staff_id::text, 'collectedByName', st.name);
         elsif k = 'membership' then

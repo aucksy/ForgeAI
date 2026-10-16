@@ -74,7 +74,7 @@ begin
   fails := fails || pg_temp.t19_is('2c and its name', d->>'collectedByName', 'Desk Ramesh');
   fails := fails || pg_temp.t19_is('2d the amount is kept', d->>'amountP', '30000');
   fails := fails || pg_temp.t19_is('2e owner session fee', pg_temp.t19_push(kop,
-    '[{"k":"payment","id":"pay-owner","d":{"memberId":"m-new","amountP":20000,"voided":false,"receiptNo":"R-2","collectedBy":null}}]'), 'ok');
+    '[{"k":"payment","id":"pay-owner","d":{"memberId":"m-new","amountP":20000,"voided":false,"receiptNo":"R-2","collectedBy":"anyone"}}]'), 'ok');
   fails := fails || pg_temp.t19_is('2f names the owner', (select data->>'collectedByName' from public.crm_records
     where gym_id = gid and kind = 'payment' and id = 'pay-owner'), 'Owner Om');
   fails := fails || pg_temp.t19_is('2g old owner key fee', pg_temp.t19_push(ko,
@@ -93,7 +93,22 @@ begin
     jsonb_build_array(jsonb_build_object('k', 'payment', 'id', 'pay-desk', 'd', d || '{"voided":true,"voidReason":"typo","collectedByName":"Someone else"}'))), 'ok');
   fails := fails || pg_temp.t19_is('2m still names the desk', (select data->>'collectedByName' from public.crm_records
     where gym_id = gid and kind = 'payment' and id = 'pay-desk'), 'Desk Ramesh');
-  checks := checks + 13;
+  -- Review: moving a browser gym online (the owner's session copies old records up with no taker)
+  -- never names the owner on them.
+  fails := fails || pg_temp.t19_is('2n owner uploads an old receipt', pg_temp.t19_push(kop,
+    '[{"k":"payment","id":"pay-old","d":{"memberId":"m-new","amountP":15000,"voided":false,"receiptNo":"2025-26/0007","collectedBy":null}}]'), 'ok');
+  fails := fails || pg_temp.t19_is('2o old receipt names nobody', (select coalesce(data->>'collectedBy', 'none') from public.crm_records
+    where gym_id = gid and kind = 'payment' and id = 'pay-old'), 'none');
+  fails := fails || pg_temp.t19_is('2p owner uploads an old sale', pg_temp.t19_push(kop,
+    jsonb_build_array(jsonb_build_object('k', 'membership', 'id', 'ms-old2', 'd', sale || '{"memberId":"m-old","soldBy":null}'))), 'ok');
+  fails := fails || pg_temp.t19_is('2q old sale names nobody', (select coalesce(data->>'soldBy', 'none') from public.crm_records
+    where gym_id = gid and kind = 'membership' and id = 'ms-old2'), 'none');
+  -- Review: a desk receipt with an import mark is still stamped with the desk.
+  fails := fails || pg_temp.t19_is('2r desk receipt with an import mark', pg_temp.t19_push(ks,
+    format('[{"k":"payment","id":"pay-desk-imp","d":{"memberId":"m-new","amountP":5000,"voided":false,"receiptNo":"IMP/1","importId":"import-desk","collectedBy":"%s","collectedByName":"Owner Om"}}]', s_owner)::jsonb), 'ok');
+  fails := fails || pg_temp.t19_is('2s names the desk', (select data->>'collectedByName' from public.crm_records
+    where gym_id = gid and kind = 'payment' and id = 'pay-desk-imp'), 'Desk Ramesh');
+  checks := checks + 19;
 
   if fails = '' then raise exception 'RESULT PASS (% checks)', checks; end if;
   raise exception 'RESULT FAIL:%', fails;
