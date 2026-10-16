@@ -246,6 +246,26 @@ describe('CloudCrmData', () => {
     await expect(desk.load()).rejects.toThrow(/signed out/);
     expect(signedOut).toBe(1);
   });
+
+  it('an owner-only refusal says so once and never freezes the desk (review of 0018)', async () => {
+    const server = new FakeServer();
+    const realPush = server.push.bind(server);
+    let refuse = true;
+    let pushes = 0;
+    server.push = async (key, base, records, pushId) => {
+      pushes += 1;
+      if (refuse) throw new Error('OWNER_ONLY');
+      return realPush(key, base, records, pushId);
+    };
+    const desk = new CloudCrmData('k', server, { wait: async () => undefined });
+    await expect(desk.createMember(member({ fullName: 'Refused', phone: '+919811100001' }))).rejects.toThrow(/Only an owner/);
+    expect(pushes).toBe(1); // not sent again
+    refuse = false;
+    // The next action goes through: nothing was kept to be re-sent first.
+    const ok = await desk.createMember(member({ fullName: 'Next one', phone: '+919811100002' }));
+    expect(ok.fullName).toBe('Next one');
+    expect(pushes).toBe(2);
+  });
 });
 
 describe('uploadSnapshot', () => {

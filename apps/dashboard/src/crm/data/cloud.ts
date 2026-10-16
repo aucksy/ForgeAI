@@ -382,7 +382,9 @@ export class CloudCrmData implements CrmData {
       } catch (e) {
         if (isStale(e)) throw e;
         this.signedOutCheck(e);
-        if (/\bBAD_KEY\b|\bINVALID\b/.test(e instanceof Error ? e.message : String((e as { message?: unknown })?.message ?? ''))) {
+        // OWNER_ONLY too (review of 0018): a refusal is final. Kept as "pending", it was sent again
+        // before every later action, and the whole desk froze until the page was reloaded.
+        if (/\bBAD_KEY\b|\bINVALID\b|\bOWNER_ONLY\b/.test(e instanceof Error ? e.message : String((e as { message?: unknown })?.message ?? ''))) {
           throw plainError(e);
         }
         last = e;
