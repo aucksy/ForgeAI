@@ -73,15 +73,30 @@ export function saleDefaults(
   }
   // A gym plan follows the gym plans' cover only — a PT pack running does not push it later.
   const coversUntil = coverageEndsOn(gymPlansOnly(memberships), today);
-  const startsOn = nextTermStart(coversUntil, today);
+  // Admin audit C7-10: a plan paid AHEAD (starting after today) covers no day yet, so the chain
+  // above misses it and the new plan started today, on top of the weeks already paid for. The new
+  // plan starts after the last gym plan that has not ended.
+  const lastEnd = lastGymPlanEnd(memberships, today);
+  const after = coversUntil && (!lastEnd || coversUntil > lastEnd) ? coversUntil : lastEnd;
+  const startsOn = nextTermStart(after, today);
 
   return {
     startsOn,
     endsOn: endDateForPlan(startsOn, plan),
     priceP: plan.priceP,
     joiningFeeP,
-    isRenewal: coversUntil !== null,
+    isRenewal: after !== null,
   };
+}
+
+/** The last day of any gym plan (not cancelled) that ends today or later, upcoming ones included. */
+function lastGymPlanEnd(memberships: readonly Membership[], today: DateISO): DateISO | null {
+  let end: DateISO | null = null;
+  for (const m of gymPlansOnly(memberships)) {
+    if (m.cancelled || m.endsOn < today) continue;
+    if (end === null || m.endsOn > end) end = m.endsOn;
+  }
+  return end;
 }
 
 /** A front-desk (Staff) sale may start at most this many days before today (the server's rule too). */
@@ -102,6 +117,8 @@ export interface SaleInput {
   collectNowP: Paise | null;
   /** Selling a PT plan (an add-on): no overlap rule. */
   pt?: boolean;
+  /** The new plan's last day (C7-10): with it, any gym plan on the same days is caught, upcoming too. */
+  endsOn?: DateISO | null;
 }
 
 /**
@@ -145,6 +162,20 @@ export function validateSale(
   }
 
   // A PT pack may run alongside a gym plan; a gym plan may not overlap another gym plan.
+  // C7-10: any gym plan on the new plan's days, a plan paid ahead (not started yet) too.
+  if (!input.pt && input.endsOn) {
+    const newEnd = input.endsOn;
+    const clash = gymPlansOnly(memberships).find((m) => !m.cancelled && m.startsOn <= newEnd && m.endsOn >= input.startsOn);
+    if (clash) {
+      return {
+        field: 'startsOn',
+        message: tr(
+          `They already have a plan from ${formatDay(clash.startsOn)} to ${formatDay(clash.endsOn)}. Start the new plan after that.`,
+          `Inka ${formatDay(clash.startsOn)} se ${formatDay(clash.endsOn)} tak ka plan pehle se hai. Naya plan uske baad shuru karo.`,
+        ),
+      };
+    }
+  }
   const coversUntil = input.pt ? null : coverageEndsOn(gymPlansOnly(memberships), today);
   if (coversUntil && input.startsOn <= coversUntil) {
     return {

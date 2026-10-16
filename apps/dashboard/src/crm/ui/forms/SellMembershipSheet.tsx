@@ -97,7 +97,7 @@ export function SellMembershipSheet({
 
   const submit = async () => {
     const found = validateSale(
-      { planId: plan?.id ?? null, startsOn, priceP, joiningFeeP: joiningP, collectNowP: collectP, pt: plan ? isPtPlan(plan) : false },
+      { planId: plan?.id ?? null, startsOn, endsOn, priceP, joiningFeeP: joiningP, collectNowP: collectP, pt: plan ? isPtPlan(plan) : false },
       memberships,
       today,
       role,

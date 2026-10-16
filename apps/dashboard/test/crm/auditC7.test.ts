@@ -6,9 +6,10 @@ import { describe, expect, it } from 'vitest';
 
 import { CloudCrmData, type CrmCloudApi, type CrmRecord, type PullResult } from '../../src/crm/data/cloud';
 import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/local';
-import { hasPaidJoiningFee, saleDefaults } from '../../src/crm/logic/selling';
+import { checkGymDetails } from '../../src/crm/logic/gst';
+import { hasPaidJoiningFee, saleDefaults, validateSale } from '../../src/crm/logic/selling';
 import type { MemberDraft } from '../../src/crm/types';
-import { makeMembership, makePayment, makePlan } from './fixtures';
+import { makeMembership, makePayment, makePlan, VALID_GSTIN } from './fixtures';
 
 const TODAY = '2026-10-16';
 
@@ -130,5 +131,50 @@ describe('C7-2 / C7-27: the joining fee', () => {
     expect(saleDefaults([wrong], plan, TODAY, []).joiningFeeP).toBe(50000);
     const paid = makePayment({ membershipId: 'ms-wrong', amountP: 50000 });
     expect(saleDefaults([wrong], plan, TODAY, [paid]).joiningFeeP).toBe(0);
+  });
+});
+
+describe('C7-10: selling to a member who paid ahead never makes two plans for the same days', () => {
+  const plan = makePlan({ name: 'Monthly', durationUnit: 'month', durationCount: 1, joiningFeeP: 0 });
+  // Paid on 10 Oct for a plan starting 20 Oct; today is 16 Oct.
+  const ahead = makeMembership({ startsOn: '2026-10-20', endsOn: '2026-11-19' });
+
+  it('the new plan starts the day after the paid-ahead one ends', () => {
+    const d = saleDefaults([ahead], plan, TODAY);
+    expect(d.startsOn).toBe('2026-11-20');
+    expect(d.isRenewal).toBe(true);
+  });
+
+  it('a start typed inside the paid-ahead plan is refused, naming its dates', () => {
+    const p = validateSale(
+      { planId: plan.id, startsOn: TODAY, endsOn: '2026-11-15', priceP: 120000, joiningFeeP: 0, collectNowP: 0 },
+      [ahead],
+      TODAY,
+    );
+    expect(p?.field).toBe('startsOn');
+    expect(p?.message).toContain('20 Oct');
+  });
+
+  it('a short plan that ends before the paid-ahead one starts is fine', () => {
+    expect(
+      validateSale({ planId: plan.id, startsOn: TODAY, endsOn: '2026-10-19', priceP: 30000, joiningFeeP: 0, collectNowP: 0 }, [ahead], TODAY),
+    ).toBeNull();
+  });
+});
+
+describe('C7-11 / C7-41: gym details are checked before "Saved."', () => {
+  it('a GSTIN with one digit wrong is refused in plain words', () => {
+    const wrong = VALID_GSTIN.slice(0, 5) + (VALID_GSTIN[5] === '9' ? '8' : '9') + VALID_GSTIN.slice(6);
+    expect(checkGymDetails({ name: 'Iron Temple', gstin: wrong })).toMatchObject({ field: 'gstin' });
+    expect(checkGymDetails({ name: 'Iron Temple', gstin: wrong })?.message).toMatch(/not valid/);
+  });
+
+  it('a right GSTIN, or none, is fine', () => {
+    expect(checkGymDetails({ name: 'Iron Temple', gstin: VALID_GSTIN.toLowerCase() })).toBeNull();
+    expect(checkGymDetails({ name: 'Iron Temple', gstin: '  ' })).toBeNull();
+  });
+
+  it('C7-41: a blank gym name is refused, never saved as "My Gym"', () => {
+    expect(checkGymDetails({ name: '   ', gstin: '' })).toMatchObject({ field: 'name' });
   });
 });

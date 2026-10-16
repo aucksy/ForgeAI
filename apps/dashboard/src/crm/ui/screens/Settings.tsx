@@ -19,6 +19,7 @@ import { useCrm } from '../../store';
 import { tr } from '../../i18n';
 import { navigate } from '../router';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
+import { checkGymDetails } from '../../logic/gst';
 import {
   Button,
   Card,
@@ -54,6 +55,7 @@ export function SettingsScreen() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [fieldError, setFieldError] = useState<{ field: 'name' | 'gstin'; message: string } | null>(null);
   const [confirming, setConfirming] = useState<'demo' | 'fresh' | 'over' | 'disconnect' | null>(null);
   // Stable, because the sheet re-focuses itself whenever its onClose changes.
   const closeConfirm = useCallback(() => setConfirming(null), []);
@@ -68,17 +70,21 @@ export function SettingsScreen() {
   };
 
   const save = async () => {
+    // C7-11 / C7-41: a wrong GSTIN or a blank name is said on its field, never saved with "Saved.".
+    const problem = checkGymDetails({ name, gstin });
+    setFieldError(problem);
+    if (problem) return;
     setSaving(true);
     setError(null);
     try {
       await updateGym({
-        name: name.trim() || 'My Gym',
+        name: name.trim(),
         phone: phone.trim() || null,
         address: address.trim() || null,
         gstin: gstin.trim().toUpperCase() || null,
       });
       // The app shows members the gym's name, so a rename goes to the cloud too.
-      await renameCloudGym(name.trim() || 'My Gym');
+      await renameCloudGym(name.trim());
       flash(tr('Saved.', 'Save ho gaya.'));
     } catch (e) {
       // Without this, a failed write (storage full) just stopped the spinner and
@@ -111,13 +117,19 @@ export function SettingsScreen() {
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>{tr('Gym details', 'Gym ki details')}</SectionTitle>
-        <TextField label={tr('Gym name', 'Gym ka naam')} value={name} onChange={setName} />
+        <TextField
+          label={tr('Gym name', 'Gym ka naam')}
+          value={name}
+          onChange={setName}
+          error={fieldError?.field === 'name' ? fieldError.message : null}
+        />
         <Grid min={220}>
           <TextField label={tr('Phone', 'Phone')} value={phone} onChange={setPhone} inputMode="tel" />
           <TextField
             label={tr('GSTIN (optional)', 'GSTIN (zaroori nahi)')}
             value={gstin}
             onChange={setGstin}
+            error={fieldError?.field === 'gstin' ? fieldError.message : null}
             hint={tr("Only if you're GST registered — used on invoices.", 'Sirf agar aap GST mein registered hain — bill par chhapta hai.')}
           />
         </Grid>
