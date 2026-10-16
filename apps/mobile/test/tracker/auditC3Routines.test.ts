@@ -138,3 +138,16 @@ describe('C3-20: a routine\'s own per-set weights are hinted in the workout', ()
     expect(planOfSet({ type: 'warmup', reps: 10 })).toBeUndefined();
   });
 });
+
+describe('C3-28 / C3-29: the routine editor at 360 dp and large text (source check)', () => {
+  const src = readFileSync(join(__dirname, '..', '..', 'src/app/routines/[id].tsx'), 'utf8').replace(/\r\n/g, '\n');
+  it('an exercise name may take two lines', () => {
+    const at = src.indexOf('{pe.exercise.name}\n');
+    expect(src.slice(Math.max(0, at - 300), at)).toContain('numberOfLines={2}');
+  });
+  it('the Sets / Reps / Rest steppers wrap onto a new line instead of running off the card', () => {
+    const rows = src.match(/<View style=\{\{ flexDirection: 'row', [^}]*gap: space\.lg[^}]*\}\}>\s*<Stepper/g) ?? [];
+    expect(rows.length).toBeGreaterThan(0);
+    for (const r of rows) expect(r).toContain("flexWrap: 'wrap'");
+  });
+});

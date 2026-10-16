@@ -530,8 +530,9 @@ export default function RoutineEditorScreen() {
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
                     <View style={{ flex: 1 }}>
+                      {/* C3-28: two lines, so two similar presses are told apart at 360 dp / large text. */}
                       <Text
-                        numberOfLines={1}
+                        numberOfLines={2}
                         style={{ fontFamily: type.heading, fontSize: type.size.sub, color: color.ink }}
                       >
                         {pe.exercise.name}
@@ -570,7 +571,7 @@ export default function RoutineEditorScreen() {
                     />
                   </View>
 
-                  <View style={{ flexDirection: 'row', gap: space.lg }}>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', rowGap: space.md, gap: space.lg }}>
                     <Stepper
                       label="Sets"
                       value={pe.targetSets}
@@ -631,7 +632,7 @@ export default function RoutineEditorScreen() {
                   </View>
 
                   {/* RP-19: warm-ups, this routine's rest, a superset with the next, a note */}
-                  <View style={{ flexDirection: 'row', gap: space.lg, alignItems: 'flex-end' }}>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', rowGap: space.md, gap: space.lg, alignItems: 'flex-end' }}>
                     <Stepper
                       label="Warm-up sets"
                       value={setsOf(pe).filter((x) => x.type === 'warmup').length}
