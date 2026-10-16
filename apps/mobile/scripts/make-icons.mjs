@@ -31,9 +31,10 @@ const ASSETS = join(ROOT, 'assets', 'images');
 const RES = join(ROOT, 'android', 'app', 'src', 'main', 'res');
 
 // Adaptive-icon safe zone = central 72dp of the 108dp foreground (~0.667). The
-// mark art already carries ~0.82 internal height, so drawing it at 0.80 of the
-// canvas lands the hexagon at ~0.66 — inside the mask on every launcher shape.
-const FG_SAFE = 0.8;
+// mark art carries ~0.82 internal height. 16 Oct 2026 (owner: "not cut out; the black borders
+// are very little"): at 0.80 the hexagon was ~0.66 tall, its points touching the launcher's
+// circle. At 0.62 it is ~0.51 tall: a clear dark margin on every launcher shape.
+const FG_SAFE = 0.62;
 
 const heroB64 = (await readFile(join(SRC, 'hero-1024.png'))).toString('base64');
 const markB64 = (await readFile(join(SRC, 'mark-1024.png'))).toString('base64');
