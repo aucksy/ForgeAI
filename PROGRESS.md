@@ -2290,6 +2290,21 @@
     typecheck 0 apart from another helper's untracked test/_audit_probes; tsc -b 0; silent-catch
     and promise ratchets at baseline.
 
+- 2026-10-16: **Drive backup/restore review fixes (3)** (ships with the next tag).
+  - Repairs re-run after a restore: `RERUN_AFTER_RESTORE` (snapshot.ts) clears the marks
+    pr_single_e1rm_fix / pr_long_set_e1rm_fix / pr_lighter_set_e1rm_fix / link_folder_repair_v1 in
+    every `replaceAllInTransaction` (Drive restore, its Undo, import Undo); a Drive restore also runs
+    them at once (backupStore `rerunRepairs`, after the clock repair). Not cleared on purpose:
+    hevy_timed_backfill_done (a guard, not a repair), link_guessed_exercise_types (data).
+  - Backups now carry `tracker_schema_version` (14) and `member_schema_version` (2); parseSnapshot
+    refuses a newer one with backupVersionWords' "made by a newer ForgeAI"; absent = older, restores.
+    Caveat: apps already installed still read only `schema_version` (still 1).
+  - A step after the data swap failing (clearDemoFlag) throws `RestoredUntidyError` ("Restored. ...
+    Tap Restore again to finish it."); BackupCard refreshes the screens and shows it as a note. The
+    retry keeps the pre-restore safety copy (in-memory `untidyRestore`, unless a workout was saved since).
+  - **Tests:** test/cloud/restoreRepairs.test.ts (7, failed first); full suite 226 files green;
+    typecheck 0; silent-catch and promise ratchets at baseline.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
