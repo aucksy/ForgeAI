@@ -786,6 +786,27 @@ export function ChipToggle({
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+/** The dimmed layer a Sheet sits on. Exported for the test lane (C7-15). */
+export function sheetOverlayStyle(compact: boolean): CSSProperties {
+  return {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 50,
+    display: 'grid',
+    placeItems: compact ? 'stretch' : 'center',
+    // A definite row on a phone. Without it the grid row grew to fit the form,
+    // `maxHeight: 100%` resolved against that, and a long form (Add product)
+    // pushed its Save button 1,500px below a screen that cannot scroll.
+    gridTemplateRows: compact ? 'minmax(0, 1fr)' : undefined,
+    // Admin audit C7-15: the same for the column. An "auto" column grew to the widest unbreakable
+    // line (Freeze / extra days came out 595 px on a 390 px phone), so the close button and Save
+    // sat off-screen on a page that cannot scroll sideways.
+    gridTemplateColumns: 'minmax(0, 1fr)',
+    background: 'rgba(3, 4, 8, 0.72)',
+    padding: compact ? 0 : space.xl,
+  };
+}
+
 /**
  * Modal sheet. Full-height on a phone (where it reads as a page), centred card on
  * desktop.
@@ -810,13 +831,19 @@ export function Sheet({
 }) {
   const compact = useIsCompact();
   const panelRef = useRef<HTMLDivElement>(null);
+  // Admin audit C7-16 (16 Oct 2026): the latest onClose, read when it is needed. The setup below
+  // depended on onClose, and every redraw (the 15-second refresh, the shop's 30-second clock) hands
+  // a new one, so the setup re-ran and pulled the focus to the panel: the phone keyboard closed
+  // mid-amount. Now the setup runs once per opening.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (e.key !== 'Tab') return;
@@ -859,24 +886,10 @@ export function Sheet({
       // Return the keyboard to where it came from, not to the top of the page.
       if (opener && document.contains(opener)) opener.focus();
     };
-  }, [onClose]);
+  }, []);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 50,
-        display: 'grid',
-        placeItems: compact ? 'stretch' : 'center',
-        // A definite row on a phone. Without it the grid row grew to fit the form,
-        // `maxHeight: 100%` resolved against that, and a long form (Add product)
-        // pushed its Save button 1,500px below a screen that cannot scroll.
-        gridTemplateRows: compact ? 'minmax(0, 1fr)' : undefined,
-        background: 'rgba(3, 4, 8, 0.72)',
-        padding: compact ? 0 : space.xl,
-      }}
-    >
+    <div style={sheetOverlayStyle(compact)}>
       <div
         ref={panelRef}
         role="dialog"
