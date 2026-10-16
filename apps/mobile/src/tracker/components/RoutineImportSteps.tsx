@@ -20,7 +20,7 @@
  */
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState, type MutableRefObject } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Card, GhostButton, Icon, PrimaryButton } from '@/components/ui';
 import { tinyDateWithYear } from '@/lib/date';
@@ -30,7 +30,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { listFolders, type ImportApp } from '../db/folderRepo';
 import { setsSummary } from '../plans/routineSets';
-import { folderChoices, type FolderChoice } from '../services/folderChoice';
+import { folderChoices } from '../services/folderChoice';
 import { matchesFrom, suggestMatches, type NameSuggestion } from '../services/importMatch';
 import {
   followQuestion,
@@ -41,11 +41,11 @@ import {
   saveImportedRoutines,
   routineSaveFailureText,
   saveLinkedRoutines,
-  type NewExercise,
 } from '../services/routineImport';
 import { chosenRoutines, findRoutines, rowKey, type FoundExercise, type FoundRoutine, type RebuildWorkout } from '../services/routineRebuild';
 import { renamedIn } from '../services/hevyImport';
 import { MatchRow, RenamedList } from './NewNamesCard';
+import { stepScrollKey, type Step } from './routineImportStepKey';
 
 // Read when drawn: gym branding repaints the tokens.
 const CAPTION = () => ({ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 }) as const;
@@ -102,14 +102,6 @@ function TickRow({ label, sub, ticked, onPress }: { label: string; sub: string; 
   );
 }
 
-type Step =
-  | { kind: 'list' }
-  | { kind: 'check'; i: number }
-  | { kind: 'new'; items: NewExercise[]; suggestions: NameSuggestion[] }
-  | { kind: 'folder'; choices: FolderChoice[] }
-  | { kind: 'follow' }
-  | { kind: 'done'; routines: number; folder: string; today: string | null; created: number; keptEdits: string[] };
-
 /** v0.29.0: routines read from a share link, with the folder's name. */
 export interface LinkRoutines {
   url: string;
@@ -121,13 +113,7 @@ export interface LinkRoutines {
   exact?: boolean;
 }
 
-export function RoutineImportSteps({
-  app,
-  workouts,
-  link,
-  onClose,
-  backRef,
-}: {
+interface StepsProps {
   app: ImportApp;
   workouts?: readonly RebuildWorkout[];
   link?: LinkRoutines;
@@ -137,7 +123,34 @@ export function RoutineImportSteps({
    * step back and returns true, or returns false on the first and last steps (Back leaves).
    */
   backRef?: MutableRefObject<(() => boolean) | null>;
-}) {
+}
+
+/**
+ * Phone test, 16 Oct 2026 (360 dp, font 1.3): the steps used to share the page's one scroll
+ * list, so "Next" at the bottom of "1 of 2" opened "2 of 2" at the old scroll position (its
+ * counter above the screen). Each step now scrolls in its own list, keyed per step: a new step
+ * gets a fresh list at its top, while the ticks and answers (state here) are kept. Both import
+ * screens turn their own scroll off while the steps show.
+ */
+export function RoutineImportSteps(props: StepsProps) {
+  const out = { key: '' };
+  const body = useStepsBody(props, out);
+  if (body == null) return null;
+  return (
+    <ScrollView
+      key={out.key}
+      style={{ flex: 1 }}
+      contentContainerStyle={{ paddingBottom: space.xxl }}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
+      {body}
+    </ScrollView>
+  );
+}
+
+/** The steps themselves; sets `out.key` to the shown step's scroll key. */
+function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out: { key: string }) {
   const router = useRouter();
   const appName = app === 'hevy' ? 'Hevy' : 'Strong';
   const found = useMemo(() => link?.found ?? findRoutines(workouts ?? []), [link, workouts]);
@@ -147,6 +160,7 @@ export function RoutineImportSteps({
   const shownCount = recent.length > 0 ? recent.length : found.length;
 
   const [step, setStep] = useState<Step>({ kind: 'list' });
+  out.key = stepScrollKey(step);
   const [keep, setKeep] = useState<Set<string>>(() => new Set(recent.map((r) => r.title)));
   const [ticks, setTicks] = useState<Map<string, Set<string>>>(
     () => new Map(found.map((r) => [r.title, new Set(r.exercises.filter((e) => e.ticked).map(rowKey))])),

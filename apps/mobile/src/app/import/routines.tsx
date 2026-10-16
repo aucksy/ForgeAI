@@ -106,7 +106,9 @@ export default function ImportRoutinesScreen() {
   };
 
   return (
-    <Screen title="Import routines" onBack={close}>
+    // The steps scroll in their own list, one per step, so each opens at its top (phone test
+    // 16 Oct 2026, 360 dp / font 1.3: step 2 opened at step 1's scroll position).
+    <Screen title="Import routines" onBack={close} scroll={phase.kind !== 'steps'}>
       {phase.kind === 'steps' ? (
         <RoutineImportSteps app="hevy" link={phase.routines} onClose={close} backRef={stepsBack} />
       ) : phase.kind === 'partial' ? (

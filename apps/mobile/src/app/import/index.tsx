@@ -558,7 +558,9 @@ export default function ImportScreen() {
 
   return (
     <Screen
-      scroll={phase !== 'importing'}
+      // The routine steps scroll in their own list, one per step, so each opens at its top
+      // (phone test 16 Oct 2026, 360 dp / font 1.3: step 2 opened at step 1's scroll position).
+      scroll={phase !== 'importing' && phase !== 'routines'}
       title={strong ? 'Import from Strong' : 'Import from Hevy'}
       onBack={phase === 'importing' ? undefined : close}
     >
