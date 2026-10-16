@@ -158,3 +158,23 @@ describe('C4-7: the .xlsx path keeps emoji and accents', () => {
     for (const s of ['Crème brûlée', 'Push 1', 'Señor Müller', '☀️']) expect(undoMojibake(s)).toBe(s);
   });
 });
+
+describe('C4-11: Strong import keeps every set\'s note and a repeated exercise as its own card', () => {
+  it('two notes on one exercise both survive; Bench, Fly, Bench is three cards', async () => {
+    const { parseStrongText } = await import('@/tracker/services/strongImport');
+    const head = 'Date,Workout Name,Duration,Exercise Name,Set Order,Weight,Reps,Distance,Seconds,Notes,Workout Notes,RPE';
+    const row = (ex: string, n: number, kg: number, note = '') => `2026-09-20 07:30:00,Push,52m,${ex},${n},${kg},8,0,0,${note},,`;
+    const csv = [
+      head,
+      row('Bench Press (Barbell)', 1, 60, 'Felt strong'),
+      row('Bench Press (Barbell)', 2, 60, 'Elbow hurt'),
+      row('Cable Fly', 1, 20),
+      row('Bench Press (Barbell)', 1, 40),
+    ].join('\n');
+    const p = parseStrongText(csv, 'metric');
+    const ex = p.workouts[0].exercises;
+    expect(ex.map((e) => e.title)).toEqual(['Bench Press (Barbell)', 'Cable Fly', 'Bench Press (Barbell)']);
+    expect(ex[0].note).toContain('Felt strong');
+    expect(ex[0].note).toContain('Elbow hurt');
+  });
+});

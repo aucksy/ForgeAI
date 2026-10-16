@@ -1,7 +1,8 @@
 /**
  * "Save my history" (audit DS-01 / DS-12) — the whole workout history as a CSV in Hevy's own
- * export format, so it comes straight back through Settings → "Import from Hevy" (and also
- * goes into Hevy or Strong). One row per set, the 14 columns `hevyImport.ts` reads:
+ * export format, so it comes straight back through Settings → "Import from Hevy". (16 Oct 2026
+ * audit, C4-8: Hevy itself imports only Strong files, and exercise names here are ForgeAI's, so
+ * this file is for ForgeAI, not for Hevy.) One row per set, the 14 columns `hevyImport.ts` reads:
  *
  *   title, start_time, end_time, description, exercise_title, superset_id, exercise_notes,
  *   set_index, set_type, weight_kg | weight_lbs, reps, distance_km | distance_miles,

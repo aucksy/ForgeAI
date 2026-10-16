@@ -208,13 +208,18 @@ export function parseStrongText(text: string, units: FileUnits, dateOrder?: Date
     // IM-04: the workout's own notes (on each of its rows; the first one written wins).
     const wn = iWorkoutNotes >= 0 ? (r[iWorkoutNotes] ?? '').replace(/\r\n?/g, '\n').trim() : '';
     if (wn !== '' && w.notes === undefined) w.notes = workoutNotes(w.title, wn);
-    let ex = w.exercises.find((e) => e.title === exTitle);
+    // 16 Oct 2026 audit (C4-11): the same exercise again after another one is its own card (a
+    // back-off block), as the Hevy parser reads blocks; rows in a row stay one card.
+    const lastEx = w.exercises[w.exercises.length - 1];
+    let ex = lastEx && lastEx.title === exTitle ? lastEx : undefined;
     if (!ex) {
       ex = { title: exTitle, sets: [], supersetId: null, note: null };
       w.exercises.push(ex);
     }
+    // C4-11: every set's own note is kept (each new one on its own line), not only the first.
     const note = iNotes >= 0 ? clean(r[iNotes] ?? '') : '';
     if (note !== '' && ex.note == null) ex.note = note;
+    else if (note !== '' && ex.note != null && !ex.note.split('\n').includes(note)) ex.note = `${ex.note}\n${note}`;
     const idx = (orderCounter.get(ex) ?? 0) + 1;
     orderCounter.set(ex, idx);
     ex.sets.push({
