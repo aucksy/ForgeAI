@@ -52,7 +52,7 @@ declare
   c record; pair text; actor text; want text; stmt text; eff text; pre text; ok boolean;
   akey text; arole text; agym uuid; aclaims text; ver bigint;
   got text; fails text := ''; cells int := 0; n_allow int := 0; n_deny int := 0; n_cross int := 0; n_table int := 0;
-  per_actor jsonb := '{}'::jsonb; probe_ip text; open_f text := '';
+  per_actor jsonb := '{}'::jsonb; probe_ip text; open_f text := ''; why text;
   nokey text := 'anon=deny:BAD_KEY memberA=deny:BAD_KEY';
 begin
   today_s := to_char(td, 'YYYY-MM-DD');
@@ -561,7 +561,7 @@ begin
         fails := fails || format(' %s/%s/%s: the table itself lets gym B reach gym A', c.entity, c.action, actor);
       end if;
 
-      got := null;
+      got := null; why := null;
       begin
         -- Tokens: {K} the actor's key, {V} the version of the actor's gym (what its panel would send).
         if c.pre is not null then
@@ -602,6 +602,7 @@ begin
         reset role;
         if sqlerrm <> 'UAT_UNDO' then
           got := 'deny:' || case when sqlstate = '42501' then 'PERM' else sqlerrm end;
+          why := sqlerrm;
         end if;
       end;
 
@@ -611,7 +612,7 @@ begin
       if got = 'allow' then n_allow := n_allow + 1; else n_deny := n_deny + 1; end if;
       per_actor := jsonb_set(per_actor, array[actor], to_jsonb(coalesce((per_actor->>actor)::int, 0) + 1));
       if not (got = any(string_to_array(want, '|'))) then
-        fails := fails || format(' %s/%s/%s: got %s, want %s;', c.entity, c.action, actor, got, want);
+        fails := fails || format(' %s/%s/%s: got %s (%s), want %s;', c.entity, c.action, actor, got, coalesce(why, 'no error'), want);
       end if;
     end loop;
   end loop;
