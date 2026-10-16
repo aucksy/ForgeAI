@@ -2256,6 +2256,33 @@
     silent-catch native-kt 60 → 57. All phone/watch behaviour is [device]: checklist at the end of
     the C5 file.
 
+- 2026-10-16: **End-to-end audit C9 (every word) fixed: 38 of 48** (e18ef9d, cf19fa4, 29e4f30,
+  04272e1, 2a1c412, ab229e8, 03381b3; ships with the next tag). Statuses: Audit/e2e-v2/C9-words.md.
+  - S2 Drive backup: new `src/cloud/backupWords.ts` (PlainError, DriveError with a logged
+    `detail`, driveStatusWords by HTTP status, backupVersionWords, shownBackupError). drive.ts
+    never shows SHA-1 / OAuth / Google JSON / raw sign-in text; a fetch failure is "check your
+    internet". parseSnapshot accepts schema_version <= current (older backups restore, added
+    columns come back NULL) and refuses only a NEWER one with "Update ForgeAI from the Play Store".
+  - Guard (memberWords.test.ts): BANNED moved to `src/lib/words.ts` (BANNED_MEMBER_WORDS +
+    usesBannedWord, case-insensitive PR, 1RM/e1RM/est-1RM, "notification volume" exempt), shared
+    with coachNote's noteAllowed. New readers in test/helpers/visibleText.ts: kotlinTextOf (skips
+    logs, comments, @Suppress, Regex, JSON keys), stringsXmlTextOf, appJsonTextOf, plus words
+    given to countWord/tell/say. Allow entries `untilCoach` (engine, services) drop out when
+    FEATURES.coach is true; src/ai and the seed chat are read always (swept: record, kg lifted,
+    workout, estimated 1-rep max — the design-language term).
+  - Admin app: test/crm/adminWords.test.ts (C9-7 guard, green); Close = "Rehne do", record
+    cancel = "Cancel karo", "Sign in/out karo"; the owner's tool is "admin app" on screen (title,
+    manifest "ForgeAI Admin", install card); "Join code" → "Gym code"; payments show the year
+    when the range spans years. Member app: tinyDateWithYear on records, photos, measurements,
+    chart readouts, undo bars, share text; routine-from-workout names use dateWithYear; import /
+    routine-file errors through importProblem.ts / routineFileProblemText (raw text logged).
+  - Deferred (files busy with other helpers): C9-23 (src/shop/checkIn.ts), C9-26 (RestCard.kt
+    channel name), C9-34 (src/shop Invite/CheckIn buttons). Skipped: C9-19 (design language),
+    C9-20 (Hevy "RPE" header), C9-25 (owner D10). Already fixed by C7: C9-37, 38, 39.
+  - **Tests:** member 2,851 pass (+ backupWords 10, auditC9Words 4, guard +16); admin 806 + 4;
+    typecheck 0 apart from another helper's untracked test/_audit_probes; tsc -b 0; silent-catch
+    and promise ratchets at baseline.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
