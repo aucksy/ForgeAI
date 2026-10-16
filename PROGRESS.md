@@ -2161,6 +2161,37 @@
   - Process: Brain rule judge-every-screenshot-like-a-designer; impeccable skill updated and
     wired to every screen review. **Tests:** 2,000 vitest; panel 450. Phone run **38219118445 on
     fbe7e00: all 23 parts passed**; screenshots reviewed by hand at normal and large text.
+- 2026-10-16: **End-to-end audit C3 (routines, suggestions) + C4 (import/export) fixed: 38 of 42**
+  (97a10fd, 67f1259, 4a84120, 085b8c6, 91e34c6, 8cc33c0, 2461cf6, ff42681, adddfe5, d1a1ea7, 241b344,
+  cac9909, 42c14c7, daf1bca; wave-1 review items 3d8f1bd, d30722c; ratchet f043732; ships with the
+  next tag). Statuses: Audit/e2e-v2/C3-routines-suggestions.md, C4-import-export.md.
+  - Targets: never more than one size step from his real weight (a 1400 kg typo, a 225 kg
+    "dumbbell" or an old best are skipped; heavy/light days never teach a 20 kg step; Up walks from
+    a clean rung after a unit switch; past the top a bar steps by the smallest plate pair so
+    Weight jumps chooses). Back-off and top sets judged apart (their rows hint last time's set; a
+    routine's own per-set numbers come first); longer breaks cut more (10/20/30%); a changed rep
+    range is never "Reps fell" (rule R6); goals from the last full workout; an extra set never
+    blocks; the reason names the shown weight; a routine's Target reads that routine first under
+    "Any workout".
+  - Routines: "Follow it" and re-opening a shared file keep his edits (file imports remembered per
+    row like Hevy links); a Hevy link copied again keeps renamed/reordered routines and a deleted
+    second copy; editor Sets then Warm-ups; Duplicate to My routines; "Other routines" label; names
+    on 2 lines, steppers wrap; the coach sees every folder's routines, each card of a lift twice,
+    the plan week's RPE, and no rep range on holds; warm-ups never under the bar.
+  - Import/export: PREVIOUS by set type (a trailing W row reads last time's unclaimed drop;
+    rebuilt routines take each set's usual type; old drafts pair by place); Repeat keeps every
+    row's type; a time-zone move never re-imports bare "Push" workouts; lb export exact; .xlsx
+    emoji/accents; restore says how many workouts go; Strong keeps every set note and blocks.
+  - Wave-1 review: a lighter set never sets or holds a 1-rep-max record live, in the list or in
+    personal_records (e1rmRecordOf shared by save, rebuild and import; once-per-install log fix);
+    a second drop row takes the drop typed above; one-day chart bar "31 Oct 2025".
+  - Owner decisions (safest default built): C3-3 routine-first Target under "Any workout" (setting
+    line changed); C3-7 a bar he loads in 5 kg jumps now goes 50 -> 52.5 on Standard; C3-1 a
+    comeback 50 -> 52.5 not 60. Kept: C3-17 (Rep range sets every row), C4-8 (export keeps ForgeAI
+    names). Skipped: C3-31 (not reproduced, frozen Chip), C4-10 (warm-up RPE needs a reader audit).
+  - **Tests:** 2,778 vitest pass (69 in the new audit files, each failed before its fix); the 3
+    failing source checks (liveCard, offlineTick, v0281) read another helper's uncommitted Kotlin.
+    typecheck 0; silent-catch 302 and promise 0 at baseline.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
