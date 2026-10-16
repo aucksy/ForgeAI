@@ -39,7 +39,7 @@ export function checkSourceFile(f: { type: string; size: number; name?: string }
 /** After shrinking: the bucket's own rules. */
 export function checkEncodedPhoto(b: { type: string; size: number }): string | null {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(b.type)) {
-    return 'That photo couldn’t be converted. Try a JPEG or PNG picture.';
+    return 'That photo could not be used. Try a JPEG or PNG picture.';
   }
   if (b.size > MAX_PHOTO_BYTES) return 'That photo is still over 3 MB after shrinking. Pick a simpler one.';
   return null;

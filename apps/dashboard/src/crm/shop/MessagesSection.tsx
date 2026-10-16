@@ -100,7 +100,7 @@ export function MessagesSection() {
   };
 
   const takeBack = async (m: SentMessage) => {
-    if (!window.confirm(`Take back “${m.title}”? It leaves every member's inbox.`)) return;
+    if (!window.confirm(`Take back “${m.title}”? It is removed from every member’s inbox.`)) return;
     try {
       await gate.run(() => api.withdrawMessage(key, m.id));
       setSent((prev) => prev?.map((x) => (x.id === m.id ? { ...x, withdrawn: true } : x)) ?? prev);
@@ -182,7 +182,7 @@ export function MessagesSection() {
               <>
                 <span style={{ fontFamily: font.body, fontSize: 14, color: color.ink }}>
                   {members === 0
-                    ? 'No member has the app yet: it shows to members who join in the next 14 days. Send now?'
+                    ? 'No member has the app yet. Members who join in the next 14 days will see it. Send now?'
                     : members === 1
                       ? `Goes to ${members ?? '…'} member. Send now?`
                       : `Goes to ${members ?? '…'} members. Send now?`}
@@ -198,7 +198,7 @@ export function MessagesSection() {
           </div>
           {members === 0 && (
             <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-              No member has joined in the app yet. Send them your gym's link (Settings → Invite members); new members also see the last 14 days of messages.
+              No member has joined in the app yet. Send them your gym’s link (Settings → Invite members). New members also see messages from the last 14 days.
             </p>
           )}
         </Card>

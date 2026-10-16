@@ -52,7 +52,7 @@ export function AppMembersSection() {
         <Card>
           <EmptyState
             title="Nobody has joined in the app yet"
-            body={`Ask members to open the ForgeAI app and join with gym code ${cloud.joinCode}. They show up here straight away.`}
+            body={`Ask members to open the ForgeAI app and join with gym code ${cloud.joinCode}. They show up here at once.`}
           />
         </Card>
       ) : (

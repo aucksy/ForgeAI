@@ -350,7 +350,7 @@ export const MAX_OPTIONS = 12;
 
 /** A typed rupee price -> paise, or a plain-English reason it is not allowed. */
 export function parsePrice(text: string): { ok: true; paise: Paise } | { ok: false; error: string } {
-  if (text.trim() === '') return { ok: false, error: 'Enter a price.' };
+  if (text.trim() === '') return { ok: false, error: 'Type the price.' };
   const p = parseRupeeInput(text);
   if (p === null) return { ok: false, error: 'Type the price in rupees, like 2499.' };
   if (p < MIN_PRICE_P) return { ok: false, error: 'The price must be at least ₹1.' };
@@ -673,13 +673,13 @@ const ERROR_WORDS: Record<ShopErrorCode, string> = {
     return 'This demo gym is no longer available. Start a new demo gym.';
   },
   get GONE() {
-    return 'That was already removed or changed. The list has been refreshed.';
+    return 'That was already removed or changed. We updated the list.';
   },
   get BAD_STEP() {
-    return 'That order has already moved on. The list has been refreshed.';
+    return 'Someone already changed that order. We updated the list.';
   },
   get EMPTY() {
-    return 'Please fill in the name.';
+    return 'Type the name.';
   },
   get BAD_OPTIONS() {
     return `Too many choices. Keep it to ${MAX_OPTIONS} or fewer.`;
@@ -688,7 +688,7 @@ const ERROR_WORDS: Record<ShopErrorCode, string> = {
     return 'Too many demo gyms were started in the last hour. Please try again in a few minutes.';
   },
   get CHANGED() {
-    return 'This product changed while you were editing (someone may have ordered it). We’ve loaded the latest — check and save again.';
+    return 'This product changed while you were editing. Someone may have ordered it. We loaded the new details. Check them and save again.';
   },
   get TOO_MANY() {
     return 'Too many orders from this member in the last hour.';

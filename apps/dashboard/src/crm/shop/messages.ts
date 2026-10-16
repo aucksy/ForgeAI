@@ -161,11 +161,11 @@ export function seenText(m: Pick<SentMessage, 'seen' | 'recipients'>): string {
 export function messageErrorWords(err: unknown): string {
   const text = err instanceof Error ? err.message : typeof err === 'object' && err ? String((err as { message?: unknown }).message ?? '') : String(err ?? '');
   if (/\bOFFER_TODAY\b/.test(text))
-    return 'You already sent an offer or event today. Members get at most one a day — send it tomorrow.';
+    return 'You already sent an offer or event today. Members get at most one a day. Send it tomorrow.';
   if (/\bOFFER_WEEK\b/.test(text))
-    return 'You sent 3 offers or events this week. Members get at most 3 a week — wait a few days.';
+    return 'You sent 3 offers or events this week. Members get at most 3 a week. Wait a few days.';
   if (/\bTOO_MANY\b/.test(text))
-    return 'That is 20 messages today, the most for one day. Send it tomorrow.';
+    return 'You sent 20 messages today. That is the most for one day. Send it tomorrow.';
   if (/\bTOO_LONG\b/.test(text))
     return `Keep the title to ${TITLE_MAX} letters and the message to ${BODY_MAX}.`;
   if (/\bEMPTY\b/.test(text)) return 'Write a title.';

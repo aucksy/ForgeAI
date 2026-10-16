@@ -248,7 +248,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const setOrderStatus = useCallback(
     async (orderId: string, status: OrderStatus) => {
       const gym = cloudRef.current;
-      if (!gym) throw new Error('No shop is connected.');
+      if (!gym) throw new Error('The shop is not turned on.');
       let failure: unknown = null;
       await gate.run(async () => {
         try {
@@ -289,7 +289,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       const code = errorCode(e);
       throw new Error(
         code === 'OFFLINE' || code === 'UNKNOWN'
-          ? 'Couldn’t reach the ForgeAI cloud. Check the internet connection and try again.'
+          ? 'Can’t reach ForgeAI. Check the internet and try again.'
           : errorWords(e),
       );
     }

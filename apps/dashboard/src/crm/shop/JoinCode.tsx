@@ -159,11 +159,11 @@ export function JoinCodeCard({
       </div>
       {copied === 'no' && (
         <div role="status" style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          This browser blocked copying. The code is selected — press Ctrl+C.
+          This browser blocked copying. The code is selected. Press Ctrl+C to copy it.
         </div>
       )}
       <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        Easiest: send members your gym's link — one tap in the app and they are in. Or they type this code in the app's Shop tab. Their orders show up here.
+        Easiest way: send members your gym’s link. One tap in the app and they are in. Or they can type this code in the app’s Shop tab. Their orders show up here.
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
         <Button onClick={() => window.open(whatsAppHref(inviteMessage(cloud.name, cloud.joinCode)), '_blank', 'noopener')}>
@@ -175,7 +175,7 @@ export function JoinCodeCard({
       </div>
       {!online && (
         <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          Offline right now — the code still works; new orders show up when the internet is back.
+          No internet right now. The code still works. New orders show up when the internet is back.
         </div>
       )}
     </Card>

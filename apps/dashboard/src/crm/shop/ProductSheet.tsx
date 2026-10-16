@@ -75,7 +75,7 @@ export function ProductSheet({
     const v = validateDraft(d);
     if (!v.ok) {
       setErrors(v.errors);
-      setError('Please fix the highlighted fields.');
+      setError('Please fix the boxes marked in red.');
       return;
     }
     setErrors({});
@@ -149,7 +149,7 @@ export function ProductSheet({
       >
         {error && <ErrorBanner>{error}</ErrorBanner>}
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {'It disappears from the app straight away. Orders already placed for it stay as they are. If you might sell it again, use '}
+          {'It goes from the app at once. Old orders for it stay as they are. If you may sell it again, use '}
           <strong style={{ color: color.ink }}>Hide from app</strong>
           {' instead.'}
         </p>
@@ -654,7 +654,7 @@ function PhotoBlock({
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
             {d.imageUrl
               ? 'Members see this photo in the app. Remove it to show the drawn picture instead.'
-              : 'A clear photo on a plain background works best. You can also drop a photo on the picture.'}
+              : 'A clear photo on a plain background works best. You can also drag a photo onto the picture.'}
           </div>
           {error && (
             <div role="alert" style={{ fontFamily: font.body, fontSize: 13, color: color.criticalText }}>

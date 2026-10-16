@@ -45,8 +45,8 @@ export function CheckInQrScreen() {
       ) : (
         <Card>
           <EmptyState
-            title="Put your records online first"
-            body="A member’s phone writes the check-in into your gym’s online records, so self check-in needs them online. Settings → put your records online, then come back here for the poster."
+            title="Put your gym online first"
+            body="Members check in from their own phone, so your gym must be online first. Go to Settings → Put your gym online. Then come back here for the poster."
             action={<Button onClick={() => navigate('/settings')}>Open Settings</Button>}
           />
         </Card>
@@ -104,7 +104,7 @@ function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           </Button>
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          Print it on A4 and stick it where members walk in. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.
+          Print it on A4 and stick it where members walk in. On a phone, Print → “Save as PDF” also works. Use the picture for a print shop.
         </p>
       </Card>
 
@@ -115,17 +115,17 @@ function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
             The member scans the poster with their phone camera. The ForgeAI app opens and checks them in.
           </li>
           <li>
-            The app finds them in your Members by their mobile number. The first time, it asks for the number once.
+            The app finds them in your Members list by their mobile number. It asks for the number only the first time.
           </li>
           <li>
-            The check-in shows in today’s register within a few seconds, with a small “App” tag. Scanning twice in a day counts once.
+            The check-in shows in today’s register in a few seconds, with a small “App” tag. Two scans in one day count as one visit.
           </li>
         </ol>
         <p style={{ margin: `${space.md}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          A member whose mobile number is not in your Members is told to ask the desk. Add or fix their number, and they scan again.
+          If a member’s mobile number is not in your Members list, the app asks them to go to the desk. Add or fix their number. Then they scan again.
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {`Members need the ForgeAI app and to have joined your gym in it (gym code ${joinCode}). Settings → Invite members has the join poster.`}
+          {`Members need the ForgeAI app, and must join your gym in it (gym code ${joinCode}). The join poster is in Settings → Invite members.`}
         </p>
         <div style={{ marginTop: space.md }}>
           <Button variant="ghost" onClick={() => navigate('/settings/invite')}>

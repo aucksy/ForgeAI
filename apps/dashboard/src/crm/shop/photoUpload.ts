@@ -61,14 +61,14 @@ export async function shrinkPhoto(file: File): Promise<Blob> {
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext('2d');
-    if (!ctx) throw new PhotoError('This browser can’t prepare photos. Try Chrome.');
+    if (!ctx) throw new PhotoError('This browser can’t open photos. Try Chrome.');
     // JPEG has no transparency: a see-through PNG would turn black without this.
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, width, height);
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(pic.source, 0, 0, width, height);
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY));
-    if (!blob) throw new PhotoError('That photo couldn’t be converted. Try a JPEG or PNG picture.');
+    if (!blob) throw new PhotoError('That photo could not be used. Try a JPEG or PNG picture.');
     const tooBig = checkEncodedPhoto(blob);
     if (tooBig) throw new PhotoError(tooBig);
     return blob;

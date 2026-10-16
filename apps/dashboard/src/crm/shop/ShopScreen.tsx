@@ -171,7 +171,7 @@ function OrdersSection() {
             body={
               filter === 'ready'
                 ? 'Orders you mark ready wait here until the member collects and pays.'
-                : 'New orders show up here by themselves within a few seconds.'
+                : 'New orders show up here on their own in a few seconds.'
             }
           />
         </Card>
@@ -201,7 +201,7 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
       await setOrderStatus(order.orderId, ACTION_TARGET[a]);
       flash(
         a === 'ready'
-          ? `Order ${order.orderNo} is ready — ${order.memberName} can see that in the app.`
+          ? `Order ${order.orderNo} is ready. ${order.memberName} can see this in the app.`
           : a === 'collected'
             ? `Order ${order.orderNo} collected. ${formatINR(order.totalP)} taken.`
             : `Order ${order.orderNo} is back to new.`,
@@ -474,7 +474,7 @@ function ProductsSection() {
         <Card>
           <EmptyState
             title="No products yet"
-            body="Add what you sell at the desk — protein, shakers, T-shirts — and members can order it in the app."
+            body="Add what you sell at the desk, like protein, shakers and T-shirts. Members can then order them in the app."
             action={<Button onClick={() => setEditing('new')}>+ Add product</Button>}
           />
         </Card>
