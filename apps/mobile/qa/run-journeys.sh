@@ -143,7 +143,9 @@ colour_check() {
 splash_check() {
   local sdk
   sdk=$(adb shell getprop ro.build.version.sdk 2>/dev/null | tr -d '\r')
-  adb logcat -d -s ForgeSplash:I > "$J_OUT/xj6-splash-log.txt" 2>/dev/null
+  # Read from the stream kept since the start: logcat's own buffer turns over within minutes
+  # (run 38967797709 kept only the last launch and the Leave).
+  cp "$SPLASH_LOG" "$J_OUT/xj6-splash-log.txt" 2>/dev/null || true
   if [ -z "$sdk" ] || [ "$sdk" -lt 33 ]; then echo "START-UP screen: SKIPPED (Android API ${sdk:-?}; needs 33+)"; return 0; fi
   python3 - "$J_OUT/xj6-splash-log.txt" <<'PY'
 import sys
@@ -166,6 +168,11 @@ adb install -r "$APK" || { log "INSTALL FAILED"; exit 1; }
 sleep 30
 adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 adb logcat -c
+# A bigger log buffer for the evidence, and the start-up screen lines kept as they come (J6 step 6).
+adb logcat -G 16M >/dev/null 2>&1 || true
+SPLASH_LOG="$J_OUT/splash-stream.txt"
+adb logcat -v time -s ForgeSplash:I > "$SPLASH_LOG" 2>/dev/null &
+SPLASH_PID=$!
 # The owner's phone (the same profile as qa-device.yml's `owner`): 360 dp, font 1.3, India time.
 adb shell wm density 480 >/dev/null 2>&1 || true
 adb shell settings put system font_scale 1.3 >/dev/null 2>&1 || true
@@ -290,6 +297,7 @@ fi
 [ $GYM_B_OK = 1 ] && python3 "$QA_DIR/xj_server.py" sign-out B 2>&1 | tee -a "$OUT/timeline.txt"
 rm -rf "$XJ_STATE_DIR"
 adb logcat -d > "$OUT/logcat.txt" 2>/dev/null || true
+kill "$SPLASH_PID" 2>/dev/null || true
 # Every screenshot in one folder.
 mkdir -p "$J_OUT/screens"
 { find "$J_OUT" -path "$J_OUT/screens" -prune -o -name 'xj*.png' -print 2>/dev/null; find "$PWD" "$QA_DIR" -maxdepth 1 -name 'xj*.png' 2>/dev/null; } \
