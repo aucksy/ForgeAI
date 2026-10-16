@@ -12,7 +12,7 @@ import { getDb } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 import { getExerciseById } from '@/db/repos/exerciseRepo';
 import { getActivePlan } from '@/db/repos/planRepo';
-import { getRoutineAnywhere, myRoutinesFolderIdUnqueued, type RoutineFull } from '@/tracker/db/folderRepo';
+import { getRoutineAnywhere, listFolders, myRoutinesFolderIdUnqueued, type RoutineFull } from '@/tracker/db/folderRepo';
 import {
   MAX_ROUTINE_SETS,
   parsePlanSets,
@@ -69,6 +69,17 @@ export async function ensureActivePlanId(): Promise<string> {
 export async function listRoutines(): Promise<PlanDayFull[]> {
   const active = await getActivePlan();
   return active ? active.days : [];
+}
+
+/**
+ * 16 Oct 2026 audit (C3-10): every routine of every folder — what the Routines screen shows —
+ * the followed folder's first, each with its folder's name. The coach used `listRoutines` (the
+ * followed plan only), so a routine it had just created (in "My routines", never followed) or a
+ * Hevy importer's folders could not be found.
+ */
+export async function listAllRoutines(): Promise<(RoutineFull & { folderName: string; following: boolean })[]> {
+  const folders = await listFolders();
+  return folders.flatMap((f) => f.routines.map((r) => ({ ...r, folderName: f.name, following: f.following })));
 }
 
 /**

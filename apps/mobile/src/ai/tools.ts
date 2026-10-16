@@ -346,11 +346,14 @@ export function buildWorkoutLoggedCard(logged: LoggedWorkout): ToolRunResult['ca
 
 // -------------------------------------------------- routine (plan-day) helpers
 
-/** Resolve a routine (plan day) by name — exact, then fuzzy, then by day type. */
+/**
+ * Resolve a routine by name — exact, then fuzzy, then by day type. 16 Oct 2026 audit (C3-10):
+ * from EVERY folder (the followed one first), as the Routines screen lists them.
+ */
 async function resolveRoutine(name: string): Promise<PlanDayFull | null> {
   const q = name.trim().toLowerCase();
   if (!q) return null;
-  const routines = await routineRepo.listRoutines();
+  const routines = await routineRepo.listAllRoutines();
   return (
     routines.find((r) => r.name.toLowerCase() === q) ??
     routines.find((r) => r.name.toLowerCase().includes(q) || q.includes(r.name.toLowerCase())) ??
@@ -390,18 +393,38 @@ function repsInUse(pe: PlanDayFull['exercises'][number]): string {
   return `${r.repRangeMin}-${r.repRangeMax}`;
 }
 
+/**
+ * 16 Oct 2026 audit (C3-18): the exercises among `routines` logged as a timed hold — their line
+ * has no rep range (as on the routine page). A failed read: every line keeps its range.
+ */
+async function timedIn(routines: readonly PlanDayFull[]): Promise<Set<string>> {
+  const ids = [...new Set(routines.flatMap((r) => r.exercises.map((pe) => pe.exerciseId)))];
+  if (ids.length === 0) return new Set();
+  try {
+    const infos = await getTrackerExercisesByIds(ids);
+    return new Set([...infos].filter(([, i]) => i.logType === 'time').map(([id]) => id));
+  } catch (e) {
+    console.warn('[ForgeErr] coach: how the routine exercises are logged could not be read', e);
+    return new Set();
+  }
+}
+
+/** "Bench Press — 3 × 8-12"; a timed hold "Plank — 3 sets". */
+function exerciseLine(pe: PlanDayFull['exercises'][number], timed: ReadonlySet<string>): string {
+  return timed.has(pe.exerciseId) ? `${pe.exercise.name} — ${countWord(pe.targetSets, 'set')}` : `${pe.exercise.name} — ${pe.targetSets} × ${repsInUse(pe)}`;
+}
+
 /** Compact routine summary for tool results. */
-function routineSummary(r: PlanDayFull): {
+async function routineSummary(r: PlanDayFull): Promise<{
   name: string;
   dayType: DayType;
   exercises: string[];
-} {
+}> {
+  const timed = await timedIn([r]);
   return {
     name: r.name,
     dayType: r.dayType,
-    exercises: r.exercises.map(
-      (pe) => `${pe.exercise.name} — ${pe.targetSets} × ${repsInUse(pe)}`,
-    ),
+    exercises: r.exercises.map((pe) => exerciseLine(pe, timed)),
   };
 }
 
@@ -847,21 +870,22 @@ export const COACH_TOOLS: CoachTool[] = [
   {
     name: 'get_routines',
     description:
-      "List the member's saved workout routines (the days of their active plan): each routine's name, day type, and its exercises with target sets and rep ranges. Use to answer 'what routines do I have?' or to build a session from a routine.",
+      "List the member's saved workout routines (every folder, the followed one first): each routine's name, its folder, day type, and its exercises with target sets and rep ranges. Use to answer 'what routines do I have?' or to build a session from a routine.",
     parameters: { type: 'object', properties: {} },
     async execute() {
-      const routines = await routineRepo.listRoutines();
+      // C3-10: every folder's routines, as the Routines screen lists them.
+      const routines = await routineRepo.listAllRoutines();
+      const timed = await timedIn(routines);
       return {
         resultForModel: {
           count: routines.length,
           routines: routines.map((d) => ({
             name: d.name,
+            folder: d.folderName,
+            followed: d.following,
             dayType: d.dayType,
             exerciseCount: d.exercises.length,
-            exercises: d.exercises.map(
-              (pe) =>
-                `${pe.exercise.name} — ${pe.targetSets} × ${repsInUse(pe)}`,
-            ),
+            exercises: d.exercises.map((pe) => exerciseLine(pe, timed)),
           })),
         },
       };
@@ -1012,7 +1036,7 @@ export const COACH_TOOLS: CoachTool[] = [
       return {
         resultForModel: {
           created: true,
-          routine: routine ? routineSummary(routine) : { name, dayType, exercises: [] },
+          routine: routine ? await routineSummary(routine) : { name, dayType, exercises: [] },
         },
       };
     },
@@ -1083,7 +1107,7 @@ export const COACH_TOOLS: CoachTool[] = [
       });
       const updated = await routineRepo.getRoutine(routine.id);
       return {
-        resultForModel: { added: exercise.name, routine: updated ? routineSummary(updated) : null },
+        resultForModel: { added: exercise.name, routine: updated ? await routineSummary(updated) : null },
       };
     },
   },
@@ -1141,7 +1165,7 @@ export const COACH_TOOLS: CoachTool[] = [
       return {
         resultForModel: {
           updated: pe.exercise.name,
-          routine: updated ? routineSummary(updated) : null,
+          routine: updated ? await routineSummary(updated) : null,
         },
       };
     },
@@ -1181,7 +1205,7 @@ export const COACH_TOOLS: CoachTool[] = [
       return {
         resultForModel: {
           removed: removedName,
-          routine: updated ? routineSummary(updated) : null,
+          routine: updated ? await routineSummary(updated) : null,
         },
       };
     },

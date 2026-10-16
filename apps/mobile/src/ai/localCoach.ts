@@ -652,7 +652,8 @@ function isRoutinesQuery(t: string): boolean {
 }
 
 async function routinesReply(f: Flavour): Promise<LocalReply> {
-  const routines = await routineRepo.listRoutines();
+  // C3-10: every folder's routines, as the Routines screen lists them.
+  const routines = await routineRepo.listAllRoutines();
   if (!routines.length) {
     return {
       text: pick(

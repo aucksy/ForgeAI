@@ -472,6 +472,24 @@ export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout,
   if (!day) return { ...tw, targets: [] };
   // "Previous values": the Up next routine's scope, as the workout it starts will read.
   const scope = await historyScopeOrAll(day.id);
-  const [targets, now] = await Promise.all([routineFirstTargets(day.exercises.map((pe) => ({ pe })), false, scope, day.id), getPlanNow().catch(() => null)]);
-  return { ...tw, targets: now?.easy ? targets.map((t) => toEasyTarget(t, EASY_REASON, easySets)) : targets };
+  // 16 Oct 2026 audit (C3-11): a lift listed twice (heavy, then back-off) — each row reads its own
+  // card of last time, as the workout screen does (both rows said the heavy weight here).
+  const seen = new Map<string, number>();
+  const items = day.exercises.map((pe) => {
+    const card = seen.get(pe.exerciseId) ?? 0;
+    seen.set(pe.exerciseId, card + 1);
+    return { pe, card };
+  });
+  const [targets, now, rir] = await Promise.all([
+    routineFirstTargets(items, false, scope, day.id),
+    getPlanNow().catch(() => null),
+    // C3-11: this plan week's effort for members who log RPE, as on the workout screen.
+    effortRir(day.id, { effort: useTrackerPrefs.getState().advancedSets }).catch(() => null),
+  ]);
+  return {
+    ...tw,
+    targets: now?.easy
+      ? targets.map((t) => toEasyTarget(t, EASY_REASON, easySets))
+      : targets.map((t) => withEffort(t, rir, rir != null ? effortReason(rir) : '')),
+  };
 }

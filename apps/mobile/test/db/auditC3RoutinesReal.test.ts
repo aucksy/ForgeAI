@@ -72,3 +72,41 @@ describe('C3-22: opening the same routine file again keeps the member\'s edits',
     expect(again.keptEdits).toEqual(['Upper']);
   });
 });
+
+describe('C3-11: Home and the coach read each card of a lift listed twice on its own', () => {
+  it('Bench heavy (100 x 5) and Bench back-off (80 x 8): the second row\'s Target is about 80, not 100', async () => {
+    const bench = db.all<{ id: string }>("SELECT id FROM exercises WHERE name = 'Barbell Bench Press'")[0].id;
+    const { createFolderWithRoutines } = await import('@/tracker/db/folderRepo');
+    await createFolderWithRoutines(
+      'Mine',
+      [
+        {
+          name: 'Bench Day',
+          dayType: 'push',
+          exercises: [
+            { exerciseId: bench, sets: 3, repMin: 3, repMax: 6 },
+            { exerciseId: bench, sets: 3, repMin: 8, repMax: 12 },
+          ],
+        },
+      ],
+      { follow: true, todayISO: '2026-01-01' },
+    );
+    const { createSession } = await import('@/db/repos/workoutRepo');
+    const { addSetsWithMeta } = await import('@/tracker/db/trackerSets');
+    const { getDb } = await import('@/db');
+    const day = db.all<{ id: string }>("SELECT id FROM plan_days WHERE name = 'Bench Day'")[0].id;
+    const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+    const s = await createSession({ dateISO: yesterday, dayType: 'push', source: 'manual', startedAt: Date.now() - 86_400_000 });
+    await addSetsWithMeta(s.id, [
+      ...[0, 1, 2].map(() => ({ exerciseId: bench, weightKg: 100, reps: 5, isWarmup: false })),
+      ...[0, 1, 2].map(() => ({ exerciseId: bench, weightKg: 80, reps: 8, isWarmup: false, cardIndex: 1 })),
+    ]);
+    await getDb().runAsync('UPDATE workout_sessions SET routine_id = ?, title = ? WHERE id = ?', [day, 'Bench Day', s.id]);
+    const { getTodaysWorkoutWithTargets } = await import('@/tracker/services/coachTargets');
+    const tw = await getTodaysWorkoutWithTargets();
+    expect(tw.planDayId).toBe(day);
+    expect(tw.targets).toHaveLength(2);
+    expect(tw.targets[0].last?.weightKg).toBe(100);
+    expect(tw.targets[1].last?.weightKg).toBe(80);
+  });
+});
