@@ -1,0 +1,79 @@
+# Audit v2 gate part ANIM (run-device-qa.sh): the phone's animation scales are 1 (as on the
+# owner's phone), so the app's "reduce motion" is OFF and every animated branch runs: sheets
+# slide, buttons spring, the record pop-up animates in. Every other part runs with animations off.
+# Demo data, today's routine, a sheet opened and closed, set 1 ticked, the rest skipped, 300 kg
+# on set 2 (a new record: the pop-up), then the workout discarded. Screenshots: anim-*.png.
+appId: com.forgeai.app
+---
+- runFlow: gate-demo.yaml
+- takeScreenshot: anim-01-workout-tab
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Up next: .*'
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Start$"
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- tapOn: "^Start$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- takeScreenshot: anim-02-live-workout
+# A sheet sliding in and out (animationType 'slide' only when reduce motion is off).
+- tapOn:
+    text: '.* set 1\. Change set type'
+    index: 0
+- takeScreenshot: anim-03-set-type-sheet
+- back
+- tapOn:
+    text: 'Mark .* set 1 complete'
+    index: 0
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 10000
+- takeScreenshot: anim-04-rest-running
+- tapOn:
+    text: "Skip rest"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: '.* set 2 weight, kilograms'
+    index: 0
+- eraseText
+- inputText: " 300"
+- hideKeyboard
+- tapOn:
+    text: 'Mark .* set 2 complete'
+    index: 0
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "New record.*"
+    timeout: 5000
+- takeScreenshot: anim-05-new-record
+- tapOn:
+    text: 'Keep 300.*'
+    optional: true
+    waitToSettleTimeoutMs: 300
+- takeScreenshot: anim-06-after-record
+# Throw the workout away (the app's own sheet), so nothing is left open.
+- scrollUntilVisible:
+    element: "Discard workout"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Discard workout"
+- extendedWaitUntil:
+    visible: 'Discard workout\?'
+    timeout: 10000
+- takeScreenshot: anim-07-discard-sheet
+- tapOn: "^Discard$"
+- extendedWaitUntil:
+    visible: "Start empty workout|Start routine.*|Up next: .*"
+    timeout: 30000
+- takeScreenshot: anim-08-back-on-workout-tab

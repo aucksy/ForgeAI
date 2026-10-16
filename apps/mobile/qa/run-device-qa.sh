@@ -83,10 +83,54 @@ adb logcat -c
 adb shell appops set $PKG SCHEDULE_EXACT_ALARM default >/dev/null 2>&1 || true
 log "exact alarms as installed: USE_EXACT_ALARM $(adb shell dumpsys package $PKG | tr -d '\r' | grep -m1 -oE 'android.permission.USE_EXACT_ALARM: granted=(true|false)' || echo 'not listed'); SCHEDULE_EXACT_ALARM appop $(adb shell appops get $PKG SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' ')"
 
-# QA_ONLY=w (qa-device.yml's `only` input): only part W, the real-workout journey, for building
-# that flow quickly. Such a run is named "(partial w)" and never opens the release gate.
-if [ "${QA_ONLY:-}" = "w" ]; then
-  log "QA_ONLY=w: only part W runs (a partial run: it cannot release)"
+# Which parts run (qa-device.yml inputs, audit v2 phase B).
+#   QA_ONLY  (`only`):  empty = the whole phone test (A ... M, then W). Otherwise ONLY the parts
+#                       named, comma or space separated, from: w, dnd, longrest, anim, mk. Such a
+#                       run is named "(partial ...)" and never opens the release gate.
+#   QA_EXTRA (`extra`): opt-in parts added to a WHOLE run (same names but w): dnd, longrest and
+#                       anim run after part M, mk after part W. Empty = the whole run exactly as before.
+#   QA_PROFILE (`profile`): default = the emulator as it boots (411 dp, font 1.0, UTC). owner = the
+#                       owner's phone for EVERY part: ~360 dp wide (density 480), font 1.3,
+#                       Asia/Kolkata. Part W always sets these itself.
+GATE_PARTS="w dnd longrest anim mk"
+qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
+QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
+QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
+for p in $QA_ONLY_LIST $QA_EXTRA_LIST; do
+  case " $GATE_PARTS " in
+    *" $p "*) ;;
+    *) log "UNKNOWN PART '$p' in only/extra (known: $GATE_PARTS)"; status=1 ;;
+  esac
+done
+# Does part $1 run in this run?
+qa_runs() {
+  if [ -n "$QA_ONLY_LIST" ]; then
+    case " $QA_ONLY_LIST " in *" $1 "*) return 0 ;; esac
+    return 1
+  fi
+  [ "$1" = "w" ] && return 0
+  case " $QA_EXTRA_LIST " in *" $1 "*) return 0 ;; esac
+  return 1
+}
+QA_PROFILE=${QA_PROFILE:-default}
+BASE_FONT=1.0
+if [ "$QA_PROFILE" = "owner" ]; then
+  BASE_FONT=${W_FONT:-1.3}
+  adb shell wm density "${W_DENSITY:-480}" >/dev/null 2>&1 || true
+  adb shell settings put system font_scale "$BASE_FONT" >/dev/null 2>&1 || true
+  adb shell settings put global auto_time_zone 0 >/dev/null 2>&1 || true
+  adb shell cmd alarm set-timezone Asia/Kolkata >/dev/null 2>&1 || adb shell setprop persist.sys.timezone Asia/Kolkata >/dev/null 2>&1 || true
+  sleep 3
+  log "PROFILE owner: screen $(adb shell wm size | tr -d '\r' | tail -1), density $(adb shell wm density | tr -d '\r' | tail -1), font scale $(adb shell settings get system font_scale | tr -d '\r'), time $(adb shell "date '+%a %d %b %Y %H:%M %Z'" | tr -d '\r')"
+  [ "$(adb shell settings get system font_scale | tr -d '\r')" = "$BASE_FONT" ] || { log "PROFILE owner FAILED: font scale not set"; status=1; }
+elif [ "$QA_PROFILE" != "default" ]; then
+  log "UNKNOWN PROFILE '$QA_PROFILE' (default | owner)"
+  status=1
+fi
+log "parts: only='${QA_ONLY_LIST}' extra='${QA_EXTRA_LIST}' profile=$QA_PROFILE"
+
+if [ -n "$QA_ONLY_LIST" ]; then
+  log "QA_ONLY=$QA_ONLY_LIST: only these parts run (a partial run: it cannot release)"
 else
 # ---------------------------------------------------------------- part A
 log "part A start"
@@ -874,12 +918,12 @@ else
   log "BIG TEXT FAILED: font scale did not change (reads '$(p7_font)'); the large-text tour was not run"
   status=1
 fi
-adb shell settings put system font_scale 1.0
+adb shell settings put system font_scale "$BASE_FONT"
 sleep 3
-if [ "$(p7_font)" = "1.0" ]; then
-  log "BIG TEXT: font scale put back to 1.0"
+if [ "$(p7_font)" = "$BASE_FONT" ]; then
+  log "BIG TEXT: font scale put back to $BASE_FONT"
 else
-  log "BIG TEXT FAILED: font scale could not be put back to 1.0 (reads '$(p7_font)')"
+  log "BIG TEXT FAILED: font scale could not be put back to $BASE_FONT (reads '$(p7_font)')"
   status=1
 fi
 adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
@@ -1005,6 +1049,148 @@ part_m
 
 fi  # QA_ONLY
 
+# ---------------------------------------------------------------- audit v2 gate parts (opt-in)
+# Each starts from a fresh install's state with the demo data (gate-demo.yaml), so it runs alone
+# (`only`) or after the whole run (`extra`). Evidence: part-<name>/, <name>-*.txt, timeline.
+GATE_RAN=""
+gate_flow() {  # $1 = part name, $2 = flow file, then extra maestro args (-e NAME=value ...)
+  local name="$1" flow="$2"
+  shift 2
+  free_maestro
+  log "part $name start"
+  maestro test "$@" --format junit --output "$OUT/part-$name.xml" --test-output-dir "$OUT/part-$name" "$QA_DIR/$flow" \
+    > "$OUT/part-$name.log" 2>&1 || {
+      status=1
+      adb exec-out screencap -p > "$OUT/$name-failed.png"
+      log "PART $(echo "$name" | tr '[:lower:]' '[:upper:]') FAILED ($flow: part-$name.log, $name-failed.png)"
+      return 1
+    }
+  GATE_RAN="$GATE_RAN $name"
+  return 0
+}
+gate_wake() {
+  adb shell input keyevent KEYCODE_WAKEUP
+  sleep 1
+  adb shell wm dismiss-keyguard || true
+}
+gate_dump() { adb shell dumpsys notification --noredact > "$OUT/$1"; }
+# Do Not Disturb as a person sets it from Quick Settings (priority only: alarms get through).
+gate_dnd() {  # $1 = on | off
+  adb shell cmd notification set_dnd "$1" > "$OUT/dnd-set-$1.txt" 2>&1 || true
+  sleep 2
+  echo "$(adb shell settings get global zen_mode | tr -d '\r')"
+}
+
+# ---------------------------------------------------------------- part DND (audit v2 B: Do Not Disturb)
+# RestCard.postOver (RT-12) with the screen off and Do Not Disturb ON:
+#   "Ring through Do Not Disturb" OFF (the app's default): "Rest is over" on the normal channel
+#     rest-over-sound as a REMINDER, so Do Not Disturb holds it back: no sound.
+#   "Ring through Do Not Disturb" ON: on rest-over-alarm-sound (alarm sound usage) as an ALARM,
+#     which Do Not Disturb lets through: it makes a sound.
+# The alert must come on time in both. Do Not Disturb is switched off again after each case.
+part_dnd() {
+  local ring zen want_ch want_cat want_sound t
+  for ring in off on; do
+    zen=$(gate_dnd on)
+    log "DND ($ring): Do Not Disturb on, zen_mode=$zen (1 = priority only)"
+    if [ "$zen" = "0" ] || [ -z "$zen" ]; then
+      log "DND FAILED: Do Not Disturb could not be switched on ($(tr -d '\r' < "$OUT/dnd-set-on.txt" | head -c 200))"
+      status=1
+      return 1
+    fi
+    if gate_flow "dnd-$ring" gate-rest.yaml -e REST="Rest 0:30" -e RING="$ring"; then
+      t=$(now_ms)
+      gate_dump "dnd-$ring-during.txt"
+      adb shell input keyevent KEYCODE_SLEEP
+      sleep 45
+      gate_dump "dnd-$ring-after.txt"
+      adb logcat -d -v time 2>/dev/null | grep 'ForgeRest' > "$OUT/dnd-$ring-forgerest.txt" || true
+      log "DND ($ring) rest end path: $(sed 's/^.*ForgeRest[^:]*: //' "$OUT/dnd-$ring-forgerest.txt" | tail -4 | tr '\n' ';' | cut -c1-300)"
+      gate_wake
+      if [ "$ring" = "off" ]; then want_ch=rest-over-sound; want_cat=reminder; want_sound=silent
+      else want_ch=rest-over-alarm-sound; want_cat=alarm; want_sound=sound; fi
+      python3 "$QA_DIR/notif.py" over-locked "$OUT/dnd-$ring-after.txt" "$t" "$OUT/dnd-$ring-during.txt" >> "$OUT/timeline.txt" || status=1
+      if python3 "$QA_DIR/notif.py" over-is "$OUT/dnd-$ring-after.txt" "$want_ch" "$want_cat" "$want_sound" >> "$OUT/timeline.txt"; then
+        log "DND ($ring ring-through): OK, Rest is over on $want_ch as $want_cat ($want_sound)"
+      else
+        status=1
+        log "DND ($ring ring-through) FAILED: want $want_ch / $want_cat / $want_sound (see the REST IS OVER line above; dnd-$ring-after.txt)"
+      fi
+    fi
+    zen=$(gate_dnd off)
+    log "DND ($ring): Do Not Disturb off, zen_mode=$zen"
+    [ "$zen" = "0" ] || { log "DND FAILED: Do Not Disturb could not be switched off (zen_mode=$zen)"; status=1; }
+  done
+}
+
+# ---------------------------------------------------------------- part LONGREST (audit v2 B: a real rest asleep)
+# A 2:00 rest with the screen OFF the whole time: "Rest is over" must post AFTER the rest's end
+# (never early, at most 5 s late) on rest-over-sound as an alarm, and make a sound. Then, woken,
+# a second rest of 0:30 right away, asleep again: its alert comes within ~2 minutes of the first,
+# where Android 15+ "notification cooldown" mutes a second alert from one app unless it is an
+# alarm (gap report rank 1; API 34 has no cooldown, 35/36 do). It too must post and sound. Last,
+# left asleep past the alert's 2-minute timeout (OVER_TIMEOUT_MS): it goes, the live card is back.
+part_longrest() {
+  local t1 t2 c1 c2
+  gate_flow longrest-1 gate-rest.yaml -e REST="Rest 2:00" -e RING=off || return 1
+  t1=$(now_ms)
+  gate_dump longrest-1-during.txt
+  adb shell input keyevent KEYCODE_SLEEP
+  log "LONGREST: 2:00 rest, screen off"
+  sleep 135
+  gate_dump longrest-1-after.txt
+  python3 "$QA_DIR/notif.py" over-locked "$OUT/longrest-1-after.txt" "$t1" "$OUT/longrest-1-during.txt" >> "$OUT/timeline.txt" || status=1
+  python3 "$QA_DIR/notif.py" over-is "$OUT/longrest-1-after.txt" rest-over-sound alarm sound >> "$OUT/timeline.txt" \
+    || { status=1; log "LONGREST FAILED: the 2:00 rest's alert (longrest-1-after.txt)"; }
+  gate_wake
+  gate_flow longrest-2 gate-rest-again.yaml -e REST="Rest 0:30" || return 1
+  t2=$(now_ms)
+  gate_dump longrest-2-during.txt
+  adb shell input keyevent KEYCODE_SLEEP
+  sleep 45
+  gate_dump longrest-2-after.txt
+  python3 "$QA_DIR/notif.py" over-locked "$OUT/longrest-2-after.txt" "$t2" "$OUT/longrest-2-during.txt" >> "$OUT/timeline.txt" || status=1
+  python3 "$QA_DIR/notif.py" over-is "$OUT/longrest-2-after.txt" rest-over-sound alarm sound >> "$OUT/timeline.txt" \
+    || { status=1; log "LONGREST FAILED: the second rest's alert (longrest-2-after.txt)"; }
+  c1=$(grep -A40 'tag=over-' "$OUT/longrest-1-after.txt" | grep -m1 -o 'mCreationTimeMs=[0-9]*' | cut -d= -f2)
+  c2=$(grep -A40 'tag=over-' "$OUT/longrest-2-after.txt" | grep -m1 -o 'mCreationTimeMs=[0-9]*' | cut -d= -f2)
+  if [ -n "$c1" ] && [ -n "$c2" ]; then
+    log "LONGREST: the two alerts posted $(( (c2 - c1) / 1000 )) s apart (under 120 s = inside Android 15+'s cooldown window; API $(adb shell getprop ro.build.version.sdk | tr -d '\r'))"
+  fi
+  # Still asleep: past the alert's 120 s timeout, the live workout card must be back.
+  sleep 115
+  gate_dump longrest-timeout.txt
+  python3 "$QA_DIR/notif.py" live-back "$OUT/longrest-timeout.txt" >> "$OUT/timeline.txt" \
+    || { status=1; log "LONGREST FAILED: after Rest is over timed out (2 min, phone asleep) the live workout card did not come back (longrest-timeout.txt)"; }
+  adb logcat -d -v time 2>/dev/null | grep 'ForgeRest' > "$OUT/longrest-forgerest.txt" || true
+  gate_wake
+}
+
+# ---------------------------------------------------------------- part ANIM (audit v2 B: animations on)
+# Every other part runs with animations OFF (the emulator runner's disable-animations), which also
+# turns the app's "reduce motion" ON, so the animated branches never ran (gap report rank 5). Here
+# the three scales are 1 (a normal phone) for one short flow; put back to 0 after.
+part_anim() {
+  local k
+  for k in window_animation_scale transition_animation_scale animator_duration_scale; do
+    adb shell settings put global "$k" 1 >/dev/null 2>&1 || true
+  done
+  log "ANIM: animation scales window/transition/animator = $(adb shell settings get global window_animation_scale | tr -d '\r')/$(adb shell settings get global transition_animation_scale | tr -d '\r')/$(adb shell settings get global animator_duration_scale | tr -d '\r') (reduce motion off)"
+  gate_flow anim gate-anim.yaml
+  log "ANIM: app process after the flow: '$(adb shell pidof $PKG | tr -d '\r')' (empty = not running)"
+  mkdir -p "$OUT/anim"
+  { find "$OUT/part-anim" -name "anim-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "anim-*.png" 2>/dev/null; } \
+    | while read -r f; do cp "$f" "$OUT/anim/" 2>/dev/null; done
+  log "ANIM: $(find "$OUT/anim" -name "anim-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/anim/"
+  for k in window_animation_scale transition_animation_scale animator_duration_scale; do
+    adb shell settings put global "$k" 0 >/dev/null 2>&1 || true
+  done
+}
+
+qa_runs dnd && { log "part DND start"; part_dnd; }
+qa_runs longrest && { log "part LONGREST start"; part_longrest; }
+qa_runs anim && { log "part ANIM start"; part_anim; }
+
 # ---------------------------------------------------------------- part W (the "real workout" journey)
 # Audit lesson (13 Oct 2026): two audits missed what the owner found in ONE gym session, because
 # the test phone was not his phone and nobody did a real workout. Part W: the phone set like his
@@ -1097,8 +1283,67 @@ part_w() {
   w_gather
 }
 
-log "part W start"
-part_w
+if qa_runs w; then
+  log "part W start"
+  part_w
+fi
+
+# ---------------------------------------------------------------- part MK (audit v2 B1: Monkey)
+# Random taps, swipes and keys INSIDE the app only (-p), with a fixed seed (the same run can be
+# repeated) and no system keys, for ~10 minutes after the scripted parts. Fails on a crash or an
+# ANR (Monkey's own report), and on a crash / ANR / JS error / [ForgeErr] line in its logcat
+# (qa_report.py scan, the same rules as the whole run's scan). Opt-in: only=mk or extra=mk.
+MK_SEED=${MK_SEED:-20261016}
+MK_EVENTS=${MK_EVENTS:-3000}
+part_mk() {
+  local lpid rc
+  # Alone (only=mk), the app has no data yet: the demo first, so Monkey has screens to press.
+  if [ -n "$QA_ONLY_LIST" ] && [ -z "$GATE_RAN" ] && ! qa_runs w; then
+    gate_flow mk-seed gate-demo.yaml || true
+  fi
+  free_maestro
+  mkdir -p "$OUT/part-mk"
+  adb logcat -c 2>/dev/null || true
+  adb logcat -v threadtime > "$OUT/part-mk/logcat-mk.txt" 2>/dev/null &
+  lpid=$!
+  adb shell svc power stayon true >/dev/null 2>&1 || true
+  gate_wake
+  log "MK: monkey seed $MK_SEED, $MK_EVENTS events, throttle 200 ms, app only"
+  timeout 1200 adb shell monkey -p "$PKG" --pct-syskeys 0 --throttle 200 --monitor-native-crashes -s "$MK_SEED" -v "$MK_EVENTS" > "$OUT/mk-monkey.txt" 2>&1
+  rc=$?
+  adb shell pkill -f com.android.commands.monkey >/dev/null 2>&1 || true
+  sleep 3
+  kill "$lpid" 2>/dev/null || true
+  wait "$lpid" 2>/dev/null || true
+  log "MK: monkey exit $rc; $(grep -oE 'Events injected: [0-9]+' "$OUT/mk-monkey.txt" | tail -1); $(grep -m1 -oE 'Monkey finished|Monkey aborted[^.]*' "$OUT/mk-monkey.txt" || echo 'no finish line')"
+  if grep -qE "// (CRASH|NOT RESPONDING): $PKG" "$OUT/mk-monkey.txt" || grep -q "Monkey aborted" "$OUT/mk-monkey.txt"; then
+    status=1
+    log "MK FAILED: monkey saw a crash or an ANR: $(grep -m2 -E '// (CRASH|NOT RESPONDING|Long Msg|Short Msg)' "$OUT/mk-monkey.txt" | tr '\n' ' ' | cut -c1-300)"
+  elif [ "$rc" -eq 124 ]; then
+    log "MK: monkey stopped by the 20-minute time limit (not a failure by itself)"
+  fi
+  # The same crash / ANR / JS-error / [ForgeErr] rules as the end-of-run scan, on Monkey's logcat alone.
+  rm -rf "$OUT/mk-scan"
+  mkdir -p "$OUT/mk-scan/part-mk"
+  cp "$OUT/part-mk/logcat-mk.txt" "$OUT/mk-scan/part-mk/logcat-mk.txt" 2>/dev/null || true
+  if python3 "$QA_DIR/qa_report.py" scan "$OUT/mk-scan" > "$OUT/mk-scan.txt" 2>&1; then
+    log "MK: logcat scan clean ($(wc -l < "$OUT/part-mk/logcat-mk.txt" | tr -d ' ') lines)"
+  else
+    status=1
+    log "MK FAILED: logcat scan: $(grep -E 'finding|CRASH|ANR|ERROR' "$OUT/mk-scan.txt" | head -4 | tr '\n' ' ' | cut -c1-400)"
+  fi
+  rm -rf "$OUT/mk-scan"
+  adb exec-out screencap -p > "$OUT/mk-end.png" 2>/dev/null || true
+  adb shell svc power stayon false >/dev/null 2>&1 || true
+  # Whatever Monkey changed outside the app is put back for the checks after it.
+  adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || true
+  adb shell svc wifi enable >/dev/null 2>&1 || true
+  adb shell svc data enable >/dev/null 2>&1 || true
+}
+if qa_runs mk; then
+  log "part MK start"
+  part_mk
+fi
 
 # ---------------------------------------------------------------- crash / ANR / JS-error check
 # Maestro clears logcat when each part starts, so every part's own device log (in its

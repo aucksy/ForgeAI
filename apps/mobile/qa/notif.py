@@ -34,6 +34,11 @@ Usage: notif.py <check> <dump-file> [args]
                           Done, +15 s, Skip (Phase 6), the given title (and, if given, a text
                           "Next: ..." containing text-part), on the Phase 2 channel "rest-card-v2"
   over-open               "Rest is over" posted while the app was open, and the rest card gone
+  over-is <channel> <category> <sound|silent>
+                          audit v2 (DND / LONGREST): the NEWEST "Rest is over" is showing, on
+                          <channel>, with <category> (alarm / reminder); "sound" = Android's
+                          own record of what last made a sound (mSoundNotificationKey) is THIS
+                          alert, "silent" = it is not (Do Not Disturb held it back)
   watch                   "Rest is over" reaches a paired watch (not local-only) as an alarm
                           (category=alarm); the live workout card stays on the phone (local-only)
 
@@ -120,10 +125,21 @@ def is_ongoing(block):
     return channel_of(block) == LIVE_CHANNEL or re.search(rf"\bid={LIVE_ID}\b", head) is not None or title(block) == "Workout in progress"
 
 
+def created(block):
+    m = re.search(r"mCreationTimeMs=(\d+)", block)
+    return int(m.group(1)) if m else 0
+
+
+def key_of(block):
+    m = re.search(r"\bkey=(\S+?):?\s", header(block) + " ")
+    return m.group(1).rstrip(":") if m else ""
+
+
 def main():
     check, path = sys.argv[1], sys.argv[2]
     recs = records(open(path, encoding="utf-8", errors="replace").read())
-    over = [b for b in recs if title(b) == "Rest is over"]
+    # Newest first: a stale "Rest is over" (another tag) must never be read as the fresh one.
+    over = sorted([b for b in recs if title(b) == "Rest is over"], key=created, reverse=True)
     cards = [b for b in recs if is_card(b)]
     if check == "over-locked":
         tick = int(sys.argv[3])
@@ -260,6 +276,30 @@ def main():
             live_local.append(bool(lm and int(lm.group(1), 16) & 0x100))
         ok = f >= 0 and not local and category == "alarm" and all(live_local)
         print(f"[qa] WATCH: 'Rest is over' flags={hex(f)} local-only={'YES (the watch never gets it)' if local else 'no'} category={category} (want alarm); live cards local-only={live_local}: {'ok' if ok else 'FAILED'}")
+        return 0 if ok else 1
+    if check == "over-is":
+        want_ch, want_cat, want_sound = sys.argv[3], sys.argv[4], sys.argv[5]
+        if not over:
+            print(f"[qa] REST IS OVER NOT FOUND (want channel {want_ch}, category {want_cat}, {want_sound})")
+            return 1
+        b = over[0]
+        ch = channel_of(b)
+        cat = re.search(r"\bcategory=(\w+)", b)
+        category = cat.group(1) if cat else "?"
+        key = key_of(b)
+        full = open(path, encoding="utf-8", errors="replace").read()
+        sm = re.search(r"mSoundNotificationKey=(\S*)", full)
+        vm = re.search(r"mVibrateNotificationKey=(\S*)", full)
+        sound_key = sm.group(1) if sm else ""
+        vib_key = vm.group(1) if vm else ""
+        made_sound = bool(key) and sound_key == key
+        icpt = re.search(r"mIntercept=(\w+)", b)
+        ok_sound = made_sound if want_sound == "sound" else not made_sound
+        ok = ch == want_ch and category == want_cat and ok_sound
+        print(f"[qa] REST IS OVER: channel={ch} (want {want_ch}) category={category} (want {want_cat}) "
+              f"made a sound={'yes' if made_sound else 'no'} (want {'yes' if want_sound == 'sound' else 'no'}) "
+              f"buzzed={'yes' if key and vib_key == key else 'no'} intercepted by DND={icpt.group(1) if icpt else '?'} "
+              f"alerts showing={len(over)} key={key or '?'}: {'ok' if ok else 'FAILED'}")
         return 0 if ok else 1
     if check == "over-open":
         if not over:

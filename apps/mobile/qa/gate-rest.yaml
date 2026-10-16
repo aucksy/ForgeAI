@@ -1,0 +1,71 @@
+# Audit v2 gate parts DND and LONGREST (run-device-qa.sh): demo data, "Ring through Do Not
+# Disturb" switched on when RING is "on" (Settings -> Workouts; off is the app's default), today's
+# routine started, the first exercise's rest set to REST (a rest-picker chip's spoken name, e.g.
+# "Rest 0:30", "Rest 2:00"), set 1 ticked: the rest is running when this flow ends. The script
+# then sleeps the phone and reads the notification list.
+# Called with: maestro test -e REST="Rest 0:30" -e RING=off gate-rest.yaml (no env defaults
+# here: a flow-level default would override the caller's, trap 22).
+appId: com.forgeai.app
+---
+- runFlow: gate-demo.yaml
+- runFlow:
+    when:
+      true: ${RING == 'on'}
+    commands:
+      - runFlow:
+          file: sub-settings-page.yaml
+          env:
+            PAGE: "Workouts"
+      - scrollUntilVisible:
+          element: "Ring through Do Not Disturb"
+          centerElement: true
+          timeout: 30000
+      - tapOn: "Ring through Do Not Disturb"
+      # The row's title is plain text; the switch carries the same name. If the first tap hit the
+      # text, press the switch itself.
+      - runFlow:
+          when:
+            notVisible:
+              text: "Ring through Do Not Disturb"
+              checked: true
+          commands:
+            - tapOn:
+                text: "Ring through Do Not Disturb"
+                index: 1
+      - assertVisible:
+          text: "Ring through Do Not Disturb"
+          checked: true
+      - takeScreenshot: gate-ring-through-dnd-on
+      - back
+      - back
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Up next: .*'
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Start$"
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- tapOn: "^Start$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- tapOn:
+    text: "More for .*"
+    index: 0
+- tapOn: "Rest timer"
+- tapOn: "${REST}"
+- tapOn:
+    text: 'Mark .* set 1 complete'
+    index: 0
+- assertVisible: "Skip rest"
+- takeScreenshot: gate-rest-running
