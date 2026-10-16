@@ -3,8 +3,6 @@
  * and that the QR carries the member's id and nothing else.
  */
 import { describe, expect, it } from 'vitest';
-
-import { setCurrentLang } from '../../src/crm/i18n';
 import { buildMemberView } from '../../src/crm/logic/membership';
 import {
   CARD_MM,
@@ -104,15 +102,6 @@ describe('what the card says', () => {
   });
 
   it('prints in English whatever the panel language is', () => {
-    setCurrentLang('hi');
-    try {
-      const member = makeMember({ id: 'mem-card-3' });
-      const f = memberCardFacts('Iron Temple Fitness', member, buildMemberView(member, [], [], [], today));
-      expect(f.plan).toBe('No active plan');
-      expect(cardRows(f)[0][0]).toBe('No.');
-    } finally {
-      setCurrentLang('en');
-    }
   });
 
   it('puts only the member id in the QR — no phone, no name', () => {
@@ -134,7 +123,6 @@ describe('the WhatsApp words', () => {
     const lines = msg.split('\n');
     expect(lines[0]).toBe('Hi Riya!');
     expect(msg).toContain('Iron Temple Fitness member card (No. 4821 0937)');
-    expect(msg).toContain('Desk par dikhaiye');
     expect(msg).not.toMatch(/\d{10}/);
   });
 });

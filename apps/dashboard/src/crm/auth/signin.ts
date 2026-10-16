@@ -9,7 +9,6 @@
  */
 
 import { INVITE_ORIGIN, firstName } from '../shop/invite';
-import { tr } from '../i18n';
 
 export type Role = 'owner' | 'staff';
 
@@ -147,7 +146,7 @@ export function madeCodeFromRow(raw: unknown): MadeCode {
 }
 
 /**
- * The WhatsApp message that carries a code: English, then the same in Hinglish, the panel's
+ * The WhatsApp message that carries a code, the panel's
  * address on its own line so WhatsApp makes it tappable. PURE.
  */
 export function codeMessage(personName: string, gymName: string, phone: string, code: string): string {
@@ -157,8 +156,6 @@ export function codeMessage(personName: string, gymName: string, phone: string, 
     hi ? `Hi ${hi}!` : 'Hi!',
     `Your ForgeAI sign-in code for ${gym}: ${code}`,
     `Open the link, tap "Sign in", type your mobile ${formatMobile(phone)} and this code. It works once, for ${CODE_MINUTES} minutes.`,
-    '',
-    `Link kholiye, "Sign in" dabaiye, apna mobile ${formatMobile(phone)} aur yeh code daaliye. Code ek baar, ${CODE_MINUTES} minute tak chalega.`,
     '',
     INVITE_ORIGIN,
   ].join('\n');
@@ -233,56 +230,44 @@ export function authErrorWords(err: unknown): string {
   const code = err instanceof SignInError ? err.code : authErrorCode(err);
   switch (code) {
     case 'BAD_PHONE':
-      return tr('Type a 10-digit mobile number, like 98290 12345.', '10 digit ka mobile number likho, jaise 98290 12345.');
+      return 'Type a 10-digit mobile number, like 98290 12345.';
     case 'NO_CODE':
-      return tr(
-        'No code is waiting for this number. Ask your gym owner to make one in Settings → Staff & sign-in.',
-        'Is number ke liye koi Code nahi hai. Gym Owner se kaho Settings → Staff ka login mein Code banaye.',
-      );
+      return 'No code is waiting for this number. Ask your gym owner to make one in Settings → Staff & sign-in.';
     case 'WRONG_CODE': {
       const left = err instanceof SignInError ? err.triesLeft : null;
       // 0011: one answer for "wrong" and "none waiting", so nobody learns when a code exists.
-      const base = tr(
-        'That code is not right, or it has run out. Check it, or ask your gym owner for a new code.',
-        'Yeh Code sahi nahi hai, ya khatam ho gaya. Check karo, ya gym Owner se naya Code maango.',
-      );
+      const base = 'That code is not right, or it has run out. Check it, or ask your gym owner for a new code.';
       if (left === 0)
-        return tr(
-          'That code is not right. Too many tries: wait 15 minutes, or ask your gym owner for a new code.',
-          'Yeh Code sahi nahi hai. Bahut baar try kiya: 15 minute ruko, ya gym Owner se naya Code maango.',
-        );
+        return 'That code is not right. Too many tries: wait 15 minutes, or ask your gym owner for a new code.';
       return left === null
         ? base
         : left === 1
-          ? tr(`${base} (${left} try left)`, `${base} (${left} try baaki)`)
-          : tr(`${base} (${left} tries left)`, `${base} (${left} try baaki)`);
+          ? `${base} (${left} try left)`
+          : `${base} (${left} tries left)`;
     }
     case 'TOO_MANY_TRIES':
-      return tr(
-        'Too many tries for this number. Wait 15 minutes, or ask your gym owner for a new code.',
-        'Is number se bahut baar try hua. 15 minute ruko, ya gym Owner se naya Code maango.',
-      );
+      return 'Too many tries for this number. Wait 15 minutes, or ask your gym owner for a new code.';
     case 'PHONE_TAKEN':
-      return tr('This mobile number is already on the list.', 'Yeh mobile number pehle se list mein hai.');
+      return 'This mobile number is already on the list.';
     case 'OWNER_ONLY':
-      return tr('Only an owner can do this.', 'Yeh sirf owner kar sakta hai.');
+      return 'Only an owner can do this.';
     case 'SELF':
-      return tr('You can’t remove yourself. Use “Sign out” instead.', 'Aap khud ko nahi hata sakte. Iski jagah “Sign out” karo.');
+      return 'You can’t remove yourself. Use “Sign out” instead.';
     case 'LAST_OWNER':
-      return tr('A gym needs at least one owner. Add another owner first.', 'Gym mein kam se kam ek owner chahiye. Pehle doosra owner jodo.');
+      return 'A gym needs at least one owner. Add another owner first.';
     case 'TOO_MANY':
-      return tr('That is the most for now. Wait a little, then try again.', 'Abhi ke liye itna hi. Thoda ruko, phir se try karo.');
+      return 'That is the most for now. Wait a little, then try again.';
     case 'GONE':
-      return tr('That person was already removed. The list has been refreshed.', 'Yeh vyakti pehle hi hata diya gaya. List refresh ho gayi hai.');
+      return 'That person was already removed. The list has been refreshed.';
     case 'BAD_KEY':
-      return tr('You were signed out. Sign in again with your mobile number.', 'Aap sign out ho gaye. Apne mobile number se phir sign in karo.');
+      return 'You were signed out. Sign in again with your mobile number.';
     case 'EMPTY':
-      return tr('Please fill in the name.', 'Naam bhariye.');
+      return 'Please fill in the name.';
     case 'BUSY':
-      return tr('Many gyms are starting right now. Please try again in a few minutes.', 'Abhi bahut gym shuru ho rahe hain. Kuch minute baad phir se try karo.');
+      return 'Many gyms are starting right now. Please try again in a few minutes.';
     case 'OFFLINE':
-      return tr('Can’t reach the internet. Check the connection and try again.', 'Internet nahi mil raha. Connection check karke phir se try karo.');
+      return 'Can’t reach the internet. Check the connection and try again.';
     default:
-      return tr('Something went wrong. Please try again.', 'Kuch gadbad hui. Phir se try karo.');
+      return 'Something went wrong. Please try again.';
   }
 }

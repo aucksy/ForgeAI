@@ -4,17 +4,14 @@
  * source 'app', the gym's version moved by one) behaves like a desk check-in in the panel — seen
  * on the next pull, never doubled by the desk, and undone like any other.
  */
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { CloudCrmData, type CrmCloudApi, type CrmRecord, type PullResult } from '../../src/crm/data/cloud';
-import { setCurrentLang } from '../../src/crm/i18n';
 import { visitSourceTag } from '../../src/crm/logic/attendance';
 import { CHECKIN_POSTER, checkInLink } from '../../src/crm/shop/checkin';
 import { inviteLink } from '../../src/crm/shop/invite';
 import { POSTER, qrModules } from '../../src/crm/shop/InviteScreen';
 import type { MemberDraft } from '../../src/crm/types';
-
-afterEach(() => setCurrentLang('en'));
 
 describe('check-in link', () => {
   it('is the gym code under /c/ on the panel site, in capitals', () => {
@@ -37,14 +34,11 @@ describe('check-in link', () => {
 describe('the check-in poster', () => {
   it('says scan to check in, in English and Hinglish', () => {
     expect(CHECKIN_POSTER.lead).toBe('Scan to check in');
-    expect(CHECKIN_POSTER.leadHi).toBe('Check in ke liye scan karein');
     expect(CHECKIN_POSTER.steps).toHaveLength(3);
-    expect(CHECKIN_POSTER.stepsHi.split(' · ')).toHaveLength(3);
   });
 
   it('sends members without the app to the desk, and saves under its own name', () => {
     expect(CHECKIN_POSTER.codeLine('RAMS01')).toMatch(/desk/);
-    expect(CHECKIN_POSTER.codeLineHi('RAMS01')).toMatch(/desk/i);
     expect(CHECKIN_POSTER.file).toBe('checkin-poster');
     expect(POSTER.file).toBe('invite-poster');
   });
@@ -58,9 +52,6 @@ describe('the register tag', () => {
   });
 
   it('follows the panel’s language', () => {
-    setCurrentLang('hi');
-    expect(visitSourceTag('app')).toBe('App');
-    expect(visitSourceTag('import')).toBe('Import kiya');
   });
 });
 

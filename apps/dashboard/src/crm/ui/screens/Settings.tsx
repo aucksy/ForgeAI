@@ -12,11 +12,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth, useCan } from '../../auth/AuthProvider';
 import { SignInCard } from '../../auth/GoOnlineCard';
 import { InstallCard } from '../InstallCard';
-import { LangToggle } from '../LangToggle';
+import { ThemeToggle } from '../ThemeToggle';
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
-import { tr } from '../../i18n';
 import { navigate } from '../router';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import { checkGymDetails } from '../../logic/gst';
@@ -42,7 +41,7 @@ export function SettingsScreen() {
   const { cloud, startOver, disconnectShop, renameCloudGym } = useShop();
   // Online records are never wiped, replaced with the demo, or cut off from here.
   const online = useAuth().session?.online === true;
-  // Staff (front desk) sees only the language, the app install and their own sign-in card;
+  // Staff (front desk) sees only the screen colours, the app install and their own sign-in card;
   // gym details, branding, the member app switch and the data actions are the owner's.
   const allowed = useCan();
   const canManage = allowed('manageGym');
@@ -85,11 +84,11 @@ export function SettingsScreen() {
       });
       // The app shows members the gym's name, so a rename goes to the cloud too.
       await renameCloudGym(name.trim());
-      flash(tr('Saved.', 'Save ho gaya.'));
+      flash('Saved.');
     } catch (e) {
       // Without this, a failed write (storage full) just stopped the spinner and
       // said nothing — the owner would assume it saved.
-      setError(e instanceof Error ? e.message : tr('Could not save your gym details.', 'Gym ki details save nahi hui.'));
+      setError(e instanceof Error ? e.message : 'Could not save your gym details.');
     } finally {
       setSaving(false);
     }
@@ -106,7 +105,7 @@ export function SettingsScreen() {
 
   return (
     <>
-      <PageHeader title={tr('Settings', 'Settings')} subtitle={tr("Your gym's details and data", 'Aapke gym ki details aur data')} />
+      <PageHeader title={'Settings'} subtitle={"Your gym's details and data"} />
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
@@ -116,79 +115,64 @@ export function SettingsScreen() {
       <InstallCard />
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{tr('Gym details', 'Gym ki details')}</SectionTitle>
+        <SectionTitle>{'Gym details'}</SectionTitle>
         <TextField
-          label={tr('Gym name', 'Gym ka naam')}
+          label={'Gym name'}
           value={name}
           onChange={setName}
           error={fieldError?.field === 'name' ? fieldError.message : null}
         />
         <Grid min={220}>
-          <TextField label={tr('Phone', 'Phone')} value={phone} onChange={setPhone} inputMode="tel" />
+          <TextField label={'Phone'} value={phone} onChange={setPhone} inputMode="tel" />
           <TextField
-            label={tr('GSTIN (optional)', 'GSTIN (zaroori nahi)')}
+            label={'GSTIN (optional)'}
             value={gstin}
             onChange={setGstin}
             error={fieldError?.field === 'gstin' ? fieldError.message : null}
-            hint={tr("Only if you're GST registered — used on invoices.", 'Sirf agar aap GST mein registered hain — bill par chhapta hai.')}
+            hint={"Only if you're GST registered — used on invoices."}
           />
         </Grid>
-        <TextField label={tr('Address', 'Pata')} value={address} onChange={setAddress} multiline />
+        <TextField label={'Address'} value={address} onChange={setAddress} multiline />
         <div style={{ marginTop: space.lg }}>
           <Button onClick={save} disabled={saving}>
-            {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save details', 'Details save karo')}
+            {saving ? 'Saving…' : 'Save details'}
           </Button>
         </div>
       </Card>
 
       {/* Titled inside its card like the sections above and below it — the title
           used to sit outside, on the page, the only one that did. */}
-      <JoinCodeCard title={tr('Member app', 'Member app')} />
+      <JoinCodeCard title={'Member app'} />
 
       {/* Gym branding: the gym's own logo and colours in the member app. */}
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{tr('Your look in the app', 'App mein aapka look')}</SectionTitle>
+        <SectionTitle>{'Your look in the app'}</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {cloud
-            ? tr(
-                'Your logo opens the app, and your colour runs through every screen members see.',
-                'App aapke logo se khulti hai, aur aapka rang members ki har screen par dikhta hai.',
-              )
-            : tr(
-                'Turn on the member app above first; then your logo and colour can run through it.',
-                'Pehle upar Member App chalu karo; phir aapka logo aur rang usmein dikhega.',
-              )}
+            ? 'Your logo opens the app, and your colour runs through every screen members see.'
+            : 'Turn on the member app above first; then your logo and colour can run through it.'}
         </p>
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" disabled={!cloud} onClick={() => navigate('/settings/branding')}>
-            {tr('Open branding', 'Branding kholo')}
+            {'Open branding'}
           </Button>
         </div>
       </Card>
 
       <Card>
-        <SectionTitle>{tr('Your data', 'Aapka data')}</SectionTitle>
+        <SectionTitle>{'Your data'}</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {tr(
-            `${counts.members} members · ${counts.memberships} memberships · ${counts.payments} payments · ${counts.visits} check-ins. Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`,
-            `${counts.members} members · ${counts.memberships} memberships · ${counts.payments} payments · ${counts.visits} Check-in. Shuru kiya ${formatDay(dateISOFromEpoch(gym.createdAt))}.`,
-          )}
+          {`${counts.members} members · ${counts.memberships} memberships · ${counts.payments} payments · ${counts.visits} check-ins. Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`}
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
           {online
-            ? tr(
-                'Stored online. Safe if a phone or computer breaks, and the same on every device you sign in on.',
-                'Online save hai. Phone ya computer toote tab bhi safe, aur jis bhi device par sign in karo wahan same.',
-              )
-            : tr(
-                'Stored in this browser only. Put your records online (above) to keep them safe and open them anywhere.',
-                'Sirf is browser mein save hai. Data safe rakhne aur kahin bhi kholne ke liye upar se Online karo.',
-              )}
+            ? 'Stored online. Safe if a phone or computer breaks, and the same on every device you sign in on.'
+            : 'Stored in this browser only. Put your records online (above) to keep them safe and open them anywhere.'}
         </p>
 
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
-            {tr('Import members from Excel', 'Excel se members import karo')}
+            {'Import members from Excel'}
           </Button>
         </div>
 
@@ -196,12 +180,12 @@ export function SettingsScreen() {
         <Row gap={space.sm}>
           <div style={{ marginTop: space.lg }}>
             <Button variant="ghost" onClick={() => setConfirming('demo')}>
-              {tr('Load demo gym', 'Demo gym kholo')}
+              {'Load demo gym'}
             </Button>
           </div>
           <div style={{ marginTop: space.lg }}>
             <Button variant="ghost" tone="danger" onClick={() => setConfirming('fresh')}>
-              {tr('Erase and start fresh', 'Sab mitao, naya shuru karo')}
+              {'Erase and start fresh'}
             </Button>
           </div>
           {/* Only a DEMO gym may be started over: that erases this browser. A real
@@ -210,14 +194,14 @@ export function SettingsScreen() {
           {cloud?.demo && (
             <div style={{ marginTop: space.lg }}>
               <Button variant="ghost" tone="danger" onClick={() => setConfirming('over')}>
-                {tr('Start over with a new demo gym', 'Naye demo gym se shuru karo')}
+                {'Start over with a new demo gym'}
               </Button>
             </div>
           )}
           {cloud && !cloud.demo && (
             <div style={{ marginTop: space.lg }}>
               <Button variant="ghost" tone="danger" onClick={() => setConfirming('disconnect')}>
-                {tr('Disconnect the shop', 'Shop band karo')}
+                {'Disconnect the shop'}
               </Button>
             </div>
           )}
@@ -229,18 +213,18 @@ export function SettingsScreen() {
         <Sheet
           title={
             confirming === 'demo'
-              ? tr('Load the demo gym?', 'Demo gym kholein?')
+              ? 'Load the demo gym?'
               : confirming === 'over'
-                ? tr('Start over with a new demo gym?', 'Naye demo gym se shuru karein?')
+                ? 'Start over with a new demo gym?'
                 : confirming === 'disconnect'
-                  ? tr('Disconnect the shop?', 'Shop band karein?')
-                  : tr('Erase everything?', 'Sab kuch mitayein?')
+                  ? 'Disconnect the shop?'
+                  : 'Erase everything?'
           }
           onClose={closeConfirm}
           footer={
             <>
               <Button variant="ghost" onClick={() => setConfirming(null)}>
-                {tr('Cancel', 'Rehne do')}
+                {'Cancel'}
               </Button>
               <Button
                 tone="danger"
@@ -250,7 +234,7 @@ export function SettingsScreen() {
                     if (confirming === 'disconnect') {
                       disconnectShop();
                       setConfirming(null);
-                      flash(tr('Shop disconnected. Your members and payments are still here.', 'Shop band ho gayi. Aapke members aur payments yahin hain.'));
+                      flash('Shop disconnected. Your members and payments are still here.');
                       return;
                     }
                     if (confirming === 'over') {
@@ -261,59 +245,44 @@ export function SettingsScreen() {
                     }
                     if (confirming === 'demo') {
                       await loadDemoGym();
-                      flash(tr('Demo gym loaded.', 'Demo gym khul gaya.'));
+                      flash('Demo gym loaded.');
                     } else {
                       // The PERSISTED name, not the unsaved form field: an
                       // unsaved edit here decided whether the fresh gym counted
                       // as "never set up" and bounced back to the welcome screen.
                       await startEmptyGym(gym.name);
-                      flash(tr('Started fresh.', 'Naya shuru ho gaya.'));
+                      flash('Started fresh.');
                     }
                   } catch (e) {
-                    setError(e instanceof Error ? e.message : tr('That didn’t work. Please try again.', 'Nahi hua. Phir se try karo.'));
+                    setError(e instanceof Error ? e.message : 'That didn’t work. Please try again.');
                   }
                   setConfirming(null);
                 }}
               >
                 {confirming === 'demo'
-                  ? tr('Load demo gym', 'Demo gym kholo')
+                  ? 'Load demo gym'
                   : confirming === 'over'
-                    ? tr('Start over', 'Naya shuru karo')
+                    ? 'Start over'
                     : confirming === 'disconnect'
-                      ? tr('Disconnect', 'Band karo')
-                      : tr('Erase everything', 'Sab mitao')}
+                      ? 'Disconnect'
+                      : 'Erase everything'}
               </Button>
             </>
           }
         >
           {confirming !== 'disconnect' && (
             <ErrorBanner>
-              {tr(
-                `This replaces everything currently in this browser — all ${counts.members} members, ${counts.payments} payments and ${counts.visits} check-ins. It cannot be undone.`,
-                `Is browser mein jo kuch hai sab badal jayega — saare ${counts.members} members, ${counts.payments} payments aur ${counts.visits} Check-in. Yeh wapas nahi hoga.`,
-              )}
+              {`This replaces everything currently in this browser — all ${counts.members} members, ${counts.payments} payments and ${counts.visits} check-ins. It cannot be undone.`}
             </ErrorBanner>
           )}
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
             {confirming === 'disconnect'
-              ? tr(
-                  `Your members, plans, payments and check-ins stay exactly as they are. This browser stops showing shop orders and products, and gym code ${cloud?.joinCode ?? ''} stops being managed from here. Members who already joined can’t be reached from this admin app any more.`,
-                  `Aapke members, Plan, payments aur Check-in jaise hain waise rahenge. Yeh browser Shop ke Order aur products dikhana band karega, aur gym code ${cloud?.joinCode ?? ''} yahan se nahi chalega. Jo members pehle join kar chuke hain, unse is admin app se baat nahi ho payegi.`,
-                )
+              ? `Your members, plans, payments and check-ins stay exactly as they are. This browser stops showing shop orders and products, and gym code ${cloud?.joinCode ?? ''} stops being managed from here. Members who already joined can’t be reached from this admin app any more.`
               : confirming === 'over'
-              ? tr(
-                  `This browser forgets the current demo gym and its shop (gym code ${cloud?.joinCode ?? ''} stops being yours here). You go back to the welcome screen, where Start demo makes a fresh gym with a new code.`,
-                  `Yeh browser abhi wala Demo gym aur uski Shop bhool jayega (gym code ${cloud?.joinCode ?? ''} yahan aapka nahi rahega). Aap shuru wali screen par pahunchenge, jahan "Demo shuru karo" naye Code ke saath naya gym banata hai.`,
-                )
+              ? `This browser forgets the current demo gym and its shop (gym code ${cloud?.joinCode ?? ''} stops being yours here). You go back to the welcome screen, where Start demo makes a fresh gym with a new code.`
               : confirming === 'demo'
-              ? tr(
-                  'A sample gym with around 128 members, their payment history and attendance will be created. Use this to show someone the product — not on a gym with real records in it.',
-                  'Lagbhag 128 members, unki payments aur hazri ke saath ek Demo gym banega. Ise kisi ko product dikhane ke liye use karein — asli data wale gym par nahi.',
-                )
-              : tr(
-                  'You will be left with an empty gym: no members, no plans, no payments.',
-                  'Gym khaali ho jayega: koi member nahi, koi Plan nahi, koi payment nahi.',
-                )}
+              ? 'A sample gym with around 128 members, their payment history and attendance will be created. Use this to show someone the product — not on a gym with real records in it.'
+              : 'You will be left with an empty gym: no members, no plans, no payments.'}
           </p>
         </Sheet>
       )}
@@ -323,20 +292,20 @@ export function SettingsScreen() {
   );
 }
 
-/** Settings for a Staff person: language, the app on this phone, and their own sign-in (sign out). */
+/** Settings for a Staff person: screen colours, the app on this phone, and their own sign-in (sign out). */
 function StaffSettings() {
   return (
     <>
-      <PageHeader title={tr('Settings', 'Settings')} subtitle={tr('Language, app and your sign-in', 'Bhasha, app aur aapka sign in')} />
+      <PageHeader title="Settings" subtitle="Screen colours, app and your sign-in" />
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{tr('Language', 'Bhasha')}</SectionTitle>
-        <LangToggle />
+        <SectionTitle>Dark or light</SectionTitle>
+        <ThemeToggle />
       </Card>
       {/* Adding members is front-desk work, so Staff may import a list too. */}
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{tr('Members', 'Members')}</SectionTitle>
+        <SectionTitle>{'Members'}</SectionTitle>
         <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
-          {tr('Import members from Excel', 'Excel se members import karo')}
+          {'Import members from Excel'}
         </Button>
       </Card>
       <SignInCard />

@@ -21,7 +21,6 @@ import { isChased, unpaidForMembership } from './membership';
 import { phoneDigits } from './members';
 import { sumPaise, type Paise } from './money';
 import { PAYMENT_METHODS } from './payments';
-import { tr } from '../i18n';
 
 // ---------------------------------------------------------------- ranges
 
@@ -50,11 +49,11 @@ export type RangePresetId = 'today' | 'last7' | 'thisMonth' | 'lastMonth' | 'thi
 
 // Labels are getters so they are read in the panel's language at the moment they are drawn.
 export const RANGE_PRESETS: readonly { id: RangePresetId; readonly label: string }[] = [
-  { id: 'today', get label() { return tr('Today', 'Aaj'); } },
-  { id: 'last7', get label() { return tr('Last 7 days', 'Pichhle 7 din'); } },
-  { id: 'thisMonth', get label() { return tr('This month', 'Is mahine'); } },
-  { id: 'lastMonth', get label() { return tr('Last month', 'Pichhle mahine'); } },
-  { id: 'thisFy', get label() { return tr('This financial year', 'Is financial year'); } },
+  { id: 'today', get label() { return 'Today'; } },
+  { id: 'last7', get label() { return 'Last 7 days'; } },
+  { id: 'thisMonth', get label() { return 'This month'; } },
+  { id: 'lastMonth', get label() { return 'Last month'; } },
+  { id: 'thisFy', get label() { return 'This financial year'; } },
 ] as const;
 
 /**
@@ -205,7 +204,7 @@ export function ledgerTakers(rows: readonly LedgerRow[]): { id: string; name: st
   const ordered = [...rows].sort((a, b) => a.payment.createdAt - b.payment.createdAt);
   for (const r of ordered) {
     const id = r.payment.collectedBy;
-    if (id && !seen.has(id)) seen.set(id, r.payment.collectedByName || tr('Someone', 'Koi'));
+    if (id && !seen.has(id)) seen.set(id, r.payment.collectedByName || 'Someone');
   }
   return [...seen].map(([id, name]) => ({ id, name }));
 }
@@ -276,13 +275,13 @@ export const AGING_LABEL: Record<AgingBucket, string> = {
 export function agingLabel(bucket: AgingBucket): string {
   switch (bucket) {
     case 'upcoming':
-      return tr(AGING_LABEL.upcoming, 'Abhi shuru nahi hua');
+      return AGING_LABEL.upcoming;
     case 'd0_30':
-      return tr(AGING_LABEL.d0_30, '30 din tak');
+      return AGING_LABEL.d0_30;
     case 'd31_60':
-      return tr(AGING_LABEL.d31_60, '31–60 din');
+      return AGING_LABEL.d31_60;
     case 'd60plus':
-      return tr(AGING_LABEL.d60plus, '60 din se zyada');
+      return AGING_LABEL.d60plus;
   }
 }
 

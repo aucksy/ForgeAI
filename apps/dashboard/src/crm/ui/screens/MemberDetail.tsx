@@ -10,7 +10,6 @@ import { WhatsAppSheet } from '../WhatsAppSheet';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCrm } from '../../store';
-import { tr } from '../../i18n';
 import { inviteMessage, whatsAppHref } from '../../shop/invite';
 import { useShop } from '../../shop/ShopProvider';
 import {
@@ -189,9 +188,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     return (
       <Card>
         <EmptyState
-          title={tr('Member not found', 'Member nahi mila')}
-          body={tr('They may have been removed.', 'Shayad hata diya gaya hai.')}
-          action={<Button onClick={() => navigate('/members')}>{tr('Back to members', 'Peeche, members par')}</Button>}
+          title={'Member not found'}
+          body={'They may have been removed.'}
+          action={<Button onClick={() => navigate('/members')}>{'Back to members'}</Button>}
         />
       </Card>
     );
@@ -211,7 +210,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       await fn();
       flash(done);
     } catch (e) {
-      setError(e instanceof Error ? e.message : tr('That didn’t work. Please try again.', 'Kuch gadbad hui. Phir se try karo.'));
+      setError(e instanceof Error ? e.message : 'That didn’t work. Please try again.');
     }
   };
 
@@ -242,9 +241,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         full
         variant="ghost"
         disabled={visitedToday}
-        onClick={() => run(() => checkIn(memberId, 'desk'), tr('Checked in for today.', 'Aaj ki Hazri lag gayi.'))}
+        onClick={() => run(() => checkIn(memberId, 'desk'), 'Checked in for today.')}
       >
-        {visitedToday ? tr('Checked in today', 'Aaj Hazri lag gayi') : tr('Check in', 'Hazri lagao')}
+        {visitedToday ? 'Checked in today' : 'Check in'}
       </Button>
       <Button
         full
@@ -254,17 +253,17 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           run(
             () => setMemberArchived(memberId, !member.archived),
             member.archived
-              ? tr('Member restored.', 'Member wapas aa gaya.')
-              : tr('Member archived.', 'Member archive ho gaya.'),
+              ? 'Member restored.'
+              : 'Member archived.',
           )
         }
       >
-        {member.archived ? tr('Restore member', 'Member wapas lao') : tr('Archive member', 'Archive karo')}
+        {member.archived ? 'Restore member' : 'Archive member'}
       </Button>
       {/* Owner and staff both: the card is printed at the desk. Full width under the two on a phone. */}
       <div style={{ gridColumn: compact ? '1 / -1' : undefined }}>
         <Button full variant="ghost" onClick={() => setCard(true)}>
-          {tr('Member card', 'Member card')}
+          {'Member card'}
         </Button>
       </div>
     </div>
@@ -275,21 +274,21 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       <PageHeader
         title={member.fullName}
         subtitle={
-          (memberBatch(member) ? tr(`${memberBatch(member)} batch · `, `${memberBatch(member)} Batch · `) : '') +
-          tr(`Member since ${formatDay(member.joinedOn)}`, `${formatDay(member.joinedOn)} se member`)
+          (memberBatch(member) ? `${memberBatch(member)} batch · ` : '') +
+          `Member since ${formatDay(member.joinedOn)}`
         }
         actions={
           <>
             <Button variant="ghost" onClick={() => setEditing(true)}>
-              {tr('Edit', 'Badlo')}
+              {'Edit'}
             </Button>
             {view.outstandingP > 0 && (
               <Button variant="ghost" onClick={() => setCollecting(true)}>
-                {tr('Record payment', 'Fees lo')}
+                {'Record payment'}
               </Button>
             )}
             <Button onClick={() => setSelling(true)}>
-              {view.coversUntil ? tr('Renew', 'Renew karo') : tr('Sell membership', 'Plan do')}
+              {view.coversUntil ? 'Renew' : 'Sell membership'}
             </Button>
           </>
         }
@@ -303,8 +302,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           <div style={{ flex: 1, minWidth: 0 }}>
             <Row gap={space.sm}>
               <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>
-              {member.archived && <Pill tone="muted">{tr('Archived', 'Archive kiye')}</Pill>}
-              {member.appUserId && <Pill tone="accent">{tr('Using the app', 'App chala rahe')}</Pill>}
+              {member.archived && <Pill tone="muted">{'Archived'}</Pill>}
+              {member.appUserId && <Pill tone="accent">{'Using the app'}</Pill>}
             </Row>
             <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
               {current ? (
@@ -314,17 +313,14 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                     // Already renewed: lead with where the cover actually runs to,
                     // so nobody chases a member who has paid.
                     <>
-                      {tr(
-                        ` · renewed through ${formatDay(view.coversUntil)} (${relativeDay(view.coversUntil, today)})`,
-                        ` · ${formatDay(view.coversUntil)} tak Renew hai (${relativeDay(view.coversUntil, today)})`,
-                      )}
+                      {` · renewed through ${formatDay(view.coversUntil)} (${relativeDay(view.coversUntil, today)})`}
                     </>
                   ) : (
                     <> ({relativeDay(current.endsOn, today)})</>
                   )}
                 </>
               ) : (
-                tr('No membership on record.', 'Koi plan nahi hai.')
+                'No membership on record.'
               )}
             </div>
             <Row gap={space.sm}>
@@ -333,7 +329,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
               </a>
               {/* Step 4: WhatsApp with the message already typed (fees, plan ending, birthday…). */}
               <button type="button" onClick={() => setWhatsApp(true)} style={{ ...linkStyle, background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit' }}>
-                {tr('WhatsApp', 'WhatsApp bhejo')}
+                {'WhatsApp'}
               </button>
               {/* Invite link: WhatsApp opens on this member with the gym's link typed in. */}
               {cloud && !member.appUserId && (
@@ -343,7 +339,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                   rel="noreferrer"
                   style={linkStyle}
                 >
-                  {tr('Send app invite', 'App ka invite bhejo')}
+                  {'Send app invite'}
                 </a>
               )}
             </Row>
@@ -355,16 +351,16 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       <Grid min={150}>
         <StatTile
-          label={tr('Outstanding', 'Baaki')}
+          label={'Outstanding'}
           value={view.outstandingP > 0 ? formatINR(view.outstandingP) : '—'}
           tone={view.outstandingP > 0 ? 'warn' : undefined}
-          sub={view.outstandingP > 0 ? tr('Money still owed', 'Fees baaki hai') : tr('Fully paid', 'Poori fees di')}
+          sub={view.outstandingP > 0 ? 'Money still owed' : 'Fully paid'}
         />
         <StatTile
-          label={tr('Last visit', 'Aakhri hazri')}
-          value={view.lastVisitOn ? relativeDay(view.lastVisitOn, today) : tr('never', 'kabhi nahi')}
+          label={'Last visit'}
+          value={view.lastVisitOn ? relativeDay(view.lastVisitOn, today) : 'never'}
           tone={view.daysSinceVisit !== null && view.daysSinceVisit >= 14 ? 'critical' : undefined}
-          sub={view.lastVisitOn ? formatDay(view.lastVisitOn) : tr('No check-ins recorded', 'Koi Hazri nahi lagi')}
+          sub={view.lastVisitOn ? formatDay(view.lastVisitOn) : 'No check-ins recorded'}
         />
         {/* C7-33: a plan paid ahead says when it starts, not the days to its end. */}
         <StatTile
@@ -374,9 +370,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           sub={daysTile?.sub}
         />
         <StatTile
-          label={tr('Total visits', 'Kul hazri')}
+          label={'Total visits'}
           value={visitCount}
-          sub={tr(`Since ${formatDay(member.joinedOn)}`, `${formatDay(member.joinedOn)} se`)}
+          sub={`Since ${formatDay(member.joinedOn)}`}
         />
       </Grid>
 
@@ -394,11 +390,11 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           canRenew={ptRenewFrom !== null && snapshot.plans.some((p) => p.id === ptRenewFrom.planId && p.active)}
           canExtend={canFreeze}
           onMark={() => {
-            if (ptMark) void runPt(() => markPtSession(ptMark.id), tr('PT session marked.', 'PT session lag gaya.'));
+            if (ptMark) void runPt(() => markPtSession(ptMark.id), 'PT session marked.');
           }}
           onUndo={() => {
             const last = ptUndo ? lastPtDay(ptUndo) : null;
-            if (ptUndo && last) void runPt(() => undoPtSession(ptUndo.id, last), tr('Last PT session taken back.', 'Aakhri PT session hata diya.'));
+            if (ptUndo && last) void runPt(() => undoPtSession(ptUndo.id, last), 'Last PT session taken back.');
           }}
           onRenew={() => {
             if (!ptRenewFrom) return;
@@ -411,21 +407,18 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       {profile && (
         <Card style={{ marginBottom: space.lg }}>
-          <SectionTitle>{tr('Training pattern', 'Aane ka pattern')}</SectionTitle>
+          <SectionTitle>{'Training pattern'}</SectionTitle>
           <AttendanceStrip profile={profile} today={today} />
         </Card>
       )}
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{tr('Memberships', 'Plan')}</SectionTitle>
+        <SectionTitle>{'Memberships'}</SectionTitle>
         {memberships.length === 0 ? (
           <EmptyState
-            title={tr('No memberships yet', 'Abhi koi plan nahi')}
-            body={tr(
-              'Sell one and their expiry date starts driving the renewals list.',
-              'Plan do, phir khatam hone ki date Renew list mein aayegi.',
-            )}
-            action={<Button onClick={() => setSelling(true)}>{tr('Sell membership', 'Plan do')}</Button>}
+            title={'No memberships yet'}
+            body={'Sell one and their expiry date starts driving the renewals list.'}
+            action={<Button onClick={() => setSelling(true)}>{'Sell membership'}</Button>}
           />
         ) : (
           <div style={{ display: 'grid', gap: space.sm }}>
@@ -441,7 +434,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                   canCancel && !restoreBusy
                     ? () => {
                         setRestoreBusy(true);
-                        void run(() => uncancelMembership(m.id).then(() => undefined), tr('Cancellation reversed.', 'Cancel wapas liya.')).finally(() =>
+                        void run(() => uncancelMembership(m.id).then(() => undefined), 'Cancellation reversed.').finally(() =>
                           setRestoreBusy(false),
                         );
                       }
@@ -454,9 +447,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       </Card>
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{tr('Payments', 'Fees ka hisaab')}</SectionTitle>
+        <SectionTitle>{'Payments'}</SectionTitle>
         {payments.length === 0 ? (
-          <EmptyState title={tr('No payments recorded', 'Abhi koi fees nahi li')} />
+          <EmptyState title={'No payments recorded'} />
         ) : (
           <div style={{ display: 'grid', gap: space.xs }}>
             {payments.map((p) => (
@@ -467,7 +460,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       </Card>
 
       <Card>
-        <SectionTitle>{tr('Details', 'Jaankari')}</SectionTitle>
+        <SectionTitle>{'Details'}</SectionTitle>
         {/* Three across on a desk screen: one column of six short pairs left a
             thousand pixels of empty card beside them. */}
         <dl
@@ -478,19 +471,19 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
             gridTemplateColumns: compact ? 'minmax(0, 1fr)' : 'repeat(3, minmax(0, 1fr))',
           }}
         >
-          <Detail label={tr('Mobile', 'Mobile')} value={formatPhone(member.phone)} />
-          <Detail label={tr('Email', 'Email')} value={member.email} />
-          <Detail label={tr('Date of birth', 'Janam din')} value={member.dateOfBirth ? formatDay(member.dateOfBirth) : null} />
-          <Detail label={tr('Address', 'Pata')} value={member.address} />
+          <Detail label={'Mobile'} value={formatPhone(member.phone)} />
+          <Detail label={'Email'} value={member.email} />
+          <Detail label={'Date of birth'} value={member.dateOfBirth ? formatDay(member.dateOfBirth) : null} />
+          <Detail label={'Address'} value={member.address} />
           <Detail
-            label={tr('Emergency contact', 'Ghar ka number')}
+            label={'Emergency contact'}
             value={
               member.emergencyName || member.emergencyPhone
                 ? `${member.emergencyName ?? ''} ${member.emergencyPhone ? formatPhone(member.emergencyPhone) : ''}`.trim()
                 : null
             }
           />
-          <Detail label={tr('Notes', 'Notes')} value={member.notes} />
+          <Detail label={'Notes'} value={member.notes} />
         </dl>
       </Card>
 
@@ -514,11 +507,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           onSold={(result) =>
             flash(
               result.payment
-                ? tr(
-                    `Membership saved. Receipt ${result.payment.receiptNo}.`,
-                    `Plan save ho gaya. Raseed ${result.payment.receiptNo}.`,
-                  )
-                : tr('Membership saved — nothing collected yet.', 'Plan save ho gaya — abhi fees nahi li.'),
+                ? `Membership saved. Receipt ${result.payment.receiptNo}.`
+                : 'Membership saved — nothing collected yet.',
             )
           }
         />
@@ -527,7 +517,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <CollectPaymentSheet
           view={view}
           onClose={() => setCollecting(false)}
-          onCollected={(payment) => flash(tr(`Payment recorded. Receipt ${payment.receiptNo}.`, `Fees le li. Raseed ${payment.receiptNo}.`))}
+          onCollected={(payment) => flash(`Payment recorded. Receipt ${payment.receiptNo}.`)}
         />
       )}
       {cancelling && (
@@ -538,7 +528,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
             // C7-26: a failure is shown inside the sheet (it used to land on the page behind it).
             await cancelMembership(cancelling.id, reason);
             setCancelling(null);
-            flash(tr('Membership cancelled.', 'Plan cancel ho gaya.'));
+            flash('Membership cancelled.');
           }}
         />
       )}
@@ -546,7 +536,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <ExtendMembershipSheet
           membership={extending}
           onClose={() => setExtending(null)}
-          onDone={(days) => flash(tr(`Plan moved ${days} days later.`, `Plan ${days} din aage badh gaya.`))}
+          onDone={(days) => flash(`Plan moved ${days} days later.`)}
         />
       )}
       {voiding && (
@@ -556,11 +546,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           onVoided={(restored) =>
             flash(
               restored
-                ? tr(
-                    'Receipt voided. The amount is back on their dues.',
-                    'Raseed cancel ho gayi. Paise wapas Fees baaki mein jud gaye.',
-                  )
-                : tr('Receipt voided.', 'Raseed cancel ho gayi.'),
+                ? 'Receipt voided. The amount is back on their dues.'
+                : 'Receipt voided.',
             )
           }
         />
@@ -598,7 +585,7 @@ function CancelMembershipSheet({
     try {
       await onConfirm(reason.trim());
     } catch (e) {
-      setFailed(e instanceof Error ? e.message : tr('That didn’t work. Please try again.', 'Kuch gadbad hui. Phir se try karo.'));
+      setFailed(e instanceof Error ? e.message : 'That didn’t work. Please try again.');
     } finally {
       setBusy(false);
     }
@@ -606,15 +593,15 @@ function CancelMembershipSheet({
 
   return (
     <Sheet
-      title={tr('Cancel this membership?', 'Yeh plan cancel karein?')}
+      title={'Cancel this membership?'}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Keep it', 'Rehne do')}
+            {'Keep it'}
           </Button>
           <Button tone="danger" disabled={busy || reason.trim().length < 3} onClick={() => void confirm()}>
-            {busy ? tr('Saving…', 'Save ho raha hai…') : tr('Cancel membership', 'Plan cancel karo')}
+            {busy ? 'Saving…' : 'Cancel membership'}
           </Button>
         </>
       }
@@ -622,22 +609,16 @@ function CancelMembershipSheet({
       {failed && <ErrorBanner>{failed}</ErrorBanner>}
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         <strong style={{ color: color.ink }}>{membership.planName}</strong>
-        {tr(
-          ` (${formatDay(membership.startsOn)} → ${formatDay(membership.endsOn)}) will stop counting as cover and will no longer be chased for money. The record stays, and you can undo this afterwards.`,
-          ` (${formatDay(membership.startsOn)} → ${formatDay(membership.endsOn)}) ab cover mein nahi ginega aur iski fees nahi maangi jayegi. Record rahega, aur aap baad mein ise wapas kar sakte hain.`,
-        )}
+        {` (${formatDay(membership.startsOn)} → ${formatDay(membership.endsOn)}) will stop counting as cover and will no longer be chased for money. The record stays, and you can undo this afterwards.`}
       </p>
 
       <TextField
-        label={tr('Reason', 'Kaaran')}
+        label={'Reason'}
         value={reason}
         onChange={setReason}
         autoFocus
-        placeholder={tr('Moved city', 'Shehar badal liya')}
-        hint={tr(
-          'Recorded against the record so it makes sense months later.',
-          'Record mein likha rahega, taaki mahino baad bhi samajh aaye.',
-        )}
+        placeholder={'Moved city'}
+        hint={'Recorded against the record so it makes sense months later.'}
       />
     </Sheet>
   );
@@ -672,16 +653,13 @@ function AttendanceStrip({
       <Row gap={space.xs}>
         <Pill tone={verdict.tone}>{verdict.label}</Pill>
         {profile.usualHour !== null && <Pill tone="muted">
-            {tr(`Usually ${hourLabel(profile.usualHour)}`, `Aksar ${hourLabel(profile.usualHour)}`)}
+            {`Usually ${hourLabel(profile.usualHour)}`}
           </Pill>}
         {profile.medianGapDays !== null && (
           <Pill tone="muted">
             {Math.round(profile.medianGapDays) === 1
-              ? tr(`Every ${Math.round(profile.medianGapDays)} day`, 'Har din')
-              : tr(
-                  `Every ${Math.round(profile.medianGapDays)} days`,
-                  `Har ${Math.round(profile.medianGapDays)} din mein`,
-                )}
+              ? `Every ${Math.round(profile.medianGapDays)} day`
+              : `Every ${Math.round(profile.medianGapDays)} days`}
           </Pill>
         )}
       </Row>
@@ -697,7 +675,7 @@ function AttendanceStrip({
         {days.map((day) => (
           <span
             key={day}
-            title={`${formatDay(day)}${present.has(day) ? tr(' — trained', ' — aaye') : ''}`}
+            title={`${formatDay(day)}${present.has(day) ? ' — trained' : ''}`}
             style={{
               width: 12,
               height: 12,
@@ -711,22 +689,13 @@ function AttendanceStrip({
 
       <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
         {profile.visitsInWindowN === 1
-          ? tr(
-              `${profile.visitsInWindowN} visit in the last ${RHYTHM_WINDOW_DAYS} days`,
-              `Pichhle ${RHYTHM_WINDOW_DAYS} din mein ${profile.visitsInWindowN} baar aaye`,
-            )
-          : tr(
-              `${profile.visitsInWindowN} visits in the last ${RHYTHM_WINDOW_DAYS} days`,
-              `Pichhle ${RHYTHM_WINDOW_DAYS} din mein ${profile.visitsInWindowN} baar aaye`,
-            )}
+          ? `${profile.visitsInWindowN} visit in the last ${RHYTHM_WINDOW_DAYS} days`
+          : `${profile.visitsInWindowN} visits in the last ${RHYTHM_WINDOW_DAYS} days`}
         {/* The rate is measured over the days their plan actually covered, so it says
             so — otherwise a member who renewed six days ago reads "20 visits in 56
             days · about 20.0 a week" and the two numbers cannot both be true. */}
         {profile.weeklyRate > 0 &&
-          tr(
-            ` · about ${profile.weeklyRate.toFixed(1)} a week while their plan was running`,
-            ` · plan chalte waqt hafte mein lagbhag ${profile.weeklyRate.toFixed(1)} baar`,
-          )}
+          ` · about ${profile.weeklyRate.toFixed(1)} a week while their plan was running`}
         {band !== 'ok' && ` · ${riskReason({ profile, band })}`}
       </div>
     </>
@@ -790,7 +759,7 @@ function PtCard({
 
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{tr('Personal training (PT)', 'Personal training (PT)')}</SectionTitle>
+      <SectionTitle>{'Personal training (PT)'}</SectionTitle>
       {main && (
         <>
           <div style={{ fontFamily: font.body, fontSize: 15, fontWeight: 700, color: color.ink, overflowWrap: 'anywhere' }}>
@@ -798,7 +767,7 @@ function PtCard({
           </div>
           <div
             role="progressbar"
-            aria-label={tr('PT sessions used', 'PT session ho gaye')}
+            aria-label={'PT sessions used'}
             aria-valuemin={0}
             aria-valuemax={total}
             aria-valuenow={total - left}
@@ -807,7 +776,7 @@ function PtCard({
             <div style={{ width: `${pct}%`, height: '100%', background: usedUp ? color.warning : color.accent }} />
           </div>
           <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, overflowWrap: 'anywhere' }}>
-            {main.planName} · {tr(`runs until ${formatDay(main.endsOn)}`, `${formatDay(main.endsOn)} tak`)}
+            {main.planName} · {`runs until ${formatDay(main.endsOn)}`}
           </div>
         </>
       )}
@@ -816,14 +785,14 @@ function PtCard({
         // Two packs at once (one renewed early): each pack's own count, and which one is in use.
         <div style={{ marginTop: space.md, display: 'grid', gap: 4 }}>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-            {tr(`${running.length} PT packs running — sessions come off the oldest first`, `${running.length} PT pack chal rahe hain — session pehle purane pack se katega`)}
+            {`${running.length} PT packs running — sessions come off the oldest first`}
           </div>
           {running.map((m) => (
             <div key={m.id} style={{ fontFamily: font.body, fontSize: 13, color: color.ink, overflowWrap: 'anywhere' }}>
-              {m.planName} · {tr(`${ptUsed(m)} of ${ptTotal(m)} used`, `${ptTotal(m)} mein se ${ptUsed(m)} hue`)} ·{' '}
-              {tr(`until ${formatDay(m.endsOn)}`, `${formatDay(m.endsOn)} tak`)}
+              {m.planName} · {`${ptUsed(m)} of ${ptTotal(m)} used`} ·{' '}
+              {`until ${formatDay(m.endsOn)}`}
               {m.id === markPack?.id && (
-                <span style={{ color: color.accentBright, fontWeight: 700 }}>{tr(' · next session', ' · agla session isse')}</span>
+                <span style={{ color: color.accentBright, fontWeight: 700 }}>{' · next session'}</span>
               )}
             </div>
           ))}
@@ -834,23 +803,20 @@ function PtCard({
         (usedUp ? (
           <div style={{ ...note, fontSize: 14, fontWeight: 700 }}>
             {running.length === 1
-              ? tr(`All ${total} PT sessions used — time to renew`, `Saare ${total} PT session ho gaye — Renew karo`)
-              : tr('All PT sessions used — time to renew', 'Saare PT session ho gaye — Renew karo')}
+              ? `All ${total} PT sessions used — time to renew`
+              : 'All PT sessions used — time to renew'}
           </div>
         ) : leftAll <= PT_LOW_LEFT ? (
           <div style={note}>
             {leftAll === 1
-              ? tr('Only 1 PT session left', 'Sirf 1 PT session bacha hai')
-              : tr(`Only ${leftAll} PT sessions left`, `Sirf ${leftAll} PT session bache hain`)}
+              ? 'Only 1 PT session left'
+              : `Only ${leftAll} PT sessions left`}
           </div>
         ) : (
           endsSoon &&
           lastEnd && (
             <div style={note}>
-              {tr(
-                `PT ends ${formatDay(lastEnd)} (${relativeDay(lastEnd, today)}) with ${leftAll} sessions left`,
-                `PT ${formatDay(lastEnd)} ko khatam (${relativeDay(lastEnd, today)}), ${leftAll} session baaki`,
-              )}
+              {`PT ends ${formatDay(lastEnd)} (${relativeDay(lastEnd, today)}) with ${leftAll} sessions left`}
             </div>
           )
         ))}
@@ -858,15 +824,15 @@ function PtCard({
       {running.length > 0 && (
         <div style={{ marginTop: space.md, display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
           {usedUp ? (
-            canRenew && <Button onClick={onRenew}>{tr('Renew PT', 'PT Renew karo')}</Button>
+            canRenew && <Button onClick={onRenew}>{'Renew PT'}</Button>
           ) : (
             <Button onClick={onMark} disabled={busy || markedToday}>
-              {markedToday ? tr('Session marked today', 'Aaj ka session lag gaya') : tr('Mark session', 'Session lagao')}
+              {markedToday ? 'Session marked today' : 'Mark session'}
             </Button>
           )}
           {canUndo && (
             <Button variant="ghost" onClick={onUndo} disabled={busy}>
-              {tr('Undo last session', 'Aakhri session hatao')}
+              {'Undo last session'}
             </Button>
           )}
         </div>
@@ -875,7 +841,7 @@ function PtCard({
       {main && (
         <>
           <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-            {days.length === 0 ? tr('No sessions used yet.', 'Abhi koi session nahi hua.') : tr('Sessions used on', 'Session in din hue')}
+            {days.length === 0 ? 'No sessions used yet.' : 'Sessions used on'}
           </div>
           {days.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.xs, marginTop: space.xs }}>
@@ -909,17 +875,17 @@ function PtCard({
             <span style={{ flex: '1 1 220px', minWidth: 0, fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.warning, overflowWrap: 'anywhere' }}>
               {m.planName} ·{' '}
               {n === 1
-                ? tr(`Ended on ${formatDay(m.endsOn)} with 1 session left`, `${formatDay(m.endsOn)} ko khatam, 1 session baaki`)
-                : tr(`Ended on ${formatDay(m.endsOn)} with ${n} sessions left`, `${formatDay(m.endsOn)} ko khatam, ${n} session baaki`)}
+                ? `Ended on ${formatDay(m.endsOn)} with 1 session left`
+                : `Ended on ${formatDay(m.endsOn)} with ${n} sessions left`}
               {!canExtend && (
                 <span style={{ display: 'block', fontWeight: 400, color: color.inkSecondary }}>
-                  {tr('Only the owner can extend it.', 'Sirf owner ise badha sakte hain.')}
+                  {'Only the owner can extend it.'}
                 </span>
               )}
             </span>
             {canExtend && (
               <Button variant="ghost" onClick={() => onExtend(m)}>
-                {tr('Extend', 'Badhao')}
+                {'Extend'}
               </Button>
             )}
           </div>
@@ -928,7 +894,7 @@ function PtCard({
 
       {running.length === 0 && canRenew && (
         <div style={{ marginTop: space.md }}>
-          <Button onClick={onRenew}>{tr('Renew PT', 'PT Renew karo')}</Button>
+          <Button onClick={onRenew}>{'Renew PT'}</Button>
         </div>
       )}
     </Card>
@@ -1029,36 +995,33 @@ function MembershipRow({
               }}
             >
               {formatINR(unpaid)}{' '}
-              {chased ? tr('due', 'baaki') : tr('unpaid · not chased', 'Fees nahi di · maangi nahi jayegi')}
+              {chased ? 'due' : 'unpaid · not chased'}
             </span>
           ) : (
-            <span style={{ fontFamily: font.body, fontSize: 12, color: color.goodText }}>{tr('Paid', 'Poori fees di')}</span>
+            <span style={{ fontFamily: font.body, fontSize: 12, color: color.goodText }}>{'Paid'}</span>
           )}
           {membership.listPriceP > membership.priceP && (
             <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-              {tr(
-                `${formatINR(membership.listPriceP - membership.priceP)} discount`,
-                `${formatINR(membership.listPriceP - membership.priceP)} Chhoot`,
-              )}
+              {`${formatINR(membership.listPriceP - membership.priceP)} discount`}
             </span>
           )}
         </div>
         {membership.cancelled
           ? onRestore && (
               <Button variant="quiet" onClick={onRestore}>
-                {tr('Undo cancel', 'Cancel wapas lo')}
+                {'Undo cancel'}
               </Button>
             )
           : onCancel && (
               <Button variant="quiet" tone="danger" onClick={onCancel}>
-                {tr('Cancel', 'Cancel karo')}
+                {'Cancel'}
               </Button>
             )}
       </Row>
       {onExtend && (
         <div style={{ marginTop: space.sm }}>
           <Button variant="ghost" full onClick={onExtend}>
-            {tr('Freeze / extra days', 'Freeze / Extra din')}
+            {'Freeze / extra days'}
           </Button>
         </div>
       )}
@@ -1074,7 +1037,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid?: () => void
       {/* Receipt number over date and method, as one tap target: side by side
           they left the date 60px on a phone and it broke into three lines. */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <Link to={`/receipts/${payment.id}`} title={tr('Open printable receipt', 'Raseed kholo')}>
+        <Link to={`/receipts/${payment.id}`} title={'Open printable receipt'}>
           <span style={{ display: 'block', minHeight: TOUCH, padding: '4px 0' }}>
             <span style={{ display: 'block', fontFamily: font.mono, fontSize: 13, color: color.accentBright }}>
               {payment.receiptNo}
@@ -1097,7 +1060,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid?: () => void
           // Colour + strikethrough alone is invisible to a screen reader, which
           // would read a cancelled receipt as a normal one.
           <div style={{ fontFamily: font.body, fontSize: 12, fontWeight: 700, color: color.criticalText }}>
-            {tr('Voided', 'Raseed cancel hui')}
+            {'Voided'}
             {payment.voidReason ? `: ${payment.voidReason}` : ''}
           </div>
         )}
@@ -1115,7 +1078,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid?: () => void
       </span>
       {!payment.voided && onVoid && (
         <Button variant="quiet" tone="danger" onClick={onVoid}>
-          {tr('Void', 'Raseed cancel karo')}
+          {'Void'}
         </Button>
       )}
     </Row>
@@ -1135,7 +1098,7 @@ function Detail({ label, value }: { label: string; value: string | null }) {
           whiteSpace: 'pre-wrap',
         }}
       >
-        {value || tr('Not recorded', 'Nahi likha')}
+        {value || 'Not recorded'}
       </dd>
     </div>
   );

@@ -45,7 +45,6 @@ import type {
   ExpenseDraft,
 } from '../types';
 import { addDays, diffDays, formatDay, isValidDateISO, type DateISO } from '../logic/dates';
-import { tr } from '../i18n';
 import { endDateForPlan } from '../logic/membership';
 import { findDuplicatePhone } from '../logic/members';
 import { normalizeBatch } from '../logic/batches';
@@ -282,7 +281,7 @@ export class LocalCrmData implements CrmData {
   async updateMember(id: string, patch: Partial<MemberDraft>): Promise<Member> {
     return this.update((db) => {
       const member = db.members.find((m) => m.id === id);
-      if (!member) throw new NotFoundError(tr('That member', 'Yeh member'));
+      if (!member) throw new NotFoundError('That member');
 
       if (patch.phone && patch.phone !== member.phone) {
         const duplicate = findDuplicatePhone(db.members, patch.phone, id);
@@ -320,7 +319,7 @@ export class LocalCrmData implements CrmData {
   async updatePlan(id: string, patch: Partial<PlanDraft>): Promise<Plan> {
     return this.update((db) => {
       const plan = db.plans.find((p) => p.id === id);
-      if (!plan) throw new NotFoundError(tr('That plan', 'Yeh plan'));
+      if (!plan) throw new NotFoundError('That plan');
       Object.assign(plan, patch, cleanPtFields(patch), { updatedAt: this.now() });
       return { ...plan };
     });
@@ -340,12 +339,12 @@ export class LocalCrmData implements CrmData {
         return { membership: { ...done }, payment: paid ? { ...paid } : null };
       }
       const member = db.members.find((m) => m.id === input.memberId);
-      if (!member) throw new NotFoundError(tr('That member', 'Yeh member'));
+      if (!member) throw new NotFoundError('That member');
       const plan = db.plans.find((p) => p.id === input.planId);
-      if (!plan) throw new NotFoundError(tr('That plan', 'Yeh plan'));
+      if (!plan) throw new NotFoundError('That plan');
 
-      requireDay(input.startsOn, tr('The start date', 'Shuru ki tareekh'));
-      if (input.collectNowP > 0) requireDay(input.paidOn, tr('The payment date', 'Payment ki tareekh'));
+      requireDay(input.startsOn, 'The start date');
+      if (input.collectNowP > 0) requireDay(input.paidOn, 'The payment date');
 
       const ts = this.now();
       const membership: Membership = {
@@ -625,7 +624,7 @@ export class LocalCrmData implements CrmData {
   async cancelMembership(id: string, reason: string | null): Promise<Membership> {
     return this.update((db) => {
       const membership = db.memberships.find((m) => m.id === id);
-      if (!membership) throw new NotFoundError(tr('That membership', 'Yeh membership'));
+      if (!membership) throw new NotFoundError('That membership');
       // Admin audit C7-26: a double tap cancels once (the reason was written twice).
       if (membership.cancelled) return { ...membership };
       membership.cancelled = true;
@@ -638,7 +637,7 @@ export class LocalCrmData implements CrmData {
   async uncancelMembership(id: string): Promise<Membership> {
     return this.update((db) => {
       const membership = db.memberships.find((m) => m.id === id);
-      if (!membership) throw new NotFoundError(tr('That membership', 'Yeh membership'));
+      if (!membership) throw new NotFoundError('That membership');
       if (!membership.cancelled) return { ...membership };
       // Admin audit C7-25: the cancelled plan was often replaced. Bringing it back on top of the
       // replacement made two plans for the same days and doubled the due.
@@ -654,10 +653,7 @@ export class LocalCrmData implements CrmData {
         );
         if (clash) {
           throw new Error(
-            tr(
-              `This member already has a plan for these days (${clash.planName}, ${formatDay(clash.startsOn)} → ${formatDay(clash.endsOn)}). Cancel that one first if this is the right plan.`,
-              `Is member ka in dino ka plan pehle se hai (${clash.planName}, ${formatDay(clash.startsOn)} → ${formatDay(clash.endsOn)}). Agar yahi sahi plan hai to pehle woh cancel karo.`,
-            ),
+            `This member already has a plan for these days (${clash.planName}, ${formatDay(clash.startsOn)} → ${formatDay(clash.endsOn)}). Cancel that one first if this is the right plan.`,
           );
         }
       }
@@ -672,11 +668,11 @@ export class LocalCrmData implements CrmData {
 
   async recordPayment(input: RecordPaymentInput): Promise<Payment> {
     return this.update((db) => {
-      if (!db.members.some((m) => m.id === input.memberId)) throw new NotFoundError(tr('That member', 'Yeh member'));
+      if (!db.members.some((m) => m.id === input.memberId)) throw new NotFoundError('That member');
       if (input.membershipId && !db.memberships.some((m) => m.id === input.membershipId)) {
-        throw new NotFoundError(tr('That membership', 'Yeh membership'));
+        throw new NotFoundError('That membership');
       }
-      requireDay(input.paidOn, tr('The payment date', 'Payment ki tareekh'));
+      requireDay(input.paidOn, 'The payment date');
 
       // C7-1: this press was already saved. The push id (crm_push_log) only stops the SAME push
       // being saved twice; a second press is a new push with a new receipt, so the press itself
@@ -721,7 +717,7 @@ export class LocalCrmData implements CrmData {
   async voidPayment(id: string, reason: string): Promise<Payment> {
     return this.update((db) => {
       const payment = db.payments.find((p) => p.id === id);
-      if (!payment) throw new NotFoundError(tr('That payment', 'Yeh payment'));
+      if (!payment) throw new NotFoundError('That payment');
       payment.voided = true;
       payment.voidReason = reason;
       return { ...payment };
@@ -737,12 +733,12 @@ export class LocalCrmData implements CrmData {
     today: DateISO,
   ): Promise<Visit> {
     return this.update((db) => {
-      if (!db.members.some((m) => m.id === memberId)) throw new NotFoundError(tr('That member', 'Yeh member'));
+      if (!db.members.some((m) => m.id === memberId)) throw new NotFoundError('That member');
 
       // Same guard the money paths get: a `type="date"` field hands over year 0002
       // without complaint, and a visit is what the at-risk list is computed from.
-      requireDay(day, tr('The visit date', 'Hazri ki tareekh'));
-      requireDay(today, tr('Today’s date', 'Aaj ki tareekh'));
+      requireDay(day, 'The visit date');
+      requireDay(today, 'Today’s date');
       if (day > today) throw new FutureVisitError();
 
       const existing = db.visits.find((v) => v.memberId === memberId && v.visitedOn === day);
@@ -765,7 +761,7 @@ export class LocalCrmData implements CrmData {
 
   async createEnquiry(draft: EnquiryDraft): Promise<Enquiry> {
     return this.update((db) => {
-      if (draft.followUpOn) requireDay(draft.followUpOn, tr('The follow-up date', 'Dobara call ki tareekh'));
+      if (draft.followUpOn) requireDay(draft.followUpOn, 'The follow-up date');
       const done = draft.requestId ? db.enquiries.find((e) => e.requestId === draft.requestId) : undefined;
       if (done) return { ...done };
       const ts = this.now();
@@ -786,8 +782,8 @@ export class LocalCrmData implements CrmData {
   async updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId'>>): Promise<Enquiry> {
     return this.update((db) => {
       const enquiry = db.enquiries.find((e) => e.id === id);
-      if (!enquiry) throw new NotFoundError(tr('That enquiry', 'Woh enquiry'));
-      if (patch.followUpOn) requireDay(patch.followUpOn, tr('The follow-up date', 'Dobara call ki tareekh'));
+      if (!enquiry) throw new NotFoundError('That enquiry');
+      if (patch.followUpOn) requireDay(patch.followUpOn, 'The follow-up date');
       Object.assign(enquiry, patch, { updatedAt: this.now() });
       return { ...enquiry };
     });
@@ -795,9 +791,9 @@ export class LocalCrmData implements CrmData {
 
   async addExpense(draft: ExpenseDraft): Promise<Expense> {
     return this.update((db) => {
-      requireDay(draft.spentOn, tr('The date', 'Tareekh'));
+      requireDay(draft.spentOn, 'The date');
       if (!Number.isInteger(draft.amountP) || draft.amountP <= 0) {
-        throw new Error(tr('Type the amount spent.', 'Kitna kharcha hua, likhiye.'));
+        throw new Error('Type the amount spent.');
       }
       const done = draft.requestId ? db.expenses.find((e) => e.requestId === draft.requestId) : undefined;
       if (done) return { ...done };
@@ -816,13 +812,13 @@ export class LocalCrmData implements CrmData {
   async extendMembership(id: string, days: number, reason: string): Promise<Membership> {
     return this.update((db) => {
       const membership = db.memberships.find((m) => m.id === id);
-      if (!membership) throw new NotFoundError(tr('That membership', 'Woh plan'));
+      if (!membership) throw new NotFoundError('That membership');
       // Same rule as the button on the member's page: only the plan that ends last, and never a
       // cancelled one. Extending an earlier term under a queued renewal makes the two overlap and
       // gives the member nothing; extending a cancelled one gives days on a plan that is not on.
       if (membership.cancelled) {
         throw new Error(
-          tr('This plan was cancelled. Undo the cancel first, or add the days to their current plan.', 'Yeh plan cancel ho chuka hai. Pehle cancel wapas lo, ya din unke chalu plan mein jodo.'),
+          'This plan was cancelled. Undo the cancel first, or add the days to their current plan.',
         );
       }
       // Gym plans and PT packs run side by side (logic/pt.ts), so they never block each other. Only a
@@ -841,11 +837,11 @@ export class LocalCrmData implements CrmData {
         );
       if (later) {
         throw new Error(
-          tr('This member has a later plan. Add the days to the plan that ends last.', 'Is member ka aage ka plan hai. Din us plan mein jodo jo sabse baad mein khatam hota hai.'),
+          'This member has a later plan. Add the days to the plan that ends last.',
         );
       }
       if (!Number.isInteger(days) || days < 1 || days > 365) {
-        throw new Error(tr('Days must be a whole number from 1 to 365.', 'Din 1 se 365 ke beech poora number hona chahiye.'));
+        throw new Error('Days must be a whole number from 1 to 365.');
       }
       const before = membership.endsOn;
       membership.endsOn = addDays(membership.endsOn, days);
@@ -859,25 +855,22 @@ export class LocalCrmData implements CrmData {
 
   async markPtSession(membershipId: string, day: DateISO, today: DateISO): Promise<Membership> {
     return this.update((db) => {
-      requireDay(day, tr('The session date', 'Session ki tareekh'));
-      requireDay(today, tr('Today’s date', 'Aaj ki tareekh'));
+      requireDay(day, 'The session date');
+      requireDay(today, 'Today’s date');
       if (day > today) {
-        throw new Error(tr('You can’t mark a session for a day that hasn’t happened yet.', 'Jo din abhi aaya nahi, uska session nahi lag sakta.'));
+        throw new Error('You can’t mark a session for a day that hasn’t happened yet.');
       }
       const membership = db.memberships.find((m) => m.id === membershipId);
-      if (!membership) throw new NotFoundError(tr('That plan', 'Woh plan'));
-      if (!isPtMembership(membership)) throw new Error(tr('This plan has no PT sessions.', 'Is plan mein PT session nahi hain.'));
-      if (membership.cancelled) throw new Error(tr('This PT plan was cancelled.', 'Yeh PT plan cancel ho chuka hai.'));
+      if (!membership) throw new NotFoundError('That plan');
+      if (!isPtMembership(membership)) throw new Error('This plan has no PT sessions.');
+      if (membership.cancelled) throw new Error('This PT plan was cancelled.');
       if (day < membership.startsOn) {
-        throw new Error(tr('This PT plan had not started on that day.', 'Us din yeh PT plan shuru nahi hua tha.'));
+        throw new Error('This PT plan had not started on that day.');
       }
       if (day > membership.endsOn) {
         // A session after the last day is a free session; the owner gives days back with Extend.
         throw new Error(
-          tr(
-            `This PT plan ended on ${formatDay(membership.endsOn)}. The owner can extend it (Freeze / extra days).`,
-            `Yeh PT plan ${formatDay(membership.endsOn)} ko khatam ho gaya. Owner ise badha sakte hain (Freeze / Extra din).`,
-          ),
+          `This PT plan ended on ${formatDay(membership.endsOn)}. The owner can extend it (Freeze / extra days).`,
         );
       }
       const days = ptDays(membership);
@@ -886,7 +879,7 @@ export class LocalCrmData implements CrmData {
       const total = ptTotal(membership);
       if (days.length >= total) {
         throw new Error(
-          tr(`All ${total} PT sessions are used. Renew the PT plan first.`, `Saare ${total} PT session ho gaye. Pehle PT plan Renew karo.`),
+          `All ${total} PT sessions are used. Renew the PT plan first.`,
         );
       }
       membership.ptLog = [...days, day].sort();
@@ -897,10 +890,10 @@ export class LocalCrmData implements CrmData {
 
   async undoPtSession(membershipId: string, day: DateISO): Promise<Membership> {
     return this.update((db) => {
-      requireDay(day, tr('The session date', 'Session ki tareekh'));
+      requireDay(day, 'The session date');
       const membership = db.memberships.find((m) => m.id === membershipId);
-      if (!membership) throw new NotFoundError(tr('That plan', 'Woh plan'));
-      if (!isPtMembership(membership)) throw new Error(tr('This plan has no PT sessions.', 'Is plan mein PT session nahi hain.'));
+      if (!membership) throw new NotFoundError('That plan');
+      if (!isPtMembership(membership)) throw new Error('This plan has no PT sessions.');
       const days = ptDays(membership);
       // Nothing on that day (a double tap on Undo): a quiet no-op, never a second session gone.
       if (!days.includes(day)) return { ...membership };
@@ -912,7 +905,7 @@ export class LocalCrmData implements CrmData {
 
   async undoCheckIn(memberId: string, day: DateISO): Promise<void> {
     return this.update((db) => {
-      requireDay(day, tr('The visit date', 'Hazri ki tareekh'));
+      requireDay(day, 'The visit date');
       // Filtered on BOTH keys. Dropping either one deletes a member's whole
       // attendance history, or everybody's attendance for the day, from what the
       // desk thinks is a single undo.
@@ -935,7 +928,7 @@ function cleanPtFields(p: Partial<Pick<Plan, 'ptSessions' | 'trainer'>>): Partia
     if (n === null || n === undefined || n === 0) out.ptSessions = null;
     else if (!Number.isInteger(n) || n < 1 || n > PT_MAX_SESSIONS) {
       throw new Error(
-        tr(`PT sessions must be a whole number from 1 to ${PT_MAX_SESSIONS}.`, `PT session 1 se ${PT_MAX_SESSIONS} ke beech poora number hona chahiye.`),
+        `PT sessions must be a whole number from 1 to ${PT_MAX_SESSIONS}.`,
       );
     } else out.ptSessions = n;
   }
@@ -977,14 +970,8 @@ export function looksLikePt(name: string): boolean {
 /** C7-1: the same press came again with different numbers: say what was already saved. */
 function alreadySavedWords(receiptNo: string | null): string {
   return receiptNo
-    ? tr(
-        `Your earlier entry was saved just now (receipt ${receiptNo}). Check the member's page before taking more.`,
-        `Aapki pichli entry abhi save ho gayi (raseed ${receiptNo}). Aur lene se pehle member ka page dekho.`,
-      )
-    : tr(
-        "Your earlier entry was saved just now. Check the member's page before doing it again.",
-        'Aapki pichli entry abhi save ho gayi. Dobara karne se pehle member ka page dekho.',
-      );
+    ? `Your earlier entry was saved just now (receipt ${receiptNo}). Check the member's page before taking more.`
+    : "Your earlier entry was saved just now. Check the member's page before doing it again.";
 }
 
 function appendNote(existing: string | null, line: string): string {

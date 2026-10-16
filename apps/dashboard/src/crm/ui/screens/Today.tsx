@@ -11,7 +11,6 @@ import { collectedOn, tileCounts } from '../../logic/homeTiles';
 import { dueCount } from '../../logic/enquiries';
 import { InstallCard } from '../InstallCard';
 import { useCan } from '../../auth/AuthProvider';
-import { tr } from '../../i18n';
 import { useMemo } from 'react';
 
 import { JoinCodeCard } from '../../shop/JoinCode';
@@ -107,9 +106,9 @@ export function TodayScreen() {
       <PageHeader
         // The gym's name is already in the sidebar (and the phone's top bar); a
         // second copy as the page title said nothing about which page this is.
-        title={tr('Today', 'Aaj ka haal')}
+        title={'Today'}
         subtitle={formatDay(today)}
-        actions={<Button onClick={() => navigate('/members')}>{tr('Open roster', 'Members dekho')}</Button>}
+        actions={<Button onClick={() => navigate('/members')}>{'Open roster'}</Button>}
       />
 
       {/* Phones only, until installed or closed: "Phone par app lagao". */}
@@ -130,81 +129,81 @@ export function TodayScreen() {
       <Grid min={compact ? 140 : 200}>
         {seeTotals && (
           <StatTile
-            label={tr("Today's collection", 'Aaj ki collection')}
+            label={"Today's collection"}
             value={formatINRShort(collectedToday)}
             tone="good"
             onClick={() => navigate('/money/today')}
-            sub={tr(`This month ${formatINRShort(stats.collectedThisMonth)}`, `Is mahine ${formatINRShort(stats.collectedThisMonth)}`)}
+            sub={`This month ${formatINRShort(stats.collectedThisMonth)}`}
           />
         )}
         <StatTile
-          label={tr('Active members', 'Chalu members')}
+          label={'Active members'}
           value={tiles.active}
           tone="accent"
           onClick={() => navigate('/members/f/active')}
-          sub={tr('With a live plan', 'Plan chal raha hai')}
+          sub={'With a live plan'}
         />
         <StatTile
-          label={tr('Ending today', 'Aaj khatam')}
+          label={'Ending today'}
           value={tiles['exp-today']}
           tone={tiles['exp-today'] > 0 ? 'critical' : undefined}
           onClick={() => navigate('/members/f/exp-today')}
-          sub={tr('Last day of their plan', 'Plan ka aakhri din')}
+          sub={'Last day of their plan'}
         />
         <StatTile
-          label={tr('Ending in 1-3 days', '1-3 din mein khatam')}
+          label={'Ending in 1-3 days'}
           value={tiles['exp-1-3']}
           tone={tiles['exp-1-3'] > 0 ? 'warn' : undefined}
           onClick={() => navigate('/members/f/exp-1-3')}
-          sub={tr('Renew them now', 'Abhi Renew karo')}
+          sub={'Renew them now'}
         />
         <StatTile
-          label={tr('Ending in 4-7 days', '4-7 din mein khatam')}
+          label={'Ending in 4-7 days'}
           value={tiles['exp-4-7']}
           tone={tiles['exp-4-7'] > 0 ? 'warn' : undefined}
           onClick={() => navigate('/members/f/exp-4-7')}
-          sub={tr('Remind them this week', 'Is hafte yaad dilao')}
+          sub={'Remind them this week'}
         />
         <StatTile
-          label={tr('Ending in 8-15 days', '8-15 din mein khatam')}
+          label={'Ending in 8-15 days'}
           value={tiles['exp-8-15']}
           onClick={() => navigate('/members/f/exp-8-15')}
-          sub={tr('Coming up', 'Aage aane wale')}
+          sub={'Coming up'}
         />
         <StatTile
-          label={tr('Expired', 'Khatam ho gaye')}
+          label={'Expired'}
           value={tiles.expired}
           tone={tiles.expired > 0 ? 'critical' : undefined}
           onClick={() => navigate('/members/f/expired')}
-          sub={tr(`${stats.recentlyLapsed} in the last ${WINBACK_WINDOW_DAYS} days`, `${stats.recentlyLapsed} pichhle ${WINBACK_WINDOW_DAYS} din mein`)}
+          sub={`${stats.recentlyLapsed} in the last ${WINBACK_WINDOW_DAYS} days`}
         />
         {seeTotals && (
           <StatTile
-            label={tr('Fees due', 'Fees baaki')}
+            label={'Fees due'}
             value={formatINRShort(stats.duesTotalP)}
             tone={stats.duesTotalP > 0 ? 'warn' : undefined}
             onClick={() => navigate('/money/dues')}
-            sub={tr(`${stats.dues.length} members`, `${stats.dues.length} members`)}
+            sub={`${stats.dues.length} members`}
           />
         )}
         <StatTile
-          label={tr('Birthdays today', 'Aaj birthday')}
+          label={'Birthdays today'}
           value={tiles.birthday}
           onClick={() => navigate('/members/f/birthday')}
-          sub={tr('Send a wish', 'Badhai bhejo')}
+          sub={'Send a wish'}
         />
         <StatTile
-          label={tr('Came in today', 'Aaj aaye')}
+          label={'Came in today'}
           value={stats.visitsToday}
           onClick={() => navigate('/attendance')}
-          sub={tr('Open the register', 'Hazri register kholo')}
+          sub={'Open the register'}
         />
         <StatTile
-          label={tr('Enquiries to call', 'Enquiry: aaj call karo')}
+          label={'Enquiries to call'}
           value={enquiriesDue}
           tone={enquiriesDue > 0 ? 'warn' : undefined}
           onClick={() => navigate('/enquiries')}
-          sub={tr('Follow-ups due', 'Follow-up baaki')}
+          sub={'Follow-ups due'}
         />
         {/* "Losing the habit" is not a tile: it is the list right below, and the
             same number twice on one screen is a duplicate, not a summary. */}
@@ -217,19 +216,16 @@ export function TodayScreen() {
           <SectionTitle
             action={
               <Link to="/members">
-                <span style={moreLink}>{tr('See all', 'Sab dekho')}</span>
+                <span style={moreLink}>{'See all'}</span>
               </Link>
             }
           >
-            {tr('Talk to these members', 'In members se baat karo')}
+            {'Talk to these members'}
           </SectionTitle>
           {renewals.length === 0 ? (
             <EmptyState
-              title={tr('Nothing to chase', 'Abhi koi baaki nahi')}
-              body={tr(
-                `No memberships are expiring, and nobody has lapsed in the last ${WINBACK_WINDOW_DAYS} days.`,
-                `Kisi ka plan khatam nahi ho raha, aur pichhle ${WINBACK_WINDOW_DAYS} din mein koi nahi gaya.`,
-              )}
+              title={'Nothing to chase'}
+              body={`No memberships are expiring, and nobody has lapsed in the last ${WINBACK_WINDOW_DAYS} days.`}
             />
           ) : (
             <div style={{ display: 'grid', gap: space.sm }}>
@@ -240,9 +236,9 @@ export function TodayScreen() {
                   detail={
                     v.current
                       ? `${v.current.planName} · ${
-                          v.state === 'expired' ? tr('expired', 'khatam hua') : tr('ends', 'khatam hoga')
+                          v.state === 'expired' ? 'expired' : 'ends'
                         } ${relativeDay(v.coversUntil ?? v.current.endsOn, today)}`
-                      : tr('No membership', 'Koi plan nahi')
+                      : 'No membership'
                   }
                   tone={v.state === 'expired' ? color.criticalText : color.warning}
                 />
@@ -255,30 +251,24 @@ export function TodayScreen() {
           <SectionTitle
             action={
               <Link to="/attendance/risk">
-                <span style={moreLink}>{tr('See all', 'Sab dekho')}</span>
+                <span style={moreLink}>{'See all'}</span>
               </Link>
             }
           >
-            {tr('Losing the habit', 'Kaafi din se nahi aaye')}
+            {'Losing the habit'}
           </SectionTitle>
           {atRisk.length === 0 ? (
             registerUsed ? (
               <EmptyState
-                title={tr('Everybody is training', 'Sab aa rahe hain')}
-                body={tr(
-                  'No member with a live plan has drifted away from their usual routine.',
-                  'Chalu plan wala koi member apni routine se nahi hata.',
-                )}
+                title={'Everybody is training'}
+                body={'No member with a live plan has drifted away from their usual routine.'}
               />
             ) : (
               // Claiming everyone is training would be inventing evidence this gym
               // has not yet produced.
               <EmptyState
-                title={tr('Start checking members in', 'Members ki Hazri lagao')}
-                body={tr(
-                  'A few days of the register and this fills itself in.',
-                  'Kuch din Hazri lagao, yeh list khud bhar jayegi.',
-                )}
+                title={'Start checking members in'}
+                body={'A few days of the register and this fills itself in.'}
               />
             )
           ) : (
@@ -301,16 +291,16 @@ export function TodayScreen() {
           <SectionTitle
             action={
               <Link to="/money/dues">
-                <span style={moreLink}>{tr('See all', 'Sab dekho')}</span>
+                <span style={moreLink}>{'See all'}</span>
               </Link>
             }
           >
-            {tr('Money to collect', 'Fees baaki')}
+            {'Money to collect'}
           </SectionTitle>
           {duesList.length === 0 ? (
             <EmptyState
-              title={tr("Everyone's paid up", 'Sabne fees de di')}
-              body={tr('No outstanding dues on the roster.', 'Kisi ki fees baaki nahi hai.')}
+              title={"Everyone's paid up"}
+              body={'No outstanding dues on the roster.'}
             />
           ) : (
             <div style={{ display: 'grid', gap: space.sm }}>
@@ -318,7 +308,7 @@ export function TodayScreen() {
                 <PersonRow
                   key={v.member.id}
                   member={v.member}
-                  detail={tr(`${formatINR(v.outstandingP)} outstanding`, `${formatINR(v.outstandingP)} baaki`)}
+                  detail={`${formatINR(v.outstandingP)} outstanding`}
                   tone={color.warning}
                 />
               ))}
@@ -361,7 +351,7 @@ function PersonRow({ member, detail, tone }: { member: Member; detail: string; t
         href={`https://wa.me/${phoneDigits(member.phone)}`}
         target="_blank"
         rel="noreferrer"
-        title={tr(`WhatsApp ${formatPhone(member.phone)}`, `WhatsApp ${formatPhone(member.phone)}`)}
+        title={`WhatsApp ${formatPhone(member.phone)}`}
         style={{
           fontFamily: font.body,
           fontSize: 12,
@@ -377,7 +367,7 @@ function PersonRow({ member, detail, tone }: { member: Member; detail: string; t
           justifyContent: 'center',
         }}
       >
-        {tr('Message', 'Message karo')}
+        {'Message'}
       </a>
     </Row>
   );

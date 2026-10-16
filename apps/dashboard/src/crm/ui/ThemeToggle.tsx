@@ -1,23 +1,25 @@
 /**
- * The English | Hinglish switch: two words side by side, the chosen one filled. In the panel's
- * top bar (phone), the sidebar (computer) and on the welcome screen. Each word is written in its
- * own language, so a person who reads only one of them can still find theirs.
+ * The Dark | Light switch: two words side by side, the chosen one filled. In the panel's top bar
+ * (phone), the sidebar (computer), on the welcome screen and in Staff settings. It took the place
+ * of the English | Hinglish switch (16 Oct 2026). The choice is kept on this device.
  */
 
-import { useLang, type Lang } from '../i18n';
+import { useState } from 'react';
+
+import { savedTheme, setTheme, type ThemeMode } from '../../theme';
 import { color, font, radius, TOUCH } from './kit';
 
-const OPTIONS: { lang: Lang; label: string }[] = [
-  { lang: 'en', label: 'English' },
-  { lang: 'hi', label: 'Hinglish' },
+const OPTIONS: { mode: ThemeMode; label: string }[] = [
+  { mode: 'dark', label: 'Dark' },
+  { mode: 'light', label: 'Light' },
 ];
 
-export function LangToggle({ compact = false }: { compact?: boolean }) {
-  const { lang, setLang } = useLang();
+export function ThemeToggle({ compact = false }: { compact?: boolean }) {
+  const [mode, setMode] = useState<ThemeMode>(savedTheme);
   return (
     <div
       role="radiogroup"
-      aria-label="Language / Bhasha"
+      aria-label="Screen colours"
       style={{
         display: 'inline-flex',
         border: `1px solid ${color.borderStrong}`,
@@ -28,14 +30,18 @@ export function LangToggle({ compact = false }: { compact?: boolean }) {
       }}
     >
       {OPTIONS.map((o) => {
-        const on = o.lang === lang;
+        const on = o.mode === mode;
         return (
           <button
-            key={o.lang}
+            key={o.mode}
             type="button"
             role="radio"
             aria-checked={on}
-            onClick={() => !on && setLang(o.lang)}
+            onClick={() => {
+              if (on) return;
+              setTheme(o.mode);
+              setMode(o.mode);
+            }}
             style={{
               appearance: 'none',
               border: 'none',

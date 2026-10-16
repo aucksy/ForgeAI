@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import {
   ACTIONS,
@@ -12,13 +12,10 @@ import {
   shopTabs,
   staffRightsWords,
 } from '../../src/crm/auth/permissions';
-import { setCurrentLang } from '../../src/crm/i18n';
 import type { Person } from '../../src/crm/auth/signin';
 
 const staff: Person = { staffId: 's1', name: 'Suresh', phone: '9829012345', role: 'staff' };
 const owner: Person = { ...staff, staffId: 'o1', role: 'owner' };
-
-afterEach(() => setCurrentLang('en'));
 
 describe('can', () => {
   it('lets an owner do everything', () => {
@@ -126,9 +123,5 @@ describe('staffRightsWords', () => {
     expect(en).toMatch(/collect fees/);
     expect(en).toMatch(/cannot see money totals/);
     expect(en).not.toMatch(/comes later/);
-    setCurrentLang('hi');
-    const hi = staffRightsWords();
-    expect(hi).not.toBe(en);
-    expect(hi).toMatch(/Fees lo/);
   });
 });

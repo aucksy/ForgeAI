@@ -34,7 +34,6 @@ import {
   space,
   useIsCompact,
 } from '../kit';
-import { tr } from '../../i18n';
 
 export function PlansScreen() {
   const { snapshot, today, createPlan } = useCrm();
@@ -75,11 +74,8 @@ export function PlansScreen() {
     } catch (e) {
       setError(
         e instanceof Error
-          ? tr(
-              `${e.message} Some plans may already have been added — check the list.`,
-              `${e.message} Kuch plan shayad jud chuke hain — list dekho.`,
-            )
-          : tr('Could not add the starter plans.', 'Starter plan jud nahi paaye.'),
+          ? `${e.message} Some plans may already have been added — check the list.`
+          : 'Could not add the starter plans.',
       );
     } finally {
       setSeeding(false);
@@ -89,9 +85,9 @@ export function PlansScreen() {
   return (
     <>
       <PageHeader
-        title={tr('Plans', 'Plans')}
-        subtitle={tr('What you sell, and for how much', 'Aap kya bechte hain, kitne mein')}
-        actions={canEdit ? <Button onClick={() => setAdding(true)}>{tr('+ Add plan', '+ Naya plan jodo')}</Button> : undefined}
+        title={'Plans'}
+        subtitle={'What you sell, and for how much'}
+        actions={canEdit ? <Button onClick={() => setAdding(true)}>{'+ Add plan'}</Button> : undefined}
       />
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
@@ -99,21 +95,18 @@ export function PlansScreen() {
       {plans.length === 0 ? (
         <Card>
           <EmptyState
-            title={tr('No plans yet', 'Abhi koi plan nahi')}
+            title={'No plans yet'}
             body={
               canEdit
-                ? tr(
-                    'Add your own, or start from a typical Indian gym price list and edit the numbers.',
-                    'Apna plan jodo, ya ek aam Indian gym ki rate list se shuru karke fees badlo.',
-                  )
-                : tr('Ask your gym owner to add the plans you sell.', 'Gym Owner se bolo ki Plan jod dein.')
+                ? 'Add your own, or start from a typical Indian gym price list and edit the numbers.'
+                : 'Ask your gym owner to add the plans you sell.'
             }
             action={
               canEdit && (
               <Row gap={space.sm}>
-                <Button onClick={() => setAdding(true)}>{tr('+ Add plan', '+ Naya plan jodo')}</Button>
+                <Button onClick={() => setAdding(true)}>{'+ Add plan'}</Button>
                 <Button variant="ghost" onClick={addStarterPlans} disabled={seeding}>
-                  {seeding ? tr('Adding…', 'Jod rahe hain…') : tr('Use a starter price list', 'Taiyaar rate list lo')}
+                  {seeding ? 'Adding…' : 'Use a starter price list'}
                 </Button>
               </Row>
               )
@@ -170,7 +163,7 @@ function PlanRow({
     <div style={{ minWidth: 0 }}>
       <Row gap={space.sm}>
         <span style={{ fontFamily: font.display, fontSize: 16, fontWeight: 700, color: color.ink }}>{plan.name}</span>
-        {!plan.active && <Pill tone="muted">{tr('Retired', 'Band')}</Pill>}
+        {!plan.active && <Pill tone="muted">{'Retired'}</Pill>}
       </Row>
       {ptPlanLine(plan) && (
         <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 2, overflowWrap: 'anywhere' }}>
@@ -194,20 +187,20 @@ function PlanRow({
       {durationLabel(plan.durationUnit, plan.durationCount)}
       <div style={{ color: color.inkMuted, fontSize: 12, marginTop: 2 }}>
         {plan.joiningFeeP > 0
-          ? tr(`+ ${formatINR(plan.joiningFeeP)} joining fee`, `+ ${formatINR(plan.joiningFeeP)} admission fees`)
-          : tr('No joining fee', 'Admission fees nahi')}
+          ? `+ ${formatINR(plan.joiningFeeP)} joining fee`
+          : 'No joining fee'}
       </div>
     </div>
   );
   const runs = (
     <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-      {tr('Sold today, runs until', 'Aaj diya to chalega')}
+      {'Sold today, runs until'}
       <div style={{ color: color.inkSecondary, fontSize: 13, marginTop: 2 }}>{formatDay(sample)}</div>
     </div>
   );
   const edit = onEdit ? (
-    <Button variant="ghost" onClick={onEdit} ariaLabel={tr(`Edit ${plan.name}`, `${plan.name} badlo`)}>
-      {tr('Edit', 'Badlo')}
+    <Button variant="ghost" onClick={onEdit} ariaLabel={`Edit ${plan.name}`}>
+      {'Edit'}
     </Button>
   ) : null;
 
@@ -255,9 +248,9 @@ function PlanRow({
 }
 
 function durationLabel(unit: DurationUnit, count: number): string {
-  if (unit === 'day') return count === 1 ? tr('1 day', '1 din') : tr(`${count} days`, `${count} din`);
-  if (count === 12) return tr('12 months (1 year)', '12 mahine (1 saal)');
-  return count === 1 ? tr('1 month', '1 mahina') : tr(`${count} months`, `${count} mahine`);
+  if (unit === 'day') return count === 1 ? '1 day' : `${count} days`;
+  if (count === 12) return '12 months (1 year)';
+  return count === 1 ? '1 month' : `${count} months`;
 }
 
 function PlanSheet({
@@ -286,33 +279,27 @@ function PlanSheet({
 
   const submit = async () => {
     const trimmed = name.trim();
-    if (trimmed.length < 2) return setError(tr('Give the plan a name.', 'Plan ka naam likho.'));
+    if (trimmed.length < 2) return setError('Give the plan a name.');
 
     // Strict: `Number('0x10')` is 16 and `Number('1e2')` is 100 — the same trap
     // `parseRupeeInput` two lines below already guards against.
     const countNum = parseCount(count, 1, 120);
     if (countNum === null) {
       return setError(
-        tr(
-          'Duration must be a whole number between 1 and 120.',
-          'Kitna samay (mahine / din): 1 se 120 ke beech poora number likho.',
-        ),
+        'Duration must be a whole number between 1 and 120.',
       );
     }
 
     const priceP = parseRupeeInput(price);
-    if (priceP === null) return setError(tr('Price isn’t a valid amount.', 'Fees sahi rakam nahi hai.'));
+    if (priceP === null) return setError('Price isn’t a valid amount.');
 
     const joiningFeeP = joining.trim() === '' ? 0 : parseRupeeInput(joining);
-    if (joiningFeeP === null) return setError(tr('Joining fee isn’t a valid amount.', 'Admission fees sahi rakam nahi hai.'));
+    if (joiningFeeP === null) return setError('Joining fee isn’t a valid amount.');
 
     const ptSessions = pt ? parseCount(sessions, 1, PT_MAX_SESSIONS) : null;
     if (pt && ptSessions === null) {
       return setError(
-        tr(
-          `PT sessions must be a whole number between 1 and ${PT_MAX_SESSIONS}.`,
-          `PT session 1 se ${PT_MAX_SESSIONS} ke beech poora number likho.`,
-        ),
+        `PT sessions must be a whole number between 1 and ${PT_MAX_SESSIONS}.`,
       );
     }
 
@@ -336,7 +323,7 @@ function PlanSheet({
       else await createPlan(draft);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : tr('Could not save this plan.', 'Yeh plan save nahi hua.'));
+      setError(e instanceof Error ? e.message : 'Could not save this plan.');
     } finally {
       setSaving(false);
     }
@@ -344,15 +331,15 @@ function PlanSheet({
 
   return (
     <Sheet
-      title={editing ? tr('Edit plan', 'Plan badlo') : tr('Add plan', 'Naya plan jodo')}
+      title={editing ? 'Edit plan' : 'Add plan'}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Rehne do')}
+            {'Cancel'}
           </Button>
           <Button onClick={submit} disabled={saving}>
-            {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save plan', 'Plan save karo')}
+            {saving ? 'Saving…' : 'Save plan'}
           </Button>
         </>
       }
@@ -361,36 +348,33 @@ function PlanSheet({
 
       {editing && (
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-          {tr(
-            'Changing the price here only affects future sales. Memberships already sold keep the price they were sold at.',
-            'Yahan fees badalne se sirf aage ke plan par asar hoga. Jo plan pehle de chuke hain, unki fees wahi rahegi.',
-          )}
+          {'Changing the price here only affects future sales. Memberships already sold keep the price they were sold at.'}
         </p>
       )}
 
-      <TextField label={tr('Plan name', 'Plan ka naam')} value={name} onChange={setName} placeholder="Quarterly" autoFocus />
+      <TextField label={'Plan name'} value={name} onChange={setName} placeholder="Quarterly" autoFocus />
 
       <Grid min={200}>
-        <TextField label={tr('Duration', 'Kitna samay')} value={count} onChange={setCount} inputMode="numeric" />
+        <TextField label={'Duration'} value={count} onChange={setCount} inputMode="numeric" />
         <SelectField
-          label={tr('Unit', 'Mahine ya din')}
+          label={'Unit'}
           value={unit}
           onChange={(v) => setUnit(v as DurationUnit)}
           options={[
-            { value: 'month', label: tr('Months', 'Mahine') },
-            { value: 'day', label: tr('Days', 'Din') },
+            { value: 'month', label: 'Months' },
+            { value: 'day', label: 'Days' },
           ]}
         />
       </Grid>
 
       <Grid min={200}>
-        <TextField label={tr('Price (₹)', 'Fees (₹)')} value={price} onChange={setPrice} inputMode="decimal" placeholder="3000" />
+        <TextField label={'Price (₹)'} value={price} onChange={setPrice} inputMode="decimal" placeholder="3000" />
         <TextField
-          label={tr('Joining fee (₹)', 'Admission fees (₹)')}
+          label={'Joining fee (₹)'}
           value={joining}
           onChange={setJoining}
           inputMode="decimal"
-          hint={tr("Charged once, on a member's first plan.", 'Member ke pehle plan par ek baar lagti hai.')}
+          hint={"Charged once, on a member's first plan."}
         />
       </Grid>
 
@@ -398,15 +382,15 @@ function PlanSheet({
       {pt && (
         <Grid min={200}>
           <TextField
-            label={tr('PT sessions', 'PT session')}
+            label={'PT sessions'}
             value={sessions}
             onChange={setSessions}
             inputMode="numeric"
             placeholder="12"
-            hint={tr('How many sessions this plan includes.', 'Is plan mein kitne session hain.')}
+            hint={'How many sessions this plan includes.'}
           />
           <TextField
-            label={tr('Trainer (optional)', 'Trainer (zaroori nahi)')}
+            label={'Trainer (optional)'}
             value={trainer}
             onChange={setTrainer}
             placeholder="Rohit"
@@ -414,15 +398,15 @@ function PlanSheet({
         </Grid>
       )}
 
-      <TextField label={tr('Description (optional)', 'Jaankari (zaroori nahi)')} value={description} onChange={setDescription} multiline />
+      <TextField label={'Description (optional)'} value={description} onChange={setDescription} multiline />
 
       <SelectField
-        label={tr('Availability', 'Chalu ya band')}
+        label={'Availability'}
         value={active ? 'active' : 'retired'}
         onChange={(v) => setActive(v === 'active')}
         options={[
-          { value: 'active', label: tr('Sellable', 'Chalu — de sakte hain') },
-          { value: 'retired', label: tr('Retired — hidden from new sales', 'Band — naye members ko nahi dikhega') },
+          { value: 'active', label: 'Sellable' },
+          { value: 'retired', label: 'Retired — hidden from new sales' },
         ]}
       />
     </Sheet>
@@ -458,13 +442,10 @@ function PtSwitch({ on, onChange }: { on: boolean; onChange: (v: boolean) => voi
       />
       <span style={{ minWidth: 0 }}>
         <span style={{ display: 'block', fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>
-          {tr('PT plan', 'PT plan')}
+          {'PT plan'}
         </span>
         <span style={{ display: 'block', fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>
-          {tr(
-            'Personal training with a set number of sessions. Sold on top of their gym plan.',
-            'Personal training, gine hue session ke saath. Gym plan ke upar alag se diya jaata hai.',
-          )}
+          {'Personal training with a set number of sessions. Sold on top of their gym plan.'}
         </span>
       </span>
     </label>

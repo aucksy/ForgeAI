@@ -8,7 +8,6 @@
 import { BUTTON_INK, PHONE_INK, type BrandPalette, type HeadingStyle } from '@forgeai/theme';
 
 import { font } from '../../theme';
-import { tr } from '../i18n';
 
 const W = 300;
 const H = 610;
@@ -80,7 +79,7 @@ export function PhonePreview({
   const display = "'Sora', system-ui, sans-serif";
   return (
     <figure
-      aria-label={tr(`Phone preview: the Workout tab in ${gymName}'s colours`, `Phone preview: ${gymName} ke rang mein Workout tab`)}
+      aria-label={`Phone preview: the Workout tab in ${gymName}'s colours`}
       style={{ margin: 0, width: W * scale, height: H * scale, flexShrink: 0 }}
     >
       <div

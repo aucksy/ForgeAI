@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import { CrmApp } from './crm/CrmApp';
 import { listenForInstall } from './crm/install';
+import { applyTheme, savedTheme } from './theme';
 import './index.css';
 
 /**
@@ -13,6 +14,8 @@ import './index.css';
  */
 // Chrome's install offer can arrive before React draws anything: catch it first.
 listenForInstall();
+// The saved dark | light choice, before the first frame, so a light panel never flashes dark.
+applyTheme(savedTheme());
 
 const root = document.getElementById('root');
 if (root) {

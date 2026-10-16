@@ -54,7 +54,7 @@ describe('C7-44: downloads are called what the owner opens them with', () => {
     for (const f of ['Money.tsx', 'Attendance.tsx']) {
       const src = readFileSync(fileURLToPath(new URL(`../../src/crm/ui/screens/${f}`, import.meta.url)), 'utf8');
       expect(src).not.toContain("'Export CSV'");
-      expect(src).toContain('Excel file nikalo');
+      expect(src).toContain('Download Excel file');
     }
   });
 });

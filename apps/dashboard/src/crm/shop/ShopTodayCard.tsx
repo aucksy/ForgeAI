@@ -6,7 +6,6 @@
 import { useMemo } from 'react';
 
 import { useCan } from '../auth/AuthProvider';
-import { tr } from '../i18n';
 import { formatINR } from '../logic/money';
 import { Button, Card, SectionTitle, color, font, space } from '../ui/kit';
 import { navigate } from '../ui/router';
@@ -27,26 +26,26 @@ export function ShopTodayCard({ flush = false }: { flush?: boolean }) {
       <SectionTitle
         action={
           <Button variant="ghost" onClick={() => navigate('/shop/orders')}>
-            {tr('Open shop', 'Shop kholo')}
+            {'Open shop'}
           </Button>
         }
       >
-        {tr('Shop today', 'Aaj ka shop')}
+        {'Shop today'}
       </SectionTitle>
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${seeTotals ? 3 : 2}, minmax(0, 1fr))`, gap: space.md }}>
         <Figure
           value={ordersLoaded ? String(newCount) : '…'}
-          label={newCount === 1 ? tr('new order', 'naya order') : tr('new orders', 'naye orders')}
+          label={newCount === 1 ? 'new order' : 'new orders'}
           tone={newCount > 0 ? color.accentBright : color.ink}
         />
-        <Figure value={ordersLoaded ? String(readyCount) : '…'} label={tr('ready for pickup', 'lene ke liye taiyaar')} tone={color.ink} />
+        <Figure value={ordersLoaded ? String(readyCount) : '…'} label={'ready for pickup'} tone={color.ink} />
         {/* "Sold", not "collected": it sits above "Collected this month" for
             memberships, and two different "collected" figures on one screen read as
             one number that disagrees with itself. Green only once there is money. */}
         {seeTotals && (
           <Figure
             value={ordersLoaded ? formatINR(today) : '…'}
-            label={tr('sold today', 'aaj bika')}
+            label={'sold today'}
             tone={today > 0 ? color.goodText : color.ink}
           />
         )}

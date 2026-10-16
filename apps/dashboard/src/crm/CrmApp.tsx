@@ -19,7 +19,6 @@ import { cloudApi } from './auth/api';
 import { AuthProvider, useAuth, useRole } from './auth/AuthProvider';
 import { OwnerOnly } from './auth/OwnerOnly';
 import { canOpen, navFor } from './auth/permissions';
-import { LangProvider, useLang, tr } from './i18n';
 import { PeopleScreen } from './auth/PeopleScreen';
 import { CloudCrmData } from './data/cloud';
 
@@ -46,11 +45,9 @@ import { useRoute } from './ui/router';
 
 export function CrmApp() {
   return (
-    <LangProvider>
-      <AuthProvider>
-        <SessionRoot />
-      </AuthProvider>
-    </LangProvider>
+    <AuthProvider>
+      <SessionRoot />
+    </AuthProvider>
   );
 }
 
@@ -60,8 +57,6 @@ export function CrmApp() {
  */
 function SessionRoot() {
   const { session, lost } = useAuth();
-  // The language keys the screens only: a switch redraws every word without reloading the gym.
-  const { lang } = useLang();
   const lostRef = useRef(lost);
   lostRef.current = lost;
   const onlineKey = session?.online ? session.ownerKey : null;
@@ -72,7 +67,7 @@ function SessionRoot() {
   return (
     <CrmProvider key={`${session?.ownerKey ?? 'none'}:${onlineKey ? 'online' : 'browser'}`} data={data}>
       <ShopProvider>
-        <Routes key={lang} online={onlineKey !== null} />
+        <Routes online={onlineKey !== null} />
       </ShopProvider>
     </CrmProvider>
   );
@@ -112,23 +107,23 @@ function Routes({ online }: { online: boolean }) {
     const enquiriesDue = dueCount(snapshot.enquiries, today);
     // A Staff person never sees a page they cannot open (permissions.ts): no Expenses.
     return navFor<NavItem>(role, [
-      { path: '/', label: tr('Today', 'Aaj'), icon: 'today' },
-      { path: '/members', label: tr('Members', 'Members'), icon: 'members', badge: needsAttention },
+      { path: '/', label: 'Today', icon: 'today' },
+      { path: '/members', label: 'Members', icon: 'members', badge: needsAttention },
       // Badged with orders waiting at the desk — the one number on this bar that
       // changes by itself while the owner watches.
-      { path: '/shop', label: tr('Shop', 'Shop'), icon: 'shop', badge: newCount },
+      { path: '/shop', label: 'Shop', icon: 'shop', badge: newCount },
       // "Visits" rather than "Attendance": six items across a 375px phone leave
       // about 54px of text, and the longer word does not fit. The screen itself is
       // still titled Attendance, which is the word an owner comparing products
       // looks for — a short tab label under a fuller page title is the ordinary
       // pattern on both mobile platforms.
-      { path: '/attendance', label: tr('Visits', 'Hazri'), icon: 'visits', badge: atRisk },
-      { path: '/money', label: tr('Money', 'Hisaab'), icon: 'money', badge: overdue },
-      { path: '/plans', label: tr('Plans', 'Plan'), icon: 'plans' },
+      { path: '/attendance', label: 'Visits', icon: 'visits', badge: atRisk },
+      { path: '/money', label: 'Money', icon: 'money', badge: overdue },
+      { path: '/plans', label: 'Plans', icon: 'plans' },
       // Step 5 (15 Oct 2026): people who asked about joining, and money going out.
-      { path: '/enquiries', label: tr('Enquiries', 'Enquiry'), icon: 'members', badge: enquiriesDue || undefined },
-      { path: '/expenses', label: tr('Expenses', 'Kharcha'), icon: 'money' },
-      { path: '/settings', label: tr('Settings', 'Settings'), icon: 'settings' },
+      { path: '/enquiries', label: 'Enquiries', icon: 'members', badge: enquiriesDue || undefined },
+      { path: '/expenses', label: 'Expenses', icon: 'money' },
+      { path: '/settings', label: 'Settings', icon: 'settings' },
     ]);
   }, [memberViews, snapshot, today, newCount, role]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
@@ -138,7 +133,7 @@ function Routes({ online }: { online: boolean }) {
     const kept = ['/', '/members', '/money', '/attendance'].map(by).filter((n): n is NavItem => Boolean(n));
     const rest = nav.filter((n) => !kept.includes(n));
     const restBadge = rest.reduce((sum, n) => sum + (n.badge ?? 0), 0);
-    return [...kept, { path: '/more', label: tr('More', 'Aur'), icon: 'more', badge: restBadge || undefined }];
+    return [...kept, { path: '/more', label: 'More', icon: 'more', badge: restBadge || undefined }];
   }, [nav]);
 
 

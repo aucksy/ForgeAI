@@ -23,7 +23,6 @@ import { buildReceiptDoc, type ReceiptDoc } from '../../logic/receiptDoc';
 import { Button, Card, EmptyState, PageHeader, space } from '../kit';
 import { navigate } from '../router';
 import { receiptBackTo } from '../../logic/receiptDoc';
-import { inEnglish, tr } from '../../i18n';
 
 // Every ink reads at 4.5:1 or better on the white paper (test/crm/receiptContrast.test.ts).
 // The old faint grey (3.9:1) failed axe on 16 Oct 2026; its text now uses inkSoft.
@@ -46,7 +45,7 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
     if (!payment) return null;
 
     // The printed receipt is English in every language (it is a money document).
-    return inEnglish(() => buildReceiptDoc({
+    return buildReceiptDoc({
       gym: snapshot.gym,
       payment,
       member: snapshot.members.find((m) => m.id === payment.memberId) ?? null,
@@ -55,7 +54,7 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
         : null,
       memberPayments: snapshot.payments.filter((p) => p.memberId === payment.memberId),
       today,
-    }));
+    });
   }, [snapshot, paymentId, today]);
 
   const waHref = useMemo(() => {
@@ -69,12 +68,9 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
     return (
       <Card>
         <EmptyState
-          title={tr('Receipt not found', 'Raseed nahi mili')}
-          body={tr(
-            'This receipt no longer exists. It may have been on a gym you have since erased.',
-            'Yeh raseed ab nahi hai. Shayad yeh us gym ki thi jise aapne mita diya.',
-          )}
-          action={<Button onClick={() => navigate('/money')}>{tr('Back to money', 'Hisaab par wapas')}</Button>}
+          title={'Receipt not found'}
+          body={'This receipt no longer exists. It may have been on a gym you have since erased.'}
+          action={<Button onClick={() => navigate('/money')}>{'Back to money'}</Button>}
         />
       </Card>
     );
@@ -86,7 +82,7 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
     <div style={{ maxWidth: 720, margin: '0 auto' }}>
       <div className="no-print">
         <PageHeader
-          title={tr(`Receipt ${doc.receiptNo}`, `Raseed ${doc.receiptNo}`)}
+          title={`Receipt ${doc.receiptNo}`}
           subtitle={`${doc.memberName} · ${doc.paidOnLabel}`}
           actions={
             <>
@@ -94,15 +90,15 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
                 variant="ghost"
                 onClick={() => (receiptBackTo(window.history.length) === 'back' ? window.history.back() : navigate('/money'))}
               >
-                {tr('Back', 'Peeche')}
+                {'Back'}
               </Button>
               {/* Step 4: the receipt as a WhatsApp message to the member (the print stays the record). */}
               {waHref && (
                 <a href={waHref} target="_blank" rel="noreferrer" style={waLink}>
-                  {tr('Send on WhatsApp', 'WhatsApp par bhejo')}
+                  {'Send on WhatsApp'}
                 </a>
               )}
-              <Button onClick={() => window.print()}>{tr('Print', 'Print karo')}</Button>
+              <Button onClick={() => window.print()}>{'Print'}</Button>
             </>
           }
         />

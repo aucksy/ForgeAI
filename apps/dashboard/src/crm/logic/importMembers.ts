@@ -21,7 +21,6 @@
  */
 
 import type { Gender, Member, MemberDraft } from '../types';
-import { inEnglish, tr } from '../i18n';
 import { csvDocument } from './csv';
 import { addDays, formatDay, isValidDateISO, toISO, type DateISO } from './dates';
 import { DuplicatePhoneError, EARLIEST_DATE, PartialSaveError } from '../data/adapter';
@@ -64,22 +63,22 @@ export function emptyColumnMap(): ColumnMap {
 /** The field's name on screen. */
 export function fieldLabel(field: ImportField): string {
   switch (field) {
-    case 'fullName': return tr('Name', 'Naam');
-    case 'phone': return tr('Mobile', 'Mobile');
-    case 'joinedOn': return tr('Joining date', 'Joining ki tareekh');
-    case 'gender': return tr('Gender', 'Gender');
-    case 'dateOfBirth': return tr('Date of birth', 'Janam din');
-    case 'email': return tr('Email', 'Email');
-    case 'address': return tr('Address', 'Pata');
-    case 'batch': return tr('Batch', 'Batch');
-    case 'plan': return tr('Plan', 'Plan');
-    case 'startDate': return tr('Plan start', 'Plan shuru');
-    case 'total': return tr('Plan price', 'Plan ki fees');
-    case 'amount': return tr('Fees paid', 'Fees di');
-    case 'paidOn': return tr('Payment date', 'Payment ki date');
-    case 'due': return tr('Balance due', 'Baaki');
-    case 'expiry': return tr('Valid till', 'Kab tak valid');
-    case 'notes': return tr('Notes', 'Notes');
+    case 'fullName': return 'Name';
+    case 'phone': return 'Mobile';
+    case 'joinedOn': return 'Joining date';
+    case 'gender': return 'Gender';
+    case 'dateOfBirth': return 'Date of birth';
+    case 'email': return 'Email';
+    case 'address': return 'Address';
+    case 'batch': return 'Batch';
+    case 'plan': return 'Plan';
+    case 'startDate': return 'Plan start';
+    case 'total': return 'Plan price';
+    case 'amount': return 'Fees paid';
+    case 'paidOn': return 'Payment date';
+    case 'due': return 'Balance due';
+    case 'expiry': return 'Valid till';
+    case 'notes': return 'Notes';
   }
 }
 
@@ -806,7 +805,7 @@ export function planImport(
 
     // Name
     const fullName = normalizeName(text('fullName'));
-    if (!fullName) problems.push(tr('No name.', 'Naam nahi hai.'));
+    if (!fullName) problems.push('No name.');
 
     // Mobile
     const phoneRead = parseImportPhone(cellAt(row, map.phone));
@@ -814,13 +813,10 @@ export function planImport(
       const shown = text('phone');
       problems.push(
         phoneRead.why === 'missing'
-          ? tr('No mobile number.', 'Mobile number nahi hai.')
+          ? 'No mobile number.'
           : phoneRead.why === 'shortened'
-            ? tr(
-                `Mobile “${shown}” was shortened by Excel. Set that column to Text in Excel and save again.`,
-                `Excel ne mobile “${shown}” chhota kar diya. Excel mein us column ko Text karke phir save karo.`,
-              )
-            : tr(`Mobile “${shown}” is not a valid 10-digit number.`, `Mobile “${shown}” sahi 10 ank ka number nahi hai.`),
+            ? `Mobile “${shown}” was shortened by Excel. Set that column to Text in Excel and save again.`
+            : `Mobile “${shown}” is not a valid 10-digit number.`,
       );
     }
 
@@ -831,55 +827,49 @@ export function planImport(
       const d = parseSheetDate(joinRaw, today, joinDayFirst);
       if (!d) {
         problems.push(
-          tr(
-            `Joining date “${text('joinedOn')}” is not a date we can read. Write it like 15/08/2026.`,
-            `Joining date “${text('joinedOn')}” samajh nahi aayi. Aise likho: 15/08/2026.`,
-          ),
+          `Joining date “${text('joinedOn')}” is not a date we can read. Write it like 15/08/2026.`,
         );
       } else if (d < EARLIEST_DATE) {
-        problems.push(tr(`Joining date ${formatDay(d)} looks like a typo — check the year.`, `Joining date ${formatDay(d)} galat lag rahi hai — saal check karo.`));
+        problems.push(`Joining date ${formatDay(d)} looks like a typo — check the year.`);
       } else if (d > addDays(today, JOIN_AHEAD_MAX_DAYS)) {
         // Nobody joins more than a year ahead: this is a typed year (2062) or digits misread.
         problems.push(
-          tr(
-            `Joining date ${formatDay(d)} is more than a year away — check the year.`,
-            `Joining date ${formatDay(d)} ek saal se zyada aage hai — saal check karo.`,
-          ),
+          `Joining date ${formatDay(d)} is more than a year away — check the year.`,
         );
       } else {
         joinedOn = d;
-        if (d > today) warnings.push(tr(`Joining date ${formatDay(d)} is in the future.`, `Joining date ${formatDay(d)} aage ki hai.`));
+        if (d > today) warnings.push(`Joining date ${formatDay(d)} is in the future.`);
       }
     } else if (map.joinedOn !== null) {
-      warnings.push(tr('No joining date — today is used.', 'Joining date nahi hai — aaj ki date lagi.'));
+      warnings.push('No joining date — today is used.');
     }
 
     // Date of birth: optional, so a bad one is left out (and said), never a reason to skip someone.
     let dateOfBirth = '';
     if (text('dateOfBirth')) {
       const d = parseSheetDate(cellAt(row, map.dateOfBirth), today, dobDayFirst, true);
-      if (!d) warnings.push(tr(`Birthday “${text('dateOfBirth')}” not readable — left blank.`, `Janam din “${text('dateOfBirth')}” samajh nahi aaya — khaali chhoda.`));
-      else if (d > today) warnings.push(tr(`Birthday ${formatDay(d)} is in the future — left blank.`, `Janam din ${formatDay(d)} aage ki date hai — khaali chhoda.`));
+      if (!d) warnings.push(`Birthday “${text('dateOfBirth')}” not readable — left blank.`);
+      else if (d > today) warnings.push(`Birthday ${formatDay(d)} is in the future — left blank.`);
       else dateOfBirth = d;
     }
 
     // Gender
     let gender = '';
     const g = parseGender(cellAt(row, map.gender));
-    if (g === 'unknown') warnings.push(tr(`Gender “${text('gender')}” not understood — left blank.`, `Gender “${text('gender')}” samajh nahi aaya — khaali chhoda.`));
+    if (g === 'unknown') warnings.push(`Gender “${text('gender')}” not understood — left blank.`);
     else if (g) gender = g;
 
     // Email
     let email = text('email');
     if (email && !EMAIL_RE.test(email)) {
-      warnings.push(tr(`Email “${email}” doesn’t look right — left blank.`, `Email “${email}” sahi nahi lag raha — khaali chhoda.`));
+      warnings.push(`Email “${email}” doesn’t look right — left blank.`);
       email = '';
     }
 
     // Batch: the gym's own spelling when it already has this batch.
     let batch = resolveBatch(text('batch'), batchNames) ?? '';
     if (batch.length > BATCH_MAX) {
-      warnings.push(tr(`Batch name cut to ${BATCH_MAX} letters.`, `Batch ka naam ${BATCH_MAX} akshar tak chhota kiya.`));
+      warnings.push(`Batch name cut to ${BATCH_MAX} letters.`);
       batch = batch.slice(0, BATCH_MAX).trim();
     }
     if (batch && !batchNames.includes(batch)) batchNames.push(batch);
@@ -891,7 +881,7 @@ export function planImport(
     for (const f of ['total', 'amount', 'due'] as const) {
       if (text(f) && money(f) === null) {
         warnings.push(
-          tr(`${fieldLabel(f)} “${text(f)}” is not an amount we can read — left out.`, `${fieldLabel(f)} “${text(f)}” rakam samajh nahi aayi — chhodi.`),
+          `${fieldLabel(f)} “${text(f)}” is not an amount we can read — left out.`,
         );
       }
     }
@@ -900,7 +890,7 @@ export function planImport(
     // A payment date the receipt can carry: readable, not before records began, not in the future.
     let paidOn = text('paidOn') ? parseSheetDate(cellAt(row, map.paidOn), today, paidDayFirst) : null;
     if (text('paidOn') && (!paidOn || paidOn < EARLIEST_DATE || paidOn > today)) {
-      warnings.push(tr(`Payment date “${text('paidOn')}” not usable — the receipt is dated the plan's start.`, `Payment date “${text('paidOn')}” sahi nahi — raseed plan shuru ki date par.`));
+      warnings.push(`Payment date “${text('paidOn')}” not usable — the receipt is dated the plan's start.`);
       paidOn = null;
     }
     const term = termFromRow({
@@ -916,49 +906,40 @@ export function planImport(
     // No joining-date column: the plan's start is a better joining date than today.
     if (map.joinedOn === null && term && term.startsOn >= EARLIEST_DATE && term.startsOn <= today) joinedOn = term.startsOn;
     if (text('expiry') && !endsOn) {
-      warnings.push(tr(`Valid till “${text('expiry')}” not readable — no plan added.`, `Valid till “${text('expiry')}” samajh nahi aaya — plan nahi juda.`));
+      warnings.push(`Valid till “${text('expiry')}” not readable — no plan added.`);
     }
     // Admin audit C7-24 (16 Oct 2026): a plan with money on it that cannot be dated was dropped
     // without a word ("Will be added"), and its balance was recorded nowhere.
     const hasMoney = !!(text('total') || text('amount') || text('due'));
     if (!term && hasMoney && (text('plan') || text('startDate') || text('expiry'))) {
-      const name = text('plan') || tr('The plan', 'Plan');
+      const name = text('plan') || 'The plan';
       if (startsOn && endsOn && startsOn > endsOn) {
         warnings.push(
-          tr(
-            `Plan not added: its end date is before its start (${formatDay(startsOn)} → ${formatDay(endsOn)}). The fees are kept in the notes.`,
-            `Plan nahi juda: khatam hone ki date shuru se pehle hai (${formatDay(startsOn)} → ${formatDay(endsOn)}). Fees notes mein rakhi.`,
-          ),
+          `Plan not added: its end date is before its start (${formatDay(startsOn)} → ${formatDay(endsOn)}). The fees are kept in the notes.`,
         );
       } else if (!endsOn && !text('expiry')) {
         warnings.push(
-          tr(
-            `Plan “${name}” not added: there is no end date, and its name doesn't say how long it runs. The fees are kept in the notes.`,
-            `Plan “${name}” nahi juda: khatam hone ki date nahi hai, aur naam se pata nahi kitne din ka hai. Fees notes mein rakhi.`,
-          ),
+          `Plan “${name}” not added: there is no end date, and its name doesn't say how long it runs. The fees are kept in the notes.`,
         );
       } else if (endsOn) {
         warnings.push(
-          tr(
-            `Plan “${name}” not added: there is no start date. The fees are kept in the notes.`,
-            `Plan “${name}” nahi juda: shuru ki date nahi hai. Fees notes mein rakhi.`,
-          ),
+          `Plan “${name}” not added: there is no start date. The fees are kept in the notes.`,
         );
       }
     }
     const extras: string[] = [];
     if (!term) {
-      if (text('plan')) extras.push(tr(`Plan: ${text('plan')}`, `Plan: ${text('plan')}`));
+      if (text('plan')) extras.push(`Plan: ${text('plan')}`);
       const total = money('total');
-      if (text('total')) extras.push(tr(`Price: ${total !== null ? formatINR(total) : text('total')}`, `Fees: ${total !== null ? formatINR(total) : text('total')}`));
+      if (text('total')) extras.push(`Price: ${total !== null ? formatINR(total) : text('total')}`);
       const p = money('amount');
-      if (text('amount')) extras.push(tr(`Fees: ${p !== null ? formatINR(p) : text('amount')}`, `Fees di: ${p !== null ? formatINR(p) : text('amount')}`));
+      if (text('amount')) extras.push(`Fees: ${p !== null ? formatINR(p) : text('amount')}`);
       const due = money('due');
-      if (text('due')) extras.push(tr(`Balance: ${due !== null ? formatINR(due) : text('due')}`, `Baaki: ${due !== null ? formatINR(due) : text('due')}`));
-      if (text('expiry')) extras.push(tr(`Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`, `Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`));
+      if (text('due')) extras.push(`Balance: ${due !== null ? formatINR(due) : text('due')}`);
+      if (text('expiry')) extras.push(`Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`);
     }
-    if (phoneRead.ok && phoneRead.extra) extras.push(tr(`Other number: ${phoneRead.extra}`, `Doosra number: ${phoneRead.extra}`));
-    const notes = [text('notes'), extras.length ? tr(`From Excel — ${extras.join(' · ')}`, `Excel se — ${extras.join(' · ')}`) : '']
+    if (phoneRead.ok && phoneRead.extra) extras.push(`Other number: ${phoneRead.extra}`);
+    const notes = [text('notes'), extras.length ? `From Excel — ${extras.join(' · ')}` : '']
       .filter(Boolean)
       .join('\n');
 
@@ -998,15 +979,12 @@ export function planImport(
       // matches too. Two people on one family mobile must never share plans and money.
       const sameName = samePersonName(earlier.name, draft.fullName);
       if (!sameName) {
-        warnings.push(tr(`Row ${earlier.row} has this mobile with another name — this row is skipped.`, `Row ${earlier.row} mein yahi mobile doosre naam se hai — yeh row chhodi.`));
+        warnings.push(`Row ${earlier.row} has this mobile with another name — this row is skipped.`);
       } else if (term && map.paidOn === null && earlier.cells === cells.join('\u0001')) {
         // Admin audit C7-20 (16 Oct 2026): with no payment date, two identical rows are counted as
         // two equal payments (instalments). Said on screen, so a copied row is deleted, not paid twice.
         warnings.push(
-          tr(
-            `Exactly the same as row ${earlier.row}: counted as a second payment. If it is a copy, delete one row in Excel and import again.`,
-            `Row ${earlier.row} jaisi hi hai: doosri payment maani gayi. Agar copy hai, Excel mein ek row hatao aur phir import karo.`,
-          ),
+          `Exactly the same as row ${earlier.row}: counted as a second payment. If it is a copy, delete one row in Excel and import again.`,
         );
       }
       out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier.row, problems, warnings, term: sameName ? term : null });
@@ -1021,10 +999,7 @@ export function planImport(
       rowTerm = null;
       if (term) {
         warnings.push(
-          tr(
-            `${existing.fullName} is already in the gym on this mobile. The name is different, so this row's plan and fees are not added.`,
-            `Is mobile par ${existing.fullName} pehle se hain. Naam alag hai, isliye is row ka plan aur fees nahi jude.`,
-          ),
+          `${existing.fullName} is already in the gym on this mobile. The name is different, so this row's plan and fees are not added.`,
         );
       }
     }
@@ -1071,15 +1046,15 @@ export function importAction(
   const label =
     adds === 0 && fills === 0 && terms > 0
       ? terms === 1
-        ? tr('Add 1 plan and payment', '1 plan aur payment jodo')
-        : tr(`Add ${terms} plans and payments`, `${terms} plan aur payment jodo`)
+        ? 'Add 1 plan and payment'
+        : `Add ${terms} plans and payments`
       : fills > 0 && adds === 0
-        ? tr(`Update ${fills} members`, `${fills} members update karo`)
+        ? `Update ${fills} members`
         : fills > 0
-          ? tr(`Add ${adds} members, update ${fills}`, `${adds} members jodo, ${fills} update karo`)
+          ? `Add ${adds} members, update ${fills}`
           : adds === 1
-            ? tr('Add 1 member', '1 member jodo')
-            : tr(`Add ${adds} members`, `${adds} members jodo`);
+            ? 'Add 1 member'
+            : `Add ${adds} members`;
   return { adds, fills, terms, label, enabled: adds + fills + terms > 0 };
 }
 
@@ -1099,22 +1074,19 @@ export function termsPreview(rows: readonly ImportRow[]): { members: number; nam
 
 /** One plain line: what happens to this row. */
 export function rowVerdict(row: ImportRow): string {
-  if (row.status === 'add') return tr('Will be added', 'Jud jayega');
-  if (row.status === 'problem') return tr('Problem — will be skipped', 'Gadbad — chhoda jayega');
+  if (row.status === 'add') return 'Will be added';
+  if (row.status === 'problem') return 'Problem — will be skipped';
   if (row.sameAsRow !== null) {
     // 16 Oct 2026: a payments list repeats the member; the row's plan and payment still count.
     if (row.term) {
-      return tr(
-        `Same member as row ${row.sameAsRow} — this plan and payment are added to them`,
-        `Row ${row.sameAsRow} wala hi member — yeh plan aur payment unhi mein judega`,
-      );
+      return `Same member as row ${row.sameAsRow} — this plan and payment are added to them`;
     }
-    return tr(`Same mobile as row ${row.sameAsRow} — skipped`, `Row ${row.sameAsRow} wala hi mobile — chhoda jayega`);
+    return `Same mobile as row ${row.sameAsRow} — skipped`;
   }
   const who = row.existing?.fullName ?? '';
   return row.existing?.archived
-    ? tr(`Already a member (${who}, archived)`, `Pehle se member hai (${who}, archive mein)`)
-    : tr(`Already a member (${who})`, `Pehle se member hai (${who})`);
+    ? `Already a member (${who}, archived)`
+    : `Already a member (${who})`;
 }
 
 /**
@@ -1138,17 +1110,17 @@ export function fillBlanksPatch(existing: Member, draft: MemberDraft): Partial<M
 /** Column names for the sample file, in the panel's language (both languages are recognised). */
 export function templateHeaders(): string[] {
   return [
-    tr('Name', 'Naam'),
-    tr('Mobile', 'Mobile'),
-    tr('Joining date', 'Joining date'),
-    tr('Gender', 'Gender'),
-    tr('Date of birth', 'Janam din'),
-    tr('Address', 'Pata'),
-    tr('Batch', 'Batch'),
-    tr('Plan', 'Plan'),
-    tr('Fees', 'Fees'),
-    tr('Valid till', 'Valid till'),
-    tr('Notes', 'Notes'),
+    'Name',
+    'Mobile',
+    'Joining date',
+    'Gender',
+    'Date of birth',
+    'Address',
+    'Batch',
+    'Plan',
+    'Fees',
+    'Valid till',
+    'Notes',
   ];
 }
 
@@ -1157,7 +1129,7 @@ export function templateHeaders(): string[] {
  * every language, like every download (both languages' headers are recognised on the way back in).
  */
 export function templateCsv(): string {
-  return inEnglish(() => csvDocument(templateHeaders(), []));
+  return csvDocument(templateHeaders(), []);
 }
 
 /**
@@ -1168,16 +1140,14 @@ export function skippedRowsCsv(
   headers: readonly string[],
   skipped: readonly { row: ImportRow; reason: string }[],
 ): string {
-  return inEnglish(() => {
-    const width = Math.max(headers.length, ...skipped.map((s) => s.row.cells.length));
-    const head = [tr('Row', 'Row'), tr('Why skipped', 'Kyun chhoda'), ...Array.from({ length: width }, (_, i) => headers[i] || columnLetter(i))];
-    const body = skipped.map(({ row, reason }) => [
-      row.rowNumber,
-      reason,
-      ...Array.from({ length: width }, (_, i) => row.cells[i] ?? ''),
-    ]);
-    return csvDocument(head, body);
-  });
+  const width = Math.max(headers.length, ...skipped.map((s) => s.row.cells.length));
+  const head = ['Row', 'Why skipped', ...Array.from({ length: width }, (_, i) => headers[i] || columnLetter(i))];
+  const body = skipped.map(({ row, reason }) => [
+    row.rowNumber,
+    reason,
+    ...Array.from({ length: width }, (_, i) => row.cells[i] ?? ''),
+  ]);
+  return csvDocument(head, body);
 }
 
 /** Why a row was skipped, in one line, for the skipped-rows file. */
@@ -1197,10 +1167,8 @@ export function englishSkipReasons(
   roster: readonly Member[],
   today: DateISO,
 ): Map<number, string> {
-  return inEnglish(() => {
-    const plan = planImport(rows, headerRow, map, roster, today);
-    return new Map(plan.rows.map((r) => [r.rowNumber, skipReason(r)]));
-  });
+  const plan = planImport(rows, headerRow, map, roster, today);
+  return new Map(plan.rows.map((r) => [r.rowNumber, skipReason(r)]));
 }
 
 // ---------------------------------------------------------------- saving
@@ -1265,7 +1233,7 @@ export async function saveInBatches(
           added,
           duplicates,
           notSaved: [...batch.filter((r) => !savedHere.includes(r)), ...work.slice(start + size)],
-          stopped: e instanceof Error && e.message ? e.message : tr('Saving stopped.', 'Save ruk gaya.'),
+          stopped: e instanceof Error && e.message ? e.message : 'Saving stopped.',
         };
       }
     }

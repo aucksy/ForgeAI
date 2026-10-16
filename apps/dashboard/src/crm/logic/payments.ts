@@ -7,7 +7,6 @@
  * the number they actually care about.
  */
 
-import { tr } from '../i18n';
 import type { PaymentMethod } from '../types';
 
 /**
@@ -25,13 +24,12 @@ export const PAYMENT_METHODS: readonly PaymentMethod[] = [
   'other',
 ] as const;
 
-// Read each time it is shown, so it follows the English | Hinglish switch.
 const METHOD_LABEL = (): Record<PaymentMethod, string> => ({
   cash: 'Cash',
   upi: 'UPI',
   card: 'Card',
-  bank: tr('Bank transfer', 'Bank transfer'),
-  other: tr('Other', 'Kuch aur'),
+  bank: 'Bank transfer',
+  other: 'Other',
 });
 
 /**

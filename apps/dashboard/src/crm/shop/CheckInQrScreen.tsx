@@ -16,7 +16,6 @@ import { createPortal } from 'react-dom';
 import type { GymBrand } from '@forgeai/theme';
 
 import { useAuth } from '../auth/AuthProvider';
-import { tr } from '../i18n';
 import { useCrm } from '../store';
 import { Button, Card, EmptyState, PageHeader, SectionTitle, Toast, color, font, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
@@ -33,14 +32,11 @@ export function CheckInQrScreen() {
   return (
     <>
       <PageHeader
-        title={tr('Check-in QR', 'Check-in QR')}
-        subtitle={tr(
-          'Members scan it with the ForgeAI app and check themselves in',
-          'Members ForgeAI app se scan karke khud hazri lagate hain',
-        )}
+        title={'Check-in QR'}
+        subtitle={'Members scan it with the ForgeAI app and check themselves in'}
         actions={
           <Button variant="ghost" onClick={() => navigate('/attendance')}>
-            {tr('Back to the register', 'Register par wapas')}
+            {'Back to the register'}
           </Button>
         }
       />
@@ -49,12 +45,9 @@ export function CheckInQrScreen() {
       ) : (
         <Card>
           <EmptyState
-            title={tr('Put your records online first', 'Pehle apne records online karo')}
-            body={tr(
-              'A member’s phone writes the check-in into your gym’s online records, so self check-in needs them online. Settings → put your records online, then come back here for the poster.',
-              'Member ka phone hazri aapke gym ke online records mein likhta hai, isliye khud hazri ke liye records online hone chahiye. Settings → records online karo, phir poster ke liye yahan wapas aao.',
-            )}
-            action={<Button onClick={() => navigate('/settings')}>{tr('Open Settings', 'Settings kholo')}</Button>}
+            title={'Put your records online first'}
+            body={'A member’s phone writes the check-in into your gym’s online records, so self check-in needs them online. Settings → put your records online, then come back here for the poster.'}
+            action={<Button onClick={() => navigate('/settings')}>{'Open Settings'}</Button>}
           />
         </Card>
       )}
@@ -88,73 +81,55 @@ function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   return (
     <div style={{ display: 'grid', gap: space.lg, gridTemplateColumns: compact ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', alignItems: 'start' }}>
       <Card>
-        <SectionTitle>{tr('Scan to check in', 'Scan karke hazri')}</SectionTitle>
+        <SectionTitle>{'Scan to check in'}</SectionTitle>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: '100%', maxWidth: 360 }}>
             <Poster words={CHECKIN_POSTER} gymName={gymName} joinCode={joinCode} link={link} brand={brand} />
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.print()}>{tr('Print poster', 'Poster print karo')}</Button>
+          <Button onClick={() => window.print()}>{'Print poster'}</Button>
           <Button
             variant="ghost"
             onClick={async () => {
               const ok = await downloadPoster(CHECKIN_POSTER, gymName, joinCode, link, brand);
               say(
                 ok
-                  ? tr('Poster saved as a picture.', 'Poster picture ki tarah save ho gaya.')
-                  : tr('Could not make the picture. Try Print poster.', 'Picture nahi bani. Poster print karo try karo.'),
+                  ? 'Poster saved as a picture.'
+                  : 'Could not make the picture. Try Print poster.',
               );
             }}
           >
-            {tr('Download picture', 'Picture download karo')}
+            {'Download picture'}
           </Button>
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {tr(
-            'Print it on A4 and stick it where members walk in. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.',
-            'A4 par print karke entry par lagao. Phone par Print → “Save as PDF” bhi chalta hai; picture print shop ke liye hai.',
-          )}
+          {'Print it on A4 and stick it where members walk in. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.'}
         </p>
       </Card>
 
       <Card>
-        <SectionTitle>{tr('How it works', 'Yeh kaise chalta hai')}</SectionTitle>
+        <SectionTitle>{'How it works'}</SectionTitle>
         <ol style={{ margin: 0, paddingLeft: 20, fontFamily: font.body, fontSize: 14, lineHeight: 1.6, color: color.inkSecondary }}>
           <li>
-            {tr(
-              'The member scans the poster with their phone camera. The ForgeAI app opens and checks them in.',
-              'Member phone ke camera se poster scan karta hai. ForgeAI app khulta hai aur hazri lag jaati hai.',
-            )}
+            {'The member scans the poster with their phone camera. The ForgeAI app opens and checks them in.'}
           </li>
           <li>
-            {tr(
-              'The app finds them in your Members by their mobile number. The first time, it asks for the number once.',
-              'App unhe aapke Members mein mobile number se dhoondhta hai. Pehli baar number ek baar poochta hai.',
-            )}
+            {'The app finds them in your Members by their mobile number. The first time, it asks for the number once.'}
           </li>
           <li>
-            {tr(
-              'The check-in shows in today’s register within a few seconds, with a small “App” tag. Scanning twice in a day counts once.',
-              'Hazri kuch second mein aaj ke register mein dikhti hai, chhote “App” tag ke saath. Ek din mein do baar scan = ek hazri.',
-            )}
+            {'The check-in shows in today’s register within a few seconds, with a small “App” tag. Scanning twice in a day counts once.'}
           </li>
         </ol>
         <p style={{ margin: `${space.md}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          {tr(
-            'A member whose mobile number is not in your Members is told to ask the desk. Add or fix their number, and they scan again.',
-            'Jis member ka mobile number aapke Members mein nahi hai, unhe desk se poochne ko kaha jata hai. Unka number jodo ya theek karo, phir woh dobara scan karein.',
-          )}
+          {'A member whose mobile number is not in your Members is told to ask the desk. Add or fix their number, and they scan again.'}
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {tr(
-            `Members need the ForgeAI app and to have joined your gym in it (gym code ${joinCode}). Settings → Invite members has the join poster.`,
-            `Members ke paas ForgeAI app hona chahiye aur usme aapka gym join kiya ho (gym code ${joinCode}). Settings → Invite members mein join wala poster hai.`,
-          )}
+          {`Members need the ForgeAI app and to have joined your gym in it (gym code ${joinCode}). Settings → Invite members has the join poster.`}
         </p>
         <div style={{ marginTop: space.md }}>
           <Button variant="ghost" onClick={() => navigate('/settings/invite')}>
-            {tr('Open Invite members', 'Invite members kholo')}
+            {'Open Invite members'}
           </Button>
         </div>
       </Card>

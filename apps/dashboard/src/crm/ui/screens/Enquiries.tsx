@@ -11,7 +11,6 @@
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 
 import { useCrm } from '../../store';
-import { tr } from '../../i18n';
 import { formatDay, relativeDay } from '../../logic/dates';
 import {
   emptyEnquiryForm,
@@ -55,15 +54,15 @@ import { newRequestId } from '../../data/local';
 function filterLabel(f: EnquiryFilter): string {
   switch (f) {
     case 'due':
-      return tr('Follow up today', 'Aaj call karo');
+      return 'Follow up today';
     case 'later':
-      return tr('Later', 'Baad mein');
+      return 'Later';
     case 'joined':
-      return tr('Joined', 'Member ban gaye');
+      return 'Joined';
     case 'lost':
-      return tr('Not interested', 'Nahi aayenge');
+      return 'Not interested';
     case 'all':
-      return tr('All', 'Sab');
+      return 'All';
   }
 }
 
@@ -92,7 +91,7 @@ export function EnquiriesScreen() {
     try {
       await op();
     } catch (e) {
-      setError(e instanceof Error ? e.message : tr('Could not save that.', 'Save nahi hua.'));
+      setError(e instanceof Error ? e.message : 'Could not save that.');
     }
   }, []);
 
@@ -108,13 +107,13 @@ export function EnquiriesScreen() {
       setUndo(null);
     });
 
-  const addButton = <Button onClick={() => setAdding(true)}>{tr('+ Add enquiry', '+ Nayi enquiry')}</Button>;
+  const addButton = <Button onClick={() => setAdding(true)}>{'+ Add enquiry'}</Button>;
 
   return (
     <>
       <PageHeader
-        title={tr('Enquiries', 'Enquiry')}
-        subtitle={tr('People who asked about joining', 'Jinhone gym ke baare mein poocha')}
+        title={'Enquiries'}
+        subtitle={'People who asked about joining'}
         actions={addButton}
       />
 
@@ -122,7 +121,7 @@ export function EnquiriesScreen() {
 
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
-          label={tr('Show enquiries', 'Enquiry dikhao')}
+          label={'Show enquiries'}
           value={filter}
           onChange={(v) => setFilter(v as EnquiryFilter)}
           options={ENQUIRY_FILTERS.map((f) => ({ value: f, label: filterLabel(f), count: counts[f] }))}
@@ -153,7 +152,7 @@ export function EnquiriesScreen() {
 
       {undo && (
         <UndoBar
-          message={tr(`${undo.name}: marked not interested.`, `${undo.name}: Nahi aayenge.`)}
+          message={`${undo.name}: marked not interested.`}
           onUndo={() => void reopen(undo)}
         />
       )}
@@ -176,25 +175,22 @@ function EmptyEnquiries({ filter, total, action }: { filter: EnquiryFilter; tota
   if (total === 0) {
     return (
       <EmptyState
-        title={tr('No enquiries yet', 'Abhi koi enquiry nahi')}
-        body={tr(
-          'When someone walks in or calls to ask about joining, add them here with a day to call back.',
-          'Jab koi gym ke baare mein poochne aaye ya call kare, unhe yahan jodo aur dobara call ka din rakho.',
-        )}
+        title={'No enquiries yet'}
+        body={'When someone walks in or calls to ask about joining, add them here with a day to call back.'}
         action={action}
       />
     );
   }
   const [title, body] =
     filter === 'due'
-      ? [tr('Nobody to call today', 'Aaj kisi ko call nahi karna'), tr('Every follow-up is on a later day.', 'Saari follow-up aage ke din par hain.')]
+      ? ['Nobody to call today', 'Every follow-up is on a later day.']
       : filter === 'later'
-        ? [tr('Nothing scheduled later', 'Aage koi call nahi'), undefined]
+        ? ['Nothing scheduled later', undefined]
         : filter === 'joined'
-          ? [tr('Nobody has joined from an enquiry yet', 'Enquiry se abhi koi member nahi bana'), undefined]
+          ? ['Nobody has joined from an enquiry yet', undefined]
           : filter === 'lost'
-            ? [tr('Nobody marked not interested', 'Kisi ko “Nahi aayenge” nahi kiya'), undefined]
-            : [tr('No enquiries', 'Koi enquiry nahi'), undefined];
+            ? ['Nobody marked not interested', undefined]
+            : ['No enquiries', undefined];
   return <EmptyState title={title} body={body} />;
 }
 
@@ -250,11 +246,8 @@ function EnquiryRow({
           {open && (
             <div style={{ fontFamily: font.body, fontSize: 12, fontWeight: 600, color: followTone, marginTop: 4 }}>
               {e.followUpOn
-                ? tr(
-                    `Call back ${formatDay(e.followUpOn)} · ${relativeDay(e.followUpOn, today)}`,
-                    `Dobara call ${formatDay(e.followUpOn)} · ${relativeDay(e.followUpOn, today)}`,
-                  )
-                : tr('No call-back day set', 'Dobara call ka din nahi rakha')}
+                ? `Call back ${formatDay(e.followUpOn)} · ${relativeDay(e.followUpOn, today)}`
+                : 'No call-back day set'}
             </div>
           )}
         </div>
@@ -262,39 +255,39 @@ function EnquiryRow({
       </div>
 
       <div style={actionsGrid}>
-        <a href={`tel:+${phoneDigits(e.phone)}`} style={linkButton} aria-label={tr(`Call ${e.name}`, `${e.name} ko Call karo`)}>
-          {tr('Call', 'Call karo')}
+        <a href={`tel:+${phoneDigits(e.phone)}`} style={linkButton} aria-label={`Call ${e.name}`}>
+          {'Call'}
         </a>
         <a
           href={whatsAppHref(followUpMessage(e, { name: gymName }), e.phone)}
           target="_blank"
           rel="noreferrer"
           style={linkButton}
-          aria-label={tr(`WhatsApp ${e.name}`, `${e.name} ko WhatsApp bhejo`)}
+          aria-label={`WhatsApp ${e.name}`}
         >
-          {tr('WhatsApp', 'WhatsApp bhejo')}
+          {'WhatsApp'}
         </a>
         {open && (
           <>
-            <Button wrap onClick={onConvert} ariaLabel={tr(`Make ${e.name} a member`, `${e.name} ko Member banao`)}>
-              {tr('Convert to member', 'Member banao')}
+            <Button wrap onClick={onConvert} ariaLabel={`Make ${e.name} a member`}>
+              {'Convert to member'}
             </Button>
-            <Button wrap variant="ghost" onClick={onReschedule} ariaLabel={tr(`Change follow-up date for ${e.name}`, `${e.name}: Dobara call kab`)}>
-              {tr('Follow-up date', 'Dobara call kab')}
+            <Button wrap variant="ghost" onClick={onReschedule} ariaLabel={`Change follow-up date for ${e.name}`}>
+              {'Follow-up date'}
             </Button>
-            <Button wrap variant="quiet" tone="danger" onClick={onLost} ariaLabel={tr(`${e.name} is not interested`, `${e.name} Nahi aayenge`)}>
-              {tr('Not interested', 'Nahi aayenge')}
+            <Button wrap variant="quiet" tone="danger" onClick={onLost} ariaLabel={`${e.name} is not interested`}>
+              {'Not interested'}
             </Button>
           </>
         )}
         {e.status === 'joined' && e.memberId && (
           <Button wrap variant="ghost" onClick={() => navigate(`/members/${e.memberId}`)}>
-            {tr('Open member', 'Member dekho')}
+            {'Open member'}
           </Button>
         )}
         {e.status === 'lost' && (
-          <Button wrap variant="ghost" onClick={onReopen} ariaLabel={tr(`Reopen ${e.name}`, `${e.name} ko wapas kholo`)}>
-            {tr('Reopen', 'Wapas kholo')}
+          <Button wrap variant="ghost" onClick={onReopen} ariaLabel={`Reopen ${e.name}`}>
+            {'Reopen'}
           </Button>
         )}
       </div>
@@ -305,13 +298,13 @@ function EnquiryRow({
 function StatusPill({ bucket }: { bucket: ReturnType<typeof enquiryBucket> }) {
   switch (bucket) {
     case 'overdue':
-      return <Pill tone="critical">{tr('Overdue', 'Late ho gaya')}</Pill>;
+      return <Pill tone="critical">{'Overdue'}</Pill>;
     case 'today':
-      return <Pill tone="warn">{tr('Today', 'Aaj')}</Pill>;
+      return <Pill tone="warn">{'Today'}</Pill>;
     case 'joined':
-      return <Pill tone="good">{tr('Joined', 'Member bana')}</Pill>;
+      return <Pill tone="good">{'Joined'}</Pill>;
     case 'lost':
-      return <Pill tone="muted">{tr('Not interested', 'Nahi aayenge')}</Pill>;
+      return <Pill tone="muted">{'Not interested'}</Pill>;
     default:
       return null;
   }
@@ -374,7 +367,7 @@ function UndoBar({ message, onUndo }: { message: string; onUndo: () => void }) {
     >
       <span style={{ minWidth: 0, overflowWrap: 'anywhere' }}>{message}</span>
       <Button variant="ghost" onClick={onUndo}>
-        {tr('Undo', 'Undo karo')}
+        {'Undo'}
       </Button>
     </div>
   );
@@ -416,35 +409,29 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
       await createEnquiry({ ...result.value, requestId });
       onClose();
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : tr('Could not save this enquiry.', 'Enquiry save nahi hui.'));
+      setFormError(e instanceof Error ? e.message : 'Could not save this enquiry.');
     } finally {
       setSaving(false);
     }
   };
 
   const phoneNote = member
-    ? tr(
-        `${member.fullName} is already a member with this number.`,
-        `${member.fullName} is number se pehle se member hai.`,
-      )
+    ? `${member.fullName} is already a member with this number.`
     : dupe
-      ? tr(
-          `${dupe.name} already asked from this number${dupe.followUpOn ? ` (call back ${formatDay(dupe.followUpOn)})` : ''}. You can still save.`,
-          `${dupe.name} ne is number se pehle bhi poocha tha${dupe.followUpOn ? ` (dobara call ${formatDay(dupe.followUpOn)})` : ''}. Phir bhi save kar sakte ho.`,
-        )
+      ? `${dupe.name} already asked from this number${dupe.followUpOn ? ` (call back ${formatDay(dupe.followUpOn)})` : ''}. You can still save.`
       : undefined;
 
   return (
     <Sheet
-      title={tr('Add enquiry', 'Nayi enquiry')}
+      title={'Add enquiry'}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Rehne do')}
+            {'Cancel'}
           </Button>
           <Button onClick={save} disabled={saving}>
-            {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save enquiry', 'Enquiry save karo')}
+            {saving ? 'Saving…' : 'Save enquiry'}
           </Button>
         </>
       }
@@ -452,7 +439,7 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
       {formError && <ErrorBanner>{formError}</ErrorBanner>}
 
       <TextField
-        label={tr('Name', 'Naam')}
+        label={'Name'}
         value={form.name}
         onChange={set('name')}
         error={errorFor('name')}
@@ -462,11 +449,11 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
 
       <Row gap={space.sm} align="flex-start">
         <div style={{ width: 110 }}>
-          <SelectField label={tr('Code', 'Code')} value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
+          <SelectField label={'Code'} value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
         </div>
         <div style={{ flex: 1, minWidth: 180 }}>
           <TextField
-            label={tr('Mobile number', 'Mobile number')}
+            label={'Mobile number'}
             value={form.phone}
             onChange={set('phone')}
             error={errorFor('phone')}
@@ -482,20 +469,20 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
       )}
 
       <TextField
-        label={tr('Interested in (optional)', 'Kya chahiye (zaroori nahi)')}
+        label={'Interested in (optional)'}
         value={form.interest}
         onChange={set('interest')}
         error={errorFor('interest')}
-        placeholder={tr('3 months, evening batch', '3 months, evening batch')}
+        placeholder={'3 months, evening batch'}
       />
 
       <TextField
-        label={tr('Follow-up date', 'Dobara call kab')}
+        label={'Follow-up date'}
         value={form.followUpOn}
         onChange={set('followUpOn')}
         type="date"
         error={errorFor('followUpOn')}
-        hint={form.followUpOn ? relativeDay(form.followUpOn, today) : tr('No date: it goes under Later.', 'Date nahi: “Baad mein” mein jayegi.')}
+        hint={form.followUpOn ? relativeDay(form.followUpOn, today) : 'No date: it goes under Later.'}
       />
       <QuickPicks today={today} value={form.followUpOn} onPick={set('followUpOn')} />
     </Sheet>
@@ -524,11 +511,11 @@ function FollowUpSheet({ enquiry, onClose }: { enquiry: Enquiry; onClose: () => 
 
   const save = async (date: string) => {
     if (!date) {
-      setError(tr('Pick a date.', 'Date chuno.'));
+      setError('Pick a date.');
       return;
     }
     if (date < today) {
-      setError(tr('The follow-up date can’t be in the past.', 'Dobara call ki date beete din ki nahi ho sakti.'));
+      setError('The follow-up date can’t be in the past.');
       return;
     }
     setSaving(true);
@@ -537,7 +524,7 @@ function FollowUpSheet({ enquiry, onClose }: { enquiry: Enquiry; onClose: () => 
       await updateEnquiry(enquiry.id, { followUpOn: date });
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : tr('Could not save that.', 'Save nahi hua.'));
+      setError(e instanceof Error ? e.message : 'Could not save that.');
     } finally {
       setSaving(false);
     }
@@ -545,21 +532,21 @@ function FollowUpSheet({ enquiry, onClose }: { enquiry: Enquiry; onClose: () => 
 
   return (
     <Sheet
-      title={tr(`Call ${enquiry.name} again`, `${enquiry.name}: Dobara call kab`)}
+      title={`Call ${enquiry.name} again`}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Rehne do')}
+            {'Cancel'}
           </Button>
           <Button onClick={() => void save(custom)} disabled={saving}>
-            {tr('Save date', 'Date save karo')}
+            {'Save date'}
           </Button>
         </>
       }
     >
       <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {tr('Pick a day — one tap saves it.', 'Din chuno — ek tap mein save.')}
+        {'Pick a day — one tap saves it.'}
       </p>
       <div style={{ ...actionsGrid, marginTop: space.md }}>
         {followUpPicks(today).map((p) => (
@@ -569,7 +556,7 @@ function FollowUpSheet({ enquiry, onClose }: { enquiry: Enquiry; onClose: () => 
         ))}
       </div>
       <TextField
-        label={tr('Or pick a date', 'Ya date chuno')}
+        label={'Or pick a date'}
         value={custom}
         onChange={(v) => {
           setCustom(v);
@@ -616,7 +603,7 @@ function ConvertFlow({
       onError(
         e instanceof Error
           ? e.message
-          : tr('The member was saved, but the enquiry was not closed.', 'Member ban gaya, par enquiry band nahi hui.'),
+          : 'The member was saved, but the enquiry was not closed.',
       );
     }
   };
@@ -626,12 +613,12 @@ function ConvertFlow({
     // owner cannot see them in the roster. Bring them back and link the enquiry in one tap.
     return (
       <Sheet
-        title={tr('Already a member (archived)', 'Pehle se member hain (archive mein)')}
+        title={'Already a member (archived)'}
         onClose={onClose}
         footer={
           <>
             <Button variant="ghost" onClick={onClose}>
-              {tr('Cancel', 'Rehne do')}
+              {'Cancel'}
             </Button>
             <Button
               wrap
@@ -642,7 +629,7 @@ function ConvertFlow({
                 try {
                   await setMemberArchived(existing.id, false);
                 } catch (e) {
-                  setRestoreError(e instanceof Error ? e.message : tr('Could not restore that member.', 'Member wapas nahi aaya.'));
+                  setRestoreError(e instanceof Error ? e.message : 'Could not restore that member.');
                   setBusy(false);
                   return;
                 }
@@ -651,17 +638,14 @@ function ConvertFlow({
                 onClose();
               }}
             >
-              {tr(`Bring back ${existing.fullName} and link`, `${existing.fullName} ko wapas lao aur jodo`)}
+              {`Bring back ${existing.fullName} and link`}
             </Button>
           </>
         }
       >
         {restoreError && <ErrorBanner>{restoreError}</ErrorBanner>}
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 14, color: color.ink, overflowWrap: 'anywhere' }}>
-          {tr(
-            `${existing.fullName} already has ${formatPhone(enquiry.phone)}, but they were archived, so they are not in the list.`,
-            `${existing.fullName} ke paas ${formatPhone(enquiry.phone)} number hai, par woh archive mein hain, isliye list mein nahi dikhte.`,
-          )}
+          {`${existing.fullName} already has ${formatPhone(enquiry.phone)}, but they were archived, so they are not in the list.`}
         </p>
       </Sheet>
     );
@@ -670,12 +654,12 @@ function ConvertFlow({
   if (existing) {
     return (
       <Sheet
-        title={tr('Already a member', 'Pehle se member hain')}
+        title={'Already a member'}
         onClose={onClose}
         footer={
           <>
             <Button variant="ghost" onClick={onClose}>
-              {tr('Cancel', 'Rehne do')}
+              {'Cancel'}
             </Button>
             <Button
               disabled={busy}
@@ -686,16 +670,13 @@ function ConvertFlow({
                 onClose();
               }}
             >
-              {tr('Mark joined and open', 'Joined karo aur kholo')}
+              {'Mark joined and open'}
             </Button>
           </>
         }
       >
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 14, color: color.ink }}>
-          {tr(
-            `${existing.fullName} is already on the roster with ${formatPhone(enquiry.phone)}.`,
-            `${existing.fullName} ${formatPhone(enquiry.phone)} number se pehle se member hai.`,
-          )}
+          {`${existing.fullName} is already on the roster with ${formatPhone(enquiry.phone)}.`}
         </p>
       </Sheet>
     );

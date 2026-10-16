@@ -11,7 +11,6 @@
 import { useState } from 'react';
 
 import { useCrm } from '../../store';
-import { tr } from '../../i18n';
 import { addDays, formatDay, relativeDay } from '../../logic/dates';
 import { parseCount } from '../../logic/money';
 import { isPtMembership, ptLeft } from '../../logic/pt';
@@ -59,7 +58,7 @@ export function ExtendMembershipSheet({
   const pt = isPtMembership(membership);
 
   const submit = async () => {
-    if (days === null) return setError(tr('Days must be a whole number from 1 to 365.', 'Din 1 se 365 ke beech poora number likho.'));
+    if (days === null) return setError('Days must be a whole number from 1 to 365.');
     setSaving(true);
     setError(null);
     try {
@@ -67,7 +66,7 @@ export function ExtendMembershipSheet({
       onDone(days);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : tr('Could not add the days to this membership. Try again.', 'Is membership mein din nahi jude. Phir se try karo.'));
+      setError(e instanceof Error ? e.message : 'Could not add the days to this membership. Try again.');
     } finally {
       setSaving(false);
     }
@@ -75,19 +74,19 @@ export function ExtendMembershipSheet({
 
   return (
     <Sheet
-      title={tr('Freeze / extra days', 'Freeze / Extra din')}
+      title={'Freeze / extra days'}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Rehne do')}
+            {'Cancel'}
           </Button>
           <Button onClick={submit} disabled={saving || days === null}>
             {saving
-              ? tr('Saving…', 'Save ho raha hai…')
+              ? 'Saving…'
               : days !== null
-                ? tr(`Add ${days} days`, `${days} din badhao`)
-                : tr('Add days', 'Din badhao')}
+                ? `Add ${days} days`
+                : 'Add days'}
           </Button>
         </>
       }
@@ -97,59 +96,59 @@ export function ExtendMembershipSheet({
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         <strong style={{ color: color.ink }}>{membership.planName}</strong>
         {wasEnded
-          ? tr(` ended on ${formatDay(membership.endsOn)}.`, ` ${formatDay(membership.endsOn)} ko khatam hua.`)
-          : tr(` last day: ${formatDay(membership.endsOn)}.`, ` aakhri din: ${formatDay(membership.endsOn)}.`)}
+          ? ` ended on ${formatDay(membership.endsOn)}.`
+          : ` last day: ${formatDay(membership.endsOn)}.`}
         {/* A PT pack: the days give its unused sessions time to be used. */}
         {pt &&
           (ptLeft(membership) === 1
-            ? tr(' 1 PT session left.', ' 1 PT session baaki.')
-            : tr(` ${ptLeft(membership)} PT sessions left.`, ` ${ptLeft(membership)} PT session baaki.`))}
+            ? ' 1 PT session left.'
+            : ` ${ptLeft(membership)} PT sessions left.`)}
       </p>
 
       <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-        {tr('Reason', 'Kyon')}
+        {'Reason'}
       </div>
       <ChipToggle
-        label={tr('Reason', 'Kyon')}
+        label={'Reason'}
         value={reason}
         onChange={(v) => setReason(v as Reason)}
         options={[
-          { value: 'medical', label: tr('Freeze – Medical', 'Freeze – Bimari') },
-          { value: 'travel', label: tr('Freeze – Travel', 'Freeze – Bahar gaye') },
-          { value: 'other', label: tr('Freeze – Other', 'Freeze – Kuch aur') },
-          { value: 'gift', label: tr('Gift – Extra days', 'Gift – Extra din') },
+          { value: 'medical', label: 'Freeze – Medical' },
+          { value: 'travel', label: 'Freeze – Travel' },
+          { value: 'other', label: 'Freeze – Other' },
+          { value: 'gift', label: 'Gift – Extra days' },
         ]}
       />
       {reason === 'other' && (
         <TextField
-          label={tr('What happened (optional)', 'Kya hua (zaroori nahi)')}
+          label={'What happened (optional)'}
           value={other}
           onChange={setOther}
-          placeholder={tr('Wedding in the family', 'Ghar mein shaadi')}
+          placeholder={'Wedding in the family'}
         />
       )}
 
       <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-        {tr('How many days', 'Kitne din')}
+        {'How many days'}
       </div>
       <ChipToggle
-        label={tr('How many days', 'Kitne din')}
+        label={'How many days'}
         value={days !== null && QUICK_DAYS.includes(days) ? String(days) : ''}
         onChange={(v) => {
           setDaysText(v);
           setError(null);
         }}
-        options={QUICK_DAYS.map((d) => ({ value: String(d), label: tr(`${d} days`, `${d} din`) }))}
+        options={QUICK_DAYS.map((d) => ({ value: String(d), label: `${d} days` }))}
       />
       <TextField
-        label={tr('Or type the days (1–365)', 'Ya din likho (1–365)')}
+        label={'Or type the days (1–365)'}
         value={daysText}
         onChange={(v) => {
           setDaysText(v);
           setError(null);
         }}
         inputMode="numeric"
-        error={daysText.trim() !== '' && days === null ? tr('A whole number from 1 to 365.', '1 se 365 ke beech poora number.') : null}
+        error={daysText.trim() !== '' && days === null ? 'A whole number from 1 to 365.' : null}
       />
 
       <div
@@ -158,16 +157,13 @@ export function ExtendMembershipSheet({
         style={{ marginTop: space.lg, fontFamily: font.body, fontSize: 15, fontWeight: 700, color: color.ink }}
       >
         {newEnd
-          ? tr(`New last day: ${formatDay(newEnd)}`, `Naya aakhri din: ${formatDay(newEnd)}`)
-          : tr('New last day: —', 'Naya aakhri din: —')}
+          ? `New last day: ${formatDay(newEnd)}`
+          : 'New last day: —'}
         {newEnd && (
           <span style={{ display: 'block', marginTop: 4, fontSize: 13, fontWeight: 600, color: newEnd < today ? color.warning : color.goodText }}>
             {newEnd < today
-              ? tr(
-                  `Still ended (${relativeDay(newEnd, today)}) — add more days to cover today.`,
-                  `Phir bhi khatam (${relativeDay(newEnd, today)}) — aaj tak ke liye aur din badhao.`,
-                )
-              : tr(`Covered until then (${relativeDay(newEnd, today)}).`, `Tab tak chalu (${relativeDay(newEnd, today)}).`)}
+              ? `Still ended (${relativeDay(newEnd, today)}) — add more days to cover today.`
+              : `Covered until then (${relativeDay(newEnd, today)}).`}
           </span>
         )}
       </div>

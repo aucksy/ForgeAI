@@ -14,7 +14,6 @@
 
 import type { Member, MemberDraft } from '../types';
 import { isValidDateISO, type DateISO } from './dates';
-import { tr } from '../i18n';
 import { BATCH_MAX, memberBatch, normalizeBatch } from './batches';
 
 export const DEFAULT_DIAL_CODE = '+91';
@@ -244,32 +243,32 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export function validateMember(form: MemberFormDraft, today: DateISO): MemberValidation {
   const fullName = normalizeName(form.fullName);
   if (fullName.length < 2) {
-    return { ok: false, field: 'fullName', message: tr('Enter the member’s name.', 'Member ka naam likho.') };
+    return { ok: false, field: 'fullName', message: 'Enter the member’s name.' };
   }
   if (fullName.length > NAME_MAX) {
-    return { ok: false, field: 'fullName', message: tr(`Name must be ${NAME_MAX} characters or fewer.`, `Naam ${NAME_MAX} akshar se zyada nahi ho sakta.`) };
+    return { ok: false, field: 'fullName', message: `Name must be ${NAME_MAX} characters or fewer.` };
   }
 
   const phone = normalizePhone(form.dialCode, form.phone);
   if (!phone) {
-    return { ok: false, field: 'phone', message: tr('Enter a valid mobile number.', 'Sahi mobile number likho.') };
+    return { ok: false, field: 'phone', message: 'Enter a valid mobile number.' };
   }
 
   const emailRaw = form.email.trim();
   if (emailRaw && !EMAIL_RE.test(emailRaw)) {
-    return { ok: false, field: 'email', message: tr('That email address doesn’t look right.', 'Yeh email sahi nahi lag raha.') };
+    return { ok: false, field: 'email', message: 'That email address doesn’t look right.' };
   }
 
   const dobRaw = form.dateOfBirth.trim();
   if (dobRaw && !isValidDateISO(dobRaw)) {
-    return { ok: false, field: 'dateOfBirth', message: tr('Date of birth must be a real date.', 'Janam din sahi date honi chahiye.') };
+    return { ok: false, field: 'dateOfBirth', message: 'Date of birth must be a real date.' };
   }
   if (dobRaw && dobRaw > today) {
-    return { ok: false, field: 'dateOfBirth', message: tr('Date of birth can’t be in the future.', 'Janam din aage ki date nahi ho sakti.') };
+    return { ok: false, field: 'dateOfBirth', message: 'Date of birth can’t be in the future.' };
   }
 
   if (!isValidDateISO(form.joinedOn)) {
-    return { ok: false, field: 'joinedOn', message: tr('Joining date must be a real date.', 'Joining date sahi honi chahiye.') };
+    return { ok: false, field: 'joinedOn', message: 'Joining date must be a real date.' };
   }
 
   const emergencyRaw = form.emergencyPhone.trim();
@@ -277,14 +276,14 @@ export function validateMember(form: MemberFormDraft, today: DateISO): MemberVal
   if (emergencyRaw) {
     const parsed = normalizePhone(DEFAULT_DIAL_CODE, emergencyRaw) ?? null;
     if (!parsed) {
-      return { ok: false, field: 'emergencyPhone', message: tr('Emergency number isn’t a valid mobile.', 'Ghar ka number sahi mobile number nahi hai.') };
+      return { ok: false, field: 'emergencyPhone', message: 'Emergency number isn’t a valid mobile.' };
     }
     emergencyPhone = parsed.e164;
   }
 
   const batch = normalizeBatch(form.batch);
   if (batch !== null && batch.length > BATCH_MAX) {
-    return { ok: false, field: 'batch', message: tr(`Batch name must be ${BATCH_MAX} characters or fewer.`, `Batch ka naam ${BATCH_MAX} akshar se zyada nahi ho sakta.`) };
+    return { ok: false, field: 'batch', message: `Batch name must be ${BATCH_MAX} characters or fewer.` };
   }
 
   const gender = form.gender === 'male' || form.gender === 'female' || form.gender === 'other'

@@ -9,7 +9,6 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
-import { tr } from '../i18n';
 import { isBirthdayToday } from '../logic/homeTiles';
 import { buildMessage, kindLabel, messageKindsFor, type MessageKind } from '../logic/whatsapp';
 import { validateE164 } from '../logic/members';
@@ -42,7 +41,7 @@ function SendLink({ href, onSent, disabled }: { href: string; onSent?: () => voi
         textDecoration: 'none',
       }}
     >
-      {tr('Send on WhatsApp', 'WhatsApp par bhejo')}
+      {'Send on WhatsApp'}
     </a>
   );
 }
@@ -58,21 +57,18 @@ export function WhatsAppSheet({ view, onClose }: { view: MemberView; onClose: ()
   };
   const phoneOk = validateE164(view.member.phone) !== null;
   return (
-    <Sheet title={tr(`WhatsApp ${view.member.fullName}`, `${view.member.fullName} ko WhatsApp`)} onClose={onClose}>
+    <Sheet title={`WhatsApp ${view.member.fullName}`} onClose={onClose}>
       <ChipToggle
-        label={tr('Which message', 'Kaunsa message')}
+        label={'Which message'}
         value={kind}
         onChange={(v) => pick(v as MessageKind)}
         options={kinds.map((k) => ({ value: k, label: kindLabel(k) }))}
       />
-      <TextField label={tr('Message (you can change it)', 'Message (badal sakte hain)')} value={text} onChange={setText} multiline />
+      <TextField label={'Message (you can change it)'} value={text} onChange={setText} multiline />
       {!phoneOk && (
         <div style={{ marginTop: space.md }}>
           <ErrorBanner>
-            {tr(
-              'This mobile number is not complete, so WhatsApp cannot open on it. Fix it on Edit.',
-              'Yeh mobile number poora nahi hai, isliye WhatsApp nahi khulega. Badlo par jaakar theek karein.',
-            )}
+            {'This mobile number is not complete, so WhatsApp cannot open on it. Fix it on Edit.'}
           </ErrorBanner>
         </div>
       )}
@@ -103,35 +99,35 @@ export function WhatsAppQueue({ views, kind, onClose }: { views: MemberView[]; k
 
   return (
     <Sheet
-      title={tr(`${kindLabel(kind)} · one by one`, `${kindLabel(kind)} · ek-ek karke`)}
+      title={`${kindLabel(kind)} · one by one`}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" disabled={i === 0} onClick={() => setI(Math.max(0, i - 1))}>
-            {tr('Back', 'Peeche')}
+            {'Back'}
           </Button>
           {i < people.length - 1 ? (
-            <Button onClick={() => setI(Math.min(people.length - 1, i + 1))}>{sent.has(v?.member.id ?? '') ? tr('Next', 'Agla') : tr('Skip', 'Chhodo')}</Button>
+            <Button onClick={() => setI(Math.min(people.length - 1, i + 1))}>{sent.has(v?.member.id ?? '') ? 'Next' : 'Skip'}</Button>
           ) : (
-            <Button onClick={onClose}>{tr('Done', 'Ho gaya')}</Button>
+            <Button onClick={onClose}>{'Done'}</Button>
           )}
         </>
       }
     >
       {people.length === 0 ? (
-        <p style={body}>{tr('Nobody on this list has a full mobile number.', 'Is list mein kisi ka poora mobile number nahi hai.')}</p>
+        <p style={body}>{'Nobody on this list has a full mobile number.'}</p>
       ) : (
         <>
           <p style={{ ...body, color: color.ink, fontWeight: 700 }}>
-            {tr(`${i + 1} of ${people.length}: ${v.member.fullName}`, `${people.length} mein se ${i + 1}: ${v.member.fullName}`)}
-            {sent.has(v.member.id) ? tr(' · sent', ' · bheja') : ''}
+            {`${i + 1} of ${people.length}: ${v.member.fullName}`}
+            {sent.has(v.member.id) ? ' · sent' : ''}
           </p>
           <p style={{ ...body, marginTop: 4 }}>
-            {tr(`${sent.size} sent so far`, `Ab tak ${sent.size} bheje`)}
-            {skipped > 0 ? tr(` · ${skipped} without a full mobile number left out`, ` · ${skipped} ka poora number nahi, chhod diye`) : ''}
+            {`${sent.size} sent so far`}
+            {skipped > 0 ? ` · ${skipped} without a full mobile number left out` : ''}
           </p>
           <TextField
-            label={tr('Message (you can change it)', 'Message (badal sakte hain)')}
+            label={'Message (you can change it)'}
             value={text}
             onChange={(t) => setEdited((e) => ({ ...e, [v.member.id]: t }))}
             multiline

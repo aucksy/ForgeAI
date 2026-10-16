@@ -1,6 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
-
-import { setCurrentLang } from '../../src/crm/i18n';
+import { describe, expect, it } from 'vitest';
 import { buildMemberView } from '../../src/crm/logic/membership';
 import {
   canUndoPtSession,
@@ -41,8 +39,6 @@ const pt = (over: Parameters<typeof makeMembership>[0] = {}) =>
 
 const days = (n: number) => Array.from({ length: n }, (_, i) => `2026-10-${String(i + 1).padStart(2, '0')}`);
 
-afterEach(() => setCurrentLang('en'));
-
 describe('what is PT', () => {
   it('old plans and memberships (no field) are not PT', () => {
     expect(isPtPlan(makePlan())).toBe(false);
@@ -67,9 +63,6 @@ describe('the counter', () => {
   it('says it in both languages', () => {
     const m = pt({ ptLog: days(4) });
     expect(ptSummary(m)).toBe('PT: 4 of 12 sessions used · Trainer Rohit');
-    setCurrentLang('hi');
-    expect(ptSummary(m)).toBe('PT: 12 mein se 4 session ho gaye · Trainer Rohit');
-    setCurrentLang('en');
     expect(ptSummary(pt({ trainer: null }))).toBe('PT: 0 of 12 sessions used');
     expect(ptPlanLine(makePlan({ ptSessions: 12, trainer: 'Rohit' }))).toBe('PT · 12 sessions · Trainer Rohit');
     expect(ptPlanLine(makePlan())).toBeNull();

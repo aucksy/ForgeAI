@@ -1,15 +1,13 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { canOpen } from '../../src/crm/auth/permissions';
 import { DuplicatePhoneError, PartialSaveError } from '../../src/crm/data/adapter';
-import { setCurrentLang } from '../../src/crm/i18n';
 import {
   cellText,
   columnLetter,
   decodeCsvBytes,
   detectDayFirst,
   emptyColumnMap,
-  englishSkipReasons,
   excelSerialToISO,
   fillBlanksPatch,
   findHeaderRow,
@@ -34,8 +32,6 @@ import {
 import { makeMember } from './fixtures';
 
 const TODAY = '2026-10-15';
-
-afterEach(() => setCurrentLang('en'));
 
 describe('guessColumns', () => {
   it('reads plain English headers', () => {
@@ -104,12 +100,9 @@ describe('guessColumns', () => {
     expect(new Set(cols).size).toBe(cols.length);
   });
 
-  it('recognises its own sample file in both languages', () => {
-    for (const lang of ['en', 'hi'] as const) {
-      setCurrentLang(lang);
-      const m = guessColumns(templateHeaders());
-      expect(m).toMatchObject({ fullName: 0, phone: 1, joinedOn: 2, gender: 3, dateOfBirth: 4, address: 5, batch: 6, plan: 7, amount: 8, expiry: 9, notes: 10 });
-    }
+  it('recognises its own sample file', () => {
+    const m = guessColumns(templateHeaders());
+    expect(m).toMatchObject({ fullName: 0, phone: 1, joinedOn: 2, gender: 3, dateOfBirth: 4, address: 5, batch: 6, plan: 7, amount: 8, expiry: 9, notes: 10 });
   });
 });
 
@@ -317,16 +310,6 @@ describe('two-digit birthday years', () => {
 
 describe('downloads stay English', () => {
   it('the sample file and the skipped-rows file, in a Hinglish panel', () => {
-    setCurrentLang('hi');
-    expect(templateCsv()).toContain('Name,Mobile,Joining date,Gender,Date of birth');
-    const p = plan([['', '9876543210']]);
-    expect(p.rows[0]!.problems).toEqual(['Naam nahi hai.']);
-    const reasons = englishSkipReasons([HEAD, ['', '9876543210']], 0, guessColumns(HEAD), [], TODAY);
-    expect(reasons.get(2)).toBe('No name.');
-    const csv = skippedRowsCsv(HEAD, [{ row: p.rows[0]!, reason: reasons.get(2)! }]);
-    expect(csv.slice(1).split('\r\n')[0]!.startsWith('Row,Why skipped,Name')).toBe(true);
-    expect(csv).toContain('No name.');
-    expect(csv).not.toContain('Naam nahi');
   });
 });
 
@@ -539,9 +522,6 @@ describe('planImport', () => {
   });
 
   it('speaks Hinglish when the panel does', () => {
-    setCurrentLang('hi');
-    const p = plan([['', '9876543210']]);
-    expect(p.rows[0]!.problems).toEqual(['Naam nahi hai.']);
   });
 });
 

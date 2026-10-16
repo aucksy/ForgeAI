@@ -9,7 +9,6 @@
 import { useCallback, useRef, useState } from 'react';
 
 import { Button, Card, ChipToggle, EmptyState, ErrorBanner, Pill, SectionTitle, TextField, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
-import { tr } from '../i18n';
 import * as api from './api';
 import { MutationGate, timeAgo } from './logic';
 import {
@@ -85,8 +84,8 @@ export function MessagesSection() {
       setConfirming(false);
       setToast(
         m.recipients === 1
-          ? tr(`Sent to ${m.recipients} member.`, `${m.recipients} member ko bheja.`)
-          : tr(`Sent to ${m.recipients} members.`, `${m.recipients} members ko bheja.`),
+          ? `Sent to ${m.recipients} member.`
+          : `Sent to ${m.recipients} members.`,
       );
       window.setTimeout(() => setToast(null), 3000);
     } catch (e) {
@@ -101,7 +100,7 @@ export function MessagesSection() {
   };
 
   const takeBack = async (m: SentMessage) => {
-    if (!window.confirm(tr(`Take back “${m.title}”? It leaves every member's inbox.`, `“${m.title}” wapas lein? Yeh har member ke inbox se hat jayega.`))) return;
+    if (!window.confirm(`Take back “${m.title}”? It leaves every member's inbox.`)) return;
     try {
       await gate.run(() => api.withdrawMessage(key, m.id));
       setSent((prev) => prev?.map((x) => (x.id === m.id ? { ...x, withdrawn: true } : x)) ?? prev);
@@ -113,10 +112,7 @@ export function MessagesSection() {
   return (
     <>
       <p style={{ margin: `0 0 ${space.lg}px`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {tr(
-          "Your message goes to every member who joined your gym in the ForgeAI app. They see it in the app's inbox (the bell on their Shop tab).",
-          'Aapka message har us member ko jayega jo ForgeAI app mein aapke gym se juda hai. Woh ise app ke inbox mein dekhenge (Shop tab par ghanti).',
-        )}
+        {"Your message goes to every member who joined your gym in the ForgeAI app. They see it in the app's inbox (the bell on their Shop tab)."}
       </p>
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
@@ -130,28 +126,28 @@ export function MessagesSection() {
         }}
       >
         <Card>
-          <SectionTitle>{tr('New message', 'Naya message')}</SectionTitle>
+          <SectionTitle>{'New message'}</SectionTitle>
           <div style={{ marginBottom: space.md }}>
             <ChipToggle
-              label={tr('Message type', 'Message ka type')}
+              label={'Message type'}
               value={draft.kind}
               onChange={(v) => pickKind(v as MessageKind)}
               options={MESSAGE_KINDS.map((k) => ({ value: k.kind, label: k.label }))}
             />
           </div>
           <TextField
-            label={tr(`Title (${draft.title.trim().length}/${TITLE_MAX})`, `Title (${draft.title.trim().length}/${TITLE_MAX})`)}
+            label={`Title (${draft.title.trim().length}/${TITLE_MAX})`}
             value={draft.title}
             onChange={(v) => {
               setTouched(true);
               setConfirming(false);
               setDraft((d) => ({ ...d, title: v.slice(0, TITLE_MAX + 10) }));
             }}
-            placeholder={tr('Gym closed on Sunday', 'Ravivaar ko gym band')}
+            placeholder={'Gym closed on Sunday'}
           />
           <div style={{ height: space.md }} />
           <TextField
-            label={tr(`Message (${draft.body.trim().length}/${BODY_MAX})`, `Message (${draft.body.trim().length}/${BODY_MAX})`)}
+            label={`Message (${draft.body.trim().length}/${BODY_MAX})`}
             value={draft.body}
             multiline
             onChange={(v) => {
@@ -159,14 +155,11 @@ export function MessagesSection() {
               setConfirming(false);
               setDraft((d) => ({ ...d, body: v.slice(0, BODY_MAX + 20) }));
             }}
-            placeholder={tr('A line or two members should know', 'Ek-do line jo members ko pata honi chahiye')}
+            placeholder={'A line or two members should know'}
           />
           {isCapped(draft.kind) && (
             <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-              {tr(
-                'Members get at most one offer or event a day, and three a week.',
-                'Members ko din mein zyada se zyada ek Offer ya Event milta hai, aur hafte mein teen.',
-              )}
+              {'Members get at most one offer or event a day, and three a week.'}
             </p>
           )}
           {problem && (touched || /\[/.test(draft.title + draft.body)) && (
@@ -183,58 +176,49 @@ export function MessagesSection() {
                   if (!problem) setConfirming(true);
                 }}
               >
-                {tr('Send', 'Bhejo')}
+                {'Send'}
               </Button>
             ) : (
               <>
                 <span style={{ fontFamily: font.body, fontSize: 14, color: color.ink }}>
                   {members === 0
-                    ? tr(
-                        'No member has the app yet: it shows to members who join in the next 14 days. Send now?',
-                        'Abhi kisi member ke paas app nahi: agle 14 din mein judne wale members ko dikhega. Abhi bhejein?',
-                      )
+                    ? 'No member has the app yet: it shows to members who join in the next 14 days. Send now?'
                     : members === 1
-                      ? tr(`Goes to ${members ?? '…'} member. Send now?`, `${members ?? '…'} member ko jayega. Abhi bhejein?`)
-                      : tr(`Goes to ${members ?? '…'} members. Send now?`, `${members ?? '…'} members ko jayega. Abhi bhejein?`)}
+                      ? `Goes to ${members ?? '…'} member. Send now?`
+                      : `Goes to ${members ?? '…'} members. Send now?`}
                 </span>
                 <Button disabled={busy} onClick={() => void send()}>
-                  {busy ? tr('Sending…', 'Bhej rahe hain…') : tr('Yes, send', 'Haan, bhejo')}
+                  {busy ? 'Sending…' : 'Yes, send'}
                 </Button>
                 <Button variant="ghost" disabled={busy} onClick={() => setConfirming(false)}>
-                  {tr('Not yet', 'Abhi nahi')}
+                  {'Not yet'}
                 </Button>
               </>
             )}
           </div>
           {members === 0 && (
             <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-              {tr(
-                "No member has joined in the app yet. Send them your gym's link (Settings → Invite members); new members also see the last 14 days of messages.",
-                'Abhi tak koi member app mein nahi juda. Unhe gym ka Link bhejo (Settings → Members ko bulao); naye members pichhle 14 din ke messages bhi dekhte hain.',
-              )}
+              {"No member has joined in the app yet. Send them your gym's link (Settings → Invite members); new members also see the last 14 days of messages."}
             </p>
           )}
         </Card>
 
         <Card>
-          <SectionTitle>{tr('What members see', 'Members ko kya dikhega')}</SectionTitle>
+          <SectionTitle>{'What members see'}</SectionTitle>
           <InboxPreview draft={draft} gymName={cloud.name} />
         </Card>
       </div>
 
-      <SectionTitle>{tr('Sent', 'Bheje gaye')}</SectionTitle>
+      <SectionTitle>{'Sent'}</SectionTitle>
       {sent === null && !error ? (
         <Card>
-          <EmptyState title={tr('Loading…', 'Load ho raha hai…')} />
+          <EmptyState title={'Loading…'} />
         </Card>
       ) : sent && sent.length === 0 ? (
         <Card>
           <EmptyState
-            title={tr('Nothing sent yet', 'Abhi kuch nahi bheja')}
-            body={tr(
-              'Messages you send show here, with how many members have seen each one.',
-              'Aapke bheje messages yahan dikhenge, aur kitne members ne har ek dekha.',
-            )}
+            title={'Nothing sent yet'}
+            body={'Messages you send show here, with how many members have seen each one.'}
           />
         </Card>
       ) : (
@@ -243,7 +227,7 @@ export function MessagesSection() {
             <Card key={m.id} pad={space.lg} style={{ opacity: m.withdrawn ? 0.6 : 1 }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', marginBottom: 6 }}>
                 <Pill tone={isCapped(m.kind) ? 'accent' : 'muted'}>{kindLabel(m.kind)}</Pill>
-                {m.withdrawn && <Pill tone="critical">{tr('Taken back', 'Wapas liya')}</Pill>}
+                {m.withdrawn && <Pill tone="critical">{'Taken back'}</Pill>}
                 <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{timeAgo(m.createdAt, now)}</span>
               </div>
               <div style={{ fontFamily: font.display, fontSize: 16, fontWeight: 600, color: color.ink }}>{m.title}</div>
@@ -255,8 +239,8 @@ export function MessagesSection() {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.md, alignItems: 'center', justifyContent: 'space-between', marginTop: space.sm }}>
                 <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{seenText(m)}</span>
                 {!m.withdrawn && (
-                  <Button variant="quiet" onClick={() => void takeBack(m)} ariaLabel={tr(`Take back ${m.title}`, `${m.title} wapas lo`)}>
-                    {tr('Take back', 'Wapas lo')}
+                  <Button variant="quiet" onClick={() => void takeBack(m)} ariaLabel={`Take back ${m.title}`}>
+                    {'Take back'}
                   </Button>
                 )}
               </div>
@@ -279,10 +263,10 @@ function InboxPreview({ draft, gymName }: { draft: MessageDraft; gymName: string
           {kindLabel(draft.kind)}
         </div>
         <div style={{ fontFamily: font.display, fontSize: 15, fontWeight: 600, color: '#F4F5F8' }}>
-          {draft.title.trim() || tr('Your title', 'Aapka title')}
+          {draft.title.trim() || 'Your title'}
         </div>
         <div style={{ marginTop: 4, fontFamily: font.body, fontSize: 13, color: '#B9BFCC', whiteSpace: 'pre-wrap' }}>
-          {draft.body.trim() || tr('Your message', 'Aapka message')}
+          {draft.body.trim() || 'Your message'}
         </div>
       </div>
     </div>

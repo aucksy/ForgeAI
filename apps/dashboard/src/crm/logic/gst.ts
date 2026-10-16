@@ -25,7 +25,6 @@
 
 import type { DateISO } from './dates';
 import type { Paise } from './money';
-import { tr } from '../i18n';
 
 /** SAC for "physical well-being including health club and fitness centre" services. */
 export const GYM_SAC_CODE = '999723';
@@ -115,16 +114,13 @@ export function isValidGstin(raw: string): boolean {
  */
 export function checkGymDetails(d: { name: string; gstin: string }): { field: 'name' | 'gstin'; message: string } | null {
   if (!d.name.trim()) {
-    return { field: 'name', message: tr('Type the gym’s name.', 'Gym ka naam likho.') };
+    return { field: 'name', message: 'Type the gym’s name.' };
   }
   const g = d.gstin.trim();
   if (g && !isValidGstin(g)) {
     return {
       field: 'gstin',
-      message: tr(
-        'This GSTIN is not valid. Check it against your GST certificate (15 letters and numbers), or leave it empty.',
-        'Yeh GSTIN sahi nahi hai. GST certificate se milao (15 akshar aur number), ya khaali chhodo.',
-      ),
+      message: 'This GSTIN is not valid. Check it against your GST certificate (15 letters and numbers), or leave it empty.',
     };
   }
   return null;

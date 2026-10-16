@@ -19,7 +19,6 @@ import { createPortal } from 'react-dom';
 
 import type { GymBrand } from '@forgeai/theme';
 
-import { tr } from '../i18n';
 import { CARD_MM, cardFileName, cardMessage, cardRows, type CardFacts } from '../logic/memberCard';
 import * as api from '../shop/api';
 import { loadImage, qrModules, roundRect } from '../shop/InviteScreen';
@@ -82,12 +81,12 @@ export function MemberCardSheet({
 
   return (
     <Sheet
-      title={tr('Member card', 'Member card')}
+      title={'Member card'}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={() => window.print()}>
-            {tr('Print', 'Print karo')}
+            {'Print'}
           </Button>
           <Button
             variant="ghost"
@@ -95,15 +94,15 @@ export function MemberCardSheet({
               const ok = await downloadCard(facts, brand);
               say(
                 ok
-                  ? tr('Card saved as a picture.', 'Card picture ki tarah save ho gaya.')
-                  : tr('Could not make the picture. Try Print.', 'Picture nahi bani. Print karo try karo.'),
+                  ? 'Card saved as a picture.'
+                  : 'Could not make the picture. Try Print.',
               );
             }}
           >
-            {tr('Download picture', 'Picture download karo')}
+            {'Download picture'}
           </Button>
           <Button onClick={() => window.open(whatsAppHref(cardMessage(facts), phone), '_blank', 'noopener')}>
-            {tr('Send on WhatsApp', 'WhatsApp par bhejo')}
+            {'Send on WhatsApp'}
           </Button>
         </>
       }
@@ -112,22 +111,13 @@ export function MemberCardSheet({
         <CardFace facts={facts} brand={brand} />
       </div>
       <p style={{ ...help, marginTop: space.md }}>
-        {tr(
-          'To send it on WhatsApp: tap Download picture first, then Send on WhatsApp, and attach the picture in the chat. A WhatsApp link cannot carry a picture by itself.',
-          'WhatsApp par bhejne ke liye: pehle Picture download karo, phir WhatsApp par bhejo, aur chat mein picture attach karo. WhatsApp ka link khud picture nahi le ja sakta.',
-        )}
+        {'To send it on WhatsApp: tap Download picture first, then Send on WhatsApp, and attach the picture in the chat. A WhatsApp link cannot carry a picture by itself.'}
       </p>
       <p style={help}>
-        {tr(
-          'Print makes the card at its real size (like an ATM card) on A4 paper: cut along the line. On a phone, Print → “Save as PDF” works too.',
-          'Print se card asli size (ATM card jaisa) mein A4 par chhapta hai: line par kaato. Phone par Print → “Save as PDF” bhi chalta hai.',
-        )}
+        {'Print makes the card at its real size (like an ATM card) on A4 paper: cut along the line. On a phone, Print → “Save as PDF” works too.'}
       </p>
       <p style={{ ...help, color: color.inkMuted, fontSize: 12 }}>
-        {tr(
-          'The QR holds only the member’s ID — no name or phone number. The mobile is shown with digits hidden.',
-          'QR mein sirf member ki ID hai — naam ya phone number nahi. Mobile ke kuch number chhupe hain.',
-        )}
+        {'The QR holds only the member’s ID — no name or phone number. The mobile is shown with digits hidden.'}
       </p>
       {/* On the page for as long as the sheet is open (hidden on screen): phone Chrome draws its
           print preview after the tap has returned (see InviteScreen's print sheet). */}
@@ -158,7 +148,7 @@ function CardFace({ facts, brand, print = false }: { facts: CardFacts; brand: Gy
     <div style={{ containerType: 'inline-size', width: print ? `${CARD_MM.w}mm` : '100%' }}>
       <div
         role="img"
-        aria-label={tr(`Member card for ${facts.name}`, `${facts.name} ka member card`)}
+        aria-label={`Member card for ${facts.name}`}
         style={{
           position: 'relative',
           width: '100%',
@@ -242,7 +232,7 @@ function CardFace({ facts, brand, print = false }: { facts: CardFacts; brand: Gy
 
         <svg
           role="img"
-          aria-label={tr('QR code with the member’s ID', 'Member ki ID ka QR code')}
+          aria-label={'QR code with the member’s ID'}
           viewBox={`${-q} ${-q} ${size + 2 * q} ${size + 2 * q}`}
           shapeRendering="crispEdges"
           style={{ ...box(L.qr.x, L.qr.y, L.qr.size, L.qr.size), display: 'block' }}

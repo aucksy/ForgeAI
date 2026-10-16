@@ -11,10 +11,9 @@
 import type { ReactNode } from 'react';
 
 import { Icon, type IconName } from './icons';
-import { LangToggle } from './LangToggle';
+import { ThemeToggle } from './ThemeToggle';
 import { color, font, radius, space, TOUCH, useIsCompact } from './kit';
 import { Link, useRoute } from './router';
-import { tr } from '../i18n';
 
 export interface NavItem {
   path: string;
@@ -75,7 +74,7 @@ export function AppShell({
 function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]; activePath: string }) {
   return (
     <nav
-      aria-label={tr('Main', 'Main menu')}
+      aria-label={'Main'}
       style={{
         borderRight: `1px solid ${color.border}`,
         padding: `${space.xl}px ${space.md}px`,
@@ -97,7 +96,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
           POWERED BY FORGEAI
         </div>
         <div style={{ marginTop: space.md }}>
-          <LangToggle compact />
+          <ThemeToggle compact />
         </div>
       </div>
 
@@ -154,7 +153,7 @@ function CompactHeader({ gymName }: { gymName: string }) {
       <div style={{ fontFamily: font.display, fontSize: 15, fontWeight: 700, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {gymName}
       </div>
-      <LangToggle compact />
+      <ThemeToggle compact />
     </header>
   );
 }
@@ -162,7 +161,7 @@ function CompactHeader({ gymName }: { gymName: string }) {
 function BottomNav({ nav, activePath }: { nav: NavItem[]; activePath: string }) {
   return (
     <nav
-      aria-label={tr('Main', 'Main menu')}
+      aria-label={'Main'}
       style={{
         position: 'fixed',
         left: 0,

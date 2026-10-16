@@ -15,7 +15,6 @@ import { createPortal } from 'react-dom';
 
 import type { GymBrand } from '@forgeai/theme';
 
-import { tr } from '../i18n';
 import * as api from './api';
 import { JoinCodeCard, copyText } from './JoinCode';
 import { useShop } from './ShopProvider';
@@ -28,21 +27,18 @@ export function InviteScreen() {
   return (
     <>
       <PageHeader
-        title={tr('Invite members', 'Members ko bulao')}
-        subtitle={tr(
-          "Send your gym's link on WhatsApp, or put a QR at the front desk",
-          'Apne gym ka Link WhatsApp par bhejo, ya front desk par QR lagao',
-        )}
+        title={'Invite members'}
+        subtitle={"Send your gym's link on WhatsApp, or put a QR at the front desk"}
         actions={
           <Button variant="ghost" onClick={() => navigate('/settings')}>
-            {tr('Back to Settings', 'Settings par wapas')}
+            {'Back to Settings'}
           </Button>
         }
       />
       {cloud ? (
         <InviteBody ownerKey={cloud.ownerKey} gymName={cloud.name} joinCode={cloud.joinCode} />
       ) : (
-        <JoinCodeCard title={tr('Turn on the member app first', 'Pehle member app chalu karo')} />
+        <JoinCodeCard title={'Turn on the member app first'} />
       )}
     </>
   );
@@ -107,7 +103,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   return (
     <div style={{ display: 'grid', gap: space.lg, gridTemplateColumns: compact ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', alignItems: 'start' }}>
       <Card>
-        <SectionTitle>{tr("Your gym's link", 'Aapke gym ka Link')}</SectionTitle>
+        <SectionTitle>{"Your gym's link"}</SectionTitle>
         <div
           style={{
             fontFamily: font.mono,
@@ -124,32 +120,29 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {link}
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          {tr(
-            `A member taps it on their phone: the ForgeAI app opens on “Join ${gymName}” — one tap and they are in. Without the app, the link shows how to get it, and your gym code ${joinCode}.`,
-            `Member phone par tap kare: ForgeAI app “Join ${gymName}” par khulega — ek tap aur woh jud gaye. App na ho to Link app lene ka tareeka aur aapka gym code ${joinCode} dikhata hai.`,
-          )}
+          {`A member taps it on their phone: the ForgeAI app opens on “Join ${gymName}” — one tap and they are in. Without the app, the link shows how to get it, and your gym code ${joinCode}.`}
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.open(whatsAppHref(message), '_blank', 'noopener')}>{tr('Send on WhatsApp', 'WhatsApp par bhejo')}</Button>
+          <Button onClick={() => window.open(whatsAppHref(message), '_blank', 'noopener')}>{'Send on WhatsApp'}</Button>
           <Button
             variant="ghost"
             onClick={async () =>
-              say((await copyText(link)) ? tr('Link copied.', 'Link copy ho gaya.') : tr('This browser blocked copying.', 'Is browser ne copy rok diya.'))
+              say((await copyText(link)) ? 'Link copied.' : 'This browser blocked copying.')
             }
           >
-            {tr('Copy link', 'Link copy karo')}
+            {'Copy link'}
           </Button>
           <Button
             variant="ghost"
             onClick={async () =>
-              say((await copyText(message)) ? tr('Message copied.', 'Message copy ho gaya.') : tr('This browser blocked copying.', 'Is browser ne copy rok diya.'))
+              say((await copyText(message)) ? 'Message copied.' : 'This browser blocked copying.')
             }
           >
-            {tr('Copy message', 'Message copy karo')}
+            {'Copy message'}
           </Button>
         </div>
         <div style={{ height: space.xl }} />
-        <SectionTitle>{tr('The message members get', 'Members ko yeh message milega')}</SectionTitle>
+        <SectionTitle>{'The message members get'}</SectionTitle>
         <pre
           style={{
             margin: 0,
@@ -166,41 +159,35 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {message}
         </pre>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {tr(
-            'To invite one member, open them in Members and tap “Send app invite”.',
-            'Ek member ko bulane ke liye, Members mein unhe kholo aur “Send app invite” dabao.',
-          )}
+          {'To invite one member, open them in Members and tap “Send app invite”.'}
         </p>
       </Card>
 
       <Card>
-        <SectionTitle>{tr('Front-desk QR poster', 'Front desk ka QR Poster')}</SectionTitle>
+        <SectionTitle>{'Front-desk QR poster'}</SectionTitle>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: '100%', maxWidth: 360 }}>
             <Poster words={POSTER} gymName={gymName} joinCode={joinCode} link={link} brand={brand} />
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.print()}>{tr('Print poster', 'Poster print karo')}</Button>
+          <Button onClick={() => window.print()}>{'Print poster'}</Button>
           <Button
             variant="ghost"
             onClick={async () => {
               const ok = await downloadPoster(POSTER, gymName, joinCode, link, brand);
               say(
                 ok
-                  ? tr('Poster saved as a picture.', 'Poster picture ki tarah save ho gaya.')
-                  : tr('Could not make the picture. Try Print poster.', 'Picture nahi bani. Poster print karo try karo.'),
+                  ? 'Poster saved as a picture.'
+                  : 'Could not make the picture. Try Print poster.',
               );
             }}
           >
-            {tr('Download picture', 'Picture download karo')}
+            {'Download picture'}
           </Button>
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {tr(
-            'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.',
-            'A4 par print karke desk par lagao. Phone par Print → “Save as PDF” bhi chalta hai; picture print shop ke liye hai.',
-          )}
+          {'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.'}
         </p>
       </Card>
 
@@ -213,29 +200,21 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
 }
 
 /**
- * Words on a poster, English with Hinglish under it — BOTH languages are printed, whatever the
- * panel shows, because the members reading the wall read one or the other. Shared by the screen,
- * the print and the picture. The invite poster (POSTER) and the check-in poster
+ * Words on a poster. Shared by the screen, the print and the picture. The invite poster (POSTER) and the check-in poster
  * (checkin.ts CHECKIN_POSTER) are the same drawing with different words.
  */
 export interface PosterWords {
   lead: string;
-  leadHi: string;
   steps: readonly string[];
-  stepsHi: string;
   codeLine: (code: string) => string;
-  codeLineHi: (code: string) => string;
   /** The downloaded picture's name, before the code ("invite-poster" → invite-poster-RAMS01.png). */
   file: string;
 }
 
 export const POSTER: PosterWords = {
   lead: 'Join our gym in the ForgeAI app',
-  leadHi: 'ForgeAI app mein hamare gym se judiye',
   steps: ['Scan with your phone camera', 'Get the ForgeAI app', 'Tap Join'],
-  stepsHi: 'Camera se scan karein · App lein · Join dabaayein',
   codeLine: (code: string) => `Or type gym code ${code} in the app's Shop tab`,
-  codeLineHi: (code: string) => `Ya app ke Shop tab mein gym code ${code} daalein`,
   file: 'invite-poster',
 };
 
@@ -276,9 +255,8 @@ export function Poster({
       )}
       <div style={{ fontFamily: "'Sora', system-ui, sans-serif", fontWeight: 800, fontSize: print ? '13mm' : 22, lineHeight: 1.15 }}>{gymName}</div>
       <div style={{ fontWeight: 700, fontSize: print ? '7mm' : 14, marginTop: u(8) }}>{words.lead}</div>
-      <div style={{ fontSize: print ? '6mm' : 13, color: '#333333' }}>{words.leadHi}</div>
       <div style={{ display: 'flex', justifyContent: 'center', margin: `${u(14)} 0` }}>
-        <QrSvg text={link} px={print ? '95mm' : '72%'} label={tr(`QR code for ${link}`, `${link} ka QR code`)} />
+        <QrSvg text={link} px={print ? '95mm' : '72%'} label={`QR code for ${link}`} />
       </div>
       <ol style={{ listStyle: 'none', padding: 0, margin: 0, fontWeight: 700, fontSize: print ? '6mm' : 13 }}>
         {words.steps.map((s, i) => (
@@ -287,11 +265,8 @@ export function Poster({
           </li>
         ))}
       </ol>
-      <div style={{ fontSize: print ? '5mm' : 12, color: '#333333', marginTop: u(4) }}>{words.stepsHi}</div>
       <div style={{ fontSize: print ? '5mm' : 12, marginTop: u(12) }}>
         {words.codeLine(joinCode)}
-        <br />
-        <span style={{ color: '#333333' }}>{words.codeLineHi(joinCode)}</span>
       </div>
       <div style={{ fontFamily: "'Space Grotesk', monospace", fontSize: print ? '4mm' : 11, color: '#555555', marginTop: u(8) }}>{link.replace(/^https:\/\//, '')}</div>
     </div>
@@ -362,8 +337,6 @@ export async function downloadPoster(words: PosterWords, gymName: string, joinCo
     g.fillStyle = '#111111';
     y = wrapText(g, gymName, W / 2, y, W - 160, 84, '800 76px Sora, system-ui, sans-serif');
     y = wrapText(g, words.lead, W / 2, y + 30, W - 160, 52, '700 44px Manrope, system-ui, sans-serif');
-    g.fillStyle = '#333333';
-    y = wrapText(g, words.leadHi, W / 2, y, W - 160, 48, '400 38px Manrope, system-ui, sans-serif');
 
     const qr = qrcode(0, 'M');
     qr.addData(link);
@@ -384,12 +357,8 @@ export async function downloadPoster(words: PosterWords, gymName: string, joinCo
     words.steps.forEach((s, i) => {
       y = wrapText(g, `${i + 1}. ${s}`, W / 2, y, W - 160, 50, '700 40px Manrope, system-ui, sans-serif');
     });
-    g.fillStyle = '#333333';
-    y = wrapText(g, words.stepsHi, W / 2, y + 6, W - 160, 44, '400 34px Manrope, system-ui, sans-serif');
     g.fillStyle = '#111111';
     y = wrapText(g, words.codeLine(joinCode), W / 2, y + 40, W - 160, 44, '400 34px Manrope, system-ui, sans-serif');
-    g.fillStyle = '#333333';
-    y = wrapText(g, words.codeLineHi(joinCode), W / 2, y, W - 160, 44, '400 34px Manrope, system-ui, sans-serif');
     g.fillStyle = '#555555';
     y = wrapText(g, link.replace(/^https:\/\//, ''), W / 2, y + 20, W - 160, 40, '500 30px "Space Grotesk", monospace');
 

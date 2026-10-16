@@ -103,7 +103,7 @@ export function cardRows(f: CardFacts): Array<[string, string]> {
 }
 
 /**
- * The WhatsApp words that go with the card picture: English, then Hinglish (as the invite). The
+ * The WhatsApp words that go with the card picture. The
  * picture cannot ride in a wa.me link, so the desk attaches it in the chat. PURE.
  */
 export function cardMessage(f: Pick<CardFacts, 'gymName' | 'name' | 'number'>): string {
@@ -111,7 +111,6 @@ export function cardMessage(f: Pick<CardFacts, 'gymName' | 'name' | 'number'>): 
   return [
     hi ? `Hi ${hi}!` : 'Hi!',
     `Here is your ${f.gymName} member card (No. ${f.number}). Please show it at the desk.`,
-    `Yeh aapka ${f.gymName} member card hai (No. ${f.number}). Desk par dikhaiye.`,
   ].join('\n');
 }
 

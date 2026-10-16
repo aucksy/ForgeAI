@@ -12,7 +12,6 @@
  */
 
 import type { ImportTerm } from '../logic/importTerms';
-import { tr } from '../i18n';
 import type {
   DateISO,
   Member,
@@ -130,14 +129,14 @@ export interface RecordPaymentInput {
 /** Named errors the UI can react to rather than showing a raw message. */
 export class DuplicatePhoneError extends Error {
   constructor(public readonly existing: Member) {
-    super(tr('A member with this mobile number already exists.', 'Is mobile number ka member pehle se hai.'));
+    super('A member with this mobile number already exists.');
     this.name = 'DuplicatePhoneError';
   }
 }
 
 export class NotFoundError extends Error {
   constructor(what: string) {
-    super(tr(`${what} no longer exists.`, `${what} ab nahi hai.`));
+    super(`${what} no longer exists.`);
     this.name = 'NotFoundError';
   }
 }
@@ -154,7 +153,7 @@ export class NotFoundError extends Error {
  */
 export class InvalidDateError extends Error {
   constructor(what: string) {
-    super(tr(`${what} is not a valid date.`, `${what} sahi tareekh nahi hai.`));
+    super(`${what} is not a valid date.`);
     this.name = 'InvalidDateError';
   }
 }
@@ -170,7 +169,7 @@ export class InvalidDateError extends Error {
  */
 export class FutureVisitError extends Error {
   constructor() {
-    super(tr('You can’t record a visit for a day that hasn’t happened yet.', 'Jo din abhi aaya nahi, uski hazri nahi lag sakti.'));
+    super('You can’t record a visit for a day that hasn’t happened yet.');
     this.name = 'FutureVisitError';
   }
 }
@@ -188,7 +187,7 @@ export class PartialSaveError extends Error {
     super(
       reason instanceof Error && reason.message
         ? reason.message
-        : tr('Saving stopped part-way. Please try again.', 'Save beech mein ruk gaya. Phir se try karo.'),
+        : 'Saving stopped part-way. Please try again.',
     );
     this.name = 'PartialSaveError';
   }
@@ -206,10 +205,7 @@ export const LATEST_DATE: DateISO = '2100-12-31';
 export class StorageFullError extends Error {
   constructor() {
     super(
-      tr(
-        'This browser can’t save any more data. Nothing was saved — free up space or switch to the cloud.',
-        'Is browser mein aur data save nahi ho sakta. Kuch save nahi hua — jagah khaali karo ya Online chalo.',
-      ),
+      'This browser can’t save any more data. Nothing was saved — free up space or switch to the cloud.',
     );
     this.name = 'StorageFullError';
   }
@@ -227,12 +223,8 @@ export class FutureSchemaError extends Error {
     public readonly supported: number,
   ) {
     super(
-      tr(
-        `This gym's data was saved by a newer version of ForgeAI (v${found}; this app reads v${supported}). ` +
-          'Reload to get the latest version — your data is untouched.',
-        `Is gym ka data ForgeAI ke naye version se save hua hai (v${found}; yeh App v${supported} padhta hai). ` +
-          'Naya version lene ke liye page reload karo — aapka data safe hai.',
-      ),
+      (`This gym's data was saved by a newer version of ForgeAI (v${found}; this app reads v${supported}). ` +
+          'Reload to get the latest version — your data is untouched.'),
     );
     this.name = 'FutureSchemaError';
   }

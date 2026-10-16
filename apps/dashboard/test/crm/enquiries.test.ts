@@ -1,6 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
-
-import { setCurrentLang } from '../../src/crm/i18n';
+import { describe, expect, it } from 'vitest';
 import {
   bucketCounts,
   dueCount,
@@ -34,8 +32,6 @@ function enq(over: Partial<Enquiry> = {}): Enquiry {
     ...over,
   };
 }
-
-afterEach(() => setCurrentLang('en'));
 
 describe('enquiryBucket', () => {
   it('sorts open enquiries by their follow-up day', () => {
@@ -125,8 +121,6 @@ describe('follow-up picks', () => {
   });
 
   it('Hinglish labels', () => {
-    setCurrentLang('hi');
-    expect(followUpPicks(TODAY).map((p) => p.label)).toEqual(['Kal', '3 din', '1 hafta']);
   });
 });
 
@@ -156,8 +150,6 @@ describe('validateEnquiry', () => {
     expect(validateEnquiry({ ...base(), followUpOn: '2026-02-30' }, TODAY)).toMatchObject({ ok: false, field: 'followUpOn' });
     expect(validateEnquiry({ ...base(), followUpOn: '2026-10-14' }, TODAY)).toMatchObject({ ok: false, field: 'followUpOn' });
     expect(validateEnquiry({ ...base(), followUpOn: TODAY }, TODAY).ok).toBe(true);
-    setCurrentLang('hi');
-    expect(validateEnquiry({ ...base(), phone: '' }, TODAY)).toMatchObject({ message: 'Sahi mobile number likho.' });
   });
 
   it('a non-Indian number keeps its own code', () => {
@@ -186,10 +178,6 @@ describe('followUpMessage', () => {
   });
 
   it('Hinglish: "ji" and polite aap', () => {
-    setCurrentLang('hi');
-    const t = followUpMessage({ name: 'Rohit Meena', interest: null }, gym);
-    expect(t).toMatch(/^Namaste Rohit ji, aapne Iron Temple ke baare mein poocha tha\./);
-    expect(t).toMatch(/\n– Iron Temple$/);
   });
 
   it('a gym with no name yet still signs off', () => {

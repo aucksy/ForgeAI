@@ -15,7 +15,6 @@ import {
   photoPath,
   uploadErrorWords,
 } from './photo';
-import { tr } from '../i18n';
 
 /** A failure whose message is already plain words for the owner. */
 export class PhotoError extends Error {}
@@ -42,7 +41,7 @@ async function decode(file: Blob): Promise<Drawable> {
     return { source: img, width: img.naturalWidth, height: img.naturalHeight };
   } catch {
     throw new PhotoError(
-      tr('This photo can’t be read here (iPhone HEIC photos often can’t). Save it as JPEG or PNG and try again.', 'Yeh photo yahan khul nahi rahi (iPhone ki HEIC photo aksar nahi khulti). JPEG ya PNG mein save karke phir try karo.'),
+      'This photo can’t be read here (iPhone HEIC photos often can’t). Save it as JPEG or PNG and try again.',
     );
   } finally {
     // The <img> has decoded; its pixels stay usable after the URL is released.
@@ -57,19 +56,19 @@ export async function shrinkPhoto(file: File): Promise<Blob> {
   const pic = await decode(file);
   try {
     const { width, height } = fitWithin(pic.width, pic.height);
-    if (!width || !height) throw new PhotoError(tr('That photo looks empty. Pick another one.', 'Yeh photo khaali lag rahi hai. Doosri chuno.'));
+    if (!width || !height) throw new PhotoError('That photo looks empty. Pick another one.');
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext('2d');
-    if (!ctx) throw new PhotoError(tr('This browser can’t prepare photos. Try Chrome.', 'Yeh browser photo taiyaar nahi kar sakta. Chrome try karo.'));
+    if (!ctx) throw new PhotoError('This browser can’t prepare photos. Try Chrome.');
     // JPEG has no transparency: a see-through PNG would turn black without this.
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, width, height);
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(pic.source, 0, 0, width, height);
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY));
-    if (!blob) throw new PhotoError(tr('That photo couldn’t be converted. Try a JPEG or PNG picture.', 'Yeh photo badli nahi ja saki. JPEG ya PNG picture try karo.'));
+    if (!blob) throw new PhotoError('That photo couldn’t be converted. Try a JPEG or PNG picture.');
     const tooBig = checkEncodedPhoto(blob);
     if (tooBig) throw new PhotoError(tooBig);
     return blob;

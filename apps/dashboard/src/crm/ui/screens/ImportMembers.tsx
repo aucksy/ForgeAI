@@ -13,7 +13,6 @@
 
 import { useMemo, useRef, useState, type CSSProperties } from 'react';
 
-import { inEnglish, tr } from '../../i18n';
 import { csvFilename } from '../../logic/csv';
 import {
   cellText,
@@ -127,7 +126,7 @@ export function ImportMembersScreen() {
     setError(null);
     setResult(null);
     if (f.size > MAX_FILE_BYTES) {
-      return fail(tr('That file is over 5 MB — too big for a member list. Pick the Excel or CSV file with your members.', 'Yeh file 5 MB se badi hai — member list itni badi nahi hoti. Members wali Excel ya CSV file chuno.'));
+      return fail('That file is over 5 MB — too big for a member list. Pick the Excel or CSV file with your members.');
     }
     setStage('reading');
     // A big .xlsx takes seconds to read and the page cannot draw meanwhile: show "Reading the file…" first.
@@ -136,15 +135,15 @@ export function ImportMembersScreen() {
     try {
       const read = await readSheets(f.name, await f.arrayBuffer(), letThePagePaint);
       if (read === 'unknown') {
-        return fail(tr('That is not an Excel or CSV file. Pick a .xlsx, .xls or .csv file.', 'Yeh Excel ya CSV file nahi hai. .xlsx, .xls ya .csv file chuno.'));
+        return fail('That is not an Excel or CSV file. Pick a .xlsx, .xls or .csv file.');
       }
       all = read;
     } catch (e) {
-      return fail(tr('We couldn’t read that file. Open it in Excel, save it again as .xlsx or CSV, and try once more.', 'File padh nahi paaye. Excel mein kholo, .xlsx ya CSV mein phir save karo, aur dobara try karo.'), e);
+      return fail('We couldn’t read that file. Open it in Excel, save it again as .xlsx or CSV, and try once more.', e);
     }
     const sheets = usableSheets(all);
     if (sheets.length === 0) {
-      return fail(tr('That file has no member rows — it needs a row of column names and one row per member.', 'Is file mein members nahi hain — ek row mein column ke naam aur har member ki ek row chahiye.'));
+      return fail('That file has no member rows — it needs a row of column names and one row per member.');
     }
     // Checking every row comes next (the list below): let the page draw once more first.
     await letThePagePaint();
@@ -190,7 +189,7 @@ export function ImportMembersScreen() {
     const work = new Set([...adds, ...fills]);
     // The skipped-rows file is English in every language: the same plan, worked out in English.
     const english = englishSkipReasons(file.rows, headerRow, map, snapshot.members, today);
-    const reasonFor = (row: ImportRow) => english.get(row.rowNumber) ?? inEnglish(() => skipReason(row));
+    const reasonFor = (row: ImportRow) => english.get(row.rowNumber) ?? skipReason(row);
     // A repeated row whose plan and payment are added to its member is not "skipped" (review: the
     // skipped-rows file would invite typing that payment in again).
     // C7-37: so is a row for a member already in the gym whose plan and payment the owner adds.
@@ -205,14 +204,9 @@ export function ImportMembersScreen() {
     const importId = `import-${Date.now().toString(36)}`;
     const outcome = await saveInBatches(adds, (drafts) => createMembers(drafts.map((d) => ({ ...d, importId }))), (done) => setProgress({ done, total }));
     for (const row of outcome.duplicates) {
-      skipped.push({ row, reason: inEnglish(() => tr('Already a member.', 'Pehle se member hai.')) });
+      skipped.push({ row, reason: 'Already a member.' });
     }
-    const notSavedReason = inEnglish(() =>
-      tr(
-        'Not saved — saving stopped (no internet?). Import this file again: members already added are skipped.',
-        'Save nahi hua — save ruk gaya (internet?). Yeh file phir import karo: jo jud gaye woh chhod diye jayenge.',
-      ),
-    );
+    const notSavedReason = 'Not saved — saving stopped (no internet?). Import this file again: members already added are skipped.';
     for (const row of outcome.notSaved) skipped.push({ row, reason: notSavedReason });
     if (outcome.stopped) console.warn('[ForgeErr] import members: saving stopped', outcome.stopped);
 
@@ -226,7 +220,7 @@ export function ImportMembersScreen() {
         try {
           const patch = row.existing && row.draft ? fillBlanksPatch(row.existing, row.draft) : {};
           if (!row.existing || Object.keys(patch).length === 0) {
-            skipped.push({ row, reason: inEnglish(() => tr('Already a member — nothing new to fill in.', 'Pehle se member — bharne ko kuch naya nahi.')) });
+            skipped.push({ row, reason: 'Already a member — nothing new to fill in.' });
           } else {
             await updateMember(row.existing.id, patch);
             updated += 1;
@@ -234,7 +228,7 @@ export function ImportMembersScreen() {
         } catch (e) {
           // One bad row never stops the rest.
           console.warn(`[ForgeErr] import members: row ${row.rowNumber} not filled in`, e);
-          skipped.push({ row, reason: inEnglish(() => tr('Could not be saved.', 'Save nahi hua.')) });
+          skipped.push({ row, reason: 'Could not be saved.' });
         }
         setProgress({ done: adds.length + i + 1, total });
       }
@@ -257,7 +251,7 @@ export function ImportMembersScreen() {
         );
       } catch (e) {
         console.warn('[ForgeErr] import members: plans and payments not saved', e);
-        termsError = e instanceof Error && e.message ? e.message : tr('Saving stopped.', 'Save ruk gaya.');
+        termsError = e instanceof Error && e.message ? e.message : 'Saving stopped.';
       }
     }
     skipped.sort((a, b) => a.row.rowNumber - b.row.rowNumber);
@@ -273,17 +267,17 @@ export function ImportMembersScreen() {
     setStage('pick');
   };
 
-  const downloadSample = () => downloadCsv(csvFilename([tr('members sample', 'members sample')]), templateCsv());
+  const downloadSample = () => downloadCsv(csvFilename(['members sample']), templateCsv());
 
   return (
     <>
       <PageHeader
-        title={tr('Import members from Excel', 'Excel se members jodo')}
-        subtitle={tr('Move your register or sheet in a few minutes', 'Apna register ya sheet kuch minute mein laao')}
+        title={'Import members from Excel'}
+        subtitle={'Move your register or sheet in a few minutes'}
         actions={
           stage !== 'running' ? (
             <Button variant="ghost" wrap onClick={() => navigate('/members')}>
-              {tr('← Members', '← Members')}
+              {'← Members'}
             </Button>
           ) : undefined
         }
@@ -296,7 +290,7 @@ export function ImportMembersScreen() {
         type="file"
         accept=".xlsx,.csv,.xls,.txt,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         style={{ display: 'none' }}
-        aria-label={tr('Choose an Excel or CSV file', 'Excel ya CSV file chuno')}
+        aria-label={'Choose an Excel or CSV file'}
         onChange={(e) => {
           const f = e.target.files?.[0];
           // Cleared so picking the same file again (after fixing it) still reads it.
@@ -307,38 +301,29 @@ export function ImportMembersScreen() {
 
       {(stage === 'pick' || stage === 'reading') && (
         <Card style={{ marginBottom: space.lg }}>
-          <SectionTitle>{tr('Your file', 'Aapki file')}</SectionTitle>
+          <SectionTitle>{'Your file'}</SectionTitle>
           <ol style={list}>
             <li>
-              {tr(
-                'One row per member, with a name and a 10-digit mobile. Joining date, gender, birthday, address, batch, plan, fees, valid till and notes are optional.',
-                'Har member ki ek row, naam aur 10 ank ke mobile ke saath. Joining date, gender, janam din, pata, Batch, Plan, Fees, valid till aur notes zaroori nahi.',
-              )}
+              {'One row per member, with a name and a 10-digit mobile. Joining date, gender, birthday, address, batch, plan, fees, valid till and notes are optional.'}
             </li>
             <li>
-              {tr(
-                'Works with .xlsx, old .xls and .csv, and files with several sheets. Dates like 15/08/2026 are fine.',
-                '.xlsx, purani .xls aur .csv sab chalti hain, kai sheet wali file bhi. 15/08/2026 jaisi date theek hai.',
-              )}
+              {'Works with .xlsx, old .xls and .csv, and files with several sheets. Dates like 15/08/2026 are fine.'}
             </li>
             <li>
-              {tr(
-                'Nothing is saved until you check the list and press Add.',
-                'Jab tak aap list dekh kar Add nahi dabate, kuch save nahi hota.',
-              )}
+              {'Nothing is saved until you check the list and press Add.'}
             </li>
           </ol>
           {stage === 'reading' && (
             <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700, marginBottom: space.md }}>
-              {tr('Reading the file… a big sheet can take a few seconds.', 'File padh rahe hain… badi sheet mein kuch second lagte hain.')}
+              {'Reading the file… a big sheet can take a few seconds.'}
             </p>
           )}
           <Row gap={space.sm}>
             <Button wrap disabled={stage === 'reading'} onClick={() => input.current?.click()}>
-              {stage === 'reading' ? tr('Reading the file…', 'File padh rahe hain…') : tr('Choose file', 'File chuno')}
+              {stage === 'reading' ? 'Reading the file…' : 'Choose file'}
             </Button>
             <Button variant="ghost" wrap onClick={downloadSample}>
-              {tr('Download sample file', 'Sample file download karo')}
+              {'Download sample file'}
             </Button>
           </Row>
         </Card>
@@ -347,16 +332,13 @@ export function ImportMembersScreen() {
       {stage === 'review' && file && plan && (
         <>
           <Card style={{ marginBottom: space.lg }}>
-            <SectionTitle>{tr('Which column is which', 'Kaunsa column kya hai')}</SectionTitle>
+            <SectionTitle>{'Which column is which'}</SectionTitle>
             <p style={muted}>
-              {tr(
-                `${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (it looks most like a member list)' : ''}` : ''}. We guessed from the column names — change any that are wrong.`,
-                `${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (yeh sabse zyada member list jaisi hai)' : ''}` : ''}. Column ke naam se andaaza lagaya hai — jo galat ho use badlo.`,
-              )}
+              {`${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (it looks most like a member list)' : ''}` : ''}. We guessed from the column names — change any that are wrong.`}
             </p>
             {file.sheets.length > 1 && (
               <SelectField
-                label={tr('Sheet', 'Sheet')}
+                label={'Sheet'}
                 value={String(file.sheet)}
                 onChange={(v) => openSheet({ ...file, auto: false }, Number(v))}
                 options={file.sheets.map((sh, i) => ({
@@ -366,12 +348,12 @@ export function ImportMembersScreen() {
               />
             )}
             <SelectField
-              label={tr('Column names are on row', 'Column ke naam is row mein hain')}
+              label={'Column names are on row'}
               value={String(headerRow)}
               onChange={changeHeaderRow}
               options={file.rows.slice(0, 10).map((r, i) => ({
                 value: String(i),
-                label: `${i + 1}: ${r.map(cellText).filter(Boolean).slice(0, 4).join(', ').slice(0, 60) || tr('(empty)', '(khaali)')}`,
+                label: `${i + 1}: ${r.map(cellText).filter(Boolean).slice(0, 4).join(', ').slice(0, 60) || '(empty)'}`,
               }))}
             />
             <Grid min={200}>
@@ -382,10 +364,10 @@ export function ImportMembersScreen() {
                   value={map[field] === null ? '' : String(map[field])}
                   onChange={(v) => pickColumn(field, v)}
                   options={[
-                    { value: '', label: tr('— Not in the file —', '— File mein nahi —') },
+                    { value: '', label: '— Not in the file —' },
                     ...Array.from({ length: width }, (_, i) => ({
                       value: String(i),
-                      label: `${columnLetter(i)} · ${(headers[i] || tr('(no name)', '(bina naam)')).slice(0, 40)}`,
+                      label: `${columnLetter(i)} · ${(headers[i] || '(no name)').slice(0, 40)}`,
                     })),
                   ]}
                 />
@@ -393,17 +375,14 @@ export function ImportMembersScreen() {
             </Grid>
             {(map.plan !== null || map.amount !== null || map.expiry !== null) && map.expiry === null && map.startDate === null && (
               <p style={{ ...muted, marginTop: space.lg }}>
-                {tr(
-                  'Pick the “Valid till” or “Plan start” column to bring each plan in with its dates. Without either, the plan and fees go into the member’s notes.',
-                  'Har plan uski dates ke saath laane ke liye “Valid till” ya “Plan shuru” column chuno. Dono na ho to plan aur fees member ke notes mein jayenge.',
-                )}
+                {'Pick the “Valid till” or “Plan start” column to bring each plan in with its dates. Without either, the plan and fees go into the member’s notes.'}
               </p>
             )}
             {map.joinedOn === null && (
               <p style={{ ...muted, marginTop: space.sm }}>
                 {map.expiry !== null || map.startDate !== null
-                  ? tr('No joining date column: each member’s plan start is used (today when there is none).', 'Joining date ka column nahi: har member ke plan ki shuru date lagegi (na ho to aaj ki).')
-                  : tr('No joining date column: everyone gets today’s date.', 'Joining date ka column nahi: sabko aaj ki date milegi.')}
+                  ? 'No joining date column: each member’s plan start is used (today when there is none).'
+                  : 'No joining date column: everyone gets today’s date.'}
               </p>
             )}
           </Card>
@@ -411,10 +390,10 @@ export function ImportMembersScreen() {
           {(map.fullName === null || map.phone === null) && (
             <ErrorBanner>
               {map.fullName === null && map.phone === null
-                ? tr('Pick the columns with the name and the mobile number.', 'Naam aur mobile number wale column chuno.')
+                ? 'Pick the columns with the name and the mobile number.'
                 : map.fullName === null
-                  ? tr('Pick the column with the name.', 'Naam wala column chuno.')
-                  : tr('Pick the column with the mobile number.', 'Mobile number wala column chuno.')}
+                  ? 'Pick the column with the name.'
+                  : 'Pick the column with the mobile number.'}
             </ErrorBanner>
           )}
 
@@ -443,13 +422,13 @@ export function ImportMembersScreen() {
 
       {stage === 'running' && (
         <Card>
-          <SectionTitle>{tr('Adding members…', 'Members jod rahe hain…')}</SectionTitle>
+          <SectionTitle>{'Adding members…'}</SectionTitle>
           <p style={muted}>
-            {tr(`${progress.done} of ${progress.total} done. Keep this page open until it finishes.`, `${progress.total} mein se ${progress.done} ho gaye. Khatam hone tak yeh page khula rakho.`)}
+            {`${progress.done} of ${progress.total} done. Keep this page open until it finishes.`}
           </p>
           <div
             role="progressbar"
-            aria-label={tr('Import progress', 'Import kitna hua')}
+            aria-label={'Import progress'}
             aria-valuemin={0}
             aria-valuemax={progress.total}
             aria-valuenow={progress.done}
@@ -469,66 +448,48 @@ export function ImportMembersScreen() {
 
       {stage === 'done' && result && (
         <Card>
-          <SectionTitle>{tr('Import finished', 'Import ho gaya')}</SectionTitle>
+          <SectionTitle>{'Import finished'}</SectionTitle>
           <p style={{ margin: 0, fontFamily: font.display, fontSize: 20, fontWeight: 700, color: color.ink }}>
-            {tr(`${result.added} added, ${result.skipped.length} skipped`, `${result.added} jude, ${result.skipped.length} chhode`)}
-            {result.updated > 0 ? tr(`, ${result.updated} filled in`, `, ${result.updated} mein details bhari`) : ''}
+            {`${result.added} added, ${result.skipped.length} skipped`}
+            {result.updated > 0 ? `, ${result.updated} filled in` : ''}
           </p>
           {result.terms && (result.terms.memberships > 0 || result.terms.skipped > 0) && (
             <p style={{ ...muted, marginTop: space.sm }}>
-              {tr(
-                `${n(result.terms.memberships, 'plan')} with their dates · ${n(result.terms.payments, 'receipt')}${result.terms.plans > 0 ? ` · ${n(result.terms.plans, 'new plan name')} added to Plans` : ''}${result.terms.skipped > 0 ? ` · ${result.terms.skipped} already here, not added again` : ''}.`,
-                `${result.terms.memberships} plan unki dates ke saath · ${result.terms.payments} raseed${result.terms.plans > 0 ? ` · ${result.terms.plans} naye plan Plans mein jude` : ''}${result.terms.skipped > 0 ? ` · ${result.terms.skipped} pehle se the, dobara nahi jude` : ''}.`,
-              )}
+              {`${n(result.terms.memberships, 'plan')} with their dates · ${n(result.terms.payments, 'receipt')}${result.terms.plans > 0 ? ` · ${n(result.terms.plans, 'new plan name')} added to Plans` : ''}${result.terms.skipped > 0 ? ` · ${result.terms.skipped} already here, not added again` : ''}.`}
             </p>
           )}
           {result.termsError && (
             <div style={{ marginTop: space.md }}>
               <ErrorBanner>
-                {tr(
-                  `Members are saved, but not all their plans and payments: ${result.termsError} Use "Undo this import" below, then import the same file again, so every payment comes in once.`,
-                  `Members save ho gaye, par saare plan aur payment nahi: ${result.termsError} Neeche "Yeh import wapas lo" dabao, phir wahi file import karo, taaki har payment ek hi baar aaye.`,
-                )}
+                {`Members are saved, but not all their plans and payments: ${result.termsError} Use "Undo this import" below, then import the same file again, so every payment comes in once.`}
               </ErrorBanner>
             </div>
           )}
           {result.termsForStaff && (
             <p style={{ ...muted, marginTop: space.sm }}>
-              {tr(
-                'Plans and payments in this file are added by the owner: ask them to import the same file (members already added are skipped).',
-                'Is file ke plan aur payment owner jodte hain: unhe yahi file import karne ko kaho (jo members jud gaye woh chhod diye jayenge).',
-              )}
+              {'Plans and payments in this file are added by the owner: ask them to import the same file (members already added are skipped).'}
             </p>
           )}
           {result.stopped && (
             <div style={{ marginTop: space.md }}>
               <ErrorBanner>
-                {tr(`Saving stopped part-way: ${result.stopped} `, `Save beech mein ruk gaya: ${result.stopped} `)}
+                {`Saving stopped part-way: ${result.stopped} `}
                 {result.added > 0
-                  ? tr(
-                      `${result.added} members were saved (up to row ${result.lastSavedRow}); the rest may not have been. `,
-                      `${result.added} members save ho gaye (row ${result.lastSavedRow} tak); baaki shayad nahi hue. `,
-                    )
-                  : tr('No new members were saved. ', 'Koi naya member save nahi hua. ')}
-                {tr(
-                  'Import the same file again when the internet is back — members already added are skipped, so nobody is added twice.',
-                  'Internet aane par wahi file phir import karo — jo pehle jud gaye woh chhod diye jayenge, koi do baar nahi judega.',
-                )}
+                  ? `${result.added} members were saved (up to row ${result.lastSavedRow}); the rest may not have been. `
+                  : 'No new members were saved. '}
+                {'Import the same file again when the internet is back — members already added are skipped, so nobody is added twice.'}
               </ErrorBanner>
             </div>
           )}
           {result.skipped.length > 0 && (
             <p style={{ ...muted, marginTop: space.sm }}>
-              {tr(
-                'Download the skipped rows, fix them in Excel (the reason is in the first column) and import that file.',
-                'Chhodi gayi rows download karo, Excel mein theek karo (wajah pehle column mein hai) aur woh file import karo.',
-              )}
+              {'Download the skipped rows, fix them in Excel (the reason is in the first column) and import that file.'}
             </p>
           )}
           <Row gap={space.sm}>
             <div style={{ marginTop: space.lg }}>
               <Button wrap onClick={() => navigate('/members')}>
-                {tr('Open members', 'Members dekho')}
+                {'Open members'}
               </Button>
             </div>
             {result.skipped.length > 0 && file && (
@@ -538,18 +499,18 @@ export function ImportMembersScreen() {
                   wrap
                   onClick={() =>
                     downloadCsv(
-                      csvFilename([tr('skipped rows', 'skipped rows'), file.name.replace(/\.[^.]+$/, '')]),
+                      csvFilename(['skipped rows', file.name.replace(/\.[^.]+$/, '')]),
                       skippedRowsCsv(headers, result.skipped),
                     )
                   }
                 >
-                  {tr(`Download ${result.skipped.length} skipped rows`, `${result.skipped.length} chhodi rows download karo`)}
+                  {`Download ${result.skipped.length} skipped rows`}
                 </Button>
               </div>
             )}
             <div style={{ marginTop: space.lg }}>
               <Button variant="ghost" wrap onClick={startOver}>
-                {tr('Import another file', 'Doosri file import karo')}
+                {'Import another file'}
               </Button>
             </div>
           </Row>
@@ -581,39 +542,33 @@ function Review({
   const shown = rows.filter((r) => filter === 'all' || r.status === filter);
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{tr('Check the list', 'List check karo')}</SectionTitle>
+      <SectionTitle>{'Check the list'}</SectionTitle>
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 15, color: color.ink }}>
-        {tr(
-          `${rows.length} rows: ${counts.add} will be added, ${counts.duplicate} already members or repeated, ${counts.problem} with a problem.`,
-          `${rows.length} rows: ${counts.add} judenge, ${counts.duplicate} pehle se member ya do baar, ${counts.problem} mein gadbad.`,
-        )}
+        {`${rows.length} rows: ${counts.add} will be added, ${counts.duplicate} already members or repeated, ${counts.problem} with a problem.`}
       </p>
       {leftOut > 0 && (
         <p style={{ ...muted, color: color.warning, marginTop: space.sm }}>
-          {tr(
-            `Only the first ${MAX_IMPORT_ROWS} rows are imported at once; ${leftOut} more were left out. Import them as a second file.`,
-            `Ek baar mein pehli ${MAX_IMPORT_ROWS} rows hi judti hain; ${leftOut} aur chhoot gayi. Unhe doosri file mein import karo.`,
-          )}
+          {`Only the first ${MAX_IMPORT_ROWS} rows are imported at once; ${leftOut} more were left out. Import them as a second file.`}
         </p>
       )}
 
       {inGym > 0 && (
         <div style={{ marginTop: space.lg }}>
           <p style={{ ...muted, marginBottom: space.sm }}>
-            {tr(`${inGym} are already members of your gym (same mobile). For them:`, `${inGym} pehle se aapke gym ke member hain (wahi mobile). Unke liye:`)}
+            {`${inGym} are already members of your gym (same mobile). For them:`}
           </p>
           <ChipToggle
-            label={tr('Members already in the gym', 'Pehle se gym ke members')}
+            label={'Members already in the gym'}
             value={dupMode}
             onChange={(v) => setDupMode(v === 'fill' ? 'fill' : 'skip')}
             options={[
-              { value: 'skip', label: tr('Skip them', 'Chhod do') },
-              { value: 'fill', label: tr('Fill in their blank details', 'Khaali details bhar do') },
+              { value: 'skip', label: 'Skip them' },
+              { value: 'fill', label: 'Fill in their blank details' },
             ]}
           />
           {dupMode === 'fill' && (
             <p style={{ ...muted, marginTop: space.sm }}>
-              {tr('Only empty details are filled in. Their name, mobile and joining date stay as they are.', 'Sirf khaali details bharengi. Naam, mobile aur joining date waise hi rahenge.')}
+              {'Only empty details are filled in. Their name, mobile and joining date stay as they are.'}
             </p>
           )}
         </div>
@@ -621,20 +576,20 @@ function Review({
 
       <div style={{ margin: `${space.lg}px 0` }}>
         <ChipToggle
-          label={tr('Show rows', 'Rows dikhao')}
+          label={'Show rows'}
           value={filter}
           onChange={(v) => setFilter(v as Filter)}
           options={[
-            { value: 'all', label: tr('All', 'Sab'), count: rows.length },
-            { value: 'add', label: tr('Will be added', 'Judenge'), count: counts.add },
-            { value: 'duplicate', label: tr('Already members', 'Pehle se member'), count: counts.duplicate },
-            { value: 'problem', label: tr('Problems', 'Gadbad'), count: counts.problem },
+            { value: 'all', label: 'All', count: rows.length },
+            { value: 'add', label: 'Will be added', count: counts.add },
+            { value: 'duplicate', label: 'Already members', count: counts.duplicate },
+            { value: 'problem', label: 'Problems', count: counts.problem },
           ]}
         />
       </div>
 
       {shown.length === 0 ? (
-        <p style={muted}>{tr('No rows here.', 'Yahan koi row nahi.')}</p>
+        <p style={muted}>{'No rows here.'}</p>
       ) : (
         <div style={{ display: 'grid', gap: space.sm }}>
           {shown.slice(0, SHOW_ROWS).map((r) => (
@@ -644,7 +599,7 @@ function Review({
       )}
       {shown.length > SHOW_ROWS && (
         <p style={{ ...muted, marginTop: space.md }}>
-          {tr(`Showing the first ${SHOW_ROWS} of ${shown.length}. All of them are counted above.`, `${shown.length} mein se pehli ${SHOW_ROWS} dikh rahi hain. Upar ginti mein sab hain.`)}
+          {`Showing the first ${SHOW_ROWS} of ${shown.length}. All of them are counted above.`}
         </p>
       )}
     </Card>
@@ -675,7 +630,7 @@ function RowCard({ row }: { row: ImportRow }) {
     >
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: space.sm }}>
         <span style={{ fontWeight: 700, minWidth: 0 }}>
-          {tr(`Row ${row.rowNumber}`, `Row ${row.rowNumber}`)} · {name || tr('(no name)', '(bina naam)')}
+          {`Row ${row.rowNumber}`} · {name || '(no name)'}
         </span>
         <span style={{ fontSize: 12, fontWeight: 700, color: TONE[row.status], minWidth: 0 }}>{rowVerdict(row)}</span>
       </div>
@@ -718,7 +673,7 @@ function ActionBar({
         {label}
       </Button>
       <Button variant="ghost" wrap onClick={onOther}>
-        {tr('Choose another file', 'Doosri file chuno')}
+        {'Choose another file'}
       </Button>
     </Row>
   );
@@ -751,17 +706,11 @@ function TermsLine({ rows, owner }: { rows: readonly ImportRow[]; owner: boolean
   if (count === 0) return null;
   return (
     <Card>
-      <SectionTitle>{tr('Plans and payments', 'Plan aur payment')}</SectionTitle>
+      <SectionTitle>{'Plans and payments'}</SectionTitle>
       <p style={{ margin: 0, fontSize: 14, color: color.ink }}>
         {owner
-          ? tr(
-              `${count} members come with their plan and its dates (${names} plan names)${paid > 0 ? `, and ${formatINR(paid)} already paid as receipts` : ''}. Expiry reminders work for them from day one.`,
-              `${count} members apne plan aur uski dates ke saath aayenge (${names} plan)${paid > 0 ? `, aur ${formatINR(paid)} di hui fees raseed ban kar` : ''}. Expiry reminder pehle din se chalenge.`,
-            )
-          : tr(
-              `${count} members have a plan in this file. The owner adds plans and payments: members are added now, plans when the owner imports the same file.`,
-              `Is file mein ${count} members ka plan hai. Plan aur payment owner jodte hain: members abhi judenge, plan tab jab owner yahi file import karenge.`,
-            )}
+          ? `${count} members come with their plan and its dates (${names} plan names)${paid > 0 ? `, and ${formatINR(paid)} already paid as receipts` : ''}. Expiry reminders work for them from day one.`
+          : `${count} members have a plan in this file. The owner adds plans and payments: members are added now, plans when the owner imports the same file.`}
       </p>
     </Card>
   );
@@ -788,19 +737,13 @@ function PastImports() {
     try {
       const r = await undoImport(importId);
       setDone(
-        tr(
-          `Import taken back: ${n(r.members, 'member')}, ${n(r.memberships, 'plan')} with dates, ${n(r.payments, 'receipt')} and ${n(r.plans, 'plan name')} removed.${keptWords(r.kept)}`,
-          `Import wapas ho gaya: ${r.members} members, ${r.memberships} plan dates ke saath, ${r.payments} raseed aur ${r.plans} plan naam hataye.${keptWords(r.kept)}`,
-        ),
+        `Import taken back: ${n(r.members, 'member')}, ${n(r.memberships, 'plan')} with dates, ${n(r.payments, 'receipt')} and ${n(r.plans, 'plan name')} removed.${keptWords(r.kept)}`,
       );
       setAsking(null);
     } catch (e) {
       console.warn('[ForgeErr] undo import', e);
       setFailed(
-        tr(
-          'The import was not fully taken back (check the internet). Press Undo again: what is already gone stays gone, the rest goes.',
-          'Import poora wapas nahi hua (internet check karo). Undo phir dabao: jo hat gaya woh hata rahega, baaki ab hatega.',
-        ),
+        'The import was not fully taken back (check the internet). Press Undo again: what is already gone stays gone, the rest goes.',
       );
     } finally {
       setBusy(false);
@@ -808,11 +751,11 @@ function PastImports() {
   };
 
   const when = (at: number | null) =>
-    at == null ? tr('Earlier import', 'Pichhla import') : new Date(at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+    at == null ? 'Earlier import' : new Date(at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
 
   return (
     <Card style={{ marginTop: space.lg }}>
-      <SectionTitle>{tr('Past imports', 'Pichhle import')}</SectionTitle>
+      <SectionTitle>{'Past imports'}</SectionTitle>
       {done && (
         <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700 }}>
           {done}
@@ -825,34 +768,28 @@ function PastImports() {
             <div>
               <div style={{ fontWeight: 700, color: color.ink }}>{when(imp.at)}</div>
               <div style={muted}>
-                {tr(
-                  `${n(imp.members, 'member')} · ${n(imp.memberships, 'plan')} with dates · ${n(imp.payments, 'receipt')}`,
-                  `${imp.members} members · ${imp.memberships} plan dates ke saath · ${imp.payments} raseed`,
-                )}
+                {`${n(imp.members, 'member')} · ${n(imp.memberships, 'plan')} with dates · ${n(imp.payments, 'receipt')}`}
               </div>
             </div>
             {asking !== imp.importId && (
-              <Button variant="ghost" tone="danger" disabled={busy} onClick={() => { setDone(null); setAsking(imp.importId); }} ariaLabel={tr(`Undo the import of ${when(imp.at)}`, `${when(imp.at)} ka import wapas lo`)}>
-                {tr('Undo this import', 'Yeh import wapas lo')}
+              <Button variant="ghost" tone="danger" disabled={busy} onClick={() => { setDone(null); setAsking(imp.importId); }} ariaLabel={`Undo the import of ${when(imp.at)}`}>
+                {'Undo this import'}
               </Button>
             )}
           </div>
           {asking === imp.importId && ask && (
             <div style={{ marginTop: space.sm }}>
               <p style={{ ...muted, color: color.ink }}>
-                {tr(
-                  `This removes what this file added: ${n(ask.members.length, 'member')}, ${n(ask.memberships.length, 'plan')} with dates, ${n(ask.payments.length, 'receipt')} and ${n(ask.plans.length, 'plan name')} from Plans.`,
-                  `Isse is file ka joda hua hatega: ${ask.members.length} members, ${ask.memberships.length} plan dates ke saath, ${ask.payments.length} raseed aur Plans se ${ask.plans.length} plan naam.`,
-                )}
+                {`This removes what this file added: ${n(ask.members.length, 'member')}, ${n(ask.memberships.length, 'plan')} with dates, ${n(ask.payments.length, 'receipt')} and ${n(ask.plans.length, 'plan name')} from Plans.`}
                 {keptWords(ask.kept)}
-                {tr(' Nothing you added yourself is removed.', ' Jo aapne khud joda, woh nahi hatega.')}
+                {' Nothing you added yourself is removed.'}
               </p>
               <Row gap={space.sm}>
                 <Button tone="danger" disabled={busy} onClick={() => run(imp.importId)}>
-                  {busy ? tr('Taking it back…', 'Wapas ho raha hai…') : tr('Yes, undo it', 'Haan, wapas lo')}
+                  {busy ? 'Taking it back…' : 'Yes, undo it'}
                 </Button>
                 <Button variant="ghost" disabled={busy} onClick={() => setAsking(null)}>
-                  {tr('Keep it', 'Rehne do')}
+                  {'Keep it'}
                 </Button>
               </Row>
             </div>
@@ -866,14 +803,11 @@ function PastImports() {
 /** " 2 members and 1 plan with dates stay: the gym used them after the import." PURE. */
 function keptWords(kept: { members: number; memberships: number; plans: number }): string {
   const parts: string[] = [];
-  if (kept.members > 0) parts.push(tr(n(kept.members, 'member'), `${kept.members} members`));
-  if (kept.memberships > 0) parts.push(tr(`${n(kept.memberships, 'plan')} with dates`, `${kept.memberships} plan dates ke saath`));
-  if (kept.plans > 0) parts.push(tr(n(kept.plans, 'plan name'), `${kept.plans} plan naam`));
+  if (kept.members > 0) parts.push(n(kept.members, 'member'));
+  if (kept.memberships > 0) parts.push(`${n(kept.memberships, 'plan')} with dates`);
+  if (kept.plans > 0) parts.push(n(kept.plans, 'plan name'));
   if (parts.length === 0) return '';
-  return tr(
-    ` ${parts.join(', ')} stay, with their receipts: the gym used them after the import (a check-in, a payment at the desk, extra days, a PT session).`,
-    ` ${parts.join(', ')} rahenge, raseed ke saath: import ke baad gym ne inhe use kiya (check-in, desk par payment, extra din, PT session).`,
-  );
+  return ` ${parts.join(', ')} stay, with their receipts: the gym used them after the import (a check-in, a payment at the desk, extra days, a PT session).`;
 }
 
 /** "1 member", "3 members". PURE. */

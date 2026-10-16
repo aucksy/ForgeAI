@@ -10,7 +10,6 @@ import { useCallback, useState } from 'react';
 import { formatINR } from '../logic/money';
 import { initials } from '../logic/members';
 import { Avatar, Card, EmptyState, ErrorBanner, Row, color, font, space } from '../ui/kit';
-import { tr } from '../i18n';
 import * as api from './api';
 import { JoinCodeCard } from './JoinCode';
 import { timeAgo, type AppMember } from './logic';
@@ -39,7 +38,7 @@ export function AppMembersSection() {
   return (
     <>
       <p style={{ margin: `0 0 ${space.lg}px`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {tr('Members who joined your gym in the ForgeAI app with gym code', 'Jo members ForgeAI app mein is gym code se aapke gym se jude')}{' '}
+        {'Members who joined your gym in the ForgeAI app with gym code'}{' '}
         <strong style={{ fontFamily: font.mono, color: color.accentBright, letterSpacing: 2 }}>{cloud.joinCode}</strong>.
       </p>
 
@@ -47,16 +46,13 @@ export function AppMembersSection() {
 
       {members === null && !error ? (
         <Card>
-          <EmptyState title={tr('Loading…', 'Load ho raha hai…')} />
+          <EmptyState title={'Loading…'} />
         </Card>
       ) : members && members.length === 0 ? (
         <Card>
           <EmptyState
-            title={tr('Nobody has joined in the app yet', 'Abhi tak koi app mein nahi juda')}
-            body={tr(
-              `Ask members to open the ForgeAI app and join with gym code ${cloud.joinCode}. They show up here straight away.`,
-              `Members se kaho ForgeAI app kholkar gym code ${cloud.joinCode} se judein. Woh turant yahan dikhenge.`,
-            )}
+            title={'Nobody has joined in the app yet'}
+            body={`Ask members to open the ForgeAI app and join with gym code ${cloud.joinCode}. They show up here straight away.`}
           />
         </Card>
       ) : (
@@ -68,10 +64,7 @@ export function AppMembersSection() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontFamily: font.body, fontSize: 15, fontWeight: 600, color: color.ink }}>{m.name}</div>
                   <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
-                    {tr(
-                      `Joined ${timeAgo(m.joinedAt, now)} · last seen ${timeAgo(m.lastSeen, now)}`,
-                      `${timeAgo(m.joinedAt, now)} jude · aakhri baar ${timeAgo(m.lastSeen, now)}`,
-                    )}
+                    {`Joined ${timeAgo(m.joinedAt, now)} · last seen ${timeAgo(m.lastSeen, now)}`}
                   </div>
                 </div>
                 {/* Two lines facing the two on the left. A bold "₹0" over "paid at the
@@ -80,15 +73,15 @@ export function AppMembersSection() {
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
                   <div style={{ fontFamily: font.body, fontSize: 15, fontWeight: 600, color: color.ink }}>
                     {m.orders === 0
-                      ? tr('No orders yet', 'Abhi koi order nahi')
+                      ? 'No orders yet'
                       : m.orders === 1
-                        ? tr('1 order', '1 order')
-                        : tr(`${m.orders} orders`, `${m.orders} orders`)}
+                        ? '1 order'
+                        : `${m.orders} orders`}
                   </div>
                   <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
                     {m.spentP > 0
-                      ? tr(`${formatINR(m.spentP)} paid at the desk`, `${formatINR(m.spentP)} desk par diye`)
-                      : tr('Nothing paid at the desk yet', 'Abhi desk par kuch nahi diya')}
+                      ? `${formatINR(m.spentP)} paid at the desk`
+                      : 'Nothing paid at the desk yet'}
                   </div>
                 </div>
               </Row>

@@ -6,7 +6,6 @@
  * number on the tile and the length of the list it opens can never disagree. PURE.
  */
 
-import { tr } from '../i18n';
 import type { DateISO } from './dates';
 import type { MemberView, Payment } from '../types';
 
@@ -99,20 +98,20 @@ export function collectedOn(payments: readonly Payment[], day: DateISO): number 
 export function tileLabel(id: TileFilter): string {
   switch (id) {
     case 'active':
-      return tr('Active members', 'Chalu members');
+      return 'Active members';
     case 'exp-today':
-      return tr('Ending today', 'Aaj khatam');
+      return 'Ending today';
     case 'exp-1-3':
-      return tr('Ending in 1-3 days', '1-3 din mein khatam');
+      return 'Ending in 1-3 days';
     case 'exp-4-7':
-      return tr('Ending in 4-7 days', '4-7 din mein khatam');
+      return 'Ending in 4-7 days';
     case 'exp-8-15':
-      return tr('Ending in 8-15 days', '8-15 din mein khatam');
+      return 'Ending in 8-15 days';
     case 'expired':
-      return tr('Expired', 'Khatam ho gaye');
+      return 'Expired';
     case 'birthday':
-      return tr('Birthdays today', 'Aaj birthday');
+      return 'Birthdays today';
     case 'visited-today':
-      return tr('Came in today', 'Aaj aaye');
+      return 'Came in today';
   }
 }

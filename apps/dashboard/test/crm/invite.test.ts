@@ -26,7 +26,6 @@ describe('the WhatsApp message', () => {
     const lines = msg.split('\n');
     expect(lines[0]).toBe('Hi Rahul!');
     expect(msg).toContain("Join RAM'S FITNESS CLUB in the ForgeAI app");
-    expect(msg).toContain("ForgeAI app mein RAM'S FITNESS CLUB se judiye");
     expect(lines).toContain('https://forgeai.aakashpahuja.in/j/RAMS01');
     expect(lines[lines.length - 1]).toBe('Gym code: RAMS01');
   });
@@ -64,6 +63,5 @@ describe('QR poster', () => {
 
   it('names the code in both languages', () => {
     expect(POSTER.codeLine('RAMS01')).toContain('RAMS01');
-    expect(POSTER.codeLineHi('RAMS01')).toContain('RAMS01');
   });
 });

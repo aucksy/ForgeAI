@@ -24,7 +24,6 @@ import type {
 } from '../types';
 import { addDays, addMonths, diffDays, formatDay, type DateISO } from './dates';
 import { sumPaise, type Paise } from './money';
-import { tr } from '../i18n';
 import { gymTerms } from './pt';
 
 /** A term inside this many days of its end is surfaced as "expiring". */
@@ -259,35 +258,21 @@ export function buildMemberView(
 
 // ---------------------------------------------------------------- presentation
 
-/** The freeze reasons as they are stored (English, ExtendMembershipSheet) and in Hinglish. */
-const REASON_HI: Record<string, string> = {
-  'Freeze - medical': 'Freeze - bimari',
-  'Freeze - travel': 'Freeze - safar',
-  'Gift - extra days': 'Gift - extra din',
-  'extra days': 'extra din',
-  Freeze: 'Freeze',
-};
-
 /**
  * One line of a plan's history, as the page shows it (admin audit C7-31 / C7-32, 16 Oct 2026).
- * The lines are stored in English with raw dates so the record reads the same in either language
- * ("+7 days (Freeze - medical): 2026-06-04 -> 2026-06-11"); here they get the page's dates and
- * the panel's language. A line typed by a person is shown as written. PURE.
+ * The lines are stored with raw dates ("+7 days (Freeze - medical): 2026-06-04 -> 2026-06-11");
+ * here they get the page's dates. A line typed by a person is shown as written. PURE.
  */
 export function historyLine(line: string): string {
   const ext = /^\+(\d+) days \((.*)\): (\d{4}-\d{2}-\d{2}) -> (\d{4}-\d{2}-\d{2})$/.exec(line.trim());
   if (ext) {
     const [, n, reason, from, to] = ext;
-    const hi = REASON_HI[reason!] ?? reason!.replace(/^Freeze - /, 'Freeze - ');
-    return tr(
-      `+${n} days (${reason}): ${formatDay(from!)} → ${formatDay(to!)}`,
-      `+${n} din (${hi}): ${formatDay(from!)} → ${formatDay(to!)}`,
-    );
+    return `+${n} days (${reason}): ${formatDay(from!)} → ${formatDay(to!)}`;
   }
   const cancelled = /^Cancelled: (.*)$/.exec(line.trim());
-  if (cancelled) return tr(`Cancelled: ${cancelled[1]}`, `Cancel kiya: ${cancelled[1]}`);
-  if (line.trim() === 'Cancellation reversed.') return tr('Cancellation reversed.', 'Cancel wapas liya.');
-  if (line.trim() === 'Imported from Excel') return tr('Imported from Excel', 'Excel se aaya');
+  if (cancelled) return `Cancelled: ${cancelled[1]}`;
+  if (line.trim() === 'Cancellation reversed.') return 'Cancellation reversed.';
+  if (line.trim() === 'Imported from Excel') return 'Imported from Excel';
   return line;
 }
 
@@ -304,35 +289,35 @@ export function daysLeftTile(
   if (!view.coversUntil && cur && cur.state === 'upcoming') {
     const n = diffDays(today, cur.startsOn);
     return {
-      label: tr('Starts in', 'Shuru hone mein'),
+      label: 'Starts in',
       value: String(n),
       sub:
         n === 1
-          ? tr(`Starts tomorrow, ${formatDay(cur.startsOn)}`, `Kal shuru, ${formatDay(cur.startsOn)}`)
-          : tr(`Starts in ${n} days, on ${formatDay(cur.startsOn)}`, `${n} din mein shuru, ${formatDay(cur.startsOn)} ko`),
+          ? `Starts tomorrow, ${formatDay(cur.startsOn)}`
+          : `Starts in ${n} days, on ${formatDay(cur.startsOn)}`,
     };
   }
   const d = view.daysRemaining;
   return {
-    label: tr('Days left', 'Kitne din bache'),
-    value: d === null ? '—' : d < 0 ? tr('Expired', 'Khatam ho gaye') : String(d),
+    label: 'Days left',
+    value: d === null ? '—' : d < 0 ? 'Expired' : String(d),
     sub: view.coversUntil
       ? d === 0
-        ? tr('Last day is today', 'Aaj aakhri din hai')
-        : tr(`Covered until ${formatDay(view.coversUntil)}`, `${formatDay(view.coversUntil)} tak chalu`)
-      : tr('No live membership', 'Koi chalu plan nahi'),
+        ? 'Last day is today'
+        : `Covered until ${formatDay(view.coversUntil)}`
+      : 'No live membership',
   };
 }
 
 /** Short label for a status pill. */
 // Getters, not values: the words are read in the panel's language at the moment a pill draws.
 export const STATE_LABEL: Record<MemberState, string> = {
-  get active() { return tr('Active', 'Chalu'); },
-  get expiring() { return tr('Expiring', 'Jaldi khatam'); },
-  get expired() { return tr('Expired', 'Khatam ho gaye'); },
-  get upcoming() { return tr('Upcoming', 'Aage shuru'); },
-  get cancelled() { return tr('Cancelled', 'Cancel ho gaya'); },
-  get never() { return tr('No membership', 'Koi plan nahi'); },
+  get active() { return 'Active'; },
+  get expiring() { return 'Expiring'; },
+  get expired() { return 'Expired'; },
+  get upcoming() { return 'Upcoming'; },
+  get cancelled() { return 'Cancelled'; },
+  get never() { return 'No membership'; },
 };
 
 /** Tone for a status pill — `critical` is reserved for "costs the gym money today". */

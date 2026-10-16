@@ -45,7 +45,6 @@ import {
 } from './dates';
 import { coverageEndsOn, EXPIRING_WINDOW_DAYS } from './membership';
 import { gymTerms } from './pt';
-import { tr } from '../i18n';
 
 // ---------------------------------------------------------------- constants
 
@@ -358,18 +357,18 @@ export type RiskBand = 'settling_in' | 'slipping' | 'gone_quiet' | 'ok';
 // shown, and a module-level string would keep whichever language was on when it loaded.
 export const RISK_LABEL: Record<RiskBand, string> = {
   get settling_in() {
-    return tr('Not settled in', 'Aadat nahi bani');
+    return 'Not settled in';
   },
   get slipping() {
-    return tr('Slipping', 'Kam aa rahe');
+    return 'Slipping';
   },
   get gone_quiet() {
-    return tr('Gone quiet', 'Kaafi din se nahi aaye');
+    return 'Gone quiet';
   },
   // Only ever reached through `patternSummary`, which decides between this and
   // "we cannot tell" — see there for why the difference matters.
   get ok() {
-    return tr('Training', 'Aa rahe hain');
+    return 'Training';
   },
 };
 
@@ -403,9 +402,9 @@ export interface PatternSummary {
  * inside one card. Coverage and evidence are checked before the band is trusted.
  */
 export function patternSummary(profile: AttendanceProfile, band: RiskBand): PatternSummary {
-  if (profile.coveredDaysN === 0) return { label: tr('No plan running', 'Koi plan chalu nahi'), tone: 'muted' };
+  if (profile.coveredDaysN === 0) return { label: 'No plan running', tone: 'muted' };
   if (band !== 'ok') return { label: RISK_LABEL[band], tone: BAND_TONE[band] };
-  if (profile.totalVisitsN === 0) return { label: tr('Never checked in', 'Kabhi nahi aaye'), tone: 'muted' };
+  if (profile.totalVisitsN === 0) return { label: 'Never checked in', tone: 'muted' };
   return { label: RISK_LABEL.ok, tone: BAND_TONE.ok };
 }
 
@@ -500,30 +499,18 @@ export function riskReason(row: { profile: AttendanceProfile; band: RiskBand }):
 
   if (band === 'settling_in') {
     if (profile.totalVisitsN === 0) {
-      return tr(
-        `Joined ${describeDays(profile.tenureDays)} ago and hasn’t trained yet.`,
-        `${describeDays(profile.tenureDays)} pehle jude, abhi tak ek baar bhi nahi aaye.`,
-      );
+      return `Joined ${describeDays(profile.tenureDays)} ago and hasn’t trained yet.`;
     }
-    return tr(
-      `Only ${profile.totalVisitsN} ${profile.totalVisitsN === 1 ? 'visit' : 'visits'} since joining ${describeDays(profile.tenureDays)} ago.`,
-      `${describeDays(profile.tenureDays)} pehle jude, tab se sirf ${profile.totalVisitsN} baar aaye.`,
-    );
+    return `Only ${profile.totalVisitsN} ${profile.totalVisitsN === 1 ? 'visit' : 'visits'} since joining ${describeDays(profile.tenureDays)} ago.`;
   }
 
   if (profile.daysSinceVisit === null) {
-    return tr('Has never checked in.', 'Kabhi nahi aaye.');
+    return 'Has never checked in.';
   }
 
-  const absence = tr(
-    `${describeDays(profile.daysSinceVisit)} since their last visit`,
-    `Pichhli baar aaye ${describeDays(profile.daysSinceVisit)} ho gaye`,
-  );
+  const absence = `${describeDays(profile.daysSinceVisit)} since their last visit`;
   if (profile.medianGapDays !== null) {
-    return tr(
-      `${absence} — they usually train every ${describeDays(Math.round(profile.medianGapDays))}.`,
-      `${absence} — aam taur par har ${describeDays(Math.round(profile.medianGapDays))} mein aate hain.`,
-    );
+    return `${absence} — they usually train every ${describeDays(Math.round(profile.medianGapDays))}.`;
   }
   return `${absence}.`;
 }
@@ -538,33 +525,24 @@ export function riskReasonShort(row: { profile: AttendanceProfile; band: RiskBan
 
   if (band === 'settling_in') {
     if (profile.totalVisitsN === 0) {
-      return tr(
-        `Joined ${describeDays(profile.tenureDays)} ago · no visits yet`,
-        `${describeDays(profile.tenureDays)} pehle jude · abhi tak nahi aaye`,
-      );
+      return `Joined ${describeDays(profile.tenureDays)} ago · no visits yet`;
     }
-    return tr(
-      `${profile.totalVisitsN} ${profile.totalVisitsN === 1 ? 'visit' : 'visits'} in ${describeDays(profile.tenureDays)}`,
-      `${describeDays(profile.tenureDays)} mein ${profile.totalVisitsN} baar aaye`,
-    );
+    return `${profile.totalVisitsN} ${profile.totalVisitsN === 1 ? 'visit' : 'visits'} in ${describeDays(profile.tenureDays)}`;
   }
 
-  if (profile.daysSinceVisit === null) return tr('Never checked in', 'Kabhi nahi aaye');
+  if (profile.daysSinceVisit === null) return 'Never checked in';
 
-  const away = tr(`Away ${describeDays(profile.daysSinceVisit)}`, `${describeDays(profile.daysSinceVisit)} se nahi aaye`);
+  const away = `Away ${describeDays(profile.daysSinceVisit)}`;
   if (profile.medianGapDays !== null) {
-    return tr(
-      `${away} · usually every ${describeDays(Math.round(profile.medianGapDays))}`,
-      `${away} · aam taur par har ${describeDays(Math.round(profile.medianGapDays))}`,
-    );
+    return `${away} · usually every ${describeDays(Math.round(profile.medianGapDays))}`;
   }
   return away;
 }
 
 function describeDays(days: number): string {
-  if (days <= 0) return tr('today', 'aaj');
-  if (days === 1) return tr('1 day', '1 din');
-  return tr(`${days} days`, `${days} din`);
+  if (days <= 0) return 'today';
+  if (days === 1) return '1 day';
+  return `${days} days`;
 }
 
 /** Most actionable first: band, then longest absence, then name for a stable order. */
@@ -793,7 +771,7 @@ function groupBy<T>(rows: readonly T[], key: (row: T) => string): Map<string, T[
  * the desk's own check-ins, which are most of them. PURE.
  */
 export function visitSourceTag(source: Visit['source']): string | null {
-  if (source === 'app') return tr('App', 'App');
-  if (source === 'import') return tr('Imported', 'Import kiya');
+  if (source === 'app') return 'App';
+  if (source === 'import') return 'Imported';
   return null;
 }

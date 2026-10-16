@@ -44,7 +44,6 @@ import {
 } from './adapter';
 import { authErrorWords } from '../auth/signin';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
-import { tr } from '../i18n';
 
 export type RecordKind = 'gym' | 'member' | 'plan' | 'membership' | 'payment' | 'visit' | 'enquiry' | 'expense';
 
@@ -331,7 +330,7 @@ export class CloudCrmData implements CrmData {
   }
 
   private current(): CrmSnapshot {
-    if (!this.gym) throw new Error(tr('The gym is not loaded yet.', 'Gym abhi load nahi hua.'));
+    if (!this.gym) throw new Error('The gym is not loaded yet.');
     return buildSnapshot(this.rows, this.gym);
   }
 
@@ -416,7 +415,7 @@ export class CloudCrmData implements CrmData {
       // likely pressing the same button again because the first time "failed", and doing this
       // action too would save it twice. They see it on screen and decide.
       if (this.pending && (await this.flushPending())) {
-        throw new Error(tr('Your last change was saved just now (the internet came back). Check the screen before doing it again.', 'Aapka pichhla badlav abhi save ho gaya (internet wapas aa gaya). Dobara karne se pehle screen dekho.'));
+        throw new Error('Your last change was saved just now (the internet came back). Check the screen before doing it again.');
       }
       for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
         const before = this.current();
@@ -438,7 +437,7 @@ export class CloudCrmData implements CrmData {
           throw e;
         }
       }
-      throw new Error(tr('Others are saving at the same moment. Please try again.', 'Isi waqt doosre bhi save kar rahe hain. Phir se try karo.'));
+      throw new Error('Others are saving at the same moment. Please try again.');
     });
   }
 

@@ -14,7 +14,6 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 import { STORAGE_KEY } from '../data/local';
 import { CLOUD_GYM_KEY, clearCloudGym, readCloudGym, writeCloudGym, type CloudGym } from '../shop/cloudGym';
-import { tr } from '../i18n';
 import * as authApi from './api';
 import { can, roleOf, type Action } from './permissions';
 import type { Role, SignedIn } from './signin';
@@ -115,17 +114,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const key = readCloudGym()?.ownerKey;
     if (key) await authApi.signOut(key);
     clearCloudGym();
-    setNotice(tr('You are signed out of this device.', 'Aap is device se sign out ho gaye.'));
+    setNotice('You are signed out of this device.');
     setSession(null);
   }, []);
 
   const lost = useCallback(() => {
     clearCloudGym();
     setNotice(
-      tr(
-        'You were signed out of this gym. Ask your gym owner for a new sign-in code.',
-        'Aap is gym se sign out ho gaye. Gym Owner se naya Sign-in code maango.',
-      ),
+      'You were signed out of this gym. Ask your gym owner for a new sign-in code.',
     );
     setSession(null);
   }, []);

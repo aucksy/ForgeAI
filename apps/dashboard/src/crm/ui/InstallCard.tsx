@@ -9,7 +9,6 @@
 
 import { useState } from 'react';
 
-import { tr } from '../i18n';
 import { useInstall } from '../install';
 import { Button, Card, SectionTitle, color, font, space, useIsCompact } from './kit';
 
@@ -36,12 +35,9 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
     if (variant === 'banner') return null;
     return (
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{tr('Admin app on your phone', 'Phone par admin app')}</SectionTitle>
+        <SectionTitle>{'Admin app on your phone'}</SectionTitle>
         <p style={body}>
-          {tr(
-            'The admin app is on your home screen. Open it from the ForgeAI Admin icon.',
-            'Admin app aapki home screen par hai. ForgeAI Admin icon se kholiye.',
-          )}
+          {'The admin app is on your home screen. Open it from the ForgeAI Admin icon.'}
         </p>
       </Card>
     );
@@ -50,19 +46,10 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
 
   const steps =
     platform === 'iphone'
-      ? tr(
-          'Tap the Share button (the square with an arrow), then “Add to Home Screen”.',
-          'Share button (teer wala dabba) dabaiye, phir “Add to Home Screen”.',
-        )
+      ? 'Tap the Share button (the square with an arrow), then “Add to Home Screen”.'
       : platform === 'android'
-        ? tr(
-            'In Chrome, tap ⋮ at the top right, then “Add to Home screen” or “Install app”.',
-            'Chrome mein upar daayein ⋮ dabaiye, phir “Add to Home screen” ya “Install app”.',
-          )
-        : tr(
-            'In Chrome or Edge, click the install icon at the right end of the address bar.',
-            'Chrome ya Edge mein address bar ke daayein install icon dabaiye.',
-          );
+        ? 'In Chrome, tap ⋮ at the top right, then “Add to Home screen” or “Install app”.'
+        : 'In Chrome or Edge, click the install icon at the right end of the address bar.';
 
   const install = async () => {
     if (canPrompt) {
@@ -74,12 +61,9 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
 
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{tr('Put the admin app on your phone', 'Phone par admin app lagao')}</SectionTitle>
+      <SectionTitle>{'Put the admin app on your phone'}</SectionTitle>
       <p style={body}>
-        {tr(
-          'Put the admin app on your home screen. It opens full screen, in one tap.',
-          'Admin app ko home screen par lagaiye. Ek tap mein poori screen mein khulega.',
-        )}
+        {'Put the admin app on your home screen. It opens full screen, in one tap.'}
       </p>
       {showSteps && (
         <p style={{ ...body, marginTop: space.md, color: color.ink }} role="status">
@@ -87,7 +71,7 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
         </p>
       )}
       <div style={{ marginTop: space.lg, display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
-        <Button onClick={() => void install()}>{tr('Install the admin app', 'Admin app lagao')}</Button>
+        <Button onClick={() => void install()}>{'Install the admin app'}</Button>
         {variant === 'banner' && (
           <Button
             variant="quiet"
@@ -100,7 +84,7 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
               setClosed(true);
             }}
           >
-            {tr('Not now', 'Abhi nahi')}
+            {'Not now'}
           </Button>
         )}
       </div>

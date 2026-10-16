@@ -20,7 +20,6 @@ import {
 } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
-import { tr } from '../i18n';
 import { useCrm } from '../store';
 import { Toast } from '../ui/kit';
 import { replace } from '../ui/router';
@@ -170,7 +169,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       setCloud(null);
       resetOrders();
       if (gym.demo) {
-        setNotice(tr('That demo gym is no longer available. Start a new one below.', 'Woh demo gym ab nahi hai. Neeche naya shuru karo.'));
+        setNotice('That demo gym is no longer available. Start a new one below.');
         await startEmptyGym('My Gym');
         replace('/');
       }
@@ -249,7 +248,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const setOrderStatus = useCallback(
     async (orderId: string, status: OrderStatus) => {
       const gym = cloudRef.current;
-      if (!gym) throw new Error(tr('No shop is connected.', 'Koi shop juda nahi hai.'));
+      if (!gym) throw new Error('No shop is connected.');
       let failure: unknown = null;
       await gate.run(async () => {
         try {
@@ -290,10 +289,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       const code = errorCode(e);
       throw new Error(
         code === 'OFFLINE' || code === 'UNKNOWN'
-          ? tr(
-              'Couldn’t reach the ForgeAI cloud. Check the internet connection and try again.',
-              'ForgeAI cloud tak nahi pahunch paaye. Internet connection check karke phir se try karo.',
-            )
+          ? 'Couldn’t reach the ForgeAI cloud. Check the internet connection and try again.'
           : errorWords(e),
       );
     }
@@ -321,7 +317,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     // Only ever for a demo gym. A real gym that turned the shop on keeps its own
     // members and payments in this browser; erasing them here would lose real
     // records, so it gets `disconnectShop` instead.
-    if (!cloudRef.current?.demo) throw new Error(tr('Only a demo gym can be started over.', 'Sirf demo gym hi phir se shuru ho sakta hai.'));
+    if (!cloudRef.current?.demo) throw new Error('Only a demo gym can be started over.');
     clearCloudGym();
     setCloud(null);
     resetOrders();

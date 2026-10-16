@@ -17,7 +17,6 @@
 import { useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
-import { tr } from '../../i18n';
 import type { Member } from '../../types';
 import {
   DIAL_CODES,
@@ -110,14 +109,11 @@ export function MemberFormSheet({
         } else {
           setFieldError({
             field: 'phone',
-            message: tr(
-              `${e.existing.fullName} is already on the roster with this number.`,
-              `${e.existing.fullName} is number se pehle se member hai.`,
-            ),
+            message: `${e.existing.fullName} is already on the roster with this number.`,
           });
         }
       } else {
-        setFormError(e instanceof Error ? e.message : tr('Could not save this member.', 'Member save nahi hua.'));
+        setFormError(e instanceof Error ? e.message : 'Could not save this member.');
       }
     } finally {
       setSaving(false);
@@ -134,7 +130,7 @@ export function MemberFormSheet({
       onClose();
       navigate(`/members/${archivedClash.id}`);
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : tr('Could not restore that member.', 'Member wapas nahi aaya.'));
+      setFormError(e instanceof Error ? e.message : 'Could not restore that member.');
     } finally {
       setSaving(false);
     }
@@ -142,20 +138,20 @@ export function MemberFormSheet({
 
   return (
     <Sheet
-      title={editing ? tr('Edit member', 'Member badlo') : tr('Add member', 'Naya member jodo')}
+      title={editing ? 'Edit member' : 'Add member'}
       onClose={onClose}
       wide
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Rehne do')}
+            {'Cancel'}
           </Button>
           <Button onClick={save} disabled={saving}>
             {saving
-              ? tr('Saving…', 'Save ho raha hai…')
+              ? 'Saving…'
               : editing
-                ? tr('Save changes', 'Save karo')
-                : tr('Add member', 'Naya member jodo')}
+                ? 'Save changes'
+                : 'Add member'}
           </Button>
         </>
       }
@@ -166,14 +162,11 @@ export function MemberFormSheet({
         <ErrorBanner>
           <div style={{ marginBottom: space.sm }}>
             <strong>{archivedClash.fullName}</strong>
-            {tr(
-              ' already has this number, but they were archived — that’s why you can’t see them in the list.',
-              ' ke paas yeh number hai, par woh archive mein hain — isliye list mein nahi dikh rahe.',
-            )}
+            {' already has this number, but they were archived — that’s why you can’t see them in the list.'}
           </div>
           <Row gap={space.sm}>
             <Button onClick={restoreArchived} disabled={saving}>
-              {tr('Bring them back', 'Wapas lao')}
+              {'Bring them back'}
             </Button>
             <Button
               variant="ghost"
@@ -182,14 +175,14 @@ export function MemberFormSheet({
                 navigate(`/members/${archivedClash.id}`);
               }}
             >
-              {tr('Open their record', 'Unka record kholo')}
+              {'Open their record'}
             </Button>
           </Row>
         </ErrorBanner>
       )}
 
       <TextField
-        label={tr('Full name', 'Poora naam')}
+        label={'Full name'}
         value={form.fullName}
         onChange={set('fullName')}
         error={errorFor('fullName')}
@@ -199,17 +192,17 @@ export function MemberFormSheet({
 
       <Row gap={space.sm} align="flex-start">
         <div style={{ width: 110 }}>
-          <SelectField label={tr('Code', 'Code')} value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
+          <SelectField label={'Code'} value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
         </div>
         <div style={{ flex: 1, minWidth: 180 }}>
           <TextField
-            label={tr('Mobile number', 'Mobile number')}
+            label={'Mobile number'}
             value={form.phone}
             onChange={set('phone')}
             error={errorFor('phone')}
             inputMode="tel"
             placeholder="98765 43210"
-            hint={tr("How you'll find them, and how WhatsApp reaches them.", 'Isi se member milega, aur WhatsApp bhi isi par jayega.')}
+            hint={"How you'll find them, and how WhatsApp reaches them."}
           />
         </div>
       </Row>
@@ -223,35 +216,35 @@ export function MemberFormSheet({
 
       <Grid min={220}>
         <TextField
-          label={tr('Joining date', 'Joining ki tareekh')}
+          label={'Joining date'}
           value={form.joinedOn}
           onChange={set('joinedOn')}
           type="date"
           error={errorFor('joinedOn')}
         />
         <SelectField
-          label={tr('Gender (optional)', 'Gender (zaroori nahi)')}
+          label={'Gender (optional)'}
           value={form.gender}
           onChange={set('gender')}
           options={[
-            { value: '', label: tr('Not stated', 'Nahi bataya') },
-            { value: 'male', label: tr('Male', 'Male') },
-            { value: 'female', label: tr('Female', 'Female') },
-            { value: 'other', label: tr('Other', 'Anya') },
+            { value: '', label: 'Not stated' },
+            { value: 'male', label: 'Male' },
+            { value: 'female', label: 'Female' },
+            { value: 'other', label: 'Other' },
           ]}
         />
       </Grid>
 
       <Grid min={220}>
         <TextField
-          label={tr('Date of birth (optional)', 'Janam din (zaroori nahi)')}
+          label={'Date of birth (optional)'}
           value={form.dateOfBirth}
           onChange={set('dateOfBirth')}
           type="date"
           error={errorFor('dateOfBirth')}
         />
         <TextField
-          label={tr('Email (optional)', 'Email (zaroori nahi)')}
+          label={'Email (optional)'}
           value={form.email}
           onChange={set('email')}
           type="email"
@@ -260,16 +253,16 @@ export function MemberFormSheet({
         />
       </Grid>
 
-      <TextField label={tr('Address (optional)', 'Pata (zaroori nahi)')} value={form.address} onChange={set('address')} />
+      <TextField label={'Address (optional)'} value={form.address} onChange={set('address')} />
 
       <Grid min={220}>
         <TextField
-          label={tr('Emergency contact (optional)', 'Ghar wale ka naam (zaroori nahi)')}
+          label={'Emergency contact (optional)'}
           value={form.emergencyName}
           onChange={set('emergencyName')}
         />
         <TextField
-          label={tr('Emergency number (optional)', 'Ghar ka number (zaroori nahi)')}
+          label={'Emergency number (optional)'}
           value={form.emergencyPhone}
           onChange={set('emergencyPhone')}
           inputMode="tel"
@@ -278,19 +271,16 @@ export function MemberFormSheet({
       </Grid>
 
       <TextField
-        label={tr('Notes (optional)', 'Notes (zaroori nahi)')}
+        label={'Notes (optional)'}
         value={form.notes}
         onChange={set('notes')}
         multiline
-        placeholder={tr('Injuries, preferences, who referred them…', 'Chot, pasand, kisne bheja…')}
+        placeholder={'Injuries, preferences, who referred them…'}
       />
 
       {editing?.archived && (
         <p style={{ margin: `${space.lg}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {tr(
-            'This member is archived. Saving here won’t change that — use “Restore member” on their page.',
-            'Yeh member archive mein hai. Yahan Save karne se yeh nahi badlega — unke page par “Member wapas lao” dabao.',
-          )}
+          {'This member is archived. Saving here won’t change that — use “Restore member” on their page.'}
         </p>
       )}
     </Sheet>
@@ -323,12 +313,12 @@ function BatchField({
   if (batches.length === 0) {
     return (
       <TextField
-        label={tr('Batch (optional)', 'Batch (zaroori nahi)')}
+        label={'Batch (optional)'}
         value={value}
         onChange={onChange}
         error={error}
-        placeholder={tr('Morning 6-8', 'Subah 6-8')}
-        hint={tr('The time they train. Later members pick it with one tap.', 'Kis time aate hain. Agle members ek tap mein chun lenge.')}
+        placeholder={'Morning 6-8'}
+        hint={'The time they train. Later members pick it with one tap.'}
       />
     );
   }
@@ -340,10 +330,10 @@ function BatchField({
     // whole form 570px wide on a 375px screen; this way the row fills the form and scrolls.
     <div style={{ marginTop: space.md, width: 0, minWidth: '100%' }}>
       <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-        {tr('Batch (optional)', 'Batch (zaroori nahi)')}
+        {'Batch (optional)'}
       </div>
       <ChipToggle
-        label={tr('Batch', 'Batch')}
+        label={'Batch'}
         value={picked}
         onChange={(v) => {
           if (v === NEW_BATCH) {
@@ -356,19 +346,19 @@ function BatchField({
         }}
         options={[
           ...batches.map((b) => ({ value: b.key, label: b.name, count: b.countN })),
-          { value: NONE, label: tr('None', 'Koi nahi') },
-          { value: NEW_BATCH, label: tr('+ New batch', '+ Naya Batch') },
+          { value: NONE, label: 'None' },
+          { value: NEW_BATCH, label: '+ New batch' },
         ]}
       />
       {typing ? (
         <TextField
-          label={tr('New batch name', 'Naye Batch ka naam')}
+          label={'New batch name'}
           value={value}
           onChange={onChange}
           error={error}
           autoFocus
-          placeholder={tr('Evening 6-9', 'Shaam 6-9')}
-          hint={tr(`Up to ${BATCH_MAX} letters.`, `${BATCH_MAX} akshar tak.`)}
+          placeholder={'Evening 6-9'}
+          hint={`Up to ${BATCH_MAX} letters.`}
         />
       ) : (
         error && (

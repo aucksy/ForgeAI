@@ -21,13 +21,10 @@ export function checkInLink(joinCode: string): string {
   return `${INVITE_ORIGIN}/c/${encodeURIComponent(joinCode.trim().toUpperCase())}`;
 }
 
-/** The check-in poster's words: English, Hinglish under it — both always printed. */
+/** The check-in poster's words. */
 export const CHECKIN_POSTER: PosterWords = {
   lead: 'Scan to check in',
-  leadHi: 'Check in ke liye scan karein',
   steps: ['Open your phone camera', 'Scan this code', 'The ForgeAI app checks you in'],
-  stepsHi: 'Camera kholiye · Code scan kijiye · ForgeAI app check in kar dega',
   codeLine: () => 'No app, or not on the gym list yet? Check in at the desk.',
-  codeLineHi: () => 'App nahi hai, ya list mein naam nahi? Desk par check in karein.',
   file: 'checkin-poster',
 };

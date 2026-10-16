@@ -17,7 +17,6 @@ import { useCallback, useState } from 'react';
 
 import type { CrmSnapshot } from '../data/adapter';
 import { uploadSnapshot } from '../data/cloud';
-import { tr } from '../i18n';
 import { normalizeSnapshot, STORAGE_KEY } from '../data/local';
 import { readCloudGym, writeCloudGym } from '../shop/cloudGym';
 import { useCrm } from '../store';
@@ -43,19 +42,16 @@ function SignedInCard() {
   if (!me) return null;
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{tr('Staff & sign-in', 'Staff ka login')}</SectionTitle>
+      <SectionTitle>{'Staff & sign-in'}</SectionTitle>
       <p style={bodyText}>
-        {tr('Signed in as ', 'Sign in hai: ')}
+        {'Signed in as '}
         <b style={{ color: color.ink }}>{me.name}</b> (+91 {formatMobile(me.phone)},{' '}
-        {me.role === 'owner' ? tr('owner', 'Owner') : tr('staff', 'Staff')}
-        {tr(
-          '). Your records are online: open them on any phone or computer.',
-          '). Aapke records Online hain: kisi bhi phone ya computer par kholo.',
-        )}
+        {me.role === 'owner' ? 'owner' : 'staff'}
+        {'). Your records are online: open them on any phone or computer.'}
       </p>
       <div style={{ marginTop: space.lg }}>
         <Button onClick={() => navigate('/settings/people')}>
-          {me.role === 'owner' ? tr('Staff & sign-in codes', 'Staff aur Sign-in code') : tr('Your sign-in, or sign out', 'Aapka sign in, ya sign out')}
+          {me.role === 'owner' ? 'Staff & sign-in codes' : 'Your sign-in, or sign out'}
         </Button>
       </div>
     </Card>
@@ -87,20 +83,17 @@ function DemoGymCard() {
   const closeSignIn = useCallback(() => setSigningIn(false), []);
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{tr('This is the demo gym', 'Yeh demo gym hai')}</SectionTitle>
+      <SectionTitle>{'This is the demo gym'}</SectionTitle>
       <p style={bodyText}>
-        {tr(
-          'Its members are made up, and they stay in this browser only. To set up your real gym online, tap “Start over with a new demo gym” at the bottom of this page, then “New here? Set up your gym”.',
-          'Iske members banawati hain, aur sirf is browser mein rehte hain. Apna asli gym Online banane ke liye, is page ke neeche “Start over with a new demo gym” dabao, phir “Naye hain? Apna gym banaiye”.',
-        )}
+        {'Its members are made up, and they stay in this browser only. To set up your real gym online, tap “Start over with a new demo gym” at the bottom of this page, then “New here? Set up your gym”.'}
       </p>
       <div style={{ marginTop: space.md }}>
         <Button variant="quiet" onClick={() => setSigningIn(true)}>
-          {tr('Your gym is already online? Sign in instead', 'Gym pehle se online hai? Sign in karo')}
+          {'Your gym is already online? Sign in instead'}
         </Button>
       </div>
       {signingIn && (
-        <Sheet title={tr('Sign in to your online gym', 'Apne online gym mein sign in karo')} onClose={closeSignIn}>
+        <Sheet title={'Sign in to your online gym'} onClose={closeSignIn}>
           <SignInForm />
         </Sheet>
       )}
@@ -123,8 +116,8 @@ function PutOnlineCard() {
 
   const go = async () => {
     const ten = normalizeMobile(phone);
-    if (!resuming && !name.trim()) return setError(tr('Type your name.', 'Apna naam likho.'));
-    if (!resuming && !ten) return setError(tr('Type a 10-digit mobile number, like 98290 12345.', '10 digit ka mobile number likho, jaise 98290 12345.'));
+    if (!resuming && !name.trim()) return setError('Type your name.');
+    if (!resuming && !ten) return setError('Type a 10-digit mobile number, like 98290 12345.');
     setBusy(true);
     setError(null);
     try {
@@ -165,10 +158,7 @@ function PutOnlineCard() {
     } catch (e) {
       const carryOn = resuming || readCloudGym()?.person;
       setError(
-        tr(
-          `${authErrorWords(e)} Nothing in this browser was lost${carryOn ? ' — press the button again to carry on' : ''}.`,
-          `${authErrorWords(e)} Is browser se kuch nahi gaya${carryOn ? ' — aage badhne ke liye button phir dabao' : ''}.`,
-        ),
+        `${authErrorWords(e)} Nothing in this browser was lost${carryOn ? ' — press the button again to carry on' : ''}.`,
       );
       setBusy(false);
     }
@@ -176,24 +166,21 @@ function PutOnlineCard() {
 
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{tr('Put your records online', 'Records online daalo')}</SectionTitle>
+      <SectionTitle>{'Put your records online'}</SectionTitle>
       <p style={bodyText}>
-        {tr(
-          'Right now your members and payments live only in this browser. If it is cleared, or this computer breaks, they are gone. Online, they are safe, and you and your staff open them on any phone or computer with a mobile number.',
-          'Abhi aapke Members aur payments sirf is browser mein hain. Browser saaf hua ya computer kharab hua, to sab chala jayega. Online woh safe rehte hain, aur aap aur aapka Staff Mobile number se kisi bhi phone ya computer par khol sakte hain.',
-        )}
+        {'Right now your members and payments live only in this browser. If it is cleared, or this computer breaks, they are gone. Online, they are safe, and you and your staff open them on any phone or computer with a mobile number.'}
       </p>
       {!resuming && (
         <>
-          <TextField label={tr('Your name', 'Aapka naam')} value={name} onChange={setName} placeholder="Ramesh Sharma" />
+          <TextField label={'Your name'} value={name} onChange={setName} placeholder="Ramesh Sharma" />
           <TextField
-            label={tr('Your mobile number', 'Aapka mobile number')}
+            label={'Your mobile number'}
             prefix="+91"
             inputMode="tel"
             value={phone}
             onChange={setPhone}
             placeholder="98290 12345"
-            hint={tr('You sign in with this number.', 'Is number se aap sign in karenge.')}
+            hint={'You sign in with this number.'}
           />
         </>
       )}
@@ -205,25 +192,22 @@ function PutOnlineCard() {
       <div style={{ marginTop: space.lg }}>
         <Button disabled={busy} onClick={() => void go()}>
           {busy
-            ? tr('Copying your records…', 'Aapke records copy ho rahe hain…')
+            ? 'Copying your records…'
             : resuming
-              ? tr('Finish putting records online', 'Records online daalna poora karo')
-              : tr('Put my records online', 'Mere records online daalo')}
+              ? 'Finish putting records online'
+              : 'Put my records online'}
         </Button>
       </div>
       <div style={{ marginTop: space.md }}>
         <Button variant="quiet" onClick={() => setSigningIn(true)}>
-          {tr('Your gym is already online? Sign in instead', 'Gym pehle se online hai? Sign in karo')}
+          {'Your gym is already online? Sign in instead'}
         </Button>
       </div>
 
       {signingIn && (
-        <Sheet title={tr('Sign in to your online gym', 'Apne online gym mein sign in karo')} onClose={closeSignIn}>
+        <Sheet title={'Sign in to your online gym'} onClose={closeSignIn}>
           <ErrorBanner>
-            {tr(
-              'This device then shows your online gym. The records in this browser are kept aside, not mixed in.',
-              'Phir yeh device aapka Online gym dikhayega. Is browser ke records alag rakhe jayenge, mile-jule nahi.',
-            )}
+            {'This device then shows your online gym. The records in this browser are kept aside, not mixed in.'}
           </ErrorBanner>
           <SignInForm />
         </Sheet>

@@ -8,7 +8,6 @@
 import { useRef, useState } from 'react';
 
 import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } from '../ui/kit';
-import { tr } from '../i18n';
 import { useCan } from '../auth/AuthProvider';
 import { useShop } from './ShopProvider';
 import { inviteMessage, whatsAppHref } from './invite';
@@ -61,10 +60,7 @@ export function JoinCodeCard({
     return (
       <Card style={{ marginBottom: flush ? 0 : space.lg }}>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {tr(
-            'The member app and shop are not turned on yet. Only an owner can turn them on.',
-            'Member app aur Shop abhi chalu nahi hai. Sirf Owner ise chalu kar sakta hai.',
-          )}
+          {'The member app and shop are not turned on yet. Only an owner can turn them on.'}
         </p>
       </Card>
     );
@@ -74,13 +70,10 @@ export function JoinCodeCard({
     return (
       <Card style={{ marginBottom: flush ? 0 : space.lg }}>
         <div style={{ fontFamily: font.display, fontSize: 16, fontWeight: 600, color: color.ink }}>
-          {tr('Let members order from your gym in the ForgeAI app', 'Members ko ForgeAI app mein aapke gym se order karne do')}
+          {'Let members order from your gym in the ForgeAI app'}
         </div>
         <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {tr(
-            'Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.',
-            'Gym code paane ke liye Shop chalu karo. Saath mein 12 sample products milte hain jo aap badal ya hata sakte hain.',
-          )}
+          {'Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.'}
         </p>
         {error && (
           <div style={{ marginTop: space.md }}>
@@ -96,13 +89,13 @@ export function JoinCodeCard({
               try {
                 await connectShop();
               } catch (e) {
-                setError(e instanceof Error ? e.message : tr('Something went wrong. Please try again.', 'Kuch gadbad hui. Phir se try karo.'));
+                setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
               } finally {
                 setBusy(false);
               }
             }}
           >
-            {busy ? tr('Turning on…', 'Chalu ho raha hai…') : tr('Turn on the shop', 'Shop chalu karo')}
+            {busy ? 'Turning on…' : 'Turn on the shop'}
           </Button>
         </div>
       </Card>
@@ -113,9 +106,9 @@ export function JoinCodeCard({
     <Card style={{ marginBottom: flush ? 0 : space.lg }} pad={space.xl}>
       {title && <SectionTitle>{title}</SectionTitle>}
       <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {tr('Members join in the ', 'Members ')}
-        <strong style={{ color: color.ink }}>{tr('ForgeAI app', 'ForgeAI app')}</strong>
-        {tr(' with gym code', ' mein is gym code se judte hain')}
+        {'Members join in the '}
+        <strong style={{ color: color.ink }}>{'ForgeAI app'}</strong>
+        {' with gym code'}
       </div>
       <div
         style={{
@@ -128,7 +121,7 @@ export function JoinCodeCard({
       >
         <span
           ref={codeRef}
-          aria-label={tr(`Gym code ${cloud.joinCode.split('').join(' ')}`, `Gym code ${cloud.joinCode.split('').join(' ')}`)}
+          aria-label={`Gym code ${cloud.joinCode.split('').join(' ')}`}
           style={{
             fontFamily: font.mono,
             userSelect: 'all',
@@ -161,34 +154,28 @@ export function JoinCodeCard({
             window.setTimeout(() => setCopied(null), 3000);
           }}
         >
-          {copied === 'yes' ? tr('Copied ✓', 'Copy ho gaya ✓') : tr('Copy code', 'Code copy karo')}
+          {copied === 'yes' ? 'Copied ✓' : 'Copy code'}
         </Button>
       </div>
       {copied === 'no' && (
         <div role="status" style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          {tr('This browser blocked copying. The code is selected — press Ctrl+C.', 'Is browser ne copy rok diya. Code select hai — Ctrl+C dabao.')}
+          {'This browser blocked copying. The code is selected — press Ctrl+C.'}
         </div>
       )}
       <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        {tr(
-          "Easiest: send members your gym's link — one tap in the app and they are in. Or they type this code in the app's Shop tab. Their orders show up here.",
-          'Sabse aasaan: members ko gym ka Link bhejo — app mein ek tap aur woh jud gaye. Ya woh app ke Shop tab mein yeh code daalein. Unke orders yahan dikhenge.',
-        )}
+        {"Easiest: send members your gym's link — one tap in the app and they are in. Or they type this code in the app's Shop tab. Their orders show up here."}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
         <Button onClick={() => window.open(whatsAppHref(inviteMessage(cloud.name, cloud.joinCode)), '_blank', 'noopener')}>
-          {tr('Send link on WhatsApp', 'Link WhatsApp par bhejo')}
+          {'Send link on WhatsApp'}
         </Button>
         <Button variant="ghost" onClick={() => navigate('/settings/invite')}>
-          {tr('Invite & QR poster', 'Invite aur QR Poster')}
+          {'Invite & QR poster'}
         </Button>
       </div>
       {!online && (
         <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          {tr(
-            'Offline right now — the code still works; new orders show up when the internet is back.',
-            'Abhi offline hain — code phir bhi chalega; internet aane par naye orders dikhenge.',
-          )}
+          {'Offline right now — the code still works; new orders show up when the internet is back.'}
         </div>
       )}
     </Card>

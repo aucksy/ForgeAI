@@ -7,7 +7,6 @@
  * screen's totals for the same month.
  */
 
-import { tr } from '../i18n';
 import { addMonths, dateISOFromEpoch, monthKey, toISO } from './dates';
 import { sumPaise, type Paise } from './money';
 import type { Expense, ExpenseCategory, Payment } from '../types';
@@ -27,19 +26,19 @@ export const EXPENSE_CATEGORIES: readonly ExpenseCategory[] = [
 export function categoryLabel(category: ExpenseCategory): string {
   switch (category) {
     case 'rent':
-      return tr('Rent', 'Kiraya');
+      return 'Rent';
     case 'salary':
-      return tr('Salary', 'Tankhwah');
+      return 'Salary';
     case 'electricity':
-      return tr('Electricity', 'Bijli');
+      return 'Electricity';
     case 'equipment':
-      return tr('Equipment', 'Machine / saamaan');
+      return 'Equipment';
     case 'stock':
-      return tr('Supplement stock', 'Stock');
+      return 'Supplement stock';
     case 'repairs':
-      return tr('Repairs', 'Marammat');
+      return 'Repairs';
     default:
-      return tr('Other', 'Kuch aur');
+      return 'Other';
   }
 }
 

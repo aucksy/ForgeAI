@@ -25,7 +25,6 @@ import type { MemberView, PaymentMethod, Plan } from '../../types';
 import type { SellMembershipResult } from '../../data/adapter';
 import { newRequestId } from '../../data/local';
 import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
-import { tr } from '../../i18n';
 import { isPtPlan, ptPlanLine } from '../../logic/pt';
 
 export function SellMembershipSheet({
@@ -158,7 +157,7 @@ export function SellMembershipSheet({
       onSold?.(result);
       onClose();
     } catch (e) {
-      setProblem({ field: 'plan', message: e instanceof Error ? e.message : tr('Could not save this membership.', 'Yeh plan save nahi hua.') });
+      setProblem({ field: 'plan', message: e instanceof Error ? e.message : 'Could not save this membership.' });
     } finally {
       setSaving(false);
     }
@@ -166,15 +165,12 @@ export function SellMembershipSheet({
 
   if (plans.length === 0) {
     return (
-      <Sheet title={tr('Sell membership', 'Plan do')} onClose={onClose}>
+      <Sheet title={'Sell membership'} onClose={onClose}>
         <ErrorBanner>
           {role === 'staff'
             ? // C7-42: the front desk cannot add plans; it says who can.
-              tr('There are no plans to sell yet. Ask the owner to add a plan.', 'Abhi dene ke liye koi plan nahi hai. Owner se plan jodne ko kaho.')
-            : tr(
-                'You haven’t created any plans yet. Add a plan first, then you can sell it here.',
-                'Aapne abhi koi plan nahi banaya. Pehle plan jodo, phir yahan de sakte hain.',
-              )}
+              'There are no plans to sell yet. Ask the owner to add a plan.'
+            : 'You haven’t created any plans yet. Add a plan first, then you can sell it here.'}
         </ErrorBanner>
       </Sheet>
     );
@@ -182,16 +178,16 @@ export function SellMembershipSheet({
 
   return (
     <Sheet
-      title={defaults?.isRenewal ? tr('Renew membership', 'Renew karo') : tr('Sell membership', 'Plan do')}
+      title={defaults?.isRenewal ? 'Renew membership' : 'Sell membership'}
       onClose={onClose}
       wide
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Rehne do')}
+            {'Cancel'}
           </Button>
           <Button onClick={submit} disabled={saving}>
-            {saving ? tr('Saving…', 'Save ho raha hai…') : warned ? tr('Yes, save', 'Haan, save karo') : tr('Confirm', 'Pakka karo')}
+            {saving ? 'Saving…' : warned ? 'Yes, save' : 'Confirm'}
           </Button>
         </>
       }
@@ -200,20 +196,17 @@ export function SellMembershipSheet({
       {warned && <ErrorBanner>{warned}</ErrorBanner>}
 
       <div style={{ color: color.inkSecondary, fontFamily: font.body, fontSize: 14 }}>
-        {tr('For', 'Member')} <strong style={{ color: color.ink }}>{view.member.fullName}</strong>
+        {'For'} <strong style={{ color: color.ink }}>{view.member.fullName}</strong>
         {view.coversUntil && (
           <>
             {' · '}
-            {tr(
-              `covered until ${formatDay(view.coversUntil)}`,
-              `${formatDay(view.coversUntil)} tak chalu`,
-            )}
+            {`covered until ${formatDay(view.coversUntil)}`}
           </>
         )}
       </div>
 
       <SelectField
-        label={tr('Plan', 'Plan')}
+        label={'Plan'}
         value={planId}
         onChange={(v) => {
           setPlanId(v);
@@ -227,13 +220,13 @@ export function SellMembershipSheet({
       {plan && ptPlanLine(plan) && (
         <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, overflowWrap: 'anywhere' }}>
           <strong style={{ color: color.accentBright }}>{ptPlanLine(plan)}</strong>
-          {tr(' — runs alongside their gym plan.', ' — gym plan ke saath alag se chalega.')}
+          {' — runs alongside their gym plan.'}
         </div>
       )}
 
       <Grid min={220}>
         <TextField
-          label={tr('Starts on', 'Shuru')}
+          label={'Starts on'}
           value={startsOn}
           onChange={(v) => {
             setStartsOnOverride(v);
@@ -244,7 +237,7 @@ export function SellMembershipSheet({
         />
         <div style={{ marginTop: space.md }}>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-            {tr('Valid until', 'Khatam')}
+            {'Valid until'}
           </div>
           <div
             style={{
@@ -260,10 +253,7 @@ export function SellMembershipSheet({
           </div>
           {endsOn && (
             <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-              {tr(
-                `Last day they can train. Next term starts ${formatDay(addDays(endsOn, 1))}.`,
-                `Is din tak aa sakte hain. Agla plan ${formatDay(addDays(endsOn, 1))} se shuru.`,
-              )}
+              {`Last day they can train. Next term starts ${formatDay(addDays(endsOn, 1))}.`}
             </div>
           )}
         </div>
@@ -271,7 +261,7 @@ export function SellMembershipSheet({
 
       <Grid min={220}>
         <TextField
-          label={tr('Plan price', 'Plan ki fees')}
+          label={'Plan price'}
           value={priceText}
           onChange={(v) => {
             setPriceText(v);
@@ -281,19 +271,13 @@ export function SellMembershipSheet({
           placeholder={plan ? formatINR(plan.priceP) : ''}
           hint={
             role === 'staff'
-              ? tr(
-                  'Leave blank for the listed price. The front desk can give at most 10% off.',
-                  'List wali fees ke liye khaali chhodo. Front desk zyada se zyada 10% chhoot de sakta hai.',
-                )
-              : tr(
-                  'Leave blank for the listed price. Type a lower number to give a discount.',
-                  'List wali fees ke liye khaali chhodo. Chhoot deni ho to kam number likho.',
-                )
+              ? 'Leave blank for the listed price. The front desk can give at most 10% off.'
+              : 'Leave blank for the listed price. Type a lower number to give a discount.'
           }
           error={errorFor('priceP')}
         />
         <TextField
-          label={tr('Joining fee', 'Admission fees')}
+          label={'Joining fee'}
           value={joiningText}
           onChange={(v) => {
             setJoiningText(v);
@@ -303,11 +287,8 @@ export function SellMembershipSheet({
           placeholder={formatINR(defaults?.joiningFeeP ?? 0)}
           hint={
             defaults && defaults.joiningFeeP === 0 && (plan?.joiningFeeP ?? 0) > 0
-              ? tr(
-                  'Already paid a joining fee before — not charged again.',
-                  'Admission fees pehle de chuke hain — dobara nahi lagegi.',
-                )
-              : tr('Charged once, on joining.', 'Joining par ek baar lagti hai.')
+              ? 'Already paid a joining fee before — not charged again.'
+              : 'Charged once, on joining.'
           }
           error={errorFor('joiningFeeP')}
         />
@@ -324,7 +305,7 @@ export function SellMembershipSheet({
       >
         <Row>
           <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, flex: 1 }}>
-            {tr('Total payable', 'Kul fees')}
+            {'Total payable'}
           </span>
           <span style={{ fontFamily: font.mono, fontSize: 20, fontWeight: 700, color: color.ink }}>
             {totalP === null ? '—' : formatINR(totalP)}
@@ -332,7 +313,7 @@ export function SellMembershipSheet({
         </Row>
 
         <TextField
-          label={tr('Received now', 'Abhi kitne mile')}
+          label={'Received now'}
           value={collectText}
           onChange={(v) => {
             setCollectText(v);
@@ -340,31 +321,28 @@ export function SellMembershipSheet({
           }}
           inputMode="decimal"
           placeholder="0"
-          hint={tr(
-            "Leave blank if they're paying later — it'll show up under dues.",
-            'Baad mein denge to khaali chhodo — fees baaki mein dikhega.',
-          )}
+          hint={"Leave blank if they're paying later — it'll show up under dues."}
           error={errorFor('collectNowP')}
         />
 
         <Grid min={200}>
           <SelectField
-            label={tr('Paid by', 'Kaise diya')}
+            label={'Paid by'}
             value={method}
             onChange={(v) => setMethod(v as PaymentMethod)}
             options={methodOptions()}
           />
           <TextField
-            label={tr('Reference (optional)', 'Reference (zaroori nahi)')}
+            label={'Reference (optional)'}
             value={reference}
             onChange={setReference}
-            placeholder={method === 'upi' ? tr('UPI ref no.', 'UPI ref no.') : tr('Cheque / card last 4', 'Cheque / card ke last 4')}
+            placeholder={method === 'upi' ? 'UPI ref no.' : 'Cheque / card last 4'}
           />
         </Grid>
 
         {collectP !== null && collectP > 0 && (
           <TextField
-            label={tr('Received on', 'Kis din mile')}
+            label={'Received on'}
             value={paidOn}
             onChange={(v) => {
               setPaidOn(v);
@@ -385,12 +363,12 @@ export function SellMembershipSheet({
               fontWeight: 600,
             }}
           >
-            {tr(`Balance due after this: ${formatINR(balanceP)}`, `Iske baad baaki: ${formatINR(balanceP)}`)}
+            {`Balance due after this: ${formatINR(balanceP)}`}
           </div>
         )}
       </div>
 
-      <TextField label={tr('Notes (optional)', 'Note (zaroori nahi)')} value={notes} onChange={setNotes} multiline />
+      <TextField label={'Notes (optional)'} value={notes} onChange={setNotes} multiline />
     </Sheet>
   );
 }

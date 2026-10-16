@@ -21,7 +21,6 @@
  * tools could still add up the totals the panel hides from them.
  */
 
-import { tr } from '../i18n';
 import type { Person, Role } from './signin';
 
 export type Action =
@@ -137,8 +136,5 @@ export function shopTabFor(role: Role, section: string | undefined): ShopTab {
 
 /** One plain line: what Staff can and cannot do now. Shown on Staff & sign-in. */
 export function staffRightsWords(): string {
-  return tr(
-    'Owner: everything. Staff (front desk): add members, sell plans (at most 10% off the plan price, joining fee as listed), collect fees, check in, hand over shop orders. Every receipt shows who took it. Staff cannot see money totals or expenses, void receipts, cancel or freeze plans, change plan prices, or change the gym.',
-    'Owner: sab kuch. Staff (front desk): member jodo, Plan do (plan ki fees par zyada se zyada 10% chhoot, admission fees list wali), Fees lo, Hazri lagao, Shop order do. Har raseed par likha hota hai kisne li. Staff kul paisa ya Kharcha nahi dekh sakta, Raseed ya Plan cancel nahi kar sakta, Freeze nahi de sakta, plan ki fees ya gym ki details nahi badal sakta.',
-  );
+  return 'Owner: everything. Staff (front desk): add members, sell plans (at most 10% off the plan price, joining fee as listed), collect fees, check in, hand over shop orders. Every receipt shows who took it. Staff cannot see money totals or expenses, void receipts, cancel or freeze plans, change plan prices, or change the gym.';
 }

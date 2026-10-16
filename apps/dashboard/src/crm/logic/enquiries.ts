@@ -7,7 +7,6 @@
  * the home tile, the add-form checks, and the follow-up WhatsApp message.
  */
 
-import { tr } from '../i18n';
 import { firstName } from '../shop/invite';
 import { addDays, isValidDateISO, type DateISO } from './dates';
 import { DEFAULT_DIAL_CODE, normalizeName, normalizePhone } from './members';
@@ -103,9 +102,9 @@ export interface FollowUpPick {
 /** The quick picks on "Dobara call kab": tomorrow, 3 days, a week. */
 export function followUpPicks(today: DateISO): FollowUpPick[] {
   return [
-    { label: tr('Tomorrow', 'Kal'), date: addDays(today, 1) },
-    { label: tr('In 3 days', '3 din'), date: addDays(today, 3) },
-    { label: tr('In a week', '1 hafta'), date: addDays(today, 7) },
+    { label: 'Tomorrow', date: addDays(today, 1) },
+    { label: 'In 3 days', date: addDays(today, 3) },
+    { label: 'In a week', date: addDays(today, 7) },
   ];
 }
 
@@ -137,19 +136,19 @@ export function emptyEnquiryForm(today: DateISO): EnquiryFormDraft {
 export function validateEnquiry(form: EnquiryFormDraft, today: DateISO): EnquiryValidation {
   const name = normalizeName(form.name);
   if (name.length < 2) {
-    return { ok: false, field: 'name', message: tr('Enter their name.', 'Naam likho.') };
+    return { ok: false, field: 'name', message: 'Enter their name.' };
   }
   if (name.length > NAME_MAX) {
     return {
       ok: false,
       field: 'name',
-      message: tr(`Name must be ${NAME_MAX} characters or fewer.`, `Naam ${NAME_MAX} akshar se zyada nahi ho sakta.`),
+      message: `Name must be ${NAME_MAX} characters or fewer.`,
     };
   }
 
   const phone = normalizePhone(form.dialCode, form.phone);
   if (!phone) {
-    return { ok: false, field: 'phone', message: tr('Enter a valid mobile number.', 'Sahi mobile number likho.') };
+    return { ok: false, field: 'phone', message: 'Enter a valid mobile number.' };
   }
 
   const interest = form.interest.trim().replace(/\s+/g, ' ');
@@ -157,19 +156,19 @@ export function validateEnquiry(form: EnquiryFormDraft, today: DateISO): Enquiry
     return {
       ok: false,
       field: 'interest',
-      message: tr(`Keep it under ${INTEREST_MAX} characters.`, `${INTEREST_MAX} akshar se kam likho.`),
+      message: `Keep it under ${INTEREST_MAX} characters.`,
     };
   }
 
   const followRaw = form.followUpOn.trim();
   if (followRaw && !isValidDateISO(followRaw)) {
-    return { ok: false, field: 'followUpOn', message: tr('Pick a real date.', 'Sahi date chuno.') };
+    return { ok: false, field: 'followUpOn', message: 'Pick a real date.' };
   }
   if (followRaw && followRaw < today) {
     return {
       ok: false,
       field: 'followUpOn',
-      message: tr('The follow-up date can’t be in the past.', 'Dobara call ki date beete din ki nahi ho sakti.'),
+      message: 'The follow-up date can’t be in the past.',
     };
   }
 
@@ -195,21 +194,15 @@ export function findOpenDuplicate(list: readonly Enquiry[], phoneE164: string, s
  */
 export function followUpMessage(e: Pick<Enquiry, 'name' | 'interest'>, gym: { name: string }): string {
   const n = firstName(e.name);
-  const gymName = gym.name.trim() || tr('our gym', 'hamare gym');
+  const gymName = gym.name.trim() || 'our gym';
   const interest = e.interest?.trim();
-  const hello = n ? tr(`Hi ${n},`, `Namaste ${n} ji,`) : tr('Hi,', 'Namaste,');
+  const hello = n ? `Hi ${n},` : 'Hi,';
   const asked = interest
-    ? tr(
-        `you asked about ${gymName} (${interest}).`,
-        `aapne ${gymName} ke baare mein poocha tha (${interest}).`,
-      )
-    : tr(`you asked about ${gymName}.`, `aapne ${gymName} ke baare mein poocha tha.`);
+    ? `you asked about ${gymName} (${interest}).`
+    : `you asked about ${gymName}.`;
   return [
     `${hello} ${asked}`,
-    tr(
-      'Would you like to start this week? Reply here with any questions, or drop in at the gym.',
-      'Kya aap is hafte se shuru karna chahenge? Koi sawaal ho to yahin reply karein, ya gym aakar mil lijiye.',
-    ),
-    `– ${gym.name.trim() || tr('Your gym', 'Aapka gym')}`,
+    'Would you like to start this week? Reply here with any questions, or drop in at the gym.',
+    `– ${gym.name.trim() || 'Your gym'}`,
   ].join('\n');
 }

@@ -6,7 +6,6 @@
 
 import { useRole } from '../../auth/AuthProvider';
 import { navFor } from '../../auth/permissions';
-import { tr } from '../../i18n';
 import { dueCount } from '../../logic/enquiries';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
@@ -30,38 +29,38 @@ export function MoreScreen() {
   const owner = role === 'owner';
   // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
   const rows: Row[] = navFor<Row>(role, [
-    { path: '/plans', label: tr('Plans', 'Plan'), hint: tr('Prices and durations', 'Fees aur samay'), icon: 'plans' },
+    { path: '/plans', label: 'Plans', hint: 'Prices and durations', icon: 'plans' },
     {
       path: '/enquiries',
-      label: tr('Enquiries', 'Enquiry'),
-      hint: tr('People who asked about joining', 'Jinhone join karne ke baare mein poocha'),
+      label: 'Enquiries',
+      hint: 'People who asked about joining',
       icon: 'members',
       badge: enquiriesDue,
     },
-    { path: '/expenses', label: tr('Expenses', 'Kharcha'), hint: tr('Money going out, and profit', 'Kharcha aur munafa'), icon: 'money' },
-    { path: '/shop', label: tr('Shop', 'Shop'), hint: tr('Orders from the app', 'App se aaye orders'), icon: 'shop', badge: newCount },
+    { path: '/expenses', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
+    { path: '/shop', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
     {
       path: '/settings/people',
-      label: tr('Staff & sign-in', 'Staff ka login'),
-      hint: owner ? tr('Who can open this admin app', 'Admin app kaun khol sakta hai') : tr('You, and signing out', 'Aap, aur sign out'),
+      label: 'Staff & sign-in',
+      hint: owner ? 'Who can open this admin app' : 'You, and signing out',
       icon: 'members',
     },
     {
       path: '/settings/invite',
-      label: tr('Invite members', 'Members ko bulao'),
-      hint: tr('Link and QR poster', 'Link aur QR poster'),
+      label: 'Invite members',
+      hint: 'Link and QR poster',
       icon: 'today',
     },
     {
       path: '/settings',
-      label: tr('Settings', 'Settings'),
-      hint: owner ? tr('Gym details, language, app', 'Gym ki details, bhasha, app') : tr('Language, app, sign-in', 'Bhasha, app, sign in'),
+      label: 'Settings',
+      hint: owner ? 'Gym details, language, app' : 'Language, app, sign-in',
       icon: 'settings',
     },
   ]);
   return (
     <>
-      <PageHeader title={tr('More', 'Aur')} />
+      <PageHeader title={'More'} />
       <Card>
         <div style={{ display: 'grid' }}>
           {rows.map((r, i) => (

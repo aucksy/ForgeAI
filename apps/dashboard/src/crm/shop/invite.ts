@@ -25,8 +25,7 @@ export function firstName(fullName: string | null | undefined): string {
 }
 
 /**
- * The WhatsApp message: English, then the same in Hinglish (most members read one or the other
- * more easily), the link on its own line so WhatsApp makes it tappable, and the code last as the
+ * The WhatsApp message: one short English line, the link on its own line so WhatsApp makes it tappable, and the code last as the
  * way in when the link will not open. PURE.
  */
 export function inviteMessage(gymName: string, joinCode: string, memberName?: string | null): string {
@@ -35,9 +34,8 @@ export function inviteMessage(gymName: string, joinCode: string, memberName?: st
   return [
     hi ? `Hi ${hi}!` : 'Hi!',
     `Join ${gym} in the ForgeAI app: track your workouts and order from the gym shop.`,
-    `ForgeAI app mein ${gym} se judiye: apna workout track kijiye aur gym shop se order kijiye.`,
     '',
-    `Tap to join / Join karne ke liye tap karein:`,
+    `Tap to join:`,
     inviteLink(joinCode),
     '',
     `Gym code: ${joinCode.trim().toUpperCase()}`,

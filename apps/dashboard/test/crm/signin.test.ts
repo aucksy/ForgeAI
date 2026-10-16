@@ -69,12 +69,11 @@ describe('refusals in words', () => {
 });
 
 describe('the WhatsApp code message', () => {
-  it('has the code, the number, both languages and the link', () => {
+  it('has the code, the number and the link', () => {
     const text = codeMessage('Suresh Kumar', 'Iron Temple', '9876543210', '482913');
     expect(text).toMatch(/Hi Suresh!/);
     expect(text).toMatch(/482913/);
     expect(text).toMatch(/98765 43210/);
-    expect(text).toMatch(/daaliye/);
     expect(text).toMatch(/https:\/\/forgeai\.aakashpahuja\.in/);
   });
   it('goes to the Indian number, never another country', () => {

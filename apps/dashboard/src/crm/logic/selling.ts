@@ -18,7 +18,6 @@
 import type { DateISO, Membership, Paise, Payment, Plan } from '../types';
 import { addDays, formatDay } from './dates';
 import { coverageEndsOn, endDateForPlan, nextTermStart } from './membership';
-import { tr } from '../i18n';
 import { formatINR } from './money';
 import { EARLIEST_DATE } from '../data/adapter';
 import { gymPlansOnly, isPtMembership, isPtPlan } from './pt';
@@ -107,16 +106,10 @@ function lastGymPlanEnd(memberships: readonly Membership[], today: DateISO): Dat
  */
 export function saleWarning(s: { priceP: Paise | null; joiningFeeP: Paise | null; listPriceP: Paise | null; listJoiningFeeP: Paise | null }): string | null {
   if (s.priceP !== null && s.listPriceP !== null && s.priceP > s.listPriceP) {
-    return tr(
-      `The price ${formatINR(s.priceP)} is more than the plan's ${formatINR(s.listPriceP)}. Press again to save it anyway.`,
-      `Fees ${formatINR(s.priceP)} plan ki ${formatINR(s.listPriceP)} se zyada hai. Phir bhi save karna ho to dobara dabao.`,
-    );
+    return `The price ${formatINR(s.priceP)} is more than the plan's ${formatINR(s.listPriceP)}. Press again to save it anyway.`;
   }
   if (s.joiningFeeP !== null && s.listJoiningFeeP !== null && s.joiningFeeP > s.listJoiningFeeP) {
-    return tr(
-      `The joining fee ${formatINR(s.joiningFeeP)} is more than the plan's ${formatINR(s.listJoiningFeeP)}. Press again to save it anyway.`,
-      `Admission fees ${formatINR(s.joiningFeeP)} plan ki ${formatINR(s.listJoiningFeeP)} se zyada hai. Phir bhi save karna ho to dobara dabao.`,
-    );
+    return `The joining fee ${formatINR(s.joiningFeeP)} is more than the plan's ${formatINR(s.listJoiningFeeP)}. Press again to save it anyway.`;
   }
   return null;
 }
@@ -173,27 +166,24 @@ export function validateSale(
   today: DateISO,
   role: 'owner' | 'staff' = 'owner',
 ): SaleProblem | null {
-  if (!input.planId) return { field: 'plan', message: tr('Choose a plan first.', 'Pehle plan chuno.') };
+  if (!input.planId) return { field: 'plan', message: 'Choose a plan first.' };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.startsOn)) {
-    return { field: 'startsOn', message: tr('Start date must be a real date.', 'Shuru ki tareekh sahi likho.') };
+    return { field: 'startsOn', message: 'Start date must be a real date.' };
   }
   // The server refuses a front-desk sale that starts further back (0018_staff_and_owner_rules.sql):
   // a start a month or more back hands out past time for free, so it is the owner's call.
   if (role === 'staff' && input.startsOn < addDays(today, -STAFF_BACKDATE_DAYS)) {
     return {
       field: 'startsOn',
-      message: tr(
-        `The front desk can start a plan at most ${STAFF_BACKDATE_DAYS} days back. Ask the owner for an older start date.`,
-        `Front desk ${STAFF_BACKDATE_DAYS} din se zyada peeche se plan shuru nahi kar sakta. Purani tareekh ke liye owner se kaho.`,
-      ),
+      message: `The front desk can start a plan at most ${STAFF_BACKDATE_DAYS} days back. Ask the owner for an older start date.`,
     };
   }
-  if (input.priceP === null) return { field: 'priceP', message: tr('Price isn’t a valid amount.', 'Fees sahi rakam nahi hai.') };
+  if (input.priceP === null) return { field: 'priceP', message: 'Price isn’t a valid amount.' };
   if (input.joiningFeeP === null) {
-    return { field: 'joiningFeeP', message: tr('Joining fee isn’t a valid amount.', 'Admission fees sahi rakam nahi hai.') };
+    return { field: 'joiningFeeP', message: 'Joining fee isn’t a valid amount.' };
   }
   if (input.collectNowP === null) {
-    return { field: 'collectNowP', message: tr('Amount received isn’t a valid amount.', 'Kitne mile — yeh sahi rakam nahi hai.') };
+    return { field: 'collectNowP', message: 'Amount received isn’t a valid amount.' };
   }
 
   // C7-13: the front desk's discount limits (the owner may give anything, a free plan too).
@@ -201,20 +191,14 @@ export function validateSale(
     const lowest = staffLowestPrice(input.listPriceP);
     return {
       field: 'priceP',
-      message: tr(
-        `The front desk can give at most ${STAFF_MAX_DISCOUNT_PCT}% off: the lowest price is ${formatINR(lowest)}. Ask the owner for a bigger discount.`,
-        `Front desk zyada se zyada ${STAFF_MAX_DISCOUNT_PCT}% chhoot de sakta hai: sabse kam fees ${formatINR(lowest)}. Zyada chhoot ke liye owner se kaho.`,
-      ),
+      message: `The front desk can give at most ${STAFF_MAX_DISCOUNT_PCT}% off: the lowest price is ${formatINR(lowest)}. Ask the owner for a bigger discount.`,
     };
   }
   // Only for someone with no plan here yet, exactly as the server (0019): a renewal may skip it.
   if (role === 'staff' && memberships.length === 0 && input.listJoiningFeeP != null && input.joiningFeeP < input.listJoiningFeeP) {
     return {
       field: 'joiningFeeP',
-      message: tr(
-        `The joining fee for a new member is ${formatINR(input.listJoiningFeeP)}. Only the owner can let it off.`,
-        `Naye member ki admission fees ${formatINR(input.listJoiningFeeP)} hai. Sirf owner maaf kar sakte hain.`,
-      ),
+      message: `The joining fee for a new member is ${formatINR(input.listJoiningFeeP)}. Only the owner can let it off.`,
     };
   }
 
@@ -222,14 +206,14 @@ export function validateSale(
   // C7-29: the money taken at a sale has its own date ("Kis din mile"), like the Collect sheet.
   if (input.collectNowP > 0 && input.paidOn !== undefined) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(input.paidOn) || input.paidOn < EARLIEST_DATE) {
-      return { field: 'paidOn', message: tr('Enter the date this money was received.', 'Paisa kis din mila, woh tareekh likho.') };
+      return { field: 'paidOn', message: 'Enter the date this money was received.' };
     }
     if (input.paidOn > today) {
-      return { field: 'paidOn', message: tr('A payment can’t be dated in the future.', 'Aage ki tareekh ki payment nahi ho sakti.') };
+      return { field: 'paidOn', message: 'A payment can’t be dated in the future.' };
     }
   }
   if (input.collectNowP > total) {
-    return { field: 'collectNowP', message: tr('Amount received is more than the total.', 'Kitne mile, woh kul fees se zyada hai.') };
+    return { field: 'collectNowP', message: 'Amount received is more than the total.' };
   }
 
   // A PT pack may run alongside a gym plan; a gym plan may not overlap another gym plan.
@@ -240,10 +224,7 @@ export function validateSale(
     if (clash) {
       return {
         field: 'startsOn',
-        message: tr(
-          `They already have a plan from ${formatDay(clash.startsOn)} to ${formatDay(clash.endsOn)}. Start the new plan after that.`,
-          `Inka ${formatDay(clash.startsOn)} se ${formatDay(clash.endsOn)} tak ka plan pehle se hai. Naya plan uske baad shuru karo.`,
-        ),
+        message: `They already have a plan from ${formatDay(clash.startsOn)} to ${formatDay(clash.endsOn)}. Start the new plan after that.`,
       };
     }
   }
@@ -251,10 +232,7 @@ export function validateSale(
   if (coversUntil && input.startsOn <= coversUntil) {
     return {
       field: 'startsOn',
-      message: tr(
-        `They're already covered until ${formatDay(coversUntil)}. Start the new plan after that.`,
-        `Inka plan ${formatDay(coversUntil)} tak chalu hai. Naya plan uske baad shuru karo.`,
-      ),
+      message: `They're already covered until ${formatDay(coversUntil)}. Start the new plan after that.`,
     };
   }
 

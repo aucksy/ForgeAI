@@ -1,6 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
-
-import { setCurrentLang } from '../../src/crm/i18n';
+import { describe, expect, it } from 'vitest';
 import {
   categoryLabel,
   categoryOptions,
@@ -30,8 +28,6 @@ function makeExpense(over: Partial<Expense> = {}): Expense {
     ...over,
   };
 }
-
-afterEach(() => setCurrentLang('en'));
 
 describe('monthSummary', () => {
   it('counts only standing receipts paid in the month, minus that month’s spend', () => {
@@ -127,15 +123,5 @@ describe('category labels', () => {
   it('has a label for every category, in both languages', () => {
     expect(categoryOptions().map((o) => o.value)).toEqual([...EXPENSE_CATEGORIES]);
     expect(categoryLabel('rent')).toBe('Rent');
-    setCurrentLang('hi');
-    expect(categoryOptions().map((o) => o.label)).toEqual([
-      'Kiraya',
-      'Tankhwah',
-      'Bijli',
-      'Machine / saamaan',
-      'Stock',
-      'Marammat',
-      'Kuch aur',
-    ]);
   });
 });

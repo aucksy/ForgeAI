@@ -2,6 +2,9 @@
   color-scheme: dark;
 }
 
+/* body and scrollbars follow the dark | light switch (src/theme.ts applyTheme). The fallbacks are
+   the dark colours, for the instant before the script runs. */
+
 * {
   box-sizing: border-box;
 }
@@ -14,8 +17,8 @@ body,
 
 body {
   margin: 0;
-  background: #07080c;
-  color: #f4f5f7;
+  background: var(--c-bg, #07080c);
+  color: var(--c-ink, #f4f5f7);
   font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -49,7 +52,7 @@ table {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--c-borderStrong, rgba(255, 255, 255, 0.14));
   border-radius: 999px;
 }
 

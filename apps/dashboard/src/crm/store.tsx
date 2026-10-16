@@ -32,8 +32,8 @@ import type {
 import { demoSnapshot } from './data/demo';
 import { emptySnapshot, LocalCrmData } from './data/local';
 import { todayISO, type DateISO } from './logic/dates';
+import { color } from '../theme';
 import { buildMemberView } from './logic/membership';
-import { tr } from './i18n';
 import type {
   Enquiry,
   EnquiryDraft,
@@ -164,7 +164,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       setSnapshot(await db.load());
       setError(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : tr('Could not load your gym.', 'Aapka gym load nahi hua.'));
+      setError(e instanceof Error ? e.message : 'Could not load your gym.');
     } finally {
       setLoading(false);
     }
@@ -319,12 +319,12 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       undoPtSession: async (membershipId, day) => void (await mutate((a) => a.undoPtSession(membershipId, day))),
       // Browser records only: an online gym is never wiped or filled with sample members.
       loadDemoGym: async () => {
-        if (!db.replaceAll) throw new Error(tr('An online gym can’t be replaced with the demo gym.', 'Online gym ki jagah demo gym nahi aa sakta.'));
+        if (!db.replaceAll) throw new Error('An online gym can’t be replaced with the demo gym.');
         db.replaceAll(demoSnapshot(today));
         await reload();
       },
       startEmptyGym: async (gymName) => {
-        if (!db.replaceAll) throw new Error(tr('An online gym can’t be erased from here.', 'Online gym yahan se mitaya nahi ja sakta.'));
+        if (!db.replaceAll) throw new Error('An online gym can’t be erased from here.');
         db.replaceAll(emptySnapshot(Date.now(), gymName));
         await reload();
       },
@@ -341,7 +341,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
 function Booting() {
   return (
     <div style={centered}>
-      <span>{tr('Loading your gym…', 'Aapka gym load ho raha hai…')}</span>
+      <span>{'Loading your gym…'}</span>
     </div>
   );
 }
@@ -350,10 +350,10 @@ function BootFailed({ message, onRetry }: { message: string | null; onRetry: () 
   return (
     <div style={centered}>
       <div style={{ display: 'grid', gap: 12, justifyItems: 'center' }}>
-        <strong style={{ color: '#F0716F' }}>{tr('Couldn’t open your gym', 'Aapka gym nahi khula')}</strong>
-        <span>{message ?? tr('Something went wrong reading your saved data.', 'Saved data padhne mein kuch gadbad hui.')}</span>
+        <strong style={{ color: color.criticalText }}>{'Couldn’t open your gym'}</strong>
+        <span>{message ?? 'Something went wrong reading your saved data.'}</span>
         <button type="button" onClick={onRetry} style={retryButton}>
-          {tr('Try again', 'Phir se try karo')}
+          {'Try again'}
         </button>
       </div>
     </div>
@@ -364,7 +364,7 @@ const centered: React.CSSProperties = {
   minHeight: '100vh',
   display: 'grid',
   placeItems: 'center',
-  color: '#A9AFBD',
+  color: color.inkSecondary,
   fontFamily: "'Manrope', system-ui, sans-serif",
   padding: 20,
   textAlign: 'center',
@@ -375,9 +375,9 @@ const retryButton: React.CSSProperties = {
   minHeight: 44,
   padding: '10px 18px',
   borderRadius: 999,
-  border: '1px solid rgba(255,255,255,0.14)',
+  border: `1px solid ${color.borderStrong}`,
   background: 'transparent',
-  color: '#F4F5F7',
+  color: color.ink,
   fontFamily: "'Manrope', system-ui, sans-serif",
   fontWeight: 700,
   cursor: 'pointer',

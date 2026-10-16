@@ -12,7 +12,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCan } from '../../auth/AuthProvider';
 import { useCrm } from '../../store';
 import { useShop } from '../../shop/ShopProvider';
-import { tr } from '../../i18n';
 import { formatDay, isValidDateISO, monthKey } from '../../logic/dates';
 import {
   categoryLabel,
@@ -75,13 +74,13 @@ export function ExpensesScreen() {
   const byCategory = useMemo(() => totalsByCategory(expenses, month), [expenses, month]);
 
   const isThisMonth = month === thisMonth;
-  const addButton = <Button onClick={() => setAdding(true)}>{tr('+ Add expense', '+ Kharcha jodo')}</Button>;
+  const addButton = <Button onClick={() => setAdding(true)}>{'+ Add expense'}</Button>;
 
   return (
     <>
       <PageHeader
-        title={tr('Expenses', 'Kharcha')}
-        subtitle={tr('What went out, and what the gym kept', 'Kitna kharcha hua, kitna munafa bacha')}
+        title={'Expenses'}
+        subtitle={'What went out, and what the gym kept'}
         actions={addButton}
       />
 
@@ -90,13 +89,13 @@ export function ExpensesScreen() {
       {/* Month picker: previous / this month / next. */}
       <Card pad={space.sm} style={{ marginBottom: space.lg }}>
         <div style={{ display: 'grid', gridTemplateColumns: `${TOUCH}px minmax(0, 1fr) ${TOUCH}px`, alignItems: 'center', gap: space.sm }}>
-          <MonthArrow label={tr('Previous month', 'Pichhla mahina')} onClick={() => setMonth((m) => shiftMonth(m, -1))}>
+          <MonthArrow label={'Previous month'} onClick={() => setMonth((m) => shiftMonth(m, -1))}>
             ‹
           </MonthArrow>
           <div style={{ textAlign: 'center', minWidth: 0 }}>
             <div style={{ fontFamily: font.display, fontSize: 17, fontWeight: 700, color: color.ink }}>{monthTitle(month)}</div>
             {isThisMonth ? (
-              <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{tr('This month', 'Is mahine')}</div>
+              <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{'This month'}</div>
             ) : (
               <button
                 type="button"
@@ -114,11 +113,11 @@ export function ExpensesScreen() {
                   padding: '0 12px',
                 }}
               >
-                {tr('Back to this month', 'Is mahine par jao')}
+                {'Back to this month'}
               </button>
             )}
           </div>
-          <MonthArrow label={tr('Next month', 'Agla mahina')} onClick={() => setMonth((m) => shiftMonth(m, 1))} disabled={month >= thisMonth}>
+          <MonthArrow label={'Next month'} onClick={() => setMonth((m) => shiftMonth(m, 1))} disabled={month >= thisMonth}>
             ›
           </MonthArrow>
         </div>
@@ -128,42 +127,39 @@ export function ExpensesScreen() {
         {/* Short figures (₹1.2L) so a big month never breaks across lines on a phone; the exact
             amount is on hover and read out by screen readers. */}
         <StatTile
-          label={tr('Collected', 'Collection')}
+          label={'Collected'}
           value={formatINRShort(summary.collectedP)}
           fullValue={formatINR(summary.collectedP)}
           tone="good"
           sub={
             summary.shopP > 0
-              ? tr(`Fees ${formatINRShort(summary.feesP)} + shop ${formatINRShort(summary.shopP)}`, `Fees ${formatINRShort(summary.feesP)} + shop ${formatINRShort(summary.shopP)}`)
+              ? `Fees ${formatINRShort(summary.feesP)} + shop ${formatINRShort(summary.shopP)}`
               : undefined
           }
         />
         <StatTile
-          label={tr('Expenses', 'Kharcha')}
+          label={'Expenses'}
           value={formatINRShort(summary.spentP)}
           fullValue={formatINR(summary.spentP)}
           tone={summary.spentP > 0 ? 'warn' : undefined}
         />
         <StatTile
-          label={tr('Profit', 'Munafa')}
+          label={'Profit'}
           value={formatINRShort(summary.profitP)}
           fullValue={formatINR(summary.profitP)}
           tone={summary.profitP < 0 ? 'critical' : 'accent'}
-          sub={summary.profitP < 0 ? tr('Spent more than collected', 'Collection se zyada kharcha hua') : undefined}
+          sub={summary.profitP < 0 ? 'Spent more than collected' : undefined}
         />
       </Grid>
 
       <div style={{ height: space.lg }} />
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{tr('Expenses this month', 'Is mahine ka kharcha')}</SectionTitle>
+        <SectionTitle>{'Expenses this month'}</SectionTitle>
         {rows.length === 0 ? (
           <EmptyState
-            title={tr('No expenses this month', 'Is mahine koi kharcha nahi likha')}
-            body={tr(
-              'Add rent, salaries, electricity and the rest to see what the gym really kept.',
-              'Kiraya, tankhwah, bijli sab jodo, tab asli munafa dikhega.',
-            )}
+            title={'No expenses this month'}
+            body={'Add rent, salaries, electricity and the rest to see what the gym really kept.'}
             action={addButton}
           />
         ) : (
@@ -177,7 +173,7 @@ export function ExpensesScreen() {
 
       {byCategory.length > 0 && (
         <Card>
-          <SectionTitle>{tr('By category', 'Kis cheez par kitna')}</SectionTitle>
+          <SectionTitle>{'By category'}</SectionTitle>
           <div style={{ display: 'grid', gap: space.sm }}>
             {byCategory.map((c) => (
               <div key={c.category}>
@@ -208,18 +204,18 @@ export function ExpensesScreen() {
           onClose={() => setAdding(false)}
           onAdded={(spentOn) => {
             setMonth(monthKey(spentOn));
-            flash(tr('Expense added.', 'Kharcha jud gaya.'));
+            flash('Expense added.');
           }}
         />
       )}
       {removing && (
         <Sheet
-          title={tr('Remove this expense?', 'Yeh kharcha hatayein?')}
+          title={'Remove this expense?'}
           onClose={() => setRemoving(null)}
           footer={
             <>
               <Button variant="ghost" onClick={() => setRemoving(null)}>
-                {tr('Keep it', 'Rehne do')}
+                {'Keep it'}
               </Button>
               <Button
                 tone="danger"
@@ -229,13 +225,13 @@ export function ExpensesScreen() {
                   setError(null);
                   try {
                     await removeExpense(target.id);
-                    flash(tr('Expense removed.', 'Kharcha hata diya.'));
+                    flash('Expense removed.');
                   } catch (e) {
-                    setError(e instanceof Error ? e.message : tr('Could not remove it. Try again.', 'Hata nahi paaye. Phir se try karo.'));
+                    setError(e instanceof Error ? e.message : 'Could not remove it. Try again.');
                   }
                 }}
               >
-                {tr('Remove', 'Hatao')}
+                {'Remove'}
               </Button>
             </>
           }
@@ -245,10 +241,7 @@ export function ExpensesScreen() {
               {formatINR(removing.amountP)} · {categoryLabel(removing.category)}
             </strong>{' '}
             ({formatDay(removing.spentOn)})
-            {tr(
-              ' will be taken out for good. It cannot be brought back — you would have to add it again.',
-              ' hamesha ke liye hat jayega. Wapas nahi aayega — dobara jodna padega.',
-            )}
+            {' will be taken out for good. It cannot be brought back — you would have to add it again.'}
           </p>
         </Sheet>
       )}
@@ -313,12 +306,9 @@ function ExpenseRow({ expense, first, onRemove }: { expense: Expense; first: boo
             variant="quiet"
             tone="danger"
             onClick={onRemove}
-            ariaLabel={tr(
-              `Remove ${categoryLabel(expense.category)} ${formatINR(expense.amountP)} on ${formatDay(expense.spentOn)}`,
-              `${formatDay(expense.spentOn)} ka ${categoryLabel(expense.category)} ${formatINR(expense.amountP)} hatao`,
-            )}
+            ariaLabel={`Remove ${categoryLabel(expense.category)} ${formatINR(expense.amountP)} on ${formatDay(expense.spentOn)}`}
           >
-            {tr('Remove', 'Hatao')}
+            {'Remove'}
           </Button>
         )}
       </Row>
@@ -341,13 +331,13 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
   const submit = async () => {
     setError(null);
     setAmountError(null);
-    if (amountText.trim() === '') return setAmountError(tr('Type how much was spent.', 'Kitna kharcha hua, likho.'));
+    if (amountText.trim() === '') return setAmountError('Type how much was spent.');
     const amountP = parseRupeeInput(amountText);
-    if (amountP === null) return setAmountError(tr('That isn’t a valid amount.', 'Yeh sahi rakam nahi hai.'));
-    if (amountP <= 0) return setAmountError(tr('Enter an amount greater than zero.', 'Zero se zyada rakam likho.'));
-    if (!isValidDateISO(spentOn)) return setError(tr('Enter the date of this expense.', 'Kharche ki tareekh likho.'));
-    if (spentOn < EARLIEST_DATE) return setError(tr('That date looks like a typo — check the year.', 'Tareekh galat lag rahi hai — saal check karo.'));
-    if (spentOn > today) return setError(tr('An expense can’t be dated in the future.', 'Aage ki tareekh ka kharcha nahi likh sakte.'));
+    if (amountP === null) return setAmountError('That isn’t a valid amount.');
+    if (amountP <= 0) return setAmountError('Enter an amount greater than zero.');
+    if (!isValidDateISO(spentOn)) return setError('Enter the date of this expense.');
+    if (spentOn < EARLIEST_DATE) return setError('That date looks like a typo — check the year.');
+    if (spentOn > today) return setError('An expense can’t be dated in the future.');
 
     setSaving(true);
     try {
@@ -355,7 +345,7 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
       onAdded(spentOn);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : tr('Could not save this expense.', 'Yeh kharcha save nahi hua.'));
+      setError(e instanceof Error ? e.message : 'Could not save this expense.');
     } finally {
       setSaving(false);
     }
@@ -363,22 +353,22 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
 
   return (
     <Sheet
-      title={tr('Add expense', 'Kharcha jodo')}
+      title={'Add expense'}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Rehne do')}
+            {'Cancel'}
           </Button>
           <Button onClick={submit} disabled={saving}>
-            {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save expense', 'Kharcha save karo')}
+            {saving ? 'Saving…' : 'Save expense'}
           </Button>
         </>
       }
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
       <TextField
-        label={tr('Amount', 'Kitne rupaye')}
+        label={'Amount'}
         value={amountText}
         onChange={(v) => {
           setAmountText(v);
@@ -391,17 +381,17 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
         error={amountError}
       />
       <SelectField
-        label={tr('What for', 'Kis cheez ka')}
+        label={'What for'}
         value={category}
         onChange={(v) => setCategory(v as ExpenseCategory)}
         options={categoryOptions()}
       />
-      <TextField label={tr('Date', 'Tareekh')} value={spentOn} onChange={setSpentOn} type="date" />
+      <TextField label={'Date'} value={spentOn} onChange={setSpentOn} type="date" />
       <TextField
-        label={tr('Note (optional)', 'Note (zaroori nahi)')}
+        label={'Note (optional)'}
         value={note}
         onChange={setNote}
-        placeholder={tr('October rent', 'October ka kiraya')}
+        placeholder={'October rent'}
       />
     </Sheet>
   );

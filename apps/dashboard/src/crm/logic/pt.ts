@@ -12,7 +12,6 @@
  * judged by them, so they never read as "No membership".
  */
 
-import { tr } from '../i18n';
 import { diffDays } from './dates';
 import type { DateISO, Membership, Plan } from '../types';
 
@@ -168,9 +167,9 @@ export function ptEndingMemberIds(memberships: readonly Membership[], today: Dat
 export function ptSummary(m: Pick<Membership, 'ptSessions' | 'ptLog' | 'trainer'>): string {
   const used = ptUsed(m);
   const total = ptTotal(m);
-  const head = tr(`PT: ${used} of ${total} sessions used`, `PT: ${total} mein se ${used} session ho gaye`);
+  const head = `PT: ${used} of ${total} sessions used`;
   const trainer = m.trainer?.trim();
-  return trainer ? `${head} · ${tr(`Trainer ${trainer}`, `Trainer ${trainer}`)}` : head;
+  return trainer ? `${head} · ${`Trainer ${trainer}`}` : head;
 }
 
 /**
@@ -186,9 +185,9 @@ export function ptExportCells(m: Pick<Membership, 'ptSessions' | 'ptLog' | 'trai
 export function ptPlanLine(plan: Pick<Plan, 'ptSessions' | 'trainer'>): string | null {
   if (!isPtPlan(plan)) return null;
   const n = plan.ptSessions as number;
-  const head = n === 1 ? tr('PT · 1 session', 'PT · 1 session') : tr(`PT · ${n} sessions`, `PT · ${n} session`);
+  const head = n === 1 ? 'PT · 1 session' : `PT · ${n} sessions`;
   const trainer = plan.trainer?.trim();
-  return trainer ? `${head} · ${tr(`Trainer ${trainer}`, `Trainer ${trainer}`)}` : head;
+  return trainer ? `${head} · ${`Trainer ${trainer}`}` : head;
 }
 
 /** Trim a typed trainer name; blank is none. At most 40 letters. */

@@ -26,7 +26,6 @@ import {
 } from 'react';
 
 import { color, font, gradients, radius, space } from '../../theme';
-import { tr } from '../i18n';
 
 /** Minimum comfortable touch target. Google and Apple both land near 44px. */
 export const TOUCH = 44;
@@ -404,7 +403,7 @@ export function Button({
    * control in the product.
    */
   ariaLabel?: string;
-  /** Let a long label (a member's name, Hinglish) wrap onto a second line instead of overflowing. */
+  /** Let a long label (a member's name) wrap onto a second line instead of overflowing. */
   wrap?: boolean;
 }) {
   const danger = tone === 'danger';
@@ -925,7 +924,7 @@ export function Sheet({
           <button
             type="button"
             onClick={onClose}
-            aria-label={tr('Close', 'Band karo')}
+            aria-label={'Close'}
             style={{
               appearance: 'none',
               background: 'transparent',
