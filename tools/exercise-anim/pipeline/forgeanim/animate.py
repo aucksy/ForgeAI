@@ -377,9 +377,27 @@ class Clip:
 
     def highlight(self):
         prim = self.spec.get("primary", []); sec = self.spec.get("secondary", [])
-        w = self.spec.get("highlight")   # research-based per-muscle strengths; falls back to primary/secondary
+        w = research_weights(self.spec.get("key")) or self.spec.get("highlight")   # research file wins
         MU.set_highlight(self.ch["body"], prim, sec, weights=w)
         MU.set_highlight(self.ch["shorts"], prim, sec, weights=w)
+
+
+TIER_GLOW = {"primary": 1.0, "secondary": 0.35, "stabiliser": 0.0, "deep": 0.0}   # research/FORMAT.md
+
+
+def research_weights(key):
+    """Muscle colours straight from research/<key>.json (tier -> glow), so the clip can never drift from the
+    research. None when the exercise has no research file yet."""
+    import os
+    p = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "research", f"{key}.json")
+    if not key or not os.path.exists(p):
+        return None
+    w = {}
+    for m in json.load(open(p, encoding="utf-8"))["muscles"]:
+        k, g = m.get("mask_key"), TIER_GLOW[m["tier"]]
+        if k and k != "none" and g > 0:
+            w[k] = max(w.get(k, 0.0), g)
+    return w or None
 
 
 def _fcurves(action):

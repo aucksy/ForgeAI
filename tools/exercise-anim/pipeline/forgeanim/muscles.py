@@ -10,7 +10,7 @@ import numpy as np
 MUSCLES = ["chest", "chest_upper", "chest_lower", "front_delts", "side_delts", "rear_delts", "lats", "upper_back", "traps", "lower_back",
            "biceps", "triceps", "forearms", "abs", "obliques", "glutes", "quads", "hamstrings", "adductors",
            "abductors", "calves"]
-SECONDARY_LEVEL = 0.5
+SECONDARY_LEVEL = 0.35   # helper muscles: clearly lighter than the main one (research/FORMAT.md)
 
 ARM = ("upperarm01", "upperarm02", "lowerarm01", "lowerarm02", "wrist", "finger", "metacarpal")
 SHOULDER = ("shoulder01", "clavicle")
@@ -107,10 +107,10 @@ def compute(P, N, G, LM):
     t_u, r_u, th_u, tp_u = limb_frame(Pm, Nm, S, E, out_arm)
     near_arm = 1 - smooth(r_u, 0.085, 0.12)
     upper = np.clip(armw + shw, 0, 1)
-    cap = window(t_u, -0.25, 0.42, 0.12) * near_arm * np.clip(upper + 0.3 * torw, 0, 1) * (1 - smooth(torw - upper, 0.0, 0.35))
+    cap = window(t_u, -0.25, 0.48, 0.12) * near_arm * np.clip(upper + 0.3 * torw, 0, 1) * (1 - smooth(torw - upper, 0.0, 0.35))   # deltoid reaches ~49 % down the upper arm (Huri 2014)
     # deltoid = three heads from collarbone / acromion / scapular spine converging on the deltoid tuberosity
     # (~40 % down the upper arm): each head's angular band narrows and drifts toward the outside as it descends
-    tt = np.clip(t_u / 0.42, 0, 1)
+    tt = np.clip(t_u / 0.48, 0, 1)
     def head(c0, c1, w0, w1):
         c = c0 + (c1 - c0) * tt; w = w0 + (w1 - w0) * tt
         return ang_window(th_u, c - w, c + w, 18) * ang_window(tp_u, c - w - 10, c + w + 10, 20)
@@ -135,9 +135,10 @@ def compute(P, N, G, LM):
     top = clav_z - 0.008 + 0.012 * fx
     bottom = (nip_z - 0.062) + 0.115 * fx ** 1.7
     xmax = 0.145 + (0.19 - 0.145) * np.clip((top - z) / max(1e-3, (clav_z - nip_z)), 0, 1)
-    m["chest"] = torso * smooth(-ny, 0.15, 0.45) * window(x, 0.008, 1, 0.01) * (1 - smooth(x, xmax - 0.012, xmax + 0.012))         * smooth(z, bottom - 0.012, bottom + 0.012) * (1 - smooth(z, top - 0.012, top + 0.006))
-    split = top - (top - bottom) * 0.38   # top third of the fan at every x (clavicular head reaches the armpit)
-    up = smooth(z, split - 0.02, split + 0.02)
+    pec_skin = np.clip(torw + shw, 0, 1) * (1 - smooth(armw, 0.25, 0.6))   # near the collarbone the skin is half "shoulder" group
+    m["chest"] = pec_skin * smooth(-ny, 0.15, 0.45) * window(x, 0.008, 1, 0.01) * (1 - smooth(x, xmax - 0.012, xmax + 0.012))         * smooth(z, bottom - 0.012, bottom + 0.012) * (1 - smooth(z, top - 0.012, top + 0.006))
+    split = top - (top - bottom) * 0.52   # clavicular head ~ upper 40 % of the fan by area (0.38 gave 15 %, "upper chest not visible")
+    up = smooth(z, split - 0.01, split + 0.01)   # tight seam: a wide fade left the thin upper head at ~0.8 max (owner: "upper chest not visible")
     m["chest_upper"] = m["chest"] * up
     m["chest_lower"] = m["chest"] * (1 - up)
     m["abs"] = torso * front * window(x, -1, 0.062, 0.025) * window(z, navel_z - 0.075, nip_z - 0.075, 0.03)
@@ -180,7 +181,13 @@ def _smooth_on_mesh(me, values, iters=4):
             acc = np.bincount(e[:, 0], weights=core[e[:, 1]], minlength=n) + np.bincount(e[:, 1], weights=core[e[:, 0]], minlength=n)
             core = 0.5 * core + 0.5 * acc / deg
         # muscles fill to their borders (a light 15 % fade toward the rim), edges softened by 4 smoothing passes
-        out[k] = np.clip(m * (0.85 + 0.15 * smooth(core, 0.3, 0.95)), 0, 1).astype(np.float32)
+        m = m * (0.85 + 0.15 * smooth(core, 0.3, 0.95))
+        # thin muscles (upper chest, delt heads) never reach 1 after smoothing; rescale so every muscle's own
+        # strong core (98th percentile of its lit skin) shows at full strength.
+        lit = m[m > 0.05]
+        if lit.size:
+            m = m / max(0.3, min(1.0, float(np.percentile(lit, 98))))
+        out[k] = np.clip(m, 0, 1).astype(np.float32)
     return out
 
 

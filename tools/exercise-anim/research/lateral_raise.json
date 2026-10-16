@@ -1,0 +1,893 @@
+{
+  "format": "forgeai-exercise-research v1",
+  "exercise": {
+    "key": "lateral_raise",
+    "name": "Lateral Raise",
+    "equipment": "dumbbell",
+    "library_primary": [
+      "side_delts"
+    ],
+    "library_secondary": [
+      "traps"
+    ],
+    "status": "draft",
+    "version": null,
+    "researched_on": "2026-10-16",
+    "one_line_summary": "Standing, arms rise out to the sides to shoulder height (90 deg) a little in front of the body, elbows softly bent and held, palms down, no shrug, no swing. Side delt is the target; front delt, rear delt and upper traps clearly help.",
+    "evidence_grade": "C"
+  },
+  "setup": [
+    {
+      "item": "stance",
+      "target": "Stand tall, feet about hip-width (or a small split stance), knees soft, not locked.",
+      "tolerance": "feet 0.8-1.3x hip width; knee bend 0-15 deg",
+      "why": "A stable base stops the body from swinging the weight up.",
+      "source_ids": [
+        "S18",
+        "S5"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "grip",
+      "target": "One dumbbell in each hand, full grip, thumb wrapped round the handle.",
+      "tolerance": "none",
+      "why": "Secure hold; the hand stays still on the handle the whole rep.",
+      "source_ids": [
+        "S18"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "start position of the arms",
+      "target": "Arms hang at the sides, dumbbells beside or just in front of the outer thighs, palms facing the body.",
+      "tolerance": "upper arm 0-15 deg out from the body side; up to ~20 deg in front",
+      "why": "Studies start from the arm hanging by the body. ACE starts beside the thighs; ExRx starts just in front of the thighs.",
+      "source_ids": [
+        "S17",
+        "S18",
+        "S19",
+        "S5"
+      ],
+      "grade": "A"
+    },
+    {
+      "item": "trunk",
+      "target": "Upright, or a very slight forward lean. Core braced. Lower back not arched.",
+      "tolerance": "0-10 deg forward lean; must not change more than 3 deg during the rep",
+      "why": "ACE says upright and no back arch. ExRx allows a slight forward bend. Leaning back or rocking turns it into a swing.",
+      "source_ids": [
+        "S18",
+        "S19"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "shoulder blades",
+      "target": "Set down (not shrugged) before the first rep and kept down.",
+      "tolerance": "visible shoulder lift at the top no more than a few degrees (see movement row: collarbone lift)",
+      "why": "ACE: keep the shoulders pulled down and back, do not shrug.",
+      "source_ids": [
+        "S18"
+      ],
+      "grade": "C"
+    },
+    {
+      "item": "head",
+      "target": "Neutral, in line with the spine, eyes forward.",
+      "tolerance": "+-10 deg",
+      "why": "ACE cue. A jutting head usually comes with a shrug.",
+      "source_ids": [
+        "S18"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "joint": "shoulder (raise)",
+      "measure": "elev: upper-arm angle out from the side of the trunk. 0 deg = hanging down, 90 deg = level with the floor.",
+      "start": "5-15 deg (arm hanging, dumbbell clear of the thigh)",
+      "end": "90 deg (upper arm level with the floor)",
+      "start_num": 8,
+      "end_num": 90,
+      "path": "Smooth rise, same path up and down. Stop at shoulder height; do not go higher.",
+      "tolerance": "top 85-95 deg; bottom 0-15 deg",
+      "source_ids": [
+        "S1",
+        "S2",
+        "S5",
+        "S17",
+        "S18",
+        "S19"
+      ],
+      "grade": "A"
+    },
+    {
+      "joint": "shoulder (plane)",
+      "measure": "plane: how far in front of side-on the arm travels. 0 deg = straight out to the side, 90 deg = straight forward.",
+      "start": "20 deg",
+      "end": "20 deg",
+      "start_num": 20,
+      "end_num": 20,
+      "path": "Held the same all rep. The arms go out to the sides and a little forward, never behind the body line. Evidence: The EMG studies used straight side-on (0 deg: Coratella, Larsen). The true shoulder-blade plane is 30 deg (Reinold) to 40 deg (Ludewig) in front. Coaches (ExRx) say elbows slightly forward. 15-25 deg is a coaching middle ground, not a measured best.",
+      "tolerance": "0-30 deg; must not drift more than 10 deg during the rep; never below 0 (behind the body)",
+      "source_ids": [
+        "S2",
+        "S17",
+        "S6",
+        "S12",
+        "S19"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "elbow",
+      "measure": "elbow bend: 0 deg = straight.",
+      "start": "15 deg",
+      "end": "15 deg",
+      "start_num": 15,
+      "end_num": 15,
+      "path": "Fixed soft bend. It must not bend more on the way up or straighten on the way down. Evidence: ExRx: 10-30 deg held. Coratella and Larsen used an almost straight elbow; Coratella found more side-delt activity with a straight elbow than with a 90 deg bent elbow.",
+      "tolerance": "10-30 deg; change within one rep no more than 5 deg",
+      "source_ids": [
+        "S19",
+        "S18",
+        "S2"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "upper-arm roll (twist)",
+      "measure": "turn of the upper arm about its own long axis. 0 = neutral: palm faces the body at the bottom and faces the floor at the top, thumb pointing forward. + = turned out (thumb up), - = turned in (thumb down, 'pouring').",
+      "start": "0 deg (palms facing the thighs)",
+      "end": "0 to +15 deg (palms down, front edge of the dumbbell level or slightly up)",
+      "start_num": 0,
+      "end_num": 5,
+      "path": "Stays near neutral. ACE allows a small turn so the front end of the dumbbell tips slightly up after about 60-70 deg. Never turned in (thumb below little finger). Evidence: Thumb-down raises rear delt and upper trap EMG and tips the shoulder blade forward, which narrows the space under the acromion (Thigpen). Thumb-up shifts the work to the front delt (anterior ~80% vs medial ~48% in Coratella's thumbs-up raise).",
+      "tolerance": "-5 to +15 deg at every frame",
+      "source_ids": [
+        "S2",
+        "S18",
+        "S15",
+        "S6"
+      ],
+      "grade": "A"
+    },
+    {
+      "joint": "wrist",
+      "measure": "wrist bend: 0 = hand in line with the forearm.",
+      "start": "0 deg",
+      "end": "0 deg",
+      "start_num": 0,
+      "end_num": 0,
+      "path": "Held straight. No curling up or dropping of the hand. No forearm twist.",
+      "tolerance": "+-10 deg; forearm twist change within one rep no more than 10 deg",
+      "source_ids": [
+        "S2",
+        "S18"
+      ],
+      "grade": "A"
+    },
+    {
+      "joint": "hand height vs elbow at the top",
+      "measure": "vertical gap, hand below elbow is negative.",
+      "start": "hand below elbow (arm hanging)",
+      "end": "0 to -5 cm (hand level with or a little below the elbow)",
+      "start_num": null,
+      "end_num": -3,
+      "path": "The elbow leads; the hand never rises above the elbow. Evidence: ExRx: elbows at or above the wrists; if the elbows drop below the wrists the front delt takes over. ACE: lead with the elbows.",
+      "tolerance": "-8 to 0 cm at the top",
+      "source_ids": [
+        "S19",
+        "S18"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "shoulder blade (upward rotation)",
+      "measure": "upward turn of the shoulder blade on the rib cage, added on top of its resting angle.",
+      "start": "0 deg added (rest)",
+      "end": "about +25 to +33 deg added at 90 deg arm raise",
+      "start_num": 0,
+      "end_num": 29,
+      "path": "Rises steadily with the arm, about 1 deg of shoulder blade for every 2 deg of arm (Ludewig 2.1:1 side-on, 2.2:1 shoulder-blade plane; McClure 1.7:1; Inman 2:1). Evidence: Derived from the measured arm-to-shoulder-blade ratios in unloaded arm raising. No study measured it in a dumbbell lateral raise. Ludewig: total shoulder-blade upward rotation rose from ~11 deg to ~50 deg over the full overhead raise.",
+      "tolerance": "+20 to +35 deg at the top, if the rig has a shoulder-blade bone",
+      "source_ids": [
+        "S12",
+        "S13",
+        "S14"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "collarbone lift (shrug)",
+      "measure": "clavicle: rise of the outer end of the collarbone, in degrees.",
+      "start": "0 deg",
+      "end": "about 3-6 deg",
+      "start_num": 0,
+      "end_num": 5,
+      "path": "Small, natural rise that follows the arm. No active shrug toward the ears. Evidence: Ludewig: the collarbone rose only about 6 deg on average over the whole arm raise to overhead, so at 90 deg it should be less than that.",
+      "tolerance": "0-7 deg at the top",
+      "source_ids": [
+        "S12",
+        "S18"
+      ],
+      "grade": "B"
+    },
+    {
+      "joint": "trunk",
+      "measure": "trunk lean from vertical; + = forward.",
+      "start": "0-10 deg",
+      "end": "same as start",
+      "start_num": 5,
+      "end_num": 5,
+      "path": "Still. No rocking back to throw the weights up.",
+      "tolerance": "change within one rep no more than 3 deg",
+      "source_ids": [
+        "S18",
+        "S19",
+        "S5"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "hips, knees, feet",
+      "measure": "lower body joint angles.",
+      "start": "knees soft 0-15 deg, hips straight",
+      "end": "unchanged",
+      "start_num": null,
+      "end_num": null,
+      "path": "Still. No knee dip to drive the weight.",
+      "tolerance": "knee change within one rep no more than 5 deg; feet never move",
+      "source_ids": [
+        "S18",
+        "S5"
+      ],
+      "grade": "C"
+    },
+    {
+      "joint": "head and neck",
+      "measure": "head tilt and forward poke.",
+      "start": "neutral",
+      "end": "neutral",
+      "start_num": 0,
+      "end_num": 0,
+      "path": "Still.",
+      "tolerance": "+-10 deg",
+      "source_ids": [
+        "S18"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "muscle": "Side delt",
+      "anatomy": "Deltoideus, pars acromialis (middle / lateral head)",
+      "mask_key": "side_delts",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "Highest of the three delt heads in every study: 30.3% MVIC (seated, 60% 1RM, S1); ~55% (seated, neutral turn, 8RM, S2); 54.4% (10RM, S3); 77% (bent-arm raise, 70% 1RM, S4); 20.6-20.7% (standing, 80% 1RM, normalised to a 1RM trial, S5); 52% fine-wire, full-can raise to 90 deg (S6).",
+      "role": "Main mover. Lifts the arm out to the side. It is what the exercise is for.",
+      "surface": "The rounded outer cap of the shoulder. Starts on the outer edge of the acromion (the bony shoulder tip). Runs straight down the outer upper arm and narrows to a V on the deltoid tuberosity, about 45-50% of the way from the shoulder tip to the elbow. Front edge meets the front delt roughly in line with the front of the acromion; back edge meets the rear delt roughly in line with the back corner of the acromion.",
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S20",
+        "S21",
+        "S17"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Rear delt",
+      "anatomy": "Deltoideus, pars spinalis (posterior head)",
+      "mask_key": "rear_delts",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "24.0% MVIC = 79% of side delt (S1); ~52% = 95% (neutral turn, S2); ~34% from figure = ~63% (S3); 33% = 43% (S4); 10.9% = 53% (standing, S5); 38% vs 52% fine-wire = 73% (S6). Thumb-down turn raises it to ~85% (S2).",
+      "role": "Helps lift the arm and steadies the back of the joint. Clears the 40%-of-primary bar in all six studies, so it is secondary, not just a stabiliser.",
+      "surface": "Back of the shoulder cap. From the lower edge of the spine of the shoulder blade, sweeping forward and down over the back of the shoulder to the same V on the outer upper arm.",
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S21"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Front delt",
+      "anatomy": "Deltoideus, pars clavicularis (anterior head)",
+      "mask_key": "front_delts",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "21.2% MVIC = 70% of side delt (S1); ~36% = 65% (neutral turn, S2); ~37% from figure = ~68% (S3); 32% = 42% (S4); 16.9% = 82% (standing, S5). Thumb-up turn raises it to ~80%, above the side delt (S2).",
+      "role": "Helps lift the arm, more so the further forward the arm travels and the more the thumb turns up. Clears the 40% bar in all five studies, so it is secondary. Must stay clearly dimmer than the side delt.",
+      "surface": "Front of the shoulder cap. From the front edge of the outer third of the collarbone, down the front of the shoulder to the same V on the outer upper arm.",
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S21"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Upper traps",
+      "anatomy": "Trapezius, pars descendens (upper fibres)",
+      "mask_key": "traps",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "97 +-6% MVC in a dumbbell lateral raise (women with neck-muscle pain, 3-10 kg, S7). 72 +-19% MVIC in shoulder-blade-plane raise below 80 deg and 79 +-19% above 120 deg (S8, values as cited in S9). Higher with the thumb-down turn than with neutral (effect size 3.86, S2).",
+      "role": "Turns the shoulder blade upward so the arm can reach 90 deg, and holds it. It works even with no shrug. A shrug, a thumb-down turn or going above shoulder height makes it work harder. The app library already lists it as secondary.",
+      "surface": "The sloping ridge from the base of the skull and the back of the neck out to the outer collarbone and acromion (the neck-to-shoulder-tip slope). Stops at the level of the collarbone; does not cover the mid back.",
+      "source_ids": [
+        "S7",
+        "S8",
+        "S9",
+        "S2",
+        "S22",
+        "S12"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Supraspinatus",
+      "anatomy": "Supraspinatus (rotator cuff)",
+      "mask_key": "none",
+      "tier": "deep",
+      "glow": 0,
+      "emg": "About 62-67% MVIC, fine-wire, raise to 90 deg in the shoulder-blade plane; no difference between thumb-up and thumb-down (S6). It is the first muscle to switch on, 0.10 s before the arm moves (S10).",
+      "role": "Starts the raise and holds the ball of the joint in the socket. Works hard but lies under the trapezius and acromion, so it is never lit.",
+      "surface": "Hidden. In the hollow above the spine of the shoulder blade, under the upper traps.",
+      "source_ids": [
+        "S6",
+        "S10"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Infraspinatus",
+      "anatomy": "Infraspinatus (rotator cuff)",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Measured in a dumbbell lateral raise (S23) but per-muscle values are not in the abstract. No other lateral-raise number found.",
+      "role": "Holds the ball of the joint down and back while the delts lift. Stabiliser, not lit.",
+      "surface": "Back of the shoulder blade below its spine, partly under the rear delt and traps.",
+      "source_ids": [
+        "S23",
+        "S10"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Serratus anterior",
+      "anatomy": "Serratus anterior",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Standing shoulder-blade-plane raise: ~43% MVIC at 1.8 kg and up to ~80% at 4.1 kg (range went to overhead, S11). Highest when the arm goes above 120 deg (S8). No value for a raise stopped at 90 deg.",
+      "role": "Turns the shoulder blade upward with the traps and keeps it flat on the ribs. Moderate below 90 deg. Stabiliser, not lit (no mask, and the area is under the raised arm).",
+      "surface": "Side of the rib cage under the armpit, finger-like slips over ribs 1-8.",
+      "source_ids": [
+        "S11",
+        "S8"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Middle traps",
+      "anatomy": "Trapezius, pars transversa",
+      "mask_key": "upper_back",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Switches on before the arm moves (0.02 s early, S10). No %MVIC found for a lateral raise. ExRx lists it as a helper.",
+      "role": "Holds the shoulder blade back and helps it turn upward. Stabiliser, not lit, so the mid back stays grey.",
+      "surface": "Between the shoulder blades, from the upper back spine to the acromion and spine of the shoulder blade.",
+      "source_ids": [
+        "S10",
+        "S19",
+        "S22"
+      ],
+      "grade": "C"
+    },
+    {
+      "muscle": "Lower traps",
+      "anatomy": "Trapezius, pars ascendens",
+      "mask_key": "upper_back",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "50 +-21% MVIC in shoulder-blade-plane raise below 80 deg (S8, as cited in S9). Up to ~51% in a standing raise to overhead with 4.1 kg (S11).",
+      "role": "Helps turn the shoulder blade upward and keeps it from riding up. Stabiliser; lighting the mid back would mislead the viewer, and the secondary slots are full.",
+      "surface": "Lower middle back, a triangle from the mid-back spine up to the inner end of the spine of the shoulder blade.",
+      "source_ids": [
+        "S8",
+        "S9",
+        "S11",
+        "S19",
+        "S22"
+      ],
+      "grade": "B"
+    },
+    {
+      "muscle": "Triceps",
+      "anatomy": "Triceps brachii, lateral head",
+      "mask_key": "triceps",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Measured in all raise variants; highest with the thumb-down turn and with a bent elbow (S2). Values only as effect sizes.",
+      "role": "Holds the elbow angle fixed. Not lit.",
+      "surface": "Back of the upper arm.",
+      "source_ids": [
+        "S2"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Forearm / wrist extensors",
+      "anatomy": "Extensor carpi radialis, extensor carpi ulnaris, finger flexors (grip)",
+      "mask_key": "forearms",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "No lateral-raise EMG found.",
+      "role": "Hold the wrist straight and grip the dumbbell. Not lit.",
+      "surface": "Forearm.",
+      "source_ids": [
+        "S19"
+      ],
+      "grade": "D"
+    },
+    {
+      "muscle": "Upper chest",
+      "anatomy": "Pectoralis major, clavicular head",
+      "mask_key": "chest_upper",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "Much lower in every lateral raise variant than in the front raise (effect sizes 21-34, S2).",
+      "role": "Barely involved. Listed only so it is not lit by mistake.",
+      "surface": "Upper chest below the collarbone.",
+      "source_ids": [
+        "S2"
+      ],
+      "grade": "A"
+    },
+    {
+      "muscle": "Core",
+      "anatomy": "Rectus abdominis, obliques, erector spinae",
+      "mask_key": "abs",
+      "tier": "stabiliser",
+      "glow": 0,
+      "emg": "No lateral-raise EMG found.",
+      "role": "Keeps the trunk still so the weights are not swung up. Not lit.",
+      "surface": "Front, sides and low back of the trunk.",
+      "source_ids": [
+        "S18"
+      ],
+      "grade": "C"
+    }
+  ],
+  "tempo": {
+    "up_s": 2.0,
+    "hold_top_s": 0.5,
+    "down_s": 2.0,
+    "pause_bottom_s": 0.5,
+    "loop_s": 5.0,
+    "source_ids": [
+      "S2",
+      "S5",
+      "S3",
+      "S1",
+      "S17"
+    ]
+  },
+  "mistakes": [
+    {
+      "mistake": "Swinging the weights up",
+      "what_it_looks_like": "Knees dip or the trunk rocks back, then the arms fly up.",
+      "why_it_matters": "Momentum does the lift, not the side delt; the lower back arches.",
+      "source_ids": [
+        "S18",
+        "S19"
+      ]
+    },
+    {
+      "mistake": "Shrugging",
+      "what_it_looks_like": "Shoulders ride up toward the ears as the arms rise.",
+      "why_it_matters": "Shifts work to the upper traps. ACE says keep the shoulders down.",
+      "source_ids": [
+        "S18",
+        "S12"
+      ]
+    },
+    {
+      "mistake": "Thumb-down 'pour'",
+      "what_it_looks_like": "The little-finger end of the dumbbell is higher than the thumb end at the top.",
+      "why_it_matters": "Tips the shoulder blade forward and turns it in, which narrows the space under the acromion. Raises rear delt and upper trap work.",
+      "source_ids": [
+        "S15",
+        "S2",
+        "S6"
+      ]
+    },
+    {
+      "mistake": "Turning it into a front raise",
+      "what_it_looks_like": "Thumbs turned well up, or the arms travel far forward of the body.",
+      "why_it_matters": "Front delt becomes the main worker (thumbs-up raise: front ~80% vs side ~48%).",
+      "source_ids": [
+        "S2",
+        "S19"
+      ]
+    },
+    {
+      "mistake": "Hands above the elbows",
+      "what_it_looks_like": "Elbows drop and the hands lead at the top.",
+      "why_it_matters": "ExRx: when the elbows drop below the wrists, the front delt takes over.",
+      "source_ids": [
+        "S19",
+        "S18"
+      ]
+    },
+    {
+      "mistake": "Elbow angle changing",
+      "what_it_looks_like": "Elbows bend more on the way up (curl-like) or lock straight on the way down.",
+      "why_it_matters": "Changes the lever, so the load on the delt changes mid-rep. The bend should be fixed.",
+      "source_ids": [
+        "S19",
+        "S2"
+      ]
+    },
+    {
+      "mistake": "Raising too high",
+      "what_it_looks_like": "Arms go clearly above shoulder height.",
+      "why_it_matters": "All guides stop at shoulder height. Upper-trap work rises above it, and the gap under the acromion gets smaller as the arm goes higher.",
+      "source_ids": [
+        "S18",
+        "S19",
+        "S8",
+        "S16"
+      ]
+    },
+    {
+      "mistake": "Dropping the weights",
+      "what_it_looks_like": "The way down is much faster than the way up.",
+      "why_it_matters": "Loses the lowering half of the work. ACE: lower gently.",
+      "source_ids": [
+        "S18",
+        "S2"
+      ]
+    },
+    {
+      "mistake": "Bent wrists",
+      "what_it_looks_like": "Hand curled up or drooping at the wrist.",
+      "why_it_matters": "ACE: keep the wrists neutral.",
+      "source_ids": [
+        "S18",
+        "S2"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "citation": "Campos YAC, Vianna JM, Guimaraes MP, et al. 2020. Different shoulder exercises affect the activation of deltoid portions in resistance-trained individuals. J Hum Kinet 75:5-14.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677",
+      "type": "emg",
+      "what_it_gave": "Seated lateral raise to 90 deg, 60% 1RM, 2 s down / 1 s up: side 30.3, rear 24.0, front 21.2 % MVIC. n=13 trained men."
+    },
+    {
+      "id": "S2",
+      "citation": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E. 2020. An electromyographic analysis of lateral raise variations and frontal raise in competitive bodybuilders. Int J Environ Res Public Health 17(17):6015.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+      "type": "emg",
+      "what_it_gave": "Seated, side-on raise to 90 deg, near-straight elbow, wrist straight, 2-0.5-2-0.5 s tempo. Thumbs-forward: side ~55, rear ~52, front ~36. Thumbs-up: front ~80. Thumbs-down: rear ~85, upper traps and triceps highest. Straight elbow beats bent elbow for side delt. n=10."
+    },
+    {
+      "id": "S3",
+      "citation": "Botton CE, Wilhelm EN, Ughini CC, Pinto RS, Lima CS. 2013. Electromyographical analysis of the deltoid between different strength training exercises. Medicina Sportiva 17(2):67-71.",
+      "url": "http://www.medicinasportiva.pl/new/pliki/ms_2013_02_03_Botton.pdf",
+      "type": "emg",
+      "what_it_gave": "Free-weight lateral raise, 10RM, 2:2 tempo: side 54.4 +-16.3 % MVIC; front ~37 and rear ~34 read from the figure. n=8."
+    },
+    {
+      "id": "S4",
+      "citation": "Sweeney S, Porcari JP, Camic C, Kovacs A, Foster C. 2014. Shoulders above the rest? ACE-sponsored research (ACE ProSource, Sept 2014); thesis: Sweeney SP 2014, Electromyographic analysis of the deltoid muscle during various shoulder exercises, Univ. Wisconsin-La Crosse.",
+      "url": "https://www.acefitness.org/certifiednews/images/article/pdfs/ACEShoulderStudy.pdf",
+      "type": "emg",
+      "what_it_gave": "Bent-arm lateral raise, 70% 1RM: side 77, rear 33, front 32 % MVC. n=16. Elbow angle not stated in the summary."
+    },
+    {
+      "id": "S5",
+      "citation": "Demirtas B, Cakir O, Cetin O, Cilli M. 2023. The effects of handgrip and range of motion variations on muscle activity in different deltoid exercises. Kinesiologia Slovenica 29(1):73-87.",
+      "url": "https://journals.uni-lj.si/kinsi/article/view/11974",
+      "type": "emg",
+      "what_it_gave": "Only STANDING dumbbell lateral raise found. Raise to 90 deg, slight elbow bend, 2-0.5-2 s tempo, 80% 1RM: side 20.6-20.7, front 16.9-19.4, rear 10.4-10.9 (concentric, % of 1RM-trial EMG). n=14."
+    },
+    {
+      "id": "S6",
+      "citation": "Reinold MM, Macrina LC, Wilk KE, et al. 2007. Electromyographic analysis of the supraspinatus and deltoid muscles during 3 common rehabilitation exercises. J Athl Train 42(4):464-469.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2140071/",
+      "type": "emg",
+      "what_it_gave": "Fine-wire EMG, standing raise 0-90 deg in the shoulder-blade plane (30 deg in front). Full can: middle delt 52, rear 38 % MVIC. Empty can: 77 and 54. Supraspinatus ~62-67% in all, no difference. Shoulder-blade plane defined as 30 deg forward."
+    },
+    {
+      "id": "S7",
+      "citation": "Andersen LL, Kjaer M, Andersen CH, et al. 2008. Muscle activation during selected strength exercises in women with chronic neck muscle pain. Phys Ther 88(6):703-711.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18339796/",
+      "type": "emg",
+      "what_it_gave": "Trapezius 97 +-6% MVC in the dumbbell lateral raise (3-10 kg), nearly as high as the shrug (102%). n=12 women with trapezius myalgia."
+    },
+    {
+      "id": "S8",
+      "citation": "Ekstrom RA, Donatelli RA, Soderberg GL. 2003. Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. J Orthop Sports Phys Ther 33(5):247-258.",
+      "url": "https://doi.org/10.2519/jospt.2003.33.5.247",
+      "type": "emg",
+      "what_it_gave": "Shoulder-blade-plane raise below 80 deg: upper trap 72 +-19, lower trap 50 +-21 % MVIC (as cited by S9). Above 120 deg: upper trap 79 +-19 (table text via ResearchGate; full text not opened). Serratus highest above 120 deg."
+    },
+    {
+      "id": "S9",
+      "citation": "McCabe RA, Orishimo KF, McHugh MP, Nicholas SJ. 2007. Surface electromyographic analysis of the lower trapezius muscle during exercises performed below ninety degrees of shoulder elevation in healthy subjects. N Am J Sports Phys Ther 2(1):34-43.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2953285/",
+      "type": "review",
+      "what_it_gave": "Source of the Ekstrom below-80 deg numbers used here."
+    },
+    {
+      "id": "S10",
+      "citation": "Wickham J, Pizzari T, Stansfeld K, Burnside A, Watson L. 2010. Quantifying 'normal' shoulder muscle activity during abduction. J Electromyogr Kinesiol 20(2):212-222.",
+      "url": "https://doi.org/10.1016/j.jelekin.2009.06.004",
+      "type": "emg",
+      "what_it_gave": "15 muscles, side-on raise 0-166 deg with a light dumbbell. Supraspinatus fires first (0.102 s before movement), then middle trap (0.019 s) and middle delt (0.014 s); prime movers supraspinatus and middle delt show the highest %MVC. Abstract only."
+    },
+    {
+      "id": "S11",
+      "citation": "Tsuruike M, Ellenbecker TS. 2019. Scapular muscle electromyographic activity during abduction exercises in the scapular plane in three positions. Int J Sports Phys Ther 14(6):935-944.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6878867/",
+      "type": "emg",
+      "what_it_gave": "Standing shoulder-blade-plane raise to overhead: serratus ~43% (1.8 kg) to ~80% MVIC (4.1 kg); lower trap up to ~51%."
+    },
+    {
+      "id": "S12",
+      "citation": "Ludewig PM, Phadke V, Braman JP, et al. 2009. Motion of the shoulder complex during multiplanar humeral elevation. J Bone Joint Surg Am 91(2):378-389.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2657311",
+      "type": "biomechanics",
+      "what_it_gave": "Bone-pin study. Arm-to-shoulder-blade ratio 2.1:1 side-on, 2.2:1 shoulder-blade plane. Shoulder-blade upward rotation ~11 to ~50 deg over full raise. Collarbone rises only ~6 deg, pulls back ~16 deg. Upper arm turns out 10-51 deg during raising. Shoulder-blade plane taken as 40 deg forward."
+    },
+    {
+      "id": "S13",
+      "citation": "McClure PW, Michener LA, Sennett BJ, Karduna AR. 2001. Direct 3-dimensional measurement of scapular kinematics during dynamic movements in vivo. J Shoulder Elbow Surg 10(3):269-277.",
+      "url": "https://doi.org/10.1067/mse.2001.112954",
+      "type": "biomechanics",
+      "what_it_gave": "Bone-pin study. Shoulder blade turns up 50 deg over a full raise; arm-to-shoulder-blade ratio 1.7:1."
+    },
+    {
+      "id": "S14",
+      "citation": "Inman VT, Saunders JB, Abbott LC. 1944. Observations on the function of the shoulder joint. J Bone Joint Surg 26(1):1-30.",
+      "url": null,
+      "type": "biomechanics",
+      "what_it_gave": "Classic 2:1 arm-to-shoulder-blade rhythm. Not re-read for this file; cited for the ratio only."
+    },
+    {
+      "id": "S15",
+      "citation": "Thigpen CA, Padua DA, Morgan N, Kreps C, Karas SG. 2006. Scapular kinematics during supraspinatus rehabilitation exercise: a comparison of full-can versus empty-can techniques. Am J Sports Med 34(4):644-652.",
+      "url": "https://doi.org/10.1177/0363546505281797",
+      "type": "biomechanics",
+      "what_it_gave": "Thumb-down raise tips the shoulder blade forward and turns it in at 30, 60 and 90 deg, shrinking the space the supraspinatus tendon passes through. Upward rotation the same."
+    },
+    {
+      "id": "S16",
+      "citation": "Lawrence RL, Braman JP, Ludewig PM. 2020. Shoulder kinematics impact subacromial proximities: a review of the literature. Braz J Phys Ther 24(3):219-230.",
+      "url": "https://doi.org/10.1016/j.bjpt.2019.07.009",
+      "type": "review",
+      "what_it_gave": "Arm height is the factor that most consistently changes the space under the acromion; plane matters less; effect of arm twist is unclear."
+    },
+    {
+      "id": "S17",
+      "citation": "Larsen S, Wolf M, Schoenfeld BJ, et al. 2025. Dumbbell versus cable lateral raises for lateral deltoid hypertrophy: an experimental study. Front Physiol 16:1611468.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/",
+      "type": "biomechanics",
+      "what_it_gave": "Protocol: arm from hanging by the body to 90 deg, side-on plane, straight elbow, ~1 s up / 1 s down. Side delt measured by ultrasound at 25% and 40% of the acromion-to-elbow line, so the muscle is still present at 40%."
+    },
+    {
+      "id": "S18",
+      "citation": "American Council on Exercise (ACE). Lateral raise. ACE Exercise Library.",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+      "type": "guideline",
+      "what_it_gave": "Start beside thighs, palms in, elbows straight or slightly bent; shoulder blades down and back; lead with the elbows; small front-edge-up turn after 60-70 deg; stop at shoulder height; upright, no back arch, neutral wrists, no swing, no shrug."
+    },
+    {
+      "id": "S19",
+      "citation": "ExRx.net. Dumbbell Lateral Raise.",
+      "url": "https://exrx.net/WeightExercises/DeltoidLateral/DBLateralRaise",
+      "type": "coach",
+      "what_it_gave": "Start in front of thighs, slight forward lean; elbows 10-30 deg held; elbows at shoulder height and at or above the wrists; elbows slightly forward; dropping elbows makes the front delt the main mover. Lists helpers (front delt, supraspinatus, middle/lower traps, serratus) and stabilisers (upper traps, levator scapulae, wrist extensors)."
+    },
+    {
+      "id": "S20",
+      "citation": "Huri G, Bicer OS, Miroglu A, et al. 2014. Humeral surface anatomy and percutaneous plate advancement: a cadaveric study. Acta Orthop Traumatol Turc 48(5):584-589.",
+      "url": "https://doi.org/10.3944/aott.2014.3161",
+      "type": "textbook",
+      "what_it_gave": "Deltoid insertion runs from 69.4% to 51% of humeral length measured up from the elbow, i.e. about 31% to 49% of the way down from the top of the humerus (mean humerus 271.8 mm). 12 cadaver arms."
+    },
+    {
+      "id": "S21",
+      "citation": "StatPearls Publishing. Anatomy, Shoulder and Upper Limb, Deltoid Muscle. StatPearls (NBK537056).",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK537056/",
+      "type": "textbook",
+      "what_it_gave": "Origins: front head from the outer third of the collarbone, middle head from the acromion, rear head from the spine of the shoulder blade (U-shaped origin); all insert on the deltoid tuberosity. Middle head is multipennate."
+    },
+    {
+      "id": "S22",
+      "citation": "Kenhub. Trapezius muscle.",
+      "url": "https://www.kenhub.com/en/library/anatomy/trapezius-muscle",
+      "type": "textbook",
+      "what_it_gave": "Upper fibres: skull base and neck ligament to the outer third of the collarbone. Middle fibres: T1-T4 to the acromion and spine of the shoulder blade. Lower fibres: T4-T12 to the inner spine of the shoulder blade."
+    },
+    {
+      "id": "S23",
+      "citation": "Andersen LL, Andersen CH, Mortensen OS, et al. 2010. Muscle activation and perceived loading during rehabilitation exercises: comparison of dumbbells and elastic resistance. Phys Ther 90(4):538-549.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20133444/",
+      "type": "emg",
+      "what_it_gave": "Lateral raise at 3RM: prime-mover EMG 59-87% with dumbbells. Muscle-by-muscle values not in the abstract."
+    }
+  ],
+  "clip_check": [
+    {
+      "check": "Top arm height (elev) at the top frame",
+      "target": "90 deg (85-95)",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Bottom arm height (elev) at the bottom frame",
+      "target": "8 deg (0-15)",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Plane of the arm, every frame",
+      "target": "20 deg in front of side-on (0-30), never behind the body, drift within a rep no more than 10 deg",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Elbow bend, every frame",
+      "target": "15 deg (10-30)",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Elbow hinge drift within one rep",
+      "target": "no more than 5 deg change",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_twist.py"
+    },
+    {
+      "check": "Upper-arm roll range over the rep",
+      "target": "-5 to +15 deg (never thumb-down)",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_twist.py"
+    },
+    {
+      "check": "Palm direction at the top",
+      "target": "facing the floor, front edge level or slightly up",
+      "measured": null,
+      "pass": null,
+      "tool": "rendered frames"
+    },
+    {
+      "check": "Wrist bend and forearm twist",
+      "target": "wrist 0 +-10 deg; forearm twist change no more than 10 deg",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_twist.py"
+    },
+    {
+      "check": "Hand height vs elbow at the top",
+      "target": "0 to -5 cm (hand never above elbow; tolerance -8 to 0)",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Shoulder-blade upward rotation at the top",
+      "target": "+20 to +35 deg added (only if the rig has a shoulder-blade bone; else record 'not modelled')",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Collarbone lift (shrug) at the top",
+      "target": "3-6 deg, max 7",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Trunk lean and its change within a rep",
+      "target": "0-10 deg forward; change no more than 3 deg",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Knees and feet still",
+      "target": "knee change no more than 5 deg; feet do not move",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Head neutral",
+      "target": "+-10 deg",
+      "measured": null,
+      "pass": null,
+      "tool": "rendered frames"
+    },
+    {
+      "check": "Hands stay on the dumbbell handles",
+      "target": "no gap in any frame",
+      "measured": null,
+      "pass": null,
+      "tool": "rendered frames"
+    },
+    {
+      "check": "Tempo",
+      "target": "up 2.0 s, hold 0.5 s, down 2.0 s, pause 0.5 s, loop 5.0 s (each +-0.5 s)",
+      "measured": null,
+      "pass": null,
+      "tool": "spec timing keys"
+    },
+    {
+      "check": "Loop joins without a jump",
+      "target": "first and last frame pose match",
+      "measured": null,
+      "pass": null,
+      "tool": "measure_pose.py"
+    },
+    {
+      "check": "Primary muscle is the strongest red in the bottom, middle and top frames",
+      "target": "side_delts 1.0 brighter than every other area",
+      "measured": null,
+      "pass": null,
+      "tool": "rendered frames"
+    },
+    {
+      "check": "Secondary glow levels",
+      "target": "front_delts, rear_delts, traps each 0.35; nothing else lit",
+      "measured": null,
+      "pass": null,
+      "tool": "spec highlight vs research"
+    },
+    {
+      "check": "Upper-trap glow stays on the neck-to-shoulder slope",
+      "target": "no red on the mid back between the shoulder blades",
+      "measured": null,
+      "pass": null,
+      "tool": "rendered frames"
+    },
+    {
+      "check": "Side-delt red reaches the V on the outer arm",
+      "target": "lit from the acromion to about 45-50% of the way to the elbow",
+      "measured": null,
+      "pass": null,
+      "tool": "rendered frames"
+    }
+  ]
+}

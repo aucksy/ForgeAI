@@ -2,9 +2,10 @@
   "key": "incline_dumbbell_press",
   "name": "Incline Dumbbell Press",
   "primary": [
-    "chest"
+    "chest_upper"
   ],
   "secondary": [
+    "chest_lower",
     "front_delts",
     "triceps"
   ],
@@ -23,7 +24,7 @@
   },
   "camera": {
     "yaw": 35,
-    "pitch": 22,
+    "pitch": 32,
     "lens": 50,
     "fill": 0.9,
     "res": 640,
@@ -41,15 +42,15 @@
         "bottom"
       ],
       [
-        1.9,
-        "top"
-      ],
-      [
         2.3,
         "top"
       ],
       [
-        4.3,
+        2.6,
+        "top"
+      ],
+      [
+        4.6,
         "bottom"
       ]
     ]
@@ -132,7 +133,7 @@
             0
           ],
           "arm": {
-            "elev": 55,
+            "elev": 48,
             "plane": 10,
             "elbow": "fore_vertical",
             "bend_world": [
@@ -167,11 +168,5 @@
       }
     }
   },
-  "research": "Bench 30 deg (upper-chest EMG peak, PMC7579505). Bottom: elbows 45-60 deg from torso, ~90 deg bend, forearm vertical (NASM/ACE). Top: near-straight, dumbbells over eyes/upper chest, not touching (ACE). Tempo 2 s up / 2 s down.",
-  "highlight": {
-    "chest_upper": 1.0,
-    "front_delts": 1.0,
-    "chest_lower": 0.45,
-    "triceps": 0.55
-  }
+  "research": "Bench 30 deg (upper-chest EMG peak, PMC7579505). Bottom: elbows 45-60 deg from torso, ~90 deg bend, forearm vertical (NASM/ACE). Top: near-straight, dumbbells over eyes/upper chest, not touching (ACE). Tempo 2 s up / 2 s down."
 }

@@ -33,19 +33,19 @@
         "down"
       ],
       [
-        0.3,
+        0.5,
         "down"
       ],
       [
-        1.9,
+        2.5,
         "up"
       ],
       [
-        2.3,
+        3.0,
         "up"
       ],
       [
-        4.2,
+        5.0,
         "down"
       ]
     ]
@@ -128,16 +128,10 @@
         "clavicle.L": [
           0,
           0,
-          7
+          5
         ]
       }
     }
   },
-  "research": "Top 90 deg (ACE, Coratella 2020), ~20 deg forward of frontal (scapular plane), soft 15-20 deg elbow held, hand at/below elbow, no thumb-down turn. EMG: side delt 30%, rear 24%, front 21% MVIC (Campos 2020). Tempo ~2 s up / 0.5 hold / 2 s down.",
-  "highlight": {
-    "side_delts": 1.0,
-    "traps": 0.5,
-    "front_delts": 0.4,
-    "rear_delts": 0.4
-  }
+  "research": "Top 90 deg (ACE, Coratella 2020), ~20 deg forward of frontal (scapular plane), soft 15-20 deg elbow held, hand at/below elbow, no thumb-down turn. EMG: side delt 30%, rear 24%, front 21% MVIC (Campos 2020). Tempo ~2 s up / 0.5 hold / 2 s down."
 }

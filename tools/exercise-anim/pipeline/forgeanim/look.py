@@ -21,7 +21,7 @@ def srgb(hexstr):
 LOOK = {  # v2 look (15 Oct 2026): matched side by side against the Gymvisual/Hevy reference
     "normal_strength": 2.0, "cav_from": 0.2, "cav_to": 0.9, "cav_amount": 0.95, "ao_floor": 0.45,
     "world": 0.16, "key": 340, "fill": 22, "rim": 190, "top": 40, "roughness": 0.58, "sheen": 0.15,
-    "hl_cav": 0.8, "hl_full": 0.85,  # helper muscles (0.5) stay visibly lighter than the main muscle (1.0)
+    "hl_cav": 0.8, "hl_full": 0.85, "hl_flat": float(os.environ.get("FA_HL_FLAT", 0.5)),  # helper muscles (0.5) stay visibly lighter than the main muscle (1.0)
 }
 _ov = os.environ.get("FA_LOOK")
 if _ov:
@@ -147,7 +147,21 @@ def skin_material(name="FA_Skin"):
     bsdf.inputs["Subsurface Scale"].default_value = 0.012
     bsdf.inputs["Sheen Weight"].default_value = LOOK["sheen"]
     bsdf.inputs["Sheen Roughness"].default_value = 0.4
-    L.new(bsdf.outputs[0], out.inputs[0])
+    # worked muscles lose most of the white shine: a chest facing the key light washed out to pale pink while the
+    # side-lit shoulders stayed red (owner, 16 Oct: "shoulders more highlighted, upper chest not visible").
+    for inp, base_v, keep in (("Specular IOR Level", 0.32, 0.25), ("Sheen Weight", LOOK["sheen"], 0.0)):
+        k = N.new("ShaderNodeMapRange"); k.location = (600, -300)
+        L.new(hl_f.outputs[0], k.inputs["Value"])
+        k.inputs["To Min"].default_value = base_v; k.inputs["To Max"].default_value = base_v * keep
+        L.new(k.outputs[0], bsdf.inputs[inp])
+    # part of the red is flat (emission) so it reads the same strength on a light-facing chest and a side-lit arm
+    em = N.new("ShaderNodeEmission"); em.location = (900, -150); em.inputs["Strength"].default_value = 1.0
+    L.new(hl_dark.outputs[2], em.inputs["Color"])
+    em_f = N.new("ShaderNodeMath"); em_f.operation = "MULTIPLY"; em_f.location = (900, -300)
+    em_f.inputs[1].default_value = LOOK["hl_flat"]; L.new(hl_f.outputs[0], em_f.inputs[0])
+    mix_s = N.new("ShaderNodeMixShader"); mix_s.location = (1100, 0)
+    L.new(em_f.outputs[0], mix_s.inputs["Fac"]); L.new(bsdf.outputs[0], mix_s.inputs[1]); L.new(em.outputs[0], mix_s.inputs[2])
+    L.new(mix_s.outputs[0], out.inputs[0])
     return mat
 
 
