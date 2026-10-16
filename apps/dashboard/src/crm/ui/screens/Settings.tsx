@@ -297,13 +297,13 @@ export function SettingsScreen() {
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
             {confirming === 'disconnect'
               ? tr(
-                  `Your members, plans, payments and check-ins stay exactly as they are. This browser stops showing shop orders and products, and code ${cloud?.joinCode ?? ''} stops being managed from here. Members who already joined can’t be reached from this panel any more.`,
-                  `Aapke members, Plan, payments aur Check-in jaise hain waise rahenge. Yeh browser Shop ke Order aur products dikhana band karega, aur Code ${cloud?.joinCode ?? ''} yahan se nahi chalega. Jo members pehle join kar chuke hain, unse is panel se baat nahi ho payegi.`,
+                  `Your members, plans, payments and check-ins stay exactly as they are. This browser stops showing shop orders and products, and gym code ${cloud?.joinCode ?? ''} stops being managed from here. Members who already joined can’t be reached from this admin app any more.`,
+                  `Aapke members, Plan, payments aur Check-in jaise hain waise rahenge. Yeh browser Shop ke Order aur products dikhana band karega, aur gym code ${cloud?.joinCode ?? ''} yahan se nahi chalega. Jo members pehle join kar chuke hain, unse is admin app se baat nahi ho payegi.`,
                 )
               : confirming === 'over'
               ? tr(
-                  `This browser forgets the current demo gym and its shop (join code ${cloud?.joinCode ?? ''} stops being yours here). You go back to the welcome screen, where Start demo makes a fresh gym with a new code.`,
-                  `Yeh browser abhi wala Demo gym aur uski Shop bhool jayega (join Code ${cloud?.joinCode ?? ''} yahan aapka nahi rahega). Aap shuru wali screen par pahunchenge, jahan "Demo shuru karo" naye Code ke saath naya gym banata hai.`,
+                  `This browser forgets the current demo gym and its shop (gym code ${cloud?.joinCode ?? ''} stops being yours here). You go back to the welcome screen, where Start demo makes a fresh gym with a new code.`,
+                  `Yeh browser abhi wala Demo gym aur uski Shop bhool jayega (gym code ${cloud?.joinCode ?? ''} yahan aapka nahi rahega). Aap shuru wali screen par pahunchenge, jahan "Demo shuru karo" naye Code ke saath naya gym banata hai.`,
                 )
               : confirming === 'demo'
               ? tr(

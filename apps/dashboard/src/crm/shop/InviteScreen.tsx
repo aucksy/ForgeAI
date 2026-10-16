@@ -125,8 +125,8 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
           {tr(
-            `A member taps it on their phone: the ForgeAI app opens on “Join ${gymName}” — one tap and they are in. Without the app, the link shows how to get it, and your code ${joinCode}.`,
-            `Member phone par tap kare: ForgeAI app “Join ${gymName}” par khulega — ek tap aur woh jud gaye. App na ho to Link app lene ka tareeka aur aapka code ${joinCode} dikhata hai.`,
+            `A member taps it on their phone: the ForgeAI app opens on “Join ${gymName}” — one tap and they are in. Without the app, the link shows how to get it, and your gym code ${joinCode}.`,
+            `Member phone par tap kare: ForgeAI app “Join ${gymName}” par khulega — ek tap aur woh jud gaye. App na ho to Link app lene ka tareeka aur aapka gym code ${joinCode} dikhata hai.`,
           )}
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
@@ -235,7 +235,7 @@ export const POSTER: PosterWords = {
   steps: ['Scan with your phone camera', 'Get the ForgeAI app', 'Tap Join'],
   stepsHi: 'Camera se scan karein · App lein · Join dabaayein',
   codeLine: (code: string) => `Or type gym code ${code} in the app's Shop tab`,
-  codeLineHi: (code: string) => `Ya app ke Shop tab mein code ${code} daalein`,
+  codeLineHi: (code: string) => `Ya app ke Shop tab mein gym code ${code} daalein`,
   file: 'invite-poster',
 };
 

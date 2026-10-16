@@ -78,8 +78,8 @@ export function JoinCodeCard({
         </div>
         <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {tr(
-            'Turn on the shop to get your gym’s join code. It comes with 12 sample products you can change or delete.',
-            'Gym ka join code paane ke liye Shop chalu karo. Saath mein 12 sample products milte hain jo aap badal ya hata sakte hain.',
+            'Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.',
+            'Gym code paane ke liye Shop chalu karo. Saath mein 12 sample products milte hain jo aap badal ya hata sakte hain.',
           )}
         </p>
         {error && (
@@ -115,7 +115,7 @@ export function JoinCodeCard({
       <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         {tr('Members join in the ', 'Members ')}
         <strong style={{ color: color.ink }}>{tr('ForgeAI app', 'ForgeAI app')}</strong>
-        {tr(' with code', ' mein is code se judte hain')}
+        {tr(' with gym code', ' mein is gym code se judte hain')}
       </div>
       <div
         style={{
@@ -128,7 +128,7 @@ export function JoinCodeCard({
       >
         <span
           ref={codeRef}
-          aria-label={tr(`Join code ${cloud.joinCode.split('').join(' ')}`, `Join code ${cloud.joinCode.split('').join(' ')}`)}
+          aria-label={tr(`Gym code ${cloud.joinCode.split('').join(' ')}`, `Gym code ${cloud.joinCode.split('').join(' ')}`)}
           style={{
             fontFamily: font.mono,
             userSelect: 'all',

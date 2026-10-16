@@ -160,8 +160,8 @@ function OrdersSection() {
           <EmptyState
             title={tr('No orders yet', 'Abhi koi order nahi')}
             body={tr(
-              `Members order from the Shop tab in the ForgeAI app after joining with code ${code}.`,
-              `Members code ${code} se judkar ForgeAI app ke Shop tab se order karte hain.`,
+              `Members order from the Shop tab in the ForgeAI app after joining with gym code ${code}.`,
+              `Members gym code ${code} se judkar ForgeAI app ke Shop tab se order karte hain.`,
             )}
           />
         </Card>

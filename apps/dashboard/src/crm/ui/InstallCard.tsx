@@ -36,11 +36,11 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
     if (variant === 'banner') return null;
     return (
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{tr('App on your phone', 'Phone par app')}</SectionTitle>
+        <SectionTitle>{tr('Admin app on your phone', 'Phone par admin app')}</SectionTitle>
         <p style={body}>
           {tr(
-            'The panel is on your home screen. Open it from the ForgeAI Gym icon.',
-            'Panel aapki home screen par hai. ForgeAI Gym icon se kholiye.',
+            'The admin app is on your home screen. Open it from the ForgeAI Admin icon.',
+            'Admin app aapki home screen par hai. ForgeAI Admin icon se kholiye.',
           )}
         </p>
       </Card>
@@ -74,11 +74,11 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
 
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{tr('Put the app on your phone', 'Phone par app lagao')}</SectionTitle>
+      <SectionTitle>{tr('Put the admin app on your phone', 'Phone par admin app lagao')}</SectionTitle>
       <p style={body}>
         {tr(
-          'Put the panel on your home screen. It opens like any app, full screen, in one tap.',
-          'Panel ko home screen par lagaiye. Ek tap mein app ki tarah poori screen mein khulega.',
+          'Put the admin app on your home screen. It opens full screen, in one tap.',
+          'Admin app ko home screen par lagaiye. Ek tap mein poori screen mein khulega.',
         )}
       </p>
       {showSteps && (
@@ -87,7 +87,7 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
         </p>
       )}
       <div style={{ marginTop: space.lg, display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
-        <Button onClick={() => void install()}>{tr('Install the app', 'App lagao')}</Button>
+        <Button onClick={() => void install()}>{tr('Install the admin app', 'Admin app lagao')}</Button>
         {variant === 'banner' && (
           <Button
             variant="quiet"

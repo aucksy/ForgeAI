@@ -39,7 +39,7 @@ export function AppMembersSection() {
   return (
     <>
       <p style={{ margin: `0 0 ${space.lg}px`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {tr('Members who joined your gym in the ForgeAI app with code', 'Jo members ForgeAI app mein is code se aapke gym se jude')}{' '}
+        {tr('Members who joined your gym in the ForgeAI app with gym code', 'Jo members ForgeAI app mein is gym code se aapke gym se jude')}{' '}
         <strong style={{ fontFamily: font.mono, color: color.accentBright, letterSpacing: 2 }}>{cloud.joinCode}</strong>.
       </p>
 
@@ -54,8 +54,8 @@ export function AppMembersSection() {
           <EmptyState
             title={tr('Nobody has joined in the app yet', 'Abhi tak koi app mein nahi juda')}
             body={tr(
-              `Ask members to open the ForgeAI app and join with code ${cloud.joinCode}. They show up here straight away.`,
-              `Members se kaho ForgeAI app kholkar code ${cloud.joinCode} se judein. Woh turant yahan dikhenge.`,
+              `Ask members to open the ForgeAI app and join with gym code ${cloud.joinCode}. They show up here straight away.`,
+              `Members se kaho ForgeAI app kholkar gym code ${cloud.joinCode} se judein. Woh turant yahan dikhenge.`,
             )}
           />
         </Card>

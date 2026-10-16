@@ -43,7 +43,7 @@ export function MoreScreen() {
     {
       path: '/settings/people',
       label: tr('Staff & sign-in', 'Staff ka login'),
-      hint: owner ? tr('Who can open this panel', 'Panel kaun khol sakta hai') : tr('You, and signing out', 'Aap, aur sign out'),
+      hint: owner ? tr('Who can open this admin app', 'Admin app kaun khol sakta hai') : tr('You, and signing out', 'Aap, aur sign out'),
       icon: 'members',
     },
     {

@@ -1,6 +1,6 @@
 {
-  "name": "ForgeAI Gym Panel",
-  "short_name": "ForgeAI Gym",
+  "name": "ForgeAI admin app",
+  "short_name": "ForgeAI Admin",
   "description": "Run your gym: members, fees, renewals and attendance.",
   "id": "/",
   "start_url": "/",

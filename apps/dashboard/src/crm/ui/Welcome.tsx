@@ -135,8 +135,8 @@ export function Welcome() {
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
             {tr(
-              'Opens a sample gym with made-up members, payments and a shop. You get a real join code, so a phone with the ForgeAI app can join and order — and you see the order here.',
-              'Ek Demo gym khulega — nakli members, payments aur ek shop ke saath. Aapko asli join Code milega, toh ForgeAI app wala phone join karke order kar sakta hai — aur order aapko yahan dikhega.',
+              'Opens a sample gym with made-up members, payments and a shop. You get a real gym code, so a phone with the ForgeAI app can join and order — and you see the order here.',
+              'Ek Demo gym khulega — nakli members, payments aur ek shop ke saath. Aapko asli gym code milega, toh ForgeAI app wala phone join karke order kar sakta hai — aur order aapko yahan dikhega.',
             )}
           </p>
 

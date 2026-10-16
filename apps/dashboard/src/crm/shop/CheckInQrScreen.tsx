@@ -148,8 +148,8 @@ function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
           {tr(
-            `Members need the ForgeAI app and to have joined your gym in it (code ${joinCode}). Settings → Invite members has the join poster.`,
-            `Members ke paas ForgeAI app hona chahiye aur usme aapka gym join kiya ho (code ${joinCode}). Settings → Invite members mein join wala poster hai.`,
+            `Members need the ForgeAI app and to have joined your gym in it (gym code ${joinCode}). Settings → Invite members has the join poster.`,
+            `Members ke paas ForgeAI app hona chahiye aur usme aapka gym join kiya ho (gym code ${joinCode}). Settings → Invite members mein join wala poster hai.`,
           )}
         </p>
         <div style={{ marginTop: space.md }}>
