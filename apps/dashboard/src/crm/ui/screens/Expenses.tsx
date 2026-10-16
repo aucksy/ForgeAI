@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCan } from '../../auth/AuthProvider';
 import { useCrm } from '../../store';
+import { useShop } from '../../shop/ShopProvider';
 import { tr } from '../../i18n';
 import { formatDay, isValidDateISO, monthKey } from '../../logic/dates';
 import {
@@ -67,7 +68,9 @@ export function ExpensesScreen() {
   };
 
   const expenses = snapshot.expenses ?? [];
-  const summary = useMemo(() => monthSummary(snapshot.payments, expenses, month), [snapshot.payments, expenses, month]);
+  // C7-14: shop orders handed over this month are money in too (the stock bought for them is Kharcha).
+  const { orders } = useShop();
+  const summary = useMemo(() => monthSummary(snapshot.payments, expenses, month, orders), [snapshot.payments, expenses, month, orders]);
   const rows = useMemo(() => expensesInMonth(expenses, month), [expenses, month]);
   const byCategory = useMemo(() => totalsByCategory(expenses, month), [expenses, month]);
 
@@ -129,6 +132,11 @@ export function ExpensesScreen() {
           value={formatINRShort(summary.collectedP)}
           fullValue={formatINR(summary.collectedP)}
           tone="good"
+          sub={
+            summary.shopP > 0
+              ? tr(`Fees ${formatINRShort(summary.feesP)} + shop ${formatINRShort(summary.shopP)}`, `Fees ${formatINRShort(summary.feesP)} + shop ${formatINRShort(summary.shopP)}`)
+              : undefined
+          }
         />
         <StatTile
           label={tr('Expenses', 'Kharcha')}

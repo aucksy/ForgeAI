@@ -8,6 +8,7 @@ import { CloudCrmData, type CrmCloudApi, type CrmRecord, type PullResult } from 
 import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/local';
 import { staffRightsWords, takerOf } from '../../src/crm/auth/permissions';
 import { buildLedger, filterLedger, ledgerTakers } from '../../src/crm/logic/collections';
+import { monthSummary } from '../../src/crm/logic/expenses';
 import { checkGymDetails } from '../../src/crm/logic/gst';
 import { hasPaidJoiningFee, saleDefaults, staffLowestPrice, validateSale } from '../../src/crm/logic/selling';
 import type { MemberDraft } from '../../src/crm/types';
@@ -227,5 +228,26 @@ describe('C7-13: the front desk gives at most 10% off; the owner decides bigger 
 
   it('the Staff rights words say what is enforced', () => {
     expect(staffRightsWords()).toContain('10%');
+  });
+});
+
+describe('C7-14: Munafa counts the shop money that came in', () => {
+  const at = (iso: string) => new Date(`${iso}T12:00:00`).getTime();
+  it('collected shop orders in the month are in Collection and profit; others are not', () => {
+    const fees = [makePayment({ paidOn: '2026-10-05', amountP: 1_000_000 })];
+    const stock = [{ id: 'e1', gymId: 'g', spentOn: '2026-10-02', amountP: 2_000_000, category: 'stock' as const, note: null, createdAt: 1 }];
+    const orders = [
+      { status: 'collected' as const, totalP: 3_000_000, updatedAt: at('2026-10-20') },
+      { status: 'ordered' as const, totalP: 500_000, updatedAt: at('2026-10-21') },
+      { status: 'cancelled' as const, totalP: 700_000, updatedAt: at('2026-10-21') },
+      { status: 'collected' as const, totalP: 900_000, updatedAt: at('2026-09-30') },
+    ];
+    expect(monthSummary(fees, stock, '2026-10', orders)).toEqual({
+      feesP: 1_000_000,
+      shopP: 3_000_000,
+      collectedP: 4_000_000,
+      spentP: 2_000_000,
+      profitP: 2_000_000,
+    });
   });
 });

@@ -8,7 +8,7 @@
  */
 
 import { tr } from '../i18n';
-import { addMonths, monthKey, toISO } from './dates';
+import { addMonths, dateISOFromEpoch, monthKey, toISO } from './dates';
 import { sumPaise, type Paise } from './money';
 import type { Expense, ExpenseCategory, Payment } from '../types';
 
@@ -110,22 +110,43 @@ export function totalsByCategory(
 }
 
 export interface MonthSummary {
-  /** Receipts in the month that were not voided. */
+  /** Fee receipts in the month that were not voided. */
+  feesP: Paise;
+  /**
+   * Admin audit C7-14 (16 Oct 2026): shop orders handed over (collected) in the month. Profit left
+   * them out while counting the supplement stock bought for the shop as Kharcha, so a gym with a
+   * shop saw its profit far too low. Stock stays a Kharcha (money that went out that month).
+   */
+  shopP: Paise;
+  /** Fees + shop: all the money that came in. */
   collectedP: Paise;
   spentP: Paise;
   /** collected − spent; negative when the month lost money. */
   profitP: Paise;
 }
 
-/** Collection, kharcha and munafa (profit) for one `'YYYY-MM'` month. */
+/** The part of a shop order the summary reads (shop/logic.ts Order). */
+export interface ShopTakings {
+  status: 'ordered' | 'ready' | 'collected' | 'cancelled';
+  totalP: Paise;
+  /** When it last changed; for a collected order, when it was handed over (epoch ms). */
+  updatedAt: number;
+}
+
+/** Collection (fees and shop), kharcha and munafa (profit) for one `'YYYY-MM'` month. */
 export function monthSummary(
   payments: readonly Payment[],
   expenses: readonly Expense[],
   month: string,
+  shopOrders: readonly ShopTakings[] = [],
 ): MonthSummary {
-  const collectedP = sumPaise(
+  const feesP = sumPaise(
     payments.filter((p) => !p.voided && monthKey(p.paidOn) === month).map((p) => p.amountP),
   );
+  const shopP = sumPaise(
+    shopOrders.filter((o) => o.status === 'collected' && monthKey(dateISOFromEpoch(o.updatedAt)) === month).map((o) => o.totalP),
+  );
+  const collectedP = feesP + shopP;
   const spentP = sumPaise(expenses.filter((e) => monthKey(e.spentOn) === month).map((e) => e.amountP));
-  return { collectedP, spentP, profitP: collectedP - spentP };
+  return { feesP, shopP, collectedP, spentP, profitP: collectedP - spentP };
 }

@@ -48,6 +48,8 @@ describe('monthSummary', () => {
       makeExpense({ spentOn: '2026-09-30', amountP: 400_000 }),
     ];
     expect(monthSummary(payments, expenses, '2026-10')).toEqual({
+      feesP: 500_000,
+      shopP: 0,
       collectedP: 500_000,
       spentP: 150_050,
       profitP: 349_950,
@@ -60,7 +62,7 @@ describe('monthSummary', () => {
   });
 
   it('is all zeros for an empty month', () => {
-    expect(monthSummary([], [], '2026-10')).toEqual({ collectedP: 0, spentP: 0, profitP: 0 });
+    expect(monthSummary([], [], '2026-10')).toEqual({ feesP: 0, shopP: 0, collectedP: 0, spentP: 0, profitP: 0 });
   });
 });
 
