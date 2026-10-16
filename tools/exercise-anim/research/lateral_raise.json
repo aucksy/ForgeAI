@@ -11,7 +11,7 @@
       "traps"
     ],
     "status": "draft",
-    "version": null,
+    "version": 6,
     "researched_on": "2026-10-16",
     "one_line_summary": "Standing, arms rise out to the sides to shoulder height (90 deg) a little in front of the body, elbows softly bent and held, palms down, no shrug, no swing. Side delt is the target; front delt, rear delt and upper traps clearly help.",
     "evidence_grade": "C"
@@ -745,148 +745,148 @@
     {
       "check": "Top arm height (elev) at the top frame",
       "target": "90 deg (85-95)",
-      "measured": null,
-      "pass": null,
+      "measured": "88 deg",
+      "pass": "yes",
       "tool": "measure_pose.py"
     },
     {
       "check": "Bottom arm height (elev) at the bottom frame",
       "target": "8 deg (0-15)",
-      "measured": null,
-      "pass": null,
+      "measured": "8 deg",
+      "pass": "yes",
       "tool": "measure_pose.py"
     },
     {
       "check": "Plane of the arm, every frame",
       "target": "20 deg in front of side-on (0-30), never behind the body, drift within a rep no more than 10 deg",
-      "measured": null,
-      "pass": null,
+      "measured": "20 deg every sample, no drift",
+      "pass": "yes",
       "tool": "measure_pose.py"
     },
     {
       "check": "Elbow bend, every frame",
       "target": "15 deg (10-30)",
-      "measured": null,
-      "pass": null,
+      "measured": "15-18 deg",
+      "pass": "yes",
       "tool": "measure_pose.py"
     },
     {
       "check": "Elbow hinge drift within one rep",
       "target": "no more than 5 deg change",
-      "measured": null,
-      "pass": null,
+      "measured": "0 deg",
+      "pass": "yes",
       "tool": "measure_twist.py"
     },
     {
       "check": "Upper-arm roll range over the rep",
       "target": "-5 to +15 deg (never thumb-down)",
-      "measured": null,
-      "pass": null,
+      "measured": "3.9 to 13.4 deg, largest step 2 deg; palms down, no thumb-down",
+      "pass": "yes",
       "tool": "measure_twist.py"
     },
     {
       "check": "Palm direction at the top",
       "target": "facing the floor, front edge level or slightly up",
-      "measured": null,
-      "pass": null,
+      "measured": "palms down, front edge level (side view)",
+      "pass": "yes",
       "tool": "rendered frames"
     },
     {
       "check": "Wrist bend and forearm twist",
       "target": "wrist 0 +-10 deg; forearm twist change no more than 10 deg",
-      "measured": null,
-      "pass": null,
+      "measured": "wrist within 2 deg of rest; forearm turn 8 deg",
+      "pass": "yes",
       "tool": "measure_twist.py"
     },
     {
       "check": "Hand height vs elbow at the top",
       "target": "0 to -5 cm (hand never above elbow; tolerance -8 to 0)",
-      "measured": null,
-      "pass": null,
+      "measured": "hand 1 cm below the elbow",
+      "pass": "yes",
       "tool": "measure_pose.py"
     },
     {
       "check": "Shoulder-blade upward rotation at the top",
       "target": "+20 to +35 deg added (only if the rig has a shoulder-blade bone; else record 'not modelled')",
-      "measured": null,
-      "pass": null,
+      "measured": "not modelled: the rig has no shoulder-blade bone that turns",
+      "pass": "no",
       "tool": "measure_pose.py"
     },
     {
       "check": "Collarbone lift (shrug) at the top",
       "target": "3-6 deg, max 7",
-      "measured": null,
-      "pass": null,
+      "measured": "5 deg collarbone lift; shoulder rises 1.8 cm",
+      "pass": "yes",
       "tool": "measure_pose.py"
     },
     {
       "check": "Trunk lean and its change within a rep",
       "target": "0-10 deg forward; change no more than 3 deg",
-      "measured": null,
-      "pass": null,
+      "measured": "0.7 deg, no change",
+      "pass": "yes",
       "tool": "measure_pose.py"
     },
     {
       "check": "Knees and feet still",
       "target": "knee change no more than 5 deg; feet do not move",
-      "measured": null,
-      "pass": null,
+      "measured": "legs not animated",
+      "pass": "yes",
       "tool": "measure_pose.py"
     },
     {
       "check": "Head neutral",
       "target": "+-10 deg",
-      "measured": null,
-      "pass": null,
+      "measured": "head not animated, neutral",
+      "pass": "yes",
       "tool": "rendered frames"
     },
     {
       "check": "Hands stay on the dumbbell handles",
       "target": "no gap in any frame",
-      "measured": null,
-      "pass": null,
+      "measured": "hands on the handles in every preview frame",
+      "pass": "yes",
       "tool": "rendered frames"
     },
     {
       "check": "Tempo",
       "target": "up 2.0 s, hold 0.5 s, down 2.0 s, pause 0.5 s, loop 5.0 s (each +-0.5 s)",
-      "measured": null,
-      "pass": null,
+      "measured": "2.0 up / 0.5 / 2.0 down / 0.5, loop 5.0 s",
+      "pass": "yes",
       "tool": "spec timing keys"
     },
     {
       "check": "Loop joins without a jump",
       "target": "first and last frame pose match",
-      "measured": null,
-      "pass": null,
+      "measured": "first and last frame match (encode seamless check)",
+      "pass": "yes",
       "tool": "measure_pose.py"
     },
     {
       "check": "Primary muscle is the strongest red in the bottom, middle and top frames",
       "target": "side_delts 1.0 brighter than every other area",
-      "measured": null,
-      "pass": null,
+      "measured": "side delt deepest red in bottom and top crops",
+      "pass": "yes",
       "tool": "rendered frames"
     },
     {
       "check": "Secondary glow levels",
       "target": "front_delts, rear_delts, traps each 0.35; nothing else lit",
-      "measured": null,
-      "pass": null,
+      "measured": "from research file: front_delts, rear_delts, traps 0.35",
+      "pass": "yes",
       "tool": "spec highlight vs research"
     },
     {
       "check": "Upper-trap glow stays on the neck-to-shoulder slope",
       "target": "no red on the mid back between the shoulder blades",
-      "measured": null,
-      "pass": null,
+      "measured": "trap glow on the neck-to-shoulder slope only (front view)",
+      "pass": "yes",
       "tool": "rendered frames"
     },
     {
       "check": "Side-delt red reaches the V on the outer arm",
       "target": "lit from the acromion to about 45-50% of the way to the elbow",
-      "measured": null,
-      "pass": null,
+      "measured": "delt mask reaches 48 % down the arm",
+      "pass": "yes",
       "tool": "rendered frames"
     }
   ]

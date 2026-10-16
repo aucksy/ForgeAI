@@ -4,10 +4,15 @@
     "key": "incline_dumbbell_press",
     "name": "Incline Dumbbell Press",
     "equipment": "dumbbell (pair) + adjustable incline bench",
-    "library_primary": ["chest"],
-    "library_secondary": ["front_delts", "triceps"],
+    "library_primary": [
+      "chest"
+    ],
+    "library_secondary": [
+      "front_delts",
+      "triceps"
+    ],
     "status": "draft",
-    "version": null,
+    "version": 6,
     "researched_on": "2026-10-16",
     "one_line_summary": "Lying on a bench set to about 30 degrees, press two dumbbells from the sides of the upper chest straight up until they meet over the shoulders, then lower them slowly. Upper chest leads; front shoulder, lower chest and triceps help.",
     "evidence_grade": "D",
@@ -20,7 +25,17 @@
       "target": "30 degrees above horizontal",
       "tolerance": "30-45 degrees; never above 45",
       "why": "Upper chest peaks at 30 degrees in the five-angle study (~30 % MVIC at 30, ~25 % at 45, ~19 % at 60; read from its Figure 3). The 30 degree peak is not significantly above 0, 15 or 45 degrees. Only 60 degrees is clearly worse. Other studies put the best angle anywhere from 30 to 45 degrees: 44 beat 28 (Trebs); 32 and 43 both beat 20 (Parpa); 30 and 45 equal (Lauver). The front shoulder rises with the angle, and the lower chest falls steeply (sternal part ~16.5 % at 30 vs ~11.5 % at 45). So 30 degrees gives the best upper-chest-to-shoulder balance. ACE's 45-60 degrees is steeper than the EMG supports.",
-      "source_ids": ["S1", "S2", "S3", "S4", "S5", "S6", "S20", "S21", "S19"],
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S20",
+        "S21",
+        "S19"
+      ],
       "grade": "B"
     },
     {
@@ -29,7 +44,10 @@
       "target": "Hips on the seat, upper back and back of head on the pad, both feet on the floor (5 contact points)",
       "tolerance": "No contact point lifts at any frame",
       "why": "Standard cue. The five-angle study also kept the head and upper back on the bench.",
-      "source_ids": ["S19", "S1"],
+      "source_ids": [
+        "S19",
+        "S1"
+      ],
       "grade": "C"
     },
     {
@@ -38,7 +56,10 @@
       "target": "Feet flat on the floor, a little wider than the shoulders",
       "tolerance": "Feet stay planted and still all rep",
       "why": "Stable base; NASM's set-up cue.",
-      "source_ids": ["S20", "S19"],
+      "source_ids": [
+        "S20",
+        "S19"
+      ],
       "grade": "C"
     },
     {
@@ -47,7 +68,12 @@
       "target": "Closed grip, thumbs wrapped, palms facing the feet (pronated); the two handles lie roughly on one line across the body",
       "tolerance": "Handles turned in up to ~20 degrees is fine; a full palms-in (neutral) grip is a different library exercise",
       "why": "ACE says palms forward. The library has a separate 'Incline Neutral-Grip Dumbbell Press', so this one must be pronated. No study has compared grips on the dumbbell press. The barbell studies on grip effects (Lehman, Roy, Muyor) found only small differences.",
-      "source_ids": ["S19", "S29", "S17", "S16"],
+      "source_ids": [
+        "S19",
+        "S29",
+        "S17",
+        "S16"
+      ],
       "grade": "C"
     },
     {
@@ -56,7 +82,11 @@
       "target": "Pulled down and back (retracted and depressed) before the first rep, held there",
       "tolerance": "No visible shrug or forward reach of the shoulders at the top",
       "why": "Guideline cue. A shoulder-model study found that retracted shoulder blades lower the loads on the shoulder joint.",
-      "source_ids": ["S19", "S21", "S14"],
+      "source_ids": [
+        "S19",
+        "S21",
+        "S14"
+      ],
       "grade": "C"
     },
     {
@@ -65,7 +95,11 @@
       "target": "Natural small curve only, no big arch",
       "tolerance": "Hips never lift off the seat",
       "why": "NASM and ACE both list excessive arching as a mistake.",
-      "source_ids": ["S19", "S20", "S21"],
+      "source_ids": [
+        "S19",
+        "S20",
+        "S21"
+      ],
       "grade": "C"
     },
     {
@@ -74,7 +108,10 @@
       "target": "In the gym: dumbbells on the thighs, kicked up to the shoulders, then pressed to the top. The clip loops bottom-to-top-to-bottom.",
       "tolerance": "n/a",
       "why": "ExRx describes this mount. The clip only needs the working rep.",
-      "source_ids": ["S22", "S19"],
+      "source_ids": [
+        "S22",
+        "S19"
+      ],
       "grade": "C"
     }
   ],
@@ -89,7 +126,14 @@
       "end_num": 120,
       "path": "One smooth sweep; the elbow stays about 45 degrees out from the body on the way down and back up",
       "tolerance": "bottom 35-55 deg; top 115-125 deg",
-      "source_ids": ["S1", "S20", "S14", "S15", "S22", "S8"],
+      "source_ids": [
+        "S1",
+        "S20",
+        "S14",
+        "S15",
+        "S22",
+        "S8"
+      ],
       "grade": "C"
     },
     {
@@ -102,7 +146,11 @@
       "end_num": 90,
       "path": "Elbows swing forward and in as the arms straighten (the inward arc)",
       "tolerance": "bottom -15 to +15 deg; top 85-100 deg",
-      "source_ids": ["S22", "S19", "S27"],
+      "source_ids": [
+        "S22",
+        "S19",
+        "S27"
+      ],
       "grade": "D"
     },
     {
@@ -115,7 +163,13 @@
       "end_num": 5,
       "path": "Straightens steadily, finishing together with the shoulder",
       "tolerance": "bottom 90-125 deg; top 0-15 deg",
-      "source_ids": ["S19", "S20", "S1", "S27", "S13"],
+      "source_ids": [
+        "S19",
+        "S20",
+        "S1",
+        "S27",
+        "S13"
+      ],
       "grade": "D"
     },
     {
@@ -128,7 +182,10 @@
       "end_num": 0,
       "path": "Stays stacked under the dumbbell the whole rep",
       "tolerance": "side view 0-10 deg; front view hand 0-15 deg inside the elbow at the bottom",
-      "source_ids": ["S19", "S22"],
+      "source_ids": [
+        "S19",
+        "S22"
+      ],
       "grade": "C"
     },
     {
@@ -139,7 +196,12 @@
       "end": "top: vertically over the shoulder joints, inner ends close together",
       "path": "Side view: straight up, square to the floor (NASM: 'up and slightly forward'). Front view: a slight inward arc. Lowering drifts slightly out toward the armpits.",
       "tolerance": "side-view drift under ~5 cm toward head or feet; top gap between inner plates 0-10 cm",
-      "source_ids": ["S19", "S20", "S22", "S8"],
+      "source_ids": [
+        "S19",
+        "S20",
+        "S22",
+        "S8"
+      ],
       "grade": "C"
     },
     {
@@ -150,7 +212,12 @@
       "end": "n/a",
       "path": "No bounce at the bottom",
       "tolerance": "handles no more than ~5 cm above the chest; elbows no more than a little below the torso line",
-      "source_ids": ["S19", "S20", "S22", "S1"],
+      "source_ids": [
+        "S19",
+        "S20",
+        "S22",
+        "S1"
+      ],
       "grade": "C"
     },
     {
@@ -161,7 +228,11 @@
       "end": "Over the shoulders / upper chest, almost or lightly touching. Not over the face or neck.",
       "path": "n/a",
       "tolerance": "Not clanking; a light touch is allowed (ACE: 'press the dumbbells together')",
-      "source_ids": ["S22", "S8", "S19"],
+      "source_ids": [
+        "S22",
+        "S8",
+        "S19"
+      ],
       "grade": "C"
     },
     {
@@ -173,7 +244,9 @@
       "end": "top: small change only",
       "path": "Smooth and one-directional; no flip or sudden spin near the top",
       "tolerance": "total change about 30 deg or less; no frame-to-frame jump over 5 deg",
-      "source_ids": ["S28"],
+      "source_ids": [
+        "S28"
+      ],
       "grade": "D"
     },
     {
@@ -186,7 +259,9 @@
       "end_num": 0,
       "path": "Still",
       "tolerance": "under 5 deg",
-      "source_ids": ["S28"],
+      "source_ids": [
+        "S28"
+      ],
       "grade": "D"
     },
     {
@@ -199,7 +274,10 @@
       "end_num": 0,
       "path": "Still; any turning of the palm comes from the forearm, not the wrist",
       "tolerance": "bend under 10 deg; hand turn at the wrist under 15 deg",
-      "source_ids": ["S19", "S28"],
+      "source_ids": [
+        "S19",
+        "S28"
+      ],
       "grade": "C"
     },
     {
@@ -210,7 +288,11 @@
       "end": "still pulled down and back",
       "path": "Still; no shrug and no reaching forward at the top",
       "tolerance": "shoulder point moves under ~2 cm up or forward",
-      "source_ids": ["S19", "S21", "S14"],
+      "source_ids": [
+        "S19",
+        "S21",
+        "S14"
+      ],
       "grade": "C"
     },
     {
@@ -223,7 +305,11 @@
       "end_num": 30,
       "path": "Still",
       "tolerance": "torso within 2 deg of the pad angle; hips never lift",
-      "source_ids": ["S19", "S20", "S1"],
+      "source_ids": [
+        "S19",
+        "S20",
+        "S1"
+      ],
       "grade": "C"
     },
     {
@@ -234,7 +320,10 @@
       "end": "unchanged",
       "path": "Still; head does not lift to watch the weights",
       "tolerance": "head stays on the pad",
-      "source_ids": ["S19", "S1"],
+      "source_ids": [
+        "S19",
+        "S1"
+      ],
       "grade": "C"
     },
     {
@@ -245,7 +334,10 @@
       "end": "unchanged",
       "path": "Still",
       "tolerance": "no foot slides or heel lift",
-      "source_ids": ["S20", "S19"],
+      "source_ids": [
+        "S20",
+        "S19"
+      ],
       "grade": "C"
     },
     {
@@ -256,7 +348,9 @@
       "end": "mirror images",
       "path": "Both dumbbells rise and fall together",
       "tolerance": "height difference under ~3 cm",
-      "source_ids": ["S19"],
+      "source_ids": [
+        "S19"
+      ],
       "grade": "D"
     }
   ],
@@ -271,7 +365,17 @@
       "emg": "~30 % MVIC at 30 deg (barbell, 60 % 1RM); highest pec part at 30 deg (p<=0.01) [S1]. 45 deg dumbbell incline: concentric 175 % of the flat dumbbell press [S8]. Incline beats flat for this head [S3, S5, S6].",
       "role": "The muscle this exercise is for: it raises the arm forward and draws it in across the chest. It is the only pec part that rises with incline. Training studies show upper-chest growth at the 2nd rib space mainly with incline pressing [S12].",
       "surface": "Top edge: the inner half of the collarbone, from the breastbone joint to the collarbone's midpoint. Outer edge: the groove against the front delt, running from mid-collarbone down to the front armpit fold. Lower edge: a slight seam from the top of the breastbone running down and out to the armpit, near the tendon. At the mid-collarbone line it reaches about the 2nd-3rd rib, roughly 40-50 % of the way from collarbone to nipple. About 20 % of the muscle's volume, but it covers roughly the upper third of the visible chest fan.",
-      "source_ids": ["S1", "S3", "S5", "S6", "S8", "S12", "S23", "S24", "S25"],
+      "source_ids": [
+        "S1",
+        "S3",
+        "S5",
+        "S6",
+        "S8",
+        "S12",
+        "S23",
+        "S24",
+        "S25"
+      ],
       "grade": "B"
     },
     {
@@ -284,7 +388,13 @@
       "emg": "~33 % MVIC at 30 deg, ~34 % at 45 deg (barbell) [S1]. Equal to or slightly above the upper chest; rises with bench angle [S1, S3, S7]. 45 deg dumbbell incline: concentric 264 % of the flat dumbbell press [S8].",
       "role": "Main helper: it raises the arm forward alongside the upper chest. By EMG it ties with the upper chest. The format rule gives the primary slot to the exercise's purpose (chest), so it stays secondary. It takes over when the bench goes past 45 deg.",
       "surface": "Front of the shoulder cap. It starts on the outer third of the collarbone, just outside the groove where the upper chest ends. It narrows as it runs down the front-outer arm to the deltoid bump at about mid upper arm (lit area ~40-50 % of upper-arm length).",
-      "source_ids": ["S1", "S3", "S7", "S8", "S24"],
+      "source_ids": [
+        "S1",
+        "S3",
+        "S7",
+        "S8",
+        "S24"
+      ],
       "grade": "B"
     },
     {
@@ -297,7 +407,13 @@
       "emg": "At 30 deg: sternal part ~16.5 % MVIC (~55 % of the upper chest), lower costal part ~13 % (~43 %); both fall steeply with incline (vs ~27 % on a flat bench) [S1, values read from Figure 3, +/-1 %]. 45 deg dumbbell incline: sternal 114 % vs 127 % on flat (similar) [S8].",
       "role": "Still helps bring the arm across and down toward the chest, but less than on a flat bench. It clears the ~40 % bar, so it gets a dim glow.",
       "surface": "The bulk of the fan below the upper-chest seam. Inner edge: the breastbone, down to the 6th rib cartilage. Lower edge: from about 6 cm below the nipple at the breastbone, rising out to the armpit fold. Outer edge: the front armpit fold. About 80 % of the muscle's volume.",
-      "source_ids": ["S1", "S8", "S5", "S23", "S25"],
+      "source_ids": [
+        "S1",
+        "S8",
+        "S5",
+        "S23",
+        "S25"
+      ],
       "grade": "B"
     },
     {
@@ -310,7 +426,15 @@
       "emg": "~14 % MVIC at 30 deg, about the same at every angle (~46 % of the upper chest) [S1]. Dumbbells give lower triceps EMG than a barbell [S9, S10]. Incline gives less long-head EMG than flat [S5, S18].",
       "role": "Straightens the elbow to finish the press. It clears the ~40 % bar, and NASM and ExRx both name it.",
       "surface": "Back of the upper arm, from under the rear shoulder down to the elbow point.",
-      "source_ids": ["S1", "S9", "S10", "S5", "S18", "S20", "S22"],
+      "source_ids": [
+        "S1",
+        "S9",
+        "S10",
+        "S5",
+        "S18",
+        "S20",
+        "S22"
+      ],
       "grade": "B"
     },
     {
@@ -323,7 +447,11 @@
       "emg": "No %MVIC for the incline dumbbell press. On the flat press, dumbbells raise biceps EMG well above a barbell (effect size 1.46-2.00) [S9, S10].",
       "role": "Steadies the elbow and the wobbling dumbbell (ExRx: 'dynamic stabiliser'). Not a mover. Not lit.",
       "surface": "Front of the upper arm.",
-      "source_ids": ["S9", "S10", "S22"],
+      "source_ids": [
+        "S9",
+        "S10",
+        "S22"
+      ],
       "grade": "B"
     },
     {
@@ -336,7 +464,10 @@
       "emg": "~5 % MVIC in the bench press (flat) [S11]. Coratella measured it on a 45 deg incline but the abstract gives no number [S5].",
       "role": "Low activity; helps hold the elbow out. Not lit.",
       "surface": "Outer point of the shoulder cap.",
-      "source_ids": ["S11", "S5"],
+      "source_ids": [
+        "S11",
+        "S5"
+      ],
       "grade": "B"
     },
     {
@@ -349,7 +480,9 @@
       "emg": "~3.5 % MVIC in the bench press (flat) [S11].",
       "role": "Nearly silent. Not lit.",
       "surface": "Back of the shoulder cap.",
-      "source_ids": ["S11"],
+      "source_ids": [
+        "S11"
+      ],
       "grade": "B"
     },
     {
@@ -362,7 +495,9 @@
       "emg": "45 deg dumbbell incline: ~3.7x the flat dumbbell press [S8]. That is a ratio over a near-silent baseline, not a high absolute level.",
       "role": "Holds the shoulder blade; it rises with incline. Shrugging is a fault. Not lit.",
       "surface": "Top of the shoulders and side of the neck.",
-      "source_ids": ["S8"],
+      "source_ids": [
+        "S8"
+      ],
       "grade": "A"
     },
     {
@@ -375,7 +510,9 @@
       "emg": "No study found that measured it in an incline press.",
       "role": "Holds the shoulder blade against the ribs. NASM lists it as secondary. Not lit; there is no mask for it.",
       "surface": "Side ribs under the armpit, below the outer chest.",
-      "source_ids": ["S20"],
+      "source_ids": [
+        "S20"
+      ],
       "grade": "C"
     },
     {
@@ -388,7 +525,9 @@
       "emg": "No study found for an incline press.",
       "role": "Keeps the ball of the shoulder centred. Lies under the deltoid. Never lit.",
       "surface": "Deep, under the deltoid and shoulder blade.",
-      "source_ids": ["S14"],
+      "source_ids": [
+        "S14"
+      ],
       "grade": "C"
     },
     {
@@ -401,7 +540,10 @@
       "emg": "Not measured.",
       "role": "NASM lists pec minor as secondary; ExRx lists coracobrachialis as a synergist. Both lie under pec major. Never lit.",
       "surface": "Deep, under the upper chest and in the armpit.",
-      "source_ids": ["S20", "S22"],
+      "source_ids": [
+        "S20",
+        "S22"
+      ],
       "grade": "C"
     },
     {
@@ -414,7 +556,9 @@
       "emg": "Low in all bench conditions [S7].",
       "role": "Not lit.",
       "surface": "Side of the back.",
-      "source_ids": ["S7"],
+      "source_ids": [
+        "S7"
+      ],
       "grade": "B"
     },
     {
@@ -427,7 +571,9 @@
       "emg": "Not measured.",
       "role": "Braces the trunk on the bench (NASM: core stabilisers). Not lit.",
       "surface": "Front of the belly.",
-      "source_ids": ["S20"],
+      "source_ids": [
+        "S20"
+      ],
       "grade": "C"
     },
     {
@@ -440,7 +586,9 @@
       "emg": "Not measured.",
       "role": "Holds the handle and keeps the wrist straight. Not lit.",
       "surface": "Inner forearm.",
-      "source_ids": ["S19"],
+      "source_ids": [
+        "S19"
+      ],
       "grade": "C"
     }
   ],
@@ -451,7 +599,12 @@
     "down_s": 2.0,
     "pause_bottom_s": 0.3,
     "loop_s": 4.6,
-    "source_ids": ["S1", "S26", "S8", "S20"]
+    "source_ids": [
+      "S1",
+      "S26",
+      "S8",
+      "S20"
+    ]
   },
   "mistakes": [
     {
@@ -459,140 +612,544 @@
       "mistake": "Bench too steep",
       "what_it_looks_like": "Torso more upright than 45 degrees; it starts to look like a shoulder press",
       "why_it_matters": "Upper chest drops (~19 % MVIC at 60 deg vs ~30 % at 30 deg) while the front shoulder stays high.",
-      "source_ids": ["S1", "S20", "S21"]
+      "source_ids": [
+        "S1",
+        "S20",
+        "S21"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Elbows flared out to 90 degrees",
       "what_it_looks_like": "Upper arms straight out from the shoulders in a T at the bottom",
       "why_it_matters": "Experts warn wide elbows and a wide grip strain the shoulder joints. The shoulder-model data are mixed: grip width and shoulder-blade position matter more.",
-      "source_ids": ["S15", "S14", "S20"]
+      "source_ids": [
+        "S15",
+        "S14",
+        "S20"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Elbows pinned to the ribs",
       "what_it_looks_like": "Upper arms almost touching the sides at the bottom",
       "why_it_matters": "Shifts the work to the triceps and front shoulder and shortens the chest stretch.",
-      "source_ids": ["S20", "S19"]
+      "source_ids": [
+        "S20",
+        "S19"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Tilted forearms",
       "what_it_looks_like": "Dumbbells drift in toward the face or out past the elbows",
       "why_it_matters": "The load stops lining up through the forearm. ACE says keep the elbows under the wrists.",
-      "source_ids": ["S19", "S22"]
+      "source_ids": [
+        "S19",
+        "S22"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Short range",
       "what_it_looks_like": "Dumbbells stop well above the chest",
       "why_it_matters": "Misses the stretched bottom. ExRx lowers to a slight stretch.",
-      "source_ids": ["S22", "S19", "S20"]
+      "source_ids": [
+        "S22",
+        "S19",
+        "S20"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Bouncing or dropping fast",
       "what_it_looks_like": "Quick fall and a rebound off the chest",
       "why_it_matters": "Loses control; NASM and ACE both flag it.",
-      "source_ids": ["S20", "S19"]
+      "source_ids": [
+        "S20",
+        "S19"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Hard lockout or clanking the dumbbells",
       "what_it_looks_like": "Elbows snapped straight, plates banging at the top",
       "why_it_matters": "Pec activity falls in the last part of the press anyway. NASM says don't lock out.",
-      "source_ids": ["S20", "S13"]
+      "source_ids": [
+        "S20",
+        "S13"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Big arch / hips off the seat",
       "what_it_looks_like": "Lower back bowed high, bottom lifting",
       "why_it_matters": "Turns the incline into a flatter press and strains the back.",
-      "source_ids": ["S19", "S20", "S21"]
+      "source_ids": [
+        "S19",
+        "S20",
+        "S21"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Shrugging or reaching at the top",
       "what_it_looks_like": "Shoulders rise toward the ears or roll forward off the pad",
       "why_it_matters": "Breaks the down-and-back shoulder-blade set.",
-      "source_ids": ["S19", "S21", "S14"]
+      "source_ids": [
+        "S19",
+        "S21",
+        "S14"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Bent-back wrists",
       "what_it_looks_like": "Knuckles pointing back, palms facing the ceiling",
       "why_it_matters": "ACE says keep the wrists neutral.",
-      "source_ids": ["S19"]
+      "source_ids": [
+        "S19"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Pressing over the face",
       "what_it_looks_like": "Dumbbells finish over the nose or forehead, arms leaning back",
       "why_it_matters": "Finish should be over the shoulders. Over the face moves the load away from the chest.",
-      "source_ids": ["S22", "S8"]
+      "source_ids": [
+        "S22",
+        "S8"
+      ]
     },
     {
       "key": "incline_dumbbell_press",
       "mistake": "Wrong muscles lit",
       "what_it_looks_like": "Front shoulder as red as the upper chest, or the side delt glowing",
       "why_it_matters": "The app's target is chest; front shoulder is a helper by the tier rule. Side delt is ~5 % MVIC.",
-      "source_ids": ["S1", "S11"]
+      "source_ids": [
+        "S1",
+        "S11"
+      ]
     }
   ],
   "sources": [
-    {"key": "incline_dumbbell_press", "id": "S1", "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM (2020). Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health 17(19):7339.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/", "type": "emg", "what_it_gave": "30 trained adults, barbell, 60 % 1RM, 0/15/30/45/60 deg, 2 s down / 2 s up by metronome, shoulders ~45 deg out, bar to 1 cm above the chest at nipple height. Figure 3 at 30 deg: upper pec ~30, sternal ~16.5, costal ~13, front delt ~33, triceps ~14 % MVIC. Upper pec 30 deg is significantly higher only than 60 deg."},
-    {"key": "incline_dumbbell_press", "id": "S2", "citation": "Lauver JD, Cayot TE, Scheuermann BW (2016). Influence of bench angle on upper extremity muscular activation during bench press exercise. Eur J Sport Sci 16(3):309-316.", "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/", "type": "emg", "what_it_gave": "14 trained men, barbell, 65 % 1RM, -15/0/30/45 deg. Upper pec: 30 and 45 deg (~122-124 %) beat flat (~98 %) only in the 26-50 % part of the press. Lower pec lowest at 45 deg (~72 %)."},
-    {"key": "incline_dumbbell_press", "id": "S3", "citation": "Trebs AA, Brandenburg JP, Pitney WA (2010). An electromyography analysis of 3 muscles surrounding the shoulder joint during the performance of a chest press exercise at several angles. J Strength Cond Res 24(7):1925-1930.", "url": "https://www.bisp-surf.de/Record/PU201104003483", "type": "emg", "what_it_gave": "15 men, 70 % 1RM, 0/28/44/56 deg. Upper pec: 44 > 28 and > 0. Sternocostal: flat highest. Front delt higher at every incline than flat."},
-    {"key": "incline_dumbbell_press", "id": "S4", "citation": "Parpa K, Michaelides M, Chernov A, Moubarak M, Intziegianni K (2025). The effect of different incline angles on the neuromuscular activation of the clavicular head of the pectoralis major muscle during the barbell incline bench press exercise. Eur J Sport Sci (EJSPORT) 4(5).", "url": "https://eu-opensci.org/index.php/sport/article/view/9255", "type": "emg", "what_it_gave": "20 trained men, 60 % 1RM, 20/32/43 deg. Upper pec RMS 0.59 / 0.64 / 0.66 mV; 43 vs 32 not different; 20 deg lowest."},
-    {"key": "incline_dumbbell_press", "id": "S5", "citation": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E (2020). Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders. Eur J Sport Sci 20(5):571-579.", "url": "https://doi.org/10.1080/17461391.2019.1655101", "type": "emg", "what_it_gave": "10 bodybuilders, 80 % 1RM. 45 deg incline: highest clavicular pec (concentric), lower sternocostal and triceps long head than flat."},
-    {"key": "incline_dumbbell_press", "id": "S6", "citation": "Cabral HV, de Souza LML, de Oliveira LF, Vieira TM (2022). Non-uniform excitation of the pectoralis major muscle during flat and inclined bench press exercises. Scand J Med Sci Sports 32(2):381-390.", "url": "https://doi.org/10.1111/sms.14082", "type": "emg", "what_it_gave": "High-density EMG: the centre of pec activity moves up toward the clavicular region going from flat to 45 deg (p<0.001)."},
-    {"key": "incline_dumbbell_press", "id": "S7", "citation": "Barnett C, Kippers V, Turner P (1995). Effects of variations of the bench press exercise on the EMG activity of five shoulder muscles. J Strength Cond Res 9(4):222-227.", "url": "https://www.bisp-surf.de/Record/PU199603106332", "type": "emg", "what_it_gave": "Incline upper pec no higher than flat; front delt rises with incline; triceps highest flat/decline; lats low in all."},
-    {"key": "incline_dumbbell_press", "id": "S8", "citation": "Luczak J, Bosak A, Riemann BL (2013). Shoulder muscle activation of novice and resistance trained women during variations of dumbbell press exercises. J Sports Med 2013:612650.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4590897/", "type": "emg", "what_it_gave": "The only DUMBBELL incline study found: 24 women, 45 deg, 4.5 kg dumbbells, self-paced ~1.2 s up / 1.3 s down, hands over the shoulder joints. Values are % of the flat dumbbell press. Concentric: clavicular pec 175, sternal 114, front delt 264, upper trap 374."},
-    {"key": "incline_dumbbell_press", "id": "S9", "citation": "Saeterbakken AH, van den Tillaar R, Fimland MS (2011). A comparison of muscle activity and 1-RM strength of three chest-press exercises with different stability requirements. J Sports Sci 29(5):533-538.", "url": "https://doi.org/10.1080/02640414.2010.543916", "type": "emg", "what_it_gave": "Flat press. Dumbbells vs barbell: same pec and front delt, lower triceps, higher biceps; dumbbell 1RM 17 % lower."},
-    {"key": "incline_dumbbell_press", "id": "S10", "citation": "Farias DA, Willardson JM, Paz GA, Bezerra ES, Miranda H (2017). Maximal strength performance and muscle activation for the bench press and triceps extension exercises adopting dumbbell, barbell, and machine modalities over multiple sets. J Strength Cond Res 31(7):1879-1887.", "url": "https://doi.org/10.1519/JSC.0000000000001651", "type": "emg", "what_it_gave": "Flat press, 10RM sets: dumbbell > barbell for pec and biceps; triceps lower with dumbbells."},
-    {"key": "incline_dumbbell_press", "id": "S11", "citation": "Campos YAC, Vianna JM, Guimaraes MP, et al. (2020). Different shoulder exercises affect the activation of deltoid portions in resistance-trained individuals. J Hum Kinet 75:5-14.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/", "type": "emg", "what_it_gave": "Bench press: front delt 21.4, side delt 5, rear delt 3.5 % MVIC."},
-    {"key": "incline_dumbbell_press", "id": "S12", "citation": "Chaves SFN, Rocha-Junior VA, Encarnacao IGA, et al. (2020). Effects of horizontal and incline bench press on neuromuscular adaptations in untrained young men. Int J Exerc Sci 13(6):859-872.", "url": "https://digitalcommons.wku.edu/ijes/vol13/iss6/12", "type": "emg", "what_it_gave": "8-week training study: the incline-only group grew most at the 2nd intercostal space (clavicular pec), +0.62 cm vs flat-only. The abstract gives no bench angle."},
-    {"key": "incline_dumbbell_press", "id": "S13", "citation": "Coutinho ABB, Matta TT (2026). Distinct activation patterns of the clavicular and sternal regions of the pectoralis major during the concentric bench press. Int J Sports Sci Coach (online 17 Jun 2026).", "url": "https://doi.org/10.1177/17479541261457744", "type": "emg", "what_it_gave": "On the incline, clavicular pec peaks in the middle of the press and is lower in the final (lockout) part."},
-    {"key": "incline_dumbbell_press", "id": "S14", "citation": "Noteboom L, Belli I, Hoozemans MJM, Seth A, Veeger HEJ, van der Helm FCT (2024). Effects of bench press technique variations on musculoskeletal shoulder loads and potential injury risk. Front Physiol 15:1393235.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11224528/", "type": "biomechanics", "what_it_gave": "Shoulder model with 45/70/90 deg elbow angles. Grip width and shoulder-blade retraction matter more than elbow angle; retraction lowers loads. Says the 45 deg rule is expert opinion."},
-    {"key": "incline_dumbbell_press", "id": "S15", "citation": "Green CM, Comfort P (2007). The affect of grip width on bench press performance and risk of injury. Strength Cond J 29(5):10-14. (Read through S14's summary, not first-hand.)", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11224528/", "type": "review", "what_it_gave": "Expert recommendation: keep the elbows at about 45 deg or less, not near 90 deg."},
-    {"key": "incline_dumbbell_press", "id": "S16", "citation": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM (2023). Comparison of muscle activity between the horizontal bench press and the seated chest press exercises using several grips. J Hum Kinet 87:23-34.", "url": "https://doi.org/10.5114/jhk/161468", "type": "emg", "what_it_gave": "Grip type changes pec EMG only a little (clavicular ~25-30 % MVIC across grips)."},
-    {"key": "incline_dumbbell_press", "id": "S17", "citation": "Lehman GJ (2005). The influence of grip width and forearm pronation/supination on upper-body myoelectric activity during the flat bench press. J Strength Cond Res 19(3):587-591.", "url": "https://pubmed.ncbi.nlm.nih.gov/16095407/", "type": "emg", "what_it_gave": "Barbell isometric: a supinated grip raises clavicular pec and biceps. Background only."},
-    {"key": "incline_dumbbell_press", "id": "S18", "citation": "Saeterbakken AH, Mo DA, Scott S, Andersen V (2017). The effects of bench press variations in competitive athletes on muscle activity and performance. J Hum Kinet 57:61-71.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5504579/", "type": "emg", "what_it_gave": "6RM: incline gives lower triceps, higher biceps, and an 18.5-21.5 % lighter load than flat."},
-    {"key": "incline_dumbbell_press", "id": "S19", "citation": "American Council on Exercise. Incline Dumbbell Press (exercise library).", "url": "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-dumbbell-press/", "type": "guideline", "what_it_gave": "5 contact points, shoulder blades down and back, palms forward, neutral wrists, elbows under the wrists. Lower to the upper chest drifting toward the armpits, light touch, no bounce. Press straight up; dumbbells together over the eyes or slightly higher. Bench 45-60 deg (steeper than the EMG supports)."},
-    {"key": "incline_dumbbell_press", "id": "S20", "citation": "National Academy of Sports Medicine. Two-Arm Incline Dumbbell Chest Press (exercise library).", "url": "https://www.nasm.org/resource-center/exercise-library/two-arm-incline-dumbbell-chest-press", "type": "guideline", "what_it_gave": "Bench 45 deg; elbows ~45 deg from the body; press up and slightly forward; don't lock out; stop just short of the chest. Mistakes list. Muscles: clavicular pec and triceps primary; front delt, pec minor, serratus and core secondary."},
-    {"key": "incline_dumbbell_press", "id": "S21", "citation": "National Academy of Sports Medicine. Incline Barbell Bench Press (exercise library).", "url": "https://www.nasm.org/resource-center/exercise-library/incline-barbell-bench-press", "type": "guideline", "what_it_gave": "Above 45 deg shifts work to the front delt; shoulder blades back; no excessive arch; no lockout."},
-    {"key": "incline_dumbbell_press", "id": "S22", "citation": "ExRx.net. Dumbbell Incline Bench Press.", "url": "https://exrx.net/WeightExercises/PectoralClavicular/DBInclineBenchPress", "type": "coach", "what_it_gave": "Target clavicular pec. Synergists: sternal pec, front delt, triceps, coracobrachialis; biceps short head a dynamic stabiliser. Lower to the sides of the upper chest to a slight stretch. Path is a slight arch: dumbbell over the upper arm between elbow and chest at the bottom, moving inward over each shoulder at the top."},
-    {"key": "incline_dumbbell_press", "id": "S23", "citation": "Radiopaedia. Pectoralis major.", "url": "https://radiopaedia.org/articles/pectoralis-major", "type": "textbook", "what_it_gave": "Clavicular head from the front of the medial half of the clavicle; sternocostal head ~80 % of the muscle volume; tendon layers."},
-    {"key": "incline_dumbbell_press", "id": "S24", "citation": "Gray's Anatomy (1918 text, via Wikipedia: Pectoralis major; Deltoid muscle).", "url": "https://en.wikipedia.org/wiki/Deltoid_muscle", "type": "textbook", "what_it_gave": "Clavicular pec from the sternal half of the clavicle, separated from the sternal part by a slight interval. Front delt from the lateral third of the clavicle, inserting at mid-shaft on the deltoid tuberosity. Cephalic vein runs between the two muscles."},
-    {"key": "incline_dumbbell_press", "id": "S25", "citation": "TeachMeAnatomy. Muscles of the pectoral region.", "url": "https://teachmeanatomy.info/upper-limb/muscles/pectoral-region/", "type": "textbook", "what_it_gave": "Sternocostal head from the sternum, upper six costal cartilages and the external oblique sheet; clavicular head flexes the arm."},
-    {"key": "incline_dumbbell_press", "id": "S26", "citation": "American College of Sports Medicine (2009). Progression models in resistance training for healthy adults. Med Sci Sports Exerc 41(3):687-708.", "url": "https://www.sportgeneeskunde.com/wp-content/uploads/ACSM-Position-Stand-Progression-Models-in-Resistance-Training-for-Healthy-Adults.pdf", "type": "guideline", "what_it_gave": "Moderate speed: 1-2 s up and 1-2 s down. (Since superseded by a 2026 stand, which was not read.)"},
-    {"key": "incline_dumbbell_press", "id": "S27", "citation": "University of Michigan MVS 330 student project (1998). Barbell vs dumbbell bench press angular kinematics.", "url": "https://public.websites.umich.edu/~mvs330/w98/benchpress/results2.html", "type": "biomechanics", "what_it_gave": "Flat bench, class project, tiny sample. Dumbbell elbow went from ~5 deg bend at the top to ~125 deg at the bottom, and the shoulder opened ~15 deg further than with a barbell. Weak evidence; used only to set wide tolerances."},
-    {"key": "incline_dumbbell_press", "id": "S28", "citation": "ForgeAI internal: research/incline_dumbbell_press.md v5 and the owner's review of clip v4 (15 Oct 2026).", "url": "D:/Apps/ForgeAI/Codebase/tools/exercise-anim/research/incline_dumbbell_press.md", "type": "coach", "what_it_gave": "Clip-quality rules, not biomechanics: a 114 deg upper-arm roll and a 147 deg wrist turn looked 'uncanny'. v5 measured 10-23 deg roll, 0 deg hinge drift and 6-11 deg wrist turn, which looked right."},
-    {"key": "incline_dumbbell_press", "id": "S29", "citation": "Roy B, Arseneault J, Sercia P (2020). The effect of 12 variations of the bench press exercise on the EMG activity of three heads of the pectoralis major. Int J Strength Cond.", "url": "https://doaj.org/article/4230b8d4b92d4277ab79ec8bfb3b1579", "type": "emg", "what_it_gave": "Barbell at -15/0/30 deg with several grips: grip and angle shift clavicular vs sternal emphasis; 30 deg favours the clavicular head."}
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S1",
+      "citation": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM (2020). Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health 17(19):7339.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+      "type": "emg",
+      "what_it_gave": "30 trained adults, barbell, 60 % 1RM, 0/15/30/45/60 deg, 2 s down / 2 s up by metronome, shoulders ~45 deg out, bar to 1 cm above the chest at nipple height. Figure 3 at 30 deg: upper pec ~30, sternal ~16.5, costal ~13, front delt ~33, triceps ~14 % MVIC. Upper pec 30 deg is significantly higher only than 60 deg."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S2",
+      "citation": "Lauver JD, Cayot TE, Scheuermann BW (2016). Influence of bench angle on upper extremity muscular activation during bench press exercise. Eur J Sport Sci 16(3):309-316.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/",
+      "type": "emg",
+      "what_it_gave": "14 trained men, barbell, 65 % 1RM, -15/0/30/45 deg. Upper pec: 30 and 45 deg (~122-124 %) beat flat (~98 %) only in the 26-50 % part of the press. Lower pec lowest at 45 deg (~72 %)."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S3",
+      "citation": "Trebs AA, Brandenburg JP, Pitney WA (2010). An electromyography analysis of 3 muscles surrounding the shoulder joint during the performance of a chest press exercise at several angles. J Strength Cond Res 24(7):1925-1930.",
+      "url": "https://www.bisp-surf.de/Record/PU201104003483",
+      "type": "emg",
+      "what_it_gave": "15 men, 70 % 1RM, 0/28/44/56 deg. Upper pec: 44 > 28 and > 0. Sternocostal: flat highest. Front delt higher at every incline than flat."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S4",
+      "citation": "Parpa K, Michaelides M, Chernov A, Moubarak M, Intziegianni K (2025). The effect of different incline angles on the neuromuscular activation of the clavicular head of the pectoralis major muscle during the barbell incline bench press exercise. Eur J Sport Sci (EJSPORT) 4(5).",
+      "url": "https://eu-opensci.org/index.php/sport/article/view/9255",
+      "type": "emg",
+      "what_it_gave": "20 trained men, 60 % 1RM, 20/32/43 deg. Upper pec RMS 0.59 / 0.64 / 0.66 mV; 43 vs 32 not different; 20 deg lowest."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S5",
+      "citation": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E (2020). Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders. Eur J Sport Sci 20(5):571-579.",
+      "url": "https://doi.org/10.1080/17461391.2019.1655101",
+      "type": "emg",
+      "what_it_gave": "10 bodybuilders, 80 % 1RM. 45 deg incline: highest clavicular pec (concentric), lower sternocostal and triceps long head than flat."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S6",
+      "citation": "Cabral HV, de Souza LML, de Oliveira LF, Vieira TM (2022). Non-uniform excitation of the pectoralis major muscle during flat and inclined bench press exercises. Scand J Med Sci Sports 32(2):381-390.",
+      "url": "https://doi.org/10.1111/sms.14082",
+      "type": "emg",
+      "what_it_gave": "High-density EMG: the centre of pec activity moves up toward the clavicular region going from flat to 45 deg (p<0.001)."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S7",
+      "citation": "Barnett C, Kippers V, Turner P (1995). Effects of variations of the bench press exercise on the EMG activity of five shoulder muscles. J Strength Cond Res 9(4):222-227.",
+      "url": "https://www.bisp-surf.de/Record/PU199603106332",
+      "type": "emg",
+      "what_it_gave": "Incline upper pec no higher than flat; front delt rises with incline; triceps highest flat/decline; lats low in all."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S8",
+      "citation": "Luczak J, Bosak A, Riemann BL (2013). Shoulder muscle activation of novice and resistance trained women during variations of dumbbell press exercises. J Sports Med 2013:612650.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4590897/",
+      "type": "emg",
+      "what_it_gave": "The only DUMBBELL incline study found: 24 women, 45 deg, 4.5 kg dumbbells, self-paced ~1.2 s up / 1.3 s down, hands over the shoulder joints. Values are % of the flat dumbbell press. Concentric: clavicular pec 175, sternal 114, front delt 264, upper trap 374."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S9",
+      "citation": "Saeterbakken AH, van den Tillaar R, Fimland MS (2011). A comparison of muscle activity and 1-RM strength of three chest-press exercises with different stability requirements. J Sports Sci 29(5):533-538.",
+      "url": "https://doi.org/10.1080/02640414.2010.543916",
+      "type": "emg",
+      "what_it_gave": "Flat press. Dumbbells vs barbell: same pec and front delt, lower triceps, higher biceps; dumbbell 1RM 17 % lower."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S10",
+      "citation": "Farias DA, Willardson JM, Paz GA, Bezerra ES, Miranda H (2017). Maximal strength performance and muscle activation for the bench press and triceps extension exercises adopting dumbbell, barbell, and machine modalities over multiple sets. J Strength Cond Res 31(7):1879-1887.",
+      "url": "https://doi.org/10.1519/JSC.0000000000001651",
+      "type": "emg",
+      "what_it_gave": "Flat press, 10RM sets: dumbbell > barbell for pec and biceps; triceps lower with dumbbells."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S11",
+      "citation": "Campos YAC, Vianna JM, Guimaraes MP, et al. (2020). Different shoulder exercises affect the activation of deltoid portions in resistance-trained individuals. J Hum Kinet 75:5-14.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/",
+      "type": "emg",
+      "what_it_gave": "Bench press: front delt 21.4, side delt 5, rear delt 3.5 % MVIC."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S12",
+      "citation": "Chaves SFN, Rocha-Junior VA, Encarnacao IGA, et al. (2020). Effects of horizontal and incline bench press on neuromuscular adaptations in untrained young men. Int J Exerc Sci 13(6):859-872.",
+      "url": "https://digitalcommons.wku.edu/ijes/vol13/iss6/12",
+      "type": "emg",
+      "what_it_gave": "8-week training study: the incline-only group grew most at the 2nd intercostal space (clavicular pec), +0.62 cm vs flat-only. The abstract gives no bench angle."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S13",
+      "citation": "Coutinho ABB, Matta TT (2026). Distinct activation patterns of the clavicular and sternal regions of the pectoralis major during the concentric bench press. Int J Sports Sci Coach (online 17 Jun 2026).",
+      "url": "https://doi.org/10.1177/17479541261457744",
+      "type": "emg",
+      "what_it_gave": "On the incline, clavicular pec peaks in the middle of the press and is lower in the final (lockout) part."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S14",
+      "citation": "Noteboom L, Belli I, Hoozemans MJM, Seth A, Veeger HEJ, van der Helm FCT (2024). Effects of bench press technique variations on musculoskeletal shoulder loads and potential injury risk. Front Physiol 15:1393235.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11224528/",
+      "type": "biomechanics",
+      "what_it_gave": "Shoulder model with 45/70/90 deg elbow angles. Grip width and shoulder-blade retraction matter more than elbow angle; retraction lowers loads. Says the 45 deg rule is expert opinion."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S15",
+      "citation": "Green CM, Comfort P (2007). The affect of grip width on bench press performance and risk of injury. Strength Cond J 29(5):10-14. (Read through S14's summary, not first-hand.)",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11224528/",
+      "type": "review",
+      "what_it_gave": "Expert recommendation: keep the elbows at about 45 deg or less, not near 90 deg."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S16",
+      "citation": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM (2023). Comparison of muscle activity between the horizontal bench press and the seated chest press exercises using several grips. J Hum Kinet 87:23-34.",
+      "url": "https://doi.org/10.5114/jhk/161468",
+      "type": "emg",
+      "what_it_gave": "Grip type changes pec EMG only a little (clavicular ~25-30 % MVIC across grips)."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S17",
+      "citation": "Lehman GJ (2005). The influence of grip width and forearm pronation/supination on upper-body myoelectric activity during the flat bench press. J Strength Cond Res 19(3):587-591.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/16095407/",
+      "type": "emg",
+      "what_it_gave": "Barbell isometric: a supinated grip raises clavicular pec and biceps. Background only."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S18",
+      "citation": "Saeterbakken AH, Mo DA, Scott S, Andersen V (2017). The effects of bench press variations in competitive athletes on muscle activity and performance. J Hum Kinet 57:61-71.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5504579/",
+      "type": "emg",
+      "what_it_gave": "6RM: incline gives lower triceps, higher biceps, and an 18.5-21.5 % lighter load than flat."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S19",
+      "citation": "American Council on Exercise. Incline Dumbbell Press (exercise library).",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-dumbbell-press/",
+      "type": "guideline",
+      "what_it_gave": "5 contact points, shoulder blades down and back, palms forward, neutral wrists, elbows under the wrists. Lower to the upper chest drifting toward the armpits, light touch, no bounce. Press straight up; dumbbells together over the eyes or slightly higher. Bench 45-60 deg (steeper than the EMG supports)."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S20",
+      "citation": "National Academy of Sports Medicine. Two-Arm Incline Dumbbell Chest Press (exercise library).",
+      "url": "https://www.nasm.org/resource-center/exercise-library/two-arm-incline-dumbbell-chest-press",
+      "type": "guideline",
+      "what_it_gave": "Bench 45 deg; elbows ~45 deg from the body; press up and slightly forward; don't lock out; stop just short of the chest. Mistakes list. Muscles: clavicular pec and triceps primary; front delt, pec minor, serratus and core secondary."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S21",
+      "citation": "National Academy of Sports Medicine. Incline Barbell Bench Press (exercise library).",
+      "url": "https://www.nasm.org/resource-center/exercise-library/incline-barbell-bench-press",
+      "type": "guideline",
+      "what_it_gave": "Above 45 deg shifts work to the front delt; shoulder blades back; no excessive arch; no lockout."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S22",
+      "citation": "ExRx.net. Dumbbell Incline Bench Press.",
+      "url": "https://exrx.net/WeightExercises/PectoralClavicular/DBInclineBenchPress",
+      "type": "coach",
+      "what_it_gave": "Target clavicular pec. Synergists: sternal pec, front delt, triceps, coracobrachialis; biceps short head a dynamic stabiliser. Lower to the sides of the upper chest to a slight stretch. Path is a slight arch: dumbbell over the upper arm between elbow and chest at the bottom, moving inward over each shoulder at the top."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S23",
+      "citation": "Radiopaedia. Pectoralis major.",
+      "url": "https://radiopaedia.org/articles/pectoralis-major",
+      "type": "textbook",
+      "what_it_gave": "Clavicular head from the front of the medial half of the clavicle; sternocostal head ~80 % of the muscle volume; tendon layers."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S24",
+      "citation": "Gray's Anatomy (1918 text, via Wikipedia: Pectoralis major; Deltoid muscle).",
+      "url": "https://en.wikipedia.org/wiki/Deltoid_muscle",
+      "type": "textbook",
+      "what_it_gave": "Clavicular pec from the sternal half of the clavicle, separated from the sternal part by a slight interval. Front delt from the lateral third of the clavicle, inserting at mid-shaft on the deltoid tuberosity. Cephalic vein runs between the two muscles."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S25",
+      "citation": "TeachMeAnatomy. Muscles of the pectoral region.",
+      "url": "https://teachmeanatomy.info/upper-limb/muscles/pectoral-region/",
+      "type": "textbook",
+      "what_it_gave": "Sternocostal head from the sternum, upper six costal cartilages and the external oblique sheet; clavicular head flexes the arm."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S26",
+      "citation": "American College of Sports Medicine (2009). Progression models in resistance training for healthy adults. Med Sci Sports Exerc 41(3):687-708.",
+      "url": "https://www.sportgeneeskunde.com/wp-content/uploads/ACSM-Position-Stand-Progression-Models-in-Resistance-Training-for-Healthy-Adults.pdf",
+      "type": "guideline",
+      "what_it_gave": "Moderate speed: 1-2 s up and 1-2 s down. (Since superseded by a 2026 stand, which was not read.)"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S27",
+      "citation": "University of Michigan MVS 330 student project (1998). Barbell vs dumbbell bench press angular kinematics.",
+      "url": "https://public.websites.umich.edu/~mvs330/w98/benchpress/results2.html",
+      "type": "biomechanics",
+      "what_it_gave": "Flat bench, class project, tiny sample. Dumbbell elbow went from ~5 deg bend at the top to ~125 deg at the bottom, and the shoulder opened ~15 deg further than with a barbell. Weak evidence; used only to set wide tolerances."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S28",
+      "citation": "ForgeAI internal: research/incline_dumbbell_press.md v5 and the owner's review of clip v4 (15 Oct 2026).",
+      "url": "D:/Apps/ForgeAI/Codebase/tools/exercise-anim/research/incline_dumbbell_press.md",
+      "type": "coach",
+      "what_it_gave": "Clip-quality rules, not biomechanics: a 114 deg upper-arm roll and a 147 deg wrist turn looked 'uncanny'. v5 measured 10-23 deg roll, 0 deg hinge drift and 6-11 deg wrist turn, which looked right."
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "id": "S29",
+      "citation": "Roy B, Arseneault J, Sercia P (2020). The effect of 12 variations of the bench press exercise on the EMG activity of three heads of the pectoralis major. Int J Strength Cond.",
+      "url": "https://doaj.org/article/4230b8d4b92d4277ab79ec8bfb3b1579",
+      "type": "emg",
+      "what_it_gave": "Barbell at -15/0/30 deg with several grips: grip and angle shift clavicular vs sternal emphasis; 30 deg favours the clavicular head."
+    }
   ],
   "clip_check": [
-    {"key": "incline_dumbbell_press", "check": "bench / torso angle", "target": "30 deg (30-45), torso within 2 deg of the pad", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "upper arm from torso (elev) at bottom", "target": "45 deg (35-55)", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "upper arm from torso (elev) at top", "target": "~120 deg, arm vertical (115-125)", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "elbow forward/back (plane) at bottom", "target": "~0 deg (-15 to +15)", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "elbow forward/back (plane) at top", "target": "~90 deg (85-100)", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "elbow bend at bottom", "target": "~100 deg (90-125)", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "elbow bend at top", "target": "~5 deg (0-15)", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "forearm tilt from vertical, side view, every frame", "target": "0-10 deg", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "hand inside elbow at bottom, front view", "target": "0-15 deg", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "dumbbell path, side view drift", "target": "under ~5 cm toward head or feet", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "depth: handle height above chest at bottom", "target": "0-5 cm, beside the upper chest", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "top: dumbbells over the shoulders, gap between inner plates", "target": "over the shoulder joints; 0-10 cm gap; not over the face", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "upper-arm roll range over the rep", "target": "about 30 deg or less, smooth, no frame jump over 5 deg", "measured": null, "pass": null, "tool": "measure_twist.py"},
-    {"key": "incline_dumbbell_press", "check": "elbow hinge drift", "target": "under 5 deg", "measured": null, "pass": null, "tool": "measure_twist.py"},
-    {"key": "incline_dumbbell_press", "check": "wrist twist (hand turn at the wrist joint)", "target": "under 15 deg", "measured": null, "pass": null, "tool": "measure_twist.py"},
-    {"key": "incline_dumbbell_press", "check": "wrist bend back/forward", "target": "under 10 deg", "measured": null, "pass": null, "tool": "measure_twist.py"},
-    {"key": "incline_dumbbell_press", "check": "handle axis (pronated, handles in line)", "target": "0-20 deg turn-in", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "shoulder blades still (shoulder point up/forward travel)", "target": "under ~2 cm", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "head, hips, feet stay in contact and still", "target": "no lift, no slide", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "left/right symmetry", "target": "height difference under ~3 cm", "measured": null, "pass": null, "tool": "measure_pose.py"},
-    {"key": "incline_dumbbell_press", "check": "tempo", "target": "up 2.0 s (1-2 s ok), top 0.3, down 2.0 s, bottom 0.3, loop ~4.6 s", "measured": null, "pass": null, "tool": "spec timing keys"},
-    {"key": "incline_dumbbell_press", "check": "glow values match tiers", "target": "chest_upper 1.0; front_delts, chest_lower, triceps 0.35; everything else 0", "measured": null, "pass": null, "tool": "spec highlight vs research muscles[]"},
-    {"key": "incline_dumbbell_press", "check": "primary muscle is the strongest red in the bottom, middle and top frames", "target": "upper chest reads as the deepest red in all three", "measured": null, "pass": null, "tool": "rendered frames"}
+    {
+      "key": "incline_dumbbell_press",
+      "check": "bench / torso angle",
+      "target": "30 deg (30-45), torso within 2 deg of the pad",
+      "measured": "torso 30.8 deg from the floor (pad 30); back gap to the pad -0.02 to +0.027 m",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "upper arm from torso (elev) at bottom",
+      "target": "45 deg (35-55)",
+      "measured": "55 deg",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "upper arm from torso (elev) at top",
+      "target": "~120 deg, arm vertical (115-125)",
+      "measured": "118 deg, arm vertical",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "elbow forward/back (plane) at bottom",
+      "target": "~0 deg (-15 to +15)",
+      "measured": "-30 deg (elbows a little below the bench line). At 0 to +10 the handles floated 22 cm above the chest, breaking the depth row; these two rows cannot both pass on this body",
+      "pass": "no",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "elbow forward/back (plane) at top",
+      "target": "~90 deg (85-100)",
+      "measured": "88 deg",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "elbow bend at bottom",
+      "target": "~100 deg (90-125)",
+      "measured": "130 deg (5 over): the bend a vertical forearm needs with the elbow at -30",
+      "pass": "no",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "elbow bend at top",
+      "target": "~5 deg (0-15)",
+      "measured": "3 deg",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "forearm tilt from vertical, side view, every frame",
+      "target": "0-10 deg",
+      "measured": "0-0.4 deg every sample",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "hand inside elbow at bottom, front view",
+      "target": "0-15 deg",
+      "measured": "0 deg (hand straight over the elbow)",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "dumbbell path, side view drift",
+      "target": "under ~5 cm toward head or feet",
+      "measured": "6.8 cm toward the head, level with the floor (measure_press)",
+      "pass": "no",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "depth: handle height above chest at bottom",
+      "target": "0-5 cm, beside the upper chest",
+      "measured": "7.6 cm: handle centre above the chest's highest skin; the plates reach below the chest line (measure_press)",
+      "pass": "no",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "top: dumbbells over the shoulders, gap between inner plates",
+      "target": "over the shoulder joints; 0-10 cm gap; not over the face",
+      "measured": "handle centres 0.46 m apart (~8 cm between inner plates); over the shoulders",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "upper-arm roll range over the rep",
+      "target": "about 30 deg or less, smooth, no frame jump over 5 deg",
+      "measured": "-25 to -4 deg (21 deg range), at most ~1.2 deg per frame",
+      "pass": "yes",
+      "tool": "measure_twist.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "elbow hinge drift",
+      "target": "under 5 deg",
+      "measured": "0 deg",
+      "pass": "yes",
+      "tool": "measure_twist.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "wrist twist (hand turn at the wrist joint)",
+      "target": "under 15 deg",
+      "measured": "1-7 deg",
+      "pass": "yes",
+      "tool": "measure_twist.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "wrist bend back/forward",
+      "target": "under 10 deg",
+      "measured": "within 2 deg of rest every sample (measure_wrist)",
+      "pass": "yes",
+      "tool": "measure_twist.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "handle axis (pronated, handles in line)",
+      "target": "0-20 deg turn-in",
+      "measured": "in line, no turn-in; handle slants 14 deg to keep the wrist straight",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "shoulder blades still (shoulder point up/forward travel)",
+      "target": "under ~2 cm",
+      "measured": "collarbone and shoulder blade bones not moved",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "head, hips, feet stay in contact and still",
+      "target": "no lift, no slide",
+      "measured": "bench and feet as v5 (probe_bench, probe_feet); recipe body pose unchanged",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "left/right symmetry",
+      "target": "height difference under ~3 cm",
+      "measured": "mirrored by construction",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "tempo",
+      "target": "up 2.0 s (1-2 s ok), top 0.3, down 2.0 s, bottom 0.3, loop ~4.6 s",
+      "measured": "2.0 up / 0.3 / 2.0 down / 0.3, loop 4.6 s",
+      "pass": "yes",
+      "tool": "spec timing keys"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "glow values match tiers",
+      "target": "chest_upper 1.0; front_delts, chest_lower, triceps 0.35; everything else 0",
+      "measured": "from research file: chest_upper 1.0; front_delts, chest_lower, triceps 0.35",
+      "pass": "yes",
+      "tool": "spec highlight vs research muscles[]"
+    },
+    {
+      "key": "incline_dumbbell_press",
+      "check": "primary muscle is the strongest red in the bottom, middle and top frames",
+      "target": "upper chest reads as the deepest red in all three",
+      "measured": "upper chest deepest red in bottom, middle and top crops",
+      "pass": "yes",
+      "tool": "rendered frames"
+    }
   ]
 }
