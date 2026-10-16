@@ -709,7 +709,7 @@ export function planImport(
   const paidDayFirst = detectDayFirst(colValues(map.paidOn));
 
   const batchNames = listBatches(roster).map((b) => b.name);
-  const seen = new Map<string, number>();
+  const seen = new Map<string, { row: number; name: string }>();
   const out: ImportRow[] = [];
 
   for (const { row, rowNumber } of taken) {
@@ -802,6 +802,12 @@ export function planImport(
     const money = (f: ImportField) => (text(f) ? parseRupeeInput(text(f).replace(/\/-$|,/g, '')) : null);
     const endsOn = text('expiry') ? parseSheetDate(cellAt(row, map.expiry), today, expiryDayFirst) : null;
     const startsOn = text('startDate') ? parseSheetDate(cellAt(row, map.startDate), today, startDayFirst) : null;
+    // A payment date the receipt can carry: readable, not before records began, not in the future.
+    let paidOn = text('paidOn') ? parseSheetDate(cellAt(row, map.paidOn), today, paidDayFirst) : null;
+    if (text('paidOn') && (!paidOn || paidOn < EARLIEST_DATE || paidOn > today)) {
+      warnings.push(tr(`Payment date “${text('paidOn')}” not usable — the receipt is dated the plan's start.`, `Payment date “${text('paidOn')}” sahi nahi — raseed plan shuru ki date par.`));
+      paidOn = null;
+    }
     const term = termFromRow({
       planName: text('plan'),
       startsOn,
@@ -810,7 +816,7 @@ export function planImport(
       totalP: money('total'),
       paidP: money('amount'),
       dueP: money('due'),
-      paidOn: text('paidOn') ? parseSheetDate(cellAt(row, map.paidOn), today, paidDayFirst) : null,
+      paidOn,
     });
     // No joining-date column: the plan's start is a better joining date than today.
     if (map.joinedOn === null && term && term.startsOn >= EARLIEST_DATE && term.startsOn <= today) joinedOn = term.startsOn;
@@ -861,10 +867,16 @@ export function planImport(
 
     const earlier = seen.get(draft.phone);
     if (earlier !== undefined) {
-      out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier, problems, warnings, term });
+      // Review (16 Oct 2026): a repeat is the SAME member (a payments list) only when the name
+      // matches too. Two people on one family mobile must never share plans and money.
+      const sameName = earlier.name.toLowerCase() === draft.fullName.toLowerCase();
+      if (!sameName) {
+        warnings.push(tr(`Row ${earlier.row} has this mobile with another name — this row is skipped.`, `Row ${earlier.row} mein yahi mobile doosre naam se hai — yeh row chhodi.`));
+      }
+      out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier.row, problems, warnings, term: sameName ? term : null });
       continue;
     }
-    seen.set(draft.phone, rowNumber);
+    seen.set(draft.phone, { row: rowNumber, name: draft.fullName });
     const existing = findDuplicatePhone(roster, draft.phone);
     out.push({ rowNumber, cells, name: fullName, status: existing ? 'duplicate' : 'add', draft, existing, sameAsRow: null, problems, warnings, term });
   }

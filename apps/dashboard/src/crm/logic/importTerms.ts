@@ -28,6 +28,10 @@ export interface ImportTerm {
   paidP: Paise;
   /** The receipt's date: the sheet's payment date, else the start (16 Oct 2026). */
   paidOn: DateISO;
+  /** The sheet gave a payment date (a payments list can then repeat an amount on other days). */
+  paidOnGiven?: boolean;
+  /** The sheet gave a price or a balance, so a payments list can be capped at the price. */
+  priceKnown?: boolean;
   /** The plan's length, for a NEW plan of this name. */
   length: { unit: DurationUnit; count: number };
 }
@@ -90,7 +94,8 @@ export function termFromRow(t: TermInput): ImportTerm | null {
   if (!startsOn || startsOn > endsOn) return null;
 
   const paid = t.paidP != null && t.paidP > 0 ? t.paidP : null;
-  const due = t.dueP != null && t.dueP > 0 ? t.dueP : null;
+  // A balance of 0 is a fact (fully paid), not a blank (review, 16 Oct 2026).
+  const due = t.dueP != null && t.dueP >= 0 ? t.dueP : null;
   const total = t.totalP != null && t.totalP > 0 ? t.totalP : null;
   let priceP = total ?? (paid != null && due != null ? paid + due : paid ?? due ?? 0);
   let paidP = paid ?? (total != null && due != null ? Math.max(0, total - due) : 0);
@@ -99,5 +104,15 @@ export function termFromRow(t: TermInput): ImportTerm | null {
   paidP = Math.round(paidP);
 
   const length = fromName ?? lengthBetween(startsOn, endsOn);
-  return { planName: named || 'Imported plan', startsOn, endsOn, priceP, paidP, paidOn: t.paidOn ?? startsOn, length };
+  return {
+    planName: named || 'Imported plan',
+    startsOn,
+    endsOn,
+    priceP,
+    paidP,
+    paidOn: t.paidOn ?? startsOn,
+    paidOnGiven: !!t.paidOn,
+    priceKnown: total != null || due != null,
+    length,
+  };
 }

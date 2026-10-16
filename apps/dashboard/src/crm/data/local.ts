@@ -44,7 +44,7 @@ import type {
   Expense,
   ExpenseDraft,
 } from '../types';
-import { addDays, formatDay, isValidDateISO, type DateISO } from '../logic/dates';
+import { addDays, diffDays, formatDay, isValidDateISO, type DateISO } from '../logic/dates';
 import { tr } from '../i18n';
 import { endDateForPlan } from '../logic/membership';
 import { findDuplicatePhone } from '../logic/members';
@@ -431,30 +431,52 @@ export class LocalCrmData implements CrmData {
           return;
         }
         const paidOn = term.paidOn ?? term.startsOn;
-        const same = db.memberships.find(
-          (m) => m.memberId === member.id && planKey(m.planName) === planKey(term.planName) && m.startsOn === term.startsOn && m.endsOn === term.endsOn,
-        );
+        // Review (16 Oct 2026): a repeat of a term THIS import made also matches when its dates are
+        // within 3 days (a typo: 31/10 vs 30/10; a misspelt plan name), so it never makes a second,
+        // overlapping plan with a false due.
+        const near = (a: DateISO, b: DateISO) => Math.abs(diffDays(a, b)) <= 3;
+        const same =
+          db.memberships.find(
+            (m) => m.memberId === member.id && planKey(m.planName) === planKey(term.planName) && m.startsOn === term.startsOn && m.endsOn === term.endsOn,
+          ) ??
+          db.memberships.find((m) => m.importId === importId && m.memberId === member.id && near(m.startsOn, term.startsOn) && near(m.endsOn, term.endsOn));
         if (same) {
           // 16 Oct 2026: a payments list repeats a term once per payment. Made by THIS import, each
-          // further row's payment is another receipt (the same amount on the same day once only).
-          // Made by an earlier import or by hand: never twice, as before.
-          const more =
-            same.importId === importId &&
-            term.paidP > 0 &&
-            !db.payments.some((p) => p.membershipId === same.id && p.importId === importId && p.amountP === term.paidP && p.paidOn === paidOn);
-          if (!more) {
+          // further row's payment is another receipt. Made by an earlier import or by hand: never
+          // twice, as before.
+          if (same.importId !== importId || term.paidP <= 0) {
             result.skipped += 1;
             return;
           }
-          // The term's price is the largest the sheet gives (a later row may carry the full price).
+          const paidSoFar = db.payments.filter((p) => p.membershipId === same.id && !p.voided).reduce((t, p) => t + p.amountP, 0);
+          // The same amount on the same day twice is a copied row, when the sheet dates payments.
+          if (term.paidOnGiven && db.payments.some((p) => p.membershipId === same.id && p.importId === importId && p.amountP === term.paidP && p.paidOn === paidOn)) {
+            result.skipped += 1;
+            return;
+          }
+          let amount = term.paidP;
+          if (term.priceKnown) {
+            const price = Math.max(same.priceP, term.priceP);
+            // A running total ("paid so far" 2000, then 4500; or a falling balance): the new money is
+            // the difference. Never more than what is still unpaid.
+            if (paidSoFar + amount > price && amount > paidSoFar && amount <= price) amount -= paidSoFar;
+            amount = Math.min(amount, Math.max(0, price - paidSoFar));
+            same.priceP = price;
+          } else {
+            // No price in the sheet: the plan's price is what was paid, so no due is made up.
+            same.priceP = paidSoFar + amount;
+          }
           // updatedAt stays: "Undo this import" reads a later save as the gym's own change.
-          if (term.priceP > same.priceP) same.priceP = term.priceP;
+          if (amount <= 0) {
+            result.skipped += 1;
+            return;
+          }
           db.payments.push({
             id: newId(),
             gymId: db.gym.gymId,
             memberId: member.id,
             membershipId: same.id,
-            amountP: term.paidP,
+            amountP: amount,
             method: 'other',
             paidOn,
             receiptNo: nextReceiptNo(db.payments, paidOn),

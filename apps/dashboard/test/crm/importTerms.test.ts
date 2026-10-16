@@ -199,3 +199,84 @@ describe('a payments list: one row per payment (16 Oct 2026)', () => {
     expect((await db.load()).payments).toHaveLength(4);
   });
 });
+
+describe('payments lists: review fixes (16 Oct 2026)', () => {
+  const H = ['Member Name', 'Mobile No', 'Package', 'Start Date', 'End Date', 'Package Amount', 'Amount Paid', 'Balance'];
+  async function importRows(rows: unknown[][]) {
+    let c = 1000;
+    const db = new LocalCrmData({ store: memoryStore(), now: () => (c += 1), seed: () => emptySnapshot(0, 'Test Gym') });
+    const plan = planImport(rows, 0, mapOf(rows), [], TODAY);
+    const adds = plan.rows.filter((r) => r.status === 'add');
+    await db.createMembers(adds.map((r) => ({ ...r.draft!, importId: 'imp' })) as never);
+    const items = plan.rows
+      .filter((r) => r.term && r.draft && (r.status === 'add' || r.sameAsRow !== null))
+      .sort((a, b) => a.rowNumber - b.rowNumber)
+      .map((r) => ({ phone: r.draft!.phone, term: r.term! }));
+    await db.importTerms(items, 'imp');
+    return { plan, snap: await db.load() };
+  }
+  const paid = (snap: Awaited<ReturnType<typeof importRows>>['snap']) => snap.payments.map((p) => p.amountP / 100);
+
+  it('two people on one mobile are never merged', async () => {
+    const { plan, snap } = await importRows([
+      H,
+      ['Rahul Jain', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '4500', ''],
+      ['Priya Jain', '9876543210', 'Monthly', '01/08/2026', '31/08/2026', '1500', '1500', ''],
+    ]);
+    expect(plan.rows[1]!.term).toBeNull();
+    expect(plan.rows[1]!.warnings.join(' ')).toContain('another name');
+    expect(snap.memberships).toHaveLength(1);
+    expect(paid(snap)).toEqual([4500]);
+  });
+
+  it('a running total of what was paid is not counted twice', async () => {
+    const { snap } = await importRows([
+      H,
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '2000', ''],
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '4500', ''],
+    ]);
+    expect(paid(snap)).toEqual([2000, 2500]);
+  });
+
+  it('a falling balance with no paid column: each row adds only the new money, the last (balance 0) too', async () => {
+    const { snap } = await importRows([
+      ['Member Name', 'Mobile No', 'Package', 'Start Date', 'End Date', 'Package Amount', 'Balance'],
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '2500'],
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '1000'],
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '0'],
+    ]);
+    expect(paid(snap)).toEqual([2000, 1500, 1000]);
+  });
+
+  it('equal instalments with no payment date column all count, and never past the price', async () => {
+    const { snap } = await importRows([
+      H,
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '1500', ''],
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '1500', ''],
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '1500', ''],
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '1500', ''],
+    ]);
+    expect(paid(snap)).toEqual([1500, 1500, 1500]);
+  });
+
+  it('a typo in a repeated row (end date a day off, plan name misspelt) is the same plan', async () => {
+    const { snap } = await importRows([
+      H,
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '2000', ''],
+      ['Riya', '9876543210', 'Quartely', '01/08/2026', '30/10/2026', '4500', '2500', ''],
+    ]);
+    expect(snap.memberships).toHaveLength(1);
+    expect(snap.plans.map((p) => p.name)).toEqual(['Quarterly']);
+    expect(paid(snap)).toEqual([2000, 2500]);
+  });
+
+  it('a payment date that cannot be used falls back to the start, with a warning', () => {
+    const rows = [
+      [...H.slice(0, 7), 'Payment Date'],
+      ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '4500', '01/01/2031'],
+    ];
+    const r = planImport(rows, 0, mapOf(rows), [], TODAY).rows[0]!;
+    expect(r.term?.paidOn).toBe('2026-08-01');
+    expect(r.warnings.join(' ')).toContain('Payment date');
+  });
+});

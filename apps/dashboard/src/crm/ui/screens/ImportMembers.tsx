@@ -188,7 +188,10 @@ export function ImportMembersScreen() {
     // The skipped-rows file is English in every language: the same plan, worked out in English.
     const english = englishSkipReasons(file.rows, headerRow, map, snapshot.members, today);
     const reasonFor = (row: ImportRow) => english.get(row.rowNumber) ?? inEnglish(() => skipReason(row));
-    const skipped = rows.filter((r) => !work.has(r)).map((row) => ({ row, reason: reasonFor(row) }));
+    // A repeated row whose plan and payment are added to its member is not "skipped" (review: the
+    // skipped-rows file would invite typing that payment in again).
+    const repeatAdds = (r: ImportRow) => role === 'owner' && r.sameAsRow !== null && r.term !== null;
+    const skipped = rows.filter((r) => !work.has(r) && !repeatAdds(r)).map((row) => ({ row, reason: reasonFor(row) }));
     const total = adds.length + fills.length;
     setStage('running');
     setProgress({ done: 0, total });
@@ -478,8 +481,8 @@ export function ImportMembersScreen() {
             <div style={{ marginTop: space.md }}>
               <ErrorBanner>
                 {tr(
-                  `Members are saved, but their plans and payments did not save: ${result.termsError} Import the same file again — members already here are skipped and their plans are added then.`,
-                  `Members save ho gaye, par unke plan aur payment save nahi hue: ${result.termsError} Wahi file phir import karo — jo members hain woh chhod diye jayenge aur plan jud jayenge.`,
+                  `Members are saved, but not all their plans and payments: ${result.termsError} Use "Undo this import" below, then import the same file again, so every payment comes in once.`,
+                  `Members save ho gaye, par saare plan aur payment nahi: ${result.termsError} Neeche "Yeh import wapas lo" dabao, phir wahi file import karo, taaki har payment ek hi baar aaye.`,
                 )}
               </ErrorBanner>
             </div>
