@@ -37,18 +37,18 @@ export function BrandingScreen() {
   return (
     <>
       <PageHeader
-        title={'Branding'}
-        subtitle={"Your gym's logo and colours in the ForgeAI app"}
+        title="Branding"
+        subtitle="Your gym's logo and colours in the ForgeAI app"
         actions={
           <Button variant="ghost" onClick={() => navigate('/settings')}>
-            {'Back to Settings'}
+            Back to Settings
           </Button>
         }
       />
       {cloud ? (
         <BrandingForm ownerKey={cloud.ownerKey} gymName={cloud.name} />
       ) : (
-        <JoinCodeCard title={'Turn on the member app first'} />
+        <JoinCodeCard title="Turn on the member app first" />
       )}
     </>
   );
@@ -102,7 +102,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
     return (
       <Card>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {'Loading your gym’s look…'}
+          Loading your gym’s look…
         </p>
       </Card>
     );
@@ -112,7 +112,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
       <Card>
         <ErrorBanner>{load.message}</ErrorBanner>
         <Button variant="ghost" onClick={() => void fetchBrand()}>
-          {'Try again'}
+          Try again
         </Button>
       </Card>
     );
@@ -158,7 +158,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
     <div style={{ display: 'grid', justifyItems: 'center', gap: space.md }}>
       <PhonePreview palette={palette} gymName={gymName} logoUrl={draft.logoUrl} heading={draft.heading} scale={compact ? 0.86 : 1} />
       <p style={{ margin: 0, maxWidth: 300, textAlign: 'center', fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        {'The Workout tab as members will see it. The app opens with your logo for a second, then these colours.'}
+        The Workout tab as members will see it. The app opens with your logo for a second, then these colours.
       </p>
     </div>
   );
@@ -187,22 +187,22 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           />
 
           <Card>
-            <SectionTitle>{'Colour'}</SectionTitle>
+            <SectionTitle>Colour</SectionTitle>
             <ColourField
-              label={'Your brand colour'}
-              hint={'Buttons, the active tab, highlights and charts.'}
+              label="Your brand colour"
+              hint="Buttons, the active tab, highlights and charts."
               value={draft.accent}
               onChange={(v) => set({ accent: v })}
             />
             <div style={{ marginTop: space.lg }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: space.sm, minHeight: 44, cursor: 'pointer', fontFamily: font.body, fontSize: 14, color: color.ink }}>
                 <input type="checkbox" checked={draft.useBg} onChange={(e) => set({ useBg: e.target.checked })} style={{ width: 20, height: 20, accentColor: color.accent }} />
-                {'Use my own background tone'}
+                Use my own background tone
               </label>
               {draft.useBg && (
                 <ColourField
-                  label={'Background tone'}
-                  hint={'A dark colour for the page; cards and sheets are made a little lighter from it.'}
+                  label="Background tone"
+                  hint="A dark colour for the page; cards and sheets are made a little lighter from it."
                   value={draft.bg}
                   onChange={(v) => set({ bg: v })}
                 />
@@ -211,8 +211,8 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           </Card>
 
           <Card>
-            <SectionTitle>{'Headings'}</SectionTitle>
-            <div role="radiogroup" aria-label={'Heading style'} style={{ display: 'grid', gap: space.sm }}>
+            <SectionTitle>Headings</SectionTitle>
+            <div role="radiogroup" aria-label="Heading style" style={{ display: 'grid', gap: space.sm }}>
               {(
                 [
                   ['normal', 'Normal', 'ForgeAI’s own headings'],
@@ -242,7 +242,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           </Card>
 
           <Card>
-            <SectionTitle>{'Readability check'}</SectionTitle>
+            <SectionTitle>Readability check</SectionTitle>
             {live ? (
               <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'grid', gap: space.sm }}>
                 {report.map((line) => {
@@ -257,12 +257,12 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
               </ul>
             ) : (
               <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkMuted }}>
-                {'Finish typing the colour code to check it.'}
+                Finish typing the colour code to check it.
               </p>
             )}
             {live && live.nudges.some((n) => n.what === 'accent' || n.what === 'background') && (
               <p style={{ margin: `${space.md}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-                {'Members get the adjusted colour. Save keeps the colour you picked.'}
+                Members get the adjusted colour. Save keeps the colour you picked.
               </p>
             )}
           </Card>
@@ -273,12 +273,12 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
             </Button>
             {saved && (
               <Button variant="quiet" tone="danger" onClick={() => setConfirmClear(true)} disabled={saving || uploading}>
-                {'Use ForgeAI’s look'}
+                Use ForgeAI’s look
               </Button>
             )}
             {!changed && saved && (
               <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-                {'Saved'}
+                Saved
                 {saved.updatedAt ? ` · ${new Date(saved.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}` : ''}
               </span>
             )}
@@ -290,21 +290,21 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
 
       {confirmClear && (
         <Sheet
-          title={'Go back to ForgeAI’s look?'}
+          title="Go back to ForgeAI’s look?"
           onClose={closeClear}
           footer={
             <>
               <Button variant="ghost" onClick={closeClear}>
-                {'Keep my look'}
+                Keep my look
               </Button>
               <Button tone="danger" onClick={() => void clear()}>
-                {'Use ForgeAI’s look'}
+                Use ForgeAI’s look
               </Button>
             </>
           }
         >
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-            {'Your logo and colours are removed from the member app. Members see ForgeAI’s own look on one of their next visits to the app — never in the middle of a workout.'}
+            Your logo and colours are removed from the member app. Members see ForgeAI’s own look on one of their next visits to the app — never in the middle of a workout.
           </p>
         </Sheet>
       )}
@@ -407,7 +407,7 @@ function LogoCard({
 
   return (
     <Card>
-      <SectionTitle>{'Logo'}</SectionTitle>
+      <SectionTitle>Logo</SectionTitle>
       <div style={{ display: 'flex', gap: space.lg, alignItems: 'center', flexWrap: 'wrap' }}>
         <div
           onDragOver={(e) => {
@@ -434,15 +434,15 @@ function LogoCard({
           }}
         >
           {logoUrl ? (
-            <img src={logoUrl} alt={'Your logo'} style={{ width: 96, height: 96, objectFit: 'contain' }} />
+            <img src={logoUrl} alt="Your logo" style={{ width: 96, height: 96, objectFit: 'contain' }} />
           ) : (
             <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, textAlign: 'center', padding: space.sm }}>
-              {'No logo yet'}
+              No logo yet
             </span>
           )}
           {busy && (
             <div role="status" style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', borderRadius: radius.lg, background: 'rgba(7,8,12,0.72)', color: color.ink, fontFamily: font.body, fontSize: 13, fontWeight: 700 }}>
-              {'Uploading…'}
+              Uploading…
             </div>
           )}
         </div>
@@ -453,12 +453,12 @@ function LogoCard({
             </Button>
             {logoUrl && (
               <Button variant="quiet" tone="danger" disabled={busy || disabled} onClick={() => onLogo(null)}>
-                {'Remove logo'}
+                Remove logo
               </Button>
             )}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-            {'A square PNG with a see-through background works best. Members see it full-screen as the app opens, and small at the top of their tabs. You can also drop it on the box.'}
+            A square PNG with a see-through background works best. Members see it full-screen as the app opens, and small at the top of their tabs. You can also drop it on the box.
           </div>
           {error && (
             <div role="alert" style={{ fontFamily: font.body, fontSize: 13, color: color.criticalText }}>

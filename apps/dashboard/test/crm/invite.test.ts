@@ -21,7 +21,7 @@ describe('invite link', () => {
 });
 
 describe('the WhatsApp message', () => {
-  it('greets by first name, says it in English and Hinglish, link on its own line, code last', () => {
+  it('greets by first name, link on its own line, code last', () => {
     const msg = inviteMessage("RAM'S FITNESS CLUB", 'RAMS01', '  Rahul  Sharma ');
     const lines = msg.split('\n');
     expect(lines[0]).toBe('Hi Rahul!');
@@ -61,7 +61,7 @@ describe('QR poster', () => {
     expect(q.path.length).toBeGreaterThan(100);
   });
 
-  it('names the code in both languages', () => {
+  it('names the code', () => {
     expect(POSTER.codeLine('RAMS01')).toContain('RAMS01');
   });
 });

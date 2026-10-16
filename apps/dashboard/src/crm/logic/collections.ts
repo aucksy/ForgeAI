@@ -47,7 +47,6 @@ export function inRange(day: DateISO, range: DateRange): boolean {
 
 export type RangePresetId = 'today' | 'last7' | 'thisMonth' | 'lastMonth' | 'thisFy';
 
-// Labels are getters so they are read in the panel's language at the moment they are drawn.
 export const RANGE_PRESETS: readonly { id: RangePresetId; readonly label: string }[] = [
   { id: 'today', get label() { return 'Today'; } },
   { id: 'last7', get label() { return 'Last 7 days'; } },
@@ -267,23 +266,6 @@ export const AGING_LABEL: Record<AgingBucket, string> = {
   d31_60: '31–60 days',
   d60plus: 'Over 60 days',
 };
-
-/**
- * The bucket's name on SCREEN, in the panel's language. `AGING_LABEL` stays English
- * because the dues CSV export writes it, and exports stay English.
- */
-export function agingLabel(bucket: AgingBucket): string {
-  switch (bucket) {
-    case 'upcoming':
-      return AGING_LABEL.upcoming;
-    case 'd0_30':
-      return AGING_LABEL.d0_30;
-    case 'd31_60':
-      return AGING_LABEL.d31_60;
-    case 'd60plus':
-      return AGING_LABEL.d60plus;
-  }
-}
 
 /** Most urgent first — the order the report and the call list are built in. */
 export const AGING_ORDER: readonly AgingBucket[] = ['d60plus', 'd31_60', 'd0_30', 'upcoming'] as const;

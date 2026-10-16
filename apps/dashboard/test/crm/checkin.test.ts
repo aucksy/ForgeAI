@@ -32,7 +32,7 @@ describe('check-in link', () => {
 });
 
 describe('the check-in poster', () => {
-  it('says scan to check in, in English and Hinglish', () => {
+  it('says scan to check in, in three steps', () => {
     expect(CHECKIN_POSTER.lead).toBe('Scan to check in');
     expect(CHECKIN_POSTER.steps).toHaveLength(3);
   });
@@ -49,9 +49,6 @@ describe('the register tag', () => {
     expect(visitSourceTag('app')).toBe('App');
     expect(visitSourceTag('import')).toBe('Imported');
     expect(visitSourceTag('desk')).toBeNull();
-  });
-
-  it('follows the panel’s language', () => {
   });
 });
 

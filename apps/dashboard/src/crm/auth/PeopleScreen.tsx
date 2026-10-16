@@ -130,15 +130,15 @@ export function PeopleScreen() {
     return (
       <>
         <PageHeader
-          title={'Staff & sign-in'}
-          subtitle={'Who can open this gym, on which phone'}
+          title="Staff & sign-in"
+          subtitle="Who can open this gym, on which phone"
         />
         <Card>
           <p style={bodyText}>
-            {'Put your records online first (Settings → Put your records online). Then you and your staff sign in with a mobile number, on any phone or computer.'}
+            Put your records online first (Settings → Put your records online). Then you and your staff sign in with a mobile number, on any phone or computer.
           </p>
           <div style={{ marginTop: space.lg }}>
-            <Button onClick={() => navigate('/settings')}>{'Go to Settings'}</Button>
+            <Button onClick={() => navigate('/settings')}>Go to Settings</Button>
           </div>
         </Card>
       </>
@@ -148,13 +148,13 @@ export function PeopleScreen() {
   return (
     <>
       <PageHeader
-        title={'Staff & sign-in'}
-        subtitle={'Who can open this gym, on which phone'}
-        actions={isOwner ? <Button onClick={() => setSheet({ kind: 'add' })}>{'Add a person'}</Button> : undefined}
+        title="Staff & sign-in"
+        subtitle="Who can open this gym, on which phone"
+        actions={isOwner ? <Button onClick={() => setSheet({ kind: 'add' })}>Add a person</Button> : undefined}
       />
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{'You'}</SectionTitle>
+        <SectionTitle>You</SectionTitle>
         <Row gap={space.sm}>
           <strong style={{ fontFamily: font.body, fontSize: 16, color: color.ink }}>{me.name}</strong>
           <Pill tone={isOwner ? 'accent' : 'muted'}>{isOwner ? 'Owner' : 'Staff'}</Pill>
@@ -162,7 +162,7 @@ export function PeopleScreen() {
         <p style={{ ...bodyText, marginTop: 4 }}>+91 {formatMobile(me.phone)}</p>
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" onClick={() => setSheet({ kind: 'me-signout' })}>
-            {'Sign out of this device'}
+            Sign out of this device
           </Button>
         </div>
       </Card>
@@ -170,7 +170,7 @@ export function PeopleScreen() {
       {!isOwner && (
         <Card>
           <p style={bodyText}>
-            {'Only an owner can add people or make sign-in codes. Ask your gym owner.'}
+            Only an owner can add people or make sign-in codes. Ask your gym owner.
           </p>
           <p style={{ ...bodyText, marginTop: space.md, fontSize: 13, color: color.inkMuted }}>{staffRightsWords()}</p>
         </Card>
@@ -178,10 +178,10 @@ export function PeopleScreen() {
 
       {isOwner && (
         <Card>
-          <SectionTitle>{'People who can sign in'}</SectionTitle>
+          <SectionTitle>People who can sign in</SectionTitle>
           <p style={bodyText}>
             {'To let someone in — or to use a new phone yourself — tap '}
-            <b>{'Make sign-in code'}</b>
+            <b>Make sign-in code</b>
             {` and give them the code. It works once, for ${CODE_MINUTES} minutes.`}
           </p>
           {loadError && (
@@ -194,7 +194,7 @@ export function PeopleScreen() {
               <ErrorBanner>{rowError}</ErrorBanner>
             </div>
           )}
-          {people === null && !loadError && <p style={{ ...bodyText, marginTop: space.lg }}>{'Loading…'}</p>}
+          {people === null && !loadError && <p style={{ ...bodyText, marginTop: space.lg }}>Loading…</p>}
           <div style={{ display: 'grid', gap: space.md, marginTop: space.lg }}>
             {(people ?? []).map((p) => (
               <div
@@ -209,7 +209,7 @@ export function PeopleScreen() {
                 <Row gap={space.sm}>
                   <strong style={{ fontFamily: font.body, fontSize: 16, color: color.ink }}>{p.name}</strong>
                   <Pill tone={p.role === 'owner' ? 'accent' : 'muted'}>{p.role === 'owner' ? 'Owner' : 'Staff'}</Pill>
-                  {p.me && <Pill tone="good">{'You'}</Pill>}
+                  {p.me && <Pill tone="good">You</Pill>}
                 </Row>
                 <p style={{ ...bodyText, marginTop: 4 }}>
                   +91 {formatMobile(p.phone)} · {seenWords(p)}
@@ -227,7 +227,7 @@ export function PeopleScreen() {
                     )}
                     {!p.me && (
                       <Button variant="quiet" tone="danger" onClick={() => setSheet({ kind: 'remove', person: p })}>
-                        {'Remove'}
+                        Remove
                       </Button>
                     )}
                   </Row>
@@ -289,9 +289,9 @@ export function PeopleScreen() {
 
       {sheet?.kind === 'me-signout' && (
         <ConfirmSheet
-          title={'Sign out of this device?'}
-          words={'Your records stay online. To come back, sign in with your mobile number and a new code (an owner makes it in Staff & sign-in).'}
-          action={'Sign out'}
+          title="Sign out of this device?"
+          words="Your records stay online. To come back, sign in with your mobile number and a new code (an owner makes it in Staff & sign-in)."
+          action="Sign out"
           onClose={closeSheet}
           run={async () => {
             navigate('/');
@@ -340,12 +340,12 @@ function AddPersonSheet({
 
   return (
     <Sheet
-      title={'Add a person'}
+      title="Add a person"
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button disabled={busy} onClick={() => void save()}>
             {busy ? 'Adding…' : 'Add'}
@@ -354,10 +354,10 @@ function AddPersonSheet({
       }
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
-      <TextField label={'Name'} value={name} onChange={setName} placeholder="Suresh" autoFocus />
-      <TextField label={'Mobile number'} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
+      <TextField label="Name" value={name} onChange={setName} placeholder="Suresh" autoFocus />
+      <TextField label="Mobile number" prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
       <SelectField
-        label={'What can they do?'}
+        label="What can they do?"
         value={role}
         onChange={(v) => setRole(v === 'owner' ? 'owner' : 'staff')}
         options={[
@@ -378,7 +378,7 @@ function CodeSheet({ code, gymName, forMe, onClose }: { code: MadeCode; gymName:
       onClose={onClose}
       footer={
         <Button variant="ghost" onClick={onClose}>
-          {'Done'}
+          Done
         </Button>
       }
     >
@@ -424,7 +424,7 @@ function CodeSheet({ code, gymName, forMe, onClose }: { code: MadeCode; gymName:
               textDecoration: 'none',
             }}
           >
-            {'Send on WhatsApp'}
+            Send on WhatsApp
           </a>
         )}
         <Button
@@ -465,7 +465,7 @@ function ConfirmSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button
             tone="danger"

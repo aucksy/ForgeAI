@@ -22,7 +22,6 @@ type Reason = 'medical' | 'travel' | 'other' | 'gift';
 const QUICK_DAYS = [7, 15, 30];
 
 function reasonText(reason: Reason, other: string): string {
-  // Stored in English so the membership's history reads the same in either language.
   switch (reason) {
     case 'medical':
       return 'Freeze - medical';
@@ -74,12 +73,12 @@ export function ExtendMembershipSheet({
 
   return (
     <Sheet
-      title={'Freeze / extra days'}
+      title="Freeze / extra days"
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button onClick={submit} disabled={saving || days === null}>
             {saving
@@ -106,10 +105,10 @@ export function ExtendMembershipSheet({
       </p>
 
       <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-        {'Reason'}
+        Reason
       </div>
       <ChipToggle
-        label={'Reason'}
+        label="Reason"
         value={reason}
         onChange={(v) => setReason(v as Reason)}
         options={[
@@ -121,18 +120,18 @@ export function ExtendMembershipSheet({
       />
       {reason === 'other' && (
         <TextField
-          label={'What happened (optional)'}
+          label="What happened (optional)"
           value={other}
           onChange={setOther}
-          placeholder={'Wedding in the family'}
+          placeholder="Wedding in the family"
         />
       )}
 
       <div style={{ marginTop: space.md, fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-        {'How many days'}
+        How many days
       </div>
       <ChipToggle
-        label={'How many days'}
+        label="How many days"
         value={days !== null && QUICK_DAYS.includes(days) ? String(days) : ''}
         onChange={(v) => {
           setDaysText(v);
@@ -141,7 +140,7 @@ export function ExtendMembershipSheet({
         options={QUICK_DAYS.map((d) => ({ value: String(d), label: `${d} days` }))}
       />
       <TextField
-        label={'Or type the days (1–365)'}
+        label="Or type the days (1–365)"
         value={daysText}
         onChange={(v) => {
           setDaysText(v);

@@ -35,9 +35,9 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
     if (variant === 'banner') return null;
     return (
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{'Admin app on your phone'}</SectionTitle>
+        <SectionTitle>Admin app on your phone</SectionTitle>
         <p style={body}>
-          {'The admin app is on your home screen. Open it from the ForgeAI Admin icon.'}
+          The admin app is on your home screen. Open it from the ForgeAI Admin icon.
         </p>
       </Card>
     );
@@ -61,9 +61,9 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
 
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{'Put the admin app on your phone'}</SectionTitle>
+      <SectionTitle>Put the admin app on your phone</SectionTitle>
       <p style={body}>
-        {'Put the admin app on your home screen. It opens full screen, in one tap.'}
+        Put the admin app on your home screen. It opens full screen, in one tap.
       </p>
       {showSteps && (
         <p style={{ ...body, marginTop: space.md, color: color.ink }} role="status">
@@ -71,7 +71,7 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
         </p>
       )}
       <div style={{ marginTop: space.lg, display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
-        <Button onClick={() => void install()}>{'Install the admin app'}</Button>
+        <Button onClick={() => void install()}>Install the admin app</Button>
         {variant === 'banner' && (
           <Button
             variant="quiet"
@@ -84,7 +84,7 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
               setClosed(true);
             }}
           >
-            {'Not now'}
+            Not now
           </Button>
         )}
       </div>

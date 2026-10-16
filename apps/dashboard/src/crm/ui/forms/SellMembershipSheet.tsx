@@ -165,7 +165,7 @@ export function SellMembershipSheet({
 
   if (plans.length === 0) {
     return (
-      <Sheet title={'Sell membership'} onClose={onClose}>
+      <Sheet title="Sell membership" onClose={onClose}>
         <ErrorBanner>
           {role === 'staff'
             ? // C7-42: the front desk cannot add plans; it says who can.
@@ -184,7 +184,7 @@ export function SellMembershipSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button onClick={submit} disabled={saving}>
             {saving ? 'Saving…' : warned ? 'Yes, save' : 'Confirm'}
@@ -196,7 +196,7 @@ export function SellMembershipSheet({
       {warned && <ErrorBanner>{warned}</ErrorBanner>}
 
       <div style={{ color: color.inkSecondary, fontFamily: font.body, fontSize: 14 }}>
-        {'For'} <strong style={{ color: color.ink }}>{view.member.fullName}</strong>
+        For <strong style={{ color: color.ink }}>{view.member.fullName}</strong>
         {view.coversUntil && (
           <>
             {' · '}
@@ -206,7 +206,7 @@ export function SellMembershipSheet({
       </div>
 
       <SelectField
-        label={'Plan'}
+        label="Plan"
         value={planId}
         onChange={(v) => {
           setPlanId(v);
@@ -226,7 +226,7 @@ export function SellMembershipSheet({
 
       <Grid min={220}>
         <TextField
-          label={'Starts on'}
+          label="Starts on"
           value={startsOn}
           onChange={(v) => {
             setStartsOnOverride(v);
@@ -237,7 +237,7 @@ export function SellMembershipSheet({
         />
         <div style={{ marginTop: space.md }}>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-            {'Valid until'}
+            Valid until
           </div>
           <div
             style={{
@@ -261,7 +261,7 @@ export function SellMembershipSheet({
 
       <Grid min={220}>
         <TextField
-          label={'Plan price'}
+          label="Plan price"
           value={priceText}
           onChange={(v) => {
             setPriceText(v);
@@ -277,7 +277,7 @@ export function SellMembershipSheet({
           error={errorFor('priceP')}
         />
         <TextField
-          label={'Joining fee'}
+          label="Joining fee"
           value={joiningText}
           onChange={(v) => {
             setJoiningText(v);
@@ -305,7 +305,7 @@ export function SellMembershipSheet({
       >
         <Row>
           <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, flex: 1 }}>
-            {'Total payable'}
+            Total payable
           </span>
           <span style={{ fontFamily: font.mono, fontSize: 20, fontWeight: 700, color: color.ink }}>
             {totalP === null ? '—' : formatINR(totalP)}
@@ -313,7 +313,7 @@ export function SellMembershipSheet({
         </Row>
 
         <TextField
-          label={'Received now'}
+          label="Received now"
           value={collectText}
           onChange={(v) => {
             setCollectText(v);
@@ -321,19 +321,19 @@ export function SellMembershipSheet({
           }}
           inputMode="decimal"
           placeholder="0"
-          hint={"Leave blank if they're paying later — it'll show up under dues."}
+          hint="Leave blank if they're paying later — it'll show up under dues."
           error={errorFor('collectNowP')}
         />
 
         <Grid min={200}>
           <SelectField
-            label={'Paid by'}
+            label="Paid by"
             value={method}
             onChange={(v) => setMethod(v as PaymentMethod)}
             options={methodOptions()}
           />
           <TextField
-            label={'Reference (optional)'}
+            label="Reference (optional)"
             value={reference}
             onChange={setReference}
             placeholder={method === 'upi' ? 'UPI ref no.' : 'Cheque / card last 4'}
@@ -342,7 +342,7 @@ export function SellMembershipSheet({
 
         {collectP !== null && collectP > 0 && (
           <TextField
-            label={'Received on'}
+            label="Received on"
             value={paidOn}
             onChange={(v) => {
               setPaidOn(v);
@@ -368,7 +368,7 @@ export function SellMembershipSheet({
         )}
       </div>
 
-      <TextField label={'Notes (optional)'} value={notes} onChange={setNotes} multiline />
+      <TextField label="Notes (optional)" value={notes} onChange={setNotes} multiline />
     </Sheet>
   );
 }

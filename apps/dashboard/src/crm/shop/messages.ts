@@ -14,7 +14,6 @@ export const BODY_MAX = 300;
 
 /**
  * The types in the order the owner picks from, each with words to start from (edited freely).
- * `label`, `title` and `body` are getters, read in the panel's language (admin audit C7-31).
  */
 export const MESSAGE_KINDS: readonly { kind: MessageKind; label: string; title: string; body: string }[] = [
   {

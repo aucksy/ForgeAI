@@ -144,7 +144,7 @@ export function MemberFormSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button onClick={save} disabled={saving}>
             {saving
@@ -166,7 +166,7 @@ export function MemberFormSheet({
           </div>
           <Row gap={space.sm}>
             <Button onClick={restoreArchived} disabled={saving}>
-              {'Bring them back'}
+              Bring them back
             </Button>
             <Button
               variant="ghost"
@@ -175,14 +175,14 @@ export function MemberFormSheet({
                 navigate(`/members/${archivedClash.id}`);
               }}
             >
-              {'Open their record'}
+              Open their record
             </Button>
           </Row>
         </ErrorBanner>
       )}
 
       <TextField
-        label={'Full name'}
+        label="Full name"
         value={form.fullName}
         onChange={set('fullName')}
         error={errorFor('fullName')}
@@ -192,17 +192,17 @@ export function MemberFormSheet({
 
       <Row gap={space.sm} align="flex-start">
         <div style={{ width: 110 }}>
-          <SelectField label={'Code'} value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
+          <SelectField label="Code" value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
         </div>
         <div style={{ flex: 1, minWidth: 180 }}>
           <TextField
-            label={'Mobile number'}
+            label="Mobile number"
             value={form.phone}
             onChange={set('phone')}
             error={errorFor('phone')}
             inputMode="tel"
             placeholder="98765 43210"
-            hint={"How you'll find them, and how WhatsApp reaches them."}
+            hint="How you'll find them, and how WhatsApp reaches them."
           />
         </div>
       </Row>
@@ -216,14 +216,14 @@ export function MemberFormSheet({
 
       <Grid min={220}>
         <TextField
-          label={'Joining date'}
+          label="Joining date"
           value={form.joinedOn}
           onChange={set('joinedOn')}
           type="date"
           error={errorFor('joinedOn')}
         />
         <SelectField
-          label={'Gender (optional)'}
+          label="Gender (optional)"
           value={form.gender}
           onChange={set('gender')}
           options={[
@@ -237,14 +237,14 @@ export function MemberFormSheet({
 
       <Grid min={220}>
         <TextField
-          label={'Date of birth (optional)'}
+          label="Date of birth (optional)"
           value={form.dateOfBirth}
           onChange={set('dateOfBirth')}
           type="date"
           error={errorFor('dateOfBirth')}
         />
         <TextField
-          label={'Email (optional)'}
+          label="Email (optional)"
           value={form.email}
           onChange={set('email')}
           type="email"
@@ -253,16 +253,16 @@ export function MemberFormSheet({
         />
       </Grid>
 
-      <TextField label={'Address (optional)'} value={form.address} onChange={set('address')} />
+      <TextField label="Address (optional)" value={form.address} onChange={set('address')} />
 
       <Grid min={220}>
         <TextField
-          label={'Emergency contact (optional)'}
+          label="Emergency contact (optional)"
           value={form.emergencyName}
           onChange={set('emergencyName')}
         />
         <TextField
-          label={'Emergency number (optional)'}
+          label="Emergency number (optional)"
           value={form.emergencyPhone}
           onChange={set('emergencyPhone')}
           inputMode="tel"
@@ -271,16 +271,16 @@ export function MemberFormSheet({
       </Grid>
 
       <TextField
-        label={'Notes (optional)'}
+        label="Notes (optional)"
         value={form.notes}
         onChange={set('notes')}
         multiline
-        placeholder={'Injuries, preferences, who referred them…'}
+        placeholder="Injuries, preferences, who referred them…"
       />
 
       {editing?.archived && (
         <p style={{ margin: `${space.lg}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {'This member is archived. Saving here won’t change that — use “Restore member” on their page.'}
+          This member is archived. Saving here won’t change that — use “Restore member” on their page.
         </p>
       )}
     </Sheet>
@@ -313,12 +313,12 @@ function BatchField({
   if (batches.length === 0) {
     return (
       <TextField
-        label={'Batch (optional)'}
+        label="Batch (optional)"
         value={value}
         onChange={onChange}
         error={error}
-        placeholder={'Morning 6-8'}
-        hint={'The time they train. Later members pick it with one tap.'}
+        placeholder="Morning 6-8"
+        hint="The time they train. Later members pick it with one tap."
       />
     );
   }
@@ -330,10 +330,10 @@ function BatchField({
     // whole form 570px wide on a 375px screen; this way the row fills the form and scrolls.
     <div style={{ marginTop: space.md, width: 0, minWidth: '100%' }}>
       <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-        {'Batch (optional)'}
+        Batch (optional)
       </div>
       <ChipToggle
-        label={'Batch'}
+        label="Batch"
         value={picked}
         onChange={(v) => {
           if (v === NEW_BATCH) {
@@ -352,12 +352,12 @@ function BatchField({
       />
       {typing ? (
         <TextField
-          label={'New batch name'}
+          label="New batch name"
           value={value}
           onChange={onChange}
           error={error}
           autoFocus
-          placeholder={'Evening 6-9'}
+          placeholder="Evening 6-9"
           hint={`Up to ${BATCH_MAX} letters.`}
         />
       ) : (

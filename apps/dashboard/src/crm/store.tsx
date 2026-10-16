@@ -341,7 +341,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
 function Booting() {
   return (
     <div style={centered}>
-      <span>{'Loading your gym…'}</span>
+      <span>Loading your gym…</span>
     </div>
   );
 }
@@ -350,10 +350,10 @@ function BootFailed({ message, onRetry }: { message: string | null; onRetry: () 
   return (
     <div style={centered}>
       <div style={{ display: 'grid', gap: 12, justifyItems: 'center' }}>
-        <strong style={{ color: color.criticalText }}>{'Couldn’t open your gym'}</strong>
+        <strong style={{ color: color.criticalText }}>Couldn’t open your gym</strong>
         <span>{message ?? 'Something went wrong reading your saved data.'}</span>
         <button type="button" onClick={onRetry} style={retryButton}>
-          {'Try again'}
+          Try again
         </button>
       </div>
     </div>

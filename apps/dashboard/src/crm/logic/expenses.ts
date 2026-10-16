@@ -22,7 +22,7 @@ export const EXPENSE_CATEGORIES: readonly ExpenseCategory[] = [
   'other',
 ];
 
-/** The category's name in the panel's language (glossary words). */
+/** The category's name on screen. */
 export function categoryLabel(category: ExpenseCategory): string {
   switch (category) {
     case 'rent':

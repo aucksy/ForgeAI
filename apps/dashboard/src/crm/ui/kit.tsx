@@ -924,7 +924,7 @@ export function Sheet({
           <button
             type="button"
             onClick={onClose}
-            aria-label={'Close'}
+            aria-label="Close"
             style={{
               appearance: 'none',
               background: 'transparent',

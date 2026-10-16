@@ -1107,7 +1107,7 @@ export function fillBlanksPatch(existing: Member, draft: MemberDraft): Partial<M
 
 // ---------------------------------------------------------------- files out
 
-/** Column names for the sample file, in the panel's language (both languages are recognised). */
+/** Column names for the sample file (Hinglish and Hindi names are recognised too on the way in). */
 export function templateHeaders(): string[] {
   return [
     'Name',
@@ -1125,16 +1125,14 @@ export function templateHeaders(): string[] {
 }
 
 /**
- * The sample file: column names only, so nothing made-up gets imported by mistake. In English in
- * every language, like every download (both languages' headers are recognised on the way back in).
+ * The sample file: column names only, so nothing made-up gets imported by mistake.
  */
 export function templateCsv(): string {
   return csvDocument(templateHeaders(), []);
 }
 
 /**
- * The rows that were not added, with the reason first, to fix and import again. English in every
- * language: pass reasons made in English too (`englishSkipReasons`, or words read in `inEnglish`).
+ * The rows that were not added, with the reason first, to fix and import again.
  */
 export function skippedRowsCsv(
   headers: readonly string[],
@@ -1154,21 +1152,6 @@ export function skippedRowsCsv(
 export function skipReason(row: ImportRow): string {
   if (row.status === 'problem') return row.problems.join(' ');
   return rowVerdict(row);
-}
-
-/**
- * Every row's skip reason in ENGLISH, by Excel row number, whatever language the panel shows: the
- * same plan worked out again in English (it is pure, so the same file and roster give the same rows).
- */
-export function englishSkipReasons(
-  rows: readonly (readonly unknown[])[],
-  headerRow: number,
-  map: ColumnMap,
-  roster: readonly Member[],
-  today: DateISO,
-): Map<number, string> {
-  const plan = planImport(rows, headerRow, map, roster, today);
-  return new Map(plan.rows.map((r) => [r.rowNumber, skipReason(r)]));
 }
 
 // ---------------------------------------------------------------- saving

@@ -40,14 +40,14 @@ export function SignInForm({ submitLabel = 'Sign in' }: { submitLabel?: string }
 
   return (
     <form onSubmit={(e) => void submit(e)} noValidate>
-      <TextField label={'Your mobile number'} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
+      <TextField label="Your mobile number" prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
       <TextField
-        label={'Sign-in code (6 digits)'}
+        label="Sign-in code (6 digits)"
         inputMode="numeric"
         value={code}
         onChange={(v) => setCode(cleanCode(v))}
         placeholder="000000"
-        hint={'Your gym owner makes this code in Settings → Staff & sign-in.'}
+        hint="Your gym owner makes this code in Settings → Staff & sign-in."
       />
       {error && (
         <div style={{ marginTop: space.md }}>
@@ -91,16 +91,16 @@ export function StartGymForm() {
 
   return (
     <form onSubmit={(e) => void submit(e)} noValidate>
-      <TextField label={'Gym name'} value={gymName} onChange={setGymName} placeholder="Iron Temple Fitness" />
-      <TextField label={'Your name'} value={name} onChange={setName} placeholder="Ramesh Sharma" />
+      <TextField label="Gym name" value={gymName} onChange={setGymName} placeholder="Iron Temple Fitness" />
+      <TextField label="Your name" value={name} onChange={setName} placeholder="Ramesh Sharma" />
       <TextField
-        label={'Your mobile number'}
+        label="Your mobile number"
         prefix="+91"
         inputMode="tel"
         value={phone}
         onChange={setPhone}
         placeholder="98290 12345"
-        hint={'You sign in with this number on any phone or computer.'}
+        hint="You sign in with this number on any phone or computer."
       />
       {error && (
         <div style={{ marginTop: space.md }}>
@@ -113,7 +113,7 @@ export function StartGymForm() {
         </Button>
       </div>
       <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        {'Your records are kept online, safe if a phone or computer breaks.'}
+        Your records are kept online, safe if a phone or computer breaks.
       </p>
     </form>
   );

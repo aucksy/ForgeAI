@@ -60,7 +60,7 @@ export function MoreScreen() {
   ]);
   return (
     <>
-      <PageHeader title={'More'} />
+      <PageHeader title="More" />
       <Card>
         <div style={{ display: 'grid' }}>
           {rows.map((r, i) => (

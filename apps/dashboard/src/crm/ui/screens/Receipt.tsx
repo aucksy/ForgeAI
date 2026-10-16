@@ -44,7 +44,6 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
     const payment = snapshot.payments.find((p) => p.id === paymentId);
     if (!payment) return null;
 
-    // The printed receipt is English in every language (it is a money document).
     return buildReceiptDoc({
       gym: snapshot.gym,
       payment,
@@ -68,9 +67,9 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
     return (
       <Card>
         <EmptyState
-          title={'Receipt not found'}
-          body={'This receipt no longer exists. It may have been on a gym you have since erased.'}
-          action={<Button onClick={() => navigate('/money')}>{'Back to money'}</Button>}
+          title="Receipt not found"
+          body="This receipt no longer exists. It may have been on a gym you have since erased."
+          action={<Button onClick={() => navigate('/money')}>Back to money</Button>}
         />
       </Card>
     );
@@ -90,15 +89,15 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
                 variant="ghost"
                 onClick={() => (receiptBackTo(window.history.length) === 'back' ? window.history.back() : navigate('/money'))}
               >
-                {'Back'}
+                Back
               </Button>
               {/* Step 4: the receipt as a WhatsApp message to the member (the print stays the record). */}
               {waHref && (
                 <a href={waHref} target="_blank" rel="noreferrer" style={waLink}>
-                  {'Send on WhatsApp'}
+                  Send on WhatsApp
                 </a>
               )}
-              <Button onClick={() => window.print()}>{'Print'}</Button>
+              <Button onClick={() => window.print()}>Print</Button>
             </>
           }
         />

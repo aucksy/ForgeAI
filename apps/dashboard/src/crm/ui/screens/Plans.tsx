@@ -85,9 +85,9 @@ export function PlansScreen() {
   return (
     <>
       <PageHeader
-        title={'Plans'}
-        subtitle={'What you sell, and for how much'}
-        actions={canEdit ? <Button onClick={() => setAdding(true)}>{'+ Add plan'}</Button> : undefined}
+        title="Plans"
+        subtitle="What you sell, and for how much"
+        actions={canEdit ? <Button onClick={() => setAdding(true)}>+ Add plan</Button> : undefined}
       />
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
@@ -95,7 +95,7 @@ export function PlansScreen() {
       {plans.length === 0 ? (
         <Card>
           <EmptyState
-            title={'No plans yet'}
+            title="No plans yet"
             body={
               canEdit
                 ? 'Add your own, or start from a typical Indian gym price list and edit the numbers.'
@@ -104,7 +104,7 @@ export function PlansScreen() {
             action={
               canEdit && (
               <Row gap={space.sm}>
-                <Button onClick={() => setAdding(true)}>{'+ Add plan'}</Button>
+                <Button onClick={() => setAdding(true)}>+ Add plan</Button>
                 <Button variant="ghost" onClick={addStarterPlans} disabled={seeding}>
                   {seeding ? 'Adding…' : 'Use a starter price list'}
                 </Button>
@@ -163,7 +163,7 @@ function PlanRow({
     <div style={{ minWidth: 0 }}>
       <Row gap={space.sm}>
         <span style={{ fontFamily: font.display, fontSize: 16, fontWeight: 700, color: color.ink }}>{plan.name}</span>
-        {!plan.active && <Pill tone="muted">{'Retired'}</Pill>}
+        {!plan.active && <Pill tone="muted">Retired</Pill>}
       </Row>
       {ptPlanLine(plan) && (
         <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 2, overflowWrap: 'anywhere' }}>
@@ -194,13 +194,13 @@ function PlanRow({
   );
   const runs = (
     <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-      {'Sold today, runs until'}
+      Sold today, runs until
       <div style={{ color: color.inkSecondary, fontSize: 13, marginTop: 2 }}>{formatDay(sample)}</div>
     </div>
   );
   const edit = onEdit ? (
     <Button variant="ghost" onClick={onEdit} ariaLabel={`Edit ${plan.name}`}>
-      {'Edit'}
+      Edit
     </Button>
   ) : null;
 
@@ -336,7 +336,7 @@ function PlanSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button onClick={submit} disabled={saving}>
             {saving ? 'Saving…' : 'Save plan'}
@@ -348,16 +348,16 @@ function PlanSheet({
 
       {editing && (
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-          {'Changing the price here only affects future sales. Memberships already sold keep the price they were sold at.'}
+          Changing the price here only affects future sales. Memberships already sold keep the price they were sold at.
         </p>
       )}
 
-      <TextField label={'Plan name'} value={name} onChange={setName} placeholder="Quarterly" autoFocus />
+      <TextField label="Plan name" value={name} onChange={setName} placeholder="Quarterly" autoFocus />
 
       <Grid min={200}>
-        <TextField label={'Duration'} value={count} onChange={setCount} inputMode="numeric" />
+        <TextField label="Duration" value={count} onChange={setCount} inputMode="numeric" />
         <SelectField
-          label={'Unit'}
+          label="Unit"
           value={unit}
           onChange={(v) => setUnit(v as DurationUnit)}
           options={[
@@ -368,13 +368,13 @@ function PlanSheet({
       </Grid>
 
       <Grid min={200}>
-        <TextField label={'Price (₹)'} value={price} onChange={setPrice} inputMode="decimal" placeholder="3000" />
+        <TextField label="Price (₹)" value={price} onChange={setPrice} inputMode="decimal" placeholder="3000" />
         <TextField
-          label={'Joining fee (₹)'}
+          label="Joining fee (₹)"
           value={joining}
           onChange={setJoining}
           inputMode="decimal"
-          hint={"Charged once, on a member's first plan."}
+          hint="Charged once, on a member's first plan."
         />
       </Grid>
 
@@ -382,15 +382,15 @@ function PlanSheet({
       {pt && (
         <Grid min={200}>
           <TextField
-            label={'PT sessions'}
+            label="PT sessions"
             value={sessions}
             onChange={setSessions}
             inputMode="numeric"
             placeholder="12"
-            hint={'How many sessions this plan includes.'}
+            hint="How many sessions this plan includes."
           />
           <TextField
-            label={'Trainer (optional)'}
+            label="Trainer (optional)"
             value={trainer}
             onChange={setTrainer}
             placeholder="Rohit"
@@ -398,10 +398,10 @@ function PlanSheet({
         </Grid>
       )}
 
-      <TextField label={'Description (optional)'} value={description} onChange={setDescription} multiline />
+      <TextField label="Description (optional)" value={description} onChange={setDescription} multiline />
 
       <SelectField
-        label={'Availability'}
+        label="Availability"
         value={active ? 'active' : 'retired'}
         onChange={(v) => setActive(v === 'active')}
         options={[
@@ -442,10 +442,10 @@ function PtSwitch({ on, onChange }: { on: boolean; onChange: (v: boolean) => voi
       />
       <span style={{ minWidth: 0 }}>
         <span style={{ display: 'block', fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>
-          {'PT plan'}
+          PT plan
         </span>
         <span style={{ display: 'block', fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>
-          {'Personal training with a set number of sessions. Sold on top of their gym plan.'}
+          Personal training with a set number of sessions. Sold on top of their gym plan.
         </span>
       </span>
     </label>

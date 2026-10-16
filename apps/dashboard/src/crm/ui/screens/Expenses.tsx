@@ -74,13 +74,13 @@ export function ExpensesScreen() {
   const byCategory = useMemo(() => totalsByCategory(expenses, month), [expenses, month]);
 
   const isThisMonth = month === thisMonth;
-  const addButton = <Button onClick={() => setAdding(true)}>{'+ Add expense'}</Button>;
+  const addButton = <Button onClick={() => setAdding(true)}>+ Add expense</Button>;
 
   return (
     <>
       <PageHeader
-        title={'Expenses'}
-        subtitle={'What went out, and what the gym kept'}
+        title="Expenses"
+        subtitle="What went out, and what the gym kept"
         actions={addButton}
       />
 
@@ -89,13 +89,13 @@ export function ExpensesScreen() {
       {/* Month picker: previous / this month / next. */}
       <Card pad={space.sm} style={{ marginBottom: space.lg }}>
         <div style={{ display: 'grid', gridTemplateColumns: `${TOUCH}px minmax(0, 1fr) ${TOUCH}px`, alignItems: 'center', gap: space.sm }}>
-          <MonthArrow label={'Previous month'} onClick={() => setMonth((m) => shiftMonth(m, -1))}>
+          <MonthArrow label="Previous month" onClick={() => setMonth((m) => shiftMonth(m, -1))}>
             ‹
           </MonthArrow>
           <div style={{ textAlign: 'center', minWidth: 0 }}>
             <div style={{ fontFamily: font.display, fontSize: 17, fontWeight: 700, color: color.ink }}>{monthTitle(month)}</div>
             {isThisMonth ? (
-              <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{'This month'}</div>
+              <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>This month</div>
             ) : (
               <button
                 type="button"
@@ -113,11 +113,11 @@ export function ExpensesScreen() {
                   padding: '0 12px',
                 }}
               >
-                {'Back to this month'}
+                Back to this month
               </button>
             )}
           </div>
-          <MonthArrow label={'Next month'} onClick={() => setMonth((m) => shiftMonth(m, 1))} disabled={month >= thisMonth}>
+          <MonthArrow label="Next month" onClick={() => setMonth((m) => shiftMonth(m, 1))} disabled={month >= thisMonth}>
             ›
           </MonthArrow>
         </div>
@@ -127,7 +127,7 @@ export function ExpensesScreen() {
         {/* Short figures (₹1.2L) so a big month never breaks across lines on a phone; the exact
             amount is on hover and read out by screen readers. */}
         <StatTile
-          label={'Collected'}
+          label="Collected"
           value={formatINRShort(summary.collectedP)}
           fullValue={formatINR(summary.collectedP)}
           tone="good"
@@ -138,13 +138,13 @@ export function ExpensesScreen() {
           }
         />
         <StatTile
-          label={'Expenses'}
+          label="Expenses"
           value={formatINRShort(summary.spentP)}
           fullValue={formatINR(summary.spentP)}
           tone={summary.spentP > 0 ? 'warn' : undefined}
         />
         <StatTile
-          label={'Profit'}
+          label="Profit"
           value={formatINRShort(summary.profitP)}
           fullValue={formatINR(summary.profitP)}
           tone={summary.profitP < 0 ? 'critical' : 'accent'}
@@ -155,11 +155,11 @@ export function ExpensesScreen() {
       <div style={{ height: space.lg }} />
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{'Expenses this month'}</SectionTitle>
+        <SectionTitle>Expenses this month</SectionTitle>
         {rows.length === 0 ? (
           <EmptyState
-            title={'No expenses this month'}
-            body={'Add rent, salaries, electricity and the rest to see what the gym really kept.'}
+            title="No expenses this month"
+            body="Add rent, salaries, electricity and the rest to see what the gym really kept."
             action={addButton}
           />
         ) : (
@@ -173,7 +173,7 @@ export function ExpensesScreen() {
 
       {byCategory.length > 0 && (
         <Card>
-          <SectionTitle>{'By category'}</SectionTitle>
+          <SectionTitle>By category</SectionTitle>
           <div style={{ display: 'grid', gap: space.sm }}>
             {byCategory.map((c) => (
               <div key={c.category}>
@@ -210,12 +210,12 @@ export function ExpensesScreen() {
       )}
       {removing && (
         <Sheet
-          title={'Remove this expense?'}
+          title="Remove this expense?"
           onClose={() => setRemoving(null)}
           footer={
             <>
               <Button variant="ghost" onClick={() => setRemoving(null)}>
-                {'Keep it'}
+                Keep it
               </Button>
               <Button
                 tone="danger"
@@ -231,7 +231,7 @@ export function ExpensesScreen() {
                   }
                 }}
               >
-                {'Remove'}
+                Remove
               </Button>
             </>
           }
@@ -308,7 +308,7 @@ function ExpenseRow({ expense, first, onRemove }: { expense: Expense; first: boo
             onClick={onRemove}
             ariaLabel={`Remove ${categoryLabel(expense.category)} ${formatINR(expense.amountP)} on ${formatDay(expense.spentOn)}`}
           >
-            {'Remove'}
+            Remove
           </Button>
         )}
       </Row>
@@ -353,12 +353,12 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
 
   return (
     <Sheet
-      title={'Add expense'}
+      title="Add expense"
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button onClick={submit} disabled={saving}>
             {saving ? 'Saving…' : 'Save expense'}
@@ -368,7 +368,7 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
     >
       {error && <ErrorBanner>{error}</ErrorBanner>}
       <TextField
-        label={'Amount'}
+        label="Amount"
         value={amountText}
         onChange={(v) => {
           setAmountText(v);
@@ -381,17 +381,17 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
         error={amountError}
       />
       <SelectField
-        label={'What for'}
+        label="What for"
         value={category}
         onChange={(v) => setCategory(v as ExpenseCategory)}
         options={categoryOptions()}
       />
-      <TextField label={'Date'} value={spentOn} onChange={setSpentOn} type="date" />
+      <TextField label="Date" value={spentOn} onChange={setSpentOn} type="date" />
       <TextField
-        label={'Note (optional)'}
+        label="Note (optional)"
         value={note}
         onChange={setNote}
-        placeholder={'October rent'}
+        placeholder="October rent"
       />
     </Sheet>
   );

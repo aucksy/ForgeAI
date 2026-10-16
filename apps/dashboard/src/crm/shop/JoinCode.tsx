@@ -60,7 +60,7 @@ export function JoinCodeCard({
     return (
       <Card style={{ marginBottom: flush ? 0 : space.lg }}>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {'The member app and shop are not turned on yet. Only an owner can turn them on.'}
+          The member app and shop are not turned on yet. Only an owner can turn them on.
         </p>
       </Card>
     );
@@ -70,10 +70,10 @@ export function JoinCodeCard({
     return (
       <Card style={{ marginBottom: flush ? 0 : space.lg }}>
         <div style={{ fontFamily: font.display, fontSize: 16, fontWeight: 600, color: color.ink }}>
-          {'Let members order from your gym in the ForgeAI app'}
+          Let members order from your gym in the ForgeAI app
         </div>
         <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {'Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.'}
+          Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.
         </p>
         {error && (
           <div style={{ marginTop: space.md }}>
@@ -107,7 +107,7 @@ export function JoinCodeCard({
       {title && <SectionTitle>{title}</SectionTitle>}
       <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         {'Members join in the '}
-        <strong style={{ color: color.ink }}>{'ForgeAI app'}</strong>
+        <strong style={{ color: color.ink }}>ForgeAI app</strong>
         {' with gym code'}
       </div>
       <div
@@ -159,23 +159,23 @@ export function JoinCodeCard({
       </div>
       {copied === 'no' && (
         <div role="status" style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          {'This browser blocked copying. The code is selected — press Ctrl+C.'}
+          This browser blocked copying. The code is selected — press Ctrl+C.
         </div>
       )}
       <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        {"Easiest: send members your gym's link — one tap in the app and they are in. Or they type this code in the app's Shop tab. Their orders show up here."}
+        Easiest: send members your gym's link — one tap in the app and they are in. Or they type this code in the app's Shop tab. Their orders show up here.
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
         <Button onClick={() => window.open(whatsAppHref(inviteMessage(cloud.name, cloud.joinCode)), '_blank', 'noopener')}>
-          {'Send link on WhatsApp'}
+          Send link on WhatsApp
         </Button>
         <Button variant="ghost" onClick={() => navigate('/settings/invite')}>
-          {'Invite & QR poster'}
+          Invite & QR poster
         </Button>
       </div>
       {!online && (
         <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          {'Offline right now — the code still works; new orders show up when the internet is back.'}
+          Offline right now — the code still works; new orders show up when the internet is back.
         </div>
       )}
     </Card>

@@ -74,7 +74,7 @@ export function AppShell({
 function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]; activePath: string }) {
   return (
     <nav
-      aria-label={'Main'}
+      aria-label="Main"
       style={{
         borderRight: `1px solid ${color.border}`,
         padding: `${space.xl}px ${space.md}px`,
@@ -161,7 +161,7 @@ function CompactHeader({ gymName }: { gymName: string }) {
 function BottomNav({ nav, activePath }: { nav: NavItem[]; activePath: string }) {
   return (
     <nav
-      aria-label={'Main'}
+      aria-label="Main"
       style={{
         position: 'fixed',
         left: 0,

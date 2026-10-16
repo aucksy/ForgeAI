@@ -310,7 +310,6 @@ export function daysLeftTile(
 }
 
 /** Short label for a status pill. */
-// Getters, not values: the words are read in the panel's language at the moment a pill draws.
 export const STATE_LABEL: Record<MemberState, string> = {
   get active() { return 'Active'; },
   get expiring() { return 'Expiring'; },

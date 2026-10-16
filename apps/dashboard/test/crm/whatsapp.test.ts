@@ -36,8 +36,6 @@ describe('WhatsApp messages', () => {
     expect(t).toMatch(/– Iron Temple$/);
   });
 
-  it('Hinglish uses the polite ji and aap', () => {
-  });
 
   it('ending today says today', () => {
     expect(buildMessage('ending', view({ daysRemaining: 0, coversUntil: TODAY }), gym, TODAY)).toMatch(/ends today/);
@@ -53,11 +51,9 @@ describe('WhatsApp messages', () => {
 
   it('greeting and first sentence share one line, so no line starts with a small letter', () => {
     const v = view({ state: 'expired', coversUntil: null, daysRemaining: -3 });
-    for (const lang of ['en', 'hi'] as const) {
-      for (const kind of ['fees', 'ending', 'ended', 'birthday', 'welcome'] as const) {
-        const t = buildMessage(kind, kind === 'ended' ? v : view(), gym, TODAY);
-        for (const line of t.split('\n')) expect(line, `${lang} ${kind}: ${line}`).not.toMatch(/^[a-z]/);
-      }
+    for (const kind of ['fees', 'ending', 'ended', 'birthday', 'welcome'] as const) {
+      const t = buildMessage(kind, kind === 'ended' ? v : view(), gym, TODAY);
+      for (const line of t.split('\n')) expect(line, `${kind}: ${line}`).not.toMatch(/^[a-z]/);
     }
     expect(buildMessage('fees', view(), gym, TODAY).split('\n')[0]).toBe(
       'Hi Rahul, a reminder that ₹1,500 of your fees is pending. Please pay at the front desk or on UPI.',
@@ -86,8 +82,6 @@ describe('WhatsApp messages', () => {
     expect(buildMessage('fees', v, gym, TODAY)).toMatch(/^Hi Rahul,/);
   });
 
-  it('Hinglish wording for ended and birthday', () => {
-  });
 
   it('a gym never named ("My Gym", or blank) is left out of the welcome and signs as "Your gym"', () => {
     for (const name of ['My Gym', '  ', 'my gym']) {

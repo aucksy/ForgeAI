@@ -4,7 +4,7 @@
  * Research (Audit/crm-research/RESEARCH.md §9 rec 9): an owner moving off his register or sheet
  * on day one. One screen: pick a file -> check which column is which -> see every row's fate ->
  * add them in batches of 500 (one save each — one push online) with progress -> a summary and the
- * skipped rows as a file to fix (in English, like every download).
+ * skipped rows as a file to fix.
  *
  * The spreadsheet reader (read-excel-file, MIT) is loaded only when a file is picked, so the
  * panel's first load does not grow. Every decision is in `logic/importMembers.ts` and tested.
@@ -18,7 +18,6 @@ import {
   cellText,
   columnLetter,
   emptyColumnMap,
-  englishSkipReasons,
   fieldLabel,
   fillBlanksPatch,
   findHeaderRow,
@@ -187,14 +186,11 @@ export function ImportMembersScreen() {
     const adds = rows.filter((r) => r.status === 'add' && r.draft !== null);
     const fills = dupMode === 'fill' ? rows.filter((r) => r.existing !== null && r.sameAsRow === null && r.draft !== null) : [];
     const work = new Set([...adds, ...fills]);
-    // The skipped-rows file is English in every language: the same plan, worked out in English.
-    const english = englishSkipReasons(file.rows, headerRow, map, snapshot.members, today);
-    const reasonFor = (row: ImportRow) => english.get(row.rowNumber) ?? skipReason(row);
     // A repeated row whose plan and payment are added to its member is not "skipped" (review: the
     // skipped-rows file would invite typing that payment in again).
     // C7-37: so is a row for a member already in the gym whose plan and payment the owner adds.
     const repeatAdds = (r: ImportRow) => rowBringsTerm(r, role);
-    const skipped = rows.filter((r) => !work.has(r) && !repeatAdds(r)).map((row) => ({ row, reason: reasonFor(row) }));
+    const skipped = rows.filter((r) => !work.has(r) && !repeatAdds(r)).map((row) => ({ row, reason: skipReason(row) }));
     const total = adds.length + fills.length;
     setStage('running');
     setProgress({ done: 0, total });
@@ -272,12 +268,12 @@ export function ImportMembersScreen() {
   return (
     <>
       <PageHeader
-        title={'Import members from Excel'}
-        subtitle={'Move your register or sheet in a few minutes'}
+        title="Import members from Excel"
+        subtitle="Move your register or sheet in a few minutes"
         actions={
           stage !== 'running' ? (
             <Button variant="ghost" wrap onClick={() => navigate('/members')}>
-              {'← Members'}
+              ← Members
             </Button>
           ) : undefined
         }
@@ -290,7 +286,7 @@ export function ImportMembersScreen() {
         type="file"
         accept=".xlsx,.csv,.xls,.txt,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         style={{ display: 'none' }}
-        aria-label={'Choose an Excel or CSV file'}
+        aria-label="Choose an Excel or CSV file"
         onChange={(e) => {
           const f = e.target.files?.[0];
           // Cleared so picking the same file again (after fixing it) still reads it.
@@ -301,21 +297,21 @@ export function ImportMembersScreen() {
 
       {(stage === 'pick' || stage === 'reading') && (
         <Card style={{ marginBottom: space.lg }}>
-          <SectionTitle>{'Your file'}</SectionTitle>
+          <SectionTitle>Your file</SectionTitle>
           <ol style={list}>
             <li>
-              {'One row per member, with a name and a 10-digit mobile. Joining date, gender, birthday, address, batch, plan, fees, valid till and notes are optional.'}
+              One row per member, with a name and a 10-digit mobile. Joining date, gender, birthday, address, batch, plan, fees, valid till and notes are optional.
             </li>
             <li>
-              {'Works with .xlsx, old .xls and .csv, and files with several sheets. Dates like 15/08/2026 are fine.'}
+              Works with .xlsx, old .xls and .csv, and files with several sheets. Dates like 15/08/2026 are fine.
             </li>
             <li>
-              {'Nothing is saved until you check the list and press Add.'}
+              Nothing is saved until you check the list and press Add.
             </li>
           </ol>
           {stage === 'reading' && (
             <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700, marginBottom: space.md }}>
-              {'Reading the file… a big sheet can take a few seconds.'}
+              Reading the file… a big sheet can take a few seconds.
             </p>
           )}
           <Row gap={space.sm}>
@@ -323,7 +319,7 @@ export function ImportMembersScreen() {
               {stage === 'reading' ? 'Reading the file…' : 'Choose file'}
             </Button>
             <Button variant="ghost" wrap onClick={downloadSample}>
-              {'Download sample file'}
+              Download sample file
             </Button>
           </Row>
         </Card>
@@ -332,13 +328,13 @@ export function ImportMembersScreen() {
       {stage === 'review' && file && plan && (
         <>
           <Card style={{ marginBottom: space.lg }}>
-            <SectionTitle>{'Which column is which'}</SectionTitle>
+            <SectionTitle>Which column is which</SectionTitle>
             <p style={muted}>
               {`${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (it looks most like a member list)' : ''}` : ''}. We guessed from the column names — change any that are wrong.`}
             </p>
             {file.sheets.length > 1 && (
               <SelectField
-                label={'Sheet'}
+                label="Sheet"
                 value={String(file.sheet)}
                 onChange={(v) => openSheet({ ...file, auto: false }, Number(v))}
                 options={file.sheets.map((sh, i) => ({
@@ -348,7 +344,7 @@ export function ImportMembersScreen() {
               />
             )}
             <SelectField
-              label={'Column names are on row'}
+              label="Column names are on row"
               value={String(headerRow)}
               onChange={changeHeaderRow}
               options={file.rows.slice(0, 10).map((r, i) => ({
@@ -375,7 +371,7 @@ export function ImportMembersScreen() {
             </Grid>
             {(map.plan !== null || map.amount !== null || map.expiry !== null) && map.expiry === null && map.startDate === null && (
               <p style={{ ...muted, marginTop: space.lg }}>
-                {'Pick the “Valid till” or “Plan start” column to bring each plan in with its dates. Without either, the plan and fees go into the member’s notes.'}
+                Pick the “Valid till” or “Plan start” column to bring each plan in with its dates. Without either, the plan and fees go into the member’s notes.
               </p>
             )}
             {map.joinedOn === null && (
@@ -422,13 +418,13 @@ export function ImportMembersScreen() {
 
       {stage === 'running' && (
         <Card>
-          <SectionTitle>{'Adding members…'}</SectionTitle>
+          <SectionTitle>Adding members…</SectionTitle>
           <p style={muted}>
             {`${progress.done} of ${progress.total} done. Keep this page open until it finishes.`}
           </p>
           <div
             role="progressbar"
-            aria-label={'Import progress'}
+            aria-label="Import progress"
             aria-valuemin={0}
             aria-valuemax={progress.total}
             aria-valuenow={progress.done}
@@ -448,7 +444,7 @@ export function ImportMembersScreen() {
 
       {stage === 'done' && result && (
         <Card>
-          <SectionTitle>{'Import finished'}</SectionTitle>
+          <SectionTitle>Import finished</SectionTitle>
           <p style={{ margin: 0, fontFamily: font.display, fontSize: 20, fontWeight: 700, color: color.ink }}>
             {`${result.added} added, ${result.skipped.length} skipped`}
             {result.updated > 0 ? `, ${result.updated} filled in` : ''}
@@ -467,7 +463,7 @@ export function ImportMembersScreen() {
           )}
           {result.termsForStaff && (
             <p style={{ ...muted, marginTop: space.sm }}>
-              {'Plans and payments in this file are added by the owner: ask them to import the same file (members already added are skipped).'}
+              Plans and payments in this file are added by the owner: ask them to import the same file (members already added are skipped).
             </p>
           )}
           {result.stopped && (
@@ -477,19 +473,19 @@ export function ImportMembersScreen() {
                 {result.added > 0
                   ? `${result.added} members were saved (up to row ${result.lastSavedRow}); the rest may not have been. `
                   : 'No new members were saved. '}
-                {'Import the same file again when the internet is back — members already added are skipped, so nobody is added twice.'}
+                Import the same file again when the internet is back — members already added are skipped, so nobody is added twice.
               </ErrorBanner>
             </div>
           )}
           {result.skipped.length > 0 && (
             <p style={{ ...muted, marginTop: space.sm }}>
-              {'Download the skipped rows, fix them in Excel (the reason is in the first column) and import that file.'}
+              Download the skipped rows, fix them in Excel (the reason is in the first column) and import that file.
             </p>
           )}
           <Row gap={space.sm}>
             <div style={{ marginTop: space.lg }}>
               <Button wrap onClick={() => navigate('/members')}>
-                {'Open members'}
+                Open members
               </Button>
             </div>
             {result.skipped.length > 0 && file && (
@@ -510,7 +506,7 @@ export function ImportMembersScreen() {
             )}
             <div style={{ marginTop: space.lg }}>
               <Button variant="ghost" wrap onClick={startOver}>
-                {'Import another file'}
+                Import another file
               </Button>
             </div>
           </Row>
@@ -542,7 +538,7 @@ function Review({
   const shown = rows.filter((r) => filter === 'all' || r.status === filter);
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{'Check the list'}</SectionTitle>
+      <SectionTitle>Check the list</SectionTitle>
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 15, color: color.ink }}>
         {`${rows.length} rows: ${counts.add} will be added, ${counts.duplicate} already members or repeated, ${counts.problem} with a problem.`}
       </p>
@@ -558,7 +554,7 @@ function Review({
             {`${inGym} are already members of your gym (same mobile). For them:`}
           </p>
           <ChipToggle
-            label={'Members already in the gym'}
+            label="Members already in the gym"
             value={dupMode}
             onChange={(v) => setDupMode(v === 'fill' ? 'fill' : 'skip')}
             options={[
@@ -568,7 +564,7 @@ function Review({
           />
           {dupMode === 'fill' && (
             <p style={{ ...muted, marginTop: space.sm }}>
-              {'Only empty details are filled in. Their name, mobile and joining date stay as they are.'}
+              Only empty details are filled in. Their name, mobile and joining date stay as they are.
             </p>
           )}
         </div>
@@ -576,7 +572,7 @@ function Review({
 
       <div style={{ margin: `${space.lg}px 0` }}>
         <ChipToggle
-          label={'Show rows'}
+          label="Show rows"
           value={filter}
           onChange={(v) => setFilter(v as Filter)}
           options={[
@@ -589,7 +585,7 @@ function Review({
       </div>
 
       {shown.length === 0 ? (
-        <p style={muted}>{'No rows here.'}</p>
+        <p style={muted}>No rows here.</p>
       ) : (
         <div style={{ display: 'grid', gap: space.sm }}>
           {shown.slice(0, SHOW_ROWS).map((r) => (
@@ -673,7 +669,7 @@ function ActionBar({
         {label}
       </Button>
       <Button variant="ghost" wrap onClick={onOther}>
-        {'Choose another file'}
+        Choose another file
       </Button>
     </Row>
   );
@@ -706,7 +702,7 @@ function TermsLine({ rows, owner }: { rows: readonly ImportRow[]; owner: boolean
   if (count === 0) return null;
   return (
     <Card>
-      <SectionTitle>{'Plans and payments'}</SectionTitle>
+      <SectionTitle>Plans and payments</SectionTitle>
       <p style={{ margin: 0, fontSize: 14, color: color.ink }}>
         {owner
           ? `${count} members come with their plan and its dates (${names} plan names)${paid > 0 ? `, and ${formatINR(paid)} already paid as receipts` : ''}. Expiry reminders work for them from day one.`
@@ -755,7 +751,7 @@ function PastImports() {
 
   return (
     <Card style={{ marginTop: space.lg }}>
-      <SectionTitle>{'Past imports'}</SectionTitle>
+      <SectionTitle>Past imports</SectionTitle>
       {done && (
         <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700 }}>
           {done}
@@ -773,7 +769,7 @@ function PastImports() {
             </div>
             {asking !== imp.importId && (
               <Button variant="ghost" tone="danger" disabled={busy} onClick={() => { setDone(null); setAsking(imp.importId); }} ariaLabel={`Undo the import of ${when(imp.at)}`}>
-                {'Undo this import'}
+                Undo this import
               </Button>
             )}
           </div>
@@ -789,7 +785,7 @@ function PastImports() {
                   {busy ? 'Taking it back…' : 'Yes, undo it'}
                 </Button>
                 <Button variant="ghost" disabled={busy} onClick={() => setAsking(null)}>
-                  {'Keep it'}
+                  Keep it
                 </Button>
               </Row>
             </div>

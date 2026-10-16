@@ -71,7 +71,7 @@ export function ShopScreen({ section }: { section?: string }) {
   return (
     <>
       <PageHeader
-        title={'Shop'}
+        title="Shop"
         subtitle={
           tabs.length > 1
             ? 'What members order in the ForgeAI app, what you sell, and your messages to them'
@@ -87,7 +87,7 @@ export function ShopScreen({ section }: { section?: string }) {
             <div style={{ marginBottom: space.lg }}>
               <ChipToggle
                 variant="tabs"
-                label={'Shop section'}
+                label="Shop section"
                 value={tab}
                 onChange={(v) => navigate(`/shop/${v}`)}
                 options={[
@@ -134,7 +134,7 @@ function OrdersSection() {
 
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
-          label={'Show orders'}
+          label="Show orders"
           value={filter}
           onChange={(v) => setFilter(v as OrderFilter)}
           options={[
@@ -149,12 +149,12 @@ function OrdersSection() {
 
       {!ordersLoaded && !ordersError ? (
         <Card>
-          <EmptyState title={'Loading orders…'} />
+          <EmptyState title="Loading orders…" />
         </Card>
       ) : orders.length === 0 ? (
         <Card>
           <EmptyState
-            title={'No orders yet'}
+            title="No orders yet"
             body={`Members order from the Shop tab in the ForgeAI app after joining with gym code ${code}.`}
           />
         </Card>
@@ -220,7 +220,7 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
       <Row gap={space.sm} wrap={false} align="flex-start">
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: font.display, fontSize: 18, fontWeight: 700, color: color.ink }}>
-            {'Order'} {order.orderNo}
+            Order {order.orderNo}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 14, color: color.ink, marginTop: 2 }}>
             {order.memberName}
@@ -257,7 +257,7 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
         ))}
         <Row gap={space.sm} wrap={false} align="baseline">
           <span style={{ flex: 1, fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>
-            {'Total'}
+            Total
           </span>
           <span style={{ fontFamily: font.mono, fontSize: 18, fontWeight: 700, color: color.ink }}>
             {formatINR(order.totalP)}
@@ -325,7 +325,7 @@ function CancelSheet({ order, onClose }: { order: Order; onClose: () => void }) 
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Keep it'}
+            Keep it
           </Button>
           <Button
             tone="danger"
@@ -354,7 +354,7 @@ function CancelSheet({ order, onClose }: { order: Order; onClose: () => void }) 
         {'’s order for '}
         <strong style={{ color: color.ink }}>{formatINR(order.totalP)}</strong>
         {' will be cancelled. '}
-        <strong style={{ color: color.ink }}>{'The items go back into stock'}</strong>
+        <strong style={{ color: color.ink }}>The items go back into stock</strong>
         {', and '}
         {order.memberName}
         {' sees “Cancelled” in the app. This cannot be undone.'}
@@ -464,7 +464,7 @@ function ProductsSection() {
             ? `${products.length} products · ${shown} shown in the app`
             : 'Loading your products…'}
         </div>
-        <Button onClick={() => setEditing('new')}>{'+ Add product'}</Button>
+        <Button onClick={() => setEditing('new')}>+ Add product</Button>
       </Row>
 
       <div style={{ height: space.lg }} />
@@ -473,9 +473,9 @@ function ProductsSection() {
       {products && products.length === 0 ? (
         <Card>
           <EmptyState
-            title={'No products yet'}
-            body={'Add what you sell at the desk — protein, shakers, T-shirts — and members can order it in the app.'}
-            action={<Button onClick={() => setEditing('new')}>{'+ Add product'}</Button>}
+            title="No products yet"
+            body="Add what you sell at the desk — protein, shakers, T-shirts — and members can order it in the app."
+            action={<Button onClick={() => setEditing('new')}>+ Add product</Button>}
           />
         </Card>
       ) : (
@@ -601,7 +601,7 @@ function ProductCard({
             >
               {stock.text}
             </span>
-            {!p.active && <Pill tone="warn">{'Hidden'}</Pill>}
+            {!p.active && <Pill tone="warn">Hidden</Pill>}
           </div>
         </div>
       </button>
@@ -620,7 +620,7 @@ function ProductCard({
         }}
       >
         <SmallButton onClick={onRestock} disabled={busy} label={`Add 10 to stock, ${p.name}`}>
-          {'+10 stock'}
+          +10 stock
         </SmallButton>
         <SmallButton
           onClick={onToggle}
@@ -635,7 +635,7 @@ function ProductCard({
           </SmallButton>
         )}
         <SmallButton onClick={onEdit} disabled={busy} label={`Edit ${p.name}`} span={!p.imageUrl ? 1 : 2}>
-          {'Edit'}
+          Edit
         </SmallButton>
         <input
           ref={fileRef}

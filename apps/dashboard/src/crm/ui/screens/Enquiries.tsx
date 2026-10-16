@@ -107,13 +107,13 @@ export function EnquiriesScreen() {
       setUndo(null);
     });
 
-  const addButton = <Button onClick={() => setAdding(true)}>{'+ Add enquiry'}</Button>;
+  const addButton = <Button onClick={() => setAdding(true)}>+ Add enquiry</Button>;
 
   return (
     <>
       <PageHeader
-        title={'Enquiries'}
-        subtitle={'People who asked about joining'}
+        title="Enquiries"
+        subtitle="People who asked about joining"
         actions={addButton}
       />
 
@@ -121,7 +121,7 @@ export function EnquiriesScreen() {
 
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
-          label={'Show enquiries'}
+          label="Show enquiries"
           value={filter}
           onChange={(v) => setFilter(v as EnquiryFilter)}
           options={ENQUIRY_FILTERS.map((f) => ({ value: f, label: filterLabel(f), count: counts[f] }))}
@@ -175,8 +175,8 @@ function EmptyEnquiries({ filter, total, action }: { filter: EnquiryFilter; tota
   if (total === 0) {
     return (
       <EmptyState
-        title={'No enquiries yet'}
-        body={'When someone walks in or calls to ask about joining, add them here with a day to call back.'}
+        title="No enquiries yet"
+        body="When someone walks in or calls to ask about joining, add them here with a day to call back."
         action={action}
       />
     );
@@ -256,7 +256,7 @@ function EnquiryRow({
 
       <div style={actionsGrid}>
         <a href={`tel:+${phoneDigits(e.phone)}`} style={linkButton} aria-label={`Call ${e.name}`}>
-          {'Call'}
+          Call
         </a>
         <a
           href={whatsAppHref(followUpMessage(e, { name: gymName }), e.phone)}
@@ -265,29 +265,29 @@ function EnquiryRow({
           style={linkButton}
           aria-label={`WhatsApp ${e.name}`}
         >
-          {'WhatsApp'}
+          WhatsApp
         </a>
         {open && (
           <>
             <Button wrap onClick={onConvert} ariaLabel={`Make ${e.name} a member`}>
-              {'Convert to member'}
+              Convert to member
             </Button>
             <Button wrap variant="ghost" onClick={onReschedule} ariaLabel={`Change follow-up date for ${e.name}`}>
-              {'Follow-up date'}
+              Follow-up date
             </Button>
             <Button wrap variant="quiet" tone="danger" onClick={onLost} ariaLabel={`${e.name} is not interested`}>
-              {'Not interested'}
+              Not interested
             </Button>
           </>
         )}
         {e.status === 'joined' && e.memberId && (
           <Button wrap variant="ghost" onClick={() => navigate(`/members/${e.memberId}`)}>
-            {'Open member'}
+            Open member
           </Button>
         )}
         {e.status === 'lost' && (
           <Button wrap variant="ghost" onClick={onReopen} ariaLabel={`Reopen ${e.name}`}>
-            {'Reopen'}
+            Reopen
           </Button>
         )}
       </div>
@@ -298,13 +298,13 @@ function EnquiryRow({
 function StatusPill({ bucket }: { bucket: ReturnType<typeof enquiryBucket> }) {
   switch (bucket) {
     case 'overdue':
-      return <Pill tone="critical">{'Overdue'}</Pill>;
+      return <Pill tone="critical">Overdue</Pill>;
     case 'today':
-      return <Pill tone="warn">{'Today'}</Pill>;
+      return <Pill tone="warn">Today</Pill>;
     case 'joined':
-      return <Pill tone="good">{'Joined'}</Pill>;
+      return <Pill tone="good">Joined</Pill>;
     case 'lost':
-      return <Pill tone="muted">{'Not interested'}</Pill>;
+      return <Pill tone="muted">Not interested</Pill>;
     default:
       return null;
   }
@@ -312,8 +312,8 @@ function StatusPill({ bucket }: { bucket: ReturnType<typeof enquiryBucket> }) {
 
 /**
  * Two buttons a row on a 375px phone, more on a wider screen, one a row on a very narrow one;
- * every one at least 44px tall. A label too long for its half ("Convert to member", a Hinglish
- * one) wraps onto a second line inside its button instead of spilling out of it.
+ * every one at least 44px tall. A label too long for its half wraps onto a second line inside its
+ * button instead of spilling out of it.
  */
 const actionsGrid: CSSProperties = {
   display: 'grid',
@@ -367,7 +367,7 @@ function UndoBar({ message, onUndo }: { message: string; onUndo: () => void }) {
     >
       <span style={{ minWidth: 0, overflowWrap: 'anywhere' }}>{message}</span>
       <Button variant="ghost" onClick={onUndo}>
-        {'Undo'}
+        Undo
       </Button>
     </div>
   );
@@ -423,12 +423,12 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
 
   return (
     <Sheet
-      title={'Add enquiry'}
+      title="Add enquiry"
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button onClick={save} disabled={saving}>
             {saving ? 'Saving…' : 'Save enquiry'}
@@ -439,7 +439,7 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
       {formError && <ErrorBanner>{formError}</ErrorBanner>}
 
       <TextField
-        label={'Name'}
+        label="Name"
         value={form.name}
         onChange={set('name')}
         error={errorFor('name')}
@@ -449,11 +449,11 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
 
       <Row gap={space.sm} align="flex-start">
         <div style={{ width: 110 }}>
-          <SelectField label={'Code'} value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
+          <SelectField label="Code" value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
         </div>
         <div style={{ flex: 1, minWidth: 180 }}>
           <TextField
-            label={'Mobile number'}
+            label="Mobile number"
             value={form.phone}
             onChange={set('phone')}
             error={errorFor('phone')}
@@ -469,15 +469,15 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
       )}
 
       <TextField
-        label={'Interested in (optional)'}
+        label="Interested in (optional)"
         value={form.interest}
         onChange={set('interest')}
         error={errorFor('interest')}
-        placeholder={'3 months, evening batch'}
+        placeholder="3 months, evening batch"
       />
 
       <TextField
-        label={'Follow-up date'}
+        label="Follow-up date"
         value={form.followUpOn}
         onChange={set('followUpOn')}
         type="date"
@@ -537,16 +537,16 @@ function FollowUpSheet({ enquiry, onClose }: { enquiry: Enquiry; onClose: () => 
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button onClick={() => void save(custom)} disabled={saving}>
-            {'Save date'}
+            Save date
           </Button>
         </>
       }
     >
       <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {'Pick a day — one tap saves it.'}
+        Pick a day — one tap saves it.
       </p>
       <div style={{ ...actionsGrid, marginTop: space.md }}>
         {followUpPicks(today).map((p) => (
@@ -556,7 +556,7 @@ function FollowUpSheet({ enquiry, onClose }: { enquiry: Enquiry; onClose: () => 
         ))}
       </div>
       <TextField
-        label={'Or pick a date'}
+        label="Or pick a date"
         value={custom}
         onChange={(v) => {
           setCustom(v);
@@ -613,12 +613,12 @@ function ConvertFlow({
     // owner cannot see them in the roster. Bring them back and link the enquiry in one tap.
     return (
       <Sheet
-        title={'Already a member (archived)'}
+        title="Already a member (archived)"
         onClose={onClose}
         footer={
           <>
             <Button variant="ghost" onClick={onClose}>
-              {'Cancel'}
+              Cancel
             </Button>
             <Button
               wrap
@@ -654,12 +654,12 @@ function ConvertFlow({
   if (existing) {
     return (
       <Sheet
-        title={'Already a member'}
+        title="Already a member"
         onClose={onClose}
         footer={
           <>
             <Button variant="ghost" onClick={onClose}>
-              {'Cancel'}
+              Cancel
             </Button>
             <Button
               disabled={busy}
@@ -670,7 +670,7 @@ function ConvertFlow({
                 onClose();
               }}
             >
-              {'Mark joined and open'}
+              Mark joined and open
             </Button>
           </>
         }

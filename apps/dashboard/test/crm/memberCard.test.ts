@@ -101,8 +101,6 @@ describe('what the card says', () => {
     expect(cardRows(f).map(([l]) => l)).toEqual(['No.', 'Mobile', 'Plan']);
   });
 
-  it('prints in English whatever the panel language is', () => {
-  });
 
   it('puts only the member id in the QR — no phone, no name', () => {
     const member = makeMember({ id: 'mem-card-4', fullName: 'Arjun Mehta', phone: '+919811122233' });
@@ -118,7 +116,7 @@ describe('what the card says', () => {
 });
 
 describe('the WhatsApp words', () => {
-  it('greet by first name, in English and Hinglish, with the number and no phone', () => {
+  it('greet by first name, with the number and no phone', () => {
     const msg = cardMessage({ gymName: 'Iron Temple Fitness', name: 'Riya Sharma', number: '4821 0937' });
     const lines = msg.split('\n');
     expect(lines[0]).toBe('Hi Riya!');

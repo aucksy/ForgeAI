@@ -27,18 +27,18 @@ export function InviteScreen() {
   return (
     <>
       <PageHeader
-        title={'Invite members'}
-        subtitle={"Send your gym's link on WhatsApp, or put a QR at the front desk"}
+        title="Invite members"
+        subtitle="Send your gym's link on WhatsApp, or put a QR at the front desk"
         actions={
           <Button variant="ghost" onClick={() => navigate('/settings')}>
-            {'Back to Settings'}
+            Back to Settings
           </Button>
         }
       />
       {cloud ? (
         <InviteBody ownerKey={cloud.ownerKey} gymName={cloud.name} joinCode={cloud.joinCode} />
       ) : (
-        <JoinCodeCard title={'Turn on the member app first'} />
+        <JoinCodeCard title="Turn on the member app first" />
       )}
     </>
   );
@@ -103,7 +103,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   return (
     <div style={{ display: 'grid', gap: space.lg, gridTemplateColumns: compact ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', alignItems: 'start' }}>
       <Card>
-        <SectionTitle>{"Your gym's link"}</SectionTitle>
+        <SectionTitle>Your gym's link</SectionTitle>
         <div
           style={{
             fontFamily: font.mono,
@@ -123,14 +123,14 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {`A member taps it on their phone: the ForgeAI app opens on “Join ${gymName}” — one tap and they are in. Without the app, the link shows how to get it, and your gym code ${joinCode}.`}
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.open(whatsAppHref(message), '_blank', 'noopener')}>{'Send on WhatsApp'}</Button>
+          <Button onClick={() => window.open(whatsAppHref(message), '_blank', 'noopener')}>Send on WhatsApp</Button>
           <Button
             variant="ghost"
             onClick={async () =>
               say((await copyText(link)) ? 'Link copied.' : 'This browser blocked copying.')
             }
           >
-            {'Copy link'}
+            Copy link
           </Button>
           <Button
             variant="ghost"
@@ -138,11 +138,11 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
               say((await copyText(message)) ? 'Message copied.' : 'This browser blocked copying.')
             }
           >
-            {'Copy message'}
+            Copy message
           </Button>
         </div>
         <div style={{ height: space.xl }} />
-        <SectionTitle>{'The message members get'}</SectionTitle>
+        <SectionTitle>The message members get</SectionTitle>
         <pre
           style={{
             margin: 0,
@@ -159,19 +159,19 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {message}
         </pre>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {'To invite one member, open them in Members and tap “Send app invite”.'}
+          To invite one member, open them in Members and tap “Send app invite”.
         </p>
       </Card>
 
       <Card>
-        <SectionTitle>{'Front-desk QR poster'}</SectionTitle>
+        <SectionTitle>Front-desk QR poster</SectionTitle>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: '100%', maxWidth: 360 }}>
             <Poster words={POSTER} gymName={gymName} joinCode={joinCode} link={link} brand={brand} />
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.print()}>{'Print poster'}</Button>
+          <Button onClick={() => window.print()}>Print poster</Button>
           <Button
             variant="ghost"
             onClick={async () => {
@@ -183,11 +183,11 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
               );
             }}
           >
-            {'Download picture'}
+            Download picture
           </Button>
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.'}
+          Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.
         </p>
       </Card>
 

@@ -112,7 +112,7 @@ export function MessagesSection() {
   return (
     <>
       <p style={{ margin: `0 0 ${space.lg}px`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {"Your message goes to every member who joined your gym in the ForgeAI app. They see it in the app's inbox (the bell on their Shop tab)."}
+        Your message goes to every member who joined your gym in the ForgeAI app. They see it in the app's inbox (the bell on their Shop tab).
       </p>
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
@@ -126,10 +126,10 @@ export function MessagesSection() {
         }}
       >
         <Card>
-          <SectionTitle>{'New message'}</SectionTitle>
+          <SectionTitle>New message</SectionTitle>
           <div style={{ marginBottom: space.md }}>
             <ChipToggle
-              label={'Message type'}
+              label="Message type"
               value={draft.kind}
               onChange={(v) => pickKind(v as MessageKind)}
               options={MESSAGE_KINDS.map((k) => ({ value: k.kind, label: k.label }))}
@@ -143,7 +143,7 @@ export function MessagesSection() {
               setConfirming(false);
               setDraft((d) => ({ ...d, title: v.slice(0, TITLE_MAX + 10) }));
             }}
-            placeholder={'Gym closed on Sunday'}
+            placeholder="Gym closed on Sunday"
           />
           <div style={{ height: space.md }} />
           <TextField
@@ -155,11 +155,11 @@ export function MessagesSection() {
               setConfirming(false);
               setDraft((d) => ({ ...d, body: v.slice(0, BODY_MAX + 20) }));
             }}
-            placeholder={'A line or two members should know'}
+            placeholder="A line or two members should know"
           />
           {isCapped(draft.kind) && (
             <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-              {'Members get at most one offer or event a day, and three a week.'}
+              Members get at most one offer or event a day, and three a week.
             </p>
           )}
           {problem && (touched || /\[/.test(draft.title + draft.body)) && (
@@ -176,7 +176,7 @@ export function MessagesSection() {
                   if (!problem) setConfirming(true);
                 }}
               >
-                {'Send'}
+                Send
               </Button>
             ) : (
               <>
@@ -191,34 +191,34 @@ export function MessagesSection() {
                   {busy ? 'Sending…' : 'Yes, send'}
                 </Button>
                 <Button variant="ghost" disabled={busy} onClick={() => setConfirming(false)}>
-                  {'Not yet'}
+                  Not yet
                 </Button>
               </>
             )}
           </div>
           {members === 0 && (
             <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-              {"No member has joined in the app yet. Send them your gym's link (Settings → Invite members); new members also see the last 14 days of messages."}
+              No member has joined in the app yet. Send them your gym's link (Settings → Invite members); new members also see the last 14 days of messages.
             </p>
           )}
         </Card>
 
         <Card>
-          <SectionTitle>{'What members see'}</SectionTitle>
+          <SectionTitle>What members see</SectionTitle>
           <InboxPreview draft={draft} gymName={cloud.name} />
         </Card>
       </div>
 
-      <SectionTitle>{'Sent'}</SectionTitle>
+      <SectionTitle>Sent</SectionTitle>
       {sent === null && !error ? (
         <Card>
-          <EmptyState title={'Loading…'} />
+          <EmptyState title="Loading…" />
         </Card>
       ) : sent && sent.length === 0 ? (
         <Card>
           <EmptyState
-            title={'Nothing sent yet'}
-            body={'Messages you send show here, with how many members have seen each one.'}
+            title="Nothing sent yet"
+            body="Messages you send show here, with how many members have seen each one."
           />
         </Card>
       ) : (
@@ -227,7 +227,7 @@ export function MessagesSection() {
             <Card key={m.id} pad={space.lg} style={{ opacity: m.withdrawn ? 0.6 : 1 }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', marginBottom: 6 }}>
                 <Pill tone={isCapped(m.kind) ? 'accent' : 'muted'}>{kindLabel(m.kind)}</Pill>
-                {m.withdrawn && <Pill tone="critical">{'Taken back'}</Pill>}
+                {m.withdrawn && <Pill tone="critical">Taken back</Pill>}
                 <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{timeAgo(m.createdAt, now)}</span>
               </div>
               <div style={{ fontFamily: font.display, fontSize: 16, fontWeight: 600, color: color.ink }}>{m.title}</div>
@@ -240,7 +240,7 @@ export function MessagesSection() {
                 <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{seenText(m)}</span>
                 {!m.withdrawn && (
                   <Button variant="quiet" onClick={() => void takeBack(m)} ariaLabel={`Take back ${m.title}`}>
-                    {'Take back'}
+                    Take back
                   </Button>
                 )}
               </div>

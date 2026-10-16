@@ -119,9 +119,6 @@ describe('follow-up picks', () => {
   it('tomorrow, 3 days, a week — across a month end', () => {
     expect(followUpPicks('2026-10-30').map((p) => p.date)).toEqual(['2026-10-31', '2026-11-02', '2026-11-06']);
   });
-
-  it('Hinglish labels', () => {
-  });
 });
 
 describe('validateEnquiry', () => {
@@ -144,7 +141,7 @@ describe('validateEnquiry', () => {
     expect(r).toMatchObject({ ok: true, value: { interest: null, followUpOn: null } });
   });
 
-  it('names the field at fault, in the panel language', () => {
+  it('names the field at fault', () => {
     expect(validateEnquiry({ ...base(), name: 'R' }, TODAY)).toMatchObject({ ok: false, field: 'name' });
     expect(validateEnquiry({ ...base(), phone: '12345' }, TODAY)).toMatchObject({ ok: false, field: 'phone' });
     expect(validateEnquiry({ ...base(), followUpOn: '2026-02-30' }, TODAY)).toMatchObject({ ok: false, field: 'followUpOn' });
@@ -177,8 +174,6 @@ describe('followUpMessage', () => {
     expect(t).toMatch(/\n– Iron Temple$/);
   });
 
-  it('Hinglish: "ji" and polite aap', () => {
-  });
 
   it('a gym with no name yet still signs off', () => {
     expect(followUpMessage({ name: 'Rohit', interest: null }, { name: ' ' })).toMatch(/– Your gym$/);

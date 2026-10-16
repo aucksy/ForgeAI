@@ -41,7 +41,7 @@ function SendLink({ href, onSent, disabled }: { href: string; onSent?: () => voi
         textDecoration: 'none',
       }}
     >
-      {'Send on WhatsApp'}
+      Send on WhatsApp
     </a>
   );
 }
@@ -59,16 +59,16 @@ export function WhatsAppSheet({ view, onClose }: { view: MemberView; onClose: ()
   return (
     <Sheet title={`WhatsApp ${view.member.fullName}`} onClose={onClose}>
       <ChipToggle
-        label={'Which message'}
+        label="Which message"
         value={kind}
         onChange={(v) => pick(v as MessageKind)}
         options={kinds.map((k) => ({ value: k, label: kindLabel(k) }))}
       />
-      <TextField label={'Message (you can change it)'} value={text} onChange={setText} multiline />
+      <TextField label="Message (you can change it)" value={text} onChange={setText} multiline />
       {!phoneOk && (
         <div style={{ marginTop: space.md }}>
           <ErrorBanner>
-            {'This mobile number is not complete, so WhatsApp cannot open on it. Fix it on Edit.'}
+            This mobile number is not complete, so WhatsApp cannot open on it. Fix it on Edit.
           </ErrorBanner>
         </div>
       )}
@@ -104,18 +104,18 @@ export function WhatsAppQueue({ views, kind, onClose }: { views: MemberView[]; k
       footer={
         <>
           <Button variant="ghost" disabled={i === 0} onClick={() => setI(Math.max(0, i - 1))}>
-            {'Back'}
+            Back
           </Button>
           {i < people.length - 1 ? (
             <Button onClick={() => setI(Math.min(people.length - 1, i + 1))}>{sent.has(v?.member.id ?? '') ? 'Next' : 'Skip'}</Button>
           ) : (
-            <Button onClick={onClose}>{'Done'}</Button>
+            <Button onClick={onClose}>Done</Button>
           )}
         </>
       }
     >
       {people.length === 0 ? (
-        <p style={body}>{'Nobody on this list has a full mobile number.'}</p>
+        <p style={body}>Nobody on this list has a full mobile number.</p>
       ) : (
         <>
           <p style={{ ...body, color: color.ink, fontWeight: 700 }}>
@@ -127,7 +127,7 @@ export function WhatsAppQueue({ views, kind, onClose }: { views: MemberView[]; k
             {skipped > 0 ? ` · ${skipped} without a full mobile number left out` : ''}
           </p>
           <TextField
-            label={'Message (you can change it)'}
+            label="Message (you can change it)"
             value={text}
             onChange={(t) => setEdited((e) => ({ ...e, [v.member.id]: t }))}
             multiline

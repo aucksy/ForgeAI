@@ -139,7 +139,7 @@ export function ProductSheet({
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
-              {'Keep it'}
+              Keep it
             </Button>
             <Button tone="danger" disabled={saving} onClick={() => void remove()}>
               {saving ? 'Deleting…' : 'Delete product'}
@@ -150,7 +150,7 @@ export function ProductSheet({
         {error && <ErrorBanner>{error}</ErrorBanner>}
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {'It disappears from the app straight away. Orders already placed for it stay as they are. If you might sell it again, use '}
-          <strong style={{ color: color.ink }}>{'Hide from app'}</strong>
+          <strong style={{ color: color.ink }}>Hide from app</strong>
           {' instead.'}
         </p>
       </Sheet>
@@ -167,12 +167,12 @@ export function ProductSheet({
           {product && (
             <span style={{ marginRight: 'auto' }}>
               <Button variant="quiet" tone="danger" onClick={() => setConfirmDelete(true)}>
-                {'Delete'}
+                Delete
               </Button>
             </span>
           )}
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button disabled={saving || uploading} onClick={() => void save()}>
             {uploading
@@ -196,23 +196,23 @@ export function ProductSheet({
       />
 
       <TextField
-        label={'Name'}
+        label="Name"
         value={d.name}
         onChange={(v) => set('name', v)}
-        placeholder={'Whey protein 1 kg'}
+        placeholder="Whey protein 1 kg"
         error={errors.name}
         autoFocus={!product}
       />
 
       <div style={twoCol}>
         <SelectField
-          label={'Category'}
+          label="Category"
           value={d.category}
           onChange={(v) => set('category', v as ProductDraft['category'])}
           options={CATEGORIES}
         />
         <TextField
-          label={'Price'}
+          label="Price"
           prefix="₹"
           inputMode="decimal"
           value={d.price}
@@ -223,14 +223,14 @@ export function ProductSheet({
       </div>
 
       <TextField
-        label={'Description (optional)'}
+        label="Description (optional)"
         value={d.description}
         onChange={(v) => set('description', v.slice(0, 600))}
-        placeholder={'One line members see, like the size or how to use it'}
+        placeholder="One line members see, like the size or how to use it"
         multiline
       />
 
-      <FieldGroup label={'Picture if there’s no photo'}>
+      <FieldGroup label="Picture if there’s no photo">
         {/* A fixed count that divides the twelve pictures: auto-fill put nine on the
             first row and three on the second. Six across in the sheet, four on a phone. */}
         <div
@@ -272,11 +272,11 @@ export function ProductSheet({
         </div>
       </FieldGroup>
 
-      <FieldGroup label={'Colour'}>
+      <FieldGroup label="Colour">
         <Swatches value={d.artTint} onChange={(t) => set('artTint', t)} />
       </FieldGroup>
 
-      <FieldGroup label={'Shown in the app'}>
+      <FieldGroup label="Shown in the app">
         <Switch
           on={d.active}
           onChange={(v) => set('active', v)}
@@ -288,7 +288,7 @@ export function ProductSheet({
         />
       </FieldGroup>
 
-      <FieldGroup label={'Choices'}>
+      <FieldGroup label="Choices">
         <Switch
           on={d.useOptions}
           onChange={(v) =>
@@ -312,22 +312,22 @@ export function ProductSheet({
       {!d.useOptions ? (
         <div style={{ maxWidth: 220 }}>
           <TextField
-            label={'Stock'}
+            label="Stock"
             inputMode="numeric"
             value={d.stock}
             onChange={(v) => set('stock', v)}
             error={errors.stock}
-            hint={'How many you have at the desk.'}
+            hint="How many you have at the desk."
           />
         </div>
       ) : (
         <>
           <div style={{ maxWidth: 260 }}>
             <TextField
-              label={'What is the choice?'}
+              label="What is the choice?"
               value={d.optionName}
               onChange={(v) => set('optionName', v)}
-              placeholder={'Flavour or Size'}
+              placeholder="Flavour or Size"
               error={errors.optionName}
             />
           </div>
@@ -359,10 +359,10 @@ export function ProductSheet({
                 }))
               }
             >
-              {'+ Add a choice'}
+              + Add a choice
             </Button>
             <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-              {'Total stock:'} <strong style={{ color: color.ink }}>{optionTotal}</strong>
+              Total stock: <strong style={{ color: color.ink }}>{optionTotal}</strong>
             </span>
           </Row2>
         </>
@@ -398,20 +398,20 @@ function OptionRow({
           label={`Choice ${index + 1}`}
           value={o.label}
           onChange={(v) => onChange({ label: v })}
-          placeholder={'Chocolate'}
+          placeholder="Chocolate"
         />
-        <TextField label={'Stock'} inputMode="numeric" value={o.stock} onChange={(v) => onChange({ stock: v })} />
+        <TextField label="Stock" inputMode="numeric" value={o.stock} onChange={(v) => onChange({ stock: v })} />
         <TextField
-          label={'Own price (optional)'}
+          label="Own price (optional)"
           prefix="₹"
           inputMode="decimal"
           value={o.price}
           onChange={(v) => onChange({ price: v })}
-          placeholder={'Same'}
+          placeholder="Same"
         />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: space.sm, flexWrap: 'wrap', marginTop: space.sm }}>
-        <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>{'Colour (optional)'}</span>
+        <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>Colour (optional)</span>
         <Swatches value={o.tint} onChange={(t) => onChange({ tint: t === o.tint ? null : t })} small />
         <span style={{ flex: 1 }} />
         <Button
@@ -420,7 +420,7 @@ function OptionRow({
           onClick={onRemove}
           ariaLabel={`Remove choice ${o.label || index + 1}`}
         >
-          {'Remove'}
+          Remove
         </Button>
       </div>
       {error && (
@@ -433,7 +433,7 @@ function OptionRow({
 function Swatches({ value, onChange, small }: { value: string | null; onChange: (t: string) => void; small?: boolean }) {
   const size = small ? 28 : 36;
   return (
-    <div role="group" aria-label={'Colour'} style={{ display: 'flex', flexWrap: 'wrap', gap: small ? 4 : 8 }}>
+    <div role="group" aria-label="Colour" style={{ display: 'flex', flexWrap: 'wrap', gap: small ? 4 : 8 }}>
       {TINT_CHOICES.map(({ value: t, name }) => {
         const on = value?.toLowerCase() === t.toLowerCase();
         return (
@@ -599,7 +599,7 @@ function PhotoBlock({
 
   return (
     <div style={{ marginTop: space.sm }}>
-      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 6 }}>{'Photo'}</div>
+      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 6 }}>Photo</div>
       <div style={{ display: 'flex', gap: space.lg, alignItems: 'center', flexWrap: 'wrap' }}>
         <div
           onDragOver={(e) => {
@@ -636,7 +636,7 @@ function PhotoBlock({
                 fontWeight: 700,
               }}
             >
-              {'Uploading…'}
+              Uploading…
             </div>
           )}
         </div>
@@ -647,7 +647,7 @@ function PhotoBlock({
             </Button>
             {d.imageUrl && (
               <Button variant="quiet" tone="danger" disabled={busy || disabled} onClick={() => onPhoto(null)}>
-                {'Remove photo'}
+                Remove photo
               </Button>
             )}
           </div>

@@ -57,7 +57,7 @@ export function MembersScreen({ section, filter: initialFilter }: { section?: 'a
   return (
     <>
       <PageHeader
-        title={'Members'}
+        title="Members"
         subtitle={
           app
             ? 'Who has the ForgeAI app on their phone'
@@ -66,10 +66,10 @@ export function MembersScreen({ section, filter: initialFilter }: { section?: 'a
         actions={
           app ? undefined : (
             <>
-              <Button wrap onClick={() => setAdding(true)}>{'+ Add member'}</Button>
+              <Button wrap onClick={() => setAdding(true)}>+ Add member</Button>
               {/* Day one: a register or sheet comes in all at once (RESEARCH.md §9 rec 9). */}
               <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
-                {'Import from Excel'}
+                Import from Excel
               </Button>
             </>
           )
@@ -78,7 +78,7 @@ export function MembersScreen({ section, filter: initialFilter }: { section?: 'a
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
           variant="tabs"
-          label={'Which members'}
+          label="Which members"
           value={app ? 'app' : 'roster'}
           onChange={(v) => navigate(v === 'app' ? '/members/app' : '/members')}
           options={[
@@ -191,11 +191,11 @@ function RosterSection({
   return (
     <>
       <Row gap={space.md}>
-        <SearchField value={query} onChange={setQuery} placeholder={'Search name or mobile number'} />
+        <SearchField value={query} onChange={setQuery} placeholder="Search name or mobile number" />
         {/* Only once the gym uses batches: a filter with nothing in it is a blank hole. */}
         {(batches.length > 0 || batch !== ALL_BATCHES) && (
           <select
-            aria-label={'Filter by batch'}
+            aria-label="Filter by batch"
             value={batch}
             onChange={(e) => setBatch(e.target.value)}
             style={batchSelect}
@@ -211,7 +211,7 @@ function RosterSection({
 
       <div style={{ margin: `${space.md}px 0 ${space.lg}px` }}>
         <ChipToggle
-          label={'Filter members'}
+          label="Filter members"
           value={filter}
           onChange={(v) => setFilter(v as Filter)}
           options={[
@@ -255,10 +255,10 @@ function RosterSection({
             action={
               !narrowed && (
                 <Row gap={space.sm}>
-                  <Button wrap onClick={() => setAdding(true)}>{'+ Add member'}</Button>
+                  <Button wrap onClick={() => setAdding(true)}>+ Add member</Button>
                   {memberViews.length === 0 && (
                     <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
-                      {'Import from Excel'}
+                      Import from Excel
                     </Button>
                   )}
                 </Row>

@@ -60,7 +60,7 @@ describe('the counter', () => {
     expect(ptUsed(makeMembership())).toBe(0);
   });
 
-  it('says it in both languages', () => {
+  it('says how many sessions are used, and the trainer', () => {
     const m = pt({ ptLog: days(4) });
     expect(ptSummary(m)).toBe('PT: 4 of 12 sessions used · Trainer Rohit');
     expect(ptSummary(pt({ trainer: null }))).toBe('PT: 0 of 12 sessions used');

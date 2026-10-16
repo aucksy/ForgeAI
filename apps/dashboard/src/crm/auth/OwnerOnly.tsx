@@ -10,9 +10,9 @@ export function OwnerOnly() {
   return (
     <Card>
       <EmptyState
-        title={'Only an owner can see this'}
-        body={'Ask your gym owner if you need something from here.'}
-        action={<Button onClick={() => navigate('/')}>{'Back to Today'}</Button>}
+        title="Only an owner can see this"
+        body="Ask your gym owner if you need something from here."
+        action={<Button onClick={() => navigate('/')}>Back to Today</Button>}
       />
     </Card>
   );

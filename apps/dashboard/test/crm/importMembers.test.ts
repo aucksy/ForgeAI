@@ -308,11 +308,6 @@ describe('two-digit birthday years', () => {
   });
 });
 
-describe('downloads stay English', () => {
-  it('the sample file and the skipped-rows file, in a Hinglish panel', () => {
-  });
-});
-
 describe('saveInBatches', () => {
   const rowsFor = (n: number) =>
     plan(Array.from({ length: n }, (_, i) => [`Member ${i}`, String(6000000000 + i)])).rows;
@@ -519,9 +514,6 @@ describe('planImport', () => {
     const p = plan(rows);
     expect(p.rows).toHaveLength(MAX_IMPORT_ROWS);
     expect(p.leftOut).toBe(3);
-  });
-
-  it('speaks Hinglish when the panel does', () => {
   });
 });
 

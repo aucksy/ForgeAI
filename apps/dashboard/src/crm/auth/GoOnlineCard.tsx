@@ -42,12 +42,12 @@ function SignedInCard() {
   if (!me) return null;
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{'Staff & sign-in'}</SectionTitle>
+      <SectionTitle>Staff & sign-in</SectionTitle>
       <p style={bodyText}>
         {'Signed in as '}
         <b style={{ color: color.ink }}>{me.name}</b> (+91 {formatMobile(me.phone)},{' '}
         {me.role === 'owner' ? 'owner' : 'staff'}
-        {'). Your records are online: open them on any phone or computer.'}
+        ). Your records are online: open them on any phone or computer.
       </p>
       <div style={{ marginTop: space.lg }}>
         <Button onClick={() => navigate('/settings/people')}>
@@ -83,17 +83,17 @@ function DemoGymCard() {
   const closeSignIn = useCallback(() => setSigningIn(false), []);
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{'This is the demo gym'}</SectionTitle>
+      <SectionTitle>This is the demo gym</SectionTitle>
       <p style={bodyText}>
-        {'Its members are made up, and they stay in this browser only. To set up your real gym online, tap “Start over with a new demo gym” at the bottom of this page, then “New here? Set up your gym”.'}
+        Its members are made up, and they stay in this browser only. To set up your real gym online, tap “Start over with a new demo gym” at the bottom of this page, then “New here? Set up your gym”.
       </p>
       <div style={{ marginTop: space.md }}>
         <Button variant="quiet" onClick={() => setSigningIn(true)}>
-          {'Your gym is already online? Sign in instead'}
+          Your gym is already online? Sign in instead
         </Button>
       </div>
       {signingIn && (
-        <Sheet title={'Sign in to your online gym'} onClose={closeSignIn}>
+        <Sheet title="Sign in to your online gym" onClose={closeSignIn}>
           <SignInForm />
         </Sheet>
       )}
@@ -166,21 +166,21 @@ function PutOnlineCard() {
 
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>{'Put your records online'}</SectionTitle>
+      <SectionTitle>Put your records online</SectionTitle>
       <p style={bodyText}>
-        {'Right now your members and payments live only in this browser. If it is cleared, or this computer breaks, they are gone. Online, they are safe, and you and your staff open them on any phone or computer with a mobile number.'}
+        Right now your members and payments live only in this browser. If it is cleared, or this computer breaks, they are gone. Online, they are safe, and you and your staff open them on any phone or computer with a mobile number.
       </p>
       {!resuming && (
         <>
-          <TextField label={'Your name'} value={name} onChange={setName} placeholder="Ramesh Sharma" />
+          <TextField label="Your name" value={name} onChange={setName} placeholder="Ramesh Sharma" />
           <TextField
-            label={'Your mobile number'}
+            label="Your mobile number"
             prefix="+91"
             inputMode="tel"
             value={phone}
             onChange={setPhone}
             placeholder="98290 12345"
-            hint={'You sign in with this number.'}
+            hint="You sign in with this number."
           />
         </>
       )}
@@ -200,14 +200,14 @@ function PutOnlineCard() {
       </div>
       <div style={{ marginTop: space.md }}>
         <Button variant="quiet" onClick={() => setSigningIn(true)}>
-          {'Your gym is already online? Sign in instead'}
+          Your gym is already online? Sign in instead
         </Button>
       </div>
 
       {signingIn && (
-        <Sheet title={'Sign in to your online gym'} onClose={closeSignIn}>
+        <Sheet title="Sign in to your online gym" onClose={closeSignIn}>
           <ErrorBanner>
-            {'This device then shows your online gym. The records in this browser are kept aside, not mixed in.'}
+            This device then shows your online gym. The records in this browser are kept aside, not mixed in.
           </ErrorBanner>
           <SignInForm />
         </Sheet>

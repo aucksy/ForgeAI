@@ -62,12 +62,12 @@ export function VoidPaymentSheet({
 
   return (
     <Sheet
-      title={'Void this receipt?'}
+      title="Void this receipt?"
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Keep it'}
+            Keep it
           </Button>
           <Button tone="danger" disabled={saving || reason.trim().length < MIN_REASON} onClick={submit}>
             {saving ? 'Voiding…' : 'Void receipt'}
@@ -78,40 +78,40 @@ export function VoidPaymentSheet({
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {'Receipt'} <strong style={{ color: color.ink }}>{payment.receiptNo}</strong>{' '}
-        {'for'} <strong style={{ color: color.ink }}>{formatINR(payment.amountP)}</strong>
-        {', taken on'} {formatDay(payment.paidOn)}
-        {', will stop counting as money received.'}{' '}
+        Receipt <strong style={{ color: color.ink }}>{payment.receiptNo}</strong>{' '}
+        for <strong style={{ color: color.ink }}>{formatINR(payment.amountP)}</strong>
+        , taken on {formatDay(payment.paidOn)}
+        , will stop counting as money received.{' '}
         {restoresDues ? (
           <>
             <strong style={{ color: color.ink }}>
-              {'The amount goes back onto what this member owes.'}
+              The amount goes back onto what this member owes.
             </strong>
           </>
         ) : membership ? (
           <>
-            {'Because that membership is'}{' '}
-            <strong style={{ color: color.ink }}>{'cancelled'}</strong>
-            {', this will not add anything back to their dues — the gym stopped chasing that term when it was cancelled.'}
+            Because that membership is{' '}
+            <strong style={{ color: color.ink }}>cancelled</strong>
+            , this will not add anything back to their dues — the gym stopped chasing that term when it was cancelled.
           </>
         ) : (
           <>
-            {'This receipt is not against a membership, so no balance changes.'}
+            This receipt is not against a membership, so no balance changes.
           </>
         )}{' '}
-        {'The row stays in the ledger and its number is never reused — that is what an auditor expects.'}
+        The row stays in the ledger and its number is never reused — that is what an auditor expects.
       </p>
 
       <TextField
-        label={'Reason'}
+        label="Reason"
         value={reason}
         onChange={(v) => {
           setReason(v);
           setError(null);
         }}
         autoFocus
-        placeholder={'Entered twice'}
-        hint={'Recorded against the receipt so it makes sense months later.'}
+        placeholder="Entered twice"
+        hint="Recorded against the receipt so it makes sense months later."
       />
     </Sheet>
   );

@@ -106,9 +106,9 @@ export function TodayScreen() {
       <PageHeader
         // The gym's name is already in the sidebar (and the phone's top bar); a
         // second copy as the page title said nothing about which page this is.
-        title={'Today'}
+        title="Today"
         subtitle={formatDay(today)}
-        actions={<Button onClick={() => navigate('/members')}>{'Open roster'}</Button>}
+        actions={<Button onClick={() => navigate('/members')}>Open roster</Button>}
       />
 
       {/* Phones only, until installed or closed: "Phone par app lagao". */}
@@ -129,7 +129,7 @@ export function TodayScreen() {
       <Grid min={compact ? 140 : 200}>
         {seeTotals && (
           <StatTile
-            label={"Today's collection"}
+            label="Today's collection"
             value={formatINRShort(collectedToday)}
             tone="good"
             onClick={() => navigate('/money/today')}
@@ -137,41 +137,41 @@ export function TodayScreen() {
           />
         )}
         <StatTile
-          label={'Active members'}
+          label="Active members"
           value={tiles.active}
           tone="accent"
           onClick={() => navigate('/members/f/active')}
-          sub={'With a live plan'}
+          sub="With a live plan"
         />
         <StatTile
-          label={'Ending today'}
+          label="Ending today"
           value={tiles['exp-today']}
           tone={tiles['exp-today'] > 0 ? 'critical' : undefined}
           onClick={() => navigate('/members/f/exp-today')}
-          sub={'Last day of their plan'}
+          sub="Last day of their plan"
         />
         <StatTile
-          label={'Ending in 1-3 days'}
+          label="Ending in 1-3 days"
           value={tiles['exp-1-3']}
           tone={tiles['exp-1-3'] > 0 ? 'warn' : undefined}
           onClick={() => navigate('/members/f/exp-1-3')}
-          sub={'Renew them now'}
+          sub="Renew them now"
         />
         <StatTile
-          label={'Ending in 4-7 days'}
+          label="Ending in 4-7 days"
           value={tiles['exp-4-7']}
           tone={tiles['exp-4-7'] > 0 ? 'warn' : undefined}
           onClick={() => navigate('/members/f/exp-4-7')}
-          sub={'Remind them this week'}
+          sub="Remind them this week"
         />
         <StatTile
-          label={'Ending in 8-15 days'}
+          label="Ending in 8-15 days"
           value={tiles['exp-8-15']}
           onClick={() => navigate('/members/f/exp-8-15')}
-          sub={'Coming up'}
+          sub="Coming up"
         />
         <StatTile
-          label={'Expired'}
+          label="Expired"
           value={tiles.expired}
           tone={tiles.expired > 0 ? 'critical' : undefined}
           onClick={() => navigate('/members/f/expired')}
@@ -179,7 +179,7 @@ export function TodayScreen() {
         />
         {seeTotals && (
           <StatTile
-            label={'Fees due'}
+            label="Fees due"
             value={formatINRShort(stats.duesTotalP)}
             tone={stats.duesTotalP > 0 ? 'warn' : undefined}
             onClick={() => navigate('/money/dues')}
@@ -187,23 +187,23 @@ export function TodayScreen() {
           />
         )}
         <StatTile
-          label={'Birthdays today'}
+          label="Birthdays today"
           value={tiles.birthday}
           onClick={() => navigate('/members/f/birthday')}
-          sub={'Send a wish'}
+          sub="Send a wish"
         />
         <StatTile
-          label={'Came in today'}
+          label="Came in today"
           value={stats.visitsToday}
           onClick={() => navigate('/attendance')}
-          sub={'Open the register'}
+          sub="Open the register"
         />
         <StatTile
-          label={'Enquiries to call'}
+          label="Enquiries to call"
           value={enquiriesDue}
           tone={enquiriesDue > 0 ? 'warn' : undefined}
           onClick={() => navigate('/enquiries')}
-          sub={'Follow-ups due'}
+          sub="Follow-ups due"
         />
         {/* "Losing the habit" is not a tile: it is the list right below, and the
             same number twice on one screen is a duplicate, not a summary. */}
@@ -216,15 +216,15 @@ export function TodayScreen() {
           <SectionTitle
             action={
               <Link to="/members">
-                <span style={moreLink}>{'See all'}</span>
+                <span style={moreLink}>See all</span>
               </Link>
             }
           >
-            {'Talk to these members'}
+            Talk to these members
           </SectionTitle>
           {renewals.length === 0 ? (
             <EmptyState
-              title={'Nothing to chase'}
+              title="Nothing to chase"
               body={`No memberships are expiring, and nobody has lapsed in the last ${WINBACK_WINDOW_DAYS} days.`}
             />
           ) : (
@@ -251,24 +251,24 @@ export function TodayScreen() {
           <SectionTitle
             action={
               <Link to="/attendance/risk">
-                <span style={moreLink}>{'See all'}</span>
+                <span style={moreLink}>See all</span>
               </Link>
             }
           >
-            {'Losing the habit'}
+            Losing the habit
           </SectionTitle>
           {atRisk.length === 0 ? (
             registerUsed ? (
               <EmptyState
-                title={'Everybody is training'}
-                body={'No member with a live plan has drifted away from their usual routine.'}
+                title="Everybody is training"
+                body="No member with a live plan has drifted away from their usual routine."
               />
             ) : (
               // Claiming everyone is training would be inventing evidence this gym
               // has not yet produced.
               <EmptyState
-                title={'Start checking members in'}
-                body={'A few days of the register and this fills itself in.'}
+                title="Start checking members in"
+                body="A few days of the register and this fills itself in."
               />
             )
           ) : (
@@ -291,16 +291,16 @@ export function TodayScreen() {
           <SectionTitle
             action={
               <Link to="/money/dues">
-                <span style={moreLink}>{'See all'}</span>
+                <span style={moreLink}>See all</span>
               </Link>
             }
           >
-            {'Money to collect'}
+            Money to collect
           </SectionTitle>
           {duesList.length === 0 ? (
             <EmptyState
-              title={"Everyone's paid up"}
-              body={'No outstanding dues on the roster.'}
+              title="Everyone's paid up"
+              body="No outstanding dues on the roster."
             />
           ) : (
             <div style={{ display: 'grid', gap: space.sm }}>
@@ -367,7 +367,7 @@ function PersonRow({ member, detail, tone }: { member: Member; detail: string; t
           justifyContent: 'center',
         }}
       >
-        {'Message'}
+        Message
       </a>
     </Row>
   );

@@ -26,11 +26,11 @@ export function ShopTodayCard({ flush = false }: { flush?: boolean }) {
       <SectionTitle
         action={
           <Button variant="ghost" onClick={() => navigate('/shop/orders')}>
-            {'Open shop'}
+            Open shop
           </Button>
         }
       >
-        {'Shop today'}
+        Shop today
       </SectionTitle>
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${seeTotals ? 3 : 2}, minmax(0, 1fr))`, gap: space.md }}>
         <Figure
@@ -38,14 +38,14 @@ export function ShopTodayCard({ flush = false }: { flush?: boolean }) {
           label={newCount === 1 ? 'new order' : 'new orders'}
           tone={newCount > 0 ? color.accentBright : color.ink}
         />
-        <Figure value={ordersLoaded ? String(readyCount) : '…'} label={'ready for pickup'} tone={color.ink} />
+        <Figure value={ordersLoaded ? String(readyCount) : '…'} label="ready for pickup" tone={color.ink} />
         {/* "Sold", not "collected": it sits above "Collected this month" for
             memberships, and two different "collected" figures on one screen read as
             one number that disagrees with itself. Green only once there is money. */}
         {seeTotals && (
           <Figure
             value={ordersLoaded ? formatINR(today) : '…'}
-            label={'sold today'}
+            label="sold today"
             tone={today > 0 ? color.goodText : color.ink}
           />
         )}

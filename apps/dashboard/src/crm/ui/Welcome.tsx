@@ -70,7 +70,7 @@ export function Welcome() {
             FORGE<span style={{ color: color.accent }}>AI</span>
           </div>
           <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 15, color: color.inkSecondary }}>
-            {'Run your gym: members, renewals, dues, attendance — and a shop your members order from in the ForgeAI app.'}
+            Run your gym: members, renewals, dues, attendance — and a shop your members order from in the ForgeAI app.
           </p>
         </div>
 
@@ -93,10 +93,10 @@ export function Welcome() {
 
         <Card>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            {'Sign in'}
+            Sign in
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            {'Your gym already uses ForgeAI? Sign in with your mobile number and the code from your gym owner.'}
+            Your gym already uses ForgeAI? Sign in with your mobile number and the code from your gym owner.
           </p>
           <SignInForm />
         </Card>
@@ -111,20 +111,20 @@ export function Welcome() {
           }}
         >
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            {'New here? Set up your gym'}
+            New here? Set up your gym
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            {'Starts empty. You add your members and your prices — nothing is made up for you.'}
+            Starts empty. You add your members and your prices — nothing is made up for you.
           </p>
           <StartGymForm />
         </div>
 
         <Card style={{ marginTop: space.lg }}>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            {'See it working'}
+            See it working
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            {'Opens a sample gym with made-up members, payments and a shop. You get a real gym code, so a phone with the ForgeAI app can join and order — and you see the order here.'}
+            Opens a sample gym with made-up members, payments and a shop. You get a real gym code, so a phone with the ForgeAI app can join and order — and you see the order here.
           </p>
 
           {error && (
@@ -146,7 +146,7 @@ export function Welcome() {
           {demoFailed && (
             <div style={{ marginTop: space.sm, textAlign: 'center' }}>
               <Button variant="quiet" disabled={busy !== null} onClick={() => run('local', loadDemoGym)}>
-                {'Open the demo without the shop (works offline)'}
+                Open the demo without the shop (works offline)
               </Button>
             </div>
           )}

@@ -353,8 +353,6 @@ export function attendanceProfile(
 
 export type RiskBand = 'settling_in' | 'slipping' | 'gone_quiet' | 'ok';
 
-// Getters, not plain strings: the words are read in the panel's language each time they are
-// shown, and a module-level string would keep whichever language was on when it loaded.
 export const RISK_LABEL: Record<RiskBand, string> = {
   get settling_in() {
     return 'Not settled in';

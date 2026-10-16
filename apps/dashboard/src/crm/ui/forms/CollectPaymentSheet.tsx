@@ -109,10 +109,10 @@ export function CollectPaymentSheet({
 
   if (owing.length === 0) {
     return (
-      <Sheet title={'Record a payment'} onClose={onClose}>
+      <Sheet title="Record a payment" onClose={onClose}>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           <strong style={{ color: color.ink }}>{view.member.fullName}</strong>{' '}
-          {'doesn’t owe anything — every membership is fully paid.'}
+          doesn’t owe anything — every membership is fully paid.
         </p>
       </Sheet>
     );
@@ -120,12 +120,12 @@ export function CollectPaymentSheet({
 
   return (
     <Sheet
-      title={'Record a payment'}
+      title="Record a payment"
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {'Cancel'}
+            Cancel
           </Button>
           <Button onClick={submit} disabled={saving}>
             {saving ? 'Saving…' : 'Record payment'}
@@ -136,12 +136,12 @@ export function CollectPaymentSheet({
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
       <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {'From'} <strong style={{ color: color.ink }}>{view.member.fullName}</strong> ·{' '}
-        {formatINR(view.outstandingP)} {'outstanding in total'}
+        From <strong style={{ color: color.ink }}>{view.member.fullName}</strong> ·{' '}
+        {formatINR(view.outstandingP)} outstanding in total
       </div>
 
       <SelectField
-        label={'Against which membership'}
+        label="Against which membership"
         value={membershipId}
         onChange={(v) => {
           setMembershipId(v);
@@ -155,7 +155,7 @@ export function CollectPaymentSheet({
       />
 
       <TextField
-        label={'Amount received'}
+        label="Amount received"
         value={amountText}
         onChange={(v) => {
           setAmountText(v);
@@ -163,25 +163,25 @@ export function CollectPaymentSheet({
         }}
         inputMode="decimal"
         placeholder={selected ? formatINR(selected.unpaidP) : ''}
-        hint={'Leave blank to settle the balance in full.'}
+        hint="Leave blank to settle the balance in full."
       />
 
       <Grid min={200}>
         <SelectField
-          label={'Paid by'}
+          label="Paid by"
           value={method}
           onChange={(v) => setMethod(v as PaymentMethod)}
           options={methodOptions()}
         />
         <TextField
-          label={'Reference (optional)'}
+          label="Reference (optional)"
           value={reference}
           onChange={setReference}
           placeholder={method === 'upi' ? 'UPI ref no.' : 'Cheque / card last 4'}
         />
       </Grid>
 
-      <TextField label={'Received on'} value={paidOn} onChange={setPaidOn} type="date" />
+      <TextField label="Received on" value={paidOn} onChange={setPaidOn} type="date" />
 
       {remainingP !== null && (
         <Row>

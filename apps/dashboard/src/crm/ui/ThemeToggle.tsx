@@ -1,7 +1,7 @@
 /**
  * The Dark | Light switch: two words side by side, the chosen one filled. In the panel's top bar
- * (phone), the sidebar (computer), on the welcome screen and in Staff settings. It took the place
- * of the English | Hinglish switch (16 Oct 2026). The choice is kept on this device.
+ * (phone), the sidebar (computer), on the welcome screen and in Staff settings. The choice is kept
+ * on this device.
  */
 
 import { useState } from 'react';

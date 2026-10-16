@@ -118,7 +118,7 @@ describe('Shop tabs', () => {
 });
 
 describe('staffRightsWords', () => {
-  it('says what staff can and cannot do, in both languages', () => {
+  it('says what staff can and cannot do', () => {
     const en = staffRightsWords();
     expect(en).toMatch(/collect fees/);
     expect(en).toMatch(/cannot see money totals/);

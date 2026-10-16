@@ -206,7 +206,6 @@ export function appMemberFromRow(r: Row): AppMember {
 
 // ---------------------------------------------------------------- orders
 
-/** Getters, so each read is in the panel's language at that moment. */
 export const STATUS_LABEL: Record<OrderStatus, string> = {
   get ordered() {
     return 'New';
@@ -669,7 +668,6 @@ function errorText(err: unknown): string {
   return String(err);
 }
 
-/** Getters, so the words are in the panel's language at the moment they are shown. */
 const ERROR_WORDS: Record<ShopErrorCode, string> = {
   get BAD_KEY() {
     return 'This demo gym is no longer available. Start a new demo gym.';

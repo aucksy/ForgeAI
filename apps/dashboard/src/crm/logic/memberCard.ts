@@ -6,7 +6,6 @@
  *
  * The card leaves the building (wallets, WhatsApp, a print shop), so it carries as little as
  * possible: the mobile is masked, and the QR holds ONLY the member's id — no name, no phone.
- * The card always reads in English (like a receipt), whatever language the panel shows.
  */
 
 import { formatDay } from './dates';

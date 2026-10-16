@@ -132,7 +132,7 @@ export function emptyEnquiryForm(today: DateISO): EnquiryFormDraft {
   return { name: '', dialCode: DEFAULT_DIAL_CODE, phone: '', interest: '', followUpOn: addDays(today, 1) };
 }
 
-/** Check the add form; name the one field at fault, in the panel's language. */
+/** Check the add form; name the one field at fault. */
 export function validateEnquiry(form: EnquiryFormDraft, today: DateISO): EnquiryValidation {
   const name = normalizeName(form.name);
   if (name.length < 2) {
@@ -189,7 +189,7 @@ export function findOpenDuplicate(list: readonly Enquiry[], phoneE164: string, s
 // ---------------------------------------------------------------- the WhatsApp message
 
 /**
- * The follow-up message, in the panel's language, polite and short, signed by the gym. The owner
+ * The follow-up message, polite and short, signed by the gym. The owner
  * can edit it in WhatsApp before sending.
  */
 export function followUpMessage(e: Pick<Enquiry, 'name' | 'interest'>, gym: { name: string }): string {

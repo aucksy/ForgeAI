@@ -110,7 +110,7 @@ function AttendanceTabs({ section }: { section?: string }) {
   return (
     <>
       <PageHeader
-        title={'Attendance'}
+        title="Attendance"
         subtitle={
           tab === 'risk'
             ? 'Paying members who are losing the habit'
@@ -118,7 +118,7 @@ function AttendanceTabs({ section }: { section?: string }) {
         }
         actions={
           <Button variant="ghost" onClick={() => navigate('/attendance/qr')}>
-            {'Check-in QR'}
+            Check-in QR
           </Button>
         }
       />
@@ -126,7 +126,7 @@ function AttendanceTabs({ section }: { section?: string }) {
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
           variant="tabs"
-          label={'Attendance view'}
+          label="Attendance view"
           value={tab}
           onChange={(v) => navigate(v === 'risk' ? '/attendance/risk' : '/attendance')}
           options={[
@@ -261,10 +261,10 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{'Check someone in'}</SectionTitle>
+        <SectionTitle>Check someone in</SectionTitle>
 
         <ChipToggle
-          label={'Day'}
+          label="Day"
           value={mode}
           onChange={(v) => setMode(v as 'today' | 'yesterday' | 'other')}
           options={[
@@ -277,7 +277,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
         {batches.length > 0 && (
           <div style={{ marginTop: space.md }}>
             <ChipToggle
-              label={'Batch'}
+              label="Batch"
               value={batch}
               onChange={setBatch}
               options={[
@@ -290,7 +290,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
 
         {mode === 'other' && (
           <TextField
-            label={'Register date'}
+            label="Register date"
             type="date"
             value={customDay}
             onChange={setCustomDay}
@@ -299,7 +299,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                 ? 'That day hasn’t happened yet.'
                 : null
             }
-            hint={'Catching up a day the desk missed. Future days are refused.'}
+            hint="Catching up a day the desk missed. Future days are refused."
           />
         )}
 
@@ -334,13 +334,13 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
             <SearchField
               value={query}
               onChange={setQuery}
-              placeholder={'Type a name or the last 4 digits of a mobile'}
+              placeholder="Type a name or the last 4 digits of a mobile"
             />
           </div>
         ) : (
           <EmptyState
-            title={'Pick a day first'}
-            body={'Choose a real day that has already happened, and the check-in box comes back.'}
+            title="Pick a day first"
+            body="Choose a real day that has already happened, and the check-in box comes back."
           />
         )}
 
@@ -348,13 +348,13 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
           <div style={{ marginTop: space.md, display: 'grid', gap: space.sm }}>
             {results.length === 0 ? (
               <EmptyState
-                title={'Nobody matches that'}
+                title="Nobody matches that"
                 body={
                   batchName
                     ? `Only ${batchName} is being searched. Pick “All batches” to look through everyone.`
                     : 'Check the spelling, or add them to the roster first.'
                 }
-                action={<Button onClick={() => navigate('/members')}>{'Open roster'}</Button>}
+                action={<Button onClick={() => navigate('/members')}>Open roster</Button>}
               />
             ) : (
               <>
@@ -383,7 +383,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
               {`${batchName}: ${batchInN} of ${batchList.length} in`}
             </div>
             {batchList.length === 0 ? (
-              <EmptyState title={'Nobody in this batch'} />
+              <EmptyState title="Nobody in this batch" />
             ) : (
               <div style={{ display: 'grid', gap: space.sm }}>
                 {batchList.map((v) => (
@@ -418,12 +418,12 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
           sub={`${summary.membersN} different members`}
         />
         <StatTile
-          label={'Check-ins a day'}
+          label="Check-ins a day"
           value={summary.perDay.toFixed(1)}
           sub={`Average over the last ${TREND_DAYS} days`}
         />
         <StatTile
-          label={'Busiest hour'}
+          label="Busiest hour"
           value={summary.busiestHour === null ? '—' : hourLabel(summary.busiestHour)}
           sub={
             summary.busiestHour === null
@@ -483,11 +483,11 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
       </Card>
 
       <Card>
-        <SectionTitle>{'When the gym is busy'}</SectionTitle>
+        <SectionTitle>When the gym is busy</SectionTitle>
         {summary.busiestHour === null ? (
           <EmptyState
-            title={'No timed check-ins yet'}
-            body={'Check-ins recorded here carry the time, so this fills in as the register is used.'}
+            title="No timed check-ins yet"
+            body="Check-ins recorded here carry the time, so this fills in as the register is used."
           />
         ) : (
           <HourBars hours={hours} />
@@ -542,7 +542,7 @@ function SearchResult({
         </div>
         {already ? (
           <span style={{ ...tapTarget, fontSize: 13, fontWeight: 700, color: color.goodText }}>
-            {'✓ Already in'}
+            ✓ Already in
           </span>
         ) : (
           <Button onClick={onCheckIn} disabled={busy}>
@@ -603,7 +603,7 @@ function RegisterRowView({
         disabled={busy}
         ariaLabel={`Undo check-in for ${name}`}
       >
-        {'Undo'}
+        Undo
       </Button>
     </Row>
   );
@@ -739,7 +739,6 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
     // Exports exactly the rows on screen, like both Money exports. A file that
     // quietly contains more than the screen it came from is a file that gets a
     // trainer phoning people the owner filtered out.
-    // Downloads stay English in every language (an accountant reads them).
     const contents = csvDocument(
       ['Member', 'Mobile', 'Batch', 'Status', 'Last visit', 'Days since visit', 'Visits in last 8 weeks', 'Why'],
       shown.map((r) => [
@@ -766,17 +765,17 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
       <Card>
         {registerUsed ? (
           <EmptyState
-            title={'Everybody is training'}
-            body={'No member with a live plan has drifted away from their usual routine.'}
-            action={<Button onClick={() => navigate('/attendance')}>{'Back to the register'}</Button>}
+            title="Everybody is training"
+            body="No member with a live plan has drifted away from their usual routine."
+            action={<Button onClick={() => navigate('/attendance')}>Back to the register</Button>}
           />
         ) : (
           // NOT "everybody is training" — that would be a claim, and this gym has
           // given us no evidence for it either way.
           <EmptyState
-            title={'Start checking members in'}
-            body={'This list needs a few days of the register before it can tell you anything. Check people in as they arrive and it fills itself in — nobody is judged on attendance that was never recorded.'}
-            action={<Button onClick={() => navigate('/attendance')}>{'Open the register'}</Button>}
+            title="Start checking members in"
+            body="This list needs a few days of the register before it can tell you anything. Check people in as they arrive and it fills itself in — nobody is judged on attendance that was never recorded."
+            action={<Button onClick={() => navigate('/attendance')}>Open the register</Button>}
           />
         )}
       </Card>
@@ -787,7 +786,7 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
     <>
       <Grid min={165}>
         <StatTile
-          label={'Need a word'}
+          label="Need a word"
           value={shown.length}
           tone="warn"
           sub={`of ${rows.length} flagged`}
@@ -809,22 +808,22 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
         <SectionTitle
           action={
             <Button variant="ghost" onClick={exportCsv} disabled={shown.length === 0}>
-              {'Download Excel file'}
+              Download Excel file
             </Button>
           }
         >
-          {'Who to talk to'}
+          Who to talk to
         </SectionTitle>
 
         <p style={{ margin: `0 0 ${space.md}px`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
           {/* "Stopped coming" was wrong for a third of this list: a new member who
               has been in twice in three weeks has not stopped, they never started,
               and the heading read absurdly above their "last visit 2 days ago". */}
-          {'Everyone here has a plan with weeks left on it — they have stopped coming, or never really started. Ask about their training, not their membership: the evidence says a renewal pitch to someone who has drifted makes them likelier to leave, not less.'}
+          Everyone here has a plan with weeks left on it — they have stopped coming, or never really started. Ask about their training, not their membership: the evidence says a renewal pitch to someone who has drifted makes them likelier to leave, not less.
         </p>
 
         <ChipToggle
-          label={'Filter by what is happening'}
+          label="Filter by what is happening"
           value={band}
           onChange={(v) => setBand(v as RiskBand | 'all')}
           options={[
@@ -834,7 +833,7 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
         />
 
         {shown.length === 0 ? (
-          <EmptyState title={'Nobody in this group'} />
+          <EmptyState title="Nobody in this group" />
         ) : (
           <div style={{ display: 'grid', gap: space.sm, marginTop: space.md }}>
             {shown.map((row) => (
@@ -847,7 +846,6 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
   );
 }
 
-// Getters, so the words follow the panel's language rather than the one on when this loaded.
 const BAND_SUB: Record<RiskBand, string> = {
   get settling_in() {
     return 'New, and the habit hasn’t formed';
@@ -922,7 +920,7 @@ function RiskCard({ row, today }: { row: AtRiskRow; today: string }) {
             justifyContent: 'center',
           }}
         >
-          {'Message'}
+          Message
         </a>
       </Row>
     </div>

@@ -38,7 +38,7 @@ export function AppMembersSection() {
   return (
     <>
       <p style={{ margin: `0 0 ${space.lg}px`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {'Members who joined your gym in the ForgeAI app with gym code'}{' '}
+        Members who joined your gym in the ForgeAI app with gym code{' '}
         <strong style={{ fontFamily: font.mono, color: color.accentBright, letterSpacing: 2 }}>{cloud.joinCode}</strong>.
       </p>
 
@@ -46,12 +46,12 @@ export function AppMembersSection() {
 
       {members === null && !error ? (
         <Card>
-          <EmptyState title={'Loading…'} />
+          <EmptyState title="Loading…" />
         </Card>
       ) : members && members.length === 0 ? (
         <Card>
           <EmptyState
-            title={'Nobody has joined in the app yet'}
+            title="Nobody has joined in the app yet"
             body={`Ask members to open the ForgeAI app and join with gym code ${cloud.joinCode}. They show up here straight away.`}
           />
         </Card>

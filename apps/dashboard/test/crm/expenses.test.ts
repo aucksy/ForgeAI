@@ -120,7 +120,7 @@ describe('months', () => {
 });
 
 describe('category labels', () => {
-  it('has a label for every category, in both languages', () => {
+  it('has a label for every category', () => {
     expect(categoryOptions().map((o) => o.value)).toEqual([...EXPENSE_CATEGORIES]);
     expect(categoryLabel('rent')).toBe('Rent');
   });

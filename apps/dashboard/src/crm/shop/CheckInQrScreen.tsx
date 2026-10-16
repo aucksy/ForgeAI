@@ -32,11 +32,11 @@ export function CheckInQrScreen() {
   return (
     <>
       <PageHeader
-        title={'Check-in QR'}
-        subtitle={'Members scan it with the ForgeAI app and check themselves in'}
+        title="Check-in QR"
+        subtitle="Members scan it with the ForgeAI app and check themselves in"
         actions={
           <Button variant="ghost" onClick={() => navigate('/attendance')}>
-            {'Back to the register'}
+            Back to the register
           </Button>
         }
       />
@@ -45,9 +45,9 @@ export function CheckInQrScreen() {
       ) : (
         <Card>
           <EmptyState
-            title={'Put your records online first'}
-            body={'A member’s phone writes the check-in into your gym’s online records, so self check-in needs them online. Settings → put your records online, then come back here for the poster.'}
-            action={<Button onClick={() => navigate('/settings')}>{'Open Settings'}</Button>}
+            title="Put your records online first"
+            body="A member’s phone writes the check-in into your gym’s online records, so self check-in needs them online. Settings → put your records online, then come back here for the poster."
+            action={<Button onClick={() => navigate('/settings')}>Open Settings</Button>}
           />
         </Card>
       )}
@@ -81,14 +81,14 @@ function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   return (
     <div style={{ display: 'grid', gap: space.lg, gridTemplateColumns: compact ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', alignItems: 'start' }}>
       <Card>
-        <SectionTitle>{'Scan to check in'}</SectionTitle>
+        <SectionTitle>Scan to check in</SectionTitle>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: '100%', maxWidth: 360 }}>
             <Poster words={CHECKIN_POSTER} gymName={gymName} joinCode={joinCode} link={link} brand={brand} />
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.print()}>{'Print poster'}</Button>
+          <Button onClick={() => window.print()}>Print poster</Button>
           <Button
             variant="ghost"
             onClick={async () => {
@@ -100,36 +100,36 @@ function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
               );
             }}
           >
-            {'Download picture'}
+            Download picture
           </Button>
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {'Print it on A4 and stick it where members walk in. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.'}
+          Print it on A4 and stick it where members walk in. On a phone, Print → “Save as PDF” works too; the picture is for a print shop.
         </p>
       </Card>
 
       <Card>
-        <SectionTitle>{'How it works'}</SectionTitle>
+        <SectionTitle>How it works</SectionTitle>
         <ol style={{ margin: 0, paddingLeft: 20, fontFamily: font.body, fontSize: 14, lineHeight: 1.6, color: color.inkSecondary }}>
           <li>
-            {'The member scans the poster with their phone camera. The ForgeAI app opens and checks them in.'}
+            The member scans the poster with their phone camera. The ForgeAI app opens and checks them in.
           </li>
           <li>
-            {'The app finds them in your Members by their mobile number. The first time, it asks for the number once.'}
+            The app finds them in your Members by their mobile number. The first time, it asks for the number once.
           </li>
           <li>
-            {'The check-in shows in today’s register within a few seconds, with a small “App” tag. Scanning twice in a day counts once.'}
+            The check-in shows in today’s register within a few seconds, with a small “App” tag. Scanning twice in a day counts once.
           </li>
         </ol>
         <p style={{ margin: `${space.md}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          {'A member whose mobile number is not in your Members is told to ask the desk. Add or fix their number, and they scan again.'}
+          A member whose mobile number is not in your Members is told to ask the desk. Add or fix their number, and they scan again.
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
           {`Members need the ForgeAI app and to have joined your gym in it (gym code ${joinCode}). Settings → Invite members has the join poster.`}
         </p>
         <div style={{ marginTop: space.md }}>
           <Button variant="ghost" onClick={() => navigate('/settings/invite')}>
-            {'Open Invite members'}
+            Open Invite members
           </Button>
         </div>
       </Card>

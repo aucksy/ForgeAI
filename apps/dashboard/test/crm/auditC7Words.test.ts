@@ -1,5 +1,5 @@
 /**
- * Admin app audit C7-31 / C7-32 (16 Oct 2026): words that stayed English in Hinglish, and the freeze
+ * Admin app audit C7-31 / C7-32 (16 Oct 2026): branding, photo and message words, and the freeze
  * history that showed raw dates. Each test failed before its fix.
  */
 import { describe, expect, it } from 'vitest';
@@ -8,8 +8,8 @@ import { brandErrorWords, checkEncodedLogo, hexError } from '../../src/crm/brand
 import { historyLine } from '../../src/crm/logic/membership';
 import { checkEncodedPhoto, checkSourceFile, uploadErrorWords as photoErrorWords } from '../../src/crm/shop/photo';
 
-describe('C7-31: branding, photo and message words follow the Hinglish switch', () => {
-  it('each says something different in Hinglish, and the same in English as before', () => {
+describe('C7-31: branding, photo and message words', () => {
+  it('each error says what happened and what to do', () => {
     const pairs: [() => string | null, string][] = [
       [() => brandErrorWords(new Error('BUSY')), 'Too many uploads in the last few minutes. Wait a little and try again.'],
       [() => brandErrorWords(new Error('Failed to fetch')), 'Can’t reach the internet. Check the connection and try again.'],
@@ -23,9 +23,6 @@ describe('C7-31: branding, photo and message words follow the Hinglish switch', 
     for (const [say, english] of pairs) {
       expect(say()).toBe(english);
     }
-  });
-
-  it('message templates come in Hinglish too, and still fit the title limit', () => {
   });
 });
 

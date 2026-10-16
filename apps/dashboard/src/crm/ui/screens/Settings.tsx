@@ -105,7 +105,7 @@ export function SettingsScreen() {
 
   return (
     <>
-      <PageHeader title={'Settings'} subtitle={"Your gym's details and data"} />
+      <PageHeader title="Settings" subtitle="Your gym's details and data" />
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
@@ -115,24 +115,24 @@ export function SettingsScreen() {
       <InstallCard />
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{'Gym details'}</SectionTitle>
+        <SectionTitle>Gym details</SectionTitle>
         <TextField
-          label={'Gym name'}
+          label="Gym name"
           value={name}
           onChange={setName}
           error={fieldError?.field === 'name' ? fieldError.message : null}
         />
         <Grid min={220}>
-          <TextField label={'Phone'} value={phone} onChange={setPhone} inputMode="tel" />
+          <TextField label="Phone" value={phone} onChange={setPhone} inputMode="tel" />
           <TextField
-            label={'GSTIN (optional)'}
+            label="GSTIN (optional)"
             value={gstin}
             onChange={setGstin}
             error={fieldError?.field === 'gstin' ? fieldError.message : null}
-            hint={"Only if you're GST registered — used on invoices."}
+            hint="Only if you're GST registered — used on invoices."
           />
         </Grid>
-        <TextField label={'Address'} value={address} onChange={setAddress} multiline />
+        <TextField label="Address" value={address} onChange={setAddress} multiline />
         <div style={{ marginTop: space.lg }}>
           <Button onClick={save} disabled={saving}>
             {saving ? 'Saving…' : 'Save details'}
@@ -142,11 +142,11 @@ export function SettingsScreen() {
 
       {/* Titled inside its card like the sections above and below it — the title
           used to sit outside, on the page, the only one that did. */}
-      <JoinCodeCard title={'Member app'} />
+      <JoinCodeCard title="Member app" />
 
       {/* Gym branding: the gym's own logo and colours in the member app. */}
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{'Your look in the app'}</SectionTitle>
+        <SectionTitle>Your look in the app</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {cloud
             ? 'Your logo opens the app, and your colour runs through every screen members see.'
@@ -154,13 +154,13 @@ export function SettingsScreen() {
         </p>
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" disabled={!cloud} onClick={() => navigate('/settings/branding')}>
-            {'Open branding'}
+            Open branding
           </Button>
         </div>
       </Card>
 
       <Card>
-        <SectionTitle>{'Your data'}</SectionTitle>
+        <SectionTitle>Your data</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {`${counts.members} members · ${counts.memberships} memberships · ${counts.payments} payments · ${counts.visits} check-ins. Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`}
         </p>
@@ -172,7 +172,7 @@ export function SettingsScreen() {
 
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
-            {'Import members from Excel'}
+            Import members from Excel
           </Button>
         </div>
 
@@ -180,12 +180,12 @@ export function SettingsScreen() {
         <Row gap={space.sm}>
           <div style={{ marginTop: space.lg }}>
             <Button variant="ghost" onClick={() => setConfirming('demo')}>
-              {'Load demo gym'}
+              Load demo gym
             </Button>
           </div>
           <div style={{ marginTop: space.lg }}>
             <Button variant="ghost" tone="danger" onClick={() => setConfirming('fresh')}>
-              {'Erase and start fresh'}
+              Erase and start fresh
             </Button>
           </div>
           {/* Only a DEMO gym may be started over: that erases this browser. A real
@@ -194,14 +194,14 @@ export function SettingsScreen() {
           {cloud?.demo && (
             <div style={{ marginTop: space.lg }}>
               <Button variant="ghost" tone="danger" onClick={() => setConfirming('over')}>
-                {'Start over with a new demo gym'}
+                Start over with a new demo gym
               </Button>
             </div>
           )}
           {cloud && !cloud.demo && (
             <div style={{ marginTop: space.lg }}>
               <Button variant="ghost" tone="danger" onClick={() => setConfirming('disconnect')}>
-                {'Disconnect the shop'}
+                Disconnect the shop
               </Button>
             </div>
           )}
@@ -224,7 +224,7 @@ export function SettingsScreen() {
           footer={
             <>
               <Button variant="ghost" onClick={() => setConfirming(null)}>
-                {'Cancel'}
+                Cancel
               </Button>
               <Button
                 tone="danger"
@@ -303,9 +303,9 @@ function StaffSettings() {
       </Card>
       {/* Adding members is front-desk work, so Staff may import a list too. */}
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>{'Members'}</SectionTitle>
+        <SectionTitle>Members</SectionTitle>
         <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
-          {'Import members from Excel'}
+          Import members from Excel
         </Button>
       </Card>
       <SignInCard />
