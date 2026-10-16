@@ -151,7 +151,7 @@ describe('TG-08 drop sets carry forward as drop sets', () => {
     await useActiveWorkout.getState().startFromPlanDay(routine);
     const card = useActiveWorkout.getState().exercises[0];
     expect(card.sets.map((s) => s.setType ?? 'normal')).toEqual(['normal', 'normal', 'normal', 'drop']);
-    expect(card.previousSets[3]).toEqual({ weightKg: 60, reps: 10 });
+    expect(card.previousSets[3]).toEqual({ weightKg: 60, reps: 10, setType: 'drop' }); // C1-3: a drop stays a drop
   });
 });
 

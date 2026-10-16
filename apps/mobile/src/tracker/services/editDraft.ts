@@ -53,6 +53,8 @@ export function buildEditDraft(
         reps: hasReps(lt) ? s.reps : null,
         isWarmup: s.isWarmup,
         done: true,
+        // C1-4: a saved set — unticked in the editor, it is left out of the save.
+        saved: true,
         rpe: s.isWarmup ? null : m?.rpe ?? null,
         // `is_warmup` stays authoritative: a warm-up row's type is carried by the
         // flag, and 'warmup' is not a valid DraftSet.setType.

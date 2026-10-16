@@ -417,7 +417,7 @@ describe('ONE source: targetFill → fillForSet', () => {
 
   it('a drop row still hints its own last-time drop, never the Target', () => {
     const [s1, d] = [row({ weightKg: 50, reps: 10, done: true }), row({ setType: 'drop' })];
-    const c = { ...card([s1, d]), previousSets: [{ weightKg: 50, reps: 10 }, { weightKg: 30, reps: 12 }] } as DraftExercise;
+    const c = { ...card([s1, d]), previousSets: [{ weightKg: 50, reps: 10 }, { weightKg: 30, reps: 12, setType: 'drop' as const }] } as DraftExercise; // C1-3: drops are typed
     expect(fillForSet(c, d.key, fill)).toEqual({ weightKg: 30, reps: 12 });
   });
 });

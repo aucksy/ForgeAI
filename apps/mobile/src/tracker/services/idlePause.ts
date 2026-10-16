@@ -25,6 +25,7 @@ export function checkIdlePause(now: number = Date.now()): void {
       restSec: last.restSec,
       now,
       pause: { pausedAt: s.pausedAt, pausedTotalMs: s.pausedTotalMs, pauses: s.pauses },
+      countedUntil: s.countedUntil,
     });
     if (at != null) s.autoPause(at);
   } catch (e) {

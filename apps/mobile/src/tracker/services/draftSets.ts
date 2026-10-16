@@ -105,6 +105,15 @@ export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tic
 }
 
 /**
+ * 16 Oct 2026 audit (C1-4): editing a saved workout — the saved sets the member UNticked are left
+ * out (each opens ticked, so unticking is how a set that never happened is taken back). Rows
+ * added while editing are kept, ticked or not. PURE.
+ */
+export function withoutUntickedSaved<E extends { sets: readonly { saved?: true; done: boolean }[] }>(exercises: readonly E[]): E[] {
+  return exercises.map((e) => (e.sets.some((s) => s.saved && !s.done) ? { ...e, sets: e.sets.filter((s) => !(s.saved && !s.done)) } : e));
+}
+
+/**
  * A session must contain at least one WORKING set. A warm-up-only session is
  * invisible to history and to the PREVIOUS column (both exclude warm-ups), so it
  * would look like a workout that silently vanished.

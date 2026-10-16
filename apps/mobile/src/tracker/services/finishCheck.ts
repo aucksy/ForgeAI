@@ -42,6 +42,63 @@ export function untickedWithNumbers(exercises: readonly DraftExercise[]): number
   return n;
 }
 
+/**
+ * 16 Oct 2026 audit (C1-4 / C1-11): the unticked rows that hold numbers, working sets and
+ * warm-ups apart — so a question about them counts what its answer changes (the Finish sheet's
+ * "5 sets" counts working sets only). PURE.
+ */
+export function untickedCounts(exercises: readonly DraftExercise[]): { sets: number; warmups: number } {
+  let sets = 0;
+  let warmups = 0;
+  for (const ex of exercises) {
+    const lt = draftLogType(ex);
+    for (const s of ex.sets) {
+      if (s.done || !isCommittable(s, lt)) continue;
+      if (s.isWarmup) warmups += 1;
+      else sets += 1;
+    }
+  }
+  return { sets, warmups };
+}
+
+/** "2 sets and 3 warm-ups" — null when there are none. */
+function untickedPhrase(c: { sets: number; warmups: number }): string | null {
+  const parts: string[] = [];
+  if (c.sets > 0) parts.push(countWord(c.sets, 'set'));
+  if (c.warmups > 0) parts.push(countWord(c.warmups, 'warm-up'));
+  return parts.length === 0 ? null : parts.join(' and ');
+}
+
+/** The Finish sheet's question: "2 sets and 3 warm-ups have numbers but aren't ticked." PURE. */
+export function untickedQuestion(c: { sets: number; warmups: number }): string | null {
+  const what = untickedPhrase(c);
+  if (!what) return null;
+  const one = c.sets + c.warmups === 1;
+  return `${what} ${one ? 'has' : 'have'} numbers but ${one ? "isn't" : "aren't"} ticked.`;
+}
+
+/** C1-4: the saved sets the member unticked while editing (each opened ticked). PURE. */
+export function untickedSavedCounts(exercises: readonly DraftExercise[]): { sets: number; warmups: number } {
+  let sets = 0;
+  let warmups = 0;
+  for (const ex of exercises) {
+    for (const s of ex.sets) {
+      if (!s.saved || s.done) continue;
+      if (s.isWarmup) warmups += 1;
+      else sets += 1;
+    }
+  }
+  return { sets, warmups };
+}
+
+/** C1-4: over "Save changes" while editing a saved workout — the unticked sets it leaves out. PURE. */
+export function editLeftOutText(c: { sets: number; warmups: number }): string | null {
+  const what = untickedPhrase(c);
+  if (!what) return null;
+  const one = c.sets + c.warmups === 1;
+  return `${what} unticked: ${one ? 'it' : 'they'} will be left out. Tick ${one ? 'it' : 'them'} to keep ${one ? 'it' : 'them'}.`;
+}
+
 /** Ticked working sets, and exercises with at least one of them — the counts shown mid-workout. */
 export function liveCounts(exercises: readonly DraftExercise[]): { setsDone: number; exercisesDone: number } {
   let setsDone = 0;
@@ -148,6 +205,11 @@ export function idlePauseAt(p: {
   restSec: number;
   now: number;
   pause: PauseState;
+  /**
+   * 16 Oct 2026 audit (C1-2): the end of an auto-pause the member counted ("Count it"). Counting
+   * removes that pause, but it still marks the member's return, exactly as an uncounted one does.
+   */
+  countedUntil?: number | null;
 }): number | null {
   if (p.pause.pausedAt != null || !Number.isFinite(p.now) || !Number.isFinite(p.startedAt)) return null;
   const from = p.lastActionAt ?? p.startedAt;
@@ -155,6 +217,7 @@ export function idlePauseAt(p: {
   // Never inside a pause already taken (a new pause starts after the last one ended).
   let floor = p.startedAt;
   for (const s of p.pause.pauses ?? []) floor = Math.max(floor, s.to);
+  if (p.countedUntil != null && Number.isFinite(p.countedUntil)) floor = Math.max(floor, p.countedUntil);
   const at = from + Math.max(0, p.restSec) * 1000;
   // Review: a pause that ended AFTER the last set's rest means the member came back and then
   // left it open; Finish's own "Ended at" question gets that right, an auto-pause would not.

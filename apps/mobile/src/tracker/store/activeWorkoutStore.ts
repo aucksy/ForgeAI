@@ -64,7 +64,7 @@ import { computeEditedTiming, dayDeltaMs } from '@/tracker/services/sessionTimin
 import { NO_PAUSE, pauseAt, pauseFromDraft, resumeAt, savedEnd, type PauseSpan } from '@/tracker/services/workoutPause';
 import { reconcilePrsForExercises } from '@/tracker/services/prRebuild';
 import { checkMinutes, checkStartTime } from '@/tracker/services/editFields';
-import { draftToRichSets, hasWorkingSet, isCommittable } from '@/tracker/services/draftSets';
+import { draftToRichSets, hasWorkingSet, isCommittable, withoutUntickedSaved } from '@/tracker/services/draftSets';
 import { tickValues, type TickMissing } from '@/tracker/services/setTick';
 import {
   applyCopy,
@@ -137,6 +137,12 @@ export interface DraftSet {
    * The editor can't show it, so Save writes it back exactly as it was — never drops it.
    */
   keep?: { weightKg: number; reps: number; durationSec?: number | null; distanceM?: number | null };
+  /**
+   * 16 Oct 2026 audit (C1-4): editing a saved workout — this row is one of the workout's saved
+   * sets (it opens ticked). Unticked by the member, it is left out of the save. Rows added while
+   * editing do not carry it: a number typed there is saved as before.
+   */
+  saved?: true;
 }
 
 /** Last time's numbers for one set row, in TYPED form (help positive). */
@@ -151,6 +157,13 @@ export interface PrevSet {
    * `fillForSet` builds its fills afresh, so a tick never copies it.
    */
   rpe?: number;
+  /**
+   * 16 Oct 2026 audit (C1-3): 'drop' when last time's set was a drop set (absent = a normal or
+   * failure set, or a draft saved before). `prevForSet` matches drop rows to last time's drops
+   * and every other working row to last time's other sets, so a routine of 3 normal sets never
+   * reads last time's drop as its set 2. Never a hint or a fill.
+   */
+  setType?: 'drop';
 }
 
 /** What a tick fills into a blank row (and what its inputs show greyed). */
@@ -288,6 +301,8 @@ interface DraftSnapshot {
   pausedAuto?: boolean;
   /** The last finished auto-pause (the member can still "Count it"). */
   autoSpan?: PauseSpan | null;
+  /** C1-2: the end of the last auto-pause the member counted (absent on older drafts). */
+  countedUntil?: number | null;
 }
 
 /** "Log a past workout": the routine it was (its id, name and day type). */
@@ -370,6 +385,12 @@ export interface ActiveWorkoutState {
   pausedAuto: boolean;
   /** The last auto-pause once the member was back: shown with "Count it" until Finish. */
   autoSpan: PauseSpan | null;
+  /**
+   * 16 Oct 2026 audit (C1-2): the end of the last auto-pause the member counted ("Count it").
+   * Counting removes the pause, so the idle check measures from here — else it paused again a
+   * minute later from the same old tick and took the counted hour back.
+   */
+  countedUntil: number | null;
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
@@ -563,6 +584,7 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
     pauses: s.pauses,
     pausedAuto: s.pausedAt != null && s.pausedAuto,
     autoSpan: s.autoSpan,
+    countedUntil: s.countedUntil,
   };
   await setMeta(DRAFT_KEY, JSON.stringify(snap));
 }
@@ -658,6 +680,7 @@ export function toPrevSet(
   s: Pick<TrackedSetEntry, 'weightKg' | 'reps' | 'durationSec' | 'distanceM' | 'loadMode'> & {
     rpe?: number | null;
     isWarmup?: boolean;
+    setType?: 'drop' | 'failure' | 'normal' | null;
   },
   logType: LogType,
   /** TG-03: the card's counting — a set logged "as typed" reads as each dumbbell, and back. */
@@ -669,6 +692,8 @@ export function toPrevSet(
   if (s.distanceM != null) p.distanceM = s.distanceM;
   // 13 Oct 2026: last time's RPE rides along for PREVIOUS (working sets only).
   if (s.rpe != null && Number.isFinite(s.rpe) && !s.isWarmup) p.rpe = s.rpe;
+  // C1-3: a drop set stays a drop set, so PREVIOUS matches drops to drops.
+  if (s.setType === 'drop' && !s.isWarmup) p.setType = 'drop';
   return p;
 }
 
@@ -1122,12 +1147,30 @@ async function targetsBeforeHints(planDayId: string, exercises: DraftExercise[],
  * warm-up order: the 1st W row ↔ last time's 1st warm-up.
  */
 export function prevForSet(ex: DraftExercise, setKey: string): PrevSet | null {
-  let working = 0;
-  let warm = 0;
+  const row = ex.sets.find((s) => s.key === setKey);
+  if (!row) return null;
+  if (row.isWarmup) {
+    let warm = 0;
+    for (const s of ex.sets) {
+      if (s.key === setKey) break;
+      if (s.isWarmup) warm += 1;
+    }
+    return ex.previousWarmups?.[warm] ?? null;
+  }
+  // 16 Oct 2026 audit (C1-3): a drop row reads last time's drops in order, every other working
+  // row last time's other sets in order — "set 2" is last time's set 2 even when last time had
+  // a drop set after set 1 that today's routine does not.
+  const drop = row.setType === 'drop';
+  let n = 0;
   for (const s of ex.sets) {
-    if (s.key === setKey) return s.isWarmup ? ex.previousWarmups?.[warm] ?? null : ex.previousSets[working] ?? null;
-    if (s.isWarmup) warm += 1;
-    else working += 1;
+    if (s.key === setKey) break;
+    if (!s.isWarmup && (s.setType === 'drop') === drop) n += 1;
+  }
+  let seen = 0;
+  for (const p of ex.previousSets) {
+    if ((p.setType === 'drop') !== drop) continue;
+    if (seen === n) return p;
+    seen += 1;
   }
   return null;
 }
@@ -1405,6 +1448,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     pauses: [],
     pausedAuto: false,
     autoSpan: null,
+    countedUntil: null,
     lastSaveReconciled: true,
 
     hydrate: async () => {
@@ -1459,6 +1503,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
               ...withSpans(pauseFromDraft(snap, snap.startedAt)),
               pausedAuto: snap.pausedAuto === true && pauseFromDraft(snap, snap.startedAt).pausedAt != null,
               autoSpan: autoSpanFromDraft(snap.autoSpan, pauseFromDraft(snap, snap.startedAt).pauses),
+              countedUntil:
+                typeof snap.countedUntil === 'number' && Number.isFinite(snap.countedUntil) && snap.countedUntil >= snap.startedAt
+                  ? snap.countedUntil
+                  : null,
             });
           }
         } catch (e) {
@@ -2317,7 +2365,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // Same re-entry guard as finish(): `committing` is set synchronously below.
       if (!s.active || !isCorrecting(s) || s.startedAt == null || s.committing) return null;
       // Review fix: the card's counting goes on every row (rows added after a Counting change too).
-      const flat = draftToRichSets(s.exercises, { stampLoadMode: true });
+      // 16 Oct 2026 audit (C1-4): an edit opens with every saved set ticked, so a saved set the
+      // member UNticks is left out of the save (the screen says how many). Rows typed while
+      // correcting are saved, ticked or not, as before ("Type a set to save").
+      const flat = draftToRichSets(withoutUntickedSaved(s.exercises), { stampLoadMode: true });
       // Emptying a workout is a DELETE, not a save — the screen offers that instead.
       if (!hasWorkingSet(flat)) return null;
       if (s.pastLog) return savePastWorkout(s, flat);
@@ -2456,6 +2507,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         pauses: s.pauses.filter((_, j) => j !== i),
         pausedTotalMs: Math.max(0, s.pausedTotalMs - (span.to - span.from)),
         autoSpan: null,
+        // C1-2: a counted span stays counted — the next idle hour is measured from its end.
+        countedUntil: Math.max(s.countedUntil ?? 0, span.to),
       });
       persistNow();
     },

@@ -35,7 +35,7 @@ import { FinishSheet, type FinishChoice } from '@/tracker/components/FinishSheet
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { PAUSE_WORDS, type PauseState } from '@/tracker/services/workoutPause';
 import { getRoutine } from '@/tracker/db/routineRepo';
-import { autoSpanText, COUNT_IT, defaultWorkoutName, idlePauseNote } from '@/tracker/services/finishCheck';
+import { autoSpanText, COUNT_IT, defaultWorkoutName, editLeftOutText, idlePauseNote, untickedSavedCounts } from '@/tracker/services/finishCheck';
 import { copiedText } from '@/tracker/services/setEntry';
 import { bounceEmptyWorkout } from '@/tracker/services/workoutStart';
 import { holdRoutineOffer, routineUpdateOffer } from '@/tracker/services/routineOffer';
@@ -44,7 +44,7 @@ import { phoneUses24Hour } from '@/tracker/services/restCard';
 import { loadTargets, querySignature, targetQuery, useTargets } from '@/tracker/store/targetStore';
 import { useUnits } from '@/lib/useUnits';
 import { goBack } from '@/lib/goBack';
-import { draftToRichSets, hasWorkingSet } from '@/tracker/services/draftSets';
+import { draftToRichSets, hasWorkingSet, withoutUntickedSaved } from '@/tracker/services/draftSets';
 import { isCorrecting, useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
@@ -348,9 +348,11 @@ export default function ActiveWorkoutScreen() {
 
   // Exactly what a save would write — the same helper the store commits through,
   // so the button can never enable on a set the save then silently drops.
-  const canFinish = hasWorkingSet(draftToRichSets(exercises));
+  // C1-4: an edit leaves out the saved sets the member unticked (the line over Save says so).
+  const canFinish = hasWorkingSet(draftToRichSets(withoutUntickedSaved(exercises)));
   // Correcting the past: an edit of a saved workout, or a past workout being logged.
   const isEditing = isCorrecting({ editingSessionId, pastLog });
+  const leftOut = isEditing ? editLeftOutText(untickedSavedCounts(exercises)) : null;
 
   // Distinct superset groups in this workout (for the per-card chooser). Memoised on a
   // primitive key, NOT on `exercises`: the store replaces that array on every keystroke,
@@ -756,6 +758,11 @@ export default function ActiveWorkoutScreen() {
                 onDismiss={() => dismissCopy(lastCopy.id)}
               />
             </View>
+          ) : null}
+          {leftOut && !entry ? (
+            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.sm, textAlign: 'center' }}>
+              {leftOut}
+            </Text>
           ) : null}
           {entry ? (
             <EntryBar model={entry} />

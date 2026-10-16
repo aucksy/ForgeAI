@@ -81,7 +81,11 @@ describe('one rule for the grey hint (LW-04, LW-19)', () => {
     const d = row({ weightKg: 70, reps: 8, setType: 'drop' });
     const s2 = row();
     const d2 = row({ setType: 'drop' });
-    const c = card({ previousSets: [{ weightKg: 1, reps: 1 }, { weightKg: 1, reps: 1 }, { weightKg: 1, reps: 1 }, { weightKg: 60, reps: 10 }], sets: [s1, d, s2, d2] });
+    // C1-3 (16 Oct 2026): last time's drop sets carry their type; a drop row reads the drops in order.
+    const c = card({
+      previousSets: [{ weightKg: 1, reps: 1 }, { weightKg: 1, reps: 1, setType: 'drop' }, { weightKg: 1, reps: 1 }, { weightKg: 60, reps: 10, setType: 'drop' }],
+      sets: [s1, d, s2, d2],
+    });
     expect(fillForSet(c, s2.key)).toEqual({ weightKg: 100, reps: 5 });
     expect(fillForSet(c, d2.key, { weightKg: 110, reps: 5 })).toEqual({ weightKg: 60, reps: 10 });
   });
