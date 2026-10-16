@@ -618,8 +618,8 @@ export function sniffFile(name: string, head: Uint8Array): FileKind {
   if (head[0] === 0x50 && head[1] === 0x4b && head[2] === 0x03 && head[3] === 0x04) return 'xlsx';
   if (head[0] === 0xd0 && head[1] === 0xcf && head[2] === 0x11 && head[3] === 0xe0) return 'xls';
   const ext = name.toLowerCase().split('.').pop() ?? '';
-  // 16 Oct 2026: some gym software saves a web page (an HTML table) and names it .xls.
-  if ((ext === 'xls' || ext === 'htm' || ext === 'html') && looksLikeHtml(head)) return 'html';
+  // 16 Oct 2026: some gym software saves a web page (an HTML table) or "Excel 2003 XML" as .xls.
+  if ((ext === 'xls' || ext === 'htm' || ext === 'html' || ext === 'xml') && looksLikeHtml(head)) return 'html';
   // Some gym software saves a tab-separated text file and names it .xls.
   if (ext === 'csv' || ext === 'txt' || ext === 'tsv' || ext === 'xls') return 'csv';
   return 'unknown';

@@ -64,6 +64,8 @@ interface Loaded {
   /** 16 Oct 2026: every usable sheet in the file, and the one shown. */
   sheets: SheetRows[];
   sheet: number;
+  /** The sheet was picked by the app (not by the owner). */
+  auto: boolean;
 }
 
 interface Result {
@@ -143,7 +145,7 @@ export function ImportMembersScreen() {
     }
     // Checking every row comes next (the list below): let the page draw once more first.
     await letThePagePaint();
-    openSheet({ name: f.name, rows: [], sheets, sheet: 0 }, bestSheet(sheets));
+    openSheet({ name: f.name, rows: [], sheets, sheet: 0, auto: true }, bestSheet(sheets));
   };
 
   /** Show one sheet of the file: its header row and column guesses start again. */
@@ -337,18 +339,18 @@ export function ImportMembersScreen() {
             <SectionTitle>{tr('Which column is which', 'Kaunsa column kya hai')}</SectionTitle>
             <p style={muted}>
               {tr(
-                `${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}" (it has the most mobile numbers)` : ''}. We guessed from the column names — change any that are wrong.`,
-                `${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}" (isme sabse zyada mobile number hain)` : ''}. Column ke naam se andaaza lagaya hai — jo galat ho use badlo.`,
+                `${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (it looks most like a member list)' : ''}` : ''}. We guessed from the column names — change any that are wrong.`,
+                `${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (yeh sabse zyada member list jaisi hai)' : ''}` : ''}. Column ke naam se andaaza lagaya hai — jo galat ho use badlo.`,
               )}
             </p>
             {file.sheets.length > 1 && (
               <SelectField
                 label={tr('Sheet', 'Sheet')}
                 value={String(file.sheet)}
-                onChange={(v) => openSheet(file, Number(v))}
+                onChange={(v) => openSheet({ ...file, auto: false }, Number(v))}
                 options={file.sheets.map((sh, i) => ({
                   value: String(i),
-                  label: `${sh.name} (${tr(`${sh.rows.length} rows`, `${sh.rows.length} rows`)})`,
+                  label: `${sh.name} (${filledRows(sh.rows)} rows)`,
                 }))}
               />
             )}
@@ -871,4 +873,9 @@ function keptWords(kept: { members: number; memberships: number; plans: number }
 /** "1 member", "3 members". PURE. */
 function n(count: number, word: string): string {
   return `${count} ${count === 1 ? word : `${word}s`}`;
+}
+
+/** Rows with anything in them (the Sheet picker's count). PURE. */
+function filledRows(rows: readonly (readonly Cell[])[]): number {
+  return rows.filter((r) => r.some((c) => cellText(c) !== '')).length;
 }
