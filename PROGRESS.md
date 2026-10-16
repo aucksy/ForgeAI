@@ -1764,6 +1764,12 @@
   `.github/workflows/exercise-clips.yml` (manual; one job per recipe, publishes to the
   `exercise-clips` release). How-to: the `making-forgeai-exercise-clips` skill. Not wired into the
   app yet: the demo sheet still shows the Everkinetic drawings.
+- 2026-10-16: **Admin app import: several sheets, old .xls, web pages and Excel 2003 XML saved as .xls** (bc7f4b6, 990e5a3; deployed).
+  Every sheet is read; the import opens the sheet with the most DIFFERENT mobile numbers (fewest
+  repeats breaks a tie, so Payments never beats Members) and a Sheet picker switches. Old .xls,
+  web-page .xls and SpreadsheetML go through SheetJS 0.20.3 (cdn.sheetjs.com tarball, lazy 500 KB
+  chunk) with RAW day numbers: cellDates put every date a day early in India (review; lesson
+  excel-dates-can-land-a-day-early-in-india). Pressed through: a 3-sheet .xls opened "Members".
 - 2026-10-16: **Admin app: "Undo this import"; admin app icon** (73e738a, a66c162, 3dbd9d4, d3a181d + this commit).
   - Members -> Import -> "Past imports": each import still in the gym (time, counts) with "Undo this
     import" -> what goes and what stays -> "Yes, undo it". Owner only. logic/undoImport.ts keeps
