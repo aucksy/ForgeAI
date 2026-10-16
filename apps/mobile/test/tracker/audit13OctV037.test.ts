@@ -76,9 +76,11 @@ describe('B1: a lighter set doing many reps is never an estimated 1-rep max reco
     expect(setRecordValue('e1rm', { weightKg: 70, reps: 25 }, W, null)).toBeCloseTo(98, 6);
   });
 
-  it('100 × 5, then 95 × 8 is still a record (120.3 > 116.7)', () => {
+  it('100 × 5, then 95 × 8 is no 1-rep-max record: lighter, more reps (C2-4, 16 Oct 2026 owner rule)', () => {
     const s = tick(95, 8);
-    expect(popUp(s)).toBe('Estimated 1-rep max · 120.3 kg');
+    expect(popUp(s) ?? '').not.toMatch(/Estimated 1-rep max/);
+    // A heavier set that beats the estimate still is one.
+    expect(popUp(tick(105, 5))).toMatch(/Estimated 1-rep max · 122\.5 kg|Heaviest weight/);
   });
 
   it('the records list and the finish screen agree: 70 × 25 is no event, its best stays 116.7', () => {

@@ -105,10 +105,27 @@ export function feedCardFacts(item: CardItem, records: number, units: UnitSystem
 }
 
 /** Records per workout, from ONE read of every record (never one read per card). PURE. */
-export function recordsPerWorkout(events: readonly { sessionId: string }[]): Map<string, number> {
+export function recordsPerWorkout(events: readonly { sessionId: string; exerciseId?: string }[]): Map<string, number> {
+  // C2-10 (16 Oct 2026 audit): one decision — records count LIFTS that beat their best, as the
+  // finish screen, month report and year review do (D10): one heavy set that set 5 kinds of record
+  // is 1, so a card never says "Records 5" for a workout whose finish said "2 lifts beat their best".
+  const lifts = new Map<string, Set<string>>();
+  let n = 0;
+  for (const e of events) {
+    let seen = lifts.get(e.sessionId);
+    if (!seen) lifts.set(e.sessionId, (seen = new Set()));
+    seen.add(e.exerciseId ?? `#${n++}`); // no exercise given: each event is its own lift
+  }
   const out = new Map<string, number>();
-  for (const e of events) out.set(e.sessionId, (out.get(e.sessionId) ?? 0) + 1);
+  for (const [id, seen] of lifts) out.set(id, seen.size);
   return out;
+}
+
+/** C2-10: the Profile header's "Records" — lifts that beat their best, added over every workout. PURE. */
+export function liftRecordsTotal(events: readonly { sessionId: string; exerciseId?: string }[]): number {
+  let total = 0;
+  for (const n of recordsPerWorkout(events).values()) total += n;
+  return total;
 }
 
 /** The feed's rows: a month line before each month's first workout. PURE. */

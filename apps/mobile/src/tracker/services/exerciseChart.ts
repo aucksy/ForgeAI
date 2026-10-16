@@ -16,7 +16,7 @@
  * page's history arrives with it already applied (`historyWithVolume`), and the best set comes
  * from `bestSetSeriesFor`, the same as before. Easy-week workouts stay out, as on every chart.
  */
-import { addDays } from '@/lib/date';
+import { addDays, twelveMonthsFrom } from '@/lib/date';
 import { estimatedOneRepMax } from '@/lib/e1rm';
 import { fmtCompact, fmtInt, kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { liftedWords } from '@/lib/units';
@@ -44,7 +44,8 @@ export type ChartRange = '3m' | '1y' | 'all';
 
 export const CHART_RANGES: readonly { id: ChartRange; label: string }[] = [
   { id: '3m', label: '3 months' },
-  { id: '1y', label: 'Year' },
+  // C2-8 (16 Oct 2026 audit): a rolling 12 months, as Statistics and Profile say — not "Year".
+  { id: '1y', label: '12 months' },
   { id: 'all', label: 'All time' },
 ];
 
@@ -134,7 +135,8 @@ export function chartAxisNumber(n: number): string {
 export function metricValueText(m: ChartMetric, y: number, units: UnitSystem, distUnit: DistUnit): string {
   switch (metricUnit(m)) {
     case 'weight':
-      return `${chartNumber(y)} ${weightUnit(units)}`;
+      // C2-5 (16 Oct 2026 audit): a set's own weight reads as the set table does ("61.25 kg").
+      return `${chartNumber(y, setWeightDp(m, units))} ${weightUnit(units)}`;
     case 'seconds':
       return fmtDuration(y);
     case 'distance':
@@ -146,6 +148,14 @@ export function metricValueText(m: ChartMetric, y: number, units: UnitSystem, di
 }
 
 const round1 = (n: number): number => Math.round(n * 10) / 10;
+/**
+ * C2-5: decimals for a chip whose value is ONE set's weight (heaviest, least help): 2 in kg, as the
+ * set table and "Last time" rows (61.25 kg, never "61.3"); 1 in lb. Totals and estimates keep 1.
+ */
+export function setWeightDp(m: ChartMetric, units: UnitSystem): number {
+  return (m === 'heaviest' || m === 'leastHelp') && units !== 'imperial' ? 2 : 1;
+}
+const roundTo = (n: number, dp: number): number => Math.round(n * 10 ** dp) / 10 ** dp;
 const maxOf = (xs: readonly number[]): number => xs.reduce((a, b) => (b > a ? b : a), 0);
 const sumOf = (xs: readonly number[]): number => xs.reduce((a, b) => a + b, 0);
 
@@ -217,7 +227,7 @@ export function metricSeries(
         y = null;
     }
     // Distances keep their own rounding (5.25 km); the rest read to one place (82.5 kg).
-    if (y != null && Number.isFinite(y)) out.push({ x: h.dateISO, y: metricUnit(m) === 'distance' ? y : round1(y) });
+    if (y != null && Number.isFinite(y)) out.push({ x: h.dateISO, y: metricUnit(m) === 'distance' ? y : roundTo(y, setWeightDp(m, units)) });
   }
   return out;
 }
@@ -244,7 +254,7 @@ export function bestPerDay(m: ChartMetric, points: readonly { x: string; y: numb
 /** The first day a range shows (null = all time). PURE. */
 export function rangeStart(range: ChartRange, today: string): string | null {
   if (range === '3m') return addDays(today, -90);
-  if (range === '1y') return addDays(today, -364);
+  if (range === '1y') return twelveMonthsFrom(today); // C2-1/C2-8: the 12 months ending today
   return null;
 }
 

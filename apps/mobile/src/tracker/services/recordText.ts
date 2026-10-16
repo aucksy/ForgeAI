@@ -19,8 +19,12 @@ export interface RecordTextContext {
   units?: UnitSystem;
 }
 
-function kg(n: number, units: UnitSystem): string {
-  return `${trimNum(kgToDisplay(n, units))} ${weightUnit(units)}`;
+/**
+ * A set's weight as the set table and "Last time" rows print it: 2 decimals in kg ("61.25 kg",
+ * C2-5, 16 Oct 2026 audit), 1 in lb. `dp` 1 for an estimate or a total.
+ */
+function kg(n: number, units: UnitSystem, dp: number = units === 'imperial' ? 1 : 2): string {
+  return `${trimNum(kgToDisplay(n, units), dp)} ${weightUnit(units)}`;
 }
 
 /** "each" when the typed weight is one of two dumbbells. */
@@ -50,13 +54,13 @@ export function recordValueText(hit: RecordHit, ctx: RecordTextContext): string 
     case 'weight':
       return recordWeightText(hit.value, { ...ctx, units }, hit.set?.loadMode);
     case 'e1rm':
-      return kg(hit.value, units);
+      return kg(hit.value, units, 1); // an estimate: one place
     case 'rep_record':
       // 13 Oct 2026: the set itself — "22.5 kg × 12" ("+10 kg × 8" on an added-weight move).
       if (!s) return kg(hit.value, units);
       return ctx.logType === 'weighted' ? `+${kg(s.weightKg, units)} × ${s.reps}` : `${kg(s.weightKg, units)}${each(hit, ctx)} × ${s.reps}`;
     case 'best_set': {
-      if (!s) return kg(hit.value, units);
+      if (!s) return kg(hit.value, units, 1); // a set's kg lifted, not a weight
       if (ctx.logType === 'weighted' || ctx.logType === 'reps' || ctx.logType === 'assisted') {
         return s.weightKg > 0 ? `+${kg(s.weightKg, units)} × ${s.reps}` : `${s.reps} ${s.reps === 1 ? 'rep' : 'reps'}`;
       }

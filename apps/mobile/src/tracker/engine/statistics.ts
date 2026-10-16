@@ -10,7 +10,7 @@
  *   - totals are `totalsOf` (engine/reports) over sessions whose volume came from the ONE
  *     volume rule.
  */
-import { addDays, tinyDateWithYear, weekStartISO } from '@/lib/date';
+import { addDays, tinyDate, tinyDateWithYear, twelveMonthsFrom, weekStartISO } from '@/lib/date';
 
 import { setShares, type Muscle, type MuscleMap } from '../catalog/muscles';
 import { monthName } from '../lib/months';
@@ -75,9 +75,47 @@ export function sessionGroupSets(session: VolumeSession): GroupSets {
   return out;
 }
 
+/**
+ * C2-3 (16 Oct 2026 audit): each exercise of one session — its working sets and the share each
+ * set counts in every group — so a headline can count a set ONCE across the picked groups.
+ */
+export function sessionLifts(session: VolumeSession): { sets: number; shares: GroupSets }[] {
+  const out: { sets: number; shares: GroupSets }[] = [];
+  for (const g of session.exercises) {
+    const working = g.sets.filter((s) => !s.isWarmup).length;
+    if (working === 0) continue;
+    out.push({ sets: working, shares: Object.fromEntries(groupShares(g.exercise.muscles)) as GroupSets });
+  }
+  return out;
+}
+
 /** A workout as Statistics needs it: the report's facts plus its sets per group. */
 export interface StatSession extends ReportSession {
   groups: GroupSets;
+  /** C2-3: its exercises' working sets and group shares (absent: count by `groups`). */
+  lifts?: { sets: number; shares: GroupSets }[];
+}
+
+/**
+ * C2-3: the sets of the picked groups between two days, each set counted ONCE — its biggest share
+ * among the picked groups (one bench set is 1 set, not chest 1 + shoulders ½ + arms ½). The
+ * headline over the chart; the bars keep each group's share. To the nearest half. PURE.
+ */
+export function setsOnceBetween(sessions: readonly StatSession[], from: string, to: string, picked: readonly StatGroup[]): number {
+  let n = 0;
+  for (const s of sessions) {
+    if (s.dateISO < from || s.dateISO > to) continue;
+    if (!s.lifts) {
+      for (const g of picked) n += s.groups[g] ?? 0;
+      continue;
+    }
+    for (const l of s.lifts) {
+      let share = 0;
+      for (const g of picked) share = Math.max(share, l.shares[g] ?? 0);
+      n += share * l.sets;
+    }
+  }
+  return halfRound(n);
 }
 
 /** Fractional sets to the nearest half, as everywhere else. */
@@ -100,11 +138,19 @@ const RANGE_DAYS: Record<Exclude<StatRange, 'all'>, number> = { '30d': 30, '3m':
 /** First day of a range ending today. All time starts at the first workout (or today). */
 export function rangeFrom(range: StatRange, today: string, firstWorkoutISO: string | null): string {
   if (range === 'all') return firstWorkoutISO && firstWorkoutISO < today ? firstWorkoutISO : today;
+  // C2-1 (16 Oct 2026 audit): "12 months" is the 12 months ending today — the ONE rule Profile's
+  // "Last 12 months" uses too (`twelveMonthsFrom`).
+  if (range === '1y') return twelveMonthsFrom(today);
   return addDays(today, -(RANGE_DAYS[range] - 1));
 }
 
 /** This period (ending today) and the same length just before it. All time has no "before". */
 export function periodPair(range: Exclude<StatRange, 'all'>, today: string): { cur: { from: string; to: string }; prev: { from: string; to: string } } {
+  if (range === '1y') {
+    const from = twelveMonthsFrom(today);
+    const prevTo = addDays(from, -1);
+    return { cur: { from, to: today }, prev: { from: twelveMonthsFrom(prevTo), to: prevTo } };
+  }
   const days = RANGE_DAYS[range];
   const from = addDays(today, -(days - 1));
   return { cur: { from, to: today }, prev: { from: addDays(from, -days), to: addDays(from, -1) } };
@@ -177,10 +223,11 @@ export function bucketsBetween(from: string, to: string, grouping: StatGrouping)
   return out;
 }
 
-/** A bucket's x label: "Oct 6" for a week, "Oct" (or "Oct '25" across years) for a month. */
+/** A bucket's x label: "6 Oct" for a week, "Oct" (or "Oct '25" across years) for a month. */
 export function bucketLabel(bucket: string, grouping: StatGrouping, withYear = false): string {
   const month = monthName(bucket.slice(0, 7)).slice(0, 3);
-  if (grouping === 'week') return `${month} ${Number(bucket.slice(8, 10))}`;
+  // C2-9 (16 Oct 2026 audit): day first ("6 Oct"), as every other date in the app.
+  if (grouping === 'week') return tinyDate(bucket);
   return withYear ? `${month} '${bucket.slice(2, 4)}` : month;
 }
 

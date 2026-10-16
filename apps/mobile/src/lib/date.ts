@@ -27,6 +27,18 @@ export function daysBetween(aISO: string, bISO: string): number {
   return Math.round(ms / 86400000);
 }
 
+/**
+ * 16 Oct 2026 audit (C2-1): the first day of "Last 12 months" — the 12 months ending `today`,
+ * rolling and inclusive: the day after the same date a year earlier (1 Oct 2026 → 2 Oct 2025;
+ * 29 Feb 2028 → 1 Mar 2027). Profile, Statistics and the exercise charts all use it.
+ */
+export function twelveMonthsFrom(today: string): string {
+  const [y, m, d] = today.split('-').map(Number);
+  const last = new Date(y - 1, m, 0).getDate(); // days in that month a year earlier
+  const yearAgo = `${String(y - 1).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(Math.min(d, last)).padStart(2, '0')}`;
+  return addDays(yearAgo, 1);
+}
+
 /** Monday of the week containing `iso` (weeks start Monday). */
 export function weekStartISO(iso: string): string {
   const d = fromISO(iso);

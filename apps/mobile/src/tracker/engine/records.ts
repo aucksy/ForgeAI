@@ -308,7 +308,7 @@ export function ladderEntries(ladder: ReadonlyMap<number, number>): [number, num
 }
 
 /**
- * The overload gate: "Most reps" and "Best set" on a weight-based move are news only when the
+ * The overload gate: "Most reps", "Best set" and (C2-4) "Estimated 1-rep max" on a weight-based move are news only when the
  * set is at least as heavy as the set that held the record before (assisted: no more help —
  * help is stored negative, so "heavier" is the bigger number there too). Other kinds and types
  * are never gated. `holder` = the previous holder's stored weight (absent: no gate). PURE.
@@ -513,7 +513,11 @@ export function exerciseRecords(sessions: readonly RecordSession[], rule: Record
 
 /** Kinds the overload gate can hold back on this type (a quick check before reading sets). */
 function overloadGatedKind(kind: RecordKind, t: LogType): boolean {
-  return (kind === 'reps' || kind === 'best_set') && (t === 'weight_reps' || t === 'weighted' || t === 'assisted');
+  // 16 Oct 2026 audit (C2-4): the estimated 1-rep max too — owner rule, a record is progressive
+  // overload, "never a lighter set doing more reps" (85 kg × 10 after 100 kg × 3 is no record;
+  // the estimate is still kept as the best, quietly). 37% of 1-rep-max records on a 500-workout
+  // import came from a lighter set.
+  return (kind === 'reps' || kind === 'best_set' || kind === 'e1rm') && (t === 'weight_reps' || t === 'weighted' || t === 'assisted');
 }
 
 /** Of one workout's sets, the best that beat `prior` at no less weight than `gateKg`; null = none. */

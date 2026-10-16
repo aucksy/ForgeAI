@@ -35,7 +35,7 @@ import {
 import { deleteMeasurement, getMeasurements } from '@/tracker/db/measurementRepo';
 import { bodyWeightTypo, bodyWeightTypoText } from '@/tracker/engine/bodyCheck';
 import { MEASURE_LABEL, measureToShown, measureUnit, shownToMeasure, type MeasurementEntry } from '@/tracker/engine/measurements';
-import { MEASURE_CHIPS, chipLabel, openingChip, type MeasureChip } from '@/tracker/lib/measuresView';
+import { MEASURE_CHIPS, changeSinceText, chipLabel, openingChip, type MeasureChip } from '@/tracker/lib/measuresView';
 import { getProgressPhotos, type ProgressPhoto } from '@/tracker/services/progressPhotos';
 import type { BodyWeightEntry } from '@/types/models';
 
@@ -56,9 +56,6 @@ interface Row {
 
 type Undo = { table: 'weight'; item: BodyWeightUndo } | { table: 'measure'; item: MeasurementUndo };
 
-function signed(n: number): string {
-  return `${n > 0 ? '+' : n < 0 ? '−' : ''}${trimNum(Math.abs(n))}`;
-}
 
 export default function MeasuresScreen() {
   const router = useRouter();
@@ -279,7 +276,7 @@ export default function MeasuresScreen() {
               </View>
               {change !== null ? (
                 <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.md }}>
-                  {`${signed(change)} ${unitOf(chip)} since ${tinyDate(sorted[0].dateISO)}`}
+                  {changeSinceText(change, unitOf(chip), sorted[0].dateISO)}
                 </Text>
               ) : null}
               {points.length >= 2 ? (

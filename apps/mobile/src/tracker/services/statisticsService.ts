@@ -8,14 +8,17 @@ import type { SessionDetail } from '@/types/models';
 
 import { getTrackerExercisesByIds } from '../db/exerciseInfo';
 import { getSessionDetailsBetween } from '../db/sessionDetails';
-import { sessionGroupSets, type StatSession } from '../engine/statistics';
+import { sessionGroupSets, sessionLifts, type StatSession } from '../engine/statistics';
 import { toReportSessions } from './reportsService';
 import { applyVolume, getVolumeContext, toVolumeSession, type VolumeContext } from './volumeService';
 
 /** Details → Statistics sessions (one volume context for all). PURE. */
 export function toStatSessions(raw: readonly SessionDetail[], ctx: VolumeContext): StatSession[] {
   const reports = toReportSessions(raw.map((d) => applyVolume(d, ctx)));
-  return reports.map((r, i) => ({ ...r, groups: sessionGroupSets(toVolumeSession(raw[i], ctx)) }));
+  return reports.map((r, i) => {
+    const v = toVolumeSession(raw[i], ctx);
+    return { ...r, groups: sessionGroupSets(v), lifts: sessionLifts(v) };
+  });
 }
 
 /** Every workout between two days (inclusive), oldest first, as Statistics counts it. */

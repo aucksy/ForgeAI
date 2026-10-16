@@ -81,7 +81,7 @@ describe('Statistics: sets per muscle group', () => {
     expect(bucketOf('2026-10-11', 'week')).toBe('2026-10-05');
     expect(bucketOf('2026-10-11', 'month')).toBe('2026-10-01');
     expect(bucketsBetween('2025-11-15', '2026-02-02', 'month')).toEqual(['2025-11-01', '2025-12-01', '2026-01-01', '2026-02-01']);
-    expect(bucketLabel('2026-10-05', 'week')).toBe('Oct 5');
+    expect(bucketLabel('2026-10-05', 'week')).toBe('5 Oct'); // C2-9: day first
     expect(bucketLabel('2025-12-01', 'month', true)).toBe("Dec '25");
   });
   it('starts each range on the right day', () => {

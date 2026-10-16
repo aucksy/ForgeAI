@@ -17,7 +17,7 @@ import { getTrackerExercisesByIds } from '../db/exerciseInfo';
 import { getProfileExtras, type ProfileExtras } from '../db/profileExtras';
 import { getWorkoutPhotoUris } from '../db/workoutPhotoRepo';
 import { chartBars, chartSpan, type ChartBar, type ChartRange } from '../engine/historyChart';
-import { recordsPerWorkout } from './feedCard';
+import { liftRecordsTotal, recordsPerWorkout } from './feedCard';
 import { getWeekStreak } from './history';
 import { getFirstWorkoutDate, getHistoryPage, type HistoryCursor, type HistoryItem } from './historyFeed';
 import { getRecordEvents } from './recordsService';
@@ -38,7 +38,7 @@ export async function getProfileHeader(): Promise<ProfileHeader> {
     getWeekStreak(),
     getRecordEvents(),
   ]);
-  return { name: profile.name, ...extras, workouts: Number(total?.n ?? 0), weeksInARow: streak.weeks, records: events.length };
+  return { name: profile.name, ...extras, workouts: Number(total?.n ?? 0), weeksInARow: streak.weeks, records: liftRecordsTotal(events) };
 }
 
 /** The bars of one range (every metric at once, so a chip change reads nothing). */

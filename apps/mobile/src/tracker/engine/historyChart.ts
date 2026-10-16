@@ -1,8 +1,9 @@
 /**
  * Redesign R2 — the Profile's history chart, as Hevy draws it (PLAN §3 item 4). PURE.
  *
- *  - Range "Last 12 weeks" = 12 weekly bars (weeks start Monday, the app's week), the last one
- *    this week; "Year" = 12 monthly bars, the last one this month; "All time" = one bar per
+ *  - Range "Last 12 weeks" = 12 full weekly bars (weeks start Monday, the app's week), the last
+ *    one this week (owner rule, 16 Oct 2026); "Last 12 months" = the 12 months ending today
+ *    (rolling, as Statistics), in monthly bars, the first one cut to the span; "All time" = one bar per
  *    month from the first workout's month to this month (Hevy's rule).
  *  - Chips: Duration · Kg lifted · Reps. Kg lifted is the ONE volume rule (`engine/volume.ts`,
  *    read per set by `volumeService.getSessionTotalsBetween`), so a bar equals the weekly
@@ -14,7 +15,7 @@
  *    or "Show … total", goes back to the total. It used to show the latest bar, so "All time"
  *    read as this month and "Last 12 weeks" read 0 on a Monday (owner, 12 Oct 2026).
  */
-import { addDays, weekStartISO } from '@/lib/date';
+import { addDays, twelveMonthsFrom, weekStartISO } from '@/lib/date';
 import { fmtCompact, fmtInt, fmtTotalTime, trimNum } from '@/lib/format';
 import { fmtVol, kgToShown, weightUnitOf, type UnitSystem } from '@/lib/units';
 
@@ -61,7 +62,6 @@ export interface ChartBar {
 }
 
 const WEEKS = 12;
-const MONTHS = 12;
 
 function monthStart(iso: string): string {
   return `${iso.slice(0, 7)}-01`;
@@ -88,12 +88,18 @@ export function chartBuckets(range: ChartRange, today: string, first: string | n
     });
   }
   const thisMonth = monthStart(today);
-  let from: string;
-  if (range === 'year') from = shiftMonthStart(thisMonth, -(MONTHS - 1));
-  else {
-    if (!first) return [];
-    from = monthStart(first) > thisMonth ? thisMonth : monthStart(first);
+  if (range === 'year') {
+    // 16 Oct 2026 audit (C2-1): "Last 12 months" is the 12 months ending today (rolling, as on
+    // Statistics), not the last 12 calendar months — on 1 Oct that was 1 Nov to 1 Oct, 11 months
+    // and a day. So the first bar is the part of its month inside the span ("2–31 Oct 2025"),
+    // and there are 13 bars unless today is a month's last day.
+    const from = twelveMonthsFrom(today);
+    const out: ChartBar[] = [];
+    for (let m = monthStart(from); m <= thisMonth; m = shiftMonthStart(m, 1)) out.push(bar('month', m < from ? from : m, monthEnd(m)));
+    return out;
   }
+  if (!first) return [];
+  const from = monthStart(first) > thisMonth ? thisMonth : monthStart(first);
   const out: ChartBar[] = [];
   for (let m = from; m <= thisMonth; m = shiftMonthStart(m, 1)) out.push(bar('month', m, monthEnd(m)));
   return out;
@@ -111,11 +117,12 @@ export function chartBars(sessions: readonly ChartSession[], range: ChartRange, 
   const bars = chartBuckets(range, today, firstDay);
   if (bars.length === 0) return bars;
   // Bars are in order and touch end to end: find each workout's bar by its start.
-  const index = new Map<string, ChartBar>(bars.map((b) => [b.start, b]));
+  const index = new Map<string, ChartBar>(bars.map((b) => [b.kind === 'week' ? b.start : monthStart(b.start), b]));
   for (const s of sessions) {
     const key = range === 'weeks' ? weekStartISO(s.dateISO) : monthStart(s.dateISO);
     const b = index.get(key);
-    if (!b) continue;
+    // C2-1: a bar can start mid-month (the first of "Last 12 months").
+    if (!b || s.dateISO < b.start || s.dateISO > b.end) continue;
     b.workouts += 1;
     b.durationSec += Math.max(0, s.durationSec);
     b.volumeKg += Math.max(0, s.volumeKg);
@@ -251,7 +258,8 @@ export function chartPeriodText(b: ChartBar, today: string): string {
   const year = b.end.slice(0, 4) !== today.slice(0, 4) ? ` ${b.end.slice(0, 4)}` : '';
   // A month always says its year: on Year and All time the bars run across years, and a bare
   // "Oct" under the big number could be any October (12 Oct 2026 design pass).
-  if (b.kind === 'month') return `${mon(b.start)} ${b.start.slice(0, 4)}`;
+  // C2-1: the first bar of "Last 12 months" starts mid-month — it says so ("2–31 Oct 2025").
+  if (b.kind === 'month') return day(b.start) === 1 ? `${mon(b.start)} ${b.start.slice(0, 4)}` : `${day(b.start)}–${day(b.end)} ${mon(b.start)} ${b.start.slice(0, 4)}`;
   const same = b.start.slice(0, 7) === b.end.slice(0, 7);
   return same ? `${day(b.start)}–${day(b.end)} ${mon(b.end)}${year}` : `${day(b.start)} ${mon(b.start)}–${day(b.end)} ${mon(b.end)}${year}`;
 }

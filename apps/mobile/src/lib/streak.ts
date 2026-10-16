@@ -26,5 +26,8 @@ export function streakText(weeks: number): string {
   return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} in a row`;
 }
 
-/** How far back a streak read looks: ~3 years covers any realistic unbroken run. */
-export const STREAK_LOOKBACK_DAYS = 1099;
+/**
+ * How far back a streak read looks. C2-7 (16 Oct 2026 audit): ~3 years capped a longer unbroken
+ * run at 157 weeks, so it is now 100 years — everything. (History's own read has no window.)
+ */
+export const STREAK_LOOKBACK_DAYS = 36_525;

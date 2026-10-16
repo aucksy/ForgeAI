@@ -3,6 +3,8 @@
  * Body weight sits beside the ten measurements as one more chip; the screens store body weight
  * in kg and lengths in cm, whatever the member types in.
  */
+import { todayISO, tinyDateWithYear } from '@/lib/date';
+import { trimNum } from '@/lib/format';
 import { shownToKg, type UnitSystem } from '@/lib/units';
 
 import { MEASURES, MEASURE_LABEL, isMeasureKind, measurementsToSave, parseMeasure, shownToMeasure, type MeasureKind } from '../engine/measurements';
@@ -53,4 +55,13 @@ export function entryPlan(weightText: string, typed: Partial<Record<MeasureKind,
   const measures: Partial<Record<MeasureKind, number>> = {};
   for (const k of Object.keys(values) as MeasureKind[]) measures[k] = shownToMeasure(k, values[k] as number, units);
   return { weightKg, measures, bad, empty: weightKg == null && Object.keys(measures).length === 0 && bad.length === 0 };
+}
+
+/**
+ * The line under a measure's latest value: "−4.2 kg since 12 Mar 2023" — with the year whenever it
+ * is not this year (C2-6, 16 Oct 2026 audit: "since 12 Mar" read as this March). PURE.
+ */
+export function changeSinceText(change: number, unit: string, fromISO: string, today: string = todayISO()): string {
+  const signed = `${change > 0 ? '+' : change < 0 ? '−' : ''}${trimNum(Math.abs(change))}`;
+  return `${signed} ${unit} since ${tinyDateWithYear(fromISO, today)}`;
 }

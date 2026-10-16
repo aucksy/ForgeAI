@@ -42,11 +42,12 @@ describe('the bars (Hevy’s rule)', () => {
     expect(b[0].start).toBe('2026-07-20');
   });
 
-  it('Year: 12 months, the last one this month', () => {
+  it('Last 12 months: the 12 months ending today, the first bar cut to the span (C2-1, 16 Oct 2026)', () => {
     const b = chartBuckets('year', TODAY, null);
-    expect(b).toHaveLength(12);
-    expect(b[0]).toMatchObject({ kind: 'month', start: '2025-11-01', end: '2025-11-30' });
-    expect(b[11]).toMatchObject({ start: '2026-10-01', end: '2026-10-31' });
+    expect(b).toHaveLength(13);
+    expect(b[0]).toMatchObject({ kind: 'month', start: '2025-10-12', end: '2025-10-31' });
+    expect(b[1]).toMatchObject({ kind: 'month', start: '2025-11-01', end: '2025-11-30' });
+    expect(b[12]).toMatchObject({ start: '2026-10-01', end: '2026-10-31' });
     expect(chartBuckets('year', '2024-03-15', null).find((x) => x.start === '2024-02-01')?.end).toBe('2024-02-29');
   });
 
@@ -66,9 +67,9 @@ describe('the bars (Hevy’s rule)', () => {
     expect(bars[10]).toMatchObject({ workouts: 1, volumeKg: 1000 });
     expect(bars.reduce((n, b) => n + b.workouts, 0)).toBe(3);
     const months = chartBars([s('2026-10-01'), s('2026-10-31'), s('2026-09-15')], 'year', TODAY);
-    expect(barValue(months[11], 'volume')).toBe(2000);
-    expect(barValue(months[10], 'duration')).toBe(3600);
-    expect(barValue(months[10], 'reps')).toBe(50);
+    expect(barValue(months[12], 'volume')).toBe(2000);
+    expect(barValue(months[11], 'duration')).toBe(3600);
+    expect(barValue(months[11], 'reps')).toBe(50);
   });
 
   it('All time starts at the first workout when none is given', () => {
@@ -93,9 +94,10 @@ describe('the big number, its period, and tapping a bar', () => {
     expect(chartPeriodText(w[11], TODAY)).toBe('5–11 Oct');
     expect(chartPeriodText({ ...w[0], start: '2026-09-28', end: '2026-10-04' }, TODAY)).toBe('28 Sep–4 Oct');
     const m = chartBuckets('year', TODAY, null);
-    expect(chartPeriodText(m[11], TODAY)).toBe('Oct 2026');
-    expect(chartPeriodText(m[0], TODAY)).toBe('Nov 2025');
-    expect(chartXText(m[0])).toBe("Nov '25");
+    expect(chartPeriodText(m[12], TODAY)).toBe('Oct 2026');
+    expect(chartPeriodText(m[1], TODAY)).toBe('Nov 2025');
+    expect(chartPeriodText(m[0], TODAY)).toBe('12–31 Oct 2025'); // C2-1: the part inside the span
+    expect(chartXText(m[1])).toBe("Nov '25");
     expect(chartXText(w[11])).toBe('5 Oct');
   });
 

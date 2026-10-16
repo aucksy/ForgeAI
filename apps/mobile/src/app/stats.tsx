@@ -30,6 +30,7 @@ import {
   STAT_GROUPS,
   STAT_RANGES,
   bucketLabel,
+  setsOnceBetween,
   chartFrom,
   comparisonText,
   distribution,
@@ -146,7 +147,8 @@ export default function StatisticsScreen() {
             scrolls to the card's edges. Three rows of orange chips left "Week · Month" alone. */}
         <StatHeading
           title="Sets per muscle group"
-          sub={win.data ? setsSinceText(setsTotal, setsFrom, today) : undefined}
+          // C2-3: the headline counts each set once (the bars keep each group's share).
+          sub={win.data ? setsSinceText(setsOnceBetween(win.data, setsFrom, today, picked), setsFrom, today) : undefined}
           right={<SegmentedControl compact label="Group by" options={GROUPINGS} value={grouping} onChange={setGrouping} />}
         />
         <Card style={{ gap: space.md }}>

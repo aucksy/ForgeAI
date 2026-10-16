@@ -86,13 +86,16 @@ describe('the Profile header and the feed', () => {
     const { getRecordEvents, getSessionRecords } = await import('@/tracker/services/recordsService');
     const h = await getProfileHeader();
     expect(h.workouts).toBe(db.count('workout_sessions'));
-    expect(h.records).toBe((await getRecordEvents()).length);
+    // C2-10 (16 Oct 2026): Records counts lifts that beat their best in each workout, not record kinds.
+    const all = await getRecordEvents();
+    expect(h.records).toBe(new Set(all.map((e) => `${e.sessionId}|${e.exerciseId}`)).size);
+    expect(h.records).toBeLessThan(all.length);
     expect(h.weeksInARow).toBeGreaterThan(0);
 
     const page = await getFeedPage();
     expect(page.items).toHaveLength(30);
     expect(page.next).not.toBeNull();
-    for (const f of page.items.slice(0, 8)) expect(f.records).toBe((await getSessionRecords(f.item.id)).length);
+    for (const f of page.items.slice(0, 8)) expect(f.records).toBe(new Set((await getSessionRecords(f.item.id)).map((e) => e.exerciseId)).size);
     const more = await getFeedPage(page.next);
     expect(more.items[0].item.dateISO <= page.items[29].item.dateISO).toBe(true);
     expect(new Set([...page.items, ...more.items].map((x) => x.item.id)).size).toBe(page.items.length + more.items.length);
