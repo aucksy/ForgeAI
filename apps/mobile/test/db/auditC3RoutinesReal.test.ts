@@ -124,3 +124,46 @@ describe('C3-24: "Duplicate to My routines" lands in My routines', () => {
     expect(where.name).toBe('My routines');
   });
 });
+
+describe('C3-25 / C3-26: copying a Hevy link again keeps the member\'s names, order and deletions', () => {
+  async function copy(routines: { name: string; ex: string[] }[]) {
+    const { saveImportedFolder } = await import('@/tracker/services/routineMerge');
+    const { linkFolder } = await import('@/tracker/db/folderRepo');
+    const url = 'https://hevy.com/routine_folder/abc';
+    const before = await linkFolder(url);
+    const ids = (n: string) => db.all<{ id: string }>('SELECT id FROM exercises WHERE name = ?', [n])[0].id;
+    return saveImportedFolder(
+      before,
+      'Jaipur',
+      routines.map((r) => ({ name: r.name, dayType: 'push' as const, exercises: r.ex.map((e) => ({ exerciseId: ids(e), sets: 3, repMin: 8, repMax: 12 })) })),
+      { fromLink: url },
+      { follow: false, todayISO: '2026-10-16' },
+    );
+  }
+  const names = () => db.all<{ name: string }>("SELECT pd.name FROM plan_days pd JOIN workout_plans wp ON wp.id = pd.plan_id WHERE wp.name = 'Jaipur' ORDER BY pd.day_order").map((r) => r.name);
+
+  it('a renamed and a reordered routine stay as the member left them', async () => {
+    const first = [
+      { name: 'Push 1', ex: ['Barbell Bench Press'] },
+      { name: 'Pull 1', ex: ['Barbell Row'] },
+    ];
+    await copy(first);
+    const { updateRoutine, reorderRoutines } = await import('@/tracker/db/routineRepo');
+    const ids = db.all<{ id: string; name: string }>("SELECT pd.id, pd.name FROM plan_days pd JOIN workout_plans wp ON wp.id = pd.plan_id WHERE wp.name = 'Jaipur' ORDER BY pd.day_order");
+    await updateRoutine(ids[0].id, { name: 'Chest day' });
+    await reorderRoutines([ids[1].id, ids[0].id]);
+    await copy(first);
+    expect(names()).toEqual(['Pull 1', 'Chest day']);
+  });
+
+  it('a deleted second Bench row stays deleted', async () => {
+    const first = [{ name: 'Push 1', ex: ['Barbell Bench Press', 'Barbell Bench Press'] }];
+    await copy(first);
+    const day = db.all<{ id: string }>("SELECT id FROM plan_days WHERE name = 'Push 1'")[0].id;
+    const rows = db.all<{ id: string }>('SELECT id FROM plan_exercises WHERE plan_day_id = ? ORDER BY ex_order', [day]);
+    const { removeRoutineExercise } = await import('@/tracker/db/routineRepo');
+    await removeRoutineExercise(rows[1].id);
+    await copy(first);
+    expect(db.count('plan_exercises', `plan_day_id = '${day}'`)).toBe(1);
+  });
+});

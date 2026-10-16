@@ -33,6 +33,17 @@ import {
 import type { PlanSetType } from '../plans/routineSets';
 
 export const ROUTINE_MARKS_KEY = 'routine_import_marks';
+/** C3-25: marks keys for a routine's copied name and a folder's copied order (never a routine id). */
+const NAME_MARK = '@name:';
+const ORDER_MARK = '@order:';
+
+/** C3-25: did the member put the copied routines in another order since? PURE. */
+export function movedByMember(copied: readonly string[], now: readonly string[]): boolean {
+  const both = new Set(copied.filter((id) => now.includes(id)));
+  const a = copied.filter((id) => both.has(id));
+  const b = now.filter((id) => both.has(id));
+  return a.join('\u0000') !== b.join('\u0000');
+}
 
 type Marks = Record<string, string[]>;
 
@@ -115,14 +126,26 @@ export function mergeRows(
   const used = new Set<number>();
   let keptEdits = false;
   const markedIds = new Set((marks ?? []).map((m) => m.split('|')[0]));
+  /** C3-26: how many rows of each exercise were copied last time. */
+  const markedCount = new Map<string, number>();
+  for (const m of marks ?? []) {
+    const id = m.split('|')[0];
+    markedCount.set(id, (markedCount.get(id) ?? 0) + 1);
+  }
+  /** Hevy's rows of each exercise seen so far (its 1st, 2nd … Bench). */
+  const seenInNext = new Map<string, number>();
   // Each Hevy row: the current row it is (by exercise), and what to write for it.
   const forCurrent = new Map<number, MergedRow>();
   const hevyOrder: { row: MergedRow; current: number | null }[] = [];
   for (const x of next) {
+    const nth = seenInNext.get(x.exerciseId) ?? 0;
+    seenInNext.set(x.exerciseId, nth + 1);
     const i = current.findIndex((c, k) => !used.has(k) && c.exerciseId === x.exerciseId);
     if (i < 0) {
-      // Copied before and deleted by the member since: it stays deleted.
-      if (marks && markedIds.has(x.exerciseId) && !current.some((c) => c.exerciseId === x.exerciseId)) {
+      // Copied before and deleted by the member since: it stays deleted. 16 Oct 2026 audit
+      // (C3-26): counted per copy — a routine with Bench twice whose second Bench he deleted
+      // keeps one (the check was "is any Bench left?").
+      if (marks && markedIds.has(x.exerciseId) && nth < (markedCount.get(x.exerciseId) ?? 0)) {
         keptEdits = true;
         continue;
       }
@@ -286,24 +309,39 @@ export async function saveImportedFolder(
             [folderId],
           )
         : [];
+      // 16 Oct 2026 audit (C3-25): a routine matches by the name it was COPIED as too, so one
+      // the member renamed is still the same routine.
+      const copiedName = (id: string): string => marks[`${NAME_MARK}${id}`]?.[0] ?? '';
+      const nk = (n: string): string => n.replace(/\s+/g, ' ').trim().toLowerCase();
+      const matchOld = old.map((o) => ({ ...o, name: copiedName(o.id) || o.name }));
       // Each routine copied again keeps its id (by name, then by place — never by place when
       // only adding), so its workouts and "Today" stay with it.
       const keep = opts.addOnly
-        ? routines.map((r) => old.find((o) => o.name.replace(/\s+/g, ' ').trim().toLowerCase() === r.name.replace(/\s+/g, ' ').trim().toLowerCase())?.id ?? null)
-        : keptRoutineIds(old, routines);
+        ? routines.map((r) => (matchOld.find((o) => nk(o.name) === nk(r.name)) ?? old.find((o) => nk(o.name) === nk(r.name)))?.id ?? null)
+        : keptRoutineIds(matchOld, routines);
       const keptIds = new Set(keep.filter((id): id is string => id != null));
-      let nextOrder = opts.addOnly ? old.reduce((m, o) => Math.max(m, o.day_order), -1) + 1 : 0;
+      // C3-25: the member moved the copied routines since: their order stays, new ones go last.
+      const copiedOrder = before ? marks[`${ORDER_MARK}${before.id}`] : undefined;
+      const memberOrder = !opts.addOnly && copiedOrder != null && movedByMember(copiedOrder, old.map((o) => o.id));
+      let nextOrder = opts.addOnly || memberOrder ? old.reduce((m, o) => Math.max(m, o.day_order), -1) + 1 : 0;
+      const names = new Map<string, string>();
       const written = new Map<string, string[]>();
       for (let d = 0; d < routines.length; d++) {
         const r = routines[d];
         const dayId = keep[d] ?? uuid();
-        const order = opts.addOnly ? (keep[d] ? old.find((o) => o.id === keep[d])?.day_order ?? nextOrder++ : nextOrder++) : d;
+        const order =
+          opts.addOnly || memberOrder ? (keep[d] ? old.find((o) => o.id === keep[d])?.day_order ?? nextOrder++ : nextOrder++) : d;
+        // C3-25: a name the member changed since the copy stays his.
+        const was = keep[d] ? old.find((o) => o.id === keep[d]) : undefined;
+        const renamed = was != null && copiedName(was.id) !== '' && nk(was.name) !== nk(copiedName(was.id));
+        const finalName = renamed && was ? was.name : r.name.trim() || 'Routine';
+        names.set(dayId, r.name.trim() || 'Routine');
         let rows: MergedRow[] = r.exercises.map((x) => ({ write: x }));
         if (keep[d]) {
           const merged = mergeRows(await rowsOfDay(dayId), r.exercises, marks[dayId]);
           rows = merged.rows;
           if (merged.keptEdits) keptEdits.push(r.name);
-          await db.runAsync('UPDATE plan_days SET plan_id = ?, day_type = ?, day_order = ?, name = ? WHERE id = ?', [folderId, r.dayType, order, r.name.trim() || 'Routine', dayId]);
+          await db.runAsync('UPDATE plan_days SET plan_id = ?, day_type = ?, day_order = ?, name = ? WHERE id = ?', [folderId, r.dayType, order, finalName, dayId]);
           await db.runAsync('DELETE FROM plan_exercises WHERE plan_day_id = ?', [dayId]);
         } else {
           await db.runAsync('INSERT INTO plan_days(id, plan_id, day_type, day_order, name) VALUES(?, ?, ?, ?, ?)', [dayId, folderId, r.dayType, order, r.name.trim() || 'Routine']);
@@ -330,8 +368,12 @@ export async function saveImportedFolder(
           }
         }
       }
+      const finalOrder = await db.getAllAsync<{ id: string }>('SELECT id FROM plan_days WHERE plan_id = ? ORDER BY day_order ASC, rowid ASC', [folderId]);
       await setMarksIn((m) => {
         for (const [dayId, prints] of written) m[dayId] = prints;
+        // C3-25: the name each routine was copied as, and the copied order (Hevy's).
+        for (const [dayId, n] of names) m[`${NAME_MARK}${dayId}`] = [n];
+        if (!memberOrder) m[`${ORDER_MARK}${folderId}`] = finalOrder.map((r) => r.id);
       });
     }),
   );
