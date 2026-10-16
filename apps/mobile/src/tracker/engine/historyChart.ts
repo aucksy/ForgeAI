@@ -259,6 +259,8 @@ export function chartPeriodText(b: ChartBar, today: string): string {
   // A month always says its year: on Year and All time the bars run across years, and a bare
   // "Oct" under the big number could be any October (12 Oct 2026 design pass).
   // C2-1: the first bar of "Last 12 months" starts mid-month — it says so ("2–31 Oct 2025").
+  // Wave-1 review (item 3): a bar of ONE day names it once ("31 Oct 2025", never "31–31 Oct 2025").
+  if (b.start === b.end) return `${day(b.start)} ${mon(b.start)}${b.kind === 'month' ? ` ${b.start.slice(0, 4)}` : year}`;
   if (b.kind === 'month') return day(b.start) === 1 ? `${mon(b.start)} ${b.start.slice(0, 4)}` : `${day(b.start)}–${day(b.end)} ${mon(b.start)} ${b.start.slice(0, 4)}`;
   const same = b.start.slice(0, 7) === b.end.slice(0, 7);
   return same ? `${day(b.start)}–${day(b.end)} ${mon(b.end)}${year}` : `${day(b.start)} ${mon(b.start)}–${day(b.end)} ${mon(b.end)}${year}`;
