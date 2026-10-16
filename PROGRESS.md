@@ -2224,6 +2224,38 @@
     the 3 failures (memberWords, unitsCoach, coachNote) read another helper's uncommitted words.ts
     work. typecheck 0; silent-catch 302 and promise 0 at baseline.
 
+- 2026-10-16: **End-to-end audit C5 (notifications, watch) fixed: 13 of 15, plus C1-10** (bd05f96
+  phone, d90d16f watch; ships with the next tag — the WATCH app must be updated too). Statuses:
+  Audit/e2e-v2/C5-notifications-watch.md. Cloud build wear-build run 38879158104 green (:app debug,
+  :wear release, watch unit tests; phone permissions = the approved 38, unchanged).
+  - C5-1: "Rest is over" carries the live card's "Complete set" (WorkoutCard.completeAction). The
+    11 Oct removal of "Done" from this alert (run 38081757903) is the device risk: if Android
+    removes it early, its delete intent brings the live card back.
+  - C5-3: countdown on new DEFAULT channel `rest-card-live` (silent), bridge tag `rest-card`; LOW
+    `rest-card-v2` only while a watch WITHOUT the ForgeAI watch app is connected (WearSync.probeWatch:
+    capability `forgeai_watch_app` from wear/res/values/wear.xml, else NodeClient).
+  - C5-4 + C1-10: app on screen → new channel `rest-over-open-sound` (rest sound, notification
+    usage, no vibration); `CH_OVER_OPEN` renamed "Rest is over, sounds off". `restBell()` →
+    "native" / "hold" (DND, ring-through off) / "app"; restCard.ts `ringerMode()` answers 'silent'
+    for the first two (raw ringer: `phoneRingerMode()`), so restTimerStore's bell follows DND. Its
+    own `success()` haptic is now the one buzz with the app open. DND + ring-through + app open now
+    uses the alarm channel (heads-up).
+  - C5-2 + C5-6: watch app shows its own Done / +15 s / Skip (countdown) and "Complete set" (its
+    "Rest is over" and workout screen), sent as Wear messages `/forge/act/{done,add,skip}` →
+    phone `WearActionService` → the same RestActionReceiver broadcasts. /forge/workout gains
+    text + done, /forge/rest gains done. Bridging excludes "rest-over" and "rest-card" ALWAYS.
+  - C5-5 `RestBootReceiver` (BOOT_COMPLETED, MY_PACKAGE_REPLACED → RestCard.recover); C5-7
+    ring-through re-sent mid-rest, Data Layer pause 5 min; C5-8 same-start re-post keeps
+    allDone; C5-9 watch Finish clears its "Rest is over"; C5-10 live card delete intent re-posts;
+    C5-11 OfflineTick refuses a card over 1 h old; C5-14 every usable channel checked; C5-15 rest
+    card delete intent → live card back (`cardGone`).
+  - Open: C5-12 (live card re-posted after "Rest is over" — lessened, needs a one-notification
+    redesign); skipped C5-13 (Health Connect, outside this packet's files).
+  - **Tests:** auditC5RestBell (6) + 3 source-text tests updated; watch RestTextTest +1; full
+    suite 2,800 pass; typecheck 0 apart from another helper's untracked test/_audit_probes;
+    silent-catch native-kt 60 → 57. All phone/watch behaviour is [device]: checklist at the end of
+    the C5 file.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
