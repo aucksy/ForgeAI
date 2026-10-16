@@ -40,7 +40,7 @@ function dates(n: number): string[] {
 function run(
   exercise: Exercise,
   history: ProgSession[],
-  opts: { min?: number; max?: number; sets?: number; jump?: WeightJump; ladder?: number[] } = {},
+  opts: { min?: number; max?: number; sets?: number; jump?: WeightJump; ladder?: number[]; gym?: { barKg: number; platesKg: number[] } } = {},
 ) {
   return computeProgressionTarget({
     exercise,
@@ -48,6 +48,7 @@ function run(
     history,
     todayISO: TODAY,
     jump: opts.jump,
+    ...(opts.gym ? { gym: opts.gym } : {}),
     ...(opts.ladder ? { ladder: opts.ladder } : {}),
   });
 }
@@ -137,14 +138,19 @@ describe('C3-6: after a unit switch the Up weight is one the plates can load', (
   });
 });
 
-describe('C3-7: "Weight jumps" works past the top of his ladder', () => {
-  it('bench 45 → 50 → 55 → 60, now 60 x 12: Small 62.5, Standard 62.5, Large 65', () => {
-    const d = dates(4);
-    const h = [three(60, 12, d[0]), three(55, 12, d[1]), three(50, 12, d[2]), three(45, 12, d[3])];
-    expect(run(ex({ name: 'Bench Press' }), h, { jump: 'small' }).targetWeightKg).toBe(62.5);
-    expect(run(ex({ name: 'Bench Press' }), h, { jump: 'standard' }).targetWeightKg).toBe(62.5);
-    expect(run(ex({ name: 'Bench Press' }), h, { jump: 'large' }).targetWeightKg).toBe(65);
-    expect(targetLine(run(ex({ name: 'Bench Press' }), h, { jump: 'small' }))).toBe('62.5 kg · aim for 8');
+describe('C3-7: "Weight jumps" works past the top of his ladder — with a custom Plates and bars setup', () => {
+  const d = dates(4);
+  const h = [three(60, 12, d[0]), three(55, 12, d[1]), three(50, 12, d[2]), three(45, 12, d[3])];
+  // A Plates and bars setup the member changed (passed only then): its smallest pair is 2.5 kg.
+  const gym = { barKg: 20, platesKg: [25, 20, 15, 10, 5, 2.5, 1.25] };
+  it('custom setup: Small 62.5, Standard 62.5, Large 65', () => {
+    expect(run(ex({ name: 'Bench Press' }), h, { jump: 'small', gym }).targetWeightKg).toBe(62.5);
+    expect(run(ex({ name: 'Bench Press' }), h, { jump: 'standard', gym }).targetWeightKg).toBe(62.5);
+    expect(run(ex({ name: 'Bench Press' }), h, { jump: 'large', gym }).targetWeightKg).toBe(65);
+    expect(targetLine(run(ex({ name: 'Bench Press' }), h, { jump: 'small', gym }))).toBe('62.5 kg · aim for 8');
+  });
+  it('no setup (owner decision, review of 8b7c0c9): his own learned 5 kg step — 65 on every setting', () => {
+    for (const jump of ['small', 'standard', 'large'] as const) expect(run(ex({ name: 'Bench Press' }), h, { jump }).targetWeightKg).toBe(65);
   });
 });
 

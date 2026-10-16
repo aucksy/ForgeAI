@@ -37,11 +37,11 @@ const run = (exercise: Exercise, history: ProgSession[], ladder?: number[]) =>
 afterEach(() => setDisplayUnits('metric'));
 
 describe('TG-01 the ladder: weights the member has actually used', () => {
-  it('a bench only ever loaded in 5 kg jumps: past his top the Weight jumps share decides (Standard 50 → 52.5, Large 55)', () => {
-    // 16 Oct 2026 audit (C3-7): past the top of his ladder a bar steps by the smallest plate pair,
-    // so the owner's "Weight jumps" (about 2.5 / 5 / 10%) chooses. Was 55 on every setting.
+  it('a bench only ever loaded in 5 kg jumps moves 50 → 55, never 52.5', () => {
+    // Owner decision (review of 8b7c0c9), restored after the C3-7 wave-2 review: the gym's plates
+    // count only when Plates and bars was changed from the default; otherwise his own step.
     const t = run(ex(), [sess('2026-10-03', 50, [12, 12, 12])], [40, 45, 50]);
-    expect(t.targetWeightKg).toBe(52.5);
+    expect(t.targetWeightKg).toBe(55);
   });
 
   it('a 7 kg cable stack (12/19/26/33/40) goes 40 → 47, never 40.5 or 42.5', () => {

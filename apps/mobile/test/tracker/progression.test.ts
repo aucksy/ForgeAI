@@ -409,9 +409,9 @@ describe('review fixes', () => {
     const ramp = (d: string) => sess(d, [[60, 12], [70, 12], [80, 12]]);
     const t = run(ex(), range(8, 12), [ramp('2026-10-03'), ramp('2026-09-30'), ramp('2026-09-27'), ramp('2026-09-24')]);
     expect(t.rule).toBe('R2');
-    // 16 Oct 2026 audit (C3-7): past the top of his ladder a bar steps by the smallest plate
-    // pair and the Weight jumps share (Standard, about 5%) decides: 80 → 82.5 (was 85).
-    expect(t.targetWeightKg).toBe(82.5);
+    // TG-01: every weight he used (60, 70, 80) is a multiple of 5, so his bar moves in 5 kg
+    // (owner decision: the gym's plates only with a custom Plates and bars setup).
+    expect(t.targetWeightKg).toBe(85);
     const top = run(ex(), range(8, 12), [sess('2026-10-03', [[100, 6], [90, 8], [85, 10]])]);
     expect(top.reason).toContain('at your heaviest weight');
   });
@@ -453,9 +453,9 @@ describe('review fixes', () => {
       sess('2026-09-24', [[80, 8], [80, 8], [80, 8]]),
     ];
     // 16 Oct 2026 audit (C3-1, owner's rule): never more than one size step from his real
-    // recent working weight — 60 is +20% from 50, so the walk goes one plate pair at a time
+    // recent working weight — 60 is +20% from 50, so the walk goes one of his own 5 kg steps
     // (was 60). Never a learned "+10 kg" past it.
-    expect(run(ex(), range(8, 12), h).targetWeightKg).toBe(52.5);
+    expect(run(ex(), range(8, 12), h).targetWeightKg).toBe(55);
   });
 
   it('L2: a cut is the nearest whole steps to 10%, not more', () => {

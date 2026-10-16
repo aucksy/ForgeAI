@@ -108,8 +108,8 @@ export interface Ladder {
   step: number | null;
   /**
    * 16 Oct 2026 audit (C3-7 / C3-1): the step Up walks with past the top of his ladder, or across a
-   * gap to a far-away rung. On a bar the smaller of `step` and the smallest plate pair (so "Weight
-   * jumps" can pick 62.5 kg after 60 on a 5 kg ladder); elsewhere `step`.
+   * gap to a far-away rung. On a bar with a custom Plates and bars setup the smaller of `step` and
+   * the gym's smallest pair (so "Weight jumps" can pick 62.5 kg after 60); otherwise `step`.
    */
   fine: number | null;
   /**
@@ -192,7 +192,9 @@ export function buildLadder(
           })();
     rungs = [...new Set([...rungs, ...grid])].sort((a, b) => a - b);
   }
-  const fine = kind === 'plates' && step != null ? Math.min(step, smallest) : step;
+  // Wave-2 review: the gym's smallest plates count only with a custom Plates and bars setup (owner
+  // decision, review of 8b7c0c9); otherwise past the top he keeps his own learned step.
+  const fine = kind === 'plates' && step != null && plates ? Math.min(step, smallest) : step;
   return { kind, units: u, own, rungs, step, fine, gym: plates };
 }
 
