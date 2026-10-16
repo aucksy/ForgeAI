@@ -28,22 +28,23 @@ on:
         type: choice
         options: ["34", "35", "36"]
       profile:
-        description: "default = the emulator as it boots (411 dp, font 1.0, UTC). owner = his phone for every part (360 dp, font 1.3, Asia/Kolkata). Only default can open the release gate."
+        description: "default = the emulator as it boots (411 dp, font 1.0, UTC). owner = his phone for every part (360 dp, font 1.3, Asia/Kolkata). A release needs a whole API 34 run on BOTH profiles."
         required: false
         default: "default"
         type: choice
         options: ["default", "owner"]
   workflow_call:
 
-# Audit v2 (16 Oct 2026): ONLY a whole run (no `only`) on API 34 with the default profile can
-# open the release gate - that is the phone every release so far was proven on. Every other run
-# (some parts only, another Android version, the owner's-phone profile) is named "(partial ...)",
-# which scripts/ci/phone_gate.py ignores; its failures are findings for the audit, and it becomes
-# a gate only once it is green on main. `extra` parts only ADD checks, so a whole default run with
-# extras can still open the gate (it fails if any extra fails).
+# Audit v2 (16 Oct 2026): a release needs a WHOLE run (no `only`) on API 34 on BOTH phones
+# (scripts/ci/phone_gate.py): profile default ("Device QA (Android emulator ...)", the phone every
+# release so far was proven on) AND profile owner ("Device QA (owner phone, api 34 ...)", his
+# Pixel: 360 dp, font 1.3, Asia/Kolkata). Every other run (some parts only, another Android
+# version) is named "(partial ...)", which the gate ignores. `extra` parts only ADD checks, so a
+# whole run with extras still counts (it fails if any extra fails).
 run-name: >-
-  ${{ ((inputs.only != '' && inputs.only != null) || (inputs.api != '' && inputs.api != null && inputs.api != '34') || (inputs.profile != '' && inputs.profile != null && inputs.profile != 'default'))
+  ${{ ((inputs.only != '' && inputs.only != null) || (inputs.api != '' && inputs.api != null && inputs.api != '34'))
   && format('Device QA (partial {0}, api {1}, profile {2}{3})', (inputs.only != '' && inputs.only != null) && inputs.only || 'whole run', inputs.api || '34', inputs.profile || 'default', (inputs.extra != '' && inputs.extra != null) && format(', + {0}', inputs.extra) || '')
+  || (inputs.profile == 'owner' && format('Device QA (owner phone, api 34{0})', (inputs.extra != '' && inputs.extra != null) && format(', + {0}', inputs.extra) || ''))
   || ((inputs.extra != '' && inputs.extra != null) && format('Device QA (Android emulator, + {0})', inputs.extra) || 'Device QA (Android emulator)') }}
 
 jobs:

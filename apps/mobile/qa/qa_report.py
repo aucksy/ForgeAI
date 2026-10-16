@@ -31,12 +31,14 @@ ANR = re.compile(r"ANR in " + re.escape(PKG) + r"\b")
 JS_ERROR = re.compile(r"\s[EF][/ ]\s*(ReactNativeJS|ReactNative|unknown:ReactNative|ForgeQA)\s*[(:]")
 # Audit v2 (16 Oct 2026, part MK, run 38887471485): two lines React Native's NATIVE side logs at
 # error level about its own bookkeeping, which Monkey's synthetic input sets off (a MOVE/UP sent to
-# a view that never got the DOWN; a frame callback removed twice). No JavaScript ran, nothing
+# a view that never got the DOWN, or a CANCEL with no DOWN, run 38892561249; a frame callback
+# removed twice). No JavaScript ran, nothing
 # failed for the member, and a real finger always starts with DOWN. Listed as warnings, not
 # failures. Only these exact messages, only under React Native's native tags.
 RN_NATIVE_NOISE = re.compile(
     r"\s[EF][/ ]\s*(ReactNative|unknown:ReactNative)\s*[(:].*("
     r"Unexpected state: received touch event but didn't get starting ACTION_DOWN for this gesture before"
+    r"|Received an ACTION_CANCEL touch event for which we have no corresponding ACTION_DOWN"
     r"|Tried to remove non-existent frame callback)"
 )
 JS_ANY = re.compile(r"\s[VDIWEF][/ ]\s*ReactNativeJS\s*[(:]")

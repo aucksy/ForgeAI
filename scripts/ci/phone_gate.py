@@ -3,9 +3,17 @@
 
 Called by .github/workflows/release-apk.yml before the Gradle build (audit QA-03).
 
-Passes when ONE of these is true:
-  1. A qa-device.yml run with conclusion "success" exists for the tagged commit itself.
-  2. A qa-device.yml run passed on a recent first-parent ANCESTOR (up to MAX_WALK commits back),
+Audit v2 (16 Oct 2026): the phone test must have passed on every phone in PHONES, each a WHOLE
+run on API 34 (qa-device.yml run names, see run_kind):
+  - "default": the emulator as it boots (411 dp, font 1.0, UTC), the phone every release was
+    proven on until now ("Device QA (Android emulator ...)");
+  - "owner": the owner's own phone (360 dp, font 1.3, Asia/Kolkata), where the old flows used to
+    miss what sat below the screen's edge ("Device QA (owner phone, api 34 ...)").
+A partial run ("(partial ...)": some parts only, or another Android version) never counts.
+
+Each phone passes when ONE of these is true:
+  1. A qa-device.yml run of that kind with conclusion "success" exists for the tagged commit itself.
+  2. One passed on a recent first-parent ANCESTOR (up to MAX_WALK commits back),
      AND the ancestor -> tag diff touches ONLY things that never change the installed app:
        - PROGRESS.md, CONTEXT.md, anything under docs/
        - unit tests (apps/mobile/test/**) and the CI scripts (scripts/ci/**)
@@ -91,12 +99,32 @@ def tag_commit(tag, fallback):
     return obj["sha"]
 
 
-def green_runs(sha):
-    data = api(f"/repos/{REPO}/actions/workflows/{QA_WORKFLOW}/runs?head_sha={sha}&status=success&per_page=20")
-    # A PARTIAL run (qa-device.yml dispatched with `only`, e.g. only part W while building a flow)
-    # ran a few parts, not the whole phone test: it never opens the gate. Its run name says so.
+# The two phones a release must pass on (audit v2, 16 Oct 2026), in the order they are reported.
+PHONES = ("default",)  # "owner" joins once a whole owner-profile run is green on main
+PHONE_WORDS = {
+    "default": "the default emulator (profile default)",
+    "owner": "the owner's phone (profile owner: 360 dp, font 1.3)",
+}
+
+
+def run_kind(title):
+    """PURE. Which phone a qa-device.yml run proved, from its run name; None = it proves nothing.
+    A PARTIAL run (`only`, or an API other than 34) ran a few parts or another Android, so it never
+    opens the gate. A whole owner-profile run on API 34 is named "Device QA (owner phone, ...)";
+    every other whole run is the default emulator ("Device QA (Android emulator ...)", or the
+    caller's name when a release workflow calls it)."""
+    t = title or ""
+    if "(partial" in t:
+        return None
+    if "(owner phone" in t:
+        return "owner"
+    return "default"
+
+
+def green_runs(sha, kind):
+    data = api(f"/repos/{REPO}/actions/workflows/{QA_WORKFLOW}/runs?head_sha={sha}&status=success&per_page=50")
     return [r for r in data.get("workflow_runs", []) if r.get("conclusion") == "success" and r.get("head_sha") == sha
-            and "(partial" not in (r.get("display_title") or "")]
+            and run_kind(r.get("display_title")) == kind]
 
 
 def only_paperwork(base, head):
@@ -194,48 +222,60 @@ def main():
         sha = tag_commit(ref_name, sha)
     say(f"commit under release: {sha[:12]} ({ref_type} {ref_name})")
 
-    runs = green_runs(sha)
-    if runs:
-        r = runs[0]
-        say(f"phone test passed on this exact commit: run {r['id']} ({r['html_url']})")
+    covered = {}
+    for kind in PHONES:
+        found = cover(sha, kind)
+        if found:
+            covered[kind] = found
+    missing = [k for k in PHONES if k not in covered]
+    if not missing:
         if not ci_ok(sha):
-            summary(False, "**Blocked.** The phone test passed, but the build check (typecheck + unit tests) did not pass on this commit.")
+            summary(False, "**Blocked.** The phone test passed on both phones, but the build check (typecheck + unit tests) did not pass on this commit.")
             return 1
-        summary(True, f"Phone test **passed** on this commit: [run {r['id']}]({r['html_url']}); build check passed too.")
+        summary(True, "Phone test **passed** on both phones: " + "; ".join(
+            f"{PHONE_WORDS[k]}: [run {r['id']}]({r['html_url']}) on `{c[:12]}`" for k, (c, r) in covered.items())
+            + ". Build check passed too.")
         return 0
-    say("no passing phone test on this exact commit")
 
-    # Walk back along first parents to the nearest commit the phone test passed on.
-    cur = sha
-    for step in range(1, MAX_WALK + 1):
-        commit = api(f"/repos/{REPO}/commits/{cur}")
-        parents = [p["sha"] for p in commit.get("parents", [])]
-        if len(parents) != 1:
-            say(f"{cur[:12]} has {len(parents)} parents; the walk stops here")
-            break
-        cur = parents[0]
-        prun = green_runs(cur)
-        if not prun:
-            say(f"no passing phone test on {cur[:12]} ({step} back)")
-            continue
-        r = prun[0]
-        say(f"phone test passed on {cur[:12]} ({step} back): run {r['id']} ({r['html_url']}); checking the diff")
-        if only_paperwork(cur, sha):
-            if not ci_ok(sha):
-                summary(False, "**Blocked.** The phone test passed, but the build check (typecheck + unit tests) did not pass on this commit.")
-                return 1
-            summary(True, f"Phone test **passed** on `{cur[:12]}` ([run {r['id']}]({r['html_url']})); everything after it changes only notes, unit tests, CI scripts or the version.")
-            return 0
-        say("the commits after it change the app itself, so that pass does not cover this release")
-        break
-
-    msg = (f"Run the phone test on this commit first: Actions > '{QA_WORKFLOW}' > Run workflow on "
-           f"{sha[:12]} (or on the commit before a version-bump-only commit). Then re-run this release.")
+    need = " and ".join(PHONE_WORDS[k] for k in missing)
+    msg = (f"Run the phone test on this commit first, a whole run on API 34 for {need}: Actions > "
+           f"'{QA_WORKFLOW}' > Run workflow on {sha[:12]} (or on the commit before a version-bump-only "
+           f"commit), `only` empty, `profile` = " + " / ".join(missing) + ". Then re-run this release.")
     print("::error::" + msg, flush=True)
     lines.append(msg)
     summary(False, "**Blocked.** " + msg)
     return 1
 
+
+def cover(sha, kind):
+    """(commit, run) of a passing whole run of this kind that covers `sha`, or None: on `sha`
+    itself, or on a recent first-parent ancestor with only paperwork after it."""
+    runs = green_runs(sha, kind)
+    if runs:
+        r = runs[0]
+        say(f"{kind}: phone test passed on this exact commit: run {r['id']} ({r['html_url']})")
+        return sha, r
+    say(f"{kind}: no passing phone test on this exact commit")
+    cur = sha
+    for step in range(1, MAX_WALK + 1):
+        commit = api(f"/repos/{REPO}/commits/{cur}")
+        parents = [p["sha"] for p in commit.get("parents", [])]
+        if len(parents) != 1:
+            say(f"{kind}: {cur[:12]} has {len(parents)} parents; the walk stops here")
+            return None
+        cur = parents[0]
+        prun = green_runs(cur, kind)
+        if not prun:
+            say(f"{kind}: no passing phone test on {cur[:12]} ({step} back)")
+            continue
+        r = prun[0]
+        say(f"{kind}: phone test passed on {cur[:12]} ({step} back): run {r['id']} ({r['html_url']}); checking the diff")
+        if only_paperwork(cur, sha):
+            say(f"{kind}: everything after {cur[:12]} changes only notes, unit tests, CI scripts or the version")
+            return cur, r
+        say(f"{kind}: the commits after it change the app itself, so that pass does not cover this release")
+        return None
+    return None
 
 if __name__ == "__main__":
     sys.exit(main())

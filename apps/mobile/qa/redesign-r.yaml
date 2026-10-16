@@ -155,6 +155,8 @@ appId: com.forgeai.app
     env:
       FIND: "Range: Last 12 weeks. Change"
 # The chart's chips: Duration · Kg lifted (Lb lifted after part I's units) · Reps.
+# Owner profile (run 38892561249): the caption over the bars and the range button sit above
+# the screen after a chip tap, so each is looked for UP (not centred: the chips stay in view).
 - scrollUntilVisible:
     element: "^Duration$"
     centerElement: true
@@ -163,23 +165,26 @@ appId: com.forgeai.app
 - tapOn:
     text: "^Duration$"
     index: 0
-- extendedWaitUntil:
-    visible: "Duration, last 12 weeks.*"
-    timeout: 10000
+- scrollUntilVisible:
+    element: "Duration, last 12 weeks.*"
+    direction: UP
+    timeout: 15000
 - takeScreenshot: r-07-chart-duration
 - tapOn:
     text: "^Reps$"
     index: 0
-- extendedWaitUntil:
-    visible: "Reps, last 12 weeks.*"
-    timeout: 10000
+- scrollUntilVisible:
+    element: "Reps, last 12 weeks.*"
+    direction: UP
+    timeout: 15000
 - takeScreenshot: r-07b-chart-reps
 - tapOn:
     text: '^(Kg|Lb) lifted$'
     index: 0
-- extendedWaitUntil:
-    visible: '(Kg|Lb) lifted, last 12 weeks.*'
-    timeout: 10000
+- scrollUntilVisible:
+    element: '(Kg|Lb) lifted, last 12 weeks.*'
+    direction: UP
+    timeout: 15000
 - takeScreenshot: r-07c-chart-lifted
 - runFlow:
     file: sub-find.yaml
@@ -192,9 +197,10 @@ appId: com.forgeai.app
 - takeScreenshot: r-08-chart-bar-tapped
 # The way back to the range's total (the big number is the 12-week total until a bar is tapped).
 - tapOn: "Show 12-week total"
-- extendedWaitUntil:
-    visible: "(Kg|Lb) lifted in the last 12 weeks · .*"
-    timeout: 10000
+- scrollUntilVisible:
+    element: "(Kg|Lb) lifted in the last 12 weeks · .*"
+    direction: UP
+    timeout: 15000
 # The ranges: Last 12 weeks · Last 12 months · All time (the "Show" sheet).
 # Owner profile: the caption and range button sit above the bars; bring it back, centred.
 - scrollUntilVisible:
@@ -209,8 +215,9 @@ appId: com.forgeai.app
 - assertVisible: "^All time$"
 - takeScreenshot: r-08b-chart-range-sheet
 - tapOn: "^Last 12 months$"
-- extendedWaitUntil:
-    visible: "Range: Last 12 months. Change"
+- scrollUntilVisible:
+    element: "Range: Last 12 months. Change"
+    direction: UP
     timeout: 15000
 - takeScreenshot: r-08c-chart-year
 - scrollUntilVisible:
@@ -223,12 +230,14 @@ appId: com.forgeai.app
     visible: "^Show$"
     timeout: 10000
 - tapOn: "^All time$"
-- extendedWaitUntil:
-    visible: "Range: All time. Change"
+- scrollUntilVisible:
+    element: "Range: All time. Change"
+    direction: UP
     timeout: 15000
-- extendedWaitUntil:
-    visible: "(Kg|Lb) lifted since .* · .*"
-    timeout: 10000
+- scrollUntilVisible:
+    element: "(Kg|Lb) lifted since .* · .*"
+    direction: UP
+    timeout: 15000
 - takeScreenshot: r-08d-chart-all-time
 # Put the range back (the chart keeps the last choice).
 - scrollUntilVisible:
@@ -244,8 +253,9 @@ appId: com.forgeai.app
     text: "^Last 12 weeks$"
     below:
       text: "^Show$"
-- extendedWaitUntil:
-    visible: "Range: Last 12 weeks. Change"
+- scrollUntilVisible:
+    element: "Range: Last 12 weeks. Change"
+    direction: UP
     timeout: 15000
 # ---------------------------------------------------------------- the 4 tiles
 - runFlow:
