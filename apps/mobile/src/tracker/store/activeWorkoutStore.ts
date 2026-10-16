@@ -54,7 +54,7 @@ import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { saveSessionEditsUnqueued } from '@/tracker/db/sessionEdit';
 import { easySets } from '@/tracker/plans/easyWeek';
-import { typesOf, type PlanSetType } from '@/tracker/plans/routineSets';
+import { typesOf, type PlanSet, type PlanSetType } from '@/tracker/plans/routineSets';
 import type { RoutineExerciseExtras } from '@/tracker/db/folderRepo';
 import { getPlanNow, isEasyForRoutine } from '@/tracker/services/planState';
 import { addSetsWithMeta, getSessionSetMeta } from '@/tracker/db/trackerSets';
@@ -137,6 +137,11 @@ export interface DraftSet {
    * The editor can't show it, so Save writes it back exactly as it was — never drops it.
    */
   keep?: { weightKg: number; reps: number; durationSec?: number | null; distanceM?: number | null };
+  /**
+   * 16 Oct 2026 audit (C3-20): this set's own numbers in the routine ("80 kg × 8" for a back-off),
+   * when the routine gives them. The row hints them before the Target; never written until ticked.
+   */
+  plan?: { weightKg?: number; reps?: number };
   /**
    * 16 Oct 2026 audit (C1-4): editing a saved workout — this row is one of the workout's saved
    * sets (it opens ticked). Unticked by the member, it is left out of the save. Rows added while
@@ -1032,13 +1037,16 @@ async function buildDraftExercise(
     rowTypes = [...lastTypes, ...Array.from({ length: extra }, () => 'normal' as const)];
   }
   if (!rowTypes.some((t) => t !== 'warmup')) rowTypes.push('normal');
-  const sets: DraftSet[] = rowTypes.map((t) => ({
+  // C3-20: each row keeps its routine set's own numbers (the rows ARE the routine's sets here).
+  const plans = planned && !opts.exactSets && !(opts.types && opts.types.length > 0) ? planned.map(planOfSet) : [];
+  const sets: DraftSet[] = rowTypes.map((t, i) => ({
     key: uuid(),
     weightKg: null,
     reps: null,
     isWarmup: t === 'warmup',
     done: false,
     ...(t === 'drop' ? { setType: 'drop' as const } : t === 'failure' ? { setType: 'failure' as const } : {}),
+    ...(plans[i] ? { plan: plans[i] } : {}),
   }));
   // The routine's own rest and note win over the exercise's (RP-19).
   const cardRest = routine?.restSec != null ? routine.restSec : restSec;
@@ -1213,6 +1221,15 @@ export function prevForSet(ex: DraftExercise, setKey: string): PrevSet | null {
   return null;
 }
 
+/** C3-20: a routine set's own weight and reps, for its row's hint (warm-ups keep their own rule). PURE. */
+export function planOfSet(p: PlanSet): { weightKg?: number; reps?: number } | undefined {
+  if (p.type === 'warmup') return undefined;
+  const out: { weightKg?: number; reps?: number } = {};
+  if (p.weightKg != null && Number.isFinite(p.weightKg) && p.weightKg > 0) out.weightKg = p.weightKg;
+  if (p.reps != null && Number.isFinite(p.reps) && p.reps > 0) out.reps = p.reps;
+  return out.weightKg != null || out.reps != null ? out : undefined;
+}
+
 /** A number worth hinting: a weight of any size (0 = bodyweight), reps / time / distance above 0. */
 const positive = (v: number | null | undefined): number | null => (v != null && v > 0 ? v : null);
 const present = (v: number | null | undefined): number | null => (v != null && Number.isFinite(v) ? v : null);
@@ -1262,6 +1279,10 @@ export function fillForSet(
     const p = prevForSet(ex, s.key);
     return p && p.weightKg > 0 && p.reps > 0 && Math.abs(p.weightKg - fromKg) >= fromKg * OFF_MAIN_SHARE - 1e-9 ? p : null;
   };
+  // C3-20: the routine's own numbers for this set come first (a planned 80 kg back-off is never
+  // hinted the Target's 100 kg, nor a weight typed above).
+  const plan = !row.isWarmup && (lt === 'weight_reps' || lt === 'reps') ? row.plan : undefined;
+  if (plan && plan.reps != null && (plan.weightKg != null || lt === 'reps')) return { weightKg: lt === 'reps' ? 0 : (plan.weightKg as number), reps: plan.reps };
   const mineOff = offMain(row);
   if (mineOff) return { weightKg: mineOff.weightKg, reps: mineOff.reps };
   // 13 Oct 2026: a warm-up row hints last time's same warm-up (its PREVIOUS) and nothing else —
@@ -1344,6 +1365,9 @@ export function fillForSet(
   } else {
     reps = pick((s) => positive(s.reps), (p) => positive(p?.reps));
   }
+  // C3-20: a plan giving only one of the two numbers sets that one.
+  if (plan?.reps != null) reps = plan.reps;
+  if (plan?.weightKg != null && lt === 'weight_reps') weightKg = plan.weightKg;
   if (reps == null) return null;
   if (lt === 'reps') return { weightKg: 0, reps };
   if (weightKg == null) return lt === 'weight_reps' ? null : { weightKg: 0, reps };

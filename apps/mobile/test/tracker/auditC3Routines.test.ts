@@ -118,3 +118,23 @@ describe('C3-24 / C3-30: the folder picker', () => {
     expect(choices[0].label).toBe('Other routines');
   });
 });
+
+describe('C3-20: a routine\'s own per-set weights are hinted in the workout', () => {
+  it('planned 100 x 5, 100 x 5, 80 x 8, 80 x 8: rows 3-4 hint 80 x 8, never the Target\'s 100', () => {
+    const plan = (weightKg: number, reps: number) => ({ plan: { weightKg, reps } }) as Partial<DraftSet>;
+    const c = card([row('a', plan(100, 5)), row('b', plan(100, 5)), row('c3', plan(80, 8)), row('d', plan(80, 8))], [prev(100, 5), prev(100, 5)]);
+    const target = { weightKg: 102.5, reps: 5 };
+    expect(wr(fillForSet(c, 'c3', target))).toEqual([80, 8]);
+    expect(wr(fillForSet(c, 'd', target))).toEqual([80, 8]);
+    // A typed weight in the row above does not override the plan of a back-off row.
+    const typed = card([row('a', { weightKg: 100, reps: 5, ...plan(100, 5) }), row('c3', plan(80, 8))], [prev(100, 5)]);
+    expect(wr(fillForSet(typed, 'c3', target))).toEqual([80, 8]);
+  });
+
+  it('the draft built from a routine carries each set\'s plan', async () => {
+    const { planOfSet } = await import('@/tracker/store/activeWorkoutStore');
+    expect(planOfSet({ type: 'normal', weightKg: 80, reps: 8 })).toEqual({ weightKg: 80, reps: 8 });
+    expect(planOfSet({ type: 'normal' })).toBeUndefined();
+    expect(planOfSet({ type: 'warmup', reps: 10 })).toBeUndefined();
+  });
+});
