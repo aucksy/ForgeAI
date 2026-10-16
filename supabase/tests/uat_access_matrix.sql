@@ -168,7 +168,7 @@ begin
     ('member', 'R (workout summaries)', 'table member_summary (RLS)', null,
      $q$select set_config('uat.out', (select count(*) from public.member_summary where member_id = {PM2})::text, true)$q$,
      $q$current_setting('uat.out')::int > 0$q$,
-     'pOwnerA=allow pMemberA=deny:none pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM'),
+     'pOwnerA=deny:PERM pMemberA=deny:none pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM'),
     ('member', 'C (own summary, own gym)', 'table member_summary (RLS)', null,
      $q$insert into public.member_summary(member_id, gym_id, display_name) values ({PMA}, {GA}, 'UAT me')$q$,
      $q$exists (select 1 from public.member_summary where member_id = {PMA} and gym_id = {GA})$q$,
@@ -486,10 +486,13 @@ begin
      $q$select set_config('uat.out', (select count(*) from public.gyms where gym_id = {GA})::text, true)$q$,
      $q$current_setting('uat.out')::int > 0$q$,
      'pMemberA=allow pOwnerA=allow pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM'),
+    -- pOwnerA=deny:PERM by accident, not design: 0001's gyms_owner_update policy would allow it, but
+    -- the gyms_brand_logo_url_ok check (0006) calls _logo_url_ok, which signed-in users may not run
+    -- (0005 revoke), so every direct update of a gyms row fails (finding F-14).
     ('gym settings', 'U (gyms row)', 'table gyms (RLS 0001)', null,
      $q$update public.gyms set name = 'UAT hacked' where gym_id = {GA}$q$,
      $q$(select name from public.gyms where gym_id = {GA}) = 'UAT hacked'$q$,
-     'pOwnerA=allow pMemberA=deny:none pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM')
+     'pOwnerA=deny:PERM pMemberA=deny:none pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM')
     ) as t(entity, action, path, pre, stmt, effect, expect)
     union all
     -- ======================================================== every table, directly (no function)
