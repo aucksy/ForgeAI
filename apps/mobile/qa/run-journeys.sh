@@ -187,8 +187,12 @@ python3 "$QA_DIR/xj_server.py" new-gym A "$GYM_A" 2>&1 | tee -a "$J_OUT/seed.log
 [ "${PIPESTATUS[0]}" -eq 0 ] && GYM_A_OK=1
 python3 "$QA_DIR/xj_server.py" new-gym B "$GYM_B" 2>&1 | tee -a "$J_OUT/seed.log" "$OUT/timeline.txt"
 [ "${PIPESTATUS[0]}" -eq 0 ] && GYM_B_OK=1
-CODE_A=$([ $GYM_A_OK = 1 ] && python3 "$QA_DIR/xj_server.py" code A)
-CODE_B=$([ $GYM_B_OK = 1 ] && python3 "$QA_DIR/xj_server.py" code B)
+# A gym code is 6 capitals or digits; anything else is never used (that gym's journeys fail).
+gym_code() { python3 "$QA_DIR/xj_server.py" code "$1" 2>/dev/null | tail -1 | grep -E '^[0-9A-Z]{6}$'; }
+CODE_A=$([ $GYM_A_OK = 1 ] && gym_code A)
+CODE_B=$([ $GYM_B_OK = 1 ] && gym_code B)
+[ -n "$CODE_A" ] || { GYM_A_OK=0; log "gym A: no usable gym code"; }
+[ -n "$CODE_B" ] || { GYM_B_OK=0; log "gym B: no usable gym code"; }
 for j in J1 J2 J3 J4; do
   [ $SEED_OK = 1 ] || blocked "$j" 0 "the phone seed failed"
   [ $GYM_A_OK = 1 ] || blocked "$j" 0 "gym A could not be made"
@@ -286,10 +290,6 @@ fi
 [ $GYM_B_OK = 1 ] && python3 "$QA_DIR/xj_server.py" sign-out B 2>&1 | tee -a "$OUT/timeline.txt"
 rm -rf "$XJ_STATE_DIR"
 adb logcat -d > "$OUT/logcat.txt" 2>/dev/null || true
-# No key in the evidence: any 48-hex-character string (the shape of every owner, session and member
-# key, _new_key in 0002) is cut from every text file before the upload.
-find "$OUT" -type f \( -name '*.txt' -o -name '*.log' -o -name '*.md' -o -name '*.xml' \) -print0 2>/dev/null \
-  | xargs -0 -r sed -i -E 's/[0-9a-f]{48}/[key removed]/g' 2>/dev/null || true
 # Every screenshot in one folder.
 mkdir -p "$J_OUT/screens"
 { find "$J_OUT" -path "$J_OUT/screens" -prune -o -name 'xj*.png' -print 2>/dev/null; find "$PWD" "$QA_DIR" -maxdepth 1 -name 'xj*.png' 2>/dev/null; } \
@@ -311,4 +311,12 @@ SECS=$(( $(date +%s) - T0 ))
 cat "$OUT/journeys-summary.md" | tee -a "$OUT/timeline.txt"
 [ -n "${GITHUB_STEP_SUMMARY:-}" ] && cat "$OUT/journeys-summary.md" >> "$GITHUB_STEP_SUMMARY"
 log "journeys finished: $([ $status = 0 ] && echo PASS || echo FAILED)"
+# No key in the evidence, as the very last thing before the upload: any 48-hex-character string
+# (the shape of every owner, session and member key, _new_key in 0002) is cut from every text file.
+find "$OUT" -type f \( -name '*.txt' -o -name '*.log' -o -name '*.md' -o -name '*.xml' -o -name '*.json' -o -name '*.html' \) -print0 2>/dev/null \
+  | xargs -0 -r sed -i -E 's/[0-9a-f]{48}/[key removed]/g' 2>/dev/null || true
+if grep -rqE --include='*.txt' --include='*.log' --include='*.md' --include='*.xml' --include='*.json' --include='*.html' '[0-9a-f]{48}' "$OUT" 2>/dev/null; then
+  status=1
+  echo "[xj] KEY CHECK FAILED: a key-shaped string is still in qa-out; the run fails"
+fi
 exit $status

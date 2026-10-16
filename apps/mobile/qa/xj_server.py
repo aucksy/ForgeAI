@@ -249,7 +249,9 @@ def main(argv):
         print(f"NEW GYM {slot}: '{g.get('name') or name}' code {g['joinCode']} (online, owner session kept in the state file only)")
         return 0
     st = load(slot)
-    mask(st.get("key"))
+    # Nothing below prints the key, so nothing below masks it either: a mask line on stdout would
+    # itself carry the key into whatever captures this output (run 38965066052 caught the join code
+    # that way, the key with it, in the summary; those sessions were already signed out).
     if cmd == "code":
         print(st["joinCode"])
         return 0
