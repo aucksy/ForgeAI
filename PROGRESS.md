@@ -1764,6 +1764,16 @@
   `.github/workflows/exercise-clips.yml` (manual; one job per recipe, publishes to the
   `exercise-clips` release). How-to: the `making-forgeai-exercise-clips` skill. Not wired into the
   app yet: the demo sheet still shows the Everkinetic drawings.
+- 2026-10-16: **v0.45.0 — member icon inside the launcher's trim; the rep range in use everywhere** (73e738a, a6f35a8).
+  Member app icon: hexagon 0.80 -> 0.62 of the adaptive layer (its points no longer touch a round
+  launcher's edge). Settings -> Rep range on Strength / Muscle / Higher reps: the routine editor
+  shows "3–6 reps, from Settings -> Workouts -> Rep range (Strength)." instead of steppers that
+  changed nothing; the AI coach's routine lines use the range in use.
+- 2026-10-16: **Admin app import: payments lists** (e539077, 68d4ece, 5deb551; deployed). One row per
+  payment: a repeated mobile WITH the same name adds its plan and payment to that member (a
+  different name is skipped: families share mobiles); "Payment date" column dates receipts; a
+  running total or falling balance adds only the new money, capped at the price; typos within 3
+  days match the same plan; a failed run says Undo first. Lesson a-piped-build-hides-its-failure.
 - 2026-10-16: **Admin app import: several sheets, old .xls, web pages and Excel 2003 XML saved as .xls** (bc7f4b6, 990e5a3; deployed).
   Every sheet is read; the import opens the sheet with the most DIFFERENT mobile numbers (fewest
   repeats breaks a tie, so Payments never beats Members) and a Sheet picker switches. Old .xls,
