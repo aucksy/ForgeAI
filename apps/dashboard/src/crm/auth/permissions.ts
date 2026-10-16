@@ -83,6 +83,15 @@ export function roleOf(session: { person?: Person | null } | null | undefined): 
   return session?.person?.role === 'staff' ? 'staff' : 'owner';
 }
 
+/**
+ * Admin audit C7-12 (16 Oct 2026): who is taking the money on this device — the signed-in person.
+ * A browser-only gym or an old owner key has no person: null (single-operator gym).
+ */
+export function takerOf(session: { person?: Person | null } | null | undefined): { id: string | null; name: string | null } {
+  const p = session?.person;
+  return p ? { id: p.staffId, name: p.name || null } : { id: null, name: null };
+}
+
 // ---------------------------------------------------------------- screen-level helpers
 
 /** Pages a role may open at all. Staff: everything except Expenses. */
@@ -129,7 +138,7 @@ export function shopTabFor(role: Role, section: string | undefined): ShopTab {
 /** One plain line: what Staff can and cannot do now. Shown on Staff & sign-in. */
 export function staffRightsWords(): string {
   return tr(
-    'Owner: everything. Staff (front desk): add members, sell plans, collect fees, check in, hand over shop orders. Staff cannot see money totals or expenses, void receipts, cancel or freeze plans, change prices, or change the gym.',
-    'Owner: sab kuch. Staff (front desk): member jodo, Plan do, Fees lo, Hazri lagao, Shop order do. Staff kul paisa ya Kharcha nahi dekh sakta, Raseed ya Plan cancel nahi kar sakta, Freeze nahi de sakta, Fees ya gym ki details nahi badal sakta.',
+    'Owner: everything. Staff (front desk): add members, sell plans (at most 10% off the plan price, joining fee as listed), collect fees, check in, hand over shop orders. Every receipt shows who took it. Staff cannot see money totals or expenses, void receipts, cancel or freeze plans, change plan prices, or change the gym.',
+    'Owner: sab kuch. Staff (front desk): member jodo, Plan do (plan ki fees par zyada se zyada 10% chhoot, admission fees list wali), Fees lo, Hazri lagao, Shop order do. Har raseed par likha hota hai kisne li. Staff kul paisa ya Kharcha nahi dekh sakta, Raseed ya Plan cancel nahi kar sakta, Freeze nahi de sakta, plan ki fees ya gym ki details nahi badal sakta.',
   );
 }

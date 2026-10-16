@@ -6,8 +6,10 @@ import { describe, expect, it } from 'vitest';
 
 import { CloudCrmData, type CrmCloudApi, type CrmRecord, type PullResult } from '../../src/crm/data/cloud';
 import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/local';
+import { staffRightsWords, takerOf } from '../../src/crm/auth/permissions';
+import { buildLedger, filterLedger, ledgerTakers } from '../../src/crm/logic/collections';
 import { checkGymDetails } from '../../src/crm/logic/gst';
-import { hasPaidJoiningFee, saleDefaults, validateSale } from '../../src/crm/logic/selling';
+import { hasPaidJoiningFee, saleDefaults, staffLowestPrice, validateSale } from '../../src/crm/logic/selling';
 import type { MemberDraft } from '../../src/crm/types';
 import { makeMembership, makePayment, makePlan, VALID_GSTIN } from './fixtures';
 
@@ -176,5 +178,54 @@ describe('C7-11 / C7-41: gym details are checked before "Saved."', () => {
 
   it('C7-41: a blank gym name is refused, never saved as "My Gym"', () => {
     expect(checkGymDetails({ name: '   ', gstin: '' })).toMatchObject({ field: 'name' });
+  });
+});
+
+describe('C7-12: every receipt says who took the money', () => {
+  const desk = { person: { staffId: 'st-1', name: 'Ramesh', phone: '+919800000001', role: 'staff' as const } };
+
+  it('the signed-in person is the taker; a browser-only gym has none', () => {
+    expect(takerOf(desk)).toEqual({ id: 'st-1', name: 'Ramesh' });
+    expect(takerOf(null)).toEqual({ id: null, name: null });
+  });
+
+  it('a fee and a sale keep who took them, and the Money list filters by them', async () => {
+    const db = new LocalCrmData({ store: memoryStore(), seed: () => emptySnapshot(0, 'Gym') });
+    const m = await db.createMember(member());
+    const plan = await db.createPlan({ name: 'Monthly', durationUnit: 'month', durationCount: 1, priceP: 150000, joiningFeeP: 0, description: null, active: true, sortOrder: 1 } as never);
+    await db.recordPayment({ memberId: m.id, membershipId: null, amountP: 50000, method: 'cash', paidOn: TODAY, reference: null, note: null, collectedBy: 'st-1', collectedByName: 'Ramesh' });
+    await db.sellMembership({ memberId: m.id, planId: plan.id, startsOn: TODAY, priceP: 150000, joiningFeeP: 0, notes: null, collectNowP: 150000, method: 'cash', reference: null, paidOn: TODAY, soldBy: 'st-2', soldByName: 'Sunita' });
+    const snap = await db.load();
+    expect(snap.payments.map((p) => [p.collectedBy, p.collectedByName])).toEqual([['st-1', 'Ramesh'], ['st-2', 'Sunita']]);
+    expect(snap.memberships[0]).toMatchObject({ soldBy: 'st-2', soldByName: 'Sunita' });
+    const rows = buildLedger(snap.payments, snap.members, snap.memberships);
+    expect(ledgerTakers(rows)).toEqual([{ id: 'st-1', name: 'Ramesh' }, { id: 'st-2', name: 'Sunita' }]);
+    const range = { from: TODAY, to: TODAY };
+    expect(filterLedger(rows, { range, method: 'all', query: '', includeVoided: false, takenBy: 'st-1' }).map((r) => r.payment.amountP)).toEqual([50000]);
+  });
+});
+
+describe('C7-13: the front desk gives at most 10% off; the owner decides bigger discounts', () => {
+  const sale = { planId: 'p1', startsOn: TODAY, priceP: 0, joiningFeeP: 0, collectNowP: 0, listPriceP: 120000, listJoiningFeeP: 50000 };
+
+  it('staff selling a ₹1,200 plan for ₹0 is refused, naming the lowest price', () => {
+    const p = validateSale({ ...sale, joiningFeeP: 50000 }, [], TODAY, 'staff');
+    expect(p?.field).toBe('priceP');
+    expect(p?.message).toContain('₹1,080');
+    expect(staffLowestPrice(120000)).toBe(108000);
+  });
+
+  it('staff may give 10% off; the owner may give it free', () => {
+    expect(validateSale({ ...sale, priceP: 108000, joiningFeeP: 50000 }, [], TODAY, 'staff')).toBeNull();
+    expect(validateSale({ ...sale, priceP: 0, joiningFeeP: 0 }, [], TODAY, 'owner')).toBeNull();
+  });
+
+  it('staff may not drop a joining fee that is due', () => {
+    const p = validateSale({ ...sale, priceP: 120000, joiningFeeP: 0 }, [], TODAY, 'staff');
+    expect(p?.field).toBe('joiningFeeP');
+  });
+
+  it('the Staff rights words say what is enforced', () => {
+    expect(staffRightsWords()).toContain('10%');
   });
 });

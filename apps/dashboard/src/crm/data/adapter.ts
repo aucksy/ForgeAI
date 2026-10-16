@@ -75,6 +75,8 @@ export interface SellMembershipInput {
   reference: string | null;
   paidOn: DateISO;
   soldBy: string | null;
+  /** C7-12: the signed-in person's name, kept with `soldBy` on the plan and its receipt. */
+  soldByName?: string | null;
   /** C7-1: one id per press of the sheet; the same press twice is saved once (types.ts Payment.requestId). */
   requestId?: string | null;
 }
@@ -119,6 +121,8 @@ export interface RecordPaymentInput {
   reference: string | null;
   note: string | null;
   collectedBy: string | null;
+  /** C7-12: the signed-in person's name, kept with `collectedBy`. */
+  collectedByName?: string | null;
   /** C7-1: one id per press of the sheet; the same press twice is saved once. */
   requestId?: string | null;
 }

@@ -195,6 +195,19 @@ export interface LedgerFilter {
   query: string;
   /** Voided receipts are hidden by default but must stay reachable. */
   includeVoided: boolean;
+  /** Admin audit C7-12: only receipts this person took (their staff id); 'all' or absent = everyone. */
+  takenBy?: string | 'all';
+}
+
+/** C7-12: everyone who took money in these rows, by first appearance, for the "Taken by" filter. */
+export function ledgerTakers(rows: readonly LedgerRow[]): { id: string; name: string }[] {
+  const seen = new Map<string, string>();
+  const ordered = [...rows].sort((a, b) => a.payment.createdAt - b.payment.createdAt);
+  for (const r of ordered) {
+    const id = r.payment.collectedBy;
+    if (id && !seen.has(id)) seen.set(id, r.payment.collectedByName || tr('Someone', 'Koi'));
+  }
+  return [...seen].map(([id, name]) => ({ id, name }));
 }
 
 /**
@@ -227,6 +240,7 @@ export function ledgerMatchesQuery(row: LedgerRow, query: string): boolean {
   if (row.payment.receiptNo.toLowerCase().includes(q)) return true;
   if (row.payment.reference && row.payment.reference.toLowerCase().includes(q)) return true;
   if (row.member && row.member.fullName.toLowerCase().includes(q)) return true;
+  if (row.payment.collectedByName && row.payment.collectedByName.toLowerCase().includes(q)) return true;
 
   const digits = q.replace(/\D/g, '');
   if (digits.length >= 3 && row.member && phoneDigits(row.member.phone).includes(digits)) return true;
@@ -239,6 +253,7 @@ export function filterLedger(rows: readonly LedgerRow[], filter: LedgerFilter): 
     if (!inRange(row.payment.paidOn, filter.range)) return false;
     if (!filter.includeVoided && row.payment.voided) return false;
     if (filter.method !== 'all' && row.payment.method !== filter.method) return false;
+    if (filter.takenBy && filter.takenBy !== 'all' && row.payment.collectedBy !== filter.takenBy) return false;
     return ledgerMatchesQuery(row, filter.query);
   });
 }

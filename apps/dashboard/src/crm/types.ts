@@ -155,6 +155,8 @@ export interface Membership extends GymScoped {
   notes: string | null;
   /** Who sold it — a staff member id, or null in single-operator gyms. */
   soldBy: string | null;
+  /** Admin audit C7-12: that person's name when it was sold (the server stamps both, 0019). */
+  soldByName?: string | null;
   /**
    * PT snapshot (15 Oct 2026), copied from the plan at sale like `planName`: the sessions bought
    * and the trainer. Absent on an ordinary gym plan (and on every row sold before PT existed).
@@ -219,6 +221,11 @@ export interface Payment extends GymScoped {
   voided: boolean;
   voidReason: string | null;
   collectedBy: string | null;
+  /**
+   * Admin audit C7-12 (16 Oct 2026): the name of the person who took it, as signed in. The server
+   * stamps id and name from the session (0019), so a desk can never put a colleague's name on it.
+   */
+  collectedByName?: string | null;
   createdAt: number;
   /**
    * The gym's GSTIN at the moment this receipt was issued, or null if the gym was

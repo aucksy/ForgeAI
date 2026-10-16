@@ -362,6 +362,7 @@ export class LocalCrmData implements CrmData {
         cancelled: false,
         notes: input.notes,
         soldBy: input.soldBy,
+        soldByName: input.soldByName ?? null,
         ...(input.requestId ? { requestId: input.requestId } : {}),
         // PT snapshot, like the name and price: editing the plan later never changes this pack.
         // A gym plan gets no PT fields at all, so its row is exactly what it always was.
@@ -388,6 +389,7 @@ export class LocalCrmData implements CrmData {
           voided: false,
           voidReason: null,
           collectedBy: input.soldBy,
+          collectedByName: input.soldByName ?? null,
           ...(input.requestId ? { requestId: input.requestId } : {}),
           createdAt: ts,
           // Snapshot: registering for GST later must not rewrite this receipt.
@@ -648,6 +650,7 @@ export class LocalCrmData implements CrmData {
         voided: false,
         voidReason: null,
         collectedBy: input.collectedBy,
+        collectedByName: input.collectedByName ?? null,
         ...(input.requestId ? { requestId: input.requestId } : {}),
         createdAt: this.now(),
         gstinAtSale: db.gym.gstin,

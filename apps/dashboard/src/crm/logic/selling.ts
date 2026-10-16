@@ -19,6 +19,7 @@ import type { DateISO, Membership, Paise, Payment, Plan } from '../types';
 import { addDays, formatDay } from './dates';
 import { coverageEndsOn, endDateForPlan, nextTermStart } from './membership';
 import { tr } from '../i18n';
+import { formatINR } from './money';
 import { gymPlansOnly, isPtMembership, isPtPlan } from './pt';
 
 export interface SaleDefaults {
@@ -102,6 +103,18 @@ function lastGymPlanEnd(memberships: readonly Membership[], today: DateISO): Dat
 /** A front-desk (Staff) sale may start at most this many days before today (the server's rule too). */
 export const STAFF_BACKDATE_DAYS = 31;
 
+/**
+ * Admin audit C7-13 (16 Oct 2026), owner decision recorded in the audit file: the front desk may give
+ * at most 10% off a plan's listed price; a bigger discount (or a free plan) is the owner's. The
+ * server (0019_staff_discount_and_taker.sql) refuses the same, with the same rounding.
+ */
+export const STAFF_MAX_DISCOUNT_PCT = 10;
+
+/** The lowest price the front desk may sell at: the listed price less 10%, in whole paise. */
+export function staffLowestPrice(listP: Paise): Paise {
+  return listP - Math.floor(listP / STAFF_MAX_DISCOUNT_PCT);
+}
+
 export type SaleProblem =
   | { field: 'startsOn'; message: string }
   | { field: 'priceP'; message: string }
@@ -119,6 +132,9 @@ export interface SaleInput {
   pt?: boolean;
   /** The new plan's last day (C7-10): with it, any gym plan on the same days is caught, upcoming too. */
   endsOn?: DateISO | null;
+  /** C7-13: the plan's listed price and the joining fee due (the sheet's defaults), for the desk's limits. */
+  listPriceP?: Paise | null;
+  listJoiningFeeP?: Paise | null;
 }
 
 /**
@@ -154,6 +170,27 @@ export function validateSale(
   }
   if (input.collectNowP === null) {
     return { field: 'collectNowP', message: tr('Amount received isn’t a valid amount.', 'Kitne mile — yeh sahi rakam nahi hai.') };
+  }
+
+  // C7-13: the front desk's discount limits (the owner may give anything, a free plan too).
+  if (role === 'staff' && input.listPriceP != null && input.priceP < staffLowestPrice(input.listPriceP)) {
+    const lowest = staffLowestPrice(input.listPriceP);
+    return {
+      field: 'priceP',
+      message: tr(
+        `The front desk can give at most ${STAFF_MAX_DISCOUNT_PCT}% off: the lowest price is ${formatINR(lowest)}. Ask the owner for a bigger discount.`,
+        `Front desk zyada se zyada ${STAFF_MAX_DISCOUNT_PCT}% chhoot de sakta hai: sabse kam fees ${formatINR(lowest)}. Zyada chhoot ke liye owner se kaho.`,
+      ),
+    };
+  }
+  if (role === 'staff' && input.listJoiningFeeP != null && input.joiningFeeP < input.listJoiningFeeP) {
+    return {
+      field: 'joiningFeeP',
+      message: tr(
+        `The joining fee for a new member is ${formatINR(input.listJoiningFeeP)}. Only the owner can let it off.`,
+        `Naye member ki admission fees ${formatINR(input.listJoiningFeeP)} hai. Sirf owner maaf kar sakte hain.`,
+      ),
+    };
   }
 
   const total = input.priceP + input.joiningFeeP;

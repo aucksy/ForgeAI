@@ -131,7 +131,8 @@ begin
   fails := fails || pg_temp.t18_is('4 end 26 Jul +1 month', public._plan_end('2026-07-26', 'month', 1)::text, '2026-08-25');
   fails := fails || pg_temp.t18_is('4 end 31 Jan +3 months', public._plan_end('2026-01-31', 'month', 3)::text, '2026-04-29');
   fails := fails || pg_temp.t18_is('4 end 7-day pass', public._plan_end('2026-07-26', 'day', 7)::text, '2026-08-01');
-  x := jsonb_build_object('memberId', 'm1', 'planId', 'pl-month', 'priceP', 80000, 'joiningFeeP', 0, 'listPriceP', 100000,
+  -- 0019 (C7-13): the front desk gives at most 10% off, so the discount sale here is 10% off.
+  x := jsonb_build_object('memberId', 'm1', 'planId', 'pl-month', 'priceP', 90000, 'joiningFeeP', 0, 'listPriceP', 100000,
          'startsOn', to_char(td, 'YYYY-MM-DD'), 'endsOn', to_char((td + interval '1 month')::date - 1, 'YYYY-MM-DD'),
          'cancelled', false, 'notes', null, 'soldBy', null, 'createdAt', 1, 'updatedAt', 1);
   fails := fails || pg_temp.t18_is('4a sell today (discount)', pg_temp.t18_push(ks,

@@ -12,6 +12,8 @@
 import { useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
+import { useAuth } from '../../auth/AuthProvider';
+import { takerOf } from '../../auth/permissions';
 import { formatDay, isValidDateISO } from '../../logic/dates';
 import { isChased, unpaidForMembership } from '../../logic/membership';
 import { formatINR, parseRupeeInput } from '../../logic/money';
@@ -33,6 +35,8 @@ export function CollectPaymentSheet({
   onCollected?: (payment: Payment) => void;
 }) {
   const { snapshot, today, recordPayment } = useCrm();
+  // C7-12: the receipt says who took the money (the server stamps the same from the session).
+  const taker = takerOf(useAuth().session);
 
   const owing = useMemo(() => {
     const payments = snapshot.payments.filter((p) => p.memberId === view.member.id);
@@ -94,7 +98,8 @@ export function CollectPaymentSheet({
         paidOn,
         reference: reference.trim() || null,
         note: null,
-        collectedBy: null,
+        collectedBy: taker.id,
+        collectedByName: taker.name,
         requestId,
       });
       onCollected?.(payment);

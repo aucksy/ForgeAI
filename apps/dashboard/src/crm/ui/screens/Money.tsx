@@ -26,6 +26,7 @@ import {
   duesByMember,
   duesLedger,
   filterLedger,
+  ledgerTakers,
   presetRange,
   RANGE_PRESETS,
   type AgingBucket,
@@ -143,6 +144,8 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
   const [method, setMethod] = useState<PaymentMethod | 'all'>('all');
   const [query, setQuery] = useState('');
   const [includeVoided, setIncludeVoided] = useState(false);
+  // C7-12: whose receipts (the desk's cash drawer is counted per person).
+  const [takenBy, setTakenBy] = useState<string>('all');
   const [voiding, setVoiding] = useState<Payment | null>(null);
   const canVoid = useCan()('voidReceipt');
 
@@ -161,19 +164,21 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
     [snapshot],
   );
 
+  const takers = useMemo(() => ledgerTakers(allRows), [allRows]);
+
   const visible = useMemo(
-    () => filterLedger(allRows, { range, method, query, includeVoided }),
-    [allRows, range, method, query, includeVoided],
+    () => filterLedger(allRows, { range, method, query, includeVoided, takenBy }),
+    [allRows, range, method, query, includeVoided, takenBy],
   );
 
   // The summary always covers the SAME population as the table, plus the voided
   // rows the table may be hiding — so the two can never tell different stories.
   const summary = useMemo(() => {
-    const population = filterLedger(allRows, { range, method, query, includeVoided: true }).map(
+    const population = filterLedger(allRows, { range, method, query, includeVoided: true, takenBy }).map(
       (r) => r.payment,
     );
     return collectionSummary(population, range);
-  }, [allRows, range, method, query]);
+  }, [allRows, range, method, query, takenBy]);
 
   const usePreset = (id: RangePresetId | 'custom') => {
     setPresetId(id);
@@ -183,7 +188,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
   const exportCsv = () => {
     // Downloads stay English in every language (an accountant reads them).
     const contents = inEnglish(() => csvDocument(
-      ['Receipt no', 'Date', 'Member', 'Mobile', 'Membership', 'Method', 'Reference', 'Amount (INR)', 'Status'],
+      ['Receipt no', 'Date', 'Member', 'Mobile', 'Membership', 'Method', 'Reference', 'Amount (INR)', 'Status', 'Taken by'],
       visible.map((r) => [
         r.payment.receiptNo,
         r.payment.paidOn,
@@ -196,6 +201,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
         // this column without stripping ₹ and commas out of it first.
         paiseToRupees(r.payment.amountP),
         r.payment.voided ? `Voided: ${r.payment.voidReason ?? 'no reason given'}` : 'Received',
+        r.payment.collectedByName ?? '',
       ]),
     ));
     downloadCsv(csvFilename([snapshot.gym.name, 'collections', range.from, range.to]), contents);
@@ -209,6 +215,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
   const filterNote = [
     `${formatDay(range.from)} → ${formatDay(range.to)}`,
     method === 'all' ? null : methodLabel(method),
+    takenBy === 'all' ? null : tr(`Taken by ${takers.find((t) => t.id === takenBy)?.name ?? ''}`, `${takers.find((t) => t.id === takenBy)?.name ?? ''} ne li`),
     query.trim() ? `“${query.trim()}”` : null,
   ]
     .filter(Boolean)
@@ -331,6 +338,16 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
               options={[{ value: 'all', label: tr('All methods', 'Sab tarike') }, ...methodOptions()]}
             />
           </div>
+          {takers.length > 0 && (
+            <div style={{ flex: '1 1 180px', maxWidth: compact ? undefined : 240, minWidth: 0 }}>
+              <SelectField
+                label={tr('Taken by', 'Kisne li')}
+                value={takenBy}
+                onChange={setTakenBy}
+                options={[{ value: 'all', label: tr('Everyone', 'Sab') }, ...takers.map((t) => ({ value: t.id, label: t.name }))]}
+              />
+            </div>
+          )}
         </Row>
 
         <label
@@ -448,6 +465,11 @@ function MethodBar({
   );
 }
 
+/** C7-12: "Taken by Ramesh". */
+function takenByWords(name: string): string {
+  return tr(`Taken by ${name}`, `${name} ne li`);
+}
+
 function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid?: () => void }) {
   const { payment, member, membership } = row;
   return (
@@ -472,6 +494,9 @@ function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid?: () => void }
         {methodLabel(payment.method)}
         {payment.reference ? (
           <span style={{ color: color.inkMuted }}> · {payment.reference}</span>
+        ) : null}
+        {payment.collectedByName ? (
+          <div style={{ fontSize: 11, color: color.inkMuted }}>{takenByWords(payment.collectedByName)}</div>
         ) : null}
       </Td>
       <Td align="right" mono>
@@ -529,6 +554,7 @@ function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid?: () => void }) {
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>
             {formatDay(payment.paidOn)} · {methodLabel(payment.method)}
             {membership ? ` · ${membership.planName}` : ''}
+            {payment.collectedByName ? ` · ${takenByWords(payment.collectedByName)}` : ''}
           </div>
         </div>
         <div

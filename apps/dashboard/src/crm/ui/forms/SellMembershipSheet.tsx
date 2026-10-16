@@ -14,7 +14,8 @@
 import { useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
-import { useRole } from '../../auth/AuthProvider';
+import { useAuth, useRole } from '../../auth/AuthProvider';
+import { takerOf } from '../../auth/permissions';
 import { addDays, formatDay, isValidDateISO } from '../../logic/dates';
 import { endDateForPlan } from '../../logic/membership';
 import { saleDefaults, validateSale, type SaleProblem } from '../../logic/selling';
@@ -42,6 +43,8 @@ export function SellMembershipSheet({
 }) {
   const { snapshot, today, sellMembership } = useCrm();
   const role = useRole();
+  // C7-12: the receipt says who took the money (the server stamps the same from the session).
+  const taker = takerOf(useAuth().session);
 
   const plans = useMemo(
     () =>
@@ -97,7 +100,18 @@ export function SellMembershipSheet({
 
   const submit = async () => {
     const found = validateSale(
-      { planId: plan?.id ?? null, startsOn, endsOn, priceP, joiningFeeP: joiningP, collectNowP: collectP, pt: plan ? isPtPlan(plan) : false },
+      {
+        planId: plan?.id ?? null,
+        startsOn,
+        endsOn,
+        priceP,
+        joiningFeeP: joiningP,
+        collectNowP: collectP,
+        pt: plan ? isPtPlan(plan) : false,
+        // C7-13: the desk's discount limits are checked against the listed price and the fee due.
+        listPriceP: plan?.priceP ?? null,
+        listJoiningFeeP: defaults?.joiningFeeP ?? null,
+      },
       memberships,
       today,
       role,
@@ -121,7 +135,8 @@ export function SellMembershipSheet({
         method,
         reference: reference.trim() || null,
         paidOn: today,
-        soldBy: null,
+        soldBy: taker.id,
+        soldByName: taker.name,
         requestId,
       });
       onSold?.(result);
@@ -244,10 +259,17 @@ export function SellMembershipSheet({
           }}
           inputMode="decimal"
           placeholder={plan ? formatINR(plan.priceP) : ''}
-          hint={tr(
-            'Leave blank for the listed price. Type a lower number to give a discount.',
-            'List wali fees ke liye khaali chhodo. Chhoot deni ho to kam number likho.',
-          )}
+          hint={
+            role === 'staff'
+              ? tr(
+                  'Leave blank for the listed price. The front desk can give at most 10% off.',
+                  'List wali fees ke liye khaali chhodo. Front desk zyada se zyada 10% chhoot de sakta hai.',
+                )
+              : tr(
+                  'Leave blank for the listed price. Type a lower number to give a discount.',
+                  'List wali fees ke liye khaali chhodo. Chhoot deni ho to kam number likho.',
+                )
+          }
           error={errorFor('priceP')}
         />
         <TextField
