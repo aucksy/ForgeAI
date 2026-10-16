@@ -1230,6 +1230,15 @@ export function planOfSet(p: PlanSet): { weightKg?: number; reps?: number } | un
   return out.weightKg != null || out.reps != null ? out : undefined;
 }
 
+/** Wave-2 review: the routine's main planned weight for a card — its most planned weight (ties: heavier). PURE. */
+function plannedMainKg(ex: DraftExercise): number | null {
+  const n = new Map<number, number>();
+  for (const s of ex.sets) if (!s.isWarmup && s.setType !== 'drop' && s.plan?.weightKg != null) n.set(s.plan.weightKg, (n.get(s.plan.weightKg) ?? 0) + 1);
+  let best: number | null = null;
+  for (const [w, c] of n) if (best == null || c > (n.get(best) ?? 0) || (c === n.get(best) && w > best)) best = w;
+  return best;
+}
+
 /** A number worth hinting: a weight of any size (0 = bodyweight), reps / time / distance above 0. */
 const positive = (v: number | null | undefined): number | null => (v != null && v > 0 ? v : null);
 const present = (v: number | null | undefined): number | null => (v != null && Number.isFinite(v) ? v : null);
@@ -1279,10 +1288,15 @@ export function fillForSet(
     const p = prevForSet(ex, s.key);
     return p && p.weightKg > 0 && p.reps > 0 && Math.abs(p.weightKg - fromKg) >= fromKg * OFF_MAIN_SHARE - 1e-9 ? p : null;
   };
-  // C3-20: the routine's own numbers for this set come first (a planned 80 kg back-off is never
-  // hinted the Target's 100 kg, nor a weight typed above).
+  // C3-20 (+ wave-2 review): the routine's own numbers win on a row OFF the main weight (a planned
+  // 80 kg back-off, a heavy top set) — never hinted the Target's 100 kg nor a weight typed above.
+  // On a main working row (a Hevy-link routine's 100 x 5, never updated after a workout) the
+  // Target and the row above lead; the plan only fills what they leave empty.
   const plan = !row.isWarmup && (lt === 'weight_reps' || lt === 'reps') ? row.plan : undefined;
-  if (plan && plan.reps != null && (plan.weightKg != null || lt === 'reps')) return { weightKg: lt === 'reps' ? 0 : (plan.weightKg as number), reps: plan.reps };
+  const mainRef = fromKg ?? plannedMainKg(ex);
+  const planOff =
+    plan?.weightKg != null && lt === 'weight_reps' && mainRef != null && mainRef > 0 && Math.abs(plan.weightKg - mainRef) >= mainRef * OFF_MAIN_SHARE - 1e-9;
+  if (plan && planOff && plan.reps != null) return { weightKg: plan.weightKg as number, reps: plan.reps };
   const mineOff = offMain(row);
   if (mineOff) return { weightKg: mineOff.weightKg, reps: mineOff.reps };
   // 13 Oct 2026: a warm-up row hints last time's same warm-up (its PREVIOUS) and nothing else —
@@ -1365,9 +1379,15 @@ export function fillForSet(
   } else {
     reps = pick((s) => positive(s.reps), (p) => positive(p?.reps));
   }
-  // C3-20: a plan giving only one of the two numbers sets that one.
-  if (plan?.reps != null) reps = plan.reps;
-  if (plan?.weightKg != null && lt === 'weight_reps') weightKg = plan.weightKg;
+  // C3-20: off the main weight a plan's single number sets that one; on it, the plan only fills
+  // what the row above, the Target and PREVIOUS left empty.
+  if (planOff) {
+    if (plan?.reps != null) reps = plan.reps;
+    if (plan?.weightKg != null) weightKg = plan.weightKg;
+  } else if (plan) {
+    if (reps == null && plan.reps != null) reps = plan.reps;
+    if (weightKg == null && plan.weightKg != null && lt === 'weight_reps') weightKg = plan.weightKg;
+  }
   if (reps == null) return null;
   if (lt === 'reps') return { weightKg: 0, reps };
   if (weightKg == null) return lt === 'weight_reps' ? null : { weightKg: 0, reps };

@@ -131,6 +131,21 @@ describe('C3-20: a routine\'s own per-set weights are hinted in the workout', ()
     expect(wr(fillForSet(typed, 'c3', target))).toEqual([80, 8]);
   });
 
+  it('wave-2 review: main working rows follow the Target and the row above, never a stale plan', () => {
+    const plan = (weightKg: number, reps: number) => ({ plan: { weightKg, reps } }) as Partial<DraftSet>;
+    const target = { weightKg: 102.5, reps: 5, fromKg: 100 };
+    // A Hevy-link routine's 100 x 5 (never updated after a workout): row 1 hints the Target.
+    const c = card([row('a', plan(100, 5)), row('b', plan(100, 5)), row('c3', plan(80, 8))], [prev(100, 5), prev(100, 5)]);
+    expect(wr(fillForSet(c, 'a', target))).toEqual([102.5, 5]);
+    expect(wr(fillForSet(c, 'c3', target))).toEqual([80, 8]);
+    // 105 typed in row 1: row 2 follows it, not the plan's 100.
+    const typed = card([row('a', { weightKg: 105, reps: 5, ...plan(100, 5) }), row('b', plan(100, 5))], [prev(100, 5), prev(100, 5)]);
+    expect(fillForSet(typed, 'b', target)?.weightKg).toBe(105);
+    // No Target and nothing typed: the plan is still the hint.
+    const first = card([row('a', plan(100, 5))], []);
+    expect(wr(fillForSet(first, 'a', null))).toEqual([100, 5]);
+  });
+
   it('the draft built from a routine carries each set\'s plan', async () => {
     const { planOfSet } = await import('@/tracker/store/activeWorkoutStore');
     expect(planOfSet({ type: 'normal', weightKg: 80, reps: 8 })).toEqual({ weightKg: 80, reps: 8 });
