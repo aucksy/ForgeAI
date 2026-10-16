@@ -2186,12 +2186,17 @@
     personal_records (e1rmRecordOf shared by save, rebuild and import; once-per-install log fix);
     a second drop row takes the drop typed above; one-day chart bar "31 Oct 2025".
   - Owner decisions (safest default built): C3-3 routine-first Target under "Any workout" (setting
-    line changed); C3-7 a bar he loads in 5 kg jumps now goes 50 -> 52.5 on Standard; C3-1 a
-    comeback 50 -> 52.5 not 60. Kept: C3-17 (Rep range sets every row), C4-8 (export keeps ForgeAI
+    line changed). Kept: C3-17 (Rep range sets every row), C4-8 (export keeps ForgeAI
     names). Skipped: C3-31 (not reproduced, frozen Chip), C4-10 (warm-up RPE needs a reader audit).
   - **Tests:** 2,778 vitest pass (69 in the new audit files, each failed before its fix); the 3
     failing source checks (liveCard, offlineTick, v0281) read another helper's uncommitted Kotlin.
     typecheck 0; silent-catch 302 and promise 0 at baseline.
+  - Wave-2 review fixes (ebdd038, b8c06fe, d5b6382, da5928d, 738dfa5): a stale routine plan wins
+    only on back-off / top-set rows (main rows follow the Target and the row above); a long break
+    is judged from the lift's newest workout anywhere; R6 never after a workout at that weight
+    reached the range, and a 1-rep-max test day (singles/doubles) is skipped; the one-time
+    lighter-set record fix runs per lift in a transaction, marks done last, 5 s after start-up;
+    TG-01 restored — the gym's smallest plates only with a custom Plates and bars setup (50 -> 55).
 - 2026-10-16: **End-to-end audit C6 (gym side of the member app) fixed: 14 of 16** (5bbada1,
   d69284f, 0ba67af, 2895d7f; ships with the next tag). Statuses: Audit/e2e-v2/C6-gym-side.md.
   - **DB 0020 (`0020_gym_side_retries.sql`) — NOT applied live yet (owner applies).** Green in CI
