@@ -49,6 +49,15 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 15000
 - tapOn: "Join your gym's shop"
+# Audit C6-11 (2895d7f, 16 Oct 2026): a TYPED code first asks "Join <gym>?" with the gym's name
+# (run 38887468954 stopped on this sheet). The sheet's own Join, below its title.
+- extendedWaitUntil:
+    visible: "Join RAM'S FITNESS CLUB IMPACT\\?"
+    timeout: 45000
+- tapOn:
+    text: "^Join$"
+    below:
+      text: "Join RAM'S FITNESS CLUB IMPACT\\?"
 # The opening: the gym's logo (or name), full screen, for about a second.
 - extendedWaitUntil:
     visible:
