@@ -79,7 +79,7 @@ export function statusText(s: RestAlertStatus): { title: string; caption: string
     case 'off':
       return { title: 'Rest alerts: Off — notifications are blocked', caption: 'Tap to turn them on' };
     case 'silenced':
-      return { title: 'Rest alerts: Silent — tap to fix', caption: 'Android muted "Rest timer" for ForgeAI. Turn its sound back on' };
+      return { title: 'Rest alerts: Silent — tap to fix', caption: 'Android muted "Rest is over" for ForgeAI. Turn its sound back on' };
     case 'held-back':
       return { title: 'Rest alerts: May be late — tap to fix', caption: 'Android is holding ForgeAI back in the background. Allow it' };
     default:

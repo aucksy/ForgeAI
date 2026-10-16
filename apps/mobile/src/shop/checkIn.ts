@@ -135,7 +135,7 @@ export function doneDetail(a: { alreadyIn: boolean; gymName: string; memberName:
 }
 
 /** Shown under the check-in when no plan covers today. The visit is still recorded. PURE. */
-export const PLAN_ENDED_TEXT = "The gym has no running plan for you today. Please see the desk.";
+export const PLAN_ENDED_TEXT = "Your gym membership is not active today. Please see the desk.";
 
 /** The line on the ready screen: one tap, so a forwarded link never checks anyone in by itself. */
 export const READY_TEXT = 'Tap Check in when you are at the gym.';

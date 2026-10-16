@@ -37,6 +37,6 @@ appId: com.forgeai.app
     visible: 'You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m'
     timeout: 30000
 - assertVisible: 'Checked in at QA Check-in Gym as QA\. Have a good workout\.'
-- assertVisible: 'The gym has no running plan for you today\. Please see the desk\.'
+- assertVisible: 'Your gym membership is not active today\. Please see the desk\.'
 - takeScreenshot: inv-f2-checked-in
 - tapOn: '^Done$'

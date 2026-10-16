@@ -110,6 +110,9 @@ object RestCard {
   const val CH_OVER = "rest-over-sound"
   const val CH_OVER_OPEN = "rest-over-open"
   const val CH_OVER_ALARM = "rest-over-alarm-sound"
+  /** C9-26: the channel that rings at the end of rest. Its old name "Rest timer" read like the countdown. */
+  private const val OVER_NAME = "Rest is over"
+  private const val OVER_DESC = "Tells you when your rest is over"
   /**
    * C5-4 / C1-10 (16 Oct 2026): ForgeAI on screen. The app's own bell played through the MEDIA
    * stream (often at 0) and ignored Do Not Disturb. Now this alert rings itself: the same sound at
@@ -981,7 +984,7 @@ object RestCard {
     }
   }
 
-  /** Android's settings page of the "Rest timer" channel itself. False if none opened. */
+  /** Android's settings page of the "Rest is over" channel itself. False if none opened. */
   fun openAlertChannelSettings(ctx: Context): Boolean {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return openAppDetails(ctx)
     return try {
@@ -1213,10 +1216,18 @@ object RestCard {
         },
       )
     }
-    if (m.getNotificationChannel(CH_OVER) == null) {
+    val over = m.getNotificationChannel(CH_OVER)
+    if (over != null && over.name?.toString() != OVER_NAME) {
+      // C9-26: the channel was called "Rest timer". Re-creating it with the same id changes only its
+      // name and description; the member's sound, buzz and importance choices stay as they set them.
       m.createNotificationChannel(
-        NotificationChannel(CH_OVER, "Rest timer", NotificationManager.IMPORTANCE_HIGH).apply {
-          description = "Tells you when your rest is over"
+        NotificationChannel(CH_OVER, OVER_NAME, over.importance).apply { description = OVER_DESC },
+      )
+    }
+    if (over == null) {
+      m.createNotificationChannel(
+        NotificationChannel(CH_OVER, OVER_NAME, NotificationManager.IMPORTANCE_HIGH).apply {
+          description = OVER_DESC
           setSound(
             restSound(ctx),
             AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build(),
