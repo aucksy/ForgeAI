@@ -1,0 +1,35 @@
+# Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-workout-fresh.yaml, so a change to the
+# phone test parts never moves these flows. Same behaviour.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Start empty workout|Resume workout"
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Resume workout"
+    commands:
+      - scrollUntilVisible:
+          element: "^Discard workout$"
+          centerElement: true
+          timeout: 15000
+      - tapOn: "^Discard workout$"
+      - extendedWaitUntil:
+          visible: 'Discard workout\?'
+          timeout: 10000
+      # The sheet's own button (the link behind it says "Discard workout").
+      - tapOn: "^Discard$"
+- scrollUntilVisible:
+    element: "Start empty workout"
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- assertNotVisible: "Resume workout"

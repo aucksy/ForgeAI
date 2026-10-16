@@ -1,0 +1,23 @@
+# Phone conditions (UAT WP7), condition 3b: still on the slow link, QA Rope into the bag, "Place
+# order" tapped, and airplane mode switched ON straight after the tap: the request is cut on its way
+# (or its answer is). Whatever the screen then says is kept as evidence; the script switches the
+# network back and xc-3b-order-retry.yaml finishes the order. The server must end with ONE order.
+appId: com.forgeai.app
+---
+- runFlow: xc-sub-shop.yaml
+- extendedWaitUntil:
+    visible: "^${GYM}$"
+    timeout: 90000
+- runFlow:
+    file: xc-sub-to-bag.yaml
+    env:
+      PRODUCT: "QA Rope"
+- tapOn:
+    text: "^Place order$"
+    waitToSettleTimeoutMs: 100
+    retryTapIfNoChange: false
+- setAirplaneMode: enabled
+- extendedWaitUntil:
+    visible: 'Order \d+ placed\. Pay at the desk when you collect it\.|No internet.*|The gym didn.t answer.*|Couldn.t place the order.*'
+    timeout: 120000
+- takeScreenshot: xc3b-01-cut-order-outcome

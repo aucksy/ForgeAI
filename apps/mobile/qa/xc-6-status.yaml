@@ -1,0 +1,37 @@
+# Phone conditions (UAT WP7), condition 6: Settings -> Workouts, the rest alerts line. It shows only
+# when Android holds something back ("Rest alerts: May be late — tap to fix"). The screenshot's name
+# says which the member saw: xc6-status-<SHOT>-may-be-late or xc6-status-<SHOT>-on-time.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- runFlow: xc-sub-back-to-tabs.yaml
+- runFlow:
+    file: xc-sub-settings-page.yaml
+    env:
+      PAGE: "Workouts"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Ring through Do Not Disturb"
+- scrollUntilVisible:
+    element: "Rest alerts: May be late.*"
+    centerElement: true
+    timeout: 6000
+    optional: true
+- runFlow:
+    when:
+      visible: "Rest alerts: May be late.*"
+    commands:
+      - takeScreenshot: xc6-status-${SHOT}-may-be-late
+- runFlow:
+    when:
+      notVisible: "Rest alerts: May be late.*"
+    commands:
+      - takeScreenshot: xc6-status-${SHOT}-on-time
+- runFlow: xc-sub-back-to-tabs.yaml

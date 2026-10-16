@@ -1,0 +1,28 @@
+# Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-profile-tile.yaml, so a change to the
+# phone test parts never moves these flows. Same behaviour.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 30000
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^${TILE}$"
+    direction: UP
+    centerElement: true
+    timeout: 8000
+    optional: true
+- runFlow:
+    when:
+      notVisible: "^${TILE}$"
+    commands:
+      - scrollUntilVisible:
+          element: "^${TILE}$"
+          centerElement: true
+          timeout: 20000
+- tapOn: "^${TILE}$"

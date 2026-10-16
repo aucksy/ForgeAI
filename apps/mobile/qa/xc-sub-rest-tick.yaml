@@ -1,0 +1,26 @@
+# Phone conditions (UAT WP7), sub-flow: on the live workout of xc-sub-bench.yaml, the bench's rest set
+# to REST (a rest chip's spoken name: "Rest 0:30", "Rest 1:30", "Rest 3:00"), then set 1 ticked: the
+# rest is running when this ends ("Skip rest" on screen).
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "More for .*"
+    index: 0
+- tapOn: "Rest timer"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^${REST}$"
+- tapOn: "^${REST}$"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Mark Barbell Bench Press set 1 complete"
+- tapOn:
+    text: "Mark Barbell Bench Press set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- assertVisible: "Skip rest"

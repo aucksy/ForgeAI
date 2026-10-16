@@ -1,0 +1,22 @@
+# Phone conditions (UAT WP7), conditions 4-6: the app opened (a normal start), a fresh bench workout
+# (60 kg x 8; any open one thrown away first), its rest set to REST, set 1 ticked. Ends with the rest
+# running; the script then kills the app, or puts the phone to sleep.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- runFlow:
+    file: xc-sub-bench.yaml
+    env:
+      WEIGHT: " 60"
+      REPS: " 8"
+- runFlow:
+    file: xc-sub-rest-tick.yaml
+    env:
+      REST: "${REST}"
+- takeScreenshot: xc-rest-running-${SHOT}

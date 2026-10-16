@@ -1,0 +1,11 @@
+# Phone conditions (UAT WP7), sub-flow: Settings, then the page whose row title is PAGE (a regex).
+# Copied from sub-settings-page.yaml so a change to the phone test parts never moves these flows.
+appId: com.forgeai.app
+---
+- runFlow:
+    file: xc-sub-settings-open.yaml
+- scrollUntilVisible:
+    element: "^${PAGE}$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^${PAGE}$"

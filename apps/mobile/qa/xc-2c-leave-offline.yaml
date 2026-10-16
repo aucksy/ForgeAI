@@ -1,0 +1,23 @@
+# Phone conditions (UAT WP7), condition 2c: Leave with NO INTERNET and nothing open. The phone leaves
+# at once and says the gym will be told the next time the app is online.
+appId: com.forgeai.app
+---
+- runFlow: xc-sub-shop.yaml
+- extendedWaitUntil:
+    visible: "^${GYM}$"
+    timeout: 45000
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Leave$"
+- tapOn: "^Leave$"
+- extendedWaitUntil:
+    visible: 'Leave ${GYM}''s shop\?'
+    timeout: 30000
+- assertNotVisible: '.*open order.*'
+- tapOn: "Leave shop"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: 'You left ${GYM}''s shop on this phone\. The gym couldn''t be reached, so it will be told the next time the app is online\.'
+- takeScreenshot: xc2c-04-left-offline-words

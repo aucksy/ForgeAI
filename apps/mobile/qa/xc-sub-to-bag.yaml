@@ -1,0 +1,32 @@
+# Phone conditions (UAT WP7), sub-flow: in the gym's shop (the Shop tab open), one PRODUCT into the
+# bag, then the bag with "Place order" centred.
+appId: com.forgeai.app
+---
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "${PRODUCT}, .*"
+- tapOn: "${PRODUCT}, .*"
+- extendedWaitUntil:
+    visible: "^${PRODUCT}$"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Add to bag"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Add to bag"
+- extendedWaitUntil:
+    visible: "Added 1 to your bag"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Go to bag"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Go to bag"
+- extendedWaitUntil:
+    visible: "^Bag$"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "^Place order$"
+    centerElement: true
+    timeout: 15000

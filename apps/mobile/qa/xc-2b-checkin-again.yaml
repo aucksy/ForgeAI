@@ -1,0 +1,13 @@
+# Phone conditions (UAT WP7), condition 2b, the retry: the poster scanned once more (online) -> "You
+# were already checked in": still ONE visit at the gym (the script checks the server).
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Check in at ${GYM}$"
+    timeout: 45000
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'You were already checked in at ${GYM} today\. Nothing more to do\.'
+    timeout: 60000
+- takeScreenshot: xc2b-03-checkin-again-already-in
+- tapOn: "^Done$"

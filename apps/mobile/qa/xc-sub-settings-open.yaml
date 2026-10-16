@@ -1,0 +1,23 @@
+# Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-settings-open.yaml, so a change to the
+# phone test parts never moves these flows. Same behaviour.
+appId: com.forgeai.app
+---
+- runFlow:
+    when:
+      notVisible: "^Your details$|^Export & import$|^Your data$"
+    commands:
+      - extendedWaitUntil:
+          visible: "^Profile$"
+          timeout: 30000
+      - tapOn:
+          text: "^Profile$"
+          index: 0
+      # The gear sits in the Profile page's header (never scrolls away).
+      - extendedWaitUntil:
+          visible: "Edit profile"
+          timeout: 30000
+      - tapOn: "Settings"
+- scrollUntilVisible:
+    element: "^Your details$"
+    direction: UP
+    timeout: 20000

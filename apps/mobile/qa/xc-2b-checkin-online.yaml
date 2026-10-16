@@ -1,0 +1,18 @@
+# Phone conditions (UAT WP7), condition 2b, back online: the same screen's "Check in" again. The gym
+# asks for the mobile once (98765 00031, on its desk list with a plan today) -> in as Asha.
+appId: com.forgeai.app
+---
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'Type the mobile number your gym has for you\. The app asks only once\.'
+    timeout: 60000
+- tapOn: "Your mobile number"
+- inputText: "98765 00031"
+- hideKeyboard
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'You''re in ✓.*'
+    timeout: 60000
+- assertVisible: 'Checked in at ${GYM} as Asha\. Have a good workout\.'
+- takeScreenshot: xc2b-02-checkin-online
+- tapOn: "^Done$"

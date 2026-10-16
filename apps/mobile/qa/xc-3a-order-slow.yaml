@@ -1,0 +1,18 @@
+# Phone conditions (UAT WP7), condition 3a: a FLAKY network (the script set the emulator's link to
+# GPRS delay and EDGE speed). QA Band ordered the normal way; it must still be placed (once).
+appId: com.forgeai.app
+---
+- runFlow: xc-sub-shop.yaml
+- extendedWaitUntil:
+    visible: "^${GYM}$"
+    timeout: 90000
+- runFlow:
+    file: xc-sub-to-bag.yaml
+    env:
+      PRODUCT: "QA Band"
+- tapOn: "^Place order$"
+- extendedWaitUntil:
+    visible: 'Order \d+ placed\. Pay at the desk when you collect it\.|No internet.*|The gym didn.t answer.*'
+    timeout: 120000
+- takeScreenshot: xc3a-01-slow-order-outcome
+- assertVisible: 'Order \d+ placed\. Pay at the desk when you collect it\.'

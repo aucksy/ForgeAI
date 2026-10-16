@@ -1,0 +1,15 @@
+# Phone conditions (UAT WP7), sub-flow: the app closed and opened again, then the Shop tab. Copied
+# from xj-sub-shop.yaml (WP6) so a change there never moves these flows.
+appId: com.forgeai.app
+---
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- tapOn:
+    text: "^Shop$"
+    index: 0

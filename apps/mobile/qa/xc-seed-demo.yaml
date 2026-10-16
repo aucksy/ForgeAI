@@ -1,0 +1,28 @@
+# Phone conditions (UAT WP7): a fresh install's state (clearState) with the demo data loaded, the app
+# on the Workout tab. Copied from gate-demo.yaml so a change to the phone test parts never moves it.
+appId: com.forgeai.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Step 1 of 3|Your name"
+    timeout: 90000
+- scrollUntilVisible:
+    element: "Load demo data instead"
+    timeout: 30000
+- tapOn: "Load demo data instead"
+- extendedWaitUntil:
+    visible: "(?i)load demo"
+    timeout: 15000
+- tapOn: "(?i)^load demo$"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000

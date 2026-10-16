@@ -1,0 +1,21 @@
+# Phone conditions (UAT WP7), condition 2a, back online (the script switched airplane mode off and
+# waited for the network): the same bag, still on screen, placed with one tap -> the order is placed.
+# No app restart in between: this is the member pressing the button again.
+appId: com.forgeai.app
+---
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Place order$"
+- tapOn: "^Place order$"
+- extendedWaitUntil:
+    visible: 'Order \d+ placed\. Pay at the desk when you collect it\.'
+    timeout: 60000
+- extendedWaitUntil:
+    visible: "^The gym is getting it ready$"
+    timeout: 20000
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: '1 × QA Bottle'
+- takeScreenshot: xc2a-03-online-placed

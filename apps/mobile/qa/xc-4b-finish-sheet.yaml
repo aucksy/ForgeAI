@@ -1,0 +1,19 @@
+# Phone conditions (UAT WP7), condition 4b: the rest skipped, "Finish workout" tapped: the finish sheet
+# is open when this ends (the script then kills the app).
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Finish workout$"
+- tapOn:
+    text: "^Finish workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- assertVisible: "Keep going"
+- takeScreenshot: xc4b-01-finish-sheet-open

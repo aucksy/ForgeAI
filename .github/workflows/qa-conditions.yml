@@ -1,0 +1,155 @@
+name: Phone conditions (offline, flaky, killed, Doze, upgrade)
+
+# UAT work package 7 (17 Oct 2026): real-life phone conditions on the member app, each checked on the
+# screen AND in what the phone or the server holds (apps/mobile/qa/run-conditions.sh):
+#   C1 upgrade      released v0.45.0 + real data + a workout open mid-rest -> `adb install -r` of this
+#                   build: data, open workout, Ring through DND, the rest alert, channel names
+#   C2 no internet  shop order, QR check-in, Leave, the workout loop: plain words, then ONE order /
+#                   ONE visit after reconnecting; a Leave told to the gym on the next start
+#   C3 flaky        GPRS/EDGE link, airplane mode mid-order: still ONE order
+#   C4 process      killed mid-rest, with the finish sheet open, mid-Hevy-import (Home + am kill)
+#      death
+#   C5 Doze         a 1:30 rest asleep in deep Doze, standby bucket rare: "Rest is over" on time
+#   C6 exact alarm  SCHEDULE_EXACT_ALARM denied (as after a restore); background-restricted
+#
+#  - The member app: built for the emulator from this commit (like qa-device.yml), versionCode above
+#    the last release so it can update v0.45.0 in place, and ALSO re-signed with the release key
+#    rotation exactly as release-apk.yml signs (v0.45.0 is signed that way; Android 9+ refuses an
+#    update signed with the debug key alone). The re-signed APK stays in $RUNNER_TEMP: never uploaded.
+#  - The owner's phone profile (360 dp, font 1.3, Asia/Kolkata), driven by Maestro (qa/xc-*.yaml).
+#  - The server: the run makes its OWN fresh online gym (apps/mobile/qa/xc_server.py on WP6's
+#    xj_server.py); the owner session is signed out at the end. Never FORGE1 / RAMS01.
+#
+# ADVISORY: not part of the release gate (scripts/ci/phone_gate.py does not read it). Manual only.
+# Evidence: the `qa-conditions` artifact (screenshots, each part's log, notification dumps, database
+# counts, the timeline, the summary on the run page).
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Run only these conditions, comma separated (1 upgrade, 2 offline, 3 flaky, 4 process death, 5 Doze, 6 exact alarms). Empty = all."
+        required: false
+        default: ""
+
+run-name: ${{ (inputs.only != '' && inputs.only != null) && format('Phone conditions ({0})', inputs.only) || 'Phone conditions (all)' }}
+
+permissions:
+  contents: read
+
+jobs:
+  conditions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      # versionCode = this version's (release_checks.py formula) + 900: above every published release
+      # up to this version, so `adb install -r` over v0.45.0 is an update, not a downgrade.
+      - name: Build an emulator APK (x86_64)
+        working-directory: apps/mobile/android
+        run: |
+          set -euo pipefail
+          VERSION="$(python3 -c 'import json; print(json.load(open("../app.json"))["expo"]["version"])')"
+          CODE=$(( $(python3 ../../../scripts/ci/release_checks.py --version-code "$VERSION") + 900 ))
+          echo "versionName ${VERSION}-conditions, versionCode $CODE"
+          chmod +x gradlew
+          ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 -PappVersionName="${VERSION}-conditions" -PappVersionCode="$CODE" --no-daemon --stacktrace
+          APK="$(find app/build/outputs/apk/release -name '*.apk' | head -1)"
+          cp "$APK" "$RUNNER_TEMP/qa-debug.apk"
+          ls -la "$RUNNER_TEMP/qa-debug.apk"
+
+      # The same rotation signing as release-apk.yml ("Sign with key rotation"): v1/v2 = the public
+      # debug key, v3 = the release key + the lineage. The keystore exists only inside this step.
+      - name: Re-sign that APK as a release is signed (key rotation)
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ vars.ANDROID_KEY_ALIAS || secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          umask 077
+          if [ -z "${ANDROID_KEYSTORE_BASE64:-}" ] || [ -z "${ANDROID_KEYSTORE_PASSWORD:-}" ] || [ -z "${ANDROID_KEY_ALIAS:-}" ]; then
+            echo "::warning::No release key here: condition 1 can only try the debug-signed build and v0.46.0."
+            exit 0
+          fi
+          if [ -z "${ANDROID_KEY_PASSWORD:-}" ]; then ANDROID_KEY_PASSWORD="$ANDROID_KEYSTORE_PASSWORD"; fi
+          export ANDROID_KEY_PASSWORD
+          KS="$RUNNER_TEMP/forgeai-release.p12"
+          WORK="$RUNNER_TEMP/forgeai-signing"
+          trap 'rm -f "$KS"; rm -rf "$WORK"' EXIT
+          mkdir -p "$WORK"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '\r\n ' | base64 -d > "$KS"
+          chmod 600 "$KS"
+          unset ANDROID_KEYSTORE_BASE64
+          BT="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)"
+          APKSIGNER="${BT%/}/apksigner"
+          ZIPALIGN="${BT%/}/zipalign"
+          LINEAGE="$WORK/lineage.bin"
+          DEBUG_KS="apps/mobile/android/app/debug.keystore"
+          OLD=(--ks "$DEBUG_KS" --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android)
+          NEW=(--ks "$KS" --ks-type PKCS12 --ks-pass env:ANDROID_KEYSTORE_PASSWORD --ks-key-alias "$ANDROID_KEY_ALIAS" --key-pass env:ANDROID_KEY_PASSWORD)
+          "$APKSIGNER" rotate --out "$LINEAGE" --old-signer "${OLD[@]}" --new-signer "${NEW[@]}"
+          # shellcheck source=scripts/ci/sign_rotated.sh
+          source scripts/ci/sign_rotated.sh
+          sign_rotated "$RUNNER_TEMP/qa-debug.apk" "$RUNNER_TEMP/qa-rotated.apk" > "$WORK/verify.txt"
+          grep -E '^Verifies|Verified using v[123]' "$WORK/verify.txt" || true
+          ls -la "$RUNNER_TEMP/qa-rotated.apk"
+
+      - name: Download the released v0.45.0 and v0.46.0 APKs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for tag in v0.45.0 v0.46.0; do
+            gh release download "$tag" -R "$GITHUB_REPOSITORY" -p "forgeai-$tag.apk" -D "$RUNNER_TEMP" --clobber
+          done
+          ls -la "$RUNNER_TEMP"/forgeai-v0.4*.apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      # google_apis (not playstore): root for the database reads and the low-memory kill; the
+      # released APKs carry ARM code only, which Android 11+ x86_64 images translate.
+      - name: Run the phone conditions
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: XC_ONLY="${{ inputs.only }}" XC_APK_DEBUG="$RUNNER_TEMP/qa-debug.apk" XC_APK_NEW="$([ -f "$RUNNER_TEMP/qa-rotated.apk" ] && echo "$RUNNER_TEMP/qa-rotated.apk")" XC_APK_OLD="$RUNNER_TEMP/forgeai-v0.45.0.apk" XC_APK_REL="$RUNNER_TEMP/forgeai-v0.46.0.apk" bash apps/mobile/qa/run-conditions.sh
+
+      - name: Upload the conditions evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-conditions
+          path: qa-out
+          retention-days: 14

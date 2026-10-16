@@ -1,0 +1,14 @@
+# Phone conditions (UAT WP7), condition 4a: the app process was killed mid-rest (Home, then `am kill`,
+# as Android does to a background app) and opened again: the workout is still open, set 1 still
+# ticked, and the rest still running ("Skip rest").
+appId: com.forgeai.app
+---
+- runFlow: xc-sub-reopened.yaml
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 20000
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: 'Barbell Bench Press set 1 complete\. Tap to undo'
+- takeScreenshot: xc4a-01-after-kill-rest-intact

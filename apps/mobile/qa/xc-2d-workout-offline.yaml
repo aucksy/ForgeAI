@@ -1,0 +1,39 @@
+# Phone conditions (UAT WP7), condition 2d: the whole workout loop with NO INTERNET (airplane mode on,
+# the app opened afresh): start (any open workout thrown away first), fill, tick, a 0:30 rest that
+# runs out by itself, finish, the summary. Then the Profile counts it.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- runFlow:
+    file: xc-sub-bench.yaml
+    env:
+      WEIGHT: " 135"
+      REPS: " 5"
+- runFlow:
+    file: xc-sub-rest-tick.yaml
+    env:
+      REST: "Rest 0:30"
+- takeScreenshot: xc2d-01-offline-rest-running
+- extendedWaitUntil:
+    notVisible: "Skip rest"
+    timeout: 90000
+- takeScreenshot: xc2d-02-offline-rest-over
+- runFlow: xc-sub-finish.yaml
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Workouts: ${COUNT}$"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: xc2d-03-offline-workout-counted

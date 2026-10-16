@@ -1,0 +1,54 @@
+# Phone conditions (UAT WP7), condition 4c: Settings -> Export & import -> Import from Hevy with the
+# big history the script pushed (qa-hevy-xc.csv, ~1,000 workouts), Merge, and "Import N workouts"
+# tapped. The flow ends straight after the tap: the script kills the app while it writes.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- runFlow:
+    file: xc-sub-settings-page.yaml
+    env:
+      PAGE: "Export & import"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Import from Hevy"
+- tapOn: "Import from Hevy"
+- extendedWaitUntil:
+    visible: "Choose Hevy file"
+    timeout: 15000
+- tapOn: "Choose Hevy file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-hevy).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-hevy-xc.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "qa-hevy-xc.*"
+- extendedWaitUntil:
+    visible: "^Date range$"
+    timeout: 180000
+- tapOn:
+    text: "^Merge$"
+    optional: true
+- scrollUntilVisible:
+    element: 'Import [\d,]+ workouts'
+    centerElement: true
+    timeout: 30000
+- takeScreenshot: xc4c-01-import-ready
+- tapOn:
+    text: 'Import [\d,]+ workouts'
+    waitToSettleTimeoutMs: 100
+    retryTapIfNoChange: false

@@ -1,0 +1,15 @@
+# Phone conditions (UAT WP7), condition 2b: the gym's check-in poster opened with NO INTERNET (the
+# script opened /c/<CODE> at the app in airplane mode). One tap "Check in" -> the plain words, and a
+# "Check in" button to try again (no dead end).
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Check in at ${GYM}$"
+    timeout: 45000
+- assertVisible: 'Tap Check in when you are at the gym\.'
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'No internet\. Check in at the desk, or scan again when you''re online\.'
+    timeout: 60000
+- assertVisible: "^Check in$"
+- takeScreenshot: xc2b-01-checkin-offline

@@ -1,0 +1,184 @@
+# Phone conditions (UAT WP7), condition 1 "upgrade over real data", the OLD side: on the released
+# v0.45.0 APK (installed by run-conditions.sh on a clean phone), a member's real data, made the way a
+# member makes it:
+#   - the welcome (name "QA Upgrade", kilograms, build muscle, intermediate),
+#   - 2 workouts (Start empty workout, Barbell Bench Press 60 x 8 and 62.5 x 8, Finish),
+#   - a routine: Explore -> "Dumbbell Full Body" -> Follow this plan (its routines Full Body A / B),
+#   - a measurement: Body fat 17.5 %,
+#   - units "lb, miles", and "Ring through Do Not Disturb" switched ON (Settings -> Workouts),
+#   - a 3rd workout left OPEN mid-rest: bench 135 lb x 5, rest 3:00, set 1 ticked.
+# The script then updates the app in place (adb install -r) while that rest runs.
+appId: com.forgeai.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 180000
+- tapOn: "Your name"
+- inputText: "QA Upgrade"
+- hideKeyboard
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Next$"
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: 'Kilograms or pounds\?'
+    timeout: 20000
+- tapOn: "^Kilograms$"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Next$"
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 3 of 3"
+    timeout: 20000
+- tapOn: "Build muscle"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Intermediate"
+- tapOn: "Intermediate"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Start training"
+- tapOn: "Start training"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 120000
+- runFlow: xc-sub-back-to-tabs.yaml
+- takeScreenshot: xc1-00-old-onboarded
+# ---------------------------------------------------------------- 2 workouts
+- runFlow:
+    file: xc-sub-bench.yaml
+    env:
+      WEIGHT: " 60"
+      REPS: " 8"
+- tapOn:
+    text: "Mark Barbell Bench Press set 1 complete"
+    waitToSettleTimeoutMs: 300
+- runFlow: xc-sub-finish.yaml
+- runFlow:
+    file: xc-sub-bench.yaml
+    env:
+      WEIGHT: " 62.5"
+      REPS: " 8"
+- tapOn:
+    text: "Mark Barbell Bench Press set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- runFlow: xc-sub-finish.yaml
+- takeScreenshot: xc1-01-old-two-workouts
+# ---------------------------------------------------------------- a routine (a ready plan followed)
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Explore$"
+- tapOn: "^Explore$"
+- extendedWaitUntil:
+    visible: "Build a plan"
+    timeout: 20000
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Dumbbell Full Body,.*"
+- tapOn: "Dumbbell Full Body,.*"
+- extendedWaitUntil:
+    visible: "Follow this plan"
+    timeout: 20000
+- tapOn: "Follow this plan"
+- extendedWaitUntil:
+    visible: "Up next: Full Body [AB].*"
+    timeout: 30000
+- takeScreenshot: xc1-02-old-routine
+# ---------------------------------------------------------------- a measurement
+- runFlow:
+    file: xc-sub-profile-tile.yaml
+    env:
+      TILE: "Measures"
+- extendedWaitUntil:
+    visible: "Add measures"
+    timeout: 20000
+- tapOn: "Add measures"
+- extendedWaitUntil:
+    visible: "Fill in any you like."
+    timeout: 15000
+- runFlow:
+    file: xc-sub-type.yaml
+    env:
+      FIELD: "Body fat in percent"
+      VALUE: " 17.5"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Save$"
+- tapOn: "^Save$"
+- extendedWaitUntil:
+    visible: "^Measures$"
+    timeout: 15000
+- takeScreenshot: xc1-03-old-measure
+- runFlow: xc-sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- units lb, Ring through DND on
+- runFlow:
+    file: xc-sub-settings-page.yaml
+    env:
+      PAGE: "Units"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^lb, miles$"
+- tapOn: "^lb, miles$"
+- back
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^lb, miles$"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Workouts$"
+- tapOn: "^Workouts$"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Ring through Do Not Disturb"
+- tapOn: "Ring through Do Not Disturb"
+- runFlow:
+    when:
+      notVisible:
+        text: "Ring through Do Not Disturb"
+        checked: true
+    commands:
+      - tapOn:
+          text: "Ring through Do Not Disturb"
+          index: 1
+- assertVisible:
+    text: "Ring through Do Not Disturb"
+    checked: true
+- takeScreenshot: xc1-04-old-ring-through-dnd-on
+- runFlow: xc-sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- a workout left open mid-rest
+- runFlow:
+    file: xc-sub-bench.yaml
+    env:
+      WEIGHT: " 135"
+      REPS: " 5"
+- runFlow:
+    file: xc-sub-rest-tick.yaml
+    env:
+      REST: "Rest 3:00"
+- takeScreenshot: xc1-05-old-open-mid-rest

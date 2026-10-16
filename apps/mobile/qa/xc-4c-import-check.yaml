@@ -1,0 +1,24 @@
+# Phone conditions (UAT WP7), condition 4c: killed mid-import, opened again: the app starts normally
+# (no start-up error screen) and the Profile shows a workout count. Whether that count is the demo's
+# alone (nothing kept) or the demo's plus the whole file is the script's verdict (the database).
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 120000
+- assertNotVisible: "(?i).*(couldn.t start|something went wrong).*"
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '^Workouts: [\d,]+$'
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: xc4c-02-after-kill-mid-import

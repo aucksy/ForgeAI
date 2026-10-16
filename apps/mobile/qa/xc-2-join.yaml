@@ -1,0 +1,51 @@
+# Phone conditions (UAT WP7), condition 2 setup (online): join the run's own fresh gym by typing its
+# code (CODE, gym name GYM); the shop lists the products the owner added (QA Bottle, QA Band,
+# QA Rope). Same steps as WP6's xj-1-join-order.yaml.
+appId: com.forgeai.app
+---
+- runFlow: xc-sub-shop.yaml
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Enter the code from your gym"
+- scrollUntilVisible:
+    element: "Gym code"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- tapOn: "Gym code"
+- inputText: "${CODE}"
+- runFlow:
+    when:
+      notVisible: "^${CODE}$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "${CODE}"
+- assertVisible: "^${CODE}$"
+- tapOn: "Name on your orders"
+- eraseText: 70
+- inputText: " QA Member"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Join your gym's shop"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Join your gym's shop"
+- extendedWaitUntil:
+    visible: 'Join ${GYM}\?'
+    timeout: 45000
+- tapOn:
+    text: "^Join$"
+    below:
+      text: 'Join ${GYM}\?'
+- extendedWaitUntil:
+    visible: "^${GYM}$"
+    timeout: 45000
+- extendedWaitUntil:
+    visible: "QA Bottle, .*"
+    timeout: 45000
+- takeScreenshot: xc2-00-joined

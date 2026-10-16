@@ -1,0 +1,9 @@
+# Phone conditions (UAT WP7), condition 2c: back online, the app is started again (the "next start"
+# that sends the kept Leave). The Shop is the join card.
+appId: com.forgeai.app
+---
+- runFlow: xc-sub-shop.yaml
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 45000
+- takeScreenshot: xc2c-05-restarted-online

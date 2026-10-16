@@ -1,0 +1,37 @@
+# Phone conditions (UAT WP7), sub-flow: a fresh workout ("Start empty workout", any open one thrown
+# away first) with Barbell Bench Press, set 1 filled with WEIGHT x REPS (VALUE strings start with a
+# space: trap 5). Ends on the live workout with nothing ticked. Works in kg or lb (the box's spoken
+# unit is not named). No `env:` defaults here (trap 22).
+appId: com.forgeai.app
+---
+- runFlow: xc-sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Add exercise$"
+    timeout: 30000
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " bench press"
+- tapOn:
+    text: "Select Barbell Bench Press"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "Barbell Bench Press set 1 weight, .*"
+    timeout: 20000
+- runFlow:
+    file: xc-sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 weight, .*"
+      VALUE: "${WEIGHT}"
+- runFlow:
+    file: xc-sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 reps"
+      VALUE: "${REPS}"

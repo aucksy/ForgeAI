@@ -1,0 +1,71 @@
+# Phone conditions (UAT WP7), condition 1, the NEW side: after `adb install -r` of this build over the
+# v0.45.0 install (run-conditions.sh opened the app itself, without a force-stop), what the member
+# sees: the open workout with its ticked set; 2 workouts on the Profile; Body fat 17.5 %; "lb, miles";
+# "Ring through Do Not Disturb" still on; the followed plan's routine Full Body A.
+appId: com.forgeai.app
+---
+- runFlow: xc-sub-reopened.yaml
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: 'Barbell Bench Press set 1 complete\. Tap to undo'
+- takeScreenshot: xc1-10-new-open-workout-kept
+- runFlow: xc-sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Workouts: 2$"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: xc1-11-new-two-workouts
+- runFlow:
+    file: xc-sub-profile-tile.yaml
+    env:
+      TILE: "Measures"
+- extendedWaitUntil:
+    visible: "Add measures"
+    timeout: 20000
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Body fat$"
+- tapOn: "^Body fat$"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: '.*, 17\.5 %\. Fix or delete'
+- takeScreenshot: xc1-12-new-measure
+- runFlow: xc-sub-back-to-tabs.yaml
+- runFlow: xc-sub-settings-open.yaml
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^lb, miles$"
+- takeScreenshot: xc1-13-new-units-lb
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Workouts$"
+- tapOn: "^Workouts$"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Ring through Do Not Disturb"
+- assertVisible:
+    text: "Ring through Do Not Disturb"
+    checked: true
+- takeScreenshot: xc1-14-new-ring-through-dnd-kept
+- runFlow: xc-sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: ".*Full Body A.*"
+- takeScreenshot: xc1-15-new-routine-kept

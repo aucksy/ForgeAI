@@ -1,0 +1,19 @@
+# Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from xj-sub-find.yaml, so a change to the
+# phone test parts never moves these flows. Same behaviour.
+appId: com.forgeai.app
+---
+- scrollUntilVisible:
+    element: "${FIND}"
+    centerElement: true
+    timeout: 15000
+    optional: true
+- runFlow:
+    when:
+      notVisible: "${FIND}"
+    commands:
+      - scrollUntilVisible:
+          element: "${FIND}"
+          direction: UP
+          centerElement: true
+          timeout: 20000
+- assertVisible: "${FIND}"
