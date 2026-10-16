@@ -207,7 +207,8 @@ export function validateSale(
       ),
     };
   }
-  if (role === 'staff' && input.listJoiningFeeP != null && input.joiningFeeP < input.listJoiningFeeP) {
+  // Only for someone with no plan here yet, exactly as the server (0019): a renewal may skip it.
+  if (role === 'staff' && memberships.length === 0 && input.listJoiningFeeP != null && input.joiningFeeP < input.listJoiningFeeP) {
     return {
       field: 'joiningFeeP',
       message: tr(

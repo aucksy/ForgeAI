@@ -467,16 +467,22 @@ export class LocalCrmData implements CrmData {
               near(m.endsOn, term.endsOn) &&
               similarPlanName(m.planName, term.planName),
           ) ??
-          // Admin audit C7-19: a gym plan typed in by hand (or by an earlier import) for the same
-          // days, under another name ("Monthly" / "1 Month"), is the same plan: never a second one
-          // with a second receipt.
+          // Admin audit C7-19: a gym plan typed in by HAND for the same days, under another name
+          // ("Monthly" / "1 Month"), is the same plan: never a second one with a second receipt.
+          // Review: only a hand-typed gym plan, and never when either name is personal training (a
+          // PT plan on a gym plan's dates is a second plan). A plan an EARLIER import made matches
+          // only by its (near) name, like this import's own.
           db.memberships.find(
             (m) =>
               m.importId !== importId &&
               m.memberId === member.id &&
               !m.cancelled &&
               !isPtMembership(m) &&
-              ((m.startsOn === term.startsOn && m.endsOn === term.endsOn) ||
+              ((!m.importId &&
+                !looksLikePt(m.planName) &&
+                !looksLikePt(term.planName) &&
+                m.startsOn === term.startsOn &&
+                m.endsOn === term.endsOn) ||
                 (near(m.startsOn, term.startsOn) && near(m.endsOn, term.endsOn) && similarPlanName(m.planName, term.planName))),
           );
         if (same) {
@@ -488,6 +494,13 @@ export class LocalCrmData implements CrmData {
           // new to that term. A term typed in by hand never does (its receipts were typed too).
           const earlierImport = !!same.importId && same.importId !== importId && !!term.paidOnGiven;
           if ((same.importId !== importId && !earlierImport) || term.paidP <= 0) {
+            result.skipped += 1;
+            return;
+          }
+          // Review: a term an earlier import made already has this file's payment when it has a
+          // receipt on that day, whatever the amount (a running "paid so far" was saved as the
+          // difference). Importing the same file again adds nothing.
+          if (earlierImport && db.payments.some((p) => p.membershipId === same.id && p.paidOn === paidOn)) {
             result.skipped += 1;
             return;
           }
@@ -954,6 +967,11 @@ export function similarPlanName(a: string, b: string): boolean {
     prev = cur;
   }
   return prev[y.length]! <= 2;
+}
+
+/** A plan name that says personal training ("PT 10", "Personal Training 3 Months", "Trainer"). */
+export function looksLikePt(name: string): boolean {
+  return /\b(pt|personal\s*train(ing|er)|trainer)\b/i.test(name);
 }
 
 /** C7-1: the same press came again with different numbers: say what was already saved. */
