@@ -1826,8 +1826,16 @@
     the same step with the phone's OLD/NEW signers and lineage (sign_rotated.sh), checked by
     same_signer.py, uploaded and published as forgeai-<tag>-wear.apk. release_checks and the update
     proof now pick the phone APK by name (phone_apk_asset; unit-tested), never the -wear one. Not run
-    (no tag). Known: the watch also shows the phone's bridged rest card and "Rest is over", so a rest
-    end can show two cards on the watch (the watch's own is the reliable buzz).
+    (no tag).
+  - Review fixes (9389df0, def26f1; **wear-build run 38863936120 green**): the phone's "Rest is over"
+    carries bridge tag "rest-over" and the watch excludes it (BridgingManager, wear-phone-interactions
+    1.1.0) only while its own notifications are allowed, so one card and one buzz; the rest card
+    (Done / +15 s / Skip) still bridges. /forge/rest carries ringThroughDnd: the watch buzz is
+    notification usage (DND / Bedtime silence it) unless that is on (alarm usage + alarm category). A
+    saved rest 60 s+ past its end reads as none; BootReceiver (BOOT_COMPLETED, MY_PACKAGE_REPLACED)
+    and opening the screen re-arm a running rest and drop a lost one. Heart rate: status reset on
+    each start, Health Services capabilities checked first ("This watch has no heart-rate sensor").
+    Notifications off: idle and heart screens say the watch-face countdown needs them + Allow.
 - 2026-10-15: **v0.44.0 — owner's gym-test fixes: RPE one-tap sheet; the rest sound never changes**
   (34db130 + this commit). Owner testing in the gym ("Keep adding the improvements I send in the plan").
   - RPE: the RPE cell opens its own sheet (RpeSheet.tsx): 10 -> 6 with meanings, ONE tap saves and
