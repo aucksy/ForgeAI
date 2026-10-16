@@ -2354,6 +2354,15 @@
     retry keeps the pre-restore safety copy (in-memory `untidyRestore`, unless a workout was saved since).
   - **Tests:** test/cloud/restoreRepairs.test.ts (7, failed first); full suite 226 files green;
     typecheck 0; silent-catch and promise ratchets at baseline.
+- 2026-10-16: **v0.46.0 — audit v2 fixes, the Wear OS watch app, owner-phone release gate** (tag commit below).
+  - Member app: audit v2 waves 1-4 (C1-C6, C9; Audit/e2e-v2/REGISTER.md), C9-23 membership line,
+    C9-26 "Rest is over" channel name (3c330f7 keeps its full settings on rename), owner-profile
+    fixes (camera refusal logged, routine-import step 2 opens at its top, receipt contrast).
+  - Watch app: forgeai-v0.46.0-wear.apk, same key and lineage as the phone APK.
+  - Gate: a release needs a whole API 34 phone run on BOTH profiles (default + owner 360 dp/1.3/IST).
+  - Admin app (deployed, not in the APK): English only (Hinglish removed on the owner's word),
+    Dark | Light switch where the language switch was (color.* are CSS variables; light palette
+    4.5:1+ on every plane), ~300 sentences in plainer English, "Void" -> "Cancel receipt".
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
