@@ -21,6 +21,7 @@ import { coverageEndsOn, endDateForPlan, nextTermStart } from './membership';
 import { formatINR } from './money';
 import { EARLIEST_DATE } from '../data/adapter';
 import { gymPlansOnly, isPtMembership, isPtPlan } from './pt';
+import { DESK_BACKDATE_DAYS, priceProblem, receiptDateProblem } from './receiptRules';
 
 export interface SaleDefaults {
   /** First day of the new term. */
@@ -115,7 +116,7 @@ export function saleWarning(s: { priceP: Paise | null; joiningFeeP: Paise | null
 }
 
 /** A front-desk (Staff) sale may start at most this many days before today (the server's rule too). */
-export const STAFF_BACKDATE_DAYS = 31;
+export const STAFF_BACKDATE_DAYS = DESK_BACKDATE_DAYS;
 
 /**
  * Admin audit C7-13 (16 Oct 2026), owner decision recorded in the audit file: the front desk may give
@@ -208,10 +209,13 @@ export function validateSale(
     if (!/^\d{4}-\d{2}-\d{2}$/.test(input.paidOn) || input.paidOn < EARLIEST_DATE) {
       return { field: 'paidOn', message: 'Pick the date you got this money.' };
     }
-    if (input.paidOn > today) {
-      return { field: 'paidOn', message: 'The payment date can’t be in the future.' };
-    }
+    // UAT F-02: never ahead; the front desk at most 31 days back (the server's rule too, 0021).
+    const dateProblem = receiptDateProblem(input.paidOn, today, role);
+    if (dateProblem) return { field: 'paidOn', message: dateProblem };
   }
+  // UAT F-07: prices are whole paise (the rupee box already gives that; this guards every caller).
+  const priceWords = priceProblem(input.priceP, 'price') ?? priceProblem(input.joiningFeeP, 'joining fee');
+  if (priceWords) return { field: priceProblem(input.priceP, 'price') ? 'priceP' : 'joiningFeeP', message: priceWords };
   if (input.collectNowP > total) {
     return { field: 'collectNowP', message: 'Amount received is more than the total.' };
   }

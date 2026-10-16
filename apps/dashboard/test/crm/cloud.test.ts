@@ -13,6 +13,7 @@ import {
 } from '../../src/crm/data/cloud';
 import { emptySnapshot, normalizeSnapshot } from '../../src/crm/data/local';
 import type { MemberDraft, PlanDraft } from '../../src/crm/types';
+import { openTerm } from './fixtures';
 
 const TODAY = '2026-10-14';
 
@@ -137,11 +138,12 @@ describe('CloudCrmData', () => {
     const server = new FakeServer();
     const deskA = new CloudCrmData('k', server);
     const m = await deskA.createMember(member());
+    const term = await openTerm(deskA, m.id, TODAY);
     const deskB = new CloudCrmData('k', server);
     await deskB.load();
     const input = {
       memberId: m.id,
-      membershipId: null,
+      membershipId: term,
       amountP: 50000,
       method: 'cash' as const,
       paidOn: TODAY,
@@ -156,9 +158,9 @@ describe('CloudCrmData', () => {
     expect(snap.payments).toHaveLength(2);
   });
 
-  const pay = (memberId: string) => ({
+  const pay = (memberId: string, membershipId: string) => ({
     memberId,
-    membershipId: null,
+    membershipId,
     amountP: 50000,
     method: 'cash' as const,
     paidOn: TODAY,
@@ -172,8 +174,9 @@ describe('CloudCrmData', () => {
     const server = new FakeServer();
     const desk = new CloudCrmData('k', server, noSleep);
     const m = await desk.createMember(member());
+    const term = await openTerm(desk, m.id, TODAY);
     server.loseReplies = 1;
-    await desk.recordPayment(pay(m.id)); // resent with the same id: the server answers "already have it"
+    await desk.recordPayment(pay(m.id, term)); // resent with the same id: the server answers "already have it"
     const snap = await new CloudCrmData('k', server).load();
     expect(snap.payments).toHaveLength(1);
     expect((await desk.load()).payments).toHaveLength(1);
@@ -183,11 +186,12 @@ describe('CloudCrmData', () => {
     const server = new FakeServer();
     const desk = new CloudCrmData('k', server, noSleep);
     const m = await desk.createMember(member());
+    const term = await openTerm(desk, m.id, TODAY);
     server.offline = 3; // the push and both resends never reach the server
-    await expect(desk.recordPayment(pay(m.id))).rejects.toThrow(/internet/);
+    await expect(desk.recordPayment(pay(m.id, term))).rejects.toThrow(/internet/);
     expect((await new CloudCrmData('k', server).load()).payments).toHaveLength(0);
     // The internet is back. The kept payment goes first, and the next press stops to say so.
-    await expect(desk.recordPayment(pay(m.id))).rejects.toThrow(/saved just now/);
+    await expect(desk.recordPayment(pay(m.id, term))).rejects.toThrow(/saved just now/);
     expect((await desk.load()).payments).toHaveLength(1);
     await desk.checkIn(m.id, TODAY, 'desk', TODAY);
     const snap = await new CloudCrmData('k', server).load();

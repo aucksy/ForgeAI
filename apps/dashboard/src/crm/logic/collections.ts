@@ -18,9 +18,9 @@
 import type { Member, Membership, Payment, PaymentMethod } from '../types';
 import { addDays, diffDays, endOfMonth, startOfMonth, toISO, partsOf, type DateISO } from './dates';
 import { isChased, unpaidForMembership } from './membership';
-import { phoneDigits } from './members';
-import { sumPaise, type Paise } from './money';
-import { PAYMENT_METHODS } from './payments';
+import { phoneDigits, phoneForExport } from './members';
+import { paiseToRupees, sumPaise, type Paise } from './money';
+import { methodLabel, PAYMENT_METHODS } from './payments';
 
 // ---------------------------------------------------------------- ranges
 
@@ -244,6 +244,37 @@ export function ledgerMatchesQuery(row: LedgerRow, query: string): boolean {
   if (digits.length >= 3 && row.member && phoneDigits(row.member.phone).includes(digits)) return true;
 
   return false;
+}
+
+/**
+ * The receipts export (Money → Collections → Export). UAT F-09 (17 Oct 2026): with "show cancelled"
+ * ticked, the Amount column used to carry cancelled receipts too, so the accountant's column total
+ * came to more than Collected, by exactly the cancelled money. Now Amount is the money that counts
+ * (0 for a cancelled receipt) and the cancelled money has its own column: Amount always adds up to
+ * Collected, and nothing is hidden. PURE.
+ */
+export const RECEIPT_EXPORT_HEADERS = [
+  'Receipt no', 'Date', 'Member', 'Mobile', 'Membership', 'Method', 'Reference',
+  'Amount (INR)', 'Cancelled amount (INR)', 'Status', 'Taken by',
+] as const;
+
+export function receiptExportRow(r: LedgerRow): (string | number)[] {
+  const { payment } = r;
+  return [
+    payment.receiptNo,
+    payment.paidOn,
+    r.member?.fullName ?? 'Unknown member',
+    r.member ? phoneForExport(r.member.phone) : '',
+    r.membership?.planName ?? '',
+    methodLabel(payment.method),
+    payment.reference ?? '',
+    // Numbers, not formatted strings: the accountant has to be able to sum these columns
+    // without stripping ₹ and commas out of them first.
+    payment.voided ? 0 : paiseToRupees(payment.amountP),
+    payment.voided ? paiseToRupees(payment.amountP) : 0,
+    payment.voided ? `Cancelled: ${payment.voidReason ?? 'no reason given'}` : 'Received',
+    payment.collectedByName ?? '',
+  ];
 }
 
 export function filterLedger(rows: readonly LedgerRow[], filter: LedgerFilter): LedgerRow[] {

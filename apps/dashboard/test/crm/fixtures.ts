@@ -124,3 +124,29 @@ export function makeVisit(over: Partial<Visit> = {}): Visit {
     ...over,
   };
 }
+
+/**
+ * UAT work package 3 (17 Oct 2026): a receipt is always for one of its member's memberships, and
+ * never more than that membership still owes (local.ts, 0021). Tests that only need "a receipt for
+ * this member" sell a term with nothing paid yet and use its id. Works on the browser store and the
+ * online one alike.
+ */
+export async function openTerm(
+  db: {
+    createPlan(d: never): Promise<{ id: string }>;
+    sellMembership(i: never): Promise<{ membership: { id: string } }>;
+  },
+  memberId: string,
+  startsOn: DateISO,
+  priceP = 1_000_000,
+): Promise<string> {
+  const plan = await db.createPlan({
+    name: `Term ${(n += 1)}`, durationUnit: 'month', durationCount: 1, priceP, joiningFeeP: 0,
+    description: null, active: true, sortOrder: 99,
+  } as never);
+  const { membership } = await db.sellMembership({
+    memberId, planId: plan.id, startsOn, priceP, joiningFeeP: 0, notes: null, collectNowP: 0,
+    method: 'cash', reference: null, paidOn: startsOn, soldBy: null,
+  } as never);
+  return membership.id;
+}

@@ -315,6 +315,12 @@ function Footer({ doc }: { doc: ReceiptDoc }) {
           ) : null}
         </div>
 
+        {doc.collectedByName && (
+          <div>
+            <span style={{ color: PAPER.inkSoft }}>Received by</span> {doc.collectedByName}
+          </div>
+        )}
+
         {doc.balanceP !== null && doc.termTotalP !== null && (
           <div>
             <span style={{ color: PAPER.inkSoft }}>

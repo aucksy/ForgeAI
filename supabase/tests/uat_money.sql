@@ -9,8 +9,12 @@
 -- FINDINGS ARE PROBES, NOT FAILURES. A money rule the server should enforce but does not (e.g. a
 -- receipt bigger than what is owed) is run as a probe: the push is tried and then undone. "open"
 -- means the server still accepts it (the finding stands); "closed" means a later migration now
--- refuses it (update the write-up). A probe that fails in any OTHER way is a broken test and fails
--- the file. So CI stays green while a finding is open, and the open list is printed every run.
+-- refuses it WITH THE REFUSAL NAMED IN THE PROBE (update the write-up). A probe that fails in any
+-- OTHER way is a broken test and fails the file. So CI stays green while a finding is open, and the
+-- open list is printed every run.
+--
+-- 0021 (UAT work package 3, 17 Oct 2026) closed F-01 to F-08. Each probe now names the refusal
+-- that closes it; the rules themselves are tested in 0021_receipt_rules.sql.
 
 -- One push on the gym's current version: 'ok', or the error it raised (nothing kept on an error).
 create or replace function pg_temp.um_push(p_key text, p_rows jsonb) returns text
@@ -81,43 +85,46 @@ begin
     (gid, 'member', 'm-new2', '{"fullName":"New two","phone":"9811200003"}', 1),
     (gid, 'membership', 'ms1', jsonb_build_object('memberId', 'm1', 'planId', 'pl', 'priceP', 100000, 'joiningFeeP', 0,
        'startsOn', to_char(td - 10, 'YYYY-MM-DD'), 'endsOn', to_char(td + 19, 'YYYY-MM-DD'), 'cancelled', false), 1),
+    (gid, 'membership', 'ms-imp', jsonb_build_object('memberId', 'm1', 'planId', 'pl', 'priceP', 40000, 'joiningFeeP', 0,
+       'startsOn', to_char(td - 100, 'YYYY-MM-DD'), 'endsOn', to_char(td - 71, 'YYYY-MM-DD'), 'cancelled', false, 'importId', 'imp-money'), 1),
     (gid, 'payment', 'pay1', pay1, 1),
-    (gid, 'payment', 'pay-imp', pay1 || '{"receiptNo":"IMP/2026-27/0001","amountP":25000,"importId":"imp-money"}', 1),
-    (gid, 'payment', 'pay-imp2', pay1 || '{"receiptNo":"IMP/2026-27/0002","amountP":15000,"importId":"imp-money"}', 1);
+    (gid, 'payment', 'pay-imp', pay1 || '{"membershipId":"ms-imp","receiptNo":"IMP/2026-27/0001","amountP":25000,"importId":"imp-money"}', 1),
+    (gid, 'payment', 'pay-imp2', pay1 || '{"membershipId":"ms-imp","receiptNo":"IMP/2026-27/0002","amountP":15000,"importId":"imp-money"}', 1);
   update public.gyms set crm_version = 1 where gym_id = gid;
 
   -- ================================================================ FINDINGS (probes; each undone)
   -- Run first, on the seeded gym, so every probe sees the same state.
   for probe in select * from (values
     -- F-01 (coordinator): a desk receipt MORE than the term's remaining due (₹10,000 on ₹400 due).
-    ('F-01', kd, pg_temp.um_row('payment', 'p-over', rcpt || '{"amountP":1000000}')),
+    ('F-01', kd, pg_temp.um_row('payment', 'p-over', rcpt || '{"amountP":1000000}'), 'OVER_DUE'),
     -- F-02: the desk dates a receipt 400 days back (last financial year) or 30 days ahead.
-    ('F-02', kd, pg_temp.um_row('payment', 'p-back', rcpt || jsonb_build_object('paidOn', to_char(td - 400, 'YYYY-MM-DD')))),
-    ('F-02', kd, pg_temp.um_row('payment', 'p-ahead', rcpt || jsonb_build_object('paidOn', to_char(td + 30, 'YYYY-MM-DD')))),
-    -- F-03: the owner rewrites a saved receipt (amount, member, number) — no history row is kept.
-    ('F-03', ko, pg_temp.um_row('payment', 'pay1', pay1 || '{"amountP":100}')),
-    ('F-03', ko, pg_temp.um_row('payment', 'pay1', pay1 || '{"receiptNo":"2026-27/0999","memberId":"m-new"}')),
-    -- F-04: an owner session's NEW receipt is not checked: minus, zero, a fraction of a paisa, text.
-    ('F-04', ko, pg_temp.um_row('payment', 'p-neg', rcpt || '{"amountP":-500}')),
-    ('F-04', ko, pg_temp.um_row('payment', 'p-frac', rcpt || '{"amountP":100.5}')),
-    ('F-04', ko, pg_temp.um_row('payment', 'p-text', rcpt || '{"amountP":"10000"}')),
+    ('F-02', kd, pg_temp.um_row('payment', 'p-back', rcpt || jsonb_build_object('paidOn', to_char(td - 400, 'YYYY-MM-DD'))), 'TOO_OLD'),
+    ('F-02', kd, pg_temp.um_row('payment', 'p-ahead', rcpt || jsonb_build_object('paidOn', to_char(td + 30, 'YYYY-MM-DD'))), 'BAD_DATE'),
+    -- F-03: the owner rewrites a saved receipt (amount, member, number). Now refused for everyone;
+    -- the change log is in 0021_receipt_rules.sql.
+    ('F-03', ko, pg_temp.um_row('payment', 'pay1', pay1 || '{"amountP":100}'), 'RECEIPT_LOCKED'),
+    ('F-03', ko, pg_temp.um_row('payment', 'pay1', pay1 || '{"receiptNo":"2026-27/0999","memberId":"m-new"}'), 'RECEIPT_LOCKED'),
+    -- F-04: an owner session's NEW receipt: minus, a fraction of a paisa, text.
+    ('F-04', ko, pg_temp.um_row('payment', 'p-neg', rcpt || '{"amountP":-500}'), 'BAD_AMOUNT'),
+    ('F-04', ko, pg_temp.um_row('payment', 'p-frac', rcpt || '{"amountP":100.5}'), 'BAD_AMOUNT'),
+    ('F-04', ko, pg_temp.um_row('payment', 'p-text', rcpt || '{"amountP":"10000"}'), 'BAD_AMOUNT'),
     -- F-05: a second receipt with a number already used in this gym (the desk).
-    ('F-05', kd, pg_temp.um_row('payment', 'p-dupno', rcpt || '{"receiptNo":"2026-27/0001"}')),
+    ('F-05', kd, pg_temp.um_row('payment', 'p-dupno', rcpt || '{"receiptNo":"2026-27/0001"}'), 'DUP_RECEIPT'),
     -- F-06: the owner cancels a receipt with no reason.
-    ('F-06', ko, pg_temp.um_row('payment', 'pay1', (pay1 - 'voidReason') || '{"voided":true}')),
+    ('F-06', ko, pg_temp.um_row('payment', 'pay1', (pay1 - 'voidReason') || '{"voided":true}'), 'NEED_REASON'),
     -- F-07: the desk sells a plan at a fraction of a paisa.
-    ('F-07', kd, pg_temp.um_row('membership', 'ms-frac', sale || '{"priceP":90000.5}')),
+    ('F-07', kd, pg_temp.um_row('membership', 'ms-frac', sale || '{"priceP":90000.5}'), 'BAD_PRICE'),
     -- F-08: the desk takes money against a plan that does not exist / belongs to another member.
-    ('F-08', kd, pg_temp.um_row('payment', 'p-nowhere', rcpt || '{"membershipId":"no-such-plan"}')),
-    ('F-08', kd, pg_temp.um_row('payment', 'p-wrong', rcpt || '{"memberId":"m-new"}'))
-    ) as t(fid, k, prow)
+    ('F-08', kd, pg_temp.um_row('payment', 'p-nowhere', rcpt || '{"membershipId":"no-such-plan"}'), 'WRONG_PLAN'),
+    ('F-08', kd, pg_temp.um_row('payment', 'p-wrong', rcpt || '{"memberId":"m-new"}'), 'WRONG_PLAN')
+    ) as t(fid, k, prow, closed_by)
   loop
     r := pg_temp.um_probe(probe.k, probe.prow);
     probes := probes + 1;
     if r = 'ok' then
       if position(probe.fid in open_f) = 0 then open_f := open_f || ' ' || probe.fid; end if;
-    elsif r not in ('OWNER_ONLY', 'INVALID') then
-      fails := fails || ' probe ' || probe.fid || ' broke:' || r;
+    elsif r is distinct from probe.closed_by then
+      fails := fails || ' probe ' || probe.fid || ' broke:' || r || ' (want ' || probe.closed_by || ')';
     end if;
   end loop;
 

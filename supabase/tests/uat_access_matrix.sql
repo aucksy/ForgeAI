@@ -97,12 +97,15 @@ begin
     (ga, 'membership', 'a-ms-imp', ms_d || '{"importId":"imp-a"}', 1),
     (ga, 'payment', 'a-pay', pay_d, 1),
     (ga, 'payment', 'a-pay-void', payv_d, 1),
-    (ga, 'payment', 'a-pay-imp', pay_d || '{"receiptNo":"IMP/2026-27/0001","importId":"imp-a"}', 1),
+    (ga, 'payment', 'a-pay-imp', pay_d || '{"membershipId":"a-ms-imp","receiptNo":"IMP/2026-27/0001","importId":"imp-a"}', 1),
     (ga, 'visit', 'a-vis', vis_d, 1),
     (ga, 'enquiry', 'a-enq', enq_d, 1),
     (ga, 'expense', 'a-exp', exp_d, 1),
     (gb, 'member', 'b-mem', '{"fullName":"Bina B","phone":"9811100041"}', 1);
   update public.gyms set crm_version = 1 where gym_id in (ga, gb);
+  -- 0021: one row of gym A's receipt history, for the owner to read and nobody else.
+  insert into public.receipt_history(gym_id, receipt_id, what, old_data, new_data, old_deleted, new_deleted)
+    values (ga, 'a-pay', 'changed', pay_d, pay_d, false, false);
 
   insert into public.shop_products(gym_id, name, category, price_p, options, stock, active)
     values (ga, 'UAT Shaker A', 'gear', 39900, '[]', 10, true) returning product_id into pa;
@@ -235,23 +238,32 @@ begin
     ('payment', 'C (collect)', 'crm_push', null,
      $q$select public.crm_push({K}, {V}, '[{"k":"payment","id":"x-pay","d":{"memberId":"a-mem","membershipId":"a-ms","amountP":50000,"method":"cash","paidOn":"{TODAY}","receiptNo":"2026-27/0003","voided":false}}]'::jsonb)$q$,
      $q$exists (select 1 from public.crm_records where gym_id = {GA} and kind = 'payment' and id = 'x-pay')$q$,
-     '{NOKEY} deskA=allow ownerA=allow ownerB=deny:none'),
+     '{NOKEY} deskA=allow ownerA=allow ownerB=deny:WRONG_PLAN'),
     ('payment', 'R', 'crm_pull', null,
      $q$select set_config('uat.out', public.crm_pull({K}, 0)::text, true)$q$,
      $q$pg_temp.uat_pulled('payment', 'a-pay')$q$,
      '{NOKEY} deskA=allow ownerA=allow ownerB=deny:none'),
-    -- ownerA=allow is what the server does today: see finding F-03 (an owner can rewrite a receipt).
+    -- 0021 (F-03): a saved receipt is never edited, by anyone; the owner cancels it and issues a new
+    -- one. Gym B's owner naming gym A's ids makes a NEW receipt in gym B, refused for its membership.
     ('payment', 'U (change the amount)', 'crm_push', null,
      $q$select public.crm_push({K}, {V}, jsonb_build_array(jsonb_build_object('k','payment','id','a-pay','d', {PAY_D} || '{"amountP":100}'::jsonb)))$q$,
      $q$(select data->>'amountP' from public.crm_records where gym_id = {GA} and kind = 'payment' and id = 'a-pay') = '100'$q$,
-     '{NOKEY} deskA=deny:OWNER_ONLY ownerA=allow ownerB=deny:none'),
+     '{NOKEY} deskA=deny:OWNER_ONLY ownerA=deny:RECEIPT_LOCKED ownerB=deny:WRONG_PLAN'),
     ('payment', 'U (cancel = void)', 'crm_push', null,
      $q$select public.crm_push({K}, {V}, jsonb_build_array(jsonb_build_object('k','payment','id','a-pay','d', {PAY_D} || '{"voided":true,"voidReason":"typo"}'::jsonb)))$q$,
      $q$(select data->>'voided' from public.crm_records where gym_id = {GA} and kind = 'payment' and id = 'a-pay') = 'true'$q$,
-     '{NOKEY} deskA=deny:OWNER_ONLY ownerA=allow ownerB=deny:none'),
+     '{NOKEY} deskA=deny:OWNER_ONLY ownerA=allow ownerB=deny:WRONG_PLAN'),
+    ('payment', 'U (cancel with no reason)', 'crm_push', null,
+     $q$select public.crm_push({K}, {V}, jsonb_build_array(jsonb_build_object('k','payment','id','a-pay','d', {PAY_D} || '{"voided":true}'::jsonb)))$q$,
+     $q$(select data->>'voided' from public.crm_records where gym_id = {GA} and kind = 'payment' and id = 'a-pay') = 'true'$q$,
+     '{NOKEY} deskA=deny:OWNER_ONLY ownerA=deny:NEED_REASON ownerB=deny:WRONG_PLAN'),
     ('payment', 'U (undo a void)', 'crm_push', null,
      $q$select public.crm_push({K}, {V}, jsonb_build_array(jsonb_build_object('k','payment','id','a-pay-void','d', {PAYV_D} || '{"voided":false}'::jsonb)))$q$,
      $q$(select data->>'voided' from public.crm_records where gym_id = {GA} and kind = 'payment' and id = 'a-pay-void') = 'false'$q$,
+     '{NOKEY} deskA=deny:OWNER_ONLY ownerA=deny:RECEIPT_LOCKED ownerB=deny:WRONG_PLAN'),
+    ('payment', 'R (change history)', 'owner_receipt_history', null,
+     $q$select set_config('uat.out', public.owner_receipt_history({K})::text, true)$q$,
+     $q$current_setting('uat.out') like '%"a-pay"%'$q$,
      '{NOKEY} deskA=deny:OWNER_ONLY ownerA=allow ownerB=deny:none'),
     ('payment', 'D (imported)', 'crm_push x:true', null,
      $q$select public.crm_push({K}, {V}, '[{"k":"payment","id":"a-pay-imp","d":null,"x":true}]'::jsonb)$q$,
@@ -481,18 +493,18 @@ begin
      $q$select public.crm_push({K}, {V}, '[{"k":"gym","id":"gym","d":null,"x":true}]'::jsonb)$q$,
      $q$(select deleted from public.crm_records where gym_id = {GA} and kind = 'gym' and id = 'gym')$q$,
      '{NOKEY} deskA=deny:OWNER_ONLY ownerA=deny:INVALID ownerB=deny:INVALID'),
-    -- pMemberA=allow: 0001's gyms_read lets a gym's signed-in member read the whole gyms row (finding F-10).
+    -- pMemberA=allow: 0001's gyms_read lets a gym's signed-in member read the gyms row. Since 0021
+    -- the row no longer holds the IP the gym was created from (F-10; the probe below).
     ('gym settings', 'R (gyms row)', 'table gyms (RLS 0001)', null,
      $q$select set_config('uat.out', (select count(*) from public.gyms where gym_id = {GA})::text, true)$q$,
      $q$current_setting('uat.out')::int > 0$q$,
      'pMemberA=allow pOwnerA=allow pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM'),
-    -- pOwnerA=deny:PERM by accident, not design: 0001's gyms_owner_update policy would allow it, but
-    -- the gyms_brand_logo_url_ok check (0006) calls _logo_url_ok, which signed-in users may not run
-    -- (0005 revoke), so every direct update of a gyms row fails (finding F-14).
+    -- F-14 closed by 0021: 0001's gyms_owner_update policy is gone, so no signed-in profile has an
+    -- update rule on gyms at all (it used to fail only by accident, at the logo check).
     ('gym settings', 'U (gyms row)', 'table gyms (RLS 0001)', null,
      $q$update public.gyms set name = 'UAT hacked' where gym_id = {GA}$q$,
      $q$(select name from public.gyms where gym_id = {GA}) = 'UAT hacked'$q$,
-     'pOwnerA=deny:PERM pMemberA=deny:none pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM')
+     'pOwnerA=deny:none|deny:PERM pMemberA=deny:none pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM')
     ) as t(entity, action, path, pre, stmt, effect, expect)
     union all
     -- ======================================================== every table, directly (no function)
@@ -543,7 +555,16 @@ begin
         ('gym settings', 'gyms', $q$gym_id = {GA}$q$, $q$name = 'UAT hacked'$q$,
          $q$insert into public.gyms(name, join_code) values ('UAT table', 'UQAMXZ')$q$,
          $q$exists (select 1 from public.gyms where join_code = 'UQAMXZ')$q$,
-         $q$exists (select 1 from public.gyms where name = 'UAT hacked')$q$)
+         $q$exists (select 1 from public.gyms where name = 'UAT hacked')$q$),
+        -- 0021: the receipt change log, and the IPs gyms were created from.
+        ('payment', 'receipt_history', $q$gym_id = {GA}$q$, $q$what = 'UAT hacked'$q$,
+         $q$insert into public.receipt_history(gym_id, receipt_id, what, old_data, new_data, old_deleted, new_deleted) values ({GA}, 'tbl-x', 'changed', '{}', '{}', false, false)$q$,
+         $q$exists (select 1 from public.receipt_history where receipt_id = 'tbl-x')$q$,
+         $q$exists (select 1 from public.receipt_history where what = 'UAT hacked')$q$),
+        ('gym settings', 'gym_creator_ips', $q$gym_id = {GA}$q$, $q$ip = 'UAT hacked'$q$,
+         $q$insert into public.gym_creator_ips(gym_id, ip) values ({GB}, '198.51.100.77')$q$,
+         $q$exists (select 1 from public.gym_creator_ips where ip = '198.51.100.77')$q$,
+         $q$exists (select 1 from public.gym_creator_ips where ip = 'UAT hacked')$q$)
       ) as tb(entity, tname, cond, upd, ins, ins_eff, upd_eff)
       cross join (values ('C'), ('R'), ('U'), ('D')) as x(op)
   loop

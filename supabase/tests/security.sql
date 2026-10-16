@@ -24,7 +24,7 @@ declare
     'member_orders','member_place_order','member_products','member_saw_messages','member_set_name',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
     'owner_gym','owner_make_signin_code','owner_messages','owner_orders','owner_people','owner_photo_ticket',
-    'owner_products','owner_remove_person','owner_rename_gym','owner_retire_key','owner_save_product',
+    'owner_products','owner_receipt_history','owner_remove_person','owner_rename_gym','owner_retire_key','owner_save_product',
     'owner_send_message','owner_set_brand','owner_set_order_status','owner_set_product_active',
     'owner_set_product_photo','owner_sign_out_person','owner_withdraw_message','staff_me','staff_sign_in',
     'staff_sign_out'];

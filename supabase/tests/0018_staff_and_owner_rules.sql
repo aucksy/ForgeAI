@@ -73,7 +73,8 @@ begin
   fails := fails || pg_temp.t18_is('1d same receipt again', pg_temp.t18_push(ks,
     jsonb_build_array(jsonb_build_object('k', 'payment', 'id', 'pay1', 'd', d))), 'ok');
   fails := fails || pg_temp.t18_is('1e take a fee', pg_temp.t18_push(ks,
-    '[{"k":"payment","id":"pay-new","d":{"memberId":"m1","amountP":30000,"voided":false,"receiptNo":"R-2"}}]'), 'ok');
+    replace('[{"k":"payment","id":"pay-new","d":{"memberId":"m1","membershipId":"ms1","paidOn":"{T}","amountP":30000,"voided":false,"receiptNo":"R-2"}}]',
+            '{T}', to_char(td, 'YYYY-MM-DD'))::jsonb), 'ok');
   fails := fails || pg_temp.t18_is('1f minus receipt', pg_temp.t18_push(ks,
     '[{"k":"payment","id":"pay-neg","d":{"memberId":"m1","amountP":-500,"voided":false}}]'), 'OWNER_ONLY');
   fails := fails || pg_temp.t18_is('1g zero receipt', pg_temp.t18_push(ks,
@@ -174,7 +175,8 @@ begin
   fails := fails || pg_temp.t18_is('5g sale + receipt in one push', pg_temp.t18_push(ks, jsonb_build_array(
     jsonb_build_object('k', 'membership', 'id', 'ms-j', 'd', jsonb_build_object('memberId', 'm-new', 'planId', 'pl-month', 'priceP', 100000,
       'joiningFeeP', 50000, 'startsOn', to_char(td, 'YYYY-MM-DD'), 'endsOn', to_char((td + interval '1 month')::date - 1, 'YYYY-MM-DD'), 'cancelled', false)),
-    jsonb_build_object('k', 'payment', 'id', 'pay-j', 'd', '{"memberId":"m-new","membershipId":"ms-j","amountP":150000,"voided":false}'::jsonb))), 'ok');
+    jsonb_build_object('k', 'payment', 'id', 'pay-j', 'd', '{"memberId":"m-new","membershipId":"ms-j","amountP":150000,"voided":false,"receiptNo":"R-3"}'::jsonb
+      || jsonb_build_object('paidOn', to_char(td, 'YYYY-MM-DD'))))), 'ok');
   checks := checks + 7;
 
   -- ---------------------------------------------------------------- owners are unchanged

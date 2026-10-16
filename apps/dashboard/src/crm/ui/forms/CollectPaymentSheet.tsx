@@ -12,12 +12,13 @@
 import { useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
-import { useAuth } from '../../auth/AuthProvider';
+import { useAuth, useRole } from '../../auth/AuthProvider';
 import { takerOf } from '../../auth/permissions';
 import { formatDay, isValidDateISO } from '../../logic/dates';
 import { isChased, unpaidForMembership } from '../../logic/membership';
 import { formatINR, parseRupeeInput } from '../../logic/money';
 import { DEFAULT_PAYMENT_METHOD, methodOptions } from '../../logic/payments';
+import { DESK_BACKDATE_DAYS, receiptDateProblem } from '../../logic/receiptRules';
 import type { MemberView, Payment, PaymentMethod } from '../../types';
 import { EARLIEST_DATE as EARLIEST_SENSIBLE_DAY } from '../../data/adapter';
 import { newRequestId } from '../../data/local';
@@ -36,6 +37,7 @@ export function CollectPaymentSheet({
   const { snapshot, today, recordPayment } = useCrm();
   // C7-12: the receipt says who took the money (the server stamps the same from the session).
   const taker = takerOf(useAuth().session);
+  const role = useRole();
 
   const owing = useMemo(() => {
     const payments = snapshot.payments.filter((p) => p.memberId === view.member.id);
@@ -81,7 +83,9 @@ export function CollectPaymentSheet({
     if (paidOn < EARLIEST_SENSIBLE_DAY) {
       return setError('That date looks wrong. Check the year.');
     }
-    if (paidOn > today) return setError('The payment date can’t be in the future.');
+    // UAT F-02: never ahead; the front desk at most 31 days back (the server refuses the same, 0021).
+    const dateProblem = receiptDateProblem(paidOn, today, role);
+    if (dateProblem) return setError(dateProblem);
 
     setSaving(true);
     setError(null);
@@ -181,7 +185,16 @@ export function CollectPaymentSheet({
         />
       </Grid>
 
-      <TextField label="Received on" value={paidOn} onChange={setPaidOn} type="date" />
+      <TextField
+        label="Received on"
+        value={paidOn}
+        onChange={(v) => {
+          setPaidOn(v);
+          setError(null);
+        }}
+        type="date"
+        hint={role === 'staff' ? `Today, or up to ${DESK_BACKDATE_DAYS} days back.` : undefined}
+      />
 
       {remainingP !== null && (
         <Row>

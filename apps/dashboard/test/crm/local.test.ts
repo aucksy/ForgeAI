@@ -18,6 +18,7 @@ import {
 } from '../../src/crm/data/local';
 import { unpaidForMembership } from '../../src/crm/logic/membership';
 import type { MemberDraft, PlanDraft } from '../../src/crm/types';
+import { openTerm } from './fixtures';
 
 const TODAY = '2026-07-26';
 
@@ -239,12 +240,13 @@ describe('two tabs on the same computer', () => {
     const tabA = new LocalCrmData({ store, now: () => (clock += 1), seed: () => emptySnapshot(0, 'Shared') });
     const tabB = new LocalCrmData({ store, now: () => (clock += 1) });
     const member = await tabA.createMember(memberDraft());
+    const term = await openTerm(tabA, member.id, TODAY);
     await tabB.load();
 
     const pay = (adapter: LocalCrmData) =>
       adapter.recordPayment({
         memberId: member.id,
-        membershipId: null,
+        membershipId: term,
         amountP: 100_000,
         method: 'cash',
         paidOn: TODAY,
@@ -491,9 +493,10 @@ describe('selling a membership', () => {
 describe('payments', () => {
   it('issues sequential receipt numbers across separate payments', async () => {
     const m = await db.createMember(memberDraft());
+    const term = await openTerm(db, m.id, TODAY);
     const first = await db.recordPayment({
       memberId: m.id,
-      membershipId: null,
+      membershipId: term,
       amountP: 50_000,
       method: 'cash',
       paidOn: TODAY,
@@ -503,7 +506,7 @@ describe('payments', () => {
     });
     const second = await db.recordPayment({
       memberId: m.id,
-      membershipId: null,
+      membershipId: term,
       amountP: 50_000,
       method: 'upi',
       paidOn: TODAY,
@@ -517,9 +520,10 @@ describe('payments', () => {
 
   it('voids rather than deletes, and the number is not reissued', async () => {
     const m = await db.createMember(memberDraft());
+    const term = await openTerm(db, m.id, TODAY);
     const p = await db.recordPayment({
       memberId: m.id,
-      membershipId: null,
+      membershipId: term,
       amountP: 50_000,
       method: 'cash',
       paidOn: TODAY,
@@ -536,7 +540,7 @@ describe('payments', () => {
 
     const next = await db.recordPayment({
       memberId: m.id,
-      membershipId: null,
+      membershipId: term,
       amountP: 10_000,
       method: 'cash',
       paidOn: TODAY,

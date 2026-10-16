@@ -34,36 +34,66 @@ export function daysInMonth(year: number, month: number): number {
   return new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
 
-/** Today as a local calendar day. Pass `now` to make a caller deterministic. */
+/**
+ * UAT F-13 (17 Oct 2026): the gym's day is INDIA's day, whatever time zone the desk PC is set to.
+ * The server's rules (the desk's 31 days, a PT session today, the check-in day, receipt dates) all
+ * use Asia/Kolkata; a PC left on UTC or on a travelling owner's laptop used to date receipts by its
+ * own clock and disagree with the server for 5½ hours a day. India has one zone and no daylight
+ * saving, so the day is the instant shifted by +05:30, read in UTC parts. Pure arithmetic: it does
+ * not depend on the machine's time zone or on Intl time-zone data.
+ */
+export const IST_OFFSET_MS = 330 * 60_000;
+
+/** The India wall-clock parts of an instant (epoch ms), or null when it is not a real instant. */
+function istParts(ms: number): { year: number; month: number; day: number; hour: number; minute: number } | null {
+  const d = new Date(ms + IST_OFFSET_MS);
+  if (Number.isNaN(d.getTime())) return null;
+  return {
+    year: d.getUTCFullYear(),
+    month: d.getUTCMonth() + 1,
+    day: d.getUTCDate(),
+    hour: d.getUTCHours(),
+    minute: d.getUTCMinutes(),
+  };
+}
+
+/** Today in India, as a calendar day. Pass `now` to make a caller deterministic. */
 export function todayISO(now: Date = new Date()): DateISO {
-  return toISO(now.getFullYear(), now.getMonth() + 1, now.getDate());
+  const p = istParts(now.getTime());
+  if (!p) return '';
+  return toISO(p.year, p.month, p.day);
 }
 
 /**
- * The local calendar day an epoch-ms timestamp falls on.
+ * The India calendar day an epoch-ms timestamp falls on.
  *
  * Use this instead of `new Date(ms).toISOString().slice(0, 10)`, which converts to
  * UTC: a gym created at 02:00 IST would render as the previous day for every user
  * in India. The same trap `todayISO` avoids.
  */
 export function dateISOFromEpoch(ms: number): DateISO {
-  const d = new Date(ms);
-  if (Number.isNaN(d.getTime())) return '';
-  return toISO(d.getFullYear(), d.getMonth() + 1, d.getDate());
+  const p = istParts(ms);
+  if (!p) return '';
+  return toISO(p.year, p.month, p.day);
 }
 
 /**
- * The LOCAL wall-clock hour (0–23) an epoch-ms timestamp falls in, or null when the
+ * The India wall-clock hour (0–23) an epoch-ms timestamp falls in, or null when the
  * timestamp is not a real instant.
  *
- * Local, not UTC, for the same reason `dateISOFromEpoch` is: a 6am check-in at a
+ * India time, not UTC, for the same reason `dateISOFromEpoch` is: a 6am check-in at a
  * Jaipur gym is 00:30 UTC, so a peak-hour report built on `getUTCHours` would tell
  * the owner their gym is busiest in the middle of the night.
  */
 export function hourOfEpoch(ms: number): number | null {
-  const d = new Date(ms);
-  if (Number.isNaN(d.getTime())) return null;
-  return d.getHours();
+  const p = istParts(ms);
+  return p ? p.hour : null;
+}
+
+/** The India wall-clock minute (0–59) of an instant, or null. */
+export function minuteOfEpoch(ms: number): number | null {
+  const p = istParts(ms);
+  return p ? p.minute : null;
 }
 
 /** Build a `DateISO` from parts, zero-padded. */

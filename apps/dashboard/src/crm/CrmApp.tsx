@@ -18,7 +18,7 @@ import { useMemo, useRef } from 'react';
 import { cloudApi } from './auth/api';
 import { AuthProvider, useAuth, useRole } from './auth/AuthProvider';
 import { OwnerOnly } from './auth/OwnerOnly';
-import { canOpen, navFor } from './auth/permissions';
+import { canOpen, navFor, roleOf } from './auth/permissions';
 import { PeopleScreen } from './auth/PeopleScreen';
 import { CloudCrmData } from './data/cloud';
 
@@ -60,9 +60,11 @@ function SessionRoot() {
   const lostRef = useRef(lost);
   lostRef.current = lost;
   const onlineKey = session?.online ? session.ownerKey : null;
+  // UAT F-02: the desk's 31-day limit on receipt dates is checked before anything is sent.
+  const role = roleOf(session);
   const data = useMemo(
-    () => (onlineKey ? new CloudCrmData(onlineKey, cloudApi, { onSignedOut: () => lostRef.current() }) : undefined),
-    [onlineKey],
+    () => (onlineKey ? new CloudCrmData(onlineKey, cloudApi, { onSignedOut: () => lostRef.current(), role }) : undefined),
+    [onlineKey, role],
   );
   return (
     <CrmProvider key={`${session?.ownerKey ?? 'none'}:${onlineKey ? 'online' : 'browser'}`} data={data}>

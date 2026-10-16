@@ -136,5 +136,5 @@ export function shopTabFor(role: Role, section: string | undefined): ShopTab {
 
 /** One plain line: what Staff can and cannot do now. Shown on Staff & sign-in. */
 export function staffRightsWords(): string {
-  return 'The owner can do everything. Staff (front desk) can add members, sell plans, collect fees, check members in and hand over shop orders. Staff can give at most 10% off a plan, and must charge the joining fee as listed. Every receipt shows who took the money. Staff cannot see money totals or expenses. They cannot cancel receipts, cancel or freeze plans, change plan prices or change gym details.';
+  return 'The owner can do everything. Staff (front desk) can add members, sell plans, collect fees, check members in and hand over shop orders. Staff can give at most 10% off a plan, and must charge the joining fee as listed. Every receipt shows who took the money. Staff can date a payment at most 31 days back, never ahead. Staff cannot see money totals or expenses. They cannot cancel receipts, cancel or freeze plans, change plan prices or change gym details.';
 }

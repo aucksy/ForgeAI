@@ -9,6 +9,7 @@
  */
 
 import { formatINR, parseRupeeInput, type Paise } from '../logic/money';
+import { dateISOFromEpoch, IST_OFFSET_MS } from '../logic/dates';
 
 // ---------------------------------------------------------------- shapes
 
@@ -272,11 +273,9 @@ export function countByStatus(orders: readonly Order[]): Record<OrderFilter, num
   return c;
 }
 
-/** Same calendar day in the browser's own time zone (the gym's). */
+/** Same calendar day in India (UAT F-13: the gym's day, whatever the PC's time zone). */
 export function isSameLocalDay(a: number, b: number): boolean {
-  const x = new Date(a);
-  const y = new Date(b);
-  return x.getFullYear() === y.getFullYear() && x.getMonth() === y.getMonth() && x.getDate() === y.getDate();
+  return dateISOFromEpoch(a) === dateISOFromEpoch(b);
 }
 
 /** Money collected at the desk today: collected orders whose last change was today. */
@@ -327,17 +326,16 @@ export function timeAgo(then: number, now: number): string {
   const d = Math.max(1, Math.round((startOfDay(now) - startOfDay(then)) / 86_400_000));
   if (d === 1) return 'yesterday';
   if (d < 30) return `${d} days ago`;
-  return new Date(then).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(then).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
 }
 
 function startOfDay(t: number): number {
-  const d = new Date(t);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime();
+  // Midnight in India of the day `t` falls on (UAT F-13).
+  return t - ((t + IST_OFFSET_MS) % 86_400_000 + 86_400_000) % 86_400_000;
 }
 
 export function clockTime(t: number): string {
-  return new Date(t).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+  return new Date(t).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
 }
 
 // ---------------------------------------------------------------- products

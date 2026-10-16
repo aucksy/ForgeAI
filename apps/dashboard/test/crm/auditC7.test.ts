@@ -17,7 +17,7 @@ import { formatINRShort } from '../../src/crm/logic/money';
 import { receiptBackTo } from '../../src/crm/logic/receiptDoc';
 import { nextImportReceiptNo, nextReceiptNo } from '../../src/crm/logic/receipts';
 import type { MemberDraft } from '../../src/crm/types';
-import { makeMembership, makePayment, makePlan, VALID_GSTIN } from './fixtures';
+import { makeMembership, makePayment, makePlan, openTerm, VALID_GSTIN } from './fixtures';
 
 const TODAY = '2026-10-16';
 
@@ -74,9 +74,10 @@ describe('C7-1: a fee taken on patchy internet is saved once', () => {
     const server = new FakeServer();
     const desk = new CloudCrmData('k', server, noSleep);
     const m = await desk.createMember(member());
+    const term = await openTerm(desk, m.id, TODAY);
     const input = {
       memberId: m.id,
-      membershipId: null,
+      membershipId: term,
       amountP: 100000,
       method: 'cash' as const,
       paidOn: TODAY,
@@ -99,7 +100,8 @@ describe('C7-1: a fee taken on patchy internet is saved once', () => {
   it('the same press with a different amount is refused, naming the receipt already saved', async () => {
     const db = new LocalCrmData({ store: memoryStore(), seed: () => emptySnapshot(0, 'Gym') });
     const m = await db.createMember(member());
-    const base = { memberId: m.id, membershipId: null, method: 'cash' as const, paidOn: TODAY, reference: null, note: null, collectedBy: null, requestId: 'sheet-2' };
+    const term = await openTerm(db, m.id, TODAY);
+    const base = { memberId: m.id, membershipId: term, method: 'cash' as const, paidOn: TODAY, reference: null, note: null, collectedBy: null, requestId: 'sheet-2' };
     await db.recordPayment({ ...base, amountP: 100000 });
     await expect(db.recordPayment({ ...base, amountP: 150000 })).rejects.toThrow(/2026-27\/0001/);
     expect((await db.load()).payments).toHaveLength(1);
@@ -198,14 +200,15 @@ describe('C7-12: every receipt says who took the money', () => {
   it('a fee and a sale keep who took them, and the Money list filters by them', async () => {
     const db = new LocalCrmData({ store: memoryStore(), seed: () => emptySnapshot(0, 'Gym') });
     const m = await db.createMember(member());
-    const plan = await db.createPlan({ name: 'Monthly', durationUnit: 'month', durationCount: 1, priceP: 150000, joiningFeeP: 0, description: null, active: true, sortOrder: 1 } as never);
-    await db.recordPayment({ memberId: m.id, membershipId: null, amountP: 50000, method: 'cash', paidOn: TODAY, reference: null, note: null, collectedBy: 'st-1', collectedByName: 'Ramesh' });
-    await db.sellMembership({ memberId: m.id, planId: plan.id, startsOn: TODAY, priceP: 150000, joiningFeeP: 0, notes: null, collectNowP: 150000, method: 'cash', reference: null, paidOn: TODAY, soldBy: 'st-2', soldByName: 'Sunita' });
+    const plan = await db.createPlan({ name: 'Monthly', durationUnit: 'month', durationCount: 1, priceP: 200000, joiningFeeP: 0, description: null, active: true, sortOrder: 1 } as never);
+    // UAT WP3: a fee is always against a membership, so the sale comes first; the fee settles the rest.
+    const { membership } = await db.sellMembership({ memberId: m.id, planId: plan.id, startsOn: TODAY, priceP: 200000, joiningFeeP: 0, notes: null, collectNowP: 150000, method: 'cash', reference: null, paidOn: TODAY, soldBy: 'st-2', soldByName: 'Sunita' });
+    await db.recordPayment({ memberId: m.id, membershipId: membership.id, amountP: 50000, method: 'cash', paidOn: TODAY, reference: null, note: null, collectedBy: 'st-1', collectedByName: 'Ramesh' });
     const snap = await db.load();
-    expect(snap.payments.map((p) => [p.collectedBy, p.collectedByName])).toEqual([['st-1', 'Ramesh'], ['st-2', 'Sunita']]);
+    expect(snap.payments.map((p) => [p.collectedBy, p.collectedByName])).toEqual([['st-2', 'Sunita'], ['st-1', 'Ramesh']]);
     expect(snap.memberships[0]).toMatchObject({ soldBy: 'st-2', soldByName: 'Sunita' });
     const rows = buildLedger(snap.payments, snap.members, snap.memberships);
-    expect(ledgerTakers(rows)).toEqual([{ id: 'st-1', name: 'Ramesh' }, { id: 'st-2', name: 'Sunita' }]);
+    expect(ledgerTakers(rows)).toEqual([{ id: 'st-2', name: 'Sunita' }, { id: 'st-1', name: 'Ramesh' }]);
     const range = { from: TODAY, to: TODAY };
     expect(filterLedger(rows, { range, method: 'all', query: '', includeVoided: false, takenBy: 'st-1' }).map((r) => r.payment.amountP)).toEqual([50000]);
   });

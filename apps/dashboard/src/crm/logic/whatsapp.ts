@@ -127,12 +127,14 @@ export function buildMessage(kind: MessageKind, v: MemberView, gym: GymWords, to
 
 /** A receipt as a WhatsApp message (the printed receipt stays the record). */
 export function receiptMessage(
-  p: Pick<Payment, 'amountP' | 'paidOn' | 'method' | 'receiptNo'>,
+  p: Pick<Payment, 'amountP' | 'paidOn' | 'method' | 'receiptNo'> & Partial<Pick<Payment, 'collectedByName'>>,
   memberName: string,
   gym: GymWords,
 ): string {
+  // UAT U-A1: who took the money, when the receipt has a name (an old one may not).
+  const taker = p.collectedByName?.trim();
   return [
-    `${hello(memberName)} we received your ${formatINR(p.amountP)} on ${formatDay(p.paidOn)} (${methodLabel(p.method)}). Receipt no. ${p.receiptNo}. Thank you!`,
+    `${hello(memberName)} we received your ${formatINR(p.amountP)} on ${formatDay(p.paidOn)} (${methodLabel(p.method)}). Receipt no. ${p.receiptNo}.${taker ? ` Received by ${taker}.` : ''} Thank you!`,
     sign(gym),
   ].join('\n');
 }

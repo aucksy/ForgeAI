@@ -42,7 +42,9 @@ import {
   type ImportTermsResult,
   type UndoImportResult,
 } from './adapter';
-import { authErrorWords } from '../auth/signin';
+import { authErrorWords, RECEIPT_REFUSALS } from '../auth/signin';
+import type { Role } from '../logic/receiptRules';
+import type { DateISO } from '../logic/dates';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
 
 export type RecordKind = 'gym' | 'member' | 'plan' | 'membership' | 'payment' | 'visit' | 'enquiry' | 'expense';
@@ -243,7 +245,14 @@ export interface CloudCrmOptions {
   onSignedOut?: () => void;
   /** Injected so tests do not sleep. */
   wait?: (ms: number) => Promise<void>;
+  /** UAT F-02: who is signed in (the desk's 31-day limit on receipt dates). Default owner. */
+  role?: Role;
+  /** India's day; injected so tests are fixed in time. */
+  today?: () => DateISO;
 }
+
+/** A refusal is final: kept as "pending" it would be sent again before every later action. */
+const FINAL_REFUSAL = new RegExp(`(^|[^A-Z_])(BAD_KEY|INVALID|OWNER_ONLY|${RECEIPT_REFUSALS.join('|')})($|[^A-Z_])`);
 
 const MAX_TRIES = 4;
 
@@ -390,7 +399,8 @@ export class CloudCrmData implements CrmData {
         this.signedOutCheck(e);
         // OWNER_ONLY too (review of 0018): a refusal is final. Kept as "pending", it was sent again
         // before every later action, and the whole desk froze until the page was reloaded.
-        if (/\bBAD_KEY\b|\bINVALID\b|\bOWNER_ONLY\b/.test(e instanceof Error ? e.message : String((e as { message?: unknown })?.message ?? ''))) {
+        // UAT WP3: the receipt refusals of 0021 are final too.
+        if (FINAL_REFUSAL.test(e instanceof Error ? e.message : String((e as { message?: unknown })?.message ?? ''))) {
           throw plainError(e);
         }
         last = e;
@@ -420,7 +430,7 @@ export class CloudCrmData implements CrmData {
       for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
         const before = this.current();
         const raw = JSON.stringify({ version: SCHEMA_VERSION, snapshot: before });
-        const copy = new LocalCrmData({ store: memoryStore(raw), now: this.now });
+        const copy = new LocalCrmData({ store: memoryStore(raw), now: this.now, role: this.opts.role, today: this.opts.today });
         const result = await op(copy);
         const after = await copy.load();
         const changes = diffSnapshots(before, after);

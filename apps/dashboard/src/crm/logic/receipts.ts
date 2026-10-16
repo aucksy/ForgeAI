@@ -9,6 +9,7 @@
  */
 
 import { partsOf, type DateISO } from './dates';
+import { MAX_RECEIPT_NO } from './receiptRules';
 
 /** Financial-year label for a date: 26 Jul 2026 -> `2026-27`, 12 Feb 2027 -> `2026-27`. */
 export function financialYear(date: DateISO): string {
@@ -39,12 +40,19 @@ export function parseReceiptNo(receiptNo: string): { fy: string; seq: number } |
  */
 export function nextImportReceiptNo(existing: readonly { receiptNo: string }[], paidOn: DateISO): string {
   const fy = financialYear(paidOn);
+  const shortFy = fy.slice(2); // 2026-27 -> 26-27
   let highest = 0;
   for (const row of existing) {
-    const m = /^IMP\/(\d{4}-\d{2})\/(\d{4,})$/.exec(row.receiptNo.trim());
-    if (m && m[1] === fy && Number(m[2]) > highest) highest = Number(m[2]);
+    // Both spellings of the series: IMP/2026-27/0001 and, from the 10,000th, IMP/26-27/10000.
+    const m = /^IMP\/(?:\d{2})?(\d{2}-\d{2})\/(\d{4,})$/.exec(row.receiptNo.trim());
+    if (m && m[1] === shortFy && Number(m[2]) > highest) highest = Number(m[2]);
   }
-  return `IMP/${fy}/${String(highest + 1).padStart(4, '0')}`;
+  const next = highest + 1;
+  // UAT F-11 (GST Rule 46: at most 16 characters). IMP/2026-27/9999 is 16; the 10,000th would be
+  // 17, so from there the year is written short (IMP/26-27/10000, 15). Old numbers never change.
+  const no = next < 10_000 ? `IMP/${fy}/${String(next).padStart(4, '0')}` : `IMP/${shortFy}/${next}`;
+  if (no.length > MAX_RECEIPT_NO) throw new Error('Too many imported receipts in one year. Split the import by year.');
+  return no;
 }
 
 /**

@@ -180,7 +180,8 @@ describe('a payments list: one row per payment (16 Oct 2026)', () => {
   });
 
   it('one member, a term per period, a receipt per payment with its own date', async () => {
-    const db = new LocalCrmData({ store: memoryStore(), now: (() => { let c = 1000; return () => (c += 1); })(), seed: () => emptySnapshot(0, 'Test Gym') });
+    // India's day pinned after every payment in the file (no receipt may be dated ahead, UAT F-02).
+    const db = new LocalCrmData({ store: memoryStore(), now: (() => { let c = 1000; return () => (c += 1); })(), seed: () => emptySnapshot(0, 'Test Gym'), today: () => '2027-02-01' });
     const { result } = await run(db, 'import-1');
     expect(result).toEqual({ plans: 2, memberships: 3, payments: 4, skipped: 1 });
     const snap = await db.load();

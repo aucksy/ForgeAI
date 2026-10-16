@@ -65,6 +65,12 @@ export interface ReceiptDoc {
   amountWords: string;
   method: string;
   reference: string | null;
+  /**
+   * UAT U-A1 (17 Oct 2026): who took the money, as signed in (the server stamps it, 0019). The
+   * staff-rights text promises the receipt says it. Null on an old receipt with no name: then the
+   * receipt says nothing, never a made-up name.
+   */
+  collectedByName: string | null;
 
   /** Null when the gym is not GST-registered — no tax lines are invented. */
   gst: GstSplit | null;
@@ -128,6 +134,7 @@ export function buildReceiptDoc(input: ReceiptDocInput): ReceiptDoc {
     amountWords: rupeesInWords(payment.amountP),
     method: methodLabel(payment.method),
     reference: payment.reference,
+    collectedByName: payment.collectedByName?.trim() || null,
 
     gst,
     sacCode: registered ? GYM_SAC_CODE : null,

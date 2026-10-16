@@ -28,6 +28,8 @@ import {
   ledgerTakers,
   presetRange,
   RANGE_PRESETS,
+  RECEIPT_EXPORT_HEADERS,
+  receiptExportRow,
   type AgingBucket,
   type DateRange,
   type LedgerRow,
@@ -184,23 +186,8 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
   };
 
   const exportCsv = () => {
-    const contents = csvDocument(
-      ['Receipt no', 'Date', 'Member', 'Mobile', 'Membership', 'Method', 'Reference', 'Amount (INR)', 'Status', 'Taken by'],
-      visible.map((r) => [
-        r.payment.receiptNo,
-        r.payment.paidOn,
-        r.member?.fullName ?? 'Unknown member',
-        r.member ? phoneForExport(r.member.phone) : '',
-        r.membership?.planName ?? '',
-        methodLabel(r.payment.method),
-        r.payment.reference ?? '',
-        // A number, not a formatted string: the accountant has to be able to sum
-        // this column without stripping ₹ and commas out of it first.
-        paiseToRupees(r.payment.amountP),
-        r.payment.voided ? `Cancelled: ${r.payment.voidReason ?? 'no reason given'}` : 'Received',
-        r.payment.collectedByName ?? '',
-      ]),
-    );
+    // UAT F-09: Amount always adds up to Collected; cancelled money has its own column.
+    const contents = csvDocument([...RECEIPT_EXPORT_HEADERS], visible.map(receiptExportRow));
     downloadCsv(csvFilename([snapshot.gym.name, 'collections', range.from, range.to]), contents);
     onToast(
       visible.length === 1

@@ -39,7 +39,7 @@ import {
 } from '../../logic/attendance';
 import { csvDocument, csvFilename } from '../../logic/csv';
 import { ALL_BATCHES, inBatch, listBatches, memberBatch } from '../../logic/batches';
-import { addDays, formatDay, formatDayShort, isValidDateISO, relativeDay } from '../../logic/dates';
+import { addDays, dateISOFromEpoch, formatDay, formatDayShort, hourOfEpoch, isValidDateISO, minuteOfEpoch, relativeDay } from '../../logic/dates';
 import { STATE_LABEL, stateTone } from '../../logic/membership';
 import { formatPhone, initials, matchesQuery, phoneDigits, phoneForExport } from '../../logic/members';
 import { formatINR } from '../../logic/money';
@@ -615,13 +615,13 @@ function RegisterRowView({
  * printing 5:30 am against it would be inventing data.
  */
 function timeLabel(visit: Visit): string {
-  const d = new Date(visit.checkedInAt);
-  if (Number.isNaN(d.getTime())) return '—';
-  const [y, m, day] = visit.visitedOn.split('-').map(Number);
-  if (d.getFullYear() !== y || d.getMonth() + 1 !== m || d.getDate() !== day) return '—';
-  const hour = d.getHours();
+  // UAT F-13: India time, whatever the PC's time zone.
+  if (dateISOFromEpoch(visit.checkedInAt) !== visit.visitedOn) return '—';
+  const hour = hourOfEpoch(visit.checkedInAt);
+  const minute = minuteOfEpoch(visit.checkedInAt);
+  if (hour === null || minute === null) return '—';
   const twelve = hour % 12 === 0 ? 12 : hour % 12;
-  return `${twelve}:${String(d.getMinutes()).padStart(2, '0')} ${hour < 12 ? 'am' : 'pm'}`;
+  return `${twelve}:${String(minute).padStart(2, '0')} ${hour < 12 ? 'am' : 'pm'}`;
 }
 
 function TrendBars({ days, today }: { days: { day: string; countN: number }[]; today: string }) {

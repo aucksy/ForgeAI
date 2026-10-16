@@ -68,21 +68,25 @@ begin
 
   -- ---------------------------------------------------------------- C7-12 who took the money
   fails := fails || pg_temp.t19_is('2a desk takes a fee naming a colleague', pg_temp.t19_push(ks,
-    format('[{"k":"payment","id":"pay-desk","d":{"memberId":"m-new","amountP":30000,"voided":false,"receiptNo":"R-1","collectedBy":"%s","collectedByName":"Owner Om"}}]', s_owner)::jsonb), 'ok');
+    format('[{"k":"payment","id":"pay-desk","d":{"memberId":"m-new","membershipId":"ms-ten","paidOn":"%s","amountP":30000,"voided":false,"receiptNo":"R-1","collectedBy":"%s","collectedByName":"Owner Om"}}]',
+           to_char(td, 'YYYY-MM-DD'), s_owner)::jsonb), 'ok');
   select data into d from public.crm_records where gym_id = gid and kind = 'payment' and id = 'pay-desk';
   fails := fails || pg_temp.t19_is('2b the receipt names the desk', d->>'collectedBy', s_staff::text);
   fails := fails || pg_temp.t19_is('2c and its name', d->>'collectedByName', 'Desk Ramesh');
   fails := fails || pg_temp.t19_is('2d the amount is kept', d->>'amountP', '30000');
   fails := fails || pg_temp.t19_is('2e owner session fee', pg_temp.t19_push(kop,
-    '[{"k":"payment","id":"pay-owner","d":{"memberId":"m-new","amountP":20000,"voided":false,"receiptNo":"R-2","collectedBy":"anyone"}}]'), 'ok');
+    jsonb_build_array(jsonb_build_object('k', 'payment', 'id', 'pay-owner', 'd',
+      '{"memberId":"m-new","amountP":20000,"voided":false,"receiptNo":"R-2","collectedBy":"anyone"}'::jsonb || jsonb_build_object('membershipId', 'ms-ten', 'paidOn', to_char(td, 'YYYY-MM-DD'))))), 'ok');
   fails := fails || pg_temp.t19_is('2f names the owner', (select data->>'collectedByName' from public.crm_records
     where gym_id = gid and kind = 'payment' and id = 'pay-owner'), 'Owner Om');
   fails := fails || pg_temp.t19_is('2g old owner key fee', pg_temp.t19_push(ko,
-    '[{"k":"payment","id":"pay-key","d":{"memberId":"m-new","amountP":10000,"voided":false,"receiptNo":"R-3","collectedBy":null}}]'), 'ok');
+    jsonb_build_array(jsonb_build_object('k', 'payment', 'id', 'pay-key', 'd',
+      '{"memberId":"m-new","amountP":10000,"voided":false,"receiptNo":"R-3","collectedBy":null}'::jsonb || jsonb_build_object('membershipId', 'ms-ten', 'paidOn', to_char(td, 'YYYY-MM-DD'))))), 'ok');
   fails := fails || pg_temp.t19_is('2h old key leaves it as written', (select coalesce(data->>'collectedBy', 'none') from public.crm_records
     where gym_id = gid and kind = 'payment' and id = 'pay-key'), 'none');
   fails := fails || pg_temp.t19_is('2i imported receipt', pg_temp.t19_push(kop,
-    '[{"k":"payment","id":"pay-imp","d":{"memberId":"m-new","amountP":10000,"voided":false,"receiptNo":"R-4","collectedBy":null,"importId":"import-t19"}}]'), 'ok');
+    jsonb_build_array(jsonb_build_object('k', 'payment', 'id', 'pay-imp', 'd',
+      '{"memberId":"m-new","amountP":10000,"voided":false,"receiptNo":"R-4","collectedBy":null,"importId":"import-t19"}'::jsonb || jsonb_build_object('membershipId', 'ms-ten', 'paidOn', to_char(td, 'YYYY-MM-DD'))))), 'ok');
   fails := fails || pg_temp.t19_is('2j imported receipt names nobody', (select coalesce(data->>'collectedBy', 'none') from public.crm_records
     where gym_id = gid and kind = 'payment' and id = 'pay-imp'), 'none');
   fails := fails || pg_temp.t19_is('2k the plan the desk sold names the desk', (select data->>'soldByName' from public.crm_records
@@ -96,7 +100,9 @@ begin
   -- Review: moving a browser gym online (the owner's session copies old records up with no taker)
   -- never names the owner on them.
   fails := fails || pg_temp.t19_is('2n owner uploads an old receipt', pg_temp.t19_push(kop,
-    '[{"k":"payment","id":"pay-old","d":{"memberId":"m-new","amountP":15000,"voided":false,"receiptNo":"2025-26/0007","collectedBy":null}}]'), 'ok');
+    jsonb_build_array(jsonb_build_object('k', 'payment', 'id', 'pay-old', 'd',
+      '{"memberId":"m-new","membershipId":"ms-ten","amountP":15000,"voided":false,"receiptNo":"2025-26/0007","collectedBy":null}'::jsonb
+      || jsonb_build_object('paidOn', to_char(td - 200, 'YYYY-MM-DD'))))), 'ok');
   fails := fails || pg_temp.t19_is('2o old receipt names nobody', (select coalesce(data->>'collectedBy', 'none') from public.crm_records
     where gym_id = gid and kind = 'payment' and id = 'pay-old'), 'none');
   fails := fails || pg_temp.t19_is('2p owner uploads an old sale', pg_temp.t19_push(kop,
@@ -105,7 +111,8 @@ begin
     where gym_id = gid and kind = 'membership' and id = 'ms-old2'), 'none');
   -- Review: a desk receipt with an import mark is still stamped with the desk.
   fails := fails || pg_temp.t19_is('2r desk receipt with an import mark', pg_temp.t19_push(ks,
-    format('[{"k":"payment","id":"pay-desk-imp","d":{"memberId":"m-new","amountP":5000,"voided":false,"receiptNo":"IMP/1","importId":"import-desk","collectedBy":"%s","collectedByName":"Owner Om"}}]', s_owner)::jsonb), 'ok');
+    format('[{"k":"payment","id":"pay-desk-imp","d":{"memberId":"m-new","membershipId":"ms-ten","paidOn":"%s","amountP":5000,"voided":false,"receiptNo":"IMP/1","importId":"import-desk","collectedBy":"%s","collectedByName":"Owner Om"}}]',
+           to_char(td, 'YYYY-MM-DD'), s_owner)::jsonb), 'ok');
   fails := fails || pg_temp.t19_is('2s names the desk', (select data->>'collectedByName' from public.crm_records
     where gym_id = gid and kind = 'payment' and id = 'pay-desk-imp'), 'Desk Ramesh');
   checks := checks + 19;

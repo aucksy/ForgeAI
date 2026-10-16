@@ -44,8 +44,16 @@ import type {
   Expense,
   ExpenseDraft,
 } from '../types';
-import { addDays, diffDays, formatDay, isValidDateISO, type DateISO } from '../logic/dates';
-import { endDateForPlan } from '../logic/membership';
+import { addDays, diffDays, formatDay, isValidDateISO, minDate, todayISO, type DateISO } from '../logic/dates';
+import { endDateForPlan, unpaidForMembership } from '../logic/membership';
+import {
+  overDueProblem,
+  priceProblem,
+  receiptAmountProblem,
+  receiptDateProblem,
+  voidReasonProblem,
+  type Role,
+} from '../logic/receiptRules';
 import { findDuplicatePhone } from '../logic/members';
 import { normalizeBatch } from '../logic/batches';
 import { nextImportReceiptNo, nextReceiptNo } from '../logic/receipts';
@@ -118,12 +126,21 @@ export interface LocalCrmOptions {
   now?: () => number;
   /** Built on first run when storage is empty. */
   seed?: () => CrmSnapshot;
+  /**
+   * UAT F-02: who is signed in on this device. The front desk may date a receipt at most 31 days
+   * back; an owner (and a browser-only gym, which has no person) any day that has come.
+   */
+  role?: Role;
+  /** India's day (dates.todayISO). Injected so tests are fixed in time. */
+  today?: () => DateISO;
 }
 
 export class LocalCrmData implements CrmData {
   private readonly store: KeyValueStore;
   private readonly now: () => number;
   private readonly seed: (() => CrmSnapshot) | undefined;
+  private readonly role: Role;
+  private readonly today: () => DateISO;
 
   private cache: CrmSnapshot | null = null;
   /** Exactly what is currently in storage, so we can detect another tab's write. */
@@ -134,6 +151,8 @@ export class LocalCrmData implements CrmData {
       opts.store ?? (typeof localStorage !== 'undefined' ? localStorage : memoryStore());
     this.now = opts.now ?? (() => Date.now());
     this.seed = opts.seed;
+    this.role = opts.role ?? 'owner';
+    this.today = opts.today ?? (() => todayISO());
   }
 
   // ------------------------------------------------------------ persistence
@@ -301,6 +320,7 @@ export class LocalCrmData implements CrmData {
   // ------------------------------------------------------------ plans
 
   async createPlan(draft: PlanDraft): Promise<Plan> {
+    requirePrices(draft);
     return this.update((db) => {
       const ts = this.now();
       const plan: Plan = {
@@ -317,6 +337,7 @@ export class LocalCrmData implements CrmData {
   }
 
   async updatePlan(id: string, patch: Partial<PlanDraft>): Promise<Plan> {
+    requirePrices(patch);
     return this.update((db) => {
       const plan = db.plans.find((p) => p.id === id);
       if (!plan) throw new NotFoundError('That plan');
@@ -344,7 +365,15 @@ export class LocalCrmData implements CrmData {
       if (!plan) throw new NotFoundError('That plan');
 
       requireDay(input.startsOn, 'The start date');
-      if (input.collectNowP > 0) requireDay(input.paidOn, 'The payment date');
+      // UAT F-07: whole paise only (the server refuses the rest, 0021).
+      requirePrices({ priceP: input.priceP, joiningFeeP: input.joiningFeeP });
+      if (input.collectNowP !== 0) {
+        requireDay(input.paidOn, 'The payment date');
+        // UAT F-04 / F-02 / F-01: the receipt taken with the sale follows the receipt rules.
+        failWith(receiptAmountProblem(input.collectNowP));
+        failWith(receiptDateProblem(input.paidOn, this.today(), this.role));
+        failWith(overDueProblem(input.collectNowP, input.priceP + input.joiningFeeP));
+      }
 
       const ts = this.now();
       const membership: Membership = {
@@ -437,6 +466,7 @@ export class LocalCrmData implements CrmData {
     return this.update((db) => {
       const result: ImportTermsResult = { plans: 0, memberships: 0, payments: 0, skipped: 0 };
       const ts = this.now();
+      const today = this.today();
       const byPhone = new Map(db.members.map((m) => [m.phone, m]));
       const planKey = (name: string) => name.trim().toLowerCase();
       const plans = new Map(db.plans.map((p) => [planKey(p.name), p]));
@@ -447,7 +477,9 @@ export class LocalCrmData implements CrmData {
           result.skipped += 1;
           return;
         }
-        const paidOn = term.paidOn ?? term.startsOn;
+        // UAT F-02: no receipt is dated in the future. A plan paid for ahead (it starts next month)
+        // was paid on or before today, so its imported receipt is dated today at the latest.
+        const paidOn = minDate(term.paidOn ?? term.startsOn, today);
         // Review (16 Oct 2026): a repeat of a term THIS import made also matches when its dates are
         // within 3 days (a typo: 31/10 vs 30/10; a misspelt plan name), so it never makes a second,
         // overlapping plan with a false due.
@@ -669,8 +701,12 @@ export class LocalCrmData implements CrmData {
   async recordPayment(input: RecordPaymentInput): Promise<Payment> {
     return this.update((db) => {
       if (!db.members.some((m) => m.id === input.memberId)) throw new NotFoundError('That member');
-      if (input.membershipId && !db.memberships.some((m) => m.id === input.membershipId)) {
-        throw new NotFoundError('That membership');
+      // UAT F-08: a receipt is always for one of THIS member's memberships (the server's rule, 0021).
+      if (!input.membershipId) throw new Error('Pick the membership this payment is for.');
+      const membership = db.memberships.find((m) => m.id === input.membershipId);
+      if (!membership) throw new NotFoundError('That membership');
+      if (membership.memberId !== input.memberId) {
+        throw new Error('That membership belongs to another member. Pick one of this member’s memberships.');
       }
       requireDay(input.paidOn, 'The payment date');
 
@@ -684,6 +720,12 @@ export class LocalCrmData implements CrmData {
         }
         return { ...done };
       }
+
+      // UAT F-04, F-02, F-01 (checked after the press look-up above: a press already saved is
+      // handed back, never refused as "more than is due" now that it is paid).
+      failWith(receiptAmountProblem(input.amountP));
+      failWith(receiptDateProblem(input.paidOn, this.today(), this.role));
+      failWith(overDueProblem(input.amountP, unpaidForMembership(membership, db.payments)));
 
       const payment: Payment = {
         id: newId(),
@@ -718,8 +760,12 @@ export class LocalCrmData implements CrmData {
     return this.update((db) => {
       const payment = db.payments.find((p) => p.id === id);
       if (!payment) throw new NotFoundError('That payment');
+      // A double tap cancels once: the first reason stays (the server refuses a second change, 0021).
+      if (payment.voided) return { ...payment };
+      // UAT F-06: a cancel says why (the server's rule too).
+      failWith(voidReasonProblem(reason));
       payment.voided = true;
-      payment.voidReason = reason;
+      payment.voidReason = reason.trim();
       return { ...payment };
     });
   }
@@ -972,6 +1018,17 @@ function alreadySavedWords(receiptNo: string | null): string {
   return receiptNo
     ? `Your earlier entry was saved just now (receipt ${receiptNo}). Check the member’s page before you take money again.`
     : "Your earlier entry was saved just now. Check the member’s page before you do it again.";
+}
+
+/** Throw the words of a rule that failed (receiptRules.ts); nothing when it passed. */
+function failWith(problem: string | null): void {
+  if (problem) throw new Error(problem);
+}
+
+/** UAT F-07: a price and joining fee, when given, are whole paise, zero or more. */
+function requirePrices(p: { priceP?: unknown; joiningFeeP?: unknown }): void {
+  if ('priceP' in p && p.priceP !== undefined) failWith(priceProblem(p.priceP, 'price'));
+  if ('joiningFeeP' in p && p.joiningFeeP !== undefined) failWith(priceProblem(p.joiningFeeP, 'joining fee'));
 }
 
 function appendNote(existing: string | null, line: string): string {

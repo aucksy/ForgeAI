@@ -5,23 +5,28 @@
  *
  * Tests named "FINDING F-xx" pin TODAY's behaviour of a gap that is written up there. They pass
  * now; when the gap is fixed they fail, and the fix updates them and the write-up together.
+ * Work package 3 (17 Oct 2026) fixed F-01, F-02, F-04, F-06 to F-09, F-11, F-13 and U-A1: their
+ * tests are now "FIXED F-xx" and assert the rule. F-12 stays a FINDING (the accountant's question).
  *
  * vitest.config.ts pins TZ=Asia/Kolkata, which the IST-boundary tests below rely on.
  */
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
+import { CloudCrmData, type CrmCloudApi, type CrmRecord } from '../../src/crm/data/cloud';
 import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/local';
-import { buildLedger, collectionSummary, filterLedger, presetRange } from '../../src/crm/logic/collections';
-import { dateISOFromEpoch, todayISO } from '../../src/crm/logic/dates';
+import { buildLedger, collectionSummary, filterLedger, presetRange, RECEIPT_EXPORT_HEADERS, receiptExportRow } from '../../src/crm/logic/collections';
+import { dateISOFromEpoch, hourOfEpoch, todayISO } from '../../src/crm/logic/dates';
 import { gstRateForDate, splitInclusiveGst, GYM_SAC_CODE } from '../../src/crm/logic/gst';
 import { outstandingForMember, unpaidForMembership } from '../../src/crm/logic/membership';
 import { formatINR, formatINRShort, paiseToRupees, parseRupeeInput, splitPaise, sumPaise } from '../../src/crm/logic/money';
 import { buildReceiptDoc } from '../../src/crm/logic/receiptDoc';
 import { financialYear, nextImportReceiptNo, nextReceiptNo, parseReceiptNo } from '../../src/crm/logic/receipts';
+import { DESK_BACKDATE_DAYS, fitsRule46, receiptDateProblem } from '../../src/crm/logic/receiptRules';
+import { receiptMessage } from '../../src/crm/logic/whatsapp';
 import { staffLowestPrice, validateSale } from '../../src/crm/logic/selling';
 import { rupeesInWords } from '../../src/crm/logic/words';
 import type { MemberDraft, Payment, PlanDraft } from '../../src/crm/types';
-import { makeGym, makeMember, makeMembership, makePayment, VALID_GSTIN } from './fixtures';
+import { makeGym, makeMember, makeMembership, makePayment, openTerm, VALID_GSTIN } from './fixtures';
 
 const memberDraft = (over: Partial<MemberDraft> = {}): MemberDraft => ({
   fullName: 'Riya Sharma',
@@ -158,24 +163,60 @@ describe('UAT money: paid + due = price, in whole paise', () => {
     expect(staffLowestPrice(1)).toBe(1);
   });
 
-  it('FINDING F-01: below the Collect sheet nothing stops a receipt bigger than what is owed', async () => {
-    // The sheet's guard ("That is more than the ₹x due") lives in CollectPaymentSheet.tsx only. The
-    // store and the server (uat_money.sql probe F-01) both save it, and the extra money then
-    // vanishes from dues (floored at 0) while Collected counts it in full.
+  it('FIXED F-01: the store refuses a receipt bigger than what the membership still owes', async () => {
+    // The Collect sheet asked; now the store under every screen (and the server, 0021) refuses too.
     const { member, membership } = await sale(0);
-    await collect(member.id, membership.id, 250_000);
+    await expect(collect(member.id, membership.id, 250_000)).rejects.toThrow('That is more than the ₹2,000 due on this membership.');
+    await collect(member.id, membership.id, 200_000);
+    await expect(collect(member.id, membership.id, 1)).rejects.toThrow('This membership is fully paid. Nothing is due on it.');
     const s = await paidPlusDue(membership.id);
-    expect(s.paid).toBe(250_000);
-    expect(s.due).toBe(0);
-    expect(s.paid + s.due).not.toBe(s.price);
+    expect(s).toEqual({ paid: 200_000, due: 0, price: 200_000 });
   });
 
-  it('FINDING F-04: below the sheets nothing stops a minus or fractional receipt', async () => {
+  it('FIXED F-01: a sale cannot take more than its total in the store either', async () => {
+    await expect(sale(200_001)).rejects.toThrow('That is more than the ₹2,000 due on this membership.');
+    expect((await db.load()).payments).toHaveLength(0);
+  });
+
+  it('FIXED F-04: the store refuses a minus, zero or fractional receipt', async () => {
     const { member, membership } = await sale(0);
-    await collect(member.id, membership.id, -5_000);
-    await collect(member.id, membership.id, 100.5);
-    const snap = await db.load();
-    expect(snap.payments.map((p) => p.amountP).sort((a, b) => a - b)).toEqual([-5_000, 100.5]);
+    for (const bad of [-5_000, 0, 100.5, Number.NaN]) {
+      await expect(collect(member.id, membership.id, bad)).rejects.toThrow('Type an amount more than zero, with at most two digits after the point.');
+    }
+    expect((await db.load()).payments).toHaveLength(0);
+  });
+
+  it('FIXED F-08: a receipt is for one of this member’s own memberships', async () => {
+    const { member, membership } = await sale(0);
+    const other = await db.createMember(memberDraft({ fullName: 'Someone Else', phone: '+919800000009' }));
+    await expect(collect(other.id, membership.id, 1_000)).rejects.toThrow('That membership belongs to another member.');
+    await expect(
+      db.recordPayment({ memberId: member.id, membershipId: null, amountP: 1_000, method: 'cash', paidOn: '2026-07-02', reference: null, note: null, collectedBy: null }),
+    ).rejects.toThrow('Pick the membership this payment is for.');
+    expect((await db.load()).payments).toHaveLength(0);
+  });
+
+  it('FIXED F-07: prices and joining fees are whole paise, in the store too', async () => {
+    const member = await db.createMember(memberDraft());
+    await expect(db.createPlan(planDraft({ priceP: 100.5 }))).rejects.toThrow('The price must be zero or more, with at most two digits after the point.');
+    const plan = await db.createPlan(planDraft());
+    await expect(db.updatePlan(plan.id, { joiningFeeP: -1 })).rejects.toThrow('The joining fee must be zero or more');
+    await expect(
+      db.sellMembership({
+        memberId: member.id, planId: plan.id, startsOn: '2026-07-01', priceP: 90_000.5, joiningFeeP: 0,
+        notes: null, collectNowP: 0, method: 'cash', reference: null, paidOn: '2026-07-01', soldBy: null,
+      }),
+    ).rejects.toThrow('The price must be zero or more');
+    expect((await db.load()).memberships).toHaveLength(0);
+  });
+
+  it('FIXED F-06: a cancel needs a reason of 3 letters; a second cancel changes nothing', async () => {
+    const { payment } = await sale(10_000);
+    await expect(db.voidPayment(payment!.id, ' ab ')).rejects.toThrow('Write why this receipt is cancelled (at least 3 letters)');
+    expect((await db.load()).payments[0].voided).toBe(false);
+    await db.voidPayment(payment!.id, '  Typo  ');
+    const again = await db.voidPayment(payment!.id, 'Another reason');
+    expect(again).toMatchObject({ voided: true, voidReason: 'Typo' });
   });
 });
 
@@ -233,13 +274,22 @@ describe('UAT money: receipt numbers are gapless per gym per financial year, res
     expect((await db.load()).payments).toHaveLength(1);
   });
 
-  it('a receipt number fits GST Rule 46 (at most 16 letters, digits, "-" or "/")', () => {
+  it('FIXED F-11: every receipt number fits GST Rule 46 (at most 16 letters, digits, "-" or "/")', () => {
     const rule46 = /^[A-Za-z0-9/-]{1,16}$/;
     expect(nextReceiptNo([], '2026-07-01')).toMatch(rule46);
-    expect(nextImportReceiptNo([], '2026-07-01')).toMatch(rule46);
-    // FINDING F-11: the 10,000th imported receipt in one year is 17 characters.
-    expect(nextImportReceiptNo([{ receiptNo: 'IMP/2026-27/9999' }], '2026-07-01')).toBe('IMP/2026-27/10000');
-    expect('IMP/2026-27/10000').not.toMatch(rule46);
+    expect(nextImportReceiptNo([], '2026-07-01')).toBe('IMP/2026-27/0001');
+    expect(nextImportReceiptNo([{ receiptNo: 'IMP/2026-27/9998' }], '2026-07-01')).toBe('IMP/2026-27/9999');
+    // The 10,000th imported receipt in a year writes the year short: 15 characters, not 17.
+    const tenThousandth = nextImportReceiptNo([{ receiptNo: 'IMP/2026-27/9999' }], '2026-07-01');
+    expect(tenThousandth).toBe('IMP/26-27/10000');
+    expect(tenThousandth).toMatch(rule46);
+    expect(fitsRule46(tenThousandth)).toBe(true);
+    // Both spellings are one series: the next one continues it, and a new year starts again at 0001.
+    expect(nextImportReceiptNo([{ receiptNo: 'IMP/2026-27/9999' }, { receiptNo: 'IMP/26-27/10000' }], '2027-03-31')).toBe('IMP/26-27/10001');
+    expect(nextImportReceiptNo([{ receiptNo: 'IMP/26-27/10000' }], '2027-04-01')).toBe('IMP/2027-28/0001');
+    // A million imported receipts in one year would pass 16: refused in words, never a long number.
+    expect(nextImportReceiptNo([{ receiptNo: 'IMP/26-27/999998' }], '2026-07-01')).toBe('IMP/26-27/999999');
+    expect(() => nextImportReceiptNo([{ receiptNo: 'IMP/26-27/999999' }], '2026-07-01')).toThrow('Too many imported receipts in one year.');
   });
 });
 
@@ -274,11 +324,22 @@ describe('UAT money: the Money screen, the Excel file and the receipts add up to
     expect(summary.byDay.map((d) => d.day)).toEqual(['2026-07-01', '2026-07-15', '2026-07-31']);
   });
 
-  it('FINDING F-09: with "show cancelled" ticked the export’s Amount column no longer equals Collected', () => {
+  it('FIXED F-09: with "show cancelled" ticked the Amount column still equals Collected; cancelled money has its own column', () => {
     const summary = collectionSummary(payments, range);
-    const exported = filterLedger(ledger, { ...filter, includeVoided: true }).map((r) => r.payment.amountP);
-    expect(sumPaise(exported) - summary.netP).toBe(summary.voidedP);
+    type Header = (typeof RECEIPT_EXPORT_HEADERS)[number];
+    const col = (name: Header) => RECEIPT_EXPORT_HEADERS.indexOf(name);
+    const total = (rows: (string | number)[][], name: Header) =>
+      Math.round(rows.reduce((t, r) => t + (r[col(name)] as number), 0) * 100);
+    const ticked = filterLedger(ledger, { ...filter, includeVoided: true }).map(receiptExportRow);
+    expect(ticked).toHaveLength(5);
+    expect(total(ticked, 'Amount (INR)')).toBe(summary.netP);
+    expect(total(ticked, 'Cancelled amount (INR)')).toBe(summary.voidedP);
     expect(summary.voidedP).toBe(20_000);
+    const cancelled = ticked.find((r) => r[0] === '2026-27/0004')!;
+    expect([cancelled[col('Amount (INR)')], cancelled[col('Cancelled amount (INR)')], cancelled[col('Status')]]).toEqual([0, 200, 'Cancelled: Typo']);
+    // Ticked or not, the Amount column adds up to the same number.
+    const live = filterLedger(ledger, filter).map(receiptExportRow);
+    expect(total(live, 'Amount (INR)')).toBe(summary.netP);
   });
 });
 
@@ -368,5 +429,163 @@ describe('UAT money: GST is taken out of the amount, at the rate of the day the 
     // Section 170 CGST Act rounds the tax PAYABLE (in the return) to the nearest rupee. Whether a
     // per-receipt split must also be whole rupees is a question for the gym's accountant.
     expect(splitInclusiveGst(150_000, 5).taxP % 100).not.toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------- work package 3: receipt dates (F-02)
+
+describe('FIXED F-02: no receipt is dated ahead; the front desk dates one at most 31 days back', () => {
+  const TODAY = '2026-07-10';
+  const store = (role: 'owner' | 'staff') =>
+    new LocalCrmData({ store: memoryStore(), now: () => (clock += 1), seed: () => emptySnapshot(0, 'UAT Gym'), role, today: () => TODAY });
+
+  async function termIn(d: LocalCrmData) {
+    const member = await d.createMember(memberDraft());
+    const plan = await d.createPlan(planDraft({ priceP: 10_000_000, joiningFeeP: 0 }));
+    const { membership } = await d.sellMembership({
+      memberId: member.id, planId: plan.id, startsOn: '2026-07-01', priceP: plan.priceP, joiningFeeP: 0,
+      notes: null, collectNowP: 0, method: 'cash', reference: null, paidOn: TODAY, soldBy: null,
+    });
+    return { member, plan, membership };
+  }
+  const pay = (d: LocalCrmData, memberId: string, membershipId: string, paidOn: string) =>
+    d.recordPayment({ memberId, membershipId, amountP: 1_000, method: 'cash', paidOn, reference: null, note: null, collectedBy: null });
+
+  it('the front desk: today and 31 days back are fine; 32 days back and tomorrow are refused in words', async () => {
+    const desk = store('staff');
+    const { member, membership } = await termIn(desk);
+    await pay(desk, member.id, membership.id, TODAY);
+    await pay(desk, member.id, membership.id, '2026-06-09');
+    await expect(pay(desk, member.id, membership.id, '2026-06-08')).rejects.toThrow(
+      'The front desk can date a payment at most 31 days back. Ask the owner to enter older payments.',
+    );
+    await expect(pay(desk, member.id, membership.id, '2026-07-11')).rejects.toThrow('The payment date can’t be in the future.');
+    expect((await desk.load()).payments.map((p) => p.paidOn)).toEqual([TODAY, '2026-06-09']);
+  });
+
+  it('the owner may date a receipt any day back (last year too), never ahead', async () => {
+    const owner = store('owner');
+    const { member, membership } = await termIn(owner);
+    await pay(owner, member.id, membership.id, '2025-05-01');
+    await expect(pay(owner, member.id, membership.id, '2026-07-11')).rejects.toThrow('The payment date can’t be in the future.');
+  });
+
+  it('the money taken with a sale follows the same rule', async () => {
+    const desk = store('staff');
+    const member = await desk.createMember(memberDraft());
+    const plan = await desk.createPlan(planDraft({ joiningFeeP: 0 }));
+    const sell = (paidOn: string) =>
+      desk.sellMembership({
+        memberId: member.id, planId: plan.id, startsOn: TODAY, priceP: plan.priceP, joiningFeeP: 0,
+        notes: null, collectNowP: 10_000, method: 'cash', reference: null, paidOn, soldBy: null,
+      });
+    await expect(sell('2026-06-01')).rejects.toThrow('at most 31 days back');
+    await expect(sell('2026-07-11')).rejects.toThrow('can’t be in the future');
+    expect((await desk.load()).memberships).toHaveLength(0);
+    // The Sell sheet says the same before anything is saved.
+    const sheet = { planId: plan.id, startsOn: TODAY, priceP: plan.priceP, joiningFeeP: 0, collectNowP: 10_000 };
+    expect(validateSale({ ...sheet, paidOn: '2026-06-01' }, [], TODAY, 'staff')?.message).toMatch('at most 31 days back');
+    expect(validateSale({ ...sheet, paidOn: '2026-06-01' }, [], TODAY, 'owner')).toBeNull();
+    expect(validateSale({ ...sheet, paidOn: '2026-07-11' }, [], TODAY, 'owner')?.message).toMatch('can’t be in the future');
+  });
+
+  it('the rule itself, at its edges', () => {
+    expect(receiptDateProblem('2026-06-09', TODAY, 'staff')).toBeNull();
+    expect(receiptDateProblem('2026-06-08', TODAY, 'staff')).not.toBeNull();
+    expect(receiptDateProblem('2020-01-01', TODAY, 'owner')).toBeNull();
+    expect(receiptDateProblem('2026-07-11', TODAY, 'owner')).not.toBeNull();
+    expect(DESK_BACKDATE_DAYS).toBe(31);
+  });
+
+  it('an imported plan paid ahead gets a receipt dated today, never in the future', async () => {
+    const owner = store('owner');
+    await owner.createMembers([{ ...memberDraft(), importId: 'imp-1' }] as never);
+    await owner.importTerms(
+      [{ phone: '+919876543210', term: { planName: 'Monthly', startsOn: '2026-08-01', endsOn: '2026-08-31', priceP: 150_000, paidP: 150_000, paidOn: null, length: { unit: 'month', count: 1 } } }] as never,
+      'imp-1',
+    );
+    expect((await owner.load()).payments.map((p) => p.paidOn)).toEqual([TODAY]);
+  });
+});
+
+// ---------------------------------------------------------------- work package 3: India's day (F-13)
+
+describe('FIXED F-13: the panel’s day is India’s day whatever the PC’s time zone', () => {
+  const original = process.env.TZ;
+  afterEach(() => {
+    process.env.TZ = original;
+  });
+
+  for (const tz of ['UTC', 'America/Los_Angeles', 'Asia/Kolkata']) {
+    it(`with TZ=${tz}: 00:00 IST on 1 April is the new day and the new financial year`, () => {
+      process.env.TZ = tz;
+      // Proves the switch took effect in this process (a no-op switch would make this test hollow).
+      const offset = new Date('2026-01-15T12:00:00Z').getTimezoneOffset();
+      expect(offset).toBe(tz === 'UTC' ? 0 : tz === 'Asia/Kolkata' ? -330 : 480);
+      const lastSecond = new Date('2026-03-31T18:29:59Z');
+      const firstSecond = new Date('2026-03-31T18:30:00Z');
+      expect(todayISO(lastSecond)).toBe('2026-03-31');
+      expect(todayISO(firstSecond)).toBe('2026-04-01');
+      expect(financialYear(todayISO(firstSecond))).toBe('2026-27');
+      expect(dateISOFromEpoch(firstSecond.getTime())).toBe('2026-04-01');
+      expect(hourOfEpoch(firstSecond.getTime())).toBe(0);
+      // 6 am in Jaipur is 00:30 UTC: the check-in hour is 6.
+      expect(hourOfEpoch(Date.parse('2026-07-01T00:30:00Z'))).toBe(6);
+    });
+  }
+});
+
+// ---------------------------------------------------------------- work package 3: who took the money (U-A1)
+
+describe('FIXED U-A1: the printed and WhatsApp receipt say who took the money', () => {
+  const doc = (collectedByName: string | null | undefined) =>
+    buildReceiptDoc({
+      gym: makeGym(),
+      payment: makePayment({ amountP: 50_000, paidOn: '2026-07-01', collectedByName }),
+      member: makeMember(), membership: null, memberPayments: [], today: '2026-07-01',
+    });
+
+  it('names the person; an old receipt with no name says nothing', () => {
+    expect(doc('Ramesh').collectedByName).toBe('Ramesh');
+    expect(doc(null).collectedByName).toBeNull();
+    expect(doc(undefined).collectedByName).toBeNull();
+    expect(doc('   ').collectedByName).toBeNull();
+  });
+
+  it('the WhatsApp receipt says it too, only when there is a name', () => {
+    const gym = { name: 'Iron Temple', phone: null };
+    const base = { amountP: 50_000, paidOn: '2026-07-01', method: 'cash' as const, receiptNo: '2026-27/0001' };
+    expect(receiptMessage({ ...base, collectedByName: 'Ramesh' }, 'Riya Sharma', gym as never)).toContain('Received by Ramesh.');
+    expect(receiptMessage({ ...base, collectedByName: null }, 'Riya Sharma', gym as never)).not.toContain('Received by');
+  });
+});
+
+// ---------------------------------------------------------------- work package 3: a server refusal is final
+
+describe('a receipt the server refuses (0021) is said in words and never sent again', () => {
+  it('OVER_DUE from the server: plain words, nothing kept to resend', async () => {
+    let pushes = 0;
+    let version = 0;
+    const rows: CrmRecord[] = [];
+    const api: CrmCloudApi = {
+      pull: async () => ({ version, gym: { gymId: 'g', name: 'Gym', joinCode: 'ABC123', createdAt: 1 }, records: rows }),
+      push: async (_k, _b, records) => {
+        pushes += 1;
+        if (records.some((r) => r.k === 'payment')) throw new Error('OVER_DUE');
+        rows.push(...records);
+        version += 1;
+        return version;
+      },
+    };
+    const desk = new CloudCrmData('k', api, { wait: async () => undefined });
+    const m = await desk.createMember(memberDraft());
+    const term = await openTerm(desk as never, m.id, '2026-07-01');
+    const before = pushes;
+    await expect(
+      desk.recordPayment({ memberId: m.id, membershipId: term, amountP: 1_000, method: 'cash', paidOn: '2026-07-01', reference: null, note: null, collectedBy: null }),
+    ).rejects.toThrow('That is more than this membership still owes.');
+    expect(pushes - before).toBe(1);
+    await desk.checkIn(m.id, '2026-07-01', 'desk', '2026-07-01');
+    expect(pushes - before).toBe(2);
   });
 });

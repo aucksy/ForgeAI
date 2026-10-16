@@ -14,11 +14,12 @@ import { useState } from 'react';
 import { useCrm } from '../../store';
 import { formatDay } from '../../logic/dates';
 import { formatINR } from '../../logic/money';
+import { MIN_VOID_REASON } from '../../logic/receiptRules';
 import type { Payment } from '../../types';
 import { Button, ErrorBanner, Sheet, TextField, color, font } from '../kit';
 
-/** A reason shorter than this is not a reason anyone can act on months later. */
-const MIN_REASON = 3;
+/** A reason shorter than this is not a reason anyone can act on months later (the server's rule too, 0021). */
+const MIN_REASON = MIN_VOID_REASON;
 
 export function VoidPaymentSheet({
   payment,

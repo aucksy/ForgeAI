@@ -183,12 +183,35 @@ export type AuthErrorCode =
   | 'BAD_KEY'
   | 'EMPTY'
   | 'BUSY'
+  // UAT work package 3 (0021): the server's receipt rules.
+  | ReceiptRefusal
   | 'OFFLINE'
   | 'UNKNOWN';
 
+/**
+ * The server's receipt refusals (0021_receipt_rules.sql). The panel checks the same rules first with
+ * fuller words (logic/receiptRules.ts); these are the words when only the server caught it.
+ */
+export type ReceiptRefusal =
+  | 'BAD_AMOUNT'
+  | 'BAD_DATE'
+  | 'TOO_OLD'
+  | 'BAD_RECEIPT_NO'
+  | 'DUP_RECEIPT'
+  | 'OVER_DUE'
+  | 'WRONG_PLAN'
+  | 'RECEIPT_LOCKED'
+  | 'NEED_REASON'
+  | 'BAD_PRICE';
+
+export const RECEIPT_REFUSALS: readonly ReceiptRefusal[] = [
+  'BAD_AMOUNT', 'BAD_DATE', 'TOO_OLD', 'BAD_RECEIPT_NO', 'DUP_RECEIPT', 'OVER_DUE', 'WRONG_PLAN',
+  'RECEIPT_LOCKED', 'NEED_REASON', 'BAD_PRICE',
+];
+
 const CODES: readonly AuthErrorCode[] = [
   'BAD_PHONE', 'NO_CODE', 'WRONG_CODE', 'TOO_MANY_TRIES', 'PHONE_TAKEN', 'OWNER_ONLY', 'SELF',
-  'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY',
+  'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', ...RECEIPT_REFUSALS,
 ];
 
 function errorText(err: unknown): string {
@@ -267,6 +290,26 @@ export function authErrorWords(err: unknown): string {
       return 'Many gyms are starting right now. Please try again in a few minutes.';
     case 'OFFLINE':
       return 'Can’t reach the internet. Check the connection and try again.';
+    case 'BAD_AMOUNT':
+      return 'The amount must be more than zero, with at most two digits after the point.';
+    case 'BAD_DATE':
+      return 'Pick the date you got this money. It can’t be in the future.';
+    case 'TOO_OLD':
+      return 'The front desk can date a payment at most 31 days back. Ask the owner to enter older payments.';
+    case 'BAD_RECEIPT_NO':
+      return 'This receipt number is missing or too long. Reload the page and try again.';
+    case 'DUP_RECEIPT':
+      return 'This receipt number is already used. Reload the page and try again.';
+    case 'OVER_DUE':
+      return 'That is more than this membership still owes. Reload the page to see what is due.';
+    case 'WRONG_PLAN':
+      return 'That membership is not this member’s. Reload the page and pick the membership again.';
+    case 'RECEIPT_LOCKED':
+      return 'A saved receipt can’t be changed. Cancel it and make a new one.';
+    case 'NEED_REASON':
+      return 'Write why this receipt is cancelled (at least 3 letters).';
+    case 'BAD_PRICE':
+      return 'A price must be zero or more, with at most two digits after the point.';
     default:
       return 'Something went wrong. Please try again.';
   }

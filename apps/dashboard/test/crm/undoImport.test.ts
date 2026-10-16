@@ -29,7 +29,7 @@ async function gym() {
   await db.importTerms(
     [
       { phone: '+919876543210', term: term('Quarterly', '2026-08-01', '2026-10-31', 450000, 300000) },
-      { phone: '+919829012345', term: term('Quarterly', '2026-09-01', '2026-11-30', 450000, 450000) },
+      { phone: '+919829012345', term: term('Quarterly', '2026-09-01', '2026-11-30', 450000, 400000) },
       { phone: '+919811111111', term: term('Yearly', '2026-01-01', '2026-12-31', 1200000, 1200000) },
     ],
     'import-abc',
