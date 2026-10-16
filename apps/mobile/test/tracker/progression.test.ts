@@ -483,7 +483,7 @@ describe('set-row fill from the Target (second review)', () => {
   it('a normal Target fills its weight and rep goal', () => {
     const t = run(ex(), range(5, 8), [sess('2026-10-03', [[72.5, 8], [72.5, 8], [72.5, 8], [72.5, 8]])]);
     // Review fix (Oct 2026): a moved weight also carries how the warm-ups scale with it.
-    expect(targetFill(t)).toEqual({ weightKg: 75, reps: 5, warm: { fromKg: 72.5, stepKg: 2.5, barKg: 20 } });
+    expect(targetFill(t)).toEqual({ weightKg: 75, reps: 5, warm: { fromKg: 72.5, stepKg: 2.5, barKg: 20 }, fromKg: 72.5 }); // C3-4: fromKg = last time's main weight
   });
 });
 

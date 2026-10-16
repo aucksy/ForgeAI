@@ -294,11 +294,18 @@ export function jumpRungKg(wKg: number, share: number, l: Ladder): number {
 /**
  * About 10% lighter (kg): the rung nearest to 90% of last time's weight among those within
  * 25% below it (ties → the heavier); else whole steps down. null when that reaches zero.
+ * `share` asks for another cut (0.2 = about 20%; the window moves with it).
  */
-export function downRungKg(wKg: number, l: Ladder): number | null {
+export function downRungKg(
+  wKg: number,
+  l: Ladder,
+  /** 16 Oct 2026 audit (C3-8 / C3-9): how much lighter (0.1 = about 10%, the default). */
+  share = 0.1,
+): number | null {
   const w = kgToUnit(wKg, l.units);
-  const ideal = w * 0.9;
-  const cands = l.rungs.filter((r) => r < w - EPS && r < rungOf(wKg, l) - EPS && r >= w * 0.75 - EPS);
+  const cut = Math.min(0.9, Math.max(0.01, share));
+  const ideal = w * (1 - cut);
+  const cands = l.rungs.filter((r) => r < w - EPS && r < rungOf(wKg, l) - EPS && r >= w * (1 - cut - 0.15) - EPS);
   if (cands.length > 0) {
     let best = cands[0];
     for (const r of cands) if (Math.abs(r - ideal) < Math.abs(best - ideal) + EPS) best = r;
@@ -310,7 +317,7 @@ export function downRungKg(wKg: number, l: Ladder): number | null {
     if (below.length === 0) return null;
     v = nearestOf(below, ideal);
   } else {
-    const steps = Math.max(1, Math.round((w * 0.1) / l.step));
+    const steps = Math.max(1, Math.round((w * cut) / l.step));
     v = r3(rungOf(wKg, l) - steps * l.step);
   }
   if (l.gym != null && v > EPS) {

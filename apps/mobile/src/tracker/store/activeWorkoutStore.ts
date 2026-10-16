@@ -35,7 +35,7 @@ import {
   type TrackerExercise,
 } from '@/tracker/db/exerciseInfo';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
-import { warmupWeightKg, type WarmScale } from '@/tracker/engine/progression';
+import { OFF_MAIN_SHARE, warmupWeightKg, type WarmScale } from '@/tracker/engine/progression';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import {
   getCarriedNote,
@@ -1241,12 +1241,23 @@ export function fillForSet(
   ex: DraftExercise,
   setKey: string,
   /** The card's Target fill (`targetFill`), or null off-plan / before it is known. */
-  target?: (SetFill & { setReps?: readonly number[]; warm?: WarmScale }) | null,
+  target?: (SetFill & { setReps?: readonly number[]; warm?: WarmScale; fromKg?: number }) | null,
 ): SetFill | null {
   const lt: LogType = ex.logType ?? 'weight_reps';
   const idx = ex.sets.findIndex((s) => s.key === setKey);
   if (idx < 0) return null;
   const row = ex.sets[idx];
+  // 16 Oct 2026 audit (C3-4 / C3-5): a working row whose last-time set was 10% or more away from
+  // last time's main weight (a heavy top set, a lighter back-off) is not one of the Target's main
+  // sets: it hints that set as it was, and the Target's per-set goals go to the main rows only.
+  const fromKg = lt === 'weight_reps' && target?.fromKg != null && target.fromKg > 0 ? target.fromKg : null;
+  const offMain = (s: DraftSet): PrevSet | null => {
+    if (fromKg == null || s.isWarmup || s.setType === 'drop') return null;
+    const p = prevForSet(ex, s.key);
+    return p && p.weightKg > 0 && p.reps > 0 && Math.abs(p.weightKg - fromKg) >= fromKg * OFF_MAIN_SHARE - 1e-9 ? p : null;
+  };
+  const mineOff = offMain(row);
+  if (mineOff) return { weightKg: mineOff.weightKg, reps: mineOff.reps };
   // 13 Oct 2026: a warm-up row hints last time's same warm-up (its PREVIOUS) and nothing else —
   // never a working set's numbers, a row above, or the Target.
   const warmup = row.isWarmup;
@@ -1313,7 +1324,7 @@ export function fillForSet(
   // The row's own goal: the Target's goal for its working-set number (warm-ups and drops not counted).
   let goal: number | null = null;
   if (tgt) {
-    const n = ex.sets.slice(0, idx).filter((s) => !s.isWarmup && s.setType !== 'drop').length;
+    const n = ex.sets.slice(0, idx).filter((s) => !s.isWarmup && s.setType !== 'drop' && offMain(s) == null).length;
     const list = tgt.setReps;
     goal = positive(list && list.length > 0 ? list[Math.min(n, list.length - 1)] : tgt.reps);
   }

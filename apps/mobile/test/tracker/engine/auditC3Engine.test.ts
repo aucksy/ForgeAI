@@ -147,3 +147,92 @@ describe('C3-7: "Weight jumps" works past the top of his ladder', () => {
     expect(targetLine(run(ex({ name: 'Bench Press' }), h, { jump: 'small' }))).toBe('62.5 kg · aim for 8');
   });
 });
+
+describe('C3-4: back-off sets — the top sets are judged on their own', () => {
+  it('2 x 100 x 6 + 2 x 80 x 10 back-offs, 4-set routine, range 4–6, at the top: Up', () => {
+    const d = dates(6);
+    const h = d.map((x) => sess(x, [[100, 6], [100, 6], [80, 10], [80, 10]]));
+    const t = run(ex(), h, { min: 4, max: 6, sets: 4 });
+    expect(t.change).toBe('up');
+    expect(t.rule).toBe('R2');
+  });
+
+  it('3 x 100 x 5 + 2 x 80 back-offs, 5 sets, range 3–5: Up', () => {
+    const h = dates(3).map((x) => sess(x, [[100, 5], [100, 5], [100, 5], [80, 8], [80, 8]]));
+    expect(run(ex(), h, { min: 3, max: 5, sets: 5 }).change).toBe('up');
+  });
+
+  it('one cut-short workout is still not enough to move up', () => {
+    const t = run(ex(), [sess('2026-10-03', [[100, 6]])], { min: 4, max: 6, sets: 4 });
+    expect(t.change).not.toBe('up');
+  });
+});
+
+describe('C3-8: the longer the break, the lighter the start', () => {
+  const h = (d: string) => [three(140, 5, d)];
+  it('6 weeks: about 10% lighter; 15 weeks: about 20%; a year: about 30%', () => {
+    const six = run(ex(), h('2026-08-25'), { min: 3, max: 5 }).targetWeightKg;
+    const fifteen = run(ex(), h('2026-06-23'), { min: 3, max: 5 }).targetWeightKg;
+    const year = run(ex(), h('2025-09-20'), { min: 3, max: 5 }).targetWeightKg;
+    expect(six).toBeGreaterThanOrEqual(125);
+    expect(six).toBeLessThan(140);
+    expect(fifteen).toBeLessThanOrEqual(115);
+    expect(fifteen).toBeGreaterThanOrEqual(105);
+    expect(year).toBeLessThanOrEqual(100);
+    expect(year).toBeGreaterThanOrEqual(90);
+  });
+});
+
+describe('C3-9: a changed rep range is never read as a failure', () => {
+  it('4 x 100 x 5 then Higher reps (12–20): no "Reps fell", a weight for about 12 reps', () => {
+    const h = dates(4).map((x) => three(100, 5, x));
+    const t = run(ex(), h, { min: 12, max: 20 });
+    expect(t.reason).not.toContain('fell');
+    expect(t.targetWeightKg).toBeLessThanOrEqual(85);
+    expect(t.targetWeightKg).toBeGreaterThanOrEqual(75);
+    expect(t.reason).toContain('well under 12–20');
+  });
+
+  it('60 x 10 then Strength (3–6): never more than one size step, aim for the top of the new range', () => {
+    const t = run(ex(), [three(60, 10, '2026-10-03')], { min: 3, max: 6 });
+    expect(t.targetWeightKg).toBeLessThanOrEqual(63);
+    expect(t.targetWeightKg).toBeGreaterThanOrEqual(60);
+    expect(t.repGoal).toBe(6);
+  });
+});
+
+describe('C3-12: one cut-short workout does not set every goal', () => {
+  it('8, 8, 8 then a single 4: the goals come from the last full workout (9, 8, 8)', () => {
+    const t = run(ex(), [sess('2026-10-03', [[100, 4]]), three(100, 8, '2026-10-01')]);
+    expect(t.setGoals).toEqual([9, 8, 8]);
+  });
+});
+
+describe('C3-13: an extra set beyond the routine never blocks progress', () => {
+  it('3-set routine, 12, 12, 12 and an extra 9: Up', () => {
+    const t = run(ex(), [sess('2026-10-03', [[60, 12], [60, 12], [60, 12], [60, 9]])]);
+    expect(t.change).toBe('up');
+  });
+});
+
+describe('C3-14: the reason names the weight the line shows', () => {
+  it('135 lb history shown in kg: the reason says 60 kg, never 61.23', () => {
+    const t = run(ex(), [three(135 * KG_PER_LB, 10, '2026-10-03')]);
+    expect(t.reason).not.toContain('61.2');
+    expect(t.reason).toContain('60 kg');
+  });
+});
+
+describe('C3-19: the first plank workout with a short last hold', () => {
+  it('60, 60, 30 s: never "Time for 35 s"', () => {
+    const plank = ex({ name: 'Plank', equipment: 'bodyweight' });
+    const t = computeProgressionTarget({
+      exercise: plank,
+      target: { targetSets: 3, repRangeMin: 8, repRangeMax: 12 },
+      history: [{ dateISO: '2026-10-03', sets: [60, 60, 30].map((s) => ({ weightKg: 0, reps: 0, rpe: null, setType: 'normal' as const, durationSec: s })) }],
+      todayISO: TODAY,
+      logType: 'time',
+    });
+    expect(t.holdSec).toBeGreaterThanOrEqual(60);
+  });
+});

@@ -121,7 +121,7 @@ export interface ProgSession {
 }
 
 export type ProgRule =
-  | 'R0' | 'R1' | 'R1b' | 'R2' | 'R2b' | 'R2c' | 'R3' | 'R4' | 'R5'
+  | 'R0' | 'R1' | 'R1b' | 'R2' | 'R2b' | 'R2c' | 'R3' | 'R4' | 'R5' | 'R6'
   | 'B1' | 'B1easy' | 'B2' | 'B2cap'
   | 'A2zero'
   | 'T0' | 'T1' | 'T2' | 'T3' | 'Tcap'
@@ -226,6 +226,8 @@ export const RULE_WINDOW = 4;
  * 20 → 22.5 kg on the bar and 12.5 → 15 kg dumbbells are not.
  */
 const BIG_STEP_SHARE = 0.2;
+/** C3-9: last time this many reps (or more) outside the range = the range moved, not a miss. */
+const RANGE_MOVED_REPS = 2;
 /** Logged RPE at or under this on the set that gets the extra rep: aim 2 more instead of 1. */
 const EASY_SET_RPE = 7;
 /** At most this many reps-in-reserve count toward a set's score. */
@@ -239,6 +241,12 @@ interface Summary {
   mainSets: ProgSet[];
   /** Every counted set at a different weight (pyramid / ramp): judged on its top set alone. */
   ramp: boolean;
+  /**
+   * 16 Oct 2026 audit (C3-4 / C3-5): counted sets at least 10% away from the main weight — a
+   * heavy top set or lighter back-offs. They are part of the routine's sets but not of the main
+   * sets the Target judges, so they lower how many main sets are needed.
+   */
+  offMain: number;
 }
 
 export interface ProgressionInput {
@@ -374,6 +382,11 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   /** " at 40 kg", " at +10 kg", " with 20 kg of help" — how the weight reads in a sentence. */
   const at = (kg: number) =>
     assisted ? (kg < 0 ? ` with ${targetKgText(-kg)} of help` : ' with no help') : kg > 0 ? ` at ${targetKgText(kg)}` : '';
+  /**
+   * 16 Oct 2026 audit (C3-14): last time's weight in a sentence is the weight the line shows (its
+   * rung: 135 lb read in kg says "60 kg", never "61.23 kg" next to "Same weight").
+   */
+  const atLast = at(same);
   /** "40 kg", "20 kg of help", "no help". */
   const load = (kg: number) => (assisted ? (kg < 0 ? `${targetKgText(-kg)} of help` : 'no help') : `${targetKgText(kg)}`);
 
@@ -422,7 +435,10 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   if (gap >= 21) {
     const weeks = Math.floor(gap / 7);
     if (gap >= 42 && !bodyweightOnly) {
-      const down = assisted ? clean(round3(w - step)) : lighter();
+      // 16 Oct 2026 audit (C3-8): the longer the break, the bigger the cut — about 10% up to 13
+      // weeks, 20% up to 26 weeks, 30% after that (a year off was the same 10% as six weeks).
+      const cut = gap < 91 ? 0.1 : gap < 183 ? 0.2 : 0.3;
+      const down = assisted ? clean(round3(w - step)) : downRungKg(w, ladder, cut);
       if (down !== null) {
         return out(
           'R1b',
@@ -430,7 +446,9 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
           min,
           assisted
             ? `${weeks} weeks since your last ${name}. Start with a little more help, ${load(down)}, and build back.`
-            : `${weeks} weeks since your last ${name}. Start a little lighter at ${targetKgText(down)} and build back.`,
+            : cut > 0.1
+              ? `${weeks} weeks since your last ${name}. Start lighter at ${targetKgText(down)} and build back.`
+              : `${weeks} weeks since your last ${name}. Start a little lighter at ${targetKgText(down)} and build back.`,
         );
       }
     }
@@ -442,8 +460,11 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     );
   }
 
-  const need = Math.max(1, target.targetSets - 1);
-  const scores = L.mainSets.map(score);
+  // C3-4: a top set or back-offs are part of the routine's sets, not of the main sets needed.
+  const needOf = (s: Summary) => Math.max(1, target.targetSets - s.offMain - 1);
+  const need = needOf(L);
+  // C3-13: only the routine's own number of sets is judged (an extra set at the end never blocks).
+  const scores = L.mainSets.map(score).sort((a, b) => b - a).slice(0, Math.max(1, target.targetSets));
   const minScore = Math.min(...scores);
   const enoughSets = L.ramp || L.mainSets.length >= need;
   const best = (s: Summary) => Math.max(...s.mainSets.map(score));
@@ -482,10 +503,29 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     return out('B1', 0, goal, `Last time ${repsList}. Aim for ${goal} on every set.`);
   }
 
+  // R6 — 16 Oct 2026 audit (C3-9): last time was far UNDER this rep range (the member changed
+  // "Rep range", or the routine's): never "Reps fell", never 90% of a 5-rep weight for 12 reps.
+  // The weight he can lift for the bottom of the range, from last time's best set (Epley), on
+  // his ladder — never heavier than last time.
+  if (logType === 'weight_reps' && !L.ramp && w > 0 && topReps < min - RANGE_MOVED_REPS && enoughSets) {
+    const e1 = w * (1 + topReps / 30);
+    const want = e1 / (1 + min / 30);
+    const down = want < w - 1e-6 ? downRungKg(w, ladder, 1 - want / w) : null;
+    // Nowhere lighter to go: the usual rules (R3 holds the weight).
+    if (down != null) {
+      return out(
+        'R6',
+        down,
+        min,
+        `Last time ${repsList}${atLast}, well under ${min}–${max} reps. Start at ${targetKgText(down)} and aim for ${min}.`,
+      );
+    }
+  }
+
   // R2 / R2b / R2c — ready to add weight (or, assisted, to take help away).
   if (enoughSets && minScore >= max) {
     const usedCredit = L.mainSets.some((s) => s.reps < max);
-    const did = `You did ${repsList}${at(w)}${usedCredit ? ' with reps to spare' : ''}.`;
+    const did = `You did ${repsList}${atLast}${usedCredit ? ' with reps to spare' : ''}.`;
     if (assisted) {
       const next = clean(round3(w + step));
       if (next >= -1e-6) {
@@ -526,10 +566,13 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     if (input.experience === 'beginner' && minScore >= max + 3 && w > 0 && fast != null) {
       const jump = jumpRungKg(w, fast, ladder);
       if (jump > next + 1e-6) {
-        return out('R2c', jump, min, `That looked easy: ${repsList}${at(w)}. Jumping to ${targetKgText(jump)}.`);
+        return out('R2c', jump, min, `That looked easy: ${repsList}${atLast}. Jumping to ${targetKgText(jump)}.`);
       }
     }
-    return out('R2', next, min, `${did} Time for ${targetKgText(next)}.`);
+    // C3-9: far ABOVE the range (a lower "Rep range" now) — still one size step, but aim for the
+    // top of the new range, not its bottom.
+    const after = lowestReps > max + RANGE_MOVED_REPS ? max : min;
+    return out('R2', next, after, `${did} Time for ${targetKgText(next)}.`);
   }
 
   // Sessions at today's main weight, newest first (the "run").
@@ -545,13 +588,13 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   if (judged.length >= 2 && best(judged[0]) < min && best(judged[1]) < min && sum(judged[0]) <= sum(judged[1])) {
     if (assisted) {
       const more = clean(round3(w - step));
-      return out('R3', more, min, `Reps fell under ${min} twice${at(w)}. Use ${load(more)} and build back up.`);
+      return out('R3', more, min, `Reps fell under ${min} twice${atLast}. Use ${load(more)} and build back up.`);
     }
     const down = lighter();
     if (down !== null) {
-      return out('R3', down, min, `Reps fell under ${min} twice at ${targetKgText(w)}. Drop to ${targetKgText(down)} and build back up.`);
+      return out('R3', down, min, `Reps fell under ${min} twice at ${targetKgText(same)}. Drop to ${targetKgText(down)} and build back up.`);
     }
-    return out('R3', same, min, `Reps fell under ${min} twice at ${targetKgText(w)}. Stay here and build back to ${min}.`);
+    return out('R3', same, min, `Reps fell under ${min} twice at ${targetKgText(same)}. Stay here and build back to ${min}.`);
   }
 
   // R4 — stalled: 4 workouts at this weight and no better than the oldest of them.
@@ -565,13 +608,13 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       const mid = Math.round((min + max) / 2);
       if (assisted) {
         const more = clean(round3(w - step));
-        return out('R4', more, mid, `Stuck${at(w)} for ${judged.length} workouts. A little more help, ${load(more)}, usually breaks it.`);
+        return out('R4', more, mid, `Stuck${atLast} for ${judged.length} workouts. A little more help, ${load(more)}, usually breaks it.`);
       }
       const down = lighter();
       if (down !== null) {
-        return out('R4', down, mid, `Stuck at ${targetKgText(w)} for ${judged.length} workouts. A small step back to ${targetKgText(down)} usually breaks it.`);
+        return out('R4', down, mid, `Stuck at ${targetKgText(same)} for ${judged.length} workouts. A small step back to ${targetKgText(down)} usually breaks it.`);
       }
-      return out('R4', same, mid, `Stuck at ${targetKgText(w)} for ${judged.length} workouts. Keep the weight and aim for ${mid} clean reps.`);
+      return out('R4', same, mid, `Stuck at ${targetKgText(same)} for ${judged.length} workouts. Keep the weight and aim for ${mid} clean reps.`);
     }
   }
 
@@ -583,14 +626,17 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       'R5',
       same,
       goal,
-      `Last time ${repsList}${at(w)}. ${assisted ? 'Same help' : 'Same weight'}, aim for ${goal} ${L.ramp ? 'at your heaviest weight' : 'on every set'}.`,
+      `Last time ${repsList}${atLast}. ${assisted ? 'Same help' : 'Same weight'}, aim for ${goal} ${L.ramp ? 'at your heaviest weight' : 'on every set'}.`,
     );
   }
   // Oct 2026 (owner): a goal per set. Last time under the range on every set (RPE 10 gives no
   // credit, so a hard set under the range is a miss) → the same numbers again; else one more
   // rep on the first set still below the top, every other set last time's own number.
-  const miss = best(L) < min;
-  const goals = perSetGoals(L.mainSets, target.targetSets, max, miss, min);
+  // C3-12: the goals come from the newest FULL workout at this weight (a single cut-short set of
+  // 4 set every goal to 4).
+  const G = sessions.find((s) => sameWeight(s.mainWeight, w) && s.mainSets.length >= needOf(s)) ?? L;
+  const miss = best(G) < min;
+  const goals = perSetGoals(G.mainSets, target.targetSets, max, miss, min);
   const top = Math.max(...goals);
   const uniform = goals.every((g) => g === goals[0]);
   const aim = uniform ? `aim for ${goals[0]} on every set` : `aim for ${goals.join(', ')}`;
@@ -599,8 +645,8 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     same,
     top,
     miss
-      ? `Last time ${repsList}${at(w)}. Same weight: match it, ${uniform ? `${goals[0]} on every set` : goals.join(', ')}, then build from there.`
-      : `Last time ${repsList}${at(w)}. Same weight, ${aim}.`,
+      ? `Last time ${repsList}${atLast}. Same weight: match it, ${uniform ? `${goals[0]} on every set` : goals.join(', ')}, then build from there.`
+      : `Last time ${repsList}${atLast}. Same weight, ${aim}.`,
     null,
     goals,
   );
@@ -747,7 +793,12 @@ function holdTarget(input: ProgressionInput): ProgressionTarget {
   for (const h of [...holds].reverse()) {
     const low = Math.min(...h.times);
     before = goal;
-    if (h.times.length >= need && (goal == null || low >= goal)) {
+    if (h.times.length >= need && goal == null && median(h.times) > low) {
+      // 16 Oct 2026 audit (C3-19): the first workout's holds were uneven (60, 60, 30 s) — its
+      // usual hold, not its shortest + 5 s ("Time for 35 s" where he held 60).
+      goal = Math.min(cap, median(h.times));
+      lastHit = true;
+    } else if (h.times.length >= need && (goal == null || low >= goal)) {
       // Capped inside the replay, so holding the cap keeps counting as a hit.
       goal = Math.min(cap, Math.max(goal ?? 0, low) + HOLD_STEP_SEC);
       lastHit = true;
@@ -868,6 +919,11 @@ export interface TargetFill {
   setReps?: number[];
   /** Review fix (Oct 2026): the weight moved - warm-up rows scale with it (`warmupWeightKg`). */
   warm?: WarmScale;
+  /**
+   * 16 Oct 2026 audit (C3-4 / C3-5): last time's MAIN weight (kg). A row whose last-time set was
+   * 10% or more away from it (a heavy top set, a lighter back-off) hints that set, not the Target.
+   */
+  fromKg?: number;
 }
 
 /** An easy week stops with this many reps left (easyWeek.ts: "stop with 3 or more reps left"). */
@@ -897,6 +953,7 @@ export function targetFill(
   const perSet = !t.easy && perSetLine(t.setGoals) != null ? [...(t.setGoals as readonly number[])] : null;
   const out: TargetFill = perSet ? { weightKg, reps: t.repGoal, setReps: perSet } : { weightKg, reps: t.repGoal };
   if (t.warm && t.change != null && !t.easy) out.warm = t.warm;
+  if (!t.easy && (t.logType ?? 'weight_reps') === 'weight_reps' && t.last && t.last.weightKg > 0) out.fromKg = t.last.weightKg;
   return out;
 }
 
@@ -934,8 +991,12 @@ export function summarise(s: ProgSession): Summary | null {
   }
   const mainSets = counted.filter((x) => sameWeight(round3(x.weightKg), mainWeight));
   if (mainSets.length === 0) return null;
-  return { dateISO: s.dateISO, mainWeight, mainSets, ramp: best === 1 && counted.length > 1 };
+  const offMain = mainWeight > 0 ? counted.filter((x) => Math.abs(x.weightKg - mainWeight) >= mainWeight * OFF_MAIN_SHARE - 1e-9).length : 0;
+  return { dateISO: s.dateISO, mainWeight, mainSets, ramp: best === 1 && counted.length > 1, offMain };
 }
+
+/** C3-4: a set this far from the main weight is a top set or a back-off, not a main set. */
+export const OFF_MAIN_SHARE = 0.1;
 
 /** Reps plus logged reps-in-reserve (10 − RPE), capped at 2. RPE outside the app's 6–10 scale is ignored. */
 export function score(s: ProgSet): number {
@@ -990,6 +1051,12 @@ export function bodyweightCap(name: string): number {
   if (/pull|chin|dip|row/.test(n)) return 15;
   if (/push/.test(n)) return 25;
   return 20;
+}
+
+function median(xs: readonly number[]): number {
+  const v = [...xs].sort((a, b) => a - b);
+  const m = Math.floor(v.length / 2);
+  return v.length % 2 === 1 ? v[m] : Math.round((v[m - 1] + v[m]) / 2);
 }
 
 function daysBetween(fromISO: string, toISO: string): number {

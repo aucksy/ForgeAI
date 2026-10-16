@@ -350,10 +350,10 @@ describe('ONE source: targetFill → fillForSet', () => {
     }) as DraftExercise;
 
   it('targetFill carries the per-set goals only when they differ', () => {
-    expect(fill).toEqual({ weightKg: 50, reps: 11, setReps: [11, 9, 8] });
+    expect(fill).toEqual({ weightKg: 50, reps: 11, setReps: [11, 9, 8], fromKg: 50 }); // C3-4: fromKg = last time's main weight
     const flat = run(ex(), [sess('2026-10-03', [[60, 12], [60, 12], [60, 11]])]);
     expect(flat.setGoals).toEqual([12, 12, 12]);
-    expect(targetFill(flat)).toEqual({ weightKg: 60, reps: 12 });
+    expect(targetFill(flat)).toEqual({ weightKg: 60, reps: 12, fromKg: 60 });
   });
 
   it('each row hints its own goal by working-set number (warm-ups and drops not counted)', () => {
