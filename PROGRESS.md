@@ -2223,6 +2223,13 @@
   - **Tests:** 4 new vitest files (32 tests, each failed before its fix); full suite 2,808 pass —
     the 3 failures (memberWords, unitsCoach, coachNote) read another helper's uncommitted words.ts
     work. typecheck 0; silent-catch 302 and promise 0 at baseline.
+  - Wave-4a review (4b8e7d9, 14d82bb): BLOCKER fixed — a kept order id is reused only for the same
+    bag within 15 min and dropped once My orders shows its order (orders carry client_order_id);
+    0020 hands back only an Ordered/Ready order from the last 24 h (index no longer unique). Join
+    id kept in storage 15 min; pending Leaves retried after the gym check in the background (4 s);
+    another site's link leaves the code box empty, www./:443/scheme-less ForgeAI links read; md5
+    tag comment says it is reversible. CI run **38882279748** on 14d82bb all green (0020: 29
+    checks). Full suite 2,851 pass, typecheck 0, ratchets at baseline.
 
 - 2026-10-16: **End-to-end audit C5 (notifications, watch) fixed: 13 of 15, plus C1-10** (bd05f96
   phone, d90d16f watch; ships with the next tag — the WATCH app must be updated too). Statuses:
