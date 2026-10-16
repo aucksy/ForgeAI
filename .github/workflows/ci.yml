@@ -109,7 +109,7 @@ jobs:
 
       # Audit toolkit pick 9 (15 Oct 2026): every panel page of a demo gym at 390 px and 1280 px,
       # English and Hinglish; fails on a page error, console error or sideways overflow.
-      - name: Panel crawl (every page, phone + computer, both languages)
+      - name: Panel crawl (every page, phone + computer, dark theme)
         working-directory: apps/dashboard
         run: |
           npx playwright install --with-deps chromium
