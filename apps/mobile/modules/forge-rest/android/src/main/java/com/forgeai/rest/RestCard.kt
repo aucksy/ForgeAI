@@ -1216,15 +1216,10 @@ object RestCard {
         },
       )
     }
-    val over = m.getNotificationChannel(CH_OVER)
-    if (over != null && over.name?.toString() != OVER_NAME) {
-      // C9-26: the channel was called "Rest timer". Re-creating it with the same id changes only its
-      // name and description; the member's sound, buzz and importance choices stay as they set them.
-      m.createNotificationChannel(
-        NotificationChannel(CH_OVER, OVER_NAME, over.importance).apply { description = OVER_DESC },
-      )
-    }
-    if (over == null) {
+    // C9-26: the channel was called "Rest timer". On a phone that already has it, creating it again
+    // with the same id changes only its name and description; Android keeps the member's sound, buzz
+    // and importance choices (the same rename as CH_OVER_OPEN below).
+    if (m.getNotificationChannel(CH_OVER)?.name?.toString() != OVER_NAME) {
       m.createNotificationChannel(
         NotificationChannel(CH_OVER, OVER_NAME, NotificationManager.IMPORTANCE_HIGH).apply {
           description = OVER_DESC
