@@ -15,8 +15,11 @@
 --   6. Gym A's owner key never reads or writes gym B's records; a member key is not an owner key.
 do $$
 declare
+  -- _photo_ticket_ok (0018, C8-7): the storage upload policies call it AS the uploader (anon), so
+  -- revoking it (0012) broke every logo and product-photo upload. It only answers yes/no for a
+  -- 48-hex ticket folder.
   anon_ok text[] := array[
-    'auth_gym_id','auth_role','crm_pull','crm_push','demo_start_gym','gym_create_online','gym_preview',
+    '_photo_ticket_ok','auth_gym_id','auth_role','crm_pull','crm_push','demo_start_gym','gym_create_online','gym_preview',
     'member_cancel_order','member_check_in','member_join','member_leave','member_me','member_messages',
     'member_orders','member_place_order','member_products','member_saw_messages','member_set_name',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
