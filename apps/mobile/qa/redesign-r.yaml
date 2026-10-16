@@ -12,9 +12,11 @@
 #  4. Shop (S2, the gym's real shop on the LIVE server): the join card, join the test gym FORGE1 as
 #     "QA Member", its products, the shaker, Add to bag, the Bag, Place order, "Order N placed",
 #     My orders (Ordered: "The gym is getting it ready"), Cancel order ("You cancelled this order",
-#     the placed line gone), Leave; then the sample shop (S1 demo).
+#     the placed line gone), Leave; then (UAT U-G1) join again, order the shaker and Leave WITH it
+#     open: the question says "You have 1 open order (₹…). Leaving cancels it.", and a third join
+#     sees the shaker's stock back where it was; then the sample shop (S1 demo).
 # Saves no workout (part M reads its count afresh). The chart's chip and range are put back to
-# Kg/Lb lifted and Last 12 weeks. The one gym order placed is cancelled (its stock goes back) and
+# Kg/Lb lifted and Last 12 weeks. Both gym orders placed are cancelled (their stock goes back) and
 # the phone leaves the gym, so the Shop ends on the join card.
 appId: com.forgeai.app
 ---
@@ -674,6 +676,213 @@ appId: com.forgeai.app
     visible: "^Your gym's shop$"
     timeout: 15000
 - takeScreenshot: r-27b-shop-join-again
+# UAT U-G1 (17 Oct 2026): Leave WITH an open order. A member who left with an order still
+# "Ordered" lost it for good (the gym kept it, its stock held). Join again, note the shaker's stock,
+# order one, and Leave without cancelling it: the question must say "You have 1 open order (₹…).
+# Leaving cancels it." and its button "Cancel order and leave". Then PROVE the gym cancelled it:
+# join once more, and the shaker's stock must read exactly what it did before the order (a member's
+# cancel puts the stock back; an order left behind would still hold one).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Enter the code from your gym"
+- scrollUntilVisible:
+    element: "Gym code"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- tapOn: "Gym code"
+- inputText: "FORGE1"
+- runFlow:
+    when:
+      notVisible: "^FORGE1$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "FORGE1"
+- assertVisible: "^FORGE1$"
+- tapOn: "Name on your orders"
+- eraseText: 70
+- inputText: " QA Member"
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: "Join ForgeAI Test Gym\\?"
+    timeout: 45000
+    optional: true
+- runFlow:
+    when:
+      visible: "^Your gym's shop$"
+    commands:
+      - scrollUntilVisible:
+          element: "^Join$"
+          centerElement: true
+          timeout: 10000
+      - tapOn: "^Join$"
+- extendedWaitUntil:
+    visible: "Join ForgeAI Test Gym\\?"
+    timeout: 45000
+- tapOn:
+    text: "^Join$"
+    below:
+      text: "Join ForgeAI Test Gym\\?"
+- extendedWaitUntil:
+    visible: 'Shaker bottle 700 ml, .*'
+    timeout: 45000
+- scrollUntilVisible:
+    element: 'Shaker bottle 700 ml, .*'
+    centerElement: true
+    timeout: 20000
+- tapOn: 'Shaker bottle 700 ml, .*'
+- extendedWaitUntil:
+    visible: '^Shaker bottle 700.ml$'
+    timeout: 15000
+# The stock before the order ("25 in stock" / "Only 2 left"), kept for the check at the end.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '(\d+ in stock|Only \d+ left)'
+- copyTextFrom:
+    text: '(\d+ in stock|Only \d+ left)'
+- scrollUntilVisible:
+    element: "Add to bag"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Add to bag"
+- extendedWaitUntil:
+    visible: "Added 1 to your bag"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Go to bag"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Go to bag"
+- extendedWaitUntil:
+    visible: "^Bag$"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "^Place order$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Place order$"
+- extendedWaitUntil:
+    visible: 'Order \d+ placed\. Pay at the desk when you collect it\.'
+    timeout: 45000
+- extendedWaitUntil:
+    visible: "^The gym is getting it ready$"
+    timeout: 20000
+# Not cancelled here: back to the Shop and Leave with the order still open.
+- back
+- runFlow:
+    when:
+      notVisible: "^ForgeAI Test Gym$"
+    commands:
+      - back
+- extendedWaitUntil:
+    visible: "^ForgeAI Test Gym$"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "^Leave$"
+    centerElement: true
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Leave$"
+- tapOn: "^Leave$"
+- extendedWaitUntil:
+    visible: 'Leave ForgeAI Test Gym''s shop\?'
+    timeout: 15000
+- assertVisible: 'You have 1 open order \(₹[0-9,.]+\)\. Leaving cancels it\. .*'
+- assertVisible: "Cancel order and leave"
+- assertNotVisible: "Leave shop"
+- takeScreenshot: r-27c-leave-with-open-order
+- tapOn: "Cancel order and leave"
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 45000
+- takeScreenshot: r-27d-left-order-cancelled
+# The proof: a fresh join sees the shaker's stock back where it was before the order.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Enter the code from your gym"
+- scrollUntilVisible:
+    element: "Gym code"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- tapOn: "Gym code"
+- inputText: "FORGE1"
+- runFlow:
+    when:
+      notVisible: "^FORGE1$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "FORGE1"
+- assertVisible: "^FORGE1$"
+- tapOn: "Name on your orders"
+- eraseText: 70
+- inputText: " QA Member"
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: "Join ForgeAI Test Gym\\?"
+    timeout: 45000
+    optional: true
+- runFlow:
+    when:
+      visible: "^Your gym's shop$"
+    commands:
+      - scrollUntilVisible:
+          element: "^Join$"
+          centerElement: true
+          timeout: 10000
+      - tapOn: "^Join$"
+- extendedWaitUntil:
+    visible: "Join ForgeAI Test Gym\\?"
+    timeout: 45000
+- tapOn:
+    text: "^Join$"
+    below:
+      text: "Join ForgeAI Test Gym\\?"
+- extendedWaitUntil:
+    visible: 'Shaker bottle 700 ml, .*'
+    timeout: 45000
+- scrollUntilVisible:
+    element: 'Shaker bottle 700 ml, .*'
+    centerElement: true
+    timeout: 20000
+- tapOn: 'Shaker bottle 700 ml, .*'
+- extendedWaitUntil:
+    visible: '^Shaker bottle 700.ml$'
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^${maestro.copiedText}$"
+- takeScreenshot: r-27e-stock-back
+# And out again: nothing open now, so the plain question and its "Leave shop".
+- back
+- extendedWaitUntil:
+    visible: "^ForgeAI Test Gym$"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "^Leave$"
+    centerElement: true
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Leave$"
+- tapOn: "^Leave$"
+- extendedWaitUntil:
+    visible: 'Leave ForgeAI Test Gym''s shop\?'
+    timeout: 15000
+- assertVisible: "Your bag on this phone is emptied. You can join again with the code."
+- tapOn: "Leave shop"
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 45000
 # The sample shop (S1 demo) opens from the join card, plainly labelled; Back returns to the card.
 - scrollUntilVisible:
     element: "See a sample shop"

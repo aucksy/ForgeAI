@@ -132,6 +132,16 @@ qa_any_old() {
   done
   return 1
 }
+# UAT U-G4: a part whose server function is missing. A whole run (the one the release gate reads)
+# FAILS on it: a gate must never pass a part it did not run. A partial run may still skip it.
+qa_server_missing() {
+  if [ -z "$QA_ONLY_LIST" ]; then
+    status=1
+    log "PART $1 FAILED: $2"
+  else
+    log "PART $1 SKIPPED (partial run): $2"
+  fi
+}
 QA_PROFILE=${QA_PROFILE:-default}
 BASE_FONT=1.0
 if [ "$QA_PROFILE" = "owner" ]; then
@@ -762,7 +772,7 @@ BR_PROBE=$(qa_runs br && br_probe)
 if ! qa_runs br; then
   :
 elif [ "$BR_PROBE" = "404" ] || [ "$BR_PROBE" = "no-config" ]; then
-  log "PART BR SKIPPED: gym branding is not on the server yet (owner_set_brand probe: $BR_PROBE) — apply 0005_gym_theme.sql"
+  qa_server_missing BR "gym branding is not on the server yet (owner_set_brand probe: $BR_PROBE) — apply 0005_gym_theme.sql"
 else
   free_maestro
   log "part BR start (owner_set_brand probe: $BR_PROBE)"
@@ -827,7 +837,7 @@ INV_PROBE=$(qa_runs inv && inv_probe)
 if ! qa_runs inv; then
   :
 elif [ "$INV_PROBE" != "200" ]; then
-  log "PART INV SKIPPED: the invite link is not on the server yet (gym_preview probe: $INV_PROBE) — apply 0007_invite_link.sql"
+  qa_server_missing INV "the invite link is not on the server yet (gym_preview probe: $INV_PROBE) — apply 0007_invite_link.sql"
 else
   # Step E (gym messages): a fresh demo gym (anyone can start one; its key lives only in this run)
   # gets one announcement, then its invite link opens the app.
@@ -876,7 +886,7 @@ CI_PROBE=$(qa_runs invf && ci_probe)
 if ! qa_runs invf; then
   :
 elif [ "$CI_PROBE" = "404" ] || [ "$CI_PROBE" = "no-config" ]; then
-  log "PART INV-f SKIPPED: QR check-in is not on the server yet (member_check_in probe: $CI_PROBE) — apply 0015_qr_checkin.sql"
+  qa_server_missing INV-f "QR check-in is not on the server yet (member_check_in probe: $CI_PROBE) — apply 0015_qr_checkin.sql"
 else
   ci_rpc() { curl -s -X POST "$inv_url/rest/v1/rpc/$1" -H "apikey: $inv_key" -H "Content-Type: application/json" -d "$2"; }
   ci_gym=$(ci_rpc gym_create_online '{"p_gym_name":"QA Check-in Gym","p_name":"QA Owner","p_phone":"9876500001"}')
