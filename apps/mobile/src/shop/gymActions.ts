@@ -349,7 +349,7 @@ export async function cancelGymOrder(orderId: string): Promise<ActionWords> {
 export async function freshOrdersSoon(waitMs = 3000): Promise<void> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   await Promise.race([
-    refreshOrders().catch(() => null),
+    refreshOrders().catch((e: unknown) => console.warn('[ForgeErr] leave: could not refresh orders first', e)),
     new Promise<void>((resolve) => {
       timer = setTimeout(resolve, waitMs);
     }),
