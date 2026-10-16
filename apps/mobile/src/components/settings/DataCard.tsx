@@ -21,7 +21,8 @@ import { Badge, Card, GhostButton, askConfirm } from '@/components/ui';
 import { success, thud, warn } from '@/lib/haptics';
 import { countOwnWorkouts } from '@/onboarding/db/dataActions';
 import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
-import { eraseLeftBehindText, healthConnectWasUsed } from '@/onboarding/eraseDevice';
+import { eraseGymNote, eraseLeftBehindText, healthConnectWasUsed } from '@/onboarding/eraseDevice';
+import { useGymShop } from '@/shop/gymStore';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, space, type } from '@/theme/tokens';
 
@@ -37,13 +38,18 @@ const caption = () => ({
 /** How long the hidden demo switch must be held. */
 export const DEMO_SWITCH_HOLD_MS = 2000;
 
-/** The erase confirm's body: what goes, in one line, plus Health Connect when used. PURE. */
-export function eraseBody(healthConnectUsed: boolean): string {
+/**
+ * The erase confirm's body: what goes, in one line, plus Health Connect when used, plus the gym
+ * the member leaves (C6-2: told now, or the next time the app is online). PURE.
+ */
+export function eraseBody(healthConnectUsed: boolean, gymName: string | null = null): string {
   const what =
     'Every workout, record, routine, body entry, photo and video, your AI keys, the gym and Drive links and your settings. This phone goes back to new.';
-  return healthConnectUsed
+  const withHc = healthConnectUsed
     ? `${what} Workouts already sent to Health Connect stay there; remove them in Health Connect.`
     : what;
+  const gym = eraseGymNote(gymName);
+  return gym ? `${withHc} ${gym}` : withHc;
 }
 
 /** The hidden demo switch's confirm body: exactly what is replaced. PURE. */
@@ -96,7 +102,7 @@ export function DataCard() {
     const hc = await healthConnectWasUsed();
     const ok = await askConfirm({
       title: 'Erase all data?',
-      body: eraseBody(hc),
+      body: eraseBody(hc, useGymShop.getState().link?.gymName ?? null),
       confirmLabel: 'Erase everything',
       destructive: true,
     });

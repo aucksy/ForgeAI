@@ -93,6 +93,8 @@ begin
   select count(*) into n from public.member_checkin_tries t join public.gym_members m using (member_id)
    where m.key_hash = public._hash_key(kc) and t.what like '%9829012345%';
   fails := fails || pg_temp.t20_is('3d number kept only hashed', n::text, '0');
+  -- (A minute passes: the 10-calls-a-minute limit is not what this test is about.)
+  update public.member_checkin_tries set at = now() - interval '2 minutes' where what = 'try';
   -- Two more DIFFERENT numbers are fine; a fourth different number is still refused.
   r := public.member_check_in(kc, 'T20GYA', '9000000002');
   r := public.member_check_in(kc, 'T20GYA', '9000000003');

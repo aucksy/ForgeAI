@@ -7,8 +7,9 @@
 import { uuid } from '@/lib/uuid';
 import { prefetchGymLogo } from '@/theme/logoPrefetch';
 
-import { apiCancelOrder, apiCheckIn, apiJoin, apiLeaveQuietly, apiMe, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
+import { apiCancelOrder, apiCheckIn, apiJoin, apiMe, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
 import { useGymInbox } from './inboxStore';
+import { leaveOnServer, leavePendingText, retryPendingLeaves } from './pendingLeave';
 import {
   JOIN_CODE_LENGTH,
   UNLINKED_TEXT,
@@ -72,7 +73,8 @@ export async function joinFromInvite(rawCode: string, rawName: string): Promise<
   const words = await joinGym(rawCode, rawName);
   if (words) return words;
   // Not waited for: the new gym is already on screen, and the leave call can take its full timeout.
-  if (oldKey && oldKey !== useGymShop.getState().link?.memberKey) void apiLeaveQuietly(oldKey);
+  // Kept and sent again until the old gym confirms (C6-2).
+  if (oldKey && oldKey !== useGymShop.getState().link?.memberKey) void leaveOnServer(oldKey);
   return null;
 }
 
@@ -108,6 +110,8 @@ let gymCheckedAt: number | null = null;
  * open). Quiet: no words for the member, a failure just keeps what the phone has.
  */
 export async function refreshGymNow(): Promise<void> {
+  // C6-2: a Leave or Erase the gym never heard (no signal then) is sent again on every start.
+  await retryPendingLeaves();
   const key = useGymShop.getState().link?.memberKey;
   if (!key) return;
   gymCheckedAt = Date.now();
@@ -261,10 +265,16 @@ export async function cancelGymOrder(orderId: string): Promise<ActionWords> {
   return null;
 }
 
-/** Leave the gym's shop on this phone: forget it at once, then tell the server (best-effort). */
+/**
+ * Leave the gym's shop on this phone: forget it at once, then tell the server. When the gym cannot
+ * be reached, the key is kept and sent again on the next start, and the join card says so (C6-2).
+ */
 export async function leaveGym(): Promise<void> {
-  const key = useGymShop.getState().link?.memberKey;
+  const link = useGymShop.getState().link;
   useGymShop.getState().unlink(null);
   useGymInbox.getState().clear();
-  if (key) await apiLeaveQuietly(key);
+  if (!link) return;
+  const told = await leaveOnServer(link.memberKey);
+  // A join in the meantime owns the card now: its words win.
+  if (!told && !useGymShop.getState().link) useGymShop.getState().setNotice(leavePendingText(link.gymName));
 }

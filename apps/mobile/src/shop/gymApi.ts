@@ -132,7 +132,12 @@ export async function apiCheckIn(key: string, code: string, phone: string | null
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
 }
 
-/** Stop the key working on the server. Best-effort and short: Leave and Erase never wait on it. */
-export async function apiLeaveQuietly(key: string): Promise<void> {
-  await call('member_leave', { p_key: key }, 6000).catch(() => undefined);
+/**
+ * Stop the key working on the server (member_leave also clears the member's numbers). Short, so
+ * Leave and Erase never hang. True when the gym confirmed, or no longer knows the key (an earlier
+ * leave whose answer was lost); false when it could not be reached — pendingLeave.ts sends it again.
+ */
+export async function apiLeaveQuietly(key: string): Promise<boolean> {
+  const r = await call('member_leave', { p_key: key }, 6000);
+  return r.ok || r.error.kind === 'BAD_KEY';
 }

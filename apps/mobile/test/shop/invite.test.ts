@@ -103,6 +103,8 @@ describe('switching gyms from an invite', () => {
     joinAnswer = { ok: true, data: linkFromJoin({ memberKey: 'new'.padEnd(48, 'y'), memberId: 'm2', gymId: 'g2', gymName: "RAM'S", joinCode: 'RAMS01', name: 'Asha' }) };
     const words = await joinFromInvite('RAMS01', 'Asha');
     expect(words).toBeNull();
+    // Not waited for (C6-2: the old key is first kept on the phone, then sent).
+    await new Promise((r) => setTimeout(r, 0));
     expect(calls).toEqual(['join RAMS01', 'leave old']);
     expect(useGymShop.getState().link?.joinCode).toBe('RAMS01');
   });

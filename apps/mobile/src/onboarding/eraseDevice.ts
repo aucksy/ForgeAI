@@ -57,6 +57,15 @@ const STEP_WORDS: Record<string, string> = {
   'pending-pick': 'picked photo',
 };
 
+/**
+ * PURE (C6-2). The line the Erase confirm adds while the phone is in a gym: the gym is told the
+ * member left — at once, or the next time the app is online. Empty when in no gym.
+ */
+export function eraseGymNote(gymName: string | null | undefined): string {
+  if (!gymName) return '';
+  return `You also leave ${gymName}. With no internet, the gym is told the next time the app is online.`;
+}
+
 /** PURE. A failed step's name in plain words. */
 export function eraseStepWords(name: string): string {
   return STEP_WORDS[name] ?? name;
@@ -182,8 +191,9 @@ function deviceSteps(): EraseStep[] {
     },
     {
       // S2: the gym's real shop — its member key, cached list, orders and bag. Forgotten on the
-      // phone first; then the server is told the key is retired (best-effort, a few seconds at
-      // most, so an erase offline never hangs).
+      // phone first; then the server is told the key is retired (a few seconds at most, so an
+      // erase offline never hangs). C6-2: with no signal, the key alone is kept and sent again on
+      // the next start, so the gym still forgets the member's number (shop/pendingLeave.ts).
       name: 'gym-shop',
       run: async () => {
         const { GYM_SHOP_STORAGE_KEY, useGymShop } = await import('@/shop/gymStore');
@@ -195,8 +205,8 @@ function deviceSteps(): EraseStep[] {
         await AsyncStorage.removeItem(GYM_SHOP_STORAGE_KEY);
         await AsyncStorage.removeItem(GYM_INBOX_STORAGE_KEY);
         if (key) {
-          const { apiLeaveQuietly } = await import('@/shop/gymApi');
-          await apiLeaveQuietly(key);
+          const { leaveOnServer } = await import('@/shop/pendingLeave');
+          await leaveOnServer(key);
         }
       },
     },
