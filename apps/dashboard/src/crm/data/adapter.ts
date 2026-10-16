@@ -169,7 +169,7 @@ export class InvalidDateError extends Error {
  */
 export class FutureVisitError extends Error {
   constructor() {
-    super('You can’t record a visit for a day that hasn’t happened yet.');
+    super('You can’t add a check-in for a day that hasn’t come yet.');
     this.name = 'FutureVisitError';
   }
 }
