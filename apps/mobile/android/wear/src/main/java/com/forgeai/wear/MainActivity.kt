@@ -101,7 +101,16 @@ class MainActivity : ComponentActivity() {
           bpm = null
         }
       }
-      ForgeWatch(snap, bpm, hrStatus, hrAllowed, notifAllowed, onAllow = ::allowHeartRate, onAllowNotif = ::allowNotifications)
+      ForgeWatch(
+        snap,
+        bpm,
+        hrStatus,
+        hrAllowed,
+        notifAllowed,
+        onAllow = ::allowHeartRate,
+        onAllowNotif = ::allowNotifications,
+        onComplete = { WatchActions.complete(this, snap.done) },
+      )
     }
   }
 
@@ -168,7 +177,7 @@ class MainActivity : ComponentActivity() {
     true
   }
 
-  /** The screen's line, and Wear OS bridging (the phone's "Rest is over" only while ours can show). */
+  /** The screen's line, and Wear OS bridging (kept up to date after an app update). */
   private fun afterNotificationChange() {
     notifAllowed = notificationsOn()
     Bridging.sync(this)
@@ -208,6 +217,7 @@ private fun ForgeWatch(
   notifAllowed: Boolean,
   onAllow: () -> Unit,
   onAllowNotif: () -> Unit,
+  onComplete: () -> Unit,
 ) {
   Scaffold(
     modifier = Modifier.fillMaxSize().background(Color.Black),
@@ -217,7 +227,7 @@ private fun ForgeWatch(
       val rest = snap.rest
       when {
         rest != null -> RestScreen(rest, if (hrAllowed) bpm else null)
-        snap.workoutActive -> HeartScreen(snap.title, bpm, hrStatus, hrAllowed, onAllow, notifAllowed, onAllowNotif)
+        snap.workoutActive -> HeartScreen(snap, bpm, hrStatus, hrAllowed, onAllow, notifAllowed, onAllowNotif, onComplete)
         else -> IdleScreen(notifAllowed, onAllowNotif)
       }
     }
@@ -281,16 +291,23 @@ private fun RestScreen(rest: WatchState.Rest, bpm: Double?) {
   }
 }
 
+/**
+ * A workout open, no rest: the exercise, live heart rate and (C5-2, 16 Oct 2026) the set the phone's
+ * live card names with "Complete set", so the set just done can be logged from the wrist.
+ */
 @Composable
 private fun HeartScreen(
-  title: String,
+  snap: WatchState.Snapshot,
   bpm: Double?,
   status: HeartRate.Status,
   allowed: Boolean,
   onAllow: () -> Unit,
   notifAllowed: Boolean,
   onAllowNotif: () -> Unit,
+  onComplete: () -> Unit,
 ) {
+  val title = snap.title
+  val canComplete = snap.done.isNotEmpty()
   Column(
     Modifier.fillMaxWidth().padding(horizontal = 22.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
@@ -303,7 +320,8 @@ private fun HeartScreen(
     Text(
       if (allowed) RestText.bpm(bpm) else "—",
       color = Color.White,
-      fontSize = 52.sp,
+      // Smaller with the set's button below, so all of it fits a small round screen.
+      fontSize = if (canComplete) 38.sp else 52.sp,
       fontWeight = FontWeight.Bold,
       maxLines = 1,
     )
@@ -316,7 +334,18 @@ private fun HeartScreen(
       bpm == null -> "Reading…"
       else -> null
     }
-    if (note != null) {
+    if (canComplete) {
+      if (snap.text.isNotBlank()) {
+        Spacer(Modifier.height(4.dp))
+        Text(snap.text, color = Muted, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+      }
+      Spacer(Modifier.height(4.dp))
+      CompactChip(
+        onClick = onComplete,
+        label = { Text("Complete set", color = Color.Black, fontWeight = FontWeight.Bold) },
+        colors = ChipDefaults.primaryChipColors(backgroundColor = Ember),
+      )
+    } else if (note != null) {
       Spacer(Modifier.height(6.dp))
       Text(
         note,
@@ -326,7 +355,7 @@ private fun HeartScreen(
         modifier = if (!allowed) Modifier.clickable(onClick = onAllow).padding(4.dp) else Modifier,
       )
     }
-    if (!notifAllowed) NotificationPrompt(onAllowNotif)
+    if (!notifAllowed && !canComplete) NotificationPrompt(onAllowNotif)
   }
 }
 

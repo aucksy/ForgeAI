@@ -95,11 +95,24 @@ object RestAlerts {
     cancel(ctx, LIVE_ID)
   }
 
-  fun restOver(ctx: Context, r: WatchState.Rest) {
+  /** [done]: the row the phone's live card ticks next ("" = none): this "Rest is over"'s "Complete set". */
+  fun restOver(ctx: Context, r: WatchState.Rest, done: String = "") {
     disarm(ctx)
     cancel(ctx, LIVE_ID)
     buzz(ctx, r.ringThroughDnd)
-    postOver(ctx, r)
+    postOver(ctx, r, done)
+  }
+
+  /** C5-9: the workout was finished or discarded on the phone: the countdown, its alarm and a "Rest is over" still up all go. */
+  fun workoutEnded(ctx: Context) {
+    disarm(ctx)
+    cancel(ctx, LIVE_ID)
+    cancel(ctx, OVER_ID)
+  }
+
+  /** C5-2: "Complete set" was tapped on "Rest is over": it has done its job. */
+  fun overTapped(ctx: Context) {
+    cancel(ctx, OVER_ID)
   }
 
   // ------------------------------------------------------------------ alarm
@@ -159,6 +172,11 @@ object RestAlerts {
         .setChronometerCountDown(true)
         .setContentIntent(open)
         .setTimeoutAfter(maxOf(1_000L, r.endsAt - System.currentTimeMillis()) + 60_000L)
+      // C5-3 / C5-2: the phone's rest card is no longer copied here (Bridging), so its buttons are
+      // this card's: Done (ticks the set the rest leads to, as the phone card's Done), +15 s, Skip.
+      if (r.done.isNotEmpty()) b.addAction(R.drawable.ic_stat_forge, "Done", WatchActions.pending(ctx, "done", r.done, 11))
+      b.addAction(R.drawable.ic_stat_forge, "+15 s", WatchActions.pending(ctx, "add", "", 12))
+      b.addAction(R.drawable.ic_stat_forge, "Skip", WatchActions.pending(ctx, "skip", "", 13))
       // The watch face / Recents chip: "Rest 1:23", counting down to the end.
       val zero = SystemClock.elapsedRealtime() + (r.endsAt - System.currentTimeMillis())
       val status = Status.Builder()
@@ -208,7 +226,7 @@ object RestAlerts {
     }
   }
 
-  private fun postOver(ctx: Context, r: WatchState.Rest) {
+  private fun postOver(ctx: Context, r: WatchState.Rest, done: String) {
     try {
       ensureChannels(ctx)
       val b = NotificationCompat.Builder(ctx, CH_OVER)
@@ -224,6 +242,8 @@ object RestAlerts {
         .setWhen(r.endsAt)
         .setContentIntent(openIntent(ctx))
         .setTimeoutAfter(OVER_TIMEOUT_MS)
+      // C5-2: log the set just done from the wrist (the phone's live card's "Complete set").
+      if (done.isNotEmpty()) b.addAction(R.drawable.ic_stat_forge, "Complete set", WatchActions.pending(ctx, "done", done, 14))
       nm(ctx).notify(OVER_ID, b.build())
     } catch (e: Exception) {
       // Notifications refused: the buzz above still happened.

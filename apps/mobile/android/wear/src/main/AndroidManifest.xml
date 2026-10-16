@@ -72,5 +72,10 @@
     <receiver
       android:name=".RestAlarmReceiver"
       android:exported="false" />
+
+    <!-- C5-2: Done / +15 s / Skip / Complete set on this app's own cards, sent to the phone. -->
+    <receiver
+      android:name=".WatchActionReceiver"
+      android:exported="false" />
   </application>
 </manifest>

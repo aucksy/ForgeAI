@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- C5-3 (16 Oct 2026): tells the phone (WearSync.probeWatch, capability "forgeai_watch_app") that
+     this watch runs the ForgeAI watch app, which shows the rest itself and keeps the phone's rest
+     countdown off the watch (Bridging.kt). A watch without it keeps getting the phone's quiet card.
+     tools:keep: release builds shrink resources, and nothing in code names this array. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@array/android_wear_capabilities">
+  <string-array name="android_wear_capabilities" translatable="false">
+    <item>forgeai_watch_app</item>
+  </string-array>
+</resources>

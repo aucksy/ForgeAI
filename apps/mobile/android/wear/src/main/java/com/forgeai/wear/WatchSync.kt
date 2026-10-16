@@ -27,9 +27,19 @@ object WatchSync {
           m.getBoolean("ended", false),
           m.getBoolean("ringThroughDnd", false),
           seq,
+          // C5-2: the row the countdown's Done ticks ("" = none; an older phone app sends none).
+          m.getString("done", "") ?: "",
         )
       } else {
-        WatchState.onWorkout(ctx, m.getBoolean("active", false), m.getString("title", "") ?: "", seq)
+        WatchState.onWorkout(
+          ctx,
+          m.getBoolean("active", false),
+          m.getString("title", "") ?: "",
+          seq,
+          // C5-2: the live card's set line and the row its "Complete set" ticks.
+          m.getString("text", "") ?: "",
+          m.getString("done", "") ?: "",
+        )
       }
     } catch (e: Exception) {
       Log.w(TAG, "phone item not read", e)
