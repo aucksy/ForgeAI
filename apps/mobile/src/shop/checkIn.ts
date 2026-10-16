@@ -111,6 +111,9 @@ export function checkInFromRow(raw: unknown): CheckInAnswer | null {
 
 /** "6:42 pm" — the phone's own clock, like the panel's register. PURE. */
 export function checkInTime(epochMs: number): string {
+  // C6-12: a visit imported from a paper register has no time (0, or null from the gym) — never
+  // "5:30 am" (1 Jan 1970 in India).
+  if (!(epochMs > 0)) return '';
   const d = new Date(epochMs);
   if (Number.isNaN(d.getTime())) return '';
   const h = d.getHours();

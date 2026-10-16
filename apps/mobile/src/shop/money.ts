@@ -182,8 +182,12 @@ export function priceBag(lines: readonly BagLine[], catalog: readonly Product[])
   };
 }
 
-/** The number on the bag icon: every item in the bag, as it was added. PURE. */
-export function bagBadgeCount(lines: readonly BagLine[]): number {
+/**
+ * The number on the bag icon. With the shop's list (C6-10): what can be ordered — the same count
+ * the bag page shows. Before any list has arrived: every item in the bag, as it was added. PURE.
+ */
+export function bagBadgeCount(lines: readonly BagLine[], catalog?: readonly Product[]): number {
+  if (catalog && catalog.length > 0) return priceBag(lines, catalog).count;
   return lines.reduce((s, l) => s + Math.max(0, Math.floor(l.qty)), 0);
 }
 

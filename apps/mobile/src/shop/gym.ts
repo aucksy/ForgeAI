@@ -617,8 +617,31 @@ export function previewFromRow(raw: unknown): GymPreview | null {
 export function codeFromInvite(raw: unknown): string | null {
   const s = Array.isArray(raw) ? raw[0] : raw;
   if (typeof s !== 'string') return null;
-  const code = cleanJoinCode(s);
-  return code.length === JOIN_CODE_LENGTH ? code : null;
+  // C6-9: exactly 6 letters or digits, like the check-in link and the cold-start path — /j/RAMS01X
+  // is not RAMS01.
+  const t = s.trim();
+  return /^[A-Za-z0-9]{6}$/.test(t) ? t.toUpperCase() : null;
+}
+
+/**
+ * The letter on a gym's tile when it has no logo (C6-13): its first letter or digit — never half
+ * of an emoji ("💪 Iron Paradise" → "I"); a name with neither gives its first whole character. PURE.
+ */
+export function gymInitial(name: string): string {
+  const chars = [...String(name ?? '').trim()];
+  const first = chars.find((c) => /[\p{L}\p{N}]/u.test(c)) ?? chars[0] ?? '';
+  return first.toUpperCase();
+}
+
+/** C6-16: the check-in poster's "Join <gym>" — the join screen comes back to the check-in. PURE. */
+export function joinPathFromCheckIn(code: string): string {
+  return `/j/${code}?then=checkin`;
+}
+
+/** Where the join screen goes after a join: back to the poster's check-in when it came from one. PURE. */
+export function afterJoinPath(code: string, then: unknown): string {
+  const t = Array.isArray(then) ? then[0] : then;
+  return t === 'checkin' ? `/c/${code}` : '/shop';
 }
 
 /** Where this phone stands against an invite: not in a gym, already in that one, or in another. PURE. */

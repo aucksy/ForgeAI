@@ -7,7 +7,7 @@
 import { uuid } from '@/lib/uuid';
 import { prefetchGymLogo } from '@/theme/logoPrefetch';
 
-import { apiCancelOrder, apiCheckIn, apiJoin, apiMe, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
+import { apiCancelOrder, apiCheckIn, apiJoin, apiMe, apiPreview, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
 import { useGymInbox } from './inboxStore';
 import { leaveOnServer, leavePendingText, retryPendingLeaves } from './pendingLeave';
 import {
@@ -46,6 +46,8 @@ let orderWrites = 0;
 function lostKey(err: GymError): boolean {
   if (err.kind !== 'BAD_KEY') return false;
   useGymShop.getState().unlink(UNLINKED_TEXT);
+  // C6-15: the gym's messages go with the link (they were kept, hidden, on the phone).
+  useGymInbox.getState().clear();
   return true;
 }
 
@@ -70,6 +72,24 @@ export async function joinGym(rawCode: string, rawName: string): Promise<ActionW
   // The shop page that replaces this card fetches the list as it opens.
   useGymShop.getState().setLink(r.data);
   return null;
+}
+
+/** What a typed code is, before joining with it (C6-11). */
+export type TypedCodeCheck = { kind: 'gym'; gymName: string } | { kind: 'words'; words: string } | { kind: 'ask-failed' };
+
+/**
+ * Audit C6-11: a typed code names its gym first (gym_preview), so a one-letter slip that hits
+ * another gym's code is caught before the member's name goes to a stranger's desk. When the gym
+ * cannot be asked, the join itself is tried — it says why if it fails too.
+ */
+export async function checkTypedCode(rawCode: string, rawName?: string): Promise<TypedCodeCheck> {
+  const code = cleanJoinCode(rawCode);
+  if (code.length !== JOIN_CODE_LENGTH) return { kind: 'words', words: `The code has ${JOIN_CODE_LENGTH} letters and numbers. Check it with the front desk.` };
+  if (rawName !== undefined && !cleanMemberName(rawName)) return { kind: 'words', words: joinErrorText({ kind: 'EMPTY' }) };
+  const r = await apiPreview(code);
+  if (!r.ok) return { kind: 'ask-failed' };
+  if (!r.data) return { kind: 'words', words: joinErrorText({ kind: 'INVALID_CODE' }) };
+  return { kind: 'gym', gymName: r.data.gymName };
 }
 
 /**

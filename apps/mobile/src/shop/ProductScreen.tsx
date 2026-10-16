@@ -28,7 +28,7 @@ export function ProductScreen() {
   const product = findProduct(source.products, id);
   const bag = source.bag;
   const back = () => leave(router, '/shop');
-  const bagButton = <BagButton count={bagBadgeCount(bag)} onPress={() => router.push('/shop/bag')} />;
+  const bagButton = <BagButton count={bagBadgeCount(bag, source.products)} onPress={() => router.push('/shop/bag')} />;
 
   if (!product) {
     return (

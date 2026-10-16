@@ -35,7 +35,7 @@ import {
   READY_TEXT,
   type CheckInAnswer,
 } from './checkIn';
-import { previewErrorText, UNLINKED_TEXT, type GymPreview } from './gym';
+import { joinPathFromCheckIn, previewErrorText, UNLINKED_TEXT, type GymPreview } from './gym';
 import { checkInAtGym } from './gymActions';
 import { apiPreview } from './gymApi';
 import { useGymShop } from './gymStore';
@@ -113,7 +113,8 @@ export function CheckInScreen() {
   }, [needsPreview, look.state, ask]);
 
   const done = () => leave(router, '/shop');
-  const toJoin = () => code && router.replace(`/j/${code}`);
+  // C6-16: the join screen comes back here after the join, so the member is checked in at once.
+  const toJoin = () => code && router.replace(joinPathFromCheckIn(code));
   const sendPhone = () => {
     const d = mobileDigits(phone);
     if (!d) {

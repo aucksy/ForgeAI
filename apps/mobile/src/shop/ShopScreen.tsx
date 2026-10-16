@@ -23,7 +23,7 @@ import { isBranded } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES, getCatalog } from './catalog';
 import { JOIN_CODE_LENGTH, joinCodeFromTyped, listAgeText } from './gym';
-import { joinGym, leaveGym, refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
+import { checkTypedCode, joinGym, leaveGym, refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { ProductPicture } from './ProductPicture';
@@ -74,6 +74,25 @@ function JoinShop() {
     if (busy) return;
     setBusy(true);
     setError(null);
+    // C6-11: the gym's name first, so a mistyped code never joins a stranger's gym.
+    const check = await checkTypedCode(code, name);
+    if (check.kind === 'words') {
+      setBusy(false);
+      setError(check.words);
+      return;
+    }
+    if (check.kind === 'gym') {
+      const ok = await askConfirm({
+        title: `Join ${check.gymName}?`,
+        body: 'Your name goes to this gym with your orders. Check it is your gym.',
+        confirmLabel: 'Join',
+        cancelLabel: 'Not now',
+      });
+      if (!ok) {
+        setBusy(false);
+        return;
+      }
+    }
     const words = await joinGym(code, name);
     // On success this card is gone (the store now holds the link); only a failure comes back here.
     setBusy(false);
@@ -230,7 +249,7 @@ function GymShop({ link }: { link: GymLink }) {
       right={
         <View style={{ flexDirection: 'row', gap: space.sm }}>
           <BellButton count={unread} onPress={() => router.push('/shop/inbox')} />
-          <BagButton count={bagBadgeCount(bag)} onPress={() => router.push('/shop/bag')} />
+          <BagButton count={bagBadgeCount(bag, products)} onPress={() => router.push('/shop/bag')} />
         </View>
       }
     >
@@ -314,7 +333,7 @@ function SampleShop() {
   );
 
   return (
-    <Screen title="Sample shop" onBack={close} right={<BagButton count={bagBadgeCount(bag)} onPress={() => router.push('/shop/bag')} />}>
+    <Screen title="Sample shop" onBack={close} right={<BagButton count={bagBadgeCount(bag, getCatalog())} onPress={() => router.push('/shop/bag')} />}>
       <DemoNote text={DEMO_SHOP_LINE} />
       <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} />
       <ProductGrid products={getCatalog()} filter={filter} onFilter={setFilter} onOpen={(id) => router.push({ pathname: '/shop/[id]', params: { id } })} emptyText="Nothing here yet." />

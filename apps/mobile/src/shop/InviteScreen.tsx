@@ -18,7 +18,7 @@ import { InlineError } from '@/components/ui/InlineError';
 import { getProfile } from '@/db/repos/userRepo';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { codeFromInvite, inviteStanding, previewErrorText, type GymPreview } from './gym';
+import { afterJoinPath, codeFromInvite, gymInitial, inviteStanding, previewErrorText, type GymPreview } from './gym';
 import { joinFromInvite } from './gymActions';
 import { apiPreview } from './gymApi';
 import { useGymShop } from './gymStore';
@@ -30,7 +30,7 @@ type Look = { state: 'loading' } | { state: 'found'; gym: GymPreview } | { state
 
 export function InviteScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ code?: string | string[] }>();
+  const params = useLocalSearchParams<{ code?: string | string[]; then?: string | string[] }>();
   const code = codeFromInvite(params.code);
   const hydrated = useGymHydrated();
   const link = useGymShop((s) => s.link);
@@ -84,7 +84,8 @@ export function InviteScreen() {
     const words = await joinFromInvite(code, name);
     setBusy(false);
     if (words) setError(words);
-    else toShop();
+    // C6-16: opened from the check-in poster → straight back to the check-in, not the Shop.
+    else router.replace(afterJoinPath(code, params.then));
   };
 
   const standing = code && hydrated ? inviteStanding(link, code) : null;
@@ -183,7 +184,7 @@ function GymFace({ gym }: { gym: GymPreview }) {
           <Image source={{ uri: logo }} contentFit="contain" style={{ width: 56, height: 56 }} onError={() => setFailed(true)} accessibilityIgnoresInvertColors />
         ) : (
           <Text style={{ fontFamily: type.display, fontSize: 28, color: gym.brand?.accent ?? color.accent }}>
-            {gym.gymName.trim().charAt(0).toUpperCase()}
+            {gymInitial(gym.gymName)}
           </Text>
         )}
       </View>
