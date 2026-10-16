@@ -22,7 +22,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { isBranded } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES, getCatalog } from './catalog';
-import { JOIN_CODE_LENGTH, cleanJoinCode } from './gym';
+import { JOIN_CODE_LENGTH, joinCodeFromTyped, listAgeText } from './gym';
 import { joinGym, leaveGym, refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
@@ -102,7 +102,8 @@ function JoinShop() {
           <TextInput
             value={code}
             onChangeText={(t) => {
-              setCode(cleanJoinCode(t));
+              // C6-5: the gym's invite link pasted from WhatsApp gives its code, not "HTTPSF".
+              setCode(joinCodeFromTyped(t));
               setError(null);
             }}
             autoCapitalize="characters"
@@ -160,12 +161,18 @@ function JoinShop() {
 /** Read when drawn: gym branding repaints the tokens. */
 const labelStyle = () => ({ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.xs }) as const;
 
+/** C6-4: "Couldn't refresh — showing the last list. Prices and stock as of Mon 13 Oct, 7:10 pm." */
+function withListAge(problem: string, age: string | null): string {
+  return age ? `${problem} ${age}` : problem;
+}
+
 // ------------------------------------------------------------------ joined: the gym's own shop
 
 function GymShop({ link }: { link: GymLink }) {
   const router = useRouter();
   const products = useGymShop((s) => s.products);
   const hasList = useGymShop((s) => s.productsAt != null);
+  const productsAt = useGymShop((s) => s.productsAt);
   const bag = useGymShop((s) => s.bag);
   const orderCount = useGymShop((s) => s.orders.length);
   const unread = useGymInbox((s) => unreadCount(inboxFor(s, link.memberId)));
@@ -253,7 +260,7 @@ function GymShop({ link }: { link: GymLink }) {
             <GhostButton label="Try again" onPress={() => void refresh(false)} />
           </View>
         ) : null}
-        {hasList && problem ? <QuietLine text={problem} /> : null}
+        {hasList && problem ? <QuietLine text={withListAge(problem, listAgeText(productsAt, Date.now()))} /> : null}
 
         <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} />
         {hasList ? <ProductGrid products={products} filter={filter} onFilter={setFilter} onOpen={(id) => router.push({ pathname: '/shop/[id]', params: { id } })} emptyText="Your gym has nothing in its shop yet." /> : null}

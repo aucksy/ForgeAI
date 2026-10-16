@@ -204,6 +204,9 @@ function deviceSteps(): EraseStep[] {
         const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
         await AsyncStorage.removeItem(GYM_SHOP_STORAGE_KEY);
         await AsyncStorage.removeItem(GYM_INBOX_STORAGE_KEY);
+        // A gym link waiting for setup to finish (C6-7) goes too.
+        const { PENDING_LINK_STORAGE_KEY } = await import('@/shop/pendingInvite');
+        await AsyncStorage.removeItem(PENDING_LINK_STORAGE_KEY);
         if (key) {
           const { leaveOnServer } = await import('@/shop/pendingLeave');
           await leaveOnServer(key);

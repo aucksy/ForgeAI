@@ -30,7 +30,7 @@ import {
 } from './gym';
 import type { CheckInAnswer } from './checkIn';
 import { useGymShop } from './gymStore';
-import { removeLine } from './money';
+import { priceBag, removeLine } from './money';
 import type { GymOrder } from './types';
 
 /** null = done; otherwise the words to show. */
@@ -49,13 +49,22 @@ function lostKey(err: GymError): boolean {
   return true;
 }
 
+/**
+ * Audit C6-6: this phone's id for the join it is trying (member_join's p_join_id, 0020). A retry
+ * of the same code after a lost answer sends the same id, so the gym gives back the member it
+ * already made (with a new key) instead of a second one on its list. Forgotten once joined.
+ */
+let joinTry: { code: string; id: string } | null = null;
+
 export async function joinGym(rawCode: string, rawName: string): Promise<ActionWords> {
   const code = cleanJoinCode(rawCode);
   const name = cleanMemberName(rawName);
   if (code.length !== JOIN_CODE_LENGTH) return `The code has ${JOIN_CODE_LENGTH} letters and numbers. Check it with the front desk.`;
   if (!name) return joinErrorText({ kind: 'EMPTY' });
-  const r = await apiJoin(code, name);
+  if (joinTry?.code !== code) joinTry = { code, id: uuid() };
+  const r = await apiJoin(code, name, joinTry.id);
   if (!r.ok) return joinErrorText(r.error);
+  joinTry = null;
   // The logo starts downloading now, while the opening is still being laid out (D13).
   prefetchGymLogo(r.data.brand?.logoUrl);
   // The shop page that replaces this card fetches the list as it opens.
@@ -208,6 +217,8 @@ export async function placeGymOrder(): Promise<PlaceOutcome> {
   const lines = orderLinesFor(s.bag, s.products);
   if (lines.length === 0) return { ok: false, message: 'Your bag has nothing that can be ordered right now.' };
   const idsBefore = s.orders.map((o) => o.id);
+  // C6-3: the total the bag showed at the tap, to say so when the gym charged another.
+  const shownTotalP = priceBag(s.bag, s.products).totalP;
   // Audit C6-1: the same bag sent again keeps its id, so a retry after a lost answer gets the
   // order the gym already wrote (0020). A changed bag is a new order with a new id.
   const linesKey = orderLinesKey(lines);
@@ -244,7 +255,7 @@ export async function placeGymOrder(): Promise<PlaceOutcome> {
   const sent = new Set(lines.map((l) => `${l.productId}::${l.optionId ?? ''}`));
   after.setBag(after.bag.filter((l) => !sent.has(`${l.productId}::${l.optionId ?? ''}`)));
   after.putOrder(r.data);
-  after.setFlash({ orderId: r.data.id, text: orderPlacedText(r.data.orderNo) });
+  after.setFlash({ orderId: r.data.id, text: orderPlacedText(r.data.orderNo, r.data.totalP !== shownTotalP ? r.data.totalP : null) });
   void refreshProducts();
   return { ok: true, order: r.data };
 }

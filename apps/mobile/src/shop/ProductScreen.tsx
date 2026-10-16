@@ -2,8 +2,8 @@
  * One product (S1; S2 reads the gym's own list once joined — shopSource.ts): its pictures, name, price, stock, description, options (flavour / size /
  * colour, each with its own price and stock when it has them), a quantity and "Add to bag".
  */
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useRef, useState, type ReactNode } from 'react';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useRef, useState, type ReactNode } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 
 import { Chip, EmptyState, GhostButton, PrimaryButton, Screen } from '@/components/ui';
@@ -11,6 +11,9 @@ import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { color, space, type } from '@/theme/tokens';
 
 import { findProduct } from './catalog';
+import { listAgeText } from './gym';
+import { refreshProducts } from './gymActions';
+import { useGymShop } from './gymStore';
 import { bagBadgeCount, clampQty, defaultOptionId, displayName, lineKey, maxQty, picturesOf, rupees, stockFor, stockText, unitPriceP } from './money';
 import { ProductPicture } from './ProductPicture';
 import { BagButton, QtyStepper, leave } from './ShopParts';
@@ -51,6 +54,17 @@ function ProductBody({ product, onBack, bagButton }: { product: Product; onBack:
   const source = useShopSource();
   const add = source.add;
   const inBag = source.bag.find((l) => lineKey(l.productId, l.optionId) === lineKey(product.id, optionId))?.qty ?? 0;
+  // C6-4: the gym's price and stock are asked again whenever this page comes into view, and a list
+  // that could not be refreshed says how old it is.
+  const gym = source.mode === 'gym';
+  const productsAt = useGymShop((s) => s.productsAt);
+  const listAge = gym ? listAgeText(productsAt, Date.now()) : null;
+  useFocusEffect(
+    useCallback(() => {
+      if (!gym) return;
+      void refreshProducts().catch((e: unknown) => console.warn('[ForgeErr] product page: list refresh', e));
+    }, [gym]),
+  );
 
   const stock = stockFor(product, optionId);
   const room = Math.max(0, maxQty(product, optionId) - inBag);
@@ -112,6 +126,9 @@ function ProductBody({ product, onBack, bagButton }: { product: Product; onBack:
       <Text style={{ marginTop: 2, fontFamily: type.bodySemi, fontSize: type.size.sub, color: stock > 0 ? color.inkSecondary : color.inkMuted }}>
         {stockText(stock)}
       </Text>
+      {listAge ? (
+        <Text style={{ marginTop: 2, fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>{listAge}</Text>
+      ) : null}
       <Text style={{ marginTop: space.md, fontFamily: type.body, fontSize: type.size.body, color: color.inkSecondary, lineHeight: 22 }}>
         {product.description}
       </Text>

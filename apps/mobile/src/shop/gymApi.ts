@@ -58,8 +58,10 @@ async function callWithNewer(fn: string, args: Record<string, unknown>, extra: R
   return call(fn, args, timeoutMs);
 }
 
-export async function apiJoin(code: string, name: string): Promise<GymResult<GymLink>> {
-  const r = await call('member_join', { p_code: code, p_name: name }, WRITE_MS);
+/** Join a gym. `joinId` (audit C6-6): the same id again within a day is the same member (0020). */
+export async function apiJoin(code: string, name: string, joinId?: string): Promise<GymResult<GymLink>> {
+  const base = { p_code: code, p_name: name };
+  const r = joinId ? await callWithNewer('member_join', base, { p_join_id: joinId }, WRITE_MS) : await call('member_join', base, WRITE_MS);
   if (!r.ok) return r;
   const link = linkFromJoin(r.data);
   return link ? { ok: true, data: link } : { ok: false, error: { kind: 'other' } };

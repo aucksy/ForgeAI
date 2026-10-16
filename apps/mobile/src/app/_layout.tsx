@@ -23,7 +23,7 @@ import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
 import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingStore';
 import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
 import { checkInCodeFromUrl } from '@/shop/checkIn';
-import { inviteCodeFromUrl, setPendingCheckIn, setPendingInvite, takePendingCheckIn, takePendingInvite } from '@/shop/pendingInvite';
+import { inviteCodeFromUrl, restorePendingLinks, setPendingCheckIn, setPendingInvite, takePendingCheckIn, takePendingInvite } from '@/shop/pendingInvite';
 
 /** The link the app was started with is read once per run: an erase later must not bring it back. */
 let launchLinkRead = false;
@@ -159,13 +159,21 @@ export default function RootLayout() {
   }, [status]);
   useEffect(() => {
     if (status !== 'ready') return;
+    let live = true;
     const t = setTimeout(() => {
-      const code = takePendingInvite();
-      if (code) router.push(`/j/${code}`);
-      const checkIn = takePendingCheckIn();
-      if (checkIn) router.push(`/c/${checkIn}`);
+      // C6-7: a link saved before the app was closed during setup comes back first (never throws).
+      void restorePendingLinks().then(() => {
+        if (!live) return;
+        const code = takePendingInvite();
+        if (code) router.push(`/j/${code}`);
+        const checkIn = takePendingCheckIn();
+        if (checkIn) router.push(`/c/${checkIn}`);
+      }).catch((e: unknown) => console.warn('[ForgeErr] opening a waiting gym link', e));
     }, 600);
-    return () => clearTimeout(t);
+    return () => {
+      live = false;
+      clearTimeout(t);
+    };
   }, [status]);
 
   return (

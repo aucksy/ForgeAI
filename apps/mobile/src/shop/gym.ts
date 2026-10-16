@@ -9,7 +9,8 @@
 import { parseGymBrand, sameBrand, type GymBrand } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES } from './catalog';
-import { lineKey, lineName, priceBag } from './money';
+import { lineKey, lineName, priceBag, rupees } from './money';
+import { inviteCodeFromUrl } from './pendingInvite';
 import type { ArtKind, BagLine, GymLink, GymOrder, OrderLine, OrderStatus, Product, ProductOption, ShopCategory } from './types';
 
 // ------------------------------------------------------------------ join code
@@ -23,6 +24,20 @@ export function cleanJoinCode(raw: string): string {
     .toUpperCase()
     .replace(/[^A-Z0-9]/g, '')
     .slice(0, JOIN_CODE_LENGTH);
+}
+
+/**
+ * What goes in the code box from what was typed or pasted (audit C6-5): the gym's invite link —
+ * alone or inside the WhatsApp message it came in — gives its code; anything else is cleaned as a
+ * typed code. PURE.
+ */
+export function joinCodeFromTyped(raw: string): string {
+  const text = String(raw ?? '');
+  for (const word of text.split(/\s+/)) {
+    const code = inviteCodeFromUrl(word);
+    if (code) return code;
+  }
+  return cleanJoinCode(text);
 }
 
 /** The name sent with a join: spaces tidied, at most 60 characters (the server's own limit). PURE. */
@@ -455,9 +470,34 @@ export function canCancelGymOrder(o: Pick<GymOrder, 'status'>): boolean {
   return o.status === 'ordered';
 }
 
-/** After a placed order. PURE. */
-export function orderPlacedText(orderNo: number): string {
+/**
+ * After a placed order. `changedTotalP` (audit C6-3): the order's total when the gym charged a
+ * different amount than the bag showed at the tap (a price changed meanwhile). PURE.
+ */
+export function orderPlacedText(orderNo: number, changedTotalP: number | null = null): string {
+  if (changedTotalP != null) return `Order ${orderNo} placed. The price changed since your bag — total ${rupees(changedTotalP)}. Pay at the desk when you collect it.`;
   return `Order ${orderNo} placed. Pay at the desk when you collect it.`;
+}
+
+/** A product list older than this says how old it is (audit C6-4). */
+export const LIST_STALE_MS = 10 * 60 * 1000;
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/**
+ * "Prices and stock as of 7:10 pm today." / "… as of Mon 13 Oct, 7:10 pm." for a list fetched more
+ * than 10 minutes ago (the phone's own clock); null when fresh, never fetched or unreadable. PURE.
+ */
+export function listAgeText(atISO: string | null, nowMs: number): string | null {
+  if (!atISO) return null;
+  const at = new Date(atISO);
+  if (Number.isNaN(at.getTime()) || nowMs - at.getTime() < LIST_STALE_MS) return null;
+  const h = at.getHours();
+  const time = `${h % 12 === 0 ? 12 : h % 12}:${String(at.getMinutes()).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`;
+  const now = new Date(nowMs);
+  const today = at.getFullYear() === now.getFullYear() && at.getMonth() === now.getMonth() && at.getDate() === now.getDate();
+  if (today) return `Prices and stock as of ${time} today.`;
+  return `Prices and stock as of ${DAYS[at.getDay()]} ${at.getDate()} ${MONTHS[at.getMonth()]}, ${time}.`;
 }
 
 /** "Order 12 placed…", said once on the My orders the bag opened, tied to the order it is about. */
