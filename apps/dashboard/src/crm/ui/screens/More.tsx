@@ -54,7 +54,7 @@ export function MoreScreen() {
     {
       path: '/settings',
       label: 'Settings',
-      hint: owner ? 'Gym details, language, app' : 'Language, app, sign-in',
+      hint: owner ? 'Gym details, screen colours, app' : 'Screen colours, app, sign-in',
       icon: 'settings',
     },
   ]);

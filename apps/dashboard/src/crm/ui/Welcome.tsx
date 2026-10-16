@@ -70,7 +70,7 @@ export function Welcome() {
             FORGE<span style={{ color: color.accent }}>AI</span>
           </div>
           <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 15, color: color.inkSecondary }}>
-            Run your gym: members, renewals, dues, attendance — and a shop your members order from in the ForgeAI app.
+            Run your gym: members, renewals, dues and attendance. Plus a shop your members order from in the ForgeAI app.
           </p>
         </div>
 
@@ -114,7 +114,7 @@ export function Welcome() {
             New here? Set up your gym
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Starts empty. You add your members and your prices — nothing is made up for you.
+            Starts empty. You add your own members and prices.
           </p>
           <StartGymForm />
         </div>
@@ -124,7 +124,7 @@ export function Welcome() {
             See it working
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Opens a sample gym with made-up members, payments and a shop. You get a real gym code, so a phone with the ForgeAI app can join and order — and you see the order here.
+            Opens a sample gym with made-up members, payments and a shop. You get a real gym code. A phone with the ForgeAI app can join and order, and you see the order here.
           </p>
 
           {error && (
@@ -146,7 +146,7 @@ export function Welcome() {
           {demoFailed && (
             <div style={{ marginTop: space.sm, textAlign: 'center' }}>
               <Button variant="quiet" disabled={busy !== null} onClick={() => run('local', loadDemoGym)}>
-                Open the demo without the shop (works offline)
+                Open the demo without the shop (works without internet)
               </Button>
             </div>
           )}

@@ -113,7 +113,7 @@ export function StartGymForm() {
         </Button>
       </div>
       <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        Your records are kept online, safe if a phone or computer breaks.
+        Your members and payments are kept online. They stay safe if a phone or computer breaks.
       </p>
     </form>
   );

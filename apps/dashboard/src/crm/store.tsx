@@ -351,7 +351,7 @@ function BootFailed({ message, onRetry }: { message: string | null; onRetry: () 
     <div style={centered}>
       <div style={{ display: 'grid', gap: 12, justifyItems: 'center' }}>
         <strong style={{ color: color.criticalText }}>Couldn’t open your gym</strong>
-        <span>{message ?? 'Something went wrong reading your saved data.'}</span>
+        <span>{message ?? 'Something went wrong while opening your gym.'}</span>
         <button type="button" onClick={onRetry} style={retryButton}>
           Try again
         </button>

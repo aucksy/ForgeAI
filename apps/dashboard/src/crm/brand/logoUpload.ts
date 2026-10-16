@@ -51,11 +51,11 @@ export async function shrinkLogo(file: File): Promise<Blob> {
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext('2d');
-    if (!ctx) throw new LogoError('This browser can’t prepare pictures. Try Chrome.');
+    if (!ctx) throw new LogoError('This browser can’t open pictures. Try Chrome.');
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(pic.source, 0, 0, width, height);
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-    if (!blob) throw new LogoError('That logo couldn’t be converted. Try a PNG or JPEG picture.');
+    if (!blob) throw new LogoError('That logo could not be used. Try a PNG or JPEG picture.');
     const tooBig = checkEncodedLogo(blob);
     if (tooBig) throw new LogoError(tooBig);
     return blob;

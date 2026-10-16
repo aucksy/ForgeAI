@@ -174,7 +174,7 @@ describe('C7-11 / C7-41: gym details are checked before "Saved."', () => {
   it('a GSTIN with one digit wrong is refused in plain words', () => {
     const wrong = VALID_GSTIN.slice(0, 5) + (VALID_GSTIN[5] === '9' ? '8' : '9') + VALID_GSTIN.slice(6);
     expect(checkGymDetails({ name: 'Iron Temple', gstin: wrong })).toMatchObject({ field: 'gstin' });
-    expect(checkGymDetails({ name: 'Iron Temple', gstin: wrong })?.message).toMatch(/not valid/);
+    expect(checkGymDetails({ name: 'Iron Temple', gstin: wrong })?.message).toMatch(/looks wrong/);
   });
 
   it('a right GSTIN, or none, is fine', () => {

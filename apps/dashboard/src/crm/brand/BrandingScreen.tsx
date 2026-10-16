@@ -30,7 +30,7 @@ import { PhonePreview } from './PhonePreview';
  * new look then shows the next time they open or come back to the app — never mid-workout.
  */
 const savedWords = () =>
-  'Saved. New members get it at once. Members already joined get it on one of their next visits to the app (it checks with your gym at most once an hour) — never in the middle of a workout.';
+  'Saved. New members see it at once. Members who already joined see it on a later visit to the app. The app checks at most once an hour, and never in the middle of a workout.';
 
 export function BrandingScreen() {
   const { cloud } = useShop();
@@ -158,7 +158,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
     <div style={{ display: 'grid', justifyItems: 'center', gap: space.md }}>
       <PhonePreview palette={palette} gymName={gymName} logoUrl={draft.logoUrl} heading={draft.heading} scale={compact ? 0.86 : 1} />
       <p style={{ margin: 0, maxWidth: 300, textAlign: 'center', fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        The Workout tab as members will see it. The app opens with your logo for a second, then these colours.
+        This is how members will see the Workout tab. The app shows your logo for a second when it opens. Then it shows these colours.
       </p>
     </div>
   );
@@ -202,7 +202,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
               {draft.useBg && (
                 <ColourField
                   label="Background tone"
-                  hint="A dark colour for the page; cards and sheets are made a little lighter from it."
+                  hint="A dark colour for the page. Cards are made a little lighter than it."
                   value={draft.bg}
                   onChange={(v) => set({ bg: v })}
                 />
@@ -242,7 +242,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           </Card>
 
           <Card>
-            <SectionTitle>Readability check</SectionTitle>
+            <SectionTitle>Easy to read?</SectionTitle>
             {live ? (
               <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'grid', gap: space.sm }}>
                 {report.map((line) => {
@@ -262,7 +262,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
             )}
             {live && live.nudges.some((n) => n.what === 'accent' || n.what === 'background') && (
               <p style={{ margin: `${space.md}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-                Members get the adjusted colour. Save keeps the colour you picked.
+                Members see the changed colour, so it is easy to read. Save keeps the colour you picked.
               </p>
             )}
           </Card>
@@ -304,7 +304,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           }
         >
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-            Your logo and colours are removed from the member app. Members see ForgeAI’s own look on one of their next visits to the app — never in the middle of a workout.
+            This removes your logo and colours from the member app. Members see ForgeAI’s look on a later visit to the app, never in the middle of a workout.
           </p>
         </Sheet>
       )}
@@ -458,7 +458,7 @@ function LogoCard({
             )}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-            A square PNG with a see-through background works best. Members see it full-screen as the app opens, and small at the top of their tabs. You can also drop it on the box.
+            A square PNG with a clear background works best. Members see it big when the app opens, and small at the top of each tab. You can also drag it onto the box.
           </div>
           {error && (
             <div role="alert" style={{ fontFamily: font.body, fontSize: 13, color: color.criticalText }}>

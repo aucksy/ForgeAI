@@ -120,7 +120,7 @@ export function checkGymDetails(d: { name: string; gstin: string }): { field: 'n
   if (g && !isValidGstin(g)) {
     return {
       field: 'gstin',
-      message: 'This GSTIN is not valid. Check it against your GST certificate (15 letters and numbers), or leave it empty.',
+      message: 'This GSTIN looks wrong. It has 15 letters and numbers. Check your GST certificate, or leave it empty.',
     };
   }
   return null;

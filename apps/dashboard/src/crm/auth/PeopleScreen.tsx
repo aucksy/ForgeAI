@@ -135,7 +135,7 @@ export function PeopleScreen() {
         />
         <Card>
           <p style={bodyText}>
-            Put your records online first (Settings → Put your records online). Then you and your staff sign in with a mobile number, on any phone or computer.
+            Put your gym online first (Settings → Put your gym online). Then you and your staff can sign in with a mobile number, on any phone or computer.
           </p>
           <div style={{ marginTop: space.lg }}>
             <Button onClick={() => navigate('/settings')}>Go to Settings</Button>
@@ -180,9 +180,9 @@ export function PeopleScreen() {
         <Card>
           <SectionTitle>People who can sign in</SectionTitle>
           <p style={bodyText}>
-            {'To let someone in — or to use a new phone yourself — tap '}
+            {'To let someone in, or to use a new phone yourself, tap '}
             <b>Make sign-in code</b>
-            {` and give them the code. It works once, for ${CODE_MINUTES} minutes.`}
+            {`. Then give them the code. It works once, for ${CODE_MINUTES} minutes.`}
           </p>
           {loadError && (
             <div style={{ marginTop: space.md }}>
@@ -213,7 +213,7 @@ export function PeopleScreen() {
                 </Row>
                 <p style={{ ...bodyText, marginTop: 4 }}>
                   +91 {formatMobile(p.phone)} · {seenWords(p)}
-                  {p.codeUntil ? ` · Code waiting till ${clock(p.codeUntil)}` : ''}
+                  {p.codeUntil ? ` · Code works till ${clock(p.codeUntil)}` : ''}
                 </p>
                 <div style={{ marginTop: space.md }}>
                   <Row gap={space.sm}>
@@ -269,7 +269,7 @@ export function PeopleScreen() {
           }
           words={
             sheet.kind === 'remove'
-              ? `${sheet.person.name} is signed out of every phone and computer and can’t sign in again. Your records stay as they are.`
+              ? `${sheet.person.name} is signed out of every phone and computer. They can’t sign in again. Your members and payments stay as they are.`
               : sheet.person.me
                 ? 'Every other phone or computer signed in as you is signed out. This one stays signed in.'
                 : `${sheet.person.name} is signed out of every phone and computer. They can sign in again with a new code.`
@@ -290,7 +290,7 @@ export function PeopleScreen() {
       {sheet?.kind === 'me-signout' && (
         <ConfirmSheet
           title="Sign out of this device?"
-          words="Your records stay online. To come back, sign in with your mobile number and a new code (an owner makes it in Staff & sign-in)."
+          words="Your gym stays online. To come back, sign in with your mobile number and a new code. An owner makes the code in Staff & sign-in."
           action="Sign out"
           onClose={closeSheet}
           run={async () => {
@@ -361,8 +361,8 @@ function AddPersonSheet({
         value={role}
         onChange={(v) => setRole(v === 'owner' ? 'owner' : 'staff')}
         options={[
-          { value: 'staff', label: 'Staff — front desk: add, collect, check in' },
-          { value: 'owner', label: 'Owner — everything, including money totals' },
+          { value: 'staff', label: 'Staff (front desk): add members, collect fees, check in' },
+          { value: 'owner', label: 'Owner: everything, including money totals' },
         ]}
       />
     </Sheet>

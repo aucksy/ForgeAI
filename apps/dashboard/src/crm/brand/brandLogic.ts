@@ -103,7 +103,7 @@ export function draftChanged(d: BrandDraft, saved: GymBrand | null): boolean {
 
 /** After shrinking: the bucket's own rules, in plain words. */
 export function checkEncodedLogo(b: { type: string; size: number }): string | null {
-  if (!['image/png', 'image/jpeg', 'image/webp'].includes(b.type)) return 'That logo couldn’t be converted. Try a PNG or JPEG picture.';
+  if (!['image/png', 'image/jpeg', 'image/webp'].includes(b.type)) return 'That logo could not be used. Try a PNG or JPEG picture.';
   if (b.size > MAX_LOGO_BYTES) return 'That logo is still over 1 MB after shrinking. Try a simpler picture.';
   return null;
 }

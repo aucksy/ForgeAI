@@ -129,7 +129,7 @@ export function SettingsScreen() {
             value={gstin}
             onChange={setGstin}
             error={fieldError?.field === 'gstin' ? fieldError.message : null}
-            hint="Only if you're GST registered — used on invoices."
+            hint="Only if you have GST. It shows on your receipts."
           />
         </Grid>
         <TextField label="Address" value={address} onChange={setAddress} multiline />
@@ -149,8 +149,8 @@ export function SettingsScreen() {
         <SectionTitle>Your look in the app</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {cloud
-            ? 'Your logo opens the app, and your colour runs through every screen members see.'
-            : 'Turn on the member app above first; then your logo and colour can run through it.'}
+            ? 'Members see your logo when the app opens, and your colour on every screen.'
+            : 'First turn on the member app above. Then you can add your logo and colour.'}
         </p>
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" disabled={!cloud} onClick={() => navigate('/settings/branding')}>
@@ -166,8 +166,8 @@ export function SettingsScreen() {
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
           {online
-            ? 'Stored online. Safe if a phone or computer breaks, and the same on every device you sign in on.'
-            : 'Stored in this browser only. Put your records online (above) to keep them safe and open them anywhere.'}
+            ? 'Saved online. Safe if a phone or computer breaks. The same on every phone or computer you sign in on.'
+            : 'Saved in this browser only. Put your gym online (above) to keep it safe and open it anywhere.'}
         </p>
 
         <div style={{ marginTop: space.lg }}>
@@ -272,16 +272,16 @@ export function SettingsScreen() {
         >
           {confirming !== 'disconnect' && (
             <ErrorBanner>
-              {`This replaces everything currently in this browser — all ${counts.members} members, ${counts.payments} payments and ${counts.visits} check-ins. It cannot be undone.`}
+              {`This replaces everything in this browser: all ${counts.members} members, ${counts.payments} payments and ${counts.visits} check-ins. You can’t undo this.`}
             </ErrorBanner>
           )}
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
             {confirming === 'disconnect'
-              ? `Your members, plans, payments and check-ins stay exactly as they are. This browser stops showing shop orders and products, and gym code ${cloud?.joinCode ?? ''} stops being managed from here. Members who already joined can’t be reached from this admin app any more.`
+              ? `Your members, plans, payments and check-ins stay as they are. This browser stops showing shop orders and products. You can’t manage gym code ${cloud?.joinCode ?? ''} from here any more. You also can’t reach members who already joined from this admin app.`
               : confirming === 'over'
-              ? `This browser forgets the current demo gym and its shop (gym code ${cloud?.joinCode ?? ''} stops being yours here). You go back to the welcome screen, where Start demo makes a fresh gym with a new code.`
+              ? `This browser forgets this demo gym and its shop (gym code ${cloud?.joinCode ?? ''}). You go back to the first screen. There, Start demo makes a new gym with a new code.`
               : confirming === 'demo'
-              ? 'A sample gym with around 128 members, their payment history and attendance will be created. Use this to show someone the product — not on a gym with real records in it.'
+              ? 'This makes a sample gym with about 128 members, their payments and check-ins. Use it to show someone the app. Don’t use it on a gym with real members.'
               : 'You will be left with an empty gym: no members, no plans, no payments.'}
           </p>
         </Sheet>

@@ -155,7 +155,7 @@ export function codeMessage(personName: string, gymName: string, phone: string, 
   return [
     hi ? `Hi ${hi}!` : 'Hi!',
     `Your ForgeAI sign-in code for ${gym}: ${code}`,
-    `Open the link, tap "Sign in", type your mobile ${formatMobile(phone)} and this code. It works once, for ${CODE_MINUTES} minutes.`,
+    `Open the link and tap "Sign in". Type your mobile number ${formatMobile(phone)} and this code. The code works once, for ${CODE_MINUTES} minutes.`,
     '',
     INVITE_ORIGIN,
   ].join('\n');
@@ -236,9 +236,9 @@ export function authErrorWords(err: unknown): string {
     case 'WRONG_CODE': {
       const left = err instanceof SignInError ? err.triesLeft : null;
       // 0011: one answer for "wrong" and "none waiting", so nobody learns when a code exists.
-      const base = 'That code is not right, or it has run out. Check it, or ask your gym owner for a new code.';
+      const base = 'That code is wrong or too old. Check it, or ask your gym owner for a new code.';
       if (left === 0)
-        return 'That code is not right. Too many tries: wait 15 minutes, or ask your gym owner for a new code.';
+        return 'That code is wrong. Too many tries. Wait 15 minutes, or ask your gym owner for a new code.';
       return left === null
         ? base
         : left === 1
@@ -256,13 +256,13 @@ export function authErrorWords(err: unknown): string {
     case 'LAST_OWNER':
       return 'A gym needs at least one owner. Add another owner first.';
     case 'TOO_MANY':
-      return 'That is the most for now. Wait a little, then try again.';
+      return 'Too many tries right now. Wait a little, then try again.';
     case 'GONE':
-      return 'That person was already removed. The list has been refreshed.';
+      return 'That person was already removed. We updated the list.';
     case 'BAD_KEY':
       return 'You were signed out. Sign in again with your mobile number.';
     case 'EMPTY':
-      return 'Please fill in the name.';
+      return 'Type the name.';
     case 'BUSY':
       return 'Many gyms are starting right now. Please try again in a few minutes.';
     case 'OFFLINE':
