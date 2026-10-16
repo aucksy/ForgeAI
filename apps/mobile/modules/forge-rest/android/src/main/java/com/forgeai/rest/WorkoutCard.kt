@@ -130,6 +130,7 @@ object WorkoutCard {
   fun show(ctx: Context, title: String, text: String, image: String?, doneJson: String?, plan: String? = null): Boolean {
     keep(ctx, title, text, image, doneJson)
     keepPlan(ctx, plan)
+    WearSync.workout(ctx, true, title) // v0.46: the watch shows heart rate while a workout is open
     if (RestCard.restUp(ctx)) {
       cancel(ctx)
       return true
@@ -141,6 +142,8 @@ object WorkoutCard {
   @Synchronized
   fun hide(ctx: Context, title: String? = null, text: String? = null, image: String? = null, doneJson: String? = null, plan: String? = null) {
     if (title != null && text != null) keep(ctx, title, text, image, doneJson)
+    // The app's own hide (a rest started) carries the words; RestCard's bare hides do not.
+    if (title != null) WearSync.workout(ctx, true, title)
     keepPlan(ctx, plan)
     cancel(ctx)
   }
@@ -204,6 +207,7 @@ object WorkoutCard {
   fun clear(ctx: Context) {
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().clear().apply()
     cancel(ctx)
+    WearSync.workout(ctx, false, "")
   }
 
   /**

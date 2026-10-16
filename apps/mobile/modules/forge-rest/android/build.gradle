@@ -13,3 +13,9 @@ android {
     versionName '1.0.0'
   }
 }
+
+dependencies {
+  // v0.46: the Wear OS companion. The rest and the open workout are published as Data Layer items
+  // (WearSync.kt); without Google Play services the calls fail quietly (logged) and nothing changes.
+  implementation "com.google.android.gms:play-services-wearable:20.0.1"
+}

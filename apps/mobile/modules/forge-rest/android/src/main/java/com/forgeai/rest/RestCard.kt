@@ -402,6 +402,7 @@ object RestCard {
     cancelOver(ctx) // an old "Rest is over" goes when the next rest starts
     post(ctx, r)
     arm(ctx, endsAt)
+    WearSync.rest(ctx, r) // v0.46: the watch app's countdown and its own end alarm
   }
 
   /**
@@ -416,6 +417,7 @@ object RestCard {
     save(ctx, r)
     post(ctx, r)
     arm(ctx, r.endsAt)
+    WearSync.rest(ctx, r)
     return r
   }
 
@@ -427,6 +429,7 @@ object RestCard {
     nm(ctx).cancel(CARD_ID)
     if (dismissOver) cancelOver(ctx)
     android.util.Log.i(LOG_TAG, "rest cleared (dismissOver=$dismissOver)")
+    WearSync.restGone(ctx, ended = false)
     // One at a time: the rest is gone, so the live workout card comes back (none after Finish).
     WorkoutCard.restore(ctx)
   }
@@ -454,6 +457,8 @@ object RestCard {
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
     endLog(expected, "posting Rest is over, ${now - expected} ms late")
+    // The watch buzzes now only if its own alarm has not (and the end is recent: WatchState).
+    WearSync.restGone(ctx, ended = true)
     postOver(ctx, cur.next, expected, now - expected, cur.allDone)
     listener?.invoke("end", 0L, 0L)
   }
@@ -483,6 +488,7 @@ object RestCard {
     disarm(ctx)
     nm(ctx).cancel(CARD_ID)
     android.util.Log.i(LOG_TAG, "rest settled quietly (ended ${now - cur.endsAt} ms ago, app on screen)")
+    WearSync.restGone(ctx, ended = false)
     WorkoutCard.restore(ctx)
   }
 
