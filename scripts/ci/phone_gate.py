@@ -3,7 +3,7 @@
 
 Called by .github/workflows/release-apk.yml before the Gradle build (audit QA-03).
 
-Audit v2 (16 Oct 2026): the phone test must have passed on every phone in PHONES, each a WHOLE
+Audit v2 (16 Oct 2026): the phone test must have passed on BOTH phones (PHONES), each a WHOLE
 run on API 34 (qa-device.yml run names, see run_kind):
   - "default": the emulator as it boots (411 dp, font 1.0, UTC), the phone every release was
     proven on until now ("Device QA (Android emulator ...)");
@@ -100,7 +100,9 @@ def tag_commit(tag, fallback):
 
 
 # The two phones a release must pass on (audit v2, 16 Oct 2026), in the order they are reported.
-PHONES = ("default",)  # "owner" joins once a whole owner-profile run is green on main
+# The owner phone joined on 16 Oct 2026, once both whole runs were green on 77d5c5d: owner
+# 38921849919 (+ Monkey), default 38921852434. The default stays too: two parallel free runs.
+PHONES = ("default", "owner")
 PHONE_WORDS = {
     "default": "the default emulator (profile default)",
     "owner": "the owner's phone (profile owner: 360 dp, font 1.3)",

@@ -79,6 +79,9 @@ class Gate(unittest.TestCase):
         self.runs = {"B": [DEFAULT, OWNER]}
         self.assertEqual(pg.main(), 0)
 
+    def test_the_owner_phone_is_required(self):
+        self.assertEqual(pg.PHONES, ("default", "owner"))
+
     def test_a_missing_required_phone_blocks(self):
         for kind in pg.PHONES:
             others = [self.TITLE[k] for k in pg.PHONES if k != kind]

@@ -2322,6 +2322,24 @@
     typecheck 0 apart from another helper's untracked test/_audit_probes; tsc -b 0; silent-catch
     and promise ratchets at baseline.
 
+- 2026-10-16: **Phone test green on the owner's phone; the release gate now needs it** (32ca5ae,
+  daf8090, 020d173, 02d066b, cf2c080, dd9d1eb, 5938d85, 797a336, b796539 + this commit).
+  - Whole runs on 77d5c5d, API 34: **owner profile + Monkey 38921849919 GREEN**, **default
+    38921852434 GREEN**. scripts/ci/phone_gate.py: PHONES = default AND owner, each covered on its
+    own (the commit or a paperwork-only parent); qa-device.yml names a whole owner run
+    "Device QA (owner phone, api 34 ...)"; scripts/ci/test_phone_gate.py (unittest, 9 tests).
+  - Flows: sub-find.yaml (scroll to a check's element, down then up, centred, then assert) at every
+    below-the-fold check; header buttons brought back centred; chart captions found upward; `only`
+    takes any whole-run part (a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7
+    p0 m; demo seeded first when `a` is absent). New app words picked up: C3-3 "Any workout" line,
+    C6-11 "Join <gym>?". W3 types the drop set (C1-7: an empty drop row's tick opens the pad).
+  - App: routine-import steps open at their top (each step its own keyed ScrollView;
+    routineImportStepKey.ts + test); workout photo: a refused camera is info + plain words, not
+    [ForgeErr] (permissionRefusal.ts + tests); admin receipt grey 3.9:1 -> 8.2:1 (receiptContrast test).
+  - Settled, not app bugs: W3 keypad (flow ticked an empty drop row), I2 "Notifications are off"
+    (cascade: reminders never turned on), P9 toast (cascade: 3 sets, so "2 sets below").
+  - qa_report.py: three exact React Native touch-bookkeeping lines from Monkey are warnings.
+  - Audit file: Audit/e2e-v2/B-gate-findings.md ("Resolved").
 - 2026-10-16: **Drive backup/restore review fixes (3)** (ships with the next tag).
   - Repairs re-run after a restore: `RERUN_AFTER_RESTORE` (snapshot.ts) clears the marks
     pr_single_e1rm_fix / pr_long_set_e1rm_fix / pr_lighter_set_e1rm_fix / link_folder_repair_v1 in
