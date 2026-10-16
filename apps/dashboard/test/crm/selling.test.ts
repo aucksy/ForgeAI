@@ -6,7 +6,7 @@ import {
   STAFF_BACKDATE_DAYS,
   validateSale,
 } from '../../src/crm/logic/selling';
-import { makeMembership, makePlan } from './fixtures';
+import { makeMembership, makePayment, makePlan } from './fixtures';
 
 const TODAY = '2026-07-26';
 
@@ -70,8 +70,10 @@ describe('saleDefaults — joining fee', () => {
       startsOn: '2026-01-01',
       endsOn: '2026-01-31',
     });
-    expect(hasPaidJoiningFee([cancelledButPaidFee])).toBe(true);
-    expect(saleDefaults([cancelledButPaidFee], monthly, TODAY).joiningFeeP).toBe(0);
+    // C7-27 (16 Oct 2026): it counts when money was taken against that term.
+    const feePaid = makePayment({ membershipId: cancelledButPaidFee.id, amountP: 50_000 });
+    expect(hasPaidJoiningFee([cancelledButPaidFee], [feePaid])).toBe(true);
+    expect(saleDefaults([cancelledButPaidFee], monthly, TODAY, [feePaid]).joiningFeeP).toBe(0);
   });
 
   it('DOES charge it when the earlier term happened to carry a zero fee', () => {

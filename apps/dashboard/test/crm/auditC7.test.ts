@@ -6,7 +6,9 @@ import { describe, expect, it } from 'vitest';
 
 import { CloudCrmData, type CrmCloudApi, type CrmRecord, type PullResult } from '../../src/crm/data/cloud';
 import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/local';
+import { hasPaidJoiningFee, saleDefaults } from '../../src/crm/logic/selling';
 import type { MemberDraft } from '../../src/crm/types';
+import { makeMembership, makePayment, makePlan } from './fixtures';
 
 const TODAY = '2026-10-16';
 
@@ -112,5 +114,21 @@ describe('C7-1: a fee taken on patchy internet is saved once', () => {
     expect(snap.payments).toHaveLength(1);
     expect(snap.expenses).toHaveLength(1);
     expect(snap.enquiries).toHaveLength(1);
+  });
+});
+
+describe('C7-2 / C7-27: the joining fee', () => {
+  const plan = makePlan({ name: 'Monthly', joiningFeeP: 50000 });
+  it('C7-2: a member imported from the old register is not charged the joining fee again', () => {
+    const imported = makeMembership({ joiningFeeP: 0, importId: 'import-1', startsOn: '2026-09-01', endsOn: '2026-09-30' });
+    expect(hasPaidJoiningFee([imported])).toBe(true);
+    expect(saleDefaults([imported], plan, TODAY).joiningFeeP).toBe(0);
+  });
+
+  it('C7-27: a plan cancelled before anything was paid did not take the fee', () => {
+    const wrong = makeMembership({ id: 'ms-wrong', joiningFeeP: 50000, cancelled: true, startsOn: TODAY, endsOn: '2026-11-15' });
+    expect(saleDefaults([wrong], plan, TODAY, []).joiningFeeP).toBe(50000);
+    const paid = makePayment({ membershipId: 'ms-wrong', amountP: 50000 });
+    expect(saleDefaults([wrong], plan, TODAY, [paid]).joiningFeeP).toBe(0);
   });
 });

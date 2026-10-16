@@ -64,8 +64,8 @@ export function SellMembershipSheet({
   // Defaults come from the coverage CHAIN, not the term running today — otherwise
   // a second renewal starts inside the renewal they already bought.
   const defaults = useMemo(
-    () => (plan ? saleDefaults(memberships, plan, today) : null),
-    [memberships, plan, today],
+    () => (plan ? saleDefaults(memberships, plan, today, snapshot.payments) : null),
+    [memberships, plan, today, snapshot.payments],
   );
 
   const [startsOnOverride, setStartsOnOverride] = useState<string | null>(null);

@@ -15,7 +15,7 @@
  * Anything the form decides now lives here.
  */
 
-import type { DateISO, Membership, Paise, Plan } from '../types';
+import type { DateISO, Membership, Paise, Payment, Plan } from '../types';
 import { addDays, formatDay } from './dates';
 import { coverageEndsOn, endDateForPlan, nextTermStart } from './membership';
 import { tr } from '../i18n';
@@ -37,12 +37,20 @@ export interface SaleDefaults {
 /**
  * Has this member ever actually been charged a joining fee?
  *
- * Asks the ledger, not the member's status: a cancelled term still charged the
- * fee, and a zero-fee plan did not. Cancelled terms therefore COUNT here (the
- * money was charged) even though they do not count as cover.
+ * Asks the ledger, not the member's status: a zero-fee plan sold here did not charge it.
+ *  - Admin audit C7-2 (16 Oct 2026): a plan brought in from the old register (`importId`) means
+ *    they joined before the panel existed, and paid then. Its fee field is 0 only because the sheet
+ *    never says it; charging again at the first renewal made a false ₹500 due on every member.
+ *  - C7-27: a CANCELLED term's fee counts only when money was received against that term. A wrong
+ *    plan cancelled the same minute, with nothing paid, took no fee — the right plan must carry it.
  */
-export function hasPaidJoiningFee(memberships: readonly Membership[]): boolean {
-  return memberships.some((m) => m.joiningFeeP > 0);
+export function hasPaidJoiningFee(memberships: readonly Membership[], payments: readonly Payment[] = []): boolean {
+  return memberships.some((m) => {
+    if (m.importId && !isPtMembership(m)) return true;
+    if (m.joiningFeeP <= 0) return false;
+    if (!m.cancelled) return true;
+    return payments.some((p) => p.membershipId === m.id && !p.voided && p.amountP > 0);
+  });
 }
 
 /** Everything the sell form should start with for this member and plan. */
@@ -50,8 +58,9 @@ export function saleDefaults(
   memberships: readonly Membership[],
   plan: Plan,
   today: DateISO,
+  payments: readonly Payment[] = [],
 ): SaleDefaults {
-  const joiningFeeP = hasPaidJoiningFee(memberships) ? 0 : plan.joiningFeeP;
+  const joiningFeeP = hasPaidJoiningFee(memberships, payments) ? 0 : plan.joiningFeeP;
   // A PT pack is an add-on (logic/pt.ts): it starts today, on top of whatever gym plan is running.
   if (isPtPlan(plan)) {
     return {
