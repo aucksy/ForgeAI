@@ -22,7 +22,7 @@ import type {
   Plan,
   Visit,
 } from '../types';
-import { addDays, addMonths, diffDays, type DateISO } from './dates';
+import { addDays, addMonths, diffDays, formatDay, type DateISO } from './dates';
 import { sumPaise, type Paise } from './money';
 import { tr } from '../i18n';
 import { gymTerms } from './pt';
@@ -258,6 +258,39 @@ export function buildMemberView(
 }
 
 // ---------------------------------------------------------------- presentation
+
+/**
+ * The member page's "Days left" tile (admin audit C7-33, 16 Oct 2026). A plan that has not started
+ * showed "Days left 34" (the days to its END) beside "No live membership"; it now says how soon it
+ * starts. PURE.
+ */
+export function daysLeftTile(
+  view: Pick<MemberView, 'coversUntil' | 'daysRemaining' | 'current'>,
+  today: DateISO,
+): { label: string; value: string; sub: string } {
+  const cur = view.current;
+  if (!view.coversUntil && cur && cur.state === 'upcoming') {
+    const n = diffDays(today, cur.startsOn);
+    return {
+      label: tr('Starts in', 'Shuru hone mein'),
+      value: String(n),
+      sub:
+        n === 1
+          ? tr(`Starts tomorrow, ${formatDay(cur.startsOn)}`, `Kal shuru, ${formatDay(cur.startsOn)}`)
+          : tr(`Starts in ${n} days, on ${formatDay(cur.startsOn)}`, `${n} din mein shuru, ${formatDay(cur.startsOn)} ko`),
+    };
+  }
+  const d = view.daysRemaining;
+  return {
+    label: tr('Days left', 'Kitne din bache'),
+    value: d === null ? '—' : d < 0 ? tr('Expired', 'Khatam ho gaye') : String(d),
+    sub: view.coversUntil
+      ? d === 0
+        ? tr('Last day is today', 'Aaj aakhri din hai')
+        : tr(`Covered until ${formatDay(view.coversUntil)}`, `${formatDay(view.coversUntil)} tak chalu`)
+      : tr('No live membership', 'Koi chalu plan nahi'),
+  };
+}
 
 /** Short label for a status pill. */
 // Getters, not values: the words are read in the panel's language at the moment a pill draws.

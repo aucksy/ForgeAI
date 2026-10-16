@@ -32,6 +32,22 @@ export function parseReceiptNo(receiptNo: string): { fy: string; seq: number } |
 }
 
 /**
+ * Admin audit C7-36 (16 Oct 2026): receipts brought in by an import get their OWN series,
+ * `IMP/2026-27/0001`. In the desk's series, May and June payments from an old register took
+ * numbers after a desk receipt from October, and "Undo this import" then left gaps in it. The desk
+ * series (`nextReceiptNo`) never reads these. PURE.
+ */
+export function nextImportReceiptNo(existing: readonly { receiptNo: string }[], paidOn: DateISO): string {
+  const fy = financialYear(paidOn);
+  let highest = 0;
+  for (const row of existing) {
+    const m = /^IMP\/(\d{4}-\d{2})\/(\d{4,})$/.exec(row.receiptNo.trim());
+    if (m && m[1] === fy && Number(m[2]) > highest) highest = Number(m[2]);
+  }
+  return `IMP/${fy}/${String(highest + 1).padStart(4, '0')}`;
+}
+
+/**
  * Next receipt number for `paidOn`, continuing that financial year's series.
  *
  * Derived from the highest number already issued IN THAT YEAR rather than from a

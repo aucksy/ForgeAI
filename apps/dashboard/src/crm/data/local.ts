@@ -49,7 +49,7 @@ import { tr } from '../i18n';
 import { endDateForPlan } from '../logic/membership';
 import { findDuplicatePhone } from '../logic/members';
 import { normalizeBatch } from '../logic/batches';
-import { nextReceiptNo } from '../logic/receipts';
+import { nextImportReceiptNo, nextReceiptNo } from '../logic/receipts';
 import { cleanTrainer, isPtMembership, isPtPlan, PT_MAX_SESSIONS, ptDays, ptTotal } from '../logic/pt';
 import { planUndo } from '../logic/undoImport';
 import {
@@ -528,7 +528,7 @@ export class LocalCrmData implements CrmData {
             amountP: amount,
             method: 'other',
             paidOn,
-            receiptNo: nextReceiptNo(db.payments, paidOn),
+            receiptNo: nextImportReceiptNo(db.payments, paidOn),
             reference: null,
             note: 'Imported from Excel',
             voided: false,
@@ -592,7 +592,7 @@ export class LocalCrmData implements CrmData {
             amountP: term.paidP,
             method: 'other',
             paidOn,
-            receiptNo: nextReceiptNo(db.payments, paidOn),
+            receiptNo: nextImportReceiptNo(db.payments, paidOn),
             reference: null,
             note: 'Imported from Excel',
             voided: false,
@@ -613,6 +613,8 @@ export class LocalCrmData implements CrmData {
     return this.update((db) => {
       const membership = db.memberships.find((m) => m.id === id);
       if (!membership) throw new NotFoundError(tr('That membership', 'Yeh membership'));
+      // Admin audit C7-26: a double tap cancels once (the reason was written twice).
+      if (membership.cancelled) return { ...membership };
       membership.cancelled = true;
       if (reason) membership.notes = appendNote(membership.notes, `Cancelled: ${reason}`);
       membership.updatedAt = this.now();
@@ -624,6 +626,28 @@ export class LocalCrmData implements CrmData {
     return this.update((db) => {
       const membership = db.memberships.find((m) => m.id === id);
       if (!membership) throw new NotFoundError(tr('That membership', 'Yeh membership'));
+      if (!membership.cancelled) return { ...membership };
+      // Admin audit C7-25: the cancelled plan was often replaced. Bringing it back on top of the
+      // replacement made two plans for the same days and doubled the due.
+      if (!isPtMembership(membership)) {
+        const clash = db.memberships.find(
+          (m) =>
+            m.memberId === membership.memberId &&
+            m.id !== membership.id &&
+            !m.cancelled &&
+            !isPtMembership(m) &&
+            m.startsOn <= membership.endsOn &&
+            m.endsOn >= membership.startsOn,
+        );
+        if (clash) {
+          throw new Error(
+            tr(
+              `This member already has a plan for these days (${clash.planName}, ${formatDay(clash.startsOn)} → ${formatDay(clash.endsOn)}). Cancel that one first if this is the right plan.`,
+              `Is member ka in dino ka plan pehle se hai (${clash.planName}, ${formatDay(clash.startsOn)} → ${formatDay(clash.endsOn)}). Agar yahi sahi plan hai to pehle woh cancel karo.`,
+            ),
+          );
+        }
+      }
       membership.cancelled = false;
       membership.notes = appendNote(membership.notes, 'Cancellation reversed.');
       membership.updatedAt = this.now();

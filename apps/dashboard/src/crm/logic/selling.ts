@@ -20,6 +20,7 @@ import { addDays, formatDay } from './dates';
 import { coverageEndsOn, endDateForPlan, nextTermStart } from './membership';
 import { tr } from '../i18n';
 import { formatINR } from './money';
+import { EARLIEST_DATE } from '../data/adapter';
 import { gymPlansOnly, isPtMembership, isPtPlan } from './pt';
 
 export interface SaleDefaults {
@@ -100,6 +101,26 @@ function lastGymPlanEnd(memberships: readonly Membership[], today: DateISO): Dat
   return end;
 }
 
+/**
+ * Admin audit C7-30 (16 Oct 2026): a price or joining fee typed ABOVE the plan's (₹15000 for ₹1500)
+ * made a large false due without a word. The sheet asks once before saving. Null when nothing to ask.
+ */
+export function saleWarning(s: { priceP: Paise | null; joiningFeeP: Paise | null; listPriceP: Paise | null; listJoiningFeeP: Paise | null }): string | null {
+  if (s.priceP !== null && s.listPriceP !== null && s.priceP > s.listPriceP) {
+    return tr(
+      `The price ${formatINR(s.priceP)} is more than the plan's ${formatINR(s.listPriceP)}. Press again to save it anyway.`,
+      `Fees ${formatINR(s.priceP)} plan ki ${formatINR(s.listPriceP)} se zyada hai. Phir bhi save karna ho to dobara dabao.`,
+    );
+  }
+  if (s.joiningFeeP !== null && s.listJoiningFeeP !== null && s.joiningFeeP > s.listJoiningFeeP) {
+    return tr(
+      `The joining fee ${formatINR(s.joiningFeeP)} is more than the plan's ${formatINR(s.listJoiningFeeP)}. Press again to save it anyway.`,
+      `Admission fees ${formatINR(s.joiningFeeP)} plan ki ${formatINR(s.listJoiningFeeP)} se zyada hai. Phir bhi save karna ho to dobara dabao.`,
+    );
+  }
+  return null;
+}
+
 /** A front-desk (Staff) sale may start at most this many days before today (the server's rule too). */
 export const STAFF_BACKDATE_DAYS = 31;
 
@@ -120,6 +141,7 @@ export type SaleProblem =
   | { field: 'priceP'; message: string }
   | { field: 'joiningFeeP'; message: string }
   | { field: 'collectNowP'; message: string }
+  | { field: 'paidOn'; message: string }
   | { field: 'plan'; message: string };
 
 export interface SaleInput {
@@ -132,6 +154,8 @@ export interface SaleInput {
   pt?: boolean;
   /** The new plan's last day (C7-10): with it, any gym plan on the same days is caught, upcoming too. */
   endsOn?: DateISO | null;
+  /** C7-29: the day the money taken now was received (default today). */
+  paidOn?: DateISO;
   /** C7-13: the plan's listed price and the joining fee due (the sheet's defaults), for the desk's limits. */
   listPriceP?: Paise | null;
   listJoiningFeeP?: Paise | null;
@@ -194,6 +218,15 @@ export function validateSale(
   }
 
   const total = input.priceP + input.joiningFeeP;
+  // C7-29: the money taken at a sale has its own date ("Kis din mile"), like the Collect sheet.
+  if (input.collectNowP > 0 && input.paidOn !== undefined) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(input.paidOn) || input.paidOn < EARLIEST_DATE) {
+      return { field: 'paidOn', message: tr('Enter the date this money was received.', 'Paisa kis din mila, woh tareekh likho.') };
+    }
+    if (input.paidOn > today) {
+      return { field: 'paidOn', message: tr('A payment can’t be dated in the future.', 'Aage ki tareekh ki payment nahi ho sakti.') };
+    }
+  }
   if (input.collectNowP > total) {
     return { field: 'collectNowP', message: tr('Amount received is more than the total.', 'Kitne mile, woh kul fees se zyada hai.') };
   }

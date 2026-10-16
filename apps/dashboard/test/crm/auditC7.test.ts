@@ -10,7 +10,10 @@ import { staffRightsWords, takerOf } from '../../src/crm/auth/permissions';
 import { buildLedger, filterLedger, ledgerTakers } from '../../src/crm/logic/collections';
 import { monthSummary } from '../../src/crm/logic/expenses';
 import { checkGymDetails } from '../../src/crm/logic/gst';
-import { hasPaidJoiningFee, saleDefaults, staffLowestPrice, validateSale } from '../../src/crm/logic/selling';
+import { hasPaidJoiningFee, saleDefaults, saleWarning, staffLowestPrice, validateSale } from '../../src/crm/logic/selling';
+import { daysLeftTile } from '../../src/crm/logic/membership';
+import { DEFAULT_PAYMENT_METHOD } from '../../src/crm/logic/payments';
+import { nextImportReceiptNo, nextReceiptNo } from '../../src/crm/logic/receipts';
 import type { MemberDraft } from '../../src/crm/types';
 import { makeMembership, makePayment, makePlan, VALID_GSTIN } from './fixtures';
 
@@ -249,5 +252,62 @@ describe('C7-14: Munafa counts the shop money that came in', () => {
       spentP: 2_000_000,
       profitP: 2_000_000,
     });
+  });
+});
+
+describe('S3 money and plan rules (C7-25, C7-26, C7-28, C7-29, C7-30, C7-33, C7-36)', () => {
+  const setup = async () => {
+    const db = new LocalCrmData({ store: memoryStore(), seed: () => emptySnapshot(0, 'Gym') });
+    const m = await db.createMember(member());
+    const plan = await db.createPlan({ name: 'Monthly', durationUnit: 'month', durationCount: 1, priceP: 150000, joiningFeeP: 0, description: null, active: true, sortOrder: 1 } as never);
+    const sell = (startsOn: string, collectNowP = 0) =>
+      db.sellMembership({ memberId: m.id, planId: plan.id, startsOn, priceP: 150000, joiningFeeP: 0, notes: null, collectNowP, method: 'cash', reference: null, paidOn: TODAY, soldBy: null });
+    return { db, m, plan, sell };
+  };
+
+  it('C7-25: "Undo cancel" is refused when another plan now covers those days', async () => {
+    const { db, sell } = await setup();
+    const wrong = await sell(TODAY);
+    await db.cancelMembership(wrong.membership.id, 'Wrong plan');
+    await sell(TODAY, 150000);
+    await expect(db.uncancelMembership(wrong.membership.id)).rejects.toThrow(/already has a plan/);
+    expect((await db.load()).memberships.filter((x) => !x.cancelled)).toHaveLength(1);
+  });
+
+  it('C7-26: cancelling twice (a double tap) writes the reason once', async () => {
+    const { db, sell } = await setup();
+    const s1 = await sell(TODAY);
+    await db.cancelMembership(s1.membership.id, 'Moved city');
+    await db.cancelMembership(s1.membership.id, 'Moved city');
+    expect((await db.load()).memberships[0]!.notes).toBe('Cancelled: Moved city');
+  });
+
+  it('C7-28: both money sheets start on Cash', () => {
+    expect(DEFAULT_PAYMENT_METHOD).toBe('cash');
+  });
+
+  it('C7-29: money taken while selling can be dated (not ahead of today)', () => {
+    const ok = { planId: 'p', startsOn: TODAY, priceP: 150000, joiningFeeP: 0, collectNowP: 150000 };
+    expect(validateSale({ ...ok, paidOn: '2026-10-15' }, [], TODAY)).toBeNull();
+    expect(validateSale({ ...ok, paidOn: '2026-10-17' }, [], TODAY)).toMatchObject({ field: 'paidOn' });
+  });
+
+  it('C7-30: a price above the plan\'s (₹15000 for ₹1500) asks first', () => {
+    expect(saleWarning({ priceP: 1500000, joiningFeeP: 0, listPriceP: 150000, listJoiningFeeP: 0 })).toContain('₹1,500');
+    expect(saleWarning({ priceP: 150000, joiningFeeP: 0, listPriceP: 150000, listJoiningFeeP: 0 })).toBeNull();
+    expect(saleWarning({ priceP: 150000, joiningFeeP: 500000, listPriceP: 150000, listJoiningFeeP: 50000 })).toContain('₹500');
+  });
+
+  it('C7-33: a plan that has not started says "Starts in 4 days", not "Days left 34"', () => {
+    const upcoming = makeMembership({ startsOn: '2026-10-20', endsOn: '2026-11-19' });
+    const t = daysLeftTile({ coversUntil: null, daysRemaining: 34, current: { ...upcoming, state: 'upcoming', daysRemaining: 34, totalDueP: 0 } }, TODAY);
+    expect(t.value).toBe('4');
+    expect(t.sub).toContain('Starts');
+  });
+
+  it('C7-36: imported receipts have their own series; the desk series is untouched', () => {
+    const issued = [{ receiptNo: '2026-27/0001' }, { receiptNo: 'IMP/2026-27/0001' }];
+    expect(nextImportReceiptNo(issued, '2026-05-01')).toBe('IMP/2026-27/0002');
+    expect(nextReceiptNo(issued, TODAY)).toBe('2026-27/0002');
   });
 });

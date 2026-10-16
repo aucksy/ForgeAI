@@ -18,9 +18,9 @@ import { useAuth, useRole } from '../../auth/AuthProvider';
 import { takerOf } from '../../auth/permissions';
 import { addDays, formatDay, isValidDateISO } from '../../logic/dates';
 import { endDateForPlan } from '../../logic/membership';
-import { saleDefaults, validateSale, type SaleProblem } from '../../logic/selling';
+import { saleDefaults, saleWarning, validateSale, type SaleProblem } from '../../logic/selling';
 import { formatINR, parseRupeeInput } from '../../logic/money';
-import { methodOptions } from '../../logic/payments';
+import { DEFAULT_PAYMENT_METHOD, methodOptions } from '../../logic/payments';
 import type { MemberView, PaymentMethod, Plan } from '../../types';
 import type { SellMembershipResult } from '../../data/adapter';
 import { newRequestId } from '../../data/local';
@@ -77,7 +77,12 @@ export function SellMembershipSheet({
   const [priceText, setPriceText] = useState('');
   const [joiningText, setJoiningText] = useState('');
   const [collectText, setCollectText] = useState('');
-  const [method, setMethod] = useState<PaymentMethod>('upi');
+  // C7-28: the same start as the Collect sheet (Cash), so cash taken at a sale is never counted as UPI.
+  const [method, setMethod] = useState<PaymentMethod>(DEFAULT_PAYMENT_METHOD);
+  // C7-29: the day the money was received (a sale written in the next morning).
+  const [paidOn, setPaidOn] = useState(today);
+  // C7-30: a price above the plan's is asked about once; any change asks again.
+  const [warned, setWarned] = useState<string | null>(null);
   const [reference, setReference] = useState('');
   const [notes, setNotes] = useState('');
   const [problem, setProblem] = useState<SaleProblem | null>(null);
@@ -97,6 +102,11 @@ export function SellMembershipSheet({
 
   const errorFor = (field: SaleProblem['field']) =>
     problem?.field === field ? problem.message : null;
+  /** Any change: the problem and the "price above the plan's" question go away. */
+  const changed = () => {
+    setProblem(null);
+    setWarned(null);
+  };
 
   const submit = async () => {
     const found = validateSale(
@@ -111,6 +121,7 @@ export function SellMembershipSheet({
         // C7-13: the desk's discount limits are checked against the listed price and the fee due.
         listPriceP: plan?.priceP ?? null,
         listJoiningFeeP: defaults?.joiningFeeP ?? null,
+        paidOn,
       },
       memberships,
       today,
@@ -118,6 +129,11 @@ export function SellMembershipSheet({
     );
     if (found) {
       setProblem(found);
+      return;
+    }
+    const warning = saleWarning({ priceP, joiningFeeP: joiningP, listPriceP: plan?.priceP ?? null, listJoiningFeeP: plan?.joiningFeeP ?? null });
+    if (warning && warned !== warning) {
+      setWarned(warning);
       return;
     }
 
@@ -134,7 +150,7 @@ export function SellMembershipSheet({
         collectNowP: collectP!,
         method,
         reference: reference.trim() || null,
-        paidOn: today,
+        paidOn: collectP && collectP > 0 ? paidOn : today,
         soldBy: taker.id,
         soldByName: taker.name,
         requestId,
@@ -152,10 +168,13 @@ export function SellMembershipSheet({
     return (
       <Sheet title={tr('Sell membership', 'Plan do')} onClose={onClose}>
         <ErrorBanner>
-          {tr(
-            'You haven’t created any plans yet. Add a plan first, then you can sell it here.',
-            'Aapne abhi koi plan nahi banaya. Pehle plan jodo, phir yahan de sakte hain.',
-          )}
+          {role === 'staff'
+            ? // C7-42: the front desk cannot add plans; it says who can.
+              tr('There are no plans to sell yet. Ask the owner to add a plan.', 'Abhi dene ke liye koi plan nahi hai. Owner se plan jodne ko kaho.')
+            : tr(
+                'You haven’t created any plans yet. Add a plan first, then you can sell it here.',
+                'Aapne abhi koi plan nahi banaya. Pehle plan jodo, phir yahan de sakte hain.',
+              )}
         </ErrorBanner>
       </Sheet>
     );
@@ -172,12 +191,13 @@ export function SellMembershipSheet({
             {tr('Cancel', 'Cancel')}
           </Button>
           <Button onClick={submit} disabled={saving}>
-            {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Confirm', 'Pakka karo')}
+            {saving ? tr('Saving…', 'Save ho raha hai…') : warned ? tr('Yes, save', 'Haan, save karo') : tr('Confirm', 'Pakka karo')}
           </Button>
         </>
       }
     >
       {problem && problem.field === 'plan' && <ErrorBanner>{problem.message}</ErrorBanner>}
+      {warned && <ErrorBanner>{warned}</ErrorBanner>}
 
       <div style={{ color: color.inkSecondary, fontFamily: font.body, fontSize: 14 }}>
         {tr('For', 'Member')} <strong style={{ color: color.ink }}>{view.member.fullName}</strong>
@@ -255,7 +275,7 @@ export function SellMembershipSheet({
           value={priceText}
           onChange={(v) => {
             setPriceText(v);
-            setProblem(null);
+            changed();
           }}
           inputMode="decimal"
           placeholder={plan ? formatINR(plan.priceP) : ''}
@@ -277,7 +297,7 @@ export function SellMembershipSheet({
           value={joiningText}
           onChange={(v) => {
             setJoiningText(v);
-            setProblem(null);
+            changed();
           }}
           inputMode="decimal"
           placeholder={formatINR(defaults?.joiningFeeP ?? 0)}
@@ -341,6 +361,19 @@ export function SellMembershipSheet({
             placeholder={method === 'upi' ? tr('UPI ref no.', 'UPI ref no.') : tr('Cheque / card last 4', 'Cheque / card ke last 4')}
           />
         </Grid>
+
+        {collectP !== null && collectP > 0 && (
+          <TextField
+            label={tr('Received on', 'Kis din mile')}
+            value={paidOn}
+            onChange={(v) => {
+              setPaidOn(v);
+              setProblem(null);
+            }}
+            type="date"
+            error={errorFor('paidOn')}
+          />
+        )}
 
         {balanceP !== null && balanceP > 0 && (
           <div

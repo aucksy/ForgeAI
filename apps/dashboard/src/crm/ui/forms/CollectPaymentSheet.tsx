@@ -17,7 +17,7 @@ import { takerOf } from '../../auth/permissions';
 import { formatDay, isValidDateISO } from '../../logic/dates';
 import { isChased, unpaidForMembership } from '../../logic/membership';
 import { formatINR, parseRupeeInput } from '../../logic/money';
-import { methodOptions } from '../../logic/payments';
+import { DEFAULT_PAYMENT_METHOD, methodOptions } from '../../logic/payments';
 import type { MemberView, Payment, PaymentMethod } from '../../types';
 import { EARLIEST_DATE as EARLIEST_SENSIBLE_DAY } from '../../data/adapter';
 import { newRequestId } from '../../data/local';
@@ -51,7 +51,7 @@ export function CollectPaymentSheet({
   const selected = owing.find((o) => o.membership.id === membershipId) ?? null;
 
   const [amountText, setAmountText] = useState('');
-  const [method, setMethod] = useState<PaymentMethod>('cash');
+  const [method, setMethod] = useState<PaymentMethod>(DEFAULT_PAYMENT_METHOD);
   const [reference, setReference] = useState('');
   const [paidOn, setPaidOn] = useState(today);
   const [error, setError] = useState<string | null>(null);

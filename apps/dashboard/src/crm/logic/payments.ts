@@ -10,6 +10,12 @@
 import { tr } from '../i18n';
 import type { PaymentMethod } from '../types';
 
+/**
+ * Admin audit C7-28 (16 Oct 2026): the method every money sheet starts on. Selling started on UPI
+ * and collecting on Cash, so cash taken at a sale was counted as UPI and the drawer never matched.
+ */
+export const DEFAULT_PAYMENT_METHOD: PaymentMethod = 'cash';
+
 /** Every method, in the order they appear in forms and reports. */
 export const PAYMENT_METHODS: readonly PaymentMethod[] = [
   'cash',

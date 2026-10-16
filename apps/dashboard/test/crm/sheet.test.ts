@@ -33,3 +33,18 @@ describe('C7-16: typing in a sheet keeps its place when the screen redraws', () 
     expect(sheet).toMatch(/onCloseRef\.current\(\)/);
   });
 });
+
+describe('money sheets (C7-28, C7-42)', () => {
+  const read = (p: string) => readFileSync(fileURLToPath(new URL(p, import.meta.url)), 'utf8');
+  const sell = read('../../src/crm/ui/forms/SellMembershipSheet.tsx');
+  const collect = read('../../src/crm/ui/forms/CollectPaymentSheet.tsx');
+
+  it('C7-28: selling and collecting start on the same method', () => {
+    expect(sell).toContain('useState<PaymentMethod>(DEFAULT_PAYMENT_METHOD)');
+    expect(collect).toContain('useState<PaymentMethod>(DEFAULT_PAYMENT_METHOD)');
+  });
+
+  it('C7-42: with no plans, the front desk is told to ask the owner', () => {
+    expect(sell).toContain('Ask the owner to add a plan.');
+  });
+});

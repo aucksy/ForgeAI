@@ -22,7 +22,7 @@ import {
   RHYTHM_WINDOW_DAYS,
 } from '../../logic/attendance';
 import { addDays, diffDays, formatDay, relativeDay } from '../../logic/dates';
-import { isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
+import { daysLeftTile, isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials } from '../../logic/members';
 import { memberBatch } from '../../logic/batches';
@@ -102,6 +102,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   /** Renew the PT plan: the sell sheet opens on this plan. */
   const [sellPlanId, setSellPlanId] = useState<string | undefined>(undefined);
   const [ptBusy, setPtBusy] = useState(false);
+  // C7-26: one "Undo cancel" at a time.
+  const [restoreBusy, setRestoreBusy] = useState(false);
   const [collecting, setCollecting] = useState(false);
   const [cancelling, setCancelling] = useState<Membership | null>(null);
   const [extending, setExtending] = useState<Membership | null>(null);
@@ -164,6 +166,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   );
 
   const visitCount = memberVisits.length;
+  const daysTile = view ? daysLeftTile(view, today) : null;
 
   const visitedToday = useMemo(
     () => memberVisits.some((v) => v.visitedOn === today),
@@ -363,17 +366,12 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           tone={view.daysSinceVisit !== null && view.daysSinceVisit >= 14 ? 'critical' : undefined}
           sub={view.lastVisitOn ? formatDay(view.lastVisitOn) : tr('No check-ins recorded', 'Koi Hazri nahi lagi')}
         />
+        {/* C7-33: a plan paid ahead says when it starts, not the days to its end. */}
         <StatTile
-          label={tr('Days left', 'Kitne din bache')}
-          value={view.daysRemaining === null ? '—' : view.daysRemaining < 0 ? tr('Expired', 'Khatam ho gaye') : view.daysRemaining}
-          tone={view.daysRemaining !== null && view.daysRemaining <= 7 ? 'warn' : undefined}
-          sub={
-            view.coversUntil
-              ? view.daysRemaining === 0
-                ? tr('Last day is today', 'Aaj aakhri din hai')
-                : tr(`Covered until ${formatDay(view.coversUntil)}`, `${formatDay(view.coversUntil)} tak chalu`)
-              : tr('No live membership', 'Koi chalu plan nahi')
-          }
+          label={daysTile?.label ?? ''}
+          value={daysTile?.value ?? '—'}
+          tone={view.coversUntil && view.daysRemaining !== null && view.daysRemaining <= 7 ? 'warn' : undefined}
+          sub={daysTile?.sub}
         />
         <StatTile
           label={tr('Total visits', 'Kul hazri')}
@@ -440,7 +438,14 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 onCancel={canCancel ? () => setCancelling(m) : undefined}
                 onExtend={canExtendRow(m) ? () => setExtending(m) : undefined}
                 onRestore={
-                  canCancel ? () => void run(() => uncancelMembership(m.id), tr('Cancellation reversed.', 'Cancel wapas liya.')) : undefined
+                  canCancel && !restoreBusy
+                    ? () => {
+                        setRestoreBusy(true);
+                        void run(() => uncancelMembership(m.id).then(() => undefined), tr('Cancellation reversed.', 'Cancel wapas liya.')).finally(() =>
+                          setRestoreBusy(false),
+                        );
+                      }
+                    : undefined
                 }
               />
             ))}
@@ -529,12 +534,12 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <CancelMembershipSheet
           membership={cancelling}
           onClose={() => setCancelling(null)}
-          onConfirm={(reason) =>
-            void run(async () => {
-              await cancelMembership(cancelling.id, reason);
-              setCancelling(null);
-            }, tr('Membership cancelled.', 'Plan cancel ho gaya.'))
-          }
+          onConfirm={async (reason) => {
+            // C7-26: a failure is shown inside the sheet (it used to land on the page behind it).
+            await cancelMembership(cancelling.id, reason);
+            setCancelling(null);
+            flash(tr('Membership cancelled.', 'Plan cancel ho gaya.'));
+          }}
         />
       )}
       {extending && (
@@ -580,9 +585,24 @@ function CancelMembershipSheet({
 }: {
   membership: Membership;
   onClose: () => void;
-  onConfirm: (reason: string) => void;
+  onConfirm: (reason: string) => Promise<void>;
 }) {
   const [reason, setReason] = useState('');
+  // C7-26: a double tap saved the cancel twice; now one save at a time, and its error shows here.
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
+  const confirm = async () => {
+    if (busy) return;
+    setBusy(true);
+    setFailed(null);
+    try {
+      await onConfirm(reason.trim());
+    } catch (e) {
+      setFailed(e instanceof Error ? e.message : tr('That didn’t work. Please try again.', 'Kuch gadbad hui. Phir se try karo.'));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <Sheet
@@ -593,12 +613,13 @@ function CancelMembershipSheet({
           <Button variant="ghost" onClick={onClose}>
             {tr('Keep it', 'Rehne do')}
           </Button>
-          <Button tone="danger" disabled={reason.trim().length < 3} onClick={() => onConfirm(reason.trim())}>
-            {tr('Cancel membership', 'Plan cancel karo')}
+          <Button tone="danger" disabled={busy || reason.trim().length < 3} onClick={() => void confirm()}>
+            {busy ? tr('Saving…', 'Save ho raha hai…') : tr('Cancel membership', 'Plan cancel karo')}
           </Button>
         </>
       }
     >
+      {failed && <ErrorBanner>{failed}</ErrorBanner>}
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         <strong style={{ color: color.ink }}>{membership.planName}</strong>
         {tr(

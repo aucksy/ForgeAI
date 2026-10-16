@@ -36,7 +36,9 @@ export function planUndo(snap: CrmSnapshot, importId: string): UndoPlan {
   const planMine = snap.plans.filter(mine);
 
   // Terms the gym touched: a receipt not from this import against it, or any save after the import.
-  const deskPaid = new Set(snap.payments.filter((p) => !mine(p) && p.membershipId).map((p) => p.membershipId!));
+  // Admin audit C7-36: an imported receipt voided since is the gym's own act too: it is kept (with
+  // its term), never deleted.
+  const deskPaid = new Set(snap.payments.filter((p) => (!mine(p) || p.voided) && p.membershipId).map((p) => p.membershipId!));
   const keepMs = new Set(msMine.filter((m) => deskPaid.has(m.id) || m.updatedAt !== m.createdAt).map((m) => m.id));
 
   // Members the gym used: anything not from this import, or a touched term.
@@ -54,7 +56,7 @@ export function planUndo(snap: CrmSnapshot, importId: string): UndoPlan {
 
   const memberships = msMine.filter((m) => !keepMs.has(m.id)).map((m) => m.id);
   const payments = payMine
-    .filter((p) => !(p.membershipId && keepMs.has(p.membershipId)) && !(importedMember.has(p.memberId) && used.has(p.memberId)))
+    .filter((p) => !p.voided && !(p.membershipId && keepMs.has(p.membershipId)) && !(importedMember.has(p.memberId) && used.has(p.memberId)))
     .map((p) => p.id);
   const members = memMine.filter((m) => !used.has(m.id)).map((m) => m.id);
 
