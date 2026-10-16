@@ -95,3 +95,21 @@ describe('a log an older version wrote with a lighter-set record is put right on
     expect(e1rmRows()).toEqual(['100x5', '110x2']);
   });
 });
+
+describe('wave-2 review 4: the one-time rebuild never loses a lift\'s records halfway', () => {
+  it('a failure while re-writing a lift leaves its old rows, and the fix tries again next launch', async () => {
+    await logAll();
+    const { getDb } = await import('@/db');
+    const s85 = db.all<{ id: string }>("SELECT id FROM workout_sessions WHERE date_iso = '2026-10-03'")[0].id;
+    // As an older version left it: a lighter-set record (85 x 12) after 100 x 5.
+    await getDb().runAsync("INSERT INTO personal_records(id, exercise_id, kind, value, weight_kg, reps, date_iso, session_id) VALUES ('old85', ?, 'e1rm', 119, 85, 12, '2026-10-03', ?)", [bench, s85]);
+    const before = db.count('personal_records', `exercise_id = '${bench}'`);
+    db.raw.run(`CREATE TRIGGER boom BEFORE INSERT ON personal_records WHEN NEW.exercise_id = '${bench}' BEGIN SELECT RAISE(ABORT, 'disk full'); END`);
+    const { fixLighterSetE1rmRecords } = await import('@/tracker/services/prRebuild');
+    await expect(fixLighterSetE1rmRecords()).rejects.toThrow();
+    expect(db.count('personal_records', `exercise_id = '${bench}'`)).toBe(before);
+    db.raw.run('DROP TRIGGER boom');
+    await fixLighterSetE1rmRecords();
+    expect(e1rmRows()).toEqual(['100x5', '110x2']);
+  });
+});

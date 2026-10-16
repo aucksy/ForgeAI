@@ -38,6 +38,9 @@ import {
   loadDemoData,
 } from '../db/dataActions';
 
+/** Wave-2 review: the one-time lighter-set record fix runs this long after start-up. */
+const LIGHTER_SET_FIX_DELAY_MS = 5000;
+
 export type BootStatus = 'loading' | 'welcome' | 'ready' | 'error';
 
 export interface OnboardingState {
@@ -137,11 +140,14 @@ async function openAndUpgrade(): Promise<void> {
     await fixLongSetE1rmRecords();
   }).catch(() => undefined);
   // Once (16 Oct 2026, owner rule): a 1-rep-max record an older version stored for a LIGHTER set
-  // (85 × 12 after 100 × 5) leaves the log, rebuilt by today's rule. Never blocks start-up.
-  await enqueueWrite(async () => {
-    const { fixLighterSetE1rmRecords } = await import('@/tracker/services/prRebuild');
-    await fixLighterSetE1rmRecords();
-  }).catch((e: unknown) => console.warn('[ForgeErr] lighter-set record fix (tries again next launch)', e));
+  // (85 × 12 after 100 × 5) leaves the log, rebuilt by today's rule. Wave-2 review: after start-up
+  // (off the first frame), queued; a failure tries again next launch.
+  setTimeout(() => {
+    void enqueueWrite(async () => {
+      const { fixLighterSetE1rmRecords } = await import('@/tracker/services/prRebuild');
+      await fixLighterSetE1rmRecords();
+    }).catch((e: unknown) => console.warn('[ForgeErr] lighter-set record fix (tries again next launch)', e));
+  }, LIGHTER_SET_FIX_DELAY_MS);
   // Audit Phase 4, once each (never blocks start-up; a failure tries again next launch):
   //  - IM-07: imported workouts' times become the real moment (they were clock time as UTC);
   //  - IM-02 / IM-03: folders copied from a Hevy link get their warm-ups and real order back.

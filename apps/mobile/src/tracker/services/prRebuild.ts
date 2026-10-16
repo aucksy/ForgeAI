@@ -145,7 +145,10 @@ export async function fixLighterSetE1rmRecords(): Promise<void> {
             SELECT 1 FROM personal_records b JOIN workout_sessions sb ON sb.id = b.session_id
              WHERE b.exercise_id = a.exercise_id AND b.kind = 'e1rm' AND sb.started_at < sa.started_at AND b.weight_kg > a.weight_kg)`,
   );
-  for (const r of rows) await rebuildRecordLog(r.exercise_id);
+  // Wave-2 review: each lift in its own transaction (a crash mid-lift keeps its old rows), and the
+  // "done" mark only after every lift — a failure tries again next launch.
+  const db = getDb();
+  for (const r of rows) await db.withTransactionAsync(() => rebuildRecordLog(r.exercise_id));
   await setMeta(LIGHTER_SET_FIX_KEY, '1');
 }
 
