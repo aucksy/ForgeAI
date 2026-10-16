@@ -4,6 +4,8 @@ import { getDb } from '@/db';
 import { SCHEMA_VERSION } from '@/db/schema';
 import { enqueueWrite } from '@/db/writeQueue';
 
+import { backupVersionWords, PlainError } from './backupWords';
+
 /**
  * Full-history snapshot of the member's local SQLite ↔ a portable JSON envelope,
  * used by the Google Drive backup/restore path (src/cloud/drive.ts). This is ONE-WAY
@@ -187,15 +189,16 @@ export function parseSnapshot(json: string): BackupEnvelope {
   try {
     raw = JSON.parse(json);
   } catch {
-    throw new Error('That backup file is unreadable.');
+    throw new PlainError('That backup file is damaged, so it can’t be restored. Make a new backup with Back up now.');
   }
   const env = raw as Partial<BackupEnvelope> | null;
   if (!env || env.app !== APP_TAG || typeof env.tables !== 'object' || env.tables === null) {
-    throw new Error('That doesn’t look like a ForgeAI backup.');
+    throw new PlainError('That file isn’t a ForgeAI backup, so nothing was changed.');
   }
-  if (env.schema_version !== SCHEMA_VERSION) {
-    throw new Error('This backup is from a different app version and can’t be restored.');
-  }
+  // C9-14: an OLDER backup restores (every column added since comes back empty, as the table
+  // notes above say). Only a backup from a NEWER app is refused, with what to do about it.
+  const versionProblem = backupVersionWords(env.schema_version, SCHEMA_VERSION);
+  if (versionProblem) throw new PlainError(versionProblem);
   return env as BackupEnvelope;
 }
 

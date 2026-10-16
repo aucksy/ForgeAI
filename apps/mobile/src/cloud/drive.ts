@@ -25,6 +25,16 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 
+import {
+  DRIVE_NO_INTERNET,
+  DRIVE_NOT_IN_THIS_VERSION,
+  DRIVE_SIGN_IN_AGAIN,
+  DriveError,
+  driveStatusWords,
+} from './backupWords';
+
+export { DriveError } from './backupWords';
+
 /** The single file versions before v0.30 overwrote; still found and restored. */
 const FILE_NAME = 'forgeai-backup.json';
 const FILE_PREFIX = 'forgeai-backup-';
@@ -56,10 +66,8 @@ export function configureDrive(): void {
   }
 }
 
-export class DriveError extends Error {}
-
 function ensureReady(): void {
-  if (!isDriveConfigured()) throw new DriveError('Google Drive isn’t set up in this build.');
+  if (!isDriveConfigured()) throw new DriveError(DRIVE_NOT_IN_THIS_VERSION, 'no googleWebClientId in this build');
   configureDrive();
 }
 
@@ -86,17 +94,23 @@ export async function signInToDrive(): Promise<string | null> {
     if (isErrorWithCode(e)) {
       if (e.code === statusCodes.SIGN_IN_CANCELLED) return null; // genuine user cancel
       if (e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE)
-        throw new DriveError('Google Play services isn’t available on this device.');
+        throw new DriveError(
+          'Google Drive backup needs Google Play services, and this phone doesn’t have it. Keep a copy with Save my history (Settings → Export & import) instead.',
+          'PLAY_SERVICES_NOT_AVAILABLE',
+        );
     }
     // DEVELOPER_ERROR (10) isn't in this version's typed statusCodes — match it loosely.
     const code = (e as { code?: unknown })?.code;
     if (code === 'DEVELOPER_ERROR' || code === 10 || code === '10') {
+      // C9-8: the developer detail goes to the log, never to the member.
       throw new DriveError(
-        'Google sign-in isn’t authorised for this build. Its signing key (SHA-1) for com.forgeai.app must be added as an Android OAuth client in Google Cloud.',
+        DRIVE_NOT_IN_THIS_VERSION,
+        'DEVELOPER_ERROR: add the build signing SHA-1 for com.forgeai.app as an Android OAuth client in Google Cloud',
       );
     }
+    // C9-10: Google's raw text ("NETWORK_ERROR", "A non-recoverable sign in failure…") is logged only.
     const msg = (e as { message?: string })?.message;
-    throw new DriveError(`Couldn’t sign in to Google${msg ? `: ${msg}` : '.'}`);
+    throw new DriveError('Couldn’t sign in to Google. Check your internet and try again.', `sign-in failed: ${String(code ?? '')} ${msg ?? ''}`);
   }
   if ((res as { type?: string })?.type === 'cancelled') return null;
   const email = emailOf(res);
@@ -104,7 +118,8 @@ export async function signInToDrive(): Promise<string | null> {
     // Account chosen but Google returned no usable account — almost always a missing
     // Android OAuth client (package + SHA-1) in the Cloud project.
     throw new DriveError(
-      'Signed in, but Google returned no account — the app’s Android OAuth client (com.forgeai.app + SHA-1) is likely missing in Google Cloud.',
+      DRIVE_NOT_IN_THIS_VERSION,
+      'signed in but no account returned: the Android OAuth client (com.forgeai.app + SHA-1) is likely missing in Google Cloud',
     );
   }
   return email;
@@ -142,24 +157,30 @@ async function accessToken(): Promise<string> {
     // any getTokens() rejection to the same actionable message.
     const res = await GoogleSignin.signInSilently();
     const t = (res as { type?: string })?.type;
-    if (t && t !== 'success') throw new DriveError('Not signed in to Google.');
+    if (t && t !== 'success') throw new DriveError(DRIVE_SIGN_IN_AGAIN, `silent sign-in: ${t}`);
     const { accessToken: token } = await GoogleSignin.getTokens();
-    if (!token) throw new DriveError('Couldn’t get a Google access token.');
+    if (!token) throw new DriveError(DRIVE_SIGN_IN_AGAIN, 'getTokens returned no access token');
     return token;
   } catch (e) {
     if (e instanceof DriveError) throw e;
-    throw new DriveError('Not signed in to Google.');
+    throw new DriveError(DRIVE_SIGN_IN_AGAIN, `token refresh failed: ${(e as { message?: string })?.message ?? String(e)}`);
   }
 }
 
 async function api(token: string, url: string, init?: RequestInit): Promise<Response> {
-  const res = await fetch(url, {
-    ...init,
-    headers: { Authorization: `Bearer ${token}`, ...(init?.headers ?? {}) },
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...init,
+      headers: { Authorization: `Bearer ${token}`, ...(init?.headers ?? {}) },
+    });
+  } catch (e) {
+    throw new DriveError(DRIVE_NO_INTERNET, `fetch failed: ${(e as { message?: string })?.message ?? String(e)}`);
+  }
   if (!res.ok) {
+    // C9-11: Google's JSON is logged; the member reads what to do about it.
     const detail = await res.text().catch(() => '');
-    throw new DriveError(`Drive request failed (${res.status}). ${detail.slice(0, 140)}`);
+    throw new DriveError(driveStatusWords(res.status, detail), `request failed (${res.status}) ${detail.slice(0, 400)}`);
   }
   return res;
 }
@@ -187,7 +208,9 @@ async function ensureFolderId(token: string): Promise<string> {
     body: JSON.stringify({ name: FOLDER_NAME, mimeType: FOLDER_MIME }),
   });
   const created = (await create.json()) as { id?: string };
-  if (!created.id) throw new DriveError('Couldn’t create the ForgeAI folder on Drive.');
+  if (!created.id) {
+    throw new DriveError('Couldn’t make the ForgeAI folder in your Google Drive. Wait a minute, then try again.', 'folder create returned no id');
+  }
   return created.id;
 }
 

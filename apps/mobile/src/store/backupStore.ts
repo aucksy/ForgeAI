@@ -13,6 +13,7 @@ import {
   signInToDrive,
   signOutDrive,
 } from '@/cloud/drive';
+import { PlainError } from '@/cloud/backupWords';
 import {
   describeSnapshot,
   exportSnapshot,
@@ -247,7 +248,7 @@ export const useBackup = create<BackupState>()((set, get) => ({
       const env = parseSnapshot(found.json);
       // DS-10: a safety copy of this phone first. If it can't be saved, nothing is replaced.
       const uri = safetyUri();
-      if (!uri) throw new Error('Could not save a copy of this phone’s data first, so nothing was changed.');
+      if (!uri) throw new PlainError('Could not save a copy of this phone’s data first, so nothing was changed.');
       try {
         const copy: SafetyFile = {
           kind: 'forgeai-before-restore',
@@ -257,8 +258,9 @@ export const useBackup = create<BackupState>()((set, get) => ({
           restoredSessionIds: (env.tables['workout_sessions'] ?? []).map((r) => String(r.id)),
         };
         await FileSystem.writeAsStringAsync(uri, JSON.stringify(copy));
-      } catch {
-        throw new Error('Could not save a copy of this phone’s data first (is the phone full?), so nothing was changed.');
+      } catch (e) {
+        console.warn('[ForgeErr] restore: the safety copy could not be written', e);
+        throw new PlainError('Could not save a copy of this phone’s data first (is the phone full?), so nothing was changed.');
       }
       set({ canUndoRestore: true });
       // Before the replace commits: a kill right after it still re-syncs the library.

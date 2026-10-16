@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { Text, View } from 'react-native';
 
+import { shownBackupError } from '@/cloud/backupWords';
 import { isDriveConfigured } from '@/cloud/drive';
 import { askConfirm, Card, GhostButton, Icon, PrimaryButton } from '@/components/ui';
 import { clockTime, tinyDateWithYear, toISO } from '@/lib/date';
@@ -217,7 +218,7 @@ function DriveBackup() {
       const linked = await linkGoogle();
       if (linked) success();
     } catch (e) {
-      say(null, e instanceof Error ? e.message : 'Could not link Google Drive.');
+      say(null, shownBackupError(e, 'Could not link Google Drive. Check your internet and try again.', 'link'));
     }
   };
 
@@ -229,7 +230,7 @@ function DriveBackup() {
       say('Backed up. Drive keeps your last 5 backups.');
     } catch (e) {
       warn();
-      say(null, e instanceof Error ? e.message : 'Backup failed — please try again.');
+      say(null, shownBackupError(e, 'Backup failed. Nothing on this phone changed. Please try again.', 'backup'));
     }
   };
 
@@ -282,7 +283,7 @@ function DriveBackup() {
       say('Restored. Your history is back on this phone.');
     } catch (e) {
       warn();
-      say(null, e instanceof Error ? e.message : 'Could not restore. Nothing was changed.');
+      say(null, shownBackupError(e, 'Could not restore. Nothing was changed.', 'restore'));
     }
   };
 
@@ -311,7 +312,7 @@ function DriveBackup() {
       say('Done. This phone is back to how it was before the restore.');
     } catch (e) {
       warn();
-      say(null, e instanceof Error ? e.message : 'Could not undo. Nothing was changed.');
+      say(null, shownBackupError(e, 'Could not undo. Nothing was changed.', 'undo restore'));
     }
   };
 
