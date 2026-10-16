@@ -1101,7 +1101,7 @@ part_dnd() {
       status=1
       return 1
     fi
-    if gate_flow "dnd-$ring" gate-rest.yaml -e REST="Rest 0:30" -e RING="$ring"; then
+    if gate_flow "dnd_$ring" gate-rest.yaml -e REST="Rest 0:30" -e RING="$ring"; then
       t=$(now_ms)
       gate_dump "dnd-$ring-during.txt"
       adb shell input keyevent KEYCODE_SLEEP
@@ -1135,7 +1135,7 @@ part_dnd() {
 # left asleep past the alert's 2-minute timeout (OVER_TIMEOUT_MS): it goes, the live card is back.
 part_longrest() {
   local t1 t2 c1 c2
-  gate_flow longrest-1 gate-rest.yaml -e REST="Rest 2:00" -e RING=off || return 1
+  gate_flow longrest_1 gate-rest.yaml -e REST="Rest 2:00" -e RING=off || return 1
   t1=$(now_ms)
   gate_dump longrest-1-during.txt
   adb shell input keyevent KEYCODE_SLEEP
@@ -1146,7 +1146,7 @@ part_longrest() {
   python3 "$QA_DIR/notif.py" over-is "$OUT/longrest-1-after.txt" rest-over-sound alarm sound >> "$OUT/timeline.txt" \
     || { status=1; log "LONGREST FAILED: the 2:00 rest's alert (longrest-1-after.txt)"; }
   gate_wake
-  gate_flow longrest-2 gate-rest-again.yaml -e REST="Rest 0:30" || return 1
+  gate_flow longrest_2 gate-rest-again.yaml -e REST="Rest 0:30" || return 1
   t2=$(now_ms)
   gate_dump longrest-2-during.txt
   adb shell input keyevent KEYCODE_SLEEP
@@ -1190,9 +1190,9 @@ part_anim() {
   done
 }
 
-qa_runs dnd && { log "part DND start"; part_dnd; }
-qa_runs longrest && { log "part LONGREST start"; part_longrest; }
-qa_runs anim && { log "part ANIM start"; part_anim; }
+qa_runs dnd && { log "gate part DND begins"; part_dnd; }
+qa_runs longrest && { log "gate part LONGREST begins"; part_longrest; }
+qa_runs anim && { log "gate part ANIM begins"; part_anim; }
 
 # ---------------------------------------------------------------- part W (the "real workout" journey)
 # Audit lesson (13 Oct 2026): two audits missed what the owner found in ONE gym session, because
@@ -1303,7 +1303,7 @@ part_mk() {
   local lpid rc
   # Alone (only=mk), the app has no data yet: the demo first, so Monkey has screens to press.
   if [ -n "$QA_ONLY_LIST" ] && [ -z "$GATE_RAN" ] && ! qa_runs w; then
-    gate_flow mk-seed gate-demo.yaml || true
+    gate_flow mk_seed gate-demo.yaml || true
   fi
   free_maestro
   mkdir -p "$OUT/part-mk"
@@ -1337,6 +1337,9 @@ part_mk() {
     log "MK FAILED: logcat scan: $(grep -E 'finding|CRASH|ANR|ERROR' "$OUT/mk-scan.txt" | head -4 | tr '\n' ' ' | cut -c1-400)"
   fi
   rm -rf "$OUT/mk-scan"
+  # A result file like Maestro's, so the run summary lists MK as passed / failed.
+  printf '<testsuites><testsuite name="mk" tests="1" failures="%s"></testsuite></testsuites>\n' \
+    "$(grep -c 'MK FAILED' "$OUT/timeline.txt")" > "$OUT/part-mk.xml"
   adb exec-out screencap -p > "$OUT/mk-end.png" 2>/dev/null || true
   adb shell svc power stayon false >/dev/null 2>&1 || true
   # Whatever Monkey changed outside the app is put back for the checks after it.
