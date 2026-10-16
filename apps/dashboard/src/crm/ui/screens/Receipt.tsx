@@ -25,10 +25,11 @@ import { navigate } from '../router';
 import { receiptBackTo } from '../../logic/receiptDoc';
 import { inEnglish, tr } from '../../i18n';
 
+// Every ink reads at 4.5:1 or better on the white paper (test/crm/receiptContrast.test.ts).
+// The old faint grey (3.9:1) failed axe on 16 Oct 2026; its text now uses inkSoft.
 const PAPER = {
   ink: '#101014',
   inkSoft: '#4A4F5C',
-  inkFaint: '#7C818E',
   rule: '#D8DBE2',
   ruleStrong: '#9AA0AC',
   void: '#C0392B',
@@ -325,7 +326,7 @@ function Footer({ doc }: { doc: ReceiptDoc }) {
               Balance on this membership as on {formatDay(doc.balanceAsOn)}:
             </span>{' '}
             <strong style={{ fontFamily: MONO }}>{formatINR(doc.balanceP)}</strong>
-            <span style={{ color: PAPER.inkFaint }}> of {formatINR(doc.termTotalP)}</span>
+            <span style={{ color: PAPER.inkSoft }}> of {formatINR(doc.termTotalP)}</span>
           </div>
         )}
 
@@ -342,7 +343,7 @@ function Footer({ doc }: { doc: ReceiptDoc }) {
           flexWrap: 'wrap',
         }}
       >
-        <div style={{ color: PAPER.inkFaint, fontSize: 11, maxWidth: 320 }}>
+        <div style={{ color: PAPER.inkSoft, fontSize: 11, maxWidth: 320 }}>
           Computer-generated receipt. Valid without a signature.
         </div>
         <div style={{ textAlign: 'right', minWidth: 200 }}>
