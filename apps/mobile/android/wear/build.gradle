@@ -78,6 +78,9 @@ dependencies {
   implementation "androidx.wear.compose:compose-foundation:1.4.1"
   implementation "androidx.wear:wear-ongoing:1.0.0"
   implementation "androidx.health:health-services-client:1.1.0"
+  // Health Services returns ListenableFuture (unregisterMeasureCallbackAsync) but ships Guava only
+  // at runtime; the same version on the compile classpath.
+  implementation "com.google.guava:guava:32.0.1-android"
   implementation "com.google.android.gms:play-services-wearable:20.0.1"
 
   testImplementation "junit:junit:4.13.2"

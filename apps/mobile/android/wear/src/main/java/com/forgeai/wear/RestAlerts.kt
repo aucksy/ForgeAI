@@ -161,7 +161,8 @@ object RestAlerts {
       val zero = SystemClock.elapsedRealtime() + (r.endsAt - System.currentTimeMillis())
       val status = Status.Builder()
         .addTemplate("Rest #time#")
-        .addPart("time", Status.TimerPart(zero, true))
+        // A TimerPart counts DOWN to zero (a StopwatchPart counts up).
+        .addPart("time", Status.TimerPart(zero))
         .build()
       OngoingActivity.Builder(ctx, LIVE_ID, b)
         .setStaticIcon(R.drawable.ic_stat_forge)
