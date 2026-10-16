@@ -19,6 +19,7 @@ OWNER = "Device QA (owner phone, api 34)"
 OWNER_EXTRA = "Device QA (owner phone, api 34, + mk)"
 PARTIAL_OWNER = "Device QA (partial a,b, api 34, profile owner)"
 PARTIAL_API = "Device QA (partial whole run, api 36, profile default)"
+JOURNEYS = "Cross-role journeys (owner phone, api 34)"
 
 
 class RunKind(unittest.TestCase):
@@ -49,9 +50,11 @@ class Gate(unittest.TestCase):
         def api(path):
             if "/actions/workflows/" in path and "head_sha=" in path:
                 sha = path.split("head_sha=")[1].split("&")[0]
+                # Each workflow answers with its own runs only.
+                journeys = f"/workflows/{pg.JOURNEY_WORKFLOW}/" in path
                 return {"workflow_runs": [
                     {"id": i, "html_url": f"u{i}", "conclusion": "success", "head_sha": sha, "display_title": t}
-                    for i, t in enumerate(self.runs.get(sha, []), 1)]}
+                    for i, t in enumerate(self.runs.get(sha, []), 1) if pg.journey_run(t) == journeys]}
             if "/commits/" in path:
                 sha = path.rsplit("/", 1)[1]
                 return {"parents": [{"sha": "A"}]} if sha == "B" else {"parents": []}
@@ -76,15 +79,33 @@ class Gate(unittest.TestCase):
     TITLE = {"default": DEFAULT, "owner": OWNER_EXTRA}
 
     def test_every_required_phone_on_the_commit_passes(self):
-        self.runs = {"B": [DEFAULT, OWNER]}
+        self.runs = {"B": [DEFAULT, OWNER, JOURNEYS]}
         self.assertEqual(pg.main(), 0)
 
     def test_the_owner_phone_is_required(self):
         self.assertEqual(pg.PHONES, ("default", "owner"))
 
+    def test_the_journeys_are_required(self):
+        self.assertEqual(pg.REQUIRED, ("default", "owner", "journeys"))
+        self.runs = {"B": [DEFAULT, OWNER]}
+        self.assertEqual(pg.main(), 1)
+        self.assertTrue(any(pg.JOURNEY_WORKFLOW in l for l in pg.lines))
+        self.assertFalse(any("`profile` =" in l for l in pg.lines))
+
+    def test_a_journeys_run_never_counts_as_a_phone(self):
+        self.assertTrue(pg.journey_run(JOURNEYS))
+        self.assertFalse(pg.journey_run(OWNER))
+        self.runs = {"B": [DEFAULT, JOURNEYS]}
+        self.assertEqual(pg.main(), 1)
+        self.assertTrue(any("profile` = owner" in l for l in pg.lines))
+
+    def test_the_journeys_may_be_covered_by_a_paperwork_parent(self):
+        self.runs = {"B": [DEFAULT, OWNER], "A": [JOURNEYS]}
+        self.assertEqual(pg.main(), 0)
+
     def test_a_missing_required_phone_blocks(self):
         for kind in pg.PHONES:
-            others = [self.TITLE[k] for k in pg.PHONES if k != kind]
+            others = [self.TITLE[k] for k in pg.PHONES if k != kind] + [JOURNEYS]
             self.runs = {"B": others}
             pg.lines.clear()
             self.assertEqual(pg.main(), 1, kind)
@@ -95,11 +116,11 @@ class Gate(unittest.TestCase):
         self.assertEqual(pg.main(), 1)
 
     def test_each_phone_may_be_covered_by_a_paperwork_parent(self):
-        self.runs = {"B": [DEFAULT], "A": [OWNER]}
+        self.runs = {"B": [DEFAULT, JOURNEYS], "A": [OWNER]}
         self.assertEqual(pg.main(), 0)
 
     def test_parent_pass_does_not_cover_an_app_change(self):
-        self.runs = {"A": [DEFAULT, OWNER]}
+        self.runs = {"A": [DEFAULT, OWNER, JOURNEYS]}
         self.paper = False
         self.assertEqual(pg.main(), 1)
 

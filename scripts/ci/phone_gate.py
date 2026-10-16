@@ -11,6 +11,10 @@ run on API 34 (qa-device.yml run names, see run_kind):
     miss what sat below the screen's edge ("Device QA (owner phone, api 34 ...)").
 A partial run ("(partial ...)": some parts only, or another Android version) never counts.
 
+UAT work package 6 (17 Oct 2026): the cross-role journeys (qa-journeys.yml: member app + admin app +
+live server, one business story per journey) must have passed too, by the same rules below. They
+joined the gate once two runs in a row were green: 38971884985 and 38975863786 on fb94a13.
+
 Each phone passes when ONE of these is true:
   1. A qa-device.yml run of that kind with conclusion "success" exists for the tagged commit itself.
   2. One passed on a recent first-parent ANCESTOR (up to MAX_WALK commits back),
@@ -42,6 +46,7 @@ API = os.environ.get("GITHUB_API_URL", "https://api.github.com")
 REPO = os.environ.get("GITHUB_REPOSITORY", "")
 TOKEN = os.environ.get("GITHUB_TOKEN", "")
 QA_WORKFLOW = os.environ.get("QA_WORKFLOW", "qa-device.yml")
+JOURNEY_WORKFLOW = os.environ.get("JOURNEY_WORKFLOW", "qa-journeys.yml")
 CI_WORKFLOW = os.environ.get("CI_WORKFLOW", "ci.yml")
 CI_WAIT_SECONDS = int(os.environ.get("CI_WAIT_SECONDS", "1500"))
 
@@ -106,7 +111,14 @@ PHONES = ("default", "owner")
 PHONE_WORDS = {
     "default": "the default emulator (profile default)",
     "owner": "the owner's phone (profile owner: 360 dp, font 1.3)",
+    "journeys": "the cross-role journeys (qa-journeys.yml)",
 }
+# Everything a release needs: both phones, then the cross-role journeys (UAT WP6).
+REQUIRED = PHONES + ("journeys",)
+
+
+def workflow_of(kind):
+    return JOURNEY_WORKFLOW if kind == "journeys" else QA_WORKFLOW
 
 
 def run_kind(title):
@@ -123,10 +135,18 @@ def run_kind(title):
     return "default"
 
 
+def journey_run(title):
+    """PURE. A run of qa-journeys.yml (its run name), or a caller's run of it."""
+    return (title or "").startswith("Cross-role journeys")
+
+
 def green_runs(sha, kind):
-    data = api(f"/repos/{REPO}/actions/workflows/{QA_WORKFLOW}/runs?head_sha={sha}&status=success&per_page=50")
+    data = api(f"/repos/{REPO}/actions/workflows/{workflow_of(kind)}/runs?head_sha={sha}&status=success&per_page=50")
+    def counts(r):
+        t = r.get("display_title")
+        return journey_run(t) if kind == "journeys" else (not journey_run(t) and run_kind(t) == kind)
     return [r for r in data.get("workflow_runs", []) if r.get("conclusion") == "success" and r.get("head_sha") == sha
-            and run_kind(r.get("display_title")) == kind]
+            and counts(r)]
 
 
 def only_paperwork(base, head):
@@ -225,24 +245,31 @@ def main():
     say(f"commit under release: {sha[:12]} ({ref_type} {ref_name})")
 
     covered = {}
-    for kind in PHONES:
+    for kind in REQUIRED:
         found = cover(sha, kind)
         if found:
             covered[kind] = found
-    missing = [k for k in PHONES if k not in covered]
+    missing = [k for k in REQUIRED if k not in covered]
     if not missing:
         if not ci_ok(sha):
             summary(False, "**Blocked.** The phone test passed on both phones, but the build check (typecheck + unit tests) did not pass on this commit.")
             return 1
-        summary(True, "Phone test **passed** on both phones: " + "; ".join(
+        summary(True, "Phone test **passed** on both phones and the cross-role journeys: " + "; ".join(
             f"{PHONE_WORDS[k]}: [run {r['id']}]({r['html_url']}) on `{c[:12]}`" for k, (c, r) in covered.items())
             + ". Build check passed too.")
         return 0
 
-    need = " and ".join(PHONE_WORDS[k] for k in missing)
-    msg = (f"Run the phone test on this commit first, a whole run on API 34 for {need}: Actions > "
-           f"'{QA_WORKFLOW}' > Run workflow on {sha[:12]} (or on the commit before a version-bump-only "
-           f"commit), `only` empty, `profile` = " + " / ".join(missing) + ". Then re-run this release.")
+    phones = [k for k in missing if k in PHONES]
+    parts = []
+    if phones:
+        need = " and ".join(PHONE_WORDS[k] for k in phones)
+        parts.append(f"Run the phone test on this commit first, a whole run on API 34 for {need}: Actions > "
+                     f"'{QA_WORKFLOW}' > Run workflow on {sha[:12]} (or on the commit before a version-bump-only "
+                     f"commit), `only` empty, `profile` = " + " / ".join(phones) + ".")
+    if "journeys" in missing:
+        parts.append(f"Run the cross-role journeys on this commit: Actions > '{JOURNEY_WORKFLOW}' > Run workflow "
+                     f"on {sha[:12]} (or on the commit before a version-bump-only commit).")
+    msg = " ".join(parts) + " Then re-run this release."
     print("::error::" + msg, flush=True)
     lines.append(msg)
     summary(False, "**Blocked.** " + msg)
