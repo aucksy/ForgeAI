@@ -394,7 +394,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           }}
           onUndo={() => {
             const last = ptUndo ? lastPtDay(ptUndo) : null;
-            if (ptUndo && last) void runPt(() => undoPtSession(ptUndo.id, last), 'Last PT session taken back.');
+            if (ptUndo && last) void runPt(() => undoPtSession(ptUndo.id, last), 'Last PT session undone.');
           }}
           onRenew={() => {
             if (!ptRenewFrom) return;

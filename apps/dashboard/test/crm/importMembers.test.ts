@@ -371,7 +371,7 @@ describe('planImport', () => {
   it('a joining date more than a year ahead is a problem; within a year, a warning', () => {
     const p = plan([['Riya', '9876543210', '01/01/2028'], ['Amit', '9876500001', '14/10/2027']]);
     expect(p.rows[0]!.status).toBe('problem');
-    expect(p.rows[0]!.problems).toEqual(['Joining date 1 Jan 2028 is more than a year away — check the year.']);
+    expect(p.rows[0]!.problems).toEqual(['Joining date 1 Jan 2028 is more than a year away. Check the year.']);
     expect(p.rows[1]!.status).toBe('add');
     expect(p.rows[1]!.warnings).toEqual(['Joining date 14 Oct 2027 is in the future.']);
   });
@@ -412,10 +412,10 @@ describe('planImport', () => {
     expect(p.rows.map((r) => r.problems[0])).toEqual([
       'No name.',
       'No mobile number.',
-      'Mobile “12345” is not a valid 10-digit number.',
+      'Mobile “12345” is not a 10-digit number.',
       'Mobile “9.87654E+09” was shortened by Excel. Set that column to Text in Excel and save again.',
       'Joining date “next week” is not a date we can read. Write it like 15/08/2026.',
-      'Joining date 15 Aug 1990 looks like a typo — check the year.',
+      'Joining date 15 Aug 1990 looks wrong. Check the year.',
     ]);
     expect(skipReason(p.rows[0]!)).toBe('No name.');
     // A row is shown by its own name, even when it cannot be added.
@@ -439,9 +439,9 @@ describe('planImport', () => {
     expect(r.status).toBe('add');
     expect(r.draft).toMatchObject({ joinedOn: TODAY, gender: null, dateOfBirth: null });
     expect(r.warnings).toEqual([
-      'No joining date — today is used.',
-      'Birthday “someday” not readable — left blank.',
-      'Gender “xyz” not understood — left blank.',
+      'No joining date. Today’s date is used.',
+      'Birthday “someday” can’t be read. Left blank.',
+      'Gender “xyz” can’t be read. Left blank.',
     ]);
   });
 

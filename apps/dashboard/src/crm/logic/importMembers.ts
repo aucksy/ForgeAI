@@ -816,7 +816,7 @@ export function planImport(
           ? 'No mobile number.'
           : phoneRead.why === 'shortened'
             ? `Mobile “${shown}” was shortened by Excel. Set that column to Text in Excel and save again.`
-            : `Mobile “${shown}” is not a valid 10-digit number.`,
+            : `Mobile “${shown}” is not a 10-digit number.`,
       );
     }
 
@@ -830,39 +830,39 @@ export function planImport(
           `Joining date “${text('joinedOn')}” is not a date we can read. Write it like 15/08/2026.`,
         );
       } else if (d < EARLIEST_DATE) {
-        problems.push(`Joining date ${formatDay(d)} looks like a typo — check the year.`);
+        problems.push(`Joining date ${formatDay(d)} looks wrong. Check the year.`);
       } else if (d > addDays(today, JOIN_AHEAD_MAX_DAYS)) {
         // Nobody joins more than a year ahead: this is a typed year (2062) or digits misread.
         problems.push(
-          `Joining date ${formatDay(d)} is more than a year away — check the year.`,
+          `Joining date ${formatDay(d)} is more than a year away. Check the year.`,
         );
       } else {
         joinedOn = d;
         if (d > today) warnings.push(`Joining date ${formatDay(d)} is in the future.`);
       }
     } else if (map.joinedOn !== null) {
-      warnings.push('No joining date — today is used.');
+      warnings.push('No joining date. Today’s date is used.');
     }
 
     // Date of birth: optional, so a bad one is left out (and said), never a reason to skip someone.
     let dateOfBirth = '';
     if (text('dateOfBirth')) {
       const d = parseSheetDate(cellAt(row, map.dateOfBirth), today, dobDayFirst, true);
-      if (!d) warnings.push(`Birthday “${text('dateOfBirth')}” not readable — left blank.`);
-      else if (d > today) warnings.push(`Birthday ${formatDay(d)} is in the future — left blank.`);
+      if (!d) warnings.push(`Birthday “${text('dateOfBirth')}” can’t be read. Left blank.`);
+      else if (d > today) warnings.push(`Birthday ${formatDay(d)} is in the future. Left blank.`);
       else dateOfBirth = d;
     }
 
     // Gender
     let gender = '';
     const g = parseGender(cellAt(row, map.gender));
-    if (g === 'unknown') warnings.push(`Gender “${text('gender')}” not understood — left blank.`);
+    if (g === 'unknown') warnings.push(`Gender “${text('gender')}” can’t be read. Left blank.`);
     else if (g) gender = g;
 
     // Email
     let email = text('email');
     if (email && !EMAIL_RE.test(email)) {
-      warnings.push(`Email “${email}” doesn’t look right — left blank.`);
+      warnings.push(`Email “${email}” doesn’t look right. Left blank.`);
       email = '';
     }
 
@@ -881,7 +881,7 @@ export function planImport(
     for (const f of ['total', 'amount', 'due'] as const) {
       if (text(f) && money(f) === null) {
         warnings.push(
-          `${fieldLabel(f)} “${text(f)}” is not an amount we can read — left out.`,
+          `${fieldLabel(f)} “${text(f)}” is not an amount we can read. Left out.`,
         );
       }
     }
@@ -890,7 +890,7 @@ export function planImport(
     // A payment date the receipt can carry: readable, not before records began, not in the future.
     let paidOn = text('paidOn') ? parseSheetDate(cellAt(row, map.paidOn), today, paidDayFirst) : null;
     if (text('paidOn') && (!paidOn || paidOn < EARLIEST_DATE || paidOn > today)) {
-      warnings.push(`Payment date “${text('paidOn')}” not usable — the receipt is dated the plan's start.`);
+      warnings.push(`Payment date “${text('paidOn')}” can’t be read. The receipt uses the plan’s start date.`);
       paidOn = null;
     }
     const term = termFromRow({
@@ -906,7 +906,7 @@ export function planImport(
     // No joining-date column: the plan's start is a better joining date than today.
     if (map.joinedOn === null && term && term.startsOn >= EARLIEST_DATE && term.startsOn <= today) joinedOn = term.startsOn;
     if (text('expiry') && !endsOn) {
-      warnings.push(`Valid till “${text('expiry')}” not readable — no plan added.`);
+      warnings.push(`Valid till “${text('expiry')}” can’t be read. No plan added.`);
     }
     // Admin audit C7-24 (16 Oct 2026): a plan with money on it that cannot be dated was dropped
     // without a word ("Will be added"), and its balance was recorded nowhere.
@@ -915,15 +915,15 @@ export function planImport(
       const name = text('plan') || 'The plan';
       if (startsOn && endsOn && startsOn > endsOn) {
         warnings.push(
-          `Plan not added: its end date is before its start (${formatDay(startsOn)} → ${formatDay(endsOn)}). The fees are kept in the notes.`,
+          `Plan not added. Its end date is before its start (${formatDay(startsOn)} → ${formatDay(endsOn)}). The fees are kept in the notes.`,
         );
       } else if (!endsOn && !text('expiry')) {
         warnings.push(
-          `Plan “${name}” not added: there is no end date, and its name doesn't say how long it runs. The fees are kept in the notes.`,
+          `Plan “${name}” not added. There is no end date, and the plan name doesn’t say how long it is. The fees are kept in the notes.`,
         );
       } else if (endsOn) {
         warnings.push(
-          `Plan “${name}” not added: there is no start date. The fees are kept in the notes.`,
+          `Plan “${name}” not added. There is no start date. The fees are kept in the notes.`,
         );
       }
     }
@@ -979,12 +979,12 @@ export function planImport(
       // matches too. Two people on one family mobile must never share plans and money.
       const sameName = samePersonName(earlier.name, draft.fullName);
       if (!sameName) {
-        warnings.push(`Row ${earlier.row} has this mobile with another name — this row is skipped.`);
+        warnings.push(`Row ${earlier.row} has this mobile with another name. This row is skipped.`);
       } else if (term && map.paidOn === null && earlier.cells === cells.join('\u0001')) {
         // Admin audit C7-20 (16 Oct 2026): with no payment date, two identical rows are counted as
         // two equal payments (instalments). Said on screen, so a copied row is deleted, not paid twice.
         warnings.push(
-          `Exactly the same as row ${earlier.row}: counted as a second payment. If it is a copy, delete one row in Excel and import again.`,
+          `Exactly the same as row ${earlier.row}, so it counts as a second payment. If it is a copy, delete one row in Excel and import again.`,
         );
       }
       out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier.row, problems, warnings, term: sameName ? term : null });
@@ -999,7 +999,7 @@ export function planImport(
       rowTerm = null;
       if (term) {
         warnings.push(
-          `${existing.fullName} is already in the gym on this mobile. The name is different, so this row's plan and fees are not added.`,
+          `${existing.fullName} is already in the gym with this mobile. The name is different, so this row’s plan and fees are not added.`,
         );
       }
     }
@@ -1079,7 +1079,7 @@ export function rowVerdict(row: ImportRow): string {
   if (row.sameAsRow !== null) {
     // 16 Oct 2026: a payments list repeats the member; the row's plan and payment still count.
     if (row.term) {
-      return `Same member as row ${row.sameAsRow} — this plan and payment are added to them`;
+      return `Same member as row ${row.sameAsRow}. This plan and payment are added to them`;
     }
     return `Same mobile as row ${row.sameAsRow} — skipped`;
   }

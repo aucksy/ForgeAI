@@ -125,7 +125,7 @@ export function ImportMembersScreen() {
     setError(null);
     setResult(null);
     if (f.size > MAX_FILE_BYTES) {
-      return fail('That file is over 5 MB — too big for a member list. Pick the Excel or CSV file with your members.');
+      return fail('That file is over 5 MB. It is too big for a member list. Pick the Excel or CSV file with your members.');
     }
     setStage('reading');
     // A big .xlsx takes seconds to read and the page cannot draw meanwhile: show "Reading the file…" first.
@@ -142,7 +142,7 @@ export function ImportMembersScreen() {
     }
     const sheets = usableSheets(all);
     if (sheets.length === 0) {
-      return fail('That file has no member rows — it needs a row of column names and one row per member.');
+      return fail('That file has no member rows. It needs one row of column names, then one row per member.');
     }
     // Checking every row comes next (the list below): let the page draw once more first.
     await letThePagePaint();
@@ -202,7 +202,7 @@ export function ImportMembersScreen() {
     for (const row of outcome.duplicates) {
       skipped.push({ row, reason: 'Already a member.' });
     }
-    const notSavedReason = 'Not saved — saving stopped (no internet?). Import this file again: members already added are skipped.';
+    const notSavedReason = 'Not saved. Saving stopped, maybe because the internet went off. Import this file again. Members already added are skipped.';
     for (const row of outcome.notSaved) skipped.push({ row, reason: notSavedReason });
     if (outcome.stopped) console.warn('[ForgeErr] import members: saving stopped', outcome.stopped);
 
@@ -216,7 +216,7 @@ export function ImportMembersScreen() {
         try {
           const patch = row.existing && row.draft ? fillBlanksPatch(row.existing, row.draft) : {};
           if (!row.existing || Object.keys(patch).length === 0) {
-            skipped.push({ row, reason: 'Already a member — nothing new to fill in.' });
+            skipped.push({ row, reason: 'Already a member. Nothing new to fill in.' });
           } else {
             await updateMember(row.existing.id, patch);
             updated += 1;
@@ -306,7 +306,7 @@ export function ImportMembersScreen() {
               Works with .xlsx, old .xls and .csv, and files with several sheets. Dates like 15/08/2026 are fine.
             </li>
             <li>
-              Nothing is saved until you check the list and press Add.
+              Nothing is saved until you check the list and tap Add.
             </li>
           </ol>
           {stage === 'reading' && (
@@ -330,7 +330,7 @@ export function ImportMembersScreen() {
           <Card style={{ marginBottom: space.lg }}>
             <SectionTitle>Which column is which</SectionTitle>
             <p style={muted}>
-              {`${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (it looks most like a member list)' : ''}` : ''}. We guessed from the column names — change any that are wrong.`}
+              {`${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (it looks most like a member list)' : ''}` : ''}. We guessed from the column names. Change any that are wrong.`}
             </p>
             {file.sheets.length > 1 && (
               <SelectField
@@ -457,29 +457,29 @@ export function ImportMembersScreen() {
           {result.termsError && (
             <div style={{ marginTop: space.md }}>
               <ErrorBanner>
-                {`Members are saved, but not all their plans and payments: ${result.termsError} Use "Undo this import" below, then import the same file again, so every payment comes in once.`}
+                {`Members are saved, but not all their plans and payments. ${result.termsError} Tap “Undo this import” below. Then import the same file again, so every payment comes in only once.`}
               </ErrorBanner>
             </div>
           )}
           {result.termsForStaff && (
             <p style={{ ...muted, marginTop: space.sm }}>
-              Plans and payments in this file are added by the owner: ask them to import the same file (members already added are skipped).
+              Only the owner can add the plans and payments in this file. Ask the owner to import the same file. Members already added are skipped.
             </p>
           )}
           {result.stopped && (
             <div style={{ marginTop: space.md }}>
               <ErrorBanner>
-                {`Saving stopped part-way: ${result.stopped} `}
+                {`Saving stopped halfway: ${result.stopped} `}
                 {result.added > 0
-                  ? `${result.added} members were saved (up to row ${result.lastSavedRow}); the rest may not have been. `
+                  ? `${result.added} members were saved (up to row ${result.lastSavedRow}). The rest may not be saved. `
                   : 'No new members were saved. '}
-                Import the same file again when the internet is back — members already added are skipped, so nobody is added twice.
+                When the internet is back, import the same file again. Members already added are skipped, so nobody is added twice.
               </ErrorBanner>
             </div>
           )}
           {result.skipped.length > 0 && (
             <p style={{ ...muted, marginTop: space.sm }}>
-              Download the skipped rows, fix them in Excel (the reason is in the first column) and import that file.
+              Download the skipped rows and fix them in Excel. The reason is in the first column. Then import that file.
             </p>
           )}
           <Row gap={space.sm}>
@@ -544,7 +544,7 @@ function Review({
       </p>
       {leftOut > 0 && (
         <p style={{ ...muted, color: color.warning, marginTop: space.sm }}>
-          {`Only the first ${MAX_IMPORT_ROWS} rows are imported at once; ${leftOut} more were left out. Import them as a second file.`}
+          {`Only the first ${MAX_IMPORT_ROWS} rows can be imported at once. ${leftOut} more rows were left out. Import them as a second file.`}
         </p>
       )}
 
@@ -706,7 +706,7 @@ function TermsLine({ rows, owner }: { rows: readonly ImportRow[]; owner: boolean
       <p style={{ margin: 0, fontSize: 14, color: color.ink }}>
         {owner
           ? `${count} members come with their plan and its dates (${names} plan names)${paid > 0 ? `, and ${formatINR(paid)} already paid as receipts` : ''}. Expiry reminders work for them from day one.`
-          : `${count} members have a plan in this file. The owner adds plans and payments: members are added now, plans when the owner imports the same file.`}
+          : `${count} members have a plan in this file. Only the owner can add plans and payments. Members are added now. Plans are added when the owner imports the same file.`}
       </p>
     </Card>
   );
@@ -733,13 +733,13 @@ function PastImports() {
     try {
       const r = await undoImport(importId);
       setDone(
-        `Import taken back: ${n(r.members, 'member')}, ${n(r.memberships, 'plan')} with dates, ${n(r.payments, 'receipt')} and ${n(r.plans, 'plan name')} removed.${keptWords(r.kept)}`,
+        `Import undone: ${n(r.members, 'member')}, ${n(r.memberships, 'plan')} with dates, ${n(r.payments, 'receipt')} and ${n(r.plans, 'plan name')} removed.${keptWords(r.kept)}`,
       );
       setAsking(null);
     } catch (e) {
       console.warn('[ForgeErr] undo import', e);
       setFailed(
-        'The import was not fully taken back (check the internet). Press Undo again: what is already gone stays gone, the rest goes.',
+        'The import was not fully undone. Check the internet and tap Undo again. What is already removed stays removed.',
       );
     } finally {
       setBusy(false);
@@ -782,7 +782,7 @@ function PastImports() {
               </p>
               <Row gap={space.sm}>
                 <Button tone="danger" disabled={busy} onClick={() => run(imp.importId)}>
-                  {busy ? 'Taking it back…' : 'Yes, undo it'}
+                  {busy ? 'Undoing…' : 'Yes, undo it'}
                 </Button>
                 <Button variant="ghost" disabled={busy} onClick={() => setAsking(null)}>
                   Keep it
@@ -803,7 +803,7 @@ function keptWords(kept: { members: number; memberships: number; plans: number }
   if (kept.memberships > 0) parts.push(`${n(kept.memberships, 'plan')} with dates`);
   if (kept.plans > 0) parts.push(n(kept.plans, 'plan name'));
   if (parts.length === 0) return '';
-  return ` ${parts.join(', ')} stay, with their receipts: the gym used them after the import (a check-in, a payment at the desk, extra days, a PT session).`;
+  return ` ${parts.join(', ')} stay, with their receipts, because they were used after the import (a check-in, a payment at the desk, extra days or a PT session).`;
 }
 
 /** "1 member", "3 members". PURE. */

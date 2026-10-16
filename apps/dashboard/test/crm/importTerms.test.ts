@@ -176,7 +176,7 @@ describe('a payments list: one row per payment (16 Oct 2026)', () => {
     expect(map.paidOn).toBe(7);
     const plan = planImport(rows, 0, map, [], TODAY);
     expect(plan.rows.map((r) => r.status)).toEqual(['add', 'duplicate', 'duplicate', 'duplicate', 'add']);
-    expect(rowVerdict(plan.rows[1]!)).toBe('Same member as row 2 — this plan and payment are added to them');
+    expect(rowVerdict(plan.rows[1]!)).toBe('Same member as row 2. This plan and payment are added to them');
   });
 
   it('one member, a term per period, a receipt per payment with its own date', async () => {
