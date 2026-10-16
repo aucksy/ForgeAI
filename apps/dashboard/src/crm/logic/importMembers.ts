@@ -45,12 +45,13 @@ export type ImportField =
   | 'startDate'
   | 'total'
   | 'amount'
+  | 'paidOn'
   | 'due'
   | 'expiry'
   | 'notes';
 
 export const IMPORT_FIELDS: readonly ImportField[] = [
-  'fullName', 'phone', 'joinedOn', 'gender', 'dateOfBirth', 'email', 'address', 'batch', 'plan', 'startDate', 'total', 'amount', 'due', 'expiry', 'notes',
+  'fullName', 'phone', 'joinedOn', 'gender', 'dateOfBirth', 'email', 'address', 'batch', 'plan', 'startDate', 'total', 'amount', 'paidOn', 'due', 'expiry', 'notes',
 ];
 
 /** Which column (0-based) holds each field; null = not in the file. */
@@ -75,6 +76,7 @@ export function fieldLabel(field: ImportField): string {
     case 'startDate': return tr('Plan start', 'Plan shuru');
     case 'total': return tr('Plan price', 'Plan ki fees');
     case 'amount': return tr('Fees paid', 'Fees di');
+    case 'paidOn': return tr('Payment date', 'Payment ki date');
     case 'due': return tr('Balance due', 'Baaki');
     case 'expiry': return tr('Valid till', 'Valid till');
     case 'notes': return tr('Notes', 'Notes');
@@ -130,6 +132,11 @@ const SYNONYMS: Record<ImportField, readonly string[]> = {
     'amount', 'fees', 'fee', 'fees paid', 'fee paid', 'amount paid', 'paid amount', 'rupees', 'received',
     'amount received', '=payment', 'payment amount', 'joining fees', 'joining fee', 'admission fees', 'admission fee',
     'shulk', '=rs', '=paid', 'jama', 'फीस', 'राशि',
+  ],
+  // 16 Oct 2026: a payments list (one row per payment) dates each receipt.
+  paidOn: [
+    'payment date', 'paid on', 'paid date', 'date of payment', 'payment on', 'receipt date', 'transaction date',
+    'txn date', 'collection date', 'collected on', 'bill date', 'invoice date', 'fees date', 'fee date',
   ],
   due: [
     '=due', 'balance', 'balance due', 'balance amount', 'due amount', 'amount due', 'pending', 'pending amount',
@@ -699,6 +706,7 @@ export function planImport(
   const dobDayFirst = detectDayFirst(colValues(map.dateOfBirth));
   const expiryDayFirst = detectDayFirst(colValues(map.expiry));
   const startDayFirst = detectDayFirst(colValues(map.startDate));
+  const paidDayFirst = detectDayFirst(colValues(map.paidOn));
 
   const batchNames = listBatches(roster).map((b) => b.name);
   const seen = new Map<string, number>();
@@ -802,6 +810,7 @@ export function planImport(
       totalP: money('total'),
       paidP: money('amount'),
       dueP: money('due'),
+      paidOn: text('paidOn') ? parseSheetDate(cellAt(row, map.paidOn), today, paidDayFirst) : null,
     });
     // No joining-date column: the plan's start is a better joining date than today.
     if (map.joinedOn === null && term && term.startsOn >= EARLIEST_DATE && term.startsOn <= today) joinedOn = term.startsOn;
@@ -870,6 +879,13 @@ export function rowVerdict(row: ImportRow): string {
   if (row.status === 'add') return tr('Will be added', 'Jud jayega');
   if (row.status === 'problem') return tr('Problem — will be skipped', 'Gadbad — chhoda jayega');
   if (row.sameAsRow !== null) {
+    // 16 Oct 2026: a payments list repeats the member; the row's plan and payment still count.
+    if (row.term) {
+      return tr(
+        `Same member as row ${row.sameAsRow} — this plan and payment are added to them`,
+        `Row ${row.sameAsRow} wala hi member — yeh plan aur payment unhi mein judega`,
+      );
+    }
     return tr(`Same mobile as row ${row.sameAsRow} — skipped`, `Row ${row.sameAsRow} wala hi mobile — chhoda jayega`);
   }
   const who = row.existing?.fullName ?? '';

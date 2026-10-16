@@ -24,8 +24,10 @@ export interface ImportTerm {
   endsOn: DateISO;
   /** The term's whole price (paise). 0 = the sheet says nothing about money. */
   priceP: Paise;
-  /** Already paid (paise); becomes one receipt dated `startsOn`. 0 = no receipt. */
+  /** Already paid (paise); becomes one receipt dated `paidOn`. 0 = no receipt. */
   paidP: Paise;
+  /** The receipt's date: the sheet's payment date, else the start (16 Oct 2026). */
+  paidOn: DateISO;
   /** The plan's length, for a NEW plan of this name. */
   length: { unit: DurationUnit; count: number };
 }
@@ -69,6 +71,8 @@ export interface TermInput {
   totalP: Paise | null;
   paidP: Paise | null;
   dueP: Paise | null;
+  /** The row's payment date (a payments list), when the sheet has one. */
+  paidOn?: DateISO | null;
 }
 
 /** The membership a row describes, or null when it does not describe one. PURE. */
@@ -95,5 +99,5 @@ export function termFromRow(t: TermInput): ImportTerm | null {
   paidP = Math.round(paidP);
 
   const length = fromName ?? lengthBetween(startsOn, endsOn);
-  return { planName: named || 'Imported plan', startsOn, endsOn, priceP, paidP, length };
+  return { planName: named || 'Imported plan', startsOn, endsOn, priceP, paidP, paidOn: t.paidOn ?? startsOn, length };
 }

@@ -237,7 +237,11 @@ export function ImportMembersScreen() {
     // the gym is skipped, so importing again adds nothing).
     let terms: ImportTermsResult | null = null;
     let termsError: string | null = null;
-    const termRows = [...outcome.added, ...rows.filter((r) => r.existing !== null && r.sameAsRow === null)].filter((r) => r.term && r.draft);
+    // 16 Oct 2026: rows that repeat a member (a payments list) bring their plan and payment too,
+    // after that member's first row (file order).
+    const termRows = [...outcome.added, ...rows.filter((r) => r.existing !== null || r.sameAsRow !== null)]
+      .filter((r) => r.term && r.draft)
+      .sort((a, b) => a.rowNumber - b.rowNumber);
     if (!outcome.stopped && termRows.length > 0 && role === 'owner') {
       try {
         terms = await importTerms(

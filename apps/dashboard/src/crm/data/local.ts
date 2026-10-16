@@ -430,12 +430,44 @@ export class LocalCrmData implements CrmData {
           result.skipped += 1;
           return;
         }
-        // Already here (this file imported before, or typed in by hand): never twice.
-        const same = db.memberships.some(
+        const paidOn = term.paidOn ?? term.startsOn;
+        const same = db.memberships.find(
           (m) => m.memberId === member.id && planKey(m.planName) === planKey(term.planName) && m.startsOn === term.startsOn && m.endsOn === term.endsOn,
         );
         if (same) {
-          result.skipped += 1;
+          // 16 Oct 2026: a payments list repeats a term once per payment. Made by THIS import, each
+          // further row's payment is another receipt (the same amount on the same day once only).
+          // Made by an earlier import or by hand: never twice, as before.
+          const more =
+            same.importId === importId &&
+            term.paidP > 0 &&
+            !db.payments.some((p) => p.membershipId === same.id && p.importId === importId && p.amountP === term.paidP && p.paidOn === paidOn);
+          if (!more) {
+            result.skipped += 1;
+            return;
+          }
+          // The term's price is the largest the sheet gives (a later row may carry the full price).
+          // updatedAt stays: "Undo this import" reads a later save as the gym's own change.
+          if (term.priceP > same.priceP) same.priceP = term.priceP;
+          db.payments.push({
+            id: newId(),
+            gymId: db.gym.gymId,
+            memberId: member.id,
+            membershipId: same.id,
+            amountP: term.paidP,
+            method: 'other',
+            paidOn,
+            receiptNo: nextReceiptNo(db.payments, paidOn),
+            reference: null,
+            note: 'Imported from Excel',
+            voided: false,
+            voidReason: null,
+            collectedBy: null,
+            createdAt: ts + i,
+            gstinAtSale: null,
+            importId,
+          });
+          result.payments += 1;
           return;
         }
         let plan = plans.get(planKey(term.planName));
@@ -488,8 +520,8 @@ export class LocalCrmData implements CrmData {
             membershipId: membership.id,
             amountP: term.paidP,
             method: 'other',
-            paidOn: term.startsOn,
-            receiptNo: nextReceiptNo(db.payments, term.startsOn),
+            paidOn,
+            receiptNo: nextReceiptNo(db.payments, paidOn),
             reference: null,
             note: 'Imported from Excel',
             voided: false,

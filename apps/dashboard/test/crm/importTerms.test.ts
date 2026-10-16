@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/local';
-import { guessColumns, guessFromValues, planImport } from '../../src/crm/logic/importMembers';
+import { guessColumns, guessFromValues, planImport, rowVerdict } from '../../src/crm/logic/importMembers';
 import { lengthBetween, lengthFromPlanName, termFromRow } from '../../src/crm/logic/importTerms';
 
 const TODAY = '2026-10-15';
@@ -141,5 +141,61 @@ describe('saving: memberships and receipts, never twice', () => {
     const snap = await db.load();
     expect(snap.memberships).toHaveLength(1);
     expect(snap.payments).toHaveLength(1);
+  });
+});
+
+describe('a payments list: one row per payment (16 Oct 2026)', () => {
+  const rows = [
+    ['Member Name', 'Mobile No', 'Package', 'Start Date', 'End Date', 'Package Amount', 'Amount Paid', 'Payment Date'],
+    ['Riya Sharma', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4,500', '2,000', '01/08/2026'],
+    ['Riya Sharma', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4,500', '2,500', '15/08/2026'],
+    ['Riya Sharma', '9876543210', 'Quarterly', '01/11/2026', '31/01/2027', '4,500', '4,500', '01/11/2026'],
+    // The same payment twice in the file (copy-paste): one receipt.
+    ['Riya Sharma', '9876543210', 'Quarterly', '01/11/2026', '31/01/2027', '4,500', '4,500', '01/11/2026'],
+    ['Asha Verma', '9829012345', 'Monthly', '05/10/2026', '04/11/2026', '1,500', '1,500', '05/10/2026'],
+  ];
+
+  async function run(db: LocalCrmData, importId: string) {
+    const map = mapOf(rows);
+    const plan = planImport(rows, 0, map, (await db.load()).members, TODAY);
+    const adds = plan.rows.filter((r) => r.status === 'add');
+    if (adds.length) await db.createMembers(adds.map((r) => ({ ...r.draft!, importId })) as never);
+    const snap = await db.load();
+    // As the screen does: every row with a term, in file order (repeats included).
+    const items = plan.rows
+      .filter((r) => r.term && r.draft && (r.status === 'add' || r.existing || r.sameAsRow !== null))
+      .sort((a, b) => a.rowNumber - b.rowNumber)
+      .map((r) => ({ phone: r.draft!.phone, term: r.term! }));
+    expect(snap.members.length).toBeGreaterThan(0);
+    return { plan, result: await db.importTerms(items, importId) };
+  }
+
+  it('finds the payment date column and says what a repeated row does', () => {
+    const map = mapOf(rows);
+    expect(map.paidOn).toBe(7);
+    const plan = planImport(rows, 0, map, [], TODAY);
+    expect(plan.rows.map((r) => r.status)).toEqual(['add', 'duplicate', 'duplicate', 'duplicate', 'add']);
+    expect(rowVerdict(plan.rows[1]!)).toBe('Same member as row 2 — this plan and payment are added to them');
+  });
+
+  it('one member, a term per period, a receipt per payment with its own date', async () => {
+    const db = new LocalCrmData({ store: memoryStore(), now: (() => { let c = 1000; return () => (c += 1); })(), seed: () => emptySnapshot(0, 'Test Gym') });
+    const { result } = await run(db, 'import-1');
+    expect(result).toEqual({ plans: 2, memberships: 3, payments: 4, skipped: 1 });
+    const snap = await db.load();
+    const riya = snap.members.find((m) => m.fullName === 'Riya Sharma')!;
+    expect(snap.memberships.filter((m) => m.memberId === riya.id).map((m) => [m.startsOn, m.endsOn, m.priceP])).toEqual([
+      ['2026-08-01', '2026-10-31', 450000],
+      ['2026-11-01', '2027-01-31', 450000],
+    ]);
+    expect(snap.payments.filter((p) => p.memberId === riya.id).map((p) => [p.paidOn, p.amountP])).toEqual([
+      ['2026-08-01', 200000],
+      ['2026-08-15', 250000],
+      ['2026-11-01', 450000],
+    ]);
+    // Same file again: nothing new.
+    const again = await run(db, 'import-2');
+    expect(again.result).toMatchObject({ memberships: 0, payments: 0 });
+    expect((await db.load()).payments).toHaveLength(4);
   });
 });
