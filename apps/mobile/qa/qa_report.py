@@ -29,6 +29,16 @@ ANR = re.compile(r"ANR in " + re.escape(PKG) + r"\b")
 # Error-level lines from React Native's JS console (console.error, fatal JS errors), its native
 # bridge, or the app's own QA tag (if a QA build ever logs swallowed errors under "ForgeQA").
 JS_ERROR = re.compile(r"\s[EF][/ ]\s*(ReactNativeJS|ReactNative|unknown:ReactNative|ForgeQA)\s*[(:]")
+# Audit v2 (16 Oct 2026, part MK, run 38887471485): two lines React Native's NATIVE side logs at
+# error level about its own bookkeeping, which Monkey's synthetic input sets off (a MOVE/UP sent to
+# a view that never got the DOWN; a frame callback removed twice). No JavaScript ran, nothing
+# failed for the member, and a real finger always starts with DOWN. Listed as warnings, not
+# failures. Only these exact messages, only under React Native's native tags.
+RN_NATIVE_NOISE = re.compile(
+    r"\s[EF][/ ]\s*(ReactNative|unknown:ReactNative)\s*[(:].*("
+    r"Unexpected state: received touch event but didn't get starting ACTION_DOWN for this gesture before"
+    r"|Tried to remove non-existent frame callback)"
+)
 JS_ANY = re.compile(r"\s[VDIWEF][/ ]\s*ReactNativeJS\s*[(:]")
 UNHANDLED = re.compile(r"(?i)unhandled (promise )?rejection|unhandled (js )?exception")
 JS_WARN = re.compile(r"\sW[/ ]\s*(ReactNativeJS|ForgeQA)\s*[(:]")
@@ -82,6 +92,8 @@ def scan(out):
                 findings.append(f"NATIVE CRASH ({where}): {l.strip()}")
             elif ANR.search(l):
                 findings.append(f"ANR ({where}): {l.strip()}")
+            elif RN_NATIVE_NOISE.search(l):
+                warns.append(f"React Native bookkeeping, not an app error ({where}): {l.strip()}")
             elif JS_ERROR.search(l):
                 findings.append(f"JS ERROR ({where}): {l.strip()}")
             elif SWALLOWED.search(l) or JS_SWALLOWED.search(l):
