@@ -14,7 +14,7 @@ const member = (fullName: string, phone: string, importId?: string) => ({
   joinedOn: '2026-08-01', photoUri: null, notes: null, archived: false, batch: null, ...(importId ? { importId } : {}),
 });
 const term = (planName: string, startsOn: string, endsOn: string, priceP: number, paidP: number) => ({
-  planName, startsOn, endsOn, priceP, paidP, length: lengthBetween(startsOn, endsOn),
+  planName, startsOn, endsOn, priceP, paidP, paidOn: startsOn, length: lengthBetween(startsOn, endsOn),
 });
 
 async function gym() {

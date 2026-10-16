@@ -107,6 +107,7 @@ describe('saving: memberships and receipts, never twice', () => {
     endsOn,
     priceP,
     paidP,
+    paidOn: startsOn,
     length: lengthBetween(startsOn, endsOn),
   });
 
