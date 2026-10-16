@@ -385,12 +385,33 @@ export async function getTargetsForCards(
   if (items.length === 0) return out;
   const scope = await historyScopeOrAll(planDayId, opts.previousFrom);
   const prefs = targetPrefs({ jump: opts.jump, repRange: opts.repRange, gym: opts.gym });
-  const [targets, rir] = await Promise.all([targetsFor(items, true, scope, prefs), effortRir(planDayId, opts)]);
+  const [targets, rir] = await Promise.all([routineFirstTargets(items, true, scope, planDayId, prefs), effortRir(planDayId, opts)]);
   targets.forEach((t, i) => {
     if (t.free) return; // no line for distance work and timed cardio
     out.set(keys[i], opts.easy ? toEasyTarget(t, EASY_REASON, easySets) : withEffort(t, rir, rir != null ? effortReason(rir) : ''));
   });
   return out;
+}
+
+/**
+ * 16 Oct 2026 audit (C3-3): under "Any workout" (no scope) a routine's Target reads THAT
+ * routine's own last time first, and every workout only for a lift the routine has never done.
+ * With heavy and light days of the same lift, the heavy day took the light day's Target
+ * ("82.5 kg · aim for 3" after a 100 kg x 5 heavy day). PREVIOUS and notes still read every
+ * workout. "Same routine" / "Same folder" scopes are used as they are.
+ */
+async function routineFirstTargets(
+  items: TargetItem[],
+  includeToday: boolean,
+  scope: HistoryScope | null,
+  planDayId: string,
+  prefs: TargetPrefs = targetPrefs(),
+): Promise<ProgressionTarget[]> {
+  if (scope != null) return targetsFor(items, includeToday, scope, prefs);
+  const own = await historyScopeOrAll(planDayId, 'routine');
+  if (own == null) return targetsFor(items, includeToday, null, prefs);
+  const [mine, any] = await Promise.all([targetsFor(items, includeToday, own, prefs), targetsFor(items, includeToday, null, prefs)]);
+  return mine.map((t, i) => (t.action === 'start' ? any[i] : t));
 }
 
 /**
@@ -451,6 +472,6 @@ export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout,
   if (!day) return { ...tw, targets: [] };
   // "Previous values": the Up next routine's scope, as the workout it starts will read.
   const scope = await historyScopeOrAll(day.id);
-  const [targets, now] = await Promise.all([targetsFor(day.exercises.map((pe) => ({ pe })), false, scope), getPlanNow().catch(() => null)]);
+  const [targets, now] = await Promise.all([routineFirstTargets(day.exercises.map((pe) => ({ pe })), false, scope, day.id), getPlanNow().catch(() => null)]);
   return { ...tw, targets: now?.easy ? targets.map((t) => toEasyTarget(t, EASY_REASON, easySets)) : targets };
 }

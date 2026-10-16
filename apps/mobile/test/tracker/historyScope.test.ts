@@ -91,7 +91,9 @@ describe('the workout’s routine and the setting', () => {
 
   it('three choices, each with one plain line', () => {
     expect(PREVIOUS_FROM_CHOICES.map((c) => c.label)).toEqual(['Any workout', 'Same routine', 'Same folder']);
-    for (const c of PREVIOUS_FROM_CHOICES) expect(c.line).toMatch(/^Previous, Target and notes come from the last time you did/);
+    for (const c of PREVIOUS_FROM_CHOICES) expect(c.line).toMatch(/^Previous(, Target)? and notes come from the last time you did/);
+    // C3-3: under Any workout a routine's Target reads that routine first.
+    expect(PREVIOUS_FROM_CHOICES[0].line).toContain('Target comes from this routine first.');
     expect(PREVIOUS_FROM_CHOICES[2].line).toContain('Handy when each folder is a gym.');
   });
 });

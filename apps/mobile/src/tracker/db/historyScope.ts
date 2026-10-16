@@ -178,7 +178,12 @@ export function historyScopeOrAll(routineId: string | null | undefined, setting?
 
 /** Settings → Workouts → Previous values: each choice and the line under it. */
 export const PREVIOUS_FROM_CHOICES: readonly { value: PreviousFrom; label: string; line: string }[] = [
-  { value: 'any', label: 'Any workout', line: 'Previous, Target and notes come from the last time you did the exercise. Applies from your next workout.' },
+  {
+    value: 'any',
+    label: 'Any workout',
+    // C3-3: a routine's Target reads that routine first (heavy and light days keep their own).
+    line: 'Previous and notes come from the last time you did the exercise. Target comes from this routine first. Applies from your next workout.',
+  },
   { value: 'routine', label: 'Same routine', line: 'Previous, Target and notes come from the last time you did it in this routine. Applies from your next workout.' },
   {
     value: 'folder',

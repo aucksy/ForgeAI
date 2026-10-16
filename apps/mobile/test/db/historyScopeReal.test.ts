@@ -3,7 +3,7 @@
  * training plus two gyms of the owner's kind:
  *   folder Gym A: routines A1 "Gym A Push 1" and A2 "Gym A Push 2"; folder Gym B: routine B1.
  *   Bench logged 100×5 from A1, then 80×6 from A2, then 60×8 from B1 (newest).
- *  - Any workout: everyone reads 60×8 (today's behaviour);
+ *  - Any workout: everyone reads 60×8 (today's behaviour); the Target its own routine first (C3-3);
  *  - Same folder: A1 and A2 read 80×6, B1 reads 60×8;
  *  - Same routine: A1 100×5, A2 80×6, B1 60×8;
  * for PREVIOUS, the Target's history (and the Target itself), and the carried note. An empty
@@ -116,10 +116,12 @@ const sees = (w: number, r: number, from: 'A1' | 'A2' | 'B1') => ({
 });
 
 describe('the three settings, on PREVIOUS, the Target and the carried note', () => {
-  it('Any workout: every routine reads the newest Bench (60×8 from Gym B)', async () => {
+  it('Any workout: every routine reads the newest Bench (60×8 from Gym B); the Target its own routine first', async () => {
     await setting('any');
-    expect(await readsFor(A1)).toEqual(sees(60, 8, 'B1'));
-    expect(await readsFor(A2)).toEqual(sees(60, 8, 'B1'));
+    // 16 Oct 2026 audit (C3-3): a routine's Target reads that routine's own last time first (a
+    // heavy day never takes the light day's Target), and every workout when the routine has none.
+    expect(await readsFor(A1)).toEqual({ ...sees(60, 8, 'B1'), target: '100×5' });
+    expect(await readsFor(A2)).toEqual({ ...sees(60, 8, 'B1'), target: '80×6' });
     expect(await readsFor(B1)).toEqual(sees(60, 8, 'B1'));
   });
 
@@ -208,15 +210,18 @@ describe('the live workout', () => {
   it('a remembered Target never crosses a setting change (and the screen’s query changes with it)', async () => {
     const { getTargetsForCards } = await import('@/tracker/services/coachTargets');
     const last = async () => (await getTargetsForCards(A1, [{ key: 'c', exerciseId: bench }])).get('c')!.last!.weightKg;
+    // C3-3: under Any workout a routine's Target reads its own routine first (A1: 100).
     await setting('any');
-    expect(await last()).toBe(60);
-    expect(await last()).toBe(60); // from memory
+    expect(await last()).toBe(100);
+    expect(await last()).toBe(100); // from memory
+    await setting('folder');
+    expect(await last()).toBe(80);
     await setting('routine');
     expect(await last()).toBe(100);
     await setting('folder');
     expect(await last()).toBe(80);
     await setting('any');
-    expect(await last()).toBe(60);
+    expect(await last()).toBe(100);
     const { querySignature, targetQuery } = await import('@/tracker/store/targetStore');
     const sig = (previousFrom: PreviousFrom) => querySignature(targetQuery(A1, [], { easy: false, effort: false, previousFrom }));
     expect(new Set([sig('any'), sig('routine'), sig('folder')]).size).toBe(3);
