@@ -131,19 +131,10 @@ appId: com.forgeai.app
 - assertNotVisible: "${output.exRe}\\. Open its history and how-to"
 - assertNotVisible: '.* complete\. Tap to undo'
 - takeScreenshot: ur-04-discarded-started-new
-# Throw the new one away (the live screen's own link and question).
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "^Discard workout$"
-- tapOn: "^Discard workout$"
-- extendedWaitUntil:
-    visible: 'Discard workout\?'
-    timeout: 10000
-- tapOn: "^Discard$"
-- extendedWaitUntil:
-    visible: "Start empty workout"
-    timeout: 30000
+# The live screen's own "Discard workout" link sits below six exercise cards (a scroll did not reach
+# it in 15 s, run 38958884137): minimised, it is thrown away from the Workout tab's link and question.
+- tapOn: "Minimise workout. It keeps running."
+- runFlow: sub-workout-fresh.yaml
 # ---------------------------------------------------------------- 5. untick keeps; remove + Undo
 - runFlow:
     file: sub-find.yaml

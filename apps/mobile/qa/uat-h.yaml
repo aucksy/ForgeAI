@@ -321,10 +321,14 @@ appId: com.forgeai.app
 - assertVisible: "This removes the workout and its sets."
 - takeScreenshot: uh-08-delete-question
 - tapOn: "^Delete$"
-# Back on Calendar: the day has no workout any more, its month one fewer.
+# Back on Calendar, where it was (the day's month on screen; "Log a past workout" is above the edge):
+# the day has no workout any more, its month one fewer.
 - extendedWaitUntil:
-    visible: "Log a past workout"
+    visible: "Search workouts"
     timeout: 20000
+- extendedWaitUntil:
+    notVisible: 'Delete this workout\?'
+    timeout: 10000
 - assertNotVisible: "${output.dayFull}, 1 workout"
 - runFlow:
     file: sub-find.yaml
