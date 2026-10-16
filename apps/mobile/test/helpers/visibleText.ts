@@ -96,6 +96,27 @@ function shownWordBranch(n: ts.Node): boolean {
   return false;
 }
 
+/**
+ * C9-4: a one-word literal handed to a helper that puts it on screen: `countWord(n, 'session')`
+ * (the word and its plural), `tell('…')`, `say('…')`. It looks like a code token but is shown.
+ */
+const SHOWN_ARGS: Readonly<Record<string, readonly number[] | 'all'>> = {
+  countWord: [1, 3],
+  tell: 'all',
+  say: 'all',
+};
+
+function shownByCall(n: ts.Node): boolean {
+  const p = n.parent;
+  if (!p || !ts.isCallExpression(p)) return false;
+  const callee = p.expression;
+  const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : '';
+  const which = SHOWN_ARGS[name];
+  if (!which) return false;
+  const at = p.arguments.indexOf(n as ts.Expression);
+  return at >= 0 && (which === 'all' || which.includes(at));
+}
+
 function skipLiteral(n: ts.Node): boolean {
   const p = n.parent;
   if (!p) return false;
@@ -124,7 +145,7 @@ export function visibleTextOf(path: string, root: string): VisibleText[] {
       const t = n.getText(sf).replace(/\s+/g, ' ').trim();
       if (t) push(n, t);
     } else if (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) {
-      if (shownWordBranch(n)) out.push({ file, line: sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1, text: n.text });
+      if (shownWordBranch(n) || shownByCall(n)) out.push({ file, line: sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1, text: n.text });
       else if (!skipLiteral(n)) push(n, n.text);
     } else if (ts.isTemplateExpression(n)) {
       // The fixed words of a template, with each ${…} as "…".
@@ -134,6 +155,82 @@ export function visibleTextOf(path: string, root: string): VisibleText[] {
     ts.forEachChild(n, visit);
   };
   visit(sf);
+  return out;
+}
+
+/**
+ * C9-3: the words in the Android code a member reads: notification titles, buttons and channel
+ * names, the widget and the whole watch app (all hard-coded in Kotlin). Every string literal
+ * counts EXCEPT the ones a member never sees: log lines (`Log.w(TAG, "…")`), comments,
+ * `@Suppress(…)`, regexes, date patterns, exception text, JSON keys read or written
+ * (`optString("title", …)`, `mapOf("kind" to …)`), plus anything `isCodeToken` calls code (keys,
+ * actions, tags). Same rule as the TypeScript reader: wide on purpose.
+ */
+const KT_HIDDEN_LINE =
+  /\bLog\.[diwev]\(|\bprintln\(|@Suppress\(|\bRegex\(|SimpleDateFormat\(|Exception\(|\b(LOG_)?TAG\s*=|\bName\(|sendEvent\(|\bopt(String|Int|Long|Double|Boolean)\(|\bput(String|Extra|Int|Long)\(|\bmapOf\(/;
+
+export function kotlinTextOf(path: string, root: string): VisibleText[] {
+  const file = relative(root, path).replace(/\\/g, '/');
+  const out: VisibleText[] = [];
+  let inBlock = false;
+  readFileSync(path, 'utf8')
+    .split(/\r?\n/)
+    .forEach((raw, i) => {
+      let line = raw;
+      if (inBlock) {
+        const end = line.indexOf('*/');
+        if (end < 0) return;
+        line = line.slice(end + 2);
+        inBlock = false;
+      }
+      // Comments: KDoc quotes notification text in "…", which is not itself shown.
+      line = line.replace(/\/\*.*?\*\//g, '');
+      const open = line.indexOf('/*');
+      if (open >= 0) {
+        line = line.slice(0, open);
+        inBlock = true;
+      }
+      const lineComment = line.search(/(^|[^:"])\/\//);
+      if (lineComment >= 0) line = line.slice(0, lineComment + 1);
+      if (KT_HIDDEN_LINE.test(line)) return;
+      for (const m of line.matchAll(/"((?:[^"\\]|\\.)*)"/g)) {
+        const text = m[1].replace(/\$\{[^}]*\}|\$[A-Za-z_][A-Za-z0-9_.]*/g, '…');
+        if (!isCodeToken(text)) out.push({ file, line: i + 1, text });
+      }
+    });
+  return out;
+}
+
+/** C9-3: `<string>` values in an Android strings.xml (not the ones marked translatable="false"). */
+export function stringsXmlTextOf(path: string, root: string): VisibleText[] {
+  const file = relative(root, path).replace(/\\/g, '/');
+  const out: VisibleText[] = [];
+  readFileSync(path, 'utf8')
+    .split(/\r?\n/)
+    .forEach((line, i) => {
+      for (const m of line.matchAll(/<string\b([^>]*)>([^<]*)<\/string>/g)) {
+        if (/translatable="false"/.test(m[1])) continue;
+        const text = m[2].replace(/\\'/g, "'");
+        if (!isCodeToken(text)) out.push({ file, line: i + 1, text });
+      }
+    });
+  return out;
+}
+
+/**
+ * C9-3: the words in app.json a member reads: the app's name and the permission questions
+ * Android asks. Every string value with a space in it, plus `name`.
+ */
+export function appJsonTextOf(path: string, root: string): VisibleText[] {
+  const file = relative(root, path).replace(/\\/g, '/');
+  const out: VisibleText[] = [];
+  const walk = (v: unknown, key: string): void => {
+    if (typeof v === 'string') {
+      if (key === 'name' || /\s/.test(v.trim())) out.push({ file, line: 0, text: v });
+    } else if (Array.isArray(v)) v.forEach((x) => walk(x, key));
+    else if (v && typeof v === 'object') for (const [k, x] of Object.entries(v)) walk(x, k);
+  };
+  walk(JSON.parse(readFileSync(path, 'utf8')), '');
   return out;
 }
 

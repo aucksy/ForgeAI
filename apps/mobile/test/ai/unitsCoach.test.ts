@@ -41,11 +41,11 @@ describe('coach under lb, miles', () => {
       skipped: [],
     } as unknown as Logged;
     expect(buildWorkoutLoggedCard(logged)?.text).toBe(
-      'Logged 0 exercises, 0 sets — 2,205 lb volume. New PR: Bench Press 135 lb (weight).',
+      'Logged 0 exercises, 0 sets — 2,205 lb lifted. New record: Bench Press 135 lb (weight).',
     );
     setDisplayUnits('metric');
     expect(buildWorkoutLoggedCard(logged)?.text).toBe(
-      'Logged 0 exercises, 0 sets — 1,000 kg volume. New PR: Bench Press 61.2kg (weight).',
+      'Logged 0 exercises, 0 sets — 1,000 kg lifted. New record: Bench Press 61.2kg (weight).',
     );
   });
 

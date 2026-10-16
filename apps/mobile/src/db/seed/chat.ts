@@ -128,8 +128,8 @@ export function generateChat(input: ChatInput): GeneratedChat {
     kind: 'workout_logged',
     text:
       `Logged — ${logSession.planDayName}: ${detail.exercises.length} exercises, ` +
-      `${fmtInt(detail.totalVolumeKg)} kg total volume. ${specOf(lead.key).name} at ` +
-      `${trimNum(leadTop.topW)} kg was the highlight. Solid session.`,
+      `${fmtInt(detail.totalVolumeKg)} kg lifted. ${specOf(lead.key).name} at ` +
+      `${trimNum(leadTop.topW)} kg was the highlight. Solid workout.`,
     payload: detail,
     createdAt: t1 + 70_000,
   });
@@ -159,8 +159,8 @@ export function generateChat(input: ChatInput): GeneratedChat {
       role: 'coach',
       kind: 'pr_list',
       text:
-        `New PR — ${specOf(star.exerciseKey).name} ${star.kind === 'e1rm' ? 'e1RM ' : ''}` +
-        `${trimNum(star.value)} kg. That makes ${monthWeightPrs} weight PRs in the last month. ` +
+        `New record — ${specOf(star.exerciseKey).name} ${star.kind === 'e1rm' ? 'best single (estimate) ' : ''}` +
+        `${trimNum(star.value)} kg. That makes ${monthWeightPrs} weight records in the last month. ` +
         `Progressive overload is doing its job.`,
       payload,
       createdAt: t1 + 120_000,
@@ -229,7 +229,7 @@ export function generateChat(input: ChatInput): GeneratedChat {
     let targetRepsMin = pe.repMin;
     if (!prev || !prevTop) {
       action = 'start';
-      reason = `First tracked session on ${spec.name} — start controlled and own every rep.`;
+      reason = `First tracked workout on ${spec.name} — start controlled and own every rep.`;
     } else if (targetWeightKg > prevTop.topW) {
       action = 'increase';
       reason = `You hit ${prevSets.map((s) => s.reps).join(', ')} at ${trimNum(prevTop.topW)} kg — time to move up.`;

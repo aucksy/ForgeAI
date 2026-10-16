@@ -25,7 +25,7 @@ import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getGroqKey } from '@/lib/keys';
 import { kgNum } from '@/lib/format';
 import { displayUnits, fmtVol, liftedWords, weightUnitOf, type UnitSystem } from '@/lib/units';
-import { countWord } from '@/lib/words';
+import { countWord, usesBannedWord } from '@/lib/words';
 import { useSettings } from '@/store/settingsStore';
 import type { SessionDetail } from '@/types/models';
 
@@ -41,6 +41,8 @@ const NUTRITION_WORDS = /\b(protein|sleep|slept|eat|eating|ate|food|meal|meals|n
 
 /** A note may show: never nutrition or sleep advice while nutrition is hidden. PURE. */
 export function noteAllowed(text: string, features: Pick<Features, 'nutrition'> = FEATURES): boolean {
+  // C9-6: a reply saying "volume", "PR", "session" or "1RM" is dropped like a food tip.
+  if (usesBannedWord(text)) return false;
   return features.nutrition || !NUTRITION_WORDS.test(text);
 }
 
@@ -129,13 +131,14 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
 function factSheet(data: SessionSummaryData, prevSameType: SessionDetail | null): string {
   const lines: string[] = [
     `Day type: ${dayTypeLabel(data.session.dayType)}`,
-    ...(data.easyWeek ? ['This was a planned easy week: half the sets at the usual weights, so less volume is the point.'] : []),
-    `Total volume: ${fmtVol(data.totalVolumeKg)} across ${data.workingSetCount} working sets, ${data.exerciseCount} exercises`,
+    // C9-6: the facts use the member's words, so the model's reply does too.
+    ...(data.easyWeek ? [`This was a planned easy week: half the sets at the usual weights, so fewer ${liftedWords()} is the point.`] : []),
+    `${liftedWords(undefined, true)}: ${fmtVol(data.totalVolumeKg)} across ${data.workingSetCount} working sets, ${data.exerciseCount} exercises`,
   ];
   if (data.prs.length > 0) {
     lines.push(
-      `PRs today: ${data.prs
-        .map((p) => `${p.exerciseName} ${kgNum(p.value)} ${p.kind === 'e1rm' ? 'est-1RM' : weightUnitOf()}`)
+      `Records today: ${data.prs
+        .map((p) => `${p.exerciseName} ${kgNum(p.value)} ${weightUnitOf()}${p.kind === 'e1rm' ? ' best single (estimate)' : ''}`)
         .join('; ')}`,
     );
   }
@@ -154,7 +157,7 @@ function factSheet(data: SessionSummaryData, prevSameType: SessionDetail | null)
       ((data.totalVolumeKg - prevSameType.totalVolumeKg) / prevSameType.totalVolumeKg) * 100,
     );
     lines.push(
-      `Vs last ${dayTypeLabel(data.session.dayType)}: ${pct >= 0 ? '+' : ''}${pct}% volume (last was ${fmtVol(prevSameType.totalVolumeKg)})`,
+      `Vs last ${dayTypeLabel(data.session.dayType)}: ${pct >= 0 ? '+' : ''}${pct}% ${liftedWords()} (last was ${fmtVol(prevSameType.totalVolumeKg)})`,
     );
   }
   return lines.join('\n');

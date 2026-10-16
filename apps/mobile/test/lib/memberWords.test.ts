@@ -19,7 +19,18 @@ import { fmtTotalTime } from '@/lib/format';
 import { NOTICE_BUTTON, tell } from '@/lib/tell';
 import { liftedWords } from '@/lib/units';
 
-import { MOBILE_ROOT, sourceFiles, visibleTextOf, type VisibleText } from '../helpers/visibleText';
+import { FEATURES, type Features } from '@/lib/features';
+import { BANNED_MEMBER_WORDS, countWord } from '@/lib/words';
+
+import {
+  appJsonTextOf,
+  kotlinTextOf,
+  MOBILE_ROOT,
+  sourceFiles,
+  stringsXmlTextOf,
+  visibleTextOf,
+  type VisibleText,
+} from '../helpers/visibleText';
 
 describe('the shared spellings', () => {
   it('"kg lifted" / "lb lifted", with a capital only to start a label', () => {
@@ -53,36 +64,58 @@ describe('the shared spellings', () => {
   });
 });
 
-/** Words a member must never read (DESIGN-LANGUAGE.md, "Words: one word per idea"). */
-const BANNED: readonly { word: string; re: RegExp }[] = [
-  { word: 'session', re: /\bsessions?\b/i },
-  { word: 'PR', re: /\bP[RB]s?\b/ },
-  { word: 'volume', re: /\bvolumes?\b/i },
-  { word: 'kg moved', re: /\b(kg|lbs?)\s+moved\b/i },
-  { word: 'vol', re: /\bvol\b/i },
-];
+/** Words a member must never read: one list, shared with the AI note's filter (C9-5, C9-6). */
+const BANNED = BANNED_MEMBER_WORDS;
 
 /**
  * Code that is not member-facing, kept small and each with its reason. A path matches when it
- * starts with the entry.
+ * starts with the entry. C9-1: an entry marked `untilCoach` holds only while the coach is hidden
+ * (lib/features.ts). Turn the coach on and the guard reads those folders too, so their sentences
+ * must be swept (or wrapped) before the coach can ship.
  */
-const ALLOW: readonly { path: string; why: string }[] = [
-  // The AI coach is hidden (lib/features.ts, coach: false), and much of this is the model's own
-  // prompt and tool descriptions, which a member never reads. Swept when the coach comes back.
-  { path: 'src/ai/', why: 'hidden coach + model prompts' },
+const ALLOW: readonly { path: string; why: string; untilCoach?: true }[] = [
   // Frozen (CLAUDE.md). Their sentences only reach coach-only cards (insight, recovery, overload).
-  { path: 'src/engine/', why: 'frozen; coach-only text' },
-  { path: 'src/services/', why: 'frozen; coach-only text' },
-  // SQL, the schema and the coach's demo chat seed.
-  { path: 'src/db/', why: 'SQL and the hidden coach demo seed' },
+  { path: 'src/engine/', why: 'frozen; coach-only text', untilCoach: true },
+  { path: 'src/services/', why: 'frozen; coach-only text', untilCoach: true },
+  // SQL and the frozen repos' developer errors ("Workout session not found"), never shown.
+  { path: 'src/db/repos/', why: 'SQL and developer errors' },
   // The prompt sent to the AI note writer: it TELLS the model never to say "PR" / "volume".
   { path: 'src/tracker/services/coachNote.ts', why: 'model prompt' },
   // Search keywords for matching imported workout names, never shown.
   { path: 'src/tracker/services/routineRebuild.ts', why: 'search keywords' },
+  // The banned list itself (its labels name the words).
+  { path: 'src/lib/words.ts', why: 'the banned-word list' },
 ];
 
+/** The allow-list in force: the `untilCoach` entries drop out once the coach is on. PURE. */
+export function activeAllow(features: Pick<Features, 'coach'>): typeof ALLOW {
+  return ALLOW.filter((a) => !(a.untilCoach && features.coach));
+}
+
 function allowed(v: VisibleText): boolean {
-  return ALLOW.some((a) => v.file.startsWith(a.path));
+  return activeAllow(FEATURES).some((a) => v.file.startsWith(a.path));
+}
+
+/**
+ * C9-3: the Android text a member reads, outside `src/`: notifications and the rest card
+ * (modules/forge-rest), the widget (modules/forge-phone), the watch app (android/wear), the app's
+ * own strings.xml, and app.json (the app name and Android's permission questions).
+ */
+function nativeTexts(): VisibleText[] {
+  const kt = [
+    ...sourceFiles(join(MOBILE_ROOT, 'modules'), ['.kt']),
+    ...sourceFiles(join(MOBILE_ROOT, 'android', 'wear', 'src', 'main'), ['.kt']),
+  ];
+  const xml = [
+    ...sourceFiles(join(MOBILE_ROOT, 'modules'), ['strings.xml']),
+    ...sourceFiles(join(MOBILE_ROOT, 'android', 'wear', 'src', 'main'), ['strings.xml']),
+    join(MOBILE_ROOT, 'android', 'app', 'src', 'main', 'res', 'values', 'strings.xml'),
+  ];
+  return [
+    ...kt.flatMap((f) => kotlinTextOf(f, MOBILE_ROOT)),
+    ...xml.flatMap((f) => stringsXmlTextOf(f, MOBILE_ROOT)),
+    ...appJsonTextOf(join(MOBILE_ROOT, 'app.json'), MOBILE_ROOT),
+  ];
 }
 
 describe('one word per idea — the guard', () => {
@@ -128,8 +161,90 @@ describe('one word per idea — the guard', () => {
     expect(seen.some((s) => s.includes('/session/') || s.startsWith('SELECT'))).toBe(false);
   });
 
+  it('C9-4: a word handed to countWord, tell or say is read, even one lowercase word', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'member-words-'));
+    const f = join(dir, 'Probe.ts');
+    writeFileSync(
+      f,
+      [
+        "const a = countWord(n, 'session');",
+        "const b = countWord(n, 'set', String, 'sessions');",
+        "tell('volume');",
+        "say('pr');",
+        "const c = lookUp(n, 'session');",
+      ].join(String.fromCharCode(10)),
+    );
+    const seen = visibleTextOf(f, dir).map((t) => t.text);
+    rmSync(dir, { recursive: true, force: true });
+    expect(seen).toEqual(expect.arrayContaining(['session', 'sessions', 'volume', 'pr']));
+    expect(seen.filter((s) => s === 'session')).toHaveLength(1); // lookUp's key is code
+    expect(countWord(2, 'record')).toBe('2 records');
+  });
+
+  it('C9-5: "pr", "Pb", "1RM", "e1RM" and "est-1RM" are caught too; "print" and "1 rep" are not', () => {
+    const hit = (s: string): boolean => BANNED.some((b) => b.re.test(s));
+    for (const s of ['New pr!', 'Pb today', 'Your 1RM', 'e1RM 100', '110 est-1RM']) expect(hit(s), s).toBe(true);
+    for (const s of ['print it', 'Best single (estimate)', '1 rep left', 'Record', 'Rings at notification volume']) {
+      expect(hit(s), s).toBe(false);
+    }
+    expect(hit('Total volume')).toBe(true);
+  });
+
+  it('C9-1: the coach folders are read the moment the coach is switched on', () => {
+    const hidden = activeAllow({ coach: false }).map((a) => a.path);
+    const shown = activeAllow({ coach: true }).map((a) => a.path);
+    expect(hidden).toEqual(expect.arrayContaining(['src/engine/', 'src/services/']));
+    expect(shown).not.toContain('src/engine/');
+    expect(shown).not.toContain('src/services/');
+    // The coach's own replies, chips, prompts and demo chat are read today, coach on or off.
+    expect(ALLOW.some((a) => a.path.startsWith('src/ai') || a.path.startsWith('src/db/seed'))).toBe(false);
+  });
+
   it('keeps the allow-list small and explained', () => {
     expect(ALLOW.length).toBeLessThanOrEqual(6);
     for (const a of ALLOW) expect(a.why.length).toBeGreaterThan(5);
+  });
+});
+
+describe('C9-3: the Android text outside src/ — notifications, widget, watch, app.json', () => {
+  const texts = nativeTexts();
+
+  it('reads the notification, widget, watch and permission text', () => {
+    const all = texts.map((t) => t.text);
+    expect(all).toEqual(expect.arrayContaining(['Rest is over', 'Skip', 'Complete set', 'ForgeAI']));
+    expect(texts.some((t) => t.file.startsWith('android/wear/'))).toBe(true);
+    expect(texts.some((t) => t.file.startsWith('modules/forge-phone/') && t.file.endsWith('strings.xml'))).toBe(true);
+    expect(texts.some((t) => t.file === 'app.json' && /microphone/.test(t.text))).toBe(true);
+  });
+
+  for (const { word, re } of BANNED) {
+    it(`no notification, widget, watch screen or permission question says "${word}"`, () => {
+      const hits = texts.filter((t) => re.test(t.text)).map((t) => `${t.file}:${t.line} ${t.text.slice(0, 120)}`);
+      expect(hits).toEqual([]);
+    });
+  }
+
+  it('the Kotlin reader sees what is shown, not logs, comments or keys (a probe file)', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'member-words-'));
+    const f = join(dir, 'Probe.kt');
+    const q = String.fromCharCode(34);
+    writeFileSync(
+      f,
+      [
+        `/** The ${q}Session done${q} card. */`,
+        `.setContentTitle(${q}Session complete${q})`,
+        `b.addAction(icon, ${q}Log PR${q}, pi)`,
+        `NotificationChannel(CH, ${q}Volume alerts${q}, IMPORTANCE)`,
+        `Log.w(TAG, ${q}session volume ${q} + x)`,
+        `val k = o.optString(${q}session note${q}, ${q}${q})`,
+        `private const val KEY = ${q}session${q}`,
+        `// ${q}PR card${q} is gone`,
+      ].join(String.fromCharCode(10)),
+    );
+    const g = join(dir, 'strings.xml');
+    writeFileSync(g, `<resources><string name=${q}a${q}>Your sessions</string><string name=${q}b${q} translatable=${q}false${q}>session volume</string></resources>`);
+    const seen = [...kotlinTextOf(f, dir), ...stringsXmlTextOf(g, dir)].map((t) => t.text);
+    rmSync(dir, { recursive: true, force: true });
+    expect(seen).toEqual(['Session complete', 'Log PR', 'Volume alerts', 'Your sessions']);
   });
 });

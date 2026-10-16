@@ -10,6 +10,7 @@ import * as userRepo from '@/db/repos/userRepo';
 import * as workoutRepo from '@/db/repos/workoutRepo';
 import { addDays, todayISO } from '@/lib/date';
 import { fmtInt, trimNum } from '@/lib/format';
+import { displayUnits, liftedWords } from '@/lib/units';
 import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
 import { getExerciseOverview, overviewFacts } from '@/tracker/services/exerciseStats';
 import { countWord } from '@/lib/words';
@@ -353,15 +354,15 @@ async function logWorkoutReply(
   const prLine = logged.newPrs.length
     ? pick(
         f,
-        ` 🏆 New PR: ${logged.newPrs.map((p) => `${p.exerciseName} ${cwTight(p.value)}`).join(', ')}!`,
-        ` 🏆 Naya PR: ${logged.newPrs.map((p) => `${p.exerciseName} ${cwTight(p.value)}`).join(', ')}!`,
+        ` 🏆 New record: ${logged.newPrs.map((p) => `${p.exerciseName} ${cwTight(p.value)}`).join(', ')}!`,
+        ` 🏆 Naya record: ${logged.newPrs.map((p) => `${p.exerciseName} ${cwTight(p.value)}`).join(', ')}!`,
       )
     : '';
   const skipped = skippedNote(logged.skipped);
   const text = pick(
     f,
-    `Logged: ${names} — ${vol} total volume. Solid work.${prLine}${skipped ? `\n${skipped}` : ''}`,
-    `Log ho gaya: ${names} — total volume ${vol}. Badhiya kaam!${prLine}${skipped ? `\n${skipped}` : ''}`,
+    `Logged: ${names} — ${vol} lifted. Solid work.${prLine}${skipped ? `\n${skipped}` : ''}`,
+    `Log ho gaya: ${names} — ${vol} lifted. Badhiya kaam!${prLine}${skipped ? `\n${skipped}` : ''}`,
   );
   return { text, cards: card ? [card] : [] };
 }
@@ -446,12 +447,12 @@ async function summaryReply(days: number, f: Flavour): Promise<LocalReply> {
   const topName = w.topExercises[0]?.name;
   const text = pick(
     f,
-    `${label}: ${countWord(w.sessions, 'workout')}, ${cvol(w.totalVolumeKg)} total volume${topName ? ` (biggest mover: ${topName})` : ''}. Nutrition averaged ${fmtInt(avgKcal)} kcal & ${avgP}g protein/day.`,
-    `${label}: ${countWord(w.sessions, 'workout')}, total volume ${cvol(w.totalVolumeKg)}${topName ? ` (sabse zyada: ${topName})` : ''}. Nutrition average ${fmtInt(avgKcal)} kcal aur ${avgP}g protein/din raha.`,
+    `${label}: ${countWord(w.sessions, 'workout')}, ${cvol(w.totalVolumeKg)} lifted${topName ? ` (biggest mover: ${topName})` : ''}. Nutrition averaged ${fmtInt(avgKcal)} kcal & ${avgP}g protein/day.`,
+    `${label}: ${countWord(w.sessions, 'workout')}, ${cvol(w.totalVolumeKg)} lifted${topName ? ` (sabse zyada: ${topName})` : ''}. Nutrition average ${fmtInt(avgKcal)} kcal aur ${avgP}g protein/din raha.`,
   );
   const rows = [
     { label: 'Workouts', value: `${w.sessions}` },
-    { label: 'Total volume', value: cvol(w.totalVolumeKg) },
+    { label: liftedWords(displayUnits(), true), value: cvol(w.totalVolumeKg) },
     ...w.topExercises.slice(0, 3).map((e) => ({
       label: e.name,
       value: `${cvol(e.volumeKg)} · ${countWord(e.sets, 'set')}`,
@@ -468,8 +469,8 @@ async function prReply(f: Flavour): Promise<LocalReply> {
     return {
       text: pick(
         f,
-        'No PRs on record yet — log a few workouts and we will start tracking them.',
-        'Abhi tak koi PR record nahi hai — kuch workouts log karo, phir track karte hain.',
+        'No records yet — log a few workouts and we will start tracking them.',
+        'Abhi tak koi record nahi hai — kuch workouts log karo, phir track karte hain.',
       ),
       cards: [],
     };
@@ -480,8 +481,8 @@ async function prReply(f: Flavour): Promise<LocalReply> {
     .join(', ');
   const text = pick(
     f,
-    `You have ${prs.length} PRs on file. Latest highlights: ${top}. Full list below 👇`,
-    `Tumhare ${prs.length} PRs file pe hain. Latest: ${top}. Puri list neeche 👇`,
+    `You have ${countWord(prs.length, 'record')}. Latest highlights: ${top}. Full list below 👇`,
+    `Tumhare ${prs.length} records hain. Latest: ${top}. Puri list neeche 👇`,
   );
   return {
     text,
@@ -508,15 +509,15 @@ async function improvementReply(f: Flavour): Promise<LocalReply> {
   parts.push(
     pick(
       f,
-      `Training volume is ${volDelta >= 0 ? 'up' : 'down'} ${Math.abs(volDelta)}% over the last month vs the month before`,
-      `Training volume pichle mahine se ${Math.abs(volDelta)}% ${volDelta >= 0 ? 'upar' : 'neeche'} hai`,
+      `${liftedWords(displayUnits(), true)} is ${volDelta >= 0 ? 'up' : 'down'} ${Math.abs(volDelta)}% over the last month vs the month before`,
+      `${liftedWords(displayUnits(), true)} pichle mahine se ${Math.abs(volDelta)}% ${volDelta >= 0 ? 'upar' : 'neeche'} hai`,
     ),
   );
   parts.push(
     pick(
       f,
-      `${recentPrs.length} PR${recentPrs.length === 1 ? '' : 's'} in the last 30 days`,
-      `pichle 30 din me ${recentPrs.length} PR`,
+      `${countWord(recentPrs.length, 'record')} in the last 30 days`,
+      `pichle 30 din me ${recentPrs.length} record`,
     ),
   );
   if (bwDelta !== null) {
@@ -534,8 +535,8 @@ async function improvementReply(f: Flavour): Promise<LocalReply> {
     `Kaafi accha improve kiya hai: ${parts.join(' · ')}. Progressive overload kaam kar raha hai 💪`,
   );
   const rows = [
-    { label: 'Volume trend (4wk vs prev 4wk)', value: `${volDelta >= 0 ? '+' : ''}${volDelta}%` },
-    { label: 'PRs in last 30 days', value: `${recentPrs.length}` },
+    { label: `${liftedWords(displayUnits(), true)}, last 4 weeks vs the 4 before`, value: `${volDelta >= 0 ? '+' : ''}${volDelta}%` },
+    { label: 'Records in the last 30 days', value: `${recentPrs.length}` },
     ...(bwDelta !== null
       ? [{ label: 'Body weight (90d)', value: `${bwDelta >= 0 ? '+' : ''}${bwDelta} ${cunit()}` }]
       : []),
@@ -731,8 +732,8 @@ async function lastWorkoutReply(f: Flavour): Promise<LocalReply> {
   );
   const text = pick(
     f,
-    `Your last workout (${s.dateISO}, ${s.dayType}): ${countWord(s.exercises.length, 'exercise')}, ${countWord(setCount, 'set')}, ${cvol(s.totalVolumeKg)} volume — ${names}.`,
-    `Pichla workout (${s.dateISO}, ${s.dayType}): ${countWord(s.exercises.length, 'exercise')}, ${countWord(setCount, 'set')}, ${cvol(s.totalVolumeKg)} volume — ${names}.`,
+    `Your last workout (${s.dateISO}, ${s.dayType}): ${countWord(s.exercises.length, 'exercise')}, ${countWord(setCount, 'set')}, ${cvol(s.totalVolumeKg)} lifted — ${names}.`,
+    `Pichla workout (${s.dateISO}, ${s.dayType}): ${countWord(s.exercises.length, 'exercise')}, ${countWord(setCount, 'set')}, ${cvol(s.totalVolumeKg)} lifted — ${names}.`,
   );
   return {
     text,
@@ -817,14 +818,14 @@ async function exerciseProgressReply(ex: Exercise, f: Flavour): Promise<LocalRep
         : pick(f, 'flat', 'same');
   const text = pick(
     f,
-    `${ex.name}: best set ${best}, estimated 1RM ${cwTight(e1rmNow)} — ${dir} ${Math.abs(e1rmDelta)}${tight} over your last ${stats.progress.length} sessions.`,
-    `${ex.name}: best set ${best}, e1RM ${cwTight(e1rmNow)} — pichle ${stats.progress.length} sessions me ${Math.abs(e1rmDelta)}${tight} ${dir}.`,
+    `${ex.name}: best set ${best}, best single (estimate) ${cwTight(e1rmNow)} — ${dir} ${Math.abs(e1rmDelta)}${tight} over your last ${countWord(stats.progress.length, 'workout')}.`,
+    `${ex.name}: best set ${best}, best single (estimate) ${cwTight(e1rmNow)} — pichle ${stats.progress.length} workouts me ${Math.abs(e1rmDelta)}${tight} ${dir}.`,
   );
   const rows = [
     { label: pick(f, 'Best set', 'Best set'), value: best },
-    { label: 'e1RM', value: cw(e1rmNow) },
-    { label: pick(f, 'e1RM change', 'e1RM change'), value: `${e1rmDelta >= 0 ? '+' : ''}${e1rmDelta} ${cunit()}` },
-    { label: pick(f, 'Sessions', 'Sessions'), value: `${stats.sessionsCount}` },
+    { label: 'Best single (estimate)', value: cw(e1rmNow) },
+    { label: pick(f, 'Change', 'Badlav'), value: `${e1rmDelta >= 0 ? '+' : ''}${e1rmDelta} ${cunit()}` },
+    { label: pick(f, 'Workouts', 'Workouts'), value: `${stats.sessionsCount}` },
   ];
   return { text, cards: [{ kind: 'stats', text: `${ex.name} progress`, payload: rows }] };
 }

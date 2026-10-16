@@ -35,7 +35,7 @@ function genericHelp(): LocalReply {
       '• "What\'s my workout today?" / "Aaj kya karna hai?"',
       cunit() === 'lb' ? '• "Bench press 185 lb for 8, 7 and 6"' : '• "Bench press 80 kg for 8, 7 and 6"',
       '• "I had 2 rotis, dal and butter chicken"',
-      '• "How much protein left today?" · "Show my PRs" · "Weekly summary"',
+      '• "How much protein left today?" · "Show my records" · "Weekly summary"',
     ].join('\n'),
     cards: [],
   };

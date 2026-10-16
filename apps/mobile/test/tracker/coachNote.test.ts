@@ -106,4 +106,14 @@ describe('finish note (audit Phase 7: facts, not a coach)', () => {
     // Whole words only: "update", "repeat" and "heaviest" are not food words.
     expect(noteAllowed('Repeat this to update your heaviest weight.', { nutrition: false })).toBe(true);
   });
+
+  it('C9-6: a model reply saying "volume", "PR", "session" or "1RM" is dropped, nutrition on or off', () => {
+    for (const nutrition of [false, true]) {
+      expect(noteAllowed('Great session — 4,200 kg lifted.', { nutrition })).toBe(false);
+      expect(noteAllowed('Bench PR at 100 kg!', { nutrition })).toBe(false);
+      expect(noteAllowed('Your volume is up 12%.', { nutrition })).toBe(false);
+      expect(noteAllowed('Bench e1RM 110 kg.', { nutrition })).toBe(false);
+      expect(noteAllowed('New bench record at 100 kg, 12% more kg lifted.', { nutrition })).toBe(true);
+    }
+  });
 });

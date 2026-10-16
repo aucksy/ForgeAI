@@ -224,7 +224,7 @@ export async function logWorkoutCore(
 
   // Phase 2: the same volume the workout screens show (body weight on pull-ups, both dumbbells…).
   const detail = await getSessionDetailWithVolume(session.id);
-  if (!detail) throw new Error('Could not load the logged session.');
+  if (!detail) throw new Error('Could not load the logged workout.');
   return { detail, newPrs: await meaningfulPrs(newPrs).catch(() => newPrs), skipped };
 }
 
@@ -328,11 +328,11 @@ function workoutLoggedCardText(detail: SessionDetail, newPrs: PrWithName[]): str
     0,
   );
   const pr = newPrs.length
-    ? ` New PR${newPrs.length > 1 ? 's' : ''}: ${newPrs
-        .map((p) => `${p.exerciseName} ${cwTight(p.value)} (${p.kind === 'e1rm' ? 'e1RM' : p.kind})`)
+    ? ` New record${newPrs.length > 1 ? 's' : ''}: ${newPrs
+        .map((p) => `${p.exerciseName} ${cwTight(p.value)} (${p.kind === 'e1rm' ? 'best single, estimate' : p.kind})`)
         .join(', ')}.`
     : '';
-  return `Logged ${countWord(detail.exercises.length, 'exercise')}, ${countWord(setCount, 'set')} — ${cvol(detail.totalVolumeKg)} volume.${pr}`;
+  return `Logged ${countWord(detail.exercises.length, 'exercise')}, ${countWord(setCount, 'set')} — ${cvol(detail.totalVolumeKg)} lifted.${pr}`;
 }
 
 /** Build the 'workout_logged' card (payload = SessionDetail + newPrs). */
@@ -441,7 +441,7 @@ export const COACH_TOOLS: CoachTool[] = [
     name: 'log_workout',
     description:
       'Log a workout the member describes. Pass every exercise with its sets (weight in kg, reps). ' +
-      'Unknown exercise names are created automatically. Reuses the existing session for that day.',
+      'Unknown exercise names are created automatically. Reuses the existing workout for that day.',
     parameters: {
       type: 'object',
       properties: {
@@ -532,7 +532,7 @@ export const COACH_TOOLS: CoachTool[] = [
   {
     name: 'get_todays_workout',
     description:
-      "Get today's planned workout with per-exercise progressive-overload targets: last session, today's target weight/reps and the reason behind it.",
+      "Get today's planned workout with per-exercise progressive-overload targets: last workout, today's target weight/reps and the reason behind it.",
     parameters: { type: 'object', properties: {} },
     async execute() {
       const tw = await getTodaysWorkoutWithTargets();
@@ -710,7 +710,7 @@ export const COACH_TOOLS: CoachTool[] = [
   {
     name: 'get_workout_summary',
     description:
-      'Summarise training across a date range (inclusive): session count, total volume, top exercises by volume and day-type mix.',
+      'Summarise training across a date range (inclusive): workout count, kg lifted (weight × reps, added up), top exercises by kg lifted and day-type mix.',
     parameters: {
       type: 'object',
       properties: {
@@ -731,7 +731,7 @@ export const COACH_TOOLS: CoachTool[] = [
 
   {
     name: 'get_prs',
-    description: "List the member's personal records (best weight and best estimated 1RM per exercise).",
+    description: "List the member's personal records (best weight and best single estimate per exercise). Call them records.",
     parameters: { type: 'object', properties: {} },
     async execute() {
       const prs = await getMeaningfulPrs(); // no "Plank 0 kg" or negative assisted records
@@ -757,7 +757,7 @@ export const COACH_TOOLS: CoachTool[] = [
   {
     name: 'get_exercise_stats',
     description:
-      'Get progress stats for one exercise by name: best set, PR e1RM, averages and recent trend.',
+      'Get progress stats for one exercise by name: best set, best single (estimate), averages and recent trend.',
     parameters: {
       type: 'object',
       properties: {
@@ -870,7 +870,7 @@ export const COACH_TOOLS: CoachTool[] = [
   {
     name: 'get_routines',
     description:
-      "List the member's saved workout routines (every folder, the followed one first): each routine's name, its folder, day type, and its exercises with target sets and rep ranges. Use to answer 'what routines do I have?' or to build a session from a routine.",
+      "List the member's saved workout routines (every folder, the followed one first): each routine's name, its folder, day type, and its exercises with target sets and rep ranges. Use to answer 'what routines do I have?' or to build a workout from a routine.",
     parameters: { type: 'object', properties: {} },
     async execute() {
       // C3-10: every folder's routines, as the Routines screen lists them.
@@ -895,13 +895,13 @@ export const COACH_TOOLS: CoachTool[] = [
   {
     name: 'get_recent_workouts',
     description:
-      'Get the most recent logged workouts in detail: date, day type, volume, each exercise with its working sets, average RPE (if recorded), any supersets, and exercise notes. Use for "how did my last workout go?", "did I overreach (RPE)?", or superset questions.',
+      'Get the most recent logged workouts in detail: date, day type, kg lifted, each exercise with its working sets, average RPE (if recorded), any supersets, and exercise notes. Use for "how did my last workout go?", "did I overreach (RPE)?", or superset questions.',
     parameters: {
       type: 'object',
       properties: {
         limit: {
           type: 'integer',
-          description: 'How many recent sessions to return (default 5, max 10).',
+          description: 'How many recent workouts to return (default 5, max 10).',
         },
       },
     },
@@ -971,7 +971,7 @@ export const COACH_TOOLS: CoachTool[] = [
   {
     name: 'get_dashboard_snapshot',
     description:
-      "Compact snapshot of the member's day and trends (streak, calories/protein vs targets, recovery, strength, weekly volume, body weight, last workout). Use for open coaching questions.",
+      "Compact snapshot of the member's day and trends (streak, calories/protein vs targets, recovery, strength, weekly kg lifted, body weight, last workout). Use for open coaching questions.",
     parameters: { type: 'object', properties: {} },
     async execute() {
       // Phase 2: exactly what Home shows (volume, recovery, records, today's Targets).
@@ -1378,7 +1378,7 @@ export const COACH_TOOLS: CoachTool[] = [
           dayType: target.dayType,
           exercises: detail ? detail.exercises.map((e) => e.exercise.name) : [],
           ...(sessions.length > 1
-            ? { note: `${sessions.length} sessions were on ${dateISO}; deleted the most recent.` }
+            ? { note: `${sessions.length} workouts were on ${dateISO}; deleted the most recent.` }
             : {}),
         },
       };
