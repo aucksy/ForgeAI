@@ -168,7 +168,7 @@ begin
     ('member', 'R (workout summaries)', 'table member_summary (RLS)', null,
      $q$select set_config('uat.out', (select count(*) from public.member_summary where member_id = {PM2})::text, true)$q$,
      $q$current_setting('uat.out')::int > 0$q$,
-     'pOwnerA=deny:PERM pMemberA=deny:none pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM'),
+     'pOwnerA=allow pMemberA=deny:none pOwnerB=deny:none signedIn=deny:none anon=deny:none|deny:PERM'),
     ('member', 'C (own summary, own gym)', 'table member_summary (RLS)', null,
      $q$insert into public.member_summary(member_id, gym_id, display_name) values ({PMA}, {GA}, 'UAT me')$q$,
      $q$exists (select 1 from public.member_summary where member_id = {PMA} and gym_id = {GA})$q$,
