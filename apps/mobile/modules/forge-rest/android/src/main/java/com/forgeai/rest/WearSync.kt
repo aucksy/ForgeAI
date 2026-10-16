@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong
  * buzzes even when the phone's bridged alert is muted (Pixel Watch mutes those while the phone is
  * in use).
  *
- *  - /forge/rest     {startedAt, endsAt, next, seq} when a rest starts or is extended
+ *  - /forge/rest     {startedAt, endsAt, next, ringThroughDnd, seq} when a rest starts or is extended
  *                    ([RestCard.show] / [RestCard.add]); {endsAt: 0, ended, seq} when it goes —
  *                    ended = false: skipped / cleared / settled quietly; ended = true: it ran out
  *                    here ([RestCard.fireEnd]), so a watch whose own alarm has not gone off yet
@@ -55,6 +55,8 @@ object WearSync {
       putLong("endsAt", r.endsAt)
       putString("next", next)
       putBoolean("ended", false)
+      // The phone's "Ring through Do Not Disturb": the watch's buzz gets through DND only then.
+      putBoolean("ringThroughDnd", RestCard.ringThroughDnd(ctx))
     }
   }
 

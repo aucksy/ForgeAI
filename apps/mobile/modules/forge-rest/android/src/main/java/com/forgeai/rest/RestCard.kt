@@ -127,6 +127,8 @@ object RestCard {
   const val OVER_TIMEOUT_MS = 120_000L
   /** v0.37.1 (C9): the words after a rest that followed the workout's last set. */
   const val ALL_DONE_TEXT = "All sets done · Finish when ready"
+  /** v0.46: the bridge tag of "Rest is over" only; the watch app excludes it (it alerts itself). */
+  const val BRIDGE_TAG_OVER = "rest-over"
   /** An end that fires this much early (an inexact alarm never does) is re-armed instead. */
   private const val EARLY_MS = 1500L
   /** Logcat tag for the end-of-rest path (the device QA saves these lines). */
@@ -299,7 +301,8 @@ object RestCard {
     ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).edit().putBoolean("dnd", on).apply()
   }
 
-  private fun ringThroughDnd(ctx: Context): Boolean =
+  /** Also sent to the watch app (WearSync): its buzz gets through Do Not Disturb only when this is on. */
+  internal fun ringThroughDnd(ctx: Context): Boolean =
     ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).getBoolean("dnd", false)
 
   /** Is Do Not Disturb (any mode) on right now? */
@@ -1201,6 +1204,11 @@ object RestCard {
       // 38081757903: posted with 1 action, then gone, not by the app). The alert is back to the
       // shape every earlier phone run passed with.
       openIntent(ctx)?.let { b.setContentIntent(it) }
+      // v0.46: the ForgeAI watch app posts its own "Rest is over" and buzzes itself, so it asks
+      // Wear OS not to copy THIS alert (BridgingConfig excluded tag "rest-over"; only while the
+      // watch app may post notifications). The rest card (Done / +15 s / Skip) keeps no tag and
+      // still reaches the watch. Without the watch app the tag changes nothing.
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) b.extend(Notification.WearableExtender().setBridgeTag(BRIDGE_TAG_OVER))
       // Swiped away: the live workout card comes back (one at a time).
       b.setDeleteIntent(actionIntent(ctx, ACTION_OVER_GONE, 6))
       val tag = "over-$endsAt"
