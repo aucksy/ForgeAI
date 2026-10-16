@@ -20,6 +20,8 @@ import { getDashboardDataPhase2 } from '@/tracker/services/dashboardPhase2';
 import { getMeaningfulPrs, meaningfulPrs } from '@/tracker/services/records';
 import { getSessionDetailWithVolume, withVolume } from '@/tracker/services/volumeService';
 import type { PlanDayFull } from '@/db/repos/planRepo';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
+import { isRepRangeChoice, rangeForRow, type RepRangeChoice } from '@/tracker/engine/repRanges';
 import { cvol, cwTight } from '@/ai/unitText';
 import * as routineRepo from '@/tracker/db/routineRepo';
 import { getRecentSessionDetailsBatched } from '@/tracker/db/sessionDetails';
@@ -372,6 +374,22 @@ function findRoutineExercise(
   );
 }
 
+/**
+ * The reps a routine row is trained at: Settings -> Rep range when it is not "Match my goal"
+ * (it then sets every row), else the row's own (16 Oct 2026: the coach saw the stored range).
+ */
+function repsInUse(pe: PlanDayFull['exercises'][number]): string {
+  let choice: RepRangeChoice = 'goal';
+  try {
+    const c = useTrackerPrefs.getState().repRange;
+    if (isRepRangeChoice(c)) choice = c;
+  } catch {
+    // quiet: an unreadable settings store means the routine's own range, as before
+  }
+  const r = rangeForRow(pe, pe.exercise, choice);
+  return `${r.repRangeMin}-${r.repRangeMax}`;
+}
+
 /** Compact routine summary for tool results. */
 function routineSummary(r: PlanDayFull): {
   name: string;
@@ -382,7 +400,7 @@ function routineSummary(r: PlanDayFull): {
     name: r.name,
     dayType: r.dayType,
     exercises: r.exercises.map(
-      (pe) => `${pe.exercise.name} — ${pe.targetSets} × ${pe.repRangeMin}-${pe.repRangeMax}`,
+      (pe) => `${pe.exercise.name} — ${pe.targetSets} × ${repsInUse(pe)}`,
     ),
   };
 }
@@ -842,7 +860,7 @@ export const COACH_TOOLS: CoachTool[] = [
             exerciseCount: d.exercises.length,
             exercises: d.exercises.map(
               (pe) =>
-                `${pe.exercise.name} — ${pe.targetSets} × ${pe.repRangeMin}-${pe.repRangeMax}`,
+                `${pe.exercise.name} — ${pe.targetSets} × ${repsInUse(pe)}`,
             ),
           })),
         },

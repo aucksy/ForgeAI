@@ -70,6 +70,9 @@ import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { swapContextFor } from '@/tracker/services/plansService';
 import { askAboutOpenWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
+import { isRepRangeChoice, rangeForRow, type RepRangeChoice } from '@/tracker/engine/repRanges';
+import { REP_RANGE_CHOICES } from '@/tracker/services/targetChoices';
 import { tell } from '@/lib/tell';
 
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
@@ -81,6 +84,11 @@ export default function RoutineEditorScreen() {
   const id = typeof params.id === 'string' ? params.id : params.id?.[0];
 
   const hydrate = useActiveWorkout((s) => s.hydrate);
+  // Settings -> Workouts -> Rep range: any choice but "Match my goal" sets every row's range, so the
+  // editor shows that range instead of steppers that would change nothing (16 Oct 2026).
+  const repChoice = useTrackerPrefs((s) => s.repRange);
+  const choice: RepRangeChoice = isRepRangeChoice(repChoice) ? repChoice : 'goal';
+  const choiceName = REP_RANGE_CHOICES.find((c) => c.value === choice)?.label ?? '';
   const startFromPlanDay = useActiveWorkout((s) => s.startFromPlanDay);
   const starting = useRef(false);
 
@@ -566,7 +574,16 @@ export default function RoutineEditorScreen() {
                       min={1}
                       max={MAX_ROUTINE_SETS}
                     />
-                    {hasReps(logTypes.get(pe.exerciseId) ?? 'weight_reps') ? (
+                    {hasReps(logTypes.get(pe.exerciseId) ?? 'weight_reps') && choice !== 'goal' ? (
+                      <Text
+                        style={{ flex: 1, alignSelf: 'center', fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}
+                      >
+                        {(() => {
+                          const r = rangeForRow(pe, pe.exercise, choice);
+                          return `${r.repRangeMin}–${r.repRangeMax} reps, from Settings → Workouts → Rep range (${choiceName}).`;
+                        })()}
+                      </Text>
+                    ) : hasReps(logTypes.get(pe.exerciseId) ?? 'weight_reps') ? (
                       <>
                         <Stepper
                           label="Rep min"
