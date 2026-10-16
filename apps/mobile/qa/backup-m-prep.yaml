@@ -1,0 +1,113 @@
+# Device QA, part M (prep, UAT work package 4 item 12) — before part M's record and Android's backup,
+# the member's other kinds of data get values a restore must bring back (part M used to check only
+# the workout count):
+#   - the profile name "QA Restore" (Profile -> Edit profile -> Name),
+#   - a measurement: Body fat 17.5 % today (unit-free, so the units switch below cannot change it),
+#   - units "lb, miles" (Settings -> Units),
+#   - a routine: the flow ends on the Workout tab with a routine card on screen; the script reads its
+#     name off the screen (uiautomator dump) and passes it to backup-m-check.yaml after the restore.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+# ---------------------------------------------------------------- the name
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- scrollUntilVisible:
+    element: "Edit profile"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- tapOn: "Edit profile"
+- extendedWaitUntil:
+    visible: 'Bio, up to \d+ characters'
+    timeout: 15000
+# The box (spoken "Name") sits under its own "Name" label: the second match, top-down.
+- tapOn:
+    text: "^Name$"
+    index: 1
+- eraseText: 80
+- inputText: " QA Restore"
+- hideKeyboard
+# It saves as you type (and on leaving the box).
+- extendedWaitUntil:
+    visible: "^Saved$"
+    timeout: 10000
+    optional: true
+- back
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "^ ?QA Restore$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+# ---------------------------------------------------------------- a measurement
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Measures"
+- extendedWaitUntil:
+    visible: "Add measures"
+    timeout: 20000
+- tapOn: "Add measures"
+- extendedWaitUntil:
+    visible: "Fill in any you like."
+    timeout: 15000
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Body fat in percent"
+      VALUE: " 17.5"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Save$"
+- tapOn: "^Save$"
+- extendedWaitUntil:
+    visible: "^Measures$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Body fat$"
+- tapOn: "^Body fat$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '.*, 17\.5 %\. Fix or delete'
+- takeScreenshot: 178a-backup-prep-measure
+- back
+# ---------------------------------------------------------------- units: lb
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Units"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^lb, miles$"
+- tapOn: "^lb, miles$"
+- back
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^lb, miles$"
+- takeScreenshot: 178b-backup-prep-units-lb
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- a routine on screen (read by the script)
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Start routine .+"
+    centerElement: true
+    timeout: 30000
+- takeScreenshot: 178c-backup-prep-routine

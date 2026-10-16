@@ -1,0 +1,18 @@
+# Sub-flow (called with runFlow; not a part of its own): Android Back until the app's tab bar shows
+# (at most 5 times), e.g. from an import result page under Settings. Waits on a tab name the
+# 3-button bar lacks (trap 18).
+appId: com.forgeai.app
+---
+- repeat:
+    times: 5
+    commands:
+      - runFlow:
+          when:
+            notVisible: "^Profile$"
+          commands:
+            - back
+            - waitForAnimationToEnd:
+                timeout: 3000
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 15000

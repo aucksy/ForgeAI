@@ -1,0 +1,37 @@
+# Part J3, restart (UAT work package 4, item 14): after the drag, run-device-qa.sh stops the app
+# (am force-stop). This opens it again and goes back into the open workout, at its top, so the
+# script can read the exercises' order again (drag_check.py ex-names): it must be the dragged order,
+# i.e. the new order was saved, not only drawn. j3-end.yaml then discards the workout as before.
+appId: com.forgeai.app
+---
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$|Log a set to finish|Finish workout"
+    timeout: 60000
+- runFlow:
+    when:
+      notVisible: "Log a set to finish|Finish workout"
+    commands:
+      - tapOn:
+          text: "^Workout$"
+          index: 0
+      - scrollUntilVisible:
+          element: "Resume workout"
+          direction: UP
+          centerElement: true
+          timeout: 20000
+      - tapOn: "Resume workout"
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '.*\. Open its history and how-to'
+    direction: UP
+    timeout: 10000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: j3-after-restart

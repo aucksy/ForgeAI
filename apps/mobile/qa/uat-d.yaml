@@ -1,0 +1,263 @@
+# UAT work package 4, part UD (U-M3): the data actions that delete or replace workouts, with the
+# member's OWN workout present, each checked on the screen after the press:
+#   - One own workout logged (Start empty workout, Barbell Bench Press 60 × 8, Finish) over the demo.
+#   - Settings -> Your data -> "Remove demo data": the question says "Your own workout stays";
+#     the welcome says "Your 1 workout is still here"; filled in, the Profile counts exactly 1.
+#   - "Load demo data instead" on that welcome, and the hidden demo switch in Your data (held 2 s):
+#     both questions name the 1 workout they would delete. Both cancelled.
+#   - Import qa-hevy.csv (12 workouts) with Replace: the option and "Delete 1 workout first?" name
+#     it; "12 workouts imported"; "Undo import": "Import undone" and the Profile counts 1 again.
+#     Replace once more, kept: the Profile counts 12 (the old one really went).
+#   - Settings -> Export & import -> "Save my history": the flow ends with Android's share sheet up;
+#     the script checks the share sheet is in front and reads the file it shares (12 workouts).
+# Starts from a fresh install with the demo (gate-demo.yaml); the script pushes qa-hevy.csv first.
+appId: com.forgeai.app
+---
+- runFlow: gate-demo.yaml
+# ---------------------------------------------------------------- one workout of the member's own
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Add exercise$"
+    timeout: 30000
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " bench press"
+- tapOn:
+    text: "Select Barbell Bench Press"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "Barbell Bench Press set 1 weight, kilograms"
+    timeout: 20000
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 weight, kilograms"
+      VALUE: " 60"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 reps"
+      VALUE: " 8"
+- tapOn:
+    text: "Mark Barbell Bench Press set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Finish workout$"
+- tapOn:
+    text: "^Finish workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "^Finish workout$"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Done$"
+- tapOn: "^Done$"
+# ---------------------------------------------------------------- remove the demo, own workout kept
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Your data"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Remove demo data$"
+- tapOn: "^Remove demo data$"
+- extendedWaitUntil:
+    visible: 'Remove the demo\?'
+    timeout: 10000
+- assertVisible: '.*Your own workout stays\. Then you add your details\.'
+- takeScreenshot: ud-01-remove-demo-question
+- tapOn: "^Remove demo$"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 60000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Your 1 workout is still here\. Add your details to carry on\.'
+- takeScreenshot: ud-02-welcome-workout-kept
+# The welcome's demo button names what it would delete. Cancelled (the sheet's own Cancel).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Load demo data instead"
+- tapOn: "Load demo data instead"
+- extendedWaitUntil:
+    visible: 'Load demo data\?'
+    timeout: 10000
+- assertVisible: '.*Your 1 workout on this phone is deleted\.'
+- takeScreenshot: ud-03-welcome-load-demo-names-count
+- tapOn:
+    text: "^Cancel$"
+    below:
+      text: 'Load demo data\?'
+- extendedWaitUntil:
+    notVisible: 'Load demo data\?'
+    timeout: 10000
+# The member's details, then the app.
+- scrollUntilVisible:
+    element: "Your name"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- tapOn: "Your name"
+- eraseText
+- inputText: "QA Member"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next$"
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Kilograms or pounds\\?"
+    timeout: 15000
+- tapOn: "^Kilograms$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next$"
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 3 of 3"
+    timeout: 15000
+- tapOn: "Build muscle"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Intermediate"
+- tapOn: "Intermediate"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start training"
+- tapOn: "Start training"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Workouts: 1$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: ud-04-profile-own-workout-only
+# The hidden demo switch (hold "Your training is stored on this phone." 2 s) names the count too.
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Your data"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Your training is stored on this phone\\."
+- longPressOn: "Your training is stored on this phone\\."
+- extendedWaitUntil:
+    visible: 'Load demo data\?'
+    timeout: 10000
+- assertVisible: '.*Your 1 workout, profile, routines, body weight, measurements and photos are deleted and cannot be brought back\.'
+- takeScreenshot: ud-05-hidden-demo-names-count
+- tapOn:
+    text: "^Cancel$"
+    below:
+      text: 'Load demo data\?'
+- extendedWaitUntil:
+    notVisible: 'Load demo data\?'
+    timeout: 10000
+- assertNotVisible: "Demo data loaded"
+# ---------------------------------------------------------------- import with Replace, then Undo
+- back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Export & import"
+- runFlow:
+    file: uat-d-hevy-replace.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Undo import$"
+- tapOn: "^Undo import$"
+- extendedWaitUntil:
+    visible: "Import undone"
+    timeout: 60000
+- assertVisible: "Everything is back as it was before the import."
+- takeScreenshot: ud-07-import-undone
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Workouts: 1$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: ud-08-count-back-after-undo
+# Replace again, kept: 12, not 13.
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Export & import"
+- runFlow:
+    file: uat-d-hevy-replace.yaml
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Workouts: 12$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: ud-09-count-after-replace
+# ---------------------------------------------------------------- Save my history
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Export & import"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Save my history$"
+- tapOn: "^Save my history$"
+- assertNotVisible: "Nothing to save yet.*"
+# Android's share sheet (the script checks it is in front and reads the file).
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: ud-10-save-my-history-share-sheet

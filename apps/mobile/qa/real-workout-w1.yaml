@@ -57,25 +57,12 @@ appId: com.forgeai.app
 - takeScreenshot: w-01-welcome-step-3
 - tapOn: "Start training"
 # ---------------------------------------------------------------- the Hevy import (~500 workouts)
+# U-M2 (UAT, 17 Oct 2026): "From Hevy" promises the import opens by itself after Start training, so
+# it must: no way round through Settings any more (that fallback hid whether the promise held).
 - extendedWaitUntil:
-    visible: "Choose Hevy file|^Profile$"
+    visible: "Choose Hevy file"
     timeout: 60000
-- runFlow:
-    when:
-      notVisible: "Choose Hevy file"
-    commands:
-      - runFlow:
-          file: sub-settings-page.yaml
-          env:
-            PAGE: "Export & import"
-      - scrollUntilVisible:
-          element: "Import from Hevy"
-          centerElement: true
-          timeout: 30000
-      - tapOn: "Import from Hevy"
-      - extendedWaitUntil:
-          visible: "Choose Hevy file"
-          timeout: 15000
+- assertVisible: "Bring your Hevy history in"
 - tapOn: "Choose Hevy file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-hevy).*'

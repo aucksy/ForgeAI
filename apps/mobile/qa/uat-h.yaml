@@ -1,0 +1,344 @@
+# UAT work package 4, part UH (U-M3 / U-M4): one past workout's whole life, pressed for real and
+# checked on the screen after every press (never only that a button is there):
+#   1. Calendar -> "Log a past workout" on an empty day (a Sunday) last month -> Barbell Bench Press 60 × 8 and
+#      62.5 × 6 -> "Save workout": its page shows exactly those sets, Calendar has the day with
+#      "1 workout", the Profile count is one up.
+#   2. Its page -> ⋯ -> "Edit workout": set 1 to 70 kg and a 3rd set 82.5 × 5 -> "Save changes": the
+#      page shows them; the app is stopped and opened again, the day reopened: still there.
+#   3. ⋯ -> "Delete workout" -> "Delete": back on Calendar the day has no workout, its month's count
+#      is one down, the Profile count is back where it started.
+# Starts from a fresh install with the demo (gate-demo.yaml: it trains Mon-Sat over 13 weeks), so it
+# runs alone (qa-device.yml only=uh) or in the whole run (after part M).
+appId: com.forgeai.app
+---
+- runFlow: gate-demo.yaml
+# ---------------------------------------------------------------- the Profile count before
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '^Workouts: [\d,]+$'
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- copyTextFrom: '^Workouts: [\d,]+$'
+- runScript:
+    file: js/uat-num.js
+    env:
+      KEY: n0
+# ---------------------------------------------------------------- 1. log a past workout and SAVE it
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 30000
+- tapOn: "Log a past workout"
+- extendedWaitUntil:
+    visible: "Pick the day, when it started and how long it lasted."
+    timeout: 15000
+# Last month's first Sunday: the demo rests on Sundays (src/db/seed/history.ts; only YESTERDAY can
+# be a Sunday make-up), so the day is empty and the workout logged is the day's only one.
+- tapOn: "Previous month"
+- tapOn:
+    text: '^Sun, \d{1,2} [A-Z][a-z]{2}( \d{4})?$'
+    index: 0
+- copyTextFrom: 'Log [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}( \d{4})? · 18:00'
+- runScript: js/uat-day.js
+- takeScreenshot: uh-01-log-past-empty-day
+- tapOn: 'Log [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}( \d{4})? · 18:00'
+- extendedWaitUntil:
+    visible: "Logging a past workout"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " bench press"
+- tapOn:
+    text: "Select Barbell Bench Press"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "Barbell Bench Press set 1 weight, kilograms"
+    timeout: 20000
+# Exactly two rows: the card opens with last time's count; rows past the 2nd go by the set menu.
+- repeat:
+    times: 6
+    commands:
+      - scrollUntilVisible:
+          element: "^Add set$"
+          centerElement: true
+          timeout: 10000
+      - runFlow:
+          when:
+            visible: 'Barbell Bench Press set 3(, RPE [\d.]+)?\. Change set type'
+          commands:
+            - tapOn: 'Barbell Bench Press set 3(, RPE [\d.]+)?\. Change set type'
+            - extendedWaitUntil:
+                visible: "Remove set"
+                timeout: 10000
+            - tapOn: "Remove set"
+- runFlow:
+    when:
+      notVisible: 'Barbell Bench Press set 2(, RPE [\d.]+)?\. Change set type'
+    commands:
+      - tapOn: "^Add set$"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 weight, kilograms"
+      VALUE: " 60"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 reps"
+      VALUE: " 8"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 2 weight, kilograms"
+      VALUE: " 62.5"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 2 reps"
+      VALUE: " 6"
+- assertNotVisible: 'Barbell Bench Press set 3 weight, kilograms'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Mark Barbell Bench Press set 1 complete"
+- tapOn:
+    text: "Mark Barbell Bench Press set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Mark Barbell Bench Press set 2 complete"
+- tapOn:
+    text: "Mark Barbell Bench Press set 2 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- takeScreenshot: uh-02-past-workout-typed
+- extendedWaitUntil:
+    visible: "^Save workout$"
+    timeout: 15000
+- tapOn: "^Save workout$"
+# Saved: its page, on the day picked, at 18:00, with exactly the two sets typed.
+- extendedWaitUntil:
+    visible: '${output.pageDate} 20\d\d · 18:00.*'
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Sets: 2$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 1: 60 kg × 8.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 2: 62\.5 kg × 6.*'
+- takeScreenshot: uh-03-past-workout-saved
+# On that day in Calendar ("Sunday 6 September, 1 workout").
+- back
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "${output.dayFull}, 1 workout"
+- takeScreenshot: uh-04-calendar-day-logged
+# Its month's count, to see it drop at the delete.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '${output.monthName} 20\d\d · [\d,]+ workouts?'
+- copyTextFrom: '${output.monthName} 20\d\d · [\d,]+ workouts?'
+- runScript:
+    file: js/uat-num.js
+    env:
+      KEY: m1
+# And the Profile count is one up.
+- back
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "^Workouts: ${output.n0 + 1}$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+# ---------------------------------------------------------------- 2. edit it and press "Save changes"
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "${output.dayFull}, 1 workout"
+- tapOn: "${output.dayFull}, 1 workout"
+- extendedWaitUntil:
+    visible: '${output.pageDate} 20\d\d · 18:00.*'
+    timeout: 20000
+- tapOn: "More"
+- extendedWaitUntil:
+    visible: "Edit workout"
+    timeout: 10000
+- tapOn: "Edit workout"
+- extendedWaitUntil:
+    visible: "Editing a saved workout"
+    timeout: 20000
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 weight, kilograms"
+      VALUE: " 70"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add set$"
+- tapOn: "^Add set$"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 3 weight, kilograms"
+      VALUE: " 82.5"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 3 reps"
+      VALUE: " 5"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Mark Barbell Bench Press set 3 complete"
+- tapOn:
+    text: "Mark Barbell Bench Press set 3 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- takeScreenshot: uh-05-edit-typed
+- extendedWaitUntil:
+    visible: "^Save changes$"
+    timeout: 15000
+- tapOn: "^Save changes$"
+- extendedWaitUntil:
+    notVisible: "Editing a saved workout"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: '${output.pageDate} 20\d\d · 18:00.*'
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Sets: 3$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 1: 70 kg × 8.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 3: 82\.5 kg × 5.*'
+- takeScreenshot: uh-06-edit-saved
+# Reopened after the app is stopped: the changes were saved, not only drawn.
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "${output.dayFull}, 1 workout"
+- tapOn: "${output.dayFull}, 1 workout"
+- extendedWaitUntil:
+    visible: '${output.pageDate} 20\d\d · 18:00.*'
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Sets: 3$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 1: 70 kg × 8.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 2: 62\.5 kg × 6.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 3: 82\.5 kg × 5.*'
+- takeScreenshot: uh-07-edit-kept-after-restart
+# ---------------------------------------------------------------- 3. delete it from its page
+- scrollUntilVisible:
+    element: "More"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- tapOn: "More"
+- extendedWaitUntil:
+    visible: "Delete workout"
+    timeout: 10000
+- tapOn: "Delete workout"
+- extendedWaitUntil:
+    visible: 'Delete this workout\?'
+    timeout: 10000
+- assertVisible: "This removes the workout and its sets."
+- takeScreenshot: uh-08-delete-question
+- tapOn: "^Delete$"
+# Back on Calendar: the day has no workout any more, its month one fewer.
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 20000
+- assertNotVisible: "${output.dayFull}, 1 workout"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '${output.monthName} 20\d\d · ${output.m1 - 1} workouts?'
+- assertNotVisible: "${output.dayFull}, .*"
+- takeScreenshot: uh-09-calendar-after-delete
+- back
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "^Workouts: ${output.n0}$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: uh-10-profile-count-back

@@ -1,0 +1,71 @@
+# UAT work package 4, part UN (U-M4): the "Rest alerts are off" line during a workout. The script has
+# taken ForgeAI's notification permission away (adb shell pm revoke ... POST_NOTIFICATIONS), as a
+# member who blocked its notifications. A rest starts (set 1 ticked): the rest bar must say the
+# alerts are off and offer to turn them on (RestTimerBar.tsx; checked when a rest starts). Not
+# tapped: it leaves the app for Android's settings. The workout is then discarded; the script gives
+# the permission back.
+appId: com.forgeai.app
+---
+# launchApp grants every permission unless told not to (trap 21).
+- launchApp:
+    permissions:
+      notifications: deny
+- tapOn:
+    text: "Wait"
+    optional: true
+- runFlow:
+    when:
+      visible: "(?i)^don.t allow$"
+    commands:
+      - tapOn: "(?i)^don.t allow$"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start routine Push Day A"
+- tapOn: "Start routine Push Day A"
+# The workout screen may ask Android for the permission once: refuse, as this member does.
+- runFlow:
+    when:
+      visible: "(?i)^don.t allow$"
+    commands:
+      - takeScreenshot: un-00-asked
+      - tapOn: "(?i)^don.t allow$"
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "(?i)^don.t allow$"
+    commands:
+      - tapOn: "(?i)^don.t allow$"
+# Set 1 is empty: its tick saves the grey hint and starts the exercise's rest.
+- tapOn:
+    text: 'Mark .* set 1 complete'
+    index: 0
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 10000
+- extendedWaitUntil:
+    visible: "Rest alerts are off. Turn on notifications"
+    timeout: 10000
+- takeScreenshot: un-01-rest-alerts-off
+- tapOn:
+    text: "Skip rest"
+    waitToSettleTimeoutMs: 300
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Discard workout$"
+- tapOn: "^Discard workout$"
+- extendedWaitUntil:
+    visible: 'Discard workout\?'
+    timeout: 10000
+- tapOn: "^Discard$"
+- extendedWaitUntil:
+    visible: "Start empty workout"
+    timeout: 30000

@@ -1,0 +1,195 @@
+# UAT work package 4, part UE (U-M3, U-M2): "Erase all data", as a solo member and as a gym member,
+# and the welcome's "From Hevy" promise.
+#   1. Solo (no gym): Settings -> Your data -> "Erase all data": the question names no gym; "Erase
+#      everything" lands on the welcome; the app stopped and opened again still opens on it.
+#   2. U-M2: on that welcome, "From Hevy" -> ... -> "Start training": the Hevy import MUST open by
+#      itself (no way round through Settings: if it does not open, that is an app bug).
+#   3. Gym member: join the test gym FORGE1 on the LIVE server (as part R), then Erase: the
+#      question names "ForgeAI Test Gym"; after it (and the demo loaded to reach the tabs) the Shop
+#      tab is the join card again.
+# Needs some data to erase: after part UD (its 12 imported workouts) or, alone, the script seeds the
+# demo first.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+# ---------------------------------------------------------------- 1. erase, solo
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Your data"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Erase all data$"
+- tapOn: "^Erase all data$"
+- extendedWaitUntil:
+    visible: 'Erase all data\?'
+    timeout: 10000
+- assertVisible: 'Every workout, record, routine, body entry, photo and video, your gym and Google Drive links, and your settings\. This phone goes back to new\..*'
+- assertNotVisible: '.*You also leave .*'
+- takeScreenshot: ue-01-erase-solo-question
+- tapOn: "^Erase everything$"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 60000
+- assertVisible: "Welcome to ForgeAI"
+- assertNotVisible: 'Your \d+ workouts? (is|are) still here.*'
+- takeScreenshot: ue-02-erased-welcome
+# Stopped and opened again: still the welcome, nothing kept.
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 60000
+- assertNotVisible: "^Profile$"
+- assertNotVisible: 'Your \d+ workouts? (is|are) still here.*'
+- takeScreenshot: ue-03-reopened-welcome
+# ---------------------------------------------------------------- 2. U-M2: "From Hevy" opens the import
+- tapOn: "Your name"
+- inputText: "QA Switcher"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^From Hevy$"
+- tapOn: "^From Hevy$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Your Hevy workouts and routines come in right after you tap Start training\.'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next$"
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Kilograms or pounds\\?"
+    timeout: 15000
+- tapOn: "^Kilograms$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next$"
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 3 of 3"
+    timeout: 15000
+- tapOn: "Build muscle"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Intermediate"
+- tapOn: "Intermediate"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start training"
+- tapOn: "Start training"
+# The promise: the Hevy import is open, by itself.
+- extendedWaitUntil:
+    visible: "Choose Hevy file"
+    timeout: 60000
+- assertVisible: "Bring your Hevy history in"
+- takeScreenshot: ue-04-hevy-import-opened-by-itself
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- 3. erase, gym member
+- tapOn:
+    text: "^Shop$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Gym code"
+- tapOn: "Gym code"
+- inputText: "FORGE1"
+- runFlow:
+    when:
+      notVisible: "^FORGE1$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "FORGE1"
+- assertVisible: "^FORGE1$"
+- tapOn: "Name on your orders"
+- eraseText: 70
+- inputText: " QA Member"
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: "Join ForgeAI Test Gym\\?"
+    timeout: 45000
+    optional: true
+- runFlow:
+    when:
+      visible: "^Your gym's shop$"
+    commands:
+      - scrollUntilVisible:
+          element: "^Join$"
+          centerElement: true
+          timeout: 10000
+      - tapOn: "^Join$"
+- extendedWaitUntil:
+    visible: "Join ForgeAI Test Gym\\?"
+    timeout: 45000
+- tapOn:
+    text: "^Join$"
+    below:
+      text: "Join ForgeAI Test Gym\\?"
+- extendedWaitUntil:
+    visible: "^ForgeAI Test Gym$"
+    timeout: 45000
+- takeScreenshot: ue-05-joined-forge1
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Your data"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Erase all data$"
+- tapOn: "^Erase all data$"
+- extendedWaitUntil:
+    visible: 'Erase all data\?'
+    timeout: 10000
+- assertVisible: '.*You also leave ForgeAI Test Gym\. With no internet, the gym is told the next time the app is online\.'
+- takeScreenshot: ue-06-erase-gym-question
+- tapOn: "^Erase everything$"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 60000
+- assertVisible: "Welcome to ForgeAI"
+# Into the app the quickest way (the demo), then the Shop: the join card, no gym.
+- scrollUntilVisible:
+    element: "Load demo data instead"
+    timeout: 30000
+- tapOn: "Load demo data instead"
+- extendedWaitUntil:
+    visible: "(?i)load demo"
+    timeout: 15000
+- tapOn: "(?i)^load demo$"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- tapOn:
+    text: "^Shop$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Enter the code from your gym"
+- assertNotVisible: "^ForgeAI Test Gym$"
+- assertNotVisible: "Gym: ForgeAI Test Gym"
+- takeScreenshot: ue-07-shop-join-card-after-erase

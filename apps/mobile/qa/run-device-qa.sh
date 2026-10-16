@@ -84,9 +84,9 @@ adb shell appops set $PKG SCHEDULE_EXACT_ALARM default >/dev/null 2>&1 || true
 log "exact alarms as installed: USE_EXACT_ALARM $(adb shell dumpsys package $PKG | tr -d '\r' | grep -m1 -oE 'android.permission.USE_EXACT_ALARM: granted=(true|false)' || echo 'not listed'); SCHEDULE_EXACT_ALARM appop $(adb shell appops get $PKG SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' ')"
 
 # Which parts run (qa-device.yml inputs, audit v2 phase B).
-#   QA_ONLY  (`only`):  empty = the whole phone test (A ... M, then W). Otherwise ONLY the parts
-#                       named, comma or space separated, from the whole run's parts (OLD_PARTS
-#                       below, in their usual order) and w, dnd, longrest, anim, mk. Such a run is
+#   QA_ONLY  (`only`):  empty = the whole phone test (A ... M, the UAT-M parts, then W). Otherwise ONLY
+#                       the parts named, comma or space separated, from the whole run's parts (OLD_PARTS
+#                       and UAT_PARTS below, in their usual order) and w, dnd, longrest, anim, mk. Such a run is
 #                       named "(partial ...)" and never opens the release gate. A part leans on
 #                       what the parts before it left (part A's workout for b, h, h3; part J's
 #                       routines for j2, j3), so name those too; when `a` is not named, the demo
@@ -98,14 +98,21 @@ log "exact alarms as installed: USE_EXACT_ALARM $(adb shell dumpsys package $PKG
 #                       Asia/Kolkata. Part W always sets these itself.
 # b = B0 + B; h = H1, H1D, H2; h3 = H3A..C; link = the two widget links; inv = INV-a..e; invf = INV-f1..f3.
 OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 p0 m"
+# UAT work package 4 (17 Oct 2026, U-M3 / U-M4): the member app's risky, never-pressed actions,
+# pressed and checked on the screen. Part of every whole run, after part M (they delete and erase,
+# so nothing after them leans on their state; each starts from a fresh install + demo or from the
+# UAT part before it). uh = a past workout logged, edited, deleted; ur = start while open, untick,
+# remove set + Undo, Update routine; un = "Rest alerts are off"; ud = remove demo, load demo, import
+# Replace + Undo, Save my history; ue = erase (solo, gym member) + the welcome's "From Hevy".
+UAT_PARTS="uh ur un ud ue"
 GATE_PARTS="w dnd longrest anim mk"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
 for p in $QA_ONLY_LIST; do
-  case " $OLD_PARTS $GATE_PARTS " in
+  case " $OLD_PARTS $UAT_PARTS $GATE_PARTS " in
     *" $p "*) ;;
-    *) log "UNKNOWN PART '$p' in only (known: $OLD_PARTS $GATE_PARTS)"; status=1 ;;
+    *) log "UNKNOWN PART '$p' in only (known: $OLD_PARTS $UAT_PARTS $GATE_PARTS)"; status=1 ;;
   esac
 done
 for p in $QA_EXTRA_LIST; do
@@ -120,7 +127,7 @@ qa_runs() {
     case " $QA_ONLY_LIST " in *" $1 "*) return 0 ;; esac
     return 1
   fi
-  case " $OLD_PARTS w " in *" $1 "*) return 0 ;; esac
+  case " $OLD_PARTS $UAT_PARTS w " in *" $1 "*) return 0 ;; esac
   case " $QA_EXTRA_LIST " in *" $1 "*) return 0 ;; esac
   return 1
 }
@@ -590,7 +597,27 @@ if maestro test --format junit --output "$OUT/part-j2.xml" --test-output-dir "$O
     after=$(python3 "$QA_DIR/drag_check.py" order "$OUT/j2-after.xml" "Push A" "Pull A")
     if [ "$after" = "B-first" ]; then
       log "J2 DRAG OK: Pull A is now above Push A"
-      back=$(python3 "$QA_DIR/drag_check.py" drag "$OUT/j2-after.xml" "Push A" "Pull A")
+      # UAT work package 4 (item 14): the new order is SAVED, not only drawn: the app stopped and
+      # opened again (the same flow brings both cards on screen) still shows Pull A first.
+      back_from="$OUT/j2-after.xml"
+      adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      free_maestro
+      log "part J2R start"
+      if maestro test --format junit --output "$OUT/part-j2r.xml" --test-output-dir "$OUT/part-j2r" "$QA_DIR/v0400-j2.yaml" > "$OUT/part-j2r.log" 2>&1; then
+        j2_dump j2-restart.xml
+        kept=$(python3 "$QA_DIR/drag_check.py" order "$OUT/j2-restart.xml" "Push A" "Pull A")
+        if [ "$kept" = "B-first" ]; then
+          log "J2 ORDER KEPT: after a restart Pull A is still above Push A"
+          back_from="$OUT/j2-restart.xml"
+        else
+          status=1
+          log "J2 ORDER NOT KEPT: after a restart the order is '$kept' (want B-first; j2-restart.xml)"
+        fi
+      else
+        status=1
+        log "PART J2R FAILED (the routines after a restart: part-j2r.log)"
+      fi
+      back=$(python3 "$QA_DIR/drag_check.py" drag "$back_from" "Push A" "Pull A")
       j2_drag $back
       sleep 2
       j2_dump j2-back.xml
@@ -656,6 +683,24 @@ if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$O
     j3_first=${j3_before%%|*}; j3_second=${j3_before##*|}
     if [ "$j3_after" = "$j3_second|$j3_first" ]; then
       log "J3 DRAG OK: $j3_second is now above $j3_first"
+      # UAT work package 4 (item 14): the order is SAVED: the app stopped, opened again, back into
+      # the open workout (uat-j3-resume.yaml): the dragged order still.
+      adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      free_maestro
+      log "part J3R start"
+      if maestro test --format junit --output "$OUT/part-j3r.xml" --test-output-dir "$OUT/part-j3r" "$QA_DIR/uat-j3-resume.yaml" > "$OUT/part-j3r.log" 2>&1; then
+        j3_dump j3-restart.xml
+        j3_kept=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-restart.xml")
+        if [ "$j3_kept" = "$j3_second|$j3_first" ]; then
+          log "J3 ORDER KEPT: after a restart $j3_second is still above $j3_first"
+        else
+          status=1
+          log "J3 ORDER NOT KEPT: after a restart the order is '$j3_kept' (want '$j3_second|$j3_first'; j3-restart.xml)"
+        fi
+      else
+        status=1
+        log "PART J3R FAILED (the open workout after a restart: part-j3r.log)"
+      fi
     else
       status=1
       log "J3 DRAG FAILED: order after the drag is '$j3_after' (want '$j3_second|$j3_first')"
@@ -1071,7 +1116,24 @@ part_m() {
     log "automatic restore was '$res'; set to 1 (a phone's default)"
   fi
 
-  # 2. What must come back: Settings -> Backup's first line, e.g. "12 workouts".
+  # 2a. UAT work package 4 (item 12): more than the workout count must come back. backup-m-prep.yaml
+  # sets the profile name "QA Restore", a Body fat 17.5 % entry and units lb, and ends on the Workout
+  # tab with a routine card on screen, whose name is read here (backup-m-check.yaml looks for it).
+  free_maestro
+  maestro test --format junit --output "$OUT/part-m-prep.xml" --test-output-dir "$OUT/part-m-prep" "$QA_DIR/backup-m-prep.yaml"     > "$OUT/part-m-prep.log" 2>&1 || { adb exec-out screencap -p > "$OUT/m-prep-failed.png"; m_fail "could not set the name, measurement, units and routine to check after the restore (part-m-prep.log, m-prep-failed.png)"; return 1; }
+  free_maestro
+  adb shell uiautomator dump /sdcard/qa-m-routine.xml >/dev/null 2>&1 || true
+  adb pull /sdcard/qa-m-routine.xml "$OUT/m-routine-ui.xml" >/dev/null 2>&1 || true
+  m_routine=$(grep -oE 'Start routine [^"]+' "$OUT/m-routine-ui.xml" 2>/dev/null | head -1 | sed 's/^Start routine //')
+  if [ -z "$m_routine" ]; then
+    maestro hierarchy > "$OUT/m-routine-hierarchy.json" 2>/dev/null || true
+    m_routine=$(grep -oE 'Start routine [^"]+' "$OUT/m-routine-hierarchy.json" 2>/dev/null | head -1 | sed 's/^Start routine //')
+    free_maestro
+  fi
+  [ -n "$m_routine" ] || { m_fail "could not read a routine's name off the Workout tab (m-routine-ui.xml)"; return 1; }
+  log "BACKUP M: before the backup: name 'QA Restore', Body fat 17.5 %, units lb, routine '$m_routine'"
+
+  # 2b. What must come back: Settings -> Backup's first line, e.g. "12 workouts".
   free_maestro
   maestro test --format junit --output "$OUT/part-m-record.xml" --test-output-dir "$OUT/part-m-record" "$QA_DIR/backup-m-record.yaml" \
     > "$OUT/part-m-record.log" 2>&1 || { m_fail "could not reach Settings -> Backup's workout count before the backup (part-m-record.log)"; return 1; }
@@ -1134,6 +1196,12 @@ part_m() {
   maestro test -e WORKOUTS_LINE="$line" --format junit --output "$OUT/part-m.xml" --test-output-dir "$OUT/part-m" "$QA_DIR/backup-m-after.yaml" \
     > "$OUT/part-m.log" 2>&1 || { adb exec-out screencap -p > "$OUT/m-after-failed.png"; m_fail "after the reinstall the app did not open on '$line' without the welcome screen (part-m.log, m-after-failed.png)"; return 1; }
   log "BACKUP M: '$line' came back after uninstall + reinstall"
+  # 6. UAT work package 4 (item 12): and the rest of what was set before the backup.
+  free_maestro
+  local m_re
+  m_re=$(python3 -c "import re,sys;print(re.escape(sys.argv[1]))" "$m_routine")
+  maestro test -e ROUTINE="$m_re" --format junit --output "$OUT/part-m-check.xml" --test-output-dir "$OUT/part-m-check" "$QA_DIR/backup-m-check.yaml"     > "$OUT/part-m-check.log" 2>&1 || { adb exec-out screencap -p > "$OUT/m-check-failed.png"; m_fail "after the reinstall the name 'QA Restore', the Body fat 17.5 % entry, units lb or routine '$m_routine' did not come back (part-m-check.log, m-check-failed.png)"; return 1; }
+  log "BACKUP M: the name 'QA Restore', the Body fat 17.5 % entry, units lb and routine '$m_routine' came back too"
 }
 if qa_runs m; then
 log "part M start"
@@ -1173,6 +1241,109 @@ gate_dnd() {  # $1 = priority | off
   sleep 2
   echo "$(adb shell settings get global zen_mode | tr -d '\r')"
 }
+
+# ---------------------------------------------------------------- UAT-M parts (UAT work package 4)
+# The member app's risky actions no phone test had pressed (Audit/uat FINDINGS U-M3, U-M4), pressed for
+# real and checked on the screen after each press. Part of the whole run, after part M: they delete,
+# replace and erase, so they run where nothing after them leans on their state (W starts afresh).
+# Each part starts from a fresh install + the demo (gate-demo.yaml), or from the UAT part before it
+# when that part passed. Evidence: part-u*/ (screenshots u?-*.png), part-u*.log, ud-history.csv.
+UAT_OK=""
+uat_part() {  # $1 = part name, $2 = flow file, then extra maestro args
+  if gate_flow "$@"; then UAT_OK="$UAT_OK $1"; return 0; fi
+  return 1
+}
+uat_passed() { case " $UAT_OK " in *" $1 "*) return 0 ;; esac; return 1; }
+uat_notif() {  # granted=true|false of ForgeAI's notification permission
+  adb shell dumpsys package "$PKG" | tr -d '\r' | grep -o 'android.permission.POST_NOTIFICATIONS: granted=[a-z]*' | head -1 | cut -d= -f2
+}
+
+# UH: a past workout logged from Calendar and saved, edited and saved, deleted (uat-h.yaml).
+if qa_runs uh; then
+  uat_part uh uat-h.yaml && log "UAT UH: a past workout logged + saved, edited + saved (kept after a restart) and deleted, each checked on screen"
+fi
+
+# UR: start while one is open (Resume / Discard and start new), untick keeps the numbers, Remove set
+# and swipe Delete each undone, Finish with a set fewer -> Update routine (uat-r.yaml).
+if qa_runs ur; then
+  uat_part ur uat-r.yaml && log "UAT UR: Resume / Discard and start new, untick kept, Remove set + Undo, swipe + Undo, Update routine, each checked on screen"
+fi
+
+# UN: "Rest alerts are off" during a workout, notifications taken away as a member would (pm revoke).
+# Given back after, as part I2 does.
+if qa_runs un; then
+  uat_passed ur || gate_flow un_seed gate-demo.yaml || true
+  adb shell pm revoke "$PKG" android.permission.POST_NOTIFICATIONS > "$OUT/un-revoke.txt" 2>&1 || log "UAT UN: could not revoke the notification permission ($(tr -d '\r' < "$OUT/un-revoke.txt"))"
+  sleep 2
+  if [ "$(uat_notif)" = "false" ]; then
+    log "UAT UN: notification permission taken away (granted=false)"
+    uat_part un uat-n.yaml && log "UAT UN: the rest bar said 'Rest alerts are off' and offered to turn them on"
+  else
+    status=1
+    log "UAT UN FAILED: the notification permission could not be taken away (granted=$(uat_notif)); the part was not run"
+  fi
+  adb shell pm clear-permission-flags "$PKG" android.permission.POST_NOTIFICATIONS user-set user-fixed >/dev/null 2>&1 || true
+  adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS > "$OUT/un-grant.txt" 2>&1 || true
+  if [ "$(uat_notif)" = "true" ]; then
+    log "UAT UN: notification permission given back"
+  else
+    status=1
+    log "UAT UN FAILED: the notification permission could not be given back ($(tr -d '\r' < "$OUT/un-grant.txt"))"
+  fi
+fi
+
+# UD: remove the demo with an own workout, load-demo questions, import Replace + Undo, Save my
+# history (uat-d.yaml). The flow ends with Android's share sheet up: here it must be in front, and
+# the file it shares (the app's cache, read as root on this google_apis image) must hold the 12
+# workouts the Profile counted.
+if qa_runs ud; then
+  push_fixture "$QA_DIR/fixtures/qa-hevy.csv" /sdcard/Download/qa-hevy.csv
+  adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+  log "downloads: $(wait_media qa-hevy 1 20 downloads) Hevy file for UD"
+  if uat_part ud uat-d.yaml; then
+    sleep 2
+    ud_top=$(adb shell dumpsys activity activities 2>/dev/null | tr -d '\r' | grep -m1 -E 'topResumedActivity|mResumedActivity' | sed 's/^ *//')
+    if echo "$ud_top" | grep -qiE 'chooser|intentresolver|ResolverActivity'; then
+      log "UAT UD SAVE MY HISTORY: Android's share sheet is open ($ud_top)"
+    else
+      status=1
+      log "UAT UD SAVE MY HISTORY FAILED: no share sheet in front after 'Save my history' ($ud_top)"
+    fi
+    ud_file=$(adb shell "su 0 ls /data/data/$PKG/cache/" 2>/dev/null | tr -d '\r' | grep -m1 -E '^forgeai-history-.*\.csv$')
+    if [ -z "$ud_file" ]; then
+      if [ -z "$(adb shell "su 0 ls /data/data/$PKG/" 2>/dev/null | tr -d '\r')" ]; then
+        log "UAT UD SAVE MY HISTORY: the file cannot be read through adb on this image (no root); the share sheet check above stands alone"
+      else
+        status=1
+        log "UAT UD SAVE MY HISTORY FAILED: no forgeai-history-*.csv in the app's cache after 'Save my history'"
+      fi
+    else
+      adb exec-out "su 0 cat /data/data/$PKG/cache/$ud_file" > "$OUT/ud-history.csv" 2>/dev/null || true
+      ud_n=$(python3 -c "
+import csv, sys
+rows = list(csv.DictReader(open(sys.argv[1], encoding='utf-8-sig', errors='replace', newline='')))
+print(len({(r.get('title'), r.get('start_time'), r.get('end_time')) for r in rows}))
+" "$OUT/ud-history.csv" 2>/dev/null)
+      if [ "$ud_n" = "12" ]; then
+        log "UAT UD SAVE MY HISTORY: $ud_file holds 12 workouts, as the Profile counted ($(wc -l < "$OUT/ud-history.csv" | tr -d ' ') lines, ud-history.csv)"
+      else
+        status=1
+        log "UAT UD SAVE MY HISTORY FAILED: $ud_file holds '${ud_n:-unreadable}' workouts, the Profile counted 12 (ud-history.csv)"
+      fi
+    fi
+    adb exec-out screencap -p > "$OUT/ud-share-sheet.png" 2>/dev/null || true
+    adb shell input keyevent KEYCODE_BACK
+    sleep 2
+  fi
+fi
+
+# UE: Erase all data as a solo member (and the app reopens on the welcome), the welcome's "From Hevy"
+# opening the import by itself (U-M2), Erase as a member of the test gym FORGE1 (uat-e.yaml).
+if qa_runs ue; then
+  uat_passed ud || gate_flow ue_seed gate-demo.yaml || true
+  uat_part ue uat-e.yaml && log "UAT UE: erase (solo, then as a FORGE1 member) and the Hevy import opening by itself, each checked on screen"
+fi
+adb shell input keyevent KEYCODE_HOME >/dev/null 2>&1 || true
 
 # ---------------------------------------------------------------- part DND (audit v2 B: Do Not Disturb)
 # RestCard.postOver (RT-12) with the screen off and Do Not Disturb ON:

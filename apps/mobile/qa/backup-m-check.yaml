@@ -1,0 +1,55 @@
+# Device QA, part M (check, UAT work package 4 item 12) — after the uninstall, reinstall and Android's
+# restore, and after backup-m-after.yaml found the workout count again: what backup-m-prep.yaml set
+# must be back too. The profile name "QA Restore"; the Body fat 17.5 % entry; units "lb, miles";
+# the routine the script read before the backup (-e ROUTINE=<regex-escaped name>).
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- scrollUntilVisible:
+    element: "^ ?QA Restore$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: 183-after-reinstall-name
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Measures"
+- extendedWaitUntil:
+    visible: "Add measures"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Body fat$"
+- tapOn: "^Body fat$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '.*, 17\.5 %\. Fix or delete'
+- takeScreenshot: 184-after-reinstall-measure
+- back
+- runFlow: sub-settings-open.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^lb, miles$"
+- takeScreenshot: 185-after-reinstall-units
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start routine ${ROUTINE}"
+- takeScreenshot: 186-after-reinstall-routine
