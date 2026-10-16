@@ -52,24 +52,51 @@ describe('which records an undo takes back', () => {
     expect(plan.members).not.toContain(hand.id);
   });
 
-  it('keeps what the gym used after the import: a check-in, a receipt taken at the desk', async () => {
+  it('keeps what the gym used after the import, with its receipts (review: no false dues)', async () => {
     const db = await gym();
     let snap = await db.load();
     const riya = snap.members.find((m) => m.fullName === 'Riya Sharma')!;
     const asha = snap.members.find((m) => m.fullName === 'Asha Verma')!;
+    const dev = snap.members.find((m) => m.fullName === 'Dev Rao')!;
     const ashaTerm = snap.memberships.find((m) => m.memberId === asha.id)!;
     await db.checkIn(riya.id, '2026-10-15', 'desk', '2026-10-15');
     await db.recordPayment({ memberId: asha.id, membershipId: ashaTerm.id, amountP: 1000, method: 'cash', paidOn: '2026-10-15', note: null } as never);
     snap = await db.load();
     const plan = planUndo(snap, 'import-abc');
-    // Riya came in: she stays (her imported plan and receipt still go).
+    // Riya is training: she keeps her imported plan AND its receipt (else she looks lapsed / owing).
+    const riyaTerm = snap.memberships.find((m) => m.memberId === riya.id)!;
     expect(plan.members).not.toContain(riya.id);
-    // Asha paid at the desk against her imported plan: she and that plan stay.
+    expect(plan.memberships).not.toContain(riyaTerm.id);
+    expect(plan.payments.some((id) => snap.payments.find((p) => p.id === id)!.memberId === riya.id)).toBe(false);
+    // Asha paid at the desk against her imported plan: the plan and the file's receipt both stay.
     expect(plan.members).not.toContain(asha.id);
     expect(plan.memberships).not.toContain(ashaTerm.id);
-    // The Quarterly plan is still used by Asha's kept term; Yearly goes.
+    expect(plan.payments.some((id) => snap.payments.find((p) => p.id === id)!.membershipId === ashaTerm.id)).toBe(false);
+    // Dev was never used: he goes, with his plan and receipt; Yearly goes, Quarterly is still in use.
+    expect(plan.members).toEqual([dev.id]);
     expect(plan.plans.map((id) => snap.plans.find((p) => p.id === id)!.name)).toEqual(['Yearly']);
-    expect(plan.kept).toEqual({ members: 2, memberships: 1, plans: 1 });
+    expect(plan.kept).toEqual({ members: 2, memberships: 2, plans: 1 });
+  });
+
+  it('a term the gym changed (extra days) stays, and so does its member', async () => {
+    const db = await gym();
+    let snap = await db.load();
+    const dev = snap.members.find((m) => m.fullName === 'Dev Rao')!;
+    const devTerm = snap.memberships.find((m) => m.memberId === dev.id)!;
+    await db.extendMembership(devTerm.id, 10, 'Freeze');
+    snap = await db.load();
+    const plan = planUndo(snap, 'import-abc');
+    expect(plan.memberships).not.toContain(devTerm.id);
+    expect(plan.members).not.toContain(dev.id);
+    expect(plan.payments.some((id) => snap.payments.find((p) => p.id === id)!.membershipId === devTerm.id)).toBe(false);
+  });
+
+  it('an import the gym fully kept leaves the Past imports list', async () => {
+    const db = await gym();
+    let snap = await db.load();
+    for (const m of snap.members.filter((x) => x.importId)) await db.checkIn(m.id, '2026-10-15', 'desk', '2026-10-15');
+    snap = await db.load();
+    expect(pastImports(snap)).toHaveLength(0);
   });
 
   it('another import, and an empty id, take back nothing', async () => {

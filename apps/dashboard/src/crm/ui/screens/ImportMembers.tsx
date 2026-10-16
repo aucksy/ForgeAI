@@ -773,11 +773,10 @@ function PastImports() {
     setFailed(null);
     try {
       const r = await undoImport(importId);
-      const kept = r.kept.members + r.kept.memberships + r.kept.plans;
       setDone(
         tr(
-          `Import taken back: ${r.members} members, ${r.memberships} plans with dates, ${r.payments} receipts removed.${kept > 0 ? ` ${kept} kept because the gym used them after the import.` : ''}`,
-          `Import wapas ho gaya: ${r.members} members, ${r.memberships} plan dates ke saath, ${r.payments} raseed hataye.${kept > 0 ? ` ${kept} rakhe, kyunki import ke baad gym ne inhe use kiya.` : ''}`,
+          `Import taken back: ${r.members} members, ${r.memberships} plans with dates, ${r.payments} receipts and ${r.plans} plan names removed.${keptWords(r.kept)}`,
+          `Import wapas ho gaya: ${r.members} members, ${r.memberships} plan dates ke saath, ${r.payments} raseed aur ${r.plans} plan naam hataye.${keptWords(r.kept)}`,
         ),
       );
       setAsking(null);
@@ -828,16 +827,11 @@ function PastImports() {
             <div style={{ marginTop: space.sm }}>
               <p style={{ ...muted, color: color.ink }}>
                 {tr(
-                  `This removes ${ask.members.length} members, ${ask.memberships.length} plans with dates and ${ask.payments.length} receipts that this file added.`,
-                  `Isse is file se jude ${ask.members.length} members, ${ask.memberships.length} plan dates ke saath aur ${ask.payments.length} raseed hat jayenge.`,
+                  `This removes what this file added: ${ask.members.length} members, ${ask.memberships.length} plans with dates, ${ask.payments.length} receipts and ${ask.plans.length} plan names from Plans.`,
+                  `Isse is file ka joda hua hatega: ${ask.members.length} members, ${ask.memberships.length} plan dates ke saath, ${ask.payments.length} raseed aur Plans se ${ask.plans.length} plan naam.`,
                 )}
-                {ask.kept.members + ask.kept.memberships + ask.kept.plans > 0
-                  ? tr(
-                      ` ${ask.kept.members + ask.kept.memberships + ask.kept.plans} stay, because the gym used them after the import (a check-in, a payment at the desk, a plan sold).`,
-                      ` ${ask.kept.members + ask.kept.memberships + ask.kept.plans} rahenge, kyunki import ke baad gym ne inhe use kiya (check-in, desk par payment, plan becha).`,
-                    )
-                  : ''}
-                {tr(' Members you typed in yourself are never touched.', ' Jo members aapne khud likhe, unhe kuch nahi hoga.')}
+                {keptWords(ask.kept)}
+                {tr(' Nothing you added yourself is removed.', ' Jo aapne khud joda, woh nahi hatega.')}
               </p>
               <Row gap={space.sm}>
                 <Button tone="danger" disabled={busy} onClick={() => run(imp.importId)}>
@@ -852,5 +846,18 @@ function PastImports() {
         </div>
       ))}
     </Card>
+  );
+}
+
+/** " 2 members and 1 plan with dates stay: the gym used them after the import." PURE. */
+function keptWords(kept: { members: number; memberships: number; plans: number }): string {
+  const parts: string[] = [];
+  if (kept.members > 0) parts.push(tr(`${kept.members} members`, `${kept.members} members`));
+  if (kept.memberships > 0) parts.push(tr(`${kept.memberships} plans with dates`, `${kept.memberships} plan dates ke saath`));
+  if (kept.plans > 0) parts.push(tr(`${kept.plans} plan names`, `${kept.plans} plan naam`));
+  if (parts.length === 0) return '';
+  return tr(
+    ` ${parts.join(', ')} stay, with their receipts: the gym used them after the import (a check-in, a payment at the desk, extra days, a PT session).`,
+    ` ${parts.join(', ')} rahenge, raseed ke saath: import ke baad gym ne inhe use kiya (check-in, desk par payment, extra din, PT session).`,
   );
 }
