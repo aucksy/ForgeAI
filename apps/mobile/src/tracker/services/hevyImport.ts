@@ -251,6 +251,11 @@ function base64Bytes(base64: string): { bytes: Uint8Array; n: number } {
  */
 export function base64Utf8(base64: string): string | null {
   const { bytes, n } = base64Bytes(base64);
+  return utf8Of(bytes, n);
+}
+
+/** UTF-8 bytes → text; null when they are not UTF-8. A leading byte-order mark is dropped. PURE. */
+function utf8Of(bytes: ArrayLike<number>, n: number): string | null {
   let out = '';
   let chunk: number[] = [];
   const flush = (): void => {
@@ -284,6 +289,32 @@ export function base64Utf8(base64: string): string | null {
   }
   flush();
   return out;
+}
+
+/** Windows-1252's letters for bytes 0x80–0x9F (undefined ones read as the byte itself). */
+const CP1252_HIGH = '\u20ac\u0081\u201a\u0192\u201e\u2026\u2020\u2021\u02c6\u2030\u0160\u2039\u0152\u008d\u017d\u008f\u0090\u2018\u2019\u201c\u201d\u2022\u2013\u2014\u02dc\u2122\u0161\u203a\u0153\u009d\u017e\u0178';
+
+/**
+ * 16 Oct 2026 audit (C4-7): the spreadsheet library reads some .xlsx files' UTF-8 text as
+ * Windows-1252 ("Morning workout ☀️" → "Morning workout â˜€ï¸", an emoji note → "ðŸ˜‚"). Text that
+ * maps back to bytes one letter each AND those bytes are valid UTF-8 is read again as UTF-8;
+ * anything else (real accents typed as such, plain English) is left exactly as it was. PURE.
+ */
+export function undoMojibake(text: string): string {
+  if (!/[\u0080-\uffff]/.test(text)) return text;
+  const bytes: number[] = [];
+  for (const ch of text) {
+    const c = ch.charCodeAt(0);
+    if (c < 0x80 || (c >= 0xa0 && c <= 0xff)) bytes.push(c);
+    else {
+      const k = CP1252_HIGH.indexOf(ch);
+      if (k < 0) return text;
+      bytes.push(0x80 + k);
+    }
+  }
+  if (!bytes.some((b) => b >= 0xc2)) return text;
+  const fixed = utf8Of(bytes, bytes.length);
+  return fixed != null && fixed !== text ? fixed : text;
 }
 
 // ---------------------------------------------------------------- date parsing
@@ -617,7 +648,8 @@ function readRows(base64: string): { rows: RawRow[]; commaDecimal: boolean } {
     const sheet = wb.Sheets[wb.SheetNames[0]];
     if (!sheet) throw new Error('empty');
     const raw = XLSX.utils.sheet_to_json<RawRow>(sheet, { defval: null, raw: true });
-    const rows = raw.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [normHead(k), v])));
+    // C4-7: text the library read as Windows-1252 is put back to the UTF-8 it was.
+    const rows = raw.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [normHead(k), typeof v === 'string' ? undoMojibake(v) : v])));
     return { rows, commaDecimal: rows.some((r) => typeof r['weight_kg'] === 'string' && /^\s*-?\d+,\d+\s*$/.test(r['weight_kg'] as string)) };
   }
   const text = base64Utf8(base64) ?? base64Latin1(base64);

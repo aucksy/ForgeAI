@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system/legacy';
+import { workoutsNotInBackup } from './restoreImpact';
 import { create } from 'zustand';
 
 import {
@@ -122,6 +123,8 @@ export interface BackupState {
   backupNow: () => Promise<void>;
   /** Downloads + validates the Drive backup (no DB writes) and stashes it for confirm. */
   checkForBackup: () => Promise<{ found: boolean }>;
+  /** C4-9: workouts on this phone the found backup does not hold (a restore removes them). */
+  foundRemoves: () => Promise<number>;
   clearFound: () => void;
   /** Applies the stashed backup to SQLite (DELETE-first + insert). Returns false
    *  (a no-op) if there's no stashed backup — so callers don't report a false success. */
@@ -227,6 +230,14 @@ export const useBackup = create<BackupState>()((set, get) => ({
   },
 
   clearFound: () => set({ found: null }),
+
+  foundRemoves: async () => {
+    const found = get().found;
+    if (!found) return 0;
+    const env = parseSnapshot(found.json);
+    const rows = await getDb().getAllAsync<{ id: string }>('SELECT id FROM workout_sessions');
+    return workoutsNotInBackup(rows.map((r) => r.id), env);
+  },
 
   restoreFound: async () => {
     const found = get().found;

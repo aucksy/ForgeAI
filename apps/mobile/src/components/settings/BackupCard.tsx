@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { restoreConfirmText } from '@/store/restoreImpact';
 import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { Text, View } from 'react-native';
@@ -253,9 +254,17 @@ function DriveBackup() {
       }
       const info = useBackup.getState().found;
       const detail = info ? ` from ${fmtWhen(info.exportedAt)} (${info.workouts} workouts, ${info.meals} meals)` : '';
+      // C4-9: say how many workouts on this phone the backup does not have (they go).
+      const removes = await useBackup
+        .getState()
+        .foundRemoves()
+        .catch((e: unknown) => {
+          console.warn('[ForgeErr] restore: could not count the workouts a restore removes', e);
+          return 0;
+        });
       const ok = await askConfirm({
         title: 'Restore from Drive?',
-        body: `This replaces what’s on this phone with your backup${detail}. A copy of this phone is kept first, so you can undo it.`,
+        body: restoreConfirmText(`This replaces what’s on this phone with your backup${detail}.`, removes),
         confirmLabel: 'Restore',
         destructive: true,
       });

@@ -147,3 +147,14 @@ describe('C4-5: a phone in another time zone never imports bare "Push" workouts 
     expect(isAlreadyHere({ ...file, dayType: 'pull' }, [here])).toBeNull();
   });
 });
+
+describe('C4-7: the .xlsx path keeps emoji and accents', () => {
+  it('text read as Windows-1252 goes back to its UTF-8; real text is untouched', async () => {
+    const { undoMojibake } = await import('@/tracker/services/hevyImport');
+    const enc = (s: string) => [...new TextEncoder().encode(s)].map((b) => (b >= 0x80 && b <= 0x9f ? '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ'[[0x80, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8e, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9e, 0x9f].indexOf(b)] ?? String.fromCharCode(b) : String.fromCharCode(b))).join('');
+    expect(undoMojibake(enc('Morning workout ☀️'))).toBe('Morning workout ☀️');
+    expect(undoMojibake(enc('Felt great 😂'))).toBe('Felt great 😂');
+    expect(undoMojibake(enc('Crème brûlée'))).toBe('Crème brûlée');
+    for (const s of ['Crème brûlée', 'Push 1', 'Señor Müller', '☀️']) expect(undoMojibake(s)).toBe(s);
+  });
+});
