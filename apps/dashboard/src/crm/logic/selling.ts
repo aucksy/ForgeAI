@@ -16,7 +16,7 @@
  */
 
 import type { DateISO, Membership, Paise, Plan } from '../types';
-import { formatDay } from './dates';
+import { addDays, formatDay } from './dates';
 import { coverageEndsOn, endDateForPlan, nextTermStart } from './membership';
 import { tr } from '../i18n';
 import { gymPlansOnly, isPtMembership, isPtPlan } from './pt';
@@ -75,6 +75,9 @@ export function saleDefaults(
   };
 }
 
+/** A front-desk (Staff) sale may start at most this many days before today (the server's rule too). */
+export const STAFF_BACKDATE_DAYS = 31;
+
 export type SaleProblem =
   | { field: 'startsOn'; message: string }
   | { field: 'priceP'; message: string }
@@ -102,10 +105,22 @@ export function validateSale(
   input: SaleInput,
   memberships: readonly Membership[],
   today: DateISO,
+  role: 'owner' | 'staff' = 'owner',
 ): SaleProblem | null {
   if (!input.planId) return { field: 'plan', message: tr('Choose a plan first.', 'Pehle plan chuno.') };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.startsOn)) {
     return { field: 'startsOn', message: tr('Start date must be a real date.', 'Shuru ki tareekh sahi likho.') };
+  }
+  // The server refuses a front-desk sale that starts further back (0018_staff_and_owner_rules.sql):
+  // a start a month or more back hands out past time for free, so it is the owner's call.
+  if (role === 'staff' && input.startsOn < addDays(today, -STAFF_BACKDATE_DAYS)) {
+    return {
+      field: 'startsOn',
+      message: tr(
+        `The front desk can start a plan at most ${STAFF_BACKDATE_DAYS} days back. Ask the owner for an older start date.`,
+        `Front desk ${STAFF_BACKDATE_DAYS} din se zyada peeche se plan shuru nahi kar sakta. Purani tareekh ke liye owner se kaho.`,
+      ),
+    };
   }
   if (input.priceP === null) return { field: 'priceP', message: tr('Price isn’t a valid amount.', 'Fees sahi rakam nahi hai.') };
   if (input.joiningFeeP === null) {

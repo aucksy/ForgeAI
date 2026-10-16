@@ -14,6 +14,7 @@
 import { useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
+import { useRole } from '../../auth/AuthProvider';
 import { addDays, formatDay, isValidDateISO } from '../../logic/dates';
 import { endDateForPlan } from '../../logic/membership';
 import { saleDefaults, validateSale, type SaleProblem } from '../../logic/selling';
@@ -39,6 +40,7 @@ export function SellMembershipSheet({
   onSold?: (result: SellMembershipResult) => void;
 }) {
   const { snapshot, today, sellMembership } = useCrm();
+  const role = useRole();
 
   const plans = useMemo(
     () =>
@@ -95,6 +97,7 @@ export function SellMembershipSheet({
       { planId: plan?.id ?? null, startsOn, priceP, joiningFeeP: joiningP, collectNowP: collectP, pt: plan ? isPtPlan(plan) : false },
       memberships,
       today,
+      role,
     );
     if (found) {
       setProblem(found);

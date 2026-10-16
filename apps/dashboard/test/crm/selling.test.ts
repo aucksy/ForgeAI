@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   hasPaidJoiningFee,
   saleDefaults,
+  STAFF_BACKDATE_DAYS,
   validateSale,
 } from '../../src/crm/logic/selling';
 import { makeMembership, makePlan } from './fixtures';
@@ -97,6 +98,19 @@ describe('validateSale', () => {
 
   it('accepts a clean sale', () => {
     expect(validateSale(ok, [], TODAY)).toBeNull();
+  });
+
+  it('lets the front desk start a plan at most 31 days back (the server refuses older; 0018)', () => {
+    // 31 days before 26 Jul is 25 Jun: fine for Staff.
+    expect(validateSale({ ...ok, startsOn: '2026-06-25' }, [], TODAY, 'staff')).toBeNull();
+    const old = validateSale({ ...ok, startsOn: '2026-06-24' }, [], TODAY, 'staff');
+    expect(old).toMatchObject({ field: 'startsOn' });
+    expect(old?.message).toContain('owner');
+    // The owner may back-date as far as they like; future starts are fine for everyone.
+    expect(validateSale({ ...ok, startsOn: '2026-01-01' }, [], TODAY, 'owner')).toBeNull();
+    expect(validateSale({ ...ok, startsOn: '2026-01-01' }, [], TODAY)).toBeNull();
+    expect(validateSale({ ...ok, startsOn: '2026-09-01' }, [], TODAY, 'staff')).toBeNull();
+    expect(STAFF_BACKDATE_DAYS).toBe(31);
   });
 
   it('rejects an unparseable amount by naming the field', () => {

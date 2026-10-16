@@ -11,9 +11,12 @@
  *
  * Screens HIDE what a role cannot do (never a greyed-out button, never a blank hole in a layout).
  *
- * The server enforces the WRITES too (supabase/migrations/0014_staff_limits.sql, 15 Oct 2026):
- * crm_push refuses a Staff session's plan / expense / gym rows, voiding a receipt, and cancelling or
- * moving the end of a membership (OWNER_ONLY). HONEST LIMIT that remains: READING — the whole gym
+ * The server enforces the WRITES too (supabase/migrations/0014_staff_limits.sql, 15 Oct 2026;
+ * 0018_staff_and_owner_rules.sql, 16 Oct 2026): crm_push refuses a Staff session's plan / expense /
+ * gym rows, any change to a saved receipt, any change to a saved membership other than marking a PT
+ * session (and taking back today's), and a new membership that is not one of the gym's plans or
+ * starts more than 31 days back (OWNER_ONLY). Gym name, branding, shop products and member messages
+ * (manageGym) are refused for Staff too; orders stay open. HONEST LIMIT that remains: READING — the whole gym
  * is pulled to every signed-in device, so a determined staff member with the browser's developer
  * tools could still add up the totals the panel hides from them.
  */
