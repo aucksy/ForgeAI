@@ -68,7 +68,7 @@ export function messageKindsFor(v: MemberView, birthday: boolean): MessageKind[]
 export function kindLabel(kind: MessageKind): string {
   switch (kind) {
     case 'fees':
-      return tr('Fees reminder', 'Fees reminder');
+      return tr('Fees reminder', 'Fees ki yaad');
     case 'ending':
       return tr('Plan ending', 'Plan khatam hone wala');
     case 'ended':

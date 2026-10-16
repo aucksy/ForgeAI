@@ -148,7 +148,7 @@ export function MemberFormSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Cancel')}
+            {tr('Cancel', 'Rehne do')}
           </Button>
           <Button onClick={save} disabled={saving}>
             {saving
@@ -223,7 +223,7 @@ export function MemberFormSheet({
 
       <Grid min={220}>
         <TextField
-          label={tr('Joining date', 'Joining date')}
+          label={tr('Joining date', 'Joining ki tareekh')}
           value={form.joinedOn}
           onChange={set('joinedOn')}
           type="date"

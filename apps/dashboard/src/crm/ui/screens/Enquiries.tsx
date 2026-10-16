@@ -441,7 +441,7 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Cancel')}
+            {tr('Cancel', 'Rehne do')}
           </Button>
           <Button onClick={save} disabled={saving}>
             {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save enquiry', 'Enquiry save karo')}
@@ -550,7 +550,7 @@ function FollowUpSheet({ enquiry, onClose }: { enquiry: Enquiry; onClose: () => 
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Cancel')}
+            {tr('Cancel', 'Rehne do')}
           </Button>
           <Button onClick={() => void save(custom)} disabled={saving}>
             {tr('Save date', 'Date save karo')}
@@ -631,7 +631,7 @@ function ConvertFlow({
         footer={
           <>
             <Button variant="ghost" onClick={onClose}>
-              {tr('Cancel', 'Cancel')}
+              {tr('Cancel', 'Rehne do')}
             </Button>
             <Button
               wrap
@@ -675,7 +675,7 @@ function ConvertFlow({
         footer={
           <>
             <Button variant="ghost" onClick={onClose}>
-              {tr('Cancel', 'Cancel')}
+              {tr('Cancel', 'Rehne do')}
             </Button>
             <Button
               disabled={busy}

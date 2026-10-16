@@ -137,7 +137,7 @@ describe('owner-facing words', () => {
     expect(brandErrorWords({ message: 'BAD_COLOUR' })).toMatch(/colour code/);
     expect(brandErrorWords({ message: 'BAD_LOGO' })).toMatch(/Upload the logo again/);
     expect(brandErrorWords({ message: 'BAD_KEY' })).toMatch(/no longer available/);
-    expect(brandErrorWords({ message: 'Could not find the function public.owner_set_brand' })).toMatch(/isn’t switched on/);
+    expect(brandErrorWords({ message: 'Could not find the function public.owner_set_brand' })).toMatch(/isn’t ready for your gym yet. Message ForgeAI on WhatsApp/);
     expect(brandErrorWords(new Error('Failed to fetch'))).toMatch(/internet/);
     expect(brandErrorWords({ message: 'deadlock detected' })).toBe('That didn’t save. Please try again.');
   });

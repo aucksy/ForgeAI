@@ -1051,7 +1051,7 @@ function MembershipRow({
             )
           : onCancel && (
               <Button variant="quiet" tone="danger" onClick={onCancel}>
-                {tr('Cancel', 'Cancel')}
+                {tr('Cancel', 'Cancel karo')}
               </Button>
             )}
       </Row>

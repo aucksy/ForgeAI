@@ -648,7 +648,7 @@ function ProductCard({
         }}
       >
         <SmallButton onClick={onRestock} disabled={busy} label={tr(`Add 10 to stock, ${p.name}`, `${p.name} ke stock mein 10 jodo`)}>
-          {tr('+10 stock', '+10 stock')}
+          {tr('+10 stock', '+10 stock jodo')}
         </SmallButton>
         <SmallButton
           onClick={onToggle}

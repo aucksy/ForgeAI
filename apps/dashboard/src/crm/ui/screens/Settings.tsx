@@ -240,7 +240,7 @@ export function SettingsScreen() {
           footer={
             <>
               <Button variant="ghost" onClick={() => setConfirming(null)}>
-                {tr('Cancel', 'Cancel')}
+                {tr('Cancel', 'Rehne do')}
               </Button>
               <Button
                 tone="danger"

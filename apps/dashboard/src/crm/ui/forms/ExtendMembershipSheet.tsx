@@ -67,7 +67,7 @@ export function ExtendMembershipSheet({
       onDone(days);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : tr('Could not move the plan. Try again.', 'Plan aage nahi badha. Phir se try karo.'));
+      setError(e instanceof Error ? e.message : tr('Could not add the days to this membership. Try again.', 'Is membership mein din nahi jude. Phir se try karo.'));
     } finally {
       setSaving(false);
     }
@@ -80,7 +80,7 @@ export function ExtendMembershipSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Cancel')}
+            {tr('Cancel', 'Rehne do')}
           </Button>
           <Button onClick={submit} disabled={saving || days === null}>
             {saving

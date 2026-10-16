@@ -176,7 +176,7 @@ export function ProductSheet({
             </span>
           )}
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Cancel')}
+            {tr('Cancel', 'Rehne do')}
           </Button>
           <Button disabled={saving || uploading} onClick={() => void save()}>
             {uploading

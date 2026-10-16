@@ -15,7 +15,7 @@ import { authErrorWords, cleanCode, normalizeMobile } from './signin';
 
 const badPhone = () => tr('Type a 10-digit mobile number, like 98290 12345.', '10 digit ka mobile number likho, jaise 98290 12345.');
 
-export function SignInForm({ submitLabel = tr('Sign in', 'Sign in') }: { submitLabel?: string }) {
+export function SignInForm({ submitLabel = tr('Sign in', 'Sign in karo') }: { submitLabel?: string }) {
   const { adopt } = useAuth();
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');

@@ -368,7 +368,7 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Cancel')}
+            {tr('Cancel', 'Rehne do')}
           </Button>
           <Button onClick={submit} disabled={saving}>
             {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save expense', 'Kharcha save karo')}

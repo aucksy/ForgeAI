@@ -152,7 +152,7 @@ export function brandErrorWords(err: unknown): string {
   if (/\bBAD_LOGO\b/.test(msg)) return tr('That logo link can’t be used. Upload the logo again from this screen.', 'Yeh logo link kaam nahi karega. Isi screen se logo phir upload karo.');
   if (/\bBAD_HEADING\b/.test(msg)) return tr('Pick a heading style again.', 'Heading style phir se chuno.');
   if (/\bBUSY\b/.test(msg)) return tr('Too many uploads in the last few minutes. Wait a little and try again.', 'Pichhle kuch minute mein bahut upload hue. Thoda ruko aur phir try karo.');
-  if (/could not find the function|PGRST202/i.test(msg)) return tr('Branding isn’t switched on for this server yet. Ask ForgeAI to finish the setup.', 'Is server par branding abhi chalu nahi hai. ForgeAI se setup poora karne ko kaho.');
+  if (/could not find the function|PGRST202/i.test(msg)) return tr('Branding isn’t ready for your gym yet. Message ForgeAI on WhatsApp to switch it on.', 'Branding abhi aapke gym ke liye chalu nahi hai. Chalu karne ke liye ForgeAI ko WhatsApp karo.');
   if (/failed to fetch|networkerror|network request failed|load failed|fetch failed|timed? ?out/i.test(msg)) {
     return tr('Can’t reach the internet. Check the connection and try again.', 'Internet nahi mil raha. Connection check karo aur phir try karo.');
   }

@@ -89,7 +89,7 @@ export function PlansScreen() {
   return (
     <>
       <PageHeader
-        title={tr('Plans', 'Plan / Package')}
+        title={tr('Plans', 'Plans')}
         subtitle={tr('What you sell, and for how much', 'Aap kya bechte hain, kitne mein')}
         actions={canEdit ? <Button onClick={() => setAdding(true)}>{tr('+ Add plan', '+ Naya plan jodo')}</Button> : undefined}
       />
@@ -349,7 +349,7 @@ function PlanSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Cancel')}
+            {tr('Cancel', 'Rehne do')}
           </Button>
           <Button onClick={submit} disabled={saving}>
             {saving ? tr('Saving…', 'Save ho raha hai…') : tr('Save plan', 'Plan save karo')}

@@ -296,7 +296,7 @@ export function PeopleScreen() {
                     `${sheet.person.name} har phone aur computer se Sign out ho jayenge. Naye Code se phir Sign in kar sakte hain.`,
                   )
           }
-          action={sheet.kind === 'remove' ? tr('Remove', 'Hatao') : tr('Sign out', 'Sign out')}
+          action={sheet.kind === 'remove' ? tr('Remove', 'Hatao') : tr('Sign out', 'Sign out karo')}
           onClose={closeSheet}
           run={async () => {
             if (sheet.kind === 'remove') await authApi.removePerson(key, sheet.person.staffId);
@@ -316,7 +316,7 @@ export function PeopleScreen() {
             'Your records stay online. To come back, sign in with your mobile number and a new code (an owner makes it in Staff & sign-in).',
             'Aapke records Online rahenge. Wapas aane ke liye Mobile number aur naye Code se Sign in karo (Owner ise Staff ka login mein banata hai).',
           )}
-          action={tr('Sign out', 'Sign out')}
+          action={tr('Sign out', 'Sign out karo')}
           onClose={closeSheet}
           run={async () => {
             navigate('/');
@@ -370,7 +370,7 @@ function AddPersonSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Cancel')}
+            {tr('Cancel', 'Rehne do')}
           </Button>
           <Button disabled={busy} onClick={() => void save()}>
             {busy ? tr('Adding…', 'Jod rahe hain…') : tr('Add', 'Jodo')}
@@ -499,7 +499,7 @@ function ConfirmSheet({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            {tr('Cancel', 'Cancel')}
+            {tr('Cancel', 'Rehne do')}
           </Button>
           <Button
             tone="danger"

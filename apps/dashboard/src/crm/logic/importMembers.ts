@@ -66,7 +66,7 @@ export function fieldLabel(field: ImportField): string {
   switch (field) {
     case 'fullName': return tr('Name', 'Naam');
     case 'phone': return tr('Mobile', 'Mobile');
-    case 'joinedOn': return tr('Joining date', 'Joining date');
+    case 'joinedOn': return tr('Joining date', 'Joining ki tareekh');
     case 'gender': return tr('Gender', 'Gender');
     case 'dateOfBirth': return tr('Date of birth', 'Janam din');
     case 'email': return tr('Email', 'Email');
@@ -78,7 +78,7 @@ export function fieldLabel(field: ImportField): string {
     case 'amount': return tr('Fees paid', 'Fees di');
     case 'paidOn': return tr('Payment date', 'Payment ki date');
     case 'due': return tr('Balance due', 'Baaki');
-    case 'expiry': return tr('Valid till', 'Valid till');
+    case 'expiry': return tr('Valid till', 'Kab tak valid');
     case 'notes': return tr('Notes', 'Notes');
   }
 }

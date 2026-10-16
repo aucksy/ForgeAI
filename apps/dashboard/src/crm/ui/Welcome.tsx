@@ -97,7 +97,7 @@ export function Welcome() {
 
         <Card>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            {tr('Sign in', 'Sign in')}
+            {tr('Sign in', 'Sign in karo')}
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
             {tr(
