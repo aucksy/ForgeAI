@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { Text, View } from 'react-native';
 
-import { shownBackupError } from '@/cloud/backupWords';
+import { RestoredUntidyError, shownBackupError } from '@/cloud/backupWords';
 import { isDriveConfigured } from '@/cloud/drive';
 import { askConfirm, Card, GhostButton, Icon, PrimaryButton } from '@/components/ui';
 import { clockTime, tinyDateWithYear, toISO } from '@/lib/date';
@@ -283,6 +283,12 @@ function DriveBackup() {
       say('Restored. Your history is back on this phone.');
     } catch (e) {
       warn();
+      if (e instanceof RestoredUntidyError) {
+        // 16 Oct 2026 review: the data WAS replaced, so the screens show it and the words say so.
+        await refreshScreens().catch((err: unknown) => console.warn('[ForgeErr] restore: screens did not refresh', err));
+        say(e.message);
+        return;
+      }
       say(null, shownBackupError(e, 'Could not restore. Nothing was changed.', 'restore'));
     }
   };

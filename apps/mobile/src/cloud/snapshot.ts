@@ -3,6 +3,8 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import { getDb } from '@/db';
 import { SCHEMA_VERSION } from '@/db/schema';
 import { enqueueWrite } from '@/db/writeQueue';
+import { MEMBER_SCHEMA_VERSION } from '@/onboarding/db/memberSchema';
+import { TRACKER_SCHEMA_VERSION } from '@/tracker/db/trackerSchema';
 
 import { backupVersionWords, PlainError } from './backupWords';
 
@@ -118,9 +120,30 @@ const APP_TAG = 'forgeai';
 // hid (`hidden_exercises`).
 const META_KEYS: readonly string[] = ['importOriginalStarts', 'import_clock_real_v1', 'routine_import_marks', 'hidden_exercises'];
 
+/**
+ * 16 Oct 2026 backup review: the one-time repairs' "done" marks. A backup does not carry them, and
+ * the data it brings back may be from before a repair (an older version's 85 kg x 12 lighter-set
+ * 1-rep-max record), so every restore clears them: each repair runs again (straight after a Drive
+ * restore, else on the next start). Each repair only touches what is still wrong, so a second run
+ * on repaired data changes nothing. A test holds this list to the repairs' own keys.
+ */
+export const RERUN_AFTER_RESTORE: readonly string[] = [
+  'pr_single_e1rm_fix',
+  'pr_long_set_e1rm_fix',
+  'pr_lighter_set_e1rm_fix',
+  'link_folder_repair_v1',
+];
+
 export interface BackupEnvelope {
   app: string;
   schema_version: number;
+  /**
+   * The tracker and member table versions of the app that made it (16 Oct 2026 review). A newer
+   * app's backup may hold columns this app would silently drop, so it is refused. Absent in
+   * backups made before (they restore as always).
+   */
+  tracker_schema_version?: number;
+  member_schema_version?: number;
   exported_at: string; // ISO timestamp
   tables: Record<string, Row[]>;
   /** `META_KEYS` present at export. Absent in backups made before it existed. */
@@ -179,7 +202,7 @@ export async function exportSnapshot(pageRows: number = EXPORT_PAGE_ROWS): Promi
     }),
   );
   // The envelope's keys in the order `BackupEnvelope` has always been written in.
-  const head = `{"app":${JSON.stringify(APP_TAG)},"schema_version":${JSON.stringify(SCHEMA_VERSION)},"exported_at":${JSON.stringify(new Date().toISOString())},"tables":{`;
+  const head = `{"app":${JSON.stringify(APP_TAG)},"schema_version":${JSON.stringify(SCHEMA_VERSION)},"tracker_schema_version":${JSON.stringify(TRACKER_SCHEMA_VERSION)},"member_schema_version":${JSON.stringify(MEMBER_SCHEMA_VERSION)},"exported_at":${JSON.stringify(new Date().toISOString())},"tables":{`;
   return `${head}${parts.join('')}},"meta":${JSON.stringify(meta)}}`;
 }
 
@@ -199,6 +222,16 @@ export function parseSnapshot(json: string): BackupEnvelope {
   // notes above say). Only a backup from a NEWER app is refused, with what to do about it.
   const versionProblem = backupVersionWords(env.schema_version, SCHEMA_VERSION);
   if (versionProblem) throw new PlainError(versionProblem);
+  // 16 Oct 2026 review: `schema_version` never moved (always 1), so the tracker and member versions
+  // decide too. A backup made before they were written has neither and restores as always.
+  for (const [backup, app] of [
+    [env.tracker_schema_version, TRACKER_SCHEMA_VERSION],
+    [env.member_schema_version, MEMBER_SCHEMA_VERSION],
+  ] as const) {
+    if (backup === undefined) continue;
+    const problem = backupVersionWords(backup, app);
+    if (problem) throw new PlainError(problem);
+  }
   return env as BackupEnvelope;
 }
 
@@ -264,4 +297,6 @@ export async function replaceAllInTransaction(tx: TxLike, env: BackupEnvelope): 
     // A backup older than the keys above predates the IM-07 repair: its imports need it again.
     await tx.runAsync('DELETE FROM meta WHERE key = ?', ['import_clock_real_v1']);
   }
+  // The restored data may be from before the one-time repairs: they run again.
+  await tx.runAsync(`DELETE FROM meta WHERE key IN (${RERUN_AFTER_RESTORE.map(() => '?').join(', ')})`, [...RERUN_AFTER_RESTORE]);
 }

@@ -13,7 +13,7 @@ import {
   signInToDrive,
   signOutDrive,
 } from '@/cloud/drive';
-import { PlainError } from '@/cloud/backupWords';
+import { PlainError, RestoredUntidyError } from '@/cloud/backupWords';
 import {
   describeSnapshot,
   exportSnapshot,
@@ -138,17 +138,44 @@ export interface BackupState {
   undoRestoreImpact: () => Promise<{ available: boolean; newerWorkouts: number }>;
 }
 
-/** After any restore (or undo): re-link the library and clear media paths that aren't here. */
+/**
+ * 16 Oct 2026 review: the restore cleared the one-time repairs' marks (snapshot.ts,
+ * `RERUN_AFTER_RESTORE`) — a backup made before them brings back what they put right (an older
+ * version's 85 kg x 12 lighter-set 1-rep-max record). They run now, in start-up's order, not only
+ * at the next start. A failure is logged; its mark stays clear, so it tries again next start.
+ */
+async function rerunRepairs(): Promise<void> {
+  const pr = await import('@/tracker/services/prRebuild');
+  for (const fix of [pr.fixSingleE1rmRecords, pr.fixLongSetE1rmRecords, pr.fixLighterSetE1rmRecords]) {
+    await enqueueWrite(fix).catch((e: unknown) => console.warn('[ForgeErr] restore: a record fix failed (tries again next start)', e));
+  }
+  // Queues its own writes: never inside another queued job.
+  await import('@/tracker/services/linkFolderRepair')
+    .then((m) => m.repairLinkFolders())
+    .catch((e: unknown) => console.warn('[ForgeErr] restore: the folder repair failed (tries again next start)', e));
+}
+
+/** After a restore: take the demo badge off, run the repairs, re-link the library, clear media paths that aren't here. */
 async function afterReplace(): Promise<void> {
   await clearDemoFlag();
   // Review fix (IM-07): a backup from before Phase 4 brings workouts imported the old way; the
-  // restore cleared the repair's mark, so they are put right now, not at the next start.
+  // restore cleared the repair's mark, so they are put right now, not at the next start. Before the
+  // record fixes: those order workouts by their start.
   await import('@/tracker/services/importClockRepair')
     .then((m) => m.repairImportedClockTimes())
-    .catch(() => 0);
+    .catch(() => 0); // quiet: the mark stays clear, so the next start repairs them
+  await rerunRepairs();
   await resyncExerciseCatalog(false).catch(() => undefined);
   await clearMissingExerciseMedia().catch(() => undefined);
 }
+
+/**
+ * 16 Oct 2026 review: the last restore replaced the data but a step after it failed, so the member
+ * is told to tap Restore again. That second restore must keep the safety copy from BEFORE the first
+ * (re-copying would save the restored data, and Undo could never bring the phone's own back).
+ * In memory only: it covers this restore and its retry, not a later one after a restart.
+ */
+let untidyRestore = false;
 
 export const useBackup = create<BackupState>()((set, get) => ({
   ready: false,
@@ -249,14 +276,21 @@ export const useBackup = create<BackupState>()((set, get) => ({
       // DS-10: a safety copy of this phone first. If it can't be saved, nothing is replaced.
       const uri = safetyUri();
       if (!uri) throw new PlainError('Could not save a copy of this phone’s data first, so nothing was changed.');
+      const restoredSessionIds = (env.tables['workout_sessions'] ?? []).map((r) => String(r.id));
       try {
-        const copy: SafetyFile = {
-          kind: 'forgeai-before-restore',
-          savedAt: Date.now(),
-          snapshot: await exportSnapshot(),
-          meta: await readDemoMeta(),
-          restoredSessionIds: (env.tables['workout_sessions'] ?? []).map((r) => String(r.id)),
-        };
+        // The retry of a restore whose tidy-up failed: the copy from before it stays (only the
+        // workouts it brings in are updated) — unless the member has saved a workout since.
+        const kept = untidyRestore ? await readSafetyFile() : null;
+        const copy: SafetyFile =
+          kept && (await countNewerWorkouts(kept.restoredSessionIds ?? [])) === 0
+            ? { ...kept, restoredSessionIds }
+            : {
+                kind: 'forgeai-before-restore',
+                savedAt: Date.now(),
+                snapshot: await exportSnapshot(),
+                meta: await readDemoMeta(),
+                restoredSessionIds,
+              };
         await FileSystem.writeAsStringAsync(uri, JSON.stringify(copy));
       } catch (e) {
         console.warn('[ForgeErr] restore: the safety copy could not be written', e);
@@ -267,12 +301,21 @@ export const useBackup = create<BackupState>()((set, get) => ({
       await forgetCatalogSync().catch(() => undefined);
       // One transaction: a failed restore changes nothing (and the safety copy is kept).
       await importSnapshot(env);
+      // From here this phone holds the backup's data: the found backup is used up.
+      set({ found: null });
       // Real history has replaced whatever was here — it is no longer demo data, so the badge
       // must not linger. Phase 2: an older backup holds the old library — link it to the bundled
       // one. The backup has each exercise's own photo/video PATH, not the file: clear the ones
       // that aren't on this phone so the library drawing shows instead of a blank square.
-      await afterReplace();
-      set({ found: null });
+      try {
+        await afterReplace();
+      } catch (e) {
+        // 16 Oct 2026 review: the data WAS replaced — never "nothing was changed".
+        console.warn('[ForgeErr] restore: a step after the data swap failed', e);
+        untidyRestore = true;
+        throw new RestoredUntidyError();
+      }
+      untidyRestore = false;
       return true;
     } finally {
       set({ busy: false });
@@ -311,6 +354,7 @@ export const useBackup = create<BackupState>()((set, get) => ({
       await resyncExerciseCatalog(demo).catch(() => undefined);
       await clearMissingExerciseMedia().catch(() => undefined);
       await FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => undefined);
+      untidyRestore = false;
       set({ canUndoRestore: false });
       return true;
     } finally {

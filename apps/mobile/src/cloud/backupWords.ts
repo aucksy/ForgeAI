@@ -12,6 +12,17 @@
 /** An error whose message is plain words, safe to show a member as it is. */
 export class PlainError extends Error {}
 
+/**
+ * 16 Oct 2026 review: the restore DID replace this phone's data, but a small step after it (taking
+ * the demo badge off, say) failed. Before, the member read "Could not restore. Nothing was
+ * changed." Its words say what is true; the Backup screen treats it as a restore.
+ */
+export class RestoredUntidyError extends PlainError {
+  constructor() {
+    super('Restored. Your history is back on this phone, but one small tidy-up step didn’t finish. Tap Restore again to finish it.');
+  }
+}
+
 /** A Google Drive problem. Its message is plain words; `detail` is the developer text (logged). */
 export class DriveError extends PlainError {
   constructor(

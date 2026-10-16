@@ -88,7 +88,7 @@ export async function reconcilePrsForExercises(exerciseIds: string[]): Promise<v
   }
 }
 
-const SINGLE_FIX_KEY = 'pr_single_e1rm_fix';
+export const SINGLE_FIX_KEY = 'pr_single_e1rm_fix';
 
 /**
  * Once per install (Phase 3 review): an older version stored a single's 1-rep max with the
@@ -109,7 +109,7 @@ export async function fixSingleE1rmRecords(): Promise<void> {
   await setMeta(SINGLE_FIX_KEY, '1');
 }
 
-const LONG_SET_FIX_KEY = 'pr_long_set_e1rm_fix';
+export const LONG_SET_FIX_KEY = 'pr_long_set_e1rm_fix';
 
 /**
  * Once per install — 13 Oct 2026 audit (B1): an older version stored a long set's 1-rep max with
@@ -128,7 +128,7 @@ export async function fixLongSetE1rmRecords(): Promise<void> {
   await setMeta(LONG_SET_FIX_KEY, '1');
 }
 
-const LIGHTER_SET_FIX_KEY = 'pr_lighter_set_e1rm_fix';
+export const LIGHTER_SET_FIX_KEY = 'pr_lighter_set_e1rm_fix';
 
 /**
  * Once per install — 16 Oct 2026 (owner rule, wave-1 review item 2): an older version stored a
