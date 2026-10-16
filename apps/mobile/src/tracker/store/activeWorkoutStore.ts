@@ -191,6 +191,11 @@ export interface DraftExercise {
    */
   previousWarmups?: PrevSet[];
   /**
+   * 16 Oct 2026 review (wave 1, item 5): `previousSets` carries the drop marker (`PrevSet.setType`).
+   * Absent on a draft saved before the marker existed: there `prevForSet` pairs rows by place.
+   */
+  prevTyped?: true;
+  /**
    * 13 Oct 2026 (idea 1): the workout PREVIOUS comes from — its day and its name (its title,
    * else its routine's name; null = no name) — for the card's "Last: 3 Oct · Push 1A" line. It
    * is the workout of the "Previous values" scope, as PREVIOUS is. Absent: no previous, or a
@@ -1041,6 +1046,7 @@ async function buildDraftExercise(
     incrementKg: ex.incrementKg,
     previousSets,
     previousWarmups,
+    prevTyped: true,
     ...(lastFrom ? { lastFrom } : {}),
     ...(elsewhere ? { elsewhere } : {}),
     sets,
@@ -1150,16 +1156,42 @@ export function prevForSet(ex: DraftExercise, setKey: string): PrevSet | null {
   const row = ex.sets.find((s) => s.key === setKey);
   if (!row) return null;
   if (row.isWarmup) {
+    const warmLast = ex.previousWarmups ?? [];
     let warm = 0;
+    /** C4-1: W rows after a working row that had no warm-up of their number last time. */
+    let trailing = 0;
+    let afterWorking = false;
     for (const s of ex.sets) {
       if (s.key === setKey) break;
-      if (s.isWarmup) warm += 1;
+      if (!s.isWarmup) afterWorking = true;
+      else {
+        if (afterWorking && warm >= warmLast.length) trailing += 1;
+        warm += 1;
+      }
     }
-    return ex.previousWarmups?.[warm] ?? null;
+    const mine = warmLast[warm];
+    if (mine) return mine;
+    // 16 Oct 2026 audit (C4-1): a W row AFTER the working sets with no warm-up of its number last
+    // time is Hevy's one-off typing of the member's usual drop ("wnnnw"): it reads last time's
+    // drop that no drop row of today claims. (A leading W row with none stays empty.)
+    if (!afterWorking) return null;
+    const drops = ex.previousSets.filter((p) => p.setType === 'drop');
+    const claimed = ex.sets.filter((s) => !s.isWarmup && s.setType === 'drop').length;
+    return drops[claimed + trailing] ?? null;
   }
-  // 16 Oct 2026 audit (C1-3): a drop row reads last time's drops in order, every other working
-  // row last time's other sets in order — "set 2" is last time's set 2 even when last time had
-  // a drop set after set 1 that today's routine does not.
+  // Review item 5: a draft saved before the drop marker existed pairs working rows by place,
+  // drops included (the rule before C1-3), so its drop rows keep their PREVIOUS.
+  if (!ex.prevTyped && !ex.previousSets.some((p) => p.setType === 'drop')) {
+    let n = 0;
+    for (const s of ex.sets) {
+      if (s.key === setKey) break;
+      if (!s.isWarmup) n += 1;
+    }
+    return ex.previousSets[n] ?? null;
+  }
+  // 16 Oct 2026 audit (C1-3, C4-2): a drop row reads last time's drops in order, every other
+  // working row last time's other sets in order — "set 2" is last time's set 2 even when last
+  // time had a drop set after set 1 that today's routine does not.
   const drop = row.setType === 'drop';
   let n = 0;
   for (const s of ex.sets) {
@@ -1189,8 +1221,8 @@ const present = (v: number | null | undefined): number | null => (v != null && N
  *      set above (an extra set is one tap, as in Hevy).
  * Each number follows the rule on its own: a weight typed above with no reps takes the
  * Target's rep goal. A warm-up row follows rule 3 only, with last time's same warm-up
- * (`prevForSet`): no warm-up last time, no hint. A drop row hints its own last-time drop first
- * and never the Target. A reps-only move never hints a weight (LW-19). A weight × reps row
+ * (`prevForSet`): no warm-up last time, no hint (C4-1: a W row after the working sets reads last
+ * time's unclaimed drop). A drop row hints its own last-time drop first, never the Target. A reps-only move never hints a weight (LW-19). A weight × reps row
  * with no weight to hint gets no hint at all — a tick then asks for the weight (TG-07).
  * Only hints: nothing is written into the row until it is ticked.
  *
@@ -1231,10 +1263,22 @@ export function fillForSet(
   const pick = (
     typedOf: (s: DraftSet) => number | null,
     prevOf: (p: PrevSet | null | undefined) => number | null,
-    /** C1-7: a drop row's WEIGHT comes only from its own last-time drop. */
+    /**
+     * C1-7: a drop row's WEIGHT comes from its own last-time drop, else (review item 4) the
+     * weight typed in a DROP row above (a second drop) — never a normal row's.
+     */
     dropOwnOnly = false,
   ): number | null => {
-    if (drop && dropOwnOnly) return prevOf(own);
+    if (drop && dropOwnOnly) {
+      const mine = prevOf(own);
+      if (mine != null) return mine;
+      for (const s of above) {
+        if (s.setType !== 'drop') continue;
+        const t = typedOf(s);
+        if (t != null) return t;
+      }
+      return null;
+    }
     let typed: number | null = null;
     for (const s of above) {
       typed = typedOf(s);
@@ -1258,8 +1302,9 @@ export function fillForSet(
     return out;
   }
   // 16 Oct 2026 audit (C1-7): a drop set is lighter by definition, so a drop row never hints the
-  // weight of the set above (or of last time's normal set): only its own last-time drop. With
-  // none, a tick asks for the weight. Its reps may still follow the row above.
+  // weight of a NORMAL set above (or of last time's normal set): its own last-time drop, else the
+  // weight typed in a drop row above (review item 4: a second drop). With neither, a tick asks
+  // for the weight. Its reps may still follow the row above.
   let weightKg = lt === 'reps' ? 0 : pick((s) => present(s.weightKg), (p) => present(p?.weightKg), true);
   // Review fix: a warm-up follows a moved working weight (last time's warm-up x new / last).
   if (warmup && lt === 'weight_reps' && weightKg != null && weightKg > 0 && target?.warm && target.weightKg > 0) {

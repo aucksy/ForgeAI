@@ -87,6 +87,8 @@ export function buildEditDraft(
       supersetGroup,
       note,
       previousSets: previous[group.exercise.id] ?? [],
+      // Review item 5: these last-time sets carry the drop marker.
+      prevTyped: true,
       sets,
     };
     if (kind) {

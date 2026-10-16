@@ -190,7 +190,37 @@ function daysBetween(aISO: string, bISO: string): number {
   return Math.round((Date.parse(`${bISO}T00:00:00Z`) - Date.parse(`${aISO}T00:00:00Z`)) / 86_400_000);
 }
 
-function summary(ex: RebuildWorkout['exercises'][number]): {
+type SetKind = 'warmup' | 'normal' | 'drop' | 'failure';
+const kindOf = (s: RebuildWorkout['exercises'][number]['sets'][number]): SetKind => (s.isWarmup ? 'warmup' : s.setType ?? 'normal');
+
+/**
+ * 16 Oct 2026 audit (C4-1): each set's type is the one the member used MOST in that place over
+ * this routine's workouts with the same number of sets (ties → the newest's). Hevy once saved his
+ * usual closing drop as a warm-up ("wnnnw" against 40 × "wnnnd"); the newest alone made the
+ * routine end with a W row. PURE.
+ */
+export function usualSetKinds(
+  last: RebuildWorkout['exercises'][number],
+  earlier: readonly RebuildWorkout['exercises'][number][],
+): SetKind[] {
+  const mine = last.sets.map(kindOf);
+  const same = earlier.filter((e) => e.sets.length === mine.length);
+  return mine.map((k, i) => {
+    const n = new Map<SetKind, number>([[k, 1]]);
+    for (const e of same) {
+      const t = kindOf(e.sets[i]);
+      n.set(t, (n.get(t) ?? 0) + 1);
+    }
+    let best = k;
+    for (const [t, c] of n) if (c > (n.get(best) ?? 0)) best = t;
+    return best;
+  });
+}
+
+function summary(
+  ex: RebuildWorkout['exercises'][number],
+  earlier: readonly RebuildWorkout['exercises'][number][] = [],
+): {
   sets: number;
   repMin: number | null;
   repMax: number | null;
@@ -204,12 +234,13 @@ function summary(ex: RebuildWorkout['exercises'][number]): {
   // 13 Oct 2026 audit: warm-ups (with last time's reps) and drop / failure sets stay what they
   // were. Plain working sets only: no list (the rows are as before, sets + rep range).
   const typed = working.length > 0 && ex.sets.some((s) => s.isWarmup || (s.setType != null && s.setType !== 'normal'));
+  const kinds = usualSetKinds(ex, earlier);
   return {
     sets: Math.max(1, counted.length),
     repMin: reps.length > 0 ? Math.min(...reps) : null,
     repMax: reps.length > 0 ? Math.max(...reps) : null,
     ...(typed
-      ? { setList: ex.sets.map((s): PlanSet => (s.isWarmup ? { type: 'warmup', reps: s.reps > 0 ? s.reps : null } : { type: s.setType ?? 'normal' })) }
+      ? { setList: ex.sets.map((s, i): PlanSet => (kinds[i] === 'warmup' ? { type: 'warmup', reps: s.isWarmup && s.reps > 0 ? s.reps : null } : { type: kinds[i] })) }
       : {}),
   };
 }
@@ -247,7 +278,9 @@ export function findRoutines(
     const tickedTitles = last.exercises.filter((ex) => ex.sets.length > 0).map((ex) => ex.title);
     const toFound = (title: string, ticked: boolean): FoundExercise => {
       const d = lastDone.get(title)!;
-      return { title, ...summary(d.ex), lastISO: d.iso, ticked };
+      // C4-1: the same exercise in this routine's other workouts, for its usual set types.
+      const earlier = uses.flatMap((w, i) => (i === d.at ? [] : w.exercises.filter((e) => e.title === title && e.sets.length > 0)));
+      return { title, ...summary(d.ex, earlier), lastISO: d.iso, ticked };
     };
     const offered = [...lastDone.keys()]
       .filter((t) => !tickedTitles.includes(t))
