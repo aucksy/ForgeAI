@@ -928,6 +928,8 @@ async function buildDraftExercise(
    */
   opts: {
     exactSets?: boolean;
+    /** C4-4: a Repeat's rows exactly as the source workout had them. */
+    types?: readonly PlanSetType[];
     card?: number;
     before?: HistoryBefore | null;
     routine?: RoutineExerciseExtras | null;
@@ -1001,7 +1003,11 @@ async function buildDraftExercise(
   const routine = opts.routine ?? null;
   const planned = routine?.sets && routine.sets.length > 0 ? routine.sets : null;
   let rowTypes: PlanSetType[];
-  if (opts.exactSets) {
+  if (opts.types && opts.types.length > 0) {
+    // 16 Oct 2026 audit (C4-4): a Repeat — the source workout's own rows, warm-ups, drops and
+    // failure sets included, in its order.
+    rowTypes = [...opts.types];
+  } else if (opts.exactSets) {
     // An easy week: exactly half the working sets (plain), after the routine's warm-ups.
     const warm = (planned ?? []).filter((x) => x.type === 'warmup').map(() => 'warmup' as const);
     rowTypes = [...warm, ...Array.from({ length: Math.max(1, targetSets) }, () => 'normal' as const)];
@@ -1692,10 +1698,23 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const ownRoutine = session.routineId ?? (await routineIdByName(session.title, session.notes).catch(() => null));
       const scope = await scopeOfWorkout({ planDayId: null, routineId: ownRoutine });
       const facts = await prefetchCardFacts(session.exercises.map((g, i) => ({ exerciseId: g.exercise.id, card: cards[i] })), null, scope);
+      // 16 Oct 2026 audit (C4-4): each card repeats the source's rows exactly (W W n n n,
+      // W n n n n D F). Counting drops as working sets and leaving warm-ups out lost every warm-up,
+      // turned a failure set into a normal one and added a phantom set after the drop. A failed
+      // read of the set types: warm-ups and plain sets, as the saved rows say.
+      const meta = await getSessionSetMeta(session.id).catch((e: unknown) => {
+        console.warn('[ForgeErr] repeat: the source workout\'s set types could not be read', e);
+        return {} as Record<string, { setType?: string | null }>;
+      });
       const exercises = await Promise.all(
         session.exercises.map((g, i) => {
-          const working = g.sets.filter((s) => !s.isWarmup).length;
-          return buildDraftExercise(g.exercise, working > 0 ? working : 1, { card: cards[i], facts, scope });
+          const types: PlanSetType[] = g.sets.map((x) => {
+            if (x.isWarmup) return 'warmup';
+            const t = meta[x.id]?.setType;
+            return t === 'drop' || t === 'failure' ? t : 'normal';
+          });
+          const working = types.filter((t) => t === 'normal' || t === 'failure').length;
+          return buildDraftExercise(g.exercise, working > 0 ? working : 1, { card: cards[i], facts, scope, types });
         }),
       );
       set({

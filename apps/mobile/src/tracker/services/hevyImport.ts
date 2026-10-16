@@ -970,10 +970,20 @@ export interface KnownWorkout {
   endedAt?: number | null;
   /** The workout's own name (an imported one keeps its Hevy title, "Push 1"). */
   title?: string | null;
+  /** C4-5: its day type ("push"), for a workout saved with no name of its own. */
+  dayType?: string | null;
 }
 
-const sameName = (a: string | null | undefined, b: string | null | undefined): boolean =>
-  !!a && !!b && a.replace(/\s+/g, ' ').trim().toLowerCase() === b.replace(/\s+/g, ' ').trim().toLowerCase();
+/**
+ * The same name — or (16 Oct 2026 audit, C4-5) NO name on either and the same day type. A bare
+ * "Push" title is saved with no name of its own, so after a time-zone move 62 of the owner's
+ * workouts never matched and were imported a second time.
+ */
+const sameName = (a: KnownWorkout, b: KnownWorkout): boolean => {
+  const key = (t: string | null | undefined): string => (t ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (key(a.title) !== '' || key(b.title) !== '') return key(a.title) === key(b.title);
+  return !!a.dayType && a.dayType === b.dayType;
+};
 
 /**
  * v0.27.0: is this imported workout already in ForgeAI? Either imported before — the exact same
@@ -987,7 +997,7 @@ export function isAlreadyHere(w: KnownWorkout, existing: readonly KnownWorkout[]
   for (const e of existing) {
     if (e.startedAt === w.startedAt) return 'exact';
     if (e.dateISO !== w.dateISO) continue;
-    if (len != null && e.endedAt != null && sameName(e.title, w.title) && Math.abs(e.endedAt - e.startedAt - len) <= 60_000) return 'exact';
+    if (len != null && e.endedAt != null && sameName(e, w) && Math.abs(e.endedAt - e.startedAt - len) <= 60_000) return 'exact';
     if (Math.abs(e.startedAt - w.startedAt) <= SAME_WORKOUT_MS) same = true;
   }
   return same ? 'same' : null;
@@ -1040,6 +1050,7 @@ async function knownWorkouts(): Promise<(KnownWorkout & { id: string })[]> {
     startedAt: r.startedAt,
     endedAt: r.endedAt ?? null,
     title: titleOf.get(r.id) ?? null,
+    dayType: r.dayType ?? null,
   }));
   // HI-03: a workout moved to another day since it was imported is still "already here".
   for (const o of await originalStarts().catch(() => [])) out.push({ id: o.id, dateISO: o.dateISO, startedAt: o.startedAt });
@@ -1047,7 +1058,13 @@ async function knownWorkouts(): Promise<(KnownWorkout & { id: string })[]> {
 }
 
 /** The workout as the check compares it: its start, end, day and the name it is saved under. */
-const asKnown = (w: ParsedWorkout): KnownWorkout => ({ dateISO: w.dateISO, startedAt: w.startedAt, endedAt: w.endedAt, title: importedWorkoutName(w) });
+const asKnown = (w: ParsedWorkout): KnownWorkout => ({
+  dateISO: w.dateISO,
+  startedAt: w.startedAt,
+  endedAt: w.endedAt,
+  title: importedWorkoutName(w),
+  dayType: w.dayType,
+});
 
 /** Every set the file has for one exercise name. PURE. */
 function setsOfTitle(parsed: ParsedHevy, title: string): ParsedSet[] {

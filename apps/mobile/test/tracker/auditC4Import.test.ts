@@ -135,3 +135,15 @@ describe('C4-1 (routine rebuild): each set keeps the type he uses most, not the 
     expect(row.setList?.map((s) => s.type)).toEqual(['warmup', 'normal', 'normal', 'normal', 'drop']);
   });
 });
+
+describe('C4-5: a phone in another time zone never imports bare "Push" workouts twice', () => {
+  it('same day, same day type, same length, no name on either: already here', async () => {
+    const { isAlreadyHere } = await import('@/tracker/services/hevyImport');
+    const start = Date.UTC(2026, 7, 22, 6, 0);
+    const shifted = start + 5.5 * 3_600_000; // IST → London
+    const here = { dateISO: '2026-08-22', startedAt: start, endedAt: start + 3_600_000, title: null, dayType: 'push' };
+    const file = { dateISO: '2026-08-22', startedAt: shifted, endedAt: shifted + 3_600_000, title: null, dayType: 'push' };
+    expect(isAlreadyHere(file, [here])).toBe('exact');
+    expect(isAlreadyHere({ ...file, dayType: 'pull' }, [here])).toBeNull();
+  });
+});
