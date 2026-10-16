@@ -19,6 +19,7 @@ appId: com.forgeai.app
     timeout: 20000
 - scrollUntilVisible:
     element: '^Leave$'
+    centerElement: true
     timeout: 20000
 - tapOn: '^Leave$'
 - tapOn: 'Leave shop'

@@ -178,8 +178,15 @@ appId: com.forgeai.app
     timeout: 15000
 # IM-02 (the plan's proof): Hevy's incline bench is 2 warm-ups + 3 working sets, and its own
 # 3:30 rest — never "5 sets".
-- assertVisible: "Incline Dumbbell Press"
-- assertVisible: '2 warm-up · 3 sets · .*Rest 3:30'
+# Owner profile (360 dp, font 1.3): each exercise is scrolled to before it is checked.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Incline Dumbbell Press"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '2 warm-up · 3 sets · .*Rest 3:30'
 - assertNotVisible: '5 sets · .*Rest 3:30'
 - takeScreenshot: 178a-jaipur-push-1-top
 # Exactly as saved in Hevy (4 sets · 20-42); its library name is "Cable Triceps Kickback"; below the fold.
@@ -268,6 +275,7 @@ appId: com.forgeai.app
 - scrollUntilVisible:
     element: 'Done today: Push 1(\. .*)?'
     direction: UP
+    centerElement: true
     timeout: 20000
 - assertVisible: '(.*\. )?Next: Pull 1(\. .*)?'
 - assertVisible: "Start Pull 1"

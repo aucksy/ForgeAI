@@ -43,6 +43,11 @@ appId: com.forgeai.app
 - eraseText: 70
 - inputText: " QA Member"
 - hideKeyboard
+# Owner profile (360 dp, font 1.3): the button can be below the form.
+- scrollUntilVisible:
+    element: "Join your gym's shop"
+    centerElement: true
+    timeout: 15000
 - tapOn: "Join your gym's shop"
 # The opening: the gym's logo (or name), full screen, for about a second.
 - extendedWaitUntil:
@@ -66,7 +71,11 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
     timeout: 20000
-- assertVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+# The tab keeps its scroll; the gym's name is at its top.
+- scrollUntilVisible:
+    element: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    direction: UP
+    timeout: 15000
 - takeScreenshot: br-02-workout
 - tapOn:
     text: "^Profile$"

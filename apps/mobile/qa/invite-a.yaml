@@ -14,6 +14,11 @@ appId: com.forgeai.app
 - inputText: "QA Member"
 - hideKeyboard
 # The button by its full words: "Join your gym" (title) and "Join to order…" (intro) also start with Join.
+# Owner profile (360 dp, font 1.3): the button can be below the form.
+- scrollUntilVisible:
+    element: "^Join ForgeAI Test Gym$"
+    centerElement: true
+    timeout: 15000
 - tapOn: "^Join ForgeAI Test Gym$"
 - extendedWaitUntil:
     visible: "Your gym's shop · pay at the desk"

@@ -21,6 +21,7 @@ appId: com.forgeai.app
 - takeScreenshot: inv-05-switched
 - scrollUntilVisible:
     element: "^Leave$"
+    centerElement: true
     timeout: 20000
 - tapOn: "^Leave$"
 - extendedWaitUntil:

@@ -230,10 +230,17 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Progress photos"
     timeout: 20000
-- extendedWaitUntil:
-    visible: '.* (kg|lb) since \d{1,2} [A-Z][a-z]{2}'
-    timeout: 15000
+# Owner profile (360 dp, font 1.3): the line under the graph can be below the screen's edge.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '.* (kg|lb) since \d{1,2} [A-Z][a-z]{2}'
 - takeScreenshot: 47b-body-weight-span
+- scrollUntilVisible:
+    element: "Add measures"
+    direction: UP
+    centerElement: true
+    timeout: 20000
 # ---------------------------------------------------------------- body weight: a 765 kg typo, fixed
 # PG-16: the "+" form has a Date row. PG-03: 765 (meant 76.5) gets one gentle question
 # ("765 kg — that's 9.5× your last. Keep it?", Keep it / Fix it), never a refusal. Keep it, then

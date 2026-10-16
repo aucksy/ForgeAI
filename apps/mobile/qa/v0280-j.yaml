@@ -170,8 +170,10 @@ appId: com.forgeai.app
       visible: "See exercises"
     commands:
       - tapOn: "See exercises"
-      - extendedWaitUntil:
-          visible: "Change this routine"
+      # Owner profile (360 dp, font 1.3): the button sits below the day's exercises.
+      - scrollUntilVisible:
+          element: "Change this routine"
+          centerElement: true
           timeout: 15000
       - takeScreenshot: 149b-today-preview
       - back
@@ -254,8 +256,10 @@ appId: com.forgeai.app
       visible: "See exercises"
     commands:
       - tapOn: "See exercises"
-      - extendedWaitUntil:
-          visible: "Change this routine"
+      # Owner profile (360 dp, font 1.3): the button sits below the day's exercises.
+      - scrollUntilVisible:
+          element: "Change this routine"
+          centerElement: true
           timeout: 15000
       - takeScreenshot: 153-today-preview-from-workout
       - back
@@ -279,9 +283,14 @@ appId: com.forgeai.app
     visible: "How you log it"
     timeout: 15000
 - tapOn: "^Distance$"
-- extendedWaitUntil:
-    visible: "Distance in"
-    timeout: 5000
+- scrollUntilVisible:
+    element: "Distance in"
+    centerElement: true
+    timeout: 10000
+- scrollUntilVisible:
+    element: "^Metres$"
+    centerElement: true
+    timeout: 10000
 - tapOn: "^Metres$"
 - scrollUntilVisible:
     element: "^Abs$"

@@ -206,7 +206,13 @@ appId: com.forgeai.app
 - assertVisible: "4:30 /km"
 - assertNotVisible: "Best pace counts only.*"
 - takeScreenshot: 76-run-records
-# Redesign R5: the heading is "Personal records" (Hevy's words), its i spoken so.
+# Redesign R5: the heading is "Personal records" (Hevy's words), its i spoken so. Owner profile
+# (360 dp, font 1.3): the pace row can push the heading above the screen; bring it back, centred.
+- scrollUntilVisible:
+    element: "Personal records, more information"
+    direction: UP
+    centerElement: true
+    timeout: 20000
 - tapOn: "Personal records, more information"
 - assertVisible: "Best pace counts only sets of 1 km or more, so a short sprint can't set it."
 - takeScreenshot: 77-run-records-info
