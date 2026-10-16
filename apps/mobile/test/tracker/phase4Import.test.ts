@@ -31,6 +31,13 @@ vi.mock('@/tracker/db/folderRepo', async () => {
     refillFolder: async () => 'refilled',
   };
 });
+// C3-22: a shared file is saved the way a Hevy link is (what was copied is remembered per row).
+vi.mock('@/tracker/services/routineMerge', () => ({
+  saveImportedFolder: async (_before: unknown, name: string, routines: unknown[], mark: Record<string, unknown>) => {
+    h.folders.push({ name, routines, opts: { source: 'import', settings: mark } });
+    return { folderId: `folder-${h.folders.length}`, keptEdits: [] };
+  },
+}));
 vi.mock('@/tracker/db/customExercise', () => ({
   createCustomExercise: async (input: { name: string; logType: string; muscles: unknown }) => {
     h.custom.push(input);

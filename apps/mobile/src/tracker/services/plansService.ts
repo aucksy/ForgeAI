@@ -17,8 +17,9 @@ import {
   fileFolder,
   folderOfRoutine,
   followedFolder,
+  followFolder,
   programFolder,
-  refillFolder,
+  setFolderSettings,
   type Folder,
   type FolderSettings,
   type NewRoutine,
@@ -29,6 +30,7 @@ import { PLAN_EQUIPMENT, SORE_AREAS, type FitContext, type PlanEquipment, type S
 import { EASY_EVERY } from '../plans/easyWeek';
 import { programByKey, programRoutines, type ProgramEquipment } from '../plans/programs';
 import { fileFingerprint, makeRoutineFile, type RoutineFile, type SharedRoutine } from '../plans/routineFile';
+import { saveImportedFolder } from './routineMerge';
 
 const easySchedule = (on: boolean): FolderSettings['easy'] => (on ? { every: EASY_EVERY, base: 0 } : null);
 
@@ -69,9 +71,14 @@ export async function addProgram(key: string, opts: { follow: boolean; easyWeeks
   const settings: FolderSettings = { program: p.key, easy: easySchedule(opts.easyWeeks), daysPerWeek: p.daysPerWeek };
   const before = opts.existing === 'copy' ? null : await programFolder(p.key);
   if (before) {
+    // 16 Oct 2026 audit (C3-21): already in his routines — following it ONLY follows it (and sets
+    // the easy-week switch). Refilling it from the program's stock rows wiped every change he had
+    // made to its routines (sets, swaps, notes, added exercises) with no warning.
     // An easy-week rhythm already running keeps its count.
     const easy = opts.easyWeeks ? (before.settings.easy ?? settings.easy) : null;
-    return refillFolder(before, before.name, routines, { ...settings, easy }, { follow: opts.follow, todayISO: todayISO() });
+    await setFolderSettings(before.id, { ...before.settings, easy });
+    if (opts.follow && !before.following) await followFolder(before.id, todayISO());
+    return before.id;
   }
   return createFolderWithRoutines(opts.existing === 'copy' ? `${p.name} (copy)` : p.name, routines, {
     source: 'program',
@@ -156,6 +163,8 @@ export interface ImportResult {
   skipped: string[];
   /** RP-18: the file was imported before and that folder was updated (no second folder). */
   updated?: boolean;
+  /** C3-22: routines whose changes by the member were kept over the file's (updated only). */
+  keptEdits?: string[];
 }
 
 /** RP-18: the folder this file was imported into before, or null. */
@@ -232,10 +241,13 @@ export async function importRoutineFile(file: RoutineFile, opts: { existing?: Ex
   // RP-18: the same file again updates the folder it made (unless the member asked for a copy).
   const fromFile = fileFingerprint(file);
   const before = opts.existing === 'copy' ? null : await fileFolder(fromFile);
-  if (before) {
-    await refillFolder(before, before.name, routines, { fromFile }, { follow: false, todayISO: todayISO() });
-    return { folderId: before.id, added, skipped, updated: true };
-  }
-  const folderId = await createFolderWithRoutines(opts.existing === 'copy' ? `${name} (copy)` : name, routines, { source: 'import', settings: { fromFile } });
-  return { folderId, added, skipped };
+  // 16 Oct 2026 audit (C3-22): saved the way a Hevy link is (`saveImportedFolder`) — what was
+  // copied is remembered per row, so opening the same file again merges: a row he changed keeps
+  // his version, a row he deleted stays deleted, his own added rows stay; only rows still exactly
+  // as imported take the file's values. Refilling wiped every edit.
+  const saved = await saveImportedFolder(before, before ? before.name : opts.existing === 'copy' ? `${name} (copy)` : name, routines, { fromFile }, {
+    follow: false,
+    todayISO: todayISO(),
+  });
+  return before ? { folderId: saved.folderId, added, skipped, updated: true, keptEdits: saved.keptEdits } : { folderId: saved.folderId, added, skipped };
 }

@@ -67,6 +67,8 @@ export default function ProgramsScreen() {
       const lines: string[] = [];
       if (res.added.length > 0) lines.push(`New in your library: ${res.added.join(', ')}.`);
       if (res.skipped.length > 0) lines.push(`Left out (no muscles in the file): ${res.skipped.join(', ')}.`);
+      // C3-22: an update merges — the member's own changes are kept.
+      if (res.keptEdits && res.keptEdits.length > 0) lines.push(`Your changes were kept in: ${res.keptEdits.join(', ')}.`);
       await tell(
         res.updated ? 'Folder updated' : 'Routines added',
         lines.length > 0 ? lines.join('\n\n') : res.updated ? 'You had this file already, so its folder was updated.' : 'They are in a new folder on the Workout tab.',
