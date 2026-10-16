@@ -313,6 +313,14 @@ def check_signing(apk, min_sdk):
         report("signing", level, text)
 
 
+def phone_apk_asset(assets):
+    """The PHONE APK among a release's assets. From v0.46 a release also carries the watch APK
+    (forgeai-<tag>-wear.apk); it must never be taken for the phone's (version, size, update proof)."""
+    apks = [a for a in assets or [] if a.get("name", "").endswith(".apk")]
+    phone = [a for a in apks if not a["name"].endswith("-wear.apk")]
+    return phone[0] if phone else None
+
+
 def previous_release(current_tag):
     """The highest-semver published (not draft, not prerelease) release other than this tag."""
     best = None
@@ -368,7 +376,7 @@ def check_version_and_size(apk, me):
         report("version", "INFO", "no earlier published release found; nothing to compare")
         return
     ptag = prev["tag_name"]
-    asset = next((a for a in prev.get("assets", []) if a["name"].endswith(".apk")), None)
+    asset = phone_apk_asset(prev.get("assets", []))
 
     mine, theirs = semver(me["versionName"]), semver(ptag)
     if mine is None:

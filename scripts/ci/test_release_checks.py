@@ -166,6 +166,26 @@ class VersionCodeTests(unittest.TestCase):
                 rc.version_code_for(bad)
 
 
+class PhoneAssetTests(unittest.TestCase):
+    """v0.46: a release also carries the watch APK; the checks must always take the phone's."""
+
+    def test_watch_apk_listed_first_is_skipped(self):
+        assets = [
+            {"name": "forgeai-v0.46.0-wear.apk"},
+            {"name": "forgeai-v0.46.0.aab"},
+            {"name": "forgeai-v0.46.0.apk"},
+        ]
+        self.assertEqual(rc.phone_apk_asset(assets)["name"], "forgeai-v0.46.0.apk")
+
+    def test_older_release_without_watch(self):
+        self.assertEqual(rc.phone_apk_asset([{"name": "forgeai-v0.45.0.apk"}])["name"], "forgeai-v0.45.0.apk")
+
+    def test_only_a_watch_apk_is_no_phone_apk(self):
+        self.assertIsNone(rc.phone_apk_asset([{"name": "forgeai-v0.46.0-wear.apk"}]))
+        self.assertIsNone(rc.phone_apk_asset([]))
+        self.assertIsNone(rc.phone_apk_asset(None))
+
+
 # ------------------------------------------------------------ update_proof parsers
 
 def _lp(b):

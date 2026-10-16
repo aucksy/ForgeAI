@@ -158,7 +158,7 @@ def cmd_fetch(a):
         print("::notice::No earlier published release: nothing to update from, so there is nothing to prove.")
     else:
         ptag = prev["tag_name"]
-        asset = next((x for x in prev.get("assets", []) if x["name"].endswith(".apk")), None)
+        asset = rc.phone_apk_asset(prev.get("assets", []))
         if not asset:
             print(f"::error::Release {ptag} has no .apk asset to update from.")
             return 1

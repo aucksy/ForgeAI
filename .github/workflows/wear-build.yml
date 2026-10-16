@@ -1,0 +1,155 @@
+name: Wear OS build (watch app)
+
+# v0.46: builds the ForgeAI watch app (apps/mobile/android/wear) next to the phone app, runs its
+# unit tests, and proves the release signing path on it WITHOUT any secret:
+#  - the watch APK and the phone APK, as Gradle signs them (the public debug key), must carry the
+#    same certificate on every watch Android version (scripts/ci/same_signer.py);
+#  - a signing dry run: both are re-signed with key rotation exactly as release-apk.yml signs them
+#    (scripts/ci/sign_rotated.sh), with a throwaway key created here standing in for the private
+#    release key, and must again carry the same certificate.
+# Manual only (workflow_dispatch). The watch APK built here is debug-signed: it pairs only with a
+# debug-signed phone app. Releases (release-apk.yml) attach the properly signed one.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Work out the version
+        id: version
+        run: |
+          set -euo pipefail
+          VERSION="$(python3 -c 'import json; print(json.load(open("apps/mobile/app.json"))["expo"]["version"])')"
+          CODE="$(python3 scripts/ci/release_checks.py --version-code "$VERSION")"
+          echo "versionName ${VERSION}-wear.${GITHUB_RUN_NUMBER}, versionCode $CODE"
+          echo "name=${VERSION}-wear.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Build the watch app (release) and the phone app (debug), watch unit tests
+        working-directory: apps/mobile/android
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+          VERSION_CODE: ${{ steps.version.outputs.code }}
+        run: |
+          chmod +x gradlew
+          ./gradlew -PwithWear=true \
+            :wear:testDebugUnitTest :wear:assembleRelease :app:assembleDebug \
+            -PappVersionName="$VERSION_NAME" \
+            -PappVersionCode="$VERSION_CODE" \
+            --no-daemon --stacktrace
+
+      - name: Stage the APKs
+        id: apks
+        run: |
+          set -euo pipefail
+          WEAR="$(find apps/mobile/android/wear/build/outputs/apk/release -name '*.apk' | head -1)"
+          PHONE="$(find apps/mobile/android/app/build/outputs/apk/debug -name '*.apk' | head -1)"
+          echo "watch: $WEAR"; echo "phone: $PHONE"
+          mkdir -p dist
+          cp "$WEAR" "dist/forgeai-wear-${{ steps.version.outputs.name }}.apk"
+          echo "wear=dist/forgeai-wear-${{ steps.version.outputs.name }}.apk" >> "$GITHUB_OUTPUT"
+          echo "phone=$PHONE" >> "$GITHUB_OUTPUT"
+          ls -la dist
+
+      - name: What the watch APK is (package, versions, permissions)
+        run: |
+          set -euo pipefail
+          BT="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)"
+          "${BT%/}/aapt2" dump badging "${{ steps.apks.outputs.wear }}" | grep -E "^(package|sdkVersion|targetSdkVersion|uses-feature|application-label|uses-permission)" || true
+          "${BT%/}/aapt2" dump badging "${{ steps.apks.outputs.wear }}" | grep -q "package: name='com.forgeai.app'" \
+            || { echo "::error::The watch APK's package is not com.forgeai.app: the Data Layer would never pair it with the phone."; exit 1; }
+
+      # play-services-wearable joined the phone app in v0.46: its permission list must not change.
+      - name: Phone app permissions (play-services-wearable must add none)
+        run: python3 scripts/ci/release_checks.py "${{ steps.apks.outputs.phone }}" --only permissions --warn-only
+
+      - name: Same signer, as Gradle signs them (the no-release-key path)
+        run: python3 scripts/ci/same_signer.py "${{ steps.apks.outputs.phone }}" "${{ steps.apks.outputs.wear }}"
+
+      # The release workflow's signing, rehearsed with a throwaway key in place of the private one.
+      # OLD / NEW / LINEAGE are built exactly as in release-apk.yml; sign_rotated.sh is the very
+      # function release-apk.yml uses for the watch APK.
+      - name: Signing dry run (key rotation, throwaway key)
+        env:
+          DRY_PASS: dry-run-only-not-a-secret
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/dry-signing"
+          mkdir -p "$WORK"
+          KS="$WORK/dry.p12"
+          keytool -genkeypair -keystore "$KS" -storetype PKCS12 -storepass "$DRY_PASS" -keypass "$DRY_PASS" \
+            -alias dry -keyalg RSA -keysize 2048 -validity 2 -dname "CN=ForgeAI signing dry run" > /dev/null 2>&1
+          export ANDROID_KEYSTORE_PASSWORD="$DRY_PASS" ANDROID_KEY_PASSWORD="$DRY_PASS"
+          ANDROID_KEY_ALIAS=dry
+
+          BT="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)"
+          APKSIGNER="${BT%/}/apksigner"
+          ZIPALIGN="${BT%/}/zipalign"
+          LINEAGE="$WORK/lineage.bin"
+          DEBUG_KS="apps/mobile/android/app/debug.keystore"
+          OLD=(--ks "$DEBUG_KS" --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android)
+          NEW=(--ks "$KS" --ks-type PKCS12 --ks-pass env:ANDROID_KEYSTORE_PASSWORD --ks-key-alias "$ANDROID_KEY_ALIAS" --key-pass env:ANDROID_KEY_PASSWORD)
+          "$APKSIGNER" rotate --out "$LINEAGE" --old-signer "${OLD[@]}" --new-signer "${NEW[@]}"
+
+          # shellcheck source=scripts/ci/sign_rotated.sh
+          source scripts/ci/sign_rotated.sh
+          sign_rotated "${{ steps.apks.outputs.phone }}" "$WORK/phone-rotated.apk"
+          sign_rotated "${{ steps.apks.outputs.wear }}" "$WORK/wear-rotated.apk"
+          "$APKSIGNER" lineage --in "$WORK/wear-rotated.apk" --print-certs || echo "::warning::apksigner could not print the watch APK's lineage"
+
+          python3 scripts/ci/same_signer.py "$WORK/phone-rotated.apk" "$WORK/wear-rotated.apk"
+          # And the watch APK must now carry the throwaway (new) key, not the debug key, on a watch.
+          DRY_SHA="$(keytool -list -v -keystore "$KS" -storetype PKCS12 -storepass "$DRY_PASS" -alias dry | sed -n 's/^[[:space:]]*SHA256: //p' | tr -d ':' | tr 'A-F' 'a-f')"
+          python3 - "$WORK/wear-rotated.apk" "$DRY_SHA" <<'PY'
+          import sys
+          sys.path.insert(0, "scripts/ci")
+          import update_proof as up
+          data = open(sys.argv[1], "rb").read()
+          for api in (30, 33, 34, 36):
+              scheme, cert = up.cert_for(data, api)
+              sha = up.sha256_hex(cert) if cert else None
+              print(f"watch API {api}: {scheme} {sha}")
+              if sha != sys.argv[2]:
+                  print(f"::error::On API {api} the rotated watch APK shows {sha}, not the new key {sys.argv[2]}")
+                  sys.exit(1)
+          print("Rotated watch APK: the new key on every watch API, with the debug key's lineage.")
+          PY
+
+      - name: Upload the watch APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: forgeai-wear
+          path: dist/forgeai-wear-*.apk
+          retention-days: 14
+
+      - name: Upload watch unit-test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wear-unit-tests
+          path: apps/mobile/android/wear/build/reports/tests
+          if-no-files-found: ignore
+          retention-days: 7
