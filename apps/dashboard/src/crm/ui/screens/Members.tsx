@@ -15,6 +15,7 @@ import { useCrm } from '../../store';
 import { formatDay, relativeDay } from '../../logic/dates';
 import { compareByAttention, STATE_LABEL, stateTone } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
+import { countOf } from '../../logic/plural';
 import { formatPhone, initials, matchesQuery } from '../../logic/members';
 import { isPtMembership, ptEndingMemberIds } from '../../logic/pt';
 import { activeBatches, ALL_BATCHES, countWithoutBatch, inBatch, listBatches, memberBatch, NO_BATCH } from '../../logic/batches';
@@ -61,7 +62,7 @@ export function MembersScreen({ section, filter: initialFilter }: { section?: 'a
         subtitle={
           app
             ? 'Who has the ForgeAI app on their phone'
-            : `${memberViews.length} members`
+            : countOf(memberViews.length, 'member')
         }
         actions={
           app ? undefined : (

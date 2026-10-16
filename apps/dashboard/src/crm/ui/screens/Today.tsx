@@ -20,6 +20,7 @@ import { atRiskList, isRegisterInUse, riskReasonShort } from '../../logic/attend
 import { formatDay, monthKey, relativeDay } from '../../logic/dates';
 import { compareByAttention, needsAttentionToday, WINBACK_WINDOW_DAYS } from '../../logic/membership';
 import { formatINR, formatINRShort, sumPaise } from '../../logic/money';
+import { countOf } from '../../logic/plural';
 import { formatPhone, initials, phoneDigits } from '../../logic/members';
 import type { Member } from '../../types';
 import {
@@ -183,7 +184,7 @@ export function TodayScreen() {
             value={formatINRShort(stats.duesTotalP)}
             tone={stats.duesTotalP > 0 ? 'warn' : undefined}
             onClick={() => navigate('/money/dues')}
-            sub={`${stats.dues.length} members`}
+            sub={countOf(stats.dues.length, 'member')}
           />
         )}
         <StatTile

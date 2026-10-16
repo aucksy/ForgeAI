@@ -108,12 +108,30 @@ jobs:
         run: npm run build
 
       # Audit toolkit pick 9 (15 Oct 2026): every panel page of a demo gym at 390 px and 1280 px,
-      # English and Hinglish; fails on a page error, console error or sideways overflow.
+      # dark theme; fails on a page error, console error, sideways overflow or a critical axe finding.
       - name: Panel crawl (every page, phone + computer, dark theme)
         working-directory: apps/dashboard
         run: |
           npx playwright install --with-deps chromium
           node scripts/crawl.mjs
+
+      # UAT work package 5 (17 Oct 2026): the admin app driven the way an owner and a front-desk
+      # person use it on a phone (390 x 844, touch, en-IN, India time, clock fixed at 17 Oct 2026
+      # 10:00). Real taps and typing on the real forms: sell, collect, cancel a receipt, renew,
+      # freeze, enquiries, expenses, check-in, import + undo, load demo / erase, staff limits,
+      # receipt. The server is faked like the crawl (apps/dashboard/e2e/support.mjs).
+      - name: Admin journeys (phone, real forms)
+        working-directory: apps/dashboard
+        run: npx playwright test
+
+      - name: Admin journeys - traces of a failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-journeys-traces
+          path: apps/dashboard/e2e/.results
+          retention-days: 3
+          if-no-files-found: ignore
 
   # Audit toolkit pick 6 (15 Oct 2026): every migration applied, in order, to a throw-away local
   # Supabase. Then the security check (RLS on, fixed search paths, the exact list of functions

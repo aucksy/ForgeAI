@@ -19,6 +19,7 @@ import { useCrm } from '../../store';
 import { navigate } from '../router';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import { checkGymDetails } from '../../logic/gst';
+import { countOf } from '../../logic/plural';
 import {
   Button,
   Card,
@@ -162,7 +163,7 @@ export function SettingsScreen() {
       <Card>
         <SectionTitle>Your data</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {`${counts.members} members · ${counts.memberships} memberships · ${counts.payments} payments · ${counts.visits} check-ins. Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`}
+          {`${countOf(counts.members, 'member')} · ${countOf(counts.memberships, 'membership')} · ${countOf(counts.payments, 'payment')} · ${countOf(counts.visits, 'check-in')}. Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`}
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
           {online
@@ -272,7 +273,7 @@ export function SettingsScreen() {
         >
           {confirming !== 'disconnect' && (
             <ErrorBanner>
-              {`This replaces everything in this browser: all ${counts.members} members, ${counts.payments} payments and ${counts.visits} check-ins. You can’t undo this.`}
+              {`This replaces everything in this browser: ${countOf(counts.members, 'member')}, ${countOf(counts.payments, 'payment')} and ${countOf(counts.visits, 'check-in')}. You can’t undo this.`}
             </ErrorBanner>
           )}
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>

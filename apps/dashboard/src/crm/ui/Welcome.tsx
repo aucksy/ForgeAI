@@ -145,7 +145,9 @@ export function Welcome() {
 
           {demoFailed && (
             <div style={{ marginTop: space.sm, textAlign: 'center' }}>
-              <Button variant="quiet" disabled={busy !== null} onClick={() => run('local', loadDemoGym)}>
+              {/* U-A9 (17 Oct 2026): `wrap`. On one line this label is ~430px, so on a 390px phone the
+                  whole welcome screen went wider than the phone and its right edge was cut off. */}
+              <Button variant="quiet" wrap disabled={busy !== null} onClick={() => run('local', loadDemoGym)}>
                 Open the demo without the shop (works without internet)
               </Button>
             </div>
