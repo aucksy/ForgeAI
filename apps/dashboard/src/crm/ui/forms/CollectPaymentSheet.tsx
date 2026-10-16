@@ -18,6 +18,7 @@ import { formatINR, parseRupeeInput } from '../../logic/money';
 import { methodOptions } from '../../logic/payments';
 import type { MemberView, Payment, PaymentMethod } from '../../types';
 import { EARLIEST_DATE as EARLIEST_SENSIBLE_DAY } from '../../data/adapter';
+import { newRequestId } from '../../data/local';
 import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
 import { tr } from '../../i18n';
 
@@ -51,6 +52,9 @@ export function CollectPaymentSheet({
   const [paidOn, setPaidOn] = useState(today);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  // C7-1: one id for this sheet's save. "No internet" can still have saved it (the background
+  // refresh sends it later); pressing again then finds that receipt instead of making a second.
+  const [requestId] = useState(newRequestId);
 
   // Default to settling the balance in full — the common case at a counter.
   const amountP = amountText.trim() === '' ? (selected?.unpaidP ?? null) : parseRupeeInput(amountText);
@@ -91,6 +95,7 @@ export function CollectPaymentSheet({
         reference: reference.trim() || null,
         note: null,
         collectedBy: null,
+        requestId,
       });
       onCollected?.(payment);
       onClose();

@@ -1,0 +1,116 @@
+/**
+ * Admin app audit C7 (Audit/e2e-v2/C7-admin-app.md, 16 Oct 2026). One block per finding; each
+ * test failed before its fix.
+ */
+import { describe, expect, it } from 'vitest';
+
+import { CloudCrmData, type CrmCloudApi, type CrmRecord, type PullResult } from '../../src/crm/data/cloud';
+import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/local';
+import type { MemberDraft } from '../../src/crm/types';
+
+const TODAY = '2026-10-16';
+
+const member = (over: Partial<MemberDraft> = {}): MemberDraft =>
+  ({
+    fullName: 'Riya Sharma',
+    phone: '+919876543210',
+    email: null,
+    gender: 'female',
+    dateOfBirth: null,
+    address: null,
+    emergencyName: null,
+    emergencyPhone: null,
+    joinedOn: TODAY,
+    photoUri: null,
+    notes: null,
+    archived: false,
+    batch: null,
+    ...over,
+  }) as MemberDraft;
+
+/** crm_pull / crm_push with the server's rules: STALE on a race, a push id kept once. */
+class FakeServer implements CrmCloudApi {
+  version = 0;
+  rows = new Map<string, { r: CrmRecord; v: number }>();
+  log = new Map<string, number>();
+  offline = 0;
+  gym = { gymId: 'g1', name: 'Iron Temple', joinCode: 'ABC123', createdAt: 1 };
+
+  async pull(_key: string, since: number): Promise<PullResult> {
+    const records = [...this.rows.values()].filter((x) => x.v > since && (since > 0 || !x.r.x)).sort((a, b) => a.v - b.v).map((x) => x.r);
+    return { version: this.version, gym: { ...this.gym }, records: JSON.parse(JSON.stringify(records)) };
+  }
+
+  async push(_key: string, base: number, records: CrmRecord[], pushId: string): Promise<number> {
+    if (this.offline > 0) {
+      this.offline -= 1;
+      throw new Error('Failed to fetch');
+    }
+    const done = this.log.get(pushId);
+    if (done !== undefined) return done;
+    if (base !== this.version) throw new Error('STALE');
+    this.version += 1;
+    for (const r of records) this.rows.set(`${r.k}:${r.id}`, { r: JSON.parse(JSON.stringify(r)), v: this.version });
+    this.log.set(pushId, this.version);
+    return this.version;
+  }
+}
+
+const noSleep = { wait: async () => undefined };
+
+describe('C7-1: a fee taken on patchy internet is saved once', () => {
+  it('the poll sends the waiting fee, then the desk presses "Fees lo" again: still one receipt', async () => {
+    const server = new FakeServer();
+    const desk = new CloudCrmData('k', server, noSleep);
+    const m = await desk.createMember(member());
+    const input = {
+      memberId: m.id,
+      membershipId: null,
+      amountP: 100000,
+      method: 'cash' as const,
+      paidOn: TODAY,
+      reference: null,
+      note: null,
+      collectedBy: null,
+      requestId: 'sheet-1',
+    };
+    server.offline = 3;
+    await expect(desk.recordPayment(input)).rejects.toThrow(/internet/);
+    // The internet is back: the 15-second poll sends the waiting fee (nobody is told).
+    await desk.refresh();
+    // The sheet is still open with ₹1,000 typed in; the desk presses again, as the message said.
+    const again = await desk.recordPayment(input);
+    const snap = await new CloudCrmData('k', server).load();
+    expect(snap.payments.map((p) => p.receiptNo)).toEqual(['2026-27/0001']);
+    expect(again.receiptNo).toBe('2026-27/0001');
+  });
+
+  it('the same press with a different amount is refused, naming the receipt already saved', async () => {
+    const db = new LocalCrmData({ store: memoryStore(), seed: () => emptySnapshot(0, 'Gym') });
+    const m = await db.createMember(member());
+    const base = { memberId: m.id, membershipId: null, method: 'cash' as const, paidOn: TODAY, reference: null, note: null, collectedBy: null, requestId: 'sheet-2' };
+    await db.recordPayment({ ...base, amountP: 100000 });
+    await expect(db.recordPayment({ ...base, amountP: 150000 })).rejects.toThrow(/2026-27\/0001/);
+    expect((await db.load()).payments).toHaveLength(1);
+  });
+
+  it('a PT pack sale, an expense and an enquiry pressed twice are each saved once', async () => {
+    const db = new LocalCrmData({ store: memoryStore(), seed: () => emptySnapshot(0, 'Gym') });
+    const m = await db.createMember(member());
+    const plan = await db.createPlan({ name: 'PT 10', durationUnit: 'day', durationCount: 30, priceP: 500000, joiningFeeP: 0, description: null, active: true, sortOrder: 1, ptSessions: 10, trainer: null } as never);
+    const sale = { memberId: m.id, planId: plan.id, startsOn: TODAY, priceP: 500000, joiningFeeP: 0, notes: null, collectNowP: 200000, method: 'cash' as const, reference: null, paidOn: TODAY, soldBy: null, requestId: 'sell-1' };
+    const s1 = await db.sellMembership(sale);
+    const s2 = await db.sellMembership(sale);
+    expect(s2.membership.id).toBe(s1.membership.id);
+    expect(s2.payment?.receiptNo).toBe(s1.payment?.receiptNo);
+    await db.addExpense({ spentOn: TODAY, amountP: 5000, category: 'other', note: null, requestId: 'exp-1' });
+    await db.addExpense({ spentOn: TODAY, amountP: 5000, category: 'other', note: null, requestId: 'exp-1' });
+    await db.createEnquiry({ name: 'Aman', phone: '+919811100001', interest: null, followUpOn: null, requestId: 'enq-1' });
+    await db.createEnquiry({ name: 'Aman', phone: '+919811100001', interest: null, followUpOn: null, requestId: 'enq-1' });
+    const snap = await db.load();
+    expect(snap.memberships).toHaveLength(1);
+    expect(snap.payments).toHaveLength(1);
+    expect(snap.expenses).toHaveLength(1);
+    expect(snap.enquiries).toHaveLength(1);
+  });
+});

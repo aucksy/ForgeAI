@@ -129,6 +129,12 @@ export type MembershipState =
  */
 export interface Membership extends GymScoped {
   /**
+   * Admin audit C7-1 (16 Oct 2026): the id of the press that made this record, made once when the
+   * sheet opens. Pressing again after a "no internet" (while the first press was in fact saved by
+   * the background refresh) finds this record instead of making a second receipt.
+   */
+  requestId?: string | null;
+  /**
    * Data migration (15 Oct 2026): which import made this record (absent = made in the panel).
    * "Undo this import" finds the records by it.
    */
@@ -187,6 +193,12 @@ export type PaymentMethod = 'cash' | 'upi' | 'card' | 'bank' | 'other';
  * never an in-place edit of the original amount.
  */
 export interface Payment extends GymScoped {
+  /**
+   * Admin audit C7-1 (16 Oct 2026): the id of the press that made this record, made once when the
+   * sheet opens. Pressing again after a "no internet" (while the first press was in fact saved by
+   * the background refresh) finds this record instead of making a second receipt.
+   */
+  requestId?: string | null;
   /**
    * Data migration (15 Oct 2026): which import made this record (absent = made in the panel).
    * "Undo this import" finds the records by it.
@@ -247,6 +259,8 @@ export interface Visit extends GymScoped {
  * `joined` (with the member) or `lost`.
  */
 export interface Enquiry extends GymScoped {
+  /** C7-1: see Payment.requestId. */
+  requestId?: string | null;
   name: string;
   /** E.164, like a member's. */
   phone: string;
@@ -260,12 +274,14 @@ export interface Enquiry extends GymScoped {
   updatedAt: number;
 }
 
-export type EnquiryDraft = Pick<Enquiry, 'name' | 'phone' | 'interest' | 'followUpOn'>;
+export type EnquiryDraft = Pick<Enquiry, 'name' | 'phone' | 'interest' | 'followUpOn'> & { requestId?: string | null };
 
 export type ExpenseCategory = 'rent' | 'salary' | 'electricity' | 'equipment' | 'stock' | 'repairs' | 'other';
 
 /** Money going OUT (kharcha): rent, salaries, electricity… so the panel can show profit. */
 export interface Expense extends GymScoped {
+  /** C7-1: see Payment.requestId. */
+  requestId?: string | null;
   spentOn: DateISO;
   amountP: Paise;
   category: ExpenseCategory;
@@ -273,7 +289,7 @@ export interface Expense extends GymScoped {
   createdAt: number;
 }
 
-export type ExpenseDraft = Pick<Expense, 'spentOn' | 'amountP' | 'category' | 'note'>;
+export type ExpenseDraft = Pick<Expense, 'spentOn' | 'amountP' | 'category' | 'note'> & { requestId?: string | null };
 
 // ---------------------------------------------------------------- roster view
 

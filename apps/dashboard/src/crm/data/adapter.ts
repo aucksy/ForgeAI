@@ -75,6 +75,8 @@ export interface SellMembershipInput {
   reference: string | null;
   paidOn: DateISO;
   soldBy: string | null;
+  /** C7-1: one id per press of the sheet; the same press twice is saved once (types.ts Payment.requestId). */
+  requestId?: string | null;
 }
 
 export interface SellMembershipResult {
@@ -117,6 +119,8 @@ export interface RecordPaymentInput {
   reference: string | null;
   note: string | null;
   collectedBy: string | null;
+  /** C7-1: one id per press of the sheet; the same press twice is saved once. */
+  requestId?: string | null;
 }
 
 /** Named errors the UI can react to rather than showing a raw message. */

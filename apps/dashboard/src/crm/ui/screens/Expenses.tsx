@@ -24,6 +24,7 @@ import {
 } from '../../logic/expenses';
 import { formatINR, formatINRShort, parseRupeeInput } from '../../logic/money';
 import { EARLIEST_DATE } from '../../data/adapter';
+import { newRequestId } from '../../data/local';
 import type { Expense, ExpenseCategory } from '../../types';
 import {
   Button,
@@ -326,6 +327,8 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
   const [amountError, setAmountError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  // C7-1: one id for this sheet's save, so a second press after "no internet" saves once.
+  const [requestId] = useState(newRequestId);
 
   const submit = async () => {
     setError(null);
@@ -340,7 +343,7 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
 
     setSaving(true);
     try {
-      await addExpense({ spentOn, amountP, category, note: note.trim() || null });
+      await addExpense({ spentOn, amountP, category, note: note.trim() || null, requestId });
       onAdded(spentOn);
       onClose();
     } catch (e) {

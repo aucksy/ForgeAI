@@ -22,6 +22,7 @@ import { formatINR, parseRupeeInput } from '../../logic/money';
 import { methodOptions } from '../../logic/payments';
 import type { MemberView, PaymentMethod, Plan } from '../../types';
 import type { SellMembershipResult } from '../../data/adapter';
+import { newRequestId } from '../../data/local';
 import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
 import { tr } from '../../i18n';
 import { isPtPlan, ptPlanLine } from '../../logic/pt';
@@ -78,6 +79,8 @@ export function SellMembershipSheet({
   const [notes, setNotes] = useState('');
   const [problem, setProblem] = useState<SaleProblem | null>(null);
   const [saving, setSaving] = useState(false);
+  // C7-1: one id for this sheet's save, so a second press after "no internet" saves once.
+  const [requestId] = useState(newRequestId);
 
   // Blank means "use the default" — typing is only needed for a discount.
   const priceP = priceText.trim() === '' ? (defaults?.priceP ?? null) : parseRupeeInput(priceText);
@@ -119,6 +122,7 @@ export function SellMembershipSheet({
         reference: reference.trim() || null,
         paidOn: today,
         soldBy: null,
+        requestId,
       });
       onSold?.(result);
       onClose();

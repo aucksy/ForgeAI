@@ -17,6 +17,12 @@
  * answers a push it already has with the version it got — so a payment is never saved twice. A
  * push still unanswered after that is kept and sent again first, before the next action.
  *
+ * Why that alone still made two receipts (admin audit C7-1): the 15-second refresh sends the kept
+ * push quietly, and the desk, told "no internet", presses the SAME sheet again. That second press is
+ * a new action — a new push id, a new receipt id and number — so the push id cannot see it. Each
+ * money sheet now makes one id per press (`requestId`, kept on the record); the shared action code
+ * (local.ts) finds a record with that id and hands it back instead of saving a second one.
+ *
  * Every read and write goes through one queue, so a poll that was already on its way can never
  * paint older rows over a change this copy just made.
  *

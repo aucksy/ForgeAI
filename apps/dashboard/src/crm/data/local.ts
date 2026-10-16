@@ -100,6 +100,11 @@ export function memoryStore(initial?: string): KeyValueStore {
   };
 }
 
+/** A fresh id for one press of a sheet (C7-1): made once when the sheet opens. */
+export function newRequestId(): string {
+  return newId();
+}
+
 function newId(): string {
   // `randomUUID` needs a secure context; a plain-http LAN front desk is exactly
   // where that fails, so fall back rather than throwing on save.
@@ -325,6 +330,15 @@ export class LocalCrmData implements CrmData {
 
   async sellMembership(input: SellMembershipInput): Promise<SellMembershipResult> {
     return this.update((db) => {
+      // C7-1: this press was already saved (the background refresh sent it after "no internet").
+      const done = input.requestId ? db.memberships.find((m) => m.requestId === input.requestId) : undefined;
+      if (done) {
+        const paid = db.payments.find((p) => p.membershipId === done.id && p.requestId === input.requestId) ?? null;
+        if (done.planId !== input.planId || done.priceP !== input.priceP || (paid?.amountP ?? 0) !== input.collectNowP) {
+          throw new Error(alreadySavedWords(paid?.receiptNo ?? null));
+        }
+        return { membership: { ...done }, payment: paid ? { ...paid } : null };
+      }
       const member = db.members.find((m) => m.id === input.memberId);
       if (!member) throw new NotFoundError(tr('That member', 'Yeh member'));
       const plan = db.plans.find((p) => p.id === input.planId);
@@ -348,6 +362,7 @@ export class LocalCrmData implements CrmData {
         cancelled: false,
         notes: input.notes,
         soldBy: input.soldBy,
+        ...(input.requestId ? { requestId: input.requestId } : {}),
         // PT snapshot, like the name and price: editing the plan later never changes this pack.
         // A gym plan gets no PT fields at all, so its row is exactly what it always was.
         ...(isPtPlan(plan) ? { ptSessions: plan.ptSessions, trainer: cleanTrainer(plan.trainer), ptLog: [] } : {}),
@@ -373,6 +388,7 @@ export class LocalCrmData implements CrmData {
           voided: false,
           voidReason: null,
           collectedBy: input.soldBy,
+          ...(input.requestId ? { requestId: input.requestId } : {}),
           createdAt: ts,
           // Snapshot: registering for GST later must not rewrite this receipt.
           gstinAtSale: db.gym.gstin,
@@ -592,6 +608,17 @@ export class LocalCrmData implements CrmData {
       }
       requireDay(input.paidOn, tr('The payment date', 'Payment ki tareekh'));
 
+      // C7-1: this press was already saved. The push id (crm_push_log) only stops the SAME push
+      // being saved twice; a second press is a new push with a new receipt, so the press itself
+      // carries an id and is looked for here.
+      const done = input.requestId ? db.payments.find((p) => p.requestId === input.requestId) : undefined;
+      if (done) {
+        if (done.amountP !== input.amountP || done.membershipId !== input.membershipId || done.memberId !== input.memberId) {
+          throw new Error(alreadySavedWords(done.receiptNo));
+        }
+        return { ...done };
+      }
+
       const payment: Payment = {
         id: newId(),
         gymId: db.gym.gymId,
@@ -606,6 +633,7 @@ export class LocalCrmData implements CrmData {
         voided: false,
         voidReason: null,
         collectedBy: input.collectedBy,
+        ...(input.requestId ? { requestId: input.requestId } : {}),
         createdAt: this.now(),
         gstinAtSale: db.gym.gstin,
       };
@@ -667,6 +695,8 @@ export class LocalCrmData implements CrmData {
   async createEnquiry(draft: EnquiryDraft): Promise<Enquiry> {
     return this.update((db) => {
       if (draft.followUpOn) requireDay(draft.followUpOn, tr('The follow-up date', 'Dobara call ki tareekh'));
+      const done = draft.requestId ? db.enquiries.find((e) => e.requestId === draft.requestId) : undefined;
+      if (done) return { ...done };
       const ts = this.now();
       const enquiry: Enquiry = {
         ...draft,
@@ -698,6 +728,8 @@ export class LocalCrmData implements CrmData {
       if (!Number.isInteger(draft.amountP) || draft.amountP <= 0) {
         throw new Error(tr('Type the amount spent.', 'Kitna kharcha hua, likhiye.'));
       }
+      const done = draft.requestId ? db.expenses.find((e) => e.requestId === draft.requestId) : undefined;
+      if (done) return { ...done };
       const expense: Expense = { ...draft, id: newId(), gymId: db.gym.gymId, createdAt: this.now() };
       db.expenses.push(expense);
       return { ...expense };
@@ -838,6 +870,19 @@ function cleanPtFields(p: Partial<Pick<Plan, 'ptSessions' | 'trainer'>>): Partia
   }
   if ('trainer' in p) out.trainer = cleanTrainer(p.trainer);
   return out;
+}
+
+/** C7-1: the same press came again with different numbers: say what was already saved. */
+function alreadySavedWords(receiptNo: string | null): string {
+  return receiptNo
+    ? tr(
+        `Your earlier entry was saved just now (receipt ${receiptNo}). Check the member's page before taking more.`,
+        `Aapki pichli entry abhi save ho gayi (raseed ${receiptNo}). Aur lene se pehle member ka page dekho.`,
+      )
+    : tr(
+        "Your earlier entry was saved just now. Check the member's page before doing it again.",
+        'Aapki pichli entry abhi save ho gayi. Dobara karne se pehle member ka page dekho.',
+      );
 }
 
 function appendNote(existing: string | null, line: string): string {

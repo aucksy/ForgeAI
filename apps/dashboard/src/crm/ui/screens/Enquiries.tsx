@@ -50,6 +50,7 @@ import {
   space,
 } from '../kit';
 import { navigate } from '../router';
+import { newRequestId } from '../../data/local';
 
 function filterLabel(f: EnquiryFilter): string {
   switch (f) {
@@ -387,6 +388,8 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
   const [fieldError, setFieldError] = useState<{ field: EnquiryField; message: string } | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  // C7-1: one id for this sheet's save, so a second press after "no internet" saves once.
+  const [requestId] = useState(newRequestId);
 
   const set = (key: EnquiryField) => (value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -410,7 +413,7 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
     }
     setSaving(true);
     try {
-      await createEnquiry(result.value);
+      await createEnquiry({ ...result.value, requestId });
       onClose();
     } catch (e) {
       setFormError(e instanceof Error ? e.message : tr('Could not save this enquiry.', 'Enquiry save nahi hui.'));
