@@ -1882,6 +1882,28 @@
     owner on old receipts and sales; a desk receipt is always stamped, import mark or not.
   - **Tests:** panel 806 vitest green (71 in auditC7*/sheet tests, each failed before its fix);
     tsc -b 0; panel silent catches and promise ratchet at baseline.
+- 2026-10-16: **Audit v2 phase B: new automatic test gates** (1da755f, 90dbbfb, 5e46c99, d5492d3).
+  Findings: Audit/e2e-v2/B-gate-findings.md.
+  - qa-device.yml inputs: `api` 34/35/36 (google_apis x86_64), `profile` default/owner (density 480
+    = 360 dp, font 1.3, Asia/Kolkata for EVERY part; P7 puts back the profile's font), `only` = a
+    list (w, dnd, longrest, anim, mk), `extra` = opt-in parts added to a whole run. Only a whole
+    API 34 default-profile run can open the release gate; all others are named "(partial ...)".
+    Job limit 170 → 240 min. The default whole run is unchanged.
+  - New parts (opt-in): DND (priority-only DND; Ring through off = reminder on rest-over-sound,
+    silent; on = alarm on rest-over-alarm-sound, sounds; notif.py over-is), LONGREST (2:00 rest
+    asleep, a 0:30 rest right after inside Android 15's cooldown window, then the 2-min alert
+    timeout brings the live card back), ANIM (animation scales 1: reduce motion off; live workout,
+    sheet, record pop-up), MK (Monkey, app only, seed 20261016, 12,000 events ≈ 10.5 min; fails on
+    crash/ANR or the qa_report scan of its logcat).
+  - ci.yml: expo-doctor warn-only (3 of 22 fail, incl. the Hermes V1 memory regression in expo
+    56.0.23). Panel crawl: axe-core (@axe-core/playwright 4.13.0) on 22 pages × 2 widths × 2
+    languages; critical fails (0), serious warns (receipt grey text 3.89:1).
+  - Runs: 38866487837 (longrest, API 35) green; 38866490224 (mk) green; 38870022515 (dnd+anim, API
+    36) green after fixing `set_dnd on` = total silence (38866492454, 38866485489 red on that).
+    **Owner whole run 38870025551 (API 34, profile=owner, + all extras): 23 of 54 parts red.** The
+    new parts passed. The old flows assume 411 dp / font 1.0 (checks below the fold, then cascades
+    from part A). Monkey logged `[ForgeErr] workout photo` for a refused camera permission.
+    Unconfirmed: W3 keypad over "Skip rest", I2 missing "Notifications are off", P9 toast.
 - 2026-10-15: **v0.44.0 — owner's gym-test fixes: RPE one-tap sheet; the rest sound never changes**
   (34db130 + this commit). Owner testing in the gym ("Keep adding the improvements I send in the plan").
   - RPE: the RPE cell opens its own sheet (RpeSheet.tsx): 10 -> 6 with meanings, ONE tap saves and
