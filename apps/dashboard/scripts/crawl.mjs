@@ -1,11 +1,15 @@
 // Panel click-through check (15 Oct 2026, audit toolkit pick 9). Opens EVERY panel page of a demo
 // gym at a phone width (390 px) and a computer width (1280 px), in English and Hinglish, and fails
 // on any page error, console error, or page wider than the screen (sideways scrolling).
+// Audit v2 B4 (16 Oct 2026): axe-core accessibility on every page at both widths and both
+// languages. A 'critical' finding fails the crawl; 'serious' ones are printed as warnings for now
+// (the plan's next step makes them fail too, once the list is empty).
 // The Supabase calls are answered here (no real server touched, no demo gym made).
 //
 //   npm run build && node scripts/crawl.mjs        (CI: .github/workflows/ci.yml)
 
 import { spawn } from 'node:child_process';
+import AxeBuilder from '@axe-core/playwright';
 import { chromium } from 'playwright';
 
 const PORT = 4179;
@@ -50,6 +54,25 @@ const server = spawn(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['vite', 
   shell: process.platform === 'win32',
 });
 const failures = [];
+// axe findings, one entry per rule: { impact, help, where: Set('en 390px /money: <selector>') }.
+const axe = new Map();
+let axePages = 0;
+async function axeCheck(page, where) {
+  let res;
+  try {
+    res = await new AxeBuilder({ page }).analyze();
+  } catch (e) {
+    failures.push(`${where}: axe could not run (${String(e?.message ?? e).slice(0, 160)})`);
+    return;
+  }
+  axePages += 1;
+  for (const v of res.violations) {
+    if (v.impact !== 'critical' && v.impact !== 'serious') continue;
+    const e = axe.get(v.id) ?? { impact: v.impact, help: v.help, where: new Set() };
+    for (const n of v.nodes.slice(0, 3)) e.where.add(`${where}: ${String(n.target?.[0] ?? '?').slice(0, 90)}`);
+    axe.set(v.id, e);
+  }
+}
 let browser;
 try {
   await waitForServer();
@@ -87,6 +110,8 @@ try {
             d.style.width = '3000px';
             d.style.height = '1px';
             document.body.appendChild(d);
+            // ...and an unlabelled text box (axe 'label', critical), to prove the axe check can fail.
+            document.body.appendChild(document.createElement('input'));
           });
         });
       }
@@ -111,6 +136,7 @@ try {
         const m = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: window.innerWidth, main: !!document.querySelector('main') }));
         if (m.sw > m.w + 1) failures.push(`${lang} ${width}px ${path}: page is ${m.sw}px wide on a ${m.w}px screen`);
         if (!m.main) failures.push(`${lang} ${width}px ${path}: no page content`);
+        await axeCheck(page, `${lang} ${width}px ${path}`);
       }
       await context.close();
     }
@@ -125,9 +151,20 @@ try {
   }
 }
 
+const critical = [...axe].filter(([, e]) => e.impact === 'critical');
+const serious = [...axe].filter(([, e]) => e.impact === 'serious');
+console.log(`Accessibility (axe-core) on ${axePages} page views: ${critical.length} critical rule(s), ${serious.length} serious rule(s).`);
+for (const [id, e] of critical) {
+  failures.push(`accessibility, critical: ${id} (${e.help}) on ${e.where.size} place(s), e.g. ${[...e.where].slice(0, 3).join(' | ')}`);
+}
+for (const [id, e] of serious) {
+  console.log(`::warning::Accessibility, serious (not failing yet): ${id} (${e.help}) on ${e.where.size} place(s)`);
+  for (const w of [...e.where].slice(0, 6)) console.log(`    ${w}`);
+}
+
 if (failures.length) {
   console.log(`::error::Panel crawl: ${failures.length} problem(s)`);
   for (const f of failures) console.log(`  ${f}`);
   process.exit(1);
 }
-console.log(`Panel crawl: ${ROUTES.length} pages x 2 widths x 2 languages, clean.`);
+console.log(`Panel crawl: ${ROUTES.length} pages x 2 widths x 2 languages, clean (no page errors, no sideways scroll, no critical accessibility finding).`);

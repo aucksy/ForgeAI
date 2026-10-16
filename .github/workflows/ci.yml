@@ -51,6 +51,23 @@ jobs:
       - name: Promise ratchet
         run: node scripts/ci/promise_ratchet.mjs
 
+      # Audit v2 B3 (16 Oct 2026): Expo's own project check (duplicate native modules, SDK
+      # regressions, config drift). WARN only for now: it never fails the build; what it finds is
+      # printed here and as warnings on the run page. The plan's next step makes it fail.
+      - name: Expo doctor (mobile, warn only)
+        working-directory: apps/mobile
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          if npx --yes expo-doctor > "$RUNNER_TEMP/expo-doctor.txt" 2>&1; then
+            cat "$RUNNER_TEMP/expo-doctor.txt"
+            echo "expo-doctor: every check passed"
+          else
+            cat "$RUNNER_TEMP/expo-doctor.txt"
+            echo "::warning::expo-doctor: $(grep -c '^✖' "$RUNNER_TEMP/expo-doctor.txt") check(s) failed (warn only, see the 'Expo doctor' step's log)"
+            grep '^✖' "$RUNNER_TEMP/expo-doctor.txt" | sed 's/^✖ */::warning::expo-doctor: /' || true
+          fi
+
       - name: Typecheck (mobile)
         working-directory: apps/mobile
         run: npm run typecheck
