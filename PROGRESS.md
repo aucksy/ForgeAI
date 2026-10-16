@@ -1836,6 +1836,25 @@
     and opening the screen re-arm a running rest and drop a lost one. Heart rate: status reset on
     each start, Health Services capabilities checked first ("This watch has no heart-rate sensor").
     Notifications off: idle and heart screens say the watch-face countdown needs them + Allow.
+- 2026-10-16: **End-to-end audit C1 (live workout) + C2 (numbers) fixed** (6d68d32, 05177bf, 215b263,
+  179375e; ships with the next tag). Findings and statuses: Audit/e2e-v2/C1-live-workout.md, C2-numbers.md.
+  - Live workout: a past workout being logged starts no rest / "Rest is over" (afterTick moved to
+    services/tickFollowUp.ts, skips every correction); "Count it" stays counted (countedUntil);
+    PREVIOUS matches drops to drops (PrevSet.setType); an edit leaves out saved sets you untick (and
+    says so over Save; rows typed while editing still save); record pop-ups never replay; RPE on an
+    empty row says what is missing; a new drop row never hints the top set's weight; Target line
+    41.25 kg (not 41.3); card tags wrap; Finish counts warm-ups apart; empty time box "—"; deleting
+    a ticked set ends its rest; the typo question follows every tick path (RPE sheet, rest card).
+  - Numbers: one "Last 12 months" rule (the 12 months ending today, lib/date twelveMonthsFrom) on
+    Profile (first bar cut to the span), Statistics and exercise charts; Statistics headline counts
+    each set once; the overload gate now covers "Estimated 1-rep max" (owner rule: never a lighter
+    set doing more reps; records are derived, nothing to repair); record and chart weights 61.25 kg;
+    Measures "since 12 Mar 2023"; streak / rest days read with no 3-year window; exercise chart "12
+    months"; Statistics week labels day first; "Records" counts lifts per workout (D10).
+  - Kept: C2-2 (owner rule: 12 full weeks ending this week = the current bars). Skipped: C1-10 (DND
+    bell) needs native — forge-rest must report Do Not Disturb to JS.
+  - **Tests:** 2,702 vitest green (auditC1LiveWorkout 18, auditC2Numbers 13, each failed before its
+    fix); typecheck 0; silent-catch and promise ratchets at baseline.
 - 2026-10-15: **v0.44.0 — owner's gym-test fixes: RPE one-tap sheet; the rest sound never changes**
   (34db130 + this commit). Owner testing in the gym ("Keep adding the improvements I send in the plan").
   - RPE: the RPE cell opens its own sheet (RpeSheet.tsx): 10 -> 6 with meanings, ONE tap saves and
