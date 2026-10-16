@@ -8,8 +8,10 @@
 -- 1. ONE TAP, ONE ORDER (C6-1). When the gym wrote an order but the answer was lost on the way back
 --    (4G in the basement), the app said "No internet", kept the bag, and the member's second tap made
 --    a second order and took the stock twice. Now the app gives each order its own id before sending
---    it (p_order_id) and sends the same id again on a retry. The gym keeps that id once per member:
---    the same id again returns the order it already has (same number, stock taken once).
+--    it (p_order_id) and sends the same id again on a retry. The same id again returns the order the
+--    gym already has (same number, stock taken once) — but only an OPEN order (Ordered or Ready) of
+--    this member from the last 24 hours. A collected, cancelled or older order is never handed back
+--    for a new tap: that is a new order (review of wave 4a). The app itself keeps an id 15 minutes.
 -- 2. ONE MEMBER PER JOIN (C6-6). A Join whose answer was lost, tapped again, made a second "Rahul" on
 --    the gym's list who never leaves and is counted in every message's "seen by x of y". Now the app
 --    sends its own join id (p_join_id) and the same id within a day gives back the same member, with
@@ -18,13 +20,19 @@
 --    your number yet" counted as a new number every time, so three taps of one number said "Too many
 --    numbers were tried today", and seven such members in an hour locked the whole gym out of typing
 --    numbers. Now one number counts once a day per member, and once an hour for the gym's limit.
---    Only a hash of the number is kept for this count.
+--    The count stores an md5 tag of gym + number, not the number as typed. That tag is NOT private:
+--    there are only ~4 billion Indian mobile numbers, so anyone who can read the table can recover a
+--    number by trying them all. It is a rate-limit tag, readable only by the database owner (RLS on,
+--    no grants), and deleted within 2 days (member tries) or 1 day (gym misses).
 -- 4. CHECK-IN TIME (C6-12). A visit the desk imported from a paper register has no real time (0); the
 --    answer now says "no time" (null) instead of a time, so the app never shows "5:30 am".
 
 -- ------------------------------------------------------------------ 1. one tap, one order
 alter table public.shop_orders add column if not exists client_order_id uuid;
-create unique index if not exists shop_orders_member_client_id
+-- Not unique: an id that was matched before (now collected, or old) may come again as a new order.
+-- Two copies of one tap never both write: the second waits on the gym's lock and then finds the first.
+drop index if exists public.shop_orders_member_client_id;
+create index if not exists shop_orders_member_client_order
   on public.shop_orders(member_id, client_order_id) where client_order_id is not null;
 
 -- 0003's member_place_order with the order id added (the rest is unchanged). The 2-argument version
@@ -45,10 +53,14 @@ begin
   end if;
   -- One order at a time per gym: the running number never repeats.
   perform 1 from public.gyms where gym_id = m.gym_id for update;
-  -- The same order sent again (its answer was lost): the order the gym already has. Looked up after
-  -- the gym's lock, so two copies racing each other see each other.
+  -- The same order sent again (its answer was lost): the order the gym already has — only while it
+  -- is still open and from the last 24 hours. Looked up after the gym's lock, so two copies racing
+  -- each other see each other.
   if p_order_id is not null then
-    select * into res from public.shop_orders where member_id = m.member_id and client_order_id = p_order_id;
+    select * into res from public.shop_orders
+     where member_id = m.member_id and client_order_id = p_order_id
+       and status in ('ordered', 'ready') and created_at > now() - interval '24 hours'
+     order by created_at desc limit 1;
     if res.order_id is not null then return res; end if;
   end if;
   select count(*) into recent from public.shop_orders

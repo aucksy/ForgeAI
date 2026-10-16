@@ -25,7 +25,7 @@ begin
   insert into public.gym_members(gym_id, name, key_hash) values
     (gid, 'Asha app', public._hash_key(km)), (gid, 'Bilal app', public._hash_key(kb)), (gid, 'Chand app', public._hash_key(kc));
   insert into public.shop_products(gym_id, name, category, price_p, options, stock, active, art_kind, art_tint)
-    values (gid, 'Shaker', 'gear', 39900, '[]', 10, true, 'shaker', '#E8661F') returning product_id into pid;
+    values (gid, 'Shaker', 'gear', 39900, '[]', 20, true, 'shaker', '#E8661F') returning product_id into pid;
   lines := jsonb_build_array(jsonb_build_object('productId', pid, 'optionId', null, 'qty', 2));
 
   -- ---------------------------------------------------------------- C6-1 one tap, one order
@@ -34,7 +34,7 @@ begin
   fails := fails || pg_temp.t20_is('1a same id, same order', o2.order_id::text, o1.order_id::text);
   select count(*) into n from public.shop_orders where gym_id = gid;
   fails := fails || pg_temp.t20_is('1b one order kept', n::text, '1');
-  fails := fails || pg_temp.t20_is('1c stock taken once', (select stock from public.shop_products where product_id = pid)::text, '8');
+  fails := fails || pg_temp.t20_is('1c stock taken once', (select stock from public.shop_products where product_id = pid)::text, '18');
   o3 := public.member_place_order(km, lines, oid2);   -- a new order: a new id
   fails := fails || pg_temp.t20_is('1d new id, new order', (o3.order_no = o1.order_no + 1)::text, 'true');
   -- An old app (no id) still places orders, one per call, as before.
@@ -45,7 +45,22 @@ begin
   -- Another member sending the same id gets their OWN new order, never Asha's.
   o2 := public.member_place_order(kb, lines, oid1);
   fails := fails || pg_temp.t20_is('1f id is per member', (o2.order_id <> o1.order_id and o2.member_name = 'Bilal app')::text, 'true');
-  checks := checks + 6;
+  -- Review of wave 4a: a collected (or cancelled) order is never handed back for a new tap ...
+  update public.shop_orders set status = 'collected' where order_id = o1.order_id;
+  o2 := public.member_place_order(km, lines, oid1);
+  fails := fails || pg_temp.t20_is('1g collected order not handed back', (o2.order_id <> o1.order_id)::text, 'true');
+  update public.shop_orders set status = 'cancelled', cancelled_by = 'member' where order_id = o2.order_id;
+  o3 := public.member_place_order(km, lines, oid1);
+  fails := fails || pg_temp.t20_is('1h cancelled order not handed back', (o3.order_id <> o2.order_id and o3.order_id <> o1.order_id)::text, 'true');
+  -- ... nor one older than 24 hours, even still open.
+  update public.shop_orders set created_at = now() - interval '25 hours' where order_id = o3.order_id;
+  o2 := public.member_place_order(km, lines, oid1);
+  fails := fails || pg_temp.t20_is('1i day-old order not handed back', (o2.order_id <> o3.order_id)::text, 'true');
+  -- ... but a READY order from today still is (the desk moved it on before the retry).
+  update public.shop_orders set status = 'ready' where order_id = o2.order_id;
+  o1 := public.member_place_order(km, lines, oid1);
+  fails := fails || pg_temp.t20_is('1j ready order handed back', (o1.order_id = o2.order_id)::text, 'true');
+  checks := checks + 10;
 
   -- ---------------------------------------------------------------- C6-6 one member per join
   j1 := public.member_join('T20GYA', 'Rahul', null, jid);
