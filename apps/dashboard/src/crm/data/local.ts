@@ -451,11 +451,20 @@ export class LocalCrmData implements CrmData {
         // within 3 days (a typo: 31/10 vs 30/10; a misspelt plan name), so it never makes a second,
         // overlapping plan with a false due.
         const near = (a: DateISO, b: DateISO) => Math.abs(diffDays(a, b)) <= 3;
+        // Admin audit C7-4: a near match must be the same plan too ("Quartely" for "Quarterly"). A
+        // gym plan and a PT plan on the same dates are two plans, never one with the other's price.
         const same =
           db.memberships.find(
             (m) => m.memberId === member.id && planKey(m.planName) === planKey(term.planName) && m.startsOn === term.startsOn && m.endsOn === term.endsOn,
           ) ??
-          db.memberships.find((m) => m.importId === importId && m.memberId === member.id && near(m.startsOn, term.startsOn) && near(m.endsOn, term.endsOn));
+          db.memberships.find(
+            (m) =>
+              m.importId === importId &&
+              m.memberId === member.id &&
+              near(m.startsOn, term.startsOn) &&
+              near(m.endsOn, term.endsOn) &&
+              similarPlanName(m.planName, term.planName),
+          );
         if (same) {
           // 16 Oct 2026: a payments list repeats a term once per payment. Made by THIS import, each
           // further row's payment is another receipt. Made by an earlier import or by hand: never
@@ -471,7 +480,13 @@ export class LocalCrmData implements CrmData {
             return;
           }
           let amount = term.paidP;
-          if (term.priceKnown) {
+          if (term.dueP != null && (term.totalP != null || same.priceP > 0)) {
+            // C7-9: the sheet says what is still due, so everything paid so far is price − balance.
+            // That reads a running "paid so far" column and a column of single payments alike.
+            const price = Math.max(same.priceP, term.totalP ?? 0);
+            amount = Math.max(0, price - term.dueP - paidSoFar);
+            same.priceP = price;
+          } else if (term.priceKnown) {
             const price = Math.max(same.priceP, term.priceP);
             // A running total ("paid so far" 2000, then 4500; or a falling balance): the new money is
             // the difference. Never more than what is still unpaid.
@@ -870,6 +885,32 @@ function cleanPtFields(p: Partial<Pick<Plan, 'ptSessions' | 'trainer'>>): Partia
   }
   if ('trainer' in p) out.trainer = cleanTrainer(p.trainer);
   return out;
+}
+
+/**
+ * Admin audit C7-4: two plan names that are one plan written twice — the same once case, spaces and
+ * dots are ignored, or at most two letters apart ("Quartely" / "Quarterly"). "Gym 3 Months" and
+ * "Personal Training 3 Months" are two plans.
+ */
+export function similarPlanName(a: string, b: string): boolean {
+  const k = (s: string) => s.toLowerCase().replace(/[^a-z0-9\u0900-\u097f]+/g, '');
+  const x = k(a);
+  const y = k(b);
+  if (x === y) return true;
+  if (Math.abs(x.length - y.length) > 2 || Math.min(x.length, y.length) < 5) return false;
+  // Edit distance, stopping early past 2.
+  let prev = Array.from({ length: y.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= x.length; i += 1) {
+    const cur = [i];
+    let best = i;
+    for (let j = 1; j <= y.length; j += 1) {
+      cur[j] = Math.min(prev[j]! + 1, cur[j - 1]! + 1, prev[j - 1]! + (x[i - 1] === y[j - 1] ? 0 : 1));
+      best = Math.min(best, cur[j]!);
+    }
+    if (best > 2) return false;
+    prev = cur;
+  }
+  return prev[y.length]! <= 2;
 }
 
 /** C7-1: the same press came again with different numbers: say what was already saved. */

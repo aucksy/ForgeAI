@@ -127,10 +127,16 @@ const SYNONYMS: Record<ImportField, readonly string[]> = {
     'total amount', 'package amount', 'plan amount', 'plan fees', 'plan price', 'package price', 'package fees',
     'membership fee', 'membership fees', 'membership value', 'total membership value', 'net amount', 'price',
     '=total', '=mrp', 'final amount',
+    // Admin audit C7-6 (16 Oct 2026): "Total Fees / Paid Fees / Due Fees" registers.
+    'total fees', 'total fee', 'total amt', 'package fee', 'fees total',
   ],
   amount: [
     'amount', 'fees', 'fee', 'fees paid', 'fee paid', 'amount paid', 'paid amount', 'rupees', 'received',
-    'amount received', '=payment', 'payment amount', 'joining fees', 'joining fee', 'admission fees', 'admission fee',
+    'amount received', '=payment', 'payment amount',
+    // C7-7: a Joining / Admission fee column is NOT what was paid (it was read as the paid column and
+    // made a false due); it is left out, like any column the panel has no field for.
+    // C7-6 / C7-8: "Paid Fees", and "Amt" (a short header the value guess used to miss).
+    'paid fees', 'paid fee', 'amt', 'paid amt', 'amt paid',
     'shulk', '=rs', '=paid', 'jama', 'फीस', 'राशि',
   ],
   // 16 Oct 2026: a payments list (one row per payment) dates each receipt.
@@ -141,6 +147,8 @@ const SYNONYMS: Record<ImportField, readonly string[]> = {
   due: [
     '=due', 'balance', 'balance due', 'balance amount', 'due amount', 'amount due', 'pending', 'pending amount',
     'pending fees', 'remaining', 'remaining amount', 'outstanding', 'baaki', 'baki', 'बाकी',
+    // C7-6
+    'due fees', 'due fee', 'fees due', 'fee due', 'balance fees', 'balance fee', 'pending fee', 'due amt', 'balance amt',
   ],
   expiry: [
     'expiry', 'expiry date', 'expire', 'expires', 'expires on', 'end date', 'ending date', 'valid till',
@@ -178,6 +186,8 @@ export function guessColumns(headers: readonly unknown[]): ColumnMap {
     if (!h) return;
     const padded = ` ${h} `;
     IMPORT_FIELDS.forEach((field) => {
+      // C7-6: a column that says "total" is the plan's price, never the amount paid.
+      if (field === 'amount' && padded.includes(' total ')) return;
       let best = 0;
       for (const entry of SYNONYMS[field]) {
         const exactOnly = entry.startsWith('=');
@@ -296,14 +306,23 @@ export function guessFromValues(rows: readonly (readonly unknown[])[], headerRow
   // Money: amounts that are not mobiles.
   const isMoney = (v: unknown): boolean => {
     if (parseImportPhone(v).ok) return false;
-    const t = cellText(v).replace(/\/-$|,|₹|rs\.?|inr/gi, '').trim();
-    if (!/^\d+(\.\d{1,2})?$/.test(t)) return false;
-    const n = Number(t);
-    return n >= 100 && n <= 500000;
+    const p = parseImportMoney(cellText(v));
+    return p !== null && p >= 100_00 && p <= 5_00_000_00;
   };
-  const moneyCols = free().filter((c) => share(c, isMoney) >= 0.6);
+  // Admin audit C7-8 (16 Oct 2026): a Member ID / Sr. No. column (1001, 1002 …) passed as money and
+  // was read as the fees paid. A column whose header names a number or a joining fee, or whose
+  // numbers all differ and run one after another, is never money.
+  const header = rows[headerRow] ?? [];
+  const notMoneyHeader = (c: number) => NOT_MONEY_HEADER.test(` ${normalizeHeader(header[c])} `);
+  const runsInSequence = (c: number): boolean => {
+    const ns = body.map((r) => cellText(r[c])).filter((t) => t !== '').map(Number);
+    if (ns.length < 2 || ns.some((n) => !Number.isInteger(n))) return false;
+    const sorted = [...ns].sort((a, b) => a - b);
+    return sorted.every((n, i) => i === 0 || n === sorted[i - 1]! + 1);
+  };
+  const moneyCols = free().filter((c) => !notMoneyHeader(c) && !runsInSequence(c) && share(c, isMoney) >= 0.6);
   const avg = (c: number) => {
-    const ns = body.map((r) => Number(cellText(r[c]).replace(/\/-$|,|₹|rs\.?|inr/gi, ''))).filter((n) => Number.isFinite(n) && n > 0);
+    const ns = body.map((r) => (parseImportMoney(cellText(r[c])) ?? 0) / 100).filter((n) => n > 0);
     return ns.length ? ns.reduce((a, b) => a + b, 0) / ns.length : 0;
   };
   if (moneyCols.length >= 2 && out.total === null && out.amount === null) {
@@ -326,6 +345,39 @@ export function columnLetter(index: number): string {
     n = Math.floor((n - 1) / 26);
   }
   return out;
+}
+
+/** C7-8: a header that names a number or a fee the panel does not take is never guessed as money. */
+const NOT_MONEY_HEADER = / (id|no|nos|sr|s no|sno|serial|code|roll|receipt|invoice|bill|joining|admission|registration|reg) /;
+
+/**
+ * A fees cell as paise (admin audit C7-5, 16 Oct 2026): "Rs. 1,500/-", "Rs 1500", "INR 1500",
+ * "₹1,500", "1500 (paid)", "1500/- only", "1.5k", "1.2 lakh". Null when it is not an amount. PURE.
+ */
+export function parseImportMoney(raw: string): number | null {
+  let t = raw.normalize('NFKC').toLowerCase();
+  t = t.replace(/\([^)]*\)/g, ' ').replace(/\/-/g, ' ').replace(/[₹,]/g, '');
+  t = t.replace(/rupees|rupee|rs\.?|inr|only|paid/g, ' ').replace(/\s+/g, '');
+  if (!t) return null;
+  const scaled = /^(\d+(?:\.\d+)?)(k|l|lakh|lakhs|lac|lacs)$/.exec(t);
+  if (scaled) {
+    const n = Number(scaled[1]) * (scaled[2] === 'k' ? 1000 : 100000);
+    return Number.isFinite(n) && n > 0 ? Math.round(n * 100) : null;
+  }
+  return parseRupeeInput(t);
+}
+
+/**
+ * Admin audit C7-3 (16 Oct 2026): the same person, as two rows or a row and a member, only when the
+ * names agree: the same name, or the same first name ("RAMESH" and "Ramesh Gupta"). A family's
+ * shared mobile ("Sunita Gupta" on Ramesh's number) is two people. PURE.
+ */
+export function samePersonName(a: string, b: string): boolean {
+  const words = (x: string) => x.normalize('NFC').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim().split(' ').filter(Boolean);
+  const x = words(a);
+  const y = words(b);
+  if (x.length === 0 || y.length === 0) return true;
+  return x.join(' ') === y.join(' ') || x[0] === y[0];
 }
 
 // ---------------------------------------------------------------- cells
@@ -799,7 +851,15 @@ export function planImport(
 
     // 15 Oct 2026 (data migration): the plan with its dates becomes a real membership, and what
     // was paid a real receipt (`termFromRow`). Only a plan the row cannot date stays in the notes.
-    const money = (f: ImportField) => (text(f) ? parseRupeeInput(text(f).replace(/\/-$|,/g, '')) : null);
+    // C7-5: "Rs. 1,500/-" and the like are read; a fees cell that still can't be read is said.
+    const money = (f: ImportField) => (text(f) ? parseImportMoney(text(f)) : null);
+    for (const f of ['total', 'amount', 'due'] as const) {
+      if (text(f) && money(f) === null) {
+        warnings.push(
+          tr(`${fieldLabel(f)} “${text(f)}” is not an amount we can read — left out.`, `${fieldLabel(f)} “${text(f)}” rakam samajh nahi aayi — chhodi.`),
+        );
+      }
+    }
     const endsOn = text('expiry') ? parseSheetDate(cellAt(row, map.expiry), today, expiryDayFirst) : null;
     const startsOn = text('startDate') ? parseSheetDate(cellAt(row, map.startDate), today, startDayFirst) : null;
     // A payment date the receipt can carry: readable, not before records began, not in the future.
@@ -869,7 +929,7 @@ export function planImport(
     if (earlier !== undefined) {
       // Review (16 Oct 2026): a repeat is the SAME member (a payments list) only when the name
       // matches too. Two people on one family mobile must never share plans and money.
-      const sameName = earlier.name.toLowerCase() === draft.fullName.toLowerCase();
+      const sameName = samePersonName(earlier.name, draft.fullName);
       if (!sameName) {
         warnings.push(tr(`Row ${earlier.row} has this mobile with another name — this row is skipped.`, `Row ${earlier.row} mein yahi mobile doosre naam se hai — yeh row chhodi.`));
       }
@@ -878,7 +938,21 @@ export function planImport(
     }
     seen.set(draft.phone, { row: rowNumber, name: draft.fullName });
     const existing = findDuplicatePhone(roster, draft.phone);
-    out.push({ rowNumber, cells, name: fullName, status: existing ? 'duplicate' : 'add', draft, existing, sameAsRow: null, problems, warnings, term });
+    // C7-3: a member already in the gym on this mobile with ANOTHER name is someone else (a family
+    // shares a number). Their plan and money are never put on that member.
+    let rowTerm = term;
+    if (existing && !samePersonName(existing.fullName, draft.fullName)) {
+      rowTerm = null;
+      if (term) {
+        warnings.push(
+          tr(
+            `${existing.fullName} is already in the gym on this mobile. The name is different, so this row's plan and fees are not added.`,
+            `Is mobile par ${existing.fullName} pehle se hain. Naam alag hai, isliye is row ka plan aur fees nahi jude.`,
+          ),
+        );
+      }
+    }
+    out.push({ rowNumber, cells, name: fullName, status: existing ? 'duplicate' : 'add', draft, existing, sameAsRow: null, problems, warnings, term: rowTerm });
   }
 
   const counts = { add: 0, duplicate: 0, problem: 0 };

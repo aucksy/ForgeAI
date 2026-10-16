@@ -32,6 +32,13 @@ export interface ImportTerm {
   paidOnGiven?: boolean;
   /** The sheet gave a price or a balance, so a payments list can be capped at the price. */
   priceKnown?: boolean;
+  /**
+   * Admin audit C7-9 (16 Oct 2026): the row's balance and its plan price exactly as the sheet wrote
+   * them (null = blank). With both, everything paid SO FAR is price − balance, whether the paid
+   * column holds this payment or a running "paid so far".
+   */
+  dueP?: Paise | null;
+  totalP?: Paise | null;
   /** The plan's length, for a NEW plan of this name. */
   length: { unit: DurationUnit; count: number };
 }
@@ -113,6 +120,8 @@ export function termFromRow(t: TermInput): ImportTerm | null {
     paidOn: t.paidOn ?? startsOn,
     paidOnGiven: !!t.paidOn,
     priceKnown: total != null || due != null,
+    dueP: due,
+    totalP: total,
     length,
   };
 }
