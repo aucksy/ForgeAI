@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { EMPTY_GYM_BLOB, cleanGymBlob, linkWithNow, upsertOrder, type GymBlob, type GymNow, type OrderFlash } from './gym';
+import { EMPTY_GYM_BLOB, cleanGymBlob, cleanPendingOrder, linkWithNow, upsertOrder, type GymBlob, type GymNow, type OrderFlash, type PendingOrder } from './gym';
 import { addToBag, removeLine, setLineQty } from './money';
 import type { BagLine, GymLink, GymOrder, Product } from './types';
 
@@ -25,6 +25,12 @@ export interface GymShopState extends GymBlob {
   notice: string | null;
   /** "Order 12 placed…" for My orders to show once, with the order it is about. Not saved. */
   flash: OrderFlash | null;
+  /**
+   * Audit C6-1: the id of the order being sent, kept (and saved) until the gym confirms it, so a
+   * retry after a lost answer never makes a second order.
+   */
+  pendingOrder: PendingOrder | null;
+  setPendingOrder: (p: PendingOrder | null) => void;
   setLink: (link: GymLink) => void;
   /** member_me's news (the gym's name and brand now). Nothing moves when nothing changed. */
   setGymNow: (now: GymNow) => void;
@@ -50,14 +56,16 @@ export const useGymShop = create<GymShopState>()(
       sampleOpen: false,
       notice: null,
       flash: null,
-      setLink: (link) => set({ ...EMPTY_GYM_BLOB, link, notice: null, flash: null, sampleOpen: false }),
+      pendingOrder: null,
+      setPendingOrder: (pendingOrder) => set({ pendingOrder }),
+      setLink: (link) => set({ ...EMPTY_GYM_BLOB, link, notice: null, flash: null, sampleOpen: false, pendingOrder: null }),
       setGymNow: (now) => {
         const link = get().link;
         if (!link) return;
         const next = linkWithNow(link, now);
         if (next !== link) set({ link: next });
       },
-      unlink: (notice = null) => set({ ...EMPTY_GYM_BLOB, notice, flash: null, sampleOpen: false }),
+      unlink: (notice = null) => set({ ...EMPTY_GYM_BLOB, notice, flash: null, sampleOpen: false, pendingOrder: null }),
       setProducts: (products, atISO) => set({ products, productsAt: atISO }),
       setOrders: (orders) => set({ orders }),
       putOrder: (order) => set({ orders: upsertOrder(get().orders, order) }),
@@ -77,8 +85,20 @@ export const useGymShop = create<GymShopState>()(
       name: GYM_SHOP_STORAGE_KEY,
       version: 1,
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s): GymBlob => ({ link: s.link, products: s.products, productsAt: s.productsAt, orders: s.orders, bag: s.bag }),
-      merge: (persisted, current) => ({ ...current, ...cleanGymBlob(persisted) }),
+      partialize: (s): GymBlob & { pendingOrder: PendingOrder | null } => ({
+        link: s.link,
+        products: s.products,
+        productsAt: s.productsAt,
+        orders: s.orders,
+        bag: s.bag,
+        pendingOrder: s.pendingOrder,
+      }),
+      merge: (persisted, current) => {
+        const blob = cleanGymBlob(persisted);
+        // An order id belongs to its gym link: no link, no pending order.
+        const pendingOrder = blob.link ? cleanPendingOrder((persisted as { pendingOrder?: unknown } | null)?.pendingOrder) : null;
+        return { ...current, ...blob, pendingOrder };
+      },
     },
   ),
 );

@@ -389,10 +389,34 @@ export function findLandedOrder(
   after: readonly GymOrder[],
   sent: readonly { productId: string; optionId: string | null; qty: number }[],
 ): GymOrder | null {
-  const key = (l: { productId: string; optionId: string | null; qty: number }) => `${l.productId}::${l.optionId ?? ''}::${l.qty}`;
-  const want = sent.map(key).sort().join('|');
+  const want = orderLinesKey(sent);
   const before = new Set(idsBefore);
-  return after.find((o) => !before.has(o.id) && o.status === 'ordered' && o.lines.map(key).sort().join('|') === want) ?? null;
+  return after.find((o) => !before.has(o.id) && o.status === 'ordered' && orderLinesKey(o.lines) === want) ?? null;
+}
+
+/**
+ * Audit C6-1: the id this phone gives an order before sending it (member_place_order's
+ * p_order_id, migration 0020). The gym keeps it once, so the same bag sent again after a lost
+ * answer returns the order it already has. Kept (and saved) until that order is confirmed.
+ */
+export interface PendingOrder {
+  id: string;
+  /** The exact lines it was made for: a changed bag is a new order with a new id. */
+  lines: string;
+}
+
+/** The lines as one string, in a fixed order, so the same bag always reads the same. PURE. */
+export function orderLinesKey(lines: readonly { productId: string; optionId: string | null; qty: number }[]): string {
+  return lines
+    .map((l) => `${l.productId}::${l.optionId ?? ''}::${l.qty}`)
+    .sort()
+    .join('|');
+}
+
+/** A saved pending order, or null when it is missing or damaged. PURE. */
+export function cleanPendingOrder(raw: unknown): PendingOrder | null {
+  if (!isObj(raw)) return null;
+  return typeof raw.id === 'string' && raw.id.length > 0 && typeof raw.lines === 'string' ? { id: raw.id, lines: raw.lines } : null;
 }
 
 // ------------------------------------------------------------------ order words

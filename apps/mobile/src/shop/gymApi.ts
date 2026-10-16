@@ -20,12 +20,23 @@ export type GymResult<T> = { ok: true; data: T } | { ok: false; error: GymError 
 const READ_MS = 15000;
 const WRITE_MS = 30000;
 
-async function call(fn: string, args: Record<string, unknown>, timeoutMs: number): Promise<GymResult<unknown>> {
+/**
+ * PostgREST's "no function with these argument names". A server the newest migration has not
+ * reached yet answers this to an argument it does not know (audit C6-1, C6-6: 0020's ids).
+ */
+const NO_SUCH_FUNCTION = 'PGRST202';
+
+type CallResult = GymResult<unknown> & { noSuchFunction?: boolean };
+
+async function call(fn: string, args: Record<string, unknown>, timeoutMs: number): Promise<CallResult> {
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(), timeoutMs);
   try {
     const res = await getSupabase().rpc(fn, args).abortSignal(ac.signal);
-    if (res.error) return { ok: false, error: classifyRpcError(res.error, res.status) };
+    if (res.error) {
+      const noSuchFunction = (res.error as { code?: unknown }).code === NO_SUCH_FUNCTION;
+      return { ok: false, error: classifyRpcError(res.error, res.status), ...(noSuchFunction ? { noSuchFunction } : {}) };
+    }
     return { ok: true, data: res.data };
   } catch (e) {
     // Not configured, or the fetch threw past the client (an abort is re-thrown by it).
@@ -35,6 +46,16 @@ async function call(fn: string, args: Record<string, unknown>, timeoutMs: number
   } finally {
     clearTimeout(timer);
   }
+}
+
+/**
+ * A call with an argument only newer servers know (`extra`): when the server has not had that
+ * migration yet, the same call is made again without it, so this app works before and after.
+ */
+async function callWithNewer(fn: string, args: Record<string, unknown>, extra: Record<string, unknown>, timeoutMs: number): Promise<CallResult> {
+  const r = await call(fn, { ...args, ...extra }, timeoutMs);
+  if (r.ok || !r.noSuchFunction) return r;
+  return call(fn, args, timeoutMs);
 }
 
 export async function apiJoin(code: string, name: string): Promise<GymResult<GymLink>> {
@@ -80,8 +101,13 @@ export async function apiOrders(key: string): Promise<GymResult<GymOrder[]>> {
   return r.ok ? { ok: true, data: ordersFromRows(r.data) } : r;
 }
 
-export async function apiPlaceOrder(key: string, lines: { productId: string; optionId: string | null; qty: number }[]): Promise<GymResult<GymOrder>> {
-  const r = await call('member_place_order', { p_key: key, p_lines: lines }, WRITE_MS);
+/**
+ * Place an order. `orderId` (audit C6-1) is this phone's own id for it: the gym keeps it once, so
+ * sending the same id again returns that order instead of writing a second one (0020).
+ */
+export async function apiPlaceOrder(key: string, lines: { productId: string; optionId: string | null; qty: number }[], orderId?: string): Promise<GymResult<GymOrder>> {
+  const base = { p_key: key, p_lines: lines };
+  const r = orderId ? await callWithNewer('member_place_order', base, { p_order_id: orderId }, WRITE_MS) : await call('member_place_order', base, WRITE_MS);
   if (!r.ok) return r;
   // A function returning one row comes back as that row (PostgREST); be lenient with a 1-row array.
   const order = orderFromRow(Array.isArray(r.data) ? r.data[0] : r.data);

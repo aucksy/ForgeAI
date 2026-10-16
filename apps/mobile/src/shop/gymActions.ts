@@ -4,6 +4,7 @@
  * knows (BAD_KEY: the member left on another phone, or the gym removed them) unlinks this phone
  * and the join card says why.
  */
+import { uuid } from '@/lib/uuid';
 import { prefetchGymLogo } from '@/theme/logoPrefetch';
 
 import { apiCancelOrder, apiCheckIn, apiJoin, apiLeaveQuietly, apiMe, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
@@ -19,6 +20,7 @@ import {
   joinErrorText,
   onlyLeftText,
   orderLinesFor,
+  orderLinesKey,
   orderPlacedText,
   placeFailure,
   refreshErrorText,
@@ -202,12 +204,18 @@ export async function placeGymOrder(): Promise<PlaceOutcome> {
   const lines = orderLinesFor(s.bag, s.products);
   if (lines.length === 0) return { ok: false, message: 'Your bag has nothing that can be ordered right now.' };
   const idsBefore = s.orders.map((o) => o.id);
+  // Audit C6-1: the same bag sent again keeps its id, so a retry after a lost answer gets the
+  // order the gym already wrote (0020). A changed bag is a new order with a new id.
+  const linesKey = orderLinesKey(lines);
+  const pending = s.pendingOrder && s.pendingOrder.lines === linesKey ? s.pendingOrder : { id: uuid(), lines: linesKey };
+  s.setPendingOrder(pending);
   orderWrites += 1;
-  let r = await apiPlaceOrder(key, lines);
+  let r = await apiPlaceOrder(key, lines, pending.id);
   orderWrites += 1;
-  if (!r.ok && r.error.kind === 'timeout') {
-    // The app stopped waiting, but the gym may have the order: look before saying it failed, so
-    // a second tap never makes a second order.
+  if (!r.ok && (r.error.kind === 'timeout' || r.error.kind === 'offline')) {
+    // The app stopped waiting, or the answer was lost on the way back ("Network request failed"
+    // after the gym wrote it): look before saying it failed, so a second tap never makes a
+    // second order (a server before 0020 has no order id to catch it).
     const check = await apiOrders(key);
     const landed = check.ok ? findLandedOrder(idsBefore, check.data, lines) : null;
     if (landed) r = { ok: true, data: landed };
@@ -227,6 +235,7 @@ export async function placeGymOrder(): Promise<PlaceOutcome> {
     return { ok: false, message: f.message };
   }
   const after = useGymShop.getState();
+  if (after.pendingOrder?.id === pending.id) after.setPendingOrder(null);
   // Take out exactly what was sent (a line added on another page meanwhile stays).
   const sent = new Set(lines.map((l) => `${l.productId}::${l.optionId ?? ''}`));
   after.setBag(after.bag.filter((l) => !sent.has(`${l.productId}::${l.optionId ?? ''}`)));
