@@ -457,7 +457,7 @@ export function ImportMembersScreen() {
           {result.terms && (result.terms.memberships > 0 || result.terms.skipped > 0) && (
             <p style={{ ...muted, marginTop: space.sm }}>
               {tr(
-                `${result.terms.memberships} plans with their dates · ${result.terms.payments} receipts${result.terms.plans > 0 ? ` · ${result.terms.plans} new plan names added to Plans` : ''}${result.terms.skipped > 0 ? ` · ${result.terms.skipped} already here, not added again` : ''}.`,
+                `${n(result.terms.memberships, 'plan')} with their dates · ${n(result.terms.payments, 'receipt')}${result.terms.plans > 0 ? ` · ${n(result.terms.plans, 'new plan name')} added to Plans` : ''}${result.terms.skipped > 0 ? ` · ${result.terms.skipped} already here, not added again` : ''}.`,
                 `${result.terms.memberships} plan unki dates ke saath · ${result.terms.payments} raseed${result.terms.plans > 0 ? ` · ${result.terms.plans} naye plan Plans mein jude` : ''}${result.terms.skipped > 0 ? ` · ${result.terms.skipped} pehle se the, dobara nahi jude` : ''}.`,
               )}
             </p>
@@ -775,7 +775,7 @@ function PastImports() {
       const r = await undoImport(importId);
       setDone(
         tr(
-          `Import taken back: ${r.members} members, ${r.memberships} plans with dates, ${r.payments} receipts and ${r.plans} plan names removed.${keptWords(r.kept)}`,
+          `Import taken back: ${n(r.members, 'member')}, ${n(r.memberships, 'plan')} with dates, ${n(r.payments, 'receipt')} and ${n(r.plans, 'plan name')} removed.${keptWords(r.kept)}`,
           `Import wapas ho gaya: ${r.members} members, ${r.memberships} plan dates ke saath, ${r.payments} raseed aur ${r.plans} plan naam hataye.${keptWords(r.kept)}`,
         ),
       );
@@ -812,7 +812,7 @@ function PastImports() {
               <div style={{ fontWeight: 700, color: color.ink }}>{when(imp.at)}</div>
               <div style={muted}>
                 {tr(
-                  `${imp.members} members · ${imp.memberships} plans with dates · ${imp.payments} receipts`,
+                  `${n(imp.members, 'member')} · ${n(imp.memberships, 'plan')} with dates · ${n(imp.payments, 'receipt')}`,
                   `${imp.members} members · ${imp.memberships} plan dates ke saath · ${imp.payments} raseed`,
                 )}
               </div>
@@ -827,7 +827,7 @@ function PastImports() {
             <div style={{ marginTop: space.sm }}>
               <p style={{ ...muted, color: color.ink }}>
                 {tr(
-                  `This removes what this file added: ${ask.members.length} members, ${ask.memberships.length} plans with dates, ${ask.payments.length} receipts and ${ask.plans.length} plan names from Plans.`,
+                  `This removes what this file added: ${n(ask.members.length, 'member')}, ${n(ask.memberships.length, 'plan')} with dates, ${n(ask.payments.length, 'receipt')} and ${n(ask.plans.length, 'plan name')} from Plans.`,
                   `Isse is file ka joda hua hatega: ${ask.members.length} members, ${ask.memberships.length} plan dates ke saath, ${ask.payments.length} raseed aur Plans se ${ask.plans.length} plan naam.`,
                 )}
                 {keptWords(ask.kept)}
@@ -852,12 +852,17 @@ function PastImports() {
 /** " 2 members and 1 plan with dates stay: the gym used them after the import." PURE. */
 function keptWords(kept: { members: number; memberships: number; plans: number }): string {
   const parts: string[] = [];
-  if (kept.members > 0) parts.push(tr(`${kept.members} members`, `${kept.members} members`));
-  if (kept.memberships > 0) parts.push(tr(`${kept.memberships} plans with dates`, `${kept.memberships} plan dates ke saath`));
-  if (kept.plans > 0) parts.push(tr(`${kept.plans} plan names`, `${kept.plans} plan naam`));
+  if (kept.members > 0) parts.push(tr(n(kept.members, 'member'), `${kept.members} members`));
+  if (kept.memberships > 0) parts.push(tr(`${n(kept.memberships, 'plan')} with dates`, `${kept.memberships} plan dates ke saath`));
+  if (kept.plans > 0) parts.push(tr(n(kept.plans, 'plan name'), `${kept.plans} plan naam`));
   if (parts.length === 0) return '';
   return tr(
     ` ${parts.join(', ')} stay, with their receipts: the gym used them after the import (a check-in, a payment at the desk, extra days, a PT session).`,
     ` ${parts.join(', ')} rahenge, raseed ke saath: import ke baad gym ne inhe use kiya (check-in, desk par payment, extra din, PT session).`,
   );
+}
+
+/** "1 member", "3 members". PURE. */
+function n(count: number, word: string): string {
+  return `${count} ${count === 1 ? word : `${word}s`}`;
 }

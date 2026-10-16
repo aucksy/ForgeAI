@@ -1764,6 +1764,19 @@
   `.github/workflows/exercise-clips.yml` (manual; one job per recipe, publishes to the
   `exercise-clips` release). How-to: the `making-forgeai-exercise-clips` skill. Not wired into the
   app yet: the demo sheet still shows the Everkinetic drawings.
+- 2026-10-16: **Admin app: "Undo this import"; admin app icon** (73e738a, a66c162, 3dbd9d4, d3a181d + this commit).
+  - Members -> Import -> "Past imports": each import still in the gym (time, counts) with "Undo this
+    import" -> what goes and what stays -> "Yes, undo it". Owner only. logic/undoImport.ts keeps
+    everything the gym used since: a term with a desk receipt or any later save (extra days,
+    freeze, cancel, PT) keeps its imported receipts; a used imported member (check-in, enquiry,
+    desk sale) keeps all the file gave them; a plan a kept term uses stays. Online in 900-row parts.
+  - Server 0017 (APPLIED LIVE 16 Oct): crm_push lets the owner delete member / plan / membership /
+    payment rows only when the stored data has an importId; front desk OWNER_ONLY. Test
+    supabase/tests/0017_undo_import.sql passes in CI and on the live database (no rows left).
+  - Pressed through locally (demo gym, server answers faked like the CI crawl): import 2 -> undo ->
+    both members and the new plan gone, the gym's own plan kept; Keep it; Hinglish at 375 px.
+  - Admin app icon (the panel installed from the website; never "team"): ember tile + dark hexagon,
+    admin-*.png. Member app icon: hexagon 0.80 -> 0.62 of the adaptive layer (ships in v0.45.0).
 - 2026-10-15: **v0.44.0 — owner's gym-test fixes: RPE one-tap sheet; the rest sound never changes**
   (34db130 + this commit). Owner testing in the gym ("Keep adding the improvements I send in the plan").
   - RPE: the RPE cell opens its own sheet (RpeSheet.tsx): 10 -> 6 with meanings, ONE tap saves and
