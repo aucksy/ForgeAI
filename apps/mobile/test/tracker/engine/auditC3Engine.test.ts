@@ -278,3 +278,22 @@ describe('C3-27: a routine\'s planned weight from a lb routine reads on kg plate
     expect(plannedWeightKg(80, 'barbell', 'metric')).toBe(80);
   });
 });
+
+describe('wave-2 review 3: one bad day or a 1-rep-max test day is not a new rep range', () => {
+  it('9, 8, 8 then 5, 5, 4 at 100 kg (range 8–12): no cut to 92.5, no "well under"', () => {
+    const t = run(ex(), [sess('2026-10-03', [[100, 5], [100, 5], [100, 4]]), sess('2026-10-01', [[100, 9], [100, 8], [100, 8]])]);
+    expect(t.rule).not.toBe('R6');
+    expect(t.targetWeightKg).toBe(100);
+  });
+
+  it('100 x 5, 5, 5 then a test day of 140 x 1: the Target follows the working sets, never 140 x 5', () => {
+    const t = run(ex(), [sess('2026-10-03', [[140, 1]]), sess('2026-10-01', [[100, 5], [100, 5], [100, 5]])], { min: 3, max: 5 });
+    expect(t.targetWeightKg).toBeLessThan(110);
+    expect(t.targetWeightKg).toBeGreaterThanOrEqual(100);
+  });
+
+  it('a ramp to a single (120 x 3, 130 x 2, 140 x 1) after working sets is a test day too', () => {
+    const t = run(ex(), [sess('2026-10-03', [[120, 3], [130, 2], [140, 1]]), sess('2026-10-01', [[100, 5], [100, 5], [100, 5]])], { min: 3, max: 5 });
+    expect(t.targetWeightKg).toBeLessThan(110);
+  });
+});

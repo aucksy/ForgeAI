@@ -228,6 +228,8 @@ export const RULE_WINDOW = 4;
  * 20 → 22.5 kg on the bar and 12.5 → 15 kg dumbbells are not.
  */
 const BIG_STEP_SHARE = 0.2;
+/** Wave-2 review: a workout of only sets this short (after one that reached the range) is a 1-rep-max test day. */
+const TEST_DAY_REPS = 2;
 /** C3-9: last time this many reps (or more) outside the range = the range moved, not a miss. */
 const RANGE_MOVED_REPS = 2;
 /** Logged RPE at or under this on the set that gets the extra rep: aim 2 more instead of 1. */
@@ -348,6 +350,20 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     };
   }
 
+  // Wave-2 review: the newest workout of a lift done when it was last done — kept for the break
+  // clock even when a 1-rep-max test day is left out below.
+  const lastDoneISO = all[0].dateISO;
+  // Wave-2 review: a 1-rep-max test day (only singles and doubles, heavier than an earlier workout
+  // that reached the range) is no working workout: the Target follows the working sets (100 x 5
+  // then 140 x 1 never gives "140 kg, aim for 5").
+  if (logType === 'weight_reps' && all.length >= 2 && min > TEST_DAY_REPS) {
+    const t = all[0];
+    const counted = t.mainSets;
+    const test =
+      counted.every((x) => x.reps <= TEST_DAY_REPS) &&
+      all.slice(1, RULE_WINDOW).some((x) => x.mainWeight < t.mainWeight - 1e-6 && Math.max(...x.mainSets.map((y) => y.reps)) >= min);
+    if (test) all = all.slice(1);
+  }
   const sessions = all.slice(0, RULE_WINDOW);
   const L = sessions[0];
   const w = L.mainWeight;
@@ -433,7 +449,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   };
 
   // R1 / R1b — coming back after a break.
-  const gap = daysBetween(L.dateISO, todayISO);
+  const gap = daysBetween(lastDoneISO, todayISO);
   if (gap >= 21) {
     const weeks = Math.floor(gap / 7);
     if (gap >= 42 && !bodyweightOnly) {
@@ -509,7 +525,10 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   // "Rep range", or the routine's): never "Reps fell", never 90% of a 5-rep weight for 12 reps.
   // The weight he can lift for the bottom of the range, from last time's best set (Epley), on
   // his ladder — never heavier than last time.
-  if (logType === 'weight_reps' && !L.ramp && w > 0 && topReps < min - RANGE_MOVED_REPS && enoughSets) {
+  // Wave-2 review: never after a recent workout at this weight that reached the range (one bad day
+  // — 9, 8, 8 then 5, 5, 4 — is the usual rules' business, not a new range).
+  const reachedHere = sessions.some((x) => sameWeight(x.mainWeight, w) && Math.max(...x.mainSets.map((y) => y.reps)) >= min);
+  if (logType === 'weight_reps' && !L.ramp && w > 0 && topReps < min - RANGE_MOVED_REPS && enoughSets && !reachedHere) {
     const e1 = w * (1 + topReps / 30);
     const want = e1 / (1 + min / 30);
     const down = want < w - 1e-6 ? downRungKg(w, ladder, 1 - want / w) : null;
