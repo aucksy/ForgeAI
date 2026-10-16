@@ -107,6 +107,12 @@ export interface Ladder {
   /** One step past the top (shown unit); null on dumbbells with no step of their own (the rack is used). */
   step: number | null;
   /**
+   * 16 Oct 2026 audit (C3-7 / C3-1): the step Up walks with past the top of his ladder, or across a
+   * gap to a far-away rung. On a bar the smaller of `step` and the smallest plate pair (so "Weight
+   * jumps" can pick 62.5 kg after 60 on a 5 kg ladder); elsewhere `step`.
+   */
+  fine: number | null;
+  /**
    * Review fix (Oct 2026): the gym's bar and plates (kg) on a barbell whose member set up Plates
    * and bars; every rung and step is then a weight those plates can load. null = no setup.
    */
@@ -186,7 +192,8 @@ export function buildLadder(
           })();
     rungs = [...new Set([...rungs, ...grid])].sort((a, b) => a - b);
   }
-  return { kind, units: u, own, rungs, step, gym: plates };
+  const fine = kind === 'plates' && step != null ? Math.min(step, smallest) : step;
+  return { kind, units: u, own, rungs, step, fine, gym: plates };
 }
 
 /** Can the gym load this weight (shown unit)? Always true with no gym. */
@@ -218,29 +225,49 @@ export function rungOf(wKg: number, l: Ladder): number {
 }
 
 /** One step past `v` when the ladder has nothing above it. */
-function beyond(v: number, l: Ladder): number {
+function beyond(v: number, l: Ladder, step: number | null = l.step): number {
   // Review fix: from a weight the gym's plates cannot make, the lightest one above it they can;
   // from one they can, a whole step (a multiple of the smallest pair) keeps it loadable.
   if (l.gym != null && !loadable(v, l)) return r3(kgToUnit(gymCeilKg(unitToKg(v, l.units), l.gym), l.units));
-  if (l.step == null) {
+  if (step == null) {
     const next = dumbbellSeries(l.units).find((x) => x > v + EPS);
     return next ?? r3(v + (imperial(l.units) ? 10 : 5));
   }
-  return r3(v + l.step);
+  return r3(v + step);
 }
 
 /**
  * The first `n` weights above `wKg` (kg), nearest first: the ladder's rungs, then steps past
  * its top. Never a rung below or at last time's weight as it reads on screen.
+ *
+ * 16 Oct 2026 audit:
+ *  - C3-1: his next rung is used only when it is within one of his steps. A rung far above (a
+ *    typo of 1400 kg, a 225 kg "dumbbell", an old best from before an injury) is skipped: the
+ *    walk goes on from where he is, one small step at a time.
+ *  - C3-6: the walk starts from last time's CLEAN rung (135 lb read in kg is 60 → 62.5), never
+ *    from the raw converted number (61.23 → 66.2).
+ *  - C3-7: past the top a bar steps by the smallest plate pair (`fine`), so "Weight jumps" can
+ *    choose; the share in `jumpRungKg` is the ceiling.
  */
+/** C3-1: on a rack or stack (unknown weights) a rung more than this times his weight is a typo or an old far-away best. */
+const FAR_STACK = 1.5;
+
 export function upRungsKg(wKg: number, n: number, l: Ladder): number[] {
   const w = kgToUnit(wKg, l.units);
-  const floor = Math.max(w, rungOf(wKg, l));
-  const out = l.rungs.filter((r) => r > floor + EPS).slice(0, n);
-  let cur = out.length > 0 ? out[out.length - 1] : floor;
+  const out: number[] = [];
+  let cur = rungOf(wKg, l);
   while (out.length < n) {
-    let next = beyond(cur, l);
-    while (next <= w + EPS) next = beyond(next, l);
+    const from = Math.max(cur, w);
+    const rung = l.rungs.find((r) => r > from + EPS);
+    let next: number;
+    // His gym's dumbbell rack or machine stack is unknown (20 → 25 kg may be the next dumbbell),
+    // so there only a rung half again above is "far".
+    const reach = l.kind === 'plates' ? beyond(cur, l) : Math.max(beyond(cur, l), cur * FAR_STACK);
+    if (rung != null && rung <= reach + EPS) next = rung;
+    else {
+      next = beyond(cur, l, l.fine);
+      while (next <= w + EPS) next = beyond(next, l, l.fine);
+    }
     out.push(next);
     cur = next;
   }

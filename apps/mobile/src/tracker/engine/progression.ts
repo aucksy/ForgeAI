@@ -957,13 +957,21 @@ export function learnStep(sessions: Summary[], exercise: Pick<Exercise, 'increme
   return gap > 0 ? gap : fallback;
 }
 
+/** C3-2: a rise between two workouts counts toward the learned jump only up to the larger of these. */
+const MAX_LEARNED_SHARE = 0.15;
+const MAX_LEARNED_FLAT_KG = 5;
+
 /** The learned jump of `learnStep`, or 0 when none was seen twice. */
 function learnedGap(sessions: Summary[], signed: boolean): number {
   const byDate = [...sessions].filter((s) => signed || s.mainWeight > 0).sort((a, b) => a.dateISO.localeCompare(b.dateISO));
   const gaps = new Map<number, number>();
   for (let i = 1; i < byDate.length; i++) {
     const g = round3(byDate[i].mainWeight - byDate[i - 1].mainWeight);
-    if (g > 0) gaps.set(g, (gaps.get(g) ?? 0) + 1);
+    // 16 Oct 2026 audit (C3-2): a rise of more than 15% (and over 5 kg) is a light day followed by
+    // a heavy one, or a comeback — never his jump. Counted, alternating 80 / 100 kg days taught a
+    // 20 kg "step" and Standard asked for 125 kg after 105.
+    const low = Math.min(Math.abs(byDate[i].mainWeight), Math.abs(byDate[i - 1].mainWeight));
+    if (g > 0 && g <= Math.max(MAX_LEARNED_FLAT_KG, low * MAX_LEARNED_SHARE) + 1e-9) gaps.set(g, (gaps.get(g) ?? 0) + 1);
   }
   let bestGap = 0;
   let bestN = 1; // must be seen at least twice

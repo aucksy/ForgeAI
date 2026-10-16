@@ -1,0 +1,149 @@
+/**
+ * 16 Oct 2026 end-to-end audit, C3 (routines and suggestions) — the Target engine.
+ * Audit/e2e-v2/C3-routines-suggestions.md. Each test failed on the code before its fix.
+ */
+import { afterEach, describe, expect, it } from 'vitest';
+
+import { KG_PER_LB, setDisplayUnits } from '@/lib/units';
+import { computeProgressionTarget, targetLine, type ProgSession, type ProgSetType, type WeightJump } from '@/tracker/engine/progression';
+import type { Exercise } from '@/types/models';
+
+afterEach(() => setDisplayUnits('metric'));
+
+const TODAY = '2026-10-06';
+
+function ex(over: Partial<Exercise> = {}): Exercise {
+  return {
+    id: 'e1',
+    name: 'Squat',
+    aliases: [],
+    muscleGroup: 'quads',
+    secondaryMuscles: [],
+    equipment: 'barbell',
+    isCompound: true,
+    incrementKg: 2.5,
+    ...over,
+  };
+}
+const dumbbell = () => ex({ name: 'Dumbbell Press', equipment: 'dumbbell', isCompound: false });
+
+type S = [number, number] | [number, number, number | null] | [number, number, number | null, ProgSetType];
+function sess(dateISO: string, sets: S[]): ProgSession {
+  return { dateISO, sets: sets.map(([weightKg, reps, rpe = null, setType = 'normal']) => ({ weightKg, reps, rpe, setType })) };
+}
+const three = (kg: number, reps: number, d: string) => sess(d, [[kg, reps], [kg, reps], [kg, reps]]);
+/** `n` dates going back two days at a time from 3 Oct 2026, newest first. */
+function dates(n: number): string[] {
+  return Array.from({ length: n }, (_, i) => new Date(Date.UTC(2026, 9, 3 - 2 * i)).toISOString().slice(0, 10));
+}
+
+function run(
+  exercise: Exercise,
+  history: ProgSession[],
+  opts: { min?: number; max?: number; sets?: number; jump?: WeightJump; ladder?: number[] } = {},
+) {
+  return computeProgressionTarget({
+    exercise,
+    target: { targetSets: opts.sets ?? 3, repRangeMin: opts.min ?? 8, repRangeMax: opts.max ?? 12 },
+    history,
+    todayISO: TODAY,
+    jump: opts.jump,
+    ...(opts.ladder ? { ladder: opts.ladder } : {}),
+  });
+}
+
+describe('C3-1: a typo or an old far-away weight never becomes the next step', () => {
+  // Three years of squats 60 … 140 kg in 2.5s, plus one typo of 1400 kg.
+  const ladder = [...Array.from({ length: 33 }, (_, i) => 60 + 2.5 * i), 1400];
+
+  it('140 kg x 16 with a 1400 kg typo in the ladder: 145 kg, never "Time for 1400 kg"', () => {
+    const t = run(ex(), [three(140, 16, '2026-10-03')], { ladder });
+    expect(t.rule).toBe('R2');
+    expect(t.targetWeightKg).toBe(145);
+    expect(t.reason).not.toContain('1400');
+    expect(t.reason).not.toContain('big jump');
+  });
+
+  it('140 kg x 12 (not past the big-jump escape) also moves to 145, never "Add reps first"', () => {
+    const t = run(ex(), [three(140, 12, '2026-10-03')], { ladder });
+    expect(t.rule).toBe('R2');
+    expect(t.targetWeightKg).toBe(145);
+  });
+
+  it('a 22.5 kg dumbbell with a 225 kg typo: the next dumbbell, 25 kg', () => {
+    const t = run(dumbbell(), [three(22.5, 12, '2026-10-03')], { ladder: [15, 17.5, 20, 22.5, 225] });
+    expect(t.targetWeightKg).toBe(25);
+  });
+
+  it('an old 140 kg from before an injury: 100 x 16 now goes to 105, not 140', () => {
+    const t = run(ex(), [three(100, 16, '2026-10-03')], { ladder: [80, 85, 90, 95, 100, 140] });
+    expect(t.targetWeightKg).toBe(105);
+    expect(t.change).toBe('up');
+  });
+
+  it('his own next rung one step away is still used (50 → 55 on a 5 kg ladder)', () => {
+    const t = run(ex(), [three(50, 12, '2026-10-03')], { ladder: [40, 45, 50, 55, 60], jump: 'small' });
+    expect(t.targetWeightKg).toBe(55);
+  });
+});
+
+describe('C3-2: heavy and light days never teach a 20 kg step', () => {
+  it('alternating 100-105 and 80-85 kg, then 105 x 12, 12, 12: Standard gives 110, not 125', () => {
+    const d = dates(8);
+    const h = [
+      three(105, 12, d[0]),
+      three(85, 12, d[1]),
+      three(105, 10, d[2]),
+      three(85, 10, d[3]),
+      three(100, 12, d[4]),
+      three(80, 12, d[5]),
+      three(100, 10, d[6]),
+      three(80, 10, d[7]),
+    ];
+    const t = run(ex(), h, { jump: 'standard' });
+    expect(t.rule).toBe('R2');
+    expect(t.targetWeightKg).toBeGreaterThanOrEqual(107.5);
+    expect(t.targetWeightKg).toBeLessThanOrEqual(110);
+    expect(t.warm?.stepKg ?? 0).toBeLessThanOrEqual(5);
+  });
+
+  it('a real repeated 2.5 kg jump is still learned', () => {
+    const d = dates(4);
+    const h = [three(67.5, 12, d[0]), three(65, 12, d[1]), three(62.5, 12, d[2]), three(60, 12, d[3])];
+    expect(run(ex(), h, { jump: 'small' }).targetWeightKg).toBe(70);
+  });
+});
+
+describe('C3-6: after a unit switch the Up weight is one the plates can load', () => {
+  it('135 lb shown in kg → 62.5 or 65 kg, never 66.2', () => {
+    const lb135 = 135 * KG_PER_LB;
+    const t = run(ex(), [three(lb135, 12, '2026-10-03')], { jump: 'large' });
+    expect([62.5, 65]).toContain(t.targetWeightKg);
+    expect(t.reason).toMatch(/Time for (62\.5|65) kg\./);
+  });
+
+  it('60 kg shown in lb → a multiple of 5 lb, never 137.3', () => {
+    setDisplayUnits('imperial');
+    const t = run(ex(), [three(60, 12, '2026-10-03')], { jump: 'large' });
+    const lb = t.targetWeightKg / KG_PER_LB;
+    expect(Math.abs(lb / 5 - Math.round(lb / 5))).toBeLessThan(1e-3);
+    expect(lb).toBeGreaterThan(132.3);
+  });
+
+  it('300 lb leg press in kg → a clean kg weight', () => {
+    const t = run(ex({ name: 'Leg Press', equipment: 'machine', isCompound: true }), [three(300 * KG_PER_LB, 12, '2026-10-03')], { jump: 'standard' });
+    expect(Math.abs(t.targetWeightKg * 2 - Math.round(t.targetWeightKg * 2))).toBeLessThan(1e-6);
+    expect(t.targetWeightKg).toBeGreaterThan(300 * KG_PER_LB);
+  });
+});
+
+describe('C3-7: "Weight jumps" works past the top of his ladder', () => {
+  it('bench 45 → 50 → 55 → 60, now 60 x 12: Small 62.5, Standard 62.5, Large 65', () => {
+    const d = dates(4);
+    const h = [three(60, 12, d[0]), three(55, 12, d[1]), three(50, 12, d[2]), three(45, 12, d[3])];
+    expect(run(ex({ name: 'Bench Press' }), h, { jump: 'small' }).targetWeightKg).toBe(62.5);
+    expect(run(ex({ name: 'Bench Press' }), h, { jump: 'standard' }).targetWeightKg).toBe(62.5);
+    expect(run(ex({ name: 'Bench Press' }), h, { jump: 'large' }).targetWeightKg).toBe(65);
+    expect(targetLine(run(ex({ name: 'Bench Press' }), h, { jump: 'small' }))).toBe('62.5 kg · aim for 8');
+  });
+});
