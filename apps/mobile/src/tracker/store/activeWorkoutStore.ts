@@ -1697,6 +1697,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     },
 
     removeExercise: (exKey) => {
+      // C1-13 (16 Oct 2026 audit): a rest started by a set of this exercise ends with it.
+      const gone = get().exercises.find((e) => e.key === exKey);
+      for (const st of gone?.sets ?? []) useRestTimer.getState().cancelIfStartedBy(exKey, st.key);
       // Kill a pending undo for this exercise (its set list is going away).
       if (get().lastDeleted?.exKey === exKey) set({ lastDeleted: null });
       if (get().lastCopy?.exKey === exKey) set({ lastCopy: null });
@@ -1731,6 +1734,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     },
 
     removeSet: (exKey, setKey) => {
+      useRestTimer.getState().cancelIfStartedBy(exKey, setKey); // C1-13: its rest ends with it
       mutate((list) =>
         list.map((e) => (e.key === exKey ? { ...e, sets: e.sets.filter((s) => s.key !== setKey) } : e)),
       );
@@ -1748,6 +1752,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       if (!ex) return;
       const index = ex.sets.findIndex((s) => s.key === setKey);
       if (index < 0) return;
+      // C1-13 (16 Oct 2026 audit): the rest this set's tick started ends with it, as on untick
+      // (Undo brings the set back, not the rest).
+      useRestTimer.getState().cancelIfStartedBy(exKey, setKey);
       set({ lastDeleted: { exKey, index, set: ex.sets[index] } });
       mutate((list) =>
         list.map((e) => (e.key === exKey ? { ...e, sets: e.sets.filter((s) => s.key !== setKey) } : e)),

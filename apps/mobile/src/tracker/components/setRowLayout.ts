@@ -172,7 +172,9 @@ export function hintTexts(
   return {
     weight: fill && (lt === 'weight_reps' || fill.weightKg) ? setW(fill.weightKg, units) : '—',
     reps: fill && fill.reps > 0 ? String(fill.reps) : '—',
-    time: fill?.durationSec ? fmtDuration(fill.durationSec) : '0:00',
+    // C1-12 (16 Oct 2026 audit): nothing to save shows '—' like every other box, never a '0:00'
+    // that reads as "a tick saves this".
+    time: fill?.durationSec ? fmtDuration(fill.durationSec) : '—',
     distance: fill?.distanceM ? trimNum(distanceToUnit(fill.distanceM, unit), 3) : '—',
   };
 }

@@ -19,17 +19,31 @@ import { useWorkoutUi } from '../store/workoutUiStore';
 import { recordLabel, recordLines, toastHit } from './liveRecords';
 import { nextForCard } from './restDoneRun';
 import { afterSetCompleted, nextUpLabel } from './restRules';
+import { typoCheck, typoText } from './setTick';
 import { vsLastTimeText } from './vsLastTime';
 import { playWorkoutSound } from './workoutSounds';
 
 /** After a tick lands in the store: record alert + rest timer + superset hand-off. */
 export function afterTick(exKey: string, setKey: string): void {
   const st = useActiveWorkout.getState();
-  // Correcting a past workout (an edit, or a past workout being logged): no timers, no fanfare.
-  if (isCorrecting(st)) return;
   const ex = st.exercises.find((e) => e.key === exKey);
   const done = ex?.sets.find((s) => s.key === setKey);
   if (!ex || !done?.done) return; // a blank set with nothing to fill stays unticked
+
+  // D7 — C1-14 (16 Oct 2026 audit): a number far above the member's best gets one question,
+  // whichever way the set was ticked (✓, RPE sheet, rest card). It is already saved. Asked while
+  // correcting too, as the ✓ always did.
+  if (!done.isWarmup) {
+    const typo = typoCheck(ex.logType ?? 'weight_reps', done, ex.bests);
+    if (typo) {
+      const text = typoText(typo, done, displayUnits());
+      useWorkoutUi.getState().askTypo(exKey, setKey, text, typo.kind);
+      AccessibilityInfo.announceForAccessibility(text);
+    }
+  }
+
+  // Correcting a past workout (an edit, or a past workout being logged): no timers, no fanfare.
+  if (isCorrecting(st)) return;
 
   // Phase 3 review: the pop-up counts the same lift on other cards, and stays quiet for a set
   // already beaten by another ticked set (the medal still follows set order).

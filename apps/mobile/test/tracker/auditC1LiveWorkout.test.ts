@@ -51,7 +51,7 @@ vi.mock('react-native', () => {
   return stub as Record<string, unknown>;
 });
 
-import { editLeftOutText, idlePauseAt, untickedSavedCounts } from '@/tracker/services/finishCheck';
+import { editLeftOutText, idlePauseAt, untickedCounts, untickedQuestion, untickedSavedCounts } from '@/tracker/services/finishCheck';
 import { checkIdlePause } from '@/tracker/services/idlePause';
 import { afterTick } from '@/tracker/services/tickFollowUp';
 import { vsLastTimeText } from '@/tracker/services/vsLastTime';
@@ -244,3 +244,60 @@ describe("C1-9: the card's tag row wraps at 360 dp and font 1.3", () => {
   });
 });
 
+
+describe('C1-11: the Finish question counts warm-ups apart', () => {
+  it('3 unticked warm-ups are called warm-ups, not sets', () => {
+    const ex = [
+      card('a', [
+        row('w1', { isWarmup: true, weightKg: 20, reps: 10 }),
+        row('w2', { isWarmup: true, weightKg: 30, reps: 8 }),
+        row('w3', { isWarmup: true, weightKg: 40, reps: 5 }),
+        row('s1', { weightKg: 60, reps: 8, done: true }),
+      ]),
+    ];
+    expect(untickedCounts(ex)).toEqual({ sets: 0, warmups: 3 });
+    expect(untickedQuestion(untickedCounts(ex))).toBe("3 warm-ups have numbers but aren't ticked.");
+    expect(untickedQuestion({ sets: 2, warmups: 1 })).toBe("2 sets and 1 warm-up have numbers but aren't ticked.");
+    expect(read('src/tracker/components/FinishSheet.tsx')).toMatch(/<Question text=\{untickedLine \?\? ''\} \/>/);
+  });
+});
+
+describe('C1-12: an empty time box with nothing to save', () => {
+  it('shows a dash, not "0:00"', () => {
+    expect(hintTexts(null, 'time', 'km', 'metric').time).toBe('—');
+    expect(hintTexts({ weightKg: 0, reps: 0, durationSec: 45 }, 'time', 'km', 'metric').time).toBe('0:45');
+  });
+});
+
+describe('C1-13: deleting a ticked set ends the rest it started', () => {
+  it('swipe-delete, remove set and remove exercise each end that set\'s rest', () => {
+    for (const how of ['delete', 'remove', 'exercise'] as const) {
+      live({ exercises: [card('a', [row('a1', { weightKg: 60, reps: 8 }), row('a2')], { restSec: 90 })] });
+      expect(useActiveWorkout.getState().toggleDone('a', 'a1', null)).toBeNull();
+      afterTick('a', 'a1');
+      expect(useRestTimer.getState().endsAt).not.toBeNull();
+      if (how === 'delete') useActiveWorkout.getState().deleteSetWithUndo('a', 'a1');
+      else if (how === 'remove') useActiveWorkout.getState().removeSet('a', 'a1');
+      else useActiveWorkout.getState().removeExercise('a');
+      expect([how, useRestTimer.getState().endsAt]).toEqual([how, null]);
+    }
+  });
+});
+
+describe('C1-14: the typo question follows every tick path', () => {
+  it('a set ticked from the RPE sheet or the rest card (both call afterTick) still asks "Keep it?"', () => {
+    live({
+      exercises: [
+        card('a', [row('a1', { weightKg: 300, reps: 5, done: true, doneAt: Date.now() })], {
+          bests: { weightKg: 75, e1rm: 85 } as DraftExercise['bests'],
+        }),
+      ],
+    });
+    useWorkoutUi.setState({ typoAsk: null });
+    afterTick('a', 'a1');
+    expect(useWorkoutUi.getState().typoAsk).toMatchObject({ exKey: 'a', setKey: 'a1', kind: 'weight', text: "300 kg — that's 4× your best. Keep it?" });
+    // The RPE sheet's tick and the rest card's Done both go through afterTick.
+    expect(read('src/tracker/components/ExerciseLogCard.tsx')).toMatch(/afterTick\(exercise\.key, rpeSet\.key\)/);
+    expect(read('src/tracker/components/WorkoutPresenceHost.tsx')).toMatch(/afterTick,/);
+  });
+});

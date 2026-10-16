@@ -65,7 +65,7 @@ import {
 import { rpeColor } from '../lib/rpe';
 import type { EntryField } from '../services/setEntry';
 import type { RecordKind } from '../services/liveRecords';
-import { missingText, typoCheck, typoText, type TickMissing } from '../services/setTick';
+import { missingText, type TickMissing } from '../services/setTick';
 import { flushDraft, useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftSet, PrevSet, SetFill } from '../store/activeWorkoutStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
@@ -189,7 +189,10 @@ export const SetRow = memo(function SetRow({
   }, [set.distanceM, units]);
   // Unticked (here or by an undo elsewhere): the typo question has nothing left to ask about.
   useEffect(() => {
-    if (!set.done) setTypo(null);
+    if (set.done) return;
+    setTypo(null);
+    useWorkoutUi.getState().clearTypo(exKey, set.key);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [set.done]);
   useEffect(
     () => () => {
@@ -319,23 +322,25 @@ export const SetRow = memo(function SetRow({
       setTypo(null);
       return;
     }
+    // D7: the typo question is asked by afterTick (every tick path, C1-14); this row shows it.
     afterTick(exKey, set.key);
-    // D7: a number far above the member's best gets one question. It is already saved.
-    const ex = useActiveWorkout.getState().exercises.find((e) => e.key === exKey);
-    const now = ex?.sets.find((s) => s.key === set.key);
-    if (ex && now?.done && !now.isWarmup) {
-      const hit = typoCheck(logType, now, ex.bests);
-      if (hit) {
-        const text = typoText(hit, now, units);
-        setTypo({ text, kind: hit.kind });
-        AccessibilityInfo.announceForAccessibility(text);
-      }
-    }
+  };
+
+  // C1-14: the typo question for this row, from whichever tick path asked it.
+  const typoAsk = useWorkoutUi((s) => (s.typoAsk && s.typoAsk.exKey === exKey && s.typoAsk.setKey === set.key ? s.typoAsk : null));
+  useEffect(() => {
+    if (!typoAsk || !set.done) return;
+    setTypo({ text: typoAsk.text, kind: typoAsk.kind });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typoAsk?.id]);
+  const closeTypo = (): void => {
+    setTypo(null);
+    useWorkoutUi.getState().clearTypo(exKey, set.key);
   };
 
   const onFix = (): void => {
     const kind = typo?.kind ?? 'weight';
-    setTypo(null);
+    closeTypo();
     if (set.done) toggleDone(exKey, set.key, fill); // untick: the rest it started is cancelled too
     setTimeout(() => (kind === 'weight' ? wRef : rRef).current?.focus(), 50);
   };
@@ -653,7 +658,7 @@ export const SetRow = memo(function SetRow({
               {typo.text}
             </Text>
             <Pressable
-              onPress={() => setTypo(null)}
+              onPress={closeTypo}
               accessibilityRole="button"
               accessibilityLabel={`Keep ${typo.text.split(' — ')[0]}`}
               style={typoButton()}

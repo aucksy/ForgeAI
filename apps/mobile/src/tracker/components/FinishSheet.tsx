@@ -14,7 +14,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { GhostButton, PrimaryButton, Sheet } from '@/components/ui';
-import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import {
@@ -27,6 +26,8 @@ import {
   lastActivity,
   overviewLine,
   suggestedEnd,
+  untickedCounts,
+  untickedQuestion,
   untickedWithNumbers,
 } from '../services/finishCheck';
 import { phoneUses24Hour } from '../services/restCard';
@@ -134,6 +135,8 @@ export function FinishSheet({
   // Everything below is decided when the sheet opens, so the numbers stand still while it's up.
   const [openedAt, setOpenedAt] = useState(() => Date.now());
   const unticked = useMemo(() => untickedWithNumbers(exercises), [exercises]);
+  // C1-11 (16 Oct 2026 audit): the question counts working sets and warm-ups apart.
+  const untickedLine = useMemo(() => untickedQuestion(untickedCounts(exercises)), [exercises]);
   const tickedOnly = useMemo(() => finishOverview(exercises, false), [exercises]);
   const [keepUnticked, setKeepUnticked] = useState(false);
   // #6: from the member's last action — a tick (plus its rest) or a number typed after it.
@@ -163,7 +166,9 @@ export function FinishSheet({
   // Now (unless the workout has been open over 3 h). "Leave them out" goes back to the suggestion.
   const pickKeep = (keep: boolean): void => {
     setKeepUnticked(keep);
-    setUseSuggested(endDefault({ keepUnticked: keep, startedAt, now: openedAt, pause }) === 'suggested');
+    // C1-11: warm-ups alone are no sign of lifting after the last tick — the end stays put.
+    const working = keep && untickedCounts(exercises).sets > 0;
+    setUseSuggested(endDefault({ keepUnticked: working, startedAt, now: openedAt, pause }) === 'suggested');
   };
   // #8: the phone's 12/24-hour setting (Android's own, else the locale's), read when it opens.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -197,9 +202,7 @@ export function FinishSheet({
     >
       {unticked > 0 ? (
         <View style={{ gap: space.xs }}>
-          <Question
-            text={`${countWord(unticked, 'set')} ${unticked === 1 ? 'has' : 'have'} numbers but ${unticked === 1 ? "isn't" : "aren't"} ticked.`}
-          />
+          <Question text={untickedLine ?? ''} />
           <Choice label="Leave them out" selected={!keepUnticked} onPress={() => pickKeep(false)} />
           <Choice label="Save them" selected={keepUnticked} onPress={() => pickKeep(true)} />
         </View>

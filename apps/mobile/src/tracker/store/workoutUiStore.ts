@@ -27,6 +27,11 @@ export interface WorkoutUiState {
   scrollTo: { id: number; exKey: string } | null;
   rowNote: { id: number; exKey: string; setKey: string; missing: TickMissing } | null;
   lastTime: { id: number; exercise: string; text: string } | null;
+  /**
+   * C1-14 (16 Oct 2026 audit): the D7 typo question for one row ("300 kg — that's 4× your best.
+   * Keep it?"), asked after EVERY tick path (✓, RPE sheet, rest card's Done); the row shows it.
+   */
+  typoAsk: { id: number; exKey: string; setKey: string; text: string; kind: 'weight' | 'reps' } | null;
   entryFocus: EntryFocus | null;
   /** True while the workout screen is mounted — a notification tap must not push a second copy. */
   screenOpen: boolean;
@@ -37,6 +42,9 @@ export interface WorkoutUiState {
   showRowNote: (exKey: string, setKey: string, missing: TickMissing) => void;
   showLastTime: (exercise: string, text: string) => void;
   clearLastTime: (id: number) => void;
+  askTypo: (exKey: string, setKey: string, text: string, kind: 'weight' | 'reps') => void;
+  /** The question is answered (or its row unticked): it goes. */
+  clearTypo: (exKey: string, setKey: string) => void;
   focusEntry: (f: EntryFocus) => void;
   /** Leaves only when it still names this box (or, without `field`, any box of this set). */
   blurEntry: (exKey: string, setKey: string, field?: EntryField) => void;
@@ -54,6 +62,7 @@ export const useWorkoutUi = create<WorkoutUiState>()((set, get) => ({
   scrollTo: null,
   rowNote: null,
   lastTime: null,
+  typoAsk: null,
   entryFocus: null,
   screenOpen: false,
   setScreenOpen: (open) => {
@@ -80,6 +89,11 @@ export const useWorkoutUi = create<WorkoutUiState>()((set, get) => ({
   },
   clearLastTime: (id) => {
     if (get().lastTime?.id === id) set({ lastTime: null });
+  },
+  askTypo: (exKey, setKey, text, kind) => set({ typoAsk: { id: ++seq, exKey, setKey, text, kind } }),
+  clearTypo: (exKey, setKey) => {
+    const cur = get().typoAsk;
+    if (cur && cur.exKey === exKey && cur.setKey === setKey) set({ typoAsk: null });
   },
   focusEntry: (f) => {
     const cur = get().entryFocus;
