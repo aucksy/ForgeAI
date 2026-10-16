@@ -1793,6 +1793,41 @@
     both members and the new plan gone, the gym's own plan kept; Keep it; Hinglish at 375 px.
   - Admin app icon (the panel installed from the website; never "team"): ember tile + dark hexagon,
     admin-*.png. Member app icon: hexagon 0.80 -> 0.62 of the adaptive layer (ships in v0.45.0).
+- 2026-10-16: **Wear OS watch app (v0.46 scope; ships with the next tag)** (2fea79f, a8bffcc, c420de0,
+  3065ce2, d42f2e2, 34119fe + this commit). Owner's scope: the watch shows and buzzes for rest timers
+  and shows heart rate from the watch sensor. Why an app: a bridged phone alert is muted on a Pixel
+  Watch while the phone is in use (Lesson pixel-watch-mutes-while-the-phone-is-in-use).
+  - Phone (modules/forge-rest, WearSync.kt + play-services-wearable 20.0.1): urgent Data Layer items.
+    `/forge/rest` {startedAt, endsAt, next, ended, seq} from RestCard.show / add; {endsAt: 0, ended:
+    false} from clear / settle; {endsAt: 0, ended: true} from fireEnd. `/forge/workout` {active, title
+    (the live card's exercise), seq} from WorkoutCard.show / hide (with words) / clear, sent only on a
+    change. seq = the clock or last+1. No Play services: logs only; API_NOT_CONNECTED stops it for the
+    run. Phone permission list unchanged (38, checked in CI).
+  - Watch (apps/mobile/android/wear; Kotlin 2.1.20, Compose for Wear 1.4.1, AGP 8.12; applicationId
+    com.forgeai.app, namespace com.forgeai.wear, minSdk 30, target 35; versions from
+    appVersionCode/Name). ForgeListenerService -> WatchState (prefs + Compose state, older seq
+    dropped); the screen also reads the phone's items on open. RestAlerts: alarm-clock alarm at the
+    end, Ongoing Activity "Rest #time#" countdown (watch face / Recents, tap opens the app), at the
+    end a 3-pulse ~1.5 s buzz (alarm usage) + "Rest is over · Next: ...". A phone "ended" buzzes the
+    watch only if its own alarm has not and the end is within 60 s; a rest that arrives already over
+    buzzes only within 5 s. Screen: resting = countdown in an ember (#F26B2A) ring (+ small heart
+    rate); workout open = live BPM (Health Services MeasureClient, only while visible; BODY_SENSORS +
+    health.READ_HEART_RATE asked on first open with notifications; "—" until a reading, plain words
+    when refused, tap re-asks or opens settings); nothing open = "Start a workout in ForgeAI on your
+    phone". Vector icon traced from the ForgeAI mark. RestTextTest (JVM, 7 tests).
+  - settings.gradle includes :wear only with -PwithWear=true: phone-only builds unchanged.
+  - CI: wear-build.yml (manual) builds :wear:assembleRelease + :app:assembleDebug, runs the watch
+    tests, checks package + phone permissions, and same_signer.py (phone and watch must show the same
+    certificate on API 30-36), as Gradle signs them and after a key-rotation dry run with a throwaway
+    key through sign_rotated.sh. Runs 38858485944, 38859248515, 38859850478 failed (Guava not on the
+    compile classpath; TimerPart has no countDown flag; `visible` clashed with Activity.setVisible;
+    lint wanted androidx.fragment 1.3+); **run 38860483576 on 34119fe green** (watch APK 0.9 MB).
+  - release-apk.yml: `assembleRelease :app:bundleRelease -PwithWear=true`; the watch APK is signed in
+    the same step with the phone's OLD/NEW signers and lineage (sign_rotated.sh), checked by
+    same_signer.py, uploaded and published as forgeai-<tag>-wear.apk. release_checks and the update
+    proof now pick the phone APK by name (phone_apk_asset; unit-tested), never the -wear one. Not run
+    (no tag). Known: the watch also shows the phone's bridged rest card and "Rest is over", so a rest
+    end can show two cards on the watch (the watch's own is the reliable buzz).
 - 2026-10-15: **v0.44.0 — owner's gym-test fixes: RPE one-tap sheet; the rest sound never changes**
   (34db130 + this commit). Owner testing in the gym ("Keep adding the improvements I send in the plan").
   - RPE: the RPE cell opens its own sheet (RpeSheet.tsx): 10 -> 6 with meanings, ONE tap saves and

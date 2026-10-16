@@ -2,6 +2,10 @@ name: Build & Release (APK + AAB)
 
 # Push a tag like v0.33.0 -> builds the release APK (sideloading) AND the release AAB (Play upload),
 # proves the APK updates the previous release in place, then publishes both as a GitHub Release.
+# From v0.46 it also builds the Wear OS watch app (apps/mobile/android/wear, -PwithWear=true),
+# signs it with exactly the phone APK's signer and lineage (scripts/ci/sign_rotated.sh; the Wear
+# Data Layer pairs only same-key apps), checks that (scripts/ci/same_signer.py) and attaches it as
+# forgeai-<tag>-wear.apk. The release checks and the update proof look only at the phone APK.
 # Manual runs (workflow_dispatch) do everything EXCEPT publish: a dry run on main.
 #
 # Signing (docs/RELEASE-SIGNING.md; audit DS-02 / QA-01): Gradle signs with the public React Native
@@ -120,14 +124,16 @@ jobs:
           echo "code=$CODE" >> "$GITHUB_OUTPUT"
 
       # Always signed with the debug config here (build.gradle); the release key is applied below.
-      - name: Build release APK + AAB
+      # -PwithWear=true adds the watch app: assembleRelease builds its APK too. The AAB stays the
+      # phone's only (:app:bundleRelease; before v0.46 :app was the only module with a bundle task).
+      - name: Build release APK + AAB (+ watch APK)
         working-directory: apps/mobile/android
         env:
           VERSION_NAME: ${{ steps.version.outputs.name }}
           VERSION_CODE: ${{ steps.version.outputs.code }}
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease bundleRelease \
+          ./gradlew assembleRelease :app:bundleRelease -PwithWear=true \
             -PappVersionName="$VERSION_NAME" \
             -PappVersionCode="$VERSION_CODE" \
             --no-daemon --stacktrace
@@ -136,10 +142,14 @@ jobs:
         run: |
           APK="$(find apps/mobile/android/app/build/outputs/apk/release -name '*.apk' | head -1)"
           AAB="$(find apps/mobile/android/app/build/outputs/bundle/release -name '*.aab' | head -1)"
+          WEAR="$(find apps/mobile/android/wear/build/outputs/apk/release -name '*.apk' | head -1)"
           echo "Found APK: $APK"
           echo "Found AAB: $AAB"
+          echo "Found watch APK: $WEAR"
+          if [ -z "$WEAR" ]; then echo "::error::No watch APK was built (apps/mobile/android/wear)."; exit 1; fi
           cp "$APK" "forgeai-${GITHUB_REF_NAME}.apk"
           cp "$AAB" "forgeai-${GITHUB_REF_NAME}.aab"
+          cp "$WEAR" "forgeai-${GITHUB_REF_NAME}-wear.apk"
           ls -la forgeai-*
 
       # Without the secrets (forks, or before the key exists) nothing changes: debug-signed, as today.
@@ -227,6 +237,13 @@ jobs:
           "$APKSIGNER" lineage --in "$WORK/signed.apk" --print-certs || echo "::warning::apksigner could not print the lineage (the release checks decide)."
           mv -f "$WORK/signed.apk" "$APK"
 
+          # 3b. The WATCH APK (v0.46): the very same OLD/NEW signers, lineage and arguments as the
+          #     phone APK above (sign_rotated.sh, rehearsed by wear-build.yml's dry run), so a watch
+          #     sees the same key as the phone and the Wear Data Layer pairs them.
+          # shellcheck source=scripts/ci/sign_rotated.sh
+          source scripts/ci/sign_rotated.sh
+          sign_rotated "forgeai-${GITHUB_REF_NAME}-wear.apk" "forgeai-${GITHUB_REF_NAME}-wear.apk"
+
           # 4. AAB (Play upload, never sideloaded): the release key ONLY. Drop Gradle's debug JAR
           #    signature first, or jarsigner would add a second signer next to it.
           zip -q -d "$AAB" 'META-INF/*.SF' 'META-INF/*.RSA' 'META-INF/*.DSA' 'META-INF/*.EC' || true
@@ -246,6 +263,11 @@ jobs:
             fi
           fi
           ls -la forgeai-*
+
+      # The watch app hears from the phone only when both carry the same certificate (with or
+      # without the release key). Fails the release before anything is published.
+      - name: Watch APK signed by the same key as the phone APK
+        run: python3 scripts/ci/same_signer.py "forgeai-${GITHUB_REF_NAME}.apk" "forgeai-${GITHUB_REF_NAME}-wear.apk"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
