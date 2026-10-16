@@ -430,7 +430,7 @@ describe('planImport', () => {
   it('uses the add-member rules (a one-letter name is refused)', () => {
     const p = plan([['A', '9876543210']]);
     expect(p.rows[0]!.status).toBe('problem');
-    expect(p.rows[0]!.problems).toEqual(['Enter the member’s name.']);
+    expect(p.rows[0]!.problems).toEqual(['Type the member’s name.']);
   });
 
   it('adds with a warning, never a skip, for optional fields it cannot read', () => {

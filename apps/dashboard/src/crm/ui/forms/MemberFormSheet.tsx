@@ -109,7 +109,7 @@ export function MemberFormSheet({
         } else {
           setFieldError({
             field: 'phone',
-            message: `${e.existing.fullName} is already on the roster with this number.`,
+            message: `${e.existing.fullName} already has this mobile number in Members.`,
           });
         }
       } else {
@@ -130,7 +130,7 @@ export function MemberFormSheet({
       onClose();
       navigate(`/members/${archivedClash.id}`);
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : 'Could not restore that member.');
+      setFormError(e instanceof Error ? e.message : 'Could not bring back that member. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -162,7 +162,7 @@ export function MemberFormSheet({
         <ErrorBanner>
           <div style={{ marginBottom: space.sm }}>
             <strong>{archivedClash.fullName}</strong>
-            {' already has this number, but they were archived — that’s why you can’t see them in the list.'}
+            {' already has this number. They are archived, so they are hidden from the list.'}
           </div>
           <Row gap={space.sm}>
             <Button onClick={restoreArchived} disabled={saving}>
@@ -175,7 +175,7 @@ export function MemberFormSheet({
                 navigate(`/members/${archivedClash.id}`);
               }}
             >
-              Open their record
+              Open their page
             </Button>
           </Row>
         </ErrorBanner>
@@ -202,7 +202,7 @@ export function MemberFormSheet({
             error={errorFor('phone')}
             inputMode="tel"
             placeholder="98765 43210"
-            hint="How you'll find them, and how WhatsApp reaches them."
+            hint="Used to find them, and to send them WhatsApp messages."
           />
         </div>
       </Row>
@@ -280,7 +280,7 @@ export function MemberFormSheet({
 
       {editing?.archived && (
         <p style={{ margin: `${space.lg}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          This member is archived. Saving here won’t change that — use “Restore member” on their page.
+          This member is archived. Saving here won’t change that. To bring them back, tap “Restore member” on their page.
         </p>
       )}
     </Sheet>
@@ -318,7 +318,7 @@ function BatchField({
         onChange={onChange}
         error={error}
         placeholder="Morning 6-8"
-        hint="The time they train. Later members pick it with one tap."
+        hint="The time they train. Next time, you can pick it with one tap."
       />
     );
   }

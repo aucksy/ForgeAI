@@ -61,7 +61,7 @@ export function MembersScreen({ section, filter: initialFilter }: { section?: 'a
         subtitle={
           app
             ? 'Who has the ForgeAI app on their phone'
-            : `${memberViews.length} on the roster`
+            : `${memberViews.length} members`
         }
         actions={
           app ? undefined : (
@@ -82,7 +82,7 @@ export function MembersScreen({ section, filter: initialFilter }: { section?: 'a
           value={app ? 'app' : 'roster'}
           onChange={(v) => navigate(v === 'app' ? '/members/app' : '/members')}
           options={[
-            { value: 'roster', label: 'Gym roster' },
+            { value: 'roster', label: 'All members' },
             { value: 'app', label: 'Joined in the app' },
           ]}
         />
@@ -219,7 +219,7 @@ function RosterSection({
             { value: 'expired', label: 'Expired', count: counts.expired ?? 0 },
             { value: 'expiring', label: 'Expiring', count: counts.expiring ?? 0 },
             { value: 'active', label: 'Active', count: counts.active ?? 0 },
-            { value: 'dues', label: 'Owes money', count: counts.dues },
+            { value: 'dues', label: 'Has dues', count: counts.dues },
             { value: 'never', label: 'No membership', count: counts.never ?? 0 },
             ...(sellsPt || filter === 'pt-ending'
               ? [{ value: 'pt-ending', label: 'PT ending', count: counts['pt-ending'] ?? 0 }]
@@ -250,7 +250,7 @@ function RosterSection({
                 ? 'Nobody in this batch fits this filter. Pick “All batches” to see everyone.'
                 : query
                 ? 'Try part of a name, or the last four digits of their mobile number.'
-                : 'Add your first member and you can sell them a membership straight away.'
+                : 'Add your first member. Then you can sell them a membership.'
             }
             action={
               !narrowed && (

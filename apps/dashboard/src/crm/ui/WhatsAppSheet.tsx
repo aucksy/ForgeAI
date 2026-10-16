@@ -68,7 +68,7 @@ export function WhatsAppSheet({ view, onClose }: { view: MemberView; onClose: ()
       {!phoneOk && (
         <div style={{ marginTop: space.md }}>
           <ErrorBanner>
-            This mobile number is not complete, so WhatsApp cannot open on it. Fix it on Edit.
+            This mobile number is not complete, so WhatsApp can’t open it. Tap Edit on their page to fix it.
           </ErrorBanner>
         </div>
       )}

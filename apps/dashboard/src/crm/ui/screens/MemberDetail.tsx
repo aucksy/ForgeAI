@@ -284,7 +284,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
             </Button>
             {view.outstandingP > 0 && (
               <Button variant="ghost" onClick={() => setCollecting(true)}>
-                Record payment
+                Collect payment
               </Button>
             )}
             <Button onClick={() => setSelling(true)}>
@@ -313,14 +313,14 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                     // Already renewed: lead with where the cover actually runs to,
                     // so nobody chases a member who has paid.
                     <>
-                      {` · renewed through ${formatDay(view.coversUntil)} (${relativeDay(view.coversUntil, today)})`}
+                      {` · renewed till ${formatDay(view.coversUntil)} (${relativeDay(view.coversUntil, today)})`}
                     </>
                   ) : (
                     <> ({relativeDay(current.endsOn, today)})</>
                   )}
                 </>
               ) : (
-                'No membership on record.'
+                'No membership yet.'
               )}
             </div>
             <Row gap={space.sm}>
@@ -351,16 +351,16 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       <Grid min={150}>
         <StatTile
-          label="Outstanding"
+          label="Dues"
           value={view.outstandingP > 0 ? formatINR(view.outstandingP) : '—'}
           tone={view.outstandingP > 0 ? 'warn' : undefined}
-          sub={view.outstandingP > 0 ? 'Money still owed' : 'Fully paid'}
+          sub={view.outstandingP > 0 ? 'Still to pay' : 'Fully paid'}
         />
         <StatTile
           label="Last visit"
           value={view.lastVisitOn ? relativeDay(view.lastVisitOn, today) : 'never'}
           tone={view.daysSinceVisit !== null && view.daysSinceVisit >= 14 ? 'critical' : undefined}
-          sub={view.lastVisitOn ? formatDay(view.lastVisitOn) : 'No check-ins recorded'}
+          sub={view.lastVisitOn ? formatDay(view.lastVisitOn) : 'No check-ins yet'}
         />
         {/* C7-33: a plan paid ahead says when it starts, not the days to its end. */}
         <StatTile
@@ -417,7 +417,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         {memberships.length === 0 ? (
           <EmptyState
             title="No memberships yet"
-            body="Sell one and their expiry date starts driving the renewals list."
+            body="Sell one. Then they show in the renewals list when their plan is ending."
             action={<Button onClick={() => setSelling(true)}>Sell membership</Button>}
           />
         ) : (
@@ -434,7 +434,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                   canCancel && !restoreBusy
                     ? () => {
                         setRestoreBusy(true);
-                        void run(() => uncancelMembership(m.id).then(() => undefined), 'Cancellation reversed.').finally(() =>
+                        void run(() => uncancelMembership(m.id).then(() => undefined), 'Cancel undone.').finally(() =>
                           setRestoreBusy(false),
                         );
                       }
@@ -449,7 +449,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Payments</SectionTitle>
         {payments.length === 0 ? (
-          <EmptyState title="No payments recorded" />
+          <EmptyState title="No payments yet" />
         ) : (
           <div style={{ display: 'grid', gap: space.xs }}>
             {payments.map((p) => (
@@ -508,7 +508,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
             flash(
               result.payment
                 ? `Membership saved. Receipt ${result.payment.receiptNo}.`
-                : 'Membership saved — nothing collected yet.',
+                : 'Membership saved. No money taken yet.',
             )
           }
         />
@@ -517,7 +517,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <CollectPaymentSheet
           view={view}
           onClose={() => setCollecting(false)}
-          onCollected={(payment) => flash(`Payment recorded. Receipt ${payment.receiptNo}.`)}
+          onCollected={(payment) => flash(`Payment saved. Receipt ${payment.receiptNo}.`)}
         />
       )}
       {cancelling && (
@@ -546,8 +546,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           onVoided={(restored) =>
             flash(
               restored
-                ? 'Receipt voided. The amount is back on their dues.'
-                : 'Receipt voided.',
+                ? 'Receipt cancelled. The amount is back in their dues.'
+                : 'Receipt cancelled.',
             )
           }
         />
@@ -609,7 +609,7 @@ function CancelMembershipSheet({
       {failed && <ErrorBanner>{failed}</ErrorBanner>}
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         <strong style={{ color: color.ink }}>{membership.planName}</strong>
-        {` (${formatDay(membership.startsOn)} → ${formatDay(membership.endsOn)}) will stop counting as cover and will no longer be chased for money. The record stays, and you can undo this afterwards.`}
+        {` (${formatDay(membership.startsOn)} → ${formatDay(membership.endsOn)}) will no longer count, and its unpaid amount is removed from their dues. It stays on their page, and you can undo this later.`}
       </p>
 
       <TextField
@@ -618,7 +618,7 @@ function CancelMembershipSheet({
         onChange={setReason}
         autoFocus
         placeholder="Moved city"
-        hint="Recorded against the record so it makes sense months later."
+        hint="Saved with the membership, so it is clear months later."
       />
     </Sheet>
   );
@@ -785,7 +785,7 @@ function PtCard({
         // Two packs at once (one renewed early): each pack's own count, and which one is in use.
         <div style={{ marginTop: space.md, display: 'grid', gap: 4 }}>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-            {`${running.length} PT packs running — sessions come off the oldest first`}
+            {`${running.length} PT packs running. Sessions are used from the oldest pack first.`}
           </div>
           {running.map((m) => (
             <div key={m.id} style={{ fontFamily: font.body, fontSize: 13, color: color.ink, overflowWrap: 'anywhere' }}>
@@ -803,8 +803,8 @@ function PtCard({
         (usedUp ? (
           <div style={{ ...note, fontSize: 14, fontWeight: 700 }}>
             {running.length === 1
-              ? `All ${total} PT sessions used — time to renew`
-              : 'All PT sessions used — time to renew'}
+              ? `All ${total} PT sessions used. Time to renew.`
+              : 'All PT sessions used. Time to renew.'}
           </div>
         ) : leftAll <= PT_LOW_LEFT ? (
           <div style={note}>
@@ -995,7 +995,7 @@ function MembershipRow({
               }}
             >
               {formatINR(unpaid)}{' '}
-              {chased ? 'due' : 'unpaid · not chased'}
+              {chased ? 'due' : 'unpaid · not in dues'}
             </span>
           ) : (
             <span style={{ fontFamily: font.body, fontSize: 12, color: color.goodText }}>Paid</span>
@@ -1060,7 +1060,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid?: () => void
           // Colour + strikethrough alone is invisible to a screen reader, which
           // would read a cancelled receipt as a normal one.
           <div style={{ fontFamily: font.body, fontSize: 12, fontWeight: 700, color: color.criticalText }}>
-            Voided
+            Cancelled
             {payment.voidReason ? `: ${payment.voidReason}` : ''}
           </div>
         )}
@@ -1078,7 +1078,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid?: () => void
       </span>
       {!payment.voided && onVoid && (
         <Button variant="quiet" tone="danger" onClick={onVoid}>
-          Void
+          Cancel receipt
         </Button>
       )}
     </Row>
@@ -1098,7 +1098,7 @@ function Detail({ label, value }: { label: string; value: string | null }) {
           whiteSpace: 'pre-wrap',
         }}
       >
-        {value || 'Not recorded'}
+        {value || 'Not added'}
       </dd>
     </div>
   );

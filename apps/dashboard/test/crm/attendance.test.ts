@@ -893,7 +893,7 @@ describe('riskReason', () => {
   it('quotes the member’s own rhythm when there is one, and stays silent when there is not', () => {
     const withRhythm = profileOf([visitDaysAgo(14), visitDaysAgo(17), visitDaysAgo(20), visitDaysAgo(23)]);
     expect(riskReason({ profile: withRhythm, band: 'slipping' })).toBe(
-      '14 days since their last visit — they usually train every 3 days.',
+      '14 days since their last visit. They usually train every 3 days.',
     );
 
     const without = profileOf([visitDaysAgo(30)]);

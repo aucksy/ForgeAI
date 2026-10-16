@@ -136,19 +136,19 @@ export function emptyEnquiryForm(today: DateISO): EnquiryFormDraft {
 export function validateEnquiry(form: EnquiryFormDraft, today: DateISO): EnquiryValidation {
   const name = normalizeName(form.name);
   if (name.length < 2) {
-    return { ok: false, field: 'name', message: 'Enter their name.' };
+    return { ok: false, field: 'name', message: 'Type their name.' };
   }
   if (name.length > NAME_MAX) {
     return {
       ok: false,
       field: 'name',
-      message: `Name must be ${NAME_MAX} characters or fewer.`,
+      message: `The name can be at most ${NAME_MAX} letters.`,
     };
   }
 
   const phone = normalizePhone(form.dialCode, form.phone);
   if (!phone) {
-    return { ok: false, field: 'phone', message: 'Enter a valid mobile number.' };
+    return { ok: false, field: 'phone', message: 'This mobile number looks wrong. Check it and type it again.' };
   }
 
   const interest = form.interest.trim().replace(/\s+/g, ' ');
@@ -156,7 +156,7 @@ export function validateEnquiry(form: EnquiryFormDraft, today: DateISO): Enquiry
     return {
       ok: false,
       field: 'interest',
-      message: `Keep it under ${INTEREST_MAX} characters.`,
+      message: `Use at most ${INTEREST_MAX} letters.`,
     };
   }
 
@@ -202,7 +202,7 @@ export function followUpMessage(e: Pick<Enquiry, 'name' | 'interest'>, gym: { na
     : `you asked about ${gymName}.`;
   return [
     `${hello} ${asked}`,
-    'Would you like to start this week? Reply here with any questions, or drop in at the gym.',
+    'Would you like to start this week? Reply here if you have any questions, or come to the gym.',
     `– ${gym.name.trim() || 'Your gym'}`,
   ].join('\n');
 }

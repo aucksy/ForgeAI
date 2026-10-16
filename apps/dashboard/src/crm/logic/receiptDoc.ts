@@ -133,7 +133,7 @@ export function buildReceiptDoc(input: ReceiptDocInput): ReceiptDoc {
     sacCode: registered ? GYM_SAC_CODE : null,
     // Says plainly that the tax is INSIDE the amount, so nobody reads the taxable
     // value as the price and the tax as something extra they still owe.
-    taxNote: gst ? `Amount received is inclusive of GST at ${gst.ratePct}%.` : null,
+    taxNote: gst ? `Amount received includes GST at ${gst.ratePct}%.` : null,
 
     voided: payment.voided,
     voidReason: payment.voidReason,

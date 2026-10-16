@@ -111,13 +111,13 @@ export function MemberCardSheet({
         <CardFace facts={facts} brand={brand} />
       </div>
       <p style={{ ...help, marginTop: space.md }}>
-        To send it on WhatsApp: tap Download picture first, then Send on WhatsApp, and attach the picture in the chat. A WhatsApp link cannot carry a picture by itself.
+        To send it on WhatsApp, first tap Download picture. Then tap Send on WhatsApp and attach the picture in the chat. WhatsApp can’t add the picture by itself.
       </p>
       <p style={help}>
-        Print makes the card at its real size (like an ATM card) on A4 paper: cut along the line. On a phone, Print → “Save as PDF” works too.
+        Print makes the card at its real size, like an ATM card, on A4 paper. Cut along the line. On a phone, Print → “Save as PDF” also works.
       </p>
       <p style={{ ...help, color: color.inkMuted, fontSize: 12 }}>
-        The QR holds only the member’s ID — no name or phone number. The mobile is shown with digits hidden.
+        The QR has only the member’s ID, not their name or phone number. Some digits of the mobile number are hidden.
       </p>
       {/* On the page for as long as the sheet is open (hidden on screen): phone Chrome draws its
           print preview after the tap has returned (see InviteScreen's print sheet). */}

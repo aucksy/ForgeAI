@@ -74,7 +74,7 @@ export function PlansScreen() {
     } catch (e) {
       setError(
         e instanceof Error
-          ? `${e.message} Some plans may already have been added — check the list.`
+          ? `${e.message} Some plans may already be added. Check the list.`
           : 'Could not add the starter plans.',
       );
     } finally {
@@ -163,7 +163,7 @@ function PlanRow({
     <div style={{ minWidth: 0 }}>
       <Row gap={space.sm}>
         <span style={{ fontFamily: font.display, fontSize: 16, fontWeight: 700, color: color.ink }}>{plan.name}</span>
-        {!plan.active && <Pill tone="muted">Retired</Pill>}
+        {!plan.active && <Pill tone="muted">Not for sale</Pill>}
       </Row>
       {ptPlanLine(plan) && (
         <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 2, overflowWrap: 'anywhere' }}>
@@ -291,10 +291,10 @@ function PlanSheet({
     }
 
     const priceP = parseRupeeInput(price);
-    if (priceP === null) return setError('Price isn’t a valid amount.');
+    if (priceP === null) return setError('The price looks wrong. Type it again.');
 
     const joiningFeeP = joining.trim() === '' ? 0 : parseRupeeInput(joining);
-    if (joiningFeeP === null) return setError('Joining fee isn’t a valid amount.');
+    if (joiningFeeP === null) return setError('The joining fee looks wrong. Type it again.');
 
     const ptSessions = pt ? parseCount(sessions, 1, PT_MAX_SESSIONS) : null;
     if (pt && ptSessions === null) {
@@ -348,7 +348,7 @@ function PlanSheet({
 
       {editing && (
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-          Changing the price here only affects future sales. Memberships already sold keep the price they were sold at.
+          A new price is used only for new sales. Memberships already sold keep their old price.
         </p>
       )}
 
@@ -401,12 +401,12 @@ function PlanSheet({
       <TextField label="Description (optional)" value={description} onChange={setDescription} multiline />
 
       <SelectField
-        label="Availability"
+        label="For sale?"
         value={active ? 'active' : 'retired'}
         onChange={(v) => setActive(v === 'active')}
         options={[
-          { value: 'active', label: 'Sellable' },
-          { value: 'retired', label: 'Retired — hidden from new sales' },
+          { value: 'active', label: 'For sale' },
+          { value: 'retired', label: 'Not for sale (hidden when selling)' },
         ]}
       />
     </Sheet>

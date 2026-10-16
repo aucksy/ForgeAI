@@ -92,10 +92,10 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
   // Annual is priced at a ~30% discount to 12x monthly — the prepay incentive the
   // research says Indian value gyms actually run on.
   const planSpecs: Array<Omit<Plan, 'id' | 'gymId' | 'createdAt' | 'updatedAt'>> = [
-    { name: 'Monthly', durationUnit: 'month', durationCount: 1, priceP: 120_000, joiningFeeP: 50_000, description: 'Rolling monthly membership.', active: true, sortOrder: 1 },
+    { name: 'Monthly', durationUnit: 'month', durationCount: 1, priceP: 120_000, joiningFeeP: 50_000, description: 'Pay month by month.', active: true, sortOrder: 1 },
     { name: 'Quarterly', durationUnit: 'month', durationCount: 3, priceP: 300_000, joiningFeeP: 50_000, description: 'The most popular first plan.', active: true, sortOrder: 2 },
     { name: 'Half-yearly', durationUnit: 'month', durationCount: 6, priceP: 550_000, joiningFeeP: 50_000, description: 'Saves ₹1,700 on paying monthly.', active: true, sortOrder: 3 },
-    { name: 'Annual', durationUnit: 'month', durationCount: 12, priceP: 1_000_000, joiningFeeP: 0, description: 'Best value — joining fee waived.', active: true, sortOrder: 4 },
+    { name: 'Annual', durationUnit: 'month', durationCount: 12, priceP: 1_000_000, joiningFeeP: 0, description: 'Best value. No joining fee.', active: true, sortOrder: 4 },
     { name: 'Day pass', durationUnit: 'day', durationCount: 1, priceP: 20_000, joiningFeeP: 0, description: 'For visitors and trial workouts.', active: true, sortOrder: 5 },
   ];
 

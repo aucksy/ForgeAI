@@ -243,15 +243,15 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export function validateMember(form: MemberFormDraft, today: DateISO): MemberValidation {
   const fullName = normalizeName(form.fullName);
   if (fullName.length < 2) {
-    return { ok: false, field: 'fullName', message: 'Enter the member’s name.' };
+    return { ok: false, field: 'fullName', message: 'Type the member’s name.' };
   }
   if (fullName.length > NAME_MAX) {
-    return { ok: false, field: 'fullName', message: `Name must be ${NAME_MAX} characters or fewer.` };
+    return { ok: false, field: 'fullName', message: `The name can be at most ${NAME_MAX} letters.` };
   }
 
   const phone = normalizePhone(form.dialCode, form.phone);
   if (!phone) {
-    return { ok: false, field: 'phone', message: 'Enter a valid mobile number.' };
+    return { ok: false, field: 'phone', message: 'This mobile number looks wrong. Check it and type it again.' };
   }
 
   const emailRaw = form.email.trim();
@@ -276,14 +276,14 @@ export function validateMember(form: MemberFormDraft, today: DateISO): MemberVal
   if (emergencyRaw) {
     const parsed = normalizePhone(DEFAULT_DIAL_CODE, emergencyRaw) ?? null;
     if (!parsed) {
-      return { ok: false, field: 'emergencyPhone', message: 'Emergency number isn’t a valid mobile.' };
+      return { ok: false, field: 'emergencyPhone', message: 'The emergency number looks wrong. Check it and type it again.' };
     }
     emergencyPhone = parsed.e164;
   }
 
   const batch = normalizeBatch(form.batch);
   if (batch !== null && batch.length > BATCH_MAX) {
-    return { ok: false, field: 'batch', message: `Batch name must be ${BATCH_MAX} characters or fewer.` };
+    return { ok: false, field: 'batch', message: `The batch name can be at most ${BATCH_MAX} letters.` };
   }
 
   const gender = form.gender === 'male' || form.gender === 'female' || form.gender === 'other'

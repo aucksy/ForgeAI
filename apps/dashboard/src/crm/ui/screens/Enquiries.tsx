@@ -270,7 +270,7 @@ function EnquiryRow({
         {open && (
           <>
             <Button wrap onClick={onConvert} ariaLabel={`Make ${e.name} a member`}>
-              Convert to member
+              Add as member
             </Button>
             <Button wrap variant="ghost" onClick={onReschedule} ariaLabel={`Change follow-up date for ${e.name}`}>
               Follow-up date
@@ -546,7 +546,7 @@ function FollowUpSheet({ enquiry, onClose }: { enquiry: Enquiry; onClose: () => 
       }
     >
       <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        Pick a day — one tap saves it.
+        Pick a day. One tap saves it.
       </p>
       <div style={{ ...actionsGrid, marginTop: space.md }}>
         {followUpPicks(today).map((p) => (
@@ -638,7 +638,7 @@ function ConvertFlow({
                 onClose();
               }}
             >
-              {`Bring back ${existing.fullName} and link`}
+              Bring back and mark joined
             </Button>
           </>
         }
@@ -676,7 +676,7 @@ function ConvertFlow({
         }
       >
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 14, color: color.ink }}>
-          {`${existing.fullName} is already on the roster with ${formatPhone(enquiry.phone)}.`}
+          {`${existing.fullName} is already a member with ${formatPhone(enquiry.phone)}.`}
         </p>
       </Sheet>
     );

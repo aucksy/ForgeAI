@@ -241,7 +241,7 @@ export function ExpensesScreen() {
               {formatINR(removing.amountP)} · {categoryLabel(removing.category)}
             </strong>{' '}
             ({formatDay(removing.spentOn)})
-            {' will be taken out for good. It cannot be brought back — you would have to add it again.'}
+            {' will be removed for good. You can’t get it back. You would have to add it again.'}
           </p>
         </Sheet>
       )}
@@ -333,11 +333,11 @@ function AddExpenseSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (
     setAmountError(null);
     if (amountText.trim() === '') return setAmountError('Type how much was spent.');
     const amountP = parseRupeeInput(amountText);
-    if (amountP === null) return setAmountError('That isn’t a valid amount.');
-    if (amountP <= 0) return setAmountError('Enter an amount greater than zero.');
-    if (!isValidDateISO(spentOn)) return setError('Enter the date of this expense.');
-    if (spentOn < EARLIEST_DATE) return setError('That date looks like a typo — check the year.');
-    if (spentOn > today) return setError('An expense can’t be dated in the future.');
+    if (amountP === null) return setAmountError('That amount looks wrong. Type it again.');
+    if (amountP <= 0) return setAmountError('Type an amount more than zero.');
+    if (!isValidDateISO(spentOn)) return setError('Pick the date of this expense.');
+    if (spentOn < EARLIEST_DATE) return setError('That date looks wrong. Check the year.');
+    if (spentOn > today) return setError('The expense date can’t be in the future.');
 
     setSaving(true);
     try {

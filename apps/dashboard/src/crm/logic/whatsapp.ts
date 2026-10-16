@@ -84,7 +84,7 @@ export function buildMessage(kind: MessageKind, v: MemberView, gym: GymWords, to
   switch (kind) {
     case 'fees':
       return [
-        `${hi} ${`a reminder that ${formatINR(v.outstandingP)} of your fees is pending. Please pay at the front desk or on UPI.`}`,
+        `${hi} ${formatINR(v.outstandingP)} of your fees is due. Please pay at the front desk or on UPI.`,
         sign(gym),
       ].join('\n');
     case 'ending': {
@@ -94,7 +94,7 @@ export function buildMessage(kind: MessageKind, v: MemberView, gym: GymWords, to
           ? 'today'
           : `on ${formatDay(end)}`;
       return [
-        `${hi} ${`your ${plan} plan ends ${when}. Renew at the desk to keep training without a break.`}`,
+        `${hi} your ${plan} plan ends ${when}. Renew at the desk to keep training without a break.`,
         sign(gym),
       ].join('\n');
     }
@@ -132,7 +132,7 @@ export function receiptMessage(
   gym: GymWords,
 ): string {
   return [
-    `${hello(memberName)} ${`we received your ${formatINR(p.amountP)} on ${formatDay(p.paidOn)} (${methodLabel(p.method)}). Receipt no. ${p.receiptNo}. Thank you!`}`,
+    `${hello(memberName)} we received your ${formatINR(p.amountP)} on ${formatDay(p.paidOn)} (${methodLabel(p.method)}). Receipt no. ${p.receiptNo}. Thank you!`,
     sign(gym),
   ].join('\n');
 }

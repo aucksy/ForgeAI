@@ -271,7 +271,7 @@ export function historyLine(line: string): string {
   }
   const cancelled = /^Cancelled: (.*)$/.exec(line.trim());
   if (cancelled) return `Cancelled: ${cancelled[1]}`;
-  if (line.trim() === 'Cancellation reversed.') return 'Cancellation reversed.';
+  if (line.trim() === 'Cancellation reversed.') return 'Cancel undone.';
   if (line.trim() === 'Imported from Excel') return 'Imported from Excel';
   return line;
 }
@@ -304,8 +304,8 @@ export function daysLeftTile(
     sub: view.coversUntil
       ? d === 0
         ? 'Last day is today'
-        : `Covered until ${formatDay(view.coversUntil)}`
-      : 'No live membership',
+        : `Valid till ${formatDay(view.coversUntil)}`
+      : 'No plan running',
   };
 }
 

@@ -65,23 +65,23 @@ export function CollectPaymentSheet({
     selected && amountP !== null ? Math.max(0, selected.unpaidP - amountP) : null;
 
   const submit = async () => {
-    if (!selected) return setError('Choose which membership this payment is for.');
-    if (amountP === null) return setError('That isn’t a valid amount.');
-    if (amountP <= 0) return setError('Enter an amount greater than zero.');
+    if (!selected) return setError('Pick the membership this payment is for.');
+    if (amountP === null) return setError('That amount looks wrong. Type it again.');
+    if (amountP <= 0) return setError('Type an amount more than zero.');
     if (amountP > selected.unpaidP) {
       return setError(
-        `That's more than the ${formatINR(selected.unpaidP)} outstanding on this membership.`,
+        `That is more than the ${formatINR(selected.unpaidP)} due on this membership.`,
       );
     }
     // Checked BEFORE the future test, because a half-typed or cleared date field
     // passes `paidOn > today` and then throws deep inside the receipt-number maths,
     // showing the desk "Not a YYYY-MM-DD date:". A mistyped year (0002) got as far
     // as storage and minted a receipt number nothing could read back.
-    if (!isValidDateISO(paidOn)) return setError('Enter the date this money was received.');
+    if (!isValidDateISO(paidOn)) return setError('Pick the date you got this money.');
     if (paidOn < EARLIEST_SENSIBLE_DAY) {
-      return setError('That date looks like a typo — check the year.');
+      return setError('That date looks wrong. Check the year.');
     }
-    if (paidOn > today) return setError('A payment can’t be dated in the future.');
+    if (paidOn > today) return setError('The payment date can’t be in the future.');
 
     setSaving(true);
     setError(null);
@@ -101,7 +101,7 @@ export function CollectPaymentSheet({
       onCollected?.(payment);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not record this payment.');
+      setError(e instanceof Error ? e.message : 'Could not save this payment. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -109,10 +109,10 @@ export function CollectPaymentSheet({
 
   if (owing.length === 0) {
     return (
-      <Sheet title="Record a payment" onClose={onClose}>
+      <Sheet title="Collect payment" onClose={onClose}>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           <strong style={{ color: color.ink }}>{view.member.fullName}</strong>{' '}
-          doesn’t owe anything — every membership is fully paid.
+          has no dues. Every membership is fully paid.
         </p>
       </Sheet>
     );
@@ -120,7 +120,7 @@ export function CollectPaymentSheet({
 
   return (
     <Sheet
-      title="Record a payment"
+      title="Collect payment"
       onClose={onClose}
       footer={
         <>
@@ -128,7 +128,7 @@ export function CollectPaymentSheet({
             Cancel
           </Button>
           <Button onClick={submit} disabled={saving}>
-            {saving ? 'Saving…' : 'Record payment'}
+            {saving ? 'Saving…' : 'Save payment'}
           </Button>
         </>
       }
@@ -137,11 +137,11 @@ export function CollectPaymentSheet({
 
       <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         From <strong style={{ color: color.ink }}>{view.member.fullName}</strong> ·{' '}
-        {formatINR(view.outstandingP)} outstanding in total
+        {formatINR(view.outstandingP)} due in total
       </div>
 
       <SelectField
-        label="Against which membership"
+        label="For which membership"
         value={membershipId}
         onChange={(v) => {
           setMembershipId(v);
@@ -163,7 +163,7 @@ export function CollectPaymentSheet({
         }}
         inputMode="decimal"
         placeholder={selected ? formatINR(selected.unpaidP) : ''}
-        hint="Leave blank to settle the balance in full."
+        hint="Leave blank to collect the full amount due."
       />
 
       <Grid min={200}>
@@ -196,7 +196,7 @@ export function CollectPaymentSheet({
           >
             {remainingP > 0
               ? `Still due after this: ${formatINR(remainingP)}`
-              : 'This settles the membership in full.'}
+              : 'This clears all dues on this membership.'}
           </span>
         </Row>
       )}

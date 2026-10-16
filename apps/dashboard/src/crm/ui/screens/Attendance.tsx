@@ -299,7 +299,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                 ? 'That day hasn’t happened yet.'
                 : null
             }
-            hint="Catching up a day the desk missed. Future days are refused."
+            hint="Use this to add a day the desk missed. You can’t pick a future day."
           />
         )}
 
@@ -323,9 +323,9 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
               color: color.warning,
             }}
           >
-            {'Recording for '}
+            {'Adding check-ins for '}
             <strong>{formatDay(viewing)}</strong>
-            {' — not today.'}
+            {', not today.'}
           </div>
         )}
 
@@ -340,7 +340,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
         ) : (
           <EmptyState
             title="Pick a day first"
-            body="Choose a real day that has already happened, and the check-in box comes back."
+            body="Pick a day that has already passed. Then the check-in box comes back."
           />
         )}
 
@@ -351,10 +351,10 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                 title="Nobody matches that"
                 body={
                   batchName
-                    ? `Only ${batchName} is being searched. Pick “All batches” to look through everyone.`
-                    : 'Check the spelling, or add them to the roster first.'
+                    ? `Searching only ${batchName}. Pick “All batches” to search everyone.`
+                    : 'Check the spelling, or add them in Members first.'
                 }
-                action={<Button onClick={() => navigate('/members')}>Open roster</Button>}
+                action={<Button onClick={() => navigate('/members')}>Open Members</Button>}
               />
             ) : (
               <>
@@ -369,7 +369,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                 ))}
                 {results.length > MAX_RESULTS && (
                   <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-                    {`${results.length - MAX_RESULTS} more match — keep typing to narrow it down.`}
+                    {`${results.length - MAX_RESULTS} more match. Type more to find them.`}
                   </div>
                 )}
               </>
@@ -450,8 +450,8 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
               !viewing
                 ? 'Pick a day above to see who trained.'
                 : isToday
-                  ? 'Check-ins appear here the moment you record them.'
-                  : 'No visits were recorded on this day.'
+                  ? 'Check-ins show here as soon as you add them.'
+                  : 'No check-ins on this day.'
             }
           />
         ) : (
@@ -487,7 +487,7 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
         {summary.busiestHour === null ? (
           <EmptyState
             title="No timed check-ins yet"
-            body="Check-ins recorded here carry the time, so this fills in as the register is used."
+            body="Each check-in here saves the time. This fills in as you use the register."
           />
         ) : (
           <HourBars hours={hours} />
@@ -657,7 +657,7 @@ function TrendBars({ days, today }: { days: { day: string; countN: number }[]; t
         </span>
         <span style={{ flex: 1 }} />
         <span style={{ fontFamily: font.body, fontSize: 11, color: color.inkMuted }}>
-          {`Peak ${peak} in a day`}
+          {`Most in a day: ${peak}`}
         </span>
       </Row>
     </div>
@@ -766,7 +766,7 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
         {registerUsed ? (
           <EmptyState
             title="Everybody is training"
-            body="No member with a live plan has drifted away from their usual routine."
+            body="Every member with a running plan is coming as usual."
             action={<Button onClick={() => navigate('/attendance')}>Back to the register</Button>}
           />
         ) : (
@@ -774,7 +774,7 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
           // given us no evidence for it either way.
           <EmptyState
             title="Start checking members in"
-            body="This list needs a few days of the register before it can tell you anything. Check people in as they arrive and it fills itself in — nobody is judged on attendance that was never recorded."
+            body="This list needs a few days of check-ins first. Check members in as they arrive, and it fills in by itself. Nobody is listed just because their visits were never added."
             action={<Button onClick={() => navigate('/attendance')}>Open the register</Button>}
           />
         )}
@@ -789,7 +789,7 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
           label="Need a word"
           value={shown.length}
           tone="warn"
-          sub={`of ${rows.length} flagged`}
+          sub={`of ${rows.length} listed`}
         />
         {totals.map((t) => (
           <StatTile
@@ -819,7 +819,7 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
           {/* "Stopped coming" was wrong for a third of this list: a new member who
               has been in twice in three weeks has not stopped, they never started,
               and the heading read absurdly above their "last visit 2 days ago". */}
-          Everyone here has a plan with weeks left on it — they have stopped coming, or never really started. Ask about their training, not their membership: the evidence says a renewal pitch to someone who has drifted makes them likelier to leave, not less.
+          Everyone here has weeks left on their plan, but they stopped coming or never really started. Ask about their training, not their plan. Pushing a renewal on them makes them more likely to leave.
         </p>
 
         <ChipToggle
@@ -848,7 +848,7 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
 
 const BAND_SUB: Record<RiskBand, string> = {
   get settling_in() {
-    return 'New, and the habit hasn’t formed';
+    return 'New, and not coming regularly yet';
   },
   // Not "past their own usual gap": a member with too few visits to have a rhythm
   // is on the fixed fallback and has no gap of their own to be past.

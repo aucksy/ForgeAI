@@ -106,10 +106,10 @@ function lastGymPlanEnd(memberships: readonly Membership[], today: DateISO): Dat
  */
 export function saleWarning(s: { priceP: Paise | null; joiningFeeP: Paise | null; listPriceP: Paise | null; listJoiningFeeP: Paise | null }): string | null {
   if (s.priceP !== null && s.listPriceP !== null && s.priceP > s.listPriceP) {
-    return `The price ${formatINR(s.priceP)} is more than the plan's ${formatINR(s.listPriceP)}. Press again to save it anyway.`;
+    return `The price ${formatINR(s.priceP)} is more than the plan price, ${formatINR(s.listPriceP)}. Tap again to save it anyway.`;
   }
   if (s.joiningFeeP !== null && s.listJoiningFeeP !== null && s.joiningFeeP > s.listJoiningFeeP) {
-    return `The joining fee ${formatINR(s.joiningFeeP)} is more than the plan's ${formatINR(s.listJoiningFeeP)}. Press again to save it anyway.`;
+    return `The joining fee ${formatINR(s.joiningFeeP)} is more than the plan’s joining fee, ${formatINR(s.listJoiningFeeP)}. Tap again to save it anyway.`;
   }
   return null;
 }
@@ -166,9 +166,9 @@ export function validateSale(
   today: DateISO,
   role: 'owner' | 'staff' = 'owner',
 ): SaleProblem | null {
-  if (!input.planId) return { field: 'plan', message: 'Choose a plan first.' };
+  if (!input.planId) return { field: 'plan', message: 'Pick a plan first.' };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.startsOn)) {
-    return { field: 'startsOn', message: 'Start date must be a real date.' };
+    return { field: 'startsOn', message: 'The start date looks wrong. Pick it again.' };
   }
   // The server refuses a front-desk sale that starts further back (0018_staff_and_owner_rules.sql):
   // a start a month or more back hands out past time for free, so it is the owner's call.
@@ -178,12 +178,12 @@ export function validateSale(
       message: `The front desk can start a plan at most ${STAFF_BACKDATE_DAYS} days back. Ask the owner for an older start date.`,
     };
   }
-  if (input.priceP === null) return { field: 'priceP', message: 'Price isn’t a valid amount.' };
+  if (input.priceP === null) return { field: 'priceP', message: 'The price looks wrong. Type it again.' };
   if (input.joiningFeeP === null) {
-    return { field: 'joiningFeeP', message: 'Joining fee isn’t a valid amount.' };
+    return { field: 'joiningFeeP', message: 'The joining fee looks wrong. Type it again.' };
   }
   if (input.collectNowP === null) {
-    return { field: 'collectNowP', message: 'Amount received isn’t a valid amount.' };
+    return { field: 'collectNowP', message: 'The amount received looks wrong. Type it again.' };
   }
 
   // C7-13: the front desk's discount limits (the owner may give anything, a free plan too).
@@ -191,14 +191,14 @@ export function validateSale(
     const lowest = staffLowestPrice(input.listPriceP);
     return {
       field: 'priceP',
-      message: `The front desk can give at most ${STAFF_MAX_DISCOUNT_PCT}% off: the lowest price is ${formatINR(lowest)}. Ask the owner for a bigger discount.`,
+      message: `The front desk can give at most ${STAFF_MAX_DISCOUNT_PCT}% off. The lowest price is ${formatINR(lowest)}. Ask the owner for a bigger discount.`,
     };
   }
   // Only for someone with no plan here yet, exactly as the server (0019): a renewal may skip it.
   if (role === 'staff' && memberships.length === 0 && input.listJoiningFeeP != null && input.joiningFeeP < input.listJoiningFeeP) {
     return {
       field: 'joiningFeeP',
-      message: `The joining fee for a new member is ${formatINR(input.listJoiningFeeP)}. Only the owner can let it off.`,
+      message: `The joining fee for a new member is ${formatINR(input.listJoiningFeeP)}. Only the owner can remove it.`,
     };
   }
 
@@ -206,10 +206,10 @@ export function validateSale(
   // C7-29: the money taken at a sale has its own date ("Kis din mile"), like the Collect sheet.
   if (input.collectNowP > 0 && input.paidOn !== undefined) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(input.paidOn) || input.paidOn < EARLIEST_DATE) {
-      return { field: 'paidOn', message: 'Enter the date this money was received.' };
+      return { field: 'paidOn', message: 'Pick the date you got this money.' };
     }
     if (input.paidOn > today) {
-      return { field: 'paidOn', message: 'A payment can’t be dated in the future.' };
+      return { field: 'paidOn', message: 'The payment date can’t be in the future.' };
     }
   }
   if (input.collectNowP > total) {
@@ -232,7 +232,7 @@ export function validateSale(
   if (coversUntil && input.startsOn <= coversUntil) {
     return {
       field: 'startsOn',
-      message: `They're already covered until ${formatDay(coversUntil)}. Start the new plan after that.`,
+      message: `Their plan already runs till ${formatDay(coversUntil)}. Start the new plan after that.`,
     };
   }
 

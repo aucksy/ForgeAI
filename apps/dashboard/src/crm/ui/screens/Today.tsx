@@ -108,7 +108,7 @@ export function TodayScreen() {
         // second copy as the page title said nothing about which page this is.
         title="Today"
         subtitle={formatDay(today)}
-        actions={<Button onClick={() => navigate('/members')}>Open roster</Button>}
+        actions={<Button onClick={() => navigate('/members')}>Open Members</Button>}
       />
 
       {/* Phones only, until installed or closed: "Phone par app lagao". */}
@@ -141,7 +141,7 @@ export function TodayScreen() {
           value={tiles.active}
           tone="accent"
           onClick={() => navigate('/members/f/active')}
-          sub="With a live plan"
+          sub="With a running plan"
         />
         <StatTile
           label="Ending today"
@@ -224,8 +224,8 @@ export function TodayScreen() {
           </SectionTitle>
           {renewals.length === 0 ? (
             <EmptyState
-              title="Nothing to chase"
-              body={`No memberships are expiring, and nobody has lapsed in the last ${WINBACK_WINDOW_DAYS} days.`}
+              title="Nobody to follow up"
+              body={`No plans are ending soon, and no plan ended in the last ${WINBACK_WINDOW_DAYS} days.`}
             />
           ) : (
             <div style={{ display: 'grid', gap: space.sm }}>
@@ -261,14 +261,14 @@ export function TodayScreen() {
             registerUsed ? (
               <EmptyState
                 title="Everybody is training"
-                body="No member with a live plan has drifted away from their usual routine."
+                body="Every member with a running plan is coming as usual."
               />
             ) : (
               // Claiming everyone is training would be inventing evidence this gym
               // has not yet produced.
               <EmptyState
                 title="Start checking members in"
-                body="A few days of the register and this fills itself in."
+                body="After a few days of check-ins, this fills in by itself."
               />
             )
           ) : (
@@ -299,8 +299,8 @@ export function TodayScreen() {
           </SectionTitle>
           {duesList.length === 0 ? (
             <EmptyState
-              title="Everyone's paid up"
-              body="No outstanding dues on the roster."
+              title="Everyone has paid"
+              body="No member has dues."
             />
           ) : (
             <div style={{ display: 'grid', gap: space.sm }}>
@@ -308,7 +308,7 @@ export function TodayScreen() {
                 <PersonRow
                   key={v.member.id}
                   member={v.member}
-                  detail={`${formatINR(v.outstandingP)} outstanding`}
+                  detail={`${formatINR(v.outstandingP)} due`}
                   tone={color.warning}
                 />
               ))}

@@ -169,7 +169,7 @@ export function ptSummary(m: Pick<Membership, 'ptSessions' | 'ptLog' | 'trainer'
   const total = ptTotal(m);
   const head = `PT: ${used} of ${total} sessions used`;
   const trainer = m.trainer?.trim();
-  return trainer ? `${head} · ${`Trainer ${trainer}`}` : head;
+  return trainer ? `${head} · Trainer ${trainer}` : head;
 }
 
 /**
@@ -187,7 +187,7 @@ export function ptPlanLine(plan: Pick<Plan, 'ptSessions' | 'trainer'>): string |
   const n = plan.ptSessions as number;
   const head = n === 1 ? 'PT · 1 session' : `PT · ${n} sessions`;
   const trainer = plan.trainer?.trim();
-  return trainer ? `${head} · ${`Trainer ${trainer}`}` : head;
+  return trainer ? `${head} · Trainer ${trainer}` : head;
 }
 
 /** Trim a typed trainer name; blank is none. At most 40 letters. */

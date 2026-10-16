@@ -56,7 +56,7 @@ describe('WhatsApp messages', () => {
       for (const line of t.split('\n')) expect(line, `${kind}: ${line}`).not.toMatch(/^[a-z]/);
     }
     expect(buildMessage('fees', view(), gym, TODAY).split('\n')[0]).toBe(
-      'Hi Rahul, a reminder that ₹1,500 of your fees is pending. Please pay at the front desk or on UPI.',
+      'Hi Rahul, ₹1,500 of your fees is due. Please pay at the front desk or on UPI.',
     );
   });
 

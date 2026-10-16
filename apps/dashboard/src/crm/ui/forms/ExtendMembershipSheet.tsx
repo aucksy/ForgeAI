@@ -65,7 +65,7 @@ export function ExtendMembershipSheet({
       onDone(days);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not add the days to this membership. Try again.');
+      setError(e instanceof Error ? e.message : 'Could not add the days to this membership. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -161,8 +161,8 @@ export function ExtendMembershipSheet({
         {newEnd && (
           <span style={{ display: 'block', marginTop: 4, fontSize: 13, fontWeight: 600, color: newEnd < today ? color.warning : color.goodText }}>
             {newEnd < today
-              ? `Still ended (${relativeDay(newEnd, today)}) — add more days to cover today.`
-              : `Covered until then (${relativeDay(newEnd, today)}).`}
+              ? `Still ended (${relativeDay(newEnd, today)}). Add more days to reach today.`
+              : `Valid till then (${relativeDay(newEnd, today)}).`}
           </span>
         )}
       </div>

@@ -818,7 +818,7 @@ export class LocalCrmData implements CrmData {
       // gives the member nothing; extending a cancelled one gives days on a plan that is not on.
       if (membership.cancelled) {
         throw new Error(
-          'This plan was cancelled. Undo the cancel first, or add the days to their current plan.',
+          'This plan is cancelled. Undo the cancel first, or add the days to their current plan.',
         );
       }
       // Gym plans and PT packs run side by side (logic/pt.ts), so they never block each other. Only a
@@ -970,8 +970,8 @@ export function looksLikePt(name: string): boolean {
 /** C7-1: the same press came again with different numbers: say what was already saved. */
 function alreadySavedWords(receiptNo: string | null): string {
   return receiptNo
-    ? `Your earlier entry was saved just now (receipt ${receiptNo}). Check the member's page before taking more.`
-    : "Your earlier entry was saved just now. Check the member's page before doing it again.";
+    ? `Your earlier entry was saved just now (receipt ${receiptNo}). Check the member’s page before you take money again.`
+    : "Your earlier entry was saved just now. Check the member’s page before you do it again.";
 }
 
 function appendNote(existing: string | null, line: string): string {

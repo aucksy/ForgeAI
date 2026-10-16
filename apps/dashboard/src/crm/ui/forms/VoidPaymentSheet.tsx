@@ -45,7 +45,7 @@ export function VoidPaymentSheet({
 
   const submit = async () => {
     const trimmed = reason.trim();
-    if (trimmed.length < MIN_REASON) return setError('Say briefly why, so this makes sense later.');
+    if (trimmed.length < MIN_REASON) return setError('Write a short reason, so it is clear later.');
 
     setSaving(true);
     setError(null);
@@ -54,7 +54,7 @@ export function VoidPaymentSheet({
       onVoided?.(restoresDues);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not void this receipt.');
+      setError(e instanceof Error ? e.message : 'Could not cancel this receipt. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -62,7 +62,7 @@ export function VoidPaymentSheet({
 
   return (
     <Sheet
-      title="Void this receipt?"
+      title="Cancel this receipt?"
       onClose={onClose}
       footer={
         <>
@@ -70,7 +70,7 @@ export function VoidPaymentSheet({
             Keep it
           </Button>
           <Button tone="danger" disabled={saving || reason.trim().length < MIN_REASON} onClick={submit}>
-            {saving ? 'Voiding…' : 'Void receipt'}
+            {saving ? 'Cancelling…' : 'Cancel receipt'}
           </Button>
         </>
       }
@@ -81,25 +81,24 @@ export function VoidPaymentSheet({
         Receipt <strong style={{ color: color.ink }}>{payment.receiptNo}</strong>{' '}
         for <strong style={{ color: color.ink }}>{formatINR(payment.amountP)}</strong>
         , taken on {formatDay(payment.paidOn)}
-        , will stop counting as money received.{' '}
+        , will no longer count as money received.{' '}
         {restoresDues ? (
           <>
             <strong style={{ color: color.ink }}>
-              The amount goes back onto what this member owes.
+              The amount is added back to this member’s dues.
             </strong>
           </>
         ) : membership ? (
           <>
-            Because that membership is{' '}
-            <strong style={{ color: color.ink }}>cancelled</strong>
-            , this will not add anything back to their dues — the gym stopped chasing that term when it was cancelled.
+            That membership is <strong style={{ color: color.ink }}>cancelled</strong>, so nothing is
+            added back to their dues.
           </>
         ) : (
           <>
-            This receipt is not against a membership, so no balance changes.
+            This receipt is not for a membership, so no dues change.
           </>
         )}{' '}
-        The row stays in the ledger and its number is never reused — that is what an auditor expects.
+        The receipt stays in the list, marked cancelled. Its number is never used again.
       </p>
 
       <TextField
@@ -111,7 +110,7 @@ export function VoidPaymentSheet({
         }}
         autoFocus
         placeholder="Entered twice"
-        hint="Recorded against the receipt so it makes sense months later."
+        hint="Saved with the receipt, so it is clear months later."
       />
     </Sheet>
   );

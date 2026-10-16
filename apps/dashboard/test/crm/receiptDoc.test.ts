@@ -142,7 +142,7 @@ describe('GST appears only when the gym is registered', () => {
     expect(doc.gst!.grossP).toBe(150_000);
     expect(doc.gst!.taxableP + doc.gst!.taxP).toBe(doc.amountP);
     expect(doc.gst!.cgstP + doc.gst!.sgstP).toBe(doc.gst!.taxP);
-    expect(doc.taxNote).toBe('Amount received is inclusive of GST at 5%.');
+    expect(doc.taxNote).toBe('Amount received includes GST at 5%.');
   });
 
   it('normalises a GSTIN typed in lower case with stray spaces', () => {
@@ -167,7 +167,7 @@ describe('GST appears only when the gym is registered', () => {
     });
     expect(doc.gst!.ratePct).toBe(18);
     expect(doc.gst!.taxableP + doc.gst!.taxP).toBe(150_000);
-    expect(doc.taxNote).toBe('Amount received is inclusive of GST at 18%.');
+    expect(doc.taxNote).toBe('Amount received includes GST at 18%.');
   });
 });
 

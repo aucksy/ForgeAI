@@ -98,8 +98,8 @@ export function MoneyScreen({ section }: { section?: string }) {
         subtitle={
           tab === 'dues'
             ? tabs.length > 1
-              ? 'Everything still owed to the gym'
-              : 'Who still owes fees, to collect'
+              ? 'All money still due to the gym'
+              : 'Who still has fees to pay'
             : 'Every rupee that came in'
         }
       />
@@ -197,7 +197,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
         // A number, not a formatted string: the accountant has to be able to sum
         // this column without stripping ₹ and commas out of it first.
         paiseToRupees(r.payment.amountP),
-        r.payment.voided ? `Voided: ${r.payment.voidReason ?? 'no reason given'}` : 'Received',
+        r.payment.voided ? `Cancelled: ${r.payment.voidReason ?? 'no reason given'}` : 'Received',
         r.payment.collectedByName ?? '',
       ]),
     );
@@ -268,7 +268,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
           sub="Single payment in this period"
         />
         <StatTile
-          label="Voided"
+          label="Cancelled"
           value={formatINRShort(summary.voidedP)}
           tone={summary.voidedN > 0 ? 'critical' : undefined}
           sub={`${summary.voidedN} not counted`}
@@ -364,7 +364,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
             checked={includeVoided}
             onChange={(e) => setIncludeVoided(e.target.checked)}
           />
-          Show voided receipts
+          Show cancelled receipts
         </label>
 
         {visible.length === 0 ? (
@@ -409,8 +409,8 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
           onVoided={(restored) =>
             onToast(
               restored
-                ? 'Receipt voided. The amount is back on their dues.'
-                : 'Receipt voided.',
+                ? 'Receipt cancelled. The amount is back in their dues.'
+                : 'Receipt cancelled.',
             )
           }
         />
@@ -507,13 +507,13 @@ function LedgerTableRow({ row, withYear, onVoid }: { row: LedgerRow; withYear: b
         {payment.voided && (
           // Never colour alone: struck-through text reads as a normal amount to a
           // screen reader, and as a normal amount on a mono printer.
-          <div style={{ fontSize: 11, color: color.criticalText, fontFamily: font.body }}>VOIDED</div>
+          <div style={{ fontSize: 11, color: color.criticalText, fontFamily: font.body }}>CANCELLED</div>
         )}
       </Td>
       <Td align="right">
         {!payment.voided && onVoid && (
           <Button variant="quiet" tone="danger" onClick={onVoid}>
-            Void
+            Cancel receipt
           </Button>
         )}
       </Td>
@@ -574,10 +574,10 @@ function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid?: () => void }) {
         </Link>
         <span style={{ flex: 1 }} />
         {payment.voided ? (
-          <span style={{ ...tapTarget, fontSize: 11, color: color.criticalText }}>VOIDED</span>
+          <span style={{ ...tapTarget, fontSize: 11, color: color.criticalText }}>CANCELLED</span>
         ) : onVoid ? (
           <Button variant="quiet" tone="danger" onClick={onVoid}>
-            Void
+            Cancel receipt
           </Button>
         ) : null}
       </Row>
@@ -637,7 +637,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
     // dues from a list filtered to 5 is a file that quietly disagrees with the
     // screen it came from.
     const contents = csvDocument(
-      ['Member', 'Mobile', 'Batch', 'Membership', 'PT sessions used', 'Trainer', 'Started', 'Days outstanding', 'Age', 'Amount due (INR)', 'Archived'],
+      ['Member', 'Mobile', 'Batch', 'Membership', 'PT sessions used', 'Trainer', 'Started', 'Days due', 'Age', 'Amount due (INR)', 'Archived'],
       shownRows.map((r) => [
         r.member.fullName,
         phoneForExport(r.member.phone),
@@ -676,9 +676,9 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
     return (
       <Card>
         <EmptyState
-          title="Nobody owes anything"
-          body="Every membership on the roster is fully paid."
-          action={<Button onClick={() => navigate('/members')}>Open roster</Button>}
+          title="No dues"
+          body="Every membership is fully paid."
+          action={<Button onClick={() => navigate('/members')}>Open Members</Button>}
         />
       </Card>
     );
@@ -692,7 +692,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
         <>
         <Grid min={165}>
           <StatTile
-            label="Total owed"
+            label="Total due"
             value={formatINRShort(owedP)}
             tone="warn"
             sub={
@@ -732,11 +732,11 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
             ) : undefined
           }
         >
-          Who owes
+          Who has dues
         </SectionTitle>
 
         <ChipToggle
-          label="Filter by how old the debt is"
+          label="Filter by how long it is due"
           value={bucket}
           onChange={(v) => setBucket(v as AgingBucket | 'all')}
           options={[
@@ -795,9 +795,9 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
                 <tr>
                   <Th>Member</Th>
                   <Th>Mobile</Th>
-                  <Th>Oldest debt</Th>
+                  <Th>Due since</Th>
                   <Th>Age</Th>
-                  <Th align="right">Owed</Th>
+                  <Th align="right">Due</Th>
                   <Th align="right">Actions</Th>
                 </tr>
               </thead>
@@ -839,7 +839,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
         <CollectPaymentSheet
           view={collecting}
           onClose={() => setCollecting(null)}
-          onCollected={() => onToast('Payment recorded.')}
+          onCollected={() => onToast('Payment saved.')}
         />
       )}
     </>

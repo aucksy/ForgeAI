@@ -68,8 +68,8 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
       <Card>
         <EmptyState
           title="Receipt not found"
-          body="This receipt no longer exists. It may have been on a gym you have since erased."
-          action={<Button onClick={() => navigate('/money')}>Back to money</Button>}
+          body="This receipt is not here any more. It may be from a gym you erased."
+          action={<Button onClick={() => navigate('/money')}>Back to Money</Button>}
         />
       </Card>
     );
@@ -170,7 +170,7 @@ function VoidBanner({ reason }: { reason: string | null }) {
     >
       {/* Text, not just a colour: a receipt that prints in mono on a cheap desk
           printer must still say it is void. */}
-      VOID — THIS RECEIPT HAS BEEN CANCELLED
+      CANCELLED — THIS RECEIPT DOES NOT COUNT
       {reason ? (
         <div style={{ fontWeight: 500, letterSpacing: 0, fontSize: 13, marginTop: 2 }}>{reason}</div>
       ) : null}

@@ -153,7 +153,7 @@ export class NotFoundError extends Error {
  */
 export class InvalidDateError extends Error {
   constructor(what: string) {
-    super(`${what} is not a valid date.`);
+    super(`${what} is not a real date.`);
     this.name = 'InvalidDateError';
   }
 }
@@ -187,7 +187,7 @@ export class PartialSaveError extends Error {
     super(
       reason instanceof Error && reason.message
         ? reason.message
-        : 'Saving stopped part-way. Please try again.',
+        : 'Saving stopped halfway. Please try again.',
     );
     this.name = 'PartialSaveError';
   }
@@ -205,7 +205,7 @@ export const LATEST_DATE: DateISO = '2100-12-31';
 export class StorageFullError extends Error {
   constructor() {
     super(
-      'This browser can’t save any more data. Nothing was saved — free up space or switch to the cloud.',
+      'This browser is full. Nothing was saved. Free up space, or put your gym online in Settings.',
     );
     this.name = 'StorageFullError';
   }
@@ -223,8 +223,8 @@ export class FutureSchemaError extends Error {
     public readonly supported: number,
   ) {
     super(
-      (`This gym's data was saved by a newer version of ForgeAI (v${found}; this app reads v${supported}). ` +
-          'Reload to get the latest version — your data is untouched.'),
+      (`This gym was saved by a newer version of ForgeAI (v${found}; this app reads v${supported}). ` +
+          'Reload the page to get the new version. Your data is safe.'),
     );
     this.name = 'FutureSchemaError';
   }

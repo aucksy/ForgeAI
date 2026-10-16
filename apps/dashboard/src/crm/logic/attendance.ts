@@ -508,7 +508,7 @@ export function riskReason(row: { profile: AttendanceProfile; band: RiskBand }):
 
   const absence = `${describeDays(profile.daysSinceVisit)} since their last visit`;
   if (profile.medianGapDays !== null) {
-    return `${absence} — they usually train every ${describeDays(Math.round(profile.medianGapDays))}.`;
+    return `${absence}. They usually train every ${describeDays(Math.round(profile.medianGapDays))}.`;
   }
   return `${absence}.`;
 }

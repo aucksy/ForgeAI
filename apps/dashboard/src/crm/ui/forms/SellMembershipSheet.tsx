@@ -200,7 +200,7 @@ export function SellMembershipSheet({
         {view.coversUntil && (
           <>
             {' · '}
-            {`covered until ${formatDay(view.coversUntil)}`}
+            {`valid till ${formatDay(view.coversUntil)}`}
           </>
         )}
       </div>
@@ -220,7 +220,7 @@ export function SellMembershipSheet({
       {plan && ptPlanLine(plan) && (
         <div style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, overflowWrap: 'anywhere' }}>
           <strong style={{ color: color.accentBright }}>{ptPlanLine(plan)}</strong>
-          {' — runs alongside their gym plan.'}
+          {'. It runs along with their gym plan.'}
         </div>
       )}
 
@@ -237,7 +237,7 @@ export function SellMembershipSheet({
         />
         <div style={{ marginTop: space.md }}>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-            Valid until
+            Valid till
           </div>
           <div
             style={{
@@ -253,7 +253,7 @@ export function SellMembershipSheet({
           </div>
           {endsOn && (
             <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-              {`Last day they can train. Next term starts ${formatDay(addDays(endsOn, 1))}.`}
+              {`Last day they can train. The next plan can start ${formatDay(addDays(endsOn, 1))}.`}
             </div>
           )}
         </div>
@@ -271,8 +271,8 @@ export function SellMembershipSheet({
           placeholder={plan ? formatINR(plan.priceP) : ''}
           hint={
             role === 'staff'
-              ? 'Leave blank for the listed price. The front desk can give at most 10% off.'
-              : 'Leave blank for the listed price. Type a lower number to give a discount.'
+              ? 'Leave blank for the plan price. The front desk can give at most 10% off.'
+              : 'Leave blank for the plan price. Type a lower number to give a discount.'
           }
           error={errorFor('priceP')}
         />
@@ -287,7 +287,7 @@ export function SellMembershipSheet({
           placeholder={formatINR(defaults?.joiningFeeP ?? 0)}
           hint={
             defaults && defaults.joiningFeeP === 0 && (plan?.joiningFeeP ?? 0) > 0
-              ? 'Already paid a joining fee before — not charged again.'
+              ? 'Already paid a joining fee before, so it is not charged again.'
               : 'Charged once, on joining.'
           }
           error={errorFor('joiningFeeP')}
@@ -305,7 +305,7 @@ export function SellMembershipSheet({
       >
         <Row>
           <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary, flex: 1 }}>
-            Total payable
+            Total to pay
           </span>
           <span style={{ fontFamily: font.mono, fontSize: 20, fontWeight: 700, color: color.ink }}>
             {totalP === null ? '—' : formatINR(totalP)}
@@ -321,7 +321,7 @@ export function SellMembershipSheet({
           }}
           inputMode="decimal"
           placeholder="0"
-          hint="Leave blank if they're paying later — it'll show up under dues."
+          hint="Leave blank if they will pay later. It will show in Dues."
           error={errorFor('collectNowP')}
         />
 
@@ -363,7 +363,7 @@ export function SellMembershipSheet({
               fontWeight: 600,
             }}
           >
-            {`Balance due after this: ${formatINR(balanceP)}`}
+            {`Still due after this: ${formatINR(balanceP)}`}
           </div>
         )}
       </div>

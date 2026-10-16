@@ -437,7 +437,7 @@ export class CloudCrmData implements CrmData {
           throw e;
         }
       }
-      throw new Error('Others are saving at the same moment. Please try again.');
+      throw new Error('Someone else is saving at the same time. Please try again.');
     });
   }
 
