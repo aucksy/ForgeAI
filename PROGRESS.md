@@ -2192,6 +2192,32 @@
   - **Tests:** 2,778 vitest pass (69 in the new audit files, each failed before its fix); the 3
     failing source checks (liveCard, offlineTick, v0281) read another helper's uncommitted Kotlin.
     typecheck 0; silent-catch 302 and promise 0 at baseline.
+- 2026-10-16: **End-to-end audit C6 (gym side of the member app) fixed: 14 of 16** (5bbada1,
+  d69284f, 0ba67af, 2895d7f; ships with the next tag). Statuses: Audit/e2e-v2/C6-gym-side.md.
+  - **DB 0020 (`0020_gym_side_retries.sql`) — NOT applied live yet (owner applies).** Green in CI
+    run 38878216376 (`0020_gym_side_retries.sql` RESULT PASS 25 checks; 0015-0019 + security
+    unchanged). Optional new arguments only, so old apps keep working: `member_place_order(...,
+    p_order_id uuid)` returns the member's existing order for a repeated id (C6-1; unique index
+    on member + id; looked up after the gym lock); `member_join(..., p_join_id uuid)` gives back
+    the same member with a new key within a day (C6-6; only a hash kept); `member_check_in` counts
+    one typed number once a day per member and once an hour for the gym (C6-8; md5 tag of gym +
+    number) and sends `checkedInAt: null` for a visit with no real time (C6-12). The 2-argument
+    `member_place_order` and 3-argument `member_join` are dropped (two overloads would make old
+    apps' calls ambiguous). The app retries without the new argument on PGRST202, so a new APK
+    works before 0020 is applied.
+  - App: order id kept (persisted) until confirmed and a lost answer also checks My orders (C6-1);
+    Leave/Erase keep only the member key until the gym confirms (`shop/pendingLeave.ts`), retried
+    in `refreshGymNow` (start + hourly), join card and Erase confirm say so (C6-2); new-price line
+    (C6-3); list age + product page refresh on focus (C6-4); pasted invite link (C6-5); pending
+    links saved 7 days (C6-7); strict invite code (C6-9); badge = orderable count (C6-10);
+    "Join <gym>?" for a typed code (C6-11); no 1970 time (C6-12); emoji-safe tile (C6-13); inbox
+    cleared with a lost key (C6-15); poster join returns to the check-in (C6-16).
+  - Skipped C6-14 (per-card seen + seen marks across re-joins: needs member identity on the
+    server). Kept: the 90-day server purge of idle members' numbers (C6-2, needs a scheduled job)
+    and Leave keeping the public logo in the image cache (Erase already empties it).
+  - **Tests:** 4 new vitest files (32 tests, each failed before its fix); full suite 2,808 pass —
+    the 3 failures (memberWords, unitsCoach, coachNote) read another helper's uncommitted words.ts
+    work. typecheck 0; silent-catch 302 and promise 0 at baseline.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
