@@ -15,7 +15,7 @@ export const BODY_MAX = 300;
 
 /**
  * The types in the order the owner picks from, each with words to start from (edited freely).
- * `label` is a getter so it is read in the panel's language; title/body stay English for now.
+ * `label`, `title` and `body` are getters, read in the panel's language (admin audit C7-31).
  */
 export const MESSAGE_KINDS: readonly { kind: MessageKind; label: string; title: string; body: string }[] = [
   {
@@ -31,39 +31,57 @@ export const MESSAGE_KINDS: readonly { kind: MessageKind; label: string; title: 
     get label() {
       return tr('Gym closed', 'Gym band');
     },
-    title: 'Gym closed on [day]',
-    body: 'The gym is closed on [day] for [reason]. We open again on [day] at [time].',
+    get title() {
+      return tr('Gym closed on [day]', 'Gym [day] ko band rahega');
+    },
+    get body() {
+      return tr('The gym is closed on [day] for [reason]. We open again on [day] at [time].', 'Gym [day] ko [reason] ki wajah se band rahega. [day] ko [time] baje phir khulega.');
+    },
   },
   {
     kind: 'timing',
     get label() {
       return tr('New timings', 'Naya timing');
     },
-    title: 'New gym timings',
-    body: 'From [date], the gym is open [time] to [time]. Sunday: [time] to [time].',
+    get title() {
+      return tr('New gym timings', 'Gym ka naya timing');
+    },
+    get body() {
+      return tr('From [date], the gym is open [time] to [time]. Sunday: [time] to [time].', '[date] se gym [time] se [time] tak khula rahega. Sunday: [time] se [time].');
+    },
   },
   {
     kind: 'offer',
     get label() {
       return tr('Offer', 'Offer');
     },
-    title: 'Offer: [what]',
-    body: '[Offer] till [date]. Ask at the front desk.',
+    get title() {
+      return tr('Offer: [what]', 'Offer: [what]');
+    },
+    get body() {
+      return tr('[Offer] till [date]. Ask at the front desk.', '[Offer] [date] tak. Front desk par poochho.');
+    },
   },
   {
     kind: 'event',
     get label() {
       return tr('Event', 'Event');
     },
-    title: '[Event] on [date]',
-    body: 'Join us for [event] on [date] at [time]. Everyone is welcome.',
+    get title() {
+      return tr('[Event] on [date]', '[Event] [date] ko');
+    },
+    get body() {
+      return tr('Join us for [event] on [date] at [time]. Everyone is welcome.', '[date] ko [time] baje [event] mein aaiye. Sabka swagat hai.');
+    },
   },
   {
     kind: 'reminder',
     get label() {
       return tr('Reminder', 'Yaad dilao');
     },
-    title: 'Reminder: [what]',
+    get title() {
+      return tr('Reminder: [what]', 'Yaad dilana: [what]');
+    },
     body: '',
   },
 ];

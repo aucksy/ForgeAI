@@ -12,6 +12,7 @@
  */
 
 import { buildBrandPalette, normalizeHex, type BrandPalette, type GymBrand, type HeadingStyle } from '@forgeai/theme';
+import { tr } from '../i18n';
 
 export const LOGO_BUCKET = 'gym-logos';
 /** The bucket's own limit (file_size_limit). */
@@ -50,8 +51,8 @@ export function draftFromBrand(b: GymBrand | null | undefined): BrandDraft {
 /** Words under a colour box when it does not hold a colour yet; null when it does. */
 export function hexError(raw: string): string | null {
   if (normalizeHex(raw)) return null;
-  if (!raw.trim()) return 'Pick a colour, or type its code (like #F7D411).';
-  return 'Type a colour code: # and six letters or numbers, like #F7D411.';
+  if (!raw.trim()) return tr('Pick a colour, or type its code (like #F7D411).', 'Rang chuno, ya uska code likho (jaise #F7D411).');
+  return tr('Type a colour code: # and six letters or numbers, like #F7D411.', 'Rang ka code likho: # aur chhe akshar ya number, jaise #F7D411.');
 }
 
 /** The draft is complete enough to preview and save. */
@@ -103,8 +104,8 @@ export function draftChanged(d: BrandDraft, saved: GymBrand | null): boolean {
 
 /** After shrinking: the bucket's own rules, in plain words. */
 export function checkEncodedLogo(b: { type: string; size: number }): string | null {
-  if (!['image/png', 'image/jpeg', 'image/webp'].includes(b.type)) return 'That logo couldn’t be converted. Try a PNG or JPEG picture.';
-  if (b.size > MAX_LOGO_BYTES) return 'That logo is still over 1 MB after shrinking. Try a simpler picture.';
+  if (!['image/png', 'image/jpeg', 'image/webp'].includes(b.type)) return tr('That logo couldn’t be converted. Try a PNG or JPEG picture.', 'Yeh logo badla nahi ja saka. PNG ya JPEG picture try karo.');
+  if (b.size > MAX_LOGO_BYTES) return tr('That logo is still over 1 MB after shrinking. Try a simpler picture.', 'Chhota karne ke baad bhi logo 1 MB se bada hai. Koi saadi picture try karo.');
   return null;
 }
 
@@ -146,16 +147,16 @@ function text(err: unknown): string {
 /** What to tell the owner when Save (or the logo upload) fails. Never a raw database message. */
 export function brandErrorWords(err: unknown): string {
   const msg = text(err);
-  if (/\bBAD_KEY\b/.test(msg)) return 'This demo gym is no longer available. Start a new demo gym.';
-  if (/\bBAD_COLOUR\b/.test(msg)) return 'One of the colours isn’t a colour code. Pick it again.';
-  if (/\bBAD_LOGO\b/.test(msg)) return 'That logo link can’t be used. Upload the logo again from this screen.';
-  if (/\bBAD_HEADING\b/.test(msg)) return 'Pick a heading style again.';
-  if (/\bBUSY\b/.test(msg)) return 'Too many uploads in the last few minutes. Wait a little and try again.';
-  if (/could not find the function|PGRST202/i.test(msg)) return 'Branding isn’t switched on for this server yet. Ask ForgeAI to finish the setup.';
+  if (/\bBAD_KEY\b/.test(msg)) return tr('This demo gym is no longer available. Start a new demo gym.', 'Yeh demo gym ab nahi hai. Naya demo gym shuru karo.');
+  if (/\bBAD_COLOUR\b/.test(msg)) return tr('One of the colours isn’t a colour code. Pick it again.', 'Ek rang sahi code nahi hai. Use phir se chuno.');
+  if (/\bBAD_LOGO\b/.test(msg)) return tr('That logo link can’t be used. Upload the logo again from this screen.', 'Yeh logo link kaam nahi karega. Isi screen se logo phir upload karo.');
+  if (/\bBAD_HEADING\b/.test(msg)) return tr('Pick a heading style again.', 'Heading style phir se chuno.');
+  if (/\bBUSY\b/.test(msg)) return tr('Too many uploads in the last few minutes. Wait a little and try again.', 'Pichhle kuch minute mein bahut upload hue. Thoda ruko aur phir try karo.');
+  if (/could not find the function|PGRST202/i.test(msg)) return tr('Branding isn’t switched on for this server yet. Ask ForgeAI to finish the setup.', 'Is server par branding abhi chalu nahi hai. ForgeAI se setup poora karne ko kaho.');
   if (/failed to fetch|networkerror|network request failed|load failed|fetch failed|timed? ?out/i.test(msg)) {
-    return 'Can’t reach the internet. Check the connection and try again.';
+    return tr('Can’t reach the internet. Check the connection and try again.', 'Internet nahi mil raha. Connection check karo aur phir try karo.');
   }
-  if (/too large|payload|exceeded|size/i.test(msg)) return 'That logo is over 1 MB. Pick a smaller one.';
-  if (/mime|type/i.test(msg)) return 'That kind of file can’t be used. Pick a PNG or JPEG picture.';
-  return 'That didn’t save. Please try again.';
+  if (/too large|payload|exceeded|size/i.test(msg)) return tr('That logo is over 1 MB. Pick a smaller one.', 'Yeh logo 1 MB se bada hai. Chhota logo chuno.');
+  if (/mime|type/i.test(msg)) return tr('That kind of file can’t be used. Pick a PNG or JPEG picture.', 'Is tarah ki file nahi chalegi. PNG ya JPEG picture chuno.');
+  return tr('That didn’t save. Please try again.', 'Save nahi hua. Phir se try karo.');
 }

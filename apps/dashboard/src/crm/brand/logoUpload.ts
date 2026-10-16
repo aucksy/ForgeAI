@@ -9,6 +9,7 @@ import { supabase } from '../../lib/supabase';
 import { photoTicket } from '../shop/api';
 import { checkSourceFile, fitWithin } from '../shop/photo';
 import { brandErrorWords, checkEncodedLogo, LOGO_BUCKET, LOGO_EDGE, logoPath, newLogoName } from './brandLogic';
+import { tr } from '../i18n';
 
 /** A failure whose message is already plain words for the owner. */
 export class LogoError extends Error {}
@@ -33,7 +34,7 @@ async function decode(file: Blob): Promise<{ source: CanvasImageSource; width: n
     const h = img.naturalHeight || LOGO_EDGE;
     return { source: img, width: w, height: h };
   } catch {
-    throw new LogoError('This picture can’t be read here. Save the logo as PNG and try again.');
+    throw new LogoError(tr('This picture can’t be read here. Save the logo as PNG and try again.', 'Yeh picture yahan khul nahi rahi. Logo ko PNG mein save karke phir try karo.'));
   } finally {
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
   }
@@ -46,16 +47,16 @@ export async function shrinkLogo(file: File): Promise<Blob> {
   const pic = await decode(file);
   try {
     const { width, height } = fitWithin(pic.width, pic.height, LOGO_EDGE);
-    if (!width || !height) throw new LogoError('That picture looks empty. Pick another one.');
+    if (!width || !height) throw new LogoError(tr('That picture looks empty. Pick another one.', 'Yeh picture khaali lag rahi hai. Doosri chuno.'));
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext('2d');
-    if (!ctx) throw new LogoError('This browser can’t prepare pictures. Try Chrome.');
+    if (!ctx) throw new LogoError(tr('This browser can’t prepare pictures. Try Chrome.', 'Yeh browser picture taiyaar nahi kar sakta. Chrome try karo.'));
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(pic.source, 0, 0, width, height);
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-    if (!blob) throw new LogoError('That logo couldn’t be converted. Try a PNG or JPEG picture.');
+    if (!blob) throw new LogoError(tr('That logo couldn’t be converted. Try a PNG or JPEG picture.', 'Yeh logo badla nahi ja saka. PNG ya JPEG picture try karo.'));
     const tooBig = checkEncodedLogo(blob);
     if (tooBig) throw new LogoError(tooBig);
     return blob;

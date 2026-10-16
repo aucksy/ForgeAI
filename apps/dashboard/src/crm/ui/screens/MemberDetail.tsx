@@ -22,7 +22,7 @@ import {
   RHYTHM_WINDOW_DAYS,
 } from '../../logic/attendance';
 import { addDays, diffDays, formatDay, relativeDay } from '../../logic/dates';
-import { daysLeftTile, isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
+import { daysLeftTile, historyLine, isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
 import { formatPhone, initials } from '../../logic/members';
 import { memberBatch } from '../../logic/batches';
@@ -992,7 +992,12 @@ function MembershipRow({
             overflowWrap: 'anywhere',
           }}
         >
-          {membership.notes.trim()}
+          {/* C7-32: dates and words as the rest of the page shows them. */}
+          {membership.notes
+            .trim()
+            .split('\n')
+            .map(historyLine)
+            .join('\n')}
         </div>
       )}
       {/* Figures wrap inside their own box; Cancel stays on the same line at the

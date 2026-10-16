@@ -259,6 +259,38 @@ export function buildMemberView(
 
 // ---------------------------------------------------------------- presentation
 
+/** The freeze reasons as they are stored (English, ExtendMembershipSheet) and in Hinglish. */
+const REASON_HI: Record<string, string> = {
+  'Freeze - medical': 'Freeze - bimari',
+  'Freeze - travel': 'Freeze - safar',
+  'Gift - extra days': 'Gift - extra din',
+  'extra days': 'extra din',
+  Freeze: 'Freeze',
+};
+
+/**
+ * One line of a plan's history, as the page shows it (admin audit C7-31 / C7-32, 16 Oct 2026).
+ * The lines are stored in English with raw dates so the record reads the same in either language
+ * ("+7 days (Freeze - medical): 2026-06-04 -> 2026-06-11"); here they get the page's dates and
+ * the panel's language. A line typed by a person is shown as written. PURE.
+ */
+export function historyLine(line: string): string {
+  const ext = /^\+(\d+) days \((.*)\): (\d{4}-\d{2}-\d{2}) -> (\d{4}-\d{2}-\d{2})$/.exec(line.trim());
+  if (ext) {
+    const [, n, reason, from, to] = ext;
+    const hi = REASON_HI[reason!] ?? reason!.replace(/^Freeze - /, 'Freeze - ');
+    return tr(
+      `+${n} days (${reason}): ${formatDay(from!)} → ${formatDay(to!)}`,
+      `+${n} din (${hi}): ${formatDay(from!)} → ${formatDay(to!)}`,
+    );
+  }
+  const cancelled = /^Cancelled: (.*)$/.exec(line.trim());
+  if (cancelled) return tr(`Cancelled: ${cancelled[1]}`, `Cancel kiya: ${cancelled[1]}`);
+  if (line.trim() === 'Cancellation reversed.') return tr('Cancellation reversed.', 'Cancel wapas liya.');
+  if (line.trim() === 'Imported from Excel') return tr('Imported from Excel', 'Excel se aaya');
+  return line;
+}
+
 /**
  * The member page's "Days left" tile (admin audit C7-33, 16 Oct 2026). A plan that has not started
  * showed "Days left 34" (the days to its END) beside "No live membership"; it now says how soon it

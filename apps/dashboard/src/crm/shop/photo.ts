@@ -12,6 +12,8 @@
  * pointless on a product tile.
  */
 
+import { tr } from '../i18n';
+
 export const PHOTO_BUCKET = 'product-photos';
 /** The bucket's own limit (file_size_limit). */
 export const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
@@ -29,18 +31,18 @@ const NAME_RE = /^[A-Za-z0-9._-]{1,80}$/;
 export function checkSourceFile(f: { type: string; size: number; name?: string }): string | null {
   const type = (f.type || '').toLowerCase();
   const byName = /\.(jpe?g|png|webp|gif|bmp|heic|heif|avif)$/i.test(f.name ?? '');
-  if (!type.startsWith('image/') && !byName) return 'That file isn’t a photo. Pick a JPEG or PNG picture.';
-  if (f.size <= 0) return 'That file is empty. Pick another photo.';
-  if (f.size > MAX_SOURCE_BYTES) return 'That photo is too big to use (over 40 MB). Pick a smaller one.';
+  if (!type.startsWith('image/') && !byName) return tr('That file isn’t a photo. Pick a JPEG or PNG picture.', 'Yeh file photo nahi hai. JPEG ya PNG picture chuno.');
+  if (f.size <= 0) return tr('That file is empty. Pick another photo.', 'Yeh file khaali hai. Doosri photo chuno.');
+  if (f.size > MAX_SOURCE_BYTES) return tr('That photo is too big to use (over 40 MB). Pick a smaller one.', 'Yeh photo bahut badi hai (40 MB se zyada). Chhoti photo chuno.');
   return null;
 }
 
 /** After shrinking: the bucket's own rules. */
 export function checkEncodedPhoto(b: { type: string; size: number }): string | null {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(b.type)) {
-    return 'That photo couldn’t be converted. Try a JPEG or PNG picture.';
+    return tr('That photo couldn’t be converted. Try a JPEG or PNG picture.', 'Yeh photo badli nahi ja saki. JPEG ya PNG picture try karo.');
   }
-  if (b.size > MAX_PHOTO_BYTES) return 'That photo is still over 3 MB after shrinking. Pick a simpler one.';
+  if (b.size > MAX_PHOTO_BYTES) return tr('That photo is still over 3 MB after shrinking. Pick a simpler one.', 'Chhota karne ke baad bhi photo 3 MB se badi hai. Koi saadi photo chuno.');
   return null;
 }
 
@@ -84,11 +86,11 @@ export function uploadErrorWords(err: unknown): string {
         ? String((err as { message: unknown }).message)
         : String(err ?? '');
   if (/failed to fetch|network|load failed|timed? ?out/i.test(msg)) {
-    return 'Can’t reach the internet, so the photo didn’t upload. Check the connection and try again.';
+    return tr('Can’t reach the internet, so the photo didn’t upload. Check the connection and try again.', 'Internet nahi mil raha, isliye photo upload nahi hui. Connection check karo aur phir try karo.');
   }
-  if (/too large|payload|exceeded|size/i.test(msg)) return 'That photo is over 3 MB. Pick a smaller one.';
-  if (/mime|type/i.test(msg)) return 'That kind of file can’t be used. Pick a JPEG or PNG picture.';
-  if (/\bBUSY\b/.test(msg)) return 'Too many photo uploads in the last few minutes. Wait a little and try again.';
-  if (/\bBAD_KEY\b/.test(msg)) return 'This demo gym is no longer available. Start a new demo gym.';
-  return 'The photo didn’t upload. Please try again.';
+  if (/too large|payload|exceeded|size/i.test(msg)) return tr('That photo is over 3 MB. Pick a smaller one.', 'Yeh photo 3 MB se badi hai. Chhoti photo chuno.');
+  if (/mime|type/i.test(msg)) return tr('That kind of file can’t be used. Pick a JPEG or PNG picture.', 'Is tarah ki file nahi chalegi. JPEG ya PNG picture chuno.');
+  if (/\bBUSY\b/.test(msg)) return tr('Too many photo uploads in the last few minutes. Wait a little and try again.', 'Pichhle kuch minute mein bahut photo upload hui. Thoda ruko aur phir try karo.');
+  if (/\bBAD_KEY\b/.test(msg)) return tr('This demo gym is no longer available. Start a new demo gym.', 'Yeh demo gym ab nahi hai. Naya demo gym shuru karo.');
+  return tr('The photo didn’t upload. Please try again.', 'Photo upload nahi hui. Phir se try karo.');
 }
