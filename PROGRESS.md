@@ -1855,6 +1855,29 @@
     bell) needs native — forge-rest must report Do Not Disturb to JS.
   - **Tests:** 2,702 vitest green (auditC1LiveWorkout 18, auditC2Numbers 13, each failed before its
     fix); typecheck 0; silent-catch and promise ratchets at baseline.
+- 2026-10-16: **End-to-end audit C7 (admin app) fixed: 44 of 45** (1d44899, 62945f0, a11e32d, 131e15a,
+  57b7b33, 32f6f7f, aef56e8, 3918a08, efeceba, 9e873f3, a334deb; panel NOT deployed). Statuses:
+  Audit/e2e-v2/C7-admin-app.md.
+  - Money: a fee pressed again after "no internet" is saved once (C7-1: each sheet press has a
+    requestId kept on the record; the push id only de-duplicates the same push). Imported members
+    are not charged the joining fee again; a cancelled unpaid plan's fee is charged on the right one.
+    No plan on top of one paid ahead. Wrong GSTIN / blank gym name refused. Profit counts shop
+    orders handed over. Receipts carry who took them (Money: "Taken by", filter, Excel column).
+  - Front desk: at most 10% off the plan price, joining fee as listed for a new member (owner:
+    anything). Panel says so; server 0019 enforces it and stamps who took the money.
+  - Import: Rs. 1,500/- style fees, Total/Paid/Due Fees, Joining Fee and Member ID columns,
+    family mobiles, gym vs PT on the same dates, running "paid so far", split files, hand-typed
+    duplicates, US dates, discounts, undatable plans, newest-first lists, UTF-16 files, old .xls
+    birthdays; imported receipts get an IMP/ series; Undo keeps edited members and voided receipts.
+  - Screens: every sheet fits 390 px (overlay column minmax(0,1fr)); typing keeps focus on redraws
+    (Sheet onClose in a ref — the root cause, verified live across the 30 s shop tick); cancel
+    busy/one save; Starts in N days; Cash default; "Kis din mile" on sale; above-price asks once;
+    Hinglish for branding/photo/save/message words and plan history.
+  - Skipped: C7-34 (two members on one mobile) — owner decision, touches QR check-in and app links.
+  - **DB:** supabase/migrations/0019_staff_discount_and_taker.sql + tests/0019 (RESULT PASS 20 checks,
+    CI run 38871969094); the 0018 test's desk discount moved to 10%. **Not applied live.**
+  - **Tests:** panel 802 vitest green (67 in auditC7*/sheet tests, each failed before its fix);
+    tsc -b 0; panel silent catches and promise ratchet at baseline.
 - 2026-10-15: **v0.44.0 — owner's gym-test fixes: RPE one-tap sheet; the rest sound never changes**
   (34db130 + this commit). Owner testing in the gym ("Keep adding the improvements I send in the plan").
   - RPE: the RPE cell opens its own sheet (RpeSheet.tsx): 10 -> 6 with meanings, ONE tap saves and
