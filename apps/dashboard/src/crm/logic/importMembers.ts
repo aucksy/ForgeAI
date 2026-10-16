@@ -603,13 +603,23 @@ export function decodeCsvBytes(bytes: Uint8Array): string {
   }
 }
 
-export type FileKind = 'xlsx' | 'csv' | 'xls' | 'unknown';
+export type FileKind = 'xlsx' | 'csv' | 'xls' | 'html' | 'unknown';
 
 /** What kind of file this really is: by its first bytes first, by its name second. */
+/** Does this file's start look like a web page (after a BOM and spaces)? */
+export function looksLikeHtml(head: Uint8Array): boolean {
+  let i = 0;
+  if (head[0] === 0xef && head[1] === 0xbb && head[2] === 0xbf) i = 3;
+  while (i < head.length && (head[i] === 0x20 || head[i] === 0x09 || head[i] === 0x0a || head[i] === 0x0d)) i += 1;
+  return head[i] === 0x3c; // "<"
+}
+
 export function sniffFile(name: string, head: Uint8Array): FileKind {
   if (head[0] === 0x50 && head[1] === 0x4b && head[2] === 0x03 && head[3] === 0x04) return 'xlsx';
   if (head[0] === 0xd0 && head[1] === 0xcf && head[2] === 0x11 && head[3] === 0xe0) return 'xls';
   const ext = name.toLowerCase().split('.').pop() ?? '';
+  // 16 Oct 2026: some gym software saves a web page (an HTML table) and names it .xls.
+  if ((ext === 'xls' || ext === 'htm' || ext === 'html') && looksLikeHtml(head)) return 'html';
   // Some gym software saves a tab-separated text file and names it .xls.
   if (ext === 'csv' || ext === 'txt' || ext === 'tsv' || ext === 'xls') return 'csv';
   return 'unknown';

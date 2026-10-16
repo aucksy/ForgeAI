@@ -18,7 +18,6 @@ import { csvFilename } from '../../logic/csv';
 import {
   cellText,
   columnLetter,
-  decodeCsvBytes,
   emptyColumnMap,
   englishSkipReasons,
   fieldLabel,
@@ -28,13 +27,11 @@ import {
   guessFromValues,
   IMPORT_FIELDS,
   MAX_IMPORT_ROWS,
-  parseCsv,
   planImport,
   rowVerdict,
   saveInBatches,
   skippedRowsCsv,
   skipReason,
-  sniffFile,
   templateCsv,
   type Cell,
   type ColumnMap,
@@ -47,6 +44,7 @@ import { useCrm } from '../../store';
 import { useRole } from '../../auth/AuthProvider';
 import type { ImportTermsResult } from '../../data/adapter';
 import { pastImports, planUndo } from '../../logic/undoImport';
+import { bestSheet, readSheets, usableSheets, type SheetRows } from '../../logic/sheets';
 import { formatINR } from '../../logic/money';
 import { downloadCsv } from '../download';
 import { Button, Card, ChipToggle, ErrorBanner, Grid, PageHeader, Row, SectionTitle, SelectField, color, font, radius, space } from '../kit';
@@ -63,6 +61,9 @@ type Filter = 'all' | RowStatus;
 interface Loaded {
   name: string;
   rows: Cell[][];
+  /** 16 Oct 2026: every usable sheet in the file, and the one shown. */
+  sheets: SheetRows[];
+  sheet: number;
 }
 
 interface Result {
@@ -126,36 +127,30 @@ export function ImportMembersScreen() {
     setStage('reading');
     // A big .xlsx takes seconds to read and the page cannot draw meanwhile: show "Reading the file…" first.
     await letThePagePaint();
-    let rows: Cell[][];
+    let all: SheetRows[];
     try {
-      const buffer = await f.arrayBuffer();
-      const bytes = new Uint8Array(buffer);
-      const kind = sniffFile(f.name, bytes.subarray(0, 8));
-      if (kind === 'xls') {
-        return fail(tr('This is an old .xls file. Open it in Excel, choose Save As → Excel Workbook (.xlsx) or CSV, and pick that file.', 'Yeh purani .xls file hai. Excel mein kholo, Save As → Excel Workbook (.xlsx) ya CSV chuno, phir woh file yahan chuno.'));
+      const read = await readSheets(f.name, await f.arrayBuffer(), letThePagePaint);
+      if (read === 'unknown') {
+        return fail(tr('That is not an Excel or CSV file. Pick a .xlsx, .xls or .csv file.', 'Yeh Excel ya CSV file nahi hai. .xlsx, .xls ya .csv file chuno.'));
       }
-      if (kind === 'unknown') {
-        return fail(tr('That is not an Excel or CSV file. Pick a .xlsx or .csv file.', 'Yeh Excel ya CSV file nahi hai. .xlsx ya .csv file chuno.'));
-      }
-      if (kind === 'csv') {
-        rows = parseCsv(decodeCsvBytes(bytes));
-      } else {
-        // Loaded only now, so the panel's first load stays small.
-        const { readSheet } = await import('read-excel-file/universal');
-        await letThePagePaint();
-        rows = (await readSheet(buffer)) as unknown as Cell[][];
-      }
+      all = read;
     } catch (e) {
       return fail(tr('We couldn’t read that file. Open it in Excel, save it again as .xlsx or CSV, and try once more.', 'File padh nahi paaye. Excel mein kholo, .xlsx ya CSV mein phir save karo, aur dobara try karo.'), e);
     }
-    const filled = rows.filter((r) => r.some((c) => cellText(c) !== ''));
-    if (filled.length < 2) {
+    const sheets = usableSheets(all);
+    if (sheets.length === 0) {
       return fail(tr('That file has no member rows — it needs a row of column names and one row per member.', 'Is file mein members nahi hain — ek row mein column ke naam aur har member ki ek row chahiye.'));
     }
     // Checking every row comes next (the list below): let the page draw once more first.
     await letThePagePaint();
+    openSheet({ name: f.name, rows: [], sheets, sheet: 0 }, bestSheet(sheets));
+  };
+
+  /** Show one sheet of the file: its header row and column guesses start again. */
+  const openSheet = (loaded: Loaded, i: number) => {
+    const rows = loaded.sheets[i]?.rows ?? [];
     const h = findHeaderRow(rows);
-    setFile({ name: f.name, rows });
+    setFile({ ...loaded, rows, sheet: i });
     setHeaderRow(h);
     setMap(guessFromValues(rows, h, guessColumns(rows[h] ?? []), today));
     setFilter('all');
@@ -309,8 +304,8 @@ export function ImportMembersScreen() {
             </li>
             <li>
               {tr(
-                'Works with .xlsx and .csv. Dates like 15/08/2026 are fine.',
-                '.xlsx aur .csv dono chalti hain. 15/08/2026 jaisi date theek hai.',
+                'Works with .xlsx, old .xls and .csv, and files with several sheets. Dates like 15/08/2026 are fine.',
+                '.xlsx, purani .xls aur .csv sab chalti hain, kai sheet wali file bhi. 15/08/2026 jaisi date theek hai.',
               )}
             </li>
             <li>
@@ -342,10 +337,21 @@ export function ImportMembersScreen() {
             <SectionTitle>{tr('Which column is which', 'Kaunsa column kya hai')}</SectionTitle>
             <p style={muted}>
               {tr(
-                `${file.name}. We guessed from the column names — change any that are wrong.`,
-                `${file.name}. Column ke naam se andaaza lagaya hai — jo galat ho use badlo.`,
+                `${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}" (it has the most mobile numbers)` : ''}. We guessed from the column names — change any that are wrong.`,
+                `${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}" (isme sabse zyada mobile number hain)` : ''}. Column ke naam se andaaza lagaya hai — jo galat ho use badlo.`,
               )}
             </p>
+            {file.sheets.length > 1 && (
+              <SelectField
+                label={tr('Sheet', 'Sheet')}
+                value={String(file.sheet)}
+                onChange={(v) => openSheet(file, Number(v))}
+                options={file.sheets.map((sh, i) => ({
+                  value: String(i),
+                  label: `${sh.name} (${tr(`${sh.rows.length} rows`, `${sh.rows.length} rows`)})`,
+                }))}
+              />
+            )}
             <SelectField
               label={tr('Column names are on row', 'Column ke naam is row mein hain')}
               value={String(headerRow)}
