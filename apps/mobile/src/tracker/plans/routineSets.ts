@@ -129,6 +129,27 @@ export function withWarmups(sets: readonly PlanSet[], n: number): PlanSet[] {
   return [...warm, ...rest.map((s) => ({ ...s }))];
 }
 
+/**
+ * 16 Oct 2026 audit (C3-23): what the routine editor's Sets stepper saves. A row with a set list
+ * gets that list resized (warm-ups and drops kept), so a later Warm-ups change builds on the new
+ * count; a plain row keeps a plain count. A count alone left the old list behind, and the next
+ * Warm-ups change put the old number of sets back. PURE.
+ */
+export function setsPatchFor(pe: { targetSets: number; sets?: readonly PlanSet[] | null }, n: number): { sets?: PlanSet[]; targetSets?: number } {
+  if (pe.sets && pe.sets.length > 0) return { sets: resizeWorking(pe.sets, n) };
+  return { targetSets: Math.max(1, Math.min(MAX_ROUTINE_SETS, Math.round(n))) };
+}
+
+/**
+ * C3-23: what the Warm-ups stepper saves — the row's sets at the count it SHOWS (`targetSets`),
+ * with `n` warm-ups in front. PURE.
+ */
+export function warmupsPatchFor(pe: { targetSets: number; sets?: readonly PlanSet[] | null }, n: number): { sets: PlanSet[] } {
+  const now = setsOf(pe);
+  const sized = workingCount(now) === pe.targetSets ? now : resizeWorking(now, pe.targetSets);
+  return { sets: withWarmups(sized, n) };
+}
+
 /** Only the types, in order — what a workout's rows say about the plan. */
 export function typesOf(sets: readonly PlanSet[]): PlanSetType[] {
   return sets.map((s) => s.type);

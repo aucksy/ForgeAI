@@ -8,7 +8,7 @@
  */
 import { countWord } from '@/lib/words';
 
-import { MY_ROUTINES } from '../db/folderRepo';
+import { MY_ROUTINES, OTHER_ROUTINES } from '../db/folderRepo';
 
 export interface FolderChoice {
   /** null = "My routines" (made when the member has none yet). */
@@ -20,10 +20,19 @@ export interface FolderChoice {
 
 /** The choices, in order: "My routines" first, the member's other folders, the followed plan last. */
 export function folderChoices(folders: readonly { id: string; name: string; following: boolean; routines: readonly unknown[] }[]): FolderChoice[] {
-  const isMine = (name: string) => name.trim().toLowerCase() === MY_ROUTINES.toLowerCase();
-  const mine = folders.find((f) => !f.following && isMine(f.name));
+  const named = (n: string) => (name: string) => name.trim().toLowerCase() === n.toLowerCase();
+  const isMine = named(MY_ROUTINES);
+  // 16 Oct 2026 audit (C3-30): when the followed plan is itself an older "My Routines", new
+  // routines go to "Other routines" (`myRoutinesFolderIdUnqueued`): the choice says so.
+  const label = folders.some((f) => f.following && isMine(f.name)) ? OTHER_ROUTINES : MY_ROUTINES;
+  const mine = folders.find((f) => !f.following && isMine(f.name)) ?? folders.find((f) => !f.following && named(label)(f.name));
   const out: FolderChoice[] = [
-    { folderId: mine?.id ?? null, label: MY_ROUTINES, value: mine ? `Not in your plan · ${countWord(mine.routines.length, 'routine')}` : 'Not in your plan', following: false },
+    {
+      folderId: mine?.id ?? null,
+      label: mine?.name ?? label,
+      value: mine ? `Not in your plan · ${countWord(mine.routines.length, 'routine')}` : 'Not in your plan',
+      following: false,
+    },
   ];
   for (const f of folders) {
     if (f.following || f.id === mine?.id) continue;

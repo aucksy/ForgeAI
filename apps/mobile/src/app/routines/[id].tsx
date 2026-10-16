@@ -44,7 +44,7 @@ import { exerciseIdsForKeys, folderOfRoutine, listFolders, moveRoutine, type Fol
 import {
   ROUTINE_DAY_TYPES,
   deleteRoutine,
-  duplicateRoutine,
+  duplicateRoutineTo,
   getRoutine,
   removeRoutineExercise,
   reorderRoutineExercises,
@@ -63,7 +63,8 @@ import {
   USUAL_MAX_REPS,
   USUAL_MAX_SETS,
   setsOf,
-  withWarmups,
+  setsPatchFor,
+  warmupsPatchFor,
 } from '@/tracker/plans/routineSets';
 import { DEFAULT_REST_SEC, fmtRest } from '@/tracker/services/restRules';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
@@ -214,9 +215,10 @@ export default function RoutineEditorScreen() {
 
   const patchExercise = (peId: string, patch: RoutineExercisePatch): void => {
     if (!routine) return;
-    setRoutine({
-      ...routine,
-      exercises: routine.exercises.map((pe) => {
+    // C3-23: built from the LATEST state, so two quick changes never undo each other.
+    setRoutine((cur) => cur && {
+      ...cur,
+      exercises: cur.exercises.map((pe) => {
         if (pe.id !== peId) return pe;
         const next = { ...pe };
         if (patch.sets !== undefined) {
@@ -318,7 +320,9 @@ export default function RoutineEditorScreen() {
     setDupTo(null);
     commitName();
     setTimeout(() => {
-      void duplicateRoutine(id, folderId)
+      // C3-24: "My routines" (null when he has none yet) is that folder, made now — never the
+      // routine's own folder.
+      void duplicateRoutineTo(id, folderId)
         .then((newId) => router.replace(`/routines/${newId}`))
         .catch(() => void tell('Duplicate failed', 'Could not duplicate this routine. Please try again.'));
     }, 260);
@@ -570,7 +574,7 @@ export default function RoutineEditorScreen() {
                     <Stepper
                       label="Sets"
                       value={pe.targetSets}
-                      onChange={(v) => void patchCounted(pe.id, 'sets', pe.targetSets, clamp(v, 1, MAX_ROUTINE_SETS), { targetSets: clamp(v, 1, MAX_ROUTINE_SETS) })}
+                      onChange={(v) => void patchCounted(pe.id, 'sets', pe.targetSets, clamp(v, 1, MAX_ROUTINE_SETS), setsPatchFor(pe, clamp(v, 1, MAX_ROUTINE_SETS)))}
                       min={1}
                       max={MAX_ROUTINE_SETS}
                     />
@@ -631,7 +635,7 @@ export default function RoutineEditorScreen() {
                     <Stepper
                       label="Warm-up sets"
                       value={setsOf(pe).filter((x) => x.type === 'warmup').length}
-                      onChange={(v) => patchExercise(pe.id, { sets: withWarmups(setsOf(pe), clamp(v, 0, 10)) })}
+                      onChange={(v) => patchExercise(pe.id, warmupsPatchFor(pe, clamp(v, 0, 10)))}
                       min={0}
                       max={10}
                     />

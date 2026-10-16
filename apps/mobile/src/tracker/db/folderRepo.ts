@@ -395,6 +395,8 @@ export async function reorderFolders(orderedIds: readonly string[]): Promise<voi
 
 /** The name of the folder new routines go to when the member does not pick one. */
 export const MY_ROUTINES = 'My routines';
+/** Where new routines go when the followed plan is itself an older "My Routines". */
+export const OTHER_ROUTINES = 'Other routines';
 const isMyRoutines = (name: string): boolean => name.trim().toLowerCase() === MY_ROUTINES.toLowerCase();
 
 /**
@@ -411,7 +413,7 @@ export async function myRoutinesFolderIdUnqueued(): Promise<string> {
   if (hit) return hit.id;
   // A plan made by an older "New routine" is itself called "My Routines": the new folder must
   // not look like the same one.
-  const name = rows.some((r) => r.is_active === 1 && isMyRoutines(r.name)) ? 'Other routines' : MY_ROUTINES;
+  const name = rows.some((r) => r.is_active === 1 && isMyRoutines(r.name)) ? OTHER_ROUTINES : MY_ROUTINES;
   const same = rows.find((r) => r.is_active !== 1 && r.name.trim().toLowerCase() === name.toLowerCase());
   if (same) return same.id;
   const id = uuid();

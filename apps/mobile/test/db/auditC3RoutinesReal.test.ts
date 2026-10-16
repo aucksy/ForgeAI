@@ -110,3 +110,17 @@ describe('C3-11: Home and the coach read each card of a lift listed twice on its
     expect(tw.targets[1].last?.weightKg).toBe(80);
   });
 });
+
+describe('C3-24: "Duplicate to My routines" lands in My routines', () => {
+  it('no My routines folder yet: the copy goes to a new My routines, not next to the original', async () => {
+    const { createFolderWithRoutines } = await import('@/tracker/db/folderRepo');
+    const bench = db.all<{ id: string }>("SELECT id FROM exercises WHERE name = 'Barbell Bench Press'")[0].id;
+    const gym = await createFolderWithRoutines('Gym A', [{ name: 'Push A', dayType: 'push', exercises: [{ exerciseId: bench, sets: 3, repMin: 6, repMax: 8 }] }]);
+    const day = db.all<{ id: string }>("SELECT id FROM plan_days WHERE name = 'Push A'")[0].id;
+    const { duplicateRoutineTo } = await import('@/tracker/db/routineRepo');
+    const copy = await duplicateRoutineTo(day, null);
+    const where = db.all<{ name: string; id: string }>('SELECT wp.name, wp.id FROM plan_days pd JOIN workout_plans wp ON wp.id = pd.plan_id WHERE pd.id = ?', [copy])[0];
+    expect(where.id).not.toBe(gym);
+    expect(where.name).toBe('My routines');
+  });
+});

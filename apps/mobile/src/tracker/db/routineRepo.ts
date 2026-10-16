@@ -157,6 +157,15 @@ export function duplicateRoutine(dayId: string, folderId?: string | null): Promi
   return serialize(() => duplicateRoutineUnqueued(dayId, folderId ?? null));
 }
 
+/**
+ * 16 Oct 2026 audit (C3-24): the duplicate picker's choice — a folder, or null for "My routines"
+ * (made when he has none yet). `duplicateRoutine` reads null as "the routine's own folder", so
+ * the copy landed next to the original.
+ */
+export function duplicateRoutineTo(dayId: string, folderId: string | null): Promise<string> {
+  return serialize(async () => duplicateRoutineUnqueued(dayId, folderId ?? (await myRoutinesFolderIdUnqueued())));
+}
+
 async function duplicateRoutineUnqueued(dayId: string, folderId: string | null): Promise<string> {
   const db = getDb();
   const day = await db.getFirstAsync<{ day_type: string; name: string; plan_id: string; is_active: number }>(

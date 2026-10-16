@@ -88,3 +88,33 @@ describe('C3-5: one top set plus back-offs', () => {
     ]);
   });
 });
+
+describe('C3-23: editing Sets, then Warm-ups, keeps the Sets change', () => {
+  it('a row with a set list: 3 → 4 sets, then 2 warm-ups → 2 warm-ups and 4 working sets', async () => {
+    const { setsPatchFor, warmupsPatchFor, workingCount } = await import('@/tracker/plans/routineSets');
+    let pe: { targetSets: number; sets: import('@/tracker/plans/routineSets').PlanSet[] | null } = {
+      targetSets: 3,
+      sets: [{ type: 'normal' }, { type: 'normal' }, { type: 'normal' }, { type: 'drop' }],
+    };
+    const p1 = setsPatchFor(pe, 4);
+    pe = { targetSets: 4, sets: p1.sets ?? pe.sets };
+    const p2 = warmupsPatchFor(pe, 2);
+    expect(p2.sets!.filter((s) => s.type === 'warmup')).toHaveLength(2);
+    expect(workingCount(p2.sets!)).toBe(4);
+  });
+
+  it('a plain row (no set list) keeps a plain count, and warm-ups follow the count shown', async () => {
+    const { setsPatchFor, warmupsPatchFor, workingCount } = await import('@/tracker/plans/routineSets');
+    expect(setsPatchFor({ targetSets: 3, sets: null }, 5)).toEqual({ targetSets: 5 });
+    const p = warmupsPatchFor({ targetSets: 5, sets: null }, 1);
+    expect(workingCount(p.sets!)).toBe(5);
+  });
+});
+
+describe('C3-24 / C3-30: the folder picker', () => {
+  it('"My routines" with no such folder yet still names where the copy goes; an older plan named My Routines → "Other routines"', async () => {
+    const { folderChoices } = await import('@/tracker/services/folderChoice');
+    const choices = folderChoices([{ id: 'p', name: 'My Routines', following: true, routines: [] }]);
+    expect(choices[0].label).toBe('Other routines');
+  });
+});
