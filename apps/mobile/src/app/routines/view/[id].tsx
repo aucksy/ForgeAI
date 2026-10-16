@@ -20,6 +20,7 @@ import { getTrackerExercisesByIds } from '@/tracker/db/exerciseInfo';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { hasReps, type LogType } from '@/tracker/engine/logTypes';
 import { rangeForRow, type RepRangeChoice } from '@/tracker/engine/repRanges';
+import { plannedWeightKg } from '@/tracker/engine/weightLadder';
 import { setsOf, setsSummary } from '@/tracker/plans/routineSets';
 import { dayTypeLabel } from '@/tracker/services/finishSummary';
 import { fmtRest } from '@/tracker/services/restRules';
@@ -42,6 +43,8 @@ function setsLine(pe: RoutineExercise, logType: LogType, choice: RepRangeChoice)
 }
 
 function targetsLine(pe: RoutineExercise): string | null {
+  // C3-27: a planned weight reads on this unit's plates (a lb routine shown in kg: 60, not 61.2).
+  const w = (kg: number): string => showWU(plannedWeightKg(kg, pe.exercise.equipment));
   const t = (pe.sets ?? []).filter((s) => s.type !== 'warmup' && (s.reps != null || s.weightKg != null || s.durationSec != null));
   if (t.length === 0) return null;
   // Audit IM-12: a timed set copied from Hevy shows its time ("60 s", "1 min 30 s").
@@ -50,12 +53,12 @@ function targetsLine(pe: RoutineExercise): string | null {
     .map((s) =>
       s.durationSec != null
         ? s.weightKg != null
-          ? `${showWU(s.weightKg)} × ${time(s.durationSec)}`
+          ? `${w(s.weightKg)} × ${time(s.durationSec)}`
           : time(s.durationSec)
         : s.weightKg != null && s.reps != null
-          ? `${showWU(s.weightKg)} × ${s.reps}`
+          ? `${w(s.weightKg)} × ${s.reps}`
           : s.weightKg != null
-            ? showWU(s.weightKg)
+            ? w(s.weightKg)
             : `${s.reps} reps`,
     )
     .join(', ');

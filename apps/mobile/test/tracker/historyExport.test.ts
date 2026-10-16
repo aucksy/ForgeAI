@@ -220,14 +220,15 @@ describe('Save my history: a Hevy CSV the app reads back (real SQLite)', () => {
     const { a, b, csv } = await saveAndReimport('imperial');
     expect(csv.split('\n')[0]).toContain('"weight_lbs"');
     expect(csv.split('\n')[0]).toContain('"distance_miles"');
-    expect(csv).toContain('"181.88"'); // 82.5 kg
+    // 16 Oct 2026 audit (C4-6): 6 decimals, so a re-import gives the same kilos (was "181.88").
+    expect(csv).toContain('"181.881366"'); // 82.5 kg
     for (let i = 0; i < a.length; i++) {
       expect(b[i].start).toBe(a[i].start);
       expect(b[i].sets).toHaveLength(a[i].sets.length);
       a[i].sets.forEach((s, k) => {
         const t = b[i].sets[k];
         expect({ ...t, weight: 0, dist: 0 }).toEqual({ ...s, weight: 0, dist: 0 });
-        expect(Math.abs(t.weight - s.weight)).toBeLessThan(0.01 * KG_PER_LB); // within 0.01 lb
+        expect(Math.abs(t.weight - s.weight)).toBeLessThan(1e-6); // C4-6: the same kilos (the app's "same weight")
         expect(Math.abs((t.dist ?? 0) - (s.dist ?? 0))).toBeLessThanOrEqual(0.1);
       });
     }

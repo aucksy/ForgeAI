@@ -337,3 +337,14 @@ export function sameRungKg(wKg: number, l: Ladder): number {
   // A clean number in this unit is kept exactly (no 61.2349 → 61.235 drift).
   return Math.abs(r - kgToUnit(wKg, l.units)) < 1e-6 ? wKg : unitToKg(r, l.units);
 }
+
+/**
+ * 16 Oct 2026 audit (C3-27): a routine's planned weight (kg) as the routine page prints it — on
+ * this unit's plates, as the Target does (135 lb planned reads "60 kg", never "61.2 kg"). PURE but
+ * for the member's units.
+ */
+export function plannedWeightKg(kg: number, equipment: Exercise['equipment'] | undefined, u: UnitSystem = displayUnits()): number {
+  if (!Number.isFinite(kg) || kg === 0) return kg;
+  const sign = kg < 0 ? -1 : 1;
+  return sign * unitToKg(cleanRung(kgToUnit(Math.abs(kg), u), ladderKind(equipment), u), u);
+}

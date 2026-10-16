@@ -97,7 +97,9 @@ export function warmupWeightKg(lastWarmKg: number, newWorkKg: number, w: WarmSca
   if (w.gym) v = gymFloorKg(raw, w.gym);
   else if (w.stepKg > 0) v = Math.floor(raw / w.stepKg + 1e-9) * w.stepKg;
   else v = raw;
-  if (w.barKg != null) v = Math.max(v, w.barKg);
+  // 16 Oct 2026 audit (C3-16): never under the empty bar — unless last time's warm-up already was
+  // (an EZ bar, a skull crusher): then never under last time's own warm-up.
+  if (w.barKg != null) v = Math.max(v, Math.min(w.barKg, lastWarmKg));
   v = Math.min(v, newWorkKg);
   return Math.round(v * 1e6) / 1e6;
 }

@@ -236,3 +236,39 @@ describe('C3-19: the first plank workout with a short last hold', () => {
     expect(t.holdSec).toBeGreaterThanOrEqual(60);
   });
 });
+
+describe('C3-15: "Add warm-up sets" never goes under the empty bar, and uses the gym\'s plates', () => {
+  it('bench 40 kg: no 15 kg warm-up; 95 lb: no 40 lb', async () => {
+    const { computeWarmups } = await import('@/tracker/services/warmupMath');
+    const kg = computeWarmups(40, 2.5, undefined, { barKg: 20 }).map((w) => w.weightKg);
+    expect(Math.min(...kg)).toBeGreaterThanOrEqual(20);
+    expect(new Set(kg).size).toBe(kg.length);
+    setDisplayUnits('imperial');
+    const lb = computeWarmups(95 * KG_PER_LB, 2.5, undefined, { barKg: 45 * KG_PER_LB }).map((w) => w.weightKg / KG_PER_LB);
+    expect(Math.min(...lb)).toBeGreaterThanOrEqual(45 - 1e-6);
+  });
+
+  it('no 1.25 kg plates: every warm-up for 60 kg is loadable (never 47.5)', async () => {
+    const { computeWarmups } = await import('@/tracker/services/warmupMath');
+    const gym = { barKg: 20, platesKg: [25, 20, 15, 10, 5, 2.5] };
+    const kg = computeWarmups(60, 2.5, undefined, { barKg: 20, gym }).map((w) => w.weightKg);
+    for (const w of kg) expect(((w - 20) / 5) % 1).toBe(0);
+  });
+});
+
+describe('C3-16: an EZ-bar warm-up lighter than the 20 kg bar stays light', () => {
+  it('last warm-up 12.5 kg for 25 kg, Target 27.5: warm-up about 12.5, never 20', async () => {
+    const { warmupWeightKg } = await import('@/tracker/engine/progression');
+    expect(warmupWeightKg(12.5, 27.5, { fromKg: 25, stepKg: 2.5, barKg: 20 })).toBe(12.5);
+    // A straight bar's 20 kg warm-up stays at least the bar.
+    expect(warmupWeightKg(20, 65, { fromKg: 60, stepKg: 2.5, barKg: 20 })).toBe(20);
+  });
+});
+
+describe('C3-27: a routine\'s planned weight from a lb routine reads on kg plates', () => {
+  it('135 lb planned, shown in kg: 60 kg, never 61.2', async () => {
+    const { plannedWeightKg } = await import('@/tracker/engine/weightLadder');
+    expect(plannedWeightKg(135 * KG_PER_LB, 'barbell', 'metric')).toBe(60);
+    expect(plannedWeightKg(80, 'barbell', 'metric')).toBe(80);
+  });
+});

@@ -172,7 +172,9 @@ export function hevyCsvEncoder(units: UnitSystem): { header: string; encode(rows
         sets.forEach((s, i) => {
           const assisted = s.log_type === 'assisted';
           const kg = assisted ? Math.abs(s.weight_kg) : s.weight_kg;
-          const weight = kg === 0 ? '' : imperial ? round(kg / KG_PER_LB, 2) : kg;
+          // 16 Oct 2026 audit (C4-6): 6 decimals, so the file comes back to the same kilos (2 changed
+          // 7,934 of 9,142 sets: 10 kg came back as 10.0017).
+          const weight = kg === 0 ? '' : imperial ? round(kg / KG_PER_LB, 6) : kg;
           const distance =
             s.distance_m != null && s.distance_m > 0
               ? imperial

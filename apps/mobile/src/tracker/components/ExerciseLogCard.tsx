@@ -34,7 +34,7 @@ import { alternativesFor, type Alternative } from '../plans/builder';
 import { swapContextFor } from '../services/plansService';
 import { earlierCards, liveRecordFlags } from '../services/liveRecords';
 import { effectiveRestSec, fmtRest } from '../services/restRules';
-import { computeWarmups } from '../services/warmupMath';
+import { computeWarmups, warmupBarFor } from '../services/warmupMath';
 import { moveKind, supersetChoices } from '../services/workoutOrder';
 import { fillForSet, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
 import type { DraftExercise } from '../store/activeWorkoutStore';
@@ -316,7 +316,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       void tell('Set a working weight first', 'Enter a weight on a working set, then add warm-up sets.');
       return;
     }
-    const w = computeWarmups(workingWeight, exercise.incrementKg ?? 2.5);
+    // C3-15: a barbell's warm-ups never go under the empty bar, and use the gym's plates.
+    const w = computeWarmups(workingWeight, exercise.incrementKg ?? 2.5, undefined, warmupBarFor(exercise.equipment, units));
     if (w.length > 0) insertWarmupSets(exercise.key, w);
   };
 
