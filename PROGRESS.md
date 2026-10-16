@@ -1874,9 +1874,13 @@
     busy/one save; Starts in N days; Cash default; "Kis din mile" on sale; above-price asks once;
     Hinglish for branding/photo/save/message words and plan history.
   - Skipped: C7-34 (two members on one mobile) — owner decision, touches QR check-in and app links.
-  - **DB:** supabase/migrations/0019_staff_discount_and_taker.sql + tests/0019 (RESULT PASS 20 checks,
-    CI run 38871969094); the 0018 test's desk discount moved to 10%. **Not applied live.**
-  - **Tests:** panel 802 vitest green (67 in auditC7*/sheet tests, each failed before its fix);
+  - **DB:** supabase/migrations/0019_staff_discount_and_taker.sql + tests/0019 (RESULT PASS 26 checks,
+    CI run 38876053168); the 0018 test's desk discount moved to 10%. **Not applied live.**
+  - Review fixes (0a0b004, 7d03e14): a PT plan on a gym plan's dates is never merged into it (hand-sold
+    or an earlier file); the same file imported twice adds nothing (a day with a receipt is skipped);
+    the desk asks the joining fee only of a member with no plan yet; going online never stamps the
+    owner on old receipts and sales; a desk receipt is always stamped, import mark or not.
+  - **Tests:** panel 806 vitest green (71 in auditC7*/sheet tests, each failed before its fix);
     tsc -b 0; panel silent catches and promise ratchet at baseline.
 - 2026-10-15: **v0.44.0 — owner's gym-test fixes: RPE one-tap sheet; the rest sound never changes**
   (34db130 + this commit). Owner testing in the gym ("Keep adding the improvements I send in the plan").
