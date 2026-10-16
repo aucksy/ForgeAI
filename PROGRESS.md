@@ -2284,6 +2284,16 @@
     suite 2,800 pass; typecheck 0 apart from another helper's untracked test/_audit_probes;
     silent-catch native-kt 60 → 57. All phone/watch behaviour is [device]: checklist at the end of
     the C5 file.
+  - **Review round** (9e5328c qa/notif.py, 8bd051d app; wear-build 38883332525 green; partial
+    phone run 38883335192 `only=dnd,longrest` green): notif.py wants `rest-card-live` /
+    `rest-over-open-sound`, over-locked FAILS with no card during the rest, requires "Complete set",
+    and (asleep) re-snapshots 60 s after the end (`*-hold60.txt`). Both LONGREST alerts were still up
+    at +60 s with the button: the 11 Oct removal did not recur on API 34. Watch: bridging excludes
+    only while the watch app's notifications are allowed, else it skips its own buzz; allow chip
+    beside Complete set. Countdown = lone child of group `forgeai-rest-countdown` with
+    GROUP_ALERT_SUMMARY (a fresh post per rest never alerts / wakes the screen). restTimerStore's
+    haptic held on restBell "hold". WorkoutCard.hide keeps the live card while the rest card is
+    cleared. Watch probe per connected node, also at OnCreate.
 
 - 2026-10-16: **End-to-end audit C9 (every word) fixed: 38 of 48** (e18ef9d, cf19fa4, 29e4f30,
   04272e1, 2a1c412, ab229e8, 03381b3; ships with the next tag). Statuses: Audit/e2e-v2/C9-words.md.
