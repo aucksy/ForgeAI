@@ -50,6 +50,8 @@ interface Native {
   openNotificationSettings?(): boolean;
   is24Hour?(): boolean;
   ringerMode?(): number;
+  /** C5-4 + C1-10 (16 Oct 2026): "native" | "hold" | "app"; an older native piece lacks it. */
+  restBell?(): string;
   setRingThroughDnd?(on: boolean): boolean;
   /** Rest-alert audit (11 Oct 2026); an older native piece lacks these. */
   alertChannelState?(): string;
@@ -463,13 +465,52 @@ export function phoneUses24Hour(): boolean | null {
 
 export type RingerMode = 'normal' | 'vibrate' | 'silent';
 
-/** The phone's ringer (RT-08). Null = unknown (no native piece): the bell plays as before. */
-export function ringerMode(): RingerMode | null {
+/**
+ * Who makes the end-of-rest sound with ForgeAI on screen (C5-4 + C1-10, 16 Oct 2026), as the
+ * native piece reports it (`RestCard.restBell`):
+ *  - 'native': the app-open "Rest is over" rings itself — the same sound as with the screen off, at
+ *    NOTIFICATION volume (the app's bell played through MEDIA volume, often at 0);
+ *  - 'hold': Do Not Disturb is on and "Ring through Do Not Disturb" is off — the screen-off alert
+ *    is held, so the app's bell must be too (it rang out loud before: JS cannot see DND);
+ *  - 'app': the alert cannot ring (notifications off, its channel muted, sounds off): the app's
+ *    own bell, as before.
+ * Null = unknown (no native piece, or an older one): the app's bell, as before.
+ */
+export type RestBell = 'native' | 'hold' | 'app';
+
+export function restBell(): RestBell | null {
+  const v = call((n) => n.restBell?.());
+  return v === 'native' || v === 'hold' || v === 'app' ? v : null;
+}
+
+/**
+ * PURE. The ringer as the in-app rest bell must follow it: 'silent' whenever the app must not ring
+ * its own bell (the alert rings itself, or Do Not Disturb holds it), else the phone's ringer.
+ */
+export function ringerForBell(ringer: RingerMode | null, bell: RestBell | null): RingerMode | null {
+  if (bell === 'native' || bell === 'hold') return 'silent';
+  return ringer;
+}
+
+/** The phone's ringer, read raw (RT-08). Null = unknown (no native piece). */
+export function phoneRingerMode(): RingerMode | null {
   const v = call((n) => n.ringerMode?.());
   if (v === 0) return 'silent';
   if (v === 1) return 'vibrate';
   if (v === 2) return 'normal';
   return null;
+}
+
+/**
+ * The ringer AS THE IN-APP REST BELL FOLLOWS IT (RT-08; the rest timer's only caller rings its
+ * bell only on 'normal' or unknown). C5-4 + C1-10: 'silent' also when the app must not ring
+ * ([restBell] 'native' or 'hold'), so the bell follows Do Not Disturb exactly as the screen-off
+ * alert does and never doubles the alert's own sound. Null = unknown: the bell plays as before.
+ */
+export function ringerMode(): RingerMode | null {
+  const bell = restBell();
+  // 'native' only for a rest the card holds: a rest the native piece never got has no alert to ring.
+  return ringerForBell(phoneRingerMode(), bell === 'native' && !handed ? null : bell);
 }
 
 // ------------------------------------------------------------------ 13 Oct 2026: the live workout card

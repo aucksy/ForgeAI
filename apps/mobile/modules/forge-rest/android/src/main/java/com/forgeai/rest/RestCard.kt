@@ -67,11 +67,35 @@ import java.util.Locale
  * front or a set is ticked ([dismissOver]); the "Open ForgeAI to …" note keeps the live workout
  * card away while it shows; the rest after the last set says "All sets done"; both cards take the
  * gym's accent ([color]).
+ *
+ * C5 audit (16 Oct 2026): "Rest is over" carries the live card's "Complete set" (C5-1: for up to
+ * 2 minutes after a rest there was no button anywhere on a locked phone); the countdown is on a
+ * DEFAULT channel unless a watch without the ForgeAI app is connected (C5-3); with the app on
+ * screen the alert rings itself at notification volume (C5-4, [restBell]); a restart mid-rest
+ * brings the alarm and the cards back ([recover], C5-5); a swiped rest card brings the live card
+ * back (C5-15).
  */
 object RestCard {
   const val CARD_ID = 41001
   const val OVER_ID = 41002
+  /**
+   * The LOW countdown channel ("Silent" on the phone). Since the C5 audit (16 Oct 2026) it is used
+   * only while a watch WITHOUT the ForgeAI watch app is connected: a bridged DEFAULT card buzzes
+   * such a watch at the start of every rest ([WearSync.plainWatch]).
+   */
   const val CH_CARD = "rest-card-v2"
+  /**
+   * C5-3 (16 Oct 2026): a Pixel set to "Hide silent conversations and notifications" never showed
+   * the LOW card on the lock screen, and the live card is down during a rest, so a locked phone
+   * showed nothing. This DEFAULT channel (no sound, no vibration) is the countdown everywhere
+   * else: no watch, or a watch with the ForgeAI app, which shows its own countdown and asks Wear
+   * OS not to copy this card (bridge tag [BRIDGE_TAG_CARD]).
+   */
+  const val CH_CARD_LIVE = "rest-card-live"
+  /** C5-3: the rest card's bridge tag; the ForgeAI watch app excludes it (it has its own countdown). */
+  const val BRIDGE_TAG_CARD = "rest-card"
+  /** C5-15: the rest card went (swiped, "Clear all"): the live card comes back for the rest. */
+  const val ACTION_CARD_GONE = "com.forgeai.rest.CARD_GONE"
   /** The v0.26.1 card channel (LOW importance, filed under "Silent"); deleted on first use. */
   private const val CH_CARD_OLD = "rest-card"
   /**
@@ -84,6 +108,14 @@ object RestCard {
   const val CH_OVER = "rest-over-sound"
   const val CH_OVER_OPEN = "rest-over-open"
   const val CH_OVER_ALARM = "rest-over-alarm-sound"
+  /**
+   * C5-4 / C1-10 (16 Oct 2026): ForgeAI on screen. The app's own bell played through the MEDIA
+   * stream (often at 0) and ignored Do Not Disturb. Now this alert rings itself: the same sound at
+   * NOTIFICATION volume as with the screen off, held by Do Not Disturb the same way. No vibration
+   * here (the app buzzes the phone itself as the rest ends). The app skips its bell ([restBell]).
+   */
+  const val CH_OVER_OPEN_SOUND = "rest-over-open-sound"
+  private const val OPEN_QUIET_NAME = "Rest is over, sounds off"
   private val CH_OVER_OLD = listOf("rest-timer", "rest-over-alarm")
   const val ACTION_ADD = "com.forgeai.rest.ADD15"
   const val ACTION_SKIP = "com.forgeai.rest.SKIP"
@@ -298,7 +330,14 @@ object RestCard {
 
   /** Profile: "Ring through Do Not Disturb" (RT-12). Kept beside the sounds switch. */
   fun setRingThroughDnd(ctx: Context, on: Boolean) {
-    ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).edit().putBoolean("dnd", on).apply()
+    val was = ringThroughDnd(ctx)
+    ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).edit().putBoolean("dnd", on).commit()
+    // C5-7: switched mid-rest: the watch's buzz for THIS rest follows at once (it was sent only
+    // with a rest start or +15 s, so the watch kept the old choice until the next rest).
+    if (was != on) {
+      val r = load(ctx)
+      if (r != null && r.endsAt > System.currentTimeMillis()) WearSync.rest(ctx, r)
+    }
   }
 
   /** Also sent to the watch app (WearSync): its buzz gets through Do Not Disturb only when this is on. */
@@ -342,7 +381,9 @@ object RestCard {
    * [WorkoutCard] can ask from the app's thread while a broadcast holds it.
    */
   fun restUp(ctx: Context): Boolean {
-    if (ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong("endsAt", 0L) > 0L) return true
+    val rest = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    // C5-15: a rest whose card was swiped away ("Clear all") no longer keeps the live card down.
+    if (rest.getLong("endsAt", 0L) > 0L && !rest.getBoolean("cardGone", false)) return true
     // v0.37.1 (C3): an "Open ForgeAI to …" note keeps the live card away too (one at a time).
     if (noteUp(ctx)) return true
     val p = ctx.getSharedPreferences(PREFS_OVER, Context.MODE_PRIVATE)
@@ -378,6 +419,21 @@ object RestCard {
     WorkoutCard.restore(ctx)
   }
 
+  /**
+   * C5-15: the rest card went while its rest still runs ("Clear all" in the shade, a swipe, or its
+   * own timeout on a phone whose alarm is late). Before, the countdown and Done / +15 s / Skip were
+   * gone AND the live card stayed down until the rest ended. Now the live card ("Complete set")
+   * comes back for the rest of the rest; "Rest is over" still comes at the end.
+   */
+  @Synchronized
+  fun cardGone(ctx: Context) {
+    val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    if (p.getLong("endsAt", 0L) <= 0L) return
+    p.edit().putBoolean("cardGone", true).commit()
+    android.util.Log.i(LOG_TAG, "rest card gone mid-rest: live card back")
+    WorkoutCard.restore(ctx)
+  }
+
   /** v0.37.1 (C3): the "Open ForgeAI to …" note went (swiped or timed out): the live card is back. */
   fun noteGone(ctx: Context) {
     ctx.getSharedPreferences(PREFS_NOTE, Context.MODE_PRIVATE).edit().clear().apply()
@@ -400,7 +456,11 @@ object RestCard {
   @Synchronized
   fun show(ctx: Context, startedAt: Long, endsAt: Long, next: String?) {
     // Review fix: the card after the LAST set says "All sets done" from its first post.
-    val r = Rest(startedAt, endsAt, next, takeAllDone(ctx))
+    // C5-8: a re-post of the SAME rest (same start: the app adopting a rest started from the shade,
+    // or its own +15 s) keeps the "All sets done" it already has; only a new rest needs the flag.
+    val same = stored(ctx)?.let { it.startedAt == startedAt && it.allDone } == true
+    val r = Rest(startedAt, endsAt, next, takeAllDone(ctx) || same)
+    WearSync.probeWatch(ctx) // C5-3: which countdown channel the NEXT post uses
     save(ctx, r)
     cancelOver(ctx) // an old "Rest is over" goes when the next rest starts
     post(ctx, r)
@@ -504,6 +564,34 @@ object RestCard {
     val cur = stored(ctx) ?: return
     if (cur.endsAt <= System.currentTimeMillis()) return
     arm(ctx, cur.endsAt)
+  }
+
+  /**
+   * C5-5 (16 Oct 2026): the phone restarted (or ForgeAI was updated) mid-workout. Android dropped
+   * the rest's alarm and every notification, and nothing brought them back until the app was
+   * opened: no "Rest is over" on the phone, no live card. Now ([RestBootReceiver]):
+   *  - a rest still running gets its card and its alarm back (on time, as before the restart);
+   *  - a rest that ended while the phone was off is forgotten quietly (no late alert mid-set);
+   *  - the live workout card comes back with its last words (and "Complete set").
+   */
+  @Synchronized
+  fun recover(ctx: Context) {
+    val cur = stored(ctx)
+    val now = System.currentTimeMillis()
+    if (cur != null && cur.endsAt > now) {
+      post(ctx, cur)
+      arm(ctx, cur.endsAt)
+      WearSync.rest(ctx, cur)
+      android.util.Log.i(LOG_TAG, "restart: rest until ${cur.endsAt} re-armed")
+    } else if (cur != null) {
+      forget(ctx)
+      disarm(ctx)
+      android.util.Log.i(LOG_TAG, "restart: rest that ended ${now - cur.endsAt} ms ago forgotten")
+    }
+    // A "Rest is over" or note still saved is checked against the system's list ([restUp]): after a
+    // restart none is up, after an update one may still be (then the live card waits for it).
+    // A workout left open for hours (forgotten) does not get its card back (C5-11).
+    if (WorkoutCard.keptWithin(ctx, OfflineTick.STALE_MS)) WorkoutCard.restore(ctx)
   }
 
   // ------------------------------------------------------------------ Phase 6: Done
@@ -706,17 +794,31 @@ object RestCard {
     } else {
       i = Intent(ctx, RestActionReceiver::class.java).setAction(ACTION_DONE)
     }
+    putDone(i, t, endsAt, label)
+    return if (t.open) {
+      PendingIntent.getActivity(ctx, doneCode(t) + codeShift, i, flags)
+    } else {
+      PendingIntent.getBroadcast(ctx, doneCode(t) + codeShift, i, flags)
+    }
+  }
+
+  private fun putDone(i: Intent, t: DoneTarget, endsAt: Long, label: String?) {
     i.putExtra(EXTRA_DONE_WORKOUT, t.workout)
     i.putExtra(EXTRA_DONE_EX, t.exKey)
     i.putExtra(EXTRA_DONE_SET, t.setKey)
     i.putExtra(EXTRA_DONE_LABEL, label)
     i.putExtra(EXTRA_DONE_VALUES, t.values)
     i.putExtra(EXTRA_ENDS, endsAt)
-    return if (t.open) {
-      PendingIntent.getActivity(ctx, doneCode(t) + codeShift, i, flags)
-    } else {
-      PendingIntent.getBroadcast(ctx, doneCode(t) + codeShift, i, flags)
-    }
+  }
+
+  /**
+   * C5-2: a Done / "Complete set" tapped on the ForgeAI watch app ([WearActionService]), as the
+   * same broadcast a phone button sends, so it takes the same road (the app, or [OfflineTick]).
+   */
+  internal fun doneBroadcast(ctx: Context, t: DoneTarget, endsAt: Long, label: String?): Intent {
+    val i = Intent(ctx, RestActionReceiver::class.java).setAction(ACTION_DONE)
+    putDone(i, t, endsAt, label)
+    return i
   }
 
   private fun doneAction(ctx: Context, icon: Int, t: DoneTarget?, endsAt: Long, label: String?): Notification.Action? {
@@ -792,20 +894,73 @@ object RestCard {
    * phone's cleaner app) can silence the channel in Android's settings, and nothing in ForgeAI
    * showed it. "ok", "silenced" (no sound and no vibration, or importance low/min) or "blocked".
    */
-  fun alertChannelState(ctx: Context): String {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return "ok"
+  fun alertChannelState(ctx: Context): String = worstChannel(ctx)?.second ?: "ok"
+
+  /**
+   * C5-14 (16 Oct 2026): every "Rest is over" channel this member's settings can use, not only the
+   * screen-off one: "Workout sounds" off uses the vibrate-only channel; otherwise the screen-off
+   * and app-open ones, plus the Do Not Disturb one when "Ring through Do Not Disturb" is on.
+   * Muting any of them in Android settings silenced some rests while Profile said "on time".
+   */
+  private fun alertChannels(ctx: Context): List<String> =
+    if (quiet(ctx)) {
+      listOf(CH_OVER_OPEN)
+    } else {
+      listOf(CH_OVER, CH_OVER_OPEN_SOUND) + (if (ringThroughDnd(ctx)) listOf(CH_OVER_ALARM) else emptyList())
+    }
+
+  /** The first of [alertChannels] that cannot alert, with its state ("blocked" / "silenced"); null = all ok. */
+  private fun worstChannel(ctx: Context): Pair<String, String>? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return null
     return try {
       ensureChannels(ctx)
-      val ch = nm(ctx).getNotificationChannel(CH_OVER) ?: return "ok"
-      when {
-        ch.importance == NotificationManager.IMPORTANCE_NONE -> "blocked"
-        ch.importance < NotificationManager.IMPORTANCE_DEFAULT -> "silenced"
-        ch.sound == null && !ch.shouldVibrate() -> "silenced"
-        else -> "ok"
+      var silenced: Pair<String, String>? = null
+      for (id in alertChannels(ctx)) {
+        val ch = nm(ctx).getNotificationChannel(id) ?: continue
+        val state = when {
+          ch.importance == NotificationManager.IMPORTANCE_NONE -> "blocked"
+          ch.importance < NotificationManager.IMPORTANCE_DEFAULT -> "silenced"
+          // The vibrate-only channel is silenced when it cannot vibrate; the others when they can do neither.
+          id == CH_OVER_OPEN && !ch.shouldVibrate() -> "silenced"
+          ch.sound == null && !ch.shouldVibrate() -> "silenced"
+          else -> "ok"
+        }
+        if (state == "blocked") return Pair(id, state)
+        if (state == "silenced" && silenced == null) silenced = Pair(id, state)
       }
-    } catch (_: Exception) {
-      "ok"
+      silenced
+    } catch (e: Exception) {
+      android.util.Log.w(LOG_TAG, "alert channel state unknown", e)
+      null
     }
+  }
+
+  /** Can this channel make a sound now (it exists, is not muted, and has one)? */
+  private fun channelRings(ctx: Context, id: String): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return false
+    return try {
+      ensureChannels(ctx)
+      val ch = nm(ctx).getNotificationChannel(id) ?: return false
+      ch.importance >= NotificationManager.IMPORTANCE_DEFAULT && ch.sound != null
+    } catch (e: Exception) {
+      android.util.Log.w(LOG_TAG, "channel $id state unknown", e)
+      false
+    }
+  }
+
+  /**
+   * C5-4 + C1-10 (16 Oct 2026): who makes the end-of-rest sound with ForgeAI on screen.
+   *  - "hold": Do Not Disturb is on and "Ring through Do Not Disturb" is off. The screen-off alert
+   *    is held by DND, so the app's bell stays quiet too (it played out loud before: one rule now).
+   *  - "native": "Rest is over" rings itself (its channel, notification volume, held by the ringer
+   *    and DND like any notification); the app must not ring a second, MEDIA-volume bell.
+   *  - "app": the alert cannot ring (notifications off, its channel muted, "Workout sounds" off,
+   *    or Android 7 and older): the app's own bell, as before.
+   */
+  fun restBell(ctx: Context): String {
+    if (dndOn(ctx) && !ringThroughDnd(ctx)) return "hold"
+    if (quiet(ctx) || !notificationsEnabled(ctx)) return "app"
+    return if (channelRings(ctx, overChannel(ctx))) "native" else "app"
   }
 
   /** Android's "background restriction" for ForgeAI (Android 9+), which can hold alarms back. */
@@ -825,7 +980,8 @@ object RestCard {
       ensureChannels(ctx)
       val i = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
       i.putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
-      i.putExtra(Settings.EXTRA_CHANNEL_ID, CH_OVER)
+      // C5-14: the channel that is muted, when one is (else the main one).
+      i.putExtra(Settings.EXTRA_CHANNEL_ID, worstChannel(ctx)?.first ?: CH_OVER)
       i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       ctx.startActivity(i)
       true
@@ -946,7 +1102,7 @@ object RestCard {
     return PendingIntent.getActivity(ctx, 3, launch, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
   }
 
-  private fun actionIntent(ctx: Context, action: String, code: Int): PendingIntent {
+  internal fun actionIntent(ctx: Context, action: String, code: Int): PendingIntent {
     val i = Intent(ctx, RestActionReceiver::class.java).setAction(action)
     return PendingIntent.getBroadcast(ctx, code, i, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
   }
@@ -996,6 +1152,34 @@ object RestCard {
         },
       )
     }
+    if (m.getNotificationChannel(CH_CARD_LIVE) == null) {
+      // C5-3: DEFAULT, so the phone lists it with the normal notifications and shows it on a lock
+      // screen that hides silent ones. No sound, no vibration; posted with onlyAlertOnce.
+      m.createNotificationChannel(
+        NotificationChannel(CH_CARD_LIVE, "Rest countdown on the lock screen", NotificationManager.IMPORTANCE_DEFAULT).apply {
+          description = "Your rest counting down, with Done, +15 s and Skip. Never makes a sound."
+          setSound(null, null)
+          enableVibration(false)
+          enableLights(false)
+          setShowBadge(false)
+          lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        },
+      )
+    }
+    if (m.getNotificationChannel(CH_OVER_OPEN_SOUND) == null) {
+      m.createNotificationChannel(
+        NotificationChannel(CH_OVER_OPEN_SOUND, "Rest is over, app open", NotificationManager.IMPORTANCE_DEFAULT).apply {
+          description = "Rings when rest ends while ForgeAI is on screen, at notification volume"
+          setSound(
+            restSound(ctx),
+            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build(),
+          )
+          enableVibration(false)
+          setShowBadge(false)
+          lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        },
+      )
+    }
     if (m.getNotificationChannel(CH_CARD_OLD) != null) {
       try {
         m.deleteNotificationChannel(CH_CARD_OLD)
@@ -1036,10 +1220,12 @@ object RestCard {
         },
       )
     }
-    if (m.getNotificationChannel(CH_OVER_OPEN) == null) {
+    // C5-4: since the app-open alert rings itself (CH_OVER_OPEN_SOUND), this vibrate-only channel is
+    // the "Workout sounds" off one. Android lets an app rename a channel (never change its sound).
+    if (m.getNotificationChannel(CH_OVER_OPEN)?.name?.toString() != OPEN_QUIET_NAME) {
       m.createNotificationChannel(
-        NotificationChannel(CH_OVER_OPEN, "Rest is over, app open", NotificationManager.IMPORTANCE_DEFAULT).apply {
-          description = "Buzzes your watch when rest ends while ForgeAI is on screen (the app rings itself)"
+        NotificationChannel(CH_OVER_OPEN, OPEN_QUIET_NAME, NotificationManager.IMPORTANCE_DEFAULT).apply {
+          description = "Buzzes when rest ends while Workout sounds are off in ForgeAI"
           setSound(null, null)
           enableVibration(true)
           vibrationPattern = longArrayOf(0, 250, 150, 250)
@@ -1088,7 +1274,12 @@ object RestCard {
     try {
       ensureChannels(ctx)
       val icon = iconRes(ctx)
-      val b = builder(ctx, CH_CARD)
+      // C5-3: DEFAULT (shown on any lock screen), unless a watch without the ForgeAI app would
+      // copy it and buzz at every rest start: then the LOW card as before.
+      val channel = if (WearSync.plainWatch(ctx)) CH_CARD else CH_CARD_LIVE
+      // C5-15: a re-post (a new rest, +15 s) is up again: the live card goes back down.
+      ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().remove("cardGone").commit()
+      val b = builder(ctx, channel)
         .setSmallIcon(icon)
         .setColor(color(ctx))
         .setContentTitle(title(ctx, r))
@@ -1124,12 +1315,18 @@ object RestCard {
         b.setPriority(Notification.PRIORITY_LOW)
       }
       openIntent(ctx)?.let { b.setContentIntent(it) }
+      // C5-3: the ForgeAI watch app asks Wear OS not to copy this card (it shows its own countdown
+      // with Done / +15 s / Skip); a watch without the app still gets it.
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) b.extend(Notification.WearableExtender().setBridgeTag(BRIDGE_TAG_CARD))
+      // C5-15: swiped away or "Clear all" mid-rest: the live card comes back ([cardGone]).
+      b.setDeleteIntent(actionIntent(ctx, ACTION_CARD_GONE, 8))
       nm(ctx).notify(CARD_ID, b.build())
       // One at a time: the rest card alone while the rest runs (it names the next set, and its
       // Done ticks it) — also when the rest started with the app's JS asleep.
       WorkoutCard.hide(ctx)
-    } catch (_: Exception) {
+    } catch (e: Exception) {
       // No permission to post: the in-app timer still works.
+      android.util.Log.w(LOG_TAG, "rest card not posted", e)
     }
   }
 
@@ -1158,19 +1355,29 @@ object RestCard {
     return if (mins >= 1L) "Ended $mins min ago · $base" else base
   }
 
+  /**
+   * The channel "Rest is over" goes out on now:
+   *  - "Workout sounds" off: vibrate only (wherever the app is);
+   *  - RT-12: Do Not Disturb on and "Ring through Do Not Disturb" on: the alarm channel, which DND
+   *    lets through (C1-10: now also with the app on screen);
+   *  - C5-4: ForgeAI on screen: the app-open channel, the same sound at notification volume;
+   *  - otherwise the loud screen-off alert.
+   */
+  private fun overChannel(ctx: Context): String = when {
+    quiet(ctx) -> CH_OVER_OPEN
+    ringThroughDnd(ctx) && dndOn(ctx) -> CH_OVER_ALARM
+    appOnScreen(ctx) -> CH_OVER_OPEN_SOUND
+    else -> CH_OVER
+  }
+
   @Suppress("DEPRECATION")
   private fun postOver(ctx: Context, next: String?, endsAt: Long, lateMs: Long, allDone: Boolean) {
     try {
       ensureChannels(ctx)
       val icon = iconRes(ctx)
-      // App on screen: it rings itself, so the phone only vibrates — but the alert is still
-      // posted, which is what makes the watch buzz. Otherwise this is the loud alert.
-      // "Workout sounds" off: the vibrate-only channel, wherever the app is.
-      val open = appOnScreen(ctx) || quiet(ctx)
-      // RT-12: only when the member turned it on, and only while Do Not Disturb is on; at other
-      // times the alert follows the ringer as before.
-      val alarm = !open && ringThroughDnd(ctx) && dndOn(ctx)
-      val channel = if (open) CH_OVER_OPEN else if (alarm) CH_OVER_ALARM else CH_OVER
+      val channel = overChannel(ctx)
+      val open = appOnScreen(ctx) || channel == CH_OVER_OPEN
+      val soft = channel == CH_OVER_OPEN || channel == CH_OVER_OPEN_SOUND
       // 13 Oct 2026: Android 15+ "notification cooldown" (on by default on Pixel, and a Pixel Watch
       // follows it) mutes the buzz of a second alert from one app within ~2 minutes — one rest
       // after another. Alarm-category alerts skip it, so every "Rest is over" is an alarm on every
@@ -1189,8 +1396,9 @@ object RestCard {
         .setCategory(category)
         .setVisibility(Notification.VISIBILITY_PUBLIC)
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-        b.setPriority(if (open) Notification.PRIORITY_DEFAULT else Notification.PRIORITY_MAX)
-          .setDefaults(if (open) Notification.DEFAULT_VIBRATE else Notification.DEFAULT_ALL)
+        // Android 7 and older (no channels): the app on screen rings its own bell there ([restBell]).
+        b.setPriority(if (soft) Notification.PRIORITY_DEFAULT else Notification.PRIORITY_MAX)
+          .setDefaults(if (soft) Notification.DEFAULT_VIBRATE else Notification.DEFAULT_ALL)
       }
       // App on screen: the watch has buzzed by the time this goes; the app shows the rest is over.
       // v0.37.1 (C2): EVERY "Rest is over" goes by itself — one posted with the app in the
@@ -1199,15 +1407,20 @@ object RestCard {
       // which brings the live card back; the app coming to the front or a tick also clear it
       // ([dismissOver]).
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) b.setTimeoutAfter(if (open) 60_000L else OVER_TIMEOUT_MS)
-      // No "Done" here (it stays on the rest card): with that action on this alert, Android 14
-      // removed "Rest is over" seconds after posting it on a locked phone (device QA run
-      // 38081757903: posted with 1 action, then gone, not by the app). The alert is back to the
-      // shape every earlier phone run passed with.
+      // C5-1 (16 Oct 2026): the live card's "Complete set" (the set named by "Next: …"). Without
+      // it, a locked phone had no button anywhere for up to 2 minutes after every rest: the rest
+      // card (Done) goes at the end and the live card waits for this alert to leave.
+      // History: a "Done" here was taken off on 11 Oct (device QA run 38081757903: posted with 1
+      // action, then removed by Android within 30 s). The same fix gave every alert its own tag
+      // because an older alert's 60 s setTimeoutAfter timer removes whatever holds its id and tag:
+      // that timer fits the removal at least as well. If Android removes this alert early anyway,
+      // its delete intent brings the live card ("Complete set") back, so a button stays.
+      WorkoutCard.completeAction(ctx, icon)?.let { b.addAction(it) }
       openIntent(ctx)?.let { b.setContentIntent(it) }
       // v0.46: the ForgeAI watch app posts its own "Rest is over" and buzzes itself, so it asks
-      // Wear OS not to copy THIS alert (BridgingConfig excluded tag "rest-over"; only while the
-      // watch app may post notifications). The rest card (Done / +15 s / Skip) keeps no tag and
-      // still reaches the watch. Without the watch app the tag changes nothing.
+      // Wear OS not to copy THIS alert (BridgingConfig excluded tag "rest-over"; since C5-6 always,
+      // so the watch never buzzes twice). Only this alert carries that tag; the rest card has its
+      // own ("rest-card", C5-3). Without the watch app the tags change nothing.
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) b.extend(Notification.WearableExtender().setBridgeTag(BRIDGE_TAG_OVER))
       // Swiped away: the live workout card comes back (one at a time).
       b.setDeleteIntent(actionIntent(ctx, ACTION_OVER_GONE, 6))

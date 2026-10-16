@@ -242,7 +242,8 @@ describe('the native side (source checks; Kotlin builds only in cloud CI)', () =
 
   it('review fixes: the last-set card says "All sets done" from its first post; a late duplicate tap after the app took the queue is ignored', () => {
     const rest = fs.readFileSync(path.join(DIR, 'RestCard.kt'), 'utf8');
-    expect(rest).toMatch(/val r = Rest\(startedAt, endsAt, next, takeAllDone\(ctx\)\)/);
+    // C5-8: a re-post of the same rest keeps the flag it has.
+    expect(rest).toMatch(/val r = Rest\(startedAt, endsAt, next, takeAllDone\(ctx\) \|\| same\)/);
     expect(rest).toMatch(/\.putBoolean\("allDone", r\.allDone\)/);
     expect(offline).toMatch(/if \(keyOf\(s\.workout, s\.exKey, s\.setKey\) in takenKeys\(p\)\) return Queued\.ALREADY/);
     expect(offline).toMatch(/remove\("ticks"\)\.putString\("taken"/);

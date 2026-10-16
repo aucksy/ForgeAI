@@ -126,13 +126,20 @@ describe('the native card (source checks — Kotlin builds only in cloud CI)', (
     const rest = read(`${DIR}RestCard.kt`);
     expect(rest).toContain('val category = if (dndOn(ctx) && !ringThroughDnd(ctx)) Notification.CATEGORY_REMINDER else Notification.CATEGORY_ALARM');
     expect(rest).toContain('.setCategory(category)');
-    // Every rest-over channel vibrates with the pattern (a watch copies the phone's buzz).
-    for (const ch of ['CH_OVER_ALARM', 'CH_OVER,', 'CH_OVER_OPEN']) {
+    // Every rest-over channel vibrates with the pattern (a watch copies the phone's buzz)...
+    for (const ch of ['CH_OVER_ALARM', 'CH_OVER,', 'CH_OVER_OPEN,']) {
       const at = rest.indexOf(`NotificationChannel(${ch}`);
       expect(at, ch).toBeGreaterThan(0);
       const block = rest.slice(at, rest.indexOf('},', at));
       expect(block, ch).toContain('enableVibration(true)');
       expect(block, ch).toContain('vibrationPattern = longArrayOf(0, 250, 150, 250)');
     }
+    // ...except C5-4's app-open one (16 Oct 2026): it rings the rest sound, and the app on screen
+    // buzzes the phone itself, so a channel buzz would be a second one.
+    const at = rest.indexOf('NotificationChannel(CH_OVER_OPEN_SOUND,');
+    expect(at).toBeGreaterThan(0);
+    const open = rest.slice(at, rest.indexOf('},', at));
+    expect(open).toContain('restSound(ctx)');
+    expect(open).toContain('enableVibration(false)');
   });
 });

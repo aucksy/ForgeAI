@@ -33,8 +33,10 @@ import org.json.JSONObject
  *  - A Wear OS watch buzzes for a bridged DEFAULT notification even on a silent channel (that is
  *    why the rest COUNTDOWN is LOW). This card is [Notification.Builder.setLocalOnly]: it stays on
  *    the phone. The watch gets the rest countdown and "Rest is over" only.
- *  - Ongoing (cannot be swiped away while the workout is open); the app removes it at Finish /
- *    Discard ([clear]).
+ *  - Ongoing; the app removes it at Finish / Discard ([clear]). C5-10 (16 Oct 2026): Android 14+
+ *    lets a member swipe an ongoing card away anyway. It then stayed gone until the next tick or
+ *    rest, so with ForgeAI closed "Complete set" was gone too. Its delete intent now puts it back
+ *    ([ACTION_GONE]); Android sends none when the app itself takes it down.
  *
  * ONE ForgeAI workout notification at a time (13 Oct 2026, device QA): with the rest card beside
  * it Android grouped both under one "ForgeAI" header, both collapsed, hiding Done / +15 s / Skip
@@ -46,6 +48,8 @@ import org.json.JSONObject
 object WorkoutCard {
   const val ID = 41004
   const val CH = "workout-live"
+  /** C5-10: the card was swiped away (Android 14+): it comes back ([restore]). */
+  const val ACTION_GONE = "com.forgeai.rest.LIVE_GONE"
   /** Keeps "Complete set"'s PendingIntent apart from the rest card's Done for the same row. */
   private const val CODE_SHIFT = 1_100_000
   /** The large icon's side, in pixels (Android scales it down to its slot). */
@@ -92,14 +96,47 @@ object WorkoutCard {
     }
   }
 
-  /** The card's words for [restore] (also written by [OfflineTick] after a tap with the app closed). */
+  /**
+   * The card's words for [restore] (also written by [OfflineTick] after a tap with the app closed).
+   * C5-2: the watch gets them too (its "Complete set" names and ticks this row); C5-11: when.
+   */
   internal fun keep(ctx: Context, title: String, text: String, image: String?, doneJson: String?) {
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
       .putString("title", title)
       .putString("text", text)
       .putString("image", image)
       .putString("done", doneJson)
+      .putLong("at", System.currentTimeMillis())
       .apply()
+    val done = doneOf(doneJson)
+    WearSync.workout(ctx, true, title, text, if (done != null && !done.first.open) doneJson.orEmpty() else "")
+  }
+
+  /**
+   * C5-11: were the card's words or the plan given within [ms]? A workout left open and forgotten
+   * is not: a stray tap on its card days later must not log a set and ring a rest.
+   */
+  internal fun keptWithin(ctx: Context, ms: Long): Boolean {
+    val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    val at = maxOf(p.getLong("at", 0L), p.getLong("planAt", 0L))
+    return at > 0L && System.currentTimeMillis() - at <= ms
+  }
+
+  /**
+   * C5-1: the card's "Complete set" for "Rest is over" (the row the card names now: the set the
+   * rest led to), or null when that row has nothing to save. The same PendingIntent as the card's.
+   */
+  internal fun completeAction(ctx: Context, icon: Int): Notification.Action? {
+    return try {
+      val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+      val done = doneOf(p.getString("done", null)) ?: return null
+      if (done.first.open) return null
+      val pi = RestCard.doneIntent(ctx, done.first, 0L, done.second, CODE_SHIFT) ?: return null
+      Notification.Action.Builder(Icon.createWithResource(ctx, icon), "Complete set", pi).build()
+    } catch (e: Exception) {
+      android.util.Log.w("ForgeRest", "Complete set not added to Rest is over", e)
+      null
+    }
   }
 
   /**
@@ -109,7 +146,10 @@ object WorkoutCard {
    */
   private fun keepPlan(ctx: Context, plan: String?) {
     if (plan == null) return
-    ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("plan", plan).apply()
+    ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+      .putString("plan", plan)
+      .putLong("planAt", System.currentTimeMillis())
+      .apply()
   }
 
   /** The plan last kept ([keepPlan]); null when none or unreadable. */
@@ -128,9 +168,8 @@ object WorkoutCard {
    */
   @Synchronized
   fun show(ctx: Context, title: String, text: String, image: String?, doneJson: String?, plan: String? = null): Boolean {
-    keep(ctx, title, text, image, doneJson)
+    keep(ctx, title, text, image, doneJson) // also tells the watch (v0.46 heart rate, C5-2 Complete set)
     keepPlan(ctx, plan)
-    WearSync.workout(ctx, true, title) // v0.46: the watch shows heart rate while a workout is open
     if (RestCard.restUp(ctx)) {
       cancel(ctx)
       return true
@@ -141,9 +180,9 @@ object WorkoutCard {
   /** A rest started: down it goes (the app's words kept when given, for [restore]). */
   @Synchronized
   fun hide(ctx: Context, title: String? = null, text: String? = null, image: String? = null, doneJson: String? = null, plan: String? = null) {
+    // The app's own hide (a rest started) carries the words (keep also tells the watch);
+    // RestCard's bare hides do not.
     if (title != null && text != null) keep(ctx, title, text, image, doneJson)
-    // The app's own hide (a rest started) carries the words; RestCard's bare hides do not.
-    if (title != null) WearSync.workout(ctx, true, title)
     keepPlan(ctx, plan)
     cancel(ctx)
   }
@@ -195,9 +234,12 @@ object WorkoutCard {
         }
       }
       RestCard.openIntent(ctx)?.let { b.setContentIntent(it) }
+      // C5-10: swiped away (Android 14+ allows it): back it comes. Not sent when the app cancels.
+      b.setDeleteIntent(RestCard.actionIntent(ctx, ACTION_GONE, 9))
       RestCard.nm(ctx).notify(ID, b.build())
       true
-    } catch (_: Exception) {
+    } catch (e: Exception) {
+      android.util.Log.w("ForgeRest", "live workout card not posted", e)
       false
     }
   }

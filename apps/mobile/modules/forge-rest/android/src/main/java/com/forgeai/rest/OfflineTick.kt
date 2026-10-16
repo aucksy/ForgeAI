@@ -36,6 +36,8 @@ object OfflineTick {
   /** At most this many ticks wait for the app (more than any workout has). */
   private const val MAX_QUEUED = 100
   private const val LOG_TAG = "ForgeRest"
+  /** C5-11: a live card (words or plan) older than this belongs to a forgotten workout. */
+  const val STALE_MS = 60L * 60_000L
 
   private fun str(o: JSONObject, k: String): String? =
     if (o.isNull(k)) null else o.optString(k, "").ifEmpty { null }
@@ -90,6 +92,13 @@ object OfflineTick {
    */
   @Synchronized
   fun run(ctx: Context, intent: Intent): Boolean {
+    // C5-11 (16 Oct 2026): a workout left open and forgotten kept its card, and a stray tap days
+    // later logged a set and started a rest that rang. A card whose words and plan are over
+    // [STALE_MS] old is not acted on here: the tap waits for the app with the "Open ForgeAI" note.
+    if (!WorkoutCard.keptWithin(ctx, STALE_MS)) {
+      android.util.Log.i(LOG_TAG, "tap with the app closed on a card over ${STALE_MS / 60_000L} min old: left for the app")
+      return false
+    }
     val s = find(ctx, intent) ?: return false
     val now = System.currentTimeMillis()
     when (enqueue(ctx, s, now)) {

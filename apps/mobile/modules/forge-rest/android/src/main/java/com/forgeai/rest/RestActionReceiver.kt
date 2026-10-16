@@ -15,6 +15,8 @@ import android.content.Intent
  * between the tap and the tick. The hold is always finished ([RestCard.releaseDone]).
  *
  * v0.37.1 (C1): a Done / "Complete set" with no JS running is handled on the phone ([OfflineTick]).
+ * C5-2 (16 Oct 2026): the ForgeAI watch app's own buttons arrive here too, re-sent as these very
+ * broadcasts by [WearActionService].
  */
 class RestActionReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context, intent: Intent) {
@@ -33,6 +35,10 @@ class RestActionReceiver : BroadcastReceiver() {
       RestCard.ACTION_OVER_GONE -> RestCard.overGone(ctx)
       // v0.37.1 (C3): the "Open ForgeAI to …" note went — the live workout card comes back.
       RestCard.ACTION_NOTE_GONE -> RestCard.noteGone(ctx)
+      // C5-15: the rest card was swiped away / "Clear all" mid-rest — the live card comes back.
+      RestCard.ACTION_CARD_GONE -> RestCard.cardGone(ctx)
+      // C5-10: the live card itself was swiped away (Android 14+) — it is put back.
+      WorkoutCard.ACTION_GONE -> WorkoutCard.restore(ctx)
       RestCard.ACTION_DONE -> {
         val l = RestCard.listener
         if (l == null) {

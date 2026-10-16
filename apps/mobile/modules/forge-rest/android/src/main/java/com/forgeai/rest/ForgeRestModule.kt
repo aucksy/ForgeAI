@@ -38,6 +38,10 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *  - setRestAllDone(on)            — the next rest follows the last set (before show());
  *  - dismissRestOver()             — an old "Rest is over" goes, the live card is back;
  *  - setAccent(hex)                — the gym's accent for both cards.
+ * C5 audit (16 Oct 2026):
+ *  - restBell()                    — "native" (the app-open "Rest is over" rings itself, at
+ *                                    notification volume), "hold" (Do Not Disturb holds it, and
+ *                                    "Ring through" is off) or "app" (the app's own bell, as before).
  * Events: onRestChange { kind: "add" | "skip" | "end" | "done", endsAt, startedAt }, onOpenWorkout.
  */
 class ForgeRestModule : Module() {
@@ -108,7 +112,9 @@ class ForgeRestModule : Module() {
       if (c != null) RestCard.rearm(c)
       // ...and with no rest or "Rest is over" left (tapped, timed out), the live workout card is back.
       if (c != null) WorkoutCard.restore(c)
-      val r = if (c != null) RestCard.load(c) else null
+      // C5-3: which watch is there (the countdown's channel).
+      if (c != null) WearSync.probeWatch(c)
+      val r =if (c != null) RestCard.load(c) else null
       mapOf(
         "endsAt" to (r?.endsAt ?: 0L).toDouble(),
         "startedAt" to (r?.startedAt ?: 0L).toDouble(),
@@ -165,6 +171,12 @@ class ForgeRestModule : Module() {
     Function("ringerMode") {
       val c = ctx ?: return@Function 2
       RestCard.ringerMode(c)
+    }
+
+    // C5-4 + C1-10: who rings the end of a rest with the app on screen ("native" | "hold" | "app").
+    Function("restBell") {
+      val c = ctx ?: return@Function "app"
+      RestCard.restBell(c)
     }
 
     Function("setRingThroughDnd") { on: Boolean ->

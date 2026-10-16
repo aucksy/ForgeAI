@@ -7,8 +7,26 @@
        it a locked phone rang minutes late or not at all (and the watch never buzzed). For apps whose
        core is a timer (the rest timer); Android 12 still uses SCHEDULE_EXACT_ALARM above. -->
   <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+  <!-- C5-5 (16 Oct 2026): a rest running across a restart gets its alarm and cards back. Already
+       in the app through expo-notifications (approved-permissions.txt): the list does not change. -->
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
   <application>
     <!-- The rest card's "+15 s" / "Skip" buttons (phone shade or watch) and the end-of-rest alarm. -->
     <receiver android:name="com.forgeai.rest.RestActionReceiver" android:exported="false"/>
+    <!-- C5-5: restart / app update mid-rest (RestCard.recover). Only the system sends these. -->
+    <receiver android:name="com.forgeai.rest.RestBootReceiver" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED"/>
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+      </intent-filter>
+    </receiver>
+    <!-- C5-2: the ForgeAI watch app's buttons (Wear messages /forge/act/…). Google Play services
+         binds to it; the Data Layer delivers only from the same app on the watch. -->
+    <service android:name="com.forgeai.rest.WearActionService" android:exported="true">
+      <intent-filter>
+        <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED"/>
+        <data android:scheme="wear" android:host="*" android:pathPrefix="/forge/act"/>
+      </intent-filter>
+    </service>
   </application>
 </manifest>
