@@ -25,8 +25,10 @@ import androidx.wear.ongoing.Status
  *    the second in Doze and never rate-limits, as the phone does) and an Ongoing Activity with a
  *    countdown, so the rest shows on the watch face and in Recents; tapping opens the app;
  *  - [restCleared]: both go;
- *  - [restOver]: a strong ~1.5 s buzz of the watch's own (alarm usage, so it is not muted while
- *    the phone is in use, unlike a bridged phone alert) and a "Rest is over" card.
+ *  - [restOver]: a strong ~1.5 s buzz of the watch's own (not muted while the phone is in use,
+ *    unlike a bridged phone alert) and a "Rest is over" card. Do Not Disturb / Bedtime silence the
+ *    buzz (notification usage), as they keep the phone quiet, unless the member turned on "Ring
+ *    through Do Not Disturb" in ForgeAI: then it is an alarm-usage buzz, which DND lets through.
  */
 object RestAlerts {
   private const val TAG = "ForgeWear"
@@ -96,7 +98,7 @@ object RestAlerts {
   fun restOver(ctx: Context, r: WatchState.Rest) {
     disarm(ctx)
     cancel(ctx, LIVE_ID)
-    buzz(ctx)
+    buzz(ctx, r.ringThroughDnd)
     postOver(ctx, r)
   }
 
@@ -177,7 +179,7 @@ object RestAlerts {
   }
 
   // ------------------------------------------------------------------ the end
-  private fun buzz(ctx: Context) {
+  private fun buzz(ctx: Context, throughDnd: Boolean) {
     try {
       // Keep the watch awake for the buzz (the alarm's own wake lock ends with the receiver).
       val pm = ctx.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -194,10 +196,12 @@ object RestAlerts {
       }
       val effect = VibrationEffect.createWaveform(WAVE_MS, WAVE_AMP, -1)
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        v.vibrate(effect, VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM))
+        val usage = if (throughDnd) VibrationAttributes.USAGE_ALARM else VibrationAttributes.USAGE_NOTIFICATION
+        v.vibrate(effect, VibrationAttributes.createForUsage(usage))
       } else {
+        val usage = if (throughDnd) AudioAttributes.USAGE_ALARM else AudioAttributes.USAGE_NOTIFICATION
         @Suppress("DEPRECATION")
-        v.vibrate(effect, AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build())
+        v.vibrate(effect, AudioAttributes.Builder().setUsage(usage).build())
       }
     } catch (e: Exception) {
       Log.w(TAG, "rest-over buzz failed", e)
@@ -212,7 +216,8 @@ object RestAlerts {
         .setColor(EMBER)
         .setContentTitle("Rest is over")
         .setContentText(RestText.nextLine(r.next) ?: "Time for your next set")
-        .setCategory(NotificationCompat.CATEGORY_ALARM)
+        // As the phone: an alarm only with "Ring through Do Not Disturb", else a reminder DND holds.
+        .setCategory(if (r.ringThroughDnd) NotificationCompat.CATEGORY_ALARM else NotificationCompat.CATEGORY_REMINDER)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setAutoCancel(true)
         .setShowWhen(true)

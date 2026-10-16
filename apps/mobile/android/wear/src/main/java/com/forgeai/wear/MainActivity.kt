@@ -1,6 +1,7 @@
 package com.forgeai.wear
 
 import android.Manifest
+import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -42,6 +43,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material.ChipDefaults
+import androidx.wear.compose.material.CompactChip
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
@@ -61,6 +64,7 @@ class MainActivity : ComponentActivity() {
   private var bpm by mutableStateOf<Double?>(null)
   private var hrStatus by mutableStateOf(HeartRate.Status.WAITING)
   private var hrAllowed by mutableStateOf(false)
+  private var notifAllowed by mutableStateOf(true)
   private lateinit var heart: HeartRate
 
   private val ask = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
@@ -72,6 +76,16 @@ class MainActivity : ComponentActivity() {
     } else {
       prefs().edit().putBoolean("hrBlocked", false).apply()
     }
+    afterNotificationChange()
+  }
+
+  private val askNotif = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+    if (!granted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+      !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
+    ) {
+      prefs().edit().putBoolean("notifBlocked", true).apply()
+    }
+    afterNotificationChange()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +101,7 @@ class MainActivity : ComponentActivity() {
           bpm = null
         }
       }
-      ForgeWatch(snap, bpm, hrStatus, hrAllowed, onAllow = ::allowHeartRate)
+      ForgeWatch(snap, bpm, hrStatus, hrAllowed, notifAllowed, onAllow = ::allowHeartRate, onAllowNotif = ::allowNotifications)
     }
   }
 
@@ -96,6 +110,7 @@ class MainActivity : ComponentActivity() {
     WatchState.load(this)
     WatchSync.refresh(this)
     hrAllowed = hasHeartPermission()
+    afterNotificationChange()
     if (!prefs().getBoolean("asked", false)) {
       // First open: heart rate, and (Wear OS 4+) notifications for "Rest is over".
       prefs().edit().putBoolean("asked", true).apply()
@@ -146,6 +161,39 @@ class MainActivity : ComponentActivity() {
     }
   }
 
+  private fun notificationsOn(): Boolean = try {
+    (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).areNotificationsEnabled()
+  } catch (e: Exception) {
+    Log.w("ForgeWear", "notification state unknown", e)
+    true
+  }
+
+  /** The screen's line, and Wear OS bridging (the phone's "Rest is over" only while ours can show). */
+  private fun afterNotificationChange() {
+    notifAllowed = notificationsOn()
+    Bridging.sync(this)
+  }
+
+  private fun allowNotifications() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !prefs().getBoolean("notifBlocked", false)) {
+      try {
+        askNotif.launch(Manifest.permission.POST_NOTIFICATIONS)
+        return
+      } catch (e: Exception) {
+        Log.w("ForgeWear", "notification request failed", e)
+      }
+    }
+    try {
+      startActivity(
+        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+          .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+          .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+      )
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "notification settings did not open", e)
+    }
+  }
+
   private companion object {
     const val READ_HEART_RATE = "android.permission.health.READ_HEART_RATE"
   }
@@ -157,7 +205,9 @@ private fun ForgeWatch(
   bpm: Double?,
   hrStatus: HeartRate.Status,
   hrAllowed: Boolean,
+  notifAllowed: Boolean,
   onAllow: () -> Unit,
+  onAllowNotif: () -> Unit,
 ) {
   Scaffold(
     modifier = Modifier.fillMaxSize().background(Color.Black),
@@ -167,8 +217,8 @@ private fun ForgeWatch(
       val rest = snap.rest
       when {
         rest != null -> RestScreen(rest, if (hrAllowed) bpm else null)
-        snap.workoutActive -> HeartScreen(snap.title, bpm, hrStatus, hrAllowed, onAllow)
-        else -> IdleScreen()
+        snap.workoutActive -> HeartScreen(snap.title, bpm, hrStatus, hrAllowed, onAllow, notifAllowed, onAllowNotif)
+        else -> IdleScreen(notifAllowed, onAllowNotif)
       }
     }
   }
@@ -232,7 +282,15 @@ private fun RestScreen(rest: WatchState.Rest, bpm: Double?) {
 }
 
 @Composable
-private fun HeartScreen(title: String, bpm: Double?, status: HeartRate.Status, allowed: Boolean, onAllow: () -> Unit) {
+private fun HeartScreen(
+  title: String,
+  bpm: Double?,
+  status: HeartRate.Status,
+  allowed: Boolean,
+  onAllow: () -> Unit,
+  notifAllowed: Boolean,
+  onAllowNotif: () -> Unit,
+) {
   Column(
     Modifier.fillMaxWidth().padding(horizontal = 22.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
@@ -242,17 +300,17 @@ private fun HeartScreen(title: String, bpm: Double?, status: HeartRate.Status, a
       Text(title, color = Muted, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
       Spacer(Modifier.height(2.dp))
     }
-    Text("♥", color = Ember, fontSize = 22.sp)
     Text(
       if (allowed) RestText.bpm(bpm) else "—",
       color = Color.White,
-      fontSize = 56.sp,
+      fontSize = 52.sp,
       fontWeight = FontWeight.Bold,
       maxLines = 1,
     )
-    Text("BPM", color = Muted, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
+    Text("♥ BPM", color = Ember, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
     val note = when {
       !allowed -> "Heart rate is off. Tap to allow."
+      status == HeartRate.Status.NO_SENSOR -> "This watch has no heart-rate sensor"
       status == HeartRate.Status.OFF_WRIST -> "Wear the watch snugly"
       status == HeartRate.Status.UNAVAILABLE -> "Heart rate not available"
       bpm == null -> "Reading…"
@@ -268,11 +326,31 @@ private fun HeartScreen(title: String, bpm: Double?, status: HeartRate.Status, a
         modifier = if (!allowed) Modifier.clickable(onClick = onAllow).padding(4.dp) else Modifier,
       )
     }
+    if (!notifAllowed) NotificationPrompt(onAllowNotif)
   }
 }
 
+/** Notifications off: the countdown on the watch face (and "Rest is over") cannot show. */
 @Composable
-private fun IdleScreen() {
+private fun NotificationPrompt(onAllow: () -> Unit) {
+  Spacer(Modifier.height(6.dp))
+  Text(
+    "The countdown on the watch face needs notifications",
+    color = Muted,
+    fontSize = 12.sp,
+    textAlign = TextAlign.Center,
+    maxLines = 2,
+  )
+  Spacer(Modifier.height(4.dp))
+  CompactChip(
+    onClick = onAllow,
+    label = { Text("Allow", color = Color.Black, fontWeight = FontWeight.Bold) },
+    colors = ChipDefaults.primaryChipColors(backgroundColor = Ember),
+  )
+}
+
+@Composable
+private fun IdleScreen(notifAllowed: Boolean, onAllowNotif: () -> Unit) {
   Column(
     Modifier.fillMaxWidth().padding(horizontal = 24.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
@@ -286,5 +364,6 @@ private fun IdleScreen() {
       fontSize = 16.sp,
       textAlign = TextAlign.Center,
     )
+    if (!notifAllowed) NotificationPrompt(onAllowNotif)
   }
 }

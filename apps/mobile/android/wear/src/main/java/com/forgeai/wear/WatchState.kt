@@ -10,7 +10,7 @@ import androidx.compose.runtime.setValue
 
 /**
  * What the watch knows, as the phone last published it (Data Layer, [WatchSync]):
- *  - /forge/rest     {startedAt, endsAt, next, seq} while a rest runs; {endsAt: 0, ended, seq} when it
+ *  - /forge/rest     {startedAt, endsAt, next, ringThroughDnd, seq} while a rest runs; {endsAt: 0, ended, seq} when it
  *                    is skipped / cleared (ended = false) or ran out on the phone (ended = true);
  *  - /forge/workout  {active, title, seq}.
  *
@@ -23,7 +23,8 @@ object WatchState {
   private const val TAG = "ForgeWear"
   private const val PREFS = "forgeai_watch"
 
-  data class Rest(val startedAt: Long, val endsAt: Long, val next: String)
+  /** [ringThroughDnd]: the phone's "Ring through Do Not Disturb" (the buzz then uses alarm usage). */
+  data class Rest(val startedAt: Long, val endsAt: Long, val next: String, val ringThroughDnd: Boolean = false)
 
   data class Snapshot(val rest: Rest?, val workoutActive: Boolean, val title: String)
 
@@ -38,7 +39,14 @@ object WatchState {
   private fun read(ctx: Context): Snapshot {
     val p = prefs(ctx)
     val ends = p.getLong("endsAt", 0L)
-    val rest = if (ends > 0L) Rest(p.getLong("startedAt", ends), ends, p.getString("next", "") ?: "") else null
+    // A rest whose end passed over a minute ago is over, alarm or not (the watch was restarted or
+    // the app force-stopped mid-rest, so its alarm was lost): never a countdown stuck at 0:00.
+    val stale = ends > 0L && ends < System.currentTimeMillis() - STALE_MS
+    val rest = if (ends > 0L && !stale) {
+      Rest(p.getLong("startedAt", ends), ends, p.getString("next", "") ?: "", p.getBoolean("ringThroughDnd", false))
+    } else {
+      null
+    }
     return Snapshot(rest, p.getBoolean("active", false), p.getString("title", "") ?: "")
   }
 
@@ -47,8 +55,33 @@ object WatchState {
     main.post { snapshot = s }
   }
 
-  /** The screen came up: show what is saved. */
-  fun load(ctx: Context) = publish(ctx)
+  /** The screen came up: show what is saved (and set a lost alarm again, [recover]). */
+  fun load(ctx: Context) {
+    recover(ctx)
+    publish(ctx)
+  }
+
+  /**
+   * After a reboot, an app update or a force-stop the rest's alarm and countdown are gone: a rest
+   * still in the future gets them back; one already over is dropped (no late buzz).
+   */
+  @Synchronized
+  fun recover(ctx: Context) {
+    val p = prefs(ctx)
+    val ends = p.getLong("endsAt", 0L)
+    if (ends <= 0L) return
+    val now = System.currentTimeMillis()
+    if (ends < now - RestText.LATE_MS) {
+      // Its alarm should have gone off by now: it was lost (or already handled). Quietly over.
+      saveRest(ctx, null)
+      RestAlerts.restCleared(ctx)
+      publish(ctx)
+      Log.i(TAG, "lost rest dropped (ended ${now - ends} ms ago)")
+      return
+    }
+    val r = read(ctx).rest ?: return
+    if (r.endsAt > now) RestAlerts.restStarted(ctx, r) // alarm + countdown set again (idempotent)
+  }
 
   /** The saved rest, if one runs (or has not been alerted yet). */
   @Synchronized
@@ -57,16 +90,17 @@ object WatchState {
   private fun saveRest(ctx: Context, r: Rest?) {
     val e = prefs(ctx).edit()
     if (r == null) {
-      e.remove("startedAt").remove("endsAt").remove("next")
+      e.remove("startedAt").remove("endsAt").remove("next").remove("ringThroughDnd")
     } else {
       e.putLong("startedAt", r.startedAt).putLong("endsAt", r.endsAt).putString("next", r.next)
+        .putBoolean("ringThroughDnd", r.ringThroughDnd)
     }
     e.commit()
   }
 
   /** A /forge/rest item from the phone. */
   @Synchronized
-  fun onRest(ctx: Context, startedAt: Long, endsAt: Long, next: String, ended: Boolean, seq: Long) {
+  fun onRest(ctx: Context, startedAt: Long, endsAt: Long, next: String, ended: Boolean, ringThroughDnd: Boolean, seq: Long) {
     val p = prefs(ctx)
     if (seq != 0L && seq <= p.getLong("restSeq", 0L)) {
       Log.i(TAG, "rest seq $seq already applied")
@@ -76,7 +110,7 @@ object WatchState {
     val now = System.currentTimeMillis()
     val cur = read(ctx).rest
     if (endsAt > 0L) {
-      val r = Rest(if (startedAt in 1L..endsAt) startedAt else now, endsAt, next)
+      val r = Rest(if (startedAt in 1L..endsAt) startedAt else now, endsAt, next, ringThroughDnd)
       if (endsAt <= now) {
         // Reached the watch already over (it was out of range).
         saveRest(ctx, null)
@@ -134,6 +168,9 @@ object WatchState {
     RestAlerts.restOver(ctx, cur)
     publish(ctx)
   }
+
+  /** A saved rest this far past its end reads as none. */
+  private const val STALE_MS = 60_000L
 
   /** An alarm that fires this much early is set again instead. */
   private const val EARLY_MS = 1_500L

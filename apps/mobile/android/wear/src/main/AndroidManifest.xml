@@ -6,6 +6,8 @@
   <!-- The end-of-rest buzz (Vibrator, alarm usage) and the brief wake while it runs. -->
   <uses-permission android:name="android.permission.VIBRATE" />
   <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <!-- A rest still running after a restart gets its alarm and countdown back (BootReceiver). -->
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
   <!-- "Rest is over" and the resting countdown (Ongoing Activity); asked on first open (Wear OS 4+). -->
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
   <!-- Live heart rate (Health Services MeasureClient). Wear OS 6 / Android 16 names it
@@ -55,6 +57,16 @@
           android:scheme="wear" />
       </intent-filter>
     </service>
+
+    <!-- Restart / app update: a running rest's alarm and countdown come back. -->
+    <receiver
+      android:name=".BootReceiver"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+      </intent-filter>
+    </receiver>
 
     <!-- The rest's end: buzz + "Rest is over". -->
     <receiver

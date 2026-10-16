@@ -80,6 +80,8 @@ dependencies {
   implementation "androidx.wear.compose:compose-material:1.4.1"
   implementation "androidx.wear.compose:compose-foundation:1.4.1"
   implementation "androidx.wear:wear-ongoing:1.0.0"
+  // BridgingManager: keep the phone's "Rest is over" off the watch (the watch alerts itself).
+  implementation "androidx.wear:wear-phone-interactions:1.1.0"
   implementation "androidx.health:health-services-client:1.1.0"
   // Health Services returns ListenableFuture (unregisterMeasureCallbackAsync) but ships Guava only
   // at runtime; the same version on the compile classpath.

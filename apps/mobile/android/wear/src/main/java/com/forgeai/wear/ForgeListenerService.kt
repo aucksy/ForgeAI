@@ -10,6 +10,8 @@ import com.google.android.gms.wearable.WearableListenerService
  */
 class ForgeListenerService : WearableListenerService() {
   override fun onDataChanged(dataEvents: DataEventBuffer) {
+    // The notification permission may have changed in Settings since: keep the bridging right.
+    Bridging.sync(applicationContext)
     for (event in dataEvents) {
       if (event.type == DataEvent.TYPE_CHANGED) WatchSync.apply(applicationContext, event.dataItem)
     }

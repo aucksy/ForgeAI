@@ -25,6 +25,7 @@ object WatchSync {
           m.getLong("endsAt", 0L),
           m.getString("next", "") ?: "",
           m.getBoolean("ended", false),
+          m.getBoolean("ringThroughDnd", false),
           seq,
         )
       } else {
