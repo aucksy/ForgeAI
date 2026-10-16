@@ -36,4 +36,9 @@ rootProject.name = 'ForgeAI'
 expoAutolinking.useExpoVersionCatalog()
 
 include ':app'
+// The Wear OS companion (v0.46): built only when asked (-PwithWear=true), so a phone-only build
+// never configures it. wear-build.yml and release-apk.yml pass it.
+if (providers.gradleProperty('withWear').getOrElse('false') == 'true') {
+  include ':wear'
+}
 includeBuild(expoAutolinking.reactNativeGradlePlugin)

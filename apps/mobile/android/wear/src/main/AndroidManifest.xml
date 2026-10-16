@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <uses-feature android:name="android.hardware.type.watch" />
+
+  <!-- The end-of-rest buzz (Vibrator, alarm usage) and the brief wake while it runs. -->
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <!-- "Rest is over" and the resting countdown (Ongoing Activity); asked on first open (Wear OS 4+). -->
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <!-- Live heart rate (Health Services MeasureClient). Wear OS 6 / Android 16 names it
+       health.READ_HEART_RATE; earlier versions use BODY_SENSORS. Both are asked for. -->
+  <uses-permission android:name="android.permission.BODY_SENSORS" />
+  <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
+  <!-- The rest's end alarm. USE_EXACT_ALARM is granted at install (a timer app, Android 13+);
+       Android 12 (API 31-32) uses SCHEDULE_EXACT_ALARM instead; Android 11 needs neither. -->
+  <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+  <uses-permission
+    android:name="android.permission.SCHEDULE_EXACT_ALARM"
+    android:maxSdkVersion="32" />
+
+  <application
+    android:allowBackup="false"
+    android:icon="@drawable/ic_launcher"
+    android:label="@string/app_name"
+    android:supportsRtl="true"
+    android:theme="@android:style/Theme.DeviceDefault">
+
+    <!-- Needs the phone app: everything it shows comes from ForgeAI on the phone. -->
+    <meta-data
+      android:name="com.google.android.wearable.standalone"
+      android:value="false" />
+
+    <activity
+      android:name=".MainActivity"
+      android:exported="true"
+      android:launchMode="singleTask"
+      android:taskAffinity=""
+      android:theme="@android:style/Theme.DeviceDefault">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+
+    <!-- The phone's rest and workout state (Data Layer items /forge/rest and /forge/workout). -->
+    <service
+      android:name=".ForgeListenerService"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+        <data
+          android:host="*"
+          android:pathPrefix="/forge"
+          android:scheme="wear" />
+      </intent-filter>
+    </service>
+
+    <!-- The rest's end: buzz + "Rest is over". -->
+    <receiver
+      android:name=".RestAlarmReceiver"
+      android:exported="false" />
+  </application>
+</manifest>

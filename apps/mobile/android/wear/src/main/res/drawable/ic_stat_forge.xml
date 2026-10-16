@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ForgeAI's mark (hexagon, ring, compass star) in white, for the notification and the
+     Ongoing Activity chip. Traced from apps/mobile/scripts/icon-src/mark-1024.png. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="1024"
+  android:viewportHeight="1024">
+  <path
+    android:fillColor="#FFFFFFFF"
+    android:fillType="evenOdd"
+    android:pathData="M512,92 L873,301 L873,721 L512,931 L151,721 L151,301 Z M314,512 A198,198 0 1,0 710,512 A198,198 0 1,0 314,512 Z M512,343 L551,472 L681,512 L551,551 L512,681 L472,551 L343,512 L472,472 Z" />
+</vector>

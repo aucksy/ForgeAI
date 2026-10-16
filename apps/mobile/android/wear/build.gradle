@@ -1,0 +1,84 @@
+// ForgeAI for Wear OS (v0.46): the watch companion. It shows the phone's rest timer with a ring,
+// buzzes when the rest is over (its own exact alarm, so a muted phone alert never matters), and
+// shows live heart rate from the watch's sensor while a workout is open.
+//
+// Built only with -PwithWear=true (settings.gradle). Same applicationId as the phone app and the
+// same signing key, which is what lets the Wear Data Layer pair the two (the phone publishes
+// /forge/rest and /forge/workout from modules/forge-rest, WearSync.kt).
+//
+// The Compose compiler plugin is put on this module's own classpath at the project's Kotlin
+// version, exactly as expo-modules-core does, so the phone build never loads it.
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    classpath("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:${kotlinVersion}")
+  }
+}
+
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "org.jetbrains.kotlin.plugin.compose"
+
+android {
+  namespace 'com.forgeai.wear'
+  compileSdk rootProject.ext.compileSdkVersion
+  buildToolsVersion rootProject.ext.buildToolsVersion
+
+  defaultConfig {
+    // MUST equal the phone app's id: the Data Layer only connects apps with the same package
+    // name and the same signing certificate.
+    applicationId 'com.forgeai.app'
+    minSdkVersion 30 // Wear OS 3+
+    targetSdkVersion 35
+    // The same numbers the phone gets from CI (app/build.gradle), so both halves match.
+    versionCode (project.hasProperty('appVersionCode') ? project.property('appVersionCode').toString().toInteger() : 1)
+    versionName (project.hasProperty('appVersionName') ? project.property('appVersionName').toString() : "0.1.0")
+  }
+
+  signingConfigs {
+    // The phone's own debug key (app/debug.keystore). Release builds are re-signed in CI with the
+    // phone's exact key-rotation arguments (release-apk.yml), so the watch and phone match.
+    debug {
+      storeFile file('../app/debug.keystore')
+      storePassword 'android'
+      keyAlias 'androiddebugkey'
+      keyPassword 'android'
+    }
+  }
+
+  buildTypes {
+    debug {
+      signingConfig signingConfigs.debug
+    }
+    release {
+      signingConfig signingConfigs.debug
+      minifyEnabled true
+      shrinkResources true
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+    }
+  }
+
+  buildFeatures {
+    compose true
+    buildConfig false
+  }
+
+  testOptions {
+    unitTests.returnDefaultValues = true
+  }
+}
+
+dependencies {
+  implementation "androidx.core:core-ktx:1.16.0"
+  implementation "androidx.activity:activity-compose:1.10.1"
+  implementation "androidx.wear.compose:compose-material:1.4.1"
+  implementation "androidx.wear.compose:compose-foundation:1.4.1"
+  implementation "androidx.wear:wear-ongoing:1.0.0"
+  implementation "androidx.health:health-services-client:1.1.0"
+  implementation "com.google.android.gms:play-services-wearable:20.0.1"
+
+  testImplementation "junit:junit:4.13.2"
+}
