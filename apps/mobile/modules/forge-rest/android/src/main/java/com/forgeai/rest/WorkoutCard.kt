@@ -184,6 +184,12 @@ object WorkoutCard {
     // RestCard's bare hides do not.
     if (title != null && text != null) keep(ctx, title, text, image, doneJson)
     keepPlan(ctx, plan)
+    // C5 review: the app's own hide while the running rest's card was swiped away / cleared
+    // (C5-15): the live card stays up with the new words instead of going down again.
+    if (title != null && text != null && RestCard.restCardGone(ctx)) {
+      post(ctx, title, text, image, doneJson)
+      return
+    }
     cancel(ctx)
   }
 

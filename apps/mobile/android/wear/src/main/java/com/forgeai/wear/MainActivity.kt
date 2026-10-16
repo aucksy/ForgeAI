@@ -355,26 +355,40 @@ private fun HeartScreen(
         modifier = if (!allowed) Modifier.clickable(onClick = onAllow).padding(4.dp) else Modifier,
       )
     }
-    if (!notifAllowed && !canComplete) NotificationPrompt(onAllowNotif)
+    // C5 review: also beside "Complete set" (short form, to fit a round screen): with notifications
+    // off this app has no countdown and no buttons of its own between sets.
+    if (!notifAllowed) NotificationPrompt(onAllowNotif, compact = canComplete)
   }
 }
 
-/** Notifications off: the countdown on the watch face (and "Rest is over") cannot show. */
+/**
+ * Notifications off: the countdown on the watch face, its buttons and "Rest is over" cannot show.
+ * [compact]: one small chip, no explanation (beside "Complete set" on a round screen).
+ */
 @Composable
-private fun NotificationPrompt(onAllow: () -> Unit) {
-  Spacer(Modifier.height(6.dp))
-  Text(
-    "The countdown on the watch face needs notifications",
-    color = Muted,
-    fontSize = 12.sp,
-    textAlign = TextAlign.Center,
-    maxLines = 2,
-  )
+private fun NotificationPrompt(onAllow: () -> Unit, compact: Boolean = false) {
+  if (!compact) {
+    Spacer(Modifier.height(6.dp))
+    Text(
+      "The countdown on the watch face needs notifications",
+      color = Muted,
+      fontSize = 12.sp,
+      textAlign = TextAlign.Center,
+      maxLines = 2,
+    )
+  }
   Spacer(Modifier.height(4.dp))
   CompactChip(
     onClick = onAllow,
-    label = { Text("Allow", color = Color.Black, fontWeight = FontWeight.Bold) },
-    colors = ChipDefaults.primaryChipColors(backgroundColor = Ember),
+    label = {
+      Text(
+        if (compact) "Allow notifications" else "Allow",
+        color = if (compact) Ember else Color.Black,
+        fontWeight = FontWeight.Bold,
+        fontSize = if (compact) 11.sp else 14.sp,
+      )
+    },
+    colors = if (compact) ChipDefaults.secondaryChipColors() else ChipDefaults.primaryChipColors(backgroundColor = Ember),
   )
 }
 

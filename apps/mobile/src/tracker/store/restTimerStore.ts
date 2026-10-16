@@ -25,7 +25,7 @@ import { create } from 'zustand';
 import { getMeta, setMeta } from '@/db';
 import { success } from '@/lib/haptics';
 
-import { dismissRestOver, ringerMode } from '../services/restCard';
+import { dismissRestOver, restBell, ringerMode } from '../services/restCard';
 import type { CardDone } from '../services/restDone';
 import { DEFAULT_REST_SEC, REST_MAX_SEC, REST_MIN_SEC } from '../services/restRules';
 import { cancelRestEnd, scheduleRestEnd } from '../services/workoutAlerts';
@@ -115,7 +115,9 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
         // In the background the scheduled notification makes the sound — playing the
         // bell too would ring twice.
         if (Date.now() - endsAt <= LATE_MS && AppState.currentState === 'active') {
-          success();
+          // C1-10 / C5 review (16 Oct 2026): Do Not Disturb holding "Rest is over" (Ring through
+          // off) holds the app's own buzz too — one rule, screen on or off.
+          if (restBell() !== 'hold') success();
           if (ringerAllowsSound()) playWorkoutSound('rest');
         }
         // Do NOT cancel/dismiss the scheduled alert here. In the background it is

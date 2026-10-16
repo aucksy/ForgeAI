@@ -20,7 +20,7 @@ vi.mock('@/tracker/services/workoutAlerts', () => ({
 vi.mock('@/tracker/services/restCard', async (orig) => {
   const real = (await orig()) as typeof import('@/tracker/services/restCard');
   // The real rule, fed the phone's ringer and the native answer the test sets.
-  return { ...real, ringerMode: () => real.ringerForBell(ringer, bell) };
+  return { ...real, ringerMode: () => real.ringerForBell(ringer, bell), restBell: () => bell };
 });
 vi.mock('@/tracker/services/workoutSounds', () => ({
   playWorkoutSound: () => {
@@ -101,6 +101,8 @@ describe('C5-4 / C1-10: one rule for the end-of-rest sound, screen on or off', (
     bell = 'hold';
     restEnds();
     expect(calls.sound).toBe(0);
+    // C5 review: the app's own buzz is held too (it still buzzed under DND before).
+    expect(calls.haptic).toBe(0);
   });
 
   it('the ringer still rules when the app rings', () => {
@@ -121,7 +123,9 @@ describe('ringerForBell (PURE)', () => {
     }
   });
 
-  it('no native piece (tests, web): restBell is unknown, so nothing changes', () => {
-    expect(restBell()).toBeNull();
+  it('no native piece (tests, web): restBell is unknown, so nothing changes', async () => {
+    const real = await vi.importActual<typeof import('@/tracker/services/restCard')>('@/tracker/services/restCard');
+    expect(real.restBell()).toBeNull();
+    expect(restBell()).toBe(bell); // the mock above
   });
 });

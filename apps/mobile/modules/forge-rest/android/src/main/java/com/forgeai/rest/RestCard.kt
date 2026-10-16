@@ -94,6 +94,8 @@ object RestCard {
   const val CH_CARD_LIVE = "rest-card-live"
   /** C5-3: the rest card's bridge tag; the ForgeAI watch app excludes it (it has its own countdown). */
   const val BRIDGE_TAG_CARD = "rest-card"
+  /** C5 review: the countdown's own group, which never gets a summary, so it never alerts. */
+  private const val QUIET_GROUP = "forgeai-rest-countdown"
   /** C5-15: the rest card went (swiped, "Clear all"): the live card comes back for the rest. */
   const val ACTION_CARD_GONE = "com.forgeai.rest.CARD_GONE"
   /** The v0.26.1 card channel (LOW importance, filed under "Silent"); deleted on first use. */
@@ -432,6 +434,12 @@ object RestCard {
     p.edit().putBoolean("cardGone", true).commit()
     android.util.Log.i(LOG_TAG, "rest card gone mid-rest: live card back")
     WorkoutCard.restore(ctx)
+  }
+
+  /** C5-15: a rest runs whose card was swiped away (preferences only, no lock, like [restUp]). */
+  fun restCardGone(ctx: Context): Boolean {
+    val p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    return p.getLong("endsAt", 0L) > 0L && p.getBoolean("cardGone", false)
   }
 
   /** v0.37.1 (C3): the "Open ForgeAI to …" note went (swiped or timed out): the live card is back. */
@@ -1320,6 +1328,18 @@ object RestCard {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) b.extend(Notification.WearableExtender().setBridgeTag(BRIDGE_TAG_CARD))
       // C5-15: swiped away or "Clear all" mid-rest: the live card comes back ([cardGone]).
       b.setDeleteIntent(actionIntent(ctx, ACTION_CARD_GONE, 8))
+      // C5 review (16 Oct 2026): on the DEFAULT channel this card, posted afresh at every rest
+      // start, counted as a new alerting notification, which can wake a Pixel's screen ("Wake
+      // screen for notifications") in a pocket at every set. onlyAlertOnce covers updates only.
+      // Chosen: the card is the lone child of its own group with GROUP_ALERT_SUMMARY and no summary
+      // is ever posted, so Android never lets this card alert (no sound, buzz, peek or screen
+      // wake: "suppressed by group alert behaviour") while its DEFAULT importance still lists it
+      // with the normal notifications and on a lock screen that hides silent ones (what C5-3 needs).
+      // (androidx's NotificationCompat.setSilent works the same way.) Keeping one notification up
+      // between rests instead would break "one at a time" with the live card.
+      if (channel == CH_CARD_LIVE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        b.setGroup(QUIET_GROUP).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
+      }
       nm(ctx).notify(CARD_ID, b.build())
       // One at a time: the rest card alone while the rest runs (it names the next set, and its
       // Done ticks it) — also when the rest started with the app's JS asleep.

@@ -53,6 +53,8 @@ class ForgeRestModule : Module() {
     Events("onRestChange", "onOpenWorkout")
 
     OnCreate {
+      // C5 review: which watch is there, asked at app start so the first rest's card has the answer.
+      ctx?.let { WearSync.probeWatch(it) }
       RestCard.listener = { kind, endsAt, startedAt ->
         try {
           sendEvent("onRestChange", mapOf("kind" to kind, "endsAt" to endsAt.toDouble(), "startedAt" to startedAt.toDouble()))

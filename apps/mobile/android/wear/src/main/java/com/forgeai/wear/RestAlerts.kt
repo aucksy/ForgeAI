@@ -99,7 +99,9 @@ object RestAlerts {
   fun restOver(ctx: Context, r: WatchState.Rest, done: String = "") {
     disarm(ctx)
     cancel(ctx, LIVE_ID)
-    buzz(ctx, r.ringThroughDnd)
+    // C5-6: with this app's notifications refused the phone's "Rest is over" is copied here and
+    // buzzes; buzzing too would make two (Bridging).
+    if (Bridging.shouldBuzz(ctx)) buzz(ctx, r.ringThroughDnd) else Log.i(TAG, "rest over: the phone's copied alert buzzes")
     postOver(ctx, r, done)
   }
 

@@ -170,24 +170,33 @@ object WearSync {
   fun plainWatch(ctx: Context): Boolean =
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("watch", MODE_NONE) == MODE_PLAIN
 
-  /** Asks Wear OS (in the background, at most once a minute) which watch is there, for [plainWatch]. */
+  /**
+   * Asks Wear OS (in the background, at most once a minute) which watch is there, for [plainWatch].
+   * C5 review (16 Oct 2026): per CONNECTED watch, not over every watch ever paired: "plain" as soon
+   * as one connected watch lacks the ForgeAI app (its copy of the card would buzz), "app" when every
+   * connected watch has it, "none" with no watch connected. Also asked when the app starts
+   * (ForgeRestModule), so the first rest already has the answer.
+   */
   fun probeWatch(ctx: Context) {
     val now = System.currentTimeMillis()
     if (now - lastProbe < PROBE_EVERY_MS || unavailable()) return
     lastProbe = now
     val app = ctx.applicationContext
     try {
-      Wearable.getCapabilityClient(app).getCapability(CAP_WATCH_APP, CapabilityClient.FILTER_ALL)
-        .addOnSuccessListener { info ->
-          if (info.nodes.isNotEmpty()) {
-            saveWatch(app, MODE_APP)
-          } else {
-            Wearable.getNodeClient(app).connectedNodes
-              .addOnSuccessListener { nodes -> saveWatch(app, if (nodes.isEmpty()) MODE_NONE else MODE_PLAIN) }
-              .addOnFailureListener { e -> failed(e, "connected watches not read") }
+      Wearable.getNodeClient(app).connectedNodes
+        .addOnSuccessListener { nodes ->
+          if (nodes.isEmpty()) {
+            saveWatch(app, MODE_NONE)
+            return@addOnSuccessListener
           }
+          Wearable.getCapabilityClient(app).getCapability(CAP_WATCH_APP, CapabilityClient.FILTER_REACHABLE)
+            .addOnSuccessListener { info ->
+              val withApp = info.nodes.map { it.id }.toSet()
+              saveWatch(app, if (nodes.any { it.id !in withApp }) MODE_PLAIN else MODE_APP)
+            }
+            .addOnFailureListener { e -> failed(e, "watch app not looked up") }
         }
-        .addOnFailureListener { e -> failed(e, "watch app not looked up") }
+        .addOnFailureListener { e -> failed(e, "connected watches not read") }
     } catch (e: Exception) {
       Log.w(TAG, "watch not looked up", e)
     }
