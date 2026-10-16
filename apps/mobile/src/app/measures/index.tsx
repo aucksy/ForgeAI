@@ -15,7 +15,7 @@ import { StatHeading, leavePage } from '@/components/stats/parts';
 import { askConfirm, Card, Chip, EmptyState, Icon, IconButton, LoadError, Screen, Skeleton, UndoBar } from '@/components/ui';
 import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { getBodyWeightHistory } from '@/db/repos/userRepo';
-import { dateWithYear, tinyDate, todayISO } from '@/lib/date';
+import { dateWithYear, tinyDateWithYear, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { success } from '@/lib/haptics';
 import { kgToShown, shownToKg, weightUnitOf } from '@/lib/units';
@@ -192,9 +192,9 @@ export default function MeasuresScreen() {
   const undoText = (u: Undo): string => {
     if (u.item.kind === 'deleted') {
       const day = u.item.entry.dateISO;
-      return `${u.table === 'weight' ? 'Weigh-in' : MEASURE_LABEL[(u.item.entry as MeasurementEntry).kind]} on ${tinyDate(day)} deleted`;
+      return `${u.table === 'weight' ? 'Weigh-in' : MEASURE_LABEL[(u.item.entry as MeasurementEntry).kind]} on ${tinyDateWithYear(day)} deleted`;
     }
-    return `Replaced the entry on ${tinyDate(u.item.replaced?.dateISO ?? u.item.before.dateISO)}`;
+    return `Replaced the entry on ${tinyDateWithYear(u.item.replaced?.dateISO ?? u.item.before.dateISO)}`;
   };
 
   const add = () => router.push({ pathname: '/measures/add', params: { kind: chip } });
@@ -233,7 +233,7 @@ export default function MeasuresScreen() {
                 <View style={{ width: 84, height: 112, borderRadius: radius.md, overflow: 'hidden', backgroundColor: color.surfaceRaised }}>
                   <Image source={{ uri: p.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" cachePolicy="memory" />
                 </View>
-                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{tinyDate(p.dateISO)}</Text>
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{tinyDateWithYear(p.dateISO)}</Text>
               </Pressable>
             ))}
           </ScrollView>
@@ -333,7 +333,7 @@ export default function MeasuresScreen() {
         error={editError}
         noteFor={(iso) => {
           const other = editing ? otherOn(iso, editing) : undefined;
-          return other ? `Replaces ${valueText(chip, other.value)} on ${tinyDate(iso)}.` : null;
+          return other ? `Replaces ${valueText(chip, other.value)} on ${tinyDateWithYear(iso)}.` : null;
         }}
         onSave={(text, iso) => void onSaveEdit(text, iso)}
         onDelete={() => void onDelete()}

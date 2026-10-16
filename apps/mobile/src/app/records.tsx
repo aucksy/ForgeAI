@@ -10,7 +10,7 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 import { Badge, EmptyState, GhostButton, LoadError, Screen, Skeleton } from '@/components/ui';
 import { useLoad } from '@/lib/useLoad';
 import { goBack } from '@/lib/goBack';
-import { tinyDate } from '@/lib/date';
+import { tinyDateWithYear } from '@/lib/date';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { liftsBeatingBest, liftsUpText } from '@/tracker/engine/headline';
@@ -118,7 +118,7 @@ export default function RecordsScreen() {
                     {recordValueText(item.row, item.row.info)}
                   </Text>
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted, marginTop: 2 }}>
-                    {tinyDate(item.row.dateISO)}
+                    {tinyDateWithYear(item.row.dateISO)}
                   </Text>
                 </View>
               </Pressable>

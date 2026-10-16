@@ -22,7 +22,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { askConfirm, EmptyState, GhostButton, Icon, IconButton, LoadError, PrimaryButton, Screen, Skeleton } from '@/components/ui';
-import { dateWithYear, tinyDate } from '@/lib/date';
+import { dateWithYear, tinyDateWithYear } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
 import { color, radius, space, type } from '@/theme/tokens';
 import { DatePickerSheet } from '@/tracker/components/DatePickerSheet';
@@ -248,7 +248,7 @@ export default function ProgressPhotosScreen() {
           ) : null}
         </View>
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted, textAlign: 'center' }}>
-          {tinyDate(p.dateISO)}
+          {tinyDateWithYear(p.dateISO)}
         </Text>
       </Pressable>
     );

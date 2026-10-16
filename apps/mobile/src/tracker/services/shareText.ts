@@ -18,7 +18,7 @@
 import { Share } from 'react-native';
 
 import { getDb } from '@/db';
-import { tinyDate } from '@/lib/date';
+import { tinyDateWithYear } from '@/lib/date';
 import { E1RM_MAX_REPS, estimatedOneRepMax } from '@/lib/e1rm';
 import { fmtInt, fmtTotalTime } from '@/lib/format';
 import { displayUnits, fmtW, kgToShown, weightUnitOf } from '@/lib/units';
@@ -376,7 +376,7 @@ export function periodText(input: PeriodTextInput): string {
   const records = input.records
     .map((r) => {
       const line = recordLine(r, input.exercises.get(r.exerciseId)?.bwShare ?? 0);
-      return line ? `${line} (${tinyDate(r.dateISO)})` : null;
+      return line ? `${line} (${tinyDateWithYear(r.dateISO)})` : null;
     })
     .filter((l): l is string => l != null);
   out.push('');

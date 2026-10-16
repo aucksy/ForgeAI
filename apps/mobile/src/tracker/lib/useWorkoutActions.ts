@@ -8,7 +8,7 @@ import { useRef, useState } from 'react';
 
 import { askConfirm } from '@/components/ui';
 import { EDIT_FAILED, SAVE_ROUTINE_FAILED, START_FAILED, runGuarded } from '@/lib/guardedAction';
-import { shortDate } from '@/lib/date';
+import { dateWithYear } from '@/lib/date';
 import { tell } from '@/lib/tell';
 import { useDashboard } from '@/store/dashboardStore';
 
@@ -124,7 +124,7 @@ export function useWorkoutActions(router: Nav, show?: () => void): WorkoutAction
           workingSets: g.sets.filter((x) => !x.isWarmup).length,
         }));
         const routineId = await createRoutineFromWorkout({
-          name: s.title?.trim() ? s.title.trim() : `${sessionTitle(s)} · ${shortDate(s.dateISO)}`,
+          name: s.title?.trim() ? s.title.trim() : `${sessionTitle(s)} · ${dateWithYear(s.dateISO)}`,
           dayType: s.dayType === 'rest' ? 'full' : s.dayType,
           items,
           folderId,

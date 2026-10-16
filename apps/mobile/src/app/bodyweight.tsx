@@ -31,7 +31,7 @@ import {
 } from '@/components/ui';
 import { getBodyWeightHistory, getProfile } from '@/db/repos/userRepo';
 import { logBodyWeight } from '@/db/queuedWrites';
-import { dateWithYear, tinyDate, todayISO } from '@/lib/date';
+import { dateWithYear, tinyDateWithYear, todayISO } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
 import { trimNum } from '@/lib/format';
 import { success } from '@/lib/haptics';
@@ -147,7 +147,7 @@ export default function BodyWeightScreen() {
 
   const replaceNote = (iso: string, exceptId?: string): string | null => {
     const other = entryOn(iso, exceptId);
-    return other ? `Replaces ${showWU(other.weightKg, units)} on ${tinyDate(iso)}.` : null;
+    return other ? `Replaces ${showWU(other.weightKg, units)} on ${tinyDateWithYear(iso)}.` : null;
   };
 
   const typeHint = units === 'imperial' ? 'Type your body weight in lb, like 168.5.' : 'Type your body weight in kg, like 76.5.';
@@ -248,8 +248,8 @@ export default function BodyWeightScreen() {
 
   const undoText = (u: BodyWeightUndo): string =>
     u.kind === 'deleted'
-      ? `Weigh-in on ${tinyDate(u.entry.dateISO)} deleted`
-      : `Replaced ${showWU(u.replaced?.weightKg ?? 0, units)} on ${tinyDate(u.replaced?.dateISO ?? u.before.dateISO)}`;
+      ? `Weigh-in on ${tinyDateWithYear(u.entry.dateISO)} deleted`
+      : `Replaced ${showWU(u.replaced?.weightKg ?? 0, units)} on ${tinyDateWithYear(u.replaced?.dateISO ?? u.before.dateISO)}`;
   const lastUndo = undo.length > 0 ? undo[undo.length - 1] : null;
   const shownHistory = historyPage(history, pages);
 

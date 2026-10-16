@@ -397,7 +397,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
               </thead>
               <tbody>
                 {visible.map((r) => (
-                  <LedgerTableRow key={r.payment.id} row={r} onVoid={canVoid ? () => setVoiding(r.payment) : undefined} />
+                  <LedgerTableRow key={r.payment.id} row={r} withYear={range.from.slice(0, 4) !== range.to.slice(0, 4)} onVoid={canVoid ? () => setVoiding(r.payment) : undefined} />
                 ))}
               </tbody>
             </table>
@@ -470,11 +470,12 @@ function takenByWords(name: string): string {
   return tr(`Taken by ${name}`, `${name} ne li`);
 }
 
-function LedgerTableRow({ row, onVoid }: { row: LedgerRow; onVoid?: () => void }) {
+/** C9-48: `withYear` when the range spans two years, so 26 Jul 2025 never reads as this July. */
+function LedgerTableRow({ row, withYear, onVoid }: { row: LedgerRow; withYear: boolean; onVoid?: () => void }) {
   const { payment, member, membership } = row;
   return (
     <tr>
-      <Td>{formatDayShort(payment.paidOn)}</Td>
+      <Td>{withYear ? formatDay(payment.paidOn) : formatDayShort(payment.paidOn)}</Td>
       <Td mono>
         <Link to={`/receipts/${payment.id}`}>
           <span style={{ color: color.accentBright }}>{payment.receiptNo}</span>

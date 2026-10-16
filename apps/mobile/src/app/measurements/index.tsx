@@ -11,7 +11,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { askConfirm, Card, Chip, EmptyState, LoadError, PrimaryButton, Screen, SectionHeader, Skeleton, UndoBar } from '@/components/ui';
-import { dateWithYear, tinyDate, todayISO } from '@/lib/date';
+import { dateWithYear, tinyDateWithYear, todayISO } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
 import { trimNum } from '@/lib/format';
 import { useUnits } from '@/lib/useUnits';
@@ -152,8 +152,8 @@ export default function MeasurementsScreen() {
 
   const undoText = (u: MeasurementUndo): string =>
     u.kind === 'deleted'
-      ? `${MEASURE_LABEL[u.entry.kind]} on ${tinyDate(u.entry.dateISO)} deleted`
-      : `Replaced ${MEASURE_LABEL[u.before.kind]} ${u.replaced ? shownOf(u.replaced) : ''} on ${tinyDate(u.replaced?.dateISO ?? u.before.dateISO)}`;
+      ? `${MEASURE_LABEL[u.entry.kind]} on ${tinyDateWithYear(u.entry.dateISO)} deleted`
+      : `Replaced ${MEASURE_LABEL[u.before.kind]} ${u.replaced ? shownOf(u.replaced) : ''} on ${tinyDateWithYear(u.replaced?.dateISO ?? u.before.dateISO)}`;
   const lastUndo = undo.length > 0 ? undo[undo.length - 1] : null;
 
   return (
@@ -190,7 +190,7 @@ export default function MeasurementsScreen() {
               </View>
               {current.change !== null ? (
                 <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.md }}>
-                  {signed(measureToShown(current.kind, current.change, units))} {unit} since {tinyDate(points[0].x)}
+                  {signed(measureToShown(current.kind, current.change, units))} {unit} since {tinyDateWithYear(points[0].x)}
                 </Text>
               ) : null}
               {points.length >= 2 ? (
@@ -282,7 +282,7 @@ export default function MeasurementsScreen() {
       error={editError}
       noteFor={(iso) => {
         const other = editing ? sameDay(iso, editing) : undefined;
-        return other ? `Replaces ${shownOf(other)} on ${tinyDate(iso)}.` : null;
+        return other ? `Replaces ${shownOf(other)} on ${tinyDateWithYear(iso)}.` : null;
       }}
       onSave={(text, iso) => void onSaveEdit(text, iso)}
       onDelete={() => void onDelete()}

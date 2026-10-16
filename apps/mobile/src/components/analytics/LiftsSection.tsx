@@ -4,7 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { BarChart } from '@/components/charts';
 import { EmptyState, GhostButton, Icon, LoadError, Skeleton } from '@/components/ui';
-import { tinyDate, todayISO } from '@/lib/date';
+import { tinyDateWithYear, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { tap } from '@/lib/haptics';
 import { kgToShown, weightUnitOf } from '@/lib/units';
@@ -124,7 +124,7 @@ export function LiftsSection({ lifts, rangeDays, focusKey, index }: LiftsSection
     <Section
       title="Your lifts"
       index={index}
-      right={inspect && chart ? <InspectReadout value={`${chart.yFormat(inspect.y)} ${chart.unitText}`.trim()} sub={tinyDate(inspect.x)} /> : undefined}
+      right={inspect && chart ? <InspectReadout value={`${chart.yFormat(inspect.y)} ${chart.unitText}`.trim()} sub={tinyDateWithYear(inspect.x)} /> : undefined}
     >
       <View style={{ gap: space.xs }}>
         {lifts.length > 0 ? (

@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 
 import { Badge, EmptyState, Icon } from '@/components/ui';
-import { tinyDate } from '@/lib/date';
+import { tinyDateWithYear } from '@/lib/date';
 import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';
 import { liftsBeatingBest, liftsUpShort } from '@/tracker/engine/headline';
@@ -71,7 +71,7 @@ export function PrSection({ events, allCount, rangeDays, index, onSeeAll, onOpen
               key={`${r.exerciseId}-${r.kind}-${r.sessionId}-${i}`}
               onPress={() => onOpenExercise(r.exerciseId)}
               accessibilityRole="button"
-              accessibilityLabel={`${r.exerciseName}, ${RECORD_LABEL[r.kind]}, ${recordValueText(r, r.info)}, ${tinyDate(r.dateISO)}`}
+              accessibilityLabel={`${r.exerciseName}, ${RECORD_LABEL[r.kind]}, ${recordValueText(r, r.info)}, ${tinyDateWithYear(r.dateISO)}`}
               style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}
             >
               <View
@@ -97,7 +97,7 @@ export function PrSection({ events, allCount, rangeDays, index, onSeeAll, onOpen
               <View style={{ alignItems: 'flex-end' }}>
                 <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }}>{recordValueText(r, r.info)}</Text>
                 <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted, marginTop: 2 }}>
-                  {tinyDate(r.dateISO)}
+                  {tinyDateWithYear(r.dateISO)}
                 </Text>
               </View>
             </Pressable>

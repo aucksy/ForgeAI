@@ -4,7 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 import { DeltaPill } from '@/components/charts';
 import { AnimatedNumber, Icon } from '@/components/ui';
 import type { IconName } from '@/components/ui';
-import { tinyDate } from '@/lib/date';
+import { tinyDateWithYear } from '@/lib/date';
 import { trimNum } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
@@ -65,7 +65,7 @@ export function BodyWeightSection({ data, index, measureLine, photoCount, lastWe
   return (
     <Section
       index={index}
-      right={inspect ? <InspectReadout value={`${trimNum(inspect.y)} ${unit}`} sub={tinyDate(inspect.x)} /> : undefined}
+      right={inspect ? <InspectReadout value={`${trimNum(inspect.y)} ${unit}`} sub={tinyDateWithYear(inspect.x)} /> : undefined}
     >
       {has ? (
         <>

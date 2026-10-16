@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { EmptyState } from '@/components/ui';
-import { tinyDate } from '@/lib/date';
+import { tinyDateWithYear } from '@/lib/date';
 import { fmtCompact, fmtInt } from '@/lib/format';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
 import type { NutritionDay } from '@/types/models';
@@ -24,7 +24,7 @@ export function ProteinSection({ data, target, index }: ProteinSectionProps) {
   const hasData = points.some((d) => d.proteinG > 0);
 
   const right = inspect ? (
-    <InspectReadout value={`${fmtInt(inspect.y)} g`} sub={tinyDate(inspect.x)} />
+    <InspectReadout value={`${fmtInt(inspect.y)} g`} sub={tinyDateWithYear(inspect.x)} />
   ) : hasData && target !== null ? (
     <HeaderStat text={`target ${fmtInt(target)}g`} />
   ) : undefined;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { EmptyState, GhostButton } from '@/components/ui';
-import { tinyDate } from '@/lib/date';
+import { tinyDateWithYear } from '@/lib/date';
 import { color, space, type } from '@/theme/tokens';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
 import { InfoHeading } from '@/tracker/components/InfoHeading';
@@ -30,7 +30,7 @@ export function StrengthSection({ data, hasBodyWeight, onAddWeight, index }: Str
   const empty = strengthEmpty(hasBodyWeight);
 
   const right = inspect ? (
-    <InspectReadout value={`${Math.round(inspect.y)}`} sub={tinyDate(inspect.x)} />
+    <InspectReadout value={`${Math.round(inspect.y)} / 100`} sub={tinyDateWithYear(inspect.x)} />
   ) : hasData ? (
     <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.accentBright }}>
       {Math.round(latest)}
