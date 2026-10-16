@@ -94,6 +94,20 @@ const nameOf = (v: unknown, max: number): string | null => {
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, Math.round(n)));
 const num = (v: unknown, fallback: number): number => (typeof v === 'number' && Number.isFinite(v) ? v : fallback);
 
+/** A routine file that can't be used: its message is plain words, shown as it is (C9-16). */
+export class RoutineFileProblem extends Error {}
+
+/**
+ * What "Could not open that file" says (C9-16): the file's own reason, or a fixed line. A raw
+ * file-system or database message is logged, never shown. PURE apart from the log line.
+ */
+export function routineFileProblemText(e: unknown, saveFailureText: (e: unknown) => string): string {
+  if (e instanceof RoutineFileProblem) return e.message;
+  if (e instanceof Error && e.name === 'RoutineSaveError') return saveFailureText(e);
+  console.warn('[ForgeErr] routine file: could not be opened', e);
+  return 'That file couldn’t be opened. Ask the sender to share it again, then try again.';
+}
+
 /**
  * Read a shared file. Anything unusable is refused with a plain reason; odd numbers are
  * brought into range rather than refused (a routine from an older app must still open).

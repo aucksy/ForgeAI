@@ -49,6 +49,7 @@ import { matchesFrom, suggestMatches, type NameSuggestion } from '@/tracker/serv
 import { allHereText, answerReadProblemText, dateRangeText, doneTitle, importButtonLabel, unitsQuestion } from '@/tracker/services/importWords';
 import { forgetKeptTrainingData } from '@/tracker/services/keptData';
 import { findRoutines } from '@/tracker/services/routineRebuild';
+import { readProblemText } from '@/tracker/services/importProblem';
 import { looksLikeStrong, parseStrongText, strongFileInfo, unitsExample, type FileUnits } from '@/tracker/services/strongImport';
 import { NewNamesCard, RenamedList } from '@/tracker/components/NewNamesCard';
 import { RoutineImportSteps } from '@/tracker/components/RoutineImportSteps';
@@ -915,9 +916,4 @@ export default function ImportScreen() {
 /** IM-17: what a file that is neither app's export gets. */
 const NOT_AN_EXPORT = 'This file isn’t a Hevy or Strong export. In Hevy: Settings → Export & Backup Data. In Strong: Settings → Export Strong Data.';
 
-/** A read problem in plain words (IM-17: "This file isn't…" stands on its own). */
-function readProblemText(e: unknown): string {
-  const m = e instanceof Error ? e.message : '';
-  if (m.startsWith('This file isn’t')) return m;
-  return `Couldn’t read that file. ${m || 'Please try again.'}`;
-}
+/* A read problem in plain words: readProblemText (tracker/services/importProblem, C9-15). */

@@ -54,8 +54,8 @@ export function BootErrorScreen() {
     if (r.ok) {
       setSaveNote(
         r.files === 2
-          ? 'Keep both files together, with the same names. Support can open them for you.'
-          : 'Keep this file somewhere safe. Support can open it for you.',
+          ? 'Keep both files together, with the same names. If you need help, send them to your gym, who can pass them to ForgeAI to open.'
+          : 'Keep this file somewhere safe. If you need help, send it to your gym, who can pass it to ForgeAI to open.',
       );
     } else if (r.reason === 'no-share') {
       setSaveNote("This phone can't share files right now.");

@@ -103,7 +103,7 @@ export function CloudCard() {
             lineHeight: 19,
           }}
         >
-          Sign in again to keep syncing with {identity.gymName}. Nothing was lost.
+          Sign in again to keep sharing with {identity.gymName}. Nothing was lost.
         </Text>
         <Field label="Email" value={email} onChange={setEmail} placeholder="you@email.com" keyboard="email-address" />
         <Field label="Password" value={password} onChange={setPassword} placeholder="Your password" secure />
@@ -151,7 +151,7 @@ export function CloudCard() {
             lineHeight: 19,
           }}
         >
-          Your workout &amp; nutrition summary syncs to {identity.gymName} so your coach can
+          Your workout &amp; nutrition summary is shared with {identity.gymName} so your coach can
           track your progress. Your full history stays on this phone.
         </Text>
         <View style={{ marginTop: space.lg, gap: space.sm }}>

@@ -159,7 +159,7 @@ export function generateChat(input: ChatInput): GeneratedChat {
       role: 'coach',
       kind: 'pr_list',
       text:
-        `New record — ${specOf(star.exerciseKey).name} ${star.kind === 'e1rm' ? 'best single (estimate) ' : ''}` +
+        `New record — ${specOf(star.exerciseKey).name} ${star.kind === 'e1rm' ? 'estimated 1-rep max ' : ''}` +
         `${trimNum(star.value)} kg. That makes ${monthWeightPrs} weight records in the last month. ` +
         `Progressive overload is doing its job.`,
       payload,

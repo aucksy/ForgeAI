@@ -228,7 +228,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
         <ToggleRow
           icon="sparkle"
           title="AI coach notes"
-          caption="After a workout, add an AI-written note via your Groq key (needs a key; otherwise the built-in coach note always shows)"
+          caption="A short note from the AI coach after each workout. Without it, the built-in note shows."
           value={coachNotes}
           onChange={setCoachNotes}
           divider

@@ -184,7 +184,7 @@ describe('one word per idea — the guard', () => {
   it('C9-5: "pr", "Pb", "1RM", "e1RM" and "est-1RM" are caught too; "print" and "1 rep" are not', () => {
     const hit = (s: string): boolean => BANNED.some((b) => b.re.test(s));
     for (const s of ['New pr!', 'Pb today', 'Your 1RM', 'e1RM 100', '110 est-1RM']) expect(hit(s), s).toBe(true);
-    for (const s of ['print it', 'Best single (estimate)', '1 rep left', 'Record', 'Rings at notification volume']) {
+    for (const s of ['print it', 'Estimated 1-rep max', '1 rep left', 'Record', 'Rings at notification volume']) {
       expect(hit(s), s).toBe(false);
     }
     expect(hit('Total volume')).toBe(true);

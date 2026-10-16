@@ -818,12 +818,12 @@ async function exerciseProgressReply(ex: Exercise, f: Flavour): Promise<LocalRep
         : pick(f, 'flat', 'same');
   const text = pick(
     f,
-    `${ex.name}: best set ${best}, best single (estimate) ${cwTight(e1rmNow)} — ${dir} ${Math.abs(e1rmDelta)}${tight} over your last ${countWord(stats.progress.length, 'workout')}.`,
-    `${ex.name}: best set ${best}, best single (estimate) ${cwTight(e1rmNow)} — pichle ${stats.progress.length} workouts me ${Math.abs(e1rmDelta)}${tight} ${dir}.`,
+    `${ex.name}: best set ${best}, estimated 1-rep max ${cwTight(e1rmNow)} — ${dir} ${Math.abs(e1rmDelta)}${tight} over your last ${countWord(stats.progress.length, 'workout')}.`,
+    `${ex.name}: best set ${best}, estimated 1-rep max ${cwTight(e1rmNow)} — pichle ${stats.progress.length} workouts me ${Math.abs(e1rmDelta)}${tight} ${dir}.`,
   );
   const rows = [
     { label: pick(f, 'Best set', 'Best set'), value: best },
-    { label: 'Best single (estimate)', value: cw(e1rmNow) },
+    { label: 'Estimated 1-rep max', value: cw(e1rmNow) },
     { label: pick(f, 'Change', 'Badlav'), value: `${e1rmDelta >= 0 ? '+' : ''}${e1rmDelta} ${cunit()}` },
     { label: pick(f, 'Workouts', 'Workouts'), value: `${stats.sessionsCount}` },
   ];

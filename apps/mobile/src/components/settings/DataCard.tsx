@@ -18,6 +18,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { DangerLink } from '@/components/DangerLink';
 import { Badge, Card, GhostButton, askConfirm } from '@/components/ui';
+import { FEATURES } from '@/lib/features';
 import { success, thud, warn } from '@/lib/haptics';
 import { countOwnWorkouts } from '@/onboarding/db/dataActions';
 import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
@@ -44,7 +45,8 @@ export const DEMO_SWITCH_HOLD_MS = 2000;
  */
 export function eraseBody(healthConnectUsed: boolean, gymName: string | null = null): string {
   const what =
-    'Every workout, record, routine, body entry, photo and video, your AI keys, the gym and Drive links and your settings. This phone goes back to new.';
+    // C9-18: AI keys are named only while members can see the coach that uses them.
+    `Every workout, record, routine, body entry, photo and video, ${FEATURES.coach ? 'your AI keys, ' : ''}your gym and Google Drive links, and your settings. This phone goes back to new.`;
   const withHc = healthConnectUsed
     ? `${what} Workouts already sent to Health Connect stay there; remove them in Health Connect.`
     : what;

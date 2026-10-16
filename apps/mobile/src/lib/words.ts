@@ -13,7 +13,7 @@ export function countWord(n: number, singular: string, fmt: (n: number) => strin
 
 /**
  * Words a member must never read (docs/DESIGN-LANGUAGE.md, "Words: one word per idea"): say
- * "workout", "record", "kg lifted", "best single (estimate)". The guard test
+ * "workout", "record", "kg lifted", "estimated 1-rep max". The guard test
  * (test/lib/memberWords.test.ts) checks every screen with this list, and the AI note is dropped
  * when the model's reply uses one of them (audit C9-6). PURE.
  */
@@ -25,7 +25,7 @@ export const BANNED_MEMBER_WORDS: readonly { word: string; re: RegExp }[] = [
   { word: 'volume', re: /(?<!\b(?:notification|alarm|ring|ringer|media|sound|phone|call)\s)\bvolumes?\b/i },
   { word: 'kg moved', re: /\b(kg|lbs?)\s+moved\b/i },
   { word: 'vol', re: /\bvol\b/i },
-  // C9-5: "1RM" / "e1RM" / "est-1RM" (say "best single (estimate)").
+  // C9-5: "1RM" / "e1RM" / "est-1RM" (say "estimated 1-rep max", docs/DESIGN-LANGUAGE.md).
   { word: 'e1RM', re: /\b(e|est-?)?1RM\b/i },
 ];
 

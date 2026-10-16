@@ -329,7 +329,7 @@ function workoutLoggedCardText(detail: SessionDetail, newPrs: PrWithName[]): str
   );
   const pr = newPrs.length
     ? ` New record${newPrs.length > 1 ? 's' : ''}: ${newPrs
-        .map((p) => `${p.exerciseName} ${cwTight(p.value)} (${p.kind === 'e1rm' ? 'best single, estimate' : p.kind})`)
+        .map((p) => `${p.exerciseName} ${cwTight(p.value)} (${p.kind === 'e1rm' ? 'estimated 1-rep max' : p.kind})`)
         .join(', ')}.`
     : '';
   return `Logged ${countWord(detail.exercises.length, 'exercise')}, ${countWord(setCount, 'set')} — ${cvol(detail.totalVolumeKg)} lifted.${pr}`;
@@ -731,7 +731,7 @@ export const COACH_TOOLS: CoachTool[] = [
 
   {
     name: 'get_prs',
-    description: "List the member's personal records (best weight and best single estimate per exercise). Call them records.",
+    description: "List the member's personal records (best weight and best estimated 1-rep max per exercise). Call them records.",
     parameters: { type: 'object', properties: {} },
     async execute() {
       const prs = await getMeaningfulPrs(); // no "Plank 0 kg" or negative assisted records
@@ -757,7 +757,7 @@ export const COACH_TOOLS: CoachTool[] = [
   {
     name: 'get_exercise_stats',
     description:
-      'Get progress stats for one exercise by name: best set, best single (estimate), averages and recent trend.',
+      'Get progress stats for one exercise by name: best set, estimated 1-rep max, averages and recent trend.',
     parameters: {
       type: 'object',
       properties: {

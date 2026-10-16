@@ -11,7 +11,7 @@ import { Share } from 'react-native';
 import type { PlanDayFull } from '@/db/repos/planRepo';
 import { SHARE_FOLDER } from '@/lib/tempPictures';
 
-import { parseRoutineFile, ROUTINE_FILE_MAX_BYTES, routineFileJson, routineFileName, routinesText } from '../plans/routineFile';
+import { parseRoutineFile, ROUTINE_FILE_MAX_BYTES, RoutineFileProblem, routineFileJson, routineFileName, routinesText } from '../plans/routineFile';
 import { existingFileFolder, importRoutineFile, routineFileOf, sharedRoutinesOf, type ExistingChoice, type ImportResult } from './plansService';
 
 /** Send the routines as plain text (WhatsApp, a note…). */
@@ -45,10 +45,10 @@ export async function pickAndImportRoutineFile(
   if (res.canceled || !res.assets || res.assets.length === 0) return null;
   // A photo or a video picked by mistake must not be read into memory whole.
   const size = res.assets[0].size ?? (await FileSystem.getInfoAsync(res.assets[0].uri).then((i) => (i.exists ? i.size : 0)).catch(() => 0));
-  if (size > ROUTINE_FILE_MAX_BYTES) throw new Error('That file is too big to be a routine file.');
+  if (size > ROUTINE_FILE_MAX_BYTES) throw new RoutineFileProblem('That file is too big to be a routine file.');
   const text = await FileSystem.readAsStringAsync(res.assets[0].uri);
   const parsed = parseRoutineFile(text);
-  if (!parsed.ok) throw new Error(parsed.reason);
+  if (!parsed.ok) throw new RoutineFileProblem(parsed.reason);
   const before = await existingFileFolder(parsed.file);
   if (before && choose) {
     const pick = await choose(before.name);

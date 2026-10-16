@@ -138,7 +138,7 @@ function factSheet(data: SessionSummaryData, prevSameType: SessionDetail | null)
   if (data.prs.length > 0) {
     lines.push(
       `Records today: ${data.prs
-        .map((p) => `${p.exerciseName} ${kgNum(p.value)} ${weightUnitOf()}${p.kind === 'e1rm' ? ' best single (estimate)' : ''}`)
+        .map((p) => `${p.exerciseName} ${kgNum(p.value)} ${weightUnitOf()}${p.kind === 'e1rm' ? ' estimated 1-rep max' : ''}`)
         .join('; ')}`,
     );
   }

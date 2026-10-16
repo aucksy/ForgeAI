@@ -16,6 +16,8 @@ import { Card, Icon, Screen, SectionHeader, type IconName } from '@/components/u
 import { color, space, type } from '@/theme/tokens';
 
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
+import { routineFileProblemText } from '@/tracker/plans/routineFile';
+import { routineSaveFailureText } from '@/tracker/services/routineImport';
 import { programGroups, programMeta } from '@/tracker/plans/programs';
 import type { ExistingChoice } from '@/tracker/services/plansService';
 import { pickAndImportRoutineFile } from '@/tracker/services/routineShare';
@@ -75,7 +77,7 @@ export default function ProgramsScreen() {
       );
       router.dismissTo('/workout');
     } catch (e) {
-      void tell('Could not open that file', e instanceof Error ? e.message : 'Please try again.');
+      void tell('Could not open that file', routineFileProblemText(e, routineSaveFailureText));
     }
   };
 
