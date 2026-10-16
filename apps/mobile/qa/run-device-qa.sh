@@ -1074,8 +1074,10 @@ gate_wake() {
   adb shell wm dismiss-keyguard || true
 }
 gate_dump() { adb shell dumpsys notification --noredact > "$OUT/$1"; }
-# Do Not Disturb as a person sets it from Quick Settings (priority only: alarms get through).
-gate_dnd() {  # $1 = on | off
+# Do Not Disturb as a person sets it from Quick Settings: "priority only" (zen_mode 1), where
+# alarms get through. NB `set_dnd on` is TOTAL SILENCE (zen_mode 2), which blocks alarms too
+# (first API 36 run, 38866492454).
+gate_dnd() {  # $1 = priority | off
   adb shell cmd notification set_dnd "$1" > "$OUT/dnd-set-$1.txt" 2>&1 || true
   sleep 2
   echo "$(adb shell settings get global zen_mode | tr -d '\r')"
@@ -1091,10 +1093,11 @@ gate_dnd() {  # $1 = on | off
 part_dnd() {
   local ring zen want_ch want_cat want_sound t
   for ring in off on; do
-    zen=$(gate_dnd on)
-    log "DND ($ring): Do Not Disturb on, zen_mode=$zen (1 = priority only)"
-    if [ "$zen" = "0" ] || [ -z "$zen" ]; then
-      log "DND FAILED: Do Not Disturb could not be switched on ($(tr -d '\r' < "$OUT/dnd-set-on.txt" | head -c 200))"
+    zen=$(gate_dnd priority)
+    log "DND ($ring): Do Not Disturb on, zen_mode=$zen (want 1 = priority only)"
+    if [ "$zen" != "1" ]; then
+      gate_dnd off >/dev/null
+      log "DND FAILED: Do Not Disturb could not be switched to priority only, zen_mode=$zen ($(tr -d '\r' < "$OUT/dnd-set-priority.txt" | head -c 200))"
       status=1
       return 1
     fi
@@ -1152,8 +1155,8 @@ part_longrest() {
   python3 "$QA_DIR/notif.py" over-locked "$OUT/longrest-2-after.txt" "$t2" "$OUT/longrest-2-during.txt" >> "$OUT/timeline.txt" || status=1
   python3 "$QA_DIR/notif.py" over-is "$OUT/longrest-2-after.txt" rest-over-sound alarm sound >> "$OUT/timeline.txt" \
     || { status=1; log "LONGREST FAILED: the second rest's alert (longrest-2-after.txt)"; }
-  c1=$(grep -A40 'tag=over-' "$OUT/longrest-1-after.txt" | grep -m1 -o 'mCreationTimeMs=[0-9]*' | cut -d= -f2)
-  c2=$(grep -A40 'tag=over-' "$OUT/longrest-2-after.txt" | grep -m1 -o 'mCreationTimeMs=[0-9]*' | cut -d= -f2)
+  c1=$(grep -A120 'tag=over-' "$OUT/longrest-1-after.txt" | grep -m1 -o 'mCreationTimeMs=[0-9]*' | cut -d= -f2)
+  c2=$(grep -A120 'tag=over-' "$OUT/longrest-2-after.txt" | grep -m1 -o 'mCreationTimeMs=[0-9]*' | cut -d= -f2)
   if [ -n "$c1" ] && [ -n "$c2" ]; then
     log "LONGREST: the two alerts posted $(( (c2 - c1) / 1000 )) s apart (under 120 s = inside Android 15+'s cooldown window; API $(adb shell getprop ro.build.version.sdk | tr -d '\r'))"
   fi
@@ -1294,7 +1297,8 @@ fi
 # ANR (Monkey's own report), and on a crash / ANR / JS error / [ForgeErr] line in its logcat
 # (qa_report.py scan, the same rules as the whole run's scan). Opt-in: only=mk or extra=mk.
 MK_SEED=${MK_SEED:-20261016}
-MK_EVENTS=${MK_EVENTS:-3000}
+# 3000 events took 155 s on the cloud phone (run 38866490224), so ~12000 for ~10 minutes.
+MK_EVENTS=${MK_EVENTS:-12000}
 part_mk() {
   local lpid rc
   # Alone (only=mk), the app has no data yet: the demo first, so Monkey has screens to press.

@@ -62,18 +62,13 @@ appId: com.forgeai.app
     optional: true
     waitToSettleTimeoutMs: 300
 - takeScreenshot: anim-06-after-record
-# Throw the workout away (the app's own sheet), so nothing is left open.
-- scrollUntilVisible:
-    element: "Discard workout"
-    centerElement: true
-    timeout: 20000
-- tapOn: "Discard workout"
-- extendedWaitUntil:
-    visible: 'Discard workout\?'
-    timeout: 10000
-- takeScreenshot: anim-07-discard-sheet
-- tapOn: "^Discard$"
-- extendedWaitUntil:
-    visible: "Start empty workout|Start routine.*|Up next: .*"
-    timeout: 30000
-- takeScreenshot: anim-08-back-on-workout-tab
+# Throw the workout away (the app's own sheet), so nothing is left open. From the Workout tab:
+# scrolling the live workout to its bottom link timed out with animations on (the rest bar
+# redraws all the time; run 38866485489), so the screen is minimised first (Back).
+- tapOn:
+    text: "Skip rest"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- back
+- runFlow: sub-workout-fresh.yaml
+- takeScreenshot: anim-07-back-on-workout-tab
