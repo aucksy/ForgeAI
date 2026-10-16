@@ -12,7 +12,14 @@ Usage: notif.py <check> <dump-file> [args]
                           dump taken during the rest; FAILS when the alert was more than
                           REST_LATE_BUDGET_S (default 5) late, or more than 2 s early.
                           Without that dump the due time is tick + 30 s (approximate): lateness
-                          is then printed but cannot fail the run.
+                          is then printed but cannot fail the run. C5 review (16 Oct 2026): with
+                          that dump given, NO rest card in it FAILS (it used to pass, ungated);
+                          "Rest is over" must carry "Complete set" (audit C5-1); and while the
+                          phone is still asleep a second snapshot is taken ~60 s after the rest's
+                          end (this script runs adb), which FAILS when the alert has gone: the
+                          11 Oct regression (run 38081757903: removed within 30 s once it carried
+                          a button). With the screen already on (the app may dismiss it) that
+                          snapshot is skipped and says so.
   ongoing                 the live workout card is showing (channel "workout-live", id 41004;
                           an older build's "Workout in progress" card counts too)
   no-ongoing              NO live workout card (no workout was started)
@@ -32,8 +39,11 @@ Usage: notif.py <check> <dump-file> [args]
   card <title-prefix> [text-part]
                           the rest card is showing: swipe-away, its three buttons in the order
                           Done, +15 s, Skip (Phase 6), the given title (and, if given, a text
-                          "Next: ..." containing text-part), on the Phase 2 channel "rest-card-v2"
-  over-open               "Rest is over" posted while the app was open, and the rest card gone
+                          "Next: ..." containing text-part), on the channel "rest-card-live"
+                          (C5-3: no watch is paired with the emulator; "rest-card-v2" is only used
+                          while a watch WITHOUT the ForgeAI watch app is connected)
+  over-open               "Rest is over" posted while the app was open, on "rest-over-open-sound"
+                          (C5-4: it rings itself at notification volume), and the rest card gone
   over-is <channel> <category> <sound|silent>
                           audit v2 (DND / LONGREST): the NEWEST "Rest is over" is showing, on
                           <channel>, with <category> (alarm / reminder); "sound" = Android's
@@ -51,13 +61,25 @@ reads those, as before. Whether the custom view was used is printed, not gated.
 """
 import os
 import re
+import shutil
+import subprocess
 import sys
+import time
 
 PKG = "pkg=com.forgeai.app"
-CARD_CHANNEL = "rest-card-v2"
-# Any rest card, on the Phase 2 channel or the deleted v0.26.1 one: a card left on the old
-# channel still counts as "a card showing" (and the card check then fails on its channel).
-CARD_CHANNELS = (CARD_CHANNEL, "rest-card")
+# C5-3 (16 Oct 2026): the countdown's channel with no watch (or a watch with the ForgeAI app).
+CARD_CHANNEL = "rest-card-live"
+# Any rest card: the C5-3 channel, the LOW one still used while a watch WITHOUT the ForgeAI app is
+# connected ("rest-card-v2", also the "Open ForgeAI to ..." note's channel), or the deleted v0.26.1
+# one. A card on another channel still counts as "a card showing" (the card check then fails).
+CARD_CHANNELS = (CARD_CHANNEL, "rest-card-v2", "rest-card")
+# C5-4: "Rest is over" with the app on screen rings itself on this channel ("rest-over-open" is
+# now only the "Workout sounds" off, vibrate-only one).
+OVER_OPEN_CHANNEL = "rest-over-open-sound"
+# C5-1: the button "Rest is over" carries (the live card's own).
+COMPLETE = "Complete set"
+# How long after the rest's end the alert must still be showing (its own timeout is 120 s asleep).
+HOLD_S = 60
 
 
 def records(text):
@@ -135,6 +157,49 @@ def key_of(block):
     return m.group(1).rstrip(":") if m else ""
 
 
+def asleep():
+    """Is the emulator's screen off right now (so nothing in the app can dismiss the alert)?"""
+    try:
+        out = subprocess.run(["adb", "shell", "dumpsys", "power"], capture_output=True, text=True, timeout=30).stdout
+    except Exception as e:  # noqa: BLE001 - no adb: the hold snapshot is skipped and says so
+        print(f"[qa] (power state unknown: {e})")
+        return False
+    m = re.search(r"mWakefulness=(\w+)", out)
+    return bool(m) and m.group(1) in ("Asleep", "Dozing")
+
+
+def hold_check(path, key, due):
+    """C5-1 / the 11 Oct regression: the "Rest is over" posted at the rest's end is still showing
+    ~HOLD_S s after that end (a second, fresh snapshot), with its "Complete set". 0 = ok, 1 = gone."""
+    if not shutil.which("adb"):
+        print("[qa] REST IS OVER HELD: not checked (no adb here)")
+        return 0
+    if not asleep():
+        print("[qa] REST IS OVER HELD: not checked (screen already on: the app may dismiss it)")
+        return 0
+    wait = (due + HOLD_S * 1000 - int(time.time() * 1000)) / 1000
+    if wait > 0:
+        time.sleep(min(wait, HOLD_S + 5))
+    snap = subprocess.run(["adb", "shell", "dumpsys", "notification", "--noredact"], capture_output=True, text=True, timeout=60).stdout
+    hold_path = re.sub(r"\.txt$", "", path) + "-hold60.txt"
+    try:
+        with open(hold_path, "w", encoding="utf-8") as f:
+            f.write(snap)
+    except OSError as e:
+        print(f"[qa] (hold snapshot not saved: {e})")
+    since = (int(time.time() * 1000) - due) / 1000
+    still = [b for b in records(snap) if title(b) == "Rest is over" and key_of(b) == key]
+    if still:
+        acts = actions(still[0])
+        ok = COMPLETE in acts
+        print(f"[qa] REST IS OVER HELD: still showing {since:.0f}s after the rest's end ({os.path.basename(hold_path)}), buttons={acts}: {'ok' if ok else 'BUTTON GONE'}")
+        return 0 if ok else 1
+    ev = subprocess.run(["adb", "logcat", "-b", "events", "-d"], capture_output=True, text=True, timeout=60).stdout
+    why = [ln.strip() for ln in ev.splitlines() if "notification_cancel" in ln and "41002" in ln][-2:]
+    print(f"[qa] REST IS OVER REMOVED EARLY: gone {since:.0f}s after the rest's end (its timeout is 120 s); cancel events {why or 'none found'}; the 11 Oct regression (run 38081757903)")
+    return 1
+
+
 def main():
     check, path = sys.argv[1], sys.argv[2]
     recs = records(open(path, encoding="utf-8", errors="replace").read())
@@ -157,22 +222,34 @@ def main():
             return 0
         posted = int(m.group(1))
         # Due time = the rest card's `when`, the exact end time the app set when the rest began.
+        acts = actions(b)
+        has_complete = COMPLETE in acts
+        print(f"[qa] REST IS OVER buttons={acts} (want {COMPLETE!r}, audit C5-1): {'ok' if has_complete else 'MISSING'}")
         due = None
         if len(sys.argv) > 4:
             during = records(open(sys.argv[4], encoding="utf-8", errors="replace").read())
-            card = [x for x in during if is_card(x)]
-            w = re.search(r"\bwhen=(\d+)", card[0]) if card else None
-            due = int(w.group(1)) if w else None
+            card = [x for x in during if is_card(x) and title(x).startswith("Rest ")]
+            if not card:
+                # C5 review: no card during the rest used to print "NOT gated" and pass.
+                chans = sorted({channel_of(x) for x in during})
+                print(f"[qa] REST CARD NOT FOUND in the during-rest dump {os.path.basename(sys.argv[4])} (channels showing: {chans}; want one of {list(CARD_CHANNELS)}): FAILED")
+                return 1
+            w = re.search(r"\bwhen=(\d+)", card[0])
+            if not w:
+                print("[qa] REST CARD has no `when` (its end time) in the during-rest dump: FAILED")
+                return 1
+            due = int(w.group(1))
         if due is None:
             late = (posted - (tick + 30000)) / 1000
-            print(f"[qa] REST ALERT posted (channel {channel}); due ~{tick + 30000} (approximate: no rest card in the during-rest dump), posted {posted}, late by about {late:.1f}s - lateness NOT gated")
-            return 0
+            print(f"[qa] REST ALERT posted (channel {channel}); due ~{tick + 30000} (approximate: no during-rest dump given), posted {posted}, late by about {late:.1f}s - lateness NOT gated")
+            return 0 if has_complete else 1
         budget = float(os.environ.get("REST_LATE_BUDGET_S", "5"))
         late = (posted - due) / 1000
         ok = -2.0 <= late <= budget
         verdict = "within budget" if ok else ("REST ALERT TOO LATE" if late > budget else "REST ALERT TOO EARLY")
         print(f"[qa] REST ALERT posted (channel {channel}); due {due} (the rest card's end time), posted {posted}, late by {late:.1f}s; budget {budget:g}s: {verdict}")
-        return 0 if ok else 1
+        held = hold_check(path, key_of(b), due)
+        return 0 if ok and has_complete and held == 0 else 1
     if check == "ongoing":
         ok = any(is_ongoing(b) for b in recs)
         print("[qa] ONGOING CARD present" if ok else "[qa] ONGOING CARD MISSING")
@@ -308,7 +385,7 @@ def main():
         ch = re.search(r"channel=([\w-]+)", header(over[0]))
         left = [x for x in cards if title(x).startswith("Rest ")]
         print(f"[qa] REST IS OVER with the app open: posted on channel {ch.group(1) if ch else '?'}; rest cards left: {len(left)}; other notes on the card's channel: {[title(x) for x in cards if x not in left]}")
-        return 0 if not left and ch and ch.group(1) == "rest-over-open" else 1
+        return 0 if not left and ch and ch.group(1) == OVER_OPEN_CHANNEL else 1
     print("unknown check " + check)
     return 2
 
