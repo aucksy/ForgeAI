@@ -484,7 +484,10 @@ export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout,
     routineFirstTargets(items, false, scope, day.id),
     getPlanNow().catch(() => null),
     // C3-11: this plan week's effort for members who log RPE, as on the workout screen.
-    effortRir(day.id, { effort: useTrackerPrefs.getState().advancedSets }).catch(() => null),
+    effortRir(day.id, { effort: useTrackerPrefs.getState().advancedSets }).catch((e: unknown) => {
+      console.warn('[ForgeErr] today: the plan week effort could not be read', e);
+      return null;
+    }),
   ]);
   return {
     ...tw,
