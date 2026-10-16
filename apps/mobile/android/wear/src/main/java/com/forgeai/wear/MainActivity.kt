@@ -57,7 +57,7 @@ private val Muted = Color(0xFFB8AFA8)
  * visible and a workout is open.
  */
 class MainActivity : ComponentActivity() {
-  private var visible by mutableStateOf(false)
+  private var onScreen by mutableStateOf(false)
   private var bpm by mutableStateOf<Double?>(null)
   private var hrStatus by mutableStateOf(HeartRate.Status.WAITING)
   private var hrAllowed by mutableStateOf(false)
@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
     heart = HeartRate(this, { bpm = it }, { hrStatus = it })
     setContent {
       val snap = WatchState.snapshot
-      val measure = visible && hrAllowed && (snap.workoutActive || snap.rest != null)
+      val measure = onScreen && hrAllowed && (snap.workoutActive || snap.rest != null)
       DisposableEffect(measure) {
         if (measure) heart.start()
         onDispose {
@@ -102,11 +102,11 @@ class MainActivity : ComponentActivity() {
       val notif = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(Manifest.permission.POST_NOTIFICATIONS) else emptyList()
       requestAll(heartPermissions() + notif)
     }
-    visible = true
+    onScreen = true
   }
 
   override fun onStop() {
-    visible = false
+    onScreen = false
     super.onStop()
   }
 
