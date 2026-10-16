@@ -411,7 +411,15 @@ async function routineFirstTargets(
   const own = await historyScopeOrAll(planDayId, 'routine');
   if (own == null) return targetsFor(items, includeToday, null, prefs);
   const [mine, any] = await Promise.all([targetsFor(items, includeToday, own, prefs), targetsFor(items, includeToday, null, prefs)]);
-  return mine.map((t, i) => (t.action === 'start' ? any[i] : t));
+  // Wave-2 review: a break is a break from the LIFT, not from this routine — when the lift was done
+  // elsewhere after this routine's last time, the break rule (and its weight) reads every workout
+  // (routine at 80 kg 70 days ago, bench 110 x 5 two days ago: never "10 weeks since… 72.5 kg").
+  const breakRule = (t: ProgressionTarget): boolean => t.rule === 'R1' || t.rule === 'R1b' || t.rule === 'T1';
+  return mine.map((t, i) => {
+    if (t.action === 'start') return any[i];
+    const newer = any[i].last?.dateISO != null && t.last?.dateISO != null && any[i].last!.dateISO > t.last!.dateISO;
+    return breakRule(t) && newer ? any[i] : t;
+  });
 }
 
 /**

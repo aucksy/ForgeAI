@@ -167,3 +167,30 @@ describe('C3-25 / C3-26: copying a Hevy link again keeps the member\'s names, or
     expect(db.count('plan_exercises', `plan_day_id = '${day}'`)).toBe(1);
   });
 });
+
+describe('wave-2 review 2: a routine done long ago, the lift done recently elsewhere', () => {
+  it('routine at 80 kg 70 days ago, Bench 110 x 5 two days ago elsewhere: no "weeks since", no 72.5 kg', async () => {
+    const bench = db.all<{ id: string }>("SELECT id FROM exercises WHERE name = 'Barbell Bench Press'")[0].id;
+    const { createFolderWithRoutines } = await import('@/tracker/db/folderRepo');
+    await createFolderWithRoutines('Mine', [
+      { name: 'Old Push', dayType: 'push', exercises: [{ exerciseId: bench, sets: 3, repMin: 3, repMax: 6 }] },
+      { name: 'New Push', dayType: 'push', exercises: [{ exerciseId: bench, sets: 3, repMin: 3, repMax: 6 }] },
+    ]);
+    const idOf = (n: string) => db.all<{ id: string }>('SELECT id FROM plan_days WHERE name = ?', [n])[0].id;
+    const { createSession } = await import('@/db/repos/workoutRepo');
+    const { addSetsWithMeta } = await import('@/tracker/db/trackerSets');
+    const { getDb } = await import('@/db');
+    const log = async (daysAgo: number, kg: number, routine: string) => {
+      const t = Date.now() - daysAgo * 86_400_000;
+      const s = await createSession({ dateISO: new Date(t).toISOString().slice(0, 10), dayType: 'push', source: 'manual', startedAt: t });
+      await addSetsWithMeta(s.id, [0, 1, 2].map(() => ({ exerciseId: bench, weightKg: kg, reps: 5, isWarmup: false })));
+      await getDb().runAsync('UPDATE workout_sessions SET routine_id = ?, title = ? WHERE id = ?', [idOf(routine), routine, s.id]);
+    };
+    await log(70, 80, 'Old Push');
+    await log(2, 110, 'New Push');
+    const { getTargetsForCards } = await import('@/tracker/services/coachTargets');
+    const t = (await getTargetsForCards(idOf('Old Push'), [{ key: 'c', exerciseId: bench }], { previousFrom: 'any' })).get('c')!;
+    expect(t.reason).not.toMatch(/weeks/);
+    expect(t.targetWeightKg).toBeGreaterThanOrEqual(110);
+  });
+});
