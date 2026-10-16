@@ -129,9 +129,25 @@ appId: com.forgeai.app
     visible: "^(102\\.5|105)$"
     timeout: 5000
 - tapOn: "Copy to sets below"
-- extendedWaitUntil:
-    visible: "Copied to 1 set below"
-    timeout: 5000
+# The bench starts with as many sets as last time. After part I (one set in lb, plus the one
+# added above) it has 2, so 1 set below. Run 38870025551 (owner profile) had part I fail before its
+# workout, so last time was part J's Hevy bench (3 sets): the copy filled 2 sets and said so,
+# and "1 set below" never came. The count is checked exactly for both cases.
+- runFlow:
+    when:
+      notVisible: ".* set 3 weight, (kilograms|pounds)"
+    commands:
+      - extendedWaitUntil:
+          visible: "Copied to 1 set below"
+          timeout: 5000
+- runFlow:
+    when:
+      visible: ".* set 3 weight, (kilograms|pounds)"
+    commands:
+      - assertNotVisible: ".* set 4 weight, (kilograms|pounds)"
+      - extendedWaitUntil:
+          visible: "Copied to 2 sets below"
+          timeout: 5000
 - takeScreenshot: p9-04-copied
 - tapOn: ".* set 1 reps"
 - eraseText
@@ -216,9 +232,20 @@ appId: com.forgeai.app
 - tapOn:
     text: "View Barbell Bench Press"
     index: 0
+# Owner profile (360 dp, font 1.3): the records can sit below the screen's edge; the ⋯ is in the
+# header, so it is brought back (centred, clear of the status bar) before the tap.
 - extendedWaitUntil:
-    visible: "Heaviest weight"
+    visible: "Options for .*"
     timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Heaviest weight"
+- scrollUntilVisible:
+    element: "Options for .*"
+    direction: UP
+    centerElement: true
+    timeout: 20000
 - tapOn: "Options for .*"
 - tapOn: "Start records fresh.*"
 - extendedWaitUntil:
@@ -234,6 +261,7 @@ appId: com.forgeai.app
 - scrollUntilVisible:
     element: "Options for .*"
     direction: UP
+    centerElement: true
     timeout: 20000
 - tapOn: "Options for .*"
 - tapOn: "Count all records again"

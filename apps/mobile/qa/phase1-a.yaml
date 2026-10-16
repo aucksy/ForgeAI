@@ -82,7 +82,12 @@ appId: com.forgeai.app
 # v0.28.0: the card opens the day's exercises first; nothing starts until Start.
 - tapOn: "See exercises"
 - extendedWaitUntil:
-    visible: "Change this routine"
+    visible: "^Today$"
+    timeout: 20000
+# Owner profile (360 dp, font 1.3): six exercises fill the screen and the button is below them.
+- scrollUntilVisible:
+    element: "Change this routine"
+    centerElement: true
     timeout: 20000
 - takeScreenshot: 01b-today-preview
 - back

@@ -246,11 +246,19 @@ appId: com.forgeai.app
     optional: true
 - tapOn: '(?i)^allow$'
 - extendedWaitUntil:
-    visible: "Send past workouts"
+    visible: "Send past workouts|^Health Connect$"
     timeout: 20000
-# Audit Phase 6 (PH-03): the row says it is on, and what goes where.
-- assertVisible: 'On\. Each workout you finish goes to Health Connect with its calories \(an estimate\), so Google Fit and Samsung Health show it\.'
+# Audit Phase 6 (PH-03): the row says it is on, and what goes where. Owner profile (360 dp, font
+# 1.3): the lower rows can sit below the screen's edge, so each is scrolled to.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'On\. Each workout you finish goes to Health Connect with its calories \(an estimate\), so Google Fit and Samsung Health show it\.'
 - takeScreenshot: 128-health-connect-on
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Send past workouts"
 - tapOn: "Send past workouts"
 # PH-03: the line under the button says what "Send past workouts" really did. The import above
 # replaced the demo, so the member's own workouts are sent (not "Nothing sent. Workouts on demo
@@ -289,16 +297,23 @@ appId: com.forgeai.app
     text: '(?i)^allow$'
     optional: true
 # On: the weekly pattern (a day picker, Monday to Sunday) and a time, with the next reminder.
+# Owner profile (360 dp, font 1.3): the day picker and the time can sit below the screen's edge,
+# each is scrolled to (sub-find.yaml: down, then up) before it is checked.
 - extendedWaitUntil:
     visible: 'Next: .*\. None on a day you already trained or while a workout is open\.'
     timeout: 15000
-- scrollUntilVisible:
-    element: 'Remind me on Monday'
-    timeout: 15000
-- assertVisible: 'Remind me on Sunday'
-- scrollUntilVisible:
-    element: 'Reminder time \d{1,2}:\d{2} (am|pm)\. Change'
-    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Remind me on Monday'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Remind me on Sunday'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Reminder time \d{1,2}:\d{2} (am|pm)\. Change'
 # Notifications are allowed (part A allowed every permission), so no "Turn on notifications".
 - assertNotVisible: "Turn on notifications"
 - assertNotVisible: 'Notifications are off for ForgeAI, so no reminder can arrive\.'
@@ -315,9 +330,23 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 15000
 # None on the home screen yet: the row says what the widgets show, with both Add buttons.
-- assertVisible: "Home-screen widgets"
-- assertVisible: "Today's workout and your week, on your home screen\\."
-- assertVisible: "Add This week"
+# Owner profile (360 dp, font 1.3): each is scrolled to before it is checked.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Home-screen widgets"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Today's workout and your week, on your home screen\\."
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Add This week"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Add Today"
 - tapOn: "Add Today"
 - extendedWaitUntil:
     visible: '(?i).*(add to home screen|add automatically|^add$).*'
@@ -347,9 +376,10 @@ appId: com.forgeai.app
           file: sub-settings-page.yaml
           env:
             PAGE: "Widgets"
-- extendedWaitUntil:
-    visible: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
-    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
 - takeScreenshot: 132b-widgets-row-counts-it
 # ---------------------------------------------------------------- a workout in lb
 # Widgets → Settings → Profile, then the Workout tab.

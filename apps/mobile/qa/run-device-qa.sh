@@ -85,21 +85,33 @@ log "exact alarms as installed: USE_EXACT_ALARM $(adb shell dumpsys package $PKG
 
 # Which parts run (qa-device.yml inputs, audit v2 phase B).
 #   QA_ONLY  (`only`):  empty = the whole phone test (A ... M, then W). Otherwise ONLY the parts
-#                       named, comma or space separated, from: w, dnd, longrest, anim, mk. Such a
-#                       run is named "(partial ...)" and never opens the release gate.
-#   QA_EXTRA (`extra`): opt-in parts added to a WHOLE run (same names but w): dnd, longrest and
-#                       anim run after part M, mk after part W. Empty = the whole run exactly as before.
+#                       named, comma or space separated, from the whole run's parts (OLD_PARTS
+#                       below, in their usual order) and w, dnd, longrest, anim, mk. Such a run is
+#                       named "(partial ...)" and never opens the release gate. A part leans on
+#                       what the parts before it left (part A's workout for b, h, h3; part J's
+#                       routines for j2, j3), so name those too; when `a` is not named, the demo
+#                       data is loaded first (gate-demo.yaml) so the other parts have data.
+#   QA_EXTRA (`extra`): opt-in parts added to a WHOLE run (dnd, longrest, anim, mk): dnd, longrest
+#                       and anim run after part M, mk after part W. Empty = the whole run exactly as before.
 #   QA_PROFILE (`profile`): default = the emulator as it boots (411 dp, font 1.0, UTC). owner = the
 #                       owner's phone for EVERY part: ~360 dp wide (density 480), font 1.3,
 #                       Asia/Kolkata. Part W always sets these itself.
+# b = B0 + B; h = H1, H1D, H2; h3 = H3A..C; link = the two widget links; inv = INV-a..e; invf = INV-f1..f3.
+OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 p0 m"
 GATE_PARTS="w dnd longrest anim mk"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
-for p in $QA_ONLY_LIST $QA_EXTRA_LIST; do
+for p in $QA_ONLY_LIST; do
+  case " $OLD_PARTS $GATE_PARTS " in
+    *" $p "*) ;;
+    *) log "UNKNOWN PART '$p' in only (known: $OLD_PARTS $GATE_PARTS)"; status=1 ;;
+  esac
+done
+for p in $QA_EXTRA_LIST; do
   case " $GATE_PARTS " in
     *" $p "*) ;;
-    *) log "UNKNOWN PART '$p' in only/extra (known: $GATE_PARTS)"; status=1 ;;
+    *) log "UNKNOWN PART '$p' in extra (known: $GATE_PARTS)"; status=1 ;;
   esac
 done
 # Does part $1 run in this run?
@@ -108,8 +120,16 @@ qa_runs() {
     case " $QA_ONLY_LIST " in *" $1 "*) return 0 ;; esac
     return 1
   fi
-  [ "$1" = "w" ] && return 0
+  case " $OLD_PARTS w " in *" $1 "*) return 0 ;; esac
   case " $QA_EXTRA_LIST " in *" $1 "*) return 0 ;; esac
+  return 1
+}
+# Is any part of the whole run (A ... M) named in `only`?
+qa_any_old() {
+  local p
+  for p in $QA_ONLY_LIST; do
+    case " $OLD_PARTS " in *" $p "*) return 0 ;; esac
+  done
   return 1
 }
 QA_PROFILE=${QA_PROFILE:-default}
@@ -131,8 +151,15 @@ log "parts: only='${QA_ONLY_LIST}' extra='${QA_EXTRA_LIST}' profile=$QA_PROFILE"
 
 if [ -n "$QA_ONLY_LIST" ]; then
   log "QA_ONLY=$QA_ONLY_LIST: only these parts run (a partial run: it cannot release)"
-else
+  if qa_any_old && ! qa_runs a; then
+    log "part seed start (demo data for the named parts, part A not named)"
+    maestro test --format junit --output "$OUT/part-seed.xml" --test-output-dir "$OUT/part-seed" "$QA_DIR/gate-demo.yaml" \
+      > "$OUT/part-seed.log" 2>&1 || { status=1; log "PART SEED FAILED"; }
+    free_maestro
+  fi
+fi
 # ---------------------------------------------------------------- part A
+if qa_runs a; then
 log "part A start"
 maestro test --format junit --output "$OUT/part-a.xml" --test-output-dir "$OUT/part-a" "$QA_DIR/phase1-a.yaml" \
   > "$OUT/part-a.log" 2>&1 || { status=1; log "PART A FAILED"; }
@@ -208,8 +235,10 @@ python3 "$QA_DIR/notif.py" alone "$OUT/notifications-during-rest.txt" >> "$OUT/t
 # v0.26.1: the rest card was showing during the rest (what a paired watch would show); Phase 6:
 # with its three buttons in the order Done, +15 s, Skip (the next set exists, so Done shows).
 python3 "$QA_DIR/notif.py" card "$OUT/notifications-during-rest.txt" "Rest 0:30" >> "$OUT/timeline.txt" || status=1
+fi  # part a
 
 # ---------------------------------------------------------------- part B
+if qa_runs b; then
 adb shell cmd statusbar expand-notifications
 sleep 2
 adb exec-out screencap -p > "$OUT/b-shade.png"
@@ -226,8 +255,10 @@ free_maestro
 log "part B start"
 maestro test --format junit --output "$OUT/part-b.xml" --test-output-dir "$OUT/part-b" "$QA_DIR/phase1-b.yaml" \
   > "$OUT/part-b.log" 2>&1 || { status=1; log "PART B FAILED"; }
+fi  # part b
 
 # ---------------------------------------------------------------- part C (Phase 2 exercises)
+if qa_runs c; then
 adb shell cmd statusbar collapse >/dev/null 2>&1 || true
 # Part B's Maestro driver can still hold its port right after B ends; a third session then
 # fails "Failed to bind to address :36609" before its first step. Stop it and let it go.
@@ -235,8 +266,10 @@ free_maestro
 log "part C start"
 maestro test --format junit --output "$OUT/part-c.xml" --test-output-dir "$OUT/part-c" "$QA_DIR/phase2-c.yaml" \
   > "$OUT/part-c.log" 2>&1 || { status=1; log "PART C FAILED"; }
+fi  # part c
 
 # ---------------------------------------------------------------- part D (Phase 3 progress)
+if qa_runs d; then
 # Two SAMPLE pictures in the phone's gallery for the progress-photo steps (they say "Sample
 # photo" on them). Media scan so Android's photo picker lists them.
 push_fixture "$QA_DIR/fixtures/sample-progress-1.png" /sdcard/Pictures/forgeai-sample-1.png
@@ -250,20 +283,26 @@ free_maestro
 log "part D start"
 maestro test --format junit --output "$OUT/part-d.xml" --test-output-dir "$OUT/part-d" "$QA_DIR/phase3-d.yaml" \
   > "$OUT/part-d.log" 2>&1 || { status=1; log "PART D FAILED"; }
+fi  # part d
 
 # ---------------------------------------------------------------- part E (records live + share)
+if qa_runs e; then
 free_maestro
 log "part E start"
 maestro test --format junit --output "$OUT/part-e.xml" --test-output-dir "$OUT/part-e" "$QA_DIR/phase3-e.yaml" \
   > "$OUT/part-e.log" 2>&1 || { status=1; log "PART E FAILED"; }
+fi  # part e
 
 # ---------------------------------------------------------------- part F (v0.25.1: figure + best pace)
+if qa_runs f; then
 free_maestro
 log "part F start"
 maestro test --format junit --output "$OUT/part-f.xml" --test-output-dir "$OUT/part-f" "$QA_DIR/v0251-f.yaml" \
   > "$OUT/part-f.log" 2>&1 || { status=1; log "PART F FAILED"; }
+fi  # part f
 
 # ---------------------------------------------------------------- part G (v0.26.0: routines and plans)
+if qa_runs g; then
 # A routine file "someone shared", in Downloads, for the import steps.
 push_fixture "$QA_DIR/fixtures/qa-shared.forgeai.json" /sdcard/Download/qa-shared.forgeai.json
 adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///sdcard/Download/qa-shared.forgeai.json" >/dev/null 2>&1 || true
@@ -273,8 +312,10 @@ log "downloads: $(wait_media qa-shared 1 20 downloads) routine file"
 free_maestro
 log "part G start"
 maestro test --format junit --output "$OUT/part-g.xml" --test-output-dir "$OUT/part-g" "$QA_DIR/v0260-g.yaml"   > "$OUT/part-g.log" 2>&1 || { status=1; log "PART G FAILED"; }
+fi  # part g
 
 # ---------------------------------------------------------------- part H (v0.26.1: the watch's rest card)
+if qa_runs h; then
 # The cloud phone cannot pair a watch. A watch shows exactly the phone's swipe-away alerts and
 # runs their buttons on the phone, so the card, its buttons and the end alert are proven here.
 free_maestro
@@ -321,8 +362,10 @@ python3 "$QA_DIR/notif.py" over-text "$OUT/h-after-rest-app-open.txt" "Bench Pre
 sleep 65
 adb shell dumpsys notification --noredact > "$OUT/h-after-over-timeout.txt"
 python3 "$QA_DIR/notif.py" live-back "$OUT/h-after-over-timeout.txt" >> "$OUT/timeline.txt" || status=1
+fi  # part h
 
 # ---------------------------------------------------------------- part H3 (v0.37.1, audit C1)
+if qa_runs h3; then
 # "Complete set" on the live workout card with ForgeAI CLOSED (Android stopped it in the
 # background; phone in a pocket, a watch tap). H3A leaves the app on set 4 (the last) and goes home; the
 # script stops the app's process; H3B taps "Complete set" in the shade: the phone itself starts
@@ -361,14 +404,18 @@ maestro test --format junit --output "$OUT/part-h3c.xml" --test-output-dir "$OUT
 sleep 3
 adb shell dumpsys notification --noredact > "$OUT/h3-app-open.txt"
 python3 "$QA_DIR/notif.py" live-back "$OUT/h3-app-open.txt" >> "$OUT/timeline.txt" || status=1
+fi  # part h3
 
 # ---------------------------------------------------------------- part P1 (15 Oct 2026: plates and bars)
+if qa_runs p1; then
 free_maestro
 log "part P1 start"
 maestro test --format junit --output "$OUT/part-p1.xml" --test-output-dir "$OUT/part-p1" "$QA_DIR/p1-plates.yaml" > "$OUT/part-p1.log" 2>&1 || { status=1; log "PART P1 FAILED"; }
 adb shell input keyevent KEYCODE_HOME
+fi  # part p1
 
 # ---------------------------------------------------------------- part P2 (15 Oct 2026: pause the workout)
+if qa_runs p2; then
 # Paused, the duration must not move: its accessibility label is read twice, 70 s apart.
 # The 70 s wait reads the SCREEN: keep it awake (review).
 adb shell svc power stayon true >/dev/null 2>&1 || true
@@ -393,8 +440,10 @@ else
   log "PART P2A FAILED"
 fi
 adb shell input keyevent KEYCODE_HOME
+fi  # part p2
 
 # ---------------------------------------------------------------- part I (v0.27.0: the rest of Phase 5)
+if qa_runs i; then
 # A Strong export "someone made" (older layout, pounds and miles), in Downloads, for the import.
 push_fixture "$QA_DIR/fixtures/qa-strong.csv" /sdcard/Download/qa-strong.csv
 adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
@@ -419,6 +468,7 @@ adb shell dumpsys alarm | grep -c "com.forgeai.app" > "$OUT/i-alarm-count.txt" 2
 log "dumpsys alarm lines mentioning the app after part I (not an alarm count): $(cat "$OUT/i-alarm-count.txt" 2>/dev/null)"
 adb shell dumpsys appwidget > "$OUT/i-appwidget.txt" 2>/dev/null || true
 log "home-screen widget list saved (i-appwidget.txt); ForgeAI widget lines: $(grep -c 'com.forgeai.phone.TodayWidget' "$OUT/i-appwidget.txt" 2>/dev/null)"
+fi  # part i
 
 # ---------------------------------------------------------------- widget link (audit Phase 6, PH-09)
 # The Today widget's Start / Resume opens forgeai://workout/start?routine=<id> (plus the widget's
@@ -459,15 +509,18 @@ widget_link() {
     log "WIDGET LINK $name: $url opened the Workout tab and started nothing"
   fi
 }
+if qa_runs link; then
 widget_link 1 "forgeai://workout/start"
 widget_link 2 "forgeai://workout/start?routine=not-a-routine"
 free_maestro
 adb shell input keyevent KEYCODE_HOME
+fi  # part link
 
 # ---------------------------------------------------------------- part I2 (audit Phase 6, PH-01: notifications off)
 # Notifications blocked for ForgeAI: Settings → Notifications (redesign R6) says so and offers
 # "Turn on notifications". Blocked here by taking the notification permission away (Android stops the app);
 # given back right after, for the parts that follow.
+if qa_runs i2; then
 adb shell pm revoke "$PKG" android.permission.POST_NOTIFICATIONS > "$OUT/i2-revoke.txt" 2>&1 || log "NOTIFICATIONS OFF: could not revoke the permission ($(tr -d '\r' < "$OUT/i2-revoke.txt"))"
 sleep 2
 free_maestro
@@ -483,18 +536,22 @@ else
   status=1
 fi
 adb shell input keyevent KEYCODE_HOME
+fi  # part i2
 
 # ---------------------------------------------------------------- part J (v0.28.0: the member's own Hevy routines)
 # A real-format Hevy .csv (text dates) with two routines, free workouts and an old name.
+if qa_runs j; then
 push_fixture "$QA_DIR/fixtures/qa-hevy.csv" /sdcard/Download/qa-hevy.csv
 adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
 free_maestro
 log "part J start"
 maestro test --format junit --output "$OUT/part-j.xml" --test-output-dir "$OUT/part-j" "$QA_DIR/v0280-j.yaml"   > "$OUT/part-j.log" 2>&1 || { status=1; log "PART J FAILED"; }
+fi  # part j
 
 # ---------------------------------------------------------------- part J2 (v0.40.0: press, hold, drag a routine)
 # The flow brings Push A and Pull A on screen; then a real finger's touch events (down, hold, move, up)
 # moves Push A below Pull A, the screen is read back, and the same drag puts it back.
+if qa_runs j2; then
 free_maestro
 log "part J2 start"
 if maestro test --format junit --output "$OUT/part-j2.xml" --test-output-dir "$OUT/part-j2" "$QA_DIR/v0400-j2.yaml" > "$OUT/part-j2.log" 2>&1; then
@@ -542,12 +599,14 @@ else
   log "PART J2 FAILED"
 fi
 adb shell input keyevent KEYCODE_HOME
+fi  # part j2
 
 # ---------------------------------------------------------------- part J3 (15 Oct 2026: drag an exercise mid-workout)
 # Owner, in the gym: press and hold an exercise in the LIVE workout, every card shrinks to its name
 # row, drag it, a buzz as it passes one. j3-workout-drag.yaml opens Push A; the same real finger
 # as J2 holds the 2nd exercise's name row and drags it above the 1st; the order is read back
 # (drag_check.py ex-names) and j3-end.yaml discards the workout.
+if qa_runs j3; then
 free_maestro
 log "part J3 start"
 # The live workout's clock ticks every second, so `uiautomator dump` can fail to find an idle
@@ -604,9 +663,12 @@ free_maestro
 maestro test --format junit --output "$OUT/j3-end.xml" --test-output-dir "$OUT/j3-end" "$QA_DIR/j3-end.yaml" > "$OUT/j3-end.log" 2>&1 \
   || log "J3 end: no workout to discard, or the discard flow failed (j3-end.log)"
 adb shell input keyevent KEYCODE_HOME
+fi  # part j3
 
 # ---------------------------------------------------------------- part K (v0.28.0: an export shared to ForgeAI)
 # The Files app, as a person shares a file (qa-hevy.csv was pushed to Downloads for part J).
+if qa_runs k; then
+qa_runs j || push_fixture "$QA_DIR/fixtures/qa-hevy.csv" /sdcard/Download/qa-hevy.csv
 adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
 adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
 adb shell am start -n com.google.android.documentsui/com.android.documentsui.files.FilesActivity > "$OUT/k-files.txt" 2>&1   || adb shell am start -a android.intent.action.VIEW -d "content://com.android.externalstorage.documents/root/primary" >> "$OUT/k-files.txt" 2>&1   || log "FILES APP DID NOT OPEN"
@@ -615,11 +677,13 @@ log "part K start"
 maestro test --format junit --output "$OUT/part-k.xml" --test-output-dir "$OUT/part-k" "$QA_DIR/v0280-k.yaml"   > "$OUT/part-k.log" 2>&1 || { status=1; log "PART K FAILED"; }
 adb logcat -d -s ForgeShare:W > "$OUT/k-share-log.txt" 2>/dev/null || true
 log "share errors logged: $(grep -c 'ForgeShare' "$OUT/k-share-log.txt" 2>/dev/null)"
+fi  # part k
 
 # ---------------------------------------------------------------- part L (v0.29.0: Import routines from a Hevy link)
 # Reads the owner's public Hevy folder on hevy.com in the app's hidden in-app browser (needs the internet).
 # Audit Phase 4: first his Hevy HISTORY of those routines (two rounds of Push 1 → … → Leg 2), so
 # the folder takes his real rotation and Today after Push 1 is Pull 1, as on his phone.
+if qa_runs l; then
 push_fixture "$QA_DIR/fixtures/qa-jaipur.csv" /sdcard/Download/qa-jaipur.csv
 adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
 log "downloads: $(wait_media qa-jaipur 1 20 downloads) Jaipur history file"
@@ -627,21 +691,25 @@ adb shell am force-stop dev.mobile.maestro >/dev/null 2>&1 || true
 adb shell am force-stop dev.mobile.maestro.test >/dev/null 2>&1 || true
 log "part L start"
 maestro test --format junit --output "$OUT/part-l.xml" --test-output-dir "$OUT/part-l" "$QA_DIR/v0290-l.yaml"   > "$OUT/part-l.log" 2>&1 || { status=1; log "PART L FAILED"; }
+fi  # part l
 
 # ---------------------------------------------------------------- part N (audit Phase 3: History holds everything)
 # Redesign: the Profile feed / Calendar (its search across years: part J's March 2024 Hevy
 # workouts), an old workout's edit (⋯ → Edit workout) asks before Back throws it away, Log a past
 # workout. Saves nothing, so part M's count holds.
+if qa_runs n; then
 free_maestro
 log "part N start"
 maestro test --format junit --output "$OUT/part-n.xml" --test-output-dir "$OUT/part-n" "$QA_DIR/audit3-n.yaml" \
   > "$OUT/part-n.log" 2>&1 || { status=1; log "PART N FAILED"; }
+fi  # part n
 
 # ---------------------------------------------------------------- part P9 (audit Phase 9: beyond Hevy)
 # Weekly goal on the Workout tab's Up next card, the entry bar's step and "Copy to sets below", "Share as text" to Android's
 # share menu, "Start records fresh" and back (phase9-p.yaml). Saves one workout (part M reads its
 # count afresh). Then the app icon's long-press shortcuts must be in Android's shortcut list:
 # "Log body weight", and "Start …" / "Resume workout" (Shortcuts.kt, from the Today widget's answer).
+if qa_runs p9; then
 free_maestro
 log "part P9 start"
 maestro test --format junit --output "$OUT/part-p9.xml" --test-output-dir "$OUT/part-p9" "$QA_DIR/phase9-p.yaml" \
@@ -654,6 +722,7 @@ else
   status=1
   log "APP ICON SHORTCUTS: MISSING from dumpsys shortcut (p9-shortcuts.txt)"
 fi
+fi  # part p9
 
 # ---------------------------------------------------------------- part R (the 3-tab redesign, photographed)
 # Workout tab (Up next, folders, a routine's and a folder's ⋯, Explore), Profile (header, the
@@ -663,6 +732,7 @@ fi
 # cancel it, leave; then the sample shop (redesign-r.yaml). Saves no workout. Its screenshots
 # (r-*.png) are gathered in qa-out/redesign/ (Maestro writes them into the part's output folder,
 # or on an older Maestro the working folder).
+if qa_runs r; then
 free_maestro
 log "part R start"
 maestro test --format junit --output "$OUT/part-r.xml" --test-output-dir "$OUT/part-r" "$QA_DIR/redesign-r.yaml" \
@@ -671,6 +741,7 @@ mkdir -p "$OUT/redesign"
 { find "$OUT/part-r" -name "r-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "r-*.png" 2>/dev/null; } \
   | while read -r f; do cp "$f" "$OUT/redesign/" 2>/dev/null; done
 log "REDESIGN TOUR: $(find "$OUT/redesign" -name "r-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/redesign/"
+fi  # part r
 
 # ---------------------------------------------------------------- part BR (gym branding, Level 1)
 # Join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT) on the LIVE server, photograph the
@@ -687,8 +758,10 @@ br_probe() {
     -H "apikey: $key" -H "Authorization: Bearer $key" -H "Content-Type: application/json" \
     -d '{"p_key":"qa-probe","p_accent":null,"p_bg":null,"p_logo_url":null,"p_heading":null}' 2>/dev/null || echo "000"
 }
-BR_PROBE=$(br_probe)
-if [ "$BR_PROBE" = "404" ] || [ "$BR_PROBE" = "no-config" ]; then
+BR_PROBE=$(qa_runs br && br_probe)
+if ! qa_runs br; then
+  :
+elif [ "$BR_PROBE" = "404" ] || [ "$BR_PROBE" = "no-config" ]; then
   log "PART BR SKIPPED: gym branding is not on the server yet (owner_set_brand probe: $BR_PROBE) — apply 0005_gym_theme.sql"
 else
   free_maestro
@@ -750,8 +823,10 @@ inv_open() {
   adb shell am start -W -a android.intent.action.VIEW -d "$1" -p "$PKG" >/dev/null 2>&1 || true
   sleep 3
 }
-INV_PROBE=$(inv_probe)
-if [ "$INV_PROBE" != "200" ]; then
+INV_PROBE=$(qa_runs inv && inv_probe)
+if ! qa_runs inv; then
+  :
+elif [ "$INV_PROBE" != "200" ]; then
   log "PART INV SKIPPED: the invite link is not on the server yet (gym_preview probe: $INV_PROBE) — apply 0007_invite_link.sql"
 else
   # Step E (gym messages): a fresh demo gym (anyone can start one; its key lives only in this run)
@@ -797,8 +872,10 @@ ci_probe() {
 }
 inv_url=${inv_url:-$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabaseUrl'])" "$QA_DIR/../app.json" 2>/dev/null)}
 inv_key=${inv_key:-$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabasePublishableKey'])" "$QA_DIR/../app.json" 2>/dev/null)}
-CI_PROBE=$(ci_probe)
-if [ "$CI_PROBE" = "404" ] || [ "$CI_PROBE" = "no-config" ]; then
+CI_PROBE=$(qa_runs invf && ci_probe)
+if ! qa_runs invf; then
+  :
+elif [ "$CI_PROBE" = "404" ] || [ "$CI_PROBE" = "no-config" ]; then
   log "PART INV-f SKIPPED: QR check-in is not on the server yet (member_check_in probe: $CI_PROBE) — apply 0015_qr_checkin.sql"
 else
   ci_rpc() { curl -s -X POST "$inv_url/rest/v1/rpc/$1" -H "apikey: $inv_key" -H "Content-Type: application/json" -d "$2"; }
@@ -881,6 +958,7 @@ p7_tour() {  # $1 = part name (p7big / p7nav3), $2 = navigation label for the sc
     log "BIG TEXT ($2 navigation): screenshots MISSING, $n of at least $P7_SHOTS in qa-out/p7-big/ (part-$1.log)"
   fi
 }
+if qa_runs p7; then
 p7_font_before=$(p7_font)
 adb shell settings put system font_scale 2.0
 sleep 3
@@ -927,15 +1005,18 @@ else
   status=1
 fi
 adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
+fi  # part p7
 
 # ---------------------------------------------------------------- part P0 (audit toolkit: permission off)
 # The camera permission is taken away in the flow's own launchApp; Android's camera question must
 # appear and the app must explain a refusal. Runs before part M, whose reinstall could leave the
 # app on its welcome screen; part M reinstalls anyway, and later launches allow every permission.
+if qa_runs p0; then
 free_maestro
 log "part P0 start"
 maestro test --format junit --output "$OUT/part-p0.xml" --test-output-dir "$OUT/part-p0" "$QA_DIR/p0-permissions-off.yaml" > "$OUT/part-p0.log" 2>&1 || { status=1; log "PART P0 FAILED"; }
 adb shell input keyevent KEYCODE_HOME
+fi  # part p0
 
 # ---------------------------------------------------------------- part M (backup survives a reinstall)
 # Android's own backup (the app's backup rules: the workout database, AsyncStorage, settings) into
@@ -1044,10 +1125,10 @@ part_m() {
     > "$OUT/part-m.log" 2>&1 || { adb exec-out screencap -p > "$OUT/m-after-failed.png"; m_fail "after the reinstall the app did not open on '$line' without the welcome screen (part-m.log, m-after-failed.png)"; return 1; }
   log "BACKUP M: '$line' came back after uninstall + reinstall"
 }
+if qa_runs m; then
 log "part M start"
 part_m
-
-fi  # QA_ONLY
+fi  # part m
 
 # ---------------------------------------------------------------- audit v2 gate parts (opt-in)
 # Each starts from a fresh install's state with the demo data (gate-demo.yaml), so it runs alone
@@ -1302,7 +1383,7 @@ MK_EVENTS=${MK_EVENTS:-12000}
 part_mk() {
   local lpid rc
   # Alone (only=mk), the app has no data yet: the demo first, so Monkey has screens to press.
-  if [ -n "$QA_ONLY_LIST" ] && [ -z "$GATE_RAN" ] && ! qa_runs w; then
+  if [ -n "$QA_ONLY_LIST" ] && [ -z "$GATE_RAN" ] && ! qa_runs w && ! qa_any_old; then
     gate_flow mk_seed gate-demo.yaml || true
   fi
   free_maestro

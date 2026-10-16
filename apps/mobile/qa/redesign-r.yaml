@@ -35,6 +35,19 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Up next: .*|Done today: .*|Workout in progress"
     timeout: 30000
+# A workout left open by an earlier part that failed (run 38870025551: "Workout in progress",
+# so no "Start empty workout") costs only that part: thrown away as a member would, then back to
+# the top of the tab.
+- runFlow:
+    when:
+      visible: "Workout in progress"
+    commands:
+      - runFlow: sub-workout-fresh.yaml
+      - scrollUntilVisible:
+          element: "Up next: .*|Done today: .*"
+          direction: UP
+          centerElement: true
+          timeout: 20000
 # Three tabs: Workout (opens first), Profile, Shop. Home, History and Progress are gone (this
 # part runs with gesture navigation, so no system "Home" button is on screen).
 - assertVisible: "^Shop$"

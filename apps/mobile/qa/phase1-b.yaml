@@ -22,9 +22,17 @@ appId: com.forgeai.app
 # next card itself says "Workout in progress" with "Resume workout", so the minimised bar is NOT
 # shown there (two of the same thing). Every other tab keeps the bar (Profile, below).
 - assertVisible: "Workout in progress"
-- assertVisible: "Discard workout"
 - assertNotVisible: ".*Tap to open the workout"
 - takeScreenshot: 12-workout-in-progress-card
+# Owner profile (360 dp, font 1.3): the red link can sit below the screen's edge.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Discard workout"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Resume workout"
 - tapOn: "Resume workout"
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
@@ -101,5 +109,11 @@ appId: com.forgeai.app
     element: "Track RPE"
     timeout: 30000
 - takeScreenshot: 16-settings-workouts
-- assertVisible: "Workout sounds"
-- assertVisible: "Track RPE"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Workout sounds"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Track RPE"

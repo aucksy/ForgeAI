@@ -72,6 +72,22 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: 'Mark .*Bench Press drop set 2 complete'
     timeout: 5000
+# Live workout audit C1-3/C1-7 (16 Oct 2026): a drop row's PREVIOUS and hint come only from last
+# time's DROP sets, and this history has none, so the row is empty ("—") and a blind tick opens
+# the number pad instead of saving a drop equal to the top set (run 38870025551, W3: the pad, no
+# rest). A member types the lighter drop first: 60 kg x 6, lighter and fewer reps (no record).
+- tapOn:
+    text: '.*Bench Press drop set 2 weight, kilograms'
+    index: 0
+- waitForAnimationToEnd
+- eraseText
+- inputText: "60"
+- tapOn:
+    text: '.*Bench Press drop set 2 reps'
+    index: 0
+- eraseText
+- inputText: "6"
+- hideKeyboard
 - tapOn:
     text: 'Mark .*Bench Press drop set 2 complete'
     index: 0

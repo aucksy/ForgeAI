@@ -308,7 +308,16 @@ appId: com.forgeai.app
 - inputText: " Wall Plank Hold"
 - hideKeyboard
 - tapOn: "^Time$"
+# Owner profile (360 dp, font 1.3): the muscle and gear chips run past the screen's edge.
+- scrollUntilVisible:
+    element: "^Abs$"
+    centerElement: true
+    timeout: 15000
 - tapOn: "^Abs$"
+- scrollUntilVisible:
+    element: "^Bodyweight$"
+    centerElement: true
+    timeout: 15000
 - tapOn: "^Bodyweight$"
 - takeScreenshot: 32-new-exercise-form
 - scrollUntilVisible:
@@ -317,7 +326,10 @@ appId: com.forgeai.app
 - takeScreenshot: 33-new-exercise-photo
 - tapOn: "Save exercise"
 - extendedWaitUntil:
-    visible: "No sets logged yet"
+    visible: "Wall Plank Hold"
     timeout: 15000
-- assertVisible: "Wall Plank Hold"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "No sets logged yet"
 - takeScreenshot: 34-custom-exercise-page

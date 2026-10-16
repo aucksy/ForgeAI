@@ -189,8 +189,15 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "Save and follow"
 # Saved and followed: back on the Workout tab, the plan's folder open and tagged "Following".
+# Owner profile (360 dp, font 1.3): the tab comes back scrolled down to the folder, the Up next
+# card above the screen: look up for it.
 - extendedWaitUntil:
-    visible: "Up next: .*"
+    visible: "Start empty workout|Upper / Lower · 4 days folder, .*"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Up next: .*"
+    direction: UP
+    centerElement: true
     timeout: 20000
 - scrollUntilVisible:
     element: "Upper / Lower · 4 days folder, 4 routines, open, Following"

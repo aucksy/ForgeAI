@@ -5,11 +5,14 @@
 # Your data, About. The old fold "Gym, backup and data" is gone; this helper replaces sub-profile-fold-open.yaml.
 # This opens that list. Call it with the app's tab bar on screen (any tab), or already on the list.
 # The Profile tab is tapped with index 0: the top-most match (trap 18, 3-button navigation).
+# Audit v2 (16 Oct 2026): on the owner's phone (360 dp, font 1.3) the list is taller than the
+# screen, so back on it from a page low down (Export & import) its first row is out of sight:
+# any of three rows says "on the list", and the list is then scrolled back to its top.
 appId: com.forgeai.app
 ---
 - runFlow:
     when:
-      notVisible: "^Your details$"
+      notVisible: "^Your details$|^Export & import$|^Your data$"
     commands:
       - extendedWaitUntil:
           visible: "^Profile$"
@@ -22,6 +25,7 @@ appId: com.forgeai.app
           visible: "Edit profile"
           timeout: 30000
       - tapOn: "Settings"
-- extendedWaitUntil:
-    visible: "^Your details$"
+- scrollUntilVisible:
+    element: "^Your details$"
+    direction: UP
     timeout: 20000

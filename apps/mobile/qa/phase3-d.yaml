@@ -52,7 +52,12 @@ appId: com.forgeai.app
 # The share button sits in the header, which scrolls away: use it before scrolling.
 - tapOn: "Share as a picture"
 - extendedWaitUntil:
-    visible: "Share picture"
+    visible: "Send it to WhatsApp, Instagram or any app."
+    timeout: 15000
+# Owner profile (360 dp, font 1.3): the preview fills the sheet and the button is below it.
+- scrollUntilVisible:
+    element: "Share picture"
+    centerElement: true
     timeout: 15000
 - takeScreenshot: 44-month-share-picture
 # 15 Oct 2026: the picture's Size (Post | Story) and Background (Dark | See-through), as Hevy.
