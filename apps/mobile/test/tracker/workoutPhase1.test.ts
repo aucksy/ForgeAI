@@ -230,8 +230,10 @@ describe('fill from the Target', () => {
     const d = set({ weightKg: null, reps: null, setType: 'drop' });
     const a = ex({ sets: [w, s1, d] });
     expect(fillForSet(a, w.key, target)).toBeNull();
-    expect(fillForSet(a, d.key, target)).toEqual({ weightKg: 75, reps: 5 }); // the set above, as before
-    expect(fillForSet(a, d.key, { weightKg: 99, reps: 1 })).toEqual({ weightKg: 75, reps: 5 }); // not the Target
+    // 16 Oct 2026 audit (C1-7): a drop row with no drop of its own last time hints no weight —
+    // never the full weight of the set above (a drop is lighter by definition), never the Target.
+    expect(fillForSet(a, d.key, target)).toBeNull();
+    expect(fillForSet(a, d.key, { weightKg: 99, reps: 1 })).toBeNull();
   });
 });
 

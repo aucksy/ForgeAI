@@ -1231,7 +1231,10 @@ export function fillForSet(
   const pick = (
     typedOf: (s: DraftSet) => number | null,
     prevOf: (p: PrevSet | null | undefined) => number | null,
+    /** C1-7: a drop row's WEIGHT comes only from its own last-time drop. */
+    dropOwnOnly = false,
   ): number | null => {
+    if (drop && dropOwnOnly) return prevOf(own);
     let typed: number | null = null;
     for (const s of above) {
       typed = typedOf(s);
@@ -1254,7 +1257,10 @@ export function fillForSet(
     if (distanceM != null) out.distanceM = distanceM;
     return out;
   }
-  let weightKg = lt === 'reps' ? 0 : pick((s) => present(s.weightKg), (p) => present(p?.weightKg));
+  // 16 Oct 2026 audit (C1-7): a drop set is lighter by definition, so a drop row never hints the
+  // weight of the set above (or of last time's normal set): only its own last-time drop. With
+  // none, a tick asks for the weight. Its reps may still follow the row above.
+  let weightKg = lt === 'reps' ? 0 : pick((s) => present(s.weightKg), (p) => present(p?.weightKg), true);
   // Review fix: a warm-up follows a moved working weight (last time's warm-up x new / last).
   if (warmup && lt === 'weight_reps' && weightKg != null && weightKg > 0 && target?.warm && target.weightKg > 0) {
     weightKg = warmupWeightKg(weightKg, target.weightKg, target.warm);

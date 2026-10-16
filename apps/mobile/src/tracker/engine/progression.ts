@@ -33,8 +33,8 @@
  *
  * All weights kg. History is newest first, sessions BEFORE today, warm-ups excluded.
  */
-import { kgText } from '@/lib/format';
-import { isImperial, roundToShownStep, stepFor } from '@/lib/units';
+import { trimNum } from '@/lib/format';
+import { displayUnits, isImperial, kgToShown, roundToShownStep, stepFor, weightUnitOf } from '@/lib/units';
 import { defaultBarKg, gymFloorKg, type GymPlates } from '@/tracker/services/plateMath';
 import type { Exercise, OverloadTarget, UserProfile } from '@/types/models';
 
@@ -373,9 +373,9 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const lighter = (): number | null => downRungKg(w, ladder);
   /** " at 40 kg", " at +10 kg", " with 20 kg of help" — how the weight reads in a sentence. */
   const at = (kg: number) =>
-    assisted ? (kg < 0 ? ` with ${kgText(-kg)} of help` : ' with no help') : kg > 0 ? ` at ${kgText(kg)}` : '';
+    assisted ? (kg < 0 ? ` with ${targetKgText(-kg)} of help` : ' with no help') : kg > 0 ? ` at ${targetKgText(kg)}` : '';
   /** "40 kg", "20 kg of help", "no help". */
-  const load = (kg: number) => (assisted ? (kg < 0 ? `${kgText(-kg)} of help` : 'no help') : `${kgText(kg)}`);
+  const load = (kg: number) => (assisted ? (kg < 0 ? `${targetKgText(-kg)} of help` : 'no help') : `${targetKgText(kg)}`);
 
   const out = (
     rule: ProgRule,
@@ -430,7 +430,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
           min,
           assisted
             ? `${weeks} weeks since your last ${name}. Start with a little more help, ${load(down)}, and build back.`
-            : `${weeks} weeks since your last ${name}. Start a little lighter at ${kgText(down)} and build back.`,
+            : `${weeks} weeks since your last ${name}. Start a little lighter at ${targetKgText(down)} and build back.`,
         );
       }
     }
@@ -509,11 +509,11 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       const expandCap = max + 4;
       if (minScore >= expandCap) {
         const goal = Math.max(1, min - 2);
-        return out('R2', up, goal, `${did} Time for ${kgText(up)} — a big jump, so ${goal} reps is a win.`);
+        return out('R2', up, goal, `${did} Time for ${targetKgText(up)} — a big jump, so ${goal} reps is a win.`);
       }
       const goal = Math.min(expandCap, Math.max(max + 2, lowestReps + 1));
       const pct = Math.round(((up - w) / w) * 100);
-      return out('R2b', same, goal, `The next step is ${kgText(up)}, a ${pct}% jump. Add reps first: aim for ${goal}.`);
+      return out('R2b', same, goal, `The next step is ${targetKgText(up)}, a ${pct}% jump. Add reps first: aim for ${goal}.`);
     }
     // Oct 2026 (owner, "Weight jumps"): the heaviest rung within the chosen 2.5 / 5 / 10% —
     // never less than one step (overrules TG-01's "never more than one rung").
@@ -526,10 +526,10 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     if (input.experience === 'beginner' && minScore >= max + 3 && w > 0 && fast != null) {
       const jump = jumpRungKg(w, fast, ladder);
       if (jump > next + 1e-6) {
-        return out('R2c', jump, min, `That looked easy: ${repsList}${at(w)}. Jumping to ${kgText(jump)}.`);
+        return out('R2c', jump, min, `That looked easy: ${repsList}${at(w)}. Jumping to ${targetKgText(jump)}.`);
       }
     }
-    return out('R2', next, min, `${did} Time for ${kgText(next)}.`);
+    return out('R2', next, min, `${did} Time for ${targetKgText(next)}.`);
   }
 
   // Sessions at today's main weight, newest first (the "run").
@@ -549,9 +549,9 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     }
     const down = lighter();
     if (down !== null) {
-      return out('R3', down, min, `Reps fell under ${min} twice at ${kgText(w)}. Drop to ${kgText(down)} and build back up.`);
+      return out('R3', down, min, `Reps fell under ${min} twice at ${targetKgText(w)}. Drop to ${targetKgText(down)} and build back up.`);
     }
-    return out('R3', same, min, `Reps fell under ${min} twice at ${kgText(w)}. Stay here and build back to ${min}.`);
+    return out('R3', same, min, `Reps fell under ${min} twice at ${targetKgText(w)}. Stay here and build back to ${min}.`);
   }
 
   // R4 — stalled: 4 workouts at this weight and no better than the oldest of them.
@@ -569,9 +569,9 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       }
       const down = lighter();
       if (down !== null) {
-        return out('R4', down, mid, `Stuck at ${kgText(w)} for ${judged.length} workouts. A small step back to ${kgText(down)} usually breaks it.`);
+        return out('R4', down, mid, `Stuck at ${targetKgText(w)} for ${judged.length} workouts. A small step back to ${targetKgText(down)} usually breaks it.`);
       }
-      return out('R4', same, mid, `Stuck at ${kgText(w)} for ${judged.length} workouts. Keep the weight and aim for ${mid} clean reps.`);
+      return out('R4', same, mid, `Stuck at ${targetKgText(w)} for ${judged.length} workouts. Keep the weight and aim for ${mid} clean reps.`);
     }
   }
 
@@ -803,7 +803,16 @@ type LineInput = Pick<OverloadTarget, 'targetWeightKg' | 'targetRepsMin' | 'targ
  * "Assist 15 kg · aim for 8", and on a first time "First time · find a weight for 8–12"
  * (never a guessed number).
  */
-export function targetLine(t: LineInput, fmtKg: (kg: number) => string = (kg) => kgText(kg)): string {
+/**
+ * 16 Oct 2026 audit (C1-8): a Target's weight as the set row's grey hint and the saved set show
+ * it — 2 decimals in kg ("41.25 kg", never "41.3"), 1 in lb. PURE but for the member's units.
+ */
+export function targetKgText(kg: number): string {
+  const u = displayUnits();
+  return `${trimNum(kgToShown(kg, u), u === 'imperial' ? 1 : 2)} ${weightUnitOf(u)}`;
+}
+
+export function targetLine(t: LineInput, fmtKg: (kg: number) => string = targetKgText): string {
   const range = t.targetRepsMin === t.targetRepsMax ? `${t.targetRepsMin}` : `${t.targetRepsMin}–${t.targetRepsMax}`;
   const lt = t.logType ?? 'weight_reps';
   if (t.free) return lt === 'time_distance' ? 'Time and distance' : lt === 'distance' ? 'Distance' : 'Time';

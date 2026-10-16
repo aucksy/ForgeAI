@@ -59,6 +59,10 @@ import { draftToRichSets, withoutUntickedSaved } from '@/tracker/services/draftS
 import { NO_PAUSE } from '@/tracker/services/workoutPause';
 import { fillForSet, prevForSet, toPrevSet, useActiveWorkout, type DraftExercise, type DraftSet, type PrevSet } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
+import { useWorkoutUi } from '@/tracker/store/workoutUiStore';
+import { targetLine } from '@/tracker/engine/progression';
+import { hintTexts } from '@/tracker/components/setRowLayout';
+import { tickValues } from '@/tracker/services/setTick';
 
 const read = (p: string) => readFileSync(join(__dirname, '..', '..', p), 'utf8');
 const MIN = 60_000;
@@ -186,5 +190,57 @@ describe('C1-4: editing a saved workout — a saved set the member unticks is le
   });
 });
 
-// fillForSet is used by C1-7 below; keep the import referenced.
-void fillForSet;
+describe('C1-5: a record pop-up plays once', () => {
+  it('the workout screen going away (minimise, finish) takes the pop-ups with it', () => {
+    const ui = useWorkoutUi.getState();
+    ui.setScreenOpen(true);
+    useWorkoutUi.getState().showRecord('Bench Press', 'New record');
+    expect(useWorkoutUi.getState().record).not.toBeNull();
+    useWorkoutUi.getState().setScreenOpen(false);
+    expect(useWorkoutUi.getState().record).toBeNull();
+    useWorkoutUi.getState().setScreenOpen(true);
+    useWorkoutUi.getState().showLastTime('Bench Press', '+2.5 kg on last time');
+    useWorkoutUi.getState().setScreenOpen(false);
+    expect(useWorkoutUi.getState().lastTime).toBeNull();
+  });
+});
+
+describe('C1-6: an RPE on a set with nothing to fill says what is missing', () => {
+  it('the RPE sheet shows the row note ("Add the weight first") when the tick could not happen', () => {
+    const cardSrc = read('src/tracker/components/ExerciseLogCard.tsx');
+    expect(cardSrc).toMatch(/afterTick\(exercise\.key, rpeSet\.key\);\s*return;\s*\}[\s\S]{0,300}showRowNote\(exercise\.key, rpeSet\.key, missing\)/);
+  });
+});
+
+describe("C1-7: a new drop row never hints the top set's weight", () => {
+  it('no drop last time: no weight hint, and a tick saves nothing (it asks for the numbers)', () => {
+    const c = card('a', [row('s1', { weightKg: 100, reps: 5, done: true }), row('d1', { setType: 'drop' })]);
+    expect(fillForSet(c, 'd1')).toBeNull();
+    expect(tickValues('weight_reps', c.sets[1], fillForSet(c, 'd1')).ok).toBe(false);
+    // Reps typed: the weight is what is missing.
+    expect(tickValues('weight_reps', { ...c.sets[1], reps: 8 }, fillForSet(c, 'd1'))).toMatchObject({ ok: false, missing: 'weight' });
+  });
+
+  it('a drop last time: its own drop is the hint', () => {
+    const c = card('a', [row('s1', { weightKg: 100, reps: 5, done: true }), row('d1', { setType: 'drop' })], {
+      previousSets: [{ weightKg: 95, reps: 5 }, { weightKg: 70, reps: 8, setType: 'drop' }],
+    });
+    expect(fillForSet(c, 'd1')).toEqual({ weightKg: 70, reps: 8 });
+  });
+});
+
+describe('C1-8: the Target line shows the weight the hint shows', () => {
+  it('41.25 kg on both', () => {
+    const line = targetLine({ targetWeightKg: 41.25, targetRepsMin: 8, targetRepsMax: 12, action: 'hold', repGoal: 10 });
+    expect(line).toBe('41.25 kg · aim for 10');
+    expect(hintTexts({ weightKg: 41.25, reps: 10 }, 'weight_reps', 'km', 'metric').weight).toBe('41.25');
+    expect(targetLine({ targetWeightKg: 21.25, targetRepsMin: 8, targetRepsMax: 12, action: 'hold', repGoal: 10, each: true })).toBe('21.25 kg each · aim for 10');
+  });
+});
+
+describe("C1-9: the card's tag row wraps at 360 dp and font 1.3", () => {
+  it('the muscle badge, superset badge and rest pill row wraps', () => {
+    expect(read('src/tracker/components/ExerciseLogCard.tsx')).toMatch(/marginTop: 6, flexDirection: 'row', flexWrap: 'wrap'/);
+  });
+});
+

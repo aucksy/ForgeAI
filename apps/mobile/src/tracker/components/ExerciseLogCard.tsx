@@ -360,7 +360,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               {exercise.name}
             </Text>
           </Pressable>
-          <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+          {/* 16 Oct 2026 audit (C1-9): the tags wrap onto a second line (360 dp at font 1.3 is
+              about 188 dp for ~311 dp of tags), so the rest pill is never pushed under the ⋯. */}
+          <View style={{ marginTop: 6, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: space.sm, rowGap: 6 }}>
             <Badge label={exercise.muscleLabel ?? cap(exercise.muscleGroup)} tone="accent" />
             {group != null ? (
               <Pressable onPress={() => setSheet('superset')} accessibilityRole="button" accessibilityLabel="Edit superset">
@@ -751,7 +753,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           if (!missing) {
             tap();
             afterTick(exercise.key, rpeSet.key);
+            return;
           }
+          // 16 Oct 2026 audit (C1-6): nothing to fill — the row says what is missing and puts the
+          // cursor there ("Add the weight first"), as a tap on ✓ does. It used to close silently.
+          useWorkoutUi.getState().showRowNote(exercise.key, rpeSet.key, missing);
         }}
         onClose={() => setRpeFor(null)}
       />

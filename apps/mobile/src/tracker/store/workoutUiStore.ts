@@ -61,7 +61,11 @@ export const useWorkoutUi = create<WorkoutUiState>()((set, get) => ({
     if (!get().screenOpen) mounted = 0;
     else if (mounted === 0) mounted = 1;
     mounted = Math.max(0, mounted + (open ? 1 : -1));
-    set({ screenOpen: mounted > 0 });
+    // 16 Oct 2026 audit (C1-5): the workout screen going away (minimised, finished, discarded)
+    // takes its pop-ups with it. Their clearing timers die with the screen, so a "New record"
+    // left here played again — confetti and all — when the screen next opened, even days later.
+    if (mounted === 0) set({ screenOpen: false, record: null, lastTime: null });
+    else set({ screenOpen: true });
   },
   // A record always wins over the quieter "on last time" line.
   showRecord: (exercise, label, lines) => set({ record: { id: ++seq, exercise, label, lines }, lastTime: null }),
