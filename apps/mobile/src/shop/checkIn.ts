@@ -7,7 +7,7 @@
  * (gymApi.ts makes the call); test/shop/checkIn.test.ts holds it.
  */
 import { cleanJoinCode, JOIN_CODE_LENGTH, type GymError } from './gym';
-import { INVITE_HOST } from './pendingInvite';
+import { INVITE_HOST, isInviteHost } from './pendingInvite';
 
 // ------------------------------------------------------------------ the link
 
@@ -16,7 +16,7 @@ export function checkInCodeFromUrl(url: string | null | undefined): string | nul
   if (!url) return null;
   const m = /^(?:https?:\/\/([^/?#]+)|forgeai:\/)\/c\/([^/?#]+)/i.exec(url.trim());
   if (!m) return null;
-  if (m[1] !== undefined && m[1].toLowerCase() !== INVITE_HOST) return null;
+  if (m[1] !== undefined && !isInviteHost(m[1])) return null;
   let raw = m[2];
   try {
     raw = decodeURIComponent(raw);

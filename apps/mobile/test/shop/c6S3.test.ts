@@ -88,6 +88,16 @@ describe('C6-5: a pasted invite link fills the code box', () => {
     expect(joinCodeFromTyped('https://forgeai.aakashpahuja.in/j/RAMS01')).toBe('RAMS01');
     expect(joinCodeFromTyped("Join RAM'S on ForgeAI: https://forgeai.aakashpahuja.in/j/rams01 see you")).toBe('RAMS01');
   });
+  it("the ForgeAI link's www. and :443 forms too", () => {
+    expect(joinCodeFromTyped('https://www.forgeai.aakashpahuja.in/j/RAMS01')).toBe('RAMS01');
+    expect(joinCodeFromTyped('https://forgeai.aakashpahuja.in:443/j/RAMS01')).toBe('RAMS01');
+    expect(joinCodeFromTyped('forgeai.aakashpahuja.in/j/RAMS01')).toBe('RAMS01');
+  });
+  it('another link leaves the box empty (never "HTTPSE")', () => {
+    expect(joinCodeFromTyped('https://example.com/j/RAMS01')).toBe('');
+    expect(joinCodeFromTyped('see https://bit.ly/3xYz')).toBe('');
+    expect(joinCodeFromTyped('www.example.com')).toBe('');
+  });
   it('a typed code is cleaned as before', () => {
     expect(joinCodeFromTyped('rams 01')).toBe('RAMS01');
     expect(joinCodeFromTyped('IRON01X')).toBe('IRON01');
@@ -98,7 +108,24 @@ describe('C6-6: a Join retry is the same join', () => {
   beforeEach(() => {
     useGymShop.getState().unlink(null);
     joins.length = 0;
+    mem.clear();
     joinAnswer = { ok: false, error: { kind: 'timeout' } };
+  });
+
+  it('the join id is kept on the phone, so a closed app still sends the same one', async () => {
+    await joinGym('RAMS01', 'Rahul');
+    const saved = JSON.parse(mem.get('forgeai-gym-join-try') ?? '{}');
+    expect(saved.id).toBe(joins[0].joinId);
+    expect(saved.code).toBe('RAMS01');
+  });
+
+  it('a kept join id older than 15 minutes is a new join', async () => {
+    mem.set('forgeai-gym-join-try', JSON.stringify({ code: 'RAMS01', id: 'old-id', at: Date.now() - 16 * 60000 }));
+    await joinGym('RAMS01', 'Rahul');
+    expect(joins[0].joinId).not.toBe('old-id');
+    mem.set('forgeai-gym-join-try', JSON.stringify({ code: 'RAMS01', id: 'fresh-id', at: Date.now() - 5 * 60000 }));
+    await joinGym('RAMS01', 'Rahul');
+    expect(joins[1].joinId).toBe('fresh-id');
   });
 
   it('the retry after "the gym didn\'t answer" sends the same join id; a new join a new one', async () => {

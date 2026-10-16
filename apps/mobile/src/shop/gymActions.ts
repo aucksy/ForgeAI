@@ -4,6 +4,8 @@
  * knows (BAD_KEY: the member left on another phone, or the gym removed them) unlinks this phone
  * and the join card says why.
  */
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { uuid } from '@/lib/uuid';
 import { prefetchGymLogo } from '@/theme/logoPrefetch';
 
@@ -18,11 +20,15 @@ import {
   cleanMemberName,
   findLandedOrder,
   gymCheckDue,
+  JOIN_TRY_STORAGE_KEY,
   joinErrorText,
+  joinIdFor,
   onlyLeftText,
   orderLinesFor,
+  orderIdFor,
   orderLinesKey,
   orderPlacedText,
+  pendingOrderSettled,
   placeFailure,
   refreshErrorText,
   stockLeftForKey,
@@ -54,19 +60,42 @@ function lostKey(err: GymError): boolean {
 /**
  * Audit C6-6: this phone's id for the join it is trying (member_join's p_join_id, 0020). A retry
  * of the same code after a lost answer sends the same id, so the gym gives back the member it
- * already made (with a new key) instead of a second one on its list. Forgotten once joined.
+ * already made (with a new key) instead of a second one on its list. Kept on the phone for 15
+ * minutes (an app closed between the two taps still sends it), forgotten once joined.
  */
-let joinTry: { code: string; id: string } | null = null;
+async function joinIdNow(code: string): Promise<string> {
+  let kept: unknown = null;
+  try {
+    const raw = await AsyncStorage.getItem(JOIN_TRY_STORAGE_KEY);
+    kept = raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    console.warn('[ForgeErr] join: could not read the kept join id', e);
+  }
+  const next = joinIdFor(kept, code, Date.now(), uuid);
+  try {
+    await AsyncStorage.setItem(JOIN_TRY_STORAGE_KEY, JSON.stringify(next));
+  } catch (e) {
+    console.warn('[ForgeErr] join: could not keep the join id', e);
+  }
+  return next.id;
+}
+
+async function forgetJoinId(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(JOIN_TRY_STORAGE_KEY);
+  } catch (e) {
+    console.warn('[ForgeErr] join: could not forget the join id', e);
+  }
+}
 
 export async function joinGym(rawCode: string, rawName: string): Promise<ActionWords> {
   const code = cleanJoinCode(rawCode);
   const name = cleanMemberName(rawName);
   if (code.length !== JOIN_CODE_LENGTH) return `The code has ${JOIN_CODE_LENGTH} letters and numbers. Check it with the front desk.`;
   if (!name) return joinErrorText({ kind: 'EMPTY' });
-  if (joinTry?.code !== code) joinTry = { code, id: uuid() };
-  const r = await apiJoin(code, name, joinTry.id);
+  const r = await apiJoin(code, name, await joinIdNow(code));
   if (!r.ok) return joinErrorText(r.error);
-  joinTry = null;
+  await forgetJoinId();
   // The logo starts downloading now, while the opening is still being laid out (D13).
   prefetchGymLogo(r.data.brand?.logoUrl);
   // The shop page that replaces this card fetches the list as it opens.
@@ -139,8 +168,16 @@ let gymCheckedAt: number | null = null;
  * open). Quiet: no words for the member, a failure just keeps what the phone has.
  */
 export async function refreshGymNow(): Promise<void> {
-  // C6-2: a Leave or Erase the gym never heard (no signal then) is sent again on every start.
-  await retryPendingLeaves();
+  try {
+    await checkGymNow();
+  } finally {
+    // C6-2: a Leave or Erase the gym never heard (no signal then) is sent again on every start —
+    // after the gym check and in the background, so start-up never waits on it.
+    void retryPendingLeaves().catch((e: unknown) => console.warn('[ForgeErr] pending leave retry', e));
+  }
+}
+
+async function checkGymNow(): Promise<void> {
   const key = useGymShop.getState().link?.memberKey;
   if (!key) return;
   gymCheckedAt = Date.now();
@@ -224,6 +261,9 @@ export async function refreshOrders(): Promise<ActionWords> {
     return "Couldn't refresh — showing the last list.";
   }
   useGymShop.getState().setOrders(r.data);
+  // The order a kept id made is on the list: the id is done (a later same bag is a new order).
+  const kept = useGymShop.getState().pendingOrder;
+  if (pendingOrderSettled(kept, r.data)) useGymShop.getState().setPendingOrder(null);
   return null;
 }
 
@@ -242,7 +282,7 @@ export async function placeGymOrder(): Promise<PlaceOutcome> {
   // Audit C6-1: the same bag sent again keeps its id, so a retry after a lost answer gets the
   // order the gym already wrote (0020). A changed bag is a new order with a new id.
   const linesKey = orderLinesKey(lines);
-  const pending = s.pendingOrder && s.pendingOrder.lines === linesKey ? s.pendingOrder : { id: uuid(), lines: linesKey };
+  const pending = orderIdFor(s.pendingOrder, linesKey, Date.now(), uuid);
   s.setPendingOrder(pending);
   orderWrites += 1;
   let r = await apiPlaceOrder(key, lines, pending.id);

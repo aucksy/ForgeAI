@@ -20,10 +20,12 @@ vi.mock('@/theme/logoPrefetch', () => ({ prefetchGymLogo: () => undefined }));
 
 /** The gym's answer to member_leave: true = done, false = no answer (offline). */
 let online = false;
+let hang = false;
 const leaves: string[] = [];
 vi.mock('@/shop/gymApi', () => ({
   apiLeaveQuietly: async (key: string) => {
     leaves.push(key);
+    if (hang) return new Promise<boolean>(() => undefined);
     return online;
   },
   apiMe: async () => ({ ok: false, error: { kind: 'offline' } }),
@@ -42,6 +44,7 @@ describe('C6-2: a leave the gym never heard is sent again', () => {
     mem.clear();
     leaves.length = 0;
     online = false;
+    hang = false;
   });
 
   it('Leave offline: the key is kept, the member is told, and the next start sends it', async () => {
@@ -55,14 +58,14 @@ describe('C6-2: a leave the gym never heard is sent again', () => {
 
     // Next start, still offline: kept.
     await refreshGymNow();
-    expect(leaves).toEqual(['secret-key-1', 'secret-key-1']);
+    await vi.waitFor(() => expect(leaves).toEqual(['secret-key-1', 'secret-key-1']));
     expect(mem.has(LEAVE_PENDING_STORAGE_KEY)).toBe(true);
 
     // Next start, online: sent and forgotten.
     online = true;
     await refreshGymNow();
+    await vi.waitFor(() => expect(mem.has(LEAVE_PENDING_STORAGE_KEY)).toBe(false));
     expect(leaves).toHaveLength(3);
-    expect(mem.has(LEAVE_PENDING_STORAGE_KEY)).toBe(false);
   });
 
   it('Leave online: nothing kept, no warning', async () => {
@@ -82,7 +85,14 @@ describe('C6-2: a leave the gym never heard is sent again', () => {
     expect(JSON.parse(mem.get(LEAVE_PENDING_STORAGE_KEY) ?? '[]')).toEqual(['secret-key-1']);
     online = true;
     await refreshGymNow();
-    expect(mem.has(LEAVE_PENDING_STORAGE_KEY)).toBe(false);
+    await vi.waitFor(() => expect(mem.has(LEAVE_PENDING_STORAGE_KEY)).toBe(false));
+  });
+
+  it('start-up never waits on a leave retry the gym does not answer', async () => {
+    mem.set(LEAVE_PENDING_STORAGE_KEY, JSON.stringify(['secret-key-1']));
+    hang = true;
+    const done = await Promise.race([refreshGymNow().then(() => 'done'), new Promise((r) => setTimeout(() => r('waited'), 200))]);
+    expect(done).toBe('done');
   });
 
   it('the Erase confirm says the gym is told, now or once online', () => {

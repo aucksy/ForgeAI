@@ -117,4 +117,6 @@ export interface GymOrder {
   totalP: number;
   status: OrderStatus;
   cancelledBy: 'member' | 'gym' | null;
+  /** The id this phone gave the order before sending it (0020, audit C6-1); absent on older orders. */
+  clientOrderId?: string;
 }

@@ -5,7 +5,7 @@
  * already has instead of writing another one. Runs the real gymActions + gymApi against a fake
  * gym server (in place of the Supabase client) that can "lose the answer after the write".
  */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mem = new Map<string, string>();
 vi.mock('@react-native-async-storage/async-storage', () => ({
@@ -70,7 +70,7 @@ vi.mock('@/cloud/client', () => ({
 }));
 
 import { productsFromRows } from '@/shop/gym';
-import { placeGymOrder } from '@/shop/gymActions';
+import { placeGymOrder, refreshOrders } from '@/shop/gymActions';
 import { useGymShop } from '@/shop/gymStore';
 
 const LINK = { memberKey: 'k'.repeat(48), memberId: 'm1', gymId: 'g1', gymName: 'Iron Temple Fitness', joinCode: 'IRON01', name: 'Asha' };
@@ -93,6 +93,9 @@ describe('C6-1: one tap, one order — even when the answer is lost', () => {
     server.ordersDown = false;
     server.old = false;
     server.placeArgs = [];
+  });
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('a retry after a dropped answer returns the same order, not a second one', async () => {
@@ -160,6 +163,37 @@ describe('C6-1: one tap, one order — even when the answer is lost', () => {
     expect(r.ok).toBe(true);
     expect(server.orders).toHaveLength(1);
     expect(useGymShop.getState().bag).toEqual([]);
+  });
+
+  // Review of wave 4a (BLOCKER): an id matched on the items alone, kept for ever, handed a week-old
+  // collected order back for a new order of the same item.
+  it('a saved id older than 15 minutes is a new order', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-16T10:00:00Z'));
+    joinedWithBag(1);
+    server.dropAnswers = 1;
+    server.ordersDown = true;
+    await placeGymOrder();
+    vi.setSystemTime(new Date('2026-10-16T10:16:00Z'));
+    server.ordersDown = false;
+    await placeGymOrder();
+    expect(server.placeArgs[1].p_order_id).not.toBe(server.placeArgs[0].p_order_id);
+  });
+
+  it('My orders showing the order lets the saved id go', async () => {
+    joinedWithBag(1);
+    server.dropAnswers = 1;
+    server.ordersDown = true;
+    await placeGymOrder();
+    expect(useGymShop.getState().pendingOrder).not.toBeNull();
+    server.ordersDown = false;
+    await refreshOrders();
+    expect(useGymShop.getState().pendingOrder).toBeNull();
+    // The member collects that order, then orders the same item again: a new order.
+    server.orders[0].status = 'collected';
+    await placeGymOrder();
+    expect(server.placeArgs[1].p_order_id).not.toBe(server.placeArgs[0].p_order_id);
+    expect(server.orders).toHaveLength(2);
   });
 
   it('a server from before the fix still takes the order (sent again without the id)', async () => {

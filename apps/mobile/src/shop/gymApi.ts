@@ -139,7 +139,7 @@ export async function apiCheckIn(key: string, code: string, phone: string | null
  * Leave and Erase never hang. True when the gym confirmed, or no longer knows the key (an earlier
  * leave whose answer was lost); false when it could not be reached — pendingLeave.ts sends it again.
  */
-export async function apiLeaveQuietly(key: string): Promise<boolean> {
-  const r = await call('member_leave', { p_key: key }, 6000);
+export async function apiLeaveQuietly(key: string, timeoutMs = 6000): Promise<boolean> {
+  const r = await call('member_leave', { p_key: key }, timeoutMs);
   return r.ok || r.error.kind === 'BAD_KEY';
 }

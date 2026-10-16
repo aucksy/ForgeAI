@@ -15,12 +15,20 @@ export const INVITE_HOST = 'forgeai.aakashpahuja.in';
 
 const CODE = /^[A-Za-z0-9]{6}$/;
 
+/**
+ * Is this a link's host the gym links' own? Its www. form and an explicit :443/:80 port count
+ * (review of wave 4a); anything else — another site, a look-alike — does not. PURE.
+ */
+export function isInviteHost(host: string): boolean {
+  return host.toLowerCase().replace(/:(443|80)$/, '').replace(/^www\./, '') === INVITE_HOST;
+}
+
 /** The gym code in an invite URL (https://<INVITE_HOST>/j/CODE or forgeai://j/CODE), else null. PURE. */
 export function inviteCodeFromUrl(url: string | null | undefined): string | null {
   if (!url) return null;
   const m = /^(?:https?:\/\/([^/?#]+)|forgeai:\/)\/j\/([^/?#]+)/i.exec(url.trim());
   if (!m) return null;
-  if (m[1] !== undefined && m[1].toLowerCase() !== INVITE_HOST) return null;
+  if (m[1] !== undefined && !isInviteHost(m[1])) return null;
   let raw = m[2];
   try {
     raw = decodeURIComponent(raw);

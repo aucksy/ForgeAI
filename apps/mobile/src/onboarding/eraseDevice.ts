@@ -207,6 +207,9 @@ function deviceSteps(): EraseStep[] {
         // A gym link waiting for setup to finish (C6-7) goes too.
         const { PENDING_LINK_STORAGE_KEY } = await import('@/shop/pendingInvite');
         await AsyncStorage.removeItem(PENDING_LINK_STORAGE_KEY);
+        // A Join's kept id (C6-6) too.
+        const { JOIN_TRY_STORAGE_KEY } = await import('@/shop/gym');
+        await AsyncStorage.removeItem(JOIN_TRY_STORAGE_KEY);
         if (key) {
           const { leaveOnServer } = await import('@/shop/pendingLeave');
           await leaveOnServer(key);

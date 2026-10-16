@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiLeaveQuietly } from './gymApi';
 
 export const LEAVE_PENDING_STORAGE_KEY = 'forgeai-gym-leave-pending';
+/** A start-up retry waits at most this long per key (it runs in the background anyway). */
+const RETRY_MS = 4000;
 /** More than a member could ever leave offline in a row; the oldest goes first past it. */
 const MAX_KEPT = 10;
 
@@ -65,7 +67,7 @@ export function retryPendingLeaves(): Promise<number> {
     if (kept.length === 0) return 0;
     const left: string[] = [];
     for (const key of kept) {
-      if (!(await apiLeaveQuietly(key))) left.push(key);
+      if (!(await apiLeaveQuietly(key, RETRY_MS))) left.push(key);
     }
     await writeKeys(left);
     return left.length;

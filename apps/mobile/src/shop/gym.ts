@@ -10,7 +10,7 @@ import { parseGymBrand, sameBrand, type GymBrand } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES } from './catalog';
 import { lineKey, lineName, priceBag, rupees } from './money';
-import { inviteCodeFromUrl } from './pendingInvite';
+import { INVITE_HOST, inviteCodeFromUrl } from './pendingInvite';
 import type { ArtKind, BagLine, GymLink, GymOrder, OrderLine, OrderStatus, Product, ProductOption, ShopCategory } from './types';
 
 // ------------------------------------------------------------------ join code
@@ -33,11 +33,38 @@ export function cleanJoinCode(raw: string): string {
  */
 export function joinCodeFromTyped(raw: string): string {
   const text = String(raw ?? '');
+  let otherLink = false;
   for (const word of text.split(/\s+/)) {
-    const code = inviteCodeFromUrl(word);
+    if (!word) continue;
+    const lower = word.toLowerCase();
+    // The gym link as WhatsApp sometimes shows it: no https:// in front.
+    const bare = lower.startsWith(INVITE_HOST) || lower.startsWith(`www.${INVITE_HOST}`);
+    const code = inviteCodeFromUrl(bare ? `https://${word}` : word);
     if (code) return code;
+    if (bare || /^(?:[a-z][a-z0-9+.-]*:\/\/|www\.)/i.test(word)) otherLink = true;
   }
-  return cleanJoinCode(text);
+  // Review of wave 4a: another link is not a code ("HTTPSE"): the box stays empty.
+  return otherLink ? '' : cleanJoinCode(text);
+}
+
+/** Where a Join's id is kept on the phone for a retry (C6-6). */
+export const JOIN_TRY_STORAGE_KEY = 'forgeai-gym-join-try';
+/** How long a Join's id is kept for a retry (review of wave 4a): one sitting, not days. */
+export const JOIN_TRY_MS = 15 * 60 * 1000;
+
+/** A Join's id, as kept on the phone for a retry of the same code. */
+export interface JoinTry {
+  code: string;
+  id: string;
+  at: number;
+}
+
+/** The id to send for this code now: the kept one when it is the same code and fresh, else new. PURE. */
+export function joinIdFor(kept: unknown, code: string, nowMs: number, newId: () => string): JoinTry {
+  if (isObj(kept) && kept.code === code && typeof kept.id === 'string' && kept.id && typeof kept.at === 'number' && nowMs >= kept.at && nowMs - kept.at < JOIN_TRY_MS) {
+    return { code, id: kept.id, at: kept.at };
+  }
+  return { code, id: newId(), at: nowMs };
 }
 
 /** The name sent with a join: spaces tidied, at most 60 characters (the server's own limit). PURE. */
@@ -158,7 +185,18 @@ export function orderFromRow(raw: unknown): GymOrder | null {
   const status = STATUSES.includes(raw.status as OrderStatus) ? (raw.status as OrderStatus) : 'ordered';
   const by = raw.cancelled_by === 'member' || raw.cancelled_by === 'gym' ? raw.cancelled_by : null;
   const lines = Array.isArray(raw.lines) ? raw.lines.map(orderLineFromJson).filter((l): l is OrderLine => l != null) : [];
-  return { id, orderNo, createdAt, updatedAt: str(raw.updated_at) ?? createdAt, lines, totalP, status, cancelledBy: status === 'cancelled' ? by : null };
+  const clientOrderId = str(raw.client_order_id);
+  return {
+    id,
+    orderNo,
+    createdAt,
+    updatedAt: str(raw.updated_at) ?? createdAt,
+    lines,
+    totalP,
+    status,
+    cancelledBy: status === 'cancelled' ? by : null,
+    ...(clientOrderId ? { clientOrderId } : {}),
+  };
 }
 
 /** Every usable order row, newest first. PURE. */
@@ -418,6 +456,26 @@ export interface PendingOrder {
   id: string;
   /** The exact lines it was made for: a changed bag is a new order with a new id. */
   lines: string;
+  /** When it was made (epoch ms): after `PENDING_ORDER_MS` the same bag is a new order. */
+  at: number;
+}
+
+/**
+ * How long a retry may reuse the id (review of wave 4a): only minutes. A week later the same item
+ * is a new order, never the old one handed back. The server also only matches an open order from
+ * the last 24 hours.
+ */
+export const PENDING_ORDER_MS = 15 * 60 * 1000;
+
+/** The id to send for these lines now: the kept one while it is the same bag and fresh, else new. PURE. */
+export function orderIdFor(kept: PendingOrder | null, linesKey: string, nowMs: number, newId: () => string): PendingOrder {
+  if (kept && kept.lines === linesKey && nowMs >= kept.at && nowMs - kept.at < PENDING_ORDER_MS) return kept;
+  return { id: newId(), lines: linesKey, at: nowMs };
+}
+
+/** True once My orders shows the order this id made: the id has done its job. PURE. */
+export function pendingOrderSettled(kept: PendingOrder | null, orders: readonly Pick<GymOrder, 'clientOrderId'>[]): boolean {
+  return kept != null && orders.some((o) => o.clientOrderId === kept.id);
 }
 
 /** The lines as one string, in a fixed order, so the same bag always reads the same. PURE. */
@@ -431,7 +489,9 @@ export function orderLinesKey(lines: readonly { productId: string; optionId: str
 /** A saved pending order, or null when it is missing or damaged. PURE. */
 export function cleanPendingOrder(raw: unknown): PendingOrder | null {
   if (!isObj(raw)) return null;
-  return typeof raw.id === 'string' && raw.id.length > 0 && typeof raw.lines === 'string' ? { id: raw.id, lines: raw.lines } : null;
+  return typeof raw.id === 'string' && raw.id.length > 0 && typeof raw.lines === 'string' && typeof raw.at === 'number' && Number.isFinite(raw.at)
+    ? { id: raw.id, lines: raw.lines, at: raw.at }
+    : null;
 }
 
 // ------------------------------------------------------------------ order words
@@ -569,6 +629,7 @@ function cleanCachedOrder(raw: unknown): GymOrder | null {
     total_p: raw.totalP,
     status: raw.status,
     cancelled_by: raw.cancelledBy,
+    client_order_id: raw.clientOrderId,
   });
 }
 
