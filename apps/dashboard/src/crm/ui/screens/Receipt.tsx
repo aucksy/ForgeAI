@@ -22,6 +22,7 @@ import { formatINR } from '../../logic/money';
 import { buildReceiptDoc, type ReceiptDoc } from '../../logic/receiptDoc';
 import { Button, Card, EmptyState, PageHeader, space } from '../kit';
 import { navigate } from '../router';
+import { receiptBackTo } from '../../logic/receiptDoc';
 import { inEnglish, tr } from '../../i18n';
 
 const PAPER = {
@@ -88,7 +89,10 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
           subtitle={`${doc.memberName} · ${doc.paidOnLabel}`}
           actions={
             <>
-              <Button variant="ghost" onClick={() => window.history.back()}>
+              <Button
+                variant="ghost"
+                onClick={() => (receiptBackTo(window.history.length) === 'back' ? window.history.back() : navigate('/money'))}
+              >
                 {tr('Back', 'Peeche')}
               </Button>
               {/* Step 4: the receipt as a WhatsApp message to the member (the print stays the record). */}

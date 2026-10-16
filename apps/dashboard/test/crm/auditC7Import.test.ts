@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/local';
-import { guessColumns, guessFromValues, importAction, planImport, rowBringsTerm, termsPreview } from '../../src/crm/logic/importMembers';
+import { decodeCsvBytes, guessColumns, guessFromValues, importAction, parseSheetDate, planImport, rowBringsTerm, termsPreview } from '../../src/crm/logic/importMembers';
 import { termFromRow } from '../../src/crm/logic/importTerms';
 import { planUndo } from '../../src/crm/logic/undoImport';
 import type { MemberDraft } from '../../src/crm/types';
@@ -289,5 +289,34 @@ describe('C7-24: a plan that cannot be dated is said, and its money kept in the 
     expect(r.term).toBeNull();
     expect(r.warnings.join(' ')).toContain('Gold');
     expect(r.draft!.notes).toContain('Balance: ₹4,000');
+  });
+});
+
+describe('C7-38: a payments list sorted newest first keeps the real joining date', () => {
+  it('joined on the earliest plan start of that member', () => {
+    const rows = [
+      ['Member Name', 'Mobile No', 'Package', 'Start Date', 'End Date', 'Amount Paid'],
+      ['Riya', '9876543210', 'Yearly', '01/10/2026', '30/09/2027', '12000'],
+      ['Riya', '9876543210', 'Yearly', '01/09/2025', '31/08/2026', '12000'],
+    ];
+    expect(planImport(rows, 0, mapOf(rows), [], TODAY).rows[0]!.draft!.joinedOn).toBe('2025-09-01');
+  });
+});
+
+describe("C7-39: Excel's Unicode Text (UTF-16) file is read", () => {
+  it('a UTF-16 file with its byte-order mark reads as text', () => {
+    const text = 'Name\tMobile\r\nRiya\t9876543210\r\n';
+    const bytes = new Uint8Array(2 + text.length * 2);
+    bytes[0] = 0xff;
+    bytes[1] = 0xfe;
+    for (let i = 0; i < text.length; i += 1) bytes[2 + i * 2] = text.charCodeAt(i);
+    expect(decodeCsvBytes(bytes)).toBe(text);
+  });
+});
+
+describe('C7-45: an old .xls birthday before Oct 1954 is read', () => {
+  it('Excel date number 15000 (1941) is a birthday; a bare year is not', () => {
+    expect(parseSheetDate(15000, TODAY, true, true)).toBe('1941-01-24');
+    expect(parseSheetDate(1990, TODAY, true, true)).toBeNull();
   });
 });

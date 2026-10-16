@@ -513,6 +513,9 @@ export function parseSheetDate(v: unknown, today: DateISO, dayFirst = true, past
     if (!Number.isFinite(v)) return null;
     // Only a real number cell in the date-number range is one of Excel's date numbers.
     if (v >= EXCEL_SERIAL_MIN && v <= EXCEL_SERIAL_MAX) return excelSerialToISO(v);
+    // Admin audit C7-45: a birthday before Oct 1954 is a smaller date number (an old .xls). From 3000
+    // (1908) up, never a bare year typed in (1990), which stays unreadable.
+    if (past && Number.isInteger(v) && v >= 3000 && v < EXCEL_SERIAL_MIN) return excelSerialToISO(v);
     if (!Number.isInteger(v) || v < 0) return null;
     // Digits typed into a number cell: Excel drops the leading zero of 01082026.
     s = String(v);
@@ -672,6 +675,10 @@ export function parseCsv(text: string): string[][] {
 
 /** CSV bytes to text: UTF-8 when it is valid UTF-8, else the Windows code page old Excel saves in. */
 export function decodeCsvBytes(bytes: Uint8Array): string {
+  // Admin audit C7-39 (16 Oct 2026): Excel's "Unicode Text" export is UTF-16, marked by its first
+  // two bytes. Read as UTF-8 every other byte was a NUL and every row came out blank.
+  if (bytes[0] === 0xff && bytes[1] === 0xfe) return new TextDecoder('utf-16le').decode(bytes.subarray(2));
+  if (bytes[0] === 0xfe && bytes[1] === 0xff) return new TextDecoder('utf-16be').decode(bytes.subarray(2));
   try {
     return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
   } catch {
@@ -1022,6 +1029,20 @@ export function planImport(
       }
     }
     out.push({ rowNumber, cells, name: fullName, status: existing ? 'duplicate' : 'add', draft, existing, sameAsRow: null, problems, warnings, term: rowTerm });
+  }
+
+  // Admin audit C7-38 (16 Oct 2026): with no joining-date column, a member joins on their EARLIEST
+  // plan start across all their rows. A payments list sorted newest first gave a yearly member of
+  // 2025 the joining date of this year's renewal.
+  if (map.joinedOn === null) {
+    const firstRow = new Map<number, ImportRow>();
+    for (const r of out) if (r.draft && r.sameAsRow === null) firstRow.set(r.rowNumber, r);
+    for (const r of out) {
+      const head = r.sameAsRow !== null ? firstRow.get(r.sameAsRow) : r.sameAsRow === null ? r : undefined;
+      const start = r.term?.startsOn;
+      if (!head?.draft || !start || start < EARLIEST_DATE || start > today) continue;
+      if (start < head.draft.joinedOn) head.draft = { ...head.draft, joinedOn: start };
+    }
   }
 
   const counts = { add: 0, duplicate: 0, problem: 0 };

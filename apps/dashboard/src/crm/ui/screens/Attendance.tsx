@@ -837,7 +837,7 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
         <SectionTitle
           action={
             <Button variant="ghost" onClick={exportCsv} disabled={shown.length === 0}>
-              {tr('Export CSV', 'CSV export karo')}
+              {tr('Download Excel file', 'Excel file nikalo')}
             </Button>
           }
         >

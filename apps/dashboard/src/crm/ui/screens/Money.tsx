@@ -306,7 +306,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
         <SectionTitle
           action={
             <Button variant="ghost" onClick={exportCsv} disabled={visible.length === 0}>
-              {tr('Export CSV', 'CSV nikalo')}
+              {tr('Download Excel file', 'Excel file nikalo')}
             </Button>
           }
         >
@@ -739,7 +739,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
           action={
             seeTotals ? (
               <Button variant="ghost" onClick={exportCsv}>
-                {tr('Export CSV', 'CSV nikalo')}
+                {tr('Download Excel file', 'Excel file nikalo')}
               </Button>
             ) : undefined
           }

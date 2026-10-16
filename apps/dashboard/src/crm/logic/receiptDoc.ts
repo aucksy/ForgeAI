@@ -143,3 +143,11 @@ export function buildReceiptDoc(input: ReceiptDocInput): ReceiptDoc {
     termTotalP: membership ? membership.priceP + membership.joiningFeeP : null,
   };
 }
+
+/**
+ * Where the receipt page's "Back" goes (admin audit C7-43, 16 Oct 2026). A receipt opened fresh (a
+ * shared link, a new tab) has no page behind it in the panel: going back left the panel. PURE.
+ */
+export function receiptBackTo(historyLength: number): 'back' | '/money' {
+  return historyLength > 1 ? 'back' : '/money';
+}

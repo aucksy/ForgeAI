@@ -48,3 +48,13 @@ describe('money sheets (C7-28, C7-42)', () => {
     expect(sell).toContain('Ask the owner to add a plan.');
   });
 });
+
+describe('C7-44: downloads are called what the owner opens them with', () => {
+  it('"Download Excel file", never "Export CSV"', () => {
+    for (const f of ['Money.tsx', 'Attendance.tsx']) {
+      const src = readFileSync(fileURLToPath(new URL(`../../src/crm/ui/screens/${f}`, import.meta.url)), 'utf8');
+      expect(src).not.toContain("'Export CSV'");
+      expect(src).toContain('Excel file nikalo');
+    }
+  });
+});

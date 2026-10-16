@@ -13,6 +13,8 @@ import { checkGymDetails } from '../../src/crm/logic/gst';
 import { hasPaidJoiningFee, saleDefaults, saleWarning, staffLowestPrice, validateSale } from '../../src/crm/logic/selling';
 import { daysLeftTile } from '../../src/crm/logic/membership';
 import { DEFAULT_PAYMENT_METHOD } from '../../src/crm/logic/payments';
+import { formatINRShort } from '../../src/crm/logic/money';
+import { receiptBackTo } from '../../src/crm/logic/receiptDoc';
 import { nextImportReceiptNo, nextReceiptNo } from '../../src/crm/logic/receipts';
 import type { MemberDraft } from '../../src/crm/types';
 import { makeMembership, makePayment, makePlan, VALID_GSTIN } from './fixtures';
@@ -309,5 +311,19 @@ describe('S3 money and plan rules (C7-25, C7-26, C7-28, C7-29, C7-30, C7-33, C7-
     const issued = [{ receiptNo: '2026-27/0001' }, { receiptNo: 'IMP/2026-27/0001' }];
     expect(nextImportReceiptNo(issued, '2026-05-01')).toBe('IMP/2026-27/0002');
     expect(nextReceiptNo(issued, TODAY)).toBe('2026-27/0002');
+  });
+});
+
+describe('S4 (C7-40, C7-43)', () => {
+  it('C7-40: ₹99,960 is "₹1L", never "₹100k"', () => {
+    expect(formatINRShort(9_996_000)).toBe('₹1L');
+    expect(formatINRShort(99_960_000)).toBe('₹10L');
+    expect(formatINRShort(999_600_000)).toBe('₹1Cr');
+    expect(formatINRShort(999_940)).toBe('₹10k');
+  });
+
+  it('C7-43: a receipt opened fresh goes "Back" to Money, not out of the panel', () => {
+    expect(receiptBackTo(1)).toBe('/money');
+    expect(receiptBackTo(4)).toBe('back');
   });
 });

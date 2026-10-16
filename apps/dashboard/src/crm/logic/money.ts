@@ -61,9 +61,12 @@ export function formatINRShort(paise: Paise): string {
   const negative = paise < 0;
   const rupees = Math.abs(Math.round(paise)) / 100;
   const sign = negative ? '-' : '';
-  if (rupees >= 10_000_000) return `${sign}₹${trimZero(rupees / 10_000_000)}Cr`;
-  if (rupees >= 100_000) return `${sign}₹${trimZero(rupees / 100_000)}L`;
-  if (rupees >= 1_000) return `${sign}₹${trimZero(rupees / 1_000)}k`;
+  // Admin audit C7-40 (16 Oct 2026): the unit is picked from the ROUNDED figure, so ₹99,960 reads
+  // "₹1L", never "₹100k" (and ₹999 rounds within rupees, never "₹1000").
+  const tenths = (n: number) => Math.round(n * 10) / 10;
+  if (tenths(rupees / 100_000) >= 100) return `${sign}₹${trimZero(rupees / 10_000_000)}Cr`;
+  if (tenths(rupees / 1_000) >= 100) return `${sign}₹${trimZero(rupees / 100_000)}L`;
+  if (Math.round(rupees) >= 1_000) return `${sign}₹${trimZero(rupees / 1_000)}k`;
   return `${sign}₹${Math.round(rupees)}`;
 }
 
