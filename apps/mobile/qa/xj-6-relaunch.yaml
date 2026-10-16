@@ -1,0 +1,35 @@
+# Cross-role journey 6, member step: the app closed and opened again inside gym B. It starts in the
+# gym's look (the gym's opening, then its name under the title); the Workout tab is photographed
+# for the colour check (run-journeys.sh reads the brand colour off this picture).
+appId: com.forgeai.app
+---
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "brand-opening"
+    timeout: 90000
+    optional: true
+- takeScreenshot: xj6-03-opening-at-launch
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Your gym: ${GYM_B}"
+    timeout: 60000
+- extendedWaitUntil:
+    notVisible:
+      id: "brand-opening"
+    timeout: 15000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+    optional: true
+- extendedWaitUntil:
+    visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Your gym: ${GYM_B}"
+    direction: UP
+    timeout: 15000
+- takeScreenshot: xj6-04-workout-gym-look

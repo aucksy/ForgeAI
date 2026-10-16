@@ -1,0 +1,14 @@
+# Cross-role journey 1, member step 2: the owner tapped "Mark ready" in the admin app (XJ1b).
+# My orders shows Ready, "Collect it at the desk", and the member can no longer cancel it.
+appId: com.forgeai.app
+---
+- runFlow: xj-sub-my-orders.yaml
+- extendedWaitUntil:
+    visible: "^Collect it at the desk$"
+    timeout: 60000
+- assertVisible: "^Ready$"
+- assertVisible: '2 × QA Shaker'
+- assertVisible: 'Pay when you collect it\.'
+- assertNotVisible: "Cancel order"
+- assertNotVisible: "^The gym is getting it ready$"
+- takeScreenshot: xj1-06-ready

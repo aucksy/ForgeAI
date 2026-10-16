@@ -1,0 +1,90 @@
+name: Cross-role journeys (phone + admin app + server)
+
+# UAT work package 6 (17 Oct 2026): each journey is one business story across the member app, the
+# admin app and the LIVE server, checked at every hand-off (apps/mobile/qa/run-journeys.sh):
+# order -> ready -> collected; member and gym cancels with the stock back; a message -> inbox ->
+# seen -> taken back; a desk member with a plan -> poster check-in -> the visit at the desk; a CSV
+# import -> check-in; the gym's brand colour on the phone.
+#
+#  - The member app: built for the emulator from this commit (like qa-device.yml), on the owner's
+#    phone profile (360 dp, font 1.3, Asia/Kolkata), driven by Maestro (apps/mobile/qa/xj-*.yaml).
+#  - The admin app: built from this commit and driven by Playwright on a 390x844 phone, en-IN,
+#    Asia/Kolkata (apps/dashboard/e2e-live), against the real server, signed in as the run's gym.
+#  - The server: the run makes its OWN two fresh online gyms; checks read them through the owner's
+#    own functions (apps/mobile/qa/xj_server.py). The owner sessions are signed out at the end.
+#
+# Manual only (about an hour a run). Evidence: the `qa-journeys` artifact (screenshots of both apps,
+# each journey's log, the timeline, the summary on the run page).
+on:
+  workflow_dispatch:
+  workflow_call:
+
+run-name: Cross-role journeys (owner phone, api 34)
+
+jobs:
+  journeys:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      # The admin app, as it would ship from this commit, and the browser that drives it.
+      - name: Build the admin app
+        working-directory: apps/dashboard
+        run: |
+          npx vite build
+          npx playwright install --with-deps chromium
+
+      - name: Build an emulator APK (x86_64)
+        working-directory: apps/mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --stacktrace
+          find app/build/outputs/apk/release -name '*.apk' -exec cp {} "$GITHUB_WORKSPACE/qa.apk" \;
+          ls -la "$GITHUB_WORKSPACE/qa.apk"
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Run the cross-role journeys
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash apps/mobile/qa/run-journeys.sh "$GITHUB_WORKSPACE/qa.apk"
+
+      - name: Upload the journey evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-journeys
+          path: qa-out
+          retention-days: 14

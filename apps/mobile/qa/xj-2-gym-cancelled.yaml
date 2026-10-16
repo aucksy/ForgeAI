@@ -1,0 +1,11 @@
+# Cross-role journey 2, member step 3: the owner cancelled the second towel order (XJ2b).
+# My orders: "The gym cancelled this order" on it, and the member's own cancel still says so.
+appId: com.forgeai.app
+---
+- runFlow: xj-sub-my-orders.yaml
+- extendedWaitUntil:
+    visible: "^The gym cancelled this order$"
+    timeout: 60000
+- assertVisible: "^You cancelled this order$"
+- assertNotVisible: "Cancel order"
+- takeScreenshot: xj2-04-gym-cancelled

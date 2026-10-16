@@ -1,0 +1,26 @@
+# Cross-role journey 4, member step: run-journeys.sh opened the gym's check-in poster link
+# /c/<CODE> at the app. The owner added Kiran Desk with mobile 98765 00011 and sold her a Monthly
+# plan in the admin app (XJ4a). One tap "Check in", the number asked once, typed -> in as Kiran,
+# and NO "see the desk" line: the plan is active today.
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Check in at ${GYM}$"
+    timeout: 45000
+- assertVisible: 'Tap Check in when you are at the gym\.'
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'Type the mobile number your gym has for you\. The app asks only once\.'
+    timeout: 30000
+- tapOn: "Your mobile number"
+- inputText: "98765 00011"
+- hideKeyboard
+- takeScreenshot: xj4-01-number-typed
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m'
+    timeout: 30000
+- assertVisible: 'Checked in at ${GYM} as Kiran\. Have a good workout\.'
+- assertNotVisible: '.*[Ss]ee the desk.*'
+- takeScreenshot: xj4-02-checked-in-plan-active
+- tapOn: "^Done$"

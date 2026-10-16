@@ -1,0 +1,23 @@
+# Cross-role journey 3, member step 1: the owner sent a message from the admin app (XJ3a). The
+# bell on the Shop tab says 1 new; the inbox shows it; back on the shop the count is gone.
+appId: com.forgeai.app
+---
+- runFlow: xj-sub-shop.yaml
+- extendedWaitUntil:
+    visible: "^${GYM}$"
+    timeout: 45000
+- extendedWaitUntil:
+    visible: "Messages from your gym, 1 new"
+    timeout: 45000
+- takeScreenshot: xj3-01-bell-one-new
+- tapOn: "Messages from your gym, 1 new"
+- extendedWaitUntil:
+    visible: "QA journeys: closed on Monday"
+    timeout: 20000
+- assertVisible: 'The gym is closed on Monday for repairs\. Sent by the journey test\.'
+- takeScreenshot: xj3-02-inbox
+- back
+- extendedWaitUntil:
+    visible: "^Messages from your gym$"
+    timeout: 20000
+- assertNotVisible: "Messages from your gym, 1 new"

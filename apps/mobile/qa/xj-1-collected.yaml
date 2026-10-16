@@ -1,0 +1,13 @@
+# Cross-role journey 1, member step 3: the owner handed it over, "Collected (paid)" (XJ1c).
+# My orders shows Collected, and nothing more to do: no pay line, no Cancel.
+appId: com.forgeai.app
+---
+- runFlow: xj-sub-my-orders.yaml
+- extendedWaitUntil:
+    visible: "^Collected$"
+    timeout: 60000
+- assertVisible: '2 × QA Shaker'
+- assertNotVisible: "^Collect it at the desk$"
+- assertNotVisible: 'Pay when you collect it\.'
+- assertNotVisible: "Cancel order"
+- takeScreenshot: xj1-07-collected

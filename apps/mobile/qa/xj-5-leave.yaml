@@ -1,0 +1,29 @@
+# Cross-role journeys 5 and 6, last member step: leave gym B. The question says the app goes back
+# to ForgeAI's colours, and it does: the gym's name is gone and the Shop is the join card again.
+# The phone ends in no gym, as it started.
+appId: com.forgeai.app
+---
+- runFlow: xj-sub-shop.yaml
+- extendedWaitUntil:
+    visible: "Your gym: ${GYM_B}"
+    timeout: 45000
+- scrollUntilVisible:
+    element: "^Leave$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Leave$"
+- extendedWaitUntil:
+    visible: "Leave ${GYM_B}'s shop\\?"
+    timeout: 15000
+- assertVisible: ".*goes back to ForgeAI's colours.*"
+- tapOn: "Leave shop"
+- extendedWaitUntil:
+    notVisible: "Your gym: ${GYM_B}"
+    timeout: 20000
+- tapOn:
+    text: "^Shop$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000
+- takeScreenshot: xj6-05-left-forgeai-look

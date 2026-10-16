@@ -1,0 +1,15 @@
+# Cross-role journeys (UAT WP6), sub-flow: the app closed and opened again (so every step starts
+# from the same place, whatever the step before it left open), then the Shop tab.
+appId: com.forgeai.app
+---
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- tapOn:
+    text: "^Shop$"
+    index: 0

@@ -1,0 +1,33 @@
+# Cross-role journey 2, member step 1: order 1 QA Towel (stock 4) and cancel it on the phone.
+# My orders: "You cancelled this order". The server check after it reads the stock back at 4.
+appId: com.forgeai.app
+---
+- runFlow: xj-sub-shop.yaml
+- extendedWaitUntil:
+    visible: "^${GYM}$"
+    timeout: 45000
+- runFlow:
+    file: xj-sub-order.yaml
+    env:
+      PRODUCT: "QA Towel"
+      STOCK: "4 in stock"
+- takeScreenshot: xj2-01-towel-ordered
+- scrollUntilVisible:
+    element: "Cancel order"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Cancel order"
+- extendedWaitUntil:
+    visible: 'Cancel this order\?'
+    timeout: 10000
+- tapOn:
+    text: "Cancel order"
+    below:
+      text: 'Cancel this order\?'
+- extendedWaitUntil:
+    visible: "^You cancelled this order$"
+    timeout: 45000
+- extendedWaitUntil:
+    notVisible: "Cancel order"
+    timeout: 10000
+- takeScreenshot: xj2-02-you-cancelled

@@ -1,0 +1,25 @@
+# Cross-role journey 5, member step: run-journeys.sh opened gym B's check-in poster link /c/<CODE_B>.
+# The owner imported a 2-row CSV in the admin app (XJ5a); one row, Meera Import, holds the mobile
+# 98765 00021. The phone types it once and is matched to that row: in as Meera. The imported row
+# came with no plan, so "Please see the desk" shows under it (the visit is still written).
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Check in at ${GYM_B}$"
+    timeout: 45000
+- assertVisible: 'Tap Check in when you are at the gym\.'
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'Type the mobile number your gym has for you\. The app asks only once\.'
+    timeout: 30000
+- tapOn: "Your mobile number"
+- inputText: "98765 00021"
+- hideKeyboard
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m'
+    timeout: 30000
+- assertVisible: 'Checked in at ${GYM_B} as Meera\. Have a good workout\.'
+- assertVisible: 'Your gym membership is not active today\. Please see the desk\.'
+- takeScreenshot: xj5-01-checked-in-imported
+- tapOn: "^Done$"

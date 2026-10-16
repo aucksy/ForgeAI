@@ -1,0 +1,114 @@
+# Cross-role journey 1 (UAT WP6), member step 1: join the fresh gym run-journeys.sh made, by typing
+# its gym code (CODE, gym name GYM), then order 2 of the QA Shaker the owner just added with stock 3
+# (the admin app, step XJ1a). The product page must say "Only 3 left" first. Ends on My orders:
+# Ordered, "The gym is getting it ready", 2 x QA Shaker.
+appId: com.forgeai.app
+---
+- runFlow: xj-sub-shop.yaml
+- extendedWaitUntil:
+    visible: "^Your gym's shop$"
+    timeout: 20000
+- runFlow:
+    file: xj-sub-find.yaml
+    env:
+      FIND: "Enter the code from your gym"
+- scrollUntilVisible:
+    element: "Gym code"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+# The emulator can drop the first key into a freshly focused box: type the code again if needed.
+- tapOn: "Gym code"
+- inputText: "${CODE}"
+- runFlow:
+    when:
+      notVisible: "^${CODE}$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "${CODE}"
+- assertVisible: "^${CODE}$"
+- tapOn: "Name on your orders"
+- eraseText: 70
+- inputText: " QA Member"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Join your gym's shop"
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: xj1-01-join-card
+- tapOn: "Join your gym's shop"
+# A typed code first asks "Join <gym>?" with the gym's name (audit C6-11).
+- extendedWaitUntil:
+    visible: "Join ${GYM}\\?"
+    timeout: 45000
+- tapOn:
+    text: "^Join$"
+    below:
+      text: "Join ${GYM}\\?"
+- extendedWaitUntil:
+    visible: "^${GYM}$"
+    timeout: 45000
+- assertVisible: "Your gym's shop · pay at the desk"
+- extendedWaitUntil:
+    visible: "QA Shaker, .*"
+    timeout: 45000
+- runFlow:
+    file: xj-sub-find.yaml
+    env:
+      FIND: "QA Towel, .*"
+- takeScreenshot: xj1-02-gym-shop
+# ---------------------------------------------------------------- order 2 shakers
+- runFlow:
+    file: xj-sub-find.yaml
+    env:
+      FIND: "QA Shaker, .*"
+- tapOn: "QA Shaker, .*"
+- extendedWaitUntil:
+    visible: "^QA Shaker$"
+    timeout: 15000
+# The owner's stock of 3, as the member sees it.
+- runFlow:
+    file: xj-sub-find.yaml
+    env:
+      FIND: "^Only 3 left$"
+- takeScreenshot: xj1-03-product-only-3-left
+- runFlow:
+    file: xj-sub-find.yaml
+    env:
+      FIND: "One more QA Shaker"
+- tapOn: "One more QA Shaker"
+- assertVisible: "Quantity 2"
+- scrollUntilVisible:
+    element: "Add to bag"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Add to bag"
+- extendedWaitUntil:
+    visible: "Added 2 to your bag"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Go to bag"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Go to bag"
+- extendedWaitUntil:
+    visible: "^Bag$"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "^Place order$"
+    centerElement: true
+    timeout: 15000
+- assertVisible: 'Pay at the desk when you collect it\. Nothing is charged in the app\.'
+- takeScreenshot: xj1-04-bag
+- tapOn: "^Place order$"
+- extendedWaitUntil:
+    visible: 'Order \d+ placed\. Pay at the desk when you collect it\.'
+    timeout: 45000
+- assertVisible: "^My orders$"
+- extendedWaitUntil:
+    visible: "^The gym is getting it ready$"
+    timeout: 20000
+- assertVisible: "^Ordered$"
+- assertVisible: '2 × QA Shaker'
+- takeScreenshot: xj1-05-ordered
