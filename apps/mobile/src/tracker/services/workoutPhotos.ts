@@ -24,6 +24,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 
 import { launchFor, takePendingPick } from '@/lib/pendingPick';
+import { isPermissionRefusal } from '@/lib/permissionRefusal';
 import { uuid } from '@/lib/uuid';
 import {
   deleteOrphanWorkoutPhotoRows,
@@ -65,8 +66,23 @@ export function workoutPhotoCountText(count: number): string {
 export type WorkoutPhotoProblem = 'camera-denied' | 'limit' | 'gone' | 'other';
 export function workoutPhotoProblem(e: unknown): WorkoutPhotoProblem {
   if (e instanceof WorkoutPhotoRefused) return e.why;
-  if (e instanceof Error && e.message === 'camera-denied') return 'camera-denied';
+  // Our own 'camera-denied' AND the camera picker rejecting with "User rejected permissions".
+  if (isPermissionRefusal(e)) return 'camera-denied';
   return 'other';
+}
+
+/**
+ * Log a failed add and say what it was. A refused camera is the member's answer, so it is an
+ * info line (never '[ForgeErr]'); every real failure is still logged as '[ForgeErr] workout photo'.
+ */
+export function reportWorkoutPhotoProblem(
+  e: unknown,
+  log: { info: (...a: unknown[]) => void; warn: (...a: unknown[]) => void } = { info: console.log, warn: console.warn },
+): WorkoutPhotoProblem {
+  const problem = workoutPhotoProblem(e);
+  if (problem === 'camera-denied') log.info('[ForgeInfo] workout photo: camera not allowed by the member');
+  else log.warn('[ForgeErr] workout photo', e);
+  return problem;
 }
 
 /** The same words progress photos use when the camera is refused. */

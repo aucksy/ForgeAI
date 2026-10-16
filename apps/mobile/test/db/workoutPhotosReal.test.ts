@@ -285,10 +285,30 @@ describe('the words and the pure rules', () => {
     expect(m.workoutPhotoProblem(new WorkoutPhotoRefused('limit'))).toBe('limit');
     expect(m.workoutPhotoProblem(new WorkoutPhotoRefused('gone'))).toBe('gone');
     expect(m.workoutPhotoProblem(new Error('disk full'))).toBe('other');
+    // The camera picker itself refusing (phone test, 16 Oct 2026) is the same refused camera.
+    const pickerRefusal = new Error("Call to function 'ExponentImagePicker.launchCameraAsync' has been rejected.\n→ Caused by: User rejected permissions");
+    expect(m.workoutPhotoProblem(pickerRefusal)).toBe('camera-denied');
     expect(m.addPhotoErrorText('limit')).toBe('This workout already has 4 photos. Remove one to add another.');
     expect(m.addPhotoErrorText('other')).toBe('Couldn’t add the photo. Please try again.');
     const progressScreen = readFileSync('src/app/photos/index.tsx', 'utf8');
     expect(progressScreen).toContain(m.addPhotoErrorText('camera-denied'));
+  });
+
+  it('a refused camera is logged as info, never [ForgeErr]; a real failure still is', async () => {
+    const m = await import('@/tracker/services/workoutPhotos');
+    const info = vi.fn();
+    const warn = vi.fn();
+    const refusal = new Error("Call to function 'ExponentImagePicker.launchCameraAsync' has been rejected.\n→ Caused by: User rejected permissions");
+    expect(m.reportWorkoutPhotoProblem(refusal, { info, warn })).toBe('camera-denied');
+    expect(m.reportWorkoutPhotoProblem(new Error('camera-denied'), { info, warn })).toBe('camera-denied');
+    expect(warn).not.toHaveBeenCalled();
+    expect(info).toHaveBeenCalledTimes(2);
+    expect(info.mock.calls.every((c) => !String(c[0]).includes('[ForgeErr]'))).toBe(true);
+
+    const broken = new Error('disk full');
+    expect(m.reportWorkoutPhotoProblem(broken, { info, warn })).toBe('other');
+    expect(warn).toHaveBeenCalledWith('[ForgeErr] workout photo', broken);
+    expect(info).toHaveBeenCalledTimes(2);
   });
 
   it('a photo Android left behind is only adopted by the workout that asked for it', async () => {

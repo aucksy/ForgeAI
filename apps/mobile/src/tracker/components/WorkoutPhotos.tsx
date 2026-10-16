@@ -8,7 +8,9 @@
  * Choose from gallery until there are 4. A photo is saved the moment it is picked.
  *
  * Every failure says so in plain words and is logged ('[ForgeErr] workout photo'); a cancelled
- * picker is not a failure. A refused camera gets the progress photos' words plus "Open settings".
+ * picker is not a failure. A refused camera (the permission ask, or the picker's "User rejected
+ * permissions") is the member's answer: an info log line, plus the progress photos' words and
+ * "Open settings".
  */
 import { Image } from 'expo-image';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
@@ -27,8 +29,8 @@ import {
   deleteWorkoutPhoto,
   keepPendingWorkoutPhoto,
   photoSlotsLeft,
+  reportWorkoutPhotoProblem,
   workoutPhotoCountText,
-  workoutPhotoProblem,
   type WorkoutPhoto,
 } from '../services/workoutPhotos';
 
@@ -91,8 +93,8 @@ export const WorkoutPhotos = memo(function WorkoutPhotos({ sessionId, onChanged 
       // null = the member cancelled the picker: nothing to say, nothing to log.
       if (photo) changed();
     } catch (e) {
-      const problem = workoutPhotoProblem(e);
-      warn(e);
+      // A refused camera is logged as info, not [ForgeErr]; it still gets the words + "Open settings".
+      const problem = reportWorkoutPhotoProblem(e);
       if (!alive.current) return;
       setNote(addPhotoErrorText(problem));
       setDenied(problem === 'camera-denied');
