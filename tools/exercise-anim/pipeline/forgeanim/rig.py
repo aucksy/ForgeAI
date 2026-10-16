@@ -143,6 +143,19 @@ def measure_grip(rig, side):
     return W.inverted() @ G
 
 
+def grip_forearm_angle(rig, side, G_local):
+    """Angle (rad) of the forearm line inside the grip frame's y-z plane with the wrist at rest (neutral).
+    The grip frame's y points from the fist centre to the wrist, which is NOT the forearm line (the fist sits on
+    the palm side); aiming y along the forearm cocked every wrist ~20 deg (incline press: 31 deg vs 11 at rest)."""
+    update()
+    mw = rig.matrix_world; pb = rig.pose.bones
+    W = mw @ pb[f"wrist.{side}"].matrix
+    f = (mw @ pb[f"lowerarm01.{side}"].head) - (mw @ pb[f"wrist.{side}"].head)
+    Gw = W @ G_local
+    d = Gw.to_3x3().inverted() @ f
+    return math.atan2(d.z, d.y)
+
+
 def frame_from(c, x_axis, y_hint):
     x = Vector(x_axis).normalized()
     y = Vector(y_hint); y = (y - x * y.dot(x)).normalized()

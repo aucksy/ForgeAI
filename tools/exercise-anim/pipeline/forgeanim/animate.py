@@ -77,6 +77,7 @@ class Clip:
                 raise ValueError("unknown prop " + p["type"])
         R.set_grip(self.rig, 1.0, 1.0)
         self.G = {s: R.measure_grip(self.rig, s) for s in R.SIDES}
+        self.Gphi = {s: R.grip_forearm_angle(self.rig, s, self.G[s]) for s in R.SIDES}
 
     # ---------------- pose resolution ----------------
     def full_pose(self, name):
@@ -237,17 +238,28 @@ class Clip:
         # hand orientation and the dumbbell from the wrist we actually reached
         wr = R.world_head(rig, f"wrist.{s}"); el = R.world_head(rig, f"lowerarm01.{s}")
         axis = (T.to_3x3() @ Vector(h["axis"])).normalized()
-        Gw = R.frame_from(Vector((0, 0, 0)), axis, el - wr)
+        G0 = R.frame_from(Vector((0, 0, 0)), axis, el - wr)
         Ginv = self.G[s].inverted()
-        Rg = Gw.to_3x3()
-        c = wr - Rg @ Ginv.translation
-        Gw.translation = c
-        Wm = Gw @ Ginv
-        hand = self.ctl[f"hand.{s}"]; hand.location = Wm.translation; hand.rotation_quaternion = Wm.to_quaternion()
-        prop = self.props.get(h.get("prop", ""))
-        if prop is not None:
-            prop.matrix_world = R.frame_from(c, axis if s == "L" else -axis, T.to_3x3() @ Vector((0, 0, 1)))
-        R.update()
+        hand = self.ctl[f"hand.{s}"]; prop = self.props.get(h.get("prop", ""))
+
+        def place(theta, tilt=0.0):
+            # tilt: the handle slants up to ~17 deg off square to the forearm, as it does in a real fist
+            Gw = G0 @ Matrix.Rotation(tilt, 4, "Z") @ Matrix.Rotation(theta, 4, "X")   # then turn about the handle
+            ax_w = Gw.to_3x3().col[0]
+            c = wr - Gw.to_3x3() @ Ginv.translation
+            Gw.translation = c
+            Wm = Gw @ Ginv
+            hand.location = Wm.translation; hand.rotation_quaternion = Wm.to_quaternion()
+            if prop is not None:
+                prop.matrix_world = R.frame_from(c, ax_w if s == "L" else -ax_w, T.to_3x3() @ Vector((0, 0, 1)))
+            R.update()
+            return self._wrist_off_rest(s)
+
+        # straight wrist: turn the hand about the handle by the rest offset (the fist centre sits on the palm side of
+        # the forearm line; aiming at it cocked the incline wrist ~20 deg). arm.tilt (deg, interpolated) slants the
+        # handle off square to the forearm as a real fist does; pick it with the wrist check, never per frame
+        # (a per-frame search made the dumbbell pop between two answers).
+        place(-self.Gphi[s], math.radians(h.get("arm", {}).get("tilt", 0.0)))
         # forearm pronation lives in the forearm (radius over ulna), not the wrist joint: hand most of the wrist's
         # spin to the forearm twist bone so the skin twists along the forearm instead of snapping at the wrist
         w = pb[f"wrist.{s}"]
@@ -257,6 +269,13 @@ class Clip:
         tw = (tw + math.pi) % (2 * math.pi) - math.pi
         pb[f"lowerarm02.{s}"].rotation_quaternion = Quaternion((0, 1, 0), tw * 0.85)
         R.update()
+
+    def _wrist_off_rest(self, s):
+        """Angle (rad) between the forearm line seen from the hand now and with the wrist at rest: 0 = neutral wrist."""
+        pb = self.rig.pose.bones; b = self.rig.data.bones
+        d = pb[f"wrist.{s}"].matrix.to_3x3().inverted() @ pb[f"lowerarm02.{s}"].matrix.to_3x3().col[1]
+        d0 = b[f"wrist.{s}"].matrix_local.to_3x3().inverted() @ b[f"lowerarm02.{s}"].matrix_local.to_3x3().col[1]
+        return d.angle(d0)
 
     def arm_lengths(self):
         if not hasattr(self, "_len"):
