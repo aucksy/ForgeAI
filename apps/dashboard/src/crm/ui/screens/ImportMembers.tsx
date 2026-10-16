@@ -25,14 +25,17 @@ import {
   findHeaderRow,
   guessColumns,
   guessFromValues,
+  importAction,
   IMPORT_FIELDS,
   MAX_IMPORT_ROWS,
   planImport,
+  rowBringsTerm,
   rowVerdict,
   saveInBatches,
   skippedRowsCsv,
   skipReason,
   templateCsv,
+  termsPreview,
   type Cell,
   type ColumnMap,
   type ImportField,
@@ -190,7 +193,8 @@ export function ImportMembersScreen() {
     const reasonFor = (row: ImportRow) => english.get(row.rowNumber) ?? inEnglish(() => skipReason(row));
     // A repeated row whose plan and payment are added to its member is not "skipped" (review: the
     // skipped-rows file would invite typing that payment in again).
-    const repeatAdds = (r: ImportRow) => role === 'owner' && r.sameAsRow !== null && r.term !== null;
+    // C7-37: so is a row for a member already in the gym whose plan and payment the owner adds.
+    const repeatAdds = (r: ImportRow) => rowBringsTerm(r, role);
     const skipped = rows.filter((r) => !work.has(r) && !repeatAdds(r)).map((row) => ({ row, reason: reasonFor(row) }));
     const total = adds.length + fills.length;
     setStage('running');
@@ -428,6 +432,7 @@ export function ImportMembersScreen() {
 
           <ActionBar
             plan={plan.rows}
+            role={role}
             dupMode={dupMode}
             blocked={map.fullName === null || map.phone === null}
             onRun={() => void run()}
@@ -691,30 +696,25 @@ function RowCard({ row }: { row: ImportRow }) {
 
 function ActionBar({
   plan,
+  role,
   dupMode,
   blocked,
   onRun,
   onOther,
 }: {
   plan: ImportRow[];
+  role: 'owner' | 'staff';
   dupMode: 'skip' | 'fill';
   blocked: boolean;
   onRun: () => void;
   onOther: () => void;
 }) {
-  const adds = plan.filter((r) => r.status === 'add').length;
-  const fills = dupMode === 'fill' ? plan.filter((r) => r.existing !== null && r.sameAsRow === null).length : 0;
-  const label =
-    fills > 0 && adds === 0
-      ? tr(`Update ${fills} members`, `${fills} members update karo`)
-      : fills > 0
-      ? tr(`Add ${adds} members, update ${fills}`, `${adds} members jodo, ${fills} update karo`)
-      : adds === 1
-        ? tr('Add 1 member', '1 member jodo')
-        : tr(`Add ${adds} members`, `${adds} members jodo`);
+  // C7-18: an owner importing a file whose members are all in already (the staff's import, the
+  // second half of a split file, a retry) can still add their plans and payments.
+  const { label, enabled } = importAction(plan, dupMode, role);
   return (
     <Row gap={space.sm}>
-      <Button wrap disabled={blocked || adds + fills === 0} onClick={onRun}>
+      <Button wrap disabled={blocked || !enabled} onClick={onRun}>
         {label}
       </Button>
       <Button variant="ghost" wrap onClick={onOther}>
@@ -746,22 +746,21 @@ const list: CSSProperties = {
  * sees their members will arrive WITH their plans, end dates and payments, not as bare names.
  */
 function TermsLine({ rows, owner }: { rows: readonly ImportRow[]; owner: boolean }) {
-  const withTerm = rows.filter((r) => r.term && r.status !== 'problem' && r.sameAsRow === null);
-  if (withTerm.length === 0) return null;
-  const paid = withTerm.reduce((sum, r) => sum + (r.term?.paidP ?? 0), 0);
-  const names = new Set(withTerm.map((r) => r.term!.planName.toLowerCase())).size;
+  // C7-37: the money counts every payment row, repeats of a member included.
+  const { members: count, names, paidP: paid } = termsPreview(rows);
+  if (count === 0) return null;
   return (
     <Card>
       <SectionTitle>{tr('Plans and payments', 'Plan aur payment')}</SectionTitle>
       <p style={{ margin: 0, fontSize: 14, color: color.ink }}>
         {owner
           ? tr(
-              `${withTerm.length} members come with their plan and its dates (${names} plan names)${paid > 0 ? `, and ${formatINR(paid)} already paid as receipts` : ''}. Expiry reminders work for them from day one.`,
-              `${withTerm.length} members apne plan aur uski dates ke saath aayenge (${names} plan)${paid > 0 ? `, aur ${formatINR(paid)} di hui fees raseed ban kar` : ''}. Expiry reminder pehle din se chalenge.`,
+              `${count} members come with their plan and its dates (${names} plan names)${paid > 0 ? `, and ${formatINR(paid)} already paid as receipts` : ''}. Expiry reminders work for them from day one.`,
+              `${count} members apne plan aur uski dates ke saath aayenge (${names} plan)${paid > 0 ? `, aur ${formatINR(paid)} di hui fees raseed ban kar` : ''}. Expiry reminder pehle din se chalenge.`,
             )
           : tr(
-              `${withTerm.length} members have a plan in this file. The owner adds plans and payments: members are added now, plans when the owner imports the same file.`,
-              `Is file mein ${withTerm.length} members ka plan hai. Plan aur payment owner jodte hain: members abhi judenge, plan tab jab owner yahi file import karenge.`,
+              `${count} members have a plan in this file. The owner adds plans and payments: members are added now, plans when the owner imports the same file.`,
+              `Is file mein ${count} members ka plan hai. Plan aur payment owner jodte hain: members abhi judenge, plan tab jab owner yahi file import karenge.`,
             )}
       </p>
     </Card>

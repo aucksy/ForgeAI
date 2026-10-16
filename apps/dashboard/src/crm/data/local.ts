@@ -466,18 +466,34 @@ export class LocalCrmData implements CrmData {
               near(m.startsOn, term.startsOn) &&
               near(m.endsOn, term.endsOn) &&
               similarPlanName(m.planName, term.planName),
+          ) ??
+          // Admin audit C7-19: a gym plan typed in by hand (or by an earlier import) for the same
+          // days, under another name ("Monthly" / "1 Month"), is the same plan: never a second one
+          // with a second receipt.
+          db.memberships.find(
+            (m) =>
+              m.importId !== importId &&
+              m.memberId === member.id &&
+              !m.cancelled &&
+              !isPtMembership(m) &&
+              ((m.startsOn === term.startsOn && m.endsOn === term.endsOn) ||
+                (near(m.startsOn, term.startsOn) && near(m.endsOn, term.endsOn) && similarPlanName(m.planName, term.planName))),
           );
         if (same) {
           // 16 Oct 2026: a payments list repeats a term once per payment. Made by THIS import, each
           // further row's payment is another receipt. Made by an earlier import or by hand: never
           // twice, as before.
-          if (same.importId !== importId || term.paidP <= 0) {
+          // Admin audit C7-17: a term an EARLIER import made (a payments list split into two files)
+          // still takes this file's payments, when the sheet dates them and the date and amount are
+          // new to that term. A term typed in by hand never does (its receipts were typed too).
+          const earlierImport = !!same.importId && same.importId !== importId && !!term.paidOnGiven;
+          if ((same.importId !== importId && !earlierImport) || term.paidP <= 0) {
             result.skipped += 1;
             return;
           }
           const paidSoFar = db.payments.filter((p) => p.membershipId === same.id && !p.voided).reduce((t, p) => t + p.amountP, 0);
           // The same amount on the same day twice is a copied row, when the sheet dates payments.
-          if (term.paidOnGiven && db.payments.some((p) => p.membershipId === same.id && p.importId === importId && p.amountP === term.paidP && p.paidOn === paidOn)) {
+          if (term.paidOnGiven && db.payments.some((p) => p.membershipId === same.id && !!p.importId && p.amountP === term.paidP && p.paidOn === paidOn)) {
             result.skipped += 1;
             return;
           }

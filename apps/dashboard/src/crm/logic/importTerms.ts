@@ -105,6 +105,9 @@ export function termFromRow(t: TermInput): ImportTerm | null {
   const due = t.dueP != null && t.dueP >= 0 ? t.dueP : null;
   const total = t.totalP != null && t.totalP > 0 ? t.totalP : null;
   let priceP = total ?? (paid != null && due != null ? paid + due : paid ?? due ?? 0);
+  // Admin audit C7-23 (16 Oct 2026): total 6,000, paid 4,000, balance 1,000 is a ₹1,000 discount.
+  // The total won and made a ₹2,000 due; what was paid plus what is still due is the real price.
+  if (total != null && paid != null && due != null && paid + due < total) priceP = paid + due;
   let paidP = paid ?? (total != null && due != null ? Math.max(0, total - due) : 0);
   if (paidP > priceP) priceP = paidP;
   priceP = Math.round(priceP);

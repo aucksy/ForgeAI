@@ -5,7 +5,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/local';
-import { guessColumns, guessFromValues, planImport } from '../../src/crm/logic/importMembers';
+import { guessColumns, guessFromValues, importAction, planImport, rowBringsTerm, termsPreview } from '../../src/crm/logic/importMembers';
+import { termFromRow } from '../../src/crm/logic/importTerms';
+import { planUndo } from '../../src/crm/logic/undoImport';
 import type { MemberDraft } from '../../src/crm/types';
 
 const TODAY = '2026-10-15';
@@ -174,5 +176,118 @@ describe('C7-9: a running "paid so far" column with a balance column', () => {
     ]);
     expect(rupees(snap)).toEqual([2000, 2000, 2000]);
     expect(snap.memberships[0]!.priceP).toBe(1000000);
+  });
+});
+
+const HP = [...H, 'Payment Date'];
+
+describe('C7-17: payments in a second file are added', () => {
+  it('a payments list split in two files: both halves count', async () => {
+    const first = await importRows([HP, ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '12000', '4000', '8000', '01/08/2026']], newDb(), 'imp-1');
+    const { snap } = await importRows([HP, ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '12000', '4000', '4000', '01/09/2026']], first.db, 'imp-2');
+    expect(snap.memberships).toHaveLength(1);
+    expect(rupees(snap)).toEqual([4000, 4000]);
+  });
+
+  it('the same file again still adds nothing', async () => {
+    const rows = [HP, ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '12000', '4000', '8000', '01/08/2026']];
+    const first = await importRows(rows, newDb(), 'imp-1');
+    const { snap } = await importRows(rows, first.db, 'imp-2');
+    expect(rupees(snap)).toEqual([4000]);
+  });
+});
+
+describe('C7-18 / C7-37: the owner can add plans and payments for members already in', () => {
+  const rows = [
+    H,
+    ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '4500', '0'],
+    ['Asha', '9829012345', 'Monthly', '01/10/2026', '31/10/2026', '1500', '1500', '0'],
+  ];
+  const roster = async () => {
+    const db = newDb();
+    await db.createMembers([member({ fullName: 'Riya', phone: '+919876543210' }), member({ fullName: 'Asha', phone: '+919829012345' })]);
+    return (await db.load()).members;
+  };
+
+  it('every row "already a member": the owner gets "Add 2 plans and payments"; staff do not', async () => {
+    const plan = planImport(rows, 0, mapOf(rows), await roster(), TODAY);
+    expect(importAction(plan.rows, 'skip', 'owner')).toMatchObject({ enabled: true, label: 'Add 2 plans and payments' });
+    expect(importAction(plan.rows, 'skip', 'staff').enabled).toBe(false);
+  });
+
+  it('those rows are not "skipped", and the preview counts every payment row', async () => {
+    const plan = planImport(rows, 0, mapOf(rows), await roster(), TODAY);
+    expect(plan.rows.every((r) => rowBringsTerm(r, 'owner'))).toBe(true);
+    expect(plan.rows.some((r) => rowBringsTerm(r, 'staff'))).toBe(false);
+    const repeat = [H, ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '2000', ''], ['Riya', '9876543210', 'Quarterly', '01/08/2026', '31/10/2026', '4500', '2500', '']];
+    expect(termsPreview(planImport(repeat, 0, mapOf(repeat), [], TODAY).rows)).toMatchObject({ members: 1, paidP: 450000 });
+  });
+});
+
+describe('C7-19: a plan already typed in by hand is not added again', () => {
+  it('"1 Month" in the file for the same days as a hand-sold "Monthly" is skipped', async () => {
+    const db = newDb();
+    const m = await db.createMember(member({ fullName: 'Riya', phone: '+919876543210' }));
+    const plan = await db.createPlan({ name: 'Monthly', durationUnit: 'month', durationCount: 1, priceP: 150000, joiningFeeP: 0, description: null, active: true, sortOrder: 1 } as never);
+    await db.sellMembership({ memberId: m.id, planId: plan.id, startsOn: '2026-10-01', priceP: 150000, joiningFeeP: 0, notes: null, collectNowP: 150000, method: 'cash', reference: null, paidOn: '2026-10-01', soldBy: null });
+    const { snap, result } = await importRows([H, ['Riya', '9876543210', '1 Month', '01/10/2026', '31/10/2026', '1500', '1500', '0']], db);
+    expect(snap.memberships).toHaveLength(1);
+    expect(rupees(snap)).toEqual([1500]);
+    expect(result.skipped).toBe(1);
+  });
+});
+
+describe('C7-20: an exact copy of a row is pointed out', () => {
+  it('two identical rows with no payment date: the second says it may be a copy', () => {
+    const rows = [H, ['Riya', '9876543210', 'Monthly', '01/10/2026', '31/10/2026', '1500', '1500', ''], ['Riya', '9876543210', 'Monthly', '01/10/2026', '31/10/2026', '1500', '1500', '']];
+    const plan = planImport(rows, 0, mapOf(rows), [], TODAY);
+    expect(plan.rows[1]!.warnings.join(' ')).toContain('row 2');
+  });
+});
+
+describe('C7-21: Undo import keeps a member the gym edited since', () => {
+  it('notes added after the import: the member stays', async () => {
+    const db = newDb();
+    const [m] = await db.createMembers([{ ...member({ fullName: 'Riya', phone: '+919876543210' }), importId: 'imp' } as never]);
+    await db.updateMember(m!.id, { notes: 'Knee injury' });
+    const undo = planUndo(await db.load(), 'imp');
+    expect(undo.members).toEqual([]);
+    expect(undo.kept.members).toBe(1);
+  });
+});
+
+describe('C7-22: a sheet proven month-first is read month-first in every date column', () => {
+  it('the expiry column with only ambiguous dates follows the joining column', () => {
+    const rows = [
+      ['Name', 'Mobile', 'Joining Date', 'Plan', 'Start Date', 'Expiry'],
+      ['Riya', '9876543210', '12/25/2025', 'Monthly', '12/03/2025', '01/02/2026'],
+    ];
+    const r = planImport(rows, 0, mapOf(rows), [], TODAY).rows[0]!;
+    expect(r.term?.endsOn).toBe('2026-01-02');
+  });
+});
+
+describe('C7-23: a discount in the sheet keeps the right due', () => {
+  it('total 6,000, paid 4,000, balance 1,000: price 5,000 and ₹1,000 due', () => {
+    const t = termFromRow({ planName: 'Quarterly', startsOn: '2026-08-01', endsOn: '2026-10-31', joinedOn: null, totalP: 600000, paidP: 400000, dueP: 100000 });
+    expect(t).toMatchObject({ priceP: 500000, paidP: 400000 });
+  });
+});
+
+describe('C7-24: a plan that cannot be dated is said, and its money kept in the notes', () => {
+  it('end before start', () => {
+    const rows = [H, ['Riya', '9876543210', 'Quarterly', '01/10/2026', '01/09/2026', '5000', '1000', '4000']];
+    const r = planImport(rows, 0, mapOf(rows), [], TODAY).rows[0]!;
+    expect(r.term).toBeNull();
+    expect(r.warnings.join(' ')).toContain('end date is before its start');
+    expect(r.draft!.notes).toContain('Balance: ₹4,000');
+  });
+
+  it('a plan name with no length and no end date', () => {
+    const rows = [['Name', 'Mobile', 'Plan', 'Start Date', 'Fees', 'Balance'], ['Riya', '9876543210', 'Gold', '01/10/2026', '5000', '4000']];
+    const r = planImport(rows, 0, mapOf(rows), [], TODAY).rows[0]!;
+    expect(r.term).toBeNull();
+    expect(r.warnings.join(' ')).toContain('Gold');
+    expect(r.draft!.notes).toContain('Balance: ₹4,000');
   });
 });

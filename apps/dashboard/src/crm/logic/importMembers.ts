@@ -478,6 +478,24 @@ export function detectDayFirst(values: readonly unknown[]): boolean {
 }
 
 /**
+ * C7-22: what a column's own dates prove: 'day' (some first number is over 12), 'month' (some
+ * middle number is over 12 and no first one is), or 'unknown' (every date reads both ways). PURE.
+ */
+export function dateOrder(values: readonly unknown[]): 'day' | 'month' | 'unknown' {
+  let firstOver12 = false;
+  let secondOver12 = false;
+  for (const v of values) {
+    if (typeof v !== 'string') continue;
+    const m = NUMERIC_DATE.exec(v.trim());
+    if (!m) continue;
+    if (Number(m[1]) > 12) firstOver12 = true;
+    if (Number(m[2]) > 12) secondOver12 = true;
+  }
+  if (firstOver12) return 'day';
+  return secondOver12 ? 'month' : 'unknown';
+}
+
+/**
  * Read one date cell. Returns the day, or null when the cell is not a date we can read with
  * certainty (blank cells are the caller's business: they are not wrong, just empty).
  *
@@ -754,14 +772,24 @@ export function planImport(
   const taken = data.slice(0, MAX_IMPORT_ROWS);
 
   const colValues = (col: number | null) => (col === null ? [] : taken.map((d) => d.row[col]));
-  const joinDayFirst = detectDayFirst(colValues(map.joinedOn));
-  const dobDayFirst = detectDayFirst(colValues(map.dateOfBirth));
-  const expiryDayFirst = detectDayFirst(colValues(map.expiry));
-  const startDayFirst = detectDayFirst(colValues(map.startDate));
-  const paidDayFirst = detectDayFirst(colValues(map.paidOn));
+  // Admin audit C7-22 (16 Oct 2026): the order was decided per column, so a US-saved sheet whose
+  // joining column proved month-first (12/25/2025) still read an expiry column of only ambiguous
+  // dates (01/02/2026) day-first: 1 Feb instead of 2 Jan. A column that proves nothing now follows
+  // the sheet: month-first when some column proves it and none proves day-first.
+  const orders = [map.joinedOn, map.dateOfBirth, map.expiry, map.startDate, map.paidOn].map((c) => dateOrder(colValues(c)));
+  const sheetDayFirst = !(orders.includes('month') && !orders.includes('day'));
+  const dayFirstOf = (col: number | null) => {
+    const o = dateOrder(colValues(col));
+    return o === 'unknown' ? sheetDayFirst : o === 'day';
+  };
+  const joinDayFirst = dayFirstOf(map.joinedOn);
+  const dobDayFirst = dayFirstOf(map.dateOfBirth);
+  const expiryDayFirst = dayFirstOf(map.expiry);
+  const startDayFirst = dayFirstOf(map.startDate);
+  const paidDayFirst = dayFirstOf(map.paidOn);
 
   const batchNames = listBatches(roster).map((b) => b.name);
-  const seen = new Map<string, { row: number; name: string }>();
+  const seen = new Map<string, { row: number; name: string; cells: string }>();
   const out: ImportRow[] = [];
 
   for (const { row, rowNumber } of taken) {
@@ -883,11 +911,43 @@ export function planImport(
     if (text('expiry') && !endsOn) {
       warnings.push(tr(`Valid till “${text('expiry')}” not readable — no plan added.`, `Valid till “${text('expiry')}” samajh nahi aaya — plan nahi juda.`));
     }
+    // Admin audit C7-24 (16 Oct 2026): a plan with money on it that cannot be dated was dropped
+    // without a word ("Will be added"), and its balance was recorded nowhere.
+    const hasMoney = !!(text('total') || text('amount') || text('due'));
+    if (!term && hasMoney && (text('plan') || text('startDate') || text('expiry'))) {
+      const name = text('plan') || tr('The plan', 'Plan');
+      if (startsOn && endsOn && startsOn > endsOn) {
+        warnings.push(
+          tr(
+            `Plan not added: its end date is before its start (${formatDay(startsOn)} → ${formatDay(endsOn)}). The fees are kept in the notes.`,
+            `Plan nahi juda: khatam hone ki date shuru se pehle hai (${formatDay(startsOn)} → ${formatDay(endsOn)}). Fees notes mein rakhi.`,
+          ),
+        );
+      } else if (!endsOn && !text('expiry')) {
+        warnings.push(
+          tr(
+            `Plan “${name}” not added: there is no end date, and its name doesn't say how long it runs. The fees are kept in the notes.`,
+            `Plan “${name}” nahi juda: khatam hone ki date nahi hai, aur naam se pata nahi kitne din ka hai. Fees notes mein rakhi.`,
+          ),
+        );
+      } else if (endsOn) {
+        warnings.push(
+          tr(
+            `Plan “${name}” not added: there is no start date. The fees are kept in the notes.`,
+            `Plan “${name}” nahi juda: shuru ki date nahi hai. Fees notes mein rakhi.`,
+          ),
+        );
+      }
+    }
     const extras: string[] = [];
     if (!term) {
       if (text('plan')) extras.push(tr(`Plan: ${text('plan')}`, `Plan: ${text('plan')}`));
+      const total = money('total');
+      if (text('total')) extras.push(tr(`Price: ${total !== null ? formatINR(total) : text('total')}`, `Fees: ${total !== null ? formatINR(total) : text('total')}`));
       const p = money('amount');
-      if (text('amount')) extras.push(tr(`Fees: ${p !== null ? formatINR(p) : text('amount')}`, `Fees: ${p !== null ? formatINR(p) : text('amount')}`));
+      if (text('amount')) extras.push(tr(`Fees: ${p !== null ? formatINR(p) : text('amount')}`, `Fees di: ${p !== null ? formatINR(p) : text('amount')}`));
+      const due = money('due');
+      if (text('due')) extras.push(tr(`Balance: ${due !== null ? formatINR(due) : text('due')}`, `Baaki: ${due !== null ? formatINR(due) : text('due')}`));
       if (text('expiry')) extras.push(tr(`Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`, `Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`));
     }
     if (phoneRead.ok && phoneRead.extra) extras.push(tr(`Other number: ${phoneRead.extra}`, `Doosra number: ${phoneRead.extra}`));
@@ -932,11 +992,20 @@ export function planImport(
       const sameName = samePersonName(earlier.name, draft.fullName);
       if (!sameName) {
         warnings.push(tr(`Row ${earlier.row} has this mobile with another name — this row is skipped.`, `Row ${earlier.row} mein yahi mobile doosre naam se hai — yeh row chhodi.`));
+      } else if (term && map.paidOn === null && earlier.cells === cells.join('\u0001')) {
+        // Admin audit C7-20 (16 Oct 2026): with no payment date, two identical rows are counted as
+        // two equal payments (instalments). Said on screen, so a copied row is deleted, not paid twice.
+        warnings.push(
+          tr(
+            `Exactly the same as row ${earlier.row}: counted as a second payment. If it is a copy, delete one row in Excel and import again.`,
+            `Row ${earlier.row} jaisi hi hai: doosri payment maani gayi. Agar copy hai, Excel mein ek row hatao aur phir import karo.`,
+          ),
+        );
       }
       out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier.row, problems, warnings, term: sameName ? term : null });
       continue;
     }
-    seen.set(draft.phone, { row: rowNumber, name: draft.fullName });
+    seen.set(draft.phone, { row: rowNumber, name: draft.fullName, cells: cells.join('\u0001') });
     const existing = findDuplicatePhone(roster, draft.phone);
     // C7-3: a member already in the gym on this mobile with ANOTHER name is someone else (a family
     // shares a number). Their plan and money are never put on that member.
@@ -958,6 +1027,53 @@ export function planImport(
   const counts = { add: 0, duplicate: 0, problem: 0 };
   for (const r of out) counts[r.status] += 1;
   return { rows: out, counts, leftOut };
+}
+
+/**
+ * Admin audit C7-18 / C7-37 (16 Oct 2026): this row's plan and payment are saved even though the
+ * member is not new — a repeat row (payments list) or a member already in the gym — which only the
+ * owner does. Such a row is not "skipped". PURE.
+ */
+export function rowBringsTerm(row: ImportRow, role: 'owner' | 'staff'): boolean {
+  return role === 'owner' && row.status === 'duplicate' && row.term !== null && row.draft !== null;
+}
+
+/** What the import button does, and whether it can (C7-18). PURE. */
+export function importAction(
+  rows: readonly ImportRow[],
+  dupMode: 'skip' | 'fill',
+  role: 'owner' | 'staff',
+): { adds: number; fills: number; terms: number; label: string; enabled: boolean } {
+  const adds = rows.filter((r) => r.status === 'add').length;
+  const fills = dupMode === 'fill' ? rows.filter((r) => r.existing !== null && r.sameAsRow === null).length : 0;
+  const terms = rows.filter((r) => rowBringsTerm(r, role)).length;
+  const label =
+    adds === 0 && fills === 0 && terms > 0
+      ? terms === 1
+        ? tr('Add 1 plan and payment', '1 plan aur payment jodo')
+        : tr(`Add ${terms} plans and payments`, `${terms} plan aur payment jodo`)
+      : fills > 0 && adds === 0
+        ? tr(`Update ${fills} members`, `${fills} members update karo`)
+        : fills > 0
+          ? tr(`Add ${adds} members, update ${fills}`, `${adds} members jodo, ${fills} update karo`)
+          : adds === 1
+            ? tr('Add 1 member', '1 member jodo')
+            : tr(`Add ${adds} members`, `${adds} members jodo`);
+  return { adds, fills, terms, label, enabled: adds + fills + terms > 0 };
+}
+
+/**
+ * The "Plans and payments" preview (C7-37): members with a plan, the plan names, and the money
+ * already paid on EVERY row (a payments list repeats a member once per payment). PURE.
+ */
+export function termsPreview(rows: readonly ImportRow[]): { members: number; names: number; paidP: number } {
+  const withTerm = rows.filter((r) => r.term && r.status !== 'problem');
+  const firsts = withTerm.filter((r) => r.sameAsRow === null);
+  return {
+    members: firsts.length,
+    names: new Set(firsts.map((r) => r.term!.planName.toLowerCase())).size,
+    paidP: withTerm.reduce((sum, r) => sum + (r.term?.paidP ?? 0), 0),
+  };
 }
 
 /** One plain line: what happens to this row. */

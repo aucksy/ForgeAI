@@ -45,6 +45,9 @@ export function planUndo(snap: CrmSnapshot, importId: string): UndoPlan {
   for (const p of snap.payments) if (!mine(p)) used.add(p.memberId);
   for (const v of snap.visits) used.add(v.memberId);
   for (const e of snap.enquiries ?? []) if (e.memberId) used.add(e.memberId);
+  // Admin audit C7-21 (16 Oct 2026): an imported member the gym EDITED since (notes, email, batch)
+  // stays. The import writes a member with createdAt = updatedAt, so any later save shows.
+  for (const m of memMine) if (m.updatedAt !== m.createdAt) used.add(m.id);
   const importedMember = new Set(memMine.map((m) => m.id));
   // A used imported member keeps every term and receipt the file gave them.
   for (const m of msMine) if (importedMember.has(m.memberId) && used.has(m.memberId)) keepMs.add(m.id);
