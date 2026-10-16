@@ -21,7 +21,7 @@
 import { getDb } from '@/db';
 import { E1RM_SQL } from '@/db/repos/prRepo';
 import { createSession, deleteSession, deleteSessions } from '@/db/repos/workoutRepo';
-import { estimatedOneRepMax } from '@/lib/e1rm';
+import { e1rmRecordOf, estimatedOneRepMax, raiseE1rmBar, type E1rmRecordBar } from '@/lib/e1rm';
 import { uuid } from '@/lib/uuid';
 import type { DayType } from '@/types/models';
 
@@ -260,6 +260,23 @@ export function fastImportWriter(opts: { chunkRows?: number } = {}): ImportWrite
   const sets: SqlValue[][] = [];
   const records: SqlValue[][] = [];
   let bests: Map<string, BestBefore> | null = null;
+  /**
+   * 16 Oct 2026 review (wave 1, item 2): each exercise's 1-rep-max records (here before, and
+   * written by this import) — a new one must beat the last REAL record at no less weight than
+   * its holder, so a lighter set is never one (`e1rmRecordOf`).
+   */
+  const e1rmRecs = new Map<string, { t: number; e: number; w: number }[]>();
+  const e1rmBarBefore = (exerciseId: string, t: number, plainBest: number | null): E1rmRecordBar => {
+    let bar: E1rmRecordBar = { best: null, barKg: null };
+    let any = false;
+    for (const r of e1rmRecs.get(exerciseId) ?? []) {
+      if (!(r.t < t)) continue;
+      any = true;
+      bar = raiseE1rmBar(bar, { weightKg: r.w, e1rm: r.e });
+    }
+    // History with no record rows (older data): the plain best set before, no weight gate.
+    return any ? bar : { best: plainBest, barKg: null };
+  };
   const sqlCache = new Map<string, string>();
   const writer = { statements: 0 } as ImportWriter & { statements: number };
 
@@ -325,6 +342,23 @@ export function fastImportWriter(opts: { chunkRows?: number } = {}): ImportWrite
       byExercise.set(r.exercise_id, list);
     }
     for (const [id, list] of byExercise) bestOf(id).addMany(list);
+    writer.statements += 1;
+    const recs = await getDb().getAllAsync<{ exercise_id: string; t: number; weight_kg: number; reps: number }>(
+      `SELECT pr.exercise_id AS exercise_id, ws.started_at AS t, pr.weight_kg AS weight_kg, pr.reps AS reps
+         FROM personal_records pr JOIN workout_sessions ws ON ws.id = pr.session_id WHERE pr.kind = 'e1rm'`,
+    );
+    // An easy-week workout sets no record, but its sets still count as what to beat.
+    writer.statements += 1;
+    const easy = await getDb().getAllAsync<{ exercise_id: string; t: number; weight_kg: number; reps: number }>(
+      `SELECT se.exercise_id AS exercise_id, ws.started_at AS t, se.weight_kg AS weight_kg, se.reps AS reps
+         FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
+        WHERE se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 1`,
+    );
+    for (const r of [...recs, ...easy]) {
+      const list = e1rmRecs.get(r.exercise_id) ?? [];
+      list.push({ t: Number(r.t), e: estimatedOneRepMax(Number(r.weight_kg), Number(r.reps)), w: Number(r.weight_kg) });
+      e1rmRecs.set(r.exercise_id, list);
+    }
   };
 
   writer.deleteSessions = async (ids, onChunk) => {
@@ -356,8 +390,13 @@ export function fastImportWriter(opts: { chunkRows?: number } = {}): ImportWrite
       if (prior.w === null || t.topWeight.weightKg > prior.w) {
         records.push([uuid(), exerciseId, 'weight', t.topWeight.weightKg, t.topWeight.weightKg, t.topWeight.reps, s.dateISO, id]);
       }
-      if (prior.e === null || t.topE1rm.e1rm > prior.e) {
-        records.push([uuid(), exerciseId, 'e1rm', round1(t.topE1rm.e1rm), t.topE1rm.weightKg, t.topE1rm.reps, s.dateISO, id]);
+      const top = e1rmRecordOf(
+        rich.filter((x) => !x.isWarmup && x.exerciseId === exerciseId),
+        e1rmBarBefore(exerciseId, s.startedAt, prior.e),
+      );
+      if (top) {
+        records.push([uuid(), exerciseId, 'e1rm', round1(top.e1rm), top.weightKg, top.reps, s.dateISO, id]);
+        e1rmRecs.set(exerciseId, [...(e1rmRecs.get(exerciseId) ?? []), { t: s.startedAt, e: top.e1rm, w: top.weightKg }]);
       }
     }
     for (const [exerciseId, t] of tops) bestOf(exerciseId).add({ t: s.startedAt, w: t.topWeight.weightKg, e: t.topE1rm.e1rm });
@@ -375,6 +414,18 @@ export function fastImportWriter(opts: { chunkRows?: number } = {}): ImportWrite
       for (const r of await readHere(sessionId)) {
         if (r.w == null || r.e == null) continue;
         bestOf(r.exercise_id).add({ t: Number(r.t), w: Number(r.w), e: Number(r.e) });
+      }
+      // Review item 2: the 1-rep-max records the old path just wrote count for later workouts.
+      writer.statements += 1;
+      const recs = await getDb().getAllAsync<{ exercise_id: string; t: number; weight_kg: number; reps: number }>(
+        `SELECT pr.exercise_id AS exercise_id, ws.started_at AS t, pr.weight_kg AS weight_kg, pr.reps AS reps
+           FROM personal_records pr JOIN workout_sessions ws ON ws.id = pr.session_id WHERE pr.kind = 'e1rm' AND pr.session_id = ?`,
+        [sessionId],
+      );
+      for (const r of recs) {
+        const list = e1rmRecs.get(r.exercise_id) ?? [];
+        list.push({ t: Number(r.t), e: estimatedOneRepMax(Number(r.weight_kg), Number(r.reps)), w: Number(r.weight_kg) });
+        e1rmRecs.set(r.exercise_id, list);
       }
     }
   };

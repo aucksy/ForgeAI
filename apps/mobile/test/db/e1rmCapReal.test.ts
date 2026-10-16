@@ -48,13 +48,15 @@ const e1rmRows = () =>
   db.all<{ value: number; weight_kg: number; reps: number }>("SELECT value, weight_kg, reps FROM personal_records WHERE kind = 'e1rm' ORDER BY date_iso, rowid");
 
 describe('B1: the stored 1-rep max counts reps above 12 as 12', () => {
-  it('100 × 5, then 70 × 25 (98, not 128.3): no new row; then 95 × 8 (120.3) is one', async () => {
+  it('100 × 5, then 70 × 25 (98, not 128.3): no new row; 95 × 8 neither (lighter); then 105 × 5 (122.5) is one', async () => {
+    // 16 Oct 2026 owner rule: a lighter set is never a 1-rep-max record (95 × 8 was one here).
     await logSets('2026-09-01', [{ kg: 100, reps: 5 }]);
     await logSets('2026-09-03', [{ kg: 70, reps: 25 }]);
-    await logSets('2026-09-05', [{ kg: 95, reps: 8 }]);
+    await logSets('2026-09-04', [{ kg: 95, reps: 8 }]);
+    await logSets('2026-09-05', [{ kg: 105, reps: 5 }]);
     expect(e1rmRows()).toEqual([
       { value: 116.7, weight_kg: 100, reps: 5 },
-      { value: 120.3, weight_kg: 95, reps: 8 },
+      { value: 122.5, weight_kg: 105, reps: 5 },
     ]);
   });
 
@@ -69,8 +71,8 @@ describe('B1: the stored 1-rep max counts reps above 12 as 12', () => {
   it('rows an older version stored from a long set are put right once, and the hidden best recorded', async () => {
     await logSets('2026-09-01', [{ kg: 100, reps: 5 }]);
     const long = await logSets('2026-09-03', [{ kg: 70, reps: 25 }]);
-    const later = await logSets('2026-09-05', [{ kg: 95, reps: 8 }]);
-    // As an older version left them: 70 × 25 stored as 128.3, so 95 × 8 (120.3) never got its row.
+    const later = await logSets('2026-09-05', [{ kg: 105, reps: 5 }]);
+    // As an older version left them: 70 × 25 stored as 128.3, so 105 × 5 (122.5) never got its row.
     db.raw.run("DELETE FROM personal_records WHERE kind = 'e1rm' AND session_id = ?", [later]);
     db.raw.run(
       "INSERT INTO personal_records (id, exercise_id, kind, value, weight_kg, reps, date_iso, session_id) VALUES ('old', ?, 'e1rm', 128.3, 70, 25, '2026-09-03', ?)",
@@ -80,10 +82,10 @@ describe('B1: the stored 1-rep max counts reps above 12 as 12', () => {
     await fixLongSetE1rmRecords();
     expect(e1rmRows()).toEqual([
       { value: 116.7, weight_kg: 100, reps: 5 },
-      { value: 120.3, weight_kg: 95, reps: 8 },
+      { value: 122.5, weight_kg: 105, reps: 5 },
     ]);
     // The heaviest-weight rows are rebuilt as they were.
-    expect(db.all<{ value: number }>("SELECT value FROM personal_records WHERE kind = 'weight'")).toEqual([{ value: 100 }]);
+    expect(db.all<{ value: number }>("SELECT value FROM personal_records WHERE kind = 'weight'")).toEqual([{ value: 100 }, { value: 105 }]);
     // Once only: a second run changes nothing.
     db.raw.run("UPDATE personal_records SET value = 128.3, weight_kg = 70, reps = 25 WHERE kind = 'e1rm' AND session_id = ?", [later]);
     await fixLongSetE1rmRecords();

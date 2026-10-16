@@ -78,9 +78,12 @@ describe('B1: a lighter set doing many reps is never an estimated 1-rep max reco
 
   it('100 × 5, then 95 × 8 is no 1-rep-max record: lighter, more reps (C2-4, 16 Oct 2026 owner rule)', () => {
     const s = tick(95, 8);
+    // No 1-rep-max record fires at all (the pop-up names only its top record, so every hit is read).
+    expect(liveRecordHits(card([s])).get(s.key)?.all?.map((h) => h.kind) ?? []).not.toContain('e1rm');
     expect(popUp(s) ?? '').not.toMatch(/Estimated 1-rep max/);
     // A heavier set that beats the estimate still is one.
-    expect(popUp(tick(105, 5))).toMatch(/Estimated 1-rep max · 122\.5 kg|Heaviest weight/);
+    const heavy = tick(105, 5);
+    expect(liveRecordHits(card([heavy])).get(heavy.key)?.all?.map((h) => h.kind)).toContain('e1rm');
   });
 
   it('the records list and the finish screen agree: 70 × 25 is no event, its best stays 116.7', () => {

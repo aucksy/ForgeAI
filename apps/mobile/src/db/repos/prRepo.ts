@@ -1,5 +1,5 @@
 import { getDb } from '@/db';
-import { e1rmSql, estimatedOneRepMax } from '@/lib/e1rm';
+import { e1rmRecordOf, e1rmSql, estimatedOneRepMax, raiseE1rmBar, type E1rmRecordBar } from '@/lib/e1rm';
 import { uuid } from '@/lib/uuid';
 import type { PersonalRecord } from '@/types/models';
 
@@ -34,6 +34,8 @@ function mapPr(r: PrRow): PersonalRecord {
  * (audit HI-10: 100 kg × 1 is 100, never "103.3"), and — 13 Oct 2026 audit (B1) — reps above 12
  * count as 12, so a lighter set doing many reps (70 kg × 25) never becomes a 1-rep max record
  * over a heavy one (100 kg × 5). Was an inlined copy; now the shared helper, so it cannot drift.
+ * 16 Oct 2026 (owner rule): a set lighter than the last 1-rep-max record's weight is never a
+ * record either — 95 × 8 after 100 × 5 is not one (`e1rmRecordOf`).
  * The same estimate in SQL, for a `set_entries` row aliased `se`:
  */
 export const E1RM_SQL = e1rmSql('se');
@@ -139,15 +141,31 @@ export async function checkAndRecordPrs(sessionId: string): Promise<PersonalReco
       );
       if (rec) recorded.push(rec);
     }
-    if (priorE1rm === null || tops.topE1rm.e1rm > priorE1rm) {
-      const rec = await upsertSessionPr(
-        exerciseId,
-        'e1rm',
-        round1(tops.topE1rm.e1rm),
-        tops.topE1rm.weightKg,
-        tops.topE1rm.reps,
-        session,
+    // 16 Oct 2026 review (wave 1, item 2): judged against the last REAL records before this
+    // workout (a lighter set is never one, and never raises the bar). History with no record rows
+    // (older data) keeps the plain "best set before" as the bar.
+    const recs = await db.getAllAsync<{ weight_kg: number; reps: number }>(
+      `SELECT pr.weight_kg, pr.reps FROM personal_records pr JOIN workout_sessions ws ON ws.id = pr.session_id
+        WHERE pr.exercise_id = ? AND pr.kind = 'e1rm' AND ws.started_at < ? AND ws.id <> ?`,
+      [exerciseId, session.started_at, sessionId],
+    );
+    let bar: E1rmRecordBar = { best: priorE1rm, barKg: null };
+    if (recs.length > 0) {
+      bar = { best: null, barKg: null };
+      // An easy-week workout sets no record, but its sets still count as what to beat.
+      const easy = await db.getAllAsync<{ weight_kg: number; reps: number }>(
+        `SELECT se.weight_kg, se.reps FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
+          WHERE se.exercise_id = ? AND se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 1 AND ws.started_at < ? AND ws.id <> ?`,
+        [exerciseId, session.started_at, sessionId],
       );
+      for (const r of [...recs, ...easy]) bar = raiseE1rmBar(bar, { weightKg: r.weight_kg, e1rm: estimatedOneRepMax(r.weight_kg, r.reps) });
+    }
+    const top = e1rmRecordOf(
+      sets.filter((s) => s.exercise_id === exerciseId).map((s) => ({ weightKg: s.weight_kg, reps: s.reps })),
+      bar,
+    );
+    if (top) {
+      const rec = await upsertSessionPr(exerciseId, 'e1rm', round1(top.e1rm), top.weightKg, top.reps, session);
       if (rec) recorded.push(rec);
     }
   }

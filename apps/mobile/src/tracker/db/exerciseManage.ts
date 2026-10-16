@@ -26,7 +26,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
-import { estimatedOneRepMax } from '@/lib/e1rm';
+import { e1rmRecordOf, estimatedOneRepMax, raiseE1rmBar, type E1rmRecordBar } from '@/lib/e1rm';
 import { uuid } from '@/lib/uuid';
 
 import { exerciseHasSets, getTrackerExercise } from './exerciseInfo';
@@ -124,32 +124,36 @@ export async function rebuildRecordLog(exerciseId: string): Promise<void> {
       ORDER BY ws.started_at ASC, ws.id ASC`,
     from ? [exerciseId, from] : [exerciseId],
   );
-  // The app's one estimate (`lib/e1rm`; 13 Oct 2026 audit: reps above 12 count as 12).
-  const e1 = estimatedOneRepMax;
   let bestW: number | null = null;
-  let bestE: number | null = null;
+  // 16 Oct 2026 review (wave 1, item 2): a 1-rep-max record beats the last REAL record, at no
+  // less weight than its holder (`e1rmRecordOf`) — a lighter set is never one.
+  let barE: E1rmRecordBar = { best: null, barKg: null };
   let i = 0;
   while (i < rows.length) {
     const sid = rows[i].session_id;
     const day = rows[i].date_iso;
     const easy = rows[i].easy === 1;
     let topW: { w: number; r: number } | null = null;
-    let topE: { w: number; r: number; e: number } | null = null;
+    const workout: { weightKg: number; reps: number }[] = [];
     for (; i < rows.length && rows[i].session_id === sid; i++) {
       const { weight_kg: w, reps: r } = rows[i];
       if (!topW || w > topW.w || (w === topW.w && r > topW.r)) topW = { w, r };
-      const e = e1(w, r);
-      if (!topE || e > topE.e) topE = { w, r, e };
+      workout.push({ weightKg: w, reps: r });
     }
+    const topE = e1rmRecordOf(workout, barE);
     const add = (kind: 'weight' | 'e1rm', value: number, w: number, r: number) =>
       db.runAsync(
         'INSERT INTO personal_records (id, exercise_id, kind, value, weight_kg, reps, date_iso, session_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
         [uuid(), exerciseId, kind, value, w, r, day, sid],
       );
     if (!easy && topW && (bestW === null || topW.w > bestW)) await add('weight', topW.w, topW.w, topW.r);
-    if (!easy && topE && (bestE === null || topE.e > bestE)) await add('e1rm', Math.round(topE.e * 10) / 10, topE.w, topE.r);
+    if (!easy && topE) {
+      await add('e1rm', Math.round(topE.e1rm * 10) / 10, topE.weightKg, topE.reps);
+      barE = raiseE1rmBar(barE, topE);
+    }
+    // An easy-week workout sets no record, but its sets still count as what to beat.
+    if (easy) for (const x of workout) barE = raiseE1rmBar(barE, { weightKg: x.weightKg, e1rm: estimatedOneRepMax(x.weightKg, x.reps) });
     if (topW) bestW = Math.max(bestW ?? -Infinity, topW.w);
-    if (topE) bestE = Math.max(bestE ?? -Infinity, topE.e);
   }
 }
 

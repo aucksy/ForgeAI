@@ -461,6 +461,13 @@ export function exerciseRecords(sessions: readonly RecordSession[], rule: Record
         events.push({ ...news, previous: prior.value });
         raiseBar(kind, news.set);
       }
+      // 16 Oct 2026 review (wave 1, item 1): the estimated 1-rep max follows only REAL records —
+      // a silenced lighter set (85 kg x 12 after 100 kg x 5) neither raises what later sets must
+      // beat nor becomes its holder, so 110 kg x 2 (117.3 > 116.7) is still a record.
+      if (kind === 'e1rm' && gate != null) {
+        if (news) bests.set(kind, news);
+        continue;
+      }
       bests.set(kind, hit);
     }
     if (reps) {

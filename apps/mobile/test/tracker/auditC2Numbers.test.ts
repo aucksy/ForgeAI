@@ -81,10 +81,11 @@ describe('C2-4: a lighter set doing more reps never gets an "Estimated 1-rep max
   const W = { logType: 'weight_reps', loadMode: 'one', bwShare: 0 } as const;
   const sess = (id: string, dateISO: string, sets: { weightKg: number; reps: number }[]): RecordSession => ({ sessionId: id, dateISO, startedAt: Date.parse(dateISO), sets });
 
-  it('100 × 3, then 85 × 10: no 1-rep-max record (the estimate is still kept as the best)', () => {
+  it('100 × 3, then 85 × 10: no 1-rep-max record, and the best stays 100 × 3 (wave-1 review item 1)', () => {
     const r = exerciseRecords([sess('a', '2026-09-01', [{ weightKg: 100, reps: 3 }]), sess('b', '2026-09-08', [{ weightKg: 85, reps: 10 }])], W, []);
     expect(r.events.filter((e) => e.kind === 'e1rm')).toEqual([]);
-    expect(r.bests.find((b) => b.kind === 'e1rm')?.value).toBeCloseTo(85 * (1 + 10 / 30));
+    // A silenced lighter set is never the best a later set must beat, nor its holder.
+    expect(r.bests.find((b) => b.kind === 'e1rm')?.value).toBeCloseTo(100 * (1 + 3 / 30));
     // A heavier set that beats it is news again.
     const r2 = exerciseRecords(
       [sess('a', '2026-09-01', [{ weightKg: 100, reps: 3 }]), sess('b', '2026-09-08', [{ weightKg: 85, reps: 10 }]), sess('c', '2026-09-15', [{ weightKg: 105, reps: 5 }])],

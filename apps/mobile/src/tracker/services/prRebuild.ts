@@ -114,8 +114,8 @@ const LONG_SET_FIX_KEY = 'pr_long_set_e1rm_fix';
 /**
  * Once per install — 13 Oct 2026 audit (B1): an older version stored a long set's 1-rep max with
  * every rep counted (70 kg × 25 as 128.3 kg, over 100 kg × 5's 116.7), so Home's strength numbers
- * and the coach named a lighter set as the member's best, and a truly heavier later set (95 × 8 =
- * 120.3) was hidden behind it and never got its row. Reps above 12 now count as 12 (`lib/e1rm`).
+ * and the coach named a lighter set as the member's best, and a truly heavier later set (105 × 5 =
+ * 122.5) was hidden behind it and never got its row. Reps above 12 now count as 12 (`lib/e1rm`).
  * Each exercise with such a row has its record log rebuilt from its sets by today's rule. Run it
  * inside the write queue.
  */
@@ -126,6 +126,27 @@ export async function fixLongSetE1rmRecords(): Promise<void> {
   );
   for (const r of rows) await rebuildRecordLog(r.exercise_id);
   await setMeta(LONG_SET_FIX_KEY, '1');
+}
+
+const LIGHTER_SET_FIX_KEY = 'pr_lighter_set_e1rm_fix';
+
+/**
+ * Once per install — 16 Oct 2026 (owner rule, wave-1 review item 2): an older version stored a
+ * 1-rep-max record for a LIGHTER set (85 kg × 12 after 100 kg × 5), which then hid a truly
+ * heavier record (110 × 2) from Home's strength numbers and the coach. Each exercise with such a
+ * row has its record log rebuilt by today's rule (`e1rmRecordOf`). Run it inside the write queue.
+ */
+export async function fixLighterSetE1rmRecords(): Promise<void> {
+  if ((await getMeta(LIGHTER_SET_FIX_KEY)) === '1') return;
+  const rows = await getDb().getAllAsync<{ exercise_id: string }>(
+    `SELECT DISTINCT a.exercise_id AS exercise_id
+       FROM personal_records a JOIN workout_sessions sa ON sa.id = a.session_id
+      WHERE a.kind = 'e1rm' AND EXISTS (
+            SELECT 1 FROM personal_records b JOIN workout_sessions sb ON sb.id = b.session_id
+             WHERE b.exercise_id = a.exercise_id AND b.kind = 'e1rm' AND sb.started_at < sa.started_at AND b.weight_kg > a.weight_kg)`,
+  );
+  for (const r of rows) await rebuildRecordLog(r.exercise_id);
+  await setMeta(LIGHTER_SET_FIX_KEY, '1');
 }
 
 /**

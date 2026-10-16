@@ -56,42 +56,44 @@ describe('6. a single is its own 1-rep max in the stored records', () => {
       "SELECT value, weight_kg, reps FROM personal_records WHERE kind = 'e1rm' ORDER BY date_iso, rowid",
     );
 
-  it('100 × 1 is recorded as 100 (not 103.3), so a later 95 × 2 (101.3) is a new best — two ways agree', async () => {
+  // 16 Oct 2026 owner rule: a lighter set is never a 1-rep-max record, so the later set here is
+  // 100 × 2 (was 95 × 2).
+  it('100 × 1 is recorded as 100 (not 103.3), so a later 100 × 2 (106.7) is a new best — two ways agree', async () => {
     await logSets('2026-09-01', 18, [{ kg: 100, reps: 1 }]);
-    await logSets('2026-09-03', 18, [{ kg: 95, reps: 2 }]);
+    await logSets('2026-09-03', 18, [{ kg: 100, reps: 2 }]);
     expect(e1rmRows()).toEqual([
       { value: 100, weight_kg: 100, reps: 1 },
-      { value: 101.3, weight_kg: 95, reps: 2 },
+      { value: 106.7, weight_kg: 100, reps: 2 },
     ]);
     // Two ways: the stored record (Progress's Strength trend) = the records engine (Records page).
     const { getAllPrs } = await import('@/db/repos/prRepo');
     const stored = (await getAllPrs()).find((p) => p.kind === 'e1rm')!;
     const { epleyE1rm } = await import('@/engine/overload');
-    expect(stored.value).toBe(Math.round(epleyE1rm(95, 2) * 10) / 10);
+    expect(stored.value).toBe(Math.round(epleyE1rm(100, 2) * 10) / 10);
     expect(epleyE1rm(100, 1)).toBe(100);
   });
 
   it('the PR rebuild picks the true best when a single is involved', async () => {
     await logSets('2026-09-01', 18, [{ kg: 100, reps: 1 }]);
-    const later = await logSets('2026-09-03', 18, [{ kg: 95, reps: 2 }]);
+    const later = await logSets('2026-09-03', 18, [{ kg: 100, reps: 2 }]);
     db.raw.run('DELETE FROM personal_records');
     const { reconcilePrsForExercises } = await import('@/tracker/services/prRebuild');
     await reconcilePrsForExercises([exId(BENCH)]);
     const rows = db.all<{ session_id: string; value: number }>("SELECT session_id, value FROM personal_records WHERE kind = 'e1rm'");
-    expect(rows.some((r) => r.session_id === later && r.value === 101.3)).toBe(true);
+    expect(rows.some((r) => r.session_id === later && r.value === 106.7)).toBe(true);
   });
 
   it('records an older version inflated (100 × 1 stored as 103.3) are put right once, and the hidden best is recorded', async () => {
     const first = await logSets('2026-09-01', 18, [{ kg: 100, reps: 1 }]);
-    const later = await logSets('2026-09-03', 18, [{ kg: 95, reps: 2 }]);
-    // As an older version left them: the single at 103.3, the 101.3 never recorded.
+    const later = await logSets('2026-09-03', 18, [{ kg: 100, reps: 2 }]);
+    // As an older version left them: the single at 103.3, the later 106.7 never recorded.
     db.raw.run("DELETE FROM personal_records WHERE kind = 'e1rm' AND session_id = ?", [later]);
     db.raw.run("UPDATE personal_records SET value = 103.3 WHERE kind = 'e1rm' AND session_id = ?", [first]);
     const { fixSingleE1rmRecords } = await import('@/tracker/services/prRebuild');
     await fixSingleE1rmRecords();
     expect(e1rmRows()).toEqual([
       { value: 100, weight_kg: 100, reps: 1 },
-      { value: 101.3, weight_kg: 95, reps: 2 },
+      { value: 106.7, weight_kg: 100, reps: 2 },
     ]);
     // Once only: a second run changes nothing.
     db.raw.run("UPDATE personal_records SET value = 103.3 WHERE kind = 'e1rm' AND session_id = ?", [first]);
