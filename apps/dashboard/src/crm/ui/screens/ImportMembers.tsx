@@ -46,6 +46,7 @@ import { formatPhone } from '../../logic/members';
 import { useCrm } from '../../store';
 import { useRole } from '../../auth/AuthProvider';
 import type { ImportTermsResult } from '../../data/adapter';
+import { pastImports, planUndo } from '../../logic/undoImport';
 import { formatINR } from '../../logic/money';
 import { downloadCsv } from '../download';
 import { Button, Card, ChipToggle, ErrorBanner, Grid, PageHeader, Row, SectionTitle, SelectField, color, font, radius, space } from '../kit';
@@ -534,6 +535,7 @@ export function ImportMembersScreen() {
           </Row>
         </Card>
       )}
+      {role === 'owner' && (stage === 'pick' || stage === 'done') && <PastImports />}
     </>
   );
 }
@@ -747,6 +749,108 @@ function TermsLine({ rows, owner }: { rows: readonly ImportRow[]; owner: boolean
               `Is file mein ${withTerm.length} members ka plan hai. Plan aur payment owner jodte hain: members abhi judenge, plan tab jab owner yahi file import karenge.`,
             )}
       </p>
+    </Card>
+  );
+}
+
+/**
+ * "Undo this import" (16 Oct 2026): every import still in the gym, newest first, each with one
+ * undo. Owner only (the server refuses the front desk). Two steps: the button shows what goes and
+ * what stays, then "Yes, undo it". What the gym used since the import always stays.
+ */
+function PastImports() {
+  const { snapshot, undoImport } = useCrm();
+  const list = useMemo(() => (snapshot ? pastImports(snapshot) : []), [snapshot]);
+  const [asking, setAsking] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState<string | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
+  const ask = asking && snapshot ? planUndo(snapshot, asking) : null;
+  if (list.length === 0 && !done) return null;
+
+  const run = async (importId: string) => {
+    setBusy(true);
+    setFailed(null);
+    try {
+      const r = await undoImport(importId);
+      const kept = r.kept.members + r.kept.memberships + r.kept.plans;
+      setDone(
+        tr(
+          `Import taken back: ${r.members} members, ${r.memberships} plans with dates, ${r.payments} receipts removed.${kept > 0 ? ` ${kept} kept because the gym used them after the import.` : ''}`,
+          `Import wapas ho gaya: ${r.members} members, ${r.memberships} plan dates ke saath, ${r.payments} raseed hataye.${kept > 0 ? ` ${kept} rakhe, kyunki import ke baad gym ne inhe use kiya.` : ''}`,
+        ),
+      );
+      setAsking(null);
+    } catch (e) {
+      console.warn('[ForgeErr] undo import', e);
+      setFailed(
+        tr(
+          'The import was not fully taken back (check the internet). Press Undo again: what is already gone stays gone, the rest goes.',
+          'Import poora wapas nahi hua (internet check karo). Undo phir dabao: jo hat gaya woh hata rahega, baaki ab hatega.',
+        ),
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const when = (at: number | null) =>
+    at == null ? tr('Earlier import', 'Pichhla import') : new Date(at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+
+  return (
+    <Card style={{ marginTop: space.lg }}>
+      <SectionTitle>{tr('Past imports', 'Pichhle import')}</SectionTitle>
+      {done && (
+        <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700 }}>
+          {done}
+        </p>
+      )}
+      {failed && <ErrorBanner>{failed}</ErrorBanner>}
+      {list.map((imp) => (
+        <div key={imp.importId} style={{ padding: `${space.sm}px 0`, borderTop: `1px solid ${color.border}` }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: space.sm, flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ fontWeight: 700, color: color.ink }}>{when(imp.at)}</div>
+              <div style={muted}>
+                {tr(
+                  `${imp.members} members · ${imp.memberships} plans with dates · ${imp.payments} receipts`,
+                  `${imp.members} members · ${imp.memberships} plan dates ke saath · ${imp.payments} raseed`,
+                )}
+              </div>
+            </div>
+            {asking !== imp.importId && (
+              <Button variant="ghost" tone="danger" disabled={busy} onClick={() => { setDone(null); setAsking(imp.importId); }} ariaLabel={tr(`Undo the import of ${when(imp.at)}`, `${when(imp.at)} ka import wapas lo`)}>
+                {tr('Undo this import', 'Yeh import wapas lo')}
+              </Button>
+            )}
+          </div>
+          {asking === imp.importId && ask && (
+            <div style={{ marginTop: space.sm }}>
+              <p style={{ ...muted, color: color.ink }}>
+                {tr(
+                  `This removes ${ask.members.length} members, ${ask.memberships.length} plans with dates and ${ask.payments.length} receipts that this file added.`,
+                  `Isse is file se jude ${ask.members.length} members, ${ask.memberships.length} plan dates ke saath aur ${ask.payments.length} raseed hat jayenge.`,
+                )}
+                {ask.kept.members + ask.kept.memberships + ask.kept.plans > 0
+                  ? tr(
+                      ` ${ask.kept.members + ask.kept.memberships + ask.kept.plans} stay, because the gym used them after the import (a check-in, a payment at the desk, a plan sold).`,
+                      ` ${ask.kept.members + ask.kept.memberships + ask.kept.plans} rahenge, kyunki import ke baad gym ne inhe use kiya (check-in, desk par payment, plan becha).`,
+                    )
+                  : ''}
+                {tr(' Members you typed in yourself are never touched.', ' Jo members aapne khud likhe, unhe kuch nahi hoga.')}
+              </p>
+              <Row gap={space.sm}>
+                <Button tone="danger" disabled={busy} onClick={() => run(imp.importId)}>
+                  {busy ? tr('Taking it back…', 'Wapas ho raha hai…') : tr('Yes, undo it', 'Haan, wapas lo')}
+                </Button>
+                <Button variant="ghost" disabled={busy} onClick={() => setAsking(null)}>
+                  {tr('Keep it', 'Rehne do')}
+                </Button>
+              </Row>
+            </div>
+          )}
+        </div>
+      ))}
     </Card>
   );
 }

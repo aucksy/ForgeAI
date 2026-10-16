@@ -97,6 +97,17 @@ export interface ImportTermsResult {
   skipped: number;
 }
 
+/** What "Undo this import" took out, and what it kept because the gym used it since. */
+export interface UndoImportResult {
+  members: number;
+  plans: number;
+  memberships: number;
+  payments: number;
+  kept: { members: number; memberships: number; plans: number };
+  /** Online the work goes in parts; true = this part stopped at its cap and more is left. */
+  more: boolean;
+}
+
 export interface RecordPaymentInput {
   memberId: string;
   membershipId: string | null;
@@ -249,6 +260,11 @@ export interface CrmData {
    * twice adds nothing. All in ONE save; online it is split so no push passes the server's cap.
    */
   importTerms(items: readonly ImportTermItem[], importId: string): Promise<ImportTermsResult>;
+  /**
+   * "Undo this import": remove what that import made, keeping what the gym used since
+   * (logic/undoImport.ts). `max` caps the records removed in one call (the online store's parts).
+   */
+  undoImport(importId: string, max?: number): Promise<UndoImportResult>;
   cancelMembership(id: string, reason: string | null): Promise<Membership>;
   /** Undo a cancellation — a misclick on an irreversible money action is not acceptable. */
   uncancelMembership(id: string): Promise<Membership>;

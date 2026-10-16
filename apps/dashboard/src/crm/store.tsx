@@ -27,6 +27,7 @@ import type {
   SellMembershipResult,
   ImportTermItem,
   ImportTermsResult,
+  UndoImportResult,
 } from './data/adapter';
 import { demoSnapshot } from './data/demo';
 import { emptySnapshot, LocalCrmData } from './data/local';
@@ -73,6 +74,7 @@ interface CrmContextValue {
   createMembers: (drafts: readonly MemberDraft[]) => Promise<Member[]>;
   /** Data migration: imported memberships and receipts (see CrmData.importTerms). */
   importTerms: (items: readonly ImportTermItem[], importId: string) => Promise<ImportTermsResult>;
+  undoImport: (importId: string) => Promise<UndoImportResult>;
   updateMember: (id: string, patch: Partial<MemberDraft>) => Promise<Member>;
   setMemberArchived: (id: string, archived: boolean) => Promise<void>;
   createPlan: (draft: PlanDraft) => Promise<void>;
@@ -293,6 +295,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       createMember: (draft) => mutate((a) => a.createMember(draft)),
       createMembers: (drafts) => mutate((a) => a.createMembers(drafts)),
       importTerms: (items, importId) => mutate((a) => a.importTerms(items, importId)),
+      undoImport: (importId) => mutate((a) => a.undoImport(importId)),
       updateMember: (id, patch) => mutate((a) => a.updateMember(id, patch)),
       setMemberArchived: async (id, archived) => void (await mutate((a) => a.setMemberArchived(id, archived))),
       createPlan: async (draft) => void (await mutate((a) => a.createPlan(draft))),

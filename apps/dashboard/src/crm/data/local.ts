@@ -51,6 +51,7 @@ import { findDuplicatePhone } from '../logic/members';
 import { normalizeBatch } from '../logic/batches';
 import { nextReceiptNo } from '../logic/receipts';
 import { cleanTrainer, isPtMembership, isPtPlan, PT_MAX_SESSIONS, ptDays, ptTotal } from '../logic/pt';
+import { planUndo } from '../logic/undoImport';
 import {
   DuplicatePhoneError,
   EARLIEST_DATE,
@@ -68,6 +69,7 @@ import {
   type SellMembershipResult,
   type ImportTermItem,
   type ImportTermsResult,
+  type UndoImportResult,
 } from './adapter';
 
 /** The `localStorage` surface we actually use — trivial to stub in tests. */
@@ -381,6 +383,35 @@ export class LocalCrmData implements CrmData {
       if (payment) db.payments.push(payment);
 
       return { membership: { ...membership }, payment: payment ? { ...payment } : null };
+    });
+  }
+
+  async undoImport(importId: string, max: number = Number.POSITIVE_INFINITY): Promise<UndoImportResult> {
+    return this.update((db) => {
+      const plan = planUndo(db, importId);
+      let room = max;
+      const take = (ids: string[]): Set<string> => {
+        const out = new Set(ids.slice(0, Math.max(0, room)));
+        room -= out.size;
+        return out;
+      };
+      const pay = take(plan.payments);
+      const ms = take(plan.memberships);
+      const mem = take(plan.members);
+      const pl = take(plan.plans);
+      db.payments = db.payments.filter((p) => !pay.has(p.id));
+      db.memberships = db.memberships.filter((m) => !ms.has(m.id));
+      db.members = db.members.filter((m) => !mem.has(m.id));
+      db.plans = db.plans.filter((p) => !pl.has(p.id));
+      const all = plan.payments.length + plan.memberships.length + plan.members.length + plan.plans.length;
+      return {
+        payments: pay.size,
+        memberships: ms.size,
+        members: mem.size,
+        plans: pl.size,
+        kept: plan.kept,
+        more: pay.size + ms.size + mem.size + pl.size < all,
+      };
     });
   }
 

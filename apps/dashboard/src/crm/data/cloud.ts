@@ -34,6 +34,7 @@ import {
   type SellMembershipResult,
   type ImportTermItem,
   type ImportTermsResult,
+  type UndoImportResult,
 } from './adapter';
 import { authErrorWords } from '../auth/signin';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
@@ -486,6 +487,21 @@ export class CloudCrmData implements CrmData {
    * membership, receipt — well under the server's 1000-row cap). Already-imported terms are
    * skipped inside each push, so a stop part-way is safe to run again.
    */
+  /** Undo in parts of BULK_ONE_PUSH records, so no push passes the server's 1000-row cap. */
+  async undoImport(importId: string): Promise<UndoImportResult> {
+    const total: UndoImportResult = { members: 0, plans: 0, memberships: 0, payments: 0, kept: { members: 0, memberships: 0, plans: 0 }, more: false };
+    for (let guard = 0; guard < 1000; guard += 1) {
+      const r = await this.run((d) => d.undoImport(importId, BULK_ONE_PUSH));
+      total.members += r.members;
+      total.plans += r.plans;
+      total.memberships += r.memberships;
+      total.payments += r.payments;
+      total.kept = r.kept;
+      if (!r.more) break;
+    }
+    return total;
+  }
+
   async importTerms(items: readonly ImportTermItem[], importId: string): Promise<ImportTermsResult> {
     const total: ImportTermsResult = { plans: 0, memberships: 0, payments: 0, skipped: 0 };
     for (let i = 0; i < items.length; i += IMPORT_TERMS_BATCH) {
