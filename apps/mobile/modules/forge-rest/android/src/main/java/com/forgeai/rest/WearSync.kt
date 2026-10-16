@@ -2,6 +2,8 @@ package com.forgeai.rest
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -36,6 +38,12 @@ import java.util.concurrent.atomic.AtomicLong
  * and a phone without Google Play services (or without the Wear OS app) only logs. After the API
  * says it is not on this phone, the calls pause for [RETRY_MS] (C5-7: it was the whole process, so
  * one hiccup while Play services updated left the watch out of step until ForgeAI restarted).
+ *
+ * U-W2 (UAT, 17 Oct 2026): a state counts as sent only once its put SUCCEEDS. Until then the latest
+ * one per path waits in [outbox] (also saved in preferences, for a restart of the app) and goes
+ * again on the next call after the pause, or by itself when the pause ends ([scheduleRetry]); a
+ * newer state replaces it. Before, the workout was marked as sent before the put, so a Finish, a
+ * new rest or a Skip during the pause or after a failed put never reached the watch.
  */
 object WearSync {
   private const val TAG = "ForgeWear"
@@ -62,8 +70,26 @@ object WearSync {
 
   @Volatile private var lastProbe = 0L
 
-  /** The workout as last sent (active, title, text, done), so a tick that changes nothing sends nothing. */
+  /**
+   * The workout as last OFFERED (active, title, text, done), so a tick that changes nothing sends
+   * nothing. U-W2: an offered state stays in [outbox] until its put succeeds, so skipping a repeat
+   * of it never loses it.
+   */
   @Volatile private var lastWorkout: List<Any>? = null
+
+  /** U-W2: the latest state per path not yet put successfully. */
+  private val outbox = WearOutbox()
+  @Volatile private var restored = false
+  private val main = Handler(Looper.getMainLooper())
+  @Volatile private var retryCtx: Context? = null
+  @Volatile private var retryArmed = false
+  /** Timed retries in a row without a success (bounded: a phone without Wear OS stops asking). */
+  @Volatile private var retries = 0
+  private const val MAX_RETRIES = 6
+  /** After a failed put that is not "Data Layer missing": try again this soon. */
+  private const val FAIL_RETRY_MS = 30_000L
+  /** A saved outbox older than this is dropped at a restart (the watch has moved on). */
+  private const val OUTBOX_MAX_AGE_MS = 6L * 60L * 60_000L
 
   private fun nextSeq(): Long {
     while (true) {
@@ -99,26 +125,28 @@ object WearSync {
   fun rest(ctx: Context, r: RestCard.Rest) {
     val next = if (r.allDone) "All sets done" else r.next.orEmpty()
     val done = restDone(ctx, r)
-    put(ctx, PATH_REST) {
-      putLong("startedAt", r.startedAt)
-      putLong("endsAt", r.endsAt)
-      putString("next", next)
-      putBoolean("ended", false)
-      // The phone's "Ring through Do Not Disturb": the watch's buzz gets through DND only then.
-      putBoolean("ringThroughDnd", RestCard.ringThroughDnd(ctx))
-      putString("done", done)
-    }
+    put(
+      ctx,
+      PATH_REST,
+      linkedMapOf(
+        "startedAt" to r.startedAt,
+        "endsAt" to r.endsAt,
+        "next" to next,
+        "ended" to false,
+        // The phone's "Ring through Do Not Disturb": the watch's buzz gets through DND only then.
+        "ringThroughDnd" to RestCard.ringThroughDnd(ctx),
+        "done" to done,
+      ),
+    )
   }
 
   /** The rest is gone: [ended] = it ran out on the phone (not skipped or settled). */
   fun restGone(ctx: Context, ended: Boolean) {
-    put(ctx, PATH_REST) {
-      putLong("startedAt", 0L)
-      putLong("endsAt", 0L)
-      putString("next", "")
-      putBoolean("ended", ended)
-      putString("done", "")
-    }
+    put(
+      ctx,
+      PATH_REST,
+      linkedMapOf("startedAt" to 0L, "endsAt" to 0L, "next" to "", "ended" to ended, "done" to ""),
+    )
   }
 
   /**
@@ -127,28 +155,108 @@ object WearSync {
    */
   fun workout(ctx: Context, active: Boolean, title: String, text: String = "", done: String = "") {
     val now = if (active) listOf<Any>(true, title, text, done) else listOf<Any>(false, "", "", "")
-    if (now == lastWorkout) return
+    if (now == lastWorkout) {
+      flush(ctx) // nothing new, but a state still waiting goes now if it can
+      return
+    }
     lastWorkout = now
-    put(ctx, PATH_WORKOUT) {
-      putBoolean("active", active)
-      putString("title", now[1] as String)
-      putString("text", now[2] as String)
-      putString("done", now[3] as String)
+    put(
+      ctx,
+      PATH_WORKOUT,
+      linkedMapOf("active" to active, "title" to now[1], "text" to now[2], "done" to now[3]),
+    )
+  }
+
+  /** U-W2: [values] becomes the path's latest state; everything waiting is sent if it can be. */
+  private fun put(ctx: Context, path: String, values: Map<String, Any>) {
+    loadOutbox(ctx)
+    outbox.offer(path, values)
+    saveOutbox(ctx)
+    flush(ctx)
+  }
+
+  /** The saved outbox of an earlier run of the app, once per process (U-W2). */
+  private fun loadOutbox(ctx: Context) {
+    if (restored) return
+    restored = true
+    try {
+      val p = ctx.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+      outbox.restore(p.getString("outbox", null), System.currentTimeMillis(), OUTBOX_MAX_AGE_MS)
+    } catch (e: Exception) {
+      Log.w(TAG, "watch outbox not read", e)
     }
   }
 
-  private fun put(ctx: Context, path: String, fill: DataMap.() -> Unit) {
-    if (unavailable()) return
+  private fun saveOutbox(ctx: Context) {
     try {
-      val req = PutDataMapRequest.create(path)
-      req.dataMap.fill()
-      req.dataMap.putLong("seq", nextSeq())
-      val data = req.asPutDataRequest().setUrgent()
-      Wearable.getDataClient(ctx.applicationContext).putDataItem(data)
-        .addOnFailureListener { e -> failed(e, "watch sync $path failed") }
+      val p = ctx.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+      if (outbox.isEmpty()) {
+        p.edit().remove("outbox").apply()
+      } else {
+        p.edit().putString("outbox", outbox.encode(System.currentTimeMillis())).apply()
+      }
     } catch (e: Exception) {
-      Log.w(TAG, "watch sync $path not sent", e)
+      Log.w(TAG, "watch outbox not saved", e)
     }
+  }
+
+  /** Puts every waiting state not already on its way. During the pause nothing goes (it waits). */
+  private fun flush(ctx: Context) {
+    loadOutbox(ctx)
+    val app = ctx.applicationContext
+    if (unavailable()) {
+      if (!outbox.isEmpty()) scheduleRetry(app, unavailableUntil - System.currentTimeMillis() + 1_000L)
+      return
+    }
+    for (item in outbox.takeDue()) {
+      try {
+        val req = PutDataMapRequest.create(item.path)
+        fill(req.dataMap, item.values)
+        req.dataMap.putLong("seq", nextSeq())
+        val data = req.asPutDataRequest().setUrgent()
+        Wearable.getDataClient(app).putDataItem(data)
+          .addOnSuccessListener {
+            outbox.sent(item)
+            retries = 0
+            saveOutbox(app)
+          }
+          .addOnFailureListener { e ->
+            outbox.failed(item)
+            failed(e, "watch sync ${item.path} failed")
+            scheduleRetry(app, if (unavailable()) unavailableUntil - System.currentTimeMillis() + 1_000L else FAIL_RETRY_MS)
+          }
+      } catch (e: Exception) {
+        outbox.failed(item)
+        Log.w(TAG, "watch sync ${item.path} not sent", e)
+        scheduleRetry(app, FAIL_RETRY_MS)
+      }
+    }
+  }
+
+  private fun fill(m: DataMap, values: Map<String, Any>) {
+    for ((k, v) in values) {
+      when (v) {
+        is Boolean -> m.putBoolean(k, v)
+        is Long -> m.putLong(k, v)
+        is Int -> m.putLong(k, v.toLong())
+        else -> m.putString(k, v.toString())
+      }
+    }
+  }
+
+  /**
+   * U-W2: "when the connection is back": one timed flush (the pause's end, or [FAIL_RETRY_MS] after
+   * a failure), at most [MAX_RETRIES] in a row without a success. Any later call flushes too.
+   */
+  private fun scheduleRetry(ctx: Context, delayMs: Long) {
+    if (retryArmed || retries >= MAX_RETRIES) return
+    retryArmed = true
+    retries += 1
+    retryCtx = ctx.applicationContext
+    main.postDelayed({
+      retryArmed = false
+      retryCtx?.let { if (!outbox.isEmpty()) flush(it) }
+    }, maxOf(1_000L, delayMs))
   }
 
   private fun failed(e: Exception, what: String) {
@@ -178,6 +286,8 @@ object WearSync {
    * (ForgeRestModule), so the first rest already has the answer.
    */
   fun probeWatch(ctx: Context) {
+    // U-W2: also asked when the app starts and at every rest: a state still waiting goes now.
+    flush(ctx)
     val now = System.currentTimeMillis()
     if (now - lastProbe < PROBE_EVERY_MS || unavailable()) return
     lastProbe = now
@@ -219,18 +329,16 @@ object WearSync {
       "$PATH_ACT/add" -> Intent(ctx, RestActionReceiver::class.java).setAction(RestCard.ACTION_ADD)
       "$PATH_ACT/skip" -> Intent(ctx, RestActionReceiver::class.java).setAction(RestCard.ACTION_SKIP)
       "$PATH_ACT/done" -> {
+        // U-W3: the parsing is pure (WearWire.parseDone, JVM-tested); null = the watch is told.
+        val d = WearWire.parseDone(data)
+        if (d == null) {
+          Log.w(TAG, "watch Done not read (${data?.size ?: 0} bytes)")
+          return null
+        }
         try {
-          val o = JSONObject(String(data ?: return null, Charsets.UTF_8))
-          val workout = o.optLong("workout", 0L)
-          val ex = o.optString("exKey", "")
-          val set = o.optString("setKey", "")
-          if (workout <= 0L || ex.isEmpty() || set.isEmpty() || o.optBoolean("open", false)) return null
-          val values = if (o.isNull("values")) null else o.optString("values", "").ifEmpty { null }
-          val label = if (o.isNull("label")) null else o.optString("label", "").ifEmpty { null }
-          val t = RestCard.DoneTarget(workout, ex, set, false, values)
-          RestCard.doneBroadcast(ctx, t, o.optLong("endsAt", 0L), label)
+          RestCard.doneBroadcast(ctx, RestCard.DoneTarget(d.workout, d.exKey, d.setKey, false, d.values), d.endsAt, d.label)
         } catch (e: Exception) {
-          Log.w(TAG, "watch Done not read", e)
+          Log.w(TAG, "watch Done not passed on", e)
           null
         }
       }

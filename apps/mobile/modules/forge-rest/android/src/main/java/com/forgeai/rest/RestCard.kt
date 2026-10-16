@@ -1443,10 +1443,13 @@ object RestCard {
       // its delete intent brings the live card ("Complete set") back, so a button stays.
       WorkoutCard.completeAction(ctx, icon)?.let { b.addAction(it) }
       openIntent(ctx)?.let { b.setContentIntent(it) }
-      // v0.46: the ForgeAI watch app posts its own "Rest is over" and buzzes itself, so it asks
-      // Wear OS not to copy THIS alert (BridgingConfig excluded tag "rest-over"; since C5-6 always,
-      // so the watch never buzzes twice). Only this alert carries that tag; the rest card has its
-      // own ("rest-card", C5-3). Without the watch app the tags change nothing.
+      // v0.46: the ForgeAI watch app buzzes at the rest's end itself, so it asks Wear OS not to
+      // copy THIS alert (its BridgingConfig excludes the tag "rest-over"). U-W1 (17 Oct 2026): it
+      // excludes it in every case, also while the member has refused the watch app's
+      // notifications (its buzz needs none; only its "Rest is over" card is then missing), so the
+      // watch buzzes exactly once. It excludes the countdown's "rest-card" (C5-3) only while its
+      // notifications are allowed. Only this alert carries "rest-over". Without the watch app the
+      // tags change nothing.
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) b.extend(Notification.WearableExtender().setBridgeTag(BRIDGE_TAG_OVER))
       // Swiped away: the live workout card comes back (one at a time).
       b.setDeleteIntent(actionIntent(ctx, ACTION_OVER_GONE, 6))

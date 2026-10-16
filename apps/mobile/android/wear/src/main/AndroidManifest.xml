@@ -45,7 +45,8 @@
       </intent-filter>
     </activity>
 
-    <!-- The phone's rest and workout state (Data Layer items /forge/rest and /forge/workout). -->
+    <!-- The phone's rest and workout state (Data Layer items /forge/rest and /forge/workout), and
+         its answer to a set it could not log. -->
     <service
       android:name=".ForgeListenerService"
       android:exported="true">
@@ -54,6 +55,14 @@
         <data
           android:host="*"
           android:pathPrefix="/forge"
+          android:scheme="wear" />
+      </intent-filter>
+      <!-- U-W3: the phone's "could not log that set" answer (/forge/nack/done). -->
+      <intent-filter>
+        <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+        <data
+          android:host="*"
+          android:pathPrefix="/forge/nack"
           android:scheme="wear" />
       </intent-filter>
     </service>

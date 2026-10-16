@@ -531,6 +531,119 @@ export function canCancelGymOrder(o: Pick<GymOrder, 'status'>): boolean {
 }
 
 /**
+ * UAT U-G2: the gym Settings names — the gym this phone JOINED, else the name the member typed at
+ * onboarding (optional, for members who are not in a gym in the app), else null. PURE.
+ */
+export function settingsGymName(link: Pick<GymLink, 'gymName'> | null, typed: string | null | undefined): string | null {
+  if (link) return link.gymName;
+  const t = (typed ?? '').trim();
+  return t.length > 0 ? t : null;
+}
+
+// ------------------------------------------------------------------ leaving with open orders (UAT U-G1)
+
+/**
+ * Leaving the gym (Leave, or an invite link's "Switch to <gym>"). A member who left lost their
+ * open orders for good (the gym kept them "Ordered" with the stock held; a rejoin is a new member
+ * who never sees them), so the question now says what is open, and Leave cancels what it can.
+ */
+export type LeaveKind = 'leave' | 'switch';
+
+/** Orders still with the gym: `ordered` (the phone cancels them) and `ready` (the desk's to settle). PURE. */
+export function openOrdersOf(orders: readonly GymOrder[]): { ordered: GymOrder[]; ready: GymOrder[] } {
+  return { ordered: orders.filter((o) => o.status === 'ordered'), ready: orders.filter((o) => o.status === 'ready') };
+}
+
+/**
+ * "You have 1 open order (₹450). Leaving cancels it." and/or "1 order is ready at the desk.
+ * Collect it or ask the desk to cancel it before you leave." — '' when nothing is open. A switch
+ * names the gym being left (`fromGym`), since the screen shows the new one. PURE.
+ */
+export function openOrdersText(orders: readonly GymOrder[], kind: LeaveKind, fromGym?: string): string {
+  const { ordered, ready } = openOrdersOf(orders);
+  const at = kind === 'switch' && fromGym ? ` at ${fromGym}` : '';
+  const desk = kind === 'switch' && fromGym ? `${fromGym}'s desk` : 'the desk';
+  const parts: string[] = [];
+  if (ordered.length > 0) {
+    const total = ordered.reduce((s, o) => s + o.totalP, 0);
+    const one = ordered.length === 1;
+    parts.push(
+      `You have ${ordered.length} open order${one ? '' : 's'}${at} (${rupees(total)}). ${kind === 'switch' ? 'Switching' : 'Leaving'} cancels ${one ? 'it' : 'them'}.`,
+    );
+  }
+  if (ready.length > 0) {
+    const one = ready.length === 1;
+    parts.push(
+      `${ready.length} order${one ? ' is' : 's are'} ready at ${desk}. Collect ${one ? 'it' : 'them'} or ask the desk to cancel ${one ? 'it' : 'them'} before you ${kind === 'switch' ? 'switch' : 'leave'}.`,
+    );
+  }
+  return parts.join(' ');
+}
+
+export interface LeaveQuestion {
+  title: string;
+  body: string;
+  confirmLabel: string;
+  cancelLabel: string;
+}
+
+function leaveButton(orders: readonly GymOrder[], kind: LeaveKind): string | null {
+  const { ordered, ready } = openOrdersOf(orders);
+  const verb = kind === 'switch' ? 'switch' : 'leave';
+  if (ordered.length > 0) return `Cancel order${ordered.length === 1 ? '' : 's'} and ${verb}`;
+  if (ready.length > 0) return kind === 'switch' ? 'Switch anyway' : 'Leave anyway';
+  return null;
+}
+
+/** The Shop's "Leave <gym>'s shop?" question, with what is still open. PURE. */
+export function leaveQuestion(a: { gymName: string; branded: boolean; orders: readonly GymOrder[] }): LeaveQuestion {
+  const base = a.branded
+    ? "Your bag on this phone is emptied and the app goes back to ForgeAI's colours. You can join again with the code."
+    : 'Your bag on this phone is emptied. You can join again with the code.';
+  const open = openOrdersText(a.orders, 'leave');
+  return {
+    title: `Leave ${a.gymName}'s shop?`,
+    body: open ? `${open} ${base}` : base,
+    confirmLabel: leaveButton(a.orders, 'leave') ?? 'Leave shop',
+    cancelLabel: 'Stay',
+  };
+}
+
+/** An invite link's "Switch to <gym>": a question only when something is open at the old gym. PURE. */
+export function switchQuestion(a: { fromGym: string; toGym: string; orders: readonly GymOrder[] }): LeaveQuestion | null {
+  const label = leaveButton(a.orders, 'switch');
+  if (!label) return null;
+  return { title: `Switch to ${a.toGym}?`, body: openOrdersText(a.orders, 'switch', a.fromGym), confirmLabel: label, cancelLabel: 'Stay' };
+}
+
+/** Where the member still is when a cancel before leaving failed. */
+function stillIn(kind: LeaveKind): string {
+  return kind === 'switch' ? "you haven't switched gyms" : "you're still in the gym";
+}
+
+/** A cancel before leaving failed (no internet, slow gym, other): nothing was left. PURE. */
+export function leaveCancelFailText(err: GymError, kind: LeaveKind, count: number): string {
+  const still = stillIn(kind);
+  const placed = count === 1 ? 'Your order is still placed' : 'Your orders are still placed';
+  if (err.kind === 'offline') return `No internet. ${placed} and ${still}. Try again when you're online.`;
+  if (err.kind === 'timeout') return `The gym didn't answer. ${placed} and ${still}. Try again in a moment.`;
+  return `Couldn't cancel your order, so ${still}. Try again.`;
+}
+
+/** An order whose answer was lost could not be looked up (no signal): leaving waits. PURE. */
+export function leaveUncheckedText(kind: LeaveKind): string {
+  return `No internet, so your last order couldn't be checked with the gym, and ${stillIn(kind)}. Try again when you're online.`;
+}
+
+/** The desk made an open order ready while the member was leaving: it is theirs to settle. PURE. */
+export function leaveReadyNowText(orderNo: number, kind: LeaveKind): { title: string; body: string } {
+  return {
+    title: `Order ${orderNo} is ready`,
+    body: `The gym has just got order ${orderNo} ready at the desk, so it can't be cancelled here. Collect it or ask the desk to cancel it. For now ${stillIn(kind)}.`,
+  };
+}
+
+/**
  * After a placed order. `changedTotalP` (audit C6-3): the order's total when the gym charged a
  * different amount than the bag showed at the tap (a price changed meanwhile). PURE.
  */

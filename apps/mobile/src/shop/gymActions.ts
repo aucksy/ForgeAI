@@ -23,7 +23,11 @@ import {
   JOIN_TRY_STORAGE_KEY,
   joinErrorText,
   joinIdFor,
+  leaveCancelFailText,
+  leaveReadyNowText,
+  leaveUncheckedText,
   onlyLeftText,
+  openOrdersOf,
   orderLinesFor,
   orderIdFor,
   orderLinesKey,
@@ -33,6 +37,7 @@ import {
   refreshErrorText,
   stockLeftForKey,
   type GymError,
+  type LeaveKind,
 } from './gym';
 import type { CheckInAnswer } from './checkIn';
 import { useGymShop } from './gymStore';
@@ -334,6 +339,72 @@ export async function cancelGymOrder(orderId: string): Promise<ActionWords> {
   useGymShop.getState().putOrder(r.data);
   void refreshProducts();
   return null;
+}
+
+/**
+ * UAT U-G1: before the Leave question, ask the gym for its latest order list — but never keep the
+ * member waiting on a slow line: after `waitMs` the question goes up with what the phone has, and
+ * the list still lands when it comes.
+ */
+export async function freshOrdersSoon(waitMs = 3000): Promise<void> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  await Promise.race([
+    refreshOrders().catch(() => null),
+    new Promise<void>((resolve) => {
+      timer = setTimeout(resolve, waitMs);
+    }),
+  ]);
+  clearTimeout(timer);
+}
+
+/** What cancelling the open orders before a leave came to. */
+export type SettleOutcome = { kind: 'done' } | { kind: 'retry'; words: string } | { kind: 'stop'; title: string; words: string };
+
+/**
+ * UAT U-G1: cancel every order still `ordered` (member_cancel_order, the member's own cancel)
+ * BEFORE the member leaves — a member who has left can never see or cancel them again. `ready`
+ * orders are the desk's (the gym set the item aside; the server refuses the member's cancel).
+ *  - 'done': nothing open is left to cancel; go on and leave.
+ *  - 'retry': no internet / no answer: nothing was left; say so and offer to try again.
+ *  - 'stop': the desk made one ready meanwhile; the member must collect it or ask the desk.
+ */
+export async function cancelOpenOrdersBeforeLeave(kind: LeaveKind): Promise<SettleOutcome> {
+  const key = useGymShop.getState().link?.memberKey;
+  if (!key) return { kind: 'done' };
+  // An order whose answer was lost (C6-1) may be at the gym without the phone knowing: look first.
+  if (useGymShop.getState().pendingOrder) {
+    const words = await refreshOrders();
+    if (useGymShop.getState().link?.memberKey !== key) return { kind: 'done' };
+    if (words) return { kind: 'retry', words: leaveUncheckedText(kind) };
+  }
+  const open = openOrdersOf(useGymShop.getState().orders).ordered;
+  for (const o of open) {
+    orderWrites += 1;
+    const r = await apiCancelOrder(key, o.id);
+    orderWrites += 1;
+    if (r.ok) {
+      useGymShop.getState().putOrder(r.data);
+      continue;
+    }
+    // The gym no longer knows this phone (it left elsewhere, or was removed): nothing left to cancel.
+    if (lostKey(r.error)) return { kind: 'done' };
+    // Already gone from the gym's list: nothing held for it.
+    if (r.error.kind === 'GONE') continue;
+    if (r.error.kind === 'TOO_LATE') {
+      // Moved on meanwhile: collected or cancelled at the desk is fine; READY is the desk's to settle.
+      await refreshOrders();
+      const now = useGymShop.getState().orders.find((x) => x.id === o.id);
+      if (now?.status === 'ready') {
+        const t = leaveReadyNowText(o.orderNo, kind);
+        return { kind: 'stop', title: t.title, words: t.body };
+      }
+      continue;
+    }
+    void refreshOrders();
+    return { kind: 'retry', words: leaveCancelFailText(r.error, kind, open.length) };
+  }
+  if (open.length > 0) void refreshProducts();
+  return { kind: 'done' };
 }
 
 /**

@@ -7,23 +7,28 @@ import androidx.wear.phone.interactions.notifications.BridgingConfig
 import androidx.wear.phone.interactions.notifications.BridgingManager
 
 /**
- * Which of the phone's ForgeAI notifications Wear OS copies to this watch. While this app may post
- * notifications it shows the rest itself (its own countdown with Done / +15 s / Skip, its own buzz
- * and "Rest is over" with "Complete set"), so it asks Wear OS not to copy:
- *  - "rest-over": the phone's "Rest is over" (RestCard.BRIDGE_TAG_OVER, the only alert with it);
- *  - "rest-card": the phone's rest countdown (RestCard.BRIDGE_TAG_CARD). C5-3 (16 Oct 2026): it is
- *    now a DEFAULT notification on the phone (so a Pixel's lock screen shows it), and a copied
- *    DEFAULT notification buzzes the watch at every rest start.
+ * Which of the phone's ForgeAI notifications Wear OS copies to this watch ([excludedTags]):
+ *  - "rest-over": the phone's "Rest is over" (RestCard.BRIDGE_TAG_OVER, the only alert with it).
+ *    ALWAYS kept off: this app buzzes at the rest's end itself ([RestAlerts.restOver]), so a copy
+ *    would be a second buzz.
+ *  - "rest-card": the phone's rest countdown (RestCard.BRIDGE_TAG_CARD). Kept off only while this
+ *    app may post notifications: then it shows its own countdown with Done / +15 s / Skip, and the
+ *    copy (a DEFAULT notification on the phone since C5-3) would buzz at every rest start. With
+ *    them refused this app can show no countdown and no buttons, so the phone's copy comes through.
  *
- * C5 review (16 Oct 2026): ONLY while this app's notifications are allowed. With them refused this
- * app can show no countdown and no buttons, so the phone's copies are the watch's only countdown
- * and buttons and they come through. Then the copied "Rest is over" is the end-of-rest buzz and
- * this app does not buzz too ([shouldBuzz]: C5-6, one buzz, not two).
+ * U-W1 (UAT, 17 Oct 2026): with this app's notifications refused, "rest-over" used to come through
+ * too and this app stayed quiet (C5-6: one buzz, not two). But a Pixel Watch mutes a copied phone
+ * alert while the phone is in use (screen on in the gym, the normal case), so the member felt
+ * nothing at all at the rest's end. The one buzz is now always this app's own: the Vibrator needs
+ * no notification permission (only VIBRATE, in the manifest), it fires from the watch's own exact
+ * alarm, and nothing mutes it while the phone is in use. What the member loses with notifications
+ * refused: the "Rest is over" card on the watch (and its "Complete set"); the screen of this app
+ * still has "Complete set" and asks for notifications.
  */
 object Bridging {
   private const val TAG = "ForgeWear"
-  private const val TAG_OVER = "rest-over"
-  private const val TAG_CARD = "rest-card"
+  const val TAG_OVER = "rest-over"
+  const val TAG_CARD = "rest-card"
   private const val PREFS = "forgeai_watch_bridging"
 
   /** May this app post notifications (its own countdown, buttons and "Rest is over")? */
@@ -34,25 +39,21 @@ object Bridging {
     true
   }
 
-  /**
-   * C5-6: buzz at the rest's end ourselves? Yes while our notifications are allowed (the phone's
-   * copy is kept off the watch). With them refused the copied phone alert buzzes, so no.
-   */
-  fun shouldBuzz(ctx: Context): Boolean = canPost(ctx)
+  /** The phone tags Wear OS must not copy here: "rest-over" always, "rest-card" only while [canPost]. */
+  fun excludedTags(canPost: Boolean): List<String> = if (canPost) listOf(TAG_OVER, TAG_CARD) else listOf(TAG_OVER)
 
   /** Apply the config if it changed since the last time (setConfig binds to a system service). */
   fun sync(ctx: Context) {
     val app = ctx.applicationContext
-    val exclude = canPost(app)
-    val want = if (exclude) "exclude-over-card" else "all"
+    val tags = excludedTags(canPost(app))
+    // U-W1: "exclude:" names differ from the old "exclude-over-card" / "all", so a watch updated
+    // from an older version applies the new config once.
+    val want = "exclude:" + tags.joinToString(",")
     val p = app.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     if (p.getString("applied", null) == want) return
     try {
       val b = BridgingConfig.Builder(app, true)
-      if (exclude) {
-        b.addExcludedTag(TAG_OVER)
-        b.addExcludedTag(TAG_CARD)
-      }
+      for (t in tags) b.addExcludedTag(t)
       BridgingManager.fromContext(app).setConfig(b.build())
       p.edit().putString("applied", want).apply()
       Log.i(TAG, "bridging: $want")

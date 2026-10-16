@@ -4,6 +4,8 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.wearable.Wearable
@@ -25,6 +27,33 @@ object WatchActions {
   const val ACTION = "com.forgeai.wear.ACT"
   const val EXTRA_WHAT = "what"
   const val EXTRA_ROW = "row"
+  /** U-W3: the phone's answer when it could not use a Done / "Complete set" ([refused]). */
+  const val PATH_NACK_DONE = "/forge/nack/done"
+
+  private val main = Handler(Looper.getMainLooper())
+
+  /** A short note on the watch (from any thread: a listener service calls on a worker thread). */
+  private fun note(ctx: Context, text: String) {
+    val app = ctx.applicationContext
+    main.post {
+      try {
+        Toast.makeText(app, text, Toast.LENGTH_SHORT).show()
+      } catch (e: Exception) {
+        Log.w(TAG, "no toast", e)
+      }
+    }
+  }
+
+  /**
+   * U-W3 (17 Oct 2026): the phone received a Done / "Complete set" but could not use it (it could
+   * not read the row). The button comes back at once and the member is told, instead of the button
+   * hiding for 20 s as if the set were saved.
+   */
+  fun refused(ctx: Context) {
+    Log.w(TAG, "the phone could not log the set sent from here")
+    WatchState.sendFailed(ctx)
+    note(ctx, "Not saved. Tick it on your phone")
+  }
 
   /** "Complete set" / Done for [row] (the phone's JSON); the button hides until the phone answers. */
   fun complete(ctx: Context, row: String, onDone: () -> Unit = {}) {
@@ -47,11 +76,7 @@ object WatchActions {
     val fail: (String) -> Unit = { why ->
       Log.w(TAG, "$path not sent: $why")
       if (what == "done") WatchState.sendFailed(app)
-      try {
-        Toast.makeText(app, "Phone not reachable", Toast.LENGTH_SHORT).show()
-      } catch (e: Exception) {
-        Log.w(TAG, "no toast", e)
-      }
+      note(app, "Phone not reachable")
       onDone()
     }
     try {

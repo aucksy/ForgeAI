@@ -41,7 +41,9 @@ Usage: notif.py <check> <dump-file> [args]
                           Done, +15 s, Skip (Phase 6), the given title (and, if given, a text
                           "Next: ..." containing text-part), on the channel "rest-card-live"
                           (C5-3: no watch is paired with the emulator; "rest-card-v2" is only used
-                          while a watch WITHOUT the ForgeAI watch app is connected)
+                          while a watch WITHOUT the ForgeAI watch app is connected). U-W5: the
+                          phone's own log line "watch: plain" (adb logcat, tag ForgeWear) makes
+                          "rest-card-v2" the one wanted instead; no such line = "rest-card-live"
   over-open               "Rest is over" posted while the app was open, on "rest-over-open-sound"
                           (C5-4: it rings itself at notification volume), and the rest card gone
   over-is <channel> <category> <sound|silent>
@@ -73,6 +75,8 @@ CARD_CHANNEL = "rest-card-live"
 # connected ("rest-card-v2", also the "Open ForgeAI to ..." note's channel), or the deleted v0.26.1
 # one. A card on another channel still counts as "a card showing" (the card check then fails).
 CARD_CHANNELS = (CARD_CHANNEL, "rest-card-v2", "rest-card")
+# U-W5: the countdown's channel while a watch WITHOUT the ForgeAI watch app is connected.
+PLAIN_WATCH_CHANNEL = "rest-card-v2"
 # C5-4: "Rest is over" with the app on screen rings itself on this channel ("rest-over-open" is
 # now only the "Workout sounds" off, vibrate-only one).
 OVER_OPEN_CHANNEL = "rest-over-open-sound"
@@ -155,6 +159,22 @@ def created(block):
 def key_of(block):
     m = re.search(r"\bkey=(\S+?):?\s", header(block) + " ")
     return m.group(1).rstrip(":") if m else ""
+
+
+def phone_watch_mode():
+    """U-W5: which watch the phone app believes is connected, from its own log line ("watch: plain"
+    / "app" / "none", tag ForgeWear, WearSync.saveWatch, logged on every change): "plain" = a watch
+    WITHOUT the ForgeAI watch app, whose copy of a DEFAULT card would buzz, so the rest card goes on
+    the LOW "rest-card-v2". None when unknown (no adb, or no such line: the app then uses "none")."""
+    if not shutil.which("adb"):
+        return None
+    try:
+        out = subprocess.run(["adb", "logcat", "-d", "-s", "ForgeWear"], capture_output=True, text=True, timeout=60).stdout
+    except Exception as e:  # noqa: BLE001 - unknown is taken as "none", and printed
+        print(f"[qa] (the phone's watch mode unknown: {e})")
+        return None
+    modes = re.findall(r"\bwatch: (plain|app|none)\b", out)
+    return modes[-1] if modes else None
 
 
 def asleep():
@@ -321,7 +341,12 @@ def main():
         text_ok = not part or part in text_of(b)
         t = title(b)
         ch = channel_of(b)
-        on_v2 = ch == CARD_CHANNEL
+        # U-W5 (UAT, 17 Oct 2026): the LOW "rest-card-v2" is right only while the phone itself says
+        # a watch WITHOUT the ForgeAI app is connected (WearSync.plainWatch); then "rest-card-live"
+        # is wrong. Read from the phone's own log line, never assumed.
+        mode = phone_watch_mode()
+        want_ch = PLAIN_WATCH_CHANNEL if mode == "plain" else CARD_CHANNEL
+        on_v2 = ch == want_ch
         chrono = "android.showChronometer=Boolean (true)" in b
         down = "android.chronometerCountDown=Boolean (true)" in b
         # RT-05: the shade's own countdown view. Informational: a build without the layout posts
@@ -329,7 +354,8 @@ def main():
         view = "DecoratedCustomViewStyle" in b
         chan = ch or "?"
         if not on_v2:
-            chan += f" (NOT {CARD_CHANNEL})"
+            chan += f" (NOT {want_ch})"
+        chan += f" [phone's watch: {mode or 'unknown, taken as none'}]"
         want_text = f" (want '{part}' in it: {'yes' if text_ok else 'NO'})" if part else ""
         print(f"[qa] REST CARD: title='{t}' (want '{want}...') text='{text_of(b)}'{want_text} channel={chan} flags={hex(f)} swipe-away={'yes' if swipe else 'NO'} done={'yes' if done else 'NO'} +15={'yes' if plus else 'NO'} skip={'yes' if skip else 'NO'} buttons={acts} order-Done,+15 s,Skip={'yes' if order else 'NO'} chronometer={'yes' if chrono else 'no'} countdown={'yes' if down else 'no'} countdown-view={'yes' if view else 'no'}")
         return 0 if swipe and order and on_v2 and t.startswith(want) and text_ok else 1

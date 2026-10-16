@@ -3,6 +3,7 @@
  * Settings list shows this page only while the coach is switched on. Moved unchanged from the
  * old long Settings page: provider, model, keys, and voice.
  */
+import { Redirect } from 'expo-router';
 import { Text, View } from 'react-native';
 
 import { ANTHROPIC_MODELS, GROQ_MODELS, OPENAI_MODELS } from '@/ai/models';
@@ -27,7 +28,14 @@ const PROVIDER_OPTIONS = [
   { id: 'local', label: 'Local demo' },
 ] as const satisfies readonly ChipOption<AiProviderId>[];
 
-export default function CoachPage() {
+/** UAT U-M1: with the coach off, a direct link goes to Settings (as the coach tab goes to Workout). */
+export default function CoachSettingsRoute() {
+  // The same test the Settings list uses to show this page's row.
+  if (!(PARTS.has('aiCoach') || PARTS.has('voice'))) return <Redirect href="/settings" />;
+  return <CoachPage />;
+}
+
+function CoachPage() {
   const ai = useSettings((s) => s.ai);
   const setProvider = useSettings((s) => s.setProvider);
   const setModel = useSettings((s) => s.setModel);

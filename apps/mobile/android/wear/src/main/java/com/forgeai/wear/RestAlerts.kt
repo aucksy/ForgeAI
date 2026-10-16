@@ -29,6 +29,7 @@ import androidx.wear.ongoing.Status
  *    unlike a bridged phone alert) and a "Rest is over" card. Do Not Disturb / Bedtime silence the
  *    buzz (notification usage), as they keep the phone quiet, unless the member turned on "Ring
  *    through Do Not Disturb" in ForgeAI: then it is an alarm-usage buzz, which DND lets through.
+ *    U-W1: the buzz comes also when this app's notifications are refused (only the card is lost).
  */
 object RestAlerts {
   private const val TAG = "ForgeWear"
@@ -99,9 +100,12 @@ object RestAlerts {
   fun restOver(ctx: Context, r: WatchState.Rest, done: String = "") {
     disarm(ctx)
     cancel(ctx, LIVE_ID)
-    // C5-6: with this app's notifications refused the phone's "Rest is over" is copied here and
-    // buzzes; buzzing too would make two (Bridging).
-    if (Bridging.shouldBuzz(ctx)) buzz(ctx, r.ringThroughDnd) else Log.i(TAG, "rest over: the phone's copied alert buzzes")
+    // U-W1 (17 Oct 2026): ALWAYS this app's own buzz, also with its notifications refused (the
+    // Vibrator needs no notification permission). The phone's "Rest is over" is never copied here
+    // (Bridging, tag "rest-over"), so this is the one buzz; the copy was muted while the phone was
+    // in use, which left a member who refused notifications with no buzz at all.
+    buzz(ctx, r.ringThroughDnd)
+    if (!Bridging.canPost(ctx)) Log.i(TAG, "rest over: buzzed; notifications refused, so no card")
     postOver(ctx, r, done)
   }
 

@@ -23,7 +23,8 @@ import { isBranded } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES, getCatalog } from './catalog';
 import { JOIN_CODE_LENGTH, joinCodeFromTyped, listAgeText } from './gym';
-import { checkTypedCode, joinGym, leaveGym, refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
+import { checkTypedCode, joinGym, refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
+import { askAndLeaveGym } from './leaveFlow';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { ProductPicture } from './ProductPicture';
@@ -227,17 +228,19 @@ function GymShop({ link }: { link: GymLink }) {
   const look = useGymTheme((s) => s.look);
   const branded = look?.gymId === link.gymId && isBranded(look.brand);
 
+  // UAT U-G1: Leave says what is still open and cancels the open orders first (leaveFlow.ts).
+  const [leaving, setLeaving] = useState(false);
+  const leavingNow = useRef(false);
   const onLeave = async () => {
-    const ok = await askConfirm({
-      title: `Leave ${link.gymName}'s shop?`,
-      body: branded
-        ? "Your bag on this phone is emptied and the app goes back to ForgeAI's colours. Orders you placed stay with the gym. You can join again with the code."
-        : 'Your bag on this phone is emptied. Orders you placed stay with the gym. You can join again with the code.',
-      confirmLabel: 'Leave shop',
-      cancelLabel: 'Stay',
-      destructive: true,
-    });
-    if (ok) await leaveGym();
+    if (leavingNow.current) return;
+    leavingNow.current = true;
+    setLeaving(true);
+    try {
+      await askAndLeaveGym(branded);
+    } finally {
+      leavingNow.current = false;
+      setLeaving(false);
+    }
   };
 
   return (
@@ -300,11 +303,12 @@ function GymShop({ link }: { link: GymLink }) {
           <Text style={{ flexShrink: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{`Gym: ${link.gymName}`}</Text>
           <Pressable
             onPress={() => void onLeave()}
+            disabled={leaving}
             accessibilityRole="button"
             accessibilityLabel={`Leave ${link.gymName}'s shop`}
             style={({ pressed }) => ({ minHeight: 48, minWidth: 48, justifyContent: 'center', paddingHorizontal: space.sm, opacity: pressed ? 0.6 : 1 })}
           >
-            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>Leave</Text>
+            {leaving ? <ActivityIndicator color={color.inkSecondary} /> : <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>Leave</Text>}
           </Pressable>
         </View>
       </ScrollView>

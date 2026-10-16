@@ -6,6 +6,7 @@ name: Build & Release (APK + AAB)
 # signs it with exactly the phone APK's signer and lineage (scripts/ci/sign_rotated.sh; the Wear
 # Data Layer pairs only same-key apps), checks that (scripts/ci/same_signer.py) and attaches it as
 # forgeai-<tag>-wear.apk. The release checks and the update proof look only at the phone APK.
+# U-W4 (17 Oct 2026): the watch's JVM tests run first, and a failing one stops the release.
 # Manual runs (workflow_dispatch) do everything EXCEPT publish: a dry run on main.
 #
 # Signing (docs/RELEASE-SIGNING.md; audit DS-02 / QA-01): Gradle signs with the public React Native
@@ -122,6 +123,26 @@ jobs:
           echo "versionName $NAME, versionCode $CODE"
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
           echo "code=$CODE" >> "$GITHUB_OUTPUT"
+
+      # U-W4 (UAT, 17 Oct 2026): the watch app's JVM tests (and the phone's watch-link tests,
+      # :forge-rest) must pass BEFORE the watch APK is built and signed: a failing one stops the
+      # release here. Release variants, so the build below reuses what they compiled.
+      - name: Watch unit tests (watch app + phone watch link)
+        working-directory: apps/mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew -PwithWear=true :wear:testReleaseUnitTest :forge-rest:testReleaseUnitTest --no-daemon --stacktrace
+
+      - name: Upload watch unit-test reports (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wear-unit-tests
+          path: |
+            apps/mobile/android/wear/build/reports/tests
+            apps/mobile/modules/forge-rest/android/build/reports/tests
+          if-no-files-found: ignore
+          retention-days: 7
 
       # Always signed with the debug config here (build.gradle); the release key is applied below.
       # -PwithWear=true adds the watch app: assembleRelease builds its APK too. The AAB stays the

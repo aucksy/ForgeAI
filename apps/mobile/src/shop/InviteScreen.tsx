@@ -4,7 +4,8 @@
  * from the link's web page. It shows the gym first (gym_preview: its name and logo), then ONE button:
  *  - not in a gym  → "Join <gym>" (the name is filled in from the profile);
  *  - in that gym   → "You're already in <gym>" and a way to its shop;
- *  - in another    → "Switch to <gym>": the new gym is joined first, the old one let go after.
+ *  - in another    → "Switch to <gym>": the new gym is joined first, the old one let go after. Open
+ *                    orders at the old gym are asked about and cancelled before (UAT U-G1, leaveFlow.ts).
  * A code no gym has, or a link that is not a gym's, says so and points at the Shop tab's code box.
  * Joining is never automatic: a link anyone can forward must not move a member by itself.
  */
@@ -20,6 +21,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { afterJoinPath, codeFromInvite, gymInitial, inviteStanding, previewErrorText, type GymPreview } from './gym';
 import { joinFromInvite } from './gymActions';
+import { askAndSwitchGym } from './leaveFlow';
 import { apiPreview } from './gymApi';
 import { useGymShop } from './gymStore';
 import { takePendingInvite } from './pendingInvite';
@@ -81,8 +83,11 @@ export function InviteScreen() {
     if (busy || !code) return;
     setBusy(true);
     setError(null);
-    const words = await joinFromInvite(code, name);
+    // UAT U-G1: a switch leaves the old gym, so its open orders are asked about and cancelled first.
+    const gymName = look.state === 'found' ? look.gym.gymName : code;
+    const words = standing === 'other' ? await askAndSwitchGym(code, name, gymName) : await joinFromInvite(code, name);
     setBusy(false);
+    if (words === 'stayed') return;
     if (words) setError(words);
     // C6-16: opened from the check-in poster → straight back to the check-in, not the Shop.
     else router.replace(afterJoinPath(code, params.then));
@@ -127,7 +132,7 @@ export function InviteScreen() {
             <>
               <Text style={body()}>
                 {standing === 'other' && link
-                  ? `You're in ${link.gymName} now. Switching takes you out of ${link.gymName}'s shop on this phone. Orders you placed there stay with that gym.`
+                  ? `You're in ${link.gymName} now. Switching takes you out of ${link.gymName}'s shop on this phone.`
                   : 'Join to order from your gym in the app and pay at the desk. Your workouts stay on this phone.'}
               </Text>
               <View>

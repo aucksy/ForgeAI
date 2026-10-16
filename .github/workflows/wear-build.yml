@@ -7,10 +7,25 @@ name: Wear OS build (watch app)
 #  - a signing dry run: both are re-signed with key rotation exactly as release-apk.yml signs them
 #    (scripts/ci/sign_rotated.sh), with a throwaway key created here standing in for the private
 #    release key, and must again carry the same certificate.
-# Manual only (workflow_dispatch). The watch APK built here is debug-signed: it pairs only with a
-# debug-signed phone app. Releases (release-apk.yml) attach the properly signed one.
+# The watch APK built here is debug-signed: it pairs only with a debug-signed phone app. Releases
+# (release-apk.yml) attach the properly signed one.
+# U-W4 (UAT, 17 Oct 2026): it was manual only, so the watch's tests ran only when someone
+# remembered. Now also on every push to main that touches the watch app, the phone's watch link
+# (modules/forge-rest) or this file; still runnable by hand. It also runs the phone module's own
+# JVM tests (:forge-rest, WearWireTest: the watch's Done parsing and the Data Layer outbox).
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/mobile/android/wear/**'
+      - 'apps/mobile/modules/forge-rest/**'
+      - '.github/workflows/wear-build.yml'
+
+# A newer push replaces a run still going for the same branch (a hand-started run is never cut).
+concurrency:
+  group: wear-build-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 permissions:
   contents: read
@@ -48,7 +63,7 @@ jobs:
           echo "name=${VERSION}-wear.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
           echo "code=$CODE" >> "$GITHUB_OUTPUT"
 
-      - name: Build the watch app (release) and the phone app (debug), watch unit tests
+      - name: Build the watch app (release) and the phone app (debug), watch + watch-link unit tests
         working-directory: apps/mobile/android
         env:
           VERSION_NAME: ${{ steps.version.outputs.name }}
@@ -56,7 +71,7 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew -PwithWear=true \
-            :wear:testDebugUnitTest :wear:assembleRelease :app:assembleDebug \
+            :wear:testDebugUnitTest :forge-rest:testDebugUnitTest :wear:assembleRelease :app:assembleDebug \
             -PappVersionName="$VERSION_NAME" \
             -PappVersionCode="$VERSION_CODE" \
             --no-daemon --stacktrace
@@ -143,13 +158,16 @@ jobs:
         with:
           name: forgeai-wear
           path: dist/forgeai-wear-*.apk
-          retention-days: 14
+          # Build storage is shared by every private repo of the account: a push run keeps it 3 days.
+          retention-days: ${{ github.event_name == 'push' && 3 || 14 }}
 
       - name: Upload watch unit-test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: wear-unit-tests
-          path: apps/mobile/android/wear/build/reports/tests
+          path: |
+            apps/mobile/android/wear/build/reports/tests
+            apps/mobile/modules/forge-rest/android/build/reports/tests
           if-no-files-found: ignore
           retention-days: 7

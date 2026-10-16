@@ -17,6 +17,8 @@ import { getProfile } from '@/db/repos/userRepo';
 import { FEATURES, profileParts } from '@/lib/features';
 import { goBack } from '@/lib/goBack';
 import { navigateOnce } from '@/lib/guardedAction';
+import { settingsGymName } from '@/shop/gym';
+import { useGymShop } from '@/shop/gymStore';
 import { useSettings } from '@/store/settingsStore';
 import { color, space } from '@/theme/tokens';
 import { healthState, type HealthState } from '@/tracker/phone/healthConnect';
@@ -62,6 +64,8 @@ export default function SettingsScreen() {
   const [placed, setPlaced] = useState(0);
   const [name, setName] = useState<string | null>(null);
   const [gym, setGym] = useState<string | null>(null);
+  // UAT U-G2: a gym joined in the app is named over the one typed at onboarding.
+  const joinedGym = useGymShop((s) => s.link);
   // One page per tap, however fast the taps.
   const busy = useRef(false);
 
@@ -99,7 +103,7 @@ export default function SettingsScreen() {
     notifications: notificationsLine(remindersOn, fmtReminderTime(reminderMinutes)),
     health: healthLine(health),
     widgets: widgetsLine(placed),
-    gym,
+    gym: settingsGymName(joinedGym, gym),
     backup: null,
     export: null,
     data: null,
