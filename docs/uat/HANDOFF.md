@@ -22,7 +22,7 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - Whole runs green on 52e8f43: default 39020754722 (attempt 2), owner 39020756689; journeys 39020758474.
 - v0.47.0: version bump, PROGRESS entry, UAT-REPORT-v0.47.0.md at 4f3d5c3. The TAG could NOT be pushed
   from the cloud (GitHub answers 403 to any tag push from this session; branch pushes work).
-  release-apk.yml dry run (workflow_dispatch) started on main to prove the gate + build.
+  release-apk.yml dry run 39035517607 on 4f3d5c3: SUCCESS (phone gate, build, release checks; no publish).
 - Release review: no blockers; U-M7, U-M8 (S4) and U-G6 (S3) open for the next release.
 - Owner tools: docs/OWNER-INBOX.md (rule in CLAUDE.md), private Owner inbox page
   https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT, /inbox desktop mod (plugins/owner-inbox).
