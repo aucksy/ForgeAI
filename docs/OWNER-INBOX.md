@@ -20,7 +20,6 @@ Full research lives in the linked docs; this file is the short version.
 
 | # | Decision | My pick |
 |---|---|---|
-| 14 | Faster phone tests: split each run into 4 at once (free) or pay for bigger machines | Split (free) |
 | 13 | Machine-free times: A gym "best times to go" from check-ins first, B machine-level later | A first |
 | 12 | Gate QR: build Step 1 now (after check-in: "Start Push day", or "Add Push Pull Legs" for no routines)? | Yes, build Step 1 |
 | 11 | Gym icon after joining: A home-screen shortcut with the gym logo, or B icons built into the app | A |
@@ -76,6 +75,7 @@ Full research lives in the linked docs; this file is the short version.
 Also: the free plan runs up to 20 jobs at once. 2 phones × 4 pieces + journeys = 9, which fits, but
 other runs started at the same time will queue.
 **Work:** about a day (not half a day) with the side-by-side check. ₹0 running cost.
+**DECIDED (17 Oct):** split the runs. Research the best way so build/test quality stays top notch, and use it from the next runs.
 
 ## 13. "Which machines are free when": suggest a schedule with less waiting — 17 Oct 2026
 **You asked:** every member logs their workouts, so we know which machines are used on which day
