@@ -230,6 +230,23 @@ export class FutureSchemaError extends Error {
   }
 }
 
+/**
+ * UAT U-A13 (17 Oct 2026): the gym saved in this browser can't be read (a save cut off half-way, a
+ * hand-edited or damaged file). It used to be set aside silently and a new, empty gym opened, so the
+ * owner saw the first screen as if his gym were gone. Now the panel stops and says so, and the copy
+ * is kept (never deleted by the panel): `keptAs` is the browser key that holds it, null when even the
+ * copy could not be written (then the original is still in place, untouched).
+ */
+export class DamagedDataError extends Error {
+  constructor(
+    public readonly raw: string,
+    public readonly keptAs: string | null,
+  ) {
+    super('We couldn’t read the gym saved in this browser. Your data is kept.');
+    this.name = 'DamagedDataError';
+  }
+}
+
 export interface CrmData {
   /** Read the whole gym. Called once on load and after a destructive reset. */
   load(): Promise<CrmSnapshot>;

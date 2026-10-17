@@ -18,7 +18,10 @@ import {
   wait,
 } from './support.mjs';
 
-const SIGNED_OUT_WORDS = 'You were signed out of this gym. Ask your gym owner for a new sign-in code.';
+const SIGNED_OUT_WORDS =
+  'You were signed out of this gym. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in.';
+// U-A14: a removed person can't come back with a code, so the words say so.
+const REMOVED_WORDS = 'You no longer have access to this gym. Talk to the gym owner.';
 
 /** Staff & sign-in, opened again so the list is read fresh from the server. */
 async function reopenPeople(page) {
@@ -82,11 +85,15 @@ test('J13 owner signs a desk person out everywhere, lets them back in, then remo
   await expect(page.getByRole('main').getByRole('button', { name: 'Make sign-in code' })).toHaveCount(1);
   expect([...server.people.values()].map((p) => p.name)).toEqual(['Ramesh Sharma']);
 
-  // The desk phone is signed out on its next refresh, and her old code no longer works.
+  // The desk phone is sent out on its next refresh, told she no longer has access (U-A14), and her
+  // old code no longer works.
   await wait(desk, 16_000);
-  await expect(desk.getByRole('status').filter({ hasText: SIGNED_OUT_WORDS })).toBeVisible();
+  await expect(desk.getByRole('status').filter({ hasText: REMOVED_WORDS })).toBeVisible();
+  await expect(desk.getByText(SIGNED_OUT_WORDS)).toHaveCount(0);
   await typeSignIn(desk, DESK.phone, '482913');
-  await expect(desk.getByRole('alert')).toContainText('That code is wrong or too old. Check it, or ask your gym owner for a new code.');
+  await expect(desk.getByRole('alert')).toContainText(
+    'That code is wrong or too old. Ask the gym owner for a new one. If you are the owner, make one on a device where you are signed in.',
+  );
   await expect(desk.getByRole('heading', { name: 'Today', exact: true })).toHaveCount(0);
   await desk.context().close();
 });

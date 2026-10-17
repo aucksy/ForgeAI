@@ -16,7 +16,7 @@ import { STORAGE_KEY } from '../data/local';
 import { CLOUD_GYM_KEY, clearCloudGym, readCloudGym, writeCloudGym, type CloudGym } from '../shop/cloudGym';
 import * as authApi from './api';
 import { can, roleOf, type Action } from './permissions';
-import type { Role, SignedIn } from './signin';
+import { lostWords, SIGNED_OUT_WORDS, type Role, type SignedIn } from './signin';
 
 interface AuthContextValue {
   /** This device's cloud gym and key, or null for a browser-only gym. */
@@ -119,11 +119,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const lost = useCallback(() => {
+    const key = readCloudGym()?.ownerKey ?? null;
     clearCloudGym();
-    setNotice(
-      'You were signed out of this gym. Ask your gym owner for a new sign-in code.',
-    );
     setSession(null);
+    // Several polls can find the dead key at once: only the first one (with the key) sets the words.
+    if (!key) return;
+    setNotice(SIGNED_OUT_WORDS);
+    // UAT U-A14: a person the owner REMOVED gets their own words (they can't come back with a code).
+    void authApi.keyStatus(key).then((status) => {
+      if (status === 'removed') setNotice((now) => (now === SIGNED_OUT_WORDS ? lostWords(status) : now));
+    });
   }, []);
 
   const value = useMemo(() => ({ session, notice, adopt, signOut, lost }), [session, notice, adopt, signOut, lost]);

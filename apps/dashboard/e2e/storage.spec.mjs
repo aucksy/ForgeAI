@@ -3,7 +3,10 @@
 // data/local.ts promises: "A shared front-desk PC has the CRM open in two tabs ... Without a re-read,
 // tab B's save silently erases tab A's and both mint the same receipt number." So it re-reads before
 // every write. J23a drives that with two real tabs. J23b-d set the browser's storage by code (a
-// newer app's data, a cut-off save, a full browser) and check what the owner sees.
+// newer app's data, a cut-off save, a full browser) and check what the owner sees. J23c is the
+// owner's decision on U-A13: say so, keep the data, offer Try again / Download / Start a new gym.
+import { readFile } from 'node:fs/promises';
+
 import { expect, test } from '@playwright/test';
 
 import { addMember, addPlan, expectFitsPhone, freshGym, open, openApp, openMember, sell, sheet, tile } from './support.mjs';
@@ -79,8 +82,7 @@ test('J23b data saved by a newer app: "Couldn’t open your gym", Try again, and
   expect(kept.copies).toBeGreaterThan(0);
 });
 
-test('J23c a save cut off half-way (damaged data): the start-up failure screen, not an empty gym (U-A13)', async ({ page }) => {
-  test.fixme(!process.env.SHOW_FIXME, 'U-A13: damaged browser data opens the first screen as if the gym were new; the old data sits in a backup the owner cannot see or restore');
+test('J23c a save cut off half-way (damaged data): "We couldn’t read the gym", the data kept and downloadable, a new gym only when asked (U-A13)', async ({ page }) => {
   await freshGym(page);
   await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
   const cut = await page.evaluate((k) => {
@@ -91,8 +93,44 @@ test('J23c a save cut off half-way (damaged data): the start-up failure screen, 
   }, STORE);
   expect(cut.length).toBeGreaterThan(10);
   await page.reload();
-  await expect(page.getByText('Couldn’t open your gym')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
+
+  // Not an empty gym: the screen says what happened, and that the data is kept.
+  await expect(page.getByRole('alert')).toHaveText('We couldn’t read the gym saved in this browser. Your data is kept.');
+  await expect(page.getByRole('button', { name: 'Start demo' })).toHaveCount(0);
+  await expectFitsPhone(page, 'on the damaged-data screen');
+
+  // Download the saved data: exactly what was in the browser.
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download the saved data' }).tap();
+  const file = await download;
+  expect(file.suggestedFilename()).toBe('forgeai-saved-gym-2026-10-17.txt');
+  expect(await readFile(await file.path(), 'utf8')).toBe(cut);
+
+  // Try again: the same screen, and still one kept copy (not one more per try).
+  await page.getByRole('button', { name: 'Try again' }).tap();
+  await expect(page.getByRole('alert')).toHaveText('We couldn’t read the gym saved in this browser. Your data is kept.');
+  const copies = () => page.evaluate((k) => Object.keys(localStorage).filter((x) => x.startsWith(`${k}-backup-`)).length, STORE);
+  expect(await copies()).toBe(1);
+
+  // Start a new gym asks first, and says the old data can still be downloaded. Cancel changes nothing.
+  await page.getByRole('button', { name: 'Start a new gym' }).tap();
+  const ask = page.getByRole('group', { name: 'Start a new gym?' });
+  await expect(ask).toContainText('The data that couldn’t be read stays here. You can still download it from Settings → Your data.');
+  await ask.getByRole('button', { name: 'Cancel' }).tap();
+  await expect(page.getByRole('button', { name: 'Start a new gym' })).toBeVisible();
+  await page.getByRole('button', { name: 'Start a new gym' }).tap();
+  await page.getByRole('button', { name: 'Yes, start a new gym' }).tap();
+  await expect(page.getByRole('button', { name: 'Start demo' })).toBeVisible();
+  expect(await copies()).toBe(1);
+
+  // Later, in the new gym's Settings: the kept copy is still there to download.
+  await page.getByRole('button', { name: 'Start demo' }).tap();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
+  await open(page, 'Settings');
+  await expect(page.getByRole('main')).toContainText('A gym this browser couldn’t read is kept here.');
+  const again = page.waitForEvent('download');
+  await page.getByRole('main').getByRole('button', { name: 'Download the saved data' }).tap();
+  expect(await readFile(await (await again).path(), 'utf8')).toBe(cut);
 });
 
 test('J23d the browser is full: the save is refused with plain words, and nothing half-saved', async ({ page }) => {

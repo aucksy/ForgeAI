@@ -19,9 +19,11 @@ import {
   typeSignIn,
 } from './support.mjs';
 
-const WRONG = 'That code is wrong or too old. Check it, or ask your gym owner for a new code.';
+// U-A14: the words fit an owner on a new phone too.
+const WRONG =
+  'That code is wrong or too old. Ask the gym owner for a new one. If you are the owner, make one on a device where you are signed in.';
 
-test('J25 owner signs in on a new device with mobile + code; wrong codes get clear words', async ({ page, browser }) => {
+test('J25 owner signs in on a new device with mobile + code; wrong codes get clear words (U-A14)', async ({ page, browser }) => {
   const server = await openApp(page);
   await startOnlineGym(page);
   await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
@@ -53,10 +55,10 @@ test('J25 owner signs in on a new device with mobile + code; wrong codes get cle
     await expect(alert).toHaveText(`${WRONG} (${left})`);
   }
   await typeSignIn(laptop, OWNER.phone, '111111');
-  await expect(alert).toHaveText('That code is wrong. Too many tries. Wait 15 minutes, or ask your gym owner for a new code.');
+  await expect(alert).toHaveText('That code is wrong. Too many tries. Wait 15 minutes, or get a new code.');
   // Now even the right code waits.
   await typeSignIn(laptop, OWNER.phone, SIGN_IN_CODE);
-  await expect(alert).toHaveText('Too many tries for this number. Wait 15 minutes, or ask your gym owner for a new code.');
+  await expect(alert).toHaveText('Too many tries for this number. Wait 15 minutes, or get a new code.');
   await expect(laptop.getByRole('heading', { name: 'Today', exact: true })).toHaveCount(0);
 
   // A new code clears the tries: he is in, as the owner, with his gym's records.

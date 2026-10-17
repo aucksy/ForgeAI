@@ -12,6 +12,8 @@ import {
   SignInError,
   signedInFromRow,
   authErrorCode,
+  keyStatusFromRow,
+  type KeyStatus,
   type MadeCode,
   type Person,
   type PersonRow,
@@ -64,6 +66,19 @@ export async function signOut(key: string): Promise<void> {
     await call<null>('staff_sign_out', { p_key: key });
   } catch {
     // Offline: the key is forgotten here anyway; an owner can sign the device out from the list.
+  }
+}
+
+/**
+ * UAT U-A14: why this device's key stopped working, for the words on the sign-in screen (0022).
+ * Never throws: a server without 0022, or no internet, answers 'unknown' (the "signed out" words).
+ */
+export async function keyStatus(key: string): Promise<KeyStatus> {
+  try {
+    return keyStatusFromRow(await call<unknown>('staff_key_status', { p_key: key }));
+  } catch (e) {
+    console.warn('[ForgeErr] staff_key_status:', e);
+    return 'unknown';
   }
 }
 

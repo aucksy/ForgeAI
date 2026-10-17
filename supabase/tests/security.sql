@@ -26,7 +26,7 @@ declare
     'owner_gym','owner_make_signin_code','owner_messages','owner_orders','owner_people','owner_photo_ticket',
     'owner_products','owner_receipt_history','owner_remove_person','owner_rename_gym','owner_retire_key','owner_save_product',
     'owner_send_message','owner_set_brand','owner_set_order_status','owner_set_product_active',
-    'owner_set_product_photo','owner_sign_out_person','owner_withdraw_message','staff_me','staff_sign_in',
+    'owner_set_product_photo','owner_sign_out_person','owner_withdraw_message','staff_key_status','staff_me','staff_sign_in',
     'staff_sign_out'];
   auth_only_ok text[] := array['create_gym','delete_my_cloud_data','join_gym_by_code'];
   fails text := ''; checks int := 0; x text; n bigint; t record;

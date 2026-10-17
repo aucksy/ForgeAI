@@ -69,6 +69,9 @@ export class FakeServer {
     /** Old owner keys (a shop turned on before sign-in) that still open the gym. */
     this.ownerKeys = new Set();
     this.retiredKeys = new Set();
+    /** Keys that stopped working -> their person (for staff_key_status, 0022); removed people. */
+    this.deadKeys = new Map();
+    this.removedStaff = new Set();
     this.keySeq = 0;
     /** mobile -> wrong sign-in tries (cleared by a new code or a sign-in). */
     this.misses = new Map();
@@ -124,6 +127,13 @@ export class FakeServer {
     };
   }
 
+  /** A device's key stops working (kept, so staff_key_status can say why). */
+  endSession(key) {
+    const id = this.sessions.get(key);
+    if (id) this.deadKeys.set(key, id);
+    this.sessions.delete(key);
+  }
+
   /** The person a session key belongs to; BAD_KEY when it no longer opens the gym. */
   who(key) {
     const staffId = this.sessions.get(key);
@@ -149,7 +159,7 @@ export class FakeServer {
     this.calls.push(fn);
     this.log.push({ fn, args });
     // Every call but the doors in (and the demo) carries this device's key.
-    if (typeof args.p_key === 'string' && !['staff_sign_in', 'gym_create_online'].includes(fn)) this.checkKey(args.p_key);
+    if (typeof args.p_key === 'string' && !['staff_sign_in', 'gym_create_online', 'staff_key_status'].includes(fn)) this.checkKey(args.p_key);
     switch (fn) {
       case 'demo_start_gym': {
         // The demo, or "Turn on the shop" for a gym kept in this browser: a gym with a code, the
@@ -215,8 +225,14 @@ export class FakeServer {
         return this.signedIn(p);
       }
       case 'staff_sign_out':
-        this.sessions.delete(args.p_key);
+        this.endSession(args.p_key);
         return null;
+      case 'staff_key_status': {
+        if (this.sessions.has(args.p_key)) return 'live';
+        const id = this.deadKeys.get(args.p_key);
+        if (!id) return 'unknown';
+        return this.removedStaff.has(id) ? 'removed' : 'signed_out';
+      }
       case 'owner_people': {
         const me = this.ownerOnly(args.p_key);
         return [...this.people.values()].map((p) => ({
@@ -252,7 +268,7 @@ export class FakeServer {
       case 'owner_sign_out_person': {
         const me = this.ownerOnly(args.p_key);
         for (const [k, id] of [...this.sessions]) {
-          if (id === args.p_staff && k !== args.p_key) this.sessions.delete(k);
+          if (id === args.p_staff && k !== args.p_key) this.endSession(k);
         }
         if (!this.personById(args.p_staff)) throw new Refusal('GONE');
         void me;
@@ -264,7 +280,8 @@ export class FakeServer {
         const p = this.personById(args.p_staff);
         if (!p) throw new Refusal('GONE');
         this.people.delete(p.phone);
-        for (const [k, id] of [...this.sessions]) if (id === p.staffId) this.sessions.delete(k);
+        this.removedStaff.add(p.staffId);
+        for (const [k, id] of [...this.sessions]) if (id === p.staffId) this.endSession(k);
         return null;
       }
       case 'crm_pull': {

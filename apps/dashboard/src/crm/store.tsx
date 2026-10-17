@@ -29,7 +29,9 @@ import type {
   ImportTermsResult,
   UndoImportResult,
 } from './data/adapter';
+import { DamagedDataError } from './data/adapter';
 import { demoSnapshot } from './data/demo';
+import { downloadTextFile } from './ui/download';
 import { emptySnapshot, LocalCrmData } from './data/local';
 import { todayISO, type DateISO } from './logic/dates';
 import { color } from '../theme';
@@ -158,13 +160,17 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
   const [snapshot, setSnapshot] = useState<CrmSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // UAT U-A13: the gym saved in this browser can't be read (its own screen, below).
+  const [damaged, setDamaged] = useState<DamagedDataError | null>(null);
 
   const reload = useCallback(async () => {
     try {
       setSnapshot(await db.load());
       setError(null);
+      setDamaged(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not load your gym.');
+      setDamaged(e instanceof DamagedDataError ? e : null);
     } finally {
       setLoading(false);
     }
@@ -332,6 +338,23 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
   }, [snapshot, today, loading, error, memberViews, allMemberViews, viewFor, reload, mutate, db]);
 
   if (!value) {
+    if (!loading && damaged) {
+      return (
+        <DamagedData
+          error={damaged}
+          onRetry={() => void reload()}
+          onStartNew={
+            // Only with the copy safely kept: starting new writes over the damaged original.
+            damaged.keptAs && db.replaceAll
+              ? async () => {
+                  db.replaceAll?.(emptySnapshot(Date.now()));
+                  await reload();
+                }
+              : undefined
+          }
+        />
+      );
+    }
     return <>{loading ? <Booting /> : <BootFailed message={error} onRetry={() => void reload()} />}</>;
   }
 
@@ -355,6 +378,84 @@ function BootFailed({ message, onRetry }: { message: string | null; onRetry: () 
         <button type="button" onClick={onRetry} style={retryButton}>
           Try again
         </button>
+      </div>
+    </div>
+  );
+}
+
+/** The kept copy as a file, exactly as it was saved (it may be cut off; it is never "fixed"). */
+export function downloadSavedData(raw: string, today: DateISO = todayISO()): void {
+  downloadTextFile(`forgeai-saved-gym-${today}.txt`, raw, 'text/plain;charset=utf-8');
+}
+
+/**
+ * UAT U-A13 (17 Oct 2026, owner's decision): the gym saved in this browser can't be read. Say so,
+ * keep it, and offer three ways on: Try again, Download the saved data, Start a new gym (asks first,
+ * and says the old data can still be downloaded from Settings). Nothing is ever deleted here.
+ */
+function DamagedData({
+  error,
+  onRetry,
+  onStartNew,
+}: {
+  error: DamagedDataError;
+  onRetry: () => void;
+  onStartNew?: () => Promise<void>;
+}) {
+  const [asking, setAsking] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
+  const startNew = async () => {
+    setBusy(true);
+    setFailed(null);
+    try {
+      await onStartNew?.();
+    } catch (e) {
+      console.warn('[ForgeErr] start a new gym over unreadable data:', e);
+      setFailed(e instanceof Error ? e.message : 'That didn’t work. Please try again.');
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div style={centered}>
+      <div style={{ display: 'grid', gap: 12, justifyItems: 'center', maxWidth: 420 }}>
+        <strong role="alert" style={{ color: color.criticalText, fontSize: 17 }}>
+          We couldn’t read the gym saved in this browser. Your data is kept.
+        </strong>
+        {failed && <span role="alert">{failed}</span>}
+        {!asking ? (
+          <>
+            <button type="button" onClick={onRetry} style={retryButton}>
+              Try again
+            </button>
+            <button type="button" onClick={() => downloadSavedData(error.raw)} style={retryButton}>
+              Download the saved data
+            </button>
+            {onStartNew && (
+              <button type="button" onClick={() => setAsking(true)} style={retryButton}>
+                Start a new gym
+              </button>
+            )}
+          </>
+        ) : (
+          <div role="group" aria-label="Start a new gym?" style={{ display: 'grid', gap: 12, justifyItems: 'center' }}>
+            <span>
+              Start a new, empty gym in this browser? The data that couldn’t be read stays here. You can still download it from Settings → Your data.
+            </span>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void startNew()}
+              style={retryButton}
+            >
+              Yes, start a new gym
+            </button>
+            <button type="button" onClick={() => setAsking(false)} style={retryButton}>
+              Cancel
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -20,6 +20,8 @@ import { navigate } from '../router';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import { checkGymDetails } from '../../logic/gst';
 import { countOf } from '../../logic/plural';
+import { unreadableCopy } from '../../data/local';
+import { downloadSavedData } from '../../store';
 import {
   Button,
   Card,
@@ -94,6 +96,9 @@ export function SettingsScreen() {
       setSaving(false);
     }
   };
+
+  // Read once per visit to Settings: it only changes when a damaged gym is found at start-up.
+  const [kept] = useState(() => unreadableCopy());
 
   const counts = {
     members: snapshot.members.length,
@@ -176,6 +181,20 @@ export function SettingsScreen() {
             Import members from Excel
           </Button>
         </div>
+
+        {/* UAT U-A13: a gym this browser could not read is kept, and stays downloadable here. */}
+        {kept && (
+          <div style={{ marginTop: space.lg }}>
+            <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
+              A gym this browser couldn’t read is kept here.
+            </p>
+            <div style={{ marginTop: space.sm }}>
+              <Button variant="ghost" wrap onClick={() => downloadSavedData(kept.raw)}>
+                Download the saved data
+              </Button>
+            </div>
+          </div>
+        )}
 
         {!online && canErase && (
         <Row gap={space.sm}>

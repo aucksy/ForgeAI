@@ -60,6 +60,7 @@ import { nextImportReceiptNo, nextReceiptNo } from '../logic/receipts';
 import { cleanTrainer, isPtMembership, isPtPlan, PT_MAX_SESSIONS, ptDays, ptTotal } from '../logic/pt';
 import { planUndo } from '../logic/undoImport';
 import {
+  DamagedDataError,
   DuplicatePhoneError,
   EARLIEST_DATE,
   FutureSchemaError,
@@ -87,6 +88,34 @@ export interface KeyValueStore {
 }
 
 export const STORAGE_KEY = 'forgeai-crm-v1';
+
+/**
+ * UAT U-A13: the browser key of the newest kept copy of a gym that could not be read (the copy
+ * itself is under `${STORAGE_KEY}-backup-<time>`). Settings offers it for download.
+ */
+export const UNREADABLE_KEY = `${STORAGE_KEY}-unreadable`;
+
+/** The kept copy of the last gym this browser could not read, or null. Never throws. */
+export function unreadableCopy(store: KeyValueStore | null = safeLocalStorage()): { key: string; raw: string } | null {
+  if (!store) return null;
+  try {
+    const key = store.getItem(UNREADABLE_KEY);
+    const raw = key ? store.getItem(key) : null;
+    return key && raw !== null ? { key, raw } : null;
+  } catch (e) {
+    console.warn('[ForgeErr] reading the kept copy:', e);
+    return null;
+  }
+}
+
+function safeLocalStorage(): KeyValueStore | null {
+  try {
+    return typeof localStorage !== 'undefined' ? localStorage : null;
+  } catch (e) {
+    console.warn('[ForgeErr] browser storage blocked:', e);
+    return null;
+  }
+}
 
 /** Bump only for a shape change that needs a migration. */
 export const SCHEMA_VERSION = 1;
@@ -191,10 +220,10 @@ export class LocalCrmData implements CrmData {
         throw new FutureSchemaError(parsed.version, SCHEMA_VERSION);
       }
 
-      // Genuinely corrupt (hand-edited, truncated write). Nothing is recoverable
-      // programmatically, so keep a copy and start fresh rather than leaving the
-      // app permanently unopenable.
-      this.backUp(raw);
+      // Genuinely corrupt (hand-edited, truncated write). UAT U-A13: this used to keep a copy and
+      // start fresh WITHOUT A WORD, so the owner saw an empty gym. Now: keep a copy, and stop. The
+      // start-up screen says so and offers Try again, Download the saved data, Start a new gym.
+      throw new DamagedDataError(raw, this.keepUnreadable(raw));
     }
 
     const seeded = this.seed ? normalizeSnapshot(this.seed()) : emptySnapshot(this.now());
@@ -202,16 +231,41 @@ export class LocalCrmData implements CrmData {
     return seeded;
   }
 
-  /** Keep an unreadable blob under a timestamped key. Never overwrite a backup. */
-  private backUp(raw: string): void {
+  /** Keep an unreadable blob under a timestamped key. Never overwrite a backup. Returns the key, or null. */
+  private backUp(raw: string): string | null {
     const key = `${STORAGE_KEY}-backup-${this.now()}`;
     try {
       this.store.setItem(key, raw);
+      return key;
     } catch {
       // If even the backup can't be written we still must not destroy the
-      // original — callers of backUp either throw or are about to seed, and the
-      // original is only replaced by persist() below.
+      // original — callers of backUp throw, and the original is only replaced
+      // by persist(), which they never reach.
+      return null;
     }
+  }
+
+  /**
+   * U-A13: keep a gym that can't be read, once. "Try again" reads the same damaged data again; it
+   * finds its own copy (UNREADABLE_KEY points at it) instead of filling the browser with copies.
+   */
+  private keepUnreadable(raw: string): string | null {
+    try {
+      const prev = this.store.getItem(UNREADABLE_KEY);
+      if (prev && this.store.getItem(prev) === raw) return prev;
+    } catch (e) {
+      console.warn('[ForgeErr] reading the kept copy:', e);
+    }
+    const key = this.backUp(raw);
+    if (key) {
+      try {
+        this.store.setItem(UNREADABLE_KEY, key);
+      } catch (e) {
+        // The copy is kept; only the pointer Settings uses to offer it is missing.
+        console.warn('[ForgeErr] pointing at the kept copy:', e);
+      }
+    }
+    return key;
   }
 
   /**

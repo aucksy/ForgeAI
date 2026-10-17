@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
+  DamagedDataError,
   DuplicatePhoneError,
   FutureSchemaError,
   FutureVisitError,
@@ -14,6 +15,8 @@ import {
   LocalCrmData,
   memoryStore,
   STORAGE_KEY,
+  UNREADABLE_KEY,
+  unreadableCopy,
   type KeyValueStore,
 } from '../../src/crm/data/local';
 import { unpaidForMembership } from '../../src/crm/logic/membership';
@@ -97,12 +100,58 @@ describe('bootstrapping', () => {
     expect(store.getItem(STORAGE_KEY)).toBe(realData);
   });
 
-  it('keeps a copy of an unreadable blob before starting fresh', async () => {
+  it('U-A13: an unreadable blob is kept and REFUSED, never quietly replaced by an empty gym', async () => {
     store.setItem(STORAGE_KEY, '{not json');
-    const recovered = new LocalCrmData({ store, now: () => 555, seed: () => emptySnapshot(0, 'Recovered') });
-    const snap = await recovered.load();
-    expect(snap.gym.name).toBe('Recovered');
-    expect(store.getItem(`${STORAGE_KEY}-backup-555`)).toBe('{not json');
+    let t = 555;
+    const db2 = new LocalCrmData({ store, now: () => (t += 1), seed: () => emptySnapshot(0, 'Fresh') });
+    const err = await db2.load().catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(DamagedDataError);
+    expect((err as Error).message).toBe('We couldn’t read the gym saved in this browser. Your data is kept.');
+    const keptAs = (err as DamagedDataError).keptAs;
+    expect(keptAs).toBe(`${STORAGE_KEY}-backup-556`);
+    expect(store.getItem(keptAs!)).toBe('{not json');
+    expect((err as DamagedDataError).raw).toBe('{not json');
+    // The original is untouched, and Settings can find the copy.
+    expect(store.getItem(STORAGE_KEY)).toBe('{not json');
+    expect(store.getItem(UNREADABLE_KEY)).toBe(keptAs);
+    expect(unreadableCopy(store)).toEqual({ key: keptAs, raw: '{not json' });
+  });
+
+  it('U-A13: "Try again" reuses the one copy; "Start a new gym" keeps it', async () => {
+    const keys = new Map<string, string>();
+    const counting: KeyValueStore = {
+      getItem: (k) => keys.get(k) ?? null,
+      setItem: (k, v) => void keys.set(k, v),
+      removeItem: (k) => void keys.delete(k),
+    };
+    counting.setItem(STORAGE_KEY, '{"version":1,"snapshot":{"gym":');
+    let t = 0;
+    const db2 = new LocalCrmData({ store: counting, now: () => (t += 1) });
+    await expect(db2.load()).rejects.toBeInstanceOf(DamagedDataError);
+    await expect(db2.load()).rejects.toBeInstanceOf(DamagedDataError);
+    const copies = [...keys.keys()].filter((k) => k.startsWith(`${STORAGE_KEY}-backup-`));
+    expect(copies).toHaveLength(1);
+    // Start a new gym: the main key gets an empty gym; the copy stays, still offered.
+    db2.replaceAll(emptySnapshot(1));
+    expect((await db2.load()).members).toEqual([]);
+    expect(unreadableCopy(counting)?.raw).toBe('{"version":1,"snapshot":{"gym":');
+  });
+
+  it('U-A13: when even the copy cannot be written, the original stays where it is', async () => {
+    const full: KeyValueStore = {
+      ...store,
+      getItem: (k) => store.getItem(k),
+      setItem: (k, v) => {
+        if (k !== STORAGE_KEY) throw new Error('QuotaExceededError');
+        store.setItem(k, v);
+      },
+      removeItem: (k) => store.removeItem(k),
+    };
+    store.setItem(STORAGE_KEY, 'garbage');
+    const err = await new LocalCrmData({ store: full }).load().catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(DamagedDataError);
+    expect((err as DamagedDataError).keptAs).toBeNull();
+    expect(store.getItem(STORAGE_KEY)).toBe('garbage');
   });
 
   it('tolerates a snapshot missing whole collections', async () => {

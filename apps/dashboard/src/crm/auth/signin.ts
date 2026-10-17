@@ -248,6 +248,31 @@ export class SignInError extends Error {
   }
 }
 
+/**
+ * UAT U-A14 (17 Oct 2026, owner's words): a wrong or old code. Said to a desk person AND to an
+ * owner on a new phone, who has nobody to ask: an owner makes his own code where he is signed in.
+ */
+export const WRONG_CODE_WORDS =
+  'That code is wrong or too old. Ask the gym owner for a new one. If you are the owner, make one on a device where you are signed in.';
+
+/** U-A14: this device's person was removed from the gym (the server says so: staff_key_status, 0022). */
+export type KeyStatus = 'live' | 'signed_out' | 'removed' | 'unknown';
+
+export function keyStatusFromRow(raw: unknown): KeyStatus {
+  return raw === 'live' || raw === 'signed_out' || raw === 'removed' ? raw : 'unknown';
+}
+
+/** The words for a device whose key stopped working: removed, or (any other answer) signed out. PURE. */
+export function lostWords(status: KeyStatus): string {
+  return status === 'removed' ? REMOVED_WORDS : SIGNED_OUT_WORDS;
+}
+
+export const REMOVED_WORDS = 'You no longer have access to this gym. Talk to the gym owner.';
+
+/** This device was signed out (from another device, or its key stopped working). */
+export const SIGNED_OUT_WORDS =
+  'You were signed out of this gym. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in.';
+
 /** Plain words for a failed sign-in, people change or code. PURE. */
 export function authErrorWords(err: unknown): string {
   const code = err instanceof SignInError ? err.code : authErrorCode(err);
@@ -255,13 +280,13 @@ export function authErrorWords(err: unknown): string {
     case 'BAD_PHONE':
       return 'Type a 10-digit mobile number, like 98290 12345.';
     case 'NO_CODE':
-      return 'No code is waiting for this number. Ask your gym owner to make one in Settings → Staff & sign-in.';
+      return WRONG_CODE_WORDS;
     case 'WRONG_CODE': {
       const left = err instanceof SignInError ? err.triesLeft : null;
       // 0011: one answer for "wrong" and "none waiting", so nobody learns when a code exists.
-      const base = 'That code is wrong or too old. Check it, or ask your gym owner for a new code.';
-      if (left === 0)
-        return 'That code is wrong. Too many tries. Wait 15 minutes, or ask your gym owner for a new code.';
+      // UAT U-A14: the person may be the owner, so the words say what an owner does too.
+      const base = WRONG_CODE_WORDS;
+      if (left === 0) return 'That code is wrong. Too many tries. Wait 15 minutes, or get a new code.';
       return left === null
         ? base
         : left === 1
@@ -269,7 +294,7 @@ export function authErrorWords(err: unknown): string {
           : `${base} (${left} tries left)`;
     }
     case 'TOO_MANY_TRIES':
-      return 'Too many tries for this number. Wait 15 minutes, or ask your gym owner for a new code.';
+      return 'Too many tries for this number. Wait 15 minutes, or get a new code.';
     case 'PHONE_TAKEN':
       return 'This mobile number is already on the list.';
     case 'OWNER_ONLY':
