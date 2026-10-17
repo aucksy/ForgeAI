@@ -726,7 +726,7 @@ appId: com.forgeai.app
     below:
       text: "Join ForgeAI Test Gym\\?"
 - extendedWaitUntil:
-    visible: 'Shaker bottle 700 ml, .*'
+    visible: 'Whey protein 1 kg, .*'
     timeout: 45000
 - scrollUntilVisible:
     element: 'Shaker bottle 700 ml, .*'
@@ -846,7 +846,7 @@ appId: com.forgeai.app
     below:
       text: "Join ForgeAI Test Gym\\?"
 - extendedWaitUntil:
-    visible: 'Shaker bottle 700 ml, .*'
+    visible: 'Whey protein 1 kg, .*'
     timeout: 45000
 - scrollUntilVisible:
     element: 'Shaker bottle 700 ml, .*'
