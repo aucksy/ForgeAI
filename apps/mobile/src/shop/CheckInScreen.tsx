@@ -8,7 +8,8 @@
  *  - the first time  → asks once for the mobile number the gym has, then one tap "Check in";
  *  - no plan covers today → still checked in, with "Please see the desk" under it;
  *  - not on the gym's list, gym not online, too many tries, offline → plain words, never a dead end;
- *  - in no gym, or another → "Join <gym>" (the invite screen), then scan again.
+ *  - in no gym, or another → "Join this gym" (the invite screen; the gym's name is the heading,
+ *    audit C9-34), then scan again.
  * The words are all in checkIn.ts (tested); this file only lays them out.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -151,7 +152,7 @@ export function CheckInScreen() {
             {view.state === 'unlinked' ? `${UNLINKED_TEXT} ` : ''}
             {notMemberText(standing === 'same' ? 'fresh' : (standing ?? 'fresh'), look.gym.gymName, standing === 'other' && link ? link.gymName : null)}
           </Text>
-          <PrimaryButton label={`Join ${look.gym.gymName}`} onPress={toJoin} />
+          <PrimaryButton label="Join this gym" onPress={toJoin} />
           <GhostButton label="Not now" onPress={done} />
         </Card>
       );

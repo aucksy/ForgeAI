@@ -5,7 +5,7 @@ appId: com.forgeai.app
     visible: "You're already in .*"
     timeout: 30000
 - takeScreenshot: inv-03-already-in
-- tapOn: "^Open .*'s shop$"
+- tapOn: "^Open the shop$"
 - extendedWaitUntil:
     visible: "Your gym's shop · pay at the desk"
     timeout: 20000

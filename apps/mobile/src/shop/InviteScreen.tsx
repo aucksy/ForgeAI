@@ -2,10 +2,12 @@
  * Invite link (14 Oct 2026): the screen a gym's link opens — https://forgeai.aakashpahuja.in/j/RAMS01
  * from WhatsApp or the front-desk QR (Android opens the app straight here), or forgeai://j/RAMS01
  * from the link's web page. It shows the gym first (gym_preview: its name and logo), then ONE button:
- *  - not in a gym  → "Join <gym>" (the name is filled in from the profile);
- *  - in that gym   → "You're already in <gym>" and a way to its shop;
- *  - in another    → "Switch to <gym>": the new gym is joined first, the old one let go after. Open
+ *  - not in a gym  → "Join this gym" (the name is filled in from the profile);
+ *  - in that gym   → "You're already in <gym>" and "Open the shop";
+ *  - in another    → "Switch to this gym": the new gym is joined first, the old one let go after. Open
  *                    orders at the old gym are asked about and cancelled before (UAT U-G1, leaveFlow.ts).
+ * Audit C9-34: the gym's name is the heading (GymFace); the buttons never repeat it, so a long name
+ * ("RAM'S FITNESS CLUB IMPACT") never wraps a button at the owner's text size.
  * A code no gym has, or a link that is not a gym's, says so and points at the Shop tab's code box.
  * Joining is never automatic: a link anyone can forward must not move a member by itself.
  */
@@ -126,7 +128,7 @@ export function InviteScreen() {
           {standing === 'same' ? (
             <>
               <Text style={body()}>You're already in {look.gym.gymName}. Nothing to do.</Text>
-              <PrimaryButton label={`Open ${look.gym.gymName}'s shop`} onPress={toShop} />
+              <PrimaryButton label="Open the shop" onPress={toShop} />
             </>
           ) : (
             <>
@@ -156,7 +158,7 @@ export function InviteScreen() {
               </View>
               <InlineError message={error ?? null} />
               <PrimaryButton
-                label={standing === 'other' ? `Switch to ${look.gym.gymName}` : `Join ${look.gym.gymName}`}
+                label={standing === 'other' ? 'Switch to this gym' : 'Join this gym'}
                 onPress={() => void onJoin()}
                 loading={busy}
               />
