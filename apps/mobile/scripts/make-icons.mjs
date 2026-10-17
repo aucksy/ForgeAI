@@ -10,6 +10,13 @@
  *   mark-1024.png        the mark alone on transparent (adaptive foreground / splash).
  *   mark-white-1024.png  solid-white mark on transparent (Android monochrome/themed).
  *
+ * 17 Oct 2026 (owner: "I like the admin panel's icon more, make it the mobile app's"): the
+ * launcher icon is now the admin app's look, a dark mark on the ember gradient. Made from the
+ * masters above by scripts/icon-src (python, once): hero-1024.png re-composed, plus
+ *   bg-1024.png          the ember gradient alone (adaptive BACKGROUND layer).
+ *   mark-dark-1024.png   mark-1024's shape in #111015 (adaptive FOREGROUND layer).
+ * The splash keeps the ember mark on #07080C (a dark mark would vanish on the dark splash).
+ *
  * No sharp/ImageMagick on the build machine, so we resize by embedding each PNG
  * as a data-URI <image> inside an SVG and letting @resvg/resvg-js rasterise it at
  * the target size (round icons use an SVG circle clip-path).
@@ -35,10 +42,15 @@ const RES = join(ROOT, 'android', 'app', 'src', 'main', 'res');
 // are very little"): at 0.80 the hexagon was ~0.66 tall, its points touching the launcher's
 // circle. At 0.62 it is ~0.51 tall: a clear dark margin on every launcher shape.
 const FG_SAFE = 0.62;
+// The dark mark on the gradient: the hexagon at ~0.54 of the visible icon, as in the admin app's
+// icon (0.44 x 0.82 of the 108dp layer = ~0.36 = ~0.54 of the 72dp the launcher shows).
+const FG_DARK = 0.44;
 
 const heroB64 = (await readFile(join(SRC, 'hero-1024.png'))).toString('base64');
 const markB64 = (await readFile(join(SRC, 'mark-1024.png'))).toString('base64');
 const monoB64 = (await readFile(join(SRC, 'mark-white-1024.png'))).toString('base64');
+const darkB64 = (await readFile(join(SRC, 'mark-dark-1024.png'))).toString('base64');
+const bgB64 = (await readFile(join(SRC, 'bg-1024.png'))).toString('base64');
 
 /** Rasterise a master PNG centred in a square canvas (optionally circle-clipped). */
 function render(b64, canvas, contentFrac, { round = false } = {}) {
@@ -69,7 +81,8 @@ await mkdir(ASSETS, { recursive: true });
 console.log('Expo assets:');
 await copyFile(join(SRC, 'hero-1024.png'), join(ASSETS, 'icon.png')); // 1024, lossless
 console.log('  ./assets/images/icon.png  (copied hero)');
-await write(join(ASSETS, 'android-icon-foreground.png'), render(markB64, 1024, FG_SAFE));
+await write(join(ASSETS, 'android-icon-foreground.png'), render(darkB64, 1024, FG_DARK));
+await write(join(ASSETS, 'android-icon-background.png'), render(bgB64, 1024, 1));
 await write(join(ASSETS, 'android-icon-monochrome.png'), render(monoB64, 1024, FG_SAFE));
 await write(join(ASSETS, 'splash-icon.png'), render(markB64, 512, 0.9));
 await write(join(ASSETS, 'favicon.png'), render(heroB64, 48, 1));
@@ -92,7 +105,8 @@ for (const d of DENSITIES) {
   }
   await write(join(dir, 'ic_launcher.png'), render(heroB64, d.legacy, 1));
   await write(join(dir, 'ic_launcher_round.png'), render(heroB64, d.legacy, 1, { round: true }));
-  await write(join(dir, 'ic_launcher_foreground.png'), render(markB64, d.adaptive, FG_SAFE));
+  await write(join(dir, 'ic_launcher_foreground.png'), render(darkB64, d.adaptive, FG_DARK));
+  await write(join(dir, 'ic_launcher_background.png'), render(bgB64, d.adaptive, 1));
   await write(join(dir, 'ic_launcher_monochrome.png'), render(monoB64, d.adaptive, FG_SAFE));
 }
 

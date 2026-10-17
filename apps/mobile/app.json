@@ -11,7 +11,8 @@
     "android": {
       "package": "com.forgeai.app",
       "adaptiveIcon": {
-        "backgroundColor": "#07080C",
+        "backgroundColor": "#E8692A",
+        "backgroundImage": "./assets/images/android-icon-background.png",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
