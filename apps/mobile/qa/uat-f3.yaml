@@ -49,10 +49,11 @@ appId: com.forgeai.app
 # Still open with both sets: minimised, the Workout tab's card says so ("2 sets done · 1 exercise";
 # the workout page is too long to scroll back to its first rows on the owner phone, run 38993381789).
 - tapOn: "Minimise workout. It keeps running."
-# The Workout tab can come back scrolled down to the routines (run 39004822935): the card is
-# brought onto the screen first (sub-find), then checked.
+# The Workout tab can come back scrolled down to the routines (run 39004822935), even past the
+# "Routines" heading (runs 39041031088, 39058151408: only routine cards on screen): wait for any
+# part only the Workout tab has, then the card is brought onto the screen (sub-find) and checked.
 - extendedWaitUntil:
-    visible: "^Routines$|Workout in progress"
+    visible: "^Routines$|Workout in progress|Start routine .*|^New routine$"
     timeout: 20000
 - runFlow:
     file: sub-find.yaml
