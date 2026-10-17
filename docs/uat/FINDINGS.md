@@ -36,6 +36,7 @@ S3 = wrong or confusing but has a workaround; S4 = cosmetic.
 | U-G2 | S3 | Member | Settings -> Your gym shows the gym name TYPED at onboarding, not the gym actually joined; there is no Leave there. | gym inventory | FIXED 6219995 (joined gym named on the page and the Settings row; "Shop and leave" to the Shop tab) |
 | U-G3 | S1? | Server / privacy | Shop + message functions have no isolation test: member key reading another gym's shop/messages, cancelling another member's order. Owner order moves (ready/collected/cancel/undo) + restock have no server test. | gym inventory | SENT to money/access helper |
 | U-G4 | S3 | Tests | Phone test runner logs a part as SKIPPED (run still passes) when its server function is missing (branding, invite, check-in). | gym inventory | FIXED abfb6c6 (whole run = FAILED, partial run may skip) |
+| U-G5 | S2 | Member | Owner, 17 Oct: a member already using the app (500 workouts) could not find how to join a gym. Settings -> Your gym showed only the typed name; the code box was only on the Shop tab. | owner report | FIXED in code 17 Oct (cloud): Settings -> Your gym has "Join your gym" with the code box for a member in no gym; Next opens the invite screen (shows the gym, asks before joining). test/shop/settingsJoinGym.test.ts. No phone part yet |
 
 WP6 cross-role journeys (17 Oct 2026, runs 38971884985 and 38975863786 on fb94a13): all six journeys pass at every hand-off between the member app, the admin app and the live server. No new app bug, so no U-X entries.
 

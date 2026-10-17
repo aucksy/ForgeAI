@@ -831,3 +831,14 @@ export function inviteStanding(link: Pick<GymLink, 'joinCode'> | null, code: str
   if (!link) return 'fresh';
   return cleanJoinCode(link.joinCode) === code ? 'same' : 'other';
 }
+
+/**
+ * Owner report, 17 Oct 2026: Settings → Your gym had no way to join, so a member who already uses
+ * the app never found the code box (it sat on the Shop tab). The page's code box opens the invite
+ * screen for the code (it shows the gym, then "Join this gym"); a code that is not 6 letters or
+ * digits opens nothing. PURE.
+ */
+export function joinPathFromSettings(typed: string): string | null {
+  const code = joinCodeFromTyped(typed);
+  return code.length === JOIN_CODE_LENGTH ? `/j/${code}` : null;
+}

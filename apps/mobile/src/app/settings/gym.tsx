@@ -3,13 +3,15 @@
  *
  * UAT U-G2: a member who JOINED a gym in the app sees that gym here (it used to show the name typed
  * at onboarding), with "Shop and leave" to the Shop tab, where its shop and Leave are. A member in
- * no gym sees the card as before (the name they typed, or "Not added yet").
+ * no gym sees the card as before (the name they typed, or "Not added yet"), and (owner report,
+ * 17 Oct 2026) "Join your gym" with the gym's code under it.
  */
 import { useRouter } from 'expo-router';
 import { Text } from 'react-native';
 
 import { CloudCard } from '@/components/settings/CloudCard';
 import { GymCard } from '@/components/settings/GymCard';
+import { JoinGymCard } from '@/components/settings/JoinGymCard';
 import { SettingsPage } from '@/components/settings/SettingsPage';
 import { LinkRow } from '@/components/stats/parts';
 import { GlassCard } from '@/components/ui';
@@ -26,7 +28,14 @@ export default function GymPage() {
   const link = useGymShop((s) => s.link);
   return (
     <SettingsPage title="Your gym">
-      {!hydrated ? null : link ? <JoinedGymCard link={link} /> : <GymCard />}
+      {!hydrated ? null : link ? (
+        <JoinedGymCard link={link} />
+      ) : (
+        <>
+          <GymCard />
+          <JoinGymCard />
+        </>
+      )}
       {PARTS.has('gymSync') ? <CloudCard /> : null}
     </SettingsPage>
   );
