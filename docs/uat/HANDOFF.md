@@ -17,12 +17,14 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - U-M5 (90e0bb1): the "Couldn't save" banner no longer takes taps meant for the top bar.
 - WP7 (9a07be2): C1 step 7 checker fix (unquoted >=); U-C1 written in FINDINGS (S4, open).
 
-### In progress
-- WP4b: uf,uk on 90e0bb1, both phones (dispatched 05:1x). uf3 should pass now (U-M5). uk2 is
-  U-M6 (shortcut Resume + Minimise closed the app): the run keeps uk-logcat-*.txt and
-  uk-05b-after-minimise for the cause. Next: read them, fix the app, re-run uf,uk.
-- WP7: qa-conditions all on 9a07be2 (dispatched 05:2x). Expect C1 4 = expected fail U-C1 only.
-- WP14: E5 re-run 39002595271.
+### In progress (06:00 UTC)
+- WP4b: U-M5 fixed and proven (Minimise reaches the tab). U-M6 found + fixed in a241c03 (ghost
+  keyboard after the app was away hid the tab bar). Re-run uf,uk on a241c03, both phones
+  (dispatched ~06:00). Next: read them; then ub,ua,uv,ug,m once more on the same commit.
+- WP7: qa-conditions all on 9a07be2 (39004899634) running.
+- WP14: E5 third try on a1b2ea0 (part B scrolls to the 2nd exercise).
+- Owner asks done meanwhile (no app build): entry-machine plan P8 (research/R-entry-machines.md),
+  GGMS competitor doc (research/R-ggms-competitor.md), phone icon = admin icon (abe5745).
 - Then: whole runs on BOTH profiles + qa-journeys on one commit -> v0.47.0.
 
 ## Last update: 17 Oct 2026, PC session (before a usage limit)
