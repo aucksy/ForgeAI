@@ -20,6 +20,7 @@ Full research lives in the linked docs; this file is the short version.
 
 | # | Decision | My pick |
 |---|---|---|
+| 15 | Owner inbox in Claude: A private page with a chat picker (phone + web), B desktop mod (PC only) | A |
 | 13 | Machine-free times: A gym "best times to go" from check-ins first, B machine-level later | A first |
 | 12 | Gate QR: build Step 1 now (after check-in: "Start Push day", or "Add Push Pull Legs" for no routines)? | Yes, build Step 1 |
 | 11 | Gym icon after joining: A home-screen shortcut with the gym logo, or B icons built into the app | A |
@@ -34,7 +35,32 @@ Full research lives in the linked docs; this file is the short version.
 ## 15. An owner-inbox "mod" in Claude, one page per chat, on the right-hand side — 17 Oct 2026
 **You asked:** with the new Claude "mods" feature, can we build a mod for the owner inbox, where I
 pick the chat I'm working on and each chat has its own page, ideally shown on the right-hand side?
-**Status:** RESEARCHING (answer coming below)
+**Status:** RESEARCHED: WAITING FOR YOU
+**My answer:** "Mods" are real (Claude Code, early Oct 2026). A mod can open its own panel; in the
+desktop app it docks beside the chat when the window is wide enough. But (official docs):
+- **Mods draw only in the terminal, the desktop app's Code tab and VS Code.** In cloud sessions
+  (claude.ai/code on the web and the mobile app, where you are now) a mod's panel never draws, and
+  plugins a repo declares are not installed there. The mobile docs don't mention mods at all.
+- So a mod would only help on your PC, not in the chats you follow on your phone.
+- A mod can read the session id, so "one page per chat" is possible there. Whether that id matches
+  the chat in the app isn't documented.
+
+**What works everywhere today: a private page in your Claude account (an "Artifact").**
+- One page, "Owner inbox": the open-decisions table on top, then every entry. Each entry is tagged
+  with the chat it came from, and a chat picker at the top shows one chat's entries.
+- It opens in the app on your phone and on the web, and you can pin it to your sidebar. I update it
+  every time I update the inbox file. Private unless you share it.
+- In this app, a file I send with "show" opens in the side panel. So I can also pop the inbox open
+  on the right after each answer.
+
+**Options:**
+- **A (recommended):** the private "Owner inbox" page with a chat picker, kept up to date by me,
+  plus the file in the repo as the backup. Small job, works on phone + web now.
+- **B (later, PC only):** a desktop mod that shows the inbox in a side panel next to the chat.
+  More work, and invisible in cloud/mobile chats.
+**Needs you:** A, B, or both?
+**Sources:** code.claude.com docs: plugins/mods overview, interface, reference; cloud-environments;
+mobile. Press: The New Stack and XDA on the mods launch.
 
 ## 14. What would it cost on GitHub to make the phone test runs faster? — 17 Oct 2026
 **You asked:** the cost of making the cloud test runs faster.
