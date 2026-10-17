@@ -15,6 +15,13 @@ owner's gym fieldwork (`docs/overhaul/FIELDWORK.md`); app-quality work proceeds 
 The owner is **not a developer**. In chat, lead with what changed for them and why. All technical
 detail goes in `PROGRESS.md`, commit messages, and code comments — not chat.
 
+## ⭐ Write the owner's ideas down FIRST — `docs/OWNER-INBOX.md`
+Chat gets compacted and the owner reads answers much later (often on his PC). So whenever he sends
+an idea, suggestion, feature request or question: FIRST add it to `docs/OWNER-INBOX.md` (newest on
+top; "You asked" in short + Status) and commit + push, THEN work on it. When answered, write the
+answer there too (plain English, same as chat) and keep the "Waiting for your decision" table at
+the top current: add new decisions, and remove them once he decides. Commit + push after each update.
+
 ## ⭐ Research demand before building a feature
 Before building any NEW feature the owner asks for (not a bug fix): search the web first —
 Hevy/Strong and other competitor apps, their help pages and feature-request boards, Reddit.

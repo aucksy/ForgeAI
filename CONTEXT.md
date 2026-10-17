@@ -4,6 +4,7 @@ Premium Android **demo app for gym owners**: every member gets an AI coach that
 remembers everything (workouts, nutrition, PRs) so leaving the gym means leaving
 your coach behind. Full requirements: `docs/PRD.md`. Module APIs: `docs/CONTRACTS.md`.
 Live status: `PROGRESS.md`.
+**Owner's ideas, my answers and his open decisions: `docs/OWNER-INBOX.md`** (write every new idea there first).
 
 **Monorepo (npm workspaces).** The Expo member app lives in **`apps/mobile/`**, the **gym CRM**
 (owner web app) in **`apps/dashboard/`**, shared code in **`packages/`** (e.g. `packages/theme`).
