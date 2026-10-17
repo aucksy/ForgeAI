@@ -56,6 +56,26 @@ Full research lives in the linked docs; this file is the short version.
   release gate must learn to accept "all 4 pieces green", and parts that rely on earlier parts
   (e.g. J needs B–I) must stay in the same piece.
 **Needs you:** split the runs for free (my pick), pay for bigger machines, or leave it as is?
+**Follow-up — you asked: "any problems in splitting the runs?"** Yes, six, all manageable:
+1. **Many parts lean on the parts before them.** Parts A to I build up one workout history that J, R,
+   the gym parts and others use. That chain can't be cut, so the longest chain sets the floor. The
+   UAT parts (UH to UK) each start fresh, so they split off easily. Honest estimate: about
+   60–75 min, not 45, until I measure each part's time from a real run.
+2. **Each piece builds the app again** (a Gradle build takes many minutes). Fix: build once, then
+   hand the same app file to all pieces. This also guarantees every piece tests the exact same app.
+3. **The release gate gets more complex.** It must demand ALL pieces green, from the same run and
+   the same commit, on both phones. A mistake here could let an untested build ship. This needs its
+   own tests and a review.
+4. **Hidden links between parts we don't know about yet.** The first split runs may fail for reasons
+   that aren't app bugs (like today's J/J2 partial run). Plan: run split and whole side by side twice
+   and compare before the split one becomes the release gate.
+5. **More phones at once = more chances that one emulator has a hiccup.** Plus side: only that piece
+   is re-run, not 3 hours.
+6. **The evidence is spread over 4 downloads** (screenshots, logs, crash scan). The report must merge
+   them so the UAT report and coverage numbers stay right.
+Also: the free plan runs up to 20 jobs at once. 2 phones × 4 pieces + journeys = 9, which fits, but
+other runs started at the same time will queue.
+**Work:** about a day (not half a day) with the side-by-side check. ₹0 running cost.
 
 ## 13. "Which machines are free when": suggest a schedule with less waiting — 17 Oct 2026
 **You asked:** every member logs their workouts, so we know which machines are used on which day
