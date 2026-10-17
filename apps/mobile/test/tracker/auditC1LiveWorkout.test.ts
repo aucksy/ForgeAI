@@ -208,7 +208,7 @@ describe('C1-5: a record pop-up plays once', () => {
 describe('C1-6: an RPE on a set with nothing to fill says what is missing', () => {
   it('the RPE sheet shows the row note ("Add the weight first") when the tick could not happen', () => {
     const cardSrc = read('src/tracker/components/ExerciseLogCard.tsx');
-    expect(cardSrc).toMatch(/afterTick\(exercise\.key, rpeSet\.key\);\s*return;\s*\}[\s\S]{0,300}showRowNote\(exercise\.key, rpeSet\.key, missing\)/);
+    expect(cardSrc).toMatch(/afterTick\(exKey, setKey\);\s*return;\s*\}[\s\S]{0,300}showRowNote\(exKey, setKey, missing\)/);
   });
 });
 
@@ -297,7 +297,7 @@ describe('C1-14: the typo question follows every tick path', () => {
     afterTick('a', 'a1');
     expect(useWorkoutUi.getState().typoAsk).toMatchObject({ exKey: 'a', setKey: 'a1', kind: 'weight', text: "300 kg — that's 4× your best. Keep it?" });
     // The RPE sheet's tick and the rest card's Done both go through afterTick.
-    expect(read('src/tracker/components/ExerciseLogCard.tsx')).toMatch(/afterTick\(exercise\.key, rpeSet\.key\)/);
+    expect(read('src/tracker/components/ExerciseLogCard.tsx')).toMatch(/const setKey = rpeSet\.key;[\s\S]{0,1200}afterTick\(exKey, setKey\)/);
     expect(read('src/tracker/components/WorkoutPresenceHost.tsx')).toMatch(/afterTick,/);
   });
 });

@@ -50,6 +50,8 @@ import { cardSourceLine } from '../lib/previousSource';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import type { DragWrap } from './DragList';
+import { rpeTickDelayMs, shouldAutoTick } from '../lib/rpeTick';
+import { useReduceMotion } from '@/components/ui/useReduceMotion';
 import { RpeSheet } from './RpeSheet';
 import { SetTypeSheet } from './SetTypeSheet';
 import { SupersetSheet } from './SupersetSheet';
@@ -133,6 +135,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const [restSaveError, setRestSaveError] = useState<string | null>(null);
   const [typeFor, setTypeFor] = useState<string | null>(null);
   const [rpeFor, setRpeFor] = useState<string | null>(null);
+  const reduceMotion = useReduceMotion();
   const [timerFor, setTimerFor] = useState<string | null>(null);
   const [showWhy, setShowWhy] = useState(false);
   const [swapOptions, setSwapOptions] = useState<Alternative[]>([]);
@@ -758,15 +761,25 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           // nothing to fill keeps its RPE and stays unticked.
           if (v == null || rpeSet.done) return;
           const row = rows.find((r) => r.set.key === rpeSet.key);
-          const missing = toggleDone(exercise.key, rpeSet.key, row?.fill ?? null);
-          if (!missing) {
-            tap();
-            afterTick(exercise.key, rpeSet.key);
-            return;
-          }
-          // 16 Oct 2026 audit (C1-6): nothing to fill — the row says what is missing and puts the
-          // cursor there ("Add the weight first"), as a tap on ✓ does. It used to close silently.
-          useWorkoutUi.getState().showRowNote(exercise.key, rpeSet.key, missing);
+          const exKey = exercise.key;
+          const setKey = rpeSet.key;
+          const fill = row?.fill ?? null;
+          // 17 Oct 2026 (owner): the member must SEE the tick. It waits for the sheet to slide
+          // away, then the ✓ turns green with a pop, then the rest starts (lib/rpeTick.ts).
+          setTimeout(() => {
+            const now = useActiveWorkout.getState().exercises.find((e) => e.key === exKey)?.sets.find((s) => s.key === setKey);
+            if (!shouldAutoTick(now)) return;
+            const missing = toggleDone(exKey, setKey, fill);
+            if (!missing) {
+              tap();
+              useWorkoutUi.getState().popTick(exKey, setKey);
+              afterTick(exKey, setKey);
+              return;
+            }
+            // 16 Oct 2026 audit (C1-6): nothing to fill — the row says what is missing and puts the
+            // cursor there ("Add the weight first"), as a tap on ✓ does. It used to close silently.
+            useWorkoutUi.getState().showRowNote(exKey, setKey, missing);
+          }, rpeTickDelayMs(reduceMotion));
         }}
         onClose={() => setRpeFor(null)}
       />

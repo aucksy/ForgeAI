@@ -26,6 +26,8 @@ export interface WorkoutUiState {
   record: { id: number; exercise: string; label: string; lines?: { kind: string; title: string; value: string }[] } | null;
   scrollTo: { id: number; exKey: string } | null;
   rowNote: { id: number; exKey: string; setKey: string; missing: TickMissing } | null;
+  /** 17 Oct 2026 (owner): a set the RPE sheet just ticked — its ✓ pops so the member sees it. */
+  tickPop: { id: number; exKey: string; setKey: string } | null;
   lastTime: { id: number; exercise: string; text: string } | null;
   /**
    * C1-14 (16 Oct 2026 audit): the D7 typo question for one row ("300 kg — that's 4× your best.
@@ -40,6 +42,7 @@ export interface WorkoutUiState {
   clearRecord: (id: number) => void;
   requestScroll: (exKey: string) => void;
   showRowNote: (exKey: string, setKey: string, missing: TickMissing) => void;
+  popTick: (exKey: string, setKey: string) => void;
   showLastTime: (exercise: string, text: string) => void;
   clearLastTime: (id: number) => void;
   askTypo: (exKey: string, setKey: string, text: string, kind: 'weight' | 'reps') => void;
@@ -61,6 +64,7 @@ export const useWorkoutUi = create<WorkoutUiState>()((set, get) => ({
   record: null,
   scrollTo: null,
   rowNote: null,
+  tickPop: null,
   lastTime: null,
   typoAsk: null,
   entryFocus: null,
@@ -83,6 +87,7 @@ export const useWorkoutUi = create<WorkoutUiState>()((set, get) => ({
   },
   requestScroll: (exKey) => set({ scrollTo: { id: ++seq, exKey } }),
   showRowNote: (exKey, setKey, missing) => set({ rowNote: { id: ++seq, exKey, setKey, missing } }),
+  popTick: (exKey, setKey) => set({ tickPop: { id: ++seq, exKey, setKey } }),
   showLastTime: (exercise, text) => {
     if (get().record) return; // the record toast is on screen: it stays
     set({ lastTime: { id: ++seq, exercise, text } });

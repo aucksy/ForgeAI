@@ -42,6 +42,7 @@ import type { TextInput as TextInputType } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 
 import { Icon } from '@/components/ui';
+import { useReduceMotion } from '@/components/ui/useReduceMotion';
 import { tap, warn } from '@/lib/haptics';
 import { trimNum } from '@/lib/format';
 import { useUnits } from '@/lib/useUnits';
@@ -63,6 +64,7 @@ import {
   type LogType,
 } from '../engine/logTypes';
 import { rpeColor } from '../lib/rpe';
+import { TICK_POP } from '../lib/rpeTick';
 import type { EntryField } from '../services/setEntry';
 import type { RecordKind } from '../services/liveRecords';
 import { missingText, type TickMissing } from '../services/setTick';
@@ -301,6 +303,19 @@ export const SetRow = memo(function SetRow({
     focusMissing(rowNote.missing);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowNote?.id]);
+
+  // 17 Oct 2026 (owner): a set the RPE sheet ticked — the ✓ pops once so the member sees it done.
+  const tickPop = useWorkoutUi((s) => (s.tickPop && s.tickPop.exKey === exKey && s.tickPop.setKey === set.key ? s.tickPop : null));
+  const popScale = useRef(new Animated.Value(1)).current;
+  const reduceMotion = useReduceMotion();
+  useEffect(() => {
+    if (!tickPop || reduceMotion) return;
+    Animated.sequence([
+      Animated.timing(popScale, { toValue: TICK_POP.scale, duration: TICK_POP.upMs, useNativeDriver: true }),
+      Animated.timing(popScale, { toValue: 1, duration: TICK_POP.downMs, useNativeDriver: true }),
+    ]).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tickPop?.id]);
 
   const onTick = (): void => {
     const wasDone = set.done;
@@ -601,6 +616,7 @@ export const SetRow = memo(function SetRow({
           {/* ✓ complete — haptic on a real tap only. 15 Oct 2026 (owner, in the gym): it buzzed on
               finger-DOWN, so scrolling the list over the ✓ column buzzed again and again; a scroll
               cancels the press, so the buzz now comes with onPress. */}
+          <Animated.View style={{ transform: [{ scale: popScale }] }}>
           <Pressable
             onPress={() => {
               tap();
@@ -623,6 +639,7 @@ export const SetRow = memo(function SetRow({
           >
             <Icon name="check" size={20} color={done ? '#05140A' : color.inkMuted} />
           </Pressable>
+          </Animated.View>
         </Animated.View>
 
         {/* LW-13: what the tick is missing — one calm line under the row */}
