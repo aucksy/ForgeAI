@@ -154,15 +154,20 @@ jobs:
           "$APKSIGNER" rotate --out "$LINEAGE" --old-signer "${OLD[@]}" --new-signer "${NEW[@]}"
           # shellcheck source=scripts/ci/sign_rotated.sh
           source scripts/ci/sign_rotated.sh
-          sign_rotated "$A/qa-new.apk" "$A/qa-new-rotated.apk" > "$WORK/verify-new.txt"
-          sign_rotated "$A/qa-old.apk" "$A/qa-old-rotated.apk" > "$WORK/verify-old.txt"
+          echo "signing this commit's build"
+          sign_rotated "$A/qa-new.apk" "$A/qa-new-rotated.apk" | grep -E '^Verifies|Verified using|Number of signers' || true
+          echo "signing the v0.45.0 build"
+          sign_rotated "$A/qa-old.apk" "$A/qa-old-rotated.apk" | grep -E '^Verifies|Verified using|Number of signers' || true
+          ls -la "$A"
           # The rebuilt v0.45.0 must carry exactly the published v0.45.0's signers (v1/v2 and v3).
-          certs() { "$APKSIGNER" verify -v --print-certs "$1" | grep -E 'Signer #[0-9]+ certificate SHA-256' | sort -u; }
+          # Every "certificate SHA-256 digest" line apksigner prints (its signer labels differ between
+          # schemes and versions; run 38989502963 matched none with a narrower pattern).
+          certs() { { "$APKSIGNER" verify -v --print-certs "$1" 2>&1 || true; } | grep -oE 'certificate SHA-256 digest: [0-9a-f]+' | sort -u || true; }
           certs "$RUNNER_TEMP/forgeai-v0.45.0.apk" > "$WORK/published.txt"
           certs "$A/qa-old-rotated.apk" > "$WORK/rebuilt.txt"
           echo "published v0.45.0 signers:"; cat "$WORK/published.txt"
           echo "rebuilt v0.45.0 signers:"; cat "$WORK/rebuilt.txt"
-          if ! diff -q "$WORK/published.txt" "$WORK/rebuilt.txt" >/dev/null; then
+          if [ ! -s "$WORK/published.txt" ] || ! diff -q "$WORK/published.txt" "$WORK/rebuilt.txt" >/dev/null; then
             echo "::error::The rebuilt v0.45.0 is not signed like the published one."; exit 1
           fi
           echo "Same signers as the published v0.45.0."
