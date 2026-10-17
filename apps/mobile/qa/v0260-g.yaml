@@ -510,11 +510,13 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- a new routine asks where it goes
 # Audit Phase 4 (RP-08): "New routine" never joins the plan by itself — a folder picker first,
 # "My routines" (not followed) at the top, the followed plan last. Nothing is made here.
-- scrollUntilVisible:
-    element: "New routine"
-    direction: UP
-    centerElement: true
-    timeout: 15000
+# Runs 39041035175 and 39066056700 (owner phone): "New routine" sat near the page's top, where it
+# can't be centred, and the centred scroll up gave up with it on screen. sub-find: centred if it
+# can, else as it is, then it must be visible.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "New routine"
 - tapOn: "New routine"
 - extendedWaitUntil:
     visible: 'Where should the routine go\?'

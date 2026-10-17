@@ -63,10 +63,12 @@ appId: com.forgeai.app
 - eraseText
 - inputText: " dumbell curl"
 - hideKeyboard
-- scrollUntilVisible:
-    element: "Create “dumbell curl”"
-    centerElement: true
-    timeout: 20000
+# Run 39066056700 (owner phone): "Create" is the list's LAST row, so it can't always be centred and
+# the plain centred scroll gave up with it on screen. sub-find: centred if it can, else as it is.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Create “dumbell curl”"
 - assertVisible:
     text: "Create “dumbell curl”"
     below:
