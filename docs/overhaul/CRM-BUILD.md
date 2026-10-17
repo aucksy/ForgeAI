@@ -282,6 +282,7 @@ they are recorded against are ignored outright — an imported paper-register ro
 | P5 | Staff, roles & permissions + PT session ledger | planned |
 | P6 | Reports + GST invoices | planned |
 | P7 | Supabase adapter, RLS migrations, deploy; fold `member_summary` back in as app activity | planned |
+| P8 | Entry machines: Matrix COSEC face reader on a door / turnstile / flap barrier; device pushes to our server, expired members refused by the device itself; entries become visits. Research and 3 price packages: `research/R-entry-machines.md` | planned (client ask, 17 Oct 2026; NOT started) |
 
 ## Testing
 
