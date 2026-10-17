@@ -56,13 +56,16 @@ export async function askAndSwitchGym(code: string, name: string, toGym: string)
   const link = useGymShop.getState().link;
   if (link) {
     await freshOrdersSoon();
-    // The member changed meanwhile (left, or joined elsewhere): this switch is not theirs any more.
-    if (useGymShop.getState().link?.memberKey !== link.memberKey) return 'stayed';
+    // Joined elsewhere meanwhile: this switch is not theirs any more. (Left meanwhile: nothing is
+    // left to cancel, so the join below goes ahead.)
+    const nowLink = useGymShop.getState().link;
+    if (!nowLink) return joinFromInvite(code, name);
+    if (nowLink.memberKey !== link.memberKey) return 'stayed';
     const q = switchQuestion({ fromGym: link.gymName, toGym, orders: useGymShop.getState().orders });
     if (q) {
       if (!(await askConfirm({ ...q, destructive: true }))) return 'stayed';
       // U-G6: the new gym must answer BEFORE the old gym's orders are cancelled.
-      const reach = switchReachWords(await apiPreview(code), link.gymName);
+      const reach = switchReachWords(await apiPreview(code), link.gymName, toGym);
       if (reach) return reach;
       if (!(await settleOpenOrders('switch'))) return 'stayed';
     }

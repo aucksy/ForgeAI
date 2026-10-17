@@ -53,13 +53,17 @@ describe('U-M8: the RPE tick fills from the set as it is when the tick fires', (
 
 describe('U-G6: switching gyms asks the new gym first', () => {
   it('the new gym answered: go on', () => {
-    expect(switchReachWords({ ok: true, data: { gymName: 'RAMS', joinCode: 'RAMS01', brand: null } }, 'Old Gym')).toBeNull();
+    expect(switchReachWords({ ok: true, data: { gymName: 'RAMS', joinCode: 'RAMS01', brand: null } }, 'Old Gym', 'RAMS')).toBeNull();
   });
   it('no internet: says so, and that nothing was cancelled', () => {
-    const w = switchReachWords({ ok: false, error: { kind: 'offline' } as never }, 'Old Gym');
+    const w = switchReachWords({ ok: false, error: { kind: 'offline' } as never }, 'Old Gym', 'RAMS');
     expect(w).toMatch(/Nothing was cancelled: you are still in Old Gym\./);
   });
+  it('any other failure names the NEW gym, never "your gym"', () => {
+    const w = switchReachWords({ ok: false, error: { kind: 'other' } as never }, 'Old Gym', 'RAMS');
+    expect(w).toBe("Couldn't reach RAMS. Try again. Nothing was cancelled: you are still in Old Gym.");
+  });
   it('no gym has that code any more: says so', () => {
-    expect(switchReachWords({ ok: true, data: null }, 'Old Gym')).toMatch(/not in use any more.*Nothing was cancelled/);
+    expect(switchReachWords({ ok: true, data: null }, 'Old Gym', 'RAMS')).toMatch(/not in use any more.*Nothing was cancelled/);
   });
 });

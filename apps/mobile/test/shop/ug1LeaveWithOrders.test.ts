@@ -345,6 +345,8 @@ describe('U-G1: switching gyms from an invite link follows the same rule', () =>
     const r = await askAndSwitchGym('RAMS01', 'Asha', "RAM'S FITNESS CLUB IMPACT");
     expect(r).toBeNull();
     expect(asked).toHaveLength(0);
+    // U-G6: with nothing to cancel the new gym is not asked twice; the join is the check.
+    expect(server.calls).not.toContain('gym_preview');
     expect(useGymShop.getState().link?.gymName).toBe("RAM'S FITNESS CLUB IMPACT");
   });
 

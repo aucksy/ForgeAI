@@ -833,9 +833,18 @@ export function previewErrorText(err: GymError): string {
  * the new gym is asked first: null = it answered with its name, go on; else what to say (nothing
  * was cancelled, still in the old gym). PURE.
  */
-export function switchReachWords(r: { ok: true; data: GymPreview | null } | { ok: false; error: GymError }, fromGym: string): string | null {
+export function switchReachWords(
+  r: { ok: true; data: GymPreview | null } | { ok: false; error: GymError },
+  fromGym: string,
+  toGym: string,
+): string | null {
   if (r.ok && r.data) return null;
-  const why = r.ok ? 'That gym code is not in use any more. Ask the desk for the right one.' : previewErrorText(r.error);
+  // The gym that failed is the NEW one: name it ("your gym" would read as the old one).
+  const why = r.ok
+    ? 'That gym code is not in use any more. Ask the desk for the right one.'
+    : r.error.kind === 'offline' || r.error.kind === 'timeout'
+      ? previewErrorText(r.error)
+      : `Couldn't reach ${toGym}. Try again.`;
   return `${why} Nothing was cancelled: you are still in ${fromGym}.`;
 }
 
