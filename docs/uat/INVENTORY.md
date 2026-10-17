@@ -62,7 +62,7 @@ Sub-cases:
 | M-04 | Load demo when own workouts exist (the warning names them) | Welcome "Load demo data instead" | Warning checked, then cancelled (confirming it) | **maestro UD / uat-d.yaml** | SCREEN-NEW | H |
 | M-05 | Remove demo data; own workouts stay | Settings → Your data | One own workout kept; welcome says "Your 1 workout is still here" (failure "Nothing was changed") | **maestro UD / uat-d.yaml**; vitest demoRemovalKeeps, demoRemovalLeave | SCREEN-NEW | H |
 | M-06 | Hidden sales switch: hold 2 s → "Replace with demo" | Settings → Your data | Warning names own workouts, cancelled (confirm) | **maestro UD / uat-d.yaml** | SCREEN-NEW | H |
-| M-07 | Start-up failure: "Try again" / "Save my data file" | Boot error screen | Storage full, failed upgrade step, database won't open | vitest startup, saveDataFile, test/db/migrations | LOGIC | H |
+| M-07 | Start-up failure: "Try again" / "Save my data file" | Boot error screen | Storage full, failed upgrade step, database won't open | vitest startup, saveDataFile, test/db/migrations; phone part UB (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | M-08 | Reopen after the app was killed: lands in the app, never the welcome | Root layout | Every relaunch; after a reinstall (part M) | maestro M / backup-m-after.yaml (drives), most parts pass by; vitest onboardingStore | SCREEN | H |
 | M-09 | Stale or mistyped forgeai:// link, or an old /history link → calm "That link didn't work" | +not-found | — | vitest linkNotice, redesignR5 | LOGIC | L |
 | M-10 | Invite or poster link opened before setup is kept and opens after Start | _layout pending link | Kept 7 days | vitest c6S3 (C6-7), invite, checkIn | LOGIC | L |
@@ -121,7 +121,7 @@ Sub-cases:
 | ID | Task | Screen / route | Key states and variants | COVERAGE | LEVEL | RISK |
 |---|---|---|---|---|---|---|
 | M-49 | Pause / resume the workout timer | ElapsedClock sheet | Clock still for 70 s (paused across a kill) | maestro P2 / p2-pause-a.yaml + p2-pause-b.yaml (drive); vitest workoutPause, db/pauseWorkoutReal | SCREEN | M |
-| M-50 | Auto-pause after an hour idle, then "Count it" | active.tsx, FinishSheet | — | vitest idlePause, auditC1LiveWorkout C1-2 | LOGIC | H |
+| M-50 | Auto-pause after an hour idle, then "Count it" | active.tsx, FinishSheet | — | vitest idlePause, auditC1LiveWorkout C1-2; phone part UA (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | M-51 | Minimise; Resume from the Up next card or the mini bar | active.tsx, UpNextCard, WorkoutMiniBar | — | maestro B / phase1-b.yaml (drives); vitest miniBar | SCREEN | H |
 | M-52 | Resume after Android killed the app | hydrate | Killed process (an unreadable saved workout: logic) | maestro H2, H3C / v0371-h3c.yaml (drive); vitest db/packetBCards, hydrateFailure | SCREEN | H |
 | M-53 | Discard a live workout (with confirm) | active.tsx, workout tab | ("Keep logging" cancel) | maestro J, J3 / j3-end.yaml, P7 (drive); vitest db/pauseWorkoutReal | SCREEN | H |
@@ -131,9 +131,9 @@ Sub-cases:
 |---|---|---|---|---|---|---|
 | M-54 | Finish: sheet → save → summary | FinishSheet → session/finish | (double tap) | maestro B, C, E, F, G, I, L, P9, W4 (drive); vitest db/finishReal, finishFlow, db/writeQueue | SCREEN | H |
 | M-55 | Unticked rows at Finish: Save them / Leave them out | FinishSheet | Save them (Leave them out: optional step only) | maestro C (drives); vitest finishFlow LW-03 | SCREEN | H |
-| M-56 | Forgotten Finish: "Ended at …" / Now | FinishSheet | — | vitest finishFlow LW-07, phase2ReviewFixes, db/finishReal | LOGIC | H |
+| M-56 | Forgotten Finish: "Ended at …" / Now | FinishSheet | — | vitest finishFlow LW-07, phase2ReviewFixes, db/finishReal; phone part UA (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | M-57 | Name and note at Finish | FinishSheet | Default names only seen (typing a name or note) | vitest finishName, finishFlow LW-10 | LOGIC | M |
-| M-58 | Finish fails or storage is full: the workout stays open, retry works | active.tsx | — | vitest db/writeQueue | LOGIC | H |
+| M-58 | Finish fails or storage is full: the workout stays open, retry works | active.tsx | — | vitest db/writeQueue; phone part UF (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | M-59 | "Update routine?" → Update routine (and Keep original) | session/finish | Update: kept after a restart (new); Keep original (B) | **maestro UR / uat-r.yaml step 4 (drives Update)**; B (Keep); vitest workoutPhase1, db/routinesHevyReal | SCREEN-NEW | H |
 | M-60 | Summary: records, sets per muscle, milestone, easy-week note | session/finish | — | maestro C, E, F, G (drive); vitest coachNote, phase9Goals | SCREEN | M |
 | M-61 | Share the workout as a picture | ShareSheet | Reaches Android's share menu | maestro E / phase3-e.yaml, F (drive); vitest phase3Share, shareFrame, phase3PhoneReview | SCREEN | M |
@@ -146,7 +146,7 @@ Sub-cases:
 | M-64 | Open a past workout's page (feed, calendar search) | session/[id] | (load error, "Workout not found") | maestro N / audit3-n.yaml, R / redesign-r.yaml, W4 (drive) | SCREEN | M |
 | M-65 | Rename a past workout | session/[id] NameSheet | — | maestro W4 / real-workout-w4.yaml (drives) | SCREEN | L |
 | M-66 | Edit a past workout and Save changes | active.tsx (edit mode) | Kept after a restart; Discard (N) (date/time/length changes, "Can't edit this one") | **maestro UH / uat-h.yaml step 2 (drives)**; vitest db/editPast, sessionEdit, editDraft, sessionTiming | SCREEN-NEW | H |
-| M-67 | Edit while a live workout is open ("Discard it and edit this one") | useWorkoutActions | — | vitest homeStart | LOGIC | H |
+| M-67 | Edit while a live workout is open ("Discard it and edit this one") | useWorkoutActions | — | vitest homeStart; phone part UV (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | M-68 | Log a past workout (Calendar) and Save it | LogPastSheet + editor | Empty Sunday last month | **maestro UH / uat-h.yaml step 1 (drives)**; vitest db/editPast, db/phase3ReviewFixes | SCREEN-NEW | H |
 | M-69 | Delete a past workout | session/[id] menu | Calendar and Profile counts drop | **maestro UH / uat-h.yaml step 3 (drives)**; vitest db/realRepos, db/queuedWrites, db/workoutPhotosReal | SCREEN-NEW | H |
 | M-70 | Repeat a workout | session/[id] menu | Row only seen | vitest db/auditC4ImportReal C4-4 | LOGIC | M |
@@ -187,7 +187,7 @@ Sub-cases:
 | M-93 | Exercise page: Summary / History / How to; a chart point stays after a tap | exercise/[id] | (Easier/Harder links) | maestro C, E, F, I, R, W4 (drive); vitest redesignR5, phase4Exercises | SCREEN | M |
 | M-94 | Create a custom exercise | library/new | (edit, own photo/video, duplicate name) | maestro C (drives); vitest phase4Exercises, exerciseMerge | SCREEN | M |
 | M-95 | Hide an exercise; show it again from Hidden | exercise/[id], library/hidden | — | vitest exerciseMerge EX-02 | LOGIC | L |
-| M-96 | Merge an exercise into another (moves its history) | exercise/[id] | — | vitest exerciseMerge EX-02, phase8Records | LOGIC | H |
+| M-96 | Merge an exercise into another (moves its history) | exercise/[id] | — | vitest exerciseMerge EX-02, phase8Records; phone part UG (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | M-97 | Start records fresh / count all records again | exercise/[id] | — | maestro P9 (drives); vitest recordStart | SCREEN | M |
 | M-98 | Records page ("See all N records") | records.tsx | — | maestro D / phase3-d.yaml (drives); vitest phase3Numbers | SCREEN | L |
 
@@ -209,7 +209,7 @@ Sub-cases:
 | M-107 | Tap the notification to get back into the workout | shade | — | maestro B0 / phase1-b0.yaml, W3, W4 (drive); vitest oneNotification | SCREEN | H |
 | M-108 | One workout notification at a time | shade | — | maestro A, H, H3, W via notif.py; vitest oneNotification, notifAudit | SCREEN | M |
 | M-109 | Place the Today widget; its count line updates | settings/widgets, home screen | ("Add This week") | maestro I / v0270-i.yaml (drives) | SCREEN | L |
-| M-110 | Start or Resume a workout from the widget (keyed tap) and app-icon shortcuts | widget, workout/start, launcher | Keyless links start nothing (link part drives that). The real keyed tap, "Start X?" and shortcuts are never tapped | maestro link / phase6-link.yaml (keyless only), P9 (shortcuts exist); vitest phase6PhoneA, widgetNative, phase9Shortcuts | LOGIC | H |
+| M-110 | Start or Resume a workout from the widget (keyed tap) and app-icon shortcuts | widget, workout/start, launcher | Keyless links start nothing (link part drives that). The real keyed tap, "Start X?" and shortcuts are never tapped | maestro link / phase6-link.yaml (keyless only), P9 (shortcuts exist); vitest phase6PhoneA, widgetNative, phase9Shortcuts; phone part UK (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | M-111 | "This week" widget | widget | — | vitest phoneFeatures | LOGIC | L |
 
 ### 1.13 Profile, history, statistics
@@ -272,7 +272,7 @@ Sub-cases:
 | ID | Task | Screen / route | Key states and variants | COVERAGE | LEVEL | RISK |
 |---|---|---|---|---|---|---|
 | M-156 | Restore after uninstall and reinstall (Android backup) | Settings → Backup | Workout count only, maybe a forced restore (units, profile, measurements, routines back) | maestro M / backup-m-record.yaml + backup-m-after.yaml; vitest backupSafety, L01-backup-rules | SCREEN | H |
-| M-157 | "Include photos in my backup"; photos back after a reinstall | Settings → Backup | Only "Off" is checked | vitest auditPhase5Body, auditPhase5Fixes | LOGIC | H |
+| M-157 | "Include photos in my backup"; photos back after a reinstall | Settings → Backup | Only "Off" is checked | vitest auditPhase5Body, auditPhase5Fixes; phone part M (photos check) (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | M-158 | Erase all data, solo member | Settings → Your data | Names no gym; reopen still on the welcome (something left behind → "Start over anyway") | **maestro UE / uat-e.yaml step 1 (drives)**; vitest dataActions, eraseLeftBehind | SCREEN-NEW | H |
 | M-159 | Erase all data as a gym member (leaves the gym) | Settings → Your data | Names the gym; the Shop is the join card after | **maestro UE / uat-e.yaml step 3 (drives, live FORGE1)**; vitest shopErase, c6LeavePending | SCREEN-NEW | H |
 
@@ -304,7 +304,7 @@ Sub-cases:
 | M-178 | Gym messages: bell count, inbox, seen; a withdrawn message disappears | shop/inbox.tsx | 1 new; taken back → empty (many unread, offline) | maestro INV-e / invite-e.yaml; **XJ3 / xj-3-bell.yaml, xj-3-gone.yaml**; vitest inbox; **sql uat_shop_orders** | SCREEN | M |
 | M-179 | Leave the gym (online) | Shop footer "Leave" | Branded and plain; bag and inbox cleared | maestro R, BR, INV-c/e/f3, **XJ5 / xj-5-leave.yaml**; vitest gymStore, c6LeavePending; sql 0015 | SCREEN | M |
 | M-180 | Leave the gym while offline (kept, sent at next start) | Shop | — | vitest c6LeavePending | LOGIC | H |
-| M-181 | Leave or switch gym with an open order | Shop | The order stays "Ordered" with stock held; after rejoin it is out of reach | NONE (XJ5 leaves only once every order is final) | NONE | H |
+| M-181 | Leave or switch gym with an open order | Shop | The order stays "Ordered" with stock held; after rejoin it is out of reach | NONE (XJ5 leaves only once every order is final); phone part R (leave with an open order) (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | M-182 | QR check-in first time: number asked once, wrong number, then in | c/[code].tsx | Wrong number → "Change my number"; roster member | maestro INV-f2 / checkin-f2.yaml, **XJ4 / xj-4-checkin.yaml, XJ5 / xj-5-checkin.yaml**; sql 0015_qr_checkin; vitest checkIn | SCREEN | H |
 | M-183 | QR check-in again the same day → "already checked in" | c/[code] | — | maestro INV-f3 / checkin-f3.yaml; sql 0015 | SCREEN | M |
 | M-184 | Check-in with an active plan (no "see the desk" line) | c/[code] | Plan sold in the admin app | **XJ4 / xj-4-checkin.yaml**; sql 0015 sec4 | SCREEN-NEW | H |
@@ -548,7 +548,7 @@ The run makes two fresh online gyms through the server. It is manual only, about
 | X-08 | Owner creates the gym on the Welcome screen → shares the invite link → member joins | Welcome → /settings/invite → j/[code] | Member half: maestro INV-a/e/f1. Owner half: e2e J11 (pretend server), vitest invite. Never joined up | LOGIC | M |
 | X-09 | Owner prints the QR poster → member scans it with the camera | /attendance/qr → c/[code] | Poster: vitest checkin. The scan is imitated by `am start` | LOGIC | M |
 | X-10 | Member leaves → their numbers are cleared → owner's "joined in the app" list updates | member_leave → owner_app_members | sql 0015 sec16, 0020 2g; the owner's list: crawl with an empty mock | LOGIC | H |
-| X-11 | Member leaves or switches gym with an open order → order stuck, stock held | Shop → Leave | NONE | NONE | H |
+| X-11 | Member leaves or switches gym with an open order → order stuck, stock held | Shop → Leave | NONE; phone part R (leave with an open order) (whole runs 17 Oct, both phones) | SCREEN-NEW | H |
 | X-12 | Owner removes or signs out a desk person → that person's device stops working | /settings/people → any desk screen | **covered (new, WP5b): e2e J13** (owner phone + desk phone, pretend server); was: **sql uat_access_matrix**; the screens: none | SCREEN-NEW | H |
 | X-13 | Desk sells a plan → the record names the desk person → owner sees who took it | Sell sheet → Money | **covered (new, WP5b): e2e J15** (the owner reads "Taken by" and filters by it); was: **e2e J11** (server record), sql 0019; the owner reading it: vitest auditC7 C7-12 | SCREEN-NEW | M |
 | X-14 | One gym's data never reaches another (members, owners, desk of gym B) | all RPCs and tables | **sql uat_access_matrix (412 cells, 64 gym-B cells all deny)**; security.sql | LOGIC-NEW | H |
