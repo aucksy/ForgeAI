@@ -119,3 +119,8 @@ table {
 @page {
   margin: 14mm;
 }
+
+/* UAT U-A15: the page header's buttons on a phone share each line they wrap onto (kit.tsx PageHeader). */
+.page-actions > * {
+  flex: 1 1 auto;
+}

@@ -137,7 +137,11 @@ export function PageHeader({
         (compact ? (
           // On a phone the buttons share the full row. Left alone they
           // hung under the title at their own widths, anchored to nothing.
-          <div style={{ display: 'grid', gridAutoFlow: 'column', gridAutoColumns: 'auto', gap: space.sm, width: '100%' }}>
+          // UAT U-A15 (17 Oct 2026): a row, not a one-row grid, so buttons that do not fit (Edit,
+          // Collect payment, Sell membership in a wider font: before the web font loads, or
+          // offline) go onto a second line instead of pushing the page wider than the phone.
+          // index.css `.page-actions > *` lets each one grow to share its line.
+          <div className="page-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, width: '100%' }}>
             {actions}
           </div>
         ) : (

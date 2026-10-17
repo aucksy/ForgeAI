@@ -132,6 +132,8 @@ jobs:
           path: apps/dashboard/e2e/.results
           retention-days: 3
           if-no-files-found: ignore
+          # The folder's name starts with a dot: without this nothing was ever uploaded (17 Oct 2026).
+          include-hidden-files: true
 
   # Audit toolkit pick 6 (15 Oct 2026): every migration applied, in order, to a throw-away local
   # Supabase. Then the security check (RLS on, fixed search paths, the exact list of functions

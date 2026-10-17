@@ -98,7 +98,9 @@ function DemoGymCard({ browserOnly = false }: { browserOnly?: boolean }) {
           : 'Its members are made up, and they are kept only in this browser. To set up your real gym, tap “Start over with a new demo gym” at the bottom of this page. Then tap “New here? Set up your gym”.'}
       </p>
       <div style={{ marginTop: space.md }}>
-        <Button variant="quiet" onClick={() => setSigningIn(true)}>
+        {/* UAT U-A15: `wrap`, as U-A9. In a wider font (before the web font loads, or offline) this
+            one line was wider than a 390px phone and the whole Settings page scrolled sideways. */}
+        <Button variant="quiet" wrap onClick={() => setSigningIn(true)}>
           Your gym is already online? Sign in instead
         </Button>
       </div>
@@ -209,7 +211,9 @@ function PutOnlineCard() {
         </Button>
       </div>
       <div style={{ marginTop: space.md }}>
-        <Button variant="quiet" onClick={() => setSigningIn(true)}>
+        {/* UAT U-A15: `wrap`, as U-A9. In a wider font (before the web font loads, or offline) this
+            one line was wider than a 390px phone and the whole Settings page scrolled sideways. */}
+        <Button variant="quiet" wrap onClick={() => setSigningIn(true)}>
           Your gym is already online? Sign in instead
         </Button>
       </div>
