@@ -24,6 +24,14 @@ appId: com.forgeai.app
       FIND: '${output.exRe} set 1 complete\. Tap to undo'
 - takeScreenshot: uk-05-resumed-by-the-shortcut
 - tapOn: "Minimise workout. It keeps running."
+# Minimise lands on the Workout tab (its Profile tab below), never a blank page or the home screen
+# (runs 38996250599 / 38996251965: the app was closed after this tap, U-M6).
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: uk-05b-after-minimise
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 15000
 - runFlow: sub-back-to-tabs.yaml
 - runFlow: sub-workout-fresh.yaml
 - pressKey: Home

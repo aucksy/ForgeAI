@@ -240,8 +240,12 @@ uat_shortcut() {
     log "UAT UK: shortcut '$sid' is not '$want' (read: $line)"
     return 1
   fi
+  local since; since=$(adb shell "date '+%m-%d %H:%M:%S.000'" 2>/dev/null | tr -d '\r')
   res=$(adb shell am start -W -a android.intent.action.VIEW -d "\"$uri\"" -f "$flags" "$PKG" 2>&1 | tr -d '\r')
   echo "$res" > "$OUT/uk-am-$sid.txt"
+  # What the app did with the link: a launcher's shortcut adds NEW_TASK|CLEAR_TASK, so the screen
+  # is made afresh, unlike the widget's tap (U-M6). The rest of the part's log is in part-uk*.
+  ( sleep 40; adb logcat -d -v time -T "$since" > "$OUT/uk-logcat-$sid-$(date +%H%M%S).txt" 2>/dev/null ) &
   log "UAT UK: shortcut '$label' ($where record, flags $flags) opened: $(echo "$res" | grep -E '^(Status|Error|Warning)' | tr '\n' ' ')"
   echo "$res" | grep -qiE '^Error|unable to resolve' && return 1
   UK_URI="$uri"; UK_LABEL="$label"
