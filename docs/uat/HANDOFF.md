@@ -17,15 +17,17 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - U-M5 (90e0bb1): the "Couldn't save" banner no longer takes taps meant for the top bar.
 - WP7 (9a07be2): C1 step 7 checker fix (unquoted >=); U-C1 written in FINDINGS (S4, open).
 
-### In progress (06:00 UTC)
-- WP4b: U-M5 fixed and proven (Minimise reaches the tab). U-M6 found + fixed in a241c03 (ghost
-  keyboard after the app was away hid the tab bar). Re-run uf,uk on a241c03, both phones
-  (dispatched ~06:00). Next: read them; then ub,ua,uv,ug,m once more on the same commit.
-- WP7: qa-conditions all on 9a07be2 (39004899634) running.
-- WP14: E5 third try on a1b2ea0 (part B scrolls to the 2nd exercise).
-- Owner asks done meanwhile (no app build): entry-machine plan P8 (research/R-entry-machines.md),
-  GGMS competitor doc (research/R-ggms-competitor.md), phone icon = admin icon (abe5745).
-- Then: whole runs on BOTH profiles + qa-journeys on one commit -> v0.47.0.
+### In progress (06:50 UTC)
+- RELEASE RUNS on a0727e6 (dispatched ~06:50): whole phone test default + owner (API 34) and
+  qa-journeys. If all green -> bump 0.47.0, PROGRESS entry, tag v0.47.0, UAT-REPORT-v0.47.0.md.
+- Already proven: U-M6 fixed (UK2 passes on both phones, 39007467904 / 39007469521). UF5 failed on
+  default only because UF3 now really minimises; test fixed in a0727e6 (no app change).
+- WP7 qa-conditions 39004899634 on 9a07be2: success.
+- Running: drag-bar screenshots (39009454208, a,j,j2 owner) and the real workout w (39009987546, owner)
+  for the RPE tick.
+- Owner asks today: join from Settings -> Your gym (U-G5, b146cf7, goes in v0.47.0); research for
+  the gate QR and gym icon (docs/overhaul/research/R-qr-entry.md). NEW standing rule: every owner
+  idea/question goes in docs/OWNER-INBOX.md first (CLAUDE.md).
 
 ## Last update: 17 Oct 2026, PC session (before a usage limit)
 
