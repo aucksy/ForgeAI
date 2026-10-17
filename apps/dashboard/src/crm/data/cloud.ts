@@ -417,14 +417,21 @@ export class CloudCrmData implements CrmData {
     });
   }
 
-  /** Run one action on a private copy with the browser store's own code, then send what changed. */
-  private run<T>(op: (d: LocalCrmData) => Promise<T>): Promise<T> {
+  /**
+   * Run one action on a private copy with the browser store's own code, then send what changed.
+   * `lateSaveIsSafe`: the action can never save the same thing twice by itself (adding members: a
+   * mobile already in the gym is refused), so a late save going through first does not stop it.
+   */
+  private run<T>(op: (d: LocalCrmData) => Promise<T>, { lateSaveIsSafe = false }: { lateSaveIsSafe?: boolean } = {}): Promise<T> {
     return this.serial(async () => {
       if (!this.gym) await this.pullNow();
       // A change that never got an answer goes first. If it lands now, STOP: the person is most
       // likely pressing the same button again because the first time "failed", and doing this
       // action too would save it twice. They see it on screen and decide.
-      if (this.pending && (await this.flushPending())) {
+      // UAT U-A11 (17 Oct 2026): an import run again after "no internet" sent the stuck batch, then
+      // stopped with "No new members were saved" although every member was in. Adding members
+      // carries on instead: the members the late save brought in now read as "already a member".
+      if (this.pending && (await this.flushPending()) && !lateSaveIsSafe) {
         throw new Error('Your last change was saved just now (the internet came back). Check the screen before doing it again.');
       }
       for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
@@ -475,12 +482,12 @@ export class CloudCrmData implements CrmData {
    * others went through, `PartialSaveError` says which members are saved.
    */
   async createMembers(drafts: readonly MemberDraft[]): Promise<Member[]> {
-    if (drafts.length <= BULK_ONE_PUSH) return this.run((d) => d.createMembers(drafts));
+    if (drafts.length <= BULK_ONE_PUSH) return this.run((d) => d.createMembers(drafts), { lateSaveIsSafe: true });
     const saved: Member[] = [];
     for (let i = 0; i < drafts.length; i += BULK_BATCH) {
       const part = drafts.slice(i, i + BULK_BATCH);
       try {
-        saved.push(...(await this.run((d) => d.createMembers(part))));
+        saved.push(...(await this.run((d) => d.createMembers(part), { lateSaveIsSafe: true })));
       } catch (e) {
         if (saved.length === 0) throw e;
         throw new PartialSaveError(saved, e);

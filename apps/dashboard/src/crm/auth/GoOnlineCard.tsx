@@ -17,6 +17,7 @@ import { useCallback, useState } from 'react';
 
 import type { CrmSnapshot } from '../data/adapter';
 import { uploadSnapshot } from '../data/cloud';
+import { isDemoGym } from '../data/demo';
 import { normalizeSnapshot, STORAGE_KEY } from '../data/local';
 import { readCloudGym, writeCloudGym } from '../shop/cloudGym';
 import { useCrm } from '../store';
@@ -72,20 +73,29 @@ function readBrowserGym(): { raw: string | null; snap: CrmSnapshot | null } {
 }
 
 function GoOnlineCard() {
+  const { snapshot } = useCrm();
   const pending = readCloudGym();
   if (pending?.demo && !pending.person) return <DemoGymCard />;
+  // UAT U-A12: the demo opened without the shop (no internet), or loaded over this browser's gym,
+  // is made-up members too. Put online, they could never be erased from the online gym.
+  if (isDemoGym(snapshot.gym) && !pending?.person) return <DemoGymCard browserOnly />;
   return <PutOnlineCard />;
 }
 
-/** The demo's made-up members stay in this browser: a real gym starts from "Start over". */
-function DemoGymCard() {
+/**
+ * The demo's made-up members stay in this browser: a real gym starts from "Start over" (a demo with
+ * a shop) or "Erase and start fresh" (a demo kept only in this browser, `browserOnly`).
+ */
+function DemoGymCard({ browserOnly = false }: { browserOnly?: boolean }) {
   const [signingIn, setSigningIn] = useState(false);
   const closeSignIn = useCallback(() => setSigningIn(false), []);
   return (
     <Card style={{ marginBottom: space.lg }}>
       <SectionTitle>This is the demo gym</SectionTitle>
       <p style={bodyText}>
-        Its members are made up, and they are kept only in this browser. To set up your real gym, tap “Start over with a new demo gym” at the bottom of this page. Then tap “New here? Set up your gym”.
+        {browserOnly
+          ? 'Its members are made up, and they are kept only in this browser. They can’t be put online. To set up your real gym, tap “Erase and start fresh” at the bottom of this page. Then add your members and put your gym online.'
+          : 'Its members are made up, and they are kept only in this browser. To set up your real gym, tap “Start over with a new demo gym” at the bottom of this page. Then tap “New here? Set up your gym”.'}
       </p>
       <div style={{ marginTop: space.md }}>
         <Button variant="quiet" onClick={() => setSigningIn(true)}>

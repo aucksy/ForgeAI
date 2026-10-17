@@ -67,6 +67,17 @@ export interface DemoOptions {
   seed?: number;
 }
 
+/** The demo gym's own id: every made-up record carries it (until "Erase and start fresh"). */
+export const DEMO_GYM_ID = 'gym_demo';
+
+/**
+ * UAT U-A12 (17 Oct 2026): is this browser's gym the made-up demo? True after "Start demo", after
+ * "Open the demo without the shop" (no internet) and after "Load demo gym"; false once erased. PURE.
+ */
+export function isDemoGym(gym: Pick<GymRecord, 'gymId'>): boolean {
+  return gym.gymId === DEMO_GYM_ID;
+}
+
 /** Build the whole demo gym. Pure — no storage, no clock beyond `today`. */
 export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
   const { today, memberCount = 128, seed = 20260726 } = opts;
@@ -79,7 +90,7 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
   const id = (prefix: string) => `${prefix}_${(idCounter += 1).toString(36).padStart(4, '0')}`;
 
   const gym: GymRecord = {
-    gymId: 'gym_demo',
+    gymId: DEMO_GYM_ID,
     name: 'Iron Temple Fitness',
     joinCode: 'IRON24',
     phone: '+919876500000',

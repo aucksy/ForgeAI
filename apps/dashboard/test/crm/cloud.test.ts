@@ -402,6 +402,25 @@ describe('createMembers online (the import)', () => {
     expect((await new CloudCrmData('k', server).load()).members).toHaveLength(500);
   });
 
+  it('U-A11: the same batch again after "no internet" sends the stuck push, then carries on: each member once, no "saved just now" stop', async () => {
+    const server = new FakeServer();
+    const desk = new CloudCrmData('k', server, noSleep);
+    await desk.load();
+    const batch = many(100);
+    server.offline = 3; // the push and both resends never reach the server: the batch is kept
+    await expect(desk.createMembers(batch)).rejects.toThrow(/internet/);
+    expect((await new CloudCrmData('k', server).load()).members).toHaveLength(0);
+    // The internet is back and the import runs again with the same rows. The kept push lands first;
+    // the rows it brought in are now members, so the same mobile is refused, never saved twice.
+    const again = await desk.createMembers(batch).catch((e: unknown) => e);
+    expect(again).toBeInstanceOf(DuplicatePhoneError);
+    expect(String((again as Error).message)).not.toMatch(/saved just now/);
+    const snap = await new CloudCrmData('k', server).load();
+    expect(snap.members).toHaveLength(100);
+    expect(new Set(snap.members.map((m) => m.phone)).size).toBe(100);
+    expect((await desk.load()).members).toHaveLength(100);
+  });
+
   it('a mobile another desk already added refuses the push, naming it', async () => {
     const server = new FakeServer();
     const deskA = new CloudCrmData('k', server);

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildDemoGym, demoSnapshot, starterPlans } from '../../src/crm/data/demo';
+import { buildDemoGym, demoSnapshot, isDemoGym, starterPlans } from '../../src/crm/data/demo';
+import { emptySnapshot } from '../../src/crm/data/local';
 import { atRiskList, attendanceProfile, attendanceSummary } from '../../src/crm/logic/attendance';
 import { diffDays, hourOfEpoch } from '../../src/crm/logic/dates';
 import {
@@ -280,5 +281,13 @@ describe('demo gym', () => {
     expect(empty.memberships).toEqual([]);
     expect(empty.payments).toEqual([]);
     expect(starterPlans(TODAY)).toHaveLength(5);
+  });
+});
+
+describe('U-A12: the demo gym is told apart from a real one (never offered to go online)', () => {
+  it('the demo is the demo; an erased or new gym is not', () => {
+    expect(isDemoGym(demoSnapshot('2026-10-17').gym)).toBe(true);
+    expect(isDemoGym(emptySnapshot(1, 'Iron Temple Fitness').gym)).toBe(false);
+    expect(isDemoGym(emptySnapshot(1).gym)).toBe(false);
   });
 });

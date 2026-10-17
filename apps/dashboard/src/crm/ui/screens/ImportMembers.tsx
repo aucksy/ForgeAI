@@ -11,7 +11,7 @@
  * Owner and Staff may both import: adding members is front-desk work (auth/permissions.ts).
  */
 
-import { useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 
 import { csvFilename } from '../../logic/csv';
 import {
@@ -44,6 +44,7 @@ import { formatPhone } from '../../logic/members';
 import { useCrm } from '../../store';
 import { useRole } from '../../auth/AuthProvider';
 import type { ImportTermsResult } from '../../data/adapter';
+import { previewImportMoney } from '../../data/importPreview';
 import { pastImports, planUndo } from '../../logic/undoImport';
 import { bestSheet, readSheets, usableSheets, type SheetRows } from '../../logic/sheets';
 import { formatINR } from '../../logic/money';
@@ -111,6 +112,26 @@ export function ImportMembersScreen() {
     () => (file && stage === 'review' ? planImport(file.rows, headerRow, map, snapshot.members, today) : null),
     [file, stage, headerRow, map, snapshot.members, today],
   );
+
+  // UAT U-A10: the money the import will really save as receipts, worked out by the import itself.
+  const [previewPaidP, setPreviewPaidP] = useState<number | null>(null);
+  useEffect(() => {
+    setPreviewPaidP(null);
+    if (!plan || role !== 'owner') return;
+    let cancelled = false;
+    const adds = plan.rows.filter((r) => r.status === 'add' && r.draft !== null).map((r) => r.draft!);
+    // The same rows, in the same order, as run() below hands to importTerms.
+    const terms = plan.rows
+      .filter((r) => r.term && r.draft && (r.status === 'add' || r.existing !== null || r.sameAsRow !== null))
+      .sort((a, b) => a.rowNumber - b.rowNumber)
+      .map((r) => ({ phone: r.draft!.phone, term: r.term! }));
+    void previewImportMoney(snapshot, adds, terms, today).then((r) => {
+      if (!cancelled) setPreviewPaidP(r ? r.paidP : null);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [plan, snapshot, role, today]);
 
   const headers = useMemo(() => (file ? (file.rows[headerRow] ?? []).map(cellText) : []), [file, headerRow]);
   const width = useMemo(() => (file ? Math.max(0, ...file.rows.slice(0, 200).map((r) => r.length)) : 0), [file]);
@@ -403,7 +424,7 @@ export function ImportMembersScreen() {
             setDupMode={setDupMode}
           />
 
-          <TermsLine rows={plan.rows} owner={role === 'owner'} />
+          <TermsLine rows={plan.rows} owner={role === 'owner'} paidP={previewPaidP} />
 
           <ActionBar
             plan={plan.rows}
@@ -696,9 +717,11 @@ const list: CSSProperties = {
  * Data migration (15 Oct 2026): before importing, what the plans in the sheet become — so the owner
  * sees their members will arrive WITH their plans, end dates and payments, not as bare names.
  */
-function TermsLine({ rows, owner }: { rows: readonly ImportRow[]; owner: boolean }) {
-  // C7-37: the money counts every payment row, repeats of a member included.
-  const { members: count, names, paidP: paid } = termsPreview(rows);
+function TermsLine({ rows, owner, paidP }: { rows: readonly ImportRow[]; owner: boolean; paidP: number | null }) {
+  // C7-37: every payment row counts, repeats of a member included. U-A10: the money is what the
+  // import will really save (a running "paid so far" is not added up twice); null while it is worked out.
+  const { members: count, names } = termsPreview(rows);
+  const paid = paidP ?? 0;
   if (count === 0) return null;
   return (
     <Card>
