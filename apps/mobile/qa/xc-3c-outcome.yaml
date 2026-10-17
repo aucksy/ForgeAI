@@ -1,0 +1,8 @@
+# Phone conditions (UAT WP7), condition 3c: after airplane mode cut the order request, the words the
+# member is left with (any of them; the script then retries online and counts the orders).
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: 'Order \d+ placed\. Pay at the desk when you collect it\.|No internet.*|The gym didn.t answer.*|Couldn.t place the order.*'
+    timeout: 120000
+- takeScreenshot: xc3c-01-cut-late-outcome

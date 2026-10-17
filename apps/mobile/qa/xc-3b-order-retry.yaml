@@ -1,5 +1,5 @@
 # Phone conditions (UAT WP7), condition 3b, back online: if the bag was kept, the member taps "Place
-# order" again (the same bag, so the same order id); then My orders shows exactly one QA Rope order.
+# order" again (the same bag, so the same order id); then My orders shows exactly one ${PRODUCT} order.
 appId: com.forgeai.app
 ---
 - runFlow:
@@ -10,7 +10,7 @@ appId: com.forgeai.app
       - extendedWaitUntil:
           visible: 'Order \d+ placed\. Pay at the desk when you collect it\.|No internet.*|The gym didn.t answer.*'
           timeout: 120000
-      - takeScreenshot: xc3b-02-retry-outcome
+      - takeScreenshot: xc${SHOT}-02-retry-outcome
 - runFlow:
     when:
       visible: "^Bag$"
@@ -26,5 +26,5 @@ appId: com.forgeai.app
 - runFlow:
     file: xc-sub-find.yaml
     env:
-      FIND: '1 × QA Rope'
-- takeScreenshot: xc3b-03-my-orders
+      FIND: '1 × ${PRODUCT}'
+- takeScreenshot: xc${SHOT}-03-my-orders

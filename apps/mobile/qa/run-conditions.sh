@@ -6,7 +6,7 @@
 # (apps/mobile/qa/xc_server.py, on top of WP6's xj_server.py) and what the phone holds read over adb
 # (apps/mobile/qa/xc_phone.py: the database with root, the notification list, the channels).
 #
-#   C1 upgrade      the released v0.45.0 APK, a member's real data (2 workouts, a followed plan, Body
+#   C1 upgrade      v0.45.0 (rebuilt from its tag for the emulator, signed as released), real data (2 workouts, a followed plan, Body
 #                   fat, lb, Ring through DND on) and a workout left OPEN mid-rest -> `adb install -r`
 #                   of this build -> the data, the open workout, the setting, the rest alert (fires or
 #                   is cleanly gone) and the channel names ("Rest is over")
@@ -32,9 +32,10 @@
 # APK is never put in the evidence.
 #
 # Environment: XC_APK_DEBUG (this commit, the build's own debug key; always), XC_APK_NEW (this commit
-# re-signed with the release key rotation, as release-apk.yml signs; may be empty), XC_APK_OLD (the
-# released v0.45.0), XC_APK_REL (the released v0.46.0, the last-resort "new" side), XC_ONLY (a
-# comma list of condition numbers, empty = all).
+# re-signed with the release key rotation, as release-apk.yml signs; may be empty), XC_APK_OLD
+# (v0.45.0 rebuilt from its tag for x86_64 and signed the same way: the published APK is ARM-only and
+# cannot start on this emulator, see qa-conditions.yml), XC_ONLY (a comma list of condition numbers,
+# empty = all).
 set -u
 QA_DIR="$(cd "$(dirname "$0")" && pwd)"
 OUT="${QA_OUT:-$PWD/qa-out}"
@@ -48,7 +49,6 @@ export PATH="$PATH:$HOME/.maestro/bin"
 APK_DEBUG="${XC_APK_DEBUG:-}"
 APK_NEW="${XC_APK_NEW:-}"
 APK_OLD="${XC_APK_OLD:-}"
-APK_REL="${XC_APK_REL:-}"
 ONLY="$(echo "${XC_ONLY:-}" | tr ',;' '  ' | xargs)"
 status=0
 T0=$(date +%s)
@@ -71,12 +71,13 @@ runs() { [ -z "$ONLY" ] && return 0; case " $ONLY " in *" $1 "*) return 0 ;; esa
 now_ms() { adb shell date +%s%3N | tr -d '\r'; }
 
 # ---------------------------------------------------------------- parts and their steps
-PARTS="C1 C2s C2a C2b C2c C2d C3a C3b C4a C4b C4c C5 C6a C6b"
+PARTS="C1 C2s C2a C2b C2c C2d C3a C3b C3c C4a C4b C4c C5 C6a C6b"
 declare -A PNAME=(
   [C1]="upgrade v0.45.0 -> this build over real data" [C2s]="no internet: join the gym (setup)"
   [C2a]="no internet: shop order" [C2b]="no internet: QR check-in" [C2c]="no internet: Leave"
   [C2d]="no internet: the workout loop" [C3a]="flaky network: order on GPRS/EDGE"
-  [C3b]="flaky network: airplane mode mid-order" [C4a]="process death mid-rest"
+  [C3b]="flaky network: airplane mode straight after Place order"
+  [C3c]="flaky network: airplane mode as the answer comes back" [C4a]="process death mid-rest"
   [C4b]="process death with the finish sheet open" [C4c]="process death mid-Hevy-import"
   [C5]="Doze + standby rare, 1:30 rest asleep" [C6a]="exact alarms denied (as after a restore)"
   [C6b]="background-restricted app"
@@ -291,7 +292,7 @@ adb shell cmd alarm set-timezone Asia/Kolkata >/dev/null 2>&1 || adb shell setpr
 sleep 3
 log "PROFILE owner: screen $(adb shell wm size | tr -d '\r' | tail -1), density $(adb shell wm density | tr -d '\r' | tail -1), font scale $(adb shell settings get system font_scale | tr -d '\r'), time $(adb shell "date '+%a %d %b %Y %H:%M %Z'" | tr -d '\r')"
 [ "$(adb shell settings get system font_scale | tr -d '\r')" = "1.3" ] || { log "PROFILE owner FAILED: font scale not set"; status=1; }
-for f in "$APK_DEBUG" "$APK_NEW" "$APK_OLD" "$APK_REL"; do
+for f in "$APK_DEBUG" "$APK_NEW" "$APK_OLD"; do
   [ -n "$f" ] && log "apk: $(basename "$f") $(stat -c %s "$f" 2>/dev/null || echo '?') bytes"
 done
 
@@ -315,14 +316,13 @@ install_fresh() {
 # ================================================================ C1 upgrade over real data
 c1_upgrade() {
   # The new side, in order: this build with its own debug key (expected to be refused: v0.45.0 is
-  # signed with key rotation, Android 9+ sees the release key), this build signed like a release
-  # (rotation), and as a last resort the released v0.46.0. The first that installs in place wins.
+  # signed with key rotation, so Android 9+ sees the release key), then this build signed like a
+  # release (rotation). The first that installs in place wins.
   local label apk
-  for label in debug rotated release-v0.46.0; do
+  for label in debug rotated; do
     case $label in
       debug) apk=$APK_DEBUG ;;
-      rotated) apk=$APK_NEW ;;
-      *) apk=$APK_REL ;;
+      *) apk=$APK_NEW ;;
     esac
     if [ -z "$apk" ]; then
       echo "INSTALL $label: no such APK in this run"
@@ -345,7 +345,7 @@ c1_verdict_rest() {  # the rest left running across the update: "Rest is over" c
 if runs 1; then
   log "condition 1: upgrade over real data"
   if [ -z "$APK_OLD" ]; then
-    blocked C1 "the v0.45.0 APK was not downloaded"
+    blocked C1 "no v0.45.0 APK in this run"
   elif ! adb install "$APK_OLD" > "$C_OUT/c1-install-old.txt" 2>&1; then
     blocked C1 "v0.45.0 did not install: $(tail -1 "$C_OUT/c1-install-old.txt")"
   else
@@ -360,7 +360,7 @@ if runs 1; then
       dump c1-channels-old.txt
       phone channels "$C_OUT/c1-channels-old.txt" > "$C_OUT/c1-channels-old-list.txt" 2>&1 || true
       log "$(phone db c1-old)"
-      step C1 2 phone "adb install -r of the new side (debug key, then release-key rotation, then v0.46.0)" -- c1_upgrade
+      step C1 2 phone "adb install -r of the new side (debug key, then the release-key rotation)" -- c1_upgrade
     fi
     if ok_so_far C1; then
       log "C1: upgraded with: $(cat "$C_OUT/c1-upgrade-side.txt" 2>/dev/null || echo none); $(adb shell dumpsys package "$PKG" | tr -d '\r' | grep -m1 -E 'versionName=')"
@@ -381,7 +381,7 @@ if runs 1; then
   adb logcat -d -v time > "$C_OUT/c1-logcat.txt" 2>/dev/null || true
 fi
 # Every later condition runs on this build. If C1 did not leave it installed, install it now.
-if [ -z "$NEW_LABEL" ] || [ "$NEW_LABEL" = "release-v0.46.0" ]; then
+if [ -z "$NEW_LABEL" ]; then
   adb uninstall "$PKG" >/dev/null 2>&1 || true
   install_fresh || { log "INSTALL FAILED: this build could not be installed"; status=1; }
   ONBOARDED=0
@@ -401,14 +401,14 @@ if runs 2 || runs 3; then
     [ -n "$CODE" ] && GYM_OK=1
   fi
   if [ $GYM_OK != 1 ]; then
-    for p in C2s C2a C2b C2c C2d C3a C3b; do blocked "$p" "the run's gym could not be made"; done
+    for p in C2s C2a C2b C2c C2d C3a C3b C3c; do blocked "$p" "the run's gym could not be made"; done
   else
-    step C2s 1 owner "adds QA Bottle, QA Band, QA Rope (stock 5 each)" -- bash -c "python3 '$QA_DIR/xc_server.py' add-product C 'QA Bottle' 200 5 && python3 '$QA_DIR/xc_server.py' add-product C 'QA Band' 150 5 && python3 '$QA_DIR/xc_server.py' add-product C 'QA Rope' 300 5"
+    step C2s 1 owner "adds QA Bottle, QA Band, QA Rope, QA Mat (stock 5 each)" -- bash -c "python3 '$QA_DIR/xc_server.py' add-product C 'QA Bottle' 200 5 && python3 '$QA_DIR/xc_server.py' add-product C 'QA Band' 150 5 && python3 '$QA_DIR/xc_server.py' add-product C 'QA Rope' 300 5 && python3 '$QA_DIR/xc_server.py' add-product C 'QA Mat' 500 5"
     step C2s 2 owner "adds $ROSTER (mobile $ROSTER_MOBILE) with a plan from today" -- owner add-roster "$ROSTER" "$ROSTER_MOBILE"
     step C2s 3 member "joins with the gym code" -- member xc-2-join CODE="$CODE" GYM="$GYM"
     step C2s 4 server "1 app member" -- server app-members 1
     if ! ok_so_far C2s; then
-      for p in C2a C2b C2c C3a C3b; do blocked "$p" "the phone did not join the gym (C2s)"; done
+      for p in C2a C2b C2c C3a C3b C3c; do blocked "$p" "the phone did not join the gym (C2s)"; done
     fi
   fi
 
@@ -439,10 +439,27 @@ if runs 2 || runs 3; then
     shape gprs edge
     step C3a 1 member "GPRS delay + EDGE speed: QA Band ordered" -- member xc-3a-order-slow GYM="$GYM"
     step C3a 2 server "exactly ONE QA Band order" -- server orders-count "QA Band" 1
-    step C3b 1 member "QA Rope: Place order, airplane mode on straight after the tap" -- member xc-3b-order-cut GYM="$GYM"
+    # Run 38983728841: on GPRS the order was done before Maestro's airplane switch took effect, so
+    # 3b and 3c run on a link with a 2 s delay each way: 3b cuts it straight after the tap (the
+    # request never arrives), 3c ~6 s later (aiming at the gym having written it with the answer
+    # still on the way). What the server held at the cut is printed, so the report says which.
+    shape 2000 edge
+    step C3b 1 member "QA Rope: Place order, airplane mode on straight after the tap" -- member xc-3b-order-cut GYM="$GYM" PRODUCT="QA Rope"
+    log "C3b: at the cut the server held: $(python3 "$QA_DIR/xc_server.py" check C orders-count 'QA Rope' 1 | sed 's/^CHECK [A-Z]* C orders-count: //')"
     online
-    step C3b 2 member "back online: the bag retried if it was kept; My orders shows 1 x QA Rope" -- member xc-3b-order-retry GYM="$GYM"
+    step C3b 2 member "back online: the bag retried if it was kept; My orders shows 1 x QA Rope" -- member xc-3b-order-retry GYM="$GYM" PRODUCT="QA Rope" SHOT=3b
     step C3b 3 server "exactly ONE QA Rope order" -- server orders-count "QA Rope" 1
+    c3c_cut() {
+      member xc-3c-order-tap GYM="$GYM" PRODUCT="QA Mat" || return 1
+      sleep 5
+      airplane enable
+    }
+    step C3c 1 member "QA Mat: Place order; airplane mode on ~6 s after the tap" -- c3c_cut
+    step C3c 2 member "the words left on screen" -- member xc-3c-outcome
+    log "C3c: at the cut the server held: $(python3 "$QA_DIR/xc_server.py" check C orders-count 'QA Mat' 1 | sed 's/^CHECK [A-Z]* C orders-count: //')"
+    online
+    step C3c 3 member "back online: the bag retried if it was kept; My orders shows 1 x QA Mat" -- member xc-3b-order-retry GYM="$GYM" PRODUCT="QA Mat" SHOT=3c
+    step C3c 4 server "exactly ONE QA Mat order" -- server orders-count "QA Mat" 1
     shape none full
   fi
   # ---- C2c: Leave with no internet
@@ -561,8 +578,17 @@ if runs 5; then
   step C5 1 member "a bench workout, rest 1:30 running" -- member xc-open-rest REST="Rest 1:30" SHOT=5
   if ok_so_far C5; then
     c5_low() {
-      adb shell am set-standby-bucket "$PKG" rare >/dev/null 2>&1 || true
-      log "standby bucket now: $(adb shell am get-standby-bucket "$PKG" | tr -d '\r') (40 = rare)"
+      # Run 38983728841: one set right after the screen went off read back 20 (working set); the
+      # app's own notification updates can lift it again, so it is set, marked idle, and read again.
+      local b i
+      for i in 1 2 3; do
+        adb shell am set-inactive "$PKG" true >/dev/null 2>&1 || true
+        adb shell am set-standby-bucket "$PKG" rare >/dev/null 2>&1 || true
+        sleep 2
+        b=$(adb shell am get-standby-bucket "$PKG" | tr -d '\r')
+        [ "$b" = 40 ] && break
+      done
+      log "standby bucket now: $b (40 = rare; 10 active, 20 working set, 30 frequent, 45 restricted); inactive: $(adb shell am get-inactive "$PKG" | tr -d '\r')"
       force_deep_idle
     }
     rest_asleep c5 c5_low
@@ -588,7 +614,7 @@ if runs 6; then
     step C6a 3 member "Settings -> Workouts: the rest alerts line" -- member xc-6-status SHOT=6a
     c6a_verdict() {
       local said=on-time
-      [ -n "$(find "$C_OUT" "$PWD" "$QA_DIR" -maxdepth 4 -name 'xc6-status-6a-may-be-late.png' 2>/dev/null | head -1)" ] && said=may-be-late
+      [ -n "$(find "$C_OUT" "$PWD" "$QA_DIR" -maxdepth 7 -name 'xc6-status-6a-may-be-late.png' 2>/dev/null | head -1)" ] && said=may-be-late
       echo "VERDICT C6a: the alert came ${C6A_LATE}s after the rest's end; the app says '$said'"
       if [ "$C6A_LATE" = none ]; then return 1; fi
       if awk "BEGIN{exit !($C6A_LATE <= 5)}"; then
@@ -607,7 +633,7 @@ if runs 6; then
   log "C6b: appops RUN_ANY_IN_BACKGROUND: $(adb shell appops get "$PKG" RUN_ANY_IN_BACKGROUND | tr -d '\r' | tr '\n' ' ')"
   step C6b 1 member "Settings -> Workouts: the rest alerts line" -- member xc-6-status SHOT=6b
   c6b_said() {
-    if [ -n "$(find "$C_OUT" "$PWD" "$QA_DIR" -maxdepth 4 -name 'xc6-status-6b-may-be-late.png' 2>/dev/null | head -1)" ]; then
+    if [ -n "$(find "$C_OUT" "$PWD" "$QA_DIR" -maxdepth 7 -name 'xc6-status-6b-may-be-late.png' 2>/dev/null | head -1)" ]; then
       echo "CHECK OK the app says 'Rest alerts: May be late - tap to fix'"
       return 0
     fi

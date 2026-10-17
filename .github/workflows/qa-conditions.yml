@@ -2,8 +2,8 @@ name: Phone conditions (offline, flaky, killed, Doze, upgrade)
 
 # UAT work package 7 (17 Oct 2026): real-life phone conditions on the member app, each checked on the
 # screen AND in what the phone or the server holds (apps/mobile/qa/run-conditions.sh):
-#   C1 upgrade      released v0.45.0 + real data + a workout open mid-rest -> `adb install -r` of this
-#                   build: data, open workout, Ring through DND, the rest alert, channel names
+#   C1 upgrade      v0.45.0 + real data + a workout open mid-rest -> `adb install -r` of this build:
+#                   data, open workout, Ring through DND, the rest alert, channel names
 #   C2 no internet  shop order, QR check-in, Leave, the workout loop: plain words, then ONE order /
 #                   ONE visit after reconnecting; a Leave told to the gym on the next start
 #   C3 flaky        GPRS/EDGE link, airplane mode mid-order: still ONE order
@@ -12,10 +12,14 @@ name: Phone conditions (offline, flaky, killed, Doze, upgrade)
 #   C5 Doze         a 1:30 rest asleep in deep Doze, standby bucket rare: "Rest is over" on time
 #   C6 exact alarm  SCHEDULE_EXACT_ALARM denied (as after a restore); background-restricted
 #
-#  - The member app: built for the emulator from this commit (like qa-device.yml), versionCode above
-#    the last release so it can update v0.45.0 in place, and ALSO re-signed with the release key
-#    rotation exactly as release-apk.yml signs (v0.45.0 is signed that way; Android 9+ refuses an
-#    update signed with the debug key alone). The re-signed APK stays in $RUNNER_TEMP: never uploaded.
+# Why v0.45.0 is REBUILT here (first run 38983728841): the released APK carries ARM code only, and
+# on the cloud emulator (x86_64, ARM translated) React Native's library loader looks for x86_64
+# libraries inside it and stops at start-up ("couldn't find DSO to load: libreactnative.so"). So the
+# old side is built from the v0.45.0 tag for x86_64 with v0.45.0's versionCode (45000), and BOTH
+# sides are signed exactly as release-apk.yml signs (debug key v1/v2 + release key v3 with the
+# rotation lineage). The phone job checks that the rebuilt v0.45.0 carries the same signers as the
+# published v0.45.0 APK. The release-signed APKs live only in $RUNNER_TEMP of the phone job.
+#
 #  - The owner's phone profile (360 dp, font 1.3, Asia/Kolkata), driven by Maestro (qa/xc-*.yaml).
 #  - The server: the run makes its OWN fresh online gym (apps/mobile/qa/xc_server.py on WP6's
 #    xj_server.py); the owner session is signed out at the end. Never FORGE1 / RAMS01.
@@ -37,12 +41,20 @@ permissions:
   contents: read
 
 jobs:
-  conditions:
+  # Two emulator builds side by side: this commit (versionCode above every release up to its version)
+  # and the v0.45.0 tag (its own versionCode, 45000). Gradle's debug signing only; handed to the
+  # phone job as a short-lived artifact.
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        side: [new, old]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.side == 'old' && 'v0.45.0' || github.sha }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -59,24 +71,56 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
-      # versionCode = this version's (release_checks.py formula) + 900: above every published release
-      # up to this version, so `adb install -r` over v0.45.0 is an update, not a downgrade.
       - name: Build an emulator APK (x86_64)
         working-directory: apps/mobile/android
+        env:
+          SIDE: ${{ matrix.side }}
         run: |
           set -euo pipefail
           VERSION="$(python3 -c 'import json; print(json.load(open("../app.json"))["expo"]["version"])')"
-          CODE=$(( $(python3 ../../../scripts/ci/release_checks.py --version-code "$VERSION") + 900 ))
-          echo "versionName ${VERSION}-conditions, versionCode $CODE"
+          CODE=$(python3 ../../../scripts/ci/release_checks.py --version-code "$VERSION")
+          NAME="$VERSION"
+          if [ "$SIDE" = new ]; then CODE=$(( CODE + 900 )); NAME="${VERSION}-conditions"; fi
+          echo "$SIDE: versionName $NAME, versionCode $CODE"
           chmod +x gradlew
-          ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 -PappVersionName="${VERSION}-conditions" -PappVersionCode="$CODE" --no-daemon --stacktrace
-          APK="$(find app/build/outputs/apk/release -name '*.apk' | head -1)"
-          cp "$APK" "$RUNNER_TEMP/qa-debug.apk"
-          ls -la "$RUNNER_TEMP/qa-debug.apk"
+          ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 -PappVersionName="$NAME" -PappVersionCode="$CODE" --no-daemon --stacktrace
+          mkdir -p "$GITHUB_WORKSPACE/apk-out"
+          cp "$(find app/build/outputs/apk/release -name '*.apk' | head -1)" "$GITHUB_WORKSPACE/apk-out/qa-$SIDE.apk"
+          ls -la "$GITHUB_WORKSPACE/apk-out"
+
+      - name: Hand the APK to the phone job
+        uses: actions/upload-artifact@v4
+        with:
+          name: conditions-apk-${{ matrix.side }}
+          path: apk-out
+          retention-days: 1
+
+  conditions:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get both emulator APKs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: conditions-apk-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/apk
+
+      - name: Download the published v0.45.0 APK (its signers, to compare)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release download v0.45.0 -R "$GITHUB_REPOSITORY" -p "forgeai-v0.45.0.apk" -D "$RUNNER_TEMP" --clobber
+          ls -la "$RUNNER_TEMP"/forgeai-v0.45.0.apk "$RUNNER_TEMP"/apk
 
       # The same rotation signing as release-apk.yml ("Sign with key rotation"): v1/v2 = the public
       # debug key, v3 = the release key + the lineage. The keystore exists only inside this step.
-      - name: Re-sign that APK as a release is signed (key rotation)
+      - name: Sign both as a release is signed (key rotation)
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -85,8 +129,10 @@ jobs:
         run: |
           set -euo pipefail
           umask 077
+          A="$RUNNER_TEMP/apk"
           if [ -z "${ANDROID_KEYSTORE_BASE64:-}" ] || [ -z "${ANDROID_KEYSTORE_PASSWORD:-}" ] || [ -z "${ANDROID_KEY_ALIAS:-}" ]; then
-            echo "::warning::No release key here: condition 1 can only try the debug-signed build and v0.46.0."
+            echo "::warning::No release key here: both sides stay on the debug key (condition 1 then proves less)."
+            cp "$A/qa-old.apk" "$A/qa-old-rotated.apk"
             exit 0
           fi
           if [ -z "${ANDROID_KEY_PASSWORD:-}" ]; then ANDROID_KEY_PASSWORD="$ANDROID_KEYSTORE_PASSWORD"; fi
@@ -108,19 +154,19 @@ jobs:
           "$APKSIGNER" rotate --out "$LINEAGE" --old-signer "${OLD[@]}" --new-signer "${NEW[@]}"
           # shellcheck source=scripts/ci/sign_rotated.sh
           source scripts/ci/sign_rotated.sh
-          sign_rotated "$RUNNER_TEMP/qa-debug.apk" "$RUNNER_TEMP/qa-rotated.apk" > "$WORK/verify.txt"
-          grep -E '^Verifies|Verified using v[123]' "$WORK/verify.txt" || true
-          ls -la "$RUNNER_TEMP/qa-rotated.apk"
-
-      - name: Download the released v0.45.0 and v0.46.0 APKs
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          for tag in v0.45.0 v0.46.0; do
-            gh release download "$tag" -R "$GITHUB_REPOSITORY" -p "forgeai-$tag.apk" -D "$RUNNER_TEMP" --clobber
-          done
-          ls -la "$RUNNER_TEMP"/forgeai-v0.4*.apk
+          sign_rotated "$A/qa-new.apk" "$A/qa-new-rotated.apk" > "$WORK/verify-new.txt"
+          sign_rotated "$A/qa-old.apk" "$A/qa-old-rotated.apk" > "$WORK/verify-old.txt"
+          # The rebuilt v0.45.0 must carry exactly the published v0.45.0's signers (v1/v2 and v3).
+          certs() { "$APKSIGNER" verify -v --print-certs "$1" | grep -E 'Signer #[0-9]+ certificate SHA-256' | sort -u; }
+          certs "$RUNNER_TEMP/forgeai-v0.45.0.apk" > "$WORK/published.txt"
+          certs "$A/qa-old-rotated.apk" > "$WORK/rebuilt.txt"
+          echo "published v0.45.0 signers:"; cat "$WORK/published.txt"
+          echo "rebuilt v0.45.0 signers:"; cat "$WORK/rebuilt.txt"
+          if ! diff -q "$WORK/published.txt" "$WORK/rebuilt.txt" >/dev/null; then
+            echo "::error::The rebuilt v0.45.0 is not signed like the published one."; exit 1
+          fi
+          echo "Same signers as the published v0.45.0."
+          ls -la "$A"
 
       - name: Enable KVM
         run: |
@@ -133,8 +179,7 @@ jobs:
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 
-      # google_apis (not playstore): root for the database reads and the low-memory kill; the
-      # released APKs carry ARM code only, which Android 11+ x86_64 images translate.
+      # google_apis (not playstore): root for the database reads and the low-memory kill.
       - name: Run the phone conditions
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -144,7 +189,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: XC_ONLY="${{ inputs.only }}" XC_APK_DEBUG="$RUNNER_TEMP/qa-debug.apk" XC_APK_NEW="$([ -f "$RUNNER_TEMP/qa-rotated.apk" ] && echo "$RUNNER_TEMP/qa-rotated.apk")" XC_APK_OLD="$RUNNER_TEMP/forgeai-v0.45.0.apk" XC_APK_REL="$RUNNER_TEMP/forgeai-v0.46.0.apk" bash apps/mobile/qa/run-conditions.sh
+          script: XC_ONLY="${{ inputs.only }}" XC_APK_DEBUG="$RUNNER_TEMP/apk/qa-new.apk" XC_APK_NEW="$([ -f "$RUNNER_TEMP/apk/qa-new-rotated.apk" ] && echo "$RUNNER_TEMP/apk/qa-new-rotated.apk")" XC_APK_OLD="$RUNNER_TEMP/apk/qa-old-rotated.apk" bash apps/mobile/qa/run-conditions.sh
 
       - name: Upload the conditions evidence
         if: always()

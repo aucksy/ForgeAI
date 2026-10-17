@@ -1,4 +1,4 @@
-# Phone conditions (UAT WP7), condition 3b: still on the slow link, QA Rope into the bag, "Place
+# Phone conditions (UAT WP7), condition 3b: still on the slow link, ${PRODUCT} into the bag, "Place
 # order" tapped, and airplane mode switched ON straight after the tap: the request is cut on its way
 # (or its answer is). Whatever the screen then says is kept as evidence; the script switches the
 # network back and xc-3b-order-retry.yaml finishes the order. The server must end with ONE order.
@@ -11,7 +11,7 @@ appId: com.forgeai.app
 - runFlow:
     file: xc-sub-to-bag.yaml
     env:
-      PRODUCT: "QA Rope"
+      PRODUCT: "${PRODUCT}"
 - tapOn:
     text: "^Place order$"
     waitToSettleTimeoutMs: 100
