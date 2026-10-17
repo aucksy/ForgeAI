@@ -5,6 +5,15 @@
 # 17 October", the phone's own date), holds both sets: 50 kg x 5 and 52.5 kg x 5.
 appId: com.forgeai.app
 ---
+# Since U-M5's fix UF3 really minimises: the open workout waits on the Workout tab. Resume it first.
+- runFlow:
+    when:
+      visible: "^Resume workout$"
+    commands:
+      - tapOn: "^Resume workout$"
+      - extendedWaitUntil:
+          visible: "Minimise workout. It keeps running."
+          timeout: 20000
 - runFlow:
     when:
       visible: "Minimise workout. It keeps running."
