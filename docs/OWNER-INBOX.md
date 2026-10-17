@@ -31,6 +31,11 @@ Full research lives in the linked docs; this file is the short version.
 
 ---
 
+## 15. An owner-inbox "mod" in Claude, one page per chat, on the right-hand side — 17 Oct 2026
+**You asked:** with the new Claude "mods" feature, can we build a mod for the owner inbox, where I
+pick the chat I'm working on and each chat has its own page, ideally shown on the right-hand side?
+**Status:** RESEARCHING (answer coming below)
+
 ## 14. What would it cost on GitHub to make the phone test runs faster? — 17 Oct 2026
 **You asked:** the cost of making the cloud test runs faster.
 **Status:** ANSWERED — WAITING FOR YOU
