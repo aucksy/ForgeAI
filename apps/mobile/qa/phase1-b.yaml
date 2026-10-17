@@ -53,9 +53,15 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
     timeout: 15000
+# The second exercise's More (any exercise but the Bench Press the H parts lean on), brought onto
+# the screen first: at font 2.0 on 360 dp one card fills the screen (UAT WP14 run 39002595271).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "More for (?!Barbell Bench Press).*"
 - tapOn:
-    text: "More for .*"
-    index: 1
+    text: "More for (?!Barbell Bench Press).*"
+    index: 0
 - tapOn: "Remove exercise"
 - tapOn: "(?i)^remove$"
 - takeScreenshot: 13-exercise-removed
