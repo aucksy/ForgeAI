@@ -6,7 +6,12 @@ name: Device QA (Android emulator)
 # puts the phone to sleep during a rest to prove the "Rest is over" alert fires, and
 # uploads every screenshot, the notification list and logcat as the `qa-out` artifact.
 #
-# Manual only, to save runner minutes (about 50 min a run). A release needs a PASSING run of
+# Manual only. Owner decision 17 Oct 2026 (docs/OWNER-INBOX.md #14): a WHOLE run is split into 4
+# shards on 4 emulators AT THE SAME TIME (scripts/ci/qa_shards.py), so it takes ~1 h 20 min, not
+# ~3 h 30 min: the app is built ONCE (job build) and every shard tests that same file (its sha256 is
+# checked); the run is green only when every shard is green AND job report proves the shards
+# together ran every part of the whole run. A partial run (`only`) is one piece, as before.
+# Was: about 50 min a run. A release needs a PASSING run of
 # this workflow on the tagged commit or its parent (release-apk.yml's phone-gate job). The
 # `workflow_call` trigger lets a later release workflow call it directly with `uses:` + `needs:`;
 # note that a called run is recorded under the CALLER's workflow, not under this file's name.
@@ -52,11 +57,28 @@ run-name: >-
   || ((inputs.extra != '' && inputs.extra != null) && format('Device QA (Android emulator, + {0})', inputs.extra) || 'Device QA (Android emulator)') }}
 
 jobs:
-  device-qa:
+  # The pieces of this run: 4 shards for a whole run, one piece for a partial run (`only`).
+  plan:
     runs-on: ubuntu-latest
-    # 170 until audit v2: a whole run takes ~140 min; the owner profile and the opt-in parts add
-    # up to ~40 more.
-    timeout-minutes: 240
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Plan the shards
+        id: plan
+        run: |
+          python3 scripts/ci/qa_shards.py matrix "${{ inputs.only }}" "${{ inputs.extra }}" > matrix.json
+          cat matrix.json
+          echo "matrix=$(cat matrix.json)" >> "$GITHUB_OUTPUT"
+
+  # The app, built ONCE for every shard (same code as the release, the emulator's x86_64 chip).
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      sha256: ${{ steps.hash.outputs.sha256 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -84,13 +106,54 @@ jobs:
           find app/build/outputs/apk/release -name '*.apk' -exec cp {} "$GITHUB_WORKSPACE/qa.apk" \;
           ls -la "$GITHUB_WORKSPACE/qa.apk"
 
+      - name: Fingerprint the APK
+        id: hash
+        run: echo "sha256=$(sha256sum qa.apk | cut -d' ' -f1)" | tee -a "$GITHUB_OUTPUT"
+
       # The same merged-manifest permission list the release checks gate on, read from this
       # build (warn only here), so a wrong scripts/ci/approved-permissions.txt shows up before
       # anyone tags a release.
       - name: Permission list of this build
         run: |
+          mkdir -p qa-build
+          python3 scripts/ci/release_checks.py qa.apk --only permissions --warn-only --out-dir qa-build 2>&1 | tee qa-build/permissions-check.txt || echo "::warning::Could not read the permission list of this build (it never fails the phone test)."
+
+      - name: Hand the APK to the shards
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-apk
+          path: |
+            qa.apk
+            qa-build/permissions-check.txt
+          retention-days: 3
+
+  device-qa:
+    needs: [plan, build]
+    runs-on: ubuntu-latest
+    # A shard is ~1 h of parts (the longest, 1-history / 2-routines-gym); a partial run of many
+    # parts can still be long (was 240 for the whole run in one piece).
+    timeout-minutes: 240
+    strategy:
+      # Every shard runs to its end even when another fails: the evidence of all of them is kept.
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    name: device-qa (${{ matrix.shard }})
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get the APK built for this run
+        uses: actions/download-artifact@v4
+        with:
+          name: qa-apk
+
+      - name: Same APK as every other shard
+        run: |
+          got=$(sha256sum qa.apk | cut -d' ' -f1)
+          echo "APK sha256 $got (built: ${{ needs.build.outputs.sha256 }})"
+          [ "$got" = "${{ needs.build.outputs.sha256 }}" ] || { echo "::error::This shard's APK is not the one built for this run."; exit 1; }
           mkdir -p qa-out
-          python3 scripts/ci/release_checks.py qa.apk --only permissions --warn-only --out-dir qa-out 2>&1 | tee qa-out/permissions-check.txt || echo "::warning::Could not read the permission list of this build (it never fails the phone test)."
+          cp qa-build/permissions-check.txt qa-out/ 2>/dev/null || true
 
       - name: Enable KVM
         run: |
@@ -112,7 +175,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: QA_ONLY="${{ inputs.only }}" QA_EXTRA="${{ inputs.extra }}" QA_PROFILE="${{ inputs.profile || 'default' }}" QA_ENV="${{ inputs.env }}" bash apps/mobile/qa/run-device-qa.sh "$GITHUB_WORKSPACE/qa.apk"
+          script: QA_ONLY="${{ matrix.only }}" QA_SHARD="${{ matrix.parts }}" QA_EXTRA="${{ matrix.extra }}" QA_PROFILE="${{ inputs.profile || 'default' }}" QA_ENV="${{ inputs.env }}" bash apps/mobile/qa/run-device-qa.sh "$GITHUB_WORKSPACE/qa.apk"
 
       # Parts run / passed / failed, every skipped step, the crash / ANR / JS-error scan and the
       # rest-alert timing, on the run's summary page.
@@ -121,6 +184,50 @@ jobs:
         run: python3 apps/mobile/qa/qa_report.py summary qa-out || true
 
       - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-out-${{ matrix.shard }}
+          path: qa-out
+          retention-days: 30
+
+  # A whole run is green only when every shard finished green AND, together, they ran every part
+  # of the whole run (scripts/ci/qa_shards.py check). All the evidence in one download: qa-out/<shard>/.
+  report:
+    needs: [plan, device-qa]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get every shard's evidence
+        uses: actions/download-artifact@v4
+        with:
+          pattern: qa-out-*
+          path: qa-shards
+
+      - name: Gather it as qa-out/<shard>/
+        run: |
+          mkdir -p qa-out
+          for d in qa-shards/qa-out-*; do
+            [ -d "$d" ] && mv "$d" "qa-out/${d#qa-shards/qa-out-}"
+          done
+          ls qa-out
+
+      - name: Every shard green, every part run
+        run: |
+          if [ -n "${{ inputs.only }}" ]; then
+            echo "Partial run: one piece; its own job decides the result."
+            [ "${{ needs.device-qa.result }}" = "success" ]
+          else
+            python3 scripts/ci/qa_shards.py check qa-out | tee qa-out/shard-check.txt
+            [ "${PIPESTATUS[0]}" -eq 0 ] || exit 1
+            [ "${{ needs.device-qa.result }}" = "success" ] || { echo "::error::A shard failed (see its summary)."; exit 1; }
+          fi
+
+      - name: Upload all the evidence in one download
         if: always()
         uses: actions/upload-artifact@v4
         with:

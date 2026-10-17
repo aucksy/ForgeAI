@@ -113,6 +113,21 @@ GATE_PARTS="w dnd longrest anim mk"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
+# Owner decision 17 Oct 2026 (docs/OWNER-INBOX.md #14): a WHOLE run is split into shards that run at
+# the same time on their own emulators (scripts/ci/qa_shards.py, qa-device.yml). QA_SHARD = this
+# shard's parts. Unlike `only` it is still part of a whole run: every whole-run rule holds (a
+# missing server function FAILS, no "partial"), and qa_shards.py check proves the shards together
+# ran every part. Ends with shard-done.txt (parts + status) for that check.
+QA_SHARD_LIST=$(qa_list "${QA_SHARD:-}")
+if [ -n "$QA_SHARD_LIST" ] && [ -n "$QA_ONLY_LIST" ]; then
+  log "SHARD FAILED: QA_SHARD and QA_ONLY together (a shard is part of a whole run; only is a partial run)"; status=1
+fi
+for p in $QA_SHARD_LIST; do
+  case " $OLD_PARTS $UAT_PARTS w " in
+    *" $p "*) ;;
+    *) log "UNKNOWN PART '$p' in QA_SHARD (known: $OLD_PARTS $UAT_PARTS w)"; status=1 ;;
+  esac
+done
 for p in $QA_ONLY_LIST; do
   case " $OLD_PARTS $UAT_PARTS $GATE_PARTS " in
     *" $p "*) ;;
@@ -131,6 +146,11 @@ qa_runs() {
     case " $QA_ONLY_LIST " in *" $1 "*) return 0 ;; esac
     return 1
   fi
+  if [ -n "$QA_SHARD_LIST" ]; then
+    case " $QA_SHARD_LIST " in *" $1 "*) return 0 ;; esac
+    case " $QA_EXTRA_LIST " in *" $1 "*) return 0 ;; esac
+    return 1
+  fi
   case " $OLD_PARTS $UAT_PARTS w " in *" $1 "*) return 0 ;; esac
   case " $QA_EXTRA_LIST " in *" $1 "*) return 0 ;; esac
   return 1
@@ -138,7 +158,7 @@ qa_runs() {
 # Is any part of the whole run (A ... M) named in `only`?
 qa_any_old() {
   local p
-  for p in $QA_ONLY_LIST; do
+  for p in $QA_ONLY_LIST $QA_SHARD_LIST; do
     case " $OLD_PARTS " in *" $p "*) return 0 ;; esac
   done
   return 1
@@ -213,7 +233,7 @@ if [ -n "$QA_ENV" ]; then
   sleep 3
   log "ENV $QA_ENV: screen $(adb shell wm size | tr -d '\r' | tail -1), density $(adb shell wm density | tr -d '\r' | tail -1), font scale $(adb shell settings get system font_scale | tr -d '\r'), time $(adb shell "date '+%a %d %b %Y %H:%M %Z'" | tr -d '\r'), battery saver $(adb shell settings get global low_power | tr -d '\r') ($(adb shell dumpsys power | tr -d '\r' | grep -m1 -oE 'mIsPowered=[a-z]+')), airplane $(adb shell settings get global airplane_mode_on | tr -d '\r')"
 fi
-log "parts: only='${QA_ONLY_LIST}' extra='${QA_EXTRA_LIST}' profile=$QA_PROFILE env='${QA_ENV}'"
+log "parts: only='${QA_ONLY_LIST}' shard='${QA_SHARD_LIST}' extra='${QA_EXTRA_LIST}' profile=$QA_PROFILE env='${QA_ENV}'"
 
 if [ -n "$QA_ONLY_LIST" ]; then
   log "QA_ONLY=$QA_ONLY_LIST: only these parts run (a partial run: it cannot release)"
@@ -223,6 +243,13 @@ if [ -n "$QA_ONLY_LIST" ]; then
       > "$OUT/part-seed.log" 2>&1 || { status=1; log "PART SEED FAILED"; }
     free_maestro
   fi
+fi
+# A shard without part A that holds parts of A ... M starts from the demo, as a partial run does.
+if [ -n "$QA_SHARD_LIST" ] && qa_any_old && ! qa_runs a; then
+  log "part seed start (shard '$QA_SHARD_LIST': demo data, part A is in another shard)"
+  maestro test --format junit --output "$OUT/part-seed.xml" --test-output-dir "$OUT/part-seed" "$QA_DIR/gate-demo.yaml" \
+    > "$OUT/part-seed.log" 2>&1 || { status=1; log "PART SEED FAILED"; }
+  free_maestro
 fi
 # ---------------------------------------------------------------- part A
 if qa_runs a; then
@@ -1729,4 +1756,7 @@ python3 "$QA_DIR/qa_report.py" scan "$OUT" | tee -a "$OUT/timeline.txt"
 # target was not on screen), as SKIPPED lines in the timeline (audit QA-10).
 python3 "$QA_DIR/qa_report.py" skipped "$OUT" | tee -a "$OUT/timeline.txt"
 log "done, status $status"
+if [ -n "$QA_SHARD_LIST" ]; then
+  printf 'parts=%s\nstatus=%s\n' "$QA_SHARD_LIST" "$status" > "$OUT/shard-done.txt"
+fi
 exit $status
