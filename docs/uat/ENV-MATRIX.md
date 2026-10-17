@@ -14,17 +14,17 @@ profile, API 34), so it is not run again here.
 | # | api | font | width (dp) | network | time zone | battery saver |
 |---|---|---|---|---|---|---|
 | E1 | 34 | 1.0 | 411 | online | UTC | off |
-| E2 | 34 | 1.3 | 360 | offline | IST | on |
-| E3 | 35 | 2.0 | 411 | flaky | UTC | on |
-| E4 | 36 | 1.0 | 360 | flaky | IST | off |
-| E5 | 35 | 2.0 | 360 | online | IST | off |
-| E6 | 36 | 1.3 | 411 | offline | UTC | off |
-| E7 | 35 | 1.0 | 411 | offline | IST | on |
-| E8 | 36 | 1.3 | 360 | online | UTC | on |
+| E2 | 39000423508 | PASS | battery saver really on (unplugged first) | offline | IST | on |
+| E3 | 39000424837 | PASS | | flaky | UTC | on |
+| E4 | 39000426353 | PASS | | flaky | IST | off |
+| E5 | 39006324165 | PASS | 3rd try: found U-M7-style layout slip (Coming from Hevy heading off the edge, fixed 00a1a8f) + 2 test-script slips | online | IST | off |
+| E6 | 39000429450 | PASS | | offline | UTC | off |
+| E7 | 39000430902 | PASS | | offline | IST | on |
+| E8 | 39000432718 | PASS | | online | UTC | on |
 | E9 | 34 | 1.3 | 411 | flaky | UTC | off |
 | E10 | 34 | 2.0 | 411 | offline | UTC | off |
-| E11 | 35 | 1.3 | 411 | online | UTC | off |
-| E12 | 36 | 2.0 | 411 | online | UTC | off |
+| E11 | 39000434137 | PASS | | online | UTC | off |
+| E12 | 39000435903 | PASS | | online | UTC | off |
 
 12 runs cover all 93 pairs (every combination would be 216).
 
@@ -38,19 +38,24 @@ set-mode 1`.
 | # | Run | Result | Notes |
 |---|---|---|---|
 | E1 | (every whole default run) | - | covered by the release gate |
-| E2 | 38997271281 | PASS | battery saver did NOT turn on (emulator on AC); offline really on (airplane 1) |
-| E3 | 38997272780 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
-| E4 | 38997274321 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
-| E5 | 38997276238 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
-| E6 | 38997277461 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
-| E7 | 38997278881 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
-| E8 | 38997280249 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+| E2 | 39000423508 | PASS | battery saver really on (unplugged first) |
+| E3 | 39000424837 | PASS | |
+| E4 | 39000426353 | PASS | |
+| E5 | 39006324165 | PASS | 3rd try: found U-M7-style layout slip (Coming from Hevy heading off the edge, fixed 00a1a8f) + 2 test-script slips |
+| E6 | 39000429450 | PASS | |
+| E7 | 39000430902 | PASS | |
+| E8 | 39000432718 | PASS | |
 | E9 | 38997281668 | PASS |  |
 | E10 | 38997283134 | PASS |  |
-| E11 | 38997284695 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
-| E12 | 38997286258 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+| E11 | 39000434137 | PASS | |
+| E12 | 39000435903 | PASS | |
 
 Round 1 (9783923): every part passed in all 11 runs; the rest alert came 0-1 ms after its due time
 on every Android version, with the screen off, offline, on a slow link and at font 2.0. The 8 red
 runs (all API 35/36) were the checker, not the app: Android 15+ prints notification flags as names.
 Round 2 (515dd52): E2-E8, E11, E12 again (E2 for a real Battery Saver).
+
+**Result (17 Oct 2026, 06:10 UTC): all 11 runs PASS** (E9, E10 round 1; the rest round 2/3).
+App change found by the matrix: the welcome screen's "Coming from Hevy or Strong?" heading ran off
+the screen at font 2.0 (fixed). Checker fixes: Android 15+ notification flags, Battery Saver on AC,
+two scroll assumptions at font 2.0 on 360 dp. The rest alert was on time (0-1 ms) everywhere.
