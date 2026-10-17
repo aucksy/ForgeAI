@@ -57,6 +57,8 @@ const server = {
   /** The desk moves this order to Ready the moment a cancel for it arrives. */
   readyOnCancel: null as string | null,
   left: [] as string[],
+  /** U-G6: the new gym can't be reached (gym_preview fails with no signal). */
+  previewOffline: false,
 };
 type Res = { data: unknown; error: unknown; status: number };
 const offline: Res = { data: null, error: { message: 'TypeError: Network request failed' }, status: 0 };
@@ -83,6 +85,9 @@ function handle(fn: string, args: Record<string, unknown>): Res {
     case 'member_leave':
       server.left.push(key);
       return { data: null, error: null, status: 200 };
+    case 'gym_preview':
+      if (server.previewOffline) return offline;
+      return { data: { gymName: "RAM'S FITNESS CLUB IMPACT", joinCode: 'RAMS01', brand: null }, error: null, status: 200 };
     case 'member_products':
       return { data: [], error: null, status: 200 };
     case 'member_join':
@@ -150,6 +155,7 @@ beforeEach(() => {
   server.cancelOffline = false;
   server.readyOnCancel = null;
   server.left = [];
+  server.previewOffline = false;
 });
 
 describe('U-G1: the words before Leave', () => {
@@ -349,6 +355,26 @@ describe('U-G1: switching gyms from an invite link follows the same rule', () =>
     expect(server.calls).not.toContain('member_cancel_order');
     expect(server.calls).not.toContain('member_join');
     expect(useGymShop.getState().link?.gymName).toBe('ForgeAI Test Gym');
+  });
+
+  it('U-G6: the new gym can\'t be reached: NOTHING is cancelled, not switched, told why', async () => {
+    joinedWith([row(1, 'ordered')]);
+    answers = [true];
+    server.previewOffline = true;
+    const r = await askAndSwitchGym('RAMS01', 'Asha', "RAM'S FITNESS CLUB IMPACT");
+    expect(r).toMatch(/Nothing was cancelled: you are still in ForgeAI Test Gym\./);
+    expect(server.calls.indexOf('gym_preview')).toBeGreaterThan(-1);
+    expect(server.calls).not.toContain('member_cancel_order');
+    expect(server.calls).not.toContain('member_join');
+    expect(server.orders[0].status).toBe('ordered');
+    expect(useGymShop.getState().link?.gymName).toBe('ForgeAI Test Gym');
+  });
+
+  it('U-G6: the new gym is asked BEFORE the old gym\'s orders are cancelled', async () => {
+    joinedWith([row(1, 'ordered')]);
+    answers = [true];
+    await askAndSwitchGym('RAMS01', 'Asha', "RAM'S FITNESS CLUB IMPACT");
+    expect(server.calls.indexOf('gym_preview')).toBeLessThan(server.calls.indexOf('member_cancel_order'));
   });
 
   it('no internet for the cancel: not switched, told, offered a retry', async () => {

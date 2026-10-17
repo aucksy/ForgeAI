@@ -10,8 +10,9 @@
  */
 import { askConfirm } from '@/components/ui';
 
-import { leaveQuestion, switchQuestion, type LeaveKind } from './gym';
+import { leaveQuestion, switchQuestion, switchReachWords, type LeaveKind } from './gym';
 import { cancelOpenOrdersBeforeLeave, freshOrdersSoon, joinFromInvite, leaveGym, type ActionWords } from './gymActions';
+import { apiPreview } from './gymApi';
 import { useGymShop } from './gymStore';
 
 /** Cancel what is open, offering "Try again" while it fails. True = go on and leave. */
@@ -55,9 +56,14 @@ export async function askAndSwitchGym(code: string, name: string, toGym: string)
   const link = useGymShop.getState().link;
   if (link) {
     await freshOrdersSoon();
+    // The member changed meanwhile (left, or joined elsewhere): this switch is not theirs any more.
+    if (useGymShop.getState().link?.memberKey !== link.memberKey) return 'stayed';
     const q = switchQuestion({ fromGym: link.gymName, toGym, orders: useGymShop.getState().orders });
     if (q) {
       if (!(await askConfirm({ ...q, destructive: true }))) return 'stayed';
+      // U-G6: the new gym must answer BEFORE the old gym's orders are cancelled.
+      const reach = switchReachWords(await apiPreview(code), link.gymName);
+      if (reach) return reach;
       if (!(await settleOpenOrders('switch'))) return 'stayed';
     }
   }

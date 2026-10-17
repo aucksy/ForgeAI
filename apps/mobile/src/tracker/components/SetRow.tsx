@@ -64,7 +64,7 @@ import {
   type LogType,
 } from '../engine/logTypes';
 import { rpeColor } from '../lib/rpe';
-import { TICK_POP } from '../lib/rpeTick';
+import { shouldPlayTickPop, TICK_POP } from '../lib/rpeTick';
 import type { EntryField } from '../services/setEntry';
 import type { RecordKind } from '../services/liveRecords';
 import { missingText, type TickMissing } from '../services/setTick';
@@ -309,7 +309,11 @@ export const SetRow = memo(function SetRow({
   const popScale = useRef(new Animated.Value(1)).current;
   const reduceMotion = useReduceMotion();
   useEffect(() => {
-    if (!tickPop || reduceMotion) return;
+    if (!tickPop) return;
+    // U-M7: once only — cleared when seen, so a row drawn again never replays it.
+    const play = !reduceMotion && shouldPlayTickPop(tickPop, set.done, Date.now());
+    useWorkoutUi.getState().clearTickPop(tickPop.id);
+    if (!play) return;
     Animated.sequence([
       Animated.timing(popScale, { toValue: TICK_POP.scale, duration: TICK_POP.upMs, useNativeDriver: true }),
       Animated.timing(popScale, { toValue: 1, duration: TICK_POP.downMs, useNativeDriver: true }),

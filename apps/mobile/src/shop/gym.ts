@@ -827,6 +827,18 @@ export function previewErrorText(err: GymError): string {
   return "Couldn't reach your gym. Try again.";
 }
 
+/**
+ * v0.47.0 review (FINDINGS U-G6): a switch with open orders cancels them at the old gym FIRST. If the
+ * new gym then can't be reached, the member stayed in the old gym with nothing left on order. So
+ * the new gym is asked first: null = it answered with its name, go on; else what to say (nothing
+ * was cancelled, still in the old gym). PURE.
+ */
+export function switchReachWords(r: { ok: true; data: GymPreview | null } | { ok: false; error: GymError }, fromGym: string): string | null {
+  if (r.ok && r.data) return null;
+  const why = r.ok ? 'That gym code is not in use any more. Ask the desk for the right one.' : previewErrorText(r.error);
+  return `${why} Nothing was cancelled: you are still in ${fromGym}.`;
+}
+
 export function inviteStanding(link: Pick<GymLink, 'joinCode'> | null, code: string): InviteStanding {
   if (!link) return 'fresh';
   return cleanJoinCode(link.joinCode) === code ? 'same' : 'other';

@@ -19,5 +19,16 @@ export function shouldAutoTick(set: { done: boolean } | undefined): boolean {
   return set != null && !set.done;
 }
 
+/**
+ * v0.47.0 review (FINDINGS U-M7): the pop plays ONCE, right after the tick. A row drawn again later
+ * (after a drag hides and shows the rows, or Minimise and reopen) must not replay it, and a set
+ * unticked since must not pop. Older than this = missed, never played late.
+ */
+export const TICK_POP_FRESH_MS = 1500;
+
+export function shouldPlayTickPop(pop: { at: number } | null, setDone: boolean, now: number): boolean {
+  return pop != null && setDone && now - pop.at <= TICK_POP_FRESH_MS;
+}
+
 /** The ✓'s pop: up, then back (scale), in ms. Off with reduce motion. */
 export const TICK_POP = { scale: 1.3, upMs: 110, downMs: 170 } as const;

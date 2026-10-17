@@ -194,6 +194,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   // Target weight + rep goal for the set rows' hints (null off-plan). Memoised so the
   // rows (and SetRow's memo) keep identity while the target is unchanged.
   const fillTarget = useMemo(() => (target ? targetFill(target) : null), [target]);
+  // U-M8: the RPE tick fills from the target as it is WHEN it fires, not when the RPE was picked.
+  const fillTargetRef = useRef(fillTarget);
+  fillTargetRef.current = fillTarget;
   // The Target line says "each" / "per side" when the columns do.
   const line = target
     ? targetLine({ ...target, each: weightIsEach(loadMode), perSide: repsPerSide(loadMode) })
@@ -760,16 +763,17 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           // the same tick as the ✓ (its grey hint fills empty boxes) and the same rest. A set with
           // nothing to fill keeps its RPE and stays unticked.
           if (v == null || rpeSet.done) return;
-          const row = rows.find((r) => r.set.key === rpeSet.key);
           const exKey = exercise.key;
           const setKey = rpeSet.key;
-          const fill = row?.fill ?? null;
           // 17 Oct 2026 (owner): the member must SEE the tick. It waits for the sheet to slide
           // away, then the ✓ turns green with a pop, then the rest starts (lib/rpeTick.ts).
           setTimeout(() => {
-            const now = useActiveWorkout.getState().exercises.find((e) => e.key === exKey)?.sets.find((s) => s.key === setKey);
-            if (!shouldAutoTick(now)) return;
-            const missing = toggleDone(exKey, setKey, fill);
+            const ex = useActiveWorkout.getState().exercises.find((e) => e.key === exKey);
+            const now = ex?.sets.find((s) => s.key === setKey);
+            if (!ex || !shouldAutoTick(now)) return;
+            // U-M8 (v0.47.0 review): the fill is worked out from the set as it is NOW, so numbers
+            // typed during the wait are the ones ticked, never the older grey hint.
+            const missing = toggleDone(exKey, setKey, fillForSet(ex, setKey, fillTargetRef.current));
             if (!missing) {
               tap();
               useWorkoutUi.getState().popTick(exKey, setKey);
