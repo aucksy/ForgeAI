@@ -1,0 +1,20 @@
+# UAT WP4b, part UB (M-07, step 1 of 4): a member with workouts. The demo is loaded on a fresh
+# install and the Profile is left on screen with its "Workouts: N" line, which the script reads (it
+# must be the same N once the start-up error screen's "Try again" has brought the app back).
+# Then the script stops the app and damages its database as a failed storage chip would
+# (tools/uat-root.sh db-break).
+appId: com.forgeai.app
+---
+- runFlow: gate-demo.yaml
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '^Workouts: [\d,]+$'
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: ub-01-profile-before

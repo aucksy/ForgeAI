@@ -1,0 +1,53 @@
+# UAT WP4b, part UA (M-50 auto-pause + "Count it", M-56 forgotten Finish), step 1 of 2: a workout
+# open with one set ticked, the app left on the workout screen. The script then moves the phone's
+# own clock 75 minutes on (as root, the way time passes for a member who walked off): no set for an
+# hour, so the app must pause the workout timer by itself (uat-a2.yaml checks it).
+# Starts from a fresh install with the demo (gate-demo.yaml), so it runs alone (only=ua).
+appId: com.forgeai.app
+---
+- runFlow: gate-demo.yaml
+- runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start routine Push Day A"
+- tapOn: "Start routine Push Day A"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '.*\. Open its history and how-to'
+    direction: UP
+    timeout: 10000
+- copyTextFrom:
+    text: '.*\. Open its history and how-to'
+    index: 0
+- runScript: js/uat-exname.js
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "${output.exRe} set 1 weight, kilograms"
+      VALUE: " 50"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "${output.exRe} set 1 reps"
+      VALUE: " 5"
+- tapOn:
+    text: "Mark ${output.exRe} set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- assertVisible: '${output.exRe} set 1 complete\. Tap to undo'
+# Not paused yet: the duration runs.
+- assertVisible: '^Workout duration (\d+ minutes? )?\d+ seconds?\. Tap to pause\.$'
+- assertNotVisible: 'Paused at .*'
+- takeScreenshot: ua-01-one-set-ticked

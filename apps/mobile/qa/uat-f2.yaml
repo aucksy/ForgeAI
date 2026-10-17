@@ -1,0 +1,78 @@
+# UAT WP4b, part UF, step 2 of 5: Push Day A started, its first exercise's sets 1 (50 kg x 5) and
+# 2 (52.5 kg x 5) ticked. The app stays on the workout screen; the script then makes another
+# program hold the database's write lock (tools/uat-root.sh lock-hold), so the app's next save
+# is refused, as when the phone's storage chip or another app holds it.
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start routine Push Day A"
+- tapOn: "Start routine Push Day A"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '.*\. Open its history and how-to'
+    direction: UP
+    timeout: 10000
+- copyTextFrom:
+    text: '.*\. Open its history and how-to'
+    index: 0
+- runScript: js/uat-exname.js
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "${output.exRe} set 1 weight, kilograms"
+      VALUE: " 50"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "${output.exRe} set 1 reps"
+      VALUE: " 5"
+- tapOn:
+    text: "Mark ${output.exRe} set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "${output.exRe} set 2 weight, kilograms"
+      VALUE: " 52.5"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "${output.exRe} set 2 reps"
+      VALUE: " 5"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Mark ${output.exRe} set 2 complete"
+- tapOn:
+    text: "Mark ${output.exRe} set 2 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '${output.exRe} set 2 complete\. Tap to undo'
+- takeScreenshot: uf-02-two-sets-ticked

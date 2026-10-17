@@ -1,0 +1,55 @@
+# Device QA, part M (photos check, UAT WP4b, M-157) — after the uninstall, reinstall and Android's
+# restore, and after backup-m-check.yaml: the progress photos are back. Measures -> Progress photos
+# shows them ("See all", not "Add"), a photo opens in the viewer, and Settings -> Backup still has
+# "Include photos in my backup" on with its "Backing up ..." line. The script then checks, as root,
+# that the picture FILES came back (files/progress-photos/, not only the rows).
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Measures"
+- extendedWaitUntil:
+    visible: "Add measures"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Progress photos"
+    direction: UP
+    timeout: 20000
+- assertNotVisible: "Add a progress photo"
+- tapOn: "See all progress photos"
+- extendedWaitUntil:
+    visible: 'Progress photo, .*'
+    timeout: 20000
+- takeScreenshot: 187-after-reinstall-photos
+- tapOn:
+    text: 'Progress photo, .*'
+    index: 0
+- extendedWaitUntil:
+    visible: "Delete photo"
+    timeout: 15000
+- takeScreenshot: 188-after-reinstall-photo-open
+- tapOn: "Close photo"
+- runFlow: sub-back-to-tabs.yaml
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Backup"
+- scrollUntilVisible:
+    element: "Include photos in my backup"
+    centerElement: true
+    timeout: 30000
+- assertVisible:
+    text: "Include photos in my backup"
+    checked: true
+- extendedWaitUntil:
+    visible: '^Backing up (your 1 photo|all \d+ photos|your newest \d+ photos) \(.+\)\..*'
+    timeout: 60000
+- takeScreenshot: 189-after-reinstall-photos-backup-on

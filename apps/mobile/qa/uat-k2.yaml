@@ -1,0 +1,29 @@
+# UAT WP4b, part UK (M-110), step 2 of 5: the app-icon shortcut "Resume workout" (opened by the
+# script with the very intent Android holds for it, as the launcher does) lands in the open
+# workout, set 1 still ticked. That workout is then thrown away the member's way, and the app left
+# in the background, so the shortcut turns back into "Start <routine>".
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '.*\. Open its history and how-to'
+    direction: UP
+    timeout: 10000
+- copyTextFrom:
+    text: '.*\. Open its history and how-to'
+    index: 0
+- runScript: js/uat-exname.js
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '${output.exRe} set 1 complete\. Tap to undo'
+- takeScreenshot: uk-05-resumed-by-the-shortcut
+- tapOn: "Minimise workout. It keeps running."
+- runFlow: sub-back-to-tabs.yaml
+- runFlow: sub-workout-fresh.yaml
+- pressKey: Home

@@ -1,0 +1,26 @@
+# UAT WP4b, part UK (M-110), step 4 of 5: the SAME Start link opened again after it was used (a
+# replayed or doubled link: its key was spent by the start in step 3). It must not start anything
+# by itself: the calm one-tap question "Start <routine>?" with "Not now". "Not now" -> the Workout
+# tab with nothing open. -e ROUTINE=<the routine's name, regex-escaped>.
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: 'Start ${ROUTINE}\?'
+    timeout: 30000
+- assertVisible: "^Not now$"
+- assertNotVisible: "Log a set to finish|Finish workout"
+- takeScreenshot: uk-07-spent-link-asks-first
+- tapOn: "^Not now$"
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Start empty workout"
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- assertNotVisible: "Resume workout"
+- pressKey: Home

@@ -1,0 +1,31 @@
+# UAT WP4b, part UB (M-07, step 2 of 4): the app opened on a database it cannot read (the script
+# overwrote its first 4 KB and moved its log files aside). It must show the start-up error screen,
+# NEVER the welcome screen (setting up again over months of training would wipe them):
+#   "ForgeAI could not start" / "ForgeAI couldn't open your data. Your workouts are still on this
+#   phone. Tap Try again." with "Try again", "Save my data file" and a folded "Details".
+# "Details" shows the raw error. "Save my data file" is pressed last: Android's share sheet must
+# open (the script checks it is in front, then closes it with Back).
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "ForgeAI could not start"
+    timeout: 60000
+- assertVisible: 'ForgeAI couldn.t open your data\. Your workouts are still on this phone\. Tap Try again\.'
+- assertVisible: "^Try again$"
+- assertVisible: "^Save my data file$"
+- assertNotVisible: "Step 1 of 3|Your name|Load demo data instead"
+- assertNotVisible: "^Profile$"
+- takeScreenshot: ub-02-error-screen
+- tapOn: "^Details$"
+- extendedWaitUntil:
+    visible: "Opening the database failed: .*"
+    timeout: 10000
+- takeScreenshot: ub-03-details
+- tapOn: "^Save my data file$"
+# The share sheet takes a moment; the script reads which screen is in front after this flow.
+- waitForAnimationToEnd:
+    timeout: 8000

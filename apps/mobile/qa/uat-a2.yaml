@@ -1,0 +1,94 @@
+# UAT WP4b, part UA, step 2 of 2. The phone's clock is now 75 minutes on from uat-a1.yaml's tick,
+# the app still on the workout screen (nothing pressed since).
+# M-50: the app paused the workout timer by itself, back-dated to the last set plus its rest:
+#   "Paused at <time>: no sets for an hour. Tick a set to carry on, or finish the workout." and the
+#   duration stands still under an hour. "Resume Workout Timer" ends the pause; the time left out
+#   is offered back: "Timer paused <from> to <to> while no sets were logged." + "Count it". Counted,
+#   the duration is over an hour.
+# M-56: Finish then asks about a workout left open: "Open for 1h ..m. When did you finish?" with
+#   "Ended at <last set + rest>" (picked) and "Now"; the overview's length follows the choice
+#   (minutes / over an hour). Finished with "Ended at": the summary's Duration is minutes, not 1h+.
+appId: com.forgeai.app
+---
+# ---------------------------------------------------------------- M-50: paused by itself
+# Checked once a minute while the app is open (src/tracker/services/idlePause.ts).
+- extendedWaitUntil:
+    visible: 'Paused at .*: no sets for an hour\. Tick a set to carry on, or finish the workout\.'
+    timeout: 150000
+- assertVisible: '^Workout duration (\d+ minutes? )?\d+ seconds?, paused\. Tap to resume\.$'
+- assertNotVisible: 'Workout duration .*hour.*'
+- takeScreenshot: ua-02-paused-by-itself
+- tapOn: 'Workout duration .*, paused\. Tap to resume\.'
+- extendedWaitUntil:
+    visible: "Resume Workout Timer"
+    timeout: 10000
+- tapOn: "Resume Workout Timer"
+- extendedWaitUntil:
+    visible: 'Timer paused .* to .* while no sets were logged\.'
+    timeout: 15000
+- assertVisible: "Count the paused time in the workout"
+- assertVisible: '^Workout duration (\d+ minutes? )?\d+ seconds?\. Tap to pause\.$'
+- takeScreenshot: ua-03-count-it-offered
+- tapOn: "Count the paused time in the workout"
+- extendedWaitUntil:
+    notVisible: 'Timer paused .* while no sets were logged\.'
+    timeout: 10000
+- extendedWaitUntil:
+    visible: '^Workout duration 1 hour( \d+ minutes?)?\. Tap to pause\.$'
+    timeout: 10000
+- takeScreenshot: ua-04-counted
+# ---------------------------------------------------------------- M-56: forgotten Finish
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Finish workout$"
+- tapOn:
+    text: "^Finish workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Open for 1h( \d\dm)?\. When did you finish\?'
+- assertVisible: '^Ended at .*'
+- assertVisible: "^Now$"
+- assertVisible:
+    text: '^Ended at .*'
+    checked: true
+# "Ended at" (picked first): the length stops at the last set + its rest.
+- assertVisible: '^\d+ exercises? · \d+ sets? · \d+ min$'
+- takeScreenshot: ua-05-ended-at-question
+- tapOn: "^Now$"
+- extendedWaitUntil:
+    visible: '^\d+ exercises? · \d+ sets? · 1h( \d\dm)?$'
+    timeout: 5000
+- takeScreenshot: ua-06-now-picked
+- tapOn: '^Ended at .*'
+- extendedWaitUntil:
+    visible: '^\d+ exercises? · \d+ sets? · \d+ min$'
+    timeout: 5000
+- tapOn:
+    text: "^Finish workout$"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "^Done$"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    text: "Keep original"
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Duration[:,] \d+ min$'
+- assertNotVisible: '^Duration[:,] \d+h.*'
+- takeScreenshot: ua-07-saved-with-its-real-length
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Done$"
+- tapOn: "^Done$"

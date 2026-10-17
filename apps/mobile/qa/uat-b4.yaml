@@ -1,0 +1,23 @@
+# UAT WP4b, part UB (M-07, step 4 of 4): the database is back (the script restored it in place, the
+# app still on its error screen). "Try again" must open the app on the member's own data: the tabs,
+# and the Profile's "Workouts: N" exactly as before the damage (-e WORKOUTS=N from step 1).
+appId: com.forgeai.app
+---
+- assertVisible: "ForgeAI could not start"
+- tapOn: "^Try again$"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- assertNotVisible: "ForgeAI could not start"
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Workouts: ${WORKOUTS}$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: ub-06-back-after-try-again

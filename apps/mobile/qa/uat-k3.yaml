@@ -1,0 +1,20 @@
+# UAT WP4b, part UK (M-110), step 3 of 5: the app-icon shortcut "Start <routine>" (its own keyed
+# link, opened as the launcher does) starts that routine AT ONCE: the workout screen, never the
+# "Start <routine>?" question. -e ROUTINE=<the routine's name, regex-escaped> from the shortcut's
+# label. The workout is thrown away again after, and the app left in the background.
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- assertNotVisible: 'Start ${ROUTINE}\?'
+- assertNotVisible: "Not now"
+- assertNotVisible: '.* complete\. Tap to undo'
+- takeScreenshot: uk-06-started-by-the-shortcut
+- tapOn: "Minimise workout. It keeps running."
+- runFlow: sub-back-to-tabs.yaml
+- runFlow: sub-workout-fresh.yaml
+- pressKey: Home

@@ -104,7 +104,11 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # UAT part before it). uh = a past workout logged, edited, deleted; ur = start while open, untick,
 # remove set + Undo, Update routine; un = "Rest alerts are off"; ud = remove demo, load demo, import
 # Replace + Undo, Save my history; ue = erase (solo, gym member) + the welcome's "From Hevy".
-UAT_PARTS="uh ur un ud ue"
+# UAT WP4b (17 Oct 2026): ub = start-up error screen (database damaged as root), uf = Finish refused
+# (write lock held) and on a full phone, ua = auto-pause + "Count it" + "Ended at" (clock moved),
+# uv = edit while a workout is open, ug = merge an exercise, uk = real widget + app-icon shortcuts
+# (qa/uat-wp4b.sh). Part M also turns on "Include photos in my backup" and checks the photos return.
+UAT_PARTS="uh ur un ud ue ub uf ua uv ug uk"
 GATE_PARTS="w dnd longrest anim mk"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
@@ -1149,6 +1153,30 @@ part_m() {
   [ -n "$line" ] || { m_fail "could not read the 'N workouts' line off Settings -> Backup (m-before-ui.xml)"; return 1; }
   log "BACKUP M: before the backup Settings -> Backup shows '$line'"
 
+  # 2c. UAT WP4b (M-157): "Include photos in my backup" ON, with at least one progress photo (one is
+  # added from the gallery when there is none: the two SAMPLE pictures, as part D pushes them). The
+  # copies Android's backup will carry (files/photo-backup/) are listed as root and counted.
+  push_fixture "$QA_DIR/fixtures/sample-progress-1.png" /sdcard/Pictures/forgeai-sample-1.png
+  push_fixture "$QA_DIR/fixtures/sample-progress-2.png" /sdcard/Pictures/forgeai-sample-2.png
+  adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+  log "media store: $(wait_media forgeai-sample 2 20 images/media) sample pictures for part M's photo"
+  free_maestro
+  maestro test --format junit --output "$OUT/part-m-photos.xml" --test-output-dir "$OUT/part-m-photos" "$QA_DIR/backup-m-photos.yaml" \
+    > "$OUT/part-m-photos.log" 2>&1 || { adb exec-out screencap -p > "$OUT/m-photos-failed.png"; m_fail "could not add a progress photo and turn on 'Include photos in my backup' (part-m-photos.log, m-photos-failed.png)"; return 1; }
+  free_maestro
+  sleep 3
+  adb shell "su 0 ls -l /data/data/$PKG/files/photo-backup/" 2>/dev/null | tr -d '\r' > "$OUT/m-photo-backup-before.txt"
+  m_photos=$(grep -cE '\.(jpg|jpeg|png|webp)$' "$OUT/m-photo-backup-before.txt")
+  if [ -z "$(adb shell "su 0 ls /data/data/$PKG/" 2>/dev/null | tr -d '\r')" ]; then
+    m_photos=""
+    log "BACKUP M: photos: the backup folder cannot be read on this image (no root); the screens alone are checked"
+  elif [ "$m_photos" -ge 1 ]; then
+    log "BACKUP M: 'Include photos in my backup' is on: $m_photos photo copies in files/photo-backup/ (m-photo-backup-before.txt)"
+  else
+    m_fail "'Include photos in my backup' is on but files/photo-backup/ holds no photo (m-photo-backup-before.txt)"
+    return 1
+  fi
+
   # 3. Back up now. The app goes to the background first (a foreground app can be skipped);
   # never force-stop it here: Android does not back up a stopped app.
   adb shell input keyevent KEYCODE_HOME
@@ -1202,6 +1230,24 @@ part_m() {
   m_re=$(python3 -c "import re,sys;print(re.escape(sys.argv[1]))" "$m_routine")
   maestro test -e ROUTINE="$m_re" --format junit --output "$OUT/part-m-check.xml" --test-output-dir "$OUT/part-m-check" "$QA_DIR/backup-m-check.yaml"     > "$OUT/part-m-check.log" 2>&1 || { adb exec-out screencap -p > "$OUT/m-check-failed.png"; m_fail "after the reinstall the name 'QA Restore', the Body fat 17.5 % entry, units lb or routine '$m_routine' did not come back (part-m-check.log, m-check-failed.png)"; return 1; }
   log "BACKUP M: the name 'QA Restore', the Body fat 17.5 % entry, units lb and routine '$m_routine' came back too"
+  # 7. UAT WP4b (M-157): the progress photos came back: on screen (Measures, the viewer, the backup
+  # switch still on), and as picture FILES in files/progress-photos/ (not only their rows).
+  free_maestro
+  maestro test --format junit --output "$OUT/part-m-photos-check.xml" --test-output-dir "$OUT/part-m-photos-check" "$QA_DIR/backup-m-photos-check.yaml" \
+    > "$OUT/part-m-photos-check.log" 2>&1 || { adb exec-out screencap -p > "$OUT/m-photos-check-failed.png"; m_fail "after the reinstall the progress photos or the photo backup switch did not come back (part-m-photos-check.log, m-photos-check-failed.png)"; return 1; }
+  free_maestro
+  if [ -n "${m_photos:-}" ]; then
+    adb shell "su 0 ls -l /data/data/$PKG/files/progress-photos/" 2>/dev/null | tr -d '\r' > "$OUT/m-photos-after.txt"
+    local m_back m_empty
+    m_back=$(grep -cE '\.(jpg|jpeg|png|webp)$' "$OUT/m-photos-after.txt")
+    m_empty=$(awk '/\.(jpg|jpeg|png|webp)$/ && $5 == 0' "$OUT/m-photos-after.txt" | wc -l | tr -d ' ')
+    if [ "$m_back" -ge "$m_photos" ] && [ "$m_empty" = "0" ]; then
+      log "BACKUP M: $m_back progress photo files back in files/progress-photos/ after the reinstall ($m_photos were in the backup; m-photos-after.txt)"
+    else
+      m_fail "after the reinstall files/progress-photos/ holds $m_back photo files ($m_empty empty); the backup held $m_photos (m-photos-after.txt)"
+      return 1
+    fi
+  fi
 }
 if qa_runs m; then
 log "part M start"
@@ -1343,6 +1389,10 @@ if qa_runs ue; then
   uat_passed ud || gate_flow ue_seed gate-demo.yaml || true
   uat_part ue uat-e.yaml && log "UAT UE: erase (solo, then as a FORGE1 member) and the Hevy import opening by itself, each checked on screen"
 fi
+# UAT WP4b: ub uf ua uv ug uk (qa/uat-wp4b.sh).
+# shellcheck source=uat-wp4b.sh
+. "$QA_DIR/uat-wp4b.sh"
+uat_wp4b
 adb shell input keyevent KEYCODE_HOME >/dev/null 2>&1 || true
 
 # ---------------------------------------------------------------- part DND (audit v2 B: Do Not Disturb)

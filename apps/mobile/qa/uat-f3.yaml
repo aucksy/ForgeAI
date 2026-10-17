@@ -1,0 +1,57 @@
+# UAT WP4b, part UF, step 3 of 5: another program holds the database's write lock. Finish -> the
+# sheet's "Finish workout": the save is refused. The member must be told ("Could not save ... Your
+# sets are still here — tap Finish to try again.", then the banner "Couldn't finish your workout.
+# It's still open — tap Finish again.") and the workout must still be open with both sets ticked.
+appId: com.forgeai.app
+---
+- scrollUntilVisible:
+    element: '.*\. Open its history and how-to'
+    direction: UP
+    timeout: 10000
+- copyTextFrom:
+    text: '.*\. Open its history and how-to'
+    index: 0
+- runScript: js/uat-exname.js
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Finish workout$"
+- tapOn:
+    text: "^Finish workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "^Finish workout$"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "^Could not save$"
+    timeout: 60000
+- assertVisible: 'Something went wrong saving your workout\. Your sets are still here — tap Finish to try again\.'
+- takeScreenshot: uf-03-could-not-save
+- tapOn: "^Close$"
+- extendedWaitUntil:
+    notVisible: "^Could not save$"
+    timeout: 10000
+# The Finish sheet may still be up behind the notice: back to the workout.
+- tapOn:
+    text: "^Keep going$"
+    optional: true
+- extendedWaitUntil:
+    visible: 'Couldn.t finish your workout\. It.s still open — tap Finish again\.'
+    timeout: 10000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '${output.exRe} set 1 complete\. Tap to undo'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '${output.exRe} set 2 complete\. Tap to undo'
+- assertVisible: "Minimise workout. It keeps running."
+- takeScreenshot: uf-04-still-open

@@ -1,0 +1,236 @@
+# UAT WP4b, part UG (M-96): merge a member's own exercise into a library one; its history moves.
+#   1. Profile -> Exercises -> "Create an exercise": "QA Bench Twin" (weight and reps, chest,
+#      barbell). A past workout logged with it: 250 kg x 1 on last month's first Sunday (an empty
+#      day in the demo), so it holds the exercise's record.
+#   2. Its page: "Heaviest weight, 250 kg". Options -> "Merge into…" -> Barbell Bench Press: the
+#      question says what moves ("Its 1 workout, routines and records move to Barbell Bench Press,
+#      and QA Bench Twin is removed. This can't be undone.") -> Merge.
+#   3. Barbell Bench Press's page now holds the record (250 kg, heavier than any demo bench set);
+#      the record opens that past workout, which now lists Barbell Bench Press with 250 kg x 1 and
+#      no QA Bench Twin. Searching Exercises finds no QA Bench Twin any more.
+# Starts from a fresh install with the demo (gate-demo.yaml), so it runs alone (only=ug).
+appId: com.forgeai.app
+---
+- runFlow: gate-demo.yaml
+# ---------------------------------------------------------------- 1a. the member's own exercise
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Create an exercise"
+- extendedWaitUntil:
+    visible: "How you log it"
+    timeout: 15000
+- tapOn: "Exercise name"
+- inputText: " QA Bench Twin"
+- hideKeyboard
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Weight and reps$"
+- tapOn: "^Weight and reps$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Chest$"
+# The main muscle's chip comes first (the optional second muscles repeat the names below it).
+- tapOn:
+    text: "^Chest$"
+    index: 0
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Barbell$"
+- tapOn: "^Barbell$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Save exercise$"
+- tapOn: "^Save exercise$"
+- extendedWaitUntil:
+    visible: "QA Bench Twin"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "No sets logged yet"
+- takeScreenshot: ug-01-own-exercise
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- 1b. a past workout with it
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 30000
+- tapOn: "Log a past workout"
+- extendedWaitUntil:
+    visible: "Pick the day, when it started and how long it lasted."
+    timeout: 15000
+- tapOn: "Previous month"
+- tapOn:
+    text: '^Sun, \d{1,2} [A-Z][a-z]{2}( \d{4})?$'
+    index: 0
+- copyTextFrom: 'Log [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}( \d{4})? · 18:00'
+- runScript: js/uat-day.js
+- tapOn: 'Log [A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2}( \d{4})? · 18:00'
+- extendedWaitUntil:
+    visible: "Logging a past workout"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " QA Bench Twin"
+- tapOn:
+    text: "Select QA Bench Twin"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "QA Bench Twin set 1 weight, kilograms"
+    timeout: 20000
+# Exactly one row: any row past the 1st goes by its set menu.
+- repeat:
+    times: 4
+    commands:
+      - runFlow:
+          when:
+            visible: 'QA Bench Twin set 2(, RPE [\d.]+)?\. Change set type'
+          commands:
+            - tapOn: 'QA Bench Twin set 2(, RPE [\d.]+)?\. Change set type'
+            - extendedWaitUntil:
+                visible: "Remove set"
+                timeout: 10000
+            - tapOn: "Remove set"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "QA Bench Twin set 1 weight, kilograms"
+      VALUE: " 250"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "QA Bench Twin set 1 reps"
+      VALUE: " 1"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Mark QA Bench Twin set 1 complete"
+- tapOn:
+    text: "Mark QA Bench Twin set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Save workout$"
+    timeout: 15000
+- tapOn: "^Save workout$"
+- extendedWaitUntil:
+    visible: '${output.pageDate} 20\d\d · 18:00.*'
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 1: 250 kg × 1.*'
+- takeScreenshot: ug-02-past-workout-with-it
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- 2. its page, then Merge into…
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " QA Bench Twin"
+- hideKeyboard
+- tapOn:
+    text: "View QA Bench Twin"
+    index: 0
+- extendedWaitUntil:
+    visible: "Options for QA Bench Twin"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Heaviest weight, 250 kg\. Open the workout\.$'
+- takeScreenshot: ug-03-its-record
+- scrollUntilVisible:
+    element: "Options for QA Bench Twin"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- tapOn: "Options for QA Bench Twin"
+- extendedWaitUntil:
+    visible: "Merge into…"
+    timeout: 10000
+- tapOn: "Merge into…"
+- extendedWaitUntil:
+    visible: "Merge QA Bench Twin into…"
+    timeout: 10000
+- tapOn: "Search exercises"
+- inputText: " bench press"
+# No hideKeyboard here (it is Back, and Back closes this picker): the first row sits above it.
+- extendedWaitUntil:
+    visible: "Merge into Barbell Bench Press"
+    timeout: 10000
+- tapOn:
+    text: "Merge into Barbell Bench Press"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Merge into Barbell Bench Press\?'
+    timeout: 10000
+- assertVisible: 'Its 1 workout, routines and records move to Barbell Bench Press, and QA Bench Twin is removed\. This can.t be undone\.'
+- takeScreenshot: ug-04-merge-question
+- tapOn: "^Merge$"
+# ---------------------------------------------------------------- 3. the history moved
+- extendedWaitUntil:
+    visible: "Options for Barbell Bench Press"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Heaviest weight, 250 kg\. Open the workout\.$'
+- takeScreenshot: ug-05-record-moved
+- tapOn: '^Heaviest weight, 250 kg\. Open the workout\.$'
+- extendedWaitUntil:
+    visible: '${output.pageDate} 20\d\d · 18:00.*'
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 1: 250 kg × 1.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: ".*Barbell Bench Press.*"
+- assertNotVisible: ".*QA Bench Twin.*"
+- takeScreenshot: ug-06-workout-now-bench-press
+- runFlow: sub-back-to-tabs.yaml
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Exercises"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " QA Bench Twin"
+- hideKeyboard
+- assertNotVisible: "View QA Bench Twin"
+- takeScreenshot: ug-07-own-exercise-gone

@@ -1,0 +1,96 @@
+# Device QA, part M (photos, UAT WP4b, M-157) — after backup-m-record.yaml (which checks the photo
+# backup is OFF by default) and BEFORE Android's backup: the member has at least one progress photo
+# (one is added from the gallery when there is none: the script pushed the two SAMPLE pictures) and
+# turns ON Settings -> Backup -> "Include photos in my backup". The card must then say what it
+# backs up ("Backing up your 1 photo (0.1 MB)." / "Backing up all 2 photos (...)."). After the
+# uninstall + reinstall, backup-m-photos-check.yaml must find the photos again.
+appId: com.forgeai.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Measures"
+- extendedWaitUntil:
+    visible: "Add measures"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Progress photos"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    text: "See all progress photos|Add a progress photo"
+    index: 0
+- extendedWaitUntil:
+    visible: "Add a photo"
+    timeout: 15000
+- runFlow:
+    when:
+      notVisible: 'Progress photo, .*'
+    commands:
+      - tapOn: "Add a photo"
+      - tapOn: "Choose from gallery"
+      - extendedWaitUntil:
+          visible: '(?i)photo taken on.*|^Albums$'
+          timeout: 20000
+      - tapOn:
+          text: '(?i)photo taken on.*'
+          index: 0
+          optional: true
+      - runFlow:
+          when:
+            visible: '^Albums$'
+          commands:
+            - tapOn:
+                id: '.*icon_thumbnail'
+                index: 0
+                optional: true
+      - extendedWaitUntil:
+          visible: 'When was this photo taken\?|Progress photo, .*'
+          timeout: 20000
+      # The sample pictures carry no date: the app asks which day (any day will do here).
+      - runFlow:
+          when:
+            visible: 'When was this photo taken\?'
+          commands:
+            - tapOn: "Previous month"
+            - tapOn: '\d{4}-\d{2}-01'
+      - extendedWaitUntil:
+          visible: 'Progress photo, .*'
+          timeout: 20000
+- takeScreenshot: 181a-backup-prep-photo
+- runFlow: sub-back-to-tabs.yaml
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Backup"
+- scrollUntilVisible:
+    element: "Include photos in my backup"
+    centerElement: true
+    timeout: 30000
+- tapOn: "Include photos in my backup"
+# The row's title is plain text; the switch carries the same name. If the first tap hit the
+# text, press the switch itself.
+- runFlow:
+    when:
+      notVisible:
+        text: "Include photos in my backup"
+        checked: true
+    commands:
+      - tapOn:
+          text: "Include photos in my backup"
+          index: 1
+- extendedWaitUntil:
+    visible: '^Backing up (your 1 photo|all \d+ photos|your newest \d+ photos) \(.+\)\..*'
+    timeout: 60000
+- assertVisible:
+    text: "Include photos in my backup"
+    checked: true
+- assertNotVisible: 'Couldn.t copy your photos.*'
+- takeScreenshot: 181b-backup-photos-on

@@ -1,0 +1,22 @@
+# UAT WP4b, part UK (M-110), step 5 of 5: the app-icon shortcut "Log body weight" (opened as the
+# launcher does) lands on Measures, on Body weight: its "Add measures" form starts with the body
+# weight box.
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add measures"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '.* (kg|lb) since \d{1,2} [A-Z][a-z]{2}'
+- takeScreenshot: uk-08-body-weight-shortcut
+- tapOn: "Add measures"
+- extendedWaitUntil:
+    visible: "Body weight in kg"
+    timeout: 15000
+- takeScreenshot: uk-09-body-weight-form
+- back

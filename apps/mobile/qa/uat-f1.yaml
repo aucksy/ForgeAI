@@ -1,0 +1,18 @@
+# UAT WP4b, part UF (M-58: Finish fails, or the phone's storage is full), step 1 of 5: the demo on a
+# fresh install, the Profile on screen with its "Workouts: N" line, which the script reads: at the
+# end exactly ONE more workout must be saved (a failed Finish retried never saves twice).
+appId: com.forgeai.app
+---
+- runFlow: gate-demo.yaml
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '^Workouts: [\d,]+$'
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: uf-01-profile-before

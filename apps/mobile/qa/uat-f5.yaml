@@ -1,0 +1,87 @@
+# UAT WP4b, part UF, step 5 of 5: space freed again (the script deleted its filler). If the workout
+# is still open (step 4 was refused), Finish once more: it must save now. Either way: the summary,
+# no "Couldn't finish" banner left, the Profile one workout up from step 1 (-e WANT=N+1: saved
+# exactly once), and the workout itself, opened from today's day in Calendar (-e TODAY="Saturday
+# 17 October", the phone's own date), holds both sets: 50 kg x 5 and 52.5 kg x 5.
+appId: com.forgeai.app
+---
+- runFlow:
+    when:
+      visible: "Minimise workout. It keeps running."
+    commands:
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "^Finish workout$"
+      - tapOn:
+          text: "^Finish workout$"
+          index: 0
+      - extendedWaitUntil:
+          visible: 'Finish workout\?'
+          timeout: 10000
+      - tapOn:
+          text: "Leave them out"
+          optional: true
+      - tapOn:
+          text: "^Finish workout$"
+          above:
+            text: "Keep going"
+- extendedWaitUntil:
+    visible: "^Done$"
+    timeout: 60000
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    text: "Keep original"
+    optional: true
+- assertNotVisible: 'Couldn.t finish your workout.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Sets[:,] 2$'
+- takeScreenshot: uf-07-saved-after-retry
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Done$"
+- tapOn: "^Done$"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 20000
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Workouts: ${WANT}$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- takeScreenshot: uf-08-profile-one-up
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "${TODAY}, 1 workout"
+- tapOn: "${TODAY}, 1 workout"
+- extendedWaitUntil:
+    visible: "^More$"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 1: 50 kg × 5.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Set 2: 52\.5 kg × 5.*'
+- assertNotVisible: 'Set 3: .*'
+- takeScreenshot: uf-09-workout-holds-both-sets

@@ -52,6 +52,9 @@ SWALLOWED = re.compile(r"\s[WEF][/ ]\s*(ForgeErr|ForgeHealth)\s*[(:]")
 # The app's JavaScript logs a caught error as console.warn('[ForgeErr] ...'), which reaches logcat as
 # "W ReactNativeJS: '[ForgeErr] ..." — a JS warning line, so it needs its own failing rule.
 JS_SWALLOWED = re.compile(r"ReactNativeJS.*\[ForgeErr\]")
+# The head every line of ONE log call shares: "10-09 16:35:29.286  1234  1250 E Tag" (threadtime)
+# or "10-09 16:35:29.286 E/Tag( 123)" (time).
+ENTRY_HEAD = re.compile(r"^(\d\d-\d\d \d\d:\d\d:\d\d\.\d+\s+(?:\d+\s+\d+\s+[VDIWEF] [^:]*|[VDIWEF]/[^(]*\(\s*\d+\)))")
 
 
 def read(path):
@@ -78,18 +81,48 @@ def java_crash(text):
     return hits
 
 
+def expected_errors(out):
+    """UAT WP4b (17 Oct 2026): errors a part MADE ON PURPOSE around the app (a damaged database, a
+    held write lock, a full phone; run-device-qa.sh / uat-wp4b.sh). expected-errors.txt holds
+    "<PART>\\t<regex>" lines. Only an error/caught-error LINE in that part's OWN log that matches
+    its regex is listed as expected; anywhere else (another part, the final logcat) the same line
+    still fails, and crashes / ANRs are never excused. The part itself checks the line appeared."""
+    rules = {}
+    for line in read(os.path.join(out, "expected-errors.txt")).splitlines():
+        if "\t" not in line:
+            continue
+        part, rx = line.split("\t", 1)
+        try:
+            rules.setdefault(part.strip().upper(), []).append(re.compile(rx.strip()))
+        except re.error:
+            continue
+    return rules
+
+
 def scan(out):
     findings, warns = [], []
+    expected = expected_errors(out)
     logs = sorted(glob.glob(os.path.join(out, "part-*", "**", "*logcat*"), recursive=True))
     final = os.path.join(out, "logcat.txt")
     if os.path.exists(final):
         logs.append(final)
     for path in logs:
         where = part_of(path, out) if path != final else "final logcat"
+        made = expected.get(where, []) if path != final else []
+        # One log call printed over several lines (an error and its "Caused by" lines) shares one
+        # head (time, pid, tid, level, tag): an expected entry is excused as a whole.
+        excused = set()
         text = read(path)
         for block in java_crash(text):
             findings.append(f"APP CRASH ({where}):\n{block}")
         for l in text.splitlines():
+            head = ENTRY_HEAD.match(l)
+            erring = JS_ERROR.search(l) or SWALLOWED.search(l) or JS_SWALLOWED.search(l)
+            if erring and made and (any(r.search(l) for r in made) or (head and head.group(1) in excused)):
+                if head:
+                    excused.add(head.group(1))
+                warns.append(f"EXPECTED: the error part {where} made on purpose ({where}): {l.strip()}")
+                continue
             if any(p.search(l) for p in NATIVE_CRASH):
                 findings.append(f"NATIVE CRASH ({where}): {l.strip()}")
             elif ANR.search(l):

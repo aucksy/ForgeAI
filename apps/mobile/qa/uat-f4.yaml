@@ -1,0 +1,68 @@
+# UAT WP4b, part UF, step 4 of 5: the lock is gone, but the phone's storage is now FULL (the script
+# filled it as the app's own user, so a 6-byte write is refused; Android keeps its own reserve).
+# Finish again. Two honest outcomes, both accepted, and the script logs which one happened:
+#   - refused: "Could not save", then the banner names the full storage ("Couldn't finish your
+#     workout — your phone's storage may be full. It's still open: free some space, then tap Finish
+#     again."), and the workout is still open with both sets;
+#   - saved: SQLite still had room in its own log file, so the workout went in (step 5 checks it
+#     went in ONCE, with both sets).
+# Screenshots are taken only after the outcome (nothing is written to the phone before it).
+appId: com.forgeai.app
+---
+- scrollUntilVisible:
+    element: '.*\. Open its history and how-to'
+    direction: UP
+    timeout: 10000
+- copyTextFrom:
+    text: '.*\. Open its history and how-to'
+    index: 0
+- runScript: js/uat-exname.js
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Finish workout$"
+- tapOn:
+    text: "^Finish workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "^Finish workout$"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "^Could not save$|^Done$"
+    timeout: 60000
+- runFlow:
+    when:
+      visible: "^Could not save$"
+    commands:
+      - takeScreenshot: uf-05-full-could-not-save
+      - tapOn: "^Close$"
+      - extendedWaitUntil:
+          notVisible: "^Could not save$"
+          timeout: 10000
+      - tapOn:
+          text: "^Keep going$"
+          optional: true
+      - extendedWaitUntil:
+          visible: 'Couldn.t finish your workout — your phone.s storage may be full\. It.s still open: free some space, then tap Finish again\.'
+          timeout: 10000
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: '${output.exRe} set 1 complete\. Tap to undo'
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: '${output.exRe} set 2 complete\. Tap to undo'
+      - takeScreenshot: uf-06-full-still-open
+- runFlow:
+    when:
+      visible: "^Done$"
+    commands:
+      - takeScreenshot: uf-05-full-saved-anyway

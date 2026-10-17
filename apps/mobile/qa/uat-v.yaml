@@ -1,0 +1,207 @@
+# UAT WP4b, part UV (M-67): edit a past workout while a live one is open.
+#   1. Push Day A open with set 1 ticked, minimised. A past workout's page (Calendar) -> More ->
+#      "Edit workout": "A workout is already open" names the 1 set it would delete, with
+#      "Resume workout" and "Discard it and edit this one".
+#   2. "Resume workout": back in the live workout, set 1 still ticked.
+#   3. Again, "Discard it and edit this one": the past workout opens for editing. Its edit is then
+#      discarded ("Discard changes?" -> Discard): its page shows the same sets as before.
+#   4. The live workout is gone for good: the Workout tab offers "Start empty workout", no "Resume
+#      workout", also after the app is stopped and opened again.
+# Starts from a fresh install with the demo (gate-demo.yaml), so it runs alone (only=uv).
+appId: com.forgeai.app
+---
+- runFlow: gate-demo.yaml
+- runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start routine Push Day A"
+- tapOn: "Start routine Push Day A"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- scrollUntilVisible:
+    element: '.*\. Open its history and how-to'
+    direction: UP
+    timeout: 10000
+- copyTextFrom:
+    text: '.*\. Open its history and how-to'
+    index: 0
+- runScript: js/uat-exname.js
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "${output.exRe} set 1 weight, kilograms"
+      VALUE: " 50"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "${output.exRe} set 1 reps"
+      VALUE: " 5"
+- tapOn:
+    text: "Mark ${output.exRe} set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- assertVisible: '${output.exRe} set 1 complete\. Tap to undo'
+- tapOn: "Minimise workout. It keeps running."
+# ---------------------------------------------------------------- 1. a past workout -> Edit workout
+- runFlow:
+    file: sub-profile-tile.yaml
+    env:
+      TILE: "Calendar"
+- extendedWaitUntil:
+    visible: "Log a past workout"
+    timeout: 30000
+# This month's first day with one workout (the demo trains Mon-Sat up to yesterday).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '[A-Z][a-z]+day \d{1,2} [A-Z][a-z]+, 1 workout'
+- copyTextFrom:
+    text: '[A-Z][a-z]+day \d{1,2} [A-Z][a-z]+, 1 workout'
+    index: 0
+# "Friday 2 October, 1 workout": no regex characters in it, so it is its own pattern.
+- evalScript: ${output.day = maestro.copiedText}
+- tapOn:
+    text: "${output.day}"
+    index: 0
+- extendedWaitUntil:
+    visible: "^More$"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Sets[:,] \d+$'
+- copyTextFrom: '^Sets[:,] \d+$'
+- runScript:
+    file: js/uat-num.js
+    env:
+      KEY: sets0
+- takeScreenshot: uv-01-past-workout
+- scrollUntilVisible:
+    element: "^More$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- tapOn: "^More$"
+- extendedWaitUntil:
+    visible: "Edit workout"
+    timeout: 10000
+- tapOn: "Edit workout"
+- extendedWaitUntil:
+    visible: "A workout is already open"
+    timeout: 15000
+- assertVisible: 'Resume it, or discard it and start this one\. Discarding deletes its 1 set\.'
+- assertVisible: "^Discard it and edit this one$"
+- takeScreenshot: uv-02-already-open
+# ---------------------------------------------------------------- 2. Resume workout
+- tapOn:
+    text: "^Resume workout$"
+    below:
+      text: "A workout is already open"
+- extendedWaitUntil:
+    visible: '${output.exRe}\. Open its history and how-to'
+    timeout: 20000
+- assertNotVisible: "Editing a saved workout"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '${output.exRe} set 1 complete\. Tap to undo'
+- takeScreenshot: uv-03-resumed
+- tapOn: "Minimise workout. It keeps running."
+# Minimised, the app goes back where it came from (the workout's page); else the page is reopened.
+- runFlow:
+    when:
+      notVisible: "^More$"
+    commands:
+      - runFlow:
+          file: sub-back-to-tabs.yaml
+      - runFlow:
+          file: sub-profile-tile.yaml
+          env:
+            TILE: "Calendar"
+      - extendedWaitUntil:
+          visible: "Log a past workout"
+          timeout: 30000
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "${output.day}"
+      - tapOn:
+          text: "${output.day}"
+          index: 0
+- extendedWaitUntil:
+    visible: "^More$"
+    timeout: 20000
+# ---------------------------------------------------------------- 3. Discard it and edit this one
+- scrollUntilVisible:
+    element: "^More$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- tapOn: "^More$"
+- extendedWaitUntil:
+    visible: "Edit workout"
+    timeout: 10000
+- tapOn: "Edit workout"
+- extendedWaitUntil:
+    visible: "A workout is already open"
+    timeout: 15000
+- tapOn: "^Discard it and edit this one$"
+- extendedWaitUntil:
+    visible: "Editing a saved workout"
+    timeout: 20000
+- takeScreenshot: uv-04-editing-the-past-one
+- tapOn: "Go back"
+- extendedWaitUntil:
+    visible: 'Discard changes\?'
+    timeout: 10000
+- tapOn: "^Discard$"
+- extendedWaitUntil:
+    visible: "^More$"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Sets[:,] ${output.sets0}$'
+- takeScreenshot: uv-05-past-workout-unchanged
+# ---------------------------------------------------------------- 4. the live workout is gone
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Start empty workout"
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- assertNotVisible: "Resume workout"
+- assertNotVisible: "Workout in progress"
+- takeScreenshot: uv-06-live-one-discarded
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Start empty workout"
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- assertNotVisible: "Resume workout"
+- assertNotVisible: "Workout in progress"
+- takeScreenshot: uv-07-still-gone-after-restart
