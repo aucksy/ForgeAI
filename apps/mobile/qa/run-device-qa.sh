@@ -738,6 +738,23 @@ j3_dump() {
   maestro hierarchy > "$OUT/$1" 2> "$OUT/$1.err" && [ -s "$OUT/$1" ] && { log "J3 screen read: Maestro view tree used"; return 0; }
   log "J3 screen read: Maestro view tree failed too ($OUT/$1.err)"
 }
+# Run 39041035175 (owner phone): after the drop the list sat scrolled so the name rows were just
+# above the screen (Lateral Raise's sets on top, its name row off it): the order read "missing".
+# Read the order; if no name rows are on screen, bring the list back to its top and read again.
+# Still exactly the same check of the order.
+j3_names() {  # $1 = dump file name. Prints ONLY the order (its log lines go to stderr + timeline).
+  j3_dump "$1" >&2
+  local n
+  n=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/$1")
+  if [ "$n" = "missing" ]; then
+    log "J3 no name rows on screen in $1: back to the top of the list, read again" >&2
+    for _ in 1 2 3; do adb shell input swipe 540 700 540 1900 300 >/dev/null 2>&1; sleep 0.5; done
+    sleep 1
+    j3_dump "$1" >&2
+    n=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/$1")
+  fi
+  echo "$n"
+}
 if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$OUT/part-j3" "$QA_DIR/j3-workout-drag.yaml" > "$OUT/part-j3.log" 2>&1; then
   j3_dump j3-before.xml
   j3_before=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-before.xml")
@@ -755,8 +772,7 @@ if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$O
     done
     adb shell input motionevent UP "$j3x2" "$j3y2"
     sleep 2
-    j3_dump j3-after.xml
-    j3_after=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-after.xml")
+    j3_after=$(j3_names j3-after.xml)
     j3_first=${j3_before%%|*}; j3_second=${j3_before##*|}
     if [ "$j3_after" = "$j3_second|$j3_first" ]; then
       log "J3 DRAG OK: $j3_second is now above $j3_first"
@@ -766,8 +782,7 @@ if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$O
       free_maestro
       log "part J3R start"
       if maestro test --format junit --output "$OUT/part-j3r.xml" --test-output-dir "$OUT/part-j3r" "$QA_DIR/uat-j3-resume.yaml" > "$OUT/part-j3r.log" 2>&1; then
-        j3_dump j3-restart.xml
-        j3_kept=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-restart.xml")
+        j3_kept=$(j3_names j3-restart.xml)
         if [ "$j3_kept" = "$j3_second|$j3_first" ]; then
           log "J3 ORDER KEPT: after a restart $j3_second is still above $j3_first"
         else
