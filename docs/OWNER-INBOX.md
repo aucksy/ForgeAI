@@ -145,8 +145,12 @@ other runs started at the same time will queue.
 - A final step proves all 4 finished green AND that together they ran every test of the full run.
   A test added later but left out of every piece fails a check, so it can't silently stop running.
 - The release check needed no change: a run only counts as green if every piece is green.
-- Expected: about 1 h 20 min per full run instead of about 3 h 30 min. Still ₹0.
+- Expected at first: about 1 h 20 min per full run (see the first-run result below: about 2 h).
 - Validation: the first split runs are compared with the old-style runs on the same app.
+**First split runs (17 Oct):** 3 of 4 pieces passed on both phones, and a whole run took ~1 h 20 min.
+The 4th piece failed from part J on: J needs the demo already removed by an earlier test, so J..R
+can't start from scratch. Regrouped on that evidence (commit 52e8f43): the long chain stays together,
+so **a whole run now takes about 2 h instead of 3 h 30 min**, still ₹0. Re-run in progress.
 
 ## 13. "Which machines are free when": suggest a schedule with less waiting — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
