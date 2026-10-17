@@ -2364,6 +2364,30 @@
     Dark | Light switch where the language switch was (color.* are CSS variables; light palette
     4.5:1+ on every plane), ~300 sentences in plainer English, "Void" -> "Cancel receipt".
 
+- 2026-10-17: **v0.47.0 — UAT finish (cloud session), the owner's asks of 16-17 Oct** (tag commit below).
+  - Member app: Settings -> Your gym has "Join your gym" with the gym code for a member in no gym
+    (U-G5; the join box was only on the Shop tab). RPE tap: the sheet closes, then the set's ✓ pops
+    and ticks in front of the member, then the rest starts. A small drag bar on draggable exercise
+    and routine cards. Phone icon in the admin app's look. Fixes: the save-problem banner no longer
+    takes taps (U-M5); no ghost keyboard / missing tab bar after the app-icon shortcut + Minimise
+    (U-M6); "Coming from Hevy or Strong?" wraps at big text; 4 controls given labels / 48 dp targets
+    (WP13 lint); shop buttons say "Join this gym" / "Switch to this gym" / "Open the shop" (C9-34).
+  - Tests: WP4b phone parts for the last high-risk member gaps (start-up error, auto-pause, "Ended
+    at", refused Finish, edit while open, merge, widget/shortcuts, photo backup); WP7 phone
+    conditions (qa-conditions.yml); WP13 label/touch-target lint; WP14 pairwise phone settings (11
+    rows, docs/uat/ENV-MATRIX.md). Coverage 219/330 tasks on a real screen (66%, was 209).
+  - Phone test split into 4 shards in one run (build once, sha256-checked; qa_shards.py check proves
+    every part ran): a whole run ~2 h instead of ~3 h 30 min. Owner decision (OWNER-INBOX #14).
+  - Owner tools: docs/OWNER-INBOX.md (every idea + answer first), the private Owner inbox page
+    (pick and send answers), the /inbox desktop mod (plugins/owner-inbox).
+  - Research only (no build): entry machines (P8), GGMS, QR at the gate, gym icon, machine-free
+    times, faster CI. Open owner decisions: docs/OWNER-INBOX.md.
+  - Admin app: no code change in this release (last deployed 1f2897c5 at 8672a6b).
+  - Gate runs (commit 52e8f43, the split phone test): default 39020754722 (green on attempt 2:
+    shard 1's part B0 died before its first step on attempt 1; B, H3B, H3C followed from it),
+    owner 39020756689, journeys 39020758474. Release review: no blockers; 3 minor items logged
+    (FINDINGS U-M7, U-M8, U-G6) for the next release.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.

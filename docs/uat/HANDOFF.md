@@ -17,17 +17,18 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - U-M5 (90e0bb1): the "Couldn't save" banner no longer takes taps meant for the top bar.
 - WP7 (9a07be2): C1 step 7 checker fix (unquoted >=); U-C1 written in FINDINGS (S4, open).
 
-### In progress (06:50 UTC)
-- RELEASE RUNS on a0727e6 (dispatched ~06:50): whole phone test default + owner (API 34) and
-  qa-journeys. If all green -> bump 0.47.0, PROGRESS entry, tag v0.47.0, UAT-REPORT-v0.47.0.md.
-- Already proven: U-M6 fixed (UK2 passes on both phones, 39007467904 / 39007469521). UF5 failed on
-  default only because UF3 now really minimises; test fixed in a0727e6 (no app change).
-- WP7 qa-conditions 39004899634 on 9a07be2: success.
-- Running: drag-bar screenshots (39009454208, a,j,j2 owner) and the real workout w (39009987546, owner)
-  for the RPE tick.
-- Owner asks today: join from Settings -> Your gym (U-G5, b146cf7, goes in v0.47.0); research for
-  the gate QR and gym icon (docs/overhaul/research/R-qr-entry.md). NEW standing rule: every owner
-  idea/question goes in docs/OWNER-INBOX.md first (CLAUDE.md).
+### Done since 06:50 UTC
+- Phone test split into 4 shards (qa_shards.py; whole run ~2 h). Release gate unchanged (run name).
+- Whole runs green on 52e8f43: default 39020754722 (attempt 2), owner 39020756689; journeys 39020758474.
+- v0.47.0: version bump, PROGRESS entry, UAT-REPORT-v0.47.0.md, tag pushed (see PROGRESS for links).
+- Release review: no blockers; U-M7, U-M8 (S4) and U-G6 (S3) open for the next release.
+- Owner tools: docs/OWNER-INBOX.md (rule in CLAUDE.md), private Owner inbox page
+  https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT, /inbox desktop mod (plugins/owner-inbox).
+
+### Next
+- Fix U-M7, U-M8, U-G6 -> v0.47.1. Owner decisions waiting: docs/OWNER-INBOX.md (table on top).
+- WP15 (Play pre-launch / Firebase Test Lab) not started.
+- Admin app: no code change since the last deploy (8672a6b); nothing to deploy.
 
 ## Last update: 17 Oct 2026, PC session (before a usage limit)
 
