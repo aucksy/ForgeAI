@@ -14,10 +14,10 @@ profile, API 34), so it is not run again here.
 | # | api | font | width (dp) | network | time zone | battery saver |
 |---|---|---|---|---|---|---|
 | E1 | 34 | 1.0 | 411 | online | UTC | off |
-| E2 | 39000423508 | PASS | battery saver really on (unplugged first) | offline | IST | on |
+| E2 | 39000423508 | PASS | battery saver set after unplugging (its ENV log line not re-read) | offline | IST | on |
 | E3 | 39000424837 | PASS | | flaky | UTC | on |
 | E4 | 39000426353 | PASS | | flaky | IST | off |
-| E5 | 39006324165 | PASS | 3rd try: found U-M7-style layout slip (Coming from Hevy heading off the edge, fixed 00a1a8f) + 2 test-script slips | online | IST | off |
+| E5 | 39006324165 | PASS | 3rd try: found a layout slip (the "Coming from Hevy" heading off the edge, fixed 00a1a8f) + 2 test-script slips | online | IST | off |
 | E6 | 39000429450 | PASS | | offline | UTC | off |
 | E7 | 39000430902 | PASS | | offline | IST | on |
 | E8 | 39000432718 | PASS | | online | UTC | on |
@@ -38,10 +38,10 @@ set-mode 1`.
 | # | Run | Result | Notes |
 |---|---|---|---|
 | E1 | (every whole default run) | - | covered by the release gate |
-| E2 | 39000423508 | PASS | battery saver really on (unplugged first) |
+| E2 | 39000423508 | PASS | battery saver set after unplugging (its ENV log line not re-read) |
 | E3 | 39000424837 | PASS | |
 | E4 | 39000426353 | PASS | |
-| E5 | 39006324165 | PASS | 3rd try: found U-M7-style layout slip (Coming from Hevy heading off the edge, fixed 00a1a8f) + 2 test-script slips |
+| E5 | 39006324165 | PASS | 3rd try: found a layout slip (the "Coming from Hevy" heading off the edge, fixed 00a1a8f) + 2 test-script slips |
 | E6 | 39000429450 | PASS | |
 | E7 | 39000430902 | PASS | |
 | E8 | 39000432718 | PASS | |
