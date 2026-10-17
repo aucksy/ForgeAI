@@ -175,6 +175,15 @@ fi
 # net offline = Wi-Fi and data off, flaky = the emulator's slowest link (GPRS speed and delay);
 # tz ist / utc; saver on = Battery Saver.
 QA_ENV=${QA_ENV:-}
+ENV_SAVER=""
+# Battery Saver cannot be on while the phone charges, and the emulator starts "on AC": take it off
+# the charger first (runs 38997271281...: low_power stayed 0). Part A puts the battery back after
+# its screen-off rest, so it calls this again.
+env_saver_on() {
+  adb shell dumpsys battery unplug >/dev/null 2>&1 || true
+  adb shell settings put global low_power 1 >/dev/null 2>&1 || true
+  adb shell cmd power set-mode 1 >/dev/null 2>&1 || true
+}
 if [ -n "$QA_ENV" ]; then
   [ -n "$QA_ONLY_LIST" ] || { log "ENV FAILED: env '$QA_ENV' needs only (a partial run)"; status=1; }
   for env_kv in $(echo "$QA_ENV" | tr ',;' '  '); do
@@ -197,13 +206,12 @@ if [ -n "$QA_ENV" ]; then
         adb shell settings put global auto_time_zone 0 >/dev/null 2>&1 || true
         adb shell cmd alarm set-timezone "$env_z" >/dev/null 2>&1 || adb shell setprop persist.sys.timezone "$env_z" >/dev/null 2>&1 || true ;;
       saver=off) adb shell settings put global low_power 0 >/dev/null 2>&1 || true ;;
-      saver=on)
-        adb shell cmd power set-mode 1 >/dev/null 2>&1 || adb shell settings put global low_power 1 >/dev/null 2>&1 || true ;;
+      saver=on) ENV_SAVER=on; env_saver_on ;;
       *) log "ENV FAILED: unknown setting '$env_kv' (font=1.0|1.3|2.0 width=360|411 net=online|offline|flaky tz=utc|ist saver=off|on)"; status=1 ;;
     esac
   done
   sleep 3
-  log "ENV $QA_ENV: screen $(adb shell wm size | tr -d '\r' | tail -1), density $(adb shell wm density | tr -d '\r' | tail -1), font scale $(adb shell settings get system font_scale | tr -d '\r'), time $(adb shell "date '+%a %d %b %Y %H:%M %Z'" | tr -d '\r'), battery saver $(adb shell settings get global low_power | tr -d '\r'), airplane $(adb shell settings get global airplane_mode_on | tr -d '\r')"
+  log "ENV $QA_ENV: screen $(adb shell wm size | tr -d '\r' | tail -1), density $(adb shell wm density | tr -d '\r' | tail -1), font scale $(adb shell settings get system font_scale | tr -d '\r'), time $(adb shell "date '+%a %d %b %Y %H:%M %Z'" | tr -d '\r'), battery saver $(adb shell settings get global low_power | tr -d '\r') ($(adb shell dumpsys power | tr -d '\r' | grep -m1 -oE 'mIsPowered=[a-z]+')), airplane $(adb shell settings get global airplane_mode_on | tr -d '\r')"
 fi
 log "parts: only='${QA_ONLY_LIST}' extra='${QA_EXTRA_LIST}' profile=$QA_PROFILE env='${QA_ENV}'"
 
@@ -244,6 +252,7 @@ if [ "${DOZE_WAS:-}" = "false" ] || [ "${DOZE_WAS:-}" = "0" ]; then
   adb shell dumpsys deviceidle disable deep >/dev/null 2>&1 || true
 fi
 adb shell dumpsys battery reset >/dev/null 2>&1 || true
+[ "$ENV_SAVER" = on ] && env_saver_on
 # Rest-alert audit: Android's own record of what last made a SOUND and a BUZZ must be "Rest is
 # over" (id 41002) — a posted but silent alert (the bug the owner heard) fails here.
 for kind in Sound Vibrate; do

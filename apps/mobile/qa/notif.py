@@ -146,6 +146,32 @@ LIVE_CHANNEL = "workout-live"
 LIVE_ID = 41004
 
 
+# Notification.FLAG_* by the name Android 15+ prints in `dumpsys notification` ("flags=ONGOING_EVENT|
+# LOCAL_ONLY"); Android 14 printed the number ("flags=0x8"). UAT WP14, runs on API 35/36
+# (38997272780 ...): the name form read as "no flags", so every rest card failed "swipe-away".
+FLAG_BITS = {
+    "SHOW_LIGHTS": 0x1, "ONGOING_EVENT": 0x2, "INSISTENT": 0x4, "ONLY_ALERT_ONCE": 0x8,
+    "AUTO_CANCEL": 0x10, "NO_CLEAR": 0x20, "FOREGROUND_SERVICE": 0x40, "HIGH_PRIORITY": 0x80,
+    "LOCAL_ONLY": 0x100, "GROUP_SUMMARY": 0x200, "AUTOGROUP_SUMMARY": 0x400, "CAN_COLORIZE": 0x800,
+    "BUBBLE": 0x1000, "NO_DISMISS": 0x2000, "FSI_REQUESTED_BUT_DENIED": 0x4000,
+    "USER_INITIATED_JOB": 0x8000, "LIFETIME_EXTENDED_BY_DIRECT_REPLY": 0x10000,
+}
+
+
+def flags_of(text):
+    """The notification's flags as a number from the first `flags=` in text, in either form
+    (0x.. / decimal, or NAME|NAME); -1 when there is none. An unknown name adds nothing."""
+    m = re.search(r"\bflags=(0x[0-9a-fA-F]+|\d+|[A-Z_][A-Z0-9_|]*)", text)
+    if not m:
+        return -1
+    v = m.group(1)
+    if v.startswith("0x"):
+        return int(v, 16)
+    if v.isdigit():
+        return int(v)
+    return sum(FLAG_BITS.get(name, 0) for name in v.split("|"))
+
+
 def is_ongoing(block):
     head = header(block)
     return channel_of(block) == LIVE_CHANNEL or re.search(rf"\bid={LIVE_ID}\b", head) is not None or title(block) == "Workout in progress"
@@ -326,8 +352,7 @@ def main():
         if notes:
             print(f"[qa] REST CARD: other notes on the card's channel: {notes}")
         b = (rest or cards)[0]
-        fm = re.search(r"flags=(0x[0-9a-fA-F]+)", header(b))
-        f = int(fm.group(1), 16) if fm else -1
+        f = flags_of(header(b))
         swipe = f >= 0 and not (f & 0x2) and not (f & 0x20)
         # The buttons are the record's notification ACTIONS ('[1] "Skip" -> PendingIntent...'),
         # not any text that happens to contain the word. Phase 6: exactly Done, +15 s, Skip, in
@@ -367,16 +392,19 @@ def main():
             print("[qa] WATCH: no 'Rest is over' in the list")
             return 1
         b = over[0]
-        fm = re.search(r"flags=(0x[0-9a-fA-F]+)", header(b)) or re.search(r"\bflags=(0x[0-9a-fA-F]+)", b)
-        f = int(fm.group(1), 16) if fm else -1
+        f = flags_of(header(b))
+        if f < 0:
+            f = flags_of(b)
         local = f >= 0 and bool(f & 0x100)
         cat = re.search(r"\bcategory=(\w+)", b)
         category = cat.group(1) if cat else "?"
         lives = [x for x in recs if is_ongoing(x)]
         live_local = []
         for x in lives:
-            lm = re.search(r"flags=(0x[0-9a-fA-F]+)", header(x)) or re.search(r"\bflags=(0x[0-9a-fA-F]+)", x)
-            live_local.append(bool(lm and int(lm.group(1), 16) & 0x100))
+            lf = flags_of(header(x))
+            if lf < 0:
+                lf = flags_of(x)
+            live_local.append(lf >= 0 and bool(lf & 0x100))
         ok = f >= 0 and not local and category == "alarm" and all(live_local)
         print(f"[qa] WATCH: 'Rest is over' flags={hex(f)} local-only={'YES (the watch never gets it)' if local else 'no'} category={category} (want alarm); live cards local-only={live_local}: {'ok' if ok else 'FAILED'}")
         return 0 if ok else 1
