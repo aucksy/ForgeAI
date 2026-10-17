@@ -2,6 +2,14 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## Cloud session ACTIVE (started 17 Oct 2026, 02:45 UTC) - read before you touch these files
+The PC helpers turned out to be still running (8e9fcdc WP4b, runs 38996250599 / 38996251965), so the
+cloud session keeps OFF their work to avoid two sessions editing the same files:
+- Cloud takes: C9-34 (src/shop Invite/CheckIn buttons), WP13 (phone label / touch-target lint),
+  WP14 (PICT pairwise matrix). It only WATCHES WP4b / WP7 / WP9 runs (R check: 38996291871).
+- PC helpers keep: WP4b, WP7, WP9 / part R. If a PC helper stops for good, write it here; the cloud
+  session then takes that package over.
+
 ## Last update: 17 Oct 2026, PC session (before a usage limit)
 
 ### Done
