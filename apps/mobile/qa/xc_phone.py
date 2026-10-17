@@ -13,6 +13,7 @@
   due <dump>                       the running rest's end (the rest card's `when`, epoch ms), or 0
   cards <dump>                     how many rest cards / "Rest is over" / live cards are showing
   over-any <after-dump> <due-ms>   a "Rest is over" was posted at all; prints how late (no budget)
+  over-has <dump> <button>         the newest "Rest is over" carries that button
   late <after-dump> <due-ms>       just the number of seconds it came after the rest's end, or none
   rest-clean <dump> <due-ms>       after the rest's end: EITHER "Rest is over" was posted (any time
                                    after the end) OR nothing of that rest is left (no rest card still
@@ -122,12 +123,13 @@ def app_channels(text):
             inside = PKG in s
             continue
         if inside:
-            m = re.search(r"NotificationChannel\{mId='([^']+)', mName=([^,]*),", s)
+            # A name can hold commas ("Rest is over, sounds off"): read up to the next field.
+            m = re.search(r"NotificationChannel\{mId='([^']+)', mName=(.*?), mDescription=", s)
             if m:
                 out[m.group(1)] = m.group(2)
     if not out:
         # Older dumps: every channel line names its package nowhere; fall back to ForgeAI's own ids.
-        for m in re.finditer(r"NotificationChannel\{mId='((?:rest|workout)[\w-]*)', mName=([^,]*),", text):
+        for m in re.finditer(r"NotificationChannel\{mId='((?:rest|workout)[\w-]*)', mName=(.*?), mDescription=", text):
             out[m.group(1)] = m.group(2)
     return out
 
@@ -192,6 +194,17 @@ def cmd_late(path, due):
     return 0
 
 
+def cmd_over_has(path, action):
+    o = overs(recs(path))
+    if not o:
+        print("CHECK FAILED no 'Rest is over' in the list")
+        return 1
+    acts = notif.actions(o[0])
+    ok = action in acts
+    print(f"CHECK {'OK' if ok else 'FAILED'} 'Rest is over' buttons {acts} (want '{action}')")
+    return 0 if ok else 1
+
+
 def cmd_rest_clean(path, due):
     rs = recs(path)
     o = overs(rs)
@@ -227,6 +240,8 @@ def main(argv):
         return cmd_over_any(argv[1], argv[2])
     if c == "rest-clean":
         return cmd_rest_clean(argv[1], argv[2])
+    if c == "over-has":
+        return cmd_over_has(argv[1], argv[2])
     if c == "late":
         return cmd_late(argv[1], argv[2])
     print(f"unknown command {c}")

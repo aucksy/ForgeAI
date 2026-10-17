@@ -1,0 +1,8 @@
+# Phone conditions (UAT WP7), condition 3: "Place order" tapped, and nothing waited for: the flow ends
+# at once, with the order request on its way.
+appId: com.forgeai.app
+---
+- tapOn:
+    text: "^Place order$"
+    waitToSettleTimeoutMs: 100
+    retryTapIfNoChange: false

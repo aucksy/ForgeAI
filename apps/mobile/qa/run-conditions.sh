@@ -59,6 +59,7 @@ ROSTER_MOBILE="9876500031"
 # Expected fails: "<part> <step>" -> the finding id (Audit/uat/FINDINGS.md). Such a step still runs
 # and is still reported; its failure does not fail the run (a pass says the finding may be fixed).
 declare -A XFAIL=(
+  ["C1 4"]="U-C1"
 )
 
 log() { echo "[xc] $*" | tee -a "$OUT/timeline.txt"; }
@@ -76,8 +77,8 @@ declare -A PNAME=(
   [C1]="upgrade v0.45.0 -> this build over real data" [C2s]="no internet: join the gym (setup)"
   [C2a]="no internet: shop order" [C2b]="no internet: QR check-in" [C2c]="no internet: Leave"
   [C2d]="no internet: the workout loop" [C3a]="flaky network: order on GPRS/EDGE"
-  [C3b]="flaky network: airplane mode straight after Place order"
-  [C3c]="flaky network: airplane mode as the answer comes back" [C4a]="process death mid-rest"
+  [C3b]="flaky network: airplane mode in the middle of the order request"
+  [C3c]="flaky network: the order's answer lost on the way back" [C4a]="process death mid-rest"
   [C4b]="process death with the finish sheet open" [C4c]="process death mid-Hevy-import"
   [C5]="Doze + standby rare, 1:30 rest asleep" [C6a]="exact alarms denied (as after a restore)"
   [C6b]="background-restricted app"
@@ -370,11 +371,12 @@ if runs 1; then
       wait_until_due "$C1_DUE" 10
       dump c1-after-due.txt
       step C1 3 phone "the rest across the update: Rest is over came, or nothing stale is left" -- c1_verdict_rest
+      step C1 4 phone "that Rest is over carries the live card's Complete set (audit C5-1)" -- phone over-has "$C_OUT/c1-after-due.txt" "Complete set"
       reopen
-      step C1 4 member "the open workout, 2 workouts, Body fat 17.5, lb, Ring through DND on, Full Body A" -- member xc-1-new-check
+      step C1 5 member "the open workout, 2 workouts, Body fat 17.5, lb, Ring through DND on, Full Body A" -- member xc-1-new-check
       dump c1-channels-new.txt
-      step C1 5 phone "channels renamed: Rest is over; old ones gone" -- phone channels "$C_OUT/c1-channels-new.txt" "rest-over-sound=Rest is over" "rest-over-open=Rest is over, sounds off"
-      step C1 6 phone "the database: 2 workouts, the open one with its ticked set, the plan, the measurement" -- phone db-check c1-new workouts=2 open=1 open_done_sets=1 measurements=1 plan_days>=2
+      step C1 6 phone "channels renamed: Rest is over; old ones gone" -- phone channels "$C_OUT/c1-channels-new.txt" "rest-over-sound=Rest is over" "rest-over-open=Rest is over, sounds off"
+      step C1 7 phone "the database: 2 workouts, the open one with its ticked set, the plan, the measurement" -- phone db-check c1-new workouts=2 open=1 open_done_sets=1 measurements=1 plan_days>=2
       NEW_LABEL=$(cat "$C_OUT/c1-upgrade-side.txt" 2>/dev/null || echo "")
     fi
   fi
@@ -439,28 +441,53 @@ if runs 2 || runs 3; then
     shape gprs edge
     step C3a 1 member "GPRS delay + EDGE speed: QA Band ordered" -- member xc-3a-order-slow GYM="$GYM"
     step C3a 2 server "exactly ONE QA Band order" -- server orders-count "QA Band" 1
-    # Run 38983728841: on GPRS the order was done before Maestro's airplane switch took effect, so
-    # 3b and 3c run on a link with a 2 s delay each way: 3b cuts it straight after the tap (the
-    # request never arrives), 3c ~6 s later (aiming at the gym having written it with the answer
-    # still on the way). What the server held at the cut is printed, so the report says which.
-    shape 2000 edge
-    step C3b 1 member "QA Rope: Place order, airplane mode on straight after the tap" -- member xc-3b-order-cut GYM="$GYM" PRODUCT="QA Rope"
-    log "C3b: at the cut the server held: $(python3 "$QA_DIR/xc_server.py" check C orders-count 'QA Rope' 1 | sed 's/^CHECK [A-Z]* C orders-count: //')"
-    online
-    step C3b 2 member "back online: the bag retried if it was kept; My orders shows 1 x QA Rope" -- member xc-3b-order-retry GYM="$GYM" PRODUCT="QA Rope" SHOT=3b
-    step C3b 3 server "exactly ONE QA Rope order" -- server orders-count "QA Rope" 1
-    c3c_cut() {
-      member xc-3c-order-tap GYM="$GYM" PRODUCT="QA Mat" || return 1
-      sleep 5
-      airplane enable
-    }
-    step C3c 1 member "QA Mat: Place order; airplane mode on ~6 s after the tap" -- c3c_cut
-    step C3c 2 member "the words left on screen" -- member xc-3c-outcome
-    log "C3c: at the cut the server held: $(python3 "$QA_DIR/xc_server.py" check C orders-count 'QA Mat' 1 | sed 's/^CHECK [A-Z]* C orders-count: //')"
-    online
-    step C3c 3 member "back online: the bag retried if it was kept; My orders shows 1 x QA Mat" -- member xc-3b-order-retry GYM="$GYM" PRODUCT="QA Mat" SHOT=3c
-    step C3c 4 server "exactly ONE QA Mat order" -- server orders-count "QA Mat" 1
     shape none full
+    # Runs 38983728841 and 38991190510: switching airplane mode on "straight after the tap" (even
+    # on a 2 s link) always came after the order was done, so the cut is now made certain with the
+    # phone's own firewall (root iptables), and timed by what it blocks, not by a clock:
+    #  3b: the request is HELD (outgoing HTTPS dropped) when Place order is tapped; 3 s later
+    #      airplane mode goes on in the middle of it. The gym never got it.
+    #  3c: the ANSWER is lost (incoming HTTPS dropped on the connection the bag just used): the gym
+    #      writes the order, the phone never hears back.
+    # Then online again, the member taps Place order once more (the same bag), and the server must
+    # hold exactly ONE order. What the server held at the cut is printed.
+    fw() {  # fw add|del OUTPUT|INPUT
+      local op=-I port=--dport
+      [ "$1" = del ] && op=-D
+      [ "$2" = INPUT ] && port=--sport
+      adb shell "su 0 iptables $op $2 -p tcp $port 443 -j DROP" >/dev/null 2>&1
+      adb shell "su 0 ip6tables $op $2 -p tcp $port 443 -j DROP" >/dev/null 2>&1
+      log "firewall: $1 drop of HTTPS on $2 ($(adb shell "su 0 iptables -S $2" 2>/dev/null | tr -d '\r' | grep -c 'dport 443\|sport 443') rule(s) now)"
+    }
+    held_at_cut() {
+      log "$1: at the cut the server held: $(python3 "$QA_DIR/xc_server.py" check C orders-count "$2" 1 | sed 's/^CHECK [A-Z]* C orders-count: //')"
+    }
+    c3b_cut() {
+      member xc-3-to-bag GYM="$GYM" PRODUCT="QA Rope" || return 1
+      fw add OUTPUT
+      member xc-3-tap || { fw del OUTPUT; return 1; }
+      sleep 3
+      airplane enable
+      fw del OUTPUT
+    }
+    step C3b 1 member "QA Rope: Place order held on its way, airplane mode on in the middle of it" -- c3b_cut
+    step C3b 2 member "the words left on screen" -- member xc-3-outcome SHOT=3b
+    held_at_cut C3b "QA Rope"
+    online
+    step C3b 3 member "back online: Place order again if the bag was kept; My orders shows 1 x QA Rope" -- member xc-3b-order-retry GYM="$GYM" PRODUCT="QA Rope" SHOT=3b
+    step C3b 4 server "exactly ONE QA Rope order" -- server orders-count "QA Rope" 1
+    c3c_cut() {
+      member xc-3-to-bag GYM="$GYM" PRODUCT="QA Mat" || return 1
+      fw add INPUT
+      member xc-3-tap || { fw del INPUT; return 1; }
+    }
+    step C3c 1 member "QA Mat: Place order with the gym's answer cut off" -- c3c_cut
+    step C3c 2 member "the words left on screen (after the app stops waiting)" -- member xc-3-outcome SHOT=3c
+    held_at_cut C3c "QA Mat"
+    fw del INPUT
+    sleep 3
+    step C3c 3 member "Place order again if the bag was kept; My orders shows 1 x QA Mat" -- member xc-3b-order-retry GYM="$GYM" PRODUCT="QA Mat" SHOT=3c
+    step C3c 4 server "exactly ONE QA Mat order" -- server orders-count "QA Mat" 1
   fi
   # ---- C2c: Leave with no internet
   if runs 2 && ok_so_far C2s && [ $GYM_OK = 1 ]; then
@@ -589,6 +616,10 @@ if runs 5; then
         [ "$b" = 40 ] && break
       done
       log "standby bucket now: $b (40 = rare; 10 active, 20 working set, 30 frequent, 45 restricted); inactive: $(adb shell am get-inactive "$PKG" | tr -d '\r')"
+      # Runs 38983728841 / 38991190510 read 20 every time: Android 12+ never puts an app that holds
+      # the exact-alarm permission (ForgeAI: USE_EXACT_ALARM) below "working set", so "rare" cannot
+      # happen to it on a real phone either. The rest is still tested asleep in that lowest bucket.
+      [ "$b" = 40 ] || log "standby: 'rare' refused by Android (an app with exact alarms stays at working set or better): the rest runs in bucket $b"
       force_deep_idle
     }
     rest_asleep c5 c5_low
