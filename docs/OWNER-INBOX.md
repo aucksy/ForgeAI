@@ -36,6 +36,13 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 ---
 
+## 16. Inbox upgrade: full context per question, pick and submit answers; a desktop mod with a permanent icon — 17 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**You asked:** each question in the inbox should carry its full context, and let me choose an option
+and submit the answer for you to act on. And I want it as a MOD I can open anytime from an icon
+that stays on the Claude Desktop app.
+**Status:** RESEARCHING (answer coming below)
+
 ## 15. An owner-inbox "mod" in Claude, one page per chat, on the right-hand side — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** with the new Claude "mods" feature, can we build a mod for the owner inbox, where I
