@@ -38,14 +38,19 @@ set-mode 1`.
 | # | Run | Result | Notes |
 |---|---|---|---|
 | E1 | (every whole default run) | - | covered by the release gate |
-| E2 | 38997271281 | running | |
-| E3 | 38997272780 | running | |
-| E4 | 38997274321 | running | |
-| E5 | 38997276238 | running | |
-| E6 | 38997277461 | running | |
-| E7 | 38997278881 | running | |
-| E8 | 38997280249 | running | |
-| E9 | 38997281668 | running | |
-| E10 | 38997283134 | running | |
-| E11 | 38997284695 | running | |
-| E12 | 38997286258 | running | |
+| E2 | 38997271281 | PASS | battery saver did NOT turn on (emulator on AC); offline really on (airplane 1) |
+| E3 | 38997272780 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+| E4 | 38997274321 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+| E5 | 38997276238 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+| E6 | 38997277461 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+| E7 | 38997278881 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+| E8 | 38997280249 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+| E9 | 38997281668 | PASS |  |
+| E10 | 38997283134 | PASS |  |
+| E11 | 38997284695 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+| E12 | 38997286258 | red: harness only | all 9 parts passed; notif.py could not read Android 15+ flags (fixed 515dd52); re-run |
+
+Round 1 (9783923): every part passed in all 11 runs; the rest alert came 0-1 ms after its due time
+on every Android version, with the screen off, offline, on a slow link and at font 2.0. The 8 red
+runs (all API 35/36) were the checker, not the app: Android 15+ prints notification flags as names.
+Round 2 (515dd52): E2-E8, E11, E12 again (E2 for a real Battery Saver).
