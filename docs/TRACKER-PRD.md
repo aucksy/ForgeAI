@@ -308,3 +308,51 @@ works** (log a workout, browse history/analytics, `localCoach` still there) · *
 (engine / components/ui / components/charts / existing repo+service signatures) · phase success
 criteria met · adversarial **logic + compile review before any tag** · `PROGRESS.md` updated · small
 committed steps · **STOP + report + wait for "continue."** Owner tags releases (cloud build only).
+
+## 11. Planned (owner, 17 Oct 2026) — "Today's target" on the Workout tab (NOT built)
+
+**Ask:** the app should be about progressive overload. On the Workout tab's Up next card (and
+below "Resume workout" when one is open), list the routine's exercises with what to lift today,
+and the total kg to lift compared with last time, following the member's own choice.
+
+**Words (member-screen rule: never "volume" or "session"):** "kg to lift", "last time".
+
+**What it shows (sketch):**
+```
+Up next: Push Day A                         [Start]
+Today: 3,240 kg to lift · 4% more than last time (3,115 kg)
+  Bench Press      42.5 kg × 6, 6, 5     765 kg  ↑ +2 reps
+  Overhead Press   30 kg × 8, 8, 8       720 kg  = hold
+  Incline DB Press find a weight for 8–12        (first time)
+  Push-ups         15, 15, 14 reps               ↑ +1 rep
+```
+With a workout open, the same lines sit under Resume workout, each with its kg so far
+("410 of 765 kg").
+
+**How the target is worked out (recommendation):** from the per-exercise Targets the app already
+computes (engine/progression.ts: double progression, the member's Settings → Workouts → Weight
+jumps ≈ 2.5 / 5 / 10%, big-jump guard, RPE, long-break and stall rules). Each exercise's kg =
+target weight × target reps of each main set (warm-ups out); the day's total and its % over last
+time FOLLOW from those Targets. The total is not forced up by a fixed % each workout:
+- Evidence (research v3 + 17 Oct search): progress comes per exercise (reps, then weight); weekly
+  sets raised 30% or 60% grew muscle no better than a moderate rise; more volume has diminishing
+  returns. A fixed +15% total every workout compounds fast (+15% a workout ≈ double in 5
+  workouts) and can only be met by extra sets or sloppy reps.
+- So the % the member sees is usually 0–10% and can be 0 or lower on purpose (a hold after a
+  stall, lighter after a long break) with the reason in words ("lighter today: back after a
+  break").
+
+**Edge cases:** first time on an exercise (no kg, "find a weight"); bodyweight and timed moves
+(reps / seconds, left out of the kg total, shown on their line); assisted (help going down);
+drop sets and back-off sets (count, never block progress, as the engine does); a routine edited
+since last time (compare exercise by exercise; new ones have no "last time"); lb users (lb).
+
+**Owner decisions needed:**
+1. Total target: (A, recommended) follows the per-exercise Targets and the existing Weight jumps
+   setting; or (B) a fixed "aim for N% more" chosen by the member (if B: cap at 10%, not 15%).
+2. Show it on app launch only on the Workout tab card (recommended), or also as a pop-up.
+
+**Build outline (when approved):** pure function `dayTarget(routine, targets, lastTime)` in
+src/tracker/lib (tested, kg and lb, all exercise types) → UpNextCard lines + the in-progress
+lines; vitest for every edge case above; phone parts check the numbers against the Targets shown
+inside the workout on the owner phone (Monday, 1st of the month, ~500-workout history).
