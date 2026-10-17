@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """Owner decision 17 Oct 2026 (docs/OWNER-INBOX.md #14): a whole phone run is split into pieces
 ("shards") that run AT THE SAME TIME on their own emulators, in ONE workflow run (qa-device.yml),
-so a whole run takes ~1 h 20 min instead of ~3 h 30 min. Free on a public repo.
+so a whole run takes ~2 h instead of ~3 h 30 min (the A..R chain is the floor). Free on a public repo.
 
 Quality rules this file keeps:
   - The shards together hold EXACTLY the whole run's parts (run-device-qa.sh OLD_PARTS +
     UAT_PARTS + w): none missing, none twice. Read from the script itself, so a part added there
     and not here fails this check (and its test) instead of silently never running.
   - Parts that lean on the parts before them stay in the same shard, in the script's order:
-    A..I2 build one history (shard 1); J..M use J's Hevy file, L's routines and the workout
-    counts of the parts before (shard 2; it starts from the demo, as a partial run does). The UAT
-    parts and W each start from a fresh install (proven alone by partial runs), so they split.
+    A..R is one chain (shard 1). First split runs 39015325103 / 39015326627: J..R started from the
+    demo failed on both phones (J expects the demo already removed by an earlier part; K..R lean on
+    J and L), so they stay after I2. BR, INV, INV-f, P7, P0 and M passed from the demo alone
+    (shard 2). The UAT parts and W each start from a fresh install (proven alone), so they split.
   - `extra` (opt-in dnd, longrest, anim, mk) goes to the shard that holds W (mk runs after W).
   - A partial run (`only`) stays ONE piece, exactly as before (it never opens the release gate).
 
@@ -29,11 +30,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 SCRIPT = os.path.join(ROOT, "apps", "mobile", "qa", "run-device-qa.sh")
 
 # In each shard the parts run in the script's own order (the script decides the order).
+# Minutes from the runs above: shard 1 ~95 (A..I2 ~60 + J..R ~35, the floor), the rest ~35-50.
 SHARDS = [
-    ("1-history", "a b c d e f g h h3 p1 p2 i link i2"),
-    ("2-routines-gym", "j j2 j3 k l n p9 r br inv invf p7 p0 m"),
-    ("3-uat-a", "uh ur un ud ue ub"),
-    ("4-uat-b-workout", "uf ua uv ug uk w"),
+    ("1-history-routines", "a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r"),
+    ("2-gym-backup", "br inv invf p7 p0 m uh ur"),
+    ("3-uat-a", "un ud ue ub uf"),
+    ("4-uat-b-workout", "ua uv ug uk w"),
 ]
 
 

@@ -7,7 +7,7 @@ name: Device QA (Android emulator)
 # uploads every screenshot, the notification list and logcat as the `qa-out` artifact.
 #
 # Manual only. Owner decision 17 Oct 2026 (docs/OWNER-INBOX.md #14): a WHOLE run is split into 4
-# shards on 4 emulators AT THE SAME TIME (scripts/ci/qa_shards.py), so it takes ~1 h 20 min, not
+# shards on 4 emulators AT THE SAME TIME (scripts/ci/qa_shards.py), so it takes ~2 h, not
 # ~3 h 30 min: the app is built ONCE (job build) and every shard tests that same file (its sha256 is
 # checked); the run is green only when every shard is green AND job report proves the shards
 # together ran every part of the whole run. A partial run (`only`) is one piece, as before.
@@ -130,7 +130,7 @@ jobs:
   device-qa:
     needs: [plan, build]
     runs-on: ubuntu-latest
-    # A shard is ~1 h of parts (the longest, 1-history / 2-routines-gym); a partial run of many
+    # A shard is up to ~1 h 40 min of parts (the longest, 1-history-routines); a partial run of many
     # parts can still be long (was 240 for the whole run in one piece).
     timeout-minutes: 240
     strategy:

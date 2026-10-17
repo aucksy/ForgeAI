@@ -23,11 +23,12 @@ class Shards(unittest.TestCase):
     def test_chains_stay_together_in_the_scripts_order(self):
         old, uat, _ = qa_shards.script_lists()
         shard_of = {p: name for name, parts in qa_shards.SHARDS for p in parts.split()}
-        # A..I2 build one history; J..M lean on J's file, L's routines and the counts before them.
-        self.assertEqual({shard_of[p] for p in old[: old.index("i2") + 1]}, {"1-history"})
-        self.assertEqual({shard_of[p] for p in old[old.index("j"):]}, {"2-routines-gym"})
-        self.assertEqual(shard_of["m"], "2-routines-gym")
-        self.assertTrue(all(shard_of[p].startswith(("3-", "4-")) for p in uat + ["w"]))
+        # A..R is one chain (runs 39015325103 / 39015326627: J..R from the demo alone failed).
+        self.assertEqual({shard_of[p] for p in old[: old.index("r") + 1]}, {"1-history-routines"})
+        # BR .. M passed from the demo alone; M (it reinstalls the app) runs last of the old parts there.
+        self.assertEqual({shard_of[p] for p in old[old.index("br"):]}, {"2-gym-backup"})
+        # The UAT parts and W start fresh; in shard 2 they run after M, as in the whole run.
+        self.assertTrue(all(shard_of[p] != "1-history-routines" for p in uat + ["w"]))
 
     def test_a_part_missing_or_twice_is_caught(self):
         drop = [(n, p.replace(" m", "")) for n, p in qa_shards.SHARDS]
@@ -70,7 +71,7 @@ class Shards(unittest.TestCase):
             name, parts = qa_shards.SHARDS[0]
             write(root, name, "parts=%s\nstatus=0\n" % parts.replace(" i2", ""))
             errs = qa_shards.check(root)
-            self.assertTrue(any("shard 1-history ran" in e for e in errs))
+            self.assertTrue(any("shard 1-history-routines ran" in e for e in errs))
             self.assertTrue(any(e == "parts never run: i2" for e in errs))
 
     def test_the_runner_knows_shards(self):
