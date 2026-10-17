@@ -20,6 +20,7 @@ Full research lives in the linked docs; this file is the short version.
 
 | # | Decision | My pick |
 |---|---|---|
+| 14 | Faster phone tests: split each run into 4 at once (free) or pay for bigger machines | Split (free) |
 | 13 | Machine-free times: A gym "best times to go" from check-ins first, B machine-level later | A first |
 | 12 | Gate QR: build Step 1 now (after check-in: "Start Push day", or "Add Push Pull Legs" for no routines)? | Yes, build Step 1 |
 | 11 | Gym icon after joining: A home-screen shortcut with the gym logo, or B icons built into the app | A |
@@ -33,7 +34,28 @@ Full research lives in the linked docs; this file is the short version.
 
 ## 14. What would it cost on GitHub to make the phone test runs faster? — 17 Oct 2026
 **You asked:** the cost of making the cloud test runs faster.
-**Status:** RESEARCHING (answer coming below)
+**Status:** ANSWERED — WAITING FOR YOU
+**My answer:**
+- **Today it costs ₹0.** The repo is public, so GitHub's normal test machines are free and
+  unlimited. A whole phone run took 3 h 04 min (run 38984599010; GitHub billed 0 minutes).
+- **Paying for bigger machines buys less than it sounds:**
+  - GitHub's paid "larger runners" only work for an **organisation** on the Team plan (about $4 per
+    user a month). The repo is under your personal account today, so it would have to move.
+  - Rough prices (third-party sites quoting GitHub, June 2026; not confirmed on GitHub's own page):
+    Linux 8-core about $0.022/min, 16-core about $0.042/min. One site says larger runners are billed
+    even on public repos.
+  - Free public-repo machines already have 4 cores. An 8-core machine doubles that at most. A lot of
+    a phone run is real waiting (rest timers, app start-ups, "wait 30 s"), which no machine shortens.
+    My estimate: maybe 20–40% faster, not 4x.
+  - Estimated cost on 8-core: about $2–3 per whole run. A release needs about 4 runs (both phones,
+    journeys, conditions), so about $10 a release. A busy fixing day like today (~30 runs) is
+    about $30–40.
+- **Better, free option: split each whole run into 4 smaller runs at the same time.** Free machines
+  can run up to 20 jobs at once. Each part group runs on its own machine, so a whole run would
+  take about 45–60 min instead of 3 h. It costs ₹0 but takes me about half a day of work. The
+  release gate must learn to accept "all 4 pieces green", and parts that rely on earlier parts
+  (e.g. J needs B–I) must stay in the same piece.
+**Needs you:** split the runs for free (my pick), pay for bigger machines, or leave it as is?
 
 ## 13. "Which machines are free when": suggest a schedule with less waiting — 17 Oct 2026
 **You asked:** every member logs their workouts, so we know which machines are used on which day
