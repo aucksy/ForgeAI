@@ -19,6 +19,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { askConfirm, GhostButton, Icon, IconButton } from '@/components/ui';
+import { hitSlopFor } from '@/components/ui/a11y';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { getWorkoutPhotos } from '../db/workoutPhotoRepo';
@@ -172,7 +173,8 @@ export const WorkoutPhotos = memo(function WorkoutPhotos({ sessionId, onChanged 
                 onPress={() => void remove(p)}
                 accessibilityRole="button"
                 accessibilityLabel={`Remove photo ${i + 1}`}
-                hitSlop={10}
+                // UAT WP13: 26 dp drawn + 11 each side = 48 dp to the finger (10 made 46).
+                hitSlop={hitSlopFor(26)}
                 style={{
                   position: 'absolute',
                   top: 4,

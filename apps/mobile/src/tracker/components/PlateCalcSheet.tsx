@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 
 import { Icon } from '@/components/ui';
+import { hitSlopFor } from '@/components/ui/a11y';
 import { shownToKg, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { accentTint } from '@/theme/tint';
@@ -72,7 +73,7 @@ export function PlateCalcSheet({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.55)' }} onPress={onClose} />
+      <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.55)' }} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
       <View
         style={{
           position: 'absolute',
@@ -94,7 +95,8 @@ export function PlateCalcSheet({
             <Icon name="dumbbell" size={20} color={color.accent} />
             <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Plate calculator</Text>
           </View>
-          <Pressable onPress={onClose} hitSlop={8}>
+          {/* UAT WP13: TalkBack said just "button" here, and 22 dp + 8 was a 38 dp target. */}
+          <Pressable onPress={onClose} hitSlop={hitSlopFor(22)} accessibilityRole="button" accessibilityLabel="Close the plate calculator">
             <Icon name="close" size={22} color={color.inkMuted} />
           </Pressable>
         </View>

@@ -796,10 +796,12 @@ function MoveBtn({ dir, disabled, onPress }: { dir: 'up' | 'down'; disabled: boo
       onPress={() => {
         if (!disabled) onPress();
       }}
-      hitSlop={6}
+      // UAT WP13: 48 dp to the finger (44 x 48 drawn + 2 each side); 30 x 30 + 6 was 42, and the
+      // up and down arrows sit side by side, so the drawn box grows instead of a wider slop.
+      hitSlop={2}
       accessibilityRole="button"
       accessibilityLabel={dir === 'up' ? 'Move up' : 'Move down'}
-      style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}
+      style={{ width: 44, height: 48, alignItems: 'center', justifyContent: 'center' }}
     >
       <View style={{ transform: [{ rotate: dir === 'up' ? '-90deg' : '90deg' }] }}>
         <Icon name="chevron-right" size={20} color={disabled ? color.inkDisabled : color.inkMuted} />

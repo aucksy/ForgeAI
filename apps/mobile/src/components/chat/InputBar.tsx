@@ -15,6 +15,7 @@ import Animated, {
 import { BUTTON_INK } from '@forgeai/theme';
 
 import { Icon, IconButton } from '@/components/ui';
+import { hitSlopFor } from '@/components/ui/a11y';
 import { tap, thud } from '@/lib/haptics';
 import { useVoiceInput } from '@/lib/voice';
 import { voiceProblemText } from '@/lib/voiceProblem';
@@ -205,7 +206,8 @@ export function InputBar({
               tap();
               onClearImage();
             }}
-            hitSlop={8}
+            // UAT WP13: a 15 dp icon needs 17 each side to make 48 dp to the finger.
+            hitSlop={hitSlopFor(15)}
             accessibilityRole="button"
             accessibilityLabel="Remove photo"
           >
