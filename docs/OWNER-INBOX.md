@@ -76,6 +76,16 @@ Also: the free plan runs up to 20 jobs at once. 2 phones × 4 pieces + journeys 
 other runs started at the same time will queue.
 **Work:** about a day (not half a day) with the side-by-side check. ₹0 running cost.
 **DECIDED (17 Oct):** split the runs. Research the best way so build/test quality stays top notch, and use it from the next runs.
+**BUILT (17 Oct, commit b8b9890), first split runs started:**
+- The app is built ONCE and every piece tests that exact same file (a fingerprint check).
+- 4 pieces run at the same time: (1) the core workout history, (2) routines, history, gym and
+  backup, (3) and (4) the newer one-screen checks and the real workout. Tests that depend on each
+  other stay in the same piece.
+- A final step proves all 4 finished green AND that together they ran every test of the full run.
+  A test added later but left out of every piece fails a check, so it can't silently stop running.
+- The release check needed no change: a run only counts as green if every piece is green.
+- Expected: about 1 h 20 min per full run instead of about 3 h 30 min. Still ₹0.
+- Validation: the first split runs are compared with the old-style runs on the same app.
 
 ## 13. "Which machines are free when": suggest a schedule with less waiting — 17 Oct 2026
 **You asked:** every member logs their workouts, so we know which machines are used on which day
