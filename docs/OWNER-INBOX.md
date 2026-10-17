@@ -20,6 +20,7 @@ Full research lives in the linked docs; this file is the short version.
 
 | # | Decision | My pick |
 |---|---|---|
+| 13 | Machine-free times: A gym "best times to go" from check-ins first, B machine-level later | A first |
 | 12 | Gate QR: build Step 1 now (after check-in: "Start Push day", or "Add Push Pull Legs" for no routines)? | Yes, build Step 1 |
 | 11 | Gym icon after joining: A home-screen shortcut with the gym logo, or B icons built into the app | A |
 | 11 | Welcome screen: add "Have a gym code? Join your gym" (small)? Google login is a bigger, separate project | Yes to the small one; research Google login later |
@@ -34,7 +35,38 @@ Full research lives in the linked docs; this file is the short version.
 **You asked:** every member logs their workouts, so we know which machines are used on which day
 and hour. Show members when machines are free, and suggest moving their schedule so they're more
 likely to get a free machine.
-**Status:** RESEARCHING (answer coming below)
+**Status:** RESEARCHED: WAITING FOR YOU
+**My answer:** A good idea, and the machine-level part would be rare. But it can't be built the
+way described today, for four reasons:
+1. **Workouts never leave the member's phone.** That is a promise in the app today ("Private.
+   They stay on this phone"). The server only gets check-ins, shop orders and messages. Each member
+   would have to agree to share "which exercise, what time" (no weights, no names).
+2. **A log says the exercise, not the machine.** "Bench press" could be any of 4 benches. The gym
+   would have to enter its equipment (e.g. 4 benches, 2 squat racks, 1 cable tower), and we'd turn
+   that into "how likely one is free".
+3. **Only members who log count.** If 40 of 300 members use the app, the picture is thin and
+   skewed. That's fine for "busy vs quiet hour", but weak for "is the squat rack free on Tuesday at 7".
+4. **It needs weeks of data per gym** before any advice is right. Wrong advice ("go at 6, it's
+   free" when it isn't) costs trust fast.
+
+What the market does (research): the mainstream feature is **how busy the whole gym is**, not each
+machine. PureGym's app shows live busyness and how busy it will be. Planet Fitness has a "Crowd
+Meter". Google Maps shows "Popular times". I found no mainstream app that shows individual
+machines; only student prototypes with sensors on the machines. So the machine part would make us
+stand out, but nobody has proven members want it.
+
+**Two options:**
+- **A (recommended first): "Best times to go" for the whole gym, from QR check-ins.** The server
+  already has every check-in with its time. No new permission, no privacy change. Member app: "Your
+  usual time (Tue 7 pm) is the busiest. Thu 7 pm is usually 40% quieter." The admin app already
+  shows peak hours to the owner. Works once the gym uses QR check-in for a few weeks.
+- **B (later, if A is used): machine-level advice.** Opt-in sharing of exercise + time, plus the
+  gym's equipment list. "Squat racks are usually all taken Mon 6–8 pm; Wed 6 pm you're likely
+  to get one." Build only after A shows members care, and a gym has enough members logging.
+**Needs you:** A first then maybe B (my pick), B straight away, or keep it parked?
+**Sources:** PureGym help centre (live busyness tracker); PureGym blog (when is the gym quiet);
+Notre Dame senior design "GyEEm" (machine sensors, prototype); Planet Fitness Crowd Meter (blog,
+low-quality source).
 
 ## 12. QR code at the entry gate instead of a fingerprint machine — 17 Oct 2026
 **You asked:** members open our app and scan a QR at the gate to get in. That marks attendance,
