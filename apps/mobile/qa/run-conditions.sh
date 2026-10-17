@@ -376,7 +376,7 @@ if runs 1; then
       step C1 5 member "the open workout, 2 workouts, Body fat 17.5, lb, Ring through DND on, Full Body A" -- member xc-1-new-check
       dump c1-channels-new.txt
       step C1 6 phone "channels renamed: Rest is over; old ones gone" -- phone channels "$C_OUT/c1-channels-new.txt" "rest-over-sound=Rest is over" "rest-over-open=Rest is over, sounds off"
-      step C1 7 phone "the database: 2 workouts, the open one with its ticked set, the plan, the measurement" -- phone db-check c1-new workouts=2 open=1 open_done_sets=1 measurements=1 plan_days>=2
+      step C1 7 phone "the database: 2 workouts, the open one with its ticked set, the plan, the measurement" -- phone db-check c1-new workouts=2 open=1 open_done_sets=1 measurements=1 "plan_days>=2"
       NEW_LABEL=$(cat "$C_OUT/c1-upgrade-side.txt" 2>/dev/null || echo "")
     fi
   fi
