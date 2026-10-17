@@ -30,8 +30,9 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 ### Next
 - PC (or the owner on github.com): push tag v0.47.0 at 4f3d5c3: `git fetch origin && git tag v0.47.0 4f3d5c3 && git push origin v0.47.0`.
   Then check releases/download/v0.47.0/forgeai-v0.47.0.apk and forgeai-v0.47.0-wear.apk answer 200.
-  No app-code commits before that tag (docs only), so the phone gate keeps matching.
-- Fix U-M7, U-M8, U-G6 -> v0.47.1. Owner decisions waiting: docs/OWNER-INBOX.md (table on top).
+  Tag the EXACT commit 4f3d5c3 (main has moved on): its parent 52e8f43 holds the green phone runs.
+- U-M7, U-M8, U-G6 fixed in 7af1403; whole split runs + journeys dispatched on it -> v0.47.1 when green
+  (after v0.47.0's tag). Owner decisions waiting: docs/OWNER-INBOX.md (table on top).
 - WP15 (Play pre-launch / Firebase Test Lab) not started.
 - Admin app: no code change since the last deploy (8672a6b); nothing to deploy.
 
