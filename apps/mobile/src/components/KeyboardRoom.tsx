@@ -11,12 +11,24 @@
  * Native modals) are windows of their own that still resize themselves.
  */
 import { useEffect, useState, type ReactNode } from 'react';
-import { Keyboard, Platform, View } from 'react-native';
+import { AppState, Keyboard, Platform, View } from 'react-native';
 
-import { keyboardRoom, type KeyboardFrame } from '@/lib/keyboardRoom';
+import { keyboardCacheTrusted, keyboardRoom, type KeyboardFrame } from '@/lib/keyboardRoom';
+
+// U-M6: React Native's own keyboard state is stale after the app was away (see
+// keyboardCacheTrusted). One app-wide belief, kept from Android's own events.
+let cacheTrusted = true;
+if (Platform.OS === 'android') {
+  AppState.addEventListener('change', (s) => {
+    if (s === 'background') cacheTrusted = keyboardCacheTrusted(cacheTrusted, 'background');
+  });
+  Keyboard.addListener('keyboardDidShow', () => {
+    cacheTrusted = keyboardCacheTrusted(cacheTrusted, 'show');
+  });
+}
 
 function current(): KeyboardFrame {
-  const m = Keyboard.isVisible() ? Keyboard.metrics() : undefined;
+  const m = cacheTrusted && Keyboard.isVisible() ? Keyboard.metrics() : undefined;
   return m ? { screenY: m.screenY, height: m.height } : null;
 }
 
@@ -27,9 +39,14 @@ export function useKeyboardFrame(): KeyboardFrame {
     if (Platform.OS !== 'android') return;
     const show = Keyboard.addListener('keyboardDidShow', (e) => setKb({ screenY: e.endCoordinates.screenY, height: e.endCoordinates.height }));
     const hide = Keyboard.addListener('keyboardDidHide', () => setKb(null));
+    // Away from the screen, no keyboard of ours is open (Android may not say so when it closes).
+    const away = AppState.addEventListener('change', (s) => {
+      if (s === 'background') setKb(null);
+    });
     return () => {
       show.remove();
       hide.remove();
+      away.remove();
     };
   }, []);
   return kb;
