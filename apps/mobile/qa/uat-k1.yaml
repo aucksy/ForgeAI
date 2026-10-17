@@ -84,7 +84,7 @@ appId: com.forgeai.app
 - takeScreenshot: uk-03-widget-resume
 - tapOn: 'Today: .+\. Workout in progress\. Resume'
 - extendedWaitUntil:
-    visible: "Log a set to finish|Finish workout"
+    visible: "Minimise workout. It keeps running."
     timeout: 30000
 - runFlow:
     file: sub-find.yaml

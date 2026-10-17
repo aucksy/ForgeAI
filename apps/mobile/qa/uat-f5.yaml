@@ -27,7 +27,7 @@ appId: com.forgeai.app
           above:
             text: "Keep going"
 - extendedWaitUntil:
-    visible: "^Done$"
+    visible: "^Workout complete$"
     timeout: 60000
 - waitForAnimationToEnd:
     timeout: 3000
@@ -38,7 +38,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Sets[:,] 2$'
+      FIND: '\d+ min · 2 sets · .*'
 - takeScreenshot: uf-07-saved-after-retry
 - runFlow:
     file: sub-find.yaml

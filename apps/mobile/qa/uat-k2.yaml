@@ -8,7 +8,7 @@ appId: com.forgeai.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "Log a set to finish|Finish workout"
+    visible: "Minimise workout. It keeps running."
     timeout: 30000
 - scrollUntilVisible:
     element: '.*\. Open its history and how-to'

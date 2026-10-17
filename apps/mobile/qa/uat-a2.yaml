@@ -74,7 +74,7 @@ appId: com.forgeai.app
     above:
       text: "Keep going"
 - extendedWaitUntil:
-    visible: "^Done$"
+    visible: "^Workout complete$"
     timeout: 30000
 - waitForAnimationToEnd:
     timeout: 3000
@@ -84,8 +84,8 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Duration[:,] \d+ min$'
-- assertNotVisible: '^Duration[:,] \d+h.*'
+      FIND: '\d+ min · 1 set · .*'
+- assertNotVisible: '\d+h( \d\dm)? · .*'
 - takeScreenshot: ua-07-saved-with-its-real-length
 - runFlow:
     file: sub-find.yaml

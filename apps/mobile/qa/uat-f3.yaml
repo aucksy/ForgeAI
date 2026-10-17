@@ -45,13 +45,15 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: 'Couldn.t finish your workout\. It.s still open — tap Finish again\.'
     timeout: 10000
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: '${output.exRe} set 1 complete\. Tap to undo'
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: '${output.exRe} set 2 complete\. Tap to undo'
+# The first exercise's rows are near the top (a long page on the owner phone): straight up.
+- scrollUntilVisible:
+    element: '${output.exRe} set 1 complete\. Tap to undo'
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- scrollUntilVisible:
+    element: '${output.exRe} set 2 complete\. Tap to undo'
+    centerElement: true
+    timeout: 15000
 - assertVisible: "Minimise workout. It keeps running."
 - takeScreenshot: uf-04-still-open

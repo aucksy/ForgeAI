@@ -38,7 +38,7 @@ uroot() {
   printf '%s\n' "$out" | tr -d '\r'
   return $rc
 }
-uat_app_uid() { adb shell dumpsys package "$PKG" 2>/dev/null | tr -d '\r' | grep -m1 -oE 'userId=[0-9]+' | cut -d= -f2; }
+uat_app_uid() { adb shell dumpsys package "$PKG" 2>/dev/null | tr -d '\r' | grep -m1 -oE '(userId|appId)=[0-9]+' | cut -d= -f2; }
 
 # A part's expected (injected) error: part name as qa_report.py names it (UB2), and an ERE.
 uat_expect() { printf '%s\t%s\n' "$1" "$2" >> "$OUT/expected-errors.txt"; }
@@ -198,7 +198,7 @@ part_uf() {
     uat_dump uf4-after
     if grep -qE "storage may be full|Minimise workout" "$OUT/uf4-after-ui.txt" 2>/dev/null; then
       outcome="refused: 'Could not save', the banner named the full storage, the workout stayed open"
-    elif grep -qE '"Done"|text="Done"|Done' "$OUT/uf4-after-ui.txt" 2>/dev/null; then
+    elif grep -qE "Workout complete" "$OUT/uf4-after-ui.txt" 2>/dev/null; then
       outcome="saved anyway (SQLite still had room in its own log file)"
     else
       outcome="unclear (uf4-after-ui.txt)"

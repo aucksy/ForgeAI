@@ -35,7 +35,7 @@ appId: com.forgeai.app
     above:
       text: "Keep going"
 - extendedWaitUntil:
-    visible: "^Could not save$|^Done$"
+    visible: "^Could not save$|^Workout complete$"
     timeout: 60000
 - runFlow:
     when:
@@ -52,17 +52,19 @@ appId: com.forgeai.app
       - extendedWaitUntil:
           visible: 'Couldn.t finish your workout — your phone.s storage may be full\. It.s still open: free some space, then tap Finish again\.'
           timeout: 10000
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: '${output.exRe} set 1 complete\. Tap to undo'
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: '${output.exRe} set 2 complete\. Tap to undo'
+      # The first exercise's rows are near the top (a long page on the owner phone): straight up.
+      - scrollUntilVisible:
+          element: '${output.exRe} set 1 complete\. Tap to undo'
+          direction: UP
+          centerElement: true
+          timeout: 30000
+      - scrollUntilVisible:
+          element: '${output.exRe} set 2 complete\. Tap to undo'
+          centerElement: true
+          timeout: 15000
       - takeScreenshot: uf-06-full-still-open
 - runFlow:
     when:
-      visible: "^Done$"
+      visible: "^Workout complete$"
     commands:
       - takeScreenshot: uf-05-full-saved-anyway
