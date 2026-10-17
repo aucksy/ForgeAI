@@ -309,50 +309,55 @@ works** (log a workout, browse history/analytics, `localCoach` still there) · *
 criteria met · adversarial **logic + compile review before any tag** · `PROGRESS.md` updated · small
 committed steps · **STOP + report + wait for "continue."** Owner tags releases (cloud build only).
 
-## 11. Planned (owner, 17 Oct 2026) — "Today's target" on the Workout tab (NOT built)
+## 11. Planned (owner, 17 Oct 2026) — kg target per exercise on the Workout tab (NOT built)
 
-**Ask:** the app should be about progressive overload. On the Workout tab's Up next card (and
-below "Resume workout" when one is open), list the routine's exercises with what to lift today,
-and the total kg to lift compared with last time, following the member's own choice.
+**Ask (corrected by the owner the same day):** NOT one total for the day. Each exercise of the
+routine gets its own kg to lift today, on the Workout tab's Up next card (and below "Resume
+workout" when one is open). Then, inside the workout, each set's suggested weight and reps are
+what add up to that exercise's target.
 
 **Words (member-screen rule: never "volume" or "session"):** "kg to lift", "last time".
 
-**What it shows (sketch):**
+**Up next card (sketch):**
 ```
-Up next: Push Day A                         [Start]
-Today: 3,240 kg to lift · 4% more than last time (3,115 kg)
-  Bench Press      42.5 kg × 6, 6, 5     765 kg  ↑ +2 reps
-  Overhead Press   30 kg × 8, 8, 8       720 kg  = hold
-  Incline DB Press find a weight for 8–12        (first time)
-  Push-ups         15, 15, 14 reps               ↑ +1 rep
+Up next: Push Day A                                  [Start]
+  Bench Press      765 kg to lift   last 720 kg   +6%
+  Overhead Press   720 kg to lift   last 720 kg   hold (same as last time)
+  Incline DB Press first time: find a weight for 8–12
+  Push-ups         40 reps          last 38       +2 reps
 ```
-With a workout open, the same lines sit under Resume workout, each with its kg so far
-("410 of 765 kg").
+With a workout open, under Resume workout: "Bench Press 410 of 765 kg".
 
-**How the target is worked out (recommendation):** from the per-exercise Targets the app already
-computes (engine/progression.ts: double progression, the member's Settings → Workouts → Weight
-jumps ≈ 2.5 / 5 / 10%, big-jump guard, RPE, long-break and stall rules). Each exercise's kg =
-target weight × target reps of each main set (warm-ups out); the day's total and its % over last
-time FOLLOW from those Targets. The total is not forced up by a fixed % each workout:
-- Evidence (research v3 + 17 Oct search): progress comes per exercise (reps, then weight); weekly
-  sets raised 30% or 60% grew muscle no better than a moderate rise; more volume has diminishing
-  returns. A fixed +15% total every workout compounds fast (+15% a workout ≈ double in 5
-  workouts) and can only be met by extra sets or sloppy reps.
-- So the % the member sees is usually 0–10% and can be 0 or lower on purpose (a hold after a
-  stall, lighter after a long break) with the reason in words ("lighter today: back after a
-  break").
+**Inside the workout (the link the owner asked for):** the exercise card's target line shows the
+kg target and how far along the member is ("765 kg to lift · 410 so far"), and every open set
+keeps its suggested weight × reps (today's Target line, "42.5 kg · aim for 6"), which together
+make the 765. When a set comes in under or over, the remaining sets' suggestion says what is left
+("355 kg left: 42.5 × 6, 5 hits it"). The member can always lift more; nothing blocks Finish.
 
-**Edge cases:** first time on an exercise (no kg, "find a weight"); bodyweight and timed moves
-(reps / seconds, left out of the kg total, shown on their line); assisted (help going down);
-drop sets and back-off sets (count, never block progress, as the engine does); a routine edited
-since last time (compare exercise by exercise; new ones have no "last time"); lb users (lb).
+**How each exercise's target is worked out (recommendation):** from the Targets the app already
+computes per exercise (engine/progression.ts: double progression — add reps up to the top of the
+range, then the member's Settings → Workouts → Weight jumps ≈ 2.5 / 5 / 10% and back to the
+bottom of the range; big-jump guard; RPE; long-break and stall rules). kg target = the sum of
+target weight × target reps of the main sets (warm-ups out). The % over last time FOLLOWS from it:
+usually 0–10%, sometimes 0 or lower on purpose (a hold after a stall, lighter after a long break,
+said in words). A fixed +15% per exercise every workout would compound to double in about 5
+workouts and could only be met with extra sets or sloppy reps; research favours reps-then-weight
+per exercise and moderate rises in work.
+
+**Edge cases:** first time on an exercise (no kg: "find a weight"); bodyweight and timed moves
+(target in reps / seconds, not kg); assisted (help going down); drop sets and back-off sets count
+toward the kg but never block progress (engine rule); a set count changed since last time
+(compare kg, say "1 set more than last time"); lb users (lb).
 
 **Owner decisions needed:**
-1. Total target: (A, recommended) follows the per-exercise Targets and the existing Weight jumps
-   setting; or (B) a fixed "aim for N% more" chosen by the member (if B: cap at 10%, not 15%).
-2. Show it on app launch only on the Workout tab card (recommended), or also as a pop-up.
+1. Each exercise's target: (A, recommended) follows the existing Targets and Weight jumps
+   setting; or (B) a fixed "aim for N% more kg per exercise" the member chooses (cap 10%).
+2. When a set falls short: (A, recommended) the next sets' suggestion shows what is left to hit
+   the target, never more than one weight step or 2 reps above the plan; or (B) leave the sets'
+   suggestions as planned and only show "kg so far".
 
-**Build outline (when approved):** pure function `dayTarget(routine, targets, lastTime)` in
-src/tracker/lib (tested, kg and lb, all exercise types) → UpNextCard lines + the in-progress
-lines; vitest for every edge case above; phone parts check the numbers against the Targets shown
-inside the workout on the owner phone (Monday, 1st of the month, ~500-workout history).
+**Build outline (when approved):** pure `exerciseKgTarget(target, lastTime)` and
+`remainingPlan(target, doneSets)` in src/tracker/lib (tested: kg / lb, every exercise type,
+short and over-shooting sets) → UpNextCard lines, the in-progress lines and the exercise card's
+target line; phone parts check the numbers on the owner phone (Monday, 1st of the month,
+~500-workout history) against what each set suggests.
