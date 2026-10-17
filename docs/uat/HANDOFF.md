@@ -20,12 +20,17 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 ### Done since 06:50 UTC
 - Phone test split into 4 shards (qa_shards.py; whole run ~2 h). Release gate unchanged (run name).
 - Whole runs green on 52e8f43: default 39020754722 (attempt 2), owner 39020756689; journeys 39020758474.
-- v0.47.0: version bump, PROGRESS entry, UAT-REPORT-v0.47.0.md, tag pushed (see PROGRESS for links).
+- v0.47.0: version bump, PROGRESS entry, UAT-REPORT-v0.47.0.md at 4f3d5c3. The TAG could NOT be pushed
+  from the cloud (GitHub answers 403 to any tag push from this session; branch pushes work).
+  release-apk.yml dry run (workflow_dispatch) started on main to prove the gate + build.
 - Release review: no blockers; U-M7, U-M8 (S4) and U-G6 (S3) open for the next release.
 - Owner tools: docs/OWNER-INBOX.md (rule in CLAUDE.md), private Owner inbox page
   https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT, /inbox desktop mod (plugins/owner-inbox).
 
 ### Next
+- PC (or the owner on github.com): push tag v0.47.0 at 4f3d5c3: `git fetch origin && git tag v0.47.0 4f3d5c3 && git push origin v0.47.0`.
+  Then check releases/download/v0.47.0/forgeai-v0.47.0.apk and forgeai-v0.47.0-wear.apk answer 200.
+  No app-code commits before that tag (docs only), so the phone gate keeps matching.
 - Fix U-M7, U-M8, U-G6 -> v0.47.1. Owner decisions waiting: docs/OWNER-INBOX.md (table on top).
 - WP15 (Play pre-launch / Firebase Test Lab) not started.
 - Admin app: no code change since the last deploy (8672a6b); nothing to deploy.
