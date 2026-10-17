@@ -1,0 +1,6 @@
+{
+  "name": "owner-inbox",
+  "version": "1.0.0",
+  "description": "The ForgeAI owner inbox in a side panel: open questions with their full context, pick an answer and send it to Claude. Type /inbox.",
+  "author": { "name": "ForgeAI" }
+}

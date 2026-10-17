@@ -1,0 +1,14 @@
+{
+  "name": "forgeai",
+  "description": "ForgeAI's own tools for Claude Code: the owner inbox panel.",
+  "owner": {
+    "name": "ForgeAI"
+  },
+  "plugins": [
+    {
+      "name": "owner-inbox",
+      "source": "./plugins/owner-inbox",
+      "description": "The ForgeAI owner inbox in a side panel: open questions with their full context, pick an answer and send it to Claude. Type /inbox."
+    }
+  ]
+}

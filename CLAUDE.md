@@ -25,6 +25,12 @@ Each entry carries a `**Chat:** <chat name> — <session link>` line (the chat i
 every inbox update, rebuild and republish his private page so it matches the file:
 `python3 scripts/owner_inbox_page.py <file>.html`, then the Artifact tool with
 `url: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT` (read it first; never make a new page).
+Answers come back two ways: (1) the page's "Send to Claude" saves them INTO the page
+(`DATA.answers` in its script; the watching session is woken by that republish): read the page,
+act, write `**DECIDED (date):** ...` into the entry (drop its `**Decide:**` lines and its table row),
+rebuild + republish (that clears the sent answers); (2) the desktop mod `/inbox`
+(plugins/owner-inbox) posts "Owner inbox #N (...): ..." into the chat as his own words: same steps.
+Each open question needs `**Decide:** <question>` + `- A: <option>` lines (mark one "(recommended)").
 
 ## ⭐ Research demand before building a feature
 Before building any NEW feature the owner asks for (not a bug fix): search the web first —

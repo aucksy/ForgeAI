@@ -1,0 +1,4 @@
+{
+  "description": "Owner inbox: /inbox opens a panel with the open questions; Send puts the answer in the chat as your own words.",
+  "modules": ["./register.js"]
+}

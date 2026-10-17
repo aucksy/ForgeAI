@@ -41,7 +41,23 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 **You asked:** each question in the inbox should carry its full context, and let me choose an option
 and submit the answer for you to act on. And I want it as a MOD I can open anytime from an icon
 that stays on the Claude Desktop app.
-**Status:** RESEARCHING (answer coming below)
+**Status:** BUILT (page now; desktop mod ready to install on your PC)
+**My answer:**
+- **The page (works on the phone and the web now):** every open question shows its choices as
+  buttons, with the full question and my answer under it. Pick, add a note if you like, press
+  "Send to Claude". The page saves your answer into itself. That wakes the chat watching the page,
+  and that chat acts on it. If saving isn't possible, the page gives the answer as text to paste.
+- **The desktop mod:** type `/inbox` in any Claude Code chat on your PC (desktop app Code tab, terminal
+  or VS Code). A panel opens next to the chat with the open questions. Pick, press "Send to
+  Claude": the answer goes into that chat as your own words, with the question written out. A line
+  under the prompt box says how many questions wait for you.
+- **A permanent icon on the app is not possible.** The mods API has no toolbar, sidebar or icon
+  (official docs). `/inbox` plus the line under the prompt box is the closest. Mods also don't
+  work in cloud/phone chats; the page covers those.
+- **Install on your PC, once:** in a Claude Code chat type
+  `/plugin install owner-inbox --marketplace aucksy/ForgeAI` (needs Claude Code 2.1.286 or later; check
+  with /status). Then `/inbox`. I couldn't try it on a real desktop app from the cloud; the code passed
+  Claude Code's own plugin check and the tests.
 
 ## 15. An owner-inbox "mod" in Claude, one page per chat, on the right-hand side — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -169,6 +185,10 @@ stand out, but nobody has proven members want it.
 **Sources:** PureGym help centre (live busyness tracker); PureGym blog (when is the gym quiet);
 Notre Dame senior design "GyEEm" (machine sensors, prototype); Planet Fitness Crowd Meter (blog,
 low-quality source).
+**Decide:** Machine-free times: what should I do?
+- A: Build "best times to go" for the whole gym from QR check-ins first; machine-level later if members use it (recommended)
+- B: Build machine-level advice straight away (needs members to agree to share, and each gym's equipment list)
+- C: Park the idea for now
 
 ## 12. QR code at the entry gate instead of a fingerprint machine — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -195,6 +215,9 @@ gate, or open only near the gym); no internet means nobody gets in (keep the des
 keypad PIN); fire safety (lock must open on power loss, plus an exit button).
 **Needs you:** build Step 1 now? Step 2 waits until the client agrees to buy a lock.
 **Details:** `docs/overhaul/research/R-qr-entry.md`
+**Decide:** Gate QR, Step 1 (after check-in: "Start Push day", or "Add Push Pull Legs" for no routines)
+- A: Build Step 1 now; the door (Step 2) waits until the client buys a lock (recommended)
+- B: Don't build yet
 
 ## 11. I couldn't join RAMS01 from my app; gym icon and theme after joining — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -216,6 +239,15 @@ Google etc., with "join via your gym membership" right below; the app must also 
   Google login is a bigger accounts project (server accounts, privacy policy, moving phone data):
   research first.
 **Needs you:** icon A or B; the small welcome-screen join (yes/no); research Google login (yes/no).
+**Decide:** Gym icon after joining
+- A: Home-screen shortcut with the gym's logo (works for every gym, no new release) (recommended)
+- B: Icons built into the app (a new release per gym)
+**Decide:** Welcome screen: add "Have a gym code? Join your gym"
+- A: Yes, add it (small) (recommended)
+- B: No
+**Decide:** "Log in with Google"
+- A: Research it properly first, then decide (recommended)
+- B: Not now
 
 ## 10. RPE tap: let me SEE the ✓ get ticked — 16/17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -234,6 +266,12 @@ B a fixed "aim for N% more" the member picks, max 10%) and decision 2 (A the nex
 is left to hit the target, never more than one weight step or 2 reps above plan, recommended; or
 B only show "kg so far").
 **Details:** `docs/TRACKER-PRD.md` §11
+**Decide:** kg target per exercise, decision 1: where the target comes from
+- A: The existing Targets / Weight jumps setting (recommended)
+- B: A fixed "aim for N% more" the member picks (max 10%)
+**Decide:** kg target per exercise, decision 2: when a set falls short
+- A: The next sets show what is left to hit the target (at most one weight step or 2 reps above plan) (recommended)
+- B: Keep the planned sets; only show "kg so far"
 
 ## 8. A drag-handle bar on exercise and routine cards — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -251,6 +289,9 @@ never twice. Opening or refreshing the app with no internet: it won't open. The 
 works fully offline for workouts. The planned entry machine would keep letting paid members in.
 **Needs you:** 1) build "offline front desk" (saved copy on the desk device; offline check-ins
 and payments queued and sent once each when back online), recommended; or 2) leave it.
+**Decide:** Offline front desk for the admin app
+- A: Build it: a saved copy on the desk device; offline check-ins and payments queued and sent once each (recommended)
+- B: Leave it: paper during outages
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -294,6 +335,10 @@ Server", their latest guide, and one real machine to test.
 3. Flap barrier: about ₹2.5–4 lakh+.
 (Online prices outside Jaipur, before GST and fitting.)
 **Details:** `docs/overhaul/research/R-entry-machines.md`
+**Decide:** Entry machine setup to offer the client as standard
+- A: Budget smart door, about ₹25,000–40,000
+- B: Tripod turnstile, about ₹80,000–1.6 lakh (recommended)
+- C: Flap barrier, about ₹2.5–4 lakh+
 
 ## 1. Physical entry / attendance machines in Jaipur that connect to our CRM — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2

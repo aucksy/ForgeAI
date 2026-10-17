@@ -21,6 +21,9 @@ SAMPLE = """# Owner inbox
 **You asked:** b
 **Status:** RESEARCHED: WAITING FOR YOU
 **My answer:** </script> stays text
+**Decide:** Pick one
+- A: First way (recommended)
+- B: Second way
 
 ## 1. First idea — 16 Oct 2026
 **Chat:** Chat one
@@ -39,6 +42,24 @@ class Page(unittest.TestCase):
         self.assertNotIn("**Chat:**", e2["body"])
         self.assertNotIn("**Status:**", e2["body"])
 
+    def test_choices(self):
+        e2 = page.parse(SAMPLE)["entries"][0]
+        self.assertEqual(e2["decides"], [{"q": "Pick one", "opts": [
+            {"key": "A", "text": "First way", "rec": True}, {"key": "B", "text": "Second way", "rec": False}]}])
+        self.assertNotIn("**Decide:**", e2["body"])
+        decided = page.parse(SAMPLE.replace("**You asked:** b", "**DECIDED (17 Oct):** A"))["entries"][0]
+        self.assertEqual(decided["decides"], [])
+
+    def test_the_page_carries_its_own_template_and_markers_appear_once(self):
+        self.assertEqual(page.TEMPLATE.count("__TPL__"), 1)
+        self.assertEqual(page.TEMPLATE.count("__DATA__"), 1)
+        html = page.fill(page.TEMPLATE, {"entries": [], "answers": {}})
+        # The code lines are filled; the saved template copy (one JSON line) keeps its markers.
+        import re
+        self.assertIsNone(re.search(r"^const TPL = __TPL__;$", html, re.M))
+        self.assertIsNone(re.search(r"^const DATA = __DATA__;$", html, re.M))
+        self.assertIn("const TPL = ", html)
+
     def test_the_real_inbox_has_a_chat_on_every_entry(self):
         d = page.parse(open(page.INBOX, encoding="utf-8").read())
         self.assertTrue(d["entries"])
@@ -54,7 +75,8 @@ class Page(unittest.TestCase):
             html = page.build(f.name)
         finally:
             os.remove(f.name)
-        self.assertIn("<\\/script> stays text", html)
+        self.assertIn("\\u003c/script> stays text", html)
+        self.assertNotIn("</script> stays text", html)
         self.assertTrue(html.startswith("<title>Owner Inbox</title>"))
 
 

@@ -26,3 +26,11 @@ npx expo start
 ## Release
 Tag-driven GitHub Actions (`v*` → signed APK + AAB GitHub Release). No local
 Gradle builds. See `CONTEXT.md` / `docs/` for architecture and contracts.
+
+## Owner inbox (Claude desktop app)
+The owner's open questions in a side panel: type `/inbox` in a Claude Code chat to pick answers and
+send them to Claude. Install once (Claude Code 2.1.286 or later):
+
+    /plugin install owner-inbox --marketplace aucksy/ForgeAI
+
+On the phone or the web, use the private Owner inbox page instead (link in `docs/OWNER-INBOX.md`).
