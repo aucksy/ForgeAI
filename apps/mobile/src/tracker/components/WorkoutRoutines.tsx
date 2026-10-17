@@ -16,6 +16,7 @@
  * Reorder: press and hold a routine, then drag it within its folder (15 Oct 2026, as Hevy does;
  * DragList). The routine ⋯ keeps Move up / Move down / Move to folder… (moving between folders).
  */
+import { DragGrip } from './DragGrip';
 import { DragList } from './DragList';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState, type MutableRefObject } from 'react';
@@ -147,6 +148,7 @@ function RoutineCard({
   onOpen,
   onStart,
   onMore,
+  canDrag = false,
 }: {
   r: RoutineFull;
   tag: 'Next' | null;
@@ -154,10 +156,13 @@ function RoutineCard({
   onOpen: () => void;
   onStart: () => void;
   onMore: () => void;
+  /** Two routines or more in the folder: the bar at the top says press, hold and drag. */
+  canDrag?: boolean;
 }) {
   const empty = r.exercises.length === 0;
   return (
     <View style={{ backgroundColor: color.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: tag ? accentTint(0.45) : color.border, padding: space.md, gap: space.sm }}>
+      {canDrag ? <DragGrip style={{ marginTop: -space.xs, marginBottom: -space.xs }} /> : null}
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.xs }}>
         <Pressable
           onPress={onOpen}
@@ -564,6 +569,7 @@ export function WorkoutRoutines({
                           onOpen={() => router.push(`/routines/view/${r.id}`)}
                           onStart={() => onStartRoutine(r)}
                           onMore={() => setRoutineFor({ folder: f, routine: r })}
+                          canDrag={f.routines.length > 1}
                         />
                       )}
                     />

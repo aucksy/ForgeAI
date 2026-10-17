@@ -48,6 +48,7 @@ import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
+import { DragGrip } from './DragGrip';
 import type { DragWrap } from './DragList';
 import { RpeSheet } from './RpeSheet';
 import { SetTypeSheet } from './SetTypeSheet';
@@ -83,6 +84,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   target,
   compact = false,
   wrapHandle,
+  canDrag = false,
 }: {
   exercise: DraftExercise;
   /** Distinct superset groups in the whole workout (kept for callers; the chooser reads the store). */
@@ -94,6 +96,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   compact?: boolean;
   /** 15 Oct 2026: wraps the name row so press-and-hold there drags the card (DragList handle). */
   wrapHandle?: DragWrap;
+  /** Two exercises or more: the bar at the top of the card says press, hold and drag (owner). */
+  canDrag?: boolean;
 }) {
   const addSet = useActiveWorkout((s) => s.addSet);
   const removeExercise = useActiveWorkout((s) => s.removeExercise);
@@ -341,6 +345,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     >
       {/* header — the small picture opens the moving demo (never autoplays here) */}
       {(wrapHandle ?? noWrap)(
+      <View>
+      {/* Inside the hold area (the name row's wrap), so holding the bar itself lifts the card. */}
+      {canDrag ? <DragGrip style={{ marginTop: -space.sm, marginBottom: space.sm - space.xs }} /> : null}
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.sm }}>
         <ExerciseThumb
           catalogKey={exercise.catalogKey ?? null}
@@ -410,6 +417,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         >
           <Glyph name="more" size={20} color={color.inkSecondary} />
         </Pressable>
+      </View>
       </View>,
       )}
 

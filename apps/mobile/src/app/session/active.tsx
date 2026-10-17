@@ -375,9 +375,10 @@ export default function ActiveWorkoutScreen() {
         target={targets.get(item.ex.key) ?? null}
         compact={dragKey != null}
         wrapHandle={wrap}
+        canDrag={exercises.length > 1}
       />
     ),
-    [existingGroups, targets, dragKey],
+    [existingGroups, targets, dragKey, exercises.length],
   );
 
   const onDiscard = (): void => {
