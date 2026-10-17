@@ -30,6 +30,12 @@ Full research lives in the linked docs; this file is the short version.
 
 ---
 
+## 13. "Which machines are free when": suggest a schedule with less waiting — 17 Oct 2026
+**You asked:** every member logs their workouts, so we know which machines are used on which day
+and hour. Show members when machines are free, and suggest moving their schedule so they're more
+likely to get a free machine.
+**Status:** RESEARCHING (answer coming below)
+
 ## 12. QR code at the entry gate instead of a fingerprint machine — 17 Oct 2026
 **You asked:** members open our app and scan a QR at the gate to get in. That marks attendance,
 then nudges them to start their workout; with no saved routines, give them a research-based
