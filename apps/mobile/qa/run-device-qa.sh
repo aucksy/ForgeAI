@@ -168,7 +168,44 @@ elif [ "$QA_PROFILE" != "default" ]; then
   log "UNKNOWN PROFILE '$QA_PROFILE' (default | owner)"
   status=1
 fi
-log "parts: only='${QA_ONLY_LIST}' extra='${QA_EXTRA_LIST}' profile=$QA_PROFILE"
+# UAT WP14 (17 Oct 2026): QA_ENV (`env`) = one row of the pairwise phone-setting matrix
+# (scripts/ci/pairwise.py, docs/uat/ENV-MATRIX.md), e.g. "font=2.0,width=360,net=flaky,tz=ist,
+# saver=on", set for EVERY part, on top of the profile. Only with `only` (a partial run: it never
+# opens the release gate). font = font_scale; width 360 = density 480 (411 = the emulator's own);
+# net offline = Wi-Fi and data off, flaky = the emulator's slowest link (GPRS speed and delay);
+# tz ist / utc; saver on = Battery Saver.
+QA_ENV=${QA_ENV:-}
+if [ -n "$QA_ENV" ]; then
+  [ -n "$QA_ONLY_LIST" ] || { log "ENV FAILED: env '$QA_ENV' needs only (a partial run)"; status=1; }
+  for env_kv in $(echo "$QA_ENV" | tr ',;' '  '); do
+    env_v=${env_kv#*=}
+    case "$env_kv" in
+      font=1.0|font=1.3|font=2.0)
+        BASE_FONT=$env_v; adb shell settings put system font_scale "$env_v" >/dev/null 2>&1 || true ;;
+      width=360) adb shell wm density 480 >/dev/null 2>&1 || true ;;
+      width=411) adb shell wm density reset >/dev/null 2>&1 || true ;;
+      net=online) ;;
+      net=offline)
+        adb shell cmd connectivity airplane-mode enable >/dev/null 2>&1 || true
+        adb shell svc wifi disable >/dev/null 2>&1 || true
+        adb shell svc data disable >/dev/null 2>&1 || true ;;
+      net=flaky)
+        adb emu network speed gprs >/dev/null 2>&1 || true
+        adb emu network delay gprs >/dev/null 2>&1 || true ;;
+      tz=utc|tz=ist)
+        [ "$env_v" = ist ] && env_z=Asia/Kolkata || env_z=UTC
+        adb shell settings put global auto_time_zone 0 >/dev/null 2>&1 || true
+        adb shell cmd alarm set-timezone "$env_z" >/dev/null 2>&1 || adb shell setprop persist.sys.timezone "$env_z" >/dev/null 2>&1 || true ;;
+      saver=off) adb shell settings put global low_power 0 >/dev/null 2>&1 || true ;;
+      saver=on)
+        adb shell cmd power set-mode 1 >/dev/null 2>&1 || adb shell settings put global low_power 1 >/dev/null 2>&1 || true ;;
+      *) log "ENV FAILED: unknown setting '$env_kv' (font=1.0|1.3|2.0 width=360|411 net=online|offline|flaky tz=utc|ist saver=off|on)"; status=1 ;;
+    esac
+  done
+  sleep 3
+  log "ENV $QA_ENV: screen $(adb shell wm size | tr -d '\r' | tail -1), density $(adb shell wm density | tr -d '\r' | tail -1), font scale $(adb shell settings get system font_scale | tr -d '\r'), time $(adb shell "date '+%a %d %b %Y %H:%M %Z'" | tr -d '\r'), battery saver $(adb shell settings get global low_power | tr -d '\r'), airplane $(adb shell settings get global airplane_mode_on | tr -d '\r')"
+fi
+log "parts: only='${QA_ONLY_LIST}' extra='${QA_EXTRA_LIST}' profile=$QA_PROFILE env='${QA_ENV}'"
 
 if [ -n "$QA_ONLY_LIST" ]; then
   log "QA_ONLY=$QA_ONLY_LIST: only these parts run (a partial run: it cannot release)"

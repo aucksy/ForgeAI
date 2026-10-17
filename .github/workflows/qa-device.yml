@@ -33,6 +33,10 @@ on:
         default: "default"
         type: choice
         options: ["default", "owner"]
+      env:
+        description: "UAT WP14: one row of the pairwise phone-setting matrix (docs/uat/ENV-MATRIX.md), e.g. font=2.0,width=360,net=flaky,tz=ist,saver=on. Needs only (a partial run). Empty = the profile as it is."
+        required: false
+        default: ""
   workflow_call:
 
 # Audit v2 (16 Oct 2026): a release needs a WHOLE run (no `only`) on API 34 on BOTH phones
@@ -42,8 +46,8 @@ on:
 # version) is named "(partial ...)", which the gate ignores. `extra` parts only ADD checks, so a
 # whole run with extras still counts (it fails if any extra fails).
 run-name: >-
-  ${{ ((inputs.only != '' && inputs.only != null) || (inputs.api != '' && inputs.api != null && inputs.api != '34'))
-  && format('Device QA (partial {0}, api {1}, profile {2}{3})', (inputs.only != '' && inputs.only != null) && inputs.only || 'whole run', inputs.api || '34', inputs.profile || 'default', (inputs.extra != '' && inputs.extra != null) && format(', + {0}', inputs.extra) || '')
+  ${{ ((inputs.only != '' && inputs.only != null) || (inputs.api != '' && inputs.api != null && inputs.api != '34') || (inputs.env != '' && inputs.env != null))
+  && format('Device QA (partial {0}, api {1}, profile {2}{3}{4})', (inputs.only != '' && inputs.only != null) && inputs.only || 'whole run', inputs.api || '34', inputs.profile || 'default', (inputs.extra != '' && inputs.extra != null) && format(', + {0}', inputs.extra) || '', (inputs.env != '' && inputs.env != null) && format(', env {0}', inputs.env) || '')
   || (inputs.profile == 'owner' && format('Device QA (owner phone, api 34{0})', (inputs.extra != '' && inputs.extra != null) && format(', + {0}', inputs.extra) || ''))
   || ((inputs.extra != '' && inputs.extra != null) && format('Device QA (Android emulator, + {0})', inputs.extra) || 'Device QA (Android emulator)') }}
 
@@ -108,7 +112,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: QA_ONLY="${{ inputs.only }}" QA_EXTRA="${{ inputs.extra }}" QA_PROFILE="${{ inputs.profile || 'default' }}" bash apps/mobile/qa/run-device-qa.sh "$GITHUB_WORKSPACE/qa.apk"
+          script: QA_ONLY="${{ inputs.only }}" QA_EXTRA="${{ inputs.extra }}" QA_PROFILE="${{ inputs.profile || 'default' }}" QA_ENV="${{ inputs.env }}" bash apps/mobile/qa/run-device-qa.sh "$GITHUB_WORKSPACE/qa.apk"
 
       # Parts run / passed / failed, every skipped step, the crash / ANR / JS-error scan and the
       # rest-alert timing, on the run's summary page.
