@@ -38,14 +38,14 @@ set-mode 1`.
 | # | Run | Result | Notes |
 |---|---|---|---|
 | E1 | (every whole default run) | - | covered by the release gate |
-| E2 | pending | | |
-| E3 | pending | | |
-| E4 | pending | | |
-| E5 | pending | | |
-| E6 | pending | | |
-| E7 | pending | | |
-| E8 | pending | | |
-| E9 | pending | | |
-| E10 | pending | | |
-| E11 | pending | | |
-| E12 | pending | | |
+| E2 | 38997271281 | running | |
+| E3 | 38997272780 | running | |
+| E4 | 38997274321 | running | |
+| E5 | 38997276238 | running | |
+| E6 | 38997277461 | running | |
+| E7 | 38997278881 | running | |
+| E8 | 38997280249 | running | |
+| E9 | 38997281668 | running | |
+| E10 | 38997283134 | running | |
+| E11 | 38997284695 | running | |
+| E12 | 38997286258 | running | |

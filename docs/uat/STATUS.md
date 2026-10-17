@@ -18,7 +18,10 @@ and MONEY-ACCESS.md (F-01..F-14).
 | 10 | Fixed clocks | DONE (admin side) | e2e J27a (31 Mar 23:55 -> receipt 2025-26/0001; check-ins at 23:59 and 00:01 on two days, register left open; 1 Apr payment = 2026-27/0001; Collections this FY / last month split) and J27b (plan ending today: "Last day is today", Ending today 1; a day later Expired everywhere, tiles follow), Playwright clock.install + fastForward, no reload. Green in CI 38988145219. Member-app clocks (midnight in a live workout, Monday / 1st of month) not part of this |
 | 11 | Traceability + coverage numbers | DONE: INVENTORY.md (330 tasks) + coverage.py (derived numbers; after WP5b 209/330 on a real screen, 22 H-risk not on screen) | |
 | 12 | Owner UAT kit | DONE: OWNER-CHECKS.md + UAT-REPORT-TEMPLATE.md (verdict first, run links, derived coverage, rollback) | |
-| 13-15 | a11y, PICT, external devices | NOT STARTED | |
+| 13 | Phone label / touch-target lint | DONE (cloud): test/a11y/touchLint.ts + touchLint.test.ts (every Pressable/Touchable/PressScale: a spoken label; icon-only ones 48 dp drawn + hitSlop). Found + fixed 4: plate calculator close X (no label, 38 dp) + its backdrop, routine Move up/down (42 dp), workout photo Remove (46 dp), chat Remove photo (31 dp). Commit b11f234. TalkBack pass by hand = owner check | |
+| 14 | Pairwise environment matrix (PICT) | RUNNING (cloud): scripts/ci/pairwise.py (12 rows cover 93 pairs), qa-device `env` input, ENV-MATRIX.md; 11 partial runs a,b,h,h3 on 9783923 (E2..E12, ids in ENV-MATRIX.md) | |
+| C9-34 | Shop buttons without the gym name | DONE (cloud): "Join this gym" / "Switch to this gym" / "Open the shop", name stays the heading; c9_34ShopButtons.test.ts; invite-a/b/c/e + checkin-f1 updated. Commit 7486ff7 | |
+| 15 | External devices (Play pre-launch, Firebase Test Lab) | NOT STARTED | |
 
 Release: v0.46.0 on 2e5673d waits for phone runs 38944110694 (owner+mk) + 38944115388 (default);
 CI on 2e5673d green. Then tag. Fixes from WP3/4/8/9 go into v0.47.0.

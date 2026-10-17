@@ -7,6 +7,7 @@ The PC helpers turned out to be still running (8e9fcdc WP4b, runs 38996250599 / 
 cloud session keeps OFF their work to avoid two sessions editing the same files:
 - Cloud takes: C9-34 (src/shop Invite/CheckIn buttons), WP13 (phone label / touch-target lint),
   WP14 (PICT pairwise matrix). It only WATCHES WP4b / WP7 / WP9 runs (R check: 38996291871).
+- Cloud done so far: C9-34 (7486ff7), WP13 (b11f234), WP14 code (9783923) + 11 env runs running.
 - PC helpers keep: WP4b, WP7, WP9 / part R. If a PC helper stops for good, write it here; the cloud
   session then takes that package over.
 
