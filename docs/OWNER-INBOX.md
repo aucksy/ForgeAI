@@ -31,6 +31,10 @@ Full research lives in the linked docs; this file is the short version.
 
 ---
 
+## 14. What would it cost on GitHub to make the phone test runs faster? — 17 Oct 2026
+**You asked:** the cost of making the cloud test runs faster.
+**Status:** RESEARCHING (answer coming below)
+
 ## 13. "Which machines are free when": suggest a schedule with less waiting — 17 Oct 2026
 **You asked:** every member logs their workouts, so we know which machines are used on which day
 and hour. Show members when machines are free, and suggest moving their schedule so they're more
