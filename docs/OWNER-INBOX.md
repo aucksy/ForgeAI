@@ -14,13 +14,17 @@ catch up.
 
 Full research lives in the linked docs; this file is the short version.
 
+**Chat:** every entry names the chat it came from. **Read it in Claude:** a private page with a chat
+picker (link below), rebuilt from this file by `scripts/owner_inbox_page.py` after every update.
+
+Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account; pin it in the sidebar)
+
 ---
 
 ## Waiting for your decision (all in one place)
 
 | # | Decision | My pick |
 |---|---|---|
-| 15 | Owner inbox in Claude: A private page with a chat picker (phone + web), B desktop mod (PC only) | A |
 | 13 | Machine-free times: A gym "best times to go" from check-ins first, B machine-level later | A first |
 | 12 | Gate QR: build Step 1 now (after check-in: "Start Push day", or "Add Push Pull Legs" for no routines)? | Yes, build Step 1 |
 | 11 | Gym icon after joining: A home-screen shortcut with the gym logo, or B icons built into the app | A |
@@ -33,9 +37,10 @@ Full research lives in the linked docs; this file is the short version.
 ---
 
 ## 15. An owner-inbox "mod" in Claude, one page per chat, on the right-hand side — 17 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** with the new Claude "mods" feature, can we build a mod for the owner inbox, where I
 pick the chat I'm working on and each chat has its own page, ideally shown on the right-hand side?
-**Status:** RESEARCHED: WAITING FOR YOU
+**Status:** BUILT (A)
 **My answer:** "Mods" are real (Claude Code, early Oct 2026). A mod can open its own panel; in the
 desktop app it docks beside the chat when the window is wide enough. But (official docs):
 - **Mods draw only in the terminal, the desktop app's Code tab and VS Code.** In cloud sessions
@@ -59,12 +64,14 @@ desktop app it docks beside the chat when the window is wide enough. But (offici
 - **B (later, PC only):** a desktop mod that shows the inbox in a side panel next to the chat.
   More work, and invisible in cloud/mobile chats.
 **Needs you:** A, B, or both?
+**DECIDED (17 Oct):** A. Built: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT
 **Sources:** code.claude.com docs: plugins/mods overview, interface, reference; cloud-environments;
 mobile. Press: The New Stack and XDA on the mods launch.
 
 ## 14. What would it cost on GitHub to make the phone test runs faster? — 17 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** the cost of making the cloud test runs faster.
-**Status:** ANSWERED — WAITING FOR YOU
+**Status:** BUILT, first split runs in progress (decided: split, free)
 **My answer:**
 - **Today it costs ₹0.** The repo is public, so GitHub's normal test machines are free and
   unlimited. A whole phone run took 3 h 04 min (run 38984599010; GitHub billed 0 minutes).
@@ -119,6 +126,7 @@ other runs started at the same time will queue.
 - Validation: the first split runs are compared with the old-style runs on the same app.
 
 ## 13. "Which machines are free when": suggest a schedule with less waiting — 17 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** every member logs their workouts, so we know which machines are used on which day
 and hour. Show members when machines are free, and suggest moving their schedule so they're more
 likely to get a free machine.
@@ -156,6 +164,7 @@ Notre Dame senior design "GyEEm" (machine sensors, prototype); Planet Fitness Cr
 low-quality source).
 
 ## 12. QR code at the entry gate instead of a fingerprint machine — 17 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** members open our app and scan a QR at the gate to get in. That marks attendance,
 then nudges them to start their workout; with no saved routines, give them a research-based
 Push Pull Legs plan. Don't build yet; does it work, and how?
@@ -181,6 +190,7 @@ keypad PIN); fire safety (lock must open on power loss, plus an exit button).
 **Details:** `docs/overhaul/research/R-qr-entry.md`
 
 ## 11. I couldn't join RAMS01 from my app; gym icon and theme after joining — 17 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** Settings → Your gym gave no way to join. After joining with a valid membership, the
 theme should change and the app icon should become the gym's (or a mix). New users: log in with
 Google etc., with "join via your gym membership" right below; the app must also work with no gym.
@@ -201,11 +211,13 @@ Google etc., with "join via your gym membership" right below; the app must also 
 **Needs you:** icon A or B; the small welcome-screen join (yes/no); research Google login (yes/no).
 
 ## 10. RPE tap: let me SEE the ✓ get ticked — 16/17 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** BUILT, NOT RELEASED (commit c54923f, in v0.47.0)
 **My answer:** after an RPE tap the sheet closes, then the ✓ on that set pops and ticks in front
 of you, then the rest timer starts.
 
 ## 9. Progressive overload: a kg target per exercise on the Workout tab — 16/17 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** under Resume workout, each exercise shows the total kg to beat (not the whole
 day's total), based on research or the member's setting; during the workout, suggest the next
 reps/weight that add up to it.
@@ -217,11 +229,13 @@ B only show "kg so far").
 **Details:** `docs/TRACKER-PRD.md` §11
 
 ## 8. A drag-handle bar on exercise and routine cards — 16 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** BUILT, NOT RELEASED (commit c1c2d5e, in v0.47.0)
 **My answer:** a small grey bar at the top of each card shows "press, hold and drag". Only shown when
 there are 2 or more cards to reorder.
 
 ## 7. Offline mode: can the gym use the admin app without internet? — 16 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** ANSWERED — WAITING FOR YOU
 **My answer:** Partly. A gym kept "in this browser only" works offline but lives on one device.
 An online gym: if the internet drops, the desk can still SEE members and dues, but can't save
@@ -232,6 +246,7 @@ works fully offline for workouts. The planned entry machine would keep letting p
 and payments queued and sent once each when back online), recommended; or 2) leave it.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** ANSWERED
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
@@ -241,9 +256,11 @@ diet and workout plans; gym-recorded body measurements.
 **Details:** `docs/overhaul/research/R-ggms-competitor.md`
 
 ## 5. Use the admin app's icon for the mobile app — 16 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** BUILT, NOT RELEASED (commit abe5745, in v0.47.0)
 
 ## 4. GGMS (the client's current CRM): features and prices — 16 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** ANSWERED
 **My answer:** GGMS (Gayatri Software, Jaipur, since 2017, claims 1,000+ gyms). Offline Plan from
 ₹11,999/year (no member app); Online Plan from ₹14,999/year (with app). These are starting prices
@@ -254,9 +271,11 @@ photo, birthday wishes. Their users complain about bugs, so reliability is a poi
 **Details:** `docs/overhaul/research/R-ggms-competitor.md`
 
 ## 3. Entry machines: don't build, add to plan — 16 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** PLANNED (P8 in `docs/overhaul/CRM-BUILD.md`)
 
 ## 2. Matrix's connection kit: does it really work? Top 3 at different prices — 16 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** ANSWERED — WAITING FOR YOU (which setup to offer)
 **My answer:** Yes. Matrix's own guide covers everything we need: the machine connects to our
 server by itself (no PC at the gym); add/remove members; block an expired member by itself even
@@ -270,6 +289,7 @@ Server", their latest guide, and one real machine to test.
 **Details:** `docs/overhaul/research/R-entry-machines.md`
 
 ## 1. Physical entry / attendance machines in Jaipur that connect to our CRM — 16 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** ANSWERED
 **My answer:** No brand has its own Jaipur office; all sell through local dealers. Two options
 connect: Matrix COSEC (Indian, official connection kit, gym case study; recommended) and

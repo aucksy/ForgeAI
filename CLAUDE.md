@@ -21,6 +21,10 @@ an idea, suggestion, feature request or question: FIRST add it to `docs/OWNER-IN
 top; "You asked" in short + Status) and commit + push, THEN work on it. When answered, write the
 answer there too (plain English, same as chat) and keep the "Waiting for your decision" table at
 the top current: add new decisions, and remove them once he decides. Commit + push after each update.
+Each entry carries a `**Chat:** <chat name> — <session link>` line (the chat it came from). After
+every inbox update, rebuild and republish his private page so it matches the file:
+`python3 scripts/owner_inbox_page.py <file>.html`, then the Artifact tool with
+`url: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT` (read it first; never make a new page).
 
 ## ⭐ Research demand before building a feature
 Before building any NEW feature the owner asks for (not a bug fix): search the web first —
