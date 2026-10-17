@@ -188,29 +188,32 @@ part_uf() {
   else
     uat_fail UF "this phone image has no sqlite3, so the refused-Finish half could not run (uat-uf-lock.txt)"
   fi
-  # 2. The phone's storage is full (filled as the app's own user: Android keeps its reserve).
+  # 2. The phone's storage is full (filled as the app's own user: Android keeps its reserve). Maestro
+  # cannot start a session on a full phone (it installs its driver first), so uat-f4.yaml starts
+  # first and waits 150 s; the phone is filled 20 s in, meanwhile.
   uid=$(uat_app_uid)
-  adb shell su "$uid" sh "$UROOT" fill > "$OUT/uat-uf-fill.txt" 2>&1
+  uat_expect UF4 'SQLITE_FULL|database or disk is full|ENOSPC|No space left|disk I/O error'
+  ( sleep 20; adb shell su "$uid" sh "$UROOT" fill > "$OUT/uat-uf-fill.txt" 2>&1; echo "fill done at $(date -u +%H:%M:%S)" >> "$OUT/uat-uf-fill.txt" ) &
+  fill_pid=$!
+  log "UAT UF: Finish on a full phone: flow started $(date -u +%H:%M:%S), filling from 20 s in (app uid ${uid:-unknown})"
+  uat_part uf4 uat-f4.yaml || true
+  wait "$fill_pid" 2>/dev/null
   if grep -q "full: a 6-byte write is refused" "$OUT/uat-uf-fill.txt"; then
-    log "UAT UF: the phone is full for the app ($(tr -d '\r' < "$OUT/uat-uf-fill.txt" | grep -E '^filled|/data' | tr '\n' ' ' | cut -c1-200))"
-    uat_expect UF4 'SQLITE_FULL|database or disk is full|ENOSPC|No space left|disk I/O error'
-    uat_part uf4 uat-f4.yaml || true
-    uat_dump uf4-after
-    if grep -qE "storage may be full|Minimise workout" "$OUT/uf4-after-ui.txt" 2>/dev/null; then
-      outcome="refused: 'Could not save', the banner named the full storage, the workout stayed open"
-    elif grep -qE "Workout complete" "$OUT/uf4-after-ui.txt" 2>/dev/null; then
-      outcome="saved anyway (SQLite still had room in its own log file)"
-    else
-      outcome="unclear (uf4-after-ui.txt)"
-    fi
-    log "UAT UF: Finish on a full phone: $outcome"
+    log "UAT UF: the phone was full for the app ($(tr -d '\r' < "$OUT/uat-uf-fill.txt" | grep -E '^filled|^fill done' | tr '\n' ' ' | cut -c1-200))"
   else
     uat_fail UF "the phone could not be filled (uat-uf-fill.txt)"
+  fi
+  if find "$OUT/part-uf4" -name 'uf-05-full-could-not-save.png' 2>/dev/null | grep -q .; then
+    log "UAT UF: Finish on a full phone was refused: 'Could not save', the banner named the full storage, the workout stayed open"
+  elif find "$OUT/part-uf4" -name 'uf-05-full-saved-anyway.png' 2>/dev/null | grep -q .; then
+    log "UAT UF: Finish on a full phone saved anyway (SQLite still had room in its own log file)"
+  else
+    log "UAT UF: Finish on a full phone: no outcome screenshot (part-uf4.log)"
   fi
   uroot unfill >> "$OUT/uat-uf-fill.txt"
   log "UAT UF: space freed again ($(tail -1 "$OUT/uat-uf-fill.txt" | tr -s ' '))"
   # 3. Finish again if needed; exactly one more workout, with both sets, under today's date.
-  today=$(adb shell date '+%A %d %B' 2>/dev/null | tr -d '\r' | sed -E 's/ 0([0-9]) / \1 /')
+  today=$(adb shell "date '+%A %d %B'" 2>/dev/null | tr -d '\r' | sed -E 's/ 0([0-9]) / \1 /')
   uat_part uf5 uat-f5.yaml -e WANT="$(( n + 1 ))" -e TODAY="$today" && \
     log "UAT UF: after the retry exactly one workout was saved (Workouts: $n -> $(( n + 1 ))) with both sets; no banner left"
 }

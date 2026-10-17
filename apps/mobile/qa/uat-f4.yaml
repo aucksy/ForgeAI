@@ -9,6 +9,13 @@
 # Screenshots are taken only after the outcome (nothing is written to the phone before it).
 appId: com.forgeai.app
 ---
+# Maestro cannot START on a full phone (it installs its driver first: run 38993380014), so this
+# flow starts while there is room and waits here; the script fills the phone meanwhile (it starts
+# 20 s after this flow and logs when the phone was full). Nothing on screen says "QA-WAIT".
+- extendedWaitUntil:
+    visible: "QA-WAIT-WHILE-THE-PHONE-FILLS"
+    timeout: 150000
+    optional: true
 - scrollUntilVisible:
     element: '.*\. Open its history and how-to'
     direction: UP
@@ -52,17 +59,18 @@ appId: com.forgeai.app
       - extendedWaitUntil:
           visible: 'Couldn.t finish your workout — your phone.s storage may be full\. It.s still open: free some space, then tap Finish again\.'
           timeout: 10000
-      # The first exercise's rows are near the top (a long page on the owner phone): straight up.
-      - scrollUntilVisible:
-          element: '${output.exRe} set 1 complete\. Tap to undo'
-          direction: UP
-          centerElement: true
-          timeout: 30000
-      - scrollUntilVisible:
-          element: '${output.exRe} set 2 complete\. Tap to undo'
-          centerElement: true
-          timeout: 15000
       - takeScreenshot: uf-06-full-still-open
+      - tapOn: "Minimise workout. It keeps running."
+      - extendedWaitUntil:
+          visible: "Workout in progress"
+          timeout: 20000
+      - assertVisible: '^2 sets done · 1 exercise$'
+      - tapOn:
+          text: "^Resume workout$"
+          index: 0
+      - extendedWaitUntil:
+          visible: "Minimise workout. It keeps running."
+          timeout: 20000
 - runFlow:
     when:
       visible: "^Workout complete$"

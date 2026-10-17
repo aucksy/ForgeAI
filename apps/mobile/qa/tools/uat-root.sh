@@ -83,14 +83,15 @@ case "$cmd" in
     ;;
   fill)
     rm -f "$FILL" "$FILL.2"
+    # Counted in MB: this shell's numbers are 32-bit (bytes overflowed past 2 GB, run 38993380014).
     n=0
-    sz=1073741824
+    sz=1024
     # Big blocks first (fast), halving at each refusal; then plain writes for the last crumbs.
-    while [ "$sz" -ge 65536 ]; do
-      if fallocate -o "$n" -l "$sz" "$FILL" 2>/dev/null; then n=$((n + sz)); else sz=$((sz / 2)); fi
+    while [ "$sz" -ge 1 ]; do
+      if fallocate -o "${n}m" -l "${sz}m" "$FILL" 2>/dev/null; then n=$((n + sz)); else sz=$((sz / 2)); fi
     done
     dd if=/dev/zero of="$FILL.2" bs=4096 2>/dev/null
-    echo "filled: $n bytes by fallocate, $(ls -l "$FILL.2" 2>/dev/null | awk '{print $5}') bytes written after"
+    echo "filled: $n MB by fallocate ($(ls -l "$FILL" 2>/dev/null | awk '{print $5}') bytes), $(ls -l "$FILL.2" 2>/dev/null | awk '{print $5}') bytes written after"
     if echo probe > "$APP/files/qa-probe" 2>/dev/null; then
       rm -f "$APP/files/qa-probe"
       echo "NOT FULL: a 6-byte write still went in"
