@@ -31,6 +31,35 @@ Diet and workout plans for members. Inventory. Dashboard and reports with export
 Cloud and offline (Windows) versions; backups. Not mentioned anywhere: WhatsApp messaging, online
 payment / UPI collection.
 
+## Their app (Play Store "GGMS", com.gayatrisoft.ggms; read 17 Oct 2026)
+10K+ downloads, 4.2 stars from 169 ratings, updated 2 Oct 2026. ONE app for owners, staff,
+trainers and members: the login asks Gym ID + username + password and has an "I'm Member" tick.
+The 7 store screenshots are copied locally for the owner (not committed: the repo is public and
+they are GGMS's own images); what they show:
+1. Splash "Perfect Gym Solution".
+2. Owner dashboard tiles: Live / Total / Expired memberships; Expiring in 1-3, 4-7, 8-15 days;
+   Today's / 7-day / this month's / this year's collection; Due amount; Total expense. Header
+   counters for SMS and WhatsApp, a banner carousel, a "Remote" side tab.
+3. "Smart login": the same app for members and admins (Gym ID, Gym name, username, password,
+   "I'm Member").
+4. Menu: AI Assistant (new), Master, Manage Member, My Classes, Invoice, Attendance, Enquiry,
+   Expense; the gym's own subscription "Valid Till".
+5. Member list: tabs Live / Expired / Expiring; card with join and end date, plan, final amount,
+   paid, due; buttons Profile, Sync (to the machine), Bio Enroll (fingerprint / face sign-up from
+   the phone), ID-Card, Edit, Add On, Add pay.
+6. "Remote control" of the entry machine from the phone: Open door, Reboot, Sync time, Clear admin,
+   device status.
+7. "GGMS AI" business assistant: ask in words ("today's peak gym hours") and get answers
+   (busiest / least busy slot, hourly check-in trend).
+
+**What a member gets** (store text, ggms.in, the screenshots): log in to the gym's app; see plan
+validity, attendance, payments and account details; book classes (capacity limits); check in by
+QR; receive expiry / renewal / payment reminders; diet and workout plans from the gym (in their
+plans). Nothing about a workout logger, exercise history or progress charts. One review (owner):
+"updates are frequent and full of bugs ... I have to enter client measurements through the app",
+so body measurements are recorded by the gym. Note: the GGMS FAQ also names a "Go GYM4u" app; the
+"GoGym4U" app on Play (com.threeclick.gogym) belongs to another company, so it is not counted here.
+
 ## Compared with ForgeAI today
 | GGMS feature | ForgeAI |
 |---|---|
@@ -47,6 +76,15 @@ payment / UPI collection.
 | Inventory | Partly: shop products with stock |
 | Desktop offline version | Have in a different form: the admin app works in the browser without internet |
 | Birthday / anniversary wishes | Missing |
+| Owner app on the phone | Have: the admin app installs on a phone (web app) |
+| Expiring-soon buckets on the home screen (1-3 / 4-7 / 8-15 days) | Partly: Today shows renewals due; no 3-bucket view |
+| AI assistant for the owner ("peak hours today?") | Missing (we show peak hours and at-risk members as reports, no chat) |
+| Entry machine from the phone: fingerprint / face sign-up, sync, open door, reboot | Missing (part of P8) |
+| Member: book a class from the app | Missing |
+| Member: see plan end date, payments and attendance in the app | Missing |
+| Member: diet / workout plan from the trainer | Missing |
+| Body measurements recorded by the gym | Missing (members log their own in the app) |
+| Member ID card | Have (print, picture, WhatsApp) |
 
 What ForgeAI has that GGMS does not advertise: a full workout tracker for members (Hevy-level),
 shop with orders, gym messages to members' phones, a watch app, WhatsApp from the gym's own number
