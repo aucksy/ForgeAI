@@ -95,7 +95,11 @@ describe('C3-11: Home and the coach read each card of a lift listed twice on its
     const { addSetsWithMeta } = await import('@/tracker/db/trackerSets');
     const { getDb } = await import('@/db');
     const day = db.all<{ id: string }>("SELECT id FROM plan_days WHERE name = 'Bench Day'")[0].id;
-    const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+    // Yesterday in the phone's own day (the app's todayISO), not in UTC: from 8 pm in New York the
+    // UTC date is already tomorrow, so "yesterday in UTC" was today there and the CI run with
+    // TZ=America/New_York failed every evening (17 Oct 2026, run 38985787582).
+    const { addDays, todayISO } = await import('@/lib/date');
+    const yesterday = addDays(todayISO(), -1);
     const s = await createSession({ dateISO: yesterday, dayType: 'push', source: 'manual', startedAt: Date.now() - 86_400_000 });
     await addSetsWithMeta(s.id, [
       ...[0, 1, 2].map(() => ({ exerciseId: bench, weightKg: 100, reps: 5, isWarmup: false })),
