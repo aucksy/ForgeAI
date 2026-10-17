@@ -33,7 +33,9 @@ export function SwitcherCard({
     <Card style={{ gap: space.sm }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
         <Icon name="import" size={18} color={color.accent} />
-        <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Coming from Hevy or Strong?</Text>
+        {/* UAT WP14 (run 39000428116, font 2.0 on 360 dp): beside the icon the heading must wrap,
+            not run off the screen's edge. */}
+        <Text style={{ flex: 1, fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Coming from Hevy or Strong?</Text>
       </View>
       <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted, lineHeight: 19 }}>
         {later

@@ -25,8 +25,16 @@ appId: com.forgeai.app
 - scrollUntilVisible:
     element: "Coming from Hevy or Strong\\?"
     timeout: 30000
-- assertVisible: "From Hevy"
-- assertVisible: "From Strong"
+# Its "From Hevy" sits below the heading: at font 2.0 on 360 dp the heading alone was on screen
+# (UAT WP14 run 39000428116). Scrolled to, then it must be visible (sub-find).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "From Hevy"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "From Strong"
 - scrollUntilVisible:
     element: "Load demo data instead"
     timeout: 30000
