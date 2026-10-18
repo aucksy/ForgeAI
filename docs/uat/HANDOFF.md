@@ -32,7 +32,7 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
   order yourself; ask only for money, LIVE data, client promises/legal, personal-vs-product.
 - Built 18 Oct, NOT released (next: v0.48.0): #12 step 1 (check-in offers the workout), #11 welcome
   join + gym-logo home-screen shortcut (Kotlin GymShortcut.kt: compile check = qa-device only=a run on
-  main), #6 "My membership" (needs 0023 live; card hidden until then), #17 inbox page.
+  main), #6 "My membership" (0023 LIVE since 18 Oct), #17 inbox page.
 - Still to build (decided): #9 per-exercise kg target + % overload + per-set targets; #13 exercise-level
   busy times (opt-in sharing); #11 Google login research; #6 gym workout plans next; #7 offline front
   desk (admin/CRM: check FIELDWORK gating).
@@ -69,8 +69,6 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
   - uat_access_matrix: RESULT PASS (438 cells: 83 allow, 355 deny; 66 gym-B-on-gym-A cells all deny)
   - uat_money: RESULT PASS (61 checks, 13 finding probes; findings still open: none)
   - uat_shop_orders: RESULT PASS (66 checks)
-- OWNER SAID YES (18 Oct): apply 0021_receipt_rules.sql, 0022_key_status.sql, then 0023_member_membership.sql, on the live database; run
-  every supabase/tests/*.sql live (expect RESULT PASS, "findings still open: none").
 - Deploy the admin app after any admin change (checked build, then wrangler in deploy/panel).
 
 ### Owner decisions needed
