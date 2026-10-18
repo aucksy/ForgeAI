@@ -42,3 +42,24 @@ more updates. Offline: nothing changes.
 2. Send to everyone on a plan (UI), ready-program templates in the admin app, withdraw, "use the
    gym's version again", trainer-made custom exercises.
 Fieldwork question to add: "Do trainers write plans for members today (paper, WhatsApp)?"
+
+## 18 Oct 2026 (OWNER-INBOX #19): trainer-first, seamless
+Owner: "the trainer picks the exercises and the starting sets and weight, does very little work,
+and the routine just shows up in the member's app." Researched Trainerize, TrueCoach, Hevy Coach,
+Everfit (templates + one-tap assign + copy-then-tweak are what they all rely on; a dedicated
+start-weight field is a top Trainerize request; %1RM needs history our members lack).
+- **Start weight:** optional per exercise ("Start kg", "+ kg added" for weighted, "Seconds" for
+  holds; none for bodyweight reps). Saved as the routine file's `setList` (one normal set per
+  working set: `{reps: repMin, weightKg}` or `{durationSec}`), which the phone already reads.
+- **Phone:** the plan's numbers fill the set boxes only where history / Target leave them empty
+  (fillForSet), so after the first workout the member's own progress leads. Now also for
+  weighted moves (added kg) and holds (seconds). A first time says "First time · start at
+  20 kg × 8" (planStartLine).
+- **Ready plans:** the 5 gym programs of the member app (`programTemplates.json`, generated from
+  programs.ts; parity test `apps/mobile/test/tracker/plans/programTemplates.test.ts`).
+- **Copy** a plan / a day. **Member page "Send a plan":** tap an existing plan (saved at once,
+  Undo), or start from a ready plan / a new one with the member ticked.
+- **Exercise list:** every kind a gym uses (reps, weighted, assisted, time), types checked against
+  the phone's library.
+- Left out on purpose: live "sync to template" (the main confusion in TrueCoach/Trainerize), %1RM,
+  RPE, calendar scheduling.
