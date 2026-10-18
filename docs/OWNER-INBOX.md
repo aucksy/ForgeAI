@@ -135,6 +135,25 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 
 ---
 
+## 24. Is Google Test Lab free, and will it use many tokens? — 18 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** ANSWERED
+**You asked:** whether testing on Google's test lab (Firebase Test Lab) is free, and whether the
+work is token heavy.
+**My answer:** Free for what we need.
+- Free plan: 15 test runs a day, 5 on real phones and 10 on virtual phones. No card needed.
+- Paid plan only above that: about $5 an hour on a real phone, $1 an hour on a virtual one, after
+  a free 30 minutes (real) and 60 minutes (virtual) every day.
+- The Play Store's pre-launch report is also free: Google tries the app on several real phones
+  every time we upload a build to a test track.
+- What it can do: an automatic "crawler" taps through the app on real Samsung, Xiaomi, Pixel
+  phones and reports crashes, screens that look broken, and slow starts. It cannot run our own
+  scripted tests (those run on our cloud phone already).
+- Tokens: light. The tests run on Google's machines, not on me. Setting it up once is a normal
+  small task; after that I only read a short result per release.
+- One thing only you can do: create the free Firebase project and give the cloud build a key to
+  start the tests (about 10 minutes; I write the steps). Nothing is paid.
+
 ## 23. Does the audit also cover all possible UAT scenarios? — 16 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
 **Status:** DONE
