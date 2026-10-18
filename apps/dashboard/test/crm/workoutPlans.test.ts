@@ -60,6 +60,13 @@ function savedPlan(over: Partial<WorkoutPlan> = {}): WorkoutPlan {
 }
 
 describe('workoutPlanProblem: the server’s checks, in plain words', () => {
+  it('an exercise typed by hand needs its main muscle (the phone leaves it out otherwise)', () => {
+    const own = customExercise('Tyre flip');
+    const plan = goodDraft({ routines: [{ name: 'Day 1', dayType: 'full' as const, exercises: [own] }] });
+    expect(workoutPlanProblem(plan)).toBe('Pick the main muscle for Tyre flip (Day 1).');
+    const fixed = goodDraft({ routines: [{ name: 'Day 1', dayType: 'full' as const, exercises: [{ ...own, primary: ['quads' as const] }] }] });
+    expect(workoutPlanProblem(fixed)).toBeNull();
+  });
   it('passes a normal plan', () => {
     expect(workoutPlanProblem(goodDraft())).toBeNull();
   });

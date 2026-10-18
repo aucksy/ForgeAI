@@ -404,6 +404,9 @@ export function workoutPlanProblem(d: WorkoutPlanDraft, record?: unknown): strin
       if (e.catalogKey !== null && !(typeof e.catalogKey === 'string' && /^[a-z0-9_]{1,60}$/.test(e.catalogKey))) {
         return `${what} looks damaged. Remove it and add it again.`;
       }
+      // Release review: the phone can only make an exercise typed by hand when it knows its main
+      // muscle (plansService resolveSharedRoutines), else it was left out of the member's routine.
+      if (e.catalogKey === null && e.primary.length === 0) return `Pick the main muscle for ${what}.`;
       if (!wholeIn(e.sets, 1, WP_MAX_SETS)) return `${what}: sets must be a whole number from 1 to ${WP_MAX_SETS}.`;
       if (!wholeIn(e.repMin, 1, WP_MAX_REPS) || !wholeIn(e.repMax, 1, WP_MAX_REPS)) {
         return `${what}: reps must be whole numbers from 1 to ${WP_MAX_REPS}.`;

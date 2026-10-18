@@ -22,7 +22,7 @@ import { useCrm } from '../../store';
 import { useAuth } from '../../auth/AuthProvider';
 import { takerOf } from '../../auth/permissions';
 import { dateISOFromEpoch, formatDay } from '../../logic/dates';
-import { logTypeWords, musclesWords } from '../../logic/exerciseCatalog';
+import { logTypeWords, muscleOptions, musclesWords, type Muscle } from '../../logic/exerciseCatalog';
 import { formatPhone, matchesQuery } from '../../logic/members';
 import { countOf } from '../../logic/plural';
 import {
@@ -604,6 +604,15 @@ function ExerciseEditor({
         </Row>
       </Row>
       <div style={{ display: 'grid', gap: `0 ${space.sm}px`, gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))' }}>
+        {exercise.catalogKey === null && (
+          <SelectField
+            label="Main muscle"
+            value={exercise.primary[0] ?? ''}
+            onChange={(v) => onChange({ primary: v ? [v as Muscle] : [] })}
+            options={[{ value: '', label: 'Pick one' }, ...muscleOptions()]}
+            error={exercise.primary.length === 0 ? 'Needed so the member’s app can add it' : null}
+          />
+        )}
         <NumberBox label={`Sets (1-${WP_MAX_SETS})`} value={exercise.sets} onChange={(n) => onChange({ sets: n ?? Number.NaN })} />
         {kind !== 'seconds' && (
           <>

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { fromGymLine, gymPlanFromRow, gymPlansFromRow } from '@/shop/gymPlans';
-import { gymSyncSteps } from '@/tracker/lib/gymPlanSteps';
+import { gymPlanKey, gymSyncSteps, leftGymSteps } from '@/tracker/lib/gymPlanSteps';
 import { MAX_ROUTINE_SETS } from '@/tracker/plans/routineSets';
 
 const ex = { name: 'Bench Press', catalogKey: 'bench_press', logType: 'weight_reps', sets: 3, repMin: 6, repMax: 10, primary: ['chest'] };
@@ -71,9 +71,17 @@ describe('gym workout plans: what to save', () => {
     expect(gymSyncSteps('g1', [], [folder('wp-old', 3, { gone: true })])).toEqual([]);
     expect(gymSyncSteps('g1', [plan], [folder('wp-1', 7, { gone: true })])[0]).toMatchObject({ kind: 'save' });
   });
-  it("another gym's folders and the member's own are never touched", () => {
+  it("release review: another gym's folders are relabelled (no more updates); the member's own never touched", () => {
     const other = folder('wp-1', 1, {}, 'g2');
     const own = { id: 'f-own', name: 'Mine', settings: {} };
-    expect(gymSyncSteps('g1', [], [other, own])).toEqual([]);
+    expect(gymSyncSteps('g1', [], [other, own]).map((s) => [s.kind, s.kind === 'gone' ? s.folder.id : ''])).toEqual([['gone', other.id]]);
+    expect(leftGymSteps([other, own], null).map((s) => s.kind)).toEqual(['gone']);
+    const relabelled = folder('wp-1', 1, { gone: true }, 'g2');
+    expect(gymSyncSteps('g1', [], [relabelled, own])).toEqual([]);
+  });
+  it('release review: a plan whose folder the member deleted never comes back', () => {
+    const plan = gymPlanFromRow(row())!;
+    expect(gymSyncSteps('g1', [plan], [], new Set([gymPlanKey('g1', 'wp-1')]))).toEqual([]);
+    expect(gymSyncSteps('g1', [plan], [], new Set([gymPlanKey('g2', 'wp-1')])).map((s) => s.kind)).toEqual(['save']);
   });
 });

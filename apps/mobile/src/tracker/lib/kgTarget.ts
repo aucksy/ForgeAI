@@ -187,7 +187,8 @@ export function kgSetLines(p: KgPlan, weight: WeightFmt): string[] {
 /** During the workout: "410 of 765 kg · next 42.5 kg × 7, 7" / "765 kg beaten ✓". PURE. */
 export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: WeightFmt): string {
   if (g.left <= 1e-9) return `${total(p.total)} beaten ✓ (${total(g.done)} done)`;
-  const head = `${total(g.done).replace(/\s*\S+$/, '')} of ${total(p.total)}`;
+  // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").
+  const head = `${total(g.done).trim().split(/\s+/)[0]} of ${total(p.total)}`;
   if (g.next.length === 0) return `${head} · ${total(g.left)} short, add a set if you have it in you`;
   const sameKg = g.next.every((s) => Math.abs(s.weightKg - g.next[0].weightKg) < 1e-9);
   const plan = sameKg

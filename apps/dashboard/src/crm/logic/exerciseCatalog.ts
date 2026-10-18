@@ -210,6 +210,11 @@ const MUSCLE_WORD: Record<Muscle, string> = {
   cardio: 'Cardio',
 };
 
+/** The muscles a trainer can pick for an exercise typed by hand, in words. */
+export function muscleOptions(): { value: Muscle; label: string }[] {
+  return (Object.keys(MUSCLE_WORD) as Muscle[]).map((m) => ({ value: m, label: MUSCLE_WORD[m] }));
+}
+
 /** "Chest" / "Lower back, Glutes" — the muscles in words for a list row. */
 export function musclesWords(primary: readonly string[]): string {
   return primary.map((m) => MUSCLE_WORD[m as Muscle] ?? m).join(', ');

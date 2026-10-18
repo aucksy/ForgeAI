@@ -55,11 +55,17 @@ export type ActionWords = string | null;
  */
 let orderWrites = 0;
 
+/** The gym's workout plans stay (workouts point at them), relabelled "No longer sent" (release review). */
+function retireGymPlans(): void {
+  void import('@/tracker/services/gymPlansSync').then((m) => m.retireGymFolders()).catch((e: unknown) => console.warn('[ForgeErr] gym plans: relabelling after the link went', e));
+}
+
 function lostKey(err: GymError): boolean {
   if (err.kind !== 'BAD_KEY') return false;
   useGymShop.getState().unlink(UNLINKED_TEXT);
   // C6-15: the gym's messages go with the link (they were kept, hidden, on the phone).
   useGymInbox.getState().clear();
+  retireGymPlans();
   return true;
 }
 
@@ -418,6 +424,7 @@ export async function leaveGym(): Promise<void> {
   useGymInbox.getState().clear();
   // "My membership"'s kept plan goes with the gym (OWNER-INBOX #6).
   AsyncStorage.removeItem(MEMBERSHIP_STORAGE_KEY).catch((e: unknown) => console.warn('[ForgeErr] leave: forgetting the kept plan', e));
+  retireGymPlans();
   if (!link) return;
   const told = await leaveOnServer(link.memberKey);
   // A join in the meantime owns the card now: its words win.
