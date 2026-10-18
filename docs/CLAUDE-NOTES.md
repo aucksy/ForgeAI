@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-27. Put the PC chat in the inbox page's chat list — 18 Oct 2026
+**Owner said:** "get yourself familiar with Owner Inbox rules and add this chat in its chat dropdown"
+**Done:** the page's Chat list is built from the entries' `**Chat:**` lines, so this chat gets in
+through its own questions and answers. The three questions he asked in the PC chat (16 Oct) are now
+entries #21-#23, tagged "PC chat (desktop app), 10-18 Oct: audit, UAT, releases" (no web link: a
+desktop chat has none), marked read (answered in chat then). Future questions asked in the PC chat
+use the same Chat line, so they land under it.
+
 ## R-26. Done items folded per tab; Built inside Feature backlog — 18 Oct 2026
 **Owner said:** "Can have the Done items collapsed and visually separated inside the 3 tabs in owner
 inbox - Move Built inside the feature backlog section only."
