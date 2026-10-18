@@ -29,6 +29,23 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 ---
 
+## 19. Workout plans must flow straight into the app; the inbox is only for my asks — 18 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**Status:** WORKING ON IT
+**You asked:** (1) the trainer picks the exercises and the starting sets and weight, does very little
+work, and the routine just shows up in the member's app: seamless, easy, simple for trainers.
+(2) The inbox is only for what you ask me and decisions that are truly yours; don't post everything.
+**My answer:**
+- (2) Done: now a standing rule. From now on the inbox gets only your questions, feedback and ideas
+  with my short answer, and decisions only you can make. Build news stays out.
+- (1) The member side already works this way: the plan appears in the member's Workout tab by
+  itself, and the trainer's starting weight fills the boxes the first time; after that the
+  member's own progress takes over. I'm adding the starting weight to the trainer's page and making
+  it faster to use (ready-made plans to start from, and adding a member to an existing plan in one
+  tap). I'll write here when it's ready.
+
+---
+
 ## 18. Don't stop to ask me what you can decide yourself — 18 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** "You should not stop to ask me these questions when you can easily decide the best
@@ -355,7 +372,7 @@ things work.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** My membership: SERVER LIVE, app BUILT, NOT RELEASED (v0.48.0). Workout plans: BUILT, WAITING FOR YOU (0024)
+**Status:** WAITING FOR YOU (turn on workout plans, 0024)
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
 the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
@@ -397,22 +414,7 @@ docs/uat/HANDOFF.md ("PC must do").
 **DONE (18 Oct, from your PC):** 0021, 0022 and 0023 are live, no errors. All 13 database test files
 passed on the live server (including "one gym can never see another gym's records": 66 of 66 blocked).
 Members see "My membership" once they have the next app release (v0.48.0).
-**BUILT (18 Oct): workout plans from the gym or trainer** (item 2, my call under rule #18).
-- **Admin app:** a new "Workout plans" page. A trainer or the owner builds a plan: days ("Push",
-  "Legs"...), exercises picked from a list (it also finds the words members use, like "chhati",
-  "dole", "baithak", or in Hindi), sets, reps, rest and a note ("Knee: no deep squats"). Then
-  "Send to": members by name or mobile, or everyone on a membership plan (for example everyone on
-  Gold). A member's page shows the plans they get, with a "Send a plan" button. Staff can send
-  plans too. A plan is never deleted, only withdrawn.
-- **Member app:** the plan appears in the member's Routines as its own folder, "From <gym> ·
-  <trainer>", ready to start. The member can change it; a later change from the trainer comes in
-  without losing theirs. Offline, nothing changes. A withdrawn plan stays (their past workouts
-  point at it) but gets no more updates.
-- **Checks:** a review found 4 real problems in the admin page (the biggest: a very large plan
-  passed the page's size check but the server would refuse it). All fixed. Tested on a copy of the
-  database (20 checks); 893 admin app tests and all phone app tests pass.
-- **What I decided:** the plan only goes to members the gym's list knows (the same name check as
-  "My membership"), and only for a gym that is online; the page says so.
+**Workout plans (item 2):** built; see #19 for how the trainer side works.
 **Decide:** turn on gym workout plans on the live server? It adds one new kind of gym record and
 one read for the member app (0024); nothing existing changes. It is applied from your PC, like 0023.
 - A: yes, apply 0024 from the PC (recommended)

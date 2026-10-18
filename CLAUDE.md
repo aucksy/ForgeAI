@@ -37,6 +37,10 @@ A comment without a pick, or a reply to an entry with no options, arrives the sa
 the entry as `**YOUR REPLY (date):** ...` with your answer under it (a question stays open until he
 picks). When you add news to an entry he has read, delete its `**READ` line so it is "waiting" again.
 Each open question needs `**Decide:** <question>` + `- A: <option>` lines (mark one "(recommended)").
+**Owner rule (18 Oct 2026, OWNER-INBOX #19): the inbox holds ONLY what he sends** (questions,
+feedback, ideas) with your short answer, plus decisions that are truly his (the #18 list below).
+Never post build news, progress or "BUILT" updates there: those go in PROGRESS.md / HANDOFF, and
+in chat. A decision you are sure is the best member experience is yours: make it, don't list it.
 
 ## ⭐ Research demand before building a feature
 Before building any NEW feature the owner asks for (not a bug fix): search the web first —
