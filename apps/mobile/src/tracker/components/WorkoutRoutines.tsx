@@ -32,6 +32,8 @@ import { readWithRetry } from '@/lib/retryRead';
 import { tell } from '@/lib/tell';
 import { useRereadWhenFailed } from '@/lib/useRereadWhenFailed';
 import { countWord } from '@/lib/words';
+import { fromGymLine } from '@/shop/gymPlans';
+import { useGymShop } from '@/shop/gymStore';
 import { accentTint } from '@/theme/tint';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -69,6 +71,7 @@ import {
   type UpNextRef,
 } from '../lib/workoutTab';
 import { moveEasyWeek, setEasyWeeks, type PlanNow } from '../services/planState';
+import { syncGymPlans } from '../services/gymPlansSync';
 import { forgetWorkoutFolders, getWorkoutFolders } from '../services/workoutFolders';
 import { askAboutOpenWorkout, openActiveWorkout } from '../services/workoutStart';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
@@ -279,6 +282,22 @@ export function WorkoutRoutines({
     forgetWorkoutFolders();
     onChanged();
   };
+
+  // OWNER-INBOX #6: workout plans the member's gym sent arrive as folders (at most every 10 min).
+  const gymLink = useGymShop((st) => st.link);
+  useFocusEffect(
+    useCallback(() => {
+      let alive = true;
+      void syncGymPlans(gymLink).then((did) => {
+        if (alive && did) changed();
+      });
+      return () => {
+        alive = false;
+      };
+      // changed only calls stable setters and the tab's callback.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gymLink]),
+  );
   const failed = (title: string) => (): void => {
     void tell(title, 'Please try again.');
     changed();
@@ -528,6 +547,11 @@ export function WorkoutRoutines({
                         {folderTitle(f)}
                       </Text>
                       {tag ? <Badge label={tag} tone="accent" /> : null}
+                      {f.settings.fromGym ? (
+                        <Text style={{ flexBasis: '100%', fontFamily: type.body, fontSize: type.size.caption, color: f.settings.fromGym.gone ? color.inkMuted : color.accentBright }}>
+                          {fromGymLine(f.settings.fromGym)}
+                        </Text>
+                      ) : null}
                     </View>
                   </Pressable>
                   <MoreButton label={`More for ${f.name}`} onPress={() => setFolderFor(f)} />

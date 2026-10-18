@@ -178,6 +178,28 @@ export function existingFileFolder(file: RoutineFile): Promise<Omit<Folder, 'rou
  * member's own (its name, how it is logged and its main muscles come with the file).
  */
 export async function importRoutineFile(file: RoutineFile, opts: { existing?: ExistingChoice } = {}): Promise<ImportResult> {
+  const { routines, added, skipped } = await resolveSharedRoutines(file);
+  const name = file.folder ?? (file.routines.length === 1 ? file.routines[0].name : 'Shared routines');
+  // RP-18: the same file again updates the folder it made (unless the member asked for a copy).
+  const fromFile = fileFingerprint(file);
+  const before = opts.existing === 'copy' ? null : await fileFolder(fromFile);
+  // 16 Oct 2026 audit (C3-22): saved the way a Hevy link is (`saveImportedFolder`) — what was
+  // copied is remembered per row, so opening the same file again merges: a row he changed keeps
+  // his version, a row he deleted stays deleted, his own added rows stay; only rows still exactly
+  // as imported take the file's values. Refilling wiped every edit.
+  const saved = await saveImportedFolder(before, before ? before.name : opts.existing === 'copy' ? `${name} (copy)` : name, routines, { fromFile }, {
+    follow: false,
+    todayISO: todayISO(),
+  });
+  return before ? { folderId: saved.folderId, added, skipped, updated: true, keptEdits: saved.keptEdits } : { folderId: saved.folderId, added, skipped };
+}
+
+/**
+ * A routine file's routines as this phone's routines: each exercise found by catalogue key, then by
+ * library name, then by the member's own name, else made as a custom exercise (needs its muscles;
+ * else skipped). Shared by the file import and the gym's plans (OWNER-INBOX #6).
+ */
+export async function resolveSharedRoutines(file: Pick<RoutineFile, 'routines'>): Promise<{ routines: NewRoutine[]; added: string[]; skipped: string[] }> {
   const all = file.routines.flatMap((r) => r.exercises);
   const byKey = await exerciseIdsForKeys(all.flatMap((e) => (e.catalogKey ? [e.catalogKey] : [])));
   // A name that is a library name (or one of its link names) lands on that library exercise.
@@ -237,17 +259,5 @@ export async function importRoutineFile(file: RoutineFile, opts: { existing?: Ex
     }
     routines.push({ name: r.name, dayType: r.dayType, exercises });
   }
-  const name = file.folder ?? (file.routines.length === 1 ? file.routines[0].name : 'Shared routines');
-  // RP-18: the same file again updates the folder it made (unless the member asked for a copy).
-  const fromFile = fileFingerprint(file);
-  const before = opts.existing === 'copy' ? null : await fileFolder(fromFile);
-  // 16 Oct 2026 audit (C3-22): saved the way a Hevy link is (`saveImportedFolder`) — what was
-  // copied is remembered per row, so opening the same file again merges: a row he changed keeps
-  // his version, a row he deleted stays deleted, his own added rows stay; only rows still exactly
-  // as imported take the file's values. Refilling wiped every edit.
-  const saved = await saveImportedFolder(before, before ? before.name : opts.existing === 'copy' ? `${name} (copy)` : name, routines, { fromFile }, {
-    follow: false,
-    todayISO: todayISO(),
-  });
-  return before ? { folderId: saved.folderId, added, skipped, updated: true, keptEdits: saved.keptEdits } : { folderId: saved.folderId, added, skipped };
+  return { routines, added, skipped };
 }

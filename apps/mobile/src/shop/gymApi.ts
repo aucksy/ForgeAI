@@ -11,6 +11,7 @@ import { getSupabase } from '@/cloud/client';
 
 import { classifyRpcError, gymNowFromMe, linkFromJoin, orderFromRow, ordersFromRows, previewFromRow, productsFromRows, type GymError, type GymNow, type GymPreview } from './gym';
 import { checkInFromRow, type CheckInAnswer } from './checkIn';
+import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
 import { membershipFromRow, type MembershipAnswer } from './membership';
 import { inboxFromRows, type InboxMessage } from './inbox';
 import type { GymLink, GymOrder, Product } from './types';
@@ -143,6 +144,17 @@ export async function apiMembership(key: string): Promise<GymResult<MembershipAn
   const r = await call('member_membership', { p_key: key }, READ_MS);
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const answer = membershipFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * Workout plans the gym sent (member_gym_plans, 0024). `missing`: the server has not had 0024 yet —
+ * nothing happens until it has.
+ */
+export async function apiGymPlans(key: string): Promise<GymResult<GymPlansAnswer> | { ok: false; missing: true }> {
+  const r = await call('member_gym_plans', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const answer = gymPlansFromRow(r.data);
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
 }
 

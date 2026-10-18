@@ -65,6 +65,22 @@ export interface FolderSettings {
    * it is still in exactly this order (never one the member arranged).
    */
   pageOrder?: string[];
+  /**
+   * OWNER-INBOX #6 (18 Oct 2026): a workout plan the member's gym sent (member_gym_plans, 0024).
+   * The same plan again updates this folder (the member's own edits kept); `version` is the gym's
+   * row version, so an unchanged plan is skipped. `gone`: the gym withdrew it or the member left —
+   * the folder stays (workouts point at its routines), relabelled, no longer updated.
+   */
+  fromGym?: FromGym;
+}
+
+export interface FromGym {
+  gymId: string;
+  planId: string;
+  version: number;
+  gymName: string;
+  byName: string | null;
+  gone?: boolean;
 }
 
 /** Audit Phase 4 (RP-19): what a routine row keeps besides sets and reps. */
@@ -112,6 +128,10 @@ export function parseFolderSettings(raw: string | null | undefined): FolderSetti
     if (typeof s.daysPerWeek === 'number' && Number.isInteger(s.daysPerWeek) && s.daysPerWeek >= 1 && s.daysPerWeek <= 7) out.daysPerWeek = s.daysPerWeek;
     if (typeof s.fromFile === 'string' && /^[a-z0-9]{1,40}$/.test(s.fromFile)) out.fromFile = s.fromFile;
     if (Array.isArray(s.pageOrder) && s.pageOrder.length <= 500 && s.pageOrder.every((n) => typeof n === 'string')) out.pageOrder = s.pageOrder as string[];
+    const g = s.fromGym as Partial<FromGym> | null | undefined;
+    if (g && typeof g === 'object' && typeof g.gymId === 'string' && typeof g.planId === 'string' && typeof g.version === 'number' && typeof g.gymName === 'string') {
+      out.fromGym = { gymId: g.gymId, planId: g.planId, version: g.version, gymName: g.gymName, byName: typeof g.byName === 'string' ? g.byName : null, ...(g.gone === true ? { gone: true } : {}) };
+    }
     const e = s.easy as Partial<EasySchedule> | null | undefined;
     if (e && typeof e.every === 'number' && e.every >= 2 && typeof e.base === 'number' && Number.isFinite(e.base)) {
       out.easy = { every: Math.round(e.every), base: Math.round(e.base) };
