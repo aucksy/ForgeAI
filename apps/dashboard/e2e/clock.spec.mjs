@@ -8,7 +8,7 @@
 //       later it has ended (Expired), on its page, in the Today tiles and in the Expired list.
 import { expect, test } from '@playwright/test';
 
-import { addMember, addPlan, clockTo, freshGym, open, openMember, sell, sheet, tile } from './support.mjs';
+import { addMember, addPlan, clockTo, expectFitsPhone, freshGym, open, openMember, sell, sheet, tile } from './support.mjs';
 
 const register = (page) =>
   page.getByRole('searchbox', { name: 'Type a name or the last 4 digits of a mobile' }).or(page.getByLabel('Type a name or the last 4 digits of a mobile'));
@@ -114,4 +114,62 @@ test('J27b a plan ending today is still running; a day later it has expired, eve
   // The Members list's Expired filter agrees.
   await open(page, 'Members');
   await expect(page.getByRole('button', { name: /^Expired/ }).first()).toHaveText(/1/);
+});
+
+// J27c (owner inbox #20): the "Ending in 1-3 / 4-7 / 8-15 days" tiles, at their edges. Six monthly
+// plans end 3, 4, 7, 8, 15 and 16 days from today (17 Oct). Each tile counts only its own days and
+// opens a list of exactly those people; the next morning everyone moves one day closer.
+test('J27c the Ending in 1-3 / 4-7 / 8-15 days tiles split at their edges and move the next day', async ({ page }) => {
+  await freshGym(page);
+  await addPlan(page, { name: 'Monthly', price: '1500', joining: '0', months: '1' });
+  // A month starting on `start` ends the day before the same date next month.
+  const people = [
+    { name: 'Asha Verma', phone: '98290 11111', start: '2026-09-21', ends: '20 Oct 2026' }, // 3 days
+    { name: 'Bharat Singh', phone: '98290 22222', start: '2026-09-22', ends: '21 Oct 2026' }, // 4
+    { name: 'Chetan Joshi', phone: '98290 33333', start: '2026-09-25', ends: '24 Oct 2026' }, // 7
+    { name: 'Deepa Rathore', phone: '98290 44444', start: '2026-09-26', ends: '25 Oct 2026' }, // 8
+    { name: 'Esha Meena', phone: '98290 55555', start: '2026-10-02', ends: '1 Nov 2026' }, // 15
+    { name: 'Farhan Khan', phone: '98290 66666', start: '2026-10-03', ends: '2 Nov 2026' }, // 16
+  ];
+  for (const p of people) {
+    await addMember(page, { name: p.name, phone: p.phone });
+    await page.getByRole('button', { name: 'Sell membership' }).first().tap();
+    const s = sheet(page, 'Sell membership');
+    await s.getByLabel('Starts on').fill(p.start);
+    await expect(s).toContainText(p.ends);
+    await s.getByLabel('Received now').fill('1500');
+    await s.getByRole('button', { name: 'Confirm' }).tap();
+    await expect(page.getByText(/^Membership saved\./)).toBeVisible();
+  }
+
+  // The tile's big number only (its label "8-15" holds digits too, so no toContainText).
+  const count = (label) => tile(page, label).locator('xpath=./div[1]');
+  const listShows = async (label, names) => {
+    await open(page, 'Today');
+    await tile(page, label).tap();
+    const main = page.getByRole('main');
+    for (const p of people) {
+      await expect(main.getByRole('link', { name: new RegExp(p.name) })).toHaveCount(names.includes(p.name) ? 1 : 0);
+    }
+  };
+
+  await open(page, 'Today');
+  await expect(count('Active members')).toHaveText('6');
+  await expect(count('Ending today')).toHaveText('0');
+  await expect(count('Ending in 1-3 days')).toHaveText('1');
+  await expect(count('Ending in 4-7 days')).toHaveText('2');
+  await expect(count('Ending in 8-15 days')).toHaveText('2');
+  await expectFitsPhone(page, 'on Today with the ending tiles');
+  await listShows('Ending in 1-3 days', ['Asha Verma']);
+  await listShows('Ending in 4-7 days', ['Bharat Singh', 'Chetan Joshi']);
+  await listShows('Ending in 8-15 days', ['Deepa Rathore', 'Esha Meena']);
+
+  // The next morning, the panel left open: 2, 3, 6, 7, 14 and 15 days left.
+  await clockTo(page, '2026-10-18T09:00:00+05:30');
+  await open(page, 'Today');
+  await expect(count('Ending in 1-3 days')).toHaveText('2');
+  await expect(count('Ending in 4-7 days')).toHaveText('2');
+  await expect(count('Ending in 8-15 days')).toHaveText('2');
+  await listShows('Ending in 1-3 days', ['Asha Verma', 'Bharat Singh']);
+  await listShows('Ending in 8-15 days', ['Esha Meena', 'Farhan Khan']);
 });
