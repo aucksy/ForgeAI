@@ -28,6 +28,15 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
   https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT, /inbox desktop mod (plugins/owner-inbox).
 
 ### Next
+- ⭐ NEXT SESSION, read docs/OWNER-INBOX.md first. Owner answered 5 questions on 18 Oct (now DECIDED
+  in the inbox, with his notes): #13 B exercise-level "busy times" (opt-in sharing, no equipment list),
+  #12 A gate-QR Step 1, #11 A/A/A (gym-logo shortcut, welcome-screen join, research Google login),
+  #9 A/A + per-exercise kg target with % overload and expandable per-set targets, #7 A offline front
+  desk for the admin app AND the Chrome website (grey out what can't work, persistent offline banner).
+  First build #17 (inbox page: mark as read, reply to any answer, comment without picking, Waiting =
+  unread or open). Then plan the builds above (new features: research + plan first per CLAUDE.md;
+  #7 is admin/CRM = gated on fieldwork? check docs/overhaul/FIELDWORK.md and ask if unsure).
+- v0.47.1 tag: owner pushes from the PC (prompt in chat; commit 8403202; dry run green).
 - PC (or the owner on github.com): push tag v0.47.0 at 4f3d5c3: `git fetch origin && git tag v0.47.0 4f3d5c3 && git push origin v0.47.0`.
   Then check releases/download/v0.47.0/forgeai-v0.47.0.apk and forgeai-v0.47.0-wear.apk answer 200.
   Tag the EXACT commit 4f3d5c3 (main has moved on): its parent 52e8f43 holds the green phone runs.

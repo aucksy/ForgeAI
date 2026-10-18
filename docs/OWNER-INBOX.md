@@ -25,16 +25,19 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 13 | Machine-free times: A gym "best times to go" from check-ins first, B machine-level later | A first |
-| 12 | Gate QR: build Step 1 now (after check-in: "Start Push day", or "Add Push Pull Legs" for no routines)? | Yes, build Step 1 |
-| 11 | Gym icon after joining: A home-screen shortcut with the gym logo, or B icons built into the app | A |
-| 11 | Welcome screen: add "Have a gym code? Join your gym" (small)? Google login is a bigger, separate project | Yes to the small one; research Google login later |
-| 7 | Offline front desk for the admin app: 1 build it, or 2 leave it (paper during outages) | 1 |
-| 9 | kg target per exercise, decision 1: A follow the Targets / Weight jumps setting, or B a fixed % the member picks (max 10%) | A |
-| 9 | kg target per exercise, decision 2: A next sets show what is left to hit the target, or B only show "kg so far" | A |
 | 2 | Entry machine: which of the 3 Matrix setups to offer the client | 2 (tripod turnstile) as standard |
 
 ---
+
+## 17. Inbox page: mark as read, reply to any answer, comment without picking, a true "Waiting for you" — 18 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**You asked:** (1) a "mark as done / read" button on anything I have read; (2) a way to reply to any of
+your answers, not only to questions with options; (3) on option questions, send a comment without
+picking an option; (4) "Waiting for you" must show only what is still pending for me to read or answer.
+**Status:** NOT STARTED (recorded before a chat compaction; build next)
+**Plan:** every entry gets "Mark as read" and a reply box ("Send to Claude"); option questions accept
+a comment alone; "Waiting for you" = not yet read OR still has an open question; read/replied state
+saved in the page and moved into this file by the next session (`**READ (date)**` / `**REPLY (date):**`).
 
 ## 16. Inbox upgrade: full context per question, pick and submit answers; a desktop mod with a permanent icon — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -157,7 +160,7 @@ so **a whole run now takes about 2 h instead of 3 h 30 min**, still ₹0. Re-run
 **You asked:** every member logs their workouts, so we know which machines are used on which day
 and hour. Show members when machines are free, and suggest moving their schedule so they're more
 likely to get a free machine.
-**Status:** RESEARCHED: WAITING FOR YOU
+**Status:** DECIDED (18 Oct) — build queued
 **My answer:** A good idea, and the machine-level part would be rare. But it can't be built the
 way described today, for four reasons:
 1. **Workouts never leave the member's phone.** That is a promise in the app today ("Private.
@@ -189,17 +192,18 @@ stand out, but nobody has proven members want it.
 **Sources:** PureGym help centre (live busyness tracker); PureGym blog (when is the gym quiet);
 Notre Dame senior design "GyEEm" (machine sensors, prototype); Planet Fitness Crowd Meter (blog,
 low-quality source).
-**Decide:** Machine-free times: what should I do?
-- A: Build "best times to go" for the whole gym from QR check-ins first; machine-level later if members use it (recommended)
-- B: Build machine-level advice straight away (needs members to agree to share, and each gym's equipment list)
-- C: Park the idea for now
+**DECIDED (18 Oct, via the page):** B — build the exercise-level advice now. Your note: no gym
+equipment list needed. Show "other members also plan this exercise between these hours" from the
+exercises in their routines/logs; members judge for themselves from how much equipment their gym has.
+Open point for me to design: members must agree to share their exercise times (they stay on the
+phone today) — opt-in, no weights or names.
 
 ## 12. QR code at the entry gate instead of a fingerprint machine — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** members open our app and scan a QR at the gate to get in. That marks attendance,
 then nudges them to start their workout; with no saved routines, give them a research-based
 Push Pull Legs plan. Don't build yet; does it work, and how?
-**Status:** RESEARCHED: WAITING FOR YOU
+**Status:** DECIDED (18 Oct) — build queued
 **My answer:** Yes, it works, and gym apps abroad already do it (PerfectGym, GymMaster; BETA and
 ButaGYM use a QR that changes every few seconds). Most of it already exists in our app:
 - the gym's QR poster already opens ForgeAI on "Check in": one tap marks attendance and checks
@@ -219,16 +223,15 @@ gate, or open only near the gym); no internet means nobody gets in (keep the des
 keypad PIN); fire safety (lock must open on power loss, plus an exit button).
 **Needs you:** build Step 1 now? Step 2 waits until the client agrees to buy a lock.
 **Details:** `docs/overhaul/research/R-qr-entry.md`
-**Decide:** Gate QR, Step 1 (after check-in: "Start Push day", or "Add Push Pull Legs" for no routines)
-- A: Build Step 1 now; the door (Step 2) waits until the client buys a lock (recommended)
-- B: Don't build yet
+**DECIDED (18 Oct, via the page):** A — build Step 1 now (after check-in: "Start <today's routine>",
+or "Add Push Pull Legs" for no routines). The door (Step 2) waits until the client buys a lock.
 
 ## 11. I couldn't join RAMS01 from my app; gym icon and theme after joining — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** Settings → Your gym gave no way to join. After joining with a valid membership, the
 theme should change and the app icon should become the gym's (or a mix). New users: log in with
 Google etc., with "join via your gym membership" right below; the app must also work with no gym.
-**Status:** join fix BUILT, NOT RELEASED (commit b146cf7, in v0.47.0); the rest WAITING FOR YOU
+**Status:** DECIDED (18 Oct) — build queued
 **My answer:**
 - **Why it failed:** Settings → Your gym only showed the name typed at setup; the join box was on
   the Shop tab. Fixed: Settings → Your gym now has "Join your gym" with a code box.
@@ -243,15 +246,9 @@ Google etc., with "join via your gym membership" right below; the app must also 
   Google login is a bigger accounts project (server accounts, privacy policy, moving phone data):
   research first.
 **Needs you:** icon A or B; the small welcome-screen join (yes/no); research Google login (yes/no).
-**Decide:** Gym icon after joining
-- A: Home-screen shortcut with the gym's logo (works for every gym, no new release) (recommended)
-- B: Icons built into the app (a new release per gym)
-**Decide:** Welcome screen: add "Have a gym code? Join your gym"
-- A: Yes, add it (small) (recommended)
-- B: No
-**Decide:** "Log in with Google"
-- A: Research it properly first, then decide (recommended)
-- B: Not now
+**DECIDED (18 Oct, via the page):** icon A (home-screen shortcut with the gym's logo after joining);
+welcome screen A (add "Have a gym code? Join your gym"); Google login A (research properly first,
+then come back with options).
 
 ## 10. RPE tap: let me SEE the ✓ get ticked — 16/17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -264,18 +261,16 @@ of you, then the rest timer starts.
 **You asked:** under Resume workout, each exercise shows the total kg to beat (not the whole
 day's total), based on research or the member's setting; during the workout, suggest the next
 reps/weight that add up to it.
-**Status:** PLANNED (not built) — WAITING FOR YOU
+**Status:** DECIDED (18 Oct) — build queued
 **Needs you:** decision 1 (A follow the existing Targets / Weight jumps setting, recommended; or
 B a fixed "aim for N% more" the member picks, max 10%) and decision 2 (A the next sets show what
 is left to hit the target, never more than one weight step or 2 reps above plan, recommended; or
 B only show "kg so far").
 **Details:** `docs/TRACKER-PRD.md` §11
-**Decide:** kg target per exercise, decision 1: where the target comes from
-- A: The existing Targets / Weight jumps setting (recommended)
-- B: A fixed "aim for N% more" the member picks (max 10%)
-**Decide:** kg target per exercise, decision 2: when a set falls short
-- A: The next sets show what is left to hit the target (at most one weight step or 2 reps above plan) (recommended)
-- B: Keep the planned sets; only show "kg so far"
+**DECIDED (18 Oct, via the page):** decision 1 A (target from the existing Targets / Weight jumps
+setting); decision 2 A (next sets show what is left to hit the target). Your note: on the
+Resume / Start workout screen show the total kg to target PER EXERCISE with the % of progressive
+overload it means; tap an exercise to expand it and see the target weight × reps for each set.
 
 ## 8. A drag-handle bar on exercise and routine cards — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -285,7 +280,7 @@ there are 2 or more cards to reorder.
 
 ## 7. Offline mode: can the gym use the admin app without internet? — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** ANSWERED — WAITING FOR YOU
+**Status:** DECIDED (18 Oct) — build queued
 **My answer:** Partly. A gym kept "in this browser only" works offline but lives on one device.
 An online gym: if the internet drops, the desk can still SEE members and dues, but can't save
 (add member, take payment, check in). A payment cut off mid-save is resent once the internet is back,
@@ -293,9 +288,11 @@ never twice. Opening or refreshing the app with no internet: it won't open. The 
 works fully offline for workouts. The planned entry machine would keep letting paid members in.
 **Needs you:** 1) build "offline front desk" (saved copy on the desk device; offline check-ins
 and payments queued and sent once each when back online), recommended; or 2) leave it.
-**Decide:** Offline front desk for the admin app
-- A: Build it: a saved copy on the desk device; offline check-ins and payments queued and sent once each (recommended)
-- B: Leave it: paper during outages
+**DECIDED (18 Oct, via the page):** A — build the offline front desk. Your note: not only the
+installed admin app but also the website in Chrome on a desktop. Detect when there is no internet;
+keep the whole CRM working, save changes and sync when the internet is back. Anything that cannot
+work offline is greyed out/disabled, and a persistent "Offline mode" banner tells staff only some
+things work.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
