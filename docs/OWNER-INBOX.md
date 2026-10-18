@@ -217,8 +217,7 @@ phone today) — opt-in, no weights or names.
 **You asked:** members open our app and scan a QR at the gate to get in. That marks attendance,
 then nudges them to start their workout; with no saved routines, give them a research-based
 Push Pull Legs plan. Don't build yet; does it work, and how?
-**Status:** DECIDED (18 Oct) — build queued
-**READ (18 Oct, via the page)**
+**Status:** STEP 1 BUILT, NOT RELEASED (next release, v0.48.0)
 **My answer:** Yes, it works, and gym apps abroad already do it (PerfectGym, GymMaster; BETA and
 ButaGYM use a QR that changes every few seconds). Most of it already exists in our app:
 - the gym's QR poster already opens ForgeAI on "Check in": one tap marks attendance and checks
@@ -240,14 +239,17 @@ keypad PIN); fire safety (lock must open on power loss, plus an exit button).
 **Details:** `docs/overhaul/research/R-qr-entry.md`
 **DECIDED (18 Oct, via the page):** A — build Step 1 now (after check-in: "Start <today's routine>",
 or "Add Push Pull Legs" for no routines). The door (Step 2) waits until the client buys a lock.
+**BUILT (18 Oct), Step 1:** after "You're in ✓" the check-in screen now offers the next step: "Start
+Push" (today's routine, the same one the Workout tab shows), "Back to your workout" if one is open, or
+"Add Push Pull Legs" for a member with no routines (opens the plan, where they choose to follow it or
+just keep it). Nothing extra once today's workout is done. Comes in the next release.
 
 ## 11. I couldn't join RAMS01 from my app; gym icon and theme after joining — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** Settings → Your gym gave no way to join. After joining with a valid membership, the
 theme should change and the app icon should become the gym's (or a mix). New users: log in with
 Google etc., with "join via your gym membership" right below; the app must also work with no gym.
-**Status:** DECIDED (18 Oct) — build queued
-**READ (18 Oct, via the page)**
+**Status:** WELCOME JOIN BUILT, NOT RELEASED; logo shortcut and Google login research next
 **My answer:**
 - **Why it failed:** Settings → Your gym only showed the name typed at setup; the join box was on
   the Shop tab. Fixed: Settings → Your gym now has "Join your gym" with a code box.
@@ -265,6 +267,10 @@ Google etc., with "join via your gym membership" right below; the app must also 
 **DECIDED (18 Oct, via the page):** icon A (home-screen shortcut with the gym's logo after joining);
 welcome screen A (add "Have a gym code? Join your gym"); Google login A (research properly first,
 then come back with options).
+**BUILT (18 Oct), welcome screen:** under "Next" on the first screen: "Have a gym code? Join your gym".
+Type the code, and right after the 3 setup questions the gym's own join screen opens (it shows the
+gym and asks before joining). Works without internet during setup. Comes in the next release.
+Still to do: the home-screen shortcut with the gym's logo, and the Google login research.
 
 ## 10. RPE tap: let me SEE the ✓ get ticked — 16/17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2

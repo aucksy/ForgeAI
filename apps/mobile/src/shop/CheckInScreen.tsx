@@ -10,17 +10,27 @@
  *  - not on the gym's list, gym not online, too many tries, offline → plain words, never a dead end;
  *  - in no gym, or another → "Join this gym" (the invite screen; the gym's name is the heading,
  *    audit C9-34), then scan again.
+ *  - "You're in ✓" then offers the workout (OWNER-INBOX #12 step 1, 18 Oct 2026): "Start <today's
+ *    routine>" from the Workout tab's own Today answer, "Back to your workout" when one is open, or
+ *    "Add Push Pull Legs" with no routines yet (opens the program, which asks follow or keep).
  * The words are all in checkIn.ts (tested); this file only lays them out.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Text, TextInput, View } from 'react-native';
 
 import { Card, GhostButton, PrimaryButton, Screen } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
+import { todayISO } from '@/lib/date';
+import { runGuarded } from '@/lib/guardedAction';
+import { tell } from '@/lib/tell';
 import { color, space, type } from '@/theme/tokens';
+import { getTodayPlan } from '@/tracker/services/todayService';
+import { startMode, startShownWorkout } from '@/tracker/services/todayStart';
+import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 import {
+  afterCheckIn,
   ASK_PHONE_TEXT,
   checkInCodeFromUrl,
   checkInErrorText,
@@ -34,6 +44,7 @@ import {
   PLAN_ENDED_TEXT,
   problemText,
   READY_TEXT,
+  type AfterCheckIn,
   type CheckInAnswer,
 } from './checkIn';
 import { joinPathFromCheckIn, previewErrorText, UNLINKED_TEXT, type GymPreview } from './gym';
@@ -70,6 +81,46 @@ export function CheckInScreen() {
   const [view, setView] = useState<View_>({ state: 'ready' });
   const [look, setLook] = useState<Look>({ state: 'loading' });
   const [phone, setPhone] = useState('');
+  const [next, setNext] = useState<AfterCheckIn>({ kind: 'none' });
+  const startGuard = useRef(false);
+
+  // Checked in: what to do next, from the same Today answer as the Workout tab (#12 step 1).
+  const checkedIn = view.state === 'done';
+  useEffect(() => {
+    if (!checkedIn) return undefined;
+    let live = true;
+    void (async () => {
+      try {
+        await useActiveWorkout.getState().hydrate();
+        const today = await getTodayPlan(todayISO());
+        if (!live) return;
+        setNext(
+          afterCheckIn({
+            resumable: startMode(useActiveWorkout.getState()) === 'resume',
+            status: today.status,
+            nextId: today.next?.id ?? null,
+            nextName: today.next?.name ?? null,
+          }),
+        );
+      } catch (e) {
+        // Only the extra button is missing; "Done" still works.
+        console.warn('[ForgeErr] check-in: reading today’s workout', e);
+      }
+    })();
+    return () => {
+      live = false;
+    };
+  }, [checkedIn]);
+
+  const goNext = (): Promise<unknown> =>
+    runGuarded(
+      startGuard,
+      async () => {
+        if (next.kind === 'program') router.replace({ pathname: '/programs/[key]', params: { key: next.programKey } });
+        else if (next.kind === 'start' || next.kind === 'resume') await startShownWorkout(router, next.kind === 'start' ? next.routineId : null);
+      },
+      () => void tell('Couldn’t start the workout', 'Please try again.'),
+    );
 
   // This screen is open: a code kept from the welcome flow (app/_layout.tsx) has done its job.
   useEffect(() => {
@@ -177,8 +228,16 @@ export function CheckInScreen() {
         </Text>
         <Text style={[bodyText(), { textAlign: 'center' }]}>{doneDetail(view.done)}</Text>
         {view.done.planOk === false && <InlineError message={PLAN_ENDED_TEXT} />}
-        <View style={{ alignSelf: 'stretch' }}>
-          <PrimaryButton label="Done" onPress={done} />
+        {next.kind === 'program' ? <Text style={[bodyText(), { textAlign: 'center' }]}>{next.line}</Text> : null}
+        <View style={{ alignSelf: 'stretch', gap: space.sm }}>
+          {next.kind === 'none' ? (
+            <PrimaryButton label="Done" onPress={done} />
+          ) : (
+            <>
+              <PrimaryButton label={next.label} icon={next.kind === 'program' ? undefined : 'dumbbell'} onPress={() => void goNext()} />
+              <GhostButton label="Done" onPress={done} />
+            </>
+          )}
         </View>
       </Card>
     );

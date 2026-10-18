@@ -2398,6 +2398,14 @@
   - Gate runs (commit b43a095, first attempt): default 39074784648, owner 39074786096, journeys
     39074787606. Release review of 7af1403: no blockers; its 3 minor items fixed in f349b7c.
   - v0.47.0 published 17 Oct (release run 39052565058): phone + watch APKs and the AAB.
+- 2026-10-18: **Owner inbox #12 step 1 + #11 welcome join** (not released; for v0.48.0).
+  - Check-in "You're in ✓" offers the next step (pure `afterCheckIn`, shop/checkIn.ts, from the
+    Workout tab's own getTodayPlan): "Back to your workout" / "Start <routine>" / "Add Push Pull Legs"
+    (opens programs/gym_ppl_intermediate, which asks follow or keep) / nothing after today's workout.
+  - Welcome step 1: folded "Have a gym code? Join your gym" (onboarding/components/WelcomeGymCode.tsx)
+    keeps the code in shop/pendingInvite.ts like an invite link; /j/CODE opens after setup. No network.
+  - Owner inbox page #17 (scripts/owner_inbox_page.py): mark as read, replies, comment-only answers,
+    computed "Waiting for you", `--absorb` (CLAUDE.md rule).
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);

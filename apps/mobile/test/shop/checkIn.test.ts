@@ -28,6 +28,7 @@ vi.mock('@/shop/gymApi', () => ({
 vi.mock('@/theme/logoPrefetch', () => ({ prefetchGymLogo: () => undefined }));
 
 import {
+  afterCheckIn,
   checkInCodeFromUrl,
   checkInErrorText,
   checkInFromRow,
@@ -45,6 +46,7 @@ import {
 } from '@/shop/checkIn';
 import { checkInAtGym } from '@/shop/gymActions';
 import { useGymShop } from '@/shop/gymStore';
+import { programByKey } from '@/tracker/plans/programs';
 import { setPendingCheckIn, takePendingCheckIn } from '@/shop/pendingInvite';
 
 describe('check-in URLs', () => {
@@ -228,5 +230,31 @@ describe('Android opens the app for the poster link', () => {
   it('in the committed AndroidManifest.xml (the cloud build does not regenerate it)', () => {
     const xml = readFileSync(join(root, 'android', 'app', 'src', 'main', 'AndroidManifest.xml'), 'utf8');
     expect(xml).toMatch(/<intent-filter android:autoVerify="true">[\s\S]*?android:host="forgeai\.aakashpahuja\.in" android:pathPrefix="\/c\/"[\s\S]*?<\/intent-filter>/);
+  });
+});
+
+describe('afterCheckIn (OWNER-INBOX #12 step 1)', () => {
+  const base = { resumable: false, status: 'next' as const, nextId: 'r1', nextName: 'Push' };
+  it('offers today’s routine by name and id', () => {
+    expect(afterCheckIn(base)).toEqual({ kind: 'start', label: 'Start Push', routineId: 'r1' });
+  });
+  it('an open workout comes first', () => {
+    expect(afterCheckIn({ ...base, resumable: true })).toEqual({ kind: 'resume', label: 'Back to your workout' });
+  });
+  it('no routines: the ready Push Pull Legs plan, which exists', () => {
+    for (const status of ['noPlan', 'emptyPlan'] as const) {
+      const a = afterCheckIn({ ...base, status, nextId: null, nextName: null });
+      expect(a.kind).toBe('program');
+      if (a.kind === 'program') {
+        expect(a.label).toBe('Add Push Pull Legs');
+        expect(programByKey(a.programKey)?.name).toBe('Push Pull Legs');
+      }
+    }
+  });
+  it('nothing more once today’s workout is done', () => {
+    expect(afterCheckIn({ ...base, status: 'doneToday' })).toEqual({ kind: 'none' });
+  });
+  it('a nameless routine still reads well', () => {
+    expect(afterCheckIn({ ...base, nextName: '  ' })).toMatchObject({ label: 'Start today’s workout' });
   });
 });

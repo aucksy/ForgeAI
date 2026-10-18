@@ -188,3 +188,37 @@ export function notMemberText(standing: CheckInStanding, posterGym: string, myGy
   if (standing === 'other' && myGym) return `You're in ${myGym} in the app, not ${posterGym}. Join ${posterGym} first — then scan again.`;
   return `Join ${posterGym} in the app first — then scan again to check in.`;
 }
+
+// ------------------------------------------------------------------ after the check-in
+
+/**
+ * The ready Push Pull Legs program (tracker/plans/programs.ts) a member with no routines is offered
+ * after checking in (OWNER-INBOX #12, decided 18 Oct 2026: "Add Push Pull Legs").
+ */
+export const AFTER_CHECK_IN_PROGRAM = 'gym_ppl_intermediate';
+
+export type AfterCheckIn =
+  | { kind: 'resume'; label: string }
+  | { kind: 'start'; label: string; routineId: string }
+  | { kind: 'program'; label: string; line: string; programKey: string }
+  | { kind: 'none' };
+
+/**
+ * OWNER-INBOX #12 step 1: what "You're in ✓" offers next, from the Workout tab's own Today answer
+ * (so the two never disagree). A workout already open comes first; today's routine; nothing more
+ * after today's workout is done; no routines yet → the ready Push Pull Legs plan. PURE.
+ */
+export function afterCheckIn(i: {
+  /** A workout is open and can be picked up (not an edit of a saved one). */
+  resumable: boolean;
+  status: 'next' | 'doneToday' | 'noPlan' | 'emptyPlan';
+  nextId: string | null;
+  nextName: string | null;
+}): AfterCheckIn {
+  if (i.resumable) return { kind: 'resume', label: 'Back to your workout' };
+  if (i.status === 'next' && i.nextId) return { kind: 'start', label: `Start ${i.nextName?.trim() || 'today’s workout'}`, routineId: i.nextId };
+  if (i.status === 'noPlan' || i.status === 'emptyPlan') {
+    return { kind: 'program', label: 'Add Push Pull Legs', line: 'No routines yet? Start with a ready plan: Push, Pull and Legs days.', programKey: AFTER_CHECK_IN_PROGRAM };
+  }
+  return { kind: 'none' };
+}

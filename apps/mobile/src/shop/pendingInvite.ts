@@ -87,6 +87,11 @@ export function setPendingInvite(code: string | null): void {
   saveWaiting();
 }
 
+/** The waiting code, left waiting (the welcome screen shows a code kept from a link or typed there). */
+export function peekPendingInvite(): string | null {
+  return pending;
+}
+
 /** The waiting code, once: whoever takes it opens the screen. */
 export function takePendingInvite(): string | null {
   const c = pending;
