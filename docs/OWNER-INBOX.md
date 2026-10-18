@@ -34,10 +34,22 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 **You asked:** (1) a "mark as done / read" button on anything I have read; (2) a way to reply to any of
 your answers, not only to questions with options; (3) on option questions, send a comment without
 picking an option; (4) "Waiting for you" must show only what is still pending for me to read or answer.
-**Status:** NOT STARTED (recorded before a chat compaction; build next)
-**Plan:** every entry gets "Mark as read" and a reply box ("Send to Claude"); option questions accept
-a comment alone; "Waiting for you" = not yet read OR still has an open question; read/replied state
-saved in the page and moved into this file by the next session (`**READ (date)**` / `**REPLY (date):**`).
+**Status:** BUILT (page updated; desktop mod updated too)
+**My answer:** done, all four:
+- **Mark as read:** every entry has a "Mark as read" button (and "Mark as unread" to undo). Read
+  entries leave "Waiting for you". New or unread entries have an orange edge and a "New" tag.
+- **Reply to any answer:** entries without options have "Reply to Claude": type and press Send to
+  Claude. Sending a reply also counts as read.
+- **Comment without picking:** on option questions you can send just a comment. The question stays
+  open until you pick or I answer your comment.
+- **Waiting for you:** shows only what is unread or still needs your answer, with a count on the
+  button. To start you off, I marked as read the ones you answered on the page (#7, #9, #11, #12,
+  #13) and #15. Everything else shows once; tap "Mark as read" when you're done with it.
+- **When I add news to an entry you've read** (e.g. "built" on #12), I clear its "read" mark so it
+  comes back into "Waiting for you".
+- **Desktop mod (`/inbox`):** also lets you send a comment without picking.
+- Each tap saves into the page, like Send does. The page reloads after each save and keeps your
+  place. I copy your read marks into this file before every page update, so they are never lost.
 
 ## 16. Inbox upgrade: full context per question, pick and submit answers; a desktop mod with a permanent icon — 17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -67,6 +79,7 @@ that stays on the Claude Desktop app.
 **You asked:** with the new Claude "mods" feature, can we build a mod for the owner inbox, where I
 pick the chat I'm working on and each chat has its own page, ideally shown on the right-hand side?
 **Status:** BUILT (A)
+**READ (17 Oct, answered in chat)**
 **My answer:** "Mods" are real (Claude Code, early Oct 2026). A mod can open its own panel; in the
 desktop app it docks beside the chat when the window is wide enough. But (official docs):
 - **Mods draw only in the terminal, the desktop app's Code tab and VS Code.** In cloud sessions
@@ -161,6 +174,7 @@ so **a whole run now takes about 2 h instead of 3 h 30 min**, still ₹0. Re-run
 and hour. Show members when machines are free, and suggest moving their schedule so they're more
 likely to get a free machine.
 **Status:** DECIDED (18 Oct) — build queued
+**READ (18 Oct, via the page)**
 **My answer:** A good idea, and the machine-level part would be rare. But it can't be built the
 way described today, for four reasons:
 1. **Workouts never leave the member's phone.** That is a promise in the app today ("Private.
@@ -204,6 +218,7 @@ phone today) — opt-in, no weights or names.
 then nudges them to start their workout; with no saved routines, give them a research-based
 Push Pull Legs plan. Don't build yet; does it work, and how?
 **Status:** DECIDED (18 Oct) — build queued
+**READ (18 Oct, via the page)**
 **My answer:** Yes, it works, and gym apps abroad already do it (PerfectGym, GymMaster; BETA and
 ButaGYM use a QR that changes every few seconds). Most of it already exists in our app:
 - the gym's QR poster already opens ForgeAI on "Check in": one tap marks attendance and checks
@@ -232,6 +247,7 @@ or "Add Push Pull Legs" for no routines). The door (Step 2) waits until the clie
 theme should change and the app icon should become the gym's (or a mix). New users: log in with
 Google etc., with "join via your gym membership" right below; the app must also work with no gym.
 **Status:** DECIDED (18 Oct) — build queued
+**READ (18 Oct, via the page)**
 **My answer:**
 - **Why it failed:** Settings → Your gym only showed the name typed at setup; the join box was on
   the Shop tab. Fixed: Settings → Your gym now has "Join your gym" with a code box.
@@ -262,6 +278,7 @@ of you, then the rest timer starts.
 day's total), based on research or the member's setting; during the workout, suggest the next
 reps/weight that add up to it.
 **Status:** DECIDED (18 Oct) — build queued
+**READ (18 Oct, via the page)**
 **Needs you:** decision 1 (A follow the existing Targets / Weight jumps setting, recommended; or
 B a fixed "aim for N% more" the member picks, max 10%) and decision 2 (A the next sets show what
 is left to hit the target, never more than one weight step or 2 reps above plan, recommended; or
@@ -281,6 +298,7 @@ there are 2 or more cards to reorder.
 ## 7. Offline mode: can the gym use the admin app without internet? — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** DECIDED (18 Oct) — build queued
+**READ (18 Oct, via the page)**
 **My answer:** Partly. A gym kept "in this browser only" works offline but lives on one device.
 An online gym: if the internet drops, the desk can still SEE members and dues, but can't save
 (add member, take payment, check in). A payment cut off mid-save is resent once the internet is back,

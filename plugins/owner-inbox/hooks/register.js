@@ -33,6 +33,8 @@ export function parseInbox(text) {
     }
     const sm = body.match(/^\*\*Status:\*\* (.+)$/m)
     const status = sm ? sm[1].trim() : ''
+    const rm = body.match(/^\*\*READ\b.*(?:\n|$)/m)
+    if (rm) body = body.replace(rm[0], '')
     const decides = []
     for (const dm of body.matchAll(/^\*\*Decide:\*\* (.+)\n((?:- [A-Z]: .+\n?)+)/gm)) {
       const opts = [...dm[2].matchAll(/^- ([A-Z]): (.+)$/gm)].map((om) => {
@@ -44,15 +46,16 @@ export function parseInbox(text) {
     }
     body = body.replace(/^\*\*Decide:\*\* .+\n(?:- [A-Z]: .+\n?)+/gm, '').trim()
     const decided = /^\*\*DECIDED/m.test(body)
-    return { num: Number(h[1]), title: h[2].trim(), date: h[3].trim(), chat, status, body, decides: decided ? [] : decides }
+    return { num: Number(h[1]), title: h[2].trim(), date: h[3].trim(), chat, status, body, decides: decided ? [] : decides, read: Boolean(rm) }
   })
 }
 
 // What Send puts in the chat: the question and the chosen option in words, never just "A".
+// A question left without a pick says so: a comment alone is a fine answer (OWNER-INBOX #17).
 export function answerText(entry, picks, note) {
   const lines = entry.decides.map((d, qi) => {
-    const o = d.opts.find((x) => x.key === picks[qi]) || { key: '?', text: '' }
-    return '- ' + d.q + ': ' + o.key + ' (' + o.text + ')'
+    const o = d.opts.find((x) => x.key === picks[qi])
+    return '- ' + d.q + ': ' + (o ? o.key + ' (' + o.text + ')' : 'no pick yet')
   })
   const extra = (note || '').trim()
   return 'Owner inbox #' + entry.num + ' (' + entry.title + '):\n' + lines.join('\n') + (extra ? '\nNote: ' + extra : '') +
@@ -174,7 +177,6 @@ export function register(on) {
 
     // One question in full: its choices first, then the whole context.
     const mine = picks[entry.num] || (picks[entry.num] = {})
-    const ready = entry.decides.every((d, qi) => mine[qi])
     const blocks = entry.decides.map((d, qi) =>
       Box({
         key: 'd' + qi,
@@ -204,7 +206,7 @@ export function register(on) {
         ...blocks,
         Input({
           key: 'note',
-          placeholder: 'Anything to add? (optional, Enter keeps it)',
+          placeholder: 'Your comment (you can send just a comment, without picking)',
           onInput: (v) => { notes[entry.num] = v },
           onSubmit: (v) => { notes[entry.num] = v; redraw() },
         }),
@@ -214,10 +216,13 @@ export function register(on) {
           children: [
             Button({
               key: 'send',
-              label: ready ? 'Send to Claude' : 'Pick an answer for each question first',
-              dimColor: !ready,
+              label: 'Send to Claude',
               onPress: () => {
-                if (!ready) return
+                // A pick or a comment is enough; the note box only reports what was typed, so check here.
+                if (!entry.decides.some((d, qi) => mine[qi]) && !(notes[entry.num] || '').trim()) {
+                  $.ui.toast('Pick an answer or write a comment first')
+                  return
+                }
                 const text = answerText(entry, mine, notes[entry.num])
                 sent[entry.num] = true
                 openNum = null

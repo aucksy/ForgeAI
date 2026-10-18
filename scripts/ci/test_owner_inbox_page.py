@@ -79,6 +79,43 @@ class Page(unittest.TestCase):
         self.assertNotIn("</script> stays text", html)
         self.assertTrue(html.startswith("<title>Owner Inbox</title>"))
 
+    def test_read_marker(self):
+        # #17: a READ line marks an entry read and never shows in its text.
+        read = page.parse(SAMPLE.replace("**Status:** BUILT", "**READ (18 Oct, 9:05 pm, via the page)**\n**Status:** BUILT"))["entries"]
+        self.assertEqual([e["read"] for e in read], [False, True])
+        self.assertNotIn("READ", read[1]["body"])
+
+    def test_set_read_adds_after_status_and_removes(self):
+        once = page.set_read(SAMPLE, 2, "18 Oct, 9:05 pm")
+        self.assertIn("**Status:** RESEARCHED: WAITING FOR YOU\n**READ (18 Oct, 9:05 pm, via the page)**\n**My answer:**", once)
+        twice = page.set_read(once, 2, "19 Oct, 8:00 am")
+        self.assertEqual(twice.count("**READ"), 1)  # a second tap replaces, never stacks
+        self.assertEqual(page.set_read(twice, 2, None), SAMPLE)
+        self.assertEqual(page.set_read(SAMPLE, 99, "x"), SAMPLE)  # no such entry: untouched
+        # The last entry (no text after its Status line ends the file) works too.
+        self.assertTrue(page.set_read(SAMPLE, 1, "18 Oct").endswith("**READ (18 Oct, via the page)**\n"))
+
+    def test_absorb_moves_read_taps_and_returns_answers(self):
+        import tempfile
+        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+            f.write(page.set_read(SAMPLE, 1, "17 Oct"))
+        try:
+            data = page.parse(SAMPLE)
+            data.update(updated="now", answers={"2": {"picks": [], "note": "</script> a comment", "at": "18 Oct"}},
+                        read={"2": "18 Oct, 9:05 pm", "1": False})
+            saved = "<!doctype html><html><body>" + page.fill(page.TEMPLATE, data) + "</body></html>"
+            answers = page.absorb(saved, f.name)
+            text = open(f.name, encoding="utf-8").read()
+        finally:
+            os.remove(f.name)
+        self.assertEqual(answers, {"2": {"picks": [], "note": "</script> a comment", "at": "18 Oct"}})
+        self.assertIn("**READ (18 Oct, 9:05 pm, via the page)**", text)
+        self.assertEqual(text.count("**READ"), 1)  # #1 was marked unread on the page
+
+    def test_page_data_needs_the_data_line(self):
+        with self.assertRaises(ValueError):
+            page.page_data("<html>no data</html>")
+
 
 if __name__ == "__main__":
     unittest.main()

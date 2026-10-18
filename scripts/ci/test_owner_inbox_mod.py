@@ -15,7 +15,7 @@ JS = """
 import { parseInbox } from %s;
 import fs from "fs";
 const es = parseInbox(fs.readFileSync(%s, "utf8"));
-console.log(JSON.stringify(es.map((e) => ({ num: e.num, chat: e.chat, decides: e.decides }))));
+console.log(JSON.stringify(es.map((e) => ({ num: e.num, chat: e.chat, decides: e.decides, read: e.read }))));
 """
 
 
@@ -26,7 +26,7 @@ class Mod(unittest.TestCase):
         out = subprocess.run(["node", "--input-type=module", "-e", JS % (json.dumps(mod), json.dumps(page.INBOX))],
                              capture_output=True, text=True, check=True).stdout
         got = json.loads(out)
-        want = [{"num": e["num"], "chat": e["chat"], "decides": e["decides"]}
+        want = [{"num": e["num"], "chat": e["chat"], "decides": e["decides"], "read": e["read"]}
                 for e in page.parse(open(page.INBOX, encoding="utf-8").read())["entries"]]
         self.assertEqual(got, want)
 

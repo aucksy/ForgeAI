@@ -24,12 +24,18 @@ the top current: add new decisions, and remove them once he decides. Commit + pu
 Each entry carries a `**Chat:** <chat name> — <session link>` line (the chat it came from). After
 every inbox update, rebuild and republish his private page so it matches the file:
 `python3 scripts/owner_inbox_page.py <file>.html`, then the Artifact tool with
-`url: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT` (read it first; never make a new page).
+`url: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT` (never make a new page). Before EVERY
+rebuild: read the page (Artifact read; it saves the full HTML to a file), then run
+`python3 scripts/owner_inbox_page.py --absorb <that file>`: it writes his "Mark as read" taps into the
+.md as `**READ (date)**` lines (a rebuild without this loses them) and prints the answers to act on.
 Answers come back two ways: (1) the page's "Send to Claude" saves them INTO the page
 (`DATA.answers` in its script; the watching session is woken by that republish): read the page,
 act, write `**DECIDED (date):** ...` into the entry (drop its `**Decide:**` lines and its table row),
 rebuild + republish (that clears the sent answers); (2) the desktop mod `/inbox`
 (plugins/owner-inbox) posts "Owner inbox #N (...): ..." into the chat as his own words: same steps.
+A comment without a pick, or a reply to an entry with no options, arrives the same way: write it into
+the entry as `**YOUR REPLY (date):** ...` with your answer under it (a question stays open until he
+picks). When you add news to an entry he has read, delete its `**READ` line so it is "waiting" again.
 Each open question needs `**Decide:** <question>` + `- A: <option>` lines (mark one "(recommended)").
 
 ## ⭐ Research demand before building a feature

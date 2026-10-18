@@ -33,13 +33,11 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
   #12 A gate-QR Step 1, #11 A/A/A (gym-logo shortcut, welcome-screen join, research Google login),
   #9 A/A + per-exercise kg target with % overload and expandable per-set targets, #7 A offline front
   desk for the admin app AND the Chrome website (grey out what can't work, persistent offline banner).
-  First build #17 (inbox page: mark as read, reply to any answer, comment without picking, Waiting =
-  unread or open). Then plan the builds above (new features: research + plan first per CLAUDE.md;
+  #17 (inbox page: mark as read, reply to any answer, comment without picking, Waiting = unread or
+  open) BUILT 18 Oct: before every page rebuild run `owner_inbox_page.py --absorb <saved page>` (CLAUDE.md).
+  Next: plan the builds above (new features: research + plan first per CLAUDE.md;
   #7 is admin/CRM = gated on fieldwork? check docs/overhaul/FIELDWORK.md and ask if unsure).
 - v0.47.1 tag: owner pushes from the PC (prompt in chat; commit 8403202; dry run green).
-- PC (or the owner on github.com): push tag v0.47.0 at 4f3d5c3: `git fetch origin && git tag v0.47.0 4f3d5c3 && git push origin v0.47.0`.
-  Then check releases/download/v0.47.0/forgeai-v0.47.0.apk and forgeai-v0.47.0-wear.apk answer 200.
-  Tag the EXACT commit 4f3d5c3 (main has moved on): its parent 52e8f43 holds the green phone runs.
 - v0.47.0 PUBLISHED 17 Oct (release run 39052565058). v0.47.1 (U-M7, U-M8, U-G6 + sturdier phone tests)
   green on b43a095 (39074784648, 39074786096, 39074787606); bump commit below waits for its tag from the
   PC: `git tag -a v0.47.1 8403202 -m v0.47.1 && git push origin v0.47.1`. Release dry run 39082827847 on 8403202: SUCCESS. Owner decisions waiting: docs/OWNER-INBOX.md (table on top).
