@@ -25,7 +25,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 6 | Turn on gym workout plans on the live server (0024, from your PC)? | A: yes |
 
 ---
 
@@ -374,7 +373,7 @@ things work.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** WAITING FOR YOU (turn on workout plans, 0024)
+**Status:** DECIDED: workout plans go live from the PC (0024)
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
 the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
@@ -417,11 +416,9 @@ docs/uat/HANDOFF.md ("PC must do").
 passed on the live server (including "one gym can never see another gym's records": 66 of 66 blocked).
 Members see "My membership" once they have the next app release (v0.48.0).
 **Workout plans (item 2):** built; see #19 for how the trainer side works.
-**Decide:** turn on gym workout plans on the live server? It adds one new kind of gym record and
-one read for the member app (0024); nothing existing changes. It is applied from your PC, like 0023.
-- A: yes, apply 0024 from the PC (recommended)
-- B: not yet
-Until it is on, nothing shows for members, and the PC should apply 0024 BEFORE it puts up the new admin app (a plan saved before that would be refused).
+**DECIDED (18 Oct, in chat):** "yeah of course - lets switch it on": apply 0024 on the live server
+from the PC, run its checks, then put up the new admin app (in that order). The paste-in steps
+for Claude on the PC are in chat and in docs/uat/HANDOFF.md ("PC must do").
 
 
 ## 5. Use the admin app's icon for the mobile app — 16 Oct 2026

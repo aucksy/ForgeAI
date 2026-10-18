@@ -53,6 +53,11 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - WP9 gym fixes + REPAIR PART R (blocks whole phone runs).
 
 ### PC must do
+- TODO (owner approved 18 Oct 2026, inbox #6): apply LIVE `supabase/migrations/0024_workout_plans.sql`
+  (gym workout plans) from main, then run on the LIVE database `supabase/tests/0024_workout_plans.sql`,
+  `security.sql` and `uat_access_matrix.sql` (each must end "RESULT PASS"; gyms count the same before
+  and after). Only THEN deploy the admin app (checked build, wrangler in deploy/panel): a plan saved
+  before 0024 is live would be refused. Write the results here.
 - DONE 18 Oct 2026 (PC, owner approved, inbox #6): applied LIVE, in order, from commit 21847ac:
   0021_receipt_rules.sql, 0022_key_status.sql, 0023_member_membership.sql - no errors.
   Every supabase/tests/*.sql then run on the LIVE database (gyms count 125 before and after; nothing left behind):
@@ -72,5 +77,5 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - Deploy the admin app after any admin change (checked build, then wrangler in deploy/panel).
 
 ### Owner decisions needed
-- None open (0021-0023 approved 18 Oct; the PC applies them).
+- None open (0021-0024 approved 18 Oct; the PC applies 0024).
 - Optional: delete Actions run 38965066052 (two already-revoked test keys in its log).
