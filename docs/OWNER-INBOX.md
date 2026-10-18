@@ -31,6 +31,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 ## 19. Workout plans must flow straight into the app; the inbox is only for my asks — 18 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** BUILT, NOT RELEASED (v0.48.0)
+**READ (18 Oct, 11:41 am, via the page)**
 **You asked:** (1) the trainer picks the exercises and the starting sets and weight, does very little
 work, and the routine just shows up in the member's app: seamless, easy, simple for trainers.
 (2) The inbox is only for what you ask me and decisions that are truly yours; don't post everything.
@@ -52,6 +53,7 @@ work, and the routine just shows up in the member's app: seamless, easy, simple 
 **You asked:** "You should not stop to ask me these questions when you can easily decide the best
 experience and sequence of build."
 **Status:** DONE (standing rule, in CLAUDE.md)
+**READ (18 Oct, 11:41 am, via the page)**
 **My answer:** agreed, and now a standing rule. I decide the member experience and the build order
 myself (after the research), build, and tell you what I chose and why, so you can overrule it any
 time. I still stop and ask only for what is truly yours:
