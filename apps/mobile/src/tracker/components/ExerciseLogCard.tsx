@@ -48,7 +48,7 @@ import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
-import { kgLiveLine, kgPlan, kgProgress } from '../lib/kgTarget';
+import { kgLiveLine, kgPlan, kgProgress, kgTickKey } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import type { DragWrap } from './DragList';
@@ -245,15 +245,24 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   }, [exercise, fillTarget, earlier, easyWeek]);
 
   // #9: the line starts from what each row hints (never disagreeing with the rows), see kgProgress.
+  // Phone runs 39095656699 / 39095657897 (part UR): worked out on every keystroke, the line grew from
+  // one to two lines while a weight was typed, the card moved under the box, and keys were lost. It
+  // is now worked out only when a set is ticked, unticked, added or removed (kgTickKey), and holds
+  // at most two lines: nothing moves while the member types.
+  const rowsRef = useRef(rows);
+  rowsRef.current = rows;
+  const tickKey = kgTickKey(rows.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType })));
   const kgLine = useMemo(() => {
     if (!kgPlanned) return null;
     const g = kgProgress(
       kgPlanned,
-      rows.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps })),
+      rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps })),
     );
     const each = weightIsEach(loadMode) ? ' each' : '';
     return kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units));
-  }, [kgPlanned, rows, units, loadMode]);
+    // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kgPlanned, tickKey, units, loadMode]);
 
   // 13 Oct 2026: the rows' widths for this phone and text size; RPE shows at every width.
   const rowLayout = useRowLayout(logType);
@@ -552,7 +561,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         </Pressable>
       ) : null}
       {kgLine ? (
-        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, paddingHorizontal: space.xs }}>
+        <Text numberOfLines={2} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, paddingHorizontal: space.xs }}>
           {kgLine}
         </Text>
       ) : null}

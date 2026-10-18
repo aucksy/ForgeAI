@@ -149,6 +149,15 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   return { done, left, next, short: sum() < left - 1e-9 };
 }
 
+/**
+ * What moves the live line: the rows that exist and which are ticked, with a ticked row's numbers.
+ * Typing into an open row changes nothing here, so the card never moves under the box being typed
+ * into (phone runs 39095656699 / 39095657897, part UR: keys were lost). PURE.
+ */
+export function kgTickKey(rows: readonly KgRow[]): string {
+  return rows.map((r) => `${r.isWarmup ? 'w' : r.setType === 'drop' ? 'd' : 's'}${r.done ? `+${r.weightKg ?? ''}x${r.reps ?? ''}` : '-'}`).join('|');
+}
+
 // ------------------------------------------------------------------ words (never "volume", "PR", "session")
 
 /** "1,765 kg": a total in whole units of the member's choice. */

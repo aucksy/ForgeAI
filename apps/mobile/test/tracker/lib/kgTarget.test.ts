@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { kgLiveLine, kgPlan, kgProgress, kgSetLines, kgToBeatLine, MAX_EXTRA_REPS, pctWords, type KgRow } from '@/tracker/lib/kgTarget';
+import { kgLiveLine, kgPlan, kgProgress, kgSetLines, kgTickKey, kgToBeatLine, MAX_EXTRA_REPS, pctWords, type KgRow } from '@/tracker/lib/kgTarget';
 
 const base = {
   action: 'increase' as const,
@@ -150,6 +150,16 @@ describe('#9 kg to beat: during the workout', () => {
     const g = kgProgress(p, [row(45, 5, true), row(45, 5, true), row(45, 5, true), { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 45, hintReps: 5 }]);
     expect(g.next).toEqual([{ weightKg: 45, reps: 5 + MAX_EXTRA_REPS }]);
     expect(g.short).toBe(true);
+  });
+  it('typing into an open row never moves the line; a tick, an added or removed row does', () => {
+    const base2 = [row(45, 9, true), row(null, null, false)];
+    const k = kgTickKey(base2);
+    expect(kgTickKey([row(45, 9, true), row(5, null, false)])).toBe(k);
+    expect(kgTickKey([row(45, 9, true), row(52.5, 8, false)])).toBe(k);
+    expect(kgTickKey([row(45, 9, true), row(45, 8, true)])).not.toBe(k);
+    expect(kgTickKey([...base2, row(null, null, false)])).not.toBe(k);
+    expect(kgTickKey([row(45, 9, true)])).not.toBe(k);
+    expect(kgTickKey([row(45, 10, true), row(null, null, false)])).not.toBe(k);
   });
   it('member words never say volume, PR or session', () => {
     const words = [kgToBeatLine(p, total), ...kgSetLines(p, weight), kgLiveLine(p, kgProgress(p, []), total, weight)].join(' ');
