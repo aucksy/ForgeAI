@@ -20,9 +20,10 @@ appId: com.forgeai.app
     visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 30000
 - takeScreenshot: inv-05-switched
+# Owner-profile run 39101894316: Leave is the LAST thing on the Shop page, so centring it can't
+# happen and ate the whole timeout (it was fully on screen). Not centred; the tap still needs it.
 - scrollUntilVisible:
     element: "^Leave$"
-    centerElement: true
     timeout: 20000
 - tapOn: "^Leave$"
 - extendedWaitUntil:

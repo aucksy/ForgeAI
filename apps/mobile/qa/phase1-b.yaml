@@ -55,6 +55,13 @@ appId: com.forgeai.app
     timeout: 15000
 # The second exercise's More (any exercise but the Bench Press the H parts lean on), brought onto
 # the screen first: at font 2.0 on 360 dp one card fills the screen (UAT WP14 run 39002595271).
+# Owner-profile run 39101894316: every scroll started at the screen's centre, which sat on set 1's
+# weight box, and the list never moved (17 swipes). One drag first from the list's left edge, away
+# from the boxes; then the same find and check.
+- swipe:
+    start: 8%, 75%
+    end: 8%, 35%
+    duration: 600
 - runFlow:
     file: sub-find.yaml
     env:
