@@ -13,6 +13,7 @@ import android.graphics.RectF
 import android.graphics.drawable.Icon
 import android.os.Build
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -49,6 +50,8 @@ object GymShortcut {
     val sm = c.getSystemService(ShortcutManager::class.java) ?: return "unsupported"
     val pinned = sm.pinnedShortcuts.any { it.id == ID }
     if (!pinned && !ask) return "none"
+    // Joined again: the greyed-out one works again even if the new picture can't be had.
+    if (pinned) sm.enableShortcuts(listOf(ID))
     val logo = download(logoUrl) ?: return "no-logo"
     val icon = Icon.createWithAdaptiveBitmap(drawIcon(logo, parseColor(bg)))
     val launch = c.packageManager.getLaunchIntentForPackage(c.packageName) ?: return "failed"
@@ -62,7 +65,6 @@ object GymShortcut {
       .setIntent(launch)
       .build()
     if (pinned) {
-      sm.enableShortcuts(listOf(ID))
       return if (sm.updateShortcuts(listOf(info))) "updated" else "failed"
     }
     if (!sm.isRequestPinShortcutSupported) return "unsupported"
@@ -78,9 +80,18 @@ object GymShortcut {
     return true
   }
 
-  /** The gym's logo (https only, at most 4 MB), decoded; null when it can't be had. */
+  /** The gym's logo (https only, at most 4 MB), decoded; null when it can't be had (offline included). */
   private fun download(url: String): Bitmap? {
     if (!url.startsWith("https://")) return null
+    return try {
+      fetch(url)
+    } catch (e: IOException) {
+      android.util.Log.w("ForgeErr", "gym shortcut: logo download failed", e)
+      null
+    }
+  }
+
+  private fun fetch(url: String): Bitmap? {
     val conn = URL(url).openConnection() as HttpURLConnection
     try {
       conn.connectTimeout = 10_000

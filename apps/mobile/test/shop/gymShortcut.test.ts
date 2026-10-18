@@ -29,7 +29,7 @@ describe('gym home-screen shortcut (OWNER-INBOX #11)', () => {
   it('says what happened in plain words; nothing while Android asks', () => {
     expect(gymShortcutWords('asked', 'G')).toBeNull();
     expect(gymShortcutWords('updated', 'G')).toMatch(/already on your home screen/);
-    expect(gymShortcutWords('unsupported', 'G')).toMatch(/doesn't take shortcuts/);
+    expect(gymShortcutWords('unsupported', 'G')).toBe("This phone's home screen doesn't take shortcuts.");
     expect(gymShortcutWords('no-logo', 'G')).toMatch(/Couldn't get G's logo/);
     expect(gymShortcutWords('failed', 'G')).toBe("Couldn't add it. Try again.");
     expect(shortcutOffText('G')).toBe('You left G. Open ForgeAI from its own icon.');

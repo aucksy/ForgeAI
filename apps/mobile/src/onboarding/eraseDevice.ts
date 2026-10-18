@@ -210,6 +210,9 @@ function deviceSteps(): EraseStep[] {
         // A Join's kept id (C6-6) too.
         const { JOIN_TRY_STORAGE_KEY } = await import('@/shop/gym');
         await AsyncStorage.removeItem(JOIN_TRY_STORAGE_KEY);
+        // Which gyms were offered the home-screen logo (OWNER-INBOX #11): a fresh start offers again.
+        const { SHORTCUT_OFFERED_KEY } = await import('@/shop/gymShortcut');
+        await AsyncStorage.removeItem(SHORTCUT_OFFERED_KEY);
         if (key) {
           const { leaveOnServer } = await import('@/shop/pendingLeave');
           await leaveOnServer(key);

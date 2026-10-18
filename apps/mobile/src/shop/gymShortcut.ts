@@ -47,7 +47,7 @@ export function gymShortcutWords(r: GymShortcutResult, gymName: string): string 
     case 'updated':
       return `${gymName} is already on your home screen. Its picture is up to date.`;
     case 'unsupported':
-      return "This phone's home screen doesn't take shortcuts. Long-press ForgeAI's icon instead.";
+      return "This phone's home screen doesn't take shortcuts.";
     case 'no-logo':
       return `Couldn't get ${gymName}'s logo. Check the internet and try again.`;
     default:

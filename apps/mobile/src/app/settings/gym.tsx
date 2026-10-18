@@ -18,7 +18,7 @@ import { SettingsPage } from '@/components/settings/SettingsPage';
 import { LinkRow } from '@/components/stats/parts';
 import { GlassCard } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
-import { addGymShortcut, canAddGymShortcut, gymShortcutWords } from '@/shop/gymShortcut';
+import { addGymShortcut, canAddGymShortcut, gymShortcutWords, markShortcutOffered } from '@/shop/gymShortcut';
 import { FEATURES, profileParts } from '@/lib/features';
 import { useGymShop } from '@/shop/gymStore';
 import { useGymHydrated } from '@/shop/shopSource';
@@ -53,7 +53,10 @@ function JoinedGymCard({ link }: { link: GymLink }) {
     if (busy.current) return;
     busy.current = true;
     setWords(null);
-    setWords(gymShortcutWords(await addGymShortcut(link), link.gymName));
+    const r = await addGymShortcut(link);
+    setWords(gymShortcutWords(r, link.gymName));
+    // Added here: the Shop tab need not offer it again.
+    if (r === 'asked' || r === 'updated') void markShortcutOffered(link.joinCode);
     busy.current = false;
   };
   return (
