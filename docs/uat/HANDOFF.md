@@ -53,6 +53,11 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - WP9 gym fixes + REPAIR PART R (blocks whole phone runs).
 
 ### PC must do
+- DONE 18 Oct 2026 (PC, owner approved, inbox #6): 0024_workout_plans.sql applied LIVE from commit 93b7fd2, no error.
+  LIVE tests: 0024_workout_plans RESULT PASS (20 checks); security RESULT PASS (9 checks);
+  uat_access_matrix RESULT PASS (438 cells: 83 allow, 355 deny; 66 gym-B-on-gym-A cells all deny).
+  public.gyms count 133 before and after.
+  Admin app deployed after a checked build at 93b7fd2 (tsc -b 0, vitest 917 passed, build 0): version 3944c634.
 - TODO (owner approved 18 Oct 2026, inbox #6): apply LIVE `supabase/migrations/0024_workout_plans.sql`
   (gym workout plans) from main, then run on the LIVE database `supabase/tests/0024_workout_plans.sql`,
   `security.sql` and `uat_access_matrix.sql` (each must end "RESULT PASS"; gyms count the same before
