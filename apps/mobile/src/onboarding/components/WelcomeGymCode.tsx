@@ -4,13 +4,13 @@
  * (shop/pendingInvite.ts) and the gym's "Join <gym>" screen opens once setup is done (app/_layout.tsx),
  * where the member sees the gym and says yes. Nothing is joined here, and no internet is needed.
  */
-import { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { AppState, Linking, Pressable, Text, TextInput, View } from 'react-native';
 
 import { GhostButton, GlassCard } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { JOIN_CODE_LENGTH } from '@/shop/gym';
-import { peekPendingInvite, setPendingInvite } from '@/shop/pendingInvite';
+import { peekPendingInvite, restorePendingLinks, setPendingInvite } from '@/shop/pendingInvite';
 import { shopInputStyle } from '@/shop/ShopParts';
 import { color, space, type } from '@/theme/tokens';
 
@@ -22,6 +22,28 @@ export function WelcomeGymCode() {
   const [open, setOpen] = useState(false);
   const [typed, setTyped] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  // What waits can change under this screen: a code kept before the app was closed during setup
+  // (restored from the phone), or a gym link tapped now (app/_layout.tsx keeps it). Show what will open.
+  useEffect(() => {
+    let live = true;
+    const reread = (): void => {
+      // After the layout's own link listener has kept the code.
+      setTimeout(() => {
+        if (live) setKept(peekPendingInvite());
+      }, 0);
+    };
+    void restorePendingLinks().then(reread);
+    const link = Linking.addEventListener('url', reread);
+    const app = AppState.addEventListener('change', (st) => {
+      if (st === 'active') reread();
+    });
+    return () => {
+      live = false;
+      link.remove();
+      app.remove();
+    };
+  }, []);
 
   const save = (): void => {
     const r = welcomeGymCode(typed);
@@ -84,6 +106,10 @@ export function WelcomeGymCode() {
         autoFocus
         returnKeyType="done"
         onSubmitEditing={save}
+        // Typed in full, then "Next" tapped without "Save the code": keep it anyway.
+        onBlur={() => {
+          if (welcomeGymCode(typed).ok) save();
+        }}
         placeholder={`${JOIN_CODE_LENGTH} letters or numbers`}
         placeholderTextColor={color.inkFaint}
         accessibilityLabel="Gym code"

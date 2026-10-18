@@ -27,6 +27,7 @@ import { tell } from '@/lib/tell';
 import { color, space, type } from '@/theme/tokens';
 import { getTodayPlan } from '@/tracker/services/todayService';
 import { startMode, startShownWorkout } from '@/tracker/services/todayStart';
+import { openActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 import {
@@ -116,8 +117,12 @@ export function CheckInScreen() {
     runGuarded(
       startGuard,
       async () => {
-        if (next.kind === 'program') router.replace({ pathname: '/programs/[key]', params: { key: next.programKey } });
-        else if (next.kind === 'start' || next.kind === 'resume') await startShownWorkout(router, next.kind === 'start' ? next.routineId : null);
+        // Pushed: opened cold from the poster, the check-in is the only screen, and Back must not close the app.
+        if (next.kind === 'program') router.push({ pathname: '/programs/[key]', params: { key: next.programKey } });
+        // The workout takes the check-in's place, so Back never shows a stale "Start Push".
+        else if (next.kind === 'start' || next.kind === 'resume') {
+          await startShownWorkout(router, next.kind === 'start' ? next.routineId : null, () => void openActiveWorkout(router, 'replace'));
+        }
       },
       () => void tell('Couldn’t start the workout', 'Please try again.'),
     );
