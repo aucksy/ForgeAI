@@ -253,7 +253,7 @@ just keep it). Nothing extra once today's workout is done. Comes in the next rel
 **You asked:** Settings → Your gym gave no way to join. After joining with a valid membership, the
 theme should change and the app icon should become the gym's (or a mix). New users: log in with
 Google etc., with "join via your gym membership" right below; the app must also work with no gym.
-**Status:** WELCOME JOIN BUILT, NOT RELEASED; logo shortcut and Google login research next
+**Status:** WELCOME JOIN + LOGO SHORTCUT BUILT, NOT RELEASED; Google login research next
 **My answer:**
 - **Why it failed:** Settings → Your gym only showed the name typed at setup; the join box was on
   the Shop tab. Fixed: Settings → Your gym now has "Join your gym" with a code box.
@@ -274,7 +274,12 @@ then come back with options).
 **BUILT (18 Oct), welcome screen:** under "Next" on the first screen: "Have a gym code? Join your gym".
 Type the code, and right after the 3 setup questions the gym's own join screen opens (it shows the
 gym and asks before joining). Works without internet during setup. Comes in the next release.
-Still to do: the home-screen shortcut with the gym's logo, and the Google login research.
+**BUILT (18 Oct), gym logo on the home screen:** after joining, the Shop tab offers once "Add
+RAM'S FITNESS to your home screen" (and Settings → Your gym always has it). Android shows its own
+"Add to home screen?" question; then the gym's logo sits on the home screen and opens ForgeAI. If
+the gym changes its logo, the shortcut updates by itself; if the member leaves, it greys out. Only
+for gyms that uploaded a logo. Comes in the next release.
+Still to do: the Google login research.
 
 ## 10. RPE tap: let me SEE the ✓ get ticked — 16/17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2

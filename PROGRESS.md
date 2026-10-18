@@ -2404,6 +2404,9 @@
     (opens programs/gym_ppl_intermediate, which asks follow or keep) / nothing after today's workout.
   - Welcome step 1: folded "Have a gym code? Join your gym" (onboarding/components/WelcomeGymCode.tsx)
     keeps the code in shop/pendingInvite.ts like an invite link; /j/CODE opens after setup. No network.
+  - Gym logo home-screen shortcut (#11 icon A): forge-phone GymShortcut.kt (requestPinShortcut,
+    adaptive bitmap from the logo, redraw without asking, grey out on leave), shop/gymShortcut.ts,
+    once-per-gym offer on the Shop tab, Settings → Your gym row. Kotlin compiled only by CI.
   - Owner inbox page #17 (scripts/owner_inbox_page.py): mark as read, replies, comment-only answers,
     computed "Waiting for you", `--absorb` (CLAUDE.md rule).
 
