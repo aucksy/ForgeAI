@@ -20,7 +20,7 @@ declare
   -- 48-hex ticket folder.
   anon_ok text[] := array[
     '_photo_ticket_ok','auth_gym_id','auth_role','crm_pull','crm_push','demo_start_gym','gym_create_online','gym_preview',
-    'member_cancel_order','member_check_in','member_join','member_leave','member_me','member_membership','member_messages',
+    'member_cancel_order','member_check_in','member_gym_plans','member_join','member_leave','member_me','member_membership','member_messages',
     'member_orders','member_place_order','member_products','member_saw_messages','member_set_name',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
     'owner_gym','owner_make_signin_code','owner_messages','owner_orders','owner_people','owner_photo_ticket',
