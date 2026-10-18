@@ -7,7 +7,8 @@ Whoever stops last updates this file and pushes it. The other side starts here.
   inbox page script, which phone_gate does not count as paperwork; main has the same two changes).
   Gate: default 39120213047, owner 39120214610, journeys 39120216807, CI 39120212122 (all green).
   First runs on 2391daf were red on test steps U-Q2 (part D) and U-Q3 (J3 owner phone): fixed in 4d651d6.
-- Release workflow result and APK links: see PROGRESS / the next update here.
+- v0.48.0 PUBLISHED: release run 39128079580 (attempt 2; CI 39128144598 dispatched on the tag, since
+  ci.yml skips v* tags and the tag commit is on no branch). Phone + watch APK links answer 200.
 - Task 2 (inbox #20 "Expiring in 1-3 / 4-7 / 8-15 days"): already LIVE since 15 Oct (399cc9e); covered
   by admin journey J27c (d2ef22c). Inbox page: chat rename (R-28) and the PC chat in the list (R-27).
 - Next: WP15 (Play pre-launch / Firebase Test Lab) not started; backlog in docs/OWNER-INBOX.md.

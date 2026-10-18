@@ -2434,6 +2434,9 @@
     with notes and the inbox page script (not paperwork to phone_gate); main carries the same two
     changes. The APK's code is the same.
   - Admin app: journey J27c covers the "Ending in 1-3 / 4-7 / 8-15 days" tiles (live since 15 Oct).
+  - PUBLISHED 18 Oct (release run 39128079580, attempt 2 after a hand-started CI 39128144598 on the
+    tag: ci.yml ignores v* tags and d62c4a4 is on no branch): phone APK 68,975,318 B and watch APK
+    2,033,849 B answer 200.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
