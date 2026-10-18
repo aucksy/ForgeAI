@@ -39,7 +39,7 @@ detail goes in `PROGRESS.md`, commit messages, and code comments — not chat.
 `url: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT` (never make a new page). Before EVERY
 rebuild: read the page (Artifact read; it saves the full HTML to a file), then run
 `python3 scripts/owner_inbox_page.py --absorb <that file>`: it writes his "Mark as read" taps into the
-.md as `**READ (date)**` lines (a rebuild without this loses them) and prints his answers and his
+.md as `**READ (date)**` lines and his chat renames into the `**Chat:**` lines (a rebuild without this loses them) and prints his answers and his
 feature comments to act on. Answers come back two ways: (1) the page's "Send to Claude" saves them
 INTO the page (the watching session is woken by that republish); (2) the desktop mod `/inbox`
 (plugins/owner-inbox) posts "Owner inbox #N (...): ..." into the chat as his own words. A reply to an

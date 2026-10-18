@@ -195,6 +195,31 @@ class Backlog(unittest.TestCase):
         self.assertIn('"notes":{}', html)
         self.assertIn("Staff salaries", html)
 
+    def test_rename_chats_keeps_links_and_other_chats(self):
+        # R-28: the owner renames a chat on the page; --absorb writes it into every **Chat:** line.
+        out = page.rename_chats(SAMPLE, {"Chat two": "UAT chat", "Chat one": "PC chat", "Gone": "x"})
+        d = page.parse(out)
+        self.assertEqual([(e["chat"], e["chatUrl"]) for e in d["entries"]],
+                         [("UAT chat", "https://claude.ai/code/session_x"), ("PC chat", "")])
+        self.assertEqual(page.rename_chats(SAMPLE, {}), SAMPLE)
+        self.assertEqual(page.rename_chats(SAMPLE, {"Chat one": "  "}), SAMPLE)  # a blank name changes nothing
+
+    def test_absorb_applies_chat_names(self):
+        import json, tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            md = os.path.join(tmp, "inbox.md")
+            with open(md, "w", encoding="utf-8") as f:
+                f.write(SAMPLE)
+            saved = "\n".join(["x", "const DATA = " + json.dumps({"entries": [], "chatNames": {"Chat one": "PC chat"}}) + ";", "y"])
+            page.absorb(saved, md)
+            with open(md, encoding="utf-8") as f:
+                self.assertEqual([e["chat"] for e in page.parse(f.read())["entries"]], ["Chat two", "PC chat"])
+
+    def test_page_has_rename(self):
+        html = page.fill(page.TEMPLATE, {"entries": [], "answers": {}})
+        self.assertIn('id="rename"', html)
+        self.assertIn("chatLabel(e.chat)", html)
+
 
 if __name__ == "__main__":
     unittest.main()

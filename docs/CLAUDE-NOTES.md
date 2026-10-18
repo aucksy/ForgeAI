@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-28. Rename chats on the inbox page — 18 Oct 2026
+**Owner said:** "Give me option to rename chat names"
+**Done:** a "Rename" button beside the Chat list (for the chat picked). The new name saves into the
+page like his other taps (DATA.chatNames, old name -> new name) and shows at once in the list and on
+every entry. `--absorb` writes it into the .md's `**Chat:**` lines (the link is kept), so a rebuild
+keeps it. An empty name or one already used by another chat is refused.
+
 ## R-27. Put the PC chat in the inbox page's chat list — 18 Oct 2026
 **Owner said:** "get yourself familiar with Owner Inbox rules and add this chat in its chat dropdown"
 **Done:** the page's Chat list is built from the entries' `**Chat:**` lines, so this chat gets in

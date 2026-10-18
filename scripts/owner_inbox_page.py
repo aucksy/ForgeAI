@@ -176,6 +176,18 @@ def set_read(text, num, when):
     return text
 
 
+def rename_chats(text, names):
+    """R-28: every `**Chat:** <old>` line (its link kept) gets the owner's new name from the page."""
+    def one(m):
+        raw, link = m.group(1).strip(), ""
+        um = re.search(r"\s+—\s+(https://\S+)$", raw)
+        if um:
+            raw, link = raw[: um.start()].strip(), " — " + um.group(1)
+        new = names.get(raw)
+        return "**Chat:** " + (new.strip() if isinstance(new, str) and new.strip() else raw) + link
+    return re.sub(r"^\*\*Chat:\*\* (.+)$", one, text, flags=re.M)
+
+
 def absorb(saved_html, md_path=INBOX):
     """Move the page's read taps into the .md; return the answers/replies the page holds (to act on)."""
     data = page_data(saved_html)
@@ -189,6 +201,7 @@ def absorb(saved_html, md_path=INBOX):
     for num, a in answers.items():
         if num not in read:
             text = set_read(text, int(num), str(a.get("at") or "sent"))
+    text = rename_chats(text, data.get("chatNames") or {})
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(text)
     return answers
@@ -315,6 +328,10 @@ article.unread { border-left: 4px solid var(--accent); }
 .btn.ghost.quiet { color: var(--muted); border-color: var(--line); }
 pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono); font-size: 0.8rem; margin: 6px 0 0; }
 .decide a { color: var(--ink); }
+/* R-28 (owner, 18 Oct): rename a chat; the name is saved into the page like a read tap. */
+.renamebox { display: flex; flex-direction: column; gap: 8px; }
+.renamebox input { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; box-sizing: border-box; }
+.renamebox input:focus-visible, #rename:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 </style>
 
@@ -323,6 +340,12 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
   <div class="controls">
     <label class="lbl" for="chat">Chat</label>
     <select id="chat"></select>
+    <button class="btn ghost quiet" id="rename" type="button" hidden>Rename</button>
+  </div>
+  <div class="renamebox" id="renamebox" hidden>
+    <label class="notelbl" for="newname">New name for this chat</label>
+    <input id="newname" maxlength="80" autocomplete="off">
+    <div class="actions"><button class="btn" id="rensave" type="button">Save name</button><button class="btn ghost quiet" id="rencancel" type="button">Cancel</button><span class="msg" id="renmsg" role="status"></span></div>
   </div>
   <div class="chips" role="group" aria-label="Show">
     <button class="chip" data-f="waiting" aria-pressed="false">Waiting for you</button>
@@ -359,6 +382,8 @@ DATA.answers = DATA.answers || {};
 DATA.read = DATA.read || {}; // num -> when tapped, or false for "mark as unread" (moved into the .md by --absorb)
 DATA.notes = DATA.notes || {}; // feature id -> {group, name, text, at}: a comment on a backlog feature (printed by --absorb)
 DATA.backlog = DATA.backlog || [];
+DATA.chatNames = DATA.chatNames || {}; // R-28: chat as in the .md -> the owner's new name (written into the .md by --absorb)
+const chatLabel = (c) => DATA.chatNames[c] || c;
 let chat = "all", filter = "all";
 let blKind = null; // a status pill tapped in the backlog / built tab: only that status (null = all)
 const picks = {}; // num -> {qIndex: key}
@@ -393,9 +418,13 @@ const toRead = (e) => !needsAnswer(e) && !isRead(e);
 $("updated").textContent = "Updated " + DATA.updated;
 const chats = [...new Set(DATA.entries.map((e) => e.chat))];
 $("chat").innerHTML = '<option value="all">All chats (' + chats.length + ")</option>" +
-  chats.map((c) => '<option value="' + esc(c) + '">' + esc(c) + "</option>").join("");
+  chats.map((c) => '<option value="' + esc(c) + '">' + esc(chatLabel(c)) + "</option>").join("");
 if (chat !== "all" && !chats.includes(chat)) chat = "all";
 $("chat").value = chat;
+// R-28: "Rename" shows for one picked chat (not for "All chats").
+const closeRename = () => { $("renamebox").hidden = true; $("renmsg").textContent = ""; };
+const syncRename = () => { $("rename").hidden = chat === "all"; if (chat === "all") closeRename(); };
+syncRename();
 
 // #21 follow-up (owner, 18 Oct): each tab shows only its own content: no boxes above the tabs.
 const TAB = { all: "Questions and answers", waiting: "Waiting for your decision" };
@@ -524,7 +553,7 @@ function render() {
     '<article id="e' + e.num + '"' + (pending(e) ? ' class="unread"' : "") + '><header><span class="num">#' + e.num + "</span><div><h3>" + esc(e.title) + "</h3>" +
     '<div class="meta">' + (needsAnswer(e) ? '<span class="new">To answer</span>' : !isRead(e) ? '<span class="new">New</span>' : "") +
     '<span class="status k-' + e.kind + '">' + (sentOf(e) ? (e.decides.length ? "Answer sent" : "Reply sent") : KIND[e.kind]) + "</span><span>" + esc(e.date) + "</span>" +
-    (e.chatUrl ? '<a href="' + esc(e.chatUrl) + '" target="_blank" rel="noopener">' + esc(e.chat) + "</a>" : "<span>" + esc(e.chat) + "</span>") +
+    (e.chatUrl ? '<a href="' + esc(e.chatUrl) + '" target="_blank" rel="noopener">' + esc(chatLabel(e.chat)) + "</a>" : "<span>" + esc(chatLabel(e.chat)) + "</span>") +
     "</div></div></header>" +
     (e.status ? '<p class="pick">' + esc(e.status) + "</p>" : "") +
     (e.decides.length ? formHtml(e) : "") +
@@ -583,6 +612,17 @@ function send(n) {
   save(() => { DATA.answers[n] = answer; delete picks[n]; keepPicks(); },
     () => { delete DATA.answers[n]; if (kept) picks[n] = kept; keepPicks(); }, msg, answerText(e, answer));
 }
+function renameChat() {
+  const msg = $("renmsg");
+  const name = ($("newname").value || "").trim().replace(/\s+/g, " ").slice(0, 80);
+  if (!name) { msg.textContent = "Type a name first."; return; }
+  if (/https?:/i.test(name) || name.includes("—")) { msg.textContent = "Leave out links and long dashes."; return; }
+  if (name === chatLabel(chat)) { closeRename(); return; }
+  if (chats.some((c) => c !== chat && chatLabel(c).toLowerCase() === name.toLowerCase())) { msg.textContent = "Another chat already has this name."; return; }
+  const raw = chat, had = raw in DATA.chatNames, before = DATA.chatNames[raw];
+  save(() => { DATA.chatNames[raw] = name; }, () => { if (had) DATA.chatNames[raw] = before; else delete DATA.chatNames[raw]; },
+    msg, 'Owner inbox: rename the chat "' + chatLabel(raw) + '" to "' + name + '"');
+}
 function markRead(n, on) {
   const had = n in DATA.read, before = DATA.read[n];
   const e = DATA.entries.find((x) => x.num === n);
@@ -635,7 +675,11 @@ document.addEventListener("click", (ev) => {
     });
   }
 });
-$("chat").addEventListener("change", (ev) => { chat = ev.target.value; try { localStorage.setItem("inbox-chat", chat); } catch (e) { /* not kept */ } render(); });
+$("chat").addEventListener("change", (ev) => { chat = ev.target.value; try { localStorage.setItem("inbox-chat", chat); } catch (e) { /* not kept */ } syncRename(); render(); });
+$("rename").addEventListener("click", () => { $("newname").value = chatLabel(chat); $("renmsg").textContent = ""; $("renamebox").hidden = false; $("newname").focus(); $("newname").select(); });
+$("rencancel").addEventListener("click", closeRename);
+$("rensave").addEventListener("click", renameChat);
+$("newname").addEventListener("keydown", (ev) => { if (ev.key === "Enter") renameChat(); if (ev.key === "Escape") closeRename(); });
 document.querySelectorAll(".chip").forEach((b) => b.addEventListener("click", () => {
   filter = b.dataset.f;
   blKind = null;
@@ -654,7 +698,10 @@ def main(argv):
         print("read taps written into the inbox; answers and replies to act on: " + str(len(answers)))
         for num, a in sorted(answers.items(), key=lambda kv: -int(kv[0])):
             print(json.dumps({"num": int(num), **a}, ensure_ascii=False))
-        notes = page_data(open(argv[2], encoding="utf-8").read()).get("notes") or {}
+        saved = page_data(open(argv[2], encoding="utf-8").read())
+        for old, new in (saved.get("chatNames") or {}).items():
+            print("chat renamed in the inbox: " + json.dumps(old, ensure_ascii=False) + " -> " + json.dumps(new, ensure_ascii=False))
+        notes = saved.get("notes") or {}
         print("feature comments to act on (write each into the inbox as a new entry): " + str(len(notes)))
         for fid, n in notes.items():
             print(json.dumps({"feature": fid, **n}, ensure_ascii=False))
