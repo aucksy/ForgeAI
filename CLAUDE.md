@@ -41,6 +41,11 @@ Each open question needs `**Decide:** <question>` + `- A: <option>` lines (mark 
 feedback, ideas) with your short answer, plus decisions that are truly his (the #18 list below).
 Never post build news, progress or "BUILT" updates there: those go in PROGRESS.md / HANDOFF, and
 in chat. A decision you are sure is the best member experience is yours: make it, don't list it.
+**Feature backlog (#21):** the `## Feature backlog` section at the top of the inbox (`### <group>` +
+`| Feature | Status | Details |`, Status one of Live / Next release / Planned / Idea / Waiting for you /
+Not doing; one short plain sentence each) is the owner's map of every feature. Keep it current: add a
+row when something is decided, move a row when it ships. His comments on a feature come back via
+`--absorb` ("feature comments to act on"): write each as a new inbox entry with your answer.
 
 ## ⭐ Research demand before building a feature
 Before building any NEW feature the owner asks for (not a bug fix): search the web first —

@@ -141,5 +141,59 @@ class Page(unittest.TestCase):
             page.page_data("<html>no data</html>")
 
 
+BACKLOG = """# Owner inbox
+## Waiting for your decision (all in one place)
+
+| # | Decision | My pick |
+|---|---|---|
+
+---
+
+## Feature backlog
+Every feature, built and pending.
+
+### Member app
+| Feature | Status | Details |
+|---|---|---|
+| Workout logging | Live | Log sets, reps and weight. |
+| My membership | Next release | Plan and end date in the app. |
+| Workout logging | Live | A repeat is ignored. |
+
+### Admin app
+| Feature | Status | Details |
+|---|---|---|
+| Staff salaries | Planned | Pay staff from the app. |
+| Webcam photo | Something new | Take a photo at the desk. |
+
+---
+
+## 3. Third idea — 18 Oct 2026
+**Chat:** Chat three
+**Status:** ANSWERED
+"""
+
+
+class Backlog(unittest.TestCase):
+    def test_parse_backlog(self):
+        d = page.parse(BACKLOG)
+        b = d["backlog"]
+        self.assertEqual([f["name"] for f in b], ["Workout logging", "My membership", "Staff salaries", "Webcam photo"])
+        self.assertEqual([f["kind"] for f in b], ["done", "built", "planned", "idea"])
+        self.assertEqual(b[0]["id"], "member-app/workout-logging")
+        self.assertEqual(b[2]["group"], "Admin app")
+        # The backlog is not an entry, and entries still parse after it.
+        self.assertEqual([e["num"] for e in d["entries"]], [3])
+
+    def test_no_backlog(self):
+        self.assertEqual(page.parse(SAMPLE)["backlog"], [])
+
+    def test_page_has_backlog_and_to_read(self):
+        html = page.fill(page.TEMPLATE, {**page.parse(BACKLOG), "updated": "x", "answers": {}, "read": {}, "notes": {}})
+        self.assertIn('data-f="backlog"', html)
+        self.assertIn('id="toread"', html)
+        self.assertIn('"notes":{}', html)
+        self.assertIn("Staff salaries", html)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -18,6 +18,11 @@ without a pick; "Waiting for you" shows only what is unread or still unanswered.
 the .md as a `**READ (date)**` line; the page keeps the owner's new taps in DATA.read until a session
 moves them into the .md with --absorb (run on the saved page BEFORE every rebuild, or they are lost).
 
+#21 (18 Oct 2026): a Feature backlog view (the .md's "## Feature backlog" section: "### <group>" headings
+with "| Feature | Status | Details |" tables), each feature with its own comment box (saved into the page
+as DATA.notes, printed by --absorb like answers); "Waiting for you" counts decisions only, and the
+entries not read yet have their own "To read" list and filter.
+
 Usage: owner_inbox_page.py <output.html> [<inbox.md>]
        owner_inbox_page.py --absorb <saved-page.html> [<inbox.md>]
          writes the page's read taps into the .md and prints the answers/replies it holds
@@ -32,6 +37,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INBOX = os.path.join(ROOT, "docs", "OWNER-INBOX.md")
 
 ENTRY_RE = re.compile(r"^## (\d+)\. (.+?) — (.+)$", re.M)
+BACKLOG_RE = re.compile(r"^## Feature backlog[^\n]*\n(.*?)^---[ \t]*$", re.M | re.S)
+# A backlog row's status, as the page colours it.
+BACKLOG_KIND = {"live": "done", "next release": "built", "waiting for you": "waiting", "planned": "planned", "idea": "idea", "not doing": "no"}
 READ_RE = re.compile(r"^\*\*READ \([^)\n]*\)\*\*[ \t]*(?:\r?\n|$)", re.M)
 
 
@@ -103,7 +111,34 @@ def parse(text):
             "read": bool(rm),
             "body": body.strip(),
         })
-    return {"decisions": decisions, "entries": entries}
+    return {"decisions": decisions, "entries": entries, "backlog": parse_backlog(text)}
+
+
+def slug(s):
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:60]
+
+
+def parse_backlog(text):
+    """[{id, group, name, status, kind, details}] from the "## Feature backlog" section ([] without one)."""
+    m = BACKLOG_RE.search(text)
+    if not m:
+        return []
+    items, group, seen = [], "Other", set()
+    for line in m.group(1).splitlines():
+        hm = re.match(r"^### (.+)$", line)
+        if hm:
+            group = hm.group(1).strip()
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if not line.strip().startswith("|") or len(cells) != 3 or cells[0] in ("Feature", "") or set(cells[0]) <= set("-: "):
+            continue
+        fid = slug(group) + "/" + slug(cells[0])
+        if fid in seen:
+            continue
+        seen.add(fid)
+        items.append({"id": fid, "group": group, "name": cells[0], "status": cells[1],
+                      "kind": BACKLOG_KIND.get(cells[1].lower(), "idea"), "details": cells[2]})
+    return items
 
 
 def build(md_path=INBOX):
@@ -111,6 +146,7 @@ def build(md_path=INBOX):
     data["updated"] = datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")
     data["answers"] = {}
     data["read"] = {}
+    data["notes"] = {}
     return fill(TEMPLATE, data)
 
 
@@ -227,7 +263,18 @@ article h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem
 .k-waiting { color: var(--wait); background: var(--wait-bg); }
 .k-built { color: var(--built); background: var(--built-bg); }
 .k-done { color: var(--done); background: var(--done-bg); }
-.k-planned, .k-answered, .k-working { color: var(--plain); background: var(--plain-bg); }
+.k-planned, .k-answered, .k-working, .k-idea, .k-no { color: var(--plain); background: var(--plain-bg); }
+.k-no { text-decoration: line-through; }
+.toread { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.toread ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.toread li { display: grid; grid-template-columns: 3.2em 1fr; gap: 10px; align-items: start; }
+.bl-sum { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 0 0 14px; font-size: 0.85rem; color: var(--muted); }
+.bl-group { margin: 18px 0 8px; font-family: var(--f-display); font-weight: 600; font-size: 1rem; }
+.feat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; min-width: 0; }
+.feat .row { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; justify-content: space-between; }
+.feat .name { font-weight: 700; overflow-wrap: anywhere; }
+.feat .det { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; overflow-wrap: anywhere; }
+.feat details { margin-top: 6px; }
 details { margin-top: 10px; }
 summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; }
 .body { margin-top: 8px; min-width: 0; overflow-wrap: anywhere; }
@@ -276,9 +323,11 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
   <div class="chips" role="group" aria-label="Show">
     <button class="chip" data-f="all" aria-pressed="true">All</button>
     <button class="chip" data-f="waiting" aria-pressed="false">Waiting for you</button>
+    <button class="chip" data-f="toread" aria-pressed="false">To read</button>
     <button class="chip" data-f="built" aria-pressed="false">Built, not released</button>
     <button class="chip" data-f="done" aria-pressed="false">Done</button>
     <button class="chip" data-f="other" aria-pressed="false">Answered / planned</button>
+    <button class="chip" data-f="backlog" aria-pressed="false">Feature backlog</button>
   </div>
 </div></header>
 
@@ -288,9 +337,17 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
     <ol id="decisions"></ol>
     <p class="pick">Tap a question, pick an answer (or just write a comment), press Send. Or reply in chat, e.g. "#13: A".</p>
   </section>
-  <section aria-labelledby="eh">
+  <section class="toread" aria-labelledby="rh">
+    <h2 id="rh">To read</h2>
+    <ol id="toread"></ol>
+  </section>
+  <section id="entrybox" aria-labelledby="eh">
     <h2 id="eh">Your ideas and my answers <span class="count" id="count"></span></h2>
     <div class="entries" id="entries"></div>
+  </section>
+  <section id="backlogbox" aria-labelledby="bh" hidden>
+    <h2 id="bh">Feature backlog</h2>
+    <div id="backlog"></div>
   </section>
 </div></main>
 
@@ -308,6 +365,8 @@ const KIND = { waiting: "Waiting for you", built: "Built, not released", done: "
 const RESET = ":root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}";
 DATA.answers = DATA.answers || {};
 DATA.read = DATA.read || {}; // num -> when tapped, or false for "mark as unread" (moved into the .md by --absorb)
+DATA.notes = DATA.notes || {}; // feature id -> {group, name, text, at}: a comment on a backlog feature (printed by --absorb)
+DATA.backlog = DATA.backlog || [];
 let chat = "all", filter = "all";
 const picks = {}; // num -> {qIndex: key}
 try { chat = localStorage.getItem("inbox-chat") || "all"; filter = localStorage.getItem("inbox-filter") || "all"; } catch (e) { /* storage blocked: defaults */ }
@@ -325,11 +384,13 @@ const MARK_TPL = "__" + "TPL__", MARK_DATA = "__" + "DATA__";
 const pageHtml = () => '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + RESET +
   "</style></head><body>" + TPL.replace(new RegExp(MARK_TPL + "|" + MARK_DATA, "g"), (m) => (m === MARK_TPL ? enc(TPL) : enc(DATA))) + "</body></html>";
 
-// "Waiting for you" = a question still to answer, or an entry not read yet. Sending a reply counts as read.
+// #21: "Waiting for you" = a question still to answer (decisions only); "To read" = an entry not read yet.
+// Sending an answer or a reply counts as read.
 const sentOf = (e) => DATA.answers[e.num];
 const isRead = (e) => Boolean(sentOf(e)) || (e.num in DATA.read ? Boolean(DATA.read[e.num]) : Boolean(e.read));
 const needsAnswer = (e) => e.decides.length > 0 && !sentOf(e);
 const pending = (e) => needsAnswer(e) || !isRead(e);
+const toRead = (e) => !needsAnswer(e) && !isRead(e);
 
 $("updated").textContent = "Updated " + DATA.updated;
 const chats = [...new Set(DATA.entries.map((e) => e.chat))];
@@ -340,10 +401,15 @@ $("chat").value = chat;
 
 const open = DATA.entries.filter((e) => e.decides.length);
 $("decisions").innerHTML = open.length
-  ? open.map((e) => '<li><span class="num">#' + e.num + '</span><div><a href="#e' + e.num + '">' + esc(e.title) + "</a>" +
+  ? open.map((e) => '<li><span class="num">#' + e.num + '</span><div><a href="#e' + e.num + '" data-goto="' + e.num + '">' + esc(e.title) + "</a>" +
       '<span class="pick">' + (sentOf(e) ? "Sent, waiting for Claude to act" : e.decides.length + (e.decides.length > 1 ? " choices" : " choice") + " to make") + "</span></div></li>").join("")
   : '<li class="none">Nothing waiting for you.</li>';
 $("dh").textContent = "Waiting for your decision (" + open.filter(needsAnswer).length + ")";
+const unread = DATA.entries.filter(toRead);
+$("toread").innerHTML = unread.length
+  ? unread.map((e) => '<li><span class="num">#' + e.num + '</span><div><a href="#e' + e.num + '" data-goto="' + e.num + '">' + esc(e.title) + '</a><span class="pick">' + esc(KIND[e.kind]) + "</span></div></li>").join("")
+  : '<li class="none">Nothing new to read.</li>';
+$("rh").textContent = "To read (" + unread.length + ")";
 
 function answerText(e, a) {
   const lines = a.picks.map((p) => "- " + p.q + ": " + p.key + " (" + p.text + ")");
@@ -383,15 +449,46 @@ function readHtml(e) {
 function shown(e) {
   if (chat !== "all" && e.chat !== chat) return false;
   if (filter === "all") return true;
-  if (filter === "waiting") return pending(e);
+  if (filter === "waiting") return needsAnswer(e);
+  if (filter === "toread") return toRead(e);
   if (filter === "other") return ["planned", "answered", "working"].includes(e.kind);
   return e.kind === filter;
 }
+const BL_KIND = { done: "Live", built: "Next release", waiting: "Waiting for you", planned: "Planned", idea: "Idea", no: "Not doing" };
+function noteText(f, text) { return "Owner inbox feature backlog: " + f.group + " / " + f.name + ": " + text; }
+function backlogHtml() {
+  if (!DATA.backlog.length) return '<p class="none">No features listed yet.</p>';
+  const counts = {};
+  DATA.backlog.forEach((f) => { counts[f.kind] = (counts[f.kind] || 0) + 1; });
+  const sum = '<p class="bl-sum">' + Object.keys(BL_KIND).filter((k) => counts[k]).map((k) => '<span class="status k-' + k + '">' + BL_KIND[k] + " " + counts[k] + "</span>").join("") +
+    "<span>Tap a feature's \u201cComment\u201d to send me a note about it.</span></p>";
+  let out = sum, group = null;
+  DATA.backlog.forEach((f, i) => {
+    if (f.group !== group) { group = f.group; out += '<h3 class="bl-group">' + esc(group) + "</h3>"; }
+    const sent = DATA.notes[f.id];
+    out += '<div class="feat"><div class="row"><span class="name">' + esc(f.name) + '</span><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
+      '<p class="det">' + esc(f.details) + "</p>" +
+      (sent
+        ? '<div class="form sent"><p class="sentline">Comment sent ' + esc(sent.at) + ". Claude acts on it next time it looks at your inbox.</p><pre>" + esc(sent.text) + "</pre>" +
+          '<div class="actions"><button class="btn ghost" data-act="renote" data-i="' + i + '">Write another</button></div></div>'
+        : '<details><summary>Comment</summary><div class="form"><label class="notelbl" for="fnote' + i + '">Your comment on ' + esc(f.name) + "</label>" +
+          '<textarea id="fnote' + i + '" rows="2" placeholder="e.g. Do this one first, members keep asking"></textarea>' +
+          '<div class="actions"><button class="btn" data-act="fnote" data-i="' + i + '">Send to Claude</button><span class="msg" id="fmsg' + i + '" role="status"></span></div></div></details>') +
+      "</div>";
+  });
+  return out;
+}
 function render() {
+  const bl = filter === "backlog";
+  $("entrybox").hidden = bl;
+  $("backlogbox").hidden = !bl;
+  document.querySelector('.chip[data-f="backlog"]').textContent = "Feature backlog (" + DATA.backlog.length + ")";
+  if (bl) { $("backlog").innerHTML = backlogHtml(); document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter))); return; }
   const list = DATA.entries.filter(shown);
   $("count").textContent = "· " + list.length + " of " + DATA.entries.length;
   const mineChat = DATA.entries.filter((e) => chat === "all" || e.chat === chat);
-  document.querySelector('.chip[data-f="waiting"]').textContent = "Waiting for you (" + mineChat.filter(pending).length + ")";
+  document.querySelector('.chip[data-f="waiting"]').textContent = "Waiting for you (" + mineChat.filter(needsAnswer).length + ")";
+  document.querySelector('.chip[data-f="toread"]').textContent = "To read (" + mineChat.filter(toRead).length + ")";
   $("entries").innerHTML = list.length ? list.map((e) =>
     '<article id="e' + e.num + '"' + (pending(e) ? ' class="unread"' : "") + '><header><span class="num">#' + e.num + "</span><div><h3>" + esc(e.title) + "</h3>" +
     '<div class="meta">' + (needsAnswer(e) ? '<span class="new">To answer</span>' : !isRead(e) ? '<span class="new">New</span>' : "") +
@@ -403,7 +500,7 @@ function render() {
     "<details" + (e.decides.length || !isRead(e) ? " open" : "") + "><summary>" + (e.decides.length ? "The full question and my answer" : "The answer") + "</summary>" +
     '<div class="body">' + md(e.body) + "</div></details>" +
     (e.decides.length ? "" : formHtml(e)) + readHtml(e) + "</article>").join("")
-    : '<p class="none">' + (filter === "waiting" ? "Nothing waiting for you: everything is read and answered." : 'No entries match. Pick "All".') + "</p>";
+    : '<p class="none">' + (filter === "waiting" ? "No decisions waiting for you." : filter === "toread" ? "Nothing new to read." : 'No entries match. Pick "All".') + "</p>";
   document.querySelectorAll(".body table").forEach((t) => { const box = document.createElement("div"); box.className = "tablebox"; t.replaceWith(box); box.appendChild(t); });
   document.querySelectorAll(".body a").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
   document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter)));
@@ -448,6 +545,15 @@ function markRead(n, on) {
   save(() => { DATA.read[n] = on ? stamp() : false; }, () => { if (had) DATA.read[n] = before; else delete DATA.read[n]; },
     $("rmsg" + n), "Owner inbox #" + e.num + " (" + e.title + "): " + (on ? "read" : "mark as unread"));
 }
+function sendNote(i) {
+  const f = DATA.backlog[i];
+  const msg = $("fmsg" + i);
+  const text = ($("fnote" + i).value || "").trim().slice(0, 2000);
+  if (!text) { msg.textContent = "Write your comment first."; return; }
+  const had = DATA.notes[f.id];
+  save(() => { DATA.notes[f.id] = { group: f.group, name: f.name, text, at: stamp() }; },
+    () => { if (had) DATA.notes[f.id] = had; else delete DATA.notes[f.id]; }, msg, noteText(f, text));
+}
 function showCopy(msg, why, text) {
   msg.innerHTML = esc(why) + ' Copy it and paste it in the chat instead: <button class="btn ghost" data-act="copy">Copy</button><pre class="copy">' + esc(text) + "</pre>";
 }
@@ -462,6 +568,12 @@ document.addEventListener("change", (ev) => {
   }
 });
 document.addEventListener("click", (ev) => {
+  // A link to an entry the current filter hides (or the backlog view): show all entries first.
+  const g = ev.target.closest("a[data-goto]");
+  if (g) {
+    const e = DATA.entries.find((x) => x.num === Number(g.dataset.goto));
+    if (filter === "backlog" || (e && !shown(e))) { filter = "all"; render(); }
+  }
   const b = ev.target.closest("button[data-act]");
   if (!b) return;
   const n = Number(b.dataset.n);
@@ -469,6 +581,8 @@ document.addEventListener("click", (ev) => {
   if (b.dataset.act === "read") markRead(n, true);
   if (b.dataset.act === "unread") markRead(n, false);
   if (b.dataset.act === "change") { delete DATA.answers[n]; render(); }
+  if (b.dataset.act === "fnote") sendNote(Number(b.dataset.i));
+  if (b.dataset.act === "renote") { delete DATA.notes[DATA.backlog[Number(b.dataset.i)].id]; render(); }
   if (b.dataset.act === "copy") {
     const pre = b.parentElement.querySelector("pre.copy");
     navigator.clipboard.writeText(pre.textContent).then(() => { b.textContent = "Copied"; }, () => {
@@ -489,6 +603,10 @@ def main(argv):
         print("read taps written into the inbox; answers and replies to act on: " + str(len(answers)))
         for num, a in sorted(answers.items(), key=lambda kv: -int(kv[0])):
             print(json.dumps({"num": int(num), **a}, ensure_ascii=False))
+        notes = page_data(open(argv[2], encoding="utf-8").read()).get("notes") or {}
+        print("feature comments to act on (write each into the inbox as a new entry): " + str(len(notes)))
+        for fid, n in notes.items():
+            print(json.dumps({"feature": fid, **n}, ensure_ascii=False))
         return 0
     if len(argv) not in (2, 3):
         print(__doc__)
