@@ -28,19 +28,15 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
   https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT, /inbox desktop mod (plugins/owner-inbox).
 
 ### Next
-- ⭐ NEXT SESSION, read docs/OWNER-INBOX.md first. Owner answered 5 questions on 18 Oct (now DECIDED
-  in the inbox, with his notes): #13 B exercise-level "busy times" (opt-in sharing, no equipment list),
-  #12 A gate-QR Step 1, #11 A/A/A (gym-logo shortcut, welcome-screen join, research Google login),
-  #9 A/A + per-exercise kg target with % overload and expandable per-set targets, #7 A offline front
-  desk for the admin app AND the Chrome website (grey out what can't work, persistent offline banner).
-  #17 (inbox page: mark as read, reply to any answer, comment without picking, Waiting = unread or
-  open) BUILT 18 Oct: before every page rebuild run `owner_inbox_page.py --absorb <saved page>` (CLAUDE.md).
-  Next: plan the builds above (new features: research + plan first per CLAUDE.md;
-  #7 is admin/CRM = gated on fieldwork? check docs/overhaul/FIELDWORK.md and ask if unsure).
-- v0.47.1 tag: owner pushes from the PC (prompt in chat; commit 8403202; dry run green).
-- v0.47.0 PUBLISHED 17 Oct (release run 39052565058). v0.47.1 (U-M7, U-M8, U-G6 + sturdier phone tests)
-  green on b43a095 (39074784648, 39074786096, 39074787606); bump commit below waits for its tag from the
-  PC: `git tag -a v0.47.1 8403202 -m v0.47.1 && git push origin v0.47.1`. Release dry run 39082827847 on 8403202: SUCCESS. Owner decisions waiting: docs/OWNER-INBOX.md (table on top).
+- ⭐ NEXT SESSION, read docs/OWNER-INBOX.md first. Owner rule #18 (CLAUDE.md): decide UX and build
+  order yourself; ask only for money, LIVE data, client promises/legal, personal-vs-product.
+- Built 18 Oct, NOT released (next: v0.48.0): #12 step 1 (check-in offers the workout), #11 welcome
+  join + gym-logo home-screen shortcut (Kotlin GymShortcut.kt: compile check = qa-device only=a run on
+  main), #6 "My membership" (needs 0023 live; card hidden until then), #17 inbox page.
+- Still to build (decided): #9 per-exercise kg target + % overload + per-set targets; #13 exercise-level
+  busy times (opt-in sharing); #11 Google login research; #6 gym workout plans next; #7 offline front
+  desk (admin/CRM: check FIELDWORK gating).
+- v0.47.1 PUBLISHED 18 Oct (release run 39092447178): phone + watch APKs and the AAB uploaded.
 - WP15 (Play pre-launch / Firebase Test Lab) not started.
 - Admin app: no code change since the last deploy (8672a6b); nothing to deploy.
 
@@ -57,10 +53,10 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - WP9 gym fixes + REPAIR PART R (blocks whole phone runs).
 
 ### PC must do
-- Owner yes -> apply 0021_receipt_rules.sql, then 0022_key_status.sql, on the live database; run
+- Owner yes -> apply 0021_receipt_rules.sql, 0022_key_status.sql, then 0023_member_membership.sql, on the live database; run
   every supabase/tests/*.sql live (expect RESULT PASS, "findings still open: none").
 - Deploy the admin app after any admin change (checked build, then wrangler in deploy/panel).
 
 ### Owner decisions needed
-- Apply the two database changes above (recommend: yes).
+- Apply the three database changes above (recommend: yes).
 - Optional: delete Actions run 38965066052 (two already-revoked test keys in its log).
