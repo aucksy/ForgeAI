@@ -375,7 +375,7 @@ things work.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** DECIDED: workout plans go live from the PC (0024)
+**Status:** DONE (server live 18 Oct; member app in v0.48.0)
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
 the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
@@ -421,6 +421,9 @@ Members see "My membership" once they have the next app release (v0.48.0).
 **DECIDED (18 Oct, in chat):** "yeah of course - lets switch it on": apply 0024 on the live server
 from the PC, run its checks, then put up the new admin app (in that order). The paste-in steps
 for Claude on the PC are in chat and in docs/uat/HANDOFF.md ("PC must do").
+**DONE (18 Oct, from your PC):** 0024 is live, no errors; its checks all passed on the live server
+(including "one gym can never see another gym's records"), and the new admin app is up. Trainers
+can send plans now; members see them once they have the next app release (v0.48.0).
 
 
 ## 5. Use the admin app's icon for the mobile app — 16 Oct 2026
