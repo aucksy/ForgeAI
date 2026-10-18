@@ -1018,6 +1018,43 @@ export function Toast({ message }: { message: string }) {
   );
 }
 
+/**
+ * A toast with an Undo button (a step that is easy to take back: an enquiry marked not interested,
+ * a plan sent in one tap). The screen shows it for a few seconds, then takes it away.
+ */
+export function UndoBar({ message, onUndo, undoLabel }: { message: string; onUndo: () => void; undoLabel?: string }) {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      style={{
+        position: 'fixed',
+        bottom: 92,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 60,
+        display: 'flex',
+        alignItems: 'center',
+        gap: space.md,
+        background: color.surfaceRaised,
+        border: `1px solid ${color.borderStrong}`,
+        borderRadius: radius.pill,
+        padding: '4px 6px 4px 18px',
+        color: color.ink,
+        fontFamily: font.body,
+        fontSize: 14,
+        boxShadow: '0 8px 30px rgba(0,0,0,0.45)',
+        maxWidth: 'calc(100vw - 32px)',
+      }}
+    >
+      <span style={{ minWidth: 0, overflowWrap: 'anywhere' }}>{message}</span>
+      <Button variant="ghost" onClick={onUndo} ariaLabel={undoLabel}>
+        Undo
+      </Button>
+    </div>
+  );
+}
+
 /** Horizontal-scroll container so a wide table never makes the page scroll sideways. */
 export function ScrollX({ children }: { children: ReactNode }) {
   return <div style={{ overflowX: 'auto', margin: `0 -${space.xl}px`, padding: `0 ${space.xl}px` }}>{children}</div>;

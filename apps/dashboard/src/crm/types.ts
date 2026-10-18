@@ -306,12 +306,36 @@ export type ExpenseDraft = Pick<Expense, 'spentOn' | 'amountP' | 'category' | 'n
  */
 export type WorkoutDayType = 'push' | 'pull' | 'legs' | 'upper' | 'lower' | 'full';
 
+/**
+ * How the phone logs an exercise: the library's type (logic/exerciseCatalog.ts `CatalogLogType`);
+ * an exercise typed by hand is weight and reps.
+ */
+export type WorkoutLogType = 'weight_reps' | 'reps' | 'weighted' | 'assisted' | 'time';
+
+/**
+ * One set's starting numbers: the member app's `PlanSet` (apps/mobile/src/tracker/plans/routineSets.ts).
+ * The builder writes only 'normal' sets: `reps` + `weightKg` (for a 'weighted' exercise, the kg
+ * ADDED to body weight), or `durationSec` for a timed hold.
+ */
+export interface WorkoutSet {
+  type: 'warmup' | 'normal' | 'drop' | 'failure';
+  reps?: number | null;
+  weightKg?: number | null;
+  durationSec?: number | null;
+}
+
 /** One exercise in a routine, in the member app's routine-file shape (`SharedExercise`). */
 export interface WorkoutExercise {
   name: string;
   /** The library key (logic/exerciseCatalog.ts); null = typed by hand, the phone makes it new. */
   catalogKey: string | null;
-  logType: 'weight_reps';
+  logType: WorkoutLogType;
+  /**
+   * The working sets with their starting weight (or time), one per set; absent = no starting
+   * numbers (the member picks). The phone fills its boxes from it until the member has logged the
+   * exercise; after that their own numbers lead.
+   */
+  setList?: WorkoutSet[] | null;
   sets: number;
   repMin: number;
   repMax: number;

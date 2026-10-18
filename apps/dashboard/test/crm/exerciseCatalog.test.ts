@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { EXERCISE_CATALOG } from '../../src/crm/logic/exerciseCatalog';
+import TEMPLATES from '../../src/crm/logic/programTemplates.json';
 
 const MOBILE = readFileSync(
   fileURLToPath(new URL('../../../mobile/src/tracker/catalog/catalogData.ts', import.meta.url)),
@@ -32,21 +33,36 @@ function mobileEntry(key: string): string | null {
 }
 
 describe('the admin app’s exercise list matches the member app’s library', () => {
-  it('is a real list (about 60 common lifts), with no key twice', () => {
-    expect(EXERCISE_CATALOG.length).toBeGreaterThanOrEqual(50);
+  it('is a real list (about 110 common gym exercises), with no key twice', () => {
+    expect(EXERCISE_CATALOG.length).toBeGreaterThanOrEqual(100);
     expect(new Set(EXERCISE_CATALOG.map((e) => e.key)).size).toBe(EXERCISE_CATALOG.length);
     expect(new Set(EXERCISE_CATALOG.map((e) => e.name.toLowerCase())).size).toBe(EXERCISE_CATALOG.length);
   });
 
-  it('every key is in the library, with the same name and a weight-and-reps type', () => {
+  it('every key is in the library, with the same name and the same type (how the phone logs it)', () => {
     const missing: string[] = [];
     for (const e of EXERCISE_CATALOG) {
       const entry = mobileEntry(e.key);
       if (!entry) missing.push(`${e.key}: no such key`);
       else if (!field('name', e.name).test(entry)) missing.push(`${e.key}: name is not "${e.name}"`);
-      else if (!field('type', 'weight_reps').test(entry)) missing.push(`${e.key}: not weight_reps`);
+      else if (!field('type', e.logType).test(entry)) missing.push(`${e.key}: not ${e.logType}`);
     }
     expect(missing).toEqual([]);
+  });
+
+  it('holds every kind of exercise a gym plan uses, not only weight and reps', () => {
+    const kinds = new Set(EXERCISE_CATALOG.map((e) => e.logType));
+    expect([...kinds].sort()).toEqual(['assisted', 'reps', 'time', 'weight_reps', 'weighted']);
+    for (const key of ['pull_up', 'chin_up', 'push_up', 'chest_dip', 'plank', 'weighted_pull_up', 'weighted_dip', 'hanging_leg_raise']) {
+      expect(EXERCISE_CATALOG.some((e) => e.key === key)).toBe(true);
+    }
+  });
+
+  it('every exercise in a ready plan (programTemplates.json) is in the list', () => {
+    const keys = new Set(EXERCISE_CATALOG.map((e) => e.key));
+    const used = TEMPLATES.flatMap((t) => t.routines.flatMap((r) => r.exercises.map((x) => x.key)));
+    expect(used.length).toBeGreaterThan(50);
+    expect([...new Set(used)].filter((k) => !keys.has(k))).toEqual([]);
   });
 
   it('every main muscle is a member-app muscle, and the library lists it for that exercise', () => {

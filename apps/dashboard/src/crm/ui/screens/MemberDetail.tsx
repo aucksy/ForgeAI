@@ -43,7 +43,7 @@ import {
   ptUsed,
   runningPtPacks,
 } from '../../logic/pt';
-import type { Membership, Payment } from '../../types';
+import type { Membership, Payment, WorkoutPlan, WorkoutPlanDraft } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
 import { ExtendMembershipSheet } from '../forms/ExtendMembershipSheet';
 import { useAuth, useCan } from '../../auth/AuthProvider';
@@ -52,8 +52,8 @@ import { SellMembershipSheet } from '../forms/SellMembershipSheet';
 import { VoidPaymentSheet } from '../forms/VoidPaymentSheet';
 import { MemberCardSheet } from '../MemberCardSheet';
 import { memberCardFacts } from '../../logic/memberCard';
-import { emptyWorkoutDraft, plansForMember } from '../../logic/workoutPlans';
-import { NOT_ONLINE_YET, WorkoutPlanSheet } from './WorkoutPlans';
+import { plansForMember, withoutMember } from '../../logic/workoutPlans';
+import { NOT_ONLINE_YET, SendPlanSheet, WorkoutPlanSheet } from './WorkoutPlans';
 import {
   Avatar,
   Button,
@@ -69,6 +69,7 @@ import {
   StatTile,
   TextField,
   Toast,
+  UndoBar,
   color,
   font,
   radius,
@@ -89,6 +90,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     uncancelMembership,
     markPtSession,
     undoPtSession,
+    saveWorkoutPlan,
   } = useCrm();
   const compact = useIsCompact();
   const { cloud } = useShop();
@@ -115,13 +117,25 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const [whatsApp, setWhatsApp] = useState(false);
   /** The member ID card sheet (owner and staff alike). */
   const [card, setCard] = useState(false);
-  /** "Send a plan": the workout plan builder, with this member already ticked. */
+  /**
+   * "Send a plan": a chooser (one tap sends one of the gym's plans), then, for a ready or new plan,
+   * the builder with this member already ticked.
+   */
   const [sendingPlan, setSendingPlan] = useState(false);
+  const [buildingPlan, setBuildingPlan] = useState<WorkoutPlanDraft | null>(null);
+  /** A plan just sent in one tap: the Undo bar takes this member off it again. */
+  const [sentPlan, setSentPlan] = useState<WorkoutPlan | null>(null);
   const canSendPlan = allowed('editWorkoutPlans');
 
   // A stray `setTimeout` that outlives the screen sets state on an unmounted tree.
   const toastTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(toastTimer.current), []);
+  // The Undo bar goes away on its own (the plan stays sent).
+  useEffect(() => {
+    if (!sentPlan) return;
+    const t = window.setTimeout(() => setSentPlan(null), 8000);
+    return () => window.clearTimeout(t);
+  }, [sentPlan]);
 
   const view = viewFor(memberId);
 
@@ -541,9 +555,23 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       )}
       {editing && <MemberFormSheet editing={member} onClose={() => setEditing(false)} />}
       {sendingPlan && (
-        <WorkoutPlanSheet
-          initial={emptyWorkoutDraft([member.id])}
+        <SendPlanSheet
+          member={member}
           onClose={() => setSendingPlan(false)}
+          onSent={(plan) => {
+            setToast(null);
+            setSentPlan(plan);
+          }}
+          onBuild={(draft) => {
+            setSendingPlan(false);
+            setBuildingPlan(draft);
+          }}
+        />
+      )}
+      {buildingPlan && (
+        <WorkoutPlanSheet
+          initial={buildingPlan}
+          onClose={() => setBuildingPlan(null)}
           onSaved={(plan) =>
             flash(plan.assign.memberIds.includes(member.id) ? `“${plan.name}” sent to ${member.fullName}.` : `“${plan.name}” saved.`)
           }
@@ -606,7 +634,30 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         />
       )}
       {whatsApp && view && <WhatsAppSheet view={view} onClose={() => setWhatsApp(false)} />}
-      {toast && <Toast message={toast} />}
+      {sentPlan ? (
+        <UndoBar
+          message={`“${sentPlan.name}” sent to ${member.fullName}.`}
+          undoLabel={`Undo sending ${sentPlan.name} to ${member.fullName}`}
+          onUndo={() => {
+            const plan = sentPlan;
+            setSentPlan(null);
+            // The saved plan is the base: a change another desk made since is refused, never dropped.
+            void run(async () => {
+              try {
+                await saveWorkoutPlan(withoutMember(plan, member.id));
+              } catch (e) {
+                // Review fix: nothing is "open" on this page; say where to take them off instead.
+                if (e instanceof Error && e.message.startsWith('Someone else changed this plan')) {
+                  throw new Error(`Someone changed “${plan.name}” just now. To take ${member.fullName} off it, open it under Workout plans.`);
+                }
+                throw e;
+              }
+            }, `“${plan.name}” is no longer sent to ${member.fullName}.`);
+          }}
+        />
+      ) : (
+        toast && <Toast message={toast} />
+      )}
     </>
   );
 }

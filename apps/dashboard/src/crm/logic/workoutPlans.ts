@@ -10,9 +10,21 @@
  * supabase/migrations/0024_workout_plans.sql, plus crm_push's 20 KB cap), in words a trainer reads,
  * so a plan is never refused as "INVALID" after Save. The number limits (sets, reps, rest) are the
  * builder's own: well inside what the phone accepts, and what a real plan needs.
+ *
+ * Starting numbers (18 Oct 2026): a trainer may give each exercise a starting weight (or, for a
+ * timed hold, a time). It is saved as the routine file's `setList`, one normal set per working
+ * set, which the phone reads as each set's target (routineSets.ts `PlanSet`). The phone fills a
+ * set's boxes from it only while the member has no numbers of their own for that exercise
+ * (activeWorkoutStore.ts `fillForSet`), so after the first workout their own progress leads.
+ * For a 'weighted' exercise (weighted pull-up, dip belt) the kg is the weight ADDED to body weight,
+ * as the phone logs it (logTypes.ts: "+KG x REPS").
+ *
+ * Ready plans: the member app's gym programs (programTemplates.json, generated from
+ * apps/mobile/src/tracker/plans/programs.ts by its test), so a trainer can start from one.
  */
 
-import { EXERCISE_CATALOG, type CatalogExercise } from './exerciseCatalog';
+import { catalogExercise, EXERCISE_CATALOG, type CatalogExercise } from './exerciseCatalog';
+import READY_PLAN_FILE from './programTemplates.json';
 import { countOf } from './plural';
 import type { DateISO } from './dates';
 import type {
@@ -20,9 +32,11 @@ import type {
   Plan,
   WorkoutDayType,
   WorkoutExercise,
+  WorkoutLogType,
   WorkoutPlan,
   WorkoutPlanDraft,
   WorkoutRoutine,
+  WorkoutSet,
 } from '../types';
 
 /** The server's limits (0024 `_workout_plan_ok`). */
@@ -41,6 +55,15 @@ export const WP_PLAN_NOTE_MAX = 500;
 export const WP_MAX_SETS = 20;
 export const WP_MAX_REPS = 100;
 export const WP_MAX_REST_SEC = 600;
+/** A starting weight, in kg (for a 'weighted' exercise: the kg added to body weight). */
+export const WP_MIN_KG = 0.5;
+export const WP_MAX_KG = 500;
+/** A timed hold's starting time, in seconds. */
+export const WP_MIN_HOLD_SEC = 5;
+export const WP_MAX_HOLD_SEC = 600;
+
+export const LOG_TYPES: readonly WorkoutLogType[] = ['weight_reps', 'reps', 'weighted', 'assisted', 'time'];
+const SET_TYPES: readonly WorkoutSet['type'][] = ['warmup', 'normal', 'drop', 'failure'];
 
 export const DAY_TYPES: readonly WorkoutDayType[] = ['full', 'push', 'pull', 'legs', 'upper', 'lower'];
 
@@ -80,12 +103,12 @@ export function draftOf(plan: WorkoutPlan): WorkoutPlanDraft {
   ) as WorkoutPlanDraft;
 }
 
-/** A library exercise with the usual starting numbers: 3 sets of 8-12. */
+/** A library exercise with the usual starting numbers: 3 sets of 8-12, logged the library's way. */
 export function exerciseFromCatalog(e: CatalogExercise): WorkoutExercise {
   return {
     name: e.name,
     catalogKey: e.key,
-    logType: 'weight_reps',
+    logType: e.logType,
     sets: 3,
     repMin: 8,
     repMax: 12,
@@ -108,6 +131,147 @@ export function customExercise(name: string): WorkoutExercise {
     restSec: null,
     note: null,
   };
+}
+
+// ---------------------------------------------------------------- starting numbers
+
+/**
+ * What the exercise's "start" box holds: kg ('weight_reps'), kg added to body weight ('weighted'),
+ * seconds ('time'), or nothing (reps only, or a machine that helps: the member finds their own).
+ */
+export function startKind(t: WorkoutLogType): 'kg' | 'addedKg' | 'seconds' | null {
+  if (t === 'weight_reps') return 'kg';
+  if (t === 'weighted') return 'addedKg';
+  if (t === 'time') return 'seconds';
+  return null;
+}
+
+/** The starting weight (or time) the exercise's sets carry, or null. A mistyped box reads as NaN. */
+export function startOf(e: Pick<WorkoutExercise, 'logType' | 'setList'>): number | null {
+  const kind = startKind(e.logType);
+  if (!kind || !Array.isArray(e.setList)) return null;
+  const first = e.setList.find((s) => s && (s.type === 'normal' || s.type === 'failure'));
+  const v = kind === 'seconds' ? first?.durationSec : first?.weightKg;
+  return typeof v === 'number' ? v : null;
+}
+
+/**
+ * The sets the phone gets for a starting weight (or time): one normal set per working set, each
+ * with the lowest reps of the range and the weight ({reps, weightKg}), or for a timed hold the time
+ * ({durationSec}). Null when there is no start (the phone then reads plain "N sets"). Sets not yet
+ * typed count as 1, so a weight typed first is kept (Save checks the sets anyway).
+ */
+export function buildSetList(logType: WorkoutLogType, sets: number, repMin: number, start: number | null): WorkoutSet[] | null {
+  const kind = startKind(logType);
+  if (!kind || start === null) return null;
+  const n = wholeIn(sets, 1, WP_MAX_SETS) ? sets : 1;
+  const one: WorkoutSet =
+    kind === 'seconds'
+      ? { type: 'normal', durationSec: start }
+      : { type: 'normal', ...(wholeIn(repMin, 1, WP_MAX_REPS) ? { reps: repMin } : {}), weightKg: start };
+  return Array.from({ length: n }, () => ({ ...one }));
+}
+
+/** The exercise with this starting weight (or time); null takes it off. */
+export function withStart(e: WorkoutExercise, start: number | null): WorkoutExercise {
+  const setList = buildSetList(e.logType, e.sets, e.repMin, start);
+  const { setList: _old, ...rest } = e;
+  return setList ? { ...rest, setList } : rest;
+}
+
+/** A kg typed to the hundredth at most (the phone keeps 2 decimals). NaN stays NaN (Save says so). */
+const roundKg = (v: number | null): number | null => (v === null || !Number.isFinite(v) ? v : Math.round(v * 100) / 100);
+
+// ---------------------------------------------------------------- copies
+
+/** "Push day (copy)", kept inside the name limit. */
+export function copyName(name: string): string {
+  const tail = ' (copy)';
+  // Review fix: a copy of a copy is "Push (copy)", never "Push (copy) (copy)".
+  const base = name.replace(/\s+/g, ' ').trim().replace(/(\s*\(copy\))+$/i, '') || 'Day';
+  return `${base.slice(0, WP_NAME_MAX - tail.length).trim()}${tail}`;
+}
+
+/** A new plan made from this one: same days and exercises, "<name> (copy)", sent to nobody yet. */
+export function copyOfPlan(plan: WorkoutPlan): WorkoutPlanDraft {
+  const d = draftOf(plan);
+  return { name: copyName(plan.name), note: d.note, routines: d.routines, assign: { memberIds: [], planIds: [] } };
+}
+
+/** The same day again ("Push (copy)"), to change a little (a deep copy). */
+export function copyRoutine(r: WorkoutRoutine): WorkoutRoutine {
+  const c = JSON.parse(JSON.stringify(r)) as WorkoutRoutine;
+  return { ...c, name: copyName(r.name) };
+}
+
+// ---------------------------------------------------------------- ready plans
+
+export interface ReadyPlan {
+  key: string;
+  name: string;
+  /** "Beginner · 3 days a week". */
+  meta: string;
+  summary: string;
+  routines: { name: string; dayType: WorkoutDayType; exercises: { key: string; sets: number; repMin: number; repMax: number }[] }[];
+}
+
+/** The member app's gym programs, ready to start a plan from. */
+export const READY_PLANS: readonly ReadyPlan[] = READY_PLAN_FILE as ReadyPlan[];
+
+/**
+ * A new plan filled from a ready plan: its days, and each exercise from the list (name, muscles,
+ * how it is logged) with the ready plan's sets and rep range. No weights yet: the trainer may type
+ * them. A key not in the list is left out with a log line (the parity test keeps that from happening).
+ */
+export function draftFromReadyPlan(t: ReadyPlan, memberIds: readonly string[] = []): WorkoutPlanDraft {
+  return {
+    name: t.name,
+    note: null,
+    routines: t.routines.map((r) => ({
+      name: r.name,
+      dayType: DAY_TYPES.includes(r.dayType) ? r.dayType : 'full',
+      exercises: r.exercises.flatMap((x) => {
+        const c = catalogExercise(x.key);
+        if (!c) {
+          console.warn('[ForgeErr] ready plan: exercise not in the list, left out', t.key, x.key);
+          return [];
+        }
+        return [{ ...exerciseFromCatalog(c), sets: x.sets, repMin: x.repMin, repMax: x.repMax }];
+      }),
+    })),
+    assign: { memberIds: [...memberIds], planIds: [] },
+  };
+}
+
+// ---------------------------------------------------------------- sending to one member
+
+/**
+ * The plan with this member added (Member detail's one-tap "Send"). An edit of the saved plan
+ * (its `baseUpdatedAt`), so a change another desk made meanwhile is refused, never dropped.
+ */
+export function withMember(plan: WorkoutPlan, memberId: string): WorkoutPlanDraft {
+  const d = draftOf(plan);
+  return { ...d, assign: { ...d.assign, memberIds: [...new Set([...d.assign.memberIds, memberId])] } };
+}
+
+/** The plan with this member taken off again (the Undo after a one-tap send). */
+export function withoutMember(plan: WorkoutPlan, memberId: string): WorkoutPlanDraft {
+  const d = draftOf(plan);
+  return { ...d, assign: { ...d.assign, memberIds: d.assign.memberIds.filter((id) => id !== memberId) } };
+}
+
+/**
+ * The gym's open plans for Member detail's "Send a plan", each marked when the member already gets
+ * it (by name, or through a membership plan they have today: then there is nothing to send).
+ */
+export function sendChoices(
+  list: readonly WorkoutPlan[],
+  memberId: string,
+  memberships: readonly Pick<Membership, 'memberId' | 'planId' | 'startsOn' | 'endsOn' | 'cancelled'>[],
+  today: DateISO,
+): { plan: WorkoutPlan; already: boolean }[] {
+  const gets = new Set(plansForMember(list, memberId, memberships, today).map((p) => p.id));
+  return splitPlans(list).open.map((plan) => ({ plan, already: gets.has(plan.id) }));
 }
 
 /** The list with item `index` moved `by` places (-1 up, +1 down). Out of range: unchanged. */
@@ -134,17 +298,28 @@ export function cleanDraft(d: WorkoutPlanDraft): WorkoutPlanDraft {
     routines: d.routines.map((r) => ({
       name: tidy(r.name),
       dayType: DAY_TYPES.includes(r.dayType) ? r.dayType : 'full',
-      exercises: r.exercises.map((e) => ({
-        name: tidy(e.name),
-        catalogKey: e.catalogKey || null,
-        logType: 'weight_reps' as const,
-        sets: e.sets,
-        repMin: e.repMin,
-        repMax: e.repMax,
-        primary: [...e.primary],
-        restSec: e.restSec ?? null,
-        note: noteOf(e.note, WP_NOTE_MAX),
-      })),
+      exercises: r.exercises.map((e) => {
+        const catalogKey = e.catalogKey || null;
+        // A library exercise is logged the library's way (a plan saved before 18 Oct had every
+        // exercise as weight and reps); one typed by hand is weight and reps.
+        const logType = catalogExercise(catalogKey)?.logType ?? (LOG_TYPES.includes(e.logType) ? e.logType : 'weight_reps');
+        // The sets are made again from the start box, so they match the sets and reps typed last.
+        // A start of another kind (kg on what is now a timed hold) is dropped.
+        const start = startKind(e.logType) === startKind(logType) ? roundKg(startOf(e)) : null;
+        const setList = buildSetList(logType, e.sets, e.repMin, start);
+        return {
+          name: tidy(e.name),
+          catalogKey,
+          logType,
+          ...(setList ? { setList } : {}),
+          sets: e.sets,
+          repMin: e.repMin,
+          repMax: e.repMax,
+          primary: [...e.primary],
+          restSec: e.restSec ?? null,
+          note: noteOf(e.note, WP_NOTE_MAX),
+        };
+      }),
     })),
     assign: { memberIds: [...new Set(d.assign.memberIds)], planIds: [...new Set(d.assign.planIds)] },
   };
@@ -175,6 +350,30 @@ export function recordBytes(record: unknown): number {
     else if (c === ':' || c === ',') extra += 1;
   }
   return new TextEncoder().encode(json).length + extra;
+}
+
+/** What is wrong with an exercise's starting numbers, in plain words; null when nothing is. */
+function setListProblem(e: WorkoutExercise, what: string): string | null {
+  if (e.setList === null || e.setList === undefined) return null;
+  const damaged = `${what} looks damaged. Remove it and add it again.`;
+  if (!Array.isArray(e.setList) || e.setList.length === 0 || e.setList.length > WP_MAX_SETS * 3) return damaged;
+  const kgWord = e.logType === 'weighted' ? 'added weight' : 'starting weight';
+  for (const s of e.setList) {
+    if (!s || typeof s !== 'object' || !SET_TYPES.includes(s.type)) return damaged;
+    if (s.weightKg !== null && s.weightKg !== undefined) {
+      const kg = s.weightKg;
+      if (typeof kg !== 'number' || !Number.isFinite(kg) || kg < WP_MIN_KG || kg > WP_MAX_KG) {
+        return `${what}: the ${kgWord} must be from ${WP_MIN_KG} to ${WP_MAX_KG} kg.`;
+      }
+    }
+    if (s.durationSec !== null && s.durationSec !== undefined && !wholeIn(s.durationSec, WP_MIN_HOLD_SEC, WP_MAX_HOLD_SEC)) {
+      return `${what}: seconds must be a whole number from ${WP_MIN_HOLD_SEC} to ${WP_MAX_HOLD_SEC}.`;
+    }
+    if (s.reps !== null && s.reps !== undefined && !wholeIn(s.reps, 1, WP_MAX_REPS)) {
+      return `${what}: reps must be whole numbers from 1 to ${WP_MAX_REPS}.`;
+    }
+  }
+  return null;
 }
 
 /**
@@ -210,6 +409,9 @@ export function workoutPlanProblem(d: WorkoutPlanDraft, record?: unknown): strin
         return `${what}: reps must be whole numbers from 1 to ${WP_MAX_REPS}.`;
       }
       if (e.repMin > e.repMax) return `${what}: the lowest reps can’t be more than the highest.`;
+      if (!LOG_TYPES.includes(e.logType)) return `${what} looks damaged. Remove it and add it again.`;
+      const setProblem = setListProblem(e, what);
+      if (setProblem) return setProblem;
       if (e.restSec !== null && e.restSec !== undefined && !wholeIn(e.restSec, 0, WP_MAX_REST_SEC)) {
         return `${what}: rest must be from 0 to ${WP_MAX_REST_SEC} seconds.`;
       }
@@ -246,7 +448,7 @@ export function assignSummary(plan: Pick<WorkoutPlan, 'assign'>, plans: readonly
 }
 
 /** "3 days · 18 exercises". */
-export function planSizeWords(plan: Pick<WorkoutPlan, 'routines'>): string {
+export function planSizeWords(plan: { routines: readonly { exercises: readonly unknown[] }[] }): string {
   const exercises = plan.routines.reduce((n, r) => n + r.exercises.length, 0);
   return `${countOf(plan.routines.length, 'day')} · ${countOf(exercises, 'exercise')}`;
 }

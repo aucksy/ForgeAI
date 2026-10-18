@@ -141,7 +141,7 @@ export interface DraftSet {
    * 16 Oct 2026 audit (C3-20): this set's own numbers in the routine ("80 kg × 8" for a back-off),
    * when the routine gives them. The row hints them before the Target; never written until ticked.
    */
-  plan?: { weightKg?: number; reps?: number };
+  plan?: { weightKg?: number; reps?: number; durationSec?: number };
   /**
    * 16 Oct 2026 audit (C1-4): editing a saved workout — this row is one of the workout's saved
    * sets (it opens ticked). Unticked by the member, it is left out of the save. Rows added while
@@ -1222,12 +1222,14 @@ export function prevForSet(ex: DraftExercise, setKey: string): PrevSet | null {
 }
 
 /** C3-20: a routine set's own weight and reps, for its row's hint (warm-ups keep their own rule). PURE. */
-export function planOfSet(p: PlanSet): { weightKg?: number; reps?: number } | undefined {
+export function planOfSet(p: PlanSet): { weightKg?: number; reps?: number; durationSec?: number } | undefined {
   if (p.type === 'warmup') return undefined;
-  const out: { weightKg?: number; reps?: number } = {};
+  const out: { weightKg?: number; reps?: number; durationSec?: number } = {};
   if (p.weightKg != null && Number.isFinite(p.weightKg) && p.weightKg > 0) out.weightKg = p.weightKg;
   if (p.reps != null && Number.isFinite(p.reps) && p.reps > 0) out.reps = p.reps;
-  return out.weightKg != null || out.reps != null ? out : undefined;
+  // OWNER-INBOX #19: a trainer's (or Hevy routine's) hold time for a timed exercise.
+  if (p.durationSec != null && Number.isFinite(p.durationSec) && p.durationSec > 0) out.durationSec = Math.round(p.durationSec);
+  return out.weightKg != null || out.reps != null || out.durationSec != null ? out : undefined;
 }
 
 /** Wave-2 review: the routine's main planned weight for a card — its most planned weight (ties: heavier). PURE. */
@@ -1292,8 +1294,12 @@ export function fillForSet(
   // 80 kg back-off, a heavy top set) — never hinted the Target's 100 kg nor a weight typed above.
   // On a main working row (a Hevy-link routine's 100 x 5, never updated after a workout) the
   // Target and the row above lead; the plan only fills what they leave empty.
-  const plan = !row.isWarmup && (lt === 'weight_reps' || lt === 'reps') ? row.plan : undefined;
-  const mainRef = fromKg ?? plannedMainKg(ex);
+  // OWNER-INBOX #19: a weighted move's plan weight (the added kg) is hinted the same way.
+  const plan = !row.isWarmup && (lt === 'weight_reps' || lt === 'reps' || lt === 'weighted') ? row.plan : undefined;
+  // OWNER-INBOX #19 review fix: a plan row is "off" against the PLAN's own main weight, never last
+  // time's. Measured against last time, a trainer's flat 20 kg x 8 counted as a back-off once the
+  // member moved 10% past it, and its stale 20 kg came back over their own progress for good.
+  const mainRef = plannedMainKg(ex);
   const planOff =
     plan?.weightKg != null && lt === 'weight_reps' && mainRef != null && mainRef > 0 && Math.abs(plan.weightKg - mainRef) >= mainRef * OFF_MAIN_SHARE - 1e-9;
   if (plan && planOff && plan.reps != null) return { weightKg: plan.weightKg as number, reps: plan.reps };
@@ -1345,7 +1351,9 @@ export function fillForSet(
   };
 
   if (lt === 'time' || lt === 'distance' || lt === 'time_distance') {
-    const durationSec = lt === 'distance' ? null : pick((s) => positive(s.durationSec), (p) => positive(p?.durationSec));
+    // OWNER-INBOX #19: the routine's hold time only fills what the rows above, Target and PREVIOUS leave empty.
+    const planSec = !warmup && !drop ? positive(row.plan?.durationSec) : null;
+    const durationSec = lt === 'distance' ? null : pick((s) => positive(s.durationSec), (p) => positive(p?.durationSec)) ?? planSec;
     const distanceM = lt === 'time' ? null : pick((s) => positive(s.distanceM), (p) => positive(p?.distanceM));
     if (durationSec == null && distanceM == null) return null;
     const out: SetFill = { weightKg: 0, reps: 0 };
@@ -1386,7 +1394,7 @@ export function fillForSet(
     if (plan?.weightKg != null) weightKg = plan.weightKg;
   } else if (plan) {
     if (reps == null && plan.reps != null) reps = plan.reps;
-    if (weightKg == null && plan.weightKg != null && lt === 'weight_reps') weightKg = plan.weightKg;
+    if (weightKg == null && plan.weightKg != null && (lt === 'weight_reps' || lt === 'weighted')) weightKg = plan.weightKg;
   }
   if (reps == null) return null;
   if (lt === 'reps') return { weightKg: 0, reps };

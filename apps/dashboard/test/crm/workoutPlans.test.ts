@@ -11,7 +11,18 @@ import { emptySnapshot, LocalCrmData, memoryStore, normalizeSnapshot } from '../
 import { EXERCISE_CATALOG } from '../../src/crm/logic/exerciseCatalog';
 import {
   assignSummary,
+  buildSetList,
   cleanDraft,
+  copyName,
+  copyOfPlan,
+  copyRoutine,
+  draftFromReadyPlan,
+  READY_PLANS,
+  sendChoices,
+  startKind,
+  startOf,
+  withMember,
+  withoutMember,
   customExercise,
   draftOf,
   emptyRoutine,
@@ -32,6 +43,7 @@ import type { Membership, WorkoutPlan, WorkoutPlanDraft } from '../../src/crm/ty
 
 const bench = EXERCISE_CATALOG.find((e) => e.key === 'barbell_bench_press')!;
 const squat = EXERCISE_CATALOG.find((e) => e.key === 'barbell_back_squat')!;
+const lib = (key: string) => EXERCISE_CATALOG.find((e) => e.key === key)!;
 
 function goodDraft(over: Partial<WorkoutPlanDraft> = {}): WorkoutPlanDraft {
   return {
@@ -341,5 +353,238 @@ describe('online', () => {
 
     await desk.withdrawWorkoutPlan(made.id);
     expect(server.sent[1]).toEqual([{ k: 'workout_plan', id: made.id, d: expect.objectContaining({ withdrawn: true }) }]);
+  });
+});
+
+describe('starting weight (or time): saved as the phone’s setList', () => {
+  const one = (key: string, patch: object = {}) =>
+    goodDraft({ routines: [{ name: 'Day 1', dayType: 'full', exercises: [{ ...exerciseFromCatalog(lib(key)), ...patch }] }] });
+
+  it('each exercise is logged the library’s way; one typed by hand is weight and reps', () => {
+    expect(exerciseFromCatalog(lib('plank')).logType).toBe('time');
+    expect(exerciseFromCatalog(lib('pull_up')).logType).toBe('reps');
+    expect(exerciseFromCatalog(lib('weighted_dip')).logType).toBe('weighted');
+    expect(exerciseFromCatalog(lib('assisted_pull_up')).logType).toBe('assisted');
+    expect(exerciseFromCatalog(bench).logType).toBe('weight_reps');
+    expect(customExercise('Tyre flip').logType).toBe('weight_reps');
+  });
+
+  it('which box each type gets: kg, kg added, seconds, or none', () => {
+    expect(startKind('weight_reps')).toBe('kg');
+    expect(startKind('weighted')).toBe('addedKg');
+    expect(startKind('time')).toBe('seconds');
+    expect(startKind('reps')).toBeNull();
+    expect(startKind('assisted')).toBeNull();
+  });
+
+  it('weight and reps: one normal set per working set, at the lowest reps and the weight', () => {
+    expect(buildSetList('weight_reps', 3, 8, 60)).toEqual([
+      { type: 'normal', reps: 8, weightKg: 60 },
+      { type: 'normal', reps: 8, weightKg: 60 },
+      { type: 'normal', reps: 8, weightKg: 60 },
+    ]);
+    // Weighted: the kg ADDED to body weight, as the phone logs it ("+KG x REPS").
+    expect(buildSetList('weighted', 2, 6, 10)).toEqual([
+      { type: 'normal', reps: 6, weightKg: 10 },
+      { type: 'normal', reps: 6, weightKg: 10 },
+    ]);
+  });
+
+  it('a timed hold: its seconds, no reps or weight', () => {
+    expect(buildSetList('time', 2, 8, 45)).toEqual([
+      { type: 'normal', durationSec: 45 },
+      { type: 'normal', durationSec: 45 },
+    ]);
+  });
+
+  it('no setList for an empty box, or for reps only and machines that help', () => {
+    expect(buildSetList('weight_reps', 3, 8, null)).toBeNull();
+    expect(buildSetList('reps', 3, 8, 20)).toBeNull();
+    expect(buildSetList('assisted', 3, 8, 20)).toBeNull();
+    const d = cleanDraft(one('barbell_bench_press'));
+    expect(d.routines[0].exercises[0]).not.toHaveProperty('setList');
+  });
+
+  it('reads the start back from a saved plan (editing it shows the same number)', () => {
+    const saved = savedPlan({ routines: cleanDraft(one('barbell_bench_press', { setList: buildSetList('weight_reps', 3, 8, 62.5) })).routines });
+    expect(startOf(draftOf(saved).routines[0].exercises[0])).toBe(62.5);
+    const hold = cleanDraft(one('plank', { setList: buildSetList('time', 3, 8, 30) }));
+    expect(startOf(hold.routines[0].exercises[0])).toBe(30);
+    expect(startOf(exerciseFromCatalog(bench))).toBeNull();
+  });
+
+  it('Save makes the sets again from the start box, so they match the sets and reps typed last', () => {
+    // 60 kg typed with 3 x 8, then the trainer changed it to 4 sets of 10-12.
+    const ex = { ...exerciseFromCatalog(bench), setList: buildSetList('weight_reps', 3, 8, 60.004), sets: 4, repMin: 10, repMax: 12 };
+    const out = cleanDraft(goodDraft({ routines: [{ name: 'D', dayType: 'full', exercises: [ex] }] })).routines[0].exercises[0];
+    expect(out.setList).toEqual(Array(4).fill({ type: 'normal', reps: 10, weightKg: 60 }));
+    expect(out).toMatchObject({ sets: 4, repMin: 10, repMax: 12 });
+  });
+
+  it('a plan saved before this change (every exercise weight and reps) is corrected on its next save', () => {
+    const old = { ...exerciseFromCatalog(lib('plank')), logType: 'weight_reps' as const, setList: buildSetList('weight_reps', 3, 8, 20) };
+    const out = cleanDraft(goodDraft({ routines: [{ name: 'D', dayType: 'full', exercises: [old] }] })).routines[0].exercises[0];
+    expect(out.logType).toBe('time');
+    // 20 kg never becomes 20 seconds.
+    expect(out).not.toHaveProperty('setList');
+  });
+
+  it('checks the starting numbers in plain words (kg 0.5-500, seconds 5-600)', () => {
+    const kg = (v: number) => one('barbell_bench_press', { setList: buildSetList('weight_reps', 3, 8, v) });
+    expect(workoutPlanProblem(kg(0.5))).toBeNull();
+    expect(workoutPlanProblem(kg(500))).toBeNull();
+    expect(workoutPlanProblem(kg(0.4))).toBe('Barbell Bench Press (Day 1): the starting weight must be from 0.5 to 500 kg.');
+    expect(workoutPlanProblem(kg(501))).toMatch(/0\.5 to 500 kg/);
+    expect(workoutPlanProblem(kg(Number.NaN))).toMatch(/starting weight/);
+    expect(workoutPlanProblem(one('weighted_dip', { setList: buildSetList('weighted', 3, 8, 900) }))).toMatch(/the added weight must be/);
+    const sec = (v: number) => one('plank', { setList: buildSetList('time', 3, 8, v) });
+    expect(workoutPlanProblem(sec(5))).toBeNull();
+    expect(workoutPlanProblem(sec(600))).toBeNull();
+    expect(workoutPlanProblem(sec(4))).toBe('Plank (Day 1): seconds must be a whole number from 5 to 600.');
+    expect(workoutPlanProblem(sec(601))).toMatch(/seconds/);
+    expect(workoutPlanProblem(one('plank', { setList: [{ type: 'jump' }] }))).toMatch(/looks damaged/);
+    expect(workoutPlanProblem(one('plank', { logType: 'yoga' }))).toMatch(/looks damaged/);
+  });
+
+  it('the size check counts the starting numbers too (the whole record)', () => {
+    const ex = { ...exerciseFromCatalog(bench), sets: 20, setList: buildSetList('weight_reps', 20, 8, 100), note: 'x'.repeat(200) };
+    const big = goodDraft({ routines: Array.from({ length: 14 }, (_, i) => ({ name: `Day ${i + 1}`, dayType: 'full' as const, exercises: [ex, ex] })) });
+    const noSets = goodDraft({ routines: big.routines.map((r) => ({ ...r, exercises: r.exercises.map(({ setList: _s, ...e }) => e) })) });
+    expect(workoutPlanProblem(noSets)).toBeNull();
+    expect(workoutPlanProblem(big)).toMatch(/too big/);
+  });
+
+  it('what the phone reads: a plan saved with starting numbers is a routine file the phone opens', async () => {
+    const db = new LocalCrmData({ store: memoryStore(), now: () => 5, seed: () => emptySnapshot(0, 'Test Gym') });
+    const made = await db.saveWorkoutPlan(
+      goodDraft({
+        routines: [
+          {
+            name: 'Day 1',
+            dayType: 'full',
+            exercises: [
+              { ...exerciseFromCatalog(bench), setList: buildSetList('weight_reps', 3, 8, 40) },
+              { ...exerciseFromCatalog(lib('plank')), sets: 2, setList: buildSetList('time', 2, 8, 30) },
+              exerciseFromCatalog(lib('pull_up')),
+            ],
+          },
+        ],
+      }),
+    );
+    const [b, p, u] = made.routines[0].exercises;
+    expect(b).toMatchObject({ logType: 'weight_reps', sets: 3, setList: [{ type: 'normal', reps: 8, weightKg: 40 }, {}, {}] });
+    expect(p).toMatchObject({ logType: 'time', sets: 2, setList: [{ type: 'normal', durationSec: 30 }, { type: 'normal', durationSec: 30 }] });
+    expect(u.logType).toBe('reps');
+    expect(u).not.toHaveProperty('setList');
+  });
+});
+
+describe('ready plans', () => {
+  it('are the 5 gym programs, each with its words for the list', () => {
+    expect(READY_PLANS).toHaveLength(5);
+    for (const t of READY_PLANS) {
+      expect(t.name.length).toBeGreaterThan(0);
+      expect(t.meta).toMatch(/·\s*\d days a week/);
+      expect(t.summary.length).toBeGreaterThan(10);
+    }
+  });
+
+  it('fill the days and exercises (name, muscles, how it is logged) with the file’s sets and reps', () => {
+    const t = READY_PLANS.find((x) => x.key === 'gym_full_body_beginner')!;
+    const d = draftFromReadyPlan(t, ['m1']);
+    expect(d).toMatchObject({ name: 'Full Body Basics', note: null, assign: { memberIds: ['m1'], planIds: [] } });
+    expect(d).not.toHaveProperty('id');
+    expect(d.routines.map((r) => r.name)).toEqual(t.routines.map((r) => r.name));
+    const first = d.routines[0].exercises[0];
+    expect(first).toMatchObject({ name: 'Leg Press', catalogKey: 'leg_press', logType: 'weight_reps', sets: 3, repMin: 6, repMax: 10, primary: ['quads'] });
+    expect(first).not.toHaveProperty('setList');
+    const plank = d.routines[0].exercises.find((e) => e.catalogKey === 'plank')!;
+    expect(plank.logType).toBe('time');
+  });
+
+  it('every ready plan, filled in, can be saved as it is (nothing left out)', () => {
+    for (const t of READY_PLANS) {
+      const d = draftFromReadyPlan(t);
+      expect(workoutPlanProblem(cleanDraft(d)), t.key).toBeNull();
+      expect(d.routines.map((r) => r.exercises.length)).toEqual(t.routines.map((r) => r.exercises.length));
+    }
+  });
+
+  it('a fresh copy each time: changing one plan never changes the next', () => {
+    const t = READY_PLANS[0];
+    const a = draftFromReadyPlan(t);
+    a.routines[0].exercises[0].sets = 9;
+    expect(draftFromReadyPlan(t).routines[0].exercises[0].sets).toBe(t.routines[0].exercises[0].sets);
+  });
+});
+
+describe('copies', () => {
+  it('"Make a copy": same days and exercises, "(copy)" added, sent to nobody, a NEW plan', () => {
+    const p = savedPlan({ name: 'Beginner 3 days', note: 'Drink water', assign: { memberIds: ['m1'], planIds: ['p1'] }, createdByName: 'Ravi' });
+    const c = copyOfPlan(p);
+    expect(c).toEqual({ name: 'Beginner 3 days (copy)', note: 'Drink water', routines: p.routines, assign: { memberIds: [], planIds: [] } });
+    expect(c).not.toHaveProperty('id');
+    expect(c).not.toHaveProperty('baseUpdatedAt');
+    c.routines[0].exercises[0].sets = 9;
+    expect(p.routines[0].exercises[0].sets).toBe(3);
+  });
+
+  it('a copy’s name stays inside the 80-letter limit', () => {
+    expect(copyName('Push (copy)')).toBe('Push (copy)');
+    expect(copyName('Push (copy) (copy)')).toBe('Push (copy)');
+    const n = copyName('x'.repeat(80));
+    expect(n.length).toBe(80);
+    expect(n.endsWith(' (copy)')).toBe(true);
+    expect(copyName('  ')).toBe('Day (copy)');
+  });
+
+  it('"Copy day": the same exercises under "<day> (copy)", a deep copy', () => {
+    const r = goodDraft().routines[0];
+    const c = copyRoutine(r);
+    expect(c.name).toBe('Day 1 (copy)');
+    expect(c.exercises).toEqual(r.exercises);
+    c.exercises[0].sets = 7;
+    expect(r.exercises[0].sets).toBe(3);
+  });
+});
+
+describe('sending a plan to one member in one tap (Member detail)', () => {
+  const ms = { memberId: 'm1', planId: 'p1', startsOn: '2026-10-01', endsOn: '2026-10-31', cancelled: false } as Membership;
+
+  it('lists the open plans, marking the ones the member already gets', () => {
+    const list = [
+      savedPlan({ id: 'byName', updatedAt: 3, assign: { memberIds: ['m1'], planIds: [] } }),
+      savedPlan({ id: 'byPlan', updatedAt: 2, assign: { memberIds: [], planIds: ['p1'] } }),
+      savedPlan({ id: 'free', updatedAt: 1, assign: { memberIds: ['m2'], planIds: [] } }),
+      savedPlan({ id: 'gone', withdrawn: true, assign: { memberIds: [], planIds: [] } }),
+    ];
+    expect(sendChoices(list, 'm1', [ms], '2026-10-18').map((c) => [c.plan.id, c.already])).toEqual([
+      ['byName', true],
+      ['byPlan', true],
+      ['free', false],
+    ]);
+  });
+
+  it('adds the member as an edit of the saved plan, and Undo takes them off again', () => {
+    const p = savedPlan({ updatedAt: 42, assign: { memberIds: ['m2'], planIds: ['p1'] } });
+    const add = withMember(p, 'm1');
+    expect(add).toMatchObject({ id: 'w1', baseUpdatedAt: 42, assign: { memberIds: ['m2', 'm1'], planIds: ['p1'] } });
+    expect(withMember(p, 'm2').assign.memberIds).toEqual(['m2']);
+    expect(withoutMember({ ...p, assign: add.assign }, 'm1').assign).toEqual({ memberIds: ['m2'], planIds: ['p1'] });
+  });
+
+  it('through the store: sends, undoes, and never drops another desk’s change', async () => {
+    let clock = 1_000;
+    const db = new LocalCrmData({ store: memoryStore(), now: () => (clock += 1), seed: () => emptySnapshot(0, 'Test Gym') });
+    const made = await db.saveWorkoutPlan(goodDraft({ assign: { memberIds: ['m2'], planIds: [] } }));
+    const sent = await db.saveWorkoutPlan(withMember(made, 'm1'));
+    expect(sent.assign.memberIds).toEqual(['m2', 'm1']);
+    expect(sent.createdAt).toBe(made.createdAt);
+    const undone = await db.saveWorkoutPlan(withoutMember(sent, 'm1'));
+    expect(undone.assign.memberIds).toEqual(['m2']);
+    // Another desk ticked m3 meanwhile: a send from the old copy is refused, their tick kept.
+    await db.saveWorkoutPlan(withMember(undone, 'm3'));
+    await expect(db.saveWorkoutPlan(withMember(undone, 'm1'))).rejects.toThrow(/Someone else changed this plan/);
+    expect((await db.load()).workoutPlans[0].assign.memberIds).toEqual(['m2', 'm3']);
   });
 });

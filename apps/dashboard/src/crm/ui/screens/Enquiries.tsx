@@ -42,6 +42,7 @@ import {
   SelectField,
   Sheet,
   TextField,
+  UndoBar,
   TOUCH,
   color,
   font,
@@ -339,39 +340,6 @@ const linkButton: CSSProperties = {
   minWidth: 0,
   overflowWrap: 'anywhere',
 };
-
-function UndoBar({ message, onUndo }: { message: string; onUndo: () => void }) {
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      style={{
-        position: 'fixed',
-        bottom: 92,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 60,
-        display: 'flex',
-        alignItems: 'center',
-        gap: space.md,
-        background: color.surfaceRaised,
-        border: `1px solid ${color.borderStrong}`,
-        borderRadius: radius.pill,
-        padding: '4px 6px 4px 18px',
-        color: color.ink,
-        fontFamily: font.body,
-        fontSize: 14,
-        boxShadow: '0 8px 30px rgba(0,0,0,0.45)',
-        maxWidth: 'calc(100vw - 32px)',
-      }}
-    >
-      <span style={{ minWidth: 0, overflowWrap: 'anywhere' }}>{message}</span>
-      <Button variant="ghost" onClick={onUndo}>
-        Undo
-      </Button>
-    </div>
-  );
-}
 
 // ---------------------------------------------------------------- add
 

@@ -16,6 +16,7 @@ describe('planStartLine (OWNER-INBOX #19): a routine that gives a starting weigh
     expect(planStartLine({ action: 'start', logType: 'reps' }, { weightKg: 10, reps: 6 }, kg)).toBeNull();
     expect(planStartLine({ ...start, bodyweightOnly: true }, { weightKg: 10 }, kg)).toBeNull();
     expect(planStartLine({ action: 'start', logType: 'time' }, { weightKg: 10 }, kg)).toBeNull();
+    expect(planStartLine({ action: 'start', logType: 'time' }, { durationSec: 45 }, kg)).toBe('First time · hold 45 s');
     expect(planStartLine(start, { reps: 8 }, kg)).toBeNull();
     expect(planStartLine(start, { weightKg: 0, reps: 8 }, kg)).toBeNull();
     expect(planStartLine(start, undefined, kg)).toBeNull();

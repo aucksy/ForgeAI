@@ -9,11 +9,14 @@ import type { LogType } from '../engine/logTypes';
 
 export function planStartLine(
   t: { action: string; logType?: LogType | null; bodyweightOnly?: boolean } | null,
-  plan: { weightKg?: number; reps?: number } | undefined,
+  plan: { weightKg?: number; reps?: number; durationSec?: number } | undefined,
   weight: (kg: number) => string,
 ): string | null {
-  if (!t || t.action !== 'start' || t.bodyweightOnly || !plan) return null;
+  if (!t || t.action !== 'start' || !plan) return null;
+  if (t.bodyweightOnly && (t.logType ?? 'weight_reps') !== 'time') return null;
   const lt = t.logType ?? 'weight_reps';
+  // A timed hold the routine gives (the rows hint it too, fillForSet).
+  if (lt === 'time') return plan.durationSec != null && plan.durationSec > 0 ? `First time · hold ${Math.round(plan.durationSec)} s` : null;
   if (lt !== 'weight_reps' && lt !== 'weighted') return null;
   const kg = plan.weightKg;
   if (kg == null || !Number.isFinite(kg) || kg <= 0) return null;

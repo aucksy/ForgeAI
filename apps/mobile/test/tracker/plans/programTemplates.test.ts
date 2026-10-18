@@ -34,7 +34,7 @@ describe('admin ready-made plans', () => {
     expect(JSON.parse(readFileSync(FILE, 'utf8'))).toEqual(want);
   });
 
-  it('use only weight-and-reps lifts with a rep range', () => {
+  it('every rep range runs from low to high', () => {
     for (const p of templates()) for (const r of p.routines) for (const e of r.exercises) expect(e.repMin).toBeLessThanOrEqual(e.repMax);
   });
 });
