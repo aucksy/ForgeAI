@@ -138,6 +138,7 @@ Comment box on every feature. Status: Live · Next release (v0.48.0) · Planned 
 ## 20. Which GGMS features have we built that we didn't have, and which are pending? — 18 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** ANSWERED
+**READ (18 Oct, 02:25 pm, via the page)**
 **You asked:** what we built from GGMS's list that we didn't have, and what is still pending.
 **My answer:**
 **Built (from the GGMS gap list):**

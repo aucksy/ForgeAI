@@ -265,6 +265,11 @@ article h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem
 .k-done { color: var(--done); background: var(--done-bg); }
 .k-planned, .k-answered, .k-working, .k-idea, .k-no { color: var(--plain); background: var(--plain-bg); }
 .k-no { text-decoration: line-through; }
+/* Owner (18 Oct): finished items sit folded at the bottom of each tab, set apart by a dashed line. */
+.donebox { margin-top: 20px; padding-top: 12px; border-top: 2px dashed var(--line); }
+.donebox > summary { font-family: var(--f-display); font-weight: 600; font-size: 1rem; color: var(--muted); }
+.donebox[open] > summary { margin-bottom: 10px; }
+.donebox .entries { margin-top: 10px; }
 button.status { font-family: inherit; border: 1px solid transparent; cursor: pointer; }
 button.status[aria-pressed="true"] { border-color: currentColor; box-shadow: 0 0 0 1px currentColor; }
 .bl-sum { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 0 0 14px; font-size: 0.85rem; color: var(--muted); }
@@ -323,7 +328,6 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
     <button class="chip" data-f="waiting" aria-pressed="false">Waiting for you</button>
     <button class="chip" data-f="all" aria-pressed="true">Questions &amp; answers</button>
     <button class="chip" data-f="backlog" aria-pressed="false">Feature backlog</button>
-    <button class="chip" data-f="shipped" aria-pressed="false">Built</button>
   </div>
 </div></header>
 
@@ -361,7 +365,9 @@ const picks = {}; // num -> {qIndex: key}
 try { chat = localStorage.getItem("inbox-chat") || "all"; filter = localStorage.getItem("inbox-filter") || "all"; } catch (e) { /* storage blocked: defaults */ }
 // Owner rule (18 Oct 2026): five tabs only; a tab kept from an older page falls back to Questions & answers.
 // Owner (18 Oct): "To read" merged into Questions & answers (unread ones on top, tagged New).
-if (!["waiting", "all", "backlog", "shipped"].includes(filter)) filter = "all";
+// Owner (18 Oct): "Built" lives inside Feature backlog (folded at the bottom), not in its own tab.
+if (filter === "shipped") filter = "backlog";
+if (!["waiting", "all", "backlog"].includes(filter)) filter = "all";
 try { Object.assign(picks, JSON.parse(sessionStorage.getItem("inbox-picks") || "{}")); } catch (e) { /* none kept */ }
 const keepPicks = () => { try { sessionStorage.setItem("inbox-picks", JSON.stringify(picks)); } catch (e) { /* not kept */ } };
 // A save reloads this view: keep the reading place across it.
@@ -442,11 +448,25 @@ function shown(e) {
 }
 const BL_KIND = { done: "Live", built: "Next release", waiting: "Waiting for you", planned: "Planned", idea: "Idea", no: "Not doing" };
 function noteText(f, text) { return "Owner inbox feature backlog: " + f.group + " / " + f.name + ": " + text; }
+// Which folded "done" boxes are open, so a re-render keeps them as the owner left them.
+const doneOpen = {};
+const doneBox = (key, label, inner) => inner
+  ? '<details class="donebox" data-box="' + key + '"' + (doneOpen[key] ? " open" : "") + "><summary>" + esc(label) + "</summary>" + inner + "</details>"
+  : "";
+document.addEventListener("toggle", (ev) => { const d = ev.target; if (d.dataset && d.dataset.box) doneOpen[d.dataset.box] = d.open; }, true);
 // "Feature backlog" = what is not built yet; "Built" = live, or built and in the next release.
 const SHIPPED = ["done", "built"];
 const inTab = (f, tab) => (tab === "shipped") === SHIPPED.includes(f.kind);
-function backlogHtml(tab) {
-  const all = DATA.backlog.map((f, i) => ({ f, i })).filter((x) => inTab(x.f, tab));
+function groupedHtml(items) {
+  let out = "", group = null;
+  items.forEach(({ f, i }) => {
+    if (f.group !== group) { group = f.group; out += '<h3 class="bl-group">' + esc(group) + "</h3>"; }
+    out += featHtml(f, i);
+  });
+  return out;
+}
+function backlogHtml() {
+  const all = DATA.backlog.map((f, i) => ({ f, i }));
   if (!all.length) return '<p class="none">Nothing here yet.</p>';
   const counts = {};
   all.forEach((x) => { counts[x.f.kind] = (counts[x.f.kind] || 0) + 1; });
@@ -455,13 +475,11 @@ function backlogHtml(tab) {
   const sum = '<p class="bl-sum">' + Object.keys(BL_KIND).filter((k) => counts[k]).map((k) =>
       '<button type="button" class="status k-' + k + '" data-act="blk" data-k="' + k + '" aria-pressed="' + (blKind === k) + '">' + BL_KIND[k] + " " + counts[k] + "</button>").join("") +
     "<span>" + (blKind ? "Showing " + BL_KIND[blKind] + " only. Tap it again to see all." : "Tap a status to see only those. Tap \u201cComment\u201d to send me a note.") + "</span></p>";
-  const items = blKind ? all.filter((x) => x.f.kind === blKind) : all;
-  let out = sum, group = null;
-  items.forEach(({ f, i }) => {
-    if (f.group !== group) { group = f.group; out += '<h3 class="bl-group">' + esc(group) + "</h3>"; }
-    out += featHtml(f, i);
-  });
-  return out;
+  // A tapped status shows just those features; otherwise the pending ones, then "Built" folded.
+  if (blKind) return sum + groupedHtml(all.filter((x) => x.f.kind === blKind));
+  const built = all.filter((x) => inTab(x.f, "shipped"));
+  return sum + groupedHtml(all.filter((x) => !inTab(x.f, "shipped"))) +
+    doneBox("built", "Built (" + built.length + "): live, or in the next release", groupedHtml(built));
 }
 function featHtml(f, i) {
     const sent = DATA.notes[f.id];
@@ -478,16 +496,14 @@ function featHtml(f, i) {
 // Features waiting for the owner also show in the main "Waiting for you" tab (owner, 18 Oct).
 const waitingFeats = () => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && !DATA.notes[x.f.id]);
 function render() {
-  const bl = filter === "backlog" || filter === "shipped";
+  const bl = filter === "backlog";
   $("entrybox").hidden = bl;
   $("backlogbox").hidden = !bl;
-  document.querySelector('.chip[data-f="backlog"]').textContent = "Feature backlog (" + DATA.backlog.filter((f) => inTab(f, "backlog")).length + ")";
-  document.querySelector('.chip[data-f="shipped"]').textContent = "Built (" + DATA.backlog.filter((f) => inTab(f, "shipped")).length + ")";
+  document.querySelector('.chip[data-f="backlog"]').textContent = "Feature backlog (" + DATA.backlog.filter((f) => inTab(f, "backlog")).length + " to build)";
   const fresh = DATA.entries.filter(toRead).length;
   document.querySelector('.chip[data-f="all"]').textContent = "Questions & answers (" + DATA.entries.length + (fresh ? " \u00b7 " + fresh + " new" : "") + ")";
   if (bl) {
-    $("bh").textContent = filter === "shipped" ? "Built" : "Feature backlog";
-    $("backlog").innerHTML = backlogHtml(filter);
+    $("backlog").innerHTML = backlogHtml();
     document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter)));
     return;
   }
@@ -495,11 +511,16 @@ function render() {
   $("tabhint").textContent = HINT[filter] || "";
   $("tabhint").hidden = !HINT[filter];
   // Unread first (newest first within each), so new answers are at the top of the list.
-  const list = DATA.entries.filter(shown).sort((a, b) => (toRead(b) - toRead(a)) || (b.num - a.num));
-  $("count").textContent = "· " + list.length + " of " + DATA.entries.length;
+  const inChat = (e) => chat === "all" || e.chat === chat;
+  const sorted = DATA.entries.filter(inChat).sort((a, b) => (toRead(b) - toRead(a)) || (b.num - a.num));
+  // Done (folded below): in Waiting, decisions already answered; in Q&A, what has been read.
+  const isDone = (e) => (filter === "waiting" ? e.decides.length > 0 && Boolean(sentOf(e)) : filter === "all" ? isRead(e) && !needsAnswer(e) : false);
+  const list = sorted.filter((e) => shown(e) && !isDone(e));
+  const doneList = sorted.filter(isDone);
+  $("count").textContent = "";
   const mineChat = DATA.entries.filter((e) => chat === "all" || e.chat === chat);
   document.querySelector('.chip[data-f="waiting"]').textContent = "Waiting for you (" + (mineChat.filter(needsAnswer).length + waitingFeats().length) + ")";
-  $("entries").innerHTML = list.length ? list.map((e) =>
+  const card = (e) =>
     '<article id="e' + e.num + '"' + (pending(e) ? ' class="unread"' : "") + '><header><span class="num">#' + e.num + "</span><div><h3>" + esc(e.title) + "</h3>" +
     '<div class="meta">' + (needsAnswer(e) ? '<span class="new">To answer</span>' : !isRead(e) ? '<span class="new">New</span>' : "") +
     '<span class="status k-' + e.kind + '">' + (sentOf(e) ? (e.decides.length ? "Answer sent" : "Reply sent") : KIND[e.kind]) + "</span><span>" + esc(e.date) + "</span>" +
@@ -509,11 +530,20 @@ function render() {
     (e.decides.length ? formHtml(e) : "") +
     "<details" + (e.decides.length || !isRead(e) ? " open" : "") + "><summary>" + (e.decides.length ? "The full question and my answer" : "The answer") + "</summary>" +
     '<div class="body">' + md(e.body) + "</div></details>" +
-    (e.decides.length ? "" : formHtml(e)) + readHtml(e) + "</article>").join("")
-    : filter === "waiting" && waitingFeats().length ? "" : '<p class="none">' + (filter === "waiting" ? "No decisions waiting for you." : "No questions yet.") + "</p>";
+    (e.decides.length ? "" : formHtml(e)) + readHtml(e) + "</article>";
+  $("entries").innerHTML = list.length ? list.map(card).join("")
+    : filter === "waiting" && waitingFeats().length ? "" : '<p class="none">' + (filter === "waiting" ? "No decisions waiting for you." : "Nothing new: everything is read.") + "</p>";
   if (filter === "waiting" && waitingFeats().length) {
     $("entries").innerHTML += '<h3 class="bl-group">Features waiting for you</h3><p class="pick">Each needs your yes (most cost money or need something bought). Tap \u201cComment\u201d and tell me, e.g. \u201cYes, go ahead\u201d or \u201cNot now\u201d.</p>' +
       waitingFeats().map(({ f, i }) => featHtml(f, i)).join("");
+  }
+  // Folded "done" box at the bottom: answered decisions (and feature yes/no's sent) or read answers.
+  const sentFeats = filter === "waiting" ? DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && DATA.notes[x.f.id]) : [];
+  const doneCount = doneList.length + sentFeats.length;
+  if (doneCount) {
+    $("entries").insertAdjacentHTML("beforeend", doneBox(filter,
+      (filter === "waiting" ? "Answered (" : "Already read (") + doneCount + ")",
+      '<div class="entries">' + doneList.map(card).join("") + sentFeats.map(({ f, i }) => featHtml(f, i)).join("") + "</div>"));
   }
   document.querySelectorAll(".body table").forEach((t) => { const box = document.createElement("div"); box.className = "tablebox"; t.replaceWith(box); box.appendChild(t); });
   document.querySelectorAll(".body a").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
@@ -586,7 +616,7 @@ document.addEventListener("click", (ev) => {
   const g = ev.target.closest("a[data-goto]");
   if (g) {
     const e = DATA.entries.find((x) => x.num === Number(g.dataset.goto));
-    if (filter === "backlog" || filter === "shipped" || (e && !shown(e))) { filter = "all"; render(); }
+    if (filter === "backlog" || (e && !shown(e))) { filter = "all"; render(); }
   }
   const b = ev.target.closest("button[data-act]");
   if (!b) return;

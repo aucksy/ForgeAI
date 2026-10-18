@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-26. Done items folded per tab; Built inside Feature backlog — 18 Oct 2026
+**Owner said:** "Can have the Done items collapsed and visually separated inside the 3 tabs in owner
+inbox - Move Built inside the feature backlog section only."
+**Done:** three tabs (Waiting for you · Questions & answers · Feature backlog). Each tab ends with a
+folded box below a dashed line: Waiting = decisions already answered (and feature yes/no's sent);
+Q&A = answers already read; Feature backlog = Built (live + next release). Status filters still
+show just that status (Live opens the built ones).
+
 ## R-25. Backlog: member progress for the gym (Planned) — 18 Oct 2026
 **Owner said:** "Add to features as planned to let GYM owner / trainer see members high level progress
 stats - to see if member is progressing or not - for now just a graph based on their total session
