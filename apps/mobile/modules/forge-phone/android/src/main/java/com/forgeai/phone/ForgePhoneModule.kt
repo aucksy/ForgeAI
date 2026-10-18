@@ -158,6 +158,38 @@ class ForgePhoneModule : Module() {
       }
     }
 
+    // ---------------------------------------------------------------- the gym's home-screen shortcut (OWNER-INBOX #11)
+    Function("gymShortcutSupported") {
+      val c = ctx ?: return@Function false
+      try {
+        GymShortcut.supported(c)
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "gym shortcut: support check failed", e)
+        false
+      }
+    }
+
+    // Off the UI thread (Expo runs AsyncFunction on its own queue): it downloads the logo.
+    AsyncFunction("gymShortcutPin") { name: String, logoUrl: String, bg: String, ask: Boolean ->
+      val c = ctx ?: return@AsyncFunction "failed"
+      try {
+        GymShortcut.pin(c, name, logoUrl, bg, ask)
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "gym shortcut: pin failed", e)
+        "failed"
+      }
+    }
+
+    Function("gymShortcutOff") { message: String ->
+      val c = ctx ?: return@Function false
+      try {
+        GymShortcut.off(c, message)
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "gym shortcut: could not grey it out", e)
+        false
+      }
+    }
+
     // ---------------------------------------------------------------- app icon shortcuts (audit Phase 9)
     Function("shortcutsSave") { json: String ->
       val c = ctx ?: return@Function false

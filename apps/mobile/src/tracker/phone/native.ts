@@ -5,6 +5,8 @@
  */
 import { Platform } from 'react-native';
 
+export type GymShortcutResult = 'asked' | 'updated' | 'none' | 'unsupported' | 'no-logo' | 'failed';
+
 export interface ForgePhone {
   healthStatus(): 'available' | 'update' | 'unavailable';
   healthGranted(): Promise<boolean>;
@@ -22,6 +24,15 @@ export interface ForgePhone {
    * Android 13+; absent on older builds.
    */
   splashPlain?(plain: boolean): 'set' | 'reset' | 'unsupported';
+  /** OWNER-INBOX #11: Android can pin a shortcut on the home screen (8.0+, a launcher that allows it). */
+  gymShortcutSupported?(): boolean;
+  /**
+   * Draws the gym's logo as a home-screen shortcut and asks Android to pin it, or redraws the pinned
+   * one. ask=false only redraws a pinned one ('none' when there is none).
+   */
+  gymShortcutPin?(name: string, logoUrl: string, bg: string, ask: boolean): Promise<GymShortcutResult>;
+  /** Left the gym: grey out the pinned shortcut with this line. */
+  gymShortcutOff?(message: string): boolean;
   /** v0.28.0: an export shared to ForgeAI (copied into the app's cache), taken once. */
   takeSharedFile(): Promise<{ uri: string; name: string; type: string } | { error: 'too_big' | 'unreadable' } | null>;
   addListener(event: 'onSharedFile', cb: () => void): { remove: () => void };

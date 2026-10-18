@@ -23,6 +23,7 @@ import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
 import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingStore';
 import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
 import { checkInCodeFromUrl } from '@/shop/checkIn';
+import { startGymShortcutSync } from '@/shop/gymShortcut';
 import { inviteCodeFromUrl, restorePendingLinks, setPendingCheckIn, setPendingInvite, takePendingCheckIn, takePendingInvite } from '@/shop/pendingInvite';
 
 /** The link the app was started with is read once per run: an erase later must not bring it back. */
@@ -44,6 +45,8 @@ setWorkoutCheck(() => {
   return w.active || !w.hydrated;
 });
 startGymTheme();
+// A gym logo pinned on the home screen follows the gym (OWNER-INBOX #11).
+startGymShortcutSync();
 
 /**
  * Last resort: the root layout ITSELF threw while drawing (each screen has its own
