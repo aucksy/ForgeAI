@@ -2388,6 +2388,17 @@
     owner 39020756689, journeys 39020758474. Release review: no blockers; 3 minor items logged
     (FINDINGS U-M7, U-M8, U-G6) for the next release.
 
+- 2026-10-18: **v0.47.1 — the three items from v0.47.0's release review, and sturdier phone tests** (tag commit below).
+  - Member app: the RPE tick's ✓ pop plays once (no replay after a drag or a reopen; never on an
+    unticked set) — U-M7. The RPE auto-tick fills from the set as it is when it fires (numbers typed
+    in the 0.35 s wait are kept) — U-M8. Switching gyms with open orders asks the new gym first: if it
+    can't be reached nothing is cancelled and the member is told, naming the new gym — U-G6.
+  - Phone tests (U-T1): J3 reads the order from the list's top when no name row is on screen; UF3
+    waits for any Workout-tab part; C and G use sub-find for rows that can't be centred. Same checks.
+  - Gate runs (commit b43a095, first attempt): default 39074784648, owner 39074786096, journeys
+    39074787606. Release review of 7af1403: no blockers; its 3 minor items fixed in f349b7c.
+  - v0.47.0 published 17 Oct (release run 39052565058): phone + watch APKs and the AAB.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
