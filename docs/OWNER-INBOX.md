@@ -135,6 +135,45 @@ Comment box on every feature. Status: Live · Next release (v0.48.0) · Planned 
 
 ---
 
+## 23. Does the audit also cover all possible UAT scenarios? — 16 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** DONE
+**READ (16 Oct, answered in chat)**
+**You asked:** whether the audit covers every UAT scenario (UAT = checking each real user can do
+their real tasks).
+**My answer:** No. The audit hunts for bugs area by area: full workouts at your phone's size, Do Not
+Disturb, screen-off rests, 12,000 random taps, every money and server rule. Gaps were: bad or no
+internet, updating over an old version with data, whole business stories across member, desk and
+owner, a workout past midnight, the admin app on a real phone with the real server, and no written
+list of stories per role ticked off each release. I recommended a written UAT list per role, each
+marked "automatic" or "owner check", tests for the gaps, and a short report every release.
+**DECIDED (16 Oct, in chat):** "research and plan a full coverage professional UAT". Done: the UAT
+plan and its work packages (docs/uat/), now part of every release.
+
+## 22. What is this: Camera "No" was not logged? — 16 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** ANSWERED
+**READ (16 Oct, answered in chat)**
+**You asked:** what the audit line "Camera No was not logged" meant.
+**My answer:** I first described it wrongly. When a member taps the camera button in a workout for
+the first time, Android asks to allow the camera. If they tapped "Don't allow", the app said
+"Couldn't add the photo. Please try again." (retrying never helps) and logged it as an error,
+though saying no is a normal choice. Now it says "Camera not allowed" with an "Open settings"
+button, like progress photos, and logs it as a normal note. Found by the 12,000 random taps.
+Shipped in v0.46.0.
+
+## 21. What is this concept of receipts that were taken back? — 16 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** DONE
+**READ (16 Oct, answered in chat)**
+**You asked:** what "receipts that were taken back" means.
+**My answer:** It is how the admin app fixes a payment saved by mistake. A receipt is never deleted
+or changed. The owner marks it as not counting and types a reason (for example "saved twice"). It
+stays in the list marked cancelled, its money leaves the day's total and goes back onto what the
+member owes (so the app asks first), its number is never used again, and a print says "CANCELLED".
+Only the owner can do it. The question was the button's name: "Void receipt" or "Cancel receipt".
+**DECIDED (16 Oct, in chat):** "Cancel receipt". It is live in the admin app.
+
 ## 20. Which GGMS features have we built that we didn't have, and which are pending? — 18 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** ANSWERED
