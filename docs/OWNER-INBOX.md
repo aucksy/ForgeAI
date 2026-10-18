@@ -161,6 +161,11 @@ separate section for what you haven't read yet.
   list (under the decisions) and its own filter.
 - A correction to #20: staff salaries and several branches are left out on purpose in the plan
   (small gyms handle pay outside the software, and our gyms have one branch), not "not built yet".
+**YOUR REPLY (18 Oct, in chat):** "The tabs selection is not changing the content below. I only want
+to see the content of the dedicated tab."
+**My answer:** fixed: the decisions box and the "To read" box no longer sit above every tab. Each
+tab now shows only its own content (Waiting for you = only the decisions, To read = only what you
+haven't read, Feature backlog = only the features), and the page jumps to the top when you switch.
 
 ---
 

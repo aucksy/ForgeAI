@@ -332,17 +332,9 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
 </div></header>
 
 <main><div class="wrap">
-  <section class="decide" aria-labelledby="dh">
-    <h2 id="dh">Waiting for your decision</h2>
-    <ol id="decisions"></ol>
-    <p class="pick">Tap a question, pick an answer (or just write a comment), press Send. Or reply in chat, e.g. "#13: A".</p>
-  </section>
-  <section class="toread" aria-labelledby="rh">
-    <h2 id="rh">To read</h2>
-    <ol id="toread"></ol>
-  </section>
   <section id="entrybox" aria-labelledby="eh">
-    <h2 id="eh">Your ideas and my answers <span class="count" id="count"></span></h2>
+    <h2 id="eh"><span id="tabname">Your ideas and my answers</span> <span class="count" id="count"></span></h2>
+    <p class="pick" id="tabhint"></p>
     <div class="entries" id="entries"></div>
   </section>
   <section id="backlogbox" aria-labelledby="bh" hidden>
@@ -399,17 +391,12 @@ $("chat").innerHTML = '<option value="all">All chats (' + chats.length + ")</opt
 if (chat !== "all" && !chats.includes(chat)) chat = "all";
 $("chat").value = chat;
 
-const open = DATA.entries.filter((e) => e.decides.length);
-$("decisions").innerHTML = open.length
-  ? open.map((e) => '<li><span class="num">#' + e.num + '</span><div><a href="#e' + e.num + '" data-goto="' + e.num + '">' + esc(e.title) + "</a>" +
-      '<span class="pick">' + (sentOf(e) ? "Sent, waiting for Claude to act" : e.decides.length + (e.decides.length > 1 ? " choices" : " choice") + " to make") + "</span></div></li>").join("")
-  : '<li class="none">Nothing waiting for you.</li>';
-$("dh").textContent = "Waiting for your decision (" + open.filter(needsAnswer).length + ")";
-const unread = DATA.entries.filter(toRead);
-$("toread").innerHTML = unread.length
-  ? unread.map((e) => '<li><span class="num">#' + e.num + '</span><div><a href="#e' + e.num + '" data-goto="' + e.num + '">' + esc(e.title) + '</a><span class="pick">' + esc(KIND[e.kind]) + "</span></div></li>").join("")
-  : '<li class="none">Nothing new to read.</li>';
-$("rh").textContent = "To read (" + unread.length + ")";
+// #21 follow-up (owner, 18 Oct): each tab shows only its own content: no boxes above the tabs.
+const TAB = { all: "Your ideas and my answers", waiting: "Waiting for your decision", toread: "To read", built: "Built, not released", done: "Done", other: "Answered / planned" };
+const HINT = {
+  waiting: 'Tap a question, pick an answer (or just write a comment), press Send. Or reply in chat, e.g. "#13: A".',
+  toread: "What you haven't read yet. \u201cMark as read\u201d takes it off this list.",
+};
 
 function answerText(e, a) {
   const lines = a.picks.map((p) => "- " + p.q + ": " + p.key + " (" + p.text + ")");
@@ -484,6 +471,9 @@ function render() {
   $("backlogbox").hidden = !bl;
   document.querySelector('.chip[data-f="backlog"]').textContent = "Feature backlog (" + DATA.backlog.length + ")";
   if (bl) { $("backlog").innerHTML = backlogHtml(); document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter))); return; }
+  $("tabname").textContent = TAB[filter] || TAB.all;
+  $("tabhint").textContent = HINT[filter] || "";
+  $("tabhint").hidden = !HINT[filter];
   const list = DATA.entries.filter(shown);
   $("count").textContent = "· " + list.length + " of " + DATA.entries.length;
   const mineChat = DATA.entries.filter((e) => chat === "all" || e.chat === chat);
@@ -591,7 +581,12 @@ document.addEventListener("click", (ev) => {
   }
 });
 $("chat").addEventListener("change", (ev) => { chat = ev.target.value; try { localStorage.setItem("inbox-chat", chat); } catch (e) { /* not kept */ } render(); });
-document.querySelectorAll(".chip").forEach((b) => b.addEventListener("click", () => { filter = b.dataset.f; try { localStorage.setItem("inbox-filter", filter); } catch (e) { /* not kept */ } render(); }));
+document.querySelectorAll(".chip").forEach((b) => b.addEventListener("click", () => {
+  filter = b.dataset.f;
+  try { localStorage.setItem("inbox-filter", filter); } catch (e) { /* not kept */ }
+  render();
+  scrollTo(0, 0);
+}));
 render();
 </script>
 """

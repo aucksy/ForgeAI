@@ -190,7 +190,8 @@ class Backlog(unittest.TestCase):
     def test_page_has_backlog_and_to_read(self):
         html = page.fill(page.TEMPLATE, {**page.parse(BACKLOG), "updated": "x", "answers": {}, "read": {}, "notes": {}})
         self.assertIn('data-f="backlog"', html)
-        self.assertIn('id="toread"', html)
+        self.assertIn('data-f="toread"', html)
+        self.assertNotIn('id="decisions"', html)
         self.assertIn('"notes":{}', html)
         self.assertIn("Staff salaries", html)
 
