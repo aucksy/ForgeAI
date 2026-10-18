@@ -306,8 +306,7 @@ of you, then the rest timer starts.
 **You asked:** under Resume workout, each exercise shows the total kg to beat (not the whole
 day's total), based on research or the member's setting; during the workout, suggest the next
 reps/weight that add up to it.
-**Status:** DECIDED (18 Oct) — build queued
-**READ (18 Oct, via the page)**
+**Status:** BUILT, NOT RELEASED (next release, v0.48.0)
 **Needs you:** decision 1 (A follow the existing Targets / Weight jumps setting, recommended; or
 B a fixed "aim for N% more" the member picks, max 10%) and decision 2 (A the next sets show what
 is left to hit the target, never more than one weight step or 2 reps above plan, recommended; or
@@ -317,6 +316,17 @@ B only show "kg so far").
 setting); decision 2 A (next sets show what is left to hit the target). Your note: on the
 Resume / Start workout screen show the total kg to target PER EXERCISE with the % of progressive
 overload it means; tap an exercise to expand it and see the target weight × reps for each set.
+**BUILT (18 Oct):**
+- **Start / Resume screen:** under each exercise: "1,125 kg to beat · +15% on last time". Tap the
+  exercise to open it: "Set 1 · 45 kg × 9", "Set 2 · 45 kg × 8"... A lighter back-off set from last
+  time is planned as it was ("as last time").
+- **During the workout:** under the Target on each exercise: "405 of 1,125 kg · next 45 kg × 8, 8".
+  After a short set the next sets catch up, never more than 2 extra reps each; if that still can't
+  reach it, it says "close enough" and never blocks anything. Once beaten: "1,125 kg beaten ✓".
+- **My calls (rule #18):** warm-ups never count; drop sets count toward "done" but aren't planned;
+  no kg target for a first time, bodyweight-only moves, holds, easy weeks or a pyramid (they keep
+  their own Target line). Tell me if you want any of these different.
+
 
 ## 8. A drag-handle bar on exercise and routine cards — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
