@@ -21,7 +21,7 @@ and MONEY-ACCESS.md (F-01..F-14).
 | 13 | Phone label / touch-target lint | DONE (cloud): test/a11y/touchLint.ts + touchLint.test.ts (every Pressable/Touchable/PressScale: a spoken label; icon-only ones 48 dp drawn + hitSlop). Found + fixed 4: plate calculator close X (no label, 38 dp) + its backdrop, routine Move up/down (42 dp), workout photo Remove (46 dp), chat Remove photo (31 dp). Commit b11f234. TalkBack pass by hand = owner check | |
 | 14 | Pairwise environment matrix (PICT) | DONE (cloud): 12 rows cover 93 pairs; all 11 runs PASS (ENV-MATRIX.md); commits 9783923 515dd52 00a1a8f a1b2ea0 | |
 | C9-34 | Shop buttons without the gym name | DONE (cloud): "Join this gym" / "Switch to this gym" / "Open the shop", name stays the heading; c9_34ShopButtons.test.ts; invite-a/b/c/e + checkin-f1 updated. Commit 7486ff7 | |
-| 15 | External devices (Play pre-launch, Firebase Test Lab) | NOT STARTED | |
+| 15 | External devices (Play pre-launch, Firebase Test Lab) | BUILT, WAITS FOR OWNER SETUP: test-lab.yml robot crawl (5 real + 2 virtual phones, free plan; picker scripts/ci/test_lab_devices.py + 4 tests), runs after each published release; secrets TEST_LAB_PROJECT / TEST_LAB_KEY per docs/uat/TEST-LAB-SETUP.md | |
 
 Release: v0.48.0 (PC, 18 Oct): app tested on 4d651d6 — whole phone runs default 39120213047 + owner
 39120214610, journeys 39120216807, CI 39120212122 (first runs on 2391daf red on test steps U-Q2, U-Q3,

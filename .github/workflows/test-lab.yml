@@ -1,0 +1,149 @@
+# UAT WP15 (owner R-29, 18 Oct 2026): Google's robot taps through a released APK on real phones in
+# Firebase Test Lab and reports crashes, broken screens and slow starts. Advisory: it never blocks
+# a release (our scripted phone tests in qa-device.yml stay the gate).
+#
+# Free (Spark) plan: 5 test runs a day on real phones, 10 on virtual ones. One run here = up to 5
+# real phones (one per brand, chosen by scripts/ci/test_lab_devices.py) + 2 virtual ones.
+# Test Lab is to shut down on 30 Sep 2027 (Google's notice); move to its successor before then.
+#
+# Needs two repository secrets (the owner makes them; docs/uat/TEST-LAB-SETUP.md):
+#   TEST_LAB_PROJECT  the Firebase project id
+#   TEST_LAB_KEY      the JSON key of a service account in that project
+# Without them the run says so and stops green (nothing to test against yet).
+name: Test Lab (real phones)
+run-name: Test Lab robot crawl (${{ inputs.tag || github.event.workflow_run.head_branch || 'latest' }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to test, e.g. v0.48.0 (empty = the latest release)'
+        default: ''
+      physical:
+        description: 'Real phones (free plan: 5 a day)'
+        default: '5'
+      virtual:
+        description: 'Virtual phones (free plan: 10 a day)'
+        default: '2'
+  workflow_run:
+    workflows: ['Build & Release (APK + AAB)']
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-lab
+  cancel-in-progress: false
+
+jobs:
+  robo:
+    # After a release only when it published (tags), never after a dry run on main.
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && startsWith(github.event.workflow_run.head_branch, 'v'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      HAS_KEY: ${{ secrets.TEST_LAB_KEY != '' && secrets.TEST_LAB_PROJECT != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Not set up yet
+        if: env.HAS_KEY != 'true'
+        run: |
+          echo "::notice::Test Lab is not set up yet: add the TEST_LAB_PROJECT and TEST_LAB_KEY secrets (docs/uat/TEST-LAB-SETUP.md)."
+          echo "Test Lab is not set up yet (secrets TEST_LAB_PROJECT / TEST_LAB_KEY missing). Nothing was tested." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Which release
+        if: env.HAS_KEY == 'true'
+        id: rel
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_IN: ${{ inputs.tag || github.event.workflow_run.head_branch }}
+        run: |
+          tag="$TAG_IN"
+          if [ -z "$tag" ]; then tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName); fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern "forgeai-$tag.apk" --dir .
+          ls -l "forgeai-$tag.apk"
+
+      - name: Sign in to Google Cloud
+        if: env.HAS_KEY == 'true'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.TEST_LAB_KEY }}
+          project_id: ${{ secrets.TEST_LAB_PROJECT }}
+
+      - name: Set up gcloud
+        if: env.HAS_KEY == 'true'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Pick the phones
+        if: env.HAS_KEY == 'true'
+        id: phones
+        run: |
+          gcloud firebase test android models list --format=json > models.json
+          python3 scripts/ci/test_lab_devices.py --physical "${{ inputs.physical || '5' }}" --virtual "${{ inputs.virtual || '2' }}" < models.json > devices.txt
+          cat devices.txt
+
+      - name: Robot crawl
+        if: env.HAS_KEY == 'true'
+        id: run
+        env:
+          TAG: ${{ steps.rel.outputs.tag }}
+        run: |
+          args=()
+          while read -r d; do args+=(--device "$d"); done < devices.txt
+          set +e
+          gcloud firebase test android run --type robo --app "forgeai-$TAG.apk" "${args[@]}" \
+            --timeout 5m --client-details matrixLabel="ForgeAI $TAG" --format=json > outcome.json 2> run.log
+          code=$?
+          set -e
+          tail -40 run.log
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+      - name: Report
+        if: env.HAS_KEY == 'true' && always()
+        env:
+          TAG: ${{ steps.rel.outputs.tag }}
+          CODE: ${{ steps.run.outputs.code }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          tag, code = os.environ.get("TAG", "?"), os.environ.get("CODE", "?")
+          # gcloud: 0 = all passed, 10 = a test failed, 15 = inconclusive, 18/19 = quota or devices.
+          words = {"0": "passed on every phone", "10": "FOUND A PROBLEM on at least one phone",
+                   "15": "inconclusive (Google's side)", "18": "no free quota left today", "19": "a phone was not available"}
+          lines = [f"## Test Lab robot crawl: {tag}", "", f"Result: **{words.get(code, 'stopped (code ' + code + ')')}**", ""]
+          try:
+              rows = json.load(open("outcome.json"))
+          except Exception as e:  # quiet: no table when gcloud stopped early; the log below says why
+              rows = []
+              print("no outcome table:", e)
+          if rows:
+              lines += ["| Phone | Outcome | Details |", "|---|---|---|"]
+              for r in rows:
+                  lines.append(f"| {r.get('axis_value', '')} | {r.get('outcome', '')} | {r.get('test_details', '')} |")
+          lines += ["", "Full results (screens, video, logs): the Firebase console link in this run's log."]
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+              f.write("\n".join(lines) + "\n")
+          print("\n".join(lines))
+          PY
+          grep -o 'https://console.firebase.google.com[^ ]*' run.log | head -1 || true
+
+      - name: Keep the result
+        if: env.HAS_KEY == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-lab-${{ steps.rel.outputs.tag }}
+          path: |
+            outcome.json
+            run.log
+            devices.txt
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Fail on a real problem
+        if: env.HAS_KEY == 'true' && steps.run.outputs.code == '10'
+        run: |
+          echo "::error::The robot found a problem on a real phone. See the summary and the Firebase console link."
+          exit 1
