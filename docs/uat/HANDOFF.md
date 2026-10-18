@@ -53,10 +53,10 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - WP9 gym fixes + REPAIR PART R (blocks whole phone runs).
 
 ### PC must do
-- Owner yes -> apply 0021_receipt_rules.sql, 0022_key_status.sql, then 0023_member_membership.sql, on the live database; run
+- OWNER SAID YES (18 Oct): apply 0021_receipt_rules.sql, 0022_key_status.sql, then 0023_member_membership.sql, on the live database; run
   every supabase/tests/*.sql live (expect RESULT PASS, "findings still open: none").
 - Deploy the admin app after any admin change (checked build, then wrangler in deploy/panel).
 
 ### Owner decisions needed
-- Apply the three database changes above (recommend: yes).
+- None open (0021-0023 approved 18 Oct; the PC applies them).
 - Optional: delete Actions run 38965066052 (two already-revoked test keys in its log).

@@ -25,7 +25,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 6 | Turn on the 3 server changes (0021, 0022, 0023) | A: yes, apply from the PC |
 
 ---
 
@@ -355,7 +354,7 @@ things work.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** BUILT, NOT RELEASED — WAITING FOR YOU (turn on the server changes)
+**Status:** BUILT, NOT RELEASED — server changes approved, to apply from the PC
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
 the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
@@ -391,10 +390,9 @@ and child): those members are asked to see the desk. Tested on a copy of the dat
 **Needs you:** it reads one new server function (0023), which only reads, never changes anything.
 Until it is turned on, the card simply doesn't show. 0021 (receipt rules) and 0022 (why a staff
 sign-in stopped) are waiting too; all three are applied from your PC.
-**Decide:** Turn on the 3 server changes (0021, 0022, 0023) on the live server?
-- A: Yes, apply all three from the PC (recommended)
-- B: Not yet
-
+**DECIDED (18 Oct, in chat):** "Yes": apply 0021, 0022 and 0023 on the live server from the PC
+(the cloud session has no live access). The paste-in prompt for Claude on the PC is in chat and in
+docs/uat/HANDOFF.md ("PC must do").
 
 ## 5. Use the admin app's icon for the mobile app — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
