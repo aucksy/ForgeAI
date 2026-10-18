@@ -25,6 +25,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 6 | Turn on the 3 server changes (0021, 0022, 0023) | A: yes, apply from the PC |
 
 ---
 
@@ -343,7 +344,7 @@ things work.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** DECIDED (my call, 18 Oct) — "My membership" being built
+**Status:** BUILT, NOT RELEASED — WAITING FOR YOU (turn on the server changes)
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
 the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
@@ -368,6 +369,21 @@ diet and workout plans; gym-recorded body measurements.
 **DECIDED (18 Oct, my call under your rule #18):** "My membership" first (members ask the desk
 about their end date more than anything), then the gym's workout plans. Class booking after your
 gym visit. Tell me if you want a different order.
+**BUILT (18 Oct):** "My membership" at the top of the gym's Shop and in Settings → Your gym: plan
+name, "Ends 30 Oct · 12 days left", "Renew at the desk" in the last week (unless the next plan is
+already paid), the next plan, personal training used ("3 of 12 used, with Ravi"), days at the gym
+this month. Works offline with the last copy. On purpose, **no money is shown**: the app only knows
+a member by the number typed at check-in, which nobody verifies. A review also found that someone
+could type another member's number and see their plan, so the plan now shows only when the first
+name given in the app matches the gym's list, and never for a number two members share (a parent
+and child): those members are asked to see the desk. Tested on a copy of the database (12 checks).
+**Needs you:** it reads one new server function (0023), which only reads, never changes anything.
+Until it is turned on, the card simply doesn't show. 0021 (receipt rules) and 0022 (why a staff
+sign-in stopped) are waiting too; all three are applied from your PC.
+**Decide:** Turn on the 3 server changes (0021, 0022, 0023) on the live server?
+- A: Yes, apply all three from the PC (recommended)
+- B: Not yet
+
 
 ## 5. Use the admin app's icon for the mobile app — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
