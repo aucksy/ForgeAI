@@ -28,6 +28,41 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 ---
 
+## 20. Which GGMS features have we built that we didn't have, and which are pending? — 18 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**Status:** ANSWERED
+**You asked:** what we built from GGMS's list that we didn't have, and what is still pending.
+**My answer:**
+**Built (from the GGMS gap list):**
+1. **Member sees their plan in the app** ("My membership"): plan name, end date, days left, "renew
+   at the desk" in the last week, the next plan, personal training used, days at the gym this
+   month. Server live; members get it in v0.48.0. On purpose, no payments (the app can't prove who
+   is holding the phone).
+2. **Workout plans from the gym or trainer**: trainers build or pick a ready plan, add starting
+   weights, send to members or a whole membership plan; it appears in the member's app by itself.
+   Server and admin app live; members get it in v0.48.0.
+3. **Trainers can do this from their own staff login** (a first piece of GGMS's "trainer section").
+Already had before: members, plans, renewals, dues, receipts, expenses, enquiries, reports, staff
+roles, QR check-in, member ID card, shop with stock, WhatsApp messages typed for you.
+**Pending:**
+| Feature | Where it stands |
+|---|---|
+| Entry machine / turnstile (fingerprint, face, open door from the phone) | Planned (P8); the tripod turnstile is the standard pick (#2) |
+| Automatic reminders (expiry, birthday, renewal) by SMS / WhatsApp | Not built: today the owner taps to send ready-typed WhatsApp messages. Costs money per message, so it needs your OK on a provider |
+| "Expiring in 1-3 / 4-7 / 8-15 days" on the home screen | Not built (small; I'll do it next with the admin app work) |
+| Class booking (timetable, spaces left) | Waits for your gym visit: "Do you run group classes?" |
+| Diet plans from the trainer | Not built (workout plans first; diet is next if gyms ask) |
+| Trainer profiles and schedules | Partly (trainers send plans); no schedule screen yet |
+| Staff / trainer salaries | Not built |
+| Several branches | Not built |
+| Webcam member photo at the desk | Not built (small) |
+| Body measurements taken by the gym | Not built (members log their own) |
+| AI assistant for the owner ("peak hours today?") | Later; the reports already show peak hours |
+| Admin app fully offline | Decided (#7), build queued |
+| Member's payments in the app | Left out on purpose (privacy, see #6) |
+
+---
+
 ## 19. Workout plans must flow straight into the app; the inbox is only for my asks — 18 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** BUILT, NOT RELEASED (v0.48.0)
@@ -327,6 +362,7 @@ of you, then the rest timer starts.
 day's total), based on research or the member's setting; during the workout, suggest the next
 reps/weight that add up to it.
 **Status:** BUILT, NOT RELEASED (next release, v0.48.0)
+**READ (18 Oct, 02:00 pm, via the page)**
 **Needs you:** decision 1 (A follow the existing Targets / Weight jumps setting, recommended; or
 B a fixed "aim for N% more" the member picks, max 10%) and decision 2 (A the next sets show what
 is left to hit the target, never more than one weight step or 2 reps above plan, recommended; or
@@ -376,6 +412,7 @@ things work.
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** DONE (server live 18 Oct; member app in v0.48.0)
+**READ (18 Oct, 02:02 pm, via the page)**
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
 the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
