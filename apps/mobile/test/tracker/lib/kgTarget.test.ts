@@ -61,6 +61,20 @@ describe('#9 kg to beat: the plan', () => {
     expect(p.pct).toBeNull();
     expect(kgToBeatLine(p, total)).toBe('1,125 kg to beat');
   });
+  it('a heavy top set first last time stays first, where the rows hint it', () => {
+    const p = kgPlan({ ...base, targetSets: 4, setGoals: [6, 5, 5] }, [{ weightKg: 60, reps: 3 }, { weightKg: 42.5, reps: 5 }, { weightKg: 42.5, reps: 5 }, { weightKg: 42.5, reps: 5 }])!;
+    expect(p.sets).toEqual([
+      { weightKg: 60, reps: 3, asLast: true },
+      { weightKg: 45, reps: 6, asLast: false },
+      { weightKg: 45, reps: 5, asLast: false },
+      { weightKg: 45, reps: 5, asLast: false },
+    ]);
+  });
+  it('no % when last time had a different number of sets', () => {
+    expect(kgPlan(base, last3.slice(0, 2))!.pct).toBeNull();
+    expect(kgPlan(base, [...last3, { weightKg: 42.5, reps: 6 }])!.pct).toBeNull();
+    expect(kgPlan(base, last3)!.pct).not.toBeNull();
+  });
   it('the % words', () => {
     expect(pctWords(0.002)).toBe('same as last time');
     expect(pctWords(-0.05)).toBe('lighter than last time');
@@ -91,7 +105,7 @@ describe('#9 kg to beat: during the workout', () => {
     const g = kgProgress(p, [row(45, 2, true), row(45, 2, true), row(null, null, false)]);
     expect(g.next).toEqual([{ weightKg: 45, reps: 8 + MAX_EXTRA_REPS }]);
     expect(g.short).toBe(true);
-    expect(kgLiveLine(p, g, total, weight)).toMatch(/close enough\)$/);
+    expect(kgLiveLine(p, g, total, weight)).toMatch(/\(a little short is fine\)$/);
   });
   it('beaten: says so with what was done', () => {
     const g = kgProgress(p, [row(45, 10, true), row(45, 10, true), row(45, 9, true)]);
@@ -107,6 +121,35 @@ describe('#9 kg to beat: during the workout', () => {
     const g = kgProgress(p, [row(45, 5, true), row(45, 5, true), row(45, 5, true)]);
     expect(g.next).toEqual([]);
     expect(kgLiveLine(p, g, total, weight)).toBe('675 of 1,125 kg · 450 kg short, add a set if you have it in you');
+  });
+  it('starts from what each row hints, and stays within 2 reps of it', () => {
+    // Set 1 done at 7: the rows hint 7, 7 (fillForSet caps at the row above) — never 8 + 2.
+    const g = kgProgress(p, [
+      { weightKg: 45, reps: 7, done: true, isWarmup: false },
+      { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 45, hintReps: 7 },
+      { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 45, hintReps: 7 },
+    ]);
+    expect(g.next.every((s) => s.reps <= 7 + MAX_EXTRA_REPS)).toBe(true);
+    // A weight typed above carries down in the hint: the line says it too.
+    const h = kgProgress(p, [
+      { weightKg: 47.5, reps: 9, done: true, isWarmup: false },
+      { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 47.5, hintReps: 8 },
+    ]);
+    expect(h.next[0].weightKg).toBe(47.5);
+  });
+  it('a drop row takes no plan place and is never planned', () => {
+    const g = kgProgress(p, [
+      { weightKg: 45, reps: 9, done: true, isWarmup: false },
+      { weightKg: null, reps: null, done: false, isWarmup: false, setType: 'drop' },
+      { weightKg: null, reps: null, done: false, isWarmup: false },
+      { weightKg: null, reps: null, done: false, isWarmup: false },
+    ]);
+    expect(g.next).toEqual([{ weightKg: 45, reps: 8 }, { weightKg: 45, reps: 8 }]);
+  });
+  it('a row added mid-workout with a hint is planned from it', () => {
+    const g = kgProgress(p, [row(45, 5, true), row(45, 5, true), row(45, 5, true), { weightKg: null, reps: null, done: false, isWarmup: false, hintKg: 45, hintReps: 5 }]);
+    expect(g.next).toEqual([{ weightKg: 45, reps: 5 + MAX_EXTRA_REPS }]);
+    expect(g.short).toBe(true);
   });
   it('member words never say volume, PR or session', () => {
     const words = [kgToBeatLine(p, total), ...kgSetLines(p, weight), kgLiveLine(p, kgProgress(p, []), total, weight)].join(' ');

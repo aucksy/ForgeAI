@@ -21,7 +21,8 @@ export function ExerciseKgRow({ target: t, index, units }: { target: KgTarget; i
   const weight = (kg: number) => fmtWeight(kg, units);
   const line = targetLine(t, weight);
   const plan = useMemo(() => kgPlan(t, t.lastSets ?? []), [t]);
-  const toBeat = plan ? kgToBeatLine(plan, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`) : null;
+  // Dumbbells counted per hand add up per hand: say so.
+  const toBeat = plan ? kgToBeatLine(plan, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${t.each ? ' each' : ''}`) : null;
   const sets = plan && open ? kgSetLines(plan, weight) : null;
 
   const body = (

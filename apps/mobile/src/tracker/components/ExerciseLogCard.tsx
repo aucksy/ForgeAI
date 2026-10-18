@@ -210,11 +210,6 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     () => (target ? kgPlan(target, exercise.previousSets.filter((p) => p.setType !== 'drop')) : null),
     [target, exercise.previousSets],
   );
-  const kgLine = useMemo(() => {
-    if (!kgPlanned) return null;
-    const g = kgProgress(kgPlanned, exercise.sets.map((x) => ({ weightKg: x.weightKg, reps: x.reps, done: x.done, isWarmup: x.isWarmup })));
-    return kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`, (kg) => fmtWeight(kg, units));
-  }, [kgPlanned, exercise.sets, units]);
 
   // Working weight = first entered working set, else today's Target, else last session's first working set.
   const firstWorking = exercise.sets.find((s) => !s.isWarmup && s.weightKg != null);
@@ -248,6 +243,17 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
     });
   }, [exercise, fillTarget, earlier, easyWeek]);
+
+  // #9: the line starts from what each row hints (never disagreeing with the rows), see kgProgress.
+  const kgLine = useMemo(() => {
+    if (!kgPlanned) return null;
+    const g = kgProgress(
+      kgPlanned,
+      rows.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps })),
+    );
+    const each = weightIsEach(loadMode) ? ' each' : '';
+    return kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units));
+  }, [kgPlanned, rows, units, loadMode]);
 
   // 13 Oct 2026: the rows' widths for this phone and text size; RPE shows at every width.
   const rowLayout = useRowLayout(logType);

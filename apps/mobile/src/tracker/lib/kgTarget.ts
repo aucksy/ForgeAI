@@ -73,13 +73,22 @@ export function kgPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
   // it that way too, fillForSet), not at the main weight.
   const main = mainWeightOf(last);
   const off = main != null && main > 0 ? last.filter((s) => Math.abs(s.weightKg - main) >= main * OFF_MAIN_SHARE - 1e-9) : [];
-  const nMain = Math.max(0, t.targetSets - off.length);
+  // Review fix: in last time's order, as the set rows hint them (fillForSet matches rows to last
+  // time's sets by place): a place that was a top set or back-off stays one; the others take the
+  // Target weight and the next per-set goal.
   const sets: KgPlanSet[] = [];
-  for (let i = 0; i < nMain; i++) sets.push({ weightKg: t.targetWeightKg, reps: t.setGoals[i] ?? t.repGoal, asLast: false });
-  for (const s of off.slice(0, t.targetSets - nMain)) sets.push({ weightKg: s.weightKg, reps: s.reps, asLast: true });
-  if (sets.length === 0) return null;
+  let goal = 0;
+  for (let i = 0; i < t.targetSets; i++) {
+    const was = last[i];
+    if (was && off.includes(was)) sets.push({ weightKg: was.weightKg, reps: was.reps, asLast: true });
+    else {
+      sets.push({ weightKg: t.targetWeightKg, reps: t.setGoals[goal] ?? t.repGoal, asLast: false });
+      goal += 1;
+    }
+  }
   const total = sets.reduce((a, s) => a + s.weightKg * s.reps, 0);
-  const lastTotal = last.length ? last.reduce((a, s) => a + s.weightKg * s.reps, 0) : null;
+  // Review fix: a % only against the same number of sets (2 of 3 done last time is not "+60%").
+  const lastTotal = last.length === t.targetSets ? last.reduce((a, s) => a + s.weightKg * s.reps, 0) : null;
   return { sets, total, last: lastTotal, pct: lastTotal && lastTotal > 0 ? (total - lastTotal) / lastTotal : null };
 }
 
@@ -89,6 +98,11 @@ export interface KgRow {
   reps: number | null;
   done: boolean;
   isWarmup: boolean;
+  /** A drop row counts when done, but is never planned (it takes no plan place). */
+  setType?: string;
+  /** What the row hints now (fillForSet: carries a weight typed above, caps reps at the row above). */
+  hintKg?: number | null;
+  hintReps?: number | null;
 }
 
 export interface KgProgress {
@@ -102,8 +116,9 @@ export interface KgProgress {
 
 /**
  * How far the workout is, and what the open sets need. Ticked working sets count (drop sets too:
- * they help, never block); open rows are planned at the plan's set for that place, else what is
- * typed; then reps are added one at a time from the last open set back, at most 2 a set. PURE.
+ * they help, never block). An open row starts from what it hints (else what is typed, else the
+ * plan's set for that place), so the line never disagrees with the rows; then reps are added one
+ * at a time from the last open set back, at most 2 a set above that hint. PURE.
  */
 export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   let done = 0;
@@ -111,14 +126,17 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   let ordinal = 0;
   for (const r of rows) {
     if (r.isWarmup) continue;
-    const planned = plan.sets[ordinal];
-    ordinal += 1;
+    const drop = r.setType === 'drop';
+    const planned = drop ? undefined : plan.sets[ordinal];
+    if (!drop) ordinal += 1;
     if (r.done) {
       if (r.weightKg != null && r.reps != null && r.weightKg > 0 && r.reps > 0) done += r.weightKg * r.reps;
       continue;
     }
-    const weightKg = r.weightKg != null && r.weightKg > 0 ? r.weightKg : planned?.weightKg ?? 0;
-    const reps = planned?.reps ?? (r.reps != null && r.reps > 0 ? r.reps : 0);
+    if (drop) continue;
+    const pos = (n: number | null | undefined): number | null => (n != null && Number.isFinite(n) && n > 0 ? n : null);
+    const weightKg = pos(r.weightKg) ?? pos(r.hintKg) ?? planned?.weightKg ?? 0;
+    const reps = pos(r.hintReps) ?? planned?.reps ?? pos(r.reps) ?? 0;
     if (weightKg > 0 && reps > 0) open.push({ weightKg, reps });
   }
   const left = Math.max(0, plan.total - done);
@@ -166,5 +184,5 @@ export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: We
   const plan = sameKg
     ? `${weight(g.next[0].weightKg)} × ${g.next.map((s) => s.reps).join(', ')}`
     : g.next.map((s) => `${weight(s.weightKg)} × ${s.reps}`).join(', ');
-  return `${head} · next ${plan}${g.short ? ' (close enough)' : ''}`;
+  return `${head} · next ${plan}${g.short ? ' (a little short is fine)' : ''}`;
 }
