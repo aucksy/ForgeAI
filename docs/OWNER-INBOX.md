@@ -74,7 +74,7 @@ Comment box on every feature. Status: Live · Next release (v0.48.0) · Planned 
 | At-risk members list | Live | A daily list of members who stopped coming, judged against each member's own routine. |
 | Renewals list and WhatsApp messages | Live | Ready-typed WhatsApp messages for fees, endings, birthdays, welcome and receipts, sent with one tap. |
 | Home screen tiles | Live | Live, expired and expiring members, today's collection and dues, each opening its matching list. |
-| "Expiring in 1-3 / 4-7 / 8-15 days" tiles | Planned | Split the renewals due on the home screen into three time buckets. |
+| "Expiring in 1-3 / 4-7 / 8-15 days" tiles | Live | On the Today screen since 15 Oct: Ending today, in 1-3, 4-7 and 8-15 days; each opens its list. |
 | Staff logins and roles | Live | Owner and front-desk logins; staff can give at most 10% off and every receipt shows who took it. |
 | Personal training packs | Live | Sell personal training packs with a sessions-used counter and the trainer's name. |
 | Member ID card | Live | Print a member card, save it as a picture, or send it on WhatsApp. |
@@ -157,7 +157,7 @@ roles, QR check-in, member ID card, shop with stock, WhatsApp messages typed for
 |---|---|
 | Entry machine / turnstile (fingerprint, face, open door from the phone) | Planned (P8); the tripod turnstile is the standard pick (#2) |
 | Automatic reminders (expiry, birthday, renewal) by SMS / WhatsApp | Not built: today the owner taps to send ready-typed WhatsApp messages. Costs money per message, so it needs your OK on a provider |
-| "Expiring in 1-3 / 4-7 / 8-15 days" on the home screen | Not built (small; I'll do it next with the admin app work) |
+| "Expiring in 1-3 / 4-7 / 8-15 days" on the home screen | Built (correction, 18 Oct): live since 15 Oct as the Today tiles "Ending today / in 1-3 / 4-7 / 8-15 days"; each opens its list. A new test checks the day edges |
 | Class booking (timetable, spaces left) | Waits for your gym visit: "Do you run group classes?" |
 | Diet plans from the trainer | Not built (workout plans first; diet is next if gyms ask) |
 | Trainer profiles and schedules | Partly (trainers send plans); no schedule screen yet |
