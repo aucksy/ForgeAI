@@ -5,6 +5,22 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-30. Plan for FitPass (and other pass) members — 18 Oct 2026
+**Owner said:** "add this to the plan that we have to consider the FitPass subscribers that use the
+gym. I'm one of those guys. I do not pay the gym directly. But I have this third-party FitPass
+subscription. So I go there and I open my FitPass app. And there is a FitPass QR code installed. I
+scan it. To register my workout."
+**Done:** added to the feature backlog (Gym ↔ member links, Planned). Not built. When it starts:
+research first (FitPass, Cult/cultpass PLAY, Fitternity, GymPik: how the gym is paid per visit, what
+the gym sees, whether any of them offer a partner API), then decide. Points to cover:
+- the member joins our gym view WITHOUT a membership plan or dues ("FitPass member"), so they still
+  get gym workout plans, the shop and check-in;
+- the desk / owner sees pass visits apart from paying members (the gym is paid per visit by the pass
+  company; a monthly count to match the pass company's statement);
+- check-in: they already scan FitPass's own QR; ours must not make them scan twice (one tap, or
+  counted from the FitPass scan if a partner link exists);
+- he is himself such a member: his own gym visits are the first real test.
+
 ## R-29. Start testing on Google's test lab (Firebase Test Lab) — 18 Oct 2026
 **Owner said:** "Okay start that testing" (after inbox #24: free plan, light on tokens).
 **Done:** see the entry below this line once built: a cloud workflow that sends each release's APK
