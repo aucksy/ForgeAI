@@ -81,6 +81,22 @@ def main():
         x1, y1 = (b[0] + b[2]) // 2, (b[1] + b[3]) // 2
         print(f"{x1} {y1} {x1} {max(a[1] - 60, 200)}")
         return
+    if sys.argv[1] == "ex-next":
+        # python3 drag_check.py ex-next <dump.xml> <name>  -> "<other name>|x y": the top name row on
+        # screen that is NOT <name>, and its centre ("missing" if none). v0.48.0 owner run 39111140587:
+        # at 360 dp and font 1.3 the first exercise's card (now with its kg-to-beat line) is taller
+        # than the list, so its name row and the next one are never on screen together.
+        for n, (x1, y1, x2, y2) in exercises(sys.argv[2]):
+            if n != sys.argv[3]:
+                print(f"{n}|{(x1 + x2) // 2} {(y1 + y2) // 2}")
+                return
+        print("missing")
+        return
+    if sys.argv[1] == "ex-first":
+        # python3 drag_check.py ex-first <dump.xml>  -> the top name row's name, or "missing"
+        ex = exercises(sys.argv[2])
+        print(ex[0][0] if ex else "missing")
+        return
     cmd, path, a, b = sys.argv[1:5]
     ba, bb = find(path, a), find(path, b)
     if not ba or not bb:

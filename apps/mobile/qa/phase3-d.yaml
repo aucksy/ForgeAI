@@ -307,10 +307,13 @@ appId: com.forgeai.app
     index: 0
 - takeScreenshot: 50-measures-waist
 # The "+" sits in the page's title row, which scrolls with the page: after the history above it
-# can be just off the top (run 38150955406), so bring it back first.
+# can be just off the top (run 38150955406), so bring it back first. Centred, as for the first "+"
+# above: v0.48.0 default run 39111139019 found it "visible" at y 71-181, under the status bar, and
+# the tap there opened nothing.
 - scrollUntilVisible:
     element: "Add measures"
     direction: UP
+    centerElement: true
     timeout: 20000
 - tapOn: "Add measures"
 - extendedWaitUntil:

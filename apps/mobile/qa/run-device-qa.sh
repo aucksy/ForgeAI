@@ -753,12 +753,43 @@ j3_names() {  # $1 = dump file name. Prints ONLY the order (its log lines go to 
     j3_dump "$1" >&2
     n=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/$1")
   fi
+  if [ "$n" = "missing" ]; then
+    # Owner phone, v0.48.0: one card can be taller than the list, so the 2nd name row is never on
+    # screen with the 1st. Take the top name, then scroll down to the next one (j3_next).
+    local first
+    first=$(python3 "$QA_DIR/drag_check.py" ex-first "$OUT/$1")
+    if [ "$first" != "missing" ] && j3_next "$1" "$first" >&2; then n="$first|${j3_nx%%|*}"; fi
+  fi
   echo "$n"
+}
+# Scroll the list down from its left edge (the set boxes swallow a drag that starts on them, U-Q1)
+# until a name row other than $2 is on screen. Sets j3_nx = "name|x y" (its centre). $1 = dump name.
+j3_next() {
+  local k
+  for k in 1 2 3 4; do
+    adb shell input swipe 90 1700 90 1350 600 >/dev/null 2>&1
+    sleep 1
+    j3_dump "$1.next$k.xml"
+    j3_nx=$(python3 "$QA_DIR/drag_check.py" ex-next "$OUT/$1.next$k.xml" "$2")
+    if [ "$j3_nx" != "missing" ]; then log "J3 next name row found after $k scroll(s): ${j3_nx%%|*}"; return 0; fi
+  done
+  log "J3 no second name row after 4 scrolls ($1.next*.xml)"
+  return 1
 }
 if maestro test --format junit --output "$OUT/part-j3.xml" --test-output-dir "$OUT/part-j3" "$QA_DIR/j3-workout-drag.yaml" > "$OUT/part-j3.log" 2>&1; then
   j3_dump j3-before.xml
   j3_before=$(python3 "$QA_DIR/drag_check.py" ex-names "$OUT/j3-before.xml")
   j3_coords=$(python3 "$QA_DIR/drag_check.py" ex-drag "$OUT/j3-before.xml")
+  if [ "$j3_before" = "missing" ]; then
+    # The 1st card is taller than the list (owner phone): hold the 2nd name row once it is scrolled
+    # into view; every card shrinks to its name row, so dragging to the list's top puts it first.
+    j3_top=$(python3 "$QA_DIR/drag_check.py" ex-first "$OUT/j3-before.xml")
+    if [ "$j3_top" != "missing" ] && j3_next j3-before.xml "$j3_top"; then
+      read -r j3nx j3ny <<< "${j3_nx##*|}"
+      j3_before="$j3_top|${j3_nx%%|*}"
+      j3_coords="$j3nx $j3ny $j3nx 300"
+    fi
+  fi
   log "J3 before: $j3_before; drag $j3_coords"
   if [ "$j3_coords" != "missing" ] && [ "$j3_before" != "missing" ]; then
     read -r j3x1 j3y1 j3x2 j3y2 <<< "$j3_coords"
