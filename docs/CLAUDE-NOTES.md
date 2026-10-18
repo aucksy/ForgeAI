@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-25. Backlog: member progress for the gym (Planned) — 18 Oct 2026
+**Owner said:** "Add to features as planned to let GYM owner / trainer see members high level progress
+stats - to see if member is progressing or not - for now just a graph based on their total session
+volumes - you will research and recommend the best way to build this when we start it."
+**Done:** added to the backlog (Admin app, Planned). When it starts: research first (how coach apps
+show client progress; Hevy Coach / Trainerize / TrueCoach), and design consent: workouts stay on the
+phone today (a promise in the app), so the member must opt in to share; admin wording stays simple
+("total kg lifted per workout"; never "volume"/"session" on member screens).
+
 ## R-24. "To read" merged into Questions & answers — 18 Oct 2026
 **Owner asked:** "To Read and Q&A Tab are separate.. is that needed?"
 **Done:** no, merged: Questions & answers lists unread answers first (tagged New) and its tab says

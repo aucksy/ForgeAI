@@ -89,6 +89,7 @@ Comment box on every feature. Status: Live · Next release (v0.48.0) · Planned 
 | Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. |
 | Webcam photo at the desk | Idea | Take a new member's photo with the desk computer's camera. |
 | Body measurements taken by the gym | Idea | Let trainers record measurements; members already log their own. |
+| Member progress for the gym | Planned | Owner and trainers see if a member is progressing: first a graph of total kg lifted per workout, shared only with the member's OK. |
 | AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. |
 | Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. |
 | Several branches | Not doing | Left out on purpose for now; our target gyms have one branch. |
