@@ -213,6 +213,9 @@ function deviceSteps(): EraseStep[] {
         // Which gyms were offered the home-screen logo (OWNER-INBOX #11): a fresh start offers again.
         const { SHORTCUT_OFFERED_KEY } = await import('@/shop/gymShortcut');
         await AsyncStorage.removeItem(SHORTCUT_OFFERED_KEY);
+        // "My membership"'s kept answer (OWNER-INBOX #6).
+        const { MEMBERSHIP_STORAGE_KEY } = await import('@/shop/membership');
+        await AsyncStorage.removeItem(MEMBERSHIP_STORAGE_KEY);
         if (key) {
           const { leaveOnServer } = await import('@/shop/pendingLeave');
           await leaveOnServer(key);

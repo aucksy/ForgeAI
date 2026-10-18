@@ -28,6 +28,7 @@ import { askAndLeaveGym } from './leaveFlow';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { GymShortcutOffer } from './GymShortcutOffer';
+import { MembershipCard } from './MembershipCard';
 import { ProductPicture } from './ProductPicture';
 import { BagButton, BellButton, DEMO_SHOP_LINE, DemoNote, MyOrdersRow, QuietLine, shopInputStyle } from './ShopParts';
 import { unreadCount } from './inbox';
@@ -285,6 +286,7 @@ function GymShop({ link }: { link: GymLink }) {
         ) : null}
         {hasList && problem ? <QuietLine text={withListAge(problem, listAgeText(productsAt, Date.now()))} /> : null}
 
+        <MembershipCard link={link} />
         <GymShortcutOffer link={link} />
         <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} />
         {hasList ? <ProductGrid products={products} filter={filter} onFilter={setFilter} onOpen={(id) => router.push({ pathname: '/shop/[id]', params: { id } })} emptyText="Your gym has nothing in its shop yet." /> : null}

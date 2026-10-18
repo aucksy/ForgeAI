@@ -11,6 +11,7 @@ import { getSupabase } from '@/cloud/client';
 
 import { classifyRpcError, gymNowFromMe, linkFromJoin, orderFromRow, ordersFromRows, previewFromRow, productsFromRows, type GymError, type GymNow, type GymPreview } from './gym';
 import { checkInFromRow, type CheckInAnswer } from './checkIn';
+import { membershipFromRow, type MembershipAnswer } from './membership';
 import { inboxFromRows, type InboxMessage } from './inbox';
 import type { GymLink, GymOrder, Product } from './types';
 
@@ -131,6 +132,17 @@ export async function apiCheckIn(key: string, code: string, phone: string | null
   const r = await call('member_check_in', { p_key: key, p_code: code, p_phone: phone }, WRITE_MS);
   if (!r.ok) return r;
   const answer = checkInFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * "My membership" (member_membership, 0023). `missing`: the server has not had 0023 yet, so the
+ * app simply shows nothing (the card stays hidden) until it has.
+ */
+export async function apiMembership(key: string): Promise<GymResult<MembershipAnswer> | { ok: false; missing: true }> {
+  const r = await call('member_membership', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const answer = membershipFromRow(r.data);
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
 }
 

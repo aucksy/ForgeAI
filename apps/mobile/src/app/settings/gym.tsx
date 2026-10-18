@@ -18,6 +18,7 @@ import { SettingsPage } from '@/components/settings/SettingsPage';
 import { LinkRow } from '@/components/stats/parts';
 import { GlassCard } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
+import { MembershipCard } from '@/shop/MembershipCard';
 import { addGymShortcut, canAddGymShortcut, gymShortcutWords, markShortcutOffered } from '@/shop/gymShortcut';
 import { FEATURES, profileParts } from '@/lib/features';
 import { useGymShop } from '@/shop/gymStore';
@@ -70,6 +71,7 @@ function JoinedGymCard({ link }: { link: GymLink }) {
           {link.name.trim() ? `Joined in the app as ${link.name.trim()}` : 'Joined in the app'}
         </Text>
       </GlassCard>
+      <MembershipCard link={link} />
       <LinkRow title="Shop and leave" sub={`${link.gymName}'s shop, your orders, and Leave`} onPress={() => router.navigate('/shop')} />
       {canAddGymShortcut(link) ? (
         <LinkRow title="Add to your home screen" sub={`${link.gymName}'s logo on your home screen. It opens ForgeAI.`} onPress={() => void addShortcut()} />
