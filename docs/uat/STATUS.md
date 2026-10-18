@@ -23,6 +23,10 @@ and MONEY-ACCESS.md (F-01..F-14).
 | C9-34 | Shop buttons without the gym name | DONE (cloud): "Join this gym" / "Switch to this gym" / "Open the shop", name stays the heading; c9_34ShopButtons.test.ts; invite-a/b/c/e + checkin-f1 updated. Commit 7486ff7 | |
 | 15 | External devices (Play pre-launch, Firebase Test Lab) | NOT STARTED | |
 
+Release: v0.48.0 (PC, 18 Oct): app tested on 4d651d6 — whole phone runs default 39120213047 + owner
+39120214610, journeys 39120216807, CI 39120212122 (first runs on 2391daf red on test steps U-Q2, U-Q3,
+fixed). Tag v0.48.0 = d62c4a4 (4d651d6 + version + PROGRESS). Admin app live 3944c634 (0024 LIVE).
+
 Release: v0.47.0 (cloud, 17 Oct): app tested on 52e8f43 — whole split phone runs default 39020754722
 (attempt 2) + owner 39020756689, journeys 39020758474; report docs/uat/UAT-REPORT-v0.47.0.md. Tag pushed by
 the cloud session; APK links checked after the release workflow.
@@ -30,4 +34,4 @@ the cloud session; APK links checked after the release workflow.
 Admin deploys: 72c91b1e (WP3+WP5 fixes), 9d7f0132 (WP5b fixes U-A10/11/12/15, checked build at 047fdb7).
 Decided by me (tell owner): U-A13 damaged-browser-data screen (Try again / Download saved data / Start new gym);
 U-A14 sign-in refusal words by role.
-Admin deploy 1f2897c5 (8672a6b): U-A13 + U-A14. Migrations waiting for owner yes: 0021, 0022.
+Admin deploy 1f2897c5 (8672a6b): U-A13 + U-A14. Later deploys: 3944c634 (93b7fd2, workout plans). Migrations 0021-0024 LIVE since 18 Oct.

@@ -2,16 +2,15 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
-## PC session, 18 Oct 2026 (v0.48.0 ship gate) - last update 10:40 UTC
-- Gate runs on 2391daf: default 39111139019 RED (part D, U-Q2), owner 39111140587 RED (J3, U-Q3),
-  journeys 39117123062 green. Both were test-step slips, fixed in the flows at 4d651d6 (FINDINGS).
-- IN PROGRESS: whole runs on 4d651d6: default 39120213047, owner 39120214610, journeys
-  39120216807 (CI 39120212122). If all green: PROGRESS entry + app.json "version" 0.48.0 only
-  (paperwork-only commit on top), push, tag v0.48.0, wait for Release, check both APK links.
-  If red: read logs + screenshots (qa-out-* artifacts), fix the cause, re-run both profiles whole.
-- Task 2 (inbox #20 "Expiring in 1-3 / 4-7 / 8-15 days"): already LIVE since 15 Oct (399cc9e,
-  Today tiles); now covered at the day edges by admin journey J27c (d2ef22c); inbox corrected
-  (1cf0430) and the inbox page republished. No admin deploy needed (test-only change).
+## PC session, 18 Oct 2026 (v0.48.0 ship gate) - last update 13:00 UTC
+- v0.48.0 TAGGED: tag commit d62c4a4 = 4d651d6 + version + PROGRESS (main moved on with notes and the
+  inbox page script, which phone_gate does not count as paperwork; main has the same two changes).
+  Gate: default 39120213047, owner 39120214610, journeys 39120216807, CI 39120212122 (all green).
+  First runs on 2391daf were red on test steps U-Q2 (part D) and U-Q3 (J3 owner phone): fixed in 4d651d6.
+- Release workflow result and APK links: see PROGRESS / the next update here.
+- Task 2 (inbox #20 "Expiring in 1-3 / 4-7 / 8-15 days"): already LIVE since 15 Oct (399cc9e); covered
+  by admin journey J27c (d2ef22c). Inbox page: chat rename (R-28) and the PC chat in the list (R-27).
+- Next: WP15 (Play pre-launch / Firebase Test Lab) not started; backlog in docs/OWNER-INBOX.md.
 
 ## Cloud session (started 17 Oct 2026 02:45 UTC) - last update 05:25 UTC
 The PC helpers went quiet at 03:00 UTC (no push or run after that), so at 05:00 the cloud session

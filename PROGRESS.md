@@ -2409,6 +2409,31 @@
     once-per-gym offer on the Shop tab, Settings → Your gym row. Kotlin compiled only by CI.
   - Owner inbox page #17 (scripts/owner_inbox_page.py): mark as read, replies, comment-only answers,
     computed "Waiting for you", `--absorb` (CLAUDE.md rule).
+- 2026-10-18: **v0.48.0 — gym workout plans end to end, kg to beat, My membership** (tag commit below).
+  - Gym workout plans (#6, #19): a trainer builds a plan in the admin app (/workouts) with
+    exercises, start sets and kg, or starts from a ready plan, and sends it to members or a whole
+    membership plan in one tap. It arrives on the member's phone as a "From <gym> · <trainer>"
+    folder; a first time says the routine's start weight. Server 0024 LIVE since 18 Oct (PC,
+    tests pass); admin app deployed 3944c634.
+  - Kg to beat (#9): Start / Resume shows the kg to beat per exercise with the % over last time and
+    a per-set plan; during the workout "done of total · next". U-M9 (line moved while typing) fixed.
+  - My membership (#6): plan, end date, days left, PT used, days at the gym this month (0023 LIVE).
+  - Check-in offers the workout next (#12 step 1); welcome gym code and the gym-logo home-screen
+    shortcut (#11); see the entry above.
+  - U-M10 (S2): a routine's own per-set weights no longer come back as stale "back-off" numbers.
+  - Release review fixes (2391daf): a deleted gym plan stays deleted; old gym folders say "No
+    longer sent" after leaving / removal / switching; hand-typed admin exercises need a main
+    muscle so they reach the member; dumbbell kg line wording.
+  - Phone flows U-Q1 (4f9434c): INV-c Leave not centred; part B drags from the list edge. No check
+    removed.
+  - Gate: first runs on 2391daf red on two test steps (U-Q2 part D tap under the status bar; U-Q3
+    J3 at 360 dp / font 1.3: first card taller than the list), fixed in the flows at 4d651d6. Green
+    on 4d651d6: default 39120213047, owner 39120214610 (J3 found the next name row after 1 scroll,
+    dragged, order kept after a restart), journeys 39120216807, CI 39120212122.
+  - Tag commit is made directly on 4d651d6 (this entry + the version line), because main moved on
+    with notes and the inbox page script (not paperwork to phone_gate); main carries the same two
+    changes. The APK's code is the same.
+  - Admin app: journey J27c covers the "Ending in 1-3 / 4-7 / 8-15 days" tiles (live since 15 Oct).
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
