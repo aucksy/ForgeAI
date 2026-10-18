@@ -64,7 +64,7 @@ function readBrowserGym(): { raw: string | null; snap: CrmSnapshot | null } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { raw, snap: null };
-    // An older browser gym has no enquiries or expenses lists: fill them in before copying it up.
+    // An older browser gym has no enquiries, expenses or workout plans lists: fill them in before copying it up.
     const snap = (JSON.parse(raw) as { snapshot?: CrmSnapshot }).snapshot;
     return { raw, snap: snap ? normalizeSnapshot(snap) : null };
   } catch {

@@ -298,6 +298,66 @@ export interface Expense extends GymScoped {
 
 export type ExpenseDraft = Pick<Expense, 'spentOn' | 'amountP' | 'category' | 'note'> & { requestId?: string | null };
 
+// ---------------------------------------------------------------- workout plans (18 Oct 2026)
+
+/**
+ * The kind of day a routine is. The member app's routine file takes these six
+ * (apps/mobile/src/tracker/plans/routineFile.ts); anything else lands there as 'full'.
+ */
+export type WorkoutDayType = 'push' | 'pull' | 'legs' | 'upper' | 'lower' | 'full';
+
+/** One exercise in a routine, in the member app's routine-file shape (`SharedExercise`). */
+export interface WorkoutExercise {
+  name: string;
+  /** The library key (logic/exerciseCatalog.ts); null = typed by hand, the phone makes it new. */
+  catalogKey: string | null;
+  logType: 'weight_reps';
+  sets: number;
+  repMin: number;
+  repMax: number;
+  /** Main muscles (the member app's names), so an exercise typed by hand can be made again. */
+  primary: string[];
+  /** Rest between sets, in seconds; null = the member's own default. */
+  restSec?: number | null;
+  note?: string | null;
+}
+
+/** One routine (one day): the member app's `SharedRoutine`. */
+export interface WorkoutRoutine {
+  name: string;
+  dayType: WorkoutDayType;
+  exercises: WorkoutExercise[];
+}
+
+/**
+ * Workout plan from the gym or trainer (OWNER-INBOX #6; supabase/migrations/0024_workout_plans.sql):
+ * routines the gym sends to members, who see them in the ForgeAI app "From <gym> · <trainer>".
+ * Sent to named members (`assign.memberIds`) and/or everyone on a plan today (`assign.planIds`).
+ * Never deleted: `withdrawn` hides it from members. Who made it is stamped by the server.
+ */
+export interface WorkoutPlan extends GymScoped {
+  name: string;
+  note: string | null;
+  routines: WorkoutRoutine[];
+  assign: { memberIds: string[]; planIds: string[] };
+  withdrawn: boolean;
+  createdAt: number;
+  updatedAt: number;
+  /** The signed-in person who made it (from the session, online gyms only). */
+  createdBy?: string | null;
+  createdByName?: string | null;
+}
+
+/** What the builder saves: with an `id`, that plan is changed; without, a new one is made. */
+export type WorkoutPlanDraft = Pick<WorkoutPlan, 'name' | 'note' | 'routines' | 'assign'> & {
+  id?: string | null;
+  /** An edit: the plan's updatedAt when the builder opened it (a newer one = someone else saved). */
+  baseUpdatedAt?: number | null;
+  /** A new plan: who is making it (the server stamps its own anyway, 0024; this shows it at once). */
+  createdBy?: string | null;
+  createdByName?: string | null;
+};
+
 // ---------------------------------------------------------------- roster view
 
 /** Roster-level status for a member, derived from their memberships. */

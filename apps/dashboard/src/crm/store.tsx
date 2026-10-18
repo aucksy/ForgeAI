@@ -46,6 +46,8 @@ import type {
   Payment,
   PlanDraft,
   Visit,
+  WorkoutPlan,
+  WorkoutPlanDraft,
 } from './types';
 
 interface CrmContextValue {
@@ -102,6 +104,9 @@ interface CrmContextValue {
   markPtSession: (membershipId: string, day?: DateISO) => Promise<void>;
   /** PT: take back the session marked on `day`. */
   undoPtSession: (membershipId: string, day: DateISO) => Promise<void>;
+  /** Workout plans (18 Oct 2026): make or change one (owner and Staff / trainers alike). */
+  saveWorkoutPlan: (draft: WorkoutPlanDraft) => Promise<WorkoutPlan>;
+  withdrawWorkoutPlan: (id: string) => Promise<void>;
 
   /** Destructive resets, used by the welcome screen and settings. */
   loadDemoGym: () => Promise<void>;
@@ -323,6 +328,8 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       markPtSession: async (membershipId, day) =>
         void (await mutate((a) => a.markPtSession(membershipId, day ?? today, today))),
       undoPtSession: async (membershipId, day) => void (await mutate((a) => a.undoPtSession(membershipId, day))),
+      saveWorkoutPlan: (draft) => mutate((a) => a.saveWorkoutPlan(draft)),
+      withdrawWorkoutPlan: async (id) => void (await mutate((a) => a.withdrawWorkoutPlan(id))),
       // Browser records only: an online gym is never wiped or filled with sample members.
       loadDemoGym: async () => {
         if (!db.replaceAll) throw new Error('An online gym can’t be replaced with the demo gym.');

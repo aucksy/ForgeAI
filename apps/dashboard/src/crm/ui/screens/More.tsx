@@ -38,6 +38,7 @@ export function MoreScreen() {
       badge: enquiriesDue,
     },
     { path: '/expenses', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
+    { path: '/workouts', label: 'Workout plans', hint: 'Send members their routines', icon: 'workouts' },
     { path: '/shop', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
     {
       path: '/settings/people',

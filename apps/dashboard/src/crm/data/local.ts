@@ -43,6 +43,8 @@ import type {
   EnquiryDraft,
   Expense,
   ExpenseDraft,
+  WorkoutPlan,
+  WorkoutPlanDraft,
 } from '../types';
 import { addDays, diffDays, formatDay, isValidDateISO, minDate, todayISO, type DateISO } from '../logic/dates';
 import { endDateForPlan, unpaidForMembership } from '../logic/membership';
@@ -59,6 +61,7 @@ import { normalizeBatch } from '../logic/batches';
 import { nextImportReceiptNo, nextReceiptNo } from '../logic/receipts';
 import { cleanTrainer, isPtMembership, isPtPlan, PT_MAX_SESSIONS, ptDays, ptTotal } from '../logic/pt';
 import { planUndo } from '../logic/undoImport';
+import { cleanDraft, workoutPlanProblem } from '../logic/workoutPlans';
 import {
   DamagedDataError,
   DuplicatePhoneError,
@@ -909,6 +912,48 @@ export class LocalCrmData implements CrmData {
     });
   }
 
+  // ------------------------------------------------------------ workout plans (18 Oct 2026)
+
+  async saveWorkoutPlan(draft: WorkoutPlanDraft): Promise<WorkoutPlan> {
+    return this.update((db) => {
+      const { id, ...fields } = cleanDraft(draft);
+      const existing = id ? db.workoutPlans.find((p) => p.id === id) : undefined;
+      if (id && !existing) throw new NotFoundError('That workout plan');
+      // Review fix: an edit replaces the whole plan, so a save over someone else's newer one
+      // (another desk ticked members meanwhile) would drop their change. Refuse it instead.
+      if (existing && draft.baseUpdatedAt != null && existing.updatedAt !== draft.baseUpdatedAt) {
+        throw new Error('Someone else changed this plan while you had it open. Close it and open it again to see their changes.');
+      }
+      const ts = this.now();
+      // An edit keeps when it was made and who made it (the server keeps those too, 0024).
+      const plan: WorkoutPlan = existing
+        ? { ...existing, ...fields, updatedAt: Math.max(ts, existing.updatedAt + 1) }
+        : {
+            ...fields,
+            id: newId(),
+            gymId: db.gym.gymId,
+            withdrawn: false,
+            createdAt: ts,
+            updatedAt: ts,
+            createdBy: draft.createdBy ?? null,
+            createdByName: draft.createdByName ?? null,
+          };
+      const problem = workoutPlanProblem(fields, plan);
+      if (problem) throw new Error(problem);
+      db.workoutPlans = existing ? db.workoutPlans.map((p) => (p.id === plan.id ? plan : p)) : [...db.workoutPlans, plan];
+      return clone(plan);
+    });
+  }
+
+  async withdrawWorkoutPlan(id: string): Promise<WorkoutPlan> {
+    return this.update((db) => {
+      const plan = db.workoutPlans.find((p) => p.id === id);
+      if (!plan) throw new NotFoundError('That workout plan');
+      if (!plan.withdrawn) Object.assign(plan, { withdrawn: true, updatedAt: Math.max(this.now(), plan.updatedAt + 1) });
+      return clone(plan);
+    });
+  }
+
   async extendMembership(id: string, days: number, reason: string): Promise<Membership> {
     return this.update((db) => {
       const membership = db.memberships.find((m) => m.id === id);
@@ -1119,6 +1164,7 @@ export function emptySnapshot(now: number, gymName = 'My Gym'): CrmSnapshot {
     visits: [],
     enquiries: [],
     expenses: [],
+    workoutPlans: [],
   };
 }
 
@@ -1133,7 +1179,7 @@ export function randomJoinCode(): string {
 
 /**
  * Guard against a hand-edited or partially-written blob missing whole collections, or one saved
- * before a collection existed (enquiries and expenses arrived on 15 Oct 2026).
+ * before a collection existed (enquiries and expenses arrived on 15 Oct 2026, workout plans on 18 Oct).
  */
 export function normalizeSnapshot(s: CrmSnapshot): CrmSnapshot {
   return {
@@ -1145,6 +1191,7 @@ export function normalizeSnapshot(s: CrmSnapshot): CrmSnapshot {
     visits: s.visits ?? [],
     enquiries: s.enquiries ?? [],
     expenses: s.expenses ?? [],
+    workoutPlans: s.workoutPlans ?? [],
   };
 }
 

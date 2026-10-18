@@ -46,12 +46,14 @@ import {
 import type { Membership, Payment } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
 import { ExtendMembershipSheet } from '../forms/ExtendMembershipSheet';
-import { useCan } from '../../auth/AuthProvider';
+import { useAuth, useCan } from '../../auth/AuthProvider';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
 import { SellMembershipSheet } from '../forms/SellMembershipSheet';
 import { VoidPaymentSheet } from '../forms/VoidPaymentSheet';
 import { MemberCardSheet } from '../MemberCardSheet';
 import { memberCardFacts } from '../../logic/memberCard';
+import { emptyWorkoutDraft, plansForMember } from '../../logic/workoutPlans';
+import { NOT_ONLINE_YET, WorkoutPlanSheet } from './WorkoutPlans';
 import {
   Avatar,
   Button,
@@ -92,6 +94,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const { cloud } = useShop();
   // Staff (front desk) can sell, collect and check in, but cannot cancel, freeze or void (permissions.ts).
   const allowed = useCan();
+  const online = Boolean(useAuth().session?.online);
   const canCancel = allowed('cancelMembership');
   const canFreeze = allowed('freeze');
   const canVoid = allowed('voidReceipt');
@@ -112,6 +115,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const [whatsApp, setWhatsApp] = useState(false);
   /** The member ID card sheet (owner and staff alike). */
   const [card, setCard] = useState(false);
+  /** "Send a plan": the workout plan builder, with this member already ticked. */
+  const [sendingPlan, setSendingPlan] = useState(false);
+  const canSendPlan = allowed('editWorkoutPlans');
 
   // A stray `setTimeout` that outlives the screen sets state on an unmounted tree.
   const toastTimer = useRef<number | undefined>(undefined);
@@ -162,6 +168,12 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const memberVisits = useMemo(
     () => snapshot.visits.filter((v) => v.memberId === memberId),
     [snapshot.visits, memberId],
+  );
+
+  // Workout plans this member gets: sent to them by name, or to a plan they have today.
+  const workoutPlans = useMemo(
+    () => plansForMember(snapshot.workoutPlans ?? [], memberId, snapshot.memberships, today),
+    [snapshot.workoutPlans, snapshot.memberships, memberId, today],
   );
 
   const visitCount = memberVisits.length;
@@ -446,6 +458,38 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         )}
       </Card>
 
+      {canSendPlan && (
+        <Card style={{ marginBottom: space.lg }}>
+          <SectionTitle
+            action={
+              <Button variant="ghost" onClick={() => setSendingPlan(true)}>
+                Send a plan
+              </Button>
+            }
+          >
+            Workout plans
+          </SectionTitle>
+          <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+            {workoutPlans.length === 0 ? (
+              online ? (
+                'No workout plan sent yet. They see one in the ForgeAI app after one check-in at the gym.'
+              ) : (
+                `No workout plan sent yet. ${NOT_ONLINE_YET}`
+              )
+            ) : (
+              <div style={{ display: 'grid', gap: space.xs }}>
+                {workoutPlans.map((w) => (
+                  <Link key={w.id} to="/workouts">
+                    <span style={{ color: color.ink, fontWeight: 600 }}>{w.name}</span>
+                    {w.assign.memberIds.includes(memberId) ? '' : ' · through their membership plan'}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
+
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Payments</SectionTitle>
         {payments.length === 0 ? (
@@ -496,6 +540,15 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         />
       )}
       {editing && <MemberFormSheet editing={member} onClose={() => setEditing(false)} />}
+      {sendingPlan && (
+        <WorkoutPlanSheet
+          initial={emptyWorkoutDraft([member.id])}
+          onClose={() => setSendingPlan(false)}
+          onSaved={(plan) =>
+            flash(plan.assign.memberIds.includes(member.id) ? `“${plan.name}” sent to ${member.fullName}.` : `“${plan.name}” saved.`)
+          }
+        />
+      )}
       {selling && (
         <SellMembershipSheet
           view={view}

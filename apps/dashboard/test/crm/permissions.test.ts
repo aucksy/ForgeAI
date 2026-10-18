@@ -23,7 +23,14 @@ describe('can', () => {
   });
 
   it('lets staff do none of the owner-only actions', () => {
-    for (const a of ACTIONS) expect(can('staff', a)).toBe(false);
+    for (const a of ACTIONS) if (a !== 'editWorkoutPlans') expect(can('staff', a)).toBe(false);
+  });
+
+  it('lets staff (trainers) make and send workout plans, as the server does (0024)', () => {
+    expect(can('staff', 'editWorkoutPlans')).toBe(true);
+    expect(can('owner', 'editWorkoutPlans')).toBe(true);
+    expect(canOpen('staff', '/workouts')).toBe(true);
+    expect(canOpen('owner', '/workouts')).toBe(true);
   });
 
   it('covers every action the brief names', () => {
@@ -31,6 +38,7 @@ describe('can', () => {
       [
         'cancelMembership',
         'editPlans',
+        'editWorkoutPlans',
         'eraseOrDemo',
         'freeze',
         'manageGym',

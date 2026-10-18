@@ -6,7 +6,7 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   // Four squares: "everything else" (the phone's More tab).
@@ -57,6 +57,15 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1.5 1.5 0 0 1 0 2.1l-6.2 6.2a1.5 1.5 0 0 1-2.1 0Z" />
       <circle cx="8.5" cy="8.5" r="1.5" />
+    </>
+  ),
+  // A dumbbell: workout plans from the gym or trainer.
+  workouts: (
+    <>
+      <path d="M7.5 12h9" />
+      <rect x="4.5" y="7" width="3" height="10" rx="1" />
+      <rect x="16.5" y="7" width="3" height="10" rx="1" />
+      <path d="M2.5 10v4M21.5 10v4" />
     </>
   ),
   settings: (

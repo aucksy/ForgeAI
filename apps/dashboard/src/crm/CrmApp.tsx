@@ -40,6 +40,7 @@ import { PlansScreen } from './ui/screens/Plans';
 import { ReceiptScreen } from './ui/screens/Receipt';
 import { SettingsScreen } from './ui/screens/Settings';
 import { TodayScreen } from './ui/screens/Today';
+import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
 import { Welcome } from './ui/Welcome';
 import { useRoute } from './ui/router';
 
@@ -125,6 +126,8 @@ function Routes({ online }: { online: boolean }) {
       // Step 5 (15 Oct 2026): people who asked about joining, and money going out.
       { path: '/enquiries', label: 'Enquiries', icon: 'members', badge: enquiriesDue || undefined },
       { path: '/expenses', label: 'Expenses', icon: 'money' },
+      // 18 Oct 2026: routines the gym or a trainer sends to members' ForgeAI app (owner and Staff).
+      { path: '/workouts', label: 'Workout plans', icon: 'workouts' },
       { path: '/settings', label: 'Settings', icon: 'settings' },
     ]);
   }, [memberViews, snapshot, today, newCount, role]);
@@ -179,6 +182,8 @@ function Screen({ segments }: { segments: string[] }) {
       return <EnquiriesScreen />;
     case 'expenses':
       return <ExpensesScreen />;
+    case 'workouts':
+      return <WorkoutPlansScreen />;
     case 'settings':
       // Gym branding: Settings -> Branding (the gym's look in the member app).
       if (id === 'branding') return <BrandingScreen />;

@@ -27,6 +27,8 @@ import type {
   EnquiryDraft,
   Expense,
   ExpenseDraft,
+  WorkoutPlan,
+  WorkoutPlanDraft,
 } from '../types';
 
 /** The gym itself — the tenant row. */
@@ -53,6 +55,8 @@ export interface CrmSnapshot {
   /** Step 5 (15 Oct 2026). Older saved gyms have none: read as []. */
   enquiries: Enquiry[];
   expenses: Expense[];
+  /** Workout plans from the gym or trainer (18 Oct 2026). Older saved gyms have none: read as []. */
+  workoutPlans: WorkoutPlan[];
 }
 
 /**
@@ -312,6 +316,13 @@ export interface CrmData {
   addExpense(draft: ExpenseDraft): Promise<Expense>;
   /** An expense typed wrong is taken out (it is not a receipt: no number to keep). */
   removeExpense(id: string): Promise<void>;
+  /**
+   * Workout plans (18 Oct 2026): make one (no `id`) or change one (its `id`). The shape is checked
+   * as the server checks it (logic/workoutPlans.ts); `createdAt` and who made it never change.
+   */
+  saveWorkoutPlan(draft: WorkoutPlanDraft): Promise<WorkoutPlan>;
+  /** Members stop seeing it (never deleted: the routines already on their phones stay). */
+  withdrawWorkoutPlan(id: string): Promise<WorkoutPlan>;
   /**
    * Freeze or gift days: the membership's last day moves `days` (1-365) later, with the reason in
    * its notes. Days only move forward here; a mistake is fixed by cancelling and selling again.

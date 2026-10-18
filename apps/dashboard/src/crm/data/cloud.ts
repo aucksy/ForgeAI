@@ -29,7 +29,7 @@
  * Server side: supabase/migrations/0010_signin_and_records.sql (crm_pull, crm_push).
  */
 
-import type { Enquiry, Expense, Member, MemberDraft, Membership, Payment, Plan, Visit } from '../types';
+import type { Enquiry, Expense, Member, MemberDraft, Membership, Payment, Plan, Visit, WorkoutPlan } from '../types';
 import {
   PartialSaveError,
   type CrmData,
@@ -47,7 +47,17 @@ import type { Role } from '../logic/receiptRules';
 import type { DateISO } from '../logic/dates';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
 
-export type RecordKind = 'gym' | 'member' | 'plan' | 'membership' | 'payment' | 'visit' | 'enquiry' | 'expense';
+export type RecordKind =
+  | 'gym'
+  | 'member'
+  | 'plan'
+  | 'membership'
+  | 'payment'
+  | 'visit'
+  | 'enquiry'
+  | 'expense'
+  // 0024 (18 Oct 2026): workout plans from the gym or trainer.
+  | 'workout_plan';
 
 /** One row on the wire: `d` is the record, or `x: true` when it was deleted. */
 export interface CrmRecord {
@@ -91,6 +101,7 @@ const COLLECTIONS = [
   ['visit', 'visits'],
   ['enquiry', 'enquiries'],
   ['expense', 'expenses'],
+  ['workout_plan', 'workoutPlans'],
 ] as const;
 
 type ListKey = (typeof COLLECTIONS)[number][1];
@@ -108,6 +119,7 @@ export function emptyRows(): Rows {
     visit: new Map(),
     enquiry: new Map(),
     expense: new Map(),
+    workout_plan: new Map(),
   };
 }
 
@@ -168,6 +180,7 @@ export function buildSnapshot(rows: Rows, gym: CloudGymRow): CrmSnapshot {
     visits: byTime(list<Visit>(rows.visit), (v) => v.checkedInAt ?? 0),
     enquiries: byTime(list<Enquiry>(rows.enquiry), (e) => e.createdAt ?? 0),
     expenses: byTime(list<Expense>(rows.expense), (e) => e.createdAt ?? 0),
+    workoutPlans: byTime(list<WorkoutPlan>(rows.workout_plan), (w) => w.updatedAt ?? 0),
   };
 }
 
@@ -197,7 +210,7 @@ export function diffSnapshots(before: CrmSnapshot, after: CrmSnapshot): CrmRecor
 
 /**
  * Every row of a gym, ready to upload (moving a browser's records online). PURE.
- * A browser gym saved before enquiries and expenses existed has no such lists at all: a missing
+ * A browser gym saved before enquiries, expenses or workout plans existed has no such lists at all: a missing
  * list is an empty one, never a crash half-way through putting the gym online.
  */
 export function allRecords(snap: CrmSnapshot, gymId: string): CrmRecord[] {
@@ -571,6 +584,12 @@ export class CloudCrmData implements CrmData {
   }
   removeExpense(id: string) {
     return this.run((d) => d.removeExpense(id));
+  }
+  saveWorkoutPlan(draft: Parameters<CrmData['saveWorkoutPlan']>[0]) {
+    return this.run((d) => d.saveWorkoutPlan(draft));
+  }
+  withdrawWorkoutPlan(id: string) {
+    return this.run((d) => d.withdrawWorkoutPlan(id));
   }
   extendMembership(id: string, days: number, reason: string) {
     return this.run((d) => d.extendMembership(id, days, reason));

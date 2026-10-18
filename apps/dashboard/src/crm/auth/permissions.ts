@@ -43,7 +43,12 @@ export type Action =
    * PT: take back a session marked on an EARLIER day (a free session given back). Anyone may mark a
    * session, and take back one marked today (a tap on the wrong member).
    */
-  | 'undoOldPtSession';
+  | 'undoOldPtSession'
+  /**
+   * Workout plans (18 Oct 2026, 0024): make, change, send and withdraw them. Staff MAY: trainers
+   * write the plans, and the server takes a Staff session's workout plans.
+   */
+  | 'editWorkoutPlans';
 
 export const ACTIONS: readonly Action[] = [
   'seeTotals',
@@ -56,9 +61,10 @@ export const ACTIONS: readonly Action[] = [
   'manageGym',
   'freeze',
   'undoOldPtSession',
+  'editWorkoutPlans',
 ];
 
-/** Everything listed above is owner-only today; a new action must be added here on purpose. */
+/** Owner-only unless it says true here; a new action must be added here on purpose. */
 const STAFF_MAY: Readonly<Record<Action, boolean>> = {
   seeTotals: false,
   voidReceipt: false,
@@ -70,6 +76,7 @@ const STAFF_MAY: Readonly<Record<Action, boolean>> = {
   manageGym: false,
   freeze: false,
   undoOldPtSession: false,
+  editWorkoutPlans: true,
 };
 
 /** May this role do this? Owners may do everything. */
@@ -93,10 +100,11 @@ export function takerOf(session: { person?: Person | null } | null | undefined):
 
 // ---------------------------------------------------------------- screen-level helpers
 
-/** Pages a role may open at all. Staff: everything except Expenses. */
+/** Pages a role may open at all. Staff: everything except Expenses (Workout plans included). */
 export function canOpen(role: Role, path: string): boolean {
   const [head, sub] = path.replace(/^#?\/?/, '').split('/');
   if (head === 'expenses') return can(role, 'seeExpenses');
+  if (head === 'workouts') return can(role, 'editWorkoutPlans');
   if (head === 'settings' && sub === 'branding') return can(role, 'manageGym');
   return true;
 }
@@ -136,5 +144,5 @@ export function shopTabFor(role: Role, section: string | undefined): ShopTab {
 
 /** One plain line: what Staff can and cannot do now. Shown on Staff & sign-in. */
 export function staffRightsWords(): string {
-  return 'The owner can do everything. Staff (front desk) can add members, sell plans, collect fees, check members in and hand over shop orders. Staff can give at most 10% off a plan, and must charge the joining fee as listed. Every receipt shows who took the money. Staff can date a payment at most 31 days back, never ahead. Staff cannot see money totals or expenses. They cannot cancel receipts, cancel or freeze plans, change plan prices or change gym details.';
+  return 'The owner can do everything. Staff (front desk) can add members, sell plans, collect fees, check members in, hand over shop orders and send members workout plans. Staff can give at most 10% off a plan, and must charge the joining fee as listed. Every receipt shows who took the money. Staff can date a payment at most 31 days back, never ahead. Staff cannot see money totals or expenses. They cannot cancel receipts, cancel or freeze plans, change plan prices or change gym details.';
 }
