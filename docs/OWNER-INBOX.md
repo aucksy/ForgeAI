@@ -25,6 +25,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 6 | Turn on gym workout plans on the live server (0024, from your PC)? | A: yes |
 
 ---
 
@@ -354,7 +355,7 @@ things work.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** SERVER LIVE (18 Oct); app card BUILT, NOT RELEASED (v0.48.0)
+**Status:** My membership: SERVER LIVE, app BUILT, NOT RELEASED (v0.48.0). Workout plans: BUILT, WAITING FOR YOU (0024)
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
 the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
@@ -396,6 +397,27 @@ docs/uat/HANDOFF.md ("PC must do").
 **DONE (18 Oct, from your PC):** 0021, 0022 and 0023 are live, no errors. All 13 database test files
 passed on the live server (including "one gym can never see another gym's records": 66 of 66 blocked).
 Members see "My membership" once they have the next app release (v0.48.0).
+**BUILT (18 Oct): workout plans from the gym or trainer** (item 2, my call under rule #18).
+- **Admin app:** a new "Workout plans" page. A trainer or the owner builds a plan: days ("Push",
+  "Legs"...), exercises picked from a list (it also finds the words members use, like "chhati",
+  "dole", "baithak", or in Hindi), sets, reps, rest and a note ("Knee: no deep squats"). Then
+  "Send to": members by name or mobile, or everyone on a membership plan (for example everyone on
+  Gold). A member's page shows the plans they get, with a "Send a plan" button. Staff can send
+  plans too. A plan is never deleted, only withdrawn.
+- **Member app:** the plan appears in the member's Routines as its own folder, "From <gym> ·
+  <trainer>", ready to start. The member can change it; a later change from the trainer comes in
+  without losing theirs. Offline, nothing changes. A withdrawn plan stays (their past workouts
+  point at it) but gets no more updates.
+- **Checks:** a review found 4 real problems in the admin page (the biggest: a very large plan
+  passed the page's size check but the server would refuse it). All fixed. Tested on a copy of the
+  database (20 checks); 893 admin app tests and all phone app tests pass.
+- **What I decided:** the plan only goes to members the gym's list knows (the same name check as
+  "My membership"), and only for a gym that is online; the page says so.
+**Decide:** turn on gym workout plans on the live server? It adds one new kind of gym record and
+one read for the member app (0024); nothing existing changes. It is applied from your PC, like 0023.
+- A: yes, apply 0024 from the PC (recommended)
+- B: not yet
+Until it is on, nothing shows for members, and the PC should apply 0024 BEFORE it puts up the new admin app (a plan saved before that would be refused).
 
 
 ## 5. Use the admin app's icon for the mobile app — 16 Oct 2026
