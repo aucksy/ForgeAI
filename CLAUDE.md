@@ -15,37 +15,37 @@ owner's gym fieldwork (`docs/overhaul/FIELDWORK.md`); app-quality work proceeds 
 The owner is **not a developer**. In chat, lead with what changed for them and why. All technical
 detail goes in `PROGRESS.md`, commit messages, and code comments — not chat.
 
-## ⭐ Write the owner's ideas down FIRST — `docs/OWNER-INBOX.md`
-Chat gets compacted and the owner reads answers much later (often on his PC). So whenever he sends
-an idea, suggestion, feature request or question: FIRST add it to `docs/OWNER-INBOX.md` (newest on
-top; "You asked" in short + Status) and commit + push, THEN work on it. When answered, write the
-answer there too (plain English, same as chat) and keep the "Waiting for your decision" table at
-the top current: add new decisions, and remove them once he decides. Commit + push after each update.
-Each entry carries a `**Chat:** <chat name> — <session link>` line (the chat it came from). After
-every inbox update, rebuild and republish his private page so it matches the file:
+## ⭐ Owner inbox (`docs/OWNER-INBOX.md` + his private page) — ONLY three things
+**Owner rule (18 Oct 2026):** the inbox holds ONLY (1) **questions and answers** between him and you,
+(2) **his pending decisions**, (3) the **feature backlog** and what is **built**. Nothing else.
+- **His instructions, requests and feedback** ("build X", "change Y", "do it this way"): write them
+  FIRST into YOUR notes, `docs/CLAUDE-NOTES.md` (newest on top, `## R-<n>. <title> — <date>`, what he
+  said + what you did), commit + push, then work. Never put them in the inbox. Chat gets compacted;
+  your notes survive it.
+- **A question he asks** ("what does X cost?", "which features are pending?"): a new inbox entry
+  (`## <n>. <title> — <date>`, a `**Chat:** <chat name> — <session link>` line, `**Status:**`,
+  "You asked" in short + your plain-English answer), the same answer in chat.
+- **A decision only he can make** (the #18 list below): `**Decide:** <question>` + `- A: <option>`
+  lines (mark one "(recommended)") in the entry, plus a row in the "Waiting for your decision" table;
+  when he decides, write `**DECIDED (date):** ...`, drop the `**Decide:**` lines and the table row.
+- **Feature backlog** (`## Feature backlog` near the top: `### <group>` + `| Feature | Status | Details |`,
+  Status one of Live / Next release / Planned / Idea / Waiting for you / Not doing, one short plain
+  sentence each): his map of every feature; the page splits it into "Feature backlog" (not built)
+  and "Built" (Live + Next release). Add a row when something is decided; move it when it ships.
+- Never post build news, progress or "BUILT" updates in the inbox: those go in PROGRESS.md / HANDOFF,
+  your notes, and chat.
+**The page:** after every inbox change, rebuild and republish it so it matches the file:
 `python3 scripts/owner_inbox_page.py <file>.html`, then the Artifact tool with
 `url: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT` (never make a new page). Before EVERY
 rebuild: read the page (Artifact read; it saves the full HTML to a file), then run
 `python3 scripts/owner_inbox_page.py --absorb <that file>`: it writes his "Mark as read" taps into the
-.md as `**READ (date)**` lines (a rebuild without this loses them) and prints the answers to act on.
-Answers come back two ways: (1) the page's "Send to Claude" saves them INTO the page
-(`DATA.answers` in its script; the watching session is woken by that republish): read the page,
-act, write `**DECIDED (date):** ...` into the entry (drop its `**Decide:**` lines and its table row),
-rebuild + republish (that clears the sent answers); (2) the desktop mod `/inbox`
-(plugins/owner-inbox) posts "Owner inbox #N (...): ..." into the chat as his own words: same steps.
-A comment without a pick, or a reply to an entry with no options, arrives the same way: write it into
-the entry as `**YOUR REPLY (date):** ...` with your answer under it (a question stays open until he
-picks). When you add news to an entry he has read, delete its `**READ` line so it is "waiting" again.
-Each open question needs `**Decide:** <question>` + `- A: <option>` lines (mark one "(recommended)").
-**Owner rule (18 Oct 2026, OWNER-INBOX #19): the inbox holds ONLY what he sends** (questions,
-feedback, ideas) with your short answer, plus decisions that are truly his (the #18 list below).
-Never post build news, progress or "BUILT" updates there: those go in PROGRESS.md / HANDOFF, and
-in chat. A decision you are sure is the best member experience is yours: make it, don't list it.
-**Feature backlog (#21):** the `## Feature backlog` section at the top of the inbox (`### <group>` +
-`| Feature | Status | Details |`, Status one of Live / Next release / Planned / Idea / Waiting for you /
-Not doing; one short plain sentence each) is the owner's map of every feature. Keep it current: add a
-row when something is decided, move a row when it ships. His comments on a feature come back via
-`--absorb` ("feature comments to act on"): write each as a new inbox entry with your answer.
+.md as `**READ (date)**` lines (a rebuild without this loses them) and prints his answers and his
+feature comments to act on. Answers come back two ways: (1) the page's "Send to Claude" saves them
+INTO the page (the watching session is woken by that republish); (2) the desktop mod `/inbox`
+(plugins/owner-inbox) posts "Owner inbox #N (...): ..." into the chat as his own words. A reply to an
+entry goes into it as `**YOUR REPLY (date):** ...` with your answer under it. A feature comment is
+feedback: log it in your notes and act; answer in the inbox only if it asks a question. When you add
+news to an entry he has read, delete its `**READ` line so it shows under "To read" again.
 
 ## ⭐ Research demand before building a feature
 Before building any NEW feature the owner asks for (not a bug fix): search the web first —
@@ -55,8 +55,8 @@ If it is mainstream, also research the BEST way to build it (how the leading app
 their users complain about) and 1-3 ideas to make ours better than theirs. A personal-only idea
 goes to his own variant, not the product.
 **Owner rule (18 Oct 2026, OWNER-INBOX #18): don't stop to ask what you can decide.** Pick the best
-member experience and the build order yourself, build it, and write in the inbox what you chose and
-why (he can overrule). Stop and ask ONLY for: spending money or anything the client must buy; LIVE
+member experience and the build order yourself, build it, and tell him in chat what you chose and
+why (he can overrule; log it in your notes). Stop and ask ONLY for: spending money or anything the client must buy; LIVE
 server data changes; promises to the client, prices or legal/privacy wording; personal-variant vs
 product for everyone.
 

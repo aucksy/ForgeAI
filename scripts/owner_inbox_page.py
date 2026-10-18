@@ -268,6 +268,8 @@ article h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem
 .toread { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
 .toread ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .toread li { display: grid; grid-template-columns: 3.2em 1fr; gap: 10px; align-items: start; }
+button.status { font-family: inherit; border: 1px solid transparent; cursor: pointer; }
+button.status[aria-pressed="true"] { border-color: currentColor; box-shadow: 0 0 0 1px currentColor; }
 .bl-sum { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 0 0 14px; font-size: 0.85rem; color: var(--muted); }
 .bl-group { margin: 18px 0 8px; font-family: var(--f-display); font-weight: 600; font-size: 1rem; }
 .feat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; min-width: 0; }
@@ -321,13 +323,11 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
     <select id="chat"></select>
   </div>
   <div class="chips" role="group" aria-label="Show">
-    <button class="chip" data-f="all" aria-pressed="true">All</button>
     <button class="chip" data-f="waiting" aria-pressed="false">Waiting for you</button>
     <button class="chip" data-f="toread" aria-pressed="false">To read</button>
-    <button class="chip" data-f="built" aria-pressed="false">Built, not released</button>
-    <button class="chip" data-f="done" aria-pressed="false">Done</button>
-    <button class="chip" data-f="other" aria-pressed="false">Answered / planned</button>
+    <button class="chip" data-f="all" aria-pressed="true">Questions &amp; answers</button>
     <button class="chip" data-f="backlog" aria-pressed="false">Feature backlog</button>
+    <button class="chip" data-f="shipped" aria-pressed="false">Built</button>
   </div>
 </div></header>
 
@@ -360,8 +360,11 @@ DATA.read = DATA.read || {}; // num -> when tapped, or false for "mark as unread
 DATA.notes = DATA.notes || {}; // feature id -> {group, name, text, at}: a comment on a backlog feature (printed by --absorb)
 DATA.backlog = DATA.backlog || [];
 let chat = "all", filter = "all";
+let blKind = null; // a status pill tapped in the backlog / built tab: only that status (null = all)
 const picks = {}; // num -> {qIndex: key}
 try { chat = localStorage.getItem("inbox-chat") || "all"; filter = localStorage.getItem("inbox-filter") || "all"; } catch (e) { /* storage blocked: defaults */ }
+// Owner rule (18 Oct 2026): five tabs only; a tab kept from an older page falls back to Questions & answers.
+if (!["waiting", "toread", "all", "backlog", "shipped"].includes(filter)) filter = "all";
 try { Object.assign(picks, JSON.parse(sessionStorage.getItem("inbox-picks") || "{}")); } catch (e) { /* none kept */ }
 const keepPicks = () => { try { sessionStorage.setItem("inbox-picks", JSON.stringify(picks)); } catch (e) { /* not kept */ } };
 // A save reloads this view: keep the reading place across it.
@@ -392,7 +395,7 @@ if (chat !== "all" && !chats.includes(chat)) chat = "all";
 $("chat").value = chat;
 
 // #21 follow-up (owner, 18 Oct): each tab shows only its own content: no boxes above the tabs.
-const TAB = { all: "Your ideas and my answers", waiting: "Waiting for your decision", toread: "To read", built: "Built, not released", done: "Done", other: "Answered / planned" };
+const TAB = { all: "Questions and answers", waiting: "Waiting for your decision", toread: "To read" };
 const HINT = {
   waiting: 'Tap a question, pick an answer (or just write a comment), press Send. Or reply in chat, e.g. "#13: A".',
   toread: "What you haven't read yet. \u201cMark as read\u201d takes it off this list.",
@@ -443,17 +446,30 @@ function shown(e) {
 }
 const BL_KIND = { done: "Live", built: "Next release", waiting: "Waiting for you", planned: "Planned", idea: "Idea", no: "Not doing" };
 function noteText(f, text) { return "Owner inbox feature backlog: " + f.group + " / " + f.name + ": " + text; }
-function backlogHtml() {
-  if (!DATA.backlog.length) return '<p class="none">No features listed yet.</p>';
+// "Feature backlog" = what is not built yet; "Built" = live, or built and in the next release.
+const SHIPPED = ["done", "built"];
+const inTab = (f, tab) => (tab === "shipped") === SHIPPED.includes(f.kind);
+function backlogHtml(tab) {
+  const all = DATA.backlog.map((f, i) => ({ f, i })).filter((x) => inTab(x.f, tab));
+  if (!all.length) return '<p class="none">Nothing here yet.</p>';
   const counts = {};
-  DATA.backlog.forEach((f) => { counts[f.kind] = (counts[f.kind] || 0) + 1; });
-  const sum = '<p class="bl-sum">' + Object.keys(BL_KIND).filter((k) => counts[k]).map((k) => '<span class="status k-' + k + '">' + BL_KIND[k] + " " + counts[k] + "</span>").join("") +
-    "<span>Tap a feature's \u201cComment\u201d to send me a note about it.</span></p>";
+  all.forEach((x) => { counts[x.f.kind] = (counts[x.f.kind] || 0) + 1; });
+  if (blKind && !counts[blKind]) blKind = null;
+  // Owner (18 Oct): the status pills are filters: tap "Live" to see only Live; tap it again for all.
+  const sum = '<p class="bl-sum">' + Object.keys(BL_KIND).filter((k) => counts[k]).map((k) =>
+      '<button type="button" class="status k-' + k + '" data-act="blk" data-k="' + k + '" aria-pressed="' + (blKind === k) + '">' + BL_KIND[k] + " " + counts[k] + "</button>").join("") +
+    "<span>" + (blKind ? "Showing " + BL_KIND[blKind] + " only. Tap it again to see all." : "Tap a status to see only those. Tap \u201cComment\u201d to send me a note.") + "</span></p>";
+  const items = blKind ? all.filter((x) => x.f.kind === blKind) : all;
   let out = sum, group = null;
-  DATA.backlog.forEach((f, i) => {
+  items.forEach(({ f, i }) => {
     if (f.group !== group) { group = f.group; out += '<h3 class="bl-group">' + esc(group) + "</h3>"; }
+    out += featHtml(f, i);
+  });
+  return out;
+}
+function featHtml(f, i) {
     const sent = DATA.notes[f.id];
-    out += '<div class="feat"><div class="row"><span class="name">' + esc(f.name) + '</span><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
+    return '<div class="feat"><div class="row"><span class="name">' + esc(f.name) + '</span><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
       '<p class="det">' + esc(f.details) + "</p>" +
       (sent
         ? '<div class="form sent"><p class="sentline">Comment sent ' + esc(sent.at) + ". Claude acts on it next time it looks at your inbox.</p><pre>" + esc(sent.text) + "</pre>" +
@@ -462,22 +478,29 @@ function backlogHtml() {
           '<textarea id="fnote' + i + '" rows="2" placeholder="e.g. Do this one first, members keep asking"></textarea>' +
           '<div class="actions"><button class="btn" data-act="fnote" data-i="' + i + '">Send to Claude</button><span class="msg" id="fmsg' + i + '" role="status"></span></div></div></details>') +
       "</div>";
-  });
-  return out;
 }
+// Features waiting for the owner also show in the main "Waiting for you" tab (owner, 18 Oct).
+const waitingFeats = () => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && !DATA.notes[x.f.id]);
 function render() {
-  const bl = filter === "backlog";
+  const bl = filter === "backlog" || filter === "shipped";
   $("entrybox").hidden = bl;
   $("backlogbox").hidden = !bl;
-  document.querySelector('.chip[data-f="backlog"]').textContent = "Feature backlog (" + DATA.backlog.length + ")";
-  if (bl) { $("backlog").innerHTML = backlogHtml(); document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter))); return; }
+  document.querySelector('.chip[data-f="backlog"]').textContent = "Feature backlog (" + DATA.backlog.filter((f) => inTab(f, "backlog")).length + ")";
+  document.querySelector('.chip[data-f="shipped"]').textContent = "Built (" + DATA.backlog.filter((f) => inTab(f, "shipped")).length + ")";
+  document.querySelector('.chip[data-f="all"]').textContent = "Questions & answers (" + DATA.entries.length + ")";
+  if (bl) {
+    $("bh").textContent = filter === "shipped" ? "Built" : "Feature backlog";
+    $("backlog").innerHTML = backlogHtml(filter);
+    document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter)));
+    return;
+  }
   $("tabname").textContent = TAB[filter] || TAB.all;
   $("tabhint").textContent = HINT[filter] || "";
   $("tabhint").hidden = !HINT[filter];
   const list = DATA.entries.filter(shown);
   $("count").textContent = "· " + list.length + " of " + DATA.entries.length;
   const mineChat = DATA.entries.filter((e) => chat === "all" || e.chat === chat);
-  document.querySelector('.chip[data-f="waiting"]').textContent = "Waiting for you (" + mineChat.filter(needsAnswer).length + ")";
+  document.querySelector('.chip[data-f="waiting"]').textContent = "Waiting for you (" + (mineChat.filter(needsAnswer).length + waitingFeats().length) + ")";
   document.querySelector('.chip[data-f="toread"]').textContent = "To read (" + mineChat.filter(toRead).length + ")";
   $("entries").innerHTML = list.length ? list.map((e) =>
     '<article id="e' + e.num + '"' + (pending(e) ? ' class="unread"' : "") + '><header><span class="num">#' + e.num + "</span><div><h3>" + esc(e.title) + "</h3>" +
@@ -490,7 +513,11 @@ function render() {
     "<details" + (e.decides.length || !isRead(e) ? " open" : "") + "><summary>" + (e.decides.length ? "The full question and my answer" : "The answer") + "</summary>" +
     '<div class="body">' + md(e.body) + "</div></details>" +
     (e.decides.length ? "" : formHtml(e)) + readHtml(e) + "</article>").join("")
-    : '<p class="none">' + (filter === "waiting" ? "No decisions waiting for you." : filter === "toread" ? "Nothing new to read." : 'No entries match. Pick "All".') + "</p>";
+    : filter === "waiting" && waitingFeats().length ? "" : '<p class="none">' + (filter === "waiting" ? "No decisions waiting for you." : filter === "toread" ? "Nothing new to read." : 'No entries match. Pick "All".') + "</p>";
+  if (filter === "waiting" && waitingFeats().length) {
+    $("entries").innerHTML += '<h3 class="bl-group">Features waiting for you</h3><p class="pick">Each needs your yes (most cost money or need something bought). Tap \u201cComment\u201d and tell me, e.g. \u201cYes, go ahead\u201d or \u201cNot now\u201d.</p>' +
+      waitingFeats().map(({ f, i }) => featHtml(f, i)).join("");
+  }
   document.querySelectorAll(".body table").forEach((t) => { const box = document.createElement("div"); box.className = "tablebox"; t.replaceWith(box); box.appendChild(t); });
   document.querySelectorAll(".body a").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
   document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter)));
@@ -562,7 +589,7 @@ document.addEventListener("click", (ev) => {
   const g = ev.target.closest("a[data-goto]");
   if (g) {
     const e = DATA.entries.find((x) => x.num === Number(g.dataset.goto));
-    if (filter === "backlog" || (e && !shown(e))) { filter = "all"; render(); }
+    if (filter === "backlog" || filter === "shipped" || (e && !shown(e))) { filter = "all"; render(); }
   }
   const b = ev.target.closest("button[data-act]");
   if (!b) return;
@@ -572,6 +599,7 @@ document.addEventListener("click", (ev) => {
   if (b.dataset.act === "unread") markRead(n, false);
   if (b.dataset.act === "change") { delete DATA.answers[n]; render(); }
   if (b.dataset.act === "fnote") sendNote(Number(b.dataset.i));
+  if (b.dataset.act === "blk") { blKind = blKind === b.dataset.k ? null : b.dataset.k; render(); }
   if (b.dataset.act === "renote") { delete DATA.notes[DATA.backlog[Number(b.dataset.i)].id]; render(); }
   if (b.dataset.act === "copy") {
     const pre = b.parentElement.querySelector("pre.copy");
@@ -583,6 +611,7 @@ document.addEventListener("click", (ev) => {
 $("chat").addEventListener("change", (ev) => { chat = ev.target.value; try { localStorage.setItem("inbox-chat", chat); } catch (e) { /* not kept */ } render(); });
 document.querySelectorAll(".chip").forEach((b) => b.addEventListener("click", () => {
   filter = b.dataset.f;
+  blKind = null;
   try { localStorage.setItem("inbox-filter", filter); } catch (e) { /* not kept */ }
   render();
   scrollTo(0, 0);
