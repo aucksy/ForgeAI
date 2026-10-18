@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-29. Start testing on Google's test lab (Firebase Test Lab) — 18 Oct 2026
+**Owner said:** "Okay start that testing" (after inbox #24: free plan, light on tokens).
+**Done:** see the entry below this line once built: a cloud workflow that sends each release's APK
+to Firebase Test Lab (free plan: up to 5 real + 10 virtual phones a day), a robot crawl on popular
+Indian phones, and a short result. He makes the free Firebase project and the key (steps in
+docs/uat/TEST-LAB-SETUP.md); nothing paid.
+
 ## R-28. Rename chats on the inbox page — 18 Oct 2026
 **Owner said:** "Give me option to rename chat names"
 **Done:** a "Rename" button beside the Chat list (for the chat picked). The new name saves into the
