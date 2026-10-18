@@ -43,9 +43,13 @@ Before building any NEW feature the owner asks for (not a bug fix): search the w
 Hevy/Strong and other competitor apps, their help pages and feature-request boards, Reddit.
 Tell him in plain English whether most members would use it (mainstream vs niche, who has it).
 If it is mainstream, also research the BEST way to build it (how the leading apps do it, what
-their users complain about) and 1-3 ideas to make ours better than theirs. Recommend one of at
-most 2 options (build for everyone / keep it for his personal variant) and STOP until he
-decides. A personal-only idea goes to his own variant, not the product.
+their users complain about) and 1-3 ideas to make ours better than theirs. A personal-only idea
+goes to his own variant, not the product.
+**Owner rule (18 Oct 2026, OWNER-INBOX #18): don't stop to ask what you can decide.** Pick the best
+member experience and the build order yourself, build it, and write in the inbox what you chose and
+why (he can overrule). Stop and ask ONLY for: spending money or anything the client must buy; LIVE
+server data changes; promises to the client, prices or legal/privacy wording; personal-variant vs
+product for everyone.
 
 ## ⭐ Audits and release QA must test what a real workout shows
 Two full audits missed what the owner found in one gym session (13 Oct 2026). Every audit/QA:

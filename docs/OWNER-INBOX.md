@@ -25,10 +25,22 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 6 | Member features from the GGMS list: which to build first | A: "My membership" first |
-| 2 | Entry machine: which of the 3 Matrix setups to offer the client | 2 (tripod turnstile) as standard |
 
 ---
+
+## 18. Don't stop to ask me what you can decide yourself — 18 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**You asked:** "You should not stop to ask me these questions when you can easily decide the best
+experience and sequence of build."
+**Status:** DONE (standing rule, in CLAUDE.md)
+**My answer:** agreed, and now a standing rule. I decide the member experience and the build order
+myself (after the research), build, and tell you what I chose and why, so you can overrule it any
+time. I still stop and ask only for what is truly yours:
+- spending money, or anything the client must buy (hardware, paid services);
+- changes to the LIVE server data (like 0021/0022);
+- promises to the client or anything legal (prices, contracts, privacy wording);
+- a personal-only idea (your own variant vs the product for everyone).
+Applied today: #6 (build "My membership" first) and #2 (offer the tripod turnstile as standard).
 
 ## 17. Inbox page: mark as read, reply to any answer, comment without picking, a true "Waiting for you" — 18 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -331,7 +343,7 @@ things work.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** RESEARCHED: WAITING FOR YOU (which to build first)
+**Status:** DECIDED (my call, 18 Oct) — "My membership" being built
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
 the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
@@ -353,10 +365,9 @@ diet and workout plans; gym-recorded body measurements.
 4. **Body measurements taken by the gym** (small value): members already log their own in the app.
 5. **Member photo by webcam** (admin app, small): at the desk when a member joins.
 6. **AI assistant for the owner** ("peak hours today?"): later; the reports already show this.
-**Decide:** Which to build first
-- A: "My membership" first, then the gym's workout plans (recommended)
-- B: The gym's workout plans first, then "My membership"
-
+**DECIDED (18 Oct, my call under your rule #18):** "My membership" first (members ask the desk
+about their end date more than anything), then the gym's workout plans. Class booking after your
+gym visit. Tell me if you want a different order.
 
 ## 5. Use the admin app's icon for the mobile app — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -381,7 +392,7 @@ photo, birthday wishes. Their users complain about bugs, so reliability is a poi
 
 ## 2. Matrix's connection kit: does it really work? Top 3 at different prices — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** ANSWERED — WAITING FOR YOU (which setup to offer)
+**Status:** DECIDED (my call, 18 Oct)
 **My answer:** Yes. Matrix's own guide covers everything we need: the machine connects to our
 server by itself (no PC at the gym); add/remove members; block an expired member by itself even
 when offline; face/finger sign-up; every entry sent to us with a reason; open-door commands; no
@@ -392,10 +403,9 @@ Server", their latest guide, and one real machine to test.
 3. Flap barrier: about ₹2.5–4 lakh+.
 (Online prices outside Jaipur, before GST and fitting.)
 **Details:** `docs/overhaul/research/R-entry-machines.md`
-**Decide:** Entry machine setup to offer the client as standard
-- A: Budget smart door, about ₹25,000–40,000
-- B: Tripod turnstile, about ₹80,000–1.6 lakh (recommended)
-- C: Flap barrier, about ₹2.5–4 lakh+
+**DECIDED (18 Oct, my call under your rule #18):** offer the tripod turnstile (about ₹80,000–1.6
+lakh) as standard, the budget smart door for small gyms, and the flap barrier only on request. The
+client still decides what to buy; nothing is bought by us. Tell me if you want a different default.
 
 ## 1. Physical entry / attendance machines in Jaipur that connect to our CRM — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
