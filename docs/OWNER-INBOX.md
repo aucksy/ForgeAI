@@ -28,13 +28,139 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 ---
 
+## Feature backlog
+Every feature, built and pending, in one line each. On the page: the "Feature backlog" tab, with a
+Comment box on every feature. Status: Live · Next release (v0.48.0) · Planned · Waiting for you · Idea · Not doing.
+
+### Member app
+| Feature | Status | Details |
+|---|---|---|
+| Workout logging | Live | Log sets of weight and reps, time or distance, with last time's numbers shown beside each set. |
+| Set types and effort (RPE) | Live | Mark warm-up, drop and failure sets; one tap on RPE ticks the set and starts the rest. |
+| Supersets and exercise notes | Live | Pair exercises into supersets and keep a note on any exercise. |
+| Rest timer and rest alerts | Live | A rest timer starts after every set, and "Rest is over" sounds and buzzes on time, even with the screen off. |
+| Live workout card in the notification shade | Live | Shows the exercise and next set, with a "Complete set" button, without opening the app. |
+| Pause and forgotten-finish | Live | Pause a workout; after an hour with no sets the timer pauses itself and asks before counting that time. |
+| Plate calculator, your gym's plates and bars | Live | Shows which plates to load, using only the plates and bars your gym really has. |
+| Targets (progressive overload) | Live | Each exercise suggests the next weight and reps from your history, using your weight-jump and rep-range settings. |
+| Kg to beat per exercise | Next release | Start screen shows "1,125 kg to beat · +15%" and the planned weight × reps for each set. |
+| Exercise library and your own exercises | Live | 402 exercises with steps and drawings; add your own and hide the ones you don't use. |
+| Moving exercise demo clips | Waiting for you | Our own clip maker has made 2 clips; a paid ready-made set (about $405) needs your OK. |
+| Routines and folders | Live | Build routines, group them in folders, and press-and-hold to drag them into order. |
+| Ready programs and plan builder | Live | Push Pull Legs, Upper/Lower and Full Body, or a plan built for your equipment and sore joints. |
+| Easy weeks | Live | A lighter week every 6 weeks, kept out of records and targets. |
+| Up next and Today | Live | The Workout tab opens on the next routine due, ready to start. |
+| History, calendar and editing old workouts | Live | See every past workout by day, and edit, rename, repeat or delete one. |
+| Records | Live | Heaviest weight, most reps, best set and more, with a pop-up the moment you beat one. |
+| Charts and statistics | Live | Weekly charts of kg lifted, reps and time, plus a chart for each exercise. |
+| Body map | Live | Shows which muscles you trained in the last 7 days, in a male or female figure. |
+| Body weight and measurements | Live | Log body weight, body fat and body measurements, with charts. |
+| Progress photos and workout photos | Live | Private photos kept on the phone, with side-by-side compare; up to 4 photos per workout. |
+| Monthly report and year in review | Live | A month and year summary with short notes on how you did. |
+| Share a picture or text | Live | Share a workout as a picture (post or story size) or as text; body weight is never shown. |
+| Weekly goal and milestones | Live | Set workouts per week and celebrate your 10th, 100th and later workouts. |
+| Import from Hevy and Strong | Live | Bring in your full workout history and your routines, including from a Hevy share link. |
+| Google Drive backup and restore | Live | Back up all your workouts to your own Google Drive and restore them on a new phone. |
+| Export to Excel | Live | Save your workouts, and separately your measurements, as a spreadsheet. |
+| Kg or pounds, km or miles | Live | Switch units anywhere; your saved numbers never change. |
+| Health Connect | Live | Sends your workouts and calories burned to Android's Health Connect. |
+| Home-screen widgets and app shortcuts | Live | Today's workout and weekly widgets, and long-press shortcuts to start or resume a workout. |
+| Workout reminders | Live | Reminders on the days and times you pick. |
+| Watch app (Wear OS) | Live | Rest countdown and buzz on the watch, plus heart rate during a workout. |
+| Demo data | Live | An optional 3-month sample history to try the app; never loaded by itself. |
+| AI coach chat | Planned | Built earlier but hidden from members until the AI phase is switched on. |
+| Food and calorie log | Planned | Built earlier but hidden from members until its own phase. |
+| Hindi screens | Idea | Not built; the member app is in English today. |
+| Body weight from Health Connect | Idea | Read your weight from other health apps instead of typing it. |
+
+### Admin app (gym owner and staff)
+| Feature | Status | Details |
+|---|---|---|
+| Members and plans | Live | Add members, sell and renew plans, freeze or add extra days, with every plan's history. |
+| Payments, dues and receipts | Live | Take full or part payments, see who owes and for how long, and print GST-ready receipts. |
+| Money reports and Excel export | Live | Collections by day, method and staff member, with cancelled receipts shown separately. |
+| Expenses and profit | Live | Record gym expenses and see profit, including shop sales. |
+| Enquiries | Live | Track people who asked about joining until they become members. |
+| Attendance register | Live | Check members in at the desk, undo a mistap, catch up on missed days. |
+| At-risk members list | Live | A daily list of members who stopped coming, judged against each member's own routine. |
+| Renewals list and WhatsApp messages | Live | Ready-typed WhatsApp messages for fees, endings, birthdays, welcome and receipts, sent with one tap. |
+| Home screen tiles | Live | Live, expired and expiring members, today's collection and dues, each opening its matching list. |
+| "Expiring in 1-3 / 4-7 / 8-15 days" tiles | Planned | Split the renewals due on the home screen into three time buckets. |
+| Staff logins and roles | Live | Owner and front-desk logins; staff can give at most 10% off and every receipt shows who took it. |
+| Personal training packs | Live | Sell personal training packs with a sessions-used counter and the trainer's name. |
+| Member ID card | Live | Print a member card, save it as a picture, or send it on WhatsApp. |
+| Import members from Excel | Live | Bring in members and payments from old sheets, with "Undo this import". |
+| Gym branding | Live | Upload the gym's logo and colours, which members' apps then use. |
+| Gym workout plans | Live | Trainers build or pick a plan, add starting weights, and send it to members or a whole membership plan. |
+| Works on phone and computer | Live | One website that installs like an app, with dark and light looks. |
+| Offline front desk | Planned | Keep the desk working without internet and send everything once it comes back. |
+| Full GST tax invoices | Planned | Proper tax invoices on top of today's payment receipts. |
+| Entry machine (turnstile, face or fingerprint) | Planned | Matrix machine linked to us, blocking expired members; tripod turnstile is the standard offer, and the client buys it. |
+| Automatic SMS or WhatsApp reminders | Waiting for you | Reminders sent by themselves cost money per message, so a paid provider needs your OK. |
+| Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. |
+| Webcam photo at the desk | Idea | Take a new member's photo with the desk computer's camera. |
+| Body measurements taken by the gym | Idea | Let trainers record measurements; members already log their own. |
+| AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. |
+| Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. |
+| Several branches | Not doing | Left out on purpose for now; our target gyms have one branch. |
+| Hinglish in the admin app | Not doing | Removed on your word; the admin app is in plain English. |
+
+### Gym ↔ member links
+| Feature | Status | Details |
+|---|---|---|
+| Join a gym by code or invite link | Live | Members join with the gym's code, a WhatsApp invite link or the QR poster. |
+| Join from the welcome screen | Next release | "Have a gym code? Join your gym" on the very first screen. |
+| Gym's colours and logo in the app | Live | After joining, the app takes on the gym's colours and shows its logo at start-up. |
+| Gym logo on the home screen | Next release | After joining, add a home-screen shortcut with the gym's logo that opens ForgeAI. |
+| QR check-in | Live | Members scan the gym's poster and tap once; the desk sees the check-in and plan status. |
+| After check-in, start the workout | Next release | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
+| QR scan opens the door | Waiting for you | The scan could open a networked door lock, but the client must buy the lock first. |
+| Gym shop | Live | Members order supplements and gear in the app and pay at the desk; the gym manages stock and orders. |
+| Paying in the app | Idea | Shop orders are paid at the desk today; paying in the app may come later. |
+| Gym messages inbox | Live | The gym sends offers and news to members' in-app inbox and sees who read them. |
+| Messages in the phone's notification shade | Waiting for you | Needs your Firebase (Google) project set up before messages can pop up on phones. |
+| My membership | Next release | Members see their plan, end date, days left, personal training used and visits this month. |
+| Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. |
+| Gym workout plans in Routines | Next release | Plans the trainer sends appear in the member's Workout tab by themselves. |
+| First-time starting weight from the trainer | Next release | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
+| Busy times by exercise | Planned | With members' OK, show "others also plan this exercise at these hours" to help pick a quieter time. |
+| Google login | Planned | Research sign-in with Google first, then come back to you with options. |
+| Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. |
+| Diet plans from the trainer | Idea | Workout plans came first; diet plans come next if gyms ask for them. |
+| Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. |
+
+### Platform and quality
+| Feature | Status | Details |
+|---|---|---|
+| Automatic tests on every change | Live | Thousands of checks run on both apps before anything can ship. |
+| Cloud phone tests | Live | Every release is tried on a cloud phone set up like yours, in about 2 hours, at no cost. |
+| Release gate | Live | A new app version can't be published unless every test, phone run and review is green. |
+| Server safety checks | Live | Tests prove one gym can never see another gym's records, on the live server too. |
+| Private signing key | Live | The app's signing key is kept only on your PC, never in the public code. |
+| Workouts stay on the phone | Live | Workouts never go to our server; the gym only gets check-ins, orders and messages. |
+| Works without internet | Live | The member app logs workouts fully offline. |
+| Owner inbox page | Live | A private page where you read answers, mark them read and send your picks. |
+| Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
+| Play Store release | Planned | Google's pre-launch tests and the Play Store listing are not started yet. |
+
+---
+
+
 ## 21. A feature backlog in the inbox, comments on any feature; "Waiting for you" only for decisions — 18 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** WORKING ON IT
+**Status:** DONE
 **You asked:** (1) a feature backlog section in the inbox: crisp details of every feature, built and
 pending, with a way to comment on any feature; (2) "Waiting for you" only for decisions, and a
 separate section for what you haven't read yet.
-**My answer:** building it now; I'll answer here when it's on the page.
+**My answer:** done. On the page:
+- a **Feature backlog** tab: every feature (95, in 4 groups: member app, admin app, gym-member
+  links, platform), each with its status (Live, Next release, Planned, Waiting for you, Idea, Not
+  doing), one plain line, and a **Comment** box. A comment comes to me like your answers do; I
+  write it here as a new entry with my reply. The same list is at the top of this file.
+- **Waiting for you** now shows only decisions. What you haven't read yet has its own **To read**
+  list (under the decisions) and its own filter.
+- A correction to #20: staff salaries and several branches are left out on purpose in the plan
+  (small gyms handle pay outside the software, and our gyms have one branch), not "not built yet".
 
 ---
 
@@ -63,8 +189,8 @@ roles, QR check-in, member ID card, shop with stock, WhatsApp messages typed for
 | Class booking (timetable, spaces left) | Waits for your gym visit: "Do you run group classes?" |
 | Diet plans from the trainer | Not built (workout plans first; diet is next if gyms ask) |
 | Trainer profiles and schedules | Partly (trainers send plans); no schedule screen yet |
-| Staff / trainer salaries | Not built |
-| Several branches | Not built |
+| Staff / trainer salaries | Left out on purpose (small gyms pay staff outside the software) |
+| Several branches | Left out on purpose for now (our gyms have one branch) |
 | Webcam member photo at the desk | Not built (small) |
 | Body measurements taken by the gym | Not built (members log their own) |
 | AI assistant for the owner ("peak hours today?") | Later; the reports already show peak hours |
