@@ -25,6 +25,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 6 | Member features from the GGMS list: which to build first | A: "My membership" first |
 | 2 | Entry machine: which of the 3 Matrix setups to offer the client | 2 (tripod turnstile) as standard |
 
 ---
@@ -35,6 +36,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 your answers, not only to questions with options; (3) on option questions, send a comment without
 picking an option; (4) "Waiting for you" must show only what is still pending for me to read or answer.
 **Status:** BUILT (page updated; desktop mod updated too)
+**READ (18 Oct, 08:43 am, via the page)**
 **My answer:** done, all four:
 - **Mark as read:** every entry has a "Mark as read" button (and "Mark as unread" to undo). Read
   entries leave "Waiting for you". New or unread entries have an orange edge and a "New" tag.
@@ -57,6 +59,7 @@ picking an option; (4) "Waiting for you" must show only what is still pending fo
 and submit the answer for you to act on. And I want it as a MOD I can open anytime from an icon
 that stays on the Claude Desktop app.
 **Status:** BUILT (page now; desktop mod ready to install on your PC)
+**READ (18 Oct, 08:43 am, via the page)**
 **My answer:**
 - **The page (works on the phone and the web now):** every open question shows its choices as
   buttons, with the full question and my answer under it. Pick, add a note if you like, press
@@ -111,6 +114,7 @@ mobile. Press: The New Stack and XDA on the mods launch.
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **You asked:** the cost of making the cloud test runs faster.
 **Status:** BUILT, first split runs in progress (decided: split, free)
+**READ (18 Oct, 08:43 am, via the page)**
 **My answer:**
 - **Today it costs ₹0.** The repo is public, so GitHub's normal test machines are free and
   unlimited. A whole phone run took 3 h 04 min (run 38984599010; GitHub billed 0 minutes).
@@ -275,6 +279,7 @@ Still to do: the home-screen shortcut with the gym's logo, and the Google login 
 ## 10. RPE tap: let me SEE the ✓ get ticked — 16/17 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** BUILT, NOT RELEASED (commit c54923f, in v0.47.0)
+**READ (18 Oct, 08:43 am, via the page)**
 **My answer:** after an RPE tap the sheet closes, then the ✓ on that set pops and ticks in front
 of you, then the rest timer starts.
 
@@ -298,6 +303,7 @@ overload it means; tap an exercise to expand it and see the target weight × rep
 ## 8. A drag-handle bar on exercise and routine cards — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** BUILT, NOT RELEASED (commit c1c2d5e, in v0.47.0)
+**READ (18 Oct, 08:43 am, via the page)**
 **My answer:** a small grey bar at the top of each card shows "press, hold and drag". Only shown when
 there are 2 or more cards to reorder.
 
@@ -320,17 +326,37 @@ things work.
 
 ## 6. GGMS member app: what members get there — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** ANSWERED
+**Status:** RESEARCHED: WAITING FOR YOU (which to build first)
 **My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
 their plan end date, payments and attendance, book classes, check in by QR, get reminders and
 the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
 (members): own plan end date / payments / attendance in the app; class booking; trainer-sent
 diet and workout plans; gym-recorded body measurements.
 **Details:** `docs/overhaul/research/R-ggms-competitor.md`
+**YOUR REPLY (18 Oct, 08:44 am, via the page):** "You should build the useful features from the list."
+**My answer:** agreed. Here is the list ranked by how much members would use it:
+1. **"My membership" in the member app** (most useful, medium job): plan name, end date and days
+   left, payments made, and check-ins this month, with a reminder before it ends. This is the
+   question gym desks get most ("when does mine expire?"). The server already has it all (the
+   gym's plans, payments and check-ins, matched by the member's mobile number, like check-in does).
+   Needs one small read-only server addition, which goes live only after your yes (like 0021/0022).
+2. **Workout plans from the gym or trainer** (useful, bigger job): the trainer picks or builds a
+   routine in the admin app and sends it; it appears in the member's Routines, ready to start. A
+   good fit, since we are already the best workout logger. Needs a new admin app page too.
+3. **Class booking** (only if the gym runs classes): timetable, spaces left, book and cancel. Big
+   job. Waits for your gym visit: "Do you run group classes? How full are they?" is on the list.
+4. **Body measurements taken by the gym** (small value): members already log their own in the app.
+5. **Member photo by webcam** (admin app, small): at the desk when a member joins.
+6. **AI assistant for the owner** ("peak hours today?"): later; the reports already show this.
+**Decide:** Which to build first
+- A: "My membership" first, then the gym's workout plans (recommended)
+- B: The gym's workout plans first, then "My membership"
+
 
 ## 5. Use the admin app's icon for the mobile app — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** BUILT, NOT RELEASED (commit abe5745, in v0.47.0)
+**READ (18 Oct, 08:44 am, via the page)**
 
 ## 4. GGMS (the client's current CRM): features and prices — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -346,6 +372,7 @@ photo, birthday wishes. Their users complain about bugs, so reliability is a poi
 ## 3. Entry machines: don't build, add to plan — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** PLANNED (P8 in `docs/overhaul/CRM-BUILD.md`)
+**READ (18 Oct, 08:45 am, via the page)**
 
 ## 2. Matrix's connection kit: does it really work? Top 3 at different prices — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -368,6 +395,7 @@ Server", their latest guide, and one real machine to test.
 ## 1. Physical entry / attendance machines in Jaipur that connect to our CRM — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** ANSWERED
+**READ (18 Oct, 08:45 am, via the page)**
 **My answer:** No brand has its own Jaipur office; all sell through local dealers. Two options
 connect: Matrix COSEC (Indian, official connection kit, gym case study; recommended) and
 ZKTeco/eSSL (cheaper, "push" to our server, more for us to build).
