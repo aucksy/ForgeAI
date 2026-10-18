@@ -26,6 +26,7 @@ import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { columnHeads, LOAD_MODE_LABEL, LOAD_MODES, repsPerSide, weightIsEach } from '@/tracker/engine/logTypes';
 import { targetBadge, targetFill, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
+import { planStartLine } from '@/tracker/lib/planStart';
 import { tell } from '@/lib/tell';
 import { fmtInt, fmtWeight, kgToDisplay, weightUnit } from '@/lib/format';
 
@@ -200,8 +201,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const fillTargetRef = useRef(fillTarget);
   fillTargetRef.current = fillTarget;
   // The Target line says "each" / "per side" when the columns do.
+  // OWNER-INBOX #19: a first time whose routine gives a starting weight says that weight.
+  const firstPlan = exercise.sets.find((s) => !s.isWarmup && s.setType !== 'drop')?.plan;
   const line = target
-    ? targetLine({ ...target, each: weightIsEach(loadMode), perSide: repsPerSide(loadMode) })
+    ? (planStartLine(target, firstPlan, (kg) => `${fmtWeight(kg, units)}${weightIsEach(loadMode) ? ' each' : ''}`) ??
+      targetLine({ ...target, each: weightIsEach(loadMode), perSide: repsPerSide(loadMode) }))
     : null;
 
   // OWNER-INBOX #9: the kg to beat and what the open sets need (decision 2 A: at most 2 extra reps a

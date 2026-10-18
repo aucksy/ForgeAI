@@ -14,6 +14,16 @@ describe('gym workout plans (OWNER-INBOX #6): reading the answer', () => {
     expect(p.file.folder).toBe('Asha strength');
     expect(p.file.routines[0].exercises[0]).toMatchObject({ name: 'Bench Press', catalogKey: 'bench_press', sets: 3, repMin: 6, repMax: 10 });
   });
+  it("OWNER-INBOX #19: the trainer's start weights and each exercise's own kind arrive", () => {
+    const start = Array.from({ length: 3 }, () => ({ type: 'normal', reps: 8, weightKg: 20 }));
+    const pull = { name: 'Pull-Up', catalogKey: 'pull_up', logType: 'reps', sets: 3, repMin: 6, repMax: 10, primary: ['lats'] };
+    const p = gymPlanFromRow(row({ routines: [{ name: 'Push', dayType: 'push', exercises: [{ ...ex, setList: start }, pull] }] }))!;
+    const [bench, pu] = p.file.routines[0].exercises;
+    expect(bench.sets).toBe(3);
+    expect(bench.setList?.map((s) => [s.weightKg, s.reps])).toEqual([[20, 8], [20, 8], [20, 8]]);
+    expect(pu).toMatchObject({ logType: 'reps', sets: 3 });
+    expect(pu.setList).toBeUndefined();
+  });
   it('cleans numbers the way a shared file is cleaned', () => {
     const p = gymPlanFromRow(row({ routines: [{ name: 'Push', dayType: 'push', exercises: [{ ...ex, sets: 999, repMin: -4 }] }] }))!;
     const e = p.file.routines[0].exercises[0];

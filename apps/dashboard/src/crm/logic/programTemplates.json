@@ -1,0 +1,744 @@
+[
+  {
+    "key": "gym_full_body_beginner",
+    "name": "Full Body Basics",
+    "meta": "Beginner · 3 days a week",
+    "summary": "Your first months in the gym. Machines and dumbbells you can learn safely, the whole body each time.",
+    "routines": [
+      {
+        "name": "Full Body A",
+        "dayType": "full",
+        "exercises": [
+          {
+            "key": "leg_press",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "machine_chest_press",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "lat_pulldown",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "dumbbell_romanian_deadlift",
+            "sets": 2,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "lateral_raise",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "plank",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Full Body B",
+        "dayType": "full",
+        "exercises": [
+          {
+            "key": "goblet_squat",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "incline_dumbbell_press",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "seated_cable_row",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "lying_leg_curl",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "dumbbell_shoulder_press",
+            "sets": 2,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "cable_crunch",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "gym_strength_beginner",
+    "name": "Strength Starter",
+    "meta": "Beginner · 3 days a week",
+    "summary": "Learn the big barbell lifts — squat, bench, deadlift, press, row — and add a little weight most weeks.",
+    "routines": [
+      {
+        "name": "Strength A",
+        "dayType": "full",
+        "exercises": [
+          {
+            "key": "barbell_back_squat",
+            "sets": 3,
+            "repMin": 5,
+            "repMax": 8
+          },
+          {
+            "key": "barbell_bench_press",
+            "sets": 3,
+            "repMin": 5,
+            "repMax": 8
+          },
+          {
+            "key": "barbell_row",
+            "sets": 3,
+            "repMin": 5,
+            "repMax": 8
+          },
+          {
+            "key": "plank",
+            "sets": 2,
+            "repMin": 8,
+            "repMax": 12
+          }
+        ]
+      },
+      {
+        "name": "Strength B",
+        "dayType": "full",
+        "exercises": [
+          {
+            "key": "barbell_back_squat",
+            "sets": 3,
+            "repMin": 5,
+            "repMax": 8
+          },
+          {
+            "key": "overhead_press",
+            "sets": 3,
+            "repMin": 5,
+            "repMax": 8
+          },
+          {
+            "key": "deadlift",
+            "sets": 2,
+            "repMin": 5,
+            "repMax": 8
+          },
+          {
+            "key": "lat_pulldown",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "gym_ppl_intermediate",
+    "name": "Push Pull Legs",
+    "meta": "Intermediate · 3 days a week",
+    "summary": "Pushing muscles, pulling muscles and legs, each on its own day. Train three days, or keep the rotation going for more.",
+    "routines": [
+      {
+        "name": "Push",
+        "dayType": "push",
+        "exercises": [
+          {
+            "key": "barbell_bench_press",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "dumbbell_shoulder_press",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "incline_dumbbell_press",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "cable_lateral_raise",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "triceps_pushdown",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "cable_overhead_triceps_extension",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Pull",
+        "dayType": "pull",
+        "exercises": [
+          {
+            "key": "lat_pulldown",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "barbell_row",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "seated_cable_row",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "face_pull",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "dumbbell_curl",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "hammer_curl",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Legs",
+        "dayType": "legs",
+        "exercises": [
+          {
+            "key": "barbell_back_squat",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "romanian_deadlift",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "leg_press",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "lying_leg_curl",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "standing_calf_raise",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "cable_crunch",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "gym_upper_lower_intermediate",
+    "name": "Upper / Lower",
+    "meta": "Intermediate · 4 days a week",
+    "summary": "Four days: upper body, lower body, twice a week each. Every muscle gets two good workouts.",
+    "routines": [
+      {
+        "name": "Upper A",
+        "dayType": "upper",
+        "exercises": [
+          {
+            "key": "barbell_bench_press",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "barbell_row",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "dumbbell_shoulder_press",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "lat_pulldown",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "lateral_raise",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "triceps_pushdown",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "dumbbell_curl",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Lower A",
+        "dayType": "lower",
+        "exercises": [
+          {
+            "key": "barbell_back_squat",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "romanian_deadlift",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "leg_press",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "lying_leg_curl",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "standing_calf_raise",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "cable_crunch",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Upper B",
+        "dayType": "upper",
+        "exercises": [
+          {
+            "key": "incline_dumbbell_press",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "pull_up",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "seated_cable_row",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "machine_shoulder_press",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "cable_fly",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "face_pull",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "hammer_curl",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Lower B",
+        "dayType": "lower",
+        "exercises": [
+          {
+            "key": "hack_squat",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "barbell_hip_thrust",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "bulgarian_split_squat",
+            "sets": 2,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "seated_leg_curl",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "seated_calf_raise",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "hanging_knee_raise",
+            "sets": 2,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "gym_ppl_advanced",
+    "name": "Push Pull Legs × 2",
+    "meta": "Advanced · 6 days a week",
+    "summary": "Six days for experienced lifters: every muscle twice a week with heavy and lighter days. Plan easy weeks.",
+    "routines": [
+      {
+        "name": "Push A",
+        "dayType": "push",
+        "exercises": [
+          {
+            "key": "barbell_bench_press",
+            "sets": 4,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "overhead_press",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "incline_dumbbell_press",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "cable_lateral_raise",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "triceps_pushdown",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "cable_overhead_triceps_extension",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Pull A",
+        "dayType": "pull",
+        "exercises": [
+          {
+            "key": "weighted_pull_up",
+            "sets": 4,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "barbell_row",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "seated_cable_row",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "face_pull",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "ez_bar_curl",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "hammer_curl",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Legs A",
+        "dayType": "legs",
+        "exercises": [
+          {
+            "key": "barbell_back_squat",
+            "sets": 4,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "romanian_deadlift",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "leg_press",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "leg_extension",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "lying_leg_curl",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "standing_calf_raise",
+            "sets": 4,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Push B",
+        "dayType": "push",
+        "exercises": [
+          {
+            "key": "incline_barbell_press",
+            "sets": 4,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "dumbbell_shoulder_press",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "weighted_dip",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "lateral_raise",
+            "sets": 4,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "pec_deck_fly",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "rope_triceps_pushdown",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Pull B",
+        "dayType": "pull",
+        "exercises": [
+          {
+            "key": "deadlift",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "lat_pulldown",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "chest_supported_t_bar_row",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "reverse_pec_deck",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "incline_dumbbell_curl",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "barbell_shrug",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      },
+      {
+        "name": "Legs B",
+        "dayType": "legs",
+        "exercises": [
+          {
+            "key": "hack_squat",
+            "sets": 4,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "barbell_hip_thrust",
+            "sets": 3,
+            "repMin": 6,
+            "repMax": 10
+          },
+          {
+            "key": "walking_lunge",
+            "sets": 3,
+            "repMin": 8,
+            "repMax": 12
+          },
+          {
+            "key": "seated_leg_curl",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "seated_calf_raise",
+            "sets": 4,
+            "repMin": 10,
+            "repMax": 15
+          },
+          {
+            "key": "hanging_leg_raise",
+            "sets": 3,
+            "repMin": 10,
+            "repMax": 15
+          }
+        ]
+      }
+    ]
+  }
+]
