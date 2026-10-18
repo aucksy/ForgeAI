@@ -32,7 +32,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INBOX = os.path.join(ROOT, "docs", "OWNER-INBOX.md")
 
 ENTRY_RE = re.compile(r"^## (\d+)\. (.+?) — (.+)$", re.M)
-READ_RE = re.compile(r"^\*\*READ\b.*(?:\n|$)", re.M)
+READ_RE = re.compile(r"^\*\*READ \([^)\n]*\)\*\*[ \t]*(?:\r?\n|$)", re.M)
 
 
 def status_kind(status):
@@ -133,6 +133,8 @@ def set_read(text, num, when):
         if when:
             anchor = re.search(r"^\*\*Status:\*\* .*\n", block, re.M) or re.search(r"^\*\*Chat:\*\* .*\n", block, re.M)
             pos = anchor.end() if anchor else block.find("\n") + 1
+            if pos <= 0:  # a heading at the very end of the file, with no newline after it
+                block, pos = block + "\n", len(block) + 1
             block = block[:pos] + "**READ (" + when + ", via the page)**\n" + block[pos:]
         return text[: h.end()] + block + text[end:]
     return text
@@ -143,11 +145,17 @@ def absorb(saved_html, md_path=INBOX):
     data = page_data(saved_html)
     with open(md_path, encoding="utf-8") as f:
         text = f.read()
-    for num, when in (data.get("read") or {}).items():
+    read = data.get("read") or {}
+    answers = data.get("answers") or {}
+    for num, when in read.items():
         text = set_read(text, int(num), str(when) if when else None)
+    # Sending an answer or a reply counts as read on the page; keep it so after the rebuild.
+    for num, a in answers.items():
+        if num not in read:
+            text = set_read(text, int(num), str(a.get("at") or "sent"))
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(text)
-    return data.get("answers") or {}
+    return answers
 
 
 def enc(value):
@@ -405,9 +413,10 @@ function render() {
 let saving = false;
 async function save(change, undo, msg, copyText) {
   if (saving) return;
-  const artifact = await claude.use("artifact");
-  if (!artifact) { showCopy(msg, "Saving isn't available here.", copyText); return; }
-  saving = true;
+  saving = true; // before the await, so a second quick tap can't start a second save
+  let artifact = null;
+  try { artifact = await claude.use("artifact"); } catch (e) { artifact = null; /* quiet: treated as "not available" below */ }
+  if (!artifact) { saving = false; showCopy(msg, "Saving isn't available here.", copyText); return; }
   change();
   msg.textContent = "Saving…";
   try {
@@ -429,7 +438,9 @@ function send(n) {
   const chosen = e.decides.map((d, qi) => ({ q: d.q, key: mine[qi], text: (d.opts.find((o) => o.key === mine[qi]) || {}).text || "" })).filter((p) => p.key);
   if (!chosen.length && !note) { msg.textContent = e.decides.length ? "Pick an answer or write a comment first." : "Write your reply first."; return; }
   const answer = { picks: chosen, note, at: stamp() };
-  save(() => { DATA.answers[n] = answer; delete picks[n]; keepPicks(); }, () => { delete DATA.answers[n]; }, msg, answerText(e, answer));
+  const kept = picks[n];
+  save(() => { DATA.answers[n] = answer; delete picks[n]; keepPicks(); },
+    () => { delete DATA.answers[n]; if (kept) picks[n] = kept; keepPicks(); }, msg, answerText(e, answer));
 }
 function markRead(n, on) {
   const had = n in DATA.read, before = DATA.read[n];

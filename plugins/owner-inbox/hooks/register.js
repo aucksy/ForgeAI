@@ -33,7 +33,7 @@ export function parseInbox(text) {
     }
     const sm = body.match(/^\*\*Status:\*\* (.+)$/m)
     const status = sm ? sm[1].trim() : ''
-    const rm = body.match(/^\*\*READ\b.*(?:\n|$)/m)
+    const rm = body.match(/^\*\*READ \([^)\n]*\)\*\*[ \t]*(?:\r?\n|$)/m)
     if (rm) body = body.replace(rm[0], '')
     const decides = []
     for (const dm of body.matchAll(/^\*\*Decide:\*\* (.+)\n((?:- [A-Z]: .+\n?)+)/gm)) {

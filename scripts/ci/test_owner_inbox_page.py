@@ -84,6 +84,13 @@ class Page(unittest.TestCase):
         read = page.parse(SAMPLE.replace("**Status:** BUILT", "**READ (18 Oct, 9:05 pm, via the page)**\n**Status:** BUILT"))["entries"]
         self.assertEqual([e["read"] for e in read], [False, True])
         self.assertNotIn("READ", read[1]["body"])
+        # Only the exact marker counts: a line like "**READ-ONLY files:**" is text, not a read mark.
+        other = page.parse(SAMPLE.replace("**Status:** BUILT", "**READ-ONLY files:** x\n**Status:** BUILT"))["entries"][1]
+        self.assertFalse(other["read"])
+        self.assertIn("READ-ONLY", page.set_read(SAMPLE.replace("**Status:** BUILT", "**READ-ONLY files:** x\n**Status:** BUILT"), 1, None))
+        # A heading at the very end of the file, with nothing after it, stays a clean heading.
+        bare = "## 3. Last — 1 Oct 2026"
+        self.assertEqual(page.set_read(bare, 3, "2 Oct"), bare + "\n**READ (2 Oct, via the page)**\n")
 
     def test_set_read_adds_after_status_and_removes(self):
         once = page.set_read(SAMPLE, 2, "18 Oct, 9:05 pm")
@@ -101,16 +108,33 @@ class Page(unittest.TestCase):
             f.write(page.set_read(SAMPLE, 1, "17 Oct"))
         try:
             data = page.parse(SAMPLE)
-            data.update(updated="now", answers={"2": {"picks": [], "note": "</script> a comment", "at": "18 Oct"}},
-                        read={"2": "18 Oct, 9:05 pm", "1": False})
+            data.update(updated="now", read={"2": "18 Oct, 9:05 pm"}, answers={
+                "2": {"picks": [], "note": "</script> a comment", "at": "18 Oct"},
+                "1": {"picks": [], "note": "ok", "at": "18 Oct, 9:10 pm"}})  # #1: replied, never tapped "read"
             saved = "<!doctype html><html><body>" + page.fill(page.TEMPLATE, data) + "</body></html>"
             answers = page.absorb(saved, f.name)
             text = open(f.name, encoding="utf-8").read()
         finally:
             os.remove(f.name)
-        self.assertEqual(answers, {"2": {"picks": [], "note": "</script> a comment", "at": "18 Oct"}})
+        self.assertEqual(sorted(answers), ["1", "2"])
+        self.assertEqual(answers["2"]["note"], "</script> a comment")
         self.assertIn("**READ (18 Oct, 9:05 pm, via the page)**", text)
-        self.assertEqual(text.count("**READ"), 1)  # #1 was marked unread on the page
+        # A sent reply counts as read after the rebuild too (the old 17 Oct mark is replaced).
+        self.assertIn("**READ (18 Oct, 9:10 pm, via the page)**", text)
+        self.assertEqual(text.count("**READ"), 2)
+
+    def test_absorb_mark_as_unread_removes_the_line(self):
+        import tempfile
+        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+            f.write(page.set_read(SAMPLE, 1, "17 Oct"))
+        try:
+            data = page.parse(SAMPLE)
+            data.update(updated="now", answers={}, read={"1": False})
+            page.absorb(page.fill(page.TEMPLATE, data), f.name)
+            with open(f.name, encoding="utf-8") as g:
+                self.assertEqual(g.read(), SAMPLE)
+        finally:
+            os.remove(f.name)
 
     def test_page_data_needs_the_data_line(self):
         with self.assertRaises(ValueError):
