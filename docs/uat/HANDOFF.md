@@ -11,7 +11,9 @@ Whoever stops last updates this file and pushes it. The other side starts here.
   ci.yml skips v* tags and the tag commit is on no branch). Phone + watch APK links answer 200.
 - Task 2 (inbox #20 "Expiring in 1-3 / 4-7 / 8-15 days"): already LIVE since 15 Oct (399cc9e); covered
   by admin journey J27c (d2ef22c). Inbox page: chat rename (R-28) and the PC chat in the list (R-27).
-- Next: WP15 (Play pre-launch / Firebase Test Lab) not started; backlog in docs/OWNER-INBOX.md.
+- WP15 BUILT (5271512): test-lab.yml robot crawl after each release; dry run 39136145179 green ("not set
+  up yet"). WAITS FOR OWNER: secrets TEST_LAB_PROJECT / TEST_LAB_KEY (docs/uat/TEST-LAB-SETUP.md). When he
+  says it is set up: dispatch test-lab.yml with tag v0.48.0 and read the summary.
 
 ## Cloud session (started 17 Oct 2026 02:45 UTC) - last update 05:25 UTC
 The PC helpers went quiet at 03:00 UTC (no push or run after that), so at 05:00 the cloud session
