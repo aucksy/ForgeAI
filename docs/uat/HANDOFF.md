@@ -53,6 +53,22 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
 - WP9 gym fixes + REPAIR PART R (blocks whole phone runs).
 
 ### PC must do
+- DONE 18 Oct 2026 (PC, owner approved, inbox #6): applied LIVE, in order, from commit 21847ac:
+  0021_receipt_rules.sql, 0022_key_status.sql, 0023_member_membership.sql - no errors.
+  Every supabase/tests/*.sql then run on the LIVE database (gyms count 125 before and after; nothing left behind):
+  - 0015_qr_checkin: RESULT PASS (24 checks)
+  - 0017_undo_import: RESULT PASS (9 checks)
+  - 0018_photo_upload: RESULT PASS (3 checks)
+  - 0018_staff_and_owner_rules: RESULT PASS (93 checks)
+  - 0019_staff_discount_and_taker: RESULT PASS (26 checks)
+  - 0020_gym_side_retries: RESULT PASS (29 checks)
+  - 0021_receipt_rules: RESULT PASS (72 checks)
+  - 0022_key_status: RESULT PASS (9 checks)
+  - 0023_member_membership: RESULT PASS (12 checks)
+  - security: RESULT PASS (9 checks)
+  - uat_access_matrix: RESULT PASS (438 cells: 83 allow, 355 deny; 66 gym-B-on-gym-A cells all deny)
+  - uat_money: RESULT PASS (61 checks, 13 finding probes; findings still open: none)
+  - uat_shop_orders: RESULT PASS (66 checks)
 - OWNER SAID YES (18 Oct): apply 0021_receipt_rules.sql, 0022_key_status.sql, then 0023_member_membership.sql, on the live database; run
   every supabase/tests/*.sql live (expect RESULT PASS, "findings still open: none").
 - Deploy the admin app after any admin change (checked build, then wrangler in deploy/panel).
