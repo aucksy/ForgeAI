@@ -8,7 +8,10 @@
 -- (gym_members.checkin_phone, 0016) is used. Nothing is typed here, so this cannot be used to look
 -- up anyone by number. That number is not verified (no OTP), the same as check-in, so on purpose
 -- this shows NO money: no prices, no payments, no dues. Those wait until the desk can confirm who
--- an app member is.
+-- an app member is. Review (18 Oct 2026): a member who typed someone else's number at check-in
+-- would see that person's plan, so the plan shows only when the first name given at Join matches
+-- the gym's list (NAME_MISMATCH otherwise), and never for a number two roster members share
+-- (SHARED_NUMBER: the first one made would win, showing the wrong person's plan).
 --
 -- ANSWERS (never a raise after the key check):
 --   {ok:true, gymName, memberName (first name), day,
@@ -19,8 +22,16 @@
 --   {error:'NO_PHONE', gymName}        no check-in yet: the app does not know the member's number
 --   {error:'NOT_ON_ROSTER', gymName}   that number is no longer on the gym's list
 --   {error:'GYM_NOT_ONLINE', gymName}  the gym keeps no records online
+--   {error:'NAME_MISMATCH', gymName}   the gym's list has another first name for that number
+--   {error:'SHARED_NUMBER', gymName}   more than one of the gym's members has that number
 --
 -- Apply: Supabase SQL editor, after 0022.
+
+-- "Rahul Sharma", " rahul ", "RAHUL." → 'rahul'; null when there are no letters.
+create or replace function public._first_name_key(p_name text)
+  returns text language sql immutable set search_path = public as $$
+  select nullif(lower(regexp_replace(split_part(btrim(coalesce(p_name, '')), ' ', 1), '[^[:alpha:]]', '', 'g')), '')
+$$;
 
 create or replace function public.member_membership(p_key text)
   returns jsonb language plpgsql stable security definer set search_path = public as $$
@@ -36,6 +47,7 @@ declare
   nxt jsonb;
   last_end text;
   visits int;
+  sharing int;
 begin
   select * into g from public.gyms where gym_id = m.gym_id;
 
@@ -49,6 +61,17 @@ begin
 
   roster := public._checkin_roster_member(g.gym_id, ph);
   if roster.id is null then return jsonb_build_object('error', 'NOT_ON_ROSTER', 'gymName', g.name); end if;
+
+  select count(*) into sharing from public.crm_records r
+   where r.gym_id = g.gym_id and r.kind = 'member' and not r.deleted
+     and coalesce(r.data->>'archived', 'false') <> 'true'
+     and public._norm_phone(r.data->>'phone') = ph;
+  if sharing > 1 then return jsonb_build_object('error', 'SHARED_NUMBER', 'gymName', g.name); end if;
+
+  if public._first_name_key(roster.data->>'fullName') is null
+     or public._first_name_key(roster.data->>'fullName') is distinct from public._first_name_key(m.name) then
+    return jsonb_build_object('error', 'NAME_MISMATCH', 'gymName', g.name);
+  end if;
 
   -- The plan covering today (the one ending last, when two overlap).
   select jsonb_build_object(
@@ -94,5 +117,6 @@ begin
     'day', day, 'current', cur, 'next', nxt, 'lastEndedOn', last_end, 'visitsThisMonth', coalesce(visits, 0));
 end $$;
 
+revoke all on function public._first_name_key(text) from public, anon, authenticated;
 revoke all on function public.member_membership(text) from public;
 grant execute on function public.member_membership(text) to anon, authenticated;

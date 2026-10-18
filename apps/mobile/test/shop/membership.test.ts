@@ -22,7 +22,7 @@ describe('My membership (OWNER-INBOX #6): reading the answer', () => {
     expect(a).toMatchObject({ ok: true, day: today, current: { planName: 'Quarterly + PT', ptSessions: 12, ptUsed: 3, trainer: 'Ravi' }, visitsThisMonth: 9 });
   });
   it('reads the three "can\'t show it" answers', () => {
-    for (const problem of ['NO_PHONE', 'NOT_ON_ROSTER', 'GYM_NOT_ONLINE']) {
+    for (const problem of ['NO_PHONE', 'NOT_ON_ROSTER', 'GYM_NOT_ONLINE', 'NAME_MISMATCH', 'SHARED_NUMBER']) {
       expect(membershipFromRow({ error: problem, gymName: 'G' })).toEqual({ ok: false, problem, gymName: 'G' });
     }
   });
@@ -30,9 +30,9 @@ describe('My membership (OWNER-INBOX #6): reading the answer', () => {
     expect(membershipFromRow(null)).toBeNull();
     expect(membershipFromRow({ error: 'SOMETHING' })).toBeNull();
     expect(membershipFromRow(row({ day: '18/10/2026' }))).toBeNull();
-    // A plan with a broken date is no plan; bad counts are none.
-    const a = membershipFromRow(row({ current: { planName: 'X', startsOn: 'x', endsOn: '2026-10-30' }, visitsThisMonth: -2 }));
-    expect(a).toMatchObject({ current: null, visitsThisMonth: 0 });
+    // A plan whose dates can't be read hides the card (never a wrong "No plan yet"); bad counts are none.
+    expect(membershipFromRow(row({ current: { planName: 'X', startsOn: 'x', endsOn: '2026-10-30' } }))).toBeNull();
+    expect(membershipFromRow(row({ visitsThisMonth: -2 }))).toMatchObject({ visitsThisMonth: 0 });
   });
   it('never carries money, even if the server sent some', () => {
     const a = membershipFromRow(row({ priceP: 900000, current: { ...row().current, priceP: 900000 } }));
@@ -75,6 +75,9 @@ describe('My membership: the words', () => {
     expect(membershipView({ ok: false, problem: 'NO_PHONE', gymName: 'G' }).lines[0]).toMatch(/Scan G's check-in QR/);
     expect(membershipView({ ok: false, problem: 'NOT_ON_ROSTER', gymName: 'G' }).lines[0]).toMatch(/Ask the desk/);
     expect(membershipView({ ok: false, problem: 'GYM_NOT_ONLINE', gymName: 'G' }).title).toBe('Not available yet');
+    // Never names the other person on the gym's list.
+    expect(membershipView({ ok: false, problem: 'NAME_MISMATCH', gymName: 'G' })).toMatchObject({ title: 'Ask the desk to check your name' });
+    expect(membershipView({ ok: false, problem: 'SHARED_NUMBER', gymName: 'G' }).lines[0]).toMatch(/own/);
   });
   it('member words never say volume, PR or session', () => {
     const all = [view(), view({ current: null }), membershipView({ ok: false, problem: 'NO_PHONE', gymName: 'G' })].flatMap((v) => [v.title, v.when ?? '', ...v.lines]).join(' ');

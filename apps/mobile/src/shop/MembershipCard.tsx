@@ -50,6 +50,12 @@ const toneColor = (t: MembershipTone): string => (t === 'good' ? color.goodText 
 
 export function MembershipCard({ link }: { link: GymLink }) {
   const [shown, setShown] = useState<Shown>(null);
+  // Another gym (or a rejoin) on a screen that stays open: never keep the last member's plan.
+  const [forMember, setForMember] = useState(link.memberId);
+  if (forMember !== link.memberId) {
+    setForMember(link.memberId);
+    setShown(null);
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -66,7 +72,9 @@ export function MembershipCard({ link }: { link: GymLink }) {
           setShown(null);
         } else if (kept && (r.error.kind === 'offline' || r.error.kind === 'timeout')) {
           setShown({ answer: kept.answer, keptAt: kept.at });
-        } else if (!kept) {
+        } else {
+          // Not a network problem (a key the gym no longer knows, an answer it can't read): a kept
+          // plan would be wrong under "No internet", so nothing shows.
           if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[ForgeErr] membership', r.error);
           setShown(null);
         }

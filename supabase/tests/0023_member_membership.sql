@@ -19,9 +19,9 @@ begin
   insert into public.gyms(name, join_code) values ('MS Test Gym', 'MSTST1') returning gym_id into gid;
   insert into public.gyms(name, join_code) values ('MS Empty Gym', 'MSTST2') returning gym_id into gid2;
   insert into public.gym_members(gym_id, name, phone, checkin_phone, key_hash) values
-    (gid, 'Asha app', null, '+919829012345', public._hash_key(ka)),
+    (gid, 'asha v', null, '+919829012345', public._hash_key(ka)),
     -- Bilal typed a number at Join only: never matched at a check-in, so not trusted here.
-    (gid, 'Bilal app', '9829054321', null, public._hash_key(kb)),
+    (gid, 'Bilal', '9829054321', null, public._hash_key(kb)),
     -- Chand's matched number has since been removed from the gym's list.
     (gid, 'Chand app', null, '+919000000001', public._hash_key(kc)),
     (gid2, 'Dev app', null, '+919876543210', public._hash_key(kd));
@@ -86,6 +86,20 @@ begin
     fails := fails || ' 6:' || r::text;
   end if;
 
+  -- 6b. Someone who typed another member's number (a different first name) sees nothing of theirs.
+  update public.gym_members set name = 'Imposter' where key_hash = public._hash_key(kb);
+  r := public.member_membership(kb);
+  checks := checks + 1;
+  if r->>'error' is distinct from 'NAME_MISMATCH' or r::text ~ 'Bilal' then fails := fails || ' 6b:' || r::text; end if;
+
+  -- 6c. A number two members share (a parent and child): nobody's plan, ask the desk.
+  insert into public.crm_records(gym_id, kind, id, data, version) values
+    (gid, 'member', 'm-bilal-son', '{"fullName":"Bilal Junior","phone":"9829054321","archived":false,"createdAt":9}', 1);
+  update public.gym_members set name = 'Bilal' where key_hash = public._hash_key(kb);
+  r := public.member_membership(kb);
+  checks := checks + 1;
+  if r->>'error' is distinct from 'SHARED_NUMBER' then fails := fails || ' 6c:' || r::text; end if;
+
   -- 7. Another gym's member never sees this gym's records.
   r := public.member_membership(kd);
   checks := checks + 1;
@@ -102,7 +116,8 @@ begin
 
   -- 9. Anyone may call it (the app has no account); nobody may call its helpers.
   checks := checks + 1;
-  if not has_function_privilege('anon', 'public.member_membership(text)', 'execute') then fails := fails || ' 9'; end if;
+  if not has_function_privilege('anon', 'public.member_membership(text)', 'execute')
+     or has_function_privilege('anon', 'public._first_name_key(text)', 'execute') then fails := fails || ' 9'; end if;
 
   if fails = '' then raise exception 'RESULT PASS (% checks)', checks;
   else raise exception 'RESULT FAIL:%', fails; end if;

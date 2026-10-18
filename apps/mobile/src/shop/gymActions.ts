@@ -41,6 +41,7 @@ import {
 } from './gym';
 import type { CheckInAnswer } from './checkIn';
 import { useGymShop } from './gymStore';
+import { MEMBERSHIP_STORAGE_KEY } from './membership';
 import { priceBag, removeLine } from './money';
 import type { GymOrder } from './types';
 
@@ -415,6 +416,8 @@ export async function leaveGym(): Promise<void> {
   const link = useGymShop.getState().link;
   useGymShop.getState().unlink(null);
   useGymInbox.getState().clear();
+  // "My membership"'s kept plan goes with the gym (OWNER-INBOX #6).
+  AsyncStorage.removeItem(MEMBERSHIP_STORAGE_KEY).catch((e: unknown) => console.warn('[ForgeErr] leave: forgetting the kept plan', e));
   if (!link) return;
   const told = await leaveOnServer(link.memberKey);
   // A join in the meantime owns the card now: its words win.

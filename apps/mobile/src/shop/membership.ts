@@ -7,6 +7,9 @@
  */
 import { daysBetween, tinyDateWithYear } from '@/lib/date';
 
+export type MembershipProblem = 'NO_PHONE' | 'NOT_ON_ROSTER' | 'GYM_NOT_ONLINE' | 'NAME_MISMATCH' | 'SHARED_NUMBER';
+const PROBLEMS: readonly MembershipProblem[] = ['NO_PHONE', 'NOT_ON_ROSTER', 'GYM_NOT_ONLINE', 'NAME_MISMATCH', 'SHARED_NUMBER'];
+
 export interface PlanSpan {
   planName: string;
   startsOn: string;
@@ -31,7 +34,7 @@ export type MembershipAnswer =
       lastEndedOn: string | null;
       visitsThisMonth: number;
     }
-  | { ok: false; problem: 'NO_PHONE' | 'NOT_ON_ROSTER' | 'GYM_NOT_ONLINE'; gymName: string };
+  | { ok: false; problem: MembershipProblem; gymName: string };
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -51,11 +54,14 @@ export function membershipFromRow(raw: unknown): MembershipAnswer | null {
   const r = Array.isArray(raw) ? raw[0] : raw;
   if (!isObj(r)) return null;
   const gymName = str(r.gymName) || 'Your gym';
-  if (r.error === 'NO_PHONE' || r.error === 'NOT_ON_ROSTER' || r.error === 'GYM_NOT_ONLINE') return { ok: false, problem: r.error, gymName };
+  const problem = PROBLEMS.find((p) => p === r.error);
+  if (problem) return { ok: false, problem, gymName };
   if (r.ok !== true) return null;
   const today = day(r.day);
   if (!today) return null;
   const span = spanFrom(r.current);
+  // A plan the server sent but whose dates can't be read: show nothing rather than "No plan yet".
+  if (r.current != null && !span) return null;
   const c = isObj(r.current) ? r.current : {};
   const pt = typeof c.ptSessions === 'number' && Number.isInteger(c.ptSessions) && c.ptSessions > 0 ? c.ptSessions : null;
   const used = typeof c.ptUsed === 'number' && Number.isInteger(c.ptUsed) && c.ptUsed >= 0 ? c.ptUsed : 0;
@@ -106,6 +112,12 @@ export function membershipView(a: MembershipAnswer): MembershipView {
   if (!a.ok) {
     if (a.problem === 'NO_PHONE') {
       return { tone: 'none', title: 'Check in once to see your plan', when: null, lines: [`Scan ${a.gymName}'s check-in QR at the gym. After that, your plan and its end date show here.`] };
+    }
+    if (a.problem === 'NAME_MISMATCH') {
+      return { tone: 'none', title: 'Ask the desk to check your name', when: null, lines: [`${a.gymName}'s list has a different name for the number you checked in with. Your plan shows here once they match.`] };
+    }
+    if (a.problem === 'SHARED_NUMBER') {
+      return { tone: 'none', title: 'Your number is shared', when: null, lines: [`More than one ${a.gymName} member has this mobile number. Ask the desk to give each person their own.`] };
     }
     if (a.problem === 'NOT_ON_ROSTER') {
       return { tone: 'none', title: 'Your gym has a different number', when: null, lines: [`${a.gymName}'s list doesn't have the number you checked in with. Ask the desk to update it.`] };
