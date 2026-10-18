@@ -19,7 +19,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 ## Feature backlog
 Every feature, built and pending, in one line each. On the page: the "Feature backlog" tab, with a
-Comment box on every feature. Status: Live · Next release (v0.48.0) · Planned · Waiting for you · Idea · Not doing.
+Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned · Waiting for you · Idea · Not doing.
 
 ### Member app
 | Feature | Status | Details |
@@ -32,7 +32,7 @@ Comment box on every feature. Status: Live · Next release (v0.48.0) · Planned 
 | Pause and forgotten-finish | Live | Pause a workout; after an hour with no sets the timer pauses itself and asks before counting that time. |
 | Plate calculator, your gym's plates and bars | Live | Shows which plates to load, using only the plates and bars your gym really has. |
 | Targets (progressive overload) | Live | Each exercise suggests the next weight and reps from your history, using your weight-jump and rep-range settings. |
-| Kg to beat per exercise | Next release | Start screen shows "1,125 kg to beat · +15%" and the planned weight × reps for each set. |
+| Kg to beat per exercise | Live | Start screen shows "1,125 kg to beat · +15%" and the planned weight × reps for each set. |
 | Exercise library and your own exercises | Live | 402 exercises with steps and drawings; add your own and hide the ones you don't use. |
 | Moving exercise demo clips | Waiting for you | Our own clip maker has made 2 clips; a paid ready-made set (about $405) needs your OK. |
 | Routines and folders | Live | Build routines, group them in folders, and press-and-hold to drag them into order. |
@@ -99,20 +99,20 @@ Comment box on every feature. Status: Live · Next release (v0.48.0) · Planned 
 | Feature | Status | Details |
 |---|---|---|
 | Join a gym by code or invite link | Live | Members join with the gym's code, a WhatsApp invite link or the QR poster. |
-| Join from the welcome screen | Next release | "Have a gym code? Join your gym" on the very first screen. |
+| Join from the welcome screen | Live | "Have a gym code? Join your gym" on the very first screen. |
 | Gym's colours and logo in the app | Live | After joining, the app takes on the gym's colours and shows its logo at start-up. |
-| Gym logo on the home screen | Next release | After joining, add a home-screen shortcut with the gym's logo that opens ForgeAI. |
+| Gym logo on the home screen | Live | After joining, add a home-screen shortcut with the gym's logo that opens ForgeAI. |
 | QR check-in | Live | Members scan the gym's poster and tap once; the desk sees the check-in and plan status. |
-| After check-in, start the workout | Next release | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
+| After check-in, start the workout | Live | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
 | QR scan opens the door | Waiting for you | The scan could open a networked door lock, but the client must buy the lock first. |
 | Gym shop | Live | Members order supplements and gear in the app and pay at the desk; the gym manages stock and orders. |
 | Paying in the app | Idea | Shop orders are paid at the desk today; paying in the app may come later. |
 | Gym messages inbox | Live | The gym sends offers and news to members' in-app inbox and sees who read them. |
 | Messages in the phone's notification shade | Waiting for you | Needs your Firebase (Google) project set up before messages can pop up on phones. |
-| My membership | Next release | Members see their plan, end date, days left, personal training used and visits this month. |
+| My membership | Live | Members see their plan, end date, days left, personal training used and visits this month. |
 | Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. |
-| Gym workout plans in Routines | Next release | Plans the trainer sends appear in the member's Workout tab by themselves. |
-| First-time starting weight from the trainer | Next release | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
+| Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
+| First-time starting weight from the trainer | Live | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
 | Busy times by exercise | Planned | With members' OK, show "others also plan this exercise at these hours" to help pick a quieter time. |
 | Google login | Planned | Research sign-in with Google first, then come back to you with options. |
 | Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. |
