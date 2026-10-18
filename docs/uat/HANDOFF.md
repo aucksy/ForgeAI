@@ -33,7 +33,7 @@ TOOK OVER WP4b, WP7 and WP9 as well. If a PC helper comes back: read this first,
   Tag the EXACT commit 4f3d5c3 (main has moved on): its parent 52e8f43 holds the green phone runs.
 - v0.47.0 PUBLISHED 17 Oct (release run 39052565058). v0.47.1 (U-M7, U-M8, U-G6 + sturdier phone tests)
   green on b43a095 (39074784648, 39074786096, 39074787606); bump commit below waits for its tag from the
-  PC: `git tag -a v0.47.1 <bump commit> -m v0.47.1 && git push origin v0.47.1`. Owner decisions waiting: docs/OWNER-INBOX.md (table on top).
+  PC: `git tag -a v0.47.1 8403202 -m v0.47.1 && git push origin v0.47.1`. Owner decisions waiting: docs/OWNER-INBOX.md (table on top).
 - WP15 (Play pre-launch / Firebase Test Lab) not started.
 - Admin app: no code change since the last deploy (8672a6b); nothing to deploy.
 
