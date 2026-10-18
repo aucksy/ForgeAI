@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-24. "To read" merged into Questions & answers — 18 Oct 2026
+**Owner asked:** "To Read and Q&A Tab are separate.. is that needed?"
+**Done:** no, merged: Questions & answers lists unread answers first (tagged New) and its tab says
+"(10 · 4 new)". Four tabs now: Waiting for you · Questions & answers · Feature backlog · Built.
+
 ## R-23. Backlog status badges are filters; waiting features in the Waiting tab — 18 Oct 2026
 **Owner said:** "keep the tabs inside feature backlog also tap-able - If I tap LIVE, I should just
 see LIVE. If I tap Waiting for you I should just see Waiting for me. And why is waiting for me items

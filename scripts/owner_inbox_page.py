@@ -265,9 +265,6 @@ article h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem
 .k-done { color: var(--done); background: var(--done-bg); }
 .k-planned, .k-answered, .k-working, .k-idea, .k-no { color: var(--plain); background: var(--plain-bg); }
 .k-no { text-decoration: line-through; }
-.toread { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
-.toread ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.toread li { display: grid; grid-template-columns: 3.2em 1fr; gap: 10px; align-items: start; }
 button.status { font-family: inherit; border: 1px solid transparent; cursor: pointer; }
 button.status[aria-pressed="true"] { border-color: currentColor; box-shadow: 0 0 0 1px currentColor; }
 .bl-sum { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 0 0 14px; font-size: 0.85rem; color: var(--muted); }
@@ -324,7 +321,6 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
   </div>
   <div class="chips" role="group" aria-label="Show">
     <button class="chip" data-f="waiting" aria-pressed="false">Waiting for you</button>
-    <button class="chip" data-f="toread" aria-pressed="false">To read</button>
     <button class="chip" data-f="all" aria-pressed="true">Questions &amp; answers</button>
     <button class="chip" data-f="backlog" aria-pressed="false">Feature backlog</button>
     <button class="chip" data-f="shipped" aria-pressed="false">Built</button>
@@ -364,7 +360,8 @@ let blKind = null; // a status pill tapped in the backlog / built tab: only that
 const picks = {}; // num -> {qIndex: key}
 try { chat = localStorage.getItem("inbox-chat") || "all"; filter = localStorage.getItem("inbox-filter") || "all"; } catch (e) { /* storage blocked: defaults */ }
 // Owner rule (18 Oct 2026): five tabs only; a tab kept from an older page falls back to Questions & answers.
-if (!["waiting", "toread", "all", "backlog", "shipped"].includes(filter)) filter = "all";
+// Owner (18 Oct): "To read" merged into Questions & answers (unread ones on top, tagged New).
+if (!["waiting", "all", "backlog", "shipped"].includes(filter)) filter = "all";
 try { Object.assign(picks, JSON.parse(sessionStorage.getItem("inbox-picks") || "{}")); } catch (e) { /* none kept */ }
 const keepPicks = () => { try { sessionStorage.setItem("inbox-picks", JSON.stringify(picks)); } catch (e) { /* not kept */ } };
 // A save reloads this view: keep the reading place across it.
@@ -395,10 +392,10 @@ if (chat !== "all" && !chats.includes(chat)) chat = "all";
 $("chat").value = chat;
 
 // #21 follow-up (owner, 18 Oct): each tab shows only its own content: no boxes above the tabs.
-const TAB = { all: "Questions and answers", waiting: "Waiting for your decision", toread: "To read" };
+const TAB = { all: "Questions and answers", waiting: "Waiting for your decision" };
 const HINT = {
   waiting: 'Tap a question, pick an answer (or just write a comment), press Send. Or reply in chat, e.g. "#13: A".',
-  toread: "What you haven't read yet. \u201cMark as read\u201d takes it off this list.",
+  all: "New answers come first, marked \u201cNew\u201d. \u201cMark as read\u201d when you're done with one.",
 };
 
 function answerText(e, a) {
@@ -440,7 +437,6 @@ function shown(e) {
   if (chat !== "all" && e.chat !== chat) return false;
   if (filter === "all") return true;
   if (filter === "waiting") return needsAnswer(e);
-  if (filter === "toread") return toRead(e);
   if (filter === "other") return ["planned", "answered", "working"].includes(e.kind);
   return e.kind === filter;
 }
@@ -487,7 +483,8 @@ function render() {
   $("backlogbox").hidden = !bl;
   document.querySelector('.chip[data-f="backlog"]').textContent = "Feature backlog (" + DATA.backlog.filter((f) => inTab(f, "backlog")).length + ")";
   document.querySelector('.chip[data-f="shipped"]').textContent = "Built (" + DATA.backlog.filter((f) => inTab(f, "shipped")).length + ")";
-  document.querySelector('.chip[data-f="all"]').textContent = "Questions & answers (" + DATA.entries.length + ")";
+  const fresh = DATA.entries.filter(toRead).length;
+  document.querySelector('.chip[data-f="all"]').textContent = "Questions & answers (" + DATA.entries.length + (fresh ? " \u00b7 " + fresh + " new" : "") + ")";
   if (bl) {
     $("bh").textContent = filter === "shipped" ? "Built" : "Feature backlog";
     $("backlog").innerHTML = backlogHtml(filter);
@@ -497,11 +494,11 @@ function render() {
   $("tabname").textContent = TAB[filter] || TAB.all;
   $("tabhint").textContent = HINT[filter] || "";
   $("tabhint").hidden = !HINT[filter];
-  const list = DATA.entries.filter(shown);
+  // Unread first (newest first within each), so new answers are at the top of the list.
+  const list = DATA.entries.filter(shown).sort((a, b) => (toRead(b) - toRead(a)) || (b.num - a.num));
   $("count").textContent = "· " + list.length + " of " + DATA.entries.length;
   const mineChat = DATA.entries.filter((e) => chat === "all" || e.chat === chat);
   document.querySelector('.chip[data-f="waiting"]').textContent = "Waiting for you (" + (mineChat.filter(needsAnswer).length + waitingFeats().length) + ")";
-  document.querySelector('.chip[data-f="toread"]').textContent = "To read (" + mineChat.filter(toRead).length + ")";
   $("entries").innerHTML = list.length ? list.map((e) =>
     '<article id="e' + e.num + '"' + (pending(e) ? ' class="unread"' : "") + '><header><span class="num">#' + e.num + "</span><div><h3>" + esc(e.title) + "</h3>" +
     '<div class="meta">' + (needsAnswer(e) ? '<span class="new">To answer</span>' : !isRead(e) ? '<span class="new">New</span>' : "") +
@@ -513,7 +510,7 @@ function render() {
     "<details" + (e.decides.length || !isRead(e) ? " open" : "") + "><summary>" + (e.decides.length ? "The full question and my answer" : "The answer") + "</summary>" +
     '<div class="body">' + md(e.body) + "</div></details>" +
     (e.decides.length ? "" : formHtml(e)) + readHtml(e) + "</article>").join("")
-    : filter === "waiting" && waitingFeats().length ? "" : '<p class="none">' + (filter === "waiting" ? "No decisions waiting for you." : filter === "toread" ? "Nothing new to read." : 'No entries match. Pick "All".') + "</p>";
+    : filter === "waiting" && waitingFeats().length ? "" : '<p class="none">' + (filter === "waiting" ? "No decisions waiting for you." : "No questions yet.") + "</p>";
   if (filter === "waiting" && waitingFeats().length) {
     $("entries").innerHTML += '<h3 class="bl-group">Features waiting for you</h3><p class="pick">Each needs your yes (most cost money or need something bought). Tap \u201cComment\u201d and tell me, e.g. \u201cYes, go ahead\u201d or \u201cNot now\u201d.</p>' +
       waitingFeats().map(({ f, i }) => featHtml(f, i)).join("");
