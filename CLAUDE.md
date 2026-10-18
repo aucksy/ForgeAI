@@ -32,6 +32,11 @@ detail goes in `PROGRESS.md`, commit messages, and code comments — not chat.
   Status one of Live / Next release / Planned / Idea / Waiting for you / Not doing, one short plain
   sentence each): his map of every feature; the page splits it into "Feature backlog" (not built)
   and "Built" (Live + Next release). Add a row when something is decided; move it when it ships.
+- **A task waiting on HIM** (a setup step, a key to make, a phone check, anything in a chat "Needs
+  you" block): in the SAME turn, an inbox entry with `**Status:** WAITING FOR YOU` and one
+  `**Your task:** ...` line per step. The page lists it under "Waiting for you" with an "I have done
+  it" button; when he says it is done (page or chat), add `**TASK DONE (date)**`. Owner, 18 Oct:
+  "tasks pending on me will also go here.... do not make me repeat this."
 - Never post build news, progress or "BUILT" updates in the inbox: those go in PROGRESS.md / HANDOFF,
   your notes, and chat.
 **The page:** after every inbox change, rebuild and republish it so it matches the file:

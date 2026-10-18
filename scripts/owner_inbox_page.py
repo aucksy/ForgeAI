@@ -40,6 +40,10 @@ ENTRY_RE = re.compile(r"^## (\d+)\. (.+?) — (.+)$", re.M)
 BACKLOG_RE = re.compile(r"^## Feature backlog[^\n]*\n(.*?)^---[ \t]*$", re.M | re.S)
 # A backlog row's status, as the page colours it.
 BACKLOG_KIND = {"live": "done", "next release": "built", "waiting for you": "waiting", "planned": "planned", "idea": "idea", "not doing": "no"}
+# R-31 (owner, 18 Oct 2026): a task waiting on HIM ("**Your task:** ...") shows under "Waiting for you"
+# until he taps "I've done it" (saved into the page, moved into the .md as "**TASK DONE (when)**").
+TASK_RE = re.compile(r"^\*\*Your task:\*\* (.+)$", re.M)
+TASK_DONE_RE = re.compile(r"^\*\*TASK DONE \(([^)\n]*)\)\*\*[ \t]*(?:\r?\n|$)", re.M)
 READ_RE = re.compile(r"^\*\*READ \([^)\n]*\)\*\*[ \t]*(?:\r?\n|$)", re.M)
 
 
@@ -89,6 +93,11 @@ def parse(text):
         rm = READ_RE.search(body)
         if rm:
             body = body[: rm.start()] + body[rm.end():]
+        tasks = [t.strip() for t in TASK_RE.findall(body)]
+        body = TASK_RE.sub("", body)
+        td = TASK_DONE_RE.search(body)
+        if td:
+            body = body[: td.start()] + body[td.end():]
         decides = []
         for dm in re.finditer(r"^\*\*Decide:\*\* (.+)\n((?:- [A-Z]: .+\n?)+)", body, re.M):
             opts = []
@@ -109,6 +118,8 @@ def parse(text):
             "status": status,
             "kind": status_kind(status),
             "read": bool(rm),
+            "tasks": tasks,
+            "taskDone": td.group(1) if td else "",
             "body": body.strip(),
         })
     return {"decisions": decisions, "entries": entries, "backlog": parse_backlog(text)}
@@ -176,6 +187,24 @@ def set_read(text, num, when):
     return text
 
 
+def set_task_done(text, num, when):
+    """Entry #num gets `**TASK DONE (when, via the page)**` after its Status line, or loses it (when=None)."""
+    heads = list(ENTRY_RE.finditer(text))
+    for i, h in enumerate(heads):
+        if int(h.group(1)) != num:
+            continue
+        end = heads[i + 1].start() if i + 1 < len(heads) else len(text)
+        block = TASK_DONE_RE.sub("", text[h.end():end])
+        if when:
+            anchor = re.search(r"^\*\*Status:\*\* .*\n", block, re.M) or re.search(r"^\*\*Chat:\*\* .*\n", block, re.M)
+            pos = anchor.end() if anchor else block.find("\n") + 1
+            if pos <= 0:  # a heading at the very end of the file, with no newline after it
+                block, pos = block + "\n", len(block) + 1
+            block = block[:pos] + "**TASK DONE (" + when + ", via the page)**\n" + block[pos:]
+        return text[: h.end()] + block + text[end:]
+    return text
+
+
 def rename_chats(text, names):
     """R-28: every `**Chat:** <old>` line (its link kept) gets the owner's new name from the page."""
     def one(m):
@@ -202,6 +231,8 @@ def absorb(saved_html, md_path=INBOX):
         if num not in read:
             text = set_read(text, int(num), str(a.get("at") or "sent"))
     text = rename_chats(text, data.get("chatNames") or {})
+    for num, when in (data.get("done") or {}).items():
+        text = set_task_done(text, int(num), str(when) if when else None)
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(text)
     return answers
@@ -330,6 +361,7 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
 .decide a { color: var(--ink); }
 /* R-28 (owner, 18 Oct): rename a chat; the name is saved into the page like a read tap. */
 .renamebox { display: flex; flex-direction: column; gap: 8px; }
+.renamebox[hidden] { display: none; }
 .renamebox input { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; box-sizing: border-box; }
 .renamebox input:focus-visible, #rename:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
@@ -382,6 +414,7 @@ DATA.answers = DATA.answers || {};
 DATA.read = DATA.read || {}; // num -> when tapped, or false for "mark as unread" (moved into the .md by --absorb)
 DATA.notes = DATA.notes || {}; // feature id -> {group, name, text, at}: a comment on a backlog feature (printed by --absorb)
 DATA.backlog = DATA.backlog || [];
+DATA.done = DATA.done || {}; // R-31: num -> when he tapped "I've done it", or false for "Not done yet" (moved into the .md by --absorb)
 DATA.chatNames = DATA.chatNames || {}; // R-28: chat as in the .md -> the owner's new name (written into the .md by --absorb)
 const chatLabel = (c) => DATA.chatNames[c] || c;
 let chat = "all", filter = "all";
@@ -412,8 +445,13 @@ const pageHtml = () => '<!doctype html><html><head><meta charset=utf8><meta name
 const sentOf = (e) => DATA.answers[e.num];
 const isRead = (e) => Boolean(sentOf(e)) || (e.num in DATA.read ? Boolean(DATA.read[e.num]) : Boolean(e.read));
 const needsAnswer = (e) => e.decides.length > 0 && !sentOf(e);
-const pending = (e) => needsAnswer(e) || !isRead(e);
-const toRead = (e) => !needsAnswer(e) && !isRead(e);
+// R-31: tasks waiting on the owner sit under "Waiting for you" next to his decisions.
+const tasksOf = (e) => e.tasks || [];
+const taskDone = (e) => (e.num in DATA.done ? Boolean(DATA.done[e.num]) : Boolean(e.taskDone));
+const needsTask = (e) => tasksOf(e).length > 0 && !taskDone(e);
+const needsYou = (e) => needsAnswer(e) || needsTask(e);
+const pending = (e) => needsYou(e) || !isRead(e);
+const toRead = (e) => !needsYou(e) && !isRead(e);
 
 $("updated").textContent = "Updated " + DATA.updated;
 const chats = [...new Set(DATA.entries.map((e) => e.chat))];
@@ -427,9 +465,9 @@ const syncRename = () => { $("rename").hidden = chat === "all"; if (chat === "al
 syncRename();
 
 // #21 follow-up (owner, 18 Oct): each tab shows only its own content: no boxes above the tabs.
-const TAB = { all: "Questions and answers", waiting: "Waiting for your decision" };
+const TAB = { all: "Questions and answers", waiting: "Waiting for you: decisions and tasks" };
 const HINT = {
-  waiting: 'Tap a question, pick an answer (or just write a comment), press Send. Or reply in chat, e.g. "#13: A".',
+  waiting: 'A decision: pick an answer (or write a comment) and press Send. A task: do it, then tap \u201cI have done it\u201d. Or tell me in chat, e.g. "#13: A".',
   all: "New answers come first, marked \u201cNew\u201d. \u201cMark as read\u201d when you're done with one.",
 };
 
@@ -461,6 +499,23 @@ function formHtml(e) {
     '<label class="notelbl" for="note' + e.num + '">Your comment. You can send just a comment, without picking.</label>' +
     '<textarea id="note' + e.num + '" rows="2" placeholder="e.g. Yes, but keep it free for members"></textarea>' + sendRow(e) + "</div>";
 }
+function taskHtml(e) {
+  if (!tasksOf(e).length) return "";
+  const done = taskDone(e);
+  const when = e.num in DATA.done ? DATA.done[e.num] : e.taskDone;
+  return '<div class="form' + (done ? " sent" : "") + '"><p class="sentline">' + (done ? "Done" + (when ? " " + esc(when) : "") + ". Thank you." : "Your task") + "</p>" +
+    '<div class="body">' + md(tasksOf(e).map((t) => "- " + t).join("\n")) + "</div>" +
+    '<div class="actions">' + (done
+      ? '<button class="btn ghost quiet" data-act="undone" data-n="' + e.num + '">Not done yet</button>'
+      : '<button class="btn" data-act="done" data-n="' + e.num + '">I have done it</button>') +
+    '<span class="msg" id="tmsg' + e.num + '" role="status"></span></div></div>';
+}
+function markDone(n, on) {
+  const had = n in DATA.done, before = DATA.done[n];
+  const e = DATA.entries.find((x) => x.num === n);
+  save(() => { DATA.done[n] = on ? stamp() : false; }, () => { if (had) DATA.done[n] = before; else delete DATA.done[n]; },
+    $("tmsg" + n), "Owner inbox #" + e.num + " (" + e.title + "): " + (on ? "task done" : "task not done yet"));
+}
 function readHtml(e) {
   if (sentOf(e)) return "";
   return '<div class="actions readrow">' + (isRead(e)
@@ -471,7 +526,7 @@ function readHtml(e) {
 function shown(e) {
   if (chat !== "all" && e.chat !== chat) return false;
   if (filter === "all") return true;
-  if (filter === "waiting") return needsAnswer(e);
+  if (filter === "waiting") return needsYou(e);
   if (filter === "other") return ["planned", "answered", "working"].includes(e.kind);
   return e.kind === filter;
 }
@@ -543,21 +598,22 @@ function render() {
   const inChat = (e) => chat === "all" || e.chat === chat;
   const sorted = DATA.entries.filter(inChat).sort((a, b) => (toRead(b) - toRead(a)) || (b.num - a.num));
   // Done (folded below): in Waiting, decisions already answered; in Q&A, what has been read.
-  const isDone = (e) => (filter === "waiting" ? e.decides.length > 0 && Boolean(sentOf(e)) : filter === "all" ? isRead(e) && !needsAnswer(e) : false);
+  const isDone = (e) => (filter === "waiting" ? (e.decides.length > 0 && Boolean(sentOf(e))) || (tasksOf(e).length > 0 && taskDone(e)) : filter === "all" ? isRead(e) && !needsYou(e) : false);
   const list = sorted.filter((e) => shown(e) && !isDone(e));
   const doneList = sorted.filter(isDone);
   $("count").textContent = "";
   const mineChat = DATA.entries.filter((e) => chat === "all" || e.chat === chat);
-  document.querySelector('.chip[data-f="waiting"]').textContent = "Waiting for you (" + (mineChat.filter(needsAnswer).length + waitingFeats().length) + ")";
+  document.querySelector('.chip[data-f="waiting"]').textContent = "Waiting for you (" + (mineChat.filter(needsYou).length + waitingFeats().length) + ")";
   const card = (e) =>
     '<article id="e' + e.num + '"' + (pending(e) ? ' class="unread"' : "") + '><header><span class="num">#' + e.num + "</span><div><h3>" + esc(e.title) + "</h3>" +
-    '<div class="meta">' + (needsAnswer(e) ? '<span class="new">To answer</span>' : !isRead(e) ? '<span class="new">New</span>' : "") +
+    '<div class="meta">' + (needsAnswer(e) ? '<span class="new">To answer</span>' : needsTask(e) ? '<span class="new">To do</span>' : !isRead(e) ? '<span class="new">New</span>' : "") +
     '<span class="status k-' + e.kind + '">' + (sentOf(e) ? (e.decides.length ? "Answer sent" : "Reply sent") : KIND[e.kind]) + "</span><span>" + esc(e.date) + "</span>" +
     (e.chatUrl ? '<a href="' + esc(e.chatUrl) + '" target="_blank" rel="noopener">' + esc(chatLabel(e.chat)) + "</a>" : "<span>" + esc(chatLabel(e.chat)) + "</span>") +
     "</div></div></header>" +
     (e.status ? '<p class="pick">' + esc(e.status) + "</p>" : "") +
+    taskHtml(e) +
     (e.decides.length ? formHtml(e) : "") +
-    "<details" + (e.decides.length || !isRead(e) ? " open" : "") + "><summary>" + (e.decides.length ? "The full question and my answer" : "The answer") + "</summary>" +
+    "<details" + (e.decides.length || !isRead(e) ? " open" : "") + "><summary>" + (e.decides.length ? "The full question and my answer" : tasksOf(e).length ? "Why" : "The answer") + "</summary>" +
     '<div class="body">' + md(e.body) + "</div></details>" +
     (e.decides.length ? "" : formHtml(e)) + readHtml(e) + "</article>";
   $("entries").innerHTML = list.length ? list.map(card).join("")
@@ -664,6 +720,8 @@ document.addEventListener("click", (ev) => {
   if (b.dataset.act === "send") send(n);
   if (b.dataset.act === "read") markRead(n, true);
   if (b.dataset.act === "unread") markRead(n, false);
+  if (b.dataset.act === "done") markDone(n, true);
+  if (b.dataset.act === "undone") markDone(n, false);
   if (b.dataset.act === "change") { delete DATA.answers[n]; render(); }
   if (b.dataset.act === "fnote") sendNote(Number(b.dataset.i));
   if (b.dataset.act === "blk") { blKind = blKind === b.dataset.k ? null : b.dataset.k; render(); }
@@ -701,6 +759,8 @@ def main(argv):
         saved = page_data(open(argv[2], encoding="utf-8").read())
         for old, new in (saved.get("chatNames") or {}).items():
             print("chat renamed in the inbox: " + json.dumps(old, ensure_ascii=False) + " -> " + json.dumps(new, ensure_ascii=False))
+        for num, when in (saved.get("done") or {}).items():
+            print(f"task #{num}: " + ("done " + str(when) if when else "not done yet") + " (written into the inbox)")
         notes = saved.get("notes") or {}
         print("feature comments to act on (write each into the inbox as a new entry): " + str(len(notes)))
         for fid, n in notes.items():

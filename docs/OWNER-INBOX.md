@@ -136,9 +136,27 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 
 ---
 
+## 26. Try v0.48.0 on your phone with one real workout — 18 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Your task:** Install v0.48.0 on your phone: https://github.com/aucksy/ForgeAI/releases/download/v0.48.0/forgeai-v0.48.0.apk
+**Your task:** Do one real workout with it, and tell me anything that looks or feels wrong (a screenshot helps).
+**Why:** every automatic test passed, but you are the first real person in a real gym on this
+version (new: gym workout plans, kg to beat per exercise, My membership, check-in offers the workout).
+
+## 25. Set up Google Test Lab (free, about 10 minutes) — 18 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Your task:** Follow the 5 short steps in `docs/uat/TEST-LAB-SETUP.md` (on GitHub: https://github.com/aucksy/ForgeAI/blob/main/docs/uat/TEST-LAB-SETUP.md): make a free Firebase project `forgeai-testlab`, turn on 2 services, make a key, and add `TEST_LAB_PROJECT` and `TEST_LAB_KEY` to the GitHub secrets.
+**Your task:** Then tap "I have done it" here (or tell me "Test Lab is set up").
+**Why:** after that, every release is tried by Google's robot on 5 real phones (Samsung, Xiaomi,
+vivo, OPPO, OnePlus or Pixel) and 2 virtual ones, free. Only you can make the project and the key.
+Then I run the first test on v0.48.0 and tell you what it found.
+
 ## 24. Is Google Test Lab free, and will it use many tokens? — 18 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
 **Status:** ANSWERED
+**READ (18 Oct, 09:53 pm, via the page)**
 **You asked:** whether testing on Google's test lab (Firebase Test Lab) is free, and whether the
 work is token heavy.
 **My answer:** Free for what we need.

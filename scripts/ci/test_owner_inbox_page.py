@@ -215,6 +215,35 @@ class Backlog(unittest.TestCase):
             with open(md, encoding="utf-8") as f:
                 self.assertEqual([e["chat"] for e in page.parse(f.read())["entries"]], ["Chat two", "PC chat"])
 
+    def test_tasks_parse_and_absorb(self):
+        # R-31: a task waiting on the owner ("**Your task:**") until he taps "I have done it".
+        import json, tempfile
+        md = SAMPLE.replace("**Status:** BUILT, NOT RELEASED (commit abc)\n",
+                            "**Status:** WAITING FOR YOU\n**Your task:** Make the key\n**Your task:** Tell Claude\n")
+        e1 = page.parse(md)["entries"][1]
+        self.assertEqual((e1["tasks"], e1["taskDone"]), (["Make the key", "Tell Claude"], ""))
+        self.assertNotIn("Your task", e1["body"])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "inbox.md")
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(md)
+            saved = "\n".join(["x", "const DATA = " + json.dumps({"entries": [], "done": {"1": "18 Oct, 9 pm"}}) + ";", "y"])
+            page.absorb(saved, path)
+            with open(path, encoding="utf-8") as f:
+                done = f.read()
+            self.assertIn("**TASK DONE (18 Oct, 9 pm, via the page)**", done)
+            self.assertEqual(page.parse(done)["entries"][1]["taskDone"], "18 Oct, 9 pm, via the page")
+            saved = "\n".join(["x", "const DATA = " + json.dumps({"entries": [], "done": {"1": False}}) + ";", "y"])
+            page.absorb(saved, path)  # "Not done yet" takes the line out again
+            with open(path, encoding="utf-8") as f:
+                self.assertNotIn("TASK DONE", f.read())
+
+    def test_page_lists_tasks_under_waiting(self):
+        html = page.fill(page.TEMPLATE, {"entries": [], "answers": {}})
+        self.assertIn("const needsYou", html)
+        self.assertIn('if (filter === "waiting") return needsYou(e);', html)
+        self.assertIn('data-act="done"', html)
+
     def test_page_has_rename(self):
         html = page.fill(page.TEMPLATE, {"entries": [], "answers": {}})
         self.assertIn('id="rename"', html)

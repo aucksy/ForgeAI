@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-31. Tasks waiting on me go in the inbox's "Waiting for you" — 18 Oct 2026
+**Owner said:** "Why this Google Labs setup task is not added in 'waiting for you' section in Owner
+Inbox - tasks pending on me will also go here.... do not make me repeat this"
+**Done:** a task entry type: `**Your task:** ...` lines in an inbox entry show under "Waiting for
+you" (tagged "To do") with an "I have done it" button that saves into the page; `--absorb` writes
+it into the .md as `**TASK DONE (when)**`. Added #25 (Test Lab setup) and #26 (try v0.48.0 with one
+real workout). Rule in CLAUDE.md and in the brain (pending-tasks-go-in-the-inbox, hard): every
+"Needs you" item goes into the inbox as a task in the same turn.
+
 ## R-30. Plan for FitPass (and other pass) members — 18 Oct 2026
 **Owner said:** "add this to the plan that we have to consider the FitPass subscribers that use the
 gym. I'm one of those guys. I do not pay the gym directly. But I have this third-party FitPass
