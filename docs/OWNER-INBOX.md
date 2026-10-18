@@ -322,7 +322,8 @@ overload it means; tap an exercise to expand it and see the target weight × rep
   time is planned as it was ("as last time").
 - **During the workout:** under the Target on each exercise: "405 of 1,125 kg · next 45 kg × 8, 8".
   After a short set the next sets catch up, never more than 2 extra reps each; if that still can't
-  reach it, it says "close enough" and never blocks anything. Once beaten: "1,125 kg beaten ✓".
+  reach it, it says "a little short is fine" and never blocks anything. Once beaten: "1,125 kg
+  beaten ✓". The line always matches what the set rows suggest (a review made sure of that).
 - **My calls (rule #18):** warm-ups never count; drop sets count toward "done" but aren't planned;
   no kg target for a first time, bodyweight-only moves, holds, easy weeks or a pyramid (they keep
   their own Target line). Tell me if you want any of these different.
