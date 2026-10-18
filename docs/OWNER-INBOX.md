@@ -28,6 +28,16 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 ---
 
+## 21. A feature backlog in the inbox, comments on any feature; "Waiting for you" only for decisions — 18 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**Status:** WORKING ON IT
+**You asked:** (1) a feature backlog section in the inbox: crisp details of every feature, built and
+pending, with a way to comment on any feature; (2) "Waiting for you" only for decisions, and a
+separate section for what you haven't read yet.
+**My answer:** building it now; I'll answer here when it's on the page.
+
+---
+
 ## 20. Which GGMS features have we built that we didn't have, and which are pending? — 18 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
 **Status:** ANSWERED
