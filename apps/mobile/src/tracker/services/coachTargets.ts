@@ -54,6 +54,7 @@ import { folderOfRoutine } from '@/tracker/db/folderRepo';
 import { gymKey, gymPlatesFor, type GymPlates } from '@/tracker/services/plateMath';
 import { usePlateSetup } from '@/tracker/store/plateSetupStore';
 import { useTrackerPrefs, type PreviousFrom } from '@/tracker/store/trackerPrefsStore';
+import type { KgSet } from '@/tracker/lib/kgTarget';
 import type { Exercise, Goal, PlanExercise, TodaysWorkout, UserProfile } from '@/types/models';
 
 /** Sessions read per lift: 4 for the rules, the rest to learn the weight step. */
@@ -238,6 +239,14 @@ async function targetsFor(
     });
     if (weightIsEach(mode)) t.each = true;
     if (repsPerSide(mode)) t.perSide = true;
+    // OWNER-INBOX #9: last time's working sets (warm-ups and drops out), so "kg to beat" can say
+    // "+6% on last time" before the workout (tracker/lib/kgTarget.ts). Same counting as the Target.
+    const lastSession = t.last ? history.find((h) => h.dateISO === t.last?.dateISO) : undefined;
+    if (lastSession) {
+      (t as KgTarget).lastSets = lastSession.sets
+        .filter((x) => (x.setType === 'normal' || x.setType === 'failure') && x.reps > 0)
+        .map((x) => ({ weightKg: x.weightKg, reps: x.reps }));
+    }
     return t;
   });
   if (key != null && version != null && quietSince(mark)) {
@@ -247,6 +256,9 @@ async function targetsFor(
   }
   return [...targets];
 }
+
+/** A Target with last time's working sets (OWNER-INBOX #9, "kg to beat"); the engine's type is unchanged. */
+export type KgTarget = ProgressionTarget & { lastSets?: KgSet[] };
 
 /** The last few Target computations (Workout tab, Home, the routine being started). */
 const TARGET_MEMO_SIZE = 8;

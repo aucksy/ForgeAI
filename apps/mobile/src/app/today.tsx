@@ -15,13 +15,13 @@ import { todayISO } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { useLoad } from '@/lib/useLoad';
-import { fmtWeight } from '@/lib/format';
 import { countWord } from '@/lib/words';
 import { useSettings } from '@/store/settingsStore';
 import { color, space, type } from '@/theme/tokens';
 
 import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
-import { targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
+import { ExerciseKgRow } from '@/tracker/components/ExerciseKgRow';
+import type { ProgressionTarget } from '@/tracker/engine/progression';
 import { getTodaysWorkoutWithTargets } from '@/tracker/services/coachTargets';
 import { getPlanNow, planLine, type PlanNow } from '@/tracker/services/planState';
 import { doneToday } from '@/tracker/lib/todayLink';
@@ -156,25 +156,8 @@ export default function TodayScreen() {
           {plan?.easy ? <EasyWeekNote until={plan.easyUntil} /> : null}
           <Card>
             {today.targets.map((t, i) => (
-              <View
-                key={`${t.exerciseId}-${i}`}
-                accessibilityLabel={`${t.exerciseName}. ${targetLine(t, (kg) => fmtWeight(kg, unitSystem))}`}
-                style={{
-                  flexDirection: 'row',
-                  gap: space.md,
-                  paddingVertical: space.sm + 2,
-                  borderTopWidth: i === 0 ? 0 : 1,
-                  borderTopColor: color.border,
-                }}
-              >
-                <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.inkMuted, width: 18 }}>{i + 1}</Text>
-                <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink }}>{t.exerciseName}</Text>
-                  <Text style={{ fontFamily: type.mono, fontSize: type.size.sub, color: color.inkSecondary }}>
-                    {targetLine(t, (kg) => fmtWeight(kg, unitSystem))}
-                  </Text>
-                </View>
-              </View>
+              // OWNER-INBOX #9: each exercise's kg to beat; tap for each set's weight × reps.
+              <ExerciseKgRow key={`${t.exerciseId}-${i}`} target={t} index={i} units={unitSystem} />
             ))}
           </Card>
           <View style={{ gap: space.md }}>

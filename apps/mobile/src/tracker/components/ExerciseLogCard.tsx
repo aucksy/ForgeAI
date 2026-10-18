@@ -27,6 +27,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { columnHeads, LOAD_MODE_LABEL, LOAD_MODES, repsPerSide, weightIsEach } from '@/tracker/engine/logTypes';
 import { targetBadge, targetFill, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
 import { tell } from '@/lib/tell';
+import { fmtInt, fmtWeight, kgToDisplay, weightUnit } from '@/lib/format';
 
 import { exerciseIdsForKeys } from '../db/folderRepo';
 import { supersetLabel } from '../lib/superset';
@@ -47,6 +48,7 @@ import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
+import { kgLiveLine, kgPlan, kgProgress } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import type { DragWrap } from './DragList';
@@ -201,6 +203,18 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const line = target
     ? targetLine({ ...target, each: weightIsEach(loadMode), perSide: repsPerSide(loadMode) })
     : null;
+
+  // OWNER-INBOX #9: the kg to beat and what the open sets need (decision 2 A: at most 2 extra reps a
+  // set; it never blocks anything). Last time = this card's own PREVIOUS sets, drops left out.
+  const kgPlanned = useMemo(
+    () => (target ? kgPlan(target, exercise.previousSets.filter((p) => p.setType !== 'drop')) : null),
+    [target, exercise.previousSets],
+  );
+  const kgLine = useMemo(() => {
+    if (!kgPlanned) return null;
+    const g = kgProgress(kgPlanned, exercise.sets.map((x) => ({ weightKg: x.weightKg, reps: x.reps, done: x.done, isWarmup: x.isWarmup })));
+    return kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}`, (kg) => fmtWeight(kg, units));
+  }, [kgPlanned, exercise.sets, units]);
 
   // Working weight = first entered working set, else today's Target, else last session's first working set.
   const firstWorking = exercise.sets.find((s) => !s.isWarmup && s.weightKg != null);
@@ -530,6 +544,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             </Pressable>
           ) : null}
         </Pressable>
+      ) : null}
+      {kgLine ? (
+        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, paddingHorizontal: space.xs }}>
+          {kgLine}
+        </Text>
       ) : null}
 
       {/* 13 Oct 2026: where PREVIOUS comes from — one muted line above the set table */}
