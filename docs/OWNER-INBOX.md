@@ -31,18 +31,20 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 ## 19. Workout plans must flow straight into the app; the inbox is only for my asks — 18 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** WORKING ON IT
+**Status:** BUILT, NOT RELEASED (v0.48.0)
 **You asked:** (1) the trainer picks the exercises and the starting sets and weight, does very little
 work, and the routine just shows up in the member's app: seamless, easy, simple for trainers.
 (2) The inbox is only for what you ask me and decisions that are truly yours; don't post everything.
 **My answer:**
 - (2) Done: now a standing rule. From now on the inbox gets only your questions, feedback and ideas
   with my short answer, and decisions only you can make. Build news stays out.
-- (1) The member side already works this way: the plan appears in the member's Workout tab by
-  itself, and the trainer's starting weight fills the boxes the first time; after that the
-  member's own progress takes over. I'm adding the starting weight to the trainer's page and making
-  it faster to use (ready-made plans to start from, and adding a member to an existing plan in one
-  tap). I'll write here when it's ready.
+- (1) Built (in the next release, v0.48.0). A trainer builds a plan in 3 steps: pick a ready plan
+  (or start empty), type a starting weight next to any exercise if they want, tick who gets it.
+  On a member's page, "Send a plan" sends an existing plan in one tap (with Undo). The member
+  doesn't do anything: the plan appears in their Workout tab, and their first workout's boxes
+  already hold the trainer's weights ("First time · start at 20 kg × 8"). After that, the
+  member's own progress takes over; the trainer's number never comes back over it (a review
+  found and fixed exactly that case).
 
 ---
 
