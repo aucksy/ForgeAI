@@ -122,11 +122,24 @@ def parse(text):
             "taskDone": td.group(1) if td else "",
             "body": body.strip(),
         })
-    return {"decisions": decisions, "entries": entries, "backlog": parse_backlog(text)}
+    return {"decisions": decisions, "entries": entries, "backlog": parse_backlog(text), "mine": parse_mine(text)}
 
 
 def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:60]
+
+
+def parse_mine(text):
+    """R-33 (owner, 19 Oct 2026): [{task, status, details, done}] from "## Claude's tasks"
+    (| Task | Status | Details |; Status Done / Doing / To do / Blocked)."""
+    m = re.search(r"^## Claude's tasks[^\n]*\n(.*?)^---[ \t]*$", text, re.M | re.S)
+    out = []
+    for line in (m.group(1).splitlines() if m else []):
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if not line.strip().startswith("|") or len(cells) != 3 or cells[0] in ("Task", "") or set(cells[0]) <= set("-: "):
+            continue
+        out.append({"task": cells[0], "status": cells[1], "details": cells[2], "done": cells[1].lower().startswith("done")})
+    return out
 
 
 def parse_backlog(text):
@@ -383,6 +396,7 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
     <button class="chip" data-f="waiting" aria-pressed="false">Waiting for you</button>
     <button class="chip" data-f="all" aria-pressed="true">Questions &amp; answers</button>
     <button class="chip" data-f="backlog" aria-pressed="false">Feature backlog</button>
+    <button class="chip" data-f="mine" aria-pressed="false">Claude's tasks</button>
   </div>
 </div></header>
 
@@ -425,7 +439,7 @@ try { chat = localStorage.getItem("inbox-chat") || "all"; filter = localStorage.
 // Owner (18 Oct): "To read" merged into Questions & answers (unread ones on top, tagged New).
 // Owner (18 Oct): "Built" lives inside Feature backlog (folded at the bottom), not in its own tab.
 if (filter === "shipped") filter = "backlog";
-if (!["waiting", "all", "backlog"].includes(filter)) filter = "all";
+if (!["waiting", "all", "backlog", "mine"].includes(filter)) filter = "all";
 try { Object.assign(picks, JSON.parse(sessionStorage.getItem("inbox-picks") || "{}")); } catch (e) { /* none kept */ }
 const keepPicks = () => { try { sessionStorage.setItem("inbox-picks", JSON.stringify(picks)); } catch (e) { /* not kept */ } };
 // A save reloads this view: keep the reading place across it.
@@ -580,14 +594,23 @@ function featHtml(f, i) {
 // Features waiting for the owner also show in the main "Waiting for you" tab (owner, 18 Oct).
 const waitingFeats = () => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && !DATA.notes[x.f.id]);
 function render() {
-  const bl = filter === "backlog";
+  const bl = filter === "backlog" || filter === "mine";
+  const mine = DATA.mine || [];
+  document.querySelector('.chip[data-f="mine"]').textContent = "Claude's tasks (" + mine.filter((t) => !t.done).length + " to do)";
+  document.getElementById("bh").textContent = filter === "mine" ? "Claude's tasks: what I do myself" : "Feature backlog";
   $("entrybox").hidden = bl;
   $("backlogbox").hidden = !bl;
   document.querySelector('.chip[data-f="backlog"]').textContent = "Feature backlog (" + DATA.backlog.filter((f) => inTab(f, "backlog")).length + " to build)";
   const fresh = DATA.entries.filter(toRead).length;
   document.querySelector('.chip[data-f="all"]').textContent = "Questions & answers (" + DATA.entries.length + (fresh ? " \u00b7 " + fresh + " new" : "") + ")";
   if (bl) {
-    $("backlog").innerHTML = backlogHtml();
+    // R-33: Claude's own tasks (not yours): open ones first, done ones folded below.
+    const row = (t) => '<div class="feat"><div class="row"><span class="name">' + esc(t.task) + '</span><span class="status ' + (t.done ? "k-done" : "k-built") + '">' + esc(t.status) + "</span></div>" +
+      (t.details ? '<p class="det">' + esc(t.details) + "</p>" : "") + "</div>";
+    $("backlog").innerHTML = filter === "mine"
+      ? (mine.filter((t) => !t.done).map(row).join("") || '<p class="none">Nothing open: all my tasks are done.</p>') +
+        doneBox("mine", "Done (" + mine.filter((t) => t.done).length + ")", mine.filter((t) => t.done).map(row).join(""))
+      : backlogHtml();
     document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter)));
     return;
   }

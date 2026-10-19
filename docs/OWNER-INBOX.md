@@ -25,6 +25,35 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 ---
 
+## Claude's tasks
+What I do myself, cheapest first (owner, 19 Oct: "assign all the tasks you can do to yourself").
+On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (waits for you).
+
+| Task | Status | Details |
+|---|---|---|
+| "Claude's tasks" tab on the inbox page | Done | 19 Oct. This list. |
+| Breach plan (first hour, 24 h, 72 h) | Done | 19 Oct: docs/launch/BREACH-PLAN.md (launch plan D7). |
+| WhatsApp texts for members, Hindi + English | Done | 19 Oct: docs/launch/MEMBER-MESSAGES.md (G5). |
+| Desk cheat sheet, Hindi + English | Done | 19 Oct: docs/launch/DESK-CHEAT-SHEET.md (G2); button names checked in the code. |
+| Clean old notes that now say wrong things | Done | 19 Oct: admin app README rewritten, old owner to-do list retired (points here), U-A14 note fixed. The CRM phase table stays for later (H5). |
+| Privacy notice draft (English + Hindi) | To do | D1; complaints contact waits for #37. Medium. |
+| Terms of use draft | To do | D2. Medium. |
+| Pilot + data agreement draft | Blocked | D3; needs your answers to #30, #31, #33. Medium. |
+| Remove unused permissions and "AI coach" wording | To do | C5; check nothing uses them first. Medium (needs a release). |
+| Confirm the app targets Android 16 (API 36) | To do | C4; read it from the built app. Small to medium. |
+| Admin app security header + rollback note | To do | A6. Medium (needs a deploy). |
+| Re-check the two old open server refusals | To do | H1 (other gyms' shop and messages kept apart). Medium. |
+| "New version ready" prompt in the app | To do | C6. Large (code + release). |
+| Consent screen when joining a gym; 18+ check | Blocked | D5, D6; needs #29. Large. |
+| Gym data export and delete | To do | D8. Large. |
+| Crash reports and outage alerts wired in | Blocked | B1, B2; needs your free accounts (#34). Medium. |
+| Staging server, backups check, restore drill | Blocked | A2, A3, A5; needs #27 and #34. Medium. |
+| GGMS column mapping and trial imports | Blocked | F3, F4; needs the export (#36). Large. |
+| Feedback button + automatic sorting | Blocked | H7; needs #39. Large. |
+| Play Store listing, data safety answers, internal test | Blocked | C2, C3; needs the Play account (#35). Medium. |
+
+---
+
 ## Feature backlog
 Every feature, built and pending, in one line each. On the page: the "Feature backlog" tab, with a
 Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned · Waiting for you · Idea · Not doing.

@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-33. Do my own tasks, cheapest first; a "Claude's tasks" tab — 19 Oct 2026
+**Owner said:** "Identify everything you can do yourself, prioritize them based on the number of
+tokens the task will use, and start doing them. Currently I have 4 % left of my weekly limit, which
+resets on Wednesday at 4 PM ... create another tab in Owner Inbox where you assign all the tasks you
+can do to yourself, marking them complete when done. Disturb me only when truly needed."
+**Done:** "## Claude's tasks" section in the inbox (cheapest first, Done / To do / Blocked) shown as
+its own tab. Done 19 Oct: the tab, breach plan, member WhatsApp texts, desk cheat sheet, stale notes.
+Next after the limit resets (Wed 4 pm): privacy notice, terms, permissions clean-up, Android 16 check.
+Keep publishes of the inbox page rare: each read of the page costs a lot of tokens.
+
 ## R-32. Plan the production beta launch at the client gym — 19 Oct 2026
 **Owner said:** "I want to launch this system for production beta testing in my client GYM - research
 and create a plan to complete everything which is required to successfully launch this... use Owner

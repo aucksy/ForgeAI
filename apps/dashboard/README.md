@@ -1,22 +1,12 @@
-# ForgeAI — Owner Dashboard (Phase 2)
+# ForgeAI — admin app (gym owner and staff)
 
-A small **read-only** web dashboard for gym owners: members, last-active, at-risk,
-and a streak leaderboard. Vite + React + TypeScript SPA; the browser talks to
-Supabase directly with **owner auth** (RLS scopes every read to the owner's own gym).
-It reuses the mobile app's theme so it reads as the same product.
-
-> **Self-contained, by design.** This app lives at `apps/dashboard` but is NOT wired
-> into a workspace yet and touches **zero** mobile files — the offline mobile demo is
-> unaffected. Extracting a shared `packages/theme` and doing the full pnpm-monorepo
-> move (`apps/mobile`) is a later, separate step (see `docs/PLAN.md` Phase 2 notes).
-
-## What it shows
-- **KPIs:** total members, active this week, at-risk count, best current streak.
-- **Members table:** name, last active, current streak, workouts 7d/30d, weight.
-- **At risk:** members with no activity for ≥ 7 days (or who never synced).
-- **Streak leaders:** top 5 by current streak.
-- Members appear once they've synced at least once (the phone pushes a one-row
-  `member_summary`; this app never reads raw history — one-way push, summary only).
+The web app the gym runs on: members, plans, renewals, dues, receipts (GST 5%, financial-year
+numbers), visits and QR check-in, staff sign-in by mobile + 6-digit code, roles (owner / staff /
+trainer), shop, gym workout plans, Excel import. Vite + React + TypeScript; talks to Supabase
+directly (row-level security per gym). Live at forgeai.aakashpahuja.in, served by the Cloudflare
+Worker in `deploy/panel` (`npx wrangler deploy` after a checked build: `npx tsc -b`,
+`npx vitest run`, `npm run build`). Journeys: `apps/dashboard/e2e` (Playwright).
+(Rewritten 19 Oct 2026: the old text described a read-only Phase 2 dashboard on Cloudflare Pages.)
 
 ## Run locally
 ```bash
