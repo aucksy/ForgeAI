@@ -14,6 +14,13 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
+| 28 | Google Play account: personal or organisation | A: personal |
+| 29 | Members under 18 in the member app | A: 18+ for the trial |
+| 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
+| 31 | Lawyer check of privacy notice and agreement: now or before the 2nd gym | A: before the 2nd gym |
+| 32 | Register ForgeAI for GST now | A: not now |
+| 33 | Your support hours during the trial | A: rush hours, 15 minutes |
 
 ---
 
@@ -133,8 +140,110 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Owner inbox page | Live | A private page where you read answers, mark them read and send your picks. |
 | Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
 | Play Store release | Planned | Google's pre-launch tests and the Play Store listing are not started yet. |
+| Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). |
+| Test server before live | Planned | A second server where every change is tried before it reaches the gym. |
+| Crash and outage alerts | Planned | Crash reports from both apps and a "site is down" alert to your phone, so we hear before the gym calls. |
+| Real-phone tests on Google's lab | Waiting for you | Built: Google's robot tries each release on 5 real phones; needs your free setup (#25). |
+| "New version ready" in the app | Planned | Members are told when an update is ready. |
+| Privacy notice, terms and consent | Planned | Plain-English (and Hindi) notice in both apps, a consent screen when joining a gym, a named complaints contact. |
+| Gym data export and delete | Planned | A gym can download all its data in one tap, and have it deleted if it leaves. |
+| Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). |
 
 ---
+
+## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Your task:** When Claude says the draft is ready (it follows your answers to #30, #31 and #33), read it: one pilot agreement with the data agreement inside (dates, success measures, the gym owns its data, export in 7 days and deletion in 30 if they leave, breach notice to the gym in 24 hours, support hours, price after the pilot, it is a beta).
+**Your task:** Sign it with the gym owner (2 copies, or both sign a PDF), and send Claude a photo of the signed page.
+**Why:** India's data law makes the gym responsible for its members' data and needs a written contract with us (we handle it for the gym). It also stops the trial turning into a free service with no end date. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D3).
+
+## 37. Launch task: name the complaints contact for members — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Your task:** Tell Claude one name and one email address that members can write to about their data (it can be you and a new address such as privacy.forgeai@gmail.com; one you will check weekly).
+**Why:** India's data law requires a named contact on the website and in the app, with an answer within 90 days. Claude puts it into the privacy notice and both apps. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D4).
+
+## 36. Launch task: the gym visit and the GGMS export — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Your task:** Visit the gym with the one-page question sheet (about 45 minutes): https://github.com/aucksy/ForgeAI/blob/main/docs/launch/GYM-VISIT.md
+**Your task:** Ask the desk to export from GGMS whatever it can (members, plans, dues, payment history, attendance; Excel best) and get a copy, plus photos of 2 receipts.
+**Your task:** Send Claude the answers (typed, voice note text, or photos of your notes) and the export files.
+**Why:** everything after this depends on it: the data move, the training plan, whether the desk needs the offline mode, FitPass, receipts with GST. We have never asked the gym these questions. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (F1, F2).
+
+## 35. Launch task: open the Google Play developer account ($25 once) — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Your task:** After you answer #28: go to https://play.google.com/console/signup and make the account type you picked. It needs your government ID, a card in your name and an Android phone. Pay the $25 once.
+**Your task:** Tell Claude "Play account ready". Claude then prepares the store listing, the data safety answers and the internal test for you to submit.
+**Why:** members get updates by themselves from the Play Store; the GitHub download link will be blocked by Google for unregistered apps from 2027. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (C1-C3).
+
+## 34. Launch task: accounts and safety switches only you can turn on — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Your task:** If you say yes in #27: in Supabase (https://supabase.com/dashboard), open the project → Billing → upgrade the organisation to Pro. Leave "Spend cap" ON.
+**Your task:** In Supabase, create a second, free project named `forgeai-staging`, region Mumbai (Claude fills it with the same tables, for testing changes before they reach the gym).
+**Your task:** Turn on two-step sign-in (an authenticator app) on Supabase, GitHub, Cloudflare and your Google account.
+**Your task:** Make a free Sentry account (https://sentry.io/signup) and a free Better Stack account (https://betterstack.com/users/sign-up); then tell Claude. Claude wires crash reports into both apps and sets the "site is down" alerts to your phone.
+**Your task:** Check that your 2 offline copies of the app's signing key still open (the folder from docs/RELEASE-SIGNING.md). If that key is lost, every member must reinstall and loses their data.
+**Why:** today the server pauses after a quiet week, has no backups, and nobody hears about a crash or an outage until the gym calls. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (A1-A7, B1-B2).
+
+## 33. Launch decision: your support hours during the trial — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Decide:** When will you answer the gym's WhatsApp support group during the 8-week trial?
+- A: Gym rush hours (about 6-10 am and 5-9 pm) on gym days: payment problems answered within 15 minutes, everything else the same day (recommended)
+- B: Evenings only, within 2 hours; the desk uses paper or GGMS for anything urgent
+**Why it matters:** this promise goes into the pilot agreement (#38). A desk that cannot take a payment and gets no answer is the most common reason a gym gives up on new software. Claude watches the alerts all day; you are the human the gym talks to.
+
+## 32. Launch decision: should ForgeAI register for GST now? — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Decide:** Register ForgeAI for GST now?
+- A: Not now: registration is required only above ₹20 lakh a year; gyms cannot claim back GST since Sep 2025, so our 18% GST would be a straight extra cost to the gym (recommended)
+- B: Register now (needed only if you want to bill GST from day one, for example as a company)
+**Why it matters:** it changes the price the gym pays by 18%. Check with your accountant before the second or third gym. The gym's own receipts already use 5% GST and number by financial year.
+
+## 31. Launch decision: lawyer check of the privacy notice and the agreement — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Decide:** Who checks the privacy notice, the terms and the gym agreement before real members use the app?
+- A: For this one-gym trial: Claude drafts them from India's data law and standard SaaS terms, you read them; a lawyer checks them before the second gym (recommended)
+- B: A lawyer checks them now, before the trial (paid; ask for a quote first)
+**Why it matters:** the law (DPDP) applies in full from May 2027; penalties are large, but the risk in a one-gym, 8-week trial with a signed agreement is low. Legal wording is your decision.
+
+## 30. Launch decision: the price after the trial — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Decide:** What does the gym pay after a free 8-week trial? (It goes into the agreement before the trial starts.)
+- A: ₹1,499 a month, or ₹14,999 a year (about GGMS's price, with the member app included) (recommended)
+- B: A first-client price of ₹999 a month for the first year, in return for a testimonial and feedback
+**Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
+
+## 29. Launch decision: members under 18 — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Decide:** How do we handle members under 18 in the member app?
+- A: For the trial, the member app is for 18 and over (it asks the birth year when joining a gym); the desk still records younger members in the admin app as the gym's own records (recommended)
+- B: Build a parent-consent step now (a parent confirms with their own phone)
+**Why it matters:** India's data law needs a parent's verified consent for anyone under 18, and bans tracking them. A builds in a day; B takes about a week and slows joining for everyone.
+
+## 28. Launch decision: which Google Play account — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Decide:** Which kind of Google Play developer account?
+- A: Personal account ($25 once, ready in days). Before going public, the app needs 12 testers using it for 14 days in a row: the gym's members can be those testers (recommended)
+- B: Organisation account: no 12-tester rule, but needs a registered company and a free D-U-N-S number (can take up to 30 days)
+**Why it matters:** the Play Store gives members automatic updates and keeps the app installable after Google's 2027 rule against unregistered downloads. You can move to an organisation account later when you form a company.
+
+## 27. Launch decision: paid server plan (Supabase Pro, about ₹2,100 a month) — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**Decide:** When do we move the live server to the paid plan (Supabase Pro, $25 a month, about ₹2,100)?
+- A: Now, before the gym's real data goes in (recommended)
+- B: In the switch-over week
+**Why it matters:** the free plan pauses after 7 quiet days (the app and the admin app stop working until someone wakes it) and keeps no backups we can restore. With the gym's real data, one bad day without a backup could lose their records. A means real data is safe from the first import.
 
 ## 26. Try v0.48.0 on your phone with one real workout — 18 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases

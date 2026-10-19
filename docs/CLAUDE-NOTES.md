@@ -10,10 +10,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 and create a plan to complete everything which is required to successfully launch this... use Owner
 Inbox to assign tasks to me etc... consider all aspects of serious launches and future proofing ...
 all possible aspects..."
-**Doing:** research (infra limits, Play Store / install path, India privacy law, money and GST,
-messaging costs, data move from GGMS, support, monitoring, backups, rollback, training) + a code and
-docs audit of what is ready; then docs/LAUNCH-PLAN.md (phases, owner, exit checks) and every task
-for him as an inbox "Your task", every choice only he can make as an inbox "Decide".
+**Done (19 Oct):** 5 research helpers (our code; Supabase / Play / APK verification / Cloudflare;
+DPDP law, contracts, GST, WhatsApp/SMS, FitPass; pilot and migration practice). Plan:
+docs/LAUNCH-PLAN.md (8-week trial, workstreams A-H, success measures, costs, future-proofing);
+gym visit sheet docs/launch/GYM-VISIT.md. Inbox: decisions #27-#33 (paid server, Play account,
+under-18s, price, lawyer, our GST, support hours) and tasks #34-#38 (accounts and 2-step sign-in,
+Play account, gym visit + GGMS export, complaints contact, sign the agreement). Checked: receipts
+already use 5% GST from 22 Sep 2025. Found: unused mic/speech/camera permissions with "AI coach"
+wording (plan C5).
 
 ## R-31. Tasks waiting on me go in the inbox's "Waiting for you" — 18 Oct 2026
 **Owner said:** "Why this Google Labs setup task is not added in 'waiting for you' section in Owner
