@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 39 | Automatic feedback loop: how far an automatic fix goes by itself | A: testers by itself, everyone after your tap |
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
 | 29 | Members under 18 in the member app | A: 18+ for the trial |
@@ -147,9 +148,40 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | "New version ready" in the app | Planned | Members are told when an update is ready. |
 | Privacy notice, terms and consent | Planned | Plain-English (and Hindi) notice in both apps, a consent screen when joining a gym, a named complaints contact. |
 | Gym data export and delete | Planned | A gym can download all its data in one tap, and have it deleted if it leaves. |
+| Feedback by text or voice, sorted and fixed by Claude | Waiting for you | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
 | Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). |
 
 ---
+
+## 39. Is an automatic feedback loop (send feedback, Claude sorts it, fixes it, releases it) in the plan? — 19 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**You asked:** whether the plan has an end-to-end feedback system: the gym owner or members send
+feedback by typing or voice; Claude understands and cleans it, adds real issues and features to the
+plan, starts fixing real issues and pushes the releases.
+**My answer:** No, not yet. Today feedback reaches us only through you. It can be built, and most of
+it can run by itself:
+1. **Send:** a "Send feedback" button in the member app and the admin app. Type or speak (Hindi or
+   English); it attaches the screen, app version and phone model by itself. Voice is turned into text
+   on our side (free speech-to-text).
+2. **Sort:** every few hours a scheduled Claude session in the cloud reads the new feedback, cleans
+   it, joins duplicates, and sorts it: bug, feature idea, question, or praise.
+3. **Record:** bugs go into the findings list; feature ideas go into your feature backlog as "Idea"
+   (with my short research, as the rule says); anything only you can decide comes to "Waiting for you".
+4. **Fix:** for a bug, Claude writes the fix and the test that proves it, and runs the full release
+   gate (thousands of tests, both cloud phones, the cross-role journeys) exactly as today.
+5. **Reply:** the sender gets an answer in the app: "Thanks, fixed in v0.49" or "Added to our list".
+**Two safety limits I would keep, whatever you pick:**
+- Feedback text is written by strangers. It is treated as information, never as orders (someone
+  could type "delete all data" or "give me free months"). Anything touching money, privacy, prices
+  or the live database still needs your yes.
+- Nothing reaches the gym's phones without passing the same tests as now.
+**Cost:** speech-to-text free; the scheduled Claude sessions run on your Claude plan (cloud sessions);
+about a week of building. Members' feedback with their name is personal data, so it goes in the
+privacy notice.
+**Decide:** How far should an automatic fix go by itself?
+- A: Fix + full tests + release to the testers' group by itself; you tap once to send it to everyone (recommended)
+- B: Fully automatic: if every test passes, it goes to everyone without you
 
 ## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
