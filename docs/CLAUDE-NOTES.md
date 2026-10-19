@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-32. Plan the production beta launch at the client gym — 19 Oct 2026
+**Owner said:** "I want to launch this system for production beta testing in my client GYM - research
+and create a plan to complete everything which is required to successfully launch this... use Owner
+Inbox to assign tasks to me etc... consider all aspects of serious launches and future proofing ...
+all possible aspects..."
+**Doing:** research (infra limits, Play Store / install path, India privacy law, money and GST,
+messaging costs, data move from GGMS, support, monitoring, backups, rollback, training) + a code and
+docs audit of what is ready; then docs/LAUNCH-PLAN.md (phases, owner, exit checks) and every task
+for him as an inbox "Your task", every choice only he can make as an inbox "Decide".
+
 ## R-31. Tasks waiting on me go in the inbox's "Waiting for you" — 18 Oct 2026
 **Owner said:** "Why this Google Labs setup task is not added in 'waiting for you' section in Owner
 Inbox - tasks pending on me will also go here.... do not make me repeat this"
