@@ -5,6 +5,22 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-39. Can we use Supabase in India? Free vs paid, for one client for 3-6 months — 20 Oct 2026
+**Owner asked:** a reel claimed India can't use Supabase anymore; if we can, how many members free, and if
+paid, the cost and capacity. He wants to spend nothing for 3-6 months (one client).
+**Answer (chat):** supabase.co was blocked on Jio / Airtel / ACT from 24 Feb 2026 under a Section 69A order
+(MeitY, a misused third-party project); the order was withdrawn and access restored on 3 Mar 2026 (Supabase
+blog / X). Usable today. Risk remains: our apps call hdxzqbdiokjklnypfisq.supabase.co directly
+(apps/mobile/app.json, apps/dashboard/src/lib/supabase.ts, logo / photo URLs), so a new block would stop the
+admin app and the gym features (workouts keep working offline). Free fix if wanted: our own domain through a
+free Cloudflare proxy. Free plan (blogs Aug-Oct 2026; confirm on supabase.com/pricing): 500 MB database,
+1 GB files, 5 GB egress, 50k MAU, 2 projects, pauses after 7 days with no activity, no restorable backups.
+Pro: $25/month (about Rs 2,100-2,200), 8 GB DB, 100 GB files, 250 GB egress, 100k MAU, never paused, daily
+backups. One gym's data (members, payments, visits, plans; workouts stay on phones) is a few MB a month, so
+500 MB lasts years for one gym. New advice for #27: free is fine for one client IF we add a free nightly
+backup (scheduled job, encrypted, to his Google Drive; the repo is public so never store it there); move to
+Pro at the 2nd gym. Not written into the inbox (R-36); offered to him.
+
 ## R-38. What blocks building the machine link now? He can bring the RS20 for testing — 20 Oct 2026
 **Owner said:** "So what is your blocker to build this system in our admin panel which can talk to this
 machine right now? I can actually also get the fingerprint machine to test for testing."
