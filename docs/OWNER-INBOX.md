@@ -16,9 +16,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 |---|---|---|
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
-| 29 | Members under 18 in the member app | A: 18+ for the trial |
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
-| 31 | Lawyer check of privacy notice and agreement: now or before the 2nd gym | A: before the 2nd gym |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
 
@@ -287,10 +285,8 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 
 ## 31. Launch decision: lawyer check of the privacy notice and the agreement — 19 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
-**Status:** WAITING FOR YOU
-**Decide:** Who checks the privacy notice, the terms and the gym agreement before real members use the app?
-- A: For this one-gym trial: Claude drafts them from India's data law and standard SaaS terms, you read them; a lawyer checks them before the second gym (recommended)
-- B: A lawyer checks them now, before the trial (paid; ask for a quote first)
+**Status:** DONE
+**DECIDED (20 Oct):** A: Claude's checked documents for the trial; a lawyer before the second gym (you left the legal calls to Claude, R-45, 20 Oct).
 **Why it matters:** the law (DPDP) applies in full from May 2027; penalties are large, but the risk in a one-gym, 8-week trial with a signed agreement is low. Legal wording is your decision.
 
 ## 30. Launch decision: the price after the trial — 19 Oct 2026
@@ -303,10 +299,8 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 
 ## 29. Launch decision: members under 18 — 19 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
-**Status:** WAITING FOR YOU
-**Decide:** How do we handle members under 18 in the member app?
-- A: For the trial, the member app is for 18 and over (it asks the birth year when joining a gym); the desk still records younger members in the admin app as the gym's own records (recommended)
-- B: Build a parent-consent step now (a parent confirms with their own phone)
+**Status:** DONE
+**DECIDED (20 Oct):** A: the member app is for 18 and over during the trial (you left the legal calls to Claude, R-45, 20 Oct).
 **Why it matters:** India's data law needs a parent's verified consent for anyone under 18, and bans tracking them. A builds in a day; B takes about a week and slows joining for everyone.
 
 ## 28. Launch decision: which Google Play account — 19 Oct 2026
