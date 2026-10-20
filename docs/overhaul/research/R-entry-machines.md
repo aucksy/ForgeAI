@@ -75,3 +75,30 @@ Realtime Biometrics India Pvt Ltd (Delhi, est. 2008). Read from realtimebiometri
 own server URL; whether the cloud API can WRITE (add / block a user, set a validity date, open the
 door) or only read punches; the API cost. If writes work, reuse the gym's device (saves the Matrix
 purchase); otherwise Matrix COSEC stays the pick.
+
+## Update 20 Oct 2026 (2): the client's machine is an RS20, and he wants it to work OFFLINE (R-34)
+From the owner's photo of the back: **RS20**, serial RSS 103 005 7249, 12 V DC. Rear pins: RS485 A/B,
+WG_IN0/1 (Wiegand in), **NC / COM / NO (lock relay), PUSH (exit button)**, GND, POW.
+- **Offline door works by itself:** the relay pins mean an EM lock (+ 12 V lock power supply + exit
+  button) wires straight to the RS20. The machine matches the finger itself (listings: 3,000
+  fingers, 100,000 logs, "Working mode: Offline/Online", TCP/IP + USB, Wi-Fi on some variants), so
+  members get in with no PC and no internet.
+- **The gap is blocking expired members offline.** The machine only knows "enrolled or not" unless
+  it has a per-user end date (not confirmed for the RS20). Without one, someone has to delete or
+  disable the member on the machine. Our software can do that only over the gym's LAN with Realtime's
+  SDK.
+- **The SDK we saw:** the third-party server github.com/zaagan/realtime-c121ta-server-app uses
+  Realtime's Windows ActiveX `FPCLOCK_Svr` (Interop.FPCLOCK_SVRLib.dll): `OpenNetwork(port)` listens
+  and the device pushes logs (`OnReceiveGLogData` gives device IP / port). Windows only, logs only in
+  that sample. Realtime also lists a PHP SDK (with MongoDB) and a "Data Transfer Utility" (a desktop
+  app that copies punches into MSSQL / MySQL / PostgreSQL / MongoDB / Oracle).
+- **Likely local design (to confirm):** a small always-on box at the gym (an old Windows laptop or a
+  mini PC) runs a "gym bridge". It pulls member changes from our server when online and writes them
+  to the RS20 over the LAN (add, delete or disable, end date). It reads entries back into Visits.
+  If the internet is down, the door keeps working with the last list; changes catch up later.
+- Contact: support@realtimebiometrics.com, phones 88608 86086 / 91886 08860 (from their site).
+  **Email sent 20 Oct** from the owner's Gmail (thread 1a1580b122586d86) asking: lock + wiring
+  straight to the RS20; offline opening; per-user end date / disable; LAN SDK (add / delete / end
+  date / live logs / open door, which OS, documents, fee); firmware or newer model; push to our
+  own server URL.
+

@@ -213,6 +213,28 @@ gym only adds a magnetic lock (roughly ₹1,500–3,000 for the lock plus fittin
 Then renewals in the admin app unblock the member on the machine by themselves, and every entry shows
 in Visits. If the answer to blocking is no, my suggestion stays the Matrix machine (about ₹17,500–31,000).
 I won't build anything before those answers.
+**YOUR REPLY (20 Oct):** sent a photo of the machine (it is an **RS20**) and asked: can the machine and
+the lock work **offline**, without Realtime's server, with a local setup? Find out what their website
+says, and email them for the rest.
+**My answer (20 Oct):**
+- **The door itself works offline, yes.** The back of the RS20 has the lock connection (the pins marked
+  NC / COM / NO) and an exit-button connection (PUSH). A magnetic lock, its power supply and an exit
+  button wire straight into the machine. It checks the finger itself and opens the door, with no
+  computer and no internet. It holds about 3,000 fingers.
+- **The hard part is stopping expired members while offline.** The machine only knows who is enrolled.
+  To refuse someone whose membership has ended, either (a) the machine stores an end date for each
+  member (the website doesn't say if the RS20 can), or (b) a small computer at the gym (an old laptop or
+  a mini PC) tells the machine "block this person" over the gym's Wi-Fi. That computer would get the
+  list from our app whenever the internet is up. If the internet is down, the door keeps using the
+  last list.
+- **Their website** shows locks, wiring diagrams, a PHP kit and a data-transfer tool, but no RS20 manual
+  and nothing about end dates. So I **emailed support@realtimebiometrics.com** from your Gmail (you'll
+  see it in Sent). I said what you said: you are building a custom member system for a gym that already
+  has their RS20 and wants their lock too. I didn't name the gym, and there is no need to hide anything.
+  I asked six questions: which lock and how to wire it, offline opening, end dates or blocking, a kit
+  for a computer at the gym (and which systems it runs on, any fee), firmware or a newer model, and
+  sending entries to our own server.
+- **If they don't reply in 2–3 days,** a 5-minute call to 88608 86086 works too.
 
 ## 39. Is an automatic feedback loop (send feedback, Claude sorts it, fixes it, releases it) in the plan? — 19 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases

@@ -5,6 +5,21 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-34. Realtime RS20 + door lock working OFFLINE, no Realtime server; email Realtime — 20 Oct 2026
+**Owner said:** (sent a photo of the back of the machine: RS20, serial RSS 103 005 7249, 12 V, pins
+RS485 A/B, WG_IN0/1, NC/COM/NO, PUSH, GND, POW) "research on their website what all information is
+available, and the intention is for this machine and the lock to work offline without their server.
+So if there can be a local setup ... whatever information you're not able to find ... find their
+contact email address and send them an email ... Just tell them that I am making a custom member
+management system for one of the gym owners who seem to have an old machine from them lying with
+them, and they are interested in buying the lock as well for the door. But we want to see if we can
+connect the custom software with your system."
+**Done (20 Oct):** read their site and other sources (research file, update 2). The RS20 has lock-relay
+pins, so it plus an EM lock works offline by itself. Blocking expired members offline needs a per-user
+end date on the device, or a small PC at the gym running Realtime's LAN SDK; both are unconfirmed.
+Emailed support@realtimebiometrics.com from his Gmail (honest framing, as he worded it; no client
+name). Inbox #40 updated. Next: read their reply and plan the gym bridge.
+
 ## R-33. Do my own tasks, cheapest first; a "Claude's tasks" tab — 19 Oct 2026
 **Owner said:** "Identify everything you can do yourself, prioritize them based on the number of
 tokens the task will use, and start doing them. Currently I have 4 % left of my weekly limit, which
