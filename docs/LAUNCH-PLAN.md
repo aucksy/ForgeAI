@@ -135,6 +135,45 @@ the gym. For workout data members enter in our app, we are responsible ourselves
 | H7 | "Send feedback" (type or speak) in both apps; Claude sorts it every few hours, records bugs and ideas, fixes bugs through the full tests, replies to the sender. Decided (inbox #39, 19-20 Oct): fully automatic; each fix goes to the testers first, then to everyone after 24 h with no reported problem or crash (a report stops it; crash / money / privacy fixes skip the wait). Useful from the side-by-side run (week 3) | TODO |
 | H6 | Release freeze 3 days before switch-over and the week after; then weekly releases, never on Monday or month-end | TODO |
 
+### I. New gyms: landing page, leads, sign-in, onboarding (owner R-46, 20 Oct; decided by Claude)
+
+**Decisions (Claude, under R-46):**
+- **Address:** the landing page sits at the root of forgeai.aakashpahuja.in; the admin app moves
+  behind **Sign in** (`/app`); old links keep working (redirect). A product domain of its own
+  (about ₹800-1,500 a year) is a money decision for later, not needed for the first marketing.
+- **Built where:** in the same Cloudflare Worker that serves the admin app (free plan): fast in
+  India, no new server, nothing added to the live database.
+- **Leads:** a short form (gym name, owner name, mobile, city, members roughly, "how do you run the
+  gym today": GGMS / other software / Excel / paper). Stored in Cloudflare's free database (D1),
+  protected from bots (Cloudflare Turnstile, free), and a WhatsApp button as the second way in.
+  The owner sees leads on a private page behind Cloudflare Access (sign in with his Google email,
+  free). New-lead alert: an email to him (Cloudflare Email, free) once the email address is set.
+- **Calls to action:** "Book a free demo" (lead form), "Try the demo gym" (the existing demo, made
+  up data), "Sign in" (existing clients). No prices on the page until the price is decided (#30).
+- **What the page says (true claims only):** the member app (workouts, kg to beat, the gym's
+  plans, check-in by QR, shop), the desk app (renewals, dues, ending-in tiles, receipts with 5% GST,
+  WhatsApp reminders typed for you, Excel import from GGMS or Excel), data in India, Hindi +
+  English, works on the desk's phone or computer. Screenshots from the real apps. Testimonial and
+  numbers from the client gym after week 8.
+- **Design:** modern, fast (under 1 second on 4G), mobile first, Hindi / English switch, built with
+  the design checks (impeccable) before it goes live. Research first, as the rule says: how GymBook,
+  Wellyx, GoGym4U and Hevy present themselves, and what Indian gym owners respond to.
+- **Self-serve onboarding after sign-up** (the admin app already has "Set up your gym" and the demo):
+  a "Get started" checklist on Today: add plans → import members (GGMS / Excel) → add staff →
+  print the QR poster → send members the app link. Each step ticks itself when done.
+- **Legal:** the page links the privacy notice and terms; the lead form states why we keep the
+  details (to call back about a demo) and deletes leads after 12 months if no deal.
+
+| # | Item | Who | Status |
+|---|---|---|---|
+| I1 | Research gym-software landing pages and Indian owners' buying reasons | Claude | TODO |
+| I2 | Landing page (Hindi + English), real screenshots, design checks | Claude | TODO |
+| I3 | Lead form + D1 + Turnstile + private leads page (Cloudflare Access) | Claude (you approve the Google email for Access) | TODO |
+| I4 | Admin app behind "Sign in" at /app, old links redirected | Claude | TODO |
+| I5 | "Get started" checklist for a new gym | Claude | TODO |
+| I6 | New-lead email alert | Claude, after the contact email (#37) | LATER |
+| I7 | Own product domain | You decide (money) | LATER |
+
 ## 4. Success measures (signed with the gym before week 3)
 
 1. Every staff member on every shift uses ForgeAI every day.

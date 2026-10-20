@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-46. Plan new-gym onboarding: landing page, lead capture, client sign-in — 20 Oct 2026
+**Owner said:** "add to plan to ensure that new GYM onboarding is sorted - If we were to do marketing and
+then we gotta have a professional modern convincing landing page.. and option to capture the lead and
+option to login for actual clients.. rest you can plan, decide and finalize to build"
+**Done:** confirmed feature -> backlog row + launch plan section I (decisions made by me, listed there).
+
 ## R-45. Finalize legal and technical documents myself; don't ask him to review — 20 Oct 2026
 **Owner said:** "My reading wont do shit... coz I dont have any knowledge on these... you double check
 considering all factors and finalize it .. I am relying on you"
