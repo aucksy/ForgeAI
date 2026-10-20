@@ -5,6 +5,20 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-35. Realtime replied: answer by email, AI-built; don't push; read their kit — 20 Oct 2026
+**Owner said:** "They have responded and are asking for my phone number, but you can say that this is an
+AI-automated system building the software, so please document the answers for future build efforts.
+Specifically, Claude, do not push them a lot; if they do not respond, do not follow up—maybe send a
+gentle reminder tomorrow, but don't push. I'll call them manually. Also, from their website download
+their connection kit ... see how their API looks; we may get our answers from there."
+**Done:** downloaded and READ (not run) the "Biometrics SDK PHP with Mongo" kit. Findings in
+docs/overhaul/research/R-realtime-sdk.md: the machine polls an HTTP gateway; commands include
+SET_USER_PROFILE (user_enabled + From/To date), OPEN_DOOR, GET_LOG_DATA, SET_TIME. Replied in the Gmail
+thread (AI-built, written answers please, he will call too; 5 short questions; no phone number).
+Scheduled ONE check for 21 Oct 08:30 UTC (trigger trig_01KZUY2rhN9fPjK1bfr3Eq1X): if no reply, one gentle
+reminder, then stop. **Rule for later: never more than that one reminder to Realtime.** Inbox #40:
+his tasks (call them; photo of the RS20 network menu).
+
 ## R-34. Realtime RS20 + door lock working OFFLINE, no Realtime server; email Realtime — 20 Oct 2026
 **Owner said:** (sent a photo of the back of the machine: RS20, serial RSS 103 005 7249, 12 V, pins
 RS485 A/B, WG_IN0/1, NC/COM/NO, PUSH, GND, POW) "research on their website what all information is

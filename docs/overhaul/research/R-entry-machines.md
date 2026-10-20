@@ -102,3 +102,6 @@ WG_IN0/1 (Wiegand in), **NC / COM / NO (lock relay), PUSH (exit button)**, GND, 
   date / live logs / open door, which OS, documents, fee); firmware or newer model; push to our
   own server URL.
 
+**Update 20 Oct (3):** Realtime's PHP + MongoDB kit was read: see `R-realtime-sdk.md` (the machine
+polls an HTTP gateway; per-member enable / disable + From / To dates; OPEN_DOOR). Realtime replied asking
+for a phone number; answered by email (written answers please; the owner will call).

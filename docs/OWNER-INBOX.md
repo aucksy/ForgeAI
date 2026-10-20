@@ -183,7 +183,9 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 
 ## 40. The client's fingerprint machine is a Realtime: do they sell door locks too, and can it all work together? — 20 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** ANSWERED
+**Status:** WAITING FOR YOU
+**Your task:** Call Realtime's technical team when you have time (WhatsApp +91 87438 74334 or +91 87440 94409). The 5 questions to ask are in the "20 Oct, later" answer below.
+**Your task:** At the gym, on the RS20: open Menu → Comm (or Network) and look for a "Server", "Cloud" or "Push" setting with an IP or web-address box. Send me a photo of that screen.
 **You asked:** your client already has a Realtime fingerprint machine, and Realtime's website offers an
 API (a way for other software to connect). Do they also sell door locks, and can the machine, the door
 lock and our app all work together smoothly?
@@ -235,6 +237,34 @@ says, and email them for the rest.
   for a computer at the gym (and which systems it runs on, any fee), firmware or a newer model, and
   sending entries to our own server.
 - **If they don't reply in 2–3 days,** a 5-minute call to 88608 86086 works too.
+**YOUR REPLY (20 Oct, later):** Realtime answered and asked for your phone number. You said: tell them an
+AI-automated system is building the software, so they should answer by email. Don't push them: at
+most one gentle reminder tomorrow, and you'll call them yourself. Also download the connection kit
+from their website and see if it answers our questions.
+**My answer (20 Oct, later):** The kit answered most of it, and it's good news:
+- **The machine talks to the software, not the other way round.** The machine contacts the software
+  every few seconds and asks "anything for me?". It also reports each fingerprint entry as it happens.
+- **The kit has the exact commands we need:** block or unblock a member, **set a member's start and
+  end date on the machine**, open the door from the software, fetch past entries, and set the clock.
+- **So the door can work offline.** The machine keeps the member list, the fingerprints and each
+  member's end date itself. If the internet is down, paid members still get in, and expired ones are
+  refused (if the machine respects end dates; still to confirm).
+- **Maybe no computer at the gym at all.** Because the machine is the one that calls out, it may be
+  able to call our server over the internet directly. Then renewals in the admin app reach the
+  machine by themselves.
+- **What's still unknown:** their kit was tested on a newer model (Pro 304F+). Our RS20 is older, so
+  it may not have this "call the server" setting, or it may need a firmware update.
+**What I did:** replied by email as you said (the software is built by an AI system, so written
+answers please, and you'll call too), with only 5 short questions. No phone number given. Tomorrow I
+check once: if there's no reply, one gentle reminder, then nothing more. The 5 questions, if you call:
+1. Does the RS20 support the same "server" connection as the PHP kit? Where is the server setting in
+   its menu? Does it need a firmware update?
+2. If we set a member's end date on the RS20, does it refuse them by itself after that date, with no
+   internet?
+3. Can the server address be a website address, not just a local IP?
+4. Which lock, power supply and exit button for a gym's main door with the RS20, and the prices?
+5. Any licence fee for the kit?
+Everything is documented for the build in `docs/overhaul/research/R-realtime-sdk.md`.
 
 ## 39. Is an automatic feedback loop (send feedback, Claude sorts it, fixes it, releases it) in the plan? — 19 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
