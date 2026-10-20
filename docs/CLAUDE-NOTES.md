@@ -5,6 +5,164 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-36. Inbox only gets what he says to put there — 20 Oct 2026
+**Owner said:** "You seem to be adding everything in the owner inbox. I told you. From now onwards, only
+the answers that I tell you to leave in my inbox, you will do leave that. Only the confirmed features
+when I say, okay, we'll be building this or add to plan, you will leave that in the owner inbox. Don't
+add everything. In fact, remove the last two or three things that we discussed."
+**Done:** removed inbox #40 (Realtime machine + lock), #41 (face camera) and #42 (locking workout
+history), the #42 decision row, the face-camera backlog Idea, and reverted the entry-machine backlog row.
+They are kept below for my own reference. CLAUDE.md inbox rule updated. **Rule from now on:** answer in
+chat (and keep it here in my notes); an answer goes to the inbox ONLY when he says to put it there; a
+feature goes into the backlog ONLY when he confirms it ("we'll build this", "add to plan").
+
+### Moved out of the inbox (20 Oct), for reference
+## (was inbox #42) Can the gym lock a member's workout history behind the membership, to keep members? — 20 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**Status:** WAITING FOR YOU
+**You asked:** your client thinks he could lock members' workout tracking data behind the membership
+(stop paying, lose your history), so that more members stay. Is that legally allowed?
+**My answer (not legal advice; the lawyer check in #31 should confirm):** No law says "never" in so
+many words. But it is risky, and I would not build it. There is a better way to get the same effect.
+- **Privacy law (DPDP Act 2023; its rules were notified in Nov 2025, most duties start in May 2027):**
+  the workouts are the member's personal data. Members have a right to see what is held about them,
+  to have it corrected or erased, and to withdraw consent. India's act has no explicit "take your
+  data with you" right (Europe's does). So locking isn't clearly banned, but holding the data
+  back as leverage goes against the spirit of the law, and complaints go to the new Data Protection
+  Board.
+- **Consumer law is the bigger risk.** Since Nov 2023 the Central Consumer Protection Authority bans
+  13 "dark patterns" (tricks in apps). One of them is the "subscription trap": making it impossible
+  or hard to stop paying. "Pay, or lose 2 years of your workouts" is very close to that. It would
+  count as an unfair trade practice, and a member can file a consumer complaint.
+- **It doesn't fit how our app works.** A member's workouts are saved on their own phone. They can
+  already back them up to their own Google Drive and export them to Excel (both live today). Locking
+  them would mean taking away features members already use and putting their data on our server.
+  The first member who loses their history would tell everyone at the gym, and review the app badly.
+- **What the leading apps do:** Hevy and Strong lock **extra features** behind paying, never the
+  member's own history.
+**What works instead, and is fully legal (my recommendation):** the member's own history stays theirs,
+always. What the **gym** gives stops when the membership ends:
+  - the trainer's workout plans (folders say "No longer sent by the gym", which already works this way),
+  - the gym's premium features (the AI coach later, challenges and leaderboards, progress the trainer
+    follows),
+  - a friendly "Renew to keep your trainer's plan" reminder before expiry.
+That gives members a real reason to renew, without holding anything hostage.
+**Decide:** What should we tell the client?
+- A: The history always stays the member's; gym extras (trainer plans, coach, challenges) stop when the membership ends (recommended)
+- B: Lock the history behind the membership anyway (legal and reputation risk; it needs a lawyer's OK first, and members' data moved to our server)
+
+## (was inbox #41) Could we use free face recognition with a plain camera instead of a machine? — 20 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**Status:** ANSWERED
+**You asked:** whether there is a free face-recognition library or algorithm we could use. Then,
+instead of a machine, a camera could feed our system, recognise the face and open the door, with no
+dependency on a vendor.
+**My answer:** It is possible, and free parts that a paid product is allowed to use do exist. But
+for the main door I don't recommend it. It costs about the same as a machine and is less safe.
+- **Free and allowed:** OpenCV's face finder (YuNet, MIT licence), its face matcher (SFace, Apache
+  licence, 99.4% on the standard test), and a "real face or photo?" check (Silent-Face, Apache). All
+  three run offline on a small computer. The best-known free one (InsightFace) is **not** allowed in a
+  paid product without buying a licence.
+- **"No dependency" isn't quite true.** We would still need a camera, a light, a small computer at the
+  gym running all day, a switch for the lock, and the lock itself. That is about ₹15,000–25,000 in parts.
+  A ready-made face machine costs about ₹17,500–31,000, and the gym already owns a fingerprint machine.
+- **The risks:**
+  - Someone could hold a member's photo or video up to an ordinary camera. Ready-made face machines
+    use special (infrared) cameras that are much harder to fool.
+  - At a real door (bad light, caps, sweat, 500 members) it will sometimes refuse real members, and
+    that means queues at the desk.
+  - Faces are personal data under India's privacy law. We would need consent and safe storage.
+  - Every camera, Wi-Fi or power problem at the gym becomes ours to fix.
+- **My suggestion:** use a real machine for the door (the RS20 now). Keep the camera as an idea for
+  later, where a mistake costs little: a tablet at the desk that marks attendance by face, with no
+  door attached. I've added it to the feature backlog as an "Idea". Details for the build:
+  `docs/overhaul/research/R-face-camera.md`.
+
+## (was inbox #40) The client's fingerprint machine is a Realtime: do they sell door locks too, and can it all work together? — 20 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**Status:** WAITING FOR YOU
+**Your task:** Call Realtime's technical team when you have time (WhatsApp +91 87438 74334 or +91 87440 94409). The 5 questions to ask are in the "20 Oct, later" answer below.
+**Your task:** At the gym, on the RS20: open Menu → Comm (or Network) and look for a "Server", "Cloud" or "Push" setting with an IP or web-address box. Send me a photo of that screen.
+**You asked:** your client already has a Realtime fingerprint machine, and Realtime's website offers an
+API (a way for other software to connect). Do they also sell door locks, and can the machine, the door
+lock and our app all work together smoothly?
+**My answer:** Yes, very likely. And it is cheaper than the Matrix machine I suggested before, because
+the gym already owns the machine.
+- **Door locks: yes.** Realtime sells them on its own website: a magnetic door lock (600 lbs), strike
+  locks, rim locks, exit push buttons, and a multi-door access controller. Their dealers also sell
+  Realtime tripod turnstiles and flap barriers.
+- **Machine + lock work together already.** Many Realtime machines have the door switch built in: the
+  lock is wired to the machine, and it opens when a known finger is scanned. A small-gym owner wrote that
+  their Realtime RS-10 tracks member visits and blocks members whose membership has run out.
+- **Machine + our app: possible, but 3 things must be checked first.** Realtime offers a cloud
+  connection (punches go to Realtime's cloud, and we read them with an API key they give out) and
+  developer kits. Those prove that **reading visits** works. What their pages do not say is whether
+  **our app can block an expired member on the machine**. Without that, the desk still blocks people by
+  hand. Also, the PHP kit in your screenshot probably needs a computer at the gym that stays on. I would
+  avoid that, because it breaks when the PC is off.
+**What I need from you (5 minutes on your next gym visit):**
+1. A photo of the sticker on the back of the machine (the model number, e.g. RS-10 or T502).
+2. Ask the Realtime dealer these three questions:
+   - "Can this model send every punch to our own server over the internet, with no PC at the gym?"
+   - "Through your cloud API, can our software add a member, block a member, or set an end date for a
+     member?"
+   - "Is the API free? Who do we ask for the API key?"
+**If all three answers are yes:** we link the gym's existing machine, and we don't buy a new one. The
+gym only adds a magnetic lock (roughly ₹1,500–3,000 for the lock plus fitting) or a turnstile later.
+Then renewals in the admin app unblock the member on the machine by themselves, and every entry shows
+in Visits. If the answer to blocking is no, my suggestion stays the Matrix machine (about ₹17,500–31,000).
+I won't build anything before those answers.
+**YOUR REPLY (20 Oct):** sent a photo of the machine (it is an **RS20**) and asked: can the machine and
+the lock work **offline**, without Realtime's server, with a local setup? Find out what their website
+says, and email them for the rest.
+**My answer (20 Oct):**
+- **The door itself works offline, yes.** The back of the RS20 has the lock connection (the pins marked
+  NC / COM / NO) and an exit-button connection (PUSH). A magnetic lock, its power supply and an exit
+  button wire straight into the machine. It checks the finger itself and opens the door, with no
+  computer and no internet. It holds about 3,000 fingers.
+- **The hard part is stopping expired members while offline.** The machine only knows who is enrolled.
+  To refuse someone whose membership has ended, either (a) the machine stores an end date for each
+  member (the website doesn't say if the RS20 can), or (b) a small computer at the gym (an old laptop or
+  a mini PC) tells the machine "block this person" over the gym's Wi-Fi. That computer would get the
+  list from our app whenever the internet is up. If the internet is down, the door keeps using the
+  last list.
+- **Their website** shows locks, wiring diagrams, a PHP kit and a data-transfer tool, but no RS20 manual
+  and nothing about end dates. So I **emailed support@realtimebiometrics.com** from your Gmail (you'll
+  see it in Sent). I said what you said: you are building a custom member system for a gym that already
+  has their RS20 and wants their lock too. I didn't name the gym, and there is no need to hide anything.
+  I asked six questions: which lock and how to wire it, offline opening, end dates or blocking, a kit
+  for a computer at the gym (and which systems it runs on, any fee), firmware or a newer model, and
+  sending entries to our own server.
+- **If they don't reply in 2–3 days,** a 5-minute call to 88608 86086 works too.
+**YOUR REPLY (20 Oct, later):** Realtime answered and asked for your phone number. You said: tell them an
+AI-automated system is building the software, so they should answer by email. Don't push them: at
+most one gentle reminder tomorrow, and you'll call them yourself. Also download the connection kit
+from their website and see if it answers our questions.
+**My answer (20 Oct, later):** The kit answered most of it, and it's good news:
+- **The machine talks to the software, not the other way round.** The machine contacts the software
+  every few seconds and asks "anything for me?". It also reports each fingerprint entry as it happens.
+- **The kit has the exact commands we need:** block or unblock a member, **set a member's start and
+  end date on the machine**, open the door from the software, fetch past entries, and set the clock.
+- **So the door can work offline.** The machine keeps the member list, the fingerprints and each
+  member's end date itself. If the internet is down, paid members still get in, and expired ones are
+  refused (if the machine respects end dates; still to confirm).
+- **Maybe no computer at the gym at all.** Because the machine is the one that calls out, it may be
+  able to call our server over the internet directly. Then renewals in the admin app reach the
+  machine by themselves.
+- **What's still unknown:** their kit was tested on a newer model (Pro 304F+). Our RS20 is older, so
+  it may not have this "call the server" setting, or it may need a firmware update.
+**What I did:** replied by email as you said (the software is built by an AI system, so written
+answers please, and you'll call too), with only 5 short questions. No phone number given. Tomorrow I
+check once: if there's no reply, one gentle reminder, then nothing more. The 5 questions, if you call:
+1. Does the RS20 support the same "server" connection as the PHP kit? Where is the server setting in
+   its menu? Does it need a firmware update?
+2. If we set a member's end date on the RS20, does it refuse them by itself after that date, with no
+   internet?
+3. Can the server address be a website address, not just a local IP?
+4. Which lock, power supply and exit button for a gym's main door with the RS20, and the prices?
+5. Any licence fee for the kit?
+Everything is documented for the build in `docs/overhaul/research/R-realtime-sdk.md`.
+
 ## R-35. Realtime replied: answer by email, AI-built; don't push; read their kit — 20 Oct 2026
 **Owner said:** "They have responded and are asking for my phone number, but you can say that this is an
 AI-automated system building the software, so please document the answers for future build efforts.

@@ -22,16 +22,19 @@ detail goes in `PROGRESS.md`, commit messages, and code comments — not chat.
   FIRST into YOUR notes, `docs/CLAUDE-NOTES.md` (newest on top, `## R-<n>. <title> — <date>`, what he
   said + what you did), commit + push, then work. Never put them in the inbox. Chat gets compacted;
   your notes survive it.
-- **A question he asks** ("what does X cost?", "which features are pending?"): a new inbox entry
-  (`## <n>. <title> — <date>`, a `**Chat:** <chat name> — <session link>` line, `**Status:**`,
-  "You asked" in short + your plain-English answer), the same answer in chat.
+- **⭐ Owner rule (20 Oct 2026, R-36): add NOTHING to the inbox unless he says so.** Answer his questions
+  in chat and keep the answer in your notes (`docs/CLAUDE-NOTES.md`). An answer goes into the inbox
+  ONLY when he tells you to put it there ("save this in my inbox"). A feature goes into the backlog
+  ONLY when he confirms it ("okay, we'll build this", "add to plan"). Ideas and research stay in your
+  notes. When he does ask for an inbox entry: `## <n>. <title> — <date>`, a `**Chat:** <chat name> —
+  <session link>` line, `**Status:**`, "You asked" in short + your plain-English answer.
 - **A decision only he can make** (the #18 list below): `**Decide:** <question>` + `- A: <option>`
   lines (mark one "(recommended)") in the entry, plus a row in the "Waiting for your decision" table;
   when he decides, write `**DECIDED (date):** ...`, drop the `**Decide:**` lines and the table row.
 - **Feature backlog** (`## Feature backlog` near the top: `### <group>` + `| Feature | Status | Details |`,
   Status one of Live / Next release / Planned / Idea / Waiting for you / Not doing, one short plain
   sentence each): his map of every feature; the page splits it into "Feature backlog" (not built)
-  and "Built" (Live + Next release). Add a row when something is decided; move it when it ships.
+  and "Built" (Live + Next release). Add a row only when he confirms a feature; move it when it ships.
 - **A task waiting on HIM** (a setup step, a key to make, a phone check, anything in a chat "Needs
   you" block): in the SAME turn, an inbox entry with `**Status:** WAITING FOR YOU` and one
   `**Your task:** ...` line per step. The page lists it under "Waiting for you" with an "I have done
