@@ -3,7 +3,9 @@
   <uses-sdk tools:overrideLibrary="androidx.health.connect.client"/>
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:replace="android:maxSdkVersion"/>
-  <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+  <!-- Launch plan C5 (20 Oct 2026): the microphone was only for the AI coach, which is off (features.ts).
+       tools:node="remove" also drops it from libraries' merged manifests (expo-speech-recognition). -->
+  <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove"/>
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>

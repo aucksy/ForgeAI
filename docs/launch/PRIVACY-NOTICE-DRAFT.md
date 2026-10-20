@@ -37,9 +37,10 @@ added.] These companies process data only to provide their service to us.
 
 **Your choices and rights.** You can: see what the gym holds about you (ask the desk or us);
 correct it; withdraw consent for anything optional (it stops from then on); leave the gym in the
-app (your link to the gym is removed); ask us to delete the server data about you (write to the
-contact above; we reply within 7 days) [an in-app "Delete my data" button is planned]; complain to
-us, and then to India's Data Protection Board.
+app ("Leave gym": your link ends and your phone number is erased from our server; the gym keeps
+its own records, such as payments and orders, which you can ask the gym to erase); ask us to delete
+anything else about you (write to the contact above; we reply within 7 days); complain to us, and
+then to India's Data Protection Board.
 
 **Under 18.** [Per inbox #29: the member app is for people aged 18 and over during the trial.]
 
