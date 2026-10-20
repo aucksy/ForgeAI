@@ -27,3 +27,4 @@ yarn-error.*
 .DS_Store
 
 __pycache__/
+scripts/realtime-test/realtime-test-log.txt

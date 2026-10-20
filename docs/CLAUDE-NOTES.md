@@ -5,6 +5,24 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-38. What blocks building the machine link now? He can bring the RS20 for testing — 20 Oct 2026
+**Owner said:** "So what is your blocker to build this system in our admin panel which can talk to this
+machine right now? I can actually also get the fingerprint machine to test for testing."
+**Answer (chat):** the code is not the blocker: Realtime's kit shows the exact protocol (the machine
+POSTs with `request_code`, gets commands framed as 4-byte LE length + UTF-8 JSON + NUL). The blockers:
+(1) unknown whether the RS20 has a "server" setting that speaks it (kit tested on a Pro 304F+);
+(2) the machine must reach a server: first his laptop on the same Wi-Fi, later ours; Supabase Edge
+Functions are HTTPS on their own domain, and an old machine may only do plain HTTP to an IP, so maybe a
+small relay; (3) a per-user end date working on the RS20 is unconfirmed; (4) going live needs his yes
+for a new migration (LIVE server change) and an admin-app deploy from his PC.
+**Done:** built `scripts/realtime-test/listener.mjs` (Node, no packages; plays the kit's gateway: logs
+FIRST CONTACT, entries, results; commands time / users / info / open / logs / block / unblock / dates /
+raw), verified against a simulated machine (OPEN_DOOR body 26 bytes = 4 + 21 + NUL; results and
+entries decoded). Plain steps in `scripts/realtime-test/README.md`. The log file is gitignored (it can
+hold member names). No inbox entry (R-36). **Next:** his test log + photos decide: build the real link
+(gym_devices + command queue migration, a device endpoint, admin screens: status, open door, auto
+block on expiry / unblock on renewal, entries into Visits) or ask Realtime for firmware / a newer model.
+
 ## R-37. Backlog: the gym exports a member's data on request, in our own format — 20 Oct 2026
 **Owner said:** "add to the feature backlog, we will give owner the option to export the data on member's
 request, and because this is what my owner needs, the export of the data that we will do will not be
