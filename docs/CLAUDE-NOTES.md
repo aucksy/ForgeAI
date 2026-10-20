@@ -5,6 +5,19 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-37. Backlog: the gym exports a member's data on request, in our own format — 20 Oct 2026
+**Owner said:** "add to the feature backlog, we will give owner the option to export the data on member's
+request, and because this is what my owner needs, the export of the data that we will do will not be
+compatible with ... Heavy or Strong or any other app. So we'll have to create this friction because they
+want it ... business is business."
+**Done:** backlog row "Member data export by the gym, on request" (Planned, Gym ↔ member links).
+**Notes for the build:** the export must stay readable and complete (a PDF / spreadsheet report with all
+workouts), since the DPDP Act gives members a right to know what is held about them. India has no
+portability right, so our own format (not Strong's CSV, which Hevy imports) is allowed. But we can't
+promise "impossible to import": anyone can retype or convert a readable file. Open question put to him in
+chat: members can ALREADY export to Excel and back up to their own Drive themselves (both Live); keep that
+or change it? That decision affects every member (product), so it is his. Not decided yet.
+
 ## R-36. Inbox only gets what he says to put there — 20 Oct 2026
 **Owner said:** "You seem to be adding everything in the owner inbox. I told you. From now onwards, only
 the answers that I tell you to leave in my inbox, you will do leave that. Only the confirmed features
