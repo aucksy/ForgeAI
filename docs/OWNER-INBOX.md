@@ -39,7 +39,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | In-app "Delete my data" for members | To do | Found 20 Oct: the server delete exists but its button is hidden with gym sync; members can only "Leave gym". Medium (code + release). |
 | Terms of use draft | To do | D2. Medium. |
 | Pilot + data agreement draft | Blocked | D3; needs your answers to #30, #31, #33. Medium. |
-| Remove unused permissions and "AI coach" wording | To do | C5; check nothing uses them first. Medium (needs a release). |
+| Remove unused permissions and "AI coach" wording | Doing | 20 Oct checked: camera/photos are used (progress, workout, profile photos): keep. Microphone (RECORD_AUDIO in android/app/src/main/AndroidManifest.xml) is only for the coach, which is off: remove (also check expo-speech-recognition's merged manifest). SYSTEM_ALERT_WINDOW is in the main manifest: check use, then remove. app.json texts only matter at prebuild. Ships with the next release (C5). |
 | Confirm the app targets Android 16 (API 36) | Done | 20 Oct: v0.48.0 build log: targetSdk 36, minSdk 24 (Android 7+) (C4). |
 | Admin app security header + rollback note | To do | A6. Medium (needs a deploy). |
 | Re-check the two old open server refusals | To do | H1 (other gyms' shop and messages kept apart). Medium. |
