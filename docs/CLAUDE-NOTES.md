@@ -5,6 +5,32 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-44. Answers given in chat on the machine link (kept here so they survive) — 20 Oct 2026
+**Q: which features would the gym actually use through Realtime's API?** Daily: (1) auto block on expiry
+or freeze, instant unblock on renewal (SET_USER_PROFILE user_enabled + From/To dates); (2) new member
+pushed to the machine from the admin app, so the desk only scans the finger; (3) every scan becomes a
+Visit (realtime_glog), giving a "not seen in 7 / 14 days" call list and a busy-hours chart; (4) "Open door"
+button (OPEN_DOOR); (5) machine online / last seen + daily clock sync (SET_TIME). Useful: (6) users on the
+machine who aren't paying (GET_USER_ID_LIST vs members); (7) catch-up after an outage (GET_LOG_DATA);
+(8) staff attendance log (no salaries); (9) "expired member tried to enter" alert IF the RS20 reports
+refused scans. Not worth / not possible: enrolling a finger from the admin app (finger must touch the
+machine), copying fingers to a 2nd machine (later), remote reboot / clear admin (not in the kit).
+First build: 1-4. Not added to the backlog (he didn't confirm).
+**Q: does GGMS make its own machine?** No: it integrates ZKTeco, eSSL, Realtime, BioMax (fingerprint /
+face); its app has Sync, Bio Enroll and a Remote screen (open door, reboot, sync time, clear admin, status).
+Whether GGMS sells hardware is not confirmed. Suggested he ask the client if the RS20 is already linked to
+GGMS today (that would prove the RS20 can talk to software) and whether a PC stays on for it.
+**Q: can we do Bio Enroll and remote control?** Open door, sync time, online status, send member to the
+machine: yes. Remote reboot / clear admin: not in the kit, ask Realtime. Bio Enroll: face models yes from
+the phone (ENROLL_USER_PHOTO); fingerprint: the member record is created from the app and the desk only
+presses scan; enrolled fingers come back as realtime_enroll_data and could be copied to another machine
+(SET_USER_INFO). Starting a finger scan remotely: unknown, ask Realtime. Three questions added for his
+call: remote reboot / clear admin commands; start a finger scan from software; copy a finger between
+machines.
+**Still open with him:** R-37 (keep or change members' own Excel export and Drive backup); the free
+nightly server backup (R-39, needs his yes + Google Drive access); R-41 four questions; the RS20 laptop test
+(R-38); his call to Realtime; tomorrow's single email check (trigger trig_01KZUY2rhN9fPjK1bfr3Eq1X).
+
 ## R-43. Seven backlog items from the owner — 20 Oct 2026
 **Owner said:** add to the backlog: (1) admin dashboard: customizable quick actions, large icon buttons;
 (2) research a new brand name with an available domain (forge.ai / forgeai.com gone, too expensive);
