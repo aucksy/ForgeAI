@@ -35,16 +35,17 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | WhatsApp texts for members, Hindi + English | Done | 19 Oct: docs/launch/MEMBER-MESSAGES.md (G5). |
 | Desk cheat sheet, Hindi + English | Done | 19 Oct: docs/launch/DESK-CHEAT-SHEET.md (G2); button names checked in the code. |
 | Clean old notes that now say wrong things | Done | 19 Oct: admin app README rewritten, old owner to-do list retired (points here), U-A14 note fixed. The CRM phase table stays for later (H5). |
-| Privacy notice draft (English + Hindi) | Doing | 20 Oct: English draft in docs/launch/PRIVACY-NOTICE-DRAFT.md; Hindi after you approve; contact waits for #37 (D1). |
+| Privacy notice (English + Hindi) | Done | 20 Oct FINAL after an independent legal check (DPDP Act + Rules 2025, SPDI 2011): docs/launch/PRIVACY-NOTICE.md (+ a short notice for the gym) and PRIVACY-NOTICE-HI.md. Only blanks: your name + email (#37) (D1). |
 | In-app "Delete my data" for members | Blocked | 20 Oct: "Leave gym" already erases the phone number on the server (0016); the name stays with the gym's orders. A full erase needs a new server rule = a LIVE database change (needs your yes). Until then: by email (privacy notice says so). |
-| Terms of use draft | Done | 20 Oct: docs/launch/TERMS-DRAFT.md (members + gym staff); waits for your approval with the privacy notice (D2). |
+| Terms of use | Done | 20 Oct FINAL after a check against the Contract Act and Consumer Protection Act: docs/launch/TERMS.md (members + staff) (D2). |
 | Pilot + data agreement draft | Blocked | D3; needs your answers to #30, #31, #33. Medium. |
 | Remove unused permissions and "AI coach" wording | Doing (microphone removed 20 Oct, ships next release) | 20 Oct checked: camera/photos are used (progress, workout, profile photos): keep. Microphone (RECORD_AUDIO in android/app/src/main/AndroidManifest.xml) is only for the coach, which is off: remove (also check expo-speech-recognition's merged manifest). SYSTEM_ALERT_WINDOW is in the main manifest: check use, then remove. app.json texts only matter at prebuild. Ships with the next release (C5). |
 | Confirm the app targets Android 16 (API 36) | Done | 20 Oct: v0.48.0 build log: targetSdk 36, minSdk 24 (Android 7+) (C4). |
 | Admin app security header + rollback note | To do | A6. Medium (needs a deploy). |
 | Re-check the two old open server refusals | To do | H1 (other gyms' shop and messages kept apart). Medium. |
 | "New version ready" prompt in the app | To do | C6. Large (code + release). |
-| Consent screen when joining a gym; 18+ check | Blocked | D5, D6; needs #29. Large. |
+| "I agree" + 18+ check + privacy link when joining a gym | To do | D5, D6; #29 = A (18+) taken as decided 20 Oct (R-45). Shows the notice and terms; needs a release. Large. |
+| Keep access logs for 1 year | To do | DPDP Rule 6 from May 2027; today the provider keeps about 7 days. Before May 2027. Medium. |
 | Gym data export and delete | To do | D8. Large. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2; needs your free accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5; needs #27 and #34. Medium. |

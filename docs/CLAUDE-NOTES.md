@@ -8,7 +8,7 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 ## R-45. Finalize legal and technical documents myself; don't ask him to review — 20 Oct 2026
 **Owner said:** "My reading wont do shit... coz I dont have any knowledge on these... you double check
 considering all factors and finalize it .. I am relying on you"
-**Doing:** an independent legal review of the privacy notice and terms (DPDP Act + Rules 2025, SPDI
+**Done 20 Oct:** legal review applied (10 notice fixes, 6 terms fixes; every promise checked against the code: what gym_members stores, Leave gym erases the phone only, logs ~7 days today). Final: docs/launch/PRIVACY-NOTICE.md (+ gym notice), PRIVACY-NOTICE-HI.md, TERMS.md. New tasks: "I agree" + 18+ at gym join; 1-year access logs before May 2027. Was doing: an independent legal review of the privacy notice and terms (DPDP Act + Rules 2025, SPDI
 Rules, Contract / Consumer Protection Act), apply the fixes, mark them final; Hindi notice after.
 Taken as his go-ahead on inbox #29 (18+ for the trial) and #31 (my drafts for the trial, a lawyer
 before the 2nd gym), both my recommended picks. Still his: the contact name + email (#37), price
