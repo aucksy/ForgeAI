@@ -5,6 +5,20 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-40. Plan the block-proof address on forgeai.aakashpahuja.in; how Supabase is used — 20 Oct 2026
+**Owner said:** "Forgeai.aakashpahuja.in is already on cloudfare so do plan to build that fix. And how will
+supabase be actually used in our usecase"
+**Done:** backlog row "Block-proof server address" (Planned, Platform and quality). Usage explained in chat.
+**Build plan:** the panel Worker `forgeai-panel` (deploy/panel) gets `/sb/*` in run_worker_first and
+forwards it to hdxzqbdiokjklnypfisq.supabase.co (REST, RPC, auth, storage; method, headers and body passed
+through; streamed; no caching except public storage). Point apps/mobile/app.json extra.supabaseUrl and
+the panel's VITE_SUPABASE_URL to https://forgeai.aakashpahuja.in/sb. Logo / product-photo URLs saved in the
+database still start with the supabase.co address (brandLogic LOGO_PREFIX, shop/photo.ts): accept both and
+rewrite on display. The member app falls back to the direct address if the proxy fails. No database change.
+Ships with the next member-app release + a panel deploy from his PC; old APKs keep the direct address.
+Workers free plan: 100k requests a day, plenty for one gym. The same Worker can later host the Realtime
+machine endpoint (R-38).
+
 ## R-39. Can we use Supabase in India? Free vs paid, for one client for 3-6 months — 20 Oct 2026
 **Owner asked:** a reel claimed India can't use Supabase anymore; if we can, how many members free, and if
 paid, the cost and capacity. He wants to spend nothing for 3-6 months (one client).

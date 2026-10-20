@@ -160,6 +160,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 ### Platform and quality
 | Feature | Status | Details |
 |---|---|---|
+| Block-proof server address | Planned | The apps reach our database through forgeai.aakashpahuja.in (Cloudflare) instead of Supabase's own address, so a block like Feb 2026 can't stop them. |
 | Automatic tests on every change | Live | Thousands of checks run on both apps before anything can ship. |
 | Cloud phone tests | Live | Every release is tried on a cloud phone set up like yours, in about 2 hours, at no cost. |
 | Release gate | Live | A new app version can't be published unless every test, phone run and review is green. |
