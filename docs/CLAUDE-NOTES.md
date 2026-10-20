@@ -5,6 +5,22 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-42. Members must not lose workouts that live only on the phone: add to plan — 20 Oct 2026
+**Owner said:** "if we are not saving member data on Superbase, then there's a risk of them losing data if
+they do not happen to back it up. Then we do have to kind of force them to back up their data on Google
+Drive. I keep nudging them. So that's a risk we have to eliminate. Add this to the plan."
+**Found:** backup today is manual only (Settings, BackupCard / backupStore: a button, `drive_last_backup_at`
+kept); no automatic backup, no reminder.
+**Done:** backlog row "Automatic workout backup" (Planned, Member app).
+**Build plan (my call under #18):** (1) after the 2nd finished workout, a one-time card "Keep your workouts
+safe: link Google Drive" (one tap Google sign-in; skippable, asked again later, never blocks a workout);
+(2) once linked, back up by itself after each finished workout when online (else at the next app open),
+quietly; (3) Home shows "Last backup: 2 days ago" and turns into a warning after 7 days without one, or
+if never linked once there are 10+ workouts; (4) a new phone / reinstall offers "Restore from Google Drive"
+on the first screen. Not chosen for now: a server copy on Supabase (500 members x 1-5 MB each would
+exceed the free plan, and it puts health-like data on our server: privacy wording + consent). Hevy /
+Strong keep data on their own servers; ours stays the member's, in their own Drive.
+
 ## R-41. Backlog: consumer users who later join a gym keep their earlier data free of the membership — 20 Oct 2026
 **Owner said:** "Just in case in future it happens that someone started using our app as a consumer and then
 happens to connect the gym, then their database will not have to be tied to the membership ... it's

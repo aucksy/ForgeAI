@@ -86,6 +86,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Weekly goal and milestones | Live | Set workouts per week and celebrate your 10th, 100th and later workouts. |
 | Import from Hevy and Strong | Live | Bring in your full workout history and your routines, including from a Hevy share link. |
 | Google Drive backup and restore | Live | Back up all your workouts to your own Google Drive and restore them on a new phone. |
+| Automatic workout backup | Planned | Members can't lose their history: one tap to link Google Drive at the start, then the app backs up by itself after each workout; a clear warning if it hasn't backed up for a few days. |
 | Export to Excel | Live | Save your workouts, and separately your measurements, as a spreadsheet. |
 | Kg or pounds, km or miles | Live | Switch units anywhere; your saved numbers never change. |
 | Health Connect | Live | Sends your workouts and calories burned to Android's Health Connect. |
