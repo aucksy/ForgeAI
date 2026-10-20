@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-41. Backlog: consumer users who later join a gym keep their earlier data free of the membership — 20 Oct 2026
+**Owner said:** "Just in case in future it happens that someone started using our app as a consumer and then
+happens to connect the gym, then their database will not have to be tied to the membership ... it's
+something I have to think through. Just add it in our ... feature backlog to solve."
+**Done:** backlog row "A member's own history from before joining a gym" (Waiting for you, Gym ↔ member
+links). Questions to settle with him later: the boundary (workouts before the join date vs after); whether
+the gym-request export (R-37) covers only gym-era data; what happens to gym-era data on leaving (today
+everything stays on the phone, and gym plans are relabelled "No longer sent"); what the gym's trainer can
+see (only what the member shares). Fits R-37 and the earlier advice that history stays the member's.
+
 ## R-40. Plan the block-proof address on forgeai.aakashpahuja.in; how Supabase is used — 20 Oct 2026
 **Owner said:** "Forgeai.aakashpahuja.in is already on cloudfare so do plan to build that fix. And how will
 supabase be actually used in our usecase"

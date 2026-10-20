@@ -140,6 +140,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Gym logo on the home screen | Live | After joining, add a home-screen shortcut with the gym's logo that opens ForgeAI. |
 | QR check-in | Live | Members scan the gym's poster and tap once; the desk sees the check-in and plan status. |
 | Member data export by the gym, on request | Planned | When a member asks, the owner exports that member's workout history from the admin app as a readable report in our own format (not an import file for Hevy, Strong or other apps). |
+| A member's own history from before joining a gym | Waiting for you | Someone who used ForgeAI on their own and then joins a gym: their earlier workouts stay theirs, never tied to the membership. Rules to work out with you (export, leaving, what the gym sees). |
 | FitPass and other pass members | Planned | Members who come through FitPass (or a similar pass) and don't pay the gym: join without a plan, get workout plans and the shop, and the owner sees their visits apart from paying members. |
 | After check-in, start the workout | Live | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
 | QR scan opens the door | Waiting for you | The scan could open a networked door lock, but the client must buy the lock first. |
