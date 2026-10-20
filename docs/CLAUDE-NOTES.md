@@ -5,6 +5,25 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-43. Seven backlog items from the owner — 20 Oct 2026
+**Owner said:** add to the backlog: (1) admin dashboard: customizable quick actions, large icon buttons;
+(2) research a new brand name with an available domain (forge.ai / forgeai.com gone, too expensive);
+(3) every release: a plain-language "what's new" pop-up on the first launch after an update; (4) during
+rest, an option to show an "equipment in use" banner with the live timer (people take the machine while
+you walk); (5) no saved routines + empty workout: offer to save the exercises as a routine at finish;
+(6) total workout duration on the notification card; a choice of rest-ending sounds, though he wonders if
+keeping one default sound is good marketing (everyone hears that the gym uses the app); (7) a running
+rest timer gets the difference when the exercise's rest is changed (2:30 -> 3:00 adds 30 s).
+**Done:** 8 backlog rows (item 6 split in two), all Planned: Admin app (quick actions), Platform and
+quality (brand name), Member app (the other six, after the notification-card row).
+**My call on the sound (#18, told him):** keep a distinctive ForgeAI sound as the default (most people never
+change it, so the gym still hears "the ForgeAI sound"), offer 3-4 others + vibrate only. Several phones
+beeping the same sound at once is a real problem: members can't tell whose rest is over.
+**Notes for builds:** (4) a full-screen "In use, back in 1:32" view the member can leave on the machine;
+it must keep the screen on and still let them tick the next set; (7) only while that exercise's rest is
+running; a shorter rest takes time off but never below 0; (3) a short text per release, written with
+PROGRESS / the release notes, shown once per version.
+
 ## R-42. Members must not lose workouts that live only on the phone: add to plan — 20 Oct 2026
 **Owner said:** "if we are not saving member data on Superbase, then there's a risk of them losing data if
 they do not happen to back it up. Then we do have to kind of force them to back up their data on Google

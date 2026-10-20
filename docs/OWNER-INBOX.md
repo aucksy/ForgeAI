@@ -65,6 +65,12 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Supersets and exercise notes | Live | Pair exercises into supersets and keep a note on any exercise. |
 | Rest timer and rest alerts | Live | A rest timer starts after every set, and "Rest is over" sounds and buzzes on time, even with the screen off. |
 | Live workout card in the notification shade | Live | Shows the exercise and next set, with a "Complete set" button, without opening the app. |
+| Workout time on the notification card | Planned | The live workout card in the notification shade also shows how long the workout has been running. |
+| Pick your rest-over sound | Planned | Choose from a few rest-over sounds (or vibrate only), so you can tell your timer from others in the same gym; a ForgeAI sound stays the default. |
+| Changing the rest time also changes the running timer | Planned | If a rest timer is running and you change that exercise's rest from 2:30 to 3:00, the 30 seconds are added to the running timer too. |
+| "Machine in use" screen during rest | Planned | One tap during rest shows a big "In use, back in 1:32" banner with the live timer, so others know the machine is taken while you walk around. |
+| Save a free workout as a routine | Planned | If you have no routines and start an empty workout, finishing it offers "Save these exercises as a routine". |
+| "What's new" after each update | Planned | The first time the app opens after an update, a short pop-up says in plain words what changed. |
 | Pause and forgotten-finish | Live | Pause a workout; after an hour with no sets the timer pauses itself and asks before counting that time. |
 | Plate calculator, your gym's plates and bars | Live | Shows which plates to load, using only the plates and bars your gym really has. |
 | Targets (progressive overload) | Live | Each exercise suggests the next weight and reps from your history, using your weight-jump and rep-range settings. |
@@ -102,6 +108,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 ### Admin app (gym owner and staff)
 | Feature | Status | Details |
 |---|---|---|
+| Quick action buttons on the dashboard | Planned | Big icon buttons at the top of the dashboard (e.g. New member, Take payment, Check-in) that the owner can choose and reorder. |
 | Members and plans | Live | Add members, sell and renew plans, freeze or add extra days, with every plan's history. |
 | Payments, dues and receipts | Live | Take full or part payments, see who owes and for how long, and print GST-ready receipts. |
 | Money reports and Excel export | Live | Collections by day, method and staff member, with cancelled receipts shown separately. |
@@ -162,6 +169,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 ### Platform and quality
 | Feature | Status | Details |
 |---|---|---|
+| New brand name with a free domain | Planned | Research a new product name whose .com (or .in / .app) domain is still available at a normal price; forge.ai and forgeai.com are taken and too expensive. |
 | Block-proof server address | Planned | The apps reach our database through forgeai.aakashpahuja.in (Cloudflare) instead of Supabase's own address, so a block like Feb 2026 can't stop them. |
 | Automatic tests on every change | Live | Thousands of checks run on both apps before anything can ship. |
 | Cloud phone tests | Live | Every release is tried on a cloud phone set up like yours, in about 2 hours, at no cost. |
