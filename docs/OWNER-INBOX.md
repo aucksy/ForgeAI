@@ -35,11 +35,12 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | WhatsApp texts for members, Hindi + English | Done | 19 Oct: docs/launch/MEMBER-MESSAGES.md (G5). |
 | Desk cheat sheet, Hindi + English | Done | 19 Oct: docs/launch/DESK-CHEAT-SHEET.md (G2); button names checked in the code. |
 | Clean old notes that now say wrong things | Done | 19 Oct: admin app README rewritten, old owner to-do list retired (points here), U-A14 note fixed. The CRM phase table stays for later (H5). |
-| Privacy notice draft (English + Hindi) | To do | D1; complaints contact waits for #37. Medium. |
+| Privacy notice draft (English + Hindi) | Doing | 20 Oct: English draft in docs/launch/PRIVACY-NOTICE-DRAFT.md; Hindi after you approve; contact waits for #37 (D1). |
+| In-app "Delete my data" for members | To do | Found 20 Oct: the server delete exists but its button is hidden with gym sync; members can only "Leave gym". Medium (code + release). |
 | Terms of use draft | To do | D2. Medium. |
 | Pilot + data agreement draft | Blocked | D3; needs your answers to #30, #31, #33. Medium. |
 | Remove unused permissions and "AI coach" wording | To do | C5; check nothing uses them first. Medium (needs a release). |
-| Confirm the app targets Android 16 (API 36) | To do | C4; read it from the built app. Small to medium. |
+| Confirm the app targets Android 16 (API 36) | Done | 20 Oct: v0.48.0 build log: targetSdk 36, minSdk 24 (Android 7+) (C4). |
 | Admin app security header + rollback note | To do | A6. Medium (needs a deploy). |
 | Re-check the two old open server refusals | To do | H1 (other gyms' shop and messages kept apart). Medium. |
 | "New version ready" prompt in the app | To do | C6. Large (code + release). |
