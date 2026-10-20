@@ -37,7 +37,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | Clean old notes that now say wrong things | Done | 19 Oct: admin app README rewritten, old owner to-do list retired (points here), U-A14 note fixed. The CRM phase table stays for later (H5). |
 | Privacy notice draft (English + Hindi) | Doing | 20 Oct: English draft in docs/launch/PRIVACY-NOTICE-DRAFT.md; Hindi after you approve; contact waits for #37 (D1). |
 | In-app "Delete my data" for members | To do | Found 20 Oct: the server delete exists but its button is hidden with gym sync; members can only "Leave gym". Medium (code + release). |
-| Terms of use draft | To do | D2. Medium. |
+| Terms of use draft | Done | 20 Oct: docs/launch/TERMS-DRAFT.md (members + gym staff); waits for your approval with the privacy notice (D2). |
 | Pilot + data agreement draft | Blocked | D3; needs your answers to #30, #31, #33. Medium. |
 | Remove unused permissions and "AI coach" wording | Doing | 20 Oct checked: camera/photos are used (progress, workout, profile photos): keep. Microphone (RECORD_AUDIO in android/app/src/main/AndroidManifest.xml) is only for the coach, which is off: remove (also check expo-speech-recognition's merged manifest). SYSTEM_ALERT_WINDOW is in the main manifest: check use, then remove. app.json texts only matter at prebuild. Ships with the next release (C5). |
 | Confirm the app targets Android 16 (API 36) | Done | 20 Oct: v0.48.0 build log: targetSdk 36, minSdk 24 (Android 7+) (C4). |
