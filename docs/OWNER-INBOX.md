@@ -21,6 +21,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 31 | Lawyer check of privacy notice and agreement: now or before the 2nd gym | A: before the 2nd gym |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
+| 42 | What to tell the client about locking members' workout history | A: history stays the member's; gym extras stop when the membership ends |
 
 ---
 
@@ -181,6 +182,40 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). |
 
 ---
+
+## 42. Can the gym lock a member's workout history behind the membership, to keep members? — 20 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**Status:** WAITING FOR YOU
+**You asked:** your client thinks he could lock members' workout tracking data behind the membership
+(stop paying, lose your history), so that more members stay. Is that legally allowed?
+**My answer (not legal advice; the lawyer check in #31 should confirm):** No law says "never" in so
+many words. But it is risky, and I would not build it. There is a better way to get the same effect.
+- **Privacy law (DPDP Act 2023; its rules were notified in Nov 2025, most duties start in May 2027):**
+  the workouts are the member's personal data. Members have a right to see what is held about them,
+  to have it corrected or erased, and to withdraw consent. India's act has no explicit "take your
+  data with you" right (Europe's does). So locking isn't clearly banned, but holding the data
+  back as leverage goes against the spirit of the law, and complaints go to the new Data Protection
+  Board.
+- **Consumer law is the bigger risk.** Since Nov 2023 the Central Consumer Protection Authority bans
+  13 "dark patterns" (tricks in apps). One of them is the "subscription trap": making it impossible
+  or hard to stop paying. "Pay, or lose 2 years of your workouts" is very close to that. It would
+  count as an unfair trade practice, and a member can file a consumer complaint.
+- **It doesn't fit how our app works.** A member's workouts are saved on their own phone. They can
+  already back them up to their own Google Drive and export them to Excel (both live today). Locking
+  them would mean taking away features members already use and putting their data on our server.
+  The first member who loses their history would tell everyone at the gym, and review the app badly.
+- **What the leading apps do:** Hevy and Strong lock **extra features** behind paying, never the
+  member's own history.
+**What works instead, and is fully legal (my recommendation):** the member's own history stays theirs,
+always. What the **gym** gives stops when the membership ends:
+  - the trainer's workout plans (folders say "No longer sent by the gym", which already works this way),
+  - the gym's premium features (the AI coach later, challenges and leaderboards, progress the trainer
+    follows),
+  - a friendly "Renew to keep your trainer's plan" reminder before expiry.
+That gives members a real reason to renew, without holding anything hostage.
+**Decide:** What should we tell the client?
+- A: The history always stays the member's; gym extras (trainer plans, coach, challenges) stop when the membership ends (recommended)
+- B: Lock the history behind the membership anyway (legal and reputation risk; it needs a lawyer's OK first, and members' data moved to our server)
 
 ## 41. Could we use free face recognition with a plain camera instead of a machine? — 20 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
