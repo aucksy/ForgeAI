@@ -121,6 +121,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Offline front desk | Planned | Keep the desk working without internet and send everything once it comes back. |
 | Full GST tax invoices | Planned | Proper tax invoices on top of today's payment receipts. |
 | Entry machine (turnstile, face or fingerprint) | Planned | Link the gym's own Realtime fingerprint machine if it can block expired members (#40), else a Matrix machine; tripod turnstile is the standard offer, and the client buys it. |
+| Face check-in with our own camera | Idea | A tablet at the desk marks a visit by face, using free parts (no door attached); for the door, a real machine is safer (#41). |
 | Automatic SMS or WhatsApp reminders | Waiting for you | Reminders sent by themselves cost money per message, so a paid provider needs your OK. |
 | Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. |
 | Webcam photo at the desk | Idea | Take a new member's photo with the desk computer's camera. |
@@ -180,6 +181,33 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). |
 
 ---
+
+## 41. Could we use free face recognition with a plain camera instead of a machine? — 20 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**Status:** ANSWERED
+**You asked:** whether there is a free face-recognition library or algorithm we could use. Then,
+instead of a machine, a camera could feed our system, recognise the face and open the door, with no
+dependency on a vendor.
+**My answer:** It is possible, and free parts that a paid product is allowed to use do exist. But
+for the main door I don't recommend it. It costs about the same as a machine and is less safe.
+- **Free and allowed:** OpenCV's face finder (YuNet, MIT licence), its face matcher (SFace, Apache
+  licence, 99.4% on the standard test), and a "real face or photo?" check (Silent-Face, Apache). All
+  three run offline on a small computer. The best-known free one (InsightFace) is **not** allowed in a
+  paid product without buying a licence.
+- **"No dependency" isn't quite true.** We would still need a camera, a light, a small computer at the
+  gym running all day, a switch for the lock, and the lock itself. That is about ₹15,000–25,000 in parts.
+  A ready-made face machine costs about ₹17,500–31,000, and the gym already owns a fingerprint machine.
+- **The risks:**
+  - Someone could hold a member's photo or video up to an ordinary camera. Ready-made face machines
+    use special (infrared) cameras that are much harder to fool.
+  - At a real door (bad light, caps, sweat, 500 members) it will sometimes refuse real members, and
+    that means queues at the desk.
+  - Faces are personal data under India's privacy law. We would need consent and safe storage.
+  - Every camera, Wi-Fi or power problem at the gym becomes ours to fix.
+- **My suggestion:** use a real machine for the door (the RS20 now). Keep the camera as an idea for
+  later, where a mistake costs little: a tablet at the desk that marks attendance by face, with no
+  door attached. I've added it to the feature backlog as an "Idea". Details for the build:
+  `docs/overhaul/research/R-face-camera.md`.
 
 ## 40. The client's fingerprint machine is a Realtime: do they sell door locks too, and can it all work together? — 20 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
