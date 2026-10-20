@@ -48,6 +48,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | Crash reports and outage alerts wired in | Blocked | B1, B2; needs your free accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5; needs #27 and #34. Medium. |
 | GGMS column mapping and trial imports | Blocked | F3, F4; needs the export (#36). Large. |
+| Landing page + lead form + /app sign-in + "Get started" checklist | To do | R-46, plan section I (I1-I5): research first, then build on the free Cloudflare plan; no live database change. Large. |
 | Feedback button + automatic sorting | To do | H7; #39 decided: automatic, testers first for 24 h. Large. |
 | Play Store listing, data safety answers, internal test | Blocked | C2, C3; needs the Play account (#35). Medium. |
 
@@ -181,6 +182,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Owner inbox page | Live | A private page where you read answers, mark them read and send your picks. |
 | Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
 | Play Store release | Planned | Google's pre-launch tests and the Play Store listing are not started yet. |
+| Landing page, leads and new-gym onboarding | Planned | A modern Hindi + English page at forgeai.aakashpahuja.in: "Book a free demo" (leads saved privately for you), "Try the demo gym", "Sign in" for clients; then a "Get started" checklist for each new gym. |
 | Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). |
 | Test server before live | Planned | A second server where every change is tried before it reaches the gym. |
 | Crash and outage alerts | Planned | Crash reports from both apps and a "site is down" alert to your phone, so we hear before the gym calls. |
