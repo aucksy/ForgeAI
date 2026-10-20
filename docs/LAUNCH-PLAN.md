@@ -132,7 +132,7 @@ the gym. For workout data members enter in our app, we are responsible ourselves
 | H3 | Offline front desk (decided #7): needed only if the gym's internet is unreliable; decide after the gym visit | TODO after F1 |
 | H4 | FitPass / pass members (planned): needed only if the gym has many; decide after the gym visit | TODO after F1 |
 | H5 | Clean old notes that now say wrong things (old README, old to-do list, old phase table) | TODO |
-| H7 | "Send feedback" (type or speak) in both apps; Claude sorts it every few hours, records bugs and ideas, fixes bugs through the full tests, replies to the sender. How far an automatic fix goes by itself: your decision (inbox #39). Useful from the side-by-side run (week 3) | TODO after #39 |
+| H7 | "Send feedback" (type or speak) in both apps; Claude sorts it every few hours, records bugs and ideas, fixes bugs through the full tests, replies to the sender. Decided (inbox #39, 19-20 Oct): fully automatic; each fix goes to the testers first, then to everyone after 24 h with no reported problem or crash (a report stops it; crash / money / privacy fixes skip the wait). Useful from the side-by-side run (week 3) | TODO |
 | H6 | Release freeze 3 days before switch-over and the week after; then weekly releases, never on Monday or month-end | TODO |
 
 ## 4. Success measures (signed with the gym before week 3)

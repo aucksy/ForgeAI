@@ -14,7 +14,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 39 | Automatic feedback loop: how far an automatic fix goes by itself | A: testers by itself, everyone after your tap |
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
 | 29 | Members under 18 in the member app | A: 18+ for the trial |
@@ -49,7 +48,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | Crash reports and outage alerts wired in | Blocked | B1, B2; needs your free accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5; needs #27 and #34. Medium. |
 | GGMS column mapping and trial imports | Blocked | F3, F4; needs the export (#36). Large. |
-| Feedback button + automatic sorting | Blocked | H7; needs #39. Large. |
+| Feedback button + automatic sorting | To do | H7; #39 decided: automatic, testers first for 24 h. Large. |
 | Play Store listing, data safety answers, internal test | Blocked | C2, C3; needs the Play account (#35). Medium. |
 
 ---
@@ -121,7 +120,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Works on phone and computer | Live | One website that installs like an app, with dark and light looks. |
 | Offline front desk | Planned | Keep the desk working without internet and send everything once it comes back. |
 | Full GST tax invoices | Planned | Proper tax invoices on top of today's payment receipts. |
-| Entry machine (turnstile, face or fingerprint) | Planned | Matrix machine linked to us, blocking expired members; tripod turnstile is the standard offer, and the client buys it. |
+| Entry machine (turnstile, face or fingerprint) | Planned | Link the gym's own Realtime fingerprint machine if it can block expired members (#40), else a Matrix machine; tripod turnstile is the standard offer, and the client buys it. |
 | Automatic SMS or WhatsApp reminders | Waiting for you | Reminders sent by themselves cost money per message, so a paid provider needs your OK. |
 | Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. |
 | Webcam photo at the desk | Idea | Take a new member's photo with the desk computer's camera. |
@@ -182,9 +181,42 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 
 ---
 
+## 40. The client's fingerprint machine is a Realtime: do they sell door locks too, and can it all work together? — 20 Oct 2026
+**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
+**Status:** ANSWERED
+**You asked:** your client already has a Realtime fingerprint machine, and Realtime's website offers an
+API (a way for other software to connect). Do they also sell door locks, and can the machine, the door
+lock and our app all work together smoothly?
+**My answer:** Yes, very likely. And it is cheaper than the Matrix machine I suggested before, because
+the gym already owns the machine.
+- **Door locks: yes.** Realtime sells them on its own website: a magnetic door lock (600 lbs), strike
+  locks, rim locks, exit push buttons, and a multi-door access controller. Their dealers also sell
+  Realtime tripod turnstiles and flap barriers.
+- **Machine + lock work together already.** Many Realtime machines have the door switch built in: the
+  lock is wired to the machine, and it opens when a known finger is scanned. A small-gym owner wrote that
+  their Realtime RS-10 tracks member visits and blocks members whose membership has run out.
+- **Machine + our app: possible, but 3 things must be checked first.** Realtime offers a cloud
+  connection (punches go to Realtime's cloud, and we read them with an API key they give out) and
+  developer kits. Those prove that **reading visits** works. What their pages do not say is whether
+  **our app can block an expired member on the machine**. Without that, the desk still blocks people by
+  hand. Also, the PHP kit in your screenshot probably needs a computer at the gym that stays on. I would
+  avoid that, because it breaks when the PC is off.
+**What I need from you (5 minutes on your next gym visit):**
+1. A photo of the sticker on the back of the machine (the model number, e.g. RS-10 or T502).
+2. Ask the Realtime dealer these three questions:
+   - "Can this model send every punch to our own server over the internet, with no PC at the gym?"
+   - "Through your cloud API, can our software add a member, block a member, or set an end date for a
+     member?"
+   - "Is the API free? Who do we ask for the API key?"
+**If all three answers are yes:** we link the gym's existing machine, and we don't buy a new one. The
+gym only adds a magnetic lock (roughly ₹1,500–3,000 for the lock plus fitting) or a turnstile later.
+Then renewals in the admin app unblock the member on the machine by themselves, and every entry shows
+in Visits. If the answer to blocking is no, my suggestion stays the Matrix machine (about ₹17,500–31,000).
+I won't build anything before those answers.
+
 ## 39. Is an automatic feedback loop (send feedback, Claude sorts it, fixes it, releases it) in the plan? — 19 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
-**Status:** WAITING FOR YOU
+**Status:** DECIDED
 **You asked:** whether the plan has an end-to-end feedback system: the gym owner or members send
 feedback by typing or voice; Claude understands and cleans it, adds real issues and features to the
 plan, starts fixing real issues and pushes the releases.
@@ -208,9 +240,15 @@ it can run by itself:
 **Cost:** speech-to-text free; the scheduled Claude sessions run on your Claude plan (cloud sessions);
 about a week of building. Members' feedback with their name is personal data, so it goes in the
 privacy notice.
-**Decide:** How far should an automatic fix go by itself?
-- A: Fix + full tests + release to the testers' group by itself; you tap once to send it to everyone (recommended)
-- B: Fully automatic: if every test passes, it goes to everyone without you
+**DECIDED (19 Oct, on the page):** B, fully automatic: if every test passes, it goes to everyone
+without you. Your note: "Unless you think it should go thru physical user test."
+**YOUR REPLY (19 Oct):** "Unless you think it should go thru physical user test"
+**My answer (20 Oct):** Yes, a short real-person check is worth it, and it can still run without you.
+Tests catch broken code, but not "this screen is confusing" or "it feels slow on a cheap phone". So
+each automatic fix goes first to the testers' group (the gym owner, the desk staff and 2–3 members).
+If nobody reports a problem and the app does not crash for 24 hours, it goes to everyone by itself.
+If someone reports a problem, it stops and waits for me to look. You never need to tap anything.
+Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 
 ## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases

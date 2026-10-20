@@ -55,3 +55,23 @@ contact is on esslsecurity.com/contactus.
    queued for the gym's devices.
 3. Enroll face from the member page; `setevent` -> a visit tagged "Machine" (like "App").
 4. Admin app: device list (online / last seen), refused entries with the reason.
+
+## Update 20 Oct 2026: the client gym already has a Realtime machine (OWNER-INBOX #40)
+Realtime Biometrics India Pvt Ltd (Delhi, est. 2008). Read from realtimebiometrics.com (sitemap and pages):
+- Sells locks and parts: EM lock 600 lbs single leaf, strike lock, RIM lock with RFID remote, drop bolt,
+  push / no-touch exit buttons, a multi-door access control solution, and a "T4D access control manager".
+  Dealers (e.g. realtimebiometric.in, a dealer site, not Realtime itself) list Realtime A306 tripod and
+  EL128 flap barriers.
+- Integration offered: (1) cloud API, "Realtime Biometrics API" / "API Realtime": punches stream from
+  their cloud; API keys + ERP login at https://apirealtime.com/ErpLogin.aspx, from Realtime support;
+  (2) "Biometrics SDK PHP with Mongo": device access from PHP, i.e. most likely on the LAN, so a PC stays
+  on at the gym. Avoid it. (3) StaffKhata (their cloud HRMS). There is also a "GYM Realtime" software
+  page, with no details.
+- A third-party C# server for RS9 / RS10 / RS20 / C121ta / T52 / T60 has the device connect to a web
+  server over WebSocket (nikeshniraula.medium.com; github.com/zaagan/realtime-c121ta-server-app).
+  So some models push to a server we run, with no gym PC needed.
+- A TechJockey review (RS-10, small gym) says the built-in access control blocks lapsed members.
+**Unknown, must confirm with Realtime / the dealer:** the client's exact model; whether it pushes to our
+own server URL; whether the cloud API can WRITE (add / block a user, set a validity date, open the
+door) or only read punches; the API cost. If writes work, reuse the gym's device (saves the Matrix
+purchase); otherwise Matrix COSEC stays the pick.
