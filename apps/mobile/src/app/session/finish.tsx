@@ -34,6 +34,7 @@ import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coach
 import { finishAnswer, getSessionSummary, volumeComparison, workoutName } from '@/tracker/services/finishSummary';
 import { workoutMilestone } from '@/tracker/services/milestones';
 import { applyRoutineOffer, takeRoutineOffer } from '@/tracker/services/routineOffer';
+import { autoBackupAfterWorkout } from '@/cloud/autoBackup';
 import { SAVE_FIRST_ROUTINE, offersFirstRoutine, routineCount, saveFirstRoutine } from '@/tracker/services/saveFirstRoutine';
 import { workoutText } from '@/tracker/services/shareText';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
@@ -141,6 +142,14 @@ export default function FinishScreen() {
     return () => {
       alive = false;
     };
+  }, [data]);
+
+  // Backlog (21 Oct): members who linked Google Drive get a backup after each workout, by itself.
+  const backedUp = useRef(false);
+  useEffect(() => {
+    if (!data || backedUp.current) return;
+    backedUp.current = true;
+    void autoBackupAfterWorkout();
   }, [data]);
 
   const onSaveFirst = () => {

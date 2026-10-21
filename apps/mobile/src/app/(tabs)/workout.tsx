@@ -21,6 +21,7 @@ import { DangerLink } from '@/components/DangerLink';
 import { GymBrandMark } from '@/components/GymBrandMark';
 import { UpdateCard } from '@/components/UpdateCard';
 import { WhatsNewCard } from '@/components/WhatsNewCard';
+import { BackupNudgeCard } from '@/components/BackupNudgeCard';
 import { Card, GhostButton, Screen, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
@@ -312,6 +313,8 @@ export default function WorkoutScreen() {
         <UpdateCard />
         {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
         <WhatsNewCard />
+        {/* Backlog (21 Oct): members who linked Drive are told when the last backup is old. */}
+        <BackupNudgeCard />
         {linkNotice ? (
           <Pressable
             onPress={() => setLinkNotice(null)}
