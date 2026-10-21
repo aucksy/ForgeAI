@@ -5,11 +5,14 @@ Whoever stops last updates this file and pushes it. The other side starts here.
 ## PC session, 21 Oct 2026 (evening) — RESUME HERE after a compaction
 - Queue (tracker "Claude's tasks"): 1, 2, 3, 5, 6, 7 Done; 4 = v0.49.0 gate in progress; 8 built but the
   landing page is OFF live until the owner's yes (#40); 9 blocked (CLAUDE-NOTES R-49).
-- v0.49.0: tested commit 7d5ea4d (app.json 0.49.0). Phone runs: default 39604087736, owner 39604091364,
-  journeys 39604095282, CI 39604082765 (green). When all green: worktree on 7d5ea4d + PROGRESS entry ->
-  tag v0.49.0 -> push tag -> dispatch ci.yml on the tag -> rerun the release run (memory note
-  forgeai-release-commit-off-main). Main moved on with admin / Worker / notes commits (not paperwork).
-  Main also has 9d5e4ec (feedback double-tap guard) for v0.50.0.
+- v0.49.0: tested commit now 28dcf00 (app.json 0.49.0). First gate on 7d5ea4d: journeys green,
+  default red (UK2 = U-M6b, a real keyboard bug, fixed), owner red (BR/INV = U-Q5 test fault, UR =
+  U-M6b). Reruns: default 39621314089, owner 39621317566, journeys 39621321348, CI 39621312862.
+  When all green: PROGRESS entry (paperwork) on main -> tag v0.49.0 on that commit -> push tag ->
+  dispatch ci.yml on the tag -> rerun the release run if it stops on "build check" (memory note
+  forgeai-release-commit-off-main). Do NOT commit non-paperwork to main before tagging.
+- Landing page (/home/) rebuilt around the member app (R-50), reviewed twice (impeccable finish
+  reviewer), DESIGN.md written; still OFF live until #40.
 - Live admin app (forgeai-panel Worker) 47cfa24d: security policy, Send feedback, gym data download +
   delete request, Get started list; /home/ and /api/lead 404 (vars.LANDING "off").
 - Cloudflare D1 `forgeai-web` (feedback, leads); secret FEEDBACK_SALT set. Read: scripts/feedback.py,
