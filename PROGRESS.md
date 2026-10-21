@@ -2438,6 +2438,27 @@
     tag: ci.yml ignores v* tags and d62c4a4 is on no branch): phone APK 68,975,318 B and watch APK
     2,033,849 B answer 200.
 
+- 2026-10-21: **v0.49.0 — join with 18+ and the terms, "new version ready", Send feedback, no microphone** (tag commit below).
+  - Joining a gym (Shop tab and invite link) needs one tick first: "I'm 18 or older, and I agree to
+    ForgeAI's terms and privacy notice", with links to both (launch D5/D6; shop/joinTerms.ts,
+    JoinAgreement.tsx). A wrong gym code is still told first. Phone flows tick it (qa/sub-agree.yaml).
+  - "A new version of ForgeAI is ready" card on the Workout tab (launch C6; lib/appUpdate.ts): GitHub's
+    latest release, at most every 6 hours; Get it opens the phone APK; Later hides it until the next
+    version. release-apk.yml now refuses a tag that differs from app.json (review MUST-FIX).
+  - Settings → Send feedback (launch H7; lib/feedback.ts): typed or spoken with the keyboard's mic, to
+    the panel Worker's /api/feedback (Cloudflare D1), no name or number.
+  - Microphone permission removed (launch C5; manifest tools:node="remove", approved-permissions list).
+  - Keyboard (U-M6b, S2): the screen is padded for the keyboard, and the tab bar hides, only while one
+    of our text boxes has the focus; after the app-icon "Resume workout" shortcut the resumed workout
+    no longer has a blank band and Minimise keeps the tab bar (KeyboardRoom, keyboardIfTyping).
+  - Settings → Send feedback: a very fast double tap sends once.
+  - Reviews: three subagent rounds; fixes applied (version check, invite-c scroll, logged update reads,
+    Worker hardening, keyboard focus check reviewed clean). Test-script faults found by the gate and
+    fixed: U-Q4 (sub-agree pressed Back), U-Q5 (Leave scroll could never be centred).
+  - Gate on 28dcf00: default 39621314089, owner 39621317566, journeys 39621321348, CI 39621312862
+    (all green). Tag commit = 28dcf00 + paperwork (HANDOFF, this entry). Earlier gate on 7d5ea4d was
+    red (UK2, BR/INV, UR) and is the reason for U-M6b and U-Q5.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
