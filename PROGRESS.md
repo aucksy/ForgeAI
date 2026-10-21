@@ -2458,6 +2458,8 @@
   - Gate on 28dcf00: default 39621314089, owner 39621317566, journeys 39621321348, CI 39621312862
     (all green). Tag commit = 28dcf00 + paperwork (HANDOFF, this entry). Earlier gate on 7d5ea4d was
     red (UK2, BR/INV, UR) and is the reason for U-M6b and U-Q5.
+  - PUBLISHED 21 Oct (release run 39638183366, tag on main, no hand-started CI needed): phone APK
+    68,991,702 B and watch APK 2,033,849 B answer 200; GitHub's latest release is v0.49.0.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);

@@ -33,11 +33,11 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
 | 2. "I agree" + 18+ check + privacy link when joining a gym | Done | 21 Oct: one tick box above Join on the Shop tab and the invite-link screen ("I'm 18 or older, and I agree to ForgeAI's terms and privacy notice", links to both); wrong codes are still told first; 13 phone-test steps tick it (qa/sub-agree.yaml); 3021 tests + typecheck green. Pages privacy.html + terms.html built by scripts/legal_pages.py; they go live with the admin deploy once #37 fills the contact. Ships in v0.49.0 (D5, D6). |
 | 3. "New version ready" prompt in the app | Done | 21 Oct: a card on the Workout tab when a newer release exists ("Get it" / "Later"); checks at most every 6 hours. The release now stops if its number differs from the app's own (review find). Ships in v0.49.0 (C6). |
-| 4. Next release (v0.49.0) with 2 + 3 + microphone removed | Doing | Two independent reviews done (fixes applied); all 3,029 app tests green; both cloud phones and the cross-role journeys running on the release build. One test-script fault found and fixed on the way (U-Q4). Also carries Settings → Send feedback. |
+| 4. Next release (v0.49.0) with 2 + 3 + microphone removed | Done | 21 Oct: released. The phone tests caught a real bug coming back (no tab bar after resuming a workout from the app-icon shortcut) and it was fixed before release. APK: https://github.com/aucksy/ForgeAI/releases/download/v0.49.0/forgeai-v0.49.0.apk |
 | 5. Admin app security header + rollback note | Done | 21 Oct: live. The admin app runs only its own scripts and talks only to the gym server; every admin journey runs under that rule (J29). Rollback = one command, written in the admin README (A6). |
 | 6. Feedback button + automatic sorting | Done | 21 Oct: More → Send feedback in the admin app (live) and Settings → Send feedback in the member app (v0.49.0). Kept in Cloudflare's free database, not the gym server; no name or number; 20 a day per phone. How Claude sorts it: docs/launch/FEEDBACK.md. The twice-a-day schedule starts with trial week 3 (H7). |
 | 7. Gym data export and delete | Done | 21 Oct, live: Settings → Your data → "Download all your gym's data" (Excel, one sheet per record type, + full copy). Online gyms: "Delete our gym from ForgeAI" sends a request; the real delete is a checked step with your yes each time (docs/launch/GYM-DELETE.md) (D8). |
-| 8. Landing page + lead form + /app sign-in + "Get started" checklist | Doing | 21 Oct: "Get started" list on Today is live (I5). Landing page (English + Hindi, real app pictures) and the free-demo form are built and tested, but hidden on the live site until your yes (#40). The admin app stays at the root until the page is live. |
+| 8. Landing page + lead form + /app sign-in + "Get started" checklist | Doing | "Get started" list live. Landing page rebuilt on your note (member app first), reviewed twice by a design reviewer; off on the live site until your yes (#40). |
 | 9. Keep access logs for 1 year | Blocked | Needs either Supabase's paid log export or a live database change, both your call; due before May 2027. Plan in CLAUDE-NOTES R-49. Medium. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
@@ -70,10 +70,10 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Live workout card in the notification shade | Live | Shows the exercise and next set, with a "Complete set" button, without opening the app. |
 | Workout time on the notification card | Planned | The live workout card in the notification shade also shows how long the workout has been running. |
 | Pick your rest-over sound | Planned | Choose from a few rest-over sounds (or vibrate only), so you can tell your timer from others in the same gym; a ForgeAI sound stays the default. |
-| Changing the rest time also changes the running timer | Planned | If a rest timer is running and you change that exercise's rest from 2:30 to 3:00, the 30 seconds are added to the running timer too. |
-| "Machine in use" screen during rest | Planned | One tap during rest shows a big "In use, back in 1:32" banner with the live timer, so others know the machine is taken while you walk around. |
-| Save a free workout as a routine | Planned | If you have no routines and start an empty workout, finishing it offers "Save these exercises as a routine". |
-| "What's new" after each update | Planned | The first time the app opens after an update, a short pop-up says in plain words what changed. |
+| Changing the rest time also changes the running timer | Next release | If a rest timer is running and you change that exercise's rest from 2:30 to 3:00, the 30 seconds are added to the running timer too. |
+| "Machine in use" screen during rest | Next release | One tap during rest shows a big "In use, back in 1:32" banner with the live timer, so others know the machine is taken while you walk around. |
+| Save a free workout as a routine | Next release | If you have no routines and start an empty workout, finishing it offers "Save these exercises as a routine". |
+| "What's new" after each update | Next release | The first time the app opens after an update, a short pop-up says in plain words what changed. |
 | Pause and forgotten-finish | Live | Pause a workout; after an hour with no sets the timer pauses itself and asks before counting that time. |
 | Plate calculator, your gym's plates and bars | Live | Shows which plates to load, using only the plates and bars your gym really has. |
 | Targets (progressive overload) | Live | Each exercise suggests the next weight and reps from your history, using your weight-jump and rep-range settings. |
@@ -111,7 +111,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 ### Admin app (gym owner and staff)
 | Feature | Status | Details |
 |---|---|---|
-| Quick action buttons on the dashboard | Planned | Big icon buttons at the top of the dashboard (e.g. New member, Take payment, Check-in) that the owner can choose and reorder. |
+| Quick action buttons on the dashboard | Live | Big icon buttons at the top of the dashboard (e.g. New member, Take payment, Check-in) that the owner can choose and reorder. |
 | Members and plans | Live | Add members, sell and renew plans, freeze or add extra days, with every plan's history. |
 | Payments, dues and receipts | Live | Take full or part payments, see who owes and for how long, and print GST-ready receipts. |
 | Money reports and Excel export | Live | Collections by day, method and staff member, with cancelled receipts shown separately. |
@@ -189,10 +189,10 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Test server before live | Planned | A second server where every change is tried before it reaches the gym. |
 | Crash and outage alerts | Planned | Crash reports from both apps and a "site is down" alert to your phone, so we hear before the gym calls. |
 | Real-phone tests on Google's lab | Waiting for you | Built: Google's robot tries each release on 5 real phones; needs your free setup (#25). |
-| "New version ready" in the app | Planned | Members are told when an update is ready. |
+| "New version ready" in the app | Live | Members are told when an update is ready. |
 | Privacy notice, terms and consent | Planned | Plain-English (and Hindi) notice in both apps, a consent screen when joining a gym, a named complaints contact. |
 | Gym data export and delete | Live | A gym can download all its data in one tap (Excel), and ask to be deleted if it leaves. |
-| Feedback by text or voice, sorted and fixed by Claude | Next release | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
+| Feedback by text or voice, sorted and fixed by Claude | Live | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
 | Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). |
 
 ---
