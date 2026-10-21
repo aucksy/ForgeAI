@@ -2482,6 +2482,8 @@
   - Gate on 5a8375b: default 39647353406, journeys 39647362273, CI 39647345689 (green); owner
     39647358581 red only on U-Q6, repeated on the same code as 39664337093 (tag qa-v050-owner).
     Tag commit = 5a8375b + this entry (main moved on with the U-Q6 script fix, not paperwork).
+  - PUBLISHED 22 Oct (release run 39680117943; CI 39680118695 dispatched on the tag): phone APK
+    69,012,182 B and watch APK 2,033,849 B answer 200; GitHub's latest release is v0.50.0.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);

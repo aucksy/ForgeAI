@@ -4,7 +4,7 @@ Whoever stops last updates this file and pushes it. The other side starts here.
 
 ## PC session, 21-22 Oct 2026 (night, owner asleep, R-51) — RESUME HERE after a compaction
 - v0.49.0 RELEASED (tag 61bed3d, run 39638183366); APK links 200.
-- v0.50.0 candidate = 5a8375b (app.json 0.50.0): What's new (shows from 0.51), Save as routine after a
+- v0.50.0 RELEASED 22 Oct (tag fe2542f = 5a8375b + PROGRESS; run 39680117943). It was candidate 5a8375b: What's new (shows from 0.51), Save as routine after a
   first free workout, rest change moves the running timer, Machine in use, automatic Drive backup
   (only from a phone that backed up before), 15 s request limit. Two review rounds done (one MUST-FIX
   fixed). Gate runs: default 39647353406, owner 39647358581, journeys 39647362273, CI 39647345689.

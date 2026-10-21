@@ -39,7 +39,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 7. Gym data export and delete | Done | 21 Oct, live: Settings → Your data → "Download all your gym's data" (Excel, one sheet per record type, + full copy). Online gyms: "Delete our gym from ForgeAI" sends a request; the real delete is a checked step with your yes each time (docs/launch/GYM-DELETE.md) (D8). |
 | 8. Landing page + lead form + /app sign-in + "Get started" checklist | Doing | "Get started" list live. Landing page rebuilt on your note (member app first), reviewed twice by a design reviewer; off on the live site until your yes (#40). |
 | 9. Keep access logs for 1 year | Blocked | Needs either Supabase's paid log export or a live database change, both your call; due before May 2027. Plan in CLAUDE-NOTES R-49. Medium. |
-| 10. Night build (21 Oct, you asleep): backlog features | Doing | Live in the admin app: quick buttons on Today. In v0.50.0 (cloud phone tests running): "Machine in use" screen, rest change moves the running timer, "Save as routine" after a first free workout, automatic Google Drive backup after each workout, "What's new" (shows from v0.51). |
+| 10. Night build (21 Oct, you asleep): backlog features | Done | 22 Oct: v0.50.0 released (https://github.com/aucksy/ForgeAI/releases/download/v0.50.0/forgeai-v0.50.0.apk): "Machine in use", rest change moves the running timer, "Save as routine" after a first free workout, automatic Google Drive backup, "What's new" (shows from v0.51). Admin app: quick buttons on Today (live). Two reviews; one real backup risk caught and fixed before release. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
@@ -71,10 +71,10 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Live workout card in the notification shade | Live | Shows the exercise and next set, with a "Complete set" button, without opening the app. |
 | Workout time on the notification card | Planned | The live workout card in the notification shade also shows how long the workout has been running. |
 | Pick your rest-over sound | Planned | Choose from a few rest-over sounds (or vibrate only), so you can tell your timer from others in the same gym; a ForgeAI sound stays the default. |
-| Changing the rest time also changes the running timer | Next release | If a rest timer is running and you change that exercise's rest from 2:30 to 3:00, the 30 seconds are added to the running timer too. |
-| "Machine in use" screen during rest | Next release | One tap during rest shows a big "In use, back in 1:32" banner with the live timer, so others know the machine is taken while you walk around. |
-| Save a free workout as a routine | Next release | If you have no routines and start an empty workout, finishing it offers "Save these exercises as a routine". |
-| "What's new" after each update | Next release | The first time the app opens after an update, a short pop-up says in plain words what changed. |
+| Changing the rest time also changes the running timer | Live | If a rest timer is running and you change that exercise's rest from 2:30 to 3:00, the 30 seconds are added to the running timer too. |
+| "Machine in use" screen during rest | Live | One tap during rest shows a big "In use, back in 1:32" banner with the live timer, so others know the machine is taken while you walk around. |
+| Save a free workout as a routine | Live | If you have no routines and start an empty workout, finishing it offers "Save these exercises as a routine". |
+| "What's new" after each update | Live | The first time the app opens after an update, a short pop-up says in plain words what changed. |
 | Pause and forgotten-finish | Live | Pause a workout; after an hour with no sets the timer pauses itself and asks before counting that time. |
 | Plate calculator, your gym's plates and bars | Live | Shows which plates to load, using only the plates and bars your gym really has. |
 | Targets (progressive overload) | Live | Each exercise suggests the next weight and reps from your history, using your weight-jump and rep-range settings. |
@@ -96,7 +96,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Weekly goal and milestones | Live | Set workouts per week and celebrate your 10th, 100th and later workouts. |
 | Import from Hevy and Strong | Live | Bring in your full workout history and your routines, including from a Hevy share link. |
 | Google Drive backup and restore | Live | Back up all your workouts to your own Google Drive and restore them on a new phone. |
-| Automatic workout backup | Planned | Members can't lose their history: one tap to link Google Drive at the start, then the app backs up by itself after each workout; a clear warning if it hasn't backed up for a few days. |
+| Automatic workout backup | Live | Members can't lose their history: one tap to link Google Drive at the start, then the app backs up by itself after each workout; a clear warning if it hasn't backed up for a few days. |
 | Export to Excel | Live | Save your workouts, and separately your measurements, as a spreadsheet. |
 | Kg or pounds, km or miles | Live | Switch units anywhere; your saved numbers never change. |
 | Health Connect | Live | Sends your workouts and calories burned to Android's Health Connect. |
