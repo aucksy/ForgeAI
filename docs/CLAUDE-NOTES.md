@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-51. "Keep building what you can... feel free to take the best decisions.. I am going to sleep" — 21 Oct 2026 (night)
+**Owner said:** keep building, decide myself, he is asleep.
+**My plan for the night (my decisions, cheapest risk first; nothing LIVE on the gym server, no money):**
+1. Finish v0.49.0 (tagged 61bed3d) and give the APK link.
+2. Member app, from his "Planned" backlog, for v0.50.0: "What's new" after each update; "Save a free
+   workout as a routine"; "Machine in use" screen during rest; changing the rest time also changes
+   the running timer. Each with tests, then the full gate (both cloud phones, journeys) overnight.
+3. Admin app: "Quick action buttons" on the dashboard (owner picks and orders them); checked deploy.
+4. Republish the Project Tracker page once at the end, with everything above.
+Not tonight (need him or are risky without him): block-proof server address (changes how every
+phone reaches the server), FitPass members and anything needing a LIVE migration, paid items.
+
 ## R-50. Landing page: lead with our USP, modern and jaw-dropping — 21 Oct 2026
 **Owner said:** "'never miss a renewal' is not our USP. I feel our USP is the member app which
 encourages members to progress so they dont quit, plus the shop on which the GYM owner can sell and in
