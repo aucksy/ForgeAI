@@ -14,6 +14,8 @@
 import { useEffect, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
+import { MachineInUse } from './MachineInUse';
+
 import { ConfirmSheet, Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -136,8 +138,14 @@ export function RestTimerBar() {
   const durationSec = useRestTimer((s) => s.durationSec);
   const addSec = useRestTimer((s) => s.addSec);
   const skip = useRestTimer((s) => s.skip);
+  const nextLabel = useRestTimer((s) => s.nextLabel);
   const remaining = useRestRemaining();
   const checks = useAlertChecks(endsAt);
+  const [inUse, setInUse] = useState(false);
+  // The rest ended (or was skipped): the in-use screen closes and stays closed for the next rest.
+  useEffect(() => {
+    if (endsAt == null) setInUse(false);
+  }, [endsAt]);
 
   const ask = (
     <ConfirmSheet
@@ -176,9 +184,15 @@ export function RestTimerBar() {
             picker's own option, which phone tests tap by that text). */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, padding: space.sm }}>
           <TimerBtn label="−15" a11y="15 seconds less" onPress={() => addSec(-15)} />
-          <View style={{ flex: 1, minWidth: 0, alignItems: 'center', justifyContent: 'center' }}>
+          {/* Backlog (21 Oct): tapping the clock shows "Machine in use" full screen (MachineInUse). */}
+          <Pressable
+            onPress={() => setInUse(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`Rest, ${remaining} seconds left. Show machine in use`}
+            style={{ flex: 1, minWidth: 0, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
+          >
             <Text
-              accessibilityLabel={`Rest, ${remaining} seconds left`}
+              accessible={false}
               numberOfLines={1}
               adjustsFontSizeToFit
               minimumFontScale={0.5}
@@ -187,7 +201,7 @@ export function RestTimerBar() {
               <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Rest </Text>
               {fmtClock(remaining)}
             </Text>
-          </View>
+          </Pressable>
           <TimerBtn label="+15" a11y="15 seconds more" onPress={() => addSec(15)} />
           <TimerBtn label="Skip" a11y="Skip rest" onPress={() => skip()} />
         </View>
@@ -210,6 +224,7 @@ export function RestTimerBar() {
         </Pressable>
       ) : null}
       {ask}
+      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} nextLabel={nextLabel} onClose={() => setInUse(false)} />
     </View>
   );
 }

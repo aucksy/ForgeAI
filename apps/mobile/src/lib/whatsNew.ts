@@ -14,7 +14,7 @@ import { enqueueWrite } from '@/db/writeQueue';
 export const WHATS_NEW: Readonly<Record<string, readonly string[]>> = {
   '0.50.0': [
     'Finished a workout without a routine? Save its exercises as a routine in one tap.',
-    'During rest, tap "Machine in use" to show a big timer, so others know you are coming back.',
+    'During rest, tap the rest clock: a big "In use" timer shows others the machine is taken.',
     'Change an exercise\'s rest while its timer runs, and the running timer changes too.',
   ],
 };
