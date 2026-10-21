@@ -1,0 +1,89 @@
+/**
+ * "A new version is ready" (launch plan C6). During the trial members install the APK from the
+ * GitHub release page, so nothing tells them about a fix. The app asks GitHub for the latest
+ * published release (drafts and pre-releases are never "latest"), at most once every 6 hours, and
+ * the Workout tab shows a card when that release is newer than the app on the phone.
+ *
+ * "Get it" opens the release's phone APK in the browser; Android installs it over the old one and
+ * keeps every workout (same signing key). "Later" hides the card until the NEXT version.
+ * When the app is on Google Play, switch this to Play's own update check: a Play install cannot
+ * take the GitHub APK.
+ */
+import { getMeta, setMeta } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
+
+export const LATEST_URL = 'https://api.github.com/repos/aucksy/ForgeAI/releases/latest';
+const CHECK_EVERY_MS = 6 * 60 * 60 * 1000;
+const SEEN_KEY = 'update_seen'; // JSON: { at, version, url }
+const LATER_KEY = 'update_later'; // the version "Later" was pressed for
+
+export type AppUpdate = { version: string; url: string };
+
+/** "v0.49.0" / "0.49.0" -> [0, 49, 0]; null when it is not a plain version. PURE. */
+export function versionParts(v: string | null | undefined): number[] | null {
+  const m = /^v?(\d+)\.(\d+)\.(\d+)$/.exec((v ?? '').trim());
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+}
+
+/** True only when `latest` is a plain version newer than `current`. PURE. */
+export function isNewer(latest: string | null | undefined, current: string | null | undefined): boolean {
+  const a = versionParts(latest);
+  const b = versionParts(current);
+  if (!a || !b) return false;
+  for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] > b[i];
+  return false;
+}
+
+type Release = { tag_name?: unknown; assets?: { name?: unknown; browser_download_url?: unknown }[] };
+
+/** The phone APK of a GitHub release ("forgeai-v0.49.0.apk", never the watch APK). PURE. */
+export function releaseUpdate(release: Release): AppUpdate | null {
+  const tag = typeof release.tag_name === 'string' ? release.tag_name : '';
+  if (!versionParts(tag)) return null;
+  const apk = (release.assets ?? []).find((a) => a.name === `forgeai-${tag}.apk`);
+  const url = typeof apk?.browser_download_url === 'string' ? apk.browser_download_url : '';
+  if (!url.startsWith('https://github.com/')) return null;
+  return { version: tag.replace(/^v/, ''), url };
+}
+
+/** What the card shows: the newer release, unless "Later" was pressed for that version. PURE. */
+export function updateToShow(seen: AppUpdate | null, current: string | null | undefined, later: string | null): AppUpdate | null {
+  if (!seen || !isNewer(seen.version, current)) return null;
+  return later === seen.version ? null : seen;
+}
+
+function readSeen(raw: string | null): (AppUpdate & { at: number }) | null {
+  if (!raw) return null;
+  try {
+    const v = JSON.parse(raw) as Partial<AppUpdate & { at: number }>;
+    return typeof v.version === 'string' && typeof v.url === 'string' && typeof v.at === 'number' ? (v as AppUpdate & { at: number }) : null;
+  } catch {
+    return null; // quiet: a broken saved value is the same as none; the next check rewrites it
+  }
+}
+
+/** The update to offer, asking GitHub when the last answer is older than 6 hours. Never throws. */
+export async function findUpdate(current: string | null | undefined, now = Date.now()): Promise<AppUpdate | null> {
+  let seen = readSeen(await getMeta(SEEN_KEY).catch(() => null));
+  if (!seen || now - seen.at > CHECK_EVERY_MS) {
+    try {
+      const res = await fetch(LATEST_URL, { headers: { Accept: 'application/vnd.github+json' } });
+      if (res.ok) {
+        const found = releaseUpdate((await res.json()) as Release);
+        const next = found ? { ...found, at: now } : { version: '', url: '', at: now };
+        seen = next;
+        await enqueueWrite(() => setMeta(SEEN_KEY, JSON.stringify(next)));
+      } else {
+        console.warn('[update] release check answered', res.status);
+      }
+    } catch (e) {
+      console.warn('[update] release check failed', e); // offline: keep the last answer
+    }
+  }
+  const later = await getMeta(LATER_KEY).catch(() => null);
+  return updateToShow(seen && seen.version ? seen : null, current, later);
+}
+
+export async function updateLater(version: string): Promise<void> {
+  await enqueueWrite(() => setMeta(LATER_KEY, version));
+}
