@@ -29,7 +29,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
-| 1. Re-check the two old open server refusals | To do | H1: prove one gym can never see another gym's shop or messages, before real data goes in. Medium. |
+| 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
 | 2. "I agree" + 18+ check + privacy link when joining a gym | To do | D5, D6 (#29 = 18+). Needed before real members join. Large; ships in the next release. |
 | 3. "New version ready" prompt in the app | To do | C6: members get fixes during the trial. Large; same release as 2. |
 | 4. Next release (v0.49.0) with 2 + 3 + microphone removed | To do | Full release gate (tests, both cloud phones, journeys). Microphone already removed in the code (C5). |
