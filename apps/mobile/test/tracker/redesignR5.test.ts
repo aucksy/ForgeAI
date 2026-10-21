@@ -250,6 +250,7 @@ describe('Settings — Hevy’s list of pages', () => {
       'Backup',
       'Export & import',
       'Your data',
+      'Send feedback',
       'About',
     ]);
   });

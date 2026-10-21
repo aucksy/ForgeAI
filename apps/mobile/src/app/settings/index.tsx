@@ -42,6 +42,7 @@ const ICON: Record<SettingsPage, IconName> = {
   backup: 'check',
   export: 'import',
   data: 'trash',
+  feedback: 'chat',
   about: 'globe',
 };
 
@@ -107,6 +108,7 @@ export default function SettingsScreen() {
     backup: null,
     export: null,
     data: null,
+    feedback: null,
     about: versionLine(Constants.expoConfig?.version),
   };
 

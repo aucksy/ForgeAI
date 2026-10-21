@@ -41,6 +41,7 @@ import { ReceiptScreen } from './ui/screens/Receipt';
 import { SettingsScreen } from './ui/screens/Settings';
 import { TodayScreen } from './ui/screens/Today';
 import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
+import { FeedbackScreen } from './ui/screens/Feedback';
 import { Welcome } from './ui/Welcome';
 import { useRoute } from './ui/router';
 
@@ -129,6 +130,8 @@ function Routes({ online }: { online: boolean }) {
       // 18 Oct 2026: routines the gym or a trainer sends to members' ForgeAI app (owner and Staff).
       { path: '/workouts', label: 'Workout plans', icon: 'workouts' },
       { path: '/settings', label: 'Settings', icon: 'settings' },
+      // Launch H7 (21 Oct 2026): write to ForgeAI (problems, ideas). Owner and Staff.
+      { path: '/feedback', label: 'Send feedback', icon: 'more' },
     ]);
   }, [memberViews, snapshot, today, newCount, role]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
@@ -184,6 +187,8 @@ function Screen({ segments }: { segments: string[] }) {
       return <ExpensesScreen />;
     case 'workouts':
       return <WorkoutPlansScreen />;
+    case 'feedback':
+      return <FeedbackScreen />;
     case 'settings':
       // Gym branding: Settings -> Branding (the gym's look in the member app).
       if (id === 'branding') return <BrandingScreen />;

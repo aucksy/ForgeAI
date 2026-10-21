@@ -31,6 +31,7 @@ A lawyer check is still advised before the second gym (open risks at the end).
 | Check-ins (date and time), shop orders, messages with the desk | To run your membership and the gym's shop | As long as the gym keeps its records |
 | The gym's records listed above | So the gym can run memberships, receipts and check-ins | While the gym uses ForgeAI; deleted within 30 days after it leaves (backups expire within 7 more days) |
 | Gym staff: name and mobile | Staff sign-in | While they work there |
+| Feedback you choose to send (Settings → Send feedback): your message, the app version, the phone model, your gym's code, a random number for this install, and a scrambled (one-way) form of your network address. No name or mobile number | To fix problems and decide what to build next | 1 year |
 | Technical logs (sign-ins, errors, the network address of requests) | To keep the service working and safe | Up to 7 days today (our provider's limit); from May 2027, 1 year, as the law then requires |
 
 We do not sell your data, show ads, or use your data to profile you. If we ever add AI features
