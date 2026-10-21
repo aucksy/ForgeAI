@@ -7,11 +7,13 @@
 //               with the app, Android opens the app's "Check in at <gym>" screen instead; this page
 //               is for phones without it ("Open this in the ForgeAI app to check in" + get the app).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
+//  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
 //  - /app       the newest ForgeAI APK (whatever the latest GitHub release is), so the page, the
 //               poster and old messages never point at an old version.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
 
 import { handleFeedback } from './feedback.js';
+import { handleLead } from './leads.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 // The public, read-only app key (the same one in the panel and the app).
@@ -29,6 +31,11 @@ export default {
     if (url.pathname.startsWith('/c/')) return joinPage(request, env, ctx, url, null, CHECKIN);
     if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);
     if (url.pathname === '/api/feedback') return handleFeedback(request, env);
+    if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
+    // Launch I2: the landing page goes public only when the owner says yes (wrangler.jsonc vars.LANDING).
+    if (url.pathname === '/home' || url.pathname.startsWith('/home/')) {
+      return env.LANDING === 'live' ? env.ASSETS.fetch(request) : new Response('Not found', { status: 404 });
+    }
     if (url.pathname.startsWith('/api/')) return new Response('Not found', { status: 404 });
     return env.ASSETS.fetch(request);
   },
