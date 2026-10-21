@@ -19,6 +19,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
+| 40 | Put the new-gym landing page live | A: yes, now |
 
 ---
 
@@ -31,13 +32,13 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 |---|---|---|
 | 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
 | 2. "I agree" + 18+ check + privacy link when joining a gym | Done | 21 Oct: one tick box above Join on the Shop tab and the invite-link screen ("I'm 18 or older, and I agree to ForgeAI's terms and privacy notice", links to both); wrong codes are still told first; 13 phone-test steps tick it (qa/sub-agree.yaml); 3021 tests + typecheck green. Pages privacy.html + terms.html built by scripts/legal_pages.py; they go live with the admin deploy once #37 fills the contact. Ships in v0.49.0 (D5, D6). |
-| 3. "New version ready" prompt in the app | To do | C6: members get fixes during the trial. Large; same release as 2. |
-| 4. Next release (v0.49.0) with 2 + 3 + microphone removed | To do | Full release gate (tests, both cloud phones, journeys). Microphone already removed in the code (C5). |
-| 5. Admin app security header + rollback note | To do | A6: content security policy; how to roll back a deploy. Medium (checked deploy). |
-| 6. Feedback button + automatic sorting | To do | H7; #39 decided: automatic, testers first for 24 h. Ready for trial week 3. Large. |
-| 7. Gym data export and delete | To do | D8: promised in the privacy notice and the agreement. Large. |
-| 8. Landing page + lead form + /app sign-in + "Get started" checklist | To do | R-46, plan section I: research first; free Cloudflare plan; no live database change. Large. |
-| 9. Keep access logs for 1 year | To do | DPDP Rule 6 from May 2027; today the provider keeps about 7 days. Medium. |
+| 3. "New version ready" prompt in the app | Done | 21 Oct: a card on the Workout tab when a newer release exists ("Get it" / "Later"); checks at most every 6 hours. The release now stops if its number differs from the app's own (review find). Ships in v0.49.0 (C6). |
+| 4. Next release (v0.49.0) with 2 + 3 + microphone removed | Doing | Two independent reviews done (fixes applied); all 3,029 app tests green; both cloud phones and the cross-role journeys running on the release build. One test-script fault found and fixed on the way (U-Q4). Also carries Settings → Send feedback. |
+| 5. Admin app security header + rollback note | Done | 21 Oct: live. The admin app runs only its own scripts and talks only to the gym server; every admin journey runs under that rule (J29). Rollback = one command, written in the admin README (A6). |
+| 6. Feedback button + automatic sorting | Done | 21 Oct: More → Send feedback in the admin app (live) and Settings → Send feedback in the member app (v0.49.0). Kept in Cloudflare's free database, not the gym server; no name or number; 20 a day per phone. How Claude sorts it: docs/launch/FEEDBACK.md. The twice-a-day schedule starts with trial week 3 (H7). |
+| 7. Gym data export and delete | Done | 21 Oct, live: Settings → Your data → "Download all your gym's data" (Excel, one sheet per record type, + full copy). Online gyms: "Delete our gym from ForgeAI" sends a request; the real delete is a checked step with your yes each time (docs/launch/GYM-DELETE.md) (D8). |
+| 8. Landing page + lead form + /app sign-in + "Get started" checklist | Doing | 21 Oct: "Get started" list on Today is live (I5). Landing page (English + Hindi, real app pictures) and the free-demo form are built and tested, but hidden on the live site until your yes (#40). The admin app stays at the root until the page is live. |
+| 9. Keep access logs for 1 year | Blocked | Needs either Supabase's paid log export or a live database change, both your call; due before May 2027. Plan in CLAUDE-NOTES R-49. Medium. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
@@ -183,18 +184,31 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Owner inbox page | Live | A private page where you read answers, mark them read and send your picks. |
 | Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
 | Play Store release | Planned | Google's pre-launch tests and the Play Store listing are not started yet. |
-| Landing page, leads and new-gym onboarding | Planned | A modern Hindi + English page at forgeai.aakashpahuja.in: "Book a free demo" (leads saved privately for you), "Try the demo gym", "Sign in" for clients; then a "Get started" checklist for each new gym. |
+| Landing page, leads and new-gym onboarding | Waiting for you | A modern Hindi + English page at forgeai.aakashpahuja.in: "Book a free demo" (leads saved privately for you), "Try the demo gym", "Sign in" for clients; then a "Get started" checklist for each new gym. |
 | Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). |
 | Test server before live | Planned | A second server where every change is tried before it reaches the gym. |
 | Crash and outage alerts | Planned | Crash reports from both apps and a "site is down" alert to your phone, so we hear before the gym calls. |
 | Real-phone tests on Google's lab | Waiting for you | Built: Google's robot tries each release on 5 real phones; needs your free setup (#25). |
 | "New version ready" in the app | Planned | Members are told when an update is ready. |
 | Privacy notice, terms and consent | Planned | Plain-English (and Hindi) notice in both apps, a consent screen when joining a gym, a named complaints contact. |
-| Gym data export and delete | Planned | A gym can download all its data in one tap, and have it deleted if it leaves. |
-| Feedback by text or voice, sorted and fixed by Claude | Waiting for you | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
+| Gym data export and delete | Live | A gym can download all its data in one tap (Excel), and ask to be deleted if it leaves. |
+| Feedback by text or voice, sorted and fixed by Claude | Next release | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
 | Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). |
 
 ---
+
+## 40. Launch decision: put the new-gym landing page live — 21 Oct 2026
+**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Status:** WAITING FOR YOU
+**What it is:** a page for gym owners who don't use ForgeAI yet: "Never miss a renewal again", real
+pictures of the admin app, the free member app, 4 common questions, and a "Free demo" form (WhatsApp
+number, gym name, city). English and Hindi. No prices (you have not picked one, #30). It is built and
+tested, and switched OFF on the live site today because it is public marketing in your name.
+**Where:** it would live at forgeai.aakashpahuja.in/home/ first; the admin app keeps its address.
+New demo requests reach me; I tell you each one so you or I can call back.
+**Decide:** Put the landing page live now?
+- A: Yes, now (recommended). It costs nothing and you can share the link with gym owners today.
+- B: Not yet. It stays off until you say so.
 
 ## 39. Is an automatic feedback loop (send feedback, Claude sorts it, fixes it, releases it) in the plan? — 19 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases

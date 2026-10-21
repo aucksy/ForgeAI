@@ -5,6 +5,38 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-49. "Limit is reset, complete all your tasks without stopping" — 21 Oct 2026
+**Owner said:** "okay limit is reset.. now complete all your tasks without stopping".
+**What I did (PC session), in queue order:**
+- **3 New version card (C6):** Workout tab card from GitHub's latest release, every 6 h at most;
+  release-apk.yml now refuses a tag that differs from app.json (review MUST-FIX).
+- **4 v0.49.0:** app.json 0.49.0 at cc4440e; review 1 (subagent) + review 2 (feedback diff); fixes
+  applied; phone runs restarted twice (silent-catch ratchet fix 1b23323; test-script Back fault
+  U-Q4 at 7d5ea4d). Tag goes on a release commit made ON the tested commit (worktree), because later
+  admin / Worker commits are not paperwork for phone_gate.
+- **5 Security policy (A6):** public/_headers CSP; vite preview sends it so all journeys run under it;
+  J29. Cloudflare's own analytics beacon allowed after the live check. README: checked deploy +
+  `wrangler rollback`.
+- **6 Feedback (H7):** /api/feedback in the panel Worker -> D1 forgeai-web (created 21 Oct, id in
+  wrangler.jsonc); secret FEEDBACK_SALT set with `wrangler secret put` (in no file). Admin More page
+  live; member Settings page ships in v0.49.0. Runbook docs/launch/FEEDBACK.md; scripts/feedback.py.
+  Privacy notice + Hindi: feedback row (1 year). Known small gap (next release): a very fast double
+  tap on Send can send twice.
+- **7 Gym data (D8):** Excel + JSON download (owner); delete request -> runbook GYM-DELETE.md (call
+  back, owner's yes, SQL in the dashboard tab only).
+- **8 New gyms (I1-I5):** research brief (subagent, sourced) — Indian rivals lead with "free demo",
+  WhatsApp button, rupee prices; short phone-first forms. Built: "Get started" list (live), landing
+  page /home/ EN+HI with real pictures, /api/lead -> D1 leads, scripts/leads.py. Page and form are
+  OFF live (vars.LANDING) until his yes: inbox #40 (public marketing in his name). /app stays the
+  APK link; the admin app keeps the root until the page goes live (then decide: admin at /admin).
+  No WhatsApp button yet: no business number (part of #37).
+- **9 Access logs 1 year:** blocked. Options: (a) Supabase log drain (paid add-on) — money, his call;
+  (b) a server access-log table written by the sign-in and pull functions, kept 1 year by a nightly
+  delete — a LIVE migration, his yes; _staff() is STABLE, so logging must sit in the volatile entry
+  functions, not there. Due before 13 May 2027. Recommend (b) in the staging work (#27).
+- **Review note:** the 18+ tick is not recorded on the server (needs a LIVE migration); fine for the
+  trial, add a "terms version agreed" field with the next server change.
+
 ## R-48. Re-prioritise my tasks; keep docs current; local = GitHub; rename to Project Tracker — 21 Oct 2026
 **Owner said:** "go thru all your pending tasks and re-prioritize them / re-order in the owner inbox -
 you can decide the sequence / keep docs updated as I will compact / ... ensure all the recent changes
