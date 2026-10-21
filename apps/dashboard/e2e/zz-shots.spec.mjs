@@ -1,5 +1,7 @@
 // Pictures of the real admin app (demo gym, phone size) for the landing page (launch I2).
-// Only with SHOTS=1:  SHOTS=1 npx playwright test zz-shots  ->  public/home/*.png
+// Only with SHOTS=1:  SHOTS=1 npx playwright test zz-shots  ->  public/home/*.png. The page ships two webp
+// crops of them, made with PIL (quality 80): tiles.webp = today.png rows 470-1430, dues-list.webp =
+// dues.png rows 195-900. Delete the .png files afterwards; the page loads only the two crops.
 import { test } from '@playwright/test';
 
 import { open, openApp, startDemo } from './support.mjs';

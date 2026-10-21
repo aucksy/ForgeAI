@@ -146,6 +146,71 @@
     if (again) again.addEventListener('click', play);
   }
 
+  // Leader lines: each call-out or price tag (data-target, data-side) gets a hand-drawn line to the
+  // part of the app it names. The line runs to a gutter beside the phone (data-side = which side),
+  // along it, then into the target, so it never cuts across the label text it starts from.
+  var NS = 'http://www.w3.org/2000/svg';
+  function drawLeaders() {
+    Array.prototype.forEach.call(document.querySelectorAll('.leads-host'), function (host) {
+      var svg = host.querySelector(':scope > svg.leaders');
+      if (!svg) return;
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      var H = host.getBoundingClientRect();
+      var lane = { left: 0, right: 0 };
+      Array.prototype.forEach.call(host.querySelectorAll('[data-target]'), function (tag) {
+        var target = host.querySelector(tag.dataset.target);
+        var phone = target && target.closest('.phone');
+        if (!target || !phone || !tag.offsetParent) return;
+        var T = tag.getBoundingClientRect(), G = target.getBoundingClientRect(), P = phone.getBoundingClientRect();
+        var right = tag.dataset.side === 'right';
+        // each line gets its own lane beside the phone, so two lines never run on top of each other
+        var k = lane[right ? 'right' : 'left']++;
+        var gx = (right ? P.right + 12 + k * 12 : P.left - 12 - k * 12) - H.left;
+        // data-anchor="under": run along the target's bottom edge (a table header's own rule) to its
+        // middle, so the line never crosses the words beside it.
+        var under = tag.dataset.anchor === 'under';
+        var gy = (under ? G.bottom : G.top + G.height / 2) - H.top;
+        var ex = (under ? G.left + G.width / 2 : right ? G.right + 3 : G.left - 3) - H.left;
+        var tl = T.left - H.left, tr = T.right - H.left, tt = T.top - H.top, tb = T.bottom - H.top;
+        var d;
+        if (gx > tl && gx < tr) {
+          var sy = tt > gy ? tt : tb;
+          d = 'M' + gx + ' ' + sy + ' V' + gy + ' H' + ex;
+        } else {
+          var sx = gx > tr ? tr : tl;
+          var ty = tt + (tb - tt) / 2;
+          d = 'M' + sx + ' ' + ty + ' H' + gx + ' V' + gy + ' H' + ex;
+        }
+        var path = document.createElementNS(NS, 'path');
+        path.setAttribute('d', d);
+        var dot = document.createElementNS(NS, 'circle');
+        dot.setAttribute('cx', ex);
+        dot.setAttribute('cy', gy);
+        dot.setAttribute('r', 3.5);
+        var lead = getComputedStyle(tag).getPropertyValue('--lead');
+        if (lead) { path.style.stroke = lead; dot.style.fill = lead; }
+        svg.appendChild(path);
+        svg.appendChild(dot);
+      });
+    });
+  }
+  var leadQueued = false;
+  function queueLeaders() {
+    if (leadQueued) return;
+    leadQueued = true;
+    requestAnimationFrame(function () { leadQueued = false; drawLeaders(); });
+  }
+  window.addEventListener('resize', queueLeaders);
+  window.addEventListener('load', queueLeaders);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueLeaders);
+  if ('ResizeObserver' in window) {
+    var ro = new ResizeObserver(queueLeaders);
+    Array.prototype.forEach.call(document.querySelectorAll('.leads-host'), function (h) { ro.observe(h); });
+  }
+  btn.addEventListener('click', queueLeaders);
+  nameBox.addEventListener('input', queueLeaders);
+  queueLeaders();
+
   // 4. Free demo forms ---------------------------------------------------------------------------
   var WORDS = {
     en: { phone: 'Type a 10-digit mobile number.', gym: 'Type your gym’s name first (in the coloured box above).', gym2: 'Type your gym’s name.', sending: 'Sending…', ok: 'Thank you! We will call you soon.', fail: 'Could not send. Check your internet and try again.' },
