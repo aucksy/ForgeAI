@@ -5,6 +5,17 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-50. Landing page: lead with our USP, modern and jaw-dropping — 21 Oct 2026
+**Owner said:** "'never miss a renewal' is not our USP. I feel our USP is the member app which
+encourages members to progress so they dont quit, plus the shop on which the GYM owner can sell and in
+app notification... so you really study all which we will offer (even if its not yet built) and make
+landing page which really sets us apart because of high value we are giving compared to competition.
+please make the landing page using modern website techniques.. make it unique and jaw dropping"
+**What I do:** rebuild /home/ around the member app (progress -> members stay), the gym shop and gym
+messages; planned features shown as "coming", never as live; interactive demos (the visitor brands a
+live phone with their own gym name and colour), scroll-driven story, Hindi + English. Still off live
+until his yes (#40). Saved as Brain note marketing-leads-with-what-sets-us-apart + Projects/forgeai.md.
+
 ## R-49. "Limit is reset, complete all your tasks without stopping" — 21 Oct 2026
 **Owner said:** "okay limit is reset.. now complete all your tasks without stopping".
 **What I did (PC session), in queue order:**
