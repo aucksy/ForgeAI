@@ -37,6 +37,7 @@ import {
   font,
   space,
 } from '../kit';
+import { GymDataActions } from '../GymDataActions';
 
 export function SettingsScreen() {
   const { snapshot, updateGym, loadDemoGym, startEmptyGym } = useCrm();
@@ -181,6 +182,9 @@ export function SettingsScreen() {
             Import members from Excel
           </Button>
         </div>
+
+        {/* Launch D8: take everything away (Excel + full copy); an online gym can ask to be deleted. */}
+        {canErase && <GymDataActions online={online} />}
 
         {/* UAT U-A13: a gym this browser could not read is kept, and stays downloadable here. */}
         {kept && (
