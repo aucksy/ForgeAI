@@ -5,6 +5,17 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-47. RS20 menu asks for a manager code; is there a default, and Windows software? — 21 Oct 2026
+**Owner asked:** the RS20 menu asks for a manager access code: is there a default? Is there companion
+Windows software to check settings over USB?
+**Answer (chat):** best first: the gym's admin (owner / whoever set it up) opens the menu with their finger
+or PIN. Published default for Realtime RS-9 / NewT-401F / BS-30 / BS-160 (technodiblog, 2019): Menu, ID
+999999999, password 83265736; unconfirmed for the RS20. Max 1-2 tries: too many wrong tries can self-lock
+the menu. Only with the gym owner's OK, and only to look at Comm settings (don't change the admin's
+privilege). Windows software: Realsoft v12.6 (official page realtimebiometrics.com/software/realsoft-v126,
+Google Drive file 1khQF81HXo9WECvPl0K2PPg75DjiSomXx); connects over LAN (USB on the RS20 is listed as
+"USB drive / link", likely a pen drive for data, not a PC cable). Realtime support can remove a lost admin.
+
 ## R-46. Plan new-gym onboarding: landing page, lead capture, client sign-in — 20 Oct 2026
 **Owner said:** "add to plan to ensure that new GYM onboarding is sorted - If we were to do marketing and
 then we gotta have a professional modern convincing landing page.. and option to capture the lead and
