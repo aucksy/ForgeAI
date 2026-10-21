@@ -8,7 +8,8 @@
 // to stop floods). Kept 1 year (the privacy notice says so).
 
 export const MAX_TEXT = 2000;
-export const PER_DAY = 20; // messages one network address may send in 24 hours
+export const PER_DAY = 20; // messages one network address, or one install, may send in 24 hours
+export const ALL_PER_DAY = 1000; // all messages together in 24 hours (keeps the free database's limits safe)
 
 const SHORT = 120;
 
@@ -35,8 +36,8 @@ export function checkFeedback(body) {
   };
 }
 
-async function hashIp(ip) {
-  const data = new TextEncoder().encode(`forgeai-feedback:${ip}`);
+async function hashIp(ip, salt, day) {
+  const data = new TextEncoder().encode(`${salt}:${day}:${ip}`);
   const digest = await crypto.subtle.digest('SHA-256', data);
   return [...new Uint8Array(digest)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
@@ -51,10 +52,12 @@ function answer(status, body) {
 /** POST /api/feedback -> 201 { ok: true } | 400/405/413/429/503 { error }. */
 export async function handleFeedback(request, env, now = new Date()) {
   if (request.method !== 'POST') return answer(405, { error: 'Use POST.' });
-  if (!env.WEB) {
-    console.error('[feedback] no D1 binding WEB');
+  if (!env.WEB || !env.FEEDBACK_SALT) {
+    console.error('[feedback] not set up: D1 binding WEB or secret FEEDBACK_SALT missing');
     return answer(503, { error: 'Feedback is not set up yet.' });
   }
+  // Refuse a big body before reading it (the length the sender declares), then check what came.
+  if (Number(request.headers.get('Content-Length') || 0) > MAX_TEXT * 4) return answer(413, { error: 'Too long.' });
   const raw = await request.text();
   if (raw.length > MAX_TEXT * 4) return answer(413, { error: 'Too long.' });
   let body;
@@ -66,12 +69,18 @@ export async function handleFeedback(request, env, now = new Date()) {
   const checked = checkFeedback(body);
   if (checked.error) return answer(400, { error: checked.error });
   const v = checked.value;
-  const ipHash = await hashIp(request.headers.get('CF-Connecting-IP') || 'unknown');
   const at = now.toISOString();
+  const ipHash = await hashIp(request.headers.get('CF-Connecting-IP') || 'unknown', env.FEEDBACK_SALT, at.slice(0, 10));
   const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
   try {
-    const row = await env.WEB.prepare('SELECT COUNT(*) AS n FROM feedback WHERE ip_hash = ? AND at > ?').bind(ipHash, dayAgo).first();
-    if (row && row.n >= PER_DAY) return answer(429, { error: 'Too many messages today. Try again tomorrow.' });
+    const row = await env.WEB.prepare(
+      "SELECT COUNT(*) AS n, SUM(ip_hash = ?) AS ip, SUM(sender <> '' AND sender = ?) AS me FROM feedback WHERE at > ?",
+    )
+      .bind(ipHash, v.sender, dayAgo)
+      .first();
+    if (row && (row.n >= ALL_PER_DAY || row.ip >= PER_DAY || row.me >= PER_DAY)) {
+      return answer(429, { error: 'Too many messages today. Try again tomorrow.' });
+    }
     await env.WEB.prepare(
       'INSERT INTO feedback (at, source, text, app, device, screen, gym, sender, ip_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
     )
