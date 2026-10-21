@@ -16,6 +16,7 @@ export const WHATS_NEW: Readonly<Record<string, readonly string[]>> = {
     'Finished a workout without a routine? Save its exercises as a routine in one tap.',
     'During rest, tap the rest clock: a big "In use" timer shows others the machine is taken.',
     'Change an exercise\'s rest while its timer runs, and the running timer changes too.',
+    'Linked Google Drive? Your workouts now back up by themselves after every workout.',
   ],
 };
 
