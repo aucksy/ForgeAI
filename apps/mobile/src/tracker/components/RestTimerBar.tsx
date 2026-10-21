@@ -14,7 +14,7 @@
 import { useEffect, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
-import { MachineInUse } from './MachineInUse';
+import { MachineInUse, machineName } from './MachineInUse';
 
 import { ConfirmSheet, Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
@@ -139,6 +139,9 @@ export function RestTimerBar() {
   const addSec = useRestTimer((s) => s.addSec);
   const skip = useRestTimer((s) => s.skip);
   const nextLabel = useRestTimer((s) => s.nextLabel);
+  // "In use" names the lift whose tick started this rest (the machine the member is on), not the next one.
+  const startedBy = useRestTimer((s) => s.source?.exKey ?? null);
+  const machine = useActiveWorkout((s) => (startedBy ? s.exercises.find((e) => e.key === startedBy)?.name ?? null : null));
   const remaining = useRestRemaining();
   const checks = useAlertChecks(endsAt);
   const [inUse, setInUse] = useState(false);
@@ -224,7 +227,7 @@ export function RestTimerBar() {
         </Pressable>
       ) : null}
       {ask}
-      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} nextLabel={nextLabel} onClose={() => setInUse(false)} />
+      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} machine={machine ?? machineName(nextLabel)} onClose={() => setInUse(false)} />
     </View>
   );
 }

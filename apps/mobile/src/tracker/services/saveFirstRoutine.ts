@@ -16,9 +16,12 @@ export const SAVE_FIRST_ROUTINE = {
   failed: "Couldn't save the routine. Your workout is saved.",
 } as const;
 
-/** The offer shows for a workout not started from a routine, with exercises, when no routine exists. PURE. */
-export function offersFirstRoutine(data: Pick<SessionSummaryData, 'routineName' | 'exerciseCount'>, routineCount: number): boolean {
-  return data.routineName == null && data.exerciseCount > 0 && routineCount === 0;
+/**
+ * The offer shows for a workout not started from a routine (its own saved link, review 21 Oct: the
+ * name is empty for a routine deleted since), with exercises, when no routine exists. PURE.
+ */
+export function offersFirstRoutine(data: Pick<SessionSummaryData, 'routineName' | 'exerciseCount' | 'session'>, routineCount: number): boolean {
+  return data.session?.routineId == null && data.routineName == null && data.exerciseCount > 0 && routineCount === 0;
 }
 
 /** The new routine's name and exercises from the finished workout. PURE. */

@@ -15,7 +15,7 @@ export const IN_USE_WORDS = {
   close: "I'm back",
 } as const;
 
-/** "Bench Press, set 3" -> "Bench Press": the machine, not the set. PURE. */
+/** "Bench Press, set 3" -> "Bench Press": the fallback when the rest has no starting lift. PURE. */
 export function machineName(nextLabel: string | null): string | null {
   const name = (nextLabel ?? '').split(',')[0].trim();
   return name || null;
@@ -26,16 +26,16 @@ export function MachineInUse({
   visible,
   remaining,
   clock,
-  nextLabel,
+  machine,
   onClose,
 }: {
   visible: boolean;
   remaining: number;
   clock: string;
-  nextLabel: string | null;
+  /** The lift whose tick started this rest (RestTimerBar finds it), or null. */
+  machine: string | null;
   onClose: () => void;
 }) {
-  const machine = machineName(nextLabel);
   return (
     <Modal visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
       <Pressable

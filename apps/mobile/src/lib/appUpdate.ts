@@ -11,6 +11,7 @@
  */
 import { getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
+import { fetchWithTimeout } from '@/lib/fetchTimeout';
 
 export const LATEST_URL = 'https://api.github.com/repos/aucksy/ForgeAI/releases/latest';
 const CHECK_EVERY_MS = 6 * 60 * 60 * 1000;
@@ -77,7 +78,7 @@ export async function findUpdate(current: string | null | undefined, now = Date.
   let seen = readSeen(await readMeta(SEEN_KEY));
   if (!seen || now - seen.at > CHECK_EVERY_MS) {
     try {
-      const res = await fetch(LATEST_URL, { headers: { Accept: 'application/vnd.github+json' } });
+      const res = await fetchWithTimeout(LATEST_URL, { headers: { Accept: 'application/vnd.github+json' } });
       if (res.ok) {
         const found = releaseUpdate((await res.json()) as Release);
         const next = found ? { ...found, at: now } : { version: '', url: '', at: now };

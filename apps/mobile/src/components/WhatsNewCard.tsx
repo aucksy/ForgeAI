@@ -42,7 +42,7 @@ export function WhatsNewCard() {
         onPress={done}
         accessibilityRole="button"
         accessibilityLabel="Got it. Hide what's new"
-        style={{ minHeight: 48, justifyContent: 'center', alignSelf: 'flex-start' }}
+        style={{ minHeight: 48, minWidth: 48, justifyContent: 'center', alignSelf: 'flex-start' }}
       >
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Got it</Text>
       </Pressable>

@@ -4,6 +4,8 @@ import { WHATS_NEW, whatsNewToShow } from '@/lib/whatsNew';
 
 describe("What's new after an update", () => {
   const v = '0.50.0';
+  // Review 21 Oct: v0.49 never saved its version, so 0.49 -> 0.50 is "remembered", not shown;
+  // the first update that shows news is 0.50 -> 0.51. The rule itself is what is tested here.
   it('after an update the news shows once', () => {
     expect(whatsNewToShow(v, '0.49.0')).toEqual(WHATS_NEW[v]);
     expect(whatsNewToShow(v, v)).toBeNull(); // "Got it" pressed, or already remembered

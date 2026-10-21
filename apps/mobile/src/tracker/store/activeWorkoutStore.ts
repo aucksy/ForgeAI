@@ -2046,7 +2046,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const timer = useRestTimer.getState();
       const runningFor = timer.endsAt != null && timer.source ? get().exercises.find((e) => e.key === timer.source?.exKey) : undefined;
       if (runningFor && runningFor.exerciseId === ex.exerciseId) {
-        const shift = runningRestShift(effectiveRestSec(ex, timer.defaultSec), effectiveRestSec({ restSec }, timer.defaultSec));
+        // The old length is the running card's own (the same lift twice can carry two routine rests).
+        const shift = runningRestShift(effectiveRestSec(runningFor, timer.defaultSec), effectiveRestSec({ restSec }, timer.defaultSec));
         if (shift != null) timer.addSec(shift);
       }
       // Same lift twice in one workout shares the setting, as it will next time.

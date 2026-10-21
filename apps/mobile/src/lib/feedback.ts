@@ -9,6 +9,7 @@ import { Platform } from 'react-native';
 
 import { getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
+import { fetchWithTimeout } from '@/lib/fetchTimeout';
 import { uuid } from '@/lib/uuid';
 
 export const FEEDBACK_URL = 'https://forgeai.aakashpahuja.in/api/feedback';
@@ -67,7 +68,7 @@ export async function sendFeedback(text: string, extra: { app?: string; gym?: st
     sender: await senderId(),
   };
   try {
-    const res = await fetch(FEEDBACK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const res = await fetchWithTimeout(FEEDBACK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     let answer: unknown = null;
     try {
       answer = await res.json();
