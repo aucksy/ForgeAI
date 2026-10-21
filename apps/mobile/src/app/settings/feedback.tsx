@@ -1,6 +1,6 @@
 /** Settings → Send feedback (launch H7): type or speak (keyboard microphone), then Send. */
 import Constants from 'expo-constants';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Text, TextInput } from 'react-native';
 
 import { SettingsPage } from '@/components/settings/SettingsPage';
@@ -14,12 +14,16 @@ export default function FeedbackPage() {
   const [sending, setSending] = useState(false);
   const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
+  // A ref, not the state: two taps in the same frame both see `sending` still false (review, 21 Oct).
+  const busy = useRef(false);
 
   const send = async () => {
-    if (sending) return;
+    if (busy.current) return;
+    busy.current = true;
     setSending(true);
     setNote(null);
     const r = await sendFeedback(text, { app: Constants.expoConfig?.version, gym, screen: 'settings/feedback' });
+    busy.current = false;
     setSending(false);
     if (r.ok) {
       setText('');
