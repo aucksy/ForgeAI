@@ -200,10 +200,14 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 ## 40. Launch decision: put the new-gym landing page live — 21 Oct 2026
 **Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
 **Status:** WAITING FOR YOU
-**What it is:** a page for gym owners who don't use ForgeAI yet: "Never miss a renewal again", real
-pictures of the admin app, the free member app, 4 common questions, and a "Free demo" form (WhatsApp
-number, gym name, city). English and Hindi. No prices (you have not picked one, #30). It is built and
-tested, and switched OFF on the live site today because it is public marketing in your name.
+**What it is (rebuilt 21 Oct on your note "our USP is the member app"):** a page for gym owners
+who don't use ForgeAI yet, designed like a supplement tub label (the thing every owner sells from his
+own shelf). It leads with "Keeps members coming back": the visitor types their gym's name and picks
+its colour, and the member app on the page turns into theirs. Then a member's workout plays (sets
+tick, "kg to beat" counts down, NEW RECORD), a "Member Facts" panel (live features ticked, planned
+ones marked "Coming"), your shop inside the app, messages to every member, the desk work in one
+line, and a "Free demo" form. Three real, sourced numbers on why progress keeps members. English and
+Hindi. No prices (you have not picked one, #30). Built and tested; switched OFF on the live site.
 **Where:** it would live at forgeai.aakashpahuja.in/home/ first; the admin app keeps its address.
 New demo requests reach me; I tell you each one so you or I can call back.
 **Decide:** Put the landing page live now?
