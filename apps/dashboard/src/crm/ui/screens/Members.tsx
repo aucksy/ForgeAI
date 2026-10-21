@@ -51,9 +51,9 @@ type Filter = 'all' | MemberState | 'dues' | 'archived' | 'pt-ending' | `tile:${
  * Two lists under one tab: the gym's own roster (everyone who pays), and the
  * members who joined in the ForgeAI app with the gym's code (`/members/app`).
  */
-export function MembersScreen({ section, filter: initialFilter }: { section?: 'app'; filter?: TileFilter } = {}) {
+export function MembersScreen({ section, filter: initialFilter, startAdding }: { section?: 'app'; filter?: TileFilter; startAdding?: boolean } = {}) {
   const { memberViews } = useCrm();
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useState(Boolean(startAdding));
   const app = section === 'app';
   return (
     <>

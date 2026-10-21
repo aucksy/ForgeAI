@@ -10,6 +10,7 @@
 import { collectedOn, tileCounts } from '../../logic/homeTiles';
 import { dueCount } from '../../logic/enquiries';
 import { GetStartedCard } from '../GetStartedCard';
+import { QuickActions } from '../QuickActions';
 import { InstallCard } from '../InstallCard';
 import { useCan } from '../../auth/AuthProvider';
 import { useMemo } from 'react';
@@ -112,6 +113,9 @@ export function TodayScreen() {
         subtitle={formatDay(today)}
         actions={<Button onClick={() => navigate('/members')}>Open Members</Button>}
       />
+
+      {/* Backlog (21 Oct): big buttons for the desk's common jobs, chosen and ordered by the owner. */}
+      <QuickActions />
 
       {/* Launch I5: a new gym's first five steps (owner only; gone when done or hidden). */}
       <GetStartedCard />

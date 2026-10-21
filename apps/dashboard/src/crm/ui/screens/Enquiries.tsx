@@ -67,11 +67,11 @@ function filterLabel(f: EnquiryFilter): string {
   }
 }
 
-export function EnquiriesScreen() {
+export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {}) {
   const { snapshot, today, updateEnquiry } = useCrm();
   const enquiries = snapshot.enquiries ?? [];
   const [filter, setFilter] = useState<EnquiryFilter>('due');
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useState(Boolean(startAdding));
   const [rescheduling, setRescheduling] = useState<Enquiry | null>(null);
   const [converting, setConverting] = useState<Enquiry | null>(null);
   const [error, setError] = useState<string | null>(null);

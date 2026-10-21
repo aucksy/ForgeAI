@@ -165,6 +165,8 @@ function Screen({ segments }: { segments: string[] }) {
       if (id === 'app') return <MembersScreen section="app" />;
       // `/members/import`: bring members in from an Excel or CSV file (owner and Staff).
       if (id === 'import') return <ImportMembersScreen />;
+      // `/members/new`: the quick button "New member" opens the add form at once.
+      if (id === 'new') return <MembersScreen startAdding />;
       // `/members/f/<tile>`: the roster filtered like the home tile that was tapped.
       if (id === 'f') return <MembersScreen key={segments[2]} filter={isTileFilter(segments[2]) ? segments[2] : undefined} />;
       return id ? <MemberDetailScreen memberId={id} /> : <MembersScreen />;
@@ -182,7 +184,7 @@ function Screen({ segments }: { segments: string[] }) {
     case 'more':
       return <MoreScreen />;
     case 'enquiries':
-      return <EnquiriesScreen />;
+      return <EnquiriesScreen startAdding={id === 'new'} />;
     case 'expenses':
       return <ExpensesScreen />;
     case 'workouts':
