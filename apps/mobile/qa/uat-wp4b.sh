@@ -166,6 +166,9 @@ part_uf() {
   uat_part uf1 uat-f1.yaml || return 1
   n=$(uat_workouts uf1)
   [ -n "$n" ] || { uat_fail UF "could not read the Profile's 'Workouts: N' (uf1-ui.txt)"; return 1; }
+  # The workout starts in UF2, and a workout belongs to the day it STARTED: that is the day UF5 opens
+  # in the Calendar (owner run 39647358581 crossed midnight in India between UF2 and UF5, U-Q6).
+  today=$(adb shell "date '+%A %d %B'" 2>/dev/null | tr -d '\r' | sed -E 's/ 0([0-9]) / \1 /')
   uat_part uf2 uat-f2.yaml || return 1
   # 1. Another program holds the database's write lock.
   : > "$OUT/uat-uf-lock.txt"
@@ -212,8 +215,7 @@ part_uf() {
   fi
   uroot unfill >> "$OUT/uat-uf-fill.txt"
   log "UAT UF: space freed again ($(tail -1 "$OUT/uat-uf-fill.txt" | tr -s ' '))"
-  # 3. Finish again if needed; exactly one more workout, with both sets, under today's date.
-  today=$(adb shell "date '+%A %d %B'" 2>/dev/null | tr -d '\r' | sed -E 's/ 0([0-9]) / \1 /')
+  # 3. Finish again if needed; exactly one more workout, with both sets, under the day it started.
   uat_part uf5 uat-f5.yaml -e WANT="$(( n + 1 ))" -e TODAY="$today" && \
     log "UAT UF: after the retry exactly one workout was saved (Workouts: $n -> $(( n + 1 ))) with both sets; no banner left"
 }
