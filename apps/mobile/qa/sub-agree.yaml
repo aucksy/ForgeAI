@@ -1,0 +1,15 @@
+# Launch D5/D6 (21 Oct 2026): before joining a gym the member ticks "I'm 18 or older, and I agree
+# to ForgeAI's terms and privacy notice". Ticks it only when not yet ticked (a second call is a no-op).
+appId: com.forgeai.app
+---
+- hideKeyboard
+- scrollUntilVisible:
+    element: "I'm 18 or older.*"
+    timeout: 15000
+- runFlow:
+    when:
+      visible:
+        text: "I'm 18 or older.*"
+        checked: false
+    commands:
+      - tapOn: "I'm 18 or older.*"

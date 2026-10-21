@@ -30,7 +30,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | Task | Status | Details |
 |---|---|---|
 | 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
-| 2. "I agree" + 18+ check + privacy link when joining a gym | To do | D5, D6 (#29 = 18+). Needed before real members join. Large; ships in the next release. |
+| 2. "I agree" + 18+ check + privacy link when joining a gym | Done | 21 Oct: one tick box above Join on the Shop tab and the invite-link screen ("I'm 18 or older, and I agree to ForgeAI's terms and privacy notice", links to both); wrong codes are still told first; 13 phone-test steps tick it (qa/sub-agree.yaml); 3021 tests + typecheck green. Pages privacy.html + terms.html built by scripts/legal_pages.py; they go live with the admin deploy once #37 fills the contact. Ships in v0.49.0 (D5, D6). |
 | 3. "New version ready" prompt in the app | To do | C6: members get fixes during the trial. Large; same release as 2. |
 | 4. Next release (v0.49.0) with 2 + 3 + microphone removed | To do | Full release gate (tests, both cloud phones, journeys). Microphone already removed in the code (C5). |
 | 5. Admin app security header + rollback note | To do | A6: content security policy; how to roll back a deploy. Medium (checked deploy). |

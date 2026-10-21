@@ -16,7 +16,7 @@ A lawyer check is still advised before the second gym (open risks at the end).
 
 ### Who is responsible for what
 - **Your gym's records about you** (membership, payments, receipts, visits, shop orders, messages
-  with the desk): your **gym** is responsible: [GYM NAME, address, phone]. ForgeAI stores and
+  with the desk): your **gym** is responsible (its name and contact are in the app under Settings → Your gym, and at its desk). ForgeAI stores and
   processes them for the gym, under a written agreement.
 - **Your ForgeAI account and our technical logs:** **ForgeAI** is responsible.
 - **Your workouts** (exercises, sets, weights, body weight, progress photos) stay **on your phone**.

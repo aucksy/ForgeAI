@@ -23,6 +23,8 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { afterJoinPath, codeFromInvite, gymInitial, inviteStanding, previewErrorText, type GymPreview } from './gym';
 import { joinFromInvite } from './gymActions';
+import { JoinAgreement } from './JoinAgreement';
+import { agreementWords } from './joinTerms';
 import { askAndSwitchGym } from './leaveFlow';
 import { apiPreview } from './gymApi';
 import { useGymShop } from './gymStore';
@@ -42,6 +44,7 @@ export function InviteScreen() {
   const [name, setName] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [agreed, setAgreed] = useState(false);
   const nameTouched = useRef(false);
 
   // This screen is open: a code kept from the welcome flow (app/_layout.tsx) has done its job.
@@ -83,6 +86,12 @@ export function InviteScreen() {
 
   const onJoin = async () => {
     if (busy || !code) return;
+    // Launch D5/D6: 18+ and the terms, ticked before anything is sent.
+    const notAgreed = agreementWords(agreed);
+    if (notAgreed) {
+      setError(notAgreed);
+      return;
+    }
     setBusy(true);
     setError(null);
     // UAT U-G1: a switch leaves the old gym, so its open orders are asked about and cancelled first.
@@ -156,6 +165,7 @@ export function InviteScreen() {
                   style={shopInputStyle()}
                 />
               </View>
+              <JoinAgreement agreed={agreed} onChange={(v) => { setAgreed(v); setError(null); }} />
               <InlineError message={error ?? null} />
               <PrimaryButton
                 label={standing === 'other' ? 'Switch to this gym' : 'Join this gym'}

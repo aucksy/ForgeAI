@@ -28,6 +28,8 @@ import { askAndLeaveGym } from './leaveFlow';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { GymShortcutOffer } from './GymShortcutOffer';
+import { JoinAgreement } from './JoinAgreement';
+import { agreementWords } from './joinTerms';
 import { MembershipCard } from './MembershipCard';
 import { ProductPicture } from './ProductPicture';
 import { BagButton, BellButton, DEMO_SHOP_LINE, DemoNote, MyOrdersRow, QuietLine, shopInputStyle } from './ShopParts';
@@ -57,6 +59,7 @@ function JoinShop() {
   const [name, setName] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [agreed, setAgreed] = useState(false);
   const nameTouched = useRef(false);
   const nameBox = useRef<TextInput>(null);
 
@@ -82,6 +85,13 @@ function JoinShop() {
     if (check.kind === 'words') {
       setBusy(false);
       setError(check.words);
+      return;
+    }
+    // Launch D5/D6: 18+ and the terms, ticked before the gym is joined (a wrong code is told first).
+    const notAgreed = agreementWords(agreed);
+    if (notAgreed) {
+      setBusy(false);
+      setError(notAgreed);
       return;
     }
     if (check.kind === 'gym') {
@@ -164,6 +174,7 @@ function JoinShop() {
           />
         </View>
 
+        <JoinAgreement agreed={agreed} onChange={(v) => { setAgreed(v); setError(null); }} />
         <InlineError message={error} />
         <PrimaryButton label="Join" accessibilityLabel="Join your gym's shop" onPress={() => void onJoin()} loading={busy} />
       </Card>

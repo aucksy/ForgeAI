@@ -44,6 +44,7 @@ appId: com.forgeai.app
 - inputText: " QA Member"
 - hideKeyboard
 # Owner profile (360 dp, font 1.3): the button can be below the form.
+- runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
 - scrollUntilVisible:
     element: "Join your gym's shop"
     centerElement: true
