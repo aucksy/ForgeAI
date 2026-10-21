@@ -2,6 +2,19 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 21 Oct 2026 — RESUME HERE after a compaction
+- State: v0.48.0 released 18 Oct (tag d62c4a4). Local = GitHub main. Launch plan: docs/LAUNCH-PLAN.md
+  (8-week trial; sections A-I). Finished docs in docs/launch/ (privacy notice EN+HI, terms, breach plan,
+  desk cheat sheet, member WhatsApp texts, gym visit sheet). Microphone permission removed in code
+  (ships in v0.49.0).
+- My work queue: "## Claude's tasks" in docs/OWNER-INBOX.md (the "Project Tracker"), numbered 1-9.
+  Start at 1 (server refusals re-check), then 2-4 = v0.49.0 ("I agree" + 18+, update prompt).
+- Waiting on the owner (tracker "Waiting for you"): #27 paid server, #28 Play account type, #30 price,
+  #32 our GST, #33 support hours; tasks #25 Test Lab, #26 try v0.48.0, #34 accounts, #35 Play, #36 gym
+  visit + GGMS export, #37 contact name + email, #38 agreement. Owner rules: R-36 (inbox only what he
+  says), R-45 (finalize expert docs myself), CLAUDE.md.
+- Page republish costs a lot of tokens (read + absorb + rebuild): batch changes, publish once.
+
 ## PC session, 18 Oct 2026 (v0.48.0 ship gate) - last update 13:00 UTC
 - v0.48.0 TAGGED: tag commit d62c4a4 = 4d651d6 + version + PROGRESS (main moved on with notes and the
   inbox page script, which phone_gate does not count as paperwork; main has the same two changes).

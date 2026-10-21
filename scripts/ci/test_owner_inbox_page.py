@@ -77,7 +77,7 @@ class Page(unittest.TestCase):
             os.remove(f.name)
         self.assertIn("\\u003c/script> stays text", html)
         self.assertNotIn("</script> stays text", html)
-        self.assertTrue(html.startswith("<title>Owner Inbox</title>"))
+        self.assertTrue(html.startswith("<title>Project Tracker</title>"))
 
     def test_read_marker(self):
         # #17: a READ line marks an entry read and never shows in its text.

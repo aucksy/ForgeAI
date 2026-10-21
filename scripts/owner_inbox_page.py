@@ -261,7 +261,7 @@ def fill(tpl, data):
     return re.sub(r"__TPL__|__DATA__", lambda m: enc(tpl) if m.group(0) == "__TPL__" else enc(data), tpl)
 
 
-TEMPLATE = r"""<title>Owner Inbox</title>
+TEMPLATE = r"""<title>Project Tracker</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
@@ -381,7 +381,7 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
 </style>
 
 <header class="bar"><div class="wrap">
-  <div class="titlerow"><h1>Owner <span>Inbox</span></h1><span class="updated" id="updated"></span></div>
+  <div class="titlerow"><h1>Project <span>Tracker</span></h1><span class="updated" id="updated"></span></div>
   <div class="controls">
     <label class="lbl" for="chat">Chat</label>
     <select id="chat"></select>

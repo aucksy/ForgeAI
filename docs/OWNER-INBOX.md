@@ -1,4 +1,4 @@
-# Owner inbox — questions and answers, your decisions, the feature backlog
+# Project Tracker (was "Owner inbox") — questions and answers, your decisions, tasks, the feature backlog
 
 **What this is (owner rule, 18 Oct 2026):** only three things live here:
 1. **Questions and answers** between you and me;
@@ -23,35 +23,36 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 ---
 
 ## Claude's tasks
-What I do myself, cheapest first (owner, 19 Oct: "assign all the tasks you can do to yourself").
+What I do myself, in the order I do them (re-prioritised 21 Oct: safety and legal before real
+members, then what the trial needs, then marketing; owner, 21 Oct: "you can decide the sequence").
 On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (waits for you).
 
 | Task | Status | Details |
 |---|---|---|
-| "Claude's tasks" tab on the inbox page | Done | 19 Oct. This list. |
-| Breach plan (first hour, 24 h, 72 h) | Done | 19 Oct: docs/launch/BREACH-PLAN.md (launch plan D7). |
+| 1. Re-check the two old open server refusals | To do | H1: prove one gym can never see another gym's shop or messages, before real data goes in. Medium. |
+| 2. "I agree" + 18+ check + privacy link when joining a gym | To do | D5, D6 (#29 = 18+). Needed before real members join. Large; ships in the next release. |
+| 3. "New version ready" prompt in the app | To do | C6: members get fixes during the trial. Large; same release as 2. |
+| 4. Next release (v0.49.0) with 2 + 3 + microphone removed | To do | Full release gate (tests, both cloud phones, journeys). Microphone already removed in the code (C5). |
+| 5. Admin app security header + rollback note | To do | A6: content security policy; how to roll back a deploy. Medium (checked deploy). |
+| 6. Feedback button + automatic sorting | To do | H7; #39 decided: automatic, testers first for 24 h. Ready for trial week 3. Large. |
+| 7. Gym data export and delete | To do | D8: promised in the privacy notice and the agreement. Large. |
+| 8. Landing page + lead form + /app sign-in + "Get started" checklist | To do | R-46, plan section I: research first; free Cloudflare plan; no live database change. Large. |
+| 9. Keep access logs for 1 year | To do | DPDP Rule 6 from May 2027; today the provider keeps about 7 days. Medium. |
+| Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
+| Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
+| Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
+| GGMS column mapping and trial imports | Blocked | F3, F4: needs the GGMS export (#36). Large. |
+| Play Store listing, data safety answers, internal test | Blocked | C2, C3: needs the Play account (#35). Medium. |
+| In-app "Delete my data" for members | Blocked | "Leave gym" already erases the phone number; a full erase needs a new server rule = a LIVE database change (your yes). Until then by email. |
+| "Claude's tasks" tab on the tracker page | Done | 19 Oct. This list. |
+| Breach plan (first hour, 24 h, 72 h) | Done | 19 Oct: docs/launch/BREACH-PLAN.md (D7). |
 | WhatsApp texts for members, Hindi + English | Done | 19 Oct: docs/launch/MEMBER-MESSAGES.md (G5). |
 | Desk cheat sheet, Hindi + English | Done | 19 Oct: docs/launch/DESK-CHEAT-SHEET.md (G2); button names checked in the code. |
-| Clean old notes that now say wrong things | Done | 19 Oct: admin app README rewritten, old owner to-do list retired (points here), U-A14 note fixed. The CRM phase table stays for later (H5). |
-| Privacy notice (English + Hindi) | Done | 20 Oct FINAL after an independent legal check (DPDP Act + Rules 2025, SPDI 2011): docs/launch/PRIVACY-NOTICE.md (+ a short notice for the gym) and PRIVACY-NOTICE-HI.md. Only blanks: your name + email (#37) (D1). |
-| In-app "Delete my data" for members | Blocked | 20 Oct: "Leave gym" already erases the phone number on the server (0016); the name stays with the gym's orders. A full erase needs a new server rule = a LIVE database change (needs your yes). Until then: by email (privacy notice says so). |
-| Terms of use | Done | 20 Oct FINAL after a check against the Contract Act and Consumer Protection Act: docs/launch/TERMS.md (members + staff) (D2). |
-| Pilot + data agreement draft | Blocked | D3; needs your answers to #30, #31, #33. Medium. |
-| Remove unused permissions and "AI coach" wording | Doing (microphone removed 20 Oct, ships next release) | 20 Oct checked: camera/photos are used (progress, workout, profile photos): keep. Microphone (RECORD_AUDIO in android/app/src/main/AndroidManifest.xml) is only for the coach, which is off: remove (also check expo-speech-recognition's merged manifest). SYSTEM_ALERT_WINDOW is in the main manifest: check use, then remove. app.json texts only matter at prebuild. Ships with the next release (C5). |
-| Confirm the app targets Android 16 (API 36) | Done | 20 Oct: v0.48.0 build log: targetSdk 36, minSdk 24 (Android 7+) (C4). |
-| Admin app security header + rollback note | To do | A6. Medium (needs a deploy). |
-| Re-check the two old open server refusals | To do | H1 (other gyms' shop and messages kept apart). Medium. |
-| "New version ready" prompt in the app | To do | C6. Large (code + release). |
-| "I agree" + 18+ check + privacy link when joining a gym | To do | D5, D6; #29 = A (18+) taken as decided 20 Oct (R-45). Shows the notice and terms; needs a release. Large. |
-| Keep access logs for 1 year | To do | DPDP Rule 6 from May 2027; today the provider keeps about 7 days. Before May 2027. Medium. |
-| Gym data export and delete | To do | D8. Large. |
-| Crash reports and outage alerts wired in | Blocked | B1, B2; needs your free accounts (#34). Medium. |
-| Staging server, backups check, restore drill | Blocked | A2, A3, A5; needs #27 and #34. Medium. |
-| GGMS column mapping and trial imports | Blocked | F3, F4; needs the export (#36). Large. |
-| Landing page + lead form + /app sign-in + "Get started" checklist | To do | R-46, plan section I (I1-I5): research first, then build on the free Cloudflare plan; no live database change. Large. |
-| Feedback button + automatic sorting | To do | H7; #39 decided: automatic, testers first for 24 h. Large. |
-| Play Store listing, data safety answers, internal test | Blocked | C2, C3; needs the Play account (#35). Medium. |
-
+| Clean old notes that now say wrong things | Done | 19 Oct: admin README, old owner to-do list retired, U-A14 fixed (H5). |
+| Confirm the app targets Android 16 (API 36) | Done | 20 Oct: targetSdk 36, minSdk 24 (C4). |
+| Privacy notice (English + Hindi) | Done | 20 Oct FINAL after an independent legal check: docs/launch/PRIVACY-NOTICE.md (+ gym notice), PRIVACY-NOTICE-HI.md. Blanks: your name + email (#37) (D1). |
+| Terms of use | Done | 20 Oct FINAL: docs/launch/TERMS.md (members + staff) (D2). |
+| Remove the unused microphone permission | Done | 20 Oct in the code + approved-permissions list; reaches phones with task 4 (C5). |
 ---
 
 ## Feature backlog

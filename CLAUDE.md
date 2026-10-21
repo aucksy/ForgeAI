@@ -15,7 +15,9 @@ owner's gym fieldwork (`docs/overhaul/FIELDWORK.md`); app-quality work proceeds 
 The owner is **not a developer**. In chat, lead with what changed for them and why. All technical
 detail goes in `PROGRESS.md`, commit messages, and code comments — not chat.
 
-## ⭐ Owner inbox (`docs/OWNER-INBOX.md` + his private page) — ONLY three things
+## ⭐ Project Tracker = the owner inbox (`docs/OWNER-INBOX.md` + his private page, renamed 21 Oct)
+The page and the file's title say "Project Tracker"; the file path and the script names stay. It also
+holds "## Claude's tasks" (my own work, in priority order; its own tab): keep it current, mark Done.
 **Owner rule (18 Oct 2026):** the inbox holds ONLY (1) **questions and answers** between him and you,
 (2) **his pending decisions**, (3) the **feature backlog** and what is **built**. Nothing else.
 - **His instructions, requests and feedback** ("build X", "change Y", "do it this way"): write them

@@ -5,6 +5,17 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-48. Re-prioritise my tasks; keep docs current; local = GitHub; rename to Project Tracker — 21 Oct 2026
+**Owner said:** "go thru all your pending tasks and re-prioritize them / re-order in the owner inbox -
+you can decide the sequence / keep docs updated as I will compact / ... ensure all the recent changes
+done on github using cloud session are all merged in locale folder also.. it should be in sync /
+Also change the name of Owner Inbox to Project Tracker"
+**Done:** pulled (local = origin/main at 45d8864 + my commits); "Claude's tasks" re-ordered 1-9
+(server refusals; "I agree" + 18+; update prompt; v0.49.0 release; admin header; feedback; gym
+export/delete; landing page; 1-year logs), blocked ones after, done ones last. Page and file title now
+"Project Tracker" (path docs/OWNER-INBOX.md and owner_inbox_page.py unchanged); CLAUDE.md updated;
+HANDOFF has a 21 Oct resume block. Rule: always `git pull --rebase --autostash` before work.
+
 ## R-47. RS20 menu asks for a manager code; is there a default, and Windows software? — 21 Oct 2026
 **Owner asked:** the RS20 menu asks for a manager access code: is there a default? Is there companion
 Windows software to check settings over USB?
