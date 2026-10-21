@@ -2461,6 +2461,28 @@
   - PUBLISHED 21 Oct (release run 39638183366, tag on main, no hand-started CI needed): phone APK
     68,991,702 B and watch APK 2,033,849 B answer 200; GitHub's latest release is v0.49.0.
 
+- 2026-10-22: **v0.50.0 — Machine in use, rest change moves the timer, Save as routine, automatic Drive backup** (tag commit below; built overnight on the owner's R-51 "keep building").
+  - "Machine in use": during rest, a tap on the rest clock fills the screen with "IN USE · Back in
+    1:32", the machine's name (the lift whose tick started the rest) and the live timer; I'm back,
+    Back or the end of the rest closes it (MachineInUse, RestTimerBar).
+  - Changing an exercise's rest moves its running rest by the difference (2:30 -> 3:00 adds 30 s;
+    Off leaves it alone; the old length is the running card's own) (restRules.runningRestShift).
+  - Finish screen: a member with no routines who finished an empty workout can keep its exercises as
+    a routine in My routines (a button, never a pop-up) (saveFirstRoutine).
+  - Automatic Google Drive backup when leaving the finish screen, for members who linked Drive AND
+    whose phone has backed up before (review MUST-FIX: a new phone must never bury the real backup);
+    a Workout-tab card when the last backup is over 3 days old, with the error's own words; offline
+    at start no longer shows a linked member as unlinked (cloud/autoBackup, BackupNudgeCard,
+    backupStore.init).
+  - "What's new" card (lib/whatsNew): the first version an install meets is remembered, never
+    announced, so news shows from 0.50 -> 0.51 on.
+  - Send feedback and the update check give up after 15 s (lib/fetchTimeout).
+  - Reviews: two subagent rounds (one MUST-FIX, minors fixed). Test-script fault found by the gate:
+    U-Q6 (UF5 looked under the wrong day when a run crossed midnight in India).
+  - Gate on 5a8375b: default 39647353406, journeys 39647362273, CI 39647345689 (green); owner
+    39647358581 red only on U-Q6, repeated on the same code as 39664337093 (tag qa-v050-owner).
+    Tag commit = 5a8375b + this entry (main moved on with the U-Q6 script fix, not paperwork).
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
