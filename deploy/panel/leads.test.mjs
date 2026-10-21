@@ -38,6 +38,7 @@ test('a good lead: 10 digits, tidy text, known choices only', () => {
   assert.ok(checkLead({ ...good, phone: '12345' }).error);
   assert.ok(checkLead({ ...good, phone: '1234567890' }).error); // Indian mobiles start 6-9
   assert.ok(checkLead({ ...good, gym: ' ' }).error);
+  assert.equal(checkLead({ ...good, city: undefined }).value.city, ''); // the top form sends no city
 });
 
 test('saved once; a filled hidden box (a bot) is answered 201 and never kept', async () => {

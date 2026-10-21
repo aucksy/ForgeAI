@@ -1,63 +1,199 @@
-// The landing page's only script (launch I2/I3, 21 Oct 2026): the English / Hindi switch and the
-// "free demo" form (POST /api/lead, deploy/panel/leads.js). A separate file because the site's
-// security policy runs no inline script.
+// The landing page's only script (launch I2/I3; rebuilt 21 Oct 2026 around the member app, owner
+// R-50). A separate file because the site's security policy runs no inline script. Four jobs:
+//  1. English / Hindi (kept per browser);
+//  2. "Type your gym's name" + colour: every phone on the page wears it (View Transitions when the
+//     browser has them);
+//  3. the live workout: three sets tick, the kg to beat rolls down digit by digit, a record slams;
+//  4. the "free demo" forms -> POST /api/lead (deploy/panel/leads.js).
 (function () {
-  var KEY = 'forgeai.home.lang';
+  var root = document.documentElement;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* quiet: private window; the choice just isn't kept */ } }
+  function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; /* quiet: private window */ } }
+
+  // 1. Language --------------------------------------------------------------------------------
+  var LANG = 'forgeai.home.lang';
   var btn = document.getElementById('lang');
-  var nodes = Array.prototype.slice.call(document.querySelectorAll('[data-hi]'));
-  var alts = Array.prototype.slice.call(document.querySelectorAll('[data-hi-alt]'));
-  var labels = Array.prototype.slice.call(document.querySelectorAll('[data-hi-label]'));
-  nodes.forEach(function (n) { n.setAttribute('data-en', n.innerHTML); });
-  alts.forEach(function (n) { n.setAttribute('data-en-alt', n.getAttribute('alt')); });
-  labels.forEach(function (n) { n.setAttribute('data-en-label', n.getAttribute('aria-label')); });
-
-  function set(lang) {
+  var swaps = [
+    ['[data-hi]', function (n) { return n.innerHTML; }, function (n, v) { n.innerHTML = v; }, 'data-hi'],
+    ['[data-hi-alt]', function (n) { return n.getAttribute('alt'); }, function (n, v) { n.setAttribute('alt', v); }, 'data-hi-alt'],
+    ['[data-hi-label]', function (n) { return n.getAttribute('aria-label'); }, function (n, v) { n.setAttribute('aria-label', v); }, 'data-hi-label'],
+    ['[data-hi-ph]', function (n) { return n.getAttribute('placeholder'); }, function (n, v) { n.setAttribute('placeholder', v); }, 'data-hi-ph'],
+  ].map(function (s) {
+    var nodes = Array.prototype.slice.call(document.querySelectorAll(s[0]));
+    nodes.forEach(function (n) { n.__en = n.__en || {}; n.__en[s[3]] = s[1](n); });
+    return { nodes: nodes, set: s[2], attr: s[3] };
+  });
+  function setLang(lang) {
     var hi = lang === 'hi';
-    document.documentElement.lang = hi ? 'hi' : 'en';
-    nodes.forEach(function (n) { n.innerHTML = n.getAttribute(hi ? 'data-hi' : 'data-en'); });
-    alts.forEach(function (n) { n.setAttribute('alt', n.getAttribute(hi ? 'data-hi-alt' : 'data-en-alt')); });
-    labels.forEach(function (n) { n.setAttribute('aria-label', n.getAttribute(hi ? 'data-hi-label' : 'data-en-label')); });
+    root.lang = hi ? 'hi' : 'en';
+    swaps.forEach(function (s) { s.nodes.forEach(function (n) { s.set(n, hi ? n.getAttribute(s.attr) : n.__en[s.attr]); }); });
     btn.textContent = hi ? 'English' : 'हिंदी';
-    btn.setAttribute('aria-label', hi ? 'Read in English' : 'हिंदी में पढ़ें');
-    try { localStorage.setItem(KEY, lang); } catch (e) { /* quiet: private window; the choice just isn't kept */ }
+    btn.lang = hi ? 'en' : 'hi';
+    store(LANG, root.lang);
+    paintGym();
   }
-  var saved = null;
-  try { saved = localStorage.getItem(KEY); } catch (e) { /* quiet: private window */ }
-  if (saved === 'hi') set('hi');
-  btn.addEventListener('click', function () { set(document.documentElement.lang === 'hi' ? 'en' : 'hi'); });
+  btn.addEventListener('click', function () { setLang(root.lang === 'hi' ? 'en' : 'hi'); });
 
-  var form = document.getElementById('lead');
-  var msg = document.getElementById('msg');
+  // 2. Your gym, your colour ---------------------------------------------------------------------
+  var GYM = 'forgeai.home.gym';
+  var COLOUR = 'forgeai.home.colour';
+  var nameBox = document.getElementById('gymname');
+  var swatches = Array.prototype.slice.call(document.querySelectorAll('.sw'));
+  function gymName() { return (nameBox.value || '').replace(/\s+/g, ' ').trim() || nameBox.getAttribute('placeholder'); }
+  function paintGym() {
+    var name = gymName();
+    Array.prototype.forEach.call(document.querySelectorAll('[data-gym]'), function (n) { n.textContent = name; });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-initial]'), function (n) { n.textContent = name.charAt(0).toUpperCase(); });
+    Array.prototype.forEach.call(document.querySelectorAll('.back input[name=gym]'), function (n) { if (!n.dataset.touched) n.value = nameBox.value.trim(); });
+  }
+  function paintColour(sw, animate) {
+    var apply = function () {
+      root.style.setProperty('--flavour', sw.dataset.c);
+      root.style.setProperty('--on-flavour', sw.dataset.on);
+      swatches.forEach(function (s) { s.setAttribute('aria-pressed', s === sw ? 'true' : 'false'); });
+      var meta = document.querySelector('meta[name=theme-color]');
+      if (meta) meta.setAttribute('content', sw.dataset.c);
+    };
+    if (animate && !reduce && document.startViewTransition) document.startViewTransition(apply);
+    else apply();
+    store(COLOUR, sw.dataset.c);
+  }
+  swatches.forEach(function (sw) { sw.addEventListener('click', function () { paintColour(sw, true); }); });
+  nameBox.addEventListener('input', function () { paintGym(); store(GYM, nameBox.value.slice(0, 34)); });
+  var back = document.querySelector('.back input[name=gym]');
+  if (back) back.addEventListener('input', function () { back.dataset.touched = '1'; });
+  var savedGym = read(GYM);
+  if (savedGym) nameBox.value = savedGym;
+  var savedColour = read(COLOUR);
+  swatches.forEach(function (sw) { if (sw.dataset.c === savedColour) paintColour(sw, false); });
+  if (read(LANG) === 'hi') setLang('hi'); else paintGym();
+
+  // 3. The live workout --------------------------------------------------------------------------
+  var live = document.getElementById('live');
+  var rows = live ? Array.prototype.slice.call(live.querySelectorAll('tbody tr')) : [];
+  var beat = document.getElementById('beat');
+  var rest = document.getElementById('rest');
+  var restT = document.getElementById('restt');
+  var record = document.getElementById('record');
+  var timers = [];
+  function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
+  function fmt(n) { return n.toLocaleString('en-IN'); }
+  // Split-flap roll: only the characters that change flip in.
+  function roll(el, text) {
+    var old = el.textContent;
+    el.textContent = '';
+    for (var i = 0; i < text.length; i++) {
+      var c = document.createElement('i');
+      c.textContent = text[i];
+      if (text[i] !== old[i]) c.className = 'flip';
+      el.appendChild(c);
+    }
+  }
+  function countDown(from, to, ms) {
+    var steps = 8;
+    for (var s = 1; s <= steps; s++) {
+      (function (s) { later((ms / steps) * s, function () { roll(beat, fmt(Math.round(from - ((from - to) * s) / steps))); }); })(s);
+    }
+  }
+  function reset() {
+    timers.forEach(clearTimeout);
+    timers = [];
+    rows.forEach(function (r) { r.classList.remove('done'); });
+    if (beat) beat.textContent = '1,125';
+    if (rest) rest.style.setProperty('--p', 0);
+    if (restT) restT.textContent = '1:30';
+    if (record) record.classList.remove('slam');
+    if (beat) beat.closest('.live-beat').classList.remove('won');
+  }
+  function finalState() {
+    rows.forEach(function (r) { r.classList.add('done'); });
+    beat.textContent = '0';
+    beat.closest('.live-beat').classList.add('won');
+    record.classList.add('slam');
+  }
+  function play() {
+    reset();
+    if (!live) return;
+    if (reduce) { finalState(); return; }
+    var left = 1125;
+    rows.forEach(function (r, i) {
+      later(900 + i * 2100, function () {
+        r.classList.add('done');
+        var next = Math.max(0, left - 375);
+        countDown(left, next, 600);
+        left = next;
+        if (i < rows.length - 1) {
+          for (var t = 1; t <= 6; t++) {
+            (function (t) { later(t * 230, function () { rest.style.setProperty('--p', t / 6); restT.textContent = '1:' + String(30 - t * 5).padStart(2, '0'); }); })(t);
+          }
+          later(1800, function () { rest.style.setProperty('--p', 0); restT.textContent = '1:30'; });
+        }
+      });
+    });
+    later(900 + rows.length * 2100, function () { beat.closest('.live-beat').classList.add('won'); record.classList.add('slam'); });
+  }
+  if (live) {
+    if ('IntersectionObserver' in window) {
+      var seen = false;
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting && !seen) { seen = true; play(); } });
+      }, { threshold: 0.45 }).observe(live);
+    } else {
+      finalState();
+    }
+    var again = document.getElementById('replay');
+    if (again) again.addEventListener('click', play);
+  }
+
+  // 4. Free demo forms ---------------------------------------------------------------------------
   var WORDS = {
-    en: { phone: 'Type a 10-digit mobile number.', gym: 'Type your gym’s name.', city: 'Type your city.', sending: 'Sending…', ok: 'Thank you! We will call you soon.', fail: 'Could not send. Check your internet and try again.' },
-    hi: { phone: '10 अंकों का मोबाइल नंबर लिखें।', gym: 'जिम का नाम लिखें।', city: 'शहर लिखें।', sending: 'भेज रहे हैं…', ok: 'धन्यवाद! हम जल्दी फोन करेंगे।', fail: 'भेज नहीं पाए। इंटरनेट देखकर फिर कोशिश करें।' },
+    en: { phone: 'Type a 10-digit mobile number.', gym: 'Type your gym’s name first (in the coloured box above).', gym2: 'Type your gym’s name.', sending: 'Sending…', ok: 'Thank you! We will call you soon.', fail: 'Could not send. Check your internet and try again.' },
+    hi: { phone: '10 अंकों का मोबाइल नंबर लिखें।', gym: 'पहले ऊपर रंगीन बॉक्स में जिम का नाम लिखें।', gym2: 'जिम का नाम लिखें।', sending: 'भेज रहे हैं…', ok: 'धन्यवाद! हम जल्दी फोन करेंगे।', fail: 'भेज नहीं पाए। इंटरनेट देखकर फिर कोशिश करें।' },
   };
-  function w() { return WORDS[document.documentElement.lang === 'hi' ? 'hi' : 'en']; }
-  function say(text, kind) { msg.textContent = text; msg.className = 'msg' + (kind ? ' ' + kind : ''); }
-  var busy = false;
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (busy) return;
-    var f = form.elements;
-    var digits = f.phone.value.replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
-    if (!/^[6-9]\d{9}$/.test(digits)) { say(w().phone, 'err'); f.phone.focus(); return; }
-    if (!f.gym.value.trim()) { say(w().gym, 'err'); f.gym.focus(); return; }
-    if (!f.city.value.trim()) { say(w().city, 'err'); f.city.focus(); return; }
-    busy = true;
-    say(w().sending);
-    fetch('/api/lead', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone: digits, gym: f.gym.value, city: f.city.value, size: f.size.value, today: f.today.value, website: f.website.value, lang: document.documentElement.lang }),
-    })
-      .then(function (r) {
-        return r.json().catch(function () { return {}; }).then(function (b) {
-          if (r.status === 201) { form.reset(); say(w().ok, 'ok'); return; }
-          console.warn('[lead] answered', r.status);
-          say(r.status < 500 && b && b.error ? b.error : w().fail, 'err');
-        });
+  function w() { return WORDS[root.lang === 'hi' ? 'hi' : 'en']; }
+  Array.prototype.forEach.call(document.querySelectorAll('.lead-form'), function (form) {
+    var msg = form.querySelector('.msg');
+    var go = form.querySelector('.go');
+    var busy = false;
+    function say(text, kind) { msg.textContent = text; msg.className = 'msg' + (kind ? ' ' + kind : ''); }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (busy) return;
+      var f = form.elements;
+      var digits = f.phone.value.replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
+      if (!/^[6-9]\d{9}$/.test(digits)) { say(w().phone, 'err'); f.phone.focus(); return; }
+      var gym = f.gym ? f.gym.value.trim() : nameBox.value.trim();
+      if (!gym) {
+        if (f.gym) { say(w().gym2, 'err'); f.gym.focus(); } else { say(w().gym, 'err'); nameBox.focus(); }
+        return;
+      }
+      busy = true;
+      go.disabled = true;
+      say(w().sending);
+      fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: digits,
+          gym: gym,
+          city: f.city ? f.city.value : '',
+          size: f.size ? f.size.value : '',
+          today: f.today ? f.today.value : '',
+          website: f.website.value,
+          lang: root.lang,
+          colour: read(COLOUR) || '',
+        }),
       })
-      .catch(function (err) { console.warn('[lead] could not send', err); say(w().fail, 'err'); })
-      .then(function () { busy = false; });
+        .then(function (r) {
+          return r.json().catch(function () { return {}; }).then(function (b) {
+            if (r.status === 201) { f.phone.value = ''; say(w().ok, 'ok'); return; }
+            console.warn('[lead] answered', r.status);
+            say(r.status < 500 && b && b.error ? b.error : w().fail, 'err');
+          });
+        })
+        .catch(function (err) { console.warn('[lead] could not send', err); say(w().fail, 'err'); })
+        .then(function () { busy = false; go.disabled = false; });
+    });
   });
 })();

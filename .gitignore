@@ -31,3 +31,9 @@ scripts/realtime-test/realtime-test-log.txt
 
 # wrangler dev / local D1 (deploy/panel)
 deploy/panel/.wrangler/
+
+# impeccable design-run scratch (review screenshots, decision pages)
+apps/dashboard/.impeccable/review/
+apps/dashboard/.impeccable/questions/
+apps/dashboard/.impeccable/mocks/
+apps/dashboard/.impeccable/build/

@@ -17,9 +17,8 @@ export function checkLead(body) {
   if (!/^[6-9]\d{9}$/.test(digits)) return { error: 'Type a 10-digit mobile number.' };
   const text = (v, n) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, n) : '');
   const gym = text(body.gym, 80);
-  const city = text(body.city, 40);
+  const city = text(body.city, 40); // optional: the page's top form asks only the number
   if (!gym) return { error: 'Type your gym’s name.' };
-  if (!city) return { error: 'Type your city.' };
   return {
     value: {
       phone: digits,
