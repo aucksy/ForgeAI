@@ -34,6 +34,7 @@ import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coach
 import { finishAnswer, getSessionSummary, volumeComparison, workoutName } from '@/tracker/services/finishSummary';
 import { workoutMilestone } from '@/tracker/services/milestones';
 import { applyRoutineOffer, takeRoutineOffer } from '@/tracker/services/routineOffer';
+import { SAVE_FIRST_ROUTINE, offersFirstRoutine, routineCount, saveFirstRoutine } from '@/tracker/services/saveFirstRoutine';
 import { workoutText } from '@/tracker/services/shareText';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
 import { workoutShareScene } from '@/tracker/share/workoutCard';
@@ -101,6 +102,9 @@ export default function FinishScreen() {
   const [note, setNote] = useState<string | null>(null);
   const [sharing, setSharing] = useState(false);
   const [routineLine, setRoutineLine] = useState<string | null>(null);
+  // Backlog (21 Oct): no routines yet and an empty workout -> one quiet "Save as routine" button.
+  const [offerFirst, setOfferFirst] = useState(false);
+  const savingFirst = useRef(false);
   const coachNotesPref = useTrackerPrefs((s) => s.coachNotes);
   // v0.25.1: the body figure chosen in Profile.
   const figure = useTrackerPrefs((s) => s.bodyFigure);
@@ -127,6 +131,33 @@ export default function FinishScreen() {
       alive = false;
     };
   }, [id]);
+
+  useEffect(() => {
+    if (!data) return;
+    let alive = true;
+    routineCount()
+      .then((n) => alive && setOfferFirst(offersFirstRoutine(data, n)))
+      .catch((e: unknown) => console.warn('[finish] could not count routines', e));
+    return () => {
+      alive = false;
+    };
+  }, [data]);
+
+  const onSaveFirst = () => {
+    if (!data || savingFirst.current) return;
+    savingFirst.current = true;
+    saveFirstRoutine(data).then(
+      () => {
+        setOfferFirst(false);
+        setRoutineLine(SAVE_FIRST_ROUTINE.saved);
+      },
+      (e: unknown) => {
+        savingFirst.current = false;
+        console.warn('[finish] could not save the routine', e);
+        setRoutineLine(SAVE_FIRST_ROUTINE.failed);
+      },
+    );
+  };
 
   // LW-11: "Update routine?" — asked here, once the summary is on screen (taken once per workout).
   useEffect(() => {
@@ -243,6 +274,13 @@ export default function FinishScreen() {
 
           {routineLine ? (
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>{routineLine}</Text>
+          ) : null}
+
+          {offerFirst ? (
+            <Card style={{ gap: space.sm }}>
+              <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{SAVE_FIRST_ROUTINE.line}</Text>
+              <GhostButton label={SAVE_FIRST_ROUTINE.button} icon="plus" onPress={onSaveFirst} />
+            </Card>
           ) : null}
 
           {/* 15 Oct 2026: photos on this workout (private, on this phone). */}

@@ -20,6 +20,7 @@ import { AppState, Pressable, Text, View } from 'react-native';
 import { DangerLink } from '@/components/DangerLink';
 import { GymBrandMark } from '@/components/GymBrandMark';
 import { UpdateCard } from '@/components/UpdateCard';
+import { WhatsNewCard } from '@/components/WhatsNewCard';
 import { Card, GhostButton, Screen, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
@@ -309,6 +310,8 @@ export default function WorkoutScreen() {
         <GymBrandMark />
         {/* Launch C6: a newer release on GitHub ("Get it" / "Later"). */}
         <UpdateCard />
+        {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
+        <WhatsNewCard />
         {linkNotice ? (
           <Pressable
             onPress={() => setLinkNotice(null)}
