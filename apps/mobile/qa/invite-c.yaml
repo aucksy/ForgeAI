@@ -9,6 +9,10 @@ appId: com.forgeai.app
 - takeScreenshot: inv-04-switch
 - assertVisible: "^RAM'S FITNESS CLUB IMPACT$"
 - runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
+# The tick box pushes the button ~100 dp lower: bring it on screen before the tap.
+- scrollUntilVisible:
+    element: "^Switch to this gym$"
+    timeout: 15000
 - tapOn: "^Switch to this gym$"
 - extendedWaitUntil:
     visible: "Your gym: RAM'S FITNESS CLUB IMPACT|Your gym's shop · pay at the desk"

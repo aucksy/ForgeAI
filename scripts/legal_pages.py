@@ -6,8 +6,9 @@
 Sources: docs/launch/PRIVACY-NOTICE.md (the part under "## ForgeAI privacy notice"),
 PRIVACY-NOTICE-HI.md (Hindi, below the English), TERMS.md. The admin app serves them as static files
 (forgeai.aakashpahuja.in/privacy.html, /terms.html); the member app links to them when joining a gym.
-CONTACT_NAME / CONTACT_EMAIL fill the documents' [OWNER NAME] / [CONTACT EMAIL] blanks; while they are
-empty the pages keep the blanks and this script says so (do not deploy them like that).
+CONTACT_NAME / CONTACT_EMAIL fill the documents' [OWNER NAME] / [CONTACT EMAIL] blanks. While they are
+empty the pages go to docs/launch/preview/ instead (to look at) and any copy in public/ is removed, so
+an admin deploy can never publish a page with blanks.
 A tiny Markdown subset only: ## / ### headings, paragraphs, "- " lists, | tables |, **bold**.
 """
 import html
@@ -121,11 +122,16 @@ def main():
         "privacy.html": PAGE.format(title="Privacy notice", body=md_to_html(en) + '\n<hr><section lang="hi"><h1>गोपनीयता सूचना (हिंदी)</h1>\n' + md_to_html(hi) + "</section>"),
         "terms.html": PAGE.format(title="Terms of use", body="<h1>ForgeAI terms of use</h1>\n" + md_to_html(tm)),
     }
-    for name, text in pages.items():
-        with open(os.path.join(OUT, name), "w", encoding="utf-8", newline="\n") as f:
-            f.write(text)
-        print("wrote", name)
     left = sorted(set(re.findall(r"\[(?:OWNER NAME|CONTACT EMAIL)\]", "".join(pages.values()))))
+    out = os.path.join(DOCS, "preview") if left else OUT
+    os.makedirs(out, exist_ok=True)
+    for name, text in pages.items():
+        with open(os.path.join(out, name), "w", encoding="utf-8", newline="\n") as f:
+            f.write(text)
+        print("wrote", os.path.relpath(os.path.join(out, name), ROOT))
+        if left and os.path.exists(os.path.join(OUT, name)):
+            os.remove(os.path.join(OUT, name))
+            print("removed", os.path.relpath(os.path.join(OUT, name), ROOT), "(blanks: never for the live site)")
     if left:
         print("NOT READY TO DEPLOY: blanks left: " + ", ".join(left) + " (owner inbox #37)")
         return 1

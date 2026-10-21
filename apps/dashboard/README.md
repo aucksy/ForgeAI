@@ -44,18 +44,32 @@ An owner needs a `profiles` row with `role='owner'` + a `gym_id`. Two paths:
    (Direct DML on `profiles` is RLS-blocked for clients by design — this runs as the
    service role in the SQL editor.)
 
-## Deploy — Cloudflare Pages (free, commercial-OK)
-- **Framework preset:** Vite (or None).
-- **Root directory:** `apps/dashboard`
-- **Build command:** `npm install && npm run build`
-- **Build output directory:** `dist`
-- Path-filter the project to `apps/dashboard/**` so a mobile-only commit doesn't
-  rebuild the dashboard.
-- Add an SPA fallback so deep links resolve: a `public/_redirects` with
-  `/*  /index.html  200` (add if/when client-side routing is introduced).
+## Deploy — the `forgeai-panel` Worker (rewritten 21 Oct 2026, launch A6)
+The old Cloudflare Pages setup is gone. A checked deploy, in this order (stop at the first failure):
+```bash
+cd apps/dashboard
+npx tsc -b                    # never `npm run build | tail`: a piped failure looks green
+npx vitest run
+npx playwright test           # every journey runs under the live security policy (J29)
+npm run build
+cd ../../deploy/panel
+npx wrangler deploy
+```
+Then open https://forgeai.aakashpahuja.in, sign in, and check the response has the
+`Content-Security-Policy` header. Write the new version id into docs/uat/STATUS.md.
+
+**Roll back** (a deploy broke the panel): from `deploy/panel`,
+`npx wrangler deployments list` shows the versions, newest last; then
+`npx wrangler rollback <version-id> -m "why"` puts an older one back in seconds. No rebuild,
+no database change. Then fix the cause on `main` and deploy again with the steps above.
 
 ## Security notes
-- Reads are RLS-scoped: an owner sees only their gym's `member_summary`
-  (`summary_staff_read` policy), and only their own `gyms` row.
-- This is **read-only** for member data. The only write is the owner's own
-  `create_gym` onboarding RPC.
+- **Security policy** (`public/_headers`): the panel runs only its own scripts and talks only to
+  the gym server (Supabase) and Google Fonts. A new outside service (a picture host, a chat widget)
+  must be added there, or the browser blocks it; J29 fails on any block. The invite and check-in
+  pages (`/join`, `/checkin`) go without it: the Worker writes the gym's name into them as a small
+  script, and they hold no sign-in.
+- **Privacy and terms pages** come from `scripts/legal_pages.py`; while the contact blanks are
+  empty they go to `docs/launch/preview/`, never to `public/`.
+- Every read and write is row-level-security scoped to the person's own gym (server tests:
+  security, uat_access_matrix).

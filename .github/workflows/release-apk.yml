@@ -115,6 +115,14 @@ jobs:
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             VERSION="${GITHUB_REF_NAME#v}"
             NAME="$VERSION"
+            # Launch C6 (21 Oct 2026): the app's "new version ready" card compares app.json's
+            # version with the latest release. A tag that differs from app.json would tell every
+            # phone on this build to update to itself, so the release stops here.
+            APP_JSON="$(python3 -c 'import json; print(json.load(open("apps/mobile/app.json"))["expo"]["version"])')"
+            if [[ "$APP_JSON" != "$VERSION" ]]; then
+              echo "::error::Tag $GITHUB_REF_NAME but apps/mobile/app.json says $APP_JSON. Bump app.json first."
+              exit 1
+            fi
           else
             VERSION="$(python3 -c 'import json; print(json.load(open("apps/mobile/app.json"))["expo"]["version"])')"
             NAME="${VERSION}-dryrun.${GITHUB_RUN_NUMBER}"
