@@ -2,7 +2,7 @@
 // with assets at https://forgeai.aakashpahuja.in. Build first (apps/dashboard: npm run build),
 // then from this folder: npx wrangler deploy
 // worker.js runs only for the invite link page (/j/<CODE>), the check-in poster page (/c/<CODE>)
-// and the app download (/app); every other path is the static panel, as before.
+// the app download (/app) and "Send feedback" (/api/feedback); every other path is the static panel, as before.
 {
   "name": "forgeai-panel",
   "compatibility_date": "2026-10-01",
@@ -11,7 +11,12 @@
     "directory": "../../apps/dashboard/dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/j/*", "/c/*", "/app", "/app/"]
+    "run_worker_first": ["/j/*", "/c/*", "/app", "/app/", "/api/*"]
   },
-  "routes": [{ "pattern": "forgeai.aakashpahuja.in", "custom_domain": true }]
+  "routes": [{ "pattern": "forgeai.aakashpahuja.in", "custom_domain": true }],
+  // Launch H7 (21 Oct 2026): "Send feedback" from both apps (feedback.js). Cloudflare's free
+  // database, not the gym server. Tables: migrations/ (npx wrangler d1 migrations apply forgeai-web --remote).
+  "d1_databases": [
+    { "binding": "WEB", "database_name": "forgeai-web", "database_id": "2c036974-ccdc-4a3c-adf8-47a2e243839d", "migrations_dir": "migrations" }
+  ]
 }

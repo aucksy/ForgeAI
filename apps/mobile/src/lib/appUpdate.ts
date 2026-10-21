@@ -52,6 +52,16 @@ export function updateToShow(seen: AppUpdate | null, current: string | null | un
   return later === seen.version ? null : seen;
 }
 
+/** A saved value, or null when the phone's database cannot be read (logged). */
+async function readMeta(key: string): Promise<string | null> {
+  try {
+    return await getMeta(key);
+  } catch (e) {
+    console.warn('[update] could not read', key, e);
+    return null;
+  }
+}
+
 function readSeen(raw: string | null): (AppUpdate & { at: number }) | null {
   if (!raw) return null;
   try {
@@ -64,7 +74,7 @@ function readSeen(raw: string | null): (AppUpdate & { at: number }) | null {
 
 /** The update to offer, asking GitHub when the last answer is older than 6 hours. Never throws. */
 export async function findUpdate(current: string | null | undefined, now = Date.now()): Promise<AppUpdate | null> {
-  let seen = readSeen(await getMeta(SEEN_KEY).catch(() => null));
+  let seen = readSeen(await readMeta(SEEN_KEY));
   if (!seen || now - seen.at > CHECK_EVERY_MS) {
     try {
       const res = await fetch(LATEST_URL, { headers: { Accept: 'application/vnd.github+json' } });
@@ -80,7 +90,7 @@ export async function findUpdate(current: string | null | undefined, now = Date.
       console.warn('[update] release check failed', e); // offline: keep the last answer
     }
   }
-  const later = await getMeta(LATER_KEY).catch(() => null);
+  const later = await readMeta(LATER_KEY);
   return updateToShow(seen && seen.version ? seen : null, current, later);
 }
 

@@ -101,6 +101,10 @@ jobs:
         working-directory: apps/dashboard
         run: npm test
 
+      # Launch H7 (21 Oct 2026): the panel Worker's own code ("Send feedback", deploy/panel).
+      - name: Panel Worker tests
+        run: node --test deploy/panel
+
       # A build failure here is a shipping failure — the CRM is served as static
       # files, so `vite build` succeeding IS the deployability check.
       - name: Build (dashboard/CRM)

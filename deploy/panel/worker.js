@@ -6,9 +6,12 @@
 //  - /c/<CODE>  the gym's check-in poster link (checkin.html), filled in the same way: on a phone
 //               with the app, Android opens the app's "Check in at <gym>" screen instead; this page
 //               is for phones without it ("Open this in the ForgeAI app to check in" + get the app).
+//  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
 //  - /app       the newest ForgeAI APK (whatever the latest GitHub release is), so the page, the
 //               poster and old messages never point at an old version.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
+
+import { handleFeedback } from './feedback.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 // The public, read-only app key (the same one in the panel and the app).
@@ -25,6 +28,8 @@ export default {
     if (checkIn) return joinPage(request, env, ctx, url, checkIn[1].toUpperCase(), CHECKIN);
     if (url.pathname.startsWith('/c/')) return joinPage(request, env, ctx, url, null, CHECKIN);
     if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);
+    if (url.pathname === '/api/feedback') return handleFeedback(request, env);
+    if (url.pathname.startsWith('/api/')) return new Response('Not found', { status: 404 });
     return env.ASSETS.fetch(request);
   },
 };
