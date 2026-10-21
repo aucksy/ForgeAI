@@ -137,3 +137,15 @@ export function afterSetCompleted(
   const first = members.find((m) => hasOpenWorkingSet(m));
   return { restSec, nextExKey: first && first.key !== exKey ? first.key : null };
 }
+
+/**
+ * Owner backlog (21 Oct 2026): "If a rest timer is running and you change that exercise's rest
+ * from 2:30 to 3:00, the 30 seconds are added to the running timer too." Seconds to move the running
+ * rest by, or null to leave it alone (no change, or the rest is switched off before or after: an
+ * "Off" never cuts a rest short by surprise). A shorter rest takes time off; past zero the timer
+ * ends quietly, like Skip (RT-04). PURE.
+ */
+export function runningRestShift(oldSec: number, newSec: number): number | null {
+  if (oldSec <= 0 || newSec <= 0 || oldSec === newSec) return null;
+  return newSec - oldSec;
+}

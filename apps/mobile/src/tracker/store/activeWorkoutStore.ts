@@ -50,6 +50,7 @@ import { historyScopeOrAll, routineIdByName, type HistoryScope } from '@/tracker
 import { getWorkoutSourceNames } from '@/tracker/db/workoutSourceNames';
 import { bestSetOf } from '@/tracker/lib/previousSource';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
+import { effectiveRestSec, runningRestShift } from '@/tracker/services/restRules';
 import type { PriorBests } from '@/tracker/services/liveRecords';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { saveSessionEditsUnqueued } from '@/tracker/db/sessionEdit';
@@ -2040,6 +2041,14 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     setRestSec: async (exKey, restSec) => {
       const ex = get().exercises.find((e) => e.key === exKey);
       if (!ex) return false;
+      // Owner backlog (21 Oct): a rest running for this lift moves with the new length (2:30 -> 3:00
+      // adds 30 s). Only the rest this lift's own tick started (RT-03 source).
+      const timer = useRestTimer.getState();
+      const runningFor = timer.endsAt != null && timer.source ? get().exercises.find((e) => e.key === timer.source?.exKey) : undefined;
+      if (runningFor && runningFor.exerciseId === ex.exerciseId) {
+        const shift = runningRestShift(effectiveRestSec(ex, timer.defaultSec), effectiveRestSec({ restSec }, timer.defaultSec));
+        if (shift != null) timer.addSec(shift);
+      }
       // Same lift twice in one workout shares the setting, as it will next time.
       mutate((list) => list.map((e) => (e.exerciseId === ex.exerciseId ? { ...e, restSec } : e)));
       // HI-08: while correcting a past workout, nothing is "remembered for next time" - the
