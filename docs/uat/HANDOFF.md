@@ -2,17 +2,20 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
-## PC session, 21 Oct 2026 — RESUME HERE after a compaction
-- State: v0.48.0 released 18 Oct (tag d62c4a4). Local = GitHub main. Launch plan: docs/LAUNCH-PLAN.md
-  (8-week trial; sections A-I). Finished docs in docs/launch/ (privacy notice EN+HI, terms, breach plan,
-  desk cheat sheet, member WhatsApp texts, gym visit sheet). Microphone permission removed in code
-  (ships in v0.49.0).
-- My work queue: "## Claude's tasks" in docs/OWNER-INBOX.md (the "Project Tracker"), numbered 1-9.
-  Start at 1 (server refusals re-check), then 2-4 = v0.49.0 ("I agree" + 18+, update prompt).
-- Waiting on the owner (tracker "Waiting for you"): #27 paid server, #28 Play account type, #30 price,
-  #32 our GST, #33 support hours; tasks #25 Test Lab, #26 try v0.48.0, #34 accounts, #35 Play, #36 gym
-  visit + GGMS export, #37 contact name + email, #38 agreement. Owner rules: R-36 (inbox only what he
-  says), R-45 (finalize expert docs myself), CLAUDE.md.
+## PC session, 21 Oct 2026 (evening) — RESUME HERE after a compaction
+- Queue (tracker "Claude's tasks"): 1, 2, 3, 5, 6, 7 Done; 4 = v0.49.0 gate in progress; 8 built but the
+  landing page is OFF live until the owner's yes (#40); 9 blocked (CLAUDE-NOTES R-49).
+- v0.49.0: tested commit 7d5ea4d (app.json 0.49.0). Phone runs: default 39604087736, owner 39604091364,
+  journeys 39604095282, CI 39604082765 (green). When all green: worktree on 7d5ea4d + PROGRESS entry ->
+  tag v0.49.0 -> push tag -> dispatch ci.yml on the tag -> rerun the release run (memory note
+  forgeai-release-commit-off-main). Main moved on with admin / Worker / notes commits (not paperwork).
+  Main also has 9d5e4ec (feedback double-tap guard) for v0.50.0.
+- Live admin app (forgeai-panel Worker) 47cfa24d: security policy, Send feedback, gym data download +
+  delete request, Get started list; /home/ and /api/lead 404 (vars.LANDING "off").
+- Cloudflare D1 `forgeai-web` (feedback, leads); secret FEEDBACK_SALT set. Read: scripts/feedback.py,
+  scripts/leads.py (this PC's wrangler sign-in).
+- Legal pages: docs/launch/preview/ until #37 (contact) is filled; then legal_pages.py writes public/.
+- Waiting on the owner: decisions #27, #28, #30, #32, #33, #40; tasks #25, #26, #34-#38.
 - Page republish costs a lot of tokens (read + absorb + rebuild): batch changes, publish once.
 
 ## PC session, 18 Oct 2026 (v0.48.0 ship gate) - last update 13:00 UTC
