@@ -144,13 +144,18 @@ export default function FinishScreen() {
     };
   }, [data]);
 
-  // Backlog (21 Oct): members who linked Google Drive get a backup after each workout, by itself.
-  const backedUp = useRef(false);
+  // Backlog (21 Oct): members who linked Google Drive get a backup after each workout, by itself:
+  // when they leave this screen (review: the export holds the write queue, so not while it loads).
+  const loaded = useRef(false);
   useEffect(() => {
-    if (!data || backedUp.current) return;
-    backedUp.current = true;
-    void autoBackupAfterWorkout();
+    if (data) loaded.current = true;
   }, [data]);
+  useEffect(
+    () => () => {
+      if (loaded.current) void autoBackupAfterWorkout();
+    },
+    [],
+  );
 
   const onSaveFirst = () => {
     if (!data || savingFirst.current) return;

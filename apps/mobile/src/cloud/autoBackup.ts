@@ -15,24 +15,33 @@ export const MIN_GAP_MS = 10 * 60 * 1000;
 
 export const AUTO_BACKUP_WORDS = {
   stale: (days: number) => `Your workouts were last backed up to Google Drive ${days} days ago.`,
-  never: 'Your workouts are not backed up to Google Drive yet.',
   button: 'Back up now',
   done: 'Backed up to Google Drive.',
-  failed: "Couldn't back up. Check your internet and try again.",
+  failed: 'Backup failed. Nothing on this phone changed. Please try again.',
 } as const;
 
-/** Back up after this workout? Linked, set up, and not backed up in the last 10 minutes. PURE. */
+/**
+ * Back up after this workout? Linked, and THIS PHONE has backed up before (review MUST-FIX, 21 Oct:
+ * a new phone that linked Drive but has not restored yet would make a 1-workout copy the newest on
+ * Drive; restore takes the newest, and after 5 such copies the real one is pruned). The last-backup
+ * time is kept on the phone only, never inside a backup, so a restored phone starts without it.
+ * Not again within 10 minutes. PURE.
+ */
 export function autoBackupDue(linked: boolean, lastAt: string | null, now: number): boolean {
-  if (!linked) return false;
-  const t = lastAt ? Date.parse(lastAt) : NaN;
-  return Number.isNaN(t) || now - t >= MIN_GAP_MS;
+  if (!linked || !lastAt) return false;
+  const t = Date.parse(lastAt);
+  return !Number.isNaN(t) && now - t >= MIN_GAP_MS;
 }
 
-/** Whole days since the last backup when it is older than 3 days (Infinity: never), else null. PURE. */
+/**
+ * Whole days since this phone's last backup when it is older than 3 days, else null. A phone that has
+ * never backed up gets no card (the same new-phone case as above: Settings → Backup handles it, with
+ * its restore-first checks). PURE.
+ */
 export function staleBackupDays(linked: boolean, lastAt: string | null, now: number): number | null {
-  if (!linked) return null;
-  const t = lastAt ? Date.parse(lastAt) : NaN;
-  if (Number.isNaN(t)) return Infinity;
+  if (!linked || !lastAt) return null;
+  const t = Date.parse(lastAt);
+  if (Number.isNaN(t)) return null;
   const age = now - t;
   return age > STALE_AFTER_MS ? Math.floor(age / (24 * 60 * 60 * 1000)) : null;
 }

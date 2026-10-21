@@ -4,6 +4,7 @@ import { Text } from 'react-native';
 
 import { Card, GhostButton } from '@/components/ui';
 import { AUTO_BACKUP_WORDS, staleBackupDays } from '@/cloud/autoBackup';
+import { shownBackupError } from '@/cloud/backupWords';
 import { useBackup } from '@/store/backupStore';
 import { color, space, type } from '@/theme/tokens';
 
@@ -31,7 +32,7 @@ export function BackupNudgeCard() {
         () => setNote(AUTO_BACKUP_WORDS.done),
         (e: unknown) => {
           console.warn('[backup nudge] backup failed', e);
-          setNote(AUTO_BACKUP_WORDS.failed);
+          setNote(shownBackupError(e, AUTO_BACKUP_WORDS.failed, 'backup'));
         },
       );
   };
@@ -39,7 +40,7 @@ export function BackupNudgeCard() {
     <Card style={{ gap: space.sm }}>
       {days != null ? (
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>
-          {Number.isFinite(days) ? AUTO_BACKUP_WORDS.stale(days) : AUTO_BACKUP_WORDS.never}
+          {AUTO_BACKUP_WORDS.stale(days)}
         </Text>
       ) : null}
       {note ? (

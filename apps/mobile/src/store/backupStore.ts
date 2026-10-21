@@ -194,10 +194,17 @@ export const useBackup = create<BackupState>()((set, get) => ({
     // OFFLINE FIREWALL: only touch Google if the user linked it before (a local
     // marker). A never-linked demo user makes zero Drive/network calls here.
     let googleEmail: string | null = null;
+    let linked = false;
     if (isDriveConfigured() && (await getMeta(LINKED_KEY)) === '1') {
-      googleEmail = await getCurrentDriveUser();
+      linked = true;
+      googleEmail = await getCurrentDriveUser().catch((e: unknown) => {
+        console.warn('[backup] could not read the linked Google account (offline?)', e);
+        return null;
+      });
     }
-    set({ ready: true, configured: isDriveConfigured(), googleEmail, lastBackupAt });
+    // Review 21 Oct: linked, but the account could not be read (offline at the gym): not "ready",
+    // so the next init tries again instead of showing the member as unlinked all session.
+    set({ ready: !(linked && !googleEmail), configured: isDriveConfigured(), googleEmail, lastBackupAt });
   },
 
   linkGoogle: async () => {
