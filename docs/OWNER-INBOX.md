@@ -39,6 +39,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 7. Gym data export and delete | Done | 21 Oct, live: Settings → Your data → "Download all your gym's data" (Excel, one sheet per record type, + full copy). Online gyms: "Delete our gym from ForgeAI" sends a request; the real delete is a checked step with your yes each time (docs/launch/GYM-DELETE.md) (D8). |
 | 8. Landing page + lead form + /app sign-in + "Get started" checklist | Doing | "Get started" list live. Landing page rebuilt on your note (member app first), reviewed twice by a design reviewer; off on the live site until your yes (#40). |
 | 9. Keep access logs for 1 year | Blocked | Needs either Supabase's paid log export or a live database change, both your call; due before May 2027. Plan in CLAUDE-NOTES R-49. Medium. |
+| 10. Night build (21 Oct, you asleep): backlog features | Doing | Live in the admin app: quick buttons on Today. In v0.50.0 (cloud phone tests running): "Machine in use" screen, rest change moves the running timer, "Save as routine" after a first free workout, automatic Google Drive backup after each workout, "What's new" (shows from v0.51). |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
