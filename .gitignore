@@ -28,3 +28,6 @@ yarn-error.*
 
 __pycache__/
 scripts/realtime-test/realtime-test-log.txt
+
+# wrangler dev / local D1 (deploy/panel)
+deploy/panel/.wrangler/
