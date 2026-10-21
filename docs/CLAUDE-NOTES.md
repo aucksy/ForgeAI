@@ -26,6 +26,11 @@ the menu. Only with the gym owner's OK, and only to look at Comm settings (don't
 privilege). Windows software: Realsoft v12.6 (official page realtimebiometrics.com/software/realsoft-v126,
 Google Drive file 1khQF81HXo9WECvPl0K2PPg75DjiSomXx); connects over LAN (USB on the RS20 is listed as
 "USB drive / link", likely a pen drive for data, not a PC cable). Realtime support can remove a lost admin.
+**21 Oct, scheduled check of the Realtime thread:** they replied again on 20 Oct ("share your contact number,
+our technical team will call you"); the owner sent his number himself on 21 Oct and they answered "Our
+support team will call you." No written answers to record; no reminder sent (not needed). Done with
+email follow-ups: the call is his. Seen in photo (21 Oct): RS20 bottom has DC power, an RJ45 port marked
+"TCP/485" (network) and a USB-A port (pen drive). Realsoft must connect over the network cable.
 
 ## R-46. Plan new-gym onboarding: landing page, lead capture, client sign-in — 20 Oct 2026
 **Owner said:** "add to plan to ensure that new GYM onboarding is sorted - If we were to do marketing and
