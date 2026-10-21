@@ -2,7 +2,8 @@
 # to ForgeAI's terms and privacy notice". Ticks it only when not yet ticked (a second call is a no-op).
 appId: com.forgeai.app
 ---
-- hideKeyboard
+# No hideKeyboard here: with no keyboard open, Android takes it as Back and leaves the Shop tab
+# (journeys run 39599886082, J1 step 3). Callers close the keyboard themselves after typing.
 - scrollUntilVisible:
     element: "I'm 18 or older.*"
     timeout: 15000
