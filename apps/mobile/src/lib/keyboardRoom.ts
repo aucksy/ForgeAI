@@ -31,3 +31,14 @@ export function keyboardCacheTrusted(trusted: boolean, event: 'background' | 'sh
   if (event === 'show') return true;
   return trusted;
 }
+
+/**
+ * UAT U-M6 again (21 Oct 2026, phone run 39604087736 part UK2; owner run 39604091364 part UR): the
+ * app-icon shortcut made the screens afresh and Android reported a keyboard that was not on screen,
+ * so the resumed workout had a blank band at the bottom and, after Minimise, no tab bar; taps could
+ * land on the wrong set row. A keyboard counts as ours only while one of our text boxes has the
+ * focus: with nothing focused, nobody is typing, whatever the keyboard events said. PURE.
+ */
+export function keyboardIfTyping(frame: KeyboardFrame, typing: boolean): KeyboardFrame {
+  return typing ? frame : null;
+}

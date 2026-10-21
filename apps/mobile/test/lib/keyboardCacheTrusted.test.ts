@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { keyboardCacheTrusted } from '@/lib/keyboardRoom';
+import { keyboardCacheTrusted, keyboardIfTyping } from '@/lib/keyboardRoom';
 
 describe('keyboardCacheTrusted', () => {
   it('going to the background drops the belief; the next real keyboard brings it back', () => {
@@ -19,5 +19,16 @@ describe('keyboardCacheTrusted', () => {
 
   it('a hide while trusted changes nothing', () => {
     expect(keyboardCacheTrusted(true, 'hide')).toBe(true);
+  });
+});
+
+describe('keyboardIfTyping (U-M6, 21 Oct)', () => {
+  const kb = { screenY: 500, height: 300 };
+  it('a keyboard with none of our text boxes focused is not ours: no padding, the tab bar stays', () => {
+    expect(keyboardIfTyping(kb, false)).toBeNull();
+  });
+  it('while typing, the keyboard is believed', () => {
+    expect(keyboardIfTyping(kb, true)).toEqual(kb);
+    expect(keyboardIfTyping(null, true)).toBeNull();
   });
 });

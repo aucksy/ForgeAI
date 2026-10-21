@@ -11,9 +11,9 @@
  * Native modals) are windows of their own that still resize themselves.
  */
 import { useEffect, useState, type ReactNode } from 'react';
-import { AppState, Keyboard, Platform, View } from 'react-native';
+import { AppState, Keyboard, Platform, TextInput, View } from 'react-native';
 
-import { keyboardCacheTrusted, keyboardRoom, type KeyboardFrame } from '@/lib/keyboardRoom';
+import { keyboardCacheTrusted, keyboardIfTyping, keyboardRoom, type KeyboardFrame } from '@/lib/keyboardRoom';
 
 // U-M6: React Native's own keyboard state is stale after the app was away (see
 // keyboardCacheTrusted). One app-wide belief, kept from Android's own events.
@@ -23,13 +23,18 @@ if (Platform.OS === 'android') {
     if (s === 'background') cacheTrusted = keyboardCacheTrusted(cacheTrusted, 'background');
   });
   Keyboard.addListener('keyboardDidShow', () => {
-    cacheTrusted = keyboardCacheTrusted(cacheTrusted, 'show');
+    if (typing()) cacheTrusted = keyboardCacheTrusted(cacheTrusted, 'show');
   });
+}
+
+/** One of our text boxes has the focus: only then can an open keyboard be ours (U-M6, 21 Oct). */
+function typing(): boolean {
+  return TextInput.State?.currentlyFocusedInput?.() != null;
 }
 
 function current(): KeyboardFrame {
   const m = cacheTrusted && Keyboard.isVisible() ? Keyboard.metrics() : undefined;
-  return m ? { screenY: m.screenY, height: m.height } : null;
+  return keyboardIfTyping(m ? { screenY: m.screenY, height: m.height } : null, typing());
 }
 
 /** The keyboard as it is now — Android only (on iOS the screens keep their own handling). */
@@ -37,7 +42,9 @@ export function useKeyboardFrame(): KeyboardFrame {
   const [kb, setKb] = useState<KeyboardFrame>(() => (Platform.OS === 'android' ? current() : null));
   useEffect(() => {
     if (Platform.OS !== 'android') return;
-    const show = Keyboard.addListener('keyboardDidShow', (e) => setKb({ screenY: e.endCoordinates.screenY, height: e.endCoordinates.height }));
+    const show = Keyboard.addListener('keyboardDidShow', (e) =>
+      setKb(keyboardIfTyping({ screenY: e.endCoordinates.screenY, height: e.endCoordinates.height }, typing())),
+    );
     const hide = Keyboard.addListener('keyboardDidHide', () => setKb(null));
     // Away from the screen, no keyboard of ours is open (Android may not say so when it closes).
     const away = AppState.addEventListener('change', (s) => {

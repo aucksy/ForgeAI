@@ -1,0 +1,565 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-21T14:49:58+00:00",
+  "title": "Design System: ForgeAI landing page (the tub label)",
+  "extensions": {
+    "scope": "Landing-page world only (public/home/). The admin app in src/ keeps its own @forgeai/theme dark theme.",
+    "colorMeta": {
+      "flavour": {
+        "role": "primary",
+        "displayName": "Flavour Orange",
+        "canonical": "#FF7A2E",
+        "tonalRamp": [
+          "oklch(15% 0.182 46.2)",
+          "oklch(26% 0.182 46.2)",
+          "oklch(37% 0.182 46.2)",
+          "oklch(48% 0.182 46.2)",
+          "oklch(60% 0.182 46.2)",
+          "oklch(72% 0.182 46.2)",
+          "oklch(84% 0.182 46.2)",
+          "oklch(95% 0.182 46.2)"
+        ]
+      },
+      "on-flavour": {
+        "role": "primary",
+        "displayName": "Flavour Ink",
+        "canonical": "#1A0A02",
+        "tonalRamp": [
+          "oklch(15% 0.034 53.8)",
+          "oklch(26% 0.034 53.8)",
+          "oklch(37% 0.034 53.8)",
+          "oklch(48% 0.034 53.8)",
+          "oklch(60% 0.034 53.8)",
+          "oklch(72% 0.034 53.8)",
+          "oklch(84% 0.034 53.8)",
+          "oklch(95% 0.034 53.8)"
+        ]
+      },
+      "sticker": {
+        "role": "secondary",
+        "displayName": "Sticker Yellow",
+        "canonical": "#FFD23F",
+        "tonalRamp": [
+          "oklch(15% 0.162 90.9)",
+          "oklch(26% 0.162 90.9)",
+          "oklch(37% 0.162 90.9)",
+          "oklch(48% 0.162 90.9)",
+          "oklch(60% 0.162 90.9)",
+          "oklch(72% 0.162 90.9)",
+          "oklch(84% 0.162 90.9)",
+          "oklch(95% 0.162 90.9)"
+        ]
+      },
+      "sticker-ink": {
+        "role": "secondary",
+        "displayName": "Sticker Ink",
+        "canonical": "#1C1600",
+        "tonalRamp": [
+          "oklch(15% 0.041 96.0)",
+          "oklch(26% 0.041 96.0)",
+          "oklch(37% 0.041 96.0)",
+          "oklch(48% 0.041 96.0)",
+          "oklch(60% 0.041 96.0)",
+          "oklch(72% 0.041 96.0)",
+          "oklch(84% 0.041 96.0)",
+          "oklch(95% 0.041 96.0)"
+        ]
+      },
+      "record-gold": {
+        "role": "tertiary",
+        "displayName": "Record Gold",
+        "canonical": "#FFC53D",
+        "tonalRamp": [
+          "oklch(15% 0.157 84.1)",
+          "oklch(26% 0.157 84.1)",
+          "oklch(37% 0.157 84.1)",
+          "oklch(48% 0.157 84.1)",
+          "oklch(60% 0.157 84.1)",
+          "oklch(72% 0.157 84.1)",
+          "oklch(84% 0.157 84.1)",
+          "oklch(95% 0.157 84.1)"
+        ]
+      },
+      "good": {
+        "role": "tertiary",
+        "displayName": "Done Green",
+        "canonical": "#3ECF7A",
+        "tonalRamp": [
+          "oklch(15% 0.172 153.1)",
+          "oklch(26% 0.172 153.1)",
+          "oklch(37% 0.172 153.1)",
+          "oklch(48% 0.172 153.1)",
+          "oklch(60% 0.172 153.1)",
+          "oklch(72% 0.172 153.1)",
+          "oklch(84% 0.172 153.1)",
+          "oklch(95% 0.172 153.1)"
+        ]
+      },
+      "tub": {
+        "role": "neutral",
+        "displayName": "Tub Black",
+        "canonical": "#0B0B0D",
+        "tonalRamp": [
+          "oklch(15% 0.004 285.9)",
+          "oklch(26% 0.004 285.9)",
+          "oklch(37% 0.004 285.9)",
+          "oklch(48% 0.004 285.9)",
+          "oklch(60% 0.004 285.9)",
+          "oklch(72% 0.004 285.9)",
+          "oklch(84% 0.004 285.9)",
+          "oklch(95% 0.004 285.9)"
+        ]
+      },
+      "tub-shelf": {
+        "role": "neutral",
+        "displayName": "Shelf Black",
+        "canonical": "#151518",
+        "tonalRamp": [
+          "oklch(15% 0.006 285.8)",
+          "oklch(26% 0.006 285.8)",
+          "oklch(37% 0.006 285.8)",
+          "oklch(48% 0.006 285.8)",
+          "oklch(60% 0.006 285.8)",
+          "oklch(72% 0.006 285.8)",
+          "oklch(84% 0.006 285.8)",
+          "oklch(95% 0.006 285.8)"
+        ]
+      },
+      "tub-rule": {
+        "role": "neutral",
+        "displayName": "Tub Rule",
+        "canonical": "#2C2C33",
+        "tonalRamp": [
+          "oklch(15% 0.013 285.6)",
+          "oklch(26% 0.013 285.6)",
+          "oklch(37% 0.013 285.6)",
+          "oklch(48% 0.013 285.6)",
+          "oklch(60% 0.013 285.6)",
+          "oklch(72% 0.013 285.6)",
+          "oklch(84% 0.013 285.6)",
+          "oklch(95% 0.013 285.6)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Chalk",
+        "canonical": "#F4F4F2",
+        "tonalRamp": [
+          "oklch(15% 0.003 106.4)",
+          "oklch(26% 0.003 106.4)",
+          "oklch(37% 0.003 106.4)",
+          "oklch(48% 0.003 106.4)",
+          "oklch(60% 0.003 106.4)",
+          "oklch(72% 0.003 106.4)",
+          "oklch(84% 0.003 106.4)",
+          "oklch(95% 0.003 106.4)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Chalk",
+        "canonical": "#C9C9CF",
+        "tonalRamp": [
+          "oklch(15% 0.008 286.2)",
+          "oklch(26% 0.008 286.2)",
+          "oklch(37% 0.008 286.2)",
+          "oklch(48% 0.008 286.2)",
+          "oklch(60% 0.008 286.2)",
+          "oklch(72% 0.008 286.2)",
+          "oklch(84% 0.008 286.2)",
+          "oklch(95% 0.008 286.2)"
+        ]
+      },
+      "ink-quiet": {
+        "role": "neutral",
+        "displayName": "Quiet Chalk",
+        "canonical": "#9A9AA3",
+        "tonalRamp": [
+          "oklch(15% 0.013 286.1)",
+          "oklch(26% 0.013 286.1)",
+          "oklch(37% 0.013 286.1)",
+          "oklch(48% 0.013 286.1)",
+          "oklch(60% 0.013 286.1)",
+          "oklch(72% 0.013 286.1)",
+          "oklch(84% 0.013 286.1)",
+          "oklch(95% 0.013 286.1)"
+        ]
+      },
+      "label": {
+        "role": "neutral",
+        "displayName": "Label White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(60% 0.000 89.9)",
+          "oklch(72% 0.000 89.9)",
+          "oklch(84% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "label-ink": {
+        "role": "neutral",
+        "displayName": "Label Ink",
+        "canonical": "#0B0B0D",
+        "tonalRamp": [
+          "oklch(15% 0.004 285.9)",
+          "oklch(26% 0.004 285.9)",
+          "oklch(37% 0.004 285.9)",
+          "oklch(48% 0.004 285.9)",
+          "oklch(60% 0.004 285.9)",
+          "oklch(72% 0.004 285.9)",
+          "oklch(84% 0.004 285.9)",
+          "oklch(95% 0.004 285.9)"
+        ]
+      },
+      "label-ink-soft": {
+        "role": "neutral",
+        "displayName": "Label Grey",
+        "canonical": "#3B3B42",
+        "tonalRamp": [
+          "oklch(15% 0.012 285.8)",
+          "oklch(26% 0.012 285.8)",
+          "oklch(37% 0.012 285.8)",
+          "oklch(48% 0.012 285.8)",
+          "oklch(60% 0.012 285.8)",
+          "oklch(72% 0.012 285.8)",
+          "oklch(84% 0.012 285.8)",
+          "oklch(95% 0.012 285.8)"
+        ]
+      },
+      "app-bg": {
+        "role": "neutral",
+        "displayName": "App Ground",
+        "canonical": "#07080C",
+        "tonalRamp": [
+          "oklch(15% 0.009 272.5)",
+          "oklch(26% 0.009 272.5)",
+          "oklch(37% 0.009 272.5)",
+          "oklch(48% 0.009 272.5)",
+          "oklch(60% 0.009 272.5)",
+          "oklch(72% 0.009 272.5)",
+          "oklch(84% 0.009 272.5)",
+          "oklch(95% 0.009 272.5)"
+        ]
+      },
+      "app-card": {
+        "role": "neutral",
+        "displayName": "App Card",
+        "canonical": "#10131C",
+        "tonalRamp": [
+          "oklch(15% 0.019 270.2)",
+          "oklch(26% 0.019 270.2)",
+          "oklch(37% 0.019 270.2)",
+          "oklch(48% 0.019 270.2)",
+          "oklch(60% 0.019 270.2)",
+          "oklch(72% 0.019 270.2)",
+          "oklch(84% 0.019 270.2)",
+          "oklch(95% 0.019 270.2)"
+        ]
+      },
+      "app-line": {
+        "role": "neutral",
+        "displayName": "App Line",
+        "canonical": "#232937",
+        "tonalRamp": [
+          "oklch(15% 0.027 266.6)",
+          "oklch(26% 0.027 266.6)",
+          "oklch(37% 0.027 266.6)",
+          "oklch(48% 0.027 266.6)",
+          "oklch(60% 0.027 266.6)",
+          "oklch(72% 0.027 266.6)",
+          "oklch(84% 0.027 266.6)",
+          "oklch(95% 0.027 266.6)"
+        ]
+      },
+      "app-ink": {
+        "role": "neutral",
+        "displayName": "App Ink",
+        "canonical": "#EEF0F4",
+        "tonalRamp": [
+          "oklch(15% 0.006 264.5)",
+          "oklch(26% 0.006 264.5)",
+          "oklch(37% 0.006 264.5)",
+          "oklch(48% 0.006 264.5)",
+          "oklch(60% 0.006 264.5)",
+          "oklch(72% 0.006 264.5)",
+          "oklch(84% 0.006 264.5)",
+          "oklch(95% 0.006 264.5)"
+        ]
+      },
+      "app-ink-soft": {
+        "role": "neutral",
+        "displayName": "App Ink Soft",
+        "canonical": "#9097A8",
+        "tonalRamp": [
+          "oklch(15% 0.026 267.8)",
+          "oklch(26% 0.026 267.8)",
+          "oklch(37% 0.026 267.8)",
+          "oklch(48% 0.026 267.8)",
+          "oklch(60% 0.026 267.8)",
+          "oklch(72% 0.026 267.8)",
+          "oklch(84% 0.026 267.8)",
+          "oklch(95% 0.026 267.8)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Brand Line",
+        "purpose": "The hero claim only; condensed caps at width 62."
+      },
+      "headline": {
+        "displayName": "Section Heading",
+        "purpose": "Every section heading."
+      },
+      "panel-title": {
+        "displayName": "Panel Title",
+        "purpose": "Facts-panel headings, width 75."
+      },
+      "title": {
+        "displayName": "Step Title",
+        "purpose": "Directions-for-use step headings."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "Section intros, max 52ch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading text on the label."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Band input label and spec strip; tracked caps, none in Hindi."
+      },
+      "app-display": {
+        "displayName": "App Display",
+        "purpose": "Inside drawn phone screens only (Sora)."
+      },
+      "app-body": {
+        "displayName": "App Body",
+        "purpose": "Inside drawn phone screens only (Manrope)."
+      }
+    },
+    "shadows": [
+      {
+        "name": "phone",
+        "value": "0 0 0 1px #34343C, 0 44px 70px -26px rgba(0,0,0,.85), 0 14px 30px rgba(0,0,0,.5)",
+        "purpose": "Drawn phones on black."
+      },
+      {
+        "name": "phone-on-flavour",
+        "value": "0 0 0 1px rgba(0,0,0,.4), 0 40px 70px -24px rgba(0,0,0,.6)",
+        "purpose": "Drawn phones on the flavour section."
+      },
+      {
+        "name": "label-panel",
+        "value": "0 30px 60px -20px rgba(0,0,0,.6)",
+        "purpose": "Facts and evidence panels."
+      },
+      {
+        "name": "stuck-note",
+        "value": "0 8px 18px rgba(0,0,0,.35)",
+        "purpose": "Call-outs."
+      },
+      {
+        "name": "stuck-tag",
+        "value": "0 10px 20px rgba(0,0,0,.4)",
+        "purpose": "Price tags."
+      },
+      {
+        "name": "sticker",
+        "value": "drop-shadow(0 8px 14px rgba(0,0,0,.4))",
+        "purpose": "Seal and burst SVG stickers (filter)."
+      },
+      {
+        "name": "record",
+        "value": "0 20px 40px rgba(0,0,0,.5)",
+        "purpose": "The New record slam card."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-label",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "Flavour repaint (0.5s), swatch scale, digit roll."
+      },
+      {
+        "name": "digit-roll",
+        "value": "flip .32s cubic-bezier(.16,1,.3,1)",
+        "purpose": "Only the changed characters of a figure drop in."
+      },
+      {
+        "name": "record-slam",
+        "value": "slam .55s cubic-bezier(.2,1.6,.4,1) forwards",
+        "purpose": "One percussive New record card per demo run."
+      },
+      {
+        "name": "rule-draw",
+        "value": "view() timeline, entry 0% to 80%",
+        "purpose": "Facts-panel rules draw in on scroll."
+      },
+      {
+        "name": "headline-press",
+        "value": "scroll(root) 0 to 60vh: opacity .55, scale .96",
+        "purpose": "Brand line presses back as the page scrolls."
+      },
+      {
+        "name": "order-drop",
+        "value": "drop 6s cubic-bezier(.16,1,.3,1) infinite",
+        "purpose": "Example shop order notification at the desk."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "desktop",
+        "value": "980px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Go Button",
+      "kind": "button",
+      "refersTo": "button-go",
+      "description": "Primary action: condensed caps on the live flavour colour.",
+      "html": "<button class=\"ds-go\">Call me for a free demo</button>",
+      "css": ".ds-go{min-height:54px;padding:0 22px;border:0;border-radius:14px;background:var(--flavour,#FF7A2E);color:var(--on-flavour,#1A0A02);font:900 19px/1 Archivo,system-ui,sans-serif;font-stretch:75%;font-variation-settings:\"wdth\" 75;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;transition:transform .2s cubic-bezier(.16,1,.3,1),filter .2s}.ds-go:hover{filter:brightness(1.08)}.ds-go:active{transform:scale(.97)}.ds-go:focus-visible{outline:3px solid var(--flavour,#FF7A2E);outline-offset:3px}"
+    },
+    {
+      "name": "Go Button on Label",
+      "kind": "button",
+      "refersTo": "button-go-on-label",
+      "description": "Primary action on the white back of the label: inverted to label ink.",
+      "html": "<div style=\"background:#fff;padding:16px\"><button class=\"ds-go-l\">Call me for a free demo</button></div>",
+      "css": ".ds-go-l{min-height:54px;padding:0 22px;border:0;border-radius:14px;background:#0B0B0D;color:#fff;font:900 21px/1 Archivo,system-ui,sans-serif;font-stretch:75%;font-variation-settings:\"wdth\" 75;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;transition:transform .2s cubic-bezier(.16,1,.3,1),filter .2s}.ds-go-l:hover{filter:brightness(1.3)}.ds-go-l:active{transform:scale(.97)}.ds-go-l:focus-visible{outline:3px solid #FF7A2E;outline-offset:3px}"
+    },
+    {
+      "name": "Pill",
+      "kind": "button",
+      "refersTo": "pill",
+      "description": "Secondary control on tub black: language switch, replay.",
+      "html": "<button class=\"ds-pill\">Replay</button>",
+      "css": ".ds-pill{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid #2C2C33;background:#0B0B0D;color:#C9C9CF;font:700 15px Archivo,system-ui,sans-serif;cursor:pointer}.ds-pill:hover{border-color:#9A9AA3;color:#F4F4F2}.ds-pill:focus-visible{outline:3px solid #FF7A2E;outline-offset:3px}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "WhatsApp number field on tub black.",
+      "html": "<input class=\"ds-field\" placeholder=\"WhatsApp number\">",
+      "css": ".ds-field{min-height:54px;padding:0 16px;border-radius:14px;border:1px solid #3A3A42;background:#151518;color:#F4F4F2;font:600 18px Archivo,system-ui,sans-serif;width:260px}.ds-field::placeholder{color:#8E8E97}.ds-field:focus{outline:none;border-color:#FF7A2E;box-shadow:0 0 0 3px color-mix(in oklab,#FF7A2E 35%,transparent)}"
+    },
+    {
+      "name": "Flavour Band",
+      "kind": "custom",
+      "refersTo": "flavour-band",
+      "description": "Full-bleed gym-colour strip with the name input and swatches.",
+      "html": "<div class=\"ds-band\"><label>Type your gym&#39;s name</label><input value=\"Iron Temple Fitness\"><div class=\"ds-sw\"><i style=\"--c:#FF7A2E\" class=\"on\"></i><i style=\"--c:#E5322D\"></i><i style=\"--c:#FFD23F\"></i><i style=\"--c:#3D7BFF\"></i></div></div>",
+      "css": ".ds-band{background:#FF7A2E;color:#1A0A02;border-block:3px solid #0B0B0D;padding:16px 20px 14px}.ds-band label{display:block;font:800 12px/1 Archivo,sans-serif;letter-spacing:.16em;text-transform:uppercase}.ds-band input{width:100%;margin-top:6px;border:0;border-bottom:2px dashed rgba(26,10,2,.5);background:none;color:inherit;font:900 40px/1.02 Archivo,sans-serif;font-stretch:62%;font-variation-settings:\"wdth\" 62;text-transform:uppercase;outline:none}.ds-band input:focus{border-bottom-style:solid}.ds-sw{display:flex;gap:8px;margin-top:12px}.ds-sw i{width:44px;height:44px;border-radius:50%;border:3px solid #1A0A02;background:var(--c)}.ds-sw i.on{transform:scale(1.12);box-shadow:0 0 0 3px #FF7A2E,0 0 0 5px #1A0A02}"
+    },
+    {
+      "name": "Facts Panel",
+      "kind": "card",
+      "refersTo": "facts-panel",
+      "description": "Black-on-white label panel with 12px, 5px and hairline rules.",
+      "html": "<div class=\"ds-panel\"><h3>Member Facts</h3><div class=\"r1\"><p>Serving size <b>1 gym</b></p></div><div class=\"hd\"><span>Per member</span><span>Live</span></div><ul><li>Last time&#39;s numbers <b>Yes</b></li><li>Kg to beat <b>Yes</b></li><li>Member app in Hindi <span class=\"soon\">Coming</span></li></ul></div>",
+      "css": ".ds-panel{background:#fff;color:#0B0B0D;border:3px solid #0B0B0D;border-radius:6px;padding:12px 14px 14px;max-width:360px;font:500 15px/1.35 Archivo,sans-serif;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);rotate:-1.2deg}.ds-panel h3{margin:0;font:900 48px/.95 Archivo,sans-serif;font-stretch:75%;font-variation-settings:\"wdth\" 75}.ds-panel .r1{border-bottom:12px solid #0B0B0D;padding:4px 0 6px}.ds-panel .r1 p{margin:0;display:flex;justify-content:space-between}.ds-panel .hd{display:flex;justify-content:space-between;font:900 13px Archivo,sans-serif;border-bottom:5px solid #0B0B0D;padding:6px 0 3px}.ds-panel ul{list-style:none;margin:0;padding:0}.ds-panel li{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #0B0B0D}.ds-panel .soon{font:800 11px Archivo,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:#FFD23F;color:#1C1600;rotate:-4deg}"
+    },
+    {
+      "name": "Call-out",
+      "kind": "custom",
+      "refersTo": "callout",
+      "description": "Tilted white note naming a part of the drawn app; joined to it by a leader line.",
+      "html": "<span class=\"ds-callout\">Kg to beat, on every exercise</span>",
+      "css": ".ds-callout{display:inline-block;max-width:15ch;padding:7px 11px;border-radius:10px;background:#fff;color:#0B0B0D;font:800 14px/1.25 Archivo,sans-serif;box-shadow:0 8px 18px rgba(0,0,0,.35);rotate:-2deg}"
+    },
+    {
+      "name": "Price Tag",
+      "kind": "custom",
+      "refersTo": "price-tag",
+      "description": "Hang-tag price for shop items, with a punched hole.",
+      "html": "<span class=\"ds-tag\">&#8377;2,499 <small>your price</small></span>",
+      "css": ".ds-tag{display:inline-flex;align-items:center;gap:7px;padding:7px 14px 7px 9px;background:#fff;color:#0B0B0D;border-radius:6px 20px 20px 6px;font:900 21px/1 Archivo,sans-serif;font-stretch:75%;font-variation-settings:\"wdth\" 75;box-shadow:0 10px 20px rgba(0,0,0,.4);rotate:-5deg}.ds-tag::before{content:\"\";width:9px;height:9px;border-radius:50%;background:#0B0B0D;box-shadow:inset 0 0 0 2px #aaa}.ds-tag small{font:700 12px Archivo,sans-serif}"
+    },
+    {
+      "name": "Coming Chip",
+      "kind": "chip",
+      "refersTo": "coming-chip",
+      "description": "Yellow sticker marking a planned, not-yet-live feature.",
+      "html": "<span class=\"ds-soon\">Coming</span>",
+      "css": ".ds-soon{display:inline-block;font:800 11px Archivo,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:#FFD23F;color:#1C1600;rotate:-4deg;box-shadow:0 3px 6px rgba(0,0,0,.25)}"
+    },
+    {
+      "name": "App Card",
+      "kind": "card",
+      "refersTo": "app-card",
+      "description": "Card inside a drawn phone screen, in the member app palette and fonts.",
+      "html": "<div class=\"ds-ac\"><div class=\"k\">Next workout</div><div class=\"t\">Push day</div><span class=\"b\">62.5 kg to beat</span></div>",
+      "css": ".ds-ac{background:#10131C;border:1px solid #232937;border-radius:18px;padding:12px;color:#EEF0F4;width:240px;font:500 13px/1.35 Manrope,sans-serif}.ds-ac .k{font:700 11px Manrope,sans-serif;color:#9097A8;text-transform:uppercase;letter-spacing:.06em}.ds-ac .t{font:700 17px Sora,sans-serif;margin:3px 0}.ds-ac .b{color:#FF7A2E;font:800 13px Manrope,sans-serif}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Tub on the Shelf",
+    "overview": "The page sells ForgeAI the way a gym owner already sells his best product: as a supplement tub. The whole page reads as one tub label for \"member retention\". It has a matte black tub ground, a flavour band in the gym's own colour, a heavy condensed brand line, a black-on-white facts panel with thick and hairline rules, seal and burst stickers, and hand-placed call-outs and price tags on drawn leader lines that point at parts of the app. The member app appears as drawn phones whose screens follow the real app. The page does not use photos of phones or a product mock-up.\n\nThe page is dense the way packaging is dense: every block carries a fact, and there is no ornamental empty hero. Each section is a different panel of the tub, set by its colour field. The front is tub black, the facts sit on a darker shelf, the messages section is drenched in the flavour colour, and the form is the white back of the label. The flavour colour is live: the visitor picks a swatch and the band, the buttons, the app's accents and the messages section all repaint together.\n\nMotion is percussive and scarce. Figures roll in digit by digit. One \"New record\" card slams in when the demo workout beats its target. Facts-panel rules draw in on scroll, and the headline presses back as the page scrolls. Every effect has a reduced-motion fallback.",
+    "keyCharacteristics": [
+      "Matte black tub ground with section panels set by colour field (tub, shelf, flavour, white label).",
+      "Heavy condensed caps (Archivo 900 at 62% width) for every heading; plain Archivo for reading.",
+      "A facts panel built from black rules of three weights: 12px, 5px and 1px hairline.",
+      "One live flavour colour, chosen by the visitor, that every accent follows.",
+      "Stickers, call-outs and price tags sit slightly tilted, like things stuck on by hand.",
+      "Drawn phones show the member app in its own type (Sora and Manrope) on its own dark palette."
+    ],
+    "rules": [
+      {
+        "name": "The One Flavour Rule",
+        "body": "There is exactly one accent hue on the page, and it belongs to the gym. Anything that says \"yours\" (band, buttons, step numbers, the app's highlights) reads the flavour variable and never a fixed orange.",
+        "section": "colors"
+      },
+      {
+        "name": "The Paired Ink Rule",
+        "body": "The flavour colour never ships without its own ink. A new swatch must give both values, chosen for contrast on that colour.",
+        "section": "colors"
+      },
+      {
+        "name": "The Colour Field Rule",
+        "body": "Sections are told apart by their ground (tub, shelf, flavour, white label), not by extra boxes or borders.",
+        "section": "colors"
+      },
+      {
+        "name": "The Hindi Swap Rule",
+        "body": "Every condensed or tracked style has a Hindi branch. Use Khand in place of condensed Archivo and Mukta for text, with no uppercase, no letter-spacing, and a slightly larger size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Two Typefaces, Two Worlds Rule",
+        "body": "Archivo belongs to the label. Sora and Manrope appear only inside the drawn app screens, because they are the app's own fonts.",
+        "section": "typography"
+      },
+      {
+        "name": "The Stuck-On Rule",
+        "body": "Things laid on the label (call-outs, tags, stickers, panels, the \"Coming\" chip) tilt between −5° and 12° and cast a soft shadow. The page's own text and sections never tilt.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** route every \"yours\" accent through the flavour colour and its paired ink, and repaint it with the 0.5s ease (cubic-bezier(.16,1,.3,1)).",
+      "**Do** set section headings in condensed Archivo 900 caps, and give every condensed or tracked style a Hindi branch (Khand or Mukta, no caps, no tracking).",
+      "**Do** build facts as a label panel with 12px, 5px and 1px black rules, and mark anything planned with the yellow \"Coming\" chip.",
+      "**Do** point at the app with a call-out on a leader line, and keep the note and its line off the content it names.",
+      "**Do** label demo data as an example in small print (13px quiet chalk) beside the screen it describes.",
+      "**Do** keep stickers on a phone's frame or its margin, not over its screen."
+    ],
+    "donts": [
+      "**Don't** use the label's fonts or colours inside a drawn phone screen, or the app palette for page chrome.",
+      "**Don't** ship a swatch without its paired ink.",
+      "**Don't** tilt the page's own text or sections. Only stuck-on objects tilt.",
+      "**Don't** use a hard offset shadow. Depth here is a soft cast shadow.",
+      "**Don't** add a tracked uppercase line above a heading. The heading is the first thing in each section.",
+      "**Don't** set readable page text below 12px. Type smaller than that belongs only inside drawn app screens, which follow the app's own sizes."
+    ]
+  }
+}

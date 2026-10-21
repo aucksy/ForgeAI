@@ -189,7 +189,7 @@ appId: com.forgeai.app
     commands:
       - scrollUntilVisible:
           element: "^Leave$"
-          centerElement: true
+          # Leave is the last row of the Shop page: it can never be centred (U-Q5), so no centerElement.
           timeout: 30000
       - tapOn: "^Leave$"
       - extendedWaitUntil:
