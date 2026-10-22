@@ -26,6 +26,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 46 | Trainers see members' progress: version 1 | A: yes, the member chooses |
 | 47 | AI import of old records: the first version | A: spreadsheets with AI, free with a daily limit |
 | 49 | Offers and messages: step 2 (live server change) and the reward numbers | A: yes after step 1; 10 workouts in 30 days → 3 days |
+| 50 | Members' workouts on our server | A: yes later, by choice, after sign-in and the paid plan |
 
 ---
 
@@ -218,6 +219,43 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 50. Members' workouts on our own server: how many fit in the free plan? — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked:** if we store every member's workouts in our own database (Supabase), how many members fit in the
+free plan, and for how long, if they start today?
+**My answer:** Many more than we will have for a long time, if we store them the compact way.
+- **Measured on your real history** (487 workouts): about 18 sets and 4.4 exercises a workout. Packed as one
+  record per workout, a workout takes about 450 bytes, about 1 KB with the database's own overhead. Stored the
+  simple way (one record per set) it takes about 4 KB.
+- **The free plan** (supabase.com/pricing, read today): 500 MB database, 5 GB of downloads a month. I keep 100 MB
+  for the gym records (members, payments, check-ins, shop, messages), so 400 MB is for workouts.
+- **A typical member** trains 3 times a week (about 13 workouts a month): about 13 KB a month, 0.16 MB a year.
+
+| Members starting today | Compact way: full after | Simple way: full after |
+|---|---|---|
+| 100 | about 26 years | about 6.5 years |
+| 300 | about 9 years | about 2 years |
+| 1,000 | about 2.5 years | about 8 months |
+| 3,000 | about 10 months | about 2.5 months |
+| 10,000 | about 3 months | under 1 month |
+
+- **Downloads are not the limit:** a member sends only each new workout (about 1 KB); a new phone downloads a
+  year of history in about 160 KB. Even 1,000 new phones in a month use about 160 MB of the 5 GB.
+- **The paid plan** (about ₹2,100 a month, #27) has 8 GB: 20 times more (1,000 members for decades, 10,000 for
+  about 5 years), plus daily backups. **The free plan keeps no daily backups** and pauses after 7 days unused, so
+  members' history there could be lost in one bad day. If workouts go to the server, the paid plan comes first.
+- **Three things come with it:**
+  - Each member needs a sign-in (#43), so their workouts are theirs on any phone.
+  - The app's promise "your workouts stay on your phone" changes: a clear consent screen and new privacy
+    notice lines, in your approved words.
+  - Workouts count as health-related data under India's privacy law: we must protect and delete them on request.
+- **What it unlocks:** a new phone gets everything back without Google Drive, the trainer view (#46) and owner
+  reports can use real workouts, and the web admin could show a member's progress.
+**Decide:** Should members' workouts go to our server?
+- A: Yes, later and by choice: after sign-in (#43) and the paid plan (#27), a "Keep my workouts on ForgeAI" switch (on when the member agrees), stored the compact way; Drive backup stays as a second copy (recommended)
+- B: No: workouts stay on the phone; Google Drive backup (#42) covers a lost phone
 
 ## 49. Offers and messages for gym owners, with the workout reward: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat

@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-74. Question: how many members' workouts fit in Supabase's free plan? (answer in the tracker, #50) — 22 Oct 2026
+**Owner asked:** "consider the possibility of storing the data in our own database and superbase for each member
+... run some calculations and tell me with the free tier how many members we can store the data for ... if someone
+starts today, for how many months, how many workouts" + "Put the answer of this one in the project tracker."
+**Measured:** his Hevy export (D:/Apps/ForgeAI/Resources/Hevy Data.csv is really an .xlsx): 487 workouts, 8,816
+set rows (1,412 warm-ups), 18.1 sets and 4.4 exercises a workout; compact JSON per workout avg 443 bytes (p90 589).
+Estimates: ~1 KB a workout as one row with overhead; ~4 KB as one row per set (~200 B a set with 2 indexes).
+Supabase free (pricing page, 22 Oct): 500 MB DB, 1 GB files, 5 GB egress, 50k MAU, pauses after 7 days; Pro $25:
+8 GB, $0.125/GB more. Answer + table in tracker #50.
+
 ## R-73. The yellow Target box shows the live kg line instead (his idea) — 22 Oct 2026
 **Owner said (Preacher Curl screenshot):** "Why is it showing different target in the yellow color up there and the
 different suggestions in the actual grayed out boxes?" Then: "this yellow color target suggestion is static ... if your
