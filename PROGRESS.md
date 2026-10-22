@@ -2539,6 +2539,16 @@
   - Admin + landing deployed the same evening (version bc42db80): offers step 1, claim-code check, R-76 holding
     pages (/privacy.html and /terms.html checked live), offline step 2, landing sections.
 
+- 2026-10-23: **v0.54.1 — a drag that starts on a set box scrolls the workout page** (R-79, built while the owner rested).
+  - Cause: on Android a one-line TextInput with centred text counts as able to scroll sideways (its layout is
+    VERY_WIDE), so ReactEditText.onTouchEvent never gives the drag back to the ScrollView. The set boxes
+    (SetRow) are multi-line now: the layout is exactly the box's width; Enter still blurs (submitBehavior
+    blurAndSubmit), a pasted line break is dropped. Not pointerEvents (that broke typing, run 39758056150).
+  - Proof: P7BIG swipes FROM the set 1 weight box and asserts the page moved; on the owner profile both
+    navigation modes took 03a-swiped-from-box and passed (the default phone already showed the link).
+  - Gate on 2385142: default 39814847937, owner 39814851301, journeys 39814871703, CI 39814846871 (all green).
+    Tag commit = 2385142 + this entry (main moved on with CLAUDE.md + owner_inbox_page.py, not paperwork).
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
