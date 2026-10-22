@@ -4,9 +4,9 @@
  * hidden-route filter. The frozen `TabBar` is untouched; this new file is swapped
  * into `(tabs)/_layout.tsx`. Keeps the app visually cohesive.
  */
-import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
+import { useEffect, useRef, useState } from 'react';
+import { Pressable, Text, View, type LayoutChangeEvent } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useKeyboardFrame } from '@/components/KeyboardRoom';
@@ -25,6 +25,7 @@ import { unreadCount } from '@/shop/inbox';
 import { inboxFor, useGymInbox } from '@/shop/inboxStore';
 
 import { showsMiniBar } from '../lib/miniBar';
+import { PILL_H, edgeSprings, pillEdges, pillWidth } from '../lib/tabPill';
 import { Glyph, type GlyphName } from './TrackerGlyph';
 import { WorkoutMiniBar } from './WorkoutMiniBar';
 
@@ -39,6 +40,9 @@ const ROUTE_ICON: Record<string, TabIcon> = {
   shop: { glyph: 'bag' },
 };
 
+/** The tab row's top padding: the sliding highlight sits at the top of each tab, this far down. */
+const TAB_ROW_TOP = 10;
+
 /** Routes present in the navigator but never shown as a tab (still navigable). */
 const HIDDEN = new Set(['coach']);
 
@@ -47,21 +51,20 @@ function TabItem({
   icon,
   focused,
   onPress,
+  onLayout,
   badge = 0,
 }: {
   label: string;
   icon: TabIcon;
   focused: boolean;
   onPress: () => void;
+  /** R-78: where this tab sits in the bar, for the one sliding highlight (SlidingPill). */
+  onLayout: (e: LayoutChangeEvent) => void;
   /** Gym messages: the Shop tab's unread count (0 = no badge). */
   badge?: number;
 }) {
-  // Audit Phase 7: the pill and lift stay still when the phone asks for less motion.
+  // Audit Phase 7: the lift stays still when the phone asks for less motion.
   const rm = motionMode(useReduceMotion());
-  const pill = useAnimatedStyle(() => ({
-    opacity: withTiming(focused ? 1 : 0, { duration: motion.fast, reduceMotion: rm }),
-    transform: [{ scale: withSpring(focused ? 1 : 0.55, { ...motion.spring, reduceMotion: rm }) }],
-  }));
   const lift = useAnimatedStyle(() => ({
     transform: [{ translateY: withSpring(focused ? -1 : 0, { ...motion.spring, reduceMotion: rm }) }],
   }));
@@ -72,24 +75,10 @@ function TabItem({
       accessibilityLabel={badge > 0 ? `${label}, ${badge} new ${badge === 1 ? 'message' : 'messages'}` : label}
       accessibilityState={{ selected: focused }}
       onPress={onPress}
+      onLayout={onLayout}
       style={{ flex: 1, alignItems: 'center', gap: 3, minHeight: 48 }}
     >
-      <View style={{ width: 54, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-        <Animated.View
-          style={[
-            {
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              left: 4,
-              right: 4,
-              borderRadius: radius.pill,
-              backgroundColor: color.accentSoft,
-              ...shadow.glow,
-            },
-            pill,
-          ]}
-        />
+      <View style={{ width: 54, height: PILL_H, alignItems: 'center', justifyContent: 'center' }}>
         <Animated.View style={lift}>
           {'glyph' in icon ? (
             <Glyph name={icon.glyph} size={21} color={focused ? color.accent : color.inkMuted} />
@@ -131,6 +120,58 @@ function TabItem({
         {label}
       </Text>
     </Pressable>
+  );
+}
+
+/**
+ * R-78 (owner, 22 Oct 2026): one highlight for the whole bar that slides to the tapped tab, its
+ * front edge quick and its back edge following (lib/tabPill.ts), so it stretches as it travels and
+ * settles to its size. On the UI thread (Reanimated). With "Remove animations" it simply moves.
+ * A tab appearing or going (R-77: the Gym/Shop tab) moves it with no stretch.
+ */
+function SlidingPill({ tabKey, center, top }: { tabKey: string | null; center: number | null; top: number }) {
+  const reduced = useReduceMotion();
+  const left = useSharedValue(0);
+  const right = useSharedValue(0);
+  const shown = useSharedValue(0);
+  const lastKey = useRef<string | null>(null);
+  const placed = useRef(false);
+  useEffect(() => {
+    if (center == null) {
+      shown.value = reduced ? 0 : withTiming(0, { duration: motion.fast });
+      return;
+    }
+    const to = pillEdges(center);
+    const switched = placed.current && lastKey.current !== tabKey;
+    if (!placed.current || reduced) {
+      left.value = to.left;
+      right.value = to.right;
+    } else if (switched) {
+      const springs = edgeSprings(left.value, to.left);
+      left.value = withSpring(to.left, springs.left);
+      right.value = withSpring(to.right, springs.right);
+    } else {
+      // The same tab, moved by the bar itself (a tab came or went): glide, no stretch.
+      left.value = withTiming(to.left, { duration: motion.fast });
+      right.value = withTiming(to.right, { duration: motion.fast });
+    }
+    placed.current = true;
+    lastKey.current = tabKey;
+    shown.value = reduced ? 1 : withTiming(1, { duration: motion.fast });
+  }, [tabKey, center, reduced, left, right, shown]);
+  const style = useAnimatedStyle(() => ({
+    opacity: shown.value,
+    width: pillWidth(left.value, right.value),
+    transform: [{ translateX: left.value }],
+  }));
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        { position: 'absolute', top, left: 0, height: PILL_H, borderRadius: radius.pill, backgroundColor: color.accentSoft, ...shadow.glow },
+        style,
+      ]}
+    />
   );
 }
 
@@ -206,6 +247,15 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   // R-77: no gym, no third tab; "Gym" until the gym's shop lists something, then "Shop".
   const productCount = useGymShop((s) => s.products.length);
   const gymTab = gymTabFor(memberId != null, productCount);
+  // R-78: each tab's place in the bar (its left edge and width), for the sliding highlight.
+  const [places, setPlaces] = useState<Record<string, { x: number; w: number }>>({});
+  const place = (key: string) => (e: LayoutChangeEvent) => {
+    const { x, width } = e.nativeEvent.layout;
+    setPlaces((p) => (p[key]?.x === x && p[key]?.w === width ? p : { ...p, [key]: { x, w: width } }));
+  };
+  const focusedRoute = state.routes[state.index];
+  const tabShown = (name: string) => !HIDDEN.has(name) && !(name === 'shop' && gymTab === 'none');
+  const focusedPlace = focusedRoute && tabShown(focusedRoute.name) ? places[focusedRoute.key] : undefined;
   if (typing) return null;
   return (
     <View>
@@ -221,12 +271,12 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
         borderTopWidth: 1,
         borderTopColor: color.border,
         paddingBottom: Math.max(insets.bottom, 12),
-        paddingTop: 10,
+        paddingTop: TAB_ROW_TOP,
       }}
     >
+      <SlidingPill tabKey={focusedRoute?.key ?? null} center={focusedPlace ? focusedPlace.x + focusedPlace.w / 2 : null} top={TAB_ROW_TOP} />
       {state.routes.map((route, index) => {
-        if (HIDDEN.has(route.name)) return null;
-        if (route.name === 'shop' && gymTab === 'none') return null;
+        if (!tabShown(route.name)) return null;
         const { options } = descriptors[route.key];
         const label = route.name === 'shop' && gymTab !== 'none' ? GYM_TAB_LABEL[gymTab] : (options.title ?? route.name);
         const focused = state.index === index;
@@ -237,6 +287,7 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
             icon={route.name === 'shop' && gymTab === 'gym' ? { glyph: 'gym' } : (ROUTE_ICON[route.name] ?? { icon: 'sparkle' })}
             focused={focused}
             badge={route.name === 'shop' ? unread : 0}
+            onLayout={place(route.key)}
             onPress={() => {
               tap();
               const event = navigation.emit({

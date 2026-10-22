@@ -25,7 +25,8 @@ describe('R-77: the gym tab shows only when it works', () => {
   it('the tab bar leaves the tab out with no gym and names it by the rule', () => {
     const bar = read('src/tracker/components/TrackerTabBar.tsx');
     expect(bar).toMatch(/gymTabFor\(memberId != null, productCount\)/);
-    expect(bar).toMatch(/route\.name === 'shop' && gymTab === 'none'\) return null/);
+    expect(bar).toMatch(/!\(name === 'shop' && gymTab === 'none'\)/);
+    expect(bar).toMatch(/if \(!tabShown\(route\.name\)\) return null/);
     expect(bar).toMatch(/GYM_TAB_LABEL\[gymTab\]/);
   });
 
