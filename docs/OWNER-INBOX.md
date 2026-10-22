@@ -17,6 +17,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
 | 51 | Your own panel for the whole system (ForgeAI HQ) | A: all 3 steps, your yes before each live change |
+| 49 | Offers step 2: the consent words and privacy lines | A: yes as written |
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
@@ -55,7 +56,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 17. Missing-muscle suggestions (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. Now and then Up next suggests a few sets for a muscle group your last 3 weeks left out (never in an easy week); "Not now" waits 4 weeks; Settings → Workouts has the switch and "Bring back". |
 | 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | Blocked | Reps to beat: live in v0.54.0. Trainer view: waits for your pick in #46. |
 | 19. v0.52.0: your gym notes of 22 Oct | Done | 22 Oct: released inside v0.54.0: warm-ups keep last time's numbers; dumbbell pairs; newest workout anywhere; the box shows kilos/reps done and turns green; "Last" beside the rest timer; pop-ups longer; "In use" after each set; Health Connect asks first. |
-| 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Doing | Step 1 live 22 Oct. Step 2 building (you picked A on 23 Oct, plus automatic giving as an option).
+| 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Blocked | Step 1 live 22 Oct. Step 2 built and reviewed 23 Oct; the admin part is live (shows "not switched on"). Waits for your OK on the consent words (#49), then the live server change and the member app release.
 | 21. Imported names with a title ("Mr. Ramesh") | Blocked | New imports leave titles out (admin app, live 22 Oct). Names already on the server need a small live server change: waits for your yes, which I will ask with the next live change. |
 | 22. Join screen: Terms and Privacy opened the admin app (your report, 22 Oct) | Done | 22 Oct, live: both links open a short "being finished" page, never the admin app; a test stops it coming back. The full pages need #37 (your contact name and email). |
 | 23. After joining: the gym's welcome, its icon pop-up, Shop only when on (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. The gym's welcome screen after joining, then a pop-up to add its logo to the home screen and how to take the ForgeAI icon off (Android lets no app remove its own icon). No gym = no Shop tab; a gym = "Gym" tab; its shop on = "Shop". "Leave gym" on its own row in Settings. |
@@ -150,7 +151,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | At-risk members list | Live | A daily list of members who stopped coming, judged against each member's own routine. |
 | Renewals list and WhatsApp messages | Live | Ready-typed WhatsApp messages for fees, endings, birthdays, welcome and receipts, sent with one tap. |
 | Messages & offers | Live | 22 Oct: admin app More → Messages & offers: ready messages in English and Hindi (closures, fee offers, festivals, renewals...), who gets it, WhatsApp one by one, Today nudges. Step 2 waits for your pick in #49. |
-| Workout offer in the app (step 2) | Planned | You picked A (23 Oct): members join the offer in the app and see "6 of 10"; the owner picks "give the days by themselves" or "I give them". Building now; the server part needs the live change you said yes to. | The owner makes an offer (10 workouts in 30 days → 3 extra days). Members tap "Join the offer"; only the dates of counted workouts leave the phone. A workout counts only on a day the gym saw a check-in, 20+ minutes and 6+ sets. When a member reaches 10, the days are added by themselves, or the desk taps Give, as the owner chose. |
+| Workout offer in the app (step 2) | Waiting for you | Built and reviewed 23 Oct. Waits for your OK on the consent words and privacy lines (#49); then the server change, the privacy notice and the member app release. | The owner makes an offer (10 workouts in 30 days → 3 extra days). Members tap "Join the offer"; only the dates of counted workouts leave the phone. A workout counts only on a day the gym saw a check-in, 20+ minutes and 6+ sets. When a member reaches 10, the days are added by themselves, or the desk taps Give, as the owner chose. |
 | Home screen tiles | Live | Live, expired and expiring members, today's collection and dues, each opening its matching list. |
 | "Expiring in 1-3 / 4-7 / 8-15 days" tiles | Live | On the Today screen since 15 Oct: Ending today, in 1-3, 4-7 and 8-15 days; each opens its list. |
 | Staff logins and roles | Live | Owner and front-desk logins; staff can give at most 10% off and every receipt shows who took it. |
@@ -301,7 +302,7 @@ free plan, and for how long, if they start today?
 
 ## 49. Offers and messages for gym owners, with the workout reward: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** Building (decided 23 Oct)
+**Status:** WAITING FOR YOU
 **You asked:** a full offers and messages section for the gym owner: holiday closures to everyone, fee offers,
 and a reward that nudges members to track workouts ("track 10 workouts, get 3 extra days"). You do Firebase.
 **My answer:** Building it in three steps. Step 1 needs nothing from you, and I have started it.
@@ -326,6 +327,13 @@ and a reward that nudges members to track workouts ("track 10 workouts, get 3 ex
 - **Step 3 (after your Firebase setup):** pop-up notifications, and automatic birthday / plan-ending / welcome
   messages at 9 am, never more than one a day per member.
 **DECIDED (23 Oct 2026):** A, plus your addition: each offer has a setting "Give the days by themselves" or "I give them" (the desk taps Give). Building now; before members see it you approve the consent words and the privacy lines.
+**BUILT (23 Oct):** step 2 is built, reviewed (1 must-fix and 4 smaller fixes, all done) and tested. The admin part is live: Messages & offers → Workout offer says "not switched on for your gym yet" until the server change. The member app card stays hidden until then too.
+**What the member sees before joining (consent words):**
+> Join: 10 workouts, 3 extra days. How it works: on a day you check in at <gym>, log a workout of at least 20 minutes with 6 or more sets in ForgeAI. Log 10 of them within 30 days of joining, and 3 days are added to your membership. What the gym gets: only the dates of those workouts. Never your exercises, weights, sets, body weight or photos. Who sees it: the owner and front desk of <gym>. Stop any time: Gym tab → Workout offer → Leave the offer. The dates are deleted and nothing more is sent. Questions or complaints: ask at <gym>'s front desk. If it is not solved, you can complain to the Data Protection Board of India. Not joining changes nothing about your membership. [Join the offer] [Not now]
+**New lines for the privacy notice** (English and Hindi, full text in docs/overhaul/offers-step2-words-for-approval.md): 1) if you join, the app sends your gym only the dates of the workouts that count, only while you are in the offer; 2) what we keep and for how long: dates deleted when you leave, or 90 days after the offer ends; 3) how to stop: Gym tab → Workout offer → Leave the offer; 4) "Last updated" with what changed.
+**Decide:** Are the consent words and the privacy lines OK?
+- A: Yes, as written. I then make the live server change (you said yes in A), put the lines in the privacy notice, and release the member app (recommended)
+- B: Change them: write what to change in the comment box
 **Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-offers-notices.md
 
 ## 48. One extra rep on every set, or the app's targets? — 22 Oct 2026

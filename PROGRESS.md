@@ -2562,6 +2562,17 @@
     + 4 NITs, all fixed (fc063d7). Checks: tsc -b, vitest 1032, playwright 50, panel node --test 37.
   - Deployed 23 Oct (version a2f535d8). Keys not set yet: the endpoint answers "not switched on" (503).
 
+- 2026-10-23: **#49 offers step 2 built** (owner R-82: A + automatic or manual giving). Not switched on.
+  - Server: supabase/migrations/0025_workout_offer.sql (NOT APPLIED; offers, members, counted dates, consent/
+    reward log, group + timed messages); tests supabase/tests/0025_workout_offer.sql (71 checks on PGlite).
+  - Member app: Gym tab offer card, consent first, dates only after Join, same set at most once a day; hidden
+    while the server lacks 0025. Admin: Messages & offers → Workout offer (auto/manual, Ready, one-tap Give,
+    owner take-back), group and timed messages; old server = "not switched on".
+  - Review: 1 MUST-FIX (desk could re-give a taken-back reward) + 4 SHOULD-FIX + NITs, all fixed (30b7c36,
+    a8b2928, 22f6d29). Checks: mobile 3186, dashboard 1053, journeys 53. Admin deployed 23 Oct (4d5be99a).
+  - Next: owner OKs the consent words (#49) -> apply 0025 + its test in the SQL editor -> privacy notice lines ->
+    member release (version bump, phone gate).
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
