@@ -5,6 +5,34 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-64. Answer the trainer-view idea (R-59) in the tracker — 22 Oct 2026
+**Owner said:** "I also gave another idea about the trainer's profile. Answer to that should be in the inbox as well."
+**Plan:** research (Trainerize, TrueCoach, Hevy Coach, PT Distinction, Everfit, Indian gym software; what members
+accept sharing; India's data law for consent), then a tracker entry with the recommended design and the
+decisions only he can make (member consent wording, the live server change). Research note:
+docs/overhaul/research/R-trainer-view.md.
+
+## R-63. Idea: count reps by listening (headphone mic) — research, answer in the tracker — 22 Oct 2026
+**Owner said:** "when someone is working out intensely ... they forget what they are counting ... if user wants,
+they can connect their headphones ... and allow the mic for them to basically let the app listen to the counting
+and automatically log the exercise when it's done ... maybe there is a different way to solve the problem ...
+You research and you think about it and see what will be the best implementation, and then put the answer in
+the project tracker."
+**Plan:** research every way to solve "I lost count" (listening to counting, the watch's motion sensor, the
+camera, the app counting aloud, a headphone-button tap), what competitors do and what users say, then a
+tracker entry with the recommendation. Research note: docs/overhaul/research/R-voice-rep-count.md.
+
+## R-61b. "Last:" date and the suggestion should use the newest time anywhere — 22 Oct 2026
+**Owner said (same workout):** "check if the date stamp ... is it from the same routine or the same folder ...
+I feel like I did that recently, but you're showing an older date and thereby suggesting a lower weight
+because it's been long." Then: "I feel like it should be even global. It shouldn't be even folder. If the same
+exact exercise were done recently, even in a different folder, then also ... You decide."
+**Found:** under "Same folder" / "Same routine" the break rule ("10 weeks since your last ...: lighter") read
+only that folder's workouts; under "Any workout" it already read every workout.
+**Decided:** Any workout for everyone once (saved choices reset; "Same folder" retired; "Same routine" stays as
+an option); the break rule always reads every workout; under Any workout a newer workout in ANOTHER folder
+leads the suggestion too (heavy and light days inside one folder keep their own).
+
 ## R-62. Idea: a paid plan for people who train without a gym — 22 Oct 2026
 **Owner said:** "Log this as an idea ... the app will be completely free with all features if they join a gym,
 but they can get option to join without a gym personally as well, directly the consumer, for which they can just
