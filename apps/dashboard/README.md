@@ -75,3 +75,8 @@ no database change. Then fix the cause on `main` and deploy again with the steps
   empty they go to `docs/launch/preview/`, never to `public/`.
 - Every read and write is row-level-security scoped to the person's own gym (server tests:
   security, uat_access_matrix).
+- **AI import (#47):** "Ask AI to match the columns" calls the Worker's `/api/ai/match-columns`
+  (`deploy/panel/aiMatch.js`), never an AI company directly; the keys are Worker secrets
+  (`GEMINI_API_KEY`, then `ANTHROPIC_API_KEY` as the fallback) and never reach the browser. Only
+  column names and 5 masked example rows are sent; owners only; 20 a gym a day (D1 `ai_usage`).
+  Without a key, or on any failure, the owner matches the columns by hand as before.

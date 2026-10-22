@@ -252,6 +252,7 @@ async function askGemini(env, columns, fetchImpl, timeoutMs) {
     }),
     signal: AbortSignal.timeout(timeoutMs),
   });
+  // quiet: an unreadable error body still fails with its status, and the chain logs that line.
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text().catch(() => '')).slice(0, 200)}`);
   const data = await res.json();
   const cand = data?.candidates?.[0];
@@ -349,7 +350,10 @@ export async function whoIsAsking(key, fetchImpl = fetch) {
     return { unreachable: true };
   }
   if (!res.ok) return { denied: true };
-  const me = await res.json().catch(() => null);
+  const me = await res.json().catch((e) => {
+    console.warn('[ai-match] staff_me answer was not JSON', safeMessage(e));
+    return null;
+  });
   if (!me || typeof me.gymId !== 'string' || !me.gymId) return { denied: true };
   // An old owner key has no person; a signed-in person carries a role.
   const owner = me.person === null || me.person === undefined || me.person?.role === 'owner';
