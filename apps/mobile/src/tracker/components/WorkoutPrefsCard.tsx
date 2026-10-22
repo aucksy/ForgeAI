@@ -31,11 +31,14 @@ import { Platform, Pressable, Text, View } from 'react-native';
 
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
 import { Card, Icon, SheetRow } from '@/components/ui';
+import { todayISO } from '@/lib/date';
 import { tap } from '@/lib/haptics';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { PREVIOUS_FROM_CHOICES } from '../db/historyScope';
+import { GROUP_WORDS } from '../engine/muscleBalance';
+import { putAwayGroups, useMuscleTips } from '../store/muscleTipsStore';
 import { refreshWidgets } from '../phone/widgets';
 import { plateSetupLine } from '../services/plateMath';
 import { REST_SOUND_CHOICES, restSoundFootnote } from '../services/restSounds';
@@ -157,6 +160,12 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
   const sounds = useTrackerPrefs((s) => s.sounds);
   const inUseAfterSet = useTrackerPrefs((s) => s.inUseAfterSet);
   const setInUseAfterSet = useTrackerPrefs((s) => s.setInUseAfterSet);
+  // R-58: the Up next muscle tips, and the ones the member put away.
+  const tipsOn = useMuscleTips((s) => s.on);
+  const setTipsOn = useMuscleTips((s) => s.setOn);
+  const tipMuted = useMuscleTips((s) => s.muted);
+  const tipSnoozed = useMuscleTips((s) => s.snoozedUntil);
+  const putAway = putAwayGroups({ muted: tipMuted, snoozedUntil: tipSnoozed }, todayISO());
   const setSounds = useTrackerPrefs((s) => s.setSounds);
   const restSound = useTrackerPrefs((s) => s.restSound);
   const setRestSound = useTrackerPrefs((s) => s.setRestSound);
@@ -246,6 +255,33 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
         onChange={setInUseAfterSet}
         divider
       />
+      {/* R-58: one calm tip on Up next when 3 weeks left a muscle group close to zero. */}
+      <ToggleRow
+        icon="dumbbell"
+        title="Muscle tips"
+        caption="Now and then, Up next suggests a few sets for a muscle group your last 3 weeks left out"
+        value={tipsOn}
+        onChange={setTipsOn}
+        divider
+      />
+      {tipsOn && putAway.length > 0 ? (
+        <Pressable
+          onPress={() => {
+            tap();
+            useMuscleTips.getState().unmuteAll();
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={`Put-away tips: ${putAway.map((g) => GROUP_WORDS[g].your).join(', ')}. Bring them back`}
+        >
+          <SettingRow
+            icon="sparkle"
+            title="Put-away tips"
+            caption={putAway.map((g) => GROUP_WORDS[g].your).join(', ')}
+            right={<Text style={ROW_VALUE()}>Bring back</Text>}
+            divider
+          />
+        </Pressable>
+      ) : null}
       <ToggleRow
         icon="gauge"
         title="Track RPE"

@@ -41,10 +41,39 @@ describe('R-75: each exercise against the compared workout', () => {
 
   it('reasons: sets first, then weight, then reps; nothing when equal', () => {
     const kg = (n: number) => `${n} kg`;
-    expect(deltaReason([{ weightKg: 60, reps: 8 }], [{ weightKg: 60, reps: 8 }, { weightKg: 60, reps: 8 }], kg)).toBe('1 set fewer');
-    expect(deltaReason([{ weightKg: 57.5, reps: 8 }], [{ weightKg: 60, reps: 8 }], kg)).toBe('2.5 kg lighter');
-    expect(deltaReason([{ weightKg: 60, reps: 11 }], [{ weightKg: 60, reps: 8 }], kg)).toBe('3 more reps');
-    expect(deltaReason([{ weightKg: 60, reps: 8 }], [{ weightKg: 60, reps: 8 }], kg)).toBeNull();
+    expect(deltaReason([{ weightKg: 60, reps: 8 }], [{ weightKg: 60, reps: 8 }, { weightKg: 60, reps: 8 }], kg, -1)).toBe('1 set fewer');
+    expect(deltaReason([{ weightKg: 57.5, reps: 8 }], [{ weightKg: 60, reps: 8 }], kg, -1)).toBe('2.5 kg lighter');
+    expect(deltaReason([{ weightKg: 60, reps: 11 }], [{ weightKg: 60, reps: 8 }], kg, 1)).toBe('3 more reps');
+    expect(deltaReason([{ weightKg: 60, reps: 8 }], [{ weightKg: 60, reps: 8 }], kg, 1)).toBeNull();
+  });
+
+  it('review fix: the reason always moved the same way as the row', () => {
+    const set = (weightKg: number, reps: number, n: number) => Array.from({ length: n }, () => ({ weightKg, reps }));
+    const ex = (sets: { weightKg: number; reps: number }[]): CompareExercise => ({
+      exerciseId: 'row',
+      name: 'Row',
+      volumeKg: sets.reduce((a, x) => a + x.weightKg * x.reps, 0),
+      sets,
+    });
+    // 3x10 at 60 kg, then 3x6 at 62.5 kg: down 38%, because of the reps (not "2.5 kg heavier").
+    const [heavier] = exerciseDeltas([ex(set(62.5, 6, 3))], [ex(set(60, 10, 3))]);
+    expect(heavier!.kind).toBe('down');
+    expect(heavier!.reason).toBe('12 fewer reps');
+    // 3x8 at 60 kg, then 4x8 at 40 kg: down 11%, because it was lighter (not "1 set more").
+    const [lighter] = exerciseDeltas([ex(set(40, 8, 4))], [ex(set(60, 8, 3))]);
+    expect(lighter!.kind).toBe('down');
+    expect(lighter!.reason).toBe('20 kg lighter');
+  });
+
+  it('review fix: a move with no kilos is measured by reps, then by sets (never always "same")', () => {
+    const ex = (sets: { weightKg: number; reps: number }[], volumeKg = 0): CompareExercise => ({ exerciseId: 'p', name: 'Plank', volumeKg, sets });
+    const [plank] = exerciseDeltas([ex([{ weightKg: 0, reps: 60 }])], [ex([{ weightKg: 0, reps: 60 }, { weightKg: 0, reps: 60 }, { weightKg: 0, reps: 60 }])]);
+    expect(plank!.kind).toBe('down');
+    expect(plank!.reason).toBe('2 sets fewer');
+    // Pull-ups logged at 0 kg last time, with body weight today: by reps, the same reps = same.
+    const [pull] = exerciseDeltas([ex([{ weightKg: 75, reps: 8 }], 600)], [ex([{ weightKg: 0, reps: 8 }])]);
+    expect(pull!.kind).toBe('same');
+    expect(deltaTag(plank!)).toBe('−67%');
   });
 
   it('a small change reads as the same; an exercise listed twice is added up', () => {

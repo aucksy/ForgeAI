@@ -23,7 +23,7 @@ export interface ExerciseDelta {
   kind: DeltaKind;
   todayKg: number;
   lastKg: number;
-  /** (today − last) / last, or null (new, skipped, or nothing to divide by). */
+  /** (today − last) / last by kg lifted (reps, or sets, for a move with no kilos), or null (new, skipped). */
   pct: number | null;
   /** "2 sets fewer", "2.5 kg heavier", "3 more reps" — the main reason, or null. */
   reason: string | null;
@@ -40,16 +40,34 @@ const reps = (sets: CompareExercise['sets']): number => sets.reduce((a, s) => a 
 
 /**
  * The main reason an exercise moved, in the order a member thinks of it: sets, then weight, then
- * reps. `fmtKg` writes a weight in the member's unit ("2.5 kg"). PURE.
+ * reps — the first one that moved the SAME way as the row (review fix: a row down 38% said "2.5 kg
+ * heavier" when the reps fell). `dir`: +1 up, -1 down. `fmtKg` writes a weight in the member's unit
+ * ("2.5 kg"). null when nothing moved that way. PURE.
  */
-export function deltaReason(today: CompareExercise['sets'], last: CompareExercise['sets'], fmtKg: (kg: number) => string): string | null {
+export function deltaReason(
+  today: CompareExercise['sets'],
+  last: CompareExercise['sets'],
+  fmtKg: (kg: number) => string,
+  dir: 1 | -1,
+): string | null {
   const ds = today.length - last.length;
-  if (ds !== 0) return `${Math.abs(ds)} ${Math.abs(ds) === 1 ? 'set' : 'sets'} ${ds > 0 ? 'more' : 'fewer'}`;
+  if (Math.sign(ds) === dir) return `${Math.abs(ds)} ${Math.abs(ds) === 1 ? 'set' : 'sets'} ${ds > 0 ? 'more' : 'fewer'}`;
   const dw = topKg(today) - topKg(last);
-  if (Math.abs(dw) > 1e-6) return `${fmtKg(Math.abs(dw))} ${dw > 0 ? 'heavier' : 'lighter'}`;
+  if (Math.abs(dw) > 1e-6 && Math.sign(dw) === dir) return `${fmtKg(Math.abs(dw))} ${dw > 0 ? 'heavier' : 'lighter'}`;
   const dr = reps(today) - reps(last);
-  if (dr !== 0) return `${Math.abs(dr)} ${dr > 0 ? 'more' : 'fewer'} ${Math.abs(dr) === 1 ? 'rep' : 'reps'}`;
+  if (Math.sign(dr) === dir) return `${Math.abs(dr)} ${dr > 0 ? 'more' : 'fewer'} ${Math.abs(dr) === 1 ? 'rep' : 'reps'}`;
   return null;
+}
+
+/**
+ * What a row is measured by: kg lifted when both workouts have some; else reps (a plank, a pull-up
+ * logged without body weight: review fix, those always read "same"); else the number of sets. PURE.
+ */
+function measure(now: CompareExercise, was: CompareExercise): [number, number] {
+  if (now.volumeKg > 0 && was.volumeKg > 0) return [now.volumeKg, was.volumeKg];
+  const r = [reps(now.sets), reps(was.sets)] as const;
+  if (r[0] > 0 && r[1] > 0) return [r[0], r[1]];
+  return [now.sets.length, was.sets.length];
 }
 
 /**
@@ -78,7 +96,8 @@ export function exerciseDeltas(
       out.push({ exerciseId: e.exerciseId, name: e.name, kind: 'new', todayKg: e.volumeKg, lastKg: 0, pct: null, reason: null });
       continue;
     }
-    const pct = was.volumeKg > 0 ? (e.volumeKg - was.volumeKg) / was.volumeKg : null;
+    const [a, b] = measure(e, was);
+    const pct = b > 0 ? (a - b) / b : null;
     const kind: DeltaKind = pct == null || Math.abs(pct) < SAME_SHARE ? 'same' : pct > 0 ? 'up' : 'down';
     out.push({
       exerciseId: e.exerciseId,
@@ -87,7 +106,7 @@ export function exerciseDeltas(
       todayKg: e.volumeKg,
       lastKg: was.volumeKg,
       pct,
-      reason: kind === 'same' ? null : deltaReason(e.sets, was.sets, fmtKg),
+      reason: kind === 'same' ? null : deltaReason(e.sets, was.sets, fmtKg, kind === 'up' ? 1 : -1),
     });
   }
   for (const w of then.values()) {

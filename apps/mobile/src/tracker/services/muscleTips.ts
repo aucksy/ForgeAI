@@ -24,7 +24,7 @@ import { getExerciseIdsByCatalogKey, getTrackerExercisesByIds } from '../db/exer
 import { folderOfRoutine } from '../db/folderRepo';
 import { addExerciseToRoutine } from '../db/routineRepo';
 import { GROUP_MUSCLES, missingGroups, todayLine, weekFromLogged, type BalanceGroup } from '../engine/muscleBalance';
-import { NEW_TIP_DAYS, quietGroups, useMuscleTips } from '../store/muscleTipsStore';
+import { muscleTipsLoaded, NEW_TIP_DAYS, quietGroups, useMuscleTips } from '../store/muscleTipsStore';
 import { getPlanNow } from './planState';
 import { getBalanceSets } from './volumeService';
 
@@ -78,17 +78,19 @@ export function fitsDay(group: BalanceGroup, day: DayType): boolean {
 
 /**
  * The group to show today: the first missing one whose home is this day — but a NEW group only when
- * the last one shown is a week old (or no longer missing). PURE.
+ * the last one shown is a week old (or no longer missing). A group put away ("Not now", "I skip this
+ * on purpose": in `quiet`) keeps that clock, so the next one never shows the same day. PURE.
  */
 export function groupForDay(
   missing: readonly BalanceGroup[],
   day: DayType,
   shown: { group: BalanceGroup; sinceISO: string } | null,
   today: string,
+  quiet: ReadonlySet<BalanceGroup> = new Set(),
 ): BalanceGroup | null {
   const fits = missing.filter((g) => fitsDay(g, day));
   if (fits.length === 0) return null;
-  if (shown && missing.includes(shown.group)) {
+  if (shown && (missing.includes(shown.group) || quiet.has(shown.group))) {
     if (fits.includes(shown.group)) return shown.group;
     if (daysBetween(shown.sinceISO, today) < NEW_TIP_DAYS) return null;
   }
@@ -139,6 +141,7 @@ export async function muscleTipFor(
   today: string = todayISO(),
 ): Promise<MuscleTip | null> {
   try {
+    await muscleTipsLoaded();
     const prefs = useMuscleTips.getState();
     if (!prefs.on) return null;
     const folder = await folderOfRoutine(routine.id);
@@ -157,8 +160,9 @@ export async function muscleTipFor(
       return null;
     });
     const beginner = profile?.experience === 'beginner';
-    const missing = missingGroups(weekFromLogged(sets, 3), { beginner, quiet: quietGroups(prefs, today) });
-    const group = groupForDay(missing, routine.dayType, prefs.shown, today);
+    const quiet = quietGroups(prefs, today);
+    const missing = missingGroups(weekFromLogged(sets, 3), { beginner, quiet });
+    const group = groupForDay(missing, routine.dayType, prefs.shown, today, quiet);
     if (!group) return null;
     // The routine already lists an exercise for it (skipped lately): no tip, it is already planned.
     const want = new Set(musclesOfGroup(group));

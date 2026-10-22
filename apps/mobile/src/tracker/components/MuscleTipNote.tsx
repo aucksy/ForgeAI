@@ -17,8 +17,11 @@ export function MuscleTipNote({
   onAdd,
   onNotNow,
   onSkip,
+  lastNotNow = false,
 }: {
   tip: MuscleTip;
+  /** A second "Not now" puts the group away for good (muscleTipsStore): the label says so. */
+  lastNotNow?: boolean;
   onAdd: () => Promise<void>;
   onNotNow: () => void;
   onSkip: () => void;
@@ -47,7 +50,7 @@ export function MuscleTipNote({
             onNotNow();
           }}
           accessibilityRole="button"
-          accessibilityLabel="Not now. Ask again in 4 weeks"
+          accessibilityLabel={lastNotNow ? "Not now. Don't suggest it again" : 'Not now. Ask again in 4 weeks'}
           style={{ minHeight: 48, paddingHorizontal: space.md, justifyContent: 'center' }}
         >
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>Not now</Text>

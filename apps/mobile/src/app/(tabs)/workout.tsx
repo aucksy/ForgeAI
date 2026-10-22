@@ -383,6 +383,7 @@ export default function WorkoutScreen() {
                 {tip && card.kind === 'next' && !easyNow ? (
                   <MuscleTipNote
                     tip={tip}
+                    lastNotNow={(useMuscleTips.getState().notNow[tip.group] ?? 0) >= 1}
                     onAdd={async () => {
                       try {
                         await addMuscleTip(tip.routineId, tip);

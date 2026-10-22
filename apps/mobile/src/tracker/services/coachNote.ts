@@ -26,7 +26,7 @@ import { tinyDateWithYear } from '@/lib/date';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getGroqKey } from '@/lib/keys';
 import { kgNum } from '@/lib/format';
-import { displayUnits, fmtVol, liftedWords, weightUnitOf, type UnitSystem } from '@/lib/units';
+import { displayUnits, fmtVol, fmtW, liftedWords, weightUnitOf, type UnitSystem } from '@/lib/units';
 import { countWord, usesBannedWord } from '@/lib/words';
 import { useSettings } from '@/store/settingsStore';
 import type { SessionDetail } from '@/types/models';
@@ -198,8 +198,11 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
   const units = displayUnits();
   const text = buildSessionNote(data, cmp?.detail ?? null, units, cmp?.against);
   if (!text || !cmp || data.easyWeek) return { text, source: 'engine' };
-  const exercises = exerciseDeltas(compareExercises(data.session), compareExercises(cmp.detail), (kg) => `${kgNum(kg, units)} ${weightUnitOf(units)}`);
-  return { text, source: 'engine', exercises, cause: mainCause(exercises, data.totalVolumeKg - cmp.detail.totalVolumeKg) };
+  const exercises = exerciseDeltas(compareExercises(data.session), compareExercises(cmp.detail), (kg) => fmtW(kg, units));
+  // "About the same" in the line: no "Mostly …" under it (review nit).
+  const moved = data.totalVolumeKg - cmp.detail.totalVolumeKg;
+  const cause = cmp.detail.totalVolumeKg > 0 && Math.abs(moved) / cmp.detail.totalVolumeKg >= 0.05 ? mainCause(exercises, moved) : null;
+  return { text, source: 'engine', exercises, cause };
 }
 
 /** Compact, grounded fact sheet handed to Groq — only real numbers, no prose. */

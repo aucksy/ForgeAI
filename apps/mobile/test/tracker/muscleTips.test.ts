@@ -5,8 +5,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { DEFAULT_PICKS, fitsDay, groupForDay, musclesOfGroup } from '@/tracker/services/muscleTips';
-import { quietGroups, useMuscleTips } from '@/tracker/store/muscleTipsStore';
+import { muscleTipsLoaded, putAwayGroups, quietGroups, useMuscleTips } from '@/tracker/store/muscleTipsStore';
 import { CATALOG } from '@/tracker/catalog/exerciseCatalog';
+import { BALANCE_ORDER } from '@/tracker/engine/muscleBalance';
 
 useMuscleTips.persist.setOptions({ storage: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } });
 
@@ -57,3 +58,30 @@ describe('R-58: where and when the tip shows', () => {
     }
   });
 });
+
+describe('R-58 review fixes', () => {
+  it('"Not now" keeps the once-a-week clock: the next group never shows the same day', () => {
+    useMuscleTips.setState({ muted: [], snoozedUntil: {}, notNow: {}, shown: null });
+    useMuscleTips.getState().markShown('back', TODAY);
+    useMuscleTips.getState().snooze('back', TODAY);
+    const st = useMuscleTips.getState();
+    expect(st.shown).toEqual({ group: 'back', sinceISO: TODAY });
+    const quiet = quietGroups(st, TODAY);
+    // Back is put away, core is still missing: nothing more this week, core a week later.
+    expect(groupForDay(['core'], 'full', st.shown, TODAY, quiet)).toBeNull();
+    expect(groupForDay(['core'], 'full', st.shown, '2026-10-29', quietGroups(st, '2026-10-29'))).toBe('core');
+  });
+
+  it('Settings lists the put-away groups and brings them all back', () => {
+    useMuscleTips.setState({ muted: ['calves'], snoozedUntil: { back: '2026-11-19', core: '2026-10-01' }, notNow: { back: 1 } });
+    expect(putAwayGroups(useMuscleTips.getState(), TODAY)).toEqual(BALANCE_ORDER.filter((g) => g === 'back' || g === 'calves'));
+    useMuscleTips.getState().unmuteAll();
+    expect(putAwayGroups(useMuscleTips.getState(), TODAY)).toEqual([]);
+    expect(useMuscleTips.getState().notNow).toEqual({});
+  });
+
+  it('waiting for the saved choices never hangs', async () => {
+    await expect(muscleTipsLoaded(50)).resolves.toBeUndefined();
+  });
+});
+
