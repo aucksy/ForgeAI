@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-76. Join screen: "Terms" and "Privacy notice" open the admin app — 22 Oct 2026
+**Owner said (screenshot of "Join your gym" from a gym's invite link, RAM Fitness Club):** "when I tap on terms of
+privacy notice, it doesn't really open that. It opens the admin dashboard."
+**Cause:** the links (forgeai.aakashpahuja.in/privacy.html, /terms.html) point at pages that were never published:
+scripts/legal_pages.py holds them back until #37 gives the complaints contact (name + email), and the site sends
+any unknown address to the admin app. Live check 22 Oct: both addresses answer 200 with the admin app's page.
+**Plan:** (1) until #37, the two addresses get a plain holding page that says the notice is being finished (never
+the admin app); (2) a test fails if either page is missing from the site; (3) the real pages go up the moment he
+gives #37. Ask him for #37 now.
+
 ## R-75. Finish screen: compare fairly, and show which exercises went up or down — 22 Oct 2026
 **Owner said (screenshot "Pull 1 done ... 18% less kg lifted than your last pull workout (3,155 kg)"):** "First, this
 has to be, I think, folder specific, but you can think through this. Second, what I really want is further insights
