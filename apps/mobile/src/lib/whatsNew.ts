@@ -36,6 +36,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       '"Previous values" is back on Any workout. Pick Same routine again in Settings → Workouts if you want it.',
       'The kg to beat turns green when you beat it, and "Last" sits beside the rest timer.',
       'The pop-up after a set stays on screen longer.',
+      'New: Settings → Workouts → Show In use after each set. A big IN USE screen with your rest clock opens by itself, so others know you are coming back.',
     ],
   },
   {

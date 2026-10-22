@@ -86,6 +86,11 @@ export interface TrackerPrefsState {
   weightJump: WeightJump;
   /** Settings → Workouts → Rep range. */
   repRange: RepRangeChoice;
+  /**
+   * R-70 (owner, 22 Oct 2026): "In use" fills the screen by itself the moment a set's rest starts,
+   * so people nearby see the machine is taken while the member walks away. Off by default.
+   */
+  inUseAfterSet: boolean;
   setAdvancedSets: (value: boolean) => void;
   setCoachNotes: (value: boolean) => void;
   setSounds: (value: boolean) => void;
@@ -98,6 +103,7 @@ export interface TrackerPrefsState {
   setShareSize: (value: ShareSize) => void;
   setShareLook: (value: ShareLook) => void;
   setWeightJump: (value: WeightJump) => void;
+  setInUseAfterSet: (value: boolean) => void;
   setRepRange: (value: RepRangeChoice) => void;
 }
 
@@ -132,6 +138,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       shareLook: 'dark',
       weightJump: DEFAULT_JUMP,
       repRange: 'goal',
+      inUseAfterSet: false,
       setAdvancedSets: (advancedSets) => set({ advancedSets }),
       setCoachNotes: (coachNotes) => set({ coachNotes }),
       setSounds: (sounds) => set({ sounds }),
@@ -145,6 +152,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       setShareLook: (value) => set({ shareLook: isShareLook(value) ? value : 'dark' }),
       setWeightJump: (value) => set({ weightJump: isWeightJump(value) ? value : DEFAULT_JUMP }),
       setRepRange: (value) => set({ repRange: isRepRangeChoice(value) ? value : 'goal' }),
+      setInUseAfterSet: (inUseAfterSet) => set({ inUseAfterSet: inUseAfterSet === true }),
     }),
     {
       name: 'forgeai-tracker-prefs',
@@ -167,6 +175,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           weightJump: isWeightJump(p.weightJump) ? p.weightJump : current.weightJump,
           repRange: isRepRangeChoice(p.repRange) ? p.repRange : current.repRange,
           restSound: isRestSoundId(p.restSound) ? p.restSound : current.restSound,
+          inUseAfterSet: typeof p.inUseAfterSet === 'boolean' ? p.inUseAfterSet : current.inUseAfterSet,
         };
       },
     },

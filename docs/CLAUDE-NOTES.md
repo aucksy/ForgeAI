@@ -5,6 +5,23 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-71. Question: can our workouts show as strength training in Google's health app on the Pixel? — 22 Oct 2026
+**Owner asked:** "check if Google Pixel will allow other apps to send the workout data, so that even if I do not
+start the workout on the ... watch with the native functionality, can it still receive data from our watch app or
+our phone app and record it as a strength training done and put that in the ... Google Health app as a history
+record."
+**Plan:** check what we already write to Health Connect, and research whether Google's health app (Fitbit / Google
+Health) shows exercise written by other apps; answer in chat, keep it here.
+
+## R-70. Build: "In use" opens by itself after each set (a setting) — 22 Oct 2026
+**Owner said:** "a checkbox in the menu. So if the checkbox is always ticked, then as soon as the user completes a
+set, the banner automatically comes up. And of course, user can get out of it ... After my set, I walk and I get
+away from my equipment and people start to take away the weights ... Also the rest timer, like the label rest
+timer, and then the rest timer going down."
+**Done (v0.52.0 candidate):** Settings → Workouts → "Show In use after each set" (off by default) and the same tick
+on the In use screen ("Show after every set"). When on, a rest that starts from a tick opens IN USE by itself; it
+says "Resting · back in" over the clock; "I'm back" or a tap closes it; the set's pop-up shows on top of it.
+
 ## R-69. Question: one extra rep on every set, or follow the app's targets? — 22 Oct 2026
 **Owner asked:** "I personally target to do one extra rep for each set that I do ... is it ideal and better to
 follow the suggestions in the app ... or for a long run progress it is better to follow what's in the app? Put

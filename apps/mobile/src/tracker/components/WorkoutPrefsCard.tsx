@@ -155,6 +155,8 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
   const coachNotes = useTrackerPrefs((s) => s.coachNotes);
   const setCoachNotes = useTrackerPrefs((s) => s.setCoachNotes);
   const sounds = useTrackerPrefs((s) => s.sounds);
+  const inUseAfterSet = useTrackerPrefs((s) => s.inUseAfterSet);
+  const setInUseAfterSet = useTrackerPrefs((s) => s.setInUseAfterSet);
   const setSounds = useTrackerPrefs((s) => s.setSounds);
   const restSound = useTrackerPrefs((s) => s.restSound);
   const setRestSound = useTrackerPrefs((s) => s.setRestSound);
@@ -235,6 +237,15 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
         />
       ) : null}
       <RestAlertsStatusRow divider />
+      {/* R-70 (owner, 22 Oct 2026): "In use" opens by itself when a set's rest starts. */}
+      <ToggleRow
+        icon="clock"
+        title="Show In use after each set"
+        caption="When rest starts, a big IN USE screen with the rest clock, so others know you are coming back"
+        value={inUseAfterSet}
+        onChange={setInUseAfterSet}
+        divider
+      />
       <ToggleRow
         icon="gauge"
         title="Track RPE"

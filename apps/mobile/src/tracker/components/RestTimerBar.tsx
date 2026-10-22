@@ -11,7 +11,7 @@
  *  - D8: the first rest on a phone whose alerts would come late (no "Alarms & reminders") asks
  *    ONCE: "Get rest alerts on time?" — Allow opens that Android page; Not now is remembered.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 import { MachineInUse, machineName } from './MachineInUse';
@@ -25,6 +25,7 @@ import { openExactAlarmSettings } from '../services/restCard';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { restAlertPrefsReady, useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { restRemainingSec, useRestTimer } from '../store/restTimerStore';
+import { useTrackerPrefs } from '../store/trackerPrefsStore';
 
 /** The three pills share one width, so the row reads as a set; 52 dp holds "Skip" at large text. */
 const PILL_W = 52;
@@ -149,6 +150,16 @@ export function RestTimerBar() {
   useEffect(() => {
     if (endsAt == null) setInUse(false);
   }, [endsAt]);
+  // R-70: with "Show after every set" on, a rest that starts now opens it by itself. A rest already
+  // running when the screen opens (an app restart, coming back to the workout) does not.
+  const startedAt = useRestTimer((s) => s.startedAt);
+  const autoInUse = useTrackerPrefs((s) => s.inUseAfterSet);
+  const seenStart = useRef(startedAt);
+  useEffect(() => {
+    if (startedAt == null || startedAt === seenStart.current) return;
+    seenStart.current = startedAt;
+    if (autoInUse && endsAt != null) setInUse(true);
+  }, [startedAt, endsAt, autoInUse]);
 
   const ask = (
     <ConfirmSheet
