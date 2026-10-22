@@ -2,6 +2,16 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 22 Oct 2026 (~22:15 IST) — RESUME HERE after a compaction
+- **v0.54.1 candidate = 2385142** (R-79: set boxes are multi-line, so a drag that starts on a box scrolls the page;
+  P7BIG now swipes FROM the set 1 weight box and asserts the page moved). Gate: default 39814847937, owner
+  39814851301, journeys 39814871703, CI 39814846871. Main moved on with CLAUDE.md + owner_inbox_page.py (NOT
+  paperwork): when green, release from a worktree on 2385142 (memory forgeai-release-commit-off-main), dispatch
+  ci.yml on the tag, re-run the release run if the gate gave up.
+- **Tracker rule R-81:** Planned = mine to pick; anything needing him = Waiting for you; page has "Move to"
+  (DATA.moves, written by --absorb). Planned is empty now: every open feature needs him.
+- He put AI coach chat and the food log on hold (Waiting for you).
+
 ## PC session, 22 Oct 2026 (~19:30 IST) — RESUME HERE after a compaction
 - **v0.54.0 RELEASED** (APK link 200, latest release). Tagged on fc63af9 (= 9258c49 + PROGRESS entry). Gate on 9258c49 all green: default 39772408594,
   owner 39772411860, journeys 39772415575, CI 39772408248. Release run 39789841069; CI on main 39789833624.
