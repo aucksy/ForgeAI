@@ -20,7 +20,9 @@
 import { DEFAULT_GROQ_MODEL } from '@/ai/models';
 import { chatGroq } from '@/ai/providers/groq';
 import { FEATURES, type Features } from '@/lib/features';
-import { getLastSessionOfDayType } from '@/db/repos/workoutRepo';
+import { getDb } from '@/db';
+import { getLastSessionOfDayType, getSessionDetail } from '@/db/repos/workoutRepo';
+import { tinyDateWithYear } from '@/lib/date';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { getGroqKey } from '@/lib/keys';
 import { kgNum } from '@/lib/format';
@@ -30,6 +32,7 @@ import { useSettings } from '@/store/settingsStore';
 import type { SessionDetail } from '@/types/models';
 
 import { RECORD_LABEL } from '../engine/records';
+import { exerciseDeltas, mainCause, type CompareExercise, type ExerciseDelta } from '../lib/workoutCompare';
 import { dayTypeLabel } from './finishSummary';
 import { recordValueText } from './recordText';
 import { withVolume } from './volumeService';
@@ -77,6 +80,11 @@ export function buildSessionNote(
   data: SessionSummaryData,
   prevSameType: SessionDetail | null,
   units: UnitSystem = displayUnits(),
+  /**
+   * R-75: the workout compared with, in words ("Pull 1 on 15 Oct"); absent = "your last <kind>"
+   * (the last workout of the same kind, as before).
+   */
+  against?: string | null,
 ): string | null {
   // Phase 4: a planned easy week — less is the point, not a dip to explain away.
   if (data.easyWeek) {
@@ -87,16 +95,17 @@ export function buildSessionNote(
   // and the "New records" row right below lists them (design critique, Oct 2026: the same record
   // showed twice on the finish screen). A record workout falls through to the kg comparison.
 
-  // Kg lifted against the last workout of the same kind.
+  // Kg lifted against the workout compared with (R-75: this routine's last time first).
   const kind = kindWord(data.session.dayType);
-  if (kind && prevSameType && prevSameType.totalVolumeKg > 0 && data.totalVolumeKg > 0) {
+  const than = against ?? (kind ? `your last ${kind}` : null);
+  if (than && prevSameType && prevSameType.totalVolumeKg > 0 && data.totalVolumeKg > 0) {
     const delta = (data.totalVolumeKg - prevSameType.totalVolumeKg) / prevSameType.totalVolumeKg;
     const pct = Math.round(Math.abs(delta) * 100);
     const lifted = liftedWords(units);
     const last = fmtVol(prevSameType.totalVolumeKg, units);
-    if (pct >= 5 && delta > 0) return `${pct}% more ${lifted} than your last ${kind} (${last}).`;
-    if (pct >= 5 && delta < 0) return `${pct}% less ${lifted} than your last ${kind} (${last}).`;
-    return `About the same ${lifted} as your last ${kind} (${last}).`;
+    if (pct >= 5 && delta > 0) return `${pct}% more ${lifted} than ${than} (${last}).`;
+    if (pct >= 5 && delta < 0) return `${pct}% less ${lifted} than ${than} (${last}).`;
+    return `About the same ${lifted} as ${than} (${last}).`;
   }
   return null;
 }
@@ -105,6 +114,68 @@ export interface CoachNote {
   /** null: nothing worth a card. */
   text: string | null;
   source: 'engine' | 'groq';
+  /** R-75: each exercise against the workout compared with (the card opens to them). */
+  exercises?: ExerciseDelta[];
+  /** R-75: what explains most of the change ("Mostly Barbell Row: 2 sets fewer."). */
+  cause?: string | null;
+}
+
+/** R-75: a workout's exercises as the comparison reads them (warm-ups out). PURE. */
+export function compareExercises(d: SessionDetail): CompareExercise[] {
+  return d.exercises.map((e) => ({
+    exerciseId: e.exercise.id,
+    name: e.exercise.name,
+    volumeKg: e.volumeKg,
+    sets: e.sets.filter((x) => !x.isWarmup).map((x) => ({ weightKg: x.weightKg, reps: x.reps })),
+  }));
+}
+
+/**
+ * R-75 (owner, 22 Oct 2026: "this has to be, I think, folder specific"): the workout to compare with.
+ * The last time of THIS routine (the same exercises: a fair total), else the last workout of the same
+ * kind in the same folder, else the last workout of the same kind anywhere (as before). With its name
+ * in words ("Pull 1 on 15 Oct"); null when there is none.
+ */
+async function comparisonWorkout(data: SessionSummaryData): Promise<{ detail: SessionDetail; against: string | null } | null> {
+  const db = getDb();
+  const me = await db.getFirstAsync<{ routine_id: string | null; started_at: number }>(
+    'SELECT routine_id, started_at FROM workout_sessions WHERE id = ?',
+    [data.session.id],
+  );
+  const pick = async (sql: string, args: (string | number)[]): Promise<string | null> =>
+    (await db.getFirstAsync<{ id: string }>(sql, args))?.id ?? null;
+  const routineId = me?.routine_id && me.routine_id !== '' ? me.routine_id : null;
+  let id: string | null = null;
+  if (routineId && me) {
+    id = await pick(
+      `SELECT id FROM workout_sessions WHERE routine_id = ? AND id != ? AND source != 'seed' AND started_at < ?
+        ORDER BY started_at DESC LIMIT 1`,
+      [routineId, data.session.id, me.started_at],
+    );
+    if (!id) {
+      id = await pick(
+        `SELECT ws.id FROM workout_sessions ws
+           JOIN plan_days pd ON pd.id = ws.routine_id
+          WHERE pd.plan_id = (SELECT plan_id FROM plan_days WHERE id = ?)
+            AND ws.day_type = ? AND ws.id != ? AND ws.source != 'seed' AND ws.started_at < ?
+          ORDER BY ws.started_at DESC LIMIT 1`,
+        [routineId, data.session.dayType, data.session.id, me.started_at],
+      );
+    }
+  }
+  if (id) {
+    const d = await getSessionDetail(id);
+    if (!d) return null;
+    const [withKg] = await withVolume([d]);
+    const named = await db.getFirstAsync<{ title: string | null; routine: string | null }>(
+      'SELECT ws.title, (SELECT name FROM plan_days WHERE id = ws.routine_id) AS routine FROM workout_sessions ws WHERE ws.id = ?',
+      [id],
+    );
+    const name = named?.title?.trim() || named?.routine?.trim() || null;
+    return { detail: withKg, against: name ? `${name} on ${tinyDateWithYear(d.dateISO)}` : `your workout on ${tinyDateWithYear(d.dateISO)}` };
+  }
+  const prev = await lastSameTypeWithVolume(data);
+  return prev ? { detail: prev, against: null } : null;
 }
 
 /** The previous workout of the same day type, its volume counted by the Phase 2 rule (like today's). */
@@ -115,16 +186,20 @@ async function lastSameTypeWithVolume(data: SessionSummaryData): Promise<Session
 
 /** The deterministic note (fetches the prior same-day-type session); text null = no card. */
 export async function getSessionCoachNote(data: SessionSummaryData): Promise<CoachNote> {
-  // `date_iso < beforeISO` excludes today's just-saved session → the PREVIOUS
-  // day we trained this type, which is the honest comparison point. If that read
-  // ever fails, the note is worked out without it (prev=null).
-  let prev: SessionDetail | null = null;
+  // R-75: this routine's last time first (else the folder's, else the last of its kind). If that
+  // read ever fails, the note is worked out without it (no comparison).
+  let cmp: { detail: SessionDetail; against: string | null } | null = null;
   try {
-    prev = await lastSameTypeWithVolume(data);
-  } catch {
-    prev = null;
+    cmp = await comparisonWorkout(data);
+  } catch (e) {
+    console.warn('[ForgeErr] finish: the workout to compare with could not be read', e);
+    cmp = null;
   }
-  return { text: buildSessionNote(data, prev), source: 'engine' };
+  const units = displayUnits();
+  const text = buildSessionNote(data, cmp?.detail ?? null, units, cmp?.against);
+  if (!text || !cmp || data.easyWeek) return { text, source: 'engine' };
+  const exercises = exerciseDeltas(compareExercises(data.session), compareExercises(cmp.detail), (kg) => `${kgNum(kg, units)} ${weightUnitOf(units)}`);
+  return { text, source: 'engine', exercises, cause: mainCause(exercises, data.totalVolumeKg - cmp.detail.totalVolumeKg) };
 }
 
 /** Compact, grounded fact sheet handed to Groq — only real numbers, no prose. */

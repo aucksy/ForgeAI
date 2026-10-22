@@ -2,6 +2,25 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 22 Oct 2026 (afternoon, stopped at 88% context) — RESUME HERE after a compaction
+- **0.51.0 is NOT released separately:** its default-profile run 39722663191 failed only on one caught
+  "workout reminders could not be set" (expo-sqlite "already released"); now retried once (reminders.ts).
+- **v0.52.0 candidate = 3ebf8fc** (carries 0.51 + gym fixes R-61/R-61b/R-65/R-66/R-70/R-72/R-73/R-60, two review
+  rounds fixed). Gate running on 3ebf8fc: default 39734797251, owner 39734799762, journeys 39734802376, CI
+  39734778914. When all green: worktree `git worktree add --detach ../rel052 3ebf8fc`, PROGRESS entry, tag
+  v0.52.0, push the tag, dispatch ci.yml on the tag (memory forgeai-release-commit-off-main); check
+  releases/download/v0.52.0/forgeai-v0.52.0.apk answers. Then the checked admin + landing deploy.
+- **Committed after the candidate (0.53.0 work, not released):** muscle-tip engine/service/store (R-58) and,
+  in the WIP commit after this note, the Up next tip UI (workout.tsx + MuscleTipNote.tsx) and the finish-screen
+  comparison (R-75: coachNote.comparisonWorkout + lib/workoutCompare; the expandable per-exercise list in
+  app/session/finish.tsx is NOT built yet: arrow on the right, opens the rows, his request). Both need a review.
+- **Admin offers step 1 (#49):** a background agent was editing apps/dashboard (uncommitted files: messages,
+  templates, audience, sendQueue, receipt fix...). On resume: read its report if it arrived, else check
+  `git status`; run tsc -b, vitest, journeys (E2E_CHROME), review, commit, deploy after the 0.52.0 release.
+- **Tracker:** #45-#50 written (voice counting, trainer view, AI import, extra rep, offers, server storage);
+  page last published v79 (before #50): republish (read + absorb + rebuild + publish).
+- **Context meter:** ~/.claude/hooks/context_meter.py (PostToolUse) warns at 85% and 90% of 1M tokens.
+
 ## PC session, 22 Oct 2026 (midday, owner in the gym sending notes R-61..R-73) — RESUME HERE after a compaction
 - **v0.51.0** = 4e5983d, gate: journeys 39722667517 GREEN; default 39722663191 and owner 39722665499 still running
   at 06:07 UTC. When green: release from a worktree (memory forgeai-release-commit-off-main), APK link 200.

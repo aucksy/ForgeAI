@@ -35,14 +35,16 @@ import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, space, type } from '@/theme/tokens';
 
 import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
+import { MuscleTipNote } from '@/tracker/components/MuscleTipNote';
 import { SwitcherCard, takePendingImport, type SwitchApp } from '@/tracker/components/SwitcherCard';
 import { UpNextCard } from '@/tracker/components/UpNextCard';
 import { WorkoutRoutines } from '@/tracker/components/WorkoutRoutines';
-import { followedFolder } from '@/tracker/db/folderRepo';
+import { followedFolder, getRoutineAnywhere } from '@/tracker/db/folderRepo';
 import { showsImportOffer, upNextCard, type UpNextAction, type UpNextToday } from '@/tracker/lib/upNext';
 import { offerEarlyEasy } from '@/tracker/plans/effort';
 import { stalledLiftsInPlan } from '@/tracker/services/coachTargets';
 import { liveCountsLine } from '@/tracker/services/finishCheck';
+import { addMuscleTip, muscleTipFor, type MuscleTip } from '@/tracker/services/muscleTips';
 import { getPlanNow, moveEasyWeek, planLine, type PlanNow } from '@/tracker/services/planState';
 import { getTodayPlan } from '@/tracker/services/todayService';
 import { startShownWorkout } from '@/tracker/services/todayStart';
@@ -57,6 +59,7 @@ import { openActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useFolderOpen } from '@/tracker/store/folderOpenStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
+import { useMuscleTips } from '@/tracker/store/muscleTipsStore';
 
 /** How long the "That link didn't work." line stays before it fades on its own. */
 const NOTICE_MS = 4000;
@@ -86,6 +89,8 @@ export default function WorkoutScreen() {
   const [stalled, setStalled] = useState(0);
   const [counts, setCounts] = useState<{ total: number; daysThisWeek: number } | null>(null);
   const [starting, setStarting] = useState(false);
+  // R-58: the one muscle tip for the routine up next (most days none), and that routine's id.
+  const [tip, setTip] = useState<(MuscleTip & { routineId: string }) | null>(null);
   const [tick, setTick] = useState(0);
   // SH-29: a wrong forgeai:// link lands here with one calm line.
   const [linkNotice, setLinkNotice] = useState<string | null>(null);
@@ -117,9 +122,25 @@ export default function WorkoutScreen() {
       const upNext = readWithRetry(() => getTodayPlan(day), retry)
         .then((tp) => {
           if (!alive) return;
-          setToday(upNextToday(tp));
+          const up = upNextToday(tp);
+          setToday(up);
           setFollowing(tp.following);
           setUpFolderId(tp.folder?.id ?? null);
+          // R-58: a calm muscle tip only for the routine up next (never once it is done today).
+          const nextId = up.status === 'next' ? up.nextId : null;
+          if (!nextId) {
+            setTip(null);
+            return;
+          }
+          void getRoutineAnywhere(nextId)
+            .then((r) => (r ? muscleTipFor(r, day) : null))
+            .then((t) => {
+              if (alive) setTip(t ? { ...t, routineId: nextId } : null);
+            })
+            .catch((e: unknown) => {
+              console.warn('[ForgeErr] muscle tip: the routine could not be read', e);
+              if (alive) setTip(null);
+            });
         })
         .catch(() => {
           failedNow = true;
@@ -358,6 +379,30 @@ export default function WorkoutScreen() {
                 {/* An easy week shows even on a day with no routine to do (trained already). */}
                 {easyNow ? <EasyWeekNote until={plan?.easyUntil} /> : null}
                 {easyNow ? <GhostButton label="Train normally this week" icon="dumbbell" onPress={() => void onTrainNormally()} /> : null}
+                {/* R-58: one calm tip when 3 weeks left a muscle group close to zero (never in an easy week). */}
+                {tip && card.kind === 'next' && !easyNow ? (
+                  <MuscleTipNote
+                    tip={tip}
+                    onAdd={async () => {
+                      try {
+                        await addMuscleTip(tip.routineId, tip);
+                        setTip(null);
+                        setTick((t) => t + 1);
+                      } catch (e) {
+                        console.warn('[ForgeErr] muscle tip: the exercise could not be added', e);
+                        void tell("Couldn't add it", 'Please try again.');
+                      }
+                    }}
+                    onNotNow={() => {
+                      useMuscleTips.getState().snooze(tip.group, todayISO());
+                      setTip(null);
+                    }}
+                    onSkip={() => {
+                      useMuscleTips.getState().mute(tip.group);
+                      setTip(null);
+                    }}
+                  />
+                ) : null}
                 {offerEasy ? (
                   <View style={{ gap: space.sm }}>
                     <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
