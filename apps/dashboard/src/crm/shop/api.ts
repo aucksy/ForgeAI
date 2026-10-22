@@ -20,6 +20,16 @@ import {
 } from './logic';
 
 import { sentFromRow, sentFromRows, type MessageDraft, type SentMessage } from './messages';
+import {
+  giveFromAnswer,
+  offerFromRow,
+  offersFromAnswer,
+  undoFromAnswer,
+  type CheckedDraft,
+  type GiveAnswer,
+  type OffersAnswer,
+  type WorkoutOffer,
+} from '../logic/workoutOffer';
 
 type Row = Record<string, unknown>;
 
@@ -111,12 +121,61 @@ export async function listAppMembers(key: string): Promise<AppMember[]> {
 
 // ---------------------------------------------------------------- gym messages (0008)
 
-/** Send one message to every app member of the gym. Throws OFFER_TODAY / OFFER_WEEK / TOO_MANY. */
-export async function sendMessage(key: string, d: MessageDraft): Promise<SentMessage> {
-  const r = await call<Row>('owner_send_message', { p_key: key, p_kind: d.kind, p_title: d.title.trim(), p_body: d.body.trim() });
+/**
+ * Send one message to every app member of the gym, or (0025) only to `to` (app member ids) and/or
+ * at `sendAt` (an ISO time). The two new keys go only when set, so an older server still answers
+ * the four-argument call. Throws OFFER_TODAY / OFFER_WEEK / TOO_MANY / NO_ONE / BAD_TIME.
+ */
+export async function sendMessage(
+  key: string,
+  d: MessageDraft,
+  opts: { to?: readonly string[] | null; sendAt?: string | null } = {},
+): Promise<SentMessage> {
+  const args: Record<string, unknown> = { p_key: key, p_kind: d.kind, p_title: d.title.trim(), p_body: d.body.trim() };
+  if (opts.to) args.p_to = [...opts.to];
+  if (opts.sendAt) args.p_send_at = opts.sendAt;
+  const r = await call<Row>('owner_send_message', args);
   const m = sentFromRow(r);
   if (!m) throw new Error('UNKNOWN');
   return m;
+}
+
+// ---------------------------------------------------------------- the workout offer (0025)
+
+/** The gym's offers and their members (owner and front desk). Throws PGRST202 on a server without 0025. */
+export async function listOffers(key: string): Promise<OffersAnswer> {
+  return offersFromAnswer(await call<unknown>('owner_offers', { p_key: key }));
+}
+
+/** Start an offer (no id), or change a running one's giving mode / last day to join (with id). Owner only. */
+export async function saveOffer(
+  key: string,
+  offer: Partial<CheckedDraft> & { id?: string },
+): Promise<WorkoutOffer> {
+  const o = offerFromRow(await call<unknown>('owner_save_offer', { p_key: key, p_offer: offer }));
+  if (!o) throw new Error('UNKNOWN');
+  return o;
+}
+
+/** Stop an offer: nobody new joins; members in it keep their window. Owner only. */
+export async function stopOffer(key: string, offerId: string): Promise<WorkoutOffer> {
+  const o = offerFromRow(await call<unknown>('owner_stop_offer', { p_key: key, p_offer: offerId }));
+  if (!o) throw new Error('UNKNOWN');
+  return o;
+}
+
+/** The desk's one tap: give an earned reward (owner and front desk). */
+export async function giveReward(key: string, offerId: string, rosterId: string): Promise<GiveAnswer> {
+  const r = giveFromAnswer(await call<unknown>('staff_give_reward', { p_key: key, p_offer: offerId, p_roster: rosterId }));
+  if (!r) throw new Error('UNKNOWN');
+  return r;
+}
+
+/** The owner takes a reward back (while the plan still ends where the reward put it). */
+export async function undoReward(key: string, offerId: string, rosterId: string): Promise<{ endsOn: string }> {
+  const r = undoFromAnswer(await call<unknown>('owner_undo_reward', { p_key: key, p_offer: offerId, p_roster: rosterId }));
+  if (!r) throw new Error('UNKNOWN');
+  return r;
 }
 
 /** The Sent list, newest first, with how many members have seen each. */

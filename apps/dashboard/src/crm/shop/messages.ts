@@ -9,7 +9,7 @@
  * The server's limits are checked here before a send too (`capProblem`).
  */
 
-import { addDays, dateISOFromEpoch } from '../logic/dates';
+import { addDays, dateISOFromEpoch, formatDay, IST_OFFSET_MS } from '../logic/dates';
 import { letterCount } from '../logic/messageWords';
 import { errorWords } from './logic';
 
@@ -129,20 +129,25 @@ export const OFFERS_A_WEEK = 3;
  * server's. A message taken back does not count here; the server still counts one taken back more
  * than 10 minutes after it went (0009), and its answer is shown then. Null when nothing stops it. PURE.
  */
-export function capProblem(kind: MessageKind, sent: readonly SentMessage[] | null, now: number): string | null {
+export function capProblem(kind: MessageKind, sent: readonly SentMessage[] | null, now: number, at: number = now): string | null {
   if (!sent) return null;
   const today = dateISOFromEpoch(now);
-  const weekStart = addDays(today, -6);
-  const dayOf = (m: SentMessage) => dateISOFromEpoch(m.createdAt);
-  if (sent.filter((m) => dayOf(m) === today).length >= DAY_MAX) {
+  // 0025: a timed message counts on the day it appears (the server's rule too).
+  const target = dateISOFromEpoch(at);
+  const weekStart = addDays(target, -6);
+  const sentDay = (m: SentMessage) => dateISOFromEpoch(m.createdAt);
+  const dayOf = (m: SentMessage) => dateISOFromEpoch(m.sendAt ?? m.createdAt);
+  if (sent.filter((m) => sentDay(m) === today).length >= DAY_MAX) {
     return `You sent ${DAY_MAX} messages today. That is the most for one day. Send it in the app tomorrow, or on WhatsApp now.`;
   }
   if (!isCapped(kind)) return null;
   const offers = sent.filter((m) => isCapped(m.kind) && !m.withdrawn);
-  if (offers.filter((m) => dayOf(m) === today).length >= OFFERS_A_DAY) {
-    return 'You already sent an offer or event today. Members get at most one a day in the app. Send it tomorrow, or on WhatsApp now.';
+  if (offers.filter((m) => dayOf(m) === target).length >= OFFERS_A_DAY) {
+    return target === today
+      ? 'You already sent an offer or event today. Members get at most one a day in the app. Send it tomorrow, or on WhatsApp now.'
+      : 'An offer or event already goes out that day. Members get at most one a day in the app. Pick another day.';
   }
-  if (offers.filter((m) => dayOf(m) >= weekStart && dayOf(m) <= today).length >= OFFERS_A_WEEK) {
+  if (offers.filter((m) => dayOf(m) >= weekStart && dayOf(m) <= target).length >= OFFERS_A_WEEK) {
     return `You sent ${OFFERS_A_WEEK} offers or events this week. Members get at most ${OFFERS_A_WEEK} a week in the app. Wait a few days, or use WhatsApp now.`;
   }
   return null;
@@ -160,6 +165,10 @@ export interface SentMessage {
   /** Members whose inbox has shown it. */
   seen: number;
   withdrawn: boolean;
+  /** 0025: when a timed message appears in the inbox (epoch ms); null = when it was sent. */
+  sendAt: number | null;
+  /** 0025: sent to a group of members, not every app member. */
+  toGroup: boolean;
 }
 
 const KINDS = new Set<string>(MESSAGE_KINDS.map((k) => k.kind));
@@ -182,7 +191,41 @@ export function sentFromRow(raw: unknown): SentMessage | null {
     recipients: Number(r.recipients) || 0,
     seen: Number(r.seen) || 0,
     withdrawn: r.withdrawn === true,
+    sendAt: typeof r.sendAt === 'string' && Number.isFinite(Date.parse(r.sendAt)) ? Date.parse(r.sendAt) : null,
+    toGroup: r.toGroup === true,
   };
+}
+
+/** A timed message that has not appeared in members' inboxes yet. PURE. */
+export function isWaiting(m: Pick<SentMessage, 'sendAt'>, now: number): boolean {
+  return m.sendAt !== null && m.sendAt > now;
+}
+
+/** "8 Nov 2026, 7:30 am" (India time) for a timed message. PURE. */
+export function whenWords(ms: number): string {
+  const ist = new Date(ms + IST_OFFSET_MS);
+  const h = ist.getUTCHours();
+  const m = ist.getUTCMinutes();
+  const clock = `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`;
+  return `${formatDay(dateISOFromEpoch(ms))}, ${clock}`;
+}
+
+/** The earliest and latest a message can be timed: 5 minutes from now, 30 days ahead (0025). */
+export const SEND_AT_MIN_MS = 5 * 60_000;
+export const SEND_AT_MAX_MS = 30 * 24 * 60 * 60_000;
+
+/**
+ * A "Pick a day and time" box's value ('2026-11-08T07:30', India time) as an ISO time with +05:30,
+ * or a problem in plain words. PURE.
+ */
+export function sendAtFromLocal(local: string, now: number): { ok: true; iso: string; at: number } | { ok: false; problem: string } {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local)) return { ok: false, problem: 'Pick a day and a time.' };
+  const iso = `${local}:00+05:30`;
+  const at = Date.parse(iso);
+  if (!Number.isFinite(at)) return { ok: false, problem: 'Pick a day and a time.' };
+  if (at < now + SEND_AT_MIN_MS) return { ok: false, problem: 'Pick a time at least 5 minutes from now.' };
+  if (at > now + SEND_AT_MAX_MS) return { ok: false, problem: 'Pick a time within the next 30 days.' };
+  return { ok: true, iso, at };
 }
 
 export function sentFromRows(raw: unknown): SentMessage[] {
@@ -207,6 +250,8 @@ export function messageErrorWords(err: unknown): string {
   if (/\bTOO_LONG\b/.test(text))
     return `Keep the title to ${TITLE_MAX} letters and the message to ${BODY_MAX}.`;
   if (/\bEMPTY\b/.test(text)) return 'Write a title.';
+  if (/\bNO_ONE\b/.test(text)) return 'Nobody in this group has the ForgeAI app. Send it on WhatsApp instead.';
+  if (/\bBAD_TIME\b/.test(text)) return 'Pick a time within the next 30 days.';
   // A send that timed out may still have gone: say so, so the owner looks before sending again.
   return `${errorWords(err)} Check the Sent list below before sending it again.`;
 }

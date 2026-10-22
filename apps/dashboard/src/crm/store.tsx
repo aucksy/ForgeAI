@@ -74,6 +74,8 @@ interface CrmContextValue {
   viewFor: (memberId: string) => MemberView | null;
 
   reload: () => Promise<void>;
+  /** Online records: pull what the server changed now (a reward the server gave, 0025), then redraw. */
+  refreshNow: () => Promise<void>;
   createMember: (draft: MemberDraft) => Promise<Member>;
   /** Import: many members in one save (see CrmData.createMembers). */
   createMembers: (drafts: readonly MemberDraft[]) => Promise<Member[]>;
@@ -191,6 +193,15 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  const refreshNow = useCallback(async () => {
+    try {
+      if (db.refresh) await db.refresh();
+    } catch (e) {
+      console.warn('[ForgeErr] refresh now', e);
+    }
+    await reload();
+  }, [db, reload]);
 
   // Online records: pick up what other devices saved — every few seconds while this tab is in
   // front, and at once when it comes back. Only a real change redraws the screens.
@@ -316,6 +327,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       allMemberViews,
       viewFor,
       reload,
+      refreshNow,
       createMember: (draft) => mutate((a) => a.createMember(draft)),
       createMembers: (drafts) => mutate((a) => a.createMembers(drafts)),
       importTerms: (items, importId) => mutate((a) => a.importTerms(items, importId)),
@@ -355,7 +367,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
         await reload();
       },
     };
-  }, [snapshot, today, loading, error, memberViews, allMemberViews, viewFor, reload, mutate, db]);
+  }, [snapshot, today, loading, error, memberViews, allMemberViews, viewFor, reload, refreshNow, mutate, db]);
 
   if (!value) {
     if (!loading && damaged) {

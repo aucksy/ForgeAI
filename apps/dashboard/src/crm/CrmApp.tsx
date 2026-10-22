@@ -121,6 +121,9 @@ function Routes({ online }: { online: boolean }) {
       { path: '/shop', label: 'Shop', icon: 'shop', badge: newCount },
       // 22 Oct 2026: notices, offers and wishes to members, moved out of Shop (owner only).
       { path: '/messages', label: 'Messages & offers', icon: 'messages' },
+      // #49 step 2: the front desk sees only the workout offer (to give earned rewards). The owner
+      // reaches it inside Messages & offers.
+      ...(role === 'staff' ? [{ path: '/messages/offer', label: 'Workout offer', icon: 'messages' } as NavItem] : []),
       // "Visits" rather than "Attendance": six items across a 375px phone leave
       // about 54px of text, and the longer word does not fit. The screen itself is
       // still titled Attendance, which is the word an owner comparing products

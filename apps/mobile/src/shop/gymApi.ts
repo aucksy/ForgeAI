@@ -14,6 +14,7 @@ import { checkInFromRow, type CheckInAnswer } from './checkIn';
 import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
 import { membershipFromRow, type MembershipAnswer } from './membership';
 import { inboxFromRows, type InboxMessage } from './inbox';
+import { offerErrorOf, offersFromRow, type OffersAnswer } from './offer';
 import type { GymLink, GymOrder, Product } from './types';
 
 export type GymResult<T> = { ok: true; data: T } | { ok: false; error: GymError };
@@ -156,6 +157,44 @@ export async function apiGymPlans(key: string): Promise<GymResult<GymPlansAnswer
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const answer = gymPlansFromRow(r.data);
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+// ------------------------------------------------------------------ the workout offer (0025)
+
+/**
+ * An answer from the workout offer's functions. `missing`: the server has not had 0025 yet, so the
+ * offer card simply does not appear. `refused`: the gym said no ({error: 'NO_PLAN'} and the like).
+ */
+export type OfferResult = { ok: true; data: OffersAnswer } | { ok: false; missing: true } | { ok: false; refused: string } | { ok: false; error: GymError };
+
+function offerResult(r: CallResult): OfferResult {
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const answer = offersFromRow(r.data);
+  if (answer) return { ok: true, data: answer };
+  const code = offerErrorOf(r.data);
+  return code ? { ok: false, refused: code } : { ok: false, error: { kind: 'other' } };
+}
+
+/** The gym's workout offer for this member (member_offers). */
+export async function apiOffers(key: string): Promise<OfferResult> {
+  return offerResult(await call('member_offers', { p_key: key }, READ_MS));
+}
+
+/** "Join the offer", with the version of the consent words the member saw (member_join_offer). */
+export async function apiJoinOffer(key: string, offerId: string, notice: string): Promise<OfferResult> {
+  return offerResult(await call('member_join_offer', { p_key: key, p_offer: offerId, p_notice: notice }, WRITE_MS));
+}
+
+/** The DATES of counted workouts, nothing else (member_offer_days). The gym checks each against its register. */
+export async function apiOfferDays(key: string, offerId: string, days: string[]): Promise<OfferResult> {
+  return offerResult(await call('member_offer_days', { p_key: key, p_offer: offerId, p_days: days }, WRITE_MS));
+}
+
+/** "Leave the offer" (member_leave_offer): the gym deletes the dates. True when the gym confirmed. */
+export async function apiLeaveOffer(key: string, offerId: string): Promise<{ ok: true } | { ok: false; missing?: true; error?: GymError }> {
+  const r = await call('member_leave_offer', { p_key: key, p_offer: offerId }, WRITE_MS);
+  if (r.ok) return { ok: true };
+  return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
 }
 
 /**

@@ -275,13 +275,28 @@ export function extensionLine(line: string): ExtensionLine | null {
 }
 
 /**
+ * "Reward taken back: 2026-12-03 -> 2026-11-30" (the owner undid a workout-offer reward, 0025's
+ * owner_undo_reward) read back, or null for any other line. PURE.
+ */
+export function rewardTakenBackLine(line: string): { from: DateISO; to: DateISO } | null {
+  const m = /^Reward taken back: (\d{4}-\d{2}-\d{2}) -> (\d{4}-\d{2}-\d{2})$/.exec(line.trim());
+  return m ? { from: m[1]!, to: m[2]! } : null;
+}
+
+/**
  * One line of a plan's history, as the page shows it (admin audit C7-31 / C7-32, 16 Oct 2026).
  * The lines are stored with raw dates ("+7 days (Freeze - medical): 2026-06-04 -> 2026-06-11");
  * here they get the page's dates. A line typed by a person is shown as written. PURE.
  */
 export function historyLine(line: string): string {
   const ext = extensionLine(line);
+  // #49 step 2: a workout-offer reward (given by the desk's tap or by itself, 0025) is free days, not
+  // a sale: "Extended free by 3 days (reward): 30 Nov → 3 Dec".
+  if (ext && /^reward\b/i.test(ext.reason.trim()))
+    return `Extended free by ${ext.days === 1 ? '1 day' : `${ext.days} days`} (reward): ${formatDay(ext.from)} → ${formatDay(ext.to)}`;
   if (ext) return `+${ext.days} days (${ext.reason}): ${formatDay(ext.from)} → ${formatDay(ext.to)}`;
+  const back = rewardTakenBackLine(line);
+  if (back) return `Reward taken back: ${formatDay(back.from)} → ${formatDay(back.to)}`;
   const cancelled = /^Cancelled: (.*)$/.exec(line.trim());
   if (cancelled) return `Cancelled: ${cancelled[1]}`;
   if (line.trim() === 'Cancellation reversed.') return 'Cancel undone.';

@@ -42,6 +42,7 @@ import {
 import type { CheckInAnswer } from './checkIn';
 import { useGymShop } from './gymStore';
 import { MEMBERSHIP_STORAGE_KEY } from './membership';
+import { OFFER_STORAGE_KEYS } from './offer';
 import { priceBag, removeLine } from './money';
 import type { GymOrder } from './types';
 
@@ -207,6 +208,17 @@ async function checkGymNow(): Promise<void> {
   void refreshInbox().catch(() => undefined);
   // R-77: and whether its shop is on (the tab says "Shop" or "Gym").
   void refreshProducts().catch((e: unknown) => console.warn('[ForgeErr] gym check: the shop list', e));
+  // #49 step 2: the workout offer's counted DATES, only when the member joined it (offerActions.ts).
+  syncOfferQuietly();
+}
+
+/** Best effort, in the background: a failure keeps what the offer card shows. */
+function syncOfferQuietly(): void {
+  const link = useGymShop.getState().link;
+  if (!link) return;
+  void import('./offerActions')
+    .then((m) => m.syncOfferDates(link))
+    .catch((e: unknown) => console.warn('[ForgeErr] gym check: the workout offer', e));
 }
 
 /**
@@ -444,6 +456,8 @@ export async function leaveGym(): Promise<void> {
   useGymInbox.getState().clear();
   // "My membership"'s kept plan goes with the gym (OWNER-INBOX #6).
   AsyncStorage.removeItem(MEMBERSHIP_STORAGE_KEY).catch((e: unknown) => console.warn('[ForgeErr] leave: forgetting the kept plan', e));
+  // The workout offer's consent and kept card go too (the gym's member_leave leaves its offers).
+  for (const k of OFFER_STORAGE_KEYS) AsyncStorage.removeItem(k).catch((e: unknown) => console.warn('[ForgeErr] leave: forgetting the offer', k, e));
   retireGymPlans();
   if (!link) return;
   const told = await leaveOnServer(link.memberKey);
