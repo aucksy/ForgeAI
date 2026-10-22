@@ -7,10 +7,13 @@ Whoever stops last updates this file and pushes it. The other side starts here.
 - v0.50.0 RELEASED 22 Oct (tag fe2542f = 5a8375b + PROGRESS; run 39680117943). It was candidate 5a8375b: What's new (shows from 0.51), Save as routine after a
   first free workout, rest change moves the running timer, Machine in use, automatic Drive backup
   (only from a phone that backed up before), 15 s request limit. Two review rounds done (one MUST-FIX
-  fixed). Gate runs: default 39647353406, owner 39647358581, journeys 39647362273, CI 39647345689.
-  When all green: PROGRESS entry -> tag v0.50.0 on main (no non-paperwork commits before it).
+  fixed). Gate: default 39647353406, journeys 39647362273, CI 39647345689 green; owner red only on
+  U-Q6 (midnight), repeated green on the same code as 39664337093 (helper tag qa-v050-owner).
+  APK links 200; GitHub latest = v0.50.0. Main moved on with the U-Q6 script fix (7393460).
 - Admin live 7739d985: quick buttons on Today (+ everything from 21 Oct). Landing /home/ still OFF (#40).
-- Tracker page republished (version 71).
+- Tracker page republished (version 72). Waiting on the owner: #40 landing live, #37 contact, #27-#38.
+- Next (my pick): workout time on the notification card (native RestCard.kt, cloud-only build, with
+  the owner awake), then more Planned backlog items; FitPass and member progress need LIVE migrations.
 
 ## PC session, 21 Oct 2026 (evening) — RESUME HERE after a compaction
 - Queue (tracker "Claude's tasks"): 1, 2, 3, 5, 6, 7 Done; 4 = v0.49.0 gate in progress; 8 built but the
