@@ -28,18 +28,22 @@ export function sessionKey(direct: string): string {
 
 type Fetch = typeof fetch;
 
-/** A fetch that turns to the direct address for a while after our address failed to answer. */
+/**
+ * A fetch that turns to the direct address for a while after our address failed to answer.
+ * Typed loosely inside, so it compiles whatever the `fetch` type of the lib in use says.
+ */
 export function routedFetch(proxyBase: string, direct: string, base: Fetch, now: () => number = Date.now): Fetch {
   let directUntil = 0;
-  return async (input, init) => {
-    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+  const call = base as unknown as (input: unknown, init?: RequestInit) => Promise<Response>;
+  return (async (input: unknown, init?: RequestInit) => {
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : (input as Request).url;
     const viaProxy = url.startsWith(proxyBase + '/');
     if (viaProxy && now() < directUntil) {
       const swapped = direct + url.slice(proxyBase.length);
-      return base(input instanceof Request ? new Request(swapped, input) : swapped, init);
+      return call(input instanceof Request ? new Request(swapped, input) : swapped, init);
     }
     try {
-      return await base(input, init);
+      return await call(input, init);
     } catch (e) {
       if (viaProxy && !(e instanceof DOMException && e.name === 'AbortError')) {
         directUntil = now() + FALLBACK_MS;
@@ -47,5 +51,5 @@ export function routedFetch(proxyBase: string, direct: string, base: Fetch, now:
       }
       throw e;
     }
-  };
+  }) as unknown as Fetch;
 }

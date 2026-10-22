@@ -206,6 +206,12 @@ function Letterhead({ doc }: { doc: ReceiptDoc }) {
             GSTIN: {doc.gstin}
           </div>
         )}
+        {doc.taxInvoice && (
+          <div style={{ color: PAPER.inkSoft, fontSize: 13, marginTop: 2 }}>
+            {doc.taxInvoice.placeOfSupply ? `Place of supply: ${doc.taxInvoice.placeOfSupply} · ` : ''}
+            Reverse charge: {doc.taxInvoice.reverseCharge}
+          </div>
+        )}
       </div>
 
       <div style={{ textAlign: 'right' }}>
@@ -345,12 +351,14 @@ function Footer({ doc }: { doc: ReceiptDoc }) {
         }}
       >
         <div style={{ color: PAPER.inkSoft, fontSize: 11, maxWidth: 320 }}>
-          Computer-generated receipt. Valid without a signature.
+          {doc.taxInvoice ? 'Computer-generated tax invoice.' : 'Computer-generated receipt. Valid without a signature.'}
         </div>
         <div style={{ textAlign: 'right', minWidth: 200 }}>
-          <div style={{ borderTop: `1px solid ${PAPER.rule}`, paddingTop: 6, fontSize: 13 }}>
+          {/* A tax invoice carries the supplier's signature (rule 46): room to sign or stamp above the line. */}
+          <div style={{ borderTop: `1px solid ${PAPER.rule}`, paddingTop: 6, fontSize: 13, marginTop: doc.taxInvoice ? 28 : 0 }}>
             For {doc.gymName}
           </div>
+          {doc.taxInvoice && <div style={{ color: PAPER.inkSoft, fontSize: 12 }}>Authorised signatory</div>}
         </div>
       </div>
     </>

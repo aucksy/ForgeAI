@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildReceiptDoc } from '../../src/crm/logic/receiptDoc';
-import { GYM_SAC_CODE } from '../../src/crm/logic/gst';
+import { GYM_SAC_CODE, placeOfSupply } from '../../src/crm/logic/gst';
 import { makeGym, makeMember, makeMembership, makePayment, VALID_GSTIN } from './fixtures';
 
 const TODAY = '2026-07-26';
@@ -145,6 +145,19 @@ describe('GST appears only when the gym is registered', () => {
     expect(doc.taxNote).toBe('Amount received includes GST at 5%.');
   });
 
+  it('R-55: a registered gym prints a TAX INVOICE: place of supply from its GSTIN, reverse charge No', () => {
+    const doc = buildReceiptDoc(registeredSale(VALID_GSTIN));
+    expect(doc.heading).toBe('Tax invoice');
+    expect(doc.taxInvoice).toEqual({ placeOfSupply: placeOfSupply(VALID_GSTIN), reverseCharge: 'No' });
+    expect(doc.taxInvoice!.placeOfSupply).toMatch(/^[A-Za-z ]+ \(\d{2}\)$/);
+  });
+
+  it('R-55: an unregistered gym keeps a plain payment receipt', () => {
+    const doc = buildReceiptDoc(registeredSale('29AAACR5055K1Z5')); // checksum fails: not registered
+    expect(doc.heading).toBe('Payment receipt');
+    expect(doc.taxInvoice).toBeNull();
+  });
+
   it('normalises a GSTIN typed in lower case with stray spaces', () => {
     const doc = buildReceiptDoc(registeredSale(`  ${VALID_GSTIN.toLowerCase()} `));
     expect(doc.gstin).toBe(VALID_GSTIN);
@@ -230,5 +243,14 @@ describe('the tax status is snapshotted, not read live', () => {
         memberPayments: [legacy],
       }).gstin,
     ).toBe(VALID_GSTIN);
+  });
+});
+
+describe('R-55: place of supply on a tax invoice', () => {
+  it('names the state from the GSTIN\'s first two digits', () => {
+    expect(placeOfSupply('08AAACR5055K1ZX')).toBe('Rajasthan (08)');
+    expect(placeOfSupply('27AAACR5055K1ZX')).toBe('Maharashtra (27)');
+    expect(placeOfSupply('99AAACR5055K1ZX')).toBeNull(); // centre jurisdiction: no state to name
+    expect(placeOfSupply(null)).toBeNull();
   });
 });

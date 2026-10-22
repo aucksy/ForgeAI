@@ -126,6 +126,31 @@ export function checkGymDetails(d: { name: string; gstin: string }): { field: 'n
   return null;
 }
 
+// ---------------------------------------------------------------- place of supply
+
+/**
+ * GST state codes (the first two digits of a GSTIN; CBIC's list, as used on every e-invoice).
+ * R-55 (22 Oct 2026, owner backlog "Full GST tax invoices"): a tax invoice names the place of
+ * supply. A gym is used where it stands, so it is the gym's own state, read from its GSTIN.
+ */
+export const GST_STATES: Readonly<Record<string, string>> = {
+  '01': 'Jammu and Kashmir', '02': 'Himachal Pradesh', '03': 'Punjab', '04': 'Chandigarh',
+  '05': 'Uttarakhand', '06': 'Haryana', '07': 'Delhi', '08': 'Rajasthan', '09': 'Uttar Pradesh',
+  '10': 'Bihar', '11': 'Sikkim', '12': 'Arunachal Pradesh', '13': 'Nagaland', '14': 'Manipur',
+  '15': 'Mizoram', '16': 'Tripura', '17': 'Meghalaya', '18': 'Assam', '19': 'West Bengal',
+  '20': 'Jharkhand', '21': 'Odisha', '22': 'Chhattisgarh', '23': 'Madhya Pradesh', '24': 'Gujarat',
+  '26': 'Dadra and Nagar Haveli and Daman and Diu', '27': 'Maharashtra', '29': 'Karnataka',
+  '30': 'Goa', '31': 'Lakshadweep', '32': 'Kerala', '33': 'Tamil Nadu', '34': 'Puducherry',
+  '35': 'Andaman and Nicobar Islands', '36': 'Telangana', '37': 'Andhra Pradesh', '38': 'Ladakh',
+};
+
+/** "Rajasthan (08)" for a GSTIN starting 08; null when the code is not a state's. PURE. */
+export function placeOfSupply(gstin: string | null | undefined): string | null {
+  const code = (gstin ?? '').trim().slice(0, 2);
+  const name = GST_STATES[code];
+  return name ? `${name} (${code})` : null;
+}
+
 /** The 15th character for a 14-character GSTIN body. */
 export function gstinChecksumChar(body: string): string {
   let sum = 0;

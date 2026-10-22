@@ -20,7 +20,7 @@
 import type { Member, Membership, Payment } from '../types';
 import type { GymRecord } from '../data/adapter';
 import { formatDay, type DateISO } from './dates';
-import { gstAppliesTo, gstRateForDate, splitInclusiveGst, GYM_SAC_CODE, type GstSplit } from './gst';
+import { gstAppliesTo, gstRateForDate, placeOfSupply, splitInclusiveGst, GYM_SAC_CODE, type GstSplit } from './gst';
 import { unpaidForMembership } from './membership';
 import { formatINR, type Paise } from './money';
 import { methodLabel } from './payments';
@@ -74,6 +74,12 @@ export interface ReceiptDoc {
 
   /** Null when the gym is not GST-registered — no tax lines are invented. */
   gst: GstSplit | null;
+  /**
+   * R-55 (owner backlog "Full GST tax invoices"): a registered gym's receipt is a TAX INVOICE
+   * (CGST Rules, rule 46): it also names the place of supply ("Rajasthan (08)", the gym's own state)
+   * and says reverse charge does not apply, and the gym signs it. Null for an unregistered gym.
+   */
+  taxInvoice: { placeOfSupply: string | null; reverseCharge: 'No' } | null;
   sacCode: string | null;
   taxNote: string | null;
 
@@ -111,7 +117,7 @@ export function buildReceiptDoc(input: ReceiptDocInput): ReceiptDoc {
   const balanceP = membership ? unpaidForMembership(membership, memberPayments) : null;
 
   return {
-    heading: 'Payment receipt',
+    heading: registered ? 'Tax invoice' : 'Payment receipt',
     gymName: gym.name,
     gymAddress: gym.address,
     // Formatted the same way as a member's, so the two numbers on one receipt do
@@ -137,6 +143,7 @@ export function buildReceiptDoc(input: ReceiptDocInput): ReceiptDoc {
     collectedByName: payment.collectedByName?.trim() || null,
 
     gst,
+    taxInvoice: registered ? { placeOfSupply: placeOfSupply(gstinAtSale), reverseCharge: 'No' } : null,
     sacCode: registered ? GYM_SAC_CODE : null,
     // Says plainly that the tax is INSIDE the amount, so nobody reads the taxable
     // value as the price and the tax as something extra they still owe.

@@ -24,33 +24,37 @@ export function sessionKey(direct: string): string {
 
 type Fetch = typeof fetch;
 
-function urlOf(input: Parameters<Fetch>[0]): string {
+function urlOf(input: unknown): string {
   if (typeof input === 'string') return input;
   if (input instanceof URL) return input.href;
   return (input as Request).url;
 }
 
-/** A fetch that turns to the direct address for a while after our address failed to answer. */
+/**
+ * A fetch that turns to the direct address for a while after our address failed to answer.
+ * Typed loosely inside: React Native's and the browser's `fetch` types differ (a URL or not).
+ */
 export function routedFetch(proxyBase: string, direct: string, base: Fetch, now: () => number = Date.now): Fetch {
   let directUntil = 0;
-  return async (input, init) => {
+  const call = base as unknown as (input: unknown, init?: RequestInit) => Promise<Response>;
+  return (async (input: unknown, init?: RequestInit) => {
     const url = urlOf(input);
     const viaProxy = url.startsWith(proxyBase + '/');
     if (viaProxy && now() < directUntil) {
       const swapped = direct + url.slice(proxyBase.length);
-      return base(typeof input === 'string' || input instanceof URL ? swapped : new Request(swapped, input as Request), init);
+      return call(typeof input === 'string' || input instanceof URL ? swapped : new Request(swapped, input as Request), init);
     }
     try {
-      return await base(input, init);
+      return await call(input, init);
     } catch (e) {
       const aborted = !!e && typeof e === 'object' && (e as { name?: string }).name === 'AbortError';
       if (viaProxy && !aborted) {
         directUntil = now() + FALLBACK_MS;
-        console.warn('[ForgeErr] our server address did not answer; Supabase\'s own for 10 minutes', e);
+        console.warn("[ForgeErr] our server address did not answer; Supabase's own for 10 minutes", e);
       }
       throw e;
     }
-  };
+  }) as unknown as Fetch;
 }
 
 /**
