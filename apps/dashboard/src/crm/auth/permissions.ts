@@ -107,7 +107,9 @@ export function canOpen(role: Role, path: string): boolean {
   if (head === 'workouts') return can(role, 'editWorkoutPlans');
   // Messages & offers (22 Oct 2026): the owner's, like messages always were (the server sends only
   // for the owner, 0018). Staff opening an old Shop -> Messages link is sent to Shop instead.
-  if (head === 'messages') return can(role, 'manageGym');
+  // #49 step 2: the workout offer's list (`/messages/offer`) is open to the front desk too, so the
+  // desk can give an earned reward with one tap. Starting, stopping and taking back stay the owner's.
+  if (head === 'messages') return sub === 'offer' || can(role, 'manageGym');
   if (head === 'settings' && sub === 'branding') return can(role, 'manageGym');
   return true;
 }

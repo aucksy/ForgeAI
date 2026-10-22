@@ -84,6 +84,10 @@ describe('canOpen / navFor', () => {
 
   it('blocks typed addresses to owner pages, but keeps invite and sign-in open', () => {
     expect(canOpen('staff', '/expenses')).toBe(false);
+    // #49 step 2: the desk gives earned workout-offer rewards, but never sends messages.
+    expect(canOpen('staff', '/messages/offer')).toBe(true);
+    expect(canOpen('staff', '/messages')).toBe(false);
+    expect(canOpen('staff', '/messages/birthday')).toBe(false);
     expect(canOpen('staff', 'expenses')).toBe(false);
     expect(canOpen('staff', '/settings/branding')).toBe(false);
     expect(canOpen('staff', '/settings/invite')).toBe(true);

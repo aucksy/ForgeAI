@@ -25,6 +25,7 @@ import {
   appPhones,
   audienceMembers,
   audiencePlans,
+  phone10,
   reachOf,
   startingAudience,
   withoutApp,
@@ -83,13 +84,17 @@ import {
   capProblem,
   draftProblem,
   isCapped,
+  isWaiting,
   kindLabel,
   messageErrorWords,
   seenText,
+  sendAtFromLocal,
+  whenWords,
   type MessageDraft,
   type MessageKind,
   type SentMessage,
 } from './messages';
+import { useOfferServer } from './offerServer';
 import { usePoll, useShop } from './ShopProvider';
 
 type GroupPick = TemplateGroup | 'custom';
@@ -103,6 +108,10 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
   const compact = useIsCompact();
   const key = cloud?.ownerKey ?? null;
   const [lang, setLang] = useMessageLang();
+  // #49 step 2 (0025): a server that knows groups and times. Until then, exactly the step 1 page.
+  const groups = useOfferServer(key) === 'yes';
+  const [when, setWhen] = useState<'now' | 'later'>('now');
+  const [laterText, setLaterText] = useState('');
 
   const opening = templateById(startWith);
   const [group, setGroup] = useState<GroupPick>(opening?.group ?? 'news');
@@ -156,7 +165,8 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
   const missing = broadcast && !manual ? missingSlots(broadcast, values) : [];
   // Personal messages are each member's own words (logic/whatsapp.ts): nothing to fill in.
   const problem = personal ? null : missing.length > 0 ? `Fill in: ${missing.map((s) => s.label).join(', ')}.` : draftProblem(draft);
-  const cap = capProblem(kind, sent, now);
+  const later = groups && when === 'later' ? sendAtFromLocal(laterText, now) : null;
+  const cap = capProblem(kind, sent, now, later?.ok ? later.at : now);
 
   const gymName = snapshot.gym.name;
   const sign = signLine(snapshot.gym, lang === 'hi' ? 'hi' : 'en');
@@ -176,12 +186,26 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
   );
   const groupMembers = useMemo(() => audienceMembers(target, data), [target, data]);
   const phones = useMemo(() => appPhones(appMembers ?? []), [appMembers]);
-  const reach = reachOf(target, groupMembers, phones, appMembers?.length ?? 0);
+  const everyone = target.type === 'everyone';
+  // 0025: the group's own app members (matched by mobile number, as the server matches check-ins).
+  const groupAppIds = useMemo(() => {
+    if (!groups || everyone) return null;
+    const wanted = new Set(groupMembers.map((v) => phone10(v.member.phone)).filter((p): p is string => p !== null));
+    return (appMembers ?? []).filter((a) => {
+      const p = phone10(a.phone);
+      return p !== null && wanted.has(p);
+    }).map((a) => a.memberId);
+  }, [groups, everyone, groupMembers, appMembers]);
+  const baseReach = reachOf(target, groupMembers, phones, appMembers?.length ?? 0);
+  const reach = groups ? { ...baseReach, widerInApp: false } : baseReach;
+  const groupEmptyInApp = groupAppIds !== null && appMembers !== null && groupAppIds.length === 0;
   // "Not in the app" only when the app send can go (or went): a send limit that blocks it leaves the
   // members with the app to WhatsApp too (review fix).
   const appSendOpen = alreadySent || cap === null;
   const scope: Scope =
-    personal || !cloud ? 'all' : (scopeChoice ?? (target.type === 'everyone' && reach.inApp > 0 && appSendOpen ? 'notInApp' : 'all'));
+    personal || !cloud
+      ? 'all'
+      : (scopeChoice ?? ((everyone || groups) && reach.inApp > 0 && appSendOpen ? 'notInApp' : 'all'));
   const queueGroup = useMemo(
     () => (scope === 'notInApp' ? withoutApp(groupMembers, phones) : groupMembers),
     [scope, groupMembers, phones],
@@ -245,11 +269,13 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
     setBusy(true);
     setError(null);
     try {
-      const m = await gate.run(() => api.sendMessage(key, draft));
+      const opts = groups ? { to: groupAppIds, sendAt: later?.ok ? later.iso : null } : {};
+      const m = await gate.run(() => api.sendMessage(key, draft, opts));
       setSent((prev) => [m, ...(prev ?? [])]);
       setSentSig(draftSig);
       setConfirming(false);
-      setToast(m.recipients === 1 ? 'Sent to 1 member in the app.' : `Sent to ${m.recipients} members in the app.`);
+      const who = m.recipients === 1 ? '1 member' : `${m.recipients} members`;
+      setToast(m.sendAt !== null && m.sendAt > Date.now() ? `Goes out ${whenWords(m.sendAt)} to ${who} in the app.` : `Sent to ${who} in the app.`);
       window.setTimeout(() => setToast(null), 3000);
     } catch (e) {
       const words = messageErrorWords(e);
@@ -453,11 +479,18 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
                   {cloud ? (
                     <>
                       <p style={{ ...quiet, fontSize: 14, color: color.ink }}>
-                        {reach.widerInApp ? `In this group: ${countOf(reach.group, 'member')}. ` : ''}
+                        {!everyone ? `In this group: ${countOf(reach.group, 'member')}. ` : ''}
                         {appCount === null
                           ? 'Counting who has the app…'
-                          : `In the app: ${countOf(reach.inApp, 'member')}. Not in the app: ${reach.notInApp}.`}
+                          : groupAppIds !== null
+                            ? `In the app: ${countOf(groupAppIds.length, 'member')} of this group. Not in the app: ${reach.notInApp}.`
+                            : `In the app: ${countOf(reach.inApp, 'member')}. Not in the app: ${reach.notInApp}.`}
                       </p>
+                      {groupEmptyInApp && (
+                        <p role="note" style={{ ...quiet, color: color.warning }}>
+                          Nobody in this group has the ForgeAI app yet. Send it on WhatsApp.
+                        </p>
+                      )}
                       {reach.widerInApp && (
                         <p role="note" style={{ ...quiet, color: color.warning }}>
                           In the app this goes to everyone; for just this group, use WhatsApp.
@@ -492,6 +525,35 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
             {!personal && cloud && (
               <div style={{ marginTop: space.lg, paddingTop: space.lg, borderTop: `1px solid ${color.border}` }}>
                 <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink, marginBottom: space.sm }}>In the ForgeAI app</div>
+                {groups && !alreadySent && (
+                  <div style={{ marginBottom: space.md }}>
+                    <ChipToggle
+                      label="When"
+                      value={when}
+                      onChange={(v) => {
+                        setWhen(v === 'later' ? 'later' : 'now');
+                        setConfirming(false);
+                      }}
+                      options={[
+                        { value: 'now', label: 'Now' },
+                        { value: 'later', label: 'Pick a day and time' },
+                      ]}
+                    />
+                    {when === 'later' && (
+                      <TextField
+                        label="Day and time"
+                        type="datetime-local"
+                        value={laterText}
+                        onChange={(v) => {
+                          setLaterText(v);
+                          setConfirming(false);
+                        }}
+                        error={laterText && later && !later.ok ? later.problem : null}
+                        hint="India time. It appears in members' inbox then. You can cancel it until it goes."
+                      />
+                    )}
+                  </div>
+                )}
                 {cap && (
                   <p role="status" style={{ ...quiet, color: color.warning, marginBottom: space.sm }}>
                     {cap}
@@ -499,21 +561,28 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
                 )}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center' }}>
                   {alreadySent ? (
-                    <Pill tone="good">Sent in the app</Pill>
+                    <Pill tone="good">{later?.ok ? 'Timed in the app' : 'Sent in the app'}</Pill>
                   ) : !confirming ? (
-                    <Button disabled={busy || problem !== null || cap !== null} onClick={() => setConfirming(true)}>
+                    <Button
+                      disabled={busy || problem !== null || cap !== null || groupEmptyInApp || (later !== null && !later.ok)}
+                      onClick={() => setConfirming(true)}
+                    >
                       Send in the app
                     </Button>
                   ) : (
                     <>
                       <span style={{ fontFamily: font.body, fontSize: 14, color: color.ink }}>
-                        {appCount === 0
-                          ? 'No member has the app yet. Members who join in the next 14 days will see it. Send now?'
-                          : appCount === null
-                            ? 'Goes to every member in the app. Send now?'
-                            : reach.widerInApp
-                            ? `Goes to all ${countOf(appCount ?? 0, 'member')} in the app, not only this group. Send now?`
-                            : `Goes to ${countOf(appCount ?? 0, 'member')} in the app. Send now?`}
+                        {groupAppIds !== null
+                          ? `Goes to ${countOf(groupAppIds.length, 'member')} of this group in the app${later?.ok ? ` on ${whenWords(later.at)}` : ''}. Send ${later?.ok ? 'then' : 'now'}?`
+                          : later?.ok
+                            ? `Goes to every member in the app on ${whenWords(later.at)}. Send then?`
+                            : appCount === 0
+                              ? 'No member has the app yet. Members who join in the next 14 days will see it. Send now?'
+                              : appCount === null
+                                ? 'Goes to every member in the app. Send now?'
+                                : reach.widerInApp
+                                  ? `Goes to all ${countOf(appCount ?? 0, 'member')} in the app, not only this group. Send now?`
+                                  : `Goes to ${countOf(appCount ?? 0, 'member')} in the app. Send now?`}
                       </span>
                       <Button disabled={busy} onClick={() => void send()}>
                         {busy ? 'Sending…' : 'Yes, send'}
@@ -584,7 +653,8 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
                 <Card key={m.id} pad={space.lg} style={{ opacity: m.withdrawn ? 0.6 : 1 }}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', marginBottom: 6 }}>
                     <Pill tone={isCapped(m.kind) ? 'accent' : 'muted'}>{kindLabel(m.kind)}</Pill>
-                    {m.withdrawn && <Pill tone="critical">Taken back</Pill>}
+                    {m.toGroup && <Pill tone="muted">To a group</Pill>}
+                    {m.withdrawn && <Pill tone="critical">{m.sendAt !== null && m.sendAt > m.createdAt ? 'Cancelled' : 'Taken back'}</Pill>}
                     <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{timeAgo(m.createdAt, now)}</span>
                   </div>
                   <div style={{ fontFamily: font.display, fontSize: 16, fontWeight: 600, color: color.ink, overflowWrap: 'anywhere' }}>{m.title}</div>
@@ -594,12 +664,19 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
                     </div>
                   )}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.md, alignItems: 'center', justifyContent: 'space-between', marginTop: space.sm }}>
-                    <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{seenText(m)}</span>
-                    {!m.withdrawn && (
-                      <Button variant="quiet" onClick={() => void takeBack(m)} ariaLabel={`Take back ${m.title}`}>
-                        Take back
-                      </Button>
-                    )}
+                    <span style={{ fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+                      {isWaiting(m, now) && m.sendAt !== null ? `Goes out ${whenWords(m.sendAt)} · ${m.recipients === 1 ? '1 member' : `${m.recipients} members`}` : seenText(m)}
+                    </span>
+                    {!m.withdrawn &&
+                      (isWaiting(m, now) ? (
+                        <Button variant="quiet" onClick={() => void takeBack(m)} ariaLabel={`Cancel ${m.title}`}>
+                          Cancel
+                        </Button>
+                      ) : (
+                        <Button variant="quiet" onClick={() => void takeBack(m)} ariaLabel={`Take back ${m.title}`}>
+                          Take back
+                        </Button>
+                      ))}
                   </div>
                 </Card>
               ))}

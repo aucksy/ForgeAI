@@ -16,7 +16,11 @@ import { useCan, useRole } from '../../auth/AuthProvider';
 import { canOpen } from '../../auth/permissions';
 import { endingSoon } from '../../logic/audience';
 import { isBirthdayToday } from '../../logic/homeTiles';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useAuth } from '../../auth/AuthProvider';
+import { rewardsToGive } from '../../logic/workoutOffer';
+import { probeOffers } from '../../shop/offerServer';
+import { usePoll } from '../../shop/ShopProvider';
 
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { ShopTodayCard } from '../../shop/ShopTodayCard';
@@ -128,6 +132,9 @@ export function TodayScreen() {
 
       {/* Messages & offers (22 Oct 2026): who to message today, each opening its ready message. */}
       <MessageNudges />
+
+      {/* #49 step 2: earned workout-offer rewards waiting for the desk's one tap (owner and desk). */}
+      <RewardNudge />
 
       {/* The join code first: it is how members get into the app, and the shop
           card beside it is the part of the demo that moves on its own. */}
@@ -376,6 +383,41 @@ function MessageNudges() {
           </Row>
         ))}
       </div>
+    </Card>
+  );
+}
+
+/**
+ * #49 step 2 (23 Oct 2026): "2 rewards to give" when members reached a workout offer's target and
+ * the days wait for the desk. Online gyms on a server with 0025 only; nothing otherwise.
+ */
+function RewardNudge() {
+  const { session } = useAuth();
+  const key = session?.online ? (session.ownerKey ?? null) : null;
+  const [count, setCount] = useState(0);
+  const [server, setServer] = useState<'yes' | 'no' | 'unknown'>('unknown');
+  const load = useCallback(async () => {
+    if (!key) return;
+    try {
+      const r = await probeOffers(key);
+      setServer(r.server);
+      setCount(r.server === 'yes' ? rewardsToGive(r.answer) : 0);
+    } catch (e) {
+      console.warn('[ForgeErr] today: rewards to give', e);
+    }
+  }, [key]);
+  usePoll(load, 60_000, key !== null && server !== 'no');
+  if (!key || count === 0) return null;
+  const text = count === 1 ? '1 reward to give' : `${count} rewards to give`;
+  return (
+    <Card pad={space.lg} style={{ marginBottom: space.md }}>
+      <SectionTitle>Workout offer</SectionTitle>
+      <Row gap={space.md} wrap={false}>
+        <span style={{ flex: 1, minWidth: 0, fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.ink }}>{text}</span>
+        <Button variant="ghost" onClick={() => navigate('/messages/offer')} ariaLabel={`Give rewards: ${text}`}>
+          Give
+        </Button>
+      </Row>
     </Card>
   );
 }
