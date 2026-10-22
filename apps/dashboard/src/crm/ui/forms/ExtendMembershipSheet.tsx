@@ -38,16 +38,19 @@ export function ExtendMembershipSheet({
   membership,
   onClose,
   onDone,
+  gift,
 }: {
   membership: Membership;
   onClose: () => void;
   /** Handed the number of days added, for the caller's toast. */
   onDone: (days: number) => void;
+  /** A reward (the workout offer, #49): opens on "Gift – Extra days" with these days. */
+  gift?: number;
 }) {
   const { today, extendMembership } = useCrm();
-  const [reason, setReason] = useState<Reason>('medical');
+  const [reason, setReason] = useState<Reason>(gift ? 'gift' : 'medical');
   const [other, setOther] = useState('');
-  const [daysText, setDaysText] = useState('7');
+  const [daysText, setDaysText] = useState(String(gift ?? 7));
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 

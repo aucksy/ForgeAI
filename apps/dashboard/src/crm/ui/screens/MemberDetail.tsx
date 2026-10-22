@@ -51,6 +51,7 @@ import { MemberFormSheet } from '../forms/MemberFormSheet';
 import { SellMembershipSheet } from '../forms/SellMembershipSheet';
 import { VoidPaymentSheet } from '../forms/VoidPaymentSheet';
 import { MemberCardSheet } from '../MemberCardSheet';
+import { WorkoutCodeCheckSheet } from '../WorkoutCodeCheckSheet';
 import { memberCardFacts } from '../../logic/memberCard';
 import { plansForMember, withoutMember } from '../../logic/workoutPlans';
 import { NOT_ONLINE_YET, SendPlanSheet, WorkoutPlanSheet } from './WorkoutPlans';
@@ -111,6 +112,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const [collecting, setCollecting] = useState(false);
   const [cancelling, setCancelling] = useState<Membership | null>(null);
   const [extending, setExtending] = useState<Membership | null>(null);
+  // #49 step 1: the workout offer's claim code, and a reward given from it (opens on Gift, 3 days).
+  const [checkingCode, setCheckingCode] = useState(false);
+  const [rewardDays, setRewardDays] = useState<number | undefined>(undefined);
   const [voiding, setVoiding] = useState<Payment | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -435,6 +439,11 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <Card style={{ marginBottom: space.lg }}>
           <SectionTitle>Training pattern</SectionTitle>
           <AttendanceStrip profile={profile} today={today} />
+          <div style={{ marginTop: space.md }}>
+            <Button variant="ghost" onClick={() => setCheckingCode(true)}>
+              Check workout code
+            </Button>
+          </div>
         </Card>
       )}
 
@@ -616,8 +625,28 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       {extending && (
         <ExtendMembershipSheet
           membership={extending}
-          onClose={() => setExtending(null)}
+          gift={rewardDays}
+          onClose={() => {
+            setExtending(null);
+            setRewardDays(undefined);
+          }}
           onDone={(days) => flash(`Plan moved ${days} days later.`)}
+        />
+      )}
+      {checkingCode && (
+        <WorkoutCodeCheckSheet
+          visits={memberVisits}
+          today={today}
+          onGive={
+            canFreeze && extendTarget
+              ? () => {
+                  setCheckingCode(false);
+                  setRewardDays(3);
+                  setExtending(extendTarget);
+                }
+              : undefined
+          }
+          onClose={() => setCheckingCode(false)}
         />
       )}
       {voiding && (

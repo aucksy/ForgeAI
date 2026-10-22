@@ -3,19 +3,22 @@
  * gym's Shop and in Settings → Your gym. Read on every visit; the last answer is kept on the phone
  * so it still shows at the gym with no signal. Hidden until the server has 0023 (and on any answer
  * it can't read), so nothing half-working is ever on screen. Words: membership.ts (tested).
+ * #49 step 1: "Show my workouts to the desk" opens the workout offer's claim code (WorkoutCodeSheet).
  */
 import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { Card } from '@/components/ui';
+import { Card, GhostButton } from '@/components/ui';
 import { clockTime } from '@/lib/date';
 import { color, space, type } from '@/theme/tokens';
 
 import { apiMembership } from './gymApi';
 import { keptLine, MEMBERSHIP_STORAGE_KEY, membershipFromRow, membershipView, type MembershipAnswer, type MembershipTone } from './membership';
 import type { GymLink } from './types';
+import { WorkoutCodeSheet } from './WorkoutCodeSheet';
+import { WORKOUT_CODE_WORDS } from './workoutCodeWords';
 
 type Shown = { answer: MembershipAnswer; keptAt: number | null } | null;
 
@@ -50,6 +53,8 @@ const toneColor = (t: MembershipTone): string => (t === 'good' ? color.goodText 
 
 export function MembershipCard({ link }: { link: GymLink }) {
   const [shown, setShown] = useState<Shown>(null);
+  // #49 step 1: the workout offer's claim code for the desk (nothing is sent).
+  const [codeOpen, setCodeOpen] = useState(false);
   // Another gym (or a rejoin) on a screen that stays open: never keep the last member's plan.
   const [forMember, setForMember] = useState(link.memberId);
   if (forMember !== link.memberId) {
@@ -106,6 +111,10 @@ export function MembershipCard({ link }: { link: GymLink }) {
           <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs }}>{keptLine(shown.keptAt, Date.now(), clockTime)}</Text>
         ) : null}
       </View>
+      <View style={{ marginTop: space.sm }}>
+        <GhostButton label={WORKOUT_CODE_WORDS.button} icon="dumbbell" onPress={() => setCodeOpen(true)} />
+      </View>
+      <WorkoutCodeSheet visible={codeOpen} onClose={() => setCodeOpen(false)} />
     </Card>
   );
 }
