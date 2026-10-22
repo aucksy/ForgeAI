@@ -28,6 +28,7 @@ import { askAndLeaveGym } from './leaveFlow';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { MembershipCard } from './MembershipCard';
+import { OfferCard } from './OfferCard';
 import { ProductPicture } from './ProductPicture';
 import { BagButton, BellButton, MyOrdersRow, QuietLine } from './ShopParts';
 import { unreadCount } from './inbox';
@@ -152,6 +153,8 @@ function GymShop({ link }: { link: GymLink }) {
         ) : null}
         {hasList && problem ? <QuietLine text={withListAge(problem, listAgeText(productsAt, Date.now()))} /> : null}
 
+        {/* #49 step 2: the gym's workout offer (hidden when there is none, or the server has none yet). */}
+        <OfferCard link={link} />
         <MembershipCard link={link} />
         {/* R-77: the home-screen icon is offered in a pop-up right after joining (GymIconOffer.tsx). */}
         {shopOn || orderCount > 0 ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
