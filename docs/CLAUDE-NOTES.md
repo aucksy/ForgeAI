@@ -5,6 +5,30 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-67. Build: AI import of a gym's old data, with fields that grow per gym — 22 Oct 2026
+**Owner said:** "we need to plan and build it for sure, because in the long run, I cannot be the one personally
+helping gym owners on board, and the biggest friction will be ... exporting the data. So ... enable AI in their
+admin panel import ... a flexible and modifiable database. So if the AI detects new fields, new type of data, then
+we should be able to just real time add those fields in the data for that gym owner and keep the data import or
+migration completely smooth ... research first, think through it, and also think about the challenges ... and the
+possible solutions. Put your answer in the ... tracker."
+**Plan:** confirmed feature: backlog row (Planned). Research (how gym software and CRMs import: Mindbody, Glofox,
+Wellyx, HubSpot, Airtable; AI column mapping; custom fields in Postgres/Supabase: JSON field vs extra tables;
+messy Excel/PDF/photos of registers; Hindi; money and dates; duplicates; undo), then a tracker entry with the
+design, the challenges and their fixes, the first version, and his decisions (AI cost, live server change).
+Research note: docs/overhaul/research/R-ai-import.md.
+
+## R-66. The set pop-up stays 2 seconds longer — 22 Oct 2026
+**Owner said:** "The toast notifications that we are showing after someone completes a set about how much reps
+they did more or whatever, the duration of that is still not long enough. Add maybe 2 more seconds."
+**Done:** the "better than last time" pop-up 3 s → 5 s, the record pop-up 4.2 s → 6.2 s (it has an ×).
+
+## R-65. The kg line turns green once it is beaten — 22 Oct 2026
+**Owner said:** "I really like that line which says what to beat, and once I've beaten ... maybe show some colors,
+like make it green or something, right? Think about these things, bro."
+**Done:** the line gets a soft green band and green bold text when every kilo to beat is lifted. Saved as a
+standing rule: success moments must be visible, and Claude spots them itself.
+
 ## R-64. Answer the trainer-view idea (R-59) in the tracker — 22 Oct 2026
 **Owner said:** "I also gave another idea about the trainer's profile. Answer to that should be in the inbox as well."
 **Plan:** research (Trainerize, TrueCoach, Hevy Coach, PT Distinction, Everfit, Indian gym software; what members
