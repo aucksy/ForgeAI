@@ -98,10 +98,34 @@ appId: com.forgeai.app
       - waitForAnimationToEnd:
           timeout: 3000
       - takeScreenshot: p7-big-${NAV}-03-open-workout
+      # 22 Oct 2026 (runs 39734799762 x2): Maestro's swipe starts at the screen's centre, which can
+      # land on a set's number box; on Android a drag from a box never scrolled the page. The app now
+      # lets a box take touches only while typed in (SetRow, a member bug too). The centre swipe is
+      # tried first (it proves that fix); if it still cannot scroll, swipes from the PREVIOUS column
+      # (never a box) reach the link, and the 03a-scroll-fallback picture says the fix did not hold.
       - scrollUntilVisible:
           element: "Discard workout"
           centerElement: true
-          timeout: 20000
+          timeout: 12000
+          optional: true
+      - runFlow:
+          when:
+            notVisible: "Discard workout"
+          commands:
+            - takeScreenshot: p7-big-${NAV}-03a-scroll-fallback
+            - repeat:
+                while:
+                  notVisible: "Discard workout"
+                times: 6
+                commands:
+                  - swipe:
+                      start: "20%, 70%"
+                      end: "20%, 35%"
+                      duration: 600
+      - scrollUntilVisible:
+          element: "Discard workout"
+          centerElement: true
+          timeout: 10000
       - takeScreenshot: p7-big-${NAV}-03b-open-workout-bottom
       - tapOn: "Discard workout"
       - extendedWaitUntil:
