@@ -41,6 +41,19 @@ export const SAMPLE_PRODUCTS = [
 /** A server refusal, answered the way PostgREST does (400 with the message). */
 class Refusal extends Error {}
 
+/** A function this server does not have (PostgREST: 404, code PGRST202), e.g. before 0025. */
+class NoSuchFunction extends Error {}
+
+/** #49 step 2 (0025): the calls only a server with the workout offer answers. */
+const OFFER_FNS = ['owner_offers', 'owner_save_offer', 'owner_stop_offer', 'staff_give_reward', 'owner_undo_reward'];
+
+/** 'YYYY-MM-DD' + n days. */
+function plusDays(day, n) {
+  const d = new Date(`${day}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
 /**
  * A pretend server, shared by every phone (browser context) attached to it. Holds an online gym's
  * records the way crm_pull / crm_push do (a version number; a push built on an old version is
@@ -83,6 +96,87 @@ export class FakeServer {
     this.messages = [];
     /** Members who joined the gym in the ForgeAI app (owner_app_members rows). None by default. */
     this.appMembers = [];
+    /**
+     * #49 step 2: does this server have 0025 (the workout offer, group and timed messages)? Off by
+     * default: the calls answer PGRST202 like a server before 0025, so the older journeys see the
+     * panel exactly as before.
+     */
+    this.offerServer = false;
+    this.offers = [];
+    /** offer members: { offerId, rosterId, joinedOn, windowEndsOn, counted, deskDays, appDays, ... } */
+    this.offerMembers = [];
+  }
+
+  /**
+   * A member joins the running offer in the app and has `counted` workouts matched by the register
+   * (what member_join_offer and member_offer_days would leave on the real server).
+   */
+  joinOffer(rosterId, counted = 0) {
+    const o = this.offers.find((x) => x.stoppedAt === null);
+    if (!o) throw new Error('no running offer');
+    const m = {
+      offerId: o.id,
+      rosterId,
+      joinedOn: TODAY,
+      windowEndsOn: plusDays(TODAY, o.windowDays - 1),
+      counted,
+      deskDays: counted,
+      appDays: 0,
+      left: false,
+      earnedAt: counted >= o.workouts ? NOW.toISOString() : null,
+      givenAt: null,
+      givenAuto: null,
+      givenByName: null,
+      givenDays: null,
+      oldEnd: null,
+      newEnd: null,
+      undoneAt: null,
+      undoneByName: null,
+    };
+    this.offerMembers.push(m);
+    return m;
+  }
+
+  /** The owner of an old owner key (the demo's shop), or a signed-in owner; OWNER_ONLY for the desk. */
+  ownerLike(key) {
+    if (this.ownerKeys.has(key)) return { staffId: null, name: 'Owner (old owner key)', role: 'owner' };
+    return this.ownerOnly(key);
+  }
+
+  /** A person by key for a desk-or-owner call (an old owner key is the owner). */
+  anyone(key) {
+    if (this.ownerKeys.has(key)) return { staffId: null, name: 'Owner (old owner key)', role: 'owner' };
+    return this.who(key);
+  }
+
+  offerJson(o) {
+    const ms = this.offerMembers.filter((m) => m.offerId === o.id);
+    return {
+      ...o,
+      open: o.stoppedAt === null && o.startsOn <= TODAY && o.joinUntil >= TODAY,
+      joined: ms.length,
+      inNow: ms.filter((m) => !m.left && !m.earnedAt && m.windowEndsOn >= TODAY).length,
+      ready: ms.filter((m) => m.earnedAt && !m.givenAt).length,
+      given: ms.filter((m) => m.givenAt).length,
+    };
+  }
+
+  /** 0025's _offer_give: the member's gym plan that ends last moves `rewardDays` later, with a note. */
+  giveReward(o, m, by, auto) {
+    if (m.givenAt) return { ok: true, alreadyGiven: true, days: m.givenDays, oldEnd: m.oldEnd, newEnd: m.newEnd, version: this.version };
+    if (!m.earnedAt) throw new Refusal('NOT_EARNED');
+    const plan = [...this.records.values()]
+      .filter((r) => r.k === 'membership' && !r.x && r.d.memberId === m.rosterId && r.d.cancelled !== true && !(Number(r.d.ptSessions) > 0) && r.d.endsOn >= TODAY)
+      .sort((a, b) => (a.d.endsOn < b.d.endsOn ? 1 : -1))[0];
+    if (!plan) throw new Refusal('NO_PLAN');
+    const oldEnd = plan.d.endsOn;
+    const newEnd = plusDays(oldEnd, o.rewardDays);
+    const line = `+${o.rewardDays} days (Reward - Workout offer): ${oldEnd} -> ${newEnd}`;
+    this.version += 1;
+    plan.d = { ...plan.d, endsOn: newEnd, notes: plan.d.notes ? `${plan.d.notes}\n${line}` : line, updatedAt: NOW.getTime() };
+    plan.ver = this.version;
+    Object.assign(m, { givenAt: NOW.toISOString(), givenAuto: auto, givenByName: by, givenDays: o.rewardDays, oldEnd, newEnd, undoneAt: null, undoneByName: null, membershipId: plan.id });
+    return { ok: true, alreadyGiven: false, days: o.rewardDays, oldEnd, newEnd, membershipId: plan.id, version: this.version };
   }
 
   /** The internet goes off for `fn` after `n` more calls get through (n = 0: at once). */
@@ -170,6 +264,10 @@ export class FakeServer {
     this.log.push({ fn, args });
     // Every call but the doors in (and the demo) carries this device's key.
     if (typeof args.p_key === 'string' && !['staff_sign_in', 'gym_create_online', 'staff_key_status'].includes(fn)) this.checkKey(args.p_key);
+    // A server before 0025 has neither the offer calls nor owner_send_message's two new arguments.
+    if (!this.offerServer && (OFFER_FNS.includes(fn) || (fn === 'owner_send_message' && ('p_to' in args || 'p_send_at' in args)))) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
     switch (fn) {
       case 'demo_start_gym': {
         // The demo, or "Turn on the shop" for a gym kept in this browser: a gym with a code, the
@@ -318,15 +416,20 @@ export class FakeServer {
         const body = String(args.p_body ?? '').trim();
         if (!title) throw new Refusal('EMPTY');
         if ([...title].length > 60 || [...body].length > 300) throw new Refusal('TOO_LONG');
+        // 0025: a group (app member ids; none left: NO_ONE) and a time to appear.
+        const to = Array.isArray(args.p_to) ? args.p_to.filter((id) => this.appMembers.some((a) => a.member_id === id)) : null;
+        if (to && to.length === 0) throw new Refusal('NO_ONE');
         const m = {
           id: `msg-${this.messages.length + 1}`,
           kind: args.p_kind,
           title,
           body,
           createdAt: NOW.toISOString(),
-          recipients: this.appMembers.length,
+          recipients: to ? to.length : this.appMembers.length,
           seen: 0,
           withdrawn: false,
+          sendAt: typeof args.p_send_at === 'string' ? new Date(args.p_send_at).toISOString() : null,
+          toGroup: Boolean(to),
         };
         this.messages.unshift(m);
         return m;
@@ -335,6 +438,74 @@ export class FakeServer {
         return this.messages;
       case 'owner_app_members':
         return this.appMembers;
+      // ---- #49 step 2 (0025): the workout offer, only when offerServer is on (see above).
+      case 'owner_offers': {
+        this.anyone(args.p_key);
+        return { offers: this.offers.map((o) => this.offerJson(o)), members: this.offerMembers, today: TODAY };
+      }
+      case 'owner_save_offer': {
+        const me = this.ownerLike(args.p_key);
+        const p = args.p_offer ?? {};
+        if (p.id) {
+          const o = this.offers.find((x) => x.id === p.id && x.stoppedAt === null);
+          if (!o) throw new Refusal('GONE');
+          if (typeof p.autoGive === 'boolean') o.autoGive = p.autoGive;
+          if (p.joinUntil) o.joinUntil = p.joinUntil;
+          return this.offerJson(o);
+        }
+        if (this.offers.some((o) => o.stoppedAt === null)) throw new Refusal('ONE_RUNNING');
+        const w = Number(p.workouts);
+        const wd = Number(p.windowDays);
+        const rd = Number(p.rewardDays);
+        if (!(w >= 4 && w <= 30 && wd >= 7 && wd <= 60 && rd >= 1 && rd <= 7 && w <= wd)) throw new Refusal('INVALID');
+        const o = {
+          id: `offer-${this.offers.length + 1}`,
+          kind: 'workout',
+          title: String(p.title ?? '').trim(),
+          workouts: w,
+          windowDays: wd,
+          rewardDays: rd,
+          minMinutes: 20,
+          minSets: 6,
+          startsOn: TODAY,
+          joinUntil: p.joinUntil,
+          countAppCheckins: p.countAppCheckins !== false,
+          autoGive: p.autoGive === true,
+          createdAt: NOW.toISOString(),
+          createdByName: me.name,
+          stoppedAt: null,
+        };
+        this.offers.unshift(o);
+        return this.offerJson(o);
+      }
+      case 'owner_stop_offer': {
+        this.ownerLike(args.p_key);
+        const o = this.offers.find((x) => x.id === args.p_offer);
+        if (!o) throw new Refusal('GONE');
+        o.stoppedAt = o.stoppedAt ?? NOW.toISOString();
+        return this.offerJson(o);
+      }
+      case 'staff_give_reward': {
+        const p = this.anyone(args.p_key);
+        const o = this.offers.find((x) => x.id === args.p_offer);
+        const m = this.offerMembers.find((x) => x.offerId === args.p_offer && x.rosterId === args.p_roster);
+        if (!o || !m) throw new Refusal('GONE');
+        return this.giveReward(o, m, p.name, false);
+      }
+      case 'owner_undo_reward': {
+        const p = this.ownerLike(args.p_key);
+        const m = this.offerMembers.find((x) => x.offerId === args.p_offer && x.rosterId === args.p_roster);
+        if (!m) throw new Refusal('GONE');
+        if (!m.givenAt) throw new Refusal('NOT_GIVEN');
+        const plan = this.records.get(`membership:${m.membershipId}`);
+        if (!plan || plan.x || plan.d.endsOn !== m.newEnd) throw new Refusal('CHANGED');
+        const line = `Reward taken back: ${m.newEnd} -> ${m.oldEnd}`;
+        this.version += 1;
+        plan.d = { ...plan.d, endsOn: m.oldEnd, notes: `${plan.d.notes}\n${line}`, updatedAt: NOW.getTime() };
+        plan.ver = this.version;
+        Object.assign(m, { givenAt: null, givenAuto: null, givenByName: null, givenDays: null, undoneAt: NOW.toISOString(), undoneByName: p.name });
+        return { ok: true, endsOn: m.oldEnd, version: this.version };
+      }
       default:
         // Orders, messages, app members: an empty list, as for a new gym.
         return [];
@@ -375,6 +546,14 @@ export class FakeServer {
         const body = this.answer(fn, args);
         await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
       } catch (e) {
+        if (e instanceof NoSuchFunction) {
+          await route.fulfill({
+            status: 404,
+            contentType: 'application/json',
+            body: JSON.stringify({ code: 'PGRST202', message: e.message, details: null, hint: null }),
+          });
+          return;
+        }
         await route.fulfill({
           status: 400,
           contentType: 'application/json',
