@@ -76,5 +76,5 @@ export function retryPendingLeaves(): Promise<number> {
 
 /** The line on the join card after a Leave the gym did not hear yet. PURE. */
 export function leavePendingText(gymName: string): string {
-  return `You left ${gymName}'s shop on this phone. The gym couldn't be reached, so it will be told the next time the app is online.`;
+  return `You left ${gymName} on this phone. The gym couldn't be reached, so it will be told the next time the app is online.`;
 }

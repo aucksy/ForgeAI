@@ -3,6 +3,8 @@
 # app first (XJ6a), so the app re-draws in the gym's look on joining (branding: new members see it
 # at once). The Workout tab is photographed before (ForgeAI's look) and after (the gym's look);
 # run-journeys.sh measures the brand colour on both pictures.
+# R-77: after Leave there is no third tab; the join is in Settings → Your gym (sub-join-gym.yaml),
+# which waits out gym B's "Welcome to" opening and lands on the Workout tab.
 appId: com.forgeai.app
 ---
 - stopApp
@@ -22,7 +24,7 @@ appId: com.forgeai.app
 - takeScreenshot: xj6-00-workout-forgeai-look
 # ---------------------------------------------------------------- leave gym A
 - tapOn:
-    text: "^Shop$"
+    text: "^(Shop|Gym)$"
     index: 0
 - extendedWaitUntil:
     visible: "^${GYM}$"
@@ -33,61 +35,25 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "^Leave$"
 - extendedWaitUntil:
-    visible: "Leave ${GYM}'s shop\\?"
+    visible: "Leave ${GYM}\\?"
     timeout: 15000
-- tapOn: "Leave shop"
+- tapOn: "^Leave gym$"
+# R-77: no gym, no third tab; the app is on Workout.
 - extendedWaitUntil:
-    visible: "^Your gym's shop$"
+    notVisible: "^(Shop|Gym)$"
     timeout: 30000
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 30000
+- assertNotVisible: "^(Shop|Gym)$"
 # ---------------------------------------------------------------- join gym B (branded)
 - runFlow:
-    file: xj-sub-find.yaml
+    file: sub-join-gym.yaml
     env:
-      FIND: "Enter the code from your gym"
-- scrollUntilVisible:
-    element: "Gym code"
-    direction: UP
-    centerElement: true
-    timeout: 20000
-- tapOn: "Gym code"
-- inputText: "${CODE_B}"
-- runFlow:
-    when:
-      notVisible: "^${CODE_B}$"
-    commands:
-      - tapOn: "Gym code"
-      - eraseText: 10
-      - inputText: "${CODE_B}"
-- assertVisible: "^${CODE_B}$"
-- tapOn: "Name on your orders"
-- eraseText: 70
-- inputText: " QA Member"
-- hideKeyboard
-- runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
-- scrollUntilVisible:
-    element: "Join your gym's shop"
-    centerElement: true
-    timeout: 15000
-- tapOn: "Join your gym's shop"
-- extendedWaitUntil:
-    visible: "Join ${GYM_B}\\?"
-    timeout: 45000
-- tapOn:
-    text: "^Join$"
-    below:
-      text: "Join ${GYM_B}\\?"
-# The gym's opening (its name: this gym has no logo) for about a second; best effort.
-- extendedWaitUntil:
-    visible:
-      id: "brand-opening"
-    timeout: 45000
-    optional: true
-- takeScreenshot: xj6-01-opening-after-join
+      CODE: "${CODE_B}"
+      NAME: "QA Member"
+      GYM: "${GYM_B}"
 - extendedWaitUntil:
     visible: "Your gym: ${GYM_B}"
     timeout: 45000
-- extendedWaitUntil:
-    notVisible:
-      id: "brand-opening"
-    timeout: 15000
 - takeScreenshot: xj6-02-joined-gym-look

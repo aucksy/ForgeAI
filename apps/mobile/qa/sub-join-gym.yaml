@@ -1,0 +1,78 @@
+# Sub-flow (called with runFlow; not a part of its own). R-77 (22 Oct 2026): with no gym joined there
+# is no Shop tab and no join card on it (nor a sample shop). A member joins from Settings → Your gym
+# ("Join your gym": the gym code, Next) or from the gym's own link; both open the invite screen
+# (src/shop/InviteScreen.tsx: the gym's name and code, "Your name", the 18+ / terms tick, "Join this
+# gym"). This joins the first way:
+#   - runFlow:
+#       file: sub-join-gym.yaml
+#       env:
+#         CODE: "FORGE1"
+#         NAME: "QA Member"
+#         GYM: "ForgeAI Test Gym"
+# CODE, NAME and GYM are also matched as regexes (GYM = the invite screen's heading, exactly).
+# No `env:` default here: a flow-level default would override the caller's (trap 22).
+# Call it with the phone in NO gym and the app's tab bar on screen (any tab) or on the Settings list.
+# Ends on the Workout tab with the gym joined (sub-after-join.yaml: the opening waited out, the
+# home-screen icon pop-up closed with "Not now"). The third tab then reads "Gym", or "Shop" once the
+# gym's product list has arrived (it can read "Gym" for a moment): wait for "^Shop$" before products.
+appId: com.forgeai.app
+---
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Your gym"
+# The no-gym page: its "Join your gym" card. Not centred: on a short page nothing can reach the
+# middle, and centring would eat the timeout (U-Q5). Fully on screen is enough for the tap.
+- scrollUntilVisible:
+    element: "^Join your gym$"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Gym code"
+    timeout: 20000
+# The emulator can drop the first key into a freshly focused box (trap 5): type the code again if needed.
+- tapOn: "Gym code"
+- inputText: "${CODE}"
+- runFlow:
+    when:
+      notVisible: "^${CODE}$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "${CODE}"
+- assertVisible: "^${CODE}$"
+# The keyboard is open after typing, so this is not Android's Back (sub-agree.yaml's trap).
+- hideKeyboard
+# "Next" (spoken "Find my gym") opens the invite screen for that code.
+- scrollUntilVisible:
+    element: "Find my gym"
+    timeout: 15000
+- tapOn: "Find my gym"
+# ---------------------------------------------------------------- the invite screen (the live gym_preview)
+- extendedWaitUntil:
+    visible: "Gym code ${CODE}"
+    timeout: 45000
+- assertVisible: "^${GYM}$"
+- tapOn: "Your name"
+- eraseText: 70
+- inputText: "${NAME}"
+- runFlow:
+    when:
+      notVisible: "^${NAME}$"
+    commands:
+      - tapOn: "Your name"
+      - eraseText: 70
+      - inputText: "${NAME}"
+- assertVisible: "^${NAME}$"
+- hideKeyboard
+# Owner profile (360 dp, font 1.3): the tick box and the button can be below the form.
+- runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
+- scrollUntilVisible:
+    element: "^Join this gym$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Join this gym$"
+# The join is on the live server. Joined = the third tab is there (no gym, no third tab).
+- extendedWaitUntil:
+    visible: "^(Shop|Gym)$"
+    timeout: 45000
+- runFlow: sub-after-join.yaml

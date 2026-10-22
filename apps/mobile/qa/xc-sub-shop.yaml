@@ -1,5 +1,7 @@
-# Phone conditions (UAT WP7), sub-flow: the app closed and opened again, then the Shop tab. Copied
+# Phone conditions (UAT WP7), sub-flow: the app closed and opened again, then the gym's tab. Copied
 # from xj-sub-shop.yaml (WP6) so a change there never moves these flows.
+# R-77: the third tab shows only with a gym joined, as "Gym" until the gym lists a product, then
+# "Shop" (the run's gym lists four).
 appId: com.forgeai.app
 ---
 - stopApp
@@ -11,5 +13,5 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 90000
 - tapOn:
-    text: "^Shop$"
+    text: "^(Shop|Gym)$"
     index: 0

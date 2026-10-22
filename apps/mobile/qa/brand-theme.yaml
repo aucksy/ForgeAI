@@ -1,15 +1,17 @@
 # Gym branding device QA, part BR — join a branded gym and photograph the app in its look.
 # Talks to the LIVE server: needs supabase/migrations/0005_gym_theme.sql applied there (the
 # runner skips this part when it is not — run-device-qa.sh probes owner_set_brand first).
-#  1. Shop → join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT, yellow #F7D411 on
-#     #0A0A0C) as "QA Member". The app re-draws in the gym's colours behind the gym's opening
-#     (logo, or its name while the test gym has no logo) and comes back on the Workout tab.
+#  1. Settings → Your gym → join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT, yellow
+#     #F7D411 on #0A0A0C) as "QA Member" (sub-join-gym.yaml; R-77: in no gym there is no Shop tab).
+#     The app re-draws in the gym's colours behind the gym's "Welcome to" opening (logo, or its
+#     name while the test gym has no logo) and lands on the Workout tab. The opening and the
+#     home-screen icon pop-up are photographed by brand-welcome.yaml, which runs just before this.
 #  2. Workout, Profile and Shop tabs, each with the gym's mark under the title; a product page
 #     (the yellow "Add to bag" button with black words).
 #  3. The app closed and opened again: the gym's opening shows at launch, then the gym's colours.
-#  4. Leave the gym: ForgeAI's own look is back and the Shop is the join card again.
-# Screenshots br-*.png (gathered in qa-out/brand/). The opening lasts about a second, so its two
-# photos are best-effort (optional waits); everything after them is asserted.
+#  4. Leave the gym: ForgeAI's own look is back and the third tab is gone (R-77).
+# Screenshots br-*.png (gathered in qa-out/brand/). The opening lasts about a second, so its
+# photo is best-effort (an optional wait); everything after it is asserted.
 # Saves no workout and places no order; the phone ends outside the gym, as it started.
 appId: com.forgeai.app
 ---
@@ -20,52 +22,47 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 90000
-# ---------------------------------------------------------------- 1. join the branded gym
-- tapOn:
-    text: "^Shop$"
-    index: 0
-- extendedWaitUntil:
-    visible: "^Your gym's shop$"
-    timeout: 20000
-- takeScreenshot: br-00-join-card-forgeai-look
-# The emulator can drop the first key into a freshly focused box: type the code again if needed.
-- tapOn: "Gym code"
-- inputText: "RAMS01"
+# brand-welcome.yaml (just before) leaves RAMS01 at its end; if it failed before that, leave here
+# from the gym's tab so this join starts from no gym.
 - runFlow:
     when:
-      notVisible: "^RAMS01$"
+      visible: "^(Shop|Gym)$"
     commands:
-      - tapOn: "Gym code"
-      - eraseText: 10
-      - inputText: "RAMS01"
-- assertVisible: "^RAMS01$"
-- tapOn: "Name on your orders"
-- eraseText: 70
-- inputText: " QA Member"
-- hideKeyboard
-# Owner profile (360 dp, font 1.3): the button can be below the form.
-- runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
+      - tapOn:
+          text: "^(Shop|Gym)$"
+          index: 0
+      - scrollUntilVisible:
+          element: "^Leave$"
+          # Leave is the last row of the gym's page: it can never be centred (U-Q5), so no centerElement.
+          timeout: 30000
+      - tapOn: "^Leave$"
+      - extendedWaitUntil:
+          visible: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
+          timeout: 15000
+      - tapOn: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
+      - extendedWaitUntil:
+          notVisible: "^(Shop|Gym)$"
+          timeout: 45000
+      - extendedWaitUntil:
+          visible: "^Profile$"
+          timeout: 30000
+# ---------------------------------------------------------------- 1. join the branded gym
+# The join card, in ForgeAI's look (R-77: Settings → Your gym, not the Shop tab).
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Your gym"
 - scrollUntilVisible:
-    element: "Join your gym's shop"
-    centerElement: true
-    timeout: 15000
-- tapOn: "Join your gym's shop"
-# Audit C6-11 (2895d7f, 16 Oct 2026): a TYPED code first asks "Join <gym>?" with the gym's name
-# (run 38887468954 stopped on this sheet). The sheet's own Join, below its title.
-- extendedWaitUntil:
-    visible: "Join RAM'S FITNESS CLUB IMPACT\\?"
-    timeout: 45000
-- tapOn:
-    text: "^Join$"
-    below:
-      text: "Join RAM'S FITNESS CLUB IMPACT\\?"
-# The opening: the gym's logo (or name), full screen, for about a second.
-- extendedWaitUntil:
-    visible:
-      id: "brand-opening"
-    timeout: 45000
-    optional: true
-- takeScreenshot: br-01-opening-after-join
+    element: "^Join your gym$"
+    timeout: 20000
+- takeScreenshot: br-00-join-card-forgeai-look
+- runFlow: sub-back-to-tabs.yaml
+- runFlow:
+    file: sub-join-gym.yaml
+    env:
+      CODE: "RAMS01"
+      NAME: "QA Member"
+      GYM: "RAM'S FITNESS CLUB IMPACT"
 # ---------------------------------------------------------------- 2. the app in the gym's look
 - extendedWaitUntil:
     visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
@@ -94,12 +91,16 @@ appId: com.forgeai.app
     visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 15000
 - takeScreenshot: br-03-profile
+# RAMS01 lists products, so its tab is "Shop" (it can read "Gym" until the list arrives).
 - tapOn:
-    text: "^Shop$"
+    text: "^(Shop|Gym)$"
     index: 0
 - extendedWaitUntil:
     visible: "Your gym's shop · pay at the desk"
     timeout: 30000
+- extendedWaitUntil:
+    visible: "^Shop$"
+    timeout: 20000
 - assertVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
 - takeScreenshot: br-04-shop
 - scrollUntilVisible:
@@ -132,7 +133,7 @@ appId: com.forgeai.app
 - takeScreenshot: br-07-workout-after-relaunch
 # ---------------------------------------------------------------- 4. leave: ForgeAI's look again
 - tapOn:
-    text: "^Shop$"
+    text: "^(Shop|Gym)$"
     index: 0
 - extendedWaitUntil:
     visible: "Your gym's shop · pay at the desk"
@@ -143,18 +144,17 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "^Leave$"
 - extendedWaitUntil:
-    visible: "Leave RAM'S FITNESS CLUB IMPACT's shop\\?"
+    visible: "Leave RAM'S FITNESS CLUB IMPACT\\?"
     timeout: 10000
 - assertVisible: ".*goes back to ForgeAI's colours.*"
-- tapOn: "Leave shop"
-# The app re-draws in ForgeAI's look (it may come back on the Workout tab).
+- tapOn: "^Leave gym$"
+# The app re-draws in ForgeAI's look (it may come back on the Workout tab). R-77: no gym, so the
+# third tab is gone.
 - extendedWaitUntil:
     notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 15000
-- tapOn:
-    text: "^Shop$"
-    index: 0
 - extendedWaitUntil:
-    visible: "^Your gym's shop$"
-    timeout: 15000
+    visible: "^Profile$"
+    timeout: 20000
+- assertNotVisible: "^(Shop|Gym)$"
 - takeScreenshot: br-08-left-forgeai-look

@@ -14,13 +14,15 @@ appId: com.forgeai.app
     element: "^Switch to this gym$"
     timeout: 15000
 - tapOn: "^Switch to this gym$"
+# Switched = the branded gym's mark is up (the third tab was there before, so it proves nothing).
 - extendedWaitUntil:
-    visible: "Your gym: RAM'S FITNESS CLUB IMPACT|Your gym's shop · pay at the desk"
+    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 30000
+# R-77: the welcome opening, then the home-screen icon pop-up (closed with "Not now"), on Workout.
+- runFlow: sub-after-join.yaml
 - tapOn:
-    text: "^Shop$"
+    text: "^(Shop|Gym)$"
     index: 0
-    optional: true
 - extendedWaitUntil:
     visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 30000
@@ -32,17 +34,15 @@ appId: com.forgeai.app
     timeout: 20000
 - tapOn: "^Leave$"
 - extendedWaitUntil:
-    visible: 'Leave RAM''S FITNESS CLUB IMPACT''s shop\?'
+    visible: 'Leave RAM''S FITNESS CLUB IMPACT\?'
     timeout: 10000
-- tapOn: "Leave shop"
+- tapOn: "^Leave gym$"
 # Leaving a branded gym redraws the app in ForgeAI's colours, which lands on the Workout tab
-# (as in part BR): back to the Shop tab to see the join card.
+# (as in part BR). R-77: in no gym there is no third tab.
 - extendedWaitUntil:
-    visible: "^Shop$"
+    notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 20000
-- tapOn:
-    text: "^Shop$"
-    index: 0
 - extendedWaitUntil:
-    visible: "^Your gym's shop$"
+    visible: "^Profile$"
     timeout: 20000
+- assertNotVisible: "^(Shop|Gym)$"

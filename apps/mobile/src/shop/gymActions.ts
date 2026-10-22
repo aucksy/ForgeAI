@@ -418,7 +418,7 @@ export async function cancelOpenOrdersBeforeLeave(kind: LeaveKind): Promise<Sett
 }
 
 /**
- * Leave the gym's shop on this phone: forget it at once, then tell the server. When the gym cannot
+ * Leave the gym on this phone: forget it at once, then tell the server. When the gym cannot
  * be reached, the key is kept and sent again on the next start, and the join card says so (C6-2).
  */
 export async function leaveGym(): Promise<void> {

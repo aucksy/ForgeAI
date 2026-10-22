@@ -2,6 +2,8 @@
 # the live server (gym_create_online, "QA Check-in Gym"), put one member on its roster with the
 # mobile +91 98765 00002 (crm_push), and opened the gym's INVITE link /j/<CODE> at the app. Join it,
 # so the phone is that gym's member before the check-in poster's link is opened (F2).
+# R-77: the join lands on the Workout tab. The gym lists NO products (gym_create_online seeds no
+# shop), so its tab is "Gym" and its page says "Your gym" (no bag, no product grid).
 appId: com.forgeai.app
 ---
 - extendedWaitUntil:
@@ -18,7 +20,20 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 15000
 - tapOn: '^Join this gym$'
+# Joined = the third tab is there (no gym, no third tab). Then the Workout tab (sub-after-join.yaml).
 - extendedWaitUntil:
-    visible: 'Your gym''s shop · pay at the desk'
+    visible: '^(Shop|Gym)$'
     timeout: 30000
+- runFlow: sub-after-join.yaml
 - takeScreenshot: inv-f1-joined
+# The gym's tab while its shop is off.
+- tapOn:
+    text: '^(Shop|Gym)$'
+    index: 0
+- extendedWaitUntil:
+    visible: '^QA Check-in Gym$'
+    timeout: 30000
+- assertVisible: '^Gym$'
+- assertVisible: '^Your gym$'
+- assertNotVisible: 'Bag, .*'
+- takeScreenshot: inv-f1-gym-tab

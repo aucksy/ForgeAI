@@ -1,11 +1,14 @@
-# Part INV, step B: the same link again while in that gym — "already in", nothing to do.
+# Part INV, step B: the same link again while in that gym — "already in", nothing to do. Its button
+# opens the gym's tab (R-77: "Open your gym", was "Open the shop").
 appId: com.forgeai.app
 ---
 - extendedWaitUntil:
     visible: "You're already in .*"
     timeout: 30000
+- assertVisible: 'You''re already in ForgeAI Test Gym\. Nothing to do\.'
 - takeScreenshot: inv-03-already-in
-- tapOn: "^Open the shop$"
+- tapOn: "^Open your gym$"
+# FORGE1 lists products, so its page is its shop.
 - extendedWaitUntil:
     visible: "Your gym's shop · pay at the desk"
     timeout: 20000

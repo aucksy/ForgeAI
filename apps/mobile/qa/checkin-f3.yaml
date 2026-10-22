@@ -14,15 +14,24 @@ appId: com.forgeai.app
 - assertNotVisible: 'Your mobile number'
 - takeScreenshot: inv-f3-already-in
 - tapOn: '^Done$'
+# Done goes to the gym's tab (R-77: "Gym" here, its shop is off; its unbranded title is its name).
 - extendedWaitUntil:
-    visible: 'Your gym''s shop · pay at the desk'
+    visible: '^QA Check-in Gym$'
     timeout: 20000
 - scrollUntilVisible:
     element: '^Leave$'
-    centerElement: true
+    # Leave is the last row of the gym's page: it can never be centred (U-Q5), so no centerElement.
     timeout: 20000
 - tapOn: '^Leave$'
-- tapOn: 'Leave shop'
 - extendedWaitUntil:
-    visible: '^Your gym''s shop$'
+    visible: 'Leave QA Check-in Gym\?'
+    timeout: 15000
+- tapOn: '^Leave gym$'
+# R-77: no gym, no third tab; the app is on Workout.
+- extendedWaitUntil:
+    notVisible: '^(Shop|Gym)$'
     timeout: 20000
+- extendedWaitUntil:
+    visible: '^Profile$'
+    timeout: 20000
+- assertNotVisible: '^(Shop|Gym)$'

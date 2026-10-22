@@ -4,9 +4,9 @@
 #      everything" lands on the welcome; the app stopped and opened again still opens on it.
 #   2. U-M2: on that welcome, "From Hevy" -> ... -> "Start training": the Hevy import MUST open by
 #      itself (no way round through Settings: if it does not open, that is an app bug).
-#   3. Gym member: join the test gym FORGE1 on the LIVE server (as part R), then Erase: the
-#      question names "ForgeAI Test Gym"; after it (and the demo loaded to reach the tabs) the Shop
-#      tab is the join card again.
+#   3. Gym member: join the test gym FORGE1 on the LIVE server (as part R; R-77: from Settings →
+#      Your gym), then Erase: the question names "ForgeAI Test Gym"; after it (and the demo loaded
+#      to reach the tabs) there is no third tab and Settings → Your gym offers "Join your gym" again.
 # Needs some data to erase: after part UD (its 12 imported workouts) or, alone, the script seeds the
 # demo first.
 appId: com.forgeai.app
@@ -101,52 +101,17 @@ appId: com.forgeai.app
 - takeScreenshot: ue-04-hevy-import-opened-by-itself
 - runFlow: sub-back-to-tabs.yaml
 # ---------------------------------------------------------------- 3. erase, gym member
-- tapOn:
-    text: "^Shop$"
-    index: 0
-- extendedWaitUntil:
-    visible: "^Your gym's shop$"
-    timeout: 20000
+# R-77: in no gym there is no Shop tab; the join is in Settings → Your gym (sub-join-gym.yaml), and
+# it lands on the Workout tab. FORGE1 is unbranded, so its tab's title is its name.
 - runFlow:
-    file: sub-find.yaml
+    file: sub-join-gym.yaml
     env:
-      FIND: "Gym code"
-- tapOn: "Gym code"
-- inputText: "FORGE1"
-- runFlow:
-    when:
-      notVisible: "^FORGE1$"
-    commands:
-      - tapOn: "Gym code"
-      - eraseText: 10
-      - inputText: "FORGE1"
-- assertVisible: "^FORGE1$"
-- tapOn: "Name on your orders"
-- eraseText: 70
-- inputText: " QA Member"
-- hideKeyboard
-- runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
-- pressKey: Enter
-- extendedWaitUntil:
-    visible: "Join ForgeAI Test Gym\\?"
-    timeout: 45000
-    optional: true
-- runFlow:
-    when:
-      visible: "^Your gym's shop$"
-    commands:
-      - scrollUntilVisible:
-          element: "^Join$"
-          centerElement: true
-          timeout: 10000
-      - tapOn: "^Join$"
-- extendedWaitUntil:
-    visible: "Join ForgeAI Test Gym\\?"
-    timeout: 45000
+      CODE: "FORGE1"
+      NAME: "QA Member"
+      GYM: "ForgeAI Test Gym"
 - tapOn:
-    text: "^Join$"
-    below:
-      text: "Join ForgeAI Test Gym\\?"
+    text: "^(Shop|Gym)$"
+    index: 0
 - extendedWaitUntil:
     visible: "^ForgeAI Test Gym$"
     timeout: 45000
@@ -170,7 +135,7 @@ appId: com.forgeai.app
     visible: "Step 1 of 3"
     timeout: 60000
 - assertVisible: "Welcome to ForgeAI"
-# Into the app the quickest way (the demo), then the Shop: the join card, no gym.
+# Into the app the quickest way (the demo), then: no gym.
 - scrollUntilVisible:
     element: "Load demo data instead"
     timeout: 30000
@@ -182,16 +147,19 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 90000
-- tapOn:
-    text: "^Shop$"
-    index: 0
-- extendedWaitUntil:
-    visible: "^Your gym's shop$"
-    timeout: 20000
+# R-77: no gym after the erase, so no third tab; Settings → Your gym offers "Join your gym" and
+# names no gym.
+- assertNotVisible: "^(Shop|Gym)$"
 - runFlow:
-    file: sub-find.yaml
+    file: sub-settings-page.yaml
     env:
-      FIND: "Enter the code from your gym"
+      PAGE: "Your gym"
+- scrollUntilVisible:
+    element: "^Join your gym$"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Gym code"
+    timeout: 20000
 - assertNotVisible: "^ForgeAI Test Gym$"
 - assertNotVisible: "Gym: ForgeAI Test Gym"
-- takeScreenshot: ue-07-shop-join-card-after-erase
+- takeScreenshot: ue-07-your-gym-join-card-after-erase

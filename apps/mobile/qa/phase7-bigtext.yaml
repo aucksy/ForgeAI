@@ -5,12 +5,13 @@
 # Android's 3-button bar (NAV=3button). Each screen a member uses is photographed
 # (p7-big-<NAV>-*.png; the script gathers them in qa-out/p7-big/). Redesign (3 tabs): the Workout
 # tab (top, then its folders), an open workout with a set row, the Profile page (top, its chart,
-# its feed), Calendar, Statistics, Settings, the Shop's join card, the sample shop's grid and a
-# product page.
+# its feed), Calendar, Statistics, Settings, and Settings → Your gym's "Join your gym" card.
+# R-77: no gym, no shop tab (sample shop removed): the Shop's join card, the sample shop's grid and
+# its product page are gone, so this tour checks the tab is absent instead.
 # Changes NOTHING: the workout is an empty one with one exercise and no ticked set, thrown away
 # with "Discard workout" (the app's own sheet, "Discard workout?" → Discard); a workout an earlier
 # part left open is only looked at, then minimised. Nothing is added to the bag; no gym is joined.
-# Screenshots every tour takes, whichever way its workout step goes: 12 (P7_SHOTS in
+# Screenshots every tour takes, whichever way its workout step goes: 10 (P7_SHOTS in
 # run-device-qa.sh); the empty-workout branch adds 2 (03b, 03c).
 appId: com.forgeai.app
 # NAV comes from the script (maestro test -e NAV=gesture|3button). No `env:` default here: a
@@ -169,66 +170,51 @@ appId: com.forgeai.app
     timeout: 3000
 - takeScreenshot: p7-big-${NAV}-09-settings
 - back
-# ---------------------------------------------------------------- Shop: the join card, the sample grid, a product
-# Not joined, the Shop tab is the gym shop's join card (S2). Nothing is joined here: the tour
-# photographs the card, then opens the sample shop (the S1 demo) for its grid and a product page.
-# If an earlier part left this phone joined (part R leaves at its end; a failed R may not), leave
-# first so the card shows.
+# ---------------------------------------------------------------- the gym: no tab, the join card in Settings
+# R-77: no gym, no shop tab (sample shop removed). Not joined, there are only Workout and Profile;
+# joining is in Settings → Your gym, whose "Join your gym" card is photographed here (nothing typed).
+# If an earlier part left this phone joined (a failed BR, INV or INV-f may not leave), leave first
+# from the gym's tab so the tour sees the phone as it should be.
 - extendedWaitUntil:
-    visible: "^Shop$"
+    visible: "^Profile$"
     timeout: 20000
-- tapOn:
-    text: "^Shop$"
-    index: 0
-- extendedWaitUntil:
-    visible: "Your gym's shop.*"
-    timeout: 30000
 - runFlow:
     when:
-      visible: "Your gym's shop · pay at the desk"
+      visible: "^(Shop|Gym)$"
     commands:
+      - tapOn:
+          text: "^(Shop|Gym)$"
+          index: 0
       - scrollUntilVisible:
           element: "^Leave$"
-          # Leave is the last row of the Shop page: it can never be centred (U-Q5), so no centerElement.
+          # Leave is the last row of the gym's page: it can never be centred (U-Q5), so no centerElement.
           timeout: 30000
       - tapOn: "^Leave$"
       - extendedWaitUntil:
-          visible: "Leave shop"
-          timeout: 10000
-      - tapOn: "Leave shop"
+          visible: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
+          timeout: 15000
+      - tapOn: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
+      - extendedWaitUntil:
+          notVisible: "^(Shop|Gym)$"
+          timeout: 45000
 - extendedWaitUntil:
-    visible: "^Your gym's shop$"
+    visible: "^Profile$"
     timeout: 20000
-- waitForAnimationToEnd:
-    timeout: 3000
-- takeScreenshot: p7-big-${NAV}-10-shop-join
+- assertNotVisible: "^(Shop|Gym)$"
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Your gym"
 - scrollUntilVisible:
-    element: "See a sample shop"
-    centerElement: true
+    element: "^Join your gym$"
     timeout: 30000
-- tapOn: "See a sample shop"
-- extendedWaitUntil:
-    visible: "^Sample shop$"
-    timeout: 20000
-- waitForAnimationToEnd:
-    timeout: 3000
-- takeScreenshot: p7-big-${NAV}-10b-shop-grid
 - scrollUntilVisible:
-    element: 'Whey protein 1 kg, .*'
-    centerElement: true
+    element: "Gym code"
     timeout: 30000
-- tapOn: 'Whey protein 1 kg, .*'
-# The title writes "1 kg" with a no-break space (never "1" / "kg" on two lines): "." matches it.
-- extendedWaitUntil:
-    visible: '^Whey protein 1.kg$'
-    timeout: 20000
 - waitForAnimationToEnd:
     timeout: 3000
-- takeScreenshot: p7-big-${NAV}-11-shop-product
-- back
-- extendedWaitUntil:
-    visible: "^Workout$"
-    timeout: 20000
+- takeScreenshot: p7-big-${NAV}-10-your-gym-join
+- runFlow: sub-back-to-tabs.yaml
 - tapOn:
     text: "^Workout$"
     index: 0

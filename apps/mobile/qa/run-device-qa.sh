@@ -906,8 +906,9 @@ fi  # part p9
 # Workout tab (Up next, folders, a routine's and a folder's ⋯, Explore), Profile (header, the
 # chart in each chip and range, a bar tapped, the 4 tiles' screens, a feed card and its ⋯, a
 # workout page, an exercise page's 3 tabs), Settings and 3 of its pages, Edit profile, and the
-# gym's real Shop on the LIVE server: join the test gym FORGE1, order the shaker, see it Ordered,
-# cancel it, leave; then the sample shop (redesign-r.yaml). Saves no workout. Its screenshots
+# gym's real shop on the LIVE server: join the test gym FORGE1 from Settings → Your gym (R-77: in
+# no gym there is no third tab), order the shaker, see it Ordered, cancel it, leave; the sample
+# shop is gone (R-77) (redesign-r.yaml). Saves no workout. Its screenshots
 # (r-*.png) are gathered in qa-out/redesign/ (Maestro writes them into the part's output folder,
 # or on an older Maestro the working folder).
 if qa_runs r; then
@@ -922,9 +923,14 @@ log "REDESIGN TOUR: $(find "$OUT/redesign" -name "r-*.png" 2>/dev/null | wc -l |
 fi  # part r
 
 # ---------------------------------------------------------------- part BR (gym branding, Level 1)
-# Join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT) on the LIVE server, photograph the
-# opening, Workout, Profile, Shop and a product in the gym's colours, relaunch (the opening again),
-# leave (ForgeAI's look back) — brand-theme.yaml. Needs supabase/migrations/0005_gym_theme.sql on
+# R-77 first (brand-welcome.yaml): RAMS01's invite link opened at the app, join it, its "Welcome to"
+# opening, the home-screen icon pop-up (checked and closed with "Not now" when the gym has a logo),
+# Workout, Settings → Your gym's "Leave <gym>" row, and Leave from there. Then brand-theme.yaml:
+# join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT) on the LIVE server from Settings →
+# Your gym, photograph Workout, Profile, Shop and a product in the gym's colours, relaunch (the
+# opening again), leave (ForgeAI's look back). brand-welcome runs first: the pop-up shows once per
+# gym, and the start-up screen check below reads brand-theme's join + relaunch as the last two
+# "plain" lines before its Leave. Needs supabase/migrations/0005_gym_theme.sql on
 # the server: probed first with a harmless call (a made-up owner key): 404 = the function is not
 # there yet, so the part is skipped and says so, instead of failing on "That code didn't match".
 br_probe() {
@@ -942,12 +948,19 @@ if ! qa_runs br; then
 elif [ "$BR_PROBE" = "404" ] || [ "$BR_PROBE" = "no-config" ]; then
   qa_server_missing BR "gym branding is not on the server yet (owner_set_brand probe: $BR_PROBE) — apply 0005_gym_theme.sql"
 else
+  # R-77: the gym's link, opened at the app as Android does once the link is verified (as part INV).
+  adb shell am start -W -a android.intent.action.VIEW -d "https://forgeai.aakashpahuja.in/j/RAMS01" -p "$PKG" >/dev/null 2>&1 || true
+  sleep 3
+  free_maestro
+  log "part BR-welcome start (owner_set_brand probe: $BR_PROBE)"
+  maestro test --format junit --output "$OUT/part-br-welcome.xml" --test-output-dir "$OUT/part-br-welcome" "$QA_DIR/brand-welcome.yaml" \
+    > "$OUT/part-br-welcome.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/br-welcome-failed.png"; log "PART BR-WELCOME FAILED (part-br-welcome.log, br-welcome-failed.png)"; }
   free_maestro
   log "part BR start (owner_set_brand probe: $BR_PROBE)"
   maestro test --format junit --output "$OUT/part-br.xml" --test-output-dir "$OUT/part-br" "$QA_DIR/brand-theme.yaml" \
     > "$OUT/part-br.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/br-failed.png"; log "PART BR FAILED (part-br.log, br-failed.png)"; }
   mkdir -p "$OUT/brand"
-  { find "$OUT/part-br" -name "br-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "br-*.png" 2>/dev/null; } \
+  { find "$OUT/part-br" "$OUT/part-br-welcome" -name "br-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "br-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/brand/" 2>/dev/null; done
   log "BRAND TOUR: $(find "$OUT/brand" -name "br-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/brand/"
   # Start-up screen (15 Oct 2026): joining RAMS01 must ask Android 13+ for the plain start-up screen
@@ -987,7 +1000,9 @@ fi
 # ---------------------------------------------------------------- part INV (v0.38.0: invite link)
 # The gym's invite link opens the app on "Join <gym>" (invite-a..d.yaml): join FORGE1 from its link;
 # the same link again says "already in"; RAMS01's link switches gyms (then Leave); a code no gym has
-# says so. Each link is opened at the app by adb with the package named, as Android does once the
+# says so and offers "Type a gym code" (Settings → Your gym). R-77: a join lands on the Workout tab
+# and the third tab ("Shop" / "Gym") shows only while in a gym; Leave takes it away.
+# Each link is opened at the app by adb with the package named, as Android does once the
 # link is verified (a QA build is not signed with the release key, so it is never verified here).
 # Needs supabase/migrations/0007_invite_link.sql live: probed first (404 = skipped and said so).
 inv_probe() {
@@ -1096,12 +1111,14 @@ fi
 # The phone's font size at its largest step (font_scale 2.0, Android 14's top setting) and the app
 # restarted, then a screen tour (phase7-bigtext.yaml): the Workout tab (top, folders), an open
 # workout with a set row (an empty workout with one exercise, then discarded: nothing saved), the
-# Profile page (top, chart, feed), Calendar, Statistics, Settings, the Shop grid and a product
-# page, each photographed (p7-big-<nav>-*.png, also gathered in qa-out/p7-big/).
+# Profile page (top, chart, feed), Calendar, Statistics, Settings, and Settings → Your gym's join
+# card, each photographed (p7-big-<nav>-*.png, also gathered in qa-out/p7-big/). R-77: no gym, no
+# shop tab (sample shop removed): the Shop grid and product page photos are gone, and the tour
+# checks the third tab is absent instead.
 # Run once with the emulator's gesture navigation (part P7BIG) and once with Android's 3-button
 # bar (part P7NAV3) when this image can switch to it by adb. Font size and navigation are put
 # back before part M. Saves nothing, so part M's workout count is not changed by this part.
-P7_SHOTS=12  # screenshots every tour takes, whichever way its workout step goes (14 when it starts one)
+P7_SHOTS=10  # screenshots every tour takes, whichever way its workout step goes (12 when it starts one); R-77: was 12 with the sample shop's 2
 p7_font() { adb shell settings get system font_scale 2>/dev/null | tr -d '\r'; }
 # 0 = 3-button, 1 = 2-button, 2 = gestures (Android's own setting, kept in step with the overlay).
 p7_nav() { adb shell settings get secure navigation_mode 2>/dev/null | tr -d '\r'; }

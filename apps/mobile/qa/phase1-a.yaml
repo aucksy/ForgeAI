@@ -54,8 +54,9 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 30000
-# The old tabs are gone: only Workout, Profile and Shop.
-- assertVisible: "^Shop$"
+# The old tabs are gone. R-77: no gym joined, so no third tab (it is "Gym" or "Shop" only in a
+# gym): Workout and Profile only.
+- assertNotVisible: "^(Shop|Gym)$"
 - assertNotVisible: "^History$"
 - assertNotVisible: "^Progress$"
 # Audit Phase 3 / redesign R1: the ONE "Today" answer is the Up next card at the top of the

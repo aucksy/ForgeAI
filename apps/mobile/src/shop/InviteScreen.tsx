@@ -146,7 +146,7 @@ export function InviteScreen() {
             <>
               <Text style={body()}>
                 {standing === 'other' && link
-                  ? `You're in ${link.gymName} now. Switching takes you out of ${link.gymName}'s shop on this phone.`
+                  ? `You're in ${link.gymName} now. Switching takes you out of ${link.gymName} on this phone.`
                   : "Join to see your membership and your gym's messages here. Your workouts stay on this phone."}
               </Text>
               <View>

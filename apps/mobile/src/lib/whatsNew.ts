@@ -27,6 +27,15 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.54.0',
+    date: '22 Oct',
+    lines: [
+      "Joined a gym? The app starts again in your gym's look with a welcome, then offers your gym's logo for your home screen.",
+      "No gym, no Shop tab. With a gym it's the Gym tab, and it becomes Shop once your gym's shop has something in it.",
+      'Leave gym is now its own row in Settings → Your gym.',
+    ],
+  },
+  {
     version: '0.53.0',
     date: '22 Oct',
     lines: [

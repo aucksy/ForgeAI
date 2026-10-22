@@ -1,9 +1,23 @@
 # Phone conditions (UAT WP7), condition 2c: back online, the app is started again (the "next start"
-# that sends the kept Leave). The Shop is the join card.
+# that sends the kept Leave). R-77: in no gym there is no third tab, and Settings → Your gym offers
+# "Join your gym" (it used to be the Shop tab's join card).
 appId: com.forgeai.app
 ---
-- runFlow: xc-sub-shop.yaml
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
 - extendedWaitUntil:
-    visible: "^Your gym's shop$"
-    timeout: 45000
+    visible: "^Profile$"
+    timeout: 90000
+- assertNotVisible: "^(Shop|Gym)$"
+- runFlow:
+    file: xc-sub-settings-page.yaml
+    env:
+      PAGE: "Your gym"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^Join your gym$"
 - takeScreenshot: xc2c-05-restarted-online

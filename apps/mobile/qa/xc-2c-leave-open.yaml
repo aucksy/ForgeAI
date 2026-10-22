@@ -14,7 +14,7 @@ appId: com.forgeai.app
       FIND: "^Leave$"
 - tapOn: "^Leave$"
 - extendedWaitUntil:
-    visible: "Leave ${GYM}'s shop\\?"
+    visible: "Leave ${GYM}\\?"
     timeout: 30000
 - assertVisible: '.*You have \d+ open orders? .*Leaving cancels (it|them)\..*'
 - takeScreenshot: xc2c-01-leave-question-open-orders

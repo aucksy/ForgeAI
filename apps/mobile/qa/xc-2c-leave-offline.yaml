@@ -1,5 +1,7 @@
 # Phone conditions (UAT WP7), condition 2c: Leave with NO INTERNET and nothing open. The phone leaves
 # at once and says the gym will be told the next time the app is online.
+# R-77: after Leave the third tab is gone and the app is on Workout; the "gym will be told" words
+# now show on Settings → Your gym (above its "Join your gym" card), not on a Shop join card.
 appId: com.forgeai.app
 ---
 - runFlow: xc-sub-shop.yaml
@@ -12,12 +14,23 @@ appId: com.forgeai.app
       FIND: "^Leave$"
 - tapOn: "^Leave$"
 - extendedWaitUntil:
-    visible: 'Leave ${GYM}''s shop\?'
+    visible: 'Leave ${GYM}\?'
     timeout: 30000
 - assertNotVisible: '.*open order.*'
-- tapOn: "Leave shop"
+- tapOn: "^Leave gym$"
+- extendedWaitUntil:
+    notVisible: "^(Shop|Gym)$"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 30000
+- assertNotVisible: "^(Shop|Gym)$"
+- runFlow:
+    file: xc-sub-settings-page.yaml
+    env:
+      PAGE: "Your gym"
 - runFlow:
     file: xc-sub-find.yaml
     env:
-      FIND: 'You left ${GYM}''s shop on this phone\. The gym couldn''t be reached, so it will be told the next time the app is online\.'
+      FIND: 'You left ${GYM} on this phone\. The gym couldn''t be reached, so it will be told the next time the app is online\.'
 - takeScreenshot: xc2c-04-left-offline-words

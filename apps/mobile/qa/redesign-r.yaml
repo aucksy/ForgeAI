@@ -1,7 +1,7 @@
 # Redesign device QA, part R — the 3-tab redesign, photographed screen by screen (runs after part
 # P9 and its shortcut check, before the P7 large-text tours and M). Normal text, gesture
 # navigation. Screenshots r-*.png (the script gathers them in qa-out/redesign/).
-#  1. Workout tab (R1/R4): only Workout · Profile · Shop; the Up next card; Start empty workout,
+#  1. Workout tab (R1/R4): only Workout · Profile (R-77: no third tab in no gym); the Up next card; Start empty workout,
 #     Routines with New folder, New routine and Explore; the followed folder "Jaipur (6)" open,
 #     tagged Following, its "Next" routine; a routine's ⋯ and a folder's ⋯; Explore.
 #  2. Profile (R2): header (Edit profile, share, Settings), stats, the history chart in each chip
@@ -9,15 +9,16 @@
 #     tapped; the 4 Dashboard tiles' screens (Statistics, Exercises, Measures, Calendar + its Year
 #     view); a feed card and its ⋯; a workout page and its ⋯; an exercise page's 3 tabs.
 #  3. Settings (R6): the list and 3 pages (Units, Workouts, About); Edit profile.
-#  4. Shop (S2, the gym's real shop on the LIVE server): the join card, join the test gym FORGE1 as
-#     "QA Member", its products, the shaker, Add to bag, the Bag, Place order, "Order N placed",
+#  4. The gym's real shop (S2) on the LIVE server: Settings → Your gym's join card (R-77: in no gym
+#     there is no Shop tab), join the test gym FORGE1 as "QA Member" (sub-join-gym.yaml), its
+#     products, the shaker, Add to bag, the Bag, Place order, "Order N placed",
 #     My orders (Ordered: "The gym is getting it ready"), Cancel order ("You cancelled this order",
 #     the placed line gone), Leave; then (UAT U-G1) join again, order the shaker and Leave WITH it
 #     open: the question says "You have 1 open order (₹…). Leaving cancels it.", and a third join
-#     sees the shaker's stock back where it was; then the sample shop (S1 demo).
+#     sees the shaker's stock back where it was. R-77: no gym, no shop tab (sample shop removed).
 # Saves no workout (part M reads its count afresh). The chart's chip and range are put back to
 # Kg/Lb lifted and Last 12 weeks. Both gym orders placed are cancelled (their stock goes back) and
-# the phone leaves the gym, so the Shop ends on the join card.
+# the phone leaves the gym, so the app ends with no third tab.
 appId: com.forgeai.app
 ---
 - launchApp
@@ -50,9 +51,10 @@ appId: com.forgeai.app
           direction: UP
           centerElement: true
           timeout: 20000
-# Three tabs: Workout (opens first), Profile, Shop. Home, History and Progress are gone (this
-# part runs with gesture navigation, so no system "Home" button is on screen).
-- assertVisible: "^Shop$"
+# Workout (opens first) and Profile; R-77: the third tab ("Gym" / "Shop") shows only with a gym
+# joined, and this part starts in none. Home, History and Progress are gone (this part runs with
+# gesture navigation, so no system "Home" button is on screen).
+- assertNotVisible: "^(Shop|Gym)$"
 - assertNotVisible: "^Home$"
 - assertNotVisible: "^History$"
 - assertNotVisible: "^Progress$"
@@ -482,92 +484,49 @@ appId: com.forgeai.app
 - assertVisible: "Link"
 - takeScreenshot: r-20-edit-profile
 - back
-# ---------------------------------------------------------------- 4. the Shop (S2: the gym's real shop)
-# Not joined yet, the Shop tab is the join card. Join the fixed test gym (code FORGE1, "ForgeAI
-# Test Gym", supabase/migrations/0002_shop.sql) as "QA Member" — this talks to the LIVE server,
-# so every wait after a tap that calls it is long. The shaker is ordered, then cancelled (its
-# stock goes back), and the phone leaves the gym at the end so later parts (P7) meet the join card.
-- extendedWaitUntil:
-    visible: "^Shop$"
-    timeout: 15000
-- tapOn:
-    text: "^Shop$"
-    index: 0
-- extendedWaitUntil:
-    visible: "^Your gym's shop$"
+# ---------------------------------------------------------------- 4. the gym (S2: the gym's real shop)
+# R-77: not joined yet, there is no third tab; the join is in Settings → Your gym ("Join your gym":
+# the code, Next, then the gym's invite screen). Join the fixed test gym (code FORGE1, "ForgeAI Test
+# Gym", supabase/migrations/0002_shop.sql, with the sample products) as "QA Member" — this talks to
+# the LIVE server, so every wait after a tap that calls it is long. The shaker is ordered, then
+# cancelled (its stock goes back), and the phone leaves the gym at the end so later parts meet no gym.
+- assertNotVisible: "^(Shop|Gym)$"
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Your gym"
+- scrollUntilVisible:
+    element: "^Join your gym$"
     timeout: 20000
-# Owner profile: the sample-shop link is below the form; each is scrolled to, then the code box.
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "Enter the code from your gym"
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "See a sample shop"
 - scrollUntilVisible:
     element: "Gym code"
-    direction: UP
-    centerElement: true
     timeout: 20000
-- takeScreenshot: r-21-shop-join
-# The code box cleans what is typed to capitals, letters and digits. The emulator can drop the
-# first key into a freshly focused box (trap 5): if the box does not read FORGE1, type it again.
-- tapOn: "Gym code"
-- inputText: "FORGE1"
+- takeScreenshot: r-21-your-gym-join-card
+- runFlow: sub-back-to-tabs.yaml
 - runFlow:
-    when:
-      notVisible: "^FORGE1$"
-    commands:
-      - tapOn: "Gym code"
-      - eraseText: 10
-      - inputText: "FORGE1"
-- assertVisible: "^FORGE1$"
-# The name starts as the profile's name; replace it.
-- tapOn: "Name on your orders"
-- eraseText: 70
-- inputText: " QA Member"
-- takeScreenshot: r-21b-shop-join-filled
-# Enter on the name box joins (it is the keyboard's "Go"). Wait for the gym's shop; only if the
-# phone is still on the join card after that (the keyboard swallowed Enter, or the join failed),
-# tap Join. (The Join button keeps its word while joining, so "still visible" alone proves nothing.)
-- hideKeyboard
-- runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
-- pressKey: Enter
-- extendedWaitUntil:
-    visible: "Join ForgeAI Test Gym\\?"
-    timeout: 45000
-    optional: true
-- runFlow:
-    when:
-      visible: "^Your gym's shop$"
-    commands:
-      - scrollUntilVisible:
-          element: "^Join$"
-          centerElement: true
-          timeout: 10000
-      - tapOn: "^Join$"
-# Audit C6-11 (2895d7f, 16 Oct 2026): a TYPED code first asks "Join <gym>?" with the gym's name,
-# so a mistyped code never joins a stranger's gym. The sheet's own Join (below its title).
-- extendedWaitUntil:
-    visible: "Join ForgeAI Test Gym\\?"
-    timeout: 45000
-- assertVisible: "Your name goes to this gym with your orders. Check it is your gym."
-- takeScreenshot: r-21b2-join-confirm
+    file: sub-join-gym.yaml
+    env:
+      CODE: "FORGE1"
+      NAME: "QA Member"
+      GYM: "ForgeAI Test Gym"
+# A join lands on the Workout tab; the gym's tab is there now.
+- takeScreenshot: r-21b-joined-on-workout
 - tapOn:
-    text: "^Join$"
-    below:
-      text: "Join ForgeAI Test Gym\\?"
+    text: "^(Shop|Gym)$"
+    index: 0
 - extendedWaitUntil:
     visible: "^ForgeAI Test Gym$"
     timeout: 45000
+# FORGE1 lists products, so its tab is "Shop" (it can read "Gym" until the list arrives).
 - extendedWaitUntil:
     visible: 'Whey protein 1 kg, .*'
     timeout: 45000
+- extendedWaitUntil:
+    visible: "^Shop$"
+    timeout: 20000
 - assertVisible: "Your gym's shop · pay at the desk"
 - assertVisible: "My orders"
 - assertVisible: "Bag, empty"
-- assertNotVisible: 'Sample shop — .*'
 - takeScreenshot: r-21c-shop-grid
 - scrollUntilVisible:
     element: 'Shaker bottle 700 ml, .*'
@@ -655,7 +614,8 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^ForgeAI Test Gym$"
     timeout: 15000
-# Leave the gym (the row at the shop's end): the app's own question, then the join card again.
+# Leave the gym (the row at the shop's end): the app's own question, then no gym (R-77: the third
+# tab goes and the app is on Workout).
 - scrollUntilVisible:
     element: "^Leave$"
     # Leave is the last row of the Shop page: it can never be centred (U-Q5), so no centerElement.
@@ -670,14 +630,18 @@ appId: com.forgeai.app
       FIND: "^Leave$"
 - tapOn: "^Leave$"
 - extendedWaitUntil:
-    visible: 'Leave ForgeAI Test Gym''s shop\?'
+    visible: 'Leave ForgeAI Test Gym\?'
     timeout: 10000
 - takeScreenshot: r-27-leave-question
-- tapOn: "Leave shop"
+- tapOn: "^Leave gym$"
 - extendedWaitUntil:
-    visible: "^Your gym's shop$"
-    timeout: 15000
-- takeScreenshot: r-27b-shop-join-again
+    notVisible: "^(Shop|Gym)$"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 20000
+- assertNotVisible: "^(Shop|Gym)$"
+- takeScreenshot: r-27b-left-no-gym-tab
 # UAT U-G1 (17 Oct 2026): Leave WITH an open order. A member who left with an order still
 # "Ordered" lost it for good (the gym kept it, its stock held). Join again, note the shaker's stock,
 # order one, and Leave without cancelling it: the question must say "You have 1 open order (₹…).
@@ -685,50 +649,14 @@ appId: com.forgeai.app
 # join once more, and the shaker's stock must read exactly what it did before the order (a member's
 # cancel puts the stock back; an order left behind would still hold one).
 - runFlow:
-    file: sub-find.yaml
+    file: sub-join-gym.yaml
     env:
-      FIND: "Enter the code from your gym"
-- scrollUntilVisible:
-    element: "Gym code"
-    direction: UP
-    centerElement: true
-    timeout: 20000
-- tapOn: "Gym code"
-- inputText: "FORGE1"
-- runFlow:
-    when:
-      notVisible: "^FORGE1$"
-    commands:
-      - tapOn: "Gym code"
-      - eraseText: 10
-      - inputText: "FORGE1"
-- assertVisible: "^FORGE1$"
-- tapOn: "Name on your orders"
-- eraseText: 70
-- inputText: " QA Member"
-- hideKeyboard
-- runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
-- pressKey: Enter
-- extendedWaitUntil:
-    visible: "Join ForgeAI Test Gym\\?"
-    timeout: 45000
-    optional: true
-- runFlow:
-    when:
-      visible: "^Your gym's shop$"
-    commands:
-      - scrollUntilVisible:
-          element: "^Join$"
-          centerElement: true
-          timeout: 10000
-      - tapOn: "^Join$"
-- extendedWaitUntil:
-    visible: "Join ForgeAI Test Gym\\?"
-    timeout: 45000
+      CODE: "FORGE1"
+      NAME: "QA Member"
+      GYM: "ForgeAI Test Gym"
 - tapOn:
-    text: "^Join$"
-    below:
-      text: "Join ForgeAI Test Gym\\?"
+    text: "^(Shop|Gym)$"
+    index: 0
 - extendedWaitUntil:
     visible: 'Whey protein 1 kg, .*'
     timeout: 45000
@@ -794,63 +722,31 @@ appId: com.forgeai.app
       FIND: "^Leave$"
 - tapOn: "^Leave$"
 - extendedWaitUntil:
-    visible: 'Leave ForgeAI Test Gym''s shop\?'
+    visible: 'Leave ForgeAI Test Gym\?'
     timeout: 15000
 - assertVisible: 'You have 1 open order \(₹[0-9,.]+\)\. Leaving cancels it\. .*'
 - assertVisible: "Cancel order and leave"
-- assertNotVisible: "Leave shop"
+- assertNotVisible: "^Leave gym$"
 - takeScreenshot: r-27c-leave-with-open-order
 - tapOn: "Cancel order and leave"
 - extendedWaitUntil:
-    visible: "^Your gym's shop$"
+    notVisible: "^(Shop|Gym)$"
     timeout: 45000
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 20000
+- assertNotVisible: "^(Shop|Gym)$"
 - takeScreenshot: r-27d-left-order-cancelled
 # The proof: a fresh join sees the shaker's stock back where it was before the order.
 - runFlow:
-    file: sub-find.yaml
+    file: sub-join-gym.yaml
     env:
-      FIND: "Enter the code from your gym"
-- scrollUntilVisible:
-    element: "Gym code"
-    direction: UP
-    centerElement: true
-    timeout: 20000
-- tapOn: "Gym code"
-- inputText: "FORGE1"
-- runFlow:
-    when:
-      notVisible: "^FORGE1$"
-    commands:
-      - tapOn: "Gym code"
-      - eraseText: 10
-      - inputText: "FORGE1"
-- assertVisible: "^FORGE1$"
-- tapOn: "Name on your orders"
-- eraseText: 70
-- inputText: " QA Member"
-- hideKeyboard
-- runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
-- pressKey: Enter
-- extendedWaitUntil:
-    visible: "Join ForgeAI Test Gym\\?"
-    timeout: 45000
-    optional: true
-- runFlow:
-    when:
-      visible: "^Your gym's shop$"
-    commands:
-      - scrollUntilVisible:
-          element: "^Join$"
-          centerElement: true
-          timeout: 10000
-      - tapOn: "^Join$"
-- extendedWaitUntil:
-    visible: "Join ForgeAI Test Gym\\?"
-    timeout: 45000
+      CODE: "FORGE1"
+      NAME: "QA Member"
+      GYM: "ForgeAI Test Gym"
 - tapOn:
-    text: "^Join$"
-    below:
-      text: "Join ForgeAI Test Gym\\?"
+    text: "^(Shop|Gym)$"
+    index: 0
 - extendedWaitUntil:
     visible: 'Whey protein 1 kg, .*'
     timeout: 45000
@@ -867,7 +763,7 @@ appId: com.forgeai.app
     env:
       FIND: "^${maestro.copiedText}$"
 - takeScreenshot: r-27e-stock-back
-# And out again: nothing open now, so the plain question and its "Leave shop".
+# And out again: nothing open now, so the plain question and its "Leave gym".
 - back
 - extendedWaitUntil:
     visible: "^ForgeAI Test Gym$"
@@ -882,28 +778,29 @@ appId: com.forgeai.app
       FIND: "^Leave$"
 - tapOn: "^Leave$"
 - extendedWaitUntil:
-    visible: 'Leave ForgeAI Test Gym''s shop\?'
+    visible: 'Leave ForgeAI Test Gym\?'
     timeout: 15000
-- assertVisible: "Your bag on this phone is emptied. You can join again with the code."
-- tapOn: "Leave shop"
+- assertVisible: "Your workouts stay on this phone. You can join again with the code."
+- tapOn: "^Leave gym$"
+# R-77: no gym, no shop tab (sample shop removed). The third tab is gone and Settings → Your gym
+# offers "Join your gym" again.
 - extendedWaitUntil:
-    visible: "^Your gym's shop$"
+    notVisible: "^(Shop|Gym)$"
     timeout: 45000
-# The sample shop (S1 demo) opens from the join card, plainly labelled; Back returns to the card.
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 20000
+- assertNotVisible: "^(Shop|Gym)$"
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Your gym"
 - scrollUntilVisible:
-    element: "See a sample shop"
-    centerElement: true
-    timeout: 15000
-- tapOn: "See a sample shop"
-- extendedWaitUntil:
-    visible: "^Sample shop$"
-    timeout: 15000
-- assertVisible: 'Sample shop — these are example products.*'
-- takeScreenshot: r-28-sample-shop
-- back
-- extendedWaitUntil:
-    visible: "^Your gym's shop$"
-    timeout: 15000
+    element: "^Join your gym$"
+    timeout: 20000
+- assertNotVisible: "^ForgeAI Test Gym$"
+- takeScreenshot: r-28-no-gym-join-again
+- runFlow: sub-back-to-tabs.yaml
 - tapOn:
     text: "^Workout$"
     index: 0

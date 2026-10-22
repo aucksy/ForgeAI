@@ -1,0 +1,45 @@
+# Sub-flow (called with runFlow; not a part of its own). R-77 (22 Oct 2026): what comes after a
+# join, once the caller has seen the join land (sub-join-gym.yaml, or an invite flow after "Join this
+# gym" / "Switch to this gym"; NOT a check-in poster's join, which goes back to the check-in):
+#  1. a branded gym's opening, now "Welcome to <gym>" and held ~1.8 s longer (testID brand-opening),
+#     is waited out (it covers the screen and eats taps);
+#  2. the home-screen icon pop-up ("Put <gym> on your home screen", once per gym, only when the gym
+#     has a logo and the phone can pin shortcuts) is closed with "Not now". NEVER "Add to home
+#     screen": Android's own question would come up over the app;
+#  3. the app is on the Workout tab (a join lands there, as if the app started again in the gym's look).
+# No `env:` here (trap 22).
+appId: com.forgeai.app
+---
+# The opening may not be up yet when the caller saw the join: give it a moment, then wait it out.
+- extendedWaitUntil:
+    visible:
+      id: "brand-opening"
+    timeout: 3000
+    optional: true
+- extendedWaitUntil:
+    notVisible:
+      id: "brand-opening"
+    timeout: 15000
+# The pop-up comes ~0.5 s after the opening has gone (shop/GymIconOffer.tsx). No logo: none comes.
+- extendedWaitUntil:
+    visible: "Put .* on your home screen"
+    timeout: 5000
+    optional: true
+- runFlow:
+    when:
+      visible: "Put .* on your home screen"
+    commands:
+      # The sheet's own "Not now" button and its close × (labelled "Not now") both close it.
+      - tapOn:
+          text: "^Not now$"
+          index: 0
+      - extendedWaitUntil:
+          notVisible: "Put .* on your home screen"
+          timeout: 10000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+    optional: true
+- extendedWaitUntil:
+    visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
+    timeout: 30000
