@@ -2515,6 +2515,26 @@
   - Research: R-google-login.md (#43), R-brand-name.md (#44); found Drive backup hidden (googleWebClientId
     placeholder) -> owner task #42 with the release key's SHA-1 (97:F8:...:88).
 
+- 2026-10-22: **v0.54.0 — one release for 0.52 + 0.53 + R-77 + R-78** (0.52.0 and 0.53.0 were never tagged on their own).
+  - 0.52.0 lines: warm-ups keep last time's numbers, dumbbell totals split, last-done from any folder,
+    the progress box at the top of each exercise, "Last" beside the rest timer, bodyweight reps to beat,
+    Health Connect past-workouts question, In use after each set (Settings → Workouts).
+  - 0.53.0 (R-75): the finish screen's comparison opens into a per-exercise list (CompareNote, workoutCompare
+    deltaReason only gives a reason that moved with the row); muscle tips for groups the last 3 weeks left out
+    (muscleTipsStore hydration wait, snooze/mute keep the weekly clock); the workout code for the desk
+    (shop/claimCode, same file in the admin app; nothing leaves the phone).
+  - R-77: joining a gym shows the welcome opening ("Welcome to <gym>", 1.8 s) then the home-screen icon
+    pop-up once per gym (GymIconOfferHost: add → confirm → how to remove the plain icon; Android cannot
+    swap the app's own icon for a downloaded logo); no gym = no third tab, Gym tab, Shop once the gym lists a
+    product (shop/gymTab); GymOnly guards bag, product, orders; Settings → Your gym has its own Leave row.
+  - R-78: one tab-bar highlight that slides to the tapped tab, its leading edge faster than its trailing edge
+    so it stretches as it moves (lib/tabPill, Reanimated springs; reduce motion jumps).
+  - Undone: f98d8df made number boxes ignore touches until opened (so a drag on a box scrolls); it broke
+    typing in 15 phone-test parts (run 39758056150) and was reverted in 9258c49. Known issue kept in
+    CLAUDE-NOTES: a drag that starts on a box does not scroll; P7BIG falls back to a side swipe.
+  - Gate on 9258c49: default 39772408594, owner 39772411860, journeys 39772415575, CI 39772408248 (all green).
+    Tag commit = 9258c49 + this entry.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
