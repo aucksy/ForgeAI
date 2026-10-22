@@ -20,6 +20,7 @@ const when = (ms: number | null | undefined) => (ms ? new Date(ms).toISOString()
 export function gymExportSheets(s: CrmSnapshot, now: Date = new Date()): ExportSheet[] {
   const memberName = new Map(s.members.map((m) => [m.id, m.fullName]));
   const name = (id: string | null | undefined) => (id ? (memberName.get(id) ?? '(removed member)') : null);
+  const extraLabels = [...new Set(s.members.flatMap((m) => Object.keys(m.extra ?? {})))];
   return [
     {
       name: 'About',
@@ -41,10 +42,12 @@ export function gymExportSheets(s: CrmSnapshot, now: Date = new Date()): ExportS
     {
       name: 'Members',
       rows: [
-        ['Member id', 'Name', 'Mobile', 'Email', 'Gender', 'Date of birth', 'Address', 'Emergency contact', 'Emergency mobile', 'Joined on', 'Batch', 'Notes', 'Archived', 'Uses the app'],
+        // #47: the gym's own extra details (from an import) follow, one column each, when there are any.
+        ['Member id', 'Name', 'Mobile', 'Email', 'Gender', 'Date of birth', 'Address', 'Emergency contact', 'Emergency mobile', 'Joined on', 'Batch', 'Notes', 'Archived', 'Uses the app', ...extraLabels],
         ...s.members.map((m) => [
           m.id, m.fullName, m.phone, m.email, m.gender, m.dateOfBirth, m.address, m.emergencyName, m.emergencyPhone,
           m.joinedOn, m.batch ?? null, m.notes, m.archived, Boolean(m.appUserId),
+          ...extraLabels.map((k) => m.extra?.[k] ?? null),
         ]),
       ],
     },

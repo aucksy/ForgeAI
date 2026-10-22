@@ -8,6 +8,7 @@
 //               is for phones without it ("Open this in the ForgeAI app to check in" + get the app).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
+//  - /api/ai/match-columns  "Ask AI to match the columns" in the member import (aiMatch.js, #47).
 //  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
 //               the apps (proxy.js, owner R-40, built R-55).
 //  - /app       the newest ForgeAI APK (whatever the latest GitHub release is), so the page, the
@@ -16,6 +17,7 @@
 
 import { handleFeedback } from './feedback.js';
 import { handleLead } from './leads.js';
+import { handleMatchColumns } from './aiMatch.js';
 import { handleProxy, isProxyPath } from './proxy.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
@@ -36,6 +38,7 @@ export default {
     if (url.pathname.startsWith('/c/')) return joinPage(request, env, ctx, url, null, CHECKIN);
     if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);
     if (url.pathname === '/api/feedback') return handleFeedback(request, env);
+    if (url.pathname === '/api/ai/match-columns') return handleMatchColumns(request, env);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
     // Launch I2: the landing page goes public only when the owner says yes (wrangler.jsonc vars.LANDING).
     if (url.pathname === '/home' || url.pathname.startsWith('/home/')) {

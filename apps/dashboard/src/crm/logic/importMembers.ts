@@ -28,6 +28,7 @@ import { BATCH_MAX, listBatches, resolveBatch } from './batches';
 import { formatINR, parseRupeeInput } from './money';
 import { DEFAULT_DIAL_CODE, findDuplicatePhone, normalizeName, normalizePhone, splitE164, validateMember, withoutTitle } from './members';
 import { termFromRow, type ImportTerm } from './importTerms';
+import { scrubIds } from './importIds';
 
 // ---------------------------------------------------------------- fields
 
@@ -754,6 +755,52 @@ function cellAt(row: readonly unknown[], col: number | null): unknown {
   return col === null ? undefined : row[col];
 }
 
+// ---------------------------------------------------------------- extra details (#47)
+
+/**
+ * A column that fits no field, kept as the gym's own detail on each member ("Locker No."). The
+ * owner ticks it (`on`) and may rename it; `ai` = the AI suggested it.
+ */
+export interface ExtraColumn {
+  col: number;
+  label: string;
+  on: boolean;
+  ai: boolean;
+}
+
+/** Most extra details one import brings, and the longest value kept (the server caps a record's size). */
+export const MAX_EXTRAS = 15;
+export const MAX_EXTRA_VALUE = 200;
+export const MAX_EXTRA_LABEL = 40;
+
+/** A detail's name, tidied: one line, at most 40 letters. '' when nothing is left. PURE. */
+export function cleanExtraLabel(raw: string): string {
+  return raw.replace(/\s+/g, ' ').trim().slice(0, MAX_EXTRA_LABEL).trim();
+}
+
+/** The ticked columns with a usable, distinct name ("Locker", "Locker 2"), at most MAX_EXTRAS. PURE. */
+export function usableExtras(extras: readonly ExtraColumn[]): { col: number; label: string }[] {
+  const seen = new Set<string>();
+  const out: { col: number; label: string }[] = [];
+  for (const e of extras) {
+    if (!e.on || out.length >= MAX_EXTRAS) continue;
+    const base = cleanExtraLabel(e.label);
+    if (!base) continue;
+    let label = base;
+    for (let n = 2; seen.has(label.toLowerCase()); n += 1) label = `${base} ${n}`;
+    seen.add(label.toLowerCase());
+    out.push({ col: e.col, label });
+  }
+  return out;
+}
+
+export interface PlanOptions {
+  /** #47: columns kept as extra details. */
+  extras?: readonly ExtraColumn[];
+  /** #47: columns of Aadhaar / PAN numbers: never read, whatever field they were pointed at. */
+  idCols?: readonly number[];
+}
+
 function isBlankRow(row: readonly unknown[]): boolean {
   return row.every((c) => cellText(c) === '');
 }
@@ -768,7 +815,16 @@ export function planImport(
   map: ColumnMap,
   roster: readonly Member[],
   today: DateISO,
+  options: PlanOptions = {},
 ): ImportPlan {
+  // #47: an ID-number column is never read, even if a field was pointed at it.
+  const idCols = new Set(options.idCols ?? []);
+  if (idCols.size > 0) {
+    map = { ...map };
+    for (const f of IMPORT_FIELDS) if (map[f] !== null && idCols.has(map[f]!)) map[f] = null;
+  }
+  const fieldCols = new Set(IMPORT_FIELDS.map((f) => map[f]).filter((c): c is number => c !== null));
+  const extraCols = usableExtras(options.extras ?? []).filter((e) => !idCols.has(e.col) && !fieldCols.has(e.col));
   const data: { row: readonly unknown[]; rowNumber: number }[] = [];
   for (let i = headerRow + 1; i < rows.length; i += 1) {
     const row = rows[i] ?? [];
@@ -941,9 +997,25 @@ export function planImport(
       if (text('expiry')) extras.push(`Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`);
     }
     if (phoneRead.ok && phoneRead.extra) extras.push(`Other number: ${phoneRead.extra}`);
-    const notes = [text('notes'), extras.length ? `From Excel — ${extras.join(' · ')}` : '']
-      .filter(Boolean)
-      .join('\n');
+    // #47: an Aadhaar or PAN number written into a note, an address or an extra detail is cut out.
+    let idCut = false;
+    const safe = (s: string) => {
+      const r = scrubIds(s);
+      if (r.removed) idCut = true;
+      return r.text;
+    };
+    const notes = safe(
+      [text('notes'), extras.length ? `From Excel — ${extras.join(' · ')}` : '']
+        .filter(Boolean)
+        .join('\n'),
+    );
+    const address = safe(text('address'));
+    const extra: Record<string, string> = {};
+    for (const e of extraCols) {
+      const v = safe(cellText(row[e.col]).replace(/\s+/g, ' ').trim());
+      if (v) extra[e.label] = v.length > MAX_EXTRA_VALUE ? `${v.slice(0, MAX_EXTRA_VALUE - 1)}…` : v;
+    }
+    if (idCut) warnings.push('An Aadhaar or PAN number was left out. ID numbers are never imported.');
 
     let draft: MemberDraft | null = null;
     if (problems.length === 0 && phoneRead.ok) {
@@ -956,7 +1028,7 @@ export function planImport(
           email,
           gender,
           dateOfBirth,
-          address: text('address'),
+          address,
           emergencyName: '',
           emergencyPhone: '',
           joinedOn,
@@ -965,8 +1037,10 @@ export function planImport(
         },
         today,
       );
-      if (result.ok) draft = { ...result.value, archived: false, photoUri: null };
-      else problems.push(result.message);
+      if (result.ok) {
+        draft = { ...result.value, archived: false, photoUri: null };
+        if (Object.keys(extra).length > 0) draft.extra = extra;
+      } else problems.push(result.message);
     }
 
     const cells = row.map(cellText);
@@ -1104,6 +1178,10 @@ export function fillBlanksPatch(existing: Member, draft: MemberDraft): Partial<M
   if (blank(existing.address) && draft.address) patch.address = draft.address;
   if (blank(existing.batch) && draft.batch) patch.batch = draft.batch;
   if (blank(existing.notes) && draft.notes) patch.notes = draft.notes;
+  // #47: extra details the member does not have yet; ones already there stay as they are.
+  const had = existing.extra ?? {};
+  const fresh = Object.entries(draft.extra ?? {}).filter(([k, v]) => v && blank(had[k]));
+  if (fresh.length > 0) patch.extra = { ...had, ...Object.fromEntries(fresh) };
   return patch;
 }
 

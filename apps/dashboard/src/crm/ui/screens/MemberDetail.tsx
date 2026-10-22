@@ -551,6 +551,12 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
             }
           />
           <Detail label="Notes" value={member.notes} />
+          {/* #47: the gym's own details brought in from an old file (Locker No., Blood Group). */}
+          {Object.entries(member.extra ?? {})
+            .filter(([, v]) => typeof v === 'string' && v !== '')
+            .map(([k, v]) => (
+              <Detail key={`extra-${k}`} label={k} value={v} />
+            ))}
         </dl>
       </Card>
 
