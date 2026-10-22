@@ -2,6 +2,15 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 22 Oct 2026 (~19:30 IST) — RESUME HERE after a compaction
+- **v0.54.0 RELEASED** (APK link 200, latest release). Tagged on fc63af9 (= 9258c49 + PROGRESS entry). Gate on 9258c49 all green: default 39772408594,
+  owner 39772411860, journeys 39772415575, CI 39772408248. Release run 39789841069; CI on main 39789833624.
+  f98d8df (number-box touch change) broke typing and was reverted in 9258c49; known issue in CLAUDE-NOTES.
+- **Admin + landing deployed 22 Oct ~19:20 IST** (version bc42db80): offers step 1, claim-code check, R-76 holding
+  pages (/privacy.html, /terms.html checked live), offline step 2, landing sections. tsc -b, vitest 1014,
+  playwright 48 green before it.
+- **Waiting on him:** #37 contact (real legal pages), #41, #43, #44, #45-#47, #49, #50, #42 Google setup.
+
 ## PC session, 22 Oct 2026 (~16:30 IST) — RESUME HERE after a compaction
 - **One release: v0.54.0 = f98d8df** (carries 0.51, 0.52, 0.53, 0.54 + R-78 fluid tab bar + the number-box scroll
   fix). 0.52.0 was NOT released: its owner run failed P7BIG twice (a drag starting on a centred number box never

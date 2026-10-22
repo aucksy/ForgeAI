@@ -2534,6 +2534,10 @@
     CLAUDE-NOTES: a drag that starts on a box does not scroll; P7BIG falls back to a side swipe.
   - Gate on 9258c49: default 39772408594, owner 39772411860, journeys 39772415575, CI 39772408248 (all green).
     Tag commit = 9258c49 + this entry.
+  - PUBLISHED 22 Oct (release run 39789841069; CI 39789833624 on main): phone APK 69,508,190 B, watch APK
+    2,033,849 B, AAB 56,641,375 B; the APK link answers 200; GitHub's latest release is v0.54.0.
+  - Admin + landing deployed the same evening (version bc42db80): offers step 1, claim-code check, R-76 holding
+    pages (/privacy.html and /terms.html checked live), offline step 2, landing sections.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
