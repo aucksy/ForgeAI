@@ -16,6 +16,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 |---|---|---|
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
+| 51 | Your own panel for the whole system (ForgeAI HQ) | A: all 3 steps, your yes before each live change |
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
@@ -59,7 +60,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 22. Join screen: Terms and Privacy opened the admin app (your report, 22 Oct) | Done | 22 Oct, live: both links open a short "being finished" page, never the admin app; a test stops it coming back. The full pages need #37 (your contact name and email). |
 | 23. After joining: the gym's welcome, its icon pop-up, Shop only when on (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. The gym's welcome screen after joining, then a pop-up to add its logo to the home screen and how to take the ForgeAI icon off (Android lets no app remove its own icon). No gym = no Shop tab; a gym = "Gym" tab; its shop on = "Shop". "Leave gym" on its own row in Settings. |
 | 24. AI import of old records (#47) | Doing | Building 23 Oct: Gemini first, Claude Haiku 5.5 as backup; works by hand until you add the keys. |
-| 25. System owner panel: the plan | Doing | Researching 23 Oct; the plan comes to you before any build. |
+| 25. System owner panel: the plan | Done | 23 Oct: plan written (#51); the build waits for your pick. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
@@ -205,7 +206,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ### Platform and quality
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
-| System owner panel (for you) | Planned | Your own sign-in to see every gym's health, usage and costs, approve or pause a gym, handle delete requests, with every look logged (your note, 23 Oct). Planning now; the plan comes to you first. | Research first: what platform owners of gym software see, and what India's privacy law lets you see. The plan says what you see by default (counts and health, not members' personal data), how you open one gym's data when needed (with a reason, logged, the gym owner can see it), and a 3-step build order. |
+| System owner panel (for you) | Waiting for you | Your own sign-in ("ForgeAI HQ") to see every gym's health, usage and costs, approve or pause a gym, handle delete requests, with every look logged (your note, 23 Oct). Plan ready: waits for your pick in #51. | Research first: what platform owners of gym software see, and what India's privacy law lets you see. The plan says what you see by default (counts and health, not members' personal data), how you open one gym's data when needed (with a reason, logged, the gym owner can see it), and a 3-step build order. |
 | New brand name with a free domain | Waiting for you | Research done: 136 names checked, 5 with .com, .in and .app free at the normal price; your pick (#44). | You pick a name and buy its .com and .in the same day (about ₹1,700-3,100 a year); then a trademark check, then I rename the app, the website and the store listing. |
 | Block-proof server address | Live | Admin app since 22 Oct; member app since v0.54.0. A block of Supabase's own address (as in Feb 2026) can no longer stop the apps. |
 | Automatic tests on every change | Live | Thousands of checks run on both apps before anything can ship. |
@@ -230,6 +231,35 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 51. Your own panel for the whole system ("ForgeAI HQ"): the plan — 23 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked:** do you need an admin panel as the owner of the whole system? Think about data control and
+governance; maybe you log in and see most of the data. Decide the correct implementation.
+**My answer:** Yes, before the second gym. I decided the shape:
+- **A separate small app, "ForgeAI HQ"**, on its own address. Only your Google account gets in (with a passkey
+  and 2-step). Not a "super owner" login inside the gym admin app: that app signs in with a 6-digit code and
+  keeps a copy of a gym on each desk computer, so one mistake there must never open every gym.
+- **By default you see counts and health per gym, never people:** members, check-ins, shop orders, money
+  totals, last activity, failed sign-ins, feedback, leads, AI use and cost, app versions.
+- **Opening one gym's records = "break-glass":** the gym grants support access for an hour, or you open it in
+  an emergency with a typed reason. Read-only, 60 minutes, logged, and the gym owner always sees when you
+  looked and why.
+- **Actions:** approve or pause a new gym, create a gym from a lead, reset an owner's sign-in, delete requests
+  with a 30-day countdown, export a gym's data, AI limits and cost.
+- **Why the law matters:** each gym is responsible for its members' records; ForgeAI handles them for the gym.
+  Looking at members' personal data for your own reasons would give ForgeAI its own legal duties, so counts
+  are the default. Every HQ action goes into a log nobody can edit, kept 2 years in Mumbai.
+- **Found on the way:** today anyone on the internet can create a gym (up to 5 an hour from one address) and
+  nothing tells you. Step 2 adds "approve new gyms".
+- **Build in 3 steps, about 5 working days, ₹0 a month:** 1) Look (about 1 day), 2) Act (1.5-2 days),
+  3) Break-glass and logs (2-3 days). Each step needs your yes for one live server change (it only adds).
+  Step 1 also needs a 10-minute free Cloudflare sign-in setup and a new Supabase key that you make.
+**Decide:** Go ahead?
+- A: Yes: I build all 3 steps in order; I ask your yes before each live server change, and you approve the privacy line in step 3 (recommended)
+- B: Step 1 only (look-only) for now; decide steps 2 and 3 later
+**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-owner-panel.md
 
 ## 50. Members' workouts on our own server: how many fit in the free plan? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
