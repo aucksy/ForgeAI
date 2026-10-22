@@ -13,6 +13,13 @@ implemented online and build a good implementation for it."
 **Plan:** backlog row (Planned, his confirmation); research the common implementations; build one highlight that
 slides (and stretches a little) from the old tab to the new one, on the UI thread, still with "Remove animations".
 
+**Known issue found on the way (22 Oct):** on Android a drag that STARTS on a set's weight or reps box does not
+scroll the workout page (React Native's one-line centred TextInput keeps the drag). Starting anywhere else scrolls.
+Old (not from 0.52); the phone tests hit it because 0.52 moved the rows 20 px up. Tried: box ignores touches until
+focused (pointerEvents none) -> taps often failed to open the box (run 39758056150, 15 parts red) -> undone. Next
+try, with care: a native-side fix (e.g. a TextInput that reports it cannot scroll horizontally) proven by a
+partial phone run before any release.
+
 ## R-77. After joining a gym: restart into its branding and offer its home-screen icon; Shop only when it is on — 22 Oct 2026
 **Owner said (after joining RAM Fitness Club from its invite link):** "after I joined the gym, I wanted to just reload
 automatically and show the splash screen for the gym's branding, and automatically shows a pop-up to add the icon on

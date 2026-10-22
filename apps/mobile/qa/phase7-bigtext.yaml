@@ -99,10 +99,10 @@ appId: com.forgeai.app
           timeout: 3000
       - takeScreenshot: p7-big-${NAV}-03-open-workout
       # 22 Oct 2026 (runs 39734799762 x2): Maestro's swipe starts at the screen's centre, which can
-      # land on a set's number box; on Android a drag from a box never scrolled the page. The app now
-      # lets a box take touches only while typed in (SetRow, a member bug too). The centre swipe is
-      # tried first (it proves that fix); if it still cannot scroll, swipes from the PREVIOUS column
-      # (never a box) reach the link, and the 03a-scroll-fallback picture says the fix did not hold.
+      # land on a set's number box; on Android a drag that starts on a box does not scroll the page
+      # (a known React Native behaviour; an app-side fix broke typing in run 39758056150 and was
+      # undone). The centre swipe is tried first; if it cannot scroll, swipes from the PREVIOUS
+      # column (never a box) reach the link, and the 03a-scroll-fallback picture records it.
       - scrollUntilVisible:
           element: "Discard workout"
           centerElement: true

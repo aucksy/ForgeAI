@@ -152,11 +152,6 @@ export const SetRow = memo(function SetRow({
   const [tText, setTText] = useState(set.durationSec ? fmtDuration(set.durationSec) : '');
   const [dText, setDText] = useState(set.distanceM ? String(distanceToUnit(set.distanceM, distUnit)) : '');
   const [tFocused, setTFocused] = useState(false);
-  // Phone tests 22 Oct 2026 (P7BIG): a drag that starts on a number box never scrolled the workout
-  // page on Android (a centred one-line box keeps the finger for itself). A box takes touches only
-  // while it is being typed in; before that the finger goes to the frame around it: a tap opens it
-  // (the frame focuses the box), a drag scrolls the page.
-  const [typingIn, setTypingIn] = useState<string | null>(null);
   // Packet B: what a tick could not save (LW-13), and the typo question (D7).
   const [note, setNote] = useState<string | null>(null);
   const [typo, setTypo] = useState<{ text: string; kind: 'weight' | 'reps' } | null>(null);
@@ -412,29 +407,21 @@ export const SetRow = memo(function SetRow({
       onPress={() => p.inputRef.current?.focus()}
       style={{ flex: 1, minHeight: SET_ROW.touch, justifyContent: 'center' }}
     >
-      <View pointerEvents={typingIn === p.a11y ? 'auto' : 'none'}>
-        <TextInput
-          ref={p.inputRef}
-          value={p.value}
-          onChangeText={p.onChangeText}
-          onFocus={() => {
-            setTypingIn(p.a11y);
-            p.onFocus?.();
-          }}
-          onBlur={() => {
-            setTypingIn((t) => (t === p.a11y ? null : t));
-            p.onBlur();
-          }}
-          keyboardType={p.keyboardType}
-          selectTextOnFocus
-          accessibilityLabel={p.a11y}
-          accessibilityHint={p.value === '' && p.hint !== '—' ? `Empty. A tick saves ${p.hint}` : undefined}
-          // A1 (13 Oct 2026 audit): the size already holds the phone's text scale, shrunk only so
-          // the whole number fits its box ("102.5", never "102").
-          allowFontScaling={false}
-          style={inputStyle(boxFontSize(p.value, L.inputW, fontScale, type.size.body))}
-        />
-      </View>
+      <TextInput
+        ref={p.inputRef}
+        value={p.value}
+        onChangeText={p.onChangeText}
+        onFocus={p.onFocus}
+        onBlur={p.onBlur}
+        keyboardType={p.keyboardType}
+        selectTextOnFocus
+        accessibilityLabel={p.a11y}
+        accessibilityHint={p.value === '' && p.hint !== '—' ? `Empty. A tick saves ${p.hint}` : undefined}
+        // A1 (13 Oct 2026 audit): the size already holds the phone's text scale, shrunk only so
+        // the whole number fits its box ("102.5", never "102").
+        allowFontScaling={false}
+        style={inputStyle(boxFontSize(p.value, L.inputW, fontScale, type.size.body))}
+      />
       {p.value === '' ? (
         <View pointerEvents="none" style={hintWrap} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={hintStyle()}>

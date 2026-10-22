@@ -99,7 +99,12 @@ appId: com.forgeai.app
 - scrollUntilVisible:
     element: "^Leave RAM'S FITNESS CLUB IMPACT$"
     timeout: 20000
-- assertVisible: '^Your workouts stay on this phone\.$'
+# Run 39758056150: at the owner's text size the row's second line sat under the bottom edge. The
+# row speaks title and line as one ("Leave …, Your workouts stay on this phone."): scroll to that.
+- scrollUntilVisible:
+    element: '.*Your workouts stay on this phone\.$'
+    timeout: 15000
+- assertVisible: '.*Your workouts stay on this phone\.$'
 - assertNotVisible: "^Shop and leave$"
 - takeScreenshot: br-w04-settings-your-gym
 - tapOn: "^Leave RAM'S FITNESS CLUB IMPACT$"

@@ -34,7 +34,6 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       "No gym, no Shop tab. With a gym it's the Gym tab, and it becomes Shop once your gym's shop has something in it.",
       'Leave gym is now its own row in Settings → Your gym.',
       'The tab bar highlight now slides to the tab you tap.',
-      'A workout scrolls even when your thumb starts on a weight or reps box.',
     ],
   },
   {
