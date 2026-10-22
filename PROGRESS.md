@@ -2551,6 +2551,17 @@
   - PUBLISHED 23 Oct (release run 39834068476; CI 39834082014 dispatched on the tag): phone APK 69,508,190 B;
     the APK link answers 200; GitHub's latest release is v0.54.1.
 
+- 2026-10-23: **#47 AI import live (admin app)** (owner R-82: cheapest AI first, Claude fallback).
+  - Panel Worker /api/ai/match-columns (deploy/panel/aiMatch.js): owners only (staff_me via the device key),
+    masked headers + 5 rows (phones in any script, emails, ID numbers hidden twice), Gemini gemini-3.1-flash-lite
+    (thinking minimal, 8192 out) then claude-haiku-5-5 (effort low, JSON format), 10 s each; 20 reads a gym an
+    India day + 1,000 total, one atomic D1 statement (forgeai-web migration 0003_ai_usage applied 23 Oct).
+  - Admin: AI fills only columns the rules left empty (marked AI); extra columns kept in the member record;
+    Aadhaar/PAN columns by content (60%), numbers cut out of every value; manual matching always works.
+  - Review (subagent): 1 MUST-FIX (ID column dropped by its name) + 2 SHOULD-FIX (masking gaps, Gemini thinking)
+    + 4 NITs, all fixed (fc063d7). Checks: tsc -b, vitest 1032, playwright 50, panel node --test 37.
+  - Deployed 23 Oct (version a2f535d8). Keys not set yet: the endpoint answers "not switched on" (503).
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
