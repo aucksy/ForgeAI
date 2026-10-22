@@ -30,7 +30,7 @@ describe('Settings → Your gym: join with a code', () => {
 
   it('the page shows the join card only to a member in no gym', () => {
     const page = read('src/app/settings/gym.tsx');
-    expect(page).toMatch(/link \? \(\s*<JoinedGymCard link=\{link\} \/>\s*\) : \(\s*<>\s*<GymCard \/>\s*<JoinGymCard \/>/);
+    expect(page).toMatch(/link \? \(\s*<JoinedGymCard link=\{link\} \/>\s*\) : \(\s*<>\s*\{notice \? <DemoNote text=\{notice\} \/> : null\}\s*<GymCard \/>\s*<JoinGymCard \/>/);
   });
 
   it('the card goes through the invite screen (it asks before joining), never joins by itself', () => {

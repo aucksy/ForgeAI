@@ -8,7 +8,8 @@
  *                    orders at the old gym are asked about and cancelled before (UAT U-G1, leaveFlow.ts).
  * Audit C9-34: the gym's name is the heading (GymFace); the buttons never repeat it, so a long name
  * ("RAM'S FITNESS CLUB IMPACT") never wraps a button at the owner's text size.
- * A code no gym has, or a link that is not a gym's, says so and points at the Shop tab's code box.
+ * A code no gym has, or a link that is not a gym's, says so and points at Settings → Your gym's code box
+ * (R-77: no gym, no Shop tab).
  * Joining is never automatic: a link anyone can forward must not move a member by itself.
  */
 import { Image } from 'expo-image';
@@ -84,6 +85,7 @@ export function InviteScreen() {
   }, []);
 
   const toShop = () => router.replace('/shop');
+  const toCodeBox = () => router.replace('/settings/gym');
 
   const onJoin = async () => {
     if (busy || !code) return;
@@ -126,10 +128,10 @@ export function InviteScreen() {
           </Text>
           <Text style={body()}>
             {code
-              ? `No gym has the code ${code}. Ask your gym for a new link, or type their code in the Shop tab.`
-              : 'Ask your gym for a new link, or type their code in the Shop tab.'}
+              ? `No gym has the code ${code}. Ask your gym for a new link, or type their code in Settings → Your gym.`
+              : 'Ask your gym for a new link, or type their code in Settings → Your gym.'}
           </Text>
-          <GhostButton label="Go to the Shop tab" onPress={toShop} />
+          <GhostButton label="Type a gym code" onPress={toCodeBox} />
         </Card>
       ) : (
         <Card style={{ gap: space.lg }}>
@@ -138,14 +140,14 @@ export function InviteScreen() {
           {standing === 'same' ? (
             <>
               <Text style={body()}>You're already in {look.gym.gymName}. Nothing to do.</Text>
-              <PrimaryButton label="Open the shop" onPress={toShop} />
+              <PrimaryButton label="Open your gym" onPress={toShop} />
             </>
           ) : (
             <>
               <Text style={body()}>
                 {standing === 'other' && link
                   ? `You're in ${link.gymName} now. Switching takes you out of ${link.gymName}'s shop on this phone.`
-                  : 'Join to order from your gym in the app and pay at the desk. Your workouts stay on this phone.'}
+                  : "Join to see your membership and your gym's messages here. Your workouts stay on this phone."}
               </Text>
               <View>
                 <Text style={label()}>Your name</Text>

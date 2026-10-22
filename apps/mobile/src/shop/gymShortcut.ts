@@ -3,7 +3,7 @@
  * never lets an app use a downloaded logo as its own icon, so the gym's logo becomes a home-screen
  * shortcut that opens ForgeAI (modules/forge-phone GymShortcut.kt). Android asks the member first.
  *
- * Offered once per gym after joining (Shop tab, GymShortcutOffer.tsx) and always in Settings → Your
+ * Offered once per gym in a pop-up right after joining (GymIconOffer.tsx, R-77) and always in Settings → Your
  * gym. A pinned one follows the gym: a new logo or name redraws it without asking; leaving greys it
  * out; joining again brings it back (startGymShortcutSync, from the root layout).
  */

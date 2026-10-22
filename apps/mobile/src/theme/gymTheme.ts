@@ -41,6 +41,8 @@ export interface Opening {
   heading: HeadingStyle;
   bg: string;
   ink: string;
+  /** R-77: right after the member's own join — "Welcome to", held longer (the app starts again in the gym's look). */
+  welcome?: boolean;
 }
 
 export interface GymThemeState {
@@ -98,7 +100,7 @@ function setShown(m: ThemeMirror | null): void {
   useGymTheme.setState({ look: m });
 }
 
-function openingFor(m: ThemeMirror): Opening {
+function openingFor(m: ThemeMirror, welcome = false): Opening {
   openings += 1;
   return {
     id: openings,
@@ -107,17 +109,18 @@ function openingFor(m: ThemeMirror): Opening {
     heading: m.brand?.heading ?? 'normal',
     bg: color.bg,
     ink: color.ink,
+    ...(welcome ? { welcome: true } : null),
   };
 }
 
 /** Write the look into the tokens and the mirror, and re-draw the app (with the opening if asked). */
-function show(target: ThemeMirror | null, withOpening: boolean): void {
+function show(target: ThemeMirror | null, withOpening: boolean, welcome = false): void {
   applyBrandToTokens(target?.brand ?? null);
   saveLook(target);
   const current = useGymTheme.getState().opening;
   let opening: Opening | null = null;
   if (target && isBranded(target.brand)) {
-    if (withOpening) opening = openingFor(target);
+    if (withOpening) opening = openingFor(target, welcome);
     // The logo is already up: same animation (same id), the new look behind it.
     else if (current) opening = { ...openingFor(target), id: current.id };
   }
@@ -162,7 +165,8 @@ export function reconcileGymTheme(launch: boolean): void {
   // Review fix: under the logo at start-up too, never over a workout (Android closed the app
   // mid-workout and the member came back through the live card) — it waits like any change.
   if (launch || ownMove || (openingUp && !workoutOpen())) {
-    show(target, launch || (ownMove && target != null));
+    // R-77: the member's own join (not a launch) gets the welcome opening.
+    show(target, launch || (ownMove && target != null), !launch && ownMove && target != null);
     return;
   }
   // Not the member's doing (the owner changed the look; the gym dropped this phone): the next

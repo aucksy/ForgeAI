@@ -7,6 +7,7 @@ import { AppState, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { BrandOpening } from '@/components/BrandOpening';
+import { GymIconOfferHost } from '@/shop/GymIconOffer';
 import { KeyboardRoom } from '@/components/KeyboardRoom';
 import { logScreenCrash, ScreenCrashFallback, ScreenErrorBoundary } from '@/components/ScreenErrorBoundary';
 import { SaveProblemBanner } from '@/components/SaveProblemBanner';
@@ -183,6 +184,8 @@ export default function RootLayout() {
     <>
       <RootFrame key={epoch} ready={ready} status={status} />
       {ready && opening ? <BrandOpening key={opening.id} opening={opening} onDone={dismissOpening} /> : null}
+      {/* R-77: after a join, once the welcome has gone, the gym's home-screen icon is offered. */}
+      {ready ? <GymIconOfferHost /> : null}
     </>
   );
 }

@@ -2,12 +2,13 @@
  * Settings → Your gym (redesign R6): the member's gym (gym sync stays hidden behind its flag, D4).
  *
  * UAT U-G2: a member who JOINED a gym in the app sees that gym here (it used to show the name typed
- * at onboarding), with "Shop and leave" to the Shop tab, where its shop and Leave are. A member in
- * no gym sees the card as before (the name they typed, or "Not added yet"), and (owner report,
- * 17 Oct 2026) "Join your gym" with the gym's code under it. A joined gym with a logo also has
- * "Add to your home screen" (OWNER-INBOX #11): the gym's logo as a shortcut that opens ForgeAI.
+ * at onboarding), with My membership and "Leave <gym>" on its own row (R-77, owner 22 Oct 2026: the
+ * old "Shop and leave" row was "so weird"; the shop is the gym's own tab). A member in no gym sees
+ * the card as before (the name they typed, or "Not added yet"), why the phone left its gym when the
+ * gym let it go, and (owner report, 17 Oct 2026) "Join your gym" with the gym's code under it. A
+ * joined gym with a logo also has "Add to your home screen" (OWNER-INBOX #11): the gym's logo as a
+ * shortcut that opens ForgeAI.
  */
-import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Text } from 'react-native';
 
@@ -19,6 +20,10 @@ import { LinkRow } from '@/components/stats/parts';
 import { GlassCard } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { MembershipCard } from '@/shop/MembershipCard';
+import { askAndLeaveGym } from '@/shop/leaveFlow';
+import { DemoNote } from '@/shop/ShopParts';
+import { useGymTheme } from '@/theme/gymTheme';
+import { isBranded } from '@forgeai/theme';
 import { addGymShortcut, canAddGymShortcut, gymShortcutWords, markShortcutOffered } from '@/shop/gymShortcut';
 import { FEATURES, profileParts } from '@/lib/features';
 import { useGymShop } from '@/shop/gymStore';
@@ -31,12 +36,15 @@ const PARTS = new Set(profileParts(FEATURES));
 export default function GymPage() {
   const hydrated = useGymHydrated();
   const link = useGymShop((s) => s.link);
+  // Why this phone is in no gym, when the gym let it go (shop/gymActions.ts → unlink(UNLINKED_TEXT)).
+  const notice = useGymShop((s) => s.notice);
   return (
     <SettingsPage title="Your gym">
       {!hydrated ? null : link ? (
         <JoinedGymCard link={link} />
       ) : (
         <>
+          {notice ? <DemoNote text={notice} /> : null}
           <GymCard />
           <JoinGymCard />
         </>
@@ -47,8 +55,20 @@ export default function GymPage() {
 }
 
 function JoinedGymCard({ link }: { link: GymLink }) {
-  const router = useRouter();
   const [words, setWords] = useState<string | null>(null);
+  // Leave says what is still open and cancels the open orders first (shop/leaveFlow.ts, UAT U-G1).
+  const look = useGymTheme((s) => s.look);
+  const branded = look?.gymId === link.gymId && isBranded(look.brand);
+  const leaving = useRef(false);
+  const leave = async (): Promise<void> => {
+    if (leaving.current) return;
+    leaving.current = true;
+    try {
+      await askAndLeaveGym(branded);
+    } finally {
+      leaving.current = false;
+    }
+  };
   const busy = useRef(false);
   const addShortcut = async (): Promise<void> => {
     if (busy.current) return;
@@ -72,11 +92,11 @@ function JoinedGymCard({ link }: { link: GymLink }) {
         </Text>
       </GlassCard>
       <MembershipCard link={link} />
-      <LinkRow title="Shop and leave" sub={`${link.gymName}'s shop, your orders, and Leave`} onPress={() => router.navigate('/shop')} />
       {canAddGymShortcut(link) ? (
         <LinkRow title="Add to your home screen" sub={`${link.gymName}'s logo on your home screen. It opens ForgeAI.`} onPress={() => void addShortcut()} />
       ) : null}
       <InlineError message={words} />
+      <LinkRow title={`Leave ${link.gymName}`} sub="Your workouts stay on this phone." onPress={() => void leave()} />
     </>
   );
 }

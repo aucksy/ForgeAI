@@ -115,6 +115,17 @@ describe('gym theme controller', () => {
     expect(mirror.value).toEqual({ gymId: 'g-rams', gymName: LINK.gymName, brand: RAMS });
   });
 
+  it("R-77: the member's own join gets the welcome opening; a launch gets the plain one", () => {
+    useGymShop.getState().setLink(LINK);
+    reconcileGymTheme(false);
+    expect(useGymTheme.getState().opening?.welcome).toBe(true);
+    dismissOpening();
+    resetGymThemeForTests(null);
+    reconcileGymTheme(true);
+    expect(useGymTheme.getState().opening).not.toBeNull();
+    expect(useGymTheme.getState().opening?.welcome).toBeUndefined();
+  });
+
   it('Leave gym brings ForgeAI\'s look back (no opening) and forgets the saved look', () => {
     useGymShop.getState().setLink(LINK);
     reconcileGymTheme(false);

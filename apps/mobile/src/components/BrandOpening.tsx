@@ -25,6 +25,8 @@ import { type } from '@/theme/tokens';
 
 /** How long the opening stays, in, held and out (ms). */
 export const OPENING_MS = { in: 320, hold: 700, out: 260 } as const;
+/** R-77: right after joining, the gym's welcome stays this long (the app starting again in its look). */
+export const WELCOME_HOLD_MS = 1800;
 
 export function BrandOpening({ opening, onDone }: { opening: Opening; onDone: () => void }) {
   const reduced = useReduceMotion();
@@ -37,12 +39,13 @@ export function BrandOpening({ opening, onDone }: { opening: Opening; onDone: ()
 
   useEffect(() => {
     const ease = Easing.out(Easing.exp);
+    const hold = opening.welcome ? WELCOME_HOLD_MS : OPENING_MS.hold;
     if (!reduced) {
       fade.value = withTiming(1, { duration: OPENING_MS.in, easing: ease });
       grow.value = withTiming(1, { duration: OPENING_MS.in + 200, easing: ease });
-      out.value = withDelay(OPENING_MS.in + OPENING_MS.hold, withTiming(0, { duration: OPENING_MS.out, easing: Easing.in(Easing.quad) }));
+      out.value = withDelay(OPENING_MS.in + hold, withTiming(0, { duration: OPENING_MS.out, easing: Easing.in(Easing.quad) }));
     }
-    const total = reduced ? OPENING_MS.in + OPENING_MS.hold : OPENING_MS.in + OPENING_MS.hold + OPENING_MS.out;
+    const total = reduced ? OPENING_MS.in + hold : OPENING_MS.in + hold + OPENING_MS.out;
     const t = setTimeout(onDone, total);
     return () => clearTimeout(t);
     // One run per opening (the parent keys this component by the opening's id).
@@ -66,7 +69,7 @@ export function BrandOpening({ opening, onDone }: { opening: Opening; onDone: ()
         onPress={onDone}
         testID="brand-opening"
         accessibilityRole="image"
-        accessibilityLabel={opening.gymName}
+        accessibilityLabel={opening.welcome ? `Welcome to ${opening.gymName}` : opening.gymName}
         accessibilityHint="Tap to skip"
         style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}
       >
@@ -85,6 +88,11 @@ export function BrandOpening({ opening, onDone }: { opening: Opening; onDone: ()
             />
           ) : null}
           <View style={{ maxWidth: Math.max(size, width * 0.8) }}>
+            {opening.welcome ? (
+              <Text style={{ fontFamily: type.bodySemi, fontSize: 14, letterSpacing: 1.6, color: opening.ink, opacity: 0.6, textAlign: 'center', textTransform: 'uppercase', marginBottom: 6 }}>
+                Welcome to
+              </Text>
+            ) : null}
             <Text
               numberOfLines={2}
               style={{

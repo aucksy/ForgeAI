@@ -14,11 +14,11 @@ const buttonLabels = (text: string): string[] =>
   [...text.matchAll(/<(?:Primary|Ghost)Button[^>]*?\slabel=(\{[^}]*\}|"[^"]*")/g)].map((m) => m[1]);
 
 describe('C9-34: shop buttons never carry the gym name', () => {
-  it('invite screen: Join / Switch to / Open the shop', () => {
+  it('invite screen: Join / Switch to / Open your gym', () => {
     const t = src('InviteScreen.tsx');
     expect(t).toContain("'Join this gym'");
     expect(t).toContain("'Switch to this gym'");
-    expect(t).toContain('label="Open the shop"');
+    expect(t).toContain('label="Open your gym"');
     // The name is still on screen, as the heading.
     expect(t).toMatch(/accessibilityRole="header"[^>]*>\s*\{gym\.gymName\}/);
     for (const l of buttonLabels(t)) expect(l).not.toMatch(/gymName/);

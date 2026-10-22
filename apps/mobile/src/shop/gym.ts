@@ -595,16 +595,19 @@ function leaveButton(orders: readonly GymOrder[], kind: LeaveKind): string | nul
   return null;
 }
 
-/** The Shop's "Leave <gym>'s shop?" question, with what is still open. PURE. */
+/**
+ * "Leave <gym>?" (from the gym's tab or Settings → Your gym; R-77: it is leaving the gym, not a
+ * shop), with what is still open. PURE.
+ */
 export function leaveQuestion(a: { gymName: string; branded: boolean; orders: readonly GymOrder[] }): LeaveQuestion {
   const base = a.branded
-    ? "Your bag on this phone is emptied and the app goes back to ForgeAI's colours. You can join again with the code."
-    : 'Your bag on this phone is emptied. You can join again with the code.';
+    ? "The app goes back to ForgeAI's colours. Your workouts stay on this phone. You can join again with the code."
+    : 'Your workouts stay on this phone. You can join again with the code.';
   const open = openOrdersText(a.orders, 'leave');
   return {
-    title: `Leave ${a.gymName}'s shop?`,
+    title: `Leave ${a.gymName}?`,
     body: open ? `${open} ${base}` : base,
-    confirmLabel: leaveButton(a.orders, 'leave') ?? 'Leave shop',
+    confirmLabel: leaveButton(a.orders, 'leave') ?? 'Leave gym',
     cancelLabel: 'Stay',
   };
 }
@@ -812,10 +815,11 @@ export function joinPathFromCheckIn(code: string): string {
   return `/j/${code}?then=checkin`;
 }
 
-/** Where the join screen goes after a join: back to the poster's check-in when it came from one. PURE. */
+/** Where the join screen goes after a join: back to the poster's check-in when it came from one, else Workout. PURE. */
 export function afterJoinPath(code: string, then: unknown): string {
   const t = Array.isArray(then) ? then[0] : then;
-  return t === 'checkin' ? `/c/${code}` : '/shop';
+  // R-77: a join lands on the Workout tab, as if the app started again in the gym's look.
+  return t === 'checkin' ? `/c/${code}` : '/workout';
 }
 
 /** Where this phone stands against an invite: not in a gym, already in that one, or in another. PURE. */

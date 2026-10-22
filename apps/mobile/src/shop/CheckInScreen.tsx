@@ -169,6 +169,7 @@ export function CheckInScreen() {
     if (needsPreview && look.state === 'loading') void ask();
   }, [needsPreview, look.state, ask]);
 
+  // R-77: '/shop' is the gym's tab with a gym joined, Workout without one.
   const done = () => leave(router, '/shop');
   // C6-16: the join screen comes back here after the join, so the member is checked in at once.
   const toJoin = () => code && router.replace(joinPathFromCheckIn(code));
@@ -334,7 +335,7 @@ function NotAGymLink({ code, onShop }: { code: string | null; onShop: () => void
       <Text style={bodyText()}>
         {code ? `No gym has the code ${code}. Check in at the desk, and ask them for a new poster.` : 'Check in at the desk, and ask them for a new poster.'}
       </Text>
-      <GhostButton label="Go to the Shop tab" onPress={onShop} />
+      <GhostButton label="Close" onPress={onShop} />
     </Card>
   );
 }

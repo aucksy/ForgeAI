@@ -20,6 +20,7 @@ import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, motion, radius, shadow, space, type } from '@/theme/tokens';
 import { useGymShop } from '@/shop/gymStore';
+import { GYM_TAB_LABEL, gymTabFor } from '@/shop/gymTab';
 import { unreadCount } from '@/shop/inbox';
 import { inboxFor, useGymInbox } from '@/shop/inboxStore';
 
@@ -27,7 +28,10 @@ import { showsMiniBar } from '../lib/miniBar';
 import { Glyph, type GlyphName } from './TrackerGlyph';
 import { WorkoutMiniBar } from './WorkoutMiniBar';
 
-/** Redesign R1: three tabs, as Hevy — Workout, Profile, Shop (the bag is a tracker glyph). */
+/**
+ * Redesign R1: three tabs, as Hevy — Workout, Profile, Shop (the bag is a tracker glyph). R-77: the
+ * third shows only with a gym joined, as "Gym" until its shop is on (shop/gymTab.ts).
+ */
 type TabIcon = { icon: IconName } | { glyph: GlyphName };
 const ROUTE_ICON: Record<string, TabIcon> = {
   workout: { icon: 'dumbbell' },
@@ -199,6 +203,9 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   // Gym messages: unread messages from the member's gym badge the Shop tab.
   const memberId = useGymShop((s) => s.link?.memberId ?? null);
   const unread = useGymInbox((s) => unreadCount(inboxFor(s, memberId)));
+  // R-77: no gym, no third tab; "Gym" until the gym's shop lists something, then "Shop".
+  const productCount = useGymShop((s) => s.products.length);
+  const gymTab = gymTabFor(memberId != null, productCount);
   if (typing) return null;
   return (
     <View>
@@ -219,14 +226,15 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
     >
       {state.routes.map((route, index) => {
         if (HIDDEN.has(route.name)) return null;
+        if (route.name === 'shop' && gymTab === 'none') return null;
         const { options } = descriptors[route.key];
-        const label = options.title ?? route.name;
+        const label = route.name === 'shop' && gymTab !== 'none' ? GYM_TAB_LABEL[gymTab] : (options.title ?? route.name);
         const focused = state.index === index;
         return (
           <TabItem
             key={route.key}
             label={label}
-            icon={ROUTE_ICON[route.name] ?? { icon: 'sparkle' }}
+            icon={route.name === 'shop' && gymTab === 'gym' ? { glyph: 'gym' } : (ROUTE_ICON[route.name] ?? { icon: 'sparkle' })}
             focused={focused}
             badge={route.name === 'shop' ? unread : 0}
             onPress={() => {

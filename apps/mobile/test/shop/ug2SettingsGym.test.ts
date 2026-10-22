@@ -31,11 +31,13 @@ describe('U-G2: the gym Settings names', () => {
     expect(settingsGymName(null, undefined)).toBeNull();
   });
 
-  it('the Your gym page: joined → the joined gym and "Shop and leave" to the Shop tab; else the typed card', () => {
+  it('the Your gym page: joined → the joined gym and "Leave <gym>" on its own row (R-77); else the typed card', () => {
     const page = read('src/app/settings/gym.tsx');
     expect(page).toMatch(/useGymShop\(/);
-    expect(page).toMatch(/title="Shop and leave"/);
-    expect(page).toMatch(/navigate\('\/shop'\)/);
+    expect(page).not.toMatch(/title="Shop and leave"/);
+    expect(page).not.toMatch(/navigate\('\/shop'\)/);
+    expect(page).toMatch(/title=\{`Leave \$\{link\.gymName\}`\}/);
+    expect(page).toMatch(/askAndLeaveGym\(branded\)/);
     expect(page).toMatch(/link\.gymName/);
     // A solo member keeps today's card (the typed name, "Not added yet" when none).
     expect(page).toMatch(/<GymCard \/>/);

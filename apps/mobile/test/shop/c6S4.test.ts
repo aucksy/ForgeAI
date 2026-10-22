@@ -100,8 +100,8 @@ describe('C6-16: joining from the check-in poster goes back to the check-in', ()
   it('after the join: the check-in when asked, else the Shop', () => {
     expect(afterJoinPath('RAMS01', 'checkin')).toBe('/c/RAMS01');
     expect(afterJoinPath('RAMS01', ['checkin'])).toBe('/c/RAMS01');
-    expect(afterJoinPath('RAMS01', undefined)).toBe('/shop');
-    expect(afterJoinPath('RAMS01', 'elsewhere')).toBe('/shop');
+    expect(afterJoinPath('RAMS01', undefined)).toBe('/workout');
+    expect(afterJoinPath('RAMS01', 'elsewhere')).toBe('/workout');
   });
 });
 

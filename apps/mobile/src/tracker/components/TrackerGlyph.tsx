@@ -8,6 +8,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { color as palette } from '@/theme/tokens';
 
 export type GlyphName =
+  | 'gym'
   | 'more'
   | 'chevron-down'
   | 'chevron-up'
@@ -37,6 +38,8 @@ const PATHS: Record<GlyphName, { p?: string[]; dots?: { x: number; y: number }[]
     c: [{ x: 15.2, y: 9.2, r: 1.4 }],
   },
   swap: { p: ['M5 8.5h13', 'M14.5 5l3.5 3.5-3.5 3.5', 'M19 15.5H6', 'M9.5 12 6 15.5 9.5 19'] },
+  // R-77: the "Gym" tab (a gym joined, its shop not on): a building with windows.
+  gym: { p: ['M4.5 20.5h15', 'M6 20.5V5.5h12v15', 'M10.2 20.5v-4h3.6v4', 'M9.3 9h.01', 'M12 9h.01', 'M14.7 9h.01', 'M9.3 12.5h.01', 'M12 12.5h.01', 'M14.7 12.5h.01'] },
   bag: { p: ['M5.2 8.2h13.6l-1 11.2a1.6 1.6 0 0 1-1.6 1.4H7.8a1.6 1.6 0 0 1-1.6-1.4Z', 'M8.8 10.6V7a3.2 3.2 0 0 1 6.4 0v3.6'] },
   share: { p: ['M12 3.6v11', 'M7.8 7.6 12 3.4l4.2 4.2', 'M5 12.6v5.8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5.8'] },
   'scale-split': { p: ['M12 4v16', 'M5.5 8.5h13', 'M5.5 8.5 3 14h5Z', 'M18.5 8.5 16 14h5Z'] },

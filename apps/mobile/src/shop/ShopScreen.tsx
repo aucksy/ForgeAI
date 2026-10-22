@@ -1,42 +1,38 @@
 /**
- * The Shop tab. Three faces:
- *  - Not joined (S2): "Your gym's shop" — the code from the gym and the member's name, Join; and a
- *    quiet "See a sample shop".
- *  - Joined (S2): the gym's own products (member_products), titled with the gym's name, category
- *    chips, a 2-column grid, the bag top right, My orders, pull to refresh, and the gym row with
- *    Leave at the bottom. The last good list is kept, so the tab opens at once and reads offline.
- *  - The sample shop (S1): the demo catalog, clearly labelled, its orders pretend and on the phone.
+ * The gym's tab (R-77, owner 22 Oct 2026: "the shop shouldn't be there if there is no gym active").
+ *  - No gym joined: there is no tab (TrackerTabBar, shop/gymTab.ts); this address goes to Workout.
+ *    Joining is in Settings → Your gym and the gym's own link (InviteScreen).
+ *  - A gym joined, its shop not on (it lists nothing): "Gym" — My membership, the gym's messages
+ *    (the bell), My orders when there are any, and the gym row with Leave at the bottom.
+ *  - Its shop on (S2): the gym's own products (member_products) as well: category chips, a 2-column
+ *    grid, the bag top right, pull to refresh. The last good list is kept, so the tab opens at once
+ *    and reads offline.
  */
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, BackHandler, Pressable, RefreshControl, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { Redirect, useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View, useWindowDimensions } from 'react-native';
 
-import { Card, Chip, GhostButton, PrimaryButton, Screen, askConfirm } from '@/components/ui';
+import { Chip, GhostButton, Screen } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { PressScale } from '@/components/ui/PressScale';
-import { getProfile } from '@/db/repos/userRepo';
 import { GymBrandMark } from '@/components/GymBrandMark';
 import { useGymTheme } from '@/theme/gymTheme';
 import { color, radius, space, type } from '@/theme/tokens';
 import { isBranded } from '@forgeai/theme';
 
-import { SHOP_CATEGORIES, getCatalog } from './catalog';
-import { JOIN_CODE_LENGTH, joinCodeFromTyped, listAgeText } from './gym';
-import { checkTypedCode, joinGym, refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
+import { SHOP_CATEGORIES } from './catalog';
+import { listAgeText } from './gym';
+import { refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { askAndLeaveGym } from './leaveFlow';
 import { useGymShop } from './gymStore';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
-import { GymShortcutOffer } from './GymShortcutOffer';
-import { JoinAgreement } from './JoinAgreement';
-import { agreementWords } from './joinTerms';
 import { MembershipCard } from './MembershipCard';
 import { ProductPicture } from './ProductPicture';
-import { BagButton, BellButton, DEMO_SHOP_LINE, DemoNote, MyOrdersRow, QuietLine, shopInputStyle } from './ShopParts';
+import { BagButton, BellButton, MyOrdersRow, QuietLine } from './ShopParts';
 import { unreadCount } from './inbox';
 import { inboxFor, useGymInbox } from './inboxStore';
 import { useGymHydrated } from './shopSource';
-import { useShop } from './shopStore';
 import type { GymLink, Product, ShopCategory } from './types';
 
 type Filter = 'all' | ShopCategory;
@@ -44,155 +40,11 @@ type Filter = 'all' | ShopCategory;
 export function ShopScreen() {
   const hydrated = useGymHydrated();
   const link = useGymShop((s) => s.link);
-  const sampleOpen = useGymShop((s) => s.sampleOpen);
-  if (!hydrated) return <Screen key="wait" title="Shop" />;
+  if (!hydrated) return <Screen key="wait" title="" />;
   if (link) return <GymShop key={`gym-${link.memberId}`} link={link} />;
-  if (sampleOpen) return <SampleShop key="sample" />;
-  return <JoinShop key="join" />;
+  // R-77: no gym, no shop (a Leave, or an old link to this tab): back to Workout.
+  return <Redirect href="/workout" />;
 }
-
-// ------------------------------------------------------------------ not joined: the join card
-
-function JoinShop() {
-  const notice = useGymShop((s) => s.notice);
-  const [code, setCode] = useState('');
-  const [name, setName] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [agreed, setAgreed] = useState(false);
-  const nameTouched = useRef(false);
-  const nameBox = useRef<TextInput>(null);
-
-  // Start the name from the member's profile, unless they have already typed one.
-  useEffect(() => {
-    let live = true;
-    getProfile()
-      .then((p) => {
-        if (live && !nameTouched.current && p.name) setName(p.name);
-      })
-      .catch(() => undefined);
-    return () => {
-      live = false;
-    };
-  }, []);
-
-  const onJoin = async () => {
-    if (busy) return;
-    setBusy(true);
-    setError(null);
-    // C6-11: the gym's name first, so a mistyped code never joins a stranger's gym.
-    const check = await checkTypedCode(code, name);
-    if (check.kind === 'words') {
-      setBusy(false);
-      setError(check.words);
-      return;
-    }
-    // Launch D5/D6: 18+ and the terms, ticked before the gym is joined (a wrong code is told first).
-    const notAgreed = agreementWords(agreed);
-    if (notAgreed) {
-      setBusy(false);
-      setError(notAgreed);
-      return;
-    }
-    if (check.kind === 'gym') {
-      const ok = await askConfirm({
-        title: `Join ${check.gymName}?`,
-        body: 'Your name goes to this gym with your orders. Check it is your gym.',
-        confirmLabel: 'Join',
-        cancelLabel: 'Not now',
-      });
-      if (!ok) {
-        setBusy(false);
-        return;
-      }
-    }
-    const words = await joinGym(code, name);
-    // On success this card is gone (the store now holds the link); only a failure comes back here.
-    setBusy(false);
-    setError(words);
-  };
-
-  return (
-    <Screen title="Shop">
-      {notice ? (
-        <View style={{ marginBottom: space.md }}>
-          <DemoNote text={notice} />
-        </View>
-      ) : null}
-      <Card style={{ gap: space.lg }}>
-        <View style={{ gap: space.xs }}>
-          <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-            Your gym's shop
-          </Text>
-          <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 20 }}>
-            Order shakes, supplements and gear from your gym, and pay at the desk when you collect.
-          </Text>
-        </View>
-
-        <View>
-          <Text style={labelStyle()}>Enter the code from your gym</Text>
-          <TextInput
-            value={code}
-            onChangeText={(t) => {
-              // C6-5: the gym's invite link pasted from WhatsApp gives its code, not "HTTPSF".
-              setCode(joinCodeFromTyped(t));
-              setError(null);
-            }}
-            autoCapitalize="characters"
-            autoCorrect={false}
-            autoComplete="off"
-            spellCheck={false}
-            returnKeyType="next"
-            onSubmitEditing={() => nameBox.current?.focus()}
-            submitBehavior="submit"
-            placeholder={`${JOIN_CODE_LENGTH} letters or numbers`}
-            placeholderTextColor={color.inkFaint}
-            accessibilityLabel="Gym code"
-            accessibilityHint={`The ${JOIN_CODE_LENGTH} letters and numbers your gym gave you`}
-            style={[shopInputStyle(), { fontFamily: type.monoBold, letterSpacing: 2 }]}
-          />
-        </View>
-
-        <View>
-          <Text style={labelStyle()}>Your name</Text>
-          <TextInput
-            ref={nameBox}
-            value={name}
-            onChangeText={(t) => {
-              nameTouched.current = true;
-              setName(t.slice(0, 70));
-              setError(null);
-            }}
-            autoCapitalize="words"
-            autoComplete="name"
-            returnKeyType="go"
-            onSubmitEditing={() => void onJoin()}
-            placeholder="So the desk knows whose order it is"
-            placeholderTextColor={color.inkFaint}
-            accessibilityLabel="Name on your orders"
-            style={shopInputStyle()}
-          />
-        </View>
-
-        <JoinAgreement agreed={agreed} onChange={(v) => { setAgreed(v); setError(null); }} />
-        <InlineError message={error} />
-        <PrimaryButton label="Join" accessibilityLabel="Join your gym's shop" onPress={() => void onJoin()} loading={busy} />
-      </Card>
-
-      <Pressable
-        onPress={() => useGymShop.getState().setSampleOpen(true)}
-        accessibilityRole="button"
-        accessibilityLabel="See a sample shop"
-        style={({ pressed }) => ({ marginTop: space.lg, minHeight: 48, alignSelf: 'center', justifyContent: 'center', paddingHorizontal: space.md, opacity: pressed ? 0.6 : 1 })}
-      >
-        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.accent, textAlign: 'center' }}>See a sample shop</Text>
-      </Pressable>
-    </Screen>
-  );
-}
-
-/** Read when drawn: gym branding repaints the tokens. */
-const labelStyle = () => ({ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.xs }) as const;
 
 /** C6-4: "Couldn't refresh — showing the last list. Prices and stock as of Mon 13 Oct, 7:10 pm." */
 function withListAge(problem: string, age: string | null): string {
@@ -205,6 +57,9 @@ function GymShop({ link }: { link: GymLink }) {
   const router = useRouter();
   const products = useGymShop((s) => s.products);
   const hasList = useGymShop((s) => s.productsAt != null);
+  // R-77: the shop shows once the gym lists something (its owner turned it on in the admin app).
+  const shopOn = products.length > 0;
+  const tagline = shopOn ? "Your gym's shop · pay at the desk" : 'Your gym';
   const productsAt = useGymShop((s) => s.productsAt);
   const bag = useGymShop((s) => s.bag);
   const orderCount = useGymShop((s) => s.orders.length);
@@ -258,14 +113,14 @@ function GymShop({ link }: { link: GymLink }) {
 
   return (
     <Screen
-      title={branded ? 'Shop' : link.gymName}
-      subtitle={branded ? undefined : "Your gym's shop · pay at the desk"}
+      title={branded ? (shopOn ? 'Shop' : 'Gym') : link.gymName}
+      subtitle={branded ? undefined : tagline}
       scroll={false}
       noPad
       right={
         <View style={{ flexDirection: 'row', gap: space.sm }}>
           <BellButton count={unread} onPress={() => router.push('/shop/inbox')} />
-          <BagButton count={bagBadgeCount(bag, products)} onPress={() => router.push('/shop/bag')} />
+          {shopOn ? <BagButton count={bagBadgeCount(bag, products)} onPress={() => router.push('/shop/bag')} /> : null}
         </View>
       }
     >
@@ -280,13 +135,13 @@ function GymShop({ link }: { link: GymLink }) {
         {branded ? (
           <View style={{ gap: space.xs, marginBottom: space.md }}>
             <GymBrandMark />
-            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Your gym's shop · pay at the desk</Text>
+            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>{tagline}</Text>
           </View>
         ) : null}
         {!hasList && loading ? (
           <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingVertical: space.lg }}>
             <ActivityIndicator color={color.accent} />
-            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>Loading the shop…</Text>
+            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>Loading…</Text>
           </View>
         ) : null}
         {!hasList && !loading && problem ? (
@@ -298,9 +153,9 @@ function GymShop({ link }: { link: GymLink }) {
         {hasList && problem ? <QuietLine text={withListAge(problem, listAgeText(productsAt, Date.now()))} /> : null}
 
         <MembershipCard link={link} />
-        <GymShortcutOffer link={link} />
-        <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} />
-        {hasList ? <ProductGrid products={products} filter={filter} onFilter={setFilter} onOpen={(id) => router.push({ pathname: '/shop/[id]', params: { id } })} emptyText="Your gym has nothing in its shop yet." /> : null}
+        {/* R-77: the home-screen icon is offered in a pop-up right after joining (GymIconOffer.tsx). */}
+        {shopOn || orderCount > 0 ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
+        {shopOn ? <ProductGrid products={products} filter={filter} onFilter={setFilter} onOpen={(id) => router.push({ pathname: '/shop/[id]', params: { id } })} emptyText="Your gym has nothing in its shop yet." /> : null}
 
         <View
           style={{
@@ -320,45 +175,13 @@ function GymShop({ link }: { link: GymLink }) {
             onPress={() => void onLeave()}
             disabled={leaving}
             accessibilityRole="button"
-            accessibilityLabel={`Leave ${link.gymName}'s shop`}
+            accessibilityLabel={`Leave ${link.gymName}`}
             style={({ pressed }) => ({ minHeight: 48, minWidth: 48, justifyContent: 'center', paddingHorizontal: space.sm, opacity: pressed ? 0.6 : 1 })}
           >
             {leaving ? <ActivityIndicator color={color.inkSecondary} /> : <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>Leave</Text>}
           </Pressable>
         </View>
       </ScrollView>
-    </Screen>
-  );
-}
-
-// ------------------------------------------------------------------ the sample shop (S1 demo)
-
-function SampleShop() {
-  const router = useRouter();
-  const bag = useShop((s) => s.bag);
-  const orderCount = useShop((s) => s.orders.length);
-  const [filter, setFilter] = useState<Filter>('all');
-  const close = useCallback(() => useGymShop.getState().setSampleOpen(false), []);
-
-  // Android's Back closes the sample and shows the join card again (not the app).
-  useFocusEffect(
-    useCallback(() => {
-      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-        close();
-        return true;
-      });
-      return () => sub.remove();
-    }, [close]),
-  );
-
-  return (
-    <Screen title="Sample shop" onBack={close} right={<BagButton count={bagBadgeCount(bag, getCatalog())} onPress={() => router.push('/shop/bag')} />}>
-      <DemoNote text={DEMO_SHOP_LINE} />
-      <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} />
-      <ProductGrid products={getCatalog()} filter={filter} onFilter={setFilter} onOpen={(id) => router.push({ pathname: '/shop/[id]', params: { id } })} emptyText="Nothing here yet." />
-      <View style={{ marginTop: space.xl }}>
-        <GhostButton label="Join your gym's shop" onPress={close} />
-      </View>
     </Screen>
   );
 }

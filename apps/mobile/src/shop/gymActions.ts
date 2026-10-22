@@ -110,8 +110,9 @@ export async function joinGym(rawCode: string, rawName: string): Promise<ActionW
   await forgetJoinId();
   // The logo starts downloading now, while the opening is still being laid out (D13).
   prefetchGymLogo(r.data.brand?.logoUrl);
-  // The shop page that replaces this card fetches the list as it opens.
   useGymShop.getState().setLink(r.data);
+  // R-77: the gym's tab is "Shop" only once its shop lists something: ask now, not on a visit.
+  void refreshProducts().catch((e: unknown) => console.warn('[ForgeErr] join: the shop list', e));
   return null;
 }
 
@@ -204,6 +205,8 @@ async function checkGymNow(): Promise<void> {
   useGymShop.getState().setGymNow(r.data);
   // Gym messages: the bell's count is fresh whenever the gym was asked anyway (launch, hourly).
   void refreshInbox().catch(() => undefined);
+  // R-77: and whether its shop is on (the tab says "Shop" or "Gym").
+  void refreshProducts().catch((e: unknown) => console.warn('[ForgeErr] gym check: the shop list', e));
 }
 
 /**

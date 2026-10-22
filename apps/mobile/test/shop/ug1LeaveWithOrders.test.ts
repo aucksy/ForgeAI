@@ -161,17 +161,17 @@ beforeEach(() => {
 describe('U-G1: the words before Leave', () => {
   it('nothing open: the question is as before, without the old "orders stay" promise', () => {
     const q = leaveQuestion({ gymName: 'ForgeAI Test Gym', branded: false, orders: [order(1, 'collected'), order(2, 'cancelled')] });
-    expect(q.title).toBe("Leave ForgeAI Test Gym's shop?");
-    expect(q.confirmLabel).toBe('Leave shop');
+    expect(q.title).toBe('Leave ForgeAI Test Gym?');
+    expect(q.confirmLabel).toBe('Leave gym');
     expect(q.cancelLabel).toBe('Stay');
-    expect(q.body).toBe('Your bag on this phone is emptied. You can join again with the code.');
+    expect(q.body).toBe('Your workouts stay on this phone. You can join again with the code.');
     expect(leaveQuestion({ gymName: 'X', branded: true, orders: [] }).body).toMatch(/goes back to ForgeAI's colours/);
   });
 
   it('one open order: how much, and that leaving cancels it', () => {
     expect(openOrdersText([order(1, 'ordered', 45000)], 'leave')).toBe('You have 1 open order (₹450). Leaving cancels it.');
     const q = leaveQuestion({ gymName: 'ForgeAI Test Gym', branded: false, orders: [order(1, 'ordered', 45000)] });
-    expect(q.body).toBe('You have 1 open order (₹450). Leaving cancels it. Your bag on this phone is emptied. You can join again with the code.');
+    expect(q.body).toBe('You have 1 open order (₹450). Leaving cancels it. Your workouts stay on this phone. You can join again with the code.');
     expect(q.confirmLabel).toBe('Cancel order and leave');
   });
 
@@ -222,7 +222,7 @@ describe('U-G1: Leave cancels the open orders first', () => {
     joinedWith([row(1, 'ordered')]);
     answers = [true];
     await askAndLeaveGym(false);
-    expect(asked[0].title).toBe("Leave ForgeAI Test Gym's shop?");
+    expect(asked[0].title).toBe('Leave ForgeAI Test Gym?');
     expect(asked[0].body).toMatch(/You have 1 open order \(₹450\)\. Leaving cancels it\./);
     expect(server.orders[0].status).toBe('cancelled');
     expect(server.orders[0].cancelled_by).toBe('member');
